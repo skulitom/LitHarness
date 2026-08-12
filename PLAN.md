@@ -1,7 +1,7 @@
 # LitHarness: Autonomous Book-Production System Plan
 
 **Version:** 2.2 (supersedes PLAN-v1-authoring-tool.md, archived in this folder)
-**Status:** Master plan; **Stage 0 slices 1–3 implemented and green**
+**Status:** Master plan; **Stage 0 slices 1–4 implemented and green (146 tests)**
 **Role:** A 24/7 autonomous system that plans, drafts, evaluates, repairs, and versions quality LitRPG books — directed by a human, never blocked on one
 **Inspection baseline:** Local projects inspected 2026-08-12; v2 rewrite same day; §7/§8/§13/§15/§17/§20 re-verified later the same day (v2.1); **§7/§8.4/§13/§17/§20 re-verified against all nine repositories that evening (v2.2)**
 
@@ -913,8 +913,8 @@ every unstruck action below as a claim to re-verify rather than a task to start.
    leases are net-new, absent from v1 and from every schema). Shape
    `CharacterSheet` from action 2's working code, not ahead of it. Relax
    LongRangeContext's exact `==0.1.0` pin in the same change.
-4. **Scaffold LitHarness Stage 0** — **slices 1–3 done** (122 tests collected, 119
-   passing + 3 opt-in live, ruff clean,
+4. **Scaffold LitHarness Stage 0** — **slices 1–4 done** (149 collected, 146 passing
+   + 3 opt-in live, ruff clean,
    mypy strict clean). Slice 1, the model-free manuscript spine: canonical text and
    hashing, the IR with lock taxonomy and block payloads, immutable
    content-addressed revisions, bounded patch application with the mechanical veto
@@ -937,30 +937,32 @@ every unstruck action below as a claim to re-verify rather than a task to start.
    registry into a job handler — all three need subsystems that do not exist yet."
    That is true of one and a half of the three:
 
-   - **Wiring the registry into a job handler is not blocked at all,** and the thing
-     actually standing in the way is a column no planning document names: `Job`
-     (`domain/jobs.py:86`) and the `jobs` table carry `input_digest` — *a hash* — and
-     no input, so a handler satisfying the `JobHandler` protocol receives a job it
-     cannot reconstruct a prompt from. `make_provider_handler` is a closure that
-     satisfies `JobHandler` with zero Conductor changes, and
-     `test_a_job_can_commit_a_revision_and_its_event_atomically` already proves a
-     closure can commit revision+event in one transaction. This is slice 4.
+   - ~~**Wiring the registry into a job handler**~~ — **DONE (slice 4).** It was not
+     blocked at all, and the thing actually standing in the way was a column no
+     planning document named: `Job` and the `jobs` table carried `input_digest` — *a
+     hash* — and no input, so a handler satisfying the `JobHandler` protocol received a
+     job it could not reconstruct a prompt from. Migration 003 adds `payload`;
+     `make_scene_draft_handler` is a closure satisfying `JobHandler` with zero
+     Conductor changes. Generated text now passes a shape gate and becomes an accepted
+     revision, with provenance recorded on both the accepted and the refused path.
+     What *is* still a Stage 1 concern is where the prompt comes from — today the
+     caller supplies it in the payload, because no planner derives it from a beat and
+     no context packet grounds it.
    - **A real work-selection policy** is blocked on the plan graph and findings store
-     as stated — but there is a second, purely local blocker the plan never named:
-     `claim_next` hardcodes `ORDER BY rowid LIMIT 1`, so *no* ordering other than FIFO
-     is expressible regardless of which subsystems exist. Land the `priority` column
-     with slice 4; do not invent a severity policy until findings are persisted, or it
-     is a selector over a column with one value.
+     as stated — but there was a second, purely local blocker the plan never named:
+     `claim_next` hardcoded `ORDER BY rowid LIMIT 1`, so *no* ordering other than FIFO
+     was expressible regardless of which subsystems exist. The `priority` column landed
+     with slice 4 and is deliberately inert; a severity policy waits on a findings
+     store, or it is a selector over a column with one value.
    - **Directive ingestion** is genuinely half-blocked: capturing a directive needs
      nothing missing, interpreting one needs the Narrative Planner (§9, does not
      exist). It is additionally hard-blocked upstream — `Event.to_contract()` calls
      `lc.EventType(self.value)`, and contracts' enum has no `_missing_` hook, so
      emitting a `DirectiveIngested` event raises until action 3 ships. Defer.
 
-   Also latent: `ProviderRegistry.reset_health()` documents "called at the start of a
-   tick" and has no non-test caller, so a provider that recovers stays marked dead for
-   the process's life. Harmless today because nothing owns a registry; a bug the
-   moment slice 4 lands.
+   *(Also fixed in slice 4: `ProviderRegistry.reset_health()` documented "called at the
+   start of a tick" and had no non-test caller, so a provider that recovered stayed
+   marked dead for the process's life.)*
 
    **On the exit criterion, precisely:** the endurance property is *evidenced, not
    met.* `test_a_week_of_no_op_ticks_changes_nothing` runs the 2,016 ticks a week
