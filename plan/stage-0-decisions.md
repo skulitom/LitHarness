@@ -1,6 +1,6 @@
 # Stage 0 decisions
 
-**Status:** Slices 1-4 built and green — **146 tests (+3 opt-in live), ruff clean, mypy
+**Status:** Slices 1-4 built and green — **150 tests (+3 opt-in live), ruff clean, mypy
 strict clean.** Slice 1 is the model-free manuscript spine; slice 2 the Conductor skeleton
 (tick, instance lease, job selection, digest, outbox dispatch, crash recovery); slice 3 the
 four provider adapters with their conformance suite and the billing guard; **slice 4 the
@@ -80,7 +80,11 @@ from "this chapter is published and a retcon needs an erratum policy" (§16). So
 
 It projects onto the contract as `locked = kind is not NONE`, so a consumer that only
 understands the boolean still sees every lock and never mistakes a locked node for a free
-one. Carried in `metadata` pending promotion to a real 1.x field.
+one. **Promoted to a real field in contracts 1.1.0** (`lock_kind`), along with
+`block_kind`, `block_payload` and the tombstone pair; it rode in `metadata` until then so
+the wire shape would be proven by a consumer before being frozen upstream. `from_contract`
+still reads the `metadata` form, because revisions are immutable and content addressed and
+1.0-era nodes stay readable forever by design.
 
 ## 6. Blob/DB write ordering — one transaction now, blob-first later
 
@@ -108,9 +112,11 @@ the event insert actually having created a row.
 
 ## 8. Leases — net-new, injected clock, re-checked at every write
 
-`domain/jobs.py`. Contracts' `JobRecord` has no lease concept at all, confirming §20.3's
-list. A lease is a holder plus a wall-clock expiry; claiming is a single `BEGIN IMMEDIATE`
-transaction so two overlapping cron ticks cannot both win.
+`domain/jobs.py`. Contracts' `JobRecord` had no lease concept at all when this was
+written, confirming §20.3's list; **contracts 1.1.0 has since added
+`lease_holder`/`lease_expires_at`, and `to_contract` is lossless as a result.** A lease is
+a holder plus a wall-clock expiry; claiming is a single `BEGIN IMMEDIATE` transaction so
+two overlapping cron ticks cannot both win.
 
 Two decisions worth stating. **Time is injected, not read from the clock**, because a
 scheduler whose correctness depends on the clock has to be testable without waiting. And
@@ -355,6 +361,6 @@ consumer:
   `lc.Finding` and `lc.ManuscriptRevision` failed to resolve at exactly the boundary the
   package exists to define. 90 names now exported.
 
-All consuming suites stayed green: contracts 113, ContinuityEvaluation 42,
-LongRangeContext 14, BookWorldState 100, LitHarness **146** (was misreported as 76 here
+All consuming suites stayed green: contracts 124, ContinuityEvaluation 42,
+LongRangeContext 17, BookWorldState 100, LitHarness **150** (was misreported as 76 here
 and in PLAN.md §20.4 through slice 3; corrected in the v2.2 pass).
