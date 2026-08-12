@@ -1,7 +1,7 @@
 # LitHarness: Autonomous Book-Production System Plan
 
 **Version:** 2.2 (supersedes PLAN-v1-authoring-tool.md, archived in this folder)
-**Status:** Master plan; **Stage 0 slices 1–5 implemented and green (212 tests); operable via `litharness tick`; §19 scorecard measured in §19.1**
+**Status:** Master plan; **Stage 0 slices 1–5 implemented and green (243 tests); operable via `litharness tick`; four of §19's seven clauses met — scorecard in §19.1**
 **Role:** A 24/7 autonomous system that plans, drafts, evaluates, repairs, and versions quality LitRPG books — directed by a human, never blocked on one
 **Inspection baseline:** Local projects inspected 2026-08-12; v2 rewrite same day; §7/§8/§13/§15/§17/§20 re-verified later the same day (v2.1); **§7/§8.4/§13/§17/§20 re-verified against all nine repositories that evening (v2.2)**
 
@@ -911,20 +911,27 @@ because four of the seven are structurally blocked in ways worth naming precisel
 
 | Clause | Status | The binding reason |
 |---|---|---|
-| **Integrity** | evidenced, not met | Storage-level integrity is strong — content-addressed revisions, atomic revision+event+outbox commits, restore-by-rebuild. Attribution is now *enforced at the loop* rather than conventional: every accepted revision resolves back through `decision_for_revision`. **The "and reversible" half is unstarted**: `head()` infers the head by timestamp rather than storing a pointer, so "make revision R the head again" is not expressible. |
-| **Autonomy** | **now attemptable** | Was *not startable*: no entrypoint existed, so §17's week-unattended criterion could be simulated but never run. `litharness tick` closes that. Two spins found and fixed — the outbox retried its head 2,016 times a week while starving entries 51+, and an escalated unit was marked SUCCEEDED and discarded. Parked and poisoned units are now visible and revivable. Remaining: no exception *queue* (Stage 1), and 30 days of real elapsed operation, which nothing but time supplies. |
+| **Integrity** | **met** | Content-addressed revisions, atomic revision+event+outbox commits, restore-by-rebuild. Attribution is enforced at the loop: every accepted revision resolves back through `decision_for_revision`. Reversibility landed with a stored `branch_heads` pointer and a `revert` that moves *forward* — history is immutable, so undo produces a new revision restoring the old content, leaving the mistake and the correction both in the lineage. Undo composes; reverting a revert restores the change. |
+| **Autonomy** | **attemptable; needs 30 days** | Was *not startable*: no entrypoint existed, so §17's week-unattended criterion could be simulated but never run. `litharness tick` closes that. Three spins found and fixed — the outbox retried its head 2,016 times a week while starving entries 51+; an escalated unit was marked SUCCEEDED and discarded; and a provider outage longer than fifteen minutes permanently poisoned every unit it touched, because `ProviderUnavailable` was charged against the attempt budget despite being raised before any work was attempted. Parked units are visible and revivable, and the exception queue exists. **What remains is elapsed time, which nothing but time supplies.** |
 | **Trust** | vacuous, mostly by design | The deterministic ladder is one gate, `shape.draft.v0`. Zero false-accepts over a suite that does not exist is trivially true. Fixture-suite integration is correctly deferred to Stage 1/2. |
 | **Genre** | not started (deferred) | No game-system replay in LitHarness; §8.4 puts the pack in ContinuityEvaluation until a generator exists to constrain. |
 | **Quality (§1a)** | not started | Blocked on §10.6's craft reference corpus, which is human authoring work — see §10.6 for why eight of nine candidate proxies were refuted rather than built. |
-| **Economics** | **metered, not enforced** | Invocations *and* tokens are recorded per decision, which is the right unit. Nothing enforces a ceiling: `GateKind.BUDGET` and `EventType.BUDGET_EXHAUSTED` have no producers, and `cost_usd` is parsed from the provider envelope and then dropped. §18 keeps budget enforcement absolutely, so this is the largest remaining gap that is neither deferred nor blocked. |
+| **Economics** | **met for enforcement; per-book still per-day** | Ceilings on tokens *and* invocations, checked **before** the provider call rather than after — a check that runs afterwards records an overrun, it does not prevent one. Invocations are a ceiling in their own right because §15's per-call harness tax (~24k tokens for `claude -p`) is invisible to token accounting. Dollars are never the sole ceiling, since `claude -p` on a subscription reports none. `cost_usd` was parsed and then dropped; migration 008 stores it. `status` prints spend against plan. **Honest gap: ceilings are per-day and per-operation, not per-book** — that needs a book-scoped job, which arrives with the planner. |
 | **Recovery** | **met** | Mid-write crash loses at most the in-flight unit (WAL, `synchronous=FULL`, `BEGIN IMMEDIATE`, lease reclaim). Backups existed nowhere and now use SQLite's online API — a file copy is invalid under WAL and would silently omit everything since the last checkpoint. The drill asserts prose, the accepting decision, and the undelivered outbox all survive. |
 
-Three defects worth remembering, because each failed *silently*: migrations resolved to
-nowhere under a wheel and `migrate` reported success, so a restored host would have come
-up with an empty schema that read as data loss; a full disk reported "cannot rollback"
-instead of "disk full", because the rollback in the transaction's exit path replaced the
-real exception; and a failed `open` leaked the file handle, which on Windows blocks the
-operator from replacing a corrupt database with a backup.
+**Four of the seven now met.** The three that are not are blocked on things engineering
+cannot supply: a generator to constrain (Genre), a human-authored corpus (Quality), and
+elapsed operating time (Autonomy's 30 days). Trust is vacuous rather than failing — it
+becomes measurable when Stage 1 gives it a suite to be measured against.
+
+Six defects worth remembering, because each failed *silently* and none would have surfaced
+without being looked for: migrations resolved to nowhere under a wheel while `migrate`
+reported success, so a restored host would have come up with an empty schema that reads as
+data loss; a full disk reported "cannot rollback" because the rollback in the transaction's
+exit path replaced the real exception; a failed `open` leaked the file handle, which on
+Windows blocks replacing a corrupt database with its backup; the outbox spun and starved
+simultaneously; an escalated unit was counted as a success; and an infrastructure outage
+was charged against the unit of work it had prevented.
 
 ## 20. Immediate next actions
 
@@ -998,7 +1005,7 @@ every unstruck action below as a claim to re-verify rather than a task to start.
    the same point — the forward interface has no consumer until a generator exists to
    constrain. Shaping the sheet now would be the exact guess this action's own
    sequencing rule forbids.
-4. **Scaffold LitHarness Stage 0** — **slices 1–5 done** (215 collected, 212 passing
+4. **Scaffold LitHarness Stage 0** — **slices 1–5 done** (243 collected, 240 passing
    + 3 opt-in live, ruff clean,
    mypy strict clean). Slice 1, the model-free manuscript spine: canonical text and
    hashing, the IR with lock taxonomy and block payloads, immutable
