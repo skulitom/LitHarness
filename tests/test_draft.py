@@ -472,7 +472,12 @@ def test_test_mode_still_blocks_a_billing_provider_through_the_handler(
     result = conductor_for(store, registry).tick(START)
 
     assert result.outcome is TickOutcome.JOB_FAILED
-    assert "no healthy provider" in (store.load_job("draft-1").error or "")
+    # The unit is requeued, not charged. `ProviderUnavailable` is a `TransientFailure`:
+    # it is raised before any work is attempted, so nothing about this unit is wrong.
+    # Charging it here is what used to turn a 15-minute outage into permanent poisoning.
+    job = store.load_job("draft-1")
+    assert job.status is JobStatus.QUEUED
+    assert job.attempts == 0
 
 
 # --- the acceptance policy engine ----------------------------------------------------

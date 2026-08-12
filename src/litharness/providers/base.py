@@ -27,6 +27,8 @@ import re
 from dataclasses import dataclass, field
 from typing import Any, Protocol, runtime_checkable
 
+from litharness.domain.failures import TransientFailure
+
 #: ```json ... ``` or bare ``` ... ``` — what `claude -p` wraps JSON in.
 _FENCE = re.compile(r"^\s*```(?:json|JSON)?\s*\n(.*?)\n?\s*```\s*$", re.DOTALL)
 
@@ -35,8 +37,12 @@ class ProviderError(Exception):
     """The adapter could not complete a round trip. Distinct from a bad-shaped answer."""
 
 
-class ProviderUnavailable(ProviderError):
-    """The tool is absent, unauthenticated, or failing its health probe."""
+class ProviderUnavailable(ProviderError, TransientFailure):
+    """The tool is absent, unauthenticated, or failing its health probe.
+
+    Also a `TransientFailure`: this is raised *before* any work is attempted, so nothing
+    about the unit of work is wrong and its attempt budget must not be charged. See
+    `domain/failures.py` for why that distinction is load-bearing rather than tidy."""
 
 
 @dataclass(frozen=True, slots=True)

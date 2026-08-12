@@ -40,7 +40,7 @@ from __future__ import annotations
 
 import enum
 from collections.abc import Sequence
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from datetime import UTC, datetime
 from hashlib import sha256
 from typing import Protocol
@@ -48,6 +48,7 @@ from typing import Protocol
 from litharness.adapters.sqlite_store import SqliteStore
 from litharness.domain.events import Event, EventType, OutboxEntry
 from litharness.domain.exceptions import ExceptionKind, ExceptionRecord, exception_id_for
+from litharness.domain.failures import TransientFailure
 from litharness.domain.jobs import Job, JobStatus
 from litharness.domain.policy import Outcome, PolicyDecision
 
@@ -238,6 +239,31 @@ class Conductor:
             # Re-check the lease at the moment of doing work, not just at claim time.
             running.assert_held_by(self.holder, now)
             events = list(handler(running, now))
+        except TransientFailure as error:
+            # **Infrastructure failure must not consume the unit's attempt budget.**
+            # `ProviderUnavailable` is raised by `resolve` *before* any work is attempted,
+            # so the candidate was never produced and nothing about this unit is wrong.
+            # Charging it was the difference between "a provider blipped" and "every unit
+            # touched during a 15-minute outage is permanently poisoned": three ticks at
+            # the plan's cadence spends `max_attempts`, and poisoned is terminal and burns
+            # the idempotency key, so the work could not even be resubmitted.
+            # `transition_to(RUNNING)` already incremented attempts; restore the count so
+            # the outage costs time rather than the unit's budget.
+            requeued = replace(
+                running.transition_to(JobStatus.QUEUED), attempts=job.attempts
+            ).released()
+            self.store.save_job(requeued)
+            self.store.append_events(
+                [
+                    self._event(
+                        EventType.PROVIDER_FELL_BACK,
+                        {"job_id": job.job_id, "error": str(error), "requeued": True},
+                        now,
+                    )
+                ]
+            )
+            self.store.bump_digest(self._day(now), "provider_unavailable")
+            return TickOutcome.JOB_FAILED, ()
         except Exception as error:  # a handler failure is data, not a crash
             failed = running.fail(f"{type(error).__name__}: {error}")
             self.store.save_job(failed)

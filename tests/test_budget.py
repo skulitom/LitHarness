@@ -237,3 +237,61 @@ def test_a_generous_budget_does_not_interfere(store: SqliteStore) -> None:
     result = conductor_for(store, registry, UNLIMITED).tick(START)
     assert result.outcome is TickOutcome.RAN_JOB
     assert provider.calls == 1
+
+
+# --- provider outages cost time, not work --------------------------------------------
+
+
+class DeadProvider:
+    """Present, non-billing, and failing every health probe — an outage, not a bad unit."""
+
+    name = "dead"
+    bills = False
+
+    def __init__(self) -> None:
+        self.probes = 0
+
+    def health(self) -> bool:
+        self.probes += 1
+        return False
+
+    def complete(self, request):  # pragma: no cover - never reached
+        raise AssertionError("an unhealthy provider was called")
+
+
+def test_a_sustained_outage_never_poisons_a_unit(store: SqliteStore) -> None:
+    """The failure this replaces: `ProviderUnavailable` is raised before any work is
+    attempted, yet it was charged against the attempt budget — so at the plan's 5-minute
+    cadence `max_attempts=3` made any outage longer than fifteen minutes permanently poison
+    every unit it touched. Poisoned is terminal *and* burns the idempotency key, so the
+    work could not even be resubmitted.
+    """
+    from litharness.providers.registry import ProviderRegistry
+
+    registry = ProviderRegistry(providers=[DeadProvider()], order=["dead"])
+    seeded(store)
+    conductor = conductor_for(store, registry, UNLIMITED)
+
+    for index in range(12):  # an hour of outage at the 5-minute cadence
+        conductor.tick(START + index * 300.0)
+
+    job = store.load_job("draft-1")
+    assert job.status is JobStatus.QUEUED, "an outage poisoned a unit that never ran"
+    assert job.attempts == 0, "infrastructure failure was charged against the unit"
+
+
+def test_the_unit_runs_normally_once_the_provider_returns(store: SqliteStore) -> None:
+    """And the requeue is not a leak: the work is still there to do afterwards."""
+    registry, provider = registry_with(PROSE)
+    dead = DeadProvider()
+    from litharness.providers.registry import ProviderRegistry
+
+    outage = ProviderRegistry(providers=[dead], order=["dead"])
+    seeded(store)
+
+    conductor_for(store, outage, UNLIMITED).tick(START)
+    assert store.load_job("draft-1").status is JobStatus.QUEUED
+
+    result = conductor_for(store, registry, UNLIMITED).tick(START + 300.0)
+    assert result.outcome is TickOutcome.RAN_JOB
+    assert provider.calls == 1
