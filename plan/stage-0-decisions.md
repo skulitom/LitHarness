@@ -1,6 +1,6 @@
 # Stage 0 decisions
 
-**Status:** Slices 1-5 built and green — **180 tests (+3 opt-in live), ruff clean, mypy
+**Status:** Slices 1-5 built and green — **212 tests (+3 opt-in live), ruff clean, mypy
 strict clean.** Slice 1 is the model-free manuscript spine; slice 2 the Conductor skeleton
 (tick, instance lease, job selection, digest, outbox dispatch, crash recovery); slice 3 the
 four provider adapters with their conformance suite and the billing guard; slice 4 **the
@@ -367,8 +367,8 @@ consumer:
   `lc.Finding` and `lc.ManuscriptRevision` failed to resolve at exactly the boundary the
   package exists to define. 90 names now exported.
 
-All consuming suites stayed green: contracts 124, ContinuityEvaluation 42,
-LongRangeContext 17, BookWorldState 100, LitHarness **180** (was misreported as 76 here
+All consuming suites stayed green: contracts 126, ContinuityEvaluation 42,
+LongRangeContext 17, BookWorldState 100, LitHarness **212** (was misreported as 76 here
 and in PLAN.md §20.4 through slice 3; corrected in the v2.2 pass).
 
 ## 17. Acceptance is a recorded decision, and refusals are recorded as fully as acceptances
