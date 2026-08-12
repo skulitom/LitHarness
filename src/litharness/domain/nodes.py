@@ -153,13 +153,13 @@ class Node:
         return replace(self, tombstoned=True, tombstone_reason=reason)
 
     def to_contract(self, version_id: str) -> lc.ManuscriptNode:
-        metadata: dict[str, Any] = {"lock_kind": self.lock.value}
-        if self.tombstoned:
-            metadata["tombstoned"] = True
-            metadata["tombstone_reason"] = self.tombstone_reason
-        if self.block_kind is not None:
-            metadata["block_kind"] = self.block_kind.value
-            metadata["block_payload"] = dict(self.block_payload)
+        """Project onto the contract using the real 1.1 fields.
+
+        These five rode in `metadata` until contracts 1.1.0 gave them homes — deliberate
+        sequencing, so the wire shape was proven by this consumer before being frozen
+        upstream. `locked` stays populated alongside `lock_kind` because a reader that only
+        understands the boolean must still see every lock.
+        """
         return lc.ManuscriptNode(
             logical_id=self.logical_id,
             kind=self.kind.to_contract(),
@@ -170,14 +170,28 @@ class Node:
             content_sha256=self.content_sha256,
             version_id=version_id,
             locked=self.lock is not LockKind.NONE,
-            metadata=metadata,
+            lock_kind=lc.LockKind(self.lock.value),
+            block_kind=lc.BlockKind(self.block_kind.value) if self.block_kind else None,
+            block_payload=dict(self.block_payload) if self.block_kind else None,
+            tombstoned=True if self.tombstoned else None,
+            tombstone_reason=self.tombstone_reason,
         )
 
     @classmethod
     def from_contract(cls, node: lc.ManuscriptNode) -> Node:
+        """Read the 1.1 fields, falling back to `metadata` for artifacts written before
+        they existed. The fallback is not dead code: revisions are immutable and content
+        addressed, so 1.0-era nodes stay readable forever by design."""
         metadata = dict(node.metadata or {})
-        lock = LockKind(metadata.get("lock_kind", "content" if node.locked else "none"))
-        block_kind = metadata.get("block_kind")
+        raw_lock = node.lock_kind.value if node.lock_kind else metadata.get("lock_kind")
+        lock = LockKind(raw_lock or ("content" if node.locked else "none"))
+        raw_block = node.block_kind.value if node.block_kind else metadata.get("block_kind")
+        payload = node.block_payload
+        if payload is None:
+            payload = metadata.get("block_payload", {})
+        tombstoned = node.tombstoned
+        if tombstoned is None:
+            tombstoned = bool(metadata.get("tombstoned", False))
         return cls(
             logical_id=node.logical_id,
             kind=NodeKind(node.kind.value),
@@ -187,10 +201,10 @@ class Node:
             content=node.content,
             content_sha256=node.content_sha256,
             lock=lock,
-            tombstoned=bool(metadata.get("tombstoned", False)),
-            tombstone_reason=metadata.get("tombstone_reason"),
-            block_kind=BlockKind(block_kind) if block_kind is not None else None,
-            block_payload=dict(metadata.get("block_payload", {})),
+            tombstoned=bool(tombstoned),
+            tombstone_reason=node.tombstone_reason or metadata.get("tombstone_reason"),
+            block_kind=BlockKind(raw_block) if raw_block is not None else None,
+            block_payload=dict(payload),
         )
 
 

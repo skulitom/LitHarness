@@ -162,9 +162,14 @@ class Job:
     # -- contract projection --------------------------------------------------
 
     def to_contract(self, meta: lc.ArtifactMeta) -> lc.JobRecord:
-        """Project onto the contract. `lease_holder`, `lease_expires_at`, `payload` and
-        `priority` are dropped — `JobRecord` has no field for any of them and no metadata
-        dict to smuggle them through. All four are PLAN.md §20.3's 1.x additions."""
+        """Project onto the contract. Lossless as of contracts 1.1.0.
+
+        All four of `lease_holder`, `lease_expires_at`, `payload` and `priority` used to be
+        dropped here — `JobRecord` had no field for any of them and no metadata dict to
+        smuggle them through, so a job crossing the boundary silently lost its lease and
+        its input. They are real fields now (PLAN.md §20.3), and `payload`/`priority` pass
+        `None` when unset so an unset field stays absent from the wire.
+        """
         return lc.JobRecord(
             meta=meta,
             job_id=self.job_id,
@@ -174,6 +179,10 @@ class Job:
             idempotency_key=self.idempotency_key,
             input_digest=self.input_digest,
             error=self.error,
+            lease_holder=self.lease_holder,
+            lease_expires_at=self.lease_expires_at,
+            payload=dict(self.payload) or None,
+            priority=self.priority or None,
         )
 
 

@@ -12,6 +12,7 @@ import pytest
 from hypothesis import given
 from hypothesis import strategies as st
 
+from litharness.domain.jobs import Job
 from litharness.domain.nodes import BlockKind, LockKind, LockViolation, Node, NodeKind
 from litharness.domain.patch import PatchPolicy, Veto, apply_patch
 from litharness.domain.position import initial_keys, key_between, parse_key
@@ -316,3 +317,72 @@ def test_preservation_holds_for_arbitrary_single_span_edits(
     result = outcome.node_after.content
     assert result.startswith(original[:start])
     assert result.endswith(original[end:])
+
+
+# --- contracts 1.1 projection ------------------------------------------------------
+
+
+def test_a_job_round_trips_its_lease_and_payload_through_the_contract() -> None:
+    """Lossless as of contracts 1.1.0. Before it, a job crossing this boundary silently
+    lost its lease and its input, because JobRecord had nowhere to put either."""
+    job = Job(
+        job_id="draft-1",
+        job_kind="scene_draft",
+        lease_holder="worker-a",
+        lease_expires_at=1_760_000_600.0,
+        payload={"logical_id": "scene-1", "prompt": "Draft it."},
+        priority=7,
+    )
+    record = job.to_contract(meta("job_record", "job-draft-1"))
+    assert record.lease_holder == "worker-a"
+    assert record.lease_expires_at == 1_760_000_600.0
+    assert record.payload == {"logical_id": "scene-1", "prompt": "Draft it."}
+    assert record.priority == 7
+
+
+def test_an_unset_job_field_stays_absent_from_the_wire() -> None:
+    """Contracts 1.1 omits None and only None, so an unset addition must be None rather
+    than an empty dict or a zero — otherwise every job payload grows two keys."""
+    record = Job(job_id="noop-1", job_kind="noop").to_contract(meta("job_record", "job-noop"))
+    rendered = lc.to_jsonable(record)
+    for absent in ("payload", "priority", "lease_holder", "lease_expires_at"):
+        assert absent not in rendered
+
+
+def test_a_block_node_projects_onto_real_contract_fields_not_metadata() -> None:
+    node = Node(
+        logical_id="status-1",
+        kind=NodeKind.BLOCK,
+        position_key="010",
+        block_kind=BlockKind.STATUS_WINDOW,
+        block_payload={"hp": 24, "level": 3},
+        lock=LockKind.PUBLISHED,
+    )
+    record = node.to_contract("v-1")
+
+    assert record.block_kind is lc.BlockKind.STATUS_WINDOW
+    assert record.block_payload == {"hp": 24, "level": 3}
+    assert record.lock_kind is lc.LockKind.PUBLISHED
+    # `locked` must agree, so a reader that only understands the boolean still sees it.
+    assert record.locked is True
+    assert Node.from_contract(record) == node
+
+
+def test_a_node_written_before_1_1_still_reads_from_metadata() -> None:
+    """Revisions are immutable and content-addressed, so 1.0-era nodes stay readable
+    forever by design. The fallback is not dead code."""
+    legacy = lc.ManuscriptNode(
+        logical_id="status-1",
+        kind=lc.NodeKind.BLOCK,
+        position_key="010",
+        locked=True,
+        metadata={
+            "lock_kind": "published",
+            "block_kind": "status_window",
+            "block_payload": {"hp": 24},
+        },
+    )
+    node = Node.from_contract(legacy)
+    assert node.lock is LockKind.PUBLISHED
+    assert node.block_kind is BlockKind.STATUS_WINDOW
+    assert node.block_payload == {"hp": 24}
