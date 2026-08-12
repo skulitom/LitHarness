@@ -1,7 +1,7 @@
 # LitHarness: Autonomous Book-Production System Plan
 
 **Version:** 2.2 (supersedes PLAN-v1-authoring-tool.md, archived in this folder)
-**Status:** Master plan; **Stage 0 slices 1–4 implemented and green (150 tests)**
+**Status:** Master plan; **Stage 0 slices 1–5 implemented and green (183 tests)**
 **Role:** A 24/7 autonomous system that plans, drafts, evaluates, repairs, and versions quality LitRPG books — directed by a human, never blocked on one
 **Inspection baseline:** Local projects inspected 2026-08-12; v2 rewrite same day; §7/§8/§13/§15/§17/§20 re-verified later the same day (v2.1); **§7/§8.4/§13/§17/§20 re-verified against all nine repositories that evening (v2.2)**
 
@@ -942,7 +942,7 @@ every unstruck action below as a claim to re-verify rather than a task to start.
    the same point — the forward interface has no consumer until a generator exists to
    constrain. Shaping the sheet now would be the exact guess this action's own
    sequencing rule forbids.
-4. **Scaffold LitHarness Stage 0** — **slices 1–4 done** (153 collected, 150 passing
+4. **Scaffold LitHarness Stage 0** — **slices 1–5 done** (186 collected, 183 passing
    + 3 opt-in live, ruff clean,
    mypy strict clean). Slice 1, the model-free manuscript spine: canonical text and
    hashing, the IR with lock taxonomy and block payloads, immutable
@@ -983,15 +983,29 @@ every unstruck action below as a claim to re-verify rather than a task to start.
      was expressible regardless of which subsystems exist. The `priority` column landed
      with slice 4 and is deliberately inert; a severity policy waits on a findings
      store, or it is a selector over a column with one value.
-   - **Directive ingestion** is genuinely half-blocked: capturing a directive needs
-     nothing missing, interpreting one needs the Narrative Planner (§9, does not
-     exist). It is additionally hard-blocked upstream — `Event.to_contract()` calls
-     `lc.EventType(self.value)`, and contracts' enum has no `_missing_` hook, so
-     emitting a `DirectiveIngested` event raises until action 3 ships. Defer.
+   - ~~**Directive ingestion**~~ — **capture half DONE (slice 5b); interpretation still
+     deferred.** The upstream block is gone: contracts 1.1.0 added `DirectiveIngested`,
+     so the event is representable. Directives are now captured durably, drained as step
+     1 of the tick, and left in `RECEIVED` because interpreting one needs the Narrative
+     Planner (§9, still does not exist). The absence is deliberately *visible* — a
+     growing unread count and `interpreted: false` in the event log — rather than hidden,
+     which is the difference between direction queued and direction dropped. The earlier
+     reasoning here ("a queue nothing can read") argued for building neither half; it was
+     right about interpretation and wrong about capture.
 
    *(Also fixed in slice 4: `ProviderRegistry.reset_health()` documented "called at the
    start of a tick" and had no non-test caller, so a provider that recovered stayed
    marked dead for the process's life.)*
+
+   **Slice 5 then closed §4.2's audit gap and §20.8.** Acceptance is now a recorded
+   `PolicyDecision` — persisted, queryable by job and by resulting revision, carrying
+   every gate that ran including the passing ones — which makes §19's "every mutation is
+   attributable to a recorded policy decision" checkable rather than asserted. Two
+   invariants are enforced at construction rather than documented: a blocking gate may
+   not source its verdict from the model that produced the candidate (MirrorBench, and
+   the substance of §20.8), and an uncalibrated craft gate may not block (§10.4). A veto
+   no retry can fix escalates *before* the attempt budget is consulted, so a locked node
+   reports as locked on the first try rather than as "attempts exhausted" on the fourth.
 
    **On the exit criterion, precisely:** the endurance property is *evidenced, not
    met.* `test_a_week_of_no_op_ticks_changes_nothing` runs the 2,016 ticks a week
@@ -1055,15 +1069,17 @@ every unstruck action below as a claim to re-verify rather than a task to start.
    order-randomization, frozen configs) in the Conductor's policy records. Verified
    zero coupling in both directions — MirrorBench work advances LitHarness by exactly
    nothing otherwise.
-   **Re-premised:** this said "doc-only until Stage 0 exists". Stage 0 now exists, but
-   the *target* does not — there is no policy-decision record anywhere in LitHarness
-   or in contracts' 25 schemas, so acting on this today means inventing the record
-   shape, which is exactly the failure action 4 avoided by building the consumer
-   first. **This is gated by action 3, not by Stage 0.** When the policy decision
-   record ships, stamp it with: a verdict-source discriminator so no gate verdict can
-   originate from the generating model's claim about its own output; a recorded
-   pairing/order key for every judge or panel comparison; and a resolved-config SHA
-   plus run provenance.
+   **DONE as of slice 5a, and the re-premise is worth keeping visible.** This action
+   said "doc-only until Stage 0 exists". Stage 0 existed and it was still not
+   actionable, because the *target* did not — acting on it then meant inventing the
+   record shape, the exact failure action 4 avoided by building the consumer first. It
+   was gated by action 3, not by Stage 0. Contracts 1.1.0 shipped
+   `PolicyDecisionRecord` with `GateResult.verdict_source`, and LitHarness now **refuses
+   at construction** to build a blocking gate whose verdict comes from the generating
+   model's report on its own output. The invariant is a raised exception, not a
+   paragraph. Still outstanding from MirrorBench's set, and genuinely blocked until
+   critics exist: the recorded pairing/order key for judge and panel comparisons.
+   `policy_config_digest` covers the frozen-config half.
 9. **Provider adapters** — see [plan/provider-adapters.md](plan/provider-adapters.md).
    Local Claude Code session by default, Codex as fallback, Ollama for iterative
    testing, plus the deterministic fake. Measured, with amendments this plan owes

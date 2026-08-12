@@ -3,10 +3,10 @@
 **Status:** Slices 1-5 built and green — **183 tests (+3 opt-in live), ruff clean, mypy
 strict clean.** Slice 1 is the model-free manuscript spine; slice 2 the Conductor skeleton
 (tick, instance lease, job selection, digest, outbox dispatch, crash recovery); slice 3 the
-four provider adapters with their conformance suite and the billing guard; **slice 4 the
-first path on which generated text reaches accepted canon — job payloads, the draft shape
-gate, and a provider-backed handler wired into the tick; **slice 5 the acceptance decision
-record and the direction inbox.**
+four provider adapters with their conformance suite and the billing guard; slice 4 **the
+first path on which generated text reaches accepted canon** — job payloads, the draft shape
+gate, and a provider-backed handler wired into the tick; slice 5 **the acceptance decision
+record and the direction inbox**.
 
 PLAN.md §20.4 warns that Stage 0 carries "roughly half a dozen load-bearing design
 decisions [that] are genuinely open and an agent will silently invent answers to all of
