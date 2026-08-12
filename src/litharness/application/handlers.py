@@ -36,10 +36,15 @@ from datetime import UTC, datetime
 
 from litharness.adapters.sqlite_store import SqliteStore
 from litharness.application.conductor import JobHandler
+from litharness.domain.budget import BudgetPolicy, BudgetVerdict
+from litharness.domain.budget import check as budget_check
 from litharness.domain.draft import DraftPolicy, gate_draft
 from litharness.domain.events import Event, EventType
 from litharness.domain.jobs import Job
 from litharness.domain.policy import (
+    GateKind,
+    GateOutcome,
+    Outcome,
     PolicyDecision,
     decide,
     decision_id_for,
@@ -65,12 +70,28 @@ def _timestamp(now: float) -> str:
     return datetime.fromtimestamp(now, tz=UTC).isoformat().replace("+00:00", "Z")
 
 
+def budget_gate(verdict: BudgetVerdict) -> GateOutcome:
+    """Project a budget verdict into §4.2's ladder as a recorded gate result.
+
+    A budget refusal is auditable through the same path as a shape refusal rather than
+    being a special case an operator has to know to look for.
+    """
+    return GateOutcome(
+        gate=GateKind.BUDGET,
+        rule_or_critic_id=f"budget.{verdict.ceiling}.v0",
+        passed=verdict.allowed,
+        vetoes=(),
+        detail=verdict.reason,
+    )
+
+
 def make_scene_draft_handler(
     registry: ProviderRegistry,
     store: SqliteStore,
     project_id: str,
     *,
     policy: DraftPolicy | None = None,
+    budget: BudgetPolicy | None = None,
     call_class: str = "generation",
 ) -> JobHandler:
     """Build a `JobHandler` that drafts one node's prose and gates the result.
@@ -79,6 +100,7 @@ def make_scene_draft_handler(
     Conductor needs no more than that — `handlers[SCENE_DRAFT] = make_scene_draft_handler(...)`
     is the whole wiring story, with no changes to the Conductor itself.
     """
+    budget_policy = budget or BudgetPolicy()
 
     def handle(job: Job, now: float) -> Sequence[Event]:
         payload = job.payload
@@ -92,15 +114,64 @@ def make_scene_draft_handler(
             ) from error
 
         revision = store.load_revision(revision_id)
-
-        result, resolution = registry.complete(
-            CompletionRequest(
-                prompt=prompt,
-                system=payload.get("system"),
-                profile=str(payload.get("profile", "default")),
-                call_class=call_class,
-            )
+        request = CompletionRequest(
+            prompt=prompt,
+            system=payload.get("system"),
+            profile=str(payload.get("profile", "default")),
+            call_class=call_class,
         )
+
+        # **§4.2 gate 4, in front of the spend rather than behind it.** A budget check that
+        # runs after the provider call records an overrun; it does not prevent one. The
+        # provider is resolved first only to know whose harness tax to project against —
+        # resolution costs nothing but a cached health verdict.
+        day = _timestamp(now)[:10]
+        provider_name, _ = registry.resolve(call_class)
+        budget_verdict = budget_check(
+            budget_policy,
+            store.spend_on(day),
+            provider=provider_name.name,
+            prompt_chars=len(prompt),
+            max_output_tokens=request.max_output_tokens,
+        )
+        if not budget_verdict.allowed:
+            # Nothing was spent, so `invocations` and `total_tokens` stay zero — that is
+            # the point of refusing in front. The outcome is PARK rather than RETRY: the
+            # daily ceiling will still be there next tick, so retrying would burn the
+            # attempt budget rediscovering a fact that does not change until the day does.
+            gate = budget_gate(budget_verdict)
+            refusal = PolicyDecision(
+                decision_id=decision_id_for(job.job_id, job.attempts, (gate,)),
+                outcome=Outcome.PARK,
+                gates=(gate,),
+                job_id=job.job_id,
+                logical_id=logical_id,
+                base_revision_id=revision_id,
+                attempt=job.attempts,
+                policy_config_digest=policy_digest(policy or DraftPolicy()),
+                reason=budget_verdict.reason,
+            )
+            store.record_decision(refusal, decided_at=_timestamp(now))
+            return [
+                Event(
+                    event_type=EventType.BUDGET_EXHAUSTED,
+                    project_id=project_id,
+                    created_at=_timestamp(now),
+                    book_id=revision.book_id,
+                    branch_id=revision.branch_id,
+                    revision_id=revision_id,
+                    payload={
+                        "decision_id": refusal.decision_id,
+                        "job_id": job.job_id,
+                        "ceiling": budget_verdict.ceiling,
+                        "reason": budget_verdict.reason,
+                        "projected_tokens": budget_verdict.projected_tokens,
+                        "spent_today": store.spend_on(day).tokens,
+                    },
+                )
+            ]
+
+        result, resolution = registry.complete(request)
 
         outcome = gate_draft(
             revision,
@@ -141,6 +212,7 @@ def make_scene_draft_handler(
             fell_back_from=tuple(resolution.fell_back_from),
             invocations=result.invocations,
             total_tokens=result.usage.total,
+            cost_usd=result.cost_usd,
             policy_config_digest=policy_digest(policy or DraftPolicy()),
             reason=reason,
         )

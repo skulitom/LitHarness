@@ -33,6 +33,7 @@ from litharness.adapters.sqlite_store import MigrationsMissing, SqliteStore
 from litharness.application import status as status_module
 from litharness.application.conductor import Conductor, TickOutcome
 from litharness.application.handlers import SCENE_DRAFT, make_scene_draft_handler
+from litharness.domain.budget import BudgetPolicy
 from litharness.domain.directives import Directive, DirectiveKind, DirectiveStatus, directive_id_for
 from litharness.domain.jobs import Job, JobStatus, input_digest_for
 from litharness.providers import build_default_registry
@@ -57,6 +58,38 @@ def _store(args: argparse.Namespace) -> SqliteStore:
     return SqliteStore.open(args.database)
 
 
+def _budget(args: argparse.Namespace) -> BudgetPolicy:
+    """Ceilings from the command line, defaulting to `BudgetPolicy`'s.
+
+    Passing 0 for a ceiling means "refuse everything" and is useful for a dry run; passing
+    -1 means unbounded, which has to be *asked for* rather than being what you get by
+    forgetting a flag.
+    """
+
+    def ceiling(value: int | None) -> int | None:
+        return None if value is not None and value < 0 else value
+
+    default = BudgetPolicy()
+    return BudgetPolicy(
+        max_tokens_per_operation=ceiling(
+            args.max_tokens_per_operation
+            if args.max_tokens_per_operation is not None
+            else default.max_tokens_per_operation
+        ),
+        max_tokens_per_day=ceiling(
+            args.max_tokens_per_day
+            if args.max_tokens_per_day is not None
+            else default.max_tokens_per_day
+        ),
+        max_invocations_per_day=ceiling(
+            args.max_invocations_per_day
+            if args.max_invocations_per_day is not None
+            else default.max_invocations_per_day
+        ),
+        max_cost_usd_per_day=args.max_cost_usd_per_day,
+    )
+
+
 def _conductor(store: SqliteStore, args: argparse.Namespace) -> Conductor:
     registry = build_default_registry()
     return Conductor(
@@ -65,7 +98,9 @@ def _conductor(store: SqliteStore, args: argparse.Namespace) -> Conductor:
         project_id=args.project,
         registry=registry,
         handlers={
-            SCENE_DRAFT: make_scene_draft_handler(registry, store, args.project),
+            SCENE_DRAFT: make_scene_draft_handler(
+                registry, store, args.project, budget=_budget(args)
+            ),
         },
     )
 
@@ -96,7 +131,7 @@ def cmd_tick(args: argparse.Namespace) -> int:
 def cmd_status(args: argparse.Namespace) -> int:
     store = _store(args)
     try:
-        report = status_module.collect(store, _now())
+        report = status_module.collect(store, _now(), budget=_budget(args))
     finally:
         store.close()
 
@@ -269,6 +304,22 @@ def build_parser() -> argparse.ArgumentParser:
         "--holder",
         default="cron",
         help="instance identity for the Conductor lease (default: cron)",
+    )
+    parser.add_argument(
+        "--max-tokens-per-operation", type=int, default=None,
+        help="refuse one call projected above this; -1 for unbounded",
+    )
+    parser.add_argument(
+        "--max-tokens-per-day", type=int, default=None,
+        help="daily token ceiling; -1 for unbounded",
+    )
+    parser.add_argument(
+        "--max-invocations-per-day", type=int, default=None,
+        help="daily call ceiling — the one tokens cannot express (§15); -1 for unbounded",
+    )
+    parser.add_argument(
+        "--max-cost-usd-per-day", type=float, default=None,
+        help="daily dollar ceiling; applies only where the provider reports cost",
     )
     parser.add_argument(
         "--project",

@@ -26,6 +26,7 @@ from typing import Any
 
 from litharness.adapters.sqlite_store import SqliteStore
 from litharness.application.conductor import DEFAULT_SCOPE
+from litharness.domain.budget import BudgetPolicy, Spend
 from litharness.domain.directives import DirectiveStatus
 from litharness.domain.jobs import JobStatus
 
@@ -43,6 +44,9 @@ class Status:
     outbox: dict[str, int] = field(default_factory=dict)
     unread_directives: int = 0
     digest: dict[str, int] = field(default_factory=dict)
+    #: §19 Economics: "the operator can see spend vs. plan at any tick".
+    spend: Spend = field(default_factory=Spend)
+    budget: BudgetPolicy = field(default_factory=BudgetPolicy)
 
     @property
     def needs_attention(self) -> int:
@@ -72,7 +76,23 @@ class Status:
             "outbox": self.outbox,
             "unread_directives": self.unread_directives,
             "digest": self.digest,
+            "spend": {
+                "invocations": self.spend.invocations,
+                "tokens": self.spend.tokens,
+                "cost_usd": self.spend.cost_usd,
+            },
+            "budget": self.budget.digest_material(),
         }
+
+    def _against_plan(self) -> str:
+        """"Spend vs. plan" is the §19 Economics wording, so show the plan, not just the
+        spend. A bare number cannot be read as close-to-the-limit or nowhere-near it."""
+        parts = []
+        if self.budget.max_invocations_per_day is not None:
+            parts.append(f"{self.spend.invocations}/{self.budget.max_invocations_per_day} calls")
+        if self.budget.max_tokens_per_day is not None:
+            parts.append(f"{self.spend.tokens}/{self.budget.max_tokens_per_day} tokens")
+        return f"  [{'; '.join(parts)}]" if parts else "  [unbounded]"
 
     def render(self) -> str:
         lines = [
@@ -95,11 +115,21 @@ class Status:
             f"outbox          {self.outbox or '{}'}",
             f"unread          {self.unread_directives} directive(s)",
             f"digest today    {self.digest or '{}'}",
+            f"spend today     {self.spend.invocations} call(s), "
+            f"{self.spend.tokens} tokens"
+            + (f", ${self.spend.cost_usd:.2f}" if self.spend.cost_usd else "")
+            + self._against_plan(),
         ]
         return "\n".join(lines)
 
 
-def collect(store: SqliteStore, now: float, *, scope: str = DEFAULT_SCOPE) -> Status:
+def collect(
+    store: SqliteStore,
+    now: float,
+    *,
+    scope: str = DEFAULT_SCOPE,
+    budget: BudgetPolicy | None = None,
+) -> Status:
     last = store.last_tick()
     holder, expires = store.instance_lease(scope)
     day = datetime.fromtimestamp(now, tz=UTC).date().isoformat()
@@ -115,6 +145,8 @@ def collect(store: SqliteStore, now: float, *, scope: str = DEFAULT_SCOPE) -> St
         outbox=store.outbox_counts_by_state(),
         unread_directives=len(store.directives_by_status(DirectiveStatus.RECEIVED)),
         digest=store.digest(day),
+        spend=store.spend_on(day),
+        budget=budget or BudgetPolicy(),
     )
 
 

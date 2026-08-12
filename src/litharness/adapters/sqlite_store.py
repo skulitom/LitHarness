@@ -30,6 +30,7 @@ from dataclasses import dataclass, replace
 from pathlib import Path
 from typing import Any
 
+from litharness.domain.budget import Spend
 from litharness.domain.directives import Directive, DirectiveKind, DirectiveStatus
 from litharness.domain.events import (
     MAX_DELIVERY_ATTEMPTS,
@@ -164,6 +165,7 @@ def _decision_from_row(row: sqlite3.Row) -> PolicyDecision:
         fell_back_from=tuple(json.loads(row["fell_back_from"] or "[]")),
         invocations=row["invocations"],
         total_tokens=row["total_tokens"],
+        cost_usd=row["cost_usd"],
         policy_config_digest=row["policy_config_digest"],
         reason=row["reason"],
     )
@@ -954,8 +956,8 @@ class SqliteStore:
                 "INSERT OR IGNORE INTO policy_decisions (decision_id, outcome, job_id, "
                 "logical_id, base_revision_id, resulting_revision_id, attempt, provider, "
                 "model, profile, fell_back_from, invocations, total_tokens, "
-                "policy_config_digest, reason, gates, decided_at) "
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                "policy_config_digest, reason, gates, decided_at, cost_usd) "
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                 (
                     decision.decision_id,
                     decision.outcome.value,
@@ -974,6 +976,7 @@ class SqliteStore:
                     decision.reason,
                     json.dumps([_gate_to_row(gate) for gate in decision.gates]),
                     decided_at,
+                    decision.cost_usd,
                 ),
             )
             return cursor.rowcount > 0
@@ -994,6 +997,27 @@ class SqliteStore:
                 (job_id,),
             )
         ]
+
+    def spend_on(self, day: str) -> Spend:
+        """What one day cost, from the durable record of what was actually consumed.
+
+        Derived from `policy_decisions` rather than kept as a running counter, because a
+        counter and the decisions it summarises can disagree after a crash and there would
+        be no way to tell which was right. The decisions are the record; this is a view of
+        them. `decided_at` is an ISO-8601 stamp, so a date prefix is the day.
+        """
+        row = self._connection.execute(
+            "SELECT COALESCE(SUM(invocations), 0) AS invocations, "
+            "COALESCE(SUM(total_tokens), 0) AS tokens, "
+            "COALESCE(SUM(cost_usd), 0.0) AS cost "
+            "FROM policy_decisions WHERE decided_at LIKE ?",
+            (f"{day}%",),
+        ).fetchone()
+        return Spend(
+            invocations=int(row["invocations"]),
+            tokens=int(row["tokens"]),
+            cost_usd=float(row["cost"]),
+        )
 
     def latest_decision_for(self, job_id: str) -> PolicyDecision | None:
         """The most recent decision for a job — what the Conductor settles the row against.

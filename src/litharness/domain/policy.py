@@ -154,6 +154,9 @@ class PolicyDecision:
     fell_back_from: tuple[str, ...] = ()
     invocations: int = 0
     total_tokens: int = 0
+    #: None when the provider cannot report dollars — a subscription CLI, or local
+    #: hardware. That is why it is never the only budget ceiling.
+    cost_usd: float | None = None
     #: Digest of the frozen policy config, so a threshold change reads as a different
     #: config rather than as unexplained drift in behaviour.
     policy_config_digest: str | None = None
@@ -199,6 +202,7 @@ class PolicyDecision:
             fell_back_from=list(self.fell_back_from),
             invocations=self.invocations,
             total_tokens=self.total_tokens,
+            cost_usd=self.cost_usd,
             policy_config_digest=self.policy_config_digest,
             attempt=self.attempt,
             resulting_revision_id=self.resulting_revision_id,
