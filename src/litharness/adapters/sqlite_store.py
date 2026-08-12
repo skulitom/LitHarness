@@ -32,6 +32,14 @@ from typing import Any
 from litharness.domain.events import Event, EventType, OutboxEntry, OutboxState
 from litharness.domain.jobs import Job, JobStatus
 from litharness.domain.nodes import BlockKind, LockKind, Node, NodeKind
+from litharness.domain.patch import Veto
+from litharness.domain.policy import (
+    GateKind,
+    GateOutcome,
+    Outcome,
+    PolicyDecision,
+    VerdictSource,
+)
 from litharness.domain.revision import Revision, node_version_id
 
 MIGRATIONS_DIR = Path(__file__).resolve().parents[3] / "migrations"
@@ -61,6 +69,53 @@ def _split_statements(script: str) -> list[str]:
     if buffer.strip():
         raise ValueError(f"migration ends with an incomplete statement: {buffer[:80]!r}")
     return statements
+
+
+def _gate_to_row(gate: GateOutcome) -> dict[str, Any]:
+    return {
+        "gate": gate.gate.value,
+        "rule_or_critic_id": gate.rule_or_critic_id,
+        "passed": gate.passed,
+        "verdict_source": gate.verdict_source.value,
+        "blocking": gate.blocking,
+        "vetoes": [veto.value for veto in gate.vetoes],
+        "detail": gate.detail,
+        "calibration_id": gate.calibration_id,
+    }
+
+
+def _gate_from_row(row: dict[str, Any]) -> GateOutcome:
+    return GateOutcome(
+        gate=GateKind(row["gate"]),
+        rule_or_critic_id=row["rule_or_critic_id"],
+        passed=bool(row["passed"]),
+        verdict_source=VerdictSource(row["verdict_source"]),
+        blocking=bool(row["blocking"]),
+        vetoes=tuple(Veto(value) for value in row.get("vetoes", ())),
+        detail=row.get("detail"),
+        calibration_id=row.get("calibration_id"),
+    )
+
+
+def _decision_from_row(row: sqlite3.Row) -> PolicyDecision:
+    return PolicyDecision(
+        decision_id=row["decision_id"],
+        outcome=Outcome(row["outcome"]),
+        gates=tuple(_gate_from_row(item) for item in json.loads(row["gates"])),
+        job_id=row["job_id"],
+        logical_id=row["logical_id"],
+        base_revision_id=row["base_revision_id"],
+        resulting_revision_id=row["resulting_revision_id"],
+        attempt=row["attempt"],
+        provider=row["provider"],
+        model=row["model"],
+        profile=row["profile"],
+        fell_back_from=tuple(json.loads(row["fell_back_from"] or "[]")),
+        invocations=row["invocations"],
+        total_tokens=row["total_tokens"],
+        policy_config_digest=row["policy_config_digest"],
+        reason=row["reason"],
+    )
 
 
 def _dump_payload(payload: dict[str, Any]) -> str | None:
@@ -552,6 +607,73 @@ class SqliteStore:
         return None if row is None else str(row["holder"])
 
     # -- digest and ticks -----------------------------------------------------
+
+    # -- policy decisions -----------------------------------------------------
+
+    def record_decision(self, decision: PolicyDecision, *, decided_at: str) -> bool:
+        """Persist one acceptance decision. False if this ``decision_id`` already exists.
+
+        Idempotent by content-derived id, for the same reason ticks are: a job replayed
+        after a crash must not accumulate duplicate rows for one judgment.
+        """
+        with self.transaction() as connection:
+            cursor = connection.execute(
+                "INSERT OR IGNORE INTO policy_decisions (decision_id, outcome, job_id, "
+                "logical_id, base_revision_id, resulting_revision_id, attempt, provider, "
+                "model, profile, fell_back_from, invocations, total_tokens, "
+                "policy_config_digest, reason, gates, decided_at) "
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                (
+                    decision.decision_id,
+                    decision.outcome.value,
+                    decision.job_id,
+                    decision.logical_id,
+                    decision.base_revision_id,
+                    decision.resulting_revision_id,
+                    decision.attempt,
+                    decision.provider,
+                    decision.model,
+                    decision.profile,
+                    json.dumps(list(decision.fell_back_from)),
+                    decision.invocations,
+                    decision.total_tokens,
+                    decision.policy_config_digest,
+                    decision.reason,
+                    json.dumps([_gate_to_row(gate) for gate in decision.gates]),
+                    decided_at,
+                ),
+            )
+            return cursor.rowcount > 0
+
+    def load_decision(self, decision_id: str) -> PolicyDecision:
+        row = self._connection.execute(
+            "SELECT * FROM policy_decisions WHERE decision_id = ?", (decision_id,)
+        ).fetchone()
+        if row is None:
+            raise KeyError(f"no policy decision {decision_id}")
+        return _decision_from_row(row)
+
+    def decisions_for_job(self, job_id: str) -> list[PolicyDecision]:
+        return [
+            _decision_from_row(row)
+            for row in self._connection.execute(
+                "SELECT * FROM policy_decisions WHERE job_id = ? ORDER BY attempt, rowid",
+                (job_id,),
+            )
+        ]
+
+    def decision_for_revision(self, revision_id: str) -> PolicyDecision | None:
+        """The decision that accepted ``revision_id``, if one was recorded.
+
+        §19's integrity clause — "every mutation is attributable to a recorded policy
+        decision" — is only checkable if this lookup exists.
+        """
+        row = self._connection.execute(
+            "SELECT * FROM policy_decisions WHERE resulting_revision_id = ? "
+            "ORDER BY rowid LIMIT 1",
+            (revision_id,),
+        ).fetchone()
+        return None if row is None else _decision_from_row(row)
 
     def bump_digest(self, day: str, metric: str, value: int = 1) -> None:
         with self.transaction() as connection:

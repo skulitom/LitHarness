@@ -1,0 +1,303 @@
+"""The acceptance policy engine: §4.2's ladder, as a decision that can be recorded.
+
+Slice 4 put gate results into an event payload dict, which was honest about being
+provisional and useless as an audit surface — you could not ask "why was this accepted"
+without parsing prose out of a free-form map. Contracts 1.1.0 added
+`PolicyDecisionRecord`, so this module is the shape that fills it.
+
+Three things here are decisions rather than mechanics, and each one is the kind that gets
+silently invented if it is not written down.
+
+**A veto that a retry cannot fix must not consume the retry budget.** `CONTENT_LOCKED`
+means a human locked the node; `UNKNOWN_TARGET` means the job is wrong, not the output.
+Retrying either burns budget to reach the same refusal three times and then parks the unit
+with an attempts-exhausted message that hides the real cause. So vetoes are partitioned:
+`RETRYABLE` earns another bounded attempt, `REGENERABLE` earns a fresh candidate, and
+everything else escalates immediately with the veto as the reason.
+
+**Every gate result carries where its verdict came from, and a blocking gate may not
+believe the model that wrote the text.** MirrorBench's finding is that model self-report
+is not a correctness signal, and PLAN.md §20.8 asks for exactly this discriminator. It is
+enforced here rather than documented: `PolicyDecision.__post_init__` raises if a blocking
+gate carries `MODEL_SELF_REPORT`, so the invariant fails loudly at construction instead of
+quietly at review time.
+
+**Passing gates are recorded too.** A decision listing only failures cannot distinguish a
+candidate that cleared the full ladder from one that was never checked — and "which gates
+ran" is the question an audit actually asks first.
+"""
+
+from __future__ import annotations
+
+import enum
+from dataclasses import dataclass
+from hashlib import sha256
+
+import litharness_contracts as lc
+
+from litharness.domain.draft import DraftOutcome, DraftPolicy
+from litharness.domain.events import payload_digest
+from litharness.domain.patch import Veto
+
+#: Vetoes a bounded retry can plausibly fix: the model produced the wrong *output*.
+RETRYABLE: frozenset[Veto] = frozenset(
+    {
+        Veto.EMPTY_DRAFT,
+        Veto.EMPTY_PATCH,
+        Veto.SHAPE_NOT_CONFORMING,
+        Veto.LENGTH_MOVEMENT,
+    }
+)
+
+#: Vetoes that mean the *candidate* was built against stale or malformed inputs. A fresh
+#: candidate against a re-read base can fix these; repeating the same one cannot.
+REGENERABLE: frozenset[Veto] = frozenset(
+    {
+        Veto.STALE_BASE_VERSION,
+        Veto.STALE_BASE_CONTENT,
+        Veto.SPAN_OUT_OF_RANGE,
+        Veto.SPAN_HASH_MISMATCH,
+        Veto.OVERLAPPING_SPANS,
+        Veto.UNSUPPORTED_OP,
+    }
+)
+
+# Everything else — CONTENT_LOCKED, UNKNOWN_TARGET, TARGET_HAS_NO_CONTENT,
+# UNLICENSED_DELETION, PRESERVATION_BREACH — escalates. Deliberately the default: a veto
+# nobody has classified should reach a human, not silently earn three more model calls.
+
+
+class GateKind(enum.StrEnum):
+    SHAPE = "shape"
+    INTEGRITY = "integrity"
+    CRAFT = "craft"
+    BUDGET = "budget"
+
+    def to_contract(self) -> lc.GateKind:
+        return lc.GateKind(self.value)
+
+
+class VerdictSource(enum.StrEnum):
+    DETERMINISTIC = "deterministic"
+    CALIBRATED_CRITIC = "calibrated_critic"
+    UNCALIBRATED_CRITIC = "uncalibrated_critic"
+    HUMAN = "human"
+    #: Recorded so it can be refused, never so it can be trusted.
+    MODEL_SELF_REPORT = "model_self_report"
+
+    def to_contract(self) -> lc.VerdictSource:
+        return lc.VerdictSource(self.value)
+
+
+class Outcome(enum.StrEnum):
+    ACCEPT = "accept"
+    RETRY = "retry"
+    REPAIR = "repair"
+    REGENERATE = "regenerate"
+    PARK = "park"
+    ESCALATE = "escalate"
+
+    def to_contract(self) -> lc.PolicyOutcome:
+        return lc.PolicyOutcome(self.value)
+
+    @property
+    def is_terminal(self) -> bool:
+        """Whether this outcome ends the unit of work rather than scheduling more."""
+        return self in {Outcome.ACCEPT, Outcome.PARK, Outcome.ESCALATE}
+
+
+class UntrustedVerdict(Exception):
+    """A blocking gate tried to rely on the generating model's word for its own output."""
+
+
+@dataclass(frozen=True, slots=True)
+class GateOutcome:
+    gate: GateKind
+    rule_or_critic_id: str
+    passed: bool
+    verdict_source: VerdictSource = VerdictSource.DETERMINISTIC
+    blocking: bool = True
+    vetoes: tuple[Veto, ...] = ()
+    detail: str | None = None
+    #: Absent on a blocking craft gate means uncalibrated, which §10.4 forbids.
+    calibration_id: str | None = None
+
+    def to_contract(self) -> lc.GateResult:
+        return lc.GateResult(
+            gate=self.gate.to_contract(),
+            rule_or_critic_id=self.rule_or_critic_id,
+            passed=self.passed,
+            verdict_source=self.verdict_source.to_contract(),
+            blocking=self.blocking,
+            vetoes=[veto.value for veto in self.vetoes],
+            detail=self.detail,
+            calibration_id=self.calibration_id,
+        )
+
+
+@dataclass(frozen=True, slots=True)
+class PolicyDecision:
+    """Why one candidate was accepted, refused, or escalated."""
+
+    decision_id: str
+    outcome: Outcome
+    gates: tuple[GateOutcome, ...] = ()
+    job_id: str | None = None
+    logical_id: str | None = None
+    base_revision_id: str | None = None
+    resulting_revision_id: str | None = None
+    attempt: int = 0
+    #: Provenance of the candidate under judgment.
+    provider: str | None = None
+    model: str | None = None
+    profile: str | None = None
+    fell_back_from: tuple[str, ...] = ()
+    invocations: int = 0
+    total_tokens: int = 0
+    #: Digest of the frozen policy config, so a threshold change reads as a different
+    #: config rather than as unexplained drift in behaviour.
+    policy_config_digest: str | None = None
+    reason: str | None = None
+
+    def __post_init__(self) -> None:
+        for gate in self.gates:
+            if gate.blocking and gate.verdict_source is VerdictSource.MODEL_SELF_REPORT:
+                raise UntrustedVerdict(
+                    f"gate {gate.rule_or_critic_id} is blocking and sources its verdict "
+                    "from the generating model's report on its own output; MirrorBench's "
+                    "measurement is that this is not a correctness signal"
+                )
+            if (
+                gate.blocking
+                and gate.gate is GateKind.CRAFT
+                and gate.calibration_id is None
+            ):
+                raise UntrustedVerdict(
+                    f"craft gate {gate.rule_or_critic_id} is blocking without calibration "
+                    "evidence; §10.4 promotes a critic only after measured held-out "
+                    "precision, and until then it annotates"
+                )
+
+    @property
+    def accepted(self) -> bool:
+        return self.outcome is Outcome.ACCEPT
+
+    @property
+    def failed_vetoes(self) -> tuple[Veto, ...]:
+        return tuple(veto for gate in self.gates if not gate.passed for veto in gate.vetoes)
+
+    def to_contract(self, meta: lc.ArtifactMeta) -> lc.PolicyDecisionRecord:
+        return lc.PolicyDecisionRecord(
+            meta=meta,
+            decision_id=self.decision_id,
+            outcome=self.outcome.to_contract(),
+            job_id=self.job_id,
+            gates=[gate.to_contract() for gate in self.gates],
+            provider=self.provider,
+            model=self.model,
+            profile=self.profile,
+            fell_back_from=list(self.fell_back_from),
+            invocations=self.invocations,
+            total_tokens=self.total_tokens,
+            policy_config_digest=self.policy_config_digest,
+            attempt=self.attempt,
+            resulting_revision_id=self.resulting_revision_id,
+        )
+
+
+def policy_digest(policy: DraftPolicy) -> str:
+    """Content address of the frozen policy the decision was made under."""
+    return payload_digest(
+        {
+            "min_chars": policy.min_chars,
+            "max_chars": policy.max_chars,
+            "allow_overwrite": policy.allow_overwrite,
+        }
+    )
+
+
+def decision_id_for(job_id: str, attempt: int, gates: tuple[GateOutcome, ...]) -> str:
+    """Derived, not random, so a replayed job produces the same decision id and the row
+    collapses on insert rather than accumulating duplicates of one judgment."""
+    material = payload_digest(
+        {
+            "job_id": job_id,
+            "attempt": attempt,
+            "gates": [
+                [g.gate.value, g.rule_or_critic_id, g.passed, sorted(v.value for v in g.vetoes)]
+                for g in gates
+            ],
+        }
+    )
+    return f"dec-{sha256(material.encode()).hexdigest()[:24]}"
+
+
+def gates_for_draft(outcome: DraftOutcome) -> tuple[GateOutcome, ...]:
+    """Project a draft gate result into the recorded ladder.
+
+    One gate today. It is still a list because §4.2's ladder is a list, and a decision
+    record whose shape changes when the second gate arrives is a migration nobody
+    scheduled.
+    """
+    return (
+        GateOutcome(
+            gate=GateKind.SHAPE,
+            rule_or_critic_id="shape.draft.v0",
+            passed=outcome.accepted,
+            verdict_source=VerdictSource.DETERMINISTIC,
+            blocking=True,
+            vetoes=outcome.veto_kinds,
+            detail="; ".join(record.detail for record in outcome.vetoes) or None,
+        ),
+    )
+
+
+def decide(
+    gates: tuple[GateOutcome, ...],
+    *,
+    job_id: str,
+    attempt: int,
+    max_attempts: int,
+) -> tuple[Outcome, str | None]:
+    """Map gate results and the attempt budget onto §4.2's decision. Pure and total.
+
+    The ordering matters and is the substance of the function: an unclassified veto
+    escalates *before* the attempt budget is consulted, so a locked node is reported as
+    locked on the first try rather than as "attempts exhausted" on the fourth.
+    """
+    failing = [gate for gate in gates if gate.blocking and not gate.passed]
+    if not failing:
+        return Outcome.ACCEPT, None
+
+    vetoes = {veto for gate in failing for veto in gate.vetoes}
+    if not vetoes:
+        return Outcome.ESCALATE, "a blocking gate failed without naming a veto"
+
+    unclassified = vetoes - RETRYABLE - REGENERABLE
+    if unclassified:
+        names = ", ".join(sorted(veto.value for veto in unclassified))
+        return Outcome.ESCALATE, f"no retry can resolve: {names}"
+
+    if attempt >= max_attempts:
+        names = ", ".join(sorted(veto.value for veto in vetoes))
+        return Outcome.PARK, f"attempt budget exhausted with {names} outstanding"
+
+    if vetoes & REGENERABLE:
+        return Outcome.REGENERATE, "candidate was built against stale or malformed inputs"
+    return Outcome.RETRY, "; ".join(sorted(veto.value for veto in vetoes))
+
+
+__all__ = [
+    "REGENERABLE",
+    "RETRYABLE",
+    "GateKind",
+    "GateOutcome",
+    "Outcome",
+    "PolicyDecision",
+    "UntrustedVerdict",
+    "VerdictSource",
+    "decide",
+    "decision_id_for",
+    "gates_for_draft",
+    "policy_digest",
+]

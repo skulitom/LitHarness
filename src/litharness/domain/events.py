@@ -30,11 +30,15 @@ import litharness_contracts as lc
 
 
 class EventType(enum.StrEnum):
-    """The contract's 14 named types, restated so this package does not depend on the
-    contract's enum ordering. Conductor types (tick, lease acquired/expired, directive
-    ingested, exception raised, digest published) are **absent from the contract** and
-    are PLAN.md §20.3's `EventType` additions — this module is the consumer that shows
-    which ones are actually needed."""
+    """The contract's named types, restated so this package does not depend on the
+    contract's enum ordering.
+
+    The Conductor block was previously absent from the contract, and this module was the
+    consumer that showed which members were actually needed. Contracts 1.1.0 added them
+    (PLAN.md §20.3), so this enum now mirrors rather than anticipates — and
+    `test_every_event_type_exists_in_the_contract` pins the two together, because
+    `to_contract` calls `lc.EventType(self.value)` and a member missing upstream fails at
+    insert time rather than at import."""
 
     PLAN_CHANGED = "PlanChanged"
     MANUSCRIPT_CANDIDATE_CREATED = "ManuscriptCandidateCreated"
@@ -50,6 +54,16 @@ class EventType(enum.StrEnum):
     REVISION_PLAN_APPROVED = "RevisionPlanApproved"
     EXPORT_CREATED = "ExportCreated"
     JOB_FAILED = "JobFailed"
+
+    # -- Conductor events, available as of contracts 1.1.0 (§4.1-4.3) -----------------
+    TICK_COMPLETED = "TickCompleted"
+    DIRECTIVE_INGESTED = "DirectiveIngested"
+    POLICY_DECISION_RECORDED = "PolicyDecisionRecorded"
+    EXCEPTION_RAISED = "ExceptionRaised"
+    EXCEPTION_RESOLVED = "ExceptionResolved"
+    DIGEST_PUBLISHED = "DigestPublished"
+    PROVIDER_FELL_BACK = "ProviderFellBack"
+    BUDGET_EXHAUSTED = "BudgetExhausted"
 
     def to_contract(self) -> lc.EventType:
         return lc.EventType(self.value)

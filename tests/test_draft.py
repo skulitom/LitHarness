@@ -24,6 +24,17 @@ from litharness.domain.events import EventType, payload_digest
 from litharness.domain.jobs import Job, JobStatus, input_digest_for
 from litharness.domain.nodes import LockKind, Node, NodeKind
 from litharness.domain.patch import Veto
+from litharness.domain.policy import (
+    GateKind,
+    GateOutcome,
+    Outcome,
+    PolicyDecision,
+    UntrustedVerdict,
+    VerdictSource,
+    decide,
+    decision_id_for,
+    policy_digest,
+)
 from litharness.domain.revision import Revision, build_revision
 from litharness.providers.base import CompletionRequest, CompletionResult, Usage
 from litharness.providers.fake import FakeProvider
@@ -283,12 +294,19 @@ def test_a_model_written_scene_passes_the_gate_and_becomes_a_revision(
     ]
     assert len(accepted) == 1
     assert accepted[0].payload["accepted"] is True
-    assert accepted[0].payload["provider"] == "fake"
     assert accepted[0].payload["parent_revision_id"] == base.revision_id
 
     committed = store.load_revision(accepted[0].revision_id or "")
     assert committed.node("scene-1").content == PROSE
     assert store.verify_integrity() == 2
+
+    # §19: every mutation attributable to a recorded policy decision. Checkable, not
+    # merely asserted in prose — the revision resolves back to the decision that took it.
+    decision = store.decision_for_revision(committed.revision_id)
+    assert decision is not None
+    assert decision.outcome is Outcome.ACCEPT
+    assert decision.provider == "fake"
+    assert decision.base_revision_id == base.revision_id
 
 
 def test_a_refused_draft_commits_no_revision_but_records_the_candidate(
@@ -302,37 +320,52 @@ def test_a_refused_draft_commits_no_revision_but_records_the_candidate(
     conductor_for(store, registry).tick(START)
 
     events = [entry.event for entry in store.read_log()]
-    assert [event.event_type for event in events] == [EventType.MANUSCRIPT_CANDIDATE_CREATED]
+    assert [event.event_type for event in events] == [
+        EventType.MANUSCRIPT_CANDIDATE_CREATED,
+        EventType.POLICY_DECISION_RECORDED,
+    ]
     assert events[0].payload["accepted"] is False
     assert events[0].payload["vetoes"] == [Veto.LENGTH_MOVEMENT.value]
     # One revision only: the base. Nothing was accepted.
     assert store.verify_integrity() == 1
 
+    # A refusal is recorded as fully as an acceptance. A decision trail with holes where
+    # the failures were cannot answer "why is this unit stuck".
+    [decision] = store.decisions_for_job("draft-1")
+    assert decision.outcome is Outcome.RETRY
+    assert decision.failed_vetoes == (Veto.LENGTH_MOVEMENT,)
+    assert decision.resulting_revision_id is None
 
-def test_the_accepted_event_carries_the_provenance_a_policy_record_will_need(
+
+def test_the_decision_record_carries_the_provenance_section_2_requires(
     store: SqliteStore,
 ) -> None:
     """§2: every generated claim traceable to inputs, tool/model versions, and the policy
-    that accepted it. Until contracts ships a policy decision record (§20.3) this payload
-    is the evidence for what that record must hold."""
+    that accepted it.
+
+    This assertion used to run against a free-form event payload, because contracts had no
+    policy decision record. It has one as of 1.1.0, so the same guarantee is now checked
+    against the artifact that owns it — which is what §20.3's consumer-first sequencing
+    was for.
+    """
     registry, _ = registry_with(PROSE)
     seeded(store)
     conductor_for(store, registry).tick(START)
 
-    payload = store.read_log()[0].event.payload
-    for key in (
-        "job_id",
-        "logical_id",
-        "base_revision_id",
-        "provider",
-        "model",
-        "profile",
-        "fell_back_from",
-        "invocations",
-        "total_tokens",
-        "gates_passed",
-    ):
-        assert key in payload, f"provenance is missing {key}"
+    [decision] = store.decisions_for_job("draft-1")
+    assert decision.job_id == "draft-1"
+    assert decision.logical_id == "scene-1"
+    assert decision.base_revision_id
+    assert decision.provider == "fake"
+    assert decision.model == "fake-deterministic-v1"
+    assert decision.profile == "default"
+    assert decision.fell_back_from == ()
+    assert decision.invocations == 1
+    assert decision.total_tokens == 30
+    assert decision.gates and decision.gates[0].rule_or_critic_id == "shape.draft.v0"
+    # The frozen policy the decision was made under, so a later threshold change reads as
+    # a different config rather than as unexplained drift in behaviour.
+    assert decision.policy_config_digest == policy_digest(DraftPolicy())
 
 
 def test_replaying_the_job_converges_instead_of_duplicating(store: SqliteStore) -> None:
@@ -440,3 +473,186 @@ def test_test_mode_still_blocks_a_billing_provider_through_the_handler(
 
     assert result.outcome is TickOutcome.JOB_FAILED
     assert "no healthy provider" in (store.load_job("draft-1").error or "")
+
+
+# --- the acceptance policy engine ----------------------------------------------------
+
+
+def shape_gate(passed: bool, *vetoes: Veto) -> GateOutcome:
+    return GateOutcome(
+        gate=GateKind.SHAPE,
+        rule_or_critic_id="shape.draft.v0",
+        passed=passed,
+        vetoes=vetoes,
+    )
+
+
+def test_all_gates_passing_accepts() -> None:
+    outcome, reason = decide(
+        (shape_gate(True),), job_id="j", attempt=1, max_attempts=3
+    )
+    assert outcome is Outcome.ACCEPT
+    assert reason is None
+
+
+def test_a_retryable_veto_earns_another_attempt() -> None:
+    outcome, _ = decide(
+        (shape_gate(False, Veto.LENGTH_MOVEMENT),), job_id="j", attempt=1, max_attempts=3
+    )
+    assert outcome is Outcome.RETRY
+
+
+def test_a_stale_base_regenerates_rather_than_retrying() -> None:
+    """Repeating the same candidate against the same stale base cannot succeed; a fresh
+    one against a re-read base can."""
+    outcome, _ = decide(
+        (shape_gate(False, Veto.STALE_BASE_CONTENT),), job_id="j", attempt=1, max_attempts=3
+    )
+    assert outcome is Outcome.REGENERATE
+
+
+def test_an_unfixable_veto_escalates_immediately_without_burning_the_budget() -> None:
+    """The ordering decision in `decide`, and the reason it is not an implementation
+    detail: a locked node must be reported as locked on the first attempt, not as
+    "attempts exhausted" on the fourth with the real cause buried."""
+    outcome, reason = decide(
+        (shape_gate(False, Veto.CONTENT_LOCKED),), job_id="j", attempt=1, max_attempts=3
+    )
+    assert outcome is Outcome.ESCALATE
+    assert "content_locked" in (reason or "")
+
+
+def test_an_unclassified_veto_escalates_rather_than_defaulting_to_retry() -> None:
+    """Escalation is the default for a veto nobody has classified. A default of retry
+    would spend three model calls to rediscover an unknown failure."""
+    outcome, _ = decide(
+        (shape_gate(False, Veto.PRESERVATION_BREACH),), job_id="j", attempt=1, max_attempts=3
+    )
+    assert outcome is Outcome.ESCALATE
+
+
+def test_an_exhausted_budget_parks_rather_than_spinning() -> None:
+    """§4.2: the failure mode is a parked unit, never a spin loop."""
+    outcome, reason = decide(
+        (shape_gate(False, Veto.EMPTY_DRAFT),), job_id="j", attempt=3, max_attempts=3
+    )
+    assert outcome is Outcome.PARK
+    assert "exhausted" in (reason or "")
+
+
+def test_a_blocking_gate_may_not_trust_the_generating_model() -> None:
+    """MirrorBench's central invariant, enforced at construction rather than documented.
+
+    A model's report on its own output is not a correctness signal, so a decision that
+    tried to build one into a blocking gate must fail loudly here rather than quietly at
+    review time.
+    """
+    with pytest.raises(UntrustedVerdict, match="not a correctness signal"):
+        PolicyDecision(
+            decision_id="d-1",
+            outcome=Outcome.ACCEPT,
+            gates=(
+                GateOutcome(
+                    gate=GateKind.CRAFT,
+                    rule_or_critic_id="craft.selfscore.v0",
+                    passed=True,
+                    verdict_source=VerdictSource.MODEL_SELF_REPORT,
+                    blocking=True,
+                ),
+            ),
+        )
+
+
+def test_a_self_reported_verdict_is_allowed_when_it_does_not_gate() -> None:
+    """Recorded so it can be refused, not banned from the record. An annotation that
+    never blocks is evidence about the model, and worth keeping."""
+    decision = PolicyDecision(
+        decision_id="d-1",
+        outcome=Outcome.ACCEPT,
+        gates=(
+            GateOutcome(
+                gate=GateKind.CRAFT,
+                rule_or_critic_id="craft.selfscore.v0",
+                passed=True,
+                verdict_source=VerdictSource.MODEL_SELF_REPORT,
+                blocking=False,
+            ),
+        ),
+    )
+    assert decision.accepted
+
+
+def test_an_uncalibrated_craft_gate_may_not_block() -> None:
+    """§10.4: a critic becomes blocking only after held-out calibration. Until then it
+    annotates, and this is what stops "until then" from lasting forever by accident."""
+    with pytest.raises(UntrustedVerdict, match="calibration"):
+        PolicyDecision(
+            decision_id="d-1",
+            outcome=Outcome.ACCEPT,
+            gates=(
+                GateOutcome(
+                    gate=GateKind.CRAFT,
+                    rule_or_critic_id="craft.pacing.v0",
+                    passed=True,
+                    verdict_source=VerdictSource.UNCALIBRATED_CRITIC,
+                    blocking=True,
+                ),
+            ),
+        )
+
+
+def test_a_decision_survives_a_round_trip_through_storage(store: SqliteStore) -> None:
+    decision = PolicyDecision(
+        decision_id="dec-1",
+        outcome=Outcome.RETRY,
+        gates=(shape_gate(False, Veto.LENGTH_MOVEMENT, Veto.EMPTY_DRAFT),),
+        job_id="draft-1",
+        logical_id="scene-1",
+        attempt=2,
+        provider="fake",
+        fell_back_from=("claude_code",),
+        total_tokens=30,
+        reason="length_movement",
+    )
+    assert store.record_decision(decision, decided_at="2026-08-12T00:00:00Z") is True
+    assert store.load_decision("dec-1") == decision
+
+
+def test_recording_the_same_decision_twice_is_a_no_op(store: SqliteStore) -> None:
+    """Content-derived ids, for the same reason ticks have them: a job replayed after a
+    crash must not accumulate duplicate rows for one judgment."""
+    decision = PolicyDecision(decision_id="dec-1", outcome=Outcome.ACCEPT, job_id="draft-1")
+    assert store.record_decision(decision, decided_at="2026-08-12T00:00:00Z") is True
+    assert store.record_decision(decision, decided_at="2026-08-12T99:99:99Z") is False
+    # One row, and the first write wins — a replay must not rewrite the original timestamp.
+    assert store.decisions_for_job("draft-1") == [decision]
+
+
+def test_the_decision_id_is_stable_for_the_same_judgment() -> None:
+    gates = (shape_gate(False, Veto.EMPTY_DRAFT),)
+    assert decision_id_for("j", 1, gates) == decision_id_for("j", 1, gates)
+    assert decision_id_for("j", 1, gates) != decision_id_for("j", 2, gates)
+
+
+def test_a_replayed_job_records_one_decision_not_two(store: SqliteStore) -> None:
+    registry, _ = registry_with(PROSE)
+    seeded(store)
+    handler = make_scene_draft_handler(registry, store, PROJECT_ID)
+    job = store.claim_next("worker-a", now=START, duration=600.0)
+    assert job is not None
+
+    handler(job, START)
+    handler(job, START)
+
+    assert len(store.decisions_for_job("draft-1")) == 1
+
+
+def test_every_event_type_exists_in_the_contract() -> None:
+    """`Event.to_contract` calls `lc.EventType(self.value)`, which raises on an unknown
+    string — so a member added here but not upstream fails at insert time, deep inside a
+    handler, rather than at import. This is the cheap check that keeps the two enums
+    honest with each other."""
+    import litharness_contracts as lc
+
+    for member in EventType:
+        assert lc.EventType(member.value).value == member.value

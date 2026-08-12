@@ -18,26 +18,34 @@ is handled by making the work idempotent rather than by pretending otherwise: re
 are content-addressed and committed with `INSERT OR IGNORE`, and event idempotency keys
 are derived from content, so a replayed job converges instead of duplicating.
 
-**Two event types, both borrowed.** A candidate that fails its gate emits
-`MANUSCRIPT_CANDIDATE_CREATED` carrying the veto list; one that passes emits
-`MANUSCRIPT_REVISION_ACCEPTED`. Neither is a policy decision record — that schema does
-not exist in contracts yet (§20.3) — so the gate results ride in the event payload. This
-is deliberate consumer-first sequencing, and it is what §20.3 asked for: the payload
-written here is the evidence for what the policy decision record needs to hold, rather
-than a shape guessed ahead of a consumer.
+**Every candidate produces a decision, accepted or not.** A candidate that fails its gate
+emits `MANUSCRIPT_CANDIDATE_CREATED` with the veto list; one that passes emits
+`MANUSCRIPT_REVISION_ACCEPTED`; both are accompanied by a `POLICY_DECISION_RECORDED` and a
+row in `policy_decisions`. That is §19's integrity clause — "every mutation is attributable
+to a recorded policy decision" — made checkable via `store.decision_for_revision`.
+
+Slice 4 approximated this by putting gate results into the event payload, because contracts
+had no policy decision record. It has one as of 1.1.0, and the shape it has is the one this
+handler was already writing — which is what §20.3's consumer-first sequencing bought.
 """
 
 from __future__ import annotations
 
 from collections.abc import Sequence
 from datetime import UTC, datetime
-from typing import Any
 
 from litharness.adapters.sqlite_store import SqliteStore
 from litharness.application.conductor import JobHandler
 from litharness.domain.draft import DraftPolicy, gate_draft
 from litharness.domain.events import Event, EventType
 from litharness.domain.jobs import Job
+from litharness.domain.policy import (
+    PolicyDecision,
+    decide,
+    decision_id_for,
+    gates_for_draft,
+    policy_digest,
+)
 from litharness.providers.base import CompletionRequest
 from litharness.providers.registry import ProviderRegistry
 
@@ -102,23 +110,61 @@ def make_scene_draft_handler(
             policy=policy,
         )
 
-        # Provenance travels with every candidate, accepted or not. §5 rule 4 forbids a
-        # silent provider switch, so the fallback chain is recorded even on refusal —
-        # a gate failure that came from a degraded fallback is a different diagnosis
-        # from one that came from the primary.
-        provenance: dict[str, Any] = {
-            "job_id": job.job_id,
-            "logical_id": logical_id,
-            "base_revision_id": revision_id,
-            "provider": result.provider,
-            "model": result.model,
-            "profile": payload.get("profile", "default"),
-            "fell_back_from": list(resolution.fell_back_from),
-            "invocations": result.invocations,
-            "input_tokens": result.usage.input_tokens,
-            "output_tokens": result.usage.output_tokens,
-            "total_tokens": result.usage.total,
-        }
+        # §4.2's ladder produces a *decision*, not a boolean. Slice 4 approximated this
+        # with a payload dict; contracts 1.1.0 made it an artifact, so the gate results,
+        # the outcome, the provenance and the frozen policy digest now travel together and
+        # can be queried later by job or by resulting revision.
+        gates = gates_for_draft(outcome)
+        verdict, reason = decide(
+            gates,
+            job_id=job.job_id,
+            attempt=job.attempts,
+            max_attempts=job.max_attempts,
+        )
+        decision = PolicyDecision(
+            decision_id=decision_id_for(job.job_id, job.attempts, gates),
+            outcome=verdict,
+            gates=gates,
+            job_id=job.job_id,
+            logical_id=logical_id,
+            base_revision_id=revision_id,
+            resulting_revision_id=(
+                outcome.revision.revision_id if outcome.accepted and outcome.revision else None
+            ),
+            attempt=job.attempts,
+            # §5 rule 4 forbids a silent provider switch, so the fallback chain is recorded
+            # even on refusal — a gate failure from a degraded fallback is a different
+            # diagnosis from one from the primary.
+            provider=result.provider,
+            model=result.model,
+            profile=str(payload.get("profile", "default")),
+            fell_back_from=tuple(resolution.fell_back_from),
+            invocations=result.invocations,
+            total_tokens=result.usage.total,
+            policy_config_digest=policy_digest(policy or DraftPolicy()),
+            reason=reason,
+        )
+        store.record_decision(decision, decided_at=_timestamp(now))
+
+        decision_event = Event(
+            event_type=EventType.POLICY_DECISION_RECORDED,
+            project_id=project_id,
+            created_at=_timestamp(now),
+            actor=result.provider,
+            book_id=revision.book_id,
+            branch_id=revision.branch_id,
+            revision_id=decision.resulting_revision_id or revision_id,
+            payload={
+                "decision_id": decision.decision_id,
+                "outcome": decision.outcome.value,
+                "job_id": job.job_id,
+                "attempt": job.attempts,
+                "reason": reason,
+                "gates": [
+                    {"id": gate.rule_or_critic_id, "passed": gate.passed} for gate in gates
+                ],
+            },
+        )
 
         if not outcome.accepted:
             return [
@@ -131,12 +177,15 @@ def make_scene_draft_handler(
                     branch_id=revision.branch_id,
                     revision_id=revision_id,
                     payload={
-                        **provenance,
+                        "decision_id": decision.decision_id,
+                        "job_id": job.job_id,
+                        "logical_id": logical_id,
                         "accepted": False,
                         "vetoes": [veto.value for veto in outcome.veto_kinds],
                         "veto_details": [record.detail for record in outcome.vetoes],
                     },
-                )
+                ),
+                decision_event,
             ]
 
         assert outcome.revision is not None  # accepted implies a revision
@@ -149,14 +198,16 @@ def make_scene_draft_handler(
             branch_id=revision.branch_id,
             revision_id=outcome.revision.revision_id,
             payload={
-                **provenance,
+                "decision_id": decision.decision_id,
+                "job_id": job.job_id,
+                "logical_id": logical_id,
                 "accepted": True,
                 "chars": outcome.chars,
-                "gates_passed": ["shape.draft.v0"],
                 "parent_revision_id": revision_id,
             },
         )
         store.commit_revision(outcome.revision, created_at=_timestamp(now), events=[accepted])
+        return [decision_event]
         # Returned empty: `commit_revision` already persisted the event in the same
         # transaction as the revision. Returning it as well would ask the Conductor to
         # append it a second time — harmless, because idempotency keys are content-derived
