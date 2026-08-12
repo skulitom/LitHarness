@@ -393,7 +393,7 @@ done, and **the v2.1 pass did it again in six more places**:
 | RevisionJudge | Built; 104 pairs exported, exactly 2 verdicts collected; one uncommitted file (`data/verdicts.jsonl`) | The calibration instrument for §10; the missing half is the verdict *consumer*, not the export. Nothing anywhere under `C:/DEV` reads `verdicts.jsonl` |
 | MirrorBench | M0–M4 done, M5.0 landed (1,317 tests). One **unpushed** commit; its own README still says "M5 not started", contradicting its plan.md | Methodological invariants only; **verified zero coupling in both directions** — no import, no shared schema, no fixture exchange |
 | LongRangeContext | M0 complete, gated, reported (17 tests). **Now a git repo, Apache-2.0 LICENSE added, contracts pin relaxed to `>=0.1.0`** | Promote further milestones when Book Zero shows distant-context failures (it will); simple baseline until then. **"Byte-reproducible" was this plan's one *over*statement, and is now true rather than claimed**: three distinct machine-specific leaks fixed (an absolute checkout root in both reports, absolute artifact paths built by its own contracts loader, and CRLF from text-mode writes), each pinned by a mutation-tested guard. The test that carried "reproducible" in its name never compared bytes; one now does |
-| ContinuityEvaluation | **The LitRPG rules pack has landed: six deterministic detectors, 42 tests, exact-set span equality, mutation-tested, byte-identical across runs** (§20.2). Both fixture families load. **Now a git repo**; still no LICENSE, the wheel in `dist/` predates the pack, and CE's own PLAN/README never mention it | Owner of the LitRPG rule and predicate vocabulary (§8.4). Prose detectors next — and per §20.7's redirect, detector coverage now outranks further repair-loop work. *(Struck: "five working deterministic detectors, 20 tests… hard-gated to the mystery fixture only".)* |
+| ContinuityEvaluation | LitRPG rules pack (six deterministic detectors, span-exact, mutation-tested) **plus the first advisory craft detector and a structural advisory/blocking partition — 56 tests.** Git repo; still no LICENSE, the `dist/` wheel predates the pack, CE's own PLAN/README still never mention either | Owner of the LitRPG rule and predicate vocabulary (§8.4), and now of the bar that stops an uncalibrated proxy becoming a gate. **Further craft detectors are blocked on §10.6's corpus, not on effort** — eight of nine candidates were refuted, see §10.6. *(Struck: "five working deterministic detectors, 20 tests… hard-gated to the mystery fixture only".)* |
 | RevisionPropagation | Plan only — literally one file (the row this plan has consistently had right) | Deterministic invalidation slice only, when Book Zero's edit churn demands it. Note its M0 proposes authoring change/impact/plan/event schemas **that contracts already ships**, and its plan never mentions contracts |
 | **Narrative Planning** | **Does not exist — create** | §9. The creative half; biggest hole v1 left |
 | **Game-System Engine** | **Does not exist — create** | §8. The genre half; highest-precision quality claim. Ships as a detector pack inside ContinuityEvaluation first, promoted to its own package when a generator exists to constrain (§8.4) |
@@ -613,6 +613,39 @@ order-consistent survivors preferred human originals ~80% of the time. So:
    with a weaker variant of the same beat, so a proxy can be tested for whether it
    separates them. Human work, and a prerequisite rather than a nice-to-have —
    without it, every craft claim in this project reduces to opinion.
+
+   **This is now the measured, blocking constraint rather than a scheduled aspiration.**
+   A design pass over nine candidate craft proxies (three lenses, two independent
+   adversarial reviews) promoted exactly one, and the rejections were not failures of
+   implementation. Recorded here because the same proxies will otherwise be re-proposed:
+
+   - **The cheapest repair that satisfies the metric is often the disease.**
+     `progression_cost` goes green if a token gold decrement is inserted beside each
+     level-up — one ledger line, generatable by the very engine §1a.3 item 2 warns
+     about, with nothing a reader feels changed. A proxy whose gradient is satisfied by
+     bookkeeping does not merely fail to measure item 2; it rewards the failure.
+   - **Two proxies would have flagged the fixture's best prose.** `silent_ledger` and
+     `state_change_prose_trace` fire wherever a stat moves without a number on the page —
+     and the fixture renders HP qualitatively every time it moves ("warmth climbed his
+     ribs like a tide coming in"). Their only repair pushes prose toward the machine
+     register, degrading items 5 and 6 to satisfy an item-2 proxy.
+   - **One was falsified against the fixture outright.** `scene_change_profile` assumes
+     ledger delta tracks dramatic change. Mystery scene-6 — the confession and arrest —
+     carries **zero** state records; scene-1, pure exposition, carries the most. It ranks
+     the book upside down, because record density measures annotation coverage, not
+     scene function.
+   - **The two proxies §10.2 names by name are not buildable on this evidence.** Measured,
+     not assumed: Burrows Delta separates within-book from between-book by 0.6% at ~120
+     prose tokens per scene, and the whole program contains **77 words of dialogue**.
+     Voice consistency and dialogue distinctiveness need a corpus, not a better method.
+
+   The through-line: §1a.3 items 1–4 cannot be reached from defect fixtures at all. Six
+   120-word scenes carrying one promise and one thread apiece can prove a detector
+   *precise*; nothing in them can show that a proxy tracks human judgment. **Authoring
+   this corpus is the gating item for craft work, and it is human work that no amount of
+   engineering substitutes for.** What did ship is `repetition.exact.v1` in
+   ContinuityEvaluation — advisory only, aimed at item 5, and explicitly not a claim that
+   craft is now measured.
 
 ## 11. Manuscript IR and state architecture
 
@@ -1058,8 +1091,13 @@ every unstruck action below as a claim to re-verify rather than a task to start.
    This action's own stated rule was: *if the bottleneck is detection rather than
    repair, effort belongs in ContinuityEvaluation instead of the revision loop.* The
    condition is met. §17 Stage 2 and §6's priority order should be read through it —
-   detector coverage outranks further work on the repair loop, and RevisionBench has
-   handed the program a result it has not yet acted on.
+   detector coverage outranks further work on the repair loop.
+
+   **Acted on.** The first pass into CE built `repetition.exact.v1` plus the structural
+   advisory/blocking partition described in §10.6, and — more usefully — established that
+   eight of nine candidate craft proxies are not buildable on defect fixtures, with the
+   reasons recorded there. The redirect is followed; what it found is that the next step
+   is not another detector.
    *(Struck: "export current pairs to RevisionJudge" — done, 104 pairs on disk.
    The missing half is the verdict consumer; nothing reads `verdicts.jsonl`. Size
    the session before spending human attention: the 92-pair subjective set already
