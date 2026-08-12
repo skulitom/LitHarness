@@ -1,7 +1,7 @@
 # LitHarness: Autonomous Book-Production System Plan
 
 **Version:** 2.2 (supersedes PLAN-v1-authoring-tool.md, archived in this folder)
-**Status:** Master plan; **Stage 0 slices 1–5 implemented and green (183 tests)**
+**Status:** Master plan; **Stage 0 slices 1–5 implemented and green (180 tests)**
 **Role:** A 24/7 autonomous system that plans, drafts, evaluates, repairs, and versions quality LitRPG books — directed by a human, never blocked on one
 **Inspection baseline:** Local projects inspected 2026-08-12; v2 rewrite same day; §7/§8/§13/§15/§17/§20 re-verified later the same day (v2.1); **§7/§8.4/§13/§17/§20 re-verified against all nine repositories that evening (v2.2)**
 
@@ -942,7 +942,7 @@ every unstruck action below as a claim to re-verify rather than a task to start.
    the same point — the forward interface has no consumer until a generator exists to
    constrain. Shaping the sheet now would be the exact guess this action's own
    sequencing rule forbids.
-4. **Scaffold LitHarness Stage 0** — **slices 1–5 done** (186 collected, 183 passing
+4. **Scaffold LitHarness Stage 0** — **slices 1–5 done** (183 collected, 180 passing
    + 3 opt-in live, ruff clean,
    mypy strict clean). Slice 1, the model-free manuscript spine: canonical text and
    hashing, the IR with lock taxonomy and block payloads, immutable
