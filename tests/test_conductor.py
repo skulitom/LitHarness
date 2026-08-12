@@ -18,7 +18,7 @@ from litharness.application.conductor import (
     TickOutcome,
     no_op_handler,
 )
-from litharness.domain.events import Event, EventType, OutboxEntry
+from litharness.domain.events import MAX_DELIVERY_ATTEMPTS, Event, EventType, OutboxEntry
 from litharness.domain.jobs import Job, JobStatus
 from litharness.domain.revision import Revision
 from tests.conftest import PROJECT_ID
@@ -356,3 +356,108 @@ def test_replaying_ticks_across_a_week_never_double_counts(store: SqliteStore) -
     # summing per-instant counts the same day's total repeatedly.
     days = {Conductor._day(instant) for instant in instants}
     assert sum(store.digest(day).get("ticks", 0) for day in days) == len(instants)
+
+
+# --- the outbox does not spin (§19 Autonomy) ----------------------------------------
+
+
+def test_a_week_of_ticks_with_a_refusing_sink_stays_bounded(
+    store: SqliteStore, revision: Revision
+) -> None:
+    """The failure `test_a_week_of_no_op_ticks_changes_nothing` structurally cannot see.
+
+    That test asserts the outbox is empty, so the workload that exposes this is excluded
+    from it by construction. With a permanently refusing sink the old loop re-attempted the
+    first 50 pending entries every tick forever: over this same horizon the head entries
+    reached 2016 delivery attempts while entries 51 and beyond reached zero — an unbounded
+    spin and permanent head-of-line starvation at once.
+    """
+    events = [
+        Event(
+            event_type=EventType.MANUSCRIPT_REVISION_ACCEPTED,
+            project_id=PROJECT_ID,
+            created_at="2026-08-12T00:00:00Z",
+            revision_id=revision.revision_id,
+            payload={"n": index},
+        )
+        for index in range(60)
+    ]
+    store.commit_revision(revision, created_at="2026-08-12T00:00:00Z", events=events)
+    loop = conductor(store)
+
+    for index in range(A_WEEK_OF_TICKS):
+        loop.tick(START + index * TICK_SECONDS)
+
+    states = store.outbox_counts_by_state()
+    assert states.get("pending", 0) == 0, "an entry is still being retried after a week"
+    assert states["failed"] == 60
+
+    attempts = [
+        row["delivery_attempts"]
+        for row in store._connection.execute("SELECT delivery_attempts FROM outbox")
+    ]
+    # Bounded, and bounded *equally* — no entry starved behind the head.
+    assert max(attempts) == MAX_DELIVERY_ATTEMPTS
+    assert min(attempts) == MAX_DELIVERY_ATTEMPTS
+
+
+def test_a_transient_outage_still_delivers_once_the_sink_returns(
+    store: SqliteStore, revision: Revision
+) -> None:
+    """Backoff must not become a drop. The terminal state is a floor for a sink that is
+    never coming back, not a punishment for one that blinked."""
+    event = Event(
+        event_type=EventType.MANUSCRIPT_REVISION_ACCEPTED,
+        project_id=PROJECT_ID,
+        created_at="2026-08-12T00:00:00Z",
+        revision_id=revision.revision_id,
+        payload={"n": 1},
+    )
+    store.commit_revision(revision, created_at="2026-08-12T00:00:00Z", events=[event])
+    dispatcher = CollectingDispatcher(accept=False)
+    loop = conductor(store, dispatch=dispatcher)
+
+    loop.tick(START)
+    # Still pending, one attempt recorded — and invisible to a drain a second later,
+    # because it is inside its backoff window. `pending_outbox()` without `now` is the
+    # operator's view: everything queued, backoff ignored.
+    assert store.pending_outbox()[0].delivery_attempts == 1
+    assert store.pending_outbox(now=START + 1) == []
+
+    dispatcher.accept = True
+    # Far enough ahead to clear the backoff window.
+    loop.tick(START + 7200.0)
+
+    assert store.pending_outbox() == []
+    assert store.outbox_counts_by_state() == {"sent": 1}
+
+
+def test_delivery_attempts_grow_far_slower_than_ticks(
+    store: SqliteStore, revision: Revision
+) -> None:
+    """The property that actually distinguishes backoff from a spin.
+
+    Not "the next tick skips it" — the schedule starts at 120s and the cadence is 300s, so
+    the first couple of retries legitimately land on the next tick. What matters is that
+    the *rate* decays: over a day of ticks a permanently refused entry is attempted a
+    handful of times, not 288. The old loop attempted it once per tick, forever.
+    """
+    event = Event(
+        event_type=EventType.MANUSCRIPT_REVISION_ACCEPTED,
+        project_id=PROJECT_ID,
+        created_at="2026-08-12T00:00:00Z",
+        revision_id=revision.revision_id,
+        payload={"n": 1},
+    )
+    store.commit_revision(revision, created_at="2026-08-12T00:00:00Z", events=[event])
+    loop = conductor(store)
+
+    a_day = 24 * 12  # 288 ticks at the 5-minute cadence
+    for index in range(a_day):
+        loop.tick(START + index * TICK_SECONDS)
+
+    attempts = store._connection.execute(
+        "SELECT delivery_attempts AS n FROM outbox"
+    ).fetchone()["n"]
+    assert attempts == MAX_DELIVERY_ATTEMPTS
+    assert attempts < a_day / 10, "delivery is still being attempted at close to tick rate"

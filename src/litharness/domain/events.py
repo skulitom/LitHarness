@@ -128,6 +128,28 @@ class Event:
 class OutboxState(enum.StrEnum):
     PENDING = "pending"
     SENT = "sent"
+    #: Delivery gave up after `MAX_DELIVERY_ATTEMPTS`. Terminal, and the reason it exists:
+    #: without a state to stop in, an entry whose sink never accepts it is retried on every
+    #: tick forever — §19's "nothing spins", violated by the audit trail itself.
+    FAILED = "failed"
+
+
+#: Delivery attempts before an outbox entry is parked as FAILED.
+#:
+#: The event is never lost: it stays in `events`, which is the durable log. What stops is
+#: the *delivery*, and that is the right thing to bound — a sink that has refused eleven
+#: times across an hour of backoff is not going to accept the twelfth, and continuing to
+#: ask costs a synchronous write per tick per entry.
+MAX_DELIVERY_ATTEMPTS = 11
+
+#: Backoff schedule: 1 minute doubling to roughly an hour, then flat.
+DELIVERY_BACKOFF_SECONDS = 60.0
+MAX_DELIVERY_BACKOFF_SECONDS = 3600.0
+
+
+def delivery_backoff(attempts: int) -> float:
+    """Seconds to wait before attempt ``attempts + 1``. Exponential, capped."""
+    return float(min(DELIVERY_BACKOFF_SECONDS * (2**attempts), MAX_DELIVERY_BACKOFF_SECONDS))
 
 
 @dataclass(frozen=True, slots=True)

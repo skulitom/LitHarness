@@ -26,13 +26,20 @@ import json
 import sqlite3
 from collections.abc import Iterable, Sequence
 from contextlib import suppress
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from pathlib import Path
 from typing import Any
 
 from litharness.domain.directives import Directive, DirectiveKind, DirectiveStatus
-from litharness.domain.events import Event, EventType, OutboxEntry, OutboxState
-from litharness.domain.jobs import Job, JobStatus
+from litharness.domain.events import (
+    MAX_DELIVERY_ATTEMPTS,
+    Event,
+    EventType,
+    OutboxEntry,
+    OutboxState,
+    delivery_backoff,
+)
+from litharness.domain.jobs import IllegalTransition, Job, JobStatus
 from litharness.domain.nodes import BlockKind, LockKind, Node, NodeKind
 from litharness.domain.patch import Veto
 from litharness.domain.policy import (
@@ -489,13 +496,30 @@ class SqliteStore:
             payload=json.loads(row["payload"]),
         )
 
-    def pending_outbox(self, limit: int = 100) -> list[OutboxEntry]:
-        rows = self._connection.execute(
-            "SELECT outbox.idempotency_key, outbox.state, outbox.delivery_attempts, events.* "
-            "FROM outbox JOIN events USING (idempotency_key) WHERE outbox.state = ? "
-            "ORDER BY events.sequence LIMIT ?",
-            (OutboxState.PENDING.value, limit),
-        ).fetchall()
+    def pending_outbox(self, limit: int = 100, *, now: float | None = None) -> list[OutboxEntry]:
+        """Entries due for delivery, oldest first.
+
+        `now` filters out entries still inside their backoff window. It defaults to None —
+        meaning "everything pending, ignore backoff" — because that is what an operator
+        inspecting the queue wants and what most tests assert against. The Conductor always
+        passes it; a drain that ignored backoff would reintroduce the spin.
+        """
+        if now is None:
+            rows = self._connection.execute(
+                "SELECT outbox.idempotency_key, outbox.state, outbox.delivery_attempts, "
+                "events.* FROM outbox JOIN events USING (idempotency_key) "
+                "WHERE outbox.state = ? ORDER BY events.sequence LIMIT ?",
+                (OutboxState.PENDING.value, limit),
+            ).fetchall()
+        else:
+            rows = self._connection.execute(
+                "SELECT outbox.idempotency_key, outbox.state, outbox.delivery_attempts, "
+                "events.* FROM outbox JOIN events USING (idempotency_key) "
+                "WHERE outbox.state = ? "
+                "AND (outbox.next_attempt_at IS NULL OR outbox.next_attempt_at <= ?) "
+                "ORDER BY events.sequence LIMIT ?",
+                (OutboxState.PENDING.value, now, limit),
+            ).fetchall()
         return [
             OutboxEntry(
                 idempotency_key=row["idempotency_key"],
@@ -515,13 +539,44 @@ class SqliteStore:
                 (OutboxState.SENT.value, idempotency_key),
             )
 
-    def record_delivery_attempt(self, idempotency_key: str) -> None:
+    def record_delivery_attempt(self, idempotency_key: str, *, now: float) -> bool:
+        """Record a refused delivery, back it off, and park it once the budget is spent.
+
+        Returns True if the entry is now terminal. The event itself is never lost — it
+        stays in `events`, which is the durable log. What stops is the *delivery*, which is
+        the right thing to bound: a sink that has refused eleven times across an hour of
+        backoff will not accept the twelfth, and continuing to ask costs a synchronous
+        write per entry per tick, forever.
+        """
         with self.transaction() as connection:
-            connection.execute(
-                "UPDATE outbox SET delivery_attempts = delivery_attempts + 1 "
-                "WHERE idempotency_key = ?",
+            row = connection.execute(
+                "SELECT delivery_attempts FROM outbox WHERE idempotency_key = ?",
                 (idempotency_key,),
+            ).fetchone()
+            if row is None:
+                return False
+            attempts = int(row["delivery_attempts"]) + 1
+            if attempts >= MAX_DELIVERY_ATTEMPTS:
+                connection.execute(
+                    "UPDATE outbox SET delivery_attempts = ?, state = ?, next_attempt_at = NULL "
+                    "WHERE idempotency_key = ?",
+                    (attempts, OutboxState.FAILED.value, idempotency_key),
+                )
+                return True
+            connection.execute(
+                "UPDATE outbox SET delivery_attempts = ?, next_attempt_at = ? "
+                "WHERE idempotency_key = ?",
+                (attempts, now + delivery_backoff(attempts), idempotency_key),
             )
+            return False
+
+    def outbox_counts_by_state(self) -> dict[str, int]:
+        return {
+            row["state"]: int(row["n"])
+            for row in self._connection.execute(
+                "SELECT state, COUNT(*) AS n FROM outbox GROUP BY state ORDER BY state"
+            )
+        }
 
     # -- jobs -----------------------------------------------------------------
 
@@ -675,6 +730,53 @@ class SqliteStore:
             "SELECT COUNT(*) AS n FROM jobs WHERE status = ?", (JobStatus.QUEUED.value,)
         ).fetchone()
         return int(row["n"])
+
+    def job_counts_by_status(self) -> dict[str, int]:
+        """Queue depth per status — the operator's first question.
+
+        Until this existed there was no way to ask "is anything stuck": the only job query
+        was `load_job(job_id)`, which requires already knowing the id of the job you have
+        not heard about. §19's "parked units and exceptions are visible" was unanswerable
+        by construction.
+        """
+        return {
+            row["status"]: int(row["n"])
+            for row in self._connection.execute(
+                "SELECT status, COUNT(*) AS n FROM jobs GROUP BY status ORDER BY status"
+            )
+        }
+
+    def jobs_by_status(self, status: JobStatus, limit: int = 50) -> list[Job]:
+        return [
+            self._job_from_row(row)
+            for row in self._connection.execute(
+                "SELECT * FROM jobs WHERE status = ? ORDER BY rowid LIMIT ?",
+                (status.value, limit),
+            )
+        ]
+
+    def revive(self, job_id: str) -> Job:
+        """Return a parked unit to the queue after a human resolved what parked it.
+
+        Parked is terminal *by policy*, not by exhaustion, so the resolution is a decision
+        rather than another attempt — and without this method there was no way to act on
+        one. Attempts reset because the blocker was external: a unit parked on a locked
+        node has not consumed its budget on failures of its own.
+
+        Deliberately refuses a poisoned job. Poisoning means the attempt budget really was
+        spent, and reviving it without changing anything would just spend it again.
+        """
+        job = self.load_job(job_id)
+        if job.status is not JobStatus.PARKED:
+            raise IllegalTransition(
+                f"job {job_id} is {job.status.value}, not parked; only a parked unit can be "
+                "revived, because only a parked unit stopped for a reason a human can clear"
+            )
+        revived = replace(
+            job.transition_to(JobStatus.QUEUED), attempts=0, error=None
+        ).released()
+        self.save_job(revived)
+        return revived
 
     # -- instance lease -------------------------------------------------------
 
@@ -845,6 +947,20 @@ class SqliteStore:
                 (job_id,),
             )
         ]
+
+    def latest_decision_for(self, job_id: str) -> PolicyDecision | None:
+        """The most recent decision for a job — what the Conductor settles the row against.
+
+        Read back rather than returned by the handler, because `JobHandler` returns events
+        by contract and widening that signature for one handler's benefit would make every
+        future handler carry it.
+        """
+        row = self._connection.execute(
+            "SELECT * FROM policy_decisions WHERE job_id = ? ORDER BY attempt DESC, rowid "
+            "DESC LIMIT 1",
+            (job_id,),
+        ).fetchone()
+        return None if row is None else _decision_from_row(row)
 
     def decision_for_revision(self, revision_id: str) -> PolicyDecision | None:
         """The decision that accepted ``revision_id``, if one was recorded.

@@ -21,7 +21,7 @@ from litharness.application.handlers import (
 )
 from litharness.domain.draft import DraftPolicy, gate_draft
 from litharness.domain.events import EventType, payload_digest
-from litharness.domain.jobs import Job, JobStatus, input_digest_for
+from litharness.domain.jobs import IllegalTransition, Job, JobStatus, input_digest_for
 from litharness.domain.nodes import LockKind, Node, NodeKind
 from litharness.domain.patch import Veto
 from litharness.domain.policy import (
@@ -656,3 +656,128 @@ def test_every_event_type_exists_in_the_contract() -> None:
 
     for member in EventType:
         assert lc.EventType(member.value).value == member.value
+
+
+# --- the ladder is enforced, not just recorded ---------------------------------------
+
+
+def seeded_with_prose(store: SqliteStore) -> None:
+    """A book whose scene-1 already has prose, so a draft job against it must be refused
+    with a veto no retry can fix."""
+    revision = blank_revision()
+    filled = gate_draft(revision, "scene-1", PROSE).revision
+    assert filled is not None
+    # The parent has to exist too: revisions carry a FK to their parent, which is what
+    # makes lineage unbroken rather than merely recorded.
+    store.commit_revision(revision, created_at="2026-08-12T00:00:00Z")
+    store.commit_revision(filled, created_at="2026-08-12T00:00:01Z")
+    payload = {
+        "revision_id": filled.revision_id,
+        "logical_id": "scene-1",
+        "prompt": "Draft the opening scene.",
+    }
+    store.enqueue(
+        Job(job_id="draft-1", job_kind=SCENE_DRAFT, payload=payload,
+            input_digest=input_digest_for(payload))
+    )
+
+
+def test_an_escalated_unit_is_parked_not_counted_as_a_success(store: SqliteStore) -> None:
+    """The bug this replaces: `_run` marked the job SUCCEEDED whenever the handler did not
+    raise, so a candidate the policy engine ESCALATED was dropped off the queue and
+    counted in `jobs_succeeded`. Not parked, not visible, not bounded — gone."""
+    registry, _ = registry_with(PROSE)
+    seeded_with_prose(store)
+
+    result = conductor_for(store, registry).tick(START)
+
+    assert result.outcome is TickOutcome.JOB_PARKED
+    job = store.load_job("draft-1")
+    assert job.status is JobStatus.PARKED
+    assert job.status.needs_attention
+
+    [decision] = store.decisions_for_job("draft-1")
+    assert decision.outcome is Outcome.ESCALATE
+
+    day = store.read_log()[0].event.created_at[:10]
+    digest = store.digest(day)
+    assert digest.get("jobs_succeeded", 0) == 0
+    assert digest["jobs_parked"] == 1
+    assert digest["exceptions_raised"] == 1
+
+
+def test_an_escalation_raises_an_exception_event(store: SqliteStore) -> None:
+    """§4.2: the failure mode is a parked unit *plus an exception*. Silence would leave the
+    unit stuck with nothing summoning a human."""
+    registry, _ = registry_with(PROSE)
+    seeded_with_prose(store)
+    conductor_for(store, registry).tick(START)
+
+    raised = [
+        entry.event
+        for entry in store.read_log()
+        if entry.event.event_type is EventType.EXCEPTION_RAISED
+    ]
+    assert len(raised) == 1
+    assert raised[0].payload["job_id"] == "draft-1"
+    assert "target_has_no_content" in raised[0].payload["reason"]
+
+
+def test_a_retryable_refusal_requeues_and_stays_bounded(store: SqliteStore) -> None:
+    """RETRY must re-enter the existing bounded ladder, not park. And the ladder must still
+    terminate: a candidate that is always too short poisons on budget rather than spinning."""
+    registry, _ = registry_with("Too short.")
+    seeded(store)
+    conductor = conductor_for(store, registry)
+
+    outcomes = [conductor.tick(START + index * 300.0).outcome for index in range(6)]
+
+    assert outcomes[0] is TickOutcome.JOB_FAILED
+    assert store.load_job("draft-1").status is JobStatus.POISONED
+    assert TickOutcome.RAN_JOB not in outcomes
+    # Terminates rather than spinning: later ticks find nothing to do.
+    assert outcomes[-1] is TickOutcome.NO_WORK
+
+
+def test_parked_units_are_visible_to_an_operator(store: SqliteStore) -> None:
+    """§19 Autonomy: "parked units and exceptions are visible and bounded". Until this
+    existed the only job query was load_job(job_id), which requires already knowing the id
+    of the job you have not heard about."""
+    registry, _ = registry_with(PROSE)
+    seeded_with_prose(store)
+    conductor_for(store, registry).tick(START)
+
+    assert store.job_counts_by_status() == {"parked": 1}
+    assert [job.job_id for job in store.jobs_by_status(JobStatus.PARKED)] == ["draft-1"]
+
+
+def test_a_parked_unit_can_be_revived_once_a_human_clears_the_blocker(
+    store: SqliteStore,
+) -> None:
+    """Parked is terminal by policy, not by exhaustion, so the resolution is a decision
+    rather than another attempt — and attempts reset, because a unit parked on a locked
+    node has not spent its budget on failures of its own."""
+    registry, _ = registry_with(PROSE)
+    seeded_with_prose(store)
+    conductor_for(store, registry).tick(START)
+
+    revived = store.revive("draft-1")
+
+    assert revived.status is JobStatus.QUEUED
+    assert revived.attempts == 0
+    assert revived.error is None
+    assert store.queued_count() == 1
+
+
+def test_a_poisoned_unit_is_not_revivable(store: SqliteStore) -> None:
+    """Poisoning means the budget really was spent. Reviving without changing anything
+    would just spend it again."""
+    registry, _ = registry_with("Too short.")
+    seeded(store)
+    conductor = conductor_for(store, registry)
+    for index in range(4):
+        conductor.tick(START + index * 300.0)
+    assert store.load_job("draft-1").status is JobStatus.POISONED
+
+    with pytest.raises(IllegalTransition, match="not parked"):
+        store.revive("draft-1")

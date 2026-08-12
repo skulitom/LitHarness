@@ -48,6 +48,7 @@ from typing import Protocol
 from litharness.adapters.sqlite_store import SqliteStore
 from litharness.domain.events import Event, EventType, OutboxEntry
 from litharness.domain.jobs import Job, JobStatus
+from litharness.domain.policy import Outcome, PolicyDecision
 
 DEFAULT_SCOPE = "conductor"
 
@@ -58,6 +59,8 @@ class TickOutcome(enum.StrEnum):
     NO_WORK = "no_work"
     RAN_JOB = "ran_job"
     JOB_FAILED = "job_failed"
+    #: Terminal by policy decision (§4.2 park/escalate), not by error.
+    JOB_PARKED = "job_parked"
     REPLAYED = "replayed"
 
 
@@ -74,7 +77,11 @@ class TickResult:
 
     @property
     def did_work(self) -> bool:
-        return self.outcome in {TickOutcome.RAN_JOB, TickOutcome.JOB_FAILED}
+        return self.outcome in {
+            TickOutcome.RAN_JOB,
+            TickOutcome.JOB_FAILED,
+            TickOutcome.JOB_PARKED,
+        }
 
 
 class JobHandler(Protocol):
@@ -179,7 +186,7 @@ class Conductor:
         # no poison, no escalation — which is the bug this loop shipped with until the
         # non-starvation test caught it.
         reconciled = len(self.store.reclaim_expired(now)) + len(self.store.requeue_failed())
-        dispatched = self._drain_outbox()
+        dispatched = self._drain_outbox(now)
 
         job = self.select(self.store, self.holder, now, self.job_lease_duration)
         if job is None:
@@ -243,9 +250,84 @@ class Conductor:
             return TickOutcome.JOB_FAILED, ()
 
         self.store.append_events(events)
-        self.store.save_job(running.transition_to(JobStatus.SUCCEEDED))
-        self.store.bump_digest(self._day(now), "jobs_succeeded")
-        return TickOutcome.RAN_JOB, events
+
+        # **The handler returning is not the same as the work succeeding.** §4.2's ladder
+        # produces accept | retry | repair | regenerate | park | escalate, and until this
+        # branch existed the loop marked every non-raising handler SUCCEEDED — so a
+        # candidate the policy engine *escalated* was counted as a success in the digest
+        # and its unit silently dropped off the queue. Neither parked, nor visible, nor
+        # bounded: gone. The decision is read back from storage rather than returned by the
+        # handler because `JobHandler` returns events by contract, and widening that
+        # contract for one handler's benefit would make every future handler carry it.
+        decision = self.store.latest_decision_for(job.job_id)
+        outcome = decision.outcome if decision is not None else Outcome.ACCEPT
+        return self._settle(running, outcome, decision, now, events)
+
+    def _settle(
+        self,
+        running: Job,
+        outcome: Outcome,
+        decision: PolicyDecision | None,
+        now: float,
+        events: Sequence[Event],
+    ) -> tuple[TickOutcome, Sequence[Event]]:
+        """Apply one §4.2 decision to the job row, the digest and the event log."""
+        reason = (decision.reason if decision else None) or outcome.value
+
+        if outcome is Outcome.ACCEPT:
+            self.store.save_job(running.transition_to(JobStatus.SUCCEEDED))
+            self.store.bump_digest(self._day(now), "jobs_succeeded")
+            return TickOutcome.RAN_JOB, events
+
+        if outcome in {Outcome.RETRY, Outcome.REGENERATE, Outcome.REPAIR}:
+            # `fail` already poisons once the attempt budget is spent, so a retry ladder
+            # that never converges still terminates. This is the existing bounded-retry
+            # path; the change is only that policy decides to enter it.
+            self.store.save_job(running.fail(reason))
+            self.store.bump_digest(self._day(now), "jobs_retried")
+            return TickOutcome.JOB_FAILED, events
+
+        # **Two vocabularies meet here, and they do not use the same words.** At the
+        # decision layer §4.2 says *park* (the unit is stuck, move on) and *escalate* (a
+        # human is needed). At the job layer this codebase already said *poisoned* (the
+        # attempt budget is spent) and now says *parked* (stopped by decision, revivable).
+        # They line up crosswise, and pretending otherwise would give the operator the
+        # wrong word for the state they are looking at:
+        #
+        #   Outcome.PARK      — `decide` returns this only on attempt exhaustion, which is
+        #                       precisely what POISONED has always meant. Not revivable:
+        #                       reviving without changing anything just spends the budget
+        #                       again.
+        #   Outcome.ESCALATE  — no retry can resolve the veto (a locked node, a missing
+        #                       target). Terminal, but the blocker is external and a human
+        #                       can clear it, so PARKED and revivable — plus an exception,
+        #                       because §4.2's failure mode is "a parked unit *plus an
+        #                       exception*", and a stuck unit nobody is told about is just
+        #                       a lost one.
+        if outcome is Outcome.PARK:
+            self.store.save_job(running.transition_to(JobStatus.POISONED, error=reason).released())
+            self.store.bump_digest(self._day(now), "jobs_poisoned")
+            return TickOutcome.JOB_PARKED, events
+
+        parked = running.transition_to(JobStatus.PARKED, error=reason).released()
+        self.store.save_job(parked)
+        self.store.bump_digest(self._day(now), "jobs_parked")
+        self.store.bump_digest(self._day(now), "exceptions_raised")
+        raised = [
+            self._event(
+                EventType.EXCEPTION_RAISED,
+                {
+                    "job_id": running.job_id,
+                    "outcome": outcome.value,
+                    "reason": reason,
+                    "decision_id": decision.decision_id if decision else None,
+                    "attempts": parked.attempts,
+                },
+                now,
+            )
+        ]
+        self.store.append_events(raised)
+        return TickOutcome.JOB_PARKED, [*events, *raised]
 
     def _ingest_directives(self, now: float) -> int:
         """Drain the direction inbox (§4.3), recording each arrival as an event.
@@ -284,15 +366,22 @@ class Conductor:
         self.store.bump_digest(self._day(now), "directives_ingested", len(pending))
         return len(pending)
 
-    def _drain_outbox(self, limit: int = 50) -> int:
-        """Send-then-mark. A refused delivery records the attempt and stays pending."""
+    def _drain_outbox(self, now: float, limit: int = 50) -> int:
+        """Send-then-mark, with a refused delivery backed off rather than retried at once.
+
+        `now` is not decorative: without it this loop re-attempted the first 50 pending
+        entries on *every* tick forever. Measured over the week the endurance test
+        simulates, the head entries reached 2016 delivery attempts while entries 51 and
+        beyond reached zero — an unbounded spin and permanent head-of-line starvation at
+        once, both invisible because the endurance test asserts an empty outbox.
+        """
         sent = 0
-        for entry in self.store.pending_outbox(limit):
+        for entry in self.store.pending_outbox(limit, now=now):
             if self.dispatch(entry):
                 self.store.mark_sent(entry.idempotency_key)
                 sent += 1
-            else:
-                self.store.record_delivery_attempt(entry.idempotency_key)
+            elif self.store.record_delivery_attempt(entry.idempotency_key, now=now):
+                self.store.bump_digest(self._day(now), "outbox_failed")
         return sent
 
     def _finish(

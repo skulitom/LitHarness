@@ -46,7 +46,12 @@ class JobStatus(enum.StrEnum):
     SUCCEEDED = "succeeded"
     FAILED = "failed"
     CANCELLED = "cancelled"
+    #: Terminal by attempt exhaustion.
     POISONED = "poisoned"
+    #: Terminal by policy decision — §4.2's "park". Distinct from POISONED because they
+    #: call for different operator responses: a poisoned unit ran out of attempts, a
+    #: parked one was stopped deliberately because no retry could resolve its refusal.
+    PARKED = "parked"
 
     @property
     def is_terminal(self) -> bool:
@@ -54,7 +59,13 @@ class JobStatus(enum.StrEnum):
             JobStatus.SUCCEEDED,
             JobStatus.CANCELLED,
             JobStatus.POISONED,
+            JobStatus.PARKED,
         }
+
+    @property
+    def needs_attention(self) -> bool:
+        """Terminal without having done the work. What an operator has to look at."""
+        return self in {JobStatus.POISONED, JobStatus.PARKED}
 
     def to_contract(self) -> lc.JobStatus:
         return lc.JobStatus(self.value)
@@ -78,12 +89,20 @@ TRANSITIONS: dict[JobStatus, frozenset[JobStatus]] = {
             JobStatus.CANCELLED,
             JobStatus.POISONED,
             JobStatus.QUEUED,
+            # The §4.2 ladder's park/escalate verdict, taken directly from RUNNING: the
+            # unit did execute, the policy engine judged its result unfixable by retry.
+            JobStatus.PARKED,
         }
     ),
     JobStatus.FAILED: frozenset({JobStatus.QUEUED, JobStatus.POISONED, JobStatus.CANCELLED}),
     JobStatus.SUCCEEDED: frozenset(),
     JobStatus.CANCELLED: frozenset(),
     JobStatus.POISONED: frozenset(),
+    # Terminal, but *revivable by a human* — which is the difference between a parked unit
+    # and a poisoned one. §4.2 parks a unit when policy determines no retry can resolve the
+    # refusal (a director-locked node, a missing target); the resolution is a decision, not
+    # another attempt, so the edge back to QUEUED exists and is taken only by `revive`.
+    JobStatus.PARKED: frozenset({JobStatus.QUEUED, JobStatus.CANCELLED}),
 }
 
 

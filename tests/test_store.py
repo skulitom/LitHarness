@@ -182,7 +182,7 @@ def test_outbox_is_drained_in_log_order(store: SqliteStore, revision: Revision) 
 def test_an_undelivered_event_stays_pending(store: SqliteStore, revision: Revision) -> None:
     event = accepted_event(revision)
     store.append_events([event])
-    store.record_delivery_attempt(event.idempotency_key)
+    store.record_delivery_attempt(event.idempotency_key, now=0.0)
     pending = store.pending_outbox()
     assert len(pending) == 1
     assert pending[0].state is OutboxState.PENDING
