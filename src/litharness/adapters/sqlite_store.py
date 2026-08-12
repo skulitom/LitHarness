@@ -29,6 +29,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
+from litharness.domain.directives import Directive, DirectiveKind, DirectiveStatus
 from litharness.domain.events import Event, EventType, OutboxEntry, OutboxState
 from litharness.domain.jobs import Job, JobStatus
 from litharness.domain.nodes import BlockKind, LockKind, Node, NodeKind
@@ -69,6 +70,25 @@ def _split_statements(script: str) -> list[str]:
     if buffer.strip():
         raise ValueError(f"migration ends with an incomplete statement: {buffer[:80]!r}")
     return statements
+
+
+def _directive_from_row(row: sqlite3.Row) -> Directive:
+    return Directive(
+        directive_id=row["directive_id"],
+        kind=DirectiveKind(row["kind"]),
+        body=row["body"],
+        status=DirectiveStatus(row["status"]),
+        book_id=row["book_id"],
+        branch_id=row["branch_id"],
+        target_logical_ids=tuple(json.loads(row["target_logical_ids"] or "[]")),
+        interpretation=row["interpretation"],
+        produced_constraint_ids=tuple(json.loads(row["produced_constraint_ids"] or "[]")),
+        received_at=row["received_at"],
+        interpreted_at=row["interpreted_at"],
+        precedence=row["precedence"],
+        superseded_by=row["superseded_by"],
+        metadata=json.loads(row["metadata"]) if row["metadata"] else {},
+    )
 
 
 def _gate_to_row(gate: GateOutcome) -> dict[str, Any]:
@@ -607,6 +627,81 @@ class SqliteStore:
         return None if row is None else str(row["holder"])
 
     # -- digest and ticks -----------------------------------------------------
+
+    # -- directives -----------------------------------------------------------
+
+    def submit_directive(self, directive: Directive, *, received_at: str) -> bool:
+        """Accept one directive into the inbox. False if it was already submitted.
+
+        Deliberately separate from the tick: a director drops direction whenever they like,
+        and the Conductor drains it when it next runs. Coupling the two would mean direction
+        could only be given while the system was between ticks.
+        """
+        with self.transaction() as connection:
+            cursor = connection.execute(
+                "INSERT OR IGNORE INTO directives (directive_id, kind, body, status, "
+                "book_id, branch_id, target_logical_ids, interpretation, "
+                "produced_constraint_ids, received_at, ingested_at, interpreted_at, "
+                "precedence, superseded_by, metadata) "
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, ?, ?, ?, ?)",
+                (
+                    directive.directive_id,
+                    directive.kind.value,
+                    directive.body,
+                    directive.status.value,
+                    directive.book_id,
+                    directive.branch_id,
+                    json.dumps(list(directive.target_logical_ids)),
+                    directive.interpretation,
+                    json.dumps(list(directive.produced_constraint_ids)),
+                    directive.received_at or received_at,
+                    directive.interpreted_at,
+                    directive.precedence,
+                    directive.superseded_by,
+                    json.dumps(directive.metadata) if directive.metadata else None,
+                ),
+            )
+            return cursor.rowcount > 0
+
+    def pending_directives(self, limit: int = 50) -> list[Directive]:
+        """Directives the Conductor has not yet ingested, in the order §4.3 wants them.
+
+        Precedence leads and arrival order breaks ties, so a veto issued Monday outranks a
+        tone note issued Tuesday. Recency ordering would silently reverse that.
+        """
+        return [
+            _directive_from_row(row)
+            for row in self._connection.execute(
+                "SELECT * FROM directives WHERE ingested_at IS NULL "
+                "ORDER BY precedence DESC, rowid LIMIT ?",
+                (limit,),
+            )
+        ]
+
+    def mark_directive_ingested(self, directive_id: str, *, ingested_at: str) -> None:
+        with self.transaction() as connection:
+            connection.execute(
+                "UPDATE directives SET ingested_at = ? WHERE directive_id = ? "
+                "AND ingested_at IS NULL",
+                (ingested_at, directive_id),
+            )
+
+    def load_directive(self, directive_id: str) -> Directive:
+        row = self._connection.execute(
+            "SELECT * FROM directives WHERE directive_id = ?", (directive_id,)
+        ).fetchone()
+        if row is None:
+            raise KeyError(f"no directive {directive_id}")
+        return _directive_from_row(row)
+
+    def directives_by_status(self, status: DirectiveStatus) -> list[Directive]:
+        return [
+            _directive_from_row(row)
+            for row in self._connection.execute(
+                "SELECT * FROM directives WHERE status = ? ORDER BY precedence DESC, rowid",
+                (status.value,),
+            )
+        ]
 
     # -- policy decisions -----------------------------------------------------
 

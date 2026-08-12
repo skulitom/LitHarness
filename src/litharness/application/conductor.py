@@ -2,9 +2,16 @@
 
 §4.1 fixes the tick contract: ingest directives, reconcile state, select work, execute one
 bounded unit, commit artifacts and events atomically, update the digest. This module is
-that loop, with directive ingestion (§4.3) deliberately absent — the plan's Stage 0 scope
-is "Conductor skeleton (tick, lease, job selection, digest stub)", and a directive inbox
-without the Narrative Planner to interpret it would be a queue that nothing can read.
+that loop, in that order.
+
+**Ingest is first, and the ordering is the requirement.** A directive that arrived since
+the last tick must be able to influence what this tick selects; if selection ran first, the
+directive would sit unread for a full cycle behind the very work it was meant to redirect.
+Only the *capture* half exists — interpreting a directive into versioned plan constraints
+needs the Narrative Planner (§9), which does not — so directives are drained, recorded, and
+left in `RECEIVED`. That is deliberate and it is visible: unread direction shows up as a
+growing `RECEIVED` count and as `interpreted: false` in the event log, rather than as
+either silence or an invented reading.
 
 Three properties matter more than the loop itself.
 
@@ -61,6 +68,8 @@ class TickResult:
     job_id: str | None = None
     reconciled: int = 0
     dispatched: int = 0
+    #: Directives drained from the inbox this tick (§4.3).
+    ingested: int = 0
     events: tuple[Event, ...] = ()
 
     @property
@@ -159,6 +168,11 @@ class Conductor:
         if self.registry is not None:
             self.registry.reset_health()
 
+        # §4.1 step 1. Ingest runs *before* selection, which is the whole ordering
+        # requirement: a directive that arrived since the last tick must be able to
+        # influence what this tick picks up, and must never mutate a job already running.
+        ingested = self._ingest_directives(now)
+
         # Reconcile is two distinct recoveries, and both are needed. `reclaim_expired`
         # rescues a unit whose holder crashed mid-job; `requeue_failed` advances a unit that
         # failed cleanly. Omitting the second leaves FAILED jobs inert forever — no retry,
@@ -172,7 +186,13 @@ class Conductor:
             outcome = TickOutcome.NO_WORK
             if not self._finish(tick_id, now, outcome, None, reconciled, dispatched):
                 return TickResult(tick_id, TickOutcome.REPLAYED)
-            return TickResult(tick_id, outcome, reconciled=reconciled, dispatched=dispatched)
+            return TickResult(
+                tick_id,
+                outcome,
+                reconciled=reconciled,
+                dispatched=dispatched,
+                ingested=ingested,
+            )
 
         outcome, events = self._run(job, now)
         if not self._finish(tick_id, now, outcome, job.job_id, reconciled, dispatched):
@@ -183,6 +203,7 @@ class Conductor:
             job_id=job.job_id,
             reconciled=reconciled,
             dispatched=dispatched,
+            ingested=ingested,
             events=tuple(events),
         )
 
@@ -225,6 +246,43 @@ class Conductor:
         self.store.save_job(running.transition_to(JobStatus.SUCCEEDED))
         self.store.bump_digest(self._day(now), "jobs_succeeded")
         return TickOutcome.RAN_JOB, events
+
+    def _ingest_directives(self, now: float) -> int:
+        """Drain the direction inbox (§4.3), recording each arrival as an event.
+
+        **Capture only.** Converting a directive into versioned plan constraints needs the
+        Narrative Planner (§9), which does not exist, so a directive is marked ingested and
+        left in `RECEIVED`. That is deliberate and visible: `directives_by_status(RECEIVED)`
+        grows, which reads as "queued and unread" rather than as work silently dropped. The
+        alternative — not capturing until an interpreter exists — loses direction the
+        director gives today.
+        """
+        pending = self.store.pending_directives()
+        if not pending:
+            return 0
+        stamp = self._timestamp(now)
+        events = [
+            self._event(
+                EventType.DIRECTIVE_INGESTED,
+                {
+                    "directive_id": directive.directive_id,
+                    "kind": directive.kind.value,
+                    "precedence": directive.precedence,
+                    "status": directive.status.value,
+                    # Named rather than implied, so a reader of the log is not left to
+                    # infer why nothing acted on it.
+                    "interpreted": False,
+                    "awaiting": "narrative_planner",
+                },
+                now,
+            )
+            for directive in pending
+        ]
+        self.store.append_events(events)
+        for directive in pending:
+            self.store.mark_directive_ingested(directive.directive_id, ingested_at=stamp)
+        self.store.bump_digest(self._day(now), "directives_ingested", len(pending))
+        return len(pending)
 
     def _drain_outbox(self, limit: int = 50) -> int:
         """Send-then-mark. A refused delivery records the attempt and stays pending."""

@@ -1,11 +1,12 @@
 # Stage 0 decisions
 
-**Status:** Slices 1-4 built and green — **150 tests (+3 opt-in live), ruff clean, mypy
+**Status:** Slices 1-5 built and green — **183 tests (+3 opt-in live), ruff clean, mypy
 strict clean.** Slice 1 is the model-free manuscript spine; slice 2 the Conductor skeleton
 (tick, instance lease, job selection, digest, outbox dispatch, crash recovery); slice 3 the
 four provider adapters with their conformance suite and the billing guard; **slice 4 the
 first path on which generated text reaches accepted canon — job payloads, the draft shape
-gate, and a provider-backed handler wired into the tick.**
+gate, and a provider-backed handler wired into the tick; **slice 5 the acceptance decision
+record and the direction inbox.**
 
 PLAN.md §20.4 warns that Stage 0 carries "roughly half a dozen load-bearing design
 decisions [that] are genuinely open and an agent will silently invent answers to all of
@@ -319,9 +320,14 @@ sees one consistent verdict per provider.
 
 Deliberately deferred, in the order they should land:
 
-1. **Directive ingestion** (§4.3) — the plan scopes the Stage 0 Conductor to "tick, lease,
-   job selection, digest stub", and a directive inbox without the Narrative Planner to
-   interpret it would be a queue nothing can read.
+1. ~~**Directive ingestion**~~ — **capture half built in slice 5b; interpretation still
+   deferred.** The original reasoning ("a directive inbox without the Narrative Planner to
+   interpret it would be a queue nothing can read") turned out to argue for half the work,
+   not none of it. Capture needs nothing that is missing and losing direction the director
+   gives *today* because the reader ships later is the worse failure. So directives are
+   captured, drained at the top of each tick, and left in `RECEIVED` — visible as a growing
+   unread count and as `interpreted: false` in the event log, rather than as silence or an
+   invented reading. `Directive.interpret` is the seam §9 will attach to.
 2. **A real work-selection policy.** `fifo_selector` is still a placeholder behind a
    `WorkSelector` protocol, but the *storage* under it no longer is — see decision 13. What
    remains genuinely blocked is the policy: §4.1 wants selection over the book's state
@@ -362,5 +368,64 @@ consumer:
   package exists to define. 90 names now exported.
 
 All consuming suites stayed green: contracts 124, ContinuityEvaluation 42,
-LongRangeContext 17, BookWorldState 100, LitHarness **150** (was misreported as 76 here
+LongRangeContext 17, BookWorldState 100, LitHarness **183** (was misreported as 76 here
 and in PLAN.md §20.4 through slice 3; corrected in the v2.2 pass).
+
+## 17. Acceptance is a recorded decision, and refusals are recorded as fully as acceptances
+
+`domain/policy.py`, `migrations/004_policy_decisions.sql`. §19 makes "every mutation is
+attributable to a recorded policy decision" part of operator-grade, and slice 4 met that
+only in spirit — the gate results lived in a free-form event payload, so "why was this
+accepted" meant parsing prose out of a map. `store.decision_for_revision` now makes the
+claim checkable.
+
+Three decisions, each pinned by a test.
+
+**A veto a retry cannot fix must not consume the retry budget.** Vetoes are partitioned:
+`RETRYABLE` earns another bounded attempt, `REGENERABLE` earns a fresh candidate against a
+re-read base, and everything else escalates. The *ordering* inside `decide` is the
+substance — an unclassified veto escalates before the attempt budget is consulted, so a
+locked node reports as locked on the first attempt rather than as "attempts exhausted" on
+the fourth with the real cause buried. Escalation is deliberately the default for a veto
+nobody has triaged: it should reach a human, not silently earn three more model calls.
+
+**A blocking gate may not source its verdict from the model that wrote the text.**
+Enforced in `PolicyDecision.__post_init__` rather than documented, because MirrorBench's
+result is that self-report is not a correctness signal and a rule nobody checks is a rule
+that stops applying. Self-reported verdicts remain *recordable* when they do not gate —
+recorded so they can be refused, not banned from the record. Likewise an uncalibrated
+craft gate may not block (§10.4), so "until then it annotates" cannot quietly become
+permanent.
+
+**Passing gates are recorded too.** A decision listing only failures cannot distinguish a
+candidate that cleared the full ladder from one that was never checked, and that is the
+first question an audit asks.
+
+## 18. The direction inbox captures without interpreting, and says so
+
+`domain/directives.py`, `migrations/005_directives.sql`, and ingest as step 1 of the tick.
+
+**Ingest runs before selection**, which is §4.1's order and not an arbitrary one: a
+directive that arrived since the last tick must be able to influence what this tick picks
+up, and if selection ran first it would sit unread for a full cycle behind the work it was
+meant to redirect. It sits inside the leadership guard with everything else, because it
+mutates shared state.
+
+**Only capture is built.** The earlier note here argued that an inbox without the Narrative
+Planner "would be a queue nothing can read" and concluded: build neither half. That was
+half right. Capture needs nothing missing, and losing direction the director gives today
+because the reader ships later is the worse failure. So a directive is drained, recorded,
+and left in `RECEIVED`. The absence is *visible* rather than hidden — a growing unread
+count, and `interpreted: false` / `awaiting: narrative_planner` in the event log — which is
+the difference between work queued and work dropped. `Directive.interpret` is the single
+transition out, so §9 inherits a seam rather than a schema negotiation.
+
+**The director's words are immutable and stored apart from what the system decided they
+meant.** `body` is never rewritten; `interpretation` records the reading. Collapsing them
+would make a misinterpretation invisible afterwards, and "the system quietly understood
+'less combat' as 'no combat'" is exactly what this separation exists to catch.
+
+**Precedence is explicit, not arrival order.** A veto issued Monday must outrank a tone
+note issued Tuesday, and a queue resolving conflicts by recency would silently reverse
+that. `VETO` defaults highest; the drain query orders by precedence and breaks ties on
+arrival.
