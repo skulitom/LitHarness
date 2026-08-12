@@ -25,6 +25,7 @@ from __future__ import annotations
 import json
 import sqlite3
 from collections.abc import Iterable, Sequence
+from contextlib import suppress
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -43,11 +44,34 @@ from litharness.domain.policy import (
 )
 from litharness.domain.revision import Revision, node_version_id
 
-MIGRATIONS_DIR = Path(__file__).resolve().parents[3] / "migrations"
+#: How long a writer waits for a contended database before reporting it locked. Two
+#: overlapping cron ticks contend on `BEGIN IMMEDIATE` by design (§4.1), so this is the
+#: scheduler's tolerance, not a library default.
+BUSY_TIMEOUT_MS = 5000
 
 
 class IntegrityFailure(Exception):
     """Storage returned something that does not rebuild. Never downgraded to a warning."""
+
+
+class MigrationsMissing(Exception):
+    """No migrations were found where they were expected. Never a silent empty schema."""
+
+
+def migrations_dir() -> Path:
+    """Locate the migration set for whichever install layout is in play.
+
+    Two layouts, and only one of them was handled. Under an editable install the SQL sits
+    at the repo root, three parents up from this module. In a wheel, `pyproject.toml`'s
+    `force-include` places it at `litharness/migrations` — one parent up. The hardcoded
+    repo-root path therefore resolved to nothing at all once installed, and because
+    `migrate` globbed an empty directory and returned cleanly, the result was a store with
+    no tables rather than an error. Prefer the packaged location, fall back to the repo.
+    """
+    packaged = Path(__file__).resolve().parents[1] / "migrations"
+    if any(packaged.glob("*.sql")):
+        return packaged
+    return Path(__file__).resolve().parents[3] / "migrations"
 
 
 def _split_statements(script: str) -> list[str]:
@@ -165,12 +189,28 @@ class SqliteStore:
     @classmethod
     def open(cls, path: str | Path, *, migrations: Path | None = None) -> SqliteStore:
         connection = sqlite3.connect(str(path), isolation_level=None)
-        connection.row_factory = sqlite3.Row
-        connection.execute("PRAGMA journal_mode=WAL")
-        connection.execute("PRAGMA foreign_keys=ON")
-        connection.execute("PRAGMA synchronous=FULL")
-        store = cls(connection)
-        store.migrate(migrations or MIGRATIONS_DIR)
+        try:
+            connection.row_factory = sqlite3.Row
+            # `journal_mode=WAL` is the first statement that touches the file's header, so
+            # it is where a corrupted database announces itself — before `migrate` runs.
+            # That is why the guard starts here and not around the migration alone.
+            connection.execute("PRAGMA journal_mode=WAL")
+            connection.execute("PRAGMA foreign_keys=ON")
+            connection.execute("PRAGMA synchronous=FULL")
+            # Explicit rather than inherited. Python's default is 5s, which is fine, but a
+            # scheduler's tolerance for a busy database is a decision the scheduler should
+            # own: two overlapping cron ticks contend on `BEGIN IMMEDIATE` by design, and
+            # how long the loser waits before reporting it locked belongs here, in writing.
+            connection.execute(f"PRAGMA busy_timeout={BUSY_TIMEOUT_MS}")
+            store = cls(connection)
+            store.migrate(migrations or migrations_dir())
+        except BaseException:
+            # A failed open must not leave the file handle behind, and it matters most in
+            # exactly the case that matters most: opening a corrupted database to diagnose
+            # it, where a leaked handle blocks the operator from replacing the file with a
+            # backup — on Windows, actively so.
+            connection.close()
+            raise
         return store
 
     def migrate(self, directory: Path) -> None:
@@ -181,7 +221,19 @@ class SqliteStore:
         applied = {
             row["name"] for row in self._connection.execute("SELECT name FROM schema_migrations")
         }
-        for path in sorted(directory.glob("*.sql")):
+        available = sorted(directory.glob("*.sql"))
+        if not available:
+            # An empty migration set is never legitimate, and silence here is the worst
+            # available failure: `migrate` would return cleanly, `open` would hand back a
+            # store with no tables, and the first write would fail with "no such table"
+            # somewhere far from the cause. On a restored host it would look like data loss.
+            raise MigrationsMissing(
+                f"no .sql migrations found in {directory}; the store cannot be opened "
+                "against an empty schema. Check the package layout — under an editable "
+                "install the migrations sit beside the repo root, and in a wheel they are "
+                "force-included at litharness/migrations."
+            )
+        for path in available:
             if path.name in applied:
                 continue
             # Statements are executed individually rather than through `executescript`,
@@ -194,6 +246,37 @@ class SqliteStore:
                 connection.execute(
                     "INSERT INTO schema_migrations (name) VALUES (?)", (path.name,)
                 )
+
+    def backup_to(self, destination: str | Path) -> None:
+        """Take an online, consistent backup. §18 keeps backups absolutely.
+
+        **This must use SQLite's backup API, not a file copy**, and the reason is specific
+        to this store: it runs in WAL mode, so committed data lives partly in the `-wal`
+        sidecar until a checkpoint. Copying the main database file — the obvious thing an
+        operator reaches for, and what a naive `shutil.copy` in a cron job would do —
+        silently omits everything committed since the last checkpoint. The backup API
+        walks the pages under a read lock and produces a file that is a database.
+
+        Safe against the two mistakes that make a backup worthless: backing up onto the
+        live database, and overwriting a previous backup that was the only good copy.
+        """
+        target = Path(destination)
+        if target.resolve() == Path(self.path).resolve():
+            raise ValueError("backup destination must differ from the active database")
+        if target.exists():
+            raise FileExistsError(f"backup destination already exists: {target}")
+        target.parent.mkdir(parents=True, exist_ok=True)
+        backup = sqlite3.connect(str(target))
+        try:
+            self._connection.backup(backup)
+        finally:
+            backup.close()
+
+    @property
+    def path(self) -> str:
+        """Filesystem path of the open database, or ':memory:'."""
+        row = self._connection.execute("PRAGMA database_list").fetchone()
+        return str(row["file"] or ":memory:")
 
     def close(self) -> None:
         self._connection.close()
@@ -209,7 +292,13 @@ class SqliteStore:
         def __exit__(self, exc_type: object, exc: object, tb: object) -> None:
             if exc_type is None:
                 self._connection.execute("COMMIT")
-            else:
+                return
+            # SQLite auto-rolls-back on some errors — a full disk is the realistic one —
+            # and the explicit ROLLBACK then raises "cannot rollback - no transaction is
+            # active", *replacing* the real exception on its way out. The operator was told
+            # the rollback failed and never told the disk was full. Suppressing this one
+            # lets the original error propagate intact; the transaction is already undone.
+            with suppress(sqlite3.Error):
                 self._connection.execute("ROLLBACK")
 
     def transaction(self) -> SqliteStore._Transaction:

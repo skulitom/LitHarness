@@ -7,16 +7,23 @@ for. No model is involved anywhere in this file, which is the point.
 
 from __future__ import annotations
 
+import shutil
 import sqlite3
 
 import pytest
 
-from litharness.adapters.sqlite_store import IntegrityFailure, SqliteStore
+from litharness.adapters.sqlite_store import (
+    IntegrityFailure,
+    MigrationsMissing,
+    SqliteStore,
+    migrations_dir,
+)
 from litharness.domain.events import Event, EventType, OutboxState
 from litharness.domain.jobs import IllegalTransition, Job, JobStatus, LeaseError
 from litharness.domain.patch import apply_patch
+from litharness.domain.policy import Outcome, PolicyDecision
 from litharness.domain.revision import Revision
-from tests.conftest import BOOK_ID, BRANCH_ID, PROJECT_ID, build_patch
+from tests.conftest import BOOK_ID, BRANCH_ID, PROJECT_ID, SCENES, build_patch, make_revision
 
 NOW = "2026-08-12T00:00:00Z"
 
@@ -319,3 +326,126 @@ def test_a_rolled_back_transaction_leaves_no_partial_state(
         )
     assert store._connection.execute("SELECT COUNT(*) AS n FROM revisions").fetchone()["n"] == 0
     assert store.verify_integrity() == 0
+
+
+# --- backup and restore (§19 Recovery, §18 "kept absolutely") ------------------------
+
+
+def test_backup_captures_data_still_in_the_wal(tmp_path) -> None:
+    """The reason a backup here cannot be a file copy.
+
+    In WAL mode committed data lives partly in the `-wal` sidecar until a checkpoint, so
+    copying the main database file — the obvious thing a cron job would do — silently omits
+    everything committed since the last one. This asserts the backup sees a revision that
+    was committed moments earlier and never checkpointed.
+    """
+    store = SqliteStore.open(tmp_path / "live.db")
+    revision = make_revision()
+    store.commit_revision(revision, created_at="2026-08-12T00:00:00Z")
+
+    store.backup_to(tmp_path / "backup.db")
+
+    restored = SqliteStore.open(tmp_path / "backup.db")
+    assert restored.load_revision(revision.revision_id).revision_id == revision.revision_id
+    assert restored.verify_integrity() == 1
+
+
+def test_backup_refuses_to_overwrite_or_target_the_live_database(tmp_path) -> None:
+    """The two mistakes that make a backup worthless."""
+    store = SqliteStore.open(tmp_path / "live.db")
+    with pytest.raises(ValueError, match="must differ"):
+        store.backup_to(tmp_path / "live.db")
+    (tmp_path / "taken.db").write_bytes(b"")
+    with pytest.raises(FileExistsError):
+        store.backup_to(tmp_path / "taken.db")
+
+
+def test_a_destroyed_database_restores_from_backup_with_everything_intact(tmp_path) -> None:
+    """The drill §19 Recovery actually asks for: not "a file exists" but "the system comes
+    back". Prose, the policy decision that accepted it, and the undelivered outbox all have
+    to survive — a restore that returns the manuscript and loses the audit trail or the
+    pending events has not restored the system."""
+    live = tmp_path / "live.db"
+    store = SqliteStore.open(live)
+    revision = make_revision()
+    event = Event(
+        event_type=EventType.MANUSCRIPT_REVISION_ACCEPTED,
+        project_id=PROJECT_ID,
+        created_at="2026-08-12T00:00:00Z",
+        revision_id=revision.revision_id,
+        payload={"decision_id": "dec-1"},
+    )
+    store.commit_revision(revision, created_at=event.created_at, events=[event])
+    store.record_decision(
+        PolicyDecision(
+            decision_id="dec-1",
+            outcome=Outcome.ACCEPT,
+            job_id="draft-1",
+            resulting_revision_id=revision.revision_id,
+        ),
+        decided_at="2026-08-12T00:00:00Z",
+    )
+    pending_before = [entry.idempotency_key for entry in store.pending_outbox()]
+    assert pending_before
+
+    store.backup_to(tmp_path / "backup.db")
+    store.close()
+
+    # Destroy the primary the way corruption actually presents: readable file, junk inside.
+    for sidecar in (live.with_name(live.name + "-wal"), live.with_name(live.name + "-shm")):
+        sidecar.unlink(missing_ok=True)
+    live.write_bytes(b"this is not a database" * 64)
+    corrupt = None
+    try:
+        with pytest.raises(sqlite3.DatabaseError):
+            corrupt = SqliteStore.open(live)
+            corrupt.verify_integrity()
+    finally:
+        if corrupt is not None:
+            corrupt.close()
+
+    live.unlink()
+    shutil.copy(tmp_path / "backup.db", live)
+    recovered = SqliteStore.open(live)
+
+    assert recovered.verify_integrity() == 1
+    assert recovered.load_revision(revision.revision_id).node("scene-1").content == SCENES[0]
+    decision = recovered.decision_for_revision(revision.revision_id)
+    assert decision is not None and decision.outcome is Outcome.ACCEPT
+    assert [entry.idempotency_key for entry in recovered.pending_outbox()] == pending_before
+
+
+# --- failure surfaces ----------------------------------------------------------------
+
+
+def test_an_empty_migration_set_is_fatal_rather_than_a_silent_empty_schema(tmp_path) -> None:
+    """The failure this replaces was the dangerous kind: `migrate` returned cleanly, `open`
+    handed back a store with no tables, and the first write failed far from the cause. On a
+    restored host it would have looked like data loss."""
+    empty = tmp_path / "no-migrations"
+    empty.mkdir()
+    with pytest.raises(MigrationsMissing, match=r"no \.sql migrations"):
+        SqliteStore.open(tmp_path / "x.db", migrations=empty)
+
+
+def test_the_packaged_migrations_are_discoverable(tmp_path) -> None:
+    """`migrations_dir()` must resolve under the install layout in play. The previous
+    hardcoded repo-root path resolved to nothing once installed from a wheel."""
+    resolved = migrations_dir()
+    assert sorted(p.name for p in resolved.glob("*.sql"))[0] == "001_initial.sql"
+
+
+def test_a_storage_error_is_not_masked_by_its_own_rollback(tmp_path) -> None:
+    """A full disk used to report "cannot rollback - no transaction is active".
+
+    SQLite auto-rolls-back on SQLITE_FULL, so the explicit ROLLBACK in `__exit__` raised
+    and replaced the real exception on the way out — the operator was told the rollback
+    failed and never told the disk was full. Simulated here with a page cap.
+    """
+    store = SqliteStore.open(tmp_path / "full.db")
+    store._connection.execute("PRAGMA max_page_count=64")
+    with pytest.raises(sqlite3.OperationalError) as caught:
+        for index in range(200):
+            store.enqueue(Job(job_id=f"j-{index}", job_kind="noop", payload={"pad": "x" * 4000}))
+    assert "cannot rollback" not in str(caught.value)
+    assert "full" in str(caught.value).lower()
