@@ -11,6 +11,9 @@ requires-python = ">=3.11"
 authors = [{ name = "LitHarness contributors" }]
 dependencies = ["litharness-contracts"]
 
+[project.scripts]
+litharness = "litharness.cli:main"
+
 [project.optional-dependencies]
 dev = [
   "hypothesis>=6.130",

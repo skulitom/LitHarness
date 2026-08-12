@@ -731,6 +731,26 @@ class SqliteStore:
         ).fetchone()
         return int(row["n"])
 
+    # -- operator controls ----------------------------------------------------
+
+    def set_control(self, key: str, value: str, *, at: str, by: str | None = None) -> None:
+        with self.transaction() as connection:
+            connection.execute(
+                "INSERT INTO control (key, value, set_at, set_by) VALUES (?, ?, ?, ?) "
+                "ON CONFLICT (key) DO UPDATE SET value = excluded.value, "
+                "set_at = excluded.set_at, set_by = excluded.set_by",
+                (key, value, at, by),
+            )
+
+    def control(self, key: str) -> str | None:
+        row = self._connection.execute(
+            "SELECT value FROM control WHERE key = ?", (key,)
+        ).fetchone()
+        return None if row is None else str(row["value"])
+
+    def is_paused(self) -> bool:
+        return self.control("paused") == "true"
+
     def job_counts_by_status(self) -> dict[str, int]:
         """Queue depth per status — the operator's first question.
 
@@ -816,6 +836,33 @@ class SqliteStore:
             (scope, now),
         ).fetchone()
         return None if row is None else str(row["holder"])
+
+    def instance_lease(self, scope: str) -> tuple[str | None, float | None]:
+        """Holder and expiry, unfiltered by time.
+
+        Deliberately not the boolean `instance_lease_holder` answers. A crashed holder
+        still owns its lease for the full duration, so "is someone leading" says yes for
+        five minutes after the process died. Returning the expiry lets a caller show that
+        to a human instead of reporting a corpse as healthy.
+        """
+        row = self._connection.execute(
+            "SELECT holder, expires_at FROM instance_leases WHERE scope = ?", (scope,)
+        ).fetchone()
+        if row is None:
+            return None, None
+        return str(row["holder"]), float(row["expires_at"])
+
+    def last_tick(self) -> dict[str, Any] | None:
+        """The most recent tick — the system's liveness signal.
+
+        `tick_records.started_at` has been stored and indexed since migration 002 and read
+        by nothing, which is why "when did it last run" had no answer.
+        """
+        row = self._connection.execute(
+            "SELECT tick_id, holder, started_at, outcome, job_id FROM tick_records "
+            "ORDER BY started_at DESC, rowid DESC LIMIT 1"
+        ).fetchone()
+        return None if row is None else dict(row)
 
     # -- digest and ticks -----------------------------------------------------
 

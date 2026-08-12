@@ -1,0 +1,121 @@
+"""What an operator needs to answer "is it alive, and is anything stuck".
+
+§19 Autonomy requires that "parked units and exceptions are visible and bounded". Before
+this module the only job query was `load_job(job_id)`, which requires already knowing the
+id of the job you have not heard about — so the clause was unanswerable by construction,
+and the only way to inspect a running system was to open the SQLite file by hand.
+
+Two design notes.
+
+**Liveness is derived from the last tick, not from a heartbeat table.** `tick_records`
+already stores `started_at` and has an index on it, and nothing read either. A separate
+heartbeat would be a second source of truth for the same fact, and the two would
+eventually disagree.
+
+**The instance lease is reported with its expiry rather than as a boolean.** A crashed
+holder still owns its lease for the full duration, so "is someone leading" answers yes for
+five minutes after the process died. Showing the expiry lets a human see that themselves;
+collapsing it to a boolean would report a corpse as healthy.
+"""
+
+from __future__ import annotations
+
+from dataclasses import dataclass, field
+from datetime import UTC, datetime
+from typing import Any
+
+from litharness.adapters.sqlite_store import SqliteStore
+from litharness.application.conductor import DEFAULT_SCOPE
+from litharness.domain.directives import DirectiveStatus
+from litharness.domain.jobs import JobStatus
+
+
+@dataclass(frozen=True, slots=True)
+class Status:
+    now: float
+    paused: bool
+    last_tick_at: float | None
+    last_tick_outcome: str | None
+    seconds_since_tick: float | None
+    lease_holder: str | None
+    lease_expires_in: float | None
+    jobs: dict[str, int] = field(default_factory=dict)
+    outbox: dict[str, int] = field(default_factory=dict)
+    unread_directives: int = 0
+    digest: dict[str, int] = field(default_factory=dict)
+
+    @property
+    def needs_attention(self) -> int:
+        """Units that stopped without doing the work. The number to watch."""
+        return self.jobs.get(JobStatus.POISONED.value, 0) + self.jobs.get(
+            JobStatus.PARKED.value, 0
+        )
+
+    @property
+    def stalled(self) -> bool:
+        """No tick within four cadences. Never ticked at all counts as stalled."""
+        if self.seconds_since_tick is None:
+            return True
+        return self.seconds_since_tick > 4 * 300.0
+
+    def as_dict(self) -> dict[str, Any]:
+        return {
+            "paused": self.paused,
+            "stalled": self.stalled,
+            "last_tick_at": self.last_tick_at,
+            "last_tick_outcome": self.last_tick_outcome,
+            "seconds_since_tick": self.seconds_since_tick,
+            "lease_holder": self.lease_holder,
+            "lease_expires_in": self.lease_expires_in,
+            "jobs": self.jobs,
+            "needs_attention": self.needs_attention,
+            "outbox": self.outbox,
+            "unread_directives": self.unread_directives,
+            "digest": self.digest,
+        }
+
+    def render(self) -> str:
+        lines = [
+            f"state           {'PAUSED' if self.paused else 'running'}"
+            f"{'  STALLED' if self.stalled else ''}",
+            f"last tick       {self.last_tick_outcome or 'never'}"
+            + (
+                f"  ({self.seconds_since_tick:.0f}s ago)"
+                if self.seconds_since_tick is not None
+                else ""
+            ),
+            f"leader          {self.lease_holder or 'none'}"
+            + (
+                f"  (expires in {self.lease_expires_in:.0f}s)"
+                if self.lease_expires_in is not None
+                else ""
+            ),
+            f"jobs            {self.jobs or '{}'}",
+            f"needs attention {self.needs_attention}",
+            f"outbox          {self.outbox or '{}'}",
+            f"unread          {self.unread_directives} directive(s)",
+            f"digest today    {self.digest or '{}'}",
+        ]
+        return "\n".join(lines)
+
+
+def collect(store: SqliteStore, now: float, *, scope: str = DEFAULT_SCOPE) -> Status:
+    last = store.last_tick()
+    holder, expires = store.instance_lease(scope)
+    day = datetime.fromtimestamp(now, tz=UTC).date().isoformat()
+    return Status(
+        now=now,
+        paused=store.is_paused(),
+        last_tick_at=last["started_at"] if last else None,
+        last_tick_outcome=last["outcome"] if last else None,
+        seconds_since_tick=(now - last["started_at"]) if last else None,
+        lease_holder=holder,
+        lease_expires_in=(expires - now) if expires is not None else None,
+        jobs=store.job_counts_by_status(),
+        outbox=store.outbox_counts_by_state(),
+        unread_directives=len(store.directives_by_status(DirectiveStatus.RECEIVED)),
+        digest=store.digest(day),
+    )
+
+
+__all__ = ["Status", "collect"]

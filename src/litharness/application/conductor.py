@@ -165,7 +165,10 @@ class Conductor:
             # Another instance is the Conductor. Do nothing — not even reconcile.
             return TickResult(tick_id, TickOutcome.NOT_LEADER)
 
-        if self.paused:
+        # Durable, not in-memory. §4.1 runs this as a cron tick, so every tick is a fresh
+        # process and a dataclass field would be reconstructed as False every time — the
+        # pause control was unreachable in exactly the deployment the plan specifies.
+        if self.paused or self.store.is_paused():
             self._finish(tick_id, now, TickOutcome.PAUSED, None, 0, 0)
             return TickResult(tick_id, TickOutcome.PAUSED)
 
