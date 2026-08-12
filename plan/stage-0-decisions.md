@@ -429,3 +429,63 @@ would make a misinterpretation invisible afterwards, and "the system quietly und
 note issued Tuesday, and a queue resolving conflicts by recency would silently reverse
 that. `VETO` defaults highest; the drain query orders by precedence and breaks ties on
 arrival.
+
+## 19. Importing is not deserializing, and the id assertion stays
+
+`domain/revision.py` (`import_manuscript`), `adapters/contracts_fixtures.py`, `cli import`.
+
+The system was a **closed loop with no entry point**, and nothing in this document or
+PLAN.md had noticed. Fifteen subcommands and not one created a revision; `enqueue` requires
+`--revision`; the only way to obtain a revision id was to commit a revision; and the only
+caller of `commit_revision` outside the store was the draft handler, which needs a job,
+which needs the id. Every operator verb in §4.3 — `revert`, `verify`, `enqueue` — acted on
+a book that no command could bring into existence. It went unnoticed because the suite
+builds its book in `conftest.make_revision()`, so every test had an entry the product did
+not.
+
+**`from_contract` cannot load the golden fixtures and must keep refusing them.** Contracts
+mints `revision_id` as a UUID5; this package computes a sha256 over content; the classmethod
+asserts the rebuilt id equals the serialized one. Every contracts-authored manuscript
+therefore fails it, and the obvious fix — an `expected_revision_id` parameter, or dropping
+the assertion — would delete the round-trip corruption check for the artifacts it exists to
+protect, which are the ones *this* system wrote. So there are two operations, not one
+loosened operation: `from_contract` restores our own artifact and asserts; `import_manuscript`
+adopts a foreign one, rebuilds the id, and carries the source id as provenance. The check
+that does the real work is untouched — `Node.from_contract` verifies every node's
+`content_sha256` against its text, and that is what catches a manuscript read with the wrong
+codec. `test_from_contract_still_refuses_the_fixtures` exists because the wrong fix and the
+right one are indistinguishable from the outside once the fixtures load.
+
+**Scene prose is cleared on import, and that is the operation rather than a convenience.**
+`gate_draft` refuses any node that already carries content — decision 14, and §12's rule
+that a rewrite needs a located complaint. A fixture imported with its prose intact is
+therefore a book with six scenes and nothing to draft: it looks like progress and can take
+no work. Clearing is what §17 Stage 1's "regenerate from premise" means mechanically.
+`--keep-content` exists for inspection and prints that no scene is draftable, because a flag
+whose consequence is invisible is a trap. Only `SCENE` nodes are cleared, because a scene is
+the unit a `scene_draft` job fills; titles, ordering and parentage are the frame generation
+happens *inside*, not output to reproduce. A content-locked scene is left alone and
+**reported**: `replace` bypasses `with_content`'s lock check, so the lock is honoured
+explicitly here, and the operator is told which scenes it cost them.
+
+**Only a root revision can be imported.** A source carrying a `parent_revision_id` names an
+ancestor that is not in this store, and `lineage` walks parents until it reaches one — so a
+silently re-parented import produces a book that fails `verify` the first time anyone asks
+for its history. Refused with the reason.
+
+**The import is attributed and carries no gates.** §19 makes every mutation attributable to
+a recorded policy decision, and an import is a mutation, so it writes one — keyed on the
+*resulting* revision, so re-importing identical content collapses onto one decision while a
+`--keep-content` import of the same book still gets its own. Its `gates` tuple is empty on
+purpose: the two checks that run raise *before* a decision exists, so recording them as
+passed would be a gate that cannot fail, which is the objection §8.3 raises against
+recall-only fixture grading. An import is attributed, not gated.
+
+**Fixture discovery is a chain, and no link is an absolute path.** The golden books live
+under `fixtures/golden/` at the contracts repository root, outside the importable package,
+so `importlib.resources` cannot reach them. `LITHARNESS_CONTRACTS_ROOT` first (the variable
+LongRangeContext already uses — a second name for one setting is how two checkouts end up
+configured differently), then the installed package's own location, then a sibling checkout.
+Each candidate is tested for the *manuscript*, not the directory. PLAN.md §20.2 records a
+machine-bound `samefile("C:/DEV/litharness-contracts/schemas")` as a defect worth fixing in
+a sibling repository; hard-coding one here would have been the same bug.

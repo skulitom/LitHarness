@@ -19,6 +19,7 @@ from litharness.adapters.sqlite_store import SqliteStore
 from litharness.cli import EXIT_ATTENTION, EXIT_FAULT, EXIT_OK, main
 from litharness.domain.directives import DirectiveStatus
 from litharness.domain.jobs import Job, JobStatus
+from litharness.domain.policy import Outcome
 
 
 @pytest.fixture
@@ -245,3 +246,111 @@ def test_enqueue_puts_a_draft_on_the_queue(db, capsys) -> None:
         assert job.payload["logical_id"] == "scene-1"
     finally:
         store.close()
+
+
+# --- getting a book in (§17 Stage 1's precondition) -----------------------------------
+
+
+def imported_id(db, capsys, *extra: str) -> str:
+    """Import a fixture and return the revision id the command printed."""
+    capsys.readouterr()  # discard whatever an earlier command left buffered
+    assert run(db, "import", *extra) == EXIT_OK
+    return capsys.readouterr().out.splitlines()[0].strip()
+
+
+def test_import_opens_the_closed_loop(db, capsys) -> None:
+    """The whole point. `enqueue` requires a `--revision`, a revision id came only from
+    committing a revision, and the only caller of `commit_revision` outside the store was
+    the draft handler — which needs a job, which needs the id. Every operator verb here
+    acted on a book that no command could create."""
+    run(db, "init")
+    revision_id = imported_id(db, capsys, "--fixture", "mystery")
+
+    assert run(
+        db, "enqueue", "draft-1", "--revision", revision_id,
+        "--node", "scene-1", "--prompt", "Draft the study scene.",
+    ) == EXIT_OK
+    capsys.readouterr()
+
+    run(db, "jobs")
+    assert "queued       1" in capsys.readouterr().out
+
+    store = SqliteStore.open(db)
+    try:
+        revision = store.load_revision(revision_id)
+        assert revision.node("scene-1").content is None
+        assert len(revision.nodes) == 7
+    finally:
+        store.close()
+
+
+def test_the_imported_revision_is_attributable(db, capsys) -> None:
+    """§19: every mutation is attributable to a recorded policy decision. An import is a
+    mutation, so it carries one — naming where the book came from."""
+    run(db, "init")
+    revision_id = imported_id(db, capsys, "--fixture", "litrpg")
+
+    store = SqliteStore.open(db)
+    try:
+        decision = store.decision_for_revision(revision_id)
+        assert decision is not None
+        assert decision.outcome is Outcome.ACCEPT
+        assert decision.reason is not None and "imported from" in decision.reason
+        assert decision.gates == ()
+    finally:
+        store.close()
+
+
+def test_importing_the_same_book_twice_changes_nothing(db, capsys) -> None:
+    """Content-addressed, so a repeated import converges instead of forking the book — the
+    same property that makes a retried tick safe."""
+    run(db, "init")
+    first = imported_id(db, capsys, "--fixture", "mystery")
+    second = imported_id(db, capsys, "--fixture", "mystery")
+    assert first == second
+
+    store = SqliteStore.open(db)
+    try:
+        assert store.verify_integrity() == 1
+        rows = store._connection.execute("SELECT COUNT(*) AS n FROM policy_decisions").fetchone()
+        assert rows["n"] == 1
+    finally:
+        store.close()
+
+
+def test_import_reads_the_fixture_as_utf8(db, capsys) -> None:
+    """The default encoding on this platform is cp1252, and every litrpg scene carries an
+    em-dash. Read wrongly, each becomes three characters — and the node hash check then
+    reports corruption in a file that is not corrupt."""
+    run(db, "init")
+    revision_id = imported_id(db, capsys, "--fixture", "litrpg", "--keep-content")
+
+    store = SqliteStore.open(db)
+    try:
+        content = store.load_revision(revision_id).node("scene-1").content or ""
+    finally:
+        store.close()
+    assert "—" in content
+    assert "â" not in content  # the leading byte of a mojibaked em-dash
+
+
+def test_keeping_the_content_says_the_book_cannot_be_drafted(db, capsys) -> None:
+    """An import that preserves the source prose looks like a book and can take no draft
+    job. Saying so is the difference between a flag and a trap."""
+    run(db, "init")
+    run(db, "import", "--fixture", "mystery", "--keep-content")
+    out = capsys.readouterr().out
+    assert "0 scene(s) cleared" in out
+    assert "no scene is draftable" in out
+
+
+def test_a_manuscript_that_is_not_there_is_an_operational_fault(db, tmp_path, capsys) -> None:
+    run(db, "init")
+    assert run(db, "import", "--path", str(tmp_path / "absent.json")) == EXIT_FAULT
+    assert "litharness:" in capsys.readouterr().err
+
+
+def test_import_needs_exactly_one_source(db) -> None:
+    run(db, "init")
+    with pytest.raises(SystemExit):
+        run(db, "import")

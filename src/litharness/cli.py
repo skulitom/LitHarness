@@ -29,14 +29,20 @@ from collections.abc import Sequence
 from datetime import UTC, datetime
 from pathlib import Path
 
+import litharness_contracts as lc
+
+from litharness.adapters import contracts_fixtures
 from litharness.adapters.sqlite_store import MigrationsMissing, SqliteStore
 from litharness.application import status as status_module
 from litharness.application.conductor import Conductor, TickOutcome
 from litharness.application.handlers import SCENE_DRAFT, make_scene_draft_handler
 from litharness.domain.budget import BudgetPolicy
 from litharness.domain.directives import Directive, DirectiveKind, DirectiveStatus, directive_id_for
+from litharness.domain.events import Event, EventType
 from litharness.domain.exceptions import ExceptionStatus
 from litharness.domain.jobs import Job, JobStatus, input_digest_for
+from litharness.domain.policy import Outcome, PolicyDecision, decision_id_for
+from litharness.domain.revision import import_manuscript
 from litharness.providers import build_default_registry
 
 #: Exit codes, which are how the scheduler reads the outcome. See the module docstring.
@@ -316,6 +322,81 @@ def cmd_revert(args: argparse.Namespace) -> int:
     return EXIT_OK
 
 
+def cmd_import(args: argparse.Namespace) -> int:
+    """Put a book into the store. Until this existed, nothing could.
+
+    The system was a closed loop with no entry: `enqueue` requires `--revision`, a revision
+    id is minted only by committing a revision, and the only caller of `commit_revision`
+    outside the store was the draft handler — which needs a job, which needs the revision id
+    nothing could produce. Every other operator verb here acts on a book that no command
+    could create.
+
+    The revision id is printed because it is the argument the next command takes.
+    """
+    path = args.path or contracts_fixtures.fixture_manuscript(args.fixture)
+    # Explicit UTF-8. The default encoding on this platform is cp1252, which turns every
+    # em-dash in the litrpg fixture into three characters; the node hash check catches it,
+    # but as a corruption report about a file that is not corrupt.
+    source = lc.parse_artifact(lc.ManuscriptRevision, json.loads(path.read_text(encoding="utf-8")))
+    imported = import_manuscript(source, preserve_content=args.keep_content)
+    revision = imported.revision
+    stamp = _stamp(_now())
+
+    # §19: every mutation is attributable to a recorded policy decision. An import is a
+    # director's act rather than a gated one, so the decision carries no gate results — the
+    # only checks that ran (a root-revision requirement, a per-node content hash) raise
+    # before a decision exists, and recording them as passed would be a gate that cannot
+    # fail. Keyed on the *resulting* revision so re-importing identical content collapses
+    # onto one decision while a different import still gets its own.
+    decision = PolicyDecision(
+        decision_id=decision_id_for(f"import:{revision.revision_id}", 0, ()),
+        outcome=Outcome.ACCEPT,
+        resulting_revision_id=revision.revision_id,
+        reason=f"imported from {imported.source_revision_id} ({path.name})",
+    )
+    accepted = Event(
+        event_type=EventType.MANUSCRIPT_REVISION_ACCEPTED,
+        project_id=args.project,
+        created_at=stamp,
+        actor=args.holder,
+        book_id=revision.book_id,
+        branch_id=revision.branch_id,
+        revision_id=revision.revision_id,
+        payload={
+            "decision_id": decision.decision_id,
+            "imported": True,
+            "source_revision_id": imported.source_revision_id,
+            "nodes": len(revision.nodes),
+            "cleared": list(imported.cleared),
+            "kept_locked": list(imported.kept_locked),
+        },
+    )
+
+    store = _store(args)
+    try:
+        # Decision first, then the revision — the same order as the draft handler, for the
+        # same reason: a crash between them leaves a decision pointing at a revision that
+        # does not exist, which is detectable and harmless, rather than a revision no
+        # decision explains, which is the thing §19 forbids.
+        store.record_decision(decision, decided_at=stamp)
+        store.commit_revision(revision, created_at=stamp, events=[accepted])
+    finally:
+        store.close()
+
+    print(revision.revision_id)
+    print(f"  book={revision.book_id} branch={revision.branch_id}")
+    print(f"  {len(revision.nodes)} node(s) from {imported.source_revision_id[:12]}")
+    print(f"  {len(imported.cleared)} scene(s) cleared and draftable")
+    if imported.kept_locked:
+        print(
+            f"  {len(imported.kept_locked)} scene(s) left intact by a content lock and "
+            f"NOT draftable: {', '.join(imported.kept_locked)}"
+        )
+    if args.keep_content:
+        print("  --keep-content: no scene is draftable; a draft may only fill an empty node")
+    return EXIT_OK
+
+
 def cmd_backup(args: argparse.Namespace) -> int:
     store = _store(args)
     try:
@@ -445,6 +526,24 @@ def build_parser() -> argparse.ArgumentParser:
     revert.add_argument("--book", required=True)
     revert.add_argument("--branch", required=True)
     revert.set_defaults(func=cmd_revert)
+
+    importer = sub.add_parser(
+        "import", help="put a book into the store — the only command that creates a revision"
+    )
+    source = importer.add_mutually_exclusive_group(required=True)
+    source.add_argument(
+        "--fixture",
+        choices=list(contracts_fixtures.FIXTURE_IDS),
+        help="a golden book from the contracts checkout (§17 Stage 1 is graded on these)",
+    )
+    source.add_argument("--path", type=Path, help="a manuscript.json to import instead")
+    importer.add_argument(
+        "--keep-content",
+        action="store_true",
+        help="keep the source prose; the result has no draftable scene, so this is for "
+        "inspection and not for generation",
+    )
+    importer.set_defaults(func=cmd_import)
 
     backup = sub.add_parser("backup", help="online backup (safe while ticking)")
     backup.add_argument("destination", type=Path)

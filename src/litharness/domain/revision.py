@@ -33,13 +33,13 @@ from __future__ import annotations
 
 import json
 from collections.abc import Iterable, Mapping
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from hashlib import sha256
 from typing import Any
 
 import litharness_contracts as lc
 
-from litharness.domain.nodes import Node
+from litharness.domain.nodes import Node, NodeKind
 from litharness.domain.position import parse_key
 
 
@@ -231,6 +231,89 @@ class Revision:
                 f"{restored.revision_id[:12]} != {revision.revision_id[:12]}"
             )
         return restored
+
+
+@dataclass(frozen=True, slots=True)
+class ImportedManuscript:
+    """A foreign manuscript rebuilt as a local revision, with what changed named."""
+
+    revision: Revision
+    #: The id the source artifact carried. Kept because it is the only link back to where
+    #: this book came from, and it is *not* the local revision id — see `import_manuscript`.
+    source_revision_id: str
+    #: Scenes whose prose was cleared so a draft job can fill them.
+    cleared: tuple[str, ...] = ()
+    #: Scenes whose prose was *not* cleared because a content lock forbids it. Reported
+    #: rather than silently skipped: these are the nodes the importer could not make
+    #: draftable, and an operator who does not know that sees an import that "worked" and a
+    #: book with fewer draftable scenes than it has scenes.
+    kept_locked: tuple[str, ...] = ()
+
+
+def import_manuscript(
+    source: lc.ManuscriptRevision, *, preserve_content: bool = False
+) -> ImportedManuscript:
+    """Adopt a manuscript authored elsewhere as a root revision of this store.
+
+    **Why this is not `from_contract`.** That classmethod asserts the rebuilt id equals the
+    serialized one, which is the round-trip guarantee of a content-addressed store: an
+    artifact *this* system wrote must rebuild to the same address, and a mismatch means
+    corruption. A foreign artifact fails that assertion for a reason that is not corruption
+    at all — `litharness-contracts` mints revision ids as UUID5 while this package computes
+    a sha256 over content, so every contracts-authored manuscript mismatches by
+    construction. Relaxing the assertion to admit them would delete the corruption check for
+    the artifacts it exists to protect. So the id is *rebuilt* here and the source id is
+    carried as provenance instead. The per-node `content_sha256` check in
+    `Node.from_contract` is untouched and does the real integrity work — it is what catches
+    a manuscript decoded with the wrong codec.
+
+    **Only a root can be imported.** A source carrying a `parent_revision_id` names an
+    ancestor that is not in this store, and `lineage` walks parents until it reaches one:
+    importing it would produce a revision that breaks `verify` the first time anyone asked
+    for its history. Refused rather than silently re-parented.
+
+    **Scene prose is cleared unless `preserve_content`.** `gate_draft` refuses any node that
+    already carries content, so a manuscript imported with its prose intact is a book with
+    zero draftable scenes — it looks like a book and can do nothing. Clearing is what "the
+    fixture books regenerate from premise" (§17 Stage 1) means mechanically. Nothing is
+    lost: the source artifact is untouched on disk and its id is recorded. Only `SCENE`
+    nodes are cleared, because a scene is the unit a `scene_draft` job fills; titles and
+    structure are the frame the generation happens inside, not output to be reproduced.
+    """
+    if source.parent_revision_id is not None:
+        raise ValueError(
+            f"cannot import revision {source.revision_id[:12]}: it is parented on "
+            f"{source.parent_revision_id[:12]}, which is not in this store, and a revision "
+            "whose lineage is broken fails verification"
+        )
+
+    nodes: list[Node] = []
+    cleared: list[str] = []
+    kept_locked: list[str] = []
+    for contract_node in source.nodes:
+        node = Node.from_contract(contract_node)
+        if not preserve_content and node.kind is NodeKind.SCENE and node.content is not None:
+            # `replace` bypasses `with_content`'s lock check, so the lock is honoured here
+            # explicitly. A silent bypass would make a content lock mean nothing on the one
+            # path that erases content wholesale.
+            if node.lock.freezes_content:
+                kept_locked.append(node.logical_id)
+            else:
+                node = replace(node, content=None, content_sha256=None)
+                cleared.append(node.logical_id)
+        nodes.append(node)
+
+    return ImportedManuscript(
+        revision=Revision(
+            book_id=source.book_id,
+            branch_id=source.branch_id,
+            nodes=tuple(nodes),
+            parent_revision_id=None,
+        ),
+        source_revision_id=source.revision_id,
+        cleared=tuple(cleared),
+        kept_locked=tuple(kept_locked),
+    )
 
 
 def build_revision(

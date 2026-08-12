@@ -1,7 +1,7 @@
 # LitHarness: Autonomous Book-Production System Plan
 
 **Version:** 2.2 (supersedes PLAN-v1-authoring-tool.md, archived in this folder)
-**Status:** Master plan; **Stage 0 slices 1–5 implemented and green (243 tests); operable via `litharness tick`; four of §19's seven clauses met — scorecard in §19.1**
+**Status:** Master plan; **Stage 0 slices 1–6 implemented and green (271 tests); operable via `litharness tick`; a book can be got *into* the store as of slice 6 (`litharness import`), which is Stage 1's precondition and was missing; four of §19's seven clauses met — scorecard in §19.1**
 **Role:** A 24/7 autonomous system that plans, drafts, evaluates, repairs, and versions quality LitRPG books — directed by a human, never blocked on one
 **Inspection baseline:** Local projects inspected 2026-08-12; v2 rewrite same day; §7/§8/§13/§15/§17/§20 re-verified later the same day (v2.1); **§7/§8.4/§13/§17/§20 re-verified against all nine repositories that evening (v2.2)**
 
@@ -1005,7 +1005,7 @@ every unstruck action below as a claim to re-verify rather than a task to start.
    the same point — the forward interface has no consumer until a generator exists to
    constrain. Shaping the sheet now would be the exact guess this action's own
    sequencing rule forbids.
-4. **Scaffold LitHarness Stage 0** — **slices 1–5 done** (243 collected, 240 passing
+4. **Scaffold LitHarness Stage 0** — **slices 1–6 done** (271 collected, 268 passing
    + 3 opt-in live, ruff clean,
    mypy strict clean). Slice 1, the model-free manuscript spine: canonical text and
    hashing, the IR with lock taxonomy and block payloads, immutable
@@ -1069,6 +1069,41 @@ every unstruck action below as a claim to re-verify rather than a task to start.
    the substance of §20.8), and an uncalibrated craft gate may not block (§10.4). A veto
    no retry can fix escalates *before* the attempt budget is consulted, so a locked node
    reports as locked on the first try rather than as "attempts exhausted" on the fourth.
+
+   **Slice 6 opened the loop, which had no entry.** Stage 1 is graded on "the mystery and
+   litrpg fixture books regenerate from premise to accepted six-scene draft autonomously",
+   and there was no code path anywhere — not in `src`, not in the CLI, not in the suite —
+   that put either book into a store. Fifteen subcommands and none minted a revision;
+   `enqueue` requires `--revision`; a revision id came only from committing a revision; and
+   the only caller of `commit_revision` outside the store was the draft handler, which needs
+   a job, which needs the id. Every operator verb in §4.3 acted on a book no command could
+   create. Two things were in the way, and neither was a missing subsystem:
+
+   - `Revision.from_contract` **cannot load a contracts-authored manuscript, by
+     construction, and that is correct.** Contracts mints revision ids as UUID5; this
+     package computes a sha256 content address; the classmethod asserts they match. Both
+     fixtures fail it (`ef55d5adf2d9 != 1462725a-b14`, `907d923e5cd7 != cfb8482a-e84`). The
+     assertion is the round-trip corruption check for artifacts *this system wrote*, so
+     relaxing it to admit foreign ones would have deleted the check for the artifacts it
+     exists to protect. `import_manuscript` rebuilds the id instead and keeps the source id
+     as provenance; a test pins that `from_contract` still refuses the fixtures, because the
+     cheap fix was the wrong one and would look identical from the outside.
+   - **An imported book must have its scene prose cleared, and this is not a convenience.**
+     `gate_draft` refuses any node that already carries content (§12: rewriting routes
+     through a licensed complaint), so a fixture imported intact is a book with zero
+     draftable scenes — it looks like a book and can take no work. Clearing is what
+     "regenerate from premise" means mechanically. `--keep-content` exists for inspection
+     and says on stdout that nothing is draftable.
+
+   The import records a `PolicyDecision` and a `ManuscriptRevisionAccepted` event, so §19's
+   attribution clause holds on the one path that creates a book. It carries **no gate
+   results**: the only checks that run (a root-revision requirement, the per-node content
+   hash) raise before a decision exists, and recording them as passed would be a gate that
+   cannot fail — §8.3's own objection. **What this does not do:** it does not make Stage 1
+   attemptable. The prompt still comes from the operator's `--enqueue --prompt`, there is
+   still no planner, and the only blocking gate in the wired path is `shape.draft.v0`, so
+   "accepted" still means "a string of plausible length". It removes the precondition; it
+   closes no exit criterion.
 
    **On the exit criterion, precisely:** the endurance property is *evidenced, not
    met.* `test_a_week_of_no_op_ticks_changes_nothing` runs the 2,016 ticks a week
