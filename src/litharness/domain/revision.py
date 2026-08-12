@@ -118,6 +118,37 @@ class Revision:
                 return candidate
         raise KeyError(f"no node {logical_id} in revision {self.revision_id[:12]}")
 
+    def reverting_to(self, target: Revision) -> Revision:
+        """A new revision restoring ``target``'s node set, parented on ``self``.
+
+        **Reverting goes forward, never backward.** History is immutable and
+        content-addressed, so "undo" cannot mean deleting or rewriting a revision — every
+        evidence span citing it would become unresolvable, and the audit trail would lose
+        the fact that the bad revision ever existed, which is the fact an operator most
+        needs afterwards. Instead this produces a *new* revision whose content equals the
+        target's, leaving both the mistake and the correction in the record.
+
+        Free in storage: node versions are content addresses inserted with
+        `INSERT OR IGNORE`, so restoring old content stores no new node rows.
+
+        Nodes present now but absent from the target are carried forward tombstoned rather
+        than dropped, because a revision that dropped a node would make its predecessor
+        unreconstructible and break the restore guarantee (§19).
+        """
+        restored = {node.logical_id: node for node in target.nodes}
+        nodes: list[Node] = list(target.nodes)
+        for node in self.nodes:
+            if node.logical_id not in restored and not node.tombstoned:
+                nodes.append(
+                    node.tombstone(f"absent from reverted-to revision {target.revision_id[:12]}")
+                )
+        return Revision(
+            book_id=self.book_id,
+            branch_id=self.branch_id,
+            nodes=tuple(nodes),
+            parent_revision_id=self.revision_id,
+        )
+
     def children_of(self, logical_id: str | None) -> list[Node]:
         """Live children in position order. Tombstoned nodes are excluded."""
         children = [

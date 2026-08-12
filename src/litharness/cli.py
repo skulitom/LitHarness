@@ -300,6 +300,22 @@ def cmd_resume(args: argparse.Namespace) -> int:
     return EXIT_OK
 
 
+def cmd_revert(args: argparse.Namespace) -> int:
+    """Restore an earlier revision's content as a new head (§19 reversibility).
+
+    Forward, never backward: the mistake and the correction both stay in the record.
+    """
+    store = _store(args)
+    try:
+        reverted = store.revert(
+            args.book, args.branch, args.revision, created_at=_stamp(_now())
+        )
+    finally:
+        store.close()
+    print(f"reverted to {args.revision[:12]} as new head {reverted.revision_id[:12]}")
+    return EXIT_OK
+
+
 def cmd_backup(args: argparse.Namespace) -> int:
     store = _store(args)
     try:
@@ -423,6 +439,12 @@ def build_parser() -> argparse.ArgumentParser:
 
     resume = sub.add_parser("resume", help="undo pause")
     resume.set_defaults(func=cmd_resume)
+
+    revert = sub.add_parser("revert", help="restore an earlier revision as the new head")
+    revert.add_argument("revision", help="revision id to restore")
+    revert.add_argument("--book", required=True)
+    revert.add_argument("--branch", required=True)
+    revert.set_defaults(func=cmd_revert)
 
     backup = sub.add_parser("backup", help="online backup (safe while ticking)")
     backup.add_argument("destination", type=Path)

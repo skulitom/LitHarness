@@ -449,3 +449,103 @@ def test_a_storage_error_is_not_masked_by_its_own_rollback(tmp_path) -> None:
             store.enqueue(Job(job_id=f"j-{index}", job_kind="noop", payload={"pad": "x" * 4000}))
     assert "cannot rollback" not in str(caught.value)
     assert "full" in str(caught.value).lower()
+
+
+# --- reversibility (§19 Integrity, second half) --------------------------------------
+
+
+def test_the_head_is_a_stored_pointer_not_the_newest_timestamp(
+    store: SqliteStore, revision: Revision
+) -> None:
+    """Inferring the head by `created_at` made reverting inexpressible — a revision
+    restoring older content would carry an older timestamp and therefore not be the head —
+    and made branch state depend on a clock, with ties broken by content hash."""
+    store.commit_revision(revision, created_at="2026-08-12T00:05:00Z")
+    edited = revision.replacing([revision.node("scene-1").with_content("Later.")])
+    # Deliberately an *earlier* stamp than its parent.
+    store.commit_revision(edited, created_at="2026-08-12T00:00:00Z")
+
+    head = store.head(BOOK_ID, BRANCH_ID)
+    assert head is not None and head.revision_id == edited.revision_id
+
+
+def test_revert_restores_content_by_going_forward(
+    store: SqliteStore, revision: Revision
+) -> None:
+    """History is immutable and content-addressed, so undo cannot mean deletion: every
+    span citing the bad revision would become unresolvable and the record would lose the
+    fact that it ever existed."""
+    store.commit_revision(revision, created_at=NOW)
+    original = revision.node("scene-1").content
+    bad = revision.replacing([revision.node("scene-1").with_content("A regrettable line.")])
+    store.commit_revision(bad, created_at="2026-08-12T00:01:00Z")
+
+    reverted = store.revert(
+        BOOK_ID, BRANCH_ID, revision.revision_id, created_at="2026-08-12T00:02:00Z"
+    )
+
+    assert reverted.node("scene-1").content == original
+    assert store.head(BOOK_ID, BRANCH_ID).revision_id == reverted.revision_id  # type: ignore[union-attr]
+    # Both the mistake and the correction survive — that is what "forward" buys.
+    assert store.load_revision(bad.revision_id).node("scene-1").content == "A regrettable line."
+    assert store.lineage(reverted.revision_id)[:3] == [
+        reverted.revision_id,
+        bad.revision_id,
+        revision.revision_id,
+    ]
+
+
+def test_revert_stores_no_new_node_versions(store: SqliteStore, revision: Revision) -> None:
+    """Free in storage: node versions are content addresses, so restoring old content
+    inserts no new node rows."""
+    store.commit_revision(revision, created_at=NOW)
+    bad = revision.replacing([revision.node("scene-1").with_content("A regrettable line.")])
+    store.commit_revision(bad, created_at="2026-08-12T00:01:00Z")
+    before = store._connection.execute("SELECT COUNT(*) AS n FROM node_versions").fetchone()["n"]
+
+    store.revert(BOOK_ID, BRANCH_ID, revision.revision_id, created_at="2026-08-12T00:02:00Z")
+
+    after = store._connection.execute("SELECT COUNT(*) AS n FROM node_versions").fetchone()["n"]
+    assert after == before
+
+
+def test_a_node_added_after_the_target_is_tombstoned_not_dropped(
+    store: SqliteStore, revision: Revision
+) -> None:
+    """A revision that dropped a node would make its predecessor unreconstructible and
+    break the restore guarantee."""
+    from litharness.domain.nodes import Node, NodeKind
+
+    store.commit_revision(revision, created_at=NOW)
+    added = Revision(
+        book_id=revision.book_id,
+        branch_id=revision.branch_id,
+        nodes=(
+            *revision.nodes,
+            Node.text_node("scene-7", NodeKind.SCENE, "070", "Extra.", parent_logical_id="book"),
+        ),
+        parent_revision_id=revision.revision_id,
+    )
+    store.commit_revision(added, created_at="2026-08-12T00:01:00Z")
+
+    reverted = store.revert(
+        BOOK_ID, BRANCH_ID, revision.revision_id, created_at="2026-08-12T00:02:00Z"
+    )
+
+    assert reverted.node("scene-7").tombstoned
+    assert "scene-7" not in [node.logical_id for node in reverted.children_of("book")]
+    assert store.verify_integrity() == 3
+
+
+def test_reverting_is_itself_reversible(store: SqliteStore, revision: Revision) -> None:
+    """Forward-only history means undo composes: reverting the revert restores the change."""
+    store.commit_revision(revision, created_at=NOW)
+    bad = revision.replacing([revision.node("scene-1").with_content("A regrettable line.")])
+    store.commit_revision(bad, created_at="2026-08-12T00:01:00Z")
+    store.revert(BOOK_ID, BRANCH_ID, revision.revision_id, created_at="2026-08-12T00:02:00Z")
+
+    again = store.revert(
+        BOOK_ID, BRANCH_ID, bad.revision_id, created_at="2026-08-12T00:03:00Z"
+    )
+
+    assert again.node("scene-1").content == "A regrettable line."

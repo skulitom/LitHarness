@@ -385,6 +385,17 @@ class SqliteStore:
                 )
             for event in events:
                 self._insert_event(connection, event)
+            # The head moves in the same transaction as the revision it points at, so a
+            # crash cannot leave a revision that exists but is not the head, or a head
+            # pointing at nothing. `revert` relies on this: it commits a revision whose
+            # content is older than the one it replaces, and only an explicit pointer can
+            # express that.
+            connection.execute(
+                "INSERT INTO branch_heads (book_id, branch_id, revision_id, updated_at) "
+                "VALUES (?, ?, ?, ?) ON CONFLICT (book_id, branch_id) DO UPDATE SET "
+                "revision_id = excluded.revision_id, updated_at = excluded.updated_at",
+                (revision.book_id, revision.branch_id, revision.revision_id, created_at),
+            )
 
     def load_revision(self, revision_id: str) -> Revision:
         row = self._connection.execute(
@@ -414,12 +425,41 @@ class SqliteStore:
         return restored
 
     def head(self, book_id: str, branch_id: str) -> Revision | None:
+        """The current head of a branch.
+
+        A stored pointer, updated on every commit, rather than the newest `created_at`.
+        Inferring it by timestamp made "make revision R the head again" inexpressible —
+        §19's Integrity clause says every mutation is attributable *and reversible*, and
+        the second half needs somewhere for the answer to live. It also made the head
+        depend on a clock: two commits in the same second resolved by lexical id.
+        """
         row = self._connection.execute(
-            "SELECT revision_id FROM revisions WHERE book_id = ? AND branch_id = ? "
-            "ORDER BY created_at DESC, revision_id DESC LIMIT 1",
+            "SELECT revision_id FROM branch_heads WHERE book_id = ? AND branch_id = ?",
             (book_id, branch_id),
         ).fetchone()
         return None if row is None else self.load_revision(row["revision_id"])
+
+    def revert(
+        self,
+        book_id: str,
+        branch_id: str,
+        target_revision_id: str,
+        *,
+        created_at: str,
+        events: Sequence[Event] = (),
+    ) -> Revision:
+        """Restore ``target_revision_id``'s content as a new head. §19's reversibility.
+
+        Forward, never backward: the mistake and the correction both stay in the record.
+        Committing and moving the head happen in one transaction, so a crash cannot leave
+        a revision that exists but is not the head, or a head pointing at nothing.
+        """
+        current = self.head(book_id, branch_id)
+        if current is None:
+            raise KeyError(f"no head for {book_id}/{branch_id}")
+        reverted = current.reverting_to(self.load_revision(target_revision_id))
+        self.commit_revision(reverted, created_at=created_at, events=events)
+        return reverted
 
     def lineage(self, revision_id: str) -> list[str]:
         """Ancestry from ``revision_id`` back to the root, newest first."""
