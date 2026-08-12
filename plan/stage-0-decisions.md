@@ -1,9 +1,11 @@
 # Stage 0 decisions
 
-**Status:** Slices 1-3 built and green — 119 tests (+3 opt-in live), ruff clean, mypy
-strict clean. Slice 1 is the model-free manuscript spine; slice 2 the Conductor skeleton
+**Status:** Slices 1-4 built and green — **146 tests (+3 opt-in live), ruff clean, mypy
+strict clean.** Slice 1 is the model-free manuscript spine; slice 2 the Conductor skeleton
 (tick, instance lease, job selection, digest, outbox dispatch, crash recovery); slice 3 the
-four provider adapters with their conformance suite and the billing guard.
+four provider adapters with their conformance suite and the billing guard; **slice 4 the
+first path on which generated text reaches accepted canon — job payloads, the draft shape
+gate, and a provider-backed handler wired into the tick.**
 
 PLAN.md §20.4 warns that Stage 0 carries "roughly half a dozen load-bearing design
 decisions [that] are genuinely open and an agent will silently invent answers to all of
@@ -202,6 +204,111 @@ cached per tick, and a probe that raises counts as unhealthy rather than crashin
 the caller can record the switch as an event; §5 rule 4 forbids a silent change of
 provenance.
 
+## 12. A job carries its input — and the blocker nobody had written down
+
+`domain/jobs.py`, `migrations/003_job_input.sql`. PLAN.md §20.4 said the three remaining
+Stage 0 items "all need subsystems that do not exist yet". For wiring the registry into a
+handler that was simply false, and the diagnosis hid the real obstacle: **`Job` carried
+`input_digest` — a hash — and no input.** A handler satisfying the `JobHandler` protocol
+received a job it could not reconstruct a prompt from, so the four working adapters had no
+possible consumer for reasons that had nothing to do with planners or context packets.
+
+The digest keeps its dedupe role and `payload` sits beside it rather than replacing it,
+because they answer different questions: the digest says "this is the same work", the
+payload says "this is the work". `input_digest_for` delegates to `events.payload_digest`
+so the package has one canonical-JSON-digest definition; two would drift, and the failure
+would be silent — a job enqueued through one path would stop deduplicating against the
+same job enqueued through the other.
+
+An empty payload stores NULL rather than `"{}"`, so the no-op workload the endurance test
+runs does not pay for a column it never uses, and "no input" stays distinguishable from
+"empty input".
+
+## 13. Claim ordering — priority now, policy later
+
+`adapters/sqlite_store.py`. `fifo_selector`'s docstring blamed the missing plan graph and
+findings store for the placeholder policy. True, but incomplete in a way worth recording:
+`claim_next` hardcoded `ORDER BY rowid`, so **no ordering other than FIFO was expressible
+at any layer** regardless of which subsystems existed. The selector seam was real; the
+storage underneath it was not.
+
+`priority INTEGER NOT NULL DEFAULT 0` plus `ORDER BY priority DESC, rowid` fixes that, and
+at the default it is byte-identical to the FIFO it replaces — `fifo_selector` keeps its
+exact meaning and no existing test changed. **A severity policy is deliberately not built
+here.** With no findings store the column would have exactly one value, and a selector
+over a constant is theatre that would later have to be unpicked.
+
+`rowid` is absent from the index key because SQLite refuses to index it by name — and does
+not need to, since every b-tree index carries the rowid as payload and breaks ties on it
+ascending. That is the exact tiebreak the ORDER BY wants, and
+`test_priority_ties_break_on_insertion_not_on_id` pins it rather than trusting it.
+
+## 14. Drafting is not revising, and the type system says so
+
+`domain/draft.py`. The decision with the widest consequences in this slice, and it is an
+architectural boundary rather than a validation detail.
+
+`apply_patch` gates a *change* to existing text. `gate_draft` gates a node's *first* prose.
+They are separate functions because the interesting rule is the one that separates them:
+**`DraftPolicy.allow_overwrite` defaults to False, so a draft may only fill emptiness.**
+Rewriting must route through `apply_patch`, where `Veto.UNLICENSED_DELETION` requires a
+located complaint.
+
+This is §1a.2 and §12 made mechanical. Once a handler can generate and commit, the obvious
+next move is "have it improve the scene it just wrote" — the open-ended revision loop the
+plan forbids, with RevisionBench's ~80% preference for human originals as the measured
+evidence against it. The default is what makes that move impossible by accident rather
+than merely discouraged in prose, and
+`test_a_draft_will_not_overwrite_existing_prose` fails if it is flipped. Do not relax it
+as a convenience.
+
+Vetoes are shared with `patch.py` in one `Veto` enum rather than split per gate, so a
+policy decision record cites the same name whichever gate produced it. Two additions:
+`EMPTY_DRAFT` and `SHAPE_NOT_CONFORMING`, the latter fed directly by
+`CompletionResult.conforms` — a schema miss is a §4.2 ladder-step-1 result earning a
+bounded retry, never an exception that kills the unit.
+
+## 15. The handler commits the revision; the Conductor commits the job
+
+`application/handlers.py`. `JobHandler` returns events and must not write to the store —
+except that a draft handler must, because `commit_revision` is the only call that puts a
+revision and its event in one transaction. Both are true, and the resolution is a
+deliberate asymmetry: **the revision and its `ManuscriptRevisionAccepted` event are atomic
+with each other; the job's status row is not atomic with either.**
+
+`Conductor._run` commits handler events and the job row separately, so a crash between
+them replays the job. That gap is not closed by pretending — it is closed by making the
+work converge: revisions are content-addressed and inserted with `INSERT OR IGNORE`, and
+event idempotency keys are content-derived, so a replay produces the same revision id and
+the same event key and collapses.
+`test_replaying_the_job_converges_instead_of_duplicating` runs the handler twice and
+asserts one accepted revision and one event.
+
+The accepted event returns an empty sequence from the handler because `commit_revision`
+already persisted it; returning it as well would be harmless (the key collapses) but would
+misreport the tick's event count.
+
+**A refused candidate still emits an event.** Silence would make a refusal unauditable and
+hide a provider that had started returning stubs. Both events carry the provider, model,
+profile, fallback chain and usage — §5 rule 4 forbids a silent provenance switch, and a
+gate failure from a degraded fallback is a different diagnosis from one from the primary.
+Neither is a policy decision record; that schema does not exist yet (§20.3), so the gate
+results ride in the payload, which is the consumer-first evidence for what that record
+must eventually hold.
+
+## 16. `reset_health` gets the caller its own docstring promised
+
+`application/conductor.py`. `ProviderRegistry.reset_health` documented "called at the start
+of a tick" and had no non-test caller, so a provider marked dead by one failed probe stayed
+dead for the life of the process and could never recover. Harmless while nothing owned a
+registry; a live bug the moment slice 4 gave one a consumer.
+
+The Conductor takes an optional `registry` typed as a structural `HealthResettable`
+protocol rather than importing `ProviderRegistry`, so the loop keeps its one-way dependency
+on `providers` at the handler layer. The reset happens **after** the leadership guard — a
+non-leader must not touch shared state — and **before** reconcile, so every probe in a tick
+sees one consistent verdict per provider.
+
 ## What these slices do not include
 
 Deliberately deferred, in the order they should land:
@@ -209,21 +316,33 @@ Deliberately deferred, in the order they should land:
 1. **Directive ingestion** (§4.3) — the plan scopes the Stage 0 Conductor to "tick, lease,
    job selection, digest stub", and a directive inbox without the Narrative Planner to
    interpret it would be a queue nothing can read.
-2. **A real work-selection policy.** `fifo_selector` is a placeholder behind a
-   `WorkSelector` protocol. §4.1 wants selection to be a policy over the book's state —
-   unblocked beats, findings by severity, derived artifacts to recompute — which needs a
-   plan graph and a findings store that do not exist yet. FIFO is honest about being a
-   placeholder; a cleverer arbitrary ordering would not be.
+2. **A real work-selection policy.** `fifo_selector` is still a placeholder behind a
+   `WorkSelector` protocol, but the *storage* under it no longer is — see decision 13. What
+   remains genuinely blocked is the policy: §4.1 wants selection over the book's state
+   (unblocked beats, findings by severity), which needs a plan graph and a findings store
+   that do not exist. FIFO is honest about being a placeholder; a cleverer arbitrary
+   ordering would not be.
 3. **Retry backoff.** Retries are immediate on the next tick, bounded only by the attempt
    budget. A `next_attempt_at` column would add backoff and is not invented until something
    needs a specific delay.
-4. **Wiring the registry into the Conductor.** The adapters exist and conform; no job
-   handler consumes them yet, because the first real handler is a Stage 1 concern (a scene
-   draft needs a plan and a context packet). The seam is `Conductor.handlers`.
+4. ~~**Wiring the registry into the Conductor.**~~ **Done in slice 4** — decisions 12 and
+   15. The stated reason for deferring ("the first real handler is a Stage 1 concern: a
+   scene draft needs a plan and a context packet") was true of a *planned* scene draft and
+   false of wiring; the actual obstacle was a missing payload column. `make_scene_draft_handler`
+   is a closure satisfying `JobHandler` with zero Conductor changes. What is still a Stage 1
+   concern is where the prompt comes from: today the caller supplies it in the job payload,
+   because there is no planner to derive it from a beat and no context packet to ground it.
 5. **Contracts 1.x minors** (§20.3) — and these slices are what make them safe to write:
-   `lease_holder`/`lease_expires_at` on `JobRecord`, `block_kind`/`block_payload` and a
-   lock enum on `ManuscriptNode`, and the Conductor `EventType` additions are now shapes
-   proven by a consumer rather than guesses.
+   `lease_holder`/`lease_expires_at`/**`payload`**/**`priority`** on `JobRecord`,
+   `block_kind`/`block_payload` and a lock enum on `ManuscriptNode`, and the Conductor
+   `EventType` additions are now shapes proven by a consumer rather than guesses. Slice 4
+   adds a sixth: the **policy decision record**, whose required fields are currently the
+   provenance dict in `handlers.py` and are asserted by
+   `test_the_accepted_event_carries_the_provenance_a_policy_record_will_need`.
+6. **A craft gate of any kind.** Nothing here measures whether the prose is good — §1a.1's
+   distinction, stated plainly so a green suite is not misread. `gate_draft` checks that a
+   draft exists, is the right shape, and did not overwrite anything. A scene that passes
+   every gate in this repo can still be dead on the page.
 
 ## Two fixes this work forced upstream
 
@@ -237,4 +356,5 @@ consumer:
   package exists to define. 90 names now exported.
 
 All consuming suites stayed green: contracts 113, ContinuityEvaluation 42,
-LongRangeContext 14, BookWorldState 100, LitHarness 76.
+LongRangeContext 14, BookWorldState 100, LitHarness **146** (was misreported as 76 here
+and in PLAN.md §20.4 through slice 3; corrected in the v2.2 pass).

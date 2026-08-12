@@ -33,6 +33,13 @@ from litharness.domain.text import canonicalize, content_hash
 
 
 class Veto(enum.StrEnum):
+    """One vocabulary for every mechanical refusal, shared with `domain.draft`.
+
+    Kept as a single enum rather than one per gate so a policy decision record cites the
+    same name whichever gate produced it, and so §4.2's retry ladder has one table of
+    reasons to act on.
+    """
+
     EMPTY_PATCH = "empty_patch"
     UNKNOWN_TARGET = "unknown_target"
     STALE_BASE_VERSION = "stale_base_version"
@@ -46,6 +53,9 @@ class Veto(enum.StrEnum):
     LENGTH_MOVEMENT = "length_movement"
     PRESERVATION_BREACH = "preservation_breach"
     UNSUPPORTED_OP = "unsupported_op"
+    #: Raised by `domain.draft` only.
+    EMPTY_DRAFT = "empty_draft"
+    SHAPE_NOT_CONFORMING = "shape_not_conforming"
 
 
 @dataclass(frozen=True, slots=True)

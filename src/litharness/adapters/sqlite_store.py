@@ -63,6 +63,18 @@ def _split_statements(script: str) -> list[str]:
     return statements
 
 
+def _dump_payload(payload: dict[str, Any]) -> str | None:
+    """Serialize a job payload, or NULL for an empty one.
+
+    Empty maps to NULL rather than `"{}"` so that a job carrying no input is
+    distinguishable in the table from one carrying an empty object, and so the column
+    stays cheap for the no-op workload the endurance test runs.
+    """
+    if not payload:
+        return None
+    return json.dumps(payload, sort_keys=True, ensure_ascii=False)
+
+
 @dataclass(frozen=True, slots=True)
 class StoredEvent:
     sequence: int
@@ -353,8 +365,9 @@ class SqliteStore:
         with self.transaction() as connection:
             connection.execute(
                 "INSERT OR IGNORE INTO jobs (job_id, job_kind, status, attempts, max_attempts, "
-                "idempotency_key, input_digest, error, lease_holder, lease_expires_at) "
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                "idempotency_key, input_digest, error, lease_holder, lease_expires_at, "
+                "payload, priority) "
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                 (
                     job.job_id,
                     job.job_kind,
@@ -366,6 +379,8 @@ class SqliteStore:
                     job.error,
                     job.lease_holder,
                     job.lease_expires_at,
+                    _dump_payload(job.payload),
+                    job.priority,
                 ),
             )
 
@@ -405,6 +420,8 @@ class SqliteStore:
             error=row["error"],
             lease_holder=row["lease_holder"],
             lease_expires_at=row["lease_expires_at"],
+            payload=json.loads(row["payload"]) if row["payload"] else {},
+            priority=row["priority"],
         )
 
     def claim_next(self, holder: str, now: float, duration: float) -> Job | None:
@@ -412,12 +429,18 @@ class SqliteStore:
 
         The claim and the lease write happen in a single IMMEDIATE transaction, so two
         Conductor instances racing on the same tick cannot both win.
+
+        Order is `(priority DESC, rowid)`. While every job sits at the default priority
+        of 0 this is byte-identical to the FIFO it replaces — which is the point: it makes
+        a non-FIFO policy *expressible* (§4.1) without inventing one. Before this, no
+        ordering other than insertion order could be written at any layer, so
+        `fifo_selector`'s docstring understated its own constraint.
         """
         with self.transaction() as connection:
             row = connection.execute(
                 "SELECT * FROM jobs WHERE status = ? "
                 "AND (lease_expires_at IS NULL OR lease_expires_at <= ?) "
-                "ORDER BY rowid LIMIT 1",
+                "ORDER BY priority DESC, rowid LIMIT 1",
                 (JobStatus.QUEUED.value, now),
             ).fetchone()
             if row is None:

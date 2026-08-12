@@ -110,6 +110,16 @@ def fifo_selector(store: SqliteStore, holder: str, now: float, duration: float) 
     return store.claim_next(holder, now=now, duration=duration)
 
 
+class HealthResettable(Protocol):
+    """Anything holding per-tick cached health verdicts. `ProviderRegistry` satisfies it.
+
+    Typed structurally rather than importing the registry, so `application` keeps its one
+    -way dependency on `providers` at the handler layer instead of the loop.
+    """
+
+    def reset_health(self) -> None: ...
+
+
 @dataclass
 class Conductor:
     store: SqliteStore
@@ -122,6 +132,11 @@ class Conductor:
     lease_duration: float = 300.0
     job_lease_duration: float = 600.0
     paused: bool = False
+    #: Cleared once per leading tick. `ProviderRegistry.reset_health` documents "called at
+    #: the start of a tick" and had no caller, so a provider marked dead by one failed
+    #: probe stayed dead for the life of the process and never recovered. Harmless while
+    #: nothing owned a registry; a real bug the moment a handler does.
+    registry: HealthResettable | None = None
 
     # -- tick -----------------------------------------------------------------
 
@@ -137,6 +152,12 @@ class Conductor:
         if self.paused:
             self._finish(tick_id, now, TickOutcome.PAUSED, None, 0, 0)
             return TickResult(tick_id, TickOutcome.PAUSED)
+
+        # Fresh health verdicts for this tick. Deliberately after the leadership guard —
+        # a non-leader must not touch shared state, and deliberately before reconcile, so
+        # every probe in the tick sees one consistent verdict per provider.
+        if self.registry is not None:
+            self.registry.reset_health()
 
         # Reconcile is two distinct recoveries, and both are needed. `reclaim_expired`
         # rescues a unit whose holder crashed mid-job; `requeue_failed` advances a unit that

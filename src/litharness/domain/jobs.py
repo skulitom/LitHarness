@@ -11,6 +11,15 @@ being dropped. That is the honest state of things and the reason PLAN.md §20.3 
 `lease_holder` / `lease_expires_at` as net-new 1.x fields: this module is the consumer
 that now knows what they need to hold.
 
+**`payload` is net-new for the same reason, and for a sharper one.** The contract has
+`input_digest` and no input. A digest proves two enqueues describe the same work and
+collapses a replayed one; it cannot reconstruct what the work *was*. So a handler
+received a job it could not build a prompt from, and that — not any missing subsystem —
+is what actually blocked wiring the provider registry into a handler (PLAN.md §20.4,
+corrected in the v2.2 pass). The digest keeps its dedupe role; `payload` carries the
+input beside it, and `input_digest_for` derives one from the other so there is one
+JSON-digest definition in this package rather than two.
+
 **Lease semantics.** A lease is a holder id plus an expiry. Claiming requires the job to
 be unleased or its lease expired; renewal extends the expiry for the same holder;
 release clears it. Expiry is wall-clock, which means a paused process can wake up
@@ -23,9 +32,12 @@ clock has to be testable without waiting.
 from __future__ import annotations
 
 import enum
-from dataclasses import dataclass, replace
+from dataclasses import dataclass, field, replace
+from typing import Any
 
 import litharness_contracts as lc
+
+from litharness.domain.events import payload_digest
 
 
 class JobStatus(enum.StrEnum):
@@ -96,6 +108,10 @@ class Job:
     lease_holder: str | None = None
     lease_expires_at: float | None = None
     max_attempts: int = 3
+    #: The handler's input. Net-new; `input_digest` is a hash and cannot reconstruct it.
+    payload: dict[str, Any] = field(default_factory=dict)
+    #: Claim order is (priority DESC, rowid). Inert at the default — see migration 003.
+    priority: int = 0
 
     # -- state machine --------------------------------------------------------
 
@@ -146,6 +162,9 @@ class Job:
     # -- contract projection --------------------------------------------------
 
     def to_contract(self, meta: lc.ArtifactMeta) -> lc.JobRecord:
+        """Project onto the contract. `lease_holder`, `lease_expires_at`, `payload` and
+        `priority` are dropped — `JobRecord` has no field for any of them and no metadata
+        dict to smuggle them through. All four are PLAN.md §20.3's 1.x additions."""
         return lc.JobRecord(
             meta=meta,
             job_id=self.job_id,
@@ -156,3 +175,14 @@ class Job:
             input_digest=self.input_digest,
             error=self.error,
         )
+
+
+def input_digest_for(payload: dict[str, Any]) -> str:
+    """The digest of a job's input.
+
+    Delegates to `events.payload_digest` so this package has exactly one definition of
+    "the canonical JSON digest of a dict". Two would drift, and the failure would be
+    silent: a job enqueued through one path would stop deduplicating against the same
+    job enqueued through the other.
+    """
+    return payload_digest(payload)
