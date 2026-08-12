@@ -1,0 +1,321 @@
+"""Persistence gates for Stage 0's exit criterion.
+
+Covers the half of "revisions, patches, events, and restore work end-to-end without a
+model" that lives in storage, plus the crash-safety and idempotency properties §19 asks
+for. No model is involved anywhere in this file, which is the point.
+"""
+
+from __future__ import annotations
+
+import sqlite3
+
+import pytest
+
+from litharness.adapters.sqlite_store import IntegrityFailure, SqliteStore
+from litharness.domain.events import Event, EventType, OutboxState
+from litharness.domain.jobs import IllegalTransition, Job, JobStatus, LeaseError
+from litharness.domain.patch import apply_patch
+from litharness.domain.revision import Revision
+from tests.conftest import BOOK_ID, BRANCH_ID, PROJECT_ID, build_patch
+
+NOW = "2026-08-12T00:00:00Z"
+
+
+@pytest.fixture
+def store(tmp_path) -> SqliteStore:
+    return SqliteStore.open(tmp_path / "litharness.db")
+
+
+def accepted_event(revision: Revision, note: str = "") -> Event:
+    return Event(
+        event_type=EventType.MANUSCRIPT_REVISION_ACCEPTED,
+        project_id=PROJECT_ID,
+        created_at=NOW,
+        book_id=revision.book_id,
+        branch_id=revision.branch_id,
+        revision_id=revision.revision_id,
+        payload={"nodes": len(revision.nodes), "note": note},
+    )
+
+
+# --- revisions round-trip ----------------------------------------------------------
+
+
+def test_revision_round_trips_through_storage(store: SqliteStore, revision: Revision) -> None:
+    store.commit_revision(revision, created_at=NOW)
+    restored = store.load_revision(revision.revision_id)
+    assert restored.revision_id == revision.revision_id
+    assert restored.version_ids == revision.version_ids
+    assert restored.rendered_text() == revision.rendered_text()
+
+
+def test_committing_the_same_revision_twice_is_a_no_op(
+    store: SqliteStore, revision: Revision
+) -> None:
+    store.commit_revision(revision, created_at=NOW)
+    store.commit_revision(revision, created_at=NOW)
+    count = store._connection.execute("SELECT COUNT(*) AS n FROM revisions").fetchone()["n"]
+    assert count == 1
+
+
+def test_unchanged_nodes_are_stored_once_across_revisions(
+    store: SqliteStore, revision: Revision
+) -> None:
+    """Content addressing means an edit stores one new node row, not a whole new tree."""
+    store.commit_revision(revision, created_at=NOW)
+    before = store._connection.execute("SELECT COUNT(*) AS n FROM node_versions").fetchone()["n"]
+    edited = revision.replacing([revision.node("scene-3").with_content("Rewritten scene three.")])
+    store.commit_revision(edited, created_at=NOW)
+    after = store._connection.execute("SELECT COUNT(*) AS n FROM node_versions").fetchone()["n"]
+    assert after == before + 1
+
+
+def test_fork_stores_no_new_node_versions(store: SqliteStore, revision: Revision) -> None:
+    store.commit_revision(revision, created_at=NOW)
+    before = store._connection.execute("SELECT COUNT(*) AS n FROM node_versions").fetchone()["n"]
+    forked = revision.forked_to("55555555-5555-5555-8555-555555555555")
+    store.commit_revision(forked, created_at=NOW)
+    after = store._connection.execute("SELECT COUNT(*) AS n FROM node_versions").fetchone()["n"]
+    assert after == before
+
+
+def test_head_follows_the_latest_revision_on_a_branch(
+    store: SqliteStore, revision: Revision
+) -> None:
+    store.commit_revision(revision, created_at="2026-08-12T00:00:00Z")
+    edited = revision.replacing([revision.node("scene-1").with_content("Later.")])
+    store.commit_revision(edited, created_at="2026-08-12T00:01:00Z")
+    head = store.head(BOOK_ID, BRANCH_ID)
+    assert head is not None and head.revision_id == edited.revision_id
+    assert store.lineage(edited.revision_id) == [edited.revision_id, revision.revision_id]
+
+
+# --- patch + commit end to end ----------------------------------------------------
+
+
+def test_patch_commit_and_reload_preserves_untouched_text(
+    store: SqliteStore, revision: Revision
+) -> None:
+    store.commit_revision(revision, created_at=NOW)
+    original = revision.node("scene-6").content
+    assert original is not None
+
+    outcome = apply_patch(revision, build_patch(revision, "scene-6", [(0, 3, "That")]))
+    assert outcome.accepted and outcome.revision is not None
+    store.commit_revision(
+        outcome.revision, created_at=NOW, events=[accepted_event(outcome.revision)]
+    )
+
+    reloaded = store.load_revision(outcome.revision.revision_id)
+    assert reloaded.node("scene-6").content == "That" + original[3:]
+    assert reloaded.node("scene-1").content == revision.node("scene-1").content
+
+
+def test_a_vetoed_patch_leaves_storage_untouched(store: SqliteStore, revision: Revision) -> None:
+    store.commit_revision(revision, created_at=NOW)
+    outcome = apply_patch(revision, build_patch(revision, "scene-1", [(0, 10, "A"), (5, 15, "B")]))
+    assert not outcome.accepted
+    assert store.head(BOOK_ID, BRANCH_ID) is not None
+    assert store.head(BOOK_ID, BRANCH_ID).revision_id == revision.revision_id  # type: ignore[union-attr]
+    assert store._connection.execute("SELECT COUNT(*) AS n FROM revisions").fetchone()["n"] == 1
+
+
+# --- events and the outbox --------------------------------------------------------
+
+
+def test_events_commit_atomically_with_their_revision(
+    store: SqliteStore, revision: Revision
+) -> None:
+    store.commit_revision(revision, created_at=NOW, events=[accepted_event(revision)])
+    log = store.read_log()
+    assert len(log) == 1
+    assert log[0].event.revision_id == revision.revision_id
+    assert len(store.pending_outbox()) == 1
+
+
+def test_duplicate_event_delivery_is_idempotent(store: SqliteStore, revision: Revision) -> None:
+    """Same logical event twice: one row, because the key is content-derived."""
+    event = accepted_event(revision)
+    store.commit_revision(revision, created_at=NOW, events=[event])
+    store.append_events([event])
+    assert len(store.read_log()) == 1
+
+
+def test_out_of_order_delivery_still_yields_one_row_each(
+    store: SqliteStore, revision: Revision
+) -> None:
+    first = accepted_event(revision, note="a")
+    second = accepted_event(revision, note="b")
+    store.append_events([second, first, second])
+    assert len({item.event.idempotency_key for item in store.read_log()}) == 2
+
+
+def test_redelivery_after_dispatch_does_not_requeue_the_outbox(
+    store: SqliteStore, revision: Revision
+) -> None:
+    """The send-then-mark hazard: a duplicate must not resurrect a dispatched event."""
+    event = accepted_event(revision)
+    store.append_events([event])
+    store.mark_sent(event.idempotency_key)
+    assert store.pending_outbox() == []
+    store.append_events([event])
+    assert store.pending_outbox() == [], "a duplicate event re-opened a delivered outbox row"
+
+
+def test_outbox_is_drained_in_log_order(store: SqliteStore, revision: Revision) -> None:
+    events = [accepted_event(revision, note=str(index)) for index in range(5)]
+    store.append_events(events)
+    pending = store.pending_outbox()
+    assert [entry.event.payload["note"] for entry in pending] == ["0", "1", "2", "3", "4"]
+    for entry in pending:
+        store.mark_sent(entry.idempotency_key)
+    assert store.pending_outbox() == []
+
+
+def test_an_undelivered_event_stays_pending(store: SqliteStore, revision: Revision) -> None:
+    event = accepted_event(revision)
+    store.append_events([event])
+    store.record_delivery_attempt(event.idempotency_key)
+    pending = store.pending_outbox()
+    assert len(pending) == 1
+    assert pending[0].state is OutboxState.PENDING
+    assert pending[0].delivery_attempts == 1
+
+
+# --- jobs and leases --------------------------------------------------------------
+
+
+def test_job_status_machine_refuses_an_illegal_transition() -> None:
+    job = Job(job_id="j1", job_kind="draft_scene")
+    with pytest.raises(IllegalTransition):
+        job.transition_to(JobStatus.SUCCEEDED)
+    running = job.transition_to(JobStatus.RUNNING)
+    assert running.attempts == 1
+    assert running.transition_to(JobStatus.SUCCEEDED).status.is_terminal
+
+
+def test_repeated_failure_poisons_rather_than_spinning() -> None:
+    """§4.2's requirement: the failure mode is a parked unit, never a spin loop."""
+    job = Job(job_id="j1", job_kind="draft_scene", max_attempts=2)
+    job = job.transition_to(JobStatus.RUNNING).fail("boom")
+    assert job.status is JobStatus.FAILED
+    job = job.transition_to(JobStatus.QUEUED).transition_to(JobStatus.RUNNING).fail("boom again")
+    assert job.status is JobStatus.POISONED
+    assert job.lease_holder is None
+
+
+def test_only_one_holder_can_claim_a_job(store: SqliteStore) -> None:
+    store.enqueue(Job(job_id="j1", job_kind="tick"))
+    first = store.claim_next("worker-a", now=100.0, duration=60.0)
+    assert first is not None and first.lease_holder == "worker-a"
+    assert store.claim_next("worker-b", now=100.0, duration=60.0) is None
+
+
+def test_an_expired_lease_is_reclaimable(store: SqliteStore) -> None:
+    store.enqueue(Job(job_id="j1", job_kind="tick"))
+    store.claim_next("worker-a", now=100.0, duration=60.0)
+    assert store.claim_next("worker-b", now=120.0, duration=60.0) is None
+    second = store.claim_next("worker-b", now=200.0, duration=60.0)
+    assert second is not None and second.lease_holder == "worker-b"
+
+
+def test_a_stale_holder_cannot_advance_a_job(store: SqliteStore) -> None:
+    """Wall-clock expiry means a paused process may still believe it holds the lease."""
+    store.enqueue(Job(job_id="j1", job_kind="tick"))
+    claimed = store.claim_next("worker-a", now=100.0, duration=60.0)
+    assert claimed is not None
+    claimed.assert_held_by("worker-a", now=120.0)
+    with pytest.raises(LeaseError):
+        claimed.assert_held_by("worker-a", now=200.0)
+    with pytest.raises(LeaseError):
+        claimed.assert_held_by("worker-b", now=120.0)
+
+
+def test_job_survives_a_round_trip(store: SqliteStore) -> None:
+    store.enqueue(Job(job_id="j1", job_kind="tick", input_digest="abc", idempotency_key="k"))
+    claimed = store.claim_next("worker-a", now=10.0, duration=30.0)
+    assert claimed is not None
+    store.save_job(claimed.transition_to(JobStatus.RUNNING))
+    reloaded = store.load_job("j1")
+    assert reloaded.status is JobStatus.RUNNING
+    assert reloaded.attempts == 1
+    assert reloaded.lease_holder == "worker-a"
+    assert reloaded.input_digest == "abc"
+
+
+def test_enqueue_is_idempotent_on_job_id(store: SqliteStore) -> None:
+    store.enqueue(Job(job_id="j1", job_kind="tick"))
+    store.enqueue(Job(job_id="j1", job_kind="tick"))
+    assert store._connection.execute("SELECT COUNT(*) AS n FROM jobs").fetchone()["n"] == 1
+
+
+# --- restore and integrity --------------------------------------------------------
+
+
+def test_restore_rebuilds_every_revision_from_canonical_records(
+    store: SqliteStore, revision: Revision
+) -> None:
+    store.commit_revision(revision, created_at=NOW, events=[accepted_event(revision)])
+    edited = revision.replacing([revision.node("scene-2").with_content("Changed.")])
+    store.commit_revision(edited, created_at=NOW, events=[accepted_event(edited)])
+    assert store.verify_integrity() == 2
+
+
+def test_reopening_the_database_preserves_everything(tmp_path, revision: Revision) -> None:
+    path = tmp_path / "restore.db"
+    first = SqliteStore.open(path)
+    first.commit_revision(revision, created_at=NOW, events=[accepted_event(revision)])
+    first.close()
+
+    second = SqliteStore.open(path)
+    assert second.verify_integrity() == 1
+    assert second.load_revision(revision.revision_id).rendered_text() == revision.rendered_text()
+    assert len(second.read_log()) == 1
+
+
+def test_tampered_content_is_caught_by_restore(store: SqliteStore, revision: Revision) -> None:
+    """One altered character anywhere in storage must fail loudly, not read back quietly."""
+    store.commit_revision(revision, created_at=NOW)
+    store._connection.execute(
+        "UPDATE node_versions SET content = content || ' tampered' WHERE logical_id = 'scene-1'"
+    )
+    with pytest.raises(ValueError):
+        store.verify_integrity()
+
+
+def test_a_reordered_node_changes_the_revision_id_and_is_caught(
+    store: SqliteStore, revision: Revision
+) -> None:
+    store.commit_revision(revision, created_at=NOW)
+    store._connection.execute(
+        "UPDATE node_versions SET position_key = '999' WHERE logical_id = 'scene-2'"
+    )
+    with pytest.raises(IntegrityFailure):
+        store.verify_integrity()
+
+
+def test_foreign_keys_are_enforced(store: SqliteStore) -> None:
+    with pytest.raises(sqlite3.IntegrityError):
+        store._connection.execute(
+            "INSERT INTO revision_nodes (revision_id, logical_id, version_id) "
+            "VALUES ('ghost', 'x', 'y')"
+        )
+
+
+def test_a_rolled_back_transaction_leaves_no_partial_state(
+    store: SqliteStore, revision: Revision
+) -> None:
+    """The mid-write crash: at most the in-flight unit is lost, never half of it."""
+    with pytest.raises(sqlite3.IntegrityError), store.transaction() as connection:
+        connection.execute(
+            "INSERT INTO revisions (revision_id, book_id, branch_id, created_at) "
+            "VALUES (?, ?, ?, ?)",
+            (revision.revision_id, BOOK_ID, BRANCH_ID, NOW),
+        )
+        connection.execute(
+            "INSERT INTO revision_nodes (revision_id, logical_id, version_id) "
+            "VALUES (?, 'scene-1', 'missing-version')",
+            (revision.revision_id,),
+        )
+    assert store._connection.execute("SELECT COUNT(*) AS n FROM revisions").fetchone()["n"] == 0
+    assert store.verify_integrity() == 0

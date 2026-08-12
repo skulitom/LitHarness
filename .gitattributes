@@ -1,0 +1,20 @@
+# Line endings are a correctness concern in this repo, not a style preference.
+#
+# `domain/text.py` canonicalizes to LF + NFC on ingest and stores the canonical form,
+# so a stored hash is always verifiable against the stored text (plan/stage-0-decisions.md
+# §1). The tests that pin that behaviour compare canonicalized output against string
+# literals living in these source files. If `core.autocrlf=true` — which is set globally
+# on the machine this repo was first committed from — rewrote those literals to CRLF on
+# checkout, the line-ending tests would be asserting against the very thing they exist to
+# normalize away, and would pass or fail depending on the platform.
+#
+# litharness-contracts solves the same hazard the other way (`* -text`, no conversion at
+# all) because it stores golden fixtures verified by SHA-256 over exact byte ranges. Here
+# the working tree, not the object store, is what has to be predictable, so normalize to
+# LF on both sides.
+* text=auto eol=lf
+
+# Binary-ish artifacts that must never be translated.
+*.db binary
+*.png binary
+*.pdf binary

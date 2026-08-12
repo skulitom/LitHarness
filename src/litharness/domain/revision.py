@@ -1,0 +1,214 @@
+"""Immutable revisions: content-addressed snapshots of the manuscript tree.
+
+Four decisions the plan left open, settled here with their reasons.
+
+**Revision ids are content-addressed.** A revision's id is a hash over its book, branch,
+parent and full node set. Committing byte-identical content twice therefore yields the
+same id and the second commit is a no-op — idempotency comes from the identity scheme
+rather than from a dedup table that could drift out of sync with it.
+
+**Node version ids are content-addressed over the node alone, not Merkle-chained through
+its ancestors.** This is the "node-version fan-out" question, and the answer matters more
+than it looks. Under a Merkle scheme, editing one scene changes its chapter's version id,
+its part's, and the book's — so every evidence span citing any ancestor goes stale on
+every edit. Under per-node addressing, editing scene 3 changes scene 3's version id and
+nothing else, and every span citing scenes 1, 2 and 4-6 stays resolvable. That is what
+makes §12's "unchanged text is structurally ineligible for revision" mechanically true
+rather than aspirational, and it is why a revision id covers the whole set while node
+ids do not.
+
+**Branch forks share nodes; they do not copy them.** Nodes are immutable and
+content-addressed, so a fork is a new revision row with a new `branch_id` pointing at the
+same node versions. Copy-on-write would double storage and, worse, produce two distinct
+version ids for identical text — which would make a span citing one branch silently
+unresolvable on the other.
+
+**Lineage is single-parent, and that is a known ceiling.** `litharness-contracts` pins
+`parent_revision_id` as a single value, so this model cannot express a merge. §4.7's
+branch-merge story needs a contract change before it can be built; nothing here should
+pretend otherwise, and `parents` is deliberately not a list.
+"""
+
+from __future__ import annotations
+
+import json
+from collections.abc import Iterable, Mapping
+from dataclasses import dataclass, field
+from hashlib import sha256
+from typing import Any
+
+import litharness_contracts as lc
+
+from litharness.domain.nodes import Node
+from litharness.domain.position import parse_key
+
+
+def _digest(payload: Any) -> str:
+    rendered = json.dumps(payload, sort_keys=True, ensure_ascii=False, separators=(",", ":"))
+    return sha256(rendered.encode("utf-8")).hexdigest()
+
+
+def node_version_id(node: Node) -> str:
+    """Content address of one node version.
+
+    Covers every field that distinguishes one version of a node from another, and
+    deliberately excludes the node's ancestors — see the module docstring.
+    """
+    return _digest(
+        {
+            "logical_id": node.logical_id,
+            "kind": node.kind.value,
+            "position_key": node.position_key,
+            "parent_logical_id": node.parent_logical_id,
+            "title": node.title,
+            "content_sha256": node.content_sha256,
+            "lock": node.lock.value,
+            "tombstoned": node.tombstoned,
+            "tombstone_reason": node.tombstone_reason,
+            "block_kind": node.block_kind.value if node.block_kind else None,
+            "block_payload": node.block_payload,
+        }
+    )
+
+
+@dataclass(frozen=True, slots=True)
+class Revision:
+    book_id: str
+    branch_id: str
+    nodes: tuple[Node, ...]
+    parent_revision_id: str | None = None
+    revision_id: str = field(default="", compare=False)
+
+    def __post_init__(self) -> None:
+        ids = [node.logical_id for node in self.nodes]
+        duplicates = sorted({item for item in ids if ids.count(item) > 1})
+        if duplicates:
+            raise ValueError(f"revision contains duplicate logical ids: {duplicates}")
+        known = set(ids)
+        for node in self.nodes:
+            parent = node.parent_logical_id
+            if parent is not None and parent not in known:
+                raise ValueError(
+                    f"node {node.logical_id} references unknown parent {parent}"
+                )
+        if not self.revision_id:
+            object.__setattr__(self, "revision_id", self._compute_id())
+
+    def _compute_id(self) -> str:
+        return _digest(
+            {
+                "book_id": self.book_id,
+                "branch_id": self.branch_id,
+                "parent_revision_id": self.parent_revision_id,
+                "nodes": sorted(
+                    (node.logical_id, node_version_id(node)) for node in self.nodes
+                ),
+            }
+        )
+
+    # -- access ---------------------------------------------------------------
+
+    @property
+    def version_ids(self) -> dict[str, str]:
+        return {node.logical_id: node_version_id(node) for node in self.nodes}
+
+    def node(self, logical_id: str) -> Node:
+        for candidate in self.nodes:
+            if candidate.logical_id == logical_id:
+                return candidate
+        raise KeyError(f"no node {logical_id} in revision {self.revision_id[:12]}")
+
+    def children_of(self, logical_id: str | None) -> list[Node]:
+        """Live children in position order. Tombstoned nodes are excluded."""
+        children = [
+            node
+            for node in self.nodes
+            if node.parent_logical_id == logical_id and not node.tombstoned
+        ]
+        children.sort(key=lambda node: (parse_key(node.position_key), node.logical_id))
+        return children
+
+    def in_reading_order(self) -> list[Node]:
+        """Depth-first traversal from the roots, position-ordered, live nodes only."""
+        ordered: list[Node] = []
+
+        def walk(parent: str | None) -> None:
+            for child in self.children_of(parent):
+                ordered.append(child)
+                walk(child.logical_id)
+
+        walk(None)
+        return ordered
+
+    def rendered_text(self) -> str:
+        return "\n\n".join(
+            node.content for node in self.in_reading_order() if node.content is not None
+        )
+
+    # -- evolution ------------------------------------------------------------
+
+    def replacing(self, nodes: Iterable[Node]) -> Revision:
+        """A child revision with ``nodes`` substituted by logical id.
+
+        Unchanged nodes are carried through by reference, so their version ids — and
+        therefore every evidence span citing them — survive.
+        """
+        overrides = {node.logical_id: node for node in nodes}
+        unknown = sorted(set(overrides) - {node.logical_id for node in self.nodes})
+        if unknown:
+            raise ValueError(f"cannot replace nodes absent from the revision: {unknown}")
+        return Revision(
+            book_id=self.book_id,
+            branch_id=self.branch_id,
+            nodes=tuple(overrides.get(node.logical_id, node) for node in self.nodes),
+            parent_revision_id=self.revision_id,
+        )
+
+    def forked_to(self, branch_id: str) -> Revision:
+        """A revision on a new branch sharing this one's node versions."""
+        return Revision(
+            book_id=self.book_id,
+            branch_id=branch_id,
+            nodes=self.nodes,
+            parent_revision_id=self.revision_id,
+        )
+
+    # -- contract projection --------------------------------------------------
+
+    def to_contract(self, meta: lc.ArtifactMeta) -> lc.ManuscriptRevision:
+        versions = self.version_ids
+        return lc.ManuscriptRevision(
+            meta=meta,
+            book_id=self.book_id,
+            branch_id=self.branch_id,
+            revision_id=self.revision_id,
+            nodes=[node.to_contract(versions[node.logical_id]) for node in self.nodes],
+            parent_revision_id=self.parent_revision_id,
+        )
+
+    @classmethod
+    def from_contract(cls, revision: lc.ManuscriptRevision) -> Revision:
+        restored = cls(
+            book_id=revision.book_id,
+            branch_id=revision.branch_id,
+            nodes=tuple(Node.from_contract(node) for node in revision.nodes),
+            parent_revision_id=revision.parent_revision_id,
+        )
+        if restored.revision_id != revision.revision_id:
+            raise ValueError(
+                "restored revision id does not match the serialized one: "
+                f"{restored.revision_id[:12]} != {revision.revision_id[:12]}"
+            )
+        return restored
+
+
+def build_revision(
+    book_id: str, branch_id: str, nodes: Iterable[Node], parent: str | None = None
+) -> Revision:
+    return Revision(
+        book_id=book_id, branch_id=branch_id, nodes=tuple(nodes), parent_revision_id=parent
+    )
+
+
+def version_map(revision: Revision) -> Mapping[str, str]:
+    return revision.version_ids
