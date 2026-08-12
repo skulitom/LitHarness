@@ -386,14 +386,14 @@ done, and **the v2.1 pass did it again in six more places**:
 
 | Project | State | Role in v2 |
 |---|---|---|
-| litharness-contracts | v0.1.0, 113 tests, 25 schemas, mystery + litrpg golden fixtures. **Now a git repo** (branch `main`, 3 commits, clean tree, no remote, no tags). **Still no LICENSE** — README says "License: TBD" | Shared schemas + gold benchmarks. The 1.x minors (§20.3) are the live work; version (don't freeze) after Book Zero. *(Struck: "untracked, no git repo" and "version-controlling it is the single cheapest unblock" — the commit landed 2026-08-12 17:36, eight minutes **before** the v2.1 edit that still called it untracked.)* |
+| litharness-contracts | **Wire schema 1.1.0**, 124 tests, 30 schemas, mystery + litrpg golden fixtures. Git repo (branch `main`, clean tree, no remote, no tags). **Still no LICENSE** — README says "License: TBD", and that is a decision for the owner rather than a gap to fill | Shared schemas + gold benchmarks. §20.3's minors have shipped except the game-system schemas, which stay deferred for want of a consumer. Version (don't freeze) after Book Zero. *(Struck: "untracked, no git repo" and "version-controlling it is the single cheapest unblock" — the commit landed 2026-08-12 17:36, eight minutes **before** the v2.1 edit that still called it untracked.)* |
 | **LitHarness (this repo)** | **Stage 0 slices 1–3: 122 tests collected, 119 passing + 3 opt-in live, ruff clean, mypy strict clean. Under version control as of the v2.2 pass** (`.gitattributes` pins `eol=lf`; `core.autocrlf=true` is set globally on this machine and has already bitten this project once) | The product. **This table previously audited every sibling's VCS status and had no row for the product repo, which was itself untracked.** |
 | BookWorldState | Committed, Apache-2.0, tagged `v0.1.0`, pushed to GitHub; **13 commits, working tree clean**; 100 tests passing. Ships an authenticated versioned WSGI API, transactional outbox with capped-exponential-retry worker, signed webhook publication, migration checksums, online backup/restore + destructive-corruption drill — **Milestone 4/5 infrastructure, not "~Milestone 2"**. What is *not* done is M3's evaluation corpus | State substrate. Its closed predicate registry is **not** injectable yet (§20.5) — but §8.4 routes around this deliberately, so it is not a blocker for §8. *(Struck: "working tree is not clean", "4 commits", "~Milestone 2 complete", "the real blocker for §8" — all four false.)* |
 | RevisionBench | Mature (**411** tests). A2d complaint-gated repair, the LitRPG stratum, **and A3d** have landed — A3d shipped *under the name A2d*, and best-of-N repair ranked by minimal intervention closed the last element in `22a228d` | Source of repair policy, mechanical vetoes, LitRPG stratum evidence. **Its M5 decomposition is done and has already answered the question §20.7 was scheduled to ask** — see the redirect there. *(Struck: "405 tests", "A3d is next".)* |
 | RevisionJudge | Built; 104 pairs exported, exactly 2 verdicts collected; one uncommitted file (`data/verdicts.jsonl`) | The calibration instrument for §10; the missing half is the verdict *consumer*, not the export. Nothing anywhere under `C:/DEV` reads `verdicts.jsonl` |
 | MirrorBench | M0–M4 done, M5.0 landed (1,317 tests). One **unpushed** commit; its own README still says "M5 not started", contradicting its plan.md | Methodological invariants only; **verified zero coupling in both directions** — no import, no shared schema, no fixture exchange |
-| LongRangeContext | M0 complete, gated, reported (2,435 src lines, 14 tests). **Not a git repo, and no LICENSE despite `pyproject.toml` declaring Apache-2.0.** Carries the exact `==0.1.0` contracts pin §20.3 wants relaxed | Promote further milestones when Book Zero shows distant-context failures (it will); simple baseline until then. **"Byte-reproducible" was this plan's one *over*statement**: `reporting.py:97,152` bake an absolute machine path into both artifacts, and the test named `test_m0_report_is_reproducible_*` never compares bytes |
-| ContinuityEvaluation | **The LitRPG rules pack has landed: six deterministic detectors, 42 tests, exact-set span equality, mutation-tested, byte-identical across runs** (§20.2). Both fixture families load. **Not a git repo, no LICENSE**; the wheel in `dist/` predates the pack, and CE's own PLAN/README never mention it | Owner of the LitRPG rule and predicate vocabulary (§8.4). Prose detectors next. *(Struck: "five working deterministic detectors, 20 tests… hard-gated to the mystery fixture only".)* |
+| LongRangeContext | M0 complete, gated, reported (17 tests). **Now a git repo, Apache-2.0 LICENSE added, contracts pin relaxed to `>=0.1.0`** | Promote further milestones when Book Zero shows distant-context failures (it will); simple baseline until then. **"Byte-reproducible" was this plan's one *over*statement, and is now true rather than claimed**: three distinct machine-specific leaks fixed (an absolute checkout root in both reports, absolute artifact paths built by its own contracts loader, and CRLF from text-mode writes), each pinned by a mutation-tested guard. The test that carried "reproducible" in its name never compared bytes; one now does |
+| ContinuityEvaluation | **The LitRPG rules pack has landed: six deterministic detectors, 42 tests, exact-set span equality, mutation-tested, byte-identical across runs** (§20.2). Both fixture families load. **Now a git repo**; still no LICENSE, the wheel in `dist/` predates the pack, and CE's own PLAN/README never mention it | Owner of the LitRPG rule and predicate vocabulary (§8.4). Prose detectors next — and per §20.7's redirect, detector coverage now outranks further repair-loop work. *(Struck: "five working deterministic detectors, 20 tests… hard-gated to the mystery fixture only".)* |
 | RevisionPropagation | Plan only — literally one file (the row this plan has consistently had right) | Deterministic invalidation slice only, when Book Zero's edit churn demands it. Note its M0 proposes authoring change/impact/plan/event schemas **that contracts already ships**, and its plan never mentions contracts |
 | **Narrative Planning** | **Does not exist — create** | §9. The creative half; biggest hole v1 left |
 | **Game-System Engine** | **Does not exist — create** | §8. The genre half; highest-precision quality claim. Ships as a detector pack inside ContinuityEvaluation first, promoted to its own package when a generator exists to constrain (§8.4) |
@@ -404,9 +404,11 @@ contracts, conductor, litrpg or game-system anywhere in its tree; the
 shared-schema integration is unstarted, not partial. And on version control: of
 the eight subprojects **plus this one**, BookWorldState, RevisionBench,
 RevisionJudge, MirrorBench, litharness-contracts and LitHarness are now git
-repositories; **LongRangeContext, ContinuityEvaluation and RevisionPropagation
-are not** — and ContinuityEvaluation is the sharp case, holding 42 tests of
-freshly-landed pack work with no history and no rollback.
+repositories. **Only RevisionPropagation is not, and it is one file** — the
+version-control gap this plan tracked across three revisions is closed.
+Remaining licensing gaps, both deliberate: litharness-contracts says "License:
+TBD" and ContinuityEvaluation has none, and naming a license is the owner's call
+rather than a task an agent should complete.
 
 ## 8. Game-System Engine (new pillar)
 
@@ -668,9 +670,15 @@ commits, clean tree) but **still unlicensed** — §20.1. Policy for v2:
 
 - **Version, don't freeze.** Expect additive minor versions after Book Zero; treat
   the first breaking rework (2.0) as a scheduled consequence of Book Zero's
-  lessons, not a failure. Note the wire `SCHEMA_VERSION` is `1.0.0` and the
-  compatibility gate rejects a differing major, so the near-term additions ship as
-  **1.x minors** regardless of this document calling them "v2".
+  lessons, not a failure. The wire `SCHEMA_VERSION` is **`1.1.0`** as of §20.3 and
+  the compatibility gate rejects a differing major, so additions ship as **1.x
+  minors** regardless of this document calling them "v2".
+- **What an additive minor actually requires here** (learned in 1.1.0, and not
+  obvious): a new field must default to `None`. The serializer omits `None` and only
+  `None`, so any other default appends a key to every artifact ever written and
+  changes every content address derived from it. And bumping the wire version
+  rebuilds the golden fixtures, changing their SHA-256 — so every consumer that
+  records a fixture digest needs re-running in the same change.
 - **What contracts does and does not pin.** It fixes the vocabulary — the
   `JobStatus` state machine, `JobRecord`'s `idempotency_key`/`input_digest`/
   `attempts`, `position_key` as a string (the fixture demonstrates gap-10
@@ -901,18 +909,39 @@ every unstruck action below as a claim to re-verify rather than a task to start.
    `note` stripping — or the gate goes green while proving nothing. While in
    there, fix the machine-bound `samefile("C:/DEV/litharness-contracts/schemas")`
    in the contract test.
-3. **Extend litharness-contracts with 1.x minors** — *not* "v2 minors": the wire
-   `SCHEMA_VERSION` is `1.0.0` and the compatibility gate rejects a different
-   major outright, so 2.0.0 would be refused by its own parser. Needed:
-   game-system schemas, Conductor artifacts (directive, policy decision record,
-   exception, digest entry), a `BlockKind` plus structured-payload field on
-   `ManuscriptNode` (§11 requires it; `NodeKind` has a bare `block` member with no
-   payload, and neither golden manuscript contains a single block node), and
-   `lease_holder`/`lease_expires_at` on `JobRecord` (it has `idempotency_key`,
-   `input_digest`, `attempts`, `error` and `status`, but no lease concept at all —
-   leases are net-new, absent from v1 and from every schema). Shape
-   `CharacterSheet` from action 2's working code, not ahead of it. Relax
-   LongRangeContext's exact `==0.1.0` pin in the same change.
+3. **Extend litharness-contracts with 1.x minors** — **SCHEMA 1.1.0 SHIPPED; one
+   item deferred.** Landed: `lease_holder`/`lease_expires_at`/`payload`/`priority` on
+   `JobRecord`; `lock_kind`/`block_kind`/`block_payload`/`tombstoned`/
+   `tombstone_reason` on `ManuscriptNode`; eight Conductor `EventType` members; and
+   a new `conductor` module carrying `Directive`, `PolicyDecisionRecord`,
+   `ExceptionRecord`, `DigestEntry` and `GateResult`. 25 → 30 schemas, 113 → 124
+   tests. LitHarness's IR now projects losslessly instead of smuggling five fields
+   through `metadata`, and LongRangeContext's exact `==0.1.0` pin is relaxed.
+
+   **The rule the whole change obeys, learned by getting it wrong first:** a 1.1
+   field defaults to `None`, never to a natural default. The serializer omits `None`
+   and only `None`, so a field defaulting to `LockKind.NONE` or `{}` or `0` appends a
+   key to *every artifact ever written* — changing the bytes of existing payloads and
+   every content address derived from them. Four golden-fixture tests caught it. It is
+   now a pinned, mutation-tested property, and any future minor must obey it.
+
+   **Two things worth knowing before the next minor.** The `EventType` asymmetry is
+   why this was blocking rather than cosmetic: unknown values *decode* to `UNKNOWN`,
+   so adding a member is additive for readers — but construction goes through
+   `EventType(value)` and raises, so a producer cannot emit a type the enum lacks.
+   `DirectiveIngested` was unrepresentable, not merely unnamed. And bumping the wire
+   version rebuilds the golden fixtures, which changes their SHA-256 and therefore
+   every digest a consumer records — a 21-line, version-stamp-only diff this time,
+   but budget for the consumer sweep.
+
+   **Still open: the game-system schemas** (`CharacterSheet`, ledger event, quest
+   state, status-block payload). Deliberately deferred rather than forgotten — §20.3
+   says to shape `CharacterSheet` from action 2's working code, and that code is
+   ContinuityEvaluation's rules pack, which is an *evaluator*: it replays a ledger
+   backwards over a fixture and never constructs a sheet to hand forward. §8.4 makes
+   the same point — the forward interface has no consumer until a generator exists to
+   constrain. Shaping the sheet now would be the exact guess this action's own
+   sequencing rule forbids.
 4. **Scaffold LitHarness Stage 0** — **slices 1–4 done** (149 collected, 146 passing
    + 3 opt-in live, ruff clean,
    mypy strict clean). Slice 1, the model-free manuscript spine: canonical text and
