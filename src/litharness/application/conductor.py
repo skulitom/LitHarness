@@ -47,6 +47,7 @@ from typing import Protocol
 
 from litharness.adapters.sqlite_store import SqliteStore
 from litharness.domain.events import Event, EventType, OutboxEntry
+from litharness.domain.exceptions import ExceptionKind, ExceptionRecord, exception_id_for
 from litharness.domain.jobs import Job, JobStatus
 from litharness.domain.policy import Outcome, PolicyDecision
 
@@ -316,6 +317,25 @@ class Conductor:
         self.store.save_job(parked)
         self.store.bump_digest(self._day(now), "jobs_parked")
         self.store.bump_digest(self._day(now), "exceptions_raised")
+        # The queue, not just the event. An event is a fact in a log; answering "what is
+        # waiting for me" from events alone means replaying the stream and reconstructing
+        # which escalations were since resolved.
+        self.store.raise_exception(
+            ExceptionRecord(
+                exception_id=exception_id_for(
+                    running.job_id,
+                    ExceptionKind.REPEATED_GATE_FAILURE,
+                    decision.decision_id if decision else None,
+                ),
+                kind=ExceptionKind.REPEATED_GATE_FAILURE,
+                summary=reason,
+                job_id=running.job_id,
+                logical_id=decision.logical_id if decision else None,
+                decision_id=decision.decision_id if decision else None,
+                raised_at=self._timestamp(now),
+                attempts=parked.attempts,
+            )
+        )
         raised = [
             self._event(
                 EventType.EXCEPTION_RAISED,

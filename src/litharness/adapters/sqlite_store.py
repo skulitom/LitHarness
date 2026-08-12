@@ -40,6 +40,7 @@ from litharness.domain.events import (
     OutboxState,
     delivery_backoff,
 )
+from litharness.domain.exceptions import ExceptionKind, ExceptionRecord, ExceptionStatus
 from litharness.domain.jobs import IllegalTransition, Job, JobStatus
 from litharness.domain.nodes import BlockKind, LockKind, Node, NodeKind
 from litharness.domain.patch import Veto
@@ -120,6 +121,22 @@ def _directive_from_row(row: sqlite3.Row) -> Directive:
         precedence=row["precedence"],
         superseded_by=row["superseded_by"],
         metadata=json.loads(row["metadata"]) if row["metadata"] else {},
+    )
+
+
+def _exception_from_row(row: sqlite3.Row) -> ExceptionRecord:
+    return ExceptionRecord(
+        exception_id=row["exception_id"],
+        kind=ExceptionKind(row["kind"]),
+        summary=row["summary"],
+        status=ExceptionStatus(row["status"]),
+        job_id=row["job_id"],
+        logical_id=row["logical_id"],
+        decision_id=row["decision_id"],
+        raised_at=row["raised_at"],
+        resolved_at=row["resolved_at"],
+        resolution=row["resolution"],
+        attempts=row["attempts"],
     )
 
 
@@ -732,6 +749,86 @@ class SqliteStore:
             "SELECT COUNT(*) AS n FROM jobs WHERE status = ?", (JobStatus.QUEUED.value,)
         ).fetchone()
         return int(row["n"])
+
+    # -- exception queue ------------------------------------------------------
+
+    def raise_exception(self, record: ExceptionRecord) -> bool:
+        """Open an exception. False if this escalation was already recorded.
+
+        Idempotent by content-derived id, so a replayed tick raises one exception rather
+        than a queue of identical ones — which would be the fastest way to make the queue
+        useless.
+        """
+        with self.transaction() as connection:
+            cursor = connection.execute(
+                "INSERT OR IGNORE INTO exceptions (exception_id, kind, summary, status, "
+                "job_id, logical_id, decision_id, raised_at, resolved_at, resolution, "
+                "attempts) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                (
+                    record.exception_id,
+                    record.kind.value,
+                    record.summary,
+                    record.status.value,
+                    record.job_id,
+                    record.logical_id,
+                    record.decision_id,
+                    record.raised_at,
+                    record.resolved_at,
+                    record.resolution,
+                    record.attempts,
+                ),
+            )
+            return cursor.rowcount > 0
+
+    def open_exceptions(self, limit: int = 50) -> list[ExceptionRecord]:
+        return [
+            _exception_from_row(row)
+            for row in self._connection.execute(
+                "SELECT * FROM exceptions WHERE status IN (?, ?) ORDER BY raised_at, rowid "
+                "LIMIT ?",
+                (ExceptionStatus.OPEN.value, ExceptionStatus.ACKNOWLEDGED.value, limit),
+            )
+        ]
+
+    def load_exception(self, exception_id: str) -> ExceptionRecord:
+        row = self._connection.execute(
+            "SELECT * FROM exceptions WHERE exception_id = ?", (exception_id,)
+        ).fetchone()
+        if row is None:
+            raise KeyError(f"no exception {exception_id}")
+        return _exception_from_row(row)
+
+    def resolve_exception(
+        self,
+        exception_id: str,
+        resolution: str,
+        *,
+        at: str,
+        status: ExceptionStatus = ExceptionStatus.RESOLVED,
+    ) -> ExceptionRecord:
+        """Close the human's side. Deliberately does not restart the work.
+
+        `revive` is the separate act that requeues the unit, because a director may decide
+        the escalation was correct and the unit should stay stopped. Collapsing the two
+        would make "I have seen this and it should not run" inexpressible.
+        """
+        closed = self.load_exception(exception_id).close(resolution, at=at, status=status)
+        with self.transaction() as connection:
+            connection.execute(
+                "UPDATE exceptions SET status = ?, resolution = ?, resolved_at = ? "
+                "WHERE exception_id = ?",
+                (closed.status.value, closed.resolution, closed.resolved_at, exception_id),
+            )
+        return closed
+
+    def exceptions_for_job(self, job_id: str) -> list[ExceptionRecord]:
+        return [
+            _exception_from_row(row)
+            for row in self._connection.execute(
+                "SELECT * FROM exceptions WHERE job_id = ? ORDER BY raised_at, rowid",
+                (job_id,),
+            )
+        ]
 
     # -- operator controls ----------------------------------------------------
 

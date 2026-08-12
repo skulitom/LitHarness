@@ -35,6 +35,7 @@ from litharness.application.conductor import Conductor, TickOutcome
 from litharness.application.handlers import SCENE_DRAFT, make_scene_draft_handler
 from litharness.domain.budget import BudgetPolicy
 from litharness.domain.directives import Directive, DirectiveKind, DirectiveStatus, directive_id_for
+from litharness.domain.exceptions import ExceptionStatus
 from litharness.domain.jobs import Job, JobStatus, input_digest_for
 from litharness.providers import build_default_registry
 
@@ -243,6 +244,40 @@ def cmd_enqueue(args: argparse.Namespace) -> int:
     return EXIT_OK
 
 
+def cmd_exceptions(args: argparse.Namespace) -> int:
+    """The queue §4.3 promised the director: what policy could not resolve."""
+    store = _store(args)
+    try:
+        items = store.open_exceptions()
+    finally:
+        store.close()
+    for item in items:
+        print(f"{item.exception_id}  {item.kind.value:<22} job={item.job_id}")
+        print(f"    {item.summary}")
+    print(f"({len(items)} open)")
+    return EXIT_ATTENTION if items else EXIT_OK
+
+
+def cmd_resolve(args: argparse.Namespace) -> int:
+    """Close the human's side. Deliberately does not requeue the unit — `revive` does that,
+    because a director may decide the escalation was right and the work should stay
+    stopped."""
+    store = _store(args)
+    try:
+        closed = store.resolve_exception(
+            args.exception_id,
+            args.resolution,
+            at=_stamp(_now()),
+            status=ExceptionStatus.DISMISSED if args.dismiss else ExceptionStatus.RESOLVED,
+        )
+    finally:
+        store.close()
+    print(f"{closed.status.value} {closed.exception_id}")
+    if closed.job_id:
+        print(f"  the unit stays parked; `litharness revive {closed.job_id}` to requeue it")
+    return EXIT_OK
+
+
 def cmd_pause(args: argparse.Namespace) -> int:
     now = _now()
     store = _store(args)
@@ -370,6 +405,18 @@ def build_parser() -> argparse.ArgumentParser:
     enqueue.add_argument("--prompt", required=True)
     enqueue.add_argument("--priority", type=int, default=0)
     enqueue.set_defaults(func=cmd_enqueue)
+
+    exceptions = sub.add_parser("exceptions", help="what policy could not resolve")
+    exceptions.set_defaults(func=cmd_exceptions)
+
+    resolve = sub.add_parser("resolve", help="close an exception (does not requeue the unit)")
+    resolve.add_argument("exception_id")
+    resolve.add_argument("resolution", help="what you did about it")
+    resolve.add_argument(
+        "--dismiss", action="store_true",
+        help="close without action: the escalation was right and the unit stays stopped",
+    )
+    resolve.set_defaults(func=cmd_resolve)
 
     pause = sub.add_parser("pause", help="stop doing work; ticks still record")
     pause.set_defaults(func=cmd_pause)

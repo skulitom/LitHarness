@@ -43,6 +43,7 @@ class Status:
     jobs: dict[str, int] = field(default_factory=dict)
     outbox: dict[str, int] = field(default_factory=dict)
     unread_directives: int = 0
+    open_exceptions: int = 0
     digest: dict[str, int] = field(default_factory=dict)
     #: §19 Economics: "the operator can see spend vs. plan at any tick".
     spend: Spend = field(default_factory=Spend)
@@ -51,8 +52,10 @@ class Status:
     @property
     def needs_attention(self) -> int:
         """Units that stopped without doing the work. The number to watch."""
-        return self.jobs.get(JobStatus.POISONED.value, 0) + self.jobs.get(
-            JobStatus.PARKED.value, 0
+        return (
+            self.jobs.get(JobStatus.POISONED.value, 0)
+            + self.jobs.get(JobStatus.PARKED.value, 0)
+            + self.open_exceptions
         )
 
     @property
@@ -75,6 +78,7 @@ class Status:
             "needs_attention": self.needs_attention,
             "outbox": self.outbox,
             "unread_directives": self.unread_directives,
+            "open_exceptions": self.open_exceptions,
             "digest": self.digest,
             "spend": {
                 "invocations": self.spend.invocations,
@@ -114,6 +118,7 @@ class Status:
             f"needs attention {self.needs_attention}",
             f"outbox          {self.outbox or '{}'}",
             f"unread          {self.unread_directives} directive(s)",
+            f"exceptions      {self.open_exceptions} open",
             f"digest today    {self.digest or '{}'}",
             f"spend today     {self.spend.invocations} call(s), "
             f"{self.spend.tokens} tokens"
@@ -144,6 +149,7 @@ def collect(
         jobs=store.job_counts_by_status(),
         outbox=store.outbox_counts_by_state(),
         unread_directives=len(store.directives_by_status(DirectiveStatus.RECEIVED)),
+        open_exceptions=len(store.open_exceptions()),
         digest=store.digest(day),
         spend=store.spend_on(day),
         budget=budget or BudgetPolicy(),
