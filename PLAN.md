@@ -1036,11 +1036,55 @@ The **game-system replay validation** is built where §8.4 says it belongs and n
 gate; what is missing is the tick running it, which §17 Stage 2 already owns. 502 tests.
 
 ### Stage 2 — Detect and scoped repair
-Promote RevisionBench's A3d detect–repair–verify results into the repair path;
-integrate the LitRPG deterministic detector pack (ContinuityEvaluation's first
-slice); repairs triggered by findings, verified by re-detection, bounded by vetoes.
-**Exit:** detect-then-repair beats revise-then-gate on affected-span precision and
-preservation on held-out material (RevisionBench's own promotion gate).
+Repairs triggered by findings, applied to a located span, verified by re-detection,
+bounded by vetoes.
+
+**The exit clause below replaces one that could not be run, and the replacement is
+narrower on purpose.** The original read: *"detect-then-repair beats revise-then-gate
+on affected-span precision and preservation on held-out material (RevisionBench's own
+promotion gate)."* Four of its terms were checked against the code and three do not
+exist:
+
+- **"Affected-span precision" is not computable.** `GoldImpactExpectation` is
+  `(target, label, note)` — **no character offsets anywhere**. The gold also never
+  labels the node the change edits (`e1-lantern-price` edits scene-2 and labels scenes
+  1, 3, 4, 5, 6), so it cannot grade the repair site either. What it encodes is *blast
+  radius at node granularity*: which other nodes a change must reach, and which it must
+  not touch. Real, useful, and not span precision.
+- **"Preservation" is already a guarantee, not a measurement.** `patch.py`'s
+  `_verify_preservation` refuses any patch whose text outside the licensed spans is not
+  byte-identical, checked by walking the result independently. There is nothing to score:
+  a patch that fails it does not exist. Scoring it would report 1.000 forever.
+- **"RevisionBench's own promotion gate" does not exist.** Four prose hits for "promot"
+  in that repo; its one standing rule is a *blocker* — no threshold ships until
+  replicated on a second model family. And it cannot be imported anyway: §13, plus
+  `requires-python >=3.13` against this project's `>=3.11`. What transfers is the loop
+  *shape* — one complaint and one span per call, best-of-N ranked by edit distance, a
+  screen rejecting empty or oversized or form-changed output, acceptance only if the
+  complaint count strictly falls — re-derived against this project's `PatchOp` vocabulary.
+- **"Held-out material" does not exist either**, and this is the one the replacement does
+  not solve. Both gold impact suites are generated from the same `def.json` that authors
+  the prose they grade and ship in `fixtures/golden/`, which six test modules already
+  read. 37 expectations against this project's own `MIN_HOLDOUT = 50`.
+
+**Exit, as it can actually be run:**
+
+1. A finding with a `primary_span` triggers a bounded repair that changes only that span,
+   verified by re-detection over the repaired prose — and a re-detection that *errored* is
+   not a pass (`adapters/evaluation_artifact.py`).
+2. **Node-level propagation scope on the dev suites**, scored by `domain/impact.py` and
+   reported with its caveat attached, beating both baselines it ships with: precision
+   above `predict_everything`'s **0.481** at comparable recall, and `e3-typography-only`
+   — eight `safe_preserve` targets, no `must_update` — left **untouched**. Measured
+   already: the obvious positional heuristic scores **0.333**, worse than guessing
+   everything, so "downstream of the edit" is refuted before it is built.
+3. The number is labelled **dev-set** wherever it appears. Held-out material is Stage 3's
+   to supply — Book Zero's own output is the first genuinely unseen prose this project
+   will have — and until it exists, no claim from this stage generalises.
+
+`domain/impact.py` and `tests/test_impact.py` are this clause, executable. What they are
+not is a propagation engine: nothing yet *produces* a prediction to score, which is the
+work Stage 2 begins.
 
 ### Stage 3 — Book Zero (the pivot)
 One complete 50k–80k word LitRPG draft, end-to-end, 24/7 unattended: Narrative
