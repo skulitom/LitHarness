@@ -3,7 +3,9 @@
 An autonomous book-production system with a human director. See [PLAN.md](PLAN.md) for the
 master plan and [plan/](plan/) for companion design documents — in particular
 [plan/stage-0-decisions.md](plan/stage-0-decisions.md), which records the load-bearing
-design decisions and why each went the way it did.
+design decisions and why each went the way it did, and
+[plan/craft-corpus.md](plan/craft-corpus.md), which sets out how prose quality gets measured
+without a human in the loop.
 
 **Status: Stage 0 complete, Stage 1 slices 7–9 — all four Stage 1 exit clauses met.** The
 manuscript spine, the Conductor loop, four provider adapters, recorded acceptance decisions,
@@ -234,8 +236,17 @@ uv run litharness --database book.db calibrations
 ```
 
 `craft` shows the advisory numbers and what they do not measure; `calibrations` shows what
-evidence exists that any of them predicts human judgment, and is expected to print nothing
-for a long time. That emptiness is the honest state of §19's Quality clause.
+evidence exists that any of them predicts human judgment, and prints nothing today. That
+emptiness is the honest state of §19's Quality clause.
+
+**The audit queue is a confirmation sample, not the plan for measuring quality.** A system
+whose quality evidence depends on someone deciding to sit down will not produce any — the
+measured throughput of that design is two verdicts against 104 exported pairs. The primary
+calibration target is *revealed* judgment: readers who followed, favourited or abandoned
+published LitRPG at scale, already collected, with none of the demand characteristics or
+positional artifacts that solicited judging has to be blinded against.
+[plan/craft-corpus.md](plan/craft-corpus.md) has the measured label, the research directions
+and what each is and is not valid for.
 
 To rebuild the published-LitRPG reference profile (optional, needs the `corpus` extra and
 downloads shards of a 12.5GB dataset — no prose is stored, only percentiles):

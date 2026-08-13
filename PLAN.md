@@ -189,6 +189,31 @@ instrument for the product's actual goal.** Two rules follow:
   Nothing in the program currently encodes what good looks like, so there is
   nothing for craft work to be measured against. Fixing this is a prerequisite for
   items 1–6 being anything but opinion.
+  *(Amended — see the next paragraph. The corpus is still required; **authoring** it is
+  not, because it can be selected.)*
+
+**Amendment: solicited judgment and revealed judgment are not the same scarcity, and
+this section conflated them.** Human judgment remains the only ground truth. But the
+above was read — including by this plan's own §10.3 — as requiring *solicited* judgment:
+sessions, rubrics, pairwise forms, a human deciding to sit down. That is operationally
+self-defeating for a system whose entire product claim is that it runs without one, and
+the evidence is already in: RevisionJudge was built, works, and has collected **two**
+verdicts against 104 exported pairs. Planning for more sessions is planning for that
+result again.
+
+**Revealed judgment** — readers who followed, favourited, kept reading or abandoned, for
+their own reasons, with nobody asking them anything — is the same ground truth, already
+collected, at a scale no session reaches. It is also structurally free of the two failures
+§10.3 spends its design controlling for: there are no demand characteristics and no
+positional artifacts when nobody was asked a question. And §1a.5 already words this
+project's own bars in revealed terms — *"a majority of sampled chapters earn 'I would keep
+reading'"*, *"retention across consecutive chapters is measured"*. Those are claims about
+behaviour, which revealed preference measures directly and a rubric only proxies.
+
+So the rule stands with one word added: **any craft proxy is a hypothesis until validated
+against human judgment, solicited *or revealed*.** Details, measured labels and the
+validity limits of each direction are in
+[plan/craft-corpus.md](plan/craft-corpus.md).
 
 ### 1a.5 Set a bar that can fail, and refuse volume as a proxy
 
@@ -392,7 +417,8 @@ done, and **the v2.1 pass did it again in six more places**:
 | **LitHarness (this repo)** | **Stage 0 slices 1–6 and Stage 1 slices 7–9: 417 tests passing + 3 opt-in live, ruff clean, mypy strict clean (`warn_unreachable` on). Under version control** (`.gitattributes` pins `eol=lf`; `core.autocrlf=true` is set globally on this machine and has already bitten this project once) | The product. **This table previously audited every sibling's VCS status and had no row for the product repo, which was itself untracked.** |
 | BookWorldState | Committed, Apache-2.0, tagged `v0.1.0`, pushed to GitHub; **13 commits, working tree clean**; 100 tests passing. Ships an authenticated versioned WSGI API, transactional outbox with capped-exponential-retry worker, signed webhook publication, migration checksums, online backup/restore + destructive-corruption drill — **Milestone 4/5 infrastructure, not "~Milestone 2"**. What is *not* done is M3's evaluation corpus | State substrate. Its closed predicate registry is **not** injectable yet (§20.5) — but §8.4 routes around this deliberately, so it is not a blocker for §8. *(Struck: "working tree is not clean", "4 commits", "~Milestone 2 complete", "the real blocker for §8" — all four false.)* |
 | RevisionBench | Mature (**411** tests). A2d complaint-gated repair, the LitRPG stratum, **and A3d** have landed — A3d shipped *under the name A2d*, and best-of-N repair ranked by minimal intervention closed the last element in `22a228d` | Source of repair policy, mechanical vetoes, LitRPG stratum evidence. **Its M5 decomposition is done and has already answered the question §20.7 was scheduled to ask** — see the redirect there. *(Struck: "405 tests", "A3d is next".)* |
-| RevisionJudge | Built; 104 pairs exported, exactly 2 verdicts collected; one uncommitted file (`data/verdicts.jsonl`) | The calibration instrument for §10; the missing half is the verdict *consumer*, not the export. Nothing anywhere under `C:/DEV` reads `verdicts.jsonl` |
+| RevisionJudge | Built; 104 pairs exported, exactly 2 verdicts collected; one uncommitted file (`data/verdicts.jsonl`) | **Demoted from the calibration instrument to a confirmation sample** (§10.3 as amended). Two verdicts against 104 pairs is the measured throughput of a design that needs a human to decide to sit down, and it is why revealed preference is now primary. Still the right tool for spot-confirming a calibration derived elsewhere; `litharness audit` is the same shape and collects as a by-product of drafting. The verdict *consumer* remains unbuilt |
+| **RoyalRoad-1.61M corpus** *(external data, not a repo)* | `OmniAICreator/RoyalRoad-1.61M` on HuggingFace; 1,613,875 chapters, 12.5 GB, MIT-licensed compilation; ~19% `LitRPG`. **Verified against the data, not the card: all five score columns are 100% null**; engagement (followers/favourites/views/rating counts) is populated | The calibration target for §10 and the reference distribution for §1a.5's first bar. Read by `tools/build_craft_profile.py` behind the optional `corpus` extra; only derived statistics are committed (`plan/craft-profile.json`), never prose, since the underlying fiction is its authors' copyright. Design, measured labels and validity limits in [plan/craft-corpus.md](plan/craft-corpus.md) |
 | MirrorBench | M0–M4 done, M5.0 landed (1,317 tests). One **unpushed** commit; its own README still says "M5 not started", contradicting its plan.md | Methodological invariants only; **verified zero coupling in both directions** — no import, no shared schema, no fixture exchange |
 | LongRangeContext | M0 complete, gated, reported (17 tests). **Now a git repo, Apache-2.0 LICENSE added, contracts pin relaxed to `>=0.1.0`** | Promote further milestones when Book Zero shows distant-context failures (it will); simple baseline until then. **"Byte-reproducible" was this plan's one *over*statement, and is now true rather than claimed**: three distinct machine-specific leaks fixed (an absolute checkout root in both reports, absolute artifact paths built by its own contracts loader, and CRLF from text-mode writes), each pinned by a mutation-tested guard. The test that carried "reproducible" in its name never compared bytes; one now does |
 | ContinuityEvaluation | LitRPG rules pack (six deterministic detectors, span-exact, mutation-tested) **plus the first advisory craft detector and a structural advisory/blocking partition — 56 tests.** Git repo; still no LICENSE, the `dist/` wheel predates the pack, CE's own PLAN/README still never mention either | Owner of the LitRPG rule and predicate vocabulary (§8.4), and now of the bar that stops an uncalibrated proxy becoming a gate. **Further craft detectors are blocked on §10.6's corpus, not on effort** — eight of nine candidates were refuted, see §10.6. *(Struck: "five working deterministic detectors, 20 tests… hard-gated to the mystery fixture only".)* |
@@ -597,10 +623,27 @@ order-consistent survivors preferred human originals ~80% of the time. So:
    **dialogue distinctiveness** between characters. These are harder and less
    reliable than counting sentence lengths, which is exactly why they are worth
    building — the easy proxies measure the things that matter least.
-3. **Human calibration as a scheduled program, not a footnote.** Weekly bounded
-   RevisionJudge sessions over current output: blinded, order-randomized,
-   with planted-defect attention controls. Output: calibrated thresholds tying
+3. **Calibration against human judgment, and revealed judgment is the primary source.**
+   The calibration target is a corpus of *published* LitRPG carrying reader behaviour —
+   follower conversion, retention, abandonment — not a schedule of judging sessions. See
+   [plan/craft-corpus.md](plan/craft-corpus.md) for the corpus, the measured label, and the
+   validity limits of each direction. Output is unchanged: calibrated thresholds tying
    critic scores and craft metrics to human judgment, per task and genre.
+
+   **This inverts what v2.2 said, and the reason is measured rather than aesthetic.** The
+   original read: "weekly bounded RevisionJudge sessions over current output: blinded,
+   order-randomized, with planted-defect attention controls". Blinding and randomization are
+   necessary *because the asking distorts the answer* — and a system whose quality evidence
+   depends on a recurring human appointment is a system that will report no quality evidence.
+   RevisionJudge is built, works, and has collected two verdicts against 104 exported pairs;
+   that is the measured throughput of the scheduled-session design. Revealed preference has
+   neither failure mode and arrives in millions.
+
+   Solicited sessions are **not** deleted — they are demoted to a confirmation sample, which
+   is what §10.5's standing audit already is and is sized for. The measured label
+   (`followers / total_views`, a conversion rate that divides out discovery) shows 9× spread
+   between its 10th and 90th percentiles and Spearman ρ = 0.44 against raw follower count, so
+   it discriminates and is not merely popularity restated.
 4. **Critic promotion.** A critic (or metric) becomes a blocking gate only after
    held-out calibration shows usable precision at an acceptable workload, with
    order-consistency and abstention measured. Until then the Conductor treats it as
@@ -690,6 +733,20 @@ order-consistent survivors preferred human originals ~80% of the time. So:
    generated scene against published LitRPG, which makes an outlier a fact rather than a
    hypothesis — and a standing method for refuting proxies cheaply, which is how four of them
    were refuted in an afternoon rather than surviving to Book Zero.
+
+   **The authoring requirement is withdrawn; the corpus requirement is not.** This section's
+   claim that the corpus "is human work that no amount of engineering substitutes for" was
+   true of a *hand-authored, attributed* corpus and false of the thing that corpus was needed
+   for. A paired good/weak set can be **selected** rather than written: top and bottom deciles
+   of reader conversion (`followers / total_views`), matched on tag set, era, length and
+   author, gives thousands of pairs where this section hoped for dozens. What selection loses
+   is *attribution* — a hand-authored pair says "these differ in dramatic function", a
+   selected pair says "readers converted on one and not the other" and is silent about why —
+   so §1a.3's item-by-item ordering stays unvalidated under either approach, which means
+   authoring was never buying that either. **§10.6 is therefore no longer the gating item for
+   craft work.** What gates it now is data acquisition — per-chapter retention and reader
+   reviews, both public and neither in this dataset — plus two pieces of engineering, all
+   three set out in [plan/craft-corpus.md](plan/craft-corpus.md) §4.
 
 ## 11. Manuscript IR and state architecture
 
@@ -1397,3 +1454,33 @@ every unstruck action below as a claim to re-verify rather than a task to start.
    Local Claude Code session by default, Codex as fallback, Ollama for iterative
    testing, plus the deterministic fake. Measured, with amendments this plan owes
    §2, §4.2, §15 and Stage 0's exit.
+10. **Calibrate a craft proxy against revealed preference — the new critical path for §1a.**
+    Replaces "author the §10.6 corpus", which is withdrawn as the gating item (see §10.6).
+    Two pieces of engineering, in dependency order, both detailed in
+    [plan/craft-corpus.md](plan/craft-corpus.md) §4:
+
+    - **Build the labelled study set.** Full-corpus pass (all 47 shards, offline, behind the
+      `corpus` extra), LitRPG-tagged, story-complete so chapter counts are real — the 2-shard
+      probe truncates them because a story's chapters span shards. Label is
+      `followers / total_views`, measured at 9× spread p10→p90 and ρ = 0.44 against raw
+      followers, so it discriminates without being popularity restated. Strata: tag set, era,
+      length, cadence (computable from `release_datetime`), and author where possible — only
+      23 of 590 authors had ≥2 LitRPG stories in the probe, so within-author matching needs
+      the full pass.
+    - **Then test proxies against it, era control in the same pass.** Non-negotiable after
+      `tricolon_rate`: a headline AUC without its control is meaningless, and that one would
+      have shipped as this project's first working AI-tell detector.
+
+    **The two highest-value things are data acquisition, not modelling.** Per-chapter view
+    counts give §1a.5's retention bar directly and move the label from story-level to
+    chapter-level, which is the main validity weakness of everything above. Reader reviews are
+    voluntary written judgments with scores — solicited judgment already collected at scale.
+    Both are public on RoyalRoad and neither is in this dataset.
+
+    **And one standing constraint, recorded here because it is the way this direction fails.**
+    §4.2's discriminator is a Goodhart magnet of exactly the kind §10.6 catalogues: it must
+    never be exposed to the generation loop as an optimisation target or a prompt, must be
+    retrained on a fresh held-out slice each cycle, and a passing score is
+    necessary-and-insufficient. §1a.2 already measured what happens when a model optimises
+    prose against a signal — it gets worse, and order-consistent judges preferred the human
+    originals ~80% of the time.
