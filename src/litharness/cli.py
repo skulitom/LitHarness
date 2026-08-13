@@ -416,6 +416,68 @@ def cmd_dismiss(args: argparse.Namespace) -> int:
     return EXIT_OK
 
 
+def cmd_replan(args: argparse.Namespace) -> int:
+    """Reissue every still-draftable beat of a book under a fresh plan epoch.
+
+    **Named by two docstrings and a migration comment before it existed.**
+    `handlers._stale_base` says "clearing it is an operator act — `replan` mints fresh work
+    against the current head", and migration 011 says "bumping the epoch changes every
+    derived id for the book, so `replan` reissues exactly the beats that are still
+    draftable". `bump_plan_epoch` had one caller and it was a test. This is the same defect
+    family as `ProviderRegistry.reset_health`, which documented "called at the start of a
+    tick" and had no non-test caller until slice 4 — a promise in prose that nothing kept.
+
+    It is the recovery verb for the two states `revive` cannot reach. A **poisoned** unit
+    spent its attempt budget and burned its derived id forever; a **parked** unit whose head
+    has since moved would be revived onto a stale base and escalate. Bumping the epoch
+    changes every derived id for the book, so the next tick plans the still-empty beats
+    afresh against the current head and silently skips the ones already drafted — because
+    "draftable" is derived from the manuscript, not from a status column that could disagree
+    with it.
+
+    It does **not** clear what stopped the work. A beat blocked by a finding will block again
+    on the next attempt unless the finding is dismissed first; this reissues the unit, it
+    does not overrule the gate.
+    """
+    stamp = _stamp(_now())
+    store = _store(args)
+    try:
+        book_id, branch_id = export_module.resolve_branch(store, args.book, args.branch)
+        epoch = store.bump_plan_epoch(
+            book_id, branch_id, at=stamp, reason=args.reason or "replan"
+        )
+        head = store.head(book_id, branch_id)
+        blocking = [
+            item
+            for item in store.findings(book_id, branch_id, open_only=True)
+            if item.blocks
+        ]
+        store.append_events(
+            [
+                Event(
+                    event_type=EventType.PLAN_CHANGED,
+                    project_id=args.project,
+                    created_at=stamp,
+                    actor=args.holder,
+                    book_id=book_id,
+                    branch_id=branch_id,
+                    revision_id=head.revision_id if head else None,
+                    payload={"plan_epoch": epoch, "reason": args.reason or "replan"},
+                )
+            ]
+        )
+    finally:
+        store.close()
+    print(f"plan epoch {epoch}; still-draftable beats will be reissued on the next tick")
+    if blocking:
+        print(
+            f"  {len(blocking)} blocking finding(s) remain — reissued work will be refused "
+            "again until they are dismissed or repaired"
+        )
+        return EXIT_ATTENTION
+    return EXIT_OK
+
+
 def cmd_pause(args: argparse.Namespace) -> int:
     now = _now()
     store = _store(args)
@@ -900,6 +962,14 @@ def build_parser() -> argparse.ArgumentParser:
         help="the detector was wrong, rather than the device being deliberate",
     )
     dismiss.set_defaults(func=cmd_dismiss)
+
+    replan = sub.add_parser(
+        "replan", help="reissue still-draftable beats under a fresh plan epoch"
+    )
+    replan.add_argument("--book")
+    replan.add_argument("--branch")
+    replan.add_argument("--reason", help="recorded on the PlanChanged event")
+    replan.set_defaults(func=cmd_replan)
 
     backup = sub.add_parser("backup", help="online backup (safe while ticking)")
     backup.add_argument("destination", type=Path)

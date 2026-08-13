@@ -76,6 +76,13 @@ REGENERABLE: frozenset[Veto] = frozenset(
 # UNLICENSED_DELETION, PRESERVATION_BREACH — escalates. Deliberately the default: a veto
 # nobody has classified should reach a human, not silently earn three more model calls.
 
+#: Gates that run *before* the generation, by `rule_or_critic_id`. See `refused_before_work`:
+#: membership here means a refusal costs the day rather than the unit, so a gate is added
+#: only when retrying it is provably pointless — the condition cannot change because of
+#: anything the candidate does. Budget is recognised by its `GateKind` rather than by id,
+#: since every ceiling mints a rule id of its own (`budget.<ceiling>.v0`).
+PRE_FLIGHT: frozenset[str] = frozenset({"integrity.standing.v0"})
+
 
 class GateKind(enum.StrEnum):
     SHAPE = "shape"
@@ -203,18 +210,29 @@ class PolicyDecision:
     def refused_before_work(self) -> bool:
         """Whether this refusal was reached *in front of* the work rather than about it.
 
-        Budget is the only such gate today, and deliberately so: §4.2 gate 4 runs before
-        `registry.complete`, which is the whole point of checking a ceiling in front of the
-        spend rather than behind it. Nothing was generated, so there is no candidate to
-        judge and nothing about the unit is wrong — the refusal is a fact about the day.
+        §4.2 gate 4 runs before `registry.complete`, which is the whole point of checking a
+        ceiling in front of the spend rather than behind it. Nothing was generated, so there
+        is no candidate to judge and nothing about the unit is wrong — the refusal is a fact
+        about the day, or about the queue, and not about the work.
 
         The Conductor needs this because a unit refused before it ran must not be charged an
         attempt, exactly as `TransientFailure` already is not. A new pre-flight gate does not
-        get this treatment by default; it has to be named here, which is the safe direction
-        to be wrong in.
+        get this treatment by default; it has to be named in `PRE_FLIGHT` below, which is the
+        safe direction to be wrong in.
+
+        **The second entry was earned the same way the first was.** `integrity.standing.v0`
+        refuses on a finding that was already on record before the attempt began — the
+        candidate cannot have caused it and cannot clear it, so all three attempts meet the
+        identical refusal and the unit poisons. The operator's correct response is to dismiss
+        the finding, and under the old behaviour that arrived three ticks too late: the work
+        was already terminal and its idempotency key burned. Which is, exactly, the failure
+        §19.1 records for `ProviderUnavailable` and then again for the budget ceiling.
         """
         failing = [gate for gate in self.gates if gate.blocking and not gate.passed]
-        return bool(failing) and all(gate.gate is GateKind.BUDGET for gate in failing)
+        return bool(failing) and all(
+            gate.gate is GateKind.BUDGET or gate.rule_or_critic_id in PRE_FLIGHT
+            for gate in failing
+        )
 
     def to_contract(self, meta: lc.ArtifactMeta) -> lc.PolicyDecisionRecord:
         return lc.PolicyDecisionRecord(
@@ -319,6 +337,7 @@ def decide(
 
 
 __all__ = [
+    "PRE_FLIGHT",
     "REGENERABLE",
     "RETRYABLE",
     "GateKind",

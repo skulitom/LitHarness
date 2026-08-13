@@ -576,9 +576,54 @@ def test_the_defect_stops_that_beat_without_stalling_the_book(store: SqliteStore
     assert len(drafted) == 5, f"the book stalled; only {drafted} advanced"
 
 
-def test_dismissing_the_finding_lets_the_beat_through(store: SqliteStore) -> None:
-    """The operator's way out, and the proof the refusal was the finding's doing rather than
-    something else about that beat."""
+def test_a_standing_finding_parks_the_unit_revivably_and_costs_no_tokens(
+    store: SqliteStore,
+) -> None:
+    """§19.1's rule, third instance: **a refusal reached before the work must cost time,
+    never the unit.**
+
+    A finding already on record cannot be caused or cleared by the candidate, so all three
+    attempts meet the identical refusal. Charging them poisons the unit — terminal,
+    unrevivable, idempotency key burned — roughly fifteen minutes into a run at the plan's
+    cadence, which is long before a human reads the queue. The operator's correct response is
+    to dismiss the finding, and it would arrive to find nothing left to resume.
+
+    This is the same shape as `ProviderUnavailable` and as the budget ceiling, both of which
+    §19.1 records as having been charged against a unit that never ran. Three instances, one
+    rule.
+    """
+    book_id, branch_id = _fixture(store, "litrpg")
+    head = store.head(book_id, branch_id)
+    assert head is not None
+    first = beats_for(head, SIX_BEAT)[0].logical_id
+    _plant(store, book_id, branch_id, first)
+
+    _run(store, 4)
+
+    job = store.load_job(beat_job_id(book_id, branch_id, first, SIX_BEAT.template_id, 0))
+    assert job.status is JobStatus.PARKED, "a pre-flight refusal destroyed the unit it refused"
+    assert job.attempts == 0, "the attempt was charged for work that never ran"
+    # Refused in front of the spend, so no provider was reached at all.
+    decision = store.latest_decision_for(job.job_id)
+    assert decision is not None
+    assert decision.refused_before_work
+    assert decision.invocations == 0 and decision.total_tokens == 0
+
+
+def test_dismissing_the_finding_then_reviving_lets_the_beat_through(
+    store: SqliteStore,
+) -> None:
+    """The operator's way out, end to end and by the documented verbs.
+
+    `dismiss` then `revive` — no epoch bump, no new database. This is the test that would
+    have caught the defect above: it passes only because the unit parked instead of
+    poisoning, and `revive` refuses a poisoned unit by design.
+
+    One tick, deliberately: `revive` puts the unit back with its *frozen* base, so it is the
+    right verb only while that base is still the head. Once other beats have advanced, the
+    revived unit meets `_stale_base` instead — see the next test, which is the case an
+    operator who read the queue an hour later actually has.
+    """
     from litharness.domain.findings import Status
 
     book_id, branch_id = _fixture(store, "litrpg")
@@ -586,17 +631,74 @@ def test_dismissing_the_finding_lets_the_beat_through(store: SqliteStore) -> Non
     assert head is not None
     first = beats_for(head, SIX_BEAT)[0].logical_id
     finding_id = _plant(store, book_id, branch_id, first)
-    _run(store, 6)
+    _run(store, 1)
     head = store.head(book_id, branch_id)
     assert head is not None and head.node(first).content is None
 
     store.set_finding_status(finding_id, Status.ACCEPTED_INTENTIONAL)
-    store.bump_plan_epoch(book_id, branch_id, at="2026-08-13T02:00:00Z", reason="dismissed")
+    store.revive(beat_job_id(book_id, branch_id, first, SIX_BEAT.template_id, 0))
     _run(store, 8)
 
     head = store.head(book_id, branch_id)
     assert head is not None
     assert head.node(first).content is not None, "dismissing the finding did not unblock it"
+
+
+def test_after_the_head_has_moved_the_recovery_verb_is_replan(store: SqliteStore) -> None:
+    """`revive` alone is not enough once other beats have advanced, and that is by design
+    rather than a gap: the payload freezes a base revision, `save_job` never rewrites it, and
+    `_stale_base` escalates rather than retrying against an id that will never be current.
+
+    What was missing is the verb that clears it. `handlers._stale_base` and migration 011
+    both name `replan`, and until now `bump_plan_epoch` had exactly one caller and it was a
+    test — the same shape as `reset_health` documenting "called at the start of a tick" with
+    no non-test caller.
+    """
+    from litharness.domain.findings import Status
+
+    book_id, branch_id = _fixture(store, "litrpg")
+    head = store.head(book_id, branch_id)
+    assert head is not None
+    first = beats_for(head, SIX_BEAT)[0].logical_id
+    finding_id = _plant(store, book_id, branch_id, first)
+
+    # Long enough that the other five beats draft and the head moves well past the base the
+    # blocked unit was planned against.
+    _run(store, 10)
+    store.set_finding_status(finding_id, Status.ACCEPTED_INTENTIONAL)
+    store.revive(beat_job_id(book_id, branch_id, first, SIX_BEAT.template_id, 0))
+    _run(store, 4)
+
+    head = store.head(book_id, branch_id)
+    assert head is not None
+    assert head.node(first).content is None, "a stale base should not have drafted"
+
+    epoch = store.bump_plan_epoch(
+        book_id, branch_id, at="2026-08-13T03:00:00Z", reason="finding dismissed"
+    )
+    assert epoch == 1
+    _run(store, 6)
+
+    head = store.head(book_id, branch_id)
+    assert head is not None
+    assert head.node(first).content is not None, "replan did not reissue the freed beat"
+    # And it reissued only what was still empty: the other five keep the prose they had.
+    scenes = [node for node in head.in_reading_order() if node.kind is NodeKind.SCENE]
+    assert all(node.content for node in scenes)
+
+
+def test_a_candidate_the_model_got_wrong_still_costs_its_attempts(store: SqliteStore) -> None:
+    """The other side of the distinction, so the fix above is not read as "integrity never
+    charges". A refusal about *this candidate* is about the work and is charged normally —
+    only a refusal that was knowable before the generation is free."""
+    from litharness.domain.integrity import STANDING_GATE
+    from litharness.domain.policy import PRE_FLIGHT
+
+    assert STANDING_GATE in PRE_FLIGHT
+    # The post-generation gate is deliberately absent: its refusal judges output that exists.
+    from litharness.domain.integrity import INTEGRITY_GATE
+
+    assert INTEGRITY_GATE not in PRE_FLIGHT
 
 
 def test_a_clean_book_is_not_refused_by_the_new_gate(store: SqliteStore) -> None:

@@ -1,7 +1,7 @@
 # LitHarness: Autonomous Book-Production System Plan
 
 **Version:** 2.2 (supersedes PLAN-v1-authoring-tool.md, archived in this folder)
-**Status:** Master plan; **Stage 0 slices 1–6 and Stage 1 slices 7–9 implemented and green (414 tests + 3 opt-in live); operable via `litharness tick`; a book goes in (`import`), drafts itself against a context packet, is refused when a planted defect stands against it, and comes out readable (`export`); all four §17 Stage 1 exit clauses met; two of §19's seven clauses met outright — scorecard in §19.1**
+**Status:** Master plan; **Stage 0 slices 1–6 and Stage 1 slices 7–9 implemented and green (417 tests + 3 opt-in live); operable via `litharness tick`; a book goes in (`import`), drafts itself against a context packet, is refused when a planted defect stands against it, and comes out readable (`export`); all four §17 Stage 1 exit clauses met; two of §19's seven clauses met outright — scorecard in §19.1**
 
 *(Corrected here, because this line was the instance: it read "four of §19's seven clauses met" while §19.1's table said two. §19.1 contains a paragraph recording that exact drift happening once before, four lines above the table that contradicted it, and the header carrying the same wrong number went unnoticed through three revisions. The readiness number this project reports about itself is the number to distrust first.)*
 **Role:** A 24/7 autonomous system that plans, drafts, evaluates, repairs, and versions quality LitRPG books — directed by a human, never blocked on one
@@ -389,7 +389,7 @@ done, and **the v2.1 pass did it again in six more places**:
 | Project | State | Role in v2 |
 |---|---|---|
 | litharness-contracts | **Wire schema 1.1.0**, 124 tests, 30 schemas, mystery + litrpg golden fixtures. Git repo (branch `main`, clean tree, no remote, no tags). **Still no LICENSE** — README says "License: TBD", and that is a decision for the owner rather than a gap to fill | Shared schemas + gold benchmarks. §20.3's minors have shipped except the game-system schemas, which stay deferred for want of a consumer. Version (don't freeze) after Book Zero. *(Struck: "untracked, no git repo" and "version-controlling it is the single cheapest unblock" — the commit landed 2026-08-12 17:36, eight minutes **before** the v2.1 edit that still called it untracked.)* |
-| **LitHarness (this repo)** | **Stage 0 slices 1–6 and Stage 1 slices 7–9: 414 tests passing + 3 opt-in live, ruff clean, mypy strict clean (`warn_unreachable` on). Under version control** (`.gitattributes` pins `eol=lf`; `core.autocrlf=true` is set globally on this machine and has already bitten this project once) | The product. **This table previously audited every sibling's VCS status and had no row for the product repo, which was itself untracked.** |
+| **LitHarness (this repo)** | **Stage 0 slices 1–6 and Stage 1 slices 7–9: 417 tests passing + 3 opt-in live, ruff clean, mypy strict clean (`warn_unreachable` on). Under version control** (`.gitattributes` pins `eol=lf`; `core.autocrlf=true` is set globally on this machine and has already bitten this project once) | The product. **This table previously audited every sibling's VCS status and had no row for the product repo, which was itself untracked.** |
 | BookWorldState | Committed, Apache-2.0, tagged `v0.1.0`, pushed to GitHub; **13 commits, working tree clean**; 100 tests passing. Ships an authenticated versioned WSGI API, transactional outbox with capped-exponential-retry worker, signed webhook publication, migration checksums, online backup/restore + destructive-corruption drill — **Milestone 4/5 infrastructure, not "~Milestone 2"**. What is *not* done is M3's evaluation corpus | State substrate. Its closed predicate registry is **not** injectable yet (§20.5) — but §8.4 routes around this deliberately, so it is not a blocker for §8. *(Struck: "working tree is not clean", "4 commits", "~Milestone 2 complete", "the real blocker for §8" — all four false.)* |
 | RevisionBench | Mature (**411** tests). A2d complaint-gated repair, the LitRPG stratum, **and A3d** have landed — A3d shipped *under the name A2d*, and best-of-N repair ranked by minimal intervention closed the last element in `22a228d` | Source of repair policy, mechanical vetoes, LitRPG stratum evidence. **Its M5 decomposition is done and has already answered the question §20.7 was scheduled to ask** — see the redirect there. *(Struck: "405 tests", "A3d is next".)* |
 | RevisionJudge | Built; 104 pairs exported, exactly 2 verdicts collected; one uncommitted file (`data/verdicts.jsonl`) | The calibration instrument for §10; the missing half is the verdict *consumer*, not the export. Nothing anywhere under `C:/DEV` reads `verdicts.jsonl` |
@@ -856,6 +856,15 @@ LitRPG deterministic detector pack"), so a book nobody has run an evaluator over
 gated on shape and contradiction alone. §8.3's fourth promotion clause — validation on
 model-written rather than templated chapters — remains where §8.3 puts it.
 
+**The gate runs in two places, and the split is §19.1's rule applied a third time.** A
+finding already standing against a node is checked *before* the provider call and parks the
+unit revivably without charging an attempt or a token; a finding about the candidate itself
+is checked after generation and charged like the work it judges. The first version charged
+both, which poisoned every blocked beat twelve model calls before a human could dismiss the
+finding that stopped it — see §19.1, where the defect and what actually caught it are
+recorded. `replan` was added in the same pass, because it was named by two docstrings and a
+migration comment and did not exist.
+
 Two invariants are enforced at the gate rather than documented, and both are the kind that
 looks like a detail until it is wrong once. A finding's **status overrides its severity**:
 both fixtures ship negative controls a *correct* detector emits — the rain-on-glass motif,
@@ -905,7 +914,7 @@ Still unbuilt from the clause list above: **state extraction** (§12 step 5 — 
 only through `import`, so a book the system drafts itself accumulates no new facts, which
 also means the integrity gate judges every candidate against frozen state). The
 **game-system replay validation** is built where §8.4 says it belongs and now reaches the
-gate; what is missing is the tick running it, which §17 Stage 2 already owns. 414 tests.
+gate; what is missing is the tick running it, which §17 Stage 2 already owns. 417 tests.
 
 ### Stage 2 — Detect and scoped repair
 Promote RevisionBench's A3d detect–repair–verify results into the repair path;
@@ -1011,7 +1020,7 @@ because four of the seven are structurally blocked in ways worth naming precisel
 | Clause | Status | The binding reason |
 |---|---|---|
 | **Integrity** | **met, and now checked rather than asserted** | Content-addressed revisions, atomic revision+event+outbox commits, restore-by-rebuild. Reversibility landed with a stored `branch_heads` pointer and a `revert` that moves *forward* — history is immutable, so undo produces a new revision restoring the old content, leaving the mistake and the correction both in the lineage. Undo composes. **The correction this row needed:** it claimed "attribution is enforced at the loop: every accepted revision resolves back through `decision_for_revision`", which was true of the generation path and false of the reversibility feature added under this same clause — `revert` committed a revision and moved the head while writing no decision and no event, so `decision_for_revision` answered `None`. That was the one silent mutation in the shipped system, against a literal §17 Stage 1 exit clause, and no test would have caught it. `revert` now mints its own decision and acceptance event (attribution is not a caller's option), and `store.unattributed_revisions()` — surfaced by `litharness verify`, which exits non-zero — makes the clause a query rather than a claim. A structural constraint on one method would only ever have guarded that method. |
-| **Autonomy** | **attemptable; needs 30 days** | Was *not startable*: no entrypoint existed, so §17's week-unattended criterion could be simulated but never run. `litharness tick` closes that. Three spins found and fixed — the outbox retried its head 2,016 times a week while starving entries 51+; an escalated unit was marked SUCCEEDED and discarded; and a provider outage longer than fifteen minutes permanently poisoned every unit it touched, because `ProviderUnavailable` was charged against the attempt budget despite being raised before any work was attempted. The exception queue exists. **"Parked units are visible and revivable" was false on the refusal an operator with real ceilings meets first, and the same lesson had to be learned twice:** a budget refusal settled to POISONED — terminal, unrevivable, idempotency key burned — because `_settle` read the terminal state off the word `PARK` under a comment asserting "`decide` returns this only on attempt exhaustion", a premise the budget gate falsifies on attempt 1. A ceiling that resets at midnight destroyed the unit it refused. `_settle` now derives POISONED from the attempt budget itself, and a refusal reached *in front of* the work gives back the attempt it was charged, exactly as an outage already did. **What remains is elapsed time, which nothing but time supplies.** |
+| **Autonomy** | **attemptable; needs 30 days** | Was *not startable*: no entrypoint existed, so §17's week-unattended criterion could be simulated but never run. `litharness tick` closes that. Three spins found and fixed — the outbox retried its head 2,016 times a week while starving entries 51+; an escalated unit was marked SUCCEEDED and discarded; and a provider outage longer than fifteen minutes permanently poisoned every unit it touched, because `ProviderUnavailable` was charged against the attempt budget despite being raised before any work was attempted. The exception queue exists. **"Parked units are visible and revivable" was false on the refusal an operator with real ceilings meets first, and the same lesson had to be learned twice:** a budget refusal settled to POISONED — terminal, unrevivable, idempotency key burned — because `_settle` read the terminal state off the word `PARK` under a comment asserting "`decide` returns this only on attempt exhaustion", a premise the budget gate falsifies on attempt 1. A ceiling that resets at midnight destroyed the unit it refused. `_settle` now derives POISONED from the attempt budget itself, and a refusal reached *in front of* the work gives back the attempt it was charged, exactly as an outage already did. **And the lesson had to be learned a third time in slice 9**: a finding already standing against a node was charged against the unit it refused, so a blocked beat poisoned after twelve model calls and the operator's own remedy — dismiss the finding — arrived to find nothing revivable. The gate now runs a pre-flight pass in front of the spend. `replan` shipped in the same fix, because the recovery path it completes was named by `handlers._stale_base` and by migration 011 and did not exist. **What remains is elapsed time, which nothing but time supplies.** |
 | **Trust** | **no longer vacuous; partly met** | Was: "the deterministic ladder is one gate, `shape.draft.v0`; zero false-accepts over a suite that does not exist is trivially true". The ladder is now shape *then* integrity, and the clause has a suite to be measured against — both fixtures' planted defects, injected from their own `findings.json`. Measured: every planted defect that reaches the gate is refused, the beat's node stays empty, and both fixture books still reach six accepted scenes with the gate live, so there are no false *rejects* either. Two invariants are enforced rather than asserted — a finding's status overrides its severity, so a negative control cannot block forever; and an uncalibrated critic cannot block at all (§10.4). **What keeps this short of met:** "zero known false-accepts on the fixture suites" is measured over the defects an evaluator *reported*, and nothing in a tick runs one — §8.4 puts the detectors in ContinuityEvaluation and §17 Stage 2 owns wiring the pack in. One detector runs in-process, `state.contradiction.v0`, and it is the only one whose false-accept rate this repo can currently claim anything about. The second half of the clause — "blocking critics carry current calibration evidence" — is untouched and correctly so: there are no critics, only rules. |
 | **Genre** | not started (deferred) | No game-system replay in LitHarness; §8.4 puts the pack in ContinuityEvaluation until a generator exists to constrain. |
 | **Quality (§1a)** | not started | Blocked on §10.6's craft reference corpus, which is human authoring work — see §10.6 for why eight of nine candidate proxies were refuted rather than built. |
@@ -1029,7 +1038,7 @@ lines above it said otherwise, which is worth leaving on the record: the readine
 this project reports about itself had drifted from the evidence directly above it, in the
 one section written specifically to stop that happening.
 
-Eight defects worth remembering, because each failed *silently* and none would have surfaced
+Nine defects worth remembering, because each failed *silently* and none would have surfaced
 without being looked for: migrations resolved to nowhere under a wheel while `migrate`
 reported success, so a restored host would have come up with an empty schema that reads as
 data loss; a full disk reported "cannot rollback" because the rollback in the transaction's
@@ -1038,9 +1047,10 @@ Windows blocks replacing a corrupt database with its backup; the outbox spun and
 simultaneously; an escalated unit was counted as a success; an infrastructure outage
 was charged against the unit of work it had prevented; a **budget** refusal was charged the
 same way *and* made terminal, so a ceiling that resets at midnight destroyed the work it
-declined; and `revert` — the feature added to satisfy §19's reversibility clause — violated
+declined; `revert` — the feature added to satisfy §19's reversibility clause — violated
 the attribution clause in the same sentence, committing a revision that no policy decision
-explained.
+explained; and slice 9's integrity gate charged a standing finding against the unit it
+refused, so the operator's own remedy arrived to find the work already destroyed.
 
 Two of those eight are the same defect at different layers, and that is the more useful
 observation. `ProviderUnavailable` and a budget ceiling are both refusals raised *in front
@@ -1048,6 +1058,29 @@ of* the work; both were charged against the attempt budget of a unit that never 
 first was found and fixed, and the second survived that fix by three commits because the
 lesson was recorded as a patch rather than as a rule. The rule, stated so the third instance
 is caught by reading: **a refusal reached before the work must cost time, never the unit.**
+
+**The third instance arrived with slice 9's integrity gate, and it is worth recording that
+the rule above did not prevent it — walking the operator's recovery path did.** A finding
+already standing against a node cannot be caused or cleared by the candidate, so all three
+attempts met the identical refusal and the unit poisoned: twelve model calls to discover a
+fact known before the first one, and then a terminal state with its idempotency key burned.
+The operator's correct response is to dismiss the finding, and at the plan's cadence it
+arrived roughly fifteen minutes too late to have anything left to resume. The gate now runs
+in two places — a pre-flight pass over standing findings that parks revivably and charges
+nothing, and a post-generation pass over what the candidate itself produced, which is about
+the work and is charged like it. Measured on the litrpg fixture with its six planted defects
+ingested: 12 calls and 8,599 tokens before, 3 calls and 1,912 tokens after, with three units
+parked-and-revivable instead of poisoned.
+
+**What actually caught it is the transferable part.** The rule was in the document and the
+code was written by someone who had just read it. What surfaced the defect was running the
+recovery journey end to end through the CLI — ingest, tick, dismiss, revive — and finding
+that the documented next verb refused. **A gate is not finished when it refuses correctly; it
+is finished when the operator can get past it.** Two further gaps fell out of the same walk:
+`replan` was named by `handlers._stale_base` and by migration 011 and did not exist
+(`bump_plan_epoch` had one caller and it was a test — the `reset_health` shape again), and
+`revive` alone cannot clear a unit whose head has moved on, which is correct behaviour that
+nothing had written down.
 Three of the eight were also *pinned by passing tests* — the budget refusal's POISONED
 status was asserted by name, and `revert`'s attribution was never asserted at all. A suite
 that encodes the defect is worse than no suite, because it converts a bug into a

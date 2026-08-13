@@ -43,7 +43,7 @@ from litharness.domain.draft import DraftPolicy, gate_draft
 from litharness.domain.events import Event, EventType
 from litharness.domain.findings import DetectorInput
 from litharness.domain.findings import Finding as DomainFinding
-from litharness.domain.integrity import gate_integrity
+from litharness.domain.integrity import gate_integrity, gate_standing
 from litharness.domain.jobs import Job
 from litharness.domain.patch import Veto
 from litharness.domain.policy import (
@@ -209,6 +209,51 @@ def make_scene_draft_handler(
                     store, job, revision, project_id, logical_id, head.revision_id, now
                 )
 
+        # **§4.2 ladder step 3's pre-flight half, in front of the spend.** A finding already
+        # on record against this node cannot be caused or cleared by the candidate, so
+        # generating one to discover a refusal that was knowable beforehand costs three model
+        # calls and then poisons the unit — leaving nothing to resume when the operator does
+        # the right thing and dismisses the finding. `refused_before_work` names this gate so
+        # the Conductor gives the attempt back; see §19.1's rule, this being its third
+        # instance.
+        standing = (
+            store.findings(str(book_id), str(branch_id), logical_id=logical_id, open_only=True)
+            if book_id and branch_id
+            else []
+        )
+        standing_gate = gate_standing(standing)
+        if not standing_gate.passed:
+            refusal = PolicyDecision(
+                decision_id=decision_id_for(job.job_id, job.attempts, (standing_gate,)),
+                outcome=Outcome.PARK,
+                gates=(standing_gate,),
+                job_id=job.job_id,
+                logical_id=logical_id,
+                base_revision_id=revision_id,
+                attempt=job.attempts,
+                policy_config_digest=policy_digest(policy or DraftPolicy()),
+                reason=standing_gate.detail,
+            )
+            store.record_decision(refusal, decided_at=_timestamp(now))
+            return [
+                Event(
+                    event_type=EventType.POLICY_DECISION_RECORDED,
+                    project_id=project_id,
+                    created_at=_timestamp(now),
+                    book_id=revision.book_id,
+                    branch_id=revision.branch_id,
+                    revision_id=revision_id,
+                    payload={
+                        "decision_id": refusal.decision_id,
+                        "job_id": job.job_id,
+                        "outcome": refusal.outcome.value,
+                        "reason": standing_gate.detail,
+                        "findings": [item.finding_id for item in standing if item.blocks],
+                        "gates": [{"id": standing_gate.rule_or_critic_id, "passed": False}],
+                    },
+                )
+            ]
+
         request = CompletionRequest(
             prompt=prompt,
             system=payload.get("system"),
@@ -298,13 +343,11 @@ def make_scene_draft_handler(
                 ordinal=int(selected.get("ordinal", 0) or 0),
                 of_total=int(selected.get("of_total", 0) or 0),
             )
-            # Scoped to this node: a defect in scene 2 must not park the job drafting
-            # scene 5 (§4.1), and blocking every later beat on one old finding would turn a
-            # single defect into a stalled book.
-            standing = store.findings(
-                str(book_id), str(branch_id), logical_id=logical_id, open_only=True
-            )
-            integrity, findings = gate_integrity(subject, standing=standing)
+            # `standing` was read and cleared before the generation, so this pass judges
+            # only what the in-process detectors say about *this* candidate — which is why
+            # its refusal costs an attempt where the pre-flight one does not.
+            integrity, findings = gate_integrity(subject)
+            gates = (*gates, standing_gate)
             gates = (*gates, integrity)
             if findings:
                 # Recorded whether or not they block. A minor finding dropped because it was

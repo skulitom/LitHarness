@@ -96,7 +96,13 @@ uv run litharness --database book.db directive "More dungeon crawling." --kind a
 - `jobs [--status parked]` — queue depth, or the units in one state.
 - `revive <job_id>` — return a parked unit to the queue once you have cleared what parked
   it. Refuses a poisoned unit, whose attempt budget really was spent. A unit stopped by a
-  budget ceiling is parked, not poisoned: the ceiling resets and the work is still there.
+  budget ceiling or by a standing finding is parked, not poisoned: the blocker is external
+  and the work is still there.
+- `replan` — reissue every still-draftable beat under a fresh plan epoch. The verb for the
+  two states `revive` cannot reach: a poisoned unit burned its derived job id forever, and a
+  parked unit whose head has since moved would be revived onto a stale base. It does not
+  overrule the gate — a beat blocked by a finding blocks again unless the finding is
+  dismissed first.
 - `pause` / `resume` — durable, so it survives the process a cron tick starts and ends in.
 - `exceptions` / `resolve` — what policy could not resolve. Resolving closes your side; it
   deliberately does not requeue the unit, because an escalation may have been *right*.
@@ -116,12 +122,21 @@ by forgetting a flag. `status` prints spend against plan.
 
 ## Gating it
 
-Every candidate that clears the shape gate then faces a **blocking integrity gate**. It
-refuses a draft that any unresolved, deterministic, major-or-worse finding stands against —
-the refusal carries a `continuity_breach` veto, earns a bounded retry, and after the attempt
-budget parks the unit and files an exception. A defect on scene 3 does not stop scene 6:
-findings are scoped to the node they land on, because blocking the branch would turn one
-defect into a dead book.
+The ladder runs shape, then integrity, and integrity runs in two places for one reason.
+
+A finding **already on record** against a node is checked *before* the provider call. It
+cannot be caused or cleared by the candidate, so all three attempts would meet the identical
+refusal — generating to discover it costs three model calls and then poisons the unit,
+leaving nothing to resume when you do the right thing and dismiss the finding. So it parks
+revivably, costs no attempt and no tokens, and names the findings that stopped it in
+`jobs --status parked`.
+
+A finding about **this candidate** is checked after generation, carries a `continuity_breach`
+veto, earns a bounded retry, and after the attempt budget parks the unit and files an
+exception. That refusal is about the work, so it is charged like one.
+
+Either way a defect on scene 3 does not stop scene 6: findings are scoped to the node they
+land on, because blocking the branch would turn one defect into a dead book.
 
 The detectors themselves live in **ContinuityEvaluation** (PLAN.md §8.4 owns that decision),
 and siblings depend on contracts rather than on each other (§13) — so findings arrive as an

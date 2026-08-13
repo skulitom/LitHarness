@@ -59,8 +59,21 @@ from litharness.domain.policy import GateKind, GateOutcome, VerdictSource
 #: This module's own rule id, in the vocabulary the fixtures use for theirs.
 CONTRADICTION_RULE = "state.contradiction.v0"
 
-#: The gate's id in a recorded policy decision, alongside `shape.draft.v0`.
+#: The gate's id in a recorded policy decision, alongside `shape.draft.v0`. Judges the
+#: candidate, so its refusal is *about the work* and costs an attempt.
 INTEGRITY_GATE = "integrity.findings.v0"
+
+#: The pre-flight half, and the distinction is the whole of why it exists.
+#:
+#: A **standing** finding was in the store before this attempt began. The candidate cannot
+#: have caused it and cannot clear it, so every retry is guaranteed to meet the same refusal
+#: — which means it is a refusal reached *in front of* the work, exactly like a budget
+#: ceiling. §19.1 states the rule after finding two instances of it: **a refusal reached
+#: before the work must cost time, never the unit.** Checked before the provider call so it
+#: costs no tokens either, and settled as a revivable PARK so that dismissing the finding
+#: leaves work to resume. Charging it behind the generation is what made the operator's
+#: correct action — dismiss the negative control — arrive three ticks too late to matter.
+STANDING_GATE = "integrity.standing.v0"
 
 
 def _value_key(value: Any) -> str:
@@ -187,6 +200,37 @@ def gate_integrity(
     return gate, findings
 
 
+def gate_standing(findings: Sequence[Finding]) -> GateOutcome:
+    """§4.2 ladder step 3, run *before* the generation, over findings already on record.
+
+    Same filter as `gate_integrity` — status over severity, deterministic only — because a
+    negative control must not block in front of the work either, and an uncalibrated critic
+    that could not refuse a finished candidate must certainly not refuse an unstarted one.
+
+    Returns a *passing* gate when there is nothing standing, so the decision record shows the
+    check ran. A gate that only appears on failure cannot be distinguished from a gate that
+    was never wired in, which is the question an audit asks first.
+    """
+    blocking = [item for item in findings if item.blocks and item.deterministic]
+    detail = (
+        "; ".join(
+            f"{item.finding_id} {item.rule_or_critic_id or item.category} "
+            f"[{item.severity.value}] {item.message}"
+            for item in blocking
+        )
+        or None
+    )
+    return GateOutcome(
+        gate=GateKind.INTEGRITY,
+        rule_or_critic_id=STANDING_GATE,
+        passed=not blocking,
+        verdict_source=VerdictSource.DETERMINISTIC,
+        blocking=True,
+        vetoes=vetoes_for(blocking),
+        detail=detail,
+    )
+
+
 def summarise(findings: Sequence[Finding]) -> str:
     """One line for an operator. Worst severity first, because that is what gets read."""
     if not findings:
@@ -203,8 +247,10 @@ __all__ = [
     "CONTRADICTION_RULE",
     "INTEGRITY_GATE",
     "IN_PROCESS",
+    "STANDING_GATE",
     "detect_contradictions",
     "gate_integrity",
+    "gate_standing",
     "run_detectors",
     "summarise",
 ]
