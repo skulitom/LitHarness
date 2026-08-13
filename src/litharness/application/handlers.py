@@ -37,8 +37,10 @@ from datetime import UTC, datetime
 
 from litharness.adapters.sqlite_store import SqliteStore
 from litharness.application.conductor import JobHandler
+from litharness.domain.audit import DEFAULT_RATE, draw
 from litharness.domain.budget import BudgetPolicy, BudgetVerdict
 from litharness.domain.budget import check as budget_check
+from litharness.domain.craft import CraftMetric, craft_gates, measure
 from litharness.domain.draft import DraftPolicy, gate_draft
 from litharness.domain.events import Event, EventType
 from litharness.domain.findings import DetectorInput
@@ -154,6 +156,7 @@ def make_scene_draft_handler(
     policy: DraftPolicy | None = None,
     budget: BudgetPolicy | None = None,
     call_class: str = "generation",
+    audit_rate: float = DEFAULT_RATE,
 ) -> JobHandler:
     """Build a `JobHandler` that drafts one node's prose and gates the result.
 
@@ -332,6 +335,11 @@ def make_scene_draft_handler(
         # integrity over text the shape gate refused would be a second opinion on a draft
         # that is already going back, and it would cost a store read per refusal.
         findings: list[DomainFinding] = []
+        # Empty when the job carries no book scope — a hand `enqueue` against a bare revision.
+        # Bound here rather than inside the branch because the acceptance path below reads it
+        # unconditionally, and an unbound name there fails the *job*, turning a missing
+        # measurement into a failed draft.
+        craft_metrics: tuple[CraftMetric, ...] = ()
         if outcome.accepted and book_id and branch_id:
             subject = DetectorInput(
                 book_id=str(book_id),
@@ -347,8 +355,16 @@ def make_scene_draft_handler(
             # only what the in-process detectors say about *this* candidate — which is why
             # its refusal costs an attempt where the pre-flight one does not.
             integrity, findings = gate_integrity(subject)
-            gates = (*gates, standing_gate)
-            gates = (*gates, integrity)
+            gates = (*gates, standing_gate, integrity)
+
+            # §10.2 ladder step 7, and it can only annotate. Every gate `craft_gates` builds
+            # is `blocking=False` with no `calibration_id`, so it cannot affect `accepted`
+            # below and `PolicyDecision` would raise if it tried. Measured here rather than in
+            # a later pass because §10.2 wants proxies "logged per scene" — a metric whose
+            # history starts on the day it is promoted has no held-out data to be promoted on.
+            craft_metrics = measure(result.text)
+            gates = (*gates, *craft_gates(craft_metrics))
+
             if findings:
                 # Recorded whether or not they block. A minor finding dropped because it was
                 # not fatal is exactly the annotation §10.2 wants instrumented from Book Zero
@@ -469,6 +485,34 @@ def make_scene_draft_handler(
             },
         )
         store.commit_revision(outcome.revision, created_at=_timestamp(now), events=[acceptance])
+
+        # §10.2's log, keyed on the *resulting* revision — the address the prose actually has.
+        # Written after the commit rather than with it: a metric about a revision that failed
+        # to commit is a measurement of text nobody has, and unlike the decision record there
+        # is no attribution clause requiring it to survive the crash.
+        store.record_craft_metrics(
+            outcome.revision.revision_id,
+            logical_id,
+            craft_metrics,
+            measured_at=_timestamp(now),
+        )
+
+        # §10.5's standing audit. The only place this system asks a human about the prose, and
+        # the reason it is on the acceptance path rather than in a report: judgment is the
+        # scarce input (RevisionJudge holds 104 pairs and two verdicts), and a queue that
+        # fills as a by-product of drafting is the difference between evidence accumulating
+        # and evidence being a project somebody has to schedule.
+        sample = draw(
+            book_id=revision.book_id,
+            branch_id=revision.branch_id,
+            revision_id=outcome.revision.revision_id,
+            logical_id=logical_id,
+            sampled_at=_timestamp(now),
+            rate=audit_rate,
+        )
+        if sample is not None:
+            store.record_audit_sample(sample)
+
         # `acceptance` is deliberately **not** returned: `commit_revision` already persisted it
         # in the same transaction as the revision, and returning it as well would ask the
         # Conductor to append it a second time — harmless, because idempotency keys are

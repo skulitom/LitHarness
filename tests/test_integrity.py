@@ -316,9 +316,16 @@ def test_no_module_reads_the_note_field() -> None:
     `StateRecord.note` — "Gold 15 is what the prose says... See f-gold-ledger." — so a 6/6
     gate is reachable by regexing for `See f-`. Asserted by scanning the source rather than
     promised in a docstring, because the promise is what would rot."""
-    root = Path(domain_package.__file__).parent.parent
+    # Scoped to the modules that see a `StateRecord`, which is what §8.3 asks for verbatim:
+    # "assert the detector modules never reference the field". A whole-package scan was the
+    # first attempt and it is wrong in both directions — it cannot tell `record.note` from
+    # `calibration.note` (§10.4's own column, and the audit reader's free-text note, which is
+    # the most valuable field in the calibration schema), so it would either fail on
+    # legitimate reads or be relaxed until it caught nothing.
+    root = Path(domain_package.__file__).parent
+    watched = ("state.py", "integrity.py", "findings.py", "context.py")
     offenders: list[str] = []
-    for path in sorted(root.rglob("*.py")):
+    for path in sorted(p for p in root.rglob("*.py") if p.name in watched):
         tree = ast.parse(path.read_text(encoding="utf-8"))
         for node in ast.walk(tree):
             # Parsed rather than grepped: `note` appears legitimately in prose throughout
@@ -333,6 +340,8 @@ def test_no_module_reads_the_note_field() -> None:
             if reads or subscript:
                 offenders.append(f"{path.relative_to(root).as_posix()}:{node.lineno}")
     assert offenders == []
+    # And the scan is looking at files that exist, so a rename cannot silently empty it.
+    assert sorted(p.name for p in root.rglob("*.py") if p.name in watched) == sorted(watched)
 
 
 def test_the_fixture_really_does_carry_the_answer_key() -> None:

@@ -32,7 +32,10 @@ from typing import Any
 
 import litharness_contracts as lc
 
+from litharness.domain.audit import AuditSample, Verdict
 from litharness.domain.budget import Spend
+from litharness.domain.calibration import Calibration, Direction
+from litharness.domain.craft import CraftMetric
 from litharness.domain.directives import Directive, DirectiveKind, DirectiveStatus
 from litharness.domain.events import (
     MAX_DELIVERY_ATTEMPTS,
@@ -1153,6 +1156,210 @@ class SqliteStore:
                 (book_id, branch_id),
             )
         }
+
+    # -- craft instrumentation, audit and calibration (§10.2-§10.5) -------------
+
+    def record_craft_metrics(
+        self,
+        revision_id: str,
+        logical_id: str,
+        metrics: Sequence[CraftMetric],
+        *,
+        measured_at: str,
+    ) -> int:
+        """Log advisory craft measurements for one accepted scene.
+
+        `INSERT OR IGNORE` on (revision, node, metric): a revision is immutable and content
+        addressed, so re-measuring one can only produce the same numbers. A row that differed
+        would mean the metric changed, and that is a new metric id, not an update.
+        """
+        inserted = 0
+        with self.transaction() as connection:
+            for metric in metrics:
+                cursor = connection.execute(
+                    "INSERT OR IGNORE INTO craft_metrics (revision_id, logical_id, "
+                    "metric_id, value, detail, measured_at) VALUES (?, ?, ?, ?, ?, ?)",
+                    (
+                        revision_id,
+                        logical_id,
+                        metric.metric_id,
+                        float(metric.value),
+                        metric.detail,
+                        measured_at,
+                    ),
+                )
+                inserted += cursor.rowcount
+        return inserted
+
+    def craft_metrics(
+        self, *, metric_id: str | None = None, revision_id: str | None = None
+    ) -> list[tuple[str, str, str, float]]:
+        """(revision_id, logical_id, metric_id, value), oldest first.
+
+        The distribution a calibration would be measured against. Returned as tuples rather
+        than as `CraftMetric` because the caveat is a property of the *metric definition* and
+        re-attaching it from a row would let a stale caveat outlive the code that earned it.
+        """
+        sql = "SELECT revision_id, logical_id, metric_id, value FROM craft_metrics WHERE 1=1"
+        params: list[Any] = []
+        if metric_id is not None:
+            sql += " AND metric_id = ?"
+            params.append(metric_id)
+        if revision_id is not None:
+            sql += " AND revision_id = ?"
+            params.append(revision_id)
+        sql += " ORDER BY measured_at, revision_id, logical_id, metric_id"
+        return [
+            (row["revision_id"], row["logical_id"], row["metric_id"], float(row["value"]))
+            for row in self._connection.execute(sql, params)
+        ]
+
+    def record_audit_sample(self, sample: AuditSample, *, events: Sequence[Event] = ()) -> bool:
+        """Queue one accepted scene for human reading. False if it was already drawn.
+
+        Idempotent on the derived `sample_id`, so a replayed tick re-draws the same scene onto
+        the same row rather than asking a human to read it twice.
+        """
+        with self.transaction() as connection:
+            cursor = connection.execute(
+                "INSERT OR IGNORE INTO audit_samples (sample_id, book_id, branch_id, "
+                "revision_id, logical_id, sampled_at, rate, bucket) "
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                (
+                    sample.sample_id,
+                    sample.book_id,
+                    sample.branch_id,
+                    sample.revision_id,
+                    sample.logical_id,
+                    sample.sampled_at,
+                    sample.rate,
+                    sample.bucket,
+                ),
+            )
+            inserted = cursor.rowcount > 0
+            for event in events:
+                self._insert_event(connection, event)
+        return inserted
+
+    def audit_samples(self, *, pending_only: bool = False) -> list[AuditSample]:
+        sql = "SELECT * FROM audit_samples"
+        if pending_only:
+            sql += " WHERE verdict IS NULL"
+        sql += " ORDER BY sampled_at, sample_id"
+        return [self._audit_from_row(row) for row in self._connection.execute(sql)]
+
+    @staticmethod
+    def _audit_from_row(row: sqlite3.Row) -> AuditSample:
+        return AuditSample(
+            sample_id=row["sample_id"],
+            book_id=row["book_id"],
+            branch_id=row["branch_id"],
+            revision_id=row["revision_id"],
+            logical_id=row["logical_id"],
+            sampled_at=row["sampled_at"],
+            rate=float(row["rate"]),
+            bucket=int(row["bucket"]),
+            verdict=Verdict(row["verdict"]) if row["verdict"] else None,
+            note=row["note"],
+            judged_at=row["judged_at"],
+            judged_by=row["judged_by"],
+        )
+
+    def record_verdict(
+        self,
+        sample_id: str,
+        verdict: Verdict,
+        *,
+        at: str,
+        by: str,
+        note: str | None = None,
+        events: Sequence[Event] = (),
+    ) -> bool:
+        """Store one human judgment. False if there is no such sample.
+
+        **A verdict is never overwritten.** `WHERE verdict IS NULL` makes a second answer a
+        no-op rather than a replacement, because the first reading is the blind one — §10.3
+        wants blinded, order-randomized judgments, and a reader who has since seen the
+        provenance is a different instrument. Changing a mind is a new sample, not an edit.
+        """
+        with self.transaction() as connection:
+            cursor = connection.execute(
+                "UPDATE audit_samples SET verdict = ?, note = ?, judged_at = ?, "
+                "judged_by = ? WHERE sample_id = ? AND verdict IS NULL",
+                (verdict.value, note, at, by, sample_id),
+            )
+            if cursor.rowcount == 0:
+                return False
+            for event in events:
+                self._insert_event(connection, event)
+        return True
+
+    def audit_counts(self) -> dict[str, int]:
+        counts = {
+            row["verdict"] or "pending": int(row["n"])
+            for row in self._connection.execute(
+                "SELECT verdict, COUNT(*) AS n FROM audit_samples GROUP BY verdict"
+            )
+        }
+        return counts
+
+    def record_calibration(
+        self, calibration: Calibration, *, events: Sequence[Event] = ()
+    ) -> bool:
+        """Store measured evidence that a metric predicts human judgment.
+
+        Not an upsert: a calibration is a record of a measurement that happened, so a second
+        measurement is a second row with its own id and its own `verdicts_digest`. Overwriting
+        would delete the evidence trail that makes "why did this threshold change" answerable.
+        """
+        with self.transaction() as connection:
+            cursor = connection.execute(
+                "INSERT OR IGNORE INTO calibrations (calibration_id, metric_id, "
+                "holdout_size, precision, recall, threshold, direction, verdicts_digest, "
+                "measured_at, expires_at, note) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                (
+                    calibration.calibration_id,
+                    calibration.metric_id,
+                    calibration.holdout_size,
+                    calibration.precision,
+                    calibration.recall,
+                    calibration.threshold,
+                    calibration.direction.value,
+                    calibration.verdicts_digest,
+                    calibration.measured_at,
+                    calibration.expires_at,
+                    calibration.note,
+                ),
+            )
+            inserted = cursor.rowcount > 0
+            for event in events:
+                self._insert_event(connection, event)
+        return inserted
+
+    def calibrations(self, *, metric_id: str | None = None) -> list[Calibration]:
+        """Newest measurement first, so "the current evidence" is the first row."""
+        sql = "SELECT * FROM calibrations"
+        params: list[Any] = []
+        if metric_id is not None:
+            sql += " WHERE metric_id = ?"
+            params.append(metric_id)
+        sql += " ORDER BY measured_at DESC, calibration_id"
+        return [
+            Calibration(
+                calibration_id=row["calibration_id"],
+                metric_id=row["metric_id"],
+                holdout_size=int(row["holdout_size"]),
+                precision=float(row["precision"]),
+                threshold=float(row["threshold"]),
+                direction=Direction(row["direction"]),
+                verdicts_digest=row["verdicts_digest"],
+                measured_at=row["measured_at"],
+                expires_at=row["expires_at"],
+                recall=None if row["recall"] is None else float(row["recall"]),
+                note=row["note"],
+            )
+            for row in self._connection.execute(sql, params)
+        ]
 
     def plan_epoch(self, book_id: str, branch_id: str) -> int:
         row = self._connection.execute(

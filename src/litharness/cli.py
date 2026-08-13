@@ -27,6 +27,7 @@ import sqlite3
 import sys
 import time
 from collections.abc import Sequence
+from contextlib import suppress
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
@@ -40,6 +41,7 @@ from litharness.application import status as status_module
 from litharness.application.conductor import Conductor, TickOutcome
 from litharness.application.handlers import SCENE_DRAFT, make_scene_draft_handler
 from litharness.application.planner import make_plan_selector
+from litharness.domain import audit, calibration
 from litharness.domain import state as state_mod
 from litharness.domain.budget import BudgetPolicy
 from litharness.domain.directives import Directive, DirectiveKind, DirectiveStatus, directive_id_for
@@ -413,6 +415,163 @@ def cmd_dismiss(args: argparse.Namespace) -> int:
         print(f"litharness: no finding {args.finding_id}", file=sys.stderr)
         return EXIT_ATTENTION
     print(f"{args.finding_id} -> {status.value}")
+    return EXIT_OK
+
+
+def cmd_audit(args: argparse.Namespace) -> int:
+    """The scenes §10.5 drew for human reading, and the prose to read.
+
+    Prints the text, not a reference to it. The scarce input in this whole programme is a
+    human's attention — measured at roughly 57 seconds per judgment in RevisionJudge, which
+    has collected two — and making a reader go and find the scene spends that attention on
+    navigation. `--next` prints one and stops, which is the shape of the thing someone
+    actually does between other tasks.
+    """
+    store = _store(args)
+    try:
+        pending = store.audit_samples(pending_only=not args.all)
+        texts: dict[str, str | None] = {}
+        for sample in pending[: 1 if args.next else len(pending)]:
+            revision = store.load_revision(sample.revision_id)
+            with suppress(KeyError):
+                texts[sample.sample_id] = revision.node(sample.logical_id).content
+    finally:
+        store.close()
+
+    shown = pending[: 1 if args.next else len(pending)]
+    for sample in shown:
+        state = sample.verdict.value if sample.verdict else "PENDING"
+        print(f"{sample.sample_id}  {state:<13} {sample.logical_id}  ({sample.sampled_at})")
+        if args.quiet:
+            continue
+        # Deliberately no provenance: §10.3 wants blinded judgments, and telling the reader
+        # which provider wrote it, or that a gate passed it, is exactly the contamination
+        # RevisionBench measured as a 43-65% positional artifact in model judges.
+        print()
+        print(texts.get(sample.sample_id) or "  (no prose at that node)")
+        print()
+        print(f"  litharness judge {sample.sample_id} --keep-reading|--would-stop|--not-sure")
+        print()
+    counts = {"pending": sum(1 for item in pending if item.pending)}
+    print(f"({len(pending)} sample(s), {counts['pending']} awaiting a reader)")
+    return EXIT_OK
+
+
+def cmd_judge(args: argparse.Namespace) -> int:
+    """Record one human judgment. The only input to this system nothing else can supply.
+
+    §1a.5's bar is "a majority of sampled chapters earn *I would keep reading* from readers
+    who were not told what produced them", so that is the question asked rather than a rubric.
+    `--not-sure` is a real answer: §10.4 asks for abstention to be measured, and a scale with
+    no way to decline pushes a reader into a verdict they do not hold.
+    """
+    verdict = (
+        audit.Verdict.KEEP_READING if args.keep_reading
+        else audit.Verdict.WOULD_STOP if args.would_stop
+        else audit.Verdict.NOT_SURE
+    )
+    stamp = _stamp(_now())
+    store = _store(args)
+    try:
+        recorded = store.record_verdict(
+            args.sample_id,
+            verdict,
+            at=stamp,
+            by=args.by or args.holder,
+            note=args.note,
+            events=[
+                Event(
+                    event_type=EventType.EVALUATION_COMPLETED,
+                    project_id=args.project,
+                    created_at=stamp,
+                    actor=args.by or args.holder,
+                    payload={
+                        "sample_id": args.sample_id,
+                        "verdict": verdict.value,
+                        "audit": True,
+                    },
+                )
+            ],
+        )
+    finally:
+        store.close()
+    if not recorded:
+        print(
+            f"litharness: no unanswered sample {args.sample_id}. A verdict is never "
+            "overwritten — the first reading is the blind one",
+            file=sys.stderr,
+        )
+        return EXIT_ATTENTION
+    print(f"{args.sample_id} -> {verdict.value}")
+    return EXIT_OK
+
+
+def cmd_calibrations(args: argparse.Namespace) -> int:
+    """What evidence exists that any craft metric predicts human judgment.
+
+    Expected to print nothing for a long time, and that is the honest state: §10.6's reference
+    corpus is human authoring work and §19.1 records the Quality clause as not started. An
+    empty list here is the measure of the gap, in the same way the unread directive count
+    measures direction the planner cannot read.
+    """
+    store = _store(args)
+    try:
+        items = store.calibrations(metric_id=args.metric)
+        verdicts = [
+            (sample.sample_id, sample.verdict.value)
+            for sample in store.audit_samples()
+            if sample.verdict is not None
+        ]
+    finally:
+        store.close()
+
+    digest = calibration.verdicts_digest_for(verdicts)
+    today = _stamp(_now())[:10]
+    for item in items:
+        why = item.why_not_promotable(today, digest)
+        state = "BLOCKING-ELIGIBLE" if why is None else "advisory"
+        print(f"{item.calibration_id}  {state:<18} {item.metric_id}")
+        print(
+            f"    precision {item.precision:.2f} on {item.holdout_size} held-out; "
+            f"fails {item.direction.value} {item.threshold}"
+        )
+        if why is not None:
+            print(f"    not promotable: {why}")
+    print(f"({len(items)} calibration(s); {len(verdicts)} verdict(s) on record)")
+    if not items:
+        print(
+            "  no craft metric may block. §10.4 promotes a critic only on measured held-out "
+            f"precision (floor {calibration.MIN_PRECISION:.2f} on "
+            f"{calibration.MIN_HOLDOUT} judgments); §10.6's reference corpus is the gate."
+        )
+    return EXIT_OK
+
+
+def cmd_craft(args: argparse.Namespace) -> int:
+    """The advisory numbers, and what they are not.
+
+    §1a.1: "beware the metric that is easy *because* it is shallow". These measure §1a.3 items
+    5 and 6 — line-level craft and AI tells — and touch none of items 1 to 4, which are the
+    ones that move a reader. Printed with that on the page rather than in a doc nobody opens.
+    """
+    store = _store(args)
+    try:
+        rows = store.craft_metrics(metric_id=args.metric)
+    finally:
+        store.close()
+
+    by_metric: dict[str, list[float]] = {}
+    for _, _, metric_id, value in rows:
+        by_metric.setdefault(metric_id, []).append(value)
+    for metric_id, values in sorted(by_metric.items()):
+        low, high = min(values), max(values)
+        mean = sum(values) / len(values)
+        print(f"{metric_id:<40} n={len(values):<5} mean={mean:.4f}  [{low:.4f}, {high:.4f}]")
+    print(f"({len(rows)} measurement(s) over {len(by_metric)} metric(s))")
+    print(
+        "  advisory only — §1a.3 items 5 and 6, and nothing about dramatic function, "
+        "progression, escalation or voice. `calibrations` shows what may block."
+    )
     return EXIT_OK
 
 
@@ -962,6 +1121,42 @@ def build_parser() -> argparse.ArgumentParser:
         help="the detector was wrong, rather than the device being deliberate",
     )
     dismiss.set_defaults(func=cmd_dismiss)
+
+    audit_cmd = sub.add_parser(
+        "audit", help="scenes drawn for human reading (§10.5), with the prose to read"
+    )
+    audit_cmd.add_argument(
+        "--next", action="store_true", help="print one pending sample and stop"
+    )
+    audit_cmd.add_argument(
+        "--all", action="store_true", help="include samples already judged"
+    )
+    audit_cmd.add_argument(
+        "--quiet", action="store_true", help="list the samples without printing prose"
+    )
+    audit_cmd.set_defaults(func=cmd_audit)
+
+    judge = sub.add_parser("judge", help="record one human verdict on a sampled scene")
+    judge.add_argument("sample_id")
+    answer = judge.add_mutually_exclusive_group(required=True)
+    answer.add_argument("--keep-reading", action="store_true")
+    answer.add_argument("--would-stop", action="store_true")
+    answer.add_argument(
+        "--not-sure", action="store_true", help="abstention is a real answer and is measured"
+    )
+    judge.add_argument("--note", help="what you noticed; the most useful field here")
+    judge.add_argument("--by", help="who read it (defaults to --holder)")
+    judge.set_defaults(func=cmd_judge)
+
+    calibrations = sub.add_parser(
+        "calibrations", help="evidence that a craft metric predicts human judgment"
+    )
+    calibrations.add_argument("--metric")
+    calibrations.set_defaults(func=cmd_calibrations)
+
+    craft = sub.add_parser("craft", help="advisory craft measurements, and their limits")
+    craft.add_argument("--metric")
+    craft.set_defaults(func=cmd_craft)
 
     replan = sub.add_parser(
         "replan", help="reissue still-draftable beats under a fresh plan epoch"
