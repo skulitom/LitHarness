@@ -23,11 +23,13 @@ from __future__ import annotations
 
 import argparse
 import json
+import sqlite3
 import sys
 import time
 from collections.abc import Sequence
 from datetime import UTC, datetime
 from pathlib import Path
+from typing import Any
 
 import litharness_contracts as lc
 
@@ -75,7 +77,7 @@ def _budget(args: argparse.Namespace) -> BudgetPolicy:
     forgetting a flag.
     """
 
-    def ceiling(value: int | None) -> int | None:
+    def ceiling(value: float | None) -> Any:
         return None if value is not None and value < 0 else value
 
     default = BudgetPolicy()
@@ -95,7 +97,12 @@ def _budget(args: argparse.Namespace) -> BudgetPolicy:
             if args.max_invocations_per_day is not None
             else default.max_invocations_per_day
         ),
-        max_cost_usd_per_day=args.max_cost_usd_per_day,
+        # **`-1` has to mean the same thing on every ceiling.** This one alone was passed
+        # through raw, so the documented idiom for "unbounded" set a ceiling of -$1.00 —
+        # and `check` refuses on `spent >= ceiling`, so $0.00 spent meets it and *every*
+        # call is refused on the first tick. An operator following the README to disable
+        # the dollar ceiling stopped the system dead instead.
+        max_cost_usd_per_day=ceiling(args.max_cost_usd_per_day),
     )
 
 
@@ -637,11 +644,18 @@ def main(argv: Sequence[str] | None = None) -> int:
     except MigrationsMissing as error:
         print(f"litharness: {error}", file=sys.stderr)
         return EXIT_FAULT
-    except (OSError, FileExistsError, ValueError) as error:
+    except (OSError, FileExistsError, ValueError, sqlite3.Error) as error:
         # Operational faults — a locked or missing database, a backup destination that
         # already exists, a bad argument. Distinguished from EXIT_ATTENTION because a
         # supervisor should retry these next cadence rather than surface them as the
         # system reporting on its work.
+        #
+        # **`sqlite3.Error` is not an `OSError`**, which made the one fault this contract
+        # names first — a locked database — the one it did not handle: it escaped as an
+        # unhandled traceback and exit 1, the code reserved for "a unit needs a human".
+        # A supervisor built on the documented contract escalated the fault it was told to
+        # absorb. Two overlapping cron ticks contend on `BEGIN IMMEDIATE` by design (§4.1),
+        # so this is the *expected* fault at the plan's cadence, not an exotic one.
         print(f"litharness: {type(error).__name__}: {error}", file=sys.stderr)
         return EXIT_FAULT
 

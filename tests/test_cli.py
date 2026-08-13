@@ -18,6 +18,7 @@ import pytest
 from litharness.adapters.sqlite_store import SqliteStore
 from litharness.cli import EXIT_ATTENTION, EXIT_FAULT, EXIT_OK, main
 from litharness.domain.directives import DirectiveStatus
+from litharness.domain.events import EventType
 from litharness.domain.jobs import Job, JobStatus
 from litharness.domain.policy import Outcome
 
@@ -59,6 +60,44 @@ def test_a_parked_unit_exits_nonzero_so_the_scheduler_notices(db, capsys) -> Non
 
     assert run(db, "tick") == EXIT_ATTENTION
     assert "job_failed" in capsys.readouterr().out
+
+
+def test_an_unopenable_database_exits_two_not_one(tmp_path, capsys) -> None:
+    """The README calls exit codes "the interface" and names a locked database as the first
+    example of a fault a supervisor should absorb — and it was the one fault not handled.
+    `sqlite3.Error` is not an `OSError`, so it escaped as a traceback and exit 1, the code
+    reserved for "a unit needs a human". Two overlapping cron ticks contend on
+    `BEGIN IMMEDIATE` by design, so this is the expected fault at the plan's cadence.
+    """
+    unreachable = tmp_path / "no" / "such" / "dir" / "book.db"
+
+    assert main(["--database", str(unreachable), "status"]) == EXIT_FAULT
+
+    err = capsys.readouterr().err
+    assert "litharness: OperationalError" in err
+    assert "Traceback" not in err
+
+
+def test_minus_one_means_unbounded_on_every_ceiling_including_dollars(db, capsys) -> None:
+    """`-1` has to mean the same thing on every ceiling. The dollar ceiling alone was passed
+    through raw, so the documented idiom for "unbounded" set a ceiling of -$1.00 — and the
+    check refuses on `spent >= ceiling`, so $0.00 met it and every call was refused. An
+    operator following the README to disable the dollar ceiling stopped the system dead.
+    """
+    run(db, "init")
+    imported_id(db, capsys, "--fixture", "mystery")
+
+    main(["--database", str(db), "--max-cost-usd-per-day", "-1", "tick"])
+
+    # The exit code depends on whether the draft cleared its shape gate, which is not what
+    # is under test. What is: that the *budget* never refused. A refusal is loud — an event,
+    # a decision carrying a budget gate, and an exception — so assert on those directly.
+    store = SqliteStore.open(db)
+    try:
+        assert EventType.BUDGET_EXHAUSTED not in [e.event.event_type for e in store.read_log()]
+        assert store.open_exceptions() == []
+    finally:
+        store.close()
 
 
 def test_an_operational_fault_exits_two_not_one(tmp_path, capsys) -> None:

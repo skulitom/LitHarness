@@ -5,10 +5,12 @@ master plan and [plan/](plan/) for companion design documents — in particular
 [plan/stage-0-decisions.md](plan/stage-0-decisions.md), which records the load-bearing
 design decisions and why each went the way it did.
 
-**Status: Stage 0 slices 1–6.** The manuscript spine, the Conductor loop, four provider
-adapters, a provider-backed draft handler behind a shape gate, recorded acceptance
-decisions, a direction inbox, and a way to get a book in. It runs; it does not yet write a
-book. See [What is not built](#what-is-not-built).
+**Status: Stage 0 slices 1–6, Stage 1 slice 7.** The manuscript spine, the Conductor loop,
+four provider adapters, a provider-backed draft handler behind a shape gate, recorded
+acceptance decisions, a direction inbox, a way to get a book in, and a template planner that
+takes a six-scene fixture book from premise to six accepted scenes with no human in the
+loop. It writes a book; nothing in it yet measures whether the book is any good. See
+[What is not built](#what-is-not-built).
 
 ## Setup
 
@@ -34,26 +36,28 @@ sibling contracts checkout:
 uv run litharness --database book.db import --fixture mystery
 ```
 
-It prints the revision id, which is the argument `enqueue` takes. Scene prose is **cleared**
-so each scene can be drafted; `--keep-content` keeps it and tells you that nothing is
-draftable, because a draft may only fill an empty node. Use `--path` for a manuscript of
-your own.
+It prints the revision id. Scene prose is **cleared** so each scene can be drafted;
+`--keep-content` keeps it and tells you that nothing is draftable, because a draft may only
+fill an empty node. Use `--path` for a manuscript of your own — and pass `--plans` with it,
+because the premise in the plan snapshot is what beat prompts are rendered from and a book
+without one is reported as blocked rather than drafted. `--fixture` supplies both.
 
-```bash
-uv run litharness --database book.db enqueue draft-1 --revision <id> --node scene-1 --prompt "Draft the study scene."
-```
-
-Then a tick — one bounded unit of work. This is what a scheduler invokes:
+Then tick — one bounded unit of work, which is what a scheduler invokes:
 
 ```bash
 uv run litharness --database book.db tick
 ```
 
+Each tick drains the queue, and when nothing is claimable it plans: the next undrafted beat
+becomes a job, is drafted, gated and accepted. Six ticks take a six-scene book from premise
+to a full draft with nothing else typed. `enqueue` still exists for drafting one named node
+by hand with your own prompt, which is now the exception rather than the way in.
+
 On Windows Task Scheduler or cron, every 5–15 minutes (§4.1). **Exit codes are the
 interface**: `0` the tick did its job, including finding nothing to do; `1` a unit failed
-or parked and a human should eventually look; `2` an operational fault — locked database,
-missing migrations, full disk — which a supervisor should retry next cadence rather than
-escalate.
+or parked and a human should eventually look; `2` an operational fault — locked or corrupt
+database, missing migrations, full disk, a bad argument — which a supervisor should retry
+next cadence rather than escalate.
 
 ## Operating it
 
@@ -90,8 +94,8 @@ uv run litharness --database book.db directive "More dungeon crawling." --kind a
 Budget ceilings apply to every generating call and are checked **before** it is made:
 `--max-tokens-per-day`, `--max-invocations-per-day` (the one tokens cannot express — see
 §15's per-call harness tax), `--max-tokens-per-operation`, `--max-cost-usd-per-day`. Pass
-`-1` for unbounded, which has to be asked for rather than being what you get by forgetting
-a flag. `status` prints spend against plan.
+`-1` for unbounded on any of them, which has to be asked for rather than being what you get
+by forgetting a flag. `status` prints spend against plan.
 - `verify` — rebuild every revision from canonical records, check the content hashes, and
   report any revision no policy decision explains. Exits non-zero if it finds one.
 
@@ -114,9 +118,16 @@ test run provably cannot reach a paid CLI. Three live round-trip tests are skipp
 
 Stated plainly, because a system that runs is easy to mistake for a system that works:
 
-- **No planner.** Nothing decides what scene to write next. A book can be imported and a
-  draft job enqueued by hand with its prompt supplied, but there is no beat sheet and no
-  context packet, so nothing enqueues the next scene on its own.
+- **A template planner, not a narrative one.** `tick` does decide what to write next: a
+  fixed six-beat sheet (`domain/beats.py`) is zipped against the book's live scenes and the
+  next undrafted one is enqueued, least-progressed book first. What it does not do is
+  anything §9 means by planning — it invents no structure, reads no directives, schedules no
+  foreshadowing or progression, and only handles a book whose live scene count is exactly
+  six.
+- **No context packet.** The prompt a beat renders carries the scene title, its ordinal, its
+  dramatic function and the book's premise. It carries no prior prose, no locked
+  constraints, no game state and no distant callbacks, so scene six is written knowing
+  nothing of scene five.
 - **No craft gate.** The only gate is shape — a draft exists, is the right size, and did
   not overwrite anything. Nothing measures whether the prose is any good (PLAN.md §1a).
 - **No game-system validation.** The LitRPG rules pack lives in ContinuityEvaluation and

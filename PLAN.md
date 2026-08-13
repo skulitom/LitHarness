@@ -1,7 +1,7 @@
 # LitHarness: Autonomous Book-Production System Plan
 
 **Version:** 2.2 (supersedes PLAN-v1-authoring-tool.md, archived in this folder)
-**Status:** Master plan; **Stage 0 slices 1–6 and Stage 1 slice 7 implemented and green (297 tests + 3 opt-in live); operable via `litharness tick`; a book can be got *into* the store (`litharness import`) and the six-scene fixture book drafts itself; four of §19's seven clauses met — scorecard in §19.1**
+**Status:** Master plan; **Stage 0 slices 1–6 and Stage 1 slice 7 implemented and green (299 tests + 3 opt-in live); operable via `litharness tick`; a book can be got *into* the store (`litharness import`) and the six-scene fixture book drafts itself; four of §19's seven clauses met — scorecard in §19.1**
 **Role:** A 24/7 autonomous system that plans, drafts, evaluates, repairs, and versions quality LitRPG books — directed by a human, never blocked on one
 **Inspection baseline:** Local projects inspected 2026-08-12; v2 rewrite same day; §7/§8/§13/§15/§17/§20 re-verified later the same day (v2.1); **§7/§8.4/§13/§17/§20 re-verified against all nine repositories that evening (v2.2)**
 
@@ -387,7 +387,7 @@ done, and **the v2.1 pass did it again in six more places**:
 | Project | State | Role in v2 |
 |---|---|---|
 | litharness-contracts | **Wire schema 1.1.0**, 124 tests, 30 schemas, mystery + litrpg golden fixtures. Git repo (branch `main`, clean tree, no remote, no tags). **Still no LICENSE** — README says "License: TBD", and that is a decision for the owner rather than a gap to fill | Shared schemas + gold benchmarks. §20.3's minors have shipped except the game-system schemas, which stay deferred for want of a consumer. Version (don't freeze) after Book Zero. *(Struck: "untracked, no git repo" and "version-controlling it is the single cheapest unblock" — the commit landed 2026-08-12 17:36, eight minutes **before** the v2.1 edit that still called it untracked.)* |
-| **LitHarness (this repo)** | **Stage 0 slices 1–3: 122 tests collected, 119 passing + 3 opt-in live, ruff clean, mypy strict clean. Under version control as of the v2.2 pass** (`.gitattributes` pins `eol=lf`; `core.autocrlf=true` is set globally on this machine and has already bitten this project once) | The product. **This table previously audited every sibling's VCS status and had no row for the product repo, which was itself untracked.** |
+| **LitHarness (this repo)** | **Stage 0 slices 1–6 and Stage 1 slice 7: 299 tests passing + 3 opt-in live, ruff clean, mypy strict clean. Under version control** (`.gitattributes` pins `eol=lf`; `core.autocrlf=true` is set globally on this machine and has already bitten this project once) | The product. **This table previously audited every sibling's VCS status and had no row for the product repo, which was itself untracked.** |
 | BookWorldState | Committed, Apache-2.0, tagged `v0.1.0`, pushed to GitHub; **13 commits, working tree clean**; 100 tests passing. Ships an authenticated versioned WSGI API, transactional outbox with capped-exponential-retry worker, signed webhook publication, migration checksums, online backup/restore + destructive-corruption drill — **Milestone 4/5 infrastructure, not "~Milestone 2"**. What is *not* done is M3's evaluation corpus | State substrate. Its closed predicate registry is **not** injectable yet (§20.5) — but §8.4 routes around this deliberately, so it is not a blocker for §8. *(Struck: "working tree is not clean", "4 commits", "~Milestone 2 complete", "the real blocker for §8" — all four false.)* |
 | RevisionBench | Mature (**411** tests). A2d complaint-gated repair, the LitRPG stratum, **and A3d** have landed — A3d shipped *under the name A2d*, and best-of-N repair ranked by minimal intervention closed the last element in `22a228d` | Source of repair policy, mechanical vetoes, LitRPG stratum evidence. **Its M5 decomposition is done and has already answered the question §20.7 was scheduled to ask** — see the redirect there. *(Struck: "405 tests", "A3d is next".)* |
 | RevisionJudge | Built; 104 pairs exported, exactly 2 verdicts collected; one uncommitted file (`data/verdicts.jsonl`) | The calibration instrument for §10; the missing half is the verdict *consumer*, not the export. Nothing anywhere under `C:/DEV` reads `verdicts.jsonl` |
@@ -697,13 +697,14 @@ input), never as mid-flight mutation of a running job.
 ## 13. Contracts
 
 `litharness-contracts` v0.1.0 exists and is the interchange layer (IDs, evidence
-spans, envelopes, findings, change sets, gold suites; 25 schemas; two golden
-fixtures with span-exact annotations). It is **now under version control** (3
-commits, clean tree) but **still unlicensed** — §20.1. Policy for v2:
+spans, envelopes, findings, change sets, gold suites; **30 schemas**; two golden
+fixtures with span-exact annotations). It is **now under version control** (5
+commits, clean tree) — §20.1. Policy for v2:
 
 - **Version, don't freeze.** Expect additive minor versions after Book Zero; treat
   the first breaking rework (2.0) as a scheduled consequence of Book Zero's
-  lessons, not a failure. The wire `SCHEMA_VERSION` is **`1.1.0`** as of §20.3 and
+  lessons, not a failure. The wire `SCHEMA_VERSION` is **`1.2.0`** — 1.1.0 shipped under §20.3, and 1.2.0 added
+  `JobStatus.PARKED` so §4.2's park-vs-exhaustion distinction is representable on the wire — and
   the compatibility gate rejects a differing major, so additions ship as **1.x
   minors** regardless of this document calling them "v2".
 - **What an additive minor actually requires here** (learned in 1.1.0, and not
@@ -821,6 +822,17 @@ functioning.
 **Exit:** the mystery and litrpg fixture books regenerate from premise to accepted
 six-scene draft autonomously; zero silent mutation; every acceptance carries a
 recorded policy decision; planted-defect injection is caught by gates, not luck.
+**Three of four clauses met (slice 7).** Both fixture books reach six accepted scenes with
+no human in the loop — `import` then bare `tick`s, nothing enqueued by hand
+(`tests/test_planner.py`). Every acceptance carries a recorded decision, and "zero silent
+mutation" became checkable rather than asserted once `revert` was made to attribute itself
+and `litharness verify` learned to report revisions no decision explains. **The fourth
+clause is untouched and is the whole of the remaining work:** the only blocking gate in the
+wired path is `shape.draft.v0`, so *accepted* currently means "a string of plausible
+length". Nothing injects a planted defect and nothing would catch one. Also unbuilt from the
+clause list above: the context baseline (beat prompts carry no prior prose) and the
+game-system replay validation (§8.4's pack lives in ContinuityEvaluation and LitHarness has
+no state records to feed it).
 
 ### Stage 2 — Detect and scoped repair
 Promote RevisionBench's A3d detect–repair–verify results into the repair path;
@@ -933,10 +945,16 @@ because four of the seven are structurally blocked in ways worth naming precisel
 | **Economics** | **met for enforcement; per-book still per-day** | Ceilings on tokens *and* invocations, checked **before** the provider call rather than after — a check that runs afterwards records an overrun, it does not prevent one. Invocations are a ceiling in their own right because §15's per-call harness tax (~24k tokens for `claude -p`) is invisible to token accounting. Dollars are never the sole ceiling, since `claude -p` on a subscription reports none. `cost_usd` was parsed and then dropped; migration 008 stores it. `status` prints spend against plan. **Enforcement that destroys the unit it refuses is not what this clause describes, and that is what it did** — see Autonomy above; a refusal now parks revivably and costs the day rather than the work. **Honest gap: ceilings are per-day and per-operation, not per-book** — that needs a book-scoped job, which arrives with the planner. |
 | **Recovery** | **met** | Mid-write crash loses at most the in-flight unit (WAL, `synchronous=FULL`, `BEGIN IMMEDIATE`, lease reclaim). Backups existed nowhere and now use SQLite's online API — a file copy is invalid under WAL and would silently omit everything since the last checkpoint. The drill asserts prose, the accepting decision, and the undelivered outbox all survive. |
 
-**Four of the seven now met.** The three that are not are blocked on things engineering
-cannot supply: a generator to constrain (Genre), a human-authored corpus (Quality), and
-elapsed operating time (Autonomy's 30 days). Trust is vacuous rather than failing — it
-becomes measurable when Stage 1 gives it a suite to be measured against.
+**Two of the seven are met outright** — Integrity and Recovery. Economics is met for
+enforcement and unmet as §19 words it, because the clause says *per-book* cost and the
+ceilings are per-day. Autonomy is attemptable and needs elapsed time. Trust is vacuous
+rather than failing. Genre and Quality are not started, and both are blocked on things
+engineering cannot supply: a generator to constrain, and a human-authored corpus.
+
+An earlier revision of this paragraph said "four of the seven now met" while the table four
+lines above it said otherwise, which is worth leaving on the record: the readiness number
+this project reports about itself had drifted from the evidence directly above it, in the
+one section written specifically to stop that happening.
 
 Eight defects worth remembering, because each failed *silently* and none would have surfaced
 without being looked for: migrations resolved to nowhere under a wheel while `migrate`
@@ -981,9 +999,11 @@ every unstruck action below as a claim to re-verify rather than a task to start.
    repo. Now committed, with a `.gitattributes` that matters — `core.autocrlf=true`
    is global on this machine and plan/stage-0-decisions.md §1 records the near-miss
    it already caused in contracts.
-   **Still outstanding, and now the sharpest case:** ContinuityEvaluation and
-   LongRangeContext are still untracked, and CE is holding 42 tests of
-   freshly-landed pack work with no history and no rollback.
+   **Still outstanding:** RevisionPropagation is the last untracked project, and it is
+   one file. ContinuityEvaluation (2 commits, 56 tests) and LongRangeContext (5 commits)
+   are both git repositories with clean trees — this action claimed otherwise for two
+   revisions while §7 four hundred lines above said the opposite, which is the
+   contradiction-in-place this document keeps producing about its own progress.
    *(Struck: "commit, license and tag BookWorldState" — done. 13 commits, clean
    tree, tag `v0.1.0`, Apache-2.0 LICENSE, pushed. The v1 plan carried this
    forward for a release cycle after it stopped being true.)*

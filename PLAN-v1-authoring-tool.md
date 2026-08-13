@@ -1,6 +1,12 @@
 # LitHarness: Product and Research Integration Plan
 
-**Status:** Master plan for the final product; implementation not started  
+> **⚠️ SUPERSEDED — archived, do not act on this document.**
+> Replaced by [PLAN.md](PLAN.md) (v2.2) on 2026-08-12. This is v1: a human-in-the-loop
+> *authoring tool*, whose central premise PLAN.md §0 explicitly rejects in favour of an
+> autonomous system with a human director. It is kept for the record of what changed and
+> why. Everything below describes a design that was not built.
+
+**Status:** SUPERSEDED by PLAN.md v2.2; kept as an archived record  
 **Role:** Production-grade AI book-writing harness assembled from validated research incubators  
 **Inspection baseline:** Local projects inspected and tests run on 2026-08-12
 
