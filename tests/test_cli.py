@@ -482,3 +482,42 @@ def test_a_measurement_made_elsewhere_is_reported_as_stale(db, capsys) -> None:
     out = capsys.readouterr().out
     assert "BLOCKING-ELIGIBLE" not in out
     assert "verdict set has changed" in out
+
+
+def test_ingesting_a_failed_evaluation_exits_non_zero(db, tmp_path, capsys) -> None:
+    """The operator-facing half. A supervisor reading exit codes must not be told a book is
+    clean by a run in which every detector failed — and EXIT_ATTENTION rather than EXIT_FAULT,
+    because a detector that could not resolve its evidence fails identically next cadence:
+    the artifact read fine, the evaluation did not finish."""
+    import json as _json
+
+    from litharness.adapters.contracts_fixtures import fixture_findings
+
+    run(db, "init")
+    run(db, "import", "--fixture", "litrpg")
+    payload = _json.loads(fixture_findings("litrpg").read_text(encoding="utf-8"))
+    payload["findings"] = []
+    payload["errors"] = [
+        {"stage": "evidence_resolution", "reason": "EvidenceResolutionError", "detail": None}
+        for _ in range(6)
+    ]
+    path = tmp_path / "errored.json"
+    path.write_text(_json.dumps(payload, ensure_ascii=False), encoding="utf-8")
+    capsys.readouterr()
+
+    assert run(db, "ingest", str(path)) == EXIT_ATTENTION
+    captured = capsys.readouterr()
+    assert "INCOMPLETE" in captured.err
+    assert "6 detector error(s)" in captured.err
+    assert "did not finish is not a clean book" in captured.err
+
+
+def test_ingesting_a_completed_evaluation_still_exits_zero(db, capsys) -> None:
+    """The control. The golden artifacts record finished runs, and the new check must not
+    make a working ingest look broken."""
+    from litharness.adapters.contracts_fixtures import fixture_findings
+
+    run(db, "init")
+    run(db, "import", "--fixture", "litrpg")
+    assert run(db, "ingest", str(fixture_findings("litrpg"))) == EXIT_OK
+    assert "INCOMPLETE" not in capsys.readouterr().err

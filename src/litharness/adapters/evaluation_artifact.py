@@ -27,6 +27,7 @@ are recorded by the policy engine.
 from __future__ import annotations
 
 import json
+from dataclasses import dataclass
 from pathlib import Path
 
 import litharness_contracts as lc
@@ -58,8 +59,49 @@ def parse_artifact(payload: object) -> lc.EvaluationArtifact:
     return artifact
 
 
-def load_findings(path: str | Path) -> tuple[str, list[Finding]]:
-    """Read an evaluation artifact from disk. Returns its run id and its findings.
+@dataclass(frozen=True, slots=True)
+class Evaluation:
+    """One evaluator run: what it found, and whether it finished.
+
+    The second half is the point. `EvaluationArtifact` has carried `errors` since 1.0 and this
+    adapter read only `findings`, so a run in which **every detector failed** was ingested as
+    a clean book: zero findings, zero blocking, exit 0. Reproduced against the real litrpg
+    artifact with six `evidence_resolution` errors substituted for its eight findings —
+    `ingest` printed "0 finding(s), 0 new, 0 blocking" and `findings` printed
+    "(0 shown, 0 blocking)", both exit 0, over a book carrying six planted defects.
+
+    That is not a corner case, and §17 Stage 2 is where it bites: "repairs verified by
+    re-detection" means re-running an evaluator over prose a repair has just changed, and a
+    repair invalidates the `version_id` every downstream evidence span cites **by
+    construction**. So an errored run is the *expected* post-repair state, and reading it as a
+    clean bill would score a repair that fixed nothing as perfect.
+
+    An incomplete evaluation is not a passing one. `errors` travels with the findings so no
+    caller can spend the second without noticing the first.
+    """
+
+    run_id: str
+    findings: list[Finding]
+    errors: tuple[lc.EvaluationError, ...] = ()
+
+    @property
+    def complete(self) -> bool:
+        return not self.errors
+
+    def summarise_errors(self) -> str:
+        """One line per distinct stage and reason, with a count — an evaluator that failed
+        the same way six times is one problem, not six."""
+        seen: dict[tuple[str, str], int] = {}
+        for error in self.errors:
+            seen[(error.stage, error.reason)] = seen.get((error.stage, error.reason), 0) + 1
+        return "; ".join(
+            f"{stage}: {reason} (x{count})" if count > 1 else f"{stage}: {reason}"
+            for (stage, reason), count in sorted(seen.items())
+        )
+
+
+def load_findings(path: str | Path) -> Evaluation:
+    """Read an evaluation artifact from disk.
 
     Explicit UTF-8, for the reason `cli import` records: the default codec on this platform is
     cp1252, and a finding message quoting an em-dash from the manuscript would decode into
@@ -68,10 +110,19 @@ def load_findings(path: str | Path) -> tuple[str, list[Finding]]:
     artifact = parse_artifact(
         json.loads(Path(path).read_text(encoding="utf-8"))
     )
-    return artifact.run_id, [
-        Finding.from_contract(finding, run_id=artifact.run_id)
-        for finding in artifact.findings
-    ]
+    return Evaluation(
+        run_id=artifact.run_id,
+        findings=[
+            Finding.from_contract(finding, run_id=artifact.run_id)
+            for finding in artifact.findings
+        ],
+        errors=tuple(artifact.errors),
+    )
 
 
-__all__ = ["EvaluationArtifactUnreadable", "load_findings", "parse_artifact"]
+__all__ = [
+    "Evaluation",
+    "EvaluationArtifactUnreadable",
+    "load_findings",
+    "parse_artifact",
+]

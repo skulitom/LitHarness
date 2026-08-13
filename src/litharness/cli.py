@@ -342,7 +342,8 @@ def cmd_ingest(args: argparse.Namespace) -> int:
     are content-derived and the insert ignores duplicates, so a detector re-run converges
     rather than growing the queue, and a status a human already set is not overwritten.
     """
-    run_id, findings = evaluation_artifact.load_findings(args.path)
+    evaluation = evaluation_artifact.load_findings(args.path)
+    run_id, findings = evaluation.run_id, evaluation.findings
     stamp = _stamp(_now())
     store = _store(args)
     try:
@@ -378,6 +379,27 @@ def cmd_ingest(args: argparse.Namespace) -> int:
     print(f"{run_id}: {len(findings)} finding(s), {written} new, {blocking} blocking")
     if blocking:
         print("  the gate refuses a candidate for the nodes these land on until they close")
+    # **An incomplete evaluation is not a passing one**, and until this the two were
+    # indistinguishable: a run whose every detector failed printed "0 finding(s), 0 new,
+    # 0 blocking" and exited 0 over a book with six planted defects. The absence of a finding
+    # from a run that did not finish is not evidence of absence.
+    #
+    # EXIT_ATTENTION, not EXIT_FAULT. Fault means "retry next cadence" and a detector that
+    # could not resolve its evidence will fail identically on the next tick — the artifact
+    # was read fine, the *evaluation* did not complete, and that is a fact about the book's
+    # quality signal that a human should see. The findings that did arrive are still
+    # ingested, because dropping them would trade one silent gap for another.
+    if not evaluation.complete:
+        print(
+            f"  INCOMPLETE: {len(evaluation.errors)} detector error(s) — "
+            f"{evaluation.summarise_errors()}",
+            file=sys.stderr,
+        )
+        print(
+            "  a clean result from an evaluation that did not finish is not a clean book",
+            file=sys.stderr,
+        )
+        return EXIT_ATTENTION
     return EXIT_OK
 
 

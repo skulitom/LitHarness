@@ -500,7 +500,7 @@ def _plant(store: SqliteStore, book_id: str, branch_id: str, logical_id: str) ->
     from litharness.adapters.contracts_fixtures import fixture_findings
     from litharness.adapters.evaluation_artifact import load_findings
 
-    _, findings = load_findings(fixture_findings("litrpg"))
+    findings = load_findings(fixture_findings("litrpg")).findings
     planted = next(item for item in findings if item.finding_id == "f-gold-ledger")
     # Re-anchored onto the node under test: the artifact's own scope names the *producer's*
     # book, which is never the sha256 address this store minted on import.

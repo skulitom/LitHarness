@@ -152,6 +152,15 @@ uv run litharness --database book.db ingest ../litharness-contracts/fixtures/gol
 uv run litharness --database book.db findings
 ```
 
+`ingest` exits **1** when the artifact records detector errors, and says which stage failed.
+An evaluation that did not finish is not a passing one, and until this the two were
+indistinguishable: an artifact whose every detector failed reported "0 finding(s), 0 new, 0
+blocking" and exited 0 over a book carrying six planted defects. The findings that *did*
+arrive are still ingested — dropping them would trade one silent gap for another. This matters
+most where §17 Stage 2 is heading: "repairs verified by re-detection" means re-running an
+evaluator over prose a repair just changed, and a repair invalidates the `version_id` every
+downstream evidence span cites, so an errored run is the *expected* post-repair state.
+
 Re-ingesting the same artifact writes nothing: finding ids are content-derived and a re-run
 converges rather than growing the queue, and a status a human already set is not overwritten.
 

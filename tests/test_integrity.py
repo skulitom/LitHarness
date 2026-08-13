@@ -363,7 +363,9 @@ def test_the_golden_findings_ingest_as_an_evaluation_artifact(fixture_id: str) -
     """§8.4's integration shape, exercised on the real artifact: an evaluator writes an
     `EvaluationArtifact`, LitHarness reads it, and the only thing either project knows about
     the other is a schema they both already depend on. No import of a sibling package."""
-    run_id, findings = load_findings(fixture_findings(fixture_id))
+    evaluation = load_findings(fixture_findings(fixture_id))
+    run_id, findings = evaluation.run_id, evaluation.findings
+    assert evaluation.complete, "the golden artifacts record a finished run"
     assert run_id
     assert findings
     assert all(item.rule_or_critic_id for item in findings)
@@ -379,7 +381,7 @@ def test_the_golden_findings_ingest_as_an_evaluation_artifact(fixture_id: str) -
 def test_an_ingested_planted_defect_refuses_the_candidate_for_its_node(store: SqliteStore) -> None:
     """The clause end to end, at the store level: a real planted defect from the fixture's
     own findings artifact is ingested, and the gate for the node it lands on refuses."""
-    _, findings = load_findings(fixture_findings("litrpg"))
+    findings = load_findings(fixture_findings("litrpg")).findings
     store.record_findings(BOOK_ID, BRANCH_ID, findings, created_at="t")
 
     planted = next(item for item in findings if item.finding_id == "f-gold-ledger")
@@ -395,7 +397,7 @@ def test_an_ingested_planted_defect_refuses_the_candidate_for_its_node(store: Sq
 def test_a_defect_on_another_scene_does_not_block_this_one(store: SqliteStore) -> None:
     """§4.1: a blocked item never stalls the queue. Blocking every later beat on one old
     finding would turn a single defect into a stalled book."""
-    _, findings = load_findings(fixture_findings("litrpg"))
+    findings = load_findings(fixture_findings("litrpg")).findings
     store.record_findings(BOOK_ID, BRANCH_ID, findings, created_at="t")
     planted = next(item for item in findings if item.finding_id == "f-gold-ledger")
 
@@ -414,7 +416,7 @@ def test_a_defect_on_another_scene_does_not_block_this_one(store: SqliteStore) -
 
 
 def test_reingesting_the_same_artifact_writes_nothing(store: SqliteStore) -> None:
-    _, findings = load_findings(fixture_findings("mystery"))
+    findings = load_findings(fixture_findings("mystery")).findings
     first = store.record_findings(BOOK_ID, BRANCH_ID, findings, created_at="t")
     assert first == len(findings)
     assert store.record_findings(BOOK_ID, BRANCH_ID, findings, created_at="t") == 0
@@ -424,7 +426,7 @@ def test_a_rerun_does_not_reopen_what_a_human_closed(store: SqliteStore) -> None
     """`INSERT OR IGNORE` gives this for free, and an upsert would take it away: every
     evaluation would re-raise every negative control, which is the fastest way to make an
     operator stop reading the queue."""
-    _, findings = load_findings(fixture_findings("mystery"))
+    findings = load_findings(fixture_findings("mystery")).findings
     store.record_findings(BOOK_ID, BRANCH_ID, findings, created_at="t")
     control = "f-control-motif-rain"
     assert store.set_finding_status(control, Status.ACCEPTED_INTENTIONAL)
@@ -437,7 +439,7 @@ def test_a_rerun_does_not_reopen_what_a_human_closed(store: SqliteStore) -> None
 
 def test_dismissing_a_control_unblocks_the_node_it_landed_on(store: SqliteStore) -> None:
     """The operator verb behind a negative control, end to end."""
-    _, findings = load_findings(fixture_findings("mystery"))
+    findings = load_findings(fixture_findings("mystery")).findings
     store.record_findings(BOOK_ID, BRANCH_ID, findings, created_at="t")
     blocking = [item for item in store.findings(BOOK_ID, BRANCH_ID, open_only=True) if item.blocks]
     assert blocking
@@ -477,7 +479,7 @@ def test_a_confirmed_finding_is_still_unresolved(store: SqliteStore) -> None:
 
 
 def test_a_finding_round_trips_through_the_store(store: SqliteStore) -> None:
-    _, findings = load_findings(fixture_findings("mystery"))
+    findings = load_findings(fixture_findings("mystery")).findings
     store.record_findings(BOOK_ID, BRANCH_ID, findings, created_at="t")
     stored = {item.finding_id: item for item in store.findings(BOOK_ID, BRANCH_ID)}
     promise = stored["f-promise-letter"]
@@ -519,3 +521,52 @@ def test_summarise_leads_with_the_worst() -> None:
     text = summarise([finding(severity=Severity.MINOR), finding(severity=Severity.CRITICAL)])
     assert "worst critical" in text
     assert "1 blocking" in text
+
+
+# -- an incomplete evaluation is not a passing one --------------------------------------
+
+
+def errored_artifact(tmp_path: Path, *, findings: int = 0, errors: int = 6) -> Path:
+    """The real litrpg artifact with its findings replaced by detector errors.
+
+    Not hand-built from nothing: this is the shape ContinuityEvaluation actually produces
+    when evidence spans fail to resolve, which is the *expected* state after a repair — a
+    repair changes prose, and every downstream span cites the version_id it just invalidated.
+    """
+    payload = json.loads(fixture_findings("litrpg").read_text(encoding="utf-8"))
+    payload["findings"] = payload["findings"][:findings]
+    payload["errors"] = [
+        {
+            "stage": "evidence_resolution",
+            "reason": "EvidenceResolutionError",
+            "detail": "version_id not found in revision",
+        }
+        for _ in range(errors)
+    ]
+    path = tmp_path / "errored.json"
+    path.write_text(json.dumps(payload, ensure_ascii=False), encoding="utf-8")
+    return path
+
+
+def test_a_run_whose_detectors_failed_is_not_a_clean_book(tmp_path: Path) -> None:
+    """The defect this replaces, reproduced before it was fixed: an artifact carrying six
+    `evidence_resolution` errors and zero findings ingested as "0 finding(s), 0 new, 0
+    blocking", exit 0, over a book with six planted defects. The adapter read `findings` and
+    nothing else, so a completed evaluation and a failed one were indistinguishable."""
+    evaluation = load_findings(errored_artifact(tmp_path))
+    assert evaluation.findings == []
+    assert not evaluation.complete, "six detectors failed; that is not a clean result"
+    assert len(evaluation.errors) == 6
+    assert "evidence_resolution" in evaluation.summarise_errors()
+
+
+def test_findings_that_did_arrive_survive_a_partial_failure(tmp_path: Path) -> None:
+    """Dropping them would trade one silent gap for another. A partial run reports both."""
+    evaluation = load_findings(errored_artifact(tmp_path, findings=3, errors=2))
+    assert len(evaluation.findings) == 3
+    assert not evaluation.complete
+
+
+def test_the_error_summary_collapses_one_problem_reported_six_times(tmp_path: Path) -> None:
+    assert load_findings(errored_artifact(tmp_path)).summarise_errors().count(";") == 0
+    assert "(x6)" in load_findings(errored_artifact(tmp_path)).summarise_errors()
