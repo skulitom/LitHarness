@@ -79,6 +79,24 @@ class ClaudeCodeProvider:
       §11 requires.
     * `--no-session-persistence` — otherwise every scene leaves a session on disk.
     * stdin closed — see `subprocess_runner`.
+
+    **This runs against whatever authentication the local `claude` install already has**, and
+    passes no credential of its own — so on a Claude subscription it consumes that
+    subscription, and no API key is involved. `total_cost_usd` from the envelope is then an
+    *equivalent* API price for quota already paid for, rather than money being charged.
+
+    **It is recorded anyway, and that is deliberate.** The obvious move is `CodexProvider`'s
+    — it reports `cost_usd=None` because "ChatGPT-account auth is quota rather than dollars"
+    — and it is the wrong move here. A subscription is *also* a bounded resource, the
+    equivalent price is the best available proxy for how fast it is being consumed, and
+    `--max-cost-usd-per-day` is the only ceiling that tracks consumption rather than call
+    count. Nulling the field would delete the operator's usage governor to win an argument
+    about the word "cost". Read it as spend under API-key auth and as quota burn under a
+    subscription; the ceiling is useful either way, and `raw` keeps the whole envelope.
+
+    `bills` is a different question and stays `True` under a subscription: it means "this
+    reaches a real external service", which is what `LITHARNESS_ENV=test` filters on. A test
+    process must not consume subscription quota any more than it may spend money.
     """
 
     name: str = "claude_code"
