@@ -320,7 +320,12 @@ def cmd_revert(args: argparse.Namespace) -> int:
     store = _store(args)
     try:
         reverted = store.revert(
-            args.book, args.branch, args.revision, created_at=_stamp(_now())
+            args.book,
+            args.branch,
+            args.revision,
+            created_at=_stamp(_now()),
+            project_id=args.project,
+            actor=args.holder,
         )
     finally:
         store.close()
@@ -460,13 +465,24 @@ def cmd_backup(args: argparse.Namespace) -> int:
 
 
 def cmd_verify(args: argparse.Namespace) -> int:
-    """Rebuild every revision from canonical records — §19's integrity check."""
+    """Rebuild every revision from canonical records — §19's integrity check.
+
+    Reports attribution as well as reconstruction. §19's Integrity clause is one sentence
+    covering both, and only the reconstruction half was ever checked: `revert` committed
+    revisions no decision explained, and nothing would have said so.
+    """
     store = _store(args)
     try:
         count = store.verify_integrity()
+        unattributed = store.unattributed_revisions()
     finally:
         store.close()
     print(f"{count} revision(s) rebuild cleanly")
+    if unattributed:
+        print(f"{len(unattributed)} revision(s) no policy decision explains:")
+        for revision_id in unattributed:
+            print(f"  {revision_id}")
+        return EXIT_ATTENTION
     return EXIT_OK
 
 

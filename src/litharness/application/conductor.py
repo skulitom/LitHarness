@@ -320,40 +320,49 @@ class Conductor:
         # **Two vocabularies meet here, and they do not use the same words.** At the
         # decision layer §4.2 says *park* (the unit is stuck, move on) and *escalate* (a
         # human is needed). At the job layer this codebase already said *poisoned* (the
-        # attempt budget is spent) and now says *parked* (stopped by decision, revivable).
-        # They line up crosswise, and pretending otherwise would give the operator the
-        # wrong word for the state they are looking at:
+        # attempt budget is spent) and *parked* (stopped by decision, revivable). Both
+        # outcomes are terminal and both file an exception; the only thing that differs is
+        # *which* terminal state, and that is a fact about the attempt budget rather than
+        # about the word policy used. Deriving it from the word is what this branch used to
+        # do, and it was wrong twice over — see below.
         #
-        #   Outcome.PARK      — `decide` returns this only on attempt exhaustion, which is
-        #                       precisely what POISONED has always meant. Not revivable:
-        #                       reviving without changing anything just spends the budget
-        #                       again.
-        #   Outcome.ESCALATE  — no retry can resolve the veto (a locked node, a missing
-        #                       target). Terminal, but the blocker is external and a human
-        #                       can clear it, so PARKED and revivable — plus an exception,
-        #                       because §4.2's failure mode is "a parked unit *plus an
-        #                       exception*", and a stuck unit nobody is told about is just
-        #                       a lost one.
-        if outcome is Outcome.PARK:
-            poisoned = running.transition_to(JobStatus.POISONED, error=reason).released()
-            self.store.save_job(poisoned)
-            self.store.bump_digest(self._day(now), "jobs_poisoned")
-            # **Attempt exhaustion raises an exception too, and this is the modal case.**
-            # Only ESCALATE filed one at first, which meant the *common* way a unit dies —
-            # three length vetoes, three shape failures — produced a poisoned row and an
-            # empty exception queue. §17 lists "exception queue functioning" as a Stage 1
-            # exit criterion, and it was false for the failure an operator will actually
-            # meet. `REPEATED_GATE_FAILURE` is reused rather than a new kind added: the
-            # contract's enum has no attempt-exhaustion member, a minor for one word is not
-            # worth it, and the PARK/ESCALATE distinction is already carried by the status
-            # the exception points at — POISONED versus PARKED.
-            self._raise_exception(poisoned, decision, reason, now, exhausted=True)
-            return TickOutcome.JOB_PARKED, events
+        #   POISONED  — the attempt budget really is spent. Not revivable: reviving without
+        #               changing anything just spends it again.
+        #   PARKED    — stopped while attempts remain, because no retry can resolve the
+        #               refusal (a locked node, a missing target, a daily ceiling). The
+        #               blocker is external and a human can clear it, so `revive` works.
+        #
+        # **The correction.** This code asserted, in a comment, that "`decide` returns PARK
+        # only on attempt exhaustion" and mapped PARK straight to POISONED. The budget gate
+        # falsifies the premise: `handlers` parks on attempt 1 when the daily ceiling
+        # refuses a call. So a refusal that resolves itself at midnight was made terminal
+        # and unrevivable, and its idempotency key burned so the work could not even be
+        # resubmitted — §19's "parked units are visible and revivable" measurably false on
+        # the first refusal an operator with real ceilings meets. It is the same shape as
+        # the provider-outage bug two branches up, which this project has already paid to
+        # learn once: an outage must cost time, not work. So must a ceiling.
+        stopped = running
+        if decision is not None and decision.refused_before_work:
+            # Nothing was generated and nothing was spent, so the attempt that
+            # `transition_to(RUNNING)` charged is given back. Without this, three ticks
+            # under a ceiling poison a unit that never ran — which is exactly how the
+            # outage bug killed work, one layer down.
+            stopped = replace(running, attempts=max(running.attempts - 1, 0))
 
-        parked = running.transition_to(JobStatus.PARKED, error=reason).released()
-        self.store.save_job(parked)
-        self.store.bump_digest(self._day(now), "jobs_parked")
-        raised = self._raise_exception(parked, decision, reason, now, exhausted=False)
+        exhausted = outcome is Outcome.PARK and stopped.attempts >= stopped.max_attempts
+        status = JobStatus.POISONED if exhausted else JobStatus.PARKED
+        final = stopped.transition_to(status, error=reason).released()
+        self.store.save_job(final)
+        self.store.bump_digest(self._day(now), "jobs_poisoned" if exhausted else "jobs_parked")
+        # **Attempt exhaustion raises an exception too, and this is the modal case.** Only
+        # ESCALATE filed one at first, which meant the *common* way a unit dies — three
+        # length vetoes, three shape failures — produced a poisoned row and an empty
+        # exception queue. §17 lists "exception queue functioning" as a Stage 1 exit
+        # criterion, and it was false for the failure an operator will actually meet.
+        # `REPEATED_GATE_FAILURE` is reused rather than a new kind added: the contract's
+        # enum has no attempt-exhaustion member, a minor for one word is not worth it, and
+        # the distinction is already carried by the status the exception points at.
+        raised = self._raise_exception(final, decision, reason, now, exhausted=exhausted)
         return TickOutcome.JOB_PARKED, [*events, *raised]
 
     def _raise_exception(

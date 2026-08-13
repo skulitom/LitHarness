@@ -189,6 +189,23 @@ class PolicyDecision:
     def failed_vetoes(self) -> tuple[Veto, ...]:
         return tuple(veto for gate in self.gates if not gate.passed for veto in gate.vetoes)
 
+    @property
+    def refused_before_work(self) -> bool:
+        """Whether this refusal was reached *in front of* the work rather than about it.
+
+        Budget is the only such gate today, and deliberately so: §4.2 gate 4 runs before
+        `registry.complete`, which is the whole point of checking a ceiling in front of the
+        spend rather than behind it. Nothing was generated, so there is no candidate to
+        judge and nothing about the unit is wrong — the refusal is a fact about the day.
+
+        The Conductor needs this because a unit refused before it ran must not be charged an
+        attempt, exactly as `TransientFailure` already is not. A new pre-flight gate does not
+        get this treatment by default; it has to be named here, which is the safe direction
+        to be wrong in.
+        """
+        failing = [gate for gate in self.gates if gate.blocking and not gate.passed]
+        return bool(failing) and all(gate.gate is GateKind.BUDGET for gate in failing)
+
     def to_contract(self, meta: lc.ArtifactMeta) -> lc.PolicyDecisionRecord:
         return lc.PolicyDecisionRecord(
             meta=meta,

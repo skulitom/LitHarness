@@ -176,7 +176,10 @@ def test_an_exhausted_budget_refuses_before_the_provider_is_called(store: Sqlite
 
     assert provider.calls == 0, "the provider was called despite an exhausted budget"
     assert result.outcome is TickOutcome.JOB_PARKED
-    assert store.load_job("draft-1").status is JobStatus.POISONED
+    # PARKED, not POISONED. This assertion read `is JobStatus.POISONED` until the
+    # behaviour was corrected, which is worth recording: the test pinned the defect in
+    # place rather than catching it. See the three tests below for what was wrong.
+    assert store.load_job("draft-1").status is JobStatus.PARKED
 
 
 def test_a_budget_refusal_is_recorded_as_a_gate_result(store: SqliteStore) -> None:
@@ -204,6 +207,54 @@ def test_a_budget_refusal_emits_budget_exhausted(store: SqliteStore) -> None:
 
     kinds = [entry.event.event_type for entry in store.read_log()]
     assert EventType.BUDGET_EXHAUSTED in kinds
+
+
+# --- a ceiling costs time, not work --------------------------------------------------
+#
+# The same lesson as the outage tests further down, one layer up. A budget refusal used to
+# settle to POISONED, which is terminal *and* burns the idempotency key — so a ceiling that
+# resets at midnight destroyed the unit it refused, and §19's "parked units are visible and
+# revivable" was measurably false on the first refusal an operator with real ceilings meets.
+
+
+def test_a_refused_unit_survives_to_be_revived(store: SqliteStore) -> None:
+    """The daily ceiling is gone tomorrow; the unit must still be there when it is."""
+    registry, provider = registry_with(PROSE)
+    seeded(store)
+
+    conductor_for(store, registry, BudgetPolicy(max_invocations_per_day=0)).tick(START)
+    refused = store.load_job("draft-1")
+    assert refused.status is JobStatus.PARKED
+    assert refused.attempts == 0, "a refusal in front of the work charged the unit for it"
+
+    # The operator finds it in the queue §4.3 promised them, clears it, and it runs.
+    assert [item.job_id for item in store.open_exceptions()] == ["draft-1"]
+    assert store.revive("draft-1").status is JobStatus.QUEUED
+
+    result = conductor_for(store, registry, UNLIMITED).tick(START + 86_400.0)
+
+    assert result.outcome is TickOutcome.RAN_JOB
+    assert provider.calls == 1
+
+
+def test_a_ceiling_on_the_last_attempt_does_not_spend_it(store: SqliteStore) -> None:
+    """Two genuine gate failures and then a ceiling. The attempt the ceiling refused was
+    never taken — nothing was generated on it — so the unit has a third try owed to it, and
+    reporting it as exhausted would attribute its death to the unit rather than to the day.
+    """
+    short, _ = registry_with("Too short.")
+    seeded(store)
+
+    conductor_for(store, short, UNLIMITED).tick(START)
+    conductor_for(store, short, UNLIMITED).tick(START + 300.0)
+    assert store.load_job("draft-1").attempts == 2
+
+    conductor_for(store, short, BudgetPolicy(max_invocations_per_day=1)).tick(START + 600.0)
+
+    refused = store.load_job("draft-1")
+    assert refused.status is JobStatus.PARKED, "a ceiling spent the attempt it refused"
+    assert refused.attempts == 2
+    assert store.revive("draft-1").status is JobStatus.QUEUED
 
 
 def test_spend_accumulates_from_recorded_decisions(store: SqliteStore) -> None:

@@ -448,6 +448,8 @@ class SqliteStore:
         target_revision_id: str,
         *,
         created_at: str,
+        project_id: str,
+        actor: str = "litharness",
         events: Sequence[Event] = (),
     ) -> Revision:
         """Restore ``target_revision_id``'s content as a new head. §19's reversibility.
@@ -455,13 +457,77 @@ class SqliteStore:
         Forward, never backward: the mistake and the correction both stay in the record.
         Committing and moving the head happen in one transaction, so a crash cannot leave
         a revision that exists but is not the head, or a head pointing at nothing.
+
+        **The decision is minted here rather than asked of the caller, because attribution
+        must not be optional.** §19's Integrity clause is one sentence — every mutation is
+        attributable to a recorded policy decision *and reversible* — and the reversibility
+        half shipped violating the attribution half: this method took `events` with a
+        default of `()`, wrote no decision, and `cmd_revert` passed neither. A revert
+        therefore committed a revision, moved `branch_heads`, and left
+        `decision_for_revision` answering `None`. "Zero silent mutation" is a literal Stage
+        1 exit criterion in §17, and this was the one silent mutation in the shipped system.
+
+        Nothing here is a policy judgment — the outcome, the base, the result and the reason
+        are all determined by the arguments — so there was no reason to make the caller
+        supply what only they could get wrong or forget. The caller's `events` are still
+        appended, for anything it wants to say beyond the acceptance.
         """
         current = self.head(book_id, branch_id)
         if current is None:
             raise KeyError(f"no head for {book_id}/{branch_id}")
         reverted = current.reverting_to(self.load_revision(target_revision_id))
-        self.commit_revision(reverted, created_at=created_at, events=events)
+
+        decision = PolicyDecision(
+            # Derived, so re-reverting to the same target from the same head collapses onto
+            # one decision rather than accumulating duplicates of one judgment.
+            decision_id=f"dec-revert-{reverted.revision_id[:20]}",
+            outcome=Outcome.ACCEPT,
+            base_revision_id=current.revision_id,
+            resulting_revision_id=reverted.revision_id,
+            reason=(
+                f"reverted to {target_revision_id[:12]}, replacing head "
+                f"{current.revision_id[:12]}"
+            ),
+        )
+        accepted = Event(
+            event_type=EventType.MANUSCRIPT_REVISION_ACCEPTED,
+            project_id=project_id,
+            created_at=created_at,
+            actor=actor,
+            book_id=book_id,
+            branch_id=branch_id,
+            revision_id=reverted.revision_id,
+            payload={
+                "decision_id": decision.decision_id,
+                "reverted_to": target_revision_id,
+                "parent_revision_id": current.revision_id,
+                "accepted": True,
+            },
+        )
+        # Decision first, then the revision — the order the draft handler and the importer
+        # both use. A crash between them leaves a decision pointing at a revision that does
+        # not exist, which is detectable and harmless; the other order leaves a revision no
+        # decision explains, which is the thing this method exists to stop producing.
+        self.record_decision(decision, decided_at=created_at)
+        self.commit_revision(reverted, created_at=created_at, events=[accepted, *events])
         return reverted
+
+    def unattributed_revisions(self) -> list[str]:
+        """Revisions that no policy decision explains — §19's Integrity clause, as a query.
+
+        The clause was asserted rather than checked, and it was false: `revert` produced
+        unattributed revisions for as long as it existed, and nothing anywhere would have
+        said so. A structural constraint on one method only guards that method; this guards
+        every path, including ones not written yet.
+        """
+        return [
+            row["revision_id"]
+            for row in self._connection.execute(
+                "SELECT revision_id FROM revisions WHERE revision_id NOT IN "
+                "(SELECT resulting_revision_id FROM policy_decisions "
+                "WHERE resulting_revision_id IS NOT NULL) ORDER BY rowid"
+            )
+        ]
 
     def lineage(self, revision_id: str) -> list[str]:
         """Ancestry from ``revision_id`` back to the root, newest first."""

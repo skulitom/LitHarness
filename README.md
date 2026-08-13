@@ -76,7 +76,8 @@ uv run litharness --database book.db directive "More dungeon crawling." --kind a
   and the count is the honest measure of the gap.
 - `jobs [--status parked]` — queue depth, or the units in one state.
 - `revive <job_id>` — return a parked unit to the queue once you have cleared what parked
-  it. Refuses a poisoned unit, whose attempt budget really was spent.
+  it. Refuses a poisoned unit, whose attempt budget really was spent. A unit stopped by a
+  budget ceiling is parked, not poisoned: the ceiling resets and the work is still there.
 - `pause` / `resume` — durable, so it survives the process a cron tick starts and ends in.
 - `exceptions` / `resolve` — what policy could not resolve. Resolving closes your side; it
   deliberately does not requeue the unit, because an escalation may have been *right*.
@@ -91,7 +92,8 @@ Budget ceilings apply to every generating call and are checked **before** it is 
 §15's per-call harness tax), `--max-tokens-per-operation`, `--max-cost-usd-per-day`. Pass
 `-1` for unbounded, which has to be asked for rather than being what you get by forgetting
 a flag. `status` prints spend against plan.
-- `verify` — rebuild every revision from canonical records and check the content hashes.
+- `verify` — rebuild every revision from canonical records, check the content hashes, and
+  report any revision no policy decision explains. Exits non-zero if it finds one.
 
 ## Development
 

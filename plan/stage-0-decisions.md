@@ -1,6 +1,6 @@
 # Stage 0 decisions
 
-**Status:** Stage 0 slices 1-6 and Stage 1 slice 7 built and green — **292 tests (+3 opt-in live), ruff clean, mypy
+**Status:** Stage 0 slices 1-6 and Stage 1 slice 7 built and green — **297 tests (+3 opt-in live), ruff clean, mypy
 strict clean.** Slice 1 is the model-free manuscript spine; slice 2 the Conductor skeleton
 (tick, instance lease, job selection, digest, outbox dispatch, crash recovery); slice 3 the
 four provider adapters with their conformance suite and the billing guard; slice 4 **the
@@ -564,3 +564,65 @@ The premise is required rather than defaulted for the same reason: a planner tha
 substituted a placeholder would draft a book against a premise nobody wrote, and the
 failure mode — six scenes of plausible prose about nothing — is one no gate in this system
 can detect.
+
+## 24. A refusal reached before the work costs time, never the unit
+
+`application/conductor.py` (`_settle`), `domain/policy.py` (`refused_before_work`).
+
+Decision 12's sibling, and a lesson this project has now paid for twice. `ProviderUnavailable`
+is raised before any work is attempted, and charging it against the attempt budget meant a
+fifteen-minute outage permanently poisoned every unit it touched; that was found and fixed.
+**The budget ceiling is the same refusal at a different layer and survived the fix by three
+commits**, because the lesson had been recorded as a patch to one branch rather than as a
+rule.
+
+Two things were wrong, and only the second is interesting. `handlers` emits `Outcome.PARK`
+when a ceiling refuses a call, and `_settle` mapped PARK straight to POISONED — terminal,
+not revivable, idempotency key burned — under a comment asserting that "`decide` returns
+this only on attempt exhaustion". That premise was true when it was written and the budget
+gate falsified it, so **the defect was a comment that had become false while still being
+relied on**. A daily ceiling resets at midnight; the unit it killed did not, and could not
+even be resubmitted.
+
+The fix is to stop inferring a job-layer state from a decision-layer word. POISONED is a
+fact about the attempt budget, so `_settle` reads it off the attempt budget:
+`attempts >= max_attempts` poisons, anything else parks revivably. `decide` returns PARK
+only at exhaustion, so every pre-existing path settles exactly as before. And a decision
+whose only failing blocking gate is a budget gate gives back the attempt that
+`transition_to(RUNNING)` charged — `PolicyDecision.refused_before_work`, deliberately keyed
+on `GateKind.BUDGET` rather than on "any gate that ran early", so a future pre-flight gate
+must opt in by name instead of inheriting the exemption silently.
+
+**The test asserted the defect.** `test_an_exhausted_budget_refuses_before_the_provider_is_called`
+ended `assert store.load_job("draft-1").status is JobStatus.POISONED`. A suite that encodes
+a bug is worse than no suite, because it converts the bug into a requirement and makes the
+fix look like a regression.
+
+## 25. Attribution is minted by the operation, and checkable across all of them
+
+`adapters/sqlite_store.py` (`revert`, `unattributed_revisions`), `cli verify`.
+
+§19's Integrity clause is one sentence — every mutation is attributable to a recorded policy
+decision *and reversible* — and the reversibility feature shipped violating the attribution
+half of its own clause. `revert` took `events` defaulting to `()`, wrote no
+`PolicyDecision`, and `cmd_revert` supplied neither, so a revert committed a revision, moved
+`branch_heads`, and left `decision_for_revision` answering `None`. §17 Stage 1 lists "zero
+silent mutation" as an exit criterion; this was the one, and the four tests covering revert
+asserted its content and its lineage and never its attribution.
+
+**Minted by the operation rather than asked of the caller.** Nothing about a revert's
+decision is a policy judgment — outcome, base, result and reason are all determined by the
+arguments — so leaving it to the caller only created something to forget. `revert` gained
+`project_id` (an event needs a project) and writes both the decision and the
+`ManuscriptRevisionAccepted` event itself, decision first, matching the draft handler and
+the importer: a crash between them leaves a decision pointing at a revision that does not
+exist, which is detectable and harmless, where the other order leaves a revision no decision
+explains, which is the thing being prevented.
+
+**And checked, not just fixed.** `unattributed_revisions()` asks the question directly —
+which revisions does no decision explain — and `litharness verify` reports them and exits
+non-zero. This is the half worth more than the fix: a structural constraint on `revert`
+guards `revert`, while the query guards every path that commits a revision, including ones
+not written yet. `commit_revision` stays usable unattributed because test setup legitimately
+needs it; the guarantee lives where it can be *observed* rather than where it can be
+enforced against one caller.

@@ -481,7 +481,11 @@ def test_revert_restores_content_by_going_forward(
     store.commit_revision(bad, created_at="2026-08-12T00:01:00Z")
 
     reverted = store.revert(
-        BOOK_ID, BRANCH_ID, revision.revision_id, created_at="2026-08-12T00:02:00Z"
+        BOOK_ID,
+        BRANCH_ID,
+        revision.revision_id,
+        created_at="2026-08-12T00:02:00Z",
+        project_id=PROJECT_ID,
     )
 
     assert reverted.node("scene-1").content == original
@@ -503,7 +507,13 @@ def test_revert_stores_no_new_node_versions(store: SqliteStore, revision: Revisi
     store.commit_revision(bad, created_at="2026-08-12T00:01:00Z")
     before = store._connection.execute("SELECT COUNT(*) AS n FROM node_versions").fetchone()["n"]
 
-    store.revert(BOOK_ID, BRANCH_ID, revision.revision_id, created_at="2026-08-12T00:02:00Z")
+    store.revert(
+        BOOK_ID,
+        BRANCH_ID,
+        revision.revision_id,
+        created_at="2026-08-12T00:02:00Z",
+        project_id=PROJECT_ID,
+    )
 
     after = store._connection.execute("SELECT COUNT(*) AS n FROM node_versions").fetchone()["n"]
     assert after == before
@@ -529,7 +539,11 @@ def test_a_node_added_after_the_target_is_tombstoned_not_dropped(
     store.commit_revision(added, created_at="2026-08-12T00:01:00Z")
 
     reverted = store.revert(
-        BOOK_ID, BRANCH_ID, revision.revision_id, created_at="2026-08-12T00:02:00Z"
+        BOOK_ID,
+        BRANCH_ID,
+        revision.revision_id,
+        created_at="2026-08-12T00:02:00Z",
+        project_id=PROJECT_ID,
     )
 
     assert reverted.node("scene-7").tombstoned
@@ -542,10 +556,102 @@ def test_reverting_is_itself_reversible(store: SqliteStore, revision: Revision) 
     store.commit_revision(revision, created_at=NOW)
     bad = revision.replacing([revision.node("scene-1").with_content("A regrettable line.")])
     store.commit_revision(bad, created_at="2026-08-12T00:01:00Z")
-    store.revert(BOOK_ID, BRANCH_ID, revision.revision_id, created_at="2026-08-12T00:02:00Z")
+    store.revert(
+        BOOK_ID,
+        BRANCH_ID,
+        revision.revision_id,
+        created_at="2026-08-12T00:02:00Z",
+        project_id=PROJECT_ID,
+    )
 
     again = store.revert(
-        BOOK_ID, BRANCH_ID, bad.revision_id, created_at="2026-08-12T00:03:00Z"
+        BOOK_ID,
+        BRANCH_ID,
+        bad.revision_id,
+        created_at="2026-08-12T00:03:00Z",
+        project_id=PROJECT_ID,
     )
 
     assert again.node("scene-1").content == "A regrettable line."
+
+
+def test_a_revert_is_attributable_like_any_other_mutation(
+    store: SqliteStore, revision: Revision
+) -> None:
+    """§19's Integrity clause is one sentence — attributable *and* reversible — and the
+    reversibility half shipped violating the attribution half. A revert committed a
+    revision, moved the head, and left `decision_for_revision` answering None. §17 Stage 1
+    lists "zero silent mutation" as an exit criterion; this was the one.
+    """
+    store.commit_revision(revision, created_at=NOW, events=[accepted_event(revision)])
+    bad = revision.replacing([revision.node("scene-1").with_content("A regrettable line.")])
+    store.commit_revision(bad, created_at="2026-08-12T00:01:00Z", events=[accepted_event(bad)])
+
+    reverted = store.revert(
+        BOOK_ID,
+        BRANCH_ID,
+        revision.revision_id,
+        created_at="2026-08-12T00:02:00Z",
+        project_id=PROJECT_ID,
+    )
+
+    decision = store.decision_for_revision(reverted.revision_id)
+    assert decision is not None, "a revert committed a revision nothing explains"
+    assert decision.outcome is Outcome.ACCEPT
+    assert decision.base_revision_id == bad.revision_id
+    assert revision.revision_id[:12] in (decision.reason or "")
+    # The log too, not only the decision table: derived state is rebuilt from events.
+    accepted = [
+        entry
+        for entry in store.read_log()
+        if entry.event.revision_id == reverted.revision_id
+        and entry.event.event_type is EventType.MANUSCRIPT_REVISION_ACCEPTED
+    ]
+    assert len(accepted) == 1
+    assert accepted[0].event.payload["reverted_to"] == revision.revision_id
+
+
+def test_reverting_twice_to_one_target_is_two_attributed_mutations(
+    store: SqliteStore, revision: Revision
+) -> None:
+    """Worth pinning because the intuition goes the other way: reverting to the same target
+    twice is *not* idempotent, because the head moved in between and a revision id covers
+    its parent. Two forward moves, two revisions, two decisions — and the second is not a
+    duplicate judgment of the first. Only a genuinely replayed revert, from the same head,
+    collapses; that is what the derived decision id is for.
+    """
+    store.commit_revision(revision, created_at=NOW)
+    bad = revision.replacing([revision.node("scene-1").with_content("A regrettable line.")])
+    store.commit_revision(bad, created_at="2026-08-12T00:01:00Z")
+
+    reverts = [
+        store.revert(
+            BOOK_ID, BRANCH_ID, revision.revision_id, created_at=stamp, project_id=PROJECT_ID
+        )
+        for stamp in ("2026-08-12T00:02:00Z", "2026-08-12T00:03:00Z")
+    ]
+
+    assert reverts[0].revision_id != reverts[1].revision_id
+    assert reverts[1].parent_revision_id == reverts[0].revision_id
+    decisions = [store.decision_for_revision(item.revision_id) for item in reverts]
+    assert all(decision is not None for decision in decisions)
+    assert decisions[0].decision_id != decisions[1].decision_id  # type: ignore[union-attr]
+
+
+def test_unattributed_revisions_names_what_no_decision_explains(
+    store: SqliteStore, revision: Revision
+) -> None:
+    """The check that makes the clause hold for paths nobody has written yet. A structural
+    constraint on `revert` would only ever have guarded `revert`."""
+    store.commit_revision(revision, created_at=NOW)  # the raw primitive, as a test does
+    assert store.unattributed_revisions() == [revision.revision_id]
+
+    reverted = store.revert(
+        BOOK_ID,
+        BRANCH_ID,
+        revision.revision_id,
+        created_at="2026-08-12T00:02:00Z",
+        project_id=PROJECT_ID,
+    )
+
+    assert reverted.revision_id not in store.unattributed_revisions()
