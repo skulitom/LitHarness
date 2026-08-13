@@ -239,6 +239,37 @@ uv run litharness --database book.db calibrations
 evidence exists that any of them predicts human judgment, and prints nothing today. That
 emptiness is the honest state of §19's Quality clause.
 
+```bash
+uv run litharness --database book.db calibrate --metric craft.tricolon_rate.v0 --threshold 4.0 --direction above --precision 0.86 --holdout 50 --flagged 21
+```
+
+`calibrate` is the write verb, and the only route to a gate that can refuse a scene. It
+records; it does not promote. Whether the evidence may block is recomputed at every draft
+against the verdict set *as it stands then*, so it is printed here as information rather
+than enforced here as a precondition — recording a measurement that cannot yet promote is
+how evidence accumulates toward one that can, and the command says which you have.
+
+`--flagged` is the number the metric actually fired on, and it is required because
+precision is computed over the flagged set: a metric that flags one scene in fifty and
+happens to be right scores 1.00 on a holdout of 50 while having shown nothing. The floor is
+17 — the smallest flagged set whose 95% Clopper-Pearson lower bound on a *perfect* score
+clears the 0.80 precision floor.
+
+**A scene a promoted craft gate refuses is parked, not escalated and not redrafted.** The
+book continues, because findings are node-scoped and a weak scene 3 must not stop scene 6;
+`revive` is the way past one, exactly as it is for a standing finding. Retrying instead
+would make the accepted candidate the one that beat the metric — best-of-three optimisation
+against a craft proxy, which is the coupling [plan/craft-corpus.md](plan/craft-corpus.md)
+§4.2 calls non-negotiable to prevent. A craft refusal also files **no exception**: §4.2
+reserves those for what policy could not resolve, and a refusal is policy resolving.
+
+What a parked unit is *not*, yet, is an unjudged sample. Craft metrics are recorded and the
+§10.5 audit sample is drawn on the acceptance path, after the revision commits; a refused
+candidate commits nothing, so its text is discarded and no sample is drawn. The gate does
+not fill the audit queue by refusing, which would have been the best argument for parking —
+and it is a gap rather than an oversight, because an audit sample is addressed by
+`(revision_id, logical_id)` and a refused candidate has no revision id.
+
 **The audit queue is a confirmation sample, not the plan for measuring quality.** A system
 whose quality evidence depends on someone deciding to sit down will not produce any — the
 measured throughput of that design is two verdicts against 104 exported pairs. The primary
@@ -288,12 +319,20 @@ Stated plainly, because a system that runs is easy to mistake for a system that 
   binds, so that limit is currently invisible and will not stay that way at Book Zero
   length. Only the `draft_scene` operation is served; the suite's `evaluate` and `repair`
   cases have no implementation to grade and the suite says so rather than skipping them.
-- **No craft gate, and the reason is measured.** The blocking ladder is shape then integrity:
-  a draft exists, is the right size, did not overwrite anything, and nothing unresolved stands
-  against its node. Nothing *blocks* on whether the prose is any good (PLAN.md §1a). Four
-  craft metrics are logged per accepted scene and can only annotate — `craft_gates` has no
-  branch that could set `blocking`, and `PolicyDecision` raises on a blocking craft gate with
-  no calibration. All four were then measured against 13,000 chapters of published LitRPG and
+- **No craft gate, and the reason is measured — but the path to one is now wired end to
+  end.** The blocking ladder is shape then integrity: a draft exists, is the right size, did
+  not overwrite anything, and nothing unresolved stands against its node. Nothing *blocks* on
+  whether the prose is any good (PLAN.md §1a). Four craft metrics are logged per accepted
+  scene and can only annotate — `craft_gates` has no branch that could set `blocking`, and
+  `PolicyDecision` raises on a blocking craft gate with no calibration.
+  What changed is that the *other* door is now reachable and has a decided behaviour behind
+  it: `calibrate` records evidence, `handlers` consults it on every draft, `promoted_gate`
+  builds a blocking gate or refuses to, and a refusal parks the unit under
+  `Veto.CRAFT_BELOW_BAR`. **Nothing about the book changes until a calibration exists**, and
+  none does — with an empty table the wired path costs one indexed query and cannot construct
+  a gate, which is what made it safe to build before the evidence. It is plumbing waiting on
+  judgment, and the emptiness of `calibrations` is still the measure of the gap.
+  All four metrics were measured against 13,000 chapters of published LitRPG and
   **all four failed to separate declared-AI prose from human prose at the same date**; the one
   that looked promising turned out to be detecting the year. §10.6 now records twelve of
   thirteen candidate proxies refuted. The blocker is human judgment, not effort:
@@ -304,10 +343,17 @@ Stated plainly, because a system that runs is easy to mistake for a system that 
   ContinuityEvaluation's pack for you, and doing so is Stage 2's "integrate the LitRPG
   deterministic detector pack". Until then a book nobody ran an evaluator over is gated on
   shape and contradiction alone.
-- **No state extraction.** State records enter only through `import`, on the director's
-  authority. §12 step 5's extraction — reading state candidates back out of accepted prose —
-  does not exist, so a book the system drafts itself accumulates no new facts. Both halves
-  feel it: scene six is given whatever was imported rather than what scenes one to five
-  actually established, and the integrity gate judges each candidate against that same
-  frozen state.
+- **State extraction reads system voice only.** §12 step 5 now exists
+  (`domain/extraction.py`): every accepted scene is read for the facts it establishes, the
+  records are written in the revision's own transaction, and a candidate contradicting
+  established canon is refused before it commits. That is what gives
+  `state.contradiction.v0` an in-process producer — until it had one, the detector could not
+  fire at all and Stage 2 had no trigger to build on.
+  What it reads is the `[STATUS]` line the genre puts on the page, and nothing else. Nothing
+  here touches prose-semantic facts like "Brandt knows about the letter", which need a model
+  call that is deliberately not built. And it **mints nothing**: the story position is read
+  back out of the book's own imported evidence and abstains where the book is silent, so a
+  book with no imported snapshot — Book Zero — extracts nothing at all. Until `render_prompt`
+  asks generators to emit system voice, extraction yields records only for prose that already
+  carries it. That prompt change moves every fixture hash, so it lands on its own.
 - **Directives are captured, not read.** See above.

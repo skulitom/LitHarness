@@ -33,6 +33,13 @@ cutoff and the caller supplies it or does not. In the live loop the question doe
 records are extracted from accepted prose, so the only records that exist are about scenes
 already written. It arises for an imported book, whose records describe scenes not yet
 drafted — which is exactly when a guess would be invisible and wrong.
+
+**That paragraph described something that did not exist until `domain/extraction.py`, and
+what it now describes is narrower than it reads.** Extraction does not *mint* an order key
+either: it reads back the one the book's own imported evidence already attests for a scene,
+and abstains where the book is silent or ambiguous. So a book with no imported snapshot —
+Book Zero, §17 Stage 3 — has nothing to read back and extracts nothing. The price of
+refusing to fabricate is real and is paid there, not here.
 """
 
 from __future__ import annotations

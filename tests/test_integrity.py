@@ -323,7 +323,7 @@ def test_no_module_reads_the_note_field() -> None:
     # the most valuable field in the calibration schema), so it would either fail on
     # legitimate reads or be relaxed until it caught nothing.
     root = Path(domain_package.__file__).parent
-    watched = ("state.py", "integrity.py", "findings.py", "context.py")
+    watched = ("state.py", "integrity.py", "findings.py", "context.py", "extraction.py")
     offenders: list[str] = []
     for path in sorted(p for p in root.rglob("*.py") if p.name in watched):
         tree = ast.parse(path.read_text(encoding="utf-8"))

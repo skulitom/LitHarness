@@ -349,7 +349,21 @@ class Conductor:
             # outage bug killed work, one layer down.
             stopped = replace(running, attempts=max(running.attempts - 1, 0))
 
-        exhausted = outcome is Outcome.PARK and stopped.attempts >= stopped.max_attempts
+        # **And the same premise broke a third time.** The correction above replaced "PARK
+        # means exhaustion" with "PARK at the ceiling means exhaustion", which held only
+        # while every parkable refusal happened to arrive at the ceiling. `PARKABLE` ends
+        # that: a craft gate refuses at *any* attempt number, ahead of the budget check, so
+        # a refusal landing on attempt 3 is indistinguishable here from a budget spent —
+        # and the unit would poison, become unrevivable, vanish from `jobs --status parked`
+        # and carry an exception reading "attempt budget spent" about a budget that was not
+        # what stopped it. The decision now says which it was rather than the count implying
+        # it, because the count has been wrong about this twice.
+        parked_by_policy = decision is not None and decision.parked_by_veto
+        exhausted = (
+            outcome is Outcome.PARK
+            and stopped.attempts >= stopped.max_attempts
+            and not parked_by_policy
+        )
         status = JobStatus.POISONED if exhausted else JobStatus.PARKED
         final = stopped.transition_to(status, error=reason).released()
         self.store.save_job(final)
@@ -362,6 +376,17 @@ class Conductor:
         # `REPEATED_GATE_FAILURE` is reused rather than a new kind added: the contract's
         # enum has no attempt-exhaustion member, a minor for one word is not worth it, and
         # the distinction is already carried by the status the exception points at.
+        #
+        # **A parkable veto is the exception to it, and the whole point of the class.**
+        # §4.2 reserves escalation for what policy *could not resolve*; a craft refusal is
+        # policy resolving — the scene does not go in, and that is a decision, not a
+        # failure. Filing an exception anyway would put every refusal in the queue a human
+        # is asked to clear, which is exactly the director interruption `PARKABLE` was
+        # chosen over `ESCALATE` to avoid, arriving one layer below the choice. The unit is
+        # still visible, in `jobs --status parked` where a refusal belongs and where the
+        # README says to look for it.
+        if parked_by_policy:
+            return TickOutcome.JOB_PARKED, list(events)
         raised = self._raise_exception(final, decision, reason, now, exhausted=exhausted)
         return TickOutcome.JOB_PARKED, [*events, *raised]
 

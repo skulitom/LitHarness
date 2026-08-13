@@ -10,7 +10,10 @@ import pytest
 from litharness.adapters.contracts_fixtures import fixture_state
 from litharness.adapters.sqlite_store import SqliteStore
 from litharness.domain import state as state_mod
+from litharness.domain.draft import gate_draft
 from litharness.domain.events import Event, EventType
+from litharness.domain.nodes import Node, NodeKind
+from litharness.domain.revision import build_revision
 from tests.conftest import BOOK_ID, BRANCH_ID, PROJECT_ID
 
 
@@ -320,3 +323,57 @@ def test_the_accepting_event_commits_with_the_records(store: SqliteStore) -> Non
     )
     types = [stored.event.event_type for stored in store.read_log()]
     assert EventType.STATE_RECORDS_ACCEPTED in types
+
+
+def test_reverting_retracts_the_state_read_out_of_the_discarded_prose(
+    store: SqliteStore,
+) -> None:
+    """The trap migration 016 exists for, and it is unclearable without it.
+
+    Extraction writes canon whose evidence cites one node version. `revert` moves the head
+    back past that version, so the prose the record was read from leaves the book — and
+    without retraction the record does not. Redraft that scene with different numbers and
+    `state.contradiction.v0` fires against the orphan, refusing the beat forever: the
+    detector runs in-process on every attempt and mints its finding OPEN each time, while
+    `litharness dismiss` satisfies only the *pre-flight* standing gate. §19.1's free
+    revivable park becomes a paid unclearable one, through a door §19.1 did not know about.
+    """
+    base = build_revision(
+        BOOK_ID,
+        BRANCH_ID,
+        [
+            Node(logical_id="book", kind=NodeKind.BOOK, position_key="010"),
+            Node(
+                logical_id="scene-1",
+                kind=NodeKind.SCENE,
+                position_key="010",
+                parent_logical_id="book",
+            ),
+        ],
+    )
+    store.commit_revision(base, created_at="2026-08-13T00:00:00Z")
+    drafted = gate_draft(base, "scene-1", "x" * 400).revision
+    assert drafted is not None
+    extracted = record("rec-extracted", subject="rook", predicate="status_snapshot")
+    store.commit_revision(
+        drafted, created_at="2026-08-13T00:00:01Z", state_records=[extracted]
+    )
+    assert [r.record_id for r in store.state_records(BOOK_ID, BRANCH_ID)] == ["rec-extracted"]
+
+    store.revert(
+        BOOK_ID,
+        BRANCH_ID,
+        base.revision_id,
+        created_at="2026-08-13T00:00:02Z",
+        project_id=PROJECT_ID,
+    )
+
+    assert store.state_records(BOOK_ID, BRANCH_ID) == [], "the orphan is gone from canon"
+    # Forward-only: the row survives, marked, so the record still explains itself.
+    row = store._connection.execute(
+        "SELECT retracted_by_revision_id, retracted_at FROM state_records "
+        "WHERE record_id = ?",
+        ("rec-extracted",),
+    ).fetchone()
+    assert row["retracted_by_revision_id"], "retracted, not deleted"
+    assert row["retracted_at"] == "2026-08-13T00:00:02Z"

@@ -24,7 +24,7 @@ from __future__ import annotations
 
 import json
 import sqlite3
-from collections.abc import Iterable, Sequence
+from collections.abc import Collection, Iterable, Sequence
 from contextlib import suppress
 from dataclasses import dataclass, replace
 from pathlib import Path
@@ -342,12 +342,29 @@ class SqliteStore:
     # -- revisions ------------------------------------------------------------
 
     def commit_revision(
-        self, revision: Revision, *, created_at: str, events: Sequence[Event] = ()
+        self,
+        revision: Revision,
+        *,
+        created_at: str,
+        events: Sequence[Event] = (),
+        state_records: Sequence[lc.StateRecord] = (),
+        retract_state_from: Collection[str] = (),
     ) -> None:
-        """Persist a revision and its events atomically.
+        """Persist a revision, its events and the state read out of it, atomically.
 
         Idempotent: re-committing the same content-addressed revision is a no-op, which
         is what makes a retried tick safe.
+
+        `state_records` is §12 step 5's output arriving through step 8's transaction. It
+        defaults to empty so `revert` and every existing caller are unchanged, and it is a
+        parameter here rather than a second store call in the handler for the reason
+        `plan/stage-0-decisions.md` §6 gives: a handler must not write to the store, and the
+        one carve-out is this method, which takes its events in the same transaction. Widening
+        the carve-out would put records for prose that may never commit into the store with no
+        way to recall them under `INSERT OR IGNORE`; writing *after* the commit instead is
+        unreachable on replay, because the handler returns early when a prior ACCEPT decision
+        exists. Records therefore inherit the revision's crash semantics exactly: **they
+        cannot exist for a revision that does not.**
         """
         with self.transaction() as connection:
             connection.execute(
@@ -391,6 +408,31 @@ class SqliteStore:
                     "INSERT OR IGNORE INTO revision_nodes (revision_id, logical_id, version_id) "
                     "VALUES (?, ?, ?)",
                     (revision.revision_id, node.logical_id, version_id),
+                )
+            for record in state_records:
+                self._insert_state_record(
+                    connection,
+                    revision.book_id,
+                    revision.branch_id,
+                    record,
+                    source_revision_id=revision.revision_id,
+                    created_at=created_at,
+                )
+            # Atomic with the head move, for the reason the head move is atomic with the
+            # revision: a crash between them would leave canon read out of prose the book no
+            # longer contains, which is exactly the orphan retraction exists to prevent.
+            for source_revision_id in sorted(retract_state_from):
+                connection.execute(
+                    "UPDATE state_records SET retracted_by_revision_id = ?, retracted_at = ? "
+                    "WHERE book_id = ? AND branch_id = ? AND source_revision_id = ? "
+                    "AND retracted_by_revision_id IS NULL",
+                    (
+                        revision.revision_id,
+                        created_at,
+                        revision.book_id,
+                        revision.branch_id,
+                        source_revision_id,
+                    ),
                 )
             for event in events:
                 self._insert_event(connection, event)
@@ -516,7 +558,19 @@ class SqliteStore:
         # not exist, which is detectable and harmless; the other order leaves a revision no
         # decision explains, which is the thing this method exists to stop producing.
         self.record_decision(decision, decided_at=created_at)
-        self.commit_revision(reverted, created_at=created_at, events=[accepted, *events])
+        # The revisions this revert discards, computed *before* the head moves — afterwards
+        # they are ancestors of the new head and indistinguishable from kept history, because
+        # `reverting_to` parents on the current head. Any state record read out of prose in
+        # that segment leaves the book with it.
+        discarded = set(self.lineage(current.revision_id)) - set(
+            self.lineage(target_revision_id)
+        )
+        self.commit_revision(
+            reverted,
+            created_at=created_at,
+            events=[accepted, *events],
+            retract_state_from=discarded,
+        )
         return reverted
 
     def unattributed_revisions(self) -> list[str]:
@@ -954,33 +1008,57 @@ class SqliteStore:
         inserted = 0
         with self.transaction() as connection:
             for record in records:
-                position = record.story_position.order_key if record.story_position else None
-                cursor = connection.execute(
-                    "INSERT OR IGNORE INTO state_records (book_id, branch_id, record_id, "
-                    "kind, subject, predicate, value_json, order_key, authority, "
-                    "record_json, source_revision_id, created_at) "
-                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                    (
-                        book_id,
-                        branch_id,
-                        record.record_id,
-                        record.kind.value,
-                        record.subject,
-                        record.predicate,
-                        None
-                        if record.value is None
-                        else json.dumps(record.value, sort_keys=True, ensure_ascii=False),
-                        position,
-                        record.authority.value,
-                        json.dumps(lc.to_jsonable(record), sort_keys=True, ensure_ascii=False),
-                        source_revision_id,
-                        created_at,
-                    ),
+                inserted += self._insert_state_record(
+                    connection,
+                    book_id,
+                    branch_id,
+                    record,
+                    source_revision_id=source_revision_id,
+                    created_at=created_at,
                 )
-                inserted += cursor.rowcount
             for event in events:
                 self._insert_event(connection, event)
         return inserted
+
+    @staticmethod
+    def _insert_state_record(
+        connection: sqlite3.Connection,
+        book_id: str,
+        branch_id: str,
+        record: lc.StateRecord,
+        *,
+        source_revision_id: str | None,
+        created_at: str,
+    ) -> int:
+        """One row, on a caller-supplied connection. Factored out so `commit_revision` can
+        write extracted records **inside the revision's own transaction** rather than in a
+        second one — §12 step 8 says the revision, its events and its records commit
+        atomically, and two transactions is the gap where a crash leaves a drafted book with
+        no record of what it established."""
+        position = record.story_position.order_key if record.story_position else None
+        cursor = connection.execute(
+            "INSERT OR IGNORE INTO state_records (book_id, branch_id, record_id, "
+            "kind, subject, predicate, value_json, order_key, authority, "
+            "record_json, source_revision_id, created_at) "
+            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            (
+                book_id,
+                branch_id,
+                record.record_id,
+                record.kind.value,
+                record.subject,
+                record.predicate,
+                None
+                if record.value is None
+                else json.dumps(record.value, sort_keys=True, ensure_ascii=False),
+                position,
+                record.authority.value,
+                json.dumps(lc.to_jsonable(record), sort_keys=True, ensure_ascii=False),
+                source_revision_id,
+                created_at,
+            ),
+        )
+        return int(cursor.rowcount)
 
     def state_records(
         self,
@@ -998,7 +1076,15 @@ class SqliteStore:
         applies the identical rule in memory, and the two are tested against each other —
         one query, two implementations is how a selector drifts from its gate.
         """
-        sql = "SELECT record_json FROM state_records WHERE book_id = ? AND branch_id = ?"
+        # Retracted records are excluded everywhere by default, so a caller cannot forget:
+        # a record read out of prose a `revert` removed from the book is not canon any more,
+        # and leaving it visible makes a redraft of that scene contradict a ghost. Migration
+        # 016 records the retraction rather than deleting the row — the mistake and the
+        # correction both stay, which is the rule `revert` itself follows.
+        sql = (
+            "SELECT record_json FROM state_records WHERE book_id = ? AND branch_id = ? "
+            "AND retracted_by_revision_id IS NULL"
+        )
         params: list[Any] = [book_id, branch_id]
         if subject is not None:
             sql += " AND subject = ?"
@@ -1315,14 +1401,16 @@ class SqliteStore:
         with self.transaction() as connection:
             cursor = connection.execute(
                 "INSERT OR IGNORE INTO calibrations (calibration_id, metric_id, "
-                "holdout_size, precision, recall, threshold, direction, verdicts_digest, "
-                "measured_at, expires_at, note) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                "holdout_size, precision, recall, flagged, threshold, direction, "
+                "verdicts_digest, measured_at, expires_at, note) "
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                 (
                     calibration.calibration_id,
                     calibration.metric_id,
                     calibration.holdout_size,
                     calibration.precision,
                     calibration.recall,
+                    calibration.flagged,
                     calibration.threshold,
                     calibration.direction.value,
                     calibration.verdicts_digest,
@@ -1356,6 +1444,7 @@ class SqliteStore:
                 measured_at=row["measured_at"],
                 expires_at=row["expires_at"],
                 recall=None if row["recall"] is None else float(row["recall"]),
+                flagged=None if row["flagged"] is None else int(row["flagged"]),
                 note=row["note"],
             )
             for row in self._connection.execute(sql, params)

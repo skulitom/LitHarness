@@ -1,0 +1,14 @@
+-- The flagged count: how many of the holdout the metric actually fired on.
+--
+-- 014 recorded `holdout_size` and `precision` and treated the pair as the evidence. It is
+-- not, because precision is computed over the *flagged* set and `holdout_size` does not
+-- bound it. A metric that flags one scene in fifty and happens to be right scores precision
+-- 1.00 on a holdout of 50 and clears every floor 014 established. `recall` would have
+-- exposed that and is nullable, so it could not be relied on to.
+--
+-- Nullable here rather than NOT NULL, and the asymmetry is deliberate: a row written before
+-- this column existed genuinely does not know its flagged count, and inventing a default
+-- would turn "unrecorded" into a number. `domain/calibration.py::why_not_promotable` refuses
+-- a NULL, so an old row is advisory rather than silently promotable — which is the safe
+-- direction, and the same direction 014 chose when it made an unclassified veto escalate.
+ALTER TABLE calibrations ADD COLUMN flagged INTEGER;

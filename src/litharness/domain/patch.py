@@ -60,6 +60,11 @@ class Veto(enum.StrEnum):
     #: One veto for every finding category, because §4.2's ladder acts on the veto and the
     #: action is the same for all of them — see `findings.vetoes_for`.
     CONTINUITY_BREACH = "continuity_breach"
+    #: Raised by `domain.calibration.promoted_gate` only: a craft metric carrying measured
+    #: held-out precision measured this candidate on the failing side of its threshold. One
+    #: veto for every metric, for `CONTINUITY_BREACH`'s reason — the ladder acts on the veto,
+    #: and the action is the same whichever proxy fired.
+    CRAFT_BELOW_BAR = "craft_below_bar"
 
 
 @dataclass(frozen=True, slots=True)

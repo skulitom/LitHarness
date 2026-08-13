@@ -1009,11 +1009,31 @@ budget never binds, so this limit is currently invisible; it will not be at Book
 Only `draft_scene` is served — the suite's four `evaluate` and `repair` cases are named as
 ungraded rather than skipped, so implementing one without grading it fails the suite.
 
-Still unbuilt from the clause list above: **state extraction** (§12 step 5 — records enter
-only through `import`, so a book the system drafts itself accumulates no new facts, which
-also means the integrity gate judges every candidate against frozen state). The
-**game-system replay validation** is built where §8.4 says it belongs and now reaches the
-gate; what is missing is the tick running it, which §17 Stage 2 already owns. 417 tests.
+**State extraction is now built, and it closed the loop rather than adding a feature.**
+§12 step 5 (`domain/extraction.py`) reads every accepted scene for the facts it establishes,
+writes them in the revision's own transaction, and runs *before* the integrity gate so a
+candidate contradicting established canon is refused while refusing is still free. That
+matters because `state.contradiction.v0` had no in-process producer — nothing in `src/`
+constructed a `StateRecord` at all — so its zero findings on both fixtures were a clean
+negative control and also the sound of a check with nothing to check. It now fires: perturb a
+conforming litrpg status line and exactly one MAJOR names the position; restore it and the
+detector goes quiet. End to end, the two-place gate split is exercised by a defect the system
+produced itself rather than one an operator ingested — the candidate's own contradiction costs
+an attempt, and the next tick meets the finding standing and parks pre-flight for free.
+
+**It mints nothing, which is the part to carry forward.** The story position is read back out
+of the book's own imported evidence and abstains where the book is silent or ambiguous; the
+subject must already exist in canon; the value is the prose's, uncorrected, so §8.3's planted
+defects survive extraction rather than being sanitised by their own detector's producer. See
+[plan/stage-0-decisions.md](plan/stage-0-decisions.md) §27 for the alternatives and their
+measured failure modes. Two consequences are deliberate and are the honest limit: a book with
+**no imported snapshot has nothing to read back and extracts nothing**, which is Book Zero
+(Stage 3); and until `render_prompt` asks generators to emit system voice, extraction yields
+records only for prose that already carries it. That prompt change moves every litrpg content
+hash, so it lands on its own.
+
+The **game-system replay validation** is built where §8.4 says it belongs and now reaches the
+gate; what is missing is the tick running it, which §17 Stage 2 already owns. 502 tests.
 
 ### Stage 2 — Detect and scoped repair
 Promote RevisionBench's A3d detect–repair–verify results into the repair path;

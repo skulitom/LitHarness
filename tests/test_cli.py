@@ -393,3 +393,92 @@ def test_import_needs_exactly_one_source(db) -> None:
     run(db, "init")
     with pytest.raises(SystemExit):
         run(db, "import")
+
+
+# --- the promotion path (§10.4) ------------------------------------------------------
+
+
+def _calibrate(db, **overrides: str) -> int:
+    args = {
+        "--metric": "craft.tricolon_rate.v0",
+        "--threshold": "4.0",
+        "--direction": "above",
+        "--precision": "0.86",
+        "--holdout": "50",
+        "--flagged": "20",
+    }
+    args.update(overrides)
+    return run(db, "calibrate", *[part for pair in args.items() for part in pair])
+
+
+def test_a_calibration_can_be_recorded_from_the_command_line(db, capsys) -> None:
+    """`record_calibration` shipped with migration 014 and had no caller outside the tests,
+    so the only route to a blocking craft gate ran through writing Python against the store —
+    the promotion path was unreachable by the operator who authorises it."""
+    run(db, "init")
+    assert _calibrate(db) == EXIT_OK
+    out = capsys.readouterr().out
+    assert "BLOCKING-ELIGIBLE" in out
+
+    assert run(db, "calibrations") == EXIT_OK
+    assert "BLOCKING-ELIGIBLE" in capsys.readouterr().out
+
+
+def test_recording_the_same_measurement_twice_does_not_duplicate_it(db, capsys) -> None:
+    run(db, "init")
+    _calibrate(db)
+    capsys.readouterr()
+    assert _calibrate(db) == EXIT_OK
+    assert "already on record" in capsys.readouterr().out
+
+
+def test_a_calibration_that_cannot_promote_is_still_recorded_and_says_why(db, capsys) -> None:
+    """Recording evidence that cannot yet promote is a legitimate act — it is how evidence
+    accumulates toward evidence that can. What it must not do is look like promotion."""
+    run(db, "init")
+    assert _calibrate(db, **{"--flagged": "1"}) == EXIT_OK
+    out = capsys.readouterr().out
+    assert "not promotable" in out
+    assert "BLOCKING-ELIGIBLE" not in out
+
+
+def test_incoherent_numbers_are_refused_before_they_are_stored(db, capsys) -> None:
+    run(db, "init")
+    assert _calibrate(db, **{"--flagged": "51", "--holdout": "50"}) == EXIT_FAULT
+    assert "more flags than judgments" in capsys.readouterr().err
+    assert _calibrate(db, **{"--precision": "1.4"}) == EXIT_FAULT
+    assert "not a proportion" in capsys.readouterr().err
+
+
+def test_a_corrected_measurement_is_reported_as_it_was_stored(db, capsys) -> None:
+    """The defect an end-to-end run found and the unit tests did not: `calibrate` printed
+    the promotability of the record it *built*, while `INSERT OR IGNORE` kept an older row
+    with different numbers. The operator was told BLOCKING-ELIGIBLE about a gate that did
+    not exist."""
+    run(db, "init")
+    _calibrate(db, **{"--flagged": "1", "--precision": "1.0"})
+    capsys.readouterr()
+    assert _calibrate(db, **{"--flagged": "21", "--precision": "0.86"}) == EXIT_OK
+    out = capsys.readouterr().out
+    assert "recorded" in out
+    assert "21 flag(s)" in out
+    assert "BLOCKING-ELIGIBLE" in out
+
+    assert run(db, "calibrations") == EXIT_OK
+    listed = capsys.readouterr().out
+    assert "BLOCKING-ELIGIBLE" in listed, "the correction is the one that gates"
+    assert listed.count("craft.tricolon_rate.v0") == 2, "and the superseded row is kept"
+
+
+def test_a_measurement_made_elsewhere_is_reported_as_stale(db, capsys) -> None:
+    """`calibrate` asked `why_not_promotable` with the same digest it had just stored, so
+    the staleness clause compared a value against itself and could never fire. Harmless when
+    the digest was defaulted from the store; wrong in the one case `--verdicts-digest`
+    exists for, because `_promoted_craft_gates` recomputes from `audit_samples()` at every
+    draft and rejects the row as stale forever. The operator would have been told
+    BLOCKING-ELIGIBLE about a gate that can never be built."""
+    run(db, "init")
+    assert _calibrate(db, **{"--verdicts-digest": "measured-on-another-machine"}) == EXIT_OK
+    out = capsys.readouterr().out
+    assert "BLOCKING-ELIGIBLE" not in out
+    assert "verdict set has changed" in out

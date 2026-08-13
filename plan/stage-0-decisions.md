@@ -626,3 +626,196 @@ guards `revert`, while the query guards every path that commits a revision, incl
 not written yet. `commit_revision` stays usable unattributed because test setup legitimately
 needs it; the guarantee lives where it can be *observed* rather than where it can be
 enforced against one caller.
+
+## 26. A craft refusal parks; and what the promotion bar was not checking
+
+Two defects in one area, both found by reading the promotion path as an *operator* rather
+than as a type. Neither was reachable while no calibration existed, which is exactly why
+both survived: the bar had held perfectly for the uninteresting reason that nothing had ever
+come through the door.
+
+**The gate could not refuse a scene — it could only interrupt a human.** `promoted_gate`
+built a blocking `GateKind.CRAFT` outcome with `vetoes=()`, and `decide` maps a failed
+blocking gate carrying no veto to `ESCALATE` with the reason "a blocking gate failed without
+naming a veto". None of `Veto`'s members was craft-shaped, so it could not be classified
+`RETRYABLE` or `REGENERABLE` either. The consequence is not subtle: a gate firing on 5% of
+scenes is one director interruption per twenty accepted, in a system whose entire product
+claim is that it runs without one. The first calibration anyone recorded would have
+converted §10.4's promotion into an escalation storm.
+
+**`CRAFT_BELOW_BAR` is `PARKABLE`, and the alternatives were the argument.** `RETRYABLE`
+was the tempting classification and is the dangerous one: another attempt against the same
+context packet produces different text measured by the same metric, so the accepted
+candidate is by construction the one that beat it. At `max_attempts` that is best-of-three
+optimisation against a craft proxy — a weaker form of the coupling
+[plan/craft-corpus.md](craft-corpus.md) §4.2 calls non-negotiable to prevent, but the same
+shape, and it would have arrived as a *side effect of a retry class* rather than as a
+decision anyone took. Escalation keeps the Goodhart channel shut and breaks the autonomy
+claim instead. Parking keeps both: the refusal stands, the book continues because findings
+are node-scoped, and the unit is revivable so a dismissal is the way past it — the same
+shape §24 already gave a standing finding. A craft park also files **no** exception, which
+is the half of the choice that lives in the Conductor rather than in the ladder: §4.2
+reserves escalation for what policy could not resolve, and filing one anyway would have put
+every refusal in the queue a human is asked to clear — the interruption `PARKABLE` was
+chosen over `ESCALATE` to avoid, arriving one layer below the choice.
+
+**The best argument for parking is the one that turned out not to hold yet.** This entry
+first claimed that every parked unit is both a refused scene *and* an unjudged sample, so
+§10.5's audit queue would accumulate from the gate's own operation. It does not. `handlers`
+records craft metrics and draws the audit sample inside the acceptance branch, after
+`commit_revision`; a refused candidate commits no revision, so it produces neither and its
+text is discarded. Recorded as a gap rather than closed in passing, because `AuditSample` is
+keyed `sha256(revision_id, logical_id)` and a refused candidate has no revision id — giving
+one to text that was never accepted changes what `verdicts_digest` content-addresses, which
+is the thing every promotion is measured against.
+
+**And the premise about attempt exhaustion broke for the third time.** `Conductor._settle`
+derives POISONED from `attempts >= max_attempts` alone. It once asserted "`decide` returns
+PARK only on attempt exhaustion"; the budget gate falsified that and the fix narrowed the
+premise to "PARK at the ceiling means exhaustion", which held only while every parkable
+refusal happened to arrive at the ceiling. `PARKABLE` ends that — a craft gate refuses at
+any attempt number, deliberately, since the check sits ahead of the budget. A refusal
+landing on attempt 3 was therefore indistinguishable from a spent budget and poisoned the
+unit: unrevivable, absent from `jobs --status parked`, its derived job id burnt, and its
+exception reading "attempt budget spent" about a budget that was not what stopped it. That
+made this entry's own revivability claim false in exactly the case a director would hit
+after two bad drafts. `PolicyDecision.parked_by_veto` now says which it was, because the
+count has been wrong about this twice and a comment asserting the count is enough has been
+wrong about it three times. The tests that pin it drive real ticks to the ceiling and fail
+against the pre-fix expression.
+
+**The precision floor was measuring the wrong denominator.** `MIN_PRECISION = 0.80` on
+`MIN_HOLDOUT = 50` reads as a strong bar and is not one, because precision is computed over
+the *flagged* set and `holdout_size` does not bound it. A metric that flags one scene in
+fifty and happens to be right scores precision 1.00 on a holdout of 50 and clears both
+floors having demonstrated nothing. `recall` would have exposed it and is `None`-able, so it
+could not be what catches this. `flagged` is now recorded (migration 015) and floored at
+`MIN_FLAGGED = 17` — the smallest flagged set whose two-sided 95% Clopper-Pearson lower
+bound on a *perfect* score clears 0.80 (0.025**(1/17) = 0.805, against 0.794 at 16). The
+floor is derived rather than placed, unlike the two constants above it: it is what
+`MIN_PRECISION` already implied, made a precondition instead of an assumption. An
+unrecorded count is refused rather than assumed, because `None` is indistinguishable from
+one flag, and 015 left the column nullable rather than backfilling for the same reason.
+
+**Wiring the path on is not turning a gate on, and the early return is what makes that
+true.** `_promoted_craft_gates` reads `store.calibrations()` and returns `()` when the table
+is empty — one indexed query, no branch that can construct a gate. `NotPromotable` is
+swallowed per metric rather than raised, so expired or stale evidence falls back to the
+annotation `craft_gates` already produced; raising would turn "the evidence about prose
+quality went stale" into "this scene cannot be drafted at all", which is §10.5 re-opening
+calibration by stopping the book.
+
+**A defect the tests could not have found, and the end-to-end run did.** `calibration_id_for`
+derived identity from metric, threshold and verdict digest alone, on the reading that a
+re-measurement moves the digest. It does not have to — re-measuring the same metric at the
+same threshold over the same holdout is precisely what a *correction* is. The two rows
+collided, `record_calibration` is `INSERT OR IGNORE`, and the correction was dropped while
+the superseded row kept gating; worse, `calibrate` printed the promotability of the record
+it had *built*, so the operator was told BLOCKING-ELIGIBLE about a gate that did not exist.
+The measured numbers are now part of the id, and the command re-reads and reports the row
+that is on record. The general lesson is the one §25 reached from the other side: a content
+address must cover everything that makes two things different, and a write path must report
+what the store holds rather than what the caller offered.
+
+**One gate per metric, and a fallback that is never silent.** The ladder first appended the
+promoted gate *beside* the annotation `craft_gates` had already built, so a refused scene's
+decision carried the same `rule_or_critic_id` twice — `passed=True, blocking=False` and
+`passed=False, blocking=True` — and `decision_id_for` hashed both. An audit asking what the
+craft ladder said about one measurement got two contradictory answers. `_craft_ladder` now
+builds the annotations first and *replaces* the entry for any metric that earned a blocking
+gate. When a calibration exists but cannot promote, the annotation stays and the reason is
+written into its `detail`: expired or stale evidence degrading to advisory is exactly §10.5's
+re-opened calibration and must not fail the job, but a gate that quietly stops blocking is
+the failure `promoted_gate`'s own docstring refuses by name, and until this the decision
+record could not distinguish "the calibration went stale" from "no calibration exists".
+
+**The property to know before the first promotion.** `verdicts_digest` is computed over
+*every* answered audit sample, so a single new `litharness judge` verdict changes the digest
+and re-opens **every** recorded calibration at once — each one becomes `stale_evidence` and
+each promoted gate falls back to annotation on the next draft. That is correct under §10.5
+and it is not obvious from any one function: the sampler, the digest and the promotion bar
+each behave reasonably alone. It means a promotion is not a state the system settles into
+but one it re-earns whenever the evidence base moves, and it is why the fallback had to
+become legible before anyone records a calibration rather than after.
+
+## 27. §12 step 5: extraction mints nothing
+
+The last unbuilt item in §17 Stage 1's own text, and the one that made Stage 1's only
+in-process detector inert. `state.contradiction.v0` names the corruption it exists to catch —
+"§12 step 5's extraction writing a record that contradicts one already accepted" — and that
+write did not happen: `record_state_records` had one caller, `cli import`;
+`EventType.STATE_CANDIDATES_EXTRACTED` had no producer; **nothing in `src/` constructed a
+`StateRecord` at all.** So the detector's zero findings on both fixtures read as a clean
+negative control and were also the sound of a check with nothing to check. Stage 2's premise —
+"repairs triggered by findings, verified by re-detection" — had no in-process trigger.
+
+**The order key is read back out of the book, not computed, and that is the whole design.**
+`domain/state.py` forbids deriving one and gives the reason: `order_key` is opaque, its author
+chose it, and nothing anywhere maps a manuscript scene to one. `attested_position` therefore
+asks the book — a canon record whose evidence cites this scene is the book's own statement
+about where the scene sits in story time — and abstains when the answer is absent or
+ambiguous. Measured on the two fixtures: litrpg `scene-1..6 → s1..s6`; mystery `scene-1→s1`,
+`scene-2→` ambiguous (records at both s1 and s2), `scene-3→s3`, `scene-4→s4`, **`scene-5→s1`**
+— the analepsis honoured rather than overridden — `scene-6→` unattested.
+*Alternative:* `f"s{ordinal}"`, which is one line and reproduces litrpg 19/19. It mis-slices
+the mystery, whose genre guarantees it, and the failure is invisible: a false MAJOR on a
+conforming book, or a missed contradiction. A scheme that is right on your test book and
+silently wrong on the next is worse than abstention. `None` means *do not extract*, never
+"extract unplaced" — the detector groups on `order_key or ""`, so unplaced records share one
+bucket, which is the coarsest collision scheme wearing the costume of caution.
+
+**A deterministic extractor may write canon; a model's may not.** The chain is decision →
+prose → record: a policy decision accepted the prose and this is a mechanical restatement of
+it, asserting nothing the decision did not. That is why `ACCEPTED_CANON` here does not violate
+§11's rule that no proposal becomes canon merely because a model returned it — no model
+returned it. *Alternative:* write `PROPOSED` for safety. Measured, it is pure ceremony:
+`detect_contradictions` takes only canon and `context.assemble` skips non-canon, so the
+records would be invisible to both and Stage 2 would still have nothing to trigger on. The
+model leg is deliberately unbuilt and its precondition is a promotion decision nobody has
+taken, not effort.
+
+**Extraction runs before the gate, not after acceptance.** The facts a candidate asserts are
+judged against established canon while refusing is still free: the node stays empty, no
+revision commits, no record is written, and the finding drives the ladder. Extracting after
+acceptance would commit the prose *and* the contradicting record and then report the problem.
+Verified end to end: a candidate whose system voice contradicts canon at s1 fails on attempt
+one, and the *next* tick meets the finding already standing and parks pre-flight for no
+attempt and no tokens — §19.1's two-place split, exercised by a defect the system produced
+itself rather than one an operator ingested.
+
+**`commit_revision` grew a parameter rather than the handler growing a second write.** §15's
+carve-out is used, not widened, and §12 step 8's "atomically" is delivered literally: the
+revision, its acceptance event, `StateCandidatesExtracted` and the rows are one transaction.
+*Alternative:* a separate `record_state_records` call — before the commit it writes canon for
+prose nobody has, unrecallable under `INSERT OR IGNORE`; after it, `handlers` returns early
+when a prior ACCEPT decision exists, so a replay writes nothing and reports success. Records
+inherit the revision's crash semantics exactly: **they cannot exist for a revision that does
+not.**
+
+**`record_id` is content-derived and value-sensitive.** *Alternative:* key on
+`(subject, predicate, order_key)`, which looks like the tidier identity and makes the detector
+permanently unreachable — `INSERT OR IGNORE` means a contradicting record collides with the
+one it contradicts, inserts zero rows, leaves the old value standing, and reports success.
+
+**Extraction suppresses a record identical to canon at the same position**, so a redraft that
+establishes nothing new writes nothing. Measured: a clean six-scene litrpg run writes zero
+rows. *Alternative:* write anyway, and every redraft costs a permanent duplicate in every
+later context packet against §7's token budget.
+
+**Revert retracts the records the discarded prose produced** (migration 016), forward-only and
+in the head-move transaction. *Alternative:* leave them. Then revert-then-redraft contradicts
+an orphan, and **no operator action clears it**: the detector runs in-process on every attempt
+and mints its finding `OPEN` each time, while `dismiss` satisfies only the pre-flight standing
+gate. That converts §19.1's free revivable park into a paid unclearable one, through a door
+§19.1 did not know existed. *Also rejected:* detecting orphans by head lineage — `reverting_to`
+parents on the current head, so the discarded revisions stay ancestors and the check returns
+empty exactly when the failure has occurred. The discarded segment is therefore computed
+*before* the head moves.
+
+**What it deliberately does not do.** No model call, no provider change, no `state_candidates`
+table, no CLI verb to accept or reject a candidate, no prose-semantic extraction, and no
+change to `render_prompt` asking generators to emit system voice. The consequence, stated so a
+green Stage 1 is not read as more than it is: **until that prompt change lands, extraction
+yields records only for prose that already carries system voice.** It must land as its own
+change — it moves every litrpg content hash and revision id, and riding along here would make
+it impossible to tell which half moved the fixtures.

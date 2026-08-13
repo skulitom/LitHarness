@@ -15,6 +15,7 @@ lineage catches it.
 from __future__ import annotations
 
 import json
+from dataclasses import replace
 
 import litharness_contracts as lc
 import pytest
@@ -712,3 +713,85 @@ def test_a_clean_book_is_not_refused_by_the_new_gate(store: SqliteStore) -> None
         assert head is not None
         scenes = [node for node in head.in_reading_order() if node.kind is NodeKind.SCENE]
         assert all(node.content for node in scenes), f"{fixture} was refused by the new gate"
+
+
+@pytest.mark.parametrize("fixture", ["mystery", "litrpg"])
+def test_an_autonomous_run_extracts_nothing_from_a_fixture_book(
+    store: SqliteStore, fixture: str
+) -> None:
+    r"""The tripwire on §12 step 5, and it guards the *extractor* rather than the prompt.
+
+    Extraction runs on every accepted scene now, so a six-scene autonomous run is where a
+    careless pattern would surface as canon nobody authored. It holds today for a reason
+    worth stating rather than assuming: ``FakeProvider`` echoes ``[fake:<digest>] ...`` and
+    ``STATUS_PATTERN`` anchors on ``^\[STATUS\]``, so the echo never matches -- not "the
+    fake emits no bracket lines", which is false. ``FakeProvider`` ignores prompts entirely,
+    so a ``render_prompt`` change cannot move this either.
+    """
+    book_id, branch_id = _fixture(store, fixture)
+    before = len(store.state_records(book_id, branch_id))
+
+    _run(store, 8)
+
+    assert len(store.state_records(book_id, branch_id)) == before, "no invented canon"
+    assert store.findings(book_id, branch_id) == [], "and nothing for the gate to refuse"
+
+
+def test_a_scene_contradicting_established_canon_is_refused_and_writes_nothing(
+    store: SqliteStore,
+) -> None:
+    """§12 steps 5 and 6 closing on each other, which is why extraction exists.
+
+    The litrpg fixture establishes Rook at `Gold 45` at story position s1. A candidate whose
+    own system voice says `Gold 14` contradicts it — a corruption only this store can see,
+    because ContinuityEvaluation never sees a LitHarness store mid-run. Before extraction the
+    detector had no in-process producer and this candidate was accepted.
+
+    Both refusals in the ladder are exercised, and the second is the one §19.1 paid for: the
+    candidate's own contradiction costs an attempt, and the *next* tick meets the finding
+    already standing and parks pre-flight for no attempt and no tokens.
+
+    The assertions that matter are negative: the node is still empty and **no state row was
+    written**. Extraction runs before the gate precisely so refusing is free — extracting
+    after acceptance would commit both the prose and the contradicting record, then report it.
+    """
+    book_id, branch_id = _fixture(store, "litrpg")
+    before = len(store.state_records(book_id, branch_id))
+
+    class Contradicting(FakeProvider):
+        def complete(self, request):  # type: ignore[override]
+            result = super().complete(request)
+            line = "[STATUS] Rook — Level 4 | HP 34/30 | MP 6/10 | Gold 14"
+            return replace(result, text=f"{line}\n\n{result.text}")
+
+    registry = ProviderRegistry(providers=[Contradicting(pad_to_chars=PAD)], order=["fake"])
+    loop = Conductor(
+        store=store,
+        holder="worker-a",
+        project_id=PROJECT_ID,
+        registry=registry,
+        select=make_plan_selector(),
+        handlers={SCENE_DRAFT: make_scene_draft_handler(registry, store, PROJECT_ID)},
+    )
+    outcomes = [loop.tick(START + index * TICK).outcome for index in range(4)]
+
+    assert TickOutcome.RAN_JOB not in outcomes, "no candidate may be accepted"
+    head = store.head(book_id, branch_id)
+    assert head is not None
+    assert not (head.node("scene-1").content or ""), "the beat's node is still empty"
+    assert len(store.state_records(book_id, branch_id)) == before, "and nothing was written"
+
+    # Asserted positively, because "no candidate was accepted" is equally true of a handler
+    # that crashed — this test passed its three negative assertions once while the provider
+    # was raising a NameError, which is the shape of a green test over a dead mechanism.
+    assert outcomes == [
+        TickOutcome.JOB_FAILED,   # the candidate's own contradiction, charged an attempt
+        TickOutcome.JOB_PARKED,   # the finding now stands: refused pre-flight, free
+        TickOutcome.JOB_FAILED,   # and the next beat meets the same wall
+        TickOutcome.JOB_PARKED,
+    ]
+
+    findings = store.findings(book_id, branch_id)
+    assert findings, "the contradiction is on record"
+    assert any("position s1" in finding.message for finding in findings)
+    assert any(finding.rule_or_critic_id == "state.contradiction.v0" for finding in findings)

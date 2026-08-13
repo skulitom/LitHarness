@@ -547,6 +547,107 @@ def cmd_calibrations(args: argparse.Namespace) -> int:
     return EXIT_OK
 
 
+def cmd_calibrate(args: argparse.Namespace) -> int:
+    """Record measured evidence that one metric predicts human judgment at one threshold.
+
+    The write verb `calibrations` had no counterpart. `SqliteStore.record_calibration` has
+    existed since migration 014 with no caller outside the tests, which meant the only route
+    to a blocking craft gate ran through writing Python against the store — so the promotion
+    path was unreachable by the operator who is supposed to authorise it.
+
+    **This command records; it does not promote.** The numbers are the measurer's, and the
+    only thing checked at write time is that they are internally coherent. Whether the
+    calibration may block is `why_not_promotable`'s answer, recomputed at every draft against
+    the verdict set as it stands then — so it is printed here as information rather than
+    enforced here as a precondition. Recording a calibration that cannot yet promote is a
+    legitimate and expected act: it is how evidence accumulates toward one that can.
+
+    `--verdicts-digest` defaults to the digest of the store's current answered verdicts,
+    which is right when the measurement was made against this store and wrong if it was made
+    elsewhere. Passing it explicitly is how a measurement computed off-line says so.
+    """
+    if not 0.0 <= args.precision <= 1.0:
+        print(f"litharness: precision {args.precision} is not a proportion", file=sys.stderr)
+        return EXIT_FAULT
+    if args.recall is not None and not 0.0 <= args.recall <= 1.0:
+        print(f"litharness: recall {args.recall} is not a proportion", file=sys.stderr)
+        return EXIT_FAULT
+    if args.flagged > args.holdout:
+        print(
+            f"litharness: the metric cannot have fired on {args.flagged} of {args.holdout} "
+            "held-out judgments; more flags than judgments means the two numbers describe "
+            "different sets",
+            file=sys.stderr,
+        )
+        return EXIT_FAULT
+
+    store = _store(args)
+    try:
+        # Two digests, deliberately. `digest` is what the measurement claims it was made
+        # against; `current` is what this store holds now. They are the same when the
+        # measurement was made here, and reporting promotability against `digest` would
+        # then be a tautology — the staleness clause compares the two and could never fire.
+        # With `--verdicts-digest` they differ, and that is exactly the case the report has
+        # to get right: `_promoted_craft_gates` recomputes from `audit_samples()` at every
+        # draft, so a row measured elsewhere is stale to the gate from the moment it lands.
+        # Reporting it as blocking-eligible would be §26's own defect returning by the door
+        # §26 did not close.
+        current = calibration.verdicts_digest_for(
+            (sample.sample_id, sample.verdict.value)
+            for sample in store.audit_samples()
+            if sample.verdict is not None
+        )
+        digest = args.verdicts_digest or current
+        record = calibration.Calibration(
+            calibration_id=calibration.calibration_id_for(
+                args.metric,
+                args.threshold,
+                digest,
+                direction=calibration.Direction(args.direction),
+                precision=args.precision,
+                holdout_size=args.holdout,
+                flagged=args.flagged,
+            ),
+            metric_id=args.metric,
+            holdout_size=args.holdout,
+            precision=args.precision,
+            threshold=args.threshold,
+            direction=calibration.Direction(args.direction),
+            verdicts_digest=digest,
+            measured_at=_stamp(_now()),
+            expires_at=args.expires,
+            flagged=args.flagged,
+            recall=args.recall,
+            note=args.note,
+        )
+        inserted = store.record_calibration(record)
+        # Report the row that is *on record*, never the one just built. They differ whenever
+        # the insert was ignored, and the difference is the whole point: a caller told
+        # "BLOCKING-ELIGIBLE" about numbers the store rejected would act on a gate that does
+        # not exist. Re-read rather than assume, because the assumption is what broke.
+        stored = [
+            item for item in store.calibrations(metric_id=args.metric)
+            if item.calibration_id == record.calibration_id
+        ]
+    finally:
+        store.close()
+
+    record = stored[0] if stored else record
+    today = _stamp(_now())[:10]
+    why = record.why_not_promotable(today, current)
+    verb = "recorded" if inserted else "already on record"
+    print(f"{record.calibration_id}  {verb}  {record.metric_id}")
+    print(
+        f"    precision {record.precision:.2f} over {record.flagged} flag(s) on "
+        f"{record.holdout_size} held-out; fails {record.direction.value} {record.threshold}"
+    )
+    if why is None:
+        print("    BLOCKING-ELIGIBLE: this metric may now park a scene it refuses")
+    else:
+        print(f"    advisory — not promotable: {why}")
+    return EXIT_OK
+
+
 def cmd_craft(args: argparse.Namespace) -> int:
     """The advisory numbers, and what they are not.
 
@@ -1153,6 +1254,43 @@ def build_parser() -> argparse.ArgumentParser:
     )
     calibrations.add_argument("--metric")
     calibrations.set_defaults(func=cmd_calibrations)
+
+    calibrate = sub.add_parser(
+        "calibrate",
+        help="record measured held-out evidence for one craft metric at one threshold",
+    )
+    calibrate.add_argument("--metric", required=True, help="the metric id being calibrated")
+    calibrate.add_argument(
+        "--threshold", type=float, required=True, help="the value at which it starts failing"
+    )
+    calibrate.add_argument(
+        "--direction",
+        required=True,
+        choices=[member.value for member in calibration.Direction],
+        help="which side of the threshold is the failing side; guessing inverts the gate",
+    )
+    calibrate.add_argument(
+        "--precision", type=float, required=True, help="held-out precision over the flagged set"
+    )
+    calibrate.add_argument(
+        "--holdout", type=int, required=True, help="held-out judgments it was measured on"
+    )
+    calibrate.add_argument(
+        "--flagged",
+        type=int,
+        required=True,
+        help="how many of the holdout it fired on; the denominator of --precision",
+    )
+    calibrate.add_argument("--recall", type=float)
+    calibrate.add_argument(
+        "--expires", help="ISO date after which this stops being current evidence"
+    )
+    calibrate.add_argument(
+        "--verdicts-digest",
+        help="defaults to this store's answered verdicts; pass it when measured elsewhere",
+    )
+    calibrate.add_argument("--note")
+    calibrate.set_defaults(func=cmd_calibrate)
 
     craft = sub.add_parser("craft", help="advisory craft measurements, and their limits")
     craft.add_argument("--metric")

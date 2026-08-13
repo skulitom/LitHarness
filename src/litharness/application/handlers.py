@@ -33,16 +33,21 @@ from __future__ import annotations
 
 from collections.abc import Sequence
 from contextlib import suppress
+from dataclasses import replace
 from datetime import UTC, datetime
+
+import litharness_contracts as lc
 
 from litharness.adapters.sqlite_store import SqliteStore
 from litharness.application.conductor import JobHandler
 from litharness.domain.audit import DEFAULT_RATE, draw
 from litharness.domain.budget import BudgetPolicy, BudgetVerdict
 from litharness.domain.budget import check as budget_check
+from litharness.domain.calibration import NotPromotable, promoted_gate, verdicts_digest_for
 from litharness.domain.craft import CraftMetric, craft_gates, measure
 from litharness.domain.draft import DraftPolicy, gate_draft
 from litharness.domain.events import Event, EventType
+from litharness.domain.extraction import extract_state
 from litharness.domain.findings import DetectorInput
 from litharness.domain.findings import Finding as DomainFinding
 from litharness.domain.integrity import gate_integrity, gate_standing
@@ -58,7 +63,7 @@ from litharness.domain.policy import (
     gates_for_draft,
     policy_digest,
 )
-from litharness.domain.revision import Revision
+from litharness.domain.revision import Revision, node_version_id
 from litharness.providers.base import CompletionRequest
 from litharness.providers.registry import ProviderRegistry
 
@@ -146,6 +151,72 @@ def budget_gate(verdict: BudgetVerdict) -> GateOutcome:
         vetoes=(),
         detail=verdict.reason,
     )
+
+
+def _craft_ladder(
+    store: SqliteStore,
+    metrics: tuple[CraftMetric, ...],
+    *,
+    today: str,
+) -> tuple[GateOutcome, ...]:
+    """§10.2's craft ladder, complete: one gate per metric, blocking where it was earned.
+
+    `craft_gates` annotates unconditionally and has no branch that could block.
+    `calibration.promoted_gate` is the only door to one that can, and this is the only
+    caller — so a threshold cannot reach the ladder except by having been recorded as
+    measured evidence first.
+
+    **It returns pure annotation until someone records a calibration, and that is the normal
+    state.** The early return is not an optimisation; it is what makes wiring this safe to do
+    before any evidence exists. With an empty table this costs one query and cannot construct
+    a blocking gate, which is why turning it on does not turn anything on.
+
+    **One gate per metric, because two is a contradiction on the record.** An earlier version
+    appended the promoted gate *beside* the advisory one, so a refused scene's decision
+    carried `craft.dialogue_ratio.v0` twice — once `passed=True, blocking=False` and once
+    `passed=False, blocking=True` — and `decision_id_for` hashed both. An audit asking "what
+    did the craft ladder say" got two contradictory answers about one measurement.
+
+    **A calibration that cannot promote degrades to annotation, but never silently.**
+    `NotPromotable` is caught per metric rather than raised: expired or stale evidence is
+    exactly §10.5's re-opened calibration, and raising would turn "the evidence about prose
+    quality went stale" into "this scene cannot be drafted". But a gate that quietly stops
+    blocking is the failure `promoted_gate`'s own docstring refuses — "worse than one that
+    visibly cannot be built" — so the reason is written into the annotation's `detail`,
+    where the policy decision record carries it. That matters more than it looks: the digest
+    covers *every* answered audit sample, so one new `judge` verdict re-opens every
+    calibration at once. That is correct under §10.5 and it must be legible when it happens.
+    """
+    annotations = {gate.rule_or_critic_id: gate for gate in craft_gates(metrics)}
+    calibrations = store.calibrations()
+    if not calibrations:
+        return tuple(annotations.values())
+    # Read once, not per metric: this is the whole audit queue, and the digest is what makes
+    # a calibration stale when the verdicts move under it.
+    digest = verdicts_digest_for(
+        (sample.sample_id, sample.verdict.value)
+        for sample in store.audit_samples()
+        if sample.verdict is not None
+    )
+    measured = {metric.metric_id: metric for metric in metrics}
+    seen: set[str] = set()
+    for calibration in calibrations:
+        # `calibrations()` is newest-first, so the first row for a metric is its current
+        # evidence. A superseded measurement is history, not a second gate.
+        metric = measured.get(calibration.metric_id)
+        if metric is None or calibration.metric_id in seen:
+            continue
+        seen.add(calibration.metric_id)
+        try:
+            annotations[calibration.metric_id] = promoted_gate(
+                calibration, metric.value, today=today, verdicts_digest=digest
+            )
+        except NotPromotable as exc:
+            advisory = annotations[calibration.metric_id]
+            annotations[calibration.metric_id] = replace(
+                advisory, detail=f"{advisory.detail} [not blocking: {exc}]"
+            )
+    return tuple(annotations.values())
 
 
 def make_scene_draft_handler(
@@ -340,13 +411,35 @@ def make_scene_draft_handler(
         # unconditionally, and an unbound name there fails the *job*, turning a missing
         # measurement into a failed draft.
         craft_metrics: tuple[CraftMetric, ...] = ()
+        # §12 step 5's output, bound here for the same reason `craft_metrics` is: the
+        # acceptance path reads it unconditionally, and an unbound name there would turn a
+        # scene with no system voice into a failed job.
+        extracted: tuple[lc.StateRecord, ...] = ()
         if outcome.accepted and book_id and branch_id:
+            stored_records = tuple(store.state_records(str(book_id), str(branch_id)))
+            # **Before the gate, not after acceptance**, which is the whole point. Extracting
+            # afterwards would make the detector a report on canon already written; extracting
+            # here means the facts this scene asserts are judged against established canon
+            # while refusing is still free — the node stays empty, nothing commits, and the
+            # finding drives the ladder. `node_after.content` rather than `result.text`
+            # because `gate_draft` canonicalizes, and a span measured against the raw provider
+            # string points at the wrong characters once NFC and line endings are applied.
+            if outcome.node_after is not None:
+                extracted = extract_state(
+                    outcome.node_after.content or "",
+                    known=stored_records,
+                    project_id=project_id,
+                    book_id=str(book_id),
+                    branch_id=str(branch_id),
+                    logical_id=logical_id,
+                    version_id=node_version_id(outcome.node_after),
+                )
             subject = DetectorInput(
                 book_id=str(book_id),
                 branch_id=str(branch_id),
                 logical_id=logical_id,
                 candidate=result.text,
-                records=tuple(store.state_records(str(book_id), str(branch_id))),
+                records=stored_records + extracted,
                 plan_items=tuple(store.plan_items(str(book_id), str(branch_id))),
                 ordinal=int(selected.get("ordinal", 0) or 0),
                 of_total=int(selected.get("of_total", 0) or 0),
@@ -363,7 +456,7 @@ def make_scene_draft_handler(
             # a later pass because §10.2 wants proxies "logged per scene" — a metric whose
             # history starts on the day it is promoted has no held-out data to be promoted on.
             craft_metrics = measure(result.text)
-            gates = (*gates, *craft_gates(craft_metrics))
+            gates = (*gates, *_craft_ladder(store, craft_metrics, today=_timestamp(now)[:10]))
 
             if findings:
                 # Recorded whether or not they block. A minor finding dropped because it was
@@ -484,7 +577,43 @@ def make_scene_draft_handler(
                 "parent_revision_id": revision_id,
             },
         )
-        store.commit_revision(outcome.revision, created_at=_timestamp(now), events=[acceptance])
+        # The revision, its acceptance event and the state read out of it, in one
+        # transaction — §12 step 8 literally. `StateCandidatesExtracted` rides along only
+        # when something was extracted: an event per empty extraction would be one per
+        # accepted scene forever, and its payload carries no insert count because that
+        # differs between a run and its replay while the idempotency key does not.
+        commit_events = [acceptance]
+        if extracted:
+            commit_events.append(
+                Event(
+                    event_type=EventType.STATE_CANDIDATES_EXTRACTED,
+                    project_id=project_id,
+                    created_at=_timestamp(now),
+                    book_id=revision.book_id,
+                    branch_id=revision.branch_id,
+                    revision_id=outcome.revision.revision_id,
+                    payload={
+                        "decision_id": decision.decision_id,
+                        "logical_id": logical_id,
+                        "count": len(extracted),
+                        "order_key": next(
+                            (
+                                record.story_position.order_key
+                                for record in extracted
+                                if record.story_position
+                            ),
+                            None,
+                        ),
+                        "record_ids": sorted(record.record_id for record in extracted),
+                    },
+                )
+            )
+        store.commit_revision(
+            outcome.revision,
+            created_at=_timestamp(now),
+            events=commit_events,
+            state_records=extracted,
+        )
 
         # §10.2's log, keyed on the *resulting* revision — the address the prose actually has.
         # Written after the commit rather than with it: a metric about a revision that failed

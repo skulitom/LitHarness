@@ -19,6 +19,15 @@ from litharness.application.handlers import (
     HandlerInputError,
     make_scene_draft_handler,
 )
+from litharness.domain.calibration import (
+    MIN_FLAGGED,
+    MIN_HOLDOUT,
+    Calibration,
+    Direction,
+    calibration_id_for,
+    verdicts_digest_for,
+)
+from litharness.domain.craft import measure
 from litharness.domain.draft import DraftPolicy, gate_draft
 from litharness.domain.events import EventType, payload_digest
 from litharness.domain.jobs import IllegalTransition, Job, JobStatus, input_digest_for
@@ -492,6 +501,22 @@ def shape_gate(passed: bool, *vetoes: Veto) -> GateOutcome:
     )
 
 
+def craft_gate(passed: bool, *vetoes: Veto) -> GateOutcome:
+    """A promoted craft gate, which `calibration.promoted_gate` is the only real producer of.
+
+    Built by hand here because `decide` is pure and total over gate results: what is under
+    test is the ladder's response to the veto, not the evidence that earned it.
+    """
+    return GateOutcome(
+        gate=GateKind.CRAFT,
+        rule_or_critic_id="craft.tricolon_rate.v0",
+        passed=passed,
+        blocking=True,
+        vetoes=vetoes,
+        calibration_id="cal-test",
+    )
+
+
 def test_all_gates_passing_accepts() -> None:
     outcome, reason = decide(
         (shape_gate(True),), job_id="j", attempt=1, max_attempts=3
@@ -534,6 +559,64 @@ def test_an_unclassified_veto_escalates_rather_than_defaulting_to_retry() -> Non
         (shape_gate(False, Veto.PRESERVATION_BREACH),), job_id="j", attempt=1, max_attempts=3
     )
     assert outcome is Outcome.ESCALATE
+
+
+def test_a_craft_refusal_parks_rather_than_escalating_or_retrying() -> None:
+    """The decision `PARKABLE` records, checked here because all three alternatives are
+    plausible enough that a later reader would otherwise reclassify it.
+
+    Not ESCALATE: a gate firing on 5% of scenes would be one director interruption per
+    twenty accepted, in a system whose claim is that it runs without one. Not RETRY: another
+    attempt is measured by the same metric, so the accepted candidate would be the one that
+    beat it — rejection sampling against a craft proxy, arriving as a side effect of a retry
+    class rather than as a decision anyone took.
+    """
+    outcome, reason = decide(
+        (craft_gate(False, Veto.CRAFT_BELOW_BAR),), job_id="j", attempt=1, max_attempts=3
+    )
+    assert outcome is Outcome.PARK
+    assert "craft_below_bar" in (reason or "")
+    assert "exhausted" not in (reason or ""), "it parks on its own cause, not on the budget"
+
+
+def test_a_craft_refusal_parks_on_the_first_attempt() -> None:
+    """It is never charged the attempts it was never going to use. Parking on attempt 3
+    would spend two generations to reach a refusal the first one already established."""
+    for attempt in (1, 2, 3):
+        outcome, _ = decide(
+            (craft_gate(False, Veto.CRAFT_BELOW_BAR),),
+            job_id="j",
+            attempt=attempt,
+            max_attempts=3,
+        )
+        assert outcome is Outcome.PARK, f"attempt {attempt}"
+
+
+def test_a_craft_refusal_beside_a_retryable_veto_still_parks() -> None:
+    """The precedence in `decide`, and the safe direction to be wrong in. The mixed case is
+    unreachable today because craft is measured only on a draft shape already accepted — but
+    if it becomes reachable, the retry must not become the door the rejection-sampling
+    channel opens through."""
+    outcome, _ = decide(
+        (craft_gate(False, Veto.CRAFT_BELOW_BAR), shape_gate(False, Veto.LENGTH_MOVEMENT)),
+        job_id="j",
+        attempt=1,
+        max_attempts=3,
+    )
+    assert outcome is Outcome.PARK
+
+
+def test_a_craft_refusal_beside_an_unclassified_veto_still_escalates() -> None:
+    """Parking must not swallow a veto nobody has classified. Escalation stays the default
+    for the unknown, which is the invariant the `PARKABLE` check is inserted after."""
+    outcome, reason = decide(
+        (craft_gate(False, Veto.CRAFT_BELOW_BAR), shape_gate(False, Veto.CONTENT_LOCKED)),
+        job_id="j",
+        attempt=1,
+        max_attempts=3,
+    )
+    assert outcome is Outcome.ESCALATE
+    assert "content_locked" in (reason or "")
 
 
 def test_an_exhausted_budget_parks_rather_than_spinning() -> None:
@@ -786,3 +869,139 @@ def test_a_poisoned_unit_is_not_revivable(store: SqliteStore) -> None:
 
     with pytest.raises(IllegalTransition, match="not parked"):
         store.revive("draft-1")
+
+
+# --- a craft refusal, through the whole ladder (§26) ----------------------------------
+
+
+def registry_with_sequence(*texts: str) -> tuple[ProviderRegistry, FakeProvider]:
+    """A provider whose output changes per call, so a unit can be driven to its ceiling."""
+    provider = FakeProvider()
+
+    def complete(_: CompletionRequest) -> CompletionResult:
+        text = texts[min(provider.calls, len(texts) - 1)]
+        provider.calls += 1
+        return CompletionResult(
+            text=text, provider="fake", model="fake-deterministic-v1", usage=Usage(10, 20)
+        )
+
+    provider.complete = complete  # type: ignore[method-assign]
+    return ProviderRegistry(providers=[provider], order=["fake"]), provider
+
+
+def with_a_failing_craft_gate(store: SqliteStore) -> None:
+    """Record a calibration `PROSE` is certain to fail, and that clears every promotion bar.
+
+    The threshold is derived from the measurement rather than written down, so the test
+    cannot silently stop exercising the gate if the metric's definition moves.
+    """
+    value = {metric.metric_id: metric.value for metric in measure(PROSE)}
+    metric_id = "craft.dialogue_ratio.v0"
+    digest = verdicts_digest_for([])
+    store.record_calibration(
+        Calibration(
+            calibration_id=calibration_id_for(
+                metric_id,
+                value[metric_id] + 1.0,
+                digest,
+                direction=Direction.BELOW,
+                precision=0.86,
+                holdout_size=MIN_HOLDOUT,
+                flagged=MIN_FLAGGED,
+            ),
+            metric_id=metric_id,
+            holdout_size=MIN_HOLDOUT,
+            flagged=MIN_FLAGGED,
+            precision=0.86,
+            threshold=value[metric_id] + 1.0,
+            direction=Direction.BELOW,
+            verdicts_digest=digest,
+            measured_at="2026-08-01T00:00:00Z",
+        )
+    )
+
+
+def book_scoped(store: SqliteStore) -> None:
+    seeded(store, {"book_id": BOOK_ID, "branch_id": BRANCH_ID})
+
+
+def test_a_craft_refusal_parks_the_unit_rather_than_accepting_it(store: SqliteStore) -> None:
+    registry, _ = registry_with(PROSE)
+    book_scoped(store)
+    with_a_failing_craft_gate(store)
+
+    result = conductor_for(store, registry).tick(START)
+
+    assert result.outcome is TickOutcome.JOB_PARKED
+    assert store.load_job("draft-1").status is JobStatus.PARKED
+    [decision] = store.decisions_for_job("draft-1")
+    assert decision.outcome is Outcome.PARK
+    assert Veto.CRAFT_BELOW_BAR in decision.failed_vetoes
+
+
+def test_a_craft_refusal_at_the_attempt_ceiling_is_still_revivable(store: SqliteStore) -> None:
+    """The regression the review reproduced, and the third time this premise has broken.
+
+    `_settle` derived POISONED from `attempts >= max_attempts` alone. A craft gate refuses
+    at *any* attempt number — deliberately, since the check sits ahead of the budget — so a
+    refusal landing on the last attempt was indistinguishable there from a spent budget. The
+    unit poisoned: unrevivable, absent from `jobs --status parked`, its derived job id burnt,
+    and its exception labelled "attempt budget spent" about a budget that was not what
+    stopped it. Three claims this change added were false in exactly that case.
+
+    Driven through real ticks rather than hand-seeded attempts: two genuinely short drafts
+    burn attempts 1 and 2 on `LENGTH_MOVEMENT`, and the third clears shape and meets the
+    craft gate.
+    """
+    registry, _ = registry_with_sequence("Too short.", "Too short.", PROSE)
+    book_scoped(store)
+    with_a_failing_craft_gate(store)
+    conductor = conductor_for(store, registry)
+
+    outcomes = [conductor.tick(START + index * 300.0).outcome for index in range(3)]
+
+    assert outcomes == [
+        TickOutcome.JOB_FAILED,
+        TickOutcome.JOB_FAILED,
+        TickOutcome.JOB_PARKED,
+    ]
+    job = store.load_job("draft-1")
+    assert job.attempts == 3, "the ceiling really was reached"
+    assert job.status is JobStatus.PARKED, "not POISONED — the budget is not what stopped it"
+    assert [j.job_id for j in store.jobs_by_status(JobStatus.PARKED)] == ["draft-1"]
+    store.revive("draft-1")
+    assert store.load_job("draft-1").status is JobStatus.QUEUED
+
+
+def test_a_retryable_veto_at_the_ceiling_still_poisons(store: SqliteStore) -> None:
+    """The other direction of the same fix. Making a craft park revivable must not make an
+    exhausted attempt budget revivable, which is what `POISONED` is for."""
+    registry, _ = registry_with("Too short.")
+    book_scoped(store)
+    with_a_failing_craft_gate(store)
+    conductor = conductor_for(store, registry)
+
+    for index in range(3):
+        conductor.tick(START + index * 300.0)
+
+    assert store.load_job("draft-1").status is JobStatus.POISONED
+
+
+def test_a_craft_refusal_files_no_exception(store: SqliteStore) -> None:
+    """§4.2 reserves escalation for what policy could not resolve, and a craft refusal is
+    policy *resolving*. Filing one anyway would put every refusal in the queue a human is
+    asked to clear — the director interruption `PARKABLE` was chosen over `ESCALATE` to
+    avoid, arriving one layer below the choice."""
+    registry, _ = registry_with(PROSE)
+    book_scoped(store)
+    with_a_failing_craft_gate(store)
+    conductor_for(store, registry).tick(START)
+
+    assert [
+        entry.event
+        for entry in store.read_log()
+        if entry.event.event_type is EventType.EXCEPTION_RAISED
+    ] == []
+    day = store.read_log()[0].event.created_at[:10]
+    assert store.digest(day).get("exceptions_raised", 0) == 0
+    assert store.digest(day)["jobs_parked"] == 1

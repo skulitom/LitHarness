@@ -21,8 +21,10 @@ import json
 import pytest
 
 from litharness.adapters.sqlite_store import SqliteStore
+from litharness.application.handlers import _craft_ladder
 from litharness.domain.audit import BUCKETS, AuditSample, Verdict, bucket_for, draw, should_audit
 from litharness.domain.calibration import (
+    MIN_FLAGGED,
     MIN_HOLDOUT,
     MIN_PRECISION,
     Calibration,
@@ -34,6 +36,7 @@ from litharness.domain.calibration import (
 )
 from litharness.domain.craft import (
     METRICS,
+    CraftMetric,
     craft_gates,
     dialogue_ratio,
     measure,
@@ -42,7 +45,14 @@ from litharness.domain.craft import (
     sentences,
     tricolon_rate,
 )
-from litharness.domain.policy import GateKind, Outcome, PolicyDecision, UntrustedVerdict
+from litharness.domain.patch import Veto
+from litharness.domain.policy import (
+    GateKind,
+    Outcome,
+    PolicyDecision,
+    UntrustedVerdict,
+    decide,
+)
 from tests.conftest import BOOK_ID, BRANCH_ID
 
 TODAY = "2026-08-13"
@@ -57,6 +67,7 @@ def a_calibration(**kwargs) -> Calibration:
     fields = {
         "metric_id": "craft.tricolon_rate.v0",
         "holdout_size": MIN_HOLDOUT,
+        "flagged": MIN_FLAGGED,
         "precision": MIN_PRECISION,
         "threshold": 4.0,
         "direction": Direction.ABOVE,
@@ -64,8 +75,15 @@ def a_calibration(**kwargs) -> Calibration:
         "measured_at": "2026-08-01T00:00:00Z",
     }
     fields.update(kwargs)
+    flagged = fields["flagged"]
     fields["calibration_id"] = calibration_id_for(
-        str(fields["metric_id"]), float(fields["threshold"]), str(fields["verdicts_digest"])
+        str(fields["metric_id"]),
+        float(fields["threshold"]),
+        str(fields["verdicts_digest"]),
+        direction=Direction(fields["direction"]),
+        precision=float(fields["precision"]),
+        holdout_size=int(fields["holdout_size"]),  # type: ignore[arg-type]
+        flagged=None if flagged is None else int(flagged),  # type: ignore[arg-type]
     )
     return Calibration(**fields)  # type: ignore[arg-type]
 
@@ -297,6 +315,62 @@ def test_thin_evidence_cannot_promote() -> None:
         promoted_gate(a_calibration(holdout_size=MIN_HOLDOUT - 1), 6.0, today=TODAY)
 
 
+def test_a_metric_that_fired_almost_never_cannot_promote() -> None:
+    """The hole `MIN_HOLDOUT` alone leaves open, and it is not a corner case.
+
+    Precision is computed over the *flagged* set. A metric that flags one scene in fifty and
+    happens to be right scores precision 1.00 on a holdout of 50 — clearing both of the
+    floors §10.4 established — while having demonstrated nothing at all. `recall` would have
+    exposed it and is optional, so it cannot be what catches this.
+    """
+    with pytest.raises(NotPromotable, match="fired on 1 of"):
+        promoted_gate(
+            a_calibration(flagged=1, precision=1.0), 6.0, today=TODAY
+        )
+    # And the floor is where the arithmetic puts it, not near it.
+    with pytest.raises(NotPromotable, match="fired on"):
+        promoted_gate(a_calibration(flagged=MIN_FLAGGED - 1), 6.0, today=TODAY)
+    promoted_gate(a_calibration(flagged=MIN_FLAGGED), 6.0, today=TODAY)
+
+
+def test_an_unrecorded_flagged_count_cannot_promote() -> None:
+    """`None` is not zero and not "fine": a calibration written before the count existed is
+    indistinguishable from one that fired once, so it is refused rather than assumed. The
+    same direction the ladder takes with an unclassified veto."""
+    with pytest.raises(NotPromotable, match="does not record"):
+        promoted_gate(a_calibration(flagged=None), 6.0, today=TODAY)
+
+
+def test_more_flags_than_judgments_is_not_a_measurement_of_this_holdout() -> None:
+    with pytest.raises(NotPromotable, match="more flags than judgments"):
+        promoted_gate(
+            a_calibration(flagged=MIN_HOLDOUT + 1, holdout_size=MIN_HOLDOUT), 6.0, today=TODAY
+        )
+
+
+def test_a_failing_promoted_gate_names_its_veto() -> None:
+    """The fix at the source. `decide` acts on the veto, so a blocking gate that fails
+    without one lands on "a blocking gate failed without naming a veto" and escalates —
+    which sends a human every scene a craft gate stops."""
+    failing = promoted_gate(a_calibration(), 6.0, today=TODAY)
+    assert not failing.passed
+    assert failing.vetoes == (Veto.CRAFT_BELOW_BAR,)
+
+    passing = promoted_gate(a_calibration(), 1.0, today=TODAY)
+    assert passing.passed
+    assert passing.vetoes == (), "a gate that passed refuses nothing"
+
+
+def test_a_failing_promoted_gate_parks_the_unit() -> None:
+    """End to end through the ladder: the veto the gate names is classified, and the
+    classification is PARK. This is the assertion that would fail if `CRAFT_BELOW_BAR` were
+    ever quietly moved into `RETRYABLE`."""
+    gate = promoted_gate(a_calibration(), 6.0, today=TODAY)
+    outcome, reason = decide((gate,), job_id="j", attempt=1, max_attempts=3)
+    assert outcome is Outcome.PARK
+    assert "craft_below_bar" in (reason or "")
+
+
 def test_expired_evidence_cannot_promote() -> None:
     """§19's Trust clause requires *current* evidence. Output changes as the planner, the
     packet and the model change, so a threshold measured against last quarter's prose is a
@@ -331,6 +405,25 @@ def test_a_calibration_id_is_derived_from_what_was_measured() -> None:
     assert a_calibration().calibration_id != a_calibration(threshold=9.0).calibration_id
 
 
+def test_a_corrected_measurement_is_a_different_calibration() -> None:
+    """The measured numbers are part of the identity, and the bug that proves why: the id
+    once ignored them, on the reading that a re-measurement moves the verdict digest. It
+    does not have to — re-measuring the same metric at the same threshold over the same
+    holdout is exactly what a correction is. The two rows collided, `record_calibration` is
+    INSERT OR IGNORE, and the correction vanished while the first row kept gating."""
+    original = a_calibration(precision=0.81, flagged=MIN_FLAGGED)
+    corrected = a_calibration(precision=0.94, flagged=MIN_FLAGGED)
+    assert original.verdicts_digest == corrected.verdicts_digest
+    assert original.calibration_id != corrected.calibration_id
+
+
+def test_a_correction_reaches_the_store_instead_of_being_ignored(store: SqliteStore) -> None:
+    """The bite of the collision, at the layer that felt it."""
+    assert store.record_calibration(a_calibration(precision=0.81)) is True
+    assert store.record_calibration(a_calibration(precision=0.94)) is True
+    assert {row.precision for row in store.calibrations()} == {0.81, 0.94}
+
+
 def test_calibrations_round_trip_and_are_never_overwritten(store: SqliteStore) -> None:
     """A second measurement is a second row with its own evidence digest. Overwriting would
     delete the trail that makes "why did this threshold change" answerable."""
@@ -343,6 +436,95 @@ def test_calibrations_round_trip_and_are_never_overwritten(store: SqliteStore) -
     assert len(stored) == 2
     assert stored[0].measured_at > stored[1].measured_at, "newest evidence first"
     assert stored[0].direction is Direction.ABOVE
+
+
+def test_the_flagged_count_survives_the_round_trip(store: SqliteStore) -> None:
+    """Migration 015's column. It is the denominator `precision` was computed over, so a
+    store that dropped it would turn a checkable number back into an unreadable one."""
+    store.record_calibration(a_calibration(flagged=23))
+    assert store.calibrations()[0].flagged == 23
+
+
+def test_a_calibration_written_before_the_column_existed_is_advisory(
+    store: SqliteStore,
+) -> None:
+    """015 made the column nullable rather than backfilling it, because a row written before
+    it existed genuinely does not know its flagged count. `None` round-trips as `None` and
+    refuses promotion — the safe direction, and the reason the migration did not invent a
+    default."""
+    store.record_calibration(a_calibration(flagged=None))
+    restored = store.calibrations()[0]
+    assert restored.flagged is None
+    assert restored.why_not_promotable(TODAY, restored.verdicts_digest) is not None
+
+
+# -- the wired path (§10.2 step 7) ----------------------------------------------------------
+
+
+def a_metric(value: float, metric_id: str = "craft.tricolon_rate.v0") -> CraftMetric:
+    return CraftMetric(metric_id=metric_id, value=value, caveat="under test")
+
+
+def test_an_empty_calibration_table_produces_no_blocking_gate(store: SqliteStore) -> None:
+    """What makes wiring the promoted path safe to do before any evidence exists: with
+    nothing recorded there is no branch that can construct a blocking gate, so turning it on
+    does not turn anything on. The annotation is still produced, because §10.2 wants the
+    measurement logged whether or not anything acts on it."""
+    gates = _craft_ladder(store, (a_metric(6.0),), today=TODAY)
+    assert len(gates) == 1
+    assert not gates[0].blocking
+    assert gates[0].calibration_id is None
+
+
+def test_a_recorded_calibration_gates_the_metric_it_names(store: SqliteStore) -> None:
+    store.record_calibration(a_calibration(verdicts_digest=verdicts_digest_for([])))
+    gates = _craft_ladder(store, (a_metric(6.0),), today=TODAY)
+    assert len(gates) == 1, "one gate per metric — the promoted one replaces its annotation"
+    assert gates[0].blocking and not gates[0].passed
+    assert gates[0].vetoes == (Veto.CRAFT_BELOW_BAR,)
+
+
+def test_a_calibration_for_a_metric_this_draft_did_not_measure_is_skipped(
+    store: SqliteStore,
+) -> None:
+    store.record_calibration(a_calibration(verdicts_digest=verdicts_digest_for([])))
+    other = (a_metric(6.0, "craft.dialogue_ratio.v0"),)
+    [gate] = _craft_ladder(store, other, today=TODAY)
+    assert not gate.blocking, "a calibration for another metric cannot gate this one"
+
+
+def test_stale_evidence_falls_back_to_annotation_rather_than_failing_the_job(
+    store: SqliteStore,
+) -> None:
+    """§10.5 re-opens calibration when the verdict set moves; it does not stop the book.
+
+    `NotPromotable` is swallowed per metric here rather than raised, because raising would
+    turn "the evidence about prose quality went stale" into "this scene cannot be drafted at
+    all". The metric falls back to the annotation `craft_gates` already produced, and
+    `litharness calibrations` prints the reason.
+    """
+    store.record_calibration(a_calibration(expires_at="2026-01-01"))
+    [gate] = _craft_ladder(store, (a_metric(6.0),), today=TODAY)
+    assert not gate.blocking
+    # And never silently. A gate that quietly stops blocking is the failure `promoted_gate`
+    # refuses by name, so the reason travels on the annotation into the decision record.
+    assert "not blocking" in (gate.detail or "")
+    assert "expired" in (gate.detail or "")
+
+
+def test_only_the_newest_measurement_for_a_metric_gates(store: SqliteStore) -> None:
+    """A superseded measurement is history, not a second gate. Two rows for one metric would
+    otherwise refuse a scene twice for the same reason under two thresholds."""
+    digest = verdicts_digest_for([])
+    store.record_calibration(
+        a_calibration(threshold=4.0, verdicts_digest=digest, measured_at="2026-08-01T00:00:00Z")
+    )
+    store.record_calibration(
+        a_calibration(threshold=99.0, verdicts_digest=digest, measured_at="2026-08-05T00:00:00Z")
+    )
+    gates = _craft_ladder(store, (a_metric(6.0),), today=TODAY)
+    assert len(gates) == 1
+    assert gates[0].passed, "6.0 is below the newest threshold of 99.0"
 
 
 def test_no_calibration_exists_yet_and_that_is_the_honest_state(store: SqliteStore) -> None:
@@ -441,3 +623,62 @@ def test_a_checkout_without_a_profile_still_works() -> None:
 
     metric = measure("A sentence here. And another one, rather longer than that.")[0]
     assert percentile_of(metric, profile={}) is None
+
+
+def test_a_corrected_direction_is_a_different_calibration(store: SqliteStore) -> None:
+    """`direction` was the field the first correction left out, and it is the worst one to
+    leave out: `Direction`'s own docstring says guessing it "inverts the gate silently".
+    A row recorded with the wrong direction is exactly the one someone re-records to fix,
+    and with direction outside the id the fix collides with the inverted original, is
+    dropped by INSERT OR IGNORE, and leaves the backwards gate live."""
+    inverted = a_calibration(direction=Direction.BELOW)
+    corrected = a_calibration(direction=Direction.ABOVE)
+    assert inverted.calibration_id != corrected.calibration_id
+    assert store.record_calibration(inverted) is True
+    assert store.record_calibration(corrected) is True
+    assert {row.direction for row in store.calibrations()} == {
+        Direction.BELOW,
+        Direction.ABOVE,
+    }
+
+
+def test_a_promoted_metric_reports_once_not_twice(store: SqliteStore) -> None:
+    """Two gates for one measurement is a contradiction on the record. An earlier version
+    appended the promoted gate beside the advisory one, so a refused scene's decision carried
+    the same `rule_or_critic_id` twice — `passed=True, blocking=False` and
+    `passed=False, blocking=True` — and `decision_id_for` hashed both. An audit asking what
+    the craft ladder said got two contradictory answers about one number."""
+    store.record_calibration(a_calibration(verdicts_digest=verdicts_digest_for([])))
+    gates = _craft_ladder(
+        store,
+        (a_metric(6.0), a_metric(0.1, "craft.dialogue_ratio.v0")),
+        today=TODAY,
+    )
+    ids = [gate.rule_or_critic_id for gate in gates]
+    assert len(ids) == len(set(ids)), "one gate per metric"
+    assert {g.rule_or_critic_id for g in gates if g.blocking} == {"craft.tricolon_rate.v0"}
+
+
+def test_one_new_verdict_re_opens_every_calibration_and_says_so(store: SqliteStore) -> None:
+    """The consequence worth knowing before the first promotion, because it is invisible
+    otherwise: `verdicts_digest` covers *every* answered audit sample, so a single new
+    `judge` verdict makes every recorded calibration stale at once. That is correct under
+    §10.5 — audit disagreement re-opens calibration — and it must be legible when it
+    happens, which is what the annotation's detail is for."""
+    store.record_calibration(a_calibration(verdicts_digest=verdicts_digest_for([])))
+    assert _craft_ladder(store, (a_metric(6.0),), today=TODAY)[0].blocking
+
+    # Through the real path: `record_audit_sample` deliberately stores no verdict — the
+    # first reading is the blind one — so a judgment only ever enters via `record_verdict`.
+    store.record_audit_sample(
+        AuditSample(
+            sample_id="aud-later", book_id=BOOK_ID, branch_id=BRANCH_ID,
+            revision_id="rev-9", logical_id="scene-9", sampled_at=TODAY, bucket=1, rate=1.0,
+        )
+    )
+    assert store.record_verdict(
+        "aud-later", Verdict.KEEP_READING, at=TODAY, by="the director"
+    )
+    [gate] = _craft_ladder(store, (a_metric(6.0),), today=TODAY)
+    assert not gate.blocking, "the gate stops blocking"
+    assert "verdict set has changed" in (gate.detail or ""), "and the record says why"

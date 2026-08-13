@@ -42,6 +42,7 @@ from dataclasses import dataclass
 from hashlib import sha256
 
 from litharness.domain.events import payload_digest
+from litharness.domain.patch import Veto
 from litharness.domain.policy import GateKind, GateOutcome, UntrustedVerdict, VerdictSource
 
 #: Held-out precision below which a metric may not block. A placeholder with a floor, not a
@@ -57,6 +58,28 @@ MIN_PRECISION = 0.80
 #: therefore not a hurdle the project is close to clearing; it is a statement of what the
 #: number would have to be before anyone should believe it.
 MIN_HOLDOUT = 50
+
+#: Held-out judgments the metric must actually have **fired on**, and unlike the two above
+#: this one is derived rather than placed.
+#:
+#: `MIN_HOLDOUT` alone does not constrain it, because precision is computed over the flagged
+#: set and not over the holdout: a metric that flags one scene out of fifty and happens to be
+#: right scores precision 1.00 on a holdout of 50 and clears both floors. `recall` would have
+#: caught that and is optional, so it cannot be relied on to.
+#:
+#: 17 is the smallest flagged set whose two-sided 95% Clopper-Pearson lower bound on a
+#: *perfect* score clears `MIN_PRECISION` — 0.025**(1/17) = 0.805, against 0.794 at 16.
+#:
+#: **What that does and does not buy, stated precisely because the first draft of this
+#: comment overclaimed it.** The floor rules out the case it was written for: a metric that
+#: fires once or twice, gets it right, and reports precision 1.00. It does *not* make
+#: `MIN_PRECISION` a confidence bound in general — at 17 flags and an observed 0.80 the
+#: lower bound is far below 0.80, and the code enforces the point estimate at every
+#: precision rather than requiring more flags as precision falls. Enforcing the bound at the
+#: *observed* precision is the stricter and more principled bar; it is deliberately not
+#: taken here, because it would redefine what `MIN_PRECISION` means and that is a decision
+#: for whoever first has evidence to promote, not for the commit that wired the path.
+MIN_FLAGGED = 17
 
 
 class Direction(enum.StrEnum):
@@ -94,6 +117,11 @@ class Calibration:
     #: ISO date after which this is no longer *current* evidence. None means never expires,
     #: which is a claim about a moving target and should be rare enough to notice.
     expires_at: str | None = None
+    #: How many of `holdout_size` the metric placed on the failing side — the denominator
+    #: `precision` was computed over. `None` means the measurement did not record it, which
+    #: is not promotable: an unrecorded flagged count is indistinguishable from a flagged
+    #: count of one, and see `MIN_FLAGGED` for why that matters.
+    flagged: int | None = None
     recall: float | None = None
     note: str | None = None
 
@@ -119,6 +147,22 @@ class Calibration:
                 f"measured on {self.holdout_size} held-out judgment(s), below the "
                 f"{MIN_HOLDOUT} floor"
             )
+        if self.flagged is None:
+            return (
+                "does not record how many held-out judgments the metric fired on; precision "
+                "is computed over the flagged set, so without it the number is unreadable"
+            )
+        if self.flagged < MIN_FLAGGED:
+            return (
+                f"fired on {self.flagged} of {self.holdout_size} held-out judgment(s), below "
+                f"the {MIN_FLAGGED} floor — a precision measured over so few flags clears "
+                f"{MIN_PRECISION:.2f} by luck at conventional confidence"
+            )
+        if self.flagged > self.holdout_size:
+            return (
+                f"fired on {self.flagged} of {self.holdout_size} held-out judgment(s), which "
+                "is more flags than judgments; the measurement is not about this holdout"
+            )
         if not self.is_current(today):
             return (
                 f"expired {self.expires_at}; §19's Trust clause requires *current* "
@@ -133,10 +177,46 @@ class Calibration:
         return None
 
 
-def calibration_id_for(metric_id: str, threshold: float, verdicts_digest: str) -> str:
-    """Derived from what was measured, so the same evidence names the same calibration."""
+def calibration_id_for(
+    metric_id: str,
+    threshold: float,
+    verdicts_digest: str,
+    *,
+    direction: Direction,
+    precision: float,
+    holdout_size: int,
+    flagged: int | None,
+) -> str:
+    """Derived from what was measured, so the same evidence names the same calibration.
+
+    **The measured numbers are part of the identity, and leaving them out was a bug with an
+    operational bite.** The id was once derived from the metric, the threshold and the
+    verdict digest alone, on the reading that a re-measurement moves the digest. It does not
+    have to: measuring the same metric at the same threshold against the same holdout is
+    exactly what a *corrected* measurement is. Two such rows collided, `record_calibration`
+    is `INSERT OR IGNORE`, and so the correction was silently dropped while the caller was
+    handed back an id and no error — the second measurement vanished and the first kept
+    gating. `SqliteStore.record_calibration` promises "a second measurement is a second row
+    with its own id"; this is the half of that promise that lives in the id.
+
+    **`direction` is in here for a sharper version of the same reason.** It was the field
+    left out of the first correction, and it is the worst one to leave out: `Direction`'s own
+    docstring says guessing it "inverts the gate silently, which is the failure mode that
+    produces a confidently backwards quality signal". A calibration recorded with the wrong
+    direction is precisely the row someone re-records to fix — and with direction outside the
+    id that correction collides with the inverted original, is dropped by INSERT OR IGNORE,
+    and leaves the backwards gate live while reporting the fix as recorded.
+    """
     material = payload_digest(
-        {"metric": metric_id, "threshold": threshold, "verdicts": verdicts_digest}
+        {
+            "metric": metric_id,
+            "threshold": threshold,
+            "verdicts": verdicts_digest,
+            "direction": direction.value,
+            "precision": precision,
+            "holdout_size": holdout_size,
+            "flagged": flagged,
+        }
     )
     return f"cal-{sha256(material.encode()).hexdigest()[:24]}"
 
@@ -171,16 +251,22 @@ def promoted_gate(
     reason = calibration.why_not_promotable(today, verdicts_digest)
     if reason is not None:
         raise NotPromotable(f"{calibration.metric_id}: {reason}")
+    passed = not calibration.blocks_at(value)
     gate = GateOutcome(
         gate=GateKind.CRAFT,
         rule_or_critic_id=calibration.metric_id,
-        passed=not calibration.blocks_at(value),
+        passed=passed,
         # A deterministic proxy over prose, validated against human judgment. Not
         # `CALIBRATED_CRITIC`, which is for a model whose verdict was calibrated; the
         # distinction matters because MirrorBench's invariant is about model self-report and
         # this is arithmetic over text.
         verdict_source=VerdictSource.DETERMINISTIC,
         blocking=True,
+        # Named, because `policy.decide` acts on the veto and a blocking gate that fails
+        # without one escalates as "a blocking gate failed without naming a veto" — the
+        # anonymous refusal that sends a human every scene the gate stops. `CRAFT_BELOW_BAR`
+        # is classified `PARKABLE`, so this refusal parks the unit revivably instead.
+        vetoes=() if passed else (Veto.CRAFT_BELOW_BAR,),
         detail=(
             f"{value} vs threshold {calibration.threshold} ({calibration.direction.value}); "
             f"precision {calibration.precision:.2f} on {calibration.holdout_size} held-out"
@@ -196,6 +282,7 @@ def promoted_gate(
 
 
 __all__ = [
+    "MIN_FLAGGED",
     "MIN_HOLDOUT",
     "MIN_PRECISION",
     "Calibration",

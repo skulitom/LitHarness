@@ -72,6 +72,45 @@ REGENERABLE: frozenset[Veto] = frozenset(
     }
 )
 
+#: Vetoes that end the unit *here*, without another generation and without an escalation.
+#:
+#: `CRAFT_BELOW_BAR` is the only member and the reasoning is the whole decision, so it is
+#: recorded rather than implied. A promoted craft gate refuses prose that a calibrated metric
+#: places on the failing side of its threshold. Each of the other three things the ladder
+#: could do to that refusal is worse:
+#:
+#: **Retry is rejection sampling against the gate.** Another attempt against the same context
+#: packet produces different text that is measured by the same metric, and the accepted
+#: candidate is by construction the one that beat it. At `max_attempts` that is best-of-three
+#: optimisation against a craft proxy — a weaker form of the coupling
+#: [plan/craft-corpus.md](../../../plan/craft-corpus.md) §4.2 calls non-negotiable to prevent,
+#: but the same shape, and it would arrive as a side effect of a retry class rather than as a
+#: decision anyone took.
+#:
+#: **Escalation breaks the product claim.** A gate firing on 5% of scenes is one director
+#: interruption per twenty accepted, in a system whose whole claim is that it runs without
+#: one. §4.2 already reserves escalation for what *policy could not resolve*, and a craft
+#: refusal is policy resolving: the scene does not go in.
+#:
+#: **Silently accepting is what the system does today.** That is the gap, not the fallback.
+#:
+#: Parking is the option that keeps all three properties. The refusal stands, the book
+#: continues — findings are node-scoped for exactly this reason, so a weak scene 3 does not
+#: stop scene 6 — and the parked unit is revivable, so the director's `revive` is the way
+#: past it, as it already is for a standing finding.
+#:
+#: **What it does not yet do, stated because the first draft of this comment claimed it
+#: did.** A parked unit is not an *unjudged sample*. `handlers` records craft metrics and
+#: draws the §10.5 audit sample inside the acceptance branch, after `commit_revision` — a
+#: refused candidate commits no revision, so it produces neither, and its text is discarded.
+#: So the gate does not currently fill the audit queue as a by-product of refusing, which
+#: would have been the best argument for this classification. Making it do so is not a
+#: one-liner: `AuditSample` is keyed `sha256(revision_id, logical_id)` and a refused
+#: candidate has no revision id, so it needs an address for text that was never accepted.
+#: Recorded as a gap rather than fixed in passing, because what `verdicts_digest` content-
+#: addresses would change with it.
+PARKABLE: frozenset[Veto] = frozenset({Veto.CRAFT_BELOW_BAR})
+
 # Everything else — CONTENT_LOCKED, UNKNOWN_TARGET, TARGET_HAS_NO_CONTENT,
 # UNLICENSED_DELETION, PRESERVATION_BREACH — escalates. Deliberately the default: a veto
 # nobody has classified should reach a human, not silently earn three more model calls.
@@ -207,6 +246,28 @@ class PolicyDecision:
         return tuple(veto for gate in self.gates if not gate.passed for veto in gate.vetoes)
 
     @property
+    def parked_by_veto(self) -> bool:
+        """Whether a parkable veto stopped this, rather than a spent attempt budget.
+
+        The Conductor needs it for the reason it already needs `refused_before_work`, and it
+        is the same bug in a third costume. `_settle` derives POISONED from
+        `attempts >= max_attempts` alone, on a premise it states in a comment: "`decide`
+        returns PARK only on attempt exhaustion". The budget gate falsified that once and
+        the comment records the fix; `PARKABLE` falsifies it again, because a craft refusal
+        parks at *any* attempt number — deliberately, since the check sits ahead of the
+        budget so the unit is never charged attempts it was never going to use.
+
+        Without this, a craft gate that happens to fire on the third attempt poisons the
+        unit: unrevivable, absent from `jobs --status parked`, its derived job id burned,
+        and its exception labelled "attempt budget spent" when the budget is not what
+        stopped it. Which would make three claims false at once — `PARKABLE`'s own
+        docstring, §26 of `plan/stage-0-decisions.md`, and the README — all of which promise
+        that a craft refusal is revivable.
+        """
+        failing = [gate for gate in self.gates if gate.blocking and not gate.passed]
+        return bool({veto for gate in failing for veto in gate.vetoes} & PARKABLE)
+
+    @property
     def refused_before_work(self) -> bool:
         """Whether this refusal was reached *in front of* the work rather than about it.
 
@@ -312,7 +373,10 @@ def decide(
 
     The ordering matters and is the substance of the function: an unclassified veto
     escalates *before* the attempt budget is consulted, so a locked node is reported as
-    locked on the first try rather than as "attempts exhausted" on the fourth.
+    locked on the first try rather than as "attempts exhausted" on the fourth. A parkable
+    veto is checked in the same place and for the same reason — it parks on attempt 1
+    carrying its own cause, rather than on attempt 3 carrying "attempts exhausted", and it
+    is never charged the attempts it was never going to use.
     """
     failing = [gate for gate in gates if gate.blocking and not gate.passed]
     if not failing:
@@ -322,10 +386,31 @@ def decide(
     if not vetoes:
         return Outcome.ESCALATE, "a blocking gate failed without naming a veto"
 
-    unclassified = vetoes - RETRYABLE - REGENERABLE
+    unclassified = vetoes - RETRYABLE - REGENERABLE - PARKABLE
     if unclassified:
         names = ", ".join(sorted(veto.value for veto in unclassified))
         return Outcome.ESCALATE, f"no retry can resolve: {names}"
+
+    # Ahead of the attempt budget, and ahead of `RETRYABLE`, so a candidate that fails a
+    # parkable veto *and* a retryable one parks rather than earning the retry.
+    #
+    # **The mixed case is reachable**, and an earlier draft of this comment claimed it was
+    # not on the grounds that craft is measured only on a shape-accepted draft. That is true
+    # and irrelevant: `handlers` appends the integrity gate and the craft gates in the same
+    # pass over the same accepted draft, so `CONTINUITY_BREACH` and `CRAFT_BELOW_BAR` fire
+    # together whenever a candidate is both contradictory and weak.
+    #
+    # Parking still wins, for the reason `PARKABLE` exists: the retry would be licensed by
+    # the continuity breach but *measured* by the craft metric too, so the candidate that
+    # eventually passes is the one that beat the proxy — the rejection-sampling channel,
+    # entered through the narrow door of a co-occurring veto. What the mixed case costs is a
+    # legitimate second attempt at the contradiction, and the compensation is that the
+    # reason names **every** failing veto rather than only the parkable one, so the breach
+    # is on the record the director reads instead of being hidden by the refusal that
+    # outranked it.
+    if vetoes & PARKABLE:
+        names = ", ".join(sorted(veto.value for veto in vetoes))
+        return Outcome.PARK, f"{names}: held for judgment rather than redrafted"
 
     if attempt >= max_attempts:
         names = ", ".join(sorted(veto.value for veto in vetoes))
@@ -337,6 +422,7 @@ def decide(
 
 
 __all__ = [
+    "PARKABLE",
     "PRE_FLIGHT",
     "REGENERABLE",
     "RETRYABLE",

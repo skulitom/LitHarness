@@ -34,6 +34,14 @@ phrasing satisfies or defeats it.
 It emits **zero findings on both golden fixtures**, which is the negative-control leg §8.3
 demands and the reason it can be turned on blocking without a calibration programme: a check
 that fires on a conforming book is not a floor, it is a tax.
+
+**It now has an in-process producer, and until it did, that silence proved nothing.**
+`domain/extraction.py` reads state out of every accepted scene, so this detector's input is
+no longer only what an operator imported — which is what the paragraph above always meant by
+"can only happen inside the loop", and what nothing in `src/` could actually cause. The
+mutation leg is in `tests/test_extraction.py`: perturb a conforming litrpg scene's status
+line and exactly one MAJOR appears naming the position; restore it and the detector goes
+quiet.
 """
 
 from __future__ import annotations
