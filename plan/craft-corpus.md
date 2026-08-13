@@ -233,6 +233,70 @@ licence that permits it, today. Per-chapter retention improves the label's granu
 story-level to chapter-level; it is not a prerequisite for starting, and treating it as one
 would be this document reintroducing the blocker it was written to remove.
 
+### 4.7 Per-chapter comments via the Wayback Machine — collected, measured, refuted
+
+§4.5 names per-chapter retention as the single most valuable missing column and §4.6 refuses
+a RoyalRoad crawler. A **Wayback** collection is a different act from crawling royalroad.com,
+and it was built (`C:/DEV/BookCrawler`) and run against Mother of Learning. This section
+records what it produced and why the signal does not survive its own control, so the route is
+not re-proposed on the strength of how promising it looks.
+
+**The count is free, exact, and complete.** Royal Road prints each chapter's comment total on
+the chapter page (`Comments(226)`), which the crawl already fetches for the prose. Recovered
+for **108/108 chapters, 0 failures**: 8,849 comments, median 58, max 883 (the afterword),
+then 398 (ch102 "Giants") and 367 (ch106 "I Win (III)"). This is the project's first
+complete, uncensored, chapter-granular human-response measurement.
+
+**It is not worth having, and the control is what says so.** Computed in one pass:
+
+| | rho vs comment count | t |
+|---|---|---|
+| chapter position | +0.1606 | +1.68 |
+| **capture date** | **+0.4284** | **+4.88** |
+| word count | −0.0333 | −0.34 |
+| partial: position \| capture date | **−0.0447** | −0.46 |
+| partial: capture date \| position | **+0.4044** | +4.53 |
+
+Position explains nothing once capture date is held; capture date explains plenty once
+position is held. The number measures **when the archive looked**, not what readers did — a
+page captured in 2024 has accumulated more comments than one captured in 2021, and Wayback
+captured this book across 25 distinct dates. It is the `tricolon_rate` lesson in a third
+costume, and the permutation null agrees the headline was never there: p = 0.098 at n=108,
+and dropping the ten largest chapters turns it *negative* (−0.0511).
+
+**Both rescues fail.** Within-capture-date strata: 5 strata with n≥8, pooled rho = +0.2228
+(t=+1.69, n=62) against a minimum detectable effect of 0.3494 — undetermined, not answered,
+and three of the five strata span only 8–10 chapter positions so they could not have detected
+a position effect anyway. Exposure-adjusted rate (comments per day from publication to
+capture) looks like the finding: rho = +0.2641, and +0.3151 partialling capture date,
+t=+3.40. **Its mechanical null refutes it.** Exposure is `capture − published`, and
+rho(exposure, position) = −0.5668, so dividing by exposure injects position by construction:
+a *constant* comment count would produce rho(rate, position) = **+0.5668**. Observed is
++0.2641 — below its own null. There is no positive position effect on the rate.
+
+**What the route did establish, and it is a correction rather than a finding.** The paginated
+comment crawl that preceded this recovered 60 pages of 422 and exported 48 chapters as having
+**zero** comments. Those 48 chapters hold **39.1% of all comments** in the book (median 56,
+max 367); 42 of them were lost to the crawler's own TLS throttling rather than to archive
+gaps, and a CDX probe found captures for 14 of 14 checked. Coverage is 105/108, not 60/108.
+Two further measurements from that pass are worth keeping: comment-page archival coverage by
+follower band is 0/16, 1/16, 1/16, 4/16, 9/14 (AUC 0.889) against a general-archival control
+of AUC 0.969 — so a multi-story comment corpus below ~1,500 followers is not obtainable — and
+`comments_unique` carries no volume information at all, being exactly 10 top-level comments
+for all 60 covered chapters by pagination.
+
+**The comment *text* is the part still worth reading.** Hand-coding a 209-comment stratified
+sample: 14.4% [10.2–19.8] carry craft judgment attributable to something in that chapter, and
+7.7% [4.8–12.1] both name a dimension and evaluate it. Sign is recoverable in 29 of 30 cases,
+and the self-selected-fan worry is refuted — negatives are 30% of located craft judgments,
+not a missing class. But the absolute volume is ~18 hand-confirmed negative craft judgments
+across 15 chapters, against `MIN_HOLDOUT = 50`, and the block is doubled in code:
+`promoted_gate` demands a `verdicts_digest` content-addressed over `store.audit_samples()`,
+keyed `sha256(revision_id, logical_id)`, so reader comments on someone else's published book
+cannot enter the calibration set at **any** volume. Collecting ten more stories fixes the
+first block and not the second. Its use is **vocabulary** for a located-complaint producer,
+which is §4.1's neighbour rather than its substitute.
+
 ## 5. Consequence for the plan
 
 - §1a.4's "human judgment is the only ground truth" **stands**, with the solicited/revealed
