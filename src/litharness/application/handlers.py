@@ -370,12 +370,12 @@ def make_scene_draft_handler(
             },
         )
         store.commit_revision(outcome.revision, created_at=_timestamp(now), events=[accepted])
+        # `accepted` is deliberately **not** returned: `commit_revision` already persisted it
+        # in the same transaction as the revision, and returning it as well would ask the
+        # Conductor to append it a second time — harmless, because idempotency keys are
+        # content-derived and collapse on insert, but it would misreport the tick's event
+        # count. The decision event has no such writer and is returned.
         return [decision_event]
-        # Returned empty: `commit_revision` already persisted the event in the same
-        # transaction as the revision. Returning it as well would ask the Conductor to
-        # append it a second time — harmless, because idempotency keys are content-derived
-        # and collapse on insert, but it would misreport the tick's event count.
-        return []
 
     return handle
 

@@ -56,3 +56,8 @@ select = ["E", "F", "I", "UP", "B", "SIM", "RUF"]
 python_version = "3.11"
 strict = true
 files = ["src"]
+# Not part of `strict`, and it caught a real one: the draft handler carried a `return []`
+# after its real return, under a comment asserting the opposite of what the code did. Dead
+# code that contradicts its comment is how a reader learns the wrong behaviour, which is the
+# defect class PLAN.md §19.1 keeps recording.
+warn_unreachable = true

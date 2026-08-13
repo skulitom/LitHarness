@@ -5,12 +5,13 @@ master plan and [plan/](plan/) for companion design documents — in particular
 [plan/stage-0-decisions.md](plan/stage-0-decisions.md), which records the load-bearing
 design decisions and why each went the way it did.
 
-**Status: Stage 0 slices 1–6, Stage 1 slice 7.** The manuscript spine, the Conductor loop,
+**Status: Stage 0 slices 1–6, Stage 1 slices 7–8.** The manuscript spine, the Conductor loop,
 four provider adapters, a provider-backed draft handler behind a shape gate, recorded
-acceptance decisions, a direction inbox, a way to get a book in, and a template planner that
+acceptance decisions, a direction inbox, a way to get a book in, a template planner that
 takes a six-scene fixture book from premise to six accepted scenes with no human in the
-loop. It writes a book; nothing in it yet measures whether the book is any good. See
-[What is not built](#what-is-not-built).
+loop, and — as of slice 8 — an objective-story-state layer and the context packet each scene
+is drafted against. It writes a book whose scenes know about each other; nothing in it yet
+measures whether the book is any good. See [What is not built](#what-is-not-built).
 
 ## Setup
 
@@ -40,7 +41,11 @@ It prints the revision id. Scene prose is **cleared** so each scene can be draft
 `--keep-content` keeps it and tells you that nothing is draftable, because a draft may only
 fill an empty node. Use `--path` for a manuscript of your own — and pass `--plans` with it,
 because the premise in the plan snapshot is what beat prompts are rendered from and a book
-without one is reported as blocked rather than drafted. `--fixture` supplies both.
+without one is reported as blocked rather than drafted. `--state` imports objective story
+state alongside: open threads and POV-visible knowledge, which the context packet is built
+from. It is optional where `--plans` is not — a book with no state records drafts against
+its plan and its prose, which is thinner but not blocked, and a regenerating book starts
+with none by definition. `--fixture` supplies all three.
 
 Then tick — one bounded unit of work, which is what a scheduler invokes:
 
@@ -52,6 +57,14 @@ Each tick drains the queue, and when nothing is claimable it plans: the next und
 becomes a job, is drafted, gated and accepted. Six ticks take a six-scene book from premise
 to a full draft with nothing else typed. `enqueue` still exists for drafting one named node
 by hand with your own prompt, which is now the exception rather than the way in.
+
+Each beat is drafted against an assembled **context packet** (§12 step 2): the premise, the
+director's locked constraints and promises, the book's open threads, the established facts
+visible to the scene's POV, and the prose of every scene before it. It is packed by a fixed
+priority order under a token ceiling — constraints and threads first, prose dropped
+oldest-first — and **everything dropped is recorded** on the job payload with its reason,
+because a baseline that packs by priority rather than relevance will drop things a scorer
+would have kept and has no way to know it. Relevance scoring is LongRangeContext's, per §12.
 
 On Windows Task Scheduler or cron, every 5–15 minutes (§4.1). **Exit codes are the
 interface**: `0` the tick did its job, including finding nothing to do; `1` a unit failed
@@ -160,12 +173,21 @@ Stated plainly, because a system that runs is easy to mistake for a system that 
   anything §9 means by planning — it invents no structure, reads no directives, schedules no
   foreshadowing or progression, and only handles a book whose live scene count is exactly
   six.
-- **No context packet.** The prompt a beat renders carries the scene title, its ordinal, its
-  dramatic function and the book's premise. It carries no prior prose, no locked
-  constraints, no game state and no distant callbacks, so scene six is written knowing
-  nothing of scene five.
+- **A context packet with no relevance scoring.** It carries prior prose, locked
+  constraints, open threads and POV-filtered state, and it is graded against the contracts
+  `GoldContextSuite` — mandatory items present, forbidden POV leak absent. What it does not
+  do is *choose*: under a budget that binds, it drops the oldest prose rather than the least
+  relevant, because nothing here measures relevance. On six-scene fixtures the budget never
+  binds, so that limit is currently invisible and will not stay that way at Book Zero
+  length. Only the `draft_scene` operation is served; the suite's `evaluate` and `repair`
+  cases have no implementation to grade and the suite says so rather than skipping them.
+- **No state extraction.** State records enter only through `import`, on the director's
+  authority. §12 step 5's extraction — reading state candidates back out of accepted prose —
+  does not exist, so a book the system drafts itself accumulates no new facts and scene six
+  gets whatever was imported, not what scenes one to five actually established.
 - **No craft gate.** The only gate is shape — a draft exists, is the right size, and did
   not overwrite anything. Nothing measures whether the prose is any good (PLAN.md §1a).
 - **No game-system validation.** The LitRPG rules pack lives in ContinuityEvaluation and
-  is not wired in, so accepted prose is not checked against the ledger.
+  is not wired in, so accepted prose is not checked against the ledger. The state layer is
+  now the place its findings would land; nothing lands there yet.
 - **Directives are captured, not read.** See above.

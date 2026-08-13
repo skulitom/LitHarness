@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import json
 
+import litharness_contracts as lc
 import pytest
 
 from litharness.adapters.sqlite_store import SqliteStore
@@ -24,15 +25,18 @@ from litharness.application.handlers import SCENE_DRAFT, make_scene_draft_handle
 from litharness.application.planner import (
     beat_job_id,
     make_plan_selector,
+    packet_for,
     plan_progress,
     render_prompt,
 )
 from litharness.domain.beats import SIX_BEAT, BeatTemplate, TemplateMismatch, beats_for
+from litharness.domain.context import assemble
 from litharness.domain.draft import DraftPolicy, is_draftable
 from litharness.domain.jobs import JobStatus
 from litharness.domain.nodes import LockKind, Node, NodeKind
 from litharness.domain.plans import import_plan
 from litharness.domain.revision import Revision, build_revision, import_manuscript
+from litharness.domain.state import import_state
 from litharness.providers.fake import FakeProvider
 from litharness.providers.registry import ProviderRegistry
 from tests.conftest import BOOK_ID, BRANCH_ID, PROJECT_ID
@@ -53,7 +57,11 @@ def _fixture(store: SqliteStore, name: str) -> tuple[str, str]:
     """Import a golden book and its plan, exactly as `cli import` does."""
     import litharness_contracts as lc
 
-    from litharness.adapters.contracts_fixtures import fixture_manuscript, fixture_plans
+    from litharness.adapters.contracts_fixtures import (
+        fixture_manuscript,
+        fixture_plans,
+        fixture_state,
+    )
 
     manuscript = lc.parse_artifact(
         lc.ManuscriptRevision,
@@ -73,6 +81,20 @@ def _fixture(store: SqliteStore, name: str) -> tuple[str, str]:
         plan.items,
         created_at="2026-08-13T00:00:00Z",
         source_revision_id=plan.source_revision_id,
+    )
+
+    state_snapshot = lc.parse_artifact(
+        lc.StateSnapshot, json.loads(fixture_state(name).read_text(encoding="utf-8"))
+    )
+    state = import_state(
+        state_snapshot, book_id=revision.book_id, branch_id=revision.branch_id
+    )
+    store.record_state_records(
+        revision.book_id,
+        revision.branch_id,
+        state.records,
+        created_at="2026-08-13T00:00:00Z",
+        source_revision_id=state.source_revision_id,
     )
     return revision.book_id, revision.branch_id
 
@@ -366,10 +388,46 @@ def test_the_prompt_names_the_beat_and_the_premise() -> None:
         ],
     )
     [beat] = beats_for(revision, template)
-    system, prompt = render_prompt(beat, book_title="A Book", premise="A locked room.")
+    packet = assemble(
+        revision,
+        "s1",
+        plan_items=[
+            lc.PlanItem(
+                logical_id="plan-premise",
+                kind=lc.PlanKind.PREMISE,
+                text="A locked room.",
+                authority=lc.PlanAuthority.INTENDED,
+            )
+        ],
+    )
+    system, prompt = render_prompt(beat, book_title="A Book", packet=packet)
     assert "scene" in system.lower()
     assert "The Study" in prompt and "1 of 1" in prompt
     assert "setup" in prompt and "A locked room." in prompt
+
+
+def test_the_prompt_carries_the_context_packet_and_ends_with_the_instruction(
+    store: SqliteStore,
+) -> None:
+    """§12 step 2 reaching the prompt, and the ordering that makes it useful.
+
+    The packet goes first and the instruction last, because the last thing in a prompt is
+    the thing a model acts on — leading with "write this scene" and then supplying the book
+    invites a scene written from the header.
+    """
+    book_id, branch_id = _fixture(store, "mystery")
+    head = store.head(book_id, branch_id)
+    assert head is not None
+    beat = beats_for(head, SIX_BEAT)[-1]
+    packet = packet_for(store, head, beat)
+    _, prompt = render_prompt(beat, book_title="The Vane House", packet=packet)
+
+    # The two locked plan items that bear on scene 6, which the pre-packet prompt omitted.
+    assert "rain-on-glass motif repeats deliberately in scenes 1, 3, and 6" in prompt
+    assert "sealed letter must be read aloud at the will reading" in prompt
+    # The open thread the resolution owes a payoff.
+    assert "sealed_letter_reading" in prompt
+    assert prompt.rstrip().endswith("Dramatic function: resolution.")
 
 
 # --- the plan store ------------------------------------------------------------------

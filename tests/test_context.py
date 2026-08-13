@@ -1,0 +1,514 @@
+"""Context assembly (§12 step 2), graded against the golden `GoldContextSuite`.
+
+The suite in `fixtures/golden/*/context_gold.json` has existed since contracts 0.1.0 and
+nothing in this repository referenced it, because the thing it grades did not exist. It is
+the reason these tests assert correctness rather than shape: `q1-draft-scene-6` says, in
+span-exact and hash-checked terms, what the packet for the mystery's resolution scene must
+contain and what it must not.
+
+**What the golden case does and does not measure here.** Both fixture books are six scenes of
+roughly 120 words, and the query's budget is 6,000 tokens — so mandatory *recall* is not
+under pressure and a packet that included everything would pass it. What is not free, and is
+what these tests are really pinning: the forbidden POV leak, the state-record resource kinds,
+and the fact that omissions are recorded rather than silent. Recall under a budget that
+actually binds is measured separately, and honestly — see the budget tests below, which
+assert that the packet stays inside its ceiling and says what it dropped, not that it dropped
+the right things. Choosing *which* to drop is scoring, LongRangeContext owns scoring, and a
+test here claiming otherwise would be this project grading its own homework.
+"""
+
+from __future__ import annotations
+
+import json
+
+import litharness_contracts as lc
+import pytest
+
+from litharness.adapters.contracts_fixtures import (
+    FIXTURE_IDS,
+    fixture_context_gold,
+    fixture_manuscript,
+    fixture_plans,
+)
+from litharness.domain import context as context_mod
+from litharness.domain.context import (
+    CONSTRAINTS,
+    FACTS,
+    PREMISE,
+    PRIOR_PROSE,
+    THREADS,
+    ContextBudgetTooSmall,
+    assemble,
+    count_tokens,
+)
+from litharness.domain.nodes import Node, NodeKind
+from litharness.domain.revision import Revision, import_manuscript
+from litharness.domain.text import content_hash
+from tests.conftest import BOOK_ID, BRANCH_ID, PROJECT_ID, make_revision, meta
+from tests.test_state import load_state
+
+#: Operations the assembler answers. The suite also carries `evaluate` and `repair` cases,
+#: which nothing here can serve — there is no evaluation and no repair path in LitHarness.
+#: Pinned as a set so *adding* one without grading it against the gold suite fails this file
+#: rather than passing silently, which is the failure mode §10's whole calibration section
+#: exists to prevent.
+SUPPORTED_OPERATIONS = {lc.ContextOperation.DRAFT_SCENE}
+UNSUPPORTED_OPERATIONS = {lc.ContextOperation.EVALUATE, lc.ContextOperation.REPAIR}
+
+
+def load_book(fixture_id: str) -> Revision:
+    """The fixture with its prose intact — the state the golden queries were written for.
+
+    `import` clears scene prose so the book is draftable, which is right for the loop and
+    wrong for grading a packet: `q1-draft-scene-6` asks what scene 6 should be told about
+    scenes 1-5, and the answer is empty if scenes 1-5 have been emptied. This is exactly what
+    `--keep-content` is for.
+    """
+    source = lc.parse_artifact(
+        lc.ManuscriptRevision,
+        json.loads(fixture_manuscript(fixture_id).read_text(encoding="utf-8")),
+    )
+    return import_manuscript(source, preserve_content=True).revision
+
+
+def load_plan_items(fixture_id: str) -> list[lc.PlanItem]:
+    snapshot = lc.parse_artifact(
+        lc.PlanSnapshot, json.loads(fixture_plans(fixture_id).read_text(encoding="utf-8"))
+    )
+    return list(snapshot.items)
+
+
+def load_gold(fixture_id: str) -> lc.GoldContextSuite:
+    return lc.parse_artifact(
+        lc.GoldContextSuite,
+        json.loads(fixture_context_gold(fixture_id).read_text(encoding="utf-8")),
+    )
+
+
+def packet_for_case(fixture_id: str, case: lc.GoldContextCase) -> context_mod.ContextPacket:
+    query = case.query
+    return assemble(
+        load_book(fixture_id),
+        query.target.logical_id,
+        plan_items=load_plan_items(fixture_id),
+        state_records=load_state(fixture_id).records,
+        query_id=query.query_id,
+        pov_character_id=query.pov_character_id,
+        token_budget=query.token_budget,
+    )
+
+
+# -- the golden suite ----------------------------------------------------------------------
+
+
+def graded_cases() -> list[tuple[str, lc.GoldContextCase]]:
+    return [
+        (fixture_id, case)
+        for fixture_id in FIXTURE_IDS
+        for case in load_gold(fixture_id).cases
+        if case.query.operation in SUPPORTED_OPERATIONS
+    ]
+
+
+def test_the_gold_suite_contains_a_draft_scene_case_to_grade() -> None:
+    """A guard on the guard. If the fixture's operations ever change, every parametrised
+    test below would silently collapse to zero cases and the file would still pass."""
+    assert [case.query.query_id for _, case in graded_cases()] == ["q1-draft-scene-6"]
+
+
+def test_the_operations_this_assembler_cannot_serve_are_named_rather_than_ignored() -> None:
+    """Four of the five golden cases are `evaluate` and `repair`, and nothing in LitHarness
+    answers either. Skipping them silently would let "the packet passes the gold suite" mean
+    "it passes the one fifth of it we implemented"."""
+    present = {
+        case.query.operation for fixture_id in FIXTURE_IDS for case in load_gold(fixture_id).cases
+    }
+    assert present == SUPPORTED_OPERATIONS | UNSUPPORTED_OPERATIONS
+    ungraded = [
+        case.query.query_id
+        for fixture_id in FIXTURE_IDS
+        for case in load_gold(fixture_id).cases
+        if case.query.operation not in SUPPORTED_OPERATIONS
+    ]
+    assert ungraded == ["q2-evaluate-timeline", "q3-repair-bruno", "q1-audit-gold", "q2-repair-hp"]
+
+
+@pytest.mark.parametrize(
+    ("fixture_id", "case"),
+    graded_cases(),
+    ids=[f"{fixture_id}:{case.query.query_id}" for fixture_id, case in graded_cases()],
+)
+def test_the_packet_carries_every_mandatory_item(
+    fixture_id: str, case: lc.GoldContextCase
+) -> None:
+    packet = packet_for_case(fixture_id, case)
+    missing = [
+        target.reason
+        for target in case.mandatory
+        if not _satisfies(packet, target, fixture_id)
+    ]
+    assert missing == []
+
+
+@pytest.mark.parametrize(
+    ("fixture_id", "case"),
+    graded_cases(),
+    ids=[f"{fixture_id}:{case.query.query_id}" for fixture_id, case in graded_cases()],
+)
+def test_the_packet_carries_no_forbidden_item(
+    fixture_id: str, case: lc.GoldContextCase
+) -> None:
+    packet = packet_for_case(fixture_id, case)
+    leaked = [
+        target.reason for target in case.forbidden if _satisfies(packet, target, fixture_id)
+    ]
+    assert leaked == []
+
+
+def _satisfies(
+    packet: context_mod.ContextPacket, target: lc.GoldContextTarget, fixture_id: str
+) -> bool:
+    if target.ref is not None:
+        return packet.contains_ref(target.ref.logical_id, target.ref.kind)
+    assert target.span is not None
+    return packet.contains_span(target.span.source.logical_id, target.span.start, target.span.end)
+
+
+def test_the_mandatory_span_offsets_are_the_fixtures_own() -> None:
+    """Containment makes the span check easy to satisfy accidentally, so this pins that the
+    offsets address the text the fixture says they do. If the manuscript were decoded with
+    the wrong codec — the cp1252 failure `cli import` guards against — the offsets would
+    shift and the hash would stop matching, and the containment test alone would not notice.
+    """
+    book = load_book("mystery")
+    case = next(
+        item for item in load_gold("mystery").cases if item.query.query_id == "q1-draft-scene-6"
+    )
+    spans = [target.span for target in case.mandatory if target.span is not None]
+    assert spans, "q1 is the distant-callback case and must carry a prose span"
+    for span in spans:
+        content = book.node(span.source.logical_id).content
+        assert content is not None
+        assert content_hash(content[span.start : span.end]) == span.content_sha256
+
+
+def test_the_motive_span_is_reached_through_scene_four_specifically() -> None:
+    """The distant-callback property, stated as the fixture states it: the mandatory items
+    for scene 6 come from scenes 1, 2 and 4, not from scene 5. A packet carrying only the
+    immediately preceding scene — the naive recent-window baseline — would fail this."""
+    case = next(
+        item for item in load_gold("mystery").cases if item.query.query_id == "q1-draft-scene-6"
+    )
+    packet = packet_for_case("mystery", case)
+    assert packet.contains_ref("scene-4")
+    assert packet.contains_ref("scene-1")
+
+
+def test_the_private_knowledge_is_omitted_for_the_stated_reason_not_by_accident() -> None:
+    """Absence proves nothing on its own — a packet that dropped the record for want of
+    budget, or never looked at state at all, would also "pass" the forbidden check. This
+    asserts the record was considered and excluded *because of the POV*."""
+    case = next(
+        item for item in load_gold("mystery").cases if item.query.query_id == "q1-draft-scene-6"
+    )
+    packet = packet_for_case("mystery", case)
+    reasons = {item.source_logical_id: item.reason for item in packet.omitted}
+    assert reasons["rec-brandt-knows-letter"] == "not visible to POV mara"
+    # And the record Mara *does* know is in, so the filter is not simply excluding knowledge.
+    assert packet.contains_ref("rec-mara-knows-floorboard")
+
+
+# -- what the old prompt was missing ---------------------------------------------------------
+
+
+def test_the_constraint_that_names_this_scene_reaches_the_prompt() -> None:
+    """The concrete gap this slice closed. Two locked plan items bear directly on the
+    mystery's scene 6 — a motif that repeats in it by number, and a promise the book owes
+    before it ends — and both sat in the store, parsed by `constraints_of`, read by nothing.
+    """
+    packet = assemble(
+        load_book("mystery"),
+        "scene-6",
+        plan_items=load_plan_items("mystery"),
+        state_records=load_state("mystery").records,
+        pov_character_id="mara",
+    )
+    rendered = packet.render()
+    assert "rain-on-glass motif repeats deliberately in scenes 1, 3, and 6" in rendered
+    assert "sealed letter must be read aloud at the will reading" in rendered
+
+
+def test_the_premise_is_still_there() -> None:
+    packet = assemble(
+        load_book("mystery"), "scene-6", plan_items=load_plan_items("mystery")
+    )
+    assert len(packet.sections[PREMISE]) == 1
+    assert "locked-room mystery" in packet.render()
+
+
+def test_a_book_with_no_plan_yields_no_premise_section_rather_than_a_placeholder() -> None:
+    packet = assemble(load_book("mystery"), "scene-6")
+    assert packet.sections.get(PREMISE, ()) == ()
+
+
+# -- prior prose ------------------------------------------------------------------------------
+
+
+def test_only_scenes_before_the_target_are_packed() -> None:
+    packet = assemble(make_revision(), "scene-4")
+    assert [item.source_logical_id for item in packet.sections[PRIOR_PROSE]] == [
+        "scene-1",
+        "scene-2",
+        "scene-3",
+    ]
+
+
+def test_prose_is_rendered_in_reading_order_even_though_it_is_selected_backwards() -> None:
+    """Selection order is not render order, and conflating them is the bug the module
+    docstring exists to prevent: dropping the oldest scene under a tight budget is right,
+    and handing the generator scene 5 before scene 1 is not."""
+    packet = assemble(make_revision(), "scene-6")
+    assert [item.source_logical_id for item in packet.sections[PRIOR_PROSE]] == [
+        f"scene-{n}" for n in range(1, 6)
+    ]
+    rendered = packet.render()
+    positions = [rendered.index(item.text) for item in packet.sections[PRIOR_PROSE]]
+    assert positions == sorted(positions)
+
+
+def test_an_undrafted_scene_contributes_nothing() -> None:
+    """The live case: on a regenerating book, scenes after the head are empty. An empty node
+    must not become an empty prose item, which would spend a section heading on nothing."""
+    revision = make_revision()
+    emptied = Revision(
+        book_id=revision.book_id,
+        branch_id=revision.branch_id,
+        nodes=tuple(
+            node if node.logical_id in {"book", "scene-1"} else Node(
+                logical_id=node.logical_id,
+                kind=node.kind,
+                position_key=node.position_key,
+                parent_logical_id=node.parent_logical_id,
+                title=node.title,
+            )
+            for node in revision.nodes
+        ),
+    )
+    packet = assemble(emptied, "scene-6")
+    assert [item.source_logical_id for item in packet.sections[PRIOR_PROSE]] == ["scene-1"]
+
+
+def test_the_first_scene_of_a_book_gets_an_empty_prose_section() -> None:
+    packet = assemble(load_book("mystery"), "scene-1")
+    assert packet.sections[PRIOR_PROSE] == ()
+
+
+# -- the budget --------------------------------------------------------------------------------
+
+
+def test_the_packet_never_exceeds_its_budget() -> None:
+    """The property a priority-packer can actually promise. Which items survive is scoring,
+    and scoring is LongRangeContext's; staying inside the ceiling is this module's."""
+    for budget in (1800, 2000, 2400, 3000, 6000):
+        packet = assemble(
+            load_book("mystery"),
+            "scene-6",
+            plan_items=load_plan_items("mystery"),
+            state_records=load_state("mystery").records,
+            token_budget=budget,
+            reserved_output=1500,
+        )
+        assert packet.used_tokens <= budget - 1500, budget
+
+
+def test_everything_dropped_is_recorded_with_a_reason() -> None:
+    """The whole of what a baseline honestly owes. A packet that silently dropped the
+    constraint naming this scene would be worse than the bare prompt it replaces, because
+    the bare prompt was at least obviously empty."""
+    full = assemble(
+        load_book("mystery"),
+        "scene-6",
+        plan_items=load_plan_items("mystery"),
+        state_records=load_state("mystery").records,
+        token_budget=6000,
+    )
+    squeezed = assemble(
+        load_book("mystery"),
+        "scene-6",
+        plan_items=load_plan_items("mystery"),
+        state_records=load_state("mystery").records,
+        token_budget=1700,
+        reserved_output=1500,
+    )
+    assert len(squeezed.items) < len(full.items)
+    dropped = {item.source_logical_id for item in full.items} - {
+        item.source_logical_id for item in squeezed.items
+    }
+    recorded = {item.source_logical_id for item in squeezed.omitted}
+    assert dropped and dropped <= recorded
+
+
+def test_prose_is_what_goes_first_under_pressure() -> None:
+    """Priority order, asserted rather than described: the director's constraints and the
+    book's open threads are small and load-bearing; prose is large and partly redundant with
+    the facts extracted from it."""
+    packet = assemble(
+        load_book("mystery"),
+        "scene-6",
+        plan_items=load_plan_items("mystery"),
+        state_records=load_state("mystery").records,
+        token_budget=1700,
+        reserved_output=1500,
+    )
+    assert packet.sections[CONSTRAINTS], "constraints must outrank prose"
+    assert packet.sections[PRIOR_PROSE] == ()
+
+
+def test_prose_is_dropped_oldest_first() -> None:
+    """The recent-window baseline: scene 5 matters more to scene 6 than scene 1 does."""
+    packet = assemble(
+        load_book("mystery"),
+        "scene-6",
+        token_budget=1700,
+        reserved_output=1500,
+    )
+    kept = [item.source_logical_id for item in packet.sections[PRIOR_PROSE]]
+    assert kept, "a budget with no plan or state to spend on should hold some prose"
+    assert kept[-1] == "scene-5"
+
+
+def test_a_budget_too_small_for_the_premise_refuses_rather_than_dropping_it() -> None:
+    """`plans.py` records why: a book drafted without a premise produces six scenes of
+    plausible prose about nothing, and no gate in this system can detect that. So this is a
+    refusal an operator sees, not an omission buried in a list."""
+    with pytest.raises(ContextBudgetTooSmall, match="premise"):
+        assemble(
+            load_book("mystery"),
+            "scene-6",
+            plan_items=load_plan_items("mystery"),
+            token_budget=1510,
+            reserved_output=1500,
+        )
+
+
+def test_output_tokens_are_reserved_out_of_the_budget() -> None:
+    """A budget spent entirely on input leaves no room for the scene, and discovering that
+    at the provider is discovering it after paying for it."""
+    generous = assemble(load_book("mystery"), "scene-6", token_budget=3000, reserved_output=0)
+    reserved = assemble(load_book("mystery"), "scene-6", token_budget=3000, reserved_output=2500)
+    assert reserved.used_tokens < generous.used_tokens
+
+
+# -- accounting and projection -------------------------------------------------------------------
+
+
+def test_token_counts_are_the_regex_v1_approximation() -> None:
+    """Matching LongRangeContext's counter is deliberate. §13 keeps siblings depending on
+    contracts and never on each other, so it is reimplemented rather than imported — but a
+    packet whose budget accounting differed from the benchmark that grades packets would
+    produce numbers nobody could compare."""
+    assert context_mod.COUNTER_ID == "regex-v1"
+    assert count_tokens("Mara laid the new will on the desk.") == 9
+    assert count_tokens("") == 0
+
+
+def test_the_packets_token_total_is_the_sum_of_its_items() -> None:
+    packet = assemble(
+        load_book("mystery"),
+        "scene-6",
+        plan_items=load_plan_items("mystery"),
+        state_records=load_state("mystery").records,
+    )
+    assert packet.used_tokens == sum(item.tokens for item in packet.items)
+    assert packet.used_tokens > 0
+
+
+def test_the_packet_projects_onto_the_contract() -> None:
+    """`ContextPacket` is the shape LongRangeContext consumes, and emitting it is what makes
+    the packet an artifact a sibling could grade rather than a private string."""
+    packet = assemble(
+        load_book("mystery"),
+        "scene-6",
+        plan_items=load_plan_items("mystery"),
+        state_records=load_state("mystery").records,
+        query_id="q1-draft-scene-6",
+        pov_character_id="mara",
+    )
+    projected = packet.to_contract(
+        meta("context_packet", "packet-1"), project_id=PROJECT_ID, packet_id="packet-1"
+    )
+    assert projected.query_id == "q1-draft-scene-6"
+    assert projected.budget.used == packet.used_tokens
+    assert projected.budget.reserved_output == packet.reserved_output
+    assert [section.name for section in projected.sections] == [
+        PREMISE, CONSTRAINTS, THREADS, FACTS, PRIOR_PROSE
+    ]
+    # The rejected candidates are on the artifact, not only in the log — an omission a
+    # consumer cannot see is an omission that did not happen, as far as the consumer knows.
+    assert any(
+        rejected.item_id == "rec-brandt-knows-letter"
+        for rejected in projected.rejected_candidates
+    )
+    # And it survives a round trip through the wire, which is what "artifact" means.
+    assert lc.from_jsonable(lc.ContextPacket, lc.to_jsonable(projected)).packet_id == "packet-1"
+
+
+def test_assembly_is_deterministic() -> None:
+    """§13's reproducibility levels are what let a recorded policy decision mean anything
+    later, and a packet that packed differently on two runs would make the prompt — and
+    therefore the candidate — unreproducible from the same inputs."""
+    kwargs = {
+        "plan_items": load_plan_items("mystery"),
+        "state_records": load_state("mystery").records,
+        "pov_character_id": "mara",
+    }
+    first = assemble(load_book("mystery"), "scene-6", **kwargs)  # type: ignore[arg-type]
+    second = assemble(load_book("mystery"), "scene-6", **kwargs)  # type: ignore[arg-type]
+    assert first.render() == second.render()
+    assert [item.item_id for item in first.items] == [item.item_id for item in second.items]
+
+
+def test_the_litrpg_book_assembles_too() -> None:
+    """§17 Stage 1 is graded on both fixtures, and the litrpg one has no `draft_scene` gold
+    case — so this asserts the assembler runs over it and produces something, which is the
+    honest claim available without ground truth."""
+    packet = assemble(
+        load_book("litrpg"),
+        "scene-6",
+        plan_items=load_plan_items("litrpg"),
+        state_records=load_state("litrpg").records,
+    )
+    assert packet.sections[PREMISE]
+    assert packet.sections[PRIOR_PROSE]
+    assert packet.used_tokens > 0
+
+
+# -- rendering ------------------------------------------------------------------------------------
+
+
+def test_sections_are_labelled_so_a_constraint_is_not_mistaken_for_prose() -> None:
+    packet = assemble(
+        load_book("mystery"),
+        "scene-6",
+        plan_items=load_plan_items("mystery"),
+        state_records=load_state("mystery").records,
+        pov_character_id="mara",
+    )
+    rendered = packet.render()
+    assert "Premise:" in rendered
+    assert "Locked constraints and promises" in rendered
+    assert "Open threads the book still owes" in rendered
+    assert "Established facts known to mara" in rendered
+    assert "The story so far" in rendered
+
+
+def test_an_empty_packet_renders_to_nothing_rather_than_to_headings() -> None:
+    empty = assemble(
+        Revision(
+            book_id=BOOK_ID,
+            branch_id=BRANCH_ID,
+            nodes=(Node(logical_id="book", kind=NodeKind.BOOK, position_key="010"),),
+        ),
+        "scene-1",
+    )
+    assert empty.render() == ""

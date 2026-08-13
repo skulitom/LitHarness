@@ -81,4 +81,30 @@ def fixture_plans(fixture_id: str) -> Path:
     return _fixture_file(fixture_id, "plans.json")
 
 
-__all__ = ["FIXTURE_IDS", "FixturesUnavailable", "fixture_manuscript", "fixture_plans"]
+def fixture_state(fixture_id: str) -> Path:
+    """The `state.json` beside those two — objective story state (§11).
+
+    The third of the three artifacts a golden book ships, and the last to get a reader: it
+    carries the open threads and the POV-restricted knowledge a context packet is graded on.
+    """
+    return _fixture_file(fixture_id, "state.json")
+
+
+def fixture_context_gold(fixture_id: str) -> Path:
+    """The `GoldContextSuite` that grades a packet — mandatory and forbidden items per query.
+
+    Used by the suite rather than by the system: it is ground truth, not input. It is the
+    reason context assembly can be tested for correctness at all instead of eyeballed, and
+    nothing in this repository referenced it until there was a packet to grade.
+    """
+    return _fixture_file(fixture_id, "context_gold.json")
+
+
+__all__ = [
+    "FIXTURE_IDS",
+    "FixturesUnavailable",
+    "fixture_context_gold",
+    "fixture_manuscript",
+    "fixture_plans",
+    "fixture_state",
+]

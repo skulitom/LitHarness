@@ -822,17 +822,56 @@ functioning.
 **Exit:** the mystery and litrpg fixture books regenerate from premise to accepted
 six-scene draft autonomously; zero silent mutation; every acceptance carries a
 recorded policy decision; planted-defect injection is caught by gates, not luck.
-**Three of four clauses met (slice 7).** Both fixture books reach six accepted scenes with
-no human in the loop — `import` then bare `tick`s, nothing enqueued by hand
-(`tests/test_planner.py`). Every acceptance carries a recorded decision, and "zero silent
-mutation" became checkable rather than asserted once `revert` was made to attribute itself
-and `litharness verify` learned to report revisions no decision explains. **The fourth
-clause is untouched and is the whole of the remaining work:** the only blocking gate in the
-wired path is `shape.draft.v0`, so *accepted* currently means "a string of plausible
-length". Nothing injects a planted defect and nothing would catch one. Also unbuilt from the
-clause list above: the context baseline (beat prompts carry no prior prose) and the
-game-system replay validation (§8.4's pack lives in ContinuityEvaluation and LitHarness has
-no state records to feed it).
+**Three of four clauses met (slice 7); the context baseline landed in slice 8.** Both
+fixture books reach six accepted scenes with no human in the loop — `import` then bare
+`tick`s, nothing enqueued by hand (`tests/test_planner.py`). Every acceptance carries a
+recorded decision, and "zero silent mutation" became checkable rather than asserted once
+`revert` was made to attribute itself and `litharness verify` learned to report revisions no
+decision explains. **The fourth clause is untouched and is the whole of the remaining
+work:** the only blocking gate in the wired path is `shape.draft.v0`, so *accepted* still
+means "a string of plausible length". Nothing injects a planted defect and nothing would
+catch one.
+
+**Slice 8 built the objective-story-state layer and the context packet, and it is worth
+recording that these were one slice rather than two.** §11's spine lists seven state layers
+and exactly one had no table — objective story state — and *both* remaining Stage 1 items sit
+on it: §12 step 2's packet needs open threads and POV-visible knowledge to read, and §12
+steps 5-6's integrity gate needs somewhere to write extracted candidates and something to
+replay them against. Building either first would have meant inventing a private store for it.
+The fixtures had been shipping `state.json` beside `manuscript.json` and `plans.json` since
+0.1.0 and `import` read two of the three.
+
+Three things this slice found, each of which would have been a silent wrong answer:
+
+- **`context_gold.json` existed all along and nothing referenced it.** The contracts
+  `GoldContextSuite` states, span-exact and hash-checked, what the packet for the mystery's
+  scene 6 must contain and must not: four mandatory items spanning scenes 1, 2 and 4, and one
+  forbidden POV leak. The measuring instrument for this work predated the work by the whole
+  project, which is the strongest form of §20.3's consumer-first sequencing — the shape was
+  not guessed at all.
+- **`StateRecordKind.EVENT` is referenced as `ResourceKind.STATE_EVENT`.** The two
+  vocabularies differ in exactly one member, so the obvious `ResourceKind(record.kind.value)`
+  raises on that one and works on all the others — and the golden suite names that exact
+  resource kind. Mapped by an explicit table, mutation-tested.
+- **An absent POV must *exclude* a restricted record, not admit it.** The suite settles this
+  by forbidding `rec-brandt-knows-letter` in a case whose query names no POV at all.
+  Defaulting the other way would make "forgot to pass the POV" mean "leak everything
+  private", with nothing downstream able to tell.
+
+**What the packet honestly is, stated so it is not overclaimed.** §12 words step 2 as a
+"simple baseline until LongRangeContext promotes", and this packs by a fixed priority order
+— premise, constraints, threads, facts, prose — not by relevance. Under a budget that binds
+it drops the oldest prose rather than the least relevant and has no way to know the
+difference. What it therefore owes, and what is tested, is that **every omission is
+recorded** with its reason, on the artifact and on the job payload. On six-scene fixtures the
+budget never binds, so this limit is currently invisible; it will not be at Book Zero length.
+Only `draft_scene` is served — the suite's four `evaluate` and `repair` cases are named as
+ungraded rather than skipped, so implementing one without grading it fails the suite.
+
+Still unbuilt from the clause list above: **state extraction** (§12 step 5 — records enter
+only through `import`, so a book the system drafts itself accumulates no new facts) and the
+**game-system replay validation** (§8.4's pack lives in ContinuityEvaluation; the state
+layer is now the place its findings would land, and nothing lands there yet). 368 tests.
 
 ### Stage 2 — Detect and scoped repair
 Promote RevisionBench's A3d detect–repair–verify results into the repair path;
@@ -1088,7 +1127,10 @@ every unstruck action below as a claim to re-verify rather than a task to start.
      revision, with provenance recorded on both the accepted and the refused path.
      What *is* still a Stage 1 concern is where the prompt comes from — today the
      caller supplies it in the payload, because no planner derives it from a beat and
-     no context packet grounds it.
+     no context packet grounds it. *(Both halves closed since: the template planner
+     derives the prompt from a beat in slice 7, and slice 8 grounds it in an assembled
+     context packet. `enqueue --prompt` remains for drafting one node by hand and is now
+     the exception. See §17 Stage 1 for what the packet does and does not do.)*
    - **A real work-selection policy** is blocked on the plan graph and findings store
      as stated — but there was a second, purely local blocker the plan never named:
      `claim_next` hardcoded `ORDER BY rowid LIMIT 1`, so *no* ordering other than FIFO

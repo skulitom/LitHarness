@@ -40,6 +40,13 @@ from litharness.adapters.sqlite_store import SqliteStore
 from litharness.application.conductor import WorkSelector
 from litharness.application.handlers import SCENE_DRAFT
 from litharness.domain.beats import SIX_BEAT, Beat, BeatTemplate, TemplateMismatch, beats_for
+from litharness.domain.context import (
+    COUNTER_ID,
+    DEFAULT_TOKEN_BUDGET,
+    ContextBudgetTooSmall,
+    ContextPacket,
+    assemble,
+)
 from litharness.domain.draft import DraftPolicy, is_draftable
 from litharness.domain.events import payload_digest
 from litharness.domain.jobs import Job, input_digest_for
@@ -70,28 +77,65 @@ def beat_job_id(
     return f"beat-{sha256(material.encode()).hexdigest()[:24]}"
 
 
-def render_prompt(beat: Beat, *, book_title: str | None, premise: str) -> tuple[str, str]:
-    """(system, prompt) for one beat. Deliberately thin.
+def render_prompt(
+    beat: Beat, *, book_title: str | None, packet: ContextPacket
+) -> tuple[str, str]:
+    """(system, prompt) for one beat, grounded in an assembled context packet.
 
-    This is the seam context assembly attaches to in the next slice — §12 step 2 wants the
-    frozen revision's local prose, locked constraints, game state, POV-visible knowledge and
-    distant callbacks. None of that is here, and pretending otherwise by stuffing in
-    whatever is cheap to reach would make the later slice a rewrite rather than an
-    extension. What is here is what a template planner can honestly supply: where the scene
-    sits, what it is for, and what the book is about.
+    This was the seam §12 step 2 attaches to, and the packet is now what fills it. Before,
+    the prompt was the scene's title, its ordinal, the word "resolution" and the premise —
+    so the final scene of a locked-room mystery was asked to resolve it while knowing
+    nothing of what had been found, who was in the room, or what the book had promised.
+
+    The packet goes *before* the instruction and the instruction last, because the last
+    thing in a prompt is the thing a model acts on; leading with "write this scene" and
+    then supplying the book invites a scene written from the header.
     """
     system = (
         "You are drafting one scene of a novel. Write only the scene's prose: no headings, "
-        "no commentary, no summary of what you wrote."
+        "no commentary, no summary of what you wrote. The context below is established and "
+        "may be relied on; do not contradict it."
     )
     title = f"{book_title}: " if book_title else ""
     prompt = (
-        f"{title}{beat.title or beat.logical_id}\n"
-        f"Scene {beat.ordinal} of {beat.of_total}. Dramatic function: {beat.function}.\n\n"
-        f"Premise: {premise}\n\n"
-        "Write this scene."
+        f"{packet.render()}\n\n"
+        f"Now write {title}{beat.title or beat.logical_id} — scene {beat.ordinal} of "
+        f"{beat.of_total}. Dramatic function: {beat.function}."
     )
     return system, prompt
+
+
+def packet_for(
+    store: SqliteStore,
+    revision: Revision,
+    beat: Beat,
+    *,
+    token_budget: int = DEFAULT_TOKEN_BUDGET,
+    pov_character_id: str | None = None,
+) -> ContextPacket:
+    """Load this book's plan and state and assemble the beat's packet.
+
+    The one place the packet touches the store. `assemble` stays pure so the golden
+    `GoldContextSuite` can grade it without a database, which is also what keeps the grading
+    honest — a test that had to build a store to ask "is the motive in the packet" would be
+    testing the store.
+
+    **No story-time cutoff is passed, and that is a decision rather than an omission.**
+    `domain/state.py` records why: nothing defines a mapping from a manuscript scene to an
+    `order_key`, and inventing `f"s{beat.ordinal}"` would fit both fixtures and silently
+    mis-slice every other book. In the live loop the question does not arise — records are
+    extracted from accepted prose, so the only records that exist describe scenes already
+    written. It arises only for a book imported with its state intact, which is inspection.
+    """
+    return assemble(
+        revision,
+        beat.logical_id,
+        plan_items=store.plan_items(revision.book_id, revision.branch_id),
+        state_records=store.state_records(revision.book_id, revision.branch_id),
+        query_id=f"beat:{beat.logical_id}",
+        pov_character_id=pov_character_id,
+        token_budget=token_budget,
+    )
 
 
 @dataclass(frozen=True, slots=True)
@@ -155,6 +199,7 @@ def make_plan_selector(
     template: BeatTemplate = DEFAULT_TEMPLATE,
     policy: DraftPolicy | None = None,
     project_id: str = "",
+    token_budget: int = DEFAULT_TOKEN_BUDGET,
 ) -> WorkSelector:
     """Build a `WorkSelector` that materialises the next unblocked beat.
 
@@ -162,6 +207,10 @@ def make_plan_selector(
     duration)` has no book scope, and the book set is state the selector carries. Widening
     the protocol would change every existing selector and its tests for one caller's
     benefit — the same reason handlers are closures.
+
+    `token_budget` bounds the *context* a beat is drafted against, and is separate from
+    `BudgetPolicy`'s ceilings, which bound the spend. They fail differently and on purpose: a
+    context budget drops the oldest scene from the packet, a spend ceiling refuses the call.
     """
 
     def select(store: SqliteStore, holder: str, now: float, duration: float) -> Job | None:
@@ -185,9 +234,8 @@ def make_plan_selector(
             head = store.head(progress.book_id, progress.branch_id)
             if head is None:  # pragma: no cover - plan_progress already excluded this
                 continue
-            premise = premise_of(store.plan_items(progress.book_id, progress.branch_id))
-            if premise is None:  # pragma: no cover - blocked_reason covers it
-                continue
+            if premise_of(store.plan_items(progress.book_id, progress.branch_id)) is None:
+                continue  # pragma: no cover - blocked_reason covers it
             epoch = store.plan_epoch(progress.book_id, progress.branch_id)
             beats = beats_for(head, template)
             ids = [
@@ -214,8 +262,17 @@ def make_plan_selector(
                 if store.has_job(job_id):
                     # Already planned under this epoch: in flight, or burned by a poison.
                     continue
+                try:
+                    packet = packet_for(store, head, beat, token_budget=token_budget)
+                except ContextBudgetTooSmall:
+                    # A ceiling too small to hold the premise refuses the *book*, not this
+                    # beat: every beat of it would refuse identically, and enqueueing six
+                    # units that each fail the same way is how a queue fills with one
+                    # misconfiguration. Skipping leaves `plan_progress` reporting the book
+                    # undrafted, which is true.
+                    break
                 system, prompt = render_prompt(
-                    beat, book_title=_book_title(head), premise=premise
+                    beat, book_title=_book_title(head), packet=packet
                 )
                 payload = {
                     "revision_id": head.revision_id,
@@ -236,6 +293,27 @@ def make_plan_selector(
                         "plan_epoch": epoch,
                         "predicate": "draftable.v0",
                     },
+                    # What the scene was told, and what it was not. `context_omitted` is the
+                    # honest half: a baseline that packs by priority rather than relevance
+                    # will drop things a scorer would have kept, and the omission being in
+                    # the payload is what makes that reviewable after the fact instead of
+                    # invisible in a prompt nobody kept.
+                    "context": {
+                        "query_id": packet.query_id,
+                        "items": len(packet.items),
+                        "tokens": packet.used_tokens,
+                        "budget": packet.token_budget,
+                        "counter": COUNTER_ID,
+                        "sections": {
+                            name: len(items)
+                            for name, items in packet.sections.items()
+                            if items
+                        },
+                    },
+                    "context_omitted": [
+                        {"source": item.source_logical_id, "reason": item.reason}
+                        for item in packet.omitted
+                    ],
                 }
                 inserted = store.enqueue(
                     Job(
@@ -264,6 +342,7 @@ __all__ = [
     "BookProgress",
     "beat_job_id",
     "make_plan_selector",
+    "packet_for",
     "plan_progress",
     "render_prompt",
 ]

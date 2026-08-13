@@ -924,6 +924,89 @@ class SqliteStore:
             for row in self._connection.execute(sql, params)
         ]
 
+    # -- objective story state -------------------------------------------------
+
+    def record_state_records(
+        self,
+        book_id: str,
+        branch_id: str,
+        records: Sequence[lc.StateRecord],
+        *,
+        created_at: str,
+        source_revision_id: str | None = None,
+        events: Sequence[Event] = (),
+    ) -> int:
+        """Store state records. Returns how many rows were new.
+
+        `INSERT OR IGNORE` keyed on (book, branch, record_id), so re-importing the same
+        snapshot is a no-op — the same idempotency every other write in this store has. A
+        record whose *content* changed under an unchanged id is therefore not an update, and
+        that is correct: §11 forbids canon being rewritten in place, and a fact that changed
+        is a new record with new evidence, not the old one edited.
+        """
+        inserted = 0
+        with self.transaction() as connection:
+            for record in records:
+                position = record.story_position.order_key if record.story_position else None
+                cursor = connection.execute(
+                    "INSERT OR IGNORE INTO state_records (book_id, branch_id, record_id, "
+                    "kind, subject, predicate, value_json, order_key, authority, "
+                    "record_json, source_revision_id, created_at) "
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                    (
+                        book_id,
+                        branch_id,
+                        record.record_id,
+                        record.kind.value,
+                        record.subject,
+                        record.predicate,
+                        None
+                        if record.value is None
+                        else json.dumps(record.value, sort_keys=True, ensure_ascii=False),
+                        position,
+                        record.authority.value,
+                        json.dumps(lc.to_jsonable(record), sort_keys=True, ensure_ascii=False),
+                        source_revision_id,
+                        created_at,
+                    ),
+                )
+                inserted += cursor.rowcount
+            for event in events:
+                self._insert_event(connection, event)
+        return inserted
+
+    def state_records(
+        self,
+        book_id: str,
+        branch_id: str,
+        *,
+        subject: str | None = None,
+        before: str | None = None,
+    ) -> list[lc.StateRecord]:
+        """Canon and proposals alike, in story order. Filtering to canon is the caller's.
+
+        `before` slices on `order_key` and **keeps records with none**: an unplaced record
+        asserts no narrative position, and treating that as "later than everything" would
+        drop every standing world rule from every packet. `domain/state.py::records_before`
+        applies the identical rule in memory, and the two are tested against each other —
+        one query, two implementations is how a selector drifts from its gate.
+        """
+        sql = "SELECT record_json FROM state_records WHERE book_id = ? AND branch_id = ?"
+        params: list[Any] = [book_id, branch_id]
+        if subject is not None:
+            sql += " AND subject = ?"
+            params.append(subject)
+        if before is not None:
+            sql += " AND (order_key IS NULL OR order_key <= ?)"
+            params.append(before)
+        # NULLs last, matching `in_story_order`. SQLite sorts NULL first by default, which
+        # would put unplaced records ahead of scene one.
+        sql += " ORDER BY order_key IS NULL, order_key, record_id"
+        return [
+            lc.from_jsonable(lc.StateRecord, json.loads(row["record_json"]))
+            for row in self._connection.execute(sql, params)
+        ]
+
     def plan_epoch(self, book_id: str, branch_id: str) -> int:
         row = self._connection.execute(
             "SELECT epoch FROM plan_epochs WHERE book_id = ? AND branch_id = ?",

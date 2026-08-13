@@ -40,6 +40,7 @@ from litharness.application import status as status_module
 from litharness.application.conductor import Conductor, TickOutcome
 from litharness.application.handlers import SCENE_DRAFT, make_scene_draft_handler
 from litharness.application.planner import make_plan_selector
+from litharness.domain import state as state_mod
 from litharness.domain.budget import BudgetPolicy
 from litharness.domain.directives import Directive, DirectiveKind, DirectiveStatus, directive_id_for
 from litharness.domain.events import Event, EventType
@@ -48,6 +49,7 @@ from litharness.domain.jobs import Job, JobStatus, input_digest_for
 from litharness.domain.plans import import_plan, premise_of
 from litharness.domain.policy import Outcome, PolicyDecision, decision_id_for
 from litharness.domain.revision import import_manuscript
+from litharness.domain.state import import_state
 from litharness.providers import build_default_registry
 
 #: Exit codes, which are how the scheduler reads the outcome. See the module docstring.
@@ -409,6 +411,27 @@ def cmd_import(args: argparse.Namespace) -> int:
         )
         plan_items, plan_source = list(plan.items), plan.source_revision_id
 
+    # Objective story state travels with the manuscript for the same reason the plan does,
+    # and it is the third of the three artifacts a golden book ships. It is *optional* where
+    # the plan is not: a book without a premise cannot be drafted at all, while a book
+    # without state records drafts with a thinner packet — worse, but not blocked. A
+    # regenerated book starts with none by definition, since records are extracted from
+    # accepted prose.
+    state_records: list[lc.StateRecord] = []
+    state_source: str | None = None
+    state_path = args.state or (
+        contracts_fixtures.fixture_state(args.fixture) if args.fixture else None
+    )
+    if state_path is not None:
+        state_snapshot = lc.parse_artifact(
+            lc.StateSnapshot, json.loads(Path(state_path).read_text(encoding="utf-8"))
+        )
+        imported_state = import_state(
+            state_snapshot, book_id=revision.book_id, branch_id=revision.branch_id
+        )
+        state_records = list(imported_state.records)
+        state_source = imported_state.source_revision_id
+
     store = _store(args)
     try:
         # Decision first, then the revision — the same order as the draft handler, for the
@@ -440,6 +463,34 @@ def cmd_import(args: argparse.Namespace) -> int:
                     )
                 ],
             )
+        if state_records:
+            store.record_state_records(
+                revision.book_id,
+                revision.branch_id,
+                state_records,
+                created_at=stamp,
+                source_revision_id=state_source,
+                events=[
+                    Event(
+                        event_type=EventType.STATE_RECORDS_ACCEPTED,
+                        project_id=args.project,
+                        created_at=stamp,
+                        actor=args.holder,
+                        book_id=revision.book_id,
+                        branch_id=revision.branch_id,
+                        revision_id=revision.revision_id,
+                        payload={
+                            "records": len(state_records),
+                            "source_revision_id": state_source,
+                            # Accepted on the director's authority, not extracted from prose
+                            # this system generated. Recorded because the distinction is the
+                            # whole of what §12 step 5 will add, and an event log that did
+                            # not say so would make the two indistinguishable later.
+                            "extracted": False,
+                        },
+                    )
+                ],
+            )
     finally:
         store.close()
 
@@ -452,6 +503,15 @@ def cmd_import(args: argparse.Namespace) -> int:
         print(f"  {len(plan_items)} plan item(s); premise: {'yes' if premise else 'MISSING'}")
     else:
         print("  no plan imported — the planner will report this book blocked")
+    if state_records:
+        threads = len(state_mod.open_threads(state_records))
+        restricted = sum(1 for record in state_records if record.pov_visibility)
+        print(
+            f"  {len(state_records)} state record(s); {threads} open thread(s), "
+            f"{restricted} POV-restricted"
+        )
+    else:
+        print("  no state imported — scenes draft against plan and prose only")
     if imported.kept_locked:
         print(
             f"  {len(imported.kept_locked)} scene(s) left intact by a content lock and "
@@ -677,6 +737,13 @@ def build_parser() -> argparse.ArgumentParser:
         type=Path,
         help="a plans.json to import alongside; implied by --fixture. Without a premise "
         "the planner reports the book blocked rather than drafting it",
+    )
+    importer.add_argument(
+        "--state",
+        type=Path,
+        help="a state.json to import alongside; implied by --fixture. Open threads and "
+        "POV-visible knowledge for the context packet — without it scenes draft against "
+        "the plan and prior prose only",
     )
     importer.add_argument(
         "--keep-content",
