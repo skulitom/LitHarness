@@ -1,6 +1,6 @@
 # Stage 0 decisions
 
-**Status:** Slices 1-5 built and green — **240 tests (+3 opt-in live), ruff clean, mypy
+**Status:** Stage 0 slices 1-6 and Stage 1 slice 7 built and green — **292 tests (+3 opt-in live), ruff clean, mypy
 strict clean.** Slice 1 is the model-free manuscript spine; slice 2 the Conductor skeleton
 (tick, instance lease, job selection, digest, outbox dispatch, crash recovery); slice 3 the
 four provider adapters with their conformance suite and the billing guard; slice 4 **the
@@ -489,3 +489,78 @@ configured differently), then the installed package's own location, then a sibli
 Each candidate is tested for the *manuscript*, not the directory. PLAN.md §20.2 records a
 machine-bound `samefile("C:/DEV/litharness-contracts/schemas")` as a defect worth fixing in
 a sibling repository; hard-coding one here would have been the same bug.
+
+## 20. Beats are derived, not stored
+
+`domain/beats.py`, `migrations/011_plan.sql`. Stage 1 asks for a *template planner (fixed
+beat sheet)*, and the imported manuscript already **is** the ordered, addressable set of
+work units: `Revision.in_reading_order()` walks `children_of`, which sorts by
+`(parse_key(position_key), logical_id)` and drops tombstones.
+
+So there is no `beats` table, no `scene_plan` row per node, and no `status`/`done`/`ordinal`
+column. The reason is sharper than "avoid duplication". `TARGET_HAS_NO_CONTENT` and
+`CONTENT_LOCKED` are in neither `RETRYABLE` nor `REGENERABLE`, so `decide` escalates them
+before consulting the attempt budget and `_settle` parks the unit **and files an
+exception**. A stored "is this beat done" flag that drifted from the manuscript would
+therefore not merely waste a tick — it would fill the queue §4.3 reserves for the director
+with work nobody asked a human about. `draft_block` is extracted from `gate_draft` so the
+selector's precondition is *literally* the gate's: one function, two callers, drift
+impossible rather than merely unlikely.
+
+What does get a table is the half `import` was throwing away: the premise, promises and
+locked constraints in `plans.json`. The premise is the one thing a prompt cannot be
+rendered without. `authority`, `locked` and `links` ride inside `item_json` rather than
+becoming columns, because nothing in this slice reads them — §20.3's rule that a shape gets
+proven by a consumer first.
+
+**A scene-count mismatch refuses rather than interpolating.** Six template functions
+against five or seven scenes has no defensible mapping, and choosing one silently would
+mislabel the dramatic function of every beat after the gap.
+
+## 21. One draft in flight per book, and why that is what keeps history linear
+
+`application/planner.py`. The selector drains the queue before consulting the plan, and
+refuses to plan a book that already has a queued or running beat.
+
+This is the invariant that stops the branch forking. A job payload freezes its base
+revision, and every acceptance writes `branch_heads` unconditionally — so six beats planned
+against one import revision produce six *sibling* revisions, each holding one drafted scene
+and five empty ones, each overwriting the head. The result is a book with one scene of
+prose, six accepted policy decisions, six acceptance events, and no error anywhere. Every
+per-scene assertion passes. `test_the_head_lineage_is_linear_and_carries_every_scene` is the
+only thing that catches it, which is why it asserts a lineage length rather than a scene
+count.
+
+Drain-first *usually* achieves the invariant on its own, since a queued job is claimed
+before planning happens — but not when that job is leased by another holder, and an
+incidental guarantee is one that breaks quietly. `store.any_unfinished` makes it explicit.
+
+**A blocked beat is skipped, not waited on** (§4.1: "a blocked or parked item never stalls
+the queue"). There is no predecessor rule: if beat 3 is content-locked, beats 4-6 still
+draft and the book finishes with a visible hole. Sequential ordering would be easier to
+reason about and would let one bad scene stop a book.
+
+## 22. Job ids carry a plan epoch
+
+`beat_job_id`. Derived from `(book, branch, logical_id, template_id, epoch)` — so a replayed
+tick converges instead of re-enqueueing, matching how revisions, decisions and events are
+already keyed.
+
+Two exclusions and one inclusion, all deliberate. The **prompt** is excluded: editing the
+template must not mint a second job for work already accepted. The **base revision** is
+excluded: it moves on every acceptance, so including it would mint a fresh job after every
+scene. The **epoch** is included because `jobs.idempotency_key` is UNIQUE, so a poisoned
+beat's id is spent permanently — without a version, "try scene 3 again after I unlocked it"
+would be inexpressible and the operator's only recourse would be a new database.
+
+## 23. A book that cannot be planned reports why, rather than looking finished
+
+`plan_progress`. A book with no premise and a book that is complete both produce
+`TickOutcome.NO_WORK`, and telling them apart is the whole difference between a green board
+and a true one. `BookProgress.blocked_reason` carries the sentence; `complete` is false
+whenever it is set.
+
+The premise is required rather than defaulted for the same reason: a planner that
+substituted a placeholder would draft a book against a premise nobody wrote, and the
+failure mode — six scenes of plausible prose about nothing — is one no gate in this system
+can detect.

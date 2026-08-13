@@ -4,6 +4,8 @@ mechanical work and tests, and a deterministic fake for the model-free suite.
 Design and measurements: `plan/provider-adapters.md`.
 """
 
+import os
+
 from litharness.providers.base import (
     CompletionRequest,
     CompletionResult,
@@ -30,12 +32,18 @@ def build_default_registry() -> ProviderRegistry:
     `LITHARNESS_ENV=test` filters billing providers out of resolution entirely, so this is
     safe to call from a test process — the registry, not the caller, enforces that.
     """
+    # The fake's answer is ~140 characters and `DraftPolicy.min_chars` is 200, so a
+    # model-free run would fail the shape gate on every beat. `LITHARNESS_FAKE_PAD_CHARS`
+    # pads it to a length that clears the floor. Opt-in and off by default: padding is
+    # scaffolding for exercising the loop without a model, and a default that quietly made
+    # the fake look like a competent writer would make the gate untestable.
+    pad = int(os.environ.get("LITHARNESS_FAKE_PAD_CHARS", "0") or 0)
     return ProviderRegistry(
         providers=[
             ClaudeCodeProvider(),
             CodexProvider(),
             OllamaProvider(),
-            FakeProvider(),
+            FakeProvider(pad_to_chars=pad),
         ],
         order=["claude_code", "codex", "ollama", "fake"],
         cheap_order=["ollama", "fake", "claude_code", "codex"],

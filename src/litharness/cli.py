@@ -36,11 +36,13 @@ from litharness.adapters.sqlite_store import MigrationsMissing, SqliteStore
 from litharness.application import status as status_module
 from litharness.application.conductor import Conductor, TickOutcome
 from litharness.application.handlers import SCENE_DRAFT, make_scene_draft_handler
+from litharness.application.planner import make_plan_selector
 from litharness.domain.budget import BudgetPolicy
 from litharness.domain.directives import Directive, DirectiveKind, DirectiveStatus, directive_id_for
 from litharness.domain.events import Event, EventType
 from litharness.domain.exceptions import ExceptionStatus
 from litharness.domain.jobs import Job, JobStatus, input_digest_for
+from litharness.domain.plans import import_plan, premise_of
 from litharness.domain.policy import Outcome, PolicyDecision, decision_id_for
 from litharness.domain.revision import import_manuscript
 from litharness.providers import build_default_registry
@@ -104,6 +106,10 @@ def _conductor(store: SqliteStore, args: argparse.Namespace) -> Conductor:
         holder=args.holder,
         project_id=args.project,
         registry=registry,
+        # §4.1's "work selection is a policy over the book's state", replacing the FIFO
+        # placeholder. It drains the queue first, so retries and hand-enqueued work still
+        # outrank planning; only when nothing is claimable does it materialise a beat.
+        select=make_plan_selector(project_id=args.project),
         handlers={
             SCENE_DRAFT: make_scene_draft_handler(
                 registry, store, args.project, budget=_budget(args)
@@ -372,6 +378,24 @@ def cmd_import(args: argparse.Namespace) -> int:
         },
     )
 
+    # The plan travels with the manuscript. Importing one without the other produces a book
+    # the planner cannot draft — `premise_of` returns None and every tick reports the book
+    # blocked — so they are one operation, and a fixture without a readable plan says so
+    # rather than importing half a book.
+    plan_items: list[lc.PlanItem] = []
+    plan_source: str | None = None
+    plans_path = args.plans or (
+        contracts_fixtures.fixture_plans(args.fixture) if args.fixture else None
+    )
+    if plans_path is not None:
+        snapshot = lc.parse_artifact(
+            lc.PlanSnapshot, json.loads(Path(plans_path).read_text(encoding="utf-8"))
+        )
+        plan = import_plan(
+            snapshot, book_id=revision.book_id, branch_id=revision.branch_id
+        )
+        plan_items, plan_source = list(plan.items), plan.source_revision_id
+
     store = _store(args)
     try:
         # Decision first, then the revision — the same order as the draft handler, for the
@@ -380,6 +404,29 @@ def cmd_import(args: argparse.Namespace) -> int:
         # decision explains, which is the thing §19 forbids.
         store.record_decision(decision, decided_at=stamp)
         store.commit_revision(revision, created_at=stamp, events=[accepted])
+        if plan_items:
+            store.record_plan_items(
+                revision.book_id,
+                revision.branch_id,
+                plan_items,
+                created_at=stamp,
+                source_revision_id=plan_source,
+                events=[
+                    Event(
+                        event_type=EventType.PLAN_CHANGED,
+                        project_id=args.project,
+                        created_at=stamp,
+                        actor=args.holder,
+                        book_id=revision.book_id,
+                        branch_id=revision.branch_id,
+                        revision_id=revision.revision_id,
+                        payload={
+                            "items": len(plan_items),
+                            "source_revision_id": plan_source,
+                        },
+                    )
+                ],
+            )
     finally:
         store.close()
 
@@ -387,6 +434,11 @@ def cmd_import(args: argparse.Namespace) -> int:
     print(f"  book={revision.book_id} branch={revision.branch_id}")
     print(f"  {len(revision.nodes)} node(s) from {imported.source_revision_id[:12]}")
     print(f"  {len(imported.cleared)} scene(s) cleared and draftable")
+    if plan_items:
+        premise = premise_of(plan_items)
+        print(f"  {len(plan_items)} plan item(s); premise: {'yes' if premise else 'MISSING'}")
+    else:
+        print("  no plan imported — the planner will report this book blocked")
     if imported.kept_locked:
         print(
             f"  {len(imported.kept_locked)} scene(s) left intact by a content lock and "
@@ -537,6 +589,12 @@ def build_parser() -> argparse.ArgumentParser:
         help="a golden book from the contracts checkout (§17 Stage 1 is graded on these)",
     )
     source.add_argument("--path", type=Path, help="a manuscript.json to import instead")
+    importer.add_argument(
+        "--plans",
+        type=Path,
+        help="a plans.json to import alongside; implied by --fixture. Without a premise "
+        "the planner reports the book blocked rather than drafting it",
+    )
     importer.add_argument(
         "--keep-content",
         action="store_true",

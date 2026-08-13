@@ -24,6 +24,7 @@ satisfy it, which is a retryable shape failure and never an exception.
 
 from __future__ import annotations
 
+from contextlib import suppress
 from dataclasses import dataclass
 
 from litharness.domain.nodes import Node
@@ -60,6 +61,57 @@ class DraftOutcome:
         return tuple(record.veto for record in self.vetoes)
 
 
+def draft_block(
+    revision: Revision,
+    logical_id: str,
+    *,
+    policy: DraftPolicy | None = None,
+) -> VetoRecord | None:
+    """The *structural* veto that would refuse a first draft of this node, or None.
+
+    Structural means: a property of the target, knowable before any text exists. Length and
+    schema conformance are properties of the *candidate* and stay in `gate_draft`.
+
+    **This function exists so a planner cannot disagree with the gate.** Selection has to
+    ask "is this node draftable" and the gate has to ask "may this draft land", and if those
+    are two implementations they will drift — and the drift is not benign. `CONTENT_LOCKED`
+    and `TARGET_HAS_NO_CONTENT` are in neither `RETRYABLE` nor `REGENERABLE`, so `decide`
+    escalates them on the first attempt and `_settle` parks the unit *and files an
+    exception*. A selector that offered a node the gate would refuse would therefore fill
+    the queue §4.3 reserves for the director with work nobody asked a human about. One
+    function, two callers, no drift possible.
+    """
+    policy = policy or DraftPolicy()
+    try:
+        node = revision.node(logical_id)
+    except KeyError:
+        return VetoRecord(Veto.UNKNOWN_TARGET, f"no node {logical_id} in revision")
+
+    if node.tombstoned:
+        return VetoRecord(Veto.UNKNOWN_TARGET, f"node {logical_id} is tombstoned")
+
+    if node.lock.freezes_content:
+        return VetoRecord(
+            Veto.CONTENT_LOCKED,
+            f"node {logical_id} is {node.lock.value}-locked and its content is frozen",
+        )
+
+    if node.content is not None and not policy.allow_overwrite:
+        return VetoRecord(
+            Veto.TARGET_HAS_NO_CONTENT,
+            f"node {logical_id} already carries {len(node.content)} characters; "
+            "a rewrite needs a located complaint and must go through apply_patch",
+        )
+    return None
+
+
+def is_draftable(
+    revision: Revision, logical_id: str, *, policy: DraftPolicy | None = None
+) -> bool:
+    """Whether a first draft of this node could land. The planner's precondition."""
+    return draft_block(revision, logical_id, policy=policy) is None
+
+
 def gate_draft(
     revision: Revision,
     logical_id: str,
@@ -76,14 +128,12 @@ def gate_draft(
     """
     policy = policy or DraftPolicy()
 
-    try:
-        node = revision.node(logical_id)
-    except KeyError:
-        return DraftOutcome(
-            False, (VetoRecord(Veto.UNKNOWN_TARGET, f"no node {logical_id} in revision"),)
-        )
-
+    # `conforms` is checked before the structural block only so a malformed answer reports
+    # as a retryable shape failure rather than as a property of the target.
     if not conforms:
+        node = None
+        with suppress(KeyError):
+            node = revision.node(logical_id)
         return DraftOutcome(
             False,
             (
@@ -95,31 +145,14 @@ def gate_draft(
             node_before=node,
         )
 
-    if node.lock.freezes_content:
-        return DraftOutcome(
-            False,
-            (
-                VetoRecord(
-                    Veto.CONTENT_LOCKED,
-                    f"node {logical_id} is {node.lock.value}-locked and its content is frozen",
-                ),
-            ),
-            node_before=node,
-        )
+    blocked = draft_block(revision, logical_id, policy=policy)
+    if blocked is not None:
+        node = None
+        with suppress(KeyError):
+            node = revision.node(logical_id)
+        return DraftOutcome(False, (blocked,), node_before=node)
 
-    if node.content is not None and not policy.allow_overwrite:
-        return DraftOutcome(
-            False,
-            (
-                VetoRecord(
-                    Veto.TARGET_HAS_NO_CONTENT,
-                    f"node {logical_id} already carries {len(node.content)} characters; "
-                    "a rewrite needs a located complaint and must go through apply_patch",
-                ),
-            ),
-            node_before=node,
-        )
-
+    node = revision.node(logical_id)
     canonical = canonicalize(text)
     if not canonical.strip():
         return DraftOutcome(
@@ -156,4 +189,10 @@ def gate_draft(
     )
 
 
-__all__ = ["DraftOutcome", "DraftPolicy", "gate_draft"]
+__all__ = [
+    "DraftOutcome",
+    "DraftPolicy",
+    "draft_block",
+    "gate_draft",
+    "is_draftable",
+]

@@ -30,6 +30,8 @@ from dataclasses import dataclass, replace
 from pathlib import Path
 from typing import Any
 
+import litharness_contracts as lc
+
 from litharness.domain.budget import Spend
 from litharness.domain.directives import Directive, DirectiveKind, DirectiveStatus
 from litharness.domain.events import (
@@ -798,6 +800,119 @@ class SqliteStore:
             "SELECT COUNT(*) AS n FROM jobs WHERE status = ?", (JobStatus.QUEUED.value,)
         ).fetchone()
         return int(row["n"])
+
+    # -- plan ------------------------------------------------------------------
+
+    def record_plan_items(
+        self,
+        book_id: str,
+        branch_id: str,
+        items: Sequence[lc.PlanItem],
+        *,
+        created_at: str,
+        source_revision_id: str | None = None,
+        events: Sequence[Event] = (),
+    ) -> int:
+        """Store plan statements. Returns how many rows were new.
+
+        `INSERT OR IGNORE` keyed on (book, branch, logical_id), so re-importing the same
+        fixture is a no-op rather than a duplicate — the same idempotency every other write
+        in this store has.
+        """
+        inserted = 0
+        with self.transaction() as connection:
+            for item in items:
+                scope = item.scope.logical_id if item.scope else None
+                cursor = connection.execute(
+                    "INSERT OR IGNORE INTO plan_items (book_id, branch_id, logical_id, "
+                    "kind, text, scope_logical_id, item_json, source_revision_id, "
+                    "created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                    (
+                        book_id,
+                        branch_id,
+                        item.logical_id,
+                        item.kind.value,
+                        item.text,
+                        scope,
+                        json.dumps(lc.to_jsonable(item), sort_keys=True, ensure_ascii=False),
+                        source_revision_id,
+                        created_at,
+                    ),
+                )
+                inserted += cursor.rowcount
+            for event in events:
+                self._insert_event(connection, event)
+        return inserted
+
+    def plan_items(
+        self, book_id: str, branch_id: str, *, kind: lc.PlanKind | None = None
+    ) -> list[lc.PlanItem]:
+        sql = "SELECT item_json FROM plan_items WHERE book_id = ? AND branch_id = ?"
+        params: list[Any] = [book_id, branch_id]
+        if kind is not None:
+            sql += " AND kind = ?"
+            params.append(kind.value)
+        sql += " ORDER BY logical_id"
+        return [
+            lc.from_jsonable(lc.PlanItem, json.loads(row["item_json"]))
+            for row in self._connection.execute(sql, params)
+        ]
+
+    def plan_epoch(self, book_id: str, branch_id: str) -> int:
+        row = self._connection.execute(
+            "SELECT epoch FROM plan_epochs WHERE book_id = ? AND branch_id = ?",
+            (book_id, branch_id),
+        ).fetchone()
+        return 0 if row is None else int(row["epoch"])
+
+    def bump_plan_epoch(self, book_id: str, branch_id: str, *, at: str, reason: str) -> int:
+        """Reissue every derived job id for this book. See migration 011's comment.
+
+        A poisoned beat burns its idempotency key permanently, so without a version in the
+        derivation "try scene 3 again" would be inexpressible.
+        """
+        with self.transaction() as connection:
+            connection.execute(
+                "INSERT INTO plan_epochs (book_id, branch_id, epoch, bumped_at, reason) "
+                "VALUES (?, ?, 1, ?, ?) ON CONFLICT (book_id, branch_id) DO UPDATE SET "
+                "epoch = epoch + 1, bumped_at = excluded.bumped_at, reason = excluded.reason",
+                (book_id, branch_id, at, reason),
+            )
+        return self.plan_epoch(book_id, branch_id)
+
+    def has_job(self, job_id: str) -> bool:
+        """Cheap existence check. `load_job` would raise, and an exception is not a query."""
+        row = self._connection.execute(
+            "SELECT 1 FROM jobs WHERE job_id = ?", (job_id,)
+        ).fetchone()
+        return row is not None
+
+    def any_unfinished(self, job_ids: Sequence[str]) -> bool:
+        """Is any of these jobs still queued or running?
+
+        The planner asks this before planning a book, because "one draft in flight per
+        book" is what keeps revisions in a linear chain. Drain-first *usually* enforces it —
+        a queued job is claimed before planning happens — but not when the job is leased by
+        another holder, and an incidental guarantee is one that breaks quietly.
+        """
+        if not job_ids:
+            return False
+        placeholders = ",".join("?" for _ in job_ids)
+        row = self._connection.execute(
+            f"SELECT 1 FROM jobs WHERE job_id IN ({placeholders}) AND status IN (?, ?) LIMIT 1",
+            (*job_ids, JobStatus.QUEUED.value, JobStatus.RUNNING.value),
+        ).fetchone()
+        return row is not None
+
+    def branches(self) -> list[tuple[str, str, str]]:
+        """Every (book_id, branch_id, head revision_id) the store knows about."""
+        return [
+            (row["book_id"], row["branch_id"], row["revision_id"])
+            for row in self._connection.execute(
+                "SELECT book_id, branch_id, revision_id FROM branch_heads "
+                "ORDER BY book_id, branch_id"
+            )
+        ]
 
     # -- exception queue ------------------------------------------------------
 

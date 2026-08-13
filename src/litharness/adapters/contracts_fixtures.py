@@ -52,23 +52,33 @@ def _candidate_roots() -> list[Path]:
     return roots
 
 
-def fixture_manuscript(fixture_id: str) -> Path:
-    """The `manuscript.json` of one golden fixture, or a message naming how to fix it."""
+def _fixture_file(fixture_id: str, filename: str) -> Path:
+    """Locate one artifact of a golden fixture, or say exactly how to fix it."""
     if fixture_id not in FIXTURE_IDS:
         raise FixturesUnavailable(
             f"unknown fixture {fixture_id!r}; the golden books are {', '.join(FIXTURE_IDS)}"
         )
     tried: list[Path] = []
     for root in _candidate_roots():
-        candidate = root / GOLDEN / fixture_id / "manuscript.json"
+        candidate = root / GOLDEN / fixture_id / filename
         if candidate.is_file():
             return candidate
         tried.append(candidate)
     raise FixturesUnavailable(
-        f"no {fixture_id} manuscript in any known contracts checkout (tried "
+        f"no {fixture_id} {filename} in any known contracts checkout (tried "
         + ", ".join(str(path) for path in tried)
         + "); set LITHARNESS_CONTRACTS_ROOT to the litharness-contracts checkout"
     )
 
 
-__all__ = ["FIXTURE_IDS", "FixturesUnavailable", "fixture_manuscript"]
+def fixture_manuscript(fixture_id: str) -> Path:
+    """The `manuscript.json` of one golden fixture."""
+    return _fixture_file(fixture_id, "manuscript.json")
+
+
+def fixture_plans(fixture_id: str) -> Path:
+    """The `plans.json` beside it — the premise and locked constraints a planner needs."""
+    return _fixture_file(fixture_id, "plans.json")
+
+
+__all__ = ["FIXTURE_IDS", "FixturesUnavailable", "fixture_manuscript", "fixture_plans"]
