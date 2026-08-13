@@ -1471,11 +1471,27 @@ every unstruck action below as a claim to re-verify rather than a task to start.
       `tricolon_rate`: a headline AUC without its control is meaningless, and that one would
       have shipped as this project's first working AI-tell detector.
 
-    **The two highest-value things are data acquisition, not modelling.** Per-chapter view
+    **The two highest-value additions are data acquisition, not modelling.** Per-chapter view
     counts give §1a.5's retention bar directly and move the label from story-level to
     chapter-level, which is the main validity weakness of everything above. Reader reviews are
     voluntary written judgments with scores — solicited judgment already collected at scale.
-    Both are public on RoyalRoad and neither is in this dataset.
+    Both are visible on RoyalRoad and neither is in this dataset.
+
+    **A crawler for them was proposed and refused; do not re-propose it.** RoyalRoad's Terms
+    of Service explicitly forbid automated access — "scrape, crawl, cache, spider" — unless
+    expressly permitted, and the site sits behind bot protection that returns 403 to a plain
+    `robots.txt` request, so a crawler that worked would be one that defeated that check.
+    The open routes are, in order: ask RoyalRoad (permission is the sanctioned path the ToS
+    itself names); ask whoever compiled `RoyalRoad-1.61M`, since that collection exists and is
+    MIT-licensed; other platforms with per-chapter engagement, each needing its own ToS check
+    and a genre-transfer argument; and §16's own serialization, which yields our retention
+    curve with nobody's permission required. Reasoning in
+    [plan/craft-corpus.md](plan/craft-corpus.md) §4.6.
+
+    **Neither absence blocks this action.** §4.1 runs on the corpus already in hand under a
+    licence that permits it. Chapter-level retention is a granularity improvement, and
+    treating it as a prerequisite would reintroduce exactly the blocker §10.6's amendment
+    removed.
 
     **And one standing constraint, recorded here because it is the way this direction fails.**
     §4.2's discriminator is a Goodhart magnet of exactly the kind §10.6 catalogues: it must

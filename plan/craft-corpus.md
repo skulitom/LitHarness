@@ -191,7 +191,47 @@ Stated so this document does not read as claiming more than it does:
 
 Both gaps are **data acquisition**, not human authoring. That is the substantive change in
 this document's conclusion: the craft programme's blocker moves from "someone must write a
-corpus and judge prose" to "someone must collect two more public columns."
+corpus and judge prose" to "someone must obtain two more columns."
+
+### 4.6 Crawling RoyalRoad for those columns — refused, and why
+
+The obvious move is a crawler subproject to fetch per-chapter view counts and reviews. It was
+proposed, checked, and **will not be built.** Recorded here so it is not re-proposed, in the
+same spirit as §10.6's refuted proxies.
+
+- **RoyalRoad's Terms of Service prohibit it explicitly.** They forbid using "any manual or
+  automated system or software, devices, scripts robots, other means or processes to access,
+  'scrape,' 'crawl', 'cache', 'spider' any web page", and separately forbid sending more
+  requests than a human could produce with a conventional browser, *unless expressly
+  permitted*. This is not a grey area to be managed with a polite rate limit.
+- **The site is behind bot protection.** A plain request for `https://www.royalroad.com/
+  robots.txt` returns HTTP 403. So a crawler that worked would be one that defeated that
+  check, which is a different and worse thing to build than a crawler.
+- **There is no official API.** Community requests for one exist (`/ideas/482`, `/ideas/1630`)
+  and are unanswered, which is also the evidence that the sanctioned route is *asking*.
+
+**The routes that remain open, in the order they are worth trying:**
+
+1. **Ask.** The ToS bars scraping "unless expressly permitted", so permission is the
+   sanctioned path and a narrow, research-scoped request — two numeric fields over a
+   stratified sample, no prose redistribution — is a reasonable thing to send. It is the
+   owner's call to make, not an agent's.
+2. **Ask the compiler of `RoyalRoad-1.61M`.** The corpus in hand exists because someone
+   already did a collection and published it MIT-licensed. Whether they hold permission, and
+   whether they would extend the columns, is one message.
+3. **Other platforms, each needing its own ToS check before anything is built.** Wattpad
+   exposes per-part read counts, which is the retention curve directly; AO3 carries hits,
+   kudos and bookmarks per work. Neither is LitRPG-native, so genre transfer would have to be
+   argued rather than assumed — but §4.1's method does not depend on the platform.
+4. **Publish, and measure our own.** §16's serialization gives per-chapter retention for the
+   system's *own* output, from our own analytics, with no permission needed from anyone. It
+   is the slowest route and the only one that is unambiguously ours.
+
+**None of this blocks the critical path, and that is the important part.** §4.1 — calibrating
+proxies against `followers / total_views` — runs on the corpus already in hand, under a
+licence that permits it, today. Per-chapter retention improves the label's granularity from
+story-level to chapter-level; it is not a prerequisite for starting, and treating it as one
+would be this document reintroducing the blocker it was written to remove.
 
 ## 5. Consequence for the plan
 
