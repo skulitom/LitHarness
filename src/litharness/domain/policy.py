@@ -56,6 +56,11 @@ RETRYABLE: frozenset[Veto] = frozenset(
         Veto.SHAPE_NOT_CONFORMING,
         Veto.LENGTH_MOVEMENT,
         Veto.CONTINUITY_BREACH,
+        # A patch that claimed too much of the node. Classified beside `LENGTH_MOVEMENT`
+        # rather than beside the stale-input vetoes, and for the same reason: the inputs
+        # were fine and the *output* overreached, so a second attempt against the same
+        # located complaint is a fair try at a narrower one.
+        Veto.CITED_SCOPE_EXCEEDED,
     }
 )
 

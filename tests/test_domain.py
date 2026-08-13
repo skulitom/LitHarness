@@ -246,13 +246,17 @@ def test_unlicensed_deletion_is_vetoed_and_a_licensed_one_is_not(revision: Revis
 
 
 def test_runaway_length_movement_is_vetoed(revision: Revision) -> None:
+    """A *small* citation with runaway replacement text, so this isolates what it names.
+
+    It used to cite `(0, len(content))` — the whole node — which also breaches
+    `max_cited_fraction`, so the case carried two independent failures and asserted one.
+    That was invisible while only one of the two checks existed.
+    """
     node = revision.node("scene-1")
     assert node.content is not None
-    outcome = apply_patch(
-        revision, build_patch(revision, "scene-1", [(0, len(node.content), "x" * 5000)])
-    )
+    outcome = apply_patch(revision, build_patch(revision, "scene-1", [(0, 4, "x" * 5000)]))
     assert not outcome.accepted
-    assert Veto.LENGTH_MOVEMENT in outcome.veto_kinds
+    assert outcome.veto_kinds == (Veto.LENGTH_MOVEMENT,)
 
 
 def test_patch_against_locked_content_is_vetoed(revision: Revision) -> None:
@@ -386,3 +390,87 @@ def test_a_node_written_before_1_1_still_reads_from_metadata() -> None:
     assert node.lock is LockKind.PUBLISHED
     assert node.block_kind is BlockKind.STATUS_WINDOW
     assert node.block_payload == {"hp": 24}
+
+
+def test_a_patch_may_not_cite_most_of_the_node(revision: Revision) -> None:
+    """The hole every other check left open, measured before it was closed.
+
+    A single **unlicensed** op citing `0..len(text)` with same-length replacement text was
+    accepted with zero vetoes: `_is_deletion` is false because there is replacement text,
+    the length ratio is exactly 1.00, `max_ops` sees one op, and `_verify_preservation` only
+    examines text *outside* the cited spans — of which there is none. So the strictest bound
+    in the module was on what a patch leaves behind, and nothing bounded what it claims.
+    """
+    node = revision.node("scene-1")
+    assert node.content is not None
+    whole = "y" * len(node.content)
+    outcome = apply_patch(
+        revision, build_patch(revision, "scene-1", [(0, len(node.content), whole)])
+    )
+    assert not outcome.accepted
+    assert outcome.veto_kinds == (Veto.CITED_SCOPE_EXCEEDED,)
+    assert "redraft, not a located repair" in outcome.vetoes[0].detail
+
+
+def test_the_scope_ceiling_applies_to_a_licensed_patch_too(revision: Revision) -> None:
+    """A finding licenses a *span*, not a rewrite of everything around it. Exempting a
+    licensed patch would leave the whole hole open to anything carrying a finding id — which
+    is exactly what the repair path §17 Stage 2 builds will be carrying."""
+    node = revision.node("scene-1")
+    assert node.content is not None
+    whole = "y" * len(node.content)
+    outcome = apply_patch(
+        revision,
+        build_patch(
+            revision, "scene-1", [(0, len(node.content), whole)], licensed_by="f-gold-ledger"
+        ),
+    )
+    assert not outcome.accepted
+    assert Veto.CITED_SCOPE_EXCEEDED in outcome.veto_kinds
+
+
+def test_many_small_ops_are_bounded_by_coverage_not_by_count(revision: Revision) -> None:
+    """`max_ops` bounds how many claims a patch makes; this bounds how much they add up to.
+    Thirty ops of four characters each is well inside `max_ops` and can still cover a short
+    node entirely."""
+    node = revision.node("scene-1")
+    assert node.content is not None
+    step = max(len(node.content) // 30, 2)
+    ops = [
+        (i, min(i + step, len(node.content)), "z" * step)
+        for i in range(0, len(node.content), step * 2)
+    ]
+    assert len(ops) <= 32, "this must stay inside max_ops or it proves the wrong thing"
+    outcome = apply_patch(revision, build_patch(revision, "scene-1", ops))
+    assert not outcome.accepted
+    assert Veto.CITED_SCOPE_EXCEEDED in outcome.veto_kinds
+
+
+def test_a_narrow_repair_is_still_accepted(revision: Revision) -> None:
+    """The control. A ceiling that refused ordinary repairs would be a tax, not a gate."""
+    outcome = apply_patch(revision, build_patch(revision, "scene-1", [(0, 4, "Rooke")]))
+    assert outcome.accepted, outcome.vetoes
+
+
+def test_a_deliberately_wider_repair_is_a_policy_decision(revision: Revision) -> None:
+    """Raising the ceiling is available and has to be asked for, the same shape as
+    `DraftPolicy.allow_overwrite`. What must not happen is arriving there by forgetting."""
+    node = revision.node("scene-1")
+    assert node.content is not None
+    whole = "y" * len(node.content)
+    outcome = apply_patch(
+        revision,
+        build_patch(revision, "scene-1", [(0, len(node.content), whole)]),
+        PatchPolicy(max_cited_fraction=1.0),
+    )
+    assert outcome.accepted, outcome.vetoes
+
+
+def test_the_scope_veto_earns_a_retry_rather_than_an_escalation() -> None:
+    """The inputs were fine and the output overreached, so a second attempt at the same
+    located complaint is a fair try at a narrower patch — the reasoning `LENGTH_MOVEMENT`
+    already carries, which is why it is classified beside it."""
+    from litharness.domain.policy import REGENERABLE, RETRYABLE
+
+    assert Veto.CITED_SCOPE_EXCEEDED in RETRYABLE
+    assert Veto.CITED_SCOPE_EXCEEDED not in REGENERABLE

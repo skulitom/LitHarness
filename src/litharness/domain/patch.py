@@ -60,6 +60,11 @@ class Veto(enum.StrEnum):
     #: One veto for every finding category, because §4.2's ladder acts on the veto and the
     #: action is the same for all of them — see `findings.vetoes_for`.
     CONTINUITY_BREACH = "continuity_breach"
+    #: A patch citing more of the node than `PatchPolicy.max_cited_fraction` allows. Distinct
+    #: from `LENGTH_MOVEMENT`, which bounds what the result *is*: this bounds what the patch
+    #: *claims*, and the two are independent — replacing a whole scene with text of identical
+    #: length moves no length at all.
+    CITED_SCOPE_EXCEEDED = "cited_scope_exceeded"
     #: Raised by `domain.calibration.promoted_gate` only: a craft metric carrying measured
     #: held-out precision measured this candidate on the failing side of its threshold. One
     #: veto for every metric, for `CONTINUITY_BREACH`'s reason — the ladder acts on the veto,
@@ -89,6 +94,33 @@ class PatchPolicy:
     #: complaint. Without this, "improve this" degenerates into "remove this".
     require_license_for_deletion: bool = True
     max_ops: int = 32
+    #: The fraction of a node's characters a patch's spans may *cite*, however many ops it
+    #: takes. The limit every other one here leaves open.
+    #:
+    #: Measured before it was added: a single **unlicensed** op citing 0..len(text) with
+    #: same-length replacement text is accepted with zero vetoes. Every existing check
+    #: passes it — `_is_deletion` is false because there is replacement text, the length
+    #: ratio is exactly 1.00, `max_ops` sees one op, and `_verify_preservation` only
+    #: examines the text *outside* the cited spans, of which there is none. So the strictest
+    #: bound in this module was on what a patch may leave behind, and nothing bounded what it
+    #: may claim.
+    #:
+    #: That is the gap between a repair and a rewrite. §1a.2 forbids open-ended "improve
+    #: this" loops and §14 records that drafting is not revising; a patch citing the whole
+    #: scene is a redraft wearing a repair's licence, and it would arrive through the repair
+    #: path §17 Stage 2 is about to build.
+    #:
+    #: **The cap applies whether or not the patch is licensed, and that is the point.** A
+    #: finding licenses a *span*, not a rewrite of everything around it. A legitimately
+    #: larger repair is a policy decision a caller makes deliberately by raising this — the
+    #: same shape as `DraftPolicy.allow_overwrite`, which exists so that overwriting is asked
+    #: for rather than arrived at.
+    #:
+    #: 0.5 is a placeholder with a floor, not a measurement — nothing here has established
+    #: what fraction a real repair needs, and the constant says so. It is set where "most of
+    #: the scene" begins, because that is the threshold at which the located complaint stops
+    #: locating anything.
+    max_cited_fraction: float = 0.5
 
 
 @dataclass(frozen=True, slots=True)
@@ -226,6 +258,21 @@ def apply_patch(
                 )
             )
             break
+
+    # Checked after the spans are known to be disjoint and in range, so the sum is the real
+    # coverage rather than an over-count from overlaps — and before the splice, because a
+    # patch this broad should cost nothing to refuse.
+    cited = sum(end - start for start, end, _ in spans)
+    fraction = cited / len(text) if text else 0.0
+    if fraction > policy.max_cited_fraction:
+        vetoes.append(
+            VetoRecord(
+                Veto.CITED_SCOPE_EXCEEDED,
+                f"{len(spans)} op(s) cite {cited} of {len(text)} characters "
+                f"({fraction:.0%}), above the {policy.max_cited_fraction:.0%} ceiling; "
+                "a patch citing most of a node is a redraft, not a located repair",
+            )
+        )
 
     if vetoes:
         return PatchOutcome(False, tuple(vetoes), node_before=node)
