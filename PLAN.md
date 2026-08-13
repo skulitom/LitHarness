@@ -796,6 +796,20 @@ the Conductor ticks idempotently for a week unattended (no-op workload); each
 configured adapter passes a conformance suite (schema conformance, usage reporting,
 a round-trip health probe, timeout, and a forced fallback); and `LITHARNESS_ENV=test`
 provably cannot reach a paid provider.
+
+**Met, with one caveat this document already records and should keep recording.** All four
+clauses have passing tests (`test_a_job_can_commit_a_revision_and_its_event_atomically`,
+`test_a_week_of_no_op_ticks_changes_nothing`, the four-adapter `CONFORMANCE_CASES`, and
+`assert_no_billing_reachable`). The caveat is the endurance clause: it is **evidenced, not
+met** — 2,016 ticks at the 5-minute cadence with injected time, which measures unbounded
+state growth and non-idempotent accumulation but not a long-lived process surviving real
+scheduling, sleep and clock changes. Do not let "Stage 0 green" be reported as the week
+having been run.
+
+Six slices rather than the four originally scoped, because the operator-grade audit (§19.1)
+found the stage was buildable but not *operable*: slices 5 and 6 added the acceptance
+decision record, the direction inbox, and the book-import entry point the whole system
+lacked. 268 tests.
 *(Struck from Stage 0: "commit/license/tag BookWorldState" — already done.)*
 
 ### Stage 1 — Closed autonomous slice

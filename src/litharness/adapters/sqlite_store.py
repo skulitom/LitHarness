@@ -639,9 +639,17 @@ class SqliteStore:
 
     # -- jobs -----------------------------------------------------------------
 
-    def enqueue(self, job: Job) -> None:
+    def enqueue(self, job: Job) -> bool:
+        """Queue a unit of work. False if this `job_id` or idempotency key already existed.
+
+        The return value is not decoration. `INSERT OR IGNORE` means a planner that mints a
+        derived job id gets silence when the id was already used — including when the work
+        it names was poisoned and its key burned. Reporting "planned" for a write that did
+        nothing is how a loop convinces itself it is making progress while the queue stays
+        empty, so callers that plan must branch on this.
+        """
         with self.transaction() as connection:
-            connection.execute(
+            cursor = connection.execute(
                 "INSERT OR IGNORE INTO jobs (job_id, job_kind, status, attempts, max_attempts, "
                 "idempotency_key, input_digest, error, lease_holder, lease_expires_at, "
                 "payload, priority) "
@@ -661,6 +669,7 @@ class SqliteStore:
                     job.priority,
                 ),
             )
+            return cursor.rowcount > 0
 
     def save_job(self, job: Job) -> None:
         with self.transaction() as connection:

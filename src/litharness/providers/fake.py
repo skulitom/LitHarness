@@ -70,6 +70,25 @@ def _synthesise(schema: dict[str, Any], seed: str) -> dict[str, Any]:
     return payload
 
 
+def _padded(text: str, target: int, digest: str) -> str:
+    """Extend ``text`` to ``target`` characters with filler derived from ``digest``.
+
+    Derived rather than random so the provider stays deterministic: the same request must
+    produce the same bytes, or content-addressed revisions stop collapsing on replay and
+    the endurance and idempotency properties quietly break.
+    """
+    if target <= 0 or len(text) >= target:
+        return text
+    words = [f"{digest[index : index + 4]}" for index in range(0, 40, 4)]
+    filler: list[str] = []
+    length = len(text)
+    while length < target:
+        word = words[len(filler) % len(words)]
+        filler.append(word)
+        length += len(word) + 1
+    return f"{text} " + " ".join(filler)
+
+
 @dataclass
 class FakeProvider:
     name: str = "fake"
@@ -79,6 +98,17 @@ class FakeProvider:
     canned: dict[str, str] = field(default_factory=dict)
     #: Set to raise on the next call, for exercising the failure path.
     fail_with: Exception | None = None
+    #: Pad free-text output to at least this many characters. 0 disables it.
+    #:
+    #: Exists because the default answer is ~140 characters and `DraftPolicy.min_chars` is
+    #: 200, so a model-free autonomous run would fail the shape gate on every beat and
+    #: poison the whole book — a green board over an empty manuscript. The alternative was
+    #: lowering `min_chars`, and `domain/draft.py` forbids exactly that class of
+    #: convenience relaxation: a gate loosened to make a test pass is not a gate.
+    #:
+    #: Opt-in, and the filler is a pure function of the request digest, so a replayed
+    #: request still produces byte-identical output and content addressing still collapses.
+    pad_to_chars: int = 0
     calls: int = 0
 
     def health(self) -> bool:
@@ -96,6 +126,7 @@ class FakeProvider:
             text = json.dumps(_synthesise(request.schema, digest), sort_keys=True)
         else:
             text = f"[fake:{digest[:12]}] {request.prompt.strip()[:120]}"
+            text = _padded(text, self.pad_to_chars, digest)
 
         return CompletionResult(
             text=text,

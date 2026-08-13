@@ -32,6 +32,7 @@ handler was already writing — which is what §20.3's consumer-first sequencing
 from __future__ import annotations
 
 from collections.abc import Sequence
+from contextlib import suppress
 from datetime import UTC, datetime
 
 from litharness.adapters.sqlite_store import SqliteStore
@@ -41,6 +42,7 @@ from litharness.domain.budget import check as budget_check
 from litharness.domain.draft import DraftPolicy, gate_draft
 from litharness.domain.events import Event, EventType
 from litharness.domain.jobs import Job
+from litharness.domain.patch import Veto
 from litharness.domain.policy import (
     GateKind,
     GateOutcome,
@@ -51,6 +53,7 @@ from litharness.domain.policy import (
     gates_for_draft,
     policy_digest,
 )
+from litharness.domain.revision import Revision
 from litharness.providers.base import CompletionRequest
 from litharness.providers.registry import ProviderRegistry
 
@@ -68,6 +71,61 @@ class HandlerInputError(Exception):
 
 def _timestamp(now: float) -> str:
     return datetime.fromtimestamp(now, tz=UTC).isoformat().replace("+00:00", "Z")
+
+
+def _stale_base(
+    store: SqliteStore,
+    job: Job,
+    revision: Revision,
+    project_id: str,
+    logical_id: str,
+    head_revision_id: str,
+    now: float,
+) -> Sequence[Event]:
+    """Refuse a candidate planned against a base that is no longer the head.
+
+    ESCALATE rather than RETRY: the payload's base is frozen and `save_job` never rewrites
+    a payload, so retrying would re-read the same stale id forever. Clearing it is an
+    operator act — `replan` mints fresh work against the current head.
+    """
+    gate = GateOutcome(
+        gate=GateKind.SHAPE,
+        rule_or_critic_id="shape.stale_base.v0",
+        passed=False,
+        vetoes=(Veto.STALE_BASE_VERSION,),
+        detail=(
+            f"planned against {revision.revision_id[:12]} but the head is now "
+            f"{head_revision_id[:12]}; drafting would fork the branch"
+        ),
+    )
+    decision = PolicyDecision(
+        decision_id=decision_id_for(job.job_id, job.attempts, (gate,)),
+        outcome=Outcome.ESCALATE,
+        gates=(gate,),
+        job_id=job.job_id,
+        logical_id=logical_id,
+        base_revision_id=revision.revision_id,
+        attempt=job.attempts,
+        reason=gate.detail,
+    )
+    store.record_decision(decision, decided_at=_timestamp(now))
+    return [
+        Event(
+            event_type=EventType.POLICY_DECISION_RECORDED,
+            project_id=project_id,
+            created_at=_timestamp(now),
+            book_id=revision.book_id,
+            branch_id=revision.branch_id,
+            revision_id=revision.revision_id,
+            payload={
+                "decision_id": decision.decision_id,
+                "job_id": job.job_id,
+                "outcome": decision.outcome.value,
+                "reason": gate.detail,
+                "head_revision_id": head_revision_id,
+            },
+        )
+    ]
 
 
 def budget_gate(verdict: BudgetVerdict) -> GateOutcome:
@@ -114,6 +172,39 @@ def make_scene_draft_handler(
             ) from error
 
         revision = store.load_revision(revision_id)
+
+        # **Crash-after-commit must not file a false exception.** This handler commits the
+        # revision itself (only `commit_revision` puts a revision and its event in one
+        # transaction), while the job's SUCCEEDED write happens later in `_settle`, in a
+        # different one. A crash between them leaves the row RUNNING; `reclaim_expired`
+        # requeues it; the re-run finds the node now has content and `gate_draft` returns
+        # TARGET_HAS_NO_CONTENT, which `decide` escalates on the first attempt — parking a
+        # unit and filing an exception for work that *succeeded*. Safe because the decision
+        # is recorded before the commit, so "content present and an ACCEPT decision for
+        # this job" is only reachable after the commit landed.
+        prior = store.latest_decision_for(job.job_id)
+        if prior is not None and prior.outcome is Outcome.ACCEPT:
+            with suppress(KeyError):
+                if revision.node(logical_id).content is not None:
+                    return []
+            if prior.resulting_revision_id is not None:
+                return []
+
+        # **A stale base silently forks the book.** The payload freezes a base revision at
+        # enqueue time, and every acceptance writes `branch_heads` unconditionally. Six jobs
+        # planned against one base therefore produce six *sibling* revisions, each holding
+        # one drafted scene and five empty ones, each overwriting the head — final head with
+        # one scene of prose, six accepted decisions, and no error anywhere. Refusing here
+        # costs no tokens because it runs before the provider call. Only planner-minted work
+        # carries book/branch, so a hand `enqueue` is unaffected.
+        book_id, branch_id = payload.get("book_id"), payload.get("branch_id")
+        if book_id and branch_id:
+            head = store.head(str(book_id), str(branch_id))
+            if head is not None and head.revision_id != revision_id:
+                return _stale_base(
+                    store, job, revision, project_id, logical_id, head.revision_id, now
+                )
+
         request = CompletionRequest(
             prompt=prompt,
             system=payload.get("system"),

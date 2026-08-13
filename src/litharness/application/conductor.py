@@ -335,48 +335,78 @@ class Conductor:
         #                       exception*", and a stuck unit nobody is told about is just
         #                       a lost one.
         if outcome is Outcome.PARK:
-            self.store.save_job(running.transition_to(JobStatus.POISONED, error=reason).released())
+            poisoned = running.transition_to(JobStatus.POISONED, error=reason).released()
+            self.store.save_job(poisoned)
             self.store.bump_digest(self._day(now), "jobs_poisoned")
+            # **Attempt exhaustion raises an exception too, and this is the modal case.**
+            # Only ESCALATE filed one at first, which meant the *common* way a unit dies —
+            # three length vetoes, three shape failures — produced a poisoned row and an
+            # empty exception queue. §17 lists "exception queue functioning" as a Stage 1
+            # exit criterion, and it was false for the failure an operator will actually
+            # meet. `REPEATED_GATE_FAILURE` is reused rather than a new kind added: the
+            # contract's enum has no attempt-exhaustion member, a minor for one word is not
+            # worth it, and the PARK/ESCALATE distinction is already carried by the status
+            # the exception points at — POISONED versus PARKED.
+            self._raise_exception(poisoned, decision, reason, now, exhausted=True)
             return TickOutcome.JOB_PARKED, events
 
         parked = running.transition_to(JobStatus.PARKED, error=reason).released()
         self.store.save_job(parked)
         self.store.bump_digest(self._day(now), "jobs_parked")
+        raised = self._raise_exception(parked, decision, reason, now, exhausted=False)
+        return TickOutcome.JOB_PARKED, [*events, *raised]
+
+    def _raise_exception(
+        self,
+        job: Job,
+        decision: PolicyDecision | None,
+        reason: str,
+        now: float,
+        *,
+        exhausted: bool,
+    ) -> Sequence[Event]:
+        """File the escalation in the queue *and* the log.
+
+        The queue is what answers "what is waiting for me"; an event alone would mean
+        replaying the stream and reconstructing which escalations were since resolved.
+        """
+        summary = (
+            f"attempt budget spent after {job.attempts} attempts: {reason}"
+            if exhausted
+            else reason
+        )
         self.store.bump_digest(self._day(now), "exceptions_raised")
-        # The queue, not just the event. An event is a fact in a log; answering "what is
-        # waiting for me" from events alone means replaying the stream and reconstructing
-        # which escalations were since resolved.
         self.store.raise_exception(
             ExceptionRecord(
                 exception_id=exception_id_for(
-                    running.job_id,
+                    job.job_id,
                     ExceptionKind.REPEATED_GATE_FAILURE,
                     decision.decision_id if decision else None,
                 ),
                 kind=ExceptionKind.REPEATED_GATE_FAILURE,
-                summary=reason,
-                job_id=running.job_id,
+                summary=summary,
+                job_id=job.job_id,
                 logical_id=decision.logical_id if decision else None,
                 decision_id=decision.decision_id if decision else None,
                 raised_at=self._timestamp(now),
-                attempts=parked.attempts,
+                attempts=job.attempts,
             )
         )
         raised = [
             self._event(
                 EventType.EXCEPTION_RAISED,
                 {
-                    "job_id": running.job_id,
-                    "outcome": outcome.value,
-                    "reason": reason,
+                    "job_id": job.job_id,
+                    "outcome": job.status.value,
+                    "reason": summary,
                     "decision_id": decision.decision_id if decision else None,
-                    "attempts": parked.attempts,
+                    "attempts": job.attempts,
                 },
                 now,
             )
         ]
         self.store.append_events(raised)
-        return TickOutcome.JOB_PARKED, [*events, *raised]
+        return raised
 
     def _ingest_directives(self, now: float) -> int:
         """Drain the direction inbox (§4.3), recording each arrival as an event.
