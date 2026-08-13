@@ -40,12 +40,22 @@ from litharness.domain.events import payload_digest
 from litharness.domain.patch import Veto
 
 #: Vetoes a bounded retry can plausibly fix: the model produced the wrong *output*.
+#:
+#: `CONTINUITY_BREACH` is classified here rather than escalated, and the reasoning is worth
+#: keeping because it is the first veto in this set that is about the *book* rather than the
+#: string. A blocking finding says the candidate contradicts established state — which is a
+#: property of the text, produced against a context packet that already carried the state it
+#: contradicts. So another attempt against the same packet is a fair second try, and after
+#: `max_attempts` the unit parks and files an exception, which is where a defect the model
+#: cannot write its way out of belongs. Escalating on attempt 1 instead would send a human
+#: every scene the model fumbled once.
 RETRYABLE: frozenset[Veto] = frozenset(
     {
         Veto.EMPTY_DRAFT,
         Veto.EMPTY_PATCH,
         Veto.SHAPE_NOT_CONFORMING,
         Veto.LENGTH_MOVEMENT,
+        Veto.CONTINUITY_BREACH,
     }
 )
 

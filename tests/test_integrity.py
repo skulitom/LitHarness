@@ -1,0 +1,512 @@
+"""§17 Stage 1's fourth exit clause: planted-defect injection is caught by gates, not luck.
+
+Before this slice the wired ladder was one gate, `shape.draft.v0`, so *accepted* meant "a
+string of plausible length" — nothing injected a planted defect and nothing would have caught
+one. These tests are the clause, stated as assertions.
+
+**What is being graded, and what is not.** §8.4 assigns the LitRPG rule and predicate
+vocabulary to ContinuityEvaluation's game-mechanics pack, because §7 and §8 once assigned the
+identical invariants over the identical fixture to two projects and that would produce "two
+divergent predicate vocabularies over one fixture and a permanent reconciliation tax". So the
+six litrpg detectors are *not* reimplemented here and these tests do not claim to grade them.
+What is graded is everything LitHarness owns: that a blocking finding refuses a candidate,
+that a negative control does not, that an uncalibrated critic cannot block, that the refusal
+carries a veto the retry ladder can act on, that the unit parks and escalates after its
+budget, and that a defect planted in the store is caught by the one detector no sibling can
+run.
+
+**Mutation testing, not negative controls, for the record-based check.** §8.3 records why:
+both fixtures' controls are prose-only phenomena with prose-only rule ids and no backing state
+records, so a record-only engine cannot fire on them at all and "zero findings on the negative
+controls" is vacuous. The replacement is to perturb the fixture and require the detector to
+move — silent on a conforming book, loud on a broken one, and each assertion failing if the
+detector is stubbed.
+
+**The answer key is never read.** §8.3: five of six planted litrpg defects carry their own
+finding id in `StateRecord.note` (*"...See f-gold-ledger."*), so a 6/6 gate is reachable by
+regexing for `See f-`. `test_no_module_reads_the_note_field` scans this package's source and
+fails if any module names it.
+"""
+
+from __future__ import annotations
+
+import ast
+import json
+from dataclasses import replace
+from pathlib import Path
+
+import litharness_contracts as lc
+import pytest
+
+import litharness.domain as domain_package
+from litharness.adapters.contracts_fixtures import fixture_findings, fixture_manuscript
+from litharness.adapters.evaluation_artifact import (
+    EvaluationArtifactUnreadable,
+    load_findings,
+)
+from litharness.adapters.sqlite_store import SqliteStore
+from litharness.domain.findings import (
+    BLOCKING_SEVERITIES,
+    DetectorInput,
+    Finding,
+    Severity,
+    Status,
+    finding_id_for,
+    vetoes_for,
+)
+from litharness.domain.integrity import (
+    CONTRADICTION_RULE,
+    detect_contradictions,
+    gate_integrity,
+    summarise,
+)
+from litharness.domain.patch import Veto
+from litharness.domain.policy import REGENERABLE, RETRYABLE, GateKind, Outcome, decide
+from tests.conftest import BOOK_ID, BRANCH_ID
+from tests.test_state import load_state, record
+
+
+@pytest.fixture
+def store(tmp_path) -> SqliteStore:
+    return SqliteStore.open(tmp_path / "litharness.db")
+
+
+def subject_for(fixture_id: str, **kwargs) -> DetectorInput:
+    return DetectorInput(
+        book_id=BOOK_ID,
+        branch_id=BRANCH_ID,
+        logical_id=kwargs.pop("logical_id", "scene-6"),
+        records=tuple(kwargs.pop("records", load_state(fixture_id).records)),
+        **kwargs,
+    )
+
+
+def finding(
+    *,
+    severity: Severity = Severity.MAJOR,
+    status: Status = Status.OPEN,
+    deterministic: bool = True,
+    logical_id: str = "scene-6",
+    rule: str = "ledger.gold.v0",
+) -> Finding:
+    return Finding(
+        finding_id=finding_id_for(rule, logical_id, {"severity": severity.value}),
+        category="world_rule",
+        severity=severity,
+        message=f"planted {rule}",
+        status=status,
+        rule_or_critic_id=rule,
+        logical_id=logical_id,
+        confidence_basis=(
+            lc.ConfidenceBasis.DETERMINISTIC.value
+            if deterministic
+            else lc.ConfidenceBasis.CALIBRATED_MODEL.value
+        ),
+    )
+
+
+# -- the clause: a planted defect is refused -------------------------------------------------
+
+
+def test_a_blocking_finding_refuses_the_candidate() -> None:
+    gate, findings = gate_integrity(subject_for("litrpg"), standing=[finding()])
+    assert not gate.passed
+    assert gate.blocking
+    assert gate.gate is GateKind.INTEGRITY
+    assert Veto.CONTINUITY_BREACH in gate.vetoes
+    assert "ledger.gold.v0" in (gate.detail or "")
+    assert len(findings) == 1
+
+
+def test_the_refusal_reaches_a_retry_rather_than_an_escalation() -> None:
+    """A veto nobody classified escalates on attempt 1 — `decide`'s deliberate default. So a
+    new veto that is *not* in the retry table would send a human every scene the model
+    fumbled once, and this is what pins that `CONTINUITY_BREACH` was classified."""
+    assert Veto.CONTINUITY_BREACH in RETRYABLE
+    assert Veto.CONTINUITY_BREACH not in REGENERABLE
+    gate, _ = gate_integrity(subject_for("litrpg"), standing=[finding()])
+    verdict, reason = decide((gate,), job_id="j", attempt=1, max_attempts=3)
+    assert verdict is Outcome.RETRY
+    assert "continuity_breach" in (reason or "")
+
+
+def test_a_defect_the_model_cannot_write_out_of_parks_rather_than_retrying_forever() -> None:
+    """After the attempt budget the unit parks and files an exception, which is where a
+    defect three regenerations could not clear belongs."""
+    gate, _ = gate_integrity(subject_for("litrpg"), standing=[finding()])
+    verdict, reason = decide((gate,), job_id="j", attempt=3, max_attempts=3)
+    assert verdict is Outcome.PARK
+    assert "attempt budget exhausted" in (reason or "")
+
+
+@pytest.mark.parametrize("severity", sorted(BLOCKING_SEVERITIES, key=lambda s: s.value))
+def test_every_blocking_severity_blocks(severity: Severity) -> None:
+    gate, _ = gate_integrity(subject_for("litrpg"), standing=[finding(severity=severity)])
+    assert not gate.passed
+
+
+@pytest.mark.parametrize("severity", [Severity.INFO, Severity.MINOR, Severity.UNKNOWN])
+def test_a_finding_below_the_bar_annotates_rather_than_blocking(severity: Severity) -> None:
+    """The line sits between minor and major because a blocking failure costs a generation.
+    A finding not worth a second model call is not worth blocking on — it is worth recording,
+    which happens either way."""
+    gate, findings = gate_integrity(subject_for("litrpg"), standing=[finding(severity=severity)])
+    assert gate.passed
+    assert len(findings) == 1
+
+
+# -- what must NOT be refused ------------------------------------------------------------------
+
+
+def test_the_golden_books_produce_no_findings_of_their_own() -> None:
+    """The negative-control leg that is not vacuous: a check that fires on a conforming book
+    is not a floor, it is a tax. Both fixtures pass every in-process detector."""
+    for fixture_id in ("mystery", "litrpg"):
+        gate, findings = gate_integrity(subject_for(fixture_id))
+        assert findings == [], (fixture_id, [item.message for item in findings])
+        assert gate.passed
+        assert "nothing found" in (gate.detail or "")
+
+
+def test_an_intentional_device_does_not_block() -> None:
+    """Both fixtures ship negative controls a *correct* detector emits — the rain-on-glass
+    motif, Julian's alibi. A gate that blocked on every finding would refuse a book for its
+    deliberate devices, and the only way past would be to weaken the detector."""
+    control = finding(status=Status.ACCEPTED_INTENTIONAL, severity=Severity.CRITICAL)
+    gate, findings = gate_integrity(subject_for("mystery"), standing=[control])
+    assert gate.passed
+    assert findings == [control]
+
+
+@pytest.mark.parametrize(
+    "status",
+    [Status.FALSE_POSITIVE, Status.FIXED, Status.SUPERSEDED, Status.DEFERRED],
+)
+def test_a_settled_finding_does_not_block(status: Status) -> None:
+    gate, _ = gate_integrity(
+        subject_for("mystery"), standing=[finding(status=status, severity=Severity.CRITICAL)]
+    )
+    assert gate.passed
+
+
+def test_an_evaluator_that_crashed_does_not_punish_the_draft() -> None:
+    """`EVALUATION_ERROR` is the detector reporting its own failure, not the manuscript's."""
+    gate, _ = gate_integrity(
+        subject_for("mystery"),
+        standing=[finding(status=Status.EVALUATION_ERROR, severity=Severity.CRITICAL)],
+    )
+    assert gate.passed
+
+
+def test_an_uncalibrated_critic_cannot_block_but_is_still_recorded() -> None:
+    """§10.4 from the gate's end. `PolicyDecision` enforces the same invariant at
+    construction; enforcing it here too means a non-deterministic verdict never reaches the
+    constructor that would raise on it — and the gate still *says* the critic ran, because a
+    gate whose output vanishes when it disagrees is worse than one that never ran."""
+    critic = finding(deterministic=False, severity=Severity.CRITICAL)
+    gate, findings = gate_integrity(subject_for("mystery"), standing=[critic])
+    assert gate.passed
+    assert findings == [critic]
+    assert "uncalibrated" in (gate.detail or "")
+    assert "§10.4" in (gate.detail or "")
+
+
+# -- the detector LitHarness owns, and its mutation tests ---------------------------------------
+
+
+def test_contradictory_records_at_one_story_position_are_a_finding() -> None:
+    """The corruption only this system can see: §12 step 5's extraction writing a record that
+    contradicts one already accepted. ContinuityEvaluation evaluates a manuscript it is handed
+    and never sees a LitHarness store mid-run."""
+    records = [
+        record("rec-a", subject="rook", predicate="level", value=3, order_key="s4"),
+        record("rec-b", subject="rook", predicate="level", value=4, order_key="s4"),
+    ]
+    [found] = detect_contradictions(subject_for("litrpg", records=records))
+    assert found.rule_or_critic_id == CONTRADICTION_RULE
+    assert found.severity is Severity.MAJOR
+    assert found.blocks
+    assert found.deterministic
+    assert "rook level holds 2 different values" in found.message
+
+
+def test_the_same_value_twice_is_not_a_contradiction() -> None:
+    records = [
+        record("rec-a", subject="rook", predicate="level", value=3, order_key="s4"),
+        record("rec-b", subject="rook", predicate="level", value=3, order_key="s4"),
+    ]
+    assert detect_contradictions(subject_for("litrpg", records=records)) == []
+
+
+def test_a_value_that_changes_between_scenes_is_a_story_not_a_defect() -> None:
+    """Story position is part of the grouping key on purpose. Dropping it would report every
+    ordinary change in the book — on the litrpg fixture, every status snapshot after the
+    first."""
+    records = [
+        record("rec-a", subject="rook", predicate="level", value=3, order_key="s3"),
+        record("rec-b", subject="rook", predicate="level", value=4, order_key="s4"),
+    ]
+    assert detect_contradictions(subject_for("litrpg", records=records)) == []
+
+
+def test_dict_values_compare_by_content_not_by_key_order() -> None:
+    """Otherwise the detector reports dict iteration order as a continuity defect."""
+    records = [
+        record("rec-a", subject="rook", predicate="status", value={"hp": 24, "gold": 45}),
+        record("rec-b", subject="rook", predicate="status", value={"gold": 45, "hp": 24}),
+    ]
+    assert detect_contradictions(subject_for("litrpg", records=records)) == []
+
+
+def test_two_proposals_disagreeing_is_what_proposals_are_for() -> None:
+    records = [
+        record("rec-a", subject="rook", predicate="level", value=3,
+               authority=lc.StateAuthority.PROPOSED),
+        record("rec-b", subject="rook", predicate="level", value=4,
+               authority=lc.StateAuthority.PROPOSED),
+    ]
+    assert detect_contradictions(subject_for("litrpg", records=records)) == []
+
+
+@pytest.mark.parametrize("fixture_id", ["mystery", "litrpg"])
+def test_mutating_a_conforming_book_makes_the_detector_fire(fixture_id: str) -> None:
+    """§8.3's replacement for the vacuous negative-control leg: perturb a conforming step and
+    require a *new* finding. Without this the detector's silence on both fixtures would be
+    indistinguishable from the detector being stubbed out."""
+    records = list(load_state(fixture_id).records)
+    assert detect_contradictions(subject_for(fixture_id, records=records)) == []
+
+    original = records[0]
+    conflicting = replace(
+        original,
+        record_id=original.record_id + "-conflict",
+        value="a value the book does not hold",
+    )
+    found = detect_contradictions(subject_for(fixture_id, records=[*records, conflicting]))
+    assert len(found) == 1
+    assert original.subject in found[0].message
+
+
+def test_removing_the_conflict_makes_the_detector_go_silent_again() -> None:
+    """The other half of the mutation leg: a repaired book produces no finding, so the
+    detector is measuring the defect rather than the fixture's shape."""
+    records = list(load_state("litrpg").records)
+    broken = replace(records[3], record_id="rec-dupe", value={"level": 99})
+    assert detect_contradictions(subject_for("litrpg", records=[*records, broken]))
+    assert detect_contradictions(subject_for("litrpg", records=records)) == []
+
+
+def test_a_finding_id_is_derived_so_a_rerun_converges() -> None:
+    """A detector that re-ran on an unchanged revision must produce one row, not two — the
+    outbox spin migration 006 had to fix, refused here in advance."""
+    records = [
+        record("rec-a", subject="rook", predicate="level", value=3, order_key="s4"),
+        record("rec-b", subject="rook", predicate="level", value=4, order_key="s4"),
+    ]
+    first = detect_contradictions(subject_for("litrpg", records=records))
+    second = detect_contradictions(subject_for("litrpg", records=list(reversed(records))))
+    assert [item.finding_id for item in first] == [item.finding_id for item in second]
+
+
+# -- the answer key ------------------------------------------------------------------------------
+
+
+def test_no_module_reads_the_note_field() -> None:
+    """§8.3: five of six planted litrpg defects carry their own finding id in
+    `StateRecord.note` — "Gold 15 is what the prose says... See f-gold-ledger." — so a 6/6
+    gate is reachable by regexing for `See f-`. Asserted by scanning the source rather than
+    promised in a docstring, because the promise is what would rot."""
+    root = Path(domain_package.__file__).parent.parent
+    offenders: list[str] = []
+    for path in sorted(root.rglob("*.py")):
+        tree = ast.parse(path.read_text(encoding="utf-8"))
+        for node in ast.walk(tree):
+            # Parsed rather than grepped: `note` appears legitimately in prose throughout
+            # this package and as `DirectiveKind.ARC_NOTE`, and a substring scan flags both.
+            # What must not exist is a *read* — `record.note` or `record["note"]`.
+            reads = isinstance(node, ast.Attribute) and node.attr == "note"
+            subscript = (
+                isinstance(node, ast.Subscript)
+                and isinstance(node.slice, ast.Constant)
+                and node.slice.value == "note"
+            )
+            if reads or subscript:
+                offenders.append(f"{path.relative_to(root).as_posix()}:{node.lineno}")
+    assert offenders == []
+
+
+def test_the_fixture_really_does_carry_the_answer_key() -> None:
+    """A guard on the guard above: if the fixture stopped annotating its defects, the scan
+    would keep passing for the wrong reason and the property it protects would be gone."""
+    notes = [
+        item.note
+        for item in load_state("litrpg").records
+        if item.note and "See f-" in item.note
+    ]
+    assert len(notes) >= 5
+
+
+# -- ingestion, which is how a sibling's detectors reach the gate ----------------------------------
+
+
+@pytest.mark.parametrize("fixture_id", ["mystery", "litrpg"])
+def test_the_golden_findings_ingest_as_an_evaluation_artifact(fixture_id: str) -> None:
+    """§8.4's integration shape, exercised on the real artifact: an evaluator writes an
+    `EvaluationArtifact`, LitHarness reads it, and the only thing either project knows about
+    the other is a schema they both already depend on. No import of a sibling package."""
+    run_id, findings = load_findings(fixture_findings(fixture_id))
+    assert run_id
+    assert findings
+    assert all(item.rule_or_critic_id for item in findings)
+    assert all(item.deterministic for item in findings)
+    # Every planted defect is severe enough to block; every negative control is a real
+    # finding that needs a human to say it is intentional.
+    blocking = [item for item in findings if item.blocks]
+    controls = [item for item in findings if item.finding_id.startswith("f-control-")]
+    assert blocking
+    assert controls
+
+
+def test_an_ingested_planted_defect_refuses_the_candidate_for_its_node(store: SqliteStore) -> None:
+    """The clause end to end, at the store level: a real planted defect from the fixture's
+    own findings artifact is ingested, and the gate for the node it lands on refuses."""
+    _, findings = load_findings(fixture_findings("litrpg"))
+    store.record_findings(BOOK_ID, BRANCH_ID, findings, created_at="t")
+
+    planted = next(item for item in findings if item.finding_id == "f-gold-ledger")
+    assert planted.logical_id
+    standing = store.findings(BOOK_ID, BRANCH_ID, logical_id=planted.logical_id, open_only=True)
+    gate, _ = gate_integrity(
+        subject_for("litrpg", logical_id=planted.logical_id), standing=standing
+    )
+    assert not gate.passed
+    assert Veto.CONTINUITY_BREACH in gate.vetoes
+
+
+def test_a_defect_on_another_scene_does_not_block_this_one(store: SqliteStore) -> None:
+    """§4.1: a blocked item never stalls the queue. Blocking every later beat on one old
+    finding would turn a single defect into a stalled book."""
+    _, findings = load_findings(fixture_findings("litrpg"))
+    store.record_findings(BOOK_ID, BRANCH_ID, findings, created_at="t")
+    planted = next(item for item in findings if item.finding_id == "f-gold-ledger")
+
+    elsewhere = [
+        item.logical_id
+        for item in findings
+        if item.logical_id and item.logical_id != planted.logical_id
+    ]
+    clean_node = next(
+        node for node in ("scene-1", "scene-2", "scene-3", "scene-4", "scene-5", "scene-6")
+        if node != planted.logical_id and node not in elsewhere
+    )
+    standing = store.findings(BOOK_ID, BRANCH_ID, logical_id=clean_node, open_only=True)
+    gate, _ = gate_integrity(subject_for("litrpg", logical_id=clean_node), standing=standing)
+    assert gate.passed
+
+
+def test_reingesting_the_same_artifact_writes_nothing(store: SqliteStore) -> None:
+    _, findings = load_findings(fixture_findings("mystery"))
+    first = store.record_findings(BOOK_ID, BRANCH_ID, findings, created_at="t")
+    assert first == len(findings)
+    assert store.record_findings(BOOK_ID, BRANCH_ID, findings, created_at="t") == 0
+
+
+def test_a_rerun_does_not_reopen_what_a_human_closed(store: SqliteStore) -> None:
+    """`INSERT OR IGNORE` gives this for free, and an upsert would take it away: every
+    evaluation would re-raise every negative control, which is the fastest way to make an
+    operator stop reading the queue."""
+    _, findings = load_findings(fixture_findings("mystery"))
+    store.record_findings(BOOK_ID, BRANCH_ID, findings, created_at="t")
+    control = "f-control-motif-rain"
+    assert store.set_finding_status(control, Status.ACCEPTED_INTENTIONAL)
+
+    store.record_findings(BOOK_ID, BRANCH_ID, findings, created_at="t")
+    stored = {item.finding_id: item for item in store.findings(BOOK_ID, BRANCH_ID)}
+    assert stored[control].status is Status.ACCEPTED_INTENTIONAL
+    assert not stored[control].blocks
+
+
+def test_dismissing_a_control_unblocks_the_node_it_landed_on(store: SqliteStore) -> None:
+    """The operator verb behind a negative control, end to end."""
+    _, findings = load_findings(fixture_findings("mystery"))
+    store.record_findings(BOOK_ID, BRANCH_ID, findings, created_at="t")
+    blocking = [item for item in store.findings(BOOK_ID, BRANCH_ID, open_only=True) if item.blocks]
+    assert blocking
+
+    for item in blocking:
+        store.set_finding_status(item.finding_id, Status.ACCEPTED_INTENTIONAL)
+    remaining = [
+        item for item in store.findings(BOOK_ID, BRANCH_ID, open_only=True) if item.blocks
+    ]
+    assert remaining == []
+
+
+def test_findings_are_returned_worst_first(store: SqliteStore) -> None:
+    store.record_findings(
+        BOOK_ID,
+        BRANCH_ID,
+        [
+            finding(severity=Severity.MINOR, rule="a"),
+            finding(severity=Severity.CRITICAL, rule="b"),
+            finding(severity=Severity.MAJOR, rule="c"),
+        ],
+        created_at="t",
+    )
+    got = [item.severity for item in store.findings(BOOK_ID, BRANCH_ID)]
+    assert got == [Severity.CRITICAL, Severity.MAJOR, Severity.MINOR]
+
+
+def test_a_confirmed_finding_is_still_unresolved(store: SqliteStore) -> None:
+    """`open_only` is not `status = 'open'`. `CONFIRMED` means a human agreed the defect is
+    real, which is the last status a gate should treat as settled."""
+    item = finding()
+    store.record_findings(BOOK_ID, BRANCH_ID, [item], created_at="t")
+    store.set_finding_status(item.finding_id, Status.CONFIRMED)
+    still = store.findings(BOOK_ID, BRANCH_ID, open_only=True)
+    assert [entry.finding_id for entry in still] == [item.finding_id]
+    assert still[0].blocks
+
+
+def test_a_finding_round_trips_through_the_store(store: SqliteStore) -> None:
+    _, findings = load_findings(fixture_findings("mystery"))
+    store.record_findings(BOOK_ID, BRANCH_ID, findings, created_at="t")
+    stored = {item.finding_id: item for item in store.findings(BOOK_ID, BRANCH_ID)}
+    promise = stored["f-promise-letter"]
+    assert promise.rule_or_critic_id == "promise.resolution.v0"
+    assert promise.severity is Severity.MAJOR
+    assert promise.logical_id == "scene-6"
+    # The whole contract artifact survives, including the claim the projection never reads.
+    assert promise.source["claim"] == {
+        "thread": "sealed_letter_reading",
+        "expected": "resolved",
+        "observed": "open_at_end",
+    }
+
+
+def test_a_malformed_artifact_is_an_operational_fault_not_a_crash(tmp_path) -> None:
+    path = tmp_path / "bad.json"
+    path.write_text(json.dumps({"not": "an artifact"}), encoding="utf-8")
+    with pytest.raises(EvaluationArtifactUnreadable):
+        load_findings(path)
+
+
+def test_the_findings_artifact_is_not_confused_with_the_manuscript(tmp_path) -> None:
+    """A real file of the wrong schema, which is the mistake an operator actually makes."""
+    with pytest.raises(EvaluationArtifactUnreadable):
+        load_findings(fixture_manuscript("mystery"))
+
+
+# -- vocabulary ------------------------------------------------------------------------------------
+
+
+def test_no_blocking_finding_means_no_veto() -> None:
+    assert vetoes_for([]) == ()
+    assert vetoes_for([finding(severity=Severity.MINOR)]) == ()
+    assert vetoes_for([finding()]) == (Veto.CONTINUITY_BREACH,)
+
+
+def test_summarise_leads_with_the_worst() -> None:
+    assert summarise([]) == "no findings"
+    text = summarise([finding(severity=Severity.MINOR), finding(severity=Severity.CRITICAL)])
+    assert "worst critical" in text
+    assert "1 blocking" in text

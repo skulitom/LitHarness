@@ -5,13 +5,15 @@ master plan and [plan/](plan/) for companion design documents — in particular
 [plan/stage-0-decisions.md](plan/stage-0-decisions.md), which records the load-bearing
 design decisions and why each went the way it did.
 
-**Status: Stage 0 slices 1–6, Stage 1 slices 7–8.** The manuscript spine, the Conductor loop,
-four provider adapters, a provider-backed draft handler behind a shape gate, recorded
-acceptance decisions, a direction inbox, a way to get a book in, a template planner that
-takes a six-scene fixture book from premise to six accepted scenes with no human in the
-loop, and — as of slice 8 — an objective-story-state layer and the context packet each scene
-is drafted against. It writes a book whose scenes know about each other; nothing in it yet
-measures whether the book is any good. See [What is not built](#what-is-not-built).
+**Status: Stage 0 complete, Stage 1 slices 7–9 — all four Stage 1 exit clauses met.** The
+manuscript spine, the Conductor loop, four provider adapters, recorded acceptance decisions,
+a direction inbox, a way to get a book in, a reading copy to get it out, a template planner
+that takes a six-scene fixture book from premise to six accepted scenes with no human in the
+loop, an objective-story-state layer and the context packet each scene is drafted against,
+and a blocking integrity gate that refuses a candidate a planted defect stands against. It
+writes a book whose scenes know about each other and refuses one that contradicts itself;
+nothing in it yet measures whether the book is any *good*. See
+[What is not built](#what-is-not-built).
 
 ## Setup
 
@@ -112,6 +114,46 @@ by forgetting a flag. `status` prints spend against plan.
 - `verify` — rebuild every revision from canonical records, check the content hashes, and
   report any revision no policy decision explains. Exits non-zero if it finds one.
 
+## Gating it
+
+Every candidate that clears the shape gate then faces a **blocking integrity gate**. It
+refuses a draft that any unresolved, deterministic, major-or-worse finding stands against —
+the refusal carries a `continuity_breach` veto, earns a bounded retry, and after the attempt
+budget parks the unit and files an exception. A defect on scene 3 does not stop scene 6:
+findings are scoped to the node they land on, because blocking the branch would turn one
+defect into a dead book.
+
+The detectors themselves live in **ContinuityEvaluation** (PLAN.md §8.4 owns that decision),
+and siblings depend on contracts rather than on each other (§13) — so findings arrive as an
+`EvaluationArtifact`, a file of a shared schema:
+
+```bash
+uv run litharness --database book.db ingest ../litharness-contracts/fixtures/golden/litrpg/findings.json
+```
+
+```bash
+uv run litharness --database book.db findings
+```
+
+Re-ingesting the same artifact writes nothing: finding ids are content-derived and a re-run
+converges rather than growing the queue, and a status a human already set is not overwritten.
+
+```bash
+uv run litharness --database book.db dismiss f-control-motif-rain
+```
+
+`dismiss` is the way past a **negative control** — both golden fixtures ship deliberate
+devices a *correct* detector flags, like the mystery's repeated rain-on-glass motif and
+Julian's intentional lie. Without it the only route past one would be to weaken the detector,
+trading a true positive for a quiet queue. `--false-positive` says the detector was wrong
+rather than the device deliberate; the distinction is what a later calibration pass reads.
+
+Two things the gate will not do. A finding below `major` **annotates rather than blocks** — a
+refusal costs a generation, so a finding not worth a second model call is not worth blocking
+on. And an **uncalibrated critic cannot block at all** (§10.4): a finding whose
+`confidence_basis` is not `deterministic` is recorded, and the gate says it ran, but it never
+refuses. Promotion needs held-out calibration evidence, which is Stage 4.
+
 ## Reading it
 
 The prose lives in the database as content-addressed node versions; `backup` produces
@@ -181,13 +223,21 @@ Stated plainly, because a system that runs is easy to mistake for a system that 
   binds, so that limit is currently invisible and will not stay that way at Book Zero
   length. Only the `draft_scene` operation is served; the suite's `evaluate` and `repair`
   cases have no implementation to grade and the suite says so rather than skipping them.
+- **No craft gate.** The ladder is shape then integrity: a draft exists, is the right size,
+  did not overwrite anything, and nothing unresolved stands against its node. Nothing
+  measures whether the prose is any *good* (PLAN.md §1a), and §10.6 records why eight of nine
+  candidate craft proxies were refuted rather than built — the blocker is a human-authored
+  reference corpus, not effort.
+- **One detector runs in-process.** `state.contradiction.v0` catches canon records that
+  disagree at one story position, which is the corruption only this system can see. Every
+  other detector's findings have to be *ingested*; nothing in a `tick` runs
+  ContinuityEvaluation's pack for you, and doing so is Stage 2's "integrate the LitRPG
+  deterministic detector pack". Until then a book nobody ran an evaluator over is gated on
+  shape and contradiction alone.
 - **No state extraction.** State records enter only through `import`, on the director's
   authority. §12 step 5's extraction — reading state candidates back out of accepted prose —
-  does not exist, so a book the system drafts itself accumulates no new facts and scene six
-  gets whatever was imported, not what scenes one to five actually established.
-- **No craft gate.** The only gate is shape — a draft exists, is the right size, and did
-  not overwrite anything. Nothing measures whether the prose is any good (PLAN.md §1a).
-- **No game-system validation.** The LitRPG rules pack lives in ContinuityEvaluation and
-  is not wired in, so accepted prose is not checked against the ledger. The state layer is
-  now the place its findings would land; nothing lands there yet.
+  does not exist, so a book the system drafts itself accumulates no new facts. Both halves
+  feel it: scene six is given whatever was imported rather than what scenes one to five
+  actually established, and the integrity gate judges each candidate against that same
+  frozen state.
 - **Directives are captured, not read.** See above.

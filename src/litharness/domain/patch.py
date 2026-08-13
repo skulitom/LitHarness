@@ -56,6 +56,10 @@ class Veto(enum.StrEnum):
     #: Raised by `domain.draft` only.
     EMPTY_DRAFT = "empty_draft"
     SHAPE_NOT_CONFORMING = "shape_not_conforming"
+    #: Raised by `domain.integrity` only: a blocking finding stands against the candidate.
+    #: One veto for every finding category, because §4.2's ladder acts on the veto and the
+    #: action is the same for all of them — see `findings.vetoes_for`.
+    CONTINUITY_BREACH = "continuity_breach"
 
 
 @dataclass(frozen=True, slots=True)

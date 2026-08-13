@@ -41,6 +41,9 @@ from litharness.domain.budget import BudgetPolicy, BudgetVerdict
 from litharness.domain.budget import check as budget_check
 from litharness.domain.draft import DraftPolicy, gate_draft
 from litharness.domain.events import Event, EventType
+from litharness.domain.findings import DetectorInput
+from litharness.domain.findings import Finding as DomainFinding
+from litharness.domain.integrity import gate_integrity
 from litharness.domain.jobs import Job
 from litharness.domain.patch import Veto
 from litharness.domain.policy import (
@@ -198,6 +201,7 @@ def make_scene_draft_handler(
         # costs no tokens because it runs before the provider call. Only planner-minted work
         # carries book/branch, so a hand `enqueue` is unaffected.
         book_id, branch_id = payload.get("book_id"), payload.get("branch_id")
+        selected = payload.get("selected_by") or {}
         if book_id and branch_id:
             head = store.head(str(book_id), str(branch_id))
             if head is not None and head.revision_id != revision_id:
@@ -277,6 +281,53 @@ def make_scene_draft_handler(
         # the outcome, the provenance and the frozen policy digest now travel together and
         # can be queried later by job or by resulting revision.
         gates = gates_for_draft(outcome)
+
+        # §4.2 ladder step 3, and the first gate in the wired path that is about the *book*
+        # rather than about the string. It runs only on a candidate that cleared shape:
+        # integrity over text the shape gate refused would be a second opinion on a draft
+        # that is already going back, and it would cost a store read per refusal.
+        findings: list[DomainFinding] = []
+        if outcome.accepted and book_id and branch_id:
+            subject = DetectorInput(
+                book_id=str(book_id),
+                branch_id=str(branch_id),
+                logical_id=logical_id,
+                candidate=result.text,
+                records=tuple(store.state_records(str(book_id), str(branch_id))),
+                plan_items=tuple(store.plan_items(str(book_id), str(branch_id))),
+                ordinal=int(selected.get("ordinal", 0) or 0),
+                of_total=int(selected.get("of_total", 0) or 0),
+            )
+            # Scoped to this node: a defect in scene 2 must not park the job drafting
+            # scene 5 (§4.1), and blocking every later beat on one old finding would turn a
+            # single defect into a stalled book.
+            standing = store.findings(
+                str(book_id), str(branch_id), logical_id=logical_id, open_only=True
+            )
+            integrity, findings = gate_integrity(subject, standing=standing)
+            gates = (*gates, integrity)
+            if findings:
+                # Recorded whether or not they block. A minor finding dropped because it was
+                # not fatal is exactly the annotation §10.2 wants instrumented from Book Zero
+                # onward, and a queue that only remembers the fatal ones cannot show a trend.
+                store.record_findings(
+                    str(book_id),
+                    str(branch_id),
+                    findings,
+                    created_at=_timestamp(now),
+                    revision_id=revision_id,
+                )
+
+        # **`accepted` is the whole ladder's verdict, not the shape gate's.** Kept as its own
+        # name rather than by rewriting `outcome`, because `outcome.vetoes` is what the
+        # refusal event reports and a rewritten outcome would report a candidate refused with
+        # no reason attached — the shape gate passed, so it has none to give. The integrity
+        # gate's veto lives on its own `GateOutcome`, which `decide` and the decision record
+        # already read.
+        accepted = outcome.accepted and all(
+            gate.passed for gate in gates if gate.blocking
+        )
+
         verdict, reason = decide(
             gates,
             job_id=job.job_id,
@@ -291,7 +342,7 @@ def make_scene_draft_handler(
             logical_id=logical_id,
             base_revision_id=revision_id,
             resulting_revision_id=(
-                outcome.revision.revision_id if outcome.accepted and outcome.revision else None
+                outcome.revision.revision_id if accepted and outcome.revision else None
             ),
             attempt=job.attempts,
             # §5 rule 4 forbids a silent provider switch, so the fallback chain is recorded
@@ -329,7 +380,8 @@ def make_scene_draft_handler(
             },
         )
 
-        if not outcome.accepted:
+        if not accepted:
+            failed = [gate for gate in gates if gate.blocking and not gate.passed]
             return [
                 Event(
                     event_type=EventType.MANUSCRIPT_CANDIDATE_CREATED,
@@ -344,15 +396,19 @@ def make_scene_draft_handler(
                         "job_id": job.job_id,
                         "logical_id": logical_id,
                         "accepted": False,
-                        "vetoes": [veto.value for veto in outcome.veto_kinds],
-                        "veto_details": [record.detail for record in outcome.vetoes],
+                        # Read off the failing gates rather than off `outcome`, so an
+                        # integrity refusal reports its own veto instead of an empty list —
+                        # the shape gate passed and has nothing to say about it.
+                        "vetoes": [veto.value for gate in failed for veto in gate.vetoes],
+                        "veto_details": [gate.detail for gate in failed if gate.detail],
+                        "findings": [item.finding_id for item in findings if item.blocks],
                     },
                 ),
                 decision_event,
             ]
 
         assert outcome.revision is not None  # accepted implies a revision
-        accepted = Event(
+        acceptance = Event(
             event_type=EventType.MANUSCRIPT_REVISION_ACCEPTED,
             project_id=project_id,
             created_at=_timestamp(now),
@@ -369,8 +425,8 @@ def make_scene_draft_handler(
                 "parent_revision_id": revision_id,
             },
         )
-        store.commit_revision(outcome.revision, created_at=_timestamp(now), events=[accepted])
-        # `accepted` is deliberately **not** returned: `commit_revision` already persisted it
+        store.commit_revision(outcome.revision, created_at=_timestamp(now), events=[acceptance])
+        # `acceptance` is deliberately **not** returned: `commit_revision` already persisted it
         # in the same transaction as the revision, and returning it as well would ask the
         # Conductor to append it a second time — harmless, because idempotency keys are
         # content-derived and collapse on insert, but it would misreport the tick's event

@@ -44,6 +44,11 @@ class Status:
     outbox: dict[str, int] = field(default_factory=dict)
     unread_directives: int = 0
     open_exceptions: int = 0
+    #: Findings a blocking gate would refuse a candidate on. Counted rather than listed,
+    #: because `litharness findings` is where they are read — but *counted here*, because a
+    #: book that stopped advancing and a book that is blocked on one dismissable finding look
+    #: identical on every other line of this report.
+    blocking_findings: int = 0
     digest: dict[str, int] = field(default_factory=dict)
     #: §19 Economics: "the operator can see spend vs. plan at any tick".
     spend: Spend = field(default_factory=Spend)
@@ -56,6 +61,10 @@ class Status:
             self.jobs.get(JobStatus.POISONED.value, 0)
             + self.jobs.get(JobStatus.PARKED.value, 0)
             + self.open_exceptions
+            # A blocking finding is a unit that will keep failing until a human closes it or
+            # a repair clears it, so it belongs in the number an operator watches — not in a
+            # separate one they have to remember to look at.
+            + self.blocking_findings
         )
 
     @property
@@ -79,6 +88,7 @@ class Status:
             "outbox": self.outbox,
             "unread_directives": self.unread_directives,
             "open_exceptions": self.open_exceptions,
+            "blocking_findings": self.blocking_findings,
             "digest": self.digest,
             "spend": {
                 "invocations": self.spend.invocations,
@@ -119,6 +129,7 @@ class Status:
             f"outbox          {self.outbox or '{}'}",
             f"unread          {self.unread_directives} directive(s)",
             f"exceptions      {self.open_exceptions} open",
+            f"findings        {self.blocking_findings} blocking",
             f"digest today    {self.digest or '{}'}",
             f"spend today     {self.spend.invocations} call(s), "
             f"{self.spend.tokens} tokens"
@@ -150,6 +161,12 @@ def collect(
         outbox=store.outbox_counts_by_state(),
         unread_directives=len(store.directives_by_status(DirectiveStatus.RECEIVED)),
         open_exceptions=len(store.open_exceptions()),
+        blocking_findings=sum(
+            1
+            for book_id, branch_id, _ in store.branches()
+            for item in store.findings(book_id, branch_id, open_only=True)
+            if item.blocks
+        ),
         digest=store.digest(day),
         spend=store.spend_on(day),
         budget=budget or BudgetPolicy(),

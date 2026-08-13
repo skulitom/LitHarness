@@ -90,6 +90,16 @@ def fixture_state(fixture_id: str) -> Path:
     return _fixture_file(fixture_id, "state.json")
 
 
+def fixture_findings(fixture_id: str) -> Path:
+    """The `findings.json` beside them — an `EvaluationArtifact` of planted defects.
+
+    Gold labels, not input: §17 Stage 1 is graded on planted-defect injection being caught by
+    gates, and this is the artifact the injection uses. It doubles as the worked example of
+    §8.4's integration shape, since it is exactly what ContinuityEvaluation's pack emits.
+    """
+    return _fixture_file(fixture_id, "findings.json")
+
+
 def fixture_context_gold(fixture_id: str) -> Path:
     """The `GoldContextSuite` that grades a packet — mandatory and forbidden items per query.
 
@@ -104,6 +114,7 @@ __all__ = [
     "FIXTURE_IDS",
     "FixturesUnavailable",
     "fixture_context_gold",
+    "fixture_findings",
     "fixture_manuscript",
     "fixture_plans",
     "fixture_state",

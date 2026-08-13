@@ -43,6 +43,10 @@ from litharness.domain.events import (
     delivery_backoff,
 )
 from litharness.domain.exceptions import ExceptionKind, ExceptionRecord, ExceptionStatus
+from litharness.domain.findings import UNRESOLVED_STATUSES
+from litharness.domain.findings import Finding as DomainFinding
+from litharness.domain.findings import Severity as DomainSeverity
+from litharness.domain.findings import Status as FindingStatus
 from litharness.domain.jobs import IllegalTransition, Job, JobStatus
 from litharness.domain.nodes import BlockKind, LockKind, Node, NodeKind
 from litharness.domain.patch import Veto
@@ -1006,6 +1010,149 @@ class SqliteStore:
             lc.from_jsonable(lc.StateRecord, json.loads(row["record_json"]))
             for row in self._connection.execute(sql, params)
         ]
+
+    # -- findings --------------------------------------------------------------
+
+    def record_findings(
+        self,
+        book_id: str,
+        branch_id: str,
+        findings: Sequence[DomainFinding],
+        *,
+        created_at: str,
+        revision_id: str | None = None,
+        events: Sequence[Event] = (),
+    ) -> int:
+        """Store findings. Returns how many rows were new.
+
+        `INSERT OR IGNORE` on the content-derived `finding_id`, so a detector re-run over an
+        unchanged revision converges on one row instead of growing the queue every tick —
+        the spin migration 006 had to fix in the outbox, refused here in advance.
+
+        **A re-run does not reopen a finding a human closed.** `INSERT OR IGNORE` is what
+        gives that for free: the existing row, with its `accepted_intentional` status, wins.
+        An upsert would re-raise every negative control on every evaluation, which is the
+        fastest way to make an operator stop reading the queue.
+        """
+        inserted = 0
+        with self.transaction() as connection:
+            for finding in findings:
+                cursor = connection.execute(
+                    "INSERT OR IGNORE INTO findings (finding_id, book_id, branch_id, "
+                    "revision_id, category, subtype, severity, status, rule_or_critic_id, "
+                    "logical_id, message, finding_json, run_id, created_at) "
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                    (
+                        finding.finding_id,
+                        book_id,
+                        branch_id,
+                        revision_id,
+                        finding.category,
+                        finding.subtype,
+                        finding.severity.value,
+                        finding.status.value,
+                        finding.rule_or_critic_id,
+                        finding.logical_id,
+                        finding.message,
+                        json.dumps(
+                            {
+                                "projection": {
+                                    "confidence_basis": finding.confidence_basis,
+                                    "run_id": finding.run_id,
+                                },
+                                "source": finding.source,
+                            },
+                            sort_keys=True,
+                            ensure_ascii=False,
+                        ),
+                        finding.run_id,
+                        created_at,
+                    ),
+                )
+                inserted += cursor.rowcount
+            for event in events:
+                self._insert_event(connection, event)
+        return inserted
+
+    def findings(
+        self,
+        book_id: str,
+        branch_id: str,
+        *,
+        logical_id: str | None = None,
+        status: FindingStatus | None = None,
+        open_only: bool = False,
+    ) -> list[DomainFinding]:
+        """Findings for a book, worst severity first.
+
+        `open_only` is the gate's filter and is *not* `status = 'open'`: `CONFIRMED` is also
+        unresolved, and a gate that only looked at `OPEN` would wave through every defect a
+        human had confirmed — the one status that means "yes, this is really wrong".
+        """
+        sql = "SELECT * FROM findings WHERE book_id = ? AND branch_id = ?"
+        params: list[Any] = [book_id, branch_id]
+        if logical_id is not None:
+            sql += " AND logical_id = ?"
+            params.append(logical_id)
+        if status is not None:
+            sql += " AND status = ?"
+            params.append(status.value)
+        if open_only:
+            placeholders = ",".join("?" for _ in UNRESOLVED_STATUSES)
+            sql += f" AND status IN ({placeholders})"
+            params.extend(item.value for item in UNRESOLVED_STATUSES)
+        sql += " ORDER BY created_at, finding_id"
+        rows = [self._finding_from_row(row) for row in self._connection.execute(sql, params)]
+        return sorted(rows, key=lambda item: (-item.severity.rank, item.finding_id))
+
+    @staticmethod
+    def _finding_from_row(row: sqlite3.Row) -> DomainFinding:
+        stored = json.loads(row["finding_json"])
+        projection = stored.get("projection", {})
+        return DomainFinding(
+            finding_id=row["finding_id"],
+            category=row["category"],
+            severity=DomainSeverity(row["severity"]),
+            message=row["message"],
+            status=FindingStatus(row["status"]),
+            subtype=row["subtype"],
+            rule_or_critic_id=row["rule_or_critic_id"],
+            logical_id=row["logical_id"],
+            confidence_basis=projection.get("confidence_basis", "unknown"),
+            run_id=row["run_id"],
+            source=stored.get("source", {}),
+        )
+
+    def set_finding_status(
+        self, finding_id: str, status: FindingStatus, *, events: Sequence[Event] = ()
+    ) -> bool:
+        """Close a finding, or mark it intentional. False if no such finding.
+
+        The operator verb behind a negative control: both fixtures ship deliberate devices a
+        correct detector flags, and without this the only way past one would be to weaken the
+        detector — trading a true positive for a quiet queue, which is the trade §10.6 spends
+        a section refusing.
+        """
+        with self.transaction() as connection:
+            cursor = connection.execute(
+                "UPDATE findings SET status = ? WHERE finding_id = ?",
+                (status.value, finding_id),
+            )
+            if cursor.rowcount == 0:
+                return False
+            for event in events:
+                self._insert_event(connection, event)
+        return True
+
+    def finding_counts(self, book_id: str, branch_id: str) -> dict[str, int]:
+        return {
+            row["status"]: int(row["n"])
+            for row in self._connection.execute(
+                "SELECT status, COUNT(*) AS n FROM findings WHERE book_id = ? AND "
+                "branch_id = ? GROUP BY status",
+                (book_id, branch_id),
+            )
+        }
 
     def plan_epoch(self, book_id: str, branch_id: str) -> int:
         row = self._connection.execute(

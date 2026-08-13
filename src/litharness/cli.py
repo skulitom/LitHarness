@@ -33,7 +33,7 @@ from typing import Any
 
 import litharness_contracts as lc
 
-from litharness.adapters import contracts_fixtures
+from litharness.adapters import contracts_fixtures, evaluation_artifact
 from litharness.adapters.sqlite_store import MigrationsMissing, SqliteStore
 from litharness.application import export as export_module
 from litharness.application import status as status_module
@@ -45,6 +45,7 @@ from litharness.domain.budget import BudgetPolicy
 from litharness.domain.directives import Directive, DirectiveKind, DirectiveStatus, directive_id_for
 from litharness.domain.events import Event, EventType
 from litharness.domain.exceptions import ExceptionStatus
+from litharness.domain.findings import Status as finding_status
 from litharness.domain.jobs import Job, JobStatus, input_digest_for
 from litharness.domain.plans import import_plan, premise_of
 from litharness.domain.policy import Outcome, PolicyDecision, decision_id_for
@@ -297,6 +298,121 @@ def cmd_resolve(args: argparse.Namespace) -> int:
     print(f"{closed.status.value} {closed.exception_id}")
     if closed.job_id:
         print(f"  the unit stays parked; `litharness revive {closed.job_id}` to requeue it")
+    return EXIT_OK
+
+
+def cmd_findings(args: argparse.Namespace) -> int:
+    """What the evaluators say is wrong, worst first.
+
+    Distinct from `exceptions`, and the distinction matters operationally: an exception is
+    something *policy could not resolve* and is waiting on a human; a finding is something a
+    *detector* reported, most of which policy resolves by itself with a retry. A director who
+    had to read both queues the same way would stop reading either.
+    """
+    store = _store(args)
+    try:
+        book_id, branch_id = export_module.resolve_branch(store, args.book, args.branch)
+        items = store.findings(
+            book_id, branch_id, logical_id=args.node, open_only=not args.all
+        )
+    finally:
+        store.close()
+    for item in items:
+        flag = "BLOCKS" if item.blocks else "      "
+        print(
+            f"{item.finding_id}  {flag}  {item.severity.value:<8} {item.status.value:<20} "
+            f"{item.rule_or_critic_id or item.category}"
+        )
+        print(f"    {item.message}")
+        if item.logical_id:
+            print(f"    at {item.logical_id}")
+    blocking = sum(1 for item in items if item.blocks)
+    print(f"({len(items)} shown, {blocking} blocking)")
+    return EXIT_ATTENTION if blocking else EXIT_OK
+
+
+def cmd_ingest(args: argparse.Namespace) -> int:
+    """Take an evaluator's findings into the store, which is how a sibling's detectors gate.
+
+    §8.4 keeps the LitRPG rule and predicate vocabulary in ContinuityEvaluation, and §13 keeps
+    siblings depending on contracts rather than on each other — so the integration is a file
+    of a shared schema, read here. Re-ingesting the same artifact writes nothing: finding ids
+    are content-derived and the insert ignores duplicates, so a detector re-run converges
+    rather than growing the queue, and a status a human already set is not overwritten.
+    """
+    run_id, findings = evaluation_artifact.load_findings(args.path)
+    stamp = _stamp(_now())
+    store = _store(args)
+    try:
+        book_id, branch_id = export_module.resolve_branch(store, args.book, args.branch)
+        head = store.head(book_id, branch_id)
+        written = store.record_findings(
+            book_id,
+            branch_id,
+            findings,
+            created_at=stamp,
+            revision_id=head.revision_id if head else None,
+            events=[
+                Event(
+                    event_type=EventType.EVALUATION_COMPLETED,
+                    project_id=args.project,
+                    created_at=stamp,
+                    actor=args.holder,
+                    book_id=book_id,
+                    branch_id=branch_id,
+                    revision_id=head.revision_id if head else None,
+                    payload={
+                        "run_id": run_id,
+                        "findings": len(findings),
+                        "blocking": sum(1 for item in findings if item.blocks),
+                        "source": str(args.path),
+                    },
+                )
+            ],
+        )
+    finally:
+        store.close()
+    blocking = sum(1 for item in findings if item.blocks)
+    print(f"{run_id}: {len(findings)} finding(s), {written} new, {blocking} blocking")
+    if blocking:
+        print("  the gate refuses a candidate for the nodes these land on until they close")
+    return EXIT_OK
+
+
+def cmd_dismiss(args: argparse.Namespace) -> int:
+    """Mark a finding intentional or false, so a deliberate device stops blocking.
+
+    Both golden fixtures ship negative controls — the rain-on-glass motif, Julian's alibi —
+    which a *correct* detector flags and a correct policy must not refuse forever. Without
+    this verb the only way past one would be to weaken the detector, trading a true positive
+    for a quiet queue.
+    """
+    status = (
+        finding_status.FALSE_POSITIVE if args.false_positive
+        else finding_status.ACCEPTED_INTENTIONAL
+    )
+    stamp = _stamp(_now())
+    store = _store(args)
+    try:
+        changed = store.set_finding_status(
+            args.finding_id,
+            status,
+            events=[
+                Event(
+                    event_type=EventType.FINDING_STATUS_CHANGED,
+                    project_id=args.project,
+                    created_at=stamp,
+                    actor=args.holder,
+                    payload={"finding_id": args.finding_id, "status": status.value},
+                )
+            ],
+        )
+    finally:
+        store.close()
+    if not changed:
+        print(f"litharness: no finding {args.finding_id}", file=sys.stderr)
+        return EXIT_ATTENTION
+    print(f"{args.finding_id} -> {status.value}")
     return EXIT_OK
 
 
@@ -752,6 +868,38 @@ def build_parser() -> argparse.ArgumentParser:
         "inspection and not for generation",
     )
     importer.set_defaults(func=cmd_import)
+
+    findings = sub.add_parser(
+        "findings", help="what the evaluators say is wrong, worst severity first"
+    )
+    findings.add_argument("--book")
+    findings.add_argument("--branch")
+    findings.add_argument("--node", help="only findings landing on this logical id")
+    findings.add_argument(
+        "--all",
+        action="store_true",
+        help="include closed and dismissed findings, not just the unresolved ones",
+    )
+    findings.set_defaults(func=cmd_findings)
+
+    ingest = sub.add_parser(
+        "ingest", help="take an evaluator's EvaluationArtifact into the findings store"
+    )
+    ingest.add_argument("path", type=Path, help="an EvaluationArtifact JSON file")
+    ingest.add_argument("--book")
+    ingest.add_argument("--branch")
+    ingest.set_defaults(func=cmd_ingest)
+
+    dismiss = sub.add_parser(
+        "dismiss", help="mark a finding intentional, so a deliberate device stops blocking"
+    )
+    dismiss.add_argument("finding_id")
+    dismiss.add_argument(
+        "--false-positive",
+        action="store_true",
+        help="the detector was wrong, rather than the device being deliberate",
+    )
+    dismiss.set_defaults(func=cmd_dismiss)
 
     backup = sub.add_parser("backup", help="online backup (safe while ticking)")
     backup.add_argument("destination", type=Path)

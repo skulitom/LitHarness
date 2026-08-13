@@ -34,7 +34,9 @@ from litharness.domain.context import assemble
 from litharness.domain.draft import DraftPolicy, is_draftable
 from litharness.domain.jobs import JobStatus
 from litharness.domain.nodes import LockKind, Node, NodeKind
+from litharness.domain.patch import Veto
 from litharness.domain.plans import import_plan
+from litharness.domain.policy import GateKind, Outcome
 from litharness.domain.revision import Revision, build_revision, import_manuscript
 from litharness.domain.state import import_state
 from litharness.providers.fake import FakeProvider
@@ -480,3 +482,131 @@ def test_bumping_the_epoch_reissues_a_burned_beat(store: SqliteStore) -> None:
     new_id = beat_job_id(book_id, branch_id, "scene-1", SIX_BEAT.template_id, after)
     assert not store.has_job(new_id)
     assert _conductor(store).tick(START + 100 * TICK).outcome is TickOutcome.RAN_JOB
+
+
+# --- §17 Stage 1 exit clause 4: planted-defect injection ------------------------------
+
+
+def _plant(store: SqliteStore, book_id: str, branch_id: str, logical_id: str) -> str:
+    """Inject a real planted defect from the fixture's own findings artifact.
+
+    From `findings.json` rather than hand-built, so what the gate refuses is a defect the
+    fixture authors labelled — a fabricated finding would only prove the gate can read a
+    dataclass this file wrote.
+    """
+    from dataclasses import replace as dataclass_replace
+
+    from litharness.adapters.contracts_fixtures import fixture_findings
+    from litharness.adapters.evaluation_artifact import load_findings
+
+    _, findings = load_findings(fixture_findings("litrpg"))
+    planted = next(item for item in findings if item.finding_id == "f-gold-ledger")
+    # Re-anchored onto the node under test: the artifact's own scope names the *producer's*
+    # book, which is never the sha256 address this store minted on import.
+    moved = dataclass_replace(planted, logical_id=logical_id)
+    store.record_findings(book_id, branch_id, [moved], created_at="2026-08-13T00:00:00Z")
+    return moved.finding_id
+
+
+def test_a_planted_defect_is_refused_by_the_gate_not_accepted_by_luck(
+    store: SqliteStore,
+) -> None:
+    """§17 Stage 1's fourth exit clause, over a real tick rather than a unit test.
+
+    Before this slice the only blocking gate in the wired path was `shape.draft.v0`, so a
+    candidate of plausible length was accepted whatever the book said. The assertion that
+    matters is the second one: the scene is still **empty** afterwards. A gate that recorded
+    a refusal and committed the revision anyway would satisfy every other check here.
+    """
+    book_id, branch_id = _fixture(store, "litrpg")
+    head = store.head(book_id, branch_id)
+    assert head is not None
+    first = beats_for(head, SIX_BEAT)[0].logical_id
+    _plant(store, book_id, branch_id, first)
+
+    outcomes = _run(store, 3)
+
+    # The unit ran — this is not a book that quietly had nothing to do.
+    assert TickOutcome.NO_WORK not in outcomes
+    head = store.head(book_id, branch_id)
+    assert head is not None
+    assert head.node(first).content is None, "a planted defect reached accepted canon"
+
+
+def test_the_refusal_is_recorded_as_an_integrity_gate_on_the_decision(
+    store: SqliteStore,
+) -> None:
+    """"Caught by gates, not luck" has to be legible afterwards or it is indistinguishable
+    from the model happening not to produce anything. The decision names the gate."""
+    book_id, branch_id = _fixture(store, "litrpg")
+    head = store.head(book_id, branch_id)
+    assert head is not None
+    first = beats_for(head, SIX_BEAT)[0].logical_id
+    _plant(store, book_id, branch_id, first)
+    _run(store, 2)
+
+    job_id = beat_job_id(book_id, branch_id, first, SIX_BEAT.template_id, 0)
+    decision = store.latest_decision_for(job_id)
+    assert decision is not None
+    integrity = [gate for gate in decision.gates if gate.gate is GateKind.INTEGRITY]
+    assert integrity, "the integrity gate did not run"
+    assert not integrity[0].passed
+    assert Veto.CONTINUITY_BREACH in decision.failed_vetoes
+    assert decision.outcome in {Outcome.RETRY, Outcome.PARK}
+
+
+def test_the_defect_stops_that_beat_without_stalling_the_book(store: SqliteStore) -> None:
+    """§4.1: a blocked item never stalls the queue — the Conductor works elsewhere in the
+    book. A gate that blocked the whole branch would convert one defect into a dead book,
+    which is the more expensive failure and the easier one to ship by accident."""
+    book_id, branch_id = _fixture(store, "litrpg")
+    head = store.head(book_id, branch_id)
+    assert head is not None
+    beats = beats_for(head, SIX_BEAT)
+    _plant(store, book_id, branch_id, beats[0].logical_id)
+
+    _run(store, 14)
+
+    head = store.head(book_id, branch_id)
+    assert head is not None
+    assert head.node(beats[0].logical_id).content is None, "the planted beat was accepted"
+    drafted = [
+        beat.logical_id for beat in beats[1:] if head.node(beat.logical_id).content is not None
+    ]
+    assert len(drafted) == 5, f"the book stalled; only {drafted} advanced"
+
+
+def test_dismissing_the_finding_lets_the_beat_through(store: SqliteStore) -> None:
+    """The operator's way out, and the proof the refusal was the finding's doing rather than
+    something else about that beat."""
+    from litharness.domain.findings import Status
+
+    book_id, branch_id = _fixture(store, "litrpg")
+    head = store.head(book_id, branch_id)
+    assert head is not None
+    first = beats_for(head, SIX_BEAT)[0].logical_id
+    finding_id = _plant(store, book_id, branch_id, first)
+    _run(store, 6)
+    head = store.head(book_id, branch_id)
+    assert head is not None and head.node(first).content is None
+
+    store.set_finding_status(finding_id, Status.ACCEPTED_INTENTIONAL)
+    store.bump_plan_epoch(book_id, branch_id, at="2026-08-13T02:00:00Z", reason="dismissed")
+    _run(store, 8)
+
+    head = store.head(book_id, branch_id)
+    assert head is not None
+    assert head.node(first).content is not None, "dismissing the finding did not unblock it"
+
+
+def test_a_clean_book_is_not_refused_by_the_new_gate(store: SqliteStore) -> None:
+    """The false-accept clause's twin, and the one that would actually stop the project: a
+    gate that refuses a conforming book is not a floor, it is an outage. Both fixtures still
+    reach six accepted scenes with the integrity gate live."""
+    for fixture in ("mystery", "litrpg"):
+        book_id, branch_id = _fixture(store, fixture)
+        _run(store, 20)
+        head = store.head(book_id, branch_id)
+        assert head is not None
+        scenes = [node for node in head.in_reading_order() if node.kind is NodeKind.SCENE]
+        assert all(node.content for node in scenes), f"{fixture} was refused by the new gate"
