@@ -205,6 +205,45 @@ uv run litharness --database book.db export book.html --format html
 pandoc book.md -o book.pdf
 ```
 
+## Judging it
+
+The one input this system cannot generate. §10.5 routes a share of accepted scenes to a
+queue as they are drafted, so evidence accumulates as a by-product of operation rather than
+requiring a session someone has to schedule:
+
+```bash
+uv run litharness --database book.db audit --next
+```
+
+It prints the prose, not a reference to it, and with no provenance attached — §10.3 wants
+blinded judgments, and RevisionBench measured 43–65% positional artifacts in unblinded
+judges. The draw is derived from `(revision, node)` rather than randomly, so a replayed tick
+picks the same scene and nobody can re-roll for a kinder sample.
+
+```bash
+uv run litharness --database book.db judge aud-… --would-stop --note "nothing changes; all setup"
+```
+
+`--keep-reading` / `--would-stop` / `--not-sure`, matching §1a.5's bar rather than a rubric.
+Abstention is a real answer and is counted (§10.4). A verdict is recorded once and never
+overwritten, because the first reading is the blind one.
+
+```bash
+uv run litharness --database book.db craft
+uv run litharness --database book.db calibrations
+```
+
+`craft` shows the advisory numbers and what they do not measure; `calibrations` shows what
+evidence exists that any of them predicts human judgment, and is expected to print nothing
+for a long time. That emptiness is the honest state of §19's Quality clause.
+
+To rebuild the published-LitRPG reference profile (optional, needs the `corpus` extra and
+downloads shards of a 12.5GB dataset — no prose is stored, only percentiles):
+
+```bash
+uv run --extra corpus python tools/build_craft_profile.py --out plan/craft-profile.json
+```
+
 ## Development
 
 ```bash
@@ -238,11 +277,16 @@ Stated plainly, because a system that runs is easy to mistake for a system that 
   binds, so that limit is currently invisible and will not stay that way at Book Zero
   length. Only the `draft_scene` operation is served; the suite's `evaluate` and `repair`
   cases have no implementation to grade and the suite says so rather than skipping them.
-- **No craft gate.** The ladder is shape then integrity: a draft exists, is the right size,
-  did not overwrite anything, and nothing unresolved stands against its node. Nothing
-  measures whether the prose is any *good* (PLAN.md §1a), and §10.6 records why eight of nine
-  candidate craft proxies were refuted rather than built — the blocker is a human-authored
-  reference corpus, not effort.
+- **No craft gate, and the reason is measured.** The blocking ladder is shape then integrity:
+  a draft exists, is the right size, did not overwrite anything, and nothing unresolved stands
+  against its node. Nothing *blocks* on whether the prose is any good (PLAN.md §1a). Four
+  craft metrics are logged per accepted scene and can only annotate — `craft_gates` has no
+  branch that could set `blocking`, and `PolicyDecision` raises on a blocking craft gate with
+  no calibration. All four were then measured against 13,000 chapters of published LitRPG and
+  **all four failed to separate declared-AI prose from human prose at the same date**; the one
+  that looked promising turned out to be detecting the year. §10.6 now records twelve of
+  thirteen candidate proxies refuted. The blocker is human judgment, not effort:
+  `litharness audit` is the queue that collects it.
 - **One detector runs in-process.** `state.contradiction.v0` catches canon records that
   disagree at one story position, which is the corruption only this system can see. Every
   other detector's findings have to be *ingested*; nothing in a `tick` runs

@@ -16,6 +16,8 @@ without being met.
 
 from __future__ import annotations
 
+import json
+
 import pytest
 
 from litharness.adapters.sqlite_store import SqliteStore
@@ -349,3 +351,93 @@ def test_no_calibration_exists_yet_and_that_is_the_honest_state(store: SqliteSto
     direction the planner cannot read."""
     assert store.calibrations() == []
     assert store.audit_samples() == []
+
+
+# -- the published-LitRPG reference profile (§10.6, partially) ----------------------------
+
+
+def test_the_profile_exists_and_names_what_it_is_not() -> None:
+    """The profile is evidence, and evidence that overstates itself is worse than none. It
+    carries its own disclaimer so a reader who opens the JSON and not the docstring still
+    learns that the dataset's five score columns are null and that engagement is not a label.
+    """
+    from litharness.domain.craft import load_profile
+
+    profile = load_profile()
+    assert profile, "plan/craft-profile.json is missing; tools/build_craft_profile.py builds it"
+    assert profile["source"]["dataset"] == "OmniAICreator/RoyalRoad-1.61M"
+    assert profile["source"]["genre_tag"] == "LitRPG"
+    assert "null" in profile["disclaimer"]
+    assert "never used as a label" in profile["disclaimer"]
+
+
+def test_no_prose_is_stored_in_the_profile() -> None:
+    """The corpus is other people's copyrighted fiction. Only statistics are committed, which
+    is what lets the profile live in a public repository at all."""
+    from litharness.domain.craft import PROFILE_PATH
+
+    raw = PROFILE_PATH.read_text(encoding="utf-8")
+    assert len(raw) < 100_000, "a profile this large is storing more than statistics"
+    assert "text" not in json.loads(raw)["cohorts"]["human_pre_llm"]
+
+
+def test_every_metric_was_measured_against_the_corpus() -> None:
+    """A metric added later without being profiled would silently have no anchor and no
+    separation number — it would look measured because its neighbours are."""
+    from litharness.domain.craft import METRICS, load_profile
+
+    profile = load_profile()
+    ids = {fn("x. y.").metric_id for fn in METRICS}
+    assert set(profile["separation"]) == ids
+    assert set(profile["cohorts"]["human_pre_llm"]["metrics"]) == ids
+
+
+def test_all_four_metrics_failed_to_separate_declared_ai_from_undeclared() -> None:
+    """**The measured refutation, pinned so it cannot be quietly forgotten.**
+
+    Holding the era fixed, every metric lands within 0.06 of chance. If a future change makes
+    one of them separate, this test fails and the claim in `domain/craft.py` has to be
+    rewritten — which is the point: the docstring says these are not AI-tell detectors, and a
+    docstring is what rots.
+    """
+    from litharness.domain.craft import load_profile
+
+    for metric_id, seps in load_profile()["separation"].items():
+        auc = seps["declared_ai_vs_undeclared_2025"]
+        assert abs(auc - 0.5) < 0.06, f"{metric_id} now separates at {auc}; update the claim"
+
+
+def test_the_era_control_catches_the_confound() -> None:
+    """`tricolon_rate` looks like a result against pre-2023 prose (0.63) until the control is
+    read: undeclared 2025 chapters separate almost as strongly (0.61). The metric is detecting
+    the year. This asserts the control still shows it, because the control is the only reason
+    that number was not reported as a success."""
+    from litharness.domain.craft import load_profile
+
+    seps = load_profile()["separation"]["craft.tricolon_rate.v0"]
+    era_gap = abs(
+        seps["declared_ai_2025_vs_human_pre_llm"] - seps["undeclared_2025_vs_human_pre_llm"]
+    )
+    assert era_gap < 0.1, "the era comparisons diverged; the confound analysis needs redoing"
+
+
+def test_a_scene_can_be_placed_against_published_litrpg() -> None:
+    """What survives the refutation: the metrics do not sort machine from human, but an
+    outlier against the published distribution is still a fact."""
+    from litharness.domain.craft import measure, percentile_of
+
+    tell = (
+        "The room was cold, dark, and silent. He was tired, hungry, and afraid. "
+        "She was calm, sure, and ready."
+    )
+    metrics = {m.metric_id: m for m in measure(tell)}
+    assert percentile_of(metrics["craft.tricolon_rate.v0"]) == 0.99
+
+
+def test_a_checkout_without_a_profile_still_works() -> None:
+    """The profile is built by an offline tool against a 12.5GB corpus behind an optional
+    extra. A checkout that has not run it must still draft, gate and tick."""
+    from litharness.domain.craft import measure, percentile_of
+
+    metric = measure("A sentence here. And another one, rather longer than that.")[0]
+    assert percentile_of(metric, profile={}) is None

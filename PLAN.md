@@ -649,6 +649,48 @@ order-consistent survivors preferred human originals ~80% of the time. So:
    ContinuityEvaluation — advisory only, aimed at item 5, and explicitly not a claim that
    craft is now measured.
 
+   **Four more proxies refuted, this time against 13,000 chapters of published LitRPG.**
+   Twelve of thirteen candidates in this project are now refuted rather than eight of nine.
+   `plan/craft-profile.json`, built by `tools/build_craft_profile.py` from the RoyalRoad
+   1.61M-chapter corpus, measures rank AUC for each of the four metrics
+   `domain/craft.py` instruments — all four named by §10.2 or §1a.3 item 6, none previously
+   tested. Holding the era fixed (2025 chapters whose author declared `AI-Assisted Content`
+   against 2025 chapters that did not), every one lands within 0.06 of chance:
+
+   | proxy | declared-AI vs undeclared, 2025 | vs pre-2023 | control: undeclared vs pre-2023 |
+   |---|---|---|---|
+   | `dialogue_ratio` | 0.445 | 0.481 | 0.531 |
+   | `opening_shape_repetition` | 0.455 | 0.404 | 0.450 |
+   | `sentence_length_cv` | 0.461 | 0.500 | 0.534 |
+   | `tricolon_rate` | **0.528** | 0.629 | 0.606 |
+
+   **The last row is the one to learn from, and it is the same lesson as
+   `scene_change_profile`.** `tricolon_rate` at 0.629 against pre-LLM prose is the only
+   number in this table that looks like a finding, and it survives exactly as long as it
+   takes to read the control beside it: *undeclared* 2025 chapters separate from the same
+   baseline at 0.606. The metric detects **the year, not the machine** — 2025 RoyalRoad
+   differs from 2021-22 RoyalRoad whether or not anyone ticked the box. Without the temporal
+   control this would have been reported as the project's first working AI-tell detector.
+   **Any future craft proxy measured against this corpus needs the control computed in the
+   same pass, or its headline number means nothing.**
+
+   Three confounds keep this at "no separation detected" rather than "no signal exists": the
+   declared-AI cohort is 55 stories, self-declaration is certainly under-reported, and the
+   cohorts differ enormously in maturity (median followers 16, 88, 314), so a separation
+   could have been story-size rather than prose.
+
+   **What the corpus does and does not supply.** It is *published* LitRPG, not *good* LitRPG,
+   and the difference is not rhetorical: the dataset card advertises `overall_score`,
+   `style_score`, `story_score`, `grammar_score` and `character_score`, and **all five columns
+   are 100% null in the data** — verified across two full shards, 68,676 chapters. What is
+   populated is engagement (followers, favourites, views, rating counts), and §1a.1 forbids
+   treating that as quality: popularity tracks update cadence, tags, cover art, launch timing
+   and an author's existing audience at least as much as prose. So the corpus **does not close
+   §10.6**. What it does supply is a *reference distribution* — `percentile_of` places a
+   generated scene against published LitRPG, which makes an outlier a fact rather than a
+   hypothesis — and a standing method for refuting proxies cheaply, which is how four of them
+   were refuted in an afternoon rather than surviving to Book Zero.
+
 ## 11. Manuscript IR and state architecture
 
 Carried from v1 §9 with one addition. The IR remains a typed ordered tree
@@ -1023,7 +1065,7 @@ because four of the seven are structurally blocked in ways worth naming precisel
 | **Autonomy** | **attemptable; needs 30 days** | Was *not startable*: no entrypoint existed, so §17's week-unattended criterion could be simulated but never run. `litharness tick` closes that. Three spins found and fixed — the outbox retried its head 2,016 times a week while starving entries 51+; an escalated unit was marked SUCCEEDED and discarded; and a provider outage longer than fifteen minutes permanently poisoned every unit it touched, because `ProviderUnavailable` was charged against the attempt budget despite being raised before any work was attempted. The exception queue exists. **"Parked units are visible and revivable" was false on the refusal an operator with real ceilings meets first, and the same lesson had to be learned twice:** a budget refusal settled to POISONED — terminal, unrevivable, idempotency key burned — because `_settle` read the terminal state off the word `PARK` under a comment asserting "`decide` returns this only on attempt exhaustion", a premise the budget gate falsifies on attempt 1. A ceiling that resets at midnight destroyed the unit it refused. `_settle` now derives POISONED from the attempt budget itself, and a refusal reached *in front of* the work gives back the attempt it was charged, exactly as an outage already did. **And the lesson had to be learned a third time in slice 9**: a finding already standing against a node was charged against the unit it refused, so a blocked beat poisoned after twelve model calls and the operator's own remedy — dismiss the finding — arrived to find nothing revivable. The gate now runs a pre-flight pass in front of the spend. `replan` shipped in the same fix, because the recovery path it completes was named by `handlers._stale_base` and by migration 011 and did not exist. **What remains is elapsed time, which nothing but time supplies.** |
 | **Trust** | **no longer vacuous; partly met** | Was: "the deterministic ladder is one gate, `shape.draft.v0`; zero false-accepts over a suite that does not exist is trivially true". The ladder is now shape *then* integrity, and the clause has a suite to be measured against — both fixtures' planted defects, injected from their own `findings.json`. Measured: every planted defect that reaches the gate is refused, the beat's node stays empty, and both fixture books still reach six accepted scenes with the gate live, so there are no false *rejects* either. Two invariants are enforced rather than asserted — a finding's status overrides its severity, so a negative control cannot block forever; and an uncalibrated critic cannot block at all (§10.4). **What keeps this short of met:** "zero known false-accepts on the fixture suites" is measured over the defects an evaluator *reported*, and nothing in a tick runs one — §8.4 puts the detectors in ContinuityEvaluation and §17 Stage 2 owns wiring the pack in. One detector runs in-process, `state.contradiction.v0`, and it is the only one whose false-accept rate this repo can currently claim anything about. The second half of the clause — "blocking critics carry current calibration evidence" — is untouched and correctly so: there are no critics, only rules. |
 | **Genre** | not started (deferred) | No game-system replay in LitHarness; §8.4 puts the pack in ContinuityEvaluation until a generator exists to constrain. |
-| **Quality (§1a)** | not started | Blocked on §10.6's craft reference corpus, which is human authoring work — see §10.6 for why eight of nine candidate proxies were refuted rather than built. |
+| **Quality (§1a)** | **not met; the machinery is built and the evidence is not** | Still blocked on §10.6's craft reference corpus, which is human authoring work — and twelve of thirteen candidate proxies are now refuted rather than eight of nine, four of them measured against 13,000 chapters of published LitRPG. What changed is that the *path* exists where before there was none. §10.5's standing audit routes a content-derived sample of accepted scenes to a queue and `litharness audit --next` prints the prose blind; a verdict is recorded once and never overwritten; §10.4's promotion bar is a function (`promoted_gate`) that refuses without held-out precision, a minimum holdout, unexpired evidence and a matching verdicts digest, and it is the only way to construct a blocking craft gate. Craft metrics are logged per accepted scene from now on, so a future calibration has held-out history to be measured against rather than starting from zero on promotion day. **The missing input is human judgment and nothing here substitutes for it**: RevisionJudge holds 104 exported pairs and two collected verdicts. The clause is met when readers have answered, not when the schema exists. |
 | **Economics** | **met for enforcement; per-book still per-day** | Ceilings on tokens *and* invocations, checked **before** the provider call rather than after — a check that runs afterwards records an overrun, it does not prevent one. Invocations are a ceiling in their own right because §15's per-call harness tax (~24k tokens for `claude -p`) is invisible to token accounting. Dollars are never the sole ceiling, since `claude -p` on a subscription reports none. `cost_usd` was parsed and then dropped; migration 008 stores it. `status` prints spend against plan. **Enforcement that destroys the unit it refuses is not what this clause describes, and that is what it did** — see Autonomy above; a refusal now parks revivably and costs the day rather than the work. **Honest gap: ceilings are per-day and per-operation, not per-book** — that needs a book-scoped job, which arrives with the planner. |
 | **Recovery** | **met** | Mid-write crash loses at most the in-flight unit (WAL, `synchronous=FULL`, `BEGIN IMMEDIATE`, lease reclaim). Backups existed nowhere and now use SQLite's online API — a file copy is invalid under WAL and would silently omit everything since the last checkpoint. The drill asserts prose, the accepting decision, and the undelivered outbox all survive. |
 

@@ -22,6 +22,14 @@ dev = [
   "pytest-cov>=6.0",
   "ruff>=0.9",
 ]
+# Building a craft reference profile from a published-prose corpus (§10.6). Deliberately its
+# own extra rather than a dev dependency: `datasets` pulls pyarrow and a network stack into a
+# repo whose only runtime dependency is its own contracts package, and CI must not need 12.5GB
+# of anybody's fiction to run the suite. The *profile* is a small committed artifact; the
+# corpus is never vendored, and `tools/build_craft_profile.py` is the only thing that reads it.
+corpus = [
+  "datasets>=3.0",
+]
 
 [tool.uv.sources]
 litharness-contracts = { path = "../litharness-contracts", editable = true }
