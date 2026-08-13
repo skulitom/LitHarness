@@ -99,6 +99,42 @@ by forgetting a flag. `status` prints spend against plan.
 - `verify` — rebuild every revision from canonical records, check the content hashes, and
   report any revision no policy decision explains. Exits non-zero if it finds one.
 
+## Reading it
+
+The prose lives in the database as content-addressed node versions; `backup` produces
+another database and `verify` never prints a word. `export` is how you read the book:
+
+```bash
+uv run litharness --database book.db export book.md
+```
+
+The suffix picks the format — `.md` or `.html`, overridable with `--format`, stdout if you
+name no file. Both open with front matter the document derives from itself: revision id,
+timestamp, word count, and a table of which scenes are drafted and which are still empty.
+**Undrafted scenes are rendered as titled placeholders, never skipped** — the gap is the
+most useful thing on the page, and a document that omitted it would read as a finished
+short book rather than an unfinished long one. Export twice a day apart and the difference
+is the progress.
+
+`--book` / `--branch` are needed only when the store holds more than one; more than one is
+ambiguous rather than defaultable, so it lists what it found and asks. `--revision` exports
+an older revision instead of the head, which is how two points in time get compared —
+revisions are immutable, so an export of revision N is reproducible forever apart from its
+timestamp.
+
+There is no PDF writer here, deliberately: owning font metrics and page breaking is not
+worth it in a repo whose only runtime dependency is its own contracts package. The HTML
+carries print CSS — `@page` margins, chapter page breaks, orphan and widow control — so a
+browser's *Save as PDF* gives a readable book, and pandoc is the other one-liner:
+
+```bash
+uv run litharness --database book.db export book.html --format html
+```
+
+```bash
+pandoc book.md -o book.pdf
+```
+
 ## Development
 
 ```bash

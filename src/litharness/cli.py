@@ -35,6 +35,7 @@ import litharness_contracts as lc
 
 from litharness.adapters import contracts_fixtures
 from litharness.adapters.sqlite_store import MigrationsMissing, SqliteStore
+from litharness.application import export as export_module
 from litharness.application import status as status_module
 from litharness.application.conductor import Conductor, TickOutcome
 from litharness.application.handlers import SCENE_DRAFT, make_scene_draft_handler
@@ -471,6 +472,65 @@ def cmd_backup(args: argparse.Namespace) -> int:
     return EXIT_OK
 
 
+#: Output formats by destination suffix. `--format` overrides; markdown is the fallback
+#: for stdout and for a destination whose name says nothing.
+_FORMATS = {".md": "markdown", ".markdown": "markdown", ".html": "html", ".htm": "html"}
+
+
+def _write_document(destination: Path | None, text: str) -> None:
+    """Write the document, in UTF-8, whether it goes to a file or to stdout.
+
+    Both halves are explicit for the same reason `import` reads explicitly: the default
+    encoding on this platform is cp1252, which cannot represent an em-dash — and a book is
+    made of them. To a file that would raise; to a *redirected* stdout it would also raise,
+    so `litharness export > book.md` would die on the first scene that used one. `print`
+    goes through the console's own codec, so the bytes are written here instead.
+    """
+    if destination is not None:
+        destination.write_text(text, encoding="utf-8")
+        return
+    stream = getattr(sys.stdout, "buffer", None)
+    if stream is None:  # a capturing or text-only stdout, e.g. under pytest's capsys
+        print(text)
+        return
+    sys.stdout.flush()
+    stream.write(text.encode("utf-8"))
+    stream.flush()
+
+
+def cmd_export(args: argparse.Namespace) -> int:
+    """A reading copy of the book as it stands. See `application/export.py`.
+
+    Not a PDF: the output is Markdown or print-ready HTML, and `pandoc book.md -o book.pdf`
+    or a browser's "Save as PDF" is the last step. That keeps font metrics and page breaking
+    out of a repository whose only runtime dependency is its own contracts package.
+    """
+    store = _store(args)
+    try:
+        book_id, branch_id = export_module.resolve_branch(store, args.book, args.branch)
+        document = export_module.collect(
+            store,
+            book_id=book_id,
+            branch_id=branch_id,
+            revision_id=args.revision,
+            generated_at=_stamp(_now()),
+        )
+    finally:
+        store.close()
+
+    suffix = args.destination.suffix.lower() if args.destination else ""
+    fmt = args.format or _FORMATS.get(suffix, "markdown")
+    _write_document(
+        args.destination, document.as_html() if fmt == "html" else document.as_markdown()
+    )
+    if args.destination is not None:
+        # Only when the document went to a file — on stdout this would land in the middle
+        # of the book.
+        print(f"{args.destination}: {document.summary}")
+        print(f"  {fmt} from revision {document.revision_id[:12]}")
+    return EXIT_OK
+
+
 def cmd_verify(args: argparse.Namespace) -> int:
     """Rebuild every revision from canonical records — §19's integrity check.
 
@@ -629,6 +689,29 @@ def build_parser() -> argparse.ArgumentParser:
     backup = sub.add_parser("backup", help="online backup (safe while ticking)")
     backup.add_argument("destination", type=Path)
     backup.set_defaults(func=cmd_backup)
+
+    export = sub.add_parser(
+        "export", help="a reading copy of the book as it stands, gaps and all"
+    )
+    export.add_argument(
+        "destination",
+        type=Path,
+        nargs="?",
+        help="file to write; stdout if omitted. The suffix picks the format",
+    )
+    export.add_argument(
+        "--format",
+        choices=["markdown", "html"],
+        help="overrides the suffix; markdown by default. HTML carries print CSS, so a "
+        "browser's Save as PDF produces a readable book",
+    )
+    export.add_argument("--book", help="required only when the store holds more than one")
+    export.add_argument("--branch")
+    export.add_argument(
+        "--revision",
+        help="an older revision instead of the head — how two exports get compared",
+    )
+    export.set_defaults(func=cmd_export)
 
     verify = sub.add_parser("verify", help="rebuild every revision from canonical records")
     verify.set_defaults(func=cmd_verify)
