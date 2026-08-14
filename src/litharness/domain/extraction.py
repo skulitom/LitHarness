@@ -35,10 +35,25 @@ leg would be a different question and is deliberately not built (see PLAN.md §1
 **Reach, stated plainly so a green Stage 1 is not read as more than it is.** This reads system
 voice — the `[STATUS]` line LitRPG puts on the page — and nothing else. The mystery fixture
 contains no such line and yields zero records; nothing here touches prose-semantic facts like
-"Brandt knows about the letter", which need a model. Until the generator is asked to emit
-system voice, extraction yields records only for prose that already carries it. What it does
-change is that the detector goes from having no producer at all to one that runs on every
-accepted scene and demonstrably fires.
+"Brandt knows about the letter", which need a model. What it does change is that the detector
+goes from having no producer at all to one that runs on every accepted scene and demonstrably
+fires.
+
+**The generator is now asked for that line, and the gain is the gate rather than the
+extraction.** `render_prompt` carries `STATUS_TEMPLATE` for any book whose canon already holds
+a status snapshot (`speaks_system_voice`). Before that, a generated litrpg scene carried no
+game state at all, so `state.contradiction.v0` had nothing to read and **every generated scene
+passed the integrity gate vacuously** — a scene claiming Rook had forty gold where canon says
+forty-five was accepted, because it never said so on the page. It says so now, and is refused.
+That is §8.3's fourth promotion clause and §17 Stage 1's "validation on model-written rather
+than templated chapters", closed by making the prose speak rather than by adding a detector.
+
+**What it is still not.** A redraft that *agrees* with canon extracts nothing new, because
+`_already_canon` suppresses a fact the book has already accepted at that position — correct,
+and it means the fixtures stay silent. And a book with no imported snapshot extracts nothing at
+all, because `attested_position` has no evidence to read a position out of: Book Zero writes
+system voice that nothing can yet place. Asking for the line is a precondition for that, not a
+solution to it.
 """
 
 from __future__ import annotations
@@ -70,6 +85,51 @@ STATUS_PATTERN = re.compile(
 #: groups on it and a vocabulary invented here would be a second answer to a question §8.4
 #: gives ContinuityEvaluation.
 STATUS_PREDICATE = "status_snapshot"
+
+#: The status line as a *shape*, for asking a generator to write one this module can read.
+#:
+#: **The pattern and the instruction have to be the same statement, or extraction reads
+#: nothing and nobody finds out.** A prompt asking for a form the parser does not accept
+#: produces prose that looks right to a human and yields zero records — the exact failure
+#: mode this project keeps finding, and one no gate would catch, because a scene with no
+#: extractable state is indistinguishable from a scene that established none. They are kept
+#: honest by a round-trip test rather than by care: fill this in, parse it with
+#: `STATUS_PATTERN`, and the numbers must come back.
+STATUS_TEMPLATE = (
+    "[STATUS] {subject} — Level {level} | HP {hp}/{hp_max} | MP {mp}/{mp_max} | Gold {gold}"
+)
+
+#: The fields `STATUS_TEMPLATE` needs, in the order the line writes them.
+STATUS_FIELDS = ("level", "hp", "hp_max", "mp", "mp_max", "gold")
+
+
+def render_status_line(subject: str, value: Mapping[str, object]) -> str:
+    """A status line for a subject and a snapshot value — the inverse of `STATUS_PATTERN`.
+
+    The subject is written as the book's records hold it. `normalise_subject` is not
+    invertible (it casefolds and collapses whitespace), and inventing a display name by
+    title-casing would be this module minting the one thing it is most careful not to: a fact
+    about a character that no canon record states.
+    """
+    return STATUS_TEMPLATE.format(
+        subject=subject, **{field: value.get(field, "?") for field in STATUS_FIELDS}
+    )
+
+
+def speaks_system_voice(records: Sequence[lc.StateRecord]) -> bool:
+    """Whether this book states its game state on the page.
+
+    Read out of the book's own canon rather than declared by a genre flag, for the reason
+    `attested_position` reads the order key rather than deriving it: a flag is a second
+    source of truth for something the records already answer, and the two would eventually
+    disagree. A book whose canon holds a status snapshot has spoken system voice at least
+    once; one whose canon holds none has not, and asking its generator for a status line
+    would put a LitRPG stat block in a locked-room mystery.
+    """
+    return any(
+        record.predicate == STATUS_PREDICATE and state_mod.is_canon(record)
+        for record in records
+    )
 
 #: Named so a later registry change is a visible version bump rather than a silent reread.
 #: Deliberately not the fixtures' `fixture.v1`: these records are this extractor's reading,

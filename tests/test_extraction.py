@@ -18,11 +18,15 @@ import pytest
 
 from litharness.adapters.contracts_fixtures import fixture_manuscript, fixture_state
 from litharness.domain.extraction import (
+    STATUS_FIELDS,
+    STATUS_PATTERN,
     STATUS_PREDICATE,
     attested_position,
     extract_state,
     normalise_subject,
     record_id_for,
+    render_status_line,
+    speaks_system_voice,
 )
 from litharness.domain.findings import DetectorInput, Severity
 from litharness.domain.integrity import detect_contradictions
@@ -247,3 +251,61 @@ def test_the_span_resolves_against_the_text_it_was_read_from() -> None:
 def test_the_subject_id_is_normalised_not_invented() -> None:
     assert normalise_subject("  Rook  ") == "rook"
     assert normalise_subject("Mara Vane") == "mara_vane"
+
+
+# -- asking for what this module can actually read -------------------------------------
+
+
+def test_the_shape_the_prompt_asks_for_is_the_shape_the_parser_accepts() -> None:
+    """The test that makes the instruction safe to write, and the failure it rules out is
+    silent: a prompt asking for a form `STATUS_PATTERN` does not match produces prose that
+    reads correctly to a human and extracts nothing — and a scene establishing no state is
+    indistinguishable from a scene whose state nobody could read. No gate catches that.
+
+    So the template is filled in and parsed back rather than eyeballed against the regex.
+    """
+    line = render_status_line(
+        "Rook", {"level": 4, "hp": 27, "hp_max": 34, "mp": 6, "mp_max": 10, "gold": 33}
+    )
+    match = STATUS_PATTERN.search(line)
+
+    assert match is not None, f"the extractor cannot read the line it asks for: {line!r}"
+    assert match.group("subject") == "Rook"
+    assert [match.group(field) for field in STATUS_FIELDS] == ["4", "27", "34", "6", "10", "33"]
+
+
+def test_a_rendered_line_round_trips_through_extraction_itself() -> None:
+    """One step further than the regex: the whole extractor, against canon that names the
+    subject, must produce a record whose value is the one the line was rendered from."""
+    known = state_of("litrpg").records
+    value = {"level": 4, "hp": 27, "hp_max": 34, "mp": 6, "mp_max": 10, "gold": 33}
+    text = f"He caught his breath.\n\n{render_status_line('Rook', value)}\n"
+
+    [extracted] = extract("litrpg", "scene-4", text, known=known)
+
+    assert extracted.value == value
+    assert extracted.subject == "rook"
+    assert extracted.predicate == STATUS_PREDICATE
+
+
+def test_a_book_that_states_its_game_state_is_recognised_from_its_own_canon() -> None:
+    """Read out of the records rather than declared by a genre flag, for the reason the order
+    key is read rather than derived: a flag is a second source of truth for something the
+    records already answer, and the two eventually disagree."""
+    assert speaks_system_voice(state_of("litrpg").records)
+    assert not speaks_system_voice(state_of("mystery").records)
+
+
+def test_a_proposed_status_record_does_not_make_a_book_speak_system_voice() -> None:
+    """Canon only. A proposal is something the book has been *offered*, and drafting against
+    it would let an unaccepted record change how every later scene is written."""
+    proposed = lc.StateRecord(
+        record_id="rec-proposed",
+        kind=lc.StateRecordKind.ASSERTION,
+        subject="rook",
+        predicate=STATUS_PREDICATE,
+        value={"gold": 1},
+        authority=lc.StateAuthority.PROPOSED,
+    )
+
+    assert not speaks_system_voice([proposed])

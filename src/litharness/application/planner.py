@@ -67,6 +67,7 @@ from litharness.domain.context import (
 from litharness.domain.directives import Directive, DirectiveStatus
 from litharness.domain.draft import DraftPolicy, is_draftable
 from litharness.domain.events import payload_digest
+from litharness.domain.extraction import STATUS_TEMPLATE, speaks_system_voice
 from litharness.domain.jobs import Job, input_digest_for
 from litharness.domain.plans import premise_of
 from litharness.domain.revision import Revision
@@ -179,7 +180,11 @@ def beat_job_id(
 
 
 def render_prompt(
-    beat: Beat, *, book_title: str | None, packet: ContextPacket
+    beat: Beat,
+    *,
+    book_title: str | None,
+    packet: ContextPacket,
+    system_voice: bool = False,
 ) -> tuple[str, str]:
     """(system, prompt) for one beat, grounded in an assembled context packet.
 
@@ -191,12 +196,34 @@ def render_prompt(
     The packet goes *before* the instruction and the instruction last, because the last
     thing in a prompt is the thing a model acts on; leading with "write this scene" and
     then supplying the book invites a scene written from the header.
+
+    **`system_voice` closes the loop §12 step 5 opened and could not run.** Extraction reads
+    the `[STATUS]` line and nothing else, and nothing ever asked a generator to write one — so
+    every record in the system came from an imported snapshot, `state.contradiction.v0` could
+    only fire on prose somebody else wrote, and the propagation producer had no fact of the
+    system's own to compare. The instruction is the extractor's own template rather than a
+    form invented here, because a prompt asking for a shape the parser does not accept yields
+    zero records and looks exactly like a scene that established nothing.
+
+    It is **off unless the book already speaks system voice** (`speaks_system_voice`, read
+    from the book's canon). A stat block in a locked-room mystery is not a smaller error than
+    a missing one.
     """
     system = (
         "You are drafting one scene of a novel. Write only the scene's prose: no headings, "
         "no commentary, no summary of what you wrote. The context below is established and "
         "may be relied on; do not contradict it."
     )
+    if system_voice:
+        # Values, not just shape: a model asked for a status line with no numbers in view
+        # invents them, and an invented balance is a contradiction the book then has to
+        # repair. The established facts are already in the packet above.
+        system += (
+            " This book states its game state on the page. End the scene with a status "
+            f"line in exactly this form:\n{STATUS_TEMPLATE}\n"
+            "Carry the established values forward unchanged unless this scene changes "
+            "them, and write the numbers the scene leaves true."
+        )
     title = f"{book_title}: " if book_title else ""
     prompt = (
         f"{packet.render()}\n\n"
@@ -383,7 +410,12 @@ def make_plan_selector(
                     # undrafted, which is true.
                     break
                 system, prompt = render_prompt(
-                    beat, book_title=_book_title(head), packet=packet
+                    beat,
+                    book_title=_book_title(head),
+                    packet=packet,
+                    system_voice=speaks_system_voice(
+                        store.state_records(progress.book_id, progress.branch_id)
+                    ),
                 )
                 payload = {
                     "revision_id": head.revision_id,

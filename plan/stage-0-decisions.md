@@ -1,6 +1,6 @@
 # Stage 0 decisions
 
-**Status:** Stage 0 slices 1-6 and Stage 1 slices 7-9 built and green — **644 passing tests (+3 opt-in live), ruff clean, mypy
+**Status:** Stage 0 slices 1-6 and Stage 1 slices 7-9 built and green — **652 passing tests (+3 opt-in live), ruff clean, mypy
 strict clean.** Slice 1 is the model-free manuscript spine; slice 2 the Conductor skeleton
 (tick, instance lease, job selection, digest, outbox dispatch, crash recovery); slice 3 the
 four provider adapters with their conformance suite and the billing guard; slice 4 **the
@@ -1071,3 +1071,41 @@ writes no analysis event.
 producer, and neither is derivable from an extraction diff — they are reached through
 `litharness propagate` over a `ChangeSet`, which is §13's boundary. The extractor's own ceiling
 is the producer's: a fact it cannot read is a change nothing can report.
+
+## 34. Ask for the line the parser accepts, and only where the book already speaks it
+
+§12 step 5 reads the `[STATUS]` line and nothing ever asked a generator to write one. So every
+record in the system came from an imported snapshot, `state.contradiction.v0` could only fire
+on prose somebody else wrote, and — since §33 — the propagation producer had no fact of the
+system's own to compare. `render_prompt` now carries the instruction.
+
+**The gain is the gate, not the extraction, and conflating the two would overclaim.** A
+generated litrpg scene carried no game state, so the integrity gate had nothing to read and
+passed it *vacuously*: a scene stating forty gold where canon says forty-five was accepted,
+because it never said so on the page. Measured through the loop — a generator writing the
+contradicting line parks the beat with `state.contradiction.v0`, and one carrying the
+established numbers forward is accepted. What did **not** change: a redraft agreeing with canon
+still extracts nothing (`_already_canon`), and a book with no imported snapshot still extracts
+nothing at all, because `attested_position` has no evidence to place the scene by. Book Zero
+will write system voice that nothing can yet position.
+
+**The instruction is the extractor's own template**, `STATUS_TEMPLATE`, with a round-trip test
+that fills it in and parses it back — first with `STATUS_PATTERN`, then through `extract_state`
+itself. The failure this rules out is silent in the worst way: a prompt asking for a form the
+parser does not accept produces prose a human reads as correct and an extractor reads as
+nothing, and a scene whose state nobody could read is indistinguishable from a scene that
+established none. No gate catches that, so a test holds the two statements together instead of
+care.
+
+**It is off unless the book already speaks system voice**, read from canon by
+`speaks_system_voice` rather than declared by a genre flag — the reason `attested_position`
+reads the order key rather than deriving it. A flag is a second source of truth for something
+the records already answer, and the two eventually disagree. Canon only: a *proposed* status
+record must not change how every later scene is written. The mystery fixture holds no status
+snapshot, so its prompts are unchanged and its prose stays free of stat blocks — a LitRPG
+status block in a locked-room mystery is not a smaller error than a missing one.
+
+**And the values, not just the shape.** A model asked for a status line with no numbers in view
+invents them, and an invented balance is a contradiction the gate then refuses and the repair
+loop then pays for. The established facts are already in the packet above the instruction; the
+instruction says to carry them forward unless the scene changes them.

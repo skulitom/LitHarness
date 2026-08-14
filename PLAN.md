@@ -1,7 +1,7 @@
 # LitHarness: Autonomous Book-Production System Plan
 
 **Version:** 2.2 (supersedes PLAN-v1-authoring-tool.md, archived in this folder)
-**Status:** Master plan; **Stage 0 slices 1–6, Stage 1 slices 7–9, and Stage 2's detect-and-repair chain implemented and green (644 passing tests + 3 opt-in live); operable via `litharness tick`; a book goes in (`import`), drafts itself against a context packet, is refused when a planted defect stands against it, repairs a located finding within a serial cap (`evaluate_revision`/`repair_finding`), notifies out of the outbox to a configured sink (`--notify-file`), can have its plan history read and rolled back (`plans`/`revert-plan`), re-checks the scenes a repair's change reaches instead of only the scene it repaired (`propagate`, dev-set precision 1.000 against a 0.481 base rate), and comes out readable (`export`); all four §17 Stage 1 exit clauses met; Stage 2's remaining work is the propagation engine and live state production; two of §19's seven clauses met outright — scorecard in §19.1**
+**Status:** Master plan; **Stage 0 slices 1–6, Stage 1 slices 7–9, and Stage 2's detect-and-repair chain implemented and green (652 passing tests + 3 opt-in live); operable via `litharness tick`; a book goes in (`import`), drafts itself against a context packet, is refused when a planted defect stands against it, repairs a located finding within a serial cap (`evaluate_revision`/`repair_finding`), notifies out of the outbox to a configured sink (`--notify-file`), can have its plan history read and rolled back (`plans`/`revert-plan`), re-checks the scenes a repair's change reaches instead of only the scene it repaired (`propagate`, dev-set precision 1.000 against a 0.481 base rate), and comes out readable (`export`); all four §17 Stage 1 exit clauses met; Stage 2's remaining work is the propagation engine and live state production; two of §19's seven clauses met outright — scorecard in §19.1**
 
 *(Corrected here, because this line was the instance: it read "four of §19's seven clauses met" while §19.1's table said two. §19.1 contains a paragraph recording that exact drift happening once before, four lines above the table that contradicted it, and the header carrying the same wrong number went unnoticed through three revisions. The readiness number this project reports about itself is the number to distrust first.)*
 **Role:** A 24/7 autonomous system that plans, drafts, evaluates, repairs, and versions quality LitRPG books — directed by a human, never blocked on one
@@ -1054,9 +1054,25 @@ defects survive extraction rather than being sanitised by their own detector's p
 [plan/stage-0-decisions.md](plan/stage-0-decisions.md) §27 for the alternatives and their
 measured failure modes. Two consequences are deliberate and are the honest limit: a book with
 **no imported snapshot has nothing to read back and extracts nothing**, which is Book Zero
-(Stage 3); and until `render_prompt` asks generators to emit system voice, extraction yields
-records only for prose that already carries it. That prompt change moves every litrpg content
-hash, so it lands on its own.
+(Stage 3); and `render_prompt` now asks generators to emit system voice for any book whose
+canon already holds a status snapshot.
+
+**That change landed, and the gain is the gate rather than the extraction.** A generated
+litrpg scene used to carry no game state at all, so `state.contradiction.v0` had nothing to
+read and every generated scene passed the integrity gate **vacuously** — a scene claiming Rook
+had forty gold where canon says forty-five was accepted, because it never said so on the page.
+It says so now and is refused, measured through the loop. That is §8.3's fourth promotion
+clause and this stage's "validation on model-written rather than templated chapters", closed by
+making the prose speak rather than by adding a detector. What it is **not**: a redraft agreeing
+with canon still extracts nothing new (`_already_canon` suppresses a fact already accepted at
+that position), and a book with no imported snapshot still extracts nothing at all, because
+`attested_position` has no evidence to place it by — Book Zero will write system voice that
+nothing can yet position, and asking for the line is a precondition for solving that rather
+than a solution to it. The instruction is the extractor's own `STATUS_TEMPLATE`, held to it by
+a round-trip test, because a prompt asking for a form the parser rejects yields zero records
+and reads exactly like a scene that established nothing. It is off for the mystery, whose canon
+holds no status snapshot: a stat block in a locked-room mystery is not a smaller error than a
+missing one.
 
 The **game-system replay validation** is built where §8.4 says it belongs and now reaches the
 gate. Stage 2 adds the optional live subprocess adapter: a tick can stream the current shared

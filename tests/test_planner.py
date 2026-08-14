@@ -33,6 +33,11 @@ from litharness.application.planner import (
 from litharness.domain.beats import SIX_BEAT, BeatTemplate, TemplateMismatch, beats_for
 from litharness.domain.context import assemble
 from litharness.domain.draft import DraftPolicy, is_draftable
+from litharness.domain.extraction import (
+    STATUS_TEMPLATE,
+    render_status_line,
+    speaks_system_voice,
+)
 from litharness.domain.jobs import JobStatus
 from litharness.domain.nodes import LockKind, Node, NodeKind
 from litharness.domain.patch import Veto
@@ -431,6 +436,127 @@ def test_the_prompt_carries_the_context_packet_and_ends_with_the_instruction(
     # The open thread the resolution owes a payoff.
     assert "sealed_letter_reading" in prompt
     assert prompt.rstrip().endswith("Dramatic function: resolution.")
+
+
+def test_the_prompt_asks_for_system_voice_only_where_the_book_speaks_it(
+    store: SqliteStore,
+) -> None:
+    """§12 step 5 could read the `[STATUS]` line and nothing ever asked for one, so every
+    record in the system came from an imported snapshot: the contradiction detector could
+    only fire on prose somebody else wrote, and the propagation producer had no fact of the
+    system's own to compare.
+
+    The instruction is the extractor's own template, and it is off for a book whose canon
+    holds no status snapshot — a stat block in a locked-room mystery is not a smaller error
+    than a missing one.
+    """
+    litrpg_ids = _fixture(store, "litrpg")
+    mystery_ids = _fixture(store, "mystery")
+
+    prompts = {}
+    for name, (book_id, branch_id) in (("litrpg", litrpg_ids), ("mystery", mystery_ids)):
+        head = store.head(book_id, branch_id)
+        assert head is not None
+        beat = beats_for(head, SIX_BEAT)[0]
+        prompts[name] = render_prompt(
+            beat,
+            book_title=None,
+            packet=packet_for(store, head, beat),
+            system_voice=speaks_system_voice(store.state_records(book_id, branch_id)),
+        )[0]
+
+    assert STATUS_TEMPLATE in prompts["litrpg"]
+    assert "[STATUS]" not in prompts["mystery"]
+
+
+def test_the_planner_puts_the_system_voice_instruction_on_the_queued_job(
+    store: SqliteStore,
+) -> None:
+    """End to end through the selector, because `render_prompt` taking the flag is worth
+    nothing if the one caller in production never passes it — which is the defect shape this
+    project keeps finding."""
+    _fixture(store, "litrpg")
+    make_plan_selector(project_id=PROJECT_ID)(store, "worker-a", START, 300.0)
+
+    [job] = [
+        unit
+        for unit in store.jobs_by_status(JobStatus.QUEUED)
+        if unit.job_kind == SCENE_DRAFT
+    ]
+    assert STATUS_TEMPLATE in str(job.payload["system"])
+
+
+def _writing(store: SqliteStore, prose: str) -> Conductor:
+    """A loop whose generator writes exactly this scene, however the prompt asked."""
+    registry = ProviderRegistry(providers=[FakeProvider(responses=[prose] * 8)], order=["fake"])
+    return Conductor(
+        store=store,
+        holder="worker-a",
+        project_id=PROJECT_ID,
+        registry=registry,
+        select=make_plan_selector(project_id=PROJECT_ID),
+        handlers={SCENE_DRAFT: make_scene_draft_handler(registry, store, PROJECT_ID)},
+    )
+
+
+#: What the litrpg fixture's canon holds at `s1`, which a redraft of scene 1 must not
+#: contradict. Written out rather than read from the snapshot, so a fixture change that moved
+#: it fails this test loudly instead of making it vacuous.
+S1_STATUS = {"level": 3, "hp": 24, "hp_max": 30, "mp": 8, "mp_max": 10, "gold": 45}
+
+
+def _scene(status: dict[str, int]) -> str:
+    body = "Rook counted what the night had left him and found it thinner than morning. " * 8
+    return f"{body}\n\n{render_status_line('Rook', status)}\n"
+
+
+def test_a_generated_scene_that_contradicts_canon_is_now_refused(store: SqliteStore) -> None:
+    """**The measurable gain, and it is the gate rather than the extraction.**
+
+    §8.3's fourth promotion clause and §17 Stage 1 both name the same missing leg: validation
+    on model-written rather than templated prose. It was missing for a mechanical reason —
+    nothing asked a generator for a `[STATUS]` line, so a generated litrpg scene carried no
+    game state, `state.contradiction.v0` had nothing to read, and **every generated scene
+    passed the integrity gate vacuously**. A scene claiming Rook had forty gold where canon
+    says forty-five was accepted, because it never said so on the page.
+
+    It now says so, and is refused. That is the deterministic gate going from vacuous to live
+    on this system's own output.
+    """
+    _fixture(store, "litrpg")
+    loop = _writing(store, _scene({**S1_STATUS, "gold": 40}))
+
+    loop.tick(START)
+    outcome = loop.tick(START + TICK)
+
+    assert outcome is not None
+    head = store.head(*_fixture_ids(store))
+    assert head is not None
+    assert head.node("scene-1").content is None, "the contradicting scene must not be accepted"
+    [finding] = [
+        item for item in store.findings(*_fixture_ids(store)) if item.blocks
+    ]
+    assert finding.rule_or_critic_id == "state.contradiction.v0"
+
+
+def test_a_generated_scene_that_carries_canon_forward_is_accepted(store: SqliteStore) -> None:
+    """The other half, and the one that keeps the gate from being a wall: a scene that states
+    the established numbers is prose the book can keep. Without this the previous test would
+    also pass on a gate that refused everything."""
+    _fixture(store, "litrpg")
+    loop = _writing(store, _scene(S1_STATUS))
+
+    loop.tick(START)
+    loop.tick(START + TICK)
+
+    head = store.head(*_fixture_ids(store))
+    assert head is not None
+    assert "[STATUS] Rook" in (head.node("scene-1").content or "")
+
+
+def _fixture_ids(store: SqliteStore) -> tuple[str, str]:
+    book_id, branch_id, _ = store.branches()[0]
+    return book_id, branch_id
 
 
 # --- the plan store ------------------------------------------------------------------
