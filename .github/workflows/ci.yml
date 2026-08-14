@@ -2,7 +2,9 @@
 # ../litharness-contracts, which only exists when the two checkouts sit side by side. So
 # this repo is checked out into a named subdirectory rather than the workspace root, the
 # contracts repo is checked out beside it, and every step runs from inside this one. Action
-# SHAs are pinned rather than floated on tags, matching BookWorldState's workflow.
+# SHAs are pinned rather than floated on tags, matching BookWorldState's workflow — and so
+# is the contracts checkout itself, which was the exception this comment was claiming did
+# not exist. See the pin on that step for how to advance it.
 name: CI
 
 on:
@@ -26,9 +28,25 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           path: LitHarness
+      # **Pinned, because this is the one dependency `uv.lock` cannot pin.** Contracts is a
+      # path dependency, so the lockfile records where it is and nothing about *which* of it
+      # — and without a `ref:` this checked out whatever that repo's default branch happened
+      # to be at the moment the job ran. A push there could turn this repo's builds red
+      # without a commit here, and worse, could turn them green: a schema loosened upstream
+      # would let a wrong artifact pass a suite that is the only thing checking it. Neither
+      # failure would appear in this repo's history at all.
+      #
+      # **To advance it deliberately:** update the SHA below to the contracts commit you
+      # intend to build against, run the suite locally against a `../litharness-contracts`
+      # checked out at that same commit, and land both in one change — the pin is part of
+      # the behaviour, not part of the infrastructure. `git -C ../litharness-contracts
+      # rev-parse HEAD` prints what you are actually testing with.
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: skulitom/litharness-contracts
+          # contracts main @ 2026-08-13: "Apache-2.0, and CI that runs the same checks as a
+          # local run" — schema 1.2.0 (JobStatus.PARKED distinct from POISONED).
+          ref: 32d9728887e401faa6d2fbe050d7778560c654ea
           path: litharness-contracts
       - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:

@@ -7,7 +7,10 @@ an ordinary local change.
 ## Set up and verify
 
 The sibling `../litharness-contracts` checkout is required because `pyproject.toml` uses it
-as an editable path dependency.
+as an editable path dependency. A path dependency is the one thing `uv.lock` cannot pin, so
+CI pins the contracts commit by SHA in `.github/workflows/ci.yml`; if your local checkout
+sits elsewhere, your run and CI's are testing different contracts. Advancing the pin is a
+deliberate change that lands with the code that needs it, not a maintenance chore.
 
 ```bash
 uv sync --extra dev
