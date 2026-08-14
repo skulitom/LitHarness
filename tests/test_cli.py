@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import json
 
+import litharness_contracts as lc
 import pytest
 
 from litharness.adapters.sqlite_store import SqliteStore
@@ -673,6 +674,106 @@ def test_ingesting_a_completed_evaluation_still_exits_zero(db, capsys) -> None:
     run(db, "import", "--fixture", "litrpg")
     assert run(db, "ingest", str(fixture_findings("litrpg"))) == EXIT_OK
     assert "INCOMPLETE" not in capsys.readouterr().err
+
+
+# --- the canon the book believes ------------------------------------------------------
+
+
+def test_state_lists_what_the_book_believes_in_story_order(db, capsys) -> None:
+    """**Twenty-eight verbs and none could answer "what does this book hold as true".**
+
+    That layer gates every draft — the integrity gate refuses a candidate contradicting it,
+    the context packet hands it to the generator, and propagation reads changes out of it —
+    and the only way to look at it was to open the SQLite file.
+
+    Story order, because a ledger read out of order is not a ledger. It is also the view that
+    makes the arithmetic visible to a human: the in-process detector checks disagreement at a
+    single position and cannot see a balance that stops adding up across them, so an operator
+    reading this column is the one who notices.
+    """
+    run(db, "init")
+    imported_id(db, capsys, "--fixture", "litrpg", "--keep-content")
+    capsys.readouterr()
+
+    assert run(db, "state") == EXIT_OK
+
+    out = capsys.readouterr().out
+    ledger = [line for line in out.splitlines() if "status_snapshot" in line]
+    assert [line.split()[0] for line in ledger] == ["s1", "s2", "s3", "s4", "s5", "s6"]
+    assert "gold=45" in ledger[0] and "gold=0" in ledger[-1]
+    assert "19 record(s)" in out
+    # The fixture's own note on its planted ledger defect, printed with the record it is
+    # about. An operator reading this column is exactly who §8.3 planted it for.
+    assert "the ledger-correct value is 20" in out
+
+
+def test_state_narrows_to_one_subject(db, capsys) -> None:
+    """A book's canon is mostly not about the thing you are looking at. The litrpg fixture
+    holds nineteen records across five subjects, and the ledger is one of them."""
+    run(db, "init")
+    imported_id(db, capsys, "--fixture", "litrpg", "--keep-content")
+    capsys.readouterr()
+
+    assert run(db, "state", "--subject", "system") == EXIT_OK
+
+    out = capsys.readouterr().out
+    assert "rule_hp_ceiling" in out
+    assert "status_snapshot" not in out, "another subject's records are not this subject's"
+
+
+def test_state_says_which_records_the_system_read_out_of_its_own_prose(db, capsys) -> None:
+    """Imported canon and extracted canon are different claims. One is the author's word and
+    one is this system's reading of prose it generated, and an operator deciding whether to
+    trust a fact needs to know which — the same reason a plan-placed story position carries a
+    note saying so."""
+    run(db, "init")
+    imported_id(db, capsys, "--fixture", "litrpg", "--keep-content")
+    store = SqliteStore.open(db)
+    try:
+        book_id, branch_id, _ = store.branches()[0]
+        store.record_state_records(
+            book_id,
+            branch_id,
+            [
+                lc.StateRecord(
+                    record_id="rec-x-extracted",
+                    kind=lc.StateRecordKind.ASSERTION,
+                    subject="rook",
+                    predicate="status_snapshot",
+                    value={"gold": 7},
+                    story_position=lc.StoryPosition(order_key="s7"),
+                    authority=lc.StateAuthority.ACCEPTED_CANON,
+                    predicate_registry_version="litharness.systemvoice.v0",
+                    note="story position s7 stated by the plan, not attested by the book",
+                )
+            ],
+            created_at="2026-08-15T00:00:00Z",
+        )
+    finally:
+        store.close()
+    capsys.readouterr()
+
+    assert run(db, "state") == EXIT_OK
+
+    out = capsys.readouterr().out
+    [extracted] = [line for line in out.splitlines() if line.startswith("s7")]
+    assert "read" in extracted, "the provenance of an extracted record must be on its line"
+    assert "stated by the plan" in out
+    assert "1 read from this book's own prose" in out
+
+
+def test_a_book_with_no_state_says_so_rather_than_printing_nothing(db, capsys) -> None:
+    """An empty list and a book nobody has read look identical otherwise."""
+    from litharness.adapters.contracts_fixtures import fixture_manuscript
+
+    run(db, "init")
+    # A manuscript on its own: no plan, no snapshot. The entry point an operator uses for a
+    # book this system will write from nothing.
+    imported_id(db, capsys, "--path", str(fixture_manuscript("mystery")))
+    capsys.readouterr()
+
+    assert run(db, "state") == EXIT_OK
+    assert "no state on record" in capsys.readouterr().out
 
 
 # --- plan history and rollback -------------------------------------------------------

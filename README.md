@@ -127,6 +127,15 @@ uv run litharness --database book.db directive "No combat in the midpoint." \
   it. Refuses a poisoned unit, whose attempt budget really was spent. A unit stopped by a
   budget ceiling or by a standing finding is parked, not poisoned: the blocker is external
   and the work is still there.
+- `state [--subject] [--predicate]` — what this book holds as true, in story order. The layer
+  that gates every draft: the integrity gate refuses a candidate contradicting it, the context
+  packet hands it to the generator, and propagation reads its changes out of it. Every line
+  says whether the record was **given** (imported canon) or **read** (this system's reading of
+  prose it generated), and carries any note about how its story position was decided. It is
+  also the view that makes a ledger checkable by eye — `state.contradiction.v0` compares
+  values at a single story position and cannot see a balance that stops adding up across them,
+  so without the ContinuityEvaluation pack configured, a human reading this column is the one
+  who notices.
 - `propagate <change-set.json> [--enqueue]` — what a change reaches beyond what it edits.
   **An accepted repair does this by itself**: the facts it changed are read out of the
   extraction the acceptance already runs, and the scenes stating them are queued for

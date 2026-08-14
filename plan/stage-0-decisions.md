@@ -1,6 +1,6 @@
 # Stage 0 decisions
 
-**Status:** Stage 0 slices 1-6 and Stage 1 slices 7-9 built and green — **664 passing tests (+6 opt-in live), ruff clean, mypy
+**Status:** Stage 0 slices 1-6 and Stage 1 slices 7-9 built and green — **668 passing tests (+6 opt-in live), ruff clean, mypy
 strict clean.** Slice 1 is the model-free manuscript spine; slice 2 the Conductor skeleton
 (tick, instance lease, job selection, digest, outbox dispatch, crash recovery); slice 3 the
 four provider adapters with their conformance suite and the billing guard; slice 4 **the
@@ -1230,3 +1230,35 @@ instruction's *content* is unobservable to all 662 of them. The round-trip test 
 real and passed the whole time — it proves the parser accepts the template, not that a model
 writes one. The check that matters is a live one, and it now exists as an opt-in test against
 local Ollama, which costs no quota. **A prompt is not tested by a suite that never sends it.**
+
+## 39. The layer that gates every draft had no way to look at it
+
+Twenty-eight operator verbs, and none answered *what does this book hold as true*. Objective
+story state gates every draft — the integrity gate refuses a candidate that contradicts it,
+the context packet hands it to the generator as established facts, and §33's propagation
+producer reads its changes out of it — and the only way to see any of it was to open the
+SQLite file. `litharness state` is that view.
+
+**Story order, because a ledger read out of order is not a ledger.** It is also what makes
+this worth having rather than a convenience: §35 records that `state.contradiction.v0` compares
+values at a *single* story position and cannot see a balance that stops adding up across them,
+so an unconfigured installation routes propagated re-checks to detectors that find nothing.
+This is where a human finds it instead — one column, six rows, and the arithmetic either works
+or does not. §4.3 calls that directing rather than operating, and directing needs somewhere to
+look.
+
+**Provenance on every line**, because imported canon and extracted canon are different claims:
+`given` is the author's word, `read` is this system's reading of prose it generated. The note
+§37 puts on a plan-placed position prints with the record it is about, so a record resting on
+the template's word says so where it is read rather than in a table nobody opens. Measured on
+a Book Zero run: six `read` rows with their positions marked as the plan's, and one `given`
+starting sheet.
+
+**Unplaced records are counted rather than hidden.** A starting sheet is true before the book
+begins and correctly carries no position — but the contradiction detector groups on position,
+so an unplaced record is canon nothing is checking. An operator should know how much of that
+they have.
+
+The fixture's own notes come along for free, which is a small vindication of `state.describe`
+being the one renderer: `f-gold-ledger`'s "the ledger-correct value is 20" prints beside the
+record it is about, so §8.3's planted defects are visible to the reader they were planted for.

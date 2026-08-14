@@ -69,7 +69,7 @@ from litharness.application.repair import (
     make_evaluation_handler,
     make_repair_handler,
 )
-from litharness.domain import audit, calibration, impact, propagation
+from litharness.domain import audit, calibration, extraction, impact, propagation
 from litharness.domain import state as state_mod
 from litharness.domain.budget import BudgetPolicy
 from litharness.domain.directives import Directive, DirectiveKind, DirectiveStatus, directive_id_for
@@ -845,6 +845,66 @@ def cmd_replan(args: argparse.Namespace) -> int:
             "again until they are dismissed or repaired"
         )
         return EXIT_ATTENTION
+    return EXIT_OK
+
+
+def cmd_state(args: argparse.Namespace) -> int:
+    """What this book holds as true, in story order (§11's objective story state).
+
+    **The layer that gates every draft, and no verb could show it.** The integrity gate
+    refuses a candidate contradicting these records, the context packet hands them to the
+    generator as established facts, and propagation reads its changes out of them — and until
+    this the only way to look at any of it was to open the SQLite file.
+
+    Story order, because a ledger read out of order is not a ledger. That is also what makes
+    this the view worth having: `state.contradiction.v0` checks disagreement at a *single*
+    position and cannot see a balance that stops adding up across them, so where the optional
+    ContinuityEvaluation pack is not configured, **the operator reading this column is the one
+    who notices**. §4.3 calls that directing rather than operating, and it needs somewhere to
+    look.
+
+    Provenance is on every line because imported canon and extracted canon are different
+    claims — one is the author's word, the other this system's reading of prose it generated —
+    and an operator deciding whether to trust a fact needs to know which.
+    """
+    store = _store(args)
+    try:
+        book_id, branch_id = export_module.resolve_branch(store, args.book, args.branch)
+        records = store.state_records(book_id, branch_id, subject=args.subject)
+    finally:
+        store.close()
+
+    if args.predicate:
+        records = [item for item in records if item.predicate == args.predicate]
+    ordered = state_mod.in_story_order(records)
+    read_here = 0
+    for record in ordered:
+        position = state_mod.order_key_of(record) or "-"
+        extracted = record.predicate_registry_version == extraction.REGISTRY_VERSION
+        read_here += int(extracted)
+        flags = "read" if extracted else "given"
+        if not state_mod.is_canon(record):
+            flags = f"{flags} {record.authority.value}"
+        print(f"{position:<6} {flags:<10} {state_mod.describe(record)}")
+        if record.note:
+            print(f"       {record.note}")
+        if record.pov_visibility:
+            print(f"       known only to {', '.join(record.pov_visibility)}")
+
+    if not ordered:
+        # An empty list and a book nobody has read look identical otherwise. The mystery is a
+        # book whose canon is real and whose *system voice* is empty by genre, so silence here
+        # is a fact about this book rather than about the store.
+        print("no state on record for this branch")
+        print("  imported with `import --state`, or read back out of accepted prose")
+        return EXIT_OK
+    print(f"({len(ordered)} record(s), {read_here} read from this book's own prose)")
+    unplaced = sum(1 for record in ordered if state_mod.order_key_of(record) is None)
+    if unplaced:
+        # Not an error: a starting sheet is true before the book begins. But an unplaced
+        # record is invisible to the contradiction detector, which groups on position, so an
+        # operator should know how much of their canon is not being checked.
+        print(f"  {unplaced} unplaced — true of the book rather than of a moment in it")
     return EXIT_OK
 
 
@@ -1697,6 +1757,15 @@ def build_parser() -> argparse.ArgumentParser:
     craft = sub.add_parser("craft", help="advisory craft measurements, and their limits")
     craft.add_argument("--metric")
     craft.set_defaults(func=cmd_craft)
+
+    state = sub.add_parser(
+        "state", help="what this book holds as true, in story order"
+    )
+    state.add_argument("--subject", help="one subject's records, e.g. a character id")
+    state.add_argument("--predicate", help="one predicate, e.g. status_snapshot")
+    state.add_argument("--book")
+    state.add_argument("--branch")
+    state.set_defaults(func=cmd_state)
 
     propagate = sub.add_parser(
         "propagate", help="what a change reaches beyond what it edits, from a ChangeSet"
