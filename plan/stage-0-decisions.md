@@ -1,6 +1,6 @@
 # Stage 0 decisions
 
-**Status:** Stage 0 slices 1-6 and Stage 1 slices 7-9 built and green — **565 passing tests (+3 opt-in live), ruff clean, mypy
+**Status:** Stage 0 slices 1-6 and Stage 1 slices 7-9 built and green — **587 passing tests (+3 opt-in live), ruff clean, mypy
 strict clean.** Slice 1 is the model-free manuscript spine; slice 2 the Conductor skeleton
 (tick, instance lease, job selection, digest, outbox dispatch, crash recovery); slice 3 the
 four provider adapters with their conformance suite and the billing guard; slice 4 **the
@@ -148,7 +148,9 @@ queue both reach a terminal state, with the good one confirmed to have run.
 
 **The default dispatcher refuses delivery.** With no sink configured, events stay pending
 rather than being marked sent. A default that silently marked them delivered would be loss
-dressed as success, and the whole audit story rests on that log.
+dressed as success, and the whole audit story rests on that log. That default is still the
+default; what changed is that there is now something else to choose — see §30, and note how
+long "until a real sink exists" lasted without anyone deciding it should.
 
 **Reconciliation is two recoveries, and the second was missing.** `reclaim_expired` rescues
 a unit whose holder crashed mid-job (RUNNING with a dead lease is invisible to
@@ -874,3 +876,56 @@ already-rendered old prompt drafted anyway.
 ledger, progression schedule, beat-template replacement, or structural/mechanical/craft
 critic for plan quality. Those remain §9 and §20.6 work; this slice establishes the safe
 provider-to-proposal lane they can reuse.
+
+## 30. The outbox drains somewhere, and the default still drains nowhere
+
+The transactional outbox was built in slice 2 and was correct and unreachable for nine
+slices. Send-then-mark, content-derived idempotency keys, capped exponential backoff, a
+FAILED terminal state, and a spin fix measured over 2,016 ticks — all of it draining into
+`_null_dispatcher`, which returns False for every entry, and which no caller ever replaced
+because no caller ever passed `dispatch=` at all. Every `EvaluationCompleted`,
+`FindingStatusChanged`, `PlanChanged` and acceptance the system had written sat pending
+forever, and the `dispatched=` count `tick` prints was **structurally** zero rather than
+usually zero.
+
+**This is the `reset_health` shape for the fourth time**, and the file already records three:
+a documented promise with no non-test caller (`ProviderRegistry.reset_health`,
+`bump_plan_epoch`/`replan`, and — still open — `rollback_proposal`). It is the most reliable
+defect this project produces, and the reason it survives review is that every part of it
+tests green: the outbox's own suite passes because it asserts the *machinery*, and §9's
+"default refuses delivery" test asserts the default is honest, which it is. Nothing asserted
+that anything was ever a non-default.
+
+**JSON Lines to an operator-named file, because it is the smallest thing that is genuinely a
+sink.** Append-only, so it is shaped like the log it carries; no network, no credentials and
+no dependency added to a repo whose only runtime dependency is its own contracts package;
+and `tail -f` is a working consumer on both supported platforms. Anything richer — webhook,
+mail, a queue — is another adapter behind the same `Dispatcher` protocol and does not touch
+the loop.
+
+Four properties are what separate a sink from the appearance of one:
+
+- **One line is exactly one `EventEnvelope`** (§13's shared contract, not a shape invented at
+  the boundary), so a consumer reads it with `lc.parse_artifact`. Delivery bookkeeping is
+  deliberately absent: attempt counts are this system's business, and mixing them in would
+  make the line something no schema describes.
+- **Flushed and fsynced before delivery is claimed.** Send-then-mark is at-least-once only if
+  the send is durable before the mark. The store commits with `synchronous=FULL`; a buffered
+  line still in the OS cache at power loss would be marked sent and gone — the silent loss
+  the null dispatcher was written to avoid, arriving through the sink instead of the default.
+- **A failed write refuses; it does not raise.** `_drain_outbox` runs *before* work selection,
+  so an exception there would abort the tick before a scene was drafted: a mistyped
+  `--notify-file` would stop the book. Refusing leaves the entry pending, backs it off, and
+  lets the tick work. The refusal is counted and its reason surfaced on stderr by `tick`, but
+  it does **not** change the exit code — the tick did its work, and paging a supervisor every
+  five minutes for a condition the backoff is already handling inverts §4.1's "a quiet system
+  is a healthy one".
+- **The default is unchanged.** No `--notify-file` means `null_dispatcher` and a visibly
+  undelivered outbox. Defaulting to some file would be worse than the old silence: events
+  marked sent into a path nobody agreed to read.
+
+`_null_dispatcher` was renamed `null_dispatcher` in the same change, which is the smaller
+half of the same point. With two dispatchers the choice belongs to the composition root, and
+a composition root that cannot name the default it is choosing expresses "no sink" by
+omitting an argument — which is exactly how this stayed the only dispatcher for nine slices
+without anyone deciding that it should.

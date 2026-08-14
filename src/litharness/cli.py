@@ -37,10 +37,16 @@ import litharness_contracts as lc
 
 from litharness.adapters import contracts_fixtures, evaluation_artifact
 from litharness.adapters.continuity_cli import ContinuityCliRunner
+from litharness.adapters.notifications import JsonlDispatcher
 from litharness.adapters.sqlite_store import MigrationsMissing, SqliteStore
 from litharness.application import export as export_module
 from litharness.application import status as status_module
-from litharness.application.conductor import Conductor, TickOutcome
+from litharness.application.conductor import (
+    Conductor,
+    Dispatcher,
+    TickOutcome,
+    null_dispatcher,
+)
 from litharness.application.directive_planner import DIRECTIVE_PLAN, make_directive_plan_handler
 from litharness.application.evaluation import (
     CompositeEvaluator,
@@ -144,11 +150,21 @@ def _conductor(store: SqliteStore, args: argparse.Namespace) -> Conductor:
     evaluator: Evaluator = (
         evaluators[0] if len(evaluators) == 1 else CompositeEvaluator(evaluators)
     )
+    # No destination configured means the null dispatcher, and the outbox stays visibly
+    # undelivered — which is what it did for every installation until this flag existed.
+    # Defaulting to *some* file instead would be worse than the old silence: events would
+    # be marked sent into a path nobody agreed to read.
+    dispatch: Dispatcher = (
+        JsonlDispatcher(Path(args.notify_file))
+        if args.notify_file is not None
+        else null_dispatcher
+    )
     return Conductor(
         store=store,
         holder=args.holder,
         project_id=args.project,
         registry=registry,
+        dispatch=dispatch,
         # §4.1's "work selection is a policy over the book's state", replacing the FIFO
         # placeholder. It drains the queue first, so retries and hand-enqueued work still
         # outrank planning; only when nothing is claimable does it materialise a beat.
@@ -185,8 +201,9 @@ def _conductor(store: SqliteStore, args: argparse.Namespace) -> Conductor:
 def cmd_tick(args: argparse.Namespace) -> int:
     """One bounded unit of work. This is what the scheduler invokes."""
     store = _store(args)
+    loop = _conductor(store, args)
     try:
-        result = _conductor(store, args).tick(_now())
+        result = loop.tick(_now())
     finally:
         store.close()
 
@@ -197,6 +214,23 @@ def cmd_tick(args: argparse.Namespace) -> int:
         f" reconciled={result.reconciled} dispatched={result.dispatched}"
         f" ingested={result.ingested}"
     )
+    # **A sink that refused says so, and does not change the exit code.** The tick did its
+    # work; what failed is the telling. Delivery has its own bounded retry with backoff and
+    # reports itself through `status`, so escalating a transient refusal here would page a
+    # supervisor every five minutes for a condition the loop is already handling. What must
+    # not happen is the refusal being invisible — an operator who configured a sink and is
+    # receiving nothing needs the OSError, not a silence indistinguishable from no events.
+    sink = loop.dispatch
+    if isinstance(sink, JsonlDispatcher) and sink.failures:
+        # Both streams usually land in the same cron log, where stdout is block-buffered
+        # and stderr is not — so without this the diagnostic arrives *before* the tick line
+        # it is about, and reads as a complaint about the previous cadence.
+        sys.stdout.flush()
+        print(
+            f"litharness: {sink.failures} event(s) undelivered to {sink.destination}: "
+            f"{sink.last_error}",
+            file=sys.stderr,
+        )
     if result.outcome in {TickOutcome.JOB_FAILED, TickOutcome.JOB_PARKED}:
         return EXIT_ATTENTION
     return EXIT_OK
@@ -1168,6 +1202,14 @@ def build_parser() -> argparse.ArgumentParser:
         type=Path,
         default=os.environ.get("LITHARNESS_CONTINUITY_EVALUATOR"),
         help="ContinuityEvaluation executable; also read from LITHARNESS_CONTINUITY_EVALUATOR",
+    )
+    parser.add_argument(
+        "--notify-file",
+        type=Path,
+        default=os.environ.get("LITHARNESS_NOTIFY_FILE"),
+        help="append delivered events to this file as JSON Lines, one EventEnvelope per "
+        "line; also read from LITHARNESS_NOTIFY_FILE. Without it the outbox accumulates "
+        "undelivered rather than claiming a delivery it did not make",
     )
     sub = parser.add_subparsers(dest="command", required=True)
 

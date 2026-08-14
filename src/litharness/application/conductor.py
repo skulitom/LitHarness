@@ -103,9 +103,16 @@ class Dispatcher(Protocol):
     def __call__(self, entry: OutboxEntry) -> bool: ...
 
 
-def _null_dispatcher(entry: OutboxEntry) -> bool:
-    """Default: deliver nowhere and say so, so the outbox stays honest until a real sink
-    exists. Marking undelivered events as sent would be silent loss dressed as success."""
+def null_dispatcher(entry: OutboxEntry) -> bool:
+    """Deliver nowhere and say so, which is the honest default when no sink is configured.
+    Marking undelivered events as sent would be silent loss dressed as success.
+
+    Named rather than private since `adapters.notifications` gave the outbox somewhere real
+    to drain: with two dispatchers the choice belongs to the composition root, and a
+    composition root that cannot name the default it is choosing has to express "no sink"
+    by omitting an argument — which is how this stayed the *only* dispatcher for nine
+    slices without anyone deciding that it should be.
+    """
     return False
 
 
@@ -147,7 +154,7 @@ class Conductor:
     project_id: str
     handlers: dict[str, JobHandler] = field(default_factory=dict)
     select: WorkSelector = fifo_selector
-    dispatch: Dispatcher = _null_dispatcher
+    dispatch: Dispatcher = null_dispatcher
     scope: str = DEFAULT_SCOPE
     lease_duration: float = 300.0
     job_lease_duration: float = 600.0
@@ -592,4 +599,5 @@ __all__ = [
     "WorkSelector",
     "fifo_selector",
     "no_op_handler",
+    "null_dispatcher",
 ]

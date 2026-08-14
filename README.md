@@ -141,6 +141,25 @@ uv run litharness --database book.db directive "No combat in the midpoint." \
   this store runs in WAL mode and a file copy would silently omit everything since the
   last checkpoint.
 
+Events reach the outside world through the transactional outbox, which needs somewhere to
+drain:
+
+```bash
+uv run litharness --database book.db --notify-file events.jsonl tick
+```
+
+Each delivered event is appended as one line of JSON — a full `EventEnvelope`, so a consumer
+parses it with the contracts package rather than a shape invented here — and the line is
+fsynced before the entry is marked sent, because send-then-mark is only at-least-once if the
+send is durable first. `LITHARNESS_NOTIFY_FILE` sets it for a cron entry that should not
+carry the flag. Delivery is at-least-once by design, so a consumer dedupes on
+`idempotency_key`. **Without the flag nothing is delivered and nothing claims to have been**:
+the outbox accumulates visibly in `status` rather than marking events sent into a destination
+nobody agreed to read. A sink that cannot be written refuses rather than raising — the drain
+runs before work selection, so a mistyped path must not stop the book from being written —
+and the entry stays pending under the existing backoff while `tick` prints the reason on
+stderr.
+
 Budget ceilings apply to every generating call and are checked **before** it is made:
 `--max-tokens-per-day`, `--max-invocations-per-day` (the one tokens cannot express — see
 §15's per-call harness tax), `--max-tokens-per-operation`, `--max-cost-usd-per-day`. Pass

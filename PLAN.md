@@ -1,7 +1,7 @@
 # LitHarness: Autonomous Book-Production System Plan
 
 **Version:** 2.2 (supersedes PLAN-v1-authoring-tool.md, archived in this folder)
-**Status:** Master plan; **Stage 0 slices 1–6 and Stage 1 slices 7–9 implemented and green (576 passing tests + 3 opt-in live); operable via `litharness tick`; a book goes in (`import`), drafts itself against a context packet, is refused when a planted defect stands against it, and comes out readable (`export`); all four §17 Stage 1 exit clauses met; two of §19's seven clauses met outright — scorecard in §19.1**
+**Status:** Master plan; **Stage 0 slices 1–6, Stage 1 slices 7–9, and Stage 2's detect-and-repair chain implemented and green (587 passing tests + 3 opt-in live); operable via `litharness tick`; a book goes in (`import`), drafts itself against a context packet, is refused when a planted defect stands against it, repairs a located finding within a serial cap (`evaluate_revision`/`repair_finding`), notifies out of the outbox to a configured sink (`--notify-file`), and comes out readable (`export`); all four §17 Stage 1 exit clauses met; Stage 2's remaining work is the propagation engine and live state production; two of §19's seven clauses met outright — scorecard in §19.1**
 
 *(Corrected here, because this line was the instance: it read "four of §19's seven clauses met" while §19.1's table said two. §19.1 contains a paragraph recording that exact drift happening once before, four lines above the table that contradicted it, and the header carrying the same wrong number went unnoticed through three revisions. The readiness number this project reports about itself is the number to distrust first.)*
 **Role:** A 24/7 autonomous system that plans, drafts, evaluates, repairs, and versions quality LitRPG books — directed by a human, never blocked on one
@@ -1217,7 +1217,7 @@ because four of the seven are structurally blocked in ways worth naming precisel
 | Clause | Status | The binding reason |
 |---|---|---|
 | **Integrity** | **met, and now checked rather than asserted** | Content-addressed revisions, atomic revision+event+outbox commits, restore-by-rebuild. Reversibility landed with a stored `branch_heads` pointer and a `revert` that moves *forward* — history is immutable, so undo produces a new revision restoring the old content, leaving the mistake and the correction both in the lineage. Undo composes. **The correction this row needed:** it claimed "attribution is enforced at the loop: every accepted revision resolves back through `decision_for_revision`", which was true of the generation path and false of the reversibility feature added under this same clause — `revert` committed a revision and moved the head while writing no decision and no event, so `decision_for_revision` answered `None`. That was the one silent mutation in the shipped system, against a literal §17 Stage 1 exit clause, and no test would have caught it. `revert` now mints its own decision and acceptance event (attribution is not a caller's option), and `store.unattributed_revisions()` — surfaced by `litharness verify`, which exits non-zero — makes the clause a query rather than a claim. A structural constraint on one method would only ever have guarded that method. |
-| **Autonomy** | **attemptable; needs 30 days** | Was *not startable*: no entrypoint existed, so §17's week-unattended criterion could be simulated but never run. `litharness tick` closes that. Three spins found and fixed — the outbox retried its head 2,016 times a week while starving entries 51+; an escalated unit was marked SUCCEEDED and discarded; and a provider outage longer than fifteen minutes permanently poisoned every unit it touched, because `ProviderUnavailable` was charged against the attempt budget despite being raised before any work was attempted. The exception queue exists. **"Parked units are visible and revivable" was false on the refusal an operator with real ceilings meets first, and the same lesson had to be learned twice:** a budget refusal settled to POISONED — terminal, unrevivable, idempotency key burned — because `_settle` read the terminal state off the word `PARK` under a comment asserting "`decide` returns this only on attempt exhaustion", a premise the budget gate falsifies on attempt 1. A ceiling that resets at midnight destroyed the unit it refused. `_settle` now derives POISONED from the attempt budget itself, and a refusal reached *in front of* the work gives back the attempt it was charged, exactly as an outage already did. **And the lesson had to be learned a third time in slice 9**: a finding already standing against a node was charged against the unit it refused, so a blocked beat poisoned after twelve model calls and the operator's own remedy — dismiss the finding — arrived to find nothing revivable. The gate now runs a pre-flight pass in front of the spend. `replan` shipped in the same fix, because the recovery path it completes was named by `handlers._stale_base` and by migration 011 and did not exist. **What remains is elapsed time, which nothing but time supplies.** |
+| **Autonomy** | **attemptable; needs 30 days** | Was *not startable*: no entrypoint existed, so §17's week-unattended criterion could be simulated but never run. `litharness tick` closes that. Three spins found and fixed — the outbox retried its head 2,016 times a week while starving entries 51+; an escalated unit was marked SUCCEEDED and discarded; and a provider outage longer than fifteen minutes permanently poisoned every unit it touched, because `ProviderUnavailable` was charged against the attempt budget despite being raised before any work was attempted. The exception queue exists. **"Parked units are visible and revivable" was false on the refusal an operator with real ceilings meets first, and the same lesson had to be learned twice:** a budget refusal settled to POISONED — terminal, unrevivable, idempotency key burned — because `_settle` read the terminal state off the word `PARK` under a comment asserting "`decide` returns this only on attempt exhaustion", a premise the budget gate falsifies on attempt 1. A ceiling that resets at midnight destroyed the unit it refused. `_settle` now derives POISONED from the attempt budget itself, and a refusal reached *in front of* the work gives back the attempt it was charged, exactly as an outage already did. **And the lesson had to be learned a third time in slice 9**: a finding already standing against a node was charged against the unit it refused, so a blocked beat poisoned after twelve model calls and the operator's own remedy — dismiss the finding — arrived to find nothing revivable. The gate now runs a pre-flight pass in front of the spend. `replan` shipped in the same fix, because the recovery path it completes was named by `handlers._stale_base` and by migration 011 and did not exist. **And the outbox delivered nothing to anyone for nine slices** — send-then-mark, derived idempotency keys, backoff, a FAILED terminal state and the spin fix above, all draining into a null dispatcher that no caller ever replaced, because no caller ever passed `dispatch=` at all. So `tick`'s printed `dispatched=` count was *structurally* zero, and the fix for the 2,016-attempt spin was a fix to a loop that could not deliver. A JSON Lines sink (`--notify-file`, one `EventEnvelope` per line, fsynced before delivery is claimed) is now selectable, the null dispatcher stays the default when none is configured, and a write that fails refuses rather than raising — because the drain runs *before* work selection, so a mistyped path would otherwise stop the book being written at all. **What remains is elapsed time, which nothing but time supplies.** |
 | **Trust** | **no longer vacuous; partly met** | Was: "the deterministic ladder is one gate, `shape.draft.v0`; zero false-accepts over a suite that does not exist is trivially true". The ladder is now shape *then* integrity, and the clause has a suite to be measured against — both fixtures' planted defects, injected from their own `findings.json`. Measured: every planted defect that reaches the gate is refused, the beat's node stays empty, and both fixture books still reach six accepted scenes with the gate live, so there are no false *rejects* either. Two invariants are enforced rather than asserted — a finding's status overrides its severity, so a negative control cannot block forever; and an uncalibrated critic cannot block at all (§10.4). The six-rule pack can now run from each durable evaluation through an explicit live subprocess contract, with transport/schema failures reported as incomplete instead of clean. **What keeps this short of met:** the pack is optional, and real-book sensitivity still depends on live state/facts the narrow extractor cannot yet produce. The second half of the clause — "blocking critics carry current calibration evidence" — is untouched and correctly so: there are no critics, only rules. |
 | **Genre** | **started; live deterministic gate available** | The six game-system rules now run in LitHarness when the ContinuityEvaluation executable is configured. The remaining gap is forward game-state production and validation on model-written chapters, not the evaluation boundary. |
 | **Quality (§1a)** | **not met; the machinery is built and the evidence is not** | Still blocked on §10.6's craft reference corpus, which is human authoring work — and twelve of thirteen candidate proxies are now refuted rather than eight of nine, four of them measured against 13,000 chapters of published LitRPG. What changed is that the *path* exists where before there was none. §10.5's standing audit routes a content-derived sample of accepted scenes to a queue and `litharness audit --next` prints the prose blind; a verdict is recorded once and never overwritten; §10.4's promotion bar is a function (`promoted_gate`) that refuses without held-out precision, a minimum holdout, unexpired evidence and a matching verdicts digest, and it is the only way to construct a blocking craft gate. Craft metrics are logged per accepted scene from now on, so a future calibration has held-out history to be measured against rather than starting from zero on promotion day. **The missing input is human judgment and nothing here substitutes for it**: RevisionJudge holds 104 exported pairs and two collected verdicts. The clause is met when readers have answered, not when the schema exists. |
@@ -1226,16 +1226,23 @@ because four of the seven are structurally blocked in ways worth naming precisel
 
 **Two of the seven are met outright** — Integrity and Recovery. Economics is met for
 enforcement and unmet as §19 words it, because the clause says *per-book* cost and the
-ceilings are per-day. Autonomy is attemptable and needs elapsed time. Trust is vacuous
-rather than failing. Genre and Quality are not started, and both are blocked on things
-engineering cannot supply: a generator to constrain, and a human-authored corpus.
+ceilings are per-day. Autonomy is attemptable and needs elapsed time. Trust is partly
+met and no longer vacuous: the ladder refuses every planted defect the fixtures supply,
+and what keeps it short of met is that the pack is optional and there are no calibrated
+critics. Genre is started — the six rules run live when configured — and blocked on
+forward game-state production. Quality is not met, and stays blocked on the one input
+engineering cannot supply: human judgment against a human-authored corpus.
 
 An earlier revision of this paragraph said "four of the seven now met" while the table four
 lines above it said otherwise, which is worth leaving on the record: the readiness number
 this project reports about itself had drifted from the evidence directly above it, in the
-one section written specifically to stop that happening.
+one section written specifically to stop that happening. It then happened a second time in
+the opposite direction: the table was re-scored for Stage 2 (Trust partly met, Genre
+started) while this paragraph went on calling Trust vacuous and Genre not started — the
+prose lagging the evidence instead of outrunning it. The direction changes; the defect —
+restating the table instead of reading it — does not.
 
-Nine defects worth remembering, because each failed *silently* and none would have surfaced
+Ten defects worth remembering, because each failed *silently* and none would have surfaced
 without being looked for: migrations resolved to nowhere under a wheel while `migrate`
 reported success, so a restored host would have come up with an empty schema that reads as
 data loss; a full disk reported "cannot rollback" because the rollback in the transaction's
@@ -1246,10 +1253,17 @@ was charged against the unit of work it had prevented; a **budget** refusal was 
 same way *and* made terminal, so a ceiling that resets at midnight destroyed the work it
 declined; `revert` — the feature added to satisfy §19's reversibility clause — violated
 the attribution clause in the same sentence, committing a revision that no policy decision
-explained; and slice 9's integrity gate charged a standing finding against the unit it
-refused, so the operator's own remedy arrived to find the work already destroyed.
+explained; slice 9's integrity gate charged a standing finding against the unit it
+refused, so the operator's own remedy arrived to find the work already destroyed; and the
+outbox delivered to nobody for nine slices, because the only dispatcher was the null one
+and no caller ever passed another — so the audit trail's whole outward half was absent
+while every test of it passed.
 
-Two of those eight are the same defect at different layers, and that is the more useful
+*(The two counts below read "eight" for three revisions after the ninth defect was added,
+which is the same drift the paragraph above the table exists to catch, one paragraph lower
+down. Corrected with the tenth.)*
+
+Two of those ten are the same defect at different layers, and that is the more useful
 observation. `ProviderUnavailable` and a budget ceiling are both refusals raised *in front
 of* the work; both were charged against the attempt budget of a unit that never ran; the
 first was found and fixed, and the second survived that fix by three commits because the
@@ -1278,10 +1292,16 @@ is finished when the operator can get past it.** Two further gaps fell out of th
 (`bump_plan_epoch` had one caller and it was a test — the `reset_health` shape again), and
 `revive` alone cannot clear a unit whose head has moved on, which is correct behaviour that
 nothing had written down.
-Three of the eight were also *pinned by passing tests* — the budget refusal's POISONED
+Three of the ten were also *pinned by passing tests* — the budget refusal's POISONED
 status was asserted by name, and `revert`'s attribution was never asserted at all. A suite
 that encodes the defect is worse than no suite, because it converts a bug into a
-requirement.
+requirement. **The silent outbox is the subtler version of the same thing:** nothing
+asserted the wrong behaviour, but the suite tested the *machinery* exhaustively — backoff,
+starvation, redelivery, the FAILED terminal state — and never once tested that a real sink
+existed to run it. Green, thorough, and about a component that had no consumer. The
+`reset_health` shape for the fourth time (`bump_plan_epoch`/`replan` was the third), and
+the pattern is specific enough to search for: **a documented promise whose only caller is a
+test.** `domain/plan_refinement.py`'s `rollback_proposal` is the next one on that list.
 
 ## 20. Immediate next actions
 
