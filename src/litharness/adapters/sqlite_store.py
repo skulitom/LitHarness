@@ -825,11 +825,14 @@ class SqliteStore:
         The claim and the lease write happen in a single IMMEDIATE transaction, so two
         Conductor instances racing on the same tick cannot both win.
 
-        Order is `(priority DESC, rowid)`. While every job sits at the default priority
-        of 0 this is byte-identical to the FIFO it replaces — which is the point: it makes
-        a non-FIFO policy *expressible* (§4.1) without inventing one. Before this, no
-        ordering other than insertion order could be written at any layer, so
-        `fifo_selector`'s docstring understated its own constraint.
+        Order is `(priority DESC, rowid)`. It shipped byte-identical to the FIFO it replaced,
+        because every job then sat at the default of 0 — the point being to make a non-FIFO
+        policy *expressible* (§4.1) without inventing one, since before this no ordering other
+        than insertion order could be written at any layer. **Four bands now use it**:
+        explicit direction at 1000 + precedence, interpretive direction at 500 + precedence,
+        repair at 100, evaluation at 80, and scene drafts at the default. So this is no longer
+        FIFO in practice, and a reader reasoning about claim order from the old sentence would
+        get the answer wrong for every book with direction or repairs in flight.
         """
         return self._jobs.claim_next(holder, now, duration)
 

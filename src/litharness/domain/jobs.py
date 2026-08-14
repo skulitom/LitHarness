@@ -129,7 +129,10 @@ class Job:
     max_attempts: int = 3
     #: The handler's input. Net-new; `input_digest` is a hash and cannot reconstruct it.
     payload: dict[str, Any] = field(default_factory=dict)
-    #: Claim order is (priority DESC, rowid). Inert at the default — see migration 003.
+    #: Claim order is (priority DESC, rowid). Live since slice 9: explicit direction mints at
+    #: 1000 + precedence, interpretive direction at 500 + precedence, repair at 100 and
+    #: evaluation at 80, and a scene draft stays at the default. Severity is the part still
+    #: unused — a finding's severity does not reach the repair job it produces.
     priority: int = 0
 
     # -- state machine --------------------------------------------------------

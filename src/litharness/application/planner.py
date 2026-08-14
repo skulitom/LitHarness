@@ -1,9 +1,17 @@
 """Work selection over the book's state — §4.1's policy, replacing the FIFO placeholder.
 
 `fifo_selector` was honest about being a placeholder, and its stated blocker was "a plan
-graph and a findings store that do not exist". This module removes the first half. The
-second is untouched: `jobs.priority` stays inert, because a severity ordering with no
-findings store is a selector over a column with one value.
+graph and a findings store that do not exist". This module removes the first half; the
+findings store landed with slice 9.
+
+**`jobs.priority` is no longer inert, and this docstring said it was for two stages after it
+stopped being true.** Both lanes here mint above the default (1000 + precedence for explicit
+direction, 500 + precedence for interpretive), and Stage 2's repair chain mints at 80 and 100,
+so the claim order `(priority DESC, rowid)` now sorts a queue with four bands in it. What is
+still absent is a *severity* ordering: a finding's severity does not reach the job it
+produces, so two repairs of very different urgency are claimed in insertion order. That is the
+column's remaining unused half, and it is the accurate version of what this paragraph used to
+claim about the whole of it.
 
 Four decisions here are load-bearing.
 

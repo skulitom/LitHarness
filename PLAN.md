@@ -1474,6 +1474,15 @@ every unstruck action below as a claim to re-verify rather than a task to start.
      nothing yet generates repair work for a finding to prioritise, so a severity ordering
      would sort a queue whose entries all came from the same beat template. The column stays
      inert for one more reason rather than for the two it had.
+     *(Struck: "the column stays inert". It has not been inert since the deterministic
+     directive lane, and Stage 2's repair chain added two more bands — explicit direction at
+     1000 + precedence, interpretive at 500 + precedence, repair at 100, evaluation at 80,
+     scene drafts at 0. Three docstrings went on saying otherwise, including the one on the
+     field itself and the one over `claim_next`, so a reader deriving claim order from the
+     code's own prose got it wrong for any book with direction or repairs in flight. **What is
+     genuinely still unused is the severity half**: a finding's severity does not reach the
+     repair job it produces, so two repairs of very different urgency are claimed in insertion
+     order. That is the accurate remaining gap, and it is smaller than the one recorded here.)*
    - ~~**Directive ingestion**~~ — **capture, atomic acceptance, deterministic explicit
      constraints, and bounded model interpretation DONE.** Contracts
      1.1.0 made `DirectiveIngested` representable, so directives are captured durably and
