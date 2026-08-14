@@ -1,7 +1,7 @@
 # LitHarness: Autonomous Book-Production System Plan
 
 **Version:** 2.2 (supersedes PLAN-v1-authoring-tool.md, archived in this folder)
-**Status:** Master plan; **Stage 0 slices 1–6, Stage 1 slices 7–9, and Stage 2's detect-and-repair chain implemented and green (595 passing tests + 3 opt-in live); operable via `litharness tick`; a book goes in (`import`), drafts itself against a context packet, is refused when a planted defect stands against it, repairs a located finding within a serial cap (`evaluate_revision`/`repair_finding`), notifies out of the outbox to a configured sink (`--notify-file`), can have its plan history read and rolled back (`plans`/`revert-plan`), and comes out readable (`export`); all four §17 Stage 1 exit clauses met; Stage 2's remaining work is the propagation engine and live state production; two of §19's seven clauses met outright — scorecard in §19.1**
+**Status:** Master plan; **Stage 0 slices 1–6, Stage 1 slices 7–9, and Stage 2's detect-and-repair chain implemented and green (633 passing tests + 3 opt-in live); operable via `litharness tick`; a book goes in (`import`), drafts itself against a context packet, is refused when a planted defect stands against it, repairs a located finding within a serial cap (`evaluate_revision`/`repair_finding`), notifies out of the outbox to a configured sink (`--notify-file`), can have its plan history read and rolled back (`plans`/`revert-plan`), answers what a change reaches before it is spent on (`propagate`, dev-set precision 1.000 against a 0.481 base rate), and comes out readable (`export`); all four §17 Stage 1 exit clauses met; Stage 2's remaining work is the propagation engine and live state production; two of §19's seven clauses met outright — scorecard in §19.1**
 
 *(Corrected here, because this line was the instance: it read "four of §19's seven clauses met" while §19.1's table said two. §19.1 contains a paragraph recording that exact drift happening once before, four lines above the table that contradicted it, and the header carrying the same wrong number went unnoticed through three revisions. The readiness number this project reports about itself is the number to distrust first.)*
 **Role:** A 24/7 autonomous system that plans, drafts, evaluates, repairs, and versions quality LitRPG books — directed by a human, never blocked on one
@@ -1116,9 +1116,42 @@ complete re-detection that explicitly checked the rule can mark it fixed. The ch
 and capped, so content-derived job ids cannot turn a persistent complaint into a spin loop.
 The live-book producer contract and subprocess adapter are now wired. Frozen fixture plans and
 live bundles use the same ContinuityEvaluation runner, and transport/schema failures become an
-incomplete evaluation rather than a false clean. The remaining Stage 2 work is the propagation
-engine and richer live state/facts production: stale future evidence is deliberately omitted,
-and the current extractor still reads only system voice.
+incomplete evaluation rather than a false clean.
+
+**Exit item 2 is now met on the dev suites, and for a while it was a scorer with nothing to
+score.** `impact.py` graded blast-radius predictions and shipped three baselines to beat, and
+no code in `src/` produced a prediction — the clause was executable and had no subject.
+`domain/propagation.py` is the engine: four rules, one per semantic change kind the contract
+names and this project can honestly read. A **rename** reaches wherever the old name is
+spelled, forwards and backwards, minus the aliases the change preserves — a name is not
+carried forward, it is written, and every place it is written is wrong the moment it changes.
+A **changed fact** reaches forward only, to the later scenes carrying both its subject and its
+predicate and to the records asserting it from that story position on; a balance before the
+purchase was true before and stays true. A **moved event** reaches the window strictly between
+the two edited nodes, plus the records at the origin sharing its subject. **Surface-only**
+reaches nothing, which is `e3-typography-only`. Measured over both gold suites: **precision
+1.000, recall 1.000, thirteen hits and zero false touches**, against `predict_everything`'s
+0.481 and the positional heuristic's 0.333, with `e3` untouched.
+
+**That number is a dev-set number and the third exit item is the one that governs it.** Four
+cases, 37 expectations, both suites generated from the same `def.json` that authors the prose
+they grade, and the rules were written after reading them. A perfect score over material of
+that size and provenance rules out an engine that is obviously wrong and rules in nothing;
+`tests/test_propagation.py` exists to test each rule against books built for it, including the
+cases the gold has none of, and `litharness propagate` prints `impact.CAVEAT` under every
+result so the number cannot travel without it. Held-out material remains Stage 3's to supply.
+
+**What abstains, and why that is the load-bearing part.** `event_added`, `event_removed`,
+`plan_changed`, `pov_changed`, `rule_changed` and `unknown` have no rule. They come back as
+`unhandled`, leave the analysis incomplete, and exit non-zero — because "nothing propagates"
+and "nobody looked" are the same empty result otherwise, which is precisely the defect
+`litharness ingest` was corrected for one stage earlier.
+
+The remaining Stage 2 work is **the producer, and richer live state/facts production**. Nothing
+in this repo derives an `ExtractedChange` from an accepted revision, so the engine is reached
+through `litharness propagate` over a `ChangeSet` file — §13's boundary, and honest about
+where the missing half lives. Stale future evidence is deliberately omitted, and the current
+extractor still reads only system voice.
 
 ### Stage 3 — Book Zero (the pivot)
 One complete 50k–80k word LitRPG draft, end-to-end, 24/7 unattended: Narrative
@@ -1302,9 +1335,20 @@ existed to run it. Green, thorough, and about a component that had no consumer. 
 `reset_health` shape for the fourth time (`bump_plan_epoch`/`replan` was the third), and
 the pattern is specific enough to search for: **a documented promise whose only caller is a
 test.** `domain/plan_refinement.py`'s `rollback_proposal` was the next one on that list, and it was
-closed in the same session by `litharness plans` / `litharness revert-plan` — so the list is
-empty as of this writing, which is a statement with a short shelf life and should be read as
-"nobody has searched since" rather than as "there are none".
+closed in the same session by `litharness plans` / `litharness revert-plan`.
+
+**The sentence that stood here said the list was then empty, and it survived exactly one
+commit.** It also said to read that as "nobody has searched since" rather than "there are
+none", which is the only reason it is not simply wrong — searching again immediately found
+two more, of a shape the earlier phrasing had missed. `domain/impact.py` was not an uncalled
+function: it was a *complete measuring instrument with nothing to measure*, grading
+blast-radius predictions against a gold suite while no code in `src/` produced one, so §17
+Stage 2's second exit item read as satisfied by the scorer that could only ever report on an
+engine that did not exist. And `EventType.IMPACT_ANALYZED` had been in the contract since 1.0
+with no producer anywhere. Both are closed by `domain/propagation.py` and `litharness
+propagate`. The lesson to carry is that the search term is wrong: it is not "a function whose
+only caller is a test" but **anything the project can point at when asked whether something is
+done, that nothing in production touches** — a scorer, an event type, a schema, a baseline.
 
 ## 20. Immediate next actions
 

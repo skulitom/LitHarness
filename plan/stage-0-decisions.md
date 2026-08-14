@@ -1,6 +1,6 @@
 # Stage 0 decisions
 
-**Status:** Stage 0 slices 1-6 and Stage 1 slices 7-9 built and green — **595 passing tests (+3 opt-in live), ruff clean, mypy
+**Status:** Stage 0 slices 1-6 and Stage 1 slices 7-9 built and green — **633 passing tests (+3 opt-in live), ruff clean, mypy
 strict clean.** Slice 1 is the model-free manuscript spine; slice 2 the Conductor skeleton
 (tick, instance lease, job selection, digest, outbox dispatch, crash recovery); slice 3 the
 four provider adapters with their conformance suite and the billing guard; slice 4 **the
@@ -969,3 +969,59 @@ advances the branch's plan epoch and cancels queued scene jobs in the same trans
 (§29's rule, unchanged), so the next tick plans still-draftable beats against the restored
 plan. Scenes already accepted under the old plan stay accepted; `revert` is the verb for
 those. Nothing here overrules a gate, exactly as `replan` does not.
+
+## 32. Propagation reasons about evidence, not about position
+
+`domain/propagation.py`. §17 Stage 2's second exit item had a complete measuring instrument
+and no subject: `domain/impact.py` scores a blast-radius prediction against the gold suites
+and ships three baselines for it to beat, and nothing in `src/` produced a prediction. The
+engine is four rules, and each reads a different kind of evidence because the obvious signal
+is refuted — `predict_downstream_scenes` ("everything after the edit") scores precision 0.333
+against `predict_everything`'s 0.481, buying *worse* precision while giving up most of the
+recall, and `tests/test_impact.py` refuted it before any of this was built.
+
+- **`entity_renamed` reaches wherever the name is spelled**, forwards and backwards, on a word
+  boundary, minus the aliases the change set preserves. A name is not carried forward; it is
+  written, and every place it is written is wrong the moment it changes. Word boundaries are
+  the whole of the rule's precision — without them "Vane" reaches "Vanessa" and a short name
+  reaches the book.
+- **`fact_changed` reaches forward only**, to nodes carrying both the subject and the
+  predicate, and to records asserting that predicate of that subject from the change's story
+  position on. The anchor is the predicate, not the value: a downstream balance is wrong
+  without repeating the number that changed.
+- **`event_moved` reaches the window strictly between the two edited nodes**, plus the records
+  at the origin sharing the moved event's subject — knowledge acquired at the event travels
+  with it. Written as a window rather than "everything after the origin" because a move can
+  run backwards and the window is the same either way.
+- **`surface_only` reaches nothing**, and is not a veto over the rest of the set: it says
+  *this* change carries no meaning, and treating it as set-wide would let one reformatted
+  sentence hide a rename beside it.
+
+**Node space and record space are never mixed, and this is the decision most likely to be
+undone by someone who has not read §27.** Manuscript order is `position_key`; story order is
+`StoryPosition.order_key`; **nothing anywhere defines a mapping between them**. The mystery
+fixture is the proof — `attested_position` abstains on two of its six scenes and reports a
+third at `s1` — so node rules compare `position_key` against the edited nodes, record rules
+compare `order_key` against other records, and the single place they must meet goes through
+`attested_position`, widening the record filter where the book has not said and writing the
+widening onto the target's reason.
+
+**Two treatments of text, deliberately.** Prose is searched on word boundaries; a record's
+value is split on non-alphanumerics first, because its keys are identifiers and `_` is a word
+character to `` — a boundary search for "gold" does not match `cost_gold`, which is exactly
+how `rec-ev-buy-lantern` states the lantern's price. A unit test caught that before the gold
+suite did.
+
+**Everything else abstains and says so.** `event_added`, `event_removed`, `plan_changed`,
+`pov_changed`, `rule_changed` and `unknown` have no rule; they return in `unhandled`, leave
+`complete` false, and make `litharness propagate` exit non-zero. An engine that guesses at a
+change it cannot read rewrites conforming prose, and an empty result that does not distinguish
+*analysed and clear* from *skipped* is the same silence `ingest` was corrected for.
+
+**The score is 1.000/1.000 and that is not the claim.** Thirteen hits, zero misses, zero false
+touches over four cases and 37 in-sample expectations, with the rules written after reading
+them. It beats both baselines, which is what the exit item asks; it does not generalise, which
+is what the third exit item says out loud and what `impact.CAVEAT` prints under every result.
+`tests/test_propagation.py` is the other half — each rule against a book built for it, plus
+the cases the gold has none of: an alias containing the old name, a fact appearing only before
+the change, a move running backwards, a move with no window, and a change kind no rule reads.

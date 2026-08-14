@@ -824,3 +824,182 @@ def test_a_book_whose_plan_was_never_proposed_has_nothing_to_restore(db, capsys)
 
     assert run(db, "revert-plan", root_id) == EXIT_FAULT
     assert "imported" in capsys.readouterr().err
+
+
+# --- propagation ---------------------------------------------------------------------
+
+
+def _rename_change_set(tmp_path, book_id: str, branch_id: str, name: str = "Julian"):
+    """A ChangeSet artifact of the shared schema, as a sibling would hand one over.
+
+    §13 keeps the integration a file of a contract rather than an import, exactly as
+    `ingest` reads an `EvaluationArtifact`.
+    """
+    path = tmp_path / "change-set.json"
+    path.write_text(
+        json.dumps(
+            {
+                "meta": {
+                    "schema_version": "1.0.0",
+                    "artifact_id": "cs-cli-1",
+                    "artifact_kind": "change_set",
+                    "created_at": "2026-08-14T00:00:00Z",
+                    "actor": "operator",
+                    "tool": {"name": "litharness-tests", "version": "0.1.0"},
+                },
+                "change_set_id": "cs-cli-1",
+                "base_revision": "unused",
+                "target_branch": branch_id,
+                "actor": "author",
+                "operations": [
+                    {"kind": "rename", "logical_source_id": "entity:julian", "detail": {}}
+                ],
+                "idempotency_key": "idem-cli-1",
+                "extracted_changes": [
+                    {
+                        "kind": "entity_renamed",
+                        "subject": "julian",
+                        "before": name,
+                        "after": "Adrian",
+                    }
+                ],
+            }
+        ),
+        encoding="utf-8",
+    )
+    return path
+
+
+def _imported_mystery(db, capsys) -> tuple[str, str]:
+    run(db, "init")
+    imported_id(db, capsys, "--fixture", "mystery", "--keep-content")
+    store = SqliteStore.open(db)
+    try:
+        book_id, branch_id, _ = store.branches()[0]
+    finally:
+        store.close()
+    capsys.readouterr()
+    return book_id, branch_id
+
+
+def test_propagate_reports_what_a_change_reaches_and_why(db, tmp_path, capsys) -> None:
+    """`domain/impact.py` scored blast-radius predictions against the gold suites and nothing
+    produced one; `domain/propagation.py` now does, and this is the surface an operator has
+    to it. Reasons are printed with the ids because the output is a proposal to spend model
+    calls over somebody's book."""
+    book_id, branch_id = _imported_mystery(db, capsys)
+    path = _rename_change_set(tmp_path, book_id, branch_id)
+
+    assert run(db, "propagate", str(path)) == EXIT_OK
+
+    out = capsys.readouterr().out
+    assert "scene-3" in out and "scene-5" in out and "scene-6" in out
+    assert "scene-1" not in out, "a scene that never says the name is not reached"
+    assert "entity_renamed" in out
+    assert "spells 'Julian'" in out
+
+
+def test_propagate_records_the_analysis_as_an_event(db, tmp_path, capsys) -> None:
+    """`ImpactAnalyzed` has been in the contract's `EventType` since 1.0 with no producer
+    anywhere. An analysis an operator acted on and the log does not carry is a decision with
+    no record, which is the shape §19's audit clause exists to refuse."""
+    book_id, branch_id = _imported_mystery(db, capsys)
+    run(db, "propagate", str(_rename_change_set(tmp_path, book_id, branch_id)))
+
+    store = SqliteStore.open(db)
+    try:
+        [analysed] = [
+            entry.event
+            for entry in store.read_log()
+            if entry.event.event_type is EventType.IMPACT_ANALYZED
+        ]
+    finally:
+        store.close()
+    assert analysed.payload["change_set_id"] == "cs-cli-1"
+    # Three scenes that spell the name and three records that carry it as subject or value.
+    assert analysed.payload["reached"] == 6
+    assert analysed.payload["nodes"] == ["scene-3", "scene-5", "scene-6"]
+    assert analysed.payload["complete"] is True
+
+
+def test_propagate_enqueues_evaluation_only_when_asked(db, tmp_path, capsys) -> None:
+    """Reporting and acting are separate verbs on purpose: the report costs nothing and the
+    work costs model calls over a book the operator may not want re-checked yet. State
+    records are not enqueued — nothing re-evaluates a record, and a job naming one would park
+    for want of a handler."""
+    book_id, branch_id = _imported_mystery(db, capsys)
+    path = _rename_change_set(tmp_path, book_id, branch_id)
+
+    run(db, "propagate", str(path))
+    store = SqliteStore.open(db)
+    try:
+        assert store.job_counts_by_status() == {}
+    finally:
+        store.close()
+    capsys.readouterr()
+
+    assert run(db, "propagate", str(path), "--enqueue") == EXIT_OK
+    assert "3 evaluation(s)" in capsys.readouterr().out
+
+    store = SqliteStore.open(db)
+    try:
+        queued = store.jobs_by_status(JobStatus.QUEUED)
+        assert {job.payload["logical_id"] for job in queued} == {
+            "scene-3",
+            "scene-5",
+            "scene-6",
+        }
+    finally:
+        store.close()
+
+
+def test_enqueueing_the_same_analysis_twice_queues_nothing_new(db, tmp_path, capsys) -> None:
+    """Job ids are content-derived, so a re-run converges rather than doubling the queue —
+    the same property `ingest` has, and the reason a propagation report is safe to act on
+    twice."""
+    book_id, branch_id = _imported_mystery(db, capsys)
+    path = _rename_change_set(tmp_path, book_id, branch_id)
+    run(db, "propagate", str(path), "--enqueue")
+    capsys.readouterr()
+
+    assert run(db, "propagate", str(path), "--enqueue") == EXIT_OK
+    assert "0 evaluation(s)" in capsys.readouterr().out
+
+    store = SqliteStore.open(db)
+    try:
+        assert len(store.jobs_by_status(JobStatus.QUEUED)) == 3
+    finally:
+        store.close()
+
+
+def test_a_change_the_engine_cannot_read_exits_non_zero(db, tmp_path, capsys) -> None:
+    """The property that makes an empty result trustworthy. `pov_changed` is in the
+    contract's vocabulary and has no rule, so "nothing propagates" here would mean "nobody
+    looked" — indistinguishable from a clean analysis unless it says so and exits non-zero,
+    exactly as an incomplete evaluation does."""
+    book_id, branch_id = _imported_mystery(db, capsys)
+    path = tmp_path / "unreadable.json"
+    source = json.loads(_rename_change_set(tmp_path, book_id, branch_id).read_text("utf-8"))
+    source["extracted_changes"] = [{"kind": "pov_changed", "subject": "mara"}]
+    path.write_text(json.dumps(source), encoding="utf-8")
+
+    assert run(db, "propagate", str(path)) == EXIT_ATTENTION
+
+    captured = capsys.readouterr()
+    assert "pov_changed" in captured.err
+    assert "no rule" in captured.err
+
+
+def test_a_surface_only_change_reaches_nothing_and_is_still_a_clean_run(
+    db, tmp_path, capsys
+) -> None:
+    """Zero targets and exit 0 — the case that must stay distinguishable from the one above.
+    §17 names it: a typography edit that propagates rewrites conforming prose."""
+    book_id, branch_id = _imported_mystery(db, capsys)
+    path = tmp_path / "surface.json"
+    source = json.loads(_rename_change_set(tmp_path, book_id, branch_id).read_text("utf-8"))
+    source["extracted_changes"] = [{"kind": "surface_only"}]
+    path.write_text(json.dumps(source), encoding="utf-8")
+
+    assert run(db, "propagate", str(path)) == EXIT_OK
+    assert "nothing" in capsys.readouterr().out.lower()

@@ -65,10 +65,11 @@ from litharness.application.planner import make_plan_selector
 from litharness.application.repair import (
     EVALUATE_REVISION,
     REPAIR_FINDING,
+    evaluation_job_for,
     make_evaluation_handler,
     make_repair_handler,
 )
-from litharness.domain import audit, calibration
+from litharness.domain import audit, calibration, impact, propagation
 from litharness.domain import state as state_mod
 from litharness.domain.budget import BudgetPolicy
 from litharness.domain.directives import Directive, DirectiveKind, DirectiveStatus, directive_id_for
@@ -847,6 +848,114 @@ def cmd_replan(args: argparse.Namespace) -> int:
     return EXIT_OK
 
 
+def cmd_propagate(args: argparse.Namespace) -> int:
+    """What a change reaches beyond what it edits (§17 Stage 2's propagation engine).
+
+    **The engine existed as a scorer with nothing to score.** `domain/impact.py` grades a
+    blast-radius prediction against the gold suites and ships three baselines for it to beat;
+    no code produced a prediction. `domain/propagation.py` is the prediction, and this is the
+    surface an operator reaches it through.
+
+    A `ChangeSet` is read from a file of the shared schema, exactly as `ingest` reads an
+    `EvaluationArtifact` — §13 keeps a sibling's output a contract rather than an import, and
+    nothing in this repo yet derives semantic changes from an accepted revision, so the
+    producer is outside it by construction as well as by design.
+
+    **Reporting and acting are separate.** The report costs nothing; `--enqueue` costs model
+    calls over a book the operator may not want re-checked yet. Only manuscript nodes are
+    enqueued: nothing in this system re-evaluates a state record, and a job naming one would
+    park for want of a handler.
+
+    **An unreadable change exits non-zero.** `pov_changed`, `plan_changed` and `rule_changed`
+    are in the contract's vocabulary and have no rule here, so an empty result for one of them
+    means "nobody looked" — which must not print the same as a change that was read and
+    reached nothing. This is `ingest`'s incomplete-evaluation rule applied to the same class
+    of silence.
+    """
+    change_set = lc.parse_artifact(
+        lc.ChangeSet, json.loads(args.path.read_text(encoding="utf-8"))
+    )
+    stamp = _stamp(_now())
+    store = _store(args)
+    try:
+        book_id, branch_id = export_module.resolve_branch(store, args.book, args.branch)
+        head = store.head(book_id, branch_id)
+        if head is None:
+            print(f"litharness: no revision on {book_id}/{branch_id}", file=sys.stderr)
+            return EXIT_FAULT
+        result = propagation.propagate(
+            change_set,
+            propagation.book_from(head, store.state_records(book_id, branch_id)),
+        )
+        # Manuscript nodes only, and derived from the head rather than from the prediction:
+        # a change set may name a state record or an entity, and neither is a thing a
+        # revision can be evaluated at.
+        nodes = sorted(
+            logical_id
+            for logical_id in result.logical_ids
+            if any(node.logical_id == logical_id for node in head.nodes)
+        )
+        queued = 0
+        if args.enqueue:
+            for logical_id in nodes:
+                queued += int(
+                    store.enqueue(
+                        evaluation_job_for(
+                            book_id=book_id,
+                            branch_id=branch_id,
+                            revision_id=head.revision_id,
+                            logical_id=logical_id,
+                        )
+                    )
+                )
+        store.append_events(
+            [
+                Event(
+                    event_type=EventType.IMPACT_ANALYZED,
+                    project_id=args.project,
+                    created_at=stamp,
+                    actor=args.holder,
+                    book_id=book_id,
+                    branch_id=branch_id,
+                    revision_id=head.revision_id,
+                    payload={
+                        "change_set_id": change_set.change_set_id,
+                        "reached": len(result.logical_ids),
+                        "nodes": nodes,
+                        "complete": result.complete,
+                        "unhandled": list(result.unhandled),
+                        "enqueued": queued,
+                    },
+                )
+            ]
+        )
+    finally:
+        store.close()
+
+    for target in sorted(result.targets, key=lambda item: (item.rule, item.logical_id)):
+        print(f"{target.logical_id:<28} {target.rule}")
+        print(f"    {target.reason}")
+    if not result.targets:
+        print("this change reaches nothing beyond what it edits")
+    print(
+        f"({len(result.logical_ids)} reached, {len(nodes)} of them draftable node(s); "
+        f"{queued} evaluation(s) enqueued)"
+    )
+    if nodes and not args.enqueue:
+        print("  `--enqueue` queues an evaluation for each; without it this only reports")
+    # Node granularity, in-sample, four cases — said at the surface rather than in a doc,
+    # because a prediction that travels without its caveat becomes a claim nobody checked.
+    print(f"  {impact.CAVEAT}")
+    if not result.complete:
+        print(
+            f"  INCOMPLETE: no rule reads {', '.join(result.unhandled)} — this change was "
+            "not analysed, which is not the same as it reaching nothing",
+            file=sys.stderr,
+        )
+        return EXIT_ATTENTION
+    return EXIT_OK
+
+
 def cmd_plans(args: argparse.Namespace) -> int:
     """The plan's lineage, newest first, and the proposal that produced each step.
 
@@ -1588,6 +1697,19 @@ def build_parser() -> argparse.ArgumentParser:
     craft = sub.add_parser("craft", help="advisory craft measurements, and their limits")
     craft.add_argument("--metric")
     craft.set_defaults(func=cmd_craft)
+
+    propagate = sub.add_parser(
+        "propagate", help="what a change reaches beyond what it edits, from a ChangeSet"
+    )
+    propagate.add_argument("path", type=Path, help="a ChangeSet JSON file")
+    propagate.add_argument(
+        "--enqueue",
+        action="store_true",
+        help="queue an evaluation for each reached scene; without it this only reports",
+    )
+    propagate.add_argument("--book")
+    propagate.add_argument("--branch")
+    propagate.set_defaults(func=cmd_propagate)
 
     plans = sub.add_parser(
         "plans", help="the plan's lineage, newest first, and what produced each revision"

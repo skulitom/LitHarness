@@ -127,6 +127,17 @@ uv run litharness --database book.db directive "No combat in the midpoint." \
   it. Refuses a poisoned unit, whose attempt budget really was spent. A unit stopped by a
   budget ceiling or by a standing finding is parked, not poisoned: the blocker is external
   and the work is still there.
+- `propagate <change-set.json> [--enqueue]` — what a change reaches beyond what it edits.
+  Reads a `ChangeSet` of the shared schema (as `ingest` reads an `EvaluationArtifact`) and
+  reports every scene and state record the change touches, with the rule that reached it and
+  why. Four rules: a rename reaches wherever the old name is spelled, forwards and back; a
+  changed fact reaches forward to what states it after the change; a moved event reaches the
+  window between where it was and where it goes; a surface-only edit reaches nothing.
+  Anything else **abstains and exits non-zero** — "no rule read this" must not print the same
+  as "this reaches nothing". `--enqueue` queues an evaluation for each reached scene; without
+  it the command only reports. Scored against the contracts gold impact suites at precision
+  1.000 / recall 1.000 versus the base rate of 0.481 — **a dev-set number over four in-sample
+  cases**, which is what the command prints under every result.
 - `plans` — the plan's lineage, newest first, with the proposal that produced each revision:
   which directive it came from, what it summarised itself as, and whether it was itself a
   rollback. A revision no proposal produced is the plan the book was imported with.

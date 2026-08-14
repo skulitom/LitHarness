@@ -51,6 +51,15 @@ SCORED = frozenset({lc.ImpactLabel.MUST_UPDATE, lc.ImpactLabel.SAFE_PRESERVE})
 #: Anything mapping a case to the `logical_id`s it claims the change reaches.
 Predictor = Callable[[lc.GoldImpactCase], set[str]]
 
+#: What every number from this module is, and is not. Defined once because it travels: the
+#: score carries it, and so does `litharness propagate`, which reports a prediction from the
+#: engine these baselines exist to grade. A caveat that lives at one call site is one the
+#: other call site quietly drops.
+CAVEAT = (
+    "dev-set propagation scope at node granularity; the gold carries no character "
+    "offsets, so this is not span precision, and both suites are in-sample"
+)
+
 
 @dataclass(frozen=True, slots=True)
 class ImpactScore:
@@ -83,10 +92,7 @@ class ImpactScore:
 
     @property
     def caveat(self) -> str:
-        return (
-            "dev-set propagation scope at node granularity; the gold carries no character "
-            "offsets, so this is not span precision, and both suites are in-sample"
-        )
+        return CAVEAT
 
 
 def targets_of(case: lc.GoldImpactCase, labels: Iterable[lc.ImpactLabel]) -> set[str]:
@@ -198,6 +204,7 @@ def predict_downstream_scenes(case: lc.GoldImpactCase) -> set[str]:
 
 
 __all__ = [
+    "CAVEAT",
     "SCORED",
     "ImpactScore",
     "Predictor",

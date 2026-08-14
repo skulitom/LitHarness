@@ -15,8 +15,9 @@ import json
 import litharness_contracts as lc
 import pytest
 
+from litharness.adapters import contracts_fixtures
 from litharness.adapters.contracts_fixtures import fixture_impact_gold
-from litharness.domain import impact
+from litharness.domain import impact, propagation
 
 
 def suite(fixture_id: str) -> lc.GoldImpactSuite:
@@ -179,3 +180,116 @@ def test_every_score_carries_what_it_is_not() -> None:
     caveat = measured(impact.predict_everything).caveat
     assert "not span precision" in caveat
     assert "in-sample" in caveat
+
+
+# -- the engine, which is what the baselines were for -------------------------------------
+
+
+def gold_book(fixture_id: str) -> propagation.Book:
+    """The fixture's prose and state records, as the engine reads them.
+
+    Built from the contracts artifacts rather than from an imported `Revision`, because the
+    gold cases are authored against the fixture's own node ids and `import_manuscript`
+    re-addresses every node — the join is on `logical_id`, never on `version_id`, for exactly
+    the reason `impact.targets_of` records.
+    """
+    manuscript = json.loads(
+        contracts_fixtures.fixture_manuscript(fixture_id).read_text(encoding="utf-8")
+    )
+    state = lc.parse_artifact(
+        lc.StateSnapshot,
+        json.loads(contracts_fixtures.fixture_state(fixture_id).read_text(encoding="utf-8")),
+    )
+    return propagation.Book(
+        nodes=tuple(
+            propagation.ProseNode(
+                node["logical_id"], node.get("position_key", ""), node.get("content") or ""
+            )
+            for node in manuscript["nodes"]
+            if node.get("content")
+        ),
+        records=tuple(state.records),
+    )
+
+
+BOOKS = {"litrpg": None, "mystery": None}
+
+
+def book_for(scenario_id: str) -> propagation.Book:
+    fixture_id = "litrpg" if scenario_id == "e1-lantern-price" else "mystery"
+    if BOOKS[fixture_id] is None:
+        BOOKS[fixture_id] = gold_book(fixture_id)
+    book = BOOKS[fixture_id]
+    assert book is not None
+    return book
+
+
+def engine(item: lc.GoldImpactCase) -> set[str]:
+    return propagation.propagate(item.change_set, book_for(item.scenario_id)).logical_ids
+
+
+def test_the_engine_beats_the_base_rate_it_had_to_beat() -> None:
+    """§17 Stage 2's exit item 2, executable at last — the clause had a scorer, three
+    baselines and nothing to score. Precision above `predict_everything`'s 0.481 at
+    comparable recall.
+
+    **This is a dev-set number and does not generalise.** Four cases, 37 expectations, both
+    suites generated from the same `def.json` that authors the prose they grade, against this
+    project's own MIN_HOLDOUT of 50. What it rules out is an engine that is obviously wrong;
+    it cannot rule in one that is right. Held-out material is Stage 3's to supply.
+    """
+    score = measured(engine)
+    everything = measured(impact.predict_everything)
+
+    assert score.precision is not None and everything.precision is not None
+    assert score.precision > everything.precision
+    assert score.recall is not None and score.recall >= everything.recall
+    assert (score.hits, score.misses, score.false_touches) == (13, 0, 0)
+
+
+def test_the_engine_leaves_the_typography_case_untouched() -> None:
+    """The other half of the exit clause, and the failure mode recall optimises into: eight
+    safe_preserve targets, no must_update, and every scene in the book still mentioning
+    everything it mentioned before."""
+    item = case("e3-typography-only")
+
+    assert engine(item) == set()
+    assert impact.score_case(item, engine(item)).false_touches == 0
+
+
+def test_the_engine_beats_the_heuristic_that_was_refuted_before_it_was_built() -> None:
+    positional = measured(impact.predict_downstream_scenes)
+    score = measured(engine)
+
+    assert score.precision is not None and positional.precision is not None
+    assert score.precision > positional.precision
+    assert score.recall is not None and positional.recall is not None
+    assert score.recall > positional.recall
+
+
+@pytest.mark.parametrize(
+    "scenario_id,hits,misses,false_touches",
+    [
+        ("e1-lantern-price", 5, 0, 0),
+        ("e1-move-key-discovery", 3, 0, 0),
+        ("e2-rename-julian", 5, 0, 0),
+        ("e3-typography-only", 0, 0, 0),
+    ],
+)
+def test_the_engine_is_pinned_per_case(
+    scenario_id: str, hits: int, misses: int, false_touches: int
+) -> None:
+    """Pinned per case because the pooled number hides which rule is carrying it — and
+    because a rule regression that trades a hit in one case for a hit in another is invisible
+    in the total."""
+    score = impact.score_case(case(scenario_id), engine(case(scenario_id)))
+    assert (score.hits, score.misses, score.false_touches) == (hits, misses, false_touches)
+
+
+def test_every_case_in_the_suite_is_one_the_engine_claims_to_have_read() -> None:
+    """A perfect score over cases the engine abstained on would be a scoring artefact: an
+    abstention predicts nothing, and predicting nothing scores no false touches. The number
+    above means something only because no case in the suite is unread."""
+    for item in all_cases():
+        result = propagation.propagate(item.change_set, book_for(item.scenario_id))
+        assert result.complete, f"{item.scenario_id}: {result.unhandled}"
