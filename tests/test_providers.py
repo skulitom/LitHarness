@@ -373,6 +373,56 @@ def test_ollama_sends_the_schema_as_the_format_field_and_pins_determinism() -> N
     assert [message["role"] for message in body["messages"]] == ["system", "user"]
 
 
+#: A **real captured** `qwen3:4b` reply to the health probe's own prompt at its own 16-token
+#: cap. A reasoning model spends the budget in `thinking` and `content` never opens — so the
+#: model generated, answered, and reported `done_reason: "length"`, and the field the probe
+#: read is empty.
+OLLAMA_TRUNCATED_REASONING = {
+    "model": "qwen3:4b",
+    "created_at": "2026-08-14T23:23:49.5321669Z",
+    "message": {
+        "role": "assistant",
+        "content": "",
+        "thinking": 'Hmm, the user just asked me to reply with the single word "OK".',
+    },
+    "done": True,
+    "done_reason": "length",
+    "prompt_eval_count": 17,
+    "eval_count": 16,
+}
+
+
+def test_a_reasoning_model_is_alive_even_when_the_probe_truncates_its_thinking() -> None:
+    """**The probe answered "is this model dead" with "did it finish a sentence".**
+
+    `health()` capped its own probe at 16 output tokens and required non-empty `content`. A
+    reasoning model spends those tokens in `thinking`, so `content` is still empty when the
+    cap bites — and the model was marked dead. Permanently: `reset_health` re-runs the same
+    probe and gets the same answer every tick, so a provider that works is never selected
+    again. Measured on `qwen3:4b`, which fails the probe and answers "OK" uncapped.
+
+    Liveness is whether the model *generated*, which `eval_count` reports exactly, and it is
+    the question the docstring already said this asks — "listed but not pulled, or too large
+    to load, fails only on generate". Emptiness is a shape problem and belongs to the caller
+    that set the cap.
+    """
+    provider = OllamaProvider(
+        model="qwen3:4b", transport=ollama_transport(OLLAMA_TRUNCATED_REASONING)
+    )
+
+    assert provider.complete(CompletionRequest(prompt="x")).text == ""
+    assert provider.health(), "a model that generated 16 tokens is not dead"
+
+
+def test_a_model_that_generates_nothing_is_still_unhealthy() -> None:
+    """The check the fix must not throw away: an empty answer with no tokens generated is the
+    listed-but-not-pulled case `health` exists to catch."""
+    silent = {**OLLAMA_TRUNCATED_REASONING, "message": {"role": "assistant", "content": ""}}
+    silent["eval_count"] = 0
+
+    assert not OllamaProvider(transport=ollama_transport(silent)).health()
+
+
 def test_ollama_error_field_becomes_a_provider_error() -> None:
     transport = ollama_transport({"error": "model 'nope' not found"})
     with pytest.raises(BlockedProviderError, match="not found") as raised:

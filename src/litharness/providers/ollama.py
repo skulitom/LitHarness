@@ -73,6 +73,16 @@ class OllamaProvider:
 
         The version endpoint answers "is the daemon up", which is not the question. A model
         that is listed but not pulled, or too large to load, fails only on generate.
+
+        **Liveness is whether the model generated, not whether it finished a sentence.** This
+        required non-empty text within the probe's own 16-token cap, and a reasoning model
+        spends those tokens in `thinking` — `content` is still empty when the cap bites, so
+        every such model was reported dead. Permanently, too: `reset_health` re-runs the same
+        probe and gets the same answer on every tick, so a working provider is never selected
+        again. Measured on `qwen3:4b`, which fails the old probe and answers "OK" uncapped.
+        `eval_count` reports generation exactly, which is the question the paragraph above
+        already said this asks; emptiness is a shape problem and belongs to whoever set the
+        cap.
         """
         try:
             result = self.complete(
@@ -84,7 +94,7 @@ class OllamaProvider:
             )
         except ProviderError:
             return False
-        return bool(result.text.strip())
+        return bool(result.text.strip()) or result.usage.output_tokens > 0
 
     def complete(self, request: CompletionRequest) -> CompletionResult:
         messages: list[dict[str, str]] = []
