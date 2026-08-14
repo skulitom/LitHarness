@@ -67,7 +67,7 @@ from litharness.domain.context import (
 from litharness.domain.directives import Directive, DirectiveStatus
 from litharness.domain.draft import DraftPolicy, is_draftable
 from litharness.domain.events import payload_digest
-from litharness.domain.extraction import STATUS_TEMPLATE, speaks_system_voice
+from litharness.domain.extraction import system_voice_example
 from litharness.domain.jobs import Job, input_digest_for
 from litharness.domain.plans import premise_of
 from litharness.domain.revision import Revision
@@ -184,7 +184,7 @@ def render_prompt(
     *,
     book_title: str | None,
     packet: ContextPacket,
-    system_voice: bool = False,
+    status_example: str | None = None,
 ) -> tuple[str, str]:
     """(system, prompt) for one beat, grounded in an assembled context packet.
 
@@ -197,32 +197,38 @@ def render_prompt(
     thing in a prompt is the thing a model acts on; leading with "write this scene" and
     then supplying the book invites a scene written from the header.
 
-    **`system_voice` closes the loop §12 step 5 opened and could not run.** Extraction reads
+    **`status_example` closes the loop §12 step 5 opened and could not run.** Extraction reads
     the `[STATUS]` line and nothing else, and nothing ever asked a generator to write one — so
     every record in the system came from an imported snapshot, `state.contradiction.v0` could
     only fire on prose somebody else wrote, and the propagation producer had no fact of the
-    system's own to compare. The instruction is the extractor's own template rather than a
-    form invented here, because a prompt asking for a shape the parser does not accept yields
-    zero records and looks exactly like a scene that established nothing.
+    system's own to compare.
 
-    It is **off unless the book already speaks system voice** (`speaks_system_voice`, read
-    from the book's canon). A stat block in a locked-room mystery is not a smaller error than
-    a missing one.
+    **It is the book's own current line rather than a template with placeholders, and that is
+    a measurement.** Shown `STATUS_TEMPLATE` with its `{subject}` slot intact, one of three
+    local models wrote the placeholder out verbatim. The line still matched the parser — a
+    brace-wrapped word is a perfectly good subject — and still extracted nothing, because
+    `{subject}` is no name canon knows: a scene that looks right, parses right, and
+    establishes nothing. See `extraction.system_voice_example`.
+
+    It is **omitted unless the book already speaks system voice**, since the example is built
+    from canon and there is none to build from otherwise. A stat block in a locked-room
+    mystery is not a smaller error than a missing one.
     """
     system = (
         "You are drafting one scene of a novel. Write only the scene's prose: no headings, "
         "no commentary, no summary of what you wrote. The context below is established and "
         "may be relied on; do not contradict it."
     )
-    if system_voice:
-        # Values, not just shape: a model asked for a status line with no numbers in view
-        # invents them, and an invented balance is a contradiction the book then has to
-        # repair. The established facts are already in the packet above.
+    if status_example:
+        # Values as well as shape. A model asked for a status line with no numbers in view
+        # invents them, and an invented balance is a contradiction the gate refuses and the
+        # repair loop pays for.
         system += (
-            " This book states its game state on the page. End the scene with a status "
-            f"line in exactly this form:\n{STATUS_TEMPLATE}\n"
-            "Carry the established values forward unchanged unless this scene changes "
-            "them, and write the numbers the scene leaves true."
+            " This book states its game state on the page. End the scene with a status line "
+            f"in this form, which is the state as it stands:\n{status_example}\n"
+            "Write the character's name as your prose spells it, carry these values forward "
+            "unchanged unless this scene changes them, and write the numbers the scene "
+            "leaves true."
         )
     title = f"{book_title}: " if book_title else ""
     prompt = (
@@ -413,8 +419,9 @@ def make_plan_selector(
                     beat,
                     book_title=_book_title(head),
                     packet=packet,
-                    system_voice=speaks_system_voice(
-                        store.state_records(progress.book_id, progress.branch_id)
+                    status_example=system_voice_example(
+                        store.state_records(progress.book_id, progress.branch_id),
+                        at=beat.story_order_key,
                     ),
                 )
                 payload = {

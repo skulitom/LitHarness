@@ -1,6 +1,6 @@
 # Stage 0 decisions
 
-**Status:** Stage 0 slices 1-6 and Stage 1 slices 7-9 built and green — **662 passing tests (+3 opt-in live), ruff clean, mypy
+**Status:** Stage 0 slices 1-6 and Stage 1 slices 7-9 built and green — **662 passing tests (+6 opt-in live), ruff clean, mypy
 strict clean.** Slice 1 is the model-free manuscript spine; slice 2 the Conductor skeleton
 (tick, instance lease, job selection, digest, outbox dispatch, crash recovery); slice 3 the
 four provider adapters with their conformance suite and the billing guard; slice 4 **the
@@ -1197,3 +1197,36 @@ nothing to place. One starting character sheet — the initial condition a LitRP
 carrying no story position because it is true before the book begins — closes the circle.
 Measured end to end: a book with no imported snapshot drafts six scenes and reads back all six
 balances, `s1` through `s6`, with seven revisions rebuilding cleanly.
+
+## 38. The instruction is the book's own line, because a placeholder is a thing a model copies
+
+§34 shipped the system-voice instruction as `STATUS_TEMPLATE` — the extractor's own form,
+`{subject}` and all — on the argument that the prompt and the parser must be the same
+statement. The argument was right and the implementation was not, and the difference was only
+findable by asking a model.
+
+Measured against three local Ollama models, drafting scene 1 of a seeded Book Zero: two
+substituted the character's name, and **one wrote `[STATUS] {subject} — Level 3 | ...` out
+verbatim.** That line matches `STATUS_PATTERN` perfectly — a brace-wrapped word is a
+perfectly good subject — so nothing rejected it; and `{subject}` is not a name canon knows, so
+extraction yielded nothing. A scene that looks right, parses right, and establishes nothing:
+precisely the silence §34 was written to prevent, produced by §34's own instruction.
+
+`system_voice_example` replaces it with the book's own current status line, built from canon so
+it mints nothing — the subject is the id the records hold, the numbers are already established.
+Re-measured: three of three.
+
+**Which line, though, is not a detail.** A model shown a line will use its numbers, so the
+wrong line is worse than none. An imported book holds a snapshot at every position at once, and
+picking the newest would show scene six's balance while asking for scene one — an invented
+state the integrity gate then refuses, a refusal caused by the instruction rather than by the
+prose. So the example is the snapshot *at* the position being drafted (`at=beat.story_order_key`),
+falling back to the latest one before it, which for a book still being written is the state the
+next scene continues from and for a book with nothing placed yet is the starting sheet.
+
+**The transferable part is what could and could not have caught this.** Nothing in the suite
+could: every other test runs on `FakeProvider`, which ignores the prompt entirely, so the
+instruction's *content* is unobservable to all 662 of them. The round-trip test §34 added is
+real and passed the whole time — it proves the parser accepts the template, not that a model
+writes one. The check that matters is a live one, and it now exists as an opt-in test against
+local Ollama, which costs no quota. **A prompt is not tested by a suite that never sends it.**

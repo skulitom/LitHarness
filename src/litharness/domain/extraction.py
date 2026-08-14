@@ -40,13 +40,22 @@ goes from having no producer at all to one that runs on every accepted scene and
 fires.
 
 **The generator is now asked for that line, and the gain is the gate rather than the
-extraction.** `render_prompt` carries `STATUS_TEMPLATE` for any book whose canon already holds
-a status snapshot (`speaks_system_voice`). Before that, a generated litrpg scene carried no
-game state at all, so `state.contradiction.v0` had nothing to read and **every generated scene
-passed the integrity gate vacuously** — a scene claiming Rook had forty gold where canon says
-forty-five was accepted, because it never said so on the page. It says so now, and is refused.
-That is §8.3's fourth promotion clause and §17 Stage 1's "validation on model-written rather
-than templated chapters", closed by making the prose speak rather than by adding a detector.
+extraction.** `render_prompt` carries the book's own current status line
+(`system_voice_example`) for any book whose canon already holds a snapshot. Before that, a
+generated litrpg scene carried no game state at all, so `state.contradiction.v0` had nothing to
+read and **every generated scene passed the integrity gate vacuously** — a scene claiming Rook
+had forty gold where canon says forty-five was accepted, because it never said so on the page.
+It says so now, and is refused. That is §8.3's fourth promotion clause and §17 Stage 1's
+"validation on model-written rather than templated chapters", closed by making the prose speak
+rather than by adding a detector.
+
+**The instruction was measured against real models, and the first version failed one of
+three.** Shown `STATUS_TEMPLATE` with its `{subject}` slot intact, one local model wrote the
+placeholder out verbatim — a line that matched `STATUS_PATTERN`, named a subject canon has
+never heard of, and extracted nothing. Showing the book's own line instead took it to three of
+three. `tests/test_planner.py` keeps that measurement runnable; it is the only test in this
+project that can check the instruction at all, because every other one runs on a provider that
+ignores the prompt.
 
 **What it is still not.** A redraft that *agrees* with canon extracts nothing new, because
 `_already_canon` suppresses a fact the book has already accepted at that position — correct,
@@ -114,6 +123,52 @@ def render_status_line(subject: str, value: Mapping[str, object]) -> str:
     return STATUS_TEMPLATE.format(
         subject=subject, **{field: value.get(field, "?") for field in STATUS_FIELDS}
     )
+
+
+def system_voice_example(
+    records: Sequence[lc.StateRecord], *, at: str | None = None
+) -> str | None:
+    """The book's own current status line, to show a generator what to write — or None.
+
+    **A filled example rather than `STATUS_TEMPLATE`, and that is a measurement rather than a
+    preference.** The instruction first showed the template with its `{subject}` placeholder
+    intact, and three local models were asked to draft against it: two substituted the
+    character's name and one wrote `[STATUS] {subject} — Level 3 | ...` verbatim. That line
+    *matches* `STATUS_PATTERN` — a brace-wrapped word is a perfectly good subject — so nothing
+    rejected it, and `{subject}` is not a name canon knows, so extraction yielded nothing. A
+    scene that looks right, parses right, and establishes nothing: the exact silence this
+    module's docstring says no gate catches.
+
+    Built from canon, so it mints nothing: the subject is the id the records hold and the
+    numbers are the ones already established.
+
+    **`at` is the position being drafted, and it is not decoration.** A model shown a line
+    will use its numbers, so the wrong line is worse than none: an imported book holds a
+    snapshot for every position at once, and picking the newest would show scene six's balance
+    while asking for scene one — an invented state the integrity gate then refuses, and a
+    refusal caused by the instruction rather than by the prose. So the snapshot *at* the
+    position wins; otherwise the latest one before it, which for a book still being written is
+    the state the next scene continues from, and for a book with nothing placed yet is the
+    starting sheet.
+    """
+    snapshots = [
+        record
+        for record in records
+        if record.predicate == STATUS_PREDICATE
+        and state_mod.is_canon(record)
+        and isinstance(record.value, Mapping)
+    ]
+    if not snapshots:
+        return None
+    exact = [record for record in snapshots if state_mod.order_key_of(record) == at]
+    earlier = [
+        record
+        for record in snapshots
+        if at is None or (state_mod.order_key_of(record) or "") < at
+    ]
+    chosen = exact or earlier or snapshots
+    latest = max(chosen, key=lambda record: state_mod.order_key_of(record) or "")
+    return render_status_line(latest.subject, latest.value)
 
 
 def speaks_system_voice(records: Sequence[lc.StateRecord]) -> bool:

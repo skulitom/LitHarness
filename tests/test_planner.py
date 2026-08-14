@@ -15,6 +15,7 @@ lineage catches it.
 from __future__ import annotations
 
 import json
+import os
 from dataclasses import replace
 
 import litharness_contracts as lc
@@ -34,9 +35,10 @@ from litharness.domain.beats import SIX_BEAT, BeatTemplate, TemplateMismatch, be
 from litharness.domain.context import assemble
 from litharness.domain.draft import DraftPolicy, is_draftable
 from litharness.domain.extraction import (
-    STATUS_TEMPLATE,
+    extract_state,
     render_status_line,
     speaks_system_voice,
+    system_voice_example,
 )
 from litharness.domain.jobs import JobStatus
 from litharness.domain.nodes import LockKind, Node, NodeKind
@@ -446,9 +448,9 @@ def test_the_prompt_asks_for_system_voice_only_where_the_book_speaks_it(
     only fire on prose somebody else wrote, and the propagation producer had no fact of the
     system's own to compare.
 
-    The instruction is the extractor's own template, and it is off for a book whose canon
-    holds no status snapshot — a stat block in a locked-room mystery is not a smaller error
-    than a missing one.
+    The instruction carries the book's own current status line, and is omitted for a book
+    whose canon holds no status snapshot — a stat block in a locked-room mystery is not a
+    smaller error than a missing one.
     """
     litrpg_ids = _fixture(store, "litrpg")
     mystery_ids = _fixture(store, "mystery")
@@ -462,11 +464,15 @@ def test_the_prompt_asks_for_system_voice_only_where_the_book_speaks_it(
             beat,
             book_title=None,
             packet=packet_for(store, head, beat),
-            system_voice=speaks_system_voice(store.state_records(book_id, branch_id)),
+            status_example=system_voice_example(
+                store.state_records(book_id, branch_id), at=beat.story_order_key
+            ),
         )[0]
 
-    assert STATUS_TEMPLATE in prompts["litrpg"]
+    assert "[STATUS] rook — Level 3 | HP 24/30 | MP 8/10 | Gold 45" in prompts["litrpg"]
+    assert "{subject}" not in prompts["litrpg"], "a placeholder is a thing a model copies"
     assert "[STATUS]" not in prompts["mystery"]
+    assert not speaks_system_voice(store.state_records(*mystery_ids))
 
 
 def test_the_planner_puts_the_system_voice_instruction_on_the_queued_job(
@@ -483,7 +489,7 @@ def test_the_planner_puts_the_system_voice_instruction_on_the_queued_job(
         for unit in store.jobs_by_status(JobStatus.QUEUED)
         if unit.job_kind == SCENE_DRAFT
     ]
-    assert STATUS_TEMPLATE in str(job.payload["system"])
+    assert "[STATUS] rook — Level 3" in str(job.payload["system"])
 
 
 def _writing(store: SqliteStore, prose: str) -> Conductor:
@@ -705,7 +711,7 @@ def test_the_seeded_book_asks_for_the_line_it_will_later_read(store: SqliteStore
     [job] = [
         unit for unit in store.jobs_by_status(JobStatus.QUEUED) if unit.job_kind == SCENE_DRAFT
     ]
-    assert STATUS_TEMPLATE in str(job.payload["system"])
+    assert "[STATUS] rook — Level 3 | HP 24/30 | MP 8/10 | Gold 45" in str(job.payload["system"])
     assert job.payload["selected_by"]["story_order_key"] == "s1"
 
 
@@ -724,6 +730,66 @@ def test_a_template_that_does_not_say_it_runs_forwards_places_nothing(
     assert [beat.story_order_key for beat in beats_for(revision, SIX_BEAT)] == [
         f"s{index}" for index in range(1, 7)
     ]
+
+
+live = pytest.mark.skipif(
+    os.environ.get("LITHARNESS_LIVE_PROVIDERS") != "1",
+    reason="set LITHARNESS_LIVE_PROVIDERS=1 to ask a real model (local Ollama; no quota)",
+)
+
+
+@live
+@pytest.mark.parametrize("model", ["llama3.2:latest", "qwen3:4b", "phi4:latest"])
+def test_a_real_model_writes_a_line_this_extractor_can_read(store: SqliteStore, model) -> None:
+    """**The one thing `FakeProvider` structurally cannot check.** Every other test in this
+    project runs on a provider that ignores the prompt, so nothing anywhere verifies that the
+    instruction produces a line the extractor accepts — and the failure is silent, because a
+    scene whose state nobody could read is indistinguishable from one that established none.
+
+    It found a real defect. Shown `STATUS_TEMPLATE` with its `{subject}` slot intact, one of
+    these three wrote `[STATUS] {subject} — Level 3 | ...` out verbatim: the line matched the
+    parser, extracted nothing, and no gate objected. Showing the book's own current line
+    instead took it from two of three to three of three.
+
+    Local Ollama, so opting in spends no quota — and it skips rather than fails where the
+    model is not installed, since a suite that needs a 20GB download is one nobody runs.
+    """
+    from litharness.providers.base import CompletionRequest
+    from litharness.providers.ollama import OllamaProvider
+
+    provider = OllamaProvider(model=model)
+    if not provider.health():
+        pytest.skip(f"{model} is not installed locally")
+
+    book_id, branch_id = _book_zero(store)
+    head = store.head(book_id, branch_id)
+    assert head is not None
+    beat = beats_for(head, SIX_BEAT)[0]
+    system, prompt = render_prompt(
+        beat,
+        book_title=None,
+        packet=packet_for(store, head, beat),
+        status_example=system_voice_example(
+            store.state_records(book_id, branch_id), at=beat.story_order_key
+        ),
+    )
+
+    text = provider.complete(
+        CompletionRequest(prompt=prompt, system=system, profile="default")
+    ).text
+
+    extracted = extract_state(
+        text or "",
+        known=store.state_records(book_id, branch_id),
+        project_id=PROJECT_ID,
+        book_id=book_id,
+        branch_id=branch_id,
+        logical_id=beat.logical_id,
+        version_id="v",
+        stated_order_key=beat.story_order_key,
+    )
+    assert extracted, f"{model} wrote a scene this extractor reads nothing out of:\n{text}"
+    assert extracted[0].subject == "rook"
 
 
 # --- the plan store ------------------------------------------------------------------
