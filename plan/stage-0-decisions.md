@@ -1,6 +1,6 @@
 # Stage 0 decisions
 
-**Status:** Stage 0 slices 1-6 and Stage 1 slices 7-9 built and green — **652 passing tests (+3 opt-in live), ruff clean, mypy
+**Status:** Stage 0 slices 1-6 and Stage 1 slices 7-9 built and green — **654 passing tests (+3 opt-in live), ruff clean, mypy
 strict clean.** Slice 1 is the model-free manuscript spine; slice 2 the Conductor skeleton
 (tick, instance lease, job selection, digest, outbox dispatch, crash recovery); slice 3 the
 four provider adapters with their conformance suite and the billing guard; slice 4 **the
@@ -1109,3 +1109,42 @@ status block in a locked-room mystery is not a smaller error than a missing one.
 invents them, and an invented balance is a contradiction the gate then refuses and the repair
 loop then pays for. The established facts are already in the packet above the instruction; the
 instruction says to carry them forward unless the scene changes them.
+
+## 35. Propagation routes re-checks; it does not decide anything is wrong
+
+§33 said the loop closes, and the sentence needs the limit stated beside it or it reads as
+"the ledger now repairs itself". Walked end to end — repair, propagate, then *run* the four
+propagated evaluations — all four complete and report nothing. Correct, and not a fix:
+`state.contradiction.v0` checks disagreement **at one position**, and scene 3 stating fifteen
+gold agrees perfectly with the record that says fifteen gold. What is wrong is the arithmetic
+*across* positions, and §8.4 gives that vocabulary to ContinuityEvaluation, whose pack is
+optional.
+
+So: **propagation routes re-checks to whatever detectors are configured, and whether anything
+is found is a fact about detector coverage rather than about the book.** With the CE pack
+configured the ledger rules see all four scenes; without it the re-checks are real work that
+finds nothing. The work is not wasted — it is the difference between four scenes nobody looked
+at and four scenes the configured detectors have now cleared — but it is not a repair.
+
+**The engine deliberately does not fill the gap by minting a finding of its own.** It knows
+scene 3 was *reached*. It does not know scene 3 is *wrong*: that it says fifteen *because of*
+the number that changed is an inference, and the detector that could settle it belongs to a
+sibling. Asserting staleness would be guessing in the register §27 refuses, and a blocking
+finding nothing can clear would be §19.1's "a gate is not finished when it refuses correctly"
+arriving one more time.
+
+## 36. Severity finally reaches the queue
+
+§4.1 asks for "findings to repair (severity-ordered)" by name. Severity reached the *findings*
+store — indexed, sorted in `litharness findings` — and stopped there: `repair_job_for` minted
+every repair at one constant priority, so a critical complaint waited behind a minor one that
+happened to be enqueued first. `priority = REPAIR_PRIORITY + severity.rank` closes it.
+
+Severity rides **on top of** the band rather than replacing it, so a repair still outranks
+every evaluation and the ladder's two stages cannot interleave. And it is derived from the
+finding rather than stored on the job payload, so a severity corrected after the job was minted
+does not leave two answers on record.
+
+This is the last of `jobs.priority`'s unused halves — the column PLAN.md §20.4 recorded as
+inert, which had four bands using it by the time that text was corrected, and now has the
+ordering the plan asked for by name.

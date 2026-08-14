@@ -40,6 +40,15 @@ from litharness.providers.registry import ProviderRegistry
 EVALUATE_REVISION = "evaluate_revision"
 REPAIR_FINDING = "repair_finding"
 EVALUATION_PRIORITY = 80
+#: Base claim priority for a repair. The finding's severity is added on top, so a critical
+#: complaint is claimed before a minor one that happened to be enqueued first.
+#:
+#: **This is the last half of `jobs.priority` that was still unused, and the plan named it.**
+#: §20.4 recorded the column as inert because "nothing yet generates repair work for a finding
+#: to prioritise, so a severity ordering would sort a queue whose entries all came from the
+#: same beat template". Stage 2's repair chain ended that, and a constant priority then meant
+#: severity — the one ordering §4.1 asks for by name, "findings to repair (severity-ordered)" —
+#: reached the queue and stopped there.
 REPAIR_PRIORITY = 100
 MAX_AUTO_REPAIRS = 3
 #: Nodes one accepted repair may queue a re-check of. A six-scene book cannot exceed it;
@@ -128,7 +137,12 @@ def repair_job_for(
         idempotency_key=job_id,
         input_digest=digest,
         payload=payload,
-        priority=REPAIR_PRIORITY,
+        # Severity rides on top of the band rather than replacing it: a repair still outranks
+        # every evaluation, and within repairs the worse complaint is claimed first. Deriving
+        # it here rather than storing it on the payload keeps one source of truth — the
+        # finding's own severity — for an ordering that would otherwise drift the first time a
+        # severity was corrected after the job was minted.
+        priority=REPAIR_PRIORITY + finding.severity.rank,
     )
 
 

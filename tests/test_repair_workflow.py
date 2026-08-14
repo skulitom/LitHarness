@@ -18,6 +18,7 @@ from litharness.application.evaluation import (
 from litharness.application.handlers import SCENE_DRAFT, make_scene_draft_handler
 from litharness.application.repair import (
     EVALUATE_REVISION,
+    EVALUATION_PRIORITY,
     MAX_AUTO_REPAIRS,
     REPAIR_FINDING,
     evaluation_job_for,
@@ -315,6 +316,95 @@ def test_repair_reanchors_only_state_evidenced_by_the_changed_node(
         "rec-scene-1": repaired.revision_id,
         "rec-scene-2": base.revision_id,
     }
+
+
+# --- severity reaches the queue -------------------------------------------------------
+
+
+def _located(finding_id: str, severity: Severity, revision) -> Finding:
+    node = revision.node("scene-1")
+    text = node.content or ""
+    span = lc.EvidenceSpan(
+        source=lc.ResourceRef(
+            project_id=PROJECT_ID,
+            book_id=revision.book_id,
+            branch_id=revision.branch_id,
+            logical_id="scene-1",
+            kind=lc.ResourceKind.MANUSCRIPT_SCENE,
+            version_id=node_version_id(node),
+        ),
+        start=0,
+        end=4,
+        content_sha256=content_hash(text[:4]),
+    )
+    return Finding(
+        finding_id=finding_id,
+        category="continuity",
+        severity=severity,
+        message=f"a {severity.value} complaint",
+        rule_or_critic_id=f"rule.{severity.value}.v0",
+        logical_id="scene-1",
+        confidence_basis=lc.ConfidenceBasis.DETERMINISTIC.value,
+        run_id="run-severity",
+        source={"primary_span": lc.to_jsonable(span)},
+    )
+
+
+def test_the_worse_complaint_is_claimed_first_however_it_was_queued(
+    store: SqliteStore,
+) -> None:
+    """§4.1 asks for "findings to repair (severity-ordered)" by name, and severity reached the
+    queue and stopped there: every repair was minted at one constant priority, so a critical
+    complaint waited behind a minor one that happened to be enqueued first.
+
+    Enqueued worst-last on purpose — insertion order and severity order disagree here, which
+    is the only arrangement that can tell them apart.
+    """
+    revision = make_revision()
+    store.commit_revision(revision, created_at="2026-08-14T00:00:00Z")
+    # MAJOR and CRITICAL, because `repair_job_for` mints nothing for a finding that does
+    # not block — a minor complaint annotates and is never repaired automatically.
+    for finding_id, severity in (
+        ("f-major", Severity.MAJOR),
+        ("f-critical", Severity.CRITICAL),
+    ):
+        finding = _located(finding_id, severity, revision)
+        store.record_findings(
+            BOOK_ID,
+            BRANCH_ID,
+            (finding,),
+            created_at="2026-08-14T00:00:00Z",
+            revision_id=revision.revision_id,
+        )
+        job = repair_job_for(
+            finding,
+            book_id=BOOK_ID,
+            branch_id=BRANCH_ID,
+            revision_id=revision.revision_id,
+            repair_depth=1,
+        )
+        assert job is not None
+        store.enqueue(job)
+
+    claimed = store.claim_next("worker-a", now=START, duration=300.0)
+
+    assert claimed is not None
+    assert claimed.payload["finding_id"] == "f-critical"
+
+
+def test_a_repair_still_outranks_every_evaluation(store: SqliteStore) -> None:
+    """Severity rides on top of the band rather than replacing it. The lowest repairable
+    complaint must not fall below an evaluation, or the ladder's two stages interleave."""
+    revision = make_revision()
+    lowest = repair_job_for(
+        _located("f-major", Severity.MAJOR, revision),
+        book_id=BOOK_ID,
+        branch_id=BRANCH_ID,
+        revision_id=revision.revision_id,
+        repair_depth=1,
+    )
+    assert lowest is not None
+    assert lowest.priority > EVALUATION_PRIORITY
 
 
 # --- a repair that changes a fact reaches the scenes that state it --------------------

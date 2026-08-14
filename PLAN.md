@@ -1,7 +1,7 @@
 # LitHarness: Autonomous Book-Production System Plan
 
 **Version:** 2.2 (supersedes PLAN-v1-authoring-tool.md, archived in this folder)
-**Status:** Master plan; **Stage 0 slices 1–6, Stage 1 slices 7–9, and Stage 2's detect-and-repair chain implemented and green (652 passing tests + 3 opt-in live); operable via `litharness tick`; a book goes in (`import`), drafts itself against a context packet, is refused when a planted defect stands against it, repairs a located finding within a serial cap (`evaluate_revision`/`repair_finding`), notifies out of the outbox to a configured sink (`--notify-file`), can have its plan history read and rolled back (`plans`/`revert-plan`), re-checks the scenes a repair's change reaches instead of only the scene it repaired (`propagate`, dev-set precision 1.000 against a 0.481 base rate), and comes out readable (`export`); all four §17 Stage 1 exit clauses met; Stage 2's remaining work is the propagation engine and live state production; two of §19's seven clauses met outright — scorecard in §19.1**
+**Status:** Master plan; **Stage 0 slices 1–6, Stage 1 slices 7–9, and Stage 2's detect-and-repair chain implemented and green (654 passing tests + 3 opt-in live); operable via `litharness tick`; a book goes in (`import`), drafts itself against a context packet, is refused when a planted defect stands against it, repairs a located finding within a serial cap (`evaluate_revision`/`repair_finding`), notifies out of the outbox to a configured sink (`--notify-file`), can have its plan history read and rolled back (`plans`/`revert-plan`), re-checks the scenes a repair's change reaches instead of only the scene it repaired (`propagate`, dev-set precision 1.000 against a 0.481 base rate), and comes out readable (`export`); all four §17 Stage 1 exit clauses met; Stage 2's remaining work is the propagation engine and live state production; two of §19's seven clauses met outright — scorecard in §19.1**
 
 *(Corrected here, because this line was the instance: it read "four of §19's seven clauses met" while §19.1's table said two. §19.1 contains a paragraph recording that exact drift happening once before, four lines above the table that contradicted it, and the header carrying the same wrong number went unnoticed through three revisions. The readiness number this project reports about itself is the number to distrust first.)*
 **Role:** A 24/7 autonomous system that plans, drafts, evaluates, repairs, and versions quality LitRPG books — directed by a human, never blocked on one
@@ -1068,7 +1068,19 @@ with canon still extracts nothing new (`_already_canon` suppresses a fact alread
 that position), and a book with no imported snapshot still extracts nothing at all, because
 `attested_position` has no evidence to place it by — Book Zero will write system voice that
 nothing can yet position, and asking for the line is a precondition for solving that rather
-than a solution to it. The instruction is the extractor's own `STATUS_TEMPLATE`, held to it by
+than a solution to it.
+
+**And the obvious way to finish it is the refuted scheme wearing a new hat, so it is recorded
+here before someone reaches for it.** The tempting move is: a book this system authored has no
+imported vocabulary to conflict with, so let extraction mint `f"s{ordinal}"` for it. That is
+the alternative §27 already measured and rejected, moved to the one book where the measurement
+cannot be run. Reading order is not story order — the mystery's scene 5 is an analepsis
+attested at `s1`, and a book this system writes will have flashbacks for the same reasons a
+human's does. On the mystery the error is visible; on Book Zero it would be invisible, because
+the system would be checking its own invention. **The story position of an authored scene has
+to come from the plan**, which is the Narrative Planner's to state and does not state it
+today — so this is a Stage 3 design item, not an engineering gap, and closing it needs a beat
+sheet that carries story position rather than a cleverer extractor. The instruction is the extractor's own `STATUS_TEMPLATE`, held to it by
 a round-trip test, because a prompt asking for a form the parser rejects yields zero records
 and reads exactly like a scene that established nothing. It is off for the mystery, whose canon
 holds no status snapshot: a stat block in a locked-room mystery is not a smaller error than a
@@ -1179,13 +1191,29 @@ set so a cap that bit is visible rather than reading as coverage. Bounded twice:
 evaluation costs a `repair_depth` level, so repair→propagate→repair terminates at
 `MAX_AUTO_REPAIRS` hops, and the fan-out per acceptance is capped.
 
+**What closing the loop does and does not buy, walked rather than assumed.** Driving the
+cascade end to end — repair, propagate, then *run* the four propagated evaluations — they all
+complete and report nothing. That is correct and it is not a fix: `state.contradiction.v0`
+checks disagreement **at one position**, and scene 3 stating fifteen gold agrees perfectly with
+the record saying fifteen gold. What is broken is the arithmetic *across* positions, and
+§8.4 gives that vocabulary to ContinuityEvaluation, whose pack is optional. So the honest
+statement is that **propagation routes re-checks to the detectors; whether anything is found is
+a fact about detector coverage, not about the book.** With the CE pack configured the ledger
+rules see the four scenes; without it the re-checks are real work that finds nothing. Stated
+here because "the loop closes" is exactly the sentence that would be read as "the ledger now
+repairs itself", and this project's §19.1 is a record of that kind of drift.
+
+The engine deliberately does not fill the gap by minting a finding of its own. It knows scene 3
+was *reached*; it does not know scene 3 is *wrong* — that it states fifteen because of the
+number that changed is an inference, and the one detector that could settle it belongs to a
+sibling. A propagation engine asserting staleness would be guessing in exactly the register
+§27 refuses.
+
 The remaining Stage 2 work is **the other two producers, and richer live state/facts
 production**. `changes_between` reads `fact_changed` and nothing else: renames and moved events
 have no in-repo producer and are reached only through `litharness propagate` over a `ChangeSet`
 file, which is §13's boundary and honest about where that half lives. Stale future evidence is
-deliberately omitted, and the current extractor still reads only system voice — which is also
-the ceiling on the producer, since a fact the extractor cannot read is a change it cannot
-report.
+deliberately omitted.
 
 ### Stage 3 — Book Zero (the pivot)
 One complete 50k–80k word LitRPG draft, end-to-end, 24/7 unattended: Narrative
