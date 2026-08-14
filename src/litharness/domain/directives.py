@@ -1,17 +1,14 @@
 """The direction inbox: durable capture of what the director says (§4.3).
 
-**Only the capture half is built here, and that is the point of the module.** §4.3 wants
-directives converted into versioned locked plan constraints via the Narrative Planner,
-which does not exist (§9). Capture needs nothing that is missing; interpretation needs a
-subsystem that has not been written. Building both would mean inventing an interpreter,
-and building neither would mean losing direction the director gives today because the
-thing that reads it ships later.
+Capture and interpretation remain deliberately separate. §4.3 wants directives converted
+into versioned plan changes by the Narrative Planner. Explicit constraints and vetoes use a
+narrow deterministic lane: their words are preserved in a locked constraint (with an
+explicit veto label where needed). Premise, arc, tone, and chapter notes use a bounded
+model-backed proposal whose edits still pass the same immutable-plan validation.
 
-So a directive lands in `RECEIVED` and stays there. `interpret()` exists and is the only
-transition out, so when the planner arrives it has one seam to attach to rather than a
-schema to negotiate. A directive that is never interpreted is visible as a growing count
-of `RECEIVED` rows, which is the honest failure mode: work queued and unread, not work
-silently dropped.
+So a directive lands in `RECEIVED` and stays there until an accepted plan proposal calls
+`interpret()`. A directive not yet included in a proposal remains visible as queued and
+unread, rather than being silently treated as handled.
 
 Two things worth stating because they are easy to get wrong later.
 
@@ -73,8 +70,24 @@ class DirectiveStatus(enum.StrEnum):
         return lc.DirectiveStatus(self.value)
 
 
+#: Kinds whose safe plan form is mechanical and preserves the original words. All others
+#: need the Narrative Planner rather than a deterministic paraphrase pretending to understand.
+VERBATIM_KINDS = frozenset({DirectiveKind.CONSTRAINT, DirectiveKind.VETO})
+
+#: Direction that needs a model to turn its meaning into concrete plan edits. Controls are
+#: intentionally absent: pause/resume/kill are operator state, not narrative plan changes.
+INTERPRETIVE_KINDS = frozenset(
+    {
+        DirectiveKind.PREMISE,
+        DirectiveKind.ARC_NOTE,
+        DirectiveKind.TONE_NOTE,
+        DirectiveKind.CHAPTER_NOTE,
+    }
+)
+
+
 #: The only transitions the inbox permits. `RECEIVED -> INTERPRETED` is the seam the
-#: Narrative Planner will attach to; everything downstream of it is planner business.
+#: Narrative Planner uses; everything downstream of it is planner business.
 TRANSITIONS: dict[DirectiveStatus, frozenset[DirectiveStatus]] = {
     DirectiveStatus.RECEIVED: frozenset(
         {DirectiveStatus.INTERPRETED, DirectiveStatus.CONFLICTED, DirectiveStatus.SUPERSEDED}
@@ -128,9 +141,8 @@ class Directive:
     ) -> Directive:
         """Record what the system decided this directive means.
 
-        The seam the Narrative Planner attaches to. Nothing calls it yet, and that is
-        stated rather than hidden: §9 does not exist, so every directive currently stops at
-        RECEIVED and is visible as such.
+        The seam an accepted Narrative Planner proposal uses in the same transaction as
+        its new plan revision.
         """
         return replace(
             self.transition_to(DirectiveStatus.INTERPRETED),
@@ -170,7 +182,9 @@ def directive_id_for(kind: DirectiveKind, body: str, received_at: str) -> str:
 
 
 __all__ = [
+    "INTERPRETIVE_KINDS",
     "TRANSITIONS",
+    "VERBATIM_KINDS",
     "Directive",
     "DirectiveKind",
     "DirectiveStatus",

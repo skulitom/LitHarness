@@ -24,14 +24,24 @@ from __future__ import annotations
 
 import json
 import sqlite3
+import weakref
 from collections.abc import Collection, Iterable, Sequence
 from contextlib import suppress
-from dataclasses import dataclass, replace
+from dataclasses import dataclass
+from functools import partial
 from pathlib import Path
 from typing import Any
 
 import litharness_contracts as lc
 
+from litharness.adapters.sqlite_errors import (
+    IntegrityFailure as IntegrityFailure,
+)
+from litharness.adapters.sqlite_errors import (
+    MigrationsMissing as MigrationsMissing,
+)
+from litharness.adapters.sqlite_jobs import SqliteJobRepository
+from litharness.adapters.sqlite_plans import SqlitePlanRepository
 from litharness.domain.audit import AuditSample, Verdict
 from litharness.domain.budget import Spend
 from litharness.domain.calibration import Calibration, Direction
@@ -50,9 +60,14 @@ from litharness.domain.findings import UNRESOLVED_STATUSES
 from litharness.domain.findings import Finding as DomainFinding
 from litharness.domain.findings import Severity as DomainSeverity
 from litharness.domain.findings import Status as FindingStatus
-from litharness.domain.jobs import IllegalTransition, Job, JobStatus
+from litharness.domain.jobs import Job, JobStatus
 from litharness.domain.nodes import BlockKind, LockKind, Node, NodeKind
 from litharness.domain.patch import Veto
+from litharness.domain.plan_refinement import (
+    PlanApplication,
+    PlanRevision,
+    StoredPlanProposal,
+)
 from litharness.domain.policy import (
     GateKind,
     GateOutcome,
@@ -66,14 +81,6 @@ from litharness.domain.revision import Revision, node_version_id
 #: overlapping cron ticks contend on `BEGIN IMMEDIATE` by design (§4.1), so this is the
 #: scheduler's tolerance, not a library default.
 BUSY_TIMEOUT_MS = 5000
-
-
-class IntegrityFailure(Exception):
-    """Storage returned something that does not rebuild. Never downgraded to a warning."""
-
-
-class MigrationsMissing(Exception):
-    """No migrations were found where they were expected. Never a silent empty schema."""
 
 
 def migrations_dir() -> Path:
@@ -197,18 +204,6 @@ def _decision_from_row(row: sqlite3.Row) -> PolicyDecision:
     )
 
 
-def _dump_payload(payload: dict[str, Any]) -> str | None:
-    """Serialize a job payload, or NULL for an empty one.
-
-    Empty maps to NULL rather than `"{}"` so that a job carrying no input is
-    distinguishable in the table from one carrying an empty object, and so the column
-    stays cheap for the no-op workload the endurance test runs.
-    """
-    if not payload:
-        return None
-    return json.dumps(payload, sort_keys=True, ensure_ascii=False)
-
-
 @dataclass(frozen=True, slots=True)
 class StoredEvent:
     sequence: int
@@ -218,6 +213,20 @@ class StoredEvent:
 class SqliteStore:
     def __init__(self, connection: sqlite3.Connection) -> None:
         self._connection = connection
+        # The finalizer owns the native handle without retaining this store. Explicit
+        # context management calls it early; legacy short-lived call sites still close as
+        # soon as the wrapper becomes unreachable, including through reference cycles.
+        self._finalizer = weakref.finalize(self, connection.close)
+        transaction = partial(SqliteStore._Transaction, connection)
+        self._jobs = SqliteJobRepository(connection, transaction)
+        self._plans = SqlitePlanRepository(
+            connection,
+            transaction,
+            insert_event=SqliteStore._insert_event,
+            insert_decision=SqliteStore._insert_decision,
+            decode_directive=_directive_from_row,
+            jobs=self._jobs,
+        )
 
     # -- lifecycle ------------------------------------------------------------
 
@@ -278,9 +287,7 @@ class SqliteStore:
             with self.transaction() as connection:
                 for statement in _split_statements(path.read_text(encoding="utf-8")):
                     connection.execute(statement)
-                connection.execute(
-                    "INSERT INTO schema_migrations (name) VALUES (?)", (path.name,)
-                )
+                connection.execute("INSERT INTO schema_migrations (name) VALUES (?)", (path.name,))
 
     def backup_to(self, destination: str | Path) -> None:
         """Take an online, consistent backup. §18 keeps backups absolutely.
@@ -314,7 +321,13 @@ class SqliteStore:
         return str(row["file"] or ":memory:")
 
     def close(self) -> None:
-        self._connection.close()
+        self._finalizer()
+
+    def __enter__(self) -> SqliteStore:
+        return self
+
+    def __exit__(self, exc_type: object, exc: object, tb: object) -> None:
+        self.close()
 
     class _Transaction:
         def __init__(self, connection: sqlite3.Connection) -> None:
@@ -349,6 +362,9 @@ class SqliteStore:
         events: Sequence[Event] = (),
         state_records: Sequence[lc.StateRecord] = (),
         retract_state_from: Collection[str] = (),
+        retract_state_for_nodes: Collection[str] = (),
+        jobs: Sequence[Job] = (),
+        decision: PolicyDecision | None = None,
     ) -> None:
         """Persist a revision, its events and the state read out of it, atomically.
 
@@ -409,15 +425,6 @@ class SqliteStore:
                     "VALUES (?, ?, ?)",
                     (revision.revision_id, node.logical_id, version_id),
                 )
-            for record in state_records:
-                self._insert_state_record(
-                    connection,
-                    revision.book_id,
-                    revision.branch_id,
-                    record,
-                    source_revision_id=revision.revision_id,
-                    created_at=created_at,
-                )
             # Atomic with the head move, for the reason the head move is atomic with the
             # revision: a crash between them would leave canon read out of prose the book no
             # longer contains, which is exactly the orphan retraction exists to prevent.
@@ -434,8 +441,38 @@ class SqliteStore:
                         source_revision_id,
                     ),
                 )
+            for logical_id in sorted(retract_state_for_nodes):
+                connection.execute(
+                    "UPDATE state_records SET retracted_by_revision_id = ?, retracted_at = ? "
+                    "WHERE book_id = ? AND branch_id = ? "
+                    "AND retracted_by_revision_id IS NULL AND EXISTS ("
+                    "SELECT 1 FROM json_each(state_records.record_json, '$.evidence') "
+                    "AS evidence WHERE json_extract("
+                    "evidence.value, '$.source.logical_id') = ?)",
+                    (
+                        revision.revision_id,
+                        created_at,
+                        revision.book_id,
+                        revision.branch_id,
+                        logical_id,
+                    ),
+                )
+            for record in state_records:
+                self._insert_state_record(
+                    connection,
+                    revision.book_id,
+                    revision.branch_id,
+                    record,
+                    source_revision_id=revision.revision_id,
+                    created_at=created_at,
+                    restore_retracted=bool(retract_state_for_nodes),
+                )
             for event in events:
                 self._insert_event(connection, event)
+            if decision is not None:
+                self._insert_decision(connection, decision, decided_at=created_at)
+            for job in jobs:
+                self._jobs.insert_job(connection, job)
             # The head moves in the same transaction as the revision it points at, so a
             # crash cannot leave a revision that exists but is not the head, or a head
             # pointing at nothing. `revert` relies on this: it commits a revision whose
@@ -534,8 +571,7 @@ class SqliteStore:
             base_revision_id=current.revision_id,
             resulting_revision_id=reverted.revision_id,
             reason=(
-                f"reverted to {target_revision_id[:12]}, replacing head "
-                f"{current.revision_id[:12]}"
+                f"reverted to {target_revision_id[:12]}, replacing head {current.revision_id[:12]}"
             ),
         )
         accepted = Event(
@@ -562,9 +598,7 @@ class SqliteStore:
         # they are ancestors of the new head and indistinguishable from kept history, because
         # `reverting_to` parents on the current head. Any state record read out of prose in
         # that segment leaves the book with it.
-        discarded = set(self.lineage(current.revision_id)) - set(
-            self.lineage(target_revision_id)
-        )
+        discarded = set(self.lineage(current.revision_id)) - set(self.lineage(target_revision_id))
         self.commit_revision(
             reverted,
             created_at=created_at,
@@ -777,68 +811,13 @@ class SqliteStore:
         nothing is how a loop convinces itself it is making progress while the queue stays
         empty, so callers that plan must branch on this.
         """
-        with self.transaction() as connection:
-            cursor = connection.execute(
-                "INSERT OR IGNORE INTO jobs (job_id, job_kind, status, attempts, max_attempts, "
-                "idempotency_key, input_digest, error, lease_holder, lease_expires_at, "
-                "payload, priority) "
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                (
-                    job.job_id,
-                    job.job_kind,
-                    job.status.value,
-                    job.attempts,
-                    job.max_attempts,
-                    job.idempotency_key,
-                    job.input_digest,
-                    job.error,
-                    job.lease_holder,
-                    job.lease_expires_at,
-                    _dump_payload(job.payload),
-                    job.priority,
-                ),
-            )
-            return cursor.rowcount > 0
+        return self._jobs.enqueue(job)
 
     def save_job(self, job: Job) -> None:
-        with self.transaction() as connection:
-            connection.execute(
-                "UPDATE jobs SET status = ?, attempts = ?, error = ?, lease_holder = ?, "
-                "lease_expires_at = ? WHERE job_id = ?",
-                (
-                    job.status.value,
-                    job.attempts,
-                    job.error,
-                    job.lease_holder,
-                    job.lease_expires_at,
-                    job.job_id,
-                ),
-            )
+        self._jobs.save_job(job)
 
     def load_job(self, job_id: str) -> Job:
-        row = self._connection.execute(
-            "SELECT * FROM jobs WHERE job_id = ?", (job_id,)
-        ).fetchone()
-        if row is None:
-            raise KeyError(f"no job {job_id}")
-        return self._job_from_row(row)
-
-    @staticmethod
-    def _job_from_row(row: sqlite3.Row) -> Job:
-        return Job(
-            job_id=row["job_id"],
-            job_kind=row["job_kind"],
-            status=JobStatus(row["status"]),
-            attempts=row["attempts"],
-            max_attempts=row["max_attempts"],
-            idempotency_key=row["idempotency_key"],
-            input_digest=row["input_digest"],
-            error=row["error"],
-            lease_holder=row["lease_holder"],
-            lease_expires_at=row["lease_expires_at"],
-            payload=json.loads(row["payload"]) if row["payload"] else {},
-            priority=row["priority"],
-        )
+        return self._jobs.load_job(job_id)
 
     def claim_next(self, holder: str, now: float, duration: float) -> Job | None:
         """Claim one queued job whose lease is free or expired, atomically.
@@ -852,21 +831,7 @@ class SqliteStore:
         ordering other than insertion order could be written at any layer, so
         `fifo_selector`'s docstring understated its own constraint.
         """
-        with self.transaction() as connection:
-            row = connection.execute(
-                "SELECT * FROM jobs WHERE status = ? "
-                "AND (lease_expires_at IS NULL OR lease_expires_at <= ?) "
-                "ORDER BY priority DESC, rowid LIMIT 1",
-                (JobStatus.QUEUED.value, now),
-            ).fetchone()
-            if row is None:
-                return None
-            job = self._job_from_row(row).claim(holder, now, duration)
-            connection.execute(
-                "UPDATE jobs SET lease_holder = ?, lease_expires_at = ? WHERE job_id = ?",
-                (job.lease_holder, job.lease_expires_at, job.job_id),
-            )
-            return job
+        return self._jobs.claim_next(holder, now, duration)
 
     def reclaim_expired(self, now: float) -> list[Job]:
         """Requeue jobs left RUNNING by a crashed holder whose lease has expired.
@@ -876,23 +841,7 @@ class SqliteStore:
         `claim_next` only looks at QUEUED. Attempts are already counted, so a job that has
         exhausted its budget poisons here rather than cycling.
         """
-        rows = self._connection.execute(
-            "SELECT * FROM jobs WHERE status = ? AND lease_expires_at IS NOT NULL "
-            "AND lease_expires_at <= ? ORDER BY rowid",
-            (JobStatus.RUNNING.value, now),
-        ).fetchall()
-        reclaimed: list[Job] = []
-        for row in rows:
-            job = self._job_from_row(row).released()
-            if job.attempts >= job.max_attempts:
-                recovered = job.transition_to(
-                    JobStatus.POISONED, error="lease expired; attempt budget exhausted"
-                )
-            else:
-                recovered = job.transition_to(JobStatus.QUEUED, error="lease expired; requeued")
-            self.save_job(recovered)
-            reclaimed.append(recovered)
-        return reclaimed
+        return self._jobs.reclaim_expired(now)
 
     def requeue_failed(self) -> list[Job]:
         """Bounded retry: requeue FAILED jobs with budget left, poison the rest.
@@ -906,27 +855,10 @@ class SqliteStore:
         bounds them; a `next_attempt_at` column would add backoff and is deliberately not
         invented here, since nothing yet needs a specific delay.
         """
-        rows = self._connection.execute(
-            "SELECT * FROM jobs WHERE status = ? ORDER BY rowid", (JobStatus.FAILED.value,)
-        ).fetchall()
-        moved: list[Job] = []
-        for row in rows:
-            job = self._job_from_row(row).released()
-            if job.attempts >= job.max_attempts:
-                recovered = job.transition_to(
-                    JobStatus.POISONED, error=job.error or "attempt budget exhausted"
-                )
-            else:
-                recovered = job.transition_to(JobStatus.QUEUED, error=job.error)
-            self.save_job(recovered)
-            moved.append(recovered)
-        return moved
+        return self._jobs.requeue_failed()
 
     def queued_count(self) -> int:
-        row = self._connection.execute(
-            "SELECT COUNT(*) AS n FROM jobs WHERE status = ?", (JobStatus.QUEUED.value,)
-        ).fetchone()
-        return int(row["n"])
+        return self._jobs.queued_count()
 
     # -- plan ------------------------------------------------------------------
 
@@ -944,46 +876,85 @@ class SqliteStore:
 
         `INSERT OR IGNORE` keyed on (book, branch, logical_id), so re-importing the same
         fixture is a no-op rather than a duplicate — the same idempotency every other write
-        in this store has.
+        in this store has. A complete imported plan also becomes the immutable root
+        revision. Incomplete legacy imports remain readable but cannot be refined.
         """
-        inserted = 0
-        with self.transaction() as connection:
-            for item in items:
-                scope = item.scope.logical_id if item.scope else None
-                cursor = connection.execute(
-                    "INSERT OR IGNORE INTO plan_items (book_id, branch_id, logical_id, "
-                    "kind, text, scope_logical_id, item_json, source_revision_id, "
-                    "created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                    (
-                        book_id,
-                        branch_id,
-                        item.logical_id,
-                        item.kind.value,
-                        item.text,
-                        scope,
-                        json.dumps(lc.to_jsonable(item), sort_keys=True, ensure_ascii=False),
-                        source_revision_id,
-                        created_at,
-                    ),
-                )
-                inserted += cursor.rowcount
-            for event in events:
-                self._insert_event(connection, event)
-        return inserted
+        return self._plans.record_plan_items(
+            book_id,
+            branch_id,
+            items,
+            created_at=created_at,
+            source_revision_id=source_revision_id,
+            events=events,
+        )
 
     def plan_items(
         self, book_id: str, branch_id: str, *, kind: lc.PlanKind | None = None
     ) -> list[lc.PlanItem]:
-        sql = "SELECT item_json FROM plan_items WHERE book_id = ? AND branch_id = ?"
-        params: list[Any] = [book_id, branch_id]
-        if kind is not None:
-            sql += " AND kind = ?"
-            params.append(kind.value)
-        sql += " ORDER BY logical_id"
-        return [
-            lc.from_jsonable(lc.PlanItem, json.loads(row["item_json"]))
-            for row in self._connection.execute(sql, params)
-        ]
+        return self._plans.plan_items(book_id, branch_id, kind=kind)
+
+    @staticmethod
+    def _legacy_plan_revision(
+        connection: sqlite3.Connection, book_id: str, branch_id: str
+    ) -> PlanRevision | None:
+        return SqlitePlanRepository.legacy_plan_revision(connection, book_id, branch_id)
+
+    @staticmethod
+    def _plan_head(
+        connection: sqlite3.Connection, book_id: str, branch_id: str
+    ) -> PlanRevision | None:
+        return SqlitePlanRepository.plan_head(connection, book_id, branch_id)
+
+    @staticmethod
+    def _insert_plan_revision(
+        connection: sqlite3.Connection,
+        revision: PlanRevision,
+        *,
+        created_at: str,
+        proposal_id: str | None = None,
+    ) -> None:
+        SqlitePlanRepository.insert_plan_revision(
+            connection,
+            revision,
+            created_at=created_at,
+            proposal_id=proposal_id,
+        )
+
+    def plan_revision(self, book_id: str, branch_id: str) -> PlanRevision | None:
+        """Current immutable plan snapshot, bootstrapped from a legacy import if needed."""
+        return self._plans.plan_revision(book_id, branch_id)
+
+    def load_plan_revision(self, plan_revision_id: str) -> PlanRevision:
+        return self._plans.load_plan_revision(plan_revision_id)
+
+    def plan_revision_for_id(self, plan_revision_id: str) -> PlanRevision:
+        """Load a persisted revision or the matching not-yet-bootstrapped legacy root."""
+        return self._plans.plan_revision_for_id(plan_revision_id)
+
+    def plan_history(self, book_id: str, branch_id: str) -> list[PlanRevision]:
+        """Return head-first lineage; a rollback is another child, never deletion."""
+        return self._plans.plan_history(book_id, branch_id)
+
+    def load_plan_proposal(self, proposal_id: str) -> StoredPlanProposal:
+        return self._plans.load_plan_proposal(proposal_id)
+
+    def commit_plan_application(
+        self,
+        application: PlanApplication,
+        *,
+        created_at: str,
+        interpreted_at: str,
+        events: Sequence[Event],
+        decision: PolicyDecision,
+    ) -> None:
+        """Commit plan movement, its decision, directive readings, and events as one unit."""
+        self._plans.commit_plan_application(
+            application,
+            created_at=created_at,
+            interpreted_at=interpreted_at,
+            events=events,
+            decision=decision,
+        )
 
     # -- objective story state -------------------------------------------------
 
@@ -1029,6 +1000,7 @@ class SqliteStore:
         *,
         source_revision_id: str | None,
         created_at: str,
+        restore_retracted: bool = False,
     ) -> int:
         """One row, on a caller-supplied connection. Factored out so `commit_revision` can
         write extracted records **inside the revision's own transaction** rather than in a
@@ -1036,11 +1008,23 @@ class SqliteStore:
         atomically, and two transactions is the gap where a crash leaves a drafted book with
         no record of what it established."""
         position = record.story_position.order_key if record.story_position else None
+        conflict = (
+            "ON CONFLICT (book_id, branch_id, record_id) DO UPDATE SET "
+            "kind = excluded.kind, subject = excluded.subject, "
+            "predicate = excluded.predicate, value_json = excluded.value_json, "
+            "order_key = excluded.order_key, authority = excluded.authority, "
+            "record_json = excluded.record_json, "
+            "source_revision_id = excluded.source_revision_id, "
+            "created_at = excluded.created_at, retracted_by_revision_id = NULL, "
+            "retracted_at = NULL WHERE state_records.retracted_by_revision_id IS NOT NULL"
+            if restore_retracted
+            else "ON CONFLICT (book_id, branch_id, record_id) DO NOTHING"
+        )
         cursor = connection.execute(
-            "INSERT OR IGNORE INTO state_records (book_id, branch_id, record_id, "
+            "INSERT INTO state_records (book_id, branch_id, record_id, "
             "kind, subject, predicate, value_json, order_key, authority, "
             "record_json, source_revision_id, created_at) "
-            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            f"VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) {conflict}",
             (
                 book_id,
                 branch_id,
@@ -1102,6 +1086,50 @@ class SqliteStore:
 
     # -- findings --------------------------------------------------------------
 
+    @staticmethod
+    def _insert_finding(
+        connection: sqlite3.Connection,
+        book_id: str,
+        branch_id: str,
+        finding: DomainFinding,
+        *,
+        revision_id: str | None,
+        created_at: str,
+    ) -> int:
+        cursor = connection.execute(
+            "INSERT OR IGNORE INTO findings (finding_id, book_id, branch_id, "
+            "revision_id, category, subtype, severity, status, rule_or_critic_id, "
+            "logical_id, message, finding_json, run_id, created_at) "
+            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            (
+                finding.finding_id,
+                book_id,
+                branch_id,
+                revision_id,
+                finding.category,
+                finding.subtype,
+                finding.severity.value,
+                finding.status.value,
+                finding.rule_or_critic_id,
+                finding.logical_id,
+                finding.message,
+                json.dumps(
+                    {
+                        "projection": {
+                            "confidence_basis": finding.confidence_basis,
+                            "run_id": finding.run_id,
+                        },
+                        "source": finding.source,
+                    },
+                    sort_keys=True,
+                    ensure_ascii=False,
+                ),
+                finding.run_id,
+                created_at,
+            ),
+        )
+        return int(cursor.rowcount)
+
     def record_findings(
         self,
         book_id: str,
@@ -1126,42 +1154,66 @@ class SqliteStore:
         inserted = 0
         with self.transaction() as connection:
             for finding in findings:
-                cursor = connection.execute(
-                    "INSERT OR IGNORE INTO findings (finding_id, book_id, branch_id, "
-                    "revision_id, category, subtype, severity, status, rule_or_critic_id, "
-                    "logical_id, message, finding_json, run_id, created_at) "
-                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                    (
-                        finding.finding_id,
-                        book_id,
-                        branch_id,
-                        revision_id,
-                        finding.category,
-                        finding.subtype,
-                        finding.severity.value,
-                        finding.status.value,
-                        finding.rule_or_critic_id,
-                        finding.logical_id,
-                        finding.message,
-                        json.dumps(
-                            {
-                                "projection": {
-                                    "confidence_basis": finding.confidence_basis,
-                                    "run_id": finding.run_id,
-                                },
-                                "source": finding.source,
-                            },
-                            sort_keys=True,
-                            ensure_ascii=False,
-                        ),
-                        finding.run_id,
-                        created_at,
-                    ),
+                inserted += self._insert_finding(
+                    connection,
+                    book_id,
+                    branch_id,
+                    finding,
+                    revision_id=revision_id,
+                    created_at=created_at,
                 )
-                inserted += cursor.rowcount
             for event in events:
                 self._insert_event(connection, event)
         return inserted
+
+    def load_finding(self, finding_id: str) -> DomainFinding:
+        row = self._connection.execute(
+            "SELECT * FROM findings WHERE finding_id = ?", (finding_id,)
+        ).fetchone()
+        if row is None:
+            raise KeyError(f"no finding {finding_id}")
+        return self._finding_from_row(row)
+
+    def commit_evaluation(
+        self,
+        book_id: str,
+        branch_id: str,
+        revision_id: str,
+        findings: Sequence[DomainFinding],
+        *,
+        created_at: str,
+        events: Sequence[Event],
+        jobs: Sequence[Job] = (),
+        fixed_finding_id: str | None = None,
+    ) -> None:
+        """Commit one evaluation's findings, verification result, events, and follow-ups."""
+        with self.transaction() as connection:
+            for finding in findings:
+                self._insert_finding(
+                    connection,
+                    book_id,
+                    branch_id,
+                    finding,
+                    revision_id=revision_id,
+                    created_at=created_at,
+                )
+            if fixed_finding_id is not None:
+                connection.execute(
+                    "UPDATE findings SET status = ? WHERE finding_id = ? "
+                    "AND book_id = ? AND branch_id = ? AND status IN (?, ?)",
+                    (
+                        FindingStatus.FIXED.value,
+                        fixed_finding_id,
+                        book_id,
+                        branch_id,
+                        FindingStatus.OPEN.value,
+                        FindingStatus.CONFIRMED.value,
+                    ),
+                )
+            for event in events:
+                self._insert_event(connection, event)
+            for job in jobs:
+                self._jobs.insert_job(connection, job)
 
     def findings(
         self,
@@ -1389,9 +1441,7 @@ class SqliteStore:
         }
         return counts
 
-    def record_calibration(
-        self, calibration: Calibration, *, events: Sequence[Event] = ()
-    ) -> bool:
+    def record_calibration(self, calibration: Calibration, *, events: Sequence[Event] = ()) -> bool:
         """Store measured evidence that a metric predicts human judgment.
 
         Not an upsert: a calibration is a record of a measurement that happened, so a second
@@ -1451,11 +1501,7 @@ class SqliteStore:
         ]
 
     def plan_epoch(self, book_id: str, branch_id: str) -> int:
-        row = self._connection.execute(
-            "SELECT epoch FROM plan_epochs WHERE book_id = ? AND branch_id = ?",
-            (book_id, branch_id),
-        ).fetchone()
-        return 0 if row is None else int(row["epoch"])
+        return self._jobs.plan_epoch(book_id, branch_id)
 
     def bump_plan_epoch(self, book_id: str, branch_id: str, *, at: str, reason: str) -> int:
         """Reissue every derived job id for this book. See migration 011's comment.
@@ -1463,21 +1509,11 @@ class SqliteStore:
         A poisoned beat burns its idempotency key permanently, so without a version in the
         derivation "try scene 3 again" would be inexpressible.
         """
-        with self.transaction() as connection:
-            connection.execute(
-                "INSERT INTO plan_epochs (book_id, branch_id, epoch, bumped_at, reason) "
-                "VALUES (?, ?, 1, ?, ?) ON CONFLICT (book_id, branch_id) DO UPDATE SET "
-                "epoch = epoch + 1, bumped_at = excluded.bumped_at, reason = excluded.reason",
-                (book_id, branch_id, at, reason),
-            )
-        return self.plan_epoch(book_id, branch_id)
+        return self._jobs.bump_plan_epoch(book_id, branch_id, at=at, reason=reason)
 
     def has_job(self, job_id: str) -> bool:
         """Cheap existence check. `load_job` would raise, and an exception is not a query."""
-        row = self._connection.execute(
-            "SELECT 1 FROM jobs WHERE job_id = ?", (job_id,)
-        ).fetchone()
-        return row is not None
+        return self._jobs.has_job(job_id)
 
     def any_unfinished(self, job_ids: Sequence[str]) -> bool:
         """Is any of these jobs still queued or running?
@@ -1487,14 +1523,7 @@ class SqliteStore:
         a queued job is claimed before planning happens — but not when the job is leased by
         another holder, and an incidental guarantee is one that breaks quietly.
         """
-        if not job_ids:
-            return False
-        placeholders = ",".join("?" for _ in job_ids)
-        row = self._connection.execute(
-            f"SELECT 1 FROM jobs WHERE job_id IN ({placeholders}) AND status IN (?, ?) LIMIT 1",
-            (*job_ids, JobStatus.QUEUED.value, JobStatus.RUNNING.value),
-        ).fetchone()
-        return row is not None
+        return self._jobs.any_unfinished(job_ids)
 
     def branches(self) -> list[tuple[str, str, str]]:
         """Every (book_id, branch_id, head revision_id) the store knows about."""
@@ -1540,8 +1569,7 @@ class SqliteStore:
         return [
             _exception_from_row(row)
             for row in self._connection.execute(
-                "SELECT * FROM exceptions WHERE status IN (?, ?) ORDER BY raised_at, rowid "
-                "LIMIT ?",
+                "SELECT * FROM exceptions WHERE status IN (?, ?) ORDER BY raised_at, rowid LIMIT ?",
                 (ExceptionStatus.OPEN.value, ExceptionStatus.ACKNOWLEDGED.value, limit),
             )
         ]
@@ -1589,22 +1617,13 @@ class SqliteStore:
     # -- operator controls ----------------------------------------------------
 
     def set_control(self, key: str, value: str, *, at: str, by: str | None = None) -> None:
-        with self.transaction() as connection:
-            connection.execute(
-                "INSERT INTO control (key, value, set_at, set_by) VALUES (?, ?, ?, ?) "
-                "ON CONFLICT (key) DO UPDATE SET value = excluded.value, "
-                "set_at = excluded.set_at, set_by = excluded.set_by",
-                (key, value, at, by),
-            )
+        self._jobs.set_control(key, value, at=at, by=by)
 
     def control(self, key: str) -> str | None:
-        row = self._connection.execute(
-            "SELECT value FROM control WHERE key = ?", (key,)
-        ).fetchone()
-        return None if row is None else str(row["value"])
+        return self._jobs.control(key)
 
     def is_paused(self) -> bool:
-        return self.control("paused") == "true"
+        return self._jobs.is_paused()
 
     def job_counts_by_status(self) -> dict[str, int]:
         """Queue depth per status — the operator's first question.
@@ -1614,21 +1633,10 @@ class SqliteStore:
         not heard about. §19's "parked units and exceptions are visible" was unanswerable
         by construction.
         """
-        return {
-            row["status"]: int(row["n"])
-            for row in self._connection.execute(
-                "SELECT status, COUNT(*) AS n FROM jobs GROUP BY status ORDER BY status"
-            )
-        }
+        return self._jobs.job_counts_by_status()
 
     def jobs_by_status(self, status: JobStatus, limit: int = 50) -> list[Job]:
-        return [
-            self._job_from_row(row)
-            for row in self._connection.execute(
-                "SELECT * FROM jobs WHERE status = ? ORDER BY rowid LIMIT ?",
-                (status.value, limit),
-            )
-        ]
+        return self._jobs.jobs_by_status(status, limit)
 
     def revive(self, job_id: str) -> Job:
         """Return a parked unit to the queue after a human resolved what parked it.
@@ -1641,23 +1649,11 @@ class SqliteStore:
         Deliberately refuses a poisoned job. Poisoning means the attempt budget really was
         spent, and reviving it without changing anything would just spend it again.
         """
-        job = self.load_job(job_id)
-        if job.status is not JobStatus.PARKED:
-            raise IllegalTransition(
-                f"job {job_id} is {job.status.value}, not parked; only a parked unit can be "
-                "revived, because only a parked unit stopped for a reason a human can clear"
-            )
-        revived = replace(
-            job.transition_to(JobStatus.QUEUED), attempts=0, error=None
-        ).released()
-        self.save_job(revived)
-        return revived
+        return self._jobs.revive(job_id)
 
     # -- instance lease -------------------------------------------------------
 
-    def acquire_instance_lease(
-        self, scope: str, holder: str, now: float, duration: float
-    ) -> bool:
+    def acquire_instance_lease(self, scope: str, holder: str, now: float, duration: float) -> bool:
         """Claim the Conductor role for ``scope``. False means someone else holds it.
 
         A single IMMEDIATE transaction, so two overlapping cron invocations cannot both
@@ -1796,7 +1792,54 @@ class SqliteStore:
             )
         ]
 
+    def ingested_directives_by_status(self, status: DirectiveStatus) -> list[Directive]:
+        """Direction visible to work selection, after its arrival event was committed."""
+        return [
+            _directive_from_row(row)
+            for row in self._connection.execute(
+                "SELECT * FROM directives WHERE status = ? AND ingested_at IS NOT NULL "
+                "ORDER BY precedence DESC, rowid",
+                (status.value,),
+            )
+        ]
+
     # -- policy decisions -----------------------------------------------------
+
+    @staticmethod
+    def _insert_decision(
+        connection: sqlite3.Connection,
+        decision: PolicyDecision,
+        *,
+        decided_at: str,
+    ) -> bool:
+        cursor = connection.execute(
+            "INSERT OR IGNORE INTO policy_decisions (decision_id, outcome, job_id, "
+            "logical_id, base_revision_id, resulting_revision_id, attempt, provider, "
+            "model, profile, fell_back_from, invocations, total_tokens, "
+            "policy_config_digest, reason, gates, decided_at, cost_usd) "
+            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            (
+                decision.decision_id,
+                decision.outcome.value,
+                decision.job_id,
+                decision.logical_id,
+                decision.base_revision_id,
+                decision.resulting_revision_id,
+                decision.attempt,
+                decision.provider,
+                decision.model,
+                decision.profile,
+                json.dumps(list(decision.fell_back_from)),
+                decision.invocations,
+                decision.total_tokens,
+                decision.policy_config_digest,
+                decision.reason,
+                json.dumps([_gate_to_row(gate) for gate in decision.gates]),
+                decided_at,
+                decision.cost_usd,
+            ),
+        )
+        return cursor.rowcount > 0
 
     def record_decision(self, decision: PolicyDecision, *, decided_at: str) -> bool:
         """Persist one acceptance decision. False if this ``decision_id`` already exists.
@@ -1805,34 +1848,7 @@ class SqliteStore:
         after a crash must not accumulate duplicate rows for one judgment.
         """
         with self.transaction() as connection:
-            cursor = connection.execute(
-                "INSERT OR IGNORE INTO policy_decisions (decision_id, outcome, job_id, "
-                "logical_id, base_revision_id, resulting_revision_id, attempt, provider, "
-                "model, profile, fell_back_from, invocations, total_tokens, "
-                "policy_config_digest, reason, gates, decided_at, cost_usd) "
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                (
-                    decision.decision_id,
-                    decision.outcome.value,
-                    decision.job_id,
-                    decision.logical_id,
-                    decision.base_revision_id,
-                    decision.resulting_revision_id,
-                    decision.attempt,
-                    decision.provider,
-                    decision.model,
-                    decision.profile,
-                    json.dumps(list(decision.fell_back_from)),
-                    decision.invocations,
-                    decision.total_tokens,
-                    decision.policy_config_digest,
-                    decision.reason,
-                    json.dumps([_gate_to_row(gate) for gate in decision.gates]),
-                    decided_at,
-                    decision.cost_usd,
-                ),
-            )
-            return cursor.rowcount > 0
+            return self._insert_decision(connection, decision, decided_at=decided_at)
 
     def load_decision(self, decision_id: str) -> PolicyDecision:
         row = self._connection.execute(
@@ -1893,8 +1909,7 @@ class SqliteStore:
         decision" — is only checkable if this lookup exists.
         """
         row = self._connection.execute(
-            "SELECT * FROM policy_decisions WHERE resulting_revision_id = ? "
-            "ORDER BY rowid LIMIT 1",
+            "SELECT * FROM policy_decisions WHERE resulting_revision_id = ? ORDER BY rowid LIMIT 1",
             (revision_id,),
         ).fetchone()
         return None if row is None else _decision_from_row(row)
@@ -1946,7 +1961,7 @@ class SqliteStore:
     # -- integrity ------------------------------------------------------------
 
     def verify_integrity(self) -> int:
-        """Rebuild every revision from canonical records. Returns the count verified.
+        """Rebuild every manuscript and plan revision; return the manuscript count.
 
         This is §19's recovery clause as an assertion: node content hashes are recomputed
         by `Node.__post_init__` and revision ids by `Revision.__post_init__`, so a single
@@ -1955,6 +1970,7 @@ class SqliteStore:
         rows = self._connection.execute("SELECT revision_id FROM revisions").fetchall()
         for row in rows:
             self.load_revision(row["revision_id"])
+        self._plans.verify_integrity()
         orphans = self._connection.execute(
             "SELECT COUNT(*) AS n FROM revision_nodes "
             "WHERE version_id NOT IN (SELECT version_id FROM node_versions)"

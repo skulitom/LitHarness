@@ -19,8 +19,10 @@ from litharness.application.conductor import (
     no_op_handler,
 )
 from litharness.domain.events import MAX_DELIVERY_ATTEMPTS, Event, EventType, OutboxEntry
+from litharness.domain.exceptions import ExceptionKind
 from litharness.domain.jobs import Job, JobStatus
 from litharness.domain.revision import Revision
+from litharness.providers.base import ProviderFailureKind, provider_error
 from tests.conftest import PROJECT_ID
 
 START = 1_760_000_000.0
@@ -156,6 +158,64 @@ def test_a_handler_failure_is_recorded_as_an_event(store: SqliteStore) -> None:
     kinds = [item.event.event_type for item in store.read_log()]
     assert EventType.JOB_FAILED in kinds
     assert store.digest(Conductor._day(START))["jobs_failed"] == 1
+
+
+def test_a_retryable_provider_failure_requeues_without_spending_an_attempt(
+    store: SqliteStore,
+) -> None:
+    def overloaded(job: Job, now: float):
+        raise provider_error("provider overloaded", kind=ProviderFailureKind.OVERLOADED)
+
+    store.enqueue(Job(job_id="provider-retry", job_kind="generate"))
+    result = conductor(store, handlers={"generate": overloaded}).tick(START)
+
+    job = store.load_job("provider-retry")
+    assert result.outcome is TickOutcome.JOB_FAILED
+    assert job.status is JobStatus.QUEUED and job.attempts == 0
+    [fallback] = [
+        entry.event
+        for entry in store.read_log()
+        if entry.event.event_type is EventType.PROVIDER_FELL_BACK
+    ]
+    assert fallback.payload["classification"] == "overloaded"
+
+
+def test_a_provider_failure_needing_intervention_parks_and_escalates(
+    store: SqliteStore,
+) -> None:
+    def unauthenticated(job: Job, now: float):
+        raise provider_error("API key expired", kind=ProviderFailureKind.AUTH)
+
+    store.enqueue(Job(job_id="provider-blocked", job_kind="generate"))
+    subject = conductor(store, handlers={"generate": unauthenticated})
+    result = subject.tick(START)
+
+    job = store.load_job("provider-blocked")
+    assert result.outcome is TickOutcome.JOB_PARKED
+    assert job.status is JobStatus.PARKED and job.attempts == 0
+    [raised] = store.open_exceptions()
+    assert raised.kind is ExceptionKind.PROVIDER_UNAVAILABLE
+    assert "auth" in raised.summary
+    assert store.digest(Conductor._day(START))["provider_blocked"] == 1
+    assert subject.tick(START + TICK_SECONDS).outcome is TickOutcome.NO_WORK
+
+
+def test_a_provider_refusal_remains_a_candidate_failure(store: SqliteStore) -> None:
+    def refused(job: Job, now: float):
+        raise provider_error("model refused", kind=ProviderFailureKind.REFUSAL)
+
+    store.enqueue(Job(job_id="provider-refused", job_kind="generate"))
+    result = conductor(store, handlers={"generate": refused}).tick(START)
+
+    job = store.load_job("provider-refused")
+    assert result.outcome is TickOutcome.JOB_FAILED
+    assert job.status is JobStatus.FAILED and job.attempts == 1
+    [failed] = [
+        entry.event
+        for entry in store.read_log()
+        if entry.event.event_type is EventType.JOB_FAILED
+    ]
+    assert failed.payload["classification"] == "refusal"
 
 
 def test_a_job_with_no_handler_fails_rather_than_vanishing(store: SqliteStore) -> None:

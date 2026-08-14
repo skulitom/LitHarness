@@ -134,6 +134,7 @@ def extract_state(
     branch_id: str,
     logical_id: str,
     version_id: str,
+    replacing_logical_id: str | None = None,
 ) -> tuple[lc.StateRecord, ...]:
     """State records read out of one scene's accepted prose.
 
@@ -167,7 +168,13 @@ def extract_state(
         }
         # Already established, identically, at this position: the record adds nothing, and
         # writing it anyway costs a permanent duplicate in every later context packet.
-        if _already_canon(known, subject, order_key, value):
+        if _already_canon(
+            known,
+            subject,
+            order_key,
+            value,
+            replacing_logical_id=replacing_logical_id,
+        ):
             continue
         start, end = match.span()
         extracted.append(
@@ -208,6 +215,8 @@ def _already_canon(
     subject: str,
     order_key: str,
     value: Mapping[str, object],
+    *,
+    replacing_logical_id: str | None = None,
 ) -> bool:
     return any(
         record.subject == subject
@@ -216,6 +225,13 @@ def _already_canon(
         and record.value == value
         for record in known
         if state_mod.is_canon(record)
+        and not (
+            replacing_logical_id is not None
+            and any(
+                span.source.logical_id == replacing_logical_id
+                for span in record.evidence
+            )
+        )
     )
 
 

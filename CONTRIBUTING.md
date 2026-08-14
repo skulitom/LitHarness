@@ -1,0 +1,57 @@
+# Contributing to LitHarness
+
+This is the short path for changing the code safely. `PLAN.md` explains the product and
+`plan/stage-0-decisions.md` preserves design history; neither should be required reading for
+an ordinary local change.
+
+## Set up and verify
+
+The sibling `../litharness-contracts` checkout is required because `pyproject.toml` uses it
+as an editable path dependency.
+
+```bash
+uv sync --extra dev
+uv run pytest
+uv run ruff check .
+uv run mypy
+```
+
+Tests force `LITHARNESS_ENV=test`, so the provider registry cannot select a billing provider.
+Live provider tests require the explicit `LITHARNESS_LIVE_PROVIDERS=1` opt-in.
+CI enforces at least 85% branch-aware coverage and treats leaked resources as test errors.
+Use `SqliteStore` as a context manager in new embedded or long-lived code.
+
+## Dependency direction
+
+- `domain` contains rules and value objects and imports only other domain modules.
+- `providers` implements model access and may use only its own package plus the domain
+  failure vocabulary.
+- `adapters` implements persistence and external artifact translation; it does not import
+  providers or application workflows.
+- `application` coordinates through structural ports and does not import concrete adapters.
+- `cli.py` is the outer composition and operator surface.
+
+`tests/test_architecture.py` enforces those boundaries and rejects internal import cycles.
+If a change needs a new direction, treat that as an architecture decision and update the
+test and its explanation together.
+
+## Persistence and audit rules
+
+- Never edit an applied SQL migration. Add the next numbered migration; startup verifies
+  migration checksums.
+- State mutations and the events describing them belong in the same SQLite transaction.
+- `SqliteStore` is the stable composition facade. Put cohesive persistence behavior in a
+  capability repository such as `sqlite_jobs.py` or `sqlite_plans.py`, then expose a thin
+  delegate on the facade when existing callers need that operation.
+- Every accepted manuscript or plan revision needs a recorded `PolicyDecision`.
+- Build `PolicyDecisionRecorded` envelopes with
+  `application.policy_events.policy_decision_event`; producer-specific facts go in
+  `details`, whose reserved canonical keys cannot be replaced.
+- Revisions and job identities are content-derived. Replays must converge rather than
+  duplicate work.
+
+## Scope discipline
+
+Keep patches narrow and preserve unrelated work in a dirty tree. Add a focused regression
+test for the behavior being changed, then run the full suite, Ruff, mypy, and
+`git diff --check` before handing off.

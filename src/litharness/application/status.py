@@ -24,8 +24,8 @@ from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from typing import Any
 
-from litharness.adapters.sqlite_store import SqliteStore
 from litharness.application.conductor import DEFAULT_SCOPE
+from litharness.application.ports import StatusStore
 from litharness.domain.budget import BudgetPolicy, Spend
 from litharness.domain.directives import DirectiveStatus
 from litharness.domain.jobs import JobStatus
@@ -140,7 +140,7 @@ class Status:
 
 
 def collect(
-    store: SqliteStore,
+    store: StatusStore,
     now: float,
     *,
     scope: str = DEFAULT_SCOPE,

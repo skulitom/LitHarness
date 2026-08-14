@@ -32,8 +32,10 @@ from litharness.providers.base import (
     CompletionRequest,
     CompletionResult,
     ProviderError,
+    ProviderFailureKind,
     Usage,
     parse_schema_payload,
+    provider_error,
 )
 
 #: (url, body, timeout) -> decoded JSON. Injected so the adapter is testable offline.
@@ -48,7 +50,11 @@ def urllib_transport(url: str, body: dict[str, Any], timeout: float) -> dict[str
     with urllib.request.urlopen(request, timeout=timeout) as response:
         decoded = json.loads(response.read().decode("utf-8"))
     if not isinstance(decoded, dict):
-        raise ProviderError(f"ollama returned a non-object response: {type(decoded).__name__}")
+        raise provider_error(
+            f"ollama returned a non-object response: {type(decoded).__name__}",
+            kind=ProviderFailureKind.MALFORMED_RESPONSE,
+            raw=repr(decoded),
+        )
     return decoded
 
 
@@ -104,16 +110,41 @@ class OllamaProvider:
             envelope = self.transport(
                 f"{self.base_url}/api/chat", body, request.timeout_seconds
             )
+        except urllib.error.HTTPError as error:
+            try:
+                raw = error.read().decode("utf-8", errors="replace")
+            except OSError:
+                raw = str(error)
+            request_id = error.headers.get("x-request-id") if error.headers else None
+            raise provider_error(
+                f"{self.name} HTTP {error.code}: {raw[:200]}",
+                status=error.code,
+                request_id=request_id,
+                raw=raw,
+            ) from error
         except (urllib.error.URLError, TimeoutError, OSError) as error:
-            raise ProviderError(
-                f"{self.name} is unreachable at {self.base_url}: {error}"
+            kind = (
+                ProviderFailureKind.TIMEOUT
+                if isinstance(error, TimeoutError)
+                else ProviderFailureKind.UNAVAILABLE
+            )
+            raise provider_error(
+                f"{self.name} is unreachable at {self.base_url}: {error}", kind=kind
             ) from error
         except json.JSONDecodeError as error:
-            raise ProviderError(f"{self.name} returned unparseable JSON") from error
+            raise provider_error(
+                f"{self.name} returned unparseable JSON",
+                kind=ProviderFailureKind.MALFORMED_RESPONSE,
+            ) from error
         wall_ms = int((time.monotonic() - started) * 1000)
 
         if "error" in envelope:
-            raise ProviderError(f"{self.name} reported: {envelope['error']}")
+            message = f"{self.name} reported: {envelope['error']}"
+            raise provider_error(
+                message,
+                provider_error_type=str(envelope.get("error_type") or "") or None,
+                raw=json.dumps(envelope, ensure_ascii=False),
+            )
 
         text = str((envelope.get("message") or {}).get("content", "")).strip()
         return CompletionResult(

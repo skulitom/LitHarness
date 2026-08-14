@@ -7,12 +7,11 @@ findings store is a selector over a column with one value.
 
 Four decisions here are load-bearing.
 
-**The queue is drained before the plan is consulted.** `claim_next` runs first and returns
-immediately if it finds anything. That is what keeps requeued retries, revived units and
-hand-enqueued jobs working — and, more importantly, it is what serialises drafting. Only
-one draft job exists per book at a time, so revisions form a linear chain R0→R1→…→R6
-instead of six siblings each overwriting the head. The alternative, planning all six beats
-up front, produces a book with one scene of prose and no error anywhere.
+**Explicit direction is materialised before the queue is drained.** A newly ingested,
+unambiguously scoped constraint or veto becomes a high-priority deterministic plan job
+before an older scene draft can be claimed. Everything else retains the durable queue's
+ordering. This is the smallest rule under which "the next tick sees the directive" means
+the system cannot draft one more scene against an explicit constraint already in its inbox.
 
 **A blocked beat is skipped, not waited on.** §4.1: "a blocked or parked item never stalls
 the queue — the Conductor works elsewhere in the book." There is no predecessor rule: if
@@ -36,9 +35,19 @@ from dataclasses import dataclass
 from datetime import UTC, datetime
 from hashlib import sha256
 
-from litharness.adapters.sqlite_store import SqliteStore
 from litharness.application.conductor import WorkSelector
+from litharness.application.directive_planner import (
+    DIRECTIVE_PLAN,
+    directive_job_id,
+    is_verbatim_actionable,
+)
 from litharness.application.handlers import SCENE_DRAFT
+from litharness.application.narrative_planner import (
+    NARRATIVE_PLAN,
+    is_interpretive_actionable,
+    narrative_job_id,
+)
+from litharness.application.ports import ApplicationStore, PlanningStore
 from litharness.domain.beats import SIX_BEAT, Beat, BeatTemplate, TemplateMismatch, beats_for
 from litharness.domain.context import (
     COUNTER_ID,
@@ -47,6 +56,7 @@ from litharness.domain.context import (
     ContextPacket,
     assemble,
 )
+from litharness.domain.directives import Directive, DirectiveStatus
 from litharness.domain.draft import DraftPolicy, is_draftable
 from litharness.domain.events import payload_digest
 from litharness.domain.jobs import Job, input_digest_for
@@ -54,6 +64,89 @@ from litharness.domain.plans import premise_of
 from litharness.domain.revision import Revision
 
 DEFAULT_TEMPLATE = SIX_BEAT
+
+
+def _resolved_directive_scope(
+    directive: Directive, branches: list[tuple[str, str, str]]
+) -> tuple[str, str] | None:
+    """Resolve only unambiguous scope; never guess across books or branches."""
+    candidates = [
+        (book_id, branch_id)
+        for book_id, branch_id, _ in branches
+        if directive.book_id in {None, book_id}
+        and directive.branch_id in {None, branch_id}
+    ]
+    return candidates[0] if len(candidates) == 1 else None
+
+
+def _enqueue_verbatim_direction(store: PlanningStore) -> bool:
+    """Materialise the highest-precedence safe directive, if its scope is unambiguous."""
+    branches = store.branches()
+    for directive in store.ingested_directives_by_status(DirectiveStatus.RECEIVED):
+        if not is_verbatim_actionable(directive):
+            continue
+        scope = _resolved_directive_scope(directive, branches)
+        if scope is None:
+            continue
+        book_id, branch_id = scope
+        if store.plan_revision(book_id, branch_id) is None:
+            continue
+        # The resolved scope belongs to the work unit, not the immutable directive. An
+        # unscoped instruction stays visibly unscoped even when one current branch made its
+        # destination unambiguous at selection time.
+        payload = {
+            "directive_id": directive.directive_id,
+            "book_id": book_id,
+            "branch_id": branch_id,
+        }
+        inserted = store.enqueue(
+            Job(
+                job_id=directive_job_id(directive.directive_id),
+                job_kind=DIRECTIVE_PLAN,
+                payload=payload,
+                input_digest=input_digest_for(payload),
+                # Explicit direction must precede already-queued scene work. Precedence
+                # remains visible inside this lane, above the ordinary priority-0 queue.
+                priority=1000 + directive.precedence,
+            )
+        )
+        if inserted:
+            return True
+    return False
+
+
+def _enqueue_interpretive_direction(store: PlanningStore) -> bool:
+    """Materialise one model-backed directive only when its destination is unambiguous."""
+    branches = store.branches()
+    for directive in store.ingested_directives_by_status(DirectiveStatus.RECEIVED):
+        if not is_interpretive_actionable(directive):
+            continue
+        scope = _resolved_directive_scope(directive, branches)
+        if scope is None:
+            continue
+        book_id, branch_id = scope
+        if store.plan_revision(book_id, branch_id) is None:
+            continue
+        epoch = store.plan_epoch(book_id, branch_id)
+        payload = {
+            "directive_id": directive.directive_id,
+            "book_id": book_id,
+            "branch_id": branch_id,
+            "plan_epoch": epoch,
+        }
+        if store.enqueue(
+            Job(
+                job_id=narrative_job_id(directive.directive_id, epoch),
+                job_kind=NARRATIVE_PLAN,
+                payload=payload,
+                input_digest=input_digest_for(payload),
+                # Mechanical constraints/vetoes use 1000+. Model interpretation still
+                # outranks prose, but can never jump ahead of exact director instruction.
+                priority=500 + directive.precedence,
+            )
+        ):
+            return True
+    return False
 
 
 def beat_job_id(
@@ -106,7 +199,7 @@ def render_prompt(
 
 
 def packet_for(
-    store: SqliteStore,
+    store: PlanningStore,
     revision: Revision,
     beat: Beat,
     *,
@@ -160,7 +253,7 @@ def _book_title(revision: Revision) -> str | None:
 
 
 def plan_progress(
-    store: SqliteStore,
+    store: PlanningStore,
     book_id: str,
     branch_id: str,
     *,
@@ -213,9 +306,16 @@ def make_plan_selector(
     context budget drops the oldest scene from the packet, a spend ceiling refuses the call.
     """
 
-    def select(store: SqliteStore, holder: str, now: float, duration: float) -> Job | None:
-        # 1. Drain first. Retries, revived units and hand-enqueued work outrank planning,
-        #    and one in-flight draft per book is what keeps the lineage linear.
+    def select(
+        store: ApplicationStore, holder: str, now: float, duration: float
+    ) -> Job | None:
+        # 1. Make safe, explicit direction claimable first. A constraint received before
+        #    this tick must affect the next scene, not the scene after it.
+        _enqueue_verbatim_direction(store)
+        _enqueue_interpretive_direction(store)
+
+        # 2. Drain. Retries, revived units and hand-enqueued work retain their ordering,
+        #    except for explicit direction; one draft at a time keeps lineage linear.
         claimed = store.claim_next(holder, now=now, duration=duration)
         if claimed is not None:
             return claimed
@@ -223,7 +323,7 @@ def make_plan_selector(
         stamp = datetime.fromtimestamp(now, tz=UTC).isoformat().replace("+00:00", "Z")
         day = stamp[:10]
 
-        # 2. Least-progressed book first: fairness derived from state, no cursor to drift.
+        # 3. Least-progressed book first: fairness derived from state, no cursor to drift.
         books = [
             plan_progress(store, book_id, branch_id, template=template, policy=policy)
             for book_id, branch_id, _ in store.branches()
@@ -236,6 +336,9 @@ def make_plan_selector(
                 continue
             if premise_of(store.plan_items(progress.book_id, progress.branch_id)) is None:
                 continue  # pragma: no cover - blocked_reason covers it
+            plan_revision = store.plan_revision(progress.book_id, progress.branch_id)
+            if plan_revision is None:  # pragma: no cover - premise lookup implies a plan
+                continue
             epoch = store.plan_epoch(progress.book_id, progress.branch_id)
             beats = beats_for(head, template)
             ids = [
@@ -252,7 +355,7 @@ def make_plan_selector(
                 continue
 
             for beat in beats:
-                # 3. The selector's precondition IS the gate's — one function, no drift.
+                # 4. The selector's precondition IS the gate's — one function, no drift.
                 if not is_draftable(head, beat.logical_id, policy=policy):
                     continue
                 job_id = beat_job_id(
@@ -282,6 +385,7 @@ def make_plan_selector(
                     "prompt": prompt,
                     "system": system,
                     "profile": "default",
+                    "plan_revision_id": plan_revision.plan_revision_id,
                     # Why this beat, recorded durably. There is no WorkSelected event type
                     # in the contract, and inventing one would need a minor for something
                     # only this payload reads.
@@ -330,7 +434,7 @@ def make_plan_selector(
                 store.bump_digest(day, "beats_enqueued")
                 return store.claim_next(holder, now=now, duration=duration)
 
-        # 4. Nothing draftable anywhere. NO_WORK, which `status` distinguishes from
+        # 5. Nothing draftable anywhere. NO_WORK, which `status` distinguishes from
         #    "finished" via plan_progress.
         return None
 

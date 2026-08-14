@@ -7,12 +7,17 @@ Design and measurements: `plan/provider-adapters.md`.
 import os
 
 from litharness.providers.base import (
+    BlockedProviderError,
     CompletionRequest,
     CompletionResult,
     Provider,
     ProviderError,
+    ProviderFailureKind,
     ProviderUnavailable,
+    RetryableProviderError,
     Usage,
+    classify_provider_failure,
+    provider_error,
 )
 from litharness.providers.cli import ClaudeCodeProvider, CodexProvider, CommandResult
 from litharness.providers.fake import FakeProvider
@@ -51,6 +56,7 @@ def build_default_registry() -> ProviderRegistry:
 
 
 __all__ = [
+    "BlockedProviderError",
     "ClaudeCodeProvider",
     "CodexProvider",
     "CommandResult",
@@ -60,10 +66,14 @@ __all__ = [
     "OllamaProvider",
     "Provider",
     "ProviderError",
+    "ProviderFailureKind",
     "ProviderRegistry",
     "ProviderUnavailable",
     "Resolution",
+    "RetryableProviderError",
     "Usage",
     "build_default_registry",
+    "classify_provider_failure",
     "in_test_mode",
+    "provider_error",
 ]

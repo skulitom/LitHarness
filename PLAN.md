@@ -1,7 +1,7 @@
 # LitHarness: Autonomous Book-Production System Plan
 
 **Version:** 2.2 (supersedes PLAN-v1-authoring-tool.md, archived in this folder)
-**Status:** Master plan; **Stage 0 slices 1–6 and Stage 1 slices 7–9 implemented and green (417 tests + 3 opt-in live); operable via `litharness tick`; a book goes in (`import`), drafts itself against a context packet, is refused when a planted defect stands against it, and comes out readable (`export`); all four §17 Stage 1 exit clauses met; two of §19's seven clauses met outright — scorecard in §19.1**
+**Status:** Master plan; **Stage 0 slices 1–6 and Stage 1 slices 7–9 implemented and green (576 passing tests + 3 opt-in live); operable via `litharness tick`; a book goes in (`import`), drafts itself against a context packet, is refused when a planted defect stands against it, and comes out readable (`export`); all four §17 Stage 1 exit clauses met; two of §19's seven clauses met outright — scorecard in §19.1**
 
 *(Corrected here, because this line was the instance: it read "four of §19's seven clauses met" while §19.1's table said two. §19.1 contains a paragraph recording that exact drift happening once before, four lines above the table that contradicted it, and the header carrying the same wrong number went unnoticed through three revisions. The readiness number this project reports about itself is the number to distrust first.)*
 **Role:** A 24/7 autonomous system that plans, drafts, evaluates, repairs, and versions quality LitRPG books — directed by a human, never blocked on one
@@ -414,16 +414,16 @@ done, and **the v2.1 pass did it again in six more places**:
 | Project | State | Role in v2 |
 |---|---|---|
 | litharness-contracts | **Wire schema 1.1.0**, 124 tests, 30 schemas, mystery + litrpg golden fixtures. Git repo (branch `main`, clean tree, no remote, no tags). **Still no LICENSE** — README says "License: TBD", and that is a decision for the owner rather than a gap to fill | Shared schemas + gold benchmarks. §20.3's minors have shipped except the game-system schemas, which stay deferred for want of a consumer. Version (don't freeze) after Book Zero. *(Struck: "untracked, no git repo" and "version-controlling it is the single cheapest unblock" — the commit landed 2026-08-12 17:36, eight minutes **before** the v2.1 edit that still called it untracked.)* |
-| **LitHarness (this repo)** | **Stage 0 slices 1–6 and Stage 1 slices 7–9: 417 tests passing + 3 opt-in live, ruff clean, mypy strict clean (`warn_unreachable` on). Under version control** (`.gitattributes` pins `eol=lf`; `core.autocrlf=true` is set globally on this machine and has already bitten this project once) | The product. **This table previously audited every sibling's VCS status and had no row for the product repo, which was itself untracked.** |
+| **LitHarness (this repo)** | **Stage 0 slices 1–6 and Stage 1 slices 7–9: 576 tests passing + 3 opt-in live, ruff clean, mypy strict clean (`warn_unreachable` on). Under version control** (`.gitattributes` pins `eol=lf`; `core.autocrlf=true` is set globally on this machine and has already bitten this project once) | The product. **This table previously audited every sibling's VCS status and had no row for the product repo, which was itself untracked.** |
 | BookWorldState | Committed, Apache-2.0, tagged `v0.1.0`, pushed to GitHub; **13 commits, working tree clean**; 100 tests passing. Ships an authenticated versioned WSGI API, transactional outbox with capped-exponential-retry worker, signed webhook publication, migration checksums, online backup/restore + destructive-corruption drill — **Milestone 4/5 infrastructure, not "~Milestone 2"**. What is *not* done is M3's evaluation corpus | State substrate. Its closed predicate registry is **not** injectable yet (§20.5) — but §8.4 routes around this deliberately, so it is not a blocker for §8. *(Struck: "working tree is not clean", "4 commits", "~Milestone 2 complete", "the real blocker for §8" — all four false.)* |
 | RevisionBench | Mature (**411** tests). A2d complaint-gated repair, the LitRPG stratum, **and A3d** have landed — A3d shipped *under the name A2d*, and best-of-N repair ranked by minimal intervention closed the last element in `22a228d` | Source of repair policy, mechanical vetoes, LitRPG stratum evidence. **Its M5 decomposition is done and has already answered the question §20.7 was scheduled to ask** — see the redirect there. *(Struck: "405 tests", "A3d is next".)* |
 | RevisionJudge | Built; 104 pairs exported, exactly 2 verdicts collected; one uncommitted file (`data/verdicts.jsonl`) | **Demoted from the calibration instrument to a confirmation sample** (§10.3 as amended). Two verdicts against 104 pairs is the measured throughput of a design that needs a human to decide to sit down, and it is why revealed preference is now primary. Still the right tool for spot-confirming a calibration derived elsewhere; `litharness audit` is the same shape and collects as a by-product of drafting. The verdict *consumer* remains unbuilt |
 | **RoyalRoad-1.61M corpus** *(external data, not a repo)* | `OmniAICreator/RoyalRoad-1.61M` on HuggingFace; 1,613,875 chapters, 12.5 GB, MIT-licensed compilation; ~19% `LitRPG`. **Verified against the data, not the card: all five score columns are 100% null**; engagement (followers/favourites/views/rating counts) is populated | The calibration target for §10 and the reference distribution for §1a.5's first bar. Read by `tools/build_craft_profile.py` behind the optional `corpus` extra; only derived statistics are committed (`plan/craft-profile.json`), never prose, since the underlying fiction is its authors' copyright. Design, measured labels and validity limits in [plan/craft-corpus.md](plan/craft-corpus.md) |
 | MirrorBench | M0–M4 done, M5.0 landed (1,317 tests). One **unpushed** commit; its own README still says "M5 not started", contradicting its plan.md | Methodological invariants only; **verified zero coupling in both directions** — no import, no shared schema, no fixture exchange |
 | LongRangeContext | M0 complete, gated, reported (17 tests). **Now a git repo, Apache-2.0 LICENSE added, contracts pin relaxed to `>=0.1.0`** | Promote further milestones when Book Zero shows distant-context failures (it will); simple baseline until then. **"Byte-reproducible" was this plan's one *over*statement, and is now true rather than claimed**: three distinct machine-specific leaks fixed (an absolute checkout root in both reports, absolute artifact paths built by its own contracts loader, and CRLF from text-mode writes), each pinned by a mutation-tested guard. The test that carried "reproducible" in its name never compared bytes; one now does |
-| ContinuityEvaluation | LitRPG rules pack (six deterministic detectors, span-exact, mutation-tested) **plus the first advisory craft detector and a structural advisory/blocking partition — 56 tests.** Git repo; still no LICENSE, the `dist/` wheel predates the pack, CE's own PLAN/README still never mention either | Owner of the LitRPG rule and predicate vocabulary (§8.4), and now of the bar that stops an uncalibrated proxy becoming a gate. **Further craft detectors are blocked on §10.6's corpus, not on effort** — eight of nine candidates were refuted, see §10.6. *(Struck: "five working deterministic detectors, 20 tests… hard-gated to the mystery fixture only".)* |
+| ContinuityEvaluation | LitRPG rules pack (six deterministic detectors, span-exact, mutation-tested) **plus the first advisory craft detector, a structural advisory/blocking partition, and a UTF-8 live-book process boundary — 60 tests.** Frozen plans and live shared-contract bundles reach the same runner; Apache-2.0 LICENSE | Owner of the LitRPG rule and predicate vocabulary (§8.4), and now of the bar that stops an uncalibrated proxy becoming a gate. **Further craft detectors are blocked on §10.6's corpus, not on effort** — eight of nine candidates were refuted, see §10.6. *(Struck: "five working deterministic detectors, 20 tests… hard-gated to the mystery fixture only".)* |
 | RevisionPropagation | Plan only — literally one file (the row this plan has consistently had right) | Deterministic invalidation slice only, when Book Zero's edit churn demands it. Note its M0 proposes authoring change/impact/plan/event schemas **that contracts already ships**, and its plan never mentions contracts |
-| **Narrative Planning** | **Does not exist — create** | §9. The creative half; biggest hole v1 left |
+| **Narrative Planning** | **Bounded directive producer now lives in LitHarness; standalone incubator not created** | §9. One scoped directive can produce a guarded immutable plan revision; full-book generation, foreshadowing, progression, and plan-quality benchmarks remain the creative gap |
 | **Game-System Engine** | **Does not exist — create** | §8. The genre half; highest-precision quality claim. Ships as a detector pack inside ContinuityEvaluation first, promoted to its own package when a generator exists to constrain (§8.4) |
 
 Two structural facts this table used to hide. **BookWorldState does not consume
@@ -596,6 +596,31 @@ and — once calibrated — craft critics for arc shape. Planning research runs 
 own incubator with the same benchmark discipline as the others: authored gold
 outlines, adversarial cases (directive conflicts, mid-book pivots), and
 plan-quality measured by downstream draft outcomes, not plan aesthetics.
+
+### 9.3 Implemented transaction foundation and bounded directive producer
+
+The proposal/accept boundary is provider-independent.
+An imported valid plan becomes a content-addressed immutable root; a `PlanProposal` names
+that exact baseline and carries its edits, directive readings, rationale, expected outcome,
+and provider/model/profile provenance. Acceptance rechecks the head under SQLite's write
+transaction and commits the child snapshot, directive interpretations, locked constraints,
+`PlanChanged` event, and acceptance policy decision together. A moved head records a conflict without
+overwriting either plan. Rollback is a new child revision whose contents restore an earlier
+snapshot, so both the mistake and correction remain in lineage.
+
+A bounded first creative slice now consumes one unambiguously scoped premise, arc, tone, or
+chapter directive per job. It asks the configured generation provider for strict structured
+output, admits at most 12 edits, preserves explicit targets, forbids canonical authority and
+locked-item mutation, validates the single-premise invariant, and records provider usage in
+the accepting or refusing policy decision. The model never writes storage directly. An
+accepted proposal, its decision, directive reading, plan revision, and events commit
+atomically; a moved head regenerates rather than overwriting newer direction. Exact
+constraints and vetoes retain their higher-priority model-free lane. Every accepted plan
+change advances the plan epoch and cancels queued scene prompts frozen against the old plan.
+
+This is deliberately not the full Narrative Planner in §9.1. It does not generate a book
+plan from scratch, schedule foreshadowing or progression, replace the fixed beat template,
+or run structural, mechanical-satisfiability, or calibrated arc-quality critics.
 
 ## 10. Quality gates and the calibration program (critical path)
 
@@ -950,10 +975,11 @@ see: canon records disagreeing at a single story position, which is what §12 st
 extraction will produce the first time it writes a record contradicting an accepted one. It
 emits zero findings on both golden fixtures, and §8.3's mutation leg replaces the vacuous
 negative-control clause — perturb a conforming book and the detector must fire, repair it and
-it must go silent. **Running CE's pack inside a tick is Stage 2's named work** ("integrate the
-LitRPG deterministic detector pack"), so a book nobody has run an evaluator over is still
-gated on shape and contradiction alone. §8.3's fourth promotion clause — validation on
-model-written rather than templated chapters — remains where §8.3 puts it.
+it must go silent. **Running CE's pack inside a tick was Stage 2's named work** ("integrate the
+LitRPG deterministic detector pack"). It is now available through the configured live
+subprocess adapter; an unconfigured installation remains gated on shape and contradiction
+alone. §8.3's fourth promotion clause — validation on model-written rather than templated
+chapters — remains where §8.3 puts it.
 
 **The gate runs in two places, and the split is §19.1's rule applied a third time.** A
 finding already standing against a node is checked *before* the provider call and parks the
@@ -1033,7 +1059,8 @@ records only for prose that already carries it. That prompt change moves every l
 hash, so it lands on its own.
 
 The **game-system replay validation** is built where §8.4 says it belongs and now reaches the
-gate; what is missing is the tick running it, which §17 Stage 2 already owns. 502 tests.
+gate. Stage 2 adds the optional live subprocess adapter: a tick can stream the current shared
+manuscript/state/plan bundle through that pack without coupling either sibling at import time.
 
 ### Stage 2 — Detect and scoped repair
 Repairs triggered by findings, applied to a located span, verified by re-detection,
@@ -1082,9 +1109,16 @@ exist:
    to supply — Book Zero's own output is the first genuinely unseen prose this project
    will have — and until it exists, no claim from this stage generalises.
 
-`domain/impact.py` and `tests/test_impact.py` are this clause, executable. What they are
-not is a propagation engine: nothing yet *produces* a prediction to score, which is the
-work Stage 2 begins.
+`domain/impact.py` and `tests/test_impact.py` are this clause, executable. The first exit item
+is now wired as durable `evaluate_revision` and `repair_finding` work: accepted drafts enqueue
+evaluation, one deterministic located complaint licenses one bounded replacement, and only a
+complete re-detection that explicitly checked the rule can mark it fixed. The chain is serial
+and capped, so content-derived job ids cannot turn a persistent complaint into a spin loop.
+The live-book producer contract and subprocess adapter are now wired. Frozen fixture plans and
+live bundles use the same ContinuityEvaluation runner, and transport/schema failures become an
+incomplete evaluation rather than a false clean. The remaining Stage 2 work is the propagation
+engine and richer live state/facts production: stale future evidence is deliberately omitted,
+and the current extractor still reads only system voice.
 
 ### Stage 3 — Book Zero (the pivot)
 One complete 50k–80k word LitRPG draft, end-to-end, 24/7 unattended: Narrative
@@ -1184,8 +1218,8 @@ because four of the seven are structurally blocked in ways worth naming precisel
 |---|---|---|
 | **Integrity** | **met, and now checked rather than asserted** | Content-addressed revisions, atomic revision+event+outbox commits, restore-by-rebuild. Reversibility landed with a stored `branch_heads` pointer and a `revert` that moves *forward* — history is immutable, so undo produces a new revision restoring the old content, leaving the mistake and the correction both in the lineage. Undo composes. **The correction this row needed:** it claimed "attribution is enforced at the loop: every accepted revision resolves back through `decision_for_revision`", which was true of the generation path and false of the reversibility feature added under this same clause — `revert` committed a revision and moved the head while writing no decision and no event, so `decision_for_revision` answered `None`. That was the one silent mutation in the shipped system, against a literal §17 Stage 1 exit clause, and no test would have caught it. `revert` now mints its own decision and acceptance event (attribution is not a caller's option), and `store.unattributed_revisions()` — surfaced by `litharness verify`, which exits non-zero — makes the clause a query rather than a claim. A structural constraint on one method would only ever have guarded that method. |
 | **Autonomy** | **attemptable; needs 30 days** | Was *not startable*: no entrypoint existed, so §17's week-unattended criterion could be simulated but never run. `litharness tick` closes that. Three spins found and fixed — the outbox retried its head 2,016 times a week while starving entries 51+; an escalated unit was marked SUCCEEDED and discarded; and a provider outage longer than fifteen minutes permanently poisoned every unit it touched, because `ProviderUnavailable` was charged against the attempt budget despite being raised before any work was attempted. The exception queue exists. **"Parked units are visible and revivable" was false on the refusal an operator with real ceilings meets first, and the same lesson had to be learned twice:** a budget refusal settled to POISONED — terminal, unrevivable, idempotency key burned — because `_settle` read the terminal state off the word `PARK` under a comment asserting "`decide` returns this only on attempt exhaustion", a premise the budget gate falsifies on attempt 1. A ceiling that resets at midnight destroyed the unit it refused. `_settle` now derives POISONED from the attempt budget itself, and a refusal reached *in front of* the work gives back the attempt it was charged, exactly as an outage already did. **And the lesson had to be learned a third time in slice 9**: a finding already standing against a node was charged against the unit it refused, so a blocked beat poisoned after twelve model calls and the operator's own remedy — dismiss the finding — arrived to find nothing revivable. The gate now runs a pre-flight pass in front of the spend. `replan` shipped in the same fix, because the recovery path it completes was named by `handlers._stale_base` and by migration 011 and did not exist. **What remains is elapsed time, which nothing but time supplies.** |
-| **Trust** | **no longer vacuous; partly met** | Was: "the deterministic ladder is one gate, `shape.draft.v0`; zero false-accepts over a suite that does not exist is trivially true". The ladder is now shape *then* integrity, and the clause has a suite to be measured against — both fixtures' planted defects, injected from their own `findings.json`. Measured: every planted defect that reaches the gate is refused, the beat's node stays empty, and both fixture books still reach six accepted scenes with the gate live, so there are no false *rejects* either. Two invariants are enforced rather than asserted — a finding's status overrides its severity, so a negative control cannot block forever; and an uncalibrated critic cannot block at all (§10.4). **What keeps this short of met:** "zero known false-accepts on the fixture suites" is measured over the defects an evaluator *reported*, and nothing in a tick runs one — §8.4 puts the detectors in ContinuityEvaluation and §17 Stage 2 owns wiring the pack in. One detector runs in-process, `state.contradiction.v0`, and it is the only one whose false-accept rate this repo can currently claim anything about. The second half of the clause — "blocking critics carry current calibration evidence" — is untouched and correctly so: there are no critics, only rules. |
-| **Genre** | not started (deferred) | No game-system replay in LitHarness; §8.4 puts the pack in ContinuityEvaluation until a generator exists to constrain. |
+| **Trust** | **no longer vacuous; partly met** | Was: "the deterministic ladder is one gate, `shape.draft.v0`; zero false-accepts over a suite that does not exist is trivially true". The ladder is now shape *then* integrity, and the clause has a suite to be measured against — both fixtures' planted defects, injected from their own `findings.json`. Measured: every planted defect that reaches the gate is refused, the beat's node stays empty, and both fixture books still reach six accepted scenes with the gate live, so there are no false *rejects* either. Two invariants are enforced rather than asserted — a finding's status overrides its severity, so a negative control cannot block forever; and an uncalibrated critic cannot block at all (§10.4). The six-rule pack can now run from each durable evaluation through an explicit live subprocess contract, with transport/schema failures reported as incomplete instead of clean. **What keeps this short of met:** the pack is optional, and real-book sensitivity still depends on live state/facts the narrow extractor cannot yet produce. The second half of the clause — "blocking critics carry current calibration evidence" — is untouched and correctly so: there are no critics, only rules. |
+| **Genre** | **started; live deterministic gate available** | The six game-system rules now run in LitHarness when the ContinuityEvaluation executable is configured. The remaining gap is forward game-state production and validation on model-written chapters, not the evaluation boundary. |
 | **Quality (§1a)** | **not met; the machinery is built and the evidence is not** | Still blocked on §10.6's craft reference corpus, which is human authoring work — and twelve of thirteen candidate proxies are now refuted rather than eight of nine, four of them measured against 13,000 chapters of published LitRPG. What changed is that the *path* exists where before there was none. §10.5's standing audit routes a content-derived sample of accepted scenes to a queue and `litharness audit --next` prints the prose blind; a verdict is recorded once and never overwritten; §10.4's promotion bar is a function (`promoted_gate`) that refuses without held-out precision, a minimum holdout, unexpired evidence and a matching verdicts digest, and it is the only way to construct a blocking craft gate. Craft metrics are logged per accepted scene from now on, so a future calibration has held-out history to be measured against rather than starting from zero on promotion day. **The missing input is human judgment and nothing here substitutes for it**: RevisionJudge holds 104 exported pairs and two collected verdicts. The clause is met when readers have answered, not when the schema exists. |
 | **Economics** | **met for enforcement; per-book still per-day** | Ceilings on tokens *and* invocations, checked **before** the provider call rather than after — a check that runs afterwards records an overrun, it does not prevent one. Invocations are a ceiling in their own right because §15's per-call harness tax (~24k tokens for `claude -p`) is invisible to token accounting. Dollars are never the sole ceiling, since `claude -p` on a subscription reports none. `cost_usd` was parsed and then dropped; migration 008 stores it. `status` prints spend against plan. **Enforcement that destroys the unit it refuses is not what this clause describes, and that is what it did** — see Autonomy above; a refusal now parks revivably and costs the day rather than the work. **Honest gap: ceilings are per-day and per-operation, not per-book** — that needs a book-scoped job, which arrives with the planner. |
 | **Recovery** | **met** | Mid-write crash loses at most the in-flight unit (WAL, `synchronous=FULL`, `BEGIN IMMEDIATE`, lease reclaim). Backups existed nowhere and now use SQLite's online API — a file copy is invalid under WAL and would silently omit everything since the last checkpoint. The drill asserts prose, the accepting decision, and the undelivered outbox all survive. |
@@ -1269,9 +1303,9 @@ every unstruck action below as a claim to re-verify rather than a task to start.
    is global on this machine and plan/stage-0-decisions.md §1 records the near-miss
    it already caused in contracts.
    **Still outstanding:** RevisionPropagation is the last untracked project, and it is
-   one file. ContinuityEvaluation (2 commits, 56 tests) and LongRangeContext (5 commits)
-   are both git repositories with clean trees — this action claimed otherwise for two
-   revisions while §7 four hundred lines above said the opposite, which is the
+   one file. ContinuityEvaluation (60 tests, Apache-2.0, live and frozen runner surfaces) and
+   LongRangeContext (5 commits) are both git repositories — this action claimed otherwise for
+   two revisions while §7 four hundred lines above said the opposite, which is the
    contradiction-in-place this document keeps producing about its own progress.
    *(Struck: "commit, license and tag BookWorldState" — done. 13 commits, clean
    tree, tag `v0.1.0`, Apache-2.0 LICENSE, pushed. The v1 plan carried this
@@ -1373,15 +1407,19 @@ every unstruck action below as a claim to re-verify rather than a task to start.
      nothing yet generates repair work for a finding to prioritise, so a severity ordering
      would sort a queue whose entries all came from the same beat template. The column stays
      inert for one more reason rather than for the two it had.
-   - ~~**Directive ingestion**~~ — **capture half DONE (slice 5b); interpretation still
-     deferred.** The upstream block is gone: contracts 1.1.0 added `DirectiveIngested`,
-     so the event is representable. Directives are now captured durably, drained as step
-     1 of the tick, and left in `RECEIVED` because interpreting one needs the Narrative
-     Planner (§9, still does not exist). The absence is deliberately *visible* — a
-     growing unread count and `interpreted: false` in the event log — rather than hidden,
-     which is the difference between direction queued and direction dropped. The earlier
-     reasoning here ("a queue nothing can read") argued for building neither half; it was
-     right about interpretation and wrong about capture.
+   - ~~**Directive ingestion**~~ — **capture, atomic acceptance, deterministic explicit
+     constraints, and bounded model interpretation DONE.** Contracts
+     1.1.0 made `DirectiveIngested` representable, so directives are captured durably and
+     drained as step 1 of the tick. An accepted `PlanProposal` can now record the immutable
+     original words, their interpretation, the locked constraints produced, the new plan
+     revision, and `PlanChanged` event in one transaction. The first producer is deliberately
+     mechanical: a `constraint` or `veto` becomes a locked plan item
+     with no model call (constraint text exact; veto words under an explicit veto label), and
+     its high-priority unit runs before queued scene work. Scope is resolved only when one
+     branch matches. A second producer now sends arc, tone, chapter, and premise notes through
+     a strict, budgeted model proposal capped at 12 edits, then applies the same immutable-plan
+     locks, target scope, current-head check, and atomic decision/event transaction. Invalid
+     output leaves the directive in `RECEIVED`; control directives remain operator state.
 
    *(Also fixed in slice 4: `ProviderRegistry.reset_health()` documented "called at the
    start of a tick" and had no non-test caller, so a provider that recovered stayed
@@ -1461,9 +1499,11 @@ every unstruck action below as a claim to re-verify rather than a task to start.
    Hours of work, and **not** on the critical path — §8.4 routes around it, and this
    action advances no Stage exit criterion in §17. Do it when BookWorldState is being
    worked on for its own sake, not as LitHarness progress.
-6. **Create the Narrative Planning incubator**: beat-sheet schema, template arc
-   planner v0, foreshadow-payoff ledger, progression schedule; gold outlines +
-   adversarial directive cases as its first benchmark. Note the ordering trap: the
+6. **Extend Narrative Planning beyond its bounded directive producer.** The safe
+   provider-to-proposal lane now exists in LitHarness (§9.3); the remaining incubator work is
+   a beat-sheet schema, template arc planner v0, foreshadow-payoff ledger, progression
+   schedule, and gold outlines plus adversarial directive cases as its first benchmark.
+   Note the ordering trap: the
    progression schedule references a level curve that only exists once the
    game-mechanics pack defines the sheet, and the litrpg fixture contains **no XP
    figure, no level curve and no milestones** (Rook reaches Level 4 because the

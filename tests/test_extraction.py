@@ -122,6 +122,30 @@ def test_extraction_reproduces_the_fixtures_own_records_exactly() -> None:
         assert got.evidence[0].content_sha256 == want.evidence[0].content_sha256, logical_id
 
 
+def test_repair_reextracts_an_unchanged_fact_against_the_new_node_version() -> None:
+    others = [
+        record
+        for record in state_of("litrpg").records
+        if record.predicate != STATUS_PREDICATE
+    ]
+    text = scenes_of("litrpg")["scene-1"]
+    [first] = extract("litrpg", "scene-1", text, known=others)
+
+    [reanchored] = extract_state(
+        text,
+        known=(*others, first),
+        project_id="p",
+        book_id="b",
+        branch_id="br",
+        logical_id="scene-1",
+        version_id="v-after-repair",
+        replacing_logical_id="scene-1",
+    )
+
+    assert reanchored.record_id == first.record_id
+    assert reanchored.evidence[0].source.version_id == "v-after-repair"
+
+
 def test_a_planted_defect_survives_extraction_uncorrected() -> None:
     """The litrpg fixture's scene 4 reads `HP 34/30` because §8.3 planted `f-hp-over-max`
     there. An extractor that reconciled values against canon would sanitise the detector's
