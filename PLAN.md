@@ -1,7 +1,7 @@
 # LitHarness: Autonomous Book-Production System Plan
 
 **Version:** 2.2 (supersedes PLAN-v1-authoring-tool.md, archived in this folder)
-**Status:** Master plan; **Stage 0 slices 1–6, Stage 1 slices 7–9, and Stage 2's detect-and-repair chain implemented and green (654 passing tests + 3 opt-in live); operable via `litharness tick`; a book goes in (`import`), drafts itself against a context packet, is refused when a planted defect stands against it, repairs a located finding within a serial cap (`evaluate_revision`/`repair_finding`), notifies out of the outbox to a configured sink (`--notify-file`), can have its plan history read and rolled back (`plans`/`revert-plan`), re-checks the scenes a repair's change reaches instead of only the scene it repaired (`propagate`, dev-set precision 1.000 against a 0.481 base rate), and comes out readable (`export`); all four §17 Stage 1 exit clauses met; Stage 2's remaining work is the propagation engine and live state production; two of §19's seven clauses met outright — scorecard in §19.1**
+**Status:** Master plan; **Stage 0 slices 1–6, Stage 1 slices 7–9, and Stage 2's detect-and-repair chain implemented and green (662 passing tests + 3 opt-in live); operable via `litharness tick`; a book goes in (`import`), drafts itself against a context packet, is refused when a planted defect stands against it, repairs a located finding within a serial cap (`evaluate_revision`/`repair_finding`), notifies out of the outbox to a configured sink (`--notify-file`), can have its plan history read and rolled back (`plans`/`revert-plan`), re-checks the scenes a repair's change reaches instead of only the scene it repaired (`propagate`, dev-set precision 1.000 against a 0.481 base rate), and comes out readable (`export`); all four §17 Stage 1 exit clauses met; Stage 2's remaining work is the propagation engine and live state production; two of §19's seven clauses met outright — scorecard in §19.1**
 
 *(Corrected here, because this line was the instance: it read "four of §19's seven clauses met" while §19.1's table said two. §19.1 contains a paragraph recording that exact drift happening once before, four lines above the table that contradicted it, and the header carrying the same wrong number went unnoticed through three revisions. The readiness number this project reports about itself is the number to distrust first.)*
 **Role:** A 24/7 autonomous system that plans, drafts, evaluates, repairs, and versions quality LitRPG books — directed by a human, never blocked on one
@@ -1070,17 +1070,45 @@ that position), and a book with no imported snapshot still extracts nothing at a
 nothing can yet position, and asking for the line is a precondition for solving that rather
 than a solution to it.
 
-**And the obvious way to finish it is the refuted scheme wearing a new hat, so it is recorded
-here before someone reaches for it.** The tempting move is: a book this system authored has no
-imported vocabulary to conflict with, so let extraction mint `f"s{ordinal}"` for it. That is
-the alternative §27 already measured and rejected, moved to the one book where the measurement
-cannot be run. Reading order is not story order — the mystery's scene 5 is an analepsis
-attested at `s1`, and a book this system writes will have flashbacks for the same reasons a
-human's does. On the mystery the error is visible; on Book Zero it would be invisible, because
-the system would be checking its own invention. **The story position of an authored scene has
-to come from the plan**, which is the Narrative Planner's to state and does not state it
-today — so this is a Stage 3 design item, not an engineering gap, and closing it needs a beat
-sheet that carries story position rather than a cleverer extractor. The instruction is the extractor's own `STATUS_TEMPLATE`, held to it by
+**That is now closed, and the correction to what stood here is worth keeping.** It read: the
+story position of an authored scene has to come from the plan, which does not state one, so
+this is a Stage 3 *design* item rather than an engineering gap. The first half was right and
+the conclusion was not — the plan states it now, in eleven lines.
+
+The tempting fix really is the refuted scheme: let extraction derive a position from the
+scene's ordinal for a book with no imported vocabulary. §27 measured that and rejected it, and
+moving it to the one book where the measurement cannot be run makes it worse rather than
+safer — reading order is not story order, the mystery's scene 5 is an analepsis attested at
+`s1`, and on Book Zero the error would be invisible because the system would be checking its
+own invention. What was missed is that **the refutation is about *deriving* an order for an
+arbitrary book, not about a template *stating* that the story it lays out runs forwards.**
+`SIX_BEAT` is setup, inciting, rising, turn, crisis, resolution: a chronological progression
+with no flashback beat, so a book planned from it cannot contain one — not by assumption, but
+because there is no beat to hold it. `BeatTemplate.chronological` is that statement, defaulting
+to **False** so a future template that forgets loses extraction coverage instead of minting an
+order nothing could detect as wrong.
+
+Three guards keep it narrow. The book always wins: an attested position is read first and a
+stated one only fills silence. A stated position is refused outright for a book that has story
+positions **somebody else** chose, so the mystery's scene-2 gap is never filled and no record is
+inserted into a numbering another author owns. And every record placed this way says so in its
+`note`, because "the book said where this sits" and "the sheet we planned said so" are different
+provenance.
+
+**One defect, found by running Book Zero rather than by reasoning about it.** The vocabulary
+guard first counted *any* canon record with an order key — including the ones this extractor
+had just written. So scene 1 was placed, its own record made the book look like it had a
+vocabulary, and every later scene abstained: a six-scene book extracting exactly one fact,
+indistinguishable at every layer from a book whose other five scenes established nothing.
+`REGISTRY_VERSION` already existed to tell this extractor's records from authored ones.
+Measured after the fix: a book with no snapshot drafts six scenes and reads back all six
+balances, `s1` through `s6`.
+
+What still has to be supplied is the **seed**: a book with no status record at all is never
+asked for system voice, so it writes none and there is nothing to place. One starting sheet —
+the initial condition a LitRPG book has anyway, carrying no story position because it is true
+before the book begins — closes the circle, and it is authored input rather than a genre this
+system guessed. The instruction is the extractor's own `STATUS_TEMPLATE`, held to it by
 a round-trip test, because a prompt asking for a form the parser rejects yields zero records
 and reads exactly like a scene that established nothing. It is off for the mystery, whose canon
 holds no status snapshot: a stat block in a locked-room mystery is not a smaller error than a

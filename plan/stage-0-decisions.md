@@ -1,6 +1,6 @@
 # Stage 0 decisions
 
-**Status:** Stage 0 slices 1-6 and Stage 1 slices 7-9 built and green — **654 passing tests (+3 opt-in live), ruff clean, mypy
+**Status:** Stage 0 slices 1-6 and Stage 1 slices 7-9 built and green — **662 passing tests (+3 opt-in live), ruff clean, mypy
 strict clean.** Slice 1 is the model-free manuscript spine; slice 2 the Conductor skeleton
 (tick, instance lease, job selection, digest, outbox dispatch, crash recovery); slice 3 the
 four provider adapters with their conformance suite and the billing guard; slice 4 **the
@@ -1148,3 +1148,52 @@ does not leave two answers on record.
 This is the last of `jobs.priority`'s unused halves — the column PLAN.md §20.4 recorded as
 inert, which had four bands using it by the time that text was corrected, and now has the
 ordering the plan asked for by name.
+
+## 37. The template may state its own chronology; the extractor still derives nothing
+
+§27 forbids deriving a story position from a scene, and measured the refutation: an
+ordinal-derived key reproduces the litrpg fixture 19/19 and mis-slices the mystery, whose
+scene 5 is an analepsis attested at `s1`. That stands. What §35 got wrong was the conclusion
+drawn from it — that a book this system authored is therefore unplaceable until the Narrative
+Planner exists, making Book Zero's extraction a design item rather than an engineering one.
+
+**The refutation is about *deriving* an order for an arbitrary book. It is not about a template
+*stating* that the story it lays out runs forwards.** `SIX_BEAT` is setup, inciting, rising,
+turn, crisis, resolution — a chronological progression with no flashback beat in it, so a book
+planned from it cannot contain one, because there is no beat to hold it. That is a fact about
+the sheet, known by the sheet, and `BeatTemplate.chronological` is where it now lives.
+
+The flag defaults to **False**. A future template that forgets it loses extraction coverage on
+the books it plans; one that wrongly claimed True would mint a story order nothing downstream
+could detect as wrong, because the system would be checking its own invention. Forgetting must
+cost coverage, never correctness.
+
+Three guards keep the opening narrow:
+
+- **The book always wins.** `attested_position` is read first; a stated position only fills
+  silence. It can never override or reorder an author's answer.
+- **A book with somebody else's vocabulary is refused outright.** One canon record carrying an
+  order key this extractor did not write is enough. The mystery's scene 2 abstains while records
+  at `s1` and `s2` exist, and filling that gap would insert a record into the middle of a
+  numbering another author owns — worse than abstaining, and exactly what §27 refuses.
+- **Provenance is on the record.** Every placed-by-plan record carries a `note` saying so,
+  because "the book said where this sits" and "the sheet we planned said so" are different
+  claims, and an audit that could not separate them would be worth less than one that said
+  nothing.
+
+**The defect this shipped with, and how it was found.** The vocabulary guard first counted any
+canon record with an order key — including the ones this extractor had just written. Scene 1
+was placed; its record then made the book look like it had a vocabulary; every later scene
+abstained. A six-scene Book Zero extracted exactly one fact and looked, at every layer, like a
+book whose other five scenes established nothing. Unit tests could not see it, because they
+place one scene. **Running the whole book did.** `REGISTRY_VERSION` already existed to
+distinguish this extractor's records from authored ones — the module docstring records that it
+is deliberately not the fixtures' `fixture.v1` — so the fix was to ask the question the marker
+was made for.
+
+**The seed is the remaining input, and it is authored rather than guessed.** A book with no
+status record at all is never asked for system voice (§34), so it writes none and there is
+nothing to place. One starting character sheet — the initial condition a LitRPG book has anyway,
+carrying no story position because it is true before the book begins — closes the circle.
+Measured end to end: a book with no imported snapshot drafts six scenes and reads back all six
+balances, `s1` through `s6`, with seven revisions rebuilding cleanly.

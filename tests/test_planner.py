@@ -559,6 +559,173 @@ def _fixture_ids(store: SqliteStore) -> tuple[str, str]:
     return book_id, branch_id
 
 
+# --- Book Zero: a book with no snapshot to read a position out of --------------------
+
+
+def _seeded_sheet() -> lc.StateRecord:
+    """A starting character sheet, and **deliberately with no story position**.
+
+    Which is what a starting sheet is: the initial condition, true before the book begins
+    rather than at some moment inside it. It gives the book a subject canon knows and tells
+    the system this one states its game state on the page, without claiming a story-time
+    vocabulary the book has not yet written.
+    """
+    return lc.StateRecord(
+        record_id="rec-seed-rook",
+        kind=lc.StateRecordKind.ASSERTION,
+        subject="rook",
+        predicate="status_snapshot",
+        value={"level": 3, "hp": 24, "hp_max": 30, "mp": 8, "mp_max": 10, "gold": 45},
+        authority=lc.StateAuthority.ACCEPTED_CANON,
+    )
+
+
+def _book_zero(store: SqliteStore) -> tuple[str, str]:
+    """The litrpg book with its plan and a seed sheet, but **no state snapshot** — every
+    scene empty, and nothing anywhere attesting where any of them sits in story time."""
+    from litharness.adapters.contracts_fixtures import fixture_manuscript, fixture_plans
+
+    manuscript = lc.parse_artifact(
+        lc.ManuscriptRevision,
+        json.loads(fixture_manuscript("litrpg").read_text(encoding="utf-8")),
+    )
+    revision = import_manuscript(manuscript).revision
+    store.commit_revision(revision, created_at="2026-08-13T00:00:00Z")
+    plan = import_plan(
+        lc.parse_artifact(
+            lc.PlanSnapshot, json.loads(fixture_plans("litrpg").read_text(encoding="utf-8"))
+        ),
+        book_id=revision.book_id,
+        branch_id=revision.branch_id,
+    )
+    store.record_plan_items(
+        revision.book_id, revision.branch_id, plan.items, created_at="2026-08-13T00:00:00Z"
+    )
+    store.record_state_records(
+        revision.book_id,
+        revision.branch_id,
+        [_seeded_sheet()],
+        created_at="2026-08-13T00:00:00Z",
+    )
+    return revision.book_id, revision.branch_id
+
+
+def test_a_book_with_no_snapshot_could_not_extract_a_single_fact_it_wrote(
+    store: SqliteStore,
+) -> None:
+    """The defect, stated as the loop actually met it. Every record in the system came from an
+    imported snapshot, because `attested_position` reads a scene's story position out of the
+    book's own evidence and a book this system wrote has none. So §12 step 5 extracted nothing
+    from Book Zero — forever, and silently, since a scene with no extractable state looks
+    exactly like one that established none.
+
+    The template is entitled to answer: `SIX_BEAT` runs setup → resolution with no flashback
+    beat in it, so a book planned from it cannot contain one. That is a statement about the
+    sheet rather than an inference about a book, which is what makes it different from the
+    ordinal scheme `test_the_obvious_order_key_scheme_is_wrong` refutes.
+    """
+    book_id, branch_id = _book_zero(store)
+    loop = _writing(store, _scene({"level": 3, "hp": 24, "hp_max": 30, "mp": 8, "mp_max": 10,
+                                   "gold": 45}))
+
+    loop.tick(START)
+    loop.tick(START + TICK)
+
+    extracted = [
+        record
+        for record in store.state_records(book_id, branch_id)
+        if record.record_id != "rec-seed-rook"
+    ]
+    assert extracted, "the book wrote a status line and could not place it"
+    placed = {
+        record.story_position.order_key: record
+        for record in extracted
+        if record.story_position is not None
+    }
+    assert "s1" in placed
+    assert placed["s1"].value["gold"] == 45
+    assert placed["s1"].note and "stated by the plan" in placed["s1"].note
+
+
+def test_every_scene_of_a_book_zero_run_is_placed_not_just_the_first(
+    store: SqliteStore,
+) -> None:
+    """**The defect a whole run finds and one scene never would.** Scene 1's own placed record
+    is a canon record carrying an order key, so a guard asking "does this book have a story
+    vocabulary" answers yes from scene 2 onward and every later scene abstains — a six-scene
+    book extracting exactly one fact, looking at every layer like a book whose other five
+    scenes established nothing.
+
+    The guard asks whether somebody *else* chose the vocabulary, which is what
+    `REGISTRY_VERSION` has always been for.
+    """
+    book_id, branch_id = _book_zero(store)
+    balances = [45, 40, 38, 33, 30, 20]
+    registry = ProviderRegistry(
+        providers=[
+            FakeProvider(
+                responses=[
+                    _scene({"level": 3, "hp": 24, "hp_max": 30, "mp": 8, "mp_max": 10,
+                            "gold": gold})
+                    for gold in balances
+                ]
+            )
+        ],
+        order=["fake"],
+    )
+    loop = Conductor(
+        store=store,
+        holder="worker-a",
+        project_id=PROJECT_ID,
+        registry=registry,
+        select=make_plan_selector(project_id=PROJECT_ID),
+        handlers={SCENE_DRAFT: make_scene_draft_handler(registry, store, PROJECT_ID)},
+    )
+    for index in range(13):
+        if loop.tick(START + index * TICK).outcome is TickOutcome.NO_WORK:
+            break
+
+    assert plan_progress(store, book_id, branch_id).drafted == 6
+    placed = {
+        record.story_position.order_key: record.value["gold"]
+        for record in store.state_records(book_id, branch_id)
+        if record.story_position is not None
+    }
+    assert placed == {f"s{index + 1}": gold for index, gold in enumerate(balances)}
+
+
+def test_the_seeded_book_asks_for_the_line_it_will_later_read(store: SqliteStore) -> None:
+    """The other half of the same circle: a book with no status record at all is not asked for
+    system voice, so it writes none, so there is nothing to place. One seeded sheet — the
+    starting condition a LitRPG book has anyway — closes it, and it is authored input rather
+    than a genre this system guessed."""
+    _book_zero(store)
+    make_plan_selector(project_id=PROJECT_ID)(store, "worker-a", START, 300.0)
+
+    [job] = [
+        unit for unit in store.jobs_by_status(JobStatus.QUEUED) if unit.job_kind == SCENE_DRAFT
+    ]
+    assert STATUS_TEMPLATE in str(job.payload["system"])
+    assert job.payload["selected_by"]["story_order_key"] == "s1"
+
+
+def test_a_template_that_does_not_say_it_runs_forwards_places_nothing(
+    store: SqliteStore,
+) -> None:
+    """The default is abstention, so a future template that forgets loses extraction coverage
+    rather than minting a story order nothing downstream could detect as wrong."""
+    quiet = BeatTemplate("template.quiet.v0", SIX_BEAT.functions)
+    assert not quiet.chronological
+
+    revision = store.head(*_book_zero(store))
+    assert revision is not None
+
+    assert [beat.story_order_key for beat in beats_for(revision, quiet)] == [None] * 6
+    assert [beat.story_order_key for beat in beats_for(revision, SIX_BEAT)] == [
+        f"s{index}" for index in range(1, 7)
+    ]
+
+
 # --- the plan store ------------------------------------------------------------------
 
 

@@ -33,6 +33,24 @@ class BeatTemplate:
 
     template_id: str
     functions: tuple[str, ...]
+    #: Whether this sheet's reading order is also its **story** order.
+    #:
+    #: The one place in this project entitled to answer that, and the answer is a property of
+    #: the sheet rather than an inference about a book. `domain/state.py` forbids deriving a
+    #: story position from a scene's ordinal, and the measurement behind that stands: the
+    #: mystery fixture's scene 5 is an analepsis attested at `s1`, so ordinal-derived
+    #: positions mis-slice it. What the measurement refutes is *deriving* an order from
+    #: reading order for an arbitrary book — not a template *stating* that the story it lays
+    #: out runs forwards. `SIX_BEAT` does run forwards, by construction: setup, inciting,
+    #: rising, turn, crisis, resolution is a chronological progression with no flashback beat
+    #: in it, and a book planned from it cannot contain one because there is no beat to hold
+    #: it.
+    #:
+    #: **Defaults to False, which is the direction that makes forgetting cheap.** A future
+    #: template that omits this loses extraction coverage on the books it plans; one that
+    #: wrongly claimed True would mint a false story order that nothing downstream could
+    #: detect, because the system would be checking its own invention.
+    chronological: bool = False
 
     def __len__(self) -> int:
         return len(self.functions)
@@ -43,6 +61,7 @@ class BeatTemplate:
 SIX_BEAT = BeatTemplate(
     "template.six-beat.v0",
     ("setup", "inciting", "rising", "turn", "crisis", "resolution"),
+    chronological=True,
 )
 
 
@@ -54,6 +73,9 @@ class Beat:
     title: str | None
     function: str
     template_id: str
+    #: Where this beat sits in story time, when the template is entitled to say — `None`
+    #: otherwise, and `None` means *abstain*, exactly as `attested_position` does.
+    story_order_key: str | None = None
 
 
 class TemplateMismatch(Exception):
@@ -87,6 +109,7 @@ def beats_for(revision: Revision, template: BeatTemplate = SIX_BEAT) -> tuple[Be
             title=by_id[logical_id].title,
             function=template.functions[index],
             template_id=template.template_id,
+            story_order_key=(f"s{index + 1}" if template.chronological else None),
         )
         for index, logical_id in enumerate(scenes)
     )

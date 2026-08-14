@@ -27,6 +27,7 @@ from litharness.domain.extraction import (
     record_id_for,
     render_status_line,
     speaks_system_voice,
+    stated_position,
 )
 from litharness.domain.findings import DetectorInput, Severity
 from litharness.domain.integrity import detect_contradictions
@@ -251,6 +252,114 @@ def test_the_span_resolves_against_the_text_it_was_read_from() -> None:
 def test_the_subject_id_is_normalised_not_invented() -> None:
     assert normalise_subject("  Rook  ") == "rook"
     assert normalise_subject("Mara Vane") == "mara_vane"
+
+
+# -- a book with no vocabulary of its own ----------------------------------------------
+
+
+def test_a_book_with_no_snapshot_extracts_nothing_until_the_plan_says_where() -> None:
+    """Book Zero, stated as the defect it is. A book this system wrote entirely itself has no
+    imported record to attest a position, so every scene is unplaceable and §12 step 5
+    extracts nothing from it — forever, and silently, because a scene with no extractable
+    state looks exactly like one that established none."""
+    canon = (
+        lc.StateRecord(
+            record_id="rec-rook",
+            kind=lc.StateRecordKind.ASSERTION,
+            subject="rook",
+            predicate="life_status",
+            value="alive",
+            authority=lc.StateAuthority.ACCEPTED_CANON,
+        ),
+    )
+    text = "[STATUS] Rook — Level 3 | HP 24/30 | MP 8/10 | Gold 45"
+
+    assert extract("litrpg", "scene-1", text, known=canon) == ()
+
+    [record] = extract_state(
+        text,
+        known=canon,
+        project_id="p",
+        book_id="b",
+        branch_id="br",
+        logical_id="scene-1",
+        version_id="v",
+        stated_order_key="s1",
+    )
+    assert record.story_position.order_key == "s1"
+    assert record.value["gold"] == 45
+
+
+def test_the_plans_answer_is_refused_where_the_book_has_its_own_vocabulary() -> None:
+    """The guard that keeps this from being the refuted scheme. The mystery has records at
+    `s1` and `s2` and abstains on scene 2 — filling that gap with the plan's `s2` would insert
+    a record into the middle of somebody else's numbering, which is worse than abstaining and
+    is exactly what `attested_position` refuses to do."""
+    known = state_of("mystery").records
+    assert attested_position(known, "scene-2") is None
+
+    assert stated_position(known, "s2") is None
+    assert (
+        extract(
+            "mystery",
+            "scene-2",
+            "[STATUS] Mara — Level 1 | HP 10/10 | MP 1/1 | Gold 0",
+            known=known,
+        )
+        == ()
+    )
+
+
+def test_the_book_wins_wherever_it_has_spoken() -> None:
+    """An attested position is read first, so a stated one can never override the book — it
+    fills silence and nothing else. The litrpg fixture attests `s4` for scene 4; a plan
+    claiming `s9` must not move it."""
+    known = state_of("litrpg").records
+    others = [record for record in known if record.predicate != STATUS_PREDICATE]
+
+    [record] = extract_state(
+        scenes_of("litrpg")["scene-4"],
+        known=others,
+        project_id="p",
+        book_id="b",
+        branch_id="br",
+        logical_id="scene-4",
+        version_id="v",
+        stated_order_key="s9",
+    )
+
+    assert record.story_position.order_key == "s4"
+
+
+def test_a_record_says_whether_the_book_or_the_plan_placed_it() -> None:
+    """Different provenance, and an audit that could not tell them apart would be worth less
+    than one that said nothing. `litharness verify` and every later reader can see which
+    records rest on the plan's word."""
+    canon = (
+        lc.StateRecord(
+            record_id="rec-rook",
+            kind=lc.StateRecordKind.ASSERTION,
+            subject="rook",
+            predicate="life_status",
+            value="alive",
+            authority=lc.StateAuthority.ACCEPTED_CANON,
+        ),
+    )
+    [minted] = extract_state(
+        "[STATUS] Rook — Level 3 | HP 24/30 | MP 8/10 | Gold 45",
+        known=canon,
+        project_id="p",
+        book_id="b",
+        branch_id="br",
+        logical_id="scene-1",
+        version_id="v",
+        stated_order_key="s1",
+    )
+    others = [r for r in state_of("litrpg").records if r.predicate != STATUS_PREDICATE]
+    [attested] = extract("litrpg", "scene-1", scenes_of("litrpg")["scene-1"], known=others)
+
+    assert minted.note and "stated by the plan" in minted.note
+    assert attested.note is None
 
 
 # -- asking for what this module can actually read -------------------------------------

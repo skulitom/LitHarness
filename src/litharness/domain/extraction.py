@@ -167,6 +167,51 @@ def attested_position(
     return next(iter(keys)) if len(keys) == 1 else None
 
 
+def has_story_vocabulary(known: Sequence[lc.StateRecord]) -> bool:
+    """Whether this book already has story positions **somebody else** chose.
+
+    One such canon record is enough: the vocabulary is that author's, its keys mean what they
+    chose, and a position stated alongside them would be a second author writing in the same
+    namespace. The mystery fixture is the case — scene 2 abstains while records at `s1` and
+    `s2` exist, and filling that gap would insert a record into the middle of a numbering
+    somebody else owns.
+
+    **This extractor's own records are excluded, and leaving them in was a real defect** found
+    by running Book Zero rather than by reasoning about it. Scene 1 was placed, its record
+    became "a canon record with an order key", and every later scene therefore saw a book with
+    a vocabulary and abstained — so a six-scene book extracted exactly one fact and looked, at
+    every layer, like a book whose other five scenes established nothing. `REGISTRY_VERSION`
+    is what tells the two apart, and it exists for precisely this: the module docstring
+    records that it is deliberately not the fixtures' `fixture.v1`, so a record this extractor
+    wrote is distinguishable from an authored one.
+    """
+    return any(
+        state_mod.order_key_of(record)
+        for record in known
+        if state_mod.is_canon(record) and record.predicate_registry_version != REGISTRY_VERSION
+    )
+
+
+def stated_position(known: Sequence[lc.StateRecord], stated: str | None) -> str | None:
+    """A position the *planner* stated, usable only for a book with no vocabulary of its own.
+
+    **This is the narrow opening in "extraction mints nothing", and the narrowness is the
+    argument.** A book with no imported snapshot has no story-time vocabulary at all, so
+    nothing here can conflict with an author's choices, contradict a record, or insert into
+    a numbering somebody else owns — and the alternative is what the system had: a book it
+    wrote entirely itself, whose every scene is unplaceable, so §12 step 5 extracts nothing
+    from it forever. That is Book Zero.
+
+    The claim is still not this module's. It comes from a `BeatTemplate` that declares itself
+    chronological, which is a statement about the sheet the planner laid out rather than an
+    inference about a book — see `domain/beats.py`, where the flag defaults to False so a
+    template that forgets loses coverage instead of minting a false order.
+    """
+    if stated is None or has_story_vocabulary(known):
+        return None
+    return stated
+
+
 def record_id_for(
     subject: str, predicate: str, order_key: str, value: Mapping[str, object]
 ) -> str:
@@ -195,6 +240,7 @@ def extract_state(
     logical_id: str,
     version_id: str,
     replacing_logical_id: str | None = None,
+    stated_order_key: str | None = None,
 ) -> tuple[lc.StateRecord, ...]:
     """State records read out of one scene's accepted prose.
 
@@ -205,10 +251,21 @@ def extract_state(
 
     Returns empty rather than raising on anything it cannot read. A scene with no system
     voice is the normal case, not an error.
+
+    `stated_order_key` is a chronological template's answer for a book that has none of its
+    own — see `stated_position`. **The book always wins:** an attested position is read first
+    and a stated one is only consulted when the book is silent, so this can never override or
+    interleave with an author's vocabulary.
     """
-    order_key = attested_position(known, logical_id)
+    order_key = attested_position(known, logical_id) or stated_position(
+        known, stated_order_key
+    )
     if order_key is None:
         return ()
+    #: Recorded on every record whose position the planner supplied, because "the book said
+    #: where this sits" and "the sheet we planned said so" are different provenance and an
+    #: audit that could not tell them apart would be worth less than one that says nothing.
+    minted = attested_position(known, logical_id) is None
     subjects = {record.subject for record in known if state_mod.is_canon(record)}
 
     extracted: list[lc.StateRecord] = []
@@ -265,6 +322,11 @@ def extract_state(
                 # No confidence. A regex match has no probability, and a fabricated 1.0 would
                 # read downstream as a critic's score rather than as a parse.
                 predicate_registry_version=REGISTRY_VERSION,
+                note=(
+                    f"story position {order_key} stated by the plan, not attested by the book"
+                    if minted
+                    else None
+                ),
             )
         )
     return tuple(extracted)

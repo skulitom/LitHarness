@@ -436,6 +436,12 @@ def make_plan_selector(
                         "of_total": beat.of_total,
                         "plan_epoch": epoch,
                         "predicate": "draftable.v0",
+                        # Where the template says this beat sits in story time, or None when
+                        # it is not entitled to say. Travels on the payload rather than being
+                        # recomputed in the handler, so the position a scene was extracted
+                        # under is the one the plan held when the work was selected — a later
+                        # template edit cannot retroactively move a scene already written.
+                        "story_order_key": beat.story_order_key,
                     },
                     # What the scene was told, and what it was not. `context_omitted` is the
                     # honest half: a baseline that packs by priority rather than relevance

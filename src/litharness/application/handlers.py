@@ -425,6 +425,16 @@ def make_scene_draft_handler(
                     branch_id=str(branch_id),
                     logical_id=logical_id,
                     version_id=node_version_id(outcome.node_after),
+                    # A book with no imported snapshot has no story-time vocabulary, so every
+                    # scene it writes is unplaceable and §12 step 5 extracts nothing from it
+                    # forever — which is Book Zero. A chronological template is entitled to
+                    # say where its beats sit; `stated_position` accepts that answer only
+                    # when the book itself is silent.
+                    stated_order_key=(
+                        str(selected["story_order_key"])
+                        if selected.get("story_order_key")
+                        else None
+                    ),
                 )
             subject = DetectorInput(
                 book_id=str(book_id),
