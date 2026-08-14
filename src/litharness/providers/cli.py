@@ -27,8 +27,10 @@ from litharness.providers.base import (
     CompletionRequest,
     CompletionResult,
     ProviderError,
+    ProviderFailureKind,
     Usage,
     parse_schema_payload,
+    provider_error,
     strip_fences,
 )
 
@@ -161,25 +163,41 @@ class ClaudeCodeProvider:
         try:
             outcome = self.runner(self._argv(request), timeout=request.timeout_seconds)
         except subprocess.TimeoutExpired as error:
-            raise ProviderError(
-                f"{self.name} timed out after {request.timeout_seconds}s"
+            raise provider_error(
+                f"{self.name} timed out after {request.timeout_seconds}s",
+                kind=ProviderFailureKind.TIMEOUT,
             ) from error
         except (OSError, FileNotFoundError) as error:
-            raise ProviderError(f"{self.name} could not be executed: {error}") from error
+            raise provider_error(
+                f"{self.name} could not be executed: {error}",
+                kind=ProviderFailureKind.UNAVAILABLE,
+            ) from error
         wall_ms = int((time.monotonic() - started) * 1000)
 
         try:
             envelope = json.loads(outcome.stdout)
         except json.JSONDecodeError as error:
-            raise ProviderError(
+            raise provider_error(
                 f"{self.name} returned unparseable output (exit {outcome.returncode}): "
-                f"{outcome.stdout[:200]!r}"
+                f"{outcome.stdout[:200]!r}",
+                kind=ProviderFailureKind.MALFORMED_RESPONSE,
+                raw=outcome.stdout,
             ) from error
 
         if envelope.get("is_error") or envelope.get("subtype") not in {None, "success"}:
-            raise ProviderError(
-                f"{self.name} reported an error: {envelope.get('api_error_status')} "
-                f"{envelope.get('result', '')[:200]}"
+            raw_status = envelope.get("api_error_status")
+            status = raw_status if isinstance(raw_status, int) else None
+            error_type = str(envelope.get("subtype") or "") or None
+            message = (
+                f"{self.name} reported an error: {raw_status} "
+                f"{str(envelope.get('result', ''))[:200]}"
+            )
+            raise provider_error(
+                message,
+                provider_error_type=error_type,
+                status=status,
+                request_id=str(envelope["request_id"]) if envelope.get("request_id") else None,
+                raw=json.dumps(envelope, ensure_ascii=False),
             )
 
         text = strip_fences(str(envelope.get("result", "")))
@@ -284,11 +302,15 @@ class CodexProvider:
                     argv, timeout=request.timeout_seconds, cwd=self._workdir
                 )
             except subprocess.TimeoutExpired as error:
-                raise ProviderError(
-                    f"{self.name} timed out after {request.timeout_seconds}s"
+                raise provider_error(
+                    f"{self.name} timed out after {request.timeout_seconds}s",
+                    kind=ProviderFailureKind.TIMEOUT,
                 ) from error
             except (OSError, FileNotFoundError) as error:
-                raise ProviderError(f"{self.name} could not be executed: {error}") from error
+                raise provider_error(
+                    f"{self.name} could not be executed: {error}",
+                    kind=ProviderFailureKind.UNAVAILABLE,
+                ) from error
 
             # The `-o` file is the contract for the final answer; the event stream is for
             # usage and provenance. Reassembling the text from events would be fragile.
@@ -300,8 +322,11 @@ class CodexProvider:
 
         if not text:
             detail = _codex_error(events, outcome.stderr)
-            raise ProviderError(
-                f"{self.name} produced no answer (exit {outcome.returncode}): {detail}"
+            status = _codex_status(events)
+            raise provider_error(
+                f"{self.name} produced no answer (exit {outcome.returncode}): {detail}",
+                status=status,
+                raw=json.dumps({"events": events, "stderr": outcome.stderr}, ensure_ascii=False),
             )
 
         return CompletionResult(
@@ -364,3 +389,17 @@ def _codex_error(events: list[dict[str, Any]], stderr: str) -> str:
             if key in event:
                 return str(event[key])[:200]
     return stderr.strip()[:200] or "no diagnostic output"
+
+
+def _codex_status(events: list[dict[str, Any]]) -> int | None:
+    for event in reversed(events):
+        for key in ("status", "status_code", "http_status"):
+            value = event.get(key)
+            if isinstance(value, int):
+                return value
+        nested = event.get("error")
+        if isinstance(nested, dict):
+            value = nested.get("status") or nested.get("status_code")
+            if isinstance(value, int):
+                return value
+    return None

@@ -21,11 +21,16 @@ from pathlib import Path
 import pytest
 
 from litharness.providers.base import (
+    BlockedProviderError,
     CompletionRequest,
     ProviderError,
+    ProviderFailureKind,
     ProviderUnavailable,
+    RetryableProviderError,
     Usage,
+    classify_provider_failure,
     parse_schema_payload,
+    provider_error,
     strip_fences,
 )
 from litharness.providers.cli import ClaudeCodeProvider, CodexProvider, CommandResult
@@ -180,6 +185,49 @@ def test_usage_separates_full_price_input_from_cache_reads() -> None:
     assert usage.total == 24049
 
 
+@pytest.mark.parametrize(
+    "message,status,expected",
+    [
+        ("too many requests", 429, ProviderFailureKind.RATE_LIMIT),
+        ("overloaded", 529, ProviderFailureKind.OVERLOADED),
+        ("prompt exceeds the context window", 400, ProviderFailureKind.CONTEXT_OVERFLOW),
+        ("invalid API key", 401, ProviderFailureKind.AUTH),
+        ("bad parameter", 422, ProviderFailureKind.INVALID_REQUEST),
+        ("upstream exploded", 503, ProviderFailureKind.SERVER_ERROR),
+    ],
+)
+def test_provider_failures_are_classified_for_recovery(
+    message: str, status: int, expected: ProviderFailureKind
+) -> None:
+    assert classify_provider_failure(message, status=status) is expected
+
+
+def test_provider_error_factory_selects_recovery_semantics_and_keeps_context() -> None:
+    retryable = provider_error(
+        "quota is momentarily busy",
+        kind=ProviderFailureKind.RATE_LIMIT,
+        status=429,
+        request_id="req-1",
+        retry_after_seconds=3.0,
+    )
+    blocked = provider_error(
+        "prompt exceeds the context window",
+        status=400,
+        raw="provider diagnostic",
+    )
+
+    assert isinstance(retryable, RetryableProviderError)
+    assert retryable.diagnostic() == {
+        "classification": "rate_limit",
+        "status": 429,
+        "request_id": "req-1",
+        "retry_after_seconds": 3.0,
+    }
+    assert isinstance(blocked, BlockedProviderError)
+    assert blocked.kind is ProviderFailureKind.CONTEXT_OVERFLOW
+    assert blocked.raw == "provider diagnostic"
+
+
 # --- claude_code -------------------------------------------------------------------
 
 
@@ -211,8 +259,10 @@ def test_claude_argv_carries_every_mandatory_flag() -> None:
 def test_claude_reports_an_error_envelope_as_a_provider_error() -> None:
     broken = {**CLAUDE_ENVELOPE, "is_error": True, "api_error_status": 529, "result": "overloaded"}
     provider = ClaudeCodeProvider(runner=claude_runner(broken))
-    with pytest.raises(ProviderError, match="529"):
+    with pytest.raises(RetryableProviderError, match="529") as raised:
         provider.complete(CompletionRequest(prompt="x"))
+    assert raised.value.kind is ProviderFailureKind.OVERLOADED
+    assert raised.value.status == 529
 
 
 def test_claude_unparseable_stdout_is_a_provider_error() -> None:
@@ -227,10 +277,11 @@ def test_claude_timeout_becomes_a_provider_error() -> None:
     def run(argv, *, timeout, cwd=None):
         raise subprocess.TimeoutExpired(cmd="claude", timeout=timeout)
 
-    with pytest.raises(ProviderError, match="timed out"):
+    with pytest.raises(RetryableProviderError, match="timed out") as raised:
         ClaudeCodeProvider(runner=run).complete(
             CompletionRequest(prompt="x", timeout_seconds=1.0)
         )
+    assert raised.value.kind is ProviderFailureKind.TIMEOUT
 
 
 def test_claude_schema_request_adds_a_json_only_instruction() -> None:
@@ -324,16 +375,18 @@ def test_ollama_sends_the_schema_as_the_format_field_and_pins_determinism() -> N
 
 def test_ollama_error_field_becomes_a_provider_error() -> None:
     transport = ollama_transport({"error": "model 'nope' not found"})
-    with pytest.raises(ProviderError, match="not found"):
+    with pytest.raises(BlockedProviderError, match="not found") as raised:
         OllamaProvider(transport=transport).complete(CompletionRequest(prompt="x"))
+    assert raised.value.kind is ProviderFailureKind.INVALID_REQUEST
 
 
 def test_ollama_unreachable_daemon_is_a_provider_error() -> None:
     def transport(url, body, timeout):
         raise OSError("connection refused")
 
-    with pytest.raises(ProviderError, match="unreachable"):
+    with pytest.raises(RetryableProviderError, match="unreachable") as raised:
         OllamaProvider(transport=transport).complete(CompletionRequest(prompt="x"))
+    assert raised.value.kind is ProviderFailureKind.UNAVAILABLE
 
 
 # --- fake --------------------------------------------------------------------------
@@ -363,6 +416,23 @@ def test_fake_synthesises_a_conforming_object_for_any_schema() -> None:
     assert result.conforms and result.parsed is not None
     assert result.parsed["kind"] == "a"
     assert isinstance(result.parsed["count"], int)
+
+
+def test_fake_consumes_a_scripted_sequence_of_results_and_failures() -> None:
+    provider = FakeProvider(
+        responses=[
+            provider_error("busy", kind=ProviderFailureKind.OVERLOADED),
+            "recovered answer",
+        ]
+    )
+    with pytest.raises(RetryableProviderError, match="busy"):
+        provider.complete(CompletionRequest(prompt="first"))
+
+    result = provider.complete(CompletionRequest(prompt="second"))
+    assert result.text == "recovered answer"
+    assert provider.calls == 2
+    with pytest.raises(ProviderError, match="no scripted fake responses"):
+        provider.complete(CompletionRequest(prompt="third"))
 
 
 # --- the shared conformance suite --------------------------------------------------

@@ -20,9 +20,13 @@ from typing import Any
 from litharness.providers.base import (
     CompletionRequest,
     CompletionResult,
+    ProviderError,
+    ProviderFailureKind,
     Usage,
     parse_schema_payload,
 )
+
+ScriptedResponse = str | CompletionResult | Exception
 
 
 def _digest(request: CompletionRequest) -> str:
@@ -98,6 +102,9 @@ class FakeProvider:
     canned: dict[str, str] = field(default_factory=dict)
     #: Set to raise on the next call, for exercising the failure path.
     fail_with: Exception | None = None
+    #: FIFO responses for multi-attempt tests. None keeps digest-derived behaviour; an
+    #: empty list means a configured script was exhausted and fails loudly.
+    responses: list[ScriptedResponse] | None = None
     #: Pad free-text output to at least this many characters. 0 disables it.
     #:
     #: Exists because the default answer is ~140 characters and `DraftPolicy.min_chars` is
@@ -114,10 +121,31 @@ class FakeProvider:
     def health(self) -> bool:
         return True
 
+    def set_responses(self, responses: list[ScriptedResponse]) -> None:
+        self.responses = list(responses)
+
+    def append_responses(self, responses: list[ScriptedResponse]) -> None:
+        if self.responses is None:
+            self.responses = []
+        self.responses.extend(responses)
+
     def complete(self, request: CompletionRequest) -> CompletionResult:
         self.calls += 1
         if self.fail_with is not None:
             raise self.fail_with
+
+        if self.responses is not None:
+            if not self.responses:
+                raise ProviderError(
+                    "no scripted fake responses remain",
+                    kind=ProviderFailureKind.INVALID_REQUEST,
+                )
+            scripted = self.responses.pop(0)
+            if isinstance(scripted, Exception):
+                raise scripted
+            if isinstance(scripted, CompletionResult):
+                return scripted
+            return self._result(request, scripted, digest=_digest(request))
 
         digest = _digest(request)
         if digest in self.canned:
@@ -128,6 +156,11 @@ class FakeProvider:
             text = f"[fake:{digest[:12]}] {request.prompt.strip()[:120]}"
             text = _padded(text, self.pad_to_chars, digest)
 
+        return self._result(request, text, digest=digest)
+
+    def _result(
+        self, request: CompletionRequest, text: str, *, digest: str
+    ) -> CompletionResult:
         return CompletionResult(
             text=text,
             provider=self.name,

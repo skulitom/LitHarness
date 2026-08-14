@@ -9,7 +9,9 @@ without a human in the loop.
 
 **Status: Stage 0 complete, Stage 1 slices 7–9 — all four Stage 1 exit clauses met.** The
 manuscript spine, the Conductor loop, four provider adapters, recorded acceptance decisions,
-a direction inbox, a way to get a book in, a reading copy to get it out, a template planner
+a direction inbox whose explicit instructions and model-interpreted notes reach an immutable
+plan revision before prose,
+a way to get a book in, a reading copy to get it out, a template planner
 that takes a six-scene fixture book from premise to six accepted scenes with no human in the
 loop, an objective-story-state layer and the context packet each scene is drafted against,
 and a blocking integrity gate that refuses a candidate a planted defect stands against. It
@@ -26,6 +28,21 @@ install without it.
 ```bash
 uv sync --extra dev
 ```
+
+The six-rule LitRPG pack is an optional subprocess integration rather than a runtime
+dependency. To enable it, install the sibling `../ContinuityEvaluation` checkout and point
+LitHarness at its console script:
+
+```powershell
+cd ..\ContinuityEvaluation
+uv sync --extra dev
+$env:LITHARNESS_CONTINUITY_EVALUATOR = "$PWD\.venv\Scripts\continuity-evaluate.exe"
+cd ..\LitHarness
+```
+
+The equivalent one-shot option is
+`--continuity-evaluator-command ..\ContinuityEvaluation\.venv\Scripts\continuity-evaluate.exe`.
+Without either setting, LitHarness keeps its existing in-process contradiction check.
 
 ## Running it
 
@@ -57,10 +74,13 @@ Then tick — one bounded unit of work, which is what a scheduler invokes:
 uv run litharness --database book.db tick
 ```
 
-Each tick drains the queue, and when nothing is claimable it plans: the next undrafted beat
-becomes a job, is drafted, gated and accepted. Six ticks take a six-scene book from premise
-to a full draft with nothing else typed. `enqueue` still exists for drafting one named node
-by hand with your own prompt, which is now the exception rather than the way in.
+Each tick first materialises plan work for any unambiguously scoped direction, then drains
+the queue; when nothing is claimable it plans the next undrafted beat. The beat becomes a
+job, is drafted, gated and accepted. With the automatic evaluation pass, a clean six-scene
+book takes twelve uninterrupted ticks from premise to a full evaluated draft when no
+direction intervenes; each accepted repair adds its own repair and verification ticks.
+`enqueue` still exists for drafting one named node by hand with your own prompt, which is now
+the exception rather than the way in.
 
 Each beat is drafted against an assembled **context packet** (§12 step 2): the premise, the
 director's locked constraints and promises, the book's open threads, the established facts
@@ -90,11 +110,18 @@ Everything else the director does:
 
 ```bash
 uv run litharness --database book.db directive "More dungeon crawling." --kind arc_note
+uv run litharness --database book.db directive "No combat in the midpoint." \
+  --kind constraint --book <book-id> --branch <branch-id>
 ```
 
-- `directives` — what has been captured. Direction is captured but **not yet interpreted**;
-  that needs the Narrative Planner, which does not exist, so directives sit in `received`
-  and the count is the honest measure of the gap.
+- `directives` — what has been captured. Explicit `constraint` and `veto` direction is
+  converted deterministically into a locked plan item on the next tick, before queued scene
+  work. Constraint text stays exact; veto text keeps its original words under an explicit
+  veto label. Arc, tone, chapter, and premise notes take a bounded structured-output model
+  pass that proposes at most 12 edits; locks, explicit targets, the single-premise invariant,
+  and the current plan head are enforced outside the model. Scope may be supplied with
+  `--book` / `--branch`; an unscoped directive is applied only when the store has exactly one
+  matching branch. Rejected output leaves the original directive in `received`.
 - `jobs [--status parked]` — queue depth, or the units in one state.
 - `revive <job_id>` — return a parked unit to the queue once you have cleared what parked
   it. Refuses a poisoned unit, whose attempt budget really was spent. A unit stopped by a
@@ -152,14 +179,29 @@ uv run litharness --database book.db ingest ../litharness-contracts/fixtures/gol
 uv run litharness --database book.db findings
 ```
 
+When `LITHARNESS_CONTINUITY_EVALUATOR` (or the matching CLI option) is configured, every
+durable evaluation streams the current manuscript, state and plan snapshots to that executable
+as a UTF-8 live bundle. Its six deterministic rules run alongside the in-process contradiction
+check; both result sets enter the same repair and re-detection workflow. The executable is
+optional so installing and operating LitHarness does not silently depend on a sibling checkout.
+
 `ingest` exits **1** when the artifact records detector errors, and says which stage failed.
 An evaluation that did not finish is not a passing one, and until this the two were
 indistinguishable: an artifact whose every detector failed reported "0 finding(s), 0 new, 0
 blocking" and exited 0 over a book carrying six planted defects. The findings that *did*
 arrive are still ingested — dropping them would trade one silent gap for another. This matters
-most where §17 Stage 2 is heading: "repairs verified by re-detection" means re-running an
+for §17 Stage 2: "repairs verified by re-detection" means re-running an
 evaluator over prose a repair just changed, and a repair invalidates the `version_id` every
 downstream evidence span cites, so an errored run is the *expected* post-repair state.
+
+Accepted drafts now enqueue a durable evaluation job. A complete run persists its findings
+and, when it supplies a deterministic blocking finding with a `primary_span`, schedules one
+located repair. The repair call can replace only that cited span; mechanical patch policy
+checks the version, hash, scope, length and byte-for-byte preservation outside it. The finding
+stays open until a separate evaluation explicitly re-runs its rule and no matching complaint
+remains. Detector errors and omitted required rules fail the verification instead of turning
+an empty result into a false pass. Repairs are serial and capped at three in one automatic
+chain, so changing content cannot manufacture an unbounded stream of fresh job ids.
 
 Re-ingesting the same artifact writes nothing: finding ids are content-derived and a re-run
 converges rather than growing the queue, and a status a human already set is not overwritten.
@@ -305,6 +347,18 @@ uv run pytest
 uv run ruff check . && uv run mypy
 ```
 
+The package has executable architecture boundaries in `tests/test_architecture.py`:
+`domain` imports only inward, providers and adapters do not import each other, application
+code depends on structural capabilities in `application/ports.py` rather than SQLite, and
+internal import cycles are rejected. Change that allow-list only as an explicit architecture
+decision, not to make a convenient import pass. CI runs the suite on Python 3.11 and 3.13 on
+both Linux and Windows, then builds the wheel once.
+
+SQLite is composed behind the stable `SqliteStore` facade: durable jobs, controls, and plan
+epochs live in `adapters/sqlite_jobs.py`, while immutable plan revisions and proposals live
+in `adapters/sqlite_plans.py`. This keeps transaction boundaries explicit without making
+application workflows depend on a monolithic concrete store.
+
 The suite is model-free by default. `tests/conftest.py` sets `LITHARNESS_ENV=test` at
 import, which makes the provider registry refuse to resolve any billing provider — so a
 test run provably cannot reach a paid CLI. Three live round-trip tests are skipped unless
@@ -314,12 +368,16 @@ test run provably cannot reach a paid CLI. Three live round-trip tests are skipp
 
 Stated plainly, because a system that runs is easy to mistake for a system that works:
 
-- **A template planner, not a narrative one.** `tick` does decide what to write next: a
+- **A template planner plus a bounded directive planner, not a full narrative
+  generator.** `tick` does decide what to write next: a
   fixed six-beat sheet (`domain/beats.py`) is zipped against the book's live scenes and the
-  next undrafted one is enqueued, least-progressed book first. What it does not do is
-  anything §9 means by planning — it invents no structure, reads no directives, schedules no
-  foreshadowing or progression, and only handles a book whose live scene count is exactly
-  six.
+  next undrafted one is enqueued, least-progressed book first. Separately, immutable plan
+  proposals are validated and accepted against a baseline, interpret directives atomically,
+  detect concurrent changes, preserve rationale/model provenance, and roll back through a
+  new forward revision. A model now produces one bounded proposal for each premise, arc,
+  tone, or chapter note. What does not exist is full-book plan generation, foreshadow/payoff
+  or progression scheduling, structural/mechanical plan critics, or replacement of the
+  fixed six-scene template.
 - **A context packet with no relevance scoring.** It carries prior prose, locked
   constraints, open threads and POV-filtered state, and it is graded against the contracts
   `GoldContextSuite` — mandatory items present, forbidden POV leak absent. What it does not
@@ -346,12 +404,15 @@ Stated plainly, because a system that runs is easy to mistake for a system that 
   that looked promising turned out to be detecting the year. §10.6 now records twelve of
   thirteen candidate proxies refuted. The blocker is human judgment, not effort:
   `litharness audit` is the queue that collects it.
-- **One detector runs in-process.** `state.contradiction.v0` catches canon records that
-  disagree at one story position, which is the corruption only this system can see. Every
-  other detector's findings have to be *ingested*; nothing in a `tick` runs
-  ContinuityEvaluation's pack for you, and doing so is Stage 2's "integrate the LitRPG
-  deterministic detector pack". Until then a book nobody ran an evaluator over is gated on
-  shape and contradiction alone.
+- **The full deterministic pack is opt-in, and its live inputs are still thin.** Every
+  accepted draft is automatically evaluated by `state.contradiction.v0`. When the
+  ContinuityEvaluation executable is configured, the same durable job also runs all six
+  game-system detectors over a live shared-contract bundle and feeds located findings into
+  bounded repair and re-detection. Without that explicit configuration, operation remains
+  in-process-only. Even with it, detector effectiveness is limited by the state and facts the
+  producer can justify: current evidence is re-anchored, stale imported future-state evidence
+  is omitted, and the extractor still understands only system voice. The process boundary is
+  complete; richer live state production is not.
 - **State extraction reads system voice only.** §12 step 5 now exists
   (`domain/extraction.py`): every accepted scene is read for the facts it establishes, the
   records are written in the revision's own transaction, and a candidate contradicting
@@ -365,4 +426,6 @@ Stated plainly, because a system that runs is easy to mistake for a system that 
   book with no imported snapshot — Book Zero — extracts nothing at all. Until `render_prompt`
   asks generators to emit system voice, extraction yields records only for prose that already
   carries it. That prompt change moves every fixture hash, so it lands on its own.
-- **Directives are captured, not read.** See above.
+- **Operator controls are not narrative plan edits.** A directive whose kind is `control`
+  remains visible in the inbox; use the durable `pause` / `resume` commands for process
+  control. The planner does not reinterpret words like “stop” as story constraints.

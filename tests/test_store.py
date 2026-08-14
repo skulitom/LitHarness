@@ -7,8 +7,10 @@ for. No model is involved anywhere in this file, which is the point.
 
 from __future__ import annotations
 
+import gc
 import shutil
 import sqlite3
+import weakref
 
 import pytest
 
@@ -31,6 +33,27 @@ NOW = "2026-08-12T00:00:00Z"
 @pytest.fixture
 def store(tmp_path) -> SqliteStore:
     return SqliteStore.open(tmp_path / "litharness.db")
+
+
+def test_store_context_manager_closes_the_connection(tmp_path) -> None:
+    with SqliteStore.open(tmp_path / "managed.db") as managed:
+        assert managed.path.endswith("managed.db")
+
+    with pytest.raises(sqlite3.ProgrammingError, match="closed database"):
+        _ = managed.path
+
+
+def test_unreachable_store_closes_its_native_handle(tmp_path) -> None:
+    abandoned = SqliteStore.open(tmp_path / "abandoned.db")
+    connection = abandoned._connection
+    reference = weakref.ref(abandoned)
+
+    del abandoned
+    gc.collect()
+
+    assert reference() is None
+    with pytest.raises(sqlite3.ProgrammingError, match="closed database"):
+        connection.execute("SELECT 1")
 
 
 def accepted_event(revision: Revision, note: str = "") -> Event:

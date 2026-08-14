@@ -1,6 +1,6 @@
 # Stage 0 decisions
 
-**Status:** Stage 0 slices 1-6 and Stage 1 slice 7 built and green — **299 tests (+3 opt-in live), ruff clean, mypy
+**Status:** Stage 0 slices 1-6 and Stage 1 slices 7-9 built and green — **565 passing tests (+3 opt-in live), ruff clean, mypy
 strict clean.** Slice 1 is the model-free manuscript spine; slice 2 the Conductor skeleton
 (tick, instance lease, job selection, digest, outbox dispatch, crash recovery); slice 3 the
 four provider adapters with their conformance suite and the billing guard; slice 4 **the
@@ -320,14 +320,13 @@ sees one consistent verdict per provider.
 
 Deliberately deferred, in the order they should land:
 
-1. ~~**Directive ingestion**~~ — **capture half built in slice 5b; interpretation still
-   deferred.** The original reasoning ("a directive inbox without the Narrative Planner to
-   interpret it would be a queue nothing can read") turned out to argue for half the work,
-   not none of it. Capture needs nothing that is missing and losing direction the director
-   gives *today* because the reader ships later is the worse failure. So directives are
-   captured, drained at the top of each tick, and left in `RECEIVED` — visible as a growing
-   unread count and as `interpreted: false` in the event log, rather than as silence or an
-   invented reading. `Directive.interpret` is the seam §9 will attach to.
+1. ~~**Directive ingestion**~~ — **capture half built in slice 5b; model interpretation
+   subsequently closed for bounded one-directive proposals in §29.** The original reasoning
+   ("a directive inbox without the Narrative Planner to interpret it would be a queue nothing
+   can read") turned out to argue for half the work, not none of it. At that slice, directives
+   were captured, drained at the top of each tick, and left in `RECEIVED` rather than silently
+   dropped or guessed. `Directive.interpret` became the seam §28's verbatim lane and §29's
+   model-backed lane both use.
 2. **A real work-selection policy.** `fifo_selector` is still a placeholder behind a
    `WorkSelector` protocol, but the *storage* under it no longer is — see decision 13. What
    remains genuinely blocked is the policy: §4.1 wants selection over the book's state
@@ -819,3 +818,59 @@ green Stage 1 is not read as more than it is: **until that prompt change lands, 
 yields records only for prose that already carries system voice.** It must land as its own
 change — it moves every litrpg content hash and revision id, and riding along here would make
 it impossible to tell which half moved the fixtures.
+
+## 28. Explicit direction needs no model interpretation, and outranks queued prose
+
+The immutable plan-proposal seam made a useful distinction available that "directives are
+captured, not read" had hidden. Arc, tone, chapter, and premise notes require a Narrative
+Planner to decide what plan edits they imply. A director-labelled `constraint` or `veto`
+already is the decision. Paraphrasing it with a model adds a failure mode; leaving it unread
+lets the system draft against direction it could have obeyed exactly.
+
+The deterministic lane puts one locked `PlanKind.CONSTRAINT` through the existing content-
+addressed `PlanProposal` transaction. Constraint text stays exact. Because `PlanItem` has no
+veto kind, a veto keeps its original words under the mechanical label "The director vetoes"
+rather than silently becoming a positive instruction. The rendered text is also the recorded
+directive reading; the original body is never rewritten. Replay after a crash sees the
+directive already `APPLIED` and succeeds without a second plan revision.
+
+**Scope is resolved, never guessed.** `--book` and `--branch` can pin it at submission. An
+unscoped explicit directive is actionable only when exactly one stored branch matches. The
+resolved destination lives on the job payload rather than mutating the submitted directive;
+the audit record therefore continues to distinguish "the director scoped this" from "the
+selector had one unambiguous destination". With multiple matching branches it remains
+`RECEIVED` and visible.
+
+**Ordering is the value of the lane.** Ingest still runs first. Selection materialises the
+verbatim unit at priority `1000 + directive.precedence` before claiming existing work, so a
+constraint received before the tick cannot sit behind an already-queued scene and affect
+only the scene after it. Interpretive directive kinds now enter the lower-priority bounded
+model lane recorded in §29. Controls stay in `RECEIVED`; they are not converted into global
+story constraints merely because doing so would make the unread count smaller.
+
+## 29. Model interpretation is a proposal, never a plan write
+
+Premise, arc, tone, and chapter notes need interpretation, so the deterministic transform in
+§28 cannot honestly consume them. The first Narrative Planner producer is intentionally one
+directive and one frozen plan at a time. It requests strict structured output with a maximum
+of 12 edits and then reconstructs domain `PlanEdit` objects itself. Locked items, the
+single-premise invariant, `canonical_in_prose`, duplicate edits, no-ops, and explicit
+`target_logical_ids` are enforced after the call; the provider cannot waive them.
+
+**Acceptance is one transaction.** The accepted policy decision, its event, the directive
+reading, the new content-addressed plan revision, and `PlanChanged` land together. The head is
+rechecked under the write lock because the model call is a long gap; a concurrent change
+records a stale-base refusal instead of overwriting newer direction. Provider usage is
+recorded on invalid output too, so a malformed proposal is not free in budget accounting.
+Budget refusal remains pre-flight, revivable, and costs neither an attempt nor a call.
+
+**Plan changes invalidate prose prompts.** Scene jobs freeze rendered context at enqueue
+time. Accepting a new plan therefore advances the branch's plan epoch and cancels queued
+scene jobs for that branch in the same transaction. The selector mints the replacement from
+the new plan. Without this, “direction outranks queued prose” would change the plan while the
+already-rendered old prompt drafted anyway.
+
+**What this does not claim.** There is no whole-book plan generation, foreshadow/payoff
+ledger, progression schedule, beat-template replacement, or structural/mechanical/craft
+critic for plan quality. Those remain §9 and §20.6 work; this slice establishes the safe
+provider-to-proposal lane they can reuse.

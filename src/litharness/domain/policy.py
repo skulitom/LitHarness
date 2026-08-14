@@ -37,7 +37,7 @@ import litharness_contracts as lc
 
 from litharness.domain.draft import DraftOutcome, DraftPolicy
 from litharness.domain.events import payload_digest
-from litharness.domain.patch import Veto
+from litharness.domain.patch import PatchOutcome, PatchPolicy, Veto
 
 #: Vetoes a bounded retry can plausibly fix: the model produced the wrong *output*.
 #:
@@ -331,6 +331,19 @@ def policy_digest(policy: DraftPolicy) -> str:
     )
 
 
+def patch_policy_digest(policy: PatchPolicy) -> str:
+    """Content address of the mechanical limits applied to a repair."""
+    return payload_digest(
+        {
+            "min_length_ratio": policy.min_length_ratio,
+            "max_length_ratio": policy.max_length_ratio,
+            "require_license_for_deletion": policy.require_license_for_deletion,
+            "max_ops": policy.max_ops,
+            "max_cited_fraction": policy.max_cited_fraction,
+        }
+    )
+
+
 def decision_id_for(job_id: str, attempt: int, gates: tuple[GateOutcome, ...]) -> str:
     """Derived, not random, so a replayed job produces the same decision id and the row
     collapses on insert rather than accumulating duplicates of one judgment."""
@@ -358,6 +371,21 @@ def gates_for_draft(outcome: DraftOutcome) -> tuple[GateOutcome, ...]:
         GateOutcome(
             gate=GateKind.SHAPE,
             rule_or_critic_id="shape.draft.v0",
+            passed=outcome.accepted,
+            verdict_source=VerdictSource.DETERMINISTIC,
+            blocking=True,
+            vetoes=outcome.veto_kinds,
+            detail="; ".join(record.detail for record in outcome.vetoes) or None,
+        ),
+    )
+
+
+def gates_for_patch(outcome: PatchOutcome) -> tuple[GateOutcome, ...]:
+    """Project the bounded-patch mechanics into the recorded policy ladder."""
+    return (
+        GateOutcome(
+            gate=GateKind.SHAPE,
+            rule_or_critic_id="shape.patch.v0",
             passed=outcome.accepted,
             verdict_source=VerdictSource.DETERMINISTIC,
             blocking=True,
@@ -440,5 +468,7 @@ __all__ = [
     "decide",
     "decision_id_for",
     "gates_for_draft",
+    "gates_for_patch",
+    "patch_policy_digest",
     "policy_digest",
 ]

@@ -11,3 +11,8 @@ build/
 *.db
 *.db-wal
 *.db-shm
+exports/
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/

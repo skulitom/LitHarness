@@ -23,6 +23,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sqlite3
 import sys
 import time
@@ -35,12 +36,30 @@ from typing import Any
 import litharness_contracts as lc
 
 from litharness.adapters import contracts_fixtures, evaluation_artifact
+from litharness.adapters.continuity_cli import ContinuityCliRunner
 from litharness.adapters.sqlite_store import MigrationsMissing, SqliteStore
 from litharness.application import export as export_module
 from litharness.application import status as status_module
 from litharness.application.conductor import Conductor, TickOutcome
+from litharness.application.directive_planner import DIRECTIVE_PLAN, make_directive_plan_handler
+from litharness.application.evaluation import (
+    CompositeEvaluator,
+    ContinuityEvaluator,
+    Evaluator,
+    InProcessEvaluator,
+)
 from litharness.application.handlers import SCENE_DRAFT, make_scene_draft_handler
+from litharness.application.narrative_planner import (
+    NARRATIVE_PLAN,
+    make_narrative_plan_handler,
+)
 from litharness.application.planner import make_plan_selector
+from litharness.application.repair import (
+    EVALUATE_REVISION,
+    REPAIR_FINDING,
+    make_evaluation_handler,
+    make_repair_handler,
+)
 from litharness.domain import audit, calibration
 from litharness.domain import state as state_mod
 from litharness.domain.budget import BudgetPolicy
@@ -114,6 +133,17 @@ def _budget(args: argparse.Namespace) -> BudgetPolicy:
 
 def _conductor(store: SqliteStore, args: argparse.Namespace) -> Conductor:
     registry = build_default_registry()
+    evaluators: list[Evaluator] = [InProcessEvaluator()]
+    if args.continuity_evaluator_command:
+        evaluators.append(
+            ContinuityEvaluator(
+                ContinuityCliRunner((str(args.continuity_evaluator_command),)),
+                args.project,
+            )
+        )
+    evaluator: Evaluator = (
+        evaluators[0] if len(evaluators) == 1 else CompositeEvaluator(evaluators)
+    )
     return Conductor(
         store=store,
         holder=args.holder,
@@ -124,7 +154,25 @@ def _conductor(store: SqliteStore, args: argparse.Namespace) -> Conductor:
         # outrank planning; only when nothing is claimable does it materialise a beat.
         select=make_plan_selector(project_id=args.project),
         handlers={
+            DIRECTIVE_PLAN: make_directive_plan_handler(store, args.project, actor=args.holder),
+            NARRATIVE_PLAN: make_narrative_plan_handler(
+                registry,
+                store,
+                args.project,
+                budget=_budget(args),
+                actor=args.holder,
+            ),
             SCENE_DRAFT: make_scene_draft_handler(
+                registry,
+                store,
+                args.project,
+                budget=_budget(args),
+                schedule_evaluation=True,
+            ),
+            EVALUATE_REVISION: make_evaluation_handler(
+                evaluator, store, args.project
+            ),
+            REPAIR_FINDING: make_repair_handler(
                 registry, store, args.project, budget=_budget(args)
             ),
         },
@@ -194,6 +242,8 @@ def cmd_directive(args: argparse.Namespace) -> int:
         directive_id=directive_id_for(kind, args.text, stamp),
         kind=kind,
         body=args.text,
+        book_id=args.book,
+        branch_id=args.branch,
         received_at=stamp,
     )
     store = _store(args)
@@ -1113,6 +1163,12 @@ def build_parser() -> argparse.ArgumentParser:
         default="00000000-0000-5000-8000-000000000000",
         help="project id recorded on emitted events",
     )
+    parser.add_argument(
+        "--continuity-evaluator-command",
+        type=Path,
+        default=os.environ.get("LITHARNESS_CONTINUITY_EVALUATOR"),
+        help="ContinuityEvaluation executable; also read from LITHARNESS_CONTINUITY_EVALUATOR",
+    )
     sub = parser.add_subparsers(dest="command", required=True)
 
     tick = sub.add_parser("tick", help="run one bounded unit of work (what cron invokes)")
@@ -1132,6 +1188,8 @@ def build_parser() -> argparse.ArgumentParser:
         default=DirectiveKind.TONE_NOTE.value,
         choices=[kind.value for kind in DirectiveKind],
     )
+    directive.add_argument("--book", help="limit direction to this book")
+    directive.add_argument("--branch", help="limit direction to this branch")
     directive.set_defaults(func=cmd_directive)
 
     directives = sub.add_parser("directives", help="list captured direction")

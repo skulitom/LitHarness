@@ -178,6 +178,68 @@ def test_a_directive_is_captured_and_ingested_by_the_next_tick(db, capsys) -> No
         store.close()
 
 
+def test_a_directive_can_be_scoped_from_the_operator_surface(db, capsys) -> None:
+    run(db, "init")
+    assert (
+        run(
+            db,
+            "directive",
+            "Do not add a second protagonist.",
+            "--kind",
+            "constraint",
+            "--book",
+            "book-1",
+            "--branch",
+            "main",
+        )
+        == EXIT_OK
+    )
+
+    store = SqliteStore.open(db)
+    try:
+        [captured] = store.directives_by_status(DirectiveStatus.RECEIVED)
+        assert (captured.book_id, captured.branch_id) == ("book-1", "main")
+    finally:
+        store.close()
+
+
+def test_the_next_tick_applies_an_explicit_constraint_before_drafting(db, capsys) -> None:
+    run(db, "init")
+    imported_id(db, capsys, "--fixture", "mystery")
+    store = SqliteStore.open(db)
+    try:
+        book_id, branch_id, _ = store.branches()[0]
+    finally:
+        store.close()
+    capsys.readouterr()
+
+    run(
+        db,
+        "directive",
+        "Keep the rain motif in the final scene.",
+        "--kind",
+        "constraint",
+        "--book",
+        book_id,
+        "--branch",
+        branch_id,
+    )
+    capsys.readouterr()
+    assert run(db, "tick") == EXIT_OK
+    assert "ran_job" in capsys.readouterr().out
+
+    store = SqliteStore.open(db)
+    try:
+        [applied] = store.directives_by_status(DirectiveStatus.APPLIED)
+        [constraint_id] = applied.produced_constraint_ids
+        constraint = store.plan_revision(book_id, branch_id).item(constraint_id)  # type: ignore[union-attr]
+        assert constraint.text == applied.body
+        assert constraint.locked
+        assert store.job_counts_by_status()["succeeded"] == 1
+    finally:
+        store.close()
+
+
 def test_the_same_directive_twice_is_reported_as_a_duplicate(db, capsys) -> None:
     run(db, "init")
     run(db, "directive", "Same words.")

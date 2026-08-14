@@ -40,13 +40,10 @@ from __future__ import annotations
 import html
 import re
 from dataclasses import dataclass
-from typing import TYPE_CHECKING
 
+from litharness.application.ports import ExportStore
 from litharness.domain.nodes import Node, NodeKind
 from litharness.domain.plans import premise_of
-
-if TYPE_CHECKING:  # pragma: no cover - import cycle only matters to the type checker
-    from litharness.adapters.sqlite_store import SqliteStore
 
 #: Written into an undrafted scene in place of prose. Deliberately conspicuous in both
 #: formats: this is the thing the reader is meant to notice.
@@ -329,7 +326,7 @@ code { font-size: .85em; word-break: break-all; }
 
 
 def collect(
-    store: SqliteStore,
+    store: ExportStore,
     *,
     book_id: str,
     branch_id: str,
@@ -403,7 +400,7 @@ def collect(
 
 
 def resolve_branch(
-    store: SqliteStore, book_id: str | None, branch_id: str | None
+    store: ExportStore, book_id: str | None, branch_id: str | None
 ) -> tuple[str, str]:
     """The branch to export, defaulting to the only one when there is exactly one.
 

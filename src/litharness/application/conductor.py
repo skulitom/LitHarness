@@ -7,11 +7,10 @@ that loop, in that order.
 **Ingest is first, and the ordering is the requirement.** A directive that arrived since
 the last tick must be able to influence what this tick selects; if selection ran first, the
 directive would sit unread for a full cycle behind the very work it was meant to redirect.
-Only the *capture* half exists — interpreting a directive into versioned plan constraints
-needs the Narrative Planner (§9), which does not — so directives are drained, recorded, and
-left in `RECEIVED`. That is deliberate and it is visible: unread direction shows up as a
-growing `RECEIVED` count and as `interpreted: false` in the event log, rather than as
-either silence or an invented reading.
+Interpretation remains a later work unit rather than part of ingestion itself: directives
+are drained and recorded first, then the selector can materialise deterministic constraints
+or bounded Narrative Planner work before prose. Unresolved direction stays visibly
+`RECEIVED` rather than disappearing as silence or an invented reading.
 
 Three properties matter more than the loop itself.
 
@@ -45,10 +44,11 @@ from datetime import UTC, datetime
 from hashlib import sha256
 from typing import Protocol
 
-from litharness.adapters.sqlite_store import SqliteStore
+from litharness.application.ports import ApplicationStore
+from litharness.domain.directives import VERBATIM_KINDS
 from litharness.domain.events import Event, EventType, OutboxEntry
 from litharness.domain.exceptions import ExceptionKind, ExceptionRecord, exception_id_for
-from litharness.domain.failures import TransientFailure
+from litharness.domain.failures import OperationalFailure, ParkedFailure, TransientFailure
 from litharness.domain.jobs import Job, JobStatus
 from litharness.domain.policy import Outcome, PolicyDecision
 
@@ -113,11 +113,13 @@ class WorkSelector(Protocol):
     """Chooses the next unit. The seam where §4.1's state-aware policy will live."""
 
     def __call__(
-        self, store: SqliteStore, holder: str, now: float, duration: float
+        self, store: ApplicationStore, holder: str, now: float, duration: float
     ) -> Job | None: ...
 
 
-def fifo_selector(store: SqliteStore, holder: str, now: float, duration: float) -> Job | None:
+def fifo_selector(
+    store: ApplicationStore, holder: str, now: float, duration: float
+) -> Job | None:
     """Skeleton policy: oldest claimable queued job wins.
 
     Deliberately not the real thing. §4.1 wants selection to be a policy over the book's
@@ -140,7 +142,7 @@ class HealthResettable(Protocol):
 
 @dataclass
 class Conductor:
-    store: SqliteStore
+    store: ApplicationStore
     holder: str
     project_id: str
     handlers: dict[str, JobHandler] = field(default_factory=dict)
@@ -253,25 +255,62 @@ class Conductor:
                 running.transition_to(JobStatus.QUEUED), attempts=job.attempts
             ).released()
             self.store.save_job(requeued)
+            diagnostic = error.diagnostic()
             self.store.append_events(
                 [
                     self._event(
                         EventType.PROVIDER_FELL_BACK,
-                        {"job_id": job.job_id, "error": str(error), "requeued": True},
+                        {
+                            "job_id": job.job_id,
+                            "error": str(error),
+                            "requeued": True,
+                            **diagnostic,
+                        },
                         now,
                     )
                 ]
             )
             self.store.bump_digest(self._day(now), "provider_unavailable")
             return TickOutcome.JOB_FAILED, ()
+        except ParkedFailure as error:
+            # Retrying unchanged cannot clear authentication, invalid-request, or context
+            # overflow failures. Give back the candidate attempt exactly as for a transient
+            # outage, but park instead of requeueing so the cadence cannot spin on it.
+            stopped = replace(running, attempts=job.attempts)
+            final = stopped.transition_to(JobStatus.PARKED, error=str(error)).released()
+            self.store.save_job(final)
+            diagnostic = error.diagnostic()
+            failed_event = self._event(
+                EventType.JOB_FAILED,
+                {
+                    "job_id": job.job_id,
+                    "error": str(error),
+                    "parked": True,
+                    **diagnostic,
+                },
+                now,
+            )
+            self.store.append_events([failed_event])
+            self.store.bump_digest(self._day(now), "jobs_parked")
+            self.store.bump_digest(self._day(now), "provider_blocked")
+            raised = self._raise_exception(
+                final,
+                None,
+                f"{error.classification}: {error}",
+                now,
+                exhausted=False,
+                kind=ExceptionKind.PROVIDER_UNAVAILABLE,
+            )
+            return TickOutcome.JOB_PARKED, [failed_event, *raised]
         except Exception as error:  # a handler failure is data, not a crash
             failed = running.fail(f"{type(error).__name__}: {error}")
             self.store.save_job(failed)
+            diagnostic = error.diagnostic() if isinstance(error, OperationalFailure) else {}
             self.store.append_events(
                 [
                     self._event(
                         EventType.JOB_FAILED,
-                        {"job_id": job.job_id, "error": str(error)},
+                        {"job_id": job.job_id, "error": str(error), **diagnostic},
                         now,
                     )
                 ]
@@ -398,6 +437,7 @@ class Conductor:
         now: float,
         *,
         exhausted: bool,
+        kind: ExceptionKind = ExceptionKind.REPEATED_GATE_FAILURE,
     ) -> Sequence[Event]:
         """File the escalation in the queue *and* the log.
 
@@ -414,10 +454,10 @@ class Conductor:
             ExceptionRecord(
                 exception_id=exception_id_for(
                     job.job_id,
-                    ExceptionKind.REPEATED_GATE_FAILURE,
+                    kind,
                     decision.decision_id if decision else None,
                 ),
-                kind=ExceptionKind.REPEATED_GATE_FAILURE,
+                kind=kind,
                 summary=summary,
                 job_id=job.job_id,
                 logical_id=decision.logical_id if decision else None,
@@ -445,12 +485,9 @@ class Conductor:
     def _ingest_directives(self, now: float) -> int:
         """Drain the direction inbox (§4.3), recording each arrival as an event.
 
-        **Capture only.** Converting a directive into versioned plan constraints needs the
-        Narrative Planner (§9), which does not exist, so a directive is marked ingested and
-        left in `RECEIVED`. That is deliberate and visible: `directives_by_status(RECEIVED)`
-        grows, which reads as "queued and unread" rather than as work silently dropped. The
-        alternative — not capturing until an interpreter exists — loses direction the
-        director gives today.
+        Ingestion itself never interprets. Explicit constraints and vetoes can be picked up
+        by the deterministic verbatim lane during selection later in this tick; everything
+        else remains visibly `RECEIVED` for the Narrative Planner.
         """
         pending = self.store.pending_directives()
         if not pending:
@@ -467,7 +504,11 @@ class Conductor:
                     # Named rather than implied, so a reader of the log is not left to
                     # infer why nothing acted on it.
                     "interpreted": False,
-                    "awaiting": "narrative_planner",
+                    "awaiting": (
+                        "directive_verbatim"
+                        if directive.kind in VERBATIM_KINDS
+                        else "narrative_planner"
+                    ),
                 },
                 now,
             )

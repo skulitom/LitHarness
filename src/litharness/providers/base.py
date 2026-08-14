@@ -22,27 +22,181 @@ actually lives.
 
 from __future__ import annotations
 
+import enum
 import json
 import re
 from dataclasses import dataclass, field
 from typing import Any, Protocol, runtime_checkable
 
-from litharness.domain.failures import TransientFailure
+from litharness.domain.failures import OperationalFailure, ParkedFailure, TransientFailure
 
 #: ```json ... ``` or bare ``` ... ``` — what `claude -p` wraps JSON in.
 _FENCE = re.compile(r"^\s*```(?:json|JSON)?\s*\n(.*?)\n?\s*```\s*$", re.DOTALL)
 
 
-class ProviderError(Exception):
+class ProviderFailureKind(enum.StrEnum):
+    """Provider-neutral causes with different recovery policies."""
+
+    UNAVAILABLE = "unavailable"
+    TIMEOUT = "timeout"
+    RATE_LIMIT = "rate_limit"
+    OVERLOADED = "overloaded"
+    SERVER_ERROR = "server_error"
+    AUTH = "auth"
+    INVALID_REQUEST = "invalid_request"
+    CONTEXT_OVERFLOW = "context_overflow"
+    REFUSAL = "refusal"
+    SAFETY = "safety"
+    MALFORMED_RESPONSE = "malformed_response"
+    ABORTED = "aborted"
+    UNKNOWN = "unknown"
+
+    @property
+    def retry_later(self) -> bool:
+        return self in {
+            ProviderFailureKind.UNAVAILABLE,
+            ProviderFailureKind.TIMEOUT,
+            ProviderFailureKind.RATE_LIMIT,
+            ProviderFailureKind.OVERLOADED,
+            ProviderFailureKind.SERVER_ERROR,
+            ProviderFailureKind.ABORTED,
+        }
+
+    @property
+    def needs_intervention(self) -> bool:
+        return self in {
+            ProviderFailureKind.AUTH,
+            ProviderFailureKind.INVALID_REQUEST,
+            ProviderFailureKind.CONTEXT_OVERFLOW,
+        }
+
+
+_CONTEXT_OVERFLOW = (
+    re.compile(r"prompt is too long", re.IGNORECASE),
+    re.compile(r"request_too_large", re.IGNORECASE),
+    re.compile(r"exceeds? the context window", re.IGNORECASE),
+    re.compile(r"input token count.*exceeds the maximum", re.IGNORECASE),
+    re.compile(r"maximum (?:prompt|context) length", re.IGNORECASE),
+    re.compile(r"context[_ ](?:window|length).*exceed", re.IGNORECASE),
+    re.compile(r"prompt too long", re.IGNORECASE),
+    re.compile(r"token limit exceeded", re.IGNORECASE),
+)
+
+
+def classify_provider_failure(
+    message: str, *, status: int | None = None, provider_error_type: str | None = None
+) -> ProviderFailureKind:
+    """Classify without erasing the provider's own diagnostic.
+
+    Status and provider type lead; message matching is the fallback needed for CLI tools,
+    which often expose no structured exception at all.
+    """
+    combined = f"{provider_error_type or ''} {message}".lower()
+    if any(pattern.search(combined) for pattern in _CONTEXT_OVERFLOW):
+        return ProviderFailureKind.CONTEXT_OVERFLOW
+    if status == 429 or "rate_limit" in combined or "rate limit" in combined:
+        return ProviderFailureKind.RATE_LIMIT
+    if status == 529 or "overloaded" in combined:
+        return ProviderFailureKind.OVERLOADED
+    if status in {401, 403} or re.search(
+        r"\b(auth(?:entication)?|unauthori[sz]ed|forbidden|credential|api.?key)\b", combined
+    ):
+        return ProviderFailureKind.AUTH
+    if "safety" in combined or "content filter" in combined or "prohibited" in combined:
+        return ProviderFailureKind.SAFETY
+    if "refusal" in combined or "refused to respond" in combined:
+        return ProviderFailureKind.REFUSAL
+    if status in {400, 404, 413, 422} or "invalid_request" in combined or "not found" in combined:
+        return ProviderFailureKind.INVALID_REQUEST
+    if status is not None and status >= 500:
+        return ProviderFailureKind.SERVER_ERROR
+    if "server_error" in combined or "service unavailable" in combined:
+        return ProviderFailureKind.SERVER_ERROR
+    return ProviderFailureKind.UNKNOWN
+
+
+class ProviderError(OperationalFailure):
     """The adapter could not complete a round trip. Distinct from a bad-shaped answer."""
 
+    def __init__(
+        self,
+        message: str,
+        *,
+        kind: ProviderFailureKind = ProviderFailureKind.UNKNOWN,
+        provider_error_type: str | None = None,
+        status: int | None = None,
+        request_id: str | None = None,
+        retry_after_seconds: float | None = None,
+        raw: str | None = None,
+    ) -> None:
+        self.kind = kind
+        self.provider_error_type = provider_error_type
+        self.status = status
+        self.request_id = request_id
+        self.retry_after_seconds = retry_after_seconds
+        self.raw = raw[:2000] if raw else None
+        super().__init__(
+            message,
+            classification=kind.value,
+            details={
+                "provider_error_type": provider_error_type,
+                "status": status,
+                "request_id": request_id,
+                "retry_after_seconds": retry_after_seconds,
+                "raw": self.raw,
+            },
+        )
 
-class ProviderUnavailable(ProviderError, TransientFailure):
+
+class RetryableProviderError(ProviderError, TransientFailure):
+    """No candidate was returned and the same call may work later."""
+
+
+class BlockedProviderError(ProviderError, ParkedFailure):
+    """Retrying unchanged cannot work; configuration or packet size must change."""
+
+
+def provider_error(
+    message: str,
+    *,
+    kind: ProviderFailureKind | None = None,
+    provider_error_type: str | None = None,
+    status: int | None = None,
+    request_id: str | None = None,
+    retry_after_seconds: float | None = None,
+    raw: str | None = None,
+) -> ProviderError:
+    """Construct the subtype whose recovery semantics match the classified cause."""
+    resolved = kind or classify_provider_failure(
+        message, status=status, provider_error_type=provider_error_type
+    )
+    error_type: type[ProviderError]
+    if resolved.retry_later:
+        error_type = RetryableProviderError
+    elif resolved.needs_intervention:
+        error_type = BlockedProviderError
+    else:
+        error_type = ProviderError
+    return error_type(
+        message,
+        kind=resolved,
+        provider_error_type=provider_error_type,
+        status=status,
+        request_id=request_id,
+        retry_after_seconds=retry_after_seconds,
+        raw=raw,
+    )
+
+
+class ProviderUnavailable(RetryableProviderError):
     """The tool is absent, unauthenticated, or failing its health probe.
 
     Also a `TransientFailure`: this is raised *before* any work is attempted, so nothing
     about the unit of work is wrong and its attempt budget must not be charged. See
     `domain/failures.py` for why that distinction is load-bearing rather than tidy."""
+
+    def __init__(self, message: str) -> None:
+        super().__init__(message, kind=ProviderFailureKind.UNAVAILABLE)
 
 
 @dataclass(frozen=True, slots=True)

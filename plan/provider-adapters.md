@@ -1,7 +1,7 @@
 # Provider adapters: local-first inference for LitHarness
 
-**Status: BUILT AND GREEN.** `src/litharness/providers/` — 46 tests (+3 opt-in live),
-ruff clean, mypy strict clean. Parsing is verified against the real captured envelopes
+**Status: BUILT AND GREEN.** `src/litharness/providers/` — focused adapter, recovery, and
+Conductor tests (+3 opt-in live), ruff clean, mypy strict clean. Parsing is verified against the real captured envelopes
 recorded in this document, not invented shapes.
 **Directive:** Default to the local Claude Code session; fall back to the local Codex
 CLI; use Ollama for iterative testing, because paid-model iteration is expensive.
@@ -251,6 +251,31 @@ Already required by Stage 0's exit criterion ("revisions, patches, events, and
 restore work end-to-end without a model"). Deterministic, zero-cost, keyed off
 the request hash. This is the adapter the whole IR/revision/jobs test suite runs
 against; the three real adapters are only exercised by a small conformance suite.
+
+The fake also accepts a FIFO script of strings, complete results, and exceptions. This is
+the deterministic way to exercise sequences such as overload → recovery, malformed answer
+→ retry, or exhausted test fixture; tests no longer need a one-off fake class for every
+multi-attempt path.
+
+### 4.5 Failure contract and recovery
+
+Adapters preserve the provider diagnostic but also classify it into a provider-neutral
+`ProviderFailureKind`: unavailable, timeout, rate limit, overload, server error,
+authentication, invalid request, context overflow, refusal, safety refusal, malformed
+response, aborted, or unknown. The exception carries status, provider error type, request
+id, retry delay, and a bounded raw diagnostic when the backend exposes them.
+
+The classification controls the Conductor rather than merely improving logs:
+
+- unavailable, timeout, rate limit, overload, server error, and aborted calls are requeued
+  without charging the candidate's attempt budget;
+- authentication, invalid request, and context overflow are parked without charging an
+  attempt and create an operator-visible exception, because retrying unchanged cannot work;
+- refusal, safety, malformed response, and unknown errors remain bounded candidate
+  failures and therefore consume the ordinary attempt budget.
+
+This keeps a provider outage from poisoning work while also preventing an expired key or
+oversized context packet from spinning once per heartbeat forever.
 
 ## 5. Resolution order and configuration
 

@@ -38,7 +38,7 @@ import enum
 from collections.abc import Sequence
 from dataclasses import dataclass, field
 from hashlib import sha256
-from typing import Any, Protocol
+from typing import Any, Protocol, cast
 
 import litharness_contracts as lc
 
@@ -165,6 +165,22 @@ class Finding:
         )
 
 
+def primary_span_of(finding: Finding) -> lc.EvidenceSpan | None:
+    """Recover the located repair licence retained in the source contract artifact.
+
+    Findings created by store-local checks may not have a prose span. Malformed foreign
+    provenance is treated the same way: it can remain visible and blocking, but it cannot
+    license an automatic edit.
+    """
+    payload = finding.source.get("primary_span")
+    if not isinstance(payload, dict):
+        return None
+    try:
+        return cast(lc.EvidenceSpan, lc.from_jsonable(lc.EvidenceSpan, payload))
+    except (KeyError, TypeError, ValueError):
+        return None
+
+
 def finding_id_for(rule_or_critic_id: str, logical_id: str, claim: dict[str, Any]) -> str:
     """Content-derived, so a re-run of the same detector over the same node converges.
 
@@ -243,6 +259,7 @@ __all__ = [
     "Severity",
     "Status",
     "finding_id_for",
+    "primary_span_of",
     "vetoes_for",
     "worst",
 ]

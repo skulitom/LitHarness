@@ -38,8 +38,10 @@ from datetime import UTC, datetime
 
 import litharness_contracts as lc
 
-from litharness.adapters.sqlite_store import SqliteStore
 from litharness.application.conductor import JobHandler
+from litharness.application.policy_events import policy_decision_event
+from litharness.application.ports import DraftStore
+from litharness.application.repair import evaluation_job_for
 from litharness.domain.audit import DEFAULT_RATE, draw
 from litharness.domain.budget import BudgetPolicy, BudgetVerdict
 from litharness.domain.budget import check as budget_check
@@ -84,7 +86,7 @@ def _timestamp(now: float) -> str:
 
 
 def _stale_base(
-    store: SqliteStore,
+    store: DraftStore,
     job: Job,
     revision: Revision,
     project_id: str,
@@ -120,20 +122,14 @@ def _stale_base(
     )
     store.record_decision(decision, decided_at=_timestamp(now))
     return [
-        Event(
-            event_type=EventType.POLICY_DECISION_RECORDED,
+        policy_decision_event(
+            decision,
             project_id=project_id,
             created_at=_timestamp(now),
             book_id=revision.book_id,
             branch_id=revision.branch_id,
             revision_id=revision.revision_id,
-            payload={
-                "decision_id": decision.decision_id,
-                "job_id": job.job_id,
-                "outcome": decision.outcome.value,
-                "reason": gate.detail,
-                "head_revision_id": head_revision_id,
-            },
+            details={"head_revision_id": head_revision_id},
         )
     ]
 
@@ -154,7 +150,7 @@ def budget_gate(verdict: BudgetVerdict) -> GateOutcome:
 
 
 def _craft_ladder(
-    store: SqliteStore,
+    store: DraftStore,
     metrics: tuple[CraftMetric, ...],
     *,
     today: str,
@@ -221,13 +217,14 @@ def _craft_ladder(
 
 def make_scene_draft_handler(
     registry: ProviderRegistry,
-    store: SqliteStore,
+    store: DraftStore,
     project_id: str,
     *,
     policy: DraftPolicy | None = None,
     budget: BudgetPolicy | None = None,
     call_class: str = "generation",
     audit_rate: float = DEFAULT_RATE,
+    schedule_evaluation: bool = False,
 ) -> JobHandler:
     """Build a `JobHandler` that drafts one node's prose and gates the result.
 
@@ -310,20 +307,15 @@ def make_scene_draft_handler(
             )
             store.record_decision(refusal, decided_at=_timestamp(now))
             return [
-                Event(
-                    event_type=EventType.POLICY_DECISION_RECORDED,
+                policy_decision_event(
+                    refusal,
                     project_id=project_id,
                     created_at=_timestamp(now),
                     book_id=revision.book_id,
                     branch_id=revision.branch_id,
                     revision_id=revision_id,
-                    payload={
-                        "decision_id": refusal.decision_id,
-                        "job_id": job.job_id,
-                        "outcome": refusal.outcome.value,
-                        "reason": standing_gate.detail,
-                        "findings": [item.finding_id for item in standing if item.blocks],
-                        "gates": [{"id": standing_gate.rule_or_critic_id, "passed": False}],
+                    details={
+                        "findings": [item.finding_id for item in standing if item.blocks]
                     },
                 )
             ]
@@ -510,29 +502,18 @@ def make_scene_draft_handler(
             policy_config_digest=policy_digest(policy or DraftPolicy()),
             reason=reason,
         )
-        store.record_decision(decision, decided_at=_timestamp(now))
-
-        decision_event = Event(
-            event_type=EventType.POLICY_DECISION_RECORDED,
+        decision_event = policy_decision_event(
+            decision,
             project_id=project_id,
             created_at=_timestamp(now),
             actor=result.provider,
             book_id=revision.book_id,
             branch_id=revision.branch_id,
             revision_id=decision.resulting_revision_id or revision_id,
-            payload={
-                "decision_id": decision.decision_id,
-                "outcome": decision.outcome.value,
-                "job_id": job.job_id,
-                "attempt": job.attempts,
-                "reason": reason,
-                "gates": [
-                    {"id": gate.rule_or_critic_id, "passed": gate.passed} for gate in gates
-                ],
-            },
         )
 
         if not accepted:
+            store.record_decision(decision, decided_at=_timestamp(now))
             failed = [gate for gate in gates if gate.blocking and not gate.passed]
             return [
                 Event(
@@ -608,11 +589,25 @@ def make_scene_draft_handler(
                     },
                 )
             )
+        follow_up_jobs = (
+            (
+                evaluation_job_for(
+                    book_id=revision.book_id,
+                    branch_id=revision.branch_id,
+                    revision_id=outcome.revision.revision_id,
+                    logical_id=logical_id,
+                ),
+            )
+            if schedule_evaluation
+            else ()
+        )
         store.commit_revision(
             outcome.revision,
             created_at=_timestamp(now),
             events=commit_events,
             state_records=extracted,
+            jobs=follow_up_jobs,
+            decision=decision,
         )
 
         # §10.2's log, keyed on the *resulting* revision — the address the prose actually has.
@@ -646,7 +641,8 @@ def make_scene_draft_handler(
         # in the same transaction as the revision, and returning it as well would ask the
         # Conductor to append it a second time — harmless, because idempotency keys are
         # content-derived and collapse on insert, but it would misreport the tick's event
-        # count. The decision event has no such writer and is returned.
+        # count. The decision event retains the established Conductor-owned write path and
+        # is returned here; only the decision record itself must share the revision commit.
         return [decision_event]
 
     return handle
