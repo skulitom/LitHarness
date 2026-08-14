@@ -128,6 +128,11 @@ uv run litharness --database book.db directive "No combat in the midpoint." \
   budget ceiling or by a standing finding is parked, not poisoned: the blocker is external
   and the work is still there.
 - `propagate <change-set.json> [--enqueue]` — what a change reaches beyond what it edits.
+  **An accepted repair does this by itself**: the facts it changed are read out of the
+  extraction the acceptance already runs, and the scenes stating them are queued for
+  re-evaluation in the same transaction, bounded by the repair-depth ladder and recorded as an
+  `ImpactAnalyzed` event. This command is for the changes that have no in-repo producer —
+  renames and moved events — and for asking before acting.
   Reads a `ChangeSet` of the shared schema (as `ingest` reads an `EvaluationArtifact`) and
   reports every scene and state record the change touches, with the rule that reached it and
   why. Four rules: a rename reaches wherever the old name is spelled, forwards and back; a

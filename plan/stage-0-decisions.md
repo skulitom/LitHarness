@@ -1,6 +1,6 @@
 # Stage 0 decisions
 
-**Status:** Stage 0 slices 1-6 and Stage 1 slices 7-9 built and green — **633 passing tests (+3 opt-in live), ruff clean, mypy
+**Status:** Stage 0 slices 1-6 and Stage 1 slices 7-9 built and green — **644 passing tests (+3 opt-in live), ruff clean, mypy
 strict clean.** Slice 1 is the model-free manuscript spine; slice 2 the Conductor skeleton
 (tick, instance lease, job selection, digest, outbox dispatch, crash recovery); slice 3 the
 four provider adapters with their conformance suite and the billing guard; slice 4 **the
@@ -1025,3 +1025,49 @@ is what the third exit item says out loud and what `impact.CAVEAT` prints under 
 `tests/test_propagation.py` is the other half — each rule against a book built for it, plus
 the cases the gold has none of: an alias containing the old name, a fact appearing only before
 the change, a move running backwards, a move with no window, and a change kind no rule reads.
+
+## 33. The producer this repo can honestly build is the diff extraction already computes
+
+§32 built the rules and left the producer outside: the engine was reachable only by an
+operator handing it a `ChangeSet` file. That left a defect in the autonomous path that no gate
+could see. `make_evaluation_handler` evaluates exactly the one `logical_id` on its job, and the
+only evaluation a repair schedules is the verification of the node it repaired — so correcting
+the lantern's price in scene 2 left scenes 3 to 6 carrying the old balance, with every gate
+green and the finding marked fixed. Detect-then-repair without propagation is
+detect-then-repair-then-lie, and Stage 2's first exit item passes either way.
+
+**The producer was already sitting in the handler.** An accepted repair runs `extract_state`
+over its result and commits the records while retracting the node's old ones. The difference
+between those two sets *is* the semantic change, read rather than inferred, so
+`changes_between` mints nothing and is §27's rule applied one layer up.
+
+Three decisions inside it, each of which is wrong in an obvious way first:
+
+- **Matched on `(subject, predicate, order_key)`.** A running balance differs at every position
+  by design. Matching on `(subject, predicate)` alone would compare `rook/gold` at s3 against
+  s2 and report the book working as a contradiction — then propagate from it, on every repair.
+- **A mapping value is diffed to the changed field.** The record is one `status_snapshot`, and
+  no book contains that word, so a change reported under it reaches records and never a scene.
+  `gold` is both the changed field and the token the prose carries. Diffing to the field is
+  what makes the produced change the same shape as the hand-authored gold suite.
+- **A newly stated fact is not a change.** It invalidates no earlier prose, and a candidate
+  contradicting standing canon is refused by the integrity gate before it can commit, so
+  treating "new" as "changed" would propagate from every first draft of every scene.
+
+**Bounded twice, because §4.2's failure mode is a parked unit and never a spin loop.** A
+propagated evaluation costs a `repair_depth` level, so repair→propagate→repair→propagate
+terminates at `MAX_AUTO_REPAIRS` hops; at the last depth it queues nothing rather than minting
+jobs the evaluation handler would refuse for an out-of-range depth. And the fan-out per
+acceptance is capped, because one repair must not be able to queue a re-check of every scene in
+a novel. The `ImpactAnalyzed` event records the **reached** set beside the **enqueued** set,
+because they differ exactly when a cap bit and a silent truncation reads as full coverage.
+
+**The control is the test that keeps this affordable.** Most repairs change no fact at all, and
+an engine firing on every acceptance would multiply the cost of every repair by the length of
+the book. A repair that rewords a sentence queues its own verification and nothing else, and
+writes no analysis event.
+
+**What it still does not read.** `fact_changed` only. Renames and moved events have no in-repo
+producer, and neither is derivable from an extraction diff — they are reached through
+`litharness propagate` over a `ChangeSet`, which is §13's boundary. The extractor's own ceiling
+is the producer's: a fact it cannot read is a change nothing can report.

@@ -15,6 +15,7 @@ from litharness.application.evaluation import (
 )
 from litharness.application.policy_events import policy_decision_event
 from litharness.application.ports import EvaluationStore, RepairStore
+from litharness.domain import propagation
 from litharness.domain.budget import BudgetPolicy
 from litharness.domain.budget import check as budget_check
 from litharness.domain.events import Event, EventType
@@ -32,7 +33,7 @@ from litharness.domain.policy import (
     gates_for_patch,
     patch_policy_digest,
 )
-from litharness.domain.revision import node_version_id
+from litharness.domain.revision import Revision, node_version_id
 from litharness.providers.base import CompletionRequest
 from litharness.providers.registry import ProviderRegistry
 
@@ -41,6 +42,10 @@ REPAIR_FINDING = "repair_finding"
 EVALUATION_PRIORITY = 80
 REPAIR_PRIORITY = 100
 MAX_AUTO_REPAIRS = 3
+#: Nodes one accepted repair may queue a re-check of. A six-scene book cannot exceed it;
+#: a novel can, and the difference between the reached set and the enqueued set is recorded
+#: on `ImpactAnalyzed` so a truncation is visible rather than looking like full coverage.
+MAX_PROPAGATED_EVALUATIONS = 12
 
 _REPAIR_SCHEMA = {
     "type": "object",
@@ -124,6 +129,64 @@ def repair_job_for(
         input_digest=digest,
         payload=payload,
         priority=REPAIR_PRIORITY,
+    )
+
+
+def _propagated_evaluations(
+    known: Sequence[lc.StateRecord],
+    extracted: Sequence[lc.StateRecord],
+    *,
+    revision: Revision,
+    book_id: str,
+    branch_id: str,
+    logical_id: str,
+    repair_depth: int,
+) -> tuple[tuple[Job, ...], tuple[str, ...]]:
+    """Evaluations for the nodes this repair's change reaches, and the full reached set.
+
+    **Bounded twice, because §4.2's failure mode is a parked unit and never a spin loop.**
+    A propagated evaluation costs a depth level, so a chain of repair-propagate-repair
+    terminates at `MAX_AUTO_REPAIRS` hops rather than walking the book forever; at the last
+    depth it enqueues nothing at all rather than minting jobs the evaluation handler would
+    refuse. And the fan-out per acceptance is capped, because one repair should not be able to
+    queue a re-check of every scene in a novel.
+
+    Both the reached set and the enqueued set are returned so the caller can record them
+    separately. They differ exactly when a cap bit, and a cap nobody can see reads as full
+    coverage.
+    """
+    if repair_depth + 1 > MAX_AUTO_REPAIRS:
+        return (), ()
+    changes = propagation.changes_between(known, extracted)
+    if not changes:
+        return (), ()
+    result = propagation.propagate_changes(
+        changes,
+        edited=(logical_id,),
+        book=propagation.book_from(revision, known),
+    )
+    # Manuscript nodes only. Nothing in this system re-evaluates a state record, so a job
+    # naming one would park for want of anything to do with it.
+    drafted = {node.logical_id for node in revision.nodes}
+    reached = tuple(
+        sorted(
+            target
+            for target in result.logical_ids
+            if target != logical_id and target in drafted
+        )
+    )
+    return (
+        tuple(
+            evaluation_job_for(
+                book_id=book_id,
+                branch_id=branch_id,
+                revision_id=revision.revision_id,
+                logical_id=target,
+                repair_depth=repair_depth + 1,
+            )
+            for target in reached[:MAX_PROPAGATED_EVALUATIONS]
+        ),
+        reached,
     )
 
 
@@ -516,6 +579,23 @@ def make_repair_handler(
             verification_of_finding_id=finding_id,
             repair_depth=repair_depth,
         )
+        # **A repair that changes a fact leaves every scene stating it stale, and nothing
+        # noticed.** The evaluation this repair schedules re-checks the repaired node and only
+        # that one — so correcting a price in scene 2 left six downstream balances wrong, the
+        # book reported clean, and the defect was invisible to every gate the system has. This
+        # is §17 Stage 2's loop, closed with the two halves that were already here: extraction
+        # says what the repaired prose now asserts, and `changes_between` reads the difference
+        # against the canon being retracted. Nothing is minted and nothing is guessed; a
+        # change the producer cannot read reaches nothing and says so.
+        propagated, reached = _propagated_evaluations(
+            records,
+            extracted,
+            revision=outcome.revision,
+            book_id=book_id,
+            branch_id=branch_id,
+            logical_id=logical_id,
+            repair_depth=repair_depth,
+        )
         acceptance = Event(
             event_type=EventType.MANUSCRIPT_REVISION_ACCEPTED,
             project_id=project_id,
@@ -535,13 +615,36 @@ def make_repair_handler(
                 "touched_spans": [list(span_) for span_ in outcome.touched_spans],
             },
         )
+        events: tuple[Event, ...] = (acceptance, decision_event)
+        if reached:
+            events += (
+                Event(
+                    event_type=EventType.IMPACT_ANALYZED,
+                    project_id=project_id,
+                    created_at=stamp,
+                    book_id=book_id,
+                    branch_id=branch_id,
+                    revision_id=outcome.revision.revision_id,
+                    causation_id=job.job_id,
+                    payload={
+                        "job_id": job.job_id,
+                        "logical_id": logical_id,
+                        "reached": list(reached),
+                        # Recorded separately because they differ whenever the fan-out cap or
+                        # the depth cap bites, and a cap that truncates silently reads as
+                        # "everything was covered" when it was not.
+                        "enqueued": [str(unit.payload["logical_id"]) for unit in propagated],
+                        "repair_depth": repair_depth,
+                    },
+                ),
+            )
         store.commit_revision(
             outcome.revision,
             created_at=stamp,
-            events=(acceptance, decision_event),
+            events=events,
             state_records=extracted,
             retract_state_for_nodes=(logical_id,),
-            jobs=(verification,),
+            jobs=(verification, *propagated),
             decision=decision,
         )
         return (decision_event,)

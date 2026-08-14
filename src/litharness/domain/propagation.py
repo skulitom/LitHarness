@@ -63,7 +63,7 @@ against the material it was written from is a rule fitted to it.
 from __future__ import annotations
 
 import re
-from collections.abc import Iterable, Sequence
+from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import dataclass, field
 
 import litharness_contracts as lc
@@ -293,7 +293,7 @@ def _change_order_key(book: Book, edited: Sequence[str]) -> str | None:
 
 def _apply_rename(
     change: lc.ExtractedChange,
-    change_set: lc.ChangeSet,
+    aliases: Sequence[str],
     book: Book,
     edited: Sequence[str],
     into: _Collector,
@@ -304,7 +304,6 @@ def _apply_rename(
         # the one that rewrites it, so this abstains and is reported as unread.
         into.abstain(change.kind)
         return
-    aliases = _preserved_aliases(change_set)
     for node in book.nodes:
         if node.logical_id in edited:
             continue
@@ -430,30 +429,122 @@ def _apply_event_move(
             )
 
 
+def changes_between(
+    known: Sequence[lc.StateRecord], extracted: Sequence[lc.StateRecord]
+) -> tuple[lc.ExtractedChange, ...]:
+    """The semantic changes between the canon a node used to state and the canon it now does.
+
+    **The producer this project can honestly build in-repo.** §13 puts a general change
+    extractor in a sibling, and nothing here reads prose for renames or moved events. But a
+    repair that rewrites a span *already* runs `extract_state` over the result, and comparing
+    those records against the ones being retracted is a deterministic reading of what the
+    repair changed — mints nothing, invents nothing, and is exactly §27's rule applied one
+    layer up.
+
+    **Matched on `(subject, predicate, order_key)`, and the order key is the whole of the
+    correctness.** A running balance differs at every position by design, so comparing
+    `rook/gold` at s3 against `rook/gold` at s2 would report the ledger advancing as a
+    contradiction. Only a disagreement at *one* position is a change.
+
+    **A mapping value is diffed to the field, because the field is the predicate prose uses.**
+    A status snapshot is one record under `status_snapshot`, and no book contains that word —
+    while `gold` is both the changed field and the token the prose carries. Diffing to the
+    field is what makes a produced change the same shape as the hand-authored gold, and what
+    lets the node rule fire at all rather than reaching records only.
+
+    A newly stated fact with no predecessor is **not** a change and is skipped: it invalidates
+    no earlier prose, and a candidate contradicting standing canon is refused by the integrity
+    gate before it can commit.
+    """
+    index: dict[tuple[str, str, str], lc.StateRecord] = {}
+    for record in known:
+        key = state_mod.order_key_of(record)
+        if state_mod.is_canon(record) and key is not None:
+            index[(record.subject, record.predicate, key)] = record
+
+    changes: list[lc.ExtractedChange] = []
+    for record in extracted:
+        key = state_mod.order_key_of(record)
+        if key is None:
+            continue
+        previous = index.get((record.subject, record.predicate, key))
+        if previous is None or previous.value == record.value:
+            continue
+        changes.extend(_field_changes(previous, record))
+    return tuple(changes)
+
+
+def _field_changes(
+    before: lc.StateRecord, after: lc.StateRecord
+) -> Iterable[lc.ExtractedChange]:
+    if isinstance(before.value, Mapping) and isinstance(after.value, Mapping):
+        return [
+            lc.ExtractedChange(
+                kind=lc.ExtractedChangeKind.FACT_CHANGED,
+                subject=before.subject,
+                predicate=str(name),
+                before=before.value.get(name),
+                after=after.value.get(name),
+                confidence=1.0,
+            )
+            for name in sorted(set(before.value) | set(after.value))
+            if before.value.get(name) != after.value.get(name)
+        ]
+    return [
+        lc.ExtractedChange(
+            kind=lc.ExtractedChangeKind.FACT_CHANGED,
+            subject=before.subject,
+            predicate=before.predicate,
+            before=before.value,
+            after=after.value,
+            confidence=1.0,
+        )
+    ]
+
+
 def propagate(change_set: lc.ChangeSet, book: Book) -> Propagation:
-    """What this change reaches, beyond what it edits.
+    """What this change set reaches, beyond what it edits.
+
+    The `ChangeSet` form of `propagate_changes`, for the callers that hold a shared-contract
+    artifact: `litharness propagate` and the gold suites.
+    """
+    return propagate_changes(
+        change_set.extracted_changes,
+        edited=_edited(change_set),
+        book=book,
+        aliases=_preserved_aliases(change_set),
+    )
+
+
+def propagate_changes(
+    changes: Sequence[lc.ExtractedChange],
+    *,
+    edited: Sequence[str],
+    book: Book,
+    aliases: Sequence[str] = (),
+) -> Propagation:
+    """What these changes reach, beyond the nodes they edit.
 
     The edited nodes are never targets: an engine gets no credit for the node it was told to
     change, and enqueueing work to re-check prose that was just written is how a repair loop
     cycles.
 
-    A change set with no extracted changes is **incomplete, not clear** — its producer emitted
-    no semantic reading, which is a statement about the producer and not about the book.
+    No changes at all is **incomplete, not clear** — nobody produced a semantic reading, which
+    is a statement about the producer and not about the book.
     """
     into = _Collector()
-    edited = _edited(change_set)
-    if not change_set.extracted_changes:
+    if not changes:
         into.abstain(lc.ExtractedChangeKind.UNKNOWN)
         return into.result()
 
-    for change in change_set.extracted_changes:
+    for change in changes:
         if change.kind is lc.ExtractedChangeKind.SURFACE_ONLY:
             # Understood, and reaches nothing. Deliberately not a veto over the rest of the
             # set: `surface_only` says *this* change carries no meaning, and treating it as
             # set-wide would let one reformatted sentence hide a rename beside it.
             continue
         if change.kind is lc.ExtractedChangeKind.ENTITY_RENAMED:
-            _apply_rename(change, change_set, book, edited, into)
+            _apply_rename(change, aliases, book, edited, into)
         elif change.kind is lc.ExtractedChangeKind.FACT_CHANGED:
             _apply_fact_change(change, book, edited, into)
         elif change.kind is lc.ExtractedChangeKind.EVENT_MOVED:
@@ -473,5 +564,7 @@ __all__ = [
     "PropagationTarget",
     "ProseNode",
     "book_from",
+    "changes_between",
     "propagate",
+    "propagate_changes",
 ]

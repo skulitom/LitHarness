@@ -523,3 +523,91 @@ def test_the_edited_nodes_are_never_targets() -> None:
     )
 
     assert reached(result) == {"scene-3"}
+
+
+# --- the in-repo producer ------------------------------------------------------------
+
+
+def test_a_changed_field_becomes_a_fact_change_named_by_the_field() -> None:
+    """`status_snapshot` is not a word any book contains; `gold` is both the changed field and
+    the token the prose carries. Diffing a mapping to the field is what makes a produced
+    change the same shape as the hand-authored gold — and what lets the node rule fire at all
+    rather than reaching records only."""
+    known = (record("rec-s2", "rook", "status_snapshot", {"gold": 25, "hp": 24}, order_key="s2"),)
+    extracted = (
+        record("rec-s2b", "rook", "status_snapshot", {"gold": 33, "hp": 24}, order_key="s2"),
+    )
+
+    [change] = propagation.changes_between(known, extracted)
+
+    assert change.kind is lc.ExtractedChangeKind.FACT_CHANGED
+    assert (change.subject, change.predicate) == ("rook", "gold")
+    assert (change.before, change.after) == (25, 33)
+
+
+def test_the_same_fact_at_another_position_is_the_ledger_advancing_not_a_change() -> None:
+    """The correctness of the whole producer. A running balance differs at every position by
+    design, so matching on `(subject, predicate)` alone would report the book working as a
+    contradiction — and then propagate from it."""
+    known = (record("rec-s2", "rook", "status_snapshot", {"gold": 25}, order_key="s2"),)
+    extracted = (record("rec-s3", "rook", "status_snapshot", {"gold": 15}, order_key="s3"),)
+
+    assert propagation.changes_between(known, extracted) == ()
+
+
+def test_a_newly_stated_fact_is_not_a_change() -> None:
+    """It invalidates no earlier prose. A candidate contradicting standing canon is refused by
+    the integrity gate before it can commit, so this is not the place to catch that."""
+    extracted = (record("rec-new", "mara", "knows", "the_will", order_key="s4"),)
+
+    assert propagation.changes_between((), extracted) == ()
+
+
+def test_an_unchanged_value_produces_no_change() -> None:
+    """Re-extraction after a repair that touched something else must stay quiet, or every
+    repair propagates to the whole book."""
+    same = {"gold": 25, "hp": 24}
+    known = (record("rec-a", "rook", "status_snapshot", same, order_key="s2"),)
+    extracted = (record("rec-b", "rook", "status_snapshot", dict(same), order_key="s2"),)
+
+    assert propagation.changes_between(known, extracted) == ()
+
+
+def test_a_scalar_value_changes_under_its_own_predicate() -> None:
+    known = (record("rec-a", "edmund", "life_status", "dead", order_key="s1"),)
+    extracted = (record("rec-b", "edmund", "life_status", "missing", order_key="s1"),)
+
+    [change] = propagation.changes_between(known, extracted)
+
+    assert (change.predicate, change.before, change.after) == ("life_status", "dead", "missing")
+
+
+def test_an_unplaced_record_is_not_compared() -> None:
+    """`order_key` is the match key, so a record the book has not placed cannot be matched
+    against anything — and treating None as a position would collide every unplaced record
+    with every other, which `extraction.attested_position` refuses for the same reason."""
+    known = (record("rec-a", "rook", "status_snapshot", {"gold": 25}),)
+    extracted = (record("rec-b", "rook", "status_snapshot", {"gold": 33}),)
+
+    assert propagation.changes_between(known, extracted) == ()
+
+
+def test_a_produced_change_drives_the_engine_end_to_end() -> None:
+    """The producer and the rules meet here: the change a repair makes to a status line is
+    the change that reaches the later scenes carrying that balance."""
+    known = (record("rec-s2", "rook", "status_snapshot", {"gold": 25}, order_key="s2"),)
+    extracted = (record("rec-s2b", "rook", "status_snapshot", {"gold": 33}, order_key="s2"),)
+
+    result = propagation.propagate_changes(
+        propagation.changes_between(known, extracted),
+        edited=("scene-2",),
+        book=book(
+            "Rook had forty-five gold.",
+            "Rook counted twelve gold onto the barrel.",
+            "Rook had thirty-three gold left.",
+            "Rook slept.",
+        ),
+    )
+
+    assert reached(result) == {"scene-3"}
+    assert result.complete

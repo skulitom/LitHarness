@@ -1,7 +1,7 @@
 # LitHarness: Autonomous Book-Production System Plan
 
 **Version:** 2.2 (supersedes PLAN-v1-authoring-tool.md, archived in this folder)
-**Status:** Master plan; **Stage 0 slices 1–6, Stage 1 slices 7–9, and Stage 2's detect-and-repair chain implemented and green (633 passing tests + 3 opt-in live); operable via `litharness tick`; a book goes in (`import`), drafts itself against a context packet, is refused when a planted defect stands against it, repairs a located finding within a serial cap (`evaluate_revision`/`repair_finding`), notifies out of the outbox to a configured sink (`--notify-file`), can have its plan history read and rolled back (`plans`/`revert-plan`), answers what a change reaches before it is spent on (`propagate`, dev-set precision 1.000 against a 0.481 base rate), and comes out readable (`export`); all four §17 Stage 1 exit clauses met; Stage 2's remaining work is the propagation engine and live state production; two of §19's seven clauses met outright — scorecard in §19.1**
+**Status:** Master plan; **Stage 0 slices 1–6, Stage 1 slices 7–9, and Stage 2's detect-and-repair chain implemented and green (644 passing tests + 3 opt-in live); operable via `litharness tick`; a book goes in (`import`), drafts itself against a context packet, is refused when a planted defect stands against it, repairs a located finding within a serial cap (`evaluate_revision`/`repair_finding`), notifies out of the outbox to a configured sink (`--notify-file`), can have its plan history read and rolled back (`plans`/`revert-plan`), re-checks the scenes a repair's change reaches instead of only the scene it repaired (`propagate`, dev-set precision 1.000 against a 0.481 base rate), and comes out readable (`export`); all four §17 Stage 1 exit clauses met; Stage 2's remaining work is the propagation engine and live state production; two of §19's seven clauses met outright — scorecard in §19.1**
 
 *(Corrected here, because this line was the instance: it read "four of §19's seven clauses met" while §19.1's table said two. §19.1 contains a paragraph recording that exact drift happening once before, four lines above the table that contradicted it, and the header carrying the same wrong number went unnoticed through three revisions. The readiness number this project reports about itself is the number to distrust first.)*
 **Role:** A 24/7 autonomous system that plans, drafts, evaluates, repairs, and versions quality LitRPG books — directed by a human, never blocked on one
@@ -1147,11 +1147,29 @@ result so the number cannot travel without it. Held-out material remains Stage 3
 and "nobody looked" are the same empty result otherwise, which is precisely the defect
 `litharness ingest` was corrected for one stage earlier.
 
-The remaining Stage 2 work is **the producer, and richer live state/facts production**. Nothing
-in this repo derives an `ExtractedChange` from an accepted revision, so the engine is reached
-through `litharness propagate` over a `ChangeSet` file — §13's boundary, and honest about
-where the missing half lives. Stale future evidence is deliberately omitted, and the current
-extractor still reads only system voice.
+**The loop now closes inside a tick, and the defect it closes was invisible to every gate the
+system has.** The evaluation a repair schedules re-checks the repaired node and only that one,
+so correcting the lantern's price in scene 2 left four downstream balances wrong while the
+book reported clean — detect-then-repair with no propagation is detect-then-repair-then-lie.
+The producer is the one this repo can honestly build: an accepted repair already runs
+`extract_state` over its result, and `propagation.changes_between` reads the difference against
+the canon being retracted. Matched on `(subject, predicate, order_key)`, because a running
+balance differs at every position by design and matching without the position would report the
+ledger advancing as a contradiction; and a mapping value is diffed **to the field**, because
+`status_snapshot` is not a word any book contains while `gold` is both the changed field and
+the token the prose carries. The reached scenes are queued for evaluation in the acceptance's
+own transaction, under an `ImpactAnalyzed` event carrying the reached set beside the enqueued
+set so a cap that bit is visible rather than reading as coverage. Bounded twice: a propagated
+evaluation costs a `repair_depth` level, so repair→propagate→repair terminates at
+`MAX_AUTO_REPAIRS` hops, and the fan-out per acceptance is capped.
+
+The remaining Stage 2 work is **the other two producers, and richer live state/facts
+production**. `changes_between` reads `fact_changed` and nothing else: renames and moved events
+have no in-repo producer and are reached only through `litharness propagate` over a `ChangeSet`
+file, which is §13's boundary and honest about where that half lives. Stale future evidence is
+deliberately omitted, and the current extractor still reads only system voice — which is also
+the ceiling on the producer, since a fact the extractor cannot read is a change it cannot
+report.
 
 ### Stage 3 — Book Zero (the pivot)
 One complete 50k–80k word LitRPG draft, end-to-end, 24/7 unattended: Narrative
