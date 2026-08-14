@@ -262,12 +262,8 @@ class SqlitePlanRepository:
             current = self.load_plan_revision(parent_id) if parent_id else None
         return history
 
-    def load_plan_proposal(self, proposal_id: str) -> StoredPlanProposal:
-        row = self._connection.execute(
-            "SELECT * FROM plan_proposals WHERE proposal_id = ?", (proposal_id,)
-        ).fetchone()
-        if row is None:
-            raise KeyError(f"no plan proposal {proposal_id}")
+    @staticmethod
+    def _stored_proposal(row: sqlite3.Row) -> StoredPlanProposal:
         payload = json.loads(row["proposal_json"])
         if not isinstance(payload, dict):
             raise IntegrityFailure("plan proposal JSON is not an object")
@@ -279,6 +275,37 @@ class SqlitePlanRepository:
             created_at=row["created_at"],
             applied_at=row["applied_at"],
         )
+
+    def load_plan_proposal(self, proposal_id: str) -> StoredPlanProposal:
+        row = self._connection.execute(
+            "SELECT * FROM plan_proposals WHERE proposal_id = ?", (proposal_id,)
+        ).fetchone()
+        if row is None:
+            raise KeyError(f"no plan proposal {proposal_id}")
+        return self._stored_proposal(row)
+
+    def plan_proposals(self, book_id: str, branch_id: str) -> list[StoredPlanProposal]:
+        """Every proposal recorded against this branch, oldest first.
+
+        Whole-branch rather than one lookup per revision, because the caller is reading a
+        *lineage*: a per-revision query would be one scan per revision over a column with no
+        index, and the lineage of a long-lived book is as long as its direction. Ordered on
+        `plan_proposals_branch_idx`, which already covers `(book_id, branch_id, created_at)`.
+
+        **Conflicted rows are included.** A proposal that never applied is direction the
+        system decided not to act on, and it carries the stale-base error saying why; leaving
+        it out of the only read path would make it unreadable outside SQLite. Callers that
+        want the applied lineage filter on `status`, and the join back to a revision is
+        `resulting_plan_revision_id`, which is written only on the applied insert.
+        """
+        return [
+            self._stored_proposal(row)
+            for row in self._connection.execute(
+                "SELECT * FROM plan_proposals WHERE book_id = ? AND branch_id = ? "
+                "ORDER BY created_at, proposal_id",
+                (book_id, branch_id),
+            )
+        ]
 
     def commit_plan_application(
         self,

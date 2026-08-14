@@ -127,6 +127,17 @@ uv run litharness --database book.db directive "No combat in the midpoint." \
   it. Refuses a poisoned unit, whose attempt budget really was spent. A unit stopped by a
   budget ceiling or by a standing finding is parked, not poisoned: the blocker is external
   and the work is still there.
+- `plans` — the plan's lineage, newest first, with the proposal that produced each revision:
+  which directive it came from, what it summarised itself as, and whether it was itself a
+  rollback. A revision no proposal produced is the plan the book was imported with.
+- `revert-plan <plan-revision>` — restore an earlier plan revision as the new plan head.
+  Forward, like `revert`: the restored plan is a new revision, so the change and its undoing
+  both stay in the lineage and rolling back a rollback composes. It is the one proposal
+  permitted to move a **locked** item, which is what lets it undo a director's constraint —
+  so it reports how many it moved, and names any applied directive left citing a plan item
+  the restored plan does not have. It touches no prose: the plan epoch advances and queued
+  scene jobs are cancelled in the same transaction, so the next tick replans the
+  still-draftable beats, and scenes already accepted stay accepted.
 - `replan` — reissue every still-draftable beat under a fresh plan epoch. The verb for the
   two states `revive` cannot reach: a poisoned unit burned its derived job id forever, and a
   parked unit whose head has since moved would be revived onto a stale base. It does not

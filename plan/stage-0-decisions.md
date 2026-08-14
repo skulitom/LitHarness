@@ -1,6 +1,6 @@
 # Stage 0 decisions
 
-**Status:** Stage 0 slices 1-6 and Stage 1 slices 7-9 built and green — **587 passing tests (+3 opt-in live), ruff clean, mypy
+**Status:** Stage 0 slices 1-6 and Stage 1 slices 7-9 built and green — **595 passing tests (+3 opt-in live), ruff clean, mypy
 strict clean.** Slice 1 is the model-free manuscript spine; slice 2 the Conductor skeleton
 (tick, instance lease, job selection, digest, outbox dispatch, crash recovery); slice 3 the
 four provider adapters with their conformance suite and the billing guard; slice 4 **the
@@ -929,3 +929,43 @@ half of the same point. With two dispatchers the choice belongs to the compositi
 a composition root that cannot name the default it is choosing expresses "no sink" by
 omitting an argument — which is exactly how this stayed the only dispatcher for nine slices
 without anyone deciding that it should.
+
+## 31. A plan is reversible from the operator surface, or it is not reversible
+
+§19's Integrity clause says every mutation is "attributable to a recorded policy decision and
+reversible". That held for prose — `revert` restores an earlier manuscript revision as a
+forward child — and did not hold for the plans that produce the prose.
+`domain/plan_refinement.rollback_proposal` was implemented, tested, and documented with the
+rule it enforces ("rollback goes forward"), and nothing in `src/` called it. The `reset_health`
+shape again, and this one sat behind a clause the project reports itself as *met* on.
+
+`litharness plans` and `litharness revert-plan` close it, and the read verb is not optional
+decoration: an operator cannot restore a revision they cannot see, and a lineage printed as
+bare content hashes would not tell them which one to pick. So each revision prints with the
+summary of the proposal that produced it, the directive it came from, and whether it was
+itself a rollback. A revision with no proposal is the plan the book was imported with, which
+is stated rather than left as a blank line — it is also the only case where there is nothing
+behind the head to restore, and `revert-plan` says so instead of raising about a baseline the
+operator never chose.
+
+**One query per branch, not one per revision.** `plan_proposals(book_id, branch_id)` reads the
+whole branch on the index migration 017 already created; the obvious
+`plan_proposal_for_revision` would have been a scan per revision over an unindexed column, and
+the lineage of a long-lived book is as long as its direction. Conflicted proposals come back
+too: a proposal that never applied is direction the system decided not to act on, and it
+carries the stale-base error explaining why.
+
+**Two things the command reports because it would otherwise be discovered later.** A rollback
+is the *one* proposal permitted to move a locked item — that permission is what lets it undo a
+director's constraint — so the count of locked items it moved is printed rather than silent.
+And a constraint minted from a directive can be rolled back out from under it: the directive
+stays `APPLIED`, still citing a plan item that no longer exists. That is recoverable, since
+the direction is on record and can be resubmitted, but only if the operator is told at the
+moment it happens rather than finding out when the book drafts without a constraint they
+believed was in force. It exits non-zero when that happens.
+
+**It touches no prose, and that is the division of labour.** Accepting the restored plan
+advances the branch's plan epoch and cancels queued scene jobs in the same transaction
+(§29's rule, unchanged), so the next tick plans still-draftable beats against the restored
+plan. Scenes already accepted under the old plan stay accepted; `revert` is the verb for
+those. Nothing here overrules a gate, exactly as `replan` does not.

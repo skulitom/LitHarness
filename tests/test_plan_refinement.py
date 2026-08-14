@@ -275,3 +275,57 @@ def test_rollback_is_a_forward_revision_that_preserves_history(store: SqliteStor
         changed.after.plan_revision_id,
         original.plan_revision_id,
     ]
+
+
+def test_the_proposal_that_produced_a_revision_is_findable_from_the_branch(
+    store: SqliteStore,
+) -> None:
+    """Lineage reads backwards from the head, so the question an operator asks is *what
+    changed here* about a revision id — not *what did this do* about a proposal id they have
+    never seen. Answering it needs the whole branch's proposals in one query rather than one
+    per revision, since a long-lived book's lineage is as long as its direction.
+
+    The root answering nothing is the case that matters: a plan revision no proposal
+    produced is the plan the book was imported with, and there is nothing behind it.
+    """
+    original = root(store)
+    proposal = update_proposal(original.plan_revision_id, "Rook burns the contract.")
+    changed = accept_plan_proposal(store, proposal, project_id=PROJECT_ID, created_at=STAMP)
+
+    by_result = {
+        stored.resulting_plan_revision_id: stored
+        for stored in store.plan_proposals(BOOK_ID, BRANCH_ID)
+    }
+
+    assert by_result[changed.after.plan_revision_id].proposal.proposal_id == proposal.proposal_id
+    assert by_result[changed.after.plan_revision_id].status is PlanProposalStatus.APPLIED
+    assert original.plan_revision_id not in by_result
+
+
+def test_a_conflicted_proposal_is_listed_rather_than_hidden(store: SqliteStore) -> None:
+    """A proposal that never applied is direction the system decided not to act on. Leaving
+    it out of the only read path would make it unreadable outside SQLite — and it carries
+    the stale-base error explaining why the direction did not land."""
+    original = root(store)
+    accept_plan_proposal(
+        store,
+        update_proposal(original.plan_revision_id, "Rook burns the contract."),
+        project_id=PROJECT_ID,
+        created_at=STAMP,
+    )
+    stale = update_proposal(
+        original.plan_revision_id,
+        "Rook keeps the contract.",
+        summary="Written against a stale base",
+    )
+    with pytest.raises(PlanConflict):
+        accept_plan_proposal(store, stale, project_id=PROJECT_ID, created_at=STAMP)
+
+    [conflicted] = [
+        stored
+        for stored in store.plan_proposals(BOOK_ID, BRANCH_ID)
+        if stored.status is PlanProposalStatus.CONFLICTED
+    ]
+    assert conflicted.proposal.proposal_id == stale.proposal_id
+    assert conflicted.resulting_plan_revision_id is None
+    assert conflicted.error and "plan head is" in conflicted.error

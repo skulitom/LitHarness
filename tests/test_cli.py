@@ -673,3 +673,154 @@ def test_ingesting_a_completed_evaluation_still_exits_zero(db, capsys) -> None:
     run(db, "import", "--fixture", "litrpg")
     assert run(db, "ingest", str(fixture_findings("litrpg"))) == EXIT_OK
     assert "INCOMPLETE" not in capsys.readouterr().err
+
+
+# --- plan history and rollback -------------------------------------------------------
+
+
+def _book_with_two_plan_revisions(db, capsys) -> tuple[str, str]:
+    """Import a fixture, then move the plan once — model-free.
+
+    An explicit `constraint` takes the deterministic verbatim lane (§28), so this produces
+    a real second plan revision with a real applied proposal behind it and never reaches a
+    provider.
+    """
+    run(db, "init")
+    imported_id(db, capsys, "--fixture", "mystery")
+    store = SqliteStore.open(db)
+    try:
+        book_id, branch_id, _ = store.branches()[0]
+    finally:
+        store.close()
+    run(
+        db,
+        "directive",
+        "Keep the rain motif in the final scene.",
+        "--kind",
+        "constraint",
+        "--book",
+        book_id,
+        "--branch",
+        branch_id,
+    )
+    run(db, "tick")
+    capsys.readouterr()
+    return book_id, branch_id
+
+
+def test_plans_lists_the_lineage_newest_first_and_what_produced_each(db, capsys) -> None:
+    """An operator could not see the plan's history at all: `plan_history` had no caller
+    outside the tests, so the only way to read what direction had done to a book was to
+    open the SQLite file."""
+    _book_with_two_plan_revisions(db, capsys)
+
+    assert run(db, "plans") == EXIT_OK
+
+    out = capsys.readouterr().out
+    assert "HEAD" in out
+    assert "(2 revision(s)" in out
+    assert "Apply constraint directive verbatim" in out, "a lineage of bare hashes would not"
+    assert "from directive dir-" in out
+    assert "imported" in out, "the root must be distinguishable from a proposed revision"
+
+
+def test_a_plan_revision_can_be_restored_from_the_command_line(db, capsys) -> None:
+    """`rollback_proposal` has been implemented, tested and unreachable: nothing in `src/`
+    called it, so §19's reversibility clause held for prose and not for the plans that
+    produce it. Restoring goes forward — the mistake and the correction both stay in the
+    lineage — and the restored plan is a *new* revision, never the old one re-headed."""
+    book_id, branch_id = _book_with_two_plan_revisions(db, capsys)
+    store = SqliteStore.open(db)
+    try:
+        history = store.plan_history(book_id, branch_id)
+        root_id = history[-1].plan_revision_id
+        constrained = len(history[0].items)
+    finally:
+        store.close()
+    capsys.readouterr()
+
+    # EXIT_ATTENTION, because rolling back this constraint orphans the directive that
+    # minted it — asserted on its own below. What is under test here is the lineage.
+    assert run(db, "revert-plan", root_id) == EXIT_ATTENTION
+    out = capsys.readouterr().out
+    assert "restored" in out
+
+    store = SqliteStore.open(db)
+    try:
+        after = store.plan_history(book_id, branch_id)
+        head = after[0]
+        assert len(after) == 3, "a rollback must add a revision rather than move the head back"
+        assert head.plan_revision_id != root_id
+        assert len(head.items) == constrained - 1
+        assert [item.text for item in head.items] == [
+            item.text for item in store.load_plan_revision(root_id).items
+        ]
+        # §19: every mutation is attributable. A plan the operator restored is no exception.
+        decision = store.decision_for_revision(head.plan_revision_id)
+        assert decision is not None and decision.outcome is Outcome.ACCEPT
+    finally:
+        store.close()
+
+
+def test_a_restored_plan_says_which_direction_it_dropped(db, capsys) -> None:
+    """The constraint being rolled back was minted from a director's directive, which stays
+    APPLIED and goes on citing a plan item that no longer exists. That is recoverable — the
+    directive is still on record and can be re-submitted — but only if the operator is told
+    it happened rather than discovering it when the book drafts without the constraint."""
+    book_id, branch_id = _book_with_two_plan_revisions(db, capsys)
+    store = SqliteStore.open(db)
+    try:
+        root_id = store.plan_history(book_id, branch_id)[-1].plan_revision_id
+    finally:
+        store.close()
+    capsys.readouterr()
+
+    assert run(db, "revert-plan", root_id) == EXIT_ATTENTION
+
+    out = capsys.readouterr().out
+    assert "locked" in out, "a rollback is the one proposal that may move a locked item"
+    assert "directive" in out
+
+
+def test_restoring_the_plan_that_is_already_the_head_is_refused(db, capsys) -> None:
+    book_id, branch_id = _book_with_two_plan_revisions(db, capsys)
+    store = SqliteStore.open(db)
+    try:
+        head_id = store.plan_history(book_id, branch_id)[0].plan_revision_id
+    finally:
+        store.close()
+
+    assert run(db, "revert-plan", head_id) == EXIT_FAULT
+    assert "already matches" in capsys.readouterr().err
+
+
+def test_restoring_a_plan_revision_that_does_not_exist_is_a_fault_not_a_traceback(
+    db, capsys
+) -> None:
+    """A mistyped id is a bad argument, which the exit-code contract calls a fault. It must
+    not escape as a `KeyError` traceback and exit 1 — the code reserved for "a unit needs a
+    human" — which is the same defect the locked-database handler was written for."""
+    _book_with_two_plan_revisions(db, capsys)
+
+    assert run(db, "revert-plan", "plan-that-never-was") == EXIT_FAULT
+
+    err = capsys.readouterr().err
+    assert "no plan revision" in err and "Traceback" not in err
+
+
+def test_a_book_whose_plan_was_never_proposed_has_nothing_to_restore(db, capsys) -> None:
+    """The imported root is the whole lineage, so the only reachable target is the head
+    itself. Saying so beats letting the operator find out from a proposal error about a
+    baseline they never chose."""
+    run(db, "init")
+    imported_id(db, capsys, "--fixture", "mystery")
+    store = SqliteStore.open(db)
+    try:
+        book_id, branch_id, _ = store.branches()[0]
+        root_id = store.plan_history(book_id, branch_id)[0].plan_revision_id
+    finally:
+        store.close()
+    capsys.readouterr()
+
+    assert run(db, "revert-plan", root_id) == EXIT_FAULT
+    assert "imported" in capsys.readouterr().err

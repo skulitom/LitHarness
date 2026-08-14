@@ -938,6 +938,15 @@ class SqliteStore:
     def load_plan_proposal(self, proposal_id: str) -> StoredPlanProposal:
         return self._plans.load_plan_proposal(proposal_id)
 
+    def plan_proposals(self, book_id: str, branch_id: str) -> list[StoredPlanProposal]:
+        """Every proposal against this branch, oldest first — what `plan_history` omits.
+
+        A lineage says which snapshots existed; this says what was proposed and whether it
+        landed. `litharness plans` reads them together, which is the only way "why is the
+        plan like this" is answerable without opening the database.
+        """
+        return self._plans.plan_proposals(book_id, branch_id)
+
     def commit_plan_application(
         self,
         application: PlanApplication,

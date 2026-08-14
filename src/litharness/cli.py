@@ -27,6 +27,7 @@ import os
 import sqlite3
 import sys
 import time
+from collections import Counter
 from collections.abc import Sequence
 from contextlib import suppress
 from datetime import UTC, datetime
@@ -59,6 +60,7 @@ from litharness.application.narrative_planner import (
     NARRATIVE_PLAN,
     make_narrative_plan_handler,
 )
+from litharness.application.plan_refinement import accept_plan_proposal
 from litharness.application.planner import make_plan_selector
 from litharness.application.repair import (
     EVALUATE_REVISION,
@@ -74,6 +76,7 @@ from litharness.domain.events import Event, EventType
 from litharness.domain.exceptions import ExceptionStatus
 from litharness.domain.findings import Status as finding_status
 from litharness.domain.jobs import Job, JobStatus, input_digest_for
+from litharness.domain.plan_refinement import PlanProposalStatus, rollback_proposal
 from litharness.domain.plans import import_plan, premise_of
 from litharness.domain.policy import Outcome, PolicyDecision, decision_id_for
 from litharness.domain.revision import import_manuscript
@@ -844,6 +847,174 @@ def cmd_replan(args: argparse.Namespace) -> int:
     return EXIT_OK
 
 
+def cmd_plans(args: argparse.Namespace) -> int:
+    """The plan's lineage, newest first, and the proposal that produced each step.
+
+    **`plan_history` had no caller outside the tests**, which is the shape §19.1 keeps
+    recording: the only way to read what direction had done to a book was to open the SQLite
+    file. It is the read half of `revert-plan` — an operator cannot restore a revision they
+    cannot see, and a lineage of bare content hashes would not tell them which one to pick,
+    so each is printed with the summary of the change that made it.
+
+    A revision no proposal produced is the plan the book was imported with. Saying so
+    distinguishes "the root" from "a step whose proposal is missing", which are the same
+    blank line otherwise.
+    """
+    store = _store(args)
+    try:
+        book_id, branch_id = export_module.resolve_branch(store, args.book, args.branch)
+        history = store.plan_history(book_id, branch_id)
+        proposals = store.plan_proposals(book_id, branch_id)
+    finally:
+        store.close()
+
+    applied = {
+        stored.resulting_plan_revision_id: stored
+        for stored in proposals
+        if stored.status is PlanProposalStatus.APPLIED
+    }
+    for index, revision in enumerate(history):
+        locked = sum(1 for item in revision.items if item.locked)
+        print(
+            f"{revision.plan_revision_id}  {'HEAD' if index == 0 else '    '}  "
+            f"{len(revision.items)} item(s), {locked} locked"
+        )
+        stored = applied.get(revision.plan_revision_id)
+        if stored is None:
+            print("    imported; no proposal produced it, and nothing precedes it")
+            continue
+        print(f"    {stored.proposal.summary}")
+        if stored.proposal.rollback_of:
+            print(f"    a rollback of {stored.proposal.rollback_of}")
+        directives = [reading.directive_id for reading in stored.proposal.readings]
+        if directives:
+            print(f"    from directive {', '.join(directives)}")
+
+    conflicted = [item for item in proposals if item.status is PlanProposalStatus.CONFLICTED]
+    print(f"({len(history)} revision(s), {len(conflicted)} proposal(s) that did not apply)")
+    for item in conflicted:
+        print(f"  {item.proposal.proposal_id}  {item.error or 'conflicted'}")
+    if len(history) > 1:
+        print("  `litharness revert-plan <id>` restores one of these as a new head")
+    return EXIT_OK
+
+
+def cmd_revert_plan(args: argparse.Namespace) -> int:
+    """Restore an earlier plan revision as the new head (§19 reversibility, for plans).
+
+    **`domain/plan_refinement.rollback_proposal` was implemented, tested, documented — and
+    unreachable.** Nothing in `src/` called it, so §19's "every mutation is reversible" held
+    for prose, which has `revert`, and not for the plans that produce it. This is the same
+    defect family as `reset_health` and `bump_plan_epoch`: a promise whose only caller is a
+    test.
+
+    Forward, exactly like `revert`. The restored plan is a *new* revision whose content
+    matches the target, so the change being undone and the undoing both stay in the lineage,
+    and rolling back a rollback composes. A rollback is also the one proposal permitted to
+    move a **locked** item — that is what makes it able to undo a director's constraint —
+    so the count of locked items it moved is reported rather than left to be discovered.
+
+    It does not touch prose. Accepting the restored plan advances the branch's plan epoch
+    and cancels queued scene jobs in the same transaction, so the next tick plans the
+    still-draftable beats against the restored plan; scenes already accepted under the old
+    one stay accepted, and `revert` is the verb for those.
+    """
+    stamp = _stamp(_now())
+    store = _store(args)
+    try:
+        book_id, branch_id = export_module.resolve_branch(store, args.book, args.branch)
+        current = store.plan_revision(book_id, branch_id)
+        if current is None:
+            print("litharness: this branch has no plan to restore", file=sys.stderr)
+            return EXIT_FAULT
+        try:
+            target = store.plan_revision_for_id(args.plan_revision)
+        except KeyError:
+            # A mistyped id is a bad argument, which the exit-code contract calls a fault.
+            # Letting the KeyError escape would exit 1 — "a unit needs a human" — which is
+            # the defect the locked-database handler was added for.
+            print(
+                f"litharness: no plan revision {args.plan_revision}; "
+                "`litharness plans` lists them",
+                file=sys.stderr,
+            )
+            return EXIT_FAULT
+        undoing = next(
+            (
+                stored
+                for stored in store.plan_proposals(book_id, branch_id)
+                if stored.status is PlanProposalStatus.APPLIED
+                and stored.resulting_plan_revision_id == current.plan_revision_id
+            ),
+            None,
+        )
+        if undoing is None:
+            # The head is the imported root, so the lineage is one revision long and the
+            # only reachable target is the head itself. Saying that beats letting the
+            # operator meet a proposal error about a baseline they never chose.
+            print(
+                "litharness: the plan head is the one the book was imported with; "
+                "nothing precedes it to restore",
+                file=sys.stderr,
+            )
+            return EXIT_FAULT
+        proposal = rollback_proposal(
+            current, target, rollback_of=undoing.proposal.proposal_id
+        )
+        application = accept_plan_proposal(
+            store,
+            proposal,
+            project_id=args.project,
+            created_at=stamp,
+            actor=args.holder,
+        )
+        # A constraint minted from a directive can be rolled back out from under it: the
+        # directive stays APPLIED and goes on citing a plan item that no longer exists.
+        # That is recoverable — the direction is still on record and can be resubmitted —
+        # but only if the operator is told, rather than finding out when the book drafts
+        # without the constraint they thought was in force.
+        restored_ids = {item.logical_id for item in application.after.items}
+        orphaned = [
+            directive.directive_id
+            for directive in store.directives_by_status(DirectiveStatus.APPLIED)
+            if directive.book_id in {None, book_id}
+            and directive.branch_id in {None, branch_id}
+            and set(directive.produced_constraint_ids) - restored_ids
+        ]
+    finally:
+        store.close()
+
+    tally = Counter(edit.action.value for edit in application.applied_edits)
+    moved_locked = sum(
+        1
+        for edit in application.applied_edits
+        if (edit.before is not None and edit.before.locked)
+        or (edit.after is not None and edit.after.locked)
+    )
+    print(
+        f"restored {target.plan_revision_id[:12]} as new plan revision "
+        f"{application.after.plan_revision_id[:12]}"
+    )
+    print(
+        f"  {len(application.applied_edits)} item(s) changed: "
+        + ", ".join(f"{count} {action}" for action, count in sorted(tally.items()))
+    )
+    print("  the plan epoch advanced; the next tick replans the still-draftable beats")
+    if moved_locked:
+        print(
+            f"  {moved_locked} locked item(s) moved — a rollback is the only proposal "
+            "permitted to, which is what lets it undo a director's constraint"
+        )
+    if orphaned:
+        print(
+            f"  {len(orphaned)} applied directive(s) now cite a plan item the restored plan "
+            f"does not have: {', '.join(orphaned)}"
+        )
+        print("    the direction is still on record; resubmit it if it should still hold")
+        return EXIT_ATTENTION
+    return EXIT_OK
+
+
 def cmd_pause(args: argparse.Namespace) -> int:
     now = _now()
     store = _store(args)
@@ -1417,6 +1588,23 @@ def build_parser() -> argparse.ArgumentParser:
     craft = sub.add_parser("craft", help="advisory craft measurements, and their limits")
     craft.add_argument("--metric")
     craft.set_defaults(func=cmd_craft)
+
+    plans = sub.add_parser(
+        "plans", help="the plan's lineage, newest first, and what produced each revision"
+    )
+    plans.add_argument("--book")
+    plans.add_argument("--branch")
+    plans.set_defaults(func=cmd_plans)
+
+    revert_plan = sub.add_parser(
+        "revert-plan", help="restore an earlier plan revision as the new plan head"
+    )
+    revert_plan.add_argument(
+        "plan_revision", help="plan revision id to restore; `litharness plans` lists them"
+    )
+    revert_plan.add_argument("--book")
+    revert_plan.add_argument("--branch")
+    revert_plan.set_defaults(func=cmd_revert_plan)
 
     replan = sub.add_parser(
         "replan", help="reissue still-draftable beats under a fresh plan epoch"
