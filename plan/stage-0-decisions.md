@@ -1,6 +1,6 @@
 # Stage 0 decisions
 
-**Status:** Stages 0-2 met against their §17 exit clauses — **685 passing tests (+6 opt-in live), ruff clean, mypy
+**Status:** Stages 0-2 met against their §17 exit clauses — **685 passing tests (+8 opt-in live), ruff clean, mypy
 strict clean.** Slice 1 is the model-free manuscript spine; slice 2 the Conductor skeleton
 (tick, instance lease, job selection, digest, outbox dispatch, crash recovery); slice 3 the
 four provider adapters with their conformance suite and the billing guard; slice 4 **the
@@ -1452,3 +1452,33 @@ long books possible, it passed every test in the suite, and the only reason it s
 that a 24-scene book was actually run and its state actually looked at. `litharness state`
 existed for two commits at that point; the defect is exactly what it was built to make
 visible, and it took one glance at a printed column.
+
+## 45. Asking for a length half-works, and the half is the finding
+
+§44's first taxonomy entry was that scenes are an order of magnitude too short — 160 words
+each against a book that wants 50-80k. Nothing had ever told a generator how long a scene is,
+so the obvious fix was to say so. Measured on two local models, drafting the same beat with
+and without the instruction:
+
+    llama3.2:3b   none -> 235 words | 900 -> 232 words   (ignored entirely)
+    phi4:14b      none -> 289 words | 900 -> 426 words   (+47%, under half the target)
+
+**Worth keeping, and it does not close the gap.** It is free, it moves the model that can
+follow it, and it makes the ask explicit rather than implicit. It also does nothing at all for
+a 3B model, and neither model reached the target. So **scale is a property of the generator**,
+and an operator choosing a scene count should divide by what their model actually writes rather
+than by what it was asked for: `--scenes 40 --target-words 900` is 36,000 words of intent and
+about 17,000 of phi4 or 9,000 of llama3.2.
+
+**It is a target and never a gate**, which is §1a.1 applied in the direction that is easy to
+get wrong. A length floor raised to 900 words would pass a scene that rambles for 900 and
+refuse a taut one, measuring nothing about whether the scene lands — and it would refuse
+prose for obeying an instruction the model could not follow. `gate_draft` still checks only
+stubs and runaways, and the live test asserts the target never provokes a refusal, because a
+target that fights the gate is worse than no target.
+
+**It lives in `DraftPolicy` so the decision record cites it.** An input that shapes every
+piece of prose in the book and appears in no policy record is precisely the invisible input
+`policy_config_digest` exists to catch — and `--target-words` is the only part of that policy
+the CLI exposes, because an operator who could lower `min_chars` to make a run go green would
+have turned the one deterministic check on drafts into a formality.

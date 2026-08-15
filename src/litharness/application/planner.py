@@ -212,6 +212,7 @@ def render_prompt(
     book_title: str | None,
     packet: ContextPacket,
     status_example: str | None = None,
+    target_words: int = 0,
 ) -> tuple[str, str]:
     """(system, prompt) for one beat, grounded in an assembled context packet.
 
@@ -450,6 +451,7 @@ def make_plan_selector(
                         store.state_records(progress.book_id, progress.branch_id),
                         at=beat.story_order_key,
                     ),
+                    target_words=(policy or DraftPolicy()).target_words,
                 )
                 payload = {
                     "revision_id": head.revision_id,

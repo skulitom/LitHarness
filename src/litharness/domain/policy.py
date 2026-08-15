@@ -327,6 +327,9 @@ def policy_digest(policy: DraftPolicy) -> str:
             "min_chars": policy.min_chars,
             "max_chars": policy.max_chars,
             "allow_overwrite": policy.allow_overwrite,
+            # A target rather than a limit, and recorded for exactly that reason: it shapes
+            # every scene the book contains and no gate would ever mention it.
+            "target_words": policy.target_words,
         }
     )
 

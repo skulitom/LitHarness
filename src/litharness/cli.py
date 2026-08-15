@@ -75,6 +75,7 @@ from litharness.domain import state as state_mod
 from litharness.domain.beats import SIX_BEAT, arc_template
 from litharness.domain.budget import BudgetPolicy
 from litharness.domain.directives import Directive, DirectiveKind, DirectiveStatus, directive_id_for
+from litharness.domain.draft import DraftPolicy
 from litharness.domain.events import Event, EventType
 from litharness.domain.exceptions import ExceptionStatus
 from litharness.domain.findings import Status as finding_status
@@ -116,6 +117,21 @@ def _env_flag(name: str) -> bool:
 
 def _store(args: argparse.Namespace) -> SqliteStore:
     return SqliteStore.open(args.database)
+
+
+def _draft_policy(args: argparse.Namespace) -> DraftPolicy:
+    """Generation policy from the command line, defaulting to `DraftPolicy`'s.
+
+    Only the target is exposed. The shape bounds are gates, and §1a.1's warning applies to
+    both directions — an operator who could lower `min_chars` to make a run go green would
+    have turned the one deterministic check on drafts into a formality.
+    """
+    default = DraftPolicy()
+    return DraftPolicy(
+        target_words=(
+            args.target_words if args.target_words is not None else default.target_words
+        )
+    )
 
 
 def _budget(args: argparse.Namespace) -> BudgetPolicy:
@@ -186,7 +202,7 @@ def _conductor(store: SqliteStore, args: argparse.Namespace) -> Conductor:
         # §4.1's "work selection is a policy over the book's state", replacing the FIFO
         # placeholder. It drains the queue first, so retries and hand-enqueued work still
         # outrank planning; only when nothing is claimable does it materialise a beat.
-        select=make_plan_selector(project_id=args.project),
+        select=make_plan_selector(project_id=args.project, policy=_draft_policy(args)),
         handlers={
             DIRECTIVE_PLAN: make_directive_plan_handler(store, args.project, actor=args.holder),
             NARRATIVE_PLAN: make_narrative_plan_handler(
@@ -1659,6 +1675,14 @@ def build_parser() -> argparse.ArgumentParser:
         type=Path,
         default=os.environ.get("LITHARNESS_CONTINUITY_EVALUATOR"),
         help="ContinuityEvaluation executable; also read from LITHARNESS_CONTINUITY_EVALUATOR",
+    )
+    parser.add_argument(
+        "--target-words",
+        type=int,
+        default=None,
+        help="how long a scene to ask the generator for. A target, not a gate: nothing "
+        "refuses a scene for missing it, and it is recorded in every decision's policy "
+        "digest because it shapes every scene in the book",
     )
     parser.add_argument(
         "--prefer",

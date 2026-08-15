@@ -40,7 +40,7 @@ from litharness.domain.beats import (
     beats_for,
 )
 from litharness.domain.context import assemble
-from litharness.domain.draft import DraftPolicy, is_draftable
+from litharness.domain.draft import DraftPolicy, gate_draft, is_draftable
 from litharness.domain.extraction import (
     extract_state,
     render_status_line,
@@ -1265,3 +1265,61 @@ def test_story_order_keys_sort_as_story_order_past_nine_scenes(store: SqliteStor
     assert [beat.story_order_key for beat in beats_for(six, template_for(six))] == [
         f"s{n}" for n in range(1, 7)
     ], "the six-scene convention both fixtures author is unchanged"
+
+
+@live
+@pytest.mark.parametrize("model", ["llama3.2:latest", "phi4:latest"])
+def test_asking_for_a_length_moves_a_capable_model_and_not_a_small_one(
+    store: SqliteStore, model
+) -> None:
+    """**Measured, because the suite cannot see prompt content and the answer is partial.**
+
+    The first Book Zero run wrote a mean of 160 words per scene against §17 Stage 3's
+    50-80k-word book, and nothing had ever told a generator how long a scene is. Adding the
+    target was the obvious fix. It half-works, and the half matters:
+
+        llama3.2:3b   none -> 235 words | 900 -> 232 words   (ignored)
+        phi4:14b      none -> 289 words | 900 -> 426 words   (+47%, under half the target)
+
+    So the instruction is worth keeping — free, and it moves the model that can follow it —
+    and it does **not** close the gap. Scale is a function of the generator, and an operator
+    choosing a scene count should divide by what their model actually writes rather than by
+    what it was asked for. This test asserts only that the target does not make scenes
+    *shorter*, because that is the property that must hold for every model; the numbers above
+    are a record of one measurement rather than a threshold anything should gate on.
+    """
+    from litharness.providers.base import CompletionRequest
+    from litharness.providers.ollama import OllamaProvider
+
+    provider = OllamaProvider(model=model)
+    if not provider.health():
+        pytest.skip(f"{model} is not installed locally")
+
+    book_id, branch_id = _book_zero(store)
+    head = store.head(book_id, branch_id)
+    assert head is not None
+    beat = beats_for(head, SIX_BEAT)[0]
+    packet = packet_for(store, head, beat)
+    example = system_voice_example(
+        store.state_records(book_id, branch_id), at=beat.story_order_key
+    )
+
+    lengths = {}
+    for target in (0, DraftPolicy().target_words):
+        system, prompt = render_prompt(
+            beat, book_title=None, packet=packet, status_example=example, target_words=target
+        )
+        text = provider.complete(
+            CompletionRequest(prompt=prompt, system=system, profile="default")
+        ).text
+        lengths[target] = len(text.split())
+        assert gate_draft(head, beat.logical_id, text).accepted, (
+            f"{model} at target={target} wrote {len(text)} chars, which the shape gate "
+            "refused — a target that provokes a refusal is worse than no target"
+        )
+
+    asked = DraftPolicy().target_words
+    assert lengths[asked] >= lengths[0] * 0.8, (
+        f"{model} wrote {lengths[asked]} words when asked for {asked} and {lengths[0]} when "
+        "asked for nothing; the instruction must not make scenes shorter"
+    )

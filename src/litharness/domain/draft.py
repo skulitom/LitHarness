@@ -45,6 +45,25 @@ class DraftPolicy:
     max_chars: int = 8000
     #: See the module docstring. Do not flip this to make a caller's life easier.
     allow_overwrite: bool = False
+    #: How long a scene the generator is **asked** for. A target, never a limit: nothing here
+    #: checks it, and `gate_draft` keeps refusing only stubs and runaways.
+    #:
+    #: **It lives in the policy so the decision record cites it.** Measured on the first Book
+    #: Zero run, a 3B model wrote a mean of 160 words per scene — 24 scenes came to under
+    #: 4,000 words against §17 Stage 3's 50-80k — because nothing ever told it how long a
+    #: scene is. An input that shapes every piece of prose in the book and appears in no
+    #: policy record is exactly the invisible input `policy_config_digest` exists to catch.
+    #:
+    #: §1a.1 is the reason it is not a gate. "Beware the metric that is easy *because* it is
+    #: shallow": a length floor raised to 900 words would make a scene that rambles for 900
+    #: words pass and a taut one fail, which measures nothing about whether the scene lands.
+    #: Asking is a generation instruction; refusing would be a quality claim this project has
+    #: no evidence for.
+    #:
+    #: The default sits well under `max_chars`: at roughly six characters per word, 900 words
+    #: is ~5,400 characters against a 8,000-character ceiling, so a model that overshoots by a
+    #: third is still accepted rather than refused for obeying the instruction.
+    target_words: int = 900
 
 
 @dataclass(frozen=True, slots=True)

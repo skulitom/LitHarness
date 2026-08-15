@@ -248,6 +248,11 @@ Before these flags the only lever was `LITHARNESS_ENV=test`, which filters billi
 i.e. configuring a production run with the flag whose purpose is proving that *test* runs
 cannot bill. That flag keeps that job and nothing else.
 
+`--target-words` asks the generator for a scene of a given length. A target, never a gate:
+nothing refuses a scene for missing it, and it is recorded in every decision's policy digest
+because it shapes every scene in the book. Measured, it moves a capable model about halfway
+and a small one not at all — so pick a scene count from what your model actually writes.
+
 Budget ceilings apply to every generating call and are checked **before** it is made:
 `--max-tokens-per-day`, `--max-invocations-per-day` (the one tokens cannot express — see
 §15's per-call harness tax), `--max-tokens-per-operation`, `--max-cost-usd-per-day`. Pass
