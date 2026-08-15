@@ -202,7 +202,15 @@ def _conductor(store: SqliteStore, args: argparse.Namespace) -> Conductor:
         # §4.1's "work selection is a policy over the book's state", replacing the FIFO
         # placeholder. It drains the queue first, so retries and hand-enqueued work still
         # outrank planning; only when nothing is claimable does it materialise a beat.
-        select=make_plan_selector(project_id=args.project, policy=_draft_policy(args)),
+        select=make_plan_selector(
+            project_id=args.project,
+            policy=_draft_policy(args),
+            **(
+                {"token_budget": args.context_budget}
+                if args.context_budget is not None
+                else {}
+            ),
+        ),
         handlers={
             DIRECTIVE_PLAN: make_directive_plan_handler(store, args.project, actor=args.holder),
             NARRATIVE_PLAN: make_narrative_plan_handler(
@@ -1675,6 +1683,14 @@ def build_parser() -> argparse.ArgumentParser:
         type=Path,
         default=os.environ.get("LITHARNESS_CONTINUITY_EVALUATOR"),
         help="ContinuityEvaluation executable; also read from LITHARNESS_CONTINUITY_EVALUATOR",
+    )
+    parser.add_argument(
+        "--context-budget",
+        type=int,
+        default=None,
+        help="tokens of context a scene is drafted against. Raise it with --target-words: "
+        "measured, a 900-word scene binds the default 6000 at scene 5 and leaves the packet "
+        "holding three prior scenes",
     )
     parser.add_argument(
         "--target-words",

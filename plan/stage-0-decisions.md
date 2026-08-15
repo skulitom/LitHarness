@@ -1,6 +1,6 @@
 # Stage 0 decisions
 
-**Status:** Stages 0-2 met against their §17 exit clauses — **688 passing tests (+8 opt-in live), ruff clean, mypy
+**Status:** Stages 0-2 met against their §17 exit clauses — **690 passing tests (+8 opt-in live), ruff clean, mypy
 strict clean.** Slice 1 is the model-free manuscript spine; slice 2 the Conductor skeleton
 (tick, instance lease, job selection, digest, outbox dispatch, crash recovery); slice 3 the
 four provider adapters with their conformance suite and the billing guard; slice 4 **the
@@ -1522,3 +1522,40 @@ now, it arrives through `import --state` and `new --state` with no new verb, and
 state` already shows it — milestones marked `proposed` at their positions, beside the canon the
 book has actually reached. Where the plan says the book should be and where it is, in one
 column, which is the §4.3 answer while §8.4's progression rules live in a sibling.
+
+## 47. The two numbers an operator picks are coupled, and nothing said so
+
+§17 Stage 1 recorded that the context packet drops the oldest prose rather than the least
+relevant, and that "on six-scene fixtures the budget never binds, so this limit is currently
+invisible; it will not be at Book Zero length." Measured on the real 24-scene run: it did not
+bind — 3,309 tokens of 4,500 usable at scene 15, growing about 220 a scene, on track for
+scene 24.
+
+Then §45 added `--target-words`, and the two interact. Measured directly:
+
+    words/scene   budget binds at   prior scenes the packet holds
+            160         scene 24                              22
+            400         scene 10                               8
+            900          scene 5                               3
+           1500          scene 4                               2
+
+**900 is the shipped default target.** So asking for scenes of a publishable length moves the
+binding point from scene 24 to scene 5, and a 40-scene book would draft its ending knowing
+three scenes of its own history. Neither number is wrong; they were simply chosen
+independently, one of them by me one commit earlier, and nothing connected them.
+
+Two things follow, and neither is a fix for the packing itself — §12 gives relevance scoring
+to LongRangeContext and this project has no business inventing it.
+
+- **`--context-budget` exists.** `make_plan_selector` has always taken `token_budget`; the CLI
+  never passed it, so the one number that has to move with scene length was the one an
+  operator could not set.
+- **A book written blind says so.** `context_omitted` has always been on the job payload,
+  where nothing reads it, so a book could reach mid-draft with every scene written against
+  three scenes of history while `status` reported a clean system. The planner now bumps a
+  `context_omitted` digest counter at the moment it drops something, which `status` already
+  prints — §4.3's daily digest, doing the job it exists for.
+
+**The counter fires on the condition, not on the book.** It stays at zero for every six-scene
+fixture, which is exactly why this limit went unnoticed for so long: nothing this project
+routinely runs is long enough to hit it.

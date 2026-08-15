@@ -457,6 +457,20 @@ def make_plan_selector(
                     # misconfiguration. Skipping leaves `plan_progress` reporting the book
                     # undrafted, which is true.
                     break
+                if packet.omitted:
+                    # **A book being written blind should not be quiet about it.** The
+                    # omissions have always been recorded on the job payload, where nothing
+                    # reads them; the daily digest is §4.3's operator report and `status`
+                    # already prints it. Measured: at the 900-word target this binds at
+                    # scene 5 and the packet holds three prior scenes, so by mid-book a scene
+                    # is drafted knowing almost nothing of the book before it — and it drops
+                    # the *oldest* prose rather than the least relevant, with no way to know
+                    # the difference (§12 gives relevance to LongRangeContext).
+                    store.bump_digest(
+                        datetime.fromtimestamp(now, tz=UTC).date().isoformat(),
+                        "context_omitted",
+                        len(packet.omitted),
+                    )
                 system, prompt = render_prompt(
                     beat,
                     book_title=_book_title(head),

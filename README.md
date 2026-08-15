@@ -248,6 +248,12 @@ Before these flags the only lever was `LITHARNESS_ENV=test`, which filters billi
 i.e. configuring a production run with the flag whose purpose is proving that *test* runs
 cannot bill. That flag keeps that job and nothing else.
 
+`--context-budget` sets how much context a scene is drafted against, and **it moves with
+`--target-words`**: measured, a 900-word scene binds the 6,000-token default at scene 5 and
+leaves the packet holding three prior scenes, against scene 24 at 160-word scenes. When the
+packet drops prose it bumps a `context_omitted` counter in the daily digest, so a book being
+written blind shows up in `status` rather than only on a job payload.
+
 `--target-words` asks the generator for a scene of a given length. A target, never a gate:
 nothing refuses a scene for missing it, and it is recorded in every decision's policy digest
 because it shapes every scene in the book. Measured, it moves a capable model about halfway

@@ -17,6 +17,7 @@ from __future__ import annotations
 import json
 import os
 from dataclasses import replace
+from datetime import UTC, datetime
 
 import litharness_contracts as lc
 import pytest
@@ -1402,3 +1403,47 @@ def test_a_book_with_no_schedule_asks_for_nothing_extra(store: SqliteStore) -> N
         progression=progression_target(records, at=beat.story_order_key),
     )
     assert "reaching this later on" not in system
+
+
+def test_a_book_written_blind_says_so_in_the_digest(store: SqliteStore) -> None:
+    """**The omissions were recorded where nothing reads them.**
+
+    `context_omitted` has always been on the job payload — the honest half of a packet that
+    packs by priority rather than relevance — and no operator surface showed it. So a book
+    could reach mid-draft with every scene written knowing three scenes of its own history,
+    and `status` would report a clean system.
+
+    Measured: at the 900-word target the 6,000-token default binds at **scene 5** and holds
+    three prior scenes, against scene 24 at the 160 words a 3B model actually writes. The two
+    numbers this project asks an operator to choose — scene length and context budget — are
+    coupled, and nothing said so.
+    """
+    book_id, branch_id = _book_zero(store)
+    head = store.head(book_id, branch_id)
+    assert head is not None
+    prose = ("Rook counted the coins by the gate. " * 40).strip()
+    # One child revision, not four: each `replacing` parents on the revision it was called
+    # against, so a chain built from `head` produces siblings rather than a lineage.
+    filled = head.replacing(
+        [head.node(f"scene-{index}").with_content(prose) for index in range(1, 5)]
+    )
+    store.commit_revision(filled, created_at="2026-08-15T00:01:00Z")
+
+    # A budget too small to hold four scenes of prose: the packet drops the oldest.
+    make_plan_selector(project_id=PROJECT_ID, token_budget=2200)(
+        store, "worker-a", START, 300.0
+    )
+
+    day = datetime.fromtimestamp(START, tz=UTC).date().isoformat()
+    assert store.digest(day).get("context_omitted", 0) > 0
+
+
+def test_a_packet_that_fits_says_nothing(store: SqliteStore) -> None:
+    """The counter must mean "this book is being written blind", so it cannot fire on a book
+    whose context fits — which is every six-scene fixture, and the reason this limit has been
+    invisible since it was written."""
+    _fixture(store, "litrpg")
+    make_plan_selector(project_id=PROJECT_ID)(store, "worker-a", START, 300.0)
+
+    day = datetime.fromtimestamp(START, tz=UTC).date().isoformat()
+    assert store.digest(day).get("context_omitted", 0) == 0
