@@ -125,6 +125,49 @@ def render_status_line(subject: str, value: Mapping[str, object]) -> str:
     )
 
 
+def progression_target(
+    records: Sequence[lc.StateRecord], *, at: str | None = None
+) -> str | None:
+    """The next milestone a progression schedule asks this book to reach, or None.
+
+    **The defect this addresses is that the ledger never moves.** Measured over a 24-scene
+    Book Zero and a six-scene one before it: every scene reported the seed values unchanged,
+    so the book had no economy, no progression and no stakes. Nothing objected, because each
+    scene agreed with canon at its own position and the contradiction detector asks only
+    that. §17 Stage 3 names a "progression schedule" as Narrative Planner v0 work; this reads
+    one.
+
+    **A schedule is a state record that is not canon**, which is the shape the system already
+    has and the reason this needs no new storage, no contract field and no prose to parse. A
+    milestone is a claim about what the state *should become* at a future story position —
+    `PROPOSED` says exactly that, `is_canon` excludes it, and so the context packet does not
+    hand it to a scene as an established fact and `detect_contradictions` does not weigh it
+    against what the prose says. It informs generation and contaminates nothing.
+
+    Returns the **nearest milestone at or after** `at`, so a book aims at its next target
+    rather than its last one. Never interpolates between milestones: a level curve's shape is
+    a modelling choice the author made when they wrote the schedule, and inventing points on
+    it here would be this module deriving the one kind of thing it is most careful not to.
+    """
+    milestones = [
+        record
+        for record in records
+        if record.predicate == STATUS_PREDICATE
+        and not state_mod.is_canon(record)
+        and isinstance(record.value, Mapping)
+        and state_mod.order_key_of(record) is not None
+    ]
+    ahead = [
+        record
+        for record in milestones
+        if at is None or (state_mod.order_key_of(record) or "") >= at
+    ]
+    if not ahead:
+        return None
+    target = min(ahead, key=lambda record: state_mod.order_key_of(record) or "")
+    return render_status_line(target.subject, target.value)
+
+
 def speaks_system_voice(records: Sequence[lc.StateRecord]) -> bool:
     """Whether this book states its game state on the page.
 

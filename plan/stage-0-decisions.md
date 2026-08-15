@@ -1,6 +1,6 @@
 # Stage 0 decisions
 
-**Status:** Stages 0-2 met against their §17 exit clauses — **685 passing tests (+8 opt-in live), ruff clean, mypy
+**Status:** Stages 0-2 met against their §17 exit clauses — **688 passing tests (+8 opt-in live), ruff clean, mypy
 strict clean.** Slice 1 is the model-free manuscript spine; slice 2 the Conductor skeleton
 (tick, instance lease, job selection, digest, outbox dispatch, crash recovery); slice 3 the
 four provider adapters with their conformance suite and the billing guard; slice 4 **the
@@ -1482,3 +1482,43 @@ piece of prose in the book and appears in no policy record is precisely the invi
 `policy_config_digest` exists to catch — and `--target-words` is the only part of that policy
 the CLI exposes, because an operator who could lower `min_chars` to make a run go green would
 have turned the one deterministic check on drafts into a formality.
+
+## 46. A progression schedule is a record that is not canon — and §44 over-generalised
+
+§44's second taxonomy entry read: the ledger never moves, "seen at six scenes and at
+twenty-four, so it is a property rather than a fluke". **Both runs were llama3.2.** Measured
+against a second model, three samples per condition:
+
+    llama3.2:3b   no schedule 0/3 moved | with schedule 0/3 moved   gold 50, 50, 50
+    phi4:14b      no schedule 3/3 moved | with schedule 3/3 moved   gold 0, 0, 0
+
+So the frozen ledger is **a property of that model**, not of this system. Two runs of one
+model is one observation, and calling it a property because it happened twice is the same
+error §19.1 keeps recording in a new costume: a number this project reported about itself,
+generalised past its evidence.
+
+**And phi4's failure is the opposite one, which is more useful than a clean result.** It moves
+the ledger every time — straight from 50 gold to 0 in scene one, past the schedule's own s8
+milestone of 5. Not stasis but collapse: a book whose entire economy resolves in its first
+scene. So the two ends of the model range fail progression in opposite directions, and neither
+is what a schedule asks for.
+
+**The schedule instruction shows no measurable effect on either.** llama3.2 ignores it; phi4
+was already moving, so nothing can be attributed to it. Kept anyway, and the reasons are worth
+separating from the measurement: it is free, it is what §17 Stage 3 names, and n=3 on two small
+local models is weak evidence of absence — the models that would write a real Book Zero are not
+these. What it is **not** is demonstrated to work, and nothing here should say otherwise.
+
+**The representation is the deliverable, and it is independent of any of that.** A milestone is
+a claim about what the state *should become* at a future story position, and `PROPOSED` says
+exactly that — so a schedule needs no new storage, no contract field and no prose to parse.
+`is_canon` excludes it, so the context packet does not hand it to a scene as an established
+fact and `detect_contradictions` does not weigh it against what the prose says: it informs
+generation and contaminates nothing.
+
+That matters because §19's Genre clause is "progression follows the planned schedule within
+tolerance", and **a schedule that cannot be expressed cannot be checked**. It can be expressed
+now, it arrives through `import --state` and `new --state` with no new verb, and `litharness
+state` already shows it — milestones marked `proposed` at their positions, beside the canon the
+book has actually reached. Where the plan says the book should be and where it is, in one
+column, which is the §4.3 answer while §8.4's progression rules live in a sibling.

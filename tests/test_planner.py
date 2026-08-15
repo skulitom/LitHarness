@@ -43,6 +43,7 @@ from litharness.domain.context import assemble
 from litharness.domain.draft import DraftPolicy, gate_draft, is_draftable
 from litharness.domain.extraction import (
     extract_state,
+    progression_target,
     render_status_line,
     speaks_system_voice,
     system_voice_example,
@@ -1323,3 +1324,81 @@ def test_asking_for_a_length_moves_a_capable_model_and_not_a_small_one(
         f"{model} wrote {lengths[asked]} words when asked for {asked} and {lengths[0]} when "
         "asked for nothing; the instruction must not make scenes shorter"
     )
+
+
+def test_a_schedule_is_a_record_that_is_not_canon(store: SqliteStore) -> None:
+    """**The shape the system already had.** A milestone is a claim about what the state
+    *should become* at a future position, which `PROPOSED` says exactly — so it needs no new
+    storage, no contract field and no prose to parse.
+
+    And because `is_canon` excludes it, the context packet does not hand it to a scene as an
+    established fact and `detect_contradictions` does not weigh it against what the prose
+    says. It informs generation and contaminates nothing.
+    """
+    book_id, branch_id = _book_zero(store)
+    goal = lc.StateRecord(
+        record_id="rec-goal",
+        kind=lc.StateRecordKind.ASSERTION,
+        subject="rook",
+        predicate="status_snapshot",
+        value={"level": 5, "hp": 44, "hp_max": 44, "mp": 12, "mp_max": 12, "gold": 5},
+        story_position=lc.StoryPosition(order_key="s6"),
+        authority=lc.StateAuthority.PROPOSED,
+    )
+    store.record_state_records(book_id, branch_id, [goal], created_at="2026-08-15T00:00:00Z")
+    records = store.state_records(book_id, branch_id)
+
+    assert progression_target(records, at="s1") == (
+        "[STATUS] rook — Level 5 | HP 44/44 | MP 12/12 | Gold 5"
+    )
+    # The seed sheet is canon and is what the scene is shown as *current*; the milestone is
+    # not, and is what it is shown as *coming*. Neither is the other.
+    assert "Gold 45" in (system_voice_example(records, at="s1") or ""), "the seed"
+    assert not speaks_system_voice([goal]), "a proposal does not make a book speak"
+
+
+def test_a_schedule_aims_at_the_next_milestone_not_the_last(store: SqliteStore) -> None:
+    """A book aims at where it is going. Never interpolated between milestones either: a
+    level curve's shape is a modelling choice the author made when they wrote the schedule,
+    and inventing points on it would be deriving the one thing extraction refuses to."""
+    book_id, branch_id = _book_zero(store)
+    milestones = [
+        lc.StateRecord(
+            record_id=f"rec-goal-{key}",
+            kind=lc.StateRecordKind.ASSERTION,
+            subject="rook",
+            predicate="status_snapshot",
+            value={"level": level, "hp": 20, "hp_max": 20, "mp": 5, "mp_max": 5, "gold": 50},
+            story_position=lc.StoryPosition(order_key=key),
+            authority=lc.StateAuthority.PROPOSED,
+        )
+        for key, level in (("s2", 2), ("s5", 4))
+    ]
+    store.record_state_records(
+        book_id, branch_id, milestones, created_at="2026-08-15T00:00:00Z"
+    )
+    records = store.state_records(book_id, branch_id)
+
+    assert "Level 2" in (progression_target(records, at="s1") or "")
+    assert "Level 4" in (progression_target(records, at="s3") or "")
+    assert progression_target(records, at="s6") is None, "nothing ahead is nothing to aim at"
+
+
+def test_a_book_with_no_schedule_asks_for_nothing_extra(store: SqliteStore) -> None:
+    """Opt-in by authoring one. A book without a schedule gets the instruction it got
+    before — which, measured, means its ledger is whatever its model does unprompted."""
+    book_id, branch_id = _book_zero(store)
+    records = store.state_records(book_id, branch_id)
+
+    assert progression_target(records) is None
+    head = store.head(book_id, branch_id)
+    assert head is not None
+    beat = beats_for(head, SIX_BEAT)[0]
+    system, _ = render_prompt(
+        beat,
+        book_title=None,
+        packet=packet_for(store, head, beat),
+        status_example=system_voice_example(records, at=beat.story_order_key),
+        progression=progression_target(records, at=beat.story_order_key),
+    )
+    assert "reaching this later on" not in system

@@ -75,7 +75,7 @@ from litharness.domain.context import (
 from litharness.domain.directives import Directive, DirectiveStatus
 from litharness.domain.draft import DraftPolicy, is_draftable
 from litharness.domain.events import payload_digest
-from litharness.domain.extraction import system_voice_example
+from litharness.domain.extraction import progression_target, system_voice_example
 from litharness.domain.jobs import Job, input_digest_for
 from litharness.domain.plans import premise_of
 from litharness.domain.revision import Revision
@@ -213,6 +213,7 @@ def render_prompt(
     packet: ContextPacket,
     status_example: str | None = None,
     target_words: int = 0,
+    progression: str | None = None,
 ) -> tuple[str, str]:
     """(system, prompt) for one beat, grounded in an assembled context packet.
 
@@ -258,6 +259,19 @@ def render_prompt(
             "unchanged unless this scene changes them, and write the numbers the scene "
             "leaves true."
         )
+        if progression:
+            # **The instruction above defaults to stasis, and a model with no reason to
+            # change anything keeps everything.** Measured over 24 scenes: the ledger never
+            # moved once. A milestone gives the scene somewhere to be going, which is the
+            # thing "unless this scene changes them" silently assumed the model would decide
+            # for itself. "Toward" rather than "to": jumping to the milestone would collapse
+            # the progression the schedule exists to spread out.
+            system += (
+                " The book's plan has the state reaching this later on:\n"
+                f"{progression}\n"
+                "Move it toward that in this scene where the events warrant it; do not jump "
+                "to it, and do not move it for no reason on the page."
+            )
     title = f"{book_title}: " if book_title else ""
     prompt = (
         f"{packet.render()}\n\n"
@@ -452,6 +466,10 @@ def make_plan_selector(
                         at=beat.story_order_key,
                     ),
                     target_words=(policy or DraftPolicy()).target_words,
+                    progression=progression_target(
+                        store.state_records(progress.book_id, progress.branch_id),
+                        at=beat.story_order_key,
+                    ),
                 )
                 payload = {
                     "revision_id": head.revision_id,
