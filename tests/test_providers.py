@@ -20,6 +20,7 @@ from pathlib import Path
 
 import pytest
 
+from litharness.providers import build_default_registry
 from litharness.providers.base import (
     BlockedProviderError,
     CompletionRequest,
@@ -556,6 +557,96 @@ def registry(*providers, order=None, environ=None, cheap_order=()) -> ProviderRe
         cheap_order=cheap_order,
         environ=environ if environ is not None else {},
     )
+
+
+def test_an_operator_can_refuse_to_bill_without_pretending_to_be_a_test() -> None:
+    """**Running a book on local models had exactly one lever, and it was the test guard.**
+
+    `LITHARNESS_ENV=test` filters billing providers, so it is what an operator reached for to
+    keep a run off a paid CLI — configuring production with a flag whose entire purpose is
+    proving that *test* runs cannot bill. `refuse_billing` says the same thing as a
+    deployment choice, and the two stay independent on purpose: Stage 0's exit criterion is
+    that a test run **provably** cannot reach a paid provider, and a guarantee that could be
+    switched off by configuration would not be one.
+    """
+    reg = registry(
+        StubProvider("claude_code", bills=True),
+        StubProvider("ollama", bills=False),
+        order=["claude_code", "ollama"],
+    )
+    assert reg.resolve()[0].name == "claude_code"
+
+    reg.refuse_billing = True
+
+    assert reg.resolve()[0].name == "ollama"
+    assert [p.name for p in reg.candidates()] == ["ollama"], "filtered, not deprioritised"
+
+
+def test_the_test_guard_holds_whatever_the_operator_configured() -> None:
+    """The guard is not the flag. `LITHARNESS_ENV=test` filters billing providers with
+    `refuse_billing` left off, because §5 rule 2 does not depend on anyone remembering."""
+    reg = registry(
+        StubProvider("claude_code", bills=True),
+        StubProvider("ollama", bills=False),
+        order=["claude_code", "ollama"],
+        environ={"LITHARNESS_ENV": "test"},
+    )
+
+    assert reg.refuse_billing is False
+    assert [p.name for p in reg.candidates()] == ["ollama"]
+
+
+def test_preferring_a_provider_moves_it_first_and_keeps_the_chain() -> None:
+    """Preference, not exclusivity: a preferred provider that is dead still falls back, and
+    §5 rule 4 makes that fallback an event rather than a silent switch. An operator who wants
+    local *and* no surprises pairs this with `refuse_billing`."""
+    reg = build_default_registry(prefer="ollama")
+
+    assert list(reg.order) == ["ollama", "claude_code", "codex"], "the rest keep order"
+    assert next(iter(reg.cheap_order)) == "ollama"
+
+
+def test_an_outage_is_an_outage_and_not_a_writer_who_cannot_write(monkeypatch) -> None:
+    """**Measured when the local Ollama daemon stopped mid-session, and it destroyed a book.**
+
+    The fake used to backstop generation. A backstop that cannot clear the gate it feeds is
+    not one: its answer is ~80 characters against a 200-char floor, so with every real
+    provider down, six beats each generated canned text three times, failed the shape gate
+    three times, spent their attempt budgets and **poisoned** — five exceptions and six
+    unrevivable job ids, for an outage.
+
+    The outage has to surface as an outage. `ProviderUnavailable` is what the Conductor
+    already handles correctly: the attempt is given back and the unit requeues, so the outage
+    costs time rather than the work. §19.1's rule, fourth instance — and this one hid best,
+    because nothing looked refused. A healthy provider answered; it simply could not write.
+    """
+    monkeypatch.delenv("LITHARNESS_FAKE_PAD_CHARS", raising=False)
+    assert "fake" not in build_default_registry().order
+
+    reg = ProviderRegistry(
+        providers=[StubProvider("ollama", bills=False, healthy=False), FakeProvider()],
+        order=list(build_default_registry().order),
+        environ={"LITHARNESS_ENV": "test"},
+    )
+    with pytest.raises(ProviderUnavailable):
+        reg.resolve("generation")
+
+
+def test_padding_the_fake_is_how_you_ask_for_a_model_free_loop(monkeypatch) -> None:
+    """Setting the pad is the statement "I am deliberately running on the fake", so it is
+    also what makes the fake eligible to generate. The scaffolding stays reachable; what it
+    stops doing is arriving uninvited during an outage."""
+    monkeypatch.setenv("LITHARNESS_FAKE_PAD_CHARS", "400")
+
+    assert list(build_default_registry().order)[-1] == "fake"
+
+
+def test_preferring_an_adapter_that_does_not_exist_is_refused_loudly() -> None:
+    """`order` ignores names it does not know, by design — so a typo would silently leave the
+    default order in place and the operator would find out from the bill. The one place a
+    name arrives from a human is the one place it has to be checked."""
+    with pytest.raises(ValueError, match="unknown provider 'ollamma'"):
+        build_default_registry(prefer="ollamma")
 
 
 def test_resolution_follows_the_configured_order() -> None:

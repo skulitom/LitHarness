@@ -62,6 +62,14 @@ class ProviderRegistry:
     order: Sequence[str]
     #: Preference order for cheap call classes; falls back to `order` if unset.
     cheap_order: Sequence[str] = ()
+    #: Refuse billing providers for this run, as an **operator's** choice.
+    #:
+    #: `LITHARNESS_ENV=test` already filters them, so it was what an operator reached for to
+    #: keep a run off a paid CLI — configuring a production run with the flag whose entire
+    #: purpose is proving that *test* runs cannot bill. The two are deliberately independent:
+    #: §5 rule 2 is that a test run **provably** cannot reach a paid provider, and a guarantee
+    #: that could be switched off by configuration would not be one.
+    refuse_billing: bool = False
     environ: dict[str, str] | None = None
     _health: dict[str, bool] = field(default_factory=dict, repr=False)
 
@@ -84,7 +92,9 @@ class ProviderRegistry:
         """Providers eligible for this call class, in preference order.
 
         A billing provider is filtered out entirely in test mode — not deprioritised.
-        That is what makes the guard hold even if `order` is misconfigured.
+        That is what makes the guard hold even if `order` is misconfigured. `refuse_billing`
+        filters the same way and for the same reason: an operator who said "this run must not
+        spend money" is not asking for a preference that a health blip can overturn.
         """
         use_cheap = call_class in CHEAP_CALL_CLASSES and self.cheap_order
         preferred = list(self.cheap_order) if use_cheap else list(self.order)
@@ -93,7 +103,7 @@ class ProviderRegistry:
             provider = self._by_name(name)
             if provider is None:
                 continue
-            if self.test_mode and provider.bills:
+            if (self.test_mode or self.refuse_billing) and provider.bills:
                 continue
             if call_class in CHEAP_CALL_CLASSES and provider.bills and self.cheap_order:
                 # An explicit cheap order that still names a billing provider is honoured

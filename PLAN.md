@@ -414,7 +414,7 @@ done, and **the v2.1 pass did it again in six more places**:
 | Project | State | Role in v2 |
 |---|---|---|
 | litharness-contracts | **Wire schema 1.1.0**, 124 tests, 30 schemas, mystery + litrpg golden fixtures. Git repo (branch `main`, clean tree, no remote, no tags). **Still no LICENSE** — README says "License: TBD", and that is a decision for the owner rather than a gap to fill | Shared schemas + gold benchmarks. §20.3's minors have shipped except the game-system schemas, which stay deferred for want of a consumer. Version (don't freeze) after Book Zero. *(Struck: "untracked, no git repo" and "version-controlling it is the single cheapest unblock" — the commit landed 2026-08-12 17:36, eight minutes **before** the v2.1 edit that still called it untracked.)* |
-| **LitHarness (this repo)** | **Stages 0–2 met against their exit clauses (§17 carries the caveats): 670 tests passing + 6 opt-in live, ruff clean, mypy strict clean (`warn_unreachable` on). Under version control** (`.gitattributes` pins `eol=lf`; `core.autocrlf=true` is set globally on this machine and has already bitten this project once) | The product. **This table previously audited every sibling's VCS status and had no row for the product repo, which was itself untracked.** |
+| **LitHarness (this repo)** | **Stages 0–2 met against their exit clauses (§17 carries the caveats): 676 tests passing + 6 opt-in live, ruff clean, mypy strict clean (`warn_unreachable` on). Under version control** (`.gitattributes` pins `eol=lf`; `core.autocrlf=true` is set globally on this machine and has already bitten this project once) | The product. **This table previously audited every sibling's VCS status and had no row for the product repo, which was itself untracked.** |
 | BookWorldState | Committed, Apache-2.0, tagged `v0.1.0`, pushed to GitHub; **13 commits, working tree clean**; 100 tests passing. Ships an authenticated versioned WSGI API, transactional outbox with capped-exponential-retry worker, signed webhook publication, migration checksums, online backup/restore + destructive-corruption drill — **Milestone 4/5 infrastructure, not "~Milestone 2"**. What is *not* done is M3's evaluation corpus | State substrate. Its closed predicate registry is **not** injectable yet (§20.5) — but §8.4 routes around this deliberately, so it is not a blocker for §8. *(Struck: "working tree is not clean", "4 commits", "~Milestone 2 complete", "the real blocker for §8" — all four false.)* |
 | RevisionBench | Mature (**411** tests). A2d complaint-gated repair, the LitRPG stratum, **and A3d** have landed — A3d shipped *under the name A2d*, and best-of-N repair ranked by minimal intervention closed the last element in `22a228d` | Source of repair policy, mechanical vetoes, LitRPG stratum evidence. **Its M5 decomposition is done and has already answered the question §20.7 was scheduled to ask** — see the redirect there. *(Struck: "405 tests", "A3d is next".)* |
 | RevisionJudge | Built; 104 pairs exported, exactly 2 verdicts collected; one uncommitted file (`data/verdicts.jsonl`) | **Demoted from the calibration instrument to a confirmation sample** (§10.3 as amended). Two verdicts against 104 pairs is the measured throughput of a design that needs a human to decide to sit down, and it is why revealed preference is now primary. Still the right tool for spot-confirming a calibration derived elsewhere; `litharness audit` is the same shape and collects as a by-product of drafting. The verdict *consumer* remains unbuilt |
@@ -1438,7 +1438,7 @@ started) while this paragraph went on calling Trust vacuous and Genre not starte
 prose lagging the evidence instead of outrunning it. The direction changes; the defect —
 restating the table instead of reading it — does not.
 
-Ten defects worth remembering, because each failed *silently* and none would have surfaced
+Eleven defects worth remembering, because each failed *silently* and none would have surfaced
 without being looked for: migrations resolved to nowhere under a wheel while `migrate`
 reported success, so a restored host would have come up with an empty schema that reads as
 data loss; a full disk reported "cannot rollback" because the rollback in the transaction's
@@ -1453,13 +1453,25 @@ explained; slice 9's integrity gate charged a standing finding against the unit 
 refused, so the operator's own remedy arrived to find the work already destroyed; and the
 outbox delivered to nobody for nine slices, because the only dispatcher was the null one
 and no caller ever passed another — so the audit trail's whole outward half was absent
-while every test of it passed.
+while every test of it passed; and the deterministic fake backstopped *generation*, so when
+every real provider went down the loop kept drafting canned 80-character text, failed the
+200-character shape gate three times per beat, and poisoned six beats with five exceptions
+for what was an outage.
+
+**That last one is the fourth instance of the rule two paragraphs down, and it hid best.**
+`ProviderUnavailable` and a budget ceiling at least *look* like refusals. Here nothing looked
+refused at all: a healthy provider answered every call. It simply could not write, and the
+attempt budget was spent on discovering that three times over. Found by running a book on a
+local model and having the daemon stop mid-session — the failure mode is invisible from any
+test that supplies its own registry, which is every test that existed. The fake is out of the
+default *generation* order now and stays in the cheap one; `LITHARNESS_FAKE_PAD_CHARS` puts it
+back, because setting the pad is the statement "I am deliberately running on the fake".
 
 *(The two counts below read "eight" for three revisions after the ninth defect was added,
 which is the same drift the paragraph above the table exists to catch, one paragraph lower
 down. Corrected with the tenth.)*
 
-Two of those ten are the same defect at different layers, and that is the more useful
+Two of those eleven are the same defect at different layers, and that is the more useful
 observation. `ProviderUnavailable` and a budget ceiling are both refusals raised *in front
 of* the work; both were charged against the attempt budget of a unit that never ran; the
 first was found and fixed, and the second survived that fix by three commits because the
@@ -1488,7 +1500,7 @@ is finished when the operator can get past it.** Two further gaps fell out of th
 (`bump_plan_epoch` had one caller and it was a test — the `reset_health` shape again), and
 `revive` alone cannot clear a unit whose head has moved on, which is correct behaviour that
 nothing had written down.
-Three of the ten were also *pinned by passing tests* — the budget refusal's POISONED
+Three of the eleven were also *pinned by passing tests* — the budget refusal's POISONED
 status was asserted by name, and `revert`'s attribution was never asserted at all. A suite
 that encodes the defect is worse than no suite, because it converts a bug into a
 requirement. **The silent outbox is the subtler version of the same thing:** nothing

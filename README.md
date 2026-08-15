@@ -205,6 +205,26 @@ runs before work selection, so a mistyped path must not stop the book from being
 and the entry stays pending under the existing backoff while `tick` prints the reason on
 stderr.
 
+**Choosing who writes it.** `--prefer ollama` puts a provider first — a preference, so an
+unhealthy choice still falls back and the fallback is recorded as an event. `--no-billing`
+refuses every billing provider outright, which is a different question: a *preference* for a
+free provider still bills the moment that provider blips. Pair them for a run that must stay
+local and free:
+
+```bash
+uv run litharness --database book.db --prefer ollama --no-billing tick
+```
+
+Measured on a 3B local model (`llama3.2`), a seeded book with no imported snapshot drafts all
+six scenes in 42 seconds at no cost, and seven revisions rebuild cleanly. Regenerating a
+*fixture* book is stricter, because its full state snapshot is imported and the integrity gate
+holds the prose to it: the same model was refused at scene 1 for writing `gold 15` where canon
+says 45. That is the gate working, and it is a measurement of the model rather than a fault.
+
+Before these flags the only lever was `LITHARNESS_ENV=test`, which filters billing providers —
+i.e. configuring a production run with the flag whose purpose is proving that *test* runs
+cannot bill. That flag keeps that job and nothing else.
+
 Budget ceilings apply to every generating call and are checked **before** it is made:
 `--max-tokens-per-day`, `--max-invocations-per-day` (the one tokens cannot express — see
 §15's per-call harness tax), `--max-tokens-per-operation`, `--max-cost-usd-per-day`. Pass

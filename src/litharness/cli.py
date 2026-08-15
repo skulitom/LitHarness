@@ -142,7 +142,7 @@ def _budget(args: argparse.Namespace) -> BudgetPolicy:
 
 
 def _conductor(store: SqliteStore, args: argparse.Namespace) -> Conductor:
-    registry = build_default_registry()
+    registry = build_default_registry(args.prefer, refuse_billing=args.no_billing)
     evaluators: list[Evaluator] = [InProcessEvaluator()]
     if args.continuity_evaluator_command:
         evaluators.append(
@@ -1542,6 +1542,17 @@ def build_parser() -> argparse.ArgumentParser:
         type=Path,
         default=os.environ.get("LITHARNESS_CONTINUITY_EVALUATOR"),
         help="ContinuityEvaluation executable; also read from LITHARNESS_CONTINUITY_EVALUATOR",
+    )
+    parser.add_argument(
+        "--prefer",
+        help="put this provider first, e.g. ollama for a local run. It stays a preference: "
+        "an unhealthy choice still falls back, and the fallback is recorded",
+    )
+    parser.add_argument(
+        "--no-billing",
+        action="store_true",
+        help="refuse every billing provider for this run. Not the same as --prefer: a "
+        "preference for a free provider still bills the moment that provider blips",
     )
     parser.add_argument(
         "--notify-file",

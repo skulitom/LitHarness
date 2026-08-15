@@ -1,6 +1,6 @@
 # Stage 0 decisions
 
-**Status:** Stages 0-2 met against their §17 exit clauses — **670 passing tests (+6 opt-in live), ruff clean, mypy
+**Status:** Stages 0-2 met against their §17 exit clauses — **676 passing tests (+6 opt-in live), ruff clean, mypy
 strict clean.** Slice 1 is the model-free manuscript spine; slice 2 the Conductor skeleton
 (tick, instance lease, job selection, digest, outbox dispatch, crash recovery); slice 3 the
 four provider adapters with their conformance suite and the billing guard; slice 4 **the
@@ -1320,3 +1320,65 @@ insertion for a system that never inserts a node — are *fine*, and forcing the
 be the wrong lesson entirely. The defect family is narrower than "uncalled": it is **a thing
 the project points at when asked whether something is done, that nothing in production
 touches.** A count cannot tell those apart, so the sweep stays a tool rather than a test.
+
+## 41. A backstop that cannot clear the gate it feeds is not a backstop
+
+`build_default_registry` ordered generation as claude, codex, ollama, **fake**. The fake's
+answer is ~80 characters and `DraftPolicy.min_chars` is 200, so the fake could never produce
+an acceptable draft — a fact the function's own comment stated, two lines above the order that
+made it the last resort for prose.
+
+**Measured, not reasoned about.** Drafting a book on a local model while the Ollama daemon
+stopped mid-session: six beats, each generating canned text three times, failing the shape
+gate three times, spending their attempt budgets and poisoning. Five exceptions filed, six
+content-derived job ids burned unrevivably, and `verify` reporting one clean revision. For an
+outage.
+
+**It is §19.1's rule for the fourth time and it hid better than the other three.** A provider
+outage and a budget ceiling at least look like refusals; this one looked like *work*. A
+healthy provider answered every call, so nothing in the loop could tell that the writer was a
+stub — and the unit paid for the discovery three times. **A refusal reached before the work
+must cost time, never the unit**, and a stub standing in for a writer is a refusal wearing the
+costume of an answer.
+
+The fake leaves `DEFAULT_ORDER` and stays in `DEFAULT_CHEAP_ORDER`, where extraction and
+mechanical calls are schema-shaped and determinism is the point. With nothing to absorb it,
+the outage surfaces as `ProviderUnavailable` — which the Conductor has always handled
+correctly: the attempt is given back and the unit requeues, so the outage costs time.
+`LITHARNESS_FAKE_PAD_CHARS` puts the fake back in the generation order, because setting the
+pad is already the statement "I am deliberately running this loop on the fake".
+
+**Why no test caught it.** Every test that exercises generation builds its own registry and
+passes the fake deliberately, which is correct and says nothing about the default. The one
+path that used the default was the CLI, and no CLI test asserts that a *scene* got drafted.
+The gap was not in the suite's thoroughness but in what it never used.
+
+## 42. Two levers for who writes the book, because they answer different questions
+
+An operator who wanted to run a book on local models had exactly one lever:
+`LITHARNESS_ENV=test`, which filters billing providers — the flag whose entire purpose is §5
+rule 2, proving that *test* runs cannot reach a paid provider. Configuring production with a
+test guard is how a guard stops meaning anything.
+
+- **`--prefer NAME`** moves a provider to the front. It stays a *preference*: an unhealthy
+  choice still falls back, and §5 rule 4 makes the fallback an event rather than a silent
+  switch. An unknown name **raises**, because `order` ignores names it does not know by
+  design — so a typo would leave the default order in place and the operator would find out
+  from the bill. This is the one place a provider name arrives from a human.
+- **`--no-billing`** refuses billing providers outright. Not a preference and not expressible
+  as one: preferring a free provider still bills the moment that provider blips, which is
+  precisely what happened in §41. It is deliberately independent of `LITHARNESS_ENV=test`,
+  because a guarantee that could be switched off by configuration would not be a guarantee.
+
+**Measured on a 3B local model**, which is the answer to whether Book Zero needs a paid
+provider at fixture scale: a seeded book with no imported snapshot drafts six of six scenes in
+42 seconds, free, with seven revisions rebuilding cleanly. Regenerating a *fixture* book is
+stricter — its full snapshot is imported, so the integrity gate holds the prose to it, and the
+same model was refused at scene 1 for writing `gold 15` where canon says 45. The gate working,
+and a measurement of the model.
+
+**And one quality finding worth keeping**, because it is the shape Stage 3's taxonomy is made
+of: across all six drafted scenes the ledger never moved — `s1` through `s6` all reported gold
+45. The model obeyed "carry these values forward unless this scene changes them" so literally
+that the book has no economy. Nothing in the system objects, because nothing yet checks that a
+story *progresses*.
