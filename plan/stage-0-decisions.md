@@ -1,6 +1,6 @@
 # Stage 0 decisions
 
-**Status:** Stages 0-2 met against their §17 exit clauses — **690 passing tests (+8 opt-in live), ruff clean, mypy
+**Status:** Stages 0-2 met against their §17 exit clauses — **693 passing tests (+8 opt-in live), ruff clean, mypy
 strict clean.** Slice 1 is the model-free manuscript spine; slice 2 the Conductor skeleton
 (tick, instance lease, job selection, digest, outbox dispatch, crash recovery); slice 3 the
 four provider adapters with their conformance suite and the billing guard; slice 4 **the
@@ -1559,3 +1559,57 @@ to LongRangeContext and this project has no business inventing it.
 **The counter fires on the condition, not on the book.** It stays at zero for every six-scene
 fixture, which is exactly why this limit went unnoticed for so long: nothing this project
 routinely runs is long enough to hit it.
+
+## 48. gzip, and the version of it that survives its own control
+
+Suggested: use perplexity, or gzip, to say something about the text. Perplexity is available —
+Ollama does return logprobs — but gzip needs no model, no dependency, no provider call and no
+cost, and it is deterministic, which matters for a number logged on every accepted scene and
+cited in a policy digest.
+
+**The obvious form does not survive its control.** Whole-book compression ratio — compress each
+scene alone, compress them together, divide — looked decisive:
+
+    human: mystery fixture     6 scenes   joint/parts 0.757
+    human: litrpg fixture      6 scenes   joint/parts 0.625
+    machine: llama 24-scene   15 scenes   joint/parts 0.418
+
+Until the fourth row: a machine-written **six**-scene book scores **0.704**, inside the human
+range. Same generator, same prompt, different scene count. The ratio falls mechanically as
+scenes are added, because gzip's dictionary amortises — so it measures *n*, not authorship.
+That is `tricolon_rate` detecting the year, one section earlier in this file, and the only
+reason it did not ship is that the control was run first.
+
+**The pairwise form has no n in it.** Normalised compression distance between two scenes,
+`(C(xy) - min(C(x),C(y))) / max(C(x),C(y))`, measured across four books with system-voice
+blocks stripped:
+
+    human: mystery           min 0.724   median 0.808
+    human: litrpg            min 0.766   median 0.783
+    machine: llama 6-scene   min 0.696   median 0.818
+    machine: llama 24-scene  min 0.089   median 0.711   <- scenes 12 and 13
+
+**The median separates nothing** — 0.71 to 0.82 across all four, human and machine alike — so
+a book's average compression distance is noise and reporting it would be inventing a signal.
+**The minimum is a duplicate detector**, an order of magnitude below every other pair in every
+book. Both halves of that are the finding.
+
+**Stripping the status blocks is not tidying.** The litrpg fixture's own plan says "a status
+block appears in every scene; repetition of the block format is intentional and must not be
+flagged as an echo", and leaving them in drops that fixture's closest pair from 0.766 to 0.591
+— the metric's first act would be to complain about the plan being followed.
+
+**What it caught.** Scene 13 of the Book Zero run was scene 12 with "breath hitched" changed to
+"chest tightened" and a digit incremented, and scenes 10 and 14 are close behind at 0.21 and
+0.25. Fifteen accepted scenes, zero exceptions, `verify` clean. The shape gate saw the right
+length; the integrity gate saw no contradiction, because the ledger was frozen and there was
+nothing to contradict; nothing else looks at prose at all. **That book is §1a's stated
+nightmare with every mechanical check green**, and it took a stdlib compressor to see it.
+
+**Advisory, and the module docstring now argues for it rather than assuming it.** §10.6 warns
+that "inventing a fifth one on a hunch is how its findings get quietly overwritten", and that
+warning is correct. Two things answer it: this was measured before it was built, with the
+control that killed the first version; and it claims two scenes are the same *text*, which is
+checkable without human judgment, where the four refuted proxies claimed something about
+quality, which is not. §10.4 still applies in both places — nothing here can gate without
+calibration evidence, and this has none.

@@ -30,6 +30,21 @@ verbatim. That is the entire selection rule — §10.6 exists because these prox
 re-proposed otherwise, and inventing a fifth one on a hunch is how its findings get quietly
 overwritten.
 
+**`scene_echo` is the fifth, and the rule above is why it needs a defence rather than a
+mention.** Two things separate it from the proxies §10.6 refuted. It was **measured before it
+was built**: the obvious form — whole-book compression ratio — turned out to track scene count
+rather than authorship, since a machine-written six-scene book scored 0.704 against human books
+at 0.625 and 0.757, and only the pairwise form survived that control. And it makes a **claim of
+a different kind**: the four above assert something about quality, which is why they need human
+judgment to be worth anything; this asserts that two scenes are largely the same text, which is
+checkable without asking anyone. It is still advisory, still uncalibrated, and still cannot
+gate — but "this scene is a copy of that one" is a fact rather than an opinion, and §10.6's
+finding is about opinions.
+
+It exists because a Book Zero run passed every gate in this system while writing the same scene
+repeatedly: fifteen accepted scenes, zero exceptions, `verify` clean, and scene 13 was scene 12
+with two words changed and a digit incremented.
+
 **All four have since been measured against published LitRPG, and all four failed.** See
 `plan/craft-profile.json`, built by `tools/build_craft_profile.py` over ~13,000 LitRPG-tagged
 chapters from a 1.61M-chapter RoyalRoad corpus. Holding the era fixed — 2025 chapters whose
@@ -65,9 +80,11 @@ a guess wearing the measurement's authority.
 
 from __future__ import annotations
 
+import gzip
 import json
 import re
 import statistics
+from collections.abc import Sequence
 from dataclasses import dataclass
 from functools import lru_cache
 from itertools import pairwise
@@ -218,6 +235,76 @@ def opening_shape_repetition(text: str) -> CraftMetric:
     )
 
 
+#: System-voice blocks, stripped before two scenes are compared. The litrpg fixture's own plan
+#: says it outright — "a status block appears in every scene; repetition of the block format is
+#: intentional and must not be flagged as an echo" — and measured, leaving them in drops the
+#: fixture's closest pair from 0.766 to 0.591, which would make a genre convention the most
+#: repetitive thing in the book.
+_SYSTEM_BLOCK = re.compile(r"^\[(?:STATUS|INVENTORY|SKILLS|QUESTS)\].*$", re.MULTILINE)
+
+#: Compressor level, pinned so the number is reproducible across machines and runs.
+_GZIP_LEVEL = 9
+
+
+def _compressed(text: str) -> int:
+    return len(gzip.compress(text.encode("utf-8"), _GZIP_LEVEL))
+
+
+def scene_echo(text: str, others: Sequence[str]) -> CraftMetric:
+    """How close this scene is to the nearest *other* scene, by compression distance.
+
+    Normalised compression distance, `(C(xy) - min(C(x), C(y))) / max(C(x), C(y))`: 1.0 means
+    the two scenes share nothing, and low means one is largely the other. No model, no
+    dependency, deterministic.
+
+    **This exists because a Book Zero run passed every gate while writing the same scene
+    repeatedly.** Fifteen accepted scenes, zero exceptions, `verify` clean — and scene 13 was
+    scene 12 with "breath hitched" changed to "chest tightened" and a digit incremented. The
+    shape gate saw the right length, the integrity gate saw no contradiction (the ledger was
+    frozen, so nothing to contradict), and nothing else in this system looks at prose at all.
+    That book is §1a's stated nightmare with every mechanical check green.
+
+    **The minimum is the signal and the median is not**, which is the whole of what the
+    measurement found. Median NCD across two human books and two machine books sat at
+    0.71-0.82 with no separation at all; the minimum was 0.72-0.77 everywhere except the
+    duplicated pair, which scored **0.089**. So this is a duplicate detector rather than a
+    craft score, and reporting a book's average would be reporting noise.
+
+    **Advisory by construction**, like every metric here: `craft_gates` builds nothing
+    blocking and `PolicyDecision` raises on a blocking craft gate with no calibration (§10.4).
+    "These two scenes are the same scene" is mechanically checkable and would be a fair
+    candidate for promotion — but promotion runs through §10.4's evidence bar like anything
+    else, and this has none yet.
+    """
+    stripped = _SYSTEM_BLOCK.sub("", text).strip()
+    candidates = [
+        cleaned
+        for other in others
+        if (cleaned := _SYSTEM_BLOCK.sub("", other).strip())
+    ]
+    if not stripped or not candidates:
+        return CraftMetric(
+            metric_id="craft.scene_echo.v0",
+            value=1.0,
+            caveat="§1a.3 item 6. Nothing to compare against; reported as maximally distinct",
+        )
+    mine = _compressed(stripped)
+    nearest = 1.0
+    for candidate in candidates:
+        theirs = _compressed(candidate)
+        joint = _compressed(f"{stripped}\n\n{candidate}")
+        nearest = min(nearest, (joint - min(mine, theirs)) / max(mine, theirs))
+    return CraftMetric(
+        metric_id="craft.scene_echo.v0",
+        value=round(max(nearest, 0.0), 4),
+        caveat=(
+            "§1a.3 item 6. Compression distance to the nearest other scene, system-voice "
+            "blocks stripped. The minimum separates a duplicate; the median measures nothing"
+        ),
+        detail=f"nearest of {len(candidates)} other scene(s)",
+    )
+
+
 #: The metric set, in a fixed order so a decision record's gate list is stable.
 METRICS = (
     sentence_length_variation,
@@ -227,9 +314,26 @@ METRICS = (
 )
 
 
-def measure(text: str) -> tuple[CraftMetric, ...]:
-    """Every craft metric over one scene's prose. Pure, deterministic, model-free."""
-    return tuple(metric(text) for metric in METRICS)
+#: Every metric id `measure` reports. `scene_echo` is not in `METRICS` because it cannot be
+#: computed from one scene alone, so "one result per entry in METRICS" stopped being the
+#: invariant — this is the one that replaced it, and it pins the ids rather than the count.
+MEASURED_IDS = (
+    "craft.sentence_length_cv.v0",
+    "craft.dialogue_ratio.v0",
+    "craft.tricolon_rate.v0",
+    "craft.opening_shape_repetition.v0",
+    "craft.scene_echo.v0",
+)
+
+
+def measure(text: str, others: Sequence[str] = ()) -> tuple[CraftMetric, ...]:
+    """Every craft metric over one scene's prose. Pure, deterministic, model-free.
+
+    `others` is the book's other accepted scenes. Every metric above reads one scene alone;
+    `scene_echo` is the first that cannot, because "this scene is a copy of another" is not a
+    property a scene has by itself.
+    """
+    return (*(metric(text) for metric in METRICS), scene_echo(text, others))
 
 
 #: The reference profile, beside the plan documents rather than inside the package: it is
@@ -327,6 +431,7 @@ __all__ = [
     "measure",
     "opening_shape_repetition",
     "percentile_of",
+    "scene_echo",
     "sentence_length_variation",
     "sentences",
     "tricolon_rate",

@@ -35,12 +35,14 @@ from litharness.domain.calibration import (
     verdicts_digest_for,
 )
 from litharness.domain.craft import (
+    MEASURED_IDS,
     METRICS,
     CraftMetric,
     craft_gates,
     dialogue_ratio,
     measure,
     opening_shape_repetition,
+    scene_echo,
     sentence_length_variation,
     sentences,
     tricolon_rate,
@@ -163,7 +165,7 @@ def test_a_metric_survives_prose_it_cannot_parse() -> None:
     """Empty, whitespace and single-sentence text all reach these functions in normal
     operation — a gate refusal path is not a reason for a measurement to raise."""
     for text in ("", "   ", "One.", "No terminator at all"):
-        assert len(measure(text)) == len(METRICS)
+        assert [m.metric_id for m in measure(text)] == list(MEASURED_IDS)
 
 
 def test_sentence_splitting_is_crude_and_says_so() -> None:
@@ -174,9 +176,9 @@ def test_metrics_are_stored_per_accepted_revision(store: SqliteStore) -> None:
     """A metric whose history begins on the day it is promoted has no held-out data to be
     promoted on, which is the whole reason these are logged before anything reads them."""
     metrics = measure("The room was cold, dark, and silent. She waited by the door.")
-    assert store.record_craft_metrics("rev-1", "scene-1", metrics, measured_at=TODAY) == len(
-        METRICS
-    )
+    assert store.record_craft_metrics(
+        "rev-1", "scene-1", metrics, measured_at=TODAY
+    ) == len(MEASURED_IDS)
     # Immutable revision, so a re-measure can only produce the same numbers.
     assert store.record_craft_metrics("rev-1", "scene-1", metrics, measured_at=TODAY) == 0
     rows = store.craft_metrics(metric_id="craft.tricolon_rate.v0")
@@ -566,7 +568,7 @@ def test_no_prose_is_stored_in_the_profile() -> None:
 def test_every_metric_was_measured_against_the_corpus() -> None:
     """A metric added later without being profiled would silently have no anchor and no
     separation number — it would look measured because its neighbours are."""
-    from litharness.domain.craft import METRICS, load_profile
+    from litharness.domain.craft import load_profile
 
     profile = load_profile()
     ids = {fn("x. y.").metric_id for fn in METRICS}
@@ -682,3 +684,59 @@ def test_one_new_verdict_re_opens_every_calibration_and_says_so(store: SqliteSto
     [gate] = _craft_ladder(store, (a_metric(6.0),), today=TODAY)
     assert not gate.blocking, "the gate stops blocking"
     assert "verdict set has changed" in (gate.detail or ""), "and the record says why"
+
+
+def test_a_scene_that_is_a_copy_of_another_scores_far_below_a_distinct_one() -> None:
+    """**A Book Zero run passed every gate while writing the same scene repeatedly.**
+
+    Fifteen accepted scenes, zero exceptions, `verify` clean — and scene 13 was scene 12 with
+    "breath hitched" changed to "chest tightened" and a digit incremented. The shape gate saw
+    the right length; the integrity gate saw no contradiction, because the ledger was frozen
+    and there was nothing to contradict; nothing else in this system looks at prose at all.
+
+    Compression distance separates them by an order of magnitude, measured across four books:
+    every pair in every book scored 0.72-0.82 except the duplicated one, at **0.089**.
+    """
+    original = (
+        "Rook counted the coins twice by the gate. Forty-five, and the lantern cost twenty. "
+        "The gatekeeper watched without speaking, and the road went on into the dark."
+    )
+    near_copy = original.replace("counted", "tallied").replace("Forty-five", "Forty-six")
+    distinct = (
+        "Mara knelt by the floorboard and pried it up with the flat of a knife until the "
+        "brass key showed, cold and unhurried in her palm, and she said nothing about it."
+    )
+
+    echo = scene_echo(near_copy, [original, distinct]).value
+    apart = scene_echo(distinct, [original, near_copy]).value
+
+    assert echo < 0.3, "a scene rewritten from another is not a new scene"
+    assert apart > 0.5
+    assert scene_echo(original, []).value == 1.0, "nothing to compare is maximally distinct"
+
+
+def test_an_intentional_status_block_is_not_an_echo() -> None:
+    """The litrpg fixture's own plan says it: "a status block appears in every scene;
+    repetition of the block format is intentional and must not be flagged as an echo."
+
+    Measured, leaving the blocks in drops that fixture's closest pair from 0.766 to 0.591 —
+    which would make a genre convention the most repetitive thing in the book, and this
+    metric's first act would be to complain about the plan being followed.
+    """
+    block = "\n[STATUS] Rook — Level 3 | HP 24/30 | MP 8/10 | Gold 45"
+    first = "Rook counted the coins twice by the gate and found them wanting." + block
+    second = "Mara pried up the floorboard and lifted the brass key from the dark." + block
+
+    assert scene_echo(first, [second]).value > 0.4, "shared genre formatting is not an echo"
+
+
+def test_the_metric_reports_and_cannot_gate() -> None:
+    """§10.4 in two places rather than one: `craft_gates` builds nothing blocking, and
+    `PolicyDecision` raises on a blocking craft gate with no calibration. "These two scenes
+    are the same scene" is mechanically checkable and would be a fair promotion candidate —
+    but promotion runs through the evidence bar like anything else, and this has none."""
+    metrics = measure("A scene.", ["A scene."])
+    [echo] = [metric for metric in metrics if metric.metric_id == "craft.scene_echo.v0"]
+
+    assert echo.caveat, "a metric travelling without its caveat is a metric that gets trusted"
+    assert all(not gate.blocking for gate in craft_gates(metrics))

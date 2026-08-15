@@ -54,6 +54,7 @@ from litharness.domain.findings import DetectorInput
 from litharness.domain.findings import Finding as DomainFinding
 from litharness.domain.integrity import gate_integrity, gate_standing
 from litharness.domain.jobs import Job
+from litharness.domain.nodes import NodeKind
 from litharness.domain.patch import Veto
 from litharness.domain.policy import (
     GateKind,
@@ -457,7 +458,18 @@ def make_scene_draft_handler(
             # below and `PolicyDecision` would raise if it tried. Measured here rather than in
             # a later pass because §10.2 wants proxies "logged per scene" — a metric whose
             # history starts on the day it is promoted has no held-out data to be promoted on.
-            craft_metrics = measure(result.text)
+            # The book's other accepted scenes, so `scene_echo` can ask whether this one is
+            # a copy of any of them — the failure a Book Zero run passed every gate with.
+            craft_metrics = measure(
+                result.text,
+                [
+                    node.content
+                    for node in revision.in_reading_order()
+                    if node.kind is NodeKind.SCENE
+                    and node.content
+                    and node.logical_id != logical_id
+                ],
+            )
             gates = (*gates, *_craft_ladder(store, craft_metrics, today=_timestamp(now)[:10]))
 
             if findings:
