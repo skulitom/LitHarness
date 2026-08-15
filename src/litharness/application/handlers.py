@@ -155,6 +155,7 @@ def _craft_ladder(
     metrics: tuple[CraftMetric, ...],
     *,
     today: str,
+    words: int | None = None,
 ) -> tuple[GateOutcome, ...]:
     """§10.2's craft ladder, complete: one gate per metric, blocking where it was earned.
 
@@ -184,7 +185,9 @@ def _craft_ladder(
     covers *every* answered audit sample, so one new `judge` verdict re-opens every
     calibration at once. That is correct under §10.5 and it must be legible when it happens.
     """
-    annotations = {gate.rule_or_critic_id: gate for gate in craft_gates(metrics)}
+    annotations = {
+        gate.rule_or_critic_id: gate for gate in craft_gates(metrics, words=words)
+    }
     calibrations = store.calibrations()
     if not calibrations:
         return tuple(annotations.values())
@@ -470,7 +473,18 @@ def make_scene_draft_handler(
                     and node.logical_id != logical_id
                 ],
             )
-            gates = (*gates, *_craft_ladder(store, craft_metrics, today=_timestamp(now)[:10]))
+            # The scene's own length, so the craft ladder can place each measurement against
+            # published chapters of comparable size rather than against the pooled corpus,
+            # whose median chapter is more than twice a scene target.
+            gates = (
+                *gates,
+                *_craft_ladder(
+                    store,
+                    craft_metrics,
+                    today=_timestamp(now)[:10],
+                    words=len(result.text.split()),
+                ),
+            )
 
             if findings:
                 # Recorded whether or not they block. A minor finding dropped because it was

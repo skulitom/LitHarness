@@ -787,6 +787,23 @@ order-consistent survivors preferred human originals ~80% of the time. So:
    hypothesis — and a standing method for refuting proxies cheaply, which is how four of them
    were refuted in an afternoon rather than surviving to Book Zero.
 
+   **That reference distribution has since been stratified by length, and it had to be.** The
+   profile pooled every chapter over 300 words with no upper bound, so a percentile compared a
+   900-word scene against a corpus whose median chapter is **2,074 words**. Measured over 4,000
+   chapters, `opening_shape_repetition` falls monotonically with length (ρ = −0.391; 0.0536 at
+   300-700 words down to 0.0204 above 4,000) because more sentences means more distinct
+   openings — so a scene the pooled ladder placed at the 50th percentile sits at the **19th**
+   among chapters its own size. `craft-profile.json` now carries per-band ladders,
+   `percentile_of` takes the scene's length as a required argument, and it **abstains rather
+   than extrapolating** when no band covers the length or a band is too thin. It also had no
+   production caller until now; `craft_gates` takes the scene's length and writes the placement
+   into each gate's `detail`. The first thing that reported: Book Zero's 138-to-205-word scenes
+   are all *below* the corpus's 300-word floor, so the system correctly says nothing about
+   where they sit rather than answering from the pooled ladder as it used to. See
+   `plan/stage-0-decisions.md` §50, which also records why the two statistics proposed by
+   `hierarchical-compression-information-texture.md` were refuted, and that a control which
+   cannot fail is not a control.
+
    **The authoring requirement is withdrawn; the corpus requirement is not.** This section's
    claim that the corpus "is human work that no amount of engineering substitutes for" was
    true of a *hand-authored, attributed* corpus and false of the thing that corpus was needed

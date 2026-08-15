@@ -45,7 +45,7 @@ from typing import Any
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from litharness.domain.craft import METRICS, measure
+from litharness.domain.craft import METRICS, band_for, measure
 
 DATASET = "OmniAICreator/RoyalRoad-1.61M"
 
@@ -143,6 +143,12 @@ def main() -> int:
         return 2
 
     samples: dict[str, dict[str, list[float]]] = defaultdict(lambda: defaultdict(list))
+    #: The same samples again, split by the chapter's own length. Keyed
+    #: (cohort, band) -> metric_id -> values.
+    banded: dict[tuple[str, str], dict[str, list[float]]] = defaultdict(
+        lambda: defaultdict(list)
+    )
+    band_counts: dict[tuple[str, str], int] = defaultdict(int)
     engagement: dict[str, list[float]] = defaultdict(list)
     counts: dict[str, int] = defaultdict(int)
     stories: dict[str, set[int]] = defaultdict(set)
@@ -166,13 +172,19 @@ def main() -> int:
             if cohort is None:
                 continue
             text = row.get("text") or ""
-            if len(text.split()) < MIN_WORDS:
+            words = len(text.split())
+            if words < MIN_WORDS:
                 continue
             counts[cohort] += 1
             stories[cohort].add(int(row["fiction_id"]))
             engagement[cohort].append(float(row.get("followers") or 0))
+            band = band_for(words)
+            if band is not None:
+                band_counts[(cohort, band)] += 1
             for metric in measure(text):
                 samples[cohort][metric.metric_id].append(metric.value)
+                if band is not None:
+                    banded[(cohort, band)][metric.metric_id].append(metric.value)
 
     metric_ids = [fn("x. y.").metric_id for fn in METRICS]
     profile: dict[str, Any] = {
@@ -200,6 +212,25 @@ def main() -> int:
                 "metrics": {
                     metric_id: percentiles(samples[name][metric_id])
                     for metric_id in metric_ids
+                },
+                # The stratified ladders, and the only ones `percentile_of` will read. The
+                # pooled block above stays because it describes the cohort, but a pooled
+                # percentile answers a question nobody asked: the corpus median chapter is
+                # over twice a scene target, and `opening_shape_repetition` falls
+                # monotonically with length, so pooling put a 900-word scene at the 50th
+                # percentile where its own band says the 19th.
+                "bands": {
+                    band: {
+                        "chapters": band_counts[(name, band)],
+                        "metrics": {
+                            metric_id: percentiles(banded[(name, band)][metric_id])
+                            for metric_id in metric_ids
+                        },
+                    }
+                    for band in sorted(
+                        {key[1] for key in band_counts if key[0] == name},
+                        key=lambda label: int(label.split("-")[0]),
+                    )
                 },
             }
             for name in sorted(counts)
@@ -240,7 +271,11 @@ def main() -> int:
     }
 
     args.out.parent.mkdir(parents=True, exist_ok=True)
-    args.out.write_text(json.dumps(profile, indent=2, sort_keys=True), encoding="utf-8")
+    # `newline="\n"` because this is a committed artifact and the tool runs on Windows too;
+    # without it the profile lands with CRLF and every rebuild is a whole-file diff.
+    args.out.write_text(
+        json.dumps(profile, indent=2, sort_keys=True), encoding="utf-8", newline="\n"
+    )
     print(f"wrote {args.out}", file=sys.stderr)
     for name, data in profile["cohorts"].items():
         print(f"  {name:<20} {data['chapters']:>6} chapters, {data['stories']:>5} stories",

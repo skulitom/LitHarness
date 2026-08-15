@@ -253,8 +253,29 @@ _SYSTEM_BLOCK = re.compile(r"^\[(?:STATUS|INVENTORY|SKILLS|QUESTS)\].*$", re.MUL
 _GZIP_LEVEL = 9
 
 
+#: gzip's own container, measured rather than assumed: 20 bytes for an empty input at this
+#: level. Subtracted so that no part of a distance is spent on the format's header, checksum
+#: and end marker, none of which say anything about the prose.
+_GZIP_HEADER = len(gzip.compress(b"", _GZIP_LEVEL))
+
+
 def _compressed(text: str) -> int:
-    return len(gzip.compress(text.encode("utf-8"), _GZIP_LEVEL))
+    """Encoded length with the container's first-order overhead removed (§5.1's `C_0`).
+
+    **The correction is not a rounding detail, it is a length confound.** On two unrelated
+    22-word scenes the payload is 105 bytes, so a 20-byte container is 19% of it and the
+    uncorrected distance reads 0.6095 against a corrected 0.7529. Measured on published
+    prose the bias runs +0.048 at 100 words, +0.020 at 300, +0.008 at 900 and +0.004 at
+    2,000 — it shrinks as scenes grow, so **without it a short scene scores as more similar
+    than a long one for no textual reason**, and this project's own Book Zero run wrote
+    147-word scenes.
+
+    Only the first-order term is removed. Block decisions and dictionary warm-up remain
+    length-dependent, which is why short spans still want calibration against same-length
+    nulls rather than trust. Negatives are possible in principle and are not clipped here;
+    `scene_echo` floors the finished distance instead, where the clamp is visible.
+    """
+    return len(gzip.compress(text.encode("utf-8"), _GZIP_LEVEL)) - _GZIP_HEADER
 
 
 def scene_echo(text: str, others: Sequence[str]) -> CraftMetric:
@@ -291,7 +312,7 @@ def scene_echo(text: str, others: Sequence[str]) -> CraftMetric:
     ]
     if not stripped or not candidates:
         return CraftMetric(
-            metric_id="craft.scene_echo.v0",
+            metric_id="craft.scene_echo.v1",
             value=1.0,
             caveat="§1a.3 item 6. Nothing to compare against; reported as maximally distinct",
         )
@@ -302,7 +323,7 @@ def scene_echo(text: str, others: Sequence[str]) -> CraftMetric:
         joint = _compressed(f"{stripped}\n\n{candidate}")
         nearest = min(nearest, (joint - min(mine, theirs)) / max(mine, theirs))
     return CraftMetric(
-        metric_id="craft.scene_echo.v0",
+        metric_id="craft.scene_echo.v1",
         value=round(max(nearest, 0.0), 4),
         caveat=(
             "§1a.3 item 6. Compression distance to the nearest other scene, system-voice "
@@ -429,7 +450,7 @@ MEASURED_IDS = (
     "craft.dialogue_ratio.v0",
     "craft.tricolon_rate.v0",
     "craft.opening_shape_repetition.v0",
-    "craft.scene_echo.v0",
+    "craft.scene_echo.v1",
     "craft.repeated_span.v0",
 )
 
@@ -478,19 +499,74 @@ def load_profile(path: str | None = None) -> dict[str, Any]:
     return loaded
 
 
+#: Calibration strata by scene length in words. §7.1 of the HMIT note requires calibration
+#: matched on "at least length, depth, genre, register, and dialogue proportion"; genre and
+#: register are already fixed by the corpus filter, and **length is the one that measurably
+#: bit**. Measured over 4,000 chapters, `opening_shape_repetition` falls monotonically across
+#: these bands — 0.0536 at 300-700 words down to 0.0204 above 4,000, mechanically, since more
+#: sentences means more distinct openings. Pooled, a 900-word scene sat at the 50th percentile
+#: where its own band says the 19th.
+#:
+#: The boundaries are round numbers bracketing `DraftPolicy.target_words`, not fitted ones. A
+#: fitted boundary would need its own evidence and would be a threshold in disguise.
+LENGTH_BANDS: tuple[tuple[int, int], ...] = (
+    (300, 700), (700, 1100), (1100, 2000), (2000, 4000), (4000, 100_000),
+)
+
+#: Below this, a band's `p01` and `p99` are each estimated from fewer than two observations,
+#: so the ends of its ladder are noise wearing a number's authority. Abstain instead.
+MIN_BAND_CHAPTERS = 200
+
+
+def band_for(words: int) -> str | None:
+    """The calibration stratum a scene of this length belongs to, or None if outside support.
+
+    Outside is a real answer, not an edge case: the corpus filter drops chapters under 300
+    words, so a 120-word scene has no matched population and nothing honest can be said about
+    where it sits.
+    """
+    for low, high in LENGTH_BANDS:
+        if low <= words < high:
+            return f"{low}-{high}"
+    return None
+
+
 def percentile_of(
-    metric: CraftMetric, *, cohort: str = REFERENCE_COHORT, profile: dict[str, Any] | None = None
+    metric: CraftMetric,
+    *,
+    words: int,
+    cohort: str = REFERENCE_COHORT,
+    profile: dict[str, Any] | None = None,
 ) -> float | None:
-    """Roughly where this measurement sits in published LitRPG, or None with no profile.
+    """Where this measurement sits among published LitRPG **of the same length**, or None.
 
     Interpolated between the stored percentiles rather than computed from raw values, because
     the profile deliberately stores no prose. Approximate by construction, and that is the
     right precision for it: the useful statement is "far outside the published range", never
     "the 63rd percentile rather than the 61st".
+
+    **`words` is required rather than defaulted, because an unmatched percentile is wrong
+    rather than approximate.** This function pooled every chapter over 300 words until the
+    error was measured: the corpus median chapter is 2,074 words against a 900-word draft
+    target, and on `opening_shape_repetition` the pooled ladder answered 0.503 where the
+    length-matched one answers 0.193. Making the caller state the length is how "we did not
+    match on length" stops being expressible.
+
+    Returns None whenever the stratum is unsupported — no band covers the length, the band
+    was never built, or it holds fewer than `MIN_BAND_CHAPTERS`. A profile built before
+    banding has no `bands` key and abstains for the same reason: an unstratified corpus
+    cannot support a matched claim, so there is no pooled ladder to fall back to. §7.1's
+    rule, and this project's own: abstain rather than silently extrapolate.
     """
     data = profile if profile is not None else load_profile()
     cohorts: dict[str, Any] = data.get("cohorts", {})
-    stops: dict[str, float] = cohorts.get(cohort, {}).get("metrics", {}).get(metric.metric_id, {})
+    key = band_for(words)
+    if key is None:
+        return None
+    band: dict[str, Any] = cohorts.get(cohort, {}).get("bands", {}).get(key, {})
+    if int(band.get("chapters", 0)) < MIN_BAND_CHAPTERS:
+        return None
+    stops: dict[str, float] = band.get("metrics", {}).get(metric.metric_id, {})
     if not stops:
         return None
     ladder = [
@@ -511,7 +587,9 @@ def percentile_of(
     return None  # pragma: no cover - the ladder is total over its own range
 
 
-def craft_gates(metrics: tuple[CraftMetric, ...]) -> tuple[GateOutcome, ...]:
+def craft_gates(
+    metrics: tuple[CraftMetric, ...], *, words: int | None = None
+) -> tuple[GateOutcome, ...]:
     """Project measurements into §4.2's ladder as *annotations*.
 
     `passed=True` and `blocking=False` on every one, unconditionally and without reading the
@@ -519,20 +597,41 @@ def craft_gates(metrics: tuple[CraftMetric, ...]) -> tuple[GateOutcome, ...]:
     ("until then the Conductor treats it as annotation") expressed as code that has no branch
     to get wrong. A threshold arrives with a `Calibration`, and it arrives by a different
     route: `domain/calibration.py::promoted_gate`, which cannot be called without evidence.
+
+    **`words` is what makes `percentile_of` reachable from the loop.** It was written to turn
+    a bare number into "the 99th percentile of published LitRPG" and then had no production
+    caller at all — the anchoring this module's own docstring offers as what survived the
+    refutation was, in the drafting path, never computed. Passing the scene's length attaches
+    it here. Omitting `words` is honest abstention rather than a default: without the length
+    there is no matched stratum, so no percentile is claimed.
     """
-    return tuple(
-        GateOutcome(
-            gate=GateKind.CRAFT,
-            rule_or_critic_id=metric.metric_id,
-            passed=True,
-            verdict_source=VerdictSource.DETERMINISTIC,
-            blocking=False,
-            detail=f"{metric.value} — {metric.caveat}"
-            + (f" ({metric.detail})" if metric.detail else ""),
-            calibration_id=None,
+    placed = {}
+    if words is not None:
+        placed = {
+            metric.metric_id: percentile_of(metric, words=words) for metric in metrics
+        }
+    gates = []
+    for metric in metrics:
+        detail = f"{metric.value} — {metric.caveat}"
+        if metric.detail:
+            detail += f" ({metric.detail})"
+        rank = placed.get(metric.metric_id)
+        if rank is not None:
+            detail += (
+                f" [p{rank:.2f} of {REFERENCE_COHORT} at {band_for(words or 0)} words]"
+            )
+        gates.append(
+            GateOutcome(
+                gate=GateKind.CRAFT,
+                rule_or_critic_id=metric.metric_id,
+                passed=True,
+                verdict_source=VerdictSource.DETERMINISTIC,
+                blocking=False,
+                detail=detail,
+                calibration_id=None,
+            )
         )
-        for metric in metrics
-    )
+    return tuple(gates)
 
 
 __all__ = [

@@ -616,7 +616,7 @@ def test_a_scene_can_be_placed_against_published_litrpg() -> None:
         "She was calm, sure, and ready."
     )
     metrics = {m.metric_id: m for m in measure(tell)}
-    assert percentile_of(metrics["craft.tricolon_rate.v0"]) == 0.99
+    assert percentile_of(metrics["craft.tricolon_rate.v0"], words=900) == 0.99
 
 
 def test_a_checkout_without_a_profile_still_works() -> None:
@@ -625,7 +625,136 @@ def test_a_checkout_without_a_profile_still_works() -> None:
     from litharness.domain.craft import measure, percentile_of
 
     metric = measure("A sentence here. And another one, rather longer than that.")[0]
-    assert percentile_of(metric, profile={}) is None
+    assert percentile_of(metric, words=900, profile={}) is None
+
+
+def test_a_percentile_is_matched_on_the_scene_s_own_length() -> None:
+    """The defect this replaced, measured before it was fixed.
+
+    `craft-profile.json` pooled every chapter over 300 words with no upper bound. The
+    corpus median chapter is **2074 words**; `DraftPolicy.target_words` is **900**. Measured
+    over 4,000 chapters, `opening_shape_repetition` falls monotonically across length bands
+    — 0.0536 at 300-700 words down to 0.0204 above 4,000 — because more sentences means more
+    distinct openings. So a scene sitting at the pooled 50th percentile was at the **19th**
+    among chapters of its own length: an error of 0.31, on the one band this system's drafts
+    actually occupy.
+
+    §7.1 of `hierarchical-compression-information-texture.md` states the rule this now
+    follows: calibration matched on "at least length, depth, genre, register, and dialogue
+    proportion". Length is the one that measurably bit.
+    """
+    from litharness.domain.craft import CraftMetric, percentile_of
+
+    def stops(median: float) -> dict[str, float]:
+        return {
+            "p01": median - 0.05, "p05": median - 0.04, "p25": median - 0.02,
+            "p50": median, "p75": median + 0.02, "p95": median + 0.04,
+            "p99": median + 0.05, "mean": median, "sd": 0.03,
+        }
+
+    metric = CraftMetric(metric_id="craft.made_up.v0", value=0.05, caveat="test")
+    profile = {
+        "cohorts": {
+            "human_pre_llm": {
+                "bands": {
+                    "700-1100": {"chapters": 400, "metrics": {"craft.made_up.v0": stops(0.02)}},
+                    "2000-4000": {"chapters": 400, "metrics": {"craft.made_up.v0": stops(0.08)}},
+                }
+            }
+        }
+    }
+
+    short = percentile_of(metric, words=900, profile=profile)
+    long = percentile_of(metric, words=3000, profile=profile)
+
+    assert short is not None and long is not None
+    assert short == 0.85, "unusual among chapters its own length"
+    assert long == 0.15, "ordinary among the long ones the pooled ladder was dominated by"
+    assert short - long > 0.5, "one value, two strata, two different facts"
+
+
+def test_the_profile_abstains_outside_its_calibration_support() -> None:
+    """§7.1: "If the calibration corpus cannot support a declared stratum, the system should
+    abstain rather than silently extrapolate."
+
+    Three ways support can be missing, and all three return None rather than a number: no
+    band covers the scene's length, the covering band was never built, and the covering band
+    holds too few chapters for its own tails to mean anything. A profile built before this
+    existed has no `bands` key at all, and abstains for that reason — an unstratified corpus
+    cannot support a matched claim, so there is nothing to fall back to.
+    """
+    from litharness.domain.craft import MIN_BAND_CHAPTERS, CraftMetric, percentile_of
+
+    stops = {
+        "p01": 0.0, "p05": 0.1, "p25": 0.2, "p50": 0.3,
+        "p75": 0.4, "p95": 0.5, "p99": 0.6, "mean": 0.3, "sd": 0.1,
+    }
+    metric = CraftMetric(metric_id="craft.made_up.v0", value=0.3, caveat="test")
+    band = {"chapters": 400, "metrics": {"craft.made_up.v0": stops}}
+    thin = {"chapters": MIN_BAND_CHAPTERS - 1, "metrics": {"craft.made_up.v0": stops}}
+    cohorts = {"human_pre_llm": {"bands": {"700-1100": band, "1100-2000": thin}}}
+
+    supported = percentile_of(metric, words=900, profile={"cohorts": cohorts})
+
+    assert supported is not None, "the band it was built for answers"
+    assert percentile_of(metric, words=1500, profile={"cohorts": cohorts}) is None, "too thin"
+    assert percentile_of(metric, words=120, profile={"cohorts": cohorts}) is None, "no band"
+    assert percentile_of(metric, words=900, profile={"cohorts": {"human_pre_llm": {}}}) is None
+
+
+def test_the_craft_ladder_places_a_scene_it_can_and_says_nothing_when_it_cannot(
+    store: SqliteStore,
+) -> None:
+    """`percentile_of` had **no production caller at all** before this.
+
+    It is the function this module's own docstring offers as what survived the refutation —
+    "the metrics do not sort machine from human, but an outlier against the published
+    distribution is still a fact" — and in the drafting path that fact was never computed.
+    Same family as the null dispatcher and `plan_history`: a thing the project points at when
+    asked whether something is done, that nothing in production touches.
+
+    The second half is the more useful assertion. `MIN_WORDS` is 300, so a shorter scene has
+    no matched population and the ladder attaches nothing. This is not hypothetical: the Book
+    Zero run wrote scenes of 138 to 205 words, so **every scene it produced sits outside the
+    support of the corpus this system calibrates against**. Before banding, the pooled ladder
+    answered anyway.
+    """
+    metrics = measure("The room was cold, dark, and silent. She waited a while by the door.")
+
+    placed = _craft_ladder(store, metrics, today=TODAY, words=900)
+    unplaced = _craft_ladder(store, metrics, today=TODAY, words=180)
+    unstated = _craft_ladder(store, metrics, today=TODAY)
+
+    assert any("of human_pre_llm at 700-1100 words" in (g.detail or "") for g in placed)
+    assert not any("percentile" in (g.detail or "") for g in unplaced)
+    assert not any("of human_pre_llm" in (g.detail or "") for g in unplaced), "below MIN_WORDS"
+    assert not any("of human_pre_llm" in (g.detail or "") for g in unstated), "no length given"
+
+
+def test_compression_distance_does_not_count_the_container_header() -> None:
+    """§5.1's first-order overhead correction, and it is not a rounding detail.
+
+    gzip's empty-object header is **20 bytes**. On two unrelated 22-word scenes the encoded
+    payload is 105 bytes, so the container is 19% of it and the uncorrected distance reads
+    0.6095 where the corrected one reads 0.7529. The bias is length-dependent — measured on
+    published prose it is +0.048 at 100 words, +0.020 at 300, +0.008 at 900 and +0.004 at
+    2,000 — so without the correction a short scene scores as *more similar* than a long one
+    for no textual reason at all. This project's own Book Zero run wrote 147-word scenes.
+
+    That is a length confound living inside the metric, which is the defect family this
+    repository keeps finding in its own proxies. The assertion below fails on the
+    uncorrected arithmetic by a wide margin.
+    """
+    first = (
+        "Rook counted the coins twice by the gate and found them wanting, then went on "
+        "into the dark road beyond the toll house."
+    )
+    second = (
+        "Mara pried up the floorboard and lifted the brass key from the cold, and said "
+        "nothing at all about it to anyone."
+    )
+
+    assert scene_echo(first, [second]).value > 0.70, "uncorrected this pair reads 0.6095"
 
 
 def test_a_corrected_direction_is_a_different_calibration(store: SqliteStore) -> None:
@@ -803,7 +932,7 @@ def test_the_metric_reports_and_cannot_gate() -> None:
     are the same scene" is mechanically checkable and would be a fair promotion candidate —
     but promotion runs through the evidence bar like anything else, and this has none."""
     metrics = measure("A scene.", ["A scene."])
-    [echo] = [metric for metric in metrics if metric.metric_id == "craft.scene_echo.v0"]
+    [echo] = [metric for metric in metrics if metric.metric_id == "craft.scene_echo.v1"]
 
     assert echo.caveat, "a metric travelling without its caveat is a metric that gets trusted"
     assert all(not gate.blocking for gate in craft_gates(metrics))

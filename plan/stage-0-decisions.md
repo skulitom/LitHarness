@@ -1708,3 +1708,103 @@ flags are regeneration defects and how many are deliberate recaps? On this proje
 drafts so far, one of five flagged scene-pairs is information `scene_echo` did not already
 have. If that ratio holds over twenty books the metric is redundant and should be deleted
 rather than calibrated.
+
+## 50. The calibration path was unmatched, unreachable, and counting gzip's header
+
+A research note was added to the repository root — `hierarchical-compression-information-texture.md`,
+a preregistration-ready methods proposal for hierarchical compression analysis, honest that it
+reports no experimental results. Two of its statistics were measured against this corpus and
+both were refuted. **What it was actually worth was three defects it exposed in shipped code.**
+
+**Its central framing does not apply here, and saying so is most of the assessment.** The paper
+is a *detector* paper: provenance discrimination, localisation of machine spans in mixed
+documents, subgroup false-positive rates, the ethics of accusation. This system does not have
+that problem — it knows its text is machine-written. The paper's own §2.3 separates provenance
+from texture from quality and states they are different prediction targets; §1a.5 and
+RevisionJudge are this project's version of the third, and they remain where the evidence is
+missing. The one section that matches our problem, §10.13's editorial-intervention study, is the
+one with no method attached.
+
+**Order asymmetry (§5.2) is an LZ77 match-distance readout.** NCD symmetrises by construction;
+the proposal keeps `A_C(x,y) = (C0(x||y) - C0(y||x)) / max(C0(x)+C0(y), eps)`. The effect is
+real and significant in every cohort (t = -3.4 to -4.8) and it is not about narrative. Reversing
+paragraph order *inside* each unit while leaving every unit in its book position **inverts the
+sign** (t = +6.72); a synthetic test that moves a shared chunk relative to the concatenation
+seam, holding content, sizes and mutual information fixed, swings it by twice the entire corpus
+effect; and the magnitude varies 7-fold with the deflate window. Declared-vs-undeclared AUC
+0.510. On `bookzero-24`, the looping book, the forward fraction is exactly 0.50 — it scores
+*more* forward-signed than the median human book, the nearest-predecessor-lag failure repeated.
+
+**A control that cannot fail is not a control, and the one specified here could not.** The plan
+was "reverse the book and check the sign flips". `A_C` is algebraically antisymmetric, so whole-
+book reversal maps every consecutive pair to its own transpose: measured max
+|mean(reversed) + mean(original)| over 34 books is **0.000e+00, to the last bit**. It passes on
+pure noise. The substitute that actually killed it permutes content *inside* the units while
+leaving the units in place. Add the question to the standing list: *can this control fail?*
+
+**Haar scale energy (§6.3) is a null with a real by-product.** The `e_d` vector is flat across
+cohorts (declared-vs-undeclared AUC 0.56), so scale organisation of sentence length separates
+nothing where its variance already separated nothing. The by-product is worth keeping: published
+prose has genuine long-range sentence-length rhythm, scale slope H ~ 0.60-0.65 against a
+simulated white-noise null of 0.471, and shuffling a book's own sentence lengths drops it to
+0.478 — onto the null to three decimals. It does not ship, because across 158 disjoint windows
+the within-book sd of H equals the between-book sd (0.078 each, ICC(1) = 0.270): it is 73%
+measurement-window noise. **Two method rules earned here.** Simulate the null at your own *n* —
+the log-log slope estimator is biased low, 0.436 at n=32 against 0.482 at n=1024, so comparing
+to a theoretical 0.5 manufactures 0.03 of effect from nothing. And check within-book reliability
+before believing any per-book statistic; this project had never run an ICC.
+
+### What was fixed
+
+**`percentile_of` was wrong by up to 0.31, and §7.1 is what found it.** The rule is that
+calibration must be matched on "at least length, depth, genre, register, and dialogue
+proportion". `craft-profile.json` pooled every chapter over 300 words with no upper bound. The
+corpus median chapter is **2,074 words**; `DraftPolicy.target_words` is **900**. Measured over
+4,000 chapters:
+
+    metric                      rho vs length   pooled   length-matched   error
+    opening_shape_repetition        -0.391       0.503       0.193        -0.310
+    sentence_length_variation       +0.110       0.500       0.650        +0.150
+    dialogue_ratio                  +0.155       0.500       0.617        +0.117
+    tricolon_rate                   -0.050       0.500       0.472        -0.028
+
+`opening_shape_repetition` falls monotonically from 0.0536 to 0.0204 across the length bands,
+mechanically, because more sentences means more distinct openings. So a scene at the pooled
+50th percentile was at the 19th among chapters its own size. The profile now carries `bands`
+and `percentile_of` requires `words` — not defaulted, because an unmatched percentile is wrong
+rather than approximate, and a required argument is how "we did not match on length" stops
+being expressible. This holds regardless of whether the metrics discriminate anything: the
+function's job is the comparison, not the discrimination.
+
+**It abstains outside support rather than extrapolating.** No band covering the length, a band
+never built, or a band under `MIN_BAND_CHAPTERS` all return None. A profile built before banding
+has no `bands` key and abstains for the same reason — an unstratified corpus cannot support a
+matched claim, so there is no pooled ladder to fall back to.
+
+**And it had no production caller.** The function this module's own docstring offers as what
+survived the refutation was, in the drafting path, never computed. `craft_gates` now takes the
+scene's length and attaches the percentile to each gate's `detail`; `_craft_ladder` threads it;
+the scene-draft handler passes `len(result.text.split())`. Same defect family as the null
+dispatcher, `rollback_proposal`, `plan_history` and `impact.py`'s scorer.
+
+**Which immediately reported something worth knowing.** A 212-word scene now receives no
+percentile, because `MIN_WORDS` is 300 and no band covers it. The Book Zero run wrote scenes of
+138 to 205 words, so **every scene it produced sits outside the support of the corpus this
+system calibrates against**. Before banding the pooled ladder answered anyway. The abstention is
+the feature: it turned a silent wrong answer into a visible gap.
+
+**`scene_echo` was counting gzip's container, and it is a length confound not a rounding
+detail.** §5.1's `C_0(x) = C(x) - h_C`; measured, `h_C` is 20 bytes. On two unrelated 22-word
+scenes the payload is 105 bytes, so the container is 19% of it and the distance reads 0.6095
+uncorrected against 0.7529 corrected. On published prose the bias runs +0.048 at 100 words,
++0.020 at 300, +0.008 at 900 and +0.004 at 2,000 — it shrinks as scenes grow, so **without the
+correction a short scene scores as more similar than a long one for no textual reason**, and
+this project's own run wrote 147-word scenes. The metric id moves to `craft.scene_echo.v1`
+because the arithmetic changed: `promoted_gate` looks a calibration up by `metric_id`, and
+evidence recorded against v0 values applied to v1 arithmetic is the silent inversion the
+`direction` field already cost this project once.
+
+**Still refuted, still advisory.** None of this makes any of the four metrics discriminate
+anything; the rebuilt profile's separation numbers are unchanged to the fourth decimal. What
+changed is that the one claim the evidence does support — where a scene sits among published
+chapters of its own size — is now correct, reachable, and honest about when it cannot be made.
