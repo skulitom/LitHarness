@@ -1,9 +1,15 @@
 """Beats: the fixed sheet Stage 1 asks for, derived rather than stored.
 
 §17 Stage 1 wants a "template planner (fixed beat sheet)" — not a creative one. §9's
-Narrative Planning is a separate pillar that does not exist, and §20.6 records the ordering
-trap around it, so anything here that looked like arc generation would be inventing §9's
-shape ahead of its consumer.
+Narrative Planning is a separate pillar, and §20.6 records the ordering trap around it, so
+anything here that looked like arc generation would be inventing §9's shape ahead of its
+consumer.
+
+*(This said the pillar "does not exist", which stopped being true when
+`application/narrative_planner.py` shipped the bounded directive-interpretation producer §9.3
+records. What is still absent is the part this module would otherwise be tempted to invent:
+whole-book plan generation, a foreshadow/payoff ledger, a progression schedule, and any
+template beyond `SIX_BEAT`.)*
 
 **A beat is a scene node plus its position in a template.** Nothing is persisted: the
 imported manuscript already *is* the ordered, addressable set of work units.

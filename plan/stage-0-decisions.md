@@ -1,6 +1,6 @@
 # Stage 0 decisions
 
-**Status:** Stage 0 slices 1-6 and Stage 1 slices 7-9 built and green — **668 passing tests (+6 opt-in live), ruff clean, mypy
+**Status:** Stage 0 slices 1-6 and Stage 1 slices 7-9 built and green — **670 passing tests (+6 opt-in live), ruff clean, mypy
 strict clean.** Slice 1 is the model-free manuscript spine; slice 2 the Conductor skeleton
 (tick, instance lease, job selection, digest, outbox dispatch, crash recovery); slice 3 the
 four provider adapters with their conformance suite and the billing guard; slice 4 **the
@@ -351,7 +351,10 @@ Deliberately deferred, in the order they should land:
    `EventType` additions are now shapes proven by a consumer rather than guesses. Slice 4
    adds a sixth: the **policy decision record**, whose required fields are currently the
    provenance dict in `handlers.py` and are asserted by
-   `test_the_accepted_event_carries_the_provenance_a_policy_record_will_need`.
+   `test_the_decision_record_carries_the_provenance_section_2_requires`.
+   *(Renamed when contracts 1.1.0 shipped `PolicyDecisionRecord` and the assertion moved off
+   the free-form event payload onto the artifact that owns it. This citation kept the old
+   name for four slices — the reason `test_every_test_cited_as_evidence_exists` now exists.)*
 6. **A craft gate of any kind.** Nothing here measures whether the prose is good — §1a.1's
    distinction, stated plainly so a green suite is not misread. `gate_draft` checks that a
    draft exists, is the right shape, and did not overwrite anything. A scene that passes
@@ -1262,3 +1265,58 @@ they have.
 The fixture's own notes come along for free, which is a small vindication of `state.describe`
 being the one renderer: `f-gold-ledger`'s "the ledger-correct value is 20" prints beside the
 record it is about, so §8.3's planted defects are visible to the reader they were planted for.
+
+## 40. The prose is load-bearing, so something had better check it
+
+This repo's comments carry the reasons, the refuted alternatives and their measurements, and
+readers act on them — §27 stopped a wrong story-position scheme twice, once by being read and
+once by being re-read. Nothing type-checked a word of it, and the record says what that costs:
+`jobs.priority` was documented as inert in four places for two stages after it stopped being,
+and a claim that the list of uncalled promises was empty survived exactly one commit.
+
+Two checks now run in `tests/test_architecture.py`, chosen because they are the two failures
+that actually happened rather than the ones easiest to write:
+
+- **every backtick-quoted symbol in `src/` prose resolves** somewhere in the repo. Contract
+  names are skipped — they belong to `litharness_contracts` and its own suite — and plain
+  lowercase words are skipped, being emphasis far more often than symbols. `PROSE_ALLOWED`
+  exists for a name deliberately absent, and it is empty: this project names refuted
+  alternatives constantly, but does so in `plan/`, not in module docstrings.
+- **every test cited as evidence exists.** §17 proves Stage 0's exit clauses by naming four
+  tests; a citation that no longer resolves is a claim with its evidence quietly removed, and
+  it reads exactly like a claim with evidence. Scoped to `src/` and this file — `PLAN.md` and
+  the other companions also discuss siblings' suites, which this repo cannot resolve and
+  should not pretend to.
+
+**What the audit found is worth recording as much as the fixes**, because the result was
+better than the criticism that prompted it. Across `src/`, every symbol named in prose exists
+— **zero** stale identifiers. The whole repo yielded two stale claims:
+
+1. `domain/beats.py` opened with "§9's Narrative Planning is a separate pillar that does not
+   exist", which stopped being true when `application/narrative_planner.py` shipped §9.3's
+   bounded producer. Corrected in place, with the part that *is* still absent named.
+2. this file cited a test whose name was
+   test_the_accepted_event_carries_the_provenance_a_policy_record_will_need, renamed to
+   `test_the_decision_record_carries_the_provenance_section_2_requires` when contracts 1.1.0
+   moved the assertion onto `PolicyDecisionRecord`. Four slices stale, and the reason the
+   second check exists.
+
+   *(Written without backticks on purpose, and the check is what forced the distinction: a
+   dead name is a historical string, not a symbol this repo has. Quoting it as one made the
+   guard fail on the very paragraph describing it — which is the right answer, and a small
+   demonstration that the rule has teeth.)*
+
+A third came from the same session that wrote the search term for it. `speaks_system_voice`
+lost its production caller when the planner switched to `system_voice_example`, which was a
+fresh instance of §19.1's defect family, created hours after documenting it. Closed by making
+`system_voice_example` guard on the predicate — which reads better anyway, since "no example"
+and "does not speak system voice" are the same answer and the code now says so.
+
+**And a limit on the check worth stating.** A sweep for public symbols whose only callers are
+tests returns sixteen, and most are correct: `assert_no_billing_reachable` is a guard tests
+assert with, `no_op_handler` is the endurance workload, the `fixture_*` helpers exist to be
+read by tests. The two that are genuinely unused — `initial_keys` and `key_between`, position
+insertion for a system that never inserts a node — are *fine*, and forcing them a caller would
+be the wrong lesson entirely. The defect family is narrower than "uncalled": it is **a thing
+the project points at when asked whether something is done, that nothing in production
+touches.** A count cannot tell those apart, so the sweep stays a tool rather than a test.

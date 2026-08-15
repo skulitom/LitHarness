@@ -1,16 +1,31 @@
-"""Executable dependency boundaries for the package.
+"""Executable boundaries for the package: its dependencies, and its prose.
 
 The project has a useful inward dependency direction today, but a diagram cannot stop a
 convenient import from reversing it. These tests keep the domain independent, keep provider
 and adapter implementations from coupling to each other, and reject internal import cycles.
+
+**And they check the docstrings, because in this repo the docstrings are load-bearing.** The
+comments here carry the reasons, the refuted alternatives and their measurements, and readers
+— human and otherwise — act on them. Nothing type-checked a word of that, and the record says
+what happens: `jobs.priority` was documented as inert in four places for two stages after it
+stopped being, and a claim that a list of uncalled promises was empty survived exactly one
+commit. Prose decays like code and had none of code's guards.
+
+These are the cheapest approximations of a type-check for it — a symbol the prose names in
+backticks should be findable, and a test it cites as evidence should exist — and they are the
+two failures that actually happened.
 """
 
 from __future__ import annotations
 
 import ast
+import re
 from pathlib import Path
 
+import litharness_contracts as lc
+
 PACKAGE_ROOT = Path(__file__).parents[1] / "src" / "litharness"
+REPO_ROOT = Path(__file__).parents[1]
 
 ALLOWED_DEPENDENCIES = {
     "domain": frozenset({"domain"}),
@@ -83,6 +98,79 @@ def test_dependencies_only_point_outward_to_inward() -> None:
                     f"{source}:{line} ({source_layer}) imports {target} ({target_layer})"
                 )
     assert not violations, "dependency boundary violations:\n" + "\n".join(violations)
+
+
+# --- the prose ------------------------------------------------------------------------
+
+#: Backtick-quoted names in `src/` docstrings that deliberately name nothing here. Empty
+#: today, and it should stay short: this project's style is to name a refuted alternative
+#: (`plan/stage-0-decisions.md` is full of them), so a genuinely absent name belongs here
+#: **with its reason**, not silently outside the check.
+PROSE_ALLOWED: dict[str, str] = {}
+
+#: A name worth resolving: it has an underscore, a dot, or an initial capital. A single
+#: lowercase word in backticks is ordinary emphasis far more often than it is a symbol.
+_SYMBOLISH = re.compile(r"`([A-Za-z_][A-Za-z0-9_]*(?:\.[A-Za-z_][A-Za-z0-9_]*)*)`")
+
+
+def _repo_corpus() -> str:
+    parts = [path.read_text(encoding="utf-8") for path in PACKAGE_ROOT.rglob("*.py")]
+    parts += [path.read_text(encoding="utf-8") for path in (REPO_ROOT / "tests").rglob("*.py")]
+    parts += [path.read_text(encoding="utf-8") for path in (REPO_ROOT / "migrations").glob("*.sql")]
+    parts.append((REPO_ROOT / "pyproject.toml").read_text(encoding="utf-8"))
+    return "\n".join(parts)
+
+
+def test_every_symbol_the_prose_names_still_exists() -> None:
+    """A docstring naming a function that was renamed is worse than one saying nothing: it
+    teaches the wrong thing to whoever reads it next, and reads as current because it is
+    sitting beside working code.
+
+    Contract names are skipped — those belong to `litharness_contracts` and are checked by
+    its own suite — and so are plain lowercase words, which are emphasis more often than
+    they are symbols.
+    """
+    contract_names = set(dir(lc))
+    corpus = _repo_corpus()
+    stale: list[str] = []
+    for path in sorted(PACKAGE_ROOT.rglob("*.py")):
+        for name in sorted(set(_SYMBOLISH.findall(path.read_text(encoding="utf-8")))):
+            head, tail = name.split(".")[0], name.split(".")[-1]
+            if "_" not in name and "." not in name and not name[0].isupper():
+                continue
+            if head in contract_names or tail in contract_names or name in PROSE_ALLOWED:
+                continue
+            if not re.search(rf"\b{re.escape(tail)}\b", corpus):
+                stale.append(f"{path.relative_to(PACKAGE_ROOT).as_posix()}: `{name}`")
+    assert not stale, (
+        "prose names symbols that no longer exist:\n"
+        + "\n".join(stale)
+        + "\n(rename the reference, or record it in PROSE_ALLOWED with why it is absent)"
+    )
+
+
+def test_every_test_cited_as_evidence_exists() -> None:
+    """The project cites tests by name as proof that a clause holds — `PLAN.md` §17 does it
+    for every Stage 0 exit criterion. A citation that no longer resolves is a claim with its
+    evidence removed, and it looks exactly like a claim with evidence.
+
+    Checked over `src/` and `plan/stage-0-decisions.md`, the two places that cite *this*
+    repo's tests. `PLAN.md` and the other companion docs also discuss siblings' suites, which
+    this repo cannot resolve and should not pretend to.
+    """
+    tests_dir = REPO_ROOT / "tests"
+    suite = "\n".join(path.read_text(encoding="utf-8") for path in tests_dir.rglob("*.py"))
+    sources = [*PACKAGE_ROOT.rglob("*.py"), REPO_ROOT / "plan" / "stage-0-decisions.md"]
+    stale: list[str] = []
+    for path in sources:
+        text = path.read_text(encoding="utf-8")
+        for name in sorted(set(re.findall(r"`(test_[a-z0-9_]+)`", text))):
+            if re.search(rf"def {re.escape(name)}\b", suite):
+                continue
+            if (tests_dir / f"{name}.py").exists():
+                continue  # a module, cited as a whole
+            stale.append(f"{path.relative_to(REPO_ROOT).as_posix()}: `{name}`")
+    assert not stale, "cited tests that do not exist:\n" + "\n".join(stale)
 
 
 def test_internal_module_graph_has_no_cycles() -> None:

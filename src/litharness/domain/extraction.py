@@ -125,52 +125,6 @@ def render_status_line(subject: str, value: Mapping[str, object]) -> str:
     )
 
 
-def system_voice_example(
-    records: Sequence[lc.StateRecord], *, at: str | None = None
-) -> str | None:
-    """The book's own current status line, to show a generator what to write — or None.
-
-    **A filled example rather than `STATUS_TEMPLATE`, and that is a measurement rather than a
-    preference.** The instruction first showed the template with its `{subject}` placeholder
-    intact, and three local models were asked to draft against it: two substituted the
-    character's name and one wrote `[STATUS] {subject} — Level 3 | ...` verbatim. That line
-    *matches* `STATUS_PATTERN` — a brace-wrapped word is a perfectly good subject — so nothing
-    rejected it, and `{subject}` is not a name canon knows, so extraction yielded nothing. A
-    scene that looks right, parses right, and establishes nothing: the exact silence this
-    module's docstring says no gate catches.
-
-    Built from canon, so it mints nothing: the subject is the id the records hold and the
-    numbers are the ones already established.
-
-    **`at` is the position being drafted, and it is not decoration.** A model shown a line
-    will use its numbers, so the wrong line is worse than none: an imported book holds a
-    snapshot for every position at once, and picking the newest would show scene six's balance
-    while asking for scene one — an invented state the integrity gate then refuses, and a
-    refusal caused by the instruction rather than by the prose. So the snapshot *at* the
-    position wins; otherwise the latest one before it, which for a book still being written is
-    the state the next scene continues from, and for a book with nothing placed yet is the
-    starting sheet.
-    """
-    snapshots = [
-        record
-        for record in records
-        if record.predicate == STATUS_PREDICATE
-        and state_mod.is_canon(record)
-        and isinstance(record.value, Mapping)
-    ]
-    if not snapshots:
-        return None
-    exact = [record for record in snapshots if state_mod.order_key_of(record) == at]
-    earlier = [
-        record
-        for record in snapshots
-        if at is None or (state_mod.order_key_of(record) or "") < at
-    ]
-    chosen = exact or earlier or snapshots
-    latest = max(chosen, key=lambda record: state_mod.order_key_of(record) or "")
-    return render_status_line(latest.subject, latest.value)
-
-
 def speaks_system_voice(records: Sequence[lc.StateRecord]) -> bool:
     """Whether this book states its game state on the page.
 
@@ -421,3 +375,54 @@ __all__ = [
     "normalise_subject",
     "record_id_for",
 ]
+
+
+def system_voice_example(
+    records: Sequence[lc.StateRecord], *, at: str | None = None
+) -> str | None:
+    """The book's own current status line, to show a generator what to write — or None.
+
+    **A filled example rather than `STATUS_TEMPLATE`, and that is a measurement rather than a
+    preference.** The instruction first showed the template with its `{subject}` placeholder
+    intact, and three local models were asked to draft against it: two substituted the
+    character's name and one wrote `[STATUS] {subject} — Level 3 | ...` verbatim. That line
+    *matches* `STATUS_PATTERN` — a brace-wrapped word is a perfectly good subject — so nothing
+    rejected it, and `{subject}` is not a name canon knows, so extraction yielded nothing. A
+    scene that looks right, parses right, and establishes nothing: the exact silence this
+    module's docstring says no gate catches.
+
+    Built from canon, so it mints nothing: the subject is the id the records hold and the
+    numbers are the ones already established.
+
+    **`at` is the position being drafted, and it is not decoration.** A model shown a line
+    will use its numbers, so the wrong line is worse than none: an imported book holds a
+    snapshot for every position at once, and picking the newest would show scene six's balance
+    while asking for scene one — an invented state the integrity gate then refuses, and a
+    refusal caused by the instruction rather than by the prose. So the snapshot *at* the
+    position wins; otherwise the latest one before it, which for a book still being written is
+    the state the next scene continues from, and for a book with nothing placed yet is the
+    starting sheet.
+    """
+    if not speaks_system_voice(records):
+        return None
+    snapshots = [
+        record
+        for record in records
+        if record.predicate == STATUS_PREDICATE
+        and state_mod.is_canon(record)
+        and isinstance(record.value, Mapping)
+    ]
+    if not snapshots:
+        # It speaks, but no snapshot carries a value this can render from. Abstaining is the
+        # same answer as not speaking: an example is what makes the instruction unambiguous,
+        # and there is nothing to build one out of.
+        return None
+    exact = [record for record in snapshots if state_mod.order_key_of(record) == at]
+    earlier = [
+        record
+        for record in snapshots
+        if at is None or (state_mod.order_key_of(record) or "") < at
+    ]
+    chosen = exact or earlier or snapshots
+    latest = max(chosen, key=lambda record: state_mod.order_key_of(record) or "")
+    return render_status_line(latest.subject, latest.value)
