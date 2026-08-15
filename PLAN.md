@@ -1,7 +1,7 @@
 # LitHarness: Autonomous Book-Production System Plan
 
 **Version:** 2.2 (supersedes PLAN-v1-authoring-tool.md, archived in this folder)
-**Status:** Master plan; **Stage 0 slices 1–6, Stage 1 slices 7–9, and Stage 2's detect-and-repair chain implemented and green (670 passing tests + 6 opt-in live); operable via `litharness tick`; a book goes in (`import`), drafts itself against a context packet, is refused when a planted defect stands against it, repairs a located finding within a serial cap (`evaluate_revision`/`repair_finding`), notifies out of the outbox to a configured sink (`--notify-file`), can have its plan history read and rolled back (`plans`/`revert-plan`), re-checks the scenes a repair's change reaches instead of only the scene it repaired (`propagate`, dev-set precision 1.000 against a 0.481 base rate), and comes out readable (`export`); all four §17 Stage 1 exit clauses met; Stage 2's propagation engine is built and scored, and its remaining work is the rename/moved-event producers and richer live state production; two of §19's seven clauses met outright — scorecard in §19.1**
+**Status:** Master plan; **Stages 0, 1 and 2 met against their exit clauses — with Stage 0's endurance clause *evidenced rather than met* and Stage 2's propagation number a *dev-set* one that does not generalise; both caveats are in §17 beside the claims they qualify. 670 passing tests + 6 opt-in live; operable via `litharness tick`; a book goes in (`import`), drafts itself against a context packet, is refused when a planted defect stands against it, repairs a located finding within a serial cap (`evaluate_revision`/`repair_finding`), notifies out of the outbox to a configured sink (`--notify-file`), can have its plan history read and rolled back (`plans`/`revert-plan`), re-checks the scenes a repair's change reaches instead of only the scene it repaired (`propagate`, dev-set precision 1.000 against a 0.481 base rate), and comes out readable (`export`); Stage 3 (Book Zero) is now startable rather than blocked — a book with no imported snapshot drafts, states its game state on the page, and reads it back; two of §19's seven clauses met outright — scorecard in §19.1**
 
 *(Corrected here, because this line was the instance: it read "four of §19's seven clauses met" while §19.1's table said two. §19.1 contains a paragraph recording that exact drift happening once before, four lines above the table that contradicted it, and the header carrying the same wrong number went unnoticed through three revisions. The readiness number this project reports about itself is the number to distrust first.)*
 **Role:** A 24/7 autonomous system that plans, drafts, evaluates, repairs, and versions quality LitRPG books — directed by a human, never blocked on one
@@ -414,7 +414,7 @@ done, and **the v2.1 pass did it again in six more places**:
 | Project | State | Role in v2 |
 |---|---|---|
 | litharness-contracts | **Wire schema 1.1.0**, 124 tests, 30 schemas, mystery + litrpg golden fixtures. Git repo (branch `main`, clean tree, no remote, no tags). **Still no LICENSE** — README says "License: TBD", and that is a decision for the owner rather than a gap to fill | Shared schemas + gold benchmarks. §20.3's minors have shipped except the game-system schemas, which stay deferred for want of a consumer. Version (don't freeze) after Book Zero. *(Struck: "untracked, no git repo" and "version-controlling it is the single cheapest unblock" — the commit landed 2026-08-12 17:36, eight minutes **before** the v2.1 edit that still called it untracked.)* |
-| **LitHarness (this repo)** | **Stage 0 slices 1–6, Stage 1 slices 7–9 and Stage 2's detect-repair-propagate chain: 670 tests passing + 6 opt-in live, ruff clean, mypy strict clean (`warn_unreachable` on). Under version control** (`.gitattributes` pins `eol=lf`; `core.autocrlf=true` is set globally on this machine and has already bitten this project once) | The product. **This table previously audited every sibling's VCS status and had no row for the product repo, which was itself untracked.** |
+| **LitHarness (this repo)** | **Stages 0–2 met against their exit clauses (§17 carries the caveats): 670 tests passing + 6 opt-in live, ruff clean, mypy strict clean (`warn_unreachable` on). Under version control** (`.gitattributes` pins `eol=lf`; `core.autocrlf=true` is set globally on this machine and has already bitten this project once) | The product. **This table previously audited every sibling's VCS status and had no row for the product repo, which was itself untracked.** |
 | BookWorldState | Committed, Apache-2.0, tagged `v0.1.0`, pushed to GitHub; **13 commits, working tree clean**; 100 tests passing. Ships an authenticated versioned WSGI API, transactional outbox with capped-exponential-retry worker, signed webhook publication, migration checksums, online backup/restore + destructive-corruption drill — **Milestone 4/5 infrastructure, not "~Milestone 2"**. What is *not* done is M3's evaluation corpus | State substrate. Its closed predicate registry is **not** injectable yet (§20.5) — but §8.4 routes around this deliberately, so it is not a blocker for §8. *(Struck: "working tree is not clean", "4 commits", "~Milestone 2 complete", "the real blocker for §8" — all four false.)* |
 | RevisionBench | Mature (**411** tests). A2d complaint-gated repair, the LitRPG stratum, **and A3d** have landed — A3d shipped *under the name A2d*, and best-of-N repair ranked by minimal intervention closed the last element in `22a228d` | Source of repair policy, mechanical vetoes, LitRPG stratum evidence. **Its M5 decomposition is done and has already answered the question §20.7 was scheduled to ask** — see the redirect there. *(Struck: "405 tests", "A3d is next".)* |
 | RevisionJudge | Built; 104 pairs exported, exactly 2 verdicts collected; one uncommitted file (`data/verdicts.jsonl`) | **Demoted from the calibration instrument to a confirmation sample** (§10.3 as amended). Two verdicts against 104 pairs is the measured throughput of a design that needs a human to decide to sit down, and it is why revealed preference is now primary. Still the right tool for spot-confirming a calibration derived elsewhere; `litharness audit` is the same shape and collects as a by-product of drafting. The verdict *consumer* remains unbuilt |
@@ -1175,6 +1175,38 @@ exist:
    to supply — Book Zero's own output is the first genuinely unseen prose this project
    will have — and until it exists, no claim from this stage generalises.
 
+**All three met.** Item 1 is `test_accepted_draft_is_evaluated_repaired_and_verified` for the
+chain, `test_incomplete_verification_never_marks_a_finding_fixed` for the errored-run half, and
+`test_preservation_holds_for_arbitrary_single_span_edits` for "only that span" — a property
+test, because the guarantee is checked by walking the result rather than trusted. Item 2,
+re-measured: the engine scores **precision 1.000 at recall 1.000** with zero false touches,
+against `predict_everything`'s 0.481 and the positional heuristic's 0.333, and
+`e3-typography-only` reaches nothing at all. Item 3 is `impact.CAVEAT`, defined once, asserted
+by `test_every_score_carries_what_it_is_not`, and printed by `litharness propagate` under every
+result so the number cannot travel without it.
+
+**What "Stage 2 complete" does not mean, in the order a reader is most likely to get it
+wrong.**
+
+- **The propagation number does not generalise, and item 3 exists to say so.** Four cases, 37
+  expectations, both suites generated from the same `def.json` that authors the prose they
+  grade, and the rules were written after reading them. A perfect score on material of that
+  size and provenance rules out an engine that is obviously wrong and rules in nothing.
+  `tests/test_propagation.py` is the other half — each rule against a book built for it, plus
+  the cases the gold has none of — and it is evidence about the rules, not about books.
+- **Propagation routes re-checks; it does not detect.** Walked end to end, the four evaluations
+  a gold-price repair queues all complete and report nothing, because `state.contradiction.v0`
+  compares values at a *single* story position and the broken thing is arithmetic across them.
+  That belongs to ContinuityEvaluation's pack, which is optional. The stage's title is "detect
+  and scoped repair" and the *scope* is what these numbers are about.
+- **The in-repo change producer reads `fact_changed` only.** Renames and moved events are
+  reachable through `litharness propagate` over a `ChangeSet` and have no producer here, which
+  is §13's boundary rather than an omission.
+- **The original exit clause was not met, because it could not be run.** Three of its four
+  terms do not exist, as the paragraphs above record. Nobody should read this stage as
+  "detect-then-repair beats revise-then-gate on held-out material"; held-out material is Stage
+  3's to supply and this measured node-granular scope on dev fixtures.
+
 `domain/impact.py` and `tests/test_impact.py` are this clause, executable. The first exit item
 is now wired as durable `evaluate_revision` and `repair_finding` work: accepted drafts enqueue
 evaluation, one deterministic located complaint licenses one bounded replacement, and only a
@@ -1260,6 +1292,29 @@ file, which is §13's boundary and honest about where that half lives. Stale fut
 deliberately omitted.
 
 ### Stage 3 — Book Zero (the pivot)
+
+**Startable, and it was not before.** A book this system wrote entirely itself used to extract
+nothing: `attested_position` reads a scene's story position out of the book's own evidence and
+a fresh book has none, so §12 step 5 was inert on exactly the book Stage 3 produces. Three
+things closed that, and the preconditions are worth stating because they are what a Book Zero
+run needs on day one rather than what it discovers on day three:
+
+1. **A seed sheet.** One canon status record — the starting condition a LitRPG book has anyway
+   — carrying no story position, because it is true before the book begins. Without it the book
+   is never asked for system voice, writes none, and has nothing to place. Authored input, not
+   a genre this system guessed.
+2. **A chronological template.** `SIX_BEAT` declares that the story it lays out runs forwards,
+   so its beats can state where they sit; the flag defaults to False so a future non-linear
+   sheet loses coverage rather than minting a false order.
+3. **The instruction, measured.** The generator is shown the book's own current status line
+   rather than a template with placeholders — three of three local models produce an
+   extractable line, where the placeholder version was two of three.
+
+Measured end to end: a seeded book with no snapshot drafts six scenes, reads back all six
+balances at `s1`–`s6`, and seven revisions rebuild cleanly. What that does **not** supply is
+the stage itself — 50–80k words is three orders of magnitude more prose than six scenes, the
+budget governor has never run against a real bill, and the failure taxonomy is the output.
+
 One complete 50k–80k word LitRPG draft, end-to-end, 24/7 unattended: Narrative
 Planner v0 (arc template + beat generation + foreshadow ledger + progression
 schedule), simple context, full gate ladder, craft instrumentation logging,

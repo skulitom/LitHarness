@@ -1,6 +1,6 @@
 # Stage 0 decisions
 
-**Status:** Stage 0 slices 1-6 and Stage 1 slices 7-9 built and green — **670 passing tests (+6 opt-in live), ruff clean, mypy
+**Status:** Stages 0-2 met against their §17 exit clauses — **670 passing tests (+6 opt-in live), ruff clean, mypy
 strict clean.** Slice 1 is the model-free manuscript spine; slice 2 the Conductor skeleton
 (tick, instance lease, job selection, digest, outbox dispatch, crash recovery); slice 3 the
 four provider adapters with their conformance suite and the billing guard; slice 4 **the

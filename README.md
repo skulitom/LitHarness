@@ -7,16 +7,25 @@ design decisions and why each went the way it did, and
 [plan/craft-corpus.md](plan/craft-corpus.md), which sets out how prose quality gets measured
 without a human in the loop.
 
-**Status: Stage 0 complete, Stage 1 slices 7–9 — all four Stage 1 exit clauses met.** The
-manuscript spine, the Conductor loop, four provider adapters, recorded acceptance decisions,
-a direction inbox whose explicit instructions and model-interpreted notes reach an immutable
-plan revision before prose,
-a way to get a book in, a reading copy to get it out, a template planner
-that takes a six-scene fixture book from premise to six accepted scenes with no human in the
-loop, an objective-story-state layer and the context packet each scene is drafted against,
-and a blocking integrity gate that refuses a candidate a planted defect stands against. It
-writes a book whose scenes know about each other and refuses one that contradicts itself;
-nothing in it yet measures whether the book is any *good*. See
+**Status: Stages 0, 1 and 2 met against their exit clauses** — with two caveats that travel
+with the claim: Stage 0's endurance clause is *evidenced rather than met* (2,016 simulated
+ticks, not a week of real scheduling), and Stage 2's propagation number is a **dev-set** one
+measured on four in-sample cases, which rules out an engine that is obviously wrong and rules
+in nothing. Both are recorded in [PLAN.md](PLAN.md) §17 beside the claims they qualify.
+
+The manuscript spine, the Conductor loop, four provider adapters, recorded acceptance
+decisions, a direction inbox whose explicit instructions and model-interpreted notes reach an
+immutable plan revision before prose, a way to get a book in, a reading copy to get it out, a
+template planner that takes a six-scene fixture book from premise to six accepted scenes with
+no human in the loop, an objective-story-state layer and the context packet each scene is
+drafted against, a blocking integrity gate that refuses a candidate a planted defect stands
+against, and a detect-repair-propagate chain in which a repair that changes a fact re-checks
+the scenes that state it.
+
+It writes a book whose scenes know about each other, refuses one that contradicts itself, and
+— since it now asks its generator to state game state on the page and reads that back — can
+do both on a book with no imported snapshot, which is what makes Stage 3 startable. **Nothing
+in it yet measures whether the book is any *good*.** See
 [What is not built](#what-is-not-built).
 
 ## Setup
