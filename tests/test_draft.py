@@ -42,6 +42,7 @@ from litharness.domain.policy import (
     VerdictSource,
     decide,
     decision_id_for,
+    gates_for_draft,
     policy_digest,
 )
 from litharness.domain.revision import Revision, build_revision
@@ -157,6 +158,33 @@ def test_a_conforming_draft_fills_an_empty_node() -> None:
     assert outcome.revision is not None
     assert outcome.revision.node("scene-1").content == PROSE
     assert outcome.chars == len(PROSE)
+
+
+def test_an_accepted_draft_records_what_was_asked_for_beside_what_arrived() -> None:
+    """The shortfall that blocks §17 Stage 3, made legible without becoming a gate.
+
+    `target_words` is an instruction and deliberately not a limit — §1a.1's "beware the
+    metric that is easy *because* it is shallow", since a 900-word floor would pass a scene
+    that rambles to 900 and refuse a taut one. That reasoning stands and this does not touch
+    it: the draft below is 19% of target and is still **accepted**.
+
+    What changes is that the record no longer omits the delivered length. Measured across
+    every stored run — 45 scenes over six books — the mean scene is **172 words against a
+    900-word target, 19%**, ranging 14% to 40%. Stage 3's low end of 50,000 words needs 291
+    scenes at that rate. `policy_config_digest` already cites what was *asked*; nothing
+    carried what *arrived*, so the one number that decides whether Stage 3 is reachable
+    existed only as a hand-measured note in a docstring.
+    """
+    short = " ".join(["word"] * 170)
+
+    outcome = gate_draft(blank_revision(), "scene-1", short)
+    [gate] = gates_for_draft(outcome)
+
+    assert outcome.accepted, "a target is not a limit; this must still land"
+    assert outcome.words == 170
+    assert outcome.target_words == DraftPolicy().target_words
+    assert gate.passed and gate.detail is not None
+    assert "170 words" in gate.detail and "900" in gate.detail
 
 
 def test_a_draft_will_not_overwrite_existing_prose() -> None:

@@ -1385,6 +1385,18 @@ capable model (phi4 +47%) and does nothing for a small one, and neither reaches 
 so a Book Zero of the stated length needs either a much larger scene count or a much better
 generator, and that is now measured rather than assumed.
 
+**Pooled across every stored run, and now carried in the record rather than only here.** Six
+books, 45 scenes: mean **172 words against a 900-word target — 19%**, ranging 14% (`bz`) to
+40% (`run2/local-llama3.2`). At that rate Stage 3's low end of 50,000 words needs **291
+scenes**, against the 24 the largest run has managed. That single ratio is what the stage turns
+on, and until now it lived only in this paragraph: `policy_config_digest` cited `target_words`,
+the instruction, and nothing anywhere recorded what arrived. `DraftOutcome` now carries `words`
+and `target_words`, and an accepted shape gate's `detail` reads "172 words against a target of
+900 (19%)" — so the shortfall accumulates per scene and a change to the prompt can be measured
+against history instead of guessed at. **It is still not a gate**, and §1a.1 is why: a 900-word
+floor would pass a scene that rambles to 900 and refuse a taut one, which measures nothing
+about whether the scene lands. The 170-word draft in the test that pins this is *accepted*.
+
 What none of that supplies is the stage itself. 50-80k words is still an order of magnitude
 beyond what has been run, the context packet's 6,000-token budget **now has a measured binding point** — scene 24 at the
 160 words a 3B model writes, and scene 5 at the 900-word target, holding three prior scenes

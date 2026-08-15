@@ -369,7 +369,20 @@ def gates_for_draft(outcome: DraftOutcome) -> tuple[GateOutcome, ...]:
     One gate today. It is still a list because §4.2's ladder is a list, and a decision
     record whose shape changes when the second gate arrives is a migration nobody
     scheduled.
+
+    **An accepted draft carries its length against the length that was asked for.** The
+    detail used to be populated only on refusal, so a passing gate said nothing at all and
+    the delivered length appeared in no record. `target_words` is an instruction and stays
+    one — §1a.1 is why it is not a floor — but "asked 900, wrote 172" is a mechanical fact
+    about a generation, and it is the fact §17 Stage 3 turns on.
     """
+    detail = "; ".join(record.detail for record in outcome.vetoes) or None
+    if outcome.accepted and outcome.target_words:
+        share = outcome.words / outcome.target_words
+        detail = (
+            f"{outcome.words} words against a target of {outcome.target_words} "
+            f"({share:.0%})"
+        )
     return (
         GateOutcome(
             gate=GateKind.SHAPE,
@@ -378,7 +391,7 @@ def gates_for_draft(outcome: DraftOutcome) -> tuple[GateOutcome, ...]:
             verdict_source=VerdictSource.DETERMINISTIC,
             blocking=True,
             vetoes=outcome.veto_kinds,
-            detail="; ".join(record.detail for record in outcome.vetoes) or None,
+            detail=detail,
         ),
     )
 
