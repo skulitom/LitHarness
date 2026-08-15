@@ -40,7 +40,7 @@ import litharness_contracts as lc
 
 from litharness.application.conductor import JobHandler
 from litharness.application.policy_events import policy_decision_event
-from litharness.application.ports import DraftStore
+from litharness.application.ports import DraftStore, TextGenerator
 from litharness.application.repair import evaluation_job_for
 from litharness.domain.audit import DEFAULT_RATE, draw
 from litharness.domain.budget import BudgetPolicy, BudgetVerdict
@@ -52,6 +52,7 @@ from litharness.domain.events import Event, EventType
 from litharness.domain.extraction import extract_state
 from litharness.domain.findings import DetectorInput
 from litharness.domain.findings import Finding as DomainFinding
+from litharness.domain.generation import CompletionRequest
 from litharness.domain.integrity import gate_integrity, gate_standing
 from litharness.domain.jobs import Job
 from litharness.domain.nodes import NodeKind
@@ -67,8 +68,6 @@ from litharness.domain.policy import (
     policy_digest,
 )
 from litharness.domain.revision import Revision, node_version_id
-from litharness.providers.base import CompletionRequest
-from litharness.providers.registry import ProviderRegistry
 
 #: Job kind this handler answers to.
 SCENE_DRAFT = "scene_draft"
@@ -220,7 +219,7 @@ def _craft_ladder(
 
 
 def make_scene_draft_handler(
-    registry: ProviderRegistry,
+    registry: TextGenerator,
     store: DraftStore,
     project_id: str,
     *,

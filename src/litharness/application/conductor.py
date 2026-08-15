@@ -44,7 +44,7 @@ from datetime import UTC, datetime
 from hashlib import sha256
 from typing import Protocol
 
-from litharness.application.ports import ApplicationStore
+from litharness.application.ports import ApplicationStore, TextGenerator
 from litharness.domain.directives import VERBATIM_KINDS
 from litharness.domain.events import Event, EventType, OutboxEntry
 from litharness.domain.exceptions import ExceptionKind, ExceptionRecord, exception_id_for
@@ -137,16 +137,6 @@ def fifo_selector(
     return store.claim_next(holder, now=now, duration=duration)
 
 
-class HealthResettable(Protocol):
-    """Anything holding per-tick cached health verdicts. `ProviderRegistry` satisfies it.
-
-    Typed structurally rather than importing the registry, so `application` keeps its one
-    -way dependency on `providers` at the handler layer instead of the loop.
-    """
-
-    def reset_health(self) -> None: ...
-
-
 @dataclass
 class Conductor:
     store: ApplicationStore
@@ -163,7 +153,7 @@ class Conductor:
     #: the start of a tick" and had no caller, so a provider marked dead by one failed
     #: probe stayed dead for the life of the process and never recovered. Harmless while
     #: nothing owned a registry; a real bug the moment a handler does.
-    registry: HealthResettable | None = None
+    registry: TextGenerator | None = None
 
     # -- tick -----------------------------------------------------------------
 

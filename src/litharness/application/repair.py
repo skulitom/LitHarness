@@ -14,13 +14,14 @@ from litharness.application.evaluation import (
     matching_finding,
 )
 from litharness.application.policy_events import policy_decision_event
-from litharness.application.ports import EvaluationStore, RepairStore
+from litharness.application.ports import EvaluationStore, RepairStore, TextGenerator
 from litharness.domain import propagation
 from litharness.domain.budget import BudgetPolicy
 from litharness.domain.budget import check as budget_check
 from litharness.domain.events import Event, EventType
 from litharness.domain.extraction import extract_state
 from litharness.domain.findings import UNRESOLVED_STATUSES, Finding, primary_span_of
+from litharness.domain.generation import CompletionRequest
 from litharness.domain.jobs import Job, input_digest_for
 from litharness.domain.patch import PatchPolicy, apply_patch
 from litharness.domain.policy import (
@@ -34,8 +35,6 @@ from litharness.domain.policy import (
     patch_policy_digest,
 )
 from litharness.domain.revision import Revision, node_version_id
-from litharness.providers.base import CompletionRequest
-from litharness.providers.registry import ProviderRegistry
 
 EVALUATE_REVISION = "evaluate_revision"
 REPAIR_FINDING = "repair_finding"
@@ -369,7 +368,7 @@ def _repair_prompt(finding: Finding, text: str, start: int, end: int) -> str:
 
 
 def make_repair_handler(
-    registry: ProviderRegistry,
+    registry: TextGenerator,
     store: RepairStore,
     project_id: str,
     *,

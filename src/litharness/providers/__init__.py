@@ -14,6 +14,7 @@ from litharness.providers.base import (
     ProviderError,
     ProviderFailureKind,
     ProviderUnavailable,
+    Resolution,
     RetryableProviderError,
     Usage,
     classify_provider_failure,
@@ -22,7 +23,7 @@ from litharness.providers.base import (
 from litharness.providers.cli import ClaudeCodeProvider, CodexProvider, CommandResult
 from litharness.providers.fake import FakeProvider
 from litharness.providers.ollama import OllamaProvider
-from litharness.providers.registry import ProviderRegistry, Resolution, in_test_mode
+from litharness.providers.registry import ProviderRegistry, in_test_mode
 
 #: The order `plan/provider-adapters.md` specifies, named once so `prefer` reorders rather
 #: than rewrites it.

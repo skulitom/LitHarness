@@ -1,9 +1,16 @@
-"""Persistence capabilities required by application workflows.
+"""Capabilities required by application workflows: persistence, and model access.
 
 Application code coordinates storage but must not know that the current adapter is SQLite.
 These structural protocols describe behavior at use-case boundaries. ``SqliteStore``
 satisfies them without inheritance, leaving a future split store, in-memory harness, or
 remote adapter free to implement only the capabilities a workflow actually needs.
+
+`TextGenerator` extends the same treatment to the other side. Persistence had fifteen
+protocols here while generation had a concrete `ProviderRegistry` import in three handlers,
+so half the layer was inverted and half was not — and `conductor.HealthResettable` typed that
+very registry structurally, which meant the direction was already agreed and applied
+unevenly. `tests/test_architecture.py` now forbids `application` importing `providers` at
+all, so this file is the only description of a generator the layer has.
 """
 
 from __future__ import annotations
@@ -22,6 +29,11 @@ from litharness.domain.events import Event, OutboxEntry
 from litharness.domain.exceptions import ExceptionRecord
 from litharness.domain.findings import Finding
 from litharness.domain.findings import Status as FindingStatus
+from litharness.domain.generation import (
+    CompletionRequest,
+    CompletionResult,
+    Resolution,
+)
 from litharness.domain.jobs import Job
 from litharness.domain.plan_refinement import PlanApplication, PlanRevision
 from litharness.domain.policy import PolicyDecision
@@ -346,6 +358,53 @@ class ApplicationStore(
     """Aggregate accepted by the composition root and pluggable work selectors."""
 
 
+class Named(Protocol):
+    """Anything that can say which provider it is.
+
+    All three `resolve` call sites in `application` read `.name` and nothing else — they ask
+    which provider *would* serve a call so the budget governor can price it before any work
+    happens. Narrowing the return to this instead of `Provider` is what keeps the generation
+    contract free of the provider vocabulary: `application` never needs `health()` or
+    `complete()` on a single provider, only on the generator as a whole.
+    """
+
+    name: str
+
+
+class TextGenerator(Protocol):
+    """Model access as the application layer needs it. `ProviderRegistry` satisfies it.
+
+    Three methods, because that is the entire surface `application` was using on the
+    concrete registry — selection order, health caching, fallback, billing refusal and the
+    test-mode guard are all `providers`' business and none of them appear here.
+
+    `reset_health` folds in what `conductor.HealthResettable` described separately. Keeping
+    two protocols for one object split the contract across two files for no gain: the loop
+    resets health at the start of a tick, the handlers complete against the same object, and
+    a reader had to visit both to learn what the layer required.
+    """
+
+    def resolve(self, call_class: str = "generation") -> tuple[Named, Resolution]:
+        """Which provider would serve this call class, without making the call.
+
+        Raises when none is healthy — the refusal reaches the caller before any work is
+        attempted, which is why the conductor can treat it as a park rather than a failure.
+        """
+        ...
+
+    def complete(self, request: CompletionRequest) -> tuple[CompletionResult, Resolution]:
+        """Complete against the best healthy provider, reporting who served it.
+
+        The `Resolution` travels with the result rather than being logged inside the
+        implementation, because §5 rule 4 forbids a silent switch.
+        """
+        ...
+
+    def reset_health(self) -> None:
+        """Drop cached health verdicts. Called at the start of a tick."""
+        ...
+
+
 __all__ = [
     "ApplicationStore",
     "ConductorStore",
@@ -353,9 +412,11 @@ __all__ = [
     "EvaluationStore",
     "ExportStore",
     "JobQueue",
+    "Named",
     "NarrativePlanningStore",
     "PlanRefinementStore",
     "PlanningStore",
     "RepairStore",
     "StatusStore",
+    "TextGenerator",
 ]

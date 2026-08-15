@@ -24,11 +24,16 @@ import litharness_contracts as lc
 from litharness.application.conductor import JobHandler
 from litharness.application.plan_refinement import accept_plan_proposal
 from litharness.application.policy_events import policy_decision_event
-from litharness.application.ports import NarrativePlanningStore
+from litharness.application.ports import NarrativePlanningStore, TextGenerator
 from litharness.domain.budget import BudgetPolicy
 from litharness.domain.budget import check as budget_check
 from litharness.domain.directives import INTERPRETIVE_KINDS, Directive, DirectiveStatus
 from litharness.domain.events import Event, EventType, payload_digest
+from litharness.domain.generation import (
+    CompletionRequest,
+    CompletionResult,
+    Resolution,
+)
 from litharness.domain.jobs import Job
 from litharness.domain.patch import Veto
 from litharness.domain.plan_refinement import (
@@ -49,8 +54,6 @@ from litharness.domain.policy import (
     decide,
     decision_id_for,
 )
-from litharness.providers.base import CompletionRequest, CompletionResult
-from litharness.providers.registry import ProviderRegistry, Resolution
 
 NARRATIVE_PLAN = "narrative_plan"
 PROFILE = "planner.directive.v0"
@@ -359,7 +362,7 @@ def _candidate_decision(
 
 
 def make_narrative_plan_handler(
-    registry: ProviderRegistry,
+    registry: TextGenerator,
     store: NarrativePlanningStore,
     project_id: str,
     *,

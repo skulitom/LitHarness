@@ -25,10 +25,15 @@ from __future__ import annotations
 import enum
 import json
 import re
-from dataclasses import dataclass, field
 from typing import Any, Protocol, runtime_checkable
 
 from litharness.domain.failures import OperationalFailure, ParkedFailure, TransientFailure
+from litharness.domain.generation import (
+    CompletionRequest,
+    CompletionResult,
+    Resolution,
+    Usage,
+)
 
 #: ```json ... ``` or bare ``` ... ``` — what `claude -p` wraps JSON in.
 _FENCE = re.compile(r"^\s*```(?:json|JSON)?\s*\n(.*?)\n?\s*```\s*$", re.DOTALL)
@@ -199,69 +204,10 @@ class ProviderUnavailable(RetryableProviderError):
         super().__init__(message, kind=ProviderFailureKind.UNAVAILABLE)
 
 
-@dataclass(frozen=True, slots=True)
-class Usage:
-    input_tokens: int = 0
-    output_tokens: int = 0
-    cache_read_tokens: int = 0
-    cache_write_tokens: int = 0
-    #: Reported separately by codex. Counted into the budget, because at its default
-    #: reasoning effort it is not small.
-    reasoning_tokens: int = 0
-
-    @property
-    def billable_input(self) -> int:
-        """Full-price input: cache reads are ~0.1x and are excluded from this figure."""
-        return self.input_tokens + self.cache_write_tokens
-
-    @property
-    def total(self) -> int:
-        return (
-            self.input_tokens
-            + self.output_tokens
-            + self.cache_read_tokens
-            + self.cache_write_tokens
-            + self.reasoning_tokens
-        )
-
-
-@dataclass(frozen=True, slots=True)
-class CompletionRequest:
-    prompt: str
-    system: str | None = None
-    #: JSON Schema. None means free text.
-    schema: dict[str, Any] | None = None
-    max_output_tokens: int = 4096
-    #: Frozen generation profile name, recorded in provenance.
-    profile: str = "default"
-    timeout_seconds: float = 300.0
-    #: Call class, used by the registry to route mechanical work to cheap providers even in
-    #: production (see plan/provider-adapters.md §3).
-    call_class: str = "generation"
-
-
-@dataclass(frozen=True, slots=True)
-class CompletionResult:
-    text: str
-    provider: str
-    model: str
-    usage: Usage = field(default_factory=Usage)
-    #: Validated against the request's schema. None when there was no schema, or when the
-    #: answer did not conform — callers distinguish via `schema_requested`.
-    parsed: dict[str, Any] | None = None
-    schema_requested: bool = False
-    #: None when the provider cannot report cost (subscription quota rather than dollars).
-    cost_usd: float | None = None
-    wall_ms: int = 0
-    #: Always 1 here; the budget governor sums these because the per-call harness tax
-    #: scales with invocation count, not tokens (§15).
-    invocations: int = 1
-    raw: dict[str, Any] = field(default_factory=dict)
-
-    @property
-    def conforms(self) -> bool:
-        """False only when a schema was requested and the answer failed to satisfy it."""
-        return not self.schema_requested or self.parsed is not None
+#: Re-exported from `domain/generation.py`, where they moved so that `application` can
+#: name what it needs without importing this package (see that module, and the
+#: `application` row of `tests/test_architecture.py`). Provider authors keep one import
+#: site: everything needed to write a provider is still reachable from here.
 
 
 @runtime_checkable
@@ -334,3 +280,24 @@ def _type_matches(value: Any, expected: str) -> bool:
     if expected == "integer" and isinstance(value, bool):
         return False  # bool is an int subclass; a schema asking for integer means integer
     return isinstance(value, kind)
+
+
+#: Named explicitly so the re-exports above are exports rather than unused imports. Provider
+#: authors import everything they need from this module; where a name is *defined* is
+#: `domain/generation.py`'s business and not theirs.
+__all__ = [
+    "BlockedProviderError",
+    "CompletionRequest",
+    "CompletionResult",
+    "Provider",
+    "ProviderError",
+    "ProviderFailureKind",
+    "ProviderUnavailable",
+    "Resolution",
+    "RetryableProviderError",
+    "Usage",
+    "classify_provider_failure",
+    "parse_schema_payload",
+    "provider_error",
+    "strip_fences",
+]

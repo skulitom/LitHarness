@@ -27,11 +27,24 @@ import litharness_contracts as lc
 PACKAGE_ROOT = Path(__file__).parents[1] / "src" / "litharness"
 REPO_ROOT = Path(__file__).parents[1]
 
+#: The inward direction, and `application` is the row that carries the argument.
+#:
+#: It reaches persistence through `application/ports.py` and never imports `adapters`, and it
+#: now reaches generation the same way. **The half-inverted state is the one this rule
+#: replaced**: `application` held a concrete `ProviderRegistry` import in three modules while
+#: `conductor.HealthResettable` typed the very same object structurally, with a docstring
+#: saying it keeps the dependency "at the handler layer instead of the loop". So the direction
+#: was already decided and enforced in one place out of four, which is the worst of both — a
+#: reader could not tell whether the concrete import was a decision or an oversight.
+#:
+#: Dropping `providers` here is what makes `TextGenerator` load-bearing rather than decorative.
+#: `cli` is the composition root and still binds the concrete registry, which is the one place
+#: that should.
 ALLOWED_DEPENDENCIES = {
     "domain": frozenset({"domain"}),
     "providers": frozenset({"domain", "providers"}),
     "adapters": frozenset({"domain", "adapters"}),
-    "application": frozenset({"domain", "providers", "application"}),
+    "application": frozenset({"domain", "application"}),
     "entrypoint": frozenset(
         {"domain", "providers", "adapters", "application", "entrypoint"}
     ),
@@ -208,3 +221,26 @@ def test_internal_module_graph_has_no_cycles() -> None:
     for module in sorted(graph):
         cycle = visit(module)
         assert cycle is None, "internal import cycle: " + " -> ".join(cycle)
+
+
+def test_the_registry_still_satisfies_the_port_the_application_asks_for() -> None:
+    """`application` names `TextGenerator`; `cli` hands it a `ProviderRegistry`. Nothing in
+    the application layer can check that, because the rule above forbids it the import.
+
+    mypy checks the fit where `cli` wires them, which is the right place and an easy one to
+    lose: the wiring is one keyword argument, and a refactor that routes the registry through
+    an `Any`-typed factory would drop the check with no diagnostic anywhere. This asserts the
+    contract directly, so the port cannot drift from its only implementation in silence.
+
+    Structural, not nominal — `ProviderRegistry` does not inherit from anything, and the whole
+    value of the port is that a future in-memory or remote generator implements it without
+    knowing it exists.
+    """
+    from litharness.application.ports import TextGenerator
+    from litharness.providers.registry import ProviderRegistry
+
+    registry = ProviderRegistry(providers=(), order=())
+    generator: TextGenerator = registry
+
+    for method in ("resolve", "complete", "reset_health"):
+        assert callable(getattr(generator, method)), f"the port names {method}"

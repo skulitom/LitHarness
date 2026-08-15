@@ -24,12 +24,8 @@ import os
 from collections.abc import Sequence
 from dataclasses import dataclass, field
 
-from litharness.providers.base import (
-    CompletionRequest,
-    CompletionResult,
-    Provider,
-    ProviderUnavailable,
-)
+from litharness.domain.generation import CompletionRequest, CompletionResult, Resolution
+from litharness.providers.base import Provider, ProviderUnavailable
 
 TEST_ENV_VAR = "LITHARNESS_ENV"
 TEST_ENV_VALUE = "test"
@@ -41,18 +37,6 @@ CHEAP_CALL_CLASSES = frozenset({"extraction", "mechanical", "evaluation"})
 def in_test_mode(environ: dict[str, str] | None = None) -> bool:
     source = os.environ if environ is None else environ
     return source.get(TEST_ENV_VAR, "").strip().lower() == TEST_ENV_VALUE
-
-
-@dataclass(frozen=True, slots=True)
-class Resolution:
-    """Which provider served a call, and whether that was the first choice."""
-
-    provider: str
-    fell_back_from: tuple[str, ...] = ()
-
-    @property
-    def is_fallback(self) -> bool:
-        return bool(self.fell_back_from)
 
 
 @dataclass

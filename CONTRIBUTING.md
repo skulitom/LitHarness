@@ -31,8 +31,17 @@ Use `SqliteStore` as a context manager in new embedded or long-lived code.
   failure vocabulary.
 - `adapters` implements persistence and external artifact translation; it does not import
   providers or application workflows.
-- `application` coordinates through structural ports and does not import concrete adapters.
-- `cli.py` is the outer composition and operator surface.
+- `application` coordinates through structural ports in `application/ports.py` and imports
+  **neither `adapters` nor `providers`**. It names what it needs — `DraftStore`,
+  `TextGenerator` — and the composition root supplies something that fits.
+- `cli.py` is the outer composition and operator surface, and the only place that binds a
+  concrete `SqliteStore` and `ProviderRegistry` to those ports.
+
+The generation vocabulary (`CompletionRequest`, `CompletionResult`, `Usage`, `Resolution`)
+lives in `domain/generation.py` so both sides can name it without either importing the other;
+`providers/base.py` re-exports it, so a provider author still has one import site. If you are
+adding an outbound capability, the shape to copy is `TextGenerator`: a protocol in `ports.py`
+naming only the methods the layer calls, and nothing about who implements it.
 
 `tests/test_architecture.py` enforces those boundaries and rejects internal import cycles.
 If a change needs a new direction, treat that as an architecture decision and update the
