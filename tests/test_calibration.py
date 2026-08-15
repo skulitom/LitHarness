@@ -42,6 +42,7 @@ from litharness.domain.craft import (
     dialogue_ratio,
     measure,
     opening_shape_repetition,
+    repeated_span,
     scene_echo,
     sentence_length_variation,
     sentences,
@@ -728,6 +729,72 @@ def test_an_intentional_status_block_is_not_an_echo() -> None:
     second = "Mara pried up the floorboard and lifted the brass key from the dark." + block
 
     assert scene_echo(first, [second]).value > 0.4, "shared genre formatting is not an echo"
+
+
+def test_a_verbatim_paragraph_hides_inside_a_scene_that_scene_echo_calls_clean() -> None:
+    """The blind spot `repeated_span` exists to cover, taken from a real run rather than
+    invented. `llama3.2-6` emitted this paragraph **byte-identical** in scenes 5 and 6:
+
+        "Rook's gaze snapped back to Marrow, his mind racing with possibilities. He knew
+        that he was in trouble, but he also knew that he couldn't give up now."
+
+    Twenty-eight words, twice. The surrounding scenes differ enough that whole-scene NCD is
+    **0.695** — more than twice `scene_echo`'s 0.30 alarm — so the shipped metric reports the
+    pair as clean and always would have. Compression distance is a ratio over the whole
+    scene, so a fixed duplicated span is diluted by everything around it; the longer the
+    scenes, the better it hides.
+    """
+    shared = (
+        "Rook's gaze snapped back to Marrow, his mind racing with possibilities. He knew "
+        "that he was in trouble, but he also knew that he couldn't give up now."
+    )
+    first = (
+        "The gate stood open and the toll box was empty when he arrived, which was wrong "
+        "for a Tuesday. Marrow leaned against the post, chewing something slow.\n\n"
+        f"{shared}\n\nHe paid the four coins and went through without looking back."
+    )
+    second = (
+        "Rain had turned the north road to a channel of grey mud, and the cart wheels sat "
+        "in it up to the axle while the driver swore at nobody.\n\n"
+        f"{shared}\n\nThe lantern guttered twice and then held, and the dark moved off a little."
+    )
+
+    assert scene_echo(first, [second]).value > 0.3, "the premise: scene_echo calls this clean"
+    assert repeated_span(first, [second]).value == 28, "twenty-eight words, verbatim, twice"
+    assert repeated_span(first, []).value == 0.0, "nothing to compare against repeats nothing"
+
+
+def test_a_status_block_is_not_a_repeated_span() -> None:
+    """Same rule `scene_echo` already follows, for the same reason: the litrpg plan requires
+    a status block in every scene, so the metric's first act must not be to report the plan
+    being followed. The blocks are stripped before anything is compared."""
+    block = "\n[STATUS] Rook — Level 3 | HP 24/30 | MP 8/10 | Gold 45\n"
+    first = f"Rook counted the coins twice by the gate and found them wanting.{block}"
+    second = f"Mara pried up the floorboard and lifted the brass key from the dark.{block}"
+
+    assert repeated_span(first, [second]).value == 0.0
+
+
+def test_the_span_says_nothing_about_who_wrote_it() -> None:
+    """Measured against 24 published RoyalRoad serials, and this is the finding that stops
+    the metric being read as an AI tell within a release.
+
+    Longest verbatim cross-chapter span, by cohort: pre-2023 human books **70 words**,
+    undeclared 2025 human books **93 words**, declared-AI 2025 books 91 words — against 59
+    for this project's own worst machine book. Human serials carry recaps, epigraphs and
+    quoted prophecies, and they repeat them exactly. A long span is evidence of *repetition*
+    and of nothing else; the four proxies §10.6 refuted all failed by being read as more.
+    """
+    recap = (
+        "Previously: the gate had been sealed for nine years, and the only key was struck "
+        "in three pieces, and no one living had held more than one of them at a time."
+    )
+    human_chapter = f"{recap}\n\nMara woke before the bell and lay listening to the rain."
+    human_next = f"{recap}\n\nThe market was already loud by the time she reached the square."
+
+    assert repeated_span(human_chapter, [human_next]).value >= 30, (
+        "a deliberate recap scores exactly like a generation loop, because it is the same fact"
+    )
 
 
 def test_the_metric_reports_and_cannot_gate() -> None:

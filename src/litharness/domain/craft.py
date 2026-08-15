@@ -113,6 +113,13 @@ _TRICOLON = re.compile(
 #: one collapses every sentence starting "The" and three splits near-identical openings apart.
 _SHAPE_TOKENS = 2
 
+#: Edge punctuation stripped before two words are called equal, so that a repeated span is
+#: not broken by the comma that ends it. Both quote families, since canonicalization is NFC
+#: and does not unify them. Spelled with escapes for the same reason `_WORD` is: the dashes
+#: and curly quotes are confusable with ASCII on sight, and this is the one place where the
+#: difference is the whole point.
+_SPAN_TRIM = ".,;:!?\"'()[]\u2014\u2013\u2026\u201c\u201d\u2018\u2019"
+
 
 @dataclass(frozen=True, slots=True)
 class CraftMetric:
@@ -305,6 +312,106 @@ def scene_echo(text: str, others: Sequence[str]) -> CraftMetric:
     )
 
 
+#: The shortest run of words worth reporting. Eight, because shorter runs are idiom — "he
+#: didn't know what to say", "for the first time in his life" — and a metric that fires on
+#: those is reporting English. Measured: published serials carry a *median* longest
+#: cross-chapter span of 10-12 words, so eight sits just under the observed noise floor.
+_MIN_SPAN = 8
+
+#: Stop looking once a span is this long. The difference between "180 words repeated" and
+#: "240 words repeated" changes no decision anyone would make, and the cap is what keeps a
+#: wholly duplicated scene from costing quadratic time in the drafting loop.
+_SPAN_CAP = 200
+
+
+def _span_tokens(text: str) -> tuple[list[str], list[str]]:
+    """Words as written and words folded for comparison, positionally aligned.
+
+    Folding is case and edge punctuation only. Comparison is on whole words rather than
+    characters so that a match cannot begin mid-word — the same reason `_identifier_words`
+    exists in `domain/propagation.py`, arrived at there by the same bug.
+    """
+    original = _SYSTEM_BLOCK.sub("", text).split()
+    folded = [word.lower().strip(_SPAN_TRIM) for word in original]
+    return original, folded
+
+
+def repeated_span(text: str, others: Sequence[str]) -> CraftMetric:
+    """The longest run of words this scene repeats verbatim from another accepted scene.
+
+    **This exists because `scene_echo` provably misses the defect it was built for.** A
+    `llama3.2` run emitted this paragraph byte-identical in scenes 5 and 6 —
+
+        "Rook's gaze snapped back to Marrow, his mind racing with possibilities. He knew
+        that he was in trouble, but he also knew that he couldn't give up now."
+
+    — and the whole-scene compression distance between those two scenes is **0.695**, more
+    than twice `scene_echo`'s 0.30 alarm. NCD is a ratio over the whole scene, so a fixed
+    duplicated span is diluted by everything around it, and the longer the scenes grow the
+    better it hides. Measured across a corpus: 43 chapter-pairs whose whole-unit NCD is
+    0.711-0.926 contain a near-verbatim paragraph pair.
+
+    **It reports its own evidence, and that is the point of the design.** The four proxies
+    §10.6 refuted all failed the same way — a number that had to be interpreted got
+    interpreted as a quality claim. "These 28 words appear in scene 5 and again in scene 6"
+    is checkable by eye in the `detail` field, so there is nothing left to interpret. It was
+    also chosen over the compression form on evidence: a repeated-trigram counter reproduced
+    the compression statistic's entire separation (AUC 1.000 to 1.000, 0.558 against 0.589
+    on the honest contrast), so the gzip curve was drawing a picture of an n-gram count.
+
+    **It says nothing about who wrote the text, and the docstring has to say so or the
+    metric will be read as an AI tell within a release.** Longest verbatim cross-chapter
+    span, measured over 24 published RoyalRoad serials: pre-2023 human **70 words**,
+    undeclared 2025 human **93 words**, declared-AI 2025 91 words — against 59 for this
+    project's own worst machine book. Human serials carry recaps, epigraphs and quoted
+    prophecies and repeat them exactly. A long span is evidence of repetition and of nothing
+    else.
+
+    Zero means no run of `_MIN_SPAN` words or longer, not "no repetition". Advisory like
+    everything here: `craft_gates` marks it non-blocking and it carries no calibration.
+    """
+    _, folded = _span_tokens(text)
+    index: dict[tuple[str, ...], list[tuple[int, list[str]]]] = {}
+    for other in others:
+        _, other_folded = _span_tokens(other)
+        for start in range(len(other_folded) - _MIN_SPAN + 1):
+            key = tuple(other_folded[start : start + _MIN_SPAN])
+            index.setdefault(key, []).append((start, other_folded))
+
+    original = _SYSTEM_BLOCK.sub("", text).split()
+    best, best_at = 0, 0
+    for position in range(len(folded) - _MIN_SPAN + 1):
+        for start, other_folded in index.get(tuple(folded[position : position + _MIN_SPAN]), ()):
+            length = _MIN_SPAN
+            while (
+                position + length < len(folded)
+                and start + length < len(other_folded)
+                and folded[position + length] == other_folded[start + length]
+            ):
+                length += 1
+            if length > best:
+                best, best_at = length, position
+        if best >= _SPAN_CAP:
+            break
+
+    quoted = " ".join(original[best_at : best_at + best])
+    return CraftMetric(
+        metric_id="craft.repeated_span.v0",
+        value=float(best),
+        caveat=(
+            "§1a.3 item 6. Longest run of words shared verbatim with another accepted scene, "
+            "system-voice blocks stripped. Evidence of repetition only — published human "
+            "serials repeat recaps up to 93 words and score higher than this project's own "
+            "worst machine book"
+        ),
+        detail=(
+            f"{best} words, first at word {best_at}: {quoted[:160]}"
+            if best
+            else f"no run of {_MIN_SPAN}+ words shared with {len(others)} other scene(s)"
+        ),
+    )
+
+
 #: The metric set, in a fixed order so a decision record's gate list is stable.
 METRICS = (
     sentence_length_variation,
@@ -323,17 +430,25 @@ MEASURED_IDS = (
     "craft.tricolon_rate.v0",
     "craft.opening_shape_repetition.v0",
     "craft.scene_echo.v0",
+    "craft.repeated_span.v0",
 )
 
 
 def measure(text: str, others: Sequence[str] = ()) -> tuple[CraftMetric, ...]:
     """Every craft metric over one scene's prose. Pure, deterministic, model-free.
 
-    `others` is the book's other accepted scenes. Every metric above reads one scene alone;
-    `scene_echo` is the first that cannot, because "this scene is a copy of another" is not a
-    property a scene has by itself.
+    `others` is the book's other accepted scenes. Every metric in `METRICS` reads one scene
+    alone; the last two cannot, because "this scene is a copy of another" is not a property a
+    scene has by itself. They also disagree by design — `scene_echo` measures the whole
+    scene and dilutes a local duplicate, `repeated_span` finds the local duplicate and says
+    nothing about the whole — and the pair is kept because the case that separates them was
+    measured in a real run, not imagined.
     """
-    return (*(metric(text) for metric in METRICS), scene_echo(text, others))
+    return (
+        *(metric(text) for metric in METRICS),
+        scene_echo(text, others),
+        repeated_span(text, others),
+    )
 
 
 #: The reference profile, beside the plan documents rather than inside the package: it is
@@ -431,6 +546,7 @@ __all__ = [
     "measure",
     "opening_shape_repetition",
     "percentile_of",
+    "repeated_span",
     "scene_echo",
     "sentence_length_variation",
     "sentences",

@@ -718,7 +718,8 @@ order-consistent survivors preferred human originals ~80% of the time. So:
    craft is now measured.
 
    **Four more proxies refuted, this time against 13,000 chapters of published LitRPG.**
-   Twelve of thirteen candidates in this project are now refuted rather than eight of nine.
+   Sixteen of eighteen candidates in this project are now refuted rather than eight of nine,
+   the last four of them at paragraph grain (see below).
    `plan/craft-profile.json`, built by `tools/build_craft_profile.py` from the RoyalRoad
    1.61M-chapter corpus, measures rank AUC for each of the four metrics
    `domain/craft.py` instruments — all four named by §10.2 or §1a.3 item 6, none previously
@@ -746,6 +747,33 @@ order-consistent survivors preferred human originals ~80% of the time. So:
    declared-AI cohort is 55 stories, self-declaration is certainly under-reported, and the
    cohorts differ enormously in maturity (median followers 16, 88, 314), so a separation
    could have been story-size rather than prose.
+
+   **Four paragraph-grain proxies refuted, and the same corpus reused as a book corpus.**
+   Grouping chapters by `fiction_id` reconstructs 163 pre-2023, 165 undeclared-2025 and 31
+   declared-AI books, which makes *cross-chapter* structure testable and not only per-chapter
+   style. Four formulations were measured with a fixed-window control and a fixed-seed
+   shuffle control, then adversarially refuted; declared-vs-undeclared AUC in brackets.
+   Minimum cross-paragraph compression distance **(0.325)** is a coverage artifact — a
+   minimum-over-pairs statistic is a lottery, and forcing large human books to exhaustion
+   *reverses* the ranking. A compression dendrogram over paragraphs **(0.412)** is a clean
+   null whose seed-to-seed swing, 0.228 to 0.545, exceeds its distance from chance.
+   Nearest-predecessor lag **(0.375)** inverts on the target defect and awards the looping
+   book the best score in the corpus, because duplicated scenes are adjacent and lag 1 cannot
+   distinguish "continues" from "is being rewritten". A cumulative novelty-decay exponent
+   **(0.589)** scored a perfect 1.000 against the machine cohort and is reproduced outright by
+   `Counter(trigrams)`. §17's rule held in all four: the temporal control was computed in the
+   same pass, and it killed every headline.
+
+   **One metric was kept, and it is a repetition reporter rather than a proxy.**
+   `craft.repeated_span.v0` reports the longest run of words a scene repeats verbatim from
+   another accepted scene. It exists because `scene_echo` demonstrably misses the defect it
+   was built for: a run repeated a 28-word paragraph byte-identically across two scenes whose
+   whole-scene NCD is 0.695, well clear of that metric's alarm, since a ratio over the whole
+   scene dilutes a fixed duplicated span. It makes no authorship claim and the measurement
+   forbids one — published human serials repeat verbatim spans up to 93 words, longer than
+   this project's worst generated book at 59. Advisory, threshold-free, non-blocking; §10.4 is
+   untouched. See `plan/stage-0-decisions.md` §49, which also corrects §48's claim that human
+   prose has no near-duplicate pairs: true at scene grain, false at paragraph grain.
 
    **What the corpus does and does not supply.** It is *published* LitRPG, not *good* LitRPG,
    and the difference is not rhetorical: the dataset card advertises `overall_score`,

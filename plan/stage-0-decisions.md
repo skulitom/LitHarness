@@ -1613,3 +1613,98 @@ control that killed the first version; and it claims two scenes are the same *te
 checkable without human judgment, where the four refuted proxies claimed something about
 quality, which is not. §10.4 still applies in both places — nothing here can gate without
 calibration evidence, and this has none.
+
+## 49. Paragraph-grain gzip: three nulls, one coverage trap, and one metric worth keeping
+
+Suggested: break the book into paragraphs, compress them individually, build trees. Four
+formulations were measured against a real corpus — 163 pre-2023 RoyalRoad LitRPG books, 165
+undeclared 2025, 31 declared `AI-Assisted Content`, reconstructed into books by `fiction_id`
+— each with a fixed-window control and a fixed-seed shuffle control, each then handed to an
+adversarial pass told to find the confound. **Zero of four survive as authorship signals.**
+The nulls are the main product and are recorded first for that reason.
+
+| formulation | statistic | declared-vs-undeclared AUC | outcome |
+| --- | --- | --- | --- |
+| paragraph echo | min cross-unit paragraph NCD | 0.325 | coverage artifact, see below |
+| NCD tree | UPGMA dendrogram over paragraphs, cohesion and shape | 0.412 | clean null |
+| predecessor lag | argmin NCD over earlier paragraphs, lag histogram | 0.375 | null, and inverts |
+| novelty decay | exponent of the cumulative compression curve | 0.589 | a trigram counter |
+
+**The tree is Cilibrasi and Vitányi (2005) run inside a book instead of across a document
+set, and it works — it just gives the same answer for everyone.** Paragraphs really do
+cluster by scene, at ≈0.25 above the chance baseline, and the cohesion measure is sound: it
+collapses to −0.058..+0.051 under shuffle at every K and every seed, so the baseline is
+right. Pre-LLM humans, 2025 humans and declared-AI books score 0.22–0.34 alike, and the
+declared/undeclared AUC swings 0.228–0.545 across four sampling seeds — **the seed-to-seed
+swing exceeds the distance from chance**. Method note worth keeping for anyone who tries
+again: **50.6% of NCD cells in a paragraph-scale matrix are exact ties** (max 89.5%), because
+NCD is a ratio of small integer gzip sizes, so half the distance matrix is arbitrary and the
+early merges mean nothing. Compression trees at this scale need larger units.
+
+**Predecessor lag fails worse than a null: it awards the looping book the best score in the
+corpus.** The known `bookzero-24` duplicate chain is fully present in the matrix and the
+argmin lands on every pair — but the lags are 1 and 2, because the duplicated scenes are
+*consecutive*. The book scores median lag 1.0, the lowest, and frac≤3 = 1.00, the highest.
+Planted period-8 loops light the histogram up in 13 of 14 book-variant pairs; planted
+*adjacent* duplication — Book Zero's actual failure shape — moves the statistic the wrong way,
++0.038. Lag 1 is irreducibly ambiguous between "the scene continues" and "the scene is being
+rewritten", and no windowing fixes that.
+
+**Novelty decay scored AUC 1.000 machine-versus-human and is a repeated-trigram counter.**
+Permuting the chunks left it at 1.000; permuting the *words* inside the window took it to
+0.521, chance. `Counter(trigrams)` reproduces it outright at 1.000 / 0.558. Duplicating 24
+twelve-word spans in a human window moves the exponent 0.140 → 0.260, while *moving* the same
+spans leaves it at 0.147 — it responds to repetition, never to order. And 71 of 72 books
+"decay" less than i.i.d. word salad resampled from their own vocabulary, so a memoryless
+source beats nearly every real book at "the book stops adding information".
+
+**The coverage trap is the new methodological finding and it generalises past gzip.** Every
+size control in the first pass equalised the *number of pair comparisons* while leaving the
+*fraction of the book examined* at 100% for a 15-paragraph machine book and 2–3% for an
+1,800-paragraph human one. A minimum-over-pairs statistic is a lottery: more tickets, lower
+minimum. Demonstrable inside a single book with the text held fixed — `llama3.2-6` scores
+0.473 at 8.5% coverage, 0.408 at the "strictest" pair-matched control, and **0.078 at 100%**.
+Forcing the large human books to true exhaustion reverses the result: three RoyalRoad books
+score 0.052–0.062 with 7–13× more near-verbatim pairs than either machine book, and ten of
+thirty score at or below the worse machine book. **There is no size-neutral version** — a
+fixed budget favours the small book, exhaustion favours the large one, and both are
+artifacts. §19.1's rule about a refusal reached before the work, again, in a new costume.
+
+**A claim in this file's own §48 was wrong and is corrected here.** That entry reported human
+minima of 0.72–0.77 and concluded the machine's 0.089 was an order of magnitude outside the
+human range. At *scene* grain that holds. At paragraph grain, sampled exhaustively, it does
+not: human books reach 0.044. Published serials repeat verbatim spans up to **93 words**
+(undeclared 2025) and **70 words** (pre-2023) — longer than this project's own worst machine
+book at 59. Human authors write recaps, epigraphs and quoted prophecies and repeat them
+exactly.
+
+**Shipped: `craft.repeated_span.v0`**, the longest run of words a scene repeats verbatim from
+another accepted scene, system blocks stripped. Its entire justification is one measured
+catch. `llama3.2-6` emitted a 28-word paragraph **byte-identical** in scenes 5 and 6, and the
+whole-scene NCD of that pair is **0.695** — more than twice `scene_echo`'s alarm, so the
+shipped metric calls it clean and always would have. Run forward over that book the way the
+loop runs, `scene_echo` reports 0.69–0.82 on every scene and finds nothing, while
+`repeated_span` reports 8, 11, 13, 10, 28. NCD is a ratio over the whole scene, so a fixed
+duplicated span is diluted by everything around it, and the longer the scenes the better it
+hides.
+
+**It is a span and not a compression number on evidence, not taste.** The trigram result above
+established that the compression statistic's discriminative content *is* repeated n-grams, so
+the gzip form would be an opaque drawing of a count. A span reports its own evidence: "these
+28 words appear in scene 5 and again in scene 6" is checkable by eye in the `detail` field,
+and there is nothing left to interpret. Every proxy §10.6 refuted failed by having a number
+that needed interpreting and getting interpreted as quality.
+
+**What it is not, recorded because it will be misread otherwise.** It is not an AI tell — the
+cohort numbers above say a published human serial out-repeats our worst generated book. It
+reports the minimum-style extreme and never a rate: flagged-over-total is a pure denominator
+artifact that buys AUC 1.000 for free, since `bookzero-24` has 105 cross-unit pairs and one
+RoyalRoad book has 1,855,701, so the same three duplicates read as 2.9% against 0.0002%. It
+carries no threshold; 0.25 was a plausible operating point in the study and fires on 4 of 10
+human books. Advisory, `blocking=False`, no calibration, §10.4 unchanged in both places.
+
+**The open question is operational rather than statistical.** Over the next runs, how many
+flags are regeneration defects and how many are deliberate recaps? On this project's own
+drafts so far, one of five flagged scene-pairs is information `scene_echo` did not already
+have. If that ratio holds over twenty books the metric is redundant and should be deleted
+rather than calibrated.
