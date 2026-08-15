@@ -121,6 +121,19 @@ predictive distribution over the text. Zero.
 
 **Nothing causal has been tried.** No proxy perturbs the text and measures what changes.
 
+> **Status, and read it before treating the two paragraphs above as an open invitation.** That
+> was true when this section was written and is no longer. [feasibility.md](feasibility.md)
+> probed the direction on 2026-08-14 and **two of its designs are already closed**, both by
+> controls computed in the same pass. §4.3: the interventional effect does not survive
+> distance — with the placebo beside it, a gap of 0 gives real − placebo of +0.2615 at 12/12
+> draws (sign-test p = 0.0005), 256 tokens gives +0.0608 at 11/12 (p = 0.0063), and by 512
+> tokens it is +0.0102 at 8/12 (**p = 0.388**), which is nothing. §5.3: the RoyalRoad
+> within-story design has no outcome variable and the within-author one is n=23. `surprisal.py`
+> implements what survived — Context Dependency Gain, scoring a block against its own prefix
+> versus a foreign one — and `results/` holds no CDG numbers yet, so it is **built and not yet
+> evidenced**. The opening is narrower than these paragraphs make it sound: short-range only,
+> and still short of a label.
+
 ## 4. What is available to experiment with, verified present on this machine
 
 - **RTX 4090, 24GB.** `C:/DEV/MirrorBench/.venv/Scripts/python.exe` has torch 2.13+cu130
