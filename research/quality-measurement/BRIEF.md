@@ -28,7 +28,11 @@ and **cannot be constructed**, because it demands held-out precision ≥0.80 on 
 with ≥17 flags, and no calibration exists. `litharness calibrations` prints nothing. That
 emptiness is the honest measure of the gap.
 
-## 2. The refutation ledger — 13 proxies dead
+## 2. The refutation ledger — 20 proxies dead
+
+**This section is canonical for the count.** It was carried in two places for a while and
+drifted within a single session; `PLAN.md` and `plan/stage-0-decisions.md` now point here
+rather than restating a number.
 
 **Pass 1: nine candidate proxies against the golden defect fixtures. One promoted, eight dead.**
 
@@ -72,9 +76,36 @@ order-consistent survivors preferred the *human originals* ~80% of the time. Mod
 improve prose made it worse — which is why the architecture is `detect → scoped repair →
 verify`, never open-ended "improve this".
 
+**Pass 5: compression. Seven more dead, two kept — and the two kept are not quality proxies.**
+Detail in [plan/stage-0-decisions.md](../../plan/stage-0-decisions.md) §48–§50; this is the
+ledger row. All seven were measured against the RoyalRoad books in `corpus_io.by_story`, with
+the era control computed in the same pass as §2 demands.
+
+| proxy | how it died |
+|---|---|
+| whole-book gzip joint/parts ratio | Tracked **scene count**, not authorship. A machine six-scene book scored 0.704 against human books at 0.625 and 0.757; only *n* differed, because gzip's dictionary amortises. |
+| minimum cross-paragraph NCD | A **coverage** artifact. Minimum-over-pairs is a lottery, so equalising the *number* of comparisons while one book is sampled at 100% and another at 2% measures the sampling. Same text, same book: 0.473 at 8.5% coverage, 0.078 at 100%. Forcing the large human books to exhaustion reverses the ranking. |
+| paragraph NCD dendrogram (UPGMA) | Clean null, declared-vs-undeclared 0.412, and its **seed-to-seed swing (0.228–0.545) exceeded its distance from chance**. Note for anyone retrying: 50.6% of NCD cells at paragraph scale are exact ties, because NCD is a ratio of small integer gzip sizes. |
+| nearest-predecessor lag | Null that **inverts on the target defect**. It awards the looping book the best score in the corpus, because duplicated scenes are adjacent and lag 1 cannot distinguish "continues" from "is being rewritten". |
+| marginal novelty-decay exponent | AUC 1.000 against the machine cohort, and `Counter(trigrams)` reproduces it outright. Word-shuffle inside the window took it to 0.521. |
+| compression order asymmetry `A_C` | An **LZ77 match-distance readout**. Reversing paragraph order *inside* each unit while units keep their book positions inverts the sign (t = +6.72). The control originally specified — reverse the book, check the sign flips — **cannot fail**: `A_C` is algebraically antisymmetric, measured at 0.000e+00 over 34 books. It passes on pure noise. |
+| tree-Haar scale energy | Null (0.56), and 73% measurement-window noise: across 158 disjoint windows the within-book sd equals the between-book sd, ICC(1) = 0.270. |
+
+**Kept: `scene_echo` and `repeated_span`, and they claim repetition rather than quality.**
+"These 28 words appear in scene 5 and again in scene 6" is mechanically checkable and needs no
+human judgment, which is the only reason they are not in the table above. They are **not AI
+tells and the code says so**: published human serials repeat verbatim spans up to 93 words,
+longer than this project's own worst generated book at 59.
+
+**Three method rules earned in this pass, all cheap and all general.** Ask whether a control
+*can fail* before running it. Simulate the null at your own *n* — the log-log slope estimator
+is biased low, 0.436 at n=32 against 0.482 at n=1024, so comparing to a theoretical 0.5
+manufactures 0.03 of effect from nothing. And check within-book reliability (ICC) before
+believing any per-book statistic; this project had never run one.
+
 ## 3. The structural diagnosis (this is the opening for a novel approach)
 
-Every one of the 13 refuted proxies shares three properties:
+Every one of the 20 refuted proxies shares three properties:
 
 - **Static** — a scalar computed on one text in isolation, with no model of what the text does.
 - **Absolute** — the number is compared *across* texts that differ in era, author, story

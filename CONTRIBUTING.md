@@ -53,6 +53,27 @@ test and its explanation together.
 - Revisions and job identities are content-derived. Replays must converge rather than
   duplicate work.
 
+## Before proposing a quality or craft metric
+
+Read [research/quality-measurement/BRIEF.md](research/quality-measurement/BRIEF.md) first.
+It is the refutation ledger: every proxy this project has tried to measure prose quality
+with, and how each one died. **Twenty are dead and every one of them died to a control, not
+to a bug** — so the cost of skipping it is not lost time, it is re-running a refuted
+experiment and believing the headline.
+
+Two things there that are easy to rediscover expensively. `tricolon_rate` separated
+declared-AI from pre-2023 chapters at 0.629, which reads as the project's first working
+AI-tell detector until the control beside it: *undeclared* 2025 chapters separate from the
+same baseline at 0.606, so the metric detects the year. And the structural diagnosis — every
+refuted proxy was **static, absolute, and correlational** — is the fastest way to tell whether
+a new idea is a fresh one or the fourteenth of the same shape.
+
+That directory is also where prose-measurement experiments belong. It sits outside `src/`
+on purpose: nothing there is imported by the package, nothing is gated on, and it depends on
+a 12.5GB corpus CI must never need. Use `corpus_io.py` rather than writing another loader —
+it already supplies the fixtures, Mother of Learning, and the cached RoyalRoad shards with
+cohort labels, and `by_story` groups chapters into books. Commit numbers, never prose.
+
 ## Scope discipline
 
 Keep patches narrow and preserve unrelated work in a dirty tree. Add a focused regression

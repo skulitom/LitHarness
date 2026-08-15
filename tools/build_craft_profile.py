@@ -107,6 +107,14 @@ def auc(positive: list[float], negative: list[float]) -> float:
     The separation statistic, chosen because it is threshold-free — reporting a single
     accuracy would bake in a cutoff nobody has justified, and §10.4 says a threshold is a
     property of a *calibration*. 0.5 is no separation; the distance from 0.5 is the signal.
+
+    **Duplicated in `research/quality-measurement/evaluate.py` and deliberately not shared.**
+    Neither tree is importable from the other — this one runs against the package, that one
+    against a 12.5GB corpus outside it — and a shared helper module would be a third place to
+    look. The duplication is safe only while they agree, so they were checked: identical over
+    300 random inputs and on the tie-heavy and all-tied cases, where rank statistics usually
+    diverge. **If you change tie handling here, change it there**, or two experiments stop
+    being comparable and nothing will say so.
     """
     if not positive or not negative:
         return 0.5

@@ -1711,7 +1711,7 @@ rather than calibrated.
 
 ## 50. The calibration path was unmatched, unreachable, and counting gzip's header
 
-A research note was added to the repository root — `hierarchical-compression-information-texture.md`,
+A research note was added — `research/quality-measurement/hierarchical-compression-information-texture.md`,
 a preregistration-ready methods proposal for hierarchical compression analysis, honest that it
 reports no experimental results. Two of its statistics were measured against this corpus and
 both were refuted. **What it was actually worth was three defects it exposed in shipped code.**
