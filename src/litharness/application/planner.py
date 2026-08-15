@@ -79,6 +79,7 @@ from litharness.domain.extraction import progression_target, system_voice_exampl
 from litharness.domain.jobs import Job, input_digest_for
 from litharness.domain.plans import premise_of
 from litharness.domain.revision import Revision
+from litharness.domain.text import content_hash
 
 DEFAULT_TEMPLATE = SIX_BEAT
 
@@ -242,6 +243,17 @@ def render_prompt(
     It is **omitted unless the book already speaks system voice**, since the example is built
     from canon and there is none to build from otherwise. A stat block in a locked-room
     mystery is not a smaller error than a missing one.
+
+    **`target_words` was a parameter this function accepted and never read**, and the defect
+    is worth stating because of what was recorded on top of it. It arrived in `8f7075c` as
+    exactly two lines — the signature here and the call site in `make_plan_selector` — while
+    the body below constructed `system` and `prompt` without ever mentioning it. So the
+    numbers that commit reports (`llama3.2` 235 -> 232, `phi4` 289 -> 426, "+47%") are two
+    draws from **byte-identical prompts**, and its live test loops over
+    `(0, DraftPolicy().target_words)` through the same ignoring function, so the assertion
+    could not fail. Measured after wiring it (three draws per arm, seeds held common):
+    `llama3.2` 279 -> 384 and `phi4` 324 -> 612 words. The instruction the record called
+    ignored by a 3B model moves it 38%, because it had never been sent.
     """
     system = (
         "You are drafting one scene of a novel. Write only the scene's prose: no headings, "
@@ -272,6 +284,20 @@ def render_prompt(
                 "Move it toward that in this scene where the events warrant it; do not jump "
                 "to it, and do not move it for no reason on the page."
             )
+    if target_words:
+        # **Length is asked for by giving the scene somewhere to spend it**, which is the
+        # difference the measurement found. A bare "write approximately 900 words" moves
+        # `phi4` 324 -> 458; naming what the length is *for* moves it 324 -> 611, and
+        # `llama3.2` 279 -> 384 where the bare form reached 329. The second sentence is
+        # doing the work: a model told only a number pads, and padding is §1a.3 item 6's
+        # "summarising instead of dramatising" arriving by the door that was opened to
+        # avoid it. So the instruction spends its words on events rather than on the count.
+        system += (
+            f" Write approximately {target_words} words. A scene of that length has room to "
+            "play out in real time — what is said, what is done, what is noticed — instead "
+            "of being told in summary. Do not pad it with restatement to reach the length; "
+            "give the scene enough events to fill it."
+        )
     title = f"{book_title}: " if book_title else ""
     prompt = (
         f"{packet.render()}\n\n"
@@ -303,6 +329,25 @@ def packet_for(
     extracted from accepted prose, so the only records that exist describe scenes already
     written. It arises only for a book imported with its state intact, which is inspection.
     """
+    # **Only a summary of the prose that is actually there.** `scene_summaries` returns every
+    # summary ever written for a scene, keyed by the content hash it was written from, and the
+    # packet takes the one matching the node's current text. A scene repaired since it was
+    # summarised therefore contributes nothing rather than contributing a description of prose
+    # the book no longer contains — which is the failure mode a summary cache has and a prose
+    # cache does not, since the prose is the thing itself.
+    stored = store.scene_summaries(revision.book_id, revision.branch_id)
+    summaries: dict[str, str] = {}
+    for logical_id, by_hash in stored.items():
+        try:
+            node = revision.node(logical_id)
+        except KeyError:
+            continue
+        if node.content is None:
+            continue
+        current = by_hash.get(content_hash(node.content))
+        if current is not None:
+            summaries[logical_id] = current
+
     return assemble(
         revision,
         beat.logical_id,
@@ -311,6 +356,7 @@ def packet_for(
         query_id=f"beat:{beat.logical_id}",
         pov_character_id=pov_character_id,
         token_budget=token_budget,
+        summaries=summaries,
     )
 
 

@@ -11,8 +11,15 @@ their own scaffolding per invocation; this carries the prompt and nothing else. 
 rendering here *even in production*, not only in tests — at ~1,000 invocations for a draft
 the scaffolding would otherwise be several times the actual payload.
 
-`temperature: 0` with a fixed `seed` is the closest thing to determinism a model offers,
-which is what the Stage 1 fixture-regeneration tests need.
+**`temperature: 0` with a fixed `seed` was called "the closest thing to determinism a model
+offers" here and in `plan/provider-adapters.md` §4.3, and it is measured now rather than
+assumed: it is not.** The same request sent twice returns different text — `llama3.2` 245
+then 279 words, with every later draw landing on 279 — so the first draw against a prompt
+comes from a different state than the rest. The seed was not even participating: at
+`temperature: 0` there is nothing to sample, and three distinct seeds returned byte-identical
+text on both models tested. These two fields remain the adapter's defaults and are now what
+a request may override, per call, via `CompletionRequest.sampler`; `domain/generation.py`
+carries the measurement and the reason the two must move together.
 
 Reasoning models are a poor fit for the schema-shaped calls: they emit preamble that fights
 schema conformance. `qwen3:4b` and `deepseek-r1:8b` are the local examples.
@@ -33,6 +40,7 @@ from litharness.providers.base import (
     CompletionResult,
     ProviderError,
     ProviderFailureKind,
+    Sampler,
     Usage,
     parse_schema_payload,
     provider_error,
@@ -102,15 +110,20 @@ class OllamaProvider:
             messages.append({"role": "system", "content": request.system})
         messages.append({"role": "user", "content": request.prompt})
 
+        # The request's sampler wins over the adapter's, field by field, and a field it
+        # leaves `None` keeps the adapter's. So a call site with no opinion behaves exactly
+        # as it did before this existed, which is what makes the field additive rather than
+        # a change to every caller.
+        sampler = request.sampler or Sampler()
+        options: dict[str, Any] = sampler.merged_over(
+            temperature=self.temperature, seed=self.seed
+        )
+        options["num_predict"] = request.max_output_tokens
         body: dict[str, Any] = {
             "model": self.model,
             "messages": messages,
             "stream": False,
-            "options": {
-                "temperature": self.temperature,
-                "seed": self.seed,
-                "num_predict": request.max_output_tokens,
-            },
+            "options": options,
         }
         if request.schema is not None:
             body["format"] = request.schema

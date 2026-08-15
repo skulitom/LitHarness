@@ -232,9 +232,17 @@ Notes:
 
 - **Native JSON-Schema structured output** via `format` — verified returning
   exactly `{"ok": true, "word": "litharness"}` with no fences.
-- `temperature: 0` plus a fixed `seed` gives the closest thing to determinism
-  available from a model, which is what the fixture-regeneration tests in Stage 1
-  need.
+- ~~`temperature: 0` plus a fixed `seed` gives the closest thing to determinism
+  available from a model~~ — **measured, and both halves are false.** At
+  `temperature: 0` there is nothing to sample, so the seed selects nothing: three
+  distinct seeds against one unchanged request returned byte-identical text on two
+  models. And `temperature: 0` does not deliver determinism either — the same
+  request sent twice returned 245 words then 279, with every later draw of that
+  request landing on 279, so the **first** draw against a prompt comes from a
+  different state than the rest. Any `@live` test comparing one draw per arm is
+  therefore comparing the warm-up. Decoding is per-request now
+  (`CompletionRequest.sampler`); see `domain/generation.py` and
+  [plan/stage-0-decisions.md](stage-0-decisions.md) §51.2.
 - Usage comes back as `prompt_eval_count` / `eval_count` and durations as
   `total_duration` / `load_duration` / `eval_duration`; `cost_usd` is `None`
   (hardware time only, per §15).

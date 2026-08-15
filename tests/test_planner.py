@@ -454,6 +454,57 @@ def test_the_prompt_carries_the_context_packet_and_ends_with_the_instruction(
     assert prompt.rstrip().endswith("Dramatic function: resolution.")
 
 
+def test_the_target_length_reaches_the_prompt_at_all(store: SqliteStore) -> None:
+    """The defect this file could not see, because the only test of it was `@live`.
+
+    `render_prompt` accepted `target_words` and never read it: the parameter and its call
+    site landed in `8f7075c` and the body was untouched, so asking for 900 words and asking
+    for nothing produced **byte-identical** prompts. Every number that commit records is
+    therefore two draws from the same request, and the live test that carried them routed
+    both of its arms through the same ignoring function, so its assertion could not fail on
+    any model at all.
+
+    The property is checkable with no model at all, which is the whole lesson: a live test
+    was written for a question that never needed one, and the cheap test that would have
+    caught it was never written. Both directions are asserted, because a function that
+    ignores the parameter passes the first half and a function that always emits the block
+    passes the second.
+    """
+    book_id, branch_id = _fixture(store, "mystery")
+    head = store.head(book_id, branch_id)
+    assert head is not None
+    beat = beats_for(head, SIX_BEAT)[0]
+    packet = packet_for(store, head, beat)
+
+    asked, _ = render_prompt(beat, book_title=None, packet=packet, target_words=900)
+    silent, _ = render_prompt(beat, book_title=None, packet=packet, target_words=0)
+
+    assert "900" in asked
+    assert asked != silent
+    assert "900" not in silent
+    # A target of zero is "do not ask", not "ask for zero words".
+    assert "0 words" not in silent
+
+
+def test_asking_for_a_length_does_not_disturb_the_instruction_the_model_acts_on(
+    store: SqliteStore,
+) -> None:
+    """The target goes in `system`; the prompt still ends with the beat.
+
+    `test_the_prompt_carries_the_context_packet_and_ends_with_the_instruction` records why
+    the last line matters — the last thing in a prompt is the thing a model acts on. A
+    length instruction appended there would displace it, so this pins that the two changes
+    cannot collide.
+    """
+    book_id, branch_id = _fixture(store, "mystery")
+    head = store.head(book_id, branch_id)
+    assert head is not None
+    beat = beats_for(head, SIX_BEAT)[-1]
+    packet = packet_for(store, head, beat)
+    _, prompt = render_prompt(beat, book_title=None, packet=packet, target_words=900)
+    assert prompt.rstrip().endswith("Dramatic function: resolution.")
+
+
 def test_the_prompt_asks_for_system_voice_only_where_the_book_speaks_it(
     store: SqliteStore,
 ) -> None:
@@ -1274,21 +1325,35 @@ def test_story_order_keys_sort_as_story_order_past_nine_scenes(store: SqliteStor
 def test_asking_for_a_length_moves_a_capable_model_and_not_a_small_one(
     store: SqliteStore, model
 ) -> None:
-    """**Measured, because the suite cannot see prompt content and the answer is partial.**
+    """**Measured, and the numbers this docstring used to carry were measuring nothing.**
 
-    The first Book Zero run wrote a mean of 160 words per scene against §17 Stage 3's
-    50-80k-word book, and nothing had ever told a generator how long a scene is. Adding the
-    target was the obvious fix. It half-works, and the half matters:
+    It reported `llama3.2` 235 -> 232 ("ignored") and `phi4` 289 -> 426 ("+47%"). Both arms
+    called a `render_prompt` that dropped `target_words` on the floor, so both were draws
+    from byte-identical requests, and the assertion below routed through the same function
+    and could not fail. `test_the_target_length_reaches_the_prompt_at_all` is the model-free
+    test that catches that, and it is where the property belongs.
 
-        llama3.2:3b   none -> 235 words | 900 -> 232 words   (ignored)
-        phi4:14b      none -> 289 words | 900 -> 426 words   (+47%, under half the target)
+    Re-measured with the instruction actually sent — three draws per arm, seeds held common
+    across arms, on the same beat and packet:
 
-    So the instruction is worth keeping — free, and it moves the model that can follow it —
-    and it does **not** close the gap. Scale is a function of the generator, and an operator
-    choosing a scene count should divide by what their model actually writes rather than by
-    what it was asked for. This test asserts only that the target does not make scenes
-    *shorter*, because that is the property that must hold for every model; the numbers above
-    are a record of one measurement rather than a threshold anything should gate on.
+        llama3.2:3b   none -> 279 words | 900 -> 384 words   (+38%)
+        phi4:14b      none -> 324 words | 900 -> 611 words   (+89%, 68% of the target)
+
+    So the model the record called incapable of following the instruction follows it, and
+    `phi4` reaches two thirds of the ask against the 19% the six stored runs averaged. It
+    still does not close the gap, and scale remains a function of the generator: an operator
+    choosing a scene count should divide by what their model actually writes.
+
+    **Two draws are not a measurement here, and the control says why.** The same request
+    sent twice at `temperature=0.0, seed=7` is *not* byte-identical — `llama3.2` returned
+    245 then 279 words for one unchanged request, a 12% swing, and the third and later draws
+    of that same request all returned 279. So the first draw against a given prompt comes
+    from a different state than the rest, and a one-draw-per-arm comparison measures the
+    warm-up as much as the arm. That is the mechanism behind the phantom +47%.
+
+    This asserts only that the target does not make scenes *shorter*, because that is the
+    property that must hold for every model, and it discards the first draw for the reason
+    above. The numbers are a record of one measurement, never a threshold.
     """
     from litharness.providers.base import CompletionRequest
     from litharness.providers.ollama import OllamaProvider
@@ -1311,9 +1376,18 @@ def test_asking_for_a_length_moves_a_capable_model_and_not_a_small_one(
         system, prompt = render_prompt(
             beat, book_title=None, packet=packet, status_example=example, target_words=target
         )
-        text = provider.complete(
-            CompletionRequest(prompt=prompt, system=system, profile="default")
-        ).text
+        # The arms must differ, or this test is the vacuous one it replaces. Asserted here
+        # rather than trusted, because trusting it is exactly what went wrong.
+        assert (target == 0) != (str(target) in system)
+        draws = [
+            provider.complete(
+                CompletionRequest(prompt=prompt, system=system, profile="default")
+            ).text
+            for _ in range(2)
+        ]
+        # Discard the first: see the docstring's control. The same request twice is not
+        # byte-identical, and the first draw against a prompt is the one that differs.
+        text = draws[-1]
         lengths[target] = len(text.split())
         assert gate_draft(head, beat.logical_id, text).accepted, (
             f"{model} at target={target} wrote {len(text)} chars, which the shape gate "

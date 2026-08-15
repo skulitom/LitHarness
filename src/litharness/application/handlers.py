@@ -35,24 +35,31 @@ from collections.abc import Sequence
 from contextlib import suppress
 from dataclasses import replace
 from datetime import UTC, datetime
+from hashlib import sha256
 
 import litharness_contracts as lc
 
 from litharness.application.conductor import JobHandler
 from litharness.application.policy_events import policy_decision_event
 from litharness.application.ports import DraftStore, TextGenerator
-from litharness.application.repair import evaluation_job_for
+from litharness.application.repair import evaluation_job_for, summary_job_for
 from litharness.domain.audit import DEFAULT_RATE, draw
 from litharness.domain.budget import BudgetPolicy, BudgetVerdict
 from litharness.domain.budget import check as budget_check
-from litharness.domain.calibration import NotPromotable, promoted_gate, verdicts_digest_for
-from litharness.domain.craft import CraftMetric, craft_gates, measure
+from litharness.domain.calibration import (
+    EvidenceClass,
+    Grain,
+    NotPromotable,
+    promoted_gate,
+    verdicts_digest_for,
+)
+from litharness.domain.craft import CraftMetric, craft_gates, measure, profile_digest
 from litharness.domain.draft import DraftPolicy, gate_draft
 from litharness.domain.events import Event, EventType
 from litharness.domain.extraction import extract_state
 from litharness.domain.findings import DetectorInput
 from litharness.domain.findings import Finding as DomainFinding
-from litharness.domain.generation import CompletionRequest
+from litharness.domain.generation import PROFILES, CompletionRequest, Sampler
 from litharness.domain.integrity import gate_integrity, gate_standing
 from litharness.domain.jobs import Job
 from litharness.domain.nodes import NodeKind
@@ -68,6 +75,7 @@ from litharness.domain.policy import (
     policy_digest,
 )
 from litharness.domain.revision import Revision, node_version_id
+from litharness.domain.text import content_hash
 
 #: Job kind this handler answers to.
 SCENE_DRAFT = "scene_draft"
@@ -192,11 +200,26 @@ def _craft_ladder(
         return tuple(annotations.values())
     # Read once, not per metric: this is the whole audit queue, and the digest is what makes
     # a calibration stale when the verdicts move under it.
-    digest = verdicts_digest_for(
-        (sample.sample_id, sample.verdict.value)
-        for sample in store.audit_samples()
-        if sample.verdict is not None
-    )
+    #
+    # **Two digests, and which one a calibration is checked against is chosen by its own
+    # evidence class.** One digest for all of them was the hole: `litharness calibrate`
+    # defaulted a missing `--verdicts-digest` to the store's answered-audit digest, this
+    # function recomputed that identical digest at every draft, the staleness clause could
+    # therefore never fire, and a threshold measured over 13,000 strangers' chapters promoted
+    # by omission. A population calibration is now compared against the *profile* digest,
+    # which a verdict digest can never equal — so even a hand-written row claiming
+    # `population` while carrying the audit digest is stale on arrival.
+    answered = [
+        sample for sample in store.audit_samples() if sample.verdict is not None
+    ]
+    digests = {
+        EvidenceClass.JUDGMENT: verdicts_digest_for(
+            (sample.sample_id, sample.verdict.value)
+            for sample in answered
+            if sample.verdict is not None
+        ),
+        EvidenceClass.POPULATION: profile_digest(),
+    }
     measured = {metric.metric_id: metric for metric in metrics}
     seen: set[str] = set()
     for calibration in calibrations:
@@ -208,7 +231,14 @@ def _craft_ladder(
         seen.add(calibration.metric_id)
         try:
             annotations[calibration.metric_id] = promoted_gate(
-                calibration, metric.value, today=today, verdicts_digest=digest
+                calibration,
+                metric.value,
+                today=today,
+                verdicts_digest=digests.get(calibration.evidence_class),
+                # A craft gate refuses a scene, so evidence coarser than a scene refuses
+                # nothing here — the clause that keeps a story-level label out.
+                decision_grain=Grain.UNIT,
+                answered=len(answered),
             )
         except NotPromotable as exc:
             advisory = annotations[calibration.metric_id]
@@ -216,6 +246,45 @@ def _craft_ladder(
                 advisory, detail=f"{advisory.detail} [not blocking: {exc}]"
             )
     return tuple(annotations.values())
+
+
+#: Ceiling for the derived seed. Ollama takes a 32-bit signed seed; a Python `int` from a
+#: sha256 does not fit and is not rejected — it is silently reinterpreted, which would make
+#: "the same job replays to the same prose" false in a way nothing would report.
+_SEED_MODULUS = 2**31 - 1
+
+
+def draft_sampler(job: Job, profile: str) -> Sampler:
+    """The decoding settings for one attempt at one job.
+
+    **Derived from the job's own content, so it is reproducible without being constant.** A
+    pinned `seed=7` gives every scene in the book the same sample path; a random seed gives a
+    run nobody can replay. `input_digest` is already a content address over the job's inputs,
+    so seeding from it means the same job re-run draws the same prose and two different
+    scenes draw differently — which is the property a fixed constant was reaching for and
+    the wrong way round.
+
+    **`attempts` is in the seed on purpose, and it is the half that matters.** The prompt is
+    frozen onto the payload at plan time and re-read verbatim on every attempt, so with a
+    seed that did not move, a refused draft was regenerated byte-identically and met the
+    identical refusal until the attempt budget poisoned the unit — three model calls to
+    receive one answer three times. Attempt *n* now draws a different sample of the same
+    request, which is what makes the retry ladder a ladder. The cost is that a crash-replay
+    of one attempt reproduces that attempt and not its predecessor, which is the correct
+    trade: replay fidelity is per-attempt, and an attempt is what the job records.
+
+    A job with no `input_digest` — one enqueued by hand — falls back to its id, which is
+    still stable per job and per attempt.
+    """
+    sampler = PROFILES.get(profile, PROFILES["default"])
+    if sampler.temperature == 0.0:
+        # Greedy decoding samples nothing, so a seed here would be a number in a record that
+        # changed no output. Measured: three distinct seeds returned byte-identical text.
+        return sampler
+    material = f"{job.input_digest or job.job_id}:{job.attempts}"
+    return replace(
+        sampler, seed=int(sha256(material.encode()).hexdigest()[:16], 16) % _SEED_MODULUS
+    )
 
 
 def make_scene_draft_handler(
@@ -228,6 +297,7 @@ def make_scene_draft_handler(
     call_class: str = "generation",
     audit_rate: float = DEFAULT_RATE,
     schedule_evaluation: bool = False,
+    schedule_summary: bool = False,
 ) -> JobHandler:
     """Build a `JobHandler` that drafts one node's prose and gates the result.
 
@@ -247,6 +317,14 @@ def make_scene_draft_handler(
             raise HandlerInputError(
                 f"job {job.job_id} payload lacks revision_id/logical_id/prompt: {error}"
             ) from error
+
+        # Resolved up here rather than beside the provider call, because every decision this
+        # handler can record — including the two refusals in front of the spend — has to
+        # cite the configuration the attempt would have run under. A refusal recorded with
+        # a digest that omits the sampler is a record of a different run.
+        profile = str(payload.get("profile", "default"))
+        sampler = draft_sampler(job, profile)
+        config_digest = policy_digest(policy or DraftPolicy(), sampler)
 
         revision = store.load_revision(revision_id)
 
@@ -305,7 +383,7 @@ def make_scene_draft_handler(
                 logical_id=logical_id,
                 base_revision_id=revision_id,
                 attempt=job.attempts,
-                policy_config_digest=policy_digest(policy or DraftPolicy()),
+                policy_config_digest=config_digest,
                 reason=standing_gate.detail,
             )
             store.record_decision(refusal, decided_at=_timestamp(now))
@@ -326,8 +404,9 @@ def make_scene_draft_handler(
         request = CompletionRequest(
             prompt=prompt,
             system=payload.get("system"),
-            profile=str(payload.get("profile", "default")),
+            profile=profile,
             call_class=call_class,
+            sampler=sampler,
         )
 
         # **§4.2 gate 4, in front of the spend rather than behind it.** A budget check that
@@ -357,7 +436,7 @@ def make_scene_draft_handler(
                 logical_id=logical_id,
                 base_revision_id=revision_id,
                 attempt=job.attempts,
-                policy_config_digest=policy_digest(policy or DraftPolicy()),
+                policy_config_digest=config_digest,
                 reason=budget_verdict.reason,
             )
             store.record_decision(refusal, decided_at=_timestamp(now))
@@ -529,12 +608,12 @@ def make_scene_draft_handler(
             # diagnosis from one from the primary.
             provider=result.provider,
             model=result.model,
-            profile=str(payload.get("profile", "default")),
+            profile=profile,
             fell_back_from=tuple(resolution.fell_back_from),
             invocations=result.invocations,
             total_tokens=result.usage.total,
             cost_usd=result.cost_usd,
-            policy_config_digest=policy_digest(policy or DraftPolicy()),
+            policy_config_digest=config_digest,
             reason=reason,
         )
         decision_event = policy_decision_event(
@@ -636,6 +715,23 @@ def make_scene_draft_handler(
             if schedule_evaluation
             else ()
         )
+        # **Summarise the scene that was just accepted, at the lowest priority in the system.**
+        # Its value is entirely in the future — the summary is read once the budget stops
+        # holding this scene's prose, dozens of scenes later — so it must never outrank
+        # writing the next one. Minted with the accepted text's own content hash, so an
+        # untouched scene is summarised once for the life of the book and a repaired one
+        # earns exactly one more.
+        if schedule_summary and outcome.revision is not None:
+            follow_up_jobs = (
+                *follow_up_jobs,
+                summary_job_for(
+                    book_id=revision.book_id,
+                    branch_id=revision.branch_id,
+                    revision_id=outcome.revision.revision_id,
+                    logical_id=logical_id,
+                    content_hash=content_hash(result.text),
+                ),
+            )
         store.commit_revision(
             outcome.revision,
             created_at=_timestamp(now),

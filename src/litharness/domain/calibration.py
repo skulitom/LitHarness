@@ -41,6 +41,7 @@ from collections.abc import Iterable
 from dataclasses import dataclass
 from hashlib import sha256
 
+from litharness.domain.craft import MIN_BAND_CHAPTERS
 from litharness.domain.events import payload_digest
 from litharness.domain.patch import Veto
 from litharness.domain.policy import GateKind, GateOutcome, UntrustedVerdict, VerdictSource
@@ -82,6 +83,110 @@ MIN_HOLDOUT = 50
 MIN_FLAGGED = 17
 
 
+#: A population gate's control cohort may cross the reference cohort's threshold at most this
+#: many times as often before the threshold is refused. **A placed constant, and the one that
+#: guards this whole route's epistemic claim** — it has no derivation behind it the way
+#: `MIN_FLAGGED` does, and it is the lever a maintainer will reach for the first time a
+#: population gate refuses something they wanted. 2.0 says: a line the reference cohort crosses
+#: 1% of the time may not be crossed more than 2% of the time by prose of the same era that
+#: nobody suspects. `tricolon_rate` fails it at better than five times that.
+MAX_CONTROL_RATIO = 2.0
+
+#: Chapters that must actually sit at or beyond a quantile stop before it may be a threshold.
+#: **Derived rather than placed.** `tools/build_craft_profile.py` indexes a stop at
+#: `round(p * (n - 1))`, so a p99 over a 200-chapter band rests on two observations and a p99
+#: is exactly where a population threshold wants to live. Measured against the committed
+#: profile, the reference cohort's bands give 3, 5, 21, 37 and 6 observations at p99 — so five
+#: refuses the 300-700 band outright and clears the 700-1100 band, the one bracketing
+#: `DraftPolicy.target_words`, by one. A control that fails on real data.
+MIN_TAIL_SUPPORT = 5
+
+
+class EvidenceClass(enum.StrEnum):
+    """What a calibration's numbers are *about*. The dispatcher, not a label beside them.
+
+    **The conflation this exists to end.** `Calibration`'s fields name only numbers —
+    `precision`, `holdout_size`, `verdicts_digest` — and `why_not_promotable` checked their
+    internal coherence and never their referent. So a percentile computed over 13,000
+    strangers' chapters could fill every field without any single field being false, and the
+    record as a whole still claimed something nobody measured. Corpus evidence was not
+    refused here; it was *unlabelled*, which is worse, because the refusal looked like it was
+    working.
+
+    These are not three grades of one thing. They have different referents, and a gate may
+    make only the claim its referent supports:
+
+    - `JUDGMENT` — a human's answer about one of *our* units at the grain being gated. This
+      is the only class that may say a scene is not good enough.
+    - `POPULATION` — membership in a named published cohort at matched length and genre. It
+      may refuse, and what it refuses on is "this value is outside the range published LitRPG
+      of this length occupies". Not quality. A different veto, so the record cannot be read
+      as the claim it was not measured for.
+    - `BEHAVIOUR` — reader behaviour aggregated over other authors' whole stories, e.g.
+      `followers / total_views`. Recordable, rankable, and it refuses nothing, because its
+      grain is `STORY` and nothing in this system gates a story.
+    - `UNCLASSIFIED` — what a row recorded before this existed reads as. Never promotable,
+      and it is a refusal by name rather than a silent default: an unclassified row is not a
+      judgment row that forgot to say so.
+    """
+
+    JUDGMENT = "judgment"
+    POPULATION = "population"
+    BEHAVIOUR = "behaviour"
+    UNCLASSIFIED = "unclassified"
+
+
+class Grain(enum.StrEnum):
+    """The unit an evidence set's label is attached to.
+
+    Ordered coarse-to-fine by `finer_than`. Expressed as a field rather than left implicit
+    because the ecological fallacy is otherwise invisible to every check in this module: a
+    story-level label and a scene-level metric fill the same columns identically.
+    """
+
+    UNIT = "unit"
+    CHAPTER = "chapter"
+    STORY = "story"
+
+    def covers(self, decision: Grain) -> bool:
+        """Whether evidence at this grain may license a refusal of a `decision`-grain unit."""
+        rank = {Grain.UNIT: 0, Grain.CHAPTER: 1, Grain.STORY: 2}
+        return rank[self] <= rank[decision]
+
+
+@dataclass(frozen=True, slots=True)
+class Population:
+    """The reference distribution a `POPULATION` calibration's threshold was read out of.
+
+    **Every field here is a control or the material to compute one.** A threshold with no
+    named control cohort measured in the same band in the same pass is the shape of every
+    proxy in `research/quality-measurement/BRIEF.md` §2, and the ledger's own worked example
+    is `tricolon_rate`: 0.629 against pre-2023 prose looks like this project's first working
+    AI-tell detector for exactly as long as it takes to read the 0.606 beside it.
+    """
+
+    metric_id: str
+    #: The cohort the threshold was read from, and the band it was read in.
+    cohort: str
+    band: str
+    #: The stored ladder stop, e.g. "p99". The threshold must *equal* this stop, so it cannot
+    #: be a number somebody typed — see `craft.quantile_stop`.
+    quantile: str
+    reference_n: int
+    #: Chapters in the reference cohort at or beyond the stop. See `MIN_TAIL_SUPPORT`.
+    tail_support: int
+    #: The cohort that holds the confound fixed — era, in this corpus. Measured in the same
+    #: band at the same threshold in the same pass.
+    control_cohort: str
+    control_n: int
+    #: Share of each cohort on the failing side of the threshold.
+    reference_exceedance: float
+    control_exceedance: float
+    #: Content address of the profile build the stop came from. `REFERENCE_COHORT` and
+    #: `LENGTH_BANDS` are build-time choices, so a rebuilt profile is different evidence.
+    profile_digest: str
+
+
 class Direction(enum.StrEnum):
     """Which side of the threshold fails.
 
@@ -111,9 +216,22 @@ class Calibration:
     precision: float
     threshold: float
     direction: Direction
-    #: Content address of the verdict set this was measured on. See the module docstring.
+    #: Content address of the evidence this was measured on — the answered verdict set for a
+    #: `JUDGMENT` calibration, the craft profile build for a `POPULATION` one. Named for the
+    #: judgment case because that is the only case that existed when it was added; what it
+    #: is compared against is now chosen by `evidence_class` rather than assumed.
     verdicts_digest: str
     measured_at: str
+    #: **Required, with no default, and that is the point.** A default would mean a caller
+    #: that says nothing about its referent gets the most permissive class for free, which is
+    #: exactly today's behaviour. The `calibrations` table is empty, so this is the last
+    #: moment a required field costs nothing.
+    evidence_class: EvidenceClass = EvidenceClass.UNCLASSIFIED
+    #: The grain the label is attached to. `UNIT` for a verdict about one of our scenes;
+    #: `STORY` for `followers / total_views`.
+    grain: Grain = Grain.UNIT
+    #: Present iff `evidence_class` is `POPULATION`.
+    population: Population | None = None
     #: ISO date after which this is no longer *current* evidence. None means never expires,
     #: which is a claim about a moving target and should be rare enough to notice.
     expires_at: str | None = None
@@ -131,12 +249,135 @@ class Calibration:
     def blocks_at(self, value: float) -> bool:
         return self.direction.fails(value, self.threshold)
 
-    def why_not_promotable(self, today: str, verdicts_digest: str | None = None) -> str | None:
+    def why_not_promotable(
+        self,
+        today: str,
+        verdicts_digest: str | None = None,
+        *,
+        decision_grain: Grain = Grain.UNIT,
+        answered: int | None = None,
+    ) -> str | None:
         """The reason this may not become a blocking gate, or None if it may.
 
         Returns a reason rather than a boolean so the refusal can be recorded and read. "Not
         promotable" with no cause is the kind of answer that gets worked around.
+
+        **A dispatcher over `evidence_class`, because the checks below are not general.**
+        Every constant in the judgment branch is denominated in human answers about our own
+        prose — `MIN_HOLDOUT` counts judgments, `MIN_FLAGGED` counts flags on those judgments
+        — and applying them to a corpus percentile does not make the percentile validated, it
+        makes the bar meaningless. The class picks the checks; the checks do not generalise.
+
+        `decision_grain` is the grain of the thing being refused, so evidence coarser than
+        the unit under judgment is refused ahead of every class-specific test. That single
+        clause is what closes the ecological fallacy, and it closes it against the label this
+        project most wants to use: `followers / total_views` is `STORY` grain, a craft gate
+        refuses a scene, and so it can never promote one — at any *n*, at any AUC.
+
+        `answered` is how many answered audit samples the store actually holds. Optional
+        because the domain cannot query, and checked when given: nothing anywhere compared
+        `holdout_size` against it, so a calibration claiming fifty held-out judgments against
+        a store holding two was promotable, and the digest clause could not catch it because
+        the digest of two verdicts matches the digest of two verdicts.
         """
+        if self.evidence_class is EvidenceClass.UNCLASSIFIED:
+            return (
+                "does not name what its numbers are about; a calibration recorded before "
+                "evidence classes existed is not a judgment calibration that forgot to say "
+                "so. Re-record it naming the class"
+            )
+        if not self.grain.covers(decision_grain):
+            return (
+                f"its label is attached to a {self.grain.value}, and this gate refuses a "
+                f"{decision_grain.value}. Evidence about whole stories cannot license the "
+                "refusal of one scene, however large the sample"
+            )
+        if self.evidence_class is EvidenceClass.BEHAVIOUR:
+            return (
+                "aggregate reader behaviour over other authors' whole works is a claim about "
+                "stories, not about a scene of ours; it may rank and select and may refuse "
+                "nothing. A per-chapter outcome would move it to unit grain"
+            )
+        if self.evidence_class is EvidenceClass.POPULATION:
+            return self._why_not_population(today, verdicts_digest)
+        return self._why_not_judgment(today, verdicts_digest, answered)
+
+    def _why_not_population(self, today: str, profile_digest: str | None) -> str | None:
+        """Why a corpus-derived threshold may not refuse a scene for being out of range.
+
+        Six conditions, and the fourth is the one the whole class turns on: the control
+        cohort's exceedance at the same threshold in the same band, measured in the same
+        pass, capped at `MAX_CONTROL_RATIO`. BRIEF §2's rule — "compute the control in the
+        same pass" — expressed as an arithmetic refusal instead of as a habit.
+        """
+        population = self.population
+        if population is None:
+            return (
+                "is a population calibration carrying no population: a threshold with no "
+                "named cohort, band and control is a number with no referent"
+            )
+        if population.metric_id != self.metric_id:
+            return (
+                f"reads its threshold from {population.metric_id}'s distribution while "
+                f"gating {self.metric_id}"
+            )
+        if population.reference_n < MIN_BAND_CHAPTERS:
+            return (
+                f"rests on {population.reference_n} chapters in band {population.band}, "
+                f"below the {MIN_BAND_CHAPTERS} the band ladder itself requires"
+            )
+        if population.tail_support < MIN_TAIL_SUPPORT:
+            return (
+                f"its {population.quantile} stop rests on {population.tail_support} "
+                f"observed chapter(s) at or beyond it, below the {MIN_TAIL_SUPPORT} floor — "
+                "a tail estimated from that many is noise wearing a number's authority"
+            )
+        if population.reference_exceedance <= 0.0:
+            return (
+                "no chapter in the reference cohort crosses this threshold, so the gate can "
+                "never fire. An inert gate is worse than an empty table: it retires the "
+                "emptiness that is currently the honest measure of the gap"
+            )
+        if population.control_n < MIN_BAND_CHAPTERS:
+            return (
+                f"its control cohort {population.control_cohort} holds "
+                f"{population.control_n} chapters in band {population.band}; a control too "
+                "small to have detected a violation is not a control"
+            )
+        allowed = MAX_CONTROL_RATIO * population.reference_exceedance
+        if population.control_exceedance > allowed:
+            ratio = population.control_exceedance / population.reference_exceedance
+            return (
+                f"the control cohort {population.control_cohort} crosses this threshold "
+                f"{ratio:.1f}x as often as the reference cohort "
+                f"({population.control_exceedance:.4f} against "
+                f"{population.reference_exceedance:.4f}, cap {MAX_CONTROL_RATIO:.1f}x), so "
+                "the threshold separates the cohorts rather than the prose — the tricolon "
+                "result, arriving as a gate instead of as a table"
+            )
+        if not self.is_current(today):
+            return (
+                f"expired {self.expires_at}; §19's Trust clause requires *current* "
+                "calibration evidence, and output has changed since"
+            )
+        if profile_digest is not None and profile_digest != self.verdicts_digest:
+            return (
+                "the reference profile has been rebuilt since this stop was read "
+                f"({profile_digest[:12]} != {self.verdicts_digest[:12]}); the cohort and "
+                "band boundaries are build-time choices, so a rebuild is different evidence"
+            )
+        return None
+
+    def _why_not_judgment(
+        self, today: str, verdicts_digest: str | None, answered: int | None
+    ) -> str | None:
+        """Today's seven checks, unchanged, plus the count nothing was comparing."""
+        if answered is not None and self.holdout_size > answered:
+            return (
+                f"claims {self.holdout_size} held-out judgment(s) against a store holding "
+                f"{answered} answered; the digest clause cannot catch this, because the "
+                "digest of the smaller set matches itself"
+            )
         if self.precision < MIN_PRECISION:
             return (
                 f"held-out precision {self.precision:.2f} is below the {MIN_PRECISION:.2f} "
@@ -186,6 +427,8 @@ def calibration_id_for(
     precision: float,
     holdout_size: int,
     flagged: int | None,
+    evidence_class: EvidenceClass = EvidenceClass.UNCLASSIFIED,
+    grain: Grain = Grain.UNIT,
 ) -> str:
     """Derived from what was measured, so the same evidence names the same calibration.
 
@@ -206,6 +449,14 @@ def calibration_id_for(
     direction is precisely the row someone re-records to fix — and with direction outside the
     id that correction collides with the inverted original, is dropped by INSERT OR IGNORE,
     and leaves the backwards gate live while reporting the fix as recorded.
+
+    **`evidence_class` and `grain` are in here for the third instance of the same reason,
+    and it is the sharpest.** The row someone re-records is the one whose class was wrong —
+    a corpus measurement filed as a judgment is precisely the mistake this field exists to
+    make sayable, and therefore precisely the mistake someone will correct. With the class
+    outside the id, that correction collides with the mislabelled original, is dropped by
+    `INSERT OR IGNORE`, and leaves the mislabelled row promoting while reporting the fix as
+    recorded.
     """
     material = payload_digest(
         {
@@ -216,6 +467,8 @@ def calibration_id_for(
             "precision": precision,
             "holdout_size": holdout_size,
             "flagged": flagged,
+            "evidence_class": evidence_class.value,
+            "grain": grain.value,
         }
     )
     return f"cal-{sha256(material.encode()).hexdigest()[:24]}"
@@ -231,12 +484,52 @@ def verdicts_digest_for(verdicts: Iterable[tuple[str, str]]) -> str:
     return payload_digest({"verdicts": pairs})
 
 
+def _detail(calibration: Calibration, value: float) -> str:
+    """What the gate says about itself, in the vocabulary its evidence supports.
+
+    A population gate reports a position in a distribution and names the cohort, the band and
+    the control that licensed it. It never says "precision", because it has none: a
+    percentile predicts nothing about a reader. The two branches exist so an operator reading
+    a refusal cannot mistake which claim was made.
+    """
+    common = f"{value} vs threshold {calibration.threshold} ({calibration.direction.value})"
+    population = calibration.population
+    if calibration.evidence_class is EvidenceClass.POPULATION and population is not None:
+        return (
+            f"{common}; outside the {population.quantile} of {population.cohort} at "
+            f"{population.band} words (n={population.reference_n}), control "
+            f"{population.control_cohort} exceeds at {population.control_exceedance:.4f} "
+            f"against {population.reference_exceedance:.4f}. A statement about range, "
+            "not about quality"
+        )
+    return (
+        f"{common}; precision {calibration.precision:.2f} on "
+        f"{calibration.holdout_size} held-out"
+    )
+
+
+def veto_for(evidence_class: EvidenceClass) -> Veto:
+    """The strongest claim this class of evidence licenses, as a veto.
+
+    Total over the enum on purpose: a class with no mapping raises here rather than falling
+    back to `CRAFT_BELOW_BAR`, because the fallback is the claim this module exists to
+    stop being made for free.
+    """
+    if evidence_class is EvidenceClass.JUDGMENT:
+        return Veto.CRAFT_BELOW_BAR
+    if evidence_class is EvidenceClass.POPULATION:
+        return Veto.CRAFT_OUT_OF_DISTRIBUTION
+    raise NotPromotable(f"{evidence_class.value} evidence licenses no refusal")
+
+
 def promoted_gate(
     calibration: Calibration,
     value: float,
     *,
     today: str,
     verdicts_digest: str | None = None,
+    decision_grain: Grain = Grain.UNIT,
+    answered: int | None = None,
 ) -> GateOutcome:
     """Build a **blocking** craft gate from calibrated evidence, or refuse to.
 
@@ -248,9 +541,12 @@ def promoted_gate(
     Raises `NotPromotable` rather than returning an advisory gate on failure. Degrading
     silently is how a gate everyone believes is on turns out to have been off.
     """
-    reason = calibration.why_not_promotable(today, verdicts_digest)
+    reason = calibration.why_not_promotable(
+        today, verdicts_digest, decision_grain=decision_grain, answered=answered
+    )
     if reason is not None:
         raise NotPromotable(f"{calibration.metric_id}: {reason}")
+    veto = veto_for(calibration.evidence_class)
     passed = not calibration.blocks_at(value)
     gate = GateOutcome(
         gate=GateKind.CRAFT,
@@ -264,13 +560,15 @@ def promoted_gate(
         blocking=True,
         # Named, because `policy.decide` acts on the veto and a blocking gate that fails
         # without one escalates as "a blocking gate failed without naming a veto" — the
-        # anonymous refusal that sends a human every scene the gate stops. `CRAFT_BELOW_BAR`
-        # is classified `PARKABLE`, so this refusal parks the unit revivably instead.
-        vetoes=() if passed else (Veto.CRAFT_BELOW_BAR,),
-        detail=(
-            f"{value} vs threshold {calibration.threshold} ({calibration.direction.value}); "
-            f"precision {calibration.precision:.2f} on {calibration.holdout_size} held-out"
-        ),
+        # anonymous refusal that sends a human every scene the gate stops. Both craft vetoes
+        # are classified `PARKABLE`, so this refusal parks the unit revivably instead.
+        #
+        # **The veto comes from the evidence class rather than being a constant**, and that
+        # is the whole enforcement. A corpus percentile refusing a scene must not emit the
+        # word "below bar": it did not measure a bar. `veto_for` is total over the enum, so
+        # a future class with no mapping raises here instead of inheriting a quality claim.
+        vetoes=() if passed else (veto,),
+        detail=_detail(calibration, value),
         calibration_id=calibration.calibration_id,
     )
     # Belt and braces, and cheap: `PolicyDecision` enforces the same invariant, but a gate is
@@ -282,13 +580,19 @@ def promoted_gate(
 
 
 __all__ = [
+    "MAX_CONTROL_RATIO",
     "MIN_FLAGGED",
     "MIN_HOLDOUT",
     "MIN_PRECISION",
+    "MIN_TAIL_SUPPORT",
     "Calibration",
     "Direction",
+    "EvidenceClass",
+    "Grain",
     "NotPromotable",
+    "Population",
     "calibration_id_for",
     "promoted_gate",
     "verdicts_digest_for",
+    "veto_for",
 ]

@@ -10,6 +10,8 @@ which is why it names the reason in its assertion.
 
 from __future__ import annotations
 
+from dataclasses import replace
+
 import pytest
 
 from litharness.adapters.sqlite_store import SqliteStore
@@ -19,11 +21,14 @@ from litharness.application.handlers import (
     HandlerInputError,
     make_scene_draft_handler,
 )
+from litharness.domain.audit import AuditSample, Verdict
 from litharness.domain.calibration import (
     MIN_FLAGGED,
     MIN_HOLDOUT,
     Calibration,
     Direction,
+    EvidenceClass,
+    Grain,
     calibration_id_for,
     verdicts_digest_for,
 )
@@ -402,7 +407,75 @@ def test_the_decision_record_carries_the_provenance_section_2_requires(
     assert decision.gates and decision.gates[0].rule_or_critic_id == "shape.draft.v0"
     # The frozen policy the decision was made under, so a later threshold change reads as
     # a different config rather than as unexplained drift in behaviour.
-    assert decision.policy_config_digest == policy_digest(DraftPolicy())
+    #
+    # **The sampler is part of that config**, and this assertion is what says so. The
+    # decision records `profile`, and a profile *name* resolves to decoding settings through
+    # a module constant — so without the sampler in the digest, changing `generation.PROSE`'s
+    # temperature would leave every stored digest identical while every scene written after
+    # it came from a different generator. The digest is the answer to "were these two scenes
+    # written under the same configuration", and the name alone cannot answer it.
+    from litharness.application.handlers import draft_sampler
+    from litharness.domain import generation
+
+    expected_sampler = draft_sampler(store.load_job("draft-1"), "default")
+    assert decision.policy_config_digest == policy_digest(DraftPolicy(), expected_sampler)
+    assert decision.policy_config_digest != policy_digest(DraftPolicy())
+    assert decision.policy_config_digest != policy_digest(
+        DraftPolicy(), replace(expected_sampler, temperature=generation.PROSE.temperature + 0.1)
+    )
+
+
+def test_a_retry_draws_a_different_sample_of_the_same_frozen_request() -> None:
+    """The defect that made the retry ladder cost three calls to receive one answer.
+
+    The prompt is frozen onto the job payload at plan time and re-read verbatim on every
+    attempt; `Job.fail` changes status, attempts and error and never the payload. With a
+    constant seed and `temperature=0.0` the provider therefore received byte-identical
+    inputs on attempt 2 and 3, returned what it returned on attempt 1, met the identical
+    gate refusal, and poisoned the unit — a ladder with one rung, climbed three times.
+
+    Both halves are asserted because either alone is satisfiable by a bug: a seed that never
+    moves passes the second, and a random seed passes the first.
+    """
+    from litharness.application.handlers import draft_sampler
+
+    payload = {"revision_id": "r-1", "logical_id": "scene-1", "prompt": "Draft it."}
+    job = Job(
+        job_id="draft-1",
+        job_kind=SCENE_DRAFT,
+        payload=payload,
+        input_digest=input_digest_for(payload),
+    )
+
+    first = draft_sampler(job, "default")
+    second = draft_sampler(replace(job, attempts=1), "default")
+    assert first.seed != second.seed, "a retry must not re-ask the identical question"
+    assert first.seed == draft_sampler(job, "default").seed, (
+        "the same job at the same attempt must replay to the same prose"
+    )
+    # A distinct scene is a distinct sample path, which a pinned constant could not give.
+    other = {**payload, "logical_id": "scene-2"}
+    assert (
+        draft_sampler(replace(job, input_digest=input_digest_for(other)), "default").seed
+        != first.seed
+    )
+
+
+def test_schema_shaped_work_stays_greedy_and_carries_no_seed() -> None:
+    """A seed at temperature zero is a number in a record that changed no output.
+
+    Measured: three distinct seeds against one unchanged request returned byte-identical
+    text on both models tested, because greedy decoding samples nothing. Recording one
+    anyway would be provenance that reads as an explanation and explains nothing — and
+    extraction *wants* to be greedy, so this is the one place the old global was right.
+    """
+    from litharness.application.handlers import draft_sampler
+
+    job = Job(job_id="x-1", job_kind=SCENE_DRAFT, input_digest="d")
+    mechanical = draft_sampler(job, "mechanical")
+    assert mechanical.temperature == 0.0
+    assert mechanical.seed is None
+    assert draft_sampler(replace(job, attempts=2), "mechanical") == mechanical
 
 
 def test_replaying_the_job_converges_instead_of_duplicating(store: SqliteStore) -> None:
@@ -925,7 +998,30 @@ def with_a_failing_craft_gate(store: SqliteStore) -> None:
     """
     value = {metric.metric_id: metric.value for metric in measure(PROSE)}
     metric_id = "craft.dialogue_ratio.v0"
-    digest = verdicts_digest_for([])
+    # **The holdout has to actually be in the store now.** `why_not_promotable` compares
+    # `holdout_size` against the number of answered audit samples, because nothing ever did:
+    # a row claiming fifty held-out judgments promoted against a store holding none, and the
+    # digest clause could not catch it, since the digest of the empty set matches itself.
+    for index in range(MIN_HOLDOUT):
+        sample = AuditSample(
+            sample_id=f"craft-holdout-{index}",
+            book_id=BOOK_ID,
+            branch_id=BRANCH_ID,
+            revision_id=f"rev-{index}",
+            logical_id=f"scene-{index}",
+            sampled_at="2026-08-01",
+            rate=1.0,
+            bucket=index,
+        )
+        store.record_audit_sample(sample)
+        store.record_verdict(
+            sample.sample_id, Verdict.KEEP_READING, at="2026-08-01", by="reader"
+        )
+    digest = verdicts_digest_for(
+        (item.sample_id, item.verdict.value)
+        for item in store.audit_samples()
+        if item.verdict is not None
+    )
     store.record_calibration(
         Calibration(
             calibration_id=calibration_id_for(
@@ -936,10 +1032,14 @@ def with_a_failing_craft_gate(store: SqliteStore) -> None:
                 precision=0.86,
                 holdout_size=MIN_HOLDOUT,
                 flagged=MIN_FLAGGED,
+                evidence_class=EvidenceClass.JUDGMENT,
+                grain=Grain.UNIT,
             ),
             metric_id=metric_id,
             holdout_size=MIN_HOLDOUT,
             flagged=MIN_FLAGGED,
+            evidence_class=EvidenceClass.JUDGMENT,
+            grain=Grain.UNIT,
             precision=0.86,
             threshold=value[metric_id] + 1.0,
             direction=Direction.BELOW,

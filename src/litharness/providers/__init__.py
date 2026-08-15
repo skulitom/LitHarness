@@ -49,7 +49,7 @@ DEFAULT_CHEAP_ORDER = ("ollama", "fake", "claude_code", "codex")
 
 
 def build_default_registry(
-    prefer: str | None = None, *, refuse_billing: bool = False
+    prefer: str | None = None, *, refuse_billing: bool = False, model: str | None = None
 ) -> ProviderRegistry:
     """The four adapters in the order `plan/provider-adapters.md` specifies.
 
@@ -73,6 +73,19 @@ def build_default_registry(
     An unknown `prefer` name raises. `order` deliberately ignores names it does not know, so
     a typo would leave the default order in place and the operator would find out from the
     bill; this is the one place a provider name arrives from a human.
+
+    **`model` names the Ollama model, and until it existed no shipped command could.** Every
+    adapter was constructed argument-free, so `OllamaProvider.model` was `qwen3:4b` for every
+    invocation of every subcommand — while `plan/stage-0-decisions.md` §44 attributes the
+    first Book Zero run to `llama3.2:3b` and §45's table names two more. `--prefer ollama`
+    selects the *adapter* and has never selected a model, so those attributions cannot have
+    come from the CLI. Scene length is a property of the generator (§45), so the one knob
+    that moves it most was the one an operator could not turn.
+
+    It applies to Ollama alone. `ClaudeCodeProvider.model` and `CodexProvider.model` are
+    per-vendor identifiers from disjoint namespaces, and one flag setting all three would
+    let `--model phi4:latest` reach `claude -p --model phi4:latest`. A billing provider is
+    the wrong place to discover a typo.
     """
     # The fake's answer is ~140 characters and `DraftPolicy.min_chars` is 200, so a
     # model-free run would fail the shape gate on every beat. `LITHARNESS_FAKE_PAD_CHARS`
@@ -83,7 +96,7 @@ def build_default_registry(
     providers: list[Provider] = [
         ClaudeCodeProvider(),
         CodexProvider(),
-        OllamaProvider(),
+        OllamaProvider() if model is None else OllamaProvider(model=model),
         FakeProvider(pad_to_chars=pad),
     ]
     order, cheap = list(DEFAULT_ORDER), list(DEFAULT_CHEAP_ORDER)

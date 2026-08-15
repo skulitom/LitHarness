@@ -51,6 +51,76 @@ class Usage:
 
 
 @dataclass(frozen=True, slots=True)
+class Sampler:
+    """How the model decodes. Per-request, because it is not one setting for all work.
+
+    **Every field is `None` by default and `None` means "the adapter's own default".** That
+    is what lets a request carry no opinion at all, which every mechanical call should: an
+    adapter that reads `None` as "0" would silently make a schema-shaped call creative.
+
+    **Why this exists at all, measured rather than argued.** The sampler used to be
+    constructor state on `OllamaProvider` — `temperature=0.0, seed=7` for every call of every
+    kind in the process — and three things follow from that which the code did not say:
+
+    - **The seed is inert at `temperature=0.0`.** Greedy decoding has nothing to sample, so
+      the seed selects nothing. Measured: three seeds (7, 101, 202) against one unchanged
+      request returned byte-identical text on both `llama3.2` and `phi4`. The fixed seed was
+      never buying the determinism `plan/provider-adapters.md` §4.3 credits it with; the
+      `temperature=0.0` beside it was doing all of the work.
+    - **And `temperature=0.0` does not buy it either.** The same request sent twice is *not*
+      byte-identical: `llama3.2` returned 245 then 279 words, a 12% swing, with every later
+      draw of that same request landing on 279. The first draw against a prompt comes from a
+      different state than the rest. So "the closest thing to determinism a model offers" is
+      a claim this project has now measured and it is false at the only precision that would
+      matter — which is why the `@live` tests that compare one draw per arm compare warm-up.
+    - **Greedy decoding made the retry ladder a no-op.** The prompt is frozen onto the job
+      payload at plan time and re-read verbatim on every attempt, so a refused draft was
+      regenerated from byte-identical inputs and met the identical refusal until the attempt
+      budget poisoned the unit. Three model calls to receive one answer three times.
+    """
+
+    #: Above zero, the seed starts selecting; at zero it selects nothing. Move them together.
+    temperature: float | None = None
+    top_p: float | None = None
+    #: Deterministic **given** a temperature. Derive it from content rather than pinning a
+    #: constant, so the same job replays to the same prose and two different scenes do not
+    #: draw the same sample path. See `application/handlers.py`.
+    seed: int | None = None
+    repeat_penalty: float | None = None
+
+    def merged_over(self, **defaults: float | int | None) -> dict[str, float | int]:
+        """This sampler's opinions on top of an adapter's defaults, `None` dropped.
+
+        Returns only keys with a value, so an adapter can splat it into a wire payload
+        without asserting a default it does not hold.
+        """
+        merged = dict(defaults)
+        for name in ("temperature", "top_p", "seed", "repeat_penalty"):
+            value = getattr(self, name)
+            if value is not None:
+                merged[name] = value
+        return {key: value for key, value in merged.items() if value is not None}
+
+
+#: The prose sampler. **Not measured, and the constant says so** — this project has measured
+#: what `temperature=0.0` costs (above) and not what any positive value buys. It is set where
+#: it is because the retry ladder needs *some* headroom to produce a second answer and because
+#: `repeated_span` exists to catch a run that emitted a 28-word paragraph byte-identical in
+#: two scenes under greedy decoding. Whether raising it reduces that is the first question
+#: Book Zero can answer, and `craft.repeated_span.v0` is the instrument that answers it.
+PROSE = Sampler(temperature=0.7, top_p=0.9, repeat_penalty=1.05)
+
+#: Schema-shaped work stays greedy. Conformance is the point of an extraction call and
+#: creativity is the failure mode, so the one place the old global was right keeps it.
+MECHANICAL = Sampler(temperature=0.0)
+
+#: Resolution from the frozen profile name a request already carries. A profile was a string
+#: recorded in provenance that no adapter read; making it *mean* the sampler is what stops
+#: decoding settings from being scattered at call sites where no decision record can see them.
+PROFILES: dict[str, Sampler] = {"default": PROSE, "prose": PROSE, "mechanical": MECHANICAL}
+
+
+@dataclass(frozen=True, slots=True)
 class CompletionRequest:
     prompt: str
     system: str | None = None
@@ -63,6 +133,9 @@ class CompletionRequest:
     #: Call class, used by the registry to route mechanical work to cheap providers even in
     #: production (see plan/provider-adapters.md §3).
     call_class: str = "generation"
+    #: How to decode. `None` leaves it to the adapter, which is what every call site that
+    #: has no opinion should do — including every existing one, so this field is additive.
+    sampler: Sampler | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -107,8 +180,12 @@ class Resolution:
 
 
 __all__ = [
+    "MECHANICAL",
+    "PROFILES",
+    "PROSE",
     "CompletionRequest",
     "CompletionResult",
     "Resolution",
+    "Sampler",
     "Usage",
 ]

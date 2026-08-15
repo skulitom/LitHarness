@@ -91,6 +91,7 @@ from itertools import pairwise
 from pathlib import Path
 from typing import Any
 
+from litharness.domain.events import payload_digest
 from litharness.domain.policy import GateKind, GateOutcome, VerdictSource
 
 #: Sentence terminators, kept deliberately crude. A real sentence splitter would be better and
@@ -587,6 +588,63 @@ def percentile_of(
     return None  # pragma: no cover - the ladder is total over its own range
 
 
+def profile_digest(profile: dict[str, Any] | None = None) -> str | None:
+    """Content address of the reference distribution, or None when none is built.
+
+    A corpus-derived threshold is a *lookup* into this file, so the file is the evidence and
+    a calibration that cites a threshold has to cite which build of it the threshold came
+    from. `REFERENCE_COHORT` and `LENGTH_BANDS` are build-time choices, so a profile rebuilt
+    under different ones produces different stops under the same names — which is the exact
+    shape of the correction `calibration_id_for` already exists to keep from colliding.
+
+    Digests `cohorts` and `source` and nothing else. `disclaimer` and `separation` are prose
+    and measured separation numbers respectively; neither changes what a stop means, and
+    including them would make an editorial fix read as new evidence.
+    """
+    data = profile if profile is not None else load_profile()
+    if not data.get("cohorts"):
+        return None
+    return payload_digest({"cohorts": data["cohorts"], "source": data.get("source")})
+
+
+def quantile_stop(
+    metric_id: str,
+    *,
+    cohort: str,
+    band: str,
+    quantile: str,
+    profile: dict[str, Any] | None = None,
+) -> float | None:
+    """One stored ladder stop, or None when the stratum cannot support it.
+
+    The counterpart to `percentile_of`, and deliberately not the same function: that one asks
+    "where does this scene sit", which is an annotation, and this one asks "what value stands
+    at p99 of this population", which is what a corpus-derived threshold *is*. Returning the
+    stop rather than accepting a number is what stops a threshold being a figure somebody
+    typed — see `domain/calibration.py`, which refuses any population calibration whose
+    threshold does not equal this.
+
+    Abstains below `MIN_BAND_CHAPTERS`, on an unbuilt band, and on an unknown quantile, for
+    `percentile_of`'s reason: an unmatched stop is wrong rather than approximate.
+    """
+    data = profile if profile is not None else load_profile()
+    stratum: dict[str, Any] = data.get("cohorts", {}).get(cohort, {}).get("bands", {}).get(band, {})
+    if int(stratum.get("chapters", 0)) < MIN_BAND_CHAPTERS:
+        return None
+    stops: dict[str, float] = stratum.get("metrics", {}).get(metric_id, {})
+    value = stops.get(quantile)
+    return None if value is None else float(value)
+
+
+def band_chapters(
+    *, cohort: str, band: str, profile: dict[str, Any] | None = None
+) -> int:
+    """How many chapters back this stratum. Zero when it was never built."""
+    data = profile if profile is not None else load_profile()
+    stratum: dict[str, Any] = data.get("cohorts", {}).get(cohort, {}).get("bands", {}).get(band, {})
+    return int(stratum.get("chapters", 0))
+
+
 def craft_gates(
     metrics: tuple[CraftMetric, ...], *, words: int | None = None
 ) -> tuple[GateOutcome, ...]:
@@ -635,16 +693,22 @@ def craft_gates(
 
 
 __all__ = [
+    "LENGTH_BANDS",
     "METRICS",
+    "MIN_BAND_CHAPTERS",
     "PROFILE_PATH",
     "REFERENCE_COHORT",
     "CraftMetric",
+    "band_chapters",
+    "band_for",
     "craft_gates",
     "dialogue_ratio",
     "load_profile",
     "measure",
     "opening_shape_repetition",
     "percentile_of",
+    "profile_digest",
+    "quantile_stop",
     "repeated_span",
     "scene_echo",
     "sentence_length_variation",

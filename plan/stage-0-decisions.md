@@ -1455,13 +1455,22 @@ visible, and it took one glance at a printed column.
 
 ## 45. Asking for a length half-works, and the half is the finding
 
+> **RETRACTED, and the retraction is §51.** Every number in this section is two draws from
+> **byte-identical prompts**. `render_prompt` accepted `target_words` and never read it: the
+> commit that added it is two lines — the signature and the call site — and the body that
+> builds `system` and `prompt` was untouched. The instruction was never sent, on either
+> model, in either arm. The re-measurement with it actually wired is in §51; the conclusion
+> reverses for the model this section calls incapable of following it. What stands unchanged
+> is the paragraph on why a target is not a gate, which was reasoning rather than
+> measurement.
+
 §44's first taxonomy entry was that scenes are an order of magnitude too short — 160 words
 each against a book that wants 50-80k. Nothing had ever told a generator how long a scene is,
 so the obvious fix was to say so. Measured on two local models, drafting the same beat with
 and without the instruction:
 
-    llama3.2:3b   none -> 235 words | 900 -> 232 words   (ignored entirely)
-    phi4:14b      none -> 289 words | 900 -> 426 words   (+47%, under half the target)
+    llama3.2:3b   none -> 235 words | 900 -> 232 words   (ignored entirely)      [RETRACTED]
+    phi4:14b      none -> 289 words | 900 -> 426 words   (+47%)                  [RETRACTED]
 
 **Worth keeping, and it does not close the gap.** It is free, it moves the model that can
 follow it, and it makes the ask explicit rather than implicit. It also does nothing at all for
@@ -1808,3 +1817,324 @@ evidence recorded against v0 values applied to v1 arithmetic is the silent inver
 anything; the rebuilt profile's separation numbers are unchanged to the fourth decimal. What
 changed is that the one claim the evidence does support — where a scene sits among published
 chapters of its own size — is now correct, reachable, and honest about when it cannot be made.
+
+## 51. Four unblocks, and the instruction that was never sent
+
+Four items were taken together because each was another's precondition: a generator that can
+actually write, the sampler, a summariser in the evicted-context slot, and a route by which
+corpus-calibrated evidence becomes admissible to the gate. What follows is what the work
+found, in the order the findings arrived rather than the order they were planned.
+
+### 51.1 `render_prompt` accepted `target_words` and never read it
+
+`git show 8f7075c -- src/litharness/application/planner.py` is **exactly two lines**: the
+parameter on the signature and the argument at the call site. The body that constructs
+`system` and `prompt` never mentioned it. Asserted rather than argued — the harness that found
+it computes `render_prompt(target=900) == render_prompt(target=0)` and gets `True`.
+
+So §45's table is two draws from byte-identical requests, and its live test parametrised
+`(0, DraftPolicy().target_words)` through the same ignoring function, which is why its
+assertion could not fail on any model. **This is the `reset_health` shape for the sixth time
+and the first with a *measurement* hanging off it**: not a promise whose only caller is a
+test, but a promise whose only caller is a test *that reported numbers into the plan*.
+
+The instruction is wired now. Re-measured, three draws per arm, seeds held common across arms,
+same beat and same packet:
+
+    llama3.2:3b   none -> 279 | bare ask -> 329 | with a reason -> 384     (+38%)
+    phi4:14b      none -> 324 | bare ask -> 458 | with a reason -> 611     (+89%)
+
+Two things reverse. The 3B model the record called incapable of following the instruction
+follows it, because it had never been given it. And `phi4` reaches **68% of the target**
+against the 19% the six stored runs averaged — so §17 Stage 3's arithmetic moves from 291
+scenes for 50,000 words to about 82.
+
+**The second sentence is doing most of the work, and that is the transferable part.** A bare
+"write approximately 900 words" moves `phi4` 324 -> 458; naming what the length is *for* —
+room for the scene to play out in real time rather than be told in summary — moves it
+324 -> 611. A model given only a number pads, and padding is §1a.3 item 6's "summarising
+instead of dramatising" arriving through the door opened to avoid it.
+
+Two smaller defects fell out of the same path. `--target-words` reached the *selector* and not
+the *handler*, so a run asking for 400 was gated and recorded against `DraftPolicy()`'s 900:
+`policy_config_digest` cited a target nobody asked for. And **no shipped command could select
+a model** — every adapter was constructed argument-free, so `OllamaProvider.model` was
+`qwen3:4b` for every invocation of every subcommand, while §44 attributes the first Book Zero
+run to `llama3.2:3b` and §45 names two more. `--prefer ollama` selects the adapter and has
+never selected a model, so those attributions cannot have come from the CLI.
+
+### 51.2 The determinism this project believed it had, it does not have
+
+`plan/provider-adapters.md` §4.3 and the Ollama adapter both called `temperature: 0` with a
+fixed `seed` "the closest thing to determinism a model offers". Measured, both halves fail:
+
+- **The seed was inert.** At `temperature: 0` there is nothing to sample, so the seed selects
+  nothing. Three seeds (7, 101, 202) against one unchanged request returned byte-identical
+  text on both models tested. `seed=7` had never bought anything.
+- **And `temperature: 0` does not deliver it either.** The same request sent twice is not
+  byte-identical: `llama3.2` returned 245 words then 279, a 12% swing, with every later draw
+  of that same request landing on 279. The **first** draw against a given prompt comes from a
+  different state than the rest.
+
+That last one is the mechanism behind the phantom +47%: a one-draw-per-arm comparison measures
+the warm-up as much as it measures the arm. **The rule to carry: draw more than once, and
+discard the first.** It belongs beside §50's "ask whether a control *can* fail" and §49's
+coverage trap — all three are the same failure, a number whose value is set by the measurement
+apparatus rather than by the thing measured.
+
+**What the sampler cost operationally** was the retry ladder. The prompt is frozen onto the job
+payload at plan time and re-read verbatim on every attempt, and `Job.fail` changes only status,
+attempts and error — so under greedy decoding a refused draft was regenerated from
+byte-identical inputs, met the identical refusal, and poisoned the unit. Three model calls to
+receive one answer three times.
+
+Fixed by making the sampler per-request (`CompletionRequest.sampler`, each field `None`
+meaning "the adapter's default", so every existing call site is unchanged), resolving it from
+the `profile` name a request already carried, and deriving the seed from the job's own
+`input_digest` **and its attempt number**. That gives the property a pinned constant was
+reaching for and getting backwards: the same job replays to the same prose, two different
+scenes draw differently, and attempt *n* is a genuinely new draft. Schema-shaped work stays
+greedy and carries no seed at all, because recording one would be provenance that explains
+nothing.
+
+The sampler is now inside `policy_config_digest`. It was not, and the profile *name* being on
+the record is not the same thing: changing `generation.PROSE`'s temperature would have left
+every stored digest identical while every scene written after it came from a different
+generator.
+
+### 51.3 The evicted-context slot, and why it was safe to ignore until now
+
+§47 measured the 6,000-token budget binding at scene 24 at 160-word scenes and at scene 5 at
+the 900-word target, and recorded that the eviction counter "stays at zero for every six-scene
+fixture, which is exactly why this limit went unnoticed". That is the sequencing: **the slot
+was unreachable because the scenes were too short**, so 51.1 is what makes 51.3 a real
+condition rather than a hypothetical.
+
+`domain/context.py` gains a `SUMMARIES` section above `PRIOR_PROSE`, on the packing order's
+own existing logic — a summary is a compressed form of prose, so under pressure the compressed
+form survives and the raw text goes. Three things about it are decisions rather than mechanics:
+
+**A reserve, or the section is unfillable.** Prose packs greedily nearest-first, so by the time
+the oldest scene is known to be evicted, the budget that would carry its summary is already
+inside the newest scenes' full text. `SUMMARY_SHARE` holds back at most a quarter, and only as
+much as the summaries actually on hand — so a book with none packs exactly as it did before.
+
+**An evicted scene with a summary is no longer an omission.** Recording it in
+`rejected_candidates` would make the packet's own accounting say the generator was told nothing
+about a scene it was told the substance of.
+
+**Keyed on the scene's content hash, not on the revision.** Every acceptance mints a new
+revision id for the whole book, so a revision-keyed summary would re-summarise every scene each
+time one landed — forty calls to draft the forty-first. Content-keyed, an untouched scene is
+summarised once and a repaired one earns exactly one more; and `packet_for` takes only the
+summary whose hash matches the node's current text, so prose repaired since it was summarised
+contributes nothing rather than contributing a description of text the book no longer holds.
+
+**The `OPEN` field is the one with a ground truth, and that is why a summariser is worth more
+here than elsewhere.** Most summarisation cannot be graded: whether a compression kept the
+important parts is the judgment nobody can automate. This project records `open_threads` as
+state, so what a summary claims the book still owes is checkable against what the book records
+it owes. Advisory, never a gate. The first version of that check counted a single shared word
+over four letters, and matched "the sealed letter must be read aloud at the will reading"
+against a summary whose only overlap was *aloud* — one shared word between two sentences about
+the same book is vocabulary, not coverage, and a number inflated that way is §2's lesson at a
+smaller scale. It now requires a majority of the thread's distinctive words.
+
+**The trap it opens, named because it is not yet measured.** This is the one section that hands
+the generator prose in a register the book must not use, directly above "now write the scene".
+The block says so in words; whether saying so works is a question for the craft instrumentation
+on post-eviction scenes, and it is not evidence yet.
+
+### 51.4 Corpus evidence: a class, not a column
+
+`promoted_gate` checked seven things and **not one was about provenance**, and migration 014
+had no source column. So corpus evidence was never *refused* here — it was unlabelled, which is
+worse, because the refusal looked like it was working. A percentile over 13,000 strangers'
+chapters fills `holdout_size`, `precision`, `threshold` and `verdicts_digest` without any single
+field being false, and the row as a whole still claims a metric predicts what a reader said
+about prose this system wrote.
+
+**The decision: `evidence_class` is the dispatcher, and a gate may make only the claim its
+referent supports.** `JUDGMENT` — humans answering about our own scenes — keeps today's seven
+checks unchanged and is the only class that may say a scene is not good enough. `POPULATION` —
+membership in a named published cohort at matched length — may refuse, on a **different veto**
+(`CRAFT_OUT_OF_DISTRIBUTION`) and in a detail that says "outside the published range at this
+length" and never "below bar". `BEHAVIOUR` — aggregate reader behaviour over other authors'
+whole stories — may rank and refuses nothing. `UNCLASSIFIED` is what a legacy row reads as, and
+is refused by name rather than by a NULL check.
+
+`Grain` is a second required field, checked ahead of every class-specific test, and it has one
+consequence sharp enough to state plainly: **`followers / total_views` can never promote a
+craft gate.** Not at any *n*, not at any AUC. It is a story-level label and a craft gate refuses
+a scene. `plan/craft-corpus.md` §4.1 already conceded the ecological-fallacy risk in prose and
+§20 action 10 proposed proceeding anyway; this makes the concession a clause that runs. The
+route is not closed — a story-grain gate may cite it — and nothing here gates a story.
+
+**A population threshold is read, never typed.** It must equal a stored ladder stop
+(`craft.quantile_stop`), so nobody can park it where nothing crosses it; and a stop no chapter
+in the reference cohort crosses is refused outright, because an inert gate is worse than an
+empty table — it retires the emptiness the brief calls the honest measure of the gap. Verified
+against the committed profile: `tricolon_rate` and `dialogue_ratio` have `p01 = 0.0` in *every*
+band and are non-negative by construction, so a `p01`/`BELOW` calibration would have cleared
+every other condition trivially and never fired.
+
+**The control is a column, not a habit.** A population calibration carries its control cohort's
+exceedance at the same threshold in the same band, and `MAX_CONTROL_RATIO` refuses a threshold
+the control crosses more than twice as often. **The first thing this refuses is this project's
+most promising metric, on data already in git**: at the 700-1100 band — the one bracketing
+`DraftPolicy.target_words` — the pre-LLM p99 tricolon line is 4.3478, and *undeclared 2025
+human* chapters put p95 at 5.0633 in the same band. More than 5% of prose nobody suspects
+crosses a line the reference cohort crosses 1% of the time, a ratio above five times against a
+cap of two. §2's 0.629-against-0.606 lesson, relocated from a paragraph into
+`why_not_promotable`, where it fires without anyone having to have read it.
+
+`MIN_TAIL_SUPPORT` is derived rather than placed: stops index at `round(p * (n - 1))`, so the
+reference cohort's bands give 3, 5, 21, 37 and 6 observations at p99. Five refuses the 300-700
+band outright and clears the target band by one — a floor that fails on real data.
+
+`MAX_CONTROL_RATIO = 2.0` is **placed, not derived**, and it is the one number here with
+nothing behind it. It guards the whole route's epistemic claim and it is the lever a maintainer
+will reach for the first time a population gate refuses something they wanted. Recorded as an
+open decision rather than as a measurement.
+
+### 51.5 Two holes that were already open, found on the way
+
+**A corpus calibration could promote by omission.** `cli.py` read
+`digest = args.verdicts_digest or current`, so omitting the flag stamped the store's own
+answered-audit digest onto numbers measured elsewhere — which then matched the digest
+`_craft_ladder` recomputes at every draft, so the staleness clause compared a value against
+itself and could never fire. The flag is deleted rather than defaulted: its only legitimate use
+was the corpus case, and "elsewhere" is now a class rather than an omission.
+
+**And the sharper one, which was never about digests at all.** Nothing anywhere compared
+`holdout_size` against the number of answered audit samples the store actually holds. A digest
+cannot: the digest of two verdicts matches the digest of two verdicts, whatever number is
+written beside it. So `--holdout 50 --flagged 17 --precision 0.86` against a store holding
+**two** verdicts cleared every floor and printed BLOCKING-ELIGIBLE. Several tests in this
+repository were passing because of it, and making them honest meant seeding the judgments they
+claimed — which is the tell that the bar had been measuring its own fixtures.
+
+The cheapest way to game the whole design is to type `--evidence-class judgment` beside corpus
+numbers. No schema makes assertion impossible. What the design buys is that the lie is now
+**deliberate rather than an omission**, that it is inside the calibration id so the corrected
+re-record does not collide under `INSERT OR IGNORE`, and that it is contradicted by the store —
+because large *n* is exactly what makes a corpus measurement attractive to mislabel, and a
+judgment row claiming more holdout than the store contains is refused with both numbers named.
+
+## 52. Book Zero, run on a generator that can write: the taxonomy
+
+Thirty scenes, **26,266 words**, drafted end to end with no inline human action, on `phi4:14b`
+via Ollama at no cost. Every number below is read out of the store the run wrote.
+
+    scenes planned / drafted     30 / 30
+    total words                  26,266
+    mean words per scene         875.5   (97% of the 900-word target)
+    range                        586 - 1,312
+    decisions                    31, all ACCEPT
+    gate failures                0
+    findings                     0
+    exceptions                   0
+    tokens per accepted scene    10,108
+    cost                         $0.00 (local)
+
+**The scale problem is solved and it was never a model problem.** 875.5 words against the 19%
+the six prior runs averaged, because the instruction now reaches the prompt (§51.1). §17
+Stage 3's arithmetic goes from 291 scenes for 50,000 words to **57**. At this rate a 50k draft
+is about two hours of wall-clock on one local GPU.
+
+**§15's cost model is now measured rather than hypothesised.** It estimated "roughly 10-20k
+model tokens per accepted scene"; the run delivers **10,108**, at the bottom of the band, with
+extraction, evaluation and the new summary call all included. The estimate stands.
+
+### The dominant failure: whole-scene duplication, unrefused
+
+**Five of thirty scenes (16.7%) are near-copies of an earlier scene**, and the system accepted
+every one of them.
+
+    s8  copies s6    0.703          s17 copies s6   0.782
+    s11 copies s6    0.823          s17 copies s11  0.814
+    s11 copies s8    0.766          s18 copies s12  0.661
+    s22 copies s21   0.708
+
+The longest verbatim run is **872 words**. For scale: §49 measured this project's own worst
+previous machine book at 59 words and published human serials at up to 93. This is an order of
+magnitude past anything in the ledger, and it is not a subtle statistical signal — s11 and s6
+are the same scene with different sentences at the edges.
+
+**Nothing in the ladder could refuse it, and that is by design rather than by oversight.**
+`repeated_span` measured it correctly and reported 872 in the annotation's `detail`; §10.4
+forbids an uncalibrated craft gate from blocking, and it has no calibration. The integrity
+detector reads state records at one position, so a scene that duplicates another contradicts
+nothing it can see. **Zero findings across thirty scenes** is the accurate summary: the
+deterministic ladder is working exactly as specified and the specification has a hole this
+book drove through five times.
+
+### The mechanism is the plan, not the sampler
+
+`arc_template(30)` produces **25 `rising` beats out of 30**, and `render_prompt` puts the
+beat's title and its function word into the prompt and nothing else from the plan. So scenes
+3 through 27 receive, from the planning side, the instruction *"Scene N — dramatic function:
+rising"* and differ only in the integer. Twenty-five scenes are asked the same question.
+
+The generator's answer is visible in the summaries the run itself produced: scene 10's says
+Kestrel retrieves an artifact from the museum; scene 11's says Thorne *assigns* her the museum
+artifact. The book re-issues its own errand because nothing told it not to.
+
+**This reframes the repetition entry.** It would be easy to read 872 duplicated words as a
+decoding problem and reach for the sampler — the change §51.2 just made. The evidence does not
+support that: the copies cluster on scenes with identical plan input, and the sampler was
+already varying per scene and per attempt. **The failure is upstream of generation.** Narrative
+Planning v0 — beat sheets with distinct dramatic function, a foreshadow-payoff ledger, a
+progression schedule — is what this run says to build, and §17 Stage 5's "in the order Book
+Zero's taxonomy demands" now has an order.
+
+*(An observation with its confound named, because it will otherwise be read as a finding: the
+copies fall at s8-s18, where the packet carried 7-8 scenes of full prose, and the five scenes
+after summary coverage passed four scenes show a maximum similarity of 0.094. That is n=5,
+with position confounded against packet composition and nothing varied deliberately. The cheap
+experiment is to re-run this book at two `--context-budget` settings and see whether the copy
+rate tracks full-prose density. It has not been run, and until it has, the summariser must not
+be credited with the improvement.)*
+
+### Progression: the ledger moves once and then stops
+
+Thirty-one extracted `status_snapshot` records, **two distinct ledger states**. Gold goes
+12 → 2 in scene 1 and never moves again; level never leaves 1; HP never leaves 18. §46
+established that the frozen ledger §44 recorded was a property of `llama3.2` rather than of the
+system, and that `phi4` moved it every time — over a six-scene book. Over thirty scenes it
+moves once. **So §46's correction was right and its generalisation was too strong**: a capable
+model will spend the ledger when a scene gives it a reason, and twenty-five scenes labelled
+`rising` give it none. Same root cause as the duplication, showing up in the game layer.
+
+`progression_target` exists and the book had no schedule to hand it, which is the gap §20.6
+already names: the progression schedule references a level curve that arrives with the
+game-mechanics pack.
+
+### What worked, recorded so the next run does not re-litigate it
+
+- **The eviction slot filled.** 30 of 30 scenes carry a summary; by the last scenes the packet
+  held 8 in full and 7 in summary. The path §47 measured as unreachable at 172-word scenes is
+  live at 875, exactly as §51.3 predicted.
+- **The summaries are usable and the `OPEN` field tracks the state layer.** Coverage of the
+  book's one recorded open thread is 1/1 on every sampled summary — measured through
+  `check_open_threads`, which is the only field in this system's summaries with a ground truth.
+- **Autonomy held.** 400 ticks, 92 jobs, zero exceptions, zero parked units, zero human
+  interventions. The three-lane loop — draft, evaluate, summarise — ran to completion and then
+  reported `no_work` rather than spinning.
+
+### The taxonomy, ordered by what it says to build next
+
+1. **Undifferentiated beats.** 83% of the plan says `rising`; the plan-side prompt is a title
+   and one word. Produces both the duplication and the frozen ledger. → Narrative Planning v0.
+2. **No gate refuses a scene that is a copy of another.** Measured at 872 words with the
+   metric already reporting it. `repeated_span` makes a mechanical, checkable claim rather
+   than a quality claim, so it is the one proxy in this project that could be promoted without
+   human verdicts — but note that `build_craft_profile.py` calls `measure(text)` with
+   `others=()`, which pins it at 0.0 for every corpus chapter, so no population ladder for it
+   exists yet (§51.4). Building one needs the harness to group chapters by `fiction_id`.
+3. **Progression has no schedule.** One ledger movement in thirty scenes. → blocked on the
+   game-mechanics pack's level curve, per §20.6.
+4. **Cost is not the constraint.** 10,108 tokens per scene, $0 locally, ~2 hours for 50k
+   words. §15's projection that gate failure rates rather than raw generation would bind is
+   correct — and this run had a gate failure rate of zero, which is the problem rather than
+   the reassurance.

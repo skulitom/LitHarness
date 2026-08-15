@@ -44,7 +44,13 @@ from litharness.adapters.sqlite_jobs import SqliteJobRepository
 from litharness.adapters.sqlite_plans import SqlitePlanRepository
 from litharness.domain.audit import AuditSample, Verdict
 from litharness.domain.budget import Spend
-from litharness.domain.calibration import Calibration, Direction
+from litharness.domain.calibration import (
+    Calibration,
+    Direction,
+    EvidenceClass,
+    Grain,
+    Population,
+)
 from litharness.domain.craft import CraftMetric
 from litharness.domain.directives import Directive, DirectiveKind, DirectiveStatus
 from litharness.domain.events import (
@@ -1309,6 +1315,63 @@ class SqliteStore:
 
     # -- craft instrumentation, audit and calibration (§10.2-§10.5) -------------
 
+    def record_scene_summary(
+        self,
+        book_id: str,
+        branch_id: str,
+        logical_id: str,
+        *,
+        content_hash: str,
+        summary: str,
+        model: str,
+        profile: str,
+        created_at: str,
+    ) -> bool:
+        """Store what one accepted scene contained, addressed by that scene's own text.
+
+        `INSERT OR IGNORE` on the content hash, so re-summarising unchanged prose is a no-op
+        rather than a second row: the key is the scene's text, and the same text has the same
+        summary as far as the packet is concerned. A *repair* changes the text, mints a new
+        hash, and gets its own row — which is the behaviour that keeps a summary from
+        outliving the prose it describes.
+        """
+        with self.transaction() as connection:
+            cursor = connection.execute(
+                "INSERT OR IGNORE INTO scene_summaries (book_id, branch_id, logical_id, "
+                "content_hash, summary, model, profile, created_at) "
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                (
+                    book_id,
+                    branch_id,
+                    logical_id,
+                    content_hash,
+                    summary,
+                    model,
+                    profile,
+                    created_at,
+                ),
+            )
+            return cursor.rowcount > 0
+
+    def scene_summaries(self, book_id: str, branch_id: str) -> dict[str, dict[str, str]]:
+        """`{logical_id: {content_hash: summary}}` for one book.
+
+        Returned keyed by content hash rather than flattened to one summary per scene, so the
+        caller can check the summary it holds is a summary of the prose it has. A scene whose
+        text has moved on has a row here and no *matching* row, and those are different
+        answers: the first is "summarised, under an older draft", the second is "never
+        summarised", and only the caller with the revision in hand can tell them apart.
+        """
+        rows = self._connection.execute(
+            "SELECT logical_id, content_hash, summary FROM scene_summaries "
+            "WHERE book_id = ? AND branch_id = ? ORDER BY logical_id, created_at",
+            (book_id, branch_id),
+        )
+        out: dict[str, dict[str, str]] = {}
+        for row in rows:
+            out.setdefault(row["logical_id"], {})[row["content_hash"]] = row["summary"]
+        return out
+
     def record_craft_metrics(
         self,
         revision_id: str,
@@ -1461,11 +1524,17 @@ class SqliteStore:
         would delete the evidence trail that makes "why did this threshold change" answerable.
         """
         with self.transaction() as connection:
+            population = calibration.population
             cursor = connection.execute(
                 "INSERT OR IGNORE INTO calibrations (calibration_id, metric_id, "
                 "holdout_size, precision, recall, flagged, threshold, direction, "
-                "verdicts_digest, measured_at, expires_at, note) "
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                "verdicts_digest, measured_at, expires_at, note, evidence_class, grain, "
+                "population_cohort, population_band, population_quantile, "
+                "population_reference_n, population_tail_support, "
+                "population_control_cohort, population_control_n, "
+                "population_reference_exceedance, population_control_exceedance, "
+                "population_profile_digest) "
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                 (
                     calibration.calibration_id,
                     calibration.metric_id,
@@ -1479,6 +1548,18 @@ class SqliteStore:
                     calibration.measured_at,
                     calibration.expires_at,
                     calibration.note,
+                    calibration.evidence_class.value,
+                    calibration.grain.value,
+                    None if population is None else population.cohort,
+                    None if population is None else population.band,
+                    None if population is None else population.quantile,
+                    None if population is None else population.reference_n,
+                    None if population is None else population.tail_support,
+                    None if population is None else population.control_cohort,
+                    None if population is None else population.control_n,
+                    None if population is None else population.reference_exceedance,
+                    None if population is None else population.control_exceedance,
+                    None if population is None else population.profile_digest,
                 ),
             )
             inserted = cursor.rowcount > 0
@@ -1508,6 +1589,9 @@ class SqliteStore:
                 recall=None if row["recall"] is None else float(row["recall"]),
                 flagged=None if row["flagged"] is None else int(row["flagged"]),
                 note=row["note"],
+                evidence_class=EvidenceClass(row["evidence_class"]),
+                grain=Grain(row["grain"]),
+                population=_population_of(row),
             )
             for row in self._connection.execute(sql, params)
         ]
@@ -1996,3 +2080,28 @@ class SqliteStore:
         if unlogged:
             raise IntegrityFailure(f"{unlogged} outbox rows have no event")
         return len(rows)
+
+
+def _population_of(row: Any) -> Population | None:
+    """Rebuild the population block, or None for a row that carries none.
+
+    Keyed on the cohort rather than on `evidence_class`, so a row that claims to be a
+    population calibration and stored no population comes back with `population=None` and is
+    refused by name in `why_not_promotable` — rather than being reconstructed out of NULLs
+    into an object that looks complete.
+    """
+    if row["population_cohort"] is None:
+        return None
+    return Population(
+        metric_id=row["metric_id"],
+        cohort=row["population_cohort"],
+        band=row["population_band"],
+        quantile=row["population_quantile"],
+        reference_n=int(row["population_reference_n"]),
+        tail_support=int(row["population_tail_support"]),
+        control_cohort=row["population_control_cohort"],
+        control_n=int(row["population_control_n"]),
+        reference_exceedance=float(row["population_reference_exceedance"]),
+        control_exceedance=float(row["population_control_exceedance"]),
+        profile_digest=row["population_profile_digest"],
+    )

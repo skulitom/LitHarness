@@ -29,9 +29,13 @@ from typing import Any, Protocol, runtime_checkable
 
 from litharness.domain.failures import OperationalFailure, ParkedFailure, TransientFailure
 from litharness.domain.generation import (
+    MECHANICAL,
+    PROFILES,
+    PROSE,
     CompletionRequest,
     CompletionResult,
     Resolution,
+    Sampler,
     Usage,
 )
 
@@ -286,6 +290,9 @@ def _type_matches(value: Any, expected: str) -> bool:
 #: authors import everything they need from this module; where a name is *defined* is
 #: `domain/generation.py`'s business and not theirs.
 __all__ = [
+    "MECHANICAL",
+    "PROFILES",
+    "PROSE",
     "BlockedProviderError",
     "CompletionRequest",
     "CompletionResult",
@@ -295,6 +302,7 @@ __all__ = [
     "ProviderUnavailable",
     "Resolution",
     "RetryableProviderError",
+    "Sampler",
     "Usage",
     "classify_provider_failure",
     "parse_schema_payload",

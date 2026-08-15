@@ -28,6 +28,7 @@ from litharness.providers.base import (
     ProviderFailureKind,
     ProviderUnavailable,
     RetryableProviderError,
+    Sampler,
     Usage,
     classify_provider_failure,
     parse_schema_payload,
@@ -361,7 +362,17 @@ def test_ollama_adapter_parses_the_real_envelope() -> None:
     assert result.model == "llama3.2:latest"
 
 
-def test_ollama_sends_the_schema_as_the_format_field_and_pins_determinism() -> None:
+def test_ollama_sends_the_schema_and_a_request_with_no_sampler_is_unchanged() -> None:
+    """A request that expresses no sampler still gets the adapter's own settings.
+
+    This test was named `..._pins_determinism` and the second half of that name was false:
+    `temperature=0.0` with a fixed seed does not make Ollama reproducible — the same request
+    sent twice returns different text — and at temperature zero the seed selects nothing at
+    all, so three distinct seeds return byte-identical output. The measurement is in
+    `domain/generation.py`. What the assertions below actually pin is the property that
+    matters for the change that made the sampler per-request: **a call site with no opinion
+    behaves exactly as it did before the field existed.**
+    """
     transport = ollama_transport(OLLAMA_ENVELOPE)
     OllamaProvider(transport=transport, seed=7).complete(
         CompletionRequest(prompt="x", schema=SCHEMA, system="be terse")
@@ -372,6 +383,44 @@ def test_ollama_sends_the_schema_as_the_format_field_and_pins_determinism() -> N
     assert body["options"]["temperature"] == 0.0
     assert body["options"]["seed"] == 7
     assert [message["role"] for message in body["messages"]] == ["system", "user"]
+
+
+def test_a_requests_sampler_overrides_the_adapters_field_by_field() -> None:
+    """Per-request decoding, and *partial* per-request decoding.
+
+    The sampler was constructor state, so one process had one temperature for prose and for
+    schema-shaped extraction alike. Field-by-field merging is what lets a request raise the
+    temperature without also having to restate the seed, and lets a field left `None` keep
+    the adapter's — which is what makes the whole field additive rather than a change to
+    every existing caller.
+    """
+    transport = ollama_transport(OLLAMA_ENVELOPE)
+    OllamaProvider(transport=transport, seed=7, temperature=0.0).complete(
+        CompletionRequest(
+            prompt="x", sampler=Sampler(temperature=0.7, top_p=0.9, repeat_penalty=1.05)
+        )
+    )
+    options = transport.body["options"]  # type: ignore[attr-defined]
+    assert options["temperature"] == 0.7, "the request wins"
+    assert options["top_p"] == 0.9
+    assert options["repeat_penalty"] == 1.05
+    assert options["seed"] == 7, "a field the request leaves None keeps the adapter's"
+
+
+def test_a_sampler_field_left_unset_never_reaches_the_wire_as_a_default() -> None:
+    """`None` means "no opinion", and an adapter must not translate that into a number.
+
+    The failure this refuses is silent and one-directional: a `None` serialised as `0` makes
+    every call greedy, which looks like working software and is the exact setting the
+    measurement says makes a retry return the same answer three times.
+    """
+    transport = ollama_transport(OLLAMA_ENVELOPE)
+    OllamaProvider(transport=transport, seed=7, temperature=0.0).complete(
+        CompletionRequest(prompt="x", sampler=Sampler(temperature=0.7))
+    )
+    options = transport.body["options"]  # type: ignore[attr-defined]
+    assert "top_p" not in options
+    assert "repeat_penalty" not in options
 
 
 #: A **real captured** `qwen3:4b` reply to the health probe's own prompt at its own 16-token

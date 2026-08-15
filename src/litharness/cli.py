@@ -66,11 +66,17 @@ from litharness.application.planner import make_plan_selector
 from litharness.application.repair import (
     EVALUATE_REVISION,
     REPAIR_FINDING,
+    SCENE_SUMMARY,
     evaluation_job_for,
     make_evaluation_handler,
     make_repair_handler,
 )
+from litharness.application.summarize import make_summary_handler
 from litharness.domain import audit, calibration, extraction, impact, propagation
+
+# Aliased: `build_parser` binds a local `craft` for the subparser, and a module named the
+# same thing would work only by scope luck.
+from litharness.domain import craft as craft_domain
 from litharness.domain import state as state_mod
 from litharness.domain.beats import SIX_BEAT, arc_template
 from litharness.domain.budget import BudgetPolicy
@@ -172,7 +178,9 @@ def _budget(args: argparse.Namespace) -> BudgetPolicy:
 
 
 def _conductor(store: SqliteStore, args: argparse.Namespace) -> Conductor:
-    registry = build_default_registry(args.prefer, refuse_billing=args.no_billing)
+    registry = build_default_registry(
+        args.prefer, refuse_billing=args.no_billing, model=args.model
+    )
     evaluators: list[Evaluator] = [InProcessEvaluator()]
     if args.continuity_evaluator_command:
         evaluators.append(
@@ -220,13 +228,26 @@ def _conductor(store: SqliteStore, args: argparse.Namespace) -> Conductor:
                 budget=_budget(args),
                 actor=args.holder,
             ),
+            # **The policy has to reach the handler as well as the selector.** It reached
+            # only the selector, so `--target-words 400` shaped the prompt while the handler
+            # gated and recorded against `DraftPolicy()`'s 900: `policy_config_digest` cited
+            # a target nobody asked for, and the accepted gate's detail read "N words against
+            # a target of 900" for a run that asked for 400. The digest exists to make the
+            # inputs that shaped a scene readable off the decision, and it was reporting a
+            # different run's.
             SCENE_DRAFT: make_scene_draft_handler(
                 registry,
                 store,
                 args.project,
+                policy=_draft_policy(args),
                 budget=_budget(args),
                 schedule_evaluation=True,
+                schedule_summary=True,
             ),
+            # The producer for the context packet's evicted-scene slot. A mechanical call
+            # class, so it routes to a local model even in production (§15), and the lowest
+            # priority in the system, so it never outranks writing the next scene.
+            SCENE_SUMMARY: make_summary_handler(registry, store, args.project),
             EVALUATE_REVISION: make_evaluation_handler(
                 evaluator, store, args.project
             ),
@@ -695,6 +716,142 @@ def cmd_calibrations(args: argparse.Namespace) -> int:
     return EXIT_OK
 
 
+def _population_from_profile(
+    args: argparse.Namespace,
+) -> tuple[calibration.Population, str, float] | int:
+    """Derive a population calibration's threshold and control from the built profile.
+
+    Returns `(population, profile_digest, threshold)`, or an exit code on refusal.
+
+    **The threshold is read, never typed**, and `--threshold` is ignored for this class. A
+    corpus-derived line is a *stop in a distribution*; letting a human supply the number
+    would let them park it wherever nothing crosses it, which is the inert gate the domain
+    then refuses on `reference_exceedance == 0`. Reading it means the only choices left are
+    which cohort, which band and which stop — each of them nameable, and each recorded.
+
+    **The control is computed here rather than accepted from the caller**, for the reason
+    `research/quality-measurement/BRIEF.md` §2 spends a table on: the control has to be
+    measured in the same pass as the headline or the headline means nothing. Passing it as a
+    flag would make "forgot to measure the control" and "measured it and it was fine"
+    indistinguishable on the command line.
+    """
+    missing = [
+        name
+        for name, value in (
+            ("--cohort", args.cohort),
+            ("--control-cohort", args.control_cohort),
+            ("--band", args.band),
+            ("--quantile", args.quantile),
+        )
+        if not value
+    ]
+    if missing:
+        print(
+            f"litharness: a population calibration needs {', '.join(missing)}; a threshold "
+            "with no named cohort, band, stop and control is a number with no referent",
+            file=sys.stderr,
+        )
+        return EXIT_FAULT
+    if args.cohort == args.control_cohort:
+        print(
+            "litharness: the control cohort must differ from the reference cohort; a cohort "
+            "compared against itself is a control that cannot fail",
+            file=sys.stderr,
+        )
+        return EXIT_FAULT
+
+    profile = craft_domain.load_profile()
+    digest = craft_domain.profile_digest(profile)
+    if digest is None:
+        print(
+            "litharness: no craft profile is built, so there is no distribution to read a "
+            "threshold out of; run tools/build_craft_profile.py",
+            file=sys.stderr,
+        )
+        return EXIT_FAULT
+    threshold = craft_domain.quantile_stop(
+        args.metric,
+        cohort=args.cohort,
+        band=args.band,
+        quantile=args.quantile,
+        profile=profile,
+    )
+    if threshold is None:
+        print(
+            f"litharness: {args.metric} has no {args.quantile} stop for {args.cohort} at "
+            f"{args.band}; the band may be unbuilt or below the "
+            f"{craft_domain.MIN_BAND_CHAPTERS}-chapter floor",
+            file=sys.stderr,
+        )
+        return EXIT_FAULT
+
+    reference_n = craft_domain.band_chapters(cohort=args.cohort, band=args.band, profile=profile)
+    control_n = craft_domain.band_chapters(
+        cohort=args.control_cohort, band=args.band, profile=profile
+    )
+    direction = calibration.Direction(args.direction)
+    reference_exceedance = _exceedance(
+        args.metric, args.cohort, args.band, threshold, direction, profile
+    )
+    control_exceedance = _exceedance(
+        args.metric, args.control_cohort, args.band, threshold, direction, profile
+    )
+    tail = round(float(args.quantile[1:]) / 100.0, 4)
+    population = calibration.Population(
+        metric_id=args.metric,
+        cohort=args.cohort,
+        band=args.band,
+        quantile=args.quantile,
+        reference_n=reference_n,
+        # How many chapters actually sit at or beyond the stop. `build_craft_profile` indexes
+        # a stop at `round(p * (n - 1))`, so this is the count the estimate rests on.
+        tail_support=reference_n - round(tail * (reference_n - 1)),
+        control_cohort=args.control_cohort,
+        control_n=control_n,
+        reference_exceedance=reference_exceedance,
+        control_exceedance=control_exceedance,
+        profile_digest=digest,
+    )
+    return population, digest, threshold
+
+
+def _exceedance(
+    metric_id: str,
+    cohort: str,
+    band: str,
+    threshold: float,
+    direction: calibration.Direction,
+    profile: dict[str, Any],
+) -> float:
+    """Share of a cohort's band on the failing side of `threshold`, from the stored ladder.
+
+    Interpolated off the same seven stops `percentile_of` uses, because the profile stores no
+    prose. Approximate, and the right precision for the question: the control clause asks
+    whether one cohort crosses a line several times as often as another, not whether it does
+    so at the fourth decimal.
+    """
+    stops = (
+        profile.get("cohorts", {})
+        .get(cohort, {})
+        .get("bands", {})
+        .get(band, {})
+        .get("metrics", {})
+        .get(metric_id, {})
+    )
+    if not stops:
+        return 0.0
+    ladder = [
+        (0.01, stops["p01"]), (0.05, stops["p05"]), (0.25, stops["p25"]),
+        (0.50, stops["p50"]), (0.75, stops["p75"]), (0.95, stops["p95"]),
+        (0.99, stops["p99"]),
+    ]
+    if direction is calibration.Direction.ABOVE:
+        below = next((p for p, value in ladder if value >= threshold), 0.99)
+        return round(max(0.0, 1.0 - below), 6)
+    below = next((p for p, value in reversed(ladder) if value <= threshold), 0.01)
+    return round(max(0.0, below), 6)
+
+
 def cmd_calibrate(args: argparse.Namespace) -> int:
     """Record measured evidence that one metric predicts human judgment at one threshold.
 
@@ -729,37 +886,49 @@ def cmd_calibrate(args: argparse.Namespace) -> int:
         )
         return EXIT_FAULT
 
+    evidence_class = calibration.EvidenceClass(args.evidence_class)
+    grain = calibration.Grain(args.grain)
+
     store = _store(args)
     try:
-        # Two digests, deliberately. `digest` is what the measurement claims it was made
-        # against; `current` is what this store holds now. They are the same when the
-        # measurement was made here, and reporting promotability against `digest` would
-        # then be a tautology — the staleness clause compares the two and could never fire.
-        # With `--verdicts-digest` they differ, and that is exactly the case the report has
-        # to get right: `_promoted_craft_gates` recomputes from `audit_samples()` at every
-        # draft, so a row measured elsewhere is stale to the gate from the moment it lands.
-        # Reporting it as blocking-eligible would be §26's own defect returning by the door
-        # §26 did not close.
+        # **The digest a row is checked against is derived from its class, never typed.**
+        # `--verdicts-digest` is gone; see the flag's own deletion note in `build_parser`.
+        # A judgment row is addressed by the answered verdicts this store holds; a population
+        # row by the profile build its threshold was read out of. The two can never collide,
+        # so a corpus measurement can no longer inherit the audit digest and promote by
+        # omission.
+        answered = [
+            sample for sample in store.audit_samples() if sample.verdict is not None
+        ]
         current = calibration.verdicts_digest_for(
             (sample.sample_id, sample.verdict.value)
-            for sample in store.audit_samples()
+            for sample in answered
             if sample.verdict is not None
         )
-        digest = args.verdicts_digest or current
+        population: calibration.Population | None = None
+        if evidence_class is calibration.EvidenceClass.POPULATION:
+            built = _population_from_profile(args)
+            if isinstance(built, int):
+                return built
+            population, digest, threshold = built
+        else:
+            digest, threshold = current, args.threshold
         record = calibration.Calibration(
             calibration_id=calibration.calibration_id_for(
                 args.metric,
-                args.threshold,
+                threshold,
                 digest,
                 direction=calibration.Direction(args.direction),
                 precision=args.precision,
                 holdout_size=args.holdout,
                 flagged=args.flagged,
+                evidence_class=evidence_class,
+                grain=grain,
             ),
             metric_id=args.metric,
             holdout_size=args.holdout,
             precision=args.precision,
-            threshold=args.threshold,
+            threshold=threshold,
             direction=calibration.Direction(args.direction),
             verdicts_digest=digest,
             measured_at=_stamp(_now()),
@@ -767,6 +936,9 @@ def cmd_calibrate(args: argparse.Namespace) -> int:
             flagged=args.flagged,
             recall=args.recall,
             note=args.note,
+            evidence_class=evidence_class,
+            grain=grain,
+            population=population,
         )
         inserted = store.record_calibration(record)
         # Report the row that is *on record*, never the one just built. They differ whenever
@@ -780,15 +952,36 @@ def cmd_calibrate(args: argparse.Namespace) -> int:
     finally:
         store.close()
 
+
     record = stored[0] if stored else record
     today = _stamp(_now())[:10]
-    why = record.why_not_promotable(today, current)
+    # Checked against the digest for its own class, and against the answered count this store
+    # actually holds — the comparison nothing anywhere was making, which is why a row claiming
+    # fifty held-out judgments promoted against a store holding two.
+    against = (
+        craft_domain.profile_digest()
+        if record.evidence_class is calibration.EvidenceClass.POPULATION
+        else current
+    )
+    why = record.why_not_promotable(today, against, answered=len(answered))
     verb = "recorded" if inserted else "already on record"
     print(f"{record.calibration_id}  {verb}  {record.metric_id}")
-    print(
-        f"    precision {record.precision:.2f} over {record.flagged} flag(s) on "
-        f"{record.holdout_size} held-out; fails {record.direction.value} {record.threshold}"
-    )
+    print(f"    evidence: {record.evidence_class.value} at {record.grain.value} grain")
+    if record.population is not None:
+        print(
+            f"    {record.population.quantile} of {record.population.cohort} at "
+            f"{record.population.band} words (n={record.population.reference_n}, "
+            f"{record.population.tail_support} at the tail); control "
+            f"{record.population.control_cohort} exceeds "
+            f"{record.population.control_exceedance:.4f} against "
+            f"{record.population.reference_exceedance:.4f}"
+        )
+    else:
+        print(
+            f"    precision {record.precision:.2f} over {record.flagged} flag(s) on "
+            f"{record.holdout_size} held-out"
+        )
+    print(f"    fails {record.direction.value} {record.threshold}")
     if why is None:
         print("    BLOCKING-ELIGIBLE: this metric may now park a scene it refuses")
     else:
@@ -1701,6 +1894,14 @@ def build_parser() -> argparse.ArgumentParser:
         "digest because it shapes every scene in the book",
     )
     parser.add_argument(
+        "--model",
+        default=os.environ.get("LITHARNESS_MODEL"),
+        help="the Ollama model to generate with, e.g. phi4:latest; also read from "
+        "LITHARNESS_MODEL. Ollama only, because the CLI adapters take vendor model names "
+        "from a different namespace. Scene length is a property of the generator, and until "
+        "this flag existed every run used the qwen3:4b default whatever the record says",
+    )
+    parser.add_argument(
         "--prefer",
         default=os.environ.get("LITHARNESS_PREFER"),
         help="put this provider first, e.g. ollama for a local run; also read from "
@@ -1919,9 +2120,51 @@ def build_parser() -> argparse.ArgumentParser:
     calibrate.add_argument(
         "--expires", help="ISO date after which this stops being current evidence"
     )
+    # **`--verdicts-digest` is deleted rather than defaulted.** It read
+    # `args.verdicts_digest or current`, so omitting it stamped this store's own answered-audit
+    # digest onto numbers measured against thirteen thousand strangers' chapters — which then
+    # matched the digest `_craft_ladder` recomputes at every draft, so the staleness clause
+    # could never fire and the row promoted. Its one documented legitimate use was "measured
+    # elsewhere", and "elsewhere" is now a *class* rather than an omission: a population
+    # calibration derives its digest from the profile it read the stop out of. There is no
+    # longer a case where a human should be typing an evidence digest.
     calibrate.add_argument(
-        "--verdicts-digest",
-        help="defaults to this store's answered verdicts; pass it when measured elsewhere",
+        "--evidence-class",
+        required=True,
+        choices=[
+            member.value
+            for member in calibration.EvidenceClass
+            if member is not calibration.EvidenceClass.UNCLASSIFIED
+        ],
+        help="what the numbers are about: judgment (humans read our scenes), population "
+        "(published-corpus distribution), behaviour (aggregate reader behaviour on other "
+        "authors' stories). Required, because a default would hand the permissive class to "
+        "a caller that said nothing",
+    )
+    calibrate.add_argument(
+        "--grain",
+        default=calibration.Grain.UNIT.value,
+        choices=[member.value for member in calibration.Grain],
+        help="the unit the label is attached to. A craft gate refuses a scene, so evidence "
+        "labelled per story refuses nothing however large its sample",
+    )
+    calibrate.add_argument(
+        "--cohort",
+        help="population only: the profile cohort the threshold is read from",
+    )
+    calibrate.add_argument(
+        "--control-cohort",
+        help="population only: the cohort holding the confound fixed, measured in the same "
+        "band at the same threshold. Required for a population calibration — a number with "
+        "no control beside it is what the refutation ledger is a list of",
+    )
+    calibrate.add_argument(
+        "--band", help="population only: the length band, e.g. 700-1100"
+    )
+    calibrate.add_argument(
+        "--quantile",
+        help="population only: the stored ladder stop the threshold must equal, e.g. p99. "
+        "The threshold is looked up rather than typed",
     )
     calibrate.add_argument("--note")
     calibrate.set_defaults(func=cmd_calibrate)

@@ -29,6 +29,19 @@ will write it that way.
 to prevent: dropping the oldest scene under a tight budget is right, and showing the
 generator scene 5 before scene 1 is not.
 
+**What the evicted scenes leave behind.** Dropping the oldest prose is right and it is not
+free: at 900-word scenes the 6,000-token budget binds at about scene five, so from scene six
+onward the generator was being handed a premise, some facts, and the three scenes immediately
+behind it — and *nothing at all* about the rest of the book it had written. Every omission was
+recorded, which is what a baseline honestly can promise, and a recorded omission is still an
+omission. `SUMMARIES` is the slot the eviction leaves: a scene the budget could not carry
+whole arrives as what it contained instead of as an entry in `rejected_candidates`.
+
+**The summaries are supplied, never computed here.** `assemble` is pure — no store, no clock,
+no provider — which is what lets the golden suite grade it directly, and calling a model from
+inside it would end that. `application/planner.py::packet_for` loads them, and a scene with no
+summary yet is simply an eviction with nothing to leave behind, exactly as before.
+
 **The premise is not droppable.** `plans.py` records why: a book drafted without one produces
 "six scenes of plausible prose about nothing, which no gate in this system can detect". A
 budget that cannot hold the premise is a misconfiguration, not a tight packet, so it raises
@@ -44,8 +57,9 @@ from the benchmark that grades packets would produce numbers nobody could compar
 from __future__ import annotations
 
 import re
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field
+from types import MappingProxyType
 
 import litharness_contracts as lc
 
@@ -65,8 +79,23 @@ PREMISE = "premise"
 CONSTRAINTS = "constraints"
 THREADS = "threads"
 FACTS = "facts"
+#: What the scenes the budget could not hold actually contained. Above `PRIOR_PROSE` in the
+#: order for the same reason `FACTS` is: a summary is a compressed form of prose, so under
+#: pressure the compressed form is what survives and the raw text is what goes.
+SUMMARIES = "summaries"
 PRIOR_PROSE = "prior_prose"
-SECTION_ORDER = (PREMISE, CONSTRAINTS, THREADS, FACTS, PRIOR_PROSE)
+SECTION_ORDER = (PREMISE, CONSTRAINTS, THREADS, FACTS, SUMMARIES, PRIOR_PROSE)
+
+#: The largest share of the packet summaries may claim, so that they can be placed at all.
+#:
+#: **Without a reserve this section is unreachable and would be a slot with no filler**, which
+#: is the defect shape §19.1 catalogues — a documented promise whose only caller is a test.
+#: Prose packs greedily nearest-first, so by the time the oldest scenes are known to have been
+#: evicted the budget that would carry their summaries is already spent on the newest scenes'
+#: full text. A quarter is a placed number, not a measured one: it is enough to carry a
+#: one-paragraph summary of every scene in a long book at the budgets this system runs, and
+#: small enough that the three or four most recent scenes still arrive whole.
+SUMMARY_SHARE = 0.25
 
 #: Matches the golden suite's `draft_scene` case. Not a measured figure: nothing in this
 #: project has yet measured what a scene needs, and §15's cost model is explicitly a
@@ -261,10 +290,25 @@ class ContextPacket:
             lines = "\n".join(f"- {item.text}" for item in facts)
             pov = f" known to {self.pov_character_id}" if self.pov_character_id else ""
             blocks.append(f"Established facts{pov}:\n{lines}")
+        summaries = self.sections.get(SUMMARIES, ())
+        if summaries:
+            lines = "\n".join(
+                f"- {item.item_id.split(':', 1)[-1]}: {item.text}" for item in summaries
+            )
+            # Labelled as summary *and* as a register not to copy. This is the one section
+            # that hands the generator prose written in a voice the book must not use:
+            # §1a.3 item 6 names "summarising instead of dramatising" as an AI tell, and a
+            # block of summary immediately above "now write the scene" is an invitation to
+            # write more of it. Naming the trap is free; measuring whether it works is what
+            # `craft` instrumentation on the scenes drafted after an eviction is for.
+            blocks.append(
+                "Earlier scenes, in summary — these happened and are established; write the "
+                f"new scene in full dramatised prose, never in this register:\n{lines}"
+            )
         prose = self.sections.get(PRIOR_PROSE, ())
         if prose:
             scenes = "\n\n".join(f"[{item.item_id}]\n{item.text}" for item in prose)
-            blocks.append(f"The story so far:\n\n{scenes}")
+            blocks.append(f"The story so far, in full:\n\n{scenes}")
         return "\n\n".join(blocks)
 
 
@@ -284,6 +328,7 @@ def assemble(
     token_budget: int = DEFAULT_TOKEN_BUDGET,
     reserved_output: int = DEFAULT_RESERVED_OUTPUT,
     story_time_cutoff: str | None = None,
+    summaries: Mapping[str, str] = MappingProxyType({}),
 ) -> ContextPacket:
     """Build the packet for drafting ``target_logical_id``.
 
@@ -406,6 +451,23 @@ def assemble(
     target_ordinal = ordinals.get(target_logical_id, len(scenes))
     prior = [node for node in scenes if ordinals[node.logical_id] < target_ordinal]
 
+    # **Prose packs against a reduced ceiling whenever summaries are waiting.** Held back
+    # rather than spent last, because prose is packed greedily nearest-first: by the time the
+    # oldest scene is known to have been evicted, an unreserved budget is already inside the
+    # newest scenes' full text, and the section that exists to carry what was evicted could
+    # never be filled. The reserve is only as large as the summaries actually on hand, so a
+    # book with none packs exactly as it did before this existed.
+    supplied = {
+        logical_id: text
+        for logical_id, text in dict(summaries).items()
+        if logical_id in ordinals and ordinals[logical_id] < target_ordinal
+    }
+    reserve = min(
+        sum(count_tokens(text) for text in supplied.values()),
+        int((available - used) * SUMMARY_SHARE),
+    )
+    prose_ceiling = available - reserve
+
     kept: dict[str, PackedItem] = {}
     for node in reversed(prior):  # nearest scene first
         assert node.content is not None
@@ -419,9 +481,14 @@ def assemble(
             authority=lc.StateAuthority.ACCEPTED_CANON,
             span=(0, len(node.content)),
         )
-        if fits(item):
+        if used + item.tokens <= prose_ceiling:
             kept[node.logical_id] = item
             used += item.tokens
+        elif node.logical_id in supplied:
+            # Not an omission: the scene is still in the packet, in compressed form. Recording
+            # it as dropped would make `rejected_candidates` say the generator was told nothing
+            # about a scene it was told the substance of.
+            pass
         else:
             omitted.append(
                 Omission(
@@ -433,6 +500,34 @@ def assemble(
     sections[PRIOR_PROSE] = tuple(
         kept[node.logical_id] for node in prior if node.logical_id in kept
     )
+
+    # 5. Summaries, for the evicted scenes only. A summary beside the full text of the same
+    #    scene is the same information twice at the generator's expense.
+    packed_summaries: list[PackedItem] = []
+    for node in prior:  # reading order: a summary of scene 1 comes before one of scene 4
+        if node.logical_id in kept or node.logical_id not in supplied:
+            continue
+        text = supplied[node.logical_id]
+        item = PackedItem(
+            item_id=f"summary:{_prose_label(revision, node.logical_id)}",
+            kind=lc.ContextItemKind.SUMMARY,
+            source_logical_id=node.logical_id,
+            source_kind=lc.ResourceKind.MANUSCRIPT_SCENE,
+            text=text,
+            tokens=count_tokens(text),
+            # **Derived, not canon.** A model wrote it from prose that is itself canon, and
+            # the distinction is what stops a summary's paraphrase being cited back as an
+            # established fact. `state` records remain the only accepted-canon route.
+            authority=lc.StateAuthority.DERIVED,
+        )
+        if fits(item):
+            packed_summaries.append(item)
+            used += item.tokens
+        else:
+            omitted.append(
+                Omission(node.logical_id, item.item_id, "budget exhausted: summary")
+            )
+    sections[SUMMARIES] = tuple(packed_summaries)
 
     return ContextPacket(
         query_id=query_id,
@@ -478,6 +573,8 @@ __all__ = [
     "PREMISE",
     "PRIOR_PROSE",
     "SECTION_ORDER",
+    "SUMMARIES",
+    "SUMMARY_SHARE",
     "THREADS",
     "ContextBudgetTooSmall",
     "ContextPacket",

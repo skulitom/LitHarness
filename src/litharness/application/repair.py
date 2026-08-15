@@ -38,7 +38,17 @@ from litharness.domain.revision import Revision, node_version_id
 
 EVALUATE_REVISION = "evaluate_revision"
 REPAIR_FINDING = "repair_finding"
+SCENE_SUMMARY = "scene_summary"
 EVALUATION_PRIORITY = 80
+
+#: Summarising an accepted scene ranks *below* everything, including drafting.
+#:
+#: It is the only job in the system whose value is entirely in the future: a summary is read
+#: only once the budget stops holding that scene's prose, which on a long book is dozens of
+#: scenes later. Ranking it above a draft would spend a tick compressing scene 3 while scene
+#: 9 waits to be written — and unlike an evaluation, nothing is blocked on the answer. It is
+#: a mechanical call, so it costs a local model and not the billing chain (§15).
+SUMMARY_PRIORITY = 40
 #: Base claim priority for a repair. The finding's severity is added on top, so a critical
 #: complaint is claimed before a minor one that happened to be enqueued first.
 #:
@@ -107,6 +117,41 @@ def evaluation_job_for(
         input_digest=digest,
         payload=payload,
         priority=EVALUATION_PRIORITY,
+    )
+
+
+def summary_job_for(
+    *,
+    book_id: str,
+    branch_id: str,
+    revision_id: str,
+    logical_id: str,
+    content_hash: str,
+) -> Job:
+    """One job: say what this scene contained, so the packet can carry it after eviction.
+
+    **`content_hash` is in the payload and in the idempotency key**, so the unit of work is
+    "summarise *this text*" rather than "summarise this node". Every accepted draft mints a
+    new revision id for the whole book, so keying on the revision would re-summarise every
+    scene in the book on every acceptance — forty calls to draft the forty-first scene. Keyed
+    on the scene's own text, a repaired scene earns a new job and an untouched one earns
+    none.
+    """
+    payload: dict[str, object] = {
+        "book_id": book_id,
+        "branch_id": branch_id,
+        "revision_id": revision_id,
+        "logical_id": logical_id,
+        "content_hash": content_hash,
+    }
+    job_id, digest = _job_id("summary", payload)
+    return Job(
+        job_id=job_id,
+        job_kind=SCENE_SUMMARY,
+        idempotency_key=job_id,
+        input_digest=digest,
+        payload=payload,
+        priority=SUMMARY_PRIORITY,
     )
 
 
@@ -669,10 +714,13 @@ __all__ = [
     "EVALUATE_REVISION",
     "MAX_AUTO_REPAIRS",
     "REPAIR_FINDING",
+    "SCENE_SUMMARY",
+    "SUMMARY_PRIORITY",
     "EvaluationIncomplete",
     "RepairInputError",
     "evaluation_job_for",
     "make_evaluation_handler",
     "make_repair_handler",
     "repair_job_for",
+    "summary_job_for",
 ]

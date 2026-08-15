@@ -29,10 +29,14 @@ from litharness.domain.calibration import (
     MIN_PRECISION,
     Calibration,
     Direction,
+    EvidenceClass,
+    Grain,
     NotPromotable,
+    Population,
     calibration_id_for,
     promoted_gate,
     verdicts_digest_for,
+    veto_for,
 )
 from litharness.domain.craft import (
     MEASURED_IDS,
@@ -50,6 +54,7 @@ from litharness.domain.craft import (
 )
 from litharness.domain.patch import Veto
 from litharness.domain.policy import (
+    PARKABLE,
     GateKind,
     Outcome,
     PolicyDecision,
@@ -66,6 +71,37 @@ def store(tmp_path) -> SqliteStore:
     return SqliteStore.open(tmp_path / "litharness.db")
 
 
+def answered_holdout(store: SqliteStore, n: int = MIN_HOLDOUT) -> str:
+    """Put `n` answered audit samples in the store and return their digest.
+
+    **Every test below that promotes a judgment calibration needs this now, and that is the
+    point.** `why_not_promotable` gained a comparison of `holdout_size` against the number of
+    answered samples the store actually holds — nothing had ever made that comparison, and the
+    digest clause structurally could not: the digest of two verdicts matches the digest of two
+    verdicts, whatever number the row claims beside it. So `--holdout 50 --flagged 17
+    --precision 0.86` promoted against a store holding nothing at all, and these tests were
+    passing because of it.
+    """
+    for index in range(n):
+        sample = AuditSample(
+            sample_id=f"sample-{index}",
+            book_id=BOOK_ID,
+            branch_id=BRANCH_ID,
+            revision_id=f"rev-{index}",
+            logical_id=f"scene-{index}",
+            sampled_at=TODAY,
+            rate=1.0,
+            bucket=index,
+        )
+        store.record_audit_sample(sample)
+        store.record_verdict(sample.sample_id, Verdict.KEEP_READING, at=TODAY, by="reader")
+    return verdicts_digest_for(
+        (item.sample_id, item.verdict.value)
+        for item in store.audit_samples()
+        if item.verdict is not None
+    )
+
+
 def a_calibration(**kwargs) -> Calibration:
     fields = {
         "metric_id": "craft.tricolon_rate.v0",
@@ -76,6 +112,11 @@ def a_calibration(**kwargs) -> Calibration:
         "direction": Direction.ABOVE,
         "verdicts_digest": "digest-1",
         "measured_at": "2026-08-01T00:00:00Z",
+        # Human verdicts about our own scenes: the only class that may claim quality.
+        # Stated rather than defaulted, here as everywhere — a helper that supplied the
+        # permissive class for free would put the defect back one layer down.
+        "evidence_class": EvidenceClass.JUDGMENT,
+        "grain": Grain.UNIT,
     }
     fields.update(kwargs)
     flagged = fields["flagged"]
@@ -87,6 +128,8 @@ def a_calibration(**kwargs) -> Calibration:
         precision=float(fields["precision"]),
         holdout_size=int(fields["holdout_size"]),  # type: ignore[arg-type]
         flagged=None if flagged is None else int(flagged),  # type: ignore[arg-type]
+        evidence_class=EvidenceClass(fields["evidence_class"]),
+        grain=Grain(fields["grain"]),
     )
     return Calibration(**fields)  # type: ignore[arg-type]
 
@@ -480,7 +523,7 @@ def test_an_empty_calibration_table_produces_no_blocking_gate(store: SqliteStore
 
 
 def test_a_recorded_calibration_gates_the_metric_it_names(store: SqliteStore) -> None:
-    store.record_calibration(a_calibration(verdicts_digest=verdicts_digest_for([])))
+    store.record_calibration(a_calibration(verdicts_digest=answered_holdout(store)))
     gates = _craft_ladder(store, (a_metric(6.0),), today=TODAY)
     assert len(gates) == 1, "one gate per metric — the promoted one replaces its annotation"
     assert gates[0].blocking and not gates[0].passed
@@ -490,7 +533,7 @@ def test_a_recorded_calibration_gates_the_metric_it_names(store: SqliteStore) ->
 def test_a_calibration_for_a_metric_this_draft_did_not_measure_is_skipped(
     store: SqliteStore,
 ) -> None:
-    store.record_calibration(a_calibration(verdicts_digest=verdicts_digest_for([])))
+    store.record_calibration(a_calibration(verdicts_digest=answered_holdout(store)))
     other = (a_metric(6.0, "craft.dialogue_ratio.v0"),)
     [gate] = _craft_ladder(store, other, today=TODAY)
     assert not gate.blocking, "a calibration for another metric cannot gate this one"
@@ -506,7 +549,14 @@ def test_stale_evidence_falls_back_to_annotation_rather_than_failing_the_job(
     all". The metric falls back to the annotation `craft_gates` already produced, and
     `litharness calibrations` prints the reason.
     """
-    store.record_calibration(a_calibration(expires_at="2026-01-01"))
+    # Seed the holdout the row claims, so expiry is the *only* thing left to refuse it on.
+    # Without this the answered-count check fires first and the test would pass while
+    # measuring a different refusal — which is what a `not gate.blocking` assertion alone
+    # cannot tell you, and why the reason is asserted below rather than just the verdict.
+    digest = answered_holdout(store)
+    store.record_calibration(
+        a_calibration(expires_at="2026-01-01", verdicts_digest=digest)
+    )
     [gate] = _craft_ladder(store, (a_metric(6.0),), today=TODAY)
     assert not gate.blocking
     # And never silently. A gate that quietly stops blocking is the failure `promoted_gate`
@@ -518,7 +568,7 @@ def test_stale_evidence_falls_back_to_annotation_rather_than_failing_the_job(
 def test_only_the_newest_measurement_for_a_metric_gates(store: SqliteStore) -> None:
     """A superseded measurement is history, not a second gate. Two rows for one metric would
     otherwise refuse a scene twice for the same reason under two thresholds."""
-    digest = verdicts_digest_for([])
+    digest = answered_holdout(store)
     store.record_calibration(
         a_calibration(threshold=4.0, verdicts_digest=digest, measured_at="2026-08-01T00:00:00Z")
     )
@@ -780,7 +830,7 @@ def test_a_promoted_metric_reports_once_not_twice(store: SqliteStore) -> None:
     the same `rule_or_critic_id` twice — `passed=True, blocking=False` and
     `passed=False, blocking=True` — and `decision_id_for` hashed both. An audit asking what
     the craft ladder said got two contradictory answers about one number."""
-    store.record_calibration(a_calibration(verdicts_digest=verdicts_digest_for([])))
+    store.record_calibration(a_calibration(verdicts_digest=answered_holdout(store)))
     gates = _craft_ladder(
         store,
         (a_metric(6.0), a_metric(0.1, "craft.dialogue_ratio.v0")),
@@ -797,7 +847,7 @@ def test_one_new_verdict_re_opens_every_calibration_and_says_so(store: SqliteSto
     `judge` verdict makes every recorded calibration stale at once. That is correct under
     §10.5 — audit disagreement re-opens calibration — and it must be legible when it
     happens, which is what the annotation's detail is for."""
-    store.record_calibration(a_calibration(verdicts_digest=verdicts_digest_for([])))
+    store.record_calibration(a_calibration(verdicts_digest=answered_holdout(store)))
     assert _craft_ladder(store, (a_metric(6.0),), today=TODAY)[0].blocking
 
     # Through the real path: `record_audit_sample` deliberately stores no verdict — the
@@ -936,3 +986,105 @@ def test_the_metric_reports_and_cannot_gate() -> None:
 
     assert echo.caveat, "a metric travelling without its caveat is a metric that gets trusted"
     assert all(not gate.blocking for gate in craft_gates(metrics))
+
+
+# -- evidence classes (§10.4's referent) --------------------------------------------------
+
+
+def test_every_evidence_class_has_a_decided_side(store: SqliteStore) -> None:
+    """A fifth class cannot be added without a commit deciding what it may refuse.
+
+    Loops the enum rather than naming members, so the test fails on *addition* — the shape
+    that matters, because the failure mode this whole module exists to stop is evidence
+    arriving with no decision attached and inheriting the permissive path. A new member
+    breaks this immediately instead of quietly promoting.
+    """
+    digest = answered_holdout(store)
+    for member in EvidenceClass:
+        row = a_calibration(evidence_class=member, verdicts_digest=digest)
+        why = row.why_not_promotable(TODAY, digest, answered=MIN_HOLDOUT)
+        if member is EvidenceClass.JUDGMENT:
+            assert why is None, "human verdicts about our own scenes are the promotable class"
+        else:
+            assert why is not None, (
+                f"{member.value} has no decided side: it neither promotes nor names why not"
+            )
+
+
+def test_a_class_that_licenses_no_refusal_raises_rather_than_inheriting_one() -> None:
+    """`veto_for` is total on purpose. The dangerous default is not a crash — it is
+    `CRAFT_BELOW_BAR`, which is a quality claim, handed to evidence that measured no such
+    thing."""
+    assert veto_for(EvidenceClass.JUDGMENT) is Veto.CRAFT_BELOW_BAR
+    assert veto_for(EvidenceClass.POPULATION) is Veto.CRAFT_OUT_OF_DISTRIBUTION
+    for member in (EvidenceClass.BEHAVIOUR, EvidenceClass.UNCLASSIFIED):
+        with pytest.raises(NotPromotable):
+            veto_for(member)
+
+
+def test_a_population_refusal_never_says_below_bar(store: SqliteStore) -> None:
+    """The veto and the wording are the enforcement, not the docstring.
+
+    A percentile over other people's chapters can say a value is outside the published range.
+    It cannot say a scene is not good enough, and an operator reading the refusal must not be
+    able to mistake which claim was made.
+    """
+    row = a_calibration(
+        evidence_class=EvidenceClass.POPULATION,
+        verdicts_digest="profile-digest",
+        population=Population(
+            metric_id="craft.tricolon_rate.v0",
+            cohort="human_pre_llm",
+            band="700-1100",
+            quantile="p99",
+            reference_n=419,
+            tail_support=5,
+            control_cohort="undeclared_2025",
+            control_n=550,
+            reference_exceedance=0.01,
+            control_exceedance=0.015,
+            profile_digest="profile-digest",
+        ),
+    )
+    gate = promoted_gate(row, 6.0, today=TODAY, verdicts_digest="profile-digest")
+    assert gate.blocking and not gate.passed
+    assert gate.vetoes == (Veto.CRAFT_OUT_OF_DISTRIBUTION,)
+    assert "not about quality" in (gate.detail or "")
+    assert "precision" not in (gate.detail or "")
+    # And it parks the unit rather than escalating or rejection-sampling against it.
+    assert Veto.CRAFT_OUT_OF_DISTRIBUTION in PARKABLE
+
+
+def test_a_population_threshold_no_chapter_crosses_is_refused_as_inert(
+    store: SqliteStore,
+) -> None:
+    """An inert gate is worse than an empty table.
+
+    Measured against the committed profile: `tricolon_rate` and `dialogue_ratio` have
+    `p01 = 0.0` in *every* band and both metrics are non-negative by construction, so a
+    `p01`/`BELOW` calibration satisfies every other condition trivially — both exceedances
+    are zero, so the control ratio passes — prints as promotable, and can never fire. That
+    would retire the emptiness of `litharness calibrations`, which is currently the honest
+    measure of the gap, in exchange for a gate that does nothing.
+    """
+    row = a_calibration(
+        evidence_class=EvidenceClass.POPULATION,
+        direction=Direction.BELOW,
+        threshold=0.0,
+        verdicts_digest="profile-digest",
+        population=Population(
+            metric_id="craft.tricolon_rate.v0",
+            cohort="human_pre_llm",
+            band="700-1100",
+            quantile="p01",
+            reference_n=419,
+            tail_support=419,
+            control_cohort="undeclared_2025",
+            control_n=550,
+            reference_exceedance=0.0,
+            control_exceedance=0.0,
+            profile_digest="profile-digest",
+        ),
+    )
+    why = row.why_not_promotable(TODAY, "profile-digest")
+    assert why is not None and "can never fire" in why

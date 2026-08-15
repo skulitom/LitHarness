@@ -248,6 +248,29 @@ class ExceptionRepository(Protocol):
     def open_exceptions(self, limit: int = ...) -> list[ExceptionRecord]: ...
 
 
+class SummaryRepository(Protocol):
+    """What an accepted scene contained, for the packet that can no longer hold its prose."""
+
+    def record_scene_summary(
+        self,
+        book_id: str,
+        branch_id: str,
+        logical_id: str,
+        *,
+        content_hash: str,
+        summary: str,
+        model: str,
+        profile: str,
+        created_at: str,
+    ) -> bool: ...
+
+    def scene_summaries(self, book_id: str, branch_id: str) -> dict[str, dict[str, str]]: ...
+
+
+class SummaryStore(ManuscriptReader, StateRepository, SummaryRepository, Protocol):
+    pass
+
+
 class ConductorStore(
     JobQueue,
     DirectiveInbox,
@@ -266,6 +289,7 @@ class PlanningStore(
     ManuscriptReader,
     PlanReader,
     StateRepository,
+    SummaryRepository,
     OperationsRepository,
     Protocol,
 ):
@@ -350,6 +374,7 @@ class ApplicationStore(
     FindingRepository,
     StateRepository,
     AuditRepository,
+    SummaryRepository,
     EventRepository,
     OperationsRepository,
     ExceptionRepository,

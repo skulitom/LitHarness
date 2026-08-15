@@ -42,7 +42,7 @@ from litharness.domain.context import (
     count_tokens,
 )
 from litharness.domain.nodes import Node, NodeKind
-from litharness.domain.revision import Revision, import_manuscript
+from litharness.domain.revision import Revision, build_revision, import_manuscript
 from litharness.domain.text import content_hash
 from tests.conftest import BOOK_ID, BRANCH_ID, PROJECT_ID, make_revision, meta
 from tests.test_state import load_state
@@ -512,3 +512,138 @@ def test_an_empty_packet_renders_to_nothing_rather_than_to_headings() -> None:
         "scene-1",
     )
     assert empty.render() == ""
+
+
+# -- the evicted-context slot ------------------------------------------------------------
+
+
+def _premise() -> lc.PlanItem:
+    return lc.PlanItem(
+        logical_id="premise",
+        kind=lc.PlanKind.PREMISE,
+        text="A long book.",
+        authority=lc.StateAuthority.AUTHOR_LOCKED,
+    )
+
+
+def _long_book(scenes: int, words: int) -> Revision:
+    """A book whose scenes are the length a capable generator actually writes."""
+    nodes = [Node(logical_id="book", kind=NodeKind.BOOK, position_key="010")]
+    for index in range(1, scenes + 1):
+        nodes.append(
+            Node(
+                logical_id=f"s{index}",
+                kind=NodeKind.SCENE,
+                position_key=f"{index:03d}0",
+                parent_logical_id="book",
+                content=f"Scene {index}. " + " ".join(["word"] * words),
+            )
+        )
+    nodes.append(
+        Node(
+            logical_id="target",
+            kind=NodeKind.SCENE,
+            position_key="9990",
+            parent_logical_id="book",
+        )
+    )
+    return build_revision(BOOK_ID, BRANCH_ID, nodes)
+
+
+def test_an_evicted_scene_arrives_as_its_summary_instead_of_as_an_omission() -> None:
+    """The slot the budget's eviction leaves, filled.
+
+    At the 172-word scenes this system used to write, the 6,000-token budget never bound and
+    the eviction path was unreachable — `plan/stage-0-decisions.md` §47 records the counter
+    staying at zero for every six-scene fixture, "which is exactly why this limit went
+    unnoticed". At the lengths a capable generator produces it binds around scene five, and
+    from there the generator was handed the three scenes behind it and nothing at all about
+    the rest of the book it had written.
+    """
+    revision = _long_book(scenes=12, words=400)
+    premise = [_premise()]
+
+    bare = assemble(revision, "target", plan_items=premise)
+    evicted = {omission.source_logical_id for omission in bare.omitted}
+    assert evicted, "the budget must actually bind, or this test proves nothing"
+
+    summaries = {logical_id: f"{logical_id} happened." for logical_id in evicted}
+    packed = assemble(revision, "target", plan_items=premise, summaries=summaries)
+
+    covered = {item.source_logical_id for item in packed.sections[context_mod.SUMMARIES]}
+    assert covered, "the section exists to be filled and must actually fill"
+    # Every scene that was dropped for budget is now represented, and is no longer reported
+    # as dropped — a recorded omission for a scene the generator was told the substance of
+    # would make `rejected_candidates` say the opposite of what happened.
+    assert covered == evicted
+    assert not {o.source_logical_id for o in packed.omitted} & covered
+    assert packed.used_tokens <= packed.token_budget - packed.reserved_output
+
+
+def test_a_summary_never_appears_beside_the_prose_it_summarises() -> None:
+    """The same information twice, at the generator's expense, is the obvious way to get
+    this wrong: the summary is for the scenes that did *not* fit."""
+    revision = _long_book(scenes=12, words=400)
+    premise = [_premise()]
+    everything = {f"s{index}": f"s{index} happened." for index in range(1, 13)}
+    packed = assemble(revision, "target", plan_items=premise, summaries=everything)
+
+    whole = {item.source_logical_id for item in packed.sections[context_mod.PRIOR_PROSE]}
+    summarised = {item.source_logical_id for item in packed.sections[context_mod.SUMMARIES]}
+    assert whole, "the nearest scenes must still arrive in full"
+    assert summarised, "and the far ones in summary"
+    assert not whole & summarised
+
+
+def test_a_book_with_no_summaries_packs_exactly_as_it_did_before() -> None:
+    """The reserve is only as large as the summaries on hand, so the section is additive.
+
+    Without this the change would quietly shrink every existing packet by a quarter — a
+    regression invisible to every test that does not count tokens.
+    """
+    revision = _long_book(scenes=12, words=400)
+    premise = [_premise()]
+    bare = assemble(revision, "target", plan_items=premise)
+    empty = assemble(revision, "target", plan_items=premise, summaries={})
+    assert [item.source_logical_id for item in bare.items] == [
+        item.source_logical_id for item in empty.items
+    ]
+    assert bare.used_tokens == empty.used_tokens
+
+
+def test_the_summary_block_tells_the_generator_not_to_copy_its_register() -> None:
+    """§1a.3 item 6 names "summarising instead of dramatising" as an AI tell, and this
+    section hands the generator a block of exactly that register directly above the
+    instruction to write. Naming the trap in the prompt is free; it is not evidence that it
+    works, and the craft instrumentation on post-eviction scenes is what would measure it."""
+    revision = _long_book(scenes=12, words=400)
+    premise = [_premise()]
+    packed = assemble(
+        revision,
+        "target",
+        plan_items=premise,
+        summaries={f"s{index}": f"s{index} happened." for index in range(1, 13)},
+    )
+    rendered = packed.render()
+    assert "in summary" in rendered
+    assert "never in this register" in rendered
+    # And the two blocks stay distinguishable, so the model is not handed an undifferentiated
+    # wall in which a paraphrase reads as the book's own prose.
+    assert rendered.index("in summary") < rendered.index("The story so far, in full")
+
+
+def test_a_summary_is_derived_and_never_accepted_canon() -> None:
+    """A model wrote it, from prose that is canon. `state` records stay the only route to
+    accepted canon, so a summary's paraphrase cannot be cited back as an established fact."""
+    revision = _long_book(scenes=12, words=400)
+    premise = [_premise()]
+    packed = assemble(
+        revision,
+        "target",
+        plan_items=premise,
+        summaries={f"s{index}": f"s{index} happened." for index in range(1, 13)},
+    )
+    for item in packed.sections[context_mod.SUMMARIES]:
+        assert item.authority is lc.StateAuthority.DERIVED
+        assert item.kind is lc.ContextItemKind.SUMMARY
+        assert item.span is None, "a summary is not a quotation of a span of the book"

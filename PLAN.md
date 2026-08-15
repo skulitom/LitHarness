@@ -1386,15 +1386,23 @@ to gather a taxonomy with.
 llama3.2 rather than of this system, and a second model moves it every time (and collapses it
 instead, straight to zero in scene one). Scale is a property of the generator rather than of
 the loop: 24 scenes came to 3,800 words
-because a 3B model writes ~160-word scenes and nothing had asked for more. Asking helps a
-capable model (phi4 +47%) and does nothing for a small one, and neither reaches the target —
-so a Book Zero of the stated length needs either a much larger scene count or a much better
-generator, and that is now measured rather than assumed.
+because a 3B model writes ~160-word scenes and nothing had asked for more.
+*(Struck: "asking helps a capable model (phi4 +47%) and does nothing for a small one". The
+instruction was never sent — `render_prompt` took `target_words` and never read it, so both
+arms of that measurement were the same request. Re-measured with it wired, three draws per
+arm: `llama3.2` 279 -> 384 (+38%) and `phi4` 324 -> 611 (+89%, 68% of target). The small
+model follows the instruction; it had not been given one. See
+[plan/stage-0-decisions.md](plan/stage-0-decisions.md) §51.1.)*
+**The gap is smaller than this paragraph assumed and is not closed**: at 611 words a scene,
+50,000 words needs about 82 scenes rather than the 291 the 19% rate implied.
 
 **Pooled across every stored run, and now carried in the record rather than only here.** Six
 books, 45 scenes: mean **172 words against a 900-word target — 19%**, ranging 14% (`bz`) to
 40% (`run2/local-llama3.2`). At that rate Stage 3's low end of 50,000 words needs **291
-scenes**, against the 24 the largest run has managed. That single ratio is what the stage turns
+scenes**, against the 24 the largest run has managed. **Every one of those runs was drafted
+against a prompt that never carried the target**, and no shipped command could select a model
+either, so the 19% is a measurement of `qwen3:4b`-or-whatever-was-default writing with no
+length instruction — read it as a floor rather than as this system's rate (§51.1). That single ratio is what the stage turns
 on, and until now it lived only in this paragraph: `policy_config_digest` cited `target_words`,
 the instruction, and nothing anywhere recorded what arrived. `DraftOutcome` now carries `words`
 and `target_words`, and an accepted shape gate's `detail` reads "172 words against a target of
@@ -1424,6 +1432,30 @@ quietly become the project's quality standard.
 taxonomy (what broke: distant context? pacing? payoff? repetition? cost?) with
 frequencies; instrumentation and cost data. **Book Zero's taxonomy reprioritizes
 Stages 4–6 — the plan commits to following the evidence, not this document.**
+
+**Run, and the taxonomy is in [plan/stage-0-decisions.md](plan/stage-0-decisions.md) §52.**
+Thirty scenes, **26,266 words**, `phi4:14b` local, no inline human action, 400 ticks, zero
+exceptions, zero parked units, **10,108 tokens per accepted scene** — which lands at the
+bottom of §15's 10-20k hypothesis and makes that estimate measured. Mean scene 875.5 words
+against the 900-word target (97%), so the 291-scene figure above becomes **57** and a 50k
+draft is about two hours on one local GPU. The stated length is 50-80k and this run was 30
+scenes by choice, so the stage is **evidenced at 26k rather than met at 50k**; nothing in the
+run suggests the remaining scenes are a different problem, and §52 is the output the stage
+exists for.
+
+**Its headline is not what this section expected.** The dominant failure is **whole-scene
+duplication that no gate refuses**: five of thirty scenes are near-copies of an earlier scene,
+the longest verbatim run is **872 words** against this project's previous machine worst of 59
+and a published-human maximum of 93, and all 31 decisions were ACCEPT with zero findings.
+`repeated_span` measured it and reported it in the annotation; §10.4 correctly forbids an
+uncalibrated craft gate from blocking, and it has no calibration.
+
+**And the mechanism is upstream of generation.** `arc_template(30)` yields **25 `rising` beats
+of 30**, and the beat's title plus that one word is the entire plan-side instruction — so
+twenty-five scenes are asked the same question, and the book re-issues its own errand. The
+frozen ledger has the same root: 31 extracted status records, **two** distinct states. So the
+taxonomy's first entry is **Narrative Planning v0**, not the sampler and not the context
+packet, and §17 Stage 5's "in the order Book Zero's taxonomy demands" now has its order.
 
 ### Stage 4 — Calibrated quality gate
 Stand up the weekly calibration program (RevisionJudge protocol) over Book Zero

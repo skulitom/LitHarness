@@ -37,6 +37,7 @@ import litharness_contracts as lc
 
 from litharness.domain.draft import DraftOutcome, DraftPolicy
 from litharness.domain.events import payload_digest
+from litharness.domain.generation import Sampler
 from litharness.domain.patch import PatchOutcome, PatchPolicy, Veto
 
 #: Vetoes a bounded retry can plausibly fix: the model produced the wrong *output*.
@@ -114,7 +115,17 @@ REGENERABLE: frozenset[Veto] = frozenset(
 #: candidate has no revision id, so it needs an address for text that was never accepted.
 #: Recorded as a gap rather than fixed in passing, because what `verdicts_digest` content-
 #: addresses would change with it.
-PARKABLE: frozenset[Veto] = frozenset({Veto.CRAFT_BELOW_BAR})
+#:
+#: `CRAFT_OUT_OF_DISTRIBUTION` joins it for every one of the reasons above and for one more
+#: of its own. It comes from a corpus percentile rather than from human judgment, so the
+#: rejection-sampling argument binds harder: retrying against a distribution threshold is
+#: best-of-three optimisation toward the middle of the published range, which is a machine
+#: writing to be unremarkable. Parking refuses the scene and asks a human, which is the only
+#: honest response to "this is outside the range" from evidence that never claimed to know
+#: whether outside is worse.
+PARKABLE: frozenset[Veto] = frozenset(
+    {Veto.CRAFT_BELOW_BAR, Veto.CRAFT_OUT_OF_DISTRIBUTION}
+)
 
 # Everything else — CONTENT_LOCKED, UNKNOWN_TARGET, TARGET_HAS_NO_CONTENT,
 # UNLICENSED_DELETION, PRESERVATION_BREACH — escalates. Deliberately the default: a veto
@@ -320,8 +331,20 @@ class PolicyDecision:
         )
 
 
-def policy_digest(policy: DraftPolicy) -> str:
-    """Content address of the frozen policy the decision was made under."""
+def policy_digest(policy: DraftPolicy, sampler: Sampler | None = None) -> str:
+    """Content address of the frozen policy the decision was made under.
+
+    **`sampler` is here for the same reason `target_words` is, one layer down.** The decision
+    already records `profile`, and a profile name resolves to a sampler — so a reader who
+    knows the mapping can reconstruct the decoding settings. That mapping is a module
+    constant, which means changing `generation.PROSE`'s temperature would leave every digest
+    in the store untouched while every scene written after it came from a different
+    generator. The name is not the settings, and it is the settings that shaped the prose.
+
+    `None` records the absence honestly rather than substituting a default: a decision made
+    before this existed, or on a path that expresses no sampler, is not a decision made at
+    the current default and must not hash as one.
+    """
     return payload_digest(
         {
             "min_chars": policy.min_chars,
@@ -330,6 +353,22 @@ def policy_digest(policy: DraftPolicy) -> str:
             # A target rather than a limit, and recorded for exactly that reason: it shapes
             # every scene the book contains and no gate would ever mention it.
             "target_words": policy.target_words,
+            "sampler": (
+                None
+                if sampler is None
+                else {
+                    "temperature": sampler.temperature,
+                    "top_p": sampler.top_p,
+                    "repeat_penalty": sampler.repeat_penalty,
+                    # The seed is deliberately **out**. It is derived per attempt from the
+                    # job's own digest, so including it would give every attempt of every
+                    # scene a distinct `policy_config_digest` — and the digest's job is to
+                    # answer "were these two scenes written under the same configuration",
+                    # which a per-scene value makes unanswerable. The seed is recoverable
+                    # from the job record; the configuration is not recoverable from
+                    # anywhere else.
+                }
+            ),
         }
     )
 
