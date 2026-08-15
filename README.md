@@ -77,6 +77,23 @@ from. It is optional where `--plans` is not — a book with no state records dra
 its plan and its prose, which is thinner but not blocked, and a regenerating book starts
 with none by definition. `--fixture` supplies all three.
 
+A book that does not exist yet starts with `new` instead, which is Stage 3's entry point:
+
+```bash
+uv run litharness --database book.db new "The Toll Road" \
+  --premise "A debtor works off an impossible debt along a System-governed road." \
+  --scenes 24 --state seed.json
+```
+
+`import` needs a manuscript file, so before this a book could only exist if someone had
+already written one. `new` creates N **empty** scenes — empty is what draftable means here,
+since a draft may only fill an empty node — plus the premise the planner requires. The beat
+sheet is chosen to fit: six scenes keep `SIX_BEAT`, any other length gets an arc of its own
+length with the singular beats kept singular (one inciting incident, one crisis, one
+resolution, and everything between them rising). `--state` seeds canon, and for a LitRPG book
+it is not optional in practice: a book whose canon holds no status snapshot is never asked for
+system voice, writes none, and so has nothing for §12 step 5 to read back.
+
 Then tick — one bounded unit of work, which is what a scheduler invokes:
 
 ```bash
@@ -205,7 +222,13 @@ runs before work selection, so a mistyped path must not stop the book from being
 and the entry stays pending under the existing backoff while `tick` prints the reason on
 stderr.
 
-**Choosing who writes it.** `--prefer ollama` puts a provider first — a preference, so an
+**Choosing who writes it.** Both flags also read the environment — `LITHARNESS_PREFER`
+and `LITHARNESS_NO_BILLING` — so a machine can be told once to stay local, which is what a
+cron entry needs since it passes no flags. `plan/provider-adapters.md` §5 says selection "is
+config, versioned like every other policy, never hardcoded"; it was hardcoded. The order this
+project *ships* is unchanged, because §5 and §1a settle it on prose quality rather than cost.
+
+`--prefer ollama` puts a provider first — a preference, so an
 unhealthy choice still falls back and the fallback is recorded as an event. `--no-billing`
 refuses every billing provider outright, which is a different question: a *preference* for a
 free provider still bills the moment that provider blips. Pair them for a run that must stay

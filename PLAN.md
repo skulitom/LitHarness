@@ -414,7 +414,7 @@ done, and **the v2.1 pass did it again in six more places**:
 | Project | State | Role in v2 |
 |---|---|---|
 | litharness-contracts | **Wire schema 1.1.0**, 124 tests, 30 schemas, mystery + litrpg golden fixtures. Git repo (branch `main`, clean tree, no remote, no tags). **Still no LICENSE** — README says "License: TBD", and that is a decision for the owner rather than a gap to fill | Shared schemas + gold benchmarks. §20.3's minors have shipped except the game-system schemas, which stay deferred for want of a consumer. Version (don't freeze) after Book Zero. *(Struck: "untracked, no git repo" and "version-controlling it is the single cheapest unblock" — the commit landed 2026-08-12 17:36, eight minutes **before** the v2.1 edit that still called it untracked.)* |
-| **LitHarness (this repo)** | **Stages 0–2 met against their exit clauses (§17 carries the caveats): 676 tests passing + 6 opt-in live, ruff clean, mypy strict clean (`warn_unreachable` on). Under version control** (`.gitattributes` pins `eol=lf`; `core.autocrlf=true` is set globally on this machine and has already bitten this project once) | The product. **This table previously audited every sibling's VCS status and had no row for the product repo, which was itself untracked.** |
+| **LitHarness (this repo)** | **Stages 0–2 met against their exit clauses (§17 carries the caveats): 685 tests passing + 6 opt-in live, ruff clean, mypy strict clean (`warn_unreachable` on). Under version control** (`.gitattributes` pins `eol=lf`; `core.autocrlf=true` is set globally on this machine and has already bitten this project once) | The product. **This table previously audited every sibling's VCS status and had no row for the product repo, which was itself untracked.** |
 | BookWorldState | Committed, Apache-2.0, tagged `v0.1.0`, pushed to GitHub; **13 commits, working tree clean**; 100 tests passing. Ships an authenticated versioned WSGI API, transactional outbox with capped-exponential-retry worker, signed webhook publication, migration checksums, online backup/restore + destructive-corruption drill — **Milestone 4/5 infrastructure, not "~Milestone 2"**. What is *not* done is M3's evaluation corpus | State substrate. Its closed predicate registry is **not** injectable yet (§20.5) — but §8.4 routes around this deliberately, so it is not a blocker for §8. *(Struck: "working tree is not clean", "4 commits", "~Milestone 2 complete", "the real blocker for §8" — all four false.)* |
 | RevisionBench | Mature (**411** tests). A2d complaint-gated repair, the LitRPG stratum, **and A3d** have landed — A3d shipped *under the name A2d*, and best-of-N repair ranked by minimal intervention closed the last element in `22a228d` | Source of repair policy, mechanical vetoes, LitRPG stratum evidence. **Its M5 decomposition is done and has already answered the question §20.7 was scheduled to ask** — see the redirect there. *(Struck: "405 tests", "A3d is next".)* |
 | RevisionJudge | Built; 104 pairs exported, exactly 2 verdicts collected; one uncommitted file (`data/verdicts.jsonl`) | **Demoted from the calibration instrument to a confirmation sample** (§10.3 as amended). Two verdicts against 104 pairs is the measured throughput of a design that needs a human to decide to sit down, and it is why revealed preference is now primary. Still the right tool for spot-confirming a calibration derived elsewhere; `litharness audit` is the same shape and collects as a by-product of drafting. The verdict *consumer* remains unbuilt |
@@ -1311,9 +1311,29 @@ run needs on day one rather than what it discovers on day three:
    extractable line, where the placeholder version was two of three.
 
 Measured end to end: a seeded book with no snapshot drafts six scenes, reads back all six
-balances at `s1`–`s6`, and seven revisions rebuild cleanly. What that does **not** supply is
-the stage itself — 50–80k words is three orders of magnitude more prose than six scenes, the
-budget governor has never run against a real bill, and the failure taxonomy is the output.
+balances at `s1`–`s6`, and seven revisions rebuild cleanly.
+
+**Two more walls fell, and both were structural rather than qualitative.** `SIX_BEAT` is
+exactly six functions and `beats_for` refuses any book that is not exactly six scenes, so a
+50-80k word book could not be *planned*; and every revision came from `import`, which needs a
+manuscript file, so a book could not be *created* from a premise at all. `arc_template(n)`
+and `litharness new` close both. The arc reproduces `SIX_BEAT` function-for-function at six —
+the property that keeps it from silently relabelling both golden fixtures — and keeps singular
+beats singular at length, because a story has one inciting incident whether it is six scenes
+or sixty and spreading the six functions proportionally would give a sixty-scene book twelve
+of them.
+
+**And it runs free.** `--prefer ollama --no-billing`, or the environment variables behind
+them, put a local model in front; measured on `llama3.2:3b`, a seeded six-scene book drafts in
+42 seconds at no cost. That matters for this stage specifically: §1a is suspended here because
+Book Zero is instrumentation, so the cheapest generator that clears the gates is the right one
+to gather a taxonomy with.
+
+What none of that supplies is the stage itself. 50-80k words is still an order of magnitude
+beyond what has been run, the context packet's 6,000-token budget has never bound (§17 Stage 1
+records that it drops the oldest prose rather than the least relevant, invisibly, until it
+does), the budget governor has never met a real bill, and the failure taxonomy is the output
+rather than the input.
 
 One complete 50k–80k word LitRPG draft, end-to-end, 24/7 unattended: Narrative
 Planner v0 (arc template + beat generation + foreshadow ledger + progression

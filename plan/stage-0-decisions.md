@@ -1,6 +1,6 @@
 # Stage 0 decisions
 
-**Status:** Stages 0-2 met against their §17 exit clauses — **676 passing tests (+6 opt-in live), ruff clean, mypy
+**Status:** Stages 0-2 met against their §17 exit clauses — **685 passing tests (+6 opt-in live), ruff clean, mypy
 strict clean.** Slice 1 is the model-free manuscript spine; slice 2 the Conductor skeleton
 (tick, instance lease, job selection, digest, outbox dispatch, crash recovery); slice 3 the
 four provider adapters with their conformance suite and the billing guard; slice 4 **the
@@ -1382,3 +1382,73 @@ of: across all six drafted scenes the ledger never moved — `s1` through `s6` a
 45. The model obeyed "carry these values forward unless this scene changes them" so literally
 that the book has no economy. Nothing in the system objects, because nothing yet checks that a
 story *progresses*.
+
+## 43. An arc that reproduces the sheet, and a book that need not already exist
+
+Stage 3 asks for 50-80k words from a premise. Two walls stood in front of the first tick, and
+neither was about prose.
+
+**`beats_for` refuses any book that is not exactly the template's length**, correctly — a
+template that does not fit mislabels every beat after the gap. But `SIX_BEAT` was the only
+template, so *every* book longer than six scenes reported itself blocked. `arc_template(n)`
+builds a sheet of the right length from the same six functions.
+
+Two properties make that safe rather than convenient:
+
+- **It reproduces `SIX_BEAT` function-for-function at six.** A generalisation that drifted
+  there would be a different template quietly relabelling every beat of both golden fixtures,
+  and `beat_job_id` derives from the template *id* rather than its content, so nothing
+  downstream would notice. `template_for` still hands six-scene books the original sheet, so
+  their job ids do not remint for a change that changes nothing they ask for.
+- **Singular beats stay singular.** A story has one inciting incident at any length. The
+  obvious implementation — distribute the six functions proportionally — gives a sixty-scene
+  book twelve inciting incidents and twelve crises, which is not a longer story but a broken
+  one. Only *rising* repeats; the rest are pinned to their positions in the arc.
+
+**And a book had to already exist to be worked on.** Every revision came from `import`, which
+takes a manuscript file, so "produce a book from a premise" had no entry point — the wall Book
+Zero met before its first tick. `new_book` creates N empty scenes and `litharness new` commits
+them with the premise, an attributed decision, and optionally a seed snapshot. Empty rather
+than absent is deliberate and is what draftable means here: `gate_draft` fills an empty node
+and refuses to overwrite content.
+
+It also gives two long-standing test-only symbols their first production callers —
+`build_revision` and `initial_keys` — which the §40 audit had listed and correctly declined to
+force. They were not unused because they were wrong; they were unused because nothing yet made
+a book.
+
+## 44. The first Book Zero run, and the three things it found
+
+A 24-scene book created from a premise, seeded with a starting sheet, drafted by `llama3.2:3b`
+through `--prefer ollama --no-billing`. Thirty ticks, 151 seconds, **no cost**, fifteen scenes
+accepted, sixteen revisions rebuilding cleanly, nothing parked. §17 says Book Zero's output is
+a failure taxonomy rather than a book; this is the first three entries.
+
+**1. The scenes are an order of magnitude too short.** 2,413 words over fifteen scenes — a mean
+of 160 words each, against a shape gate whose floor is 200 *characters*. At this rate 24 scenes
+is under 4,000 words, and §17's 50-80k would need several hundred scenes rather than a longer
+book. The gate cannot see it: `min_chars` is a floor against stubs and truncation, and §1a.1
+warns precisely against letting a mechanical number stand in for whether the scene lands.
+Nothing in this system yet has an opinion about how long a scene should be.
+
+**2. The ledger never moves.** Fifteen scenes, and every one reports `gold=50, hp=20, level=1`
+— the seed values, carried forward unchanged from beginning to end. The instruction says to
+carry values forward "unless this scene changes them", and the model never decides that
+anything changes them. So the book has no economy, no progression and no stakes, and **no gate
+objects**, because every scene agrees with canon at its own position and the contradiction
+detector asks only that. Seen twice now, on six scenes and on twenty-four, so it is a property
+rather than a fluke. §17 Stage 3 names "progression schedule" as Narrative Planner v0 work;
+this is the measurement of what its absence costs.
+
+**3. A story-order bug that only appears past nine scenes.** The ledger read back `s1`, `s10`,
+`s11` … `s2`. Order keys are compared as strings and `s10 < s2`, so a book of ten or more
+scenes had its story order silently reversed for every consumer that compares them:
+`records_before` slicing the context packet, `changes_between` matching a fact's position, and
+propagation's filter asking which records come after a change. Zero-padded to the book's own
+width now — `s1` to `s6` unchanged at six scenes, which is what both fixtures author.
+
+**The third is the one worth dwelling on.** It was introduced in the same change that made
+long books possible, it passed every test in the suite, and the only reason it surfaced is
+that a 24-scene book was actually run and its state actually looked at. `litharness state`
+existed for two commits at that point; the defect is exactly what it was built to make
+visible, and it took one glance at a printed column.

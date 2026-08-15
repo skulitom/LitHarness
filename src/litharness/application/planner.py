@@ -56,7 +56,15 @@ from litharness.application.narrative_planner import (
     narrative_job_id,
 )
 from litharness.application.ports import ApplicationStore, PlanningStore
-from litharness.domain.beats import SIX_BEAT, Beat, BeatTemplate, TemplateMismatch, beats_for
+from litharness.domain.beats import (
+    SIX_BEAT,
+    Beat,
+    BeatTemplate,
+    TemplateMismatch,
+    arc_template,
+    beats_for,
+    scene_nodes,
+)
 from litharness.domain.context import (
     COUNTER_ID,
     DEFAULT_TOKEN_BUDGET,
@@ -73,6 +81,25 @@ from litharness.domain.plans import premise_of
 from litharness.domain.revision import Revision
 
 DEFAULT_TEMPLATE = SIX_BEAT
+
+
+def template_for(revision: Revision, template: BeatTemplate | None = None) -> BeatTemplate:
+    """The sheet that fits this book, unless a caller names one.
+
+    **`SIX_BEAT` is kept for six-scene books rather than letting the arc cover them**, even
+    though `arc_template(6)` produces identical functions. `beat_job_id` derives from the
+    template *id*, so switching the fixtures onto `template.arc-6.v0` would remint every beat
+    job id in both golden books for no change in what any beat asks for. The arc reproduces
+    the sheet; it does not replace it.
+
+    A book of any other length gets an arc of its own length, which is what makes §17 Stage 3
+    reachable at all: `beats_for` refuses a mismatch, so before this every book that was not
+    exactly six scenes reported itself blocked.
+    """
+    if template is not None:
+        return template
+    scenes = len(scene_nodes(revision))
+    return SIX_BEAT if scenes == len(SIX_BEAT) else arc_template(scenes)
 
 
 def _resolved_directive_scope(
@@ -298,7 +325,7 @@ def plan_progress(
     book_id: str,
     branch_id: str,
     *,
-    template: BeatTemplate = DEFAULT_TEMPLATE,
+    template: BeatTemplate | None = None,
     policy: DraftPolicy | None = None,
 ) -> BookProgress:
     """How far this book has got, and why it cannot move if it cannot.
@@ -311,7 +338,7 @@ def plan_progress(
     if head is None:
         return BookProgress(book_id, branch_id, 0, 0, "no head revision")
     try:
-        beats = beats_for(head, template)
+        beats = beats_for(head, template_for(head, template))
     except TemplateMismatch as mismatch:
         return BookProgress(book_id, branch_id, 0, 0, str(mismatch))
     if premise_of(store.plan_items(book_id, branch_id)) is None:
@@ -330,7 +357,7 @@ def plan_progress(
 
 def make_plan_selector(
     *,
-    template: BeatTemplate = DEFAULT_TEMPLATE,
+    template: BeatTemplate | None = None,
     policy: DraftPolicy | None = None,
     project_id: str = "",
     token_budget: int = DEFAULT_TOKEN_BUDGET,
@@ -381,11 +408,11 @@ def make_plan_selector(
             if plan_revision is None:  # pragma: no cover - premise lookup implies a plan
                 continue
             epoch = store.plan_epoch(progress.book_id, progress.branch_id)
-            beats = beats_for(head, template)
+            beats = beats_for(head, template_for(head, template))
             ids = [
                 beat_job_id(
                     progress.book_id, progress.branch_id, beat.logical_id,
-                    template.template_id, epoch,
+                    template_for(head, template).template_id, epoch,
                 )
                 for beat in beats
             ]
@@ -401,7 +428,7 @@ def make_plan_selector(
                     continue
                 job_id = beat_job_id(
                     progress.book_id, progress.branch_id, beat.logical_id,
-                    template.template_id, epoch,
+                    template_for(head, template).template_id, epoch,
                 )
                 if store.has_job(job_id):
                     # Already planned under this epoch: in flight, or burned by a poison.
@@ -502,4 +529,5 @@ __all__ = [
     "packet_for",
     "plan_progress",
     "render_prompt",
+    "template_for",
 ]

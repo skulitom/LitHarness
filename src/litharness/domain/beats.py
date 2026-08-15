@@ -88,6 +88,59 @@ class TemplateMismatch(Exception):
     """The live scene count does not match the template. Never silently interpolated."""
 
 
+#: Beats that happen **once** in a story, and where. A fraction of the way through, except
+#: for the ones pinned to an end — a book has one inciting incident whether it is six scenes
+#: or sixty, and distributing the six functions proportionally would give a sixty-scene book
+#: twelve of them.
+_SINGULAR = (("setup", 1), ("inciting", 2), ("turn", 0.6), ("crisis", -2), ("resolution", -1))
+
+#: What every scene that is not a singular beat is doing: the story getting worse.
+_REPEATED = "rising"
+
+
+def arc_template(scenes: int) -> BeatTemplate:
+    """A chronological sheet of `scenes` beats, on the six-beat arc.
+
+    §17 Stage 3 needs a book of 50-80k words and `SIX_BEAT` is exactly six functions long, so
+    `beats_for` refuses every longer book — the wall Book Zero hits before it starts.
+
+    **It reproduces `SIX_BEAT` exactly at six, and that is the property that makes it safe.**
+    A generalisation that drifted at n=6 would be a *different* template quietly relabelling
+    every beat of both golden fixtures, and `beat_job_id` carries the template id rather than
+    its content, so nothing downstream would notice. `test_the_arc_reproduces_the_six_beat_sheet`
+    pins it.
+
+    **Singular beats stay singular.** A story has one inciting incident and one crisis at any
+    length; only *rising* repeats. Spreading the six functions proportionally — the obvious
+    implementation — would give a sixty-scene book twelve inciting incidents, which is not a
+    longer story but a broken one.
+
+    Refuses below six: the six-beat sheet is the floor this project's fixtures and gates are
+    built on, and an arc with fewer scenes than named beats has no defensible assignment.
+    """
+    if scenes < len(SIX_BEAT):
+        raise TemplateMismatch(
+            f"an arc needs at least {len(SIX_BEAT)} scenes to carry its named beats; "
+            f"asked for {scenes}"
+        )
+    functions = [_REPEATED] * scenes
+    for name, where in _SINGULAR:
+        index = (scenes + int(where)) if isinstance(where, int) and where < 0 else (
+            int(where) - 1 if isinstance(where, int) else _proportional(scenes, where)
+        )
+        functions[index] = name
+    return BeatTemplate(f"template.arc-{scenes}.v0", tuple(functions), chronological=True)
+
+
+def _proportional(scenes: int, fraction: float) -> int:
+    """The scene at `fraction` of the way through, as a 0-based index.
+
+    Rounded up so a six-scene book puts the turn at scene 4 — which is where `SIX_BEAT` has
+    it, and the whole reason this rounds the way it does.
+    """
+    return min(scenes - 1, max(0, -(-int(scenes * fraction * 100) // 100) - 1))
+
+
 def scene_nodes(revision: Revision) -> list[str]:
     """Live scene logical ids in reading order."""
     return [
@@ -107,6 +160,14 @@ def beats_for(revision: Revision, template: BeatTemplate = SIX_BEAT) -> tuple[Be
             "because guessing the mapping mislabels every beat after the gap"
         )
     by_id = {node.logical_id: node for node in revision.nodes}
+    # **Zero-padded to the book's own width, because order keys are compared as strings.**
+    # `s10 < s2` lexicographically, so an unpadded key silently reverses story order the
+    # moment a book passes nine scenes — and every consumer compares them that way:
+    # `records_before` slices the context packet on `<=`, `changes_between` matches on
+    # equality, and propagation's `fact_changed` filter asks which records come after the
+    # change. Measured on a 24-scene Book Zero, whose ledger read back s1, s10, s11 … s2.
+    # Width 1 at six scenes, so `s1` to `s6` is unchanged and matches what both fixtures author.
+    width = len(str(len(scenes)))
     return tuple(
         Beat(
             logical_id=logical_id,
@@ -115,7 +176,9 @@ def beats_for(revision: Revision, template: BeatTemplate = SIX_BEAT) -> tuple[Be
             title=by_id[logical_id].title,
             function=template.functions[index],
             template_id=template.template_id,
-            story_order_key=(f"s{index + 1}" if template.chronological else None),
+            story_order_key=(
+                f"s{index + 1:0{width}d}" if template.chronological else None
+            ),
         )
         for index, logical_id in enumerate(scenes)
     )
@@ -126,6 +189,7 @@ __all__ = [
     "Beat",
     "BeatTemplate",
     "TemplateMismatch",
+    "arc_template",
     "beats_for",
     "scene_nodes",
 ]

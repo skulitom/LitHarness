@@ -30,8 +30,15 @@ from litharness.application.planner import (
     packet_for,
     plan_progress,
     render_prompt,
+    template_for,
 )
-from litharness.domain.beats import SIX_BEAT, BeatTemplate, TemplateMismatch, beats_for
+from litharness.domain.beats import (
+    SIX_BEAT,
+    BeatTemplate,
+    TemplateMismatch,
+    arc_template,
+    beats_for,
+)
 from litharness.domain.context import assemble
 from litharness.domain.draft import DraftPolicy, is_draftable
 from litharness.domain.extraction import (
@@ -45,7 +52,12 @@ from litharness.domain.nodes import LockKind, Node, NodeKind
 from litharness.domain.patch import Veto
 from litharness.domain.plans import import_plan
 from litharness.domain.policy import GateKind, Outcome
-from litharness.domain.revision import Revision, build_revision, import_manuscript
+from litharness.domain.revision import (
+    Revision,
+    build_revision,
+    import_manuscript,
+    new_book,
+)
 from litharness.domain.state import import_state
 from litharness.providers.fake import FakeProvider
 from litharness.providers.registry import ProviderRegistry
@@ -1154,3 +1166,102 @@ def test_a_scene_contradicting_established_canon_is_refused_and_writes_nothing(
     assert findings, "the contradiction is on record"
     assert any("position s1" in finding.message for finding in findings)
     assert any(finding.rule_or_critic_id == "state.contradiction.v0" for finding in findings)
+
+
+# --- Stage 3: a book longer than six scenes ------------------------------------------
+
+
+def test_the_arc_reproduces_the_six_beat_sheet() -> None:
+    """**The property that makes generalising safe.** `arc_template(6)` must be `SIX_BEAT`
+    function for function — a generalisation that drifted at six would be a *different*
+    template quietly relabelling every beat of both golden fixtures, and `beat_job_id`
+    derives from the template id rather than its content, so nothing downstream would
+    notice."""
+    assert arc_template(len(SIX_BEAT)).functions == SIX_BEAT.functions
+
+
+def test_a_longer_arc_keeps_its_singular_beats_singular() -> None:
+    """A story has one inciting incident at any length. Spreading the six functions
+    proportionally — the obvious implementation — gives a sixty-scene book twelve of them,
+    which is not a longer story but a broken one. Only *rising* repeats."""
+    functions = arc_template(60).functions
+
+    assert len(functions) == 60
+    for once in ("setup", "inciting", "turn", "crisis", "resolution"):
+        assert functions.count(once) == 1, once
+    assert functions[0] == "setup"
+    assert functions[-1] == "resolution"
+    assert functions[-2] == "crisis"
+    assert functions.count("rising") == 55
+
+
+def test_an_arc_shorter_than_its_named_beats_is_refused() -> None:
+    """The six-beat sheet is the floor the fixtures and gates are built on, and an arc with
+    fewer scenes than named beats has no defensible assignment — the same refusal
+    `beats_for` makes rather than interpolating."""
+    with pytest.raises(TemplateMismatch, match="at least 6 scenes"):
+        arc_template(5)
+
+
+def test_a_six_scene_book_keeps_the_six_beat_template_id(store: SqliteStore) -> None:
+    """The arc reproduces the sheet; it does not replace it. Switching the fixtures onto
+    `template.arc-6.v0` would remint every beat job id in both golden books for no change in
+    what any beat asks for."""
+    book_id, branch_id = _fixture(store, "litrpg")
+    head = store.head(book_id, branch_id)
+    assert head is not None
+
+    assert template_for(head).template_id == SIX_BEAT.template_id
+
+
+def test_a_book_of_another_length_gets_an_arc_of_its_own_length(store: SqliteStore) -> None:
+    """Before this, `beats_for` refused every book that was not exactly six scenes — so a
+    50-80k word Book Zero reported itself blocked before its first tick."""
+    revision = new_book(BOOK_ID, BRANCH_ID, title="Book Zero", scenes=24)
+    store.commit_revision(revision, created_at="2026-08-15T00:00:00Z")
+
+    template = template_for(revision)
+
+    assert template.template_id == "template.arc-24.v0"
+    assert len(beats_for(revision, template)) == 24
+    assert template.chronological, "an arc runs forwards, so its beats can state where they sit"
+
+
+def test_an_empty_book_is_all_draftable_and_says_nothing(store: SqliteStore) -> None:
+    """Empty rather than absent is what draftable means: `gate_draft` fills an empty node and
+    refuses to overwrite content, so a scene the planner can work on is one that exists and
+    says nothing."""
+    revision = new_book(BOOK_ID, BRANCH_ID, title="Book Zero", scenes=12)
+
+    scenes = [node for node in revision.in_reading_order() if node.kind is NodeKind.SCENE]
+    assert len(scenes) == 12
+    assert all(node.content is None for node in scenes)
+    assert all(is_draftable(revision, node.logical_id) for node in scenes)
+    assert [node.position_key for node in scenes] == sorted(
+        node.position_key for node in scenes
+    ), "reading order must follow position order"
+
+
+def test_story_order_keys_sort_as_story_order_past_nine_scenes(store: SqliteStore) -> None:
+    """**Order keys are compared as strings, and `s10 < s2`.**
+
+    Every consumer compares them that way: `records_before` slices the context packet on
+    `<=`, `changes_between` matches on equality, and propagation's `fact_changed` filter asks
+    which records come *after* the change. An unpadded key therefore reverses story order the
+    moment a book passes nine scenes — silently, since nothing else changes shape.
+
+    Measured on a 24-scene Book Zero, whose ledger read back s1, s10, s11 … s2. Width comes
+    from the book's own scene count, so `s1`-`s6` at six scenes is unchanged and still matches
+    what both golden fixtures author.
+    """
+    revision = new_book(BOOK_ID, BRANCH_ID, title="Book Zero", scenes=24)
+    keys = [beat.story_order_key for beat in beats_for(revision, template_for(revision))]
+
+    assert keys[:3] == ["s01", "s02", "s03"]
+    assert keys[-1] == "s24"
+    assert keys == sorted(keys), "story order must survive a string sort"
+
+    six = new_book(BOOK_ID, BRANCH_ID, title="Six", scenes=6)
+    assert [beat.story_order_key for beat in beats_for(six, template_for(six))] == [
+        f"s{n}" for n in range(1, 7)
+    ], "the six-scene convention both fixtures author is unchanged"

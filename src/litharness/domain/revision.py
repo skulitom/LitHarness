@@ -40,7 +40,7 @@ from typing import Any
 import litharness_contracts as lc
 
 from litharness.domain.nodes import Node, NodeKind
-from litharness.domain.position import parse_key
+from litharness.domain.position import initial_keys, parse_key
 
 
 def _digest(payload: Any) -> str:
@@ -322,6 +322,40 @@ def build_revision(
     return Revision(
         book_id=book_id, branch_id=branch_id, nodes=tuple(nodes), parent_revision_id=parent
     )
+
+
+def new_book(
+    book_id: str, branch_id: str, *, title: str, scenes: int
+) -> Revision:
+    """An empty book of `scenes` draftable scenes — the entry point Stage 3 needs.
+
+    **Every revision in this system came from `import`, and `import` needs a manuscript
+    file.** So a book could only exist if someone had already written one, which is the wall
+    Book Zero meets before its first tick: §17 Stage 3 wants 50-80k words produced from a
+    premise, and there was no way to make a book with more than the six scenes a fixture
+    happens to carry.
+
+    Nodes are empty rather than absent, because that is what "draftable" means here:
+    `gate_draft` refuses to overwrite content and fills only an empty node, so a scene the
+    planner can work on is one that exists and says nothing. Position keys come from
+    `initial_keys`, which leaves gap-10 room to insert between them later — a capability
+    nothing uses yet and the one this book's structure would need first.
+    """
+    if scenes < 1:
+        raise ValueError(f"a book needs at least one scene; asked for {scenes}")
+    keys = initial_keys(scenes)
+    nodes = [Node(logical_id="book", kind=NodeKind.BOOK, position_key="010", title=title)]
+    nodes += [
+        Node(
+            logical_id=f"scene-{index + 1}",
+            kind=NodeKind.SCENE,
+            position_key=keys[index],
+            parent_logical_id="book",
+            title=f"Scene {index + 1}",
+        )
+        for index in range(scenes)
+    ]
+    return build_revision(book_id, branch_id, nodes)
 
 
 def version_map(revision: Revision) -> Mapping[str, str]:

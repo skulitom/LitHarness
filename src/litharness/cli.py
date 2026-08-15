@@ -27,6 +27,7 @@ import os
 import sqlite3
 import sys
 import time
+import uuid
 from collections import Counter
 from collections.abc import Sequence
 from contextlib import suppress
@@ -71,6 +72,7 @@ from litharness.application.repair import (
 )
 from litharness.domain import audit, calibration, extraction, impact, propagation
 from litharness.domain import state as state_mod
+from litharness.domain.beats import SIX_BEAT, arc_template
 from litharness.domain.budget import BudgetPolicy
 from litharness.domain.directives import Directive, DirectiveKind, DirectiveStatus, directive_id_for
 from litharness.domain.events import Event, EventType
@@ -80,7 +82,7 @@ from litharness.domain.jobs import Job, JobStatus, input_digest_for
 from litharness.domain.plan_refinement import PlanProposalStatus, rollback_proposal
 from litharness.domain.plans import import_plan, premise_of
 from litharness.domain.policy import Outcome, PolicyDecision, decision_id_for
-from litharness.domain.revision import import_manuscript
+from litharness.domain.revision import import_manuscript, new_book
 from litharness.domain.state import import_state
 from litharness.providers import build_default_registry
 
@@ -98,6 +100,18 @@ def _now() -> float:
 
 def _stamp(now: float) -> str:
     return datetime.fromtimestamp(now, tz=UTC).isoformat().replace("+00:00", "Z")
+
+
+def _env_flag(name: str) -> bool:
+    """A boolean from the environment, for a flag a machine should be able to set once.
+
+    `plan/provider-adapters.md` §5 says provider selection "is config, versioned like every
+    other policy, never hardcoded", and it was hardcoded — so the only way to run a book on
+    local models was to pass flags on every invocation, which a cron entry does not do. These
+    two variables are how a machine says "free by default here" without changing the order
+    this project ships, which §5 and §1a settle on prose quality rather than on cost.
+    """
+    return os.environ.get(name, "").strip().lower() in {"1", "true", "yes", "on"}
 
 
 def _store(args: argparse.Namespace) -> SqliteStore:
@@ -908,6 +922,109 @@ def cmd_state(args: argparse.Namespace) -> int:
     return EXIT_OK
 
 
+def cmd_new(args: argparse.Namespace) -> int:
+    """Create an empty book of N scenes from a premise — Stage 3's entry point.
+
+    **Every revision in this system came from `import`, and `import` needs a manuscript
+    file.** So a book could only exist if someone had already written one, and §17 Stage 3
+    asks for 50-80k words produced *from a premise*. `SIX_BEAT` compounded it: exactly six
+    functions, and `beats_for` refuses any book that is not exactly six scenes, so even a
+    hand-written 60-scene manuscript could not be planned.
+
+    Scenes are created empty, which is what draftable means here — `gate_draft` fills an
+    empty node and refuses to overwrite content. The premise becomes the one plan item the
+    planner requires; without it every tick reports the book blocked.
+
+    `--state` seeds canon the way `import` does, and for a LitRPG book it is not optional in
+    practice: a book whose canon holds no status snapshot is never asked for system voice, so
+    it writes none, so §12 step 5 reads nothing back. One starting sheet closes that.
+    """
+    stamp = _stamp(_now())
+    book_id = args.book or str(uuid.uuid4())
+    branch_id = args.branch or str(uuid.uuid4())
+    revision = new_book(book_id, branch_id, title=args.title, scenes=args.scenes)
+
+    # Attributed like every other mutation (§19). An author's act, so no gate results: the
+    # only check that runs is the scene count, and it raises before a decision exists.
+    decision = PolicyDecision(
+        decision_id=decision_id_for(f"new:{revision.revision_id}", 0, ()),
+        outcome=Outcome.ACCEPT,
+        resulting_revision_id=revision.revision_id,
+        reason=f"created {args.scenes} empty scene(s) from a premise",
+    )
+    premise = lc.PlanItem(
+        logical_id="plan-premise",
+        kind=lc.PlanKind.PREMISE,
+        text=args.premise,
+        authority=lc.PlanAuthority.INTENDED,
+        locked=True,
+    )
+    records: list[lc.StateRecord] = []
+    if args.state:
+        snapshot = lc.parse_artifact(
+            lc.StateSnapshot, json.loads(Path(args.state).read_text(encoding="utf-8"))
+        )
+        records = list(import_state(snapshot, book_id=book_id, branch_id=branch_id).records)
+
+    store = _store(args)
+    try:
+        store.record_decision(decision, decided_at=stamp)
+        store.commit_revision(
+            revision,
+            created_at=stamp,
+            events=[
+                Event(
+                    event_type=EventType.MANUSCRIPT_REVISION_ACCEPTED,
+                    project_id=args.project,
+                    created_at=stamp,
+                    actor=args.holder,
+                    book_id=book_id,
+                    branch_id=branch_id,
+                    revision_id=revision.revision_id,
+                    payload={
+                        "decision_id": decision.decision_id,
+                        "created": True,
+                        "scenes": args.scenes,
+                        "title": args.title,
+                    },
+                )
+            ],
+        )
+        store.record_plan_items(
+            book_id,
+            branch_id,
+            [premise],
+            created_at=stamp,
+            events=[
+                Event(
+                    event_type=EventType.PLAN_CHANGED,
+                    project_id=args.project,
+                    created_at=stamp,
+                    actor=args.holder,
+                    book_id=book_id,
+                    branch_id=branch_id,
+                    revision_id=revision.revision_id,
+                    payload={"items": 1, "premise": True},
+                )
+            ],
+        )
+        if records:
+            store.record_state_records(
+                book_id, branch_id, records, created_at=stamp
+            )
+    finally:
+        store.close()
+
+    template = arc_template(args.scenes)
+    print(revision.revision_id)
+    print(f"  book={book_id} branch={branch_id}")
+    print(f"  {args.scenes} empty scene(s); template {template.template_id}")
+    print(f"  {len(records)} seed state record(s)")
+    if not records:
+        print("  no state seeded — a LitRPG book needs a starting sheet to speak system voice")
+    return EXIT_OK
+
+
 def cmd_propagate(args: argparse.Namespace) -> int:
     """What a change reaches beyond what it edits (§17 Stage 2's propagation engine).
 
@@ -1545,14 +1662,18 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument(
         "--prefer",
-        help="put this provider first, e.g. ollama for a local run. It stays a preference: "
-        "an unhealthy choice still falls back, and the fallback is recorded",
+        default=os.environ.get("LITHARNESS_PREFER"),
+        help="put this provider first, e.g. ollama for a local run; also read from "
+        "LITHARNESS_PREFER. It stays a preference: an unhealthy choice still falls back, "
+        "and the fallback is recorded",
     )
     parser.add_argument(
         "--no-billing",
         action="store_true",
-        help="refuse every billing provider for this run. Not the same as --prefer: a "
-        "preference for a free provider still bills the moment that provider blips",
+        default=_env_flag("LITHARNESS_NO_BILLING"),
+        help="refuse every billing provider for this run; also read from "
+        "LITHARNESS_NO_BILLING. Not the same as --prefer: a preference for a free provider "
+        "still bills the moment that provider blips",
     )
     parser.add_argument(
         "--notify-file",
@@ -1768,6 +1889,19 @@ def build_parser() -> argparse.ArgumentParser:
     craft = sub.add_parser("craft", help="advisory craft measurements, and their limits")
     craft.add_argument("--metric")
     craft.set_defaults(func=cmd_craft)
+
+    new = sub.add_parser(
+        "new", help="create an empty book of N scenes from a premise (Stage 3's entry point)"
+    )
+    new.add_argument("title")
+    new.add_argument("--premise", required=True, help="what the book is about; the planner "
+                     "reports a book without one as blocked rather than drafting it")
+    new.add_argument("--scenes", type=int, default=len(SIX_BEAT),
+                     help="how many scenes to create, all empty and draftable")
+    new.add_argument("--state", type=Path, help="a StateSnapshot to seed canon with")
+    new.add_argument("--book", help="book id; a fresh uuid by default")
+    new.add_argument("--branch", help="branch id; a fresh uuid by default")
+    new.set_defaults(func=cmd_new)
 
     state = sub.add_parser(
         "state", help="what this book holds as true, in story order"
