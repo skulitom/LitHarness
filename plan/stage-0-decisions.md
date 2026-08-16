@@ -2538,4 +2538,47 @@ that depends on a generator following an instruction, which is the thing §51.1 
 project had assumed twice without sending. **Level stays at 1 across all four milestones**
 against a premise that names a level cap, so even the schedule this run produced is not the
 schedule the book wants. The measurement is a drafted book with more than two distinct
-extracted states, and it is not in hand.
+extracted states, and §55.1 has it: three, which is movement rather than progression.
+
+### 55.1 The schedule moved the ledger twice and then it stopped
+
+Measured, one 30-scene book on `phi4` with a schedule at s03, s11, s18 and s27:
+
+    canon status records   29        distinct ledger states   3   (was 2)
+    gold   12 -> 20 at s03  -> 22 at s07  -> unchanged for the next 23 scenes
+    hp, mp, level          never moved at all
+
+So the answer to §55's open question is **movement, not progression**, and the mechanism is
+not what failed. The milestones were written, `progression_target` read them, and
+`render_prompt` put the next one in front of every scene. The generator took the first
+milestone's gold, took two more the scene after it, and then ignored the schedule for
+three-quarters of the book — the s11, s18 and s27 milestones asking for 25, 30 and 40 gold
+produced nothing at all.
+
+**The instruction defaults to stasis, and it says so in its own docstring.** §46 wrote the
+progression clause and recorded the problem beside it: *"The instruction above defaults to
+stasis, and a model with no reason to change anything keeps everything."* The clause it added
+is hedged three times over — *carry these values forward unchanged unless this scene changes
+them*, then *move it toward that where the events warrant it*, then *do not move it for no
+reason on the page*. Every hedge is defensible on its own and their sum is an instruction to
+leave the numbers alone unless the scene forces the issue, which is what the model did.
+
+**This is §51.1's shape a second time, and that is the transferable part.** There the plan
+carried a target the prompt never rendered; here the prompt renders it and the surrounding
+words tell the model it may decline. In both cases the machinery was complete, the record
+said the feature existed, and the thing that decided the outcome was one sentence of prompt
+wording that nobody had measured. §51.1 also measured the fix: a bare instruction moved `phi4`
+324 -> 458 words and an instruction that said what the length was *for* moved it 324 -> 611.
+The schedule clause has had no equivalent pass.
+
+**So the next experiment is named and cheap**, and it is the same shape as §51.1's: hold the
+schedule fixed, vary the progression clause, three draws per arm, and count distinct extracted
+states. Candidate arms are the current hedged wording, one that states the milestone as a
+commitment the scene must land, and one that names what the movement is *for* the way the
+length instruction does. Until that is run, the honest reading of this section is that a
+progression schedule is **necessary and demonstrably not sufficient**, and taxonomy entry 3
+stays open with its cause relocated from "there is no schedule" to "the scene is told it may
+ignore one".
+
+Two beats parked to the duplicate gate, so the book drafted 28 of 30 — unremarkable at this
+point and noted so the scene count is not read as a new failure.
