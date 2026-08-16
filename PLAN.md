@@ -1473,10 +1473,15 @@ one statement per scene, stored as scoped `SCENE_PLAN` plan items through the ex
 `PlanProposal` path and rendered last in the drafting prompt. Same premise, same model, 30
 scenes: near-copies **5/30 → 0/30**, longest verbatim span **872 → 55 words** — below the
 93-word published-human maximum — with the duplicate gate refusing nothing, so the gate is not
-the explanation. **Suggestive rather than established**: a 14-scene un-outlined run also
-produced zero copies, so n is one per arm and every derived seed differs. **The ledger did not
-move** (2 distinct states in both runs), which is the expected result and leaves taxonomy entry
-3 exactly where it was — blocked on the level curve the game-mechanics pack owns.
+the explanation. **Measured at five books per arm** (§54.1), and the metric had to change to get there: with
+the duplicate gate live a copy is refused rather than accepted, so `copies_accepted` is 0 in
+all ten books and the accepted text says nothing. On the gate's own finding count, duplicate
+findings per book run **11, 8, 1, 2, 6 without an outline against 0, 0, 0, 1, 1 with one** —
+mean 5.6 against 0.4, exact two-sided permutation p = **0.0238**. The arms **overlap**, so the
+claim is that outlining substantially reduces whole-scene duplication rather than eliminating
+it, and the control arm's 1-to-11 spread is why two books misled in both directions. **The
+ledger did not move** (2 distinct states), which is expected and leaves taxonomy entry 3 where
+it was — blocked on the level curve the game-mechanics pack owns.
 
 ### Stage 4 — Calibrated quality gate
 Stand up the weekly calibration program (RevisionJudge protocol) over Book Zero

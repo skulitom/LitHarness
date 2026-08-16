@@ -2323,10 +2323,44 @@ refused nothing in run 3**, so the gate cannot be the explanation: it never inte
 
 **And the confound, which is not small.** Run 2 (no outline, 14 scenes) also produced zero
 copies, max similarity 0.131. So the no-outline condition has produced 5 copies once and 0
-once, and n is one per arm. The 30-scene comparison is like-for-like and the effect is large,
-but every derived seed differs between runs and nothing was varied deliberately. **Suggestive,
-not established.** The cheap experiment is three runs per arm at 30 scenes; it has not been
-run, and until it has, this is a measurement of two books.
+once, and n is one per arm. **Suggestive, not established** — the cheap experiment is five
+runs per arm at 30 scenes.
+
+> **Run, and §54.1 has it.** The effect is real at conventional significance and smaller and
+> noisier than this section makes it sound. Two things above are now wrong: the metric, and
+> the word "0".
+
+### 54.1 Five books per arm, and the metric had to change first
+
+**Counting copies in the finished book measures the wrong thing once the gate is live.**
+`integrity.duplicate_scene.v0` refuses a duplicate rather than accepting it, so the control
+arm's copies never reach the text — the beat parks. Measured across all ten books,
+`copies_accepted` is **0 in every one of them**, control and outlined alike: the comparison
+this section reports would have called the arms identical while one of them parked eleven
+beats and the other none. And `max_span` over accepted prose is **censored at the 120-word
+threshold by construction** — the control arm's 117 and 98 are the gate's ceiling showing
+through rather than the model's behaviour, which is §49's coverage trap in a new costume.
+The uncensored quantity is the gate's own finding count.
+
+    duplicate findings per 30-scene book
+      control   11, 8, 1, 2, 6     mean 5.6     scenes drafted 19-29
+      outlined   0, 0, 0, 1, 1     mean 0.4     scenes drafted 29-30
+
+Exact two-sided permutation test on the difference of means, five per arm: **p = 0.0238**,
+against a floor of 2/252 = 0.0079 for this design. One test rather than two — `parked_beats`
+is the same number as `duplicate_findings`, since a finding is what parks the beat.
+
+**The arms overlap, and that is the correction this experiment was for.** Control run 3
+produced one finding; outlined runs 4 and 5 produced one each. So the honest claim is that
+outlining **substantially reduces** whole-scene duplication, not that it eliminates it, and
+§54's "0/30" was one draw of a variable that ranges 0 to 1 in this arm.
+
+**The control arm's variance is the finding underneath the finding.** It runs 1 to 11. A
+single un-outlined book producing one duplicate is entirely ordinary — which is exactly what
+the 14-scene run did, and why two books misled in both directions at once: the 30-scene
+control looked like the rule when it was near the top of its range, and the 14-scene control
+looked like a refutation when it was near the bottom. **A condition this noisy cannot be
+characterised by one run**, and this project had characterised it by one twice.
 
 **The ledger did not move: 2 distinct states in both runs.** So §52's third entry stands
 untouched, which is the expected result and worth stating — the outline says what *happens*
@@ -2402,3 +2436,32 @@ Whether outlines in practice fail this way is a question for the next runs.
 reconstruct it**, raising `PlanProposalError` on read. So a write succeeds and creates a book
 that nothing can plan, draft or report on. It is pre-existing and outside this slice; the
 outline handler's own premise check is unreachable behind it and stays as a boundary guard.
+
+### 54.2 Ten books cost the machine, and pacing is an autonomy property
+
+The first attempt at §54.1 ended when the host powered off under sustained load — ten books
+back to back is hours of continuous local inference, and §17 Stage 3 asks for 24/7 unattended
+operation. **A run that cooks its own host is an autonomy failure of the same class as the
+provider outage §19.1 records**, and it is not one any gate in this system can see.
+
+Where the pacing belongs is the runner, not the product, and that is an architectural answer
+rather than a convenience: `tick` deliberately does one bounded unit per invocation and the
+cadence belongs to whatever drives the loop — cron in a real deployment, a shell loop here.
+Adding a thermal governor to the Conductor would put a wall-clock concern inside the one
+component whose tests inject time.
+
+`scratchpad/thermal.sh` rests a fixed fraction of every unit's runtime whatever the
+temperature, and rests longer as the core climbs. **The fixed fraction is the part that
+matters, and the reasoning is worth keeping**: a GPU that overheats throttles itself rather
+than switching the machine off, so a whole-host shutdown points at power delivery or case heat
+soak, and the lever is average draw over minutes rather than the instantaneous core reading.
+Measured over the 938 paced units that produced §54.1: peak **75°C**, median 67°C, zero
+interventions by the temperature branch — the duty cycle alone held it, and the run completed.
+Cost is about 40% wall-clock.
+
+One setting in it is a **correctness** control rather than a thermal one. Ollama unloads an
+idle model after five minutes, and §51.2 measured that the first draw against a prompt differs
+from every later one. A rest long enough to unload the model would therefore inject that
+warm-up artifact into the measurement once per rest, on a schedule set by how hot the room is.
+`OLLAMA_KEEP_ALIVE=30m` keeps it resident; a loaded idle model costs VRAM and about 30W, so
+the fix is thermally free and the experiment stays comparable across pauses.
