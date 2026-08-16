@@ -141,6 +141,32 @@ def _proportional(scenes: int, fraction: float) -> int:
     return min(scenes - 1, max(0, -(-int(scenes * fraction * 100) // 100) - 1))
 
 
+def template_for(revision: Revision, template: BeatTemplate | None = None) -> BeatTemplate:
+    """The sheet that fits this book, unless a caller names one.
+
+    **Domain rather than application, and it moved here to break a cycle that was
+    telling the truth.** It reads a revision and returns a template, using nothing but
+    this module's own symbols — so `application/outline.py` needing it while
+    `application/planner.py` imports the outline made an import loop out of a function
+    that never belonged upstairs. `planner` re-exports it, so every existing import site
+    is unchanged.
+
+    **`SIX_BEAT` is kept for six-scene books rather than letting the arc cover them**, even
+    though `arc_template(6)` produces identical functions. `beat_job_id` derives from the
+    template *id*, so switching the fixtures onto `template.arc-6.v0` would remint every beat
+    job id in both golden books for no change in what any beat asks for. The arc reproduces
+    the sheet; it does not replace it.
+
+    A book of any other length gets an arc of its own length, which is what makes §17 Stage 3
+    reachable at all: `beats_for` refuses a mismatch, so before this every book that was not
+    exactly six scenes reported itself blocked.
+    """
+    if template is not None:
+        return template
+    scenes = len(scene_nodes(revision))
+    return SIX_BEAT if scenes == len(SIX_BEAT) else arc_template(scenes)
+
+
 def scene_nodes(revision: Revision) -> list[str]:
     """Live scene logical ids in reading order."""
     return [
@@ -192,4 +218,5 @@ __all__ = [
     "arc_template",
     "beats_for",
     "scene_nodes",
+    "template_for",
 ]

@@ -2281,3 +2281,124 @@ downstream of this are worth checking separately and were left alone here: the t
 reporting rather than corruption — but "the operator surface says a unit needs attention when
 its work is done" is the shape §19.1 spends its list on, and it is a real item rather than a
 note.
+
+## 54. Narrative Planning v0: one statement per scene, and what it moved
+
+§52's first taxonomy entry was that `arc_template(30)` yields **25 `rising` beats of 30** —
+ordinals 3-17 and 19-28, the turn at 18 — while the beat's title and that one function word
+were the entire plan-side instruction. Twenty-five scenes were asked an identical question.
+
+**A statement of what happens, not a richer function word.** Giving the rising span a longer
+vocabulary — "complication", "setback", "reversal" — differentiates the *label* and leaves the
+content mandate as empty as before; two scenes labelled "complication" still have no reason to
+differ. What stops scene 11 re-running scene 10's errand is scene 11 having its own errand.
+
+**One model call for the whole book.** A per-scene call would ask a model to invent scene 11
+without having seen what scene 10 is for, which is the condition that produces the duplication
+in the first place. Asked once, with the premise and every beat's function in view, the model
+has to make the scenes differ from *each other*.
+
+It writes `PlanKind.SCENE_PLAN` items scoped to each scene, through the existing
+`PlanProposal` path — so the outline is versioned, attributable to a recorded decision, and
+rolled back by `revert-plan` like any other plan movement. `plans.py`'s own docstring recorded
+that vocabulary as unused since 1.0: "not one is a `scene_plan`; not one carries a `scope`."
+
+**Enqueued when the sheet cannot tell its scenes apart, and never waited on.** The trigger is
+a repeated function in the template, so a six-scene book — both golden fixtures — is untouched:
+at six every function is distinct and there is nothing to disambiguate. The condition is the
+defect, not the book. And a scene drafted without a statement simply omits the line, which is
+exactly the prompt that shipped before this existed, so an outline that fails leaves a degraded
+book rather than a stalled one.
+
+### What it moved, and what it did not
+
+Same premise, same model, same budget, 30 scenes:
+
+    run 1  no outline          near-copies 5/30   max similarity 0.823   longest span 872
+    run 3  outlined            near-copies 0/30   max similarity 0.103   longest span  55
+
+The longest verbatim span a scene shares with any earlier one falls from **872 words to 55** —
+below the 93-word maximum §49 measured across 24 published human serials. **The duplicate gate
+refused nothing in run 3**, so the gate cannot be the explanation: it never intervened.
+
+**And the confound, which is not small.** Run 2 (no outline, 14 scenes) also produced zero
+copies, max similarity 0.131. So the no-outline condition has produced 5 copies once and 0
+once, and n is one per arm. The 30-scene comparison is like-for-like and the effect is large,
+but every derived seed differs between runs and nothing was varied deliberately. **Suggestive,
+not established.** The cheap experiment is three runs per arm at 30 scenes; it has not been
+run, and until it has, this is a measurement of two books.
+
+**The ledger did not move: 2 distinct states in both runs.** So §52's third entry stands
+untouched, which is the expected result and worth stating — the outline says what *happens*
+and nothing schedules what the *numbers* do. That remains blocked on the level curve the
+game-mechanics pack owns (§20.6), exactly where §52 put it.
+
+Mean scene length fell 875.5 → 786.9 words, still 87% of target. Not investigated; a statement
+that tells a scene what to do plausibly makes it shorter than one improvising to fill space,
+and one run against one run cannot separate that from noise.
+
+### Six defects an adversarial review found before this shipped
+
+Four independent reviewers, then a refutation pass on every claim. Twenty-one candidates, eight
+survived. The five that mattered:
+
+**A partially-outlined book could never be outlined.** Reported by four lenses independently
+and reproduced end to end. The selector's trigger was "*any* beat missing a statement"; the
+handler's skip guard was "*all* beats have one"; and every edit was a `CREATE`. A book that
+gains a scene — `new` or `import` on the same book and branch moves the head — keeps the
+statements it had, so the selector fired, the guard did not, and `apply_plan_proposal` raised
+`plan item 'scene-1-plan' already exists` **after the whole-book call had been paid for**.
+Three generations per plan epoch, a poisoned job, an empty exception queue, and the scene that
+motivated the outline drafted with no statement forever. Fixed by emitting `UPDATE` where the
+item exists and `CREATE` where it does not — and by making the selector and the handler ask
+the same question with the same function, which they were not: one matched on scope-then-id
+and the other on id alone.
+
+**Refusals hard-coded `RETRY` instead of consulting `decide`.** The only handler in
+`application` that minted a failing outcome without the ladder. At the ceiling a hard-coded
+RETRY requeues a job the queue then poisons, and the POISONED path files no exception — so an
+outline that could never conform went quiet and every scene drafted with no statement. It now
+carries `SHAPE_NOT_CONFORMING` and goes through `decide`, which parks it revivably with the
+reason attached.
+
+**The no-op path recorded no decision**, leaving the Conductor to settle the attempt against
+whatever decision the job last produced — after a refusal, that refusal. A job with nothing
+left to do settled as though it had failed.
+
+**No `policy_config_digest`.** The same defect §51.2 had just fixed one layer over: the schema
+and the target length shape every statement and appear in no record, so changing them would
+have left every stored digest identical while every outline after them came from a different
+question.
+
+**The tests were the worst of it, and two of the three failures are ones this project has a
+name for.** The consumer side — the selector branch and the prompt line — had **no test at
+all**, and this file's own docstring claimed `test_planner.py` covered it. It did not. Branch
+coverage showed the selector's new lines never executed. That is §51.1's defect — a claim
+about a test that does not test it — committed in the same session that recorded §51.1.
+
+And every happy-path fixture built its outline from `"Kestrel does thing 1."` through
+`"Kestrel does thing 30."` — statements the distinctness check passes and a reader would call
+one scene written thirty times. **The suite defined a correct outline as exactly the failure
+the module exists to prevent.** §19.1's rule is that a suite encoding the defect converts a
+bug into a requirement; here it would have made the fixture the specification. The fixture is
+now fourteen statements that are actually different scenes.
+
+Also corrected: a test named for the premise refusal reached the *no plan at all* branch and
+would have passed with the premise check deleted.
+
+### The distinctness check is exact-string identity, and that is a known floor
+
+It folds case and whitespace and compares for equality. Two statements differing by one word
+pass. The cheapest way to satisfy it is therefore near-duplicates, which is a weaker bar than
+the module's own rules ask the model for — and the honest reading is that the check catches
+the degenerate case and not the interesting one. It is left there rather than tightened
+because the near-duplicate threshold would be a placed number with no measurement behind it,
+and §53's threshold is placed only because two distributions had an empty gap to put it in.
+Whether outlines in practice fail this way is a question for the next runs.
+
+### A store asymmetry found on the way, recorded and not fixed
+
+`record_plan_items` **accepts** a plan with no premise; `plan_revision` then **refuses to
+reconstruct it**, raising `PlanProposalError` on read. So a write succeeds and creates a book
+that nothing can plan, draft or report on. It is pre-existing and outside this slice; the
+outline handler's own premise check is unreachable behind it and stays as a boundary guard.

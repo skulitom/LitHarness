@@ -71,4 +71,57 @@ def constraints_of(items: Sequence[lc.PlanItem]) -> tuple[lc.PlanItem, ...]:
     )
 
 
-__all__ = ["ImportedPlan", "constraints_of", "import_plan", "premise_of"]
+def scene_plan_id_for(logical_id: str) -> str:
+    """The plan item id carrying what one scene is for.
+
+    Derived from the scene rather than minted, so an outline re-proposed for the same book
+    edits the same items instead of accumulating a second set beside the first — and so
+    `scene_plan_for` can find a statement without scanning `scope` on every item.
+    """
+    return f"{logical_id}-plan"
+
+
+def scene_plan_for(
+    items: Sequence[lc.PlanItem], logical_id: str
+) -> lc.PlanItem | None:
+    """The statement of what *this* scene is for, or None if the book has no outline.
+
+    **Scoped, so it reaches one scene and not the book.** `constraints_of` selects locked
+    constraints and promises and therefore cannot pick these up, which is what keeps thirty
+    scene statements out of every scene's constraint block — a packet carrying the whole
+    outline would hand every scene every other scene's errand, which is a more expensive way
+    to cause the failure the outline exists to fix.
+
+    Matched on `scope` first and on the derived id second. The id is how they are written and
+    the scope is what they *mean*, so an item scoped to this scene under some other id is
+    still this scene's plan; an outline imported from elsewhere is the case that makes the
+    difference.
+    """
+    scoped = [
+        item
+        for item in items
+        if item.kind is lc.PlanKind.SCENE_PLAN
+        and item.scope is not None
+        and item.scope.logical_id == logical_id
+    ]
+    if scoped:
+        return scoped[0]
+    derived = scene_plan_id_for(logical_id)
+    return next(
+        (
+            item
+            for item in items
+            if item.kind is lc.PlanKind.SCENE_PLAN and item.logical_id == derived
+        ),
+        None,
+    )
+
+
+__all__ = [
+    "ImportedPlan",
+    "constraints_of",
+    "import_plan",
+    "premise_of",
+    "scene_plan_for",
+    "scene_plan_id_for",
+]

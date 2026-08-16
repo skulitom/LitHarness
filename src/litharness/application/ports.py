@@ -271,6 +271,18 @@ class SummaryStore(ManuscriptReader, StateRepository, SummaryRepository, Protoco
     pass
 
 
+class OutlineStore(
+    ManuscriptReader,
+    PlanReader,
+    PlanWriter,
+    DecisionRepository,
+    OperationsRepository,
+    Protocol,
+):
+    """What the outline handler reads and writes: the manuscript's beats, the plan it edits,
+    the decision that attributes the edit, and the day's spend it is checked against."""
+
+
 class ConductorStore(
     JobQueue,
     DirectiveInbox,

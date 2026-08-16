@@ -55,15 +55,19 @@ from litharness.application.narrative_planner import (
     is_interpretive_actionable,
     narrative_job_id,
 )
+from litharness.application.outline import (
+    BOOK_OUTLINE,
+    OUTLINE_PRIORITY,
+    outline_job_id,
+)
 from litharness.application.ports import ApplicationStore, PlanningStore
 from litharness.domain.beats import (
     SIX_BEAT,
     Beat,
     BeatTemplate,
     TemplateMismatch,
-    arc_template,
     beats_for,
-    scene_nodes,
+    template_for,
 )
 from litharness.domain.context import (
     COUNTER_ID,
@@ -77,30 +81,11 @@ from litharness.domain.draft import DraftPolicy, is_draftable
 from litharness.domain.events import payload_digest
 from litharness.domain.extraction import progression_target, system_voice_example
 from litharness.domain.jobs import Job, input_digest_for
-from litharness.domain.plans import premise_of
+from litharness.domain.plans import premise_of, scene_plan_for
 from litharness.domain.revision import Revision
 from litharness.domain.text import content_hash
 
 DEFAULT_TEMPLATE = SIX_BEAT
-
-
-def template_for(revision: Revision, template: BeatTemplate | None = None) -> BeatTemplate:
-    """The sheet that fits this book, unless a caller names one.
-
-    **`SIX_BEAT` is kept for six-scene books rather than letting the arc cover them**, even
-    though `arc_template(6)` produces identical functions. `beat_job_id` derives from the
-    template *id*, so switching the fixtures onto `template.arc-6.v0` would remint every beat
-    job id in both golden books for no change in what any beat asks for. The arc reproduces
-    the sheet; it does not replace it.
-
-    A book of any other length gets an arc of its own length, which is what makes §17 Stage 3
-    reachable at all: `beats_for` refuses a mismatch, so before this every book that was not
-    exactly six scenes reported itself blocked.
-    """
-    if template is not None:
-        return template
-    scenes = len(scene_nodes(revision))
-    return SIX_BEAT if scenes == len(SIX_BEAT) else arc_template(scenes)
 
 
 def _resolved_directive_scope(
@@ -215,6 +200,7 @@ def render_prompt(
     status_example: str | None = None,
     target_words: int = 0,
     progression: str | None = None,
+    scene_plan: str | None = None,
 ) -> tuple[str, str]:
     """(system, prompt) for one beat, grounded in an assembled context packet.
 
@@ -299,10 +285,21 @@ def render_prompt(
             "give the scene enough events to fill it."
         )
     title = f"{book_title}: " if book_title else ""
+    # **What this scene is for, which until now was one word shared with twenty-four others.**
+    # `arc_template(30)` yields 25 `rising` beats, and the line below was the whole of the
+    # plan-side instruction — so twenty-five of thirty (ordinals 3-17 and 19-28, the turn at
+    # 18) were asked an identical question, and Book
+    # Zero answered it by re-issuing its own errand five times (§52). The statement goes last
+    # for the reason the beat line already went last: the final thing in a prompt is the thing
+    # a model acts on, and between "rising" and "Kestrel is refused entry at the archive",
+    # this is the one to act on.
+    plan_line = (
+        f" This scene: {scene_plan.strip()}" if scene_plan and scene_plan.strip() else ""
+    )
     prompt = (
         f"{packet.render()}\n\n"
         f"Now write {title}{beat.title or beat.logical_id} — scene {beat.ordinal} of "
-        f"{beat.of_total}. Dramatic function: {beat.function}."
+        f"{beat.of_total}. Dramatic function: {beat.function}.{plan_line}"
     )
     return system, prompt
 
@@ -470,6 +467,46 @@ def make_plan_selector(
                 continue
             epoch = store.plan_epoch(progress.book_id, progress.branch_id)
             beats = beats_for(head, template_for(head, template))
+
+            # **The book is outlined when its own sheet cannot tell its scenes apart.**
+            # `arc_template(30)` yields 25 `rising` beats, and the beat's function word is
+            # the whole of the plan-side instruction — so twenty-five scenes are asked an
+            # identical question, which §52 measured as the cause of both the duplicated
+            # scenes and the ledger that moved once. At six scenes every function is distinct
+            # and there is nothing for an outline to disambiguate, which is why both golden
+            # fixtures are untouched by this: the condition is the defect, not the book.
+            #
+            # **Enqueued, never waited on.** It outranks scene work (300 against 0) so it is
+            # claimed first when both are queued, and a scene drafted without a statement
+            # simply omits the line — which is exactly the behaviour that shipped before this
+            # existed. An outline that fails must leave a degraded book, not a stalled one.
+            functions = [beat.function for beat in beats]
+            plan_items = store.plan_items(progress.book_id, progress.branch_id)
+            needs_outline = len(set(functions)) < len(functions) and any(
+                scene_plan_for(plan_items, beat.logical_id) is None for beat in beats
+            )
+            if needs_outline:
+                outline_id = outline_job_id(progress.book_id, progress.branch_id, epoch)
+                if not store.has_job(outline_id):
+                    outline_payload = {
+                        "book_id": progress.book_id,
+                        "branch_id": progress.branch_id,
+                        "plan_epoch": epoch,
+                    }
+                    store.enqueue(
+                        Job(
+                            job_id=outline_id,
+                            job_kind=BOOK_OUTLINE,
+                            idempotency_key=outline_id,
+                            payload=outline_payload,
+                            input_digest=input_digest_for(outline_payload),
+                            priority=OUTLINE_PRIORITY,
+                        )
+                    )
+                    claimed = store.claim_next(holder, now=now, duration=duration)
+                    if claimed is not None:
+                        return claimed
+
             ids = [
                 beat_job_id(
                     progress.book_id, progress.branch_id, beat.logical_id,
@@ -526,6 +563,17 @@ def make_plan_selector(
                         at=beat.story_order_key,
                     ),
                     target_words=(policy or DraftPolicy()).target_words,
+                    scene_plan=(
+                        item.text
+                        if (
+                            item := scene_plan_for(
+                                store.plan_items(progress.book_id, progress.branch_id),
+                                beat.logical_id,
+                            )
+                        )
+                        is not None
+                        else None
+                    ),
                     progression=progression_target(
                         store.state_records(progress.book_id, progress.branch_id),
                         at=beat.story_order_key,

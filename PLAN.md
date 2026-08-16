@@ -1468,6 +1468,16 @@ frozen ledger has the same root: 31 extracted status records, **two** distinct s
 taxonomy's first entry is **Narrative Planning v0**, not the sampler and not the context
 packet, and §17 Stage 5's "in the order Book Zero's taxonomy demands" now has its order.
 
+**Narrative Planning v0 shipped, and §54 has what it moved.** One model call per book produces
+one statement per scene, stored as scoped `SCENE_PLAN` plan items through the existing
+`PlanProposal` path and rendered last in the drafting prompt. Same premise, same model, 30
+scenes: near-copies **5/30 → 0/30**, longest verbatim span **872 → 55 words** — below the
+93-word published-human maximum — with the duplicate gate refusing nothing, so the gate is not
+the explanation. **Suggestive rather than established**: a 14-scene un-outlined run also
+produced zero copies, so n is one per arm and every derived seed differs. **The ledger did not
+move** (2 distinct states in both runs), which is the expected result and leaves taxonomy entry
+3 exactly where it was — blocked on the level curve the game-mechanics pack owns.
+
 ### Stage 4 — Calibrated quality gate
 Stand up the weekly calibration program (RevisionJudge protocol) over Book Zero
 output; validate/discard craft metrics against human judgment; promote the first

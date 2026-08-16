@@ -61,6 +61,7 @@ from litharness.application.narrative_planner import (
     NARRATIVE_PLAN,
     make_narrative_plan_handler,
 )
+from litharness.application.outline import BOOK_OUTLINE, make_outline_handler
 from litharness.application.plan_refinement import accept_plan_proposal
 from litharness.application.planner import make_plan_selector
 from litharness.application.repair import (
@@ -248,6 +249,11 @@ def _conductor(store: SqliteStore, args: argparse.Namespace) -> Conductor:
             # class, so it routes to a local model even in production (§15), and the lowest
             # priority in the system, so it never outranks writing the next scene.
             SCENE_SUMMARY: make_summary_handler(registry, store, args.project),
+            # Narrative Planning v0: one statement per scene, so the rising span stops
+            # asking twenty-five scenes the same question (§52's first taxonomy entry).
+            BOOK_OUTLINE: make_outline_handler(
+                registry, store, args.project, budget=_budget(args), actor=args.holder
+            ),
             EVALUATE_REVISION: make_evaluation_handler(
                 evaluator, store, args.project
             ),
