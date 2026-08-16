@@ -419,6 +419,7 @@ def make_plan_selector(
     policy: DraftPolicy | None = None,
     project_id: str = "",
     token_budget: int = DEFAULT_TOKEN_BUDGET,
+    outline: bool = True,
 ) -> WorkSelector:
     """Build a `WorkSelector` that materialises the next unblocked beat.
 
@@ -426,6 +427,14 @@ def make_plan_selector(
     duration)` has no book scope, and the book set is state the selector carries. Widening
     the protocol would change every existing selector and its tests for one caller's
     benefit — the same reason handlers are closures.
+
+    **`outline=False` is the operator saying "do not spend a model call planning this book",
+    and it exists because the measurement needs it.** §54's headline — near-copies 5/30 with
+    no outline against 0/30 with one — is a comparison of two books, and a control arm that
+    could only be produced by editing the code would be a control nobody could reproduce. It
+    is also the honest flag for a book somebody plans by hand: the drafting path already
+    treats a scene without a statement as ordinary, so this changes nothing except whether
+    the statements are asked for.
 
     `token_budget` bounds the *context* a beat is drafted against, and is separate from
     `BudgetPolicy`'s ceilings, which bound the spend. They fail differently and on purpose: a
@@ -482,8 +491,12 @@ def make_plan_selector(
             # existed. An outline that fails must leave a degraded book, not a stalled one.
             functions = [beat.function for beat in beats]
             plan_items = store.plan_items(progress.book_id, progress.branch_id)
-            needs_outline = len(set(functions)) < len(functions) and any(
-                scene_plan_for(plan_items, beat.logical_id) is None for beat in beats
+            needs_outline = (
+                outline
+                and len(set(functions)) < len(functions)
+                and any(
+                    scene_plan_for(plan_items, beat.logical_id) is None for beat in beats
+                )
             )
             if needs_outline:
                 outline_id = outline_job_id(progress.book_id, progress.branch_id, epoch)

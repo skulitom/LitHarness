@@ -214,6 +214,7 @@ def _conductor(store: SqliteStore, args: argparse.Namespace) -> Conductor:
         select=make_plan_selector(
             project_id=args.project,
             policy=_draft_policy(args),
+            outline=not args.no_outline,
             **(
                 {"token_budget": args.context_budget}
                 if args.context_budget is not None
@@ -1898,6 +1899,15 @@ def build_parser() -> argparse.ArgumentParser:
         help="how long a scene to ask the generator for. A target, not a gate: nothing "
         "refuses a scene for missing it, and it is recorded in every decision's policy "
         "digest because it shapes every scene in the book",
+    )
+    parser.add_argument(
+        "--no-outline",
+        action="store_true",
+        default=_env_flag("LITHARNESS_NO_OUTLINE"),
+        help="do not plan a statement for each scene before drafting; also read from "
+        "LITHARNESS_NO_OUTLINE. The control arm of the measurement in §54, and the right "
+        "flag for a book somebody outlines by hand — a scene with no statement drafts "
+        "exactly as it did before outlines existed",
     )
     parser.add_argument(
         "--model",

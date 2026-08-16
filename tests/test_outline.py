@@ -579,3 +579,22 @@ def test_the_drafting_lane_reads_the_statement_the_outline_wrote(store: SqliteSt
     ordinal = int((draft_job.payload.get("selected_by") or {}).get("ordinal") or 1)
     assert DISTINCT[ordinal - 1] in prompt, "the scene was drafted knowing what it is for"
     assert prompt.rstrip().endswith(DISTINCT[ordinal - 1])
+
+
+def test_the_control_arm_is_reachable_through_the_operator_surface(
+    store: SqliteStore,
+) -> None:
+    """§54's comparison needs a control, and a control that required editing the code would
+    be one nobody could reproduce. `outline=False` is that arm, and it is the same flag a
+    book planned by hand wants — the drafting path already treats a scene with no statement
+    as ordinary."""
+    from litharness.application.planner import make_plan_selector
+
+    a_book(store, scenes=12)
+    selected = make_plan_selector(project_id=PROJECT_ID, outline=False)(
+        store, "worker-a", START, 60.0
+    )
+    assert selected is not None
+    assert selected.job_kind != BOOK_OUTLINE, "no statement is planned"
+    # And the book still drafts: the control arm is a degraded book, never a stalled one.
+    assert "This scene:" not in str(selected.payload["prompt"])
