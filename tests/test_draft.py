@@ -35,6 +35,8 @@ from litharness.domain.calibration import (
 from litharness.domain.craft import measure
 from litharness.domain.draft import DraftPolicy, gate_draft
 from litharness.domain.events import EventType, payload_digest
+from litharness.domain.findings import Status as FindingStatus
+from litharness.domain.integrity import DUPLICATE_RULE
 from litharness.domain.jobs import IllegalTransition, Job, JobStatus, input_digest_for
 from litharness.domain.nodes import LockKind, Node, NodeKind
 from litharness.domain.patch import Veto
@@ -1133,3 +1135,168 @@ def test_a_craft_refusal_files_no_exception(store: SqliteStore) -> None:
     day = store.read_log()[0].event.created_at[:10]
     assert store.digest(day).get("exceptions_raised", 0) == 0
     assert store.digest(day)["jobs_parked"] == 1
+
+
+# -- the duplicate-scene refusal, through the loop ----------------------------------------
+
+
+def _written(seed: str, words: int = 300) -> str:
+    return " ".join(f"{seed}{index}" for index in range(words))
+
+
+def _book_with_one_written_scene() -> Revision:
+    """scene-1 already accepted, scene-2 empty and draftable."""
+    return build_revision(
+        BOOK_ID,
+        BRANCH_ID,
+        [
+            Node(logical_id="book", kind=NodeKind.BOOK, position_key="010"),
+            Node(
+                logical_id="scene-1",
+                kind=NodeKind.SCENE,
+                position_key="010",
+                parent_logical_id="book",
+                content=_written("alpha"),
+            ),
+            Node(
+                logical_id="scene-2",
+                kind=NodeKind.SCENE,
+                position_key="020",
+                parent_logical_id="book",
+            ),
+        ],
+    )
+
+
+def _seed_duplicate_job(store: SqliteStore) -> Revision:
+    revision = _book_with_one_written_scene()
+    store.commit_revision(revision, created_at="2026-08-12T00:00:00Z")
+    payload = {
+        "revision_id": revision.revision_id,
+        "logical_id": "scene-2",
+        "prompt": "Draft the second scene.",
+        "book_id": BOOK_ID,
+        "branch_id": BRANCH_ID,
+    }
+    store.enqueue(
+        Job(
+            job_id="draft-dupe",
+            job_kind=SCENE_DRAFT,
+            payload=payload,
+            input_digest=input_digest_for(payload),
+        )
+    )
+    return revision
+
+
+def test_a_scene_that_copies_another_is_refused_and_the_beat_parks_revivably(
+    store: SqliteStore,
+) -> None:
+    """§19.1's rule applied to the newest gate: **a gate is not finished when it refuses
+    correctly; it is finished when the operator can get past it.**
+
+    Book Zero's second live run produced no duplicates at all — maximum pairwise similarity
+    0.131 across fourteen scenes — so the in-loop path could not be observed by pointing a
+    model at it. The gate is validated against the stored run by replay; this is the part
+    replay cannot show, driven deterministically instead.
+
+    **The tick sequence is `JOB_FAILED` then `JOB_PARKED`, and the second half is the design
+    rather than a shortfall.** `CONTINUITY_BREACH` is classified `RETRYABLE`, so attempt 1's
+    refusal is charged against the unit and issues a retry — but the finding it produced now
+    *stands* against the beat, and the pre-flight gate parks attempt 2 before spending a
+    second generation on it. Slice 9 measured that trade at 12 calls and 8,599 tokens before
+    against 3 and 1,912 after, and
+    `test_a_scene_contradicting_established_canon_is_refused_and_writes_nothing` pins the
+    identical sequence for the contradiction detector. So a duplicate costs **one** generation
+    and then waits for a human, revivably, which is what the operator's route is for.
+    """
+    registry, provider = registry_with_sequence(_written("alpha"), _written("beta"))
+    _seed_duplicate_job(store)
+    conductor = conductor_for(store, registry)
+
+    outcomes = [conductor.tick(START + index).outcome for index in range(2)]
+    assert outcomes == [TickOutcome.JOB_FAILED, TickOutcome.JOB_PARKED]
+    assert provider.calls == 1, "the park costs no second generation"
+
+    [refused, parked] = store.decisions_for_job("draft-dupe")
+    assert refused.outcome is Outcome.RETRY, "the ladder classifies a copy as retryable"
+    assert Veto.CONTINUITY_BREACH in {v for g in refused.gates for v in g.vetoes}
+    assert any(
+        gate.rule_or_critic_id == "integrity.findings.v0" and not gate.passed
+        for gate in refused.gates
+    )
+    assert parked.outcome is Outcome.PARK
+    assert any(
+        gate.rule_or_critic_id == "integrity.standing.v0" and not gate.passed
+        for gate in parked.gates
+    ), "the second refusal is the pre-flight one, reached in front of the work"
+
+    # And the copy is nowhere: the beat's node is still empty rather than holding it.
+    assert store.load_revision(refused.base_revision_id).node("scene-2").content is None
+
+
+def test_dismissing_a_duplicate_finding_lets_the_beat_be_written(
+    store: SqliteStore,
+) -> None:
+    """The operator's way past it, which is the half that makes the gate finished.
+
+    Walking this is what this project records as the thing that actually catches defects —
+    §19.1 twice. Dismiss the finding, revive the unit, and the next generation lands: the
+    provider's second answer is different prose and nothing refuses it.
+    """
+    registry, provider = registry_with_sequence(_written("alpha"), _written("beta"))
+    _seed_duplicate_job(store)
+    conductor = conductor_for(store, registry)
+    conductor.tick(START)
+    conductor.tick(START + 1)
+
+    [finding] = [
+        item
+        for item in store.findings(BOOK_ID, BRANCH_ID)
+        if item.rule_or_critic_id == DUPLICATE_RULE
+    ]
+    # What `litharness dismiss` writes: the operator saying this one is deliberate. A
+    # legitimate recap is the false positive this gate can produce, and this is the route
+    # past it — the same verb the golden fixtures' negative controls need.
+    store.set_finding_status(finding.finding_id, FindingStatus.ACCEPTED_INTENTIONAL)
+    store.revive("draft-dupe")
+
+    conductor.tick(START + 2)
+
+    # Asserted on the book rather than on `decisions_for_job(...)[-1]`, which is not the
+    # chronological last: that query orders by `attempt`, and `revive` resets the counter, so
+    # the post-revive acceptance is written at a *lower* attempt than the park that preceded
+    # it. `test_dismissing_the_finding_then_reviving_lets_the_beat_through` asserts on the
+    # node for the same reason.
+    head = store.head(BOOK_ID, BRANCH_ID)
+    assert head is not None
+    landed = head.node("scene-2").content
+    assert landed is not None and landed.startswith("beta"), (
+        "dismissing the finding did not unblock the beat"
+    )
+    assert provider.calls == 2, "and it cost exactly one more generation"
+    assert any(
+        decision.outcome is Outcome.ACCEPT
+        for decision in store.decisions_for_job("draft-dupe")
+    )
+
+
+def test_the_duplicate_refusal_is_attributable_like_every_other_mutation(
+    store: SqliteStore,
+) -> None:
+    """§19's integrity clause reaches refusals as well as acceptances: a candidate refused by
+    this gate leaves a recorded decision naming the rule and carrying its evidence, so
+    "why was this scene not written" is a query rather than a guess."""
+    registry, _ = registry_with_sequence(_written("alpha"), _written("beta"))
+    _seed_duplicate_job(store)
+    conductor_for(store, registry).tick(START)
+
+    [refusal] = store.decisions_for_job("draft-dupe")
+    [gate] = [g for g in refusal.gates if g.rule_or_critic_id == "integrity.findings.v0"]
+    assert not gate.passed
+    # The count is in the gate's detail and the evidence in the finding it summarises.
+    stored = store.findings(BOOK_ID, BRANCH_ID)
+    [finding] = [f for f in stored if f.rule_or_critic_id == DUPLICATE_RULE]
+    assert finding.blocks and finding.deterministic
+    assert "scene-1" in finding.message
+    assert "alpha0" in finding.message

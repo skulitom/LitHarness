@@ -2138,3 +2138,146 @@ game-mechanics pack.
    words. §15's projection that gate failure rates rather than raw generation would bind is
    correct — and this run had a gate failure rate of zero, which is the problem rather than
    the reassurance.
+
+## 53. A scene that is a copy is an integrity defect, not a craft opinion
+
+§52's dominant finding was five of thirty scenes reproducing an earlier one — the longest
+sharing **872 consecutive words** — with all 31 decisions ACCEPT and zero findings. This is
+the gate for it, and the interesting part is where it had to live.
+
+### The reclassification is the whole decision
+
+`craft.repeated_span.v0` measured every one of those five, exactly, and reported the number in
+the annotation's `detail`. It could refuse none of them, because §10.4 forbids an uncalibrated
+craft gate from blocking and no calibration exists. **The measurement was never the gap; the
+filing was.**
+
+`craft.py`'s own defence of the metric already contains the argument for moving it:
+
+> "this asserts that two scenes are largely the same text, which is checkable without asking
+> anyone… 'this scene is a copy of that one' is a fact rather than an opinion, and §10.6's
+> finding is about opinions."
+
+§10.4's bar governs claims about *quality*, and it is the right bar for those — a threshold on
+`tricolon_rate` is a guess wearing a measurement's authority until human verdicts say
+otherwise. But "these 872 words appear in scene 6 and again in scene 11" is arithmetic over
+two strings. It needs no calibration for the same reason `shape.draft.v0`'s 200-character
+floor needs none, and for the same reason `state.contradiction.v0` blocks today: a
+deterministic finding blocks on `blocks and deterministic`, and that clause was already there.
+
+So the check is a **detector**, appended to `integrity.IN_PROCESS` — which the tuple's own
+comment has described as the extension point since it had one member. The craft metric is
+untouched and keeps reporting the number on every scene, including the ones that pass.
+
+### `DetectorInput` grew the first field that is not state
+
+Every check until now asked whether the candidate contradicted what the book *records*. A
+scene that reproduces another contradicts nothing — the defect is only visible by comparing
+prose to prose, and no detector had ever been shown another scene's text. `prior_prose`
+carries `(logical_id, text)` for the accepted scenes, empty by default so a caller with no
+book to compare against is unchanged.
+
+Both call sites exclude the node under judgment, and the exclusion is load-bearing rather than
+tidy at the second one: the draft handler compares a candidate against the base revision it is
+not yet part of, but `InProcessEvaluator` judges a revision the scene is already *in*, so a
+missing exclusion would report a 900-word self-overlap on every scene in the book.
+`checked_rule_ids` gained the new rule in the same change, because a run that names one rule
+while applying two is a digest claiming a narrower check than it made.
+
+### The threshold is placed in an empty region of two distributions
+
+`DUPLICATE_SPAN_WORDS = 120`, and it is defensible without a calibration only because of where
+it sits rather than because somebody liked the number.
+
+*Above what published human prose does.* §49's measurement over 24 published RoyalRoad serials:
+longest verbatim cross-chapter span **93 words** (undeclared 2025), 91 (declared-AI), 70
+(pre-2023). Human authors write recaps, epigraphs and quoted prophecies and repeat them
+exactly, and that mechanism is what produces long *legitimate* spans — so the line sits above
+the largest anyone has observed, with headroom, rather than at it.
+
+*Inside a gap in this system's own output.* Across Book Zero's 30 scenes, the longest span each
+scene shares with any earlier one is bimodal with nothing in between:
+
+    24 scenes      0 - 47 words
+    5 scenes       353, 431, 700, 737, 872 words
+    nothing at all between 48 and 352
+
+Every threshold in that range separates the same five scenes, so the choice is not delicate —
+which is the property to look for when a number has to be placed rather than fitted. The golden
+fixtures, human-authored, reach 17 (mystery) and 0 (litrpg).
+
+*And two independent methods agree.* Whole-scene `difflib` similarity above 0.5 selects scenes
+8, 11, 17, 18, 22. The span threshold selects scenes 8, 11, 17, 18, 22. Two measures sharing
+nothing but the input picked the identical set.
+
+Replayed over the thirty accepted scenes, the gate as it now stands refuses exactly those five
+and names its evidence in each refusal:
+
+    s8   700 words of this scene appear verbatim in scene-6,  starting at word 383
+    s11  872 words                            in scene-8,     starting at word 426
+    s17  737 words                            in scene-8,     starting at word 479
+    s18  431 words                            in scene-12,    starting at word 177
+    s22  353 words                            in scene-21,    starting at word 167
+
+### What the loop actually does with it, which is not what I first wrote here
+
+The first draft of this section said the refusal is a retry, and that the retry only became
+correct once the sampler started varying per attempt. **Walking it proved the first half
+wrong**, and the correction is worth keeping because the reasoning was plausible and the
+behaviour is not what it predicts.
+
+`vetoes_for` does map every blocking finding onto `CONTINUITY_BREACH`, which §4.2 classifies
+`RETRYABLE`, so attempt 1's refusal is charged against the unit and issues a retry. But the
+finding it produced is recorded, and it then **stands** against the beat — so attempt 2 meets
+the *pre-flight* standing gate and parks, free, without calling the provider at all. Measured
+through the Conductor: `JOB_FAILED` then `JOB_PARKED`, one generation total.
+
+That is deliberate and pre-dates this gate. Slice 9 measured the alternative at 12 calls and
+8,599 tokens against 3 and 1,912, and
+`test_a_scene_contradicting_established_canon_is_refused_and_writes_nothing` pins the identical
+sequence for the contradiction detector. So a duplicate costs **one** generation and then waits
+for a human, revivably. The operator's route past it is the one that already existed and that
+a legitimate recap will need: `dismiss`, then `revive`.
+
+**I tried to "fix" this and was wrong to.** Reasoning that a finding about a *refused*
+candidate describes prose the book does not contain, I made the standing gate ignore findings
+on empty nodes, then made recording conditional on acceptance. Seven tests failed, and they
+were right: an *ingested* planted defect also sits against an empty node, and the fixtures
+depend on it parking. The finding is node-scoped — "attempts at this beat keep producing this
+defect" — not a claim that the manuscript contains the refused text. Recorded here because the
+argument for changing it is easy to reconstruct and the tests that refute it are three files
+away.
+
+The sampler still matters to this gate, just not where I put it: a *shape* refusal does retry,
+and the seed derived from the attempt is what makes that second attempt different prose rather
+than the same bytes.
+
+### What it can get wrong, left reachable on purpose
+
+A legitimate recap is the false positive, and §49 names recaps as the mechanism behind long
+human spans. Nothing here tries to define "recap" — the operator's remedy already exists and is
+the one slice 9 built after walking the journey: dismiss the finding, revive the unit.
+Suppressing recaps by rule would need a definition this project does not have, and would be a
+guess wearing the threshold's authority — the thing the threshold above is careful not to be.
+
+### Two things this run of the journey surfaced that are not this gate's
+
+**The live run produced no duplicates at all**, which is why the in-loop behaviour above had to
+be driven deterministically rather than observed. Fourteen scenes on the same premise and the
+same model, maximum pairwise similarity **0.131**, no refusals, no findings — against five
+copies in thirty scenes on the first run. The books differ in length and in every derived seed,
+nothing was varied deliberately, and n is 1 against 1. **The gate is not the cause and must not
+be credited**: it refused nothing, because there was nothing to refuse. Whether duplication is
+a property of the run or of length past ~14 scenes is unmeasured, and the honest reading is
+that one run of each is not a comparison.
+
+**`decisions_for_job` is ordered by attempt, and `revive` resets the attempt counter**, so a
+post-revive acceptance is written at a *lower* attempt than the park that preceded it and
+`[-1]` is not the chronological last. Assert on the book, as
+`test_dismissing_the_finding_then_reviving_lets_the_beat_through` already does. Two things
+downstream of this are worth checking separately and were left alone here: the tick reported
+`JOB_PARKED` for the tick that accepted the scene and committed it, and the job row settled
+`parked` after its work succeeded. The prose landed correctly in both cases, so this is
+reporting rather than corruption — but "the operator surface says a unit needs attention when
+its work is done" is the shape §19.1 spends its list on, and it is a real item rather than a
+note.

@@ -525,6 +525,19 @@ def make_scene_draft_handler(
                 candidate=result.text,
                 records=stored_records + extracted,
                 plan_items=tuple(store.plan_items(str(book_id), str(branch_id))),
+                # **The rest of the book, so a scene can be compared against it.** Read off
+                # the base revision rather than the candidate's, because the candidate's does
+                # not exist yet — and taken in reading order and excluding this node, so a
+                # scene is never compared against itself. Without this
+                # `detect_duplicate_scene` runs on every draft and finds nothing, which is a
+                # detector that is present and inert: the shape §19.1 spends a paragraph on.
+                prior_prose=tuple(
+                    (node.logical_id, node.content)
+                    for node in revision.in_reading_order()
+                    if node.kind is NodeKind.SCENE
+                    and node.content
+                    and node.logical_id != logical_id
+                ),
                 ordinal=int(selected.get("ordinal", 0) or 0),
                 of_total=int(selected.get("of_total", 0) or 0),
             )
@@ -564,18 +577,6 @@ def make_scene_draft_handler(
                 ),
             )
 
-            if findings:
-                # Recorded whether or not they block. A minor finding dropped because it was
-                # not fatal is exactly the annotation §10.2 wants instrumented from Book Zero
-                # onward, and a queue that only remembers the fatal ones cannot show a trend.
-                store.record_findings(
-                    str(book_id),
-                    str(branch_id),
-                    findings,
-                    created_at=_timestamp(now),
-                    revision_id=revision_id,
-                )
-
         # **`accepted` is the whole ladder's verdict, not the shape gate's.** Kept as its own
         # name rather than by rewriting `outcome`, because `outcome.vetoes` is what the
         # refusal event reports and a rewritten outcome would report a candidate refused with
@@ -585,6 +586,30 @@ def make_scene_draft_handler(
         accepted = outcome.accepted and all(
             gate.passed for gate in gates if gate.blocking
         )
+
+        if findings:
+            # Recorded whether or not they block. A minor finding dropped because it was not
+            # fatal is exactly the annotation §10.2 wants instrumented from Book Zero onward,
+            # and a queue that only remembers the fatal ones cannot show a trend.
+            #
+            # **Recorded whether or not the candidate was accepted, too, and that is
+            # deliberate rather than incidental** — checked when a duplicate-scene refusal
+            # made it visible for the first time. A finding a refused candidate produced
+            # becomes *standing* against the beat, so the next attempt parks pre-flight and
+            # free instead of spending a second generation to rediscover it. Slice 9 measured
+            # that trade at 12 calls and 8,599 tokens before against 3 and 1,912 after, and
+            # `test_a_scene_contradicting_established_canon_is_refused_and_writes_nothing`
+            # pins the resulting tick sequence. The finding is node-scoped — "attempts at
+            # this beat keep producing this defect" — rather than a claim that the book
+            # contains the refused prose, and the operator's route past it is the one that
+            # already exists: dismiss, then revive.
+            store.record_findings(
+                str(book_id),
+                str(branch_id),
+                findings,
+                created_at=_timestamp(now),
+                revision_id=revision_id,
+            )
 
         verdict, reason = decide(
             gates,

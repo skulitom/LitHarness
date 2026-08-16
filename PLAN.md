@@ -1443,12 +1443,23 @@ scenes by choice, so the stage is **evidenced at 26k rather than met at 50k**; n
 run suggests the remaining scenes are a different problem, and §52 is the output the stage
 exists for.
 
-**Its headline is not what this section expected.** The dominant failure is **whole-scene
+**Its headline is not what this section expected.** The dominant failure was **whole-scene
 duplication that no gate refuses**: five of thirty scenes are near-copies of an earlier scene,
 the longest verbatim run is **872 words** against this project's previous machine worst of 59
 and a published-human maximum of 93, and all 31 decisions were ACCEPT with zero findings.
 `repeated_span` measured it and reported it in the annotation; §10.4 correctly forbids an
 uncalibrated craft gate from blocking, and it has no calibration.
+
+**Closed, by moving the check rather than by calibrating it** — see
+[plan/stage-0-decisions.md](plan/stage-0-decisions.md) §53. §10.4's bar governs claims about
+*quality*; "these 872 words appear in scene 6 and again in scene 11" is arithmetic over two
+strings, and `craft.py`'s own defence of the metric already said so. It is now
+`integrity.duplicate_scene.v0`, a deterministic detector in `IN_PROCESS`, blocking without a
+calibration exactly as `state.contradiction.v0` does. Replayed over the thirty accepted
+scenes it refuses those five and no others, agreeing exactly with an independent whole-scene
+similarity measure, and the golden fixtures produce nothing. The threshold sits above the
+93-word published-human maximum and inside a gap in the run's own distribution — nothing
+between 48 and 352 words — so it is placed rather than fitted and the choice is not delicate.
 
 **And the mechanism is upstream of generation.** `arc_template(30)` yields **25 `rising` beats
 of 30**, and the beat's title plus that one word is the entire plan-side instruction — so

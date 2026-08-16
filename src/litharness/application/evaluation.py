@@ -17,7 +17,12 @@ import litharness_contracts as lc
 
 from litharness.domain.events import payload_digest
 from litharness.domain.findings import DetectorInput, Finding
-from litharness.domain.integrity import CONTRADICTION_RULE, run_detectors
+from litharness.domain.integrity import (
+    CONTRADICTION_RULE,
+    DUPLICATE_RULE,
+    run_detectors,
+)
+from litharness.domain.nodes import NodeKind
 from litharness.domain.revision import Revision, node_version_id
 from litharness.domain.text import content_hash
 
@@ -92,20 +97,32 @@ class InProcessEvaluator:
             candidate=request.revision.node(request.logical_id).content,
             records=request.records,
             plan_items=request.plan_items,
+            # **Excluding this node, or every scene is a perfect copy of itself.** Unlike the
+            # draft handler, which compares a candidate against the base revision it is not
+            # yet part of, this evaluates a revision the scene is already *in* — so the
+            # exclusion is load-bearing rather than tidy, and a detector that found a
+            # 900-word self-overlap on every scene in the book would be worse than none.
+            prior_prose=tuple(
+                (node.logical_id, node.content)
+                for node in request.revision.in_reading_order()
+                if node.kind is NodeKind.SCENE
+                and node.content
+                and node.logical_id != request.logical_id
+            ),
         )
         findings = tuple(run_detectors(subject))
         material = payload_digest(
             {
                 "revision_id": request.revision.revision_id,
                 "logical_id": request.logical_id,
-                "rules": [CONTRADICTION_RULE],
+                "rules": [CONTRADICTION_RULE, DUPLICATE_RULE],
                 "findings": [finding.finding_id for finding in findings],
             }
         )
         return EvaluationRun(
             run_id=f"run-{sha256(material.encode()).hexdigest()[:24]}",
             findings=findings,
-            checked_rule_ids=(CONTRADICTION_RULE,),
+            checked_rule_ids=(CONTRADICTION_RULE, DUPLICATE_RULE),
         )
 
 

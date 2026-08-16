@@ -56,7 +56,11 @@ from litharness.domain.findings import (
 )
 from litharness.domain.integrity import (
     CONTRADICTION_RULE,
+    DUPLICATE_RULE,
+    DUPLICATE_SPAN_WORDS,
+    IN_PROCESS,
     detect_contradictions,
+    detect_duplicate_scene,
     gate_integrity,
     summarise,
 )
@@ -570,3 +574,146 @@ def test_findings_that_did_arrive_survive_a_partial_failure(tmp_path: Path) -> N
 def test_the_error_summary_collapses_one_problem_reported_six_times(tmp_path: Path) -> None:
     assert load_findings(errored_artifact(tmp_path)).summarise_errors().count(";") == 0
     assert "(x6)" in load_findings(errored_artifact(tmp_path)).summarise_errors()
+
+
+# -- duplicate scenes (the defect Book Zero drove through five times) ----------------------
+
+
+def _scene_text(seed: str, words: int = 200) -> str:
+    """Distinct prose of a given length, sharing no long run with another seed."""
+    return " ".join(f"{seed}{index}" for index in range(words))
+
+
+def test_a_scene_that_reproduces_an_earlier_one_is_refused() -> None:
+    """The failure the whole ladder missed.
+
+    Book Zero accepted thirty scenes with 31 ACCEPT decisions and zero findings, and five of
+    them were near-copies of an earlier scene — the longest sharing **872 consecutive words**
+    with scene 6. The shape gate counts characters; `detect_contradictions` reads state
+    records; `craft.repeated_span.v0` measured all five exactly and is forbidden to block
+    because §10.4 refuses an uncalibrated craft gate. The measurement was never the gap.
+    """
+    earlier = _scene_text("alpha", 400)
+    duplicate = _scene_text("alpha", 400)  # byte-identical
+
+    found = detect_duplicate_scene(
+        subject_for("litrpg", candidate=duplicate, prior_prose=(("scene-1", earlier),))
+    )
+    assert len(found) == 1
+    assert found[0].blocks and found[0].deterministic
+    assert found[0].rule_or_critic_id == DUPLICATE_RULE
+    # The evidence travels with the refusal — `repeated_span`'s rule, for its reason: a
+    # number that has to be interpreted gets interpreted, and a quote does not.
+    assert "scene-1" in found[0].message
+    assert "alpha0" in found[0].message
+
+
+def test_a_scene_that_merely_shares_a_phrase_is_not_refused() -> None:
+    """The other half of the mutation leg. A detector that fires on ordinary prose is not a
+    floor, it is a tax — §8.3's own words about the contradiction check, applied here."""
+    earlier = _scene_text("alpha", 400)
+    borrowed = " ".join(earlier.split()[:40])
+    fresh = f"{_scene_text('beta', 300)} {borrowed}"
+
+    assert (
+        detect_duplicate_scene(
+            subject_for("litrpg", candidate=fresh, prior_prose=(("scene-1", earlier),))
+        )
+        == []
+    ), "40 shared words is under the threshold and well under what published serials repeat"
+
+
+def test_the_threshold_sits_above_what_published_human_prose_does() -> None:
+    """§49 measured the longest verbatim cross-chapter span over 24 published RoyalRoad
+    serials: 93 words (undeclared 2025), 91 (declared-AI), 70 (pre-2023). Human authors write
+    recaps, epigraphs and quoted prophecies and repeat them exactly, so the threshold sits
+    above the largest span anybody has observed rather than at it. Pinned as a number because
+    lowering it below 93 would start refusing the mechanism that produces legitimate long
+    spans in human books."""
+    assert DUPLICATE_SPAN_WORDS > 93
+
+
+def test_the_golden_fixtures_produce_no_duplicate_finding() -> None:
+    """The negative-control leg, on human-authored books this system did not write.
+
+    Measured: the mystery fixture's worst cross-scene span is 17 words and the litrpg
+    fixture's is 0, against a threshold of 120. A check that fired on a conforming book could
+    not be turned on blocking without a calibration programme, which is exactly the argument
+    `state.contradiction.v0` had to make first.
+    """
+    for fixture_id in ("mystery", "litrpg"):
+        manuscript = lc.parse_artifact(
+            lc.ManuscriptRevision,
+            json.loads(fixture_manuscript(fixture_id).read_text(encoding="utf-8")),
+        )
+        scenes = [(node.logical_id, node.content) for node in manuscript.nodes if node.content]
+        for index, (logical_id, text) in enumerate(scenes):
+            found = detect_duplicate_scene(
+                subject_for(
+                    fixture_id,
+                    logical_id=logical_id,
+                    candidate=text,
+                    prior_prose=tuple(scenes[:index]),
+                )
+            )
+            assert found == [], f"{fixture_id} {logical_id}: {found and found[0].message}"
+
+
+def test_a_detector_with_no_book_to_compare_against_finds_nothing() -> None:
+    """The first scene of every book, and any caller that supplies no prior prose. Silence
+    here is correct rather than a miss, and it is asserted so that `prior_prose` defaulting
+    to empty cannot quietly make the detector inert everywhere."""
+    assert detect_duplicate_scene(subject_for("litrpg", candidate=_scene_text("solo"))) == []
+    assert detect_duplicate_scene(subject_for("litrpg", prior_prose=(("s1", "x"),))) == []
+
+
+def test_a_scene_is_never_compared_against_itself() -> None:
+    """Through the gate rather than the detector, because the exclusion lives at both call
+    sites and an evaluator judges a revision the scene is already *in* — so a missing
+    exclusion would report a 900-word self-overlap on every scene in the book."""
+    text = _scene_text("alpha", 400)
+    subject = subject_for(
+        "litrpg",
+        logical_id="scene-1",
+        candidate=text,
+        prior_prose=(("scene-2", _scene_text("beta", 400)),),
+    )
+    assert detect_duplicate_scene(subject) == []
+
+
+def test_the_duplicate_finding_maps_onto_a_retryable_veto() -> None:
+    """And the action is only correct because the sampler moved.
+
+    `vetoes_for` maps every blocking finding onto `CONTINUITY_BREACH`, which §4.2 classifies
+    `RETRYABLE`. That was the *wrong* action until recently: the prompt is frozen onto the job
+    payload, so under greedy decoding a retry regenerated the identical duplicate and spent
+    the attempt budget rediscovering it. With the seed derived from the attempt number a retry
+    is a genuinely different draft, so the refusal now buys a second chance rather than a
+    slower route to the same refusal.
+    """
+    earlier = _scene_text("alpha", 400)
+    found = detect_duplicate_scene(
+        subject_for("litrpg", candidate=earlier, prior_prose=(("scene-1", earlier),))
+    )
+    assert vetoes_for(found) == (Veto.CONTINUITY_BREACH,)
+    assert Veto.CONTINUITY_BREACH in RETRYABLE
+
+
+def test_a_rerun_over_the_same_duplicate_converges_to_one_finding() -> None:
+    """Content-derived ids, so the evaluation lane re-checking an accepted scene does not
+    grow the findings queue every tick."""
+    earlier = _scene_text("alpha", 400)
+    subject = subject_for("litrpg", candidate=earlier, prior_prose=(("scene-1", earlier),))
+    assert detect_duplicate_scene(subject)[0].finding_id == (
+        detect_duplicate_scene(subject)[0].finding_id
+    )
+
+
+def test_the_detector_is_in_the_loop_and_not_merely_written() -> None:
+    """`IN_PROCESS` is the extension point and the only thing that runs a detector.
+
+    This project's most repeated defect is a promise whose only caller is a test — §19.1
+    lists eleven of them and names the search term. A detector absent from this tuple is
+    exactly that shape, and would be invisible to every test that calls it directly.
+    """
+    assert detect_duplicate_scene in IN_PROCESS

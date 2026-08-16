@@ -53,6 +53,7 @@ from typing import Any
 import litharness_contracts as lc
 
 from litharness.domain import state as state_mod
+from litharness.domain.craft import longest_repeated_span
 from litharness.domain.findings import (
     DetectorInput,
     Finding,
@@ -146,10 +147,106 @@ def detect_contradictions(subject: DetectorInput) -> list[Finding]:
     return findings
 
 
-#: Detectors that run inside the loop. One, and it is the one no sibling can run — see the
-#: module docstring. The tuple is the extension point: a second in-process check is appended
-#: here, and an out-of-process pack arrives through `standing` instead.
-IN_PROCESS: tuple[Any, ...] = (detect_contradictions,)
+#: Rule id for the duplication check. Versioned like every other, because the threshold below
+#: is part of its arithmetic and a changed threshold is a changed rule.
+DUPLICATE_RULE = "integrity.duplicate_scene.v0"
+
+#: Words of verbatim overlap with an earlier accepted scene at which a candidate is refused.
+#:
+#: **Placed in an empty region of two independently measured distributions, which is the only
+#: reason a number this consequential is defensible without a calibration.**
+#:
+#: *Above what published human prose does.* §49 measured the longest verbatim cross-chapter
+#: span over 24 published RoyalRoad serials: **93 words** (undeclared 2025), 91 (declared-AI),
+#: 70 (pre-2023). Human authors write recaps, epigraphs and quoted prophecies and repeat them
+#: exactly, and that mechanism is what produces long *legitimate* spans — so the threshold
+#: sits above the largest one anybody has observed, with headroom, rather than at it.
+#:
+#: *Inside a gap in this system's own output.* Across Book Zero's 30 scenes the longest span
+#: each scene shares with any earlier one is bimodal with nothing in between: twenty-four
+#: scenes score 0-47 words and five score 353, 431, 700, 737 and 872. **No scene falls between
+#: 48 and 352**, so every threshold in that range separates the same five, and the choice is
+#: not delicate. The golden fixtures — human-authored — reach 17 (mystery) and 0 (litrpg).
+#:
+#: And the two methods agree. Whole-scene `difflib` similarity above 0.5 selects scenes 8, 11,
+#: 17, 18 and 22; this threshold selects scenes 8, 11, 17, 18 and 22. Two measures with
+#: nothing in common but the input picked the identical set.
+#:
+#: **It is a deterministic threshold and therefore needs no calibration, which is the whole
+#: reason this check lives here rather than in `craft`.** §10.4's bar governs claims about
+#: *quality*, which is why `craft.repeated_span.v0` measured all five of these and could
+#: refuse none of them. "These 872 words appear in scene 6 and again in scene 11" is not an
+#: opinion about whether the prose is good; it is arithmetic over two strings, and
+#: `craft.py`'s own defence of the metric says exactly that.
+DUPLICATE_SPAN_WORDS = 120
+
+
+def detect_duplicate_scene(subject: DetectorInput) -> list[Finding]:
+    """A candidate that reproduces an earlier accepted scene verbatim, at length.
+
+    **The defect Book Zero drove through five times while every gate said accept.** Thirty
+    scenes, 31 decisions, all ACCEPT, zero findings — and five of those scenes were near-copies
+    of an earlier one, the longest sharing 872 consecutive words with scene 6. Nothing in the
+    ladder could see it: the shape gate counts characters, the contradiction detector reads
+    state records, and `craft.repeated_span.v0` measured it exactly and is forbidden to block
+    because §10.4 refuses an uncalibrated craft gate. The measurement was never the gap.
+
+    **Why the refusal is a retry rather than an escalation, and why that only became true
+    recently.** `vetoes_for` maps every blocking finding onto `CONTINUITY_BREACH`, which
+    §4.2's ladder classifies `RETRYABLE` — the model wrote the wrong thing, so ask again. That
+    was the wrong action as recently as the sampler fix: the prompt is frozen onto the job
+    payload, so under greedy decoding a retry regenerated the identical duplicate and burned
+    the attempt budget rediscovering it. With the seed derived from the attempt number, attempt
+    *n* is a genuinely different draft, so a retry is now a real second chance rather than a
+    slower way to reach the same refusal.
+
+    **The false positive it can produce is a legitimate recap**, and it is left reachable
+    rather than engineered away. The operator's remedy already exists and is the one slice 9
+    built: dismiss the finding, revive the unit. Suppressing recaps by rule would need a
+    definition of "recap" this project does not have, and would be a guess wearing the
+    threshold's authority.
+    """
+    if not subject.candidate or not subject.prior_prose:
+        return []
+    span = longest_repeated_span(subject.candidate, dict(subject.prior_prose))
+    if span is None or span.words < DUPLICATE_SPAN_WORDS:
+        return []
+
+    claim = {
+        "words": span.words,
+        "at": span.at,
+        "source_logical_id": span.source_id,
+        "threshold": DUPLICATE_SPAN_WORDS,
+    }
+    quote = span.quote if len(span.quote) <= 200 else span.quote[:200] + "…"
+    return [
+        Finding(
+            finding_id=finding_id_for(DUPLICATE_RULE, subject.logical_id, claim),
+            category=lc.FindingCategory.REPETITION.value,
+            severity=Severity.MAJOR,
+            status=Status.OPEN,
+            subtype="duplicate_scene",
+            rule_or_critic_id=DUPLICATE_RULE,
+            logical_id=subject.logical_id,
+            confidence_basis=lc.ConfidenceBasis.DETERMINISTIC.value,
+            # The evidence travels with the refusal, for `repeated_span`'s reason: a number
+            # that has to be interpreted gets interpreted, and a quote does not.
+            message=(
+                f"{span.words} words of this scene appear verbatim in {span.source_id}, "
+                f"starting at word {span.at} (threshold {DUPLICATE_SPAN_WORDS}): {quote}"
+            ),
+            source={"claim": claim},
+        )
+    ]
+
+
+#: Detectors that run inside the loop. The tuple is the extension point: a second in-process
+#: check is appended here, and an out-of-process pack arrives through `standing` instead.
+#:
+#: `detect_duplicate_scene` is the second, and it is the first that reads prose rather than
+#: state. Both are checks no sibling can run — one because it needs the candidate's extracted
+#: records beside canon, the other because it needs the rest of the book this system wrote.
+IN_PROCESS: tuple[Any, ...] = (detect_contradictions, detect_duplicate_scene)
 
 
 def run_detectors(subject: DetectorInput) -> list[Finding]:
@@ -253,10 +350,13 @@ def summarise(findings: Sequence[Finding]) -> str:
 
 __all__ = [
     "CONTRADICTION_RULE",
+    "DUPLICATE_RULE",
+    "DUPLICATE_SPAN_WORDS",
     "INTEGRITY_GATE",
     "IN_PROCESS",
     "STANDING_GATE",
     "detect_contradictions",
+    "detect_duplicate_scene",
     "gate_integrity",
     "gate_standing",
     "run_detectors",

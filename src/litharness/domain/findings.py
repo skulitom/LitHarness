@@ -227,6 +227,19 @@ class DetectorInput:
     candidate: str | None = None
     records: tuple[lc.StateRecord, ...] = ()
     plan_items: tuple[lc.PlanItem, ...] = ()
+    #: `(logical_id, prose)` for the accepted scenes before this one, in reading order.
+    #:
+    #: **The first thing a detector may read that is not state.** Every check until now asked
+    #: whether the candidate contradicted what the book *records*; a scene that reproduces
+    #: another contradicts nothing — it is a defect visible only by comparing prose to prose.
+    #: Book Zero accepted five scenes that were near-copies of an earlier one, the longest
+    #: sharing 872 verbatim words, and no detector could see any of them because none had
+    #: ever been shown another scene's text.
+    #:
+    #: Empty by default, so a caller that has no book to compare against — an evaluation
+    #: replayed from an artifact, a store-local check — is unchanged rather than obliged to
+    #: assemble one.
+    prior_prose: tuple[tuple[str, str], ...] = ()
     #: Story position of the beat being drafted, for checks that only apply at the end.
     ordinal: int = 0
     of_total: int = 0

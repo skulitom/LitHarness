@@ -84,7 +84,7 @@ import gzip
 import json
 import re
 import statistics
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from functools import lru_cache
 from itertools import pairwise
@@ -358,6 +358,68 @@ def _span_tokens(text: str) -> tuple[list[str], list[str]]:
     return original, folded
 
 
+@dataclass(frozen=True, slots=True)
+class RepeatedSpan:
+    """The longest verbatim run one unit shares with a *named* other, and where it sits."""
+
+    words: int
+    #: Word offset of the run within the candidate.
+    at: int
+    quote: str
+    #: Which other unit the run also appears in. The half `repeated_span` cannot report.
+    source_id: str
+
+
+def longest_repeated_span(text: str, others: Mapping[str, str]) -> RepeatedSpan | None:
+    """The longest run of words `text` repeats from any of `others`, and which one.
+
+    **A second implementation beside `repeated_span`, and the duplication is deliberate.**
+    Two things differ, and both matter to a caller that refuses prose rather than annotating
+    it. It reports *which* unit the run came from, which a gate has to name in its refusal
+    and the metric's `Sequence[str]` cannot express. And it does not stop early: the metric
+    breaks at `_SPAN_CAP` because an annotation only needs to know the number is large, while
+    a gate comparing against a threshold must not report a capped value as the true one.
+
+    Folding `repeated_span` into this would have changed the shipped metric's arithmetic, and
+    this project's own rule is that changed arithmetic is a new metric id — `scene_echo`
+    moved to `.v1` for exactly that, because `promoted_gate` looks a calibration up by
+    `metric_id` and evidence recorded against old values applied to new arithmetic is a
+    silent inversion. `craft.repeated_span.v0` is left byte-identical.
+
+    Returns None when nothing reaches `_MIN_SPAN`, which is "no run that long" and not "no
+    repetition".
+    """
+    _, folded = _span_tokens(text)
+    original = _SYSTEM_BLOCK.sub("", text).split()
+    best = 0
+    best_at = 0
+    best_source = ""
+    for source_id, other in others.items():
+        _, other_folded = _span_tokens(other)
+        index: dict[tuple[str, ...], list[int]] = {}
+        for start in range(len(other_folded) - _MIN_SPAN + 1):
+            index.setdefault(tuple(other_folded[start : start + _MIN_SPAN]), []).append(start)
+        for position in range(len(folded) - _MIN_SPAN + 1):
+            for start in index.get(tuple(folded[position : position + _MIN_SPAN]), ()):
+                length = _MIN_SPAN
+                while (
+                    position + length < len(folded)
+                    and start + length < len(other_folded)
+                    and folded[position + length] == other_folded[start + length]
+                ):
+                    length += 1
+                if length > best:
+                    best, best_at, best_source = length, position, source_id
+    if not best:
+        return None
+    return RepeatedSpan(
+        words=best,
+        at=best_at,
+        quote=" ".join(original[best_at : best_at + best]),
+        source_id=best_source,
+    )
+
+
 def repeated_span(text: str, others: Sequence[str]) -> CraftMetric:
     """The longest run of words this scene repeats verbatim from another accepted scene.
 
@@ -391,6 +453,17 @@ def repeated_span(text: str, others: Sequence[str]) -> CraftMetric:
 
     Zero means no run of `_MIN_SPAN` words or longer, not "no repetition". Advisory like
     everything here: `craft_gates` marks it non-blocking and it carries no calibration.
+
+    **And something does refuse on this now, which is worth finding from here rather than by
+    accident.** Book Zero accepted five scenes reproducing an earlier one, the longest sharing
+    872 words, with this metric measuring every one of them exactly and unable to block —
+    §10.4 forbids an uncalibrated craft gate, correctly. The check that refuses them is
+    `integrity.detect_duplicate_scene`, and it lives there rather than here because §10.4's
+    bar governs claims about *quality*: the paragraph three above is the argument, and it
+    applies to a gate as well as to a metric. This function is unchanged and still reports the
+    number on every scene, including the ones the detector passes. `longest_repeated_span` is
+    the exact, labelled variant the detector uses; see its docstring for why it is a second
+    implementation rather than a refactor of this one.
     """
     _, folded = _span_tokens(text)
     index: dict[tuple[str, ...], list[tuple[int, list[str]]]] = {}
@@ -699,11 +772,13 @@ __all__ = [
     "PROFILE_PATH",
     "REFERENCE_COHORT",
     "CraftMetric",
+    "RepeatedSpan",
     "band_chapters",
     "band_for",
     "craft_gates",
     "dialogue_ratio",
     "load_profile",
+    "longest_repeated_span",
     "measure",
     "opening_shape_repetition",
     "percentile_of",
