@@ -39,6 +39,7 @@ from __future__ import annotations
 import json
 from collections.abc import Mapping, Sequence
 from datetime import UTC, datetime
+from itertools import pairwise
 from typing import Any
 
 import litharness_contracts as lc
@@ -47,6 +48,7 @@ from litharness.application.conductor import JobHandler
 from litharness.application.plan_refinement import accept_plan_proposal
 from litharness.application.policy_events import policy_decision_event
 from litharness.application.ports import OutlineStore, TextGenerator
+from litharness.domain import state as state_mod
 from litharness.domain.beats import Beat, beats_for, template_for
 from litharness.domain.budget import BudgetPolicy
 from litharness.domain.budget import check as budget_check
@@ -98,7 +100,7 @@ class OutlineOutputError(Exception):
 OUTLINE_SCHEMA: dict[str, Any] = {
     "type": "object",
     "additionalProperties": False,
-    "required": ["summary", "rationale", "expected_outcome", "scenes"],
+    "required": ["summary", "rationale", "expected_outcome", "scenes", "milestones"],
     "properties": {
         "summary": {"type": "string"},
         "rationale": {"type": "string"},
@@ -112,6 +114,23 @@ OUTLINE_SCHEMA: dict[str, Any] = {
                 "properties": {
                     "ordinal": {"type": "integer"},
                     "statement": {"type": "string"},
+                },
+            },
+        },
+        # The progression schedule, asked for in the same call. §15: the per-invocation
+        # harness tax is larger than the payload, so multiple asks fold into one invocation
+        # rather than chaining calls that each re-pay it — and the model is already holding
+        # the premise and the whole beat sheet, which is what a schedule must be consistent
+        # with.
+        "milestones": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "additionalProperties": False,
+                "required": ["ordinal", "state"],
+                "properties": {
+                    "ordinal": {"type": "integer"},
+                    "state": {"type": "object"},
                 },
             },
         },
@@ -132,7 +151,11 @@ def outline_job_id(book_id: str, branch_id: str, epoch: int) -> str:
 
 
 def render_outline_request(
-    premise: str, beats: Sequence[Beat], *, base: PlanRevision
+    premise: str,
+    beats: Sequence[Beat],
+    *,
+    base: PlanRevision,
+    seed: Mapping[str, Any] | None = None,
 ) -> CompletionRequest:
     """Freeze the premise and the whole beat sheet into one structured-output request.
 
@@ -143,6 +166,11 @@ def render_outline_request(
         {
             "premise": premise,
             "base_plan_revision_id": base.plan_revision_id,
+            # The book's own starting numbers, so the schedule is expressed in the game
+            # system this book actually has rather than one the model invents. Absent for a
+            # book that does not speak system voice, and then no schedule is asked for — a
+            # stat block in a locked-room mystery is not a smaller error than a missing one.
+            "starting_state": dict(seed) if seed else None,
             "scenes": [
                 {
                     "ordinal": beat.ordinal,
@@ -162,7 +190,22 @@ def render_outline_request(
                 "Respect the dramatic function given for each scene.",
                 "Later scenes must build on earlier ones rather than repeat them: nothing may "
                 "be obtained, revealed, or resolved twice.",
-            ],
+            ]
+            + (
+                [
+                    "Also return milestones: what starting_state should have become by the "
+                    "end of certain scenes.",
+                    "Use only the keys starting_state already has. Do not invent statistics.",
+                    "The numbers must actually move. A schedule where every milestone "
+                    "repeats the starting values plans a book in which nothing changes.",
+                    "Place four to eight milestones, spread across the book, at scenes where "
+                    "the statement you wrote would plausibly change them.",
+                    "Costs as well as gains: this is a debt story, so spending and losing "
+                    "are progression too.",
+                ]
+                if seed
+                else []
+            ),
         },
         ensure_ascii=False,
         sort_keys=True,
@@ -232,6 +275,133 @@ def _statements(payload: Mapping[str, Any], expected: int) -> list[str]:
         )
     return ordered
 
+
+def _milestones(
+    payload: Mapping[str, Any], beats: Sequence[Beat], seed: Mapping[str, Any]
+) -> list[tuple[Beat, dict[str, float]]]:
+    """The schedule as (beat, state) pairs, or a refusal naming what was wrong.
+
+    **The check that is about the defect: a schedule may not schedule stasis.** §52 measured
+    31 extracted status records across thirty scenes holding **two** distinct ledger states —
+    gold moved once in scene 1 and nothing moved again. A schedule whose milestones all equal
+    the seed would reproduce that exactly while looking like a fix, so at least one milestone
+    has to differ from the starting sheet and consecutive milestones may not be identical.
+    This is `_statements`' distinctness rule applied to the numbers.
+
+    **The keys are the seed's and no others.** A model free to invent stats would add an `xp`
+    or a `stamina` the book's canon has never held, and `render_status_line` would then ask
+    every scene for a field the extractor cannot read back — inventing a game system rather
+    than scheduling the one the book has. `progression_target` refuses to interpolate a curve
+    for the same reason: its shape is the author's choice, not this module's.
+
+    Milestones are placed at beats, so a template that cannot say where its scenes sit in
+    story time gets no schedule rather than an invented one — `story_order_key` is `None`
+    exactly when the sheet is not entitled to answer.
+    """
+    raw = payload.get("milestones")
+    if not isinstance(raw, list) or not raw:
+        raise OutlineOutputError("outline carries no progression schedule")
+    by_ordinal = {beat.ordinal: beat for beat in beats}
+    numeric_seed = {
+        key: value for key, value in seed.items() if isinstance(value, int | float)
+    }
+    if not numeric_seed:
+        raise OutlineOutputError(
+            "the starting sheet holds no numeric state to schedule"
+        )
+
+    out: list[tuple[Beat, dict[str, float]]] = []
+    seen: set[int] = set()
+    for entry in raw:
+        if not isinstance(entry, Mapping):
+            raise OutlineOutputError("each milestone must be an object")
+        ordinal = entry.get("ordinal")
+        state = entry.get("state")
+        if not isinstance(ordinal, int) or isinstance(ordinal, bool):
+            raise OutlineOutputError(f"milestone ordinal {ordinal!r} is not an integer")
+        if ordinal not in by_ordinal:
+            raise OutlineOutputError(
+                f"milestone names scene {ordinal}, which does not exist"
+            )
+        if ordinal in seen:
+            raise OutlineOutputError(f"scene {ordinal} carries more than one milestone")
+        if not isinstance(state, Mapping) or not state:
+            raise OutlineOutputError(f"milestone at scene {ordinal} carries no state")
+        unknown = sorted(set(state) - set(numeric_seed))
+        if unknown:
+            raise OutlineOutputError(
+                f"milestone at scene {ordinal} invents {unknown}; the sheet holds "
+                f"{sorted(numeric_seed)} and a schedule may not add to it"
+            )
+        values: dict[str, float] = {}
+        for key, value in state.items():
+            if isinstance(value, bool) or not isinstance(value, int | float):
+                raise OutlineOutputError(
+                    f"milestone at scene {ordinal} sets {key} to {value!r}, "
+                    "which is not a number"
+                )
+            # **The number's own type is kept.** Coercing to float put `Gold 4.0` into the
+            # rendered status line, and the line is what the generator is asked to write and
+            # the extractor reads back — so a float here would have every scene writing a
+            # decimal into a ledger whose canon holds integers.
+            values[str(key)] = value
+        beat = by_ordinal[ordinal]
+        if beat.story_order_key is None:
+            raise OutlineOutputError(
+                f"scene {ordinal} has no story position, so a milestone cannot be placed "
+                "there; the beat sheet does not claim to run forwards"
+            )
+        seen.add(ordinal)
+        out.append((beat, values))
+
+    out.sort(key=lambda pair: pair[0].ordinal)
+    merged = [{**numeric_seed, **values} for _, values in out]
+    if all(state == dict(numeric_seed) for state in merged):
+        raise OutlineOutputError(
+            "every milestone restates the starting sheet; a schedule that schedules stasis "
+            "is the frozen ledger it exists to end"
+        )
+    for earlier, later in pairwise(merged):
+        if earlier == later:
+            raise OutlineOutputError(
+                "two consecutive milestones are identical; a schedule with a flat stretch "
+                "tells those scenes to change nothing"
+            )
+    return out
+
+
+def milestone_records(
+    schedule: Sequence[tuple[Beat, Mapping[str, float]]],
+    *,
+    subject: str,
+    seed: Mapping[str, Any],
+) -> list[lc.StateRecord]:
+    """The schedule as `PROPOSED` state records — the shape the system already has.
+
+    `PROPOSED` is what makes this safe and is why no new storage was needed: `state.is_canon`
+    excludes it, so the context packet never hands a milestone to a scene as established fact
+    and `detect_contradictions` never weighs one against what the prose says. It informs
+    generation and contaminates nothing — which is the property `progression_target` was
+    written against and had no producer to exercise.
+
+    Record ids are derived from the story position, so a re-run converges instead of
+    accumulating a second schedule beside the first.
+    """
+    numeric_seed = {
+        key: value for key, value in seed.items() if isinstance(value, int | float)
+    }
+    return [
+        lc.StateRecord(
+            record_id=f"milestone-{beat.story_order_key}",
+            kind=lc.StateRecordKind.ASSERTION,
+            subject=subject,
+            predicate="status_snapshot",
+            value={**numeric_seed, **dict(values)},
+            authority=lc.StateAuthority.PROPOSED,
+            story_position=lc.StoryPosition(order_key=str(beat.story_order_key)),
+        )
+        for beat, values in schedule
+    ]
 
 def outline_proposal(
     payload: Mapping[str, Any],
@@ -453,7 +623,22 @@ def make_outline_handler(
             )
             return ()
 
-        request = render_outline_request(premise, beats, base=base)
+        # The book's canon starting sheet, if it has one. `speaks_system_voice` is the same
+        # question `render_prompt` asks before requesting a status line, and asking it the
+        # same way here is what keeps a mystery from being given a level curve.
+        canon = list(store.state_records(book_id, branch_id))
+        seed_record = next(
+            (
+                record
+                for record in canon
+                if record.predicate == "status_snapshot"
+                and state_mod.is_canon(record)
+                and isinstance(record.value, Mapping)
+            ),
+            None,
+        )
+        seed = dict(seed_record.value) if seed_record is not None else {}
+        request = render_outline_request(premise, beats, base=base, seed=seed or None)
         day = stamp[:10]
         provider, _ = registry.resolve(request.call_class)
         verdict = budget_check(
@@ -514,6 +699,11 @@ def make_outline_handler(
                 branch_id=branch_id,
                 result=result,
             )
+            # Validated with the outline, so a schedule that plans stasis refuses the whole
+            # answer rather than landing beside a good outline. One call, one verdict.
+            schedule = (
+                _milestones(result.parsed, beats, seed) if seed else []
+            )
             preview = apply_plan_proposal(base, proposal)
         except (OutlineOutputError, PlanProposalError, TypeError, ValueError) as error:
             # RETRY rather than escalate: the request is unchanged and a second draw of a
@@ -565,6 +755,21 @@ def make_outline_handler(
                     actor=result.provider,
                 ),
             )
+
+        # **After the plan, never before.** A refused outline must leave nothing behind, and
+        # a schedule without the statements it was written against is a book planned twice
+        # over by two different answers. `record_state_records` is INSERT OR IGNORE on the
+        # derived record id, so a replayed job converges rather than accumulating a second
+        # schedule beside the first.
+        if schedule and seed_record is not None:
+            store.record_state_records(
+                book_id,
+                branch_id,
+                milestone_records(
+                    schedule, subject=seed_record.subject, seed=seed
+                ),
+                created_at=stamp,
+            )
         return ()
 
     return handle
@@ -578,6 +783,7 @@ __all__ = [
     "TARGET_WORDS",
     "OutlineOutputError",
     "make_outline_handler",
+    "milestone_records",
     "outline_job_id",
     "outline_proposal",
     "render_outline_request",

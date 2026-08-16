@@ -181,6 +181,19 @@ class StateRepository(Protocol):
         before: str | None = ...,
     ) -> list[lc.StateRecord]: ...
 
+
+class StateWriter(Protocol):
+    def record_state_records(
+        self,
+        book_id: str,
+        branch_id: str,
+        records: Sequence[lc.StateRecord],
+        *,
+        created_at: str,
+        source_revision_id: str | None = ...,
+        events: Sequence[Event] = ...,
+    ) -> int: ...
+
 class AuditRepository(Protocol):
     def audit_samples(self, *, pending_only: bool = ...) -> list[AuditSample]: ...
 
@@ -276,6 +289,8 @@ class OutlineStore(
     PlanReader,
     PlanWriter,
     DecisionRepository,
+    StateRepository,
+    StateWriter,
     OperationsRepository,
     Protocol,
 ):

@@ -2465,3 +2465,77 @@ from every later one. A rest long enough to unload the model would therefore inj
 warm-up artifact into the measurement once per rest, on a schedule set by how hot the room is.
 `OLLAMA_KEEP_ALIVE=30m` keeps it resident; a loaded idle model costs VRAM and about 30W, so
 the fix is thermally free and the experiment stays comparable across pauses.
+
+## 55. The progression schedule had a reader, a consumer and no writer
+
+§52's third taxonomy entry was the ledger: 31 extracted status records across thirty scenes
+holding **two** distinct states. Gold moved once in scene 1 and nothing moved again, in either
+arm of §54.1 — the outline says what *happens* and nothing said what the *numbers* do.
+
+**The blocker this carried was stale, and checking it is the whole lesson.** §20.6 recorded
+that a progression schedule is blocked because it "references a level curve that only exists
+once the game-mechanics pack defines the sheet, and the litrpg fixture contains no XP figure,
+no level curve and no milestones". Every word of that is about the **fixture**. Stage 3 books
+are not imported from it — they come from `litharness new` with an authored seed sheet, and
+Book Zero's was written by hand for that run. A schedule is authorable by exactly the same
+route, and generatable by the route §54 had just built.
+
+What was actually missing was one link, and it is the shape §19.1 says to search for:
+
+    domain/extraction.py::progression_target   reads a schedule           exists since §46
+    application/planner.py                     passes it to the prompt    wired
+    application/planner.py::render_prompt      puts it in the system      wired
+    nothing anywhere                           writes a milestone         MISSING
+
+**A complete measuring instrument with nothing to measure** — `domain/impact.py`'s defect
+exactly, the one §19.1 records as having made a Stage 2 exit criterion read as satisfied by a
+scorer that could only ever report on an engine which did not exist. `progression_target` has
+been able to answer since §46 and has answered `None` every time it was asked.
+
+**Asked for in the outline call, not a second one.** §15 measures the per-invocation harness
+tax as larger than the payload and says asks fold into one invocation; the model is already
+holding the premise and the whole beat sheet, which is what a schedule has to be consistent
+with. One call, one verdict: a schedule that fails validation refuses the outline too, rather
+than landing beside a good one.
+
+**Three refusals, and the first is the one that is about the defect.**
+
+*A schedule may not schedule stasis.* If every milestone restates the starting sheet it
+reproduces §52 exactly while looking like a fix, so it is refused — and so is any pair of
+consecutive milestones that are identical, which tells the scenes between them to change
+nothing. This is `_statements`' distinctness rule applied to the numbers.
+
+*A schedule may not invent a statistic.* A model free to add an `xp` the book has never held
+would have `render_status_line` asking every scene for a field the extractor cannot read back
+— inventing a game system rather than scheduling the one the book has. `progression_target`
+refuses to interpolate a curve for the same reason: the shape of one is the author's choice.
+
+*A milestone is placed where the sheet says the scene sits*, never at an invented position.
+`story_order_key` is `None` exactly when the template is not entitled to answer, and then the
+book gets no schedule rather than a guessed one.
+
+**`PROPOSED`, which is why this needed no new storage.** `is_canon` excludes it, so the
+context packet never hands a milestone to a scene as established fact and
+`detect_contradictions` never weighs one against what the prose says. It informs generation
+and contaminates nothing — the property §46 designed and had no producer to exercise.
+
+**A book that does not speak system voice gets no schedule**, decided by the same question
+`render_prompt` already asks before requesting a status line, so a locked-room mystery is not
+handed a level curve.
+
+**One defect the tests caught, and it would have reached the page.** Coercing milestone values
+to `float` put `Gold 4.0` into the rendered status line — and that line is what the generator
+is asked to write and what the extractor reads back, so every scene would have been writing a
+decimal into a ledger whose canon holds integers. The number's own type is kept.
+
+Measured on the live model, one call, `phi4`: four milestones at s03, s11, s18 and s27, gold
+rising 12 → 20 → 25 → 30 → 40 while HP falls 18 → 10 and MP 4 → 0. A debt story that earns and
+is worn down, which is progression in the direction the premise asks for.
+
+**What this does not establish, and the distinction matters.** The mechanism writes a schedule
+and the loop reads it. Whether the *extracted* ledger then moves is a different question —
+that depends on a generator following an instruction, which is the thing §51.1 found this
+project had assumed twice without sending. **Level stays at 1 across all four milestones**
+against a premise that names a level cap, so even the schedule this run produced is not the
+schedule the book wants. The measurement is a drafted book with more than two distinct
+extracted states, and it is not in hand.

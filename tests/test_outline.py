@@ -20,7 +20,9 @@ from litharness.application.outline import (
     BOOK_OUTLINE,
     OUTLINE_PRIORITY,
     OutlineOutputError,
+    _milestones,
     make_outline_handler,
+    milestone_records,
     outline_job_id,
     outline_proposal,
     render_outline_request,
@@ -598,3 +600,204 @@ def test_the_control_arm_is_reachable_through_the_operator_surface(
     assert selected.job_kind != BOOK_OUTLINE, "no statement is planned"
     # And the book still drafts: the control arm is a degraded book, never a stalled one.
     assert "This scene:" not in str(selected.payload["prompt"])
+
+
+# -- the progression schedule (§52's third taxonomy entry) ---------------------------------
+
+SEED = {"level": 1, "hp": 18, "hp_max": 18, "mp": 4, "mp_max": 4, "gold": 12}
+
+
+def seeded_book(store: SqliteStore, scenes: int = 12):  # type: ignore[no-untyped-def]
+    revision = a_book(store, scenes=scenes)
+    store.record_state_records(
+        BOOK_ID,
+        BRANCH_ID,
+        [
+            lc.StateRecord(
+                record_id="rec-seed",
+                kind=lc.StateRecordKind.ASSERTION,
+                subject="kestrel",
+                predicate="status_snapshot",
+                value=dict(SEED),
+                authority=lc.StateAuthority.ACCEPTED_CANON,
+            )
+        ],
+        created_at="2026-08-16T00:00:00Z",
+    )
+    return revision
+
+
+def with_schedule(count: int, milestones: list[dict] | None = None) -> dict:
+    payload = payload_for(count)
+    payload["milestones"] = milestones if milestones is not None else [
+        {"ordinal": 3, "state": {"gold": 4}},
+        {"ordinal": 7, "state": {"level": 2, "hp_max": 24, "gold": 9}},
+        {"ordinal": 11, "state": {"level": 3, "hp": 12, "gold": 2}},
+    ]
+    return payload
+
+
+def test_a_schedule_that_schedules_stasis_is_refused() -> None:
+    """The check that is about §52's third entry rather than about the schema.
+
+    Thirty scenes produced 31 status records holding **two** distinct ledger states: gold
+    moved once in scene 1 and nothing moved again. A schedule whose milestones all restate
+    the starting sheet would reproduce exactly that while looking like a fix — so it is
+    refused, for the same reason an outline that repeats itself is.
+    """
+    revision = new_book(BOOK_ID, BRANCH_ID, title="Book", scenes=12)
+    beats = beats_for(revision, arc_template(12))
+    flat = [{"ordinal": n, "state": {"gold": SEED["gold"]}} for n in (3, 7, 11)]
+
+    with pytest.raises(OutlineOutputError, match="stasis"):
+        _milestones(with_schedule(12, flat), beats, SEED)
+
+
+def test_a_flat_stretch_between_milestones_is_refused() -> None:
+    """Two consecutive milestones that are identical tell the scenes between them to change
+    nothing, which is the frozen ledger at a smaller scale."""
+    revision = new_book(BOOK_ID, BRANCH_ID, title="Book", scenes=12)
+    beats = beats_for(revision, arc_template(12))
+    repeated = [
+        {"ordinal": 3, "state": {"gold": 4}},
+        {"ordinal": 7, "state": {"gold": 4}},
+        {"ordinal": 11, "state": {"level": 3}},
+    ]
+    with pytest.raises(OutlineOutputError, match="consecutive"):
+        _milestones(with_schedule(12, repeated), beats, SEED)
+
+
+def test_a_schedule_may_not_invent_a_statistic() -> None:
+    """A model free to add an `xp` the book's canon has never held would have
+    `render_status_line` asking every scene for a field the extractor cannot read back —
+    inventing a game system rather than scheduling the one the book has."""
+    revision = new_book(BOOK_ID, BRANCH_ID, title="Book", scenes=12)
+    beats = beats_for(revision, arc_template(12))
+    invented = [{"ordinal": 5, "state": {"xp": 400, "stamina": 3}}]
+    with pytest.raises(OutlineOutputError, match="invents"):
+        _milestones(with_schedule(12, invented), beats, SEED)
+
+
+def test_costs_count_as_progression() -> None:
+    """A debt story progresses by spending as well as by gaining, so a milestone that only
+    lowers a number is a real milestone. Asserted because a check written as "the numbers go
+    up" would refuse the book this system is being built for."""
+    revision = new_book(BOOK_ID, BRANCH_ID, title="Book", scenes=12)
+    beats = beats_for(revision, arc_template(12))
+    spending = [
+        {"ordinal": 4, "state": {"gold": 6}},
+        {"ordinal": 9, "state": {"gold": 0, "hp": 11}},
+    ]
+    schedule = _milestones(with_schedule(12, spending), beats, SEED)
+    assert [beat.ordinal for beat, _ in schedule] == [4, 9]
+
+
+def test_milestones_are_proposed_and_therefore_cannot_reach_a_packet() -> None:
+    """The property that makes a schedule safe and the reason it needed no new storage.
+
+    `is_canon` excludes `PROPOSED`, so the context packet never hands a milestone to a scene
+    as established fact and `detect_contradictions` never weighs one against the prose. It
+    informs generation and contaminates nothing.
+    """
+    from litharness.domain import state as state_mod
+
+    revision = new_book(BOOK_ID, BRANCH_ID, title="Book", scenes=12)
+    beats = beats_for(revision, arc_template(12))
+    schedule = _milestones(with_schedule(12), beats, SEED)
+    records = milestone_records(schedule, subject="kestrel", seed=SEED)
+
+    assert records
+    for record in records:
+        assert record.authority is lc.StateAuthority.PROPOSED
+        assert not state_mod.is_canon(record)
+        assert record.story_position is not None
+        # The seed's keys carried forward, so a milestone is a whole sheet rather than a diff
+        # the extractor would have to merge.
+        assert set(record.value) == set(SEED)
+
+
+def test_a_milestone_is_placed_where_the_sheet_says_the_scene_sits() -> None:
+    """Never at an invented position. `story_order_key` is `None` exactly when the template
+    is not entitled to say, and a schedule refuses rather than guessing."""
+    from dataclasses import replace as dc_replace
+
+    revision = new_book(BOOK_ID, BRANCH_ID, title="Book", scenes=12)
+    beats = beats_for(revision, arc_template(12))
+    schedule = _milestones(with_schedule(12), beats, SEED)
+    records = milestone_records(schedule, subject="kestrel", seed=SEED)
+    assert [r.story_position.order_key for r in records] == [
+        beat.story_order_key for beat, _ in schedule
+    ]
+
+    unplaced = [dc_replace(beat, story_order_key=None) for beat in beats]
+    with pytest.raises(OutlineOutputError, match="no story position"):
+        _milestones(with_schedule(12), unplaced, SEED)
+
+
+def test_the_handler_writes_a_schedule_the_planner_can_already_read(
+    store: SqliteStore,
+) -> None:
+    """End to end into the function that had no producer.
+
+    `progression_target` has been able to read a schedule since §46 and nothing anywhere
+    wrote one — a complete measuring instrument with nothing to measure, which §19.1 names as
+    the shape to search for. This is the producer.
+    """
+    from litharness.domain.extraction import progression_target
+
+    seeded_book(store, scenes=12)
+    planner = StubPlanner(with_schedule(12))
+    make_outline_handler(planner, store, PROJECT_ID)(_job(store), START)
+
+    records = store.state_records(BOOK_ID, BRANCH_ID)
+    milestones = [r for r in records if r.record_id.startswith("milestone-")]
+    assert len(milestones) == 3
+
+    # And the loop can read it: a scene early in the book aims at the next milestone.
+    target = progression_target(records, at="s01")
+    assert target is not None
+    # Integers, not floats: the status line is what the generator writes and the extractor
+    # reads back, and a canon ledger of integers must not be scheduled in decimals.
+    assert "Gold 4" in target and "4.0" not in target
+
+
+def test_a_book_that_does_not_speak_system_voice_gets_no_schedule(
+    store: SqliteStore,
+) -> None:
+    """A stat block in a locked-room mystery is not a smaller error than a missing one, so
+    the schedule is asked for only where the book already states its state on the page — the
+    same question `render_prompt` asks before requesting a status line."""
+    a_book(store, scenes=12)  # no canon status snapshot
+    planner = StubPlanner(payload_for(12))  # and no milestones in the answer
+    make_outline_handler(planner, store, PROJECT_ID)(_job(store), START)
+
+    records = store.state_records(BOOK_ID, BRANCH_ID)
+    assert [r for r in records if r.record_id.startswith("milestone-")] == []
+    assert "starting_state" in str(planner.requests[0].prompt)  # type: ignore[attr-defined]
+    assert "milestones" not in str(planner.requests[0].prompt).split("rules")[-1]
+
+
+def test_a_refused_outline_writes_no_schedule(store: SqliteStore) -> None:
+    """A schedule without the statements it was written against is a book planned twice over
+    by two different answers, so the milestones land after the plan or not at all."""
+    seeded_book(store, scenes=12)
+    repeated = list(DISTINCT[:12])
+    repeated[4] = repeated[1]
+    payload = with_schedule(12)
+    payload["scenes"] = payload_for(12, statements=repeated)["scenes"]
+
+    make_outline_handler(StubPlanner(payload), store, PROJECT_ID)(_job(store), START)
+
+    records = store.state_records(BOOK_ID, BRANCH_ID)
+    assert [r for r in records if r.record_id.startswith("milestone-")] == []
+
+
+def test_running_the_outline_twice_writes_one_schedule(store: SqliteStore) -> None:
+    """Derived record ids, so a replayed job converges rather than accumulating a second
+    schedule beside the first."""
+    seeded_book(store, scenes=12)
+    handle = make_outline_handler(StubPlanner(with_schedule(12)), store, PROJECT_ID)
+    handle(_job(store), START)
+    handle(_job(store), START + 1)
+    records = store.state_records(BOOK_ID, BRANCH_ID)
+    assert len([r for r in records if r.record_id.startswith("milestone-")]) == 3
