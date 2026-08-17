@@ -112,11 +112,27 @@ That is a usable label available today, at a scale no session will ever reach.
 
 ## 4. Research directions, with what each is and is not valid for
 
-### 4.1 Calibrate proxies against revealed preference — *viable now*
+### 4.1 Calibrate proxies against revealed preference — ~~*viable now*~~ *run, and the label did not survive its own control*
 
 Score chapters with a candidate proxy; test whether it separates high-conversion from
 low-conversion stories on held-out data, stratified by tag set, era, and length, and matched
 within author where possible.
+
+**Run 2026-08-17, and the result is a refusal rather than a calibration
+([plan/stage-0-decisions.md](plan/stage-0-decisions.md) §56.3).** 354 LitRPG stories, top
+against bottom conversion decile, permuted-label null in the same pass: the best
+prose-reading metric sits *inside* its null band, while **`followers` alone separates the
+deciles at AUC 0.814**. Stratifying within follower bands is the only rescue and it fails —
+pooled 0.36–0.59, per-band values swinging 0.41 / 0.76 / 0.55. §3's "ρ = 0.438 against raw
+followers, so it is not popularity restated" holds across the middle of the distribution and
+**does not survive a decile split**, which is precisely where §4.4 proposes to select the
+reference corpus. And `tricolon_rate` separates the era (0.644) better than the reader
+(0.552): §2's lesson, now against the engagement label.
+
+This refutes the label at story-decile grain *with these five counting instruments*; it does
+not prove a §4.3 critic would fail, since a critic reads what counters cannot. What it fixes
+is the control. **Any critic scored against conversion must beat `followers` at 0.814, not
+chance at 0.500, and must say so before it is run.**
 
 - **Validity:** this is §1a.4's ground truth, revealed rather than solicited. It supplies
   exactly the evidence `domain/calibration.py::promoted_gate` refuses to promote without —

@@ -942,6 +942,19 @@ mechanical calls (extraction, gate feedback, summaries, status-block rendering)
 route to Ollama even in production, and multiple asks fold into one invocation
 rather than chaining calls that each re-pay the tax.
 
+**Two amendments from the first frontier run, measured
+([plan/stage-0-decisions.md](plan/stage-0-decisions.md) §56.1).** The "tens of dollars"
+above is scoped to a *100k-word draft at API-key pricing* and had been read as a reason not
+to run a frontier arm at all. `ClaudeCodeProvider` passes no credential — it inherits the
+local `claude` install's auth — so on a subscription that figure is quota rather than money,
+and `DEFAULT_ORDER` puts `claude_code` first with `generation` deliberately outside
+`CHEAP_CALL_CLASSES`: **the frontier arm is the unflagged default, and every run in the
+decision log needed `--prefer ollama` to avoid it.** And one cost is missing from the model
+entirely: `Conductor.tick` clears the health cache every tick, each cron tick is a fresh
+process, and `ClaudeCodeProvider.health()` is a real billed round trip — measured $0.3386
+cold — that passes neither `budget_check` nor any recorded decision, so no ceiling can see
+it.
+
 ## 16. Serial publication
 
 LitRPG's native form is serialized chapters (Royal Road cadence), so serialization

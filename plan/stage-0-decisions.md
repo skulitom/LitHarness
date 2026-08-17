@@ -2582,3 +2582,210 @@ ignore one".
 
 Two beats parked to the duplicate gate, so the book drafted 28 of 30 — unremarkable at this
 point and noted so the scene count is not read as a new failure.
+
+## 56. Forty-nine draws, and not one number that was not already on the page
+
+§55.1 named the next experiment and named it precisely: hold the schedule fixed, vary the
+progression clause, three draws per arm, count distinct extracted states. It has been run, and the
+result does not support the section that asked for it. **The clause was never the variable.**
+
+**Run as one scene rather than as five books, and the design is the reason the answer is
+readable.** §55.1's own metric is distinct states across a thirty-scene book, which is a GPU-hour
+per draw and cannot separate the wording from the thirty other things that vary across a book. The
+instruction's effect is a per-scene question, so a real ten-scene prefix was drafted once on
+`phi4:latest` (280 seconds) and scene 11 was then drawn ten times per arm from a byte-identical
+checkpoint — same packet, same status example, same milestone, same scene plan, same sampler, same
+seed sequence. `A_current` is asserted byte-identical to `render_prompt` at run time, so the
+control arm is the shipped system rather than a paraphrase of it, and `Z_none` is asserted
+identical to `progression=None`. The checkpoint:
+
+    current    [STATUS] rook — Level 1 | HP 15/18 | MP 6/4 | Gold 25
+    milestone  [STATUS] rook — Level 1 | HP  5/18 | MP 2/4 | Gold 30   (at s17, six scenes ahead)
+
+Five arms: the no-clause control, the shipped wording, the hedges removed, the milestone as a
+commitment this scene helps land, and one naming what the movement is *for* — §51.1's shape, the
+one that beat a bare instruction on length. Measured, `phi4:latest`, ten draws each:
+
+    arm             n   parsed   gold moved   hp moved   = milestone
+    Z_none         10       10            0          0             0
+    A_current      10       10            1          0             0
+    B_bare         10        9            1          0             0
+    C_commitment   10       10            2          1             1
+    D_purpose      10       10            0          0             0
+
+**The statistic that matters is not in that table, and it is the whole finding.** Every value any
+draw wrote, in every field, was a number already printed in its prompt. Gold ∈ {25, 30}, hp ∈ {15,
+5}, mp ∈ {6, 4, 2} — the current line, the milestone line, or a ceiling read off the denominator.
+**Across forty-nine parsed draws not one intermediate state was computed.** The two occasions the
+ledger moved at all were a copy of the milestone's gold figure and, once, a copy of the entire
+milestone line. The model is not declining an instruction; it is reproducing whichever status line
+is nearest to hand, which is §52's whole-scene duplication arriving in the ledger.
+
+So a clause ablation on this generator was never going to answer anything, and **that is the
+transferable part**: the experiment §55.1 specified would have returned "no effect" for five arms,
+and the reading would have been that wording does not matter. It does. It could not be seen here.
+
+### 56.1 The same prompts on a frontier generator, and what it costs
+
+§15's "tens of dollars" is scoped to a 100k-word draft at API-key pricing and was read as a
+blocker on the arm itself. It is not one. `ClaudeCodeProvider` passes no credential and inherits
+the local `claude` install's auth, so on a subscription the recorded `total_cost_usd` is an
+equivalent price for quota already paid. More to the point, `DEFAULT_ORDER` is `("claude_code",
+"codex", "ollama")` and `generation` is deliberately absent from `CHEAP_CALL_CLASSES` — **the
+frontier arm is what an unflagged `litharness tick` already does**, and every run in this log
+needed `--prefer ollama` to get off it. The taxonomy was gathered on 3B–14B models by choice,
+which §17 Stage 3 permits as instrumentation and §1a.5 forbids on the page.
+
+Same checkpoint, same prompts, only the provider swapped — the contrast that separates harness
+debt from generator debt. Eight draws per arm, one lost to a 529:
+
+    generator      arm             n   gold moved   hp moved   computed values   words
+    phi4:latest    A_current      10            1          0                 0     653
+    phi4:latest    C_commitment   10            2          1                 0     687
+    claude_code    A_current       7            1          6                 6     985
+    claude_code    C_commitment    8            8          7                 9     988
+
+    hp written, claude_code A_current      12, 10, 12, 11, 12, 11, 15
+    hp written, claude_code C_commitment   10, 15, 10, 12, 10, 10, 12, 12
+
+Current is 15 and the milestone is 5; none of those figures is printed anywhere in the prompt.
+Fisher exact on draws carrying a computed value, 15/15 against 0/49: p < 1e-9. On hp moved within
+the shipped arm, 6/7 against 0/10: **p = 0.00057**. Both arms also normalised the impossible `MP
+6/4` to `4/4`, and both land ~985 words against the 900-word target where `phi4` reaches 653.
+
+**And with a generator that can act on it, the clause is large.** Gold moved in 8 of 8 under
+`C_commitment` against 1 of 7 under the shipped wording — **p = 0.0014**. §55.1's instinct that the
+hedges suppress movement is correct; it was simply unmeasurable on the generator §55.1 proposed to
+measure it with.
+
+**The hedge was guarding something real, so this is not a wording recommendation yet.**
+`C_commitment` landed on the milestone's exact gold figure of 30 in six of eight draws, which is
+precisely the jump `do not jump to it` exists to prevent. Two draws moved gold *down* — 15 and 20,
+the debt being paid, which is the story the premise asks for — and hp stayed gradual in both arms.
+The trade is between a ledger that does not move and one that arrives early, and it can now be
+decided on evidence at the cost of a few draws. It could not be before.
+
+### 56.2 The arm found a defect before it found anything else
+
+The run's own summary table reported `extract 0` for all sixteen frontier draws. That was not a
+null result. `subprocess_runner` decoded the CLI pipe with the host locale, so every em dash in
+generated prose arrived as three characters and `STATUS_PATTERN`, which matches U+2014 exactly,
+matched nothing. A frontier Book Zero would have reported a permanently frozen ledger for a reason
+having nothing to do with the generator. Fixed in `0e17acc`, with a test that exercises the real
+subprocess rather than an injected `Runner`; the numbers above are read from the repaired files.
+
+Two more, measured on real `claude -p` round trips and left open:
+
+- **The health probe is a billed invocation no ceiling can see.** `Conductor.tick` calls
+  `reset_health()` every tick and each cron tick is a fresh process, so the verdict never survives
+  and a generating tick pays a probe. Measured: **$0.3386** cold (33,792 cache-write, 0 cache-read)
+  and $0.1013 on a warm generation call. It passes neither `budget_check` nor any recorded
+  decision, so `--max-cost-usd-per-day` cannot bound it.
+- **The recorded model can be the wrong one.** A call requesting `claude-opus-5` returned
+  `modelUsage` keyed `['claude-haiku-4-5-20251001', 'claude-opus-5']`, and `CompletionResult.model`
+  reported `claude-haiku-4-5`, because `resolved` takes the first entry of the dict. Opus wrote the
+  prose and Haiku is the CLI's own overhead; a provenance record naming the wrong model is what
+  §19's attribution chain exists to prevent.
+
+### 56.3 The label the craft programme pivoted to does not separate prose
+
+`plan/craft-corpus.md` §4.1 calls calibrating proxies against `conversion = followers /
+total_views` "viable now", §4.3 scores a model critic against the same label, and §4.4 selects a
+reference corpus from its deciles. The label itself had never been checked, and checking it is
+CPU-only on the two cached shards. Run before any critic — 354 LitRPG stories, top against bottom
+conversion decile, 35 a side, with a 400-draw permuted-label null in the same pass:
+
+    metric                       prose   conv AUC   null p05–p95   outside   era AUC
+    dialogue_ratio                 yes      0.389   0.390–0.614        yes     0.508
+    opening_shape_repetition       yes      0.367   0.394–0.614        yes     0.417
+    sentence_length_cv             yes      0.483   0.397–0.618         no     0.555
+    tricolon_rate                  yes      0.552   0.385–0.616         no     0.644
+    word_count                     yes      0.575   0.390–0.618         no     0.486
+    chapters_seen                   no      0.308   0.385–0.636        yes     0.689
+    followers   (label component)   no      0.814   0.385–0.621        yes     0.510
+
+**The top conversion decile is recoverable from follower count at AUC 0.814.** §3's "ρ = 0.438
+against raw followers, so it is not popularity restated" holds across the middle of the
+distribution and does not survive a decile split — which is exactly where §4.4 proposes to select
+the corpus. Stratifying is the only rescue and it fails: pooled decile AUC within follower bands
+runs 0.36–0.59 with per-band values swinging 0.41 / 0.76 / 0.55, and within length bands the same.
+And `tricolon_rate` separates the year (0.644) better than the reader (0.552, inside its null) —
+the lesson in a fourth costume, now against the engagement label rather than the declaration one.
+
+This refutes the label at story-decile grain with these five instruments. It does not prove a
+critic would fail, since a critic reads what counters cannot. What it establishes is that **the
+control for any §4.3 critic is measured and it is `followers` at 0.814, not chance at 0.500** — and
+that the number has to be pre-registered rather than discovered afterwards.
+
+### 56.4 The packet stops representing the book at about forty scenes
+
+§47 measured the context budget as binding at scene 5, and migration 019's summaries softened it.
+Re-run over the pure `assemble` with one accepted status record per drafted scene — §52's own
+density, 31 records over 30 scenes — the picture is worse and the mechanism is different. `FACTS`
+is packed ahead of summaries and prose, so the ledger crowds out the story and the horizon
+*shrinks* as the book grows:
+
+    scenes   full prose   summaries   facts   dark      at --context-budget 24000
+        20            3          16      19      0                         0 dark
+        30            3          19      29      7                         0 dark
+        57            2          22      56     32                         0 dark
+        82            2          12      81     67                         0 dark
+       120            1          10     119    108                              —
+
+"Dark" is a prior scene in no form at all — not full text, not summary. **Stage 3's stated target
+is 50–80k words, which at §52's measured 875-word scene is 57 to 82 scenes**, and at the shipped
+default those books carry 32 to 67 dark scenes. At 82 the packet is 81 status records and 14 pieces
+of story. §52's "nothing in the run suggests the remaining scenes are a different problem" is
+therefore wrong: the remaining scenes are precisely where the packet stops representing the book,
+and a 30-scene run could not have found it.
+
+The mitigation available today is a flag, not a packer. Whether the horizon is a *quality* boundary
+is a separate question and §52's unrun two-budget ablation is what answers it; nothing here
+licenses building a relevance scorer, and LongRangeContext is a different concern from a budget the
+ledger exhausts.
+
+### 56.5 What the run demonstrated about the rules pack, without being asked to
+
+The prefix drafted for §56 put `MP 6/4` — mana above its own ceiling — into accepted canon at s05
+and s10, across twelve ACCEPT decisions and **zero findings**. The outline had already scheduled
+it: `milestone-s10` carries `mp 6, mp_max 4`, so the system planned an impossible state and then
+`system_voice_example` rendered it into every later prompt as "the state as it stands", with "carry
+these values forward unchanged". Some draws copied it and some silently repaired it; neither is a
+recorded decision, and it contaminated the ablation's own mp column, which is why §56 reports only
+gold and hp.
+
+`detect_contradictions` cannot catch this by construction — it groups on `(subject, predicate,
+order_key)` and fires only when two canon records disagree at one position, so one internally
+impossible record is invisible to it. `_milestones` refuses stasis and refuses an invented
+statistic and never asks whether a milestone is possible. **`stats.ceiling.v0` is built and green**
+in `C:\DEV\ContinuityEvaluation` with its five siblings; it reaches the loop only through
+`--continuity-evaluator-command`, which defaults to unset — so §52, §54.1, §55.1 and this run all
+drafted without the genre's best deterministic quality claim switched on.
+
+### 56.6 What this says to build, and what it says not to
+
+1. **Stop gathering taxonomy on 14B models.** Every duplication and ledger figure in §52, §54.1 and
+   §55.1 is a measurement of `phi4`. The sharper cost is not that the figures are wrong but that
+   **prompt experiments on that generator return false negatives** — the clause ablation reads as
+   no effect on `phi4` and as p = 0.0014 on the frontier arm, from the same prompts at the same
+   checkpoint.
+2. **Re-run §54.1's duplication comparison on the frontier arm before building more planner.**
+   Narrative Planning v0's justification is near-copies 5/30 → 0/30 at p = 0.0238, measured on the
+   generator now shown to copy numbers verbatim. If duplication is largely a `phi4` artifact,
+   Stage 5's ordering is aimed at the wrong entry.
+3. **Wire the rules pack on, and refuse an impossible milestone.** Deterministic arithmetic, so it
+   blocks without a calibration exactly as `integrity.duplicate_scene.v0` does under §53's
+   precedent.
+4. **Do not build the §4.3 critic yet**, and do not select §4.4's corpus from conversion deciles.
+5. Two tightenings on the promotion path, both small and both independent of everything above:
+   `tail_support` is computed direction-blind, so a BELOW gate at p01 reports ≈0.99n where its
+   failing tail holds ≈0.01n and `MIN_TAIL_SUPPORT` is bypassed by two orders of magnitude; and the
+   only inertness guard is `reference_exceedance <= 0.0`, with no upper bound, so a threshold
+   refusing 99% of the reference cohort is promotable and its control clause is vacuous at exactly
+   the exceedance where it matters.
+
+**What §56 does not establish.** One checkpoint, one premise, one book, and the frontier arms are
+n=7 and n=8 against a generator whose sampler this harness cannot hold — `claude -p` exposes no
+temperature or seed, so the frontier draws are not paired with the local ones and their spread is
+not this experiment's to control. The mp column is contaminated by §56.5. What survives all of that
+is the between-arm comparison of rates, which is what the question needed.
