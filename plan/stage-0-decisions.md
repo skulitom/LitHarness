@@ -3119,6 +3119,16 @@ evidence channels have been tried and measured:
                                      survivors prefer human originals ~80%
     model-based scoring (CDG)        dead to its own pre-registered memorisation     §58; BRIEF §2 Pass 6
                                      sham; word count beat it
+    persona-reader elicitation       OPEN — gate 0 inconclusive on a corpus that     §70; plan/persona-
+    (added by §70, not in the        could not support it; caricature control        reader-validity.md
+    original four)                   passed, collapse statistic had no power
+
+**The fifth row is a later addition and is not evidence yet.** §70 added it under a standing
+condition — the table gains a row when a gate reports, and gate 0 reported. It is listed here so
+the channel cannot be quietly re-proposed as untried, and it is marked OPEN rather than given a
+result because one inconclusive gate is not a measurement of the channel. It is also the only row
+whose instrument asks a *reader* question rather than an expert or a distributional one, which is
+the reason the four refutations above do not bound it.
 
 Paid pairwise judgment from external genre readers is the one channel with no refutation
 against it, because it is the one channel this project never funded. "Bought rather than

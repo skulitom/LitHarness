@@ -88,8 +88,17 @@ a new idea is a fresh one or the fourteenth of the same shape.
 That directory is also where prose-measurement experiments belong. It sits outside `src/`
 on purpose: nothing there is imported by the package, nothing is gated on, and it depends on
 a 12.5GB corpus CI must never need. Use `corpus_io.py` rather than writing another loader —
-it already supplies the fixtures, Mother of Learning, and the cached RoyalRoad shards with
-cohort labels, and `by_story` groups chapters into books. Commit numbers, never prose.
+it already supplies the fixtures, Mother of Learning, the cached RoyalRoad shards with cohort
+labels, and `generated_scenes`, which reads drafted scenes out of any book database through the
+export path; `by_story` groups chapters into books. Commit numbers, never prose.
+
+**Which source you pick is a validity decision, not a convenience one.** BRIEF.md §2 Pass 6
+measured a scoring model's familiarity with published text swinging a score further than real
+damage did, so anything model-based validated on Mother of Learning or RoyalRoad either runs on
+text the model provably has not memorised or measures its familiarity term explicitly.
+`generated_scenes` is the only un-memorised source here, and also the only one carrying no reader
+label at all. Neither property is a defect to route around — pick against the question, and record
+in the summary which source ran.
 
 ## Scope discipline
 

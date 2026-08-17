@@ -159,6 +159,29 @@ predictive distribution over the text. Zero.
 > model-based measure over text the scoring model has *not* memorised — this system's own
 > generated prose — which is a different experiment with a different validity problem (no
 > published-reader label reaches it).
+>
+> **That last sentence has a sequel, and it is in progress rather than closed.** The untried
+> direction now has a design, an instrument and a first measurement:
+> [plan/persona-reader-validity.md](../../plan/persona-reader-validity.md), recorded as
+> [stage-0-decisions](../../plan/stage-0-decisions.md) §70. It is a different *kind* of
+> model-based measure from everything in §2 — not a predictive distribution over the text but a
+> **verbal report about reading it**, from a system-prompted model held in a reader persona and
+> asked what a passage did to it rather than how to improve it. Nothing in the ledger above
+> bounds that: the twenty-one dead proxies are deterministic, Pass 4's judges were asked to
+> *improve* prose, and Pass 6 read log-probabilities. So it is untested rather than refuted,
+> which is why it enters as a validity study with pre-registered kill conditions rather than as
+> a candidate proxy.
+>
+> **Gate 0 has been run and is not passed.** 246 calls over the golden fixtures returned a
+> pooled `ICC(1)` of 0.489 that is an artifact — five of six passages produced zero would-stop
+> and every stop came from the last scene of the story. The caricature decomposition passed
+> cleanly (passage sum-of-squares about seven times the persona term); the collapse statistic
+> returned 1.0 against a simulated null that *also* reaches 1.0, so it carried no information at
+> that n. The corpus, not the panel, was the limit; `results/persona-gate0-fixtures.json` holds
+> the numbers. **Read it as an open experiment with one inconclusive gate, not as a channel with
+> evidence behind it** — and note that the validity problem the paragraph above names is
+> untouched: no published-reader label reaches generated prose, which is what gates 2 and 3
+> exist to buy and neither has been attempted.
 
 ## 4. What is available to experiment with, verified present on this machine
 
@@ -166,6 +189,16 @@ predictive distribution over the text. Zero.
   (CUDA available), transformers 5.15, numpy, scipy, sklearn. `google/gemma-3-4b-it` and
   `gemma-3-4b-pt` are in the HF cache. Ollama has qwen3:4b, gemma3:4b, gpt-oss:20b, phi4,
   llama3.2.
+- **This system's own generated prose, on demand and un-memorised by construction.**
+  `corpus_io.generated_scenes(database)` returns drafted scenes from any book database, read
+  through `application/export.collect` so it sees exactly what `litharness export` would show a
+  reader — one revision, live nodes, reading order. This is the only source here that no scoring
+  model has been trained on, which §3's status note names as the one untried direction, and the
+  only one with **no reader label of any kind**: that is the trade, not an oversight. Measured on
+  a 12-scene LitRPG book drafted on the pinned provider: 10 scenes reached prose at ~1,000 words
+  each (10,049 total, two parked on `provider_unavailable`), at roughly $0.30 per drafted scene
+  in equivalent quota. Generating a book is therefore a real cost with a real wait, but it is the
+  substrate any reader-facing measurement has to run on.
 - **RoyalRoad corpus, 2 shards cached locally** (~68,676 chapters, ~19% LitRPG-tagged):
   `C:/Users/artem/.cache/huggingface/hub/datasets--OmniAICreator--RoyalRoad-1.61M/snapshots/*/data/train-00003-of-00047.parquet`
   (2025 cohort) and `train-00030-of-00047.parquet` (2021–22 pre-LLM cohort). Columns that are
