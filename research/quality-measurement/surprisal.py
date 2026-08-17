@@ -1,5 +1,17 @@
 """Context Dependency Gain: how much a chapter's own earlier text predicts its later text.
 
+**Measured 2026-08-17: DEAD — refutation ledger entry 21.** Detect AUC 0.5188 against its own
+originals, and the `rename_entities` sham this docstring pre-registers below moved the score
+2.0x further than the strongest degrader, upward. (The first run measured 3.4x with a
+contaminated sham that also renamed "The" and "She" — a stopword bug; fixed and re-run, the
+effect shrank ~40% and survived on genuine names alone, which is what makes the reading
+clean.) The "handled by the same subtraction" argument for memorisation two paragraphs down
+is the specific claim measurement refuted: recall inflates the foreign-prefix term, so any
+edit that breaks surface familiarity *releases* the gap. Full battery and verdict:
+`cdg_battery.py`, `results/cdg.json`, plan/stage-0-decisions.md §58 and its addendum. The
+rest of this docstring is kept as written — it is the pre-registration, and its kill
+conditions are what killed it.
+
 The instrument. `ablate.py` supplies ground truth and `evaluate.py` supplies the controls;
 this is the thing being tested.
 

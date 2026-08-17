@@ -28,7 +28,7 @@ and **cannot be constructed**, because it demands held-out precision ≥0.80 on 
 with ≥17 flags, and no calibration exists. `litharness calibrations` prints nothing. That
 emptiness is the honest measure of the gap.
 
-## 2. The refutation ledger — 20 proxies dead
+## 2. The refutation ledger — 21 proxies dead
 
 **This section is canonical for the count.** It was carried in two places for a while and
 drifted within a single session; `PLAN.md` and `plan/stage-0-decisions.md` now point here
@@ -103,9 +103,31 @@ is biased low, 0.436 at n=32 against 0.482 at n=1024, so comparing to a theoreti
 manufactures 0.03 of effect from nothing. And check within-book reliability (ICC) before
 believing any per-book statistic; this project had never run one.
 
+**Pass 6: Context Dependency Gain — the §3 opening, run. One more dead, and it was the
+model-based one.**
+
+| proxy | how it died |
+|---|---|
+| `craft.cdg.v0` (own-prefix vs foreign-prefix log-probability gain, `gemma-3-4b-pt`) | Detect AUC **0.5188** against its own originals (chapter-bootstrap CI includes chance), while its own pre-registered sham killed the mechanism: `rename_entities` moved it **2.0× further than the strongest degrader**, upward — and `respell` and `dialogue_flatten`, the other two surface-familiarity edits, also moved it up while every real damage sat at chance. The subtraction the design said would cancel training-set memorisation *releases* it instead: **CDG over published fiction is substantially a memorisation-release detector.** Word count also beat it (0.5229). The first run's sham was itself contaminated (it renamed "The" and "She" alongside the names — a stopword bug found in review); fixed and re-run, the sham effect shrank ~40% **and survived on names alone**, which is what makes the memorisation reading clean. Full battery: 30 MoL chapters, 962 variants, [stage-0-decisions §58](../../plan/stage-0-decisions.md) (whose addendum carries the corrected numbers), `results/cdg.json`, superseded first summary in `results/cdg.pre-sham-fix.json`, raw per-variant scores in `results/cdg-raw.jsonl`. |
+
+**The transferable lesson, and it constrains every future design in this family:** a base
+model's familiarity with a published text swings a surprisal-difference score several times
+harder than real structural damage does. Any model-based measure validated on published
+fiction either runs on text the scoring model provably has not memorised (this project's own
+generated prose qualifies; the published calibration corpus does not) or measures its
+familiarity term explicitly. Also earned: read sham effects as |AUC − 0.5| per sham, never
+pooled and never via `detect − sham` — an inverted sham response *inflates* the margin, and
+this battery measured exactly that shape (the subtraction reported **+0.2342** while the
+sham effect was the largest in the table). Implemented the same day: `evaluate.Result.margin`
+is now `(detect − 0.5) − |sham − 0.5|` and reports **−0.3713** for this battery, and the
+harness's AUCs are within-chapter with a chapter-resampled bootstrap CI, so the next
+candidate is scored by the rule this one taught.
+
 ## 3. The structural diagnosis (this is the opening for a novel approach)
 
-Every one of the 20 refuted proxies shares three properties:
+Every one of the first twenty refuted proxies — the ledger before Pass 6 — shares three
+properties (Pass 6's CDG is the exception this section predicted would be worth trying, and
+§2 records how it died anyway):
 
 - **Static** — a scalar computed on one text in isolation, with no model of what the text does.
 - **Absolute** — the number is compared *across* texts that differ in era, author, story
@@ -129,10 +151,14 @@ predictive distribution over the text. Zero.
 > draws (sign-test p = 0.0005), 256 tokens gives +0.0608 at 11/12 (p = 0.0063), and by 512
 > tokens it is +0.0102 at 8/12 (**p = 0.388**), which is nothing. §5.3: the RoyalRoad
 > within-story design has no outcome variable and the within-author one is n=23. `surprisal.py`
-> implements what survived — Context Dependency Gain, scoring a block against its own prefix
-> versus a foreign one — and `results/` holds no CDG numbers yet, so it is **built and not yet
-> evidenced**. The opening is narrower than these paragraphs make it sound: short-range only,
-> and still short of a label.
+> implemented what survived — Context Dependency Gain, scoring a block against its own prefix
+> versus a foreign one — and the battery ran on 2026-08-17: **dead, Pass 6 above** — detect at
+> chance, killed by its own pre-registered rename sham, and the memorisation-cancellation
+> argument refuted by measurement. "Nothing model-based has been tried" is no longer an open
+> door: it was tried once, controlled properly, and the control won. What remains untried is a
+> model-based measure over text the scoring model has *not* memorised — this system's own
+> generated prose — which is a different experiment with a different validity problem (no
+> published-reader label reaches it).
 
 ## 4. What is available to experiment with, verified present on this machine
 
@@ -152,16 +178,18 @@ predictive distribution over the text. Zero.
 
   **The reviews are measured, and they are close to useless as a label — check this yourself
   before building on them.** `wc -l` says 387 and that is wrong: review bodies contain
-  newlines, and a real CSV parse yields **116 rows**. Of those:
+  newlines, and a real CSV parse yields **116 rows**. Of those (re-measured 2026-08-17, the
+  measurement lives in [feasibility.md](feasibility.md) §6 — this table restated "11 below
+  4.0" and "over 20 chapters" until the re-measurement corrected both):
 
   | column | populated | distribution |
   |---|---|---|
-  | `overall_score` | 116/116 | **96 are 5.0**; 7 at 4.5; 11 below 4.0 |
+  | `overall_score` | 116/116 | **96 are 5.0**; 7 at 4.5; 13 at 4.0 or below |
   | `style_score` | **34**/116 | 25 of 34 are 5.0 |
   | `story_score` | 34/116 | 30 of 34 are 5.0 |
   | `grammar_score` | 34/116 | 24 of 34 are 5.0 |
   | `character_score` | 34/116 | 25 of 34 are 5.0 |
-  | `reviewed_at_chapter_id` | 76/116, over **20 distinct chapters** | — |
+  | `reviewed_at_chapter_id` | 76/116, over **20 distinct chapters** (exactly 20) | — |
 
   So: one book, one author, one quality tier, a self-selected fan population, and a ceiling
   at 5.0. There is no usable variance to calibrate against, and the sub-scores that would

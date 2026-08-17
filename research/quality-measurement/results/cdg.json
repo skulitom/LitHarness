@@ -1,0 +1,163 @@
+{
+ "metric": "craft.cdg.v0",
+ "model": "google/gemma-3-4b-pt",
+ "block_tokens": 384,
+ "prefix_tokens": 768,
+ "direction": -1,
+ "n_chapters": 30,
+ "scored_units": [
+  "mol:301778",
+  "mol:301788",
+  "mol:301801",
+  "mol:302241",
+  "mol:303116",
+  "mol:304097",
+  "mol:305052",
+  "mol:305877",
+  "mol:307245",
+  "mol:307852",
+  "mol:308643",
+  "mol:309417",
+  "mol:310557",
+  "mol:311668",
+  "mol:312539",
+  "mol:313489",
+  "mol:314391",
+  "mol:315172",
+  "mol:315980",
+  "mol:316947",
+  "mol:317781",
+  "mol:318639",
+  "mol:319853",
+  "mol:320672",
+  "mol:321479",
+  "mol:322443",
+  "mol:323436",
+  "mol:324123",
+  "mol:325051",
+  "mol:326028"
+ ],
+ "donor_units": [
+  "mol:326370",
+  "mol:327015",
+  "mol:328843",
+  "mol:344062",
+  "mol:361412",
+  "mol:452729",
+  "mol:452733",
+  "mol:455876"
+ ],
+ "foreign_unit": "mol:386938",
+ "scorer_calls": 962,
+ "gpu_calls": 120,
+ "replayed_calls": 842,
+ "nan_scores": 0,
+ "unmapped_calls": 0,
+ "minutes": 15.3,
+ "throttle": {
+  "rest_ratio": 3.0,
+  "pause_above_c": 72,
+  "resume_below_c": 66
+ },
+ "original_cdg_mean": 0.30183,
+ "detect_auc": 0.5188,
+ "sham_auc": 0.1099,
+ "margin": -0.3713,
+ "length_auc": 0.5229,
+ "paired_rate": 0.5139,
+ "paired_ci": [
+  0.4514,
+  0.5708
+ ],
+ "paired_n": 720,
+ "per_ablation_dose": {
+  "connective_scramble": {
+   "n": 120,
+   "mean_delta": -0.00041,
+   "dose_rho": -0.1648,
+   "hit_rate": 0.5167
+  },
+  "dialogue_flatten": {
+   "n": 120,
+   "mean_delta": 0.01347,
+   "dose_rho": -0.3035,
+   "hit_rate": 0.3167
+  },
+  "paragraph_shuffle": {
+   "n": 120,
+   "mean_delta": -0.0124,
+   "dose_rho": -0.0516,
+   "hit_rate": 0.5667
+  },
+  "sentence_deletion": {
+   "n": 120,
+   "mean_delta": -0.01845,
+   "dose_rho": 0.0316,
+   "hit_rate": 0.625
+  },
+  "sentence_shuffle": {
+   "n": 120,
+   "mean_delta": -0.001,
+   "dose_rho": -0.1584,
+   "hit_rate": 0.5583
+  },
+  "transplant": {
+   "n": 120,
+   "mean_delta": -0.00271,
+   "dose_rho": -0.2045,
+   "hit_rate": 0.5
+  }
+ },
+ "per_ablation_auc": {
+  "paragraph_shuffle": {
+   "n": 120,
+   "sign": -1,
+   "auc_vs_original": 0.5583,
+   "mean": 0.28943
+  },
+  "sentence_shuffle": {
+   "n": 120,
+   "sign": -1,
+   "auc_vs_original": 0.5058,
+   "mean": 0.30083
+  },
+  "connective_scramble": {
+   "n": 120,
+   "sign": -1,
+   "auc_vs_original": 0.5033,
+   "mean": 0.30142
+  },
+  "dialogue_flatten": {
+   "n": 120,
+   "sign": -1,
+   "auc_vs_original": 0.4189,
+   "mean": 0.3153
+  },
+  "transplant": {
+   "n": 120,
+   "sign": -1,
+   "auc_vs_original": 0.509,
+   "mean": 0.29912
+  },
+  "sentence_deletion": {
+   "n": 120,
+   "sign": -1,
+   "auc_vs_original": 0.5961,
+   "mean": 0.28338
+  },
+  "rename_entities": {
+   "n": 120,
+   "sign": 0,
+   "auc_vs_original": 0.3036,
+   "mean": 0.33848
+  },
+  "respell": {
+   "n": 92,
+   "sign": 0,
+   "auc_vs_original": 0.4228,
+   "mean": 0.31511
+  }
+ },
+ "notes": [],
+ "verdict": "DEAD \u2014 detect 0.5188: damage does not move the score in the declared direction"
+}

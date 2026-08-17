@@ -158,14 +158,28 @@ def mol_reviews() -> list[dict[str, Any]]:
 # ------------------------------------------------------------------------- RoyalRoad
 
 
+#: The dataset snapshot every number in this directory was measured against. Resolution was
+#: originally `snapshots/*` glob, `matches[-1]` — which is not a pin: a cache refresh would
+#: swap the corpus underneath every committed result and nothing would say so. A different
+#: snapshot is different evidence, exactly as a rebuilt craft profile is (`calibration.py`
+#: refuses a stale `profile_digest` for the same reason) — bump this deliberately, and re-run
+#: whatever cites the corpus when you do.
+SNAPSHOT_REVISION = "0e4df3f22999a7b7fa13b1e7564a09b5f3eb964e"
+
+
 @lru_cache(maxsize=2)
 def _shard_path(shard: int) -> Path:
-    matches = sorted(HF_CACHE.glob(f"snapshots/*/data/train-{shard:05d}-of-00047.parquet"))
-    if not matches:
+    name = f"train-{shard:05d}-of-00047.parquet"
+    path = HF_CACHE / "snapshots" / SNAPSHOT_REVISION / "data" / name
+    if not path.is_file():
+        others = sorted(HF_CACHE.glob(f"snapshots/*/data/{name}"))
+        hint = f"; the cache holds {[p.parts[-3][:12] for p in others]}" if others else ""
         raise FileNotFoundError(
-            f"shard {shard} is not in the HF cache; only {sorted(SHARDS)} were downloaded"
+            f"shard {shard} at pinned snapshot {SNAPSHOT_REVISION[:12]} is not in the HF "
+            f"cache{hint}. A different snapshot is different evidence — update "
+            "SNAPSHOT_REVISION deliberately and re-run what cites the corpus."
         )
-    return matches[-1]
+    return path
 
 
 def era_cohort(released_at: str | None, warnings_json: str | None) -> str | None:

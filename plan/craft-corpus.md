@@ -108,7 +108,29 @@ about, and leaves the part that is closest to being about the prose.
 - Spearman ρ against raw followers is **0.438**, so it is *not* popularity restated — it
   carries information beyond story size
 
-That is a usable label available today, at a scale no session will ever reach.
+~~That is a usable label available today, at a scale no session will ever reach.~~ **Run
+against its own control on 2026-08-17 and it did not survive at the grain it was wanted
+for** — §4.1 carries the result and [stage-0-decisions.md](stage-0-decisions.md) §56.3 the
+full table. The two measured facts above stand as facts; what died is the reading that they
+license selecting anything by decile.
+
+**And the division never removed what it claimed to, for a mechanical reason this section
+should have stated.** `total_views` is not a discovery counter: it accumulates one view per
+chapter-visit, so the denominator counts *staying* too — a reader who reads forty chapters
+adds roughly forty views and at most one follow. For a fixed follow propensity, conversion
+falls as chapters-read-per-reader rises: the label mechanically penalises the deep-reading
+behaviour it was adopted to capture, and rewards stories sampled shallowly and followed
+early. The project's own table carries the signature — `chapters_seen`, a column that reads
+no prose, separates the conversion deciles at AUC 0.308, the second-strongest separator
+after `followers` itself — so part of the 9× spread above is chapter-count spread.
+
+**A survivorship term sits under all of it, unmeasured.** Successful RoyalRoad serials are
+routinely *stubbed* — chapters removed when the book moves to Kindle Unlimited — and deleted
+stories leave the corpus entirely, while engagement counters freeze at whatever the compiler
+last saw. The most-successful tail is therefore systematically truncated or missing, and no
+number in this document is corrected for that. Nothing here measures the bias's size; this
+paragraph exists so the label is not extended to a use where it would matter without someone
+measuring first.
 
 ## 4. Research directions, with what each is and is not valid for
 
@@ -119,20 +141,32 @@ low-conversion stories on held-out data, stratified by tag set, era, and length,
 within author where possible.
 
 **Run 2026-08-17, and the result is a refusal rather than a calibration
-([plan/stage-0-decisions.md](plan/stage-0-decisions.md) §56.3).** 354 LitRPG stories, top
-against bottom conversion decile, permuted-label null in the same pass: the best
-prose-reading metric sits *inside* its null band, while **`followers` alone separates the
-deciles at AUC 0.814**. Stratifying within follower bands is the only rescue and it fails —
-pooled 0.36–0.59, per-band values swinging 0.41 / 0.76 / 0.55. §3's "ρ = 0.438 against raw
-followers, so it is not popularity restated" holds across the middle of the distribution and
-**does not survive a decile split**, which is precisely where §4.4 proposes to select the
-reference corpus. And `tricolon_rate` separates the era (0.644) better than the reader
-(0.552): §2's lesson, now against the engagement label.
+([stage-0-decisions.md](stage-0-decisions.md) §56.3).** 354 LitRPG stories, top against
+bottom conversion decile, permuted-label null in the same pass: **`followers` alone
+separates the deciles at AUC 0.814** while the best prose-reading metric reaches 0.367.
+(The first write-up of this paragraph said every prose metric sat *inside* its null band —
+the artifact says two sit marginally **below** it: `dialogue_ratio` at 0.3886 against a 5th
+percentile of 0.3902, `opening_shape_repetition` at 0.3665 against 0.3935. At nine metrics
+against 90% bands, roughly one excursion is chance; both excursions point the same way as
+the prose-blind `chapters_seen` at 0.308, which is §3's size coupling wearing a prose
+metric's name — a below-band excursion read as a finding would be the label separating on a
+metric's *length* loading.) Stratifying within follower bands is the only rescue and it
+fails — pooled 0.36–0.59, per-band values swinging 0.41 / 0.76 / 0.55. §3's "ρ = 0.438
+against raw followers, so it is not popularity restated" holds across the middle of the
+distribution and **does not survive a decile split**, which is precisely where §4.4 proposed
+to select the reference corpus. And `tricolon_rate` separates the era (0.644) better than
+the reader (0.552): §2's lesson, now against the engagement label.
 
 This refutes the label at story-decile grain *with these five counting instruments*; it does
 not prove a §4.3 critic would fail, since a critic reads what counters cannot. What it fixes
-is the control. **Any critic scored against conversion must beat `followers` at 0.814, not
-chance at 0.500, and must say so before it is run.**
+is the control, and `results/conversion.json`'s own verdict already words it correctly: a
+critic scored against conversion **takes the prose-blind baseline as a covariate from line
+one** — scored *conditional on* `followers` (within-band, partialled, or as a regression
+covariate), never in a raw-AUC horse race against 0.814. The raw bar this paragraph first
+demanded is the wrong shape twice over: `followers` is a component of the label's own
+numerator, so its 0.814 is partly arithmetic; and a critic could approach a raw bar by
+proxying story size while reading nothing. What stands unchanged: the design says which
+control it will be scored against **before it is run**.
 
 - **Validity:** this is §1a.4's ground truth, revealed rather than solicited. It supplies
   exactly the evidence `domain/calibration.py::promoted_gate` refuses to promote without —
@@ -179,12 +213,21 @@ a better prompt but a **calibration target**. Revealed preference is one, at sca
   §1a.3 items 1–4 — dramatic function, progression as drama, escalation, voice — which §10.6
   established are unreachable from defect fixtures and which no counting proxy has touched.
 
-### 4.4 The reference corpus, selected rather than authored — *dissolves §10.6's blocker*
+### 4.4 The reference corpus, selected rather than authored — ~~*dissolves §10.6's blocker*~~ *refused: the deciles select size, not prose (§56.3)*
 
 §10.6 asks for "passages that exemplify each item in §1a.3, paired where possible with a
 weaker variant of the same beat", and calls it human work. **Selection from the top and bottom
 deciles of conversion rate, matched on tag set, era, length and author, is a paired corpus** —
 thousands of pairs rather than dozens, and no one writes a word of it.
+
+**Refused 2026-08-17, before anything was selected** ([stage-0-decisions.md](stage-0-decisions.md)
+§56.6 item 4: "do not select §4.4's corpus from conversion deciles"). §4.1's run is the
+reason: the deciles are recoverable from `followers` at AUC 0.814 and from `chapters_seen`
+at 0.308, so a corpus selected from them is paired on story size and era, and a craft
+difference between its halves is whatever residue survives that — unknown, and unknowable
+without exactly the attribution work selection was meant to avoid. The "what is lost"
+paragraph below was written about attribution; the run showed the loss is larger — the pairs
+are not known to differ on prose at all.
 
 - **What is lost:** the pairs are not *attributed*. A hand-authored pair says "these differ in
   dramatic function"; a selected pair says "readers converted on one and not the other" and is
@@ -320,5 +363,11 @@ which is §4.1's neighbour rather than its substitute.
 - §10.3's weekly sessions are **demoted from the primary instrument to a cheap confirmation
   sample**. §10.5's standing audit (built, `litharness audit`) is the right size for that:
   it collects judgment as a by-product of operation rather than as a scheduled event.
-- §10.6's hand-authored corpus is **no longer the gating item**; §4.4 supplies a selected one.
-- The new critical path is §4.1 and §4.2, both of which are engineering.
+- ~~§10.6's hand-authored corpus is no longer the gating item; §4.4 supplies a selected
+  one.~~ §4.4 is refused (§56.3, §56.6 item 4): conversion deciles select story size, not
+  prose. §10.6's corpus question is open again.
+- ~~The new critical path is §4.1 and §4.2, both of which are engineering.~~ §4.1 ran and
+  refuted its own label at the decile grain. What remains live from this document: §4.2
+  under its stated Goodhart constraints, §4.7's comment-text vocabulary, the §4.6
+  acquisition routes — and any future §4.3 critic inherits §4.1's covariate control as a
+  precondition, stated before it runs.

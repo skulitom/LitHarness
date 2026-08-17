@@ -1,6 +1,6 @@
 # Stage 0 decisions
 
-**Status:** Stages 0-2 met against their §17 exit clauses — **693 passing tests (+8 opt-in live), ruff clean, mypy
+**Status:** Stages 0-2 met against their §17 exit clauses — **787 passing tests (+8 opt-in live, 2026-08-17 — PLAN.md's header and §7 carry the same number; the suite referees any disagreement), ruff clean, mypy
 strict clean.** Slice 1 is the model-free manuscript spine; slice 2 the Conductor skeleton
 (tick, instance lease, job selection, digest, outbox dispatch, crash recovery); slice 3 the
 four provider adapters with their conformance suite and the billing guard; slice 4 **the
@@ -2854,3 +2854,122 @@ fix landed mid-run, which is §56.2's second defect arriving as data rather than
 **What would settle the count metric**: the same arm at 30 scenes, matching §54.1 exactly, at
 about 2.5x this cost. Until then the honest reading is that the span evidence is strong and the
 count evidence is absent, and the two should not be quoted as if they were one result.
+
+## 58. Every edit that made the text less familiar raised the score
+
+BRIEF.md §3 diagnosed all twenty refuted proxies as static, absolute and correlational, and
+`research/quality-measurement/surprisal.py` was the one instrument built to share none of those
+properties: Context Dependency Gain, the mean log-probability gain a block of prose gets from
+its own chapter's prefix over a length-matched prefix from a different chapter, under a frozen
+base model (`gemma-3-4b-pt`). BRIEF.md recorded it as *built and not yet evidenced*. It has now
+been run — the full `ablate.py` battery over 30 Mother of Learning chapters, 962 scored
+variants, paired within-chapter by construction — and it is **dead, killed by the sham its own
+docstring pre-registered as the kill condition.**
+
+**The headline is that there is no headline.** Detect AUC **0.5153** against its own originals;
+paired rate 0.5139 with a Wilson 95% interval **(0.4774, 0.5502)** over 720 damage pairs.
+`evaluate.verdict()` reads "does not separate damaged prose from its own original" before any
+control needs consulting. Word count separates the same variant pool at **0.5733**, so §1a.1's
+shallow incumbent also wins outright.
+
+**The control story is the finding.** Per-ablation AUC versus originals, oriented so above 0.5
+means the variant scored below its original (the direction damage was declared to move):
+
+    ablation              kind        AUC      |AUC-0.5|   mean delta at dose 1.0
+    rename_entities       SHAM        0.1725     0.3275         +0.1008
+    sentence_deletion     degrader    0.5961     0.0961         +0.0014  (non-monotone)
+    dialogue_flatten      degrader    0.4189     0.0811         +0.0263  (wrong direction)
+    respell               SHAM        0.4228     0.0772         +0.0131
+    paragraph_shuffle     degrader    0.5583     0.0583         -0.0053
+    transplant            degrader    0.5090     0.0090         +0.0189
+    sentence_shuffle      degrader    0.5058     0.0058         +0.0054
+    connective_scramble   degrader    0.5033     0.0033         +0.0010
+
+The rename sham moved CDG **3.4× further than the strongest degrader and 5.6× further than
+paragraph shuffle**, upward, dose-monotone (+0.040, +0.062, +0.087, +0.101) — the cleanest
+dose-response curve in the entire battery belongs to the transformation that damages nothing.
+And the two other risers complete the mechanism: `respell` (spelling variants, straightened
+quotes) and `dialogue_flatten` (quotation marks deleted) are the other two edits that perturb
+the *surface* the model may have memorised, and every one of them raised the score while actual
+damage sat at chance. `surprisal.py`'s docstring argued memorisation "is handled by the same
+subtraction" because recall raises both terms. Measured: it is not. Recall of the published
+original inflates the foreign-prefix term and compresses the gap; any edit that breaks verbatim
+familiarity releases it. **CDG over published fiction is substantially a memorisation-release
+detector**, and the sham built to catch exactly that caught exactly that.
+
+**Two subsidiary readings, recorded because they would bite the next design too.**
+
+- *The margin statistic can be gamed by an inverted sham response.* `Result.margin` is
+  detect − sham = 0.5153 − 0.2811 = **+0.2342**, which reads as a healthy margin — but only
+  because the sham moved *opposite* to the declared damage direction, which inflates the
+  subtraction instead of shrinking it. The pre-committed reading was |AUC − 0.5| per ablation,
+  and by that reading the sham response dwarfs everything. `evaluate.verdict()` happened to
+  catch this metric at the first rung anyway (detect within 0.05 of chance), but a metric with
+  detect 0.58 and an inverted sham at 0.28 would sail through the margin check while being
+  three-quarters sham. If the harness is ever revisited, the margin should be
+  |detect − 0.5| − |sham − 0.5|.
+- *Transplant — the declared upper anchor — was invisible at 0.5090*, and the donor choice is
+  why it cannot be read as exoneration. Donors came from the same book thirty-plus chapters
+  ahead (the stricter choice for the foreign-*prefix* control, and `evaluate.selftest`'s
+  precedent), so at full dose the scored text is still memorised Mother of Learning in the
+  memorised voice with the memorised cast. For a score dominated by familiarity, that graft is
+  undetectable by construction. A cross-book donor would presumably move CDG — for the same
+  familiarity reason, not a craft one — which is a second route to the same verdict, not a
+  rescue.
+
+**What this licenses.** The "nothing model-based has been tried" opening in BRIEF.md §3 is now
+closed: it was tried, properly controlled, and died to the control — entry 21, and the first
+casualty of the model-based family. The transferable result is a measured confound, not just a
+dead metric: **a base model's familiarity with a published text swings a surprisal-difference
+score several times harder than real structural damage does.** Any future model-based measure
+validated on published fiction — including the §4.3-style critic the craft corpus still
+gestures at — either runs on text the scoring model provably has not memorised (this project's
+own generated prose qualifies; the calibration corpus does not) or measures and subtracts its
+familiarity term explicitly. That constraint was bought for 66 GPU-minutes at zero dollars and
+it applies to every design in that family.
+
+**Operational footnote, because the run itself refuted an assumption.** The battery's first
+attempt took the machine down with a thermal hard-shutdown at call 431 of 962 — sustained
+~300W bursts on a box whose cooling turns out to sit at a 70-72°C equilibrium even at a
+halved duty cycle. The run finished because every score was flushed to
+`results/cdg-raw.jsonl` as it was computed and both the ablations and the scorer are
+deterministic, so a restart replays finished calls from disk instead of the GPU: 431 scored
+before the shutdown, 41 under a first governor whose 60°C resume floor a heat-soaked case
+could not reach quickly (and whose hold a single failed `nvidia-smi` read could silently
+cancel — measured doing so at 69°C), 490 under the tuned one (72°C pause, 66°C resume, three
+strikes on the sensor), zero redone, zero NaN. `cdg_battery.py` carries the constants and the
+reasoning; the raw log carries a `gpu_temp` per scored call, so the thermal story of the run
+is itself data. Total wall for the final leg: 66 minutes.
+
+**Addendum, same day: the sham was contaminated, and the verdict survived its own control
+being fixed.** A review pass found that `rename_entities` selected "the most frequent
+capitalised tokens" with a frequency floor and no stopword check, so its top-12 "entities"
+on chapter 1 were Zorian, **The**, **You**, Mother, Cyoria, Fortov, **She**, Kirielle, Ilsa,
+**What**, **There**, **His** — at every dose the memorisation control was also rewriting
+articles and pronouns into names, which is grammatical damage, the one thing a sham must not
+inflict. Fixed with two text-derived checks (a token that also occurs lowercase is sentence
+capitalisation; a token never seen mid-sentence is a sentence-starter), the 120 rename
+records were purged from the raw log, and the battery re-ran: 120 GPU calls, 842 replayed —
+by a **text digest** now stored per record, because the `(unit, ablation, dose)` triple
+would have replayed the buggy variants' numbers as if the code had not changed — 15.3
+minutes, `results/cdg.pre-sham-fix.json` preserving the superseded summary.
+
+What the fix changed: the rename effect **shrank by ~40% and survived**. Pooled AUC versus
+originals 0.1725 → **0.3036**; mean delta at full dose +0.101 → +0.038; dose curve +0.031 /
++0.036 / +0.041 / +0.038 — saturating where the contaminated curve kept climbing, which
+fits the mechanism (breaking the protagonist's name breaks most of the verbatim-recall
+surface; clobbering ever more function words kept adding novelty). A sham that renames only
+genuine names still moves CDG **2.0× further than the strongest real degrader** (|AUC−0.5|
+0.196 against `sentence_deletion`'s 0.096), so the reading above — memorisation-release —
+stands, now measured with a control that damages nothing.
+
+What the harness revision changed (this section's own subsidiary reading, implemented the
+same day): `evaluate.Result.margin` is now `(detect − 0.5) − |sham − 0.5|`, and the AUCs are
+within-chapter means with a chapter-resampled bootstrap CI in place of the Wilson interval
+that treated 720 clustered pairs as independent. Under the corrected statistics the summary
+reads: detect **0.5188** (was 0.5153 pooled), margin **−0.3713** (the formulation this
+section warned about had reported **+0.2342** for the same shape of data), length incumbent
+0.5229 (within-chapter; still ≥ detect), paired CI **(0.4514, 0.5708)** (Wilson had claimed
+(0.4774, 0.5502)). Verdict unchanged at the first rung: **DEAD — damage does not move the
+score in the declared direction.** Entry 21 stands; every number in the two paragraphs above
+this addendum that disagrees with `results/cdg.json` is superseded by it.

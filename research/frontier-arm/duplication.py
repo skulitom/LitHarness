@@ -17,13 +17,19 @@ half the quota and answers the question either way.
 
 **Two books, and §54.1 is why two is the floor.** That section's own control arm ranged 1 to
 11, and it says outright that a condition this noisy cannot be characterised by one run. Two
-is not enough to characterise it either; it is enough to distinguish "none at all" from "the
-`phi4` range", which is the only distinction this experiment needs to make.
+is not enough to characterise it either; the design bet was that it could distinguish "none
+at all" from "the `phi4` range".
 
-**Twelve scenes, not thirty.** `arc_template(12)` still repeats its `rising` function, so the
-condition §52 blames — many scenes asked the same question — is present; and duplication is a
-property of pairs, so twelve scenes offer 66 of them. Thirty would cost 2.5x for a difference
-this measurement does not need.
+**Twelve scenes, not thirty — and §57 computed, after the run, that twelve voids the count.**
+Duplication is a property of pairs, so twelve scenes offer 66 of them against §54.1's 435 —
+and at phi4's own per-pair rate that expects **1.70 findings across two books, so observing
+zero has Poisson p = 0.183. The finding count from this design is not a result** (§57's own
+words: "Not a result"). What carries at this size is the *span maximum* — §54.1's worst book
+peaked at 872 verbatim words against the 93-word published-human ceiling, and the frontier
+books measured 17 and 12 — so the runner now computes `longest_repeat_words` itself and
+records it in the artifact, instead of leaving the load-bearing number in ledger prose.
+`arc_template(12)` still repeats its `rising` function, so the condition §52 blames — many
+scenes asked the same question — is present.
 
 **One process, not one process per tick.** `Conductor.tick` clears the health cache every
 tick, and `ClaudeCodeProvider.health()` is a real billed round trip that passes no budget
@@ -39,6 +45,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import sqlite3
 import sys
 import time
 from pathlib import Path
@@ -51,6 +58,7 @@ sys.path.insert(0, str(REPO / "src"))
 from litharness import cli  # noqa: E402
 from litharness.adapters.sqlite_store import SqliteStore  # noqa: E402
 from litharness.domain.beats import arc_template, beats_for  # noqa: E402
+from litharness.domain.craft import longest_repeated_span  # noqa: E402
 from litharness.domain.draft import DraftPolicy, is_draftable  # noqa: E402
 from litharness.domain.integrity import DUPLICATE_RULE  # noqa: E402
 
@@ -176,11 +184,30 @@ def run_book(
         findings = store.findings(book_id, branch_id)
         duplicates = [f for f in findings if f.rule_or_critic_id == DUPLICATE_RULE]
         head = store.head(book_id, branch_id)
-        words = sum(
-            len(node.content.split())
-            for node in (head.in_reading_order() if head else [])
-            if node.content
-        )
+        nodes = [n for n in (head.in_reading_order() if head else []) if n.content]
+        words = sum(len(node.content.split()) for node in nodes)
+        # The statistic that carries at this scene count (see the docstring): the longest
+        # verbatim cross-scene run, measured by the runner rather than in a ledger margin.
+        longest = 0
+        for node in nodes:
+            others = {o.logical_id: o.content for o in nodes if o.logical_id != node.logical_id}
+            span = longest_repeated_span(node.content, others)
+            if span is not None:
+                longest = max(longest, span.words)
+        # The independent variable is the generator, so the artifact names the generator.
+        # §57 caught this very run class writing Opus prose attributed to Haiku until a
+        # mid-run fix; a results file naming no model cannot even carry such a correction.
+        connection = sqlite3.connect(db)
+        try:
+            provenance = sorted(
+                f"{provider or '?'}:{model or '?'}"
+                for provider, model in connection.execute(
+                    "SELECT DISTINCT provider, model FROM policy_decisions "
+                    "WHERE provider IS NOT NULL OR model IS NOT NULL"
+                )
+            )
+        finally:
+            connection.close()
         result = {
             "book": index,
             "outline": outline,
@@ -188,6 +215,8 @@ def run_book(
             "scenes_total": scenes,
             "duplicate_findings": len(duplicates),
             "all_findings": len(findings),
+            "longest_repeat_words": longest,
+            "providers_models": provenance,
             "words": words,
             "ticks": ticks,
             "wall_s": round(time.monotonic() - started),
@@ -235,17 +264,23 @@ def main() -> int:
     arm = "outline" if args.outline else "no-outline"
     destination = args.out / f"results-{arm}.json"
     destination.write_text(
-        json.dumps({"arm": arm, "books": results}, indent=2), encoding="utf-8"
+        json.dumps(
+            {"arm": arm, "measured_at": time.strftime("%Y-%m-%d"), "books": results},
+            indent=2,
+        ),
+        encoding="utf-8",
     )
-    print(f"\n{'book':>5} {'scenes':>7} {'words':>7} {'duplicate findings':>19}")
+    print(f"\n{'book':>5} {'scenes':>7} {'words':>7} {'dup findings':>13} {'max span':>9}")
     for row in results:
         print(
             f"{row['book']:>5} {row['scenes_drafted']:>7} {row['words']:>7} "
-            f"{row['duplicate_findings']:>19}"
+            f"{row['duplicate_findings']:>13} {row['longest_repeat_words']:>9}"
         )
     print(
-        "\n§54.1 on phi4, this same no-outline condition, five books: 11, 8, 1, 2, 6 "
-        "(mean 5.6).\nCompare against that range, not against zero."
+        "\nRead it as §57 does: at 12 scenes the finding count cannot distinguish this "
+        "generator from phi4\n(zero has Poisson p = 0.183 at phi4's per-pair rate) — the "
+        "statistic that carries is the max span,\nagainst phi4's 872 and the published-human "
+        "93."
     )
     print(f"wrote {destination}")
     return 0

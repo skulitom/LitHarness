@@ -269,12 +269,40 @@ def rename_entities(text: str, strength: float) -> str:
     """
     if strength <= 0:
         return text
+
+    def mid_sentence(index: int) -> bool:
+        """Whether the match at `index` sits after something other than a sentence break."""
+        cursor = index - 1
+        while cursor >= 0 and text[cursor] in " \t\n\"'“”\u2018\u2019":
+            cursor -= 1
+        return cursor >= 0 and text[cursor] not in ".!?…:—"
+
+    # Two checks, because the frequency floor alone does not find names — it *selects*
+    # function words, since nothing starts sentences more often than they do. Measured on
+    # Mother of Learning chapter 1 before the checks existed, the top-12 "entities" were
+    # Zorian, The, You, Mother, Cyoria, Fortov, She, Kirielle, Ilsa, What, There, His — so at
+    # every dose the sham rewrote articles and pronouns into names ("Corwin door opened"),
+    # which is grammatical damage, the one thing a sham must not inflict. The first CDG
+    # battery ran against that version and its rename control moved further than any real
+    # degrader. So: a token that also occurs lowercase in this text is sentence
+    # capitalisation, not a name ("The", "She"); and a token never seen mid-sentence is a
+    # sentence-starter, not a name ("Apparently", a dialogue "Yes") — names get used
+    # mid-sentence. The cost is losing a name that doubles as a common noun ("Ash" in a text
+    # that mentions ash), which only makes the sham gentler — the safe direction for a
+    # control whose contract is "changes no craft".
     counts: dict[str, int] = {}
+    seen_mid_sentence: set[str] = set()
     for match in re.finditer(r"\b[A-Z][a-z]{2,}\b", text):
-        counts[match.group(0)] = counts.get(match.group(0), 0) + 1
-    # Sentence-initial words masquerade as names; requiring several occurrences and skipping
-    # the very common ones is crude and adequate for a control.
-    candidates = [w for w, n in sorted(counts.items(), key=lambda kv: -kv[1]) if n >= 3][:12]
+        word = match.group(0)
+        counts[word] = counts.get(word, 0) + 1
+        if mid_sentence(match.start()):
+            seen_mid_sentence.add(word)
+    lowercase_forms = {match.group(0) for match in re.finditer(r"\b[a-z]{3,}\b", text)}
+    candidates = [
+        w
+        for w, n in sorted(counts.items(), key=lambda kv: -kv[1])
+        if n >= 3 and w in seen_mid_sentence and w.lower() not in lowercase_forms
+    ][:12]
     if not candidates:
         return text
     rng = _rng(text, "rename")
@@ -358,9 +386,8 @@ def variants(text: str, *, donor: str = "", doses: tuple[float, ...] = DOSES):
     swap, `connective_scramble` runs out of connectives — and over 30 Mother of Learning
     chapters that happened 31 times in 987 variants. Emitting both would be worse than
     wasteful: `evaluate` counts one paired comparison per variant, so a duplicate is the same
-    evidence counted twice, and the Wilson interval it computes would be narrower than the
-    evidence supports. Deduplicating is the difference between an honest interval and a
-    confident one.
+    evidence counted twice, and the interval it reports would be narrower than the evidence
+    supports. Deduplicating is the difference between an honest interval and a confident one.
     """
     yield ("original", 0, None, 0.0, text)
     emitted = {text}

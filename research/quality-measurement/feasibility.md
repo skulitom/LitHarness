@@ -5,10 +5,18 @@ running code, so that a later proposal is costed against hardware and data that 
 rather than assumed. Every number below came from a script that ran; where something failed,
 the error is quoted.
 
-Measured 2026-08-14 on the machine described in BRIEF.md §4. Scripts live in the session
-scratchpad (`p1_load_logprob.py`, `p2_scorer_bench.py`, `p3_drive.py`/`p3_worker.py`,
-`p3b_backend.py`, `p3c_flex.py`, `p4_intervention.py`, `p4b_controlled.py`, `p5_parquet.py`,
-`p6_reviews.py`).
+Measured 2026-08-14 on the machine described in BRIEF.md §4. Scripts lived in that session's
+scratchpad (`p1_load_logprob.py` … `p6_reviews.py`) and are gone with it.
+
+**Provenance note, added 2026-08-17.** This file was first committed with §5.3 and §6 as
+placeholder comments while the §0 table cited them as if they existed — two of six headline
+results had no in-document evidence, in a document whose charter is the sentence above. The
+bodies below were reconstructed by re-measurement on 2026-08-17 (stdlib csv over
+`reviews.csv`; pyarrow over both cached shards; definitions stated inline), which also
+corrected two numbers the placeholder era let drift: the §0 table said **19** distinct
+reviewed-at chapters and "not 386" — measured, it is **20** distinct chapters and **387**
+newline-terminated lines. The corrections are in the table; the wrong values are recorded
+here so the next reader knows the table was once wrong and why.
 
 ---
 
@@ -21,8 +29,8 @@ scratchpad (`p1_load_logprob.py`, `p2_scorer_bench.py`, `p3_drive.py`/`p3_worker
 | 3 | Context ceiling on 24 GB at bf16 | **~12,288 tokens.** 12,288 OK (21.05 GB); 13,312 OOMs |
 | 4 | Interventional pair (score B with / without A) | **0.51 s** @ RoyalRoad scale, **2.60 s** @ MoL scale |
 | 4b | Does the intervention survive distance? | **No.** Effect dies by ~1–2k tokens (§4.3) |
-| 5 | RoyalRoad within-story / within-author design | **Within-story: no outcome variable. Within-author: n=23.** Both refuted (§5.3) |
-| 6 | MoL `reviews.csv` | **116 rows, not 386.** Sub-scores 29% populated; 19 distinct chapters (§6) |
+| 5 | RoyalRoad within-story / within-author design | **Within-story: no outcome variable. Within-author: n=23, and only 10 cross the era boundary.** Both refuted (§5.3) |
+| 6 | MoL `reviews.csv` | **116 rows, not 387 lines.** Sub-scores 29% populated; 20 distinct chapters (§6) |
 
 Two of these are refutations, and they are the load-bearing ones: **§4.3 and §5.3 each kill a
 design that BRIEF.md §3 points at as the open direction.**
@@ -259,12 +267,58 @@ before building anything on top.** It costs 70 seconds.
 ## 5. RoyalRoad parquet shards
 
 Both cached shards read with pyarrow: `train-00003-of-00047.parquet` and
-`train-00030-of-00047.parquet`, **34,338 rows each, 68,676 total**.
+`train-00030-of-00047.parquet`, **34,338 rows each, 68,676 total**. One snapshot in the HF
+cache: `0e4df3f22999a7b7fa13b1e7564a09b5f3eb964e` — the revision every number in this
+directory was measured against.
 
-<!--SECTION5-->
+### 5.3 The two within-designs, refuted *(re-measured 2026-08-17)*
+
+The point of a within-story or within-author design is to hold the confounds that killed
+every between-cohort proxy — era, author, maturity, cadence — fixed by construction. Both
+available versions die before the design question is reached:
+
+- **Within-story: there is no outcome variable.** All five advertised score columns
+  (`overall_score`, `style_score`, `story_score`, `grammar_score`, `character_score`) are
+  **100% null across all 68,676 rows** — re-verified column by column. A within-story design
+  compares chapters of one story against a per-chapter outcome, and this corpus has no
+  per-chapter outcome of any kind; the engagement counters are story-level stocks. The
+  missing column is exactly the per-chapter retention `plan/craft-corpus.md` §4.5 names as
+  unobtainable without platform cooperation.
+- **Within-author: the cell is too small, twice over.** Definition, stated because the first
+  write-up of this number did not state one: an author qualifies with ≥2 LitRPG-tagged
+  stories in the cached shards, each with ≥1 chapter passing the corpus filters (cohort
+  assigned by `corpus_io.era_cohort`, ≥300 words). Measured: **23 qualifying authors** — and
+  the design actually wanted (the same author on both sides of the era boundary, so era
+  varies while author holds) is smaller still: **10**. 608 qualifying stories produce ten
+  usable author-pairs; nothing calibrates on that, and the ledger's `MIN_HOLDOUT = 50` is
+  not in sight.
 
 ---
 
 ## 6. Mother of Learning `reviews.csv` — the advertised numbers do not survive contact
 
-<!--SECTION6-->
+*(Re-measured 2026-08-17: stdlib `csv` with `utf-8-sig` — the header carries a BOM — over
+`C:/DEV/BookCrawler/data/mother-of-learning-20220313/reviews.csv`.)*
+
+The file reports **387** newline-terminated lines, and that is not the row count: review
+bodies contain embedded newlines, so a line count overstates the data 3.3×. A real CSV parse
+yields **116 rows**.
+
+| column | populated | distribution |
+|---|---|---|
+| `overall_score` | 116/116 | **96 at 5.0**; 7 at 4.5; 13 at 4.0 or below |
+| `style_score` | **34**/116 | 25 of 34 at 5.0 |
+| `story_score` | 34/116 | 30 of 34 at 5.0 |
+| `grammar_score` | 34/116 | 24 of 34 at 5.0 |
+| `character_score` | 34/116 | 25 of 34 at 5.0 |
+| `reviewed_at_chapter_id` | 76/116, over **20** distinct chapters | — |
+| `content` (review text) | 116/116 | — |
+| `upvotes` / `downvotes` | 88/116 | — |
+
+**What this refuses.** One book, one author, one quality tier, a self-selected fan
+population, and a ceiling at 5.0: there is no usable variance to calibrate against, and the
+sub-scores that would supply *attribution* exist on 34 rows spread across 20 chapters. Treat
+this file as a source of review **text** (a vocabulary of located complaints, 116 documents
+of it) and as the index to a within-book prose corpus — never as a score label. Any proposal
+resting on these scores as ground truth is refuted before it starts. BRIEF.md §4 carries the
+same table; this section is the measurement it cites.

@@ -442,11 +442,15 @@ and it is a gap rather than an oversight, because an audit sample is addressed b
 **The audit queue is a confirmation sample, not the plan for measuring quality.** A system
 whose quality evidence depends on someone deciding to sit down will not produce any — the
 measured throughput of that design is two verdicts against 104 exported pairs. The primary
-calibration target is *revealed* judgment: readers who followed, favourited or abandoned
-published LitRPG at scale, already collected, with none of the demand characteristics or
-positional artifacts that solicited judging has to be blinded against.
-[plan/craft-corpus.md](plan/craft-corpus.md) has the measured label, the research directions
-and what each is and is not valid for.
+calibration target remains *revealed* judgment: readers who followed, favourited or
+abandoned published LitRPG at scale, already collected, with none of the demand
+characteristics or positional artifacts that solicited judging has to be blinded against.
+What it currently lacks is a surviving label: the measured candidate
+(`followers / total_views`) failed its own control at the decile grain a calibration would
+use — the deciles are recoverable from follower count alone at AUC 0.814
+(`plan/stage-0-decisions.md` §56.3). [plan/craft-corpus.md](plan/craft-corpus.md) has the
+refutation, the covariate control any successor label must state before it runs, and what
+each remaining research direction is and is not valid for.
 
 To rebuild the published-LitRPG reference profile (optional, needs the `corpus` extra and
 downloads shards of a 12.5GB dataset — no prose is stored, only percentiles):
@@ -519,9 +523,11 @@ Stated plainly, because a system that runs is easy to mistake for a system that 
   judgment, and the emptiness of `calibrations` is still the measure of the gap.
   All four metrics were measured against 13,000 chapters of published LitRPG and
   **all four failed to separate declared-AI prose from human prose at the same date**; the one
-  that looked promising turned out to be detecting the year. §10.6 now records twelve of
-  thirteen candidate proxies refuted. The blocker is human judgment, not effort:
-  `litharness audit` is the queue that collects it.
+  that looked promising turned out to be detecting the year. For how many candidate proxies
+  stand refuted, [research/quality-measurement/BRIEF.md](research/quality-measurement/BRIEF.md)
+  §2 is canonical — this sentence used to restate a count and the restatement was stale
+  within days, which is exactly why the ledger owns the number. The blocker is human
+  judgment, not effort: `litharness audit` is the queue that collects it.
 - **The full deterministic pack is opt-in, and its live inputs are still thin.** Every
   accepted draft is automatically evaluated by `state.contradiction.v0`. When the
   ContinuityEvaluation executable is configured, the same durable job also runs all six
@@ -540,10 +546,13 @@ Stated plainly, because a system that runs is easy to mistake for a system that 
   What it reads is the `[STATUS]` line the genre puts on the page, and nothing else. Nothing
   here touches prose-semantic facts like "Brandt knows about the letter", which need a model
   call that is deliberately not built. And it **mints nothing**: the story position is read
-  back out of the book's own imported evidence and abstains where the book is silent, so a
-  book with no imported snapshot — Book Zero — extracts nothing at all. Until `render_prompt`
-  asks generators to emit system voice, extraction yields records only for prose that already
-  carries it. That prompt change moves every fixture hash, so it lands on its own.
+  back out of the book's own evidence and abstains where the book is silent. ~~Until
+  `render_prompt` asks generators to emit system voice, extraction yields records only for
+  prose that already carries it.~~ That change has landed — it is what the opening of this
+  file means by "asks its generator to state game state on the page and reads that back",
+  and this bullet contradicted the opening for a while by still calling it future. What
+  remains true: a book whose scenes carry no `[STATUS]` line extracts nothing, which for a
+  book outside the genre is abstention working as designed, not a gap.
 - **Operator controls are not narrative plan edits.** A directive whose kind is `control`
   remains visible in the inbox; use the durable `pause` / `resume` commands for process
   control. The planner does not reinterpret words like “stop” as story constraints.

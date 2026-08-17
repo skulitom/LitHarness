@@ -16,3 +16,6 @@ exports/
 .coverage.*
 coverage.xml
 htmlcov/
+
+# LaTeX build output for research/*.tex — a build product, like dist/ and exports/.
+output/

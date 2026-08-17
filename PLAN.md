@@ -1,7 +1,7 @@
 # LitHarness: Autonomous Book-Production System Plan
 
 **Version:** 2.2 (supersedes PLAN-v1-authoring-tool.md, archived in this folder)
-**Status:** Master plan; **Stages 0, 1 and 2 met against their exit clauses — with Stage 0's endurance clause *evidenced rather than met* and Stage 2's propagation number a *dev-set* one that does not generalise; both caveats are in §17 beside the claims they qualify. 670 passing tests + 6 opt-in live; operable via `litharness tick`; a book goes in (`import`), drafts itself against a context packet, is refused when a planted defect stands against it, repairs a located finding within a serial cap (`evaluate_revision`/`repair_finding`), notifies out of the outbox to a configured sink (`--notify-file`), can have its plan history read and rolled back (`plans`/`revert-plan`), re-checks the scenes a repair's change reaches instead of only the scene it repaired (`propagate`, dev-set precision 1.000 against a 0.481 base rate), and comes out readable (`export`); Stage 3 (Book Zero) is now startable rather than blocked — a book with no imported snapshot drafts, states its game state on the page, and reads it back; two of §19's seven clauses met outright — scorecard in §19.1**
+**Status:** Master plan; **Stages 0, 1 and 2 met against their exit clauses — with Stage 0's endurance clause *evidenced rather than met* and Stage 2's propagation number a *dev-set* one that does not generalise; both caveats are in §17 beside the claims they qualify. 787 passing tests + 8 opt-in live; operable via `litharness tick`; a book goes in (`import`), drafts itself against a context packet, is refused when a planted defect stands against it, repairs a located finding within a serial cap (`evaluate_revision`/`repair_finding`), notifies out of the outbox to a configured sink (`--notify-file`), can have its plan history read and rolled back (`plans`/`revert-plan`), re-checks the scenes a repair's change reaches instead of only the scene it repaired (`propagate`, dev-set precision 1.000 against a 0.481 base rate), and comes out readable (`export`); Stage 3 (Book Zero) is now startable rather than blocked — a book with no imported snapshot drafts, states its game state on the page, and reads it back; two of §19's seven clauses met outright — scorecard in §19.1**
 
 *(Corrected here, because this line was the instance: it read "four of §19's seven clauses met" while §19.1's table said two. §19.1 contains a paragraph recording that exact drift happening once before, four lines above the table that contradicted it, and the header carrying the same wrong number went unnoticed through three revisions. The readiness number this project reports about itself is the number to distrust first.)*
 **Role:** A 24/7 autonomous system that plans, drafts, evaluates, repairs, and versions quality LitRPG books — directed by a human, never blocked on one
@@ -414,7 +414,7 @@ done, and **the v2.1 pass did it again in six more places**:
 | Project | State | Role in v2 |
 |---|---|---|
 | litharness-contracts | **Wire schema 1.1.0**, 124 tests, 30 schemas, mystery + litrpg golden fixtures. Git repo (branch `main`, clean tree, no remote, no tags). **Still no LICENSE** — README says "License: TBD", and that is a decision for the owner rather than a gap to fill | Shared schemas + gold benchmarks. §20.3's minors have shipped except the game-system schemas, which stay deferred for want of a consumer. Version (don't freeze) after Book Zero. *(Struck: "untracked, no git repo" and "version-controlling it is the single cheapest unblock" — the commit landed 2026-08-12 17:36, eight minutes **before** the v2.1 edit that still called it untracked.)* |
-| **LitHarness (this repo)** | **Stages 0–2 met against their exit clauses (§17 carries the caveats): 693 tests passing + 8 opt-in live, ruff clean, mypy strict clean (`warn_unreachable` on). Under version control** (`.gitattributes` pins `eol=lf`; `core.autocrlf=true` is set globally on this machine and has already bitten this project once) | The product. **This table previously audited every sibling's VCS status and had no row for the product repo, which was itself untracked.** |
+| **LitHarness (this repo)** | **Stages 0–2 met against their exit clauses (§17 carries the caveats): 787 tests passing + 8 opt-in live (2026-08-17; the header restates this number and the two have drifted apart once — when they disagree, the suite is the referee), ruff clean, mypy strict clean (`warn_unreachable` on). Under version control** (`.gitattributes` pins `eol=lf`; `core.autocrlf=true` is set globally on this machine and has already bitten this project once) | The product. **This table previously audited every sibling's VCS status and had no row for the product repo, which was itself untracked.** |
 | BookWorldState | Committed, Apache-2.0, tagged `v0.1.0`, pushed to GitHub; **13 commits, working tree clean**; 100 tests passing. Ships an authenticated versioned WSGI API, transactional outbox with capped-exponential-retry worker, signed webhook publication, migration checksums, online backup/restore + destructive-corruption drill — **Milestone 4/5 infrastructure, not "~Milestone 2"**. What is *not* done is M3's evaluation corpus | State substrate. Its closed predicate registry is **not** injectable yet (§20.5) — but §8.4 routes around this deliberately, so it is not a blocker for §8. *(Struck: "working tree is not clean", "4 commits", "~Milestone 2 complete", "the real blocker for §8" — all four false.)* |
 | RevisionBench | Mature (**411** tests). A2d complaint-gated repair, the LitRPG stratum, **and A3d** have landed — A3d shipped *under the name A2d*, and best-of-N repair ranked by minimal intervention closed the last element in `22a228d` | Source of repair policy, mechanical vetoes, LitRPG stratum evidence. **Its M5 decomposition is done and has already answered the question §20.7 was scheduled to ask** — see the redirect there. *(Struck: "405 tests", "A3d is next".)* |
 | RevisionJudge | Built; 104 pairs exported, exactly 2 verdicts collected; one uncommitted file (`data/verdicts.jsonl`) | **Demoted from the calibration instrument to a confirmation sample** (§10.3 as amended). Two verdicts against 104 pairs is the measured throughput of a design that needs a human to decide to sit down, and it is why revealed preference is now primary. Still the right tool for spot-confirming a calibration derived elsewhere; `litharness audit` is the same shape and collects as a by-product of drafting. The verdict *consumer* remains unbuilt |
@@ -665,10 +665,18 @@ order-consistent survivors preferred human originals ~80% of the time. So:
    neither failure mode and arrives in millions.
 
    Solicited sessions are **not** deleted — they are demoted to a confirmation sample, which
-   is what §10.5's standing audit already is and is sized for. The measured label
+   is what §10.5's standing audit already is and is sized for. ~~The measured label
    (`followers / total_views`, a conversion rate that divides out discovery) shows 9× spread
    between its 10th and 90th percentiles and Spearman ρ = 0.44 against raw follower count, so
-   it discriminates and is not merely popularity restated.
+   it discriminates and is not merely popularity restated.~~ **Measured further, and the
+   label failed its own control at the grain a calibration would use it**
+   (`plan/stage-0-decisions.md` §56.3, 2026-08-17): its top-against-bottom deciles are
+   recoverable from `followers` alone at AUC 0.814 while the best prose metric reaches
+   0.367, and the division never removed what it claimed — `total_views` counts *staying* as
+   well as discovery, so conversion falls as chapters-read-per-reader rises. Revealed
+   preference remains the direction; this label at this grain is not the instrument.
+   [plan/craft-corpus.md](plan/craft-corpus.md) §3–§4.1 carry the corrected reading and the
+   prose-blind covariate control any successor states before it runs.
 4. **Critic promotion.** A critic (or metric) becomes a blocking gate only after
    held-out calibration shows usable precision at an acceptable workload, with
    order-consistency and abstention measured. Until then the Conductor treats it as
@@ -813,16 +821,22 @@ order-consistent survivors preferred human originals ~80% of the time. So:
    **The authoring requirement is withdrawn; the corpus requirement is not.** This section's
    claim that the corpus "is human work that no amount of engineering substitutes for" was
    true of a *hand-authored, attributed* corpus and false of the thing that corpus was needed
-   for. A paired good/weak set can be **selected** rather than written: top and bottom deciles
-   of reader conversion (`followers / total_views`), matched on tag set, era, length and
-   author, gives thousands of pairs where this section hoped for dozens. What selection loses
-   is *attribution* — a hand-authored pair says "these differ in dramatic function", a
-   selected pair says "readers converted on one and not the other" and is silent about why —
-   so §1a.3's item-by-item ordering stays unvalidated under either approach, which means
-   authoring was never buying that either. **§10.6 is therefore no longer the gating item for
-   craft work.** What gates it now is data acquisition — per-chapter retention and reader
-   reviews, both public and neither in this dataset — plus two pieces of engineering, all
-   three set out in [plan/craft-corpus.md](plan/craft-corpus.md) §4.
+   for. ~~A paired good/weak set can be **selected** rather than written: top and bottom
+   deciles of reader conversion (`followers / total_views`), matched on tag set, era, length
+   and author, gives thousands of pairs where this section hoped for dozens.~~ **Run, and
+   selection is refused** (`plan/stage-0-decisions.md` §56.3; §56.6 item 4: "do not select
+   §4.4's corpus from conversion deciles"): the deciles are recoverable from `followers` at
+   AUC 0.814 and from in-shard chapter count at 0.308, so pairs selected from them are
+   paired on story *size*, and whether their halves differ on prose is unknown without
+   exactly the attribution work selection was meant to avoid. What selection was already
+   known to lose is *attribution* — a hand-authored pair says "these differ in dramatic
+   function", a selected pair says "readers converted on one and not the other" and is
+   silent about why — so §1a.3's item-by-item ordering stays unvalidated under either
+   approach, which means authoring was never buying that either. **§10.6's corpus question
+   is therefore open again**: authored is withdrawn, selected is refused, and what gates
+   craft work is back to data acquisition — per-chapter retention and reader reviews, both
+   public and neither in this dataset — set out with the refusal in
+   [plan/craft-corpus.md](plan/craft-corpus.md) §4.
 
 ## 11. Manuscript IR and state architecture
 
@@ -1452,9 +1466,11 @@ exceptions, zero parked units, **10,108 tokens per accepted scene** — which la
 bottom of §15's 10-20k hypothesis and makes that estimate measured. Mean scene 875.5 words
 against the 900-word target (97%), so the 291-scene figure above becomes **57** and a 50k
 draft is about two hours on one local GPU. The stated length is 50-80k and this run was 30
-scenes by choice, so the stage is **evidenced at 26k rather than met at 50k**; nothing in the
-run suggests the remaining scenes are a different problem, and §52 is the output the stage
-exists for.
+scenes by choice, so the stage is **evidenced at 26k rather than met at 50k**; ~~nothing in
+the run suggests the remaining scenes are a different problem~~ — §56.4 measured that they
+are: at this stage's own 57-scene target the shipped context budget leaves 32–67 prior scenes
+present in the packet in no form at all, a regime a 30-scene run never enters — and §52 is
+the output the stage exists for.
 
 **Its headline is not what this section expected.** The dominant failure was **whole-scene
 duplication that no gate refuses**: five of thirty scenes are near-copies of an earlier scene,
@@ -1479,7 +1495,12 @@ of 30**, and the beat's title plus that one word is the entire plan-side instruc
 twenty-five scenes are asked the same question, and the book re-issues its own errand. The
 frozen ledger has the same root: 31 extracted status records, **two** distinct states. So the
 taxonomy's first entry is **Narrative Planning v0**, not the sampler and not the context
-packet, and §17 Stage 5's "in the order Book Zero's taxonomy demands" now has its order.
+packet, ~~and §17 Stage 5's "in the order Book Zero's taxonomy demands" now has its
+order~~. **Generator-scoped, per §57 (2026-08-17):** the duplication this ordering rests on
+is a property of `phi4:14b` — two frontier books in the same no-outline condition put the
+longest verbatim repeat at **17 and 12 words** against phi4's 872 — so on the generator
+§1a.5 actually requires, the taxonomy's first entry does not reproduce and Stage 5's order
+has to be re-argued on other measured ground; §57 names the settling run.
 
 **Narrative Planning v0 shipped, and §54 has what it moved.** One model call per book produces
 one statement per scene, stored as scoped `SCENE_PLAN` plan items through the existing
@@ -1513,7 +1534,10 @@ produced under it.
 Integrate LongRangeContext / ContinuityEvaluation prose detectors /
 RevisionPropagation slices **in the order Book Zero's taxonomy demands**, each
 through its own incubator gates. Likely first: distant-callback context and
-overdue-payoff detection.
+overdue-payoff detection. (The taxonomy's order is currently unsettled: §57 measured its
+first entry — whole-scene duplication — as a `phi4:14b` artifact absent on the frontier
+generator, and §56.4's dark-scene arithmetic argues the context packet moved up. The order
+is re-argued from measurements on the production generator, not inherited from §52.)
 **Exit:** the dominant Book Zero failure class measurably reduced in a Book One+
 draft at equal budget.
 
@@ -1976,19 +2000,26 @@ every unstruck action below as a claim to re-verify rather than a task to start.
    Local Claude Code session by default, Codex as fallback, Ollama for iterative
    testing, plus the deterministic fake. Measured, with amendments this plan owes
    §2, §4.2, §15 and Stage 0's exit.
-10. **Calibrate a craft proxy against revealed preference — the new critical path for §1a.**
-    Replaces "author the §10.6 corpus", which is withdrawn as the gating item (see §10.6).
+10. **Calibrate a craft proxy against revealed preference — ~~the new critical path for
+    §1a~~ run at probe scale, and the label failed its own control (§56.3, 2026-08-17).**
+    Replaces "author the §10.6 corpus", which is withdrawn as the gating item (see §10.6 —
+    whose selected replacement is now also refused, so the corpus question is open again).
     Two pieces of engineering, in dependency order, both detailed in
     [plan/craft-corpus.md](plan/craft-corpus.md) §4:
 
     - **Build the labelled study set.** Full-corpus pass (all 47 shards, offline, behind the
       `corpus` extra), LitRPG-tagged, story-complete so chapter counts are real — the 2-shard
-      probe truncates them because a story's chapters span shards. Label is
-      `followers / total_views`, measured at 9× spread p10→p90 and ρ = 0.44 against raw
-      followers, so it discriminates without being popularity restated. Strata: tag set, era,
-      length, cadence (computable from `release_datetime`), and author where possible — only
-      23 of 590 authors had ≥2 LitRPG stories in the probe, so within-author matching needs
-      the full pass.
+      probe truncates them because a story's chapters span shards. Label was to be
+      `followers / total_views` — ~~measured at 9× spread p10→p90 and ρ = 0.44 against raw
+      followers, so it discriminates without being popularity restated~~ **refuted at decile
+      grain by its own control (§56.3)**: the deciles are recoverable from `followers` alone
+      at AUC 0.814, and the denominator counts staying as well as discovery, so the label
+      carries story size. A full-corpus successor is not forbidden, but it states its
+      prose-blind covariate control before it runs (craft-corpus §4.1) — and until one
+      survives that, this action is not a critical path, it is a refuted probe with a named
+      successor design. Strata: tag set, era, length, cadence (computable from
+      `release_datetime`), and author where possible — only 23 of 590 authors had ≥2 LitRPG
+      stories in the probe, so within-author matching needs the full pass.
     - **Then test proxies against it, era control in the same pass.** Non-negotiable after
       `tricolon_rate`: a headline AUC without its control is meaningless, and that one would
       have shipped as this project's first working AI-tell detector.

@@ -1,0 +1,962 @@
+{"unit": "mol:301778", "ablation": "original", "dose": 0.0, "cdg": 0.22887059052785239, "words": 7618, "seconds": 1.57, "digest": "61698500fea4fa15"}
+{"unit": "mol:301778", "ablation": "paragraph_shuffle", "dose": 0.15, "cdg": 0.3234845797220866, "words": 7618, "seconds": 1.33, "digest": "38b65356ad04b3ae"}
+{"unit": "mol:301778", "ablation": "paragraph_shuffle", "dose": 0.35, "cdg": 0.35003089904785156, "words": 7618, "seconds": 1.33, "digest": "fb7855ef95489fa4"}
+{"unit": "mol:301778", "ablation": "paragraph_shuffle", "dose": 0.65, "cdg": 0.25233209133148193, "words": 7618, "seconds": 1.33, "digest": "a83ccc8484667b4f"}
+{"unit": "mol:301778", "ablation": "paragraph_shuffle", "dose": 1.0, "cdg": 0.31005056699117023, "words": 7618, "seconds": 1.33, "digest": "138cc859c58dbbce"}
+{"unit": "mol:301778", "ablation": "sentence_shuffle", "dose": 0.15, "cdg": 0.21779298782348633, "words": 7618, "seconds": 1.33, "digest": "dd136e35b4e9d561"}
+{"unit": "mol:301778", "ablation": "sentence_shuffle", "dose": 0.35, "cdg": 0.24829256534576416, "words": 7618, "seconds": 1.33, "digest": "1b086486fe5be7b1"}
+{"unit": "mol:301778", "ablation": "sentence_shuffle", "dose": 0.65, "cdg": 0.2332152525583903, "words": 7618, "seconds": 1.34, "digest": "eb1b4c4ea419d17e"}
+{"unit": "mol:301778", "ablation": "sentence_shuffle", "dose": 1.0, "cdg": 0.2897757689158122, "words": 7618, "seconds": 1.37, "digest": "6c886f2b3cc7d9c3"}
+{"unit": "mol:301778", "ablation": "connective_scramble", "dose": 0.15, "cdg": 0.22930904229482016, "words": 7618, "seconds": 1.36, "digest": "b85b954700639903"}
+{"unit": "mol:301778", "ablation": "connective_scramble", "dose": 0.35, "cdg": 0.23239970207214355, "words": 7618, "seconds": 1.35, "digest": "e17b57a8a7b0f960"}
+{"unit": "mol:301778", "ablation": "connective_scramble", "dose": 0.65, "cdg": 0.22924729188283285, "words": 7618, "seconds": 1.34, "digest": "e1fb0a9f19b2658d"}
+{"unit": "mol:301778", "ablation": "connective_scramble", "dose": 1.0, "cdg": 0.23135900497436523, "words": 7618, "seconds": 1.33, "digest": "452969a88d254d47"}
+{"unit": "mol:301778", "ablation": "dialogue_flatten", "dose": 0.15, "cdg": 0.24546170234680176, "words": 7618, "seconds": 1.34, "digest": "c7ff6aed67a7d29e"}
+{"unit": "mol:301778", "ablation": "dialogue_flatten", "dose": 0.35, "cdg": 0.22479581832885742, "words": 7618, "seconds": 1.33, "digest": "e0a987acd1ad3d78"}
+{"unit": "mol:301778", "ablation": "dialogue_flatten", "dose": 0.65, "cdg": 0.2636994918187459, "words": 7618, "seconds": 1.36, "digest": "01434d2237a5c4b1"}
+{"unit": "mol:301778", "ablation": "dialogue_flatten", "dose": 1.0, "cdg": 0.2832901080449422, "words": 7618, "seconds": 1.33, "digest": "8bd6c02705b5c9a7"}
+{"unit": "mol:301778", "ablation": "transplant", "dose": 0.15, "cdg": 0.2526954809824626, "words": 7632, "seconds": 1.34, "digest": "474deb1136eba262"}
+{"unit": "mol:301778", "ablation": "transplant", "dose": 0.35, "cdg": 0.29131317138671875, "words": 7634, "seconds": 1.36, "digest": "645fd1f1de0edeec"}
+{"unit": "mol:301778", "ablation": "transplant", "dose": 0.65, "cdg": 0.33398008346557617, "words": 7628, "seconds": 1.34, "digest": "49bbca393bc89fa2"}
+{"unit": "mol:301778", "ablation": "transplant", "dose": 1.0, "cdg": 0.34884218374888104, "words": 7670, "seconds": 1.36, "digest": "6f7e12b50a57f6dc"}
+{"unit": "mol:301778", "ablation": "sentence_deletion", "dose": 0.15, "cdg": 0.2820359468460083, "words": 6748, "seconds": 1.38, "digest": "3e37cf9743d597f1"}
+{"unit": "mol:301778", "ablation": "sentence_deletion", "dose": 0.35, "cdg": 0.2531128406524658, "words": 5278, "seconds": 1.16, "digest": "664da641e0f246a7"}
+{"unit": "mol:301778", "ablation": "sentence_deletion", "dose": 0.65, "cdg": 0.28755640983581543, "words": 3435, "seconds": 0.7, "digest": "97bf5eb0c98d61a7"}
+{"unit": "mol:301778", "ablation": "sentence_deletion", "dose": 1.0, "cdg": 0.30079495906829834, "words": 2057, "seconds": 0.47, "digest": "9286e5fccab48070"}
+{"unit": "mol:301778", "ablation": "rename_entities", "dose": 0.15, "digest": "8bbb395eaf7e8eb4", "cdg": 0.2619725863138835, "words": 7618, "seconds": 1.73, "gpu_temp": 62}
+{"unit": "mol:301778", "ablation": "rename_entities", "dose": 0.35, "digest": "894ae72581d44360", "cdg": 0.3066736062367757, "words": 7618, "seconds": 1.52, "gpu_temp": 64}
+{"unit": "mol:301778", "ablation": "rename_entities", "dose": 0.65, "digest": "466f8fb0bd732908", "cdg": 0.29720274607340497, "words": 7618, "seconds": 1.55, "gpu_temp": 63}
+{"unit": "mol:301778", "ablation": "rename_entities", "dose": 1.0, "digest": "72d2d24bb167120c", "cdg": 0.30096669991811115, "words": 7618, "seconds": 1.51, "gpu_temp": 63}
+{"unit": "mol:301778", "ablation": "respell", "dose": 0.15, "cdg": 0.256492018699646, "words": 7618, "seconds": 1.35, "digest": "af8264bb76397b98"}
+{"unit": "mol:301778", "ablation": "respell", "dose": 0.35, "cdg": 0.2572600444157918, "words": 7618, "seconds": 1.38, "digest": "8b6d43e820f70e07"}
+{"unit": "mol:301778", "ablation": "respell", "dose": 0.65, "cdg": 0.25685850779215497, "words": 7618, "seconds": 1.36, "digest": "e2fe5e1ea811e554"}
+{"unit": "mol:301788", "ablation": "original", "dose": 0.0, "cdg": 0.2567940553029378, "words": 5938, "seconds": 1.36, "digest": "b772c5e7abfecdbe"}
+{"unit": "mol:301788", "ablation": "paragraph_shuffle", "dose": 0.15, "cdg": 0.244275172551473, "words": 5938, "seconds": 1.35, "digest": "51cb21ec8728ca4a"}
+{"unit": "mol:301788", "ablation": "paragraph_shuffle", "dose": 0.35, "cdg": 0.26978997389475506, "words": 5938, "seconds": 1.37, "digest": "b5a9bbe5623b462f"}
+{"unit": "mol:301788", "ablation": "paragraph_shuffle", "dose": 0.65, "cdg": 0.33993109067281085, "words": 5938, "seconds": 1.36, "digest": "28257d1a46c6d118"}
+{"unit": "mol:301788", "ablation": "paragraph_shuffle", "dose": 1.0, "cdg": 0.2804059584935506, "words": 5938, "seconds": 1.36, "digest": "07e95a81cc320eb1"}
+{"unit": "mol:301788", "ablation": "sentence_shuffle", "dose": 0.15, "cdg": 0.2680770953496297, "words": 5938, "seconds": 1.36, "digest": "0acad6e9fe03d056"}
+{"unit": "mol:301788", "ablation": "sentence_shuffle", "dose": 0.35, "cdg": 0.2367552916208903, "words": 5938, "seconds": 1.35, "digest": "8c385d02d55a8450"}
+{"unit": "mol:301788", "ablation": "sentence_shuffle", "dose": 0.65, "cdg": 0.2516334454218547, "words": 5938, "seconds": 1.36, "digest": "f2f07ed1402178fe"}
+{"unit": "mol:301788", "ablation": "sentence_shuffle", "dose": 1.0, "cdg": 0.25917669137318927, "words": 5938, "seconds": 1.37, "digest": "7ee6fcbb00fd836b"}
+{"unit": "mol:301788", "ablation": "connective_scramble", "dose": 0.15, "cdg": 0.25633955001831055, "words": 5938, "seconds": 1.37, "digest": "5c0489ee4895cdc3"}
+{"unit": "mol:301788", "ablation": "connective_scramble", "dose": 0.35, "cdg": 0.25451072057088214, "words": 5938, "seconds": 1.36, "digest": "1083d1e6ec2c5b40"}
+{"unit": "mol:301788", "ablation": "connective_scramble", "dose": 0.65, "cdg": 0.25567376613616943, "words": 5938, "seconds": 1.36, "digest": "e5fe7b96fd8ddb40"}
+{"unit": "mol:301788", "ablation": "connective_scramble", "dose": 1.0, "cdg": 0.24938861529032388, "words": 5938, "seconds": 1.36, "digest": "152b27705944fba5"}
+{"unit": "mol:301788", "ablation": "dialogue_flatten", "dose": 0.15, "cdg": 0.2656485637029012, "words": 5938, "seconds": 1.36, "digest": "69882e9d11f01d79"}
+{"unit": "mol:301788", "ablation": "dialogue_flatten", "dose": 0.35, "cdg": 0.26652153333028156, "words": 5938, "seconds": 1.36, "digest": "b3a8e997ad18ef96"}
+{"unit": "mol:301788", "ablation": "dialogue_flatten", "dose": 0.65, "cdg": 0.2870564858118693, "words": 5938, "seconds": 1.37, "digest": "f22456723c6bde6e"}
+{"unit": "mol:301788", "ablation": "dialogue_flatten", "dose": 1.0, "cdg": 0.29273509979248047, "words": 5938, "seconds": 1.38, "digest": "b707b6ebb1b57b40"}
+{"unit": "mol:301788", "ablation": "transplant", "dose": 0.15, "cdg": 0.25079039732615155, "words": 5944, "seconds": 1.38, "digest": "46c0ee7a72bf6337"}
+{"unit": "mol:301788", "ablation": "transplant", "dose": 0.35, "cdg": 0.2652800877888997, "words": 6012, "seconds": 1.37, "digest": "a324178acd0ae1c1"}
+{"unit": "mol:301788", "ablation": "transplant", "dose": 0.65, "cdg": 0.25291597843170166, "words": 5951, "seconds": 1.35, "digest": "c34214dacaeabf48"}
+{"unit": "mol:301788", "ablation": "transplant", "dose": 1.0, "cdg": 0.30471158027648926, "words": 6016, "seconds": 1.39, "digest": "03c04658ef4c983d"}
+{"unit": "mol:301788", "ablation": "sentence_deletion", "dose": 0.15, "cdg": 0.24173345565795898, "words": 5081, "seconds": 1.14, "digest": "716c4f088e0f9b45"}
+{"unit": "mol:301788", "ablation": "sentence_deletion", "dose": 0.35, "cdg": 0.23558467626571655, "words": 4135, "seconds": 0.92, "digest": "9d407656d7bbee5c"}
+{"unit": "mol:301788", "ablation": "sentence_deletion", "dose": 0.65, "cdg": 0.29178547859191895, "words": 2645, "seconds": 0.48, "digest": "4f137c8cd486aed8"}
+{"unit": "mol:301788", "ablation": "sentence_deletion", "dose": 1.0, "cdg": 0.21162009239196777, "words": 1651, "seconds": 0.26, "digest": "a61ea3ad47f276c3"}
+{"unit": "mol:301788", "ablation": "rename_entities", "dose": 0.15, "digest": "b935c97b24557db4", "cdg": 0.2744399309158325, "words": 5938, "seconds": 1.55, "gpu_temp": 65}
+{"unit": "mol:301788", "ablation": "rename_entities", "dose": 0.35, "digest": "44ec112dd80296d8", "cdg": 0.2982160647710164, "words": 5938, "seconds": 1.52, "gpu_temp": 65}
+{"unit": "mol:301788", "ablation": "rename_entities", "dose": 0.65, "digest": "611fb06ada1fcd6d", "cdg": 0.31372793515523273, "words": 5938, "seconds": 1.56, "gpu_temp": 65}
+{"unit": "mol:301788", "ablation": "rename_entities", "dose": 1.0, "digest": "2f43c7d61738ce62", "cdg": 0.2969878514607747, "words": 5938, "seconds": 1.5, "gpu_temp": 66}
+{"unit": "mol:301788", "ablation": "respell", "dose": 0.15, "cdg": 0.2822103103001912, "words": 5938, "seconds": 1.38, "digest": "a2dde3a4e70ebfed"}
+{"unit": "mol:301788", "ablation": "respell", "dose": 0.35, "cdg": 0.2821183999379476, "words": 5938, "seconds": 1.39, "digest": "904932af646c209e"}
+{"unit": "mol:301788", "ablation": "respell", "dose": 0.65, "cdg": 0.282659371693929, "words": 5938, "seconds": 1.38, "digest": "a7c619bab8a68d3b"}
+{"unit": "mol:301788", "ablation": "respell", "dose": 1.0, "cdg": 0.2826789617538452, "words": 5938, "seconds": 1.37, "digest": "dd19bcd6cccc9dd7"}
+{"unit": "mol:301801", "ablation": "original", "dose": 0.0, "cdg": 0.22293015321095785, "words": 7155, "seconds": 1.38, "digest": "4e9ac3c24e1ae057"}
+{"unit": "mol:301801", "ablation": "paragraph_shuffle", "dose": 0.15, "cdg": 0.23778414726257324, "words": 7155, "seconds": 1.37, "digest": "04404c7892a69a9a"}
+{"unit": "mol:301801", "ablation": "paragraph_shuffle", "dose": 0.35, "cdg": 0.2118086814880371, "words": 7155, "seconds": 1.38, "digest": "b5c74e01acf56442"}
+{"unit": "mol:301801", "ablation": "paragraph_shuffle", "dose": 0.65, "cdg": 0.25767521063486737, "words": 7155, "seconds": 1.37, "digest": "8850d4407934dcf3"}
+{"unit": "mol:301801", "ablation": "paragraph_shuffle", "dose": 1.0, "cdg": 0.19748854637145996, "words": 7155, "seconds": 1.38, "digest": "cf361f02badfc679"}
+{"unit": "mol:301801", "ablation": "sentence_shuffle", "dose": 0.15, "cdg": 0.22223838170369467, "words": 7155, "seconds": 1.37, "digest": "06cf207b3638989a"}
+{"unit": "mol:301801", "ablation": "sentence_shuffle", "dose": 0.35, "cdg": 0.22591400146484375, "words": 7155, "seconds": 1.38, "digest": "eaa00a1b21fbe916"}
+{"unit": "mol:301801", "ablation": "sentence_shuffle", "dose": 0.65, "cdg": 0.2328937848409017, "words": 7155, "seconds": 1.38, "digest": "25e0438160132e39"}
+{"unit": "mol:301801", "ablation": "sentence_shuffle", "dose": 1.0, "cdg": 0.2445406119028727, "words": 7155, "seconds": 1.38, "digest": "31291e4e1c09ca69"}
+{"unit": "mol:301801", "ablation": "connective_scramble", "dose": 0.15, "cdg": 0.2227630615234375, "words": 7155, "seconds": 1.37, "digest": "6c4f5c0a3ca49278"}
+{"unit": "mol:301801", "ablation": "connective_scramble", "dose": 0.35, "cdg": 0.22073598702748617, "words": 7155, "seconds": 1.38, "digest": "058b06c828a2a549"}
+{"unit": "mol:301801", "ablation": "connective_scramble", "dose": 0.65, "cdg": 0.22314480940500894, "words": 7155, "seconds": 1.39, "digest": "89a30bbde21fd29b"}
+{"unit": "mol:301801", "ablation": "connective_scramble", "dose": 1.0, "cdg": 0.22507838408152261, "words": 7155, "seconds": 1.38, "digest": "7e002a90333a0017"}
+{"unit": "mol:301801", "ablation": "dialogue_flatten", "dose": 0.15, "cdg": 0.25668613115946454, "words": 7155, "seconds": 1.37, "digest": "d18d41595f788801"}
+{"unit": "mol:301801", "ablation": "dialogue_flatten", "dose": 0.35, "cdg": 0.26637935638427734, "words": 7155, "seconds": 1.38, "digest": "4827e9534c34c801"}
+{"unit": "mol:301801", "ablation": "dialogue_flatten", "dose": 0.65, "cdg": 0.2981226444244385, "words": 7155, "seconds": 1.38, "digest": "d456fe7e54a198ce"}
+{"unit": "mol:301801", "ablation": "dialogue_flatten", "dose": 1.0, "cdg": 0.32654742399851483, "words": 7155, "seconds": 1.38, "digest": "8c24361c1c421d79"}
+{"unit": "mol:301801", "ablation": "transplant", "dose": 0.15, "cdg": 0.29020726680755615, "words": 7157, "seconds": 1.38, "digest": "c942984eafc477e9"}
+{"unit": "mol:301801", "ablation": "transplant", "dose": 0.35, "cdg": 0.3311607042948405, "words": 7162, "seconds": 1.38, "digest": "66b8bee2ca6fea95"}
+{"unit": "mol:301801", "ablation": "transplant", "dose": 0.65, "cdg": 0.25840866565704346, "words": 7168, "seconds": 1.37, "digest": "a98d811517eb6164"}
+{"unit": "mol:301801", "ablation": "transplant", "dose": 1.0, "cdg": 0.3413650592168172, "words": 6738, "seconds": 1.38, "digest": "f3d5bdcb809cadf3"}
+{"unit": "mol:301801", "ablation": "sentence_deletion", "dose": 0.15, "cdg": 0.2587507168451945, "words": 6147, "seconds": 1.42, "digest": "6c39623528d468f1"}
+{"unit": "mol:301801", "ablation": "sentence_deletion", "dose": 0.35, "cdg": 0.28950324058532717, "words": 4710, "seconds": 1.16, "digest": "3e84db013bc340d9"}
+{"unit": "mol:301801", "ablation": "sentence_deletion", "dose": 0.65, "cdg": 0.25955740610758465, "words": 3086, "seconds": 0.71, "digest": "ca55c60c109fbdb9"}
+{"unit": "mol:301801", "ablation": "sentence_deletion", "dose": 1.0, "cdg": 0.19311094284057617, "words": 2022, "seconds": 0.48, "digest": "b1a46721cc583ac9"}
+{"unit": "mol:301801", "ablation": "rename_entities", "dose": 0.15, "digest": "3847b67fb9041cc6", "cdg": 0.3145053784052531, "words": 7155, "seconds": 1.59, "gpu_temp": 66}
+{"unit": "mol:301801", "ablation": "rename_entities", "dose": 0.35, "digest": "1c231cd0936196f4", "cdg": 0.2504564126332601, "words": 7155, "seconds": 1.56, "gpu_temp": 67}
+{"unit": "mol:301801", "ablation": "rename_entities", "dose": 0.65, "digest": "d3345fe935d5ada2", "cdg": 0.25363043944040936, "words": 7155, "seconds": 1.48, "gpu_temp": 67}
+{"unit": "mol:301801", "ablation": "rename_entities", "dose": 1.0, "digest": "7d67955fc18d30b1", "cdg": 0.2566693623860677, "words": 7155, "seconds": 1.56, "gpu_temp": 67}
+{"unit": "mol:301801", "ablation": "respell", "dose": 0.15, "cdg": 0.23924652735392252, "words": 7155, "seconds": 1.4, "digest": "ede1c450291ac645"}
+{"unit": "mol:301801", "ablation": "respell", "dose": 0.65, "cdg": 0.23770264784495035, "words": 7155, "seconds": 1.41, "digest": "be7f3e26679cd8d3"}
+{"unit": "mol:301801", "ablation": "respell", "dose": 1.0, "cdg": 0.23718321323394775, "words": 7155, "seconds": 1.37, "digest": "74877cdce0f7d7bf"}
+{"unit": "mol:302241", "ablation": "original", "dose": 0.0, "cdg": 0.30174241065979, "words": 5175, "seconds": 1.15, "digest": "05430a1c74cc6bcb"}
+{"unit": "mol:302241", "ablation": "paragraph_shuffle", "dose": 0.15, "cdg": 0.2599067687988281, "words": 5175, "seconds": 1.16, "digest": "cbd5b41cdc9c9ac8"}
+{"unit": "mol:302241", "ablation": "paragraph_shuffle", "dose": 0.35, "cdg": 0.2600355625152588, "words": 5175, "seconds": 1.15, "digest": "ea34c66ba1bf7057"}
+{"unit": "mol:302241", "ablation": "paragraph_shuffle", "dose": 0.65, "cdg": 0.30307488441467284, "words": 5175, "seconds": 1.16, "digest": "ae60eba268e01968"}
+{"unit": "mol:302241", "ablation": "paragraph_shuffle", "dose": 1.0, "cdg": 0.30051555633544924, "words": 5175, "seconds": 1.15, "digest": "95ff7be9a8157b84"}
+{"unit": "mol:302241", "ablation": "sentence_shuffle", "dose": 0.15, "cdg": 0.2876150131225586, "words": 5175, "seconds": 1.15, "digest": "064d531676590ee1"}
+{"unit": "mol:302241", "ablation": "sentence_shuffle", "dose": 0.35, "cdg": 0.2901934623718262, "words": 5175, "seconds": 1.15, "digest": "b2e0d8be7d43298c"}
+{"unit": "mol:302241", "ablation": "sentence_shuffle", "dose": 0.65, "cdg": 0.27890424728393554, "words": 5175, "seconds": 1.15, "digest": "0a0337b02e6ee078"}
+{"unit": "mol:302241", "ablation": "sentence_shuffle", "dose": 1.0, "cdg": 0.27646479606628416, "words": 5175, "seconds": 1.16, "digest": "a90607c0438d91c0"}
+{"unit": "mol:302241", "ablation": "connective_scramble", "dose": 0.15, "cdg": 0.3023228168487549, "words": 5175, "seconds": 1.16, "digest": "a7dfb5ee2028e9ee"}
+{"unit": "mol:302241", "ablation": "connective_scramble", "dose": 0.35, "cdg": 0.3024918079376221, "words": 5175, "seconds": 1.16, "digest": "a7b9c2bffbc92540"}
+{"unit": "mol:302241", "ablation": "connective_scramble", "dose": 0.65, "cdg": 0.29932942390441897, "words": 5175, "seconds": 1.15, "digest": "9692788f3c1d0344"}
+{"unit": "mol:302241", "ablation": "connective_scramble", "dose": 1.0, "cdg": 0.2968155384063721, "words": 5175, "seconds": 1.15, "digest": "605219fb897af94e"}
+{"unit": "mol:302241", "ablation": "dialogue_flatten", "dose": 0.15, "cdg": 0.3050891876220703, "words": 5175, "seconds": 1.15, "digest": "b95441d35014038f"}
+{"unit": "mol:302241", "ablation": "dialogue_flatten", "dose": 0.35, "cdg": 0.3417666435241699, "words": 5175, "seconds": 1.15, "digest": "f88fbf490835f2c1"}
+{"unit": "mol:302241", "ablation": "dialogue_flatten", "dose": 0.65, "cdg": 0.29854741096496584, "words": 5175, "seconds": 1.15, "digest": "abe770843bc47c0f"}
+{"unit": "mol:302241", "ablation": "dialogue_flatten", "dose": 1.0, "cdg": 0.35349645614624026, "words": 5175, "seconds": 1.16, "digest": "8ef8a48faa4557ad"}
+{"unit": "mol:302241", "ablation": "transplant", "dose": 0.15, "cdg": 0.2803345680236816, "words": 5205, "seconds": 1.15, "digest": "f8351e66e96c726c"}
+{"unit": "mol:302241", "ablation": "transplant", "dose": 0.35, "cdg": 0.33199033737182615, "words": 5251, "seconds": 1.16, "digest": "c6440b0aae340aac"}
+{"unit": "mol:302241", "ablation": "transplant", "dose": 0.65, "cdg": 0.4124168872833252, "words": 5182, "seconds": 1.16, "digest": "5225eb5a3fe7b503"}
+{"unit": "mol:302241", "ablation": "transplant", "dose": 1.0, "cdg": 0.2720892906188965, "words": 5254, "seconds": 1.15, "digest": "166d5c6541d75d11"}
+{"unit": "mol:302241", "ablation": "sentence_deletion", "dose": 0.15, "cdg": 0.2541739344596863, "words": 4206, "seconds": 0.95, "digest": "bc2f724f3524262b"}
+{"unit": "mol:302241", "ablation": "sentence_deletion", "dose": 0.35, "cdg": 0.25336241722106934, "words": 3261, "seconds": 0.71, "digest": "d1cc5cd51263631d"}
+{"unit": "mol:302241", "ablation": "sentence_deletion", "dose": 0.65, "cdg": 0.24870991706848145, "words": 2151, "seconds": 0.48, "digest": "3f71a68aa103886a"}
+{"unit": "mol:302241", "ablation": "sentence_deletion", "dose": 1.0, "cdg": 0.41083717346191406, "words": 1277, "seconds": 0.26, "digest": "44886623fb980eca"}
+{"unit": "mol:302241", "ablation": "rename_entities", "dose": 0.15, "digest": "54bee678f7fcdb91", "cdg": 0.3798025608062744, "words": 5175, "seconds": 1.36, "gpu_temp": 66}
+{"unit": "mol:302241", "ablation": "rename_entities", "dose": 0.35, "digest": "b6b1c0172b3e2a34", "cdg": 0.3803991794586182, "words": 5175, "seconds": 1.29, "gpu_temp": 67}
+{"unit": "mol:302241", "ablation": "rename_entities", "dose": 0.65, "digest": "9a3c3753b94749c0", "cdg": 0.3928645133972168, "words": 5175, "seconds": 1.28, "gpu_temp": 66}
+{"unit": "mol:302241", "ablation": "rename_entities", "dose": 1.0, "digest": "0fc63eefc32cbb5c", "cdg": 0.37766714096069337, "words": 5175, "seconds": 1.33, "gpu_temp": 70}
+{"unit": "mol:302241", "ablation": "respell", "dose": 0.15, "cdg": 0.3211352348327637, "words": 5175, "seconds": 1.17, "digest": "28d9d7c8e948a720"}
+{"unit": "mol:302241", "ablation": "respell", "dose": 0.35, "cdg": 0.3199011325836182, "words": 5175, "seconds": 1.15, "digest": "6d9834daf7a07a45"}
+{"unit": "mol:302241", "ablation": "respell", "dose": 0.65, "cdg": 0.32194972038269043, "words": 5175, "seconds": 1.16, "digest": "7de213c7425737d2"}
+{"unit": "mol:302241", "ablation": "respell", "dose": 1.0, "cdg": 0.32248382568359374, "words": 5175, "seconds": 1.15, "digest": "fa94a6661a32cc5f"}
+{"unit": "mol:303116", "ablation": "original", "dose": 0.0, "cdg": 0.41094760100046795, "words": 6153, "seconds": 1.39, "digest": "14ce639b24a368f2"}
+{"unit": "mol:303116", "ablation": "paragraph_shuffle", "dose": 0.15, "cdg": 0.3954341808954875, "words": 6153, "seconds": 1.41, "digest": "6136cb09388f7e0d"}
+{"unit": "mol:303116", "ablation": "paragraph_shuffle", "dose": 0.35, "cdg": 0.3533582290013631, "words": 6153, "seconds": 1.39, "digest": "45cfdbd49fec72e8"}
+{"unit": "mol:303116", "ablation": "paragraph_shuffle", "dose": 0.65, "cdg": 0.31506991386413574, "words": 6153, "seconds": 1.39, "digest": "a87762430bf283f9"}
+{"unit": "mol:303116", "ablation": "paragraph_shuffle", "dose": 1.0, "cdg": 0.3447895844777425, "words": 6153, "seconds": 1.38, "digest": "339dfcf2a5745253"}
+{"unit": "mol:303116", "ablation": "sentence_shuffle", "dose": 0.15, "cdg": 0.4091155529022217, "words": 6153, "seconds": 1.38, "digest": "a7e0c43ae2b592b2"}
+{"unit": "mol:303116", "ablation": "sentence_shuffle", "dose": 0.35, "cdg": 0.42239781220753986, "words": 6153, "seconds": 1.4, "digest": "256202f042051882"}
+{"unit": "mol:303116", "ablation": "sentence_shuffle", "dose": 0.65, "cdg": 0.4139391581217448, "words": 6153, "seconds": 1.38, "digest": "38f3114d403bc097"}
+{"unit": "mol:303116", "ablation": "sentence_shuffle", "dose": 1.0, "cdg": 0.3814171552658081, "words": 6153, "seconds": 1.38, "digest": "cf9856cec630adcf"}
+{"unit": "mol:303116", "ablation": "connective_scramble", "dose": 0.15, "cdg": 0.41217923164367676, "words": 6153, "seconds": 1.39, "digest": "33b5037d40ae75ed"}
+{"unit": "mol:303116", "ablation": "connective_scramble", "dose": 0.35, "cdg": 0.4101850589116414, "words": 6153, "seconds": 1.38, "digest": "acda92b91dfc9e5f"}
+{"unit": "mol:303116", "ablation": "connective_scramble", "dose": 0.65, "cdg": 0.4092713197072347, "words": 6153, "seconds": 1.39, "digest": "d6f8473ff40a1e87"}
+{"unit": "mol:303116", "ablation": "connective_scramble", "dose": 1.0, "cdg": 0.40577173233032227, "words": 6153, "seconds": 1.39, "digest": "2c185d1b68f58148"}
+{"unit": "mol:303116", "ablation": "dialogue_flatten", "dose": 0.15, "cdg": 0.36833512783050537, "words": 6153, "seconds": 1.43, "digest": "d87768da8802bb62"}
+{"unit": "mol:303116", "ablation": "dialogue_flatten", "dose": 0.35, "cdg": 0.37146464983622235, "words": 6153, "seconds": 1.38, "digest": "a4ff772ce21877ef"}
+{"unit": "mol:303116", "ablation": "dialogue_flatten", "dose": 0.65, "cdg": 0.41259801387786865, "words": 6153, "seconds": 1.38, "digest": "17870c0b3c115a2f"}
+{"unit": "mol:303116", "ablation": "dialogue_flatten", "dose": 1.0, "cdg": 0.3970579306284587, "words": 6153, "seconds": 1.4, "digest": "1e2c0b17e02ae1c4"}
+{"unit": "mol:303116", "ablation": "transplant", "dose": 0.15, "cdg": 0.30124449729919434, "words": 6214, "seconds": 1.39, "digest": "592e0997f5fac86c"}
+{"unit": "mol:303116", "ablation": "transplant", "dose": 0.35, "cdg": 0.2896718184153239, "words": 6174, "seconds": 1.4, "digest": "bc2bdd46ce2355c2"}
+{"unit": "mol:303116", "ablation": "transplant", "dose": 0.65, "cdg": 0.2726023594538371, "words": 6155, "seconds": 1.39, "digest": "4f74b7bca1619e3d"}
+{"unit": "mol:303116", "ablation": "transplant", "dose": 1.0, "cdg": 0.2650926113128662, "words": 5898, "seconds": 1.38, "digest": "63cc8ec9b7fd05e1"}
+{"unit": "mol:303116", "ablation": "sentence_deletion", "dose": 0.15, "cdg": 0.3293619155883789, "words": 5408, "seconds": 1.37, "digest": "d41d4cc1042d4402"}
+{"unit": "mol:303116", "ablation": "sentence_deletion", "dose": 0.35, "cdg": 0.3098227381706238, "words": 4292, "seconds": 0.94, "digest": "b245c9546f3b66a7"}
+{"unit": "mol:303116", "ablation": "sentence_deletion", "dose": 0.65, "cdg": 0.34212342898050946, "words": 2723, "seconds": 0.71, "digest": "cde413c02289d5c7"}
+{"unit": "mol:303116", "ablation": "sentence_deletion", "dose": 1.0, "cdg": 0.5066075325012207, "words": 1823, "seconds": 0.48, "digest": "e47239b947adba2f"}
+{"unit": "mol:303116", "ablation": "rename_entities", "dose": 0.15, "digest": "3cecde6858cb2050", "cdg": 0.38494118054707843, "words": 6153, "seconds": 1.49, "gpu_temp": 67}
+{"unit": "mol:303116", "ablation": "rename_entities", "dose": 0.35, "digest": "ff93a7881e7df051", "cdg": 0.41632994016011554, "words": 6153, "seconds": 1.48, "gpu_temp": 70}
+{"unit": "mol:303116", "ablation": "rename_entities", "dose": 0.65, "digest": "5591b4157c5a0f44", "cdg": 0.4397236108779907, "words": 6153, "seconds": 1.48, "gpu_temp": 69}
+{"unit": "mol:303116", "ablation": "rename_entities", "dose": 1.0, "digest": "a28053ad520a84d8", "cdg": 0.4352027177810669, "words": 6153, "seconds": 1.51, "gpu_temp": 69}
+{"unit": "mol:303116", "ablation": "respell", "dose": 0.15, "cdg": 0.4405912558237712, "words": 6153, "seconds": 1.38, "digest": "9eb026546f57c5b0"}
+{"unit": "mol:303116", "ablation": "respell", "dose": 0.65, "cdg": 0.4393088420232137, "words": 6153, "seconds": 1.39, "digest": "12ebdad43dffc3f9"}
+{"unit": "mol:304097", "ablation": "original", "dose": 0.0, "cdg": 0.28437737623850506, "words": 7044, "seconds": 1.39, "digest": "fbbf47146f60e01f"}
+{"unit": "mol:304097", "ablation": "paragraph_shuffle", "dose": 0.15, "cdg": 0.32046326001485187, "words": 7044, "seconds": 1.41, "digest": "976fb54832011ef3"}
+{"unit": "mol:304097", "ablation": "paragraph_shuffle", "dose": 0.35, "cdg": 0.2756664752960205, "words": 7044, "seconds": 1.38, "digest": "d19c891a15509be5"}
+{"unit": "mol:304097", "ablation": "paragraph_shuffle", "dose": 0.65, "cdg": 0.21954389413197836, "words": 7044, "seconds": 1.39, "digest": "fc04c04d107f2e98"}
+{"unit": "mol:304097", "ablation": "paragraph_shuffle", "dose": 1.0, "cdg": 0.3723448117574056, "words": 7044, "seconds": 1.4, "digest": "3614fdf64d44d7b2"}
+{"unit": "mol:304097", "ablation": "sentence_shuffle", "dose": 0.15, "cdg": 0.30684371789296466, "words": 7044, "seconds": 1.41, "digest": "32da8fa57c976308"}
+{"unit": "mol:304097", "ablation": "sentence_shuffle", "dose": 0.35, "cdg": 0.29844796657562256, "words": 7044, "seconds": 1.4, "digest": "a54b3839fa127b30"}
+{"unit": "mol:304097", "ablation": "sentence_shuffle", "dose": 0.65, "cdg": 0.30225205421447754, "words": 7044, "seconds": 1.39, "digest": "531780bcb464c52c"}
+{"unit": "mol:304097", "ablation": "sentence_shuffle", "dose": 1.0, "cdg": 0.28391750653584796, "words": 7044, "seconds": 1.38, "digest": "ed61771a648a691a"}
+{"unit": "mol:304097", "ablation": "connective_scramble", "dose": 0.15, "cdg": 0.28264836470286053, "words": 7044, "seconds": 1.39, "digest": "623736ea61fa235c"}
+{"unit": "mol:304097", "ablation": "connective_scramble", "dose": 0.35, "cdg": 0.28355828921000165, "words": 7044, "seconds": 1.39, "digest": "22d0222570f7c34d"}
+{"unit": "mol:304097", "ablation": "connective_scramble", "dose": 0.65, "cdg": 0.2888140281041463, "words": 7044, "seconds": 1.39, "digest": "edd8ec88453e83d0"}
+{"unit": "mol:304097", "ablation": "connective_scramble", "dose": 1.0, "cdg": 0.29063812891642254, "words": 7044, "seconds": 1.41, "digest": "2a7135a7732ebfcc"}
+{"unit": "mol:304097", "ablation": "dialogue_flatten", "dose": 0.15, "cdg": 0.3166892925898234, "words": 7044, "seconds": 1.41, "digest": "f309a538c57c8d37"}
+{"unit": "mol:304097", "ablation": "dialogue_flatten", "dose": 0.35, "cdg": 0.3791464567184448, "words": 7044, "seconds": 1.39, "digest": "48b2731590cf8ca6"}
+{"unit": "mol:304097", "ablation": "dialogue_flatten", "dose": 0.65, "cdg": 0.38226203123728436, "words": 7044, "seconds": 1.39, "digest": "19e393e58891d04a"}
+{"unit": "mol:304097", "ablation": "dialogue_flatten", "dose": 1.0, "cdg": 0.39792342980702716, "words": 7044, "seconds": 1.38, "digest": "a2be6fa1e7bd6720"}
+{"unit": "mol:304097", "ablation": "transplant", "dose": 0.15, "cdg": 0.3003430763880412, "words": 7050, "seconds": 1.39, "digest": "3677121fe1a9c5f1"}
+{"unit": "mol:304097", "ablation": "transplant", "dose": 0.35, "cdg": 0.28796911239624023, "words": 7081, "seconds": 1.4, "digest": "5f95732cad00c041"}
+{"unit": "mol:304097", "ablation": "transplant", "dose": 0.65, "cdg": 0.30271438757578534, "words": 7064, "seconds": 1.39, "digest": "4e69eece00eea2a2"}
+{"unit": "mol:304097", "ablation": "transplant", "dose": 1.0, "cdg": 0.31871501604715985, "words": 7086, "seconds": 1.4, "digest": "e6497b9afe846266"}
+{"unit": "mol:304097", "ablation": "sentence_deletion", "dose": 0.15, "cdg": 0.35578858852386475, "words": 5925, "seconds": 1.39, "digest": "3fe434e998883a77"}
+{"unit": "mol:304097", "ablation": "sentence_deletion", "dose": 0.35, "cdg": 0.29548120498657227, "words": 4927, "seconds": 1.16, "digest": "fab405f380d77c2e"}
+{"unit": "mol:304097", "ablation": "sentence_deletion", "dose": 0.65, "cdg": 0.24210262298583984, "words": 3355, "seconds": 0.71, "digest": "effe010f2c43dfca"}
+{"unit": "mol:304097", "ablation": "sentence_deletion", "dose": 1.0, "cdg": 0.30766916275024414, "words": 2380, "seconds": 0.71, "digest": "02d66d0212e6f57e"}
+{"unit": "mol:304097", "ablation": "rename_entities", "dose": 0.15, "digest": "e2302de5e1492f50", "cdg": 0.3248090346654256, "words": 7044, "seconds": 1.55, "gpu_temp": 68}
+{"unit": "mol:304097", "ablation": "rename_entities", "dose": 0.35, "digest": "6c5600aa81c95f14", "cdg": 0.31469138463338214, "words": 7044, "seconds": 1.51, "gpu_temp": 69}
+{"unit": "mol:304097", "ablation": "rename_entities", "dose": 0.65, "digest": "1b162de5e53cb8fd", "cdg": 0.3569776217142741, "words": 7044, "seconds": 1.58, "gpu_temp": 68}
+{"unit": "mol:304097", "ablation": "rename_entities", "dose": 1.0, "digest": "c859e0a0e272a863", "cdg": 0.35562439759572345, "words": 7044, "seconds": 1.55, "gpu_temp": 69}
+{"unit": "mol:304097", "ablation": "respell", "dose": 0.15, "cdg": 0.31118492285410565, "words": 7044, "seconds": 1.4, "digest": "080500933810a8ec"}
+{"unit": "mol:304097", "ablation": "respell", "dose": 0.65, "cdg": 0.31113723913828534, "words": 7044, "seconds": 1.39, "digest": "0f168b84c91a43bc"}
+{"unit": "mol:304097", "ablation": "respell", "dose": 1.0, "cdg": 0.31094861030578613, "words": 7044, "seconds": 1.39, "digest": "d182120dccdfb244"}
+{"unit": "mol:305052", "ablation": "original", "dose": 0.0, "cdg": 0.32091108957926434, "words": 6983, "seconds": 1.4, "digest": "c55f72ca8a9854a0"}
+{"unit": "mol:305052", "ablation": "paragraph_shuffle", "dose": 0.15, "cdg": 0.37492958704630536, "words": 6983, "seconds": 1.39, "digest": "e077198ca0285cb1"}
+{"unit": "mol:305052", "ablation": "paragraph_shuffle", "dose": 0.35, "cdg": 0.31754422187805176, "words": 6983, "seconds": 1.39, "digest": "4775f44b289314ad"}
+{"unit": "mol:305052", "ablation": "paragraph_shuffle", "dose": 0.65, "cdg": 0.3371475140253703, "words": 6983, "seconds": 1.41, "digest": "b8a871546228f561"}
+{"unit": "mol:305052", "ablation": "paragraph_shuffle", "dose": 1.0, "cdg": 0.25489723682403564, "words": 6983, "seconds": 1.38, "digest": "cb6e0f85fa2b3497"}
+{"unit": "mol:305052", "ablation": "sentence_shuffle", "dose": 0.15, "cdg": 0.27654890219370526, "words": 6983, "seconds": 1.4, "digest": "a571b2f3c73cab49"}
+{"unit": "mol:305052", "ablation": "sentence_shuffle", "dose": 0.35, "cdg": 0.32961634794871014, "words": 6983, "seconds": 1.4, "digest": "4919c470b30e6aff"}
+{"unit": "mol:305052", "ablation": "sentence_shuffle", "dose": 0.65, "cdg": 0.3328157663345337, "words": 6983, "seconds": 1.39, "digest": "b516aee32101cb01"}
+{"unit": "mol:305052", "ablation": "sentence_shuffle", "dose": 1.0, "cdg": 0.3214256763458252, "words": 6983, "seconds": 1.38, "digest": "b25672167c7a0684"}
+{"unit": "mol:305052", "ablation": "connective_scramble", "dose": 0.15, "cdg": 0.32112908363342285, "words": 6983, "seconds": 1.39, "digest": "c7ede8a3e60847db"}
+{"unit": "mol:305052", "ablation": "connective_scramble", "dose": 0.35, "cdg": 0.32235682010650635, "words": 6983, "seconds": 1.4, "digest": "d5ffd73928dbcb8e"}
+{"unit": "mol:305052", "ablation": "connective_scramble", "dose": 0.65, "cdg": 0.32329046726226807, "words": 6983, "seconds": 1.4, "digest": "3860d6a058f92416"}
+{"unit": "mol:305052", "ablation": "connective_scramble", "dose": 1.0, "cdg": 0.32557634512583417, "words": 6983, "seconds": 1.4, "digest": "3ed4717fcbfc52c9"}
+{"unit": "mol:305052", "ablation": "dialogue_flatten", "dose": 0.15, "cdg": 0.33186018466949463, "words": 6983, "seconds": 1.42, "digest": "820e54d960d81d09"}
+{"unit": "mol:305052", "ablation": "dialogue_flatten", "dose": 0.35, "cdg": 0.32048813501993817, "words": 6983, "seconds": 1.39, "digest": "7217071bf1b7290f"}
+{"unit": "mol:305052", "ablation": "dialogue_flatten", "dose": 0.65, "cdg": 0.3301166296005249, "words": 6983, "seconds": 1.38, "digest": "2d881ad1a7c20566"}
+{"unit": "mol:305052", "ablation": "dialogue_flatten", "dose": 1.0, "cdg": 0.32983434200286865, "words": 6982, "seconds": 1.39, "digest": "324d50cc79dc0c3b"}
+{"unit": "mol:305052", "ablation": "transplant", "dose": 0.15, "cdg": 0.26183585325876874, "words": 7115, "seconds": 1.41, "digest": "588413feab1b4913"}
+{"unit": "mol:305052", "ablation": "transplant", "dose": 0.35, "cdg": 0.25113383928934735, "words": 7057, "seconds": 1.39, "digest": "50f8117efd389c0f"}
+{"unit": "mol:305052", "ablation": "transplant", "dose": 0.65, "cdg": 0.27547359466552734, "words": 7035, "seconds": 1.41, "digest": "466103ed01ae51a7"}
+{"unit": "mol:305052", "ablation": "transplant", "dose": 1.0, "cdg": 0.3769598801930745, "words": 6105, "seconds": 1.4, "digest": "57fdea0d18bfa44c"}
+{"unit": "mol:305052", "ablation": "sentence_deletion", "dose": 0.15, "cdg": 0.3051966031392415, "words": 5908, "seconds": 1.39, "digest": "7680698cc6dd924b"}
+{"unit": "mol:305052", "ablation": "sentence_deletion", "dose": 0.35, "cdg": 0.2997854709625244, "words": 4862, "seconds": 1.17, "digest": "cf60d72b388f1fd8"}
+{"unit": "mol:305052", "ablation": "sentence_deletion", "dose": 0.65, "cdg": 0.21779870986938477, "words": 3464, "seconds": 0.71, "digest": "f4cfab0471b7f824"}
+{"unit": "mol:305052", "ablation": "sentence_deletion", "dose": 1.0, "cdg": 0.24859297275543213, "words": 1813, "seconds": 0.48, "digest": "bacda2bccd66a575"}
+{"unit": "mol:305052", "ablation": "rename_entities", "dose": 0.15, "digest": "dc015e5b624ece79", "cdg": 0.3929315408070882, "words": 6983, "seconds": 1.52, "gpu_temp": 71}
+{"unit": "mol:305052", "ablation": "rename_entities", "dose": 0.35, "digest": "04acd53ac37f30e5", "cdg": 0.39630091190338135, "words": 6983, "seconds": 1.56, "gpu_temp": 71}
+{"unit": "mol:305052", "ablation": "rename_entities", "dose": 0.65, "digest": "d940661ad1c68f77", "cdg": 0.39723201592763263, "words": 6983, "seconds": 1.48, "gpu_temp": 71}
+{"unit": "mol:305052", "ablation": "rename_entities", "dose": 1.0, "digest": "321588dc785d1036", "cdg": 0.3924476703008016, "words": 6983, "seconds": 1.49, "gpu_temp": 71}
+{"unit": "mol:305052", "ablation": "respell", "dose": 0.15, "cdg": 0.31779905160268146, "words": 6983, "seconds": 1.38, "digest": "a750e3c469b61b16"}
+{"unit": "mol:305052", "ablation": "respell", "dose": 0.35, "cdg": 0.3165002663930257, "words": 6983, "seconds": 1.39, "digest": "726993f1425cb317"}
+{"unit": "mol:305052", "ablation": "respell", "dose": 0.65, "cdg": 0.3163999319076538, "words": 6983, "seconds": 1.44, "digest": "27bf8da285d6914c"}
+{"unit": "mol:305052", "ablation": "respell", "dose": 1.0, "cdg": 0.314095934232076, "words": 6983, "seconds": 1.4, "digest": "2914a2f73f44e1f4"}
+{"unit": "mol:305877", "ablation": "original", "dose": 0.0, "cdg": 0.32787708441416424, "words": 8379, "seconds": 1.4, "digest": "ffcf9f82d441afde"}
+{"unit": "mol:305877", "ablation": "paragraph_shuffle", "dose": 0.15, "cdg": 0.2755013704299927, "words": 8379, "seconds": 1.4, "digest": "248fe50fd98a6e64"}
+{"unit": "mol:305877", "ablation": "paragraph_shuffle", "dose": 0.35, "cdg": 0.28363152345021564, "words": 8379, "seconds": 1.41, "digest": "25a146247d5ecdbb"}
+{"unit": "mol:305877", "ablation": "paragraph_shuffle", "dose": 0.65, "cdg": 0.2945719162623088, "words": 8379, "seconds": 1.4, "digest": "8976ee26172a4713"}
+{"unit": "mol:305877", "ablation": "paragraph_shuffle", "dose": 1.0, "cdg": 0.28308820724487305, "words": 8379, "seconds": 1.4, "digest": "478d3bce1ecf21f8"}
+{"unit": "mol:305877", "ablation": "sentence_shuffle", "dose": 0.15, "cdg": 0.3314562638600667, "words": 8379, "seconds": 1.4, "digest": "2fb1fcfae828e474"}
+{"unit": "mol:305877", "ablation": "sentence_shuffle", "dose": 0.35, "cdg": 0.32922784487406415, "words": 8379, "seconds": 1.41, "digest": "1be2ee0a9b554af6"}
+{"unit": "mol:305877", "ablation": "sentence_shuffle", "dose": 0.65, "cdg": 0.31876806418100995, "words": 8379, "seconds": 1.4, "digest": "0038d37b61e56332"}
+{"unit": "mol:305877", "ablation": "sentence_shuffle", "dose": 1.0, "cdg": 0.3462037642796834, "words": 8379, "seconds": 1.4, "digest": "516cb82f1fa8abe5"}
+{"unit": "mol:305877", "ablation": "connective_scramble", "dose": 0.15, "cdg": 0.32287879784901935, "words": 8379, "seconds": 1.41, "digest": "1bf72f91c8b7d5c8"}
+{"unit": "mol:305877", "ablation": "connective_scramble", "dose": 0.35, "cdg": 0.3204951286315918, "words": 8379, "seconds": 1.42, "digest": "8d790264a0b8e408"}
+{"unit": "mol:305877", "ablation": "connective_scramble", "dose": 0.65, "cdg": 0.3249930540720622, "words": 8379, "seconds": 1.39, "digest": "ff615bd581419dc2"}
+{"unit": "mol:305877", "ablation": "connective_scramble", "dose": 1.0, "cdg": 0.3325819969177246, "words": 8379, "seconds": 1.39, "digest": "1cb8af6da2df1145"}
+{"unit": "mol:305877", "ablation": "dialogue_flatten", "dose": 0.15, "cdg": 0.30192577838897705, "words": 8379, "seconds": 1.4, "digest": "37bc9d19537fdff5"}
+{"unit": "mol:305877", "ablation": "dialogue_flatten", "dose": 0.35, "cdg": 0.30474523703257245, "words": 8379, "seconds": 1.4, "digest": "d9839f123c4d9752"}
+{"unit": "mol:305877", "ablation": "dialogue_flatten", "dose": 0.65, "cdg": 0.3324722448984782, "words": 8379, "seconds": 1.4, "digest": "c8171397a6a13a99"}
+{"unit": "mol:305877", "ablation": "dialogue_flatten", "dose": 1.0, "cdg": 0.33853896458943683, "words": 8379, "seconds": 1.4, "digest": "9f05bb1e43111a7b"}
+{"unit": "mol:305877", "ablation": "transplant", "dose": 0.15, "cdg": 0.32787708441416424, "words": 8391, "seconds": 1.4, "digest": "53ffeb783b572a01"}
+{"unit": "mol:305877", "ablation": "transplant", "dose": 0.35, "cdg": 0.3212560812632243, "words": 8426, "seconds": 1.39, "digest": "8716963a16785fc8"}
+{"unit": "mol:305877", "ablation": "transplant", "dose": 0.65, "cdg": 0.2832297086715698, "words": 8440, "seconds": 1.4, "digest": "ac6ebddb94017a7f"}
+{"unit": "mol:305877", "ablation": "transplant", "dose": 1.0, "cdg": 0.3326534827550252, "words": 8384, "seconds": 1.41, "digest": "ff15f959332c53f1"}
+{"unit": "mol:305877", "ablation": "sentence_deletion", "dose": 0.15, "cdg": 0.2876078685124715, "words": 6998, "seconds": 1.4, "digest": "a41341d15015251e"}
+{"unit": "mol:305877", "ablation": "sentence_deletion", "dose": 0.35, "cdg": 0.29091087977091473, "words": 5697, "seconds": 1.41, "digest": "9b9f2644e0182f35"}
+{"unit": "mol:305877", "ablation": "sentence_deletion", "dose": 0.65, "cdg": 0.21252048015594482, "words": 3585, "seconds": 0.94, "digest": "c06b0f810ecf51cb"}
+{"unit": "mol:305877", "ablation": "sentence_deletion", "dose": 1.0, "cdg": 0.35446786880493164, "words": 1866, "seconds": 0.48, "digest": "d2c4f34b622756ad"}
+{"unit": "mol:305877", "ablation": "rename_entities", "dose": 0.15, "digest": "8171e8b9c777e704", "cdg": 0.32475773493448895, "words": 8379, "seconds": 1.56, "gpu_temp": 69}
+{"unit": "mol:305877", "ablation": "rename_entities", "dose": 0.35, "digest": "4efed47b6e28161c", "cdg": 0.32572853565216064, "words": 8379, "seconds": 1.5, "gpu_temp": 73}
+{"unit": "mol:305877", "ablation": "rename_entities", "dose": 0.65, "digest": "fcbd180f1b0aebcd", "cdg": 0.3509661356608073, "words": 8379, "seconds": 1.64, "gpu_temp": 64}
+{"unit": "mol:305877", "ablation": "rename_entities", "dose": 1.0, "digest": "90b983544ab9bb5d", "cdg": 0.3560113509496053, "words": 8379, "seconds": 1.58, "gpu_temp": 70}
+{"unit": "mol:305877", "ablation": "respell", "dose": 0.15, "cdg": 0.34397133191426593, "words": 8379, "seconds": 1.39, "digest": "ae20fb5a6d6c5baa"}
+{"unit": "mol:305877", "ablation": "respell", "dose": 0.35, "cdg": 0.3429410457611084, "words": 8379, "seconds": 1.4, "digest": "3cfd024118a9bebe"}
+{"unit": "mol:305877", "ablation": "respell", "dose": 0.65, "cdg": 0.34726675351460773, "words": 8379, "seconds": 1.39, "digest": "1e8f464793687261"}
+{"unit": "mol:307245", "ablation": "original", "dose": 0.0, "cdg": 0.2808680534362793, "words": 14479, "seconds": 1.43, "digest": "557fba03c42c3f62"}
+{"unit": "mol:307245", "ablation": "paragraph_shuffle", "dose": 0.15, "cdg": 0.30180732409159344, "words": 14479, "seconds": 1.41, "digest": "012ec7c3707d8356"}
+{"unit": "mol:307245", "ablation": "paragraph_shuffle", "dose": 0.35, "cdg": 0.25379765033721924, "words": 14479, "seconds": 1.42, "digest": "4b709508e7f96002"}
+{"unit": "mol:307245", "ablation": "paragraph_shuffle", "dose": 0.65, "cdg": 0.3126761515935262, "words": 14479, "seconds": 1.41, "digest": "9a96ab2af6276aab"}
+{"unit": "mol:307245", "ablation": "paragraph_shuffle", "dose": 1.0, "cdg": 0.2462685505549113, "words": 14479, "seconds": 1.43, "digest": "0be8a46e659729a5"}
+{"unit": "mol:307245", "ablation": "sentence_shuffle", "dose": 0.15, "cdg": 0.2792805035909017, "words": 14479, "seconds": 1.42, "digest": "6f9d2d52308be6e8"}
+{"unit": "mol:307245", "ablation": "sentence_shuffle", "dose": 0.35, "cdg": 0.2829599777857463, "words": 14479, "seconds": 1.4, "digest": "097882c8ee555a70"}
+{"unit": "mol:307245", "ablation": "sentence_shuffle", "dose": 0.65, "cdg": 0.2990505297978719, "words": 14479, "seconds": 1.41, "digest": "2ba0f2a057fd13f3"}
+{"unit": "mol:307245", "ablation": "sentence_shuffle", "dose": 1.0, "cdg": 0.28159411748250324, "words": 14479, "seconds": 1.42, "digest": "d31d7f21185db174"}
+{"unit": "mol:307245", "ablation": "connective_scramble", "dose": 0.15, "cdg": 0.2788157860438029, "words": 14479, "seconds": 1.42, "digest": "798012fb3fe0c73d"}
+{"unit": "mol:307245", "ablation": "connective_scramble", "dose": 0.35, "cdg": 0.27743299802144367, "words": 14479, "seconds": 1.44, "digest": "8a47842ee910096c"}
+{"unit": "mol:307245", "ablation": "connective_scramble", "dose": 0.65, "cdg": 0.27953938643137616, "words": 14479, "seconds": 1.42, "digest": "e86bf074331e6ca2"}
+{"unit": "mol:307245", "ablation": "connective_scramble", "dose": 1.0, "cdg": 0.2834165891011556, "words": 14479, "seconds": 1.41, "digest": "7023aac8dc940f7d"}
+{"unit": "mol:307245", "ablation": "dialogue_flatten", "dose": 0.15, "cdg": 0.2619515260060628, "words": 14479, "seconds": 1.41, "digest": "8e17729d59b58ffe"}
+{"unit": "mol:307245", "ablation": "dialogue_flatten", "dose": 0.35, "cdg": 0.2892157236735026, "words": 14479, "seconds": 1.41, "digest": "bbc63aabc45391bc"}
+{"unit": "mol:307245", "ablation": "dialogue_flatten", "dose": 0.65, "cdg": 0.28839508692423504, "words": 14479, "seconds": 1.42, "digest": "9309ed3bfa187641"}
+{"unit": "mol:307245", "ablation": "dialogue_flatten", "dose": 1.0, "cdg": 0.30559730529785156, "words": 14479, "seconds": 1.41, "digest": "623cb6ebcdccfdd1"}
+{"unit": "mol:307245", "ablation": "transplant", "dose": 0.15, "cdg": 0.2808680534362793, "words": 14544, "seconds": 1.44, "digest": "a1871f704ab87345"}
+{"unit": "mol:307245", "ablation": "transplant", "dose": 0.35, "cdg": 0.2808680534362793, "words": 14516, "seconds": 1.41, "digest": "1c20c3c7a290e80a"}
+{"unit": "mol:307245", "ablation": "transplant", "dose": 0.65, "cdg": 0.2781812349955241, "words": 14490, "seconds": 1.42, "digest": "55b2a2d6da6f83ee"}
+{"unit": "mol:307245", "ablation": "transplant", "dose": 1.0, "cdg": 0.2849181493123372, "words": 13151, "seconds": 1.4, "digest": "7dc1f67e942cf1a8"}
+{"unit": "mol:307245", "ablation": "sentence_deletion", "dose": 0.15, "cdg": 0.2776523431142171, "words": 12313, "seconds": 1.41, "digest": "95967c29bd9b0184"}
+{"unit": "mol:307245", "ablation": "sentence_deletion", "dose": 0.35, "cdg": 0.21901476383209229, "words": 9885, "seconds": 1.4, "digest": "3c033d0950aacd57"}
+{"unit": "mol:307245", "ablation": "sentence_deletion", "dose": 0.65, "cdg": 0.2564743757247925, "words": 6282, "seconds": 1.4, "digest": "e89112bb5c63a45a"}
+{"unit": "mol:307245", "ablation": "sentence_deletion", "dose": 1.0, "cdg": 0.26008671522140503, "words": 3894, "seconds": 0.94, "digest": "1bfab2f96570bbe2"}
+{"unit": "mol:307245", "ablation": "rename_entities", "dose": 0.15, "digest": "b4843efc9580b365", "cdg": 0.3196560541788737, "words": 14479, "seconds": 1.58, "gpu_temp": 69}
+{"unit": "mol:307245", "ablation": "rename_entities", "dose": 0.35, "digest": "92cdb8b107a518b1", "cdg": 0.30690522988637287, "words": 14479, "seconds": 1.59, "gpu_temp": 66}
+{"unit": "mol:307245", "ablation": "rename_entities", "dose": 0.65, "digest": "06c8c0c5d70ff87d", "cdg": 0.29043837388356525, "words": 14479, "seconds": 1.57, "gpu_temp": 70}
+{"unit": "mol:307245", "ablation": "rename_entities", "dose": 1.0, "digest": "b201d46397a0516b", "cdg": 0.29222846031188965, "words": 14479, "seconds": 1.59, "gpu_temp": 71}
+{"unit": "mol:307245", "ablation": "respell", "dose": 0.15, "cdg": 0.2894097566604614, "words": 14479, "seconds": 1.4, "digest": "f6047f8590c6c776"}
+{"unit": "mol:307245", "ablation": "respell", "dose": 0.35, "cdg": 0.28922998905181885, "words": 14479, "seconds": 1.41, "digest": "562c48850879eb7c"}
+{"unit": "mol:307245", "ablation": "respell", "dose": 0.65, "cdg": 0.28922998905181885, "words": 14479, "seconds": 1.41, "digest": "9a713e0b5d630265"}
+{"unit": "mol:307245", "ablation": "respell", "dose": 1.0, "cdg": 0.2885558207829793, "words": 14479, "seconds": 1.45, "digest": "9cd11a24fba30bca"}
+{"unit": "mol:307852", "ablation": "original", "dose": 0.0, "cdg": 0.2717140515645345, "words": 6263, "seconds": 1.39, "digest": "4566a6515102fa25"}
+{"unit": "mol:307852", "ablation": "paragraph_shuffle", "dose": 0.15, "cdg": 0.2655189434687297, "words": 6263, "seconds": 1.39, "digest": "1ed1d6ab32e1d2e2"}
+{"unit": "mol:307852", "ablation": "paragraph_shuffle", "dose": 0.35, "cdg": 0.22831145922342935, "words": 6263, "seconds": 1.39, "digest": "e642417f5034a9b7"}
+{"unit": "mol:307852", "ablation": "paragraph_shuffle", "dose": 0.65, "cdg": 0.2766059637069702, "words": 6263, "seconds": 1.41, "digest": "f3107001ed1bbb23"}
+{"unit": "mol:307852", "ablation": "paragraph_shuffle", "dose": 1.0, "cdg": 0.2823018232981364, "words": 6263, "seconds": 1.4, "digest": "695211186dac533c"}
+{"unit": "mol:307852", "ablation": "sentence_shuffle", "dose": 0.15, "cdg": 0.27773356437683105, "words": 6263, "seconds": 1.4, "digest": "75532996f7fc727e"}
+{"unit": "mol:307852", "ablation": "sentence_shuffle", "dose": 0.35, "cdg": 0.23129630088806152, "words": 6263, "seconds": 1.42, "digest": "45b9f0d3c523f041"}
+{"unit": "mol:307852", "ablation": "sentence_shuffle", "dose": 0.65, "cdg": 0.2682083447774251, "words": 6263, "seconds": 1.39, "digest": "54f4066d6ab3f7bb"}
+{"unit": "mol:307852", "ablation": "sentence_shuffle", "dose": 1.0, "cdg": 0.2605202595392863, "words": 6263, "seconds": 1.4, "digest": "4a758bc4b8e9a518"}
+{"unit": "mol:307852", "ablation": "connective_scramble", "dose": 0.15, "cdg": 0.27058931191762287, "words": 6263, "seconds": 1.4, "digest": "f3eba7c0d33715ba"}
+{"unit": "mol:307852", "ablation": "connective_scramble", "dose": 0.35, "cdg": 0.2708427906036377, "words": 6263, "seconds": 1.4, "digest": "317b17360e8196e0"}
+{"unit": "mol:307852", "ablation": "connective_scramble", "dose": 0.65, "cdg": 0.2808149258295695, "words": 6263, "seconds": 1.41, "digest": "25ebbd8f83d01422"}
+{"unit": "mol:307852", "ablation": "connective_scramble", "dose": 1.0, "cdg": 0.2772316535313924, "words": 6263, "seconds": 1.4, "digest": "13b441a506aee376"}
+{"unit": "mol:307852", "ablation": "dialogue_flatten", "dose": 0.15, "cdg": 0.2648105223973592, "words": 6263, "seconds": 1.39, "digest": "f2a6e3516a5b272b"}
+{"unit": "mol:307852", "ablation": "dialogue_flatten", "dose": 0.35, "cdg": 0.25648558139801025, "words": 6263, "seconds": 1.41, "digest": "1f8815549460eb24"}
+{"unit": "mol:307852", "ablation": "dialogue_flatten", "dose": 0.65, "cdg": 0.2666865587234497, "words": 6263, "seconds": 1.38, "digest": "e8328826526a7551"}
+{"unit": "mol:307852", "ablation": "dialogue_flatten", "dose": 1.0, "cdg": 0.2567605972290039, "words": 6263, "seconds": 1.41, "digest": "4aa560a75181e0a4"}
+{"unit": "mol:307852", "ablation": "transplant", "dose": 0.15, "cdg": 0.2785565455754598, "words": 6345, "seconds": 1.41, "digest": "b79aa597edc94ad0"}
+{"unit": "mol:307852", "ablation": "transplant", "dose": 0.35, "cdg": 0.26609333356221515, "words": 6289, "seconds": 1.4, "digest": "a00c1fc9b5045150"}
+{"unit": "mol:307852", "ablation": "transplant", "dose": 0.65, "cdg": 0.34226401646931964, "words": 6316, "seconds": 1.41, "digest": "ffd5b61db7a51ea1"}
+{"unit": "mol:307852", "ablation": "transplant", "dose": 1.0, "cdg": 0.30307984352111816, "words": 6267, "seconds": 1.42, "digest": "99d6441a0c60958c"}
+{"unit": "mol:307852", "ablation": "sentence_deletion", "dose": 0.15, "cdg": 0.2623936653137207, "words": 5149, "seconds": 1.18, "digest": "a0905837432cf8f8"}
+{"unit": "mol:307852", "ablation": "sentence_deletion", "dose": 0.35, "cdg": 0.16211456060409546, "words": 4068, "seconds": 0.95, "digest": "c85890dac2dcd7ff"}
+{"unit": "mol:307852", "ablation": "sentence_deletion", "dose": 0.65, "cdg": 0.3234611749649048, "words": 2550, "seconds": 0.49, "digest": "330ee444733f6ddc"}
+{"unit": "mol:307852", "ablation": "sentence_deletion", "dose": 1.0, "cdg": 0.2762279510498047, "words": 1395, "seconds": 0.26, "digest": "83f0168cebde8c5e"}
+{"unit": "mol:307852", "ablation": "rename_entities", "dose": 0.15, "digest": "06f43db5819e0911", "cdg": 0.2984994252522786, "words": 6263, "seconds": 1.56, "gpu_temp": 71}
+{"unit": "mol:307852", "ablation": "rename_entities", "dose": 0.35, "digest": "1c63ff7fe17e771b", "cdg": 0.29162538051605225, "words": 6263, "seconds": 1.49, "gpu_temp": 73}
+{"unit": "mol:307852", "ablation": "rename_entities", "dose": 0.65, "digest": "b18f0cea4528e9f5", "cdg": 0.2899089256922404, "words": 6263, "seconds": 1.63, "gpu_temp": 70}
+{"unit": "mol:307852", "ablation": "rename_entities", "dose": 1.0, "digest": "e453f0857e5ec2c2", "cdg": 0.2856738169987996, "words": 6263, "seconds": 1.47, "gpu_temp": 70}
+{"unit": "mol:307852", "ablation": "respell", "dose": 0.15, "cdg": 0.2754405339558919, "words": 6263, "seconds": 1.41, "digest": "f9c886725c186d5e"}
+{"unit": "mol:307852", "ablation": "respell", "dose": 0.35, "cdg": 0.2764195203781128, "words": 6263, "seconds": 1.44, "digest": "5afb97f6487045de"}
+{"unit": "mol:307852", "ablation": "respell", "dose": 0.65, "cdg": 0.27741769949595135, "words": 6263, "seconds": 1.41, "digest": "3cc2291427ad8398"}
+{"unit": "mol:307852", "ablation": "respell", "dose": 1.0, "cdg": 0.27765655517578125, "words": 6263, "seconds": 1.41, "digest": "804a85dec3382b35"}
+{"unit": "mol:308643", "ablation": "original", "dose": 0.0, "cdg": 0.26014987627665204, "words": 5954, "seconds": 1.4, "digest": "010d4415b933259d"}
+{"unit": "mol:308643", "ablation": "paragraph_shuffle", "dose": 0.15, "cdg": 0.22614153226216635, "words": 5954, "seconds": 1.4, "digest": "21e0bbddbb59f68c"}
+{"unit": "mol:308643", "ablation": "paragraph_shuffle", "dose": 0.35, "cdg": 0.25840361913045246, "words": 5954, "seconds": 1.4, "digest": "3c31d4e34b22ba37"}
+{"unit": "mol:308643", "ablation": "paragraph_shuffle", "dose": 0.65, "cdg": 0.29651610056559247, "words": 5954, "seconds": 1.41, "digest": "8236f7d46852df49"}
+{"unit": "mol:308643", "ablation": "paragraph_shuffle", "dose": 1.0, "cdg": 0.261383851369222, "words": 5954, "seconds": 1.41, "digest": "4fae15be03e56a62"}
+{"unit": "mol:308643", "ablation": "sentence_shuffle", "dose": 0.15, "cdg": 0.25726135571797687, "words": 5954, "seconds": 1.4, "digest": "416c688bc66f8624"}
+{"unit": "mol:308643", "ablation": "sentence_shuffle", "dose": 0.35, "cdg": 0.2663295269012451, "words": 5954, "seconds": 1.39, "digest": "534f0e2314de659a"}
+{"unit": "mol:308643", "ablation": "sentence_shuffle", "dose": 0.65, "cdg": 0.2580854892730713, "words": 5954, "seconds": 1.39, "digest": "18566559030c2975"}
+{"unit": "mol:308643", "ablation": "sentence_shuffle", "dose": 1.0, "cdg": 0.2963077624638875, "words": 5954, "seconds": 1.39, "digest": "7f76088ea5dcf04d"}
+{"unit": "mol:308643", "ablation": "connective_scramble", "dose": 0.15, "cdg": 0.25845877329508465, "words": 5954, "seconds": 1.4, "digest": "b4d55c9a1c635759"}
+{"unit": "mol:308643", "ablation": "connective_scramble", "dose": 0.35, "cdg": 0.2573477427164714, "words": 5954, "seconds": 1.41, "digest": "31c2c10e771e4db3"}
+{"unit": "mol:308643", "ablation": "connective_scramble", "dose": 0.65, "cdg": 0.2609566847483317, "words": 5954, "seconds": 1.4, "digest": "0bc40cb58748c7e1"}
+{"unit": "mol:308643", "ablation": "connective_scramble", "dose": 1.0, "cdg": 0.2562882900238037, "words": 5954, "seconds": 1.4, "digest": "2bb4b90ee7374d88"}
+{"unit": "mol:308643", "ablation": "dialogue_flatten", "dose": 0.15, "cdg": 0.25246818860371906, "words": 5954, "seconds": 1.4, "digest": "6e8f88f624abd822"}
+{"unit": "mol:308643", "ablation": "dialogue_flatten", "dose": 0.35, "cdg": 0.2464061180750529, "words": 5954, "seconds": 1.39, "digest": "0bc584dfa358a489"}
+{"unit": "mol:308643", "ablation": "dialogue_flatten", "dose": 0.65, "cdg": 0.25001641114552814, "words": 5954, "seconds": 1.39, "digest": "154cedd2f2193a8c"}
+{"unit": "mol:308643", "ablation": "dialogue_flatten", "dose": 1.0, "cdg": 0.2743646303812663, "words": 5954, "seconds": 1.4, "digest": "6b32a17b3370fd4a"}
+{"unit": "mol:308643", "ablation": "transplant", "dose": 0.15, "cdg": 0.3269166549046834, "words": 5964, "seconds": 1.39, "digest": "33d9e4641ff05629"}
+{"unit": "mol:308643", "ablation": "transplant", "dose": 0.35, "cdg": 0.29685791333516437, "words": 5954, "seconds": 1.42, "digest": "8d88d6ffcd043d80"}
+{"unit": "mol:308643", "ablation": "transplant", "dose": 0.65, "cdg": 0.25954850514729816, "words": 5994, "seconds": 1.39, "digest": "98b79746a5dd1a07"}
+{"unit": "mol:308643", "ablation": "transplant", "dose": 1.0, "cdg": 0.32392289241154987, "words": 5956, "seconds": 1.41, "digest": "90427612da40ea8e"}
+{"unit": "mol:308643", "ablation": "sentence_deletion", "dose": 0.15, "cdg": 0.33731589317321775, "words": 5100, "seconds": 1.16, "digest": "aa8d11a615a5e2c4"}
+{"unit": "mol:308643", "ablation": "sentence_deletion", "dose": 0.35, "cdg": 0.22859084606170654, "words": 4062, "seconds": 0.95, "digest": "94ca33d90c8a444d"}
+{"unit": "mol:308643", "ablation": "sentence_deletion", "dose": 0.65, "cdg": 0.25038981437683105, "words": 2626, "seconds": 0.49, "digest": "d1d5ca36f0d6692d"}
+{"unit": "mol:308643", "ablation": "sentence_deletion", "dose": 1.0, "cdg": 0.28071022033691406, "words": 1674, "seconds": 0.26, "digest": "a6bb1ed31e7493cb"}
+{"unit": "mol:308643", "ablation": "rename_entities", "dose": 0.15, "digest": "08dd12509dc7d40b", "cdg": 0.29821546872456867, "words": 5954, "seconds": 1.48, "gpu_temp": 70}
+{"unit": "mol:308643", "ablation": "rename_entities", "dose": 0.35, "digest": "557862516d562d6a", "cdg": 0.32828132311503094, "words": 5954, "seconds": 1.5, "gpu_temp": 71}
+{"unit": "mol:308643", "ablation": "rename_entities", "dose": 0.65, "digest": "b06a2f0782c4dc48", "cdg": 0.307896892229716, "words": 5954, "seconds": 1.59, "gpu_temp": 70}
+{"unit": "mol:308643", "ablation": "rename_entities", "dose": 1.0, "digest": "af99a543c80986dc", "cdg": 0.30734435717264813, "words": 5954, "seconds": 1.59, "gpu_temp": 70}
+{"unit": "mol:308643", "ablation": "respell", "dose": 0.15, "cdg": 0.26801971594492596, "words": 5954, "seconds": 1.4, "digest": "ec899090719675ee"}
+{"unit": "mol:309417", "ablation": "original", "dose": 0.0, "cdg": 0.27905571460723877, "words": 7081, "seconds": 1.4, "digest": "46623816cafda106"}
+{"unit": "mol:309417", "ablation": "paragraph_shuffle", "dose": 0.15, "cdg": 0.22593228022257486, "words": 7081, "seconds": 1.39, "digest": "24750896d560d4cc"}
+{"unit": "mol:309417", "ablation": "paragraph_shuffle", "dose": 0.35, "cdg": 0.30228833357493085, "words": 7081, "seconds": 1.4, "digest": "23a98fd411cdcaec"}
+{"unit": "mol:309417", "ablation": "paragraph_shuffle", "dose": 0.65, "cdg": 0.298750360806783, "words": 7081, "seconds": 1.41, "digest": "a8c3e5d91c1989b3"}
+{"unit": "mol:309417", "ablation": "paragraph_shuffle", "dose": 1.0, "cdg": 0.28428733348846436, "words": 7081, "seconds": 1.42, "digest": "54a072a6dfaaac13"}
+{"unit": "mol:309417", "ablation": "sentence_shuffle", "dose": 0.15, "cdg": 0.28200193246205646, "words": 7081, "seconds": 1.42, "digest": "440dd27243fde253"}
+{"unit": "mol:309417", "ablation": "sentence_shuffle", "dose": 0.35, "cdg": 0.2800378402074178, "words": 7081, "seconds": 1.4, "digest": "f6c0c3b06980497c"}
+{"unit": "mol:309417", "ablation": "sentence_shuffle", "dose": 0.65, "cdg": 0.276950200398763, "words": 7081, "seconds": 1.4, "digest": "8b04075d26dcb9c9"}
+{"unit": "mol:309417", "ablation": "sentence_shuffle", "dose": 1.0, "cdg": 0.29697902997334796, "words": 7081, "seconds": 1.39, "digest": "22477b43b2fb9030"}
+{"unit": "mol:309417", "ablation": "connective_scramble", "dose": 0.15, "cdg": 0.2802385886510213, "words": 7081, "seconds": 1.4, "digest": "6557b4ea4aadf783"}
+{"unit": "mol:309417", "ablation": "connective_scramble", "dose": 0.35, "cdg": 0.28140489260355633, "words": 7081, "seconds": 1.4, "digest": "b5f93644e89040e3"}
+{"unit": "mol:309417", "ablation": "connective_scramble", "dose": 0.65, "cdg": 0.27816057205200195, "words": 7081, "seconds": 1.4, "digest": "ac0ff6ab8a8f1630"}
+{"unit": "mol:309417", "ablation": "connective_scramble", "dose": 1.0, "cdg": 0.2778741121292114, "words": 7081, "seconds": 1.44, "digest": "57642f2eb394f5dc"}
+{"unit": "mol:309417", "ablation": "dialogue_flatten", "dose": 0.15, "cdg": 0.2661420504252116, "words": 7081, "seconds": 1.41, "digest": "0254a87079cb2659"}
+{"unit": "mol:309417", "ablation": "dialogue_flatten", "dose": 0.35, "cdg": 0.2795254389444987, "words": 7081, "seconds": 1.39, "digest": "2542fae37cf33b6b"}
+{"unit": "mol:309417", "ablation": "dialogue_flatten", "dose": 0.65, "cdg": 0.26962443192799884, "words": 7081, "seconds": 1.41, "digest": "375567622b9f4295"}
+{"unit": "mol:309417", "ablation": "dialogue_flatten", "dose": 1.0, "cdg": 0.27387841542561847, "words": 7081, "seconds": 1.48, "digest": "60c6feffc41bfd24"}
+{"unit": "mol:309417", "ablation": "transplant", "dose": 0.15, "cdg": 0.2163157065709432, "words": 7101, "seconds": 1.45, "digest": "8d873e3f1c1b4634"}
+{"unit": "mol:309417", "ablation": "transplant", "dose": 0.35, "cdg": 0.1993436018625895, "words": 7119, "seconds": 1.41, "digest": "bb08095e3f7a570d"}
+{"unit": "mol:309417", "ablation": "transplant", "dose": 0.65, "cdg": 0.33425577481587726, "words": 7089, "seconds": 1.39, "digest": "404949d03cbba3ad"}
+{"unit": "mol:309417", "ablation": "transplant", "dose": 1.0, "cdg": 0.3824423948923747, "words": 7026, "seconds": 1.4, "digest": "eeaf167a51300f71"}
+{"unit": "mol:309417", "ablation": "sentence_deletion", "dose": 0.15, "cdg": 0.277082880338033, "words": 5837, "seconds": 1.39, "digest": "c35b19af33ec9500"}
+{"unit": "mol:309417", "ablation": "sentence_deletion", "dose": 0.35, "cdg": 0.25838050842285154, "words": 4631, "seconds": 1.17, "digest": "2ce9a5740dc819e1"}
+{"unit": "mol:309417", "ablation": "sentence_deletion", "dose": 0.65, "cdg": 0.2613067626953125, "words": 3249, "seconds": 0.71, "digest": "9ffcade1371b5dc2"}
+{"unit": "mol:309417", "ablation": "sentence_deletion", "dose": 1.0, "cdg": 0.30680298805236816, "words": 1975, "seconds": 0.48, "digest": "2bd7a08710b17077"}
+{"unit": "mol:309417", "ablation": "rename_entities", "dose": 0.15, "digest": "449eb63eb5986ce2", "cdg": 0.3138341506322225, "words": 7081, "seconds": 1.56, "gpu_temp": 71}
+{"unit": "mol:309417", "ablation": "rename_entities", "dose": 0.35, "digest": "b22c7cce2011cfc3", "cdg": 0.2982179323832194, "words": 7081, "seconds": 1.49, "gpu_temp": 72}
+{"unit": "mol:309417", "ablation": "rename_entities", "dose": 0.65, "digest": "c95bd9ec4174af94", "cdg": 0.3101041316986084, "words": 7081, "seconds": 1.62, "gpu_temp": 70}
+{"unit": "mol:309417", "ablation": "rename_entities", "dose": 1.0, "digest": "26b0aff0eb3227d7", "cdg": 0.28079648812611896, "words": 7081, "seconds": 1.59, "gpu_temp": 71}
+{"unit": "mol:309417", "ablation": "respell", "dose": 0.15, "cdg": 0.28199152151743573, "words": 7081, "seconds": 1.46, "digest": "9e70f8de61e7867c"}
+{"unit": "mol:309417", "ablation": "respell", "dose": 0.35, "cdg": 0.2820208470026652, "words": 7081, "seconds": 1.45, "digest": "6eada724b8e0464c"}
+{"unit": "mol:309417", "ablation": "respell", "dose": 1.0, "cdg": 0.28124014536539715, "words": 7081, "seconds": 1.46, "digest": "6be44469d8e56421"}
+{"unit": "mol:310557", "ablation": "original", "dose": 0.0, "cdg": 0.3116780122121175, "words": 7078, "seconds": 1.43, "digest": "c893fe513f3f0219"}
+{"unit": "mol:310557", "ablation": "paragraph_shuffle", "dose": 0.15, "cdg": 0.3859571615854899, "words": 7078, "seconds": 1.48, "digest": "ea92e4d5cf5f242e"}
+{"unit": "mol:310557", "ablation": "paragraph_shuffle", "dose": 0.35, "cdg": 0.3172845045725505, "words": 7078, "seconds": 1.45, "digest": "2358fe053791d547"}
+{"unit": "mol:310557", "ablation": "paragraph_shuffle", "dose": 0.65, "cdg": 0.28195130825042725, "words": 7078, "seconds": 1.57, "digest": "493226d70ac36175"}
+{"unit": "mol:310557", "ablation": "paragraph_shuffle", "dose": 1.0, "cdg": 0.2907957235972087, "words": 7078, "seconds": 1.48, "digest": "161daa714fa63809"}
+{"unit": "mol:310557", "ablation": "sentence_shuffle", "dose": 0.15, "cdg": 0.31664129098256427, "words": 7078, "seconds": 1.47, "digest": "6bd2177999a05f71"}
+{"unit": "mol:310557", "ablation": "sentence_shuffle", "dose": 0.35, "cdg": 0.31044864654541016, "words": 7078, "seconds": 1.5, "digest": "7b533aa79b3d6e51"}
+{"unit": "mol:310557", "ablation": "sentence_shuffle", "dose": 0.65, "cdg": 0.2952786684036255, "words": 7078, "seconds": 1.42, "digest": "a1b2d6c252f168c3"}
+{"unit": "mol:310557", "ablation": "sentence_shuffle", "dose": 1.0, "cdg": 0.34183335304260254, "words": 7078, "seconds": 1.43, "digest": "acb7fa2b45f313d7"}
+{"unit": "mol:310557", "ablation": "connective_scramble", "dose": 0.15, "cdg": 0.3104534149169922, "words": 7078, "seconds": 1.53, "digest": "bcab6f5643f97e3f"}
+{"unit": "mol:310557", "ablation": "connective_scramble", "dose": 0.35, "cdg": 0.314476211865743, "words": 7078, "seconds": 1.48, "digest": "e77935ad9bcc8939"}
+{"unit": "mol:310557", "ablation": "connective_scramble", "dose": 0.65, "cdg": 0.3171924352645874, "words": 7078, "seconds": 1.46, "digest": "269b430fa461e12f"}
+{"unit": "mol:310557", "ablation": "connective_scramble", "dose": 1.0, "cdg": 0.3213283220926921, "words": 7078, "seconds": 1.42, "digest": "fb7e56844107423b"}
+{"unit": "mol:310557", "ablation": "dialogue_flatten", "dose": 0.15, "cdg": 0.32656888167063397, "words": 7078, "seconds": 1.43, "digest": "14be644633acfca0"}
+{"unit": "mol:310557", "ablation": "dialogue_flatten", "dose": 0.35, "cdg": 0.35037819544474286, "words": 7078, "seconds": 1.45, "digest": "b5434c65cbe4f6d5"}
+{"unit": "mol:310557", "ablation": "dialogue_flatten", "dose": 0.65, "cdg": 0.40218345324198407, "words": 7078, "seconds": 1.46, "digest": "39317f44d0d564bf"}
+{"unit": "mol:310557", "ablation": "dialogue_flatten", "dose": 1.0, "cdg": 0.3896934986114502, "words": 7078, "seconds": 1.49, "digest": "2bd011da76c4a8a7"}
+{"unit": "mol:310557", "ablation": "transplant", "dose": 0.15, "cdg": 0.35356247425079346, "words": 7099, "seconds": 1.45, "digest": "05f6f0b862e3fd98"}
+{"unit": "mol:310557", "ablation": "transplant", "dose": 0.35, "cdg": 0.31814610958099365, "words": 7078, "seconds": 1.43, "digest": "f0b89bac49976330"}
+{"unit": "mol:310557", "ablation": "transplant", "dose": 0.65, "cdg": 0.17062735557556152, "words": 7102, "seconds": 1.44, "digest": "03b9716e3b66e744"}
+{"unit": "mol:310557", "ablation": "transplant", "dose": 1.0, "cdg": 0.23774500687917074, "words": 5898, "seconds": 1.46, "digest": "acdd5a2e93cb1d69"}
+{"unit": "mol:310557", "ablation": "sentence_deletion", "dose": 0.15, "cdg": 0.30544622739156085, "words": 6157, "seconds": 1.48, "digest": "cc2d5b045419be29"}
+{"unit": "mol:310557", "ablation": "sentence_deletion", "dose": 0.35, "cdg": 0.2993645668029785, "words": 5008, "seconds": 1.25, "digest": "9a5b531d53614cb9"}
+{"unit": "mol:310557", "ablation": "sentence_deletion", "dose": 0.65, "cdg": 0.31168492635091144, "words": 3101, "seconds": 0.76, "digest": "b927e71ef43df200"}
+{"unit": "mol:310557", "ablation": "sentence_deletion", "dose": 1.0, "cdg": 0.18053758144378662, "words": 1883, "seconds": 0.52, "digest": "f918dac824e37ef6"}
+{"unit": "mol:310557", "ablation": "rename_entities", "dose": 0.15, "digest": "5171c73a12cd77a9", "cdg": 0.39183636506398517, "words": 7078, "seconds": 1.54, "gpu_temp": 71}
+{"unit": "mol:310557", "ablation": "rename_entities", "dose": 0.35, "digest": "06f61b2cf919ae08", "cdg": 0.39593009154001874, "words": 7078, "seconds": 1.51, "gpu_temp": 71}
+{"unit": "mol:310557", "ablation": "rename_entities", "dose": 0.65, "digest": "baba7b4121c2572b", "cdg": 0.3859085241953532, "words": 7078, "seconds": 1.59, "gpu_temp": 71}
+{"unit": "mol:310557", "ablation": "rename_entities", "dose": 1.0, "digest": "25e2a65550401f17", "cdg": 0.3782905737559001, "words": 7078, "seconds": 1.63, "gpu_temp": 73}
+{"unit": "mol:310557", "ablation": "respell", "dose": 0.15, "cdg": 0.33936325709025067, "words": 7078, "seconds": 1.47, "digest": "0434a8ce6a75626d"}
+{"unit": "mol:310557", "ablation": "respell", "dose": 0.35, "cdg": 0.3388798236846924, "words": 7078, "seconds": 1.45, "digest": "7563c91ecc15fcc1"}
+{"unit": "mol:310557", "ablation": "respell", "dose": 0.65, "cdg": 0.3383326530456543, "words": 7078, "seconds": 1.46, "digest": "b575cb26efa62912"}
+{"unit": "mol:311668", "ablation": "original", "dose": 0.0, "cdg": 0.23607945442199707, "words": 7082, "seconds": 1.44, "digest": "14b6b4113e90e96e"}
+{"unit": "mol:311668", "ablation": "paragraph_shuffle", "dose": 0.15, "cdg": 0.27413642406463623, "words": 7082, "seconds": 1.43, "digest": "6a9ed259745121c0"}
+{"unit": "mol:311668", "ablation": "paragraph_shuffle", "dose": 0.35, "cdg": 0.2249845266342163, "words": 7082, "seconds": 1.47, "digest": "51de6e2406f30715"}
+{"unit": "mol:311668", "ablation": "paragraph_shuffle", "dose": 0.65, "cdg": 0.21058273315429688, "words": 7082, "seconds": 1.49, "digest": "f31f0f0229b6db42"}
+{"unit": "mol:311668", "ablation": "paragraph_shuffle", "dose": 1.0, "cdg": 0.2551690737406413, "words": 7082, "seconds": 1.47, "digest": "dc5d34a6d7cb3d74"}
+{"unit": "mol:311668", "ablation": "sentence_shuffle", "dose": 0.15, "cdg": 0.22612619400024414, "words": 7082, "seconds": 1.48, "digest": "23e1b822fa360c81"}
+{"unit": "mol:311668", "ablation": "sentence_shuffle", "dose": 0.35, "cdg": 0.23750082651774088, "words": 7082, "seconds": 1.49, "digest": "0651c0bb70c58e3a"}
+{"unit": "mol:311668", "ablation": "sentence_shuffle", "dose": 0.65, "cdg": 0.2280918757120768, "words": 7082, "seconds": 1.44, "digest": "2bfa7ccb0caad99e"}
+{"unit": "mol:311668", "ablation": "sentence_shuffle", "dose": 1.0, "cdg": 0.2171686887741089, "words": 7082, "seconds": 1.45, "digest": "1b8f8d06ad0bc110"}
+{"unit": "mol:311668", "ablation": "connective_scramble", "dose": 0.15, "cdg": 0.23423429330190024, "words": 7082, "seconds": 1.48, "digest": "d597af563148d765"}
+{"unit": "mol:311668", "ablation": "connective_scramble", "dose": 0.35, "cdg": 0.23248624801635742, "words": 7082, "seconds": 1.48, "digest": "202f5e54dcd42b3f"}
+{"unit": "mol:311668", "ablation": "connective_scramble", "dose": 0.65, "cdg": 0.22925392786661783, "words": 7082, "seconds": 1.51, "digest": "26ebf9c4378c4859"}
+{"unit": "mol:311668", "ablation": "connective_scramble", "dose": 1.0, "cdg": 0.23220356305440268, "words": 7082, "seconds": 1.44, "digest": "a53b70486955ff21"}
+{"unit": "mol:311668", "ablation": "dialogue_flatten", "dose": 0.15, "cdg": 0.22146964073181152, "words": 7082, "seconds": 1.95, "gpu_temp": 65, "digest": "103f421149b715d1"}
+{"unit": "mol:311668", "ablation": "dialogue_flatten", "dose": 0.35, "cdg": 0.2166280746459961, "words": 7082, "seconds": 1.57, "gpu_temp": 66, "digest": "c5e2e82c623b9a14"}
+{"unit": "mol:311668", "ablation": "dialogue_flatten", "dose": 0.65, "cdg": 0.22979358832041422, "words": 7082, "seconds": 1.37, "gpu_temp": 69, "digest": "5b6f31b2a4cd00e7"}
+{"unit": "mol:311668", "ablation": "dialogue_flatten", "dose": 1.0, "cdg": 0.25584113597869873, "words": 7082, "seconds": 1.33, "gpu_temp": 69, "digest": "fd44f5f1760786a6"}
+{"unit": "mol:311668", "ablation": "transplant", "dose": 0.15, "cdg": 0.2255380948384603, "words": 7124, "seconds": 1.32, "gpu_temp": 70, "digest": "6fdf6886a19865d8"}
+{"unit": "mol:311668", "ablation": "transplant", "dose": 0.35, "cdg": 0.24345258871714273, "words": 7099, "seconds": 1.33, "gpu_temp": 70, "digest": "1946f8edf8572782"}
+{"unit": "mol:311668", "ablation": "transplant", "dose": 0.65, "cdg": 0.349276860555013, "words": 7135, "seconds": 1.36, "gpu_temp": 70, "digest": "d12d093f4649f7b3"}
+{"unit": "mol:311668", "ablation": "transplant", "dose": 1.0, "cdg": 0.42355553309122723, "words": 7151, "seconds": 1.34, "gpu_temp": 71, "digest": "258a72fec6172af0"}
+{"unit": "mol:311668", "ablation": "sentence_deletion", "dose": 0.15, "cdg": 0.25505868593851727, "words": 6251, "seconds": 1.33, "gpu_temp": 72, "digest": "800470f332c64b72"}
+{"unit": "mol:311668", "ablation": "sentence_deletion", "dose": 0.35, "cdg": 0.21390972137451172, "words": 5002, "seconds": 1.27, "gpu_temp": 70, "digest": "29aa004b5c4c5186"}
+{"unit": "mol:311668", "ablation": "sentence_deletion", "dose": 0.65, "cdg": 0.2308963934580485, "words": 3226, "seconds": 0.68, "gpu_temp": 69, "digest": "efb0120fd0c600c4"}
+{"unit": "mol:311668", "ablation": "sentence_deletion", "dose": 1.0, "cdg": 0.2248471975326538, "words": 2296, "seconds": 0.46, "gpu_temp": 56, "digest": "06d038e86778e22a"}
+{"unit": "mol:311668", "ablation": "rename_entities", "dose": 0.15, "digest": "7dade000bfedc276", "cdg": 0.2518230676651001, "words": 7082, "seconds": 1.57, "gpu_temp": 71}
+{"unit": "mol:311668", "ablation": "rename_entities", "dose": 0.35, "digest": "46c7cb3f91c080fb", "cdg": 0.24487094084421793, "words": 7082, "seconds": 1.58, "gpu_temp": 71}
+{"unit": "mol:311668", "ablation": "rename_entities", "dose": 0.65, "digest": "da63428275307f9d", "cdg": 0.22729873657226562, "words": 7082, "seconds": 1.49, "gpu_temp": 71}
+{"unit": "mol:311668", "ablation": "rename_entities", "dose": 1.0, "digest": "24612985ccf9bd28", "cdg": 0.26101255416870117, "words": 7082, "seconds": 1.62, "gpu_temp": 73}
+{"unit": "mol:311668", "ablation": "respell", "dose": 0.15, "cdg": 0.21869349479675293, "words": 7082, "seconds": 1.52, "gpu_temp": 74, "digest": "c8eaa7de5f725a5c"}
+{"unit": "mol:311668", "ablation": "respell", "dose": 0.35, "cdg": 0.22026443481445312, "words": 7082, "seconds": 1.57, "gpu_temp": 72, "digest": "ee7e18166c25099d"}
+{"unit": "mol:311668", "ablation": "respell", "dose": 0.65, "cdg": 0.21984493732452393, "words": 7082, "seconds": 1.66, "gpu_temp": 71, "digest": "b114b65d952a9a44"}
+{"unit": "mol:311668", "ablation": "respell", "dose": 1.0, "cdg": 0.2220225731531779, "words": 7082, "seconds": 1.53, "gpu_temp": 72, "digest": "441ae5ab4e2fcafa"}
+{"unit": "mol:312539", "ablation": "original", "dose": 0.0, "cdg": 0.26068917910257977, "words": 7425, "seconds": 1.83, "gpu_temp": 72, "digest": "22ad28150a326305"}
+{"unit": "mol:312539", "ablation": "paragraph_shuffle", "dose": 0.15, "cdg": 0.3275330066680908, "words": 7425, "seconds": 1.6, "gpu_temp": 72, "digest": "5419a70afe58fd6a"}
+{"unit": "mol:312539", "ablation": "paragraph_shuffle", "dose": 0.35, "cdg": 0.29332149028778076, "words": 7425, "seconds": 1.61, "gpu_temp": 71, "digest": "44e1b841f0c99871"}
+{"unit": "mol:312539", "ablation": "paragraph_shuffle", "dose": 0.65, "cdg": 0.32583630084991455, "words": 7425, "seconds": 1.38, "gpu_temp": 67, "digest": "0b34b7f179a82eee"}
+{"unit": "mol:312539", "ablation": "paragraph_shuffle", "dose": 1.0, "cdg": 0.2975902557373047, "words": 7425, "seconds": 1.37, "gpu_temp": 72, "digest": "f87d073d33970033"}
+{"unit": "mol:312539", "ablation": "sentence_shuffle", "dose": 0.15, "cdg": 0.2515933911005656, "words": 7425, "seconds": 1.62, "gpu_temp": 72, "digest": "01365020bb86c28f"}
+{"unit": "mol:312539", "ablation": "sentence_shuffle", "dose": 0.35, "cdg": 0.24875390529632568, "words": 7425, "seconds": 1.52, "gpu_temp": 71, "digest": "7efe7e16776eddb0"}
+{"unit": "mol:312539", "ablation": "sentence_shuffle", "dose": 0.65, "cdg": 0.28034019470214844, "words": 7425, "seconds": 1.43, "gpu_temp": 73, "digest": "5729ea8acef9d43e"}
+{"unit": "mol:312539", "ablation": "sentence_shuffle", "dose": 1.0, "cdg": 0.2367189327875773, "words": 7425, "seconds": 1.59, "gpu_temp": 70, "digest": "9b30bdf3d8a577cf"}
+{"unit": "mol:312539", "ablation": "connective_scramble", "dose": 0.15, "cdg": 0.2633908987045288, "words": 7425, "seconds": 1.58, "gpu_temp": 70, "digest": "7df29bd081d2cb51"}
+{"unit": "mol:312539", "ablation": "connective_scramble", "dose": 0.35, "cdg": 0.2590713898340861, "words": 7425, "seconds": 1.49, "gpu_temp": 70, "digest": "e1df78e706731717"}
+{"unit": "mol:312539", "ablation": "connective_scramble", "dose": 0.65, "cdg": 0.2636560599009196, "words": 7425, "seconds": 1.47, "gpu_temp": 70, "digest": "40ed1bb5261e3048"}
+{"unit": "mol:312539", "ablation": "connective_scramble", "dose": 1.0, "cdg": 0.26590224107106525, "words": 7425, "seconds": 1.51, "gpu_temp": 71, "digest": "10ffa33f8b70be1e"}
+{"unit": "mol:312539", "ablation": "dialogue_flatten", "dose": 0.15, "cdg": 0.2675716082255046, "words": 7425, "seconds": 1.58, "gpu_temp": 72, "digest": "35822185b5288412"}
+{"unit": "mol:312539", "ablation": "dialogue_flatten", "dose": 0.35, "cdg": 0.2817498842875163, "words": 7425, "seconds": 1.77, "gpu_temp": 69, "digest": "be23017e032d8daf"}
+{"unit": "mol:312539", "ablation": "dialogue_flatten", "dose": 0.65, "cdg": 0.2719762325286865, "words": 7425, "seconds": 1.62, "gpu_temp": 71, "digest": "a3b1c374d8ca52ad"}
+{"unit": "mol:312539", "ablation": "dialogue_flatten", "dose": 1.0, "cdg": 0.30572211742401123, "words": 7425, "seconds": 1.44, "gpu_temp": 71, "digest": "0bfb36d94cc43ce2"}
+{"unit": "mol:312539", "ablation": "transplant", "dose": 0.15, "cdg": 0.21306506792704263, "words": 7425, "seconds": 3.4, "gpu_temp": 71, "digest": "151a4e4816ca89f3"}
+{"unit": "mol:312539", "ablation": "transplant", "dose": 0.35, "cdg": 0.2248943249384562, "words": 7458, "seconds": 1.44, "gpu_temp": 73, "digest": "d0e4d1ab94aefa33"}
+{"unit": "mol:312539", "ablation": "transplant", "dose": 0.65, "cdg": 0.21978235244750977, "words": 7429, "seconds": 1.59, "gpu_temp": 72, "digest": "23ac68793c51c579"}
+{"unit": "mol:312539", "ablation": "transplant", "dose": 1.0, "cdg": 0.32808375358581543, "words": 6105, "seconds": 1.57, "gpu_temp": 70, "digest": "7ef5e4a9acc4b238"}
+{"unit": "mol:312539", "ablation": "sentence_deletion", "dose": 0.15, "cdg": 0.26917433738708496, "words": 6549, "seconds": 1.56, "gpu_temp": 64, "digest": "b214176001c607e5"}
+{"unit": "mol:312539", "ablation": "sentence_deletion", "dose": 0.35, "cdg": 0.27634942531585693, "words": 5298, "seconds": 1.51, "gpu_temp": 69, "digest": "285518ebec931d2f"}
+{"unit": "mol:312539", "ablation": "sentence_deletion", "dose": 0.65, "cdg": 0.1972789764404297, "words": 3391, "seconds": 0.94, "gpu_temp": 66, "digest": "475e9a020d93ebf8"}
+{"unit": "mol:312539", "ablation": "sentence_deletion", "dose": 1.0, "cdg": 0.24572157859802246, "words": 2069, "seconds": 0.65, "gpu_temp": 60, "digest": "c4ebe3be7c4b8c1b"}
+{"unit": "mol:312539", "ablation": "rename_entities", "dose": 0.15, "digest": "7467d311f7739636", "cdg": 0.24275883038838705, "words": 7425, "seconds": 1.54, "gpu_temp": 71}
+{"unit": "mol:312539", "ablation": "rename_entities", "dose": 0.35, "digest": "447b59b84faf44ce", "cdg": 0.24440228939056396, "words": 7425, "seconds": 1.61, "gpu_temp": 70}
+{"unit": "mol:312539", "ablation": "rename_entities", "dose": 0.65, "digest": "d372a754a106c857", "cdg": 0.2582123676935832, "words": 7425, "seconds": 1.61, "gpu_temp": 71}
+{"unit": "mol:312539", "ablation": "rename_entities", "dose": 1.0, "digest": "12e3ecc5fc2e2524", "cdg": 0.25358255704243976, "words": 7425, "seconds": 1.63, "gpu_temp": 70}
+{"unit": "mol:312539", "ablation": "respell", "dose": 0.15, "cdg": 0.26817365487416583, "words": 7425, "seconds": 1.67, "gpu_temp": 70, "digest": "c0ca95def80b5ef6"}
+{"unit": "mol:312539", "ablation": "respell", "dose": 1.0, "cdg": 0.2646103302637736, "words": 7425, "seconds": 1.51, "gpu_temp": 71, "digest": "44d6f5eceb37686b"}
+{"unit": "mol:313489", "ablation": "original", "dose": 0.0, "cdg": 0.33799445629119873, "words": 7711, "seconds": 1.56, "gpu_temp": 71, "digest": "87cb67292f269959"}
+{"unit": "mol:313489", "ablation": "paragraph_shuffle", "dose": 0.15, "cdg": 0.3634098768234253, "words": 7711, "seconds": 1.52, "gpu_temp": 71, "digest": "97c6c5bd770ba006"}
+{"unit": "mol:313489", "ablation": "paragraph_shuffle", "dose": 0.35, "cdg": 0.2897258996963501, "words": 7711, "seconds": 1.58, "gpu_temp": 71, "digest": "c772a94a0acbcbb4"}
+{"unit": "mol:313489", "ablation": "paragraph_shuffle", "dose": 0.65, "cdg": 0.1918623447418213, "words": 7711, "seconds": 1.56, "gpu_temp": 73, "digest": "59abd6d53ad39c6d"}
+{"unit": "mol:313489", "ablation": "paragraph_shuffle", "dose": 1.0, "cdg": 0.3823331594467163, "words": 7711, "seconds": 1.67, "gpu_temp": 71, "digest": "fe6b9461e5ed332b"}
+{"unit": "mol:313489", "ablation": "sentence_shuffle", "dose": 0.15, "cdg": 0.3314771254857381, "words": 7711, "seconds": 1.53, "gpu_temp": 71, "digest": "88de162147e6d349"}
+{"unit": "mol:313489", "ablation": "sentence_shuffle", "dose": 0.35, "cdg": 0.3342268069585164, "words": 7711, "seconds": 1.56, "gpu_temp": 72, "digest": "5a2418bd62c1776b"}
+{"unit": "mol:313489", "ablation": "sentence_shuffle", "dose": 0.65, "cdg": 0.28488210837046307, "words": 7711, "seconds": 1.63, "gpu_temp": 71, "digest": "69a88702793214db"}
+{"unit": "mol:313489", "ablation": "sentence_shuffle", "dose": 1.0, "cdg": 0.35431281725565594, "words": 7711, "seconds": 1.6, "gpu_temp": 71, "digest": "7591f7ea92167ec8"}
+{"unit": "mol:313489", "ablation": "connective_scramble", "dose": 0.15, "cdg": 0.33869163195292157, "words": 7711, "seconds": 1.56, "gpu_temp": 71, "digest": "fcb45b530e754b19"}
+{"unit": "mol:313489", "ablation": "connective_scramble", "dose": 0.35, "cdg": 0.3365616798400879, "words": 7711, "seconds": 1.47, "gpu_temp": 70, "digest": "fb6e4952f87c81c9"}
+{"unit": "mol:313489", "ablation": "connective_scramble", "dose": 0.65, "cdg": 0.3351505994796753, "words": 7711, "seconds": 1.55, "gpu_temp": 71, "digest": "d59b6cbdac1597c4"}
+{"unit": "mol:313489", "ablation": "connective_scramble", "dose": 1.0, "cdg": 0.3416364590326945, "words": 7711, "seconds": 1.48, "gpu_temp": 74, "digest": "bec8062220ac7f1a"}
+{"unit": "mol:313489", "ablation": "dialogue_flatten", "dose": 0.15, "cdg": 0.33799691994984943, "words": 7711, "seconds": 1.58, "gpu_temp": 70, "digest": "301e576f7bafa497"}
+{"unit": "mol:313489", "ablation": "dialogue_flatten", "dose": 0.35, "cdg": 0.33799691994984943, "words": 7711, "seconds": 1.5, "gpu_temp": 71, "digest": "f1219399c10a70d0"}
+{"unit": "mol:313489", "ablation": "dialogue_flatten", "dose": 0.65, "cdg": 0.33766690889994305, "words": 7711, "seconds": 1.59, "gpu_temp": 72, "digest": "a077a7d568315fd7"}
+{"unit": "mol:313489", "ablation": "dialogue_flatten", "dose": 1.0, "cdg": 0.33968937397003174, "words": 7711, "seconds": 1.59, "gpu_temp": 72, "digest": "7e82f21aa160cee6"}
+{"unit": "mol:313489", "ablation": "transplant", "dose": 0.15, "cdg": 0.3339270353317261, "words": 7827, "seconds": 1.33, "gpu_temp": 72, "digest": "ac40a948b5e02a93"}
+{"unit": "mol:313489", "ablation": "transplant", "dose": 0.35, "cdg": 0.3339270353317261, "words": 7740, "seconds": 1.51, "gpu_temp": 71, "digest": "192930afce76cfc7"}
+{"unit": "mol:313489", "ablation": "transplant", "dose": 0.65, "cdg": 0.33945568402608234, "words": 7711, "seconds": 1.57, "gpu_temp": 70, "digest": "76c419e5d53c48cc"}
+{"unit": "mol:313489", "ablation": "transplant", "dose": 1.0, "cdg": 0.3635239601135254, "words": 7719, "seconds": 1.58, "gpu_temp": 72, "digest": "bf1449a8e0f12ed2"}
+{"unit": "mol:313489", "ablation": "sentence_deletion", "dose": 0.15, "cdg": 0.3401988347371419, "words": 6403, "seconds": 1.63, "gpu_temp": 71, "digest": "7f8e4d35a5276bce"}
+{"unit": "mol:313489", "ablation": "sentence_deletion", "dose": 0.35, "cdg": 0.3010904788970947, "words": 5054, "seconds": 1.36, "gpu_temp": 70, "digest": "2dcb785f12d5777a"}
+{"unit": "mol:313489", "ablation": "sentence_deletion", "dose": 0.65, "cdg": 0.16246342658996582, "words": 3242, "seconds": 0.84, "gpu_temp": 66, "digest": "dbd92d3ebab4726e"}
+{"unit": "mol:313489", "ablation": "sentence_deletion", "dose": 1.0, "cdg": 0.4544553756713867, "words": 1987, "seconds": 0.59, "gpu_temp": 69, "digest": "b2b5848d6b2298f9"}
+{"unit": "mol:313489", "ablation": "rename_entities", "dose": 0.15, "digest": "51cefcd0548fd98b", "cdg": 0.3609911998112996, "words": 7711, "seconds": 1.65, "gpu_temp": 72}
+{"unit": "mol:313489", "ablation": "rename_entities", "dose": 0.35, "digest": "fc5a7c2cb82d628c", "cdg": 0.3674846092859904, "words": 7711, "seconds": 1.6, "gpu_temp": 72}
+{"unit": "mol:313489", "ablation": "rename_entities", "dose": 0.65, "digest": "4990a1bbf9b1aa2c", "cdg": 0.383136510848999, "words": 7711, "seconds": 1.67, "gpu_temp": 73}
+{"unit": "mol:313489", "ablation": "rename_entities", "dose": 1.0, "digest": "a979644bdd837347", "cdg": 0.41035890579223633, "words": 7711, "seconds": 1.68, "gpu_temp": 71}
+{"unit": "mol:313489", "ablation": "respell", "dose": 0.15, "cdg": 0.3380244970321655, "words": 7711, "seconds": 1.61, "gpu_temp": 71, "digest": "22ae5aa94a20b6c6"}
+{"unit": "mol:313489", "ablation": "respell", "dose": 0.65, "cdg": 0.3380244970321655, "words": 7711, "seconds": 1.59, "gpu_temp": 67, "digest": "b343a86dadd95f2f"}
+{"unit": "mol:313489", "ablation": "respell", "dose": 1.0, "cdg": 0.3365855614344279, "words": 7711, "seconds": 1.6, "gpu_temp": 72, "digest": "48aef8789b68381a"}
+{"unit": "mol:314391", "ablation": "original", "dose": 0.0, "cdg": 0.33861323197682697, "words": 7582, "seconds": 1.52, "gpu_temp": 72, "digest": "c09ea6c974a2da46"}
+{"unit": "mol:314391", "ablation": "paragraph_shuffle", "dose": 0.15, "cdg": 0.3094596068064372, "words": 7582, "seconds": 1.51, "gpu_temp": 71, "digest": "e820a3bb07227338"}
+{"unit": "mol:314391", "ablation": "paragraph_shuffle", "dose": 0.35, "cdg": 0.33928124109903973, "words": 7582, "seconds": 1.58, "gpu_temp": 73, "digest": "113a45b07ed28916"}
+{"unit": "mol:314391", "ablation": "paragraph_shuffle", "dose": 0.65, "cdg": 0.3652159770329793, "words": 7582, "seconds": 1.61, "gpu_temp": 71, "digest": "392413117764818d"}
+{"unit": "mol:314391", "ablation": "paragraph_shuffle", "dose": 1.0, "cdg": 0.40891361236572266, "words": 7582, "seconds": 1.47, "gpu_temp": 71, "digest": "2fd6b54ed0883494"}
+{"unit": "mol:314391", "ablation": "sentence_shuffle", "dose": 0.15, "cdg": 0.31646112600962323, "words": 7582, "seconds": 1.5, "gpu_temp": 74, "digest": "98ef77b9d3b1579b"}
+{"unit": "mol:314391", "ablation": "sentence_shuffle", "dose": 0.35, "cdg": 0.3358919620513916, "words": 7582, "seconds": 1.59, "gpu_temp": 70, "digest": "2b5e36c4a43a6abb"}
+{"unit": "mol:314391", "ablation": "sentence_shuffle", "dose": 0.65, "cdg": 0.33617432912190753, "words": 7582, "seconds": 1.55, "gpu_temp": 72, "digest": "170033890df9a1eb"}
+{"unit": "mol:314391", "ablation": "sentence_shuffle", "dose": 1.0, "cdg": 0.3380461533864339, "words": 7582, "seconds": 1.51, "gpu_temp": 72, "digest": "b44a959e8a9f1d54"}
+{"unit": "mol:314391", "ablation": "connective_scramble", "dose": 0.15, "cdg": 0.3389280637105306, "words": 7582, "seconds": 1.56, "gpu_temp": 71, "digest": "4fc22c67d207f3a0"}
+{"unit": "mol:314391", "ablation": "connective_scramble", "dose": 0.35, "cdg": 0.3382519880930583, "words": 7582, "seconds": 1.46, "gpu_temp": 71, "digest": "a1fff563e0716d4b"}
+{"unit": "mol:314391", "ablation": "connective_scramble", "dose": 0.65, "cdg": 0.33998481432596844, "words": 7582, "seconds": 1.52, "gpu_temp": 71, "digest": "ba0d24af6e8424d9"}
+{"unit": "mol:314391", "ablation": "connective_scramble", "dose": 1.0, "cdg": 0.34903645515441895, "words": 7582, "seconds": 1.56, "gpu_temp": 72, "digest": "fb63d94d53402b65"}
+{"unit": "mol:314391", "ablation": "dialogue_flatten", "dose": 0.15, "cdg": 0.341437300046285, "words": 7582, "seconds": 1.5, "gpu_temp": 71, "digest": "f4d966e931a46810"}
+{"unit": "mol:314391", "ablation": "dialogue_flatten", "dose": 0.35, "cdg": 0.34834229946136475, "words": 7582, "seconds": 1.58, "gpu_temp": 71, "digest": "5c9ae397efcd2649"}
+{"unit": "mol:314391", "ablation": "dialogue_flatten", "dose": 0.65, "cdg": 0.38812828063964844, "words": 7582, "seconds": 1.47, "gpu_temp": 72, "digest": "791c84fce232090e"}
+{"unit": "mol:314391", "ablation": "dialogue_flatten", "dose": 1.0, "cdg": 0.3941580454508464, "words": 7582, "seconds": 1.54, "gpu_temp": 72, "digest": "d97c97d5d8bae564"}
+{"unit": "mol:314391", "ablation": "transplant", "dose": 0.15, "cdg": 0.2664252519607544, "words": 7631, "seconds": 1.64, "gpu_temp": 72, "digest": "93274b6c4d7ef48c"}
+{"unit": "mol:314391", "ablation": "transplant", "dose": 0.35, "cdg": 0.3016616106033325, "words": 7617, "seconds": 1.61, "gpu_temp": 71, "digest": "3caa53962de6c43f"}
+{"unit": "mol:314391", "ablation": "transplant", "dose": 0.65, "cdg": 0.31286871433258057, "words": 7615, "seconds": 1.5, "gpu_temp": 72, "digest": "2302ea1bc0fe415f"}
+{"unit": "mol:314391", "ablation": "transplant", "dose": 1.0, "cdg": 0.32668519020080566, "words": 7598, "seconds": 1.58, "gpu_temp": 63, "digest": "3207969f7b2fdd4f"}
+{"unit": "mol:314391", "ablation": "sentence_deletion", "dose": 0.15, "cdg": 0.33369898796081543, "words": 6444, "seconds": 1.65, "gpu_temp": 69, "digest": "ecc3669038d78bf0"}
+{"unit": "mol:314391", "ablation": "sentence_deletion", "dose": 0.35, "cdg": 0.3563570976257324, "words": 5269, "seconds": 1.34, "gpu_temp": 69, "digest": "c9c34e06884edd28"}
+{"unit": "mol:314391", "ablation": "sentence_deletion", "dose": 0.65, "cdg": 0.2625565528869629, "words": 3515, "seconds": 1.02, "gpu_temp": 69, "digest": "25127ff8a6729642"}
+{"unit": "mol:314391", "ablation": "sentence_deletion", "dose": 1.0, "cdg": 0.4675588607788086, "words": 2159, "seconds": 0.65, "gpu_temp": 67, "digest": "6421a84257ad88fb"}
+{"unit": "mol:314391", "ablation": "rename_entities", "dose": 0.15, "digest": "1958f3a856d8b765", "cdg": 0.3233865102132161, "words": 7582, "seconds": 1.56, "gpu_temp": 71}
+{"unit": "mol:314391", "ablation": "rename_entities", "dose": 0.35, "digest": "636ebf4e5cb81a1d", "cdg": 0.3624822696050008, "words": 7582, "seconds": 1.72, "gpu_temp": 70}
+{"unit": "mol:314391", "ablation": "rename_entities", "dose": 0.65, "digest": "61ce2eff9b324658", "cdg": 0.37315066655476886, "words": 7582, "seconds": 1.63, "gpu_temp": 70}
+{"unit": "mol:314391", "ablation": "rename_entities", "dose": 1.0, "digest": "9b102a1e9df8f67a", "cdg": 0.3423667748769124, "words": 7582, "seconds": 1.75, "gpu_temp": 71}
+{"unit": "mol:314391", "ablation": "respell", "dose": 0.15, "cdg": 0.37159685293833417, "words": 7582, "seconds": 1.55, "gpu_temp": 72, "digest": "83f06dbe5b9b492e"}
+{"unit": "mol:314391", "ablation": "respell", "dose": 0.35, "cdg": 0.37159685293833417, "words": 7582, "seconds": 1.53, "gpu_temp": 71, "digest": "4bff87f7970a5c02"}
+{"unit": "mol:314391", "ablation": "respell", "dose": 1.0, "cdg": 0.37136415640513104, "words": 7582, "seconds": 1.5, "gpu_temp": 73, "digest": "1ba40bf46bdf3e40"}
+{"unit": "mol:315172", "ablation": "original", "dose": 0.0, "cdg": 0.3005613485972087, "words": 8738, "seconds": 1.6, "gpu_temp": 71, "digest": "700f70d7c10ce892"}
+{"unit": "mol:315172", "ablation": "paragraph_shuffle", "dose": 0.15, "cdg": 0.3019403616587321, "words": 8738, "seconds": 1.53, "gpu_temp": 72, "digest": "477c359fb4740661"}
+{"unit": "mol:315172", "ablation": "paragraph_shuffle", "dose": 0.35, "cdg": 0.26477547486623126, "words": 8738, "seconds": 1.56, "gpu_temp": 72, "digest": "e45003405b389266"}
+{"unit": "mol:315172", "ablation": "paragraph_shuffle", "dose": 0.65, "cdg": 0.24117294947306314, "words": 8738, "seconds": 1.57, "gpu_temp": 71, "digest": "45dd5d0946d0b795"}
+{"unit": "mol:315172", "ablation": "paragraph_shuffle", "dose": 1.0, "cdg": 0.2535567283630371, "words": 8738, "seconds": 1.59, "gpu_temp": 71, "digest": "d5adb823b76bc8d4"}
+{"unit": "mol:315172", "ablation": "sentence_shuffle", "dose": 0.15, "cdg": 0.29547278086344403, "words": 8738, "seconds": 1.57, "gpu_temp": 72, "digest": "b29fb6e69d1ffef1"}
+{"unit": "mol:315172", "ablation": "sentence_shuffle", "dose": 0.35, "cdg": 0.28856150309244794, "words": 8738, "seconds": 1.73, "gpu_temp": 72, "digest": "35785c8d0d8f6a73"}
+{"unit": "mol:315172", "ablation": "sentence_shuffle", "dose": 0.65, "cdg": 0.29294514656066895, "words": 8738, "seconds": 1.63, "gpu_temp": 70, "digest": "4c4644f6275395dc"}
+{"unit": "mol:315172", "ablation": "sentence_shuffle", "dose": 1.0, "cdg": 0.3217457135518392, "words": 8738, "seconds": 1.56, "gpu_temp": 71, "digest": "9b29d25b67118d81"}
+{"unit": "mol:315172", "ablation": "connective_scramble", "dose": 0.15, "cdg": 0.2979472478230794, "words": 8738, "seconds": 1.47, "gpu_temp": 71, "digest": "9f33018f58eac102"}
+{"unit": "mol:315172", "ablation": "connective_scramble", "dose": 0.35, "cdg": 0.2948896884918213, "words": 8738, "seconds": 1.53, "gpu_temp": 70, "digest": "42af411c0c28a512"}
+{"unit": "mol:315172", "ablation": "connective_scramble", "dose": 0.65, "cdg": 0.29011213779449463, "words": 8738, "seconds": 1.61, "gpu_temp": 71, "digest": "b9d344ae1fb62e6b"}
+{"unit": "mol:315172", "ablation": "connective_scramble", "dose": 1.0, "cdg": 0.2868838707605998, "words": 8738, "seconds": 1.65, "gpu_temp": 71, "digest": "677e5a66f9019409"}
+{"unit": "mol:315172", "ablation": "dialogue_flatten", "dose": 0.15, "cdg": 0.2847282886505127, "words": 8738, "seconds": 1.58, "gpu_temp": 71, "digest": "381e4a9df91cd581"}
+{"unit": "mol:315172", "ablation": "dialogue_flatten", "dose": 0.35, "cdg": 0.32690107822418213, "words": 8738, "seconds": 1.59, "gpu_temp": 73, "digest": "c5cbc8568ce964b8"}
+{"unit": "mol:315172", "ablation": "dialogue_flatten", "dose": 0.65, "cdg": 0.3358864386876424, "words": 8738, "seconds": 1.56, "gpu_temp": 72, "digest": "d61df43d0de24f65"}
+{"unit": "mol:315172", "ablation": "dialogue_flatten", "dose": 1.0, "cdg": 0.32344484329223633, "words": 8738, "seconds": 1.7, "gpu_temp": 73, "digest": "55cf569507ec8874"}
+{"unit": "mol:315172", "ablation": "transplant", "dose": 0.15, "cdg": 0.2555658419926961, "words": 8755, "seconds": 1.61, "gpu_temp": 71, "digest": "1b03694e14cf9c93"}
+{"unit": "mol:315172", "ablation": "transplant", "dose": 0.35, "cdg": 0.25150760014851886, "words": 8867, "seconds": 1.67, "gpu_temp": 71, "digest": "3e46c3f0a3b362c9"}
+{"unit": "mol:315172", "ablation": "transplant", "dose": 0.65, "cdg": 0.24927818775177002, "words": 8745, "seconds": 1.6, "gpu_temp": 71, "digest": "e85a818c9bc81805"}
+{"unit": "mol:315172", "ablation": "transplant", "dose": 1.0, "cdg": 0.3174498875935872, "words": 7265, "seconds": 1.55, "gpu_temp": 72, "digest": "eb9061a885b39c2f"}
+{"unit": "mol:315172", "ablation": "sentence_deletion", "dose": 0.15, "cdg": 0.2653173605600993, "words": 7459, "seconds": 1.61, "gpu_temp": 71, "digest": "f1abc59f8b0b8185"}
+{"unit": "mol:315172", "ablation": "sentence_deletion", "dose": 0.35, "cdg": 0.3584856589635213, "words": 5734, "seconds": 1.51, "gpu_temp": 71, "digest": "93331e9fa49adb13"}
+{"unit": "mol:315172", "ablation": "sentence_deletion", "dose": 0.65, "cdg": 0.24462485313415527, "words": 3861, "seconds": 1.03, "gpu_temp": 73, "digest": "937c08eda326652b"}
+{"unit": "mol:315172", "ablation": "sentence_deletion", "dose": 1.0, "cdg": 0.3448440233866374, "words": 2467, "seconds": 0.83, "gpu_temp": 70, "digest": "f78a24e3265d4276"}
+{"unit": "mol:315172", "ablation": "rename_entities", "dose": 0.15, "digest": "4fb29190fbd09e89", "cdg": 0.36299649874369305, "words": 8738, "seconds": 3.55, "gpu_temp": 69}
+{"unit": "mol:315172", "ablation": "rename_entities", "dose": 0.35, "digest": "edb0feb1b7b50d0a", "cdg": 0.3544810215632121, "words": 8738, "seconds": 1.54, "gpu_temp": 75}
+{"unit": "mol:315172", "ablation": "rename_entities", "dose": 0.65, "digest": "70cd9cfa5fc1320a", "cdg": 0.36548157533009845, "words": 8738, "seconds": 1.79, "gpu_temp": 73}
+{"unit": "mol:315172", "ablation": "rename_entities", "dose": 1.0, "digest": "2afffd36099cc35c", "cdg": 0.3522140582402547, "words": 8738, "seconds": 1.57, "gpu_temp": 72}
+{"unit": "mol:315172", "ablation": "respell", "dose": 0.15, "cdg": 0.3083874781926473, "words": 8738, "seconds": 1.46, "gpu_temp": 72, "digest": "15fc3c4060ac667c"}
+{"unit": "mol:315172", "ablation": "respell", "dose": 0.65, "cdg": 0.3086142937342326, "words": 8738, "seconds": 1.52, "gpu_temp": 71, "digest": "25f627dfad871a5a"}
+{"unit": "mol:315172", "ablation": "respell", "dose": 1.0, "cdg": 0.30803080399831134, "words": 8738, "seconds": 1.53, "gpu_temp": 65, "digest": "a2cd888820d7b865"}
+{"unit": "mol:315980", "ablation": "original", "dose": 0.0, "cdg": 0.2894877592722575, "words": 6740, "seconds": 1.52, "gpu_temp": 71, "digest": "61b4f2b482f229d8"}
+{"unit": "mol:315980", "ablation": "paragraph_shuffle", "dose": 0.15, "cdg": 0.27084048589070636, "words": 6740, "seconds": 1.58, "gpu_temp": 74, "digest": "386f14bff7981245"}
+{"unit": "mol:315980", "ablation": "paragraph_shuffle", "dose": 0.35, "cdg": 0.25803232192993164, "words": 6740, "seconds": 1.6, "gpu_temp": 71, "digest": "2ff754f2e351c214"}
+{"unit": "mol:315980", "ablation": "paragraph_shuffle", "dose": 0.65, "cdg": 0.2026153802871704, "words": 6740, "seconds": 1.49, "gpu_temp": 71, "digest": "6cace1a85f63fe21"}
+{"unit": "mol:315980", "ablation": "paragraph_shuffle", "dose": 1.0, "cdg": 0.2801027297973633, "words": 6740, "seconds": 1.48, "gpu_temp": 71, "digest": "f359ea94f6b96b91"}
+{"unit": "mol:315980", "ablation": "sentence_shuffle", "dose": 0.15, "cdg": 0.2869890530904134, "words": 6740, "seconds": 1.5, "gpu_temp": 71, "digest": "80a47f4f5ac88cde"}
+{"unit": "mol:315980", "ablation": "sentence_shuffle", "dose": 0.35, "cdg": 0.28233031431833905, "words": 6740, "seconds": 1.59, "gpu_temp": 72, "digest": "3cf80643b190a815"}
+{"unit": "mol:315980", "ablation": "sentence_shuffle", "dose": 0.65, "cdg": 0.27669620513916016, "words": 6740, "seconds": 1.63, "gpu_temp": 72, "digest": "0fe4e1acc4f283b0"}
+{"unit": "mol:315980", "ablation": "sentence_shuffle", "dose": 1.0, "cdg": 0.28354541460673016, "words": 6740, "seconds": 1.64, "gpu_temp": 71, "digest": "cb684a4869792514"}
+{"unit": "mol:315980", "ablation": "connective_scramble", "dose": 0.15, "cdg": 0.2937811215718587, "words": 6740, "seconds": 1.58, "gpu_temp": 71, "digest": "4cf6ae0543e3de34"}
+{"unit": "mol:315980", "ablation": "connective_scramble", "dose": 0.35, "cdg": 0.291576623916626, "words": 6740, "seconds": 1.57, "gpu_temp": 72, "digest": "43b088d012818f88"}
+{"unit": "mol:315980", "ablation": "connective_scramble", "dose": 0.65, "cdg": 0.2843312819798787, "words": 6740, "seconds": 1.65, "gpu_temp": 72, "digest": "e2ea7653d9f29233"}
+{"unit": "mol:315980", "ablation": "connective_scramble", "dose": 1.0, "cdg": 0.28516964117685956, "words": 6740, "seconds": 1.55, "gpu_temp": 71, "digest": "81160387bb371b11"}
+{"unit": "mol:315980", "ablation": "dialogue_flatten", "dose": 0.15, "cdg": 0.29004844029744464, "words": 6740, "seconds": 1.5, "gpu_temp": 64, "digest": "14a79d012b6f82b1"}
+{"unit": "mol:315980", "ablation": "dialogue_flatten", "dose": 0.35, "cdg": 0.3295942147572835, "words": 6740, "seconds": 1.58, "gpu_temp": 71, "digest": "b173b96d7e9fc893"}
+{"unit": "mol:315980", "ablation": "dialogue_flatten", "dose": 0.65, "cdg": 0.31995272636413574, "words": 6740, "seconds": 1.47, "gpu_temp": 71, "digest": "9e0203c1c3ec7a1a"}
+{"unit": "mol:315980", "ablation": "dialogue_flatten", "dose": 1.0, "cdg": 0.3177257776260376, "words": 6740, "seconds": 1.51, "gpu_temp": 73, "digest": "1c7add8cc541afbb"}
+{"unit": "mol:315980", "ablation": "transplant", "dose": 0.15, "cdg": 0.27365581194559735, "words": 6764, "seconds": 1.61, "gpu_temp": 72, "digest": "093d8bc6c68a9865"}
+{"unit": "mol:315980", "ablation": "transplant", "dose": 0.35, "cdg": 0.2968355019887288, "words": 6741, "seconds": 1.64, "gpu_temp": 72, "digest": "2c49192a87d6d805"}
+{"unit": "mol:315980", "ablation": "transplant", "dose": 0.65, "cdg": 0.3034876187642415, "words": 6842, "seconds": 1.59, "gpu_temp": 72, "digest": "9b5a9fa62e32554f"}
+{"unit": "mol:315980", "ablation": "transplant", "dose": 1.0, "cdg": 0.3854196071624756, "words": 6738, "seconds": 1.53, "gpu_temp": 71, "digest": "838f6bbca0b17dc9"}
+{"unit": "mol:315980", "ablation": "sentence_deletion", "dose": 0.15, "cdg": 0.27359938621520996, "words": 5815, "seconds": 1.53, "gpu_temp": 71, "digest": "306dff4458cf6d5c"}
+{"unit": "mol:315980", "ablation": "sentence_deletion", "dose": 0.35, "cdg": 0.27080740928649905, "words": 4845, "seconds": 1.35, "gpu_temp": 70, "digest": "17cd9e1735719603"}
+{"unit": "mol:315980", "ablation": "sentence_deletion", "dose": 0.65, "cdg": 0.19540256261825562, "words": 3474, "seconds": 1.1, "gpu_temp": 69, "digest": "f070bd2819ec91d2"}
+{"unit": "mol:315980", "ablation": "sentence_deletion", "dose": 1.0, "cdg": 0.295425812403361, "words": 2503, "seconds": 0.84, "gpu_temp": 70, "digest": "6932a008332954a2"}
+{"unit": "mol:315980", "ablation": "rename_entities", "dose": 0.15, "digest": "3fb6519b6536d7cc", "cdg": 0.31990166505177814, "words": 6740, "seconds": 1.54, "gpu_temp": 72}
+{"unit": "mol:315980", "ablation": "rename_entities", "dose": 0.35, "digest": "3152bf61a3cf7d82", "cdg": 0.3183367649714152, "words": 6740, "seconds": 1.65, "gpu_temp": 71}
+{"unit": "mol:315980", "ablation": "rename_entities", "dose": 0.65, "digest": "d150f434d4e65827", "cdg": 0.28983434041341144, "words": 6740, "seconds": 1.7, "gpu_temp": 71}
+{"unit": "mol:315980", "ablation": "rename_entities", "dose": 1.0, "digest": "b880501039f96f93", "cdg": 0.2903285026550293, "words": 6740, "seconds": 1.7, "gpu_temp": 72}
+{"unit": "mol:315980", "ablation": "respell", "dose": 0.15, "cdg": 0.3019091288248698, "words": 6740, "seconds": 1.63, "gpu_temp": 72, "digest": "d8bb81565f462b74"}
+{"unit": "mol:315980", "ablation": "respell", "dose": 0.35, "cdg": 0.30223679542541504, "words": 6740, "seconds": 1.6, "gpu_temp": 71, "digest": "37601177a214a7bd"}
+{"unit": "mol:316947", "ablation": "original", "dose": 0.0, "cdg": 0.2858659029006958, "words": 8042, "seconds": 1.53, "gpu_temp": 71, "digest": "0aea23d0971e685d"}
+{"unit": "mol:316947", "ablation": "paragraph_shuffle", "dose": 0.15, "cdg": 0.25124895572662354, "words": 8042, "seconds": 1.52, "gpu_temp": 72, "digest": "9db760c2b1859e60"}
+{"unit": "mol:316947", "ablation": "paragraph_shuffle", "dose": 0.35, "cdg": 0.23185030619303384, "words": 8042, "seconds": 1.58, "gpu_temp": 71, "digest": "7b4da44cb65cc22d"}
+{"unit": "mol:316947", "ablation": "paragraph_shuffle", "dose": 0.65, "cdg": 0.22378023465474448, "words": 8042, "seconds": 1.57, "gpu_temp": 71, "digest": "584118de3e71f49c"}
+{"unit": "mol:316947", "ablation": "paragraph_shuffle", "dose": 1.0, "cdg": 0.2916373014450073, "words": 8042, "seconds": 1.46, "gpu_temp": 72, "digest": "44be6711678b95ca"}
+{"unit": "mol:316947", "ablation": "sentence_shuffle", "dose": 0.15, "cdg": 0.28364559014638263, "words": 8042, "seconds": 1.57, "gpu_temp": 72, "digest": "ac4c319b38cbfa2a"}
+{"unit": "mol:316947", "ablation": "sentence_shuffle", "dose": 0.35, "cdg": 0.2731466293334961, "words": 8042, "seconds": 1.55, "gpu_temp": 71, "digest": "73b30fcc4c058fcd"}
+{"unit": "mol:316947", "ablation": "sentence_shuffle", "dose": 0.65, "cdg": 0.2876463731129964, "words": 8042, "seconds": 1.48, "gpu_temp": 71, "digest": "daebd55e81f162de"}
+{"unit": "mol:316947", "ablation": "sentence_shuffle", "dose": 1.0, "cdg": 0.28936835130055744, "words": 8042, "seconds": 1.6, "gpu_temp": 71, "digest": "61c512ee372bea60"}
+{"unit": "mol:316947", "ablation": "connective_scramble", "dose": 0.15, "cdg": 0.2835147778193156, "words": 8042, "seconds": 1.58, "gpu_temp": 72, "digest": "6f877a356881b817"}
+{"unit": "mol:316947", "ablation": "connective_scramble", "dose": 0.35, "cdg": 0.2825964291890462, "words": 8042, "seconds": 1.6, "gpu_temp": 72, "digest": "a335f5dbff2f750b"}
+{"unit": "mol:316947", "ablation": "connective_scramble", "dose": 0.65, "cdg": 0.2825147310892741, "words": 8042, "seconds": 1.49, "gpu_temp": 71, "digest": "5ef69df2c1692799"}
+{"unit": "mol:316947", "ablation": "connective_scramble", "dose": 1.0, "cdg": 0.28310902913411456, "words": 8042, "seconds": 1.6, "gpu_temp": 72, "digest": "8f326a2250cb5987"}
+{"unit": "mol:316947", "ablation": "dialogue_flatten", "dose": 0.15, "cdg": 0.2732002337773641, "words": 8042, "seconds": 1.57, "gpu_temp": 71, "digest": "ec19ed07c8acaf50"}
+{"unit": "mol:316947", "ablation": "dialogue_flatten", "dose": 0.35, "cdg": 0.29601967334747314, "words": 8042, "seconds": 1.58, "gpu_temp": 73, "digest": "7054085e1c659223"}
+{"unit": "mol:316947", "ablation": "dialogue_flatten", "dose": 0.65, "cdg": 0.29448386033376056, "words": 8042, "seconds": 1.61, "gpu_temp": 71, "digest": "56be65dfc578e528"}
+{"unit": "mol:316947", "ablation": "dialogue_flatten", "dose": 1.0, "cdg": 0.30898455778757733, "words": 8042, "seconds": 1.49, "gpu_temp": 71, "digest": "98ebe11269765f2b"}
+{"unit": "mol:316947", "ablation": "transplant", "dose": 0.15, "cdg": 0.2967236439387004, "words": 8042, "seconds": 1.48, "gpu_temp": 72, "digest": "39dc7c2f4798e9ae"}
+{"unit": "mol:316947", "ablation": "transplant", "dose": 0.35, "cdg": 0.34738874435424805, "words": 8046, "seconds": 1.51, "gpu_temp": 71, "digest": "c0fe8fd9d9e0456f"}
+{"unit": "mol:316947", "ablation": "transplant", "dose": 0.65, "cdg": 0.3294771909713745, "words": 8114, "seconds": 1.56, "gpu_temp": 74, "digest": "55a42b1d5609a087"}
+{"unit": "mol:316947", "ablation": "transplant", "dose": 1.0, "cdg": 0.30275897185007733, "words": 7026, "seconds": 1.65, "gpu_temp": 71, "digest": "11d4af4a8c432c76"}
+{"unit": "mol:316947", "ablation": "sentence_deletion", "dose": 0.15, "cdg": 0.32486144701639813, "words": 6770, "seconds": 1.51, "gpu_temp": 72, "digest": "2f4f261e472a7877"}
+{"unit": "mol:316947", "ablation": "sentence_deletion", "dose": 0.35, "cdg": 0.23402106761932373, "words": 5568, "seconds": 1.6, "gpu_temp": 71, "digest": "c2a4e129d054a956"}
+{"unit": "mol:316947", "ablation": "sentence_deletion", "dose": 0.65, "cdg": 0.29443252086639404, "words": 3714, "seconds": 1.11, "gpu_temp": 70, "digest": "116a76e3856e817e"}
+{"unit": "mol:316947", "ablation": "sentence_deletion", "dose": 1.0, "cdg": 0.2334014574686686, "words": 2464, "seconds": 0.82, "gpu_temp": 66, "digest": "b4488574f6b5fff7"}
+{"unit": "mol:316947", "ablation": "rename_entities", "dose": 0.15, "digest": "1c8102c61ae27052", "cdg": 0.3344441254933675, "words": 8042, "seconds": 1.66, "gpu_temp": 71}
+{"unit": "mol:316947", "ablation": "rename_entities", "dose": 0.35, "digest": "0de0a343c9e21423", "cdg": 0.32962119579315186, "words": 8042, "seconds": 1.7, "gpu_temp": 70}
+{"unit": "mol:316947", "ablation": "rename_entities", "dose": 0.65, "digest": "7a2d126af1004365", "cdg": 0.3277973731358846, "words": 8042, "seconds": 1.55, "gpu_temp": 71}
+{"unit": "mol:316947", "ablation": "rename_entities", "dose": 1.0, "digest": "da13194a3911cb38", "cdg": 0.33837294578552246, "words": 8042, "seconds": 1.7, "gpu_temp": 72}
+{"unit": "mol:316947", "ablation": "respell", "dose": 0.15, "cdg": 0.30220385392506915, "words": 8042, "seconds": 1.51, "gpu_temp": 71, "digest": "f78c17f454b42e8e"}
+{"unit": "mol:316947", "ablation": "respell", "dose": 0.65, "cdg": 0.3022425174713135, "words": 8042, "seconds": 1.59, "gpu_temp": 72, "digest": "73ae3214c71d0a2b"}
+{"unit": "mol:316947", "ablation": "respell", "dose": 1.0, "cdg": 0.3029751777648926, "words": 8042, "seconds": 1.61, "gpu_temp": 72, "digest": "fc70424e45ad8f6a"}
+{"unit": "mol:317781", "ablation": "original", "dose": 0.0, "cdg": 0.2676074504852295, "words": 7944, "seconds": 1.49, "gpu_temp": 71, "digest": "d3e573f9e487a191"}
+{"unit": "mol:317781", "ablation": "paragraph_shuffle", "dose": 0.15, "cdg": 0.25843095779418945, "words": 7944, "seconds": 1.56, "gpu_temp": 71, "digest": "356081f8ed82da00"}
+{"unit": "mol:317781", "ablation": "paragraph_shuffle", "dose": 0.35, "cdg": 0.2709962526957194, "words": 7944, "seconds": 1.62, "gpu_temp": 72, "digest": "669702c847b5afb1"}
+{"unit": "mol:317781", "ablation": "paragraph_shuffle", "dose": 0.65, "cdg": 0.31842827796936035, "words": 7944, "seconds": 1.65, "gpu_temp": 71, "digest": "07599206f69e3e71"}
+{"unit": "mol:317781", "ablation": "paragraph_shuffle", "dose": 1.0, "cdg": 0.23864980538686117, "words": 7944, "seconds": 1.59, "gpu_temp": 72, "digest": "7da7d675d207707f"}
+{"unit": "mol:317781", "ablation": "sentence_shuffle", "dose": 0.15, "cdg": 0.272322138150533, "words": 7944, "seconds": 1.56, "gpu_temp": 71, "digest": "52e4614058784804"}
+{"unit": "mol:317781", "ablation": "sentence_shuffle", "dose": 0.35, "cdg": 0.2475572427113851, "words": 7944, "seconds": 1.57, "gpu_temp": 71, "digest": "4edbcaa95251c437"}
+{"unit": "mol:317781", "ablation": "sentence_shuffle", "dose": 0.65, "cdg": 0.28386855125427246, "words": 7944, "seconds": 1.6, "gpu_temp": 71, "digest": "354fda260441c4a2"}
+{"unit": "mol:317781", "ablation": "sentence_shuffle", "dose": 1.0, "cdg": 0.2696084181467692, "words": 7944, "seconds": 1.58, "gpu_temp": 74, "digest": "6f7512873e297635"}
+{"unit": "mol:317781", "ablation": "connective_scramble", "dose": 0.15, "cdg": 0.2643895943959554, "words": 7944, "seconds": 1.78, "gpu_temp": 70, "digest": "7147bdc1edc9f4f5"}
+{"unit": "mol:317781", "ablation": "connective_scramble", "dose": 0.35, "cdg": 0.2594118118286133, "words": 7944, "seconds": 1.78, "gpu_temp": 74, "digest": "caed283c12397e4c"}
+{"unit": "mol:317781", "ablation": "connective_scramble", "dose": 0.65, "cdg": 0.25909427801767987, "words": 7944, "seconds": 1.69, "gpu_temp": 72, "digest": "cc72e4c54d353d5e"}
+{"unit": "mol:317781", "ablation": "connective_scramble", "dose": 1.0, "cdg": 0.26879576841990155, "words": 7944, "seconds": 1.68, "gpu_temp": 71, "digest": "6267512054b5c327"}
+{"unit": "mol:317781", "ablation": "dialogue_flatten", "dose": 0.15, "cdg": 0.2838633855183919, "words": 7944, "seconds": 1.67, "gpu_temp": 71, "digest": "319b60ef289af95f"}
+{"unit": "mol:317781", "ablation": "dialogue_flatten", "dose": 0.35, "cdg": 0.26612603664398193, "words": 7944, "seconds": 1.67, "gpu_temp": 72, "digest": "6acafc3da1bf64f4"}
+{"unit": "mol:317781", "ablation": "dialogue_flatten", "dose": 0.65, "cdg": 0.23289740085601807, "words": 7944, "seconds": 1.83, "gpu_temp": 70, "digest": "3a18fd01817e0f78"}
+{"unit": "mol:317781", "ablation": "dialogue_flatten", "dose": 1.0, "cdg": 0.2871866623560588, "words": 7944, "seconds": 1.71, "gpu_temp": 71, "digest": "71822b7c2e94d506"}
+{"unit": "mol:317781", "ablation": "transplant", "dose": 0.15, "cdg": 0.24691363175710043, "words": 7945, "seconds": 1.7, "gpu_temp": 71, "digest": "8c726d864fccc6af"}
+{"unit": "mol:317781", "ablation": "transplant", "dose": 0.35, "cdg": 0.2682655254999797, "words": 7963, "seconds": 1.71, "gpu_temp": 72, "digest": "2d6b3445c52f2f0f"}
+{"unit": "mol:317781", "ablation": "transplant", "dose": 0.65, "cdg": 0.21393601099650064, "words": 8024, "seconds": 1.54, "gpu_temp": 72, "digest": "ebeea85242dd969a"}
+{"unit": "mol:317781", "ablation": "transplant", "dose": 1.0, "cdg": 0.3029553294181824, "words": 5898, "seconds": 1.63, "gpu_temp": 71, "digest": "c61ebd54e70ffd2d"}
+{"unit": "mol:317781", "ablation": "sentence_deletion", "dose": 0.15, "cdg": 0.23777143160502115, "words": 6925, "seconds": 1.6, "gpu_temp": 71, "digest": "0ff0cb7af4258395"}
+{"unit": "mol:317781", "ablation": "sentence_deletion", "dose": 0.35, "cdg": 0.21189884344736734, "words": 5536, "seconds": 1.57, "gpu_temp": 71, "digest": "3e50fb2573f00f7b"}
+{"unit": "mol:317781", "ablation": "sentence_deletion", "dose": 0.65, "cdg": 0.23324376344680786, "words": 3704, "seconds": 1.16, "gpu_temp": 71, "digest": "5b0953558d1dd4ce"}
+{"unit": "mol:317781", "ablation": "sentence_deletion", "dose": 1.0, "cdg": 0.15474994977315268, "words": 2501, "seconds": 0.97, "gpu_temp": 70, "digest": "791aeb6942180e85"}
+{"unit": "mol:317781", "ablation": "rename_entities", "dose": 0.15, "digest": "9a2c122a2df6aecf", "cdg": 0.32425494988759357, "words": 7944, "seconds": 1.88, "gpu_temp": 70}
+{"unit": "mol:317781", "ablation": "rename_entities", "dose": 0.35, "digest": "aac7e258bfa551ea", "cdg": 0.3354950745900472, "words": 7944, "seconds": 1.72, "gpu_temp": 72}
+{"unit": "mol:317781", "ablation": "rename_entities", "dose": 0.65, "digest": "da36a044c6d2ac14", "cdg": 0.35261058807373047, "words": 7944, "seconds": 1.64, "gpu_temp": 71}
+{"unit": "mol:317781", "ablation": "rename_entities", "dose": 1.0, "digest": "3c7aa53c3305e23f", "cdg": 0.35483185450236004, "words": 7944, "seconds": 1.61, "gpu_temp": 72}
+{"unit": "mol:317781", "ablation": "respell", "dose": 0.15, "cdg": 0.28172242641448975, "words": 7944, "seconds": 1.8, "gpu_temp": 74, "digest": "f7b15260875088ad"}
+{"unit": "mol:317781", "ablation": "respell", "dose": 0.35, "cdg": 0.28172242641448975, "words": 7944, "seconds": 1.6, "gpu_temp": 71, "digest": "99e46a83f62eeacb"}
+{"unit": "mol:317781", "ablation": "respell", "dose": 1.0, "cdg": 0.28172242641448975, "words": 7944, "seconds": 1.68, "gpu_temp": 71, "digest": "52d1f1a8e83b3e0d"}
+{"unit": "mol:318639", "ablation": "original", "dose": 0.0, "cdg": 0.21352684497833252, "words": 9704, "seconds": 1.87, "gpu_temp": 70, "digest": "1b4d31c2226089e9"}
+{"unit": "mol:318639", "ablation": "paragraph_shuffle", "dose": 0.15, "cdg": 0.22070086002349854, "words": 9704, "seconds": 1.77, "gpu_temp": 71, "digest": "334f9e221f69d00c"}
+{"unit": "mol:318639", "ablation": "paragraph_shuffle", "dose": 0.35, "cdg": 0.1729294459025065, "words": 9704, "seconds": 1.65, "gpu_temp": 72, "digest": "dff41fd0ec84fbff"}
+{"unit": "mol:318639", "ablation": "paragraph_shuffle", "dose": 0.65, "cdg": 0.3035936752955119, "words": 9704, "seconds": 1.82, "gpu_temp": 70, "digest": "bd3e191556307652"}
+{"unit": "mol:318639", "ablation": "paragraph_shuffle", "dose": 1.0, "cdg": 0.3455651601155599, "words": 9704, "seconds": 1.5, "gpu_temp": 72, "digest": "1d0e08d8898d3474"}
+{"unit": "mol:318639", "ablation": "sentence_shuffle", "dose": 0.15, "cdg": 0.23250106970469156, "words": 9704, "seconds": 1.75, "gpu_temp": 70, "digest": "ec09d7a032d0508f"}
+{"unit": "mol:318639", "ablation": "sentence_shuffle", "dose": 0.35, "cdg": 0.21238696575164795, "words": 9704, "seconds": 1.61, "gpu_temp": 74, "digest": "d19d1bc10f14f76c"}
+{"unit": "mol:318639", "ablation": "sentence_shuffle", "dose": 0.65, "cdg": 0.23754783471425375, "words": 9704, "seconds": 1.64, "gpu_temp": 71, "digest": "5ee7ead2a5c2ca8c"}
+{"unit": "mol:318639", "ablation": "sentence_shuffle", "dose": 1.0, "cdg": 0.250224510828654, "words": 9704, "seconds": 1.59, "gpu_temp": 72, "digest": "29e3fc97e5d4ffd3"}
+{"unit": "mol:318639", "ablation": "connective_scramble", "dose": 0.15, "cdg": 0.21238529682159424, "words": 9704, "seconds": 1.54, "gpu_temp": 70, "digest": "d8c6f2c41f649b73"}
+{"unit": "mol:318639", "ablation": "connective_scramble", "dose": 0.35, "cdg": 0.21164611975351968, "words": 9704, "seconds": 1.49, "gpu_temp": 72, "digest": "aae566901a3c6b7a"}
+{"unit": "mol:318639", "ablation": "connective_scramble", "dose": 0.65, "cdg": 0.2055441935857137, "words": 9704, "seconds": 1.42, "gpu_temp": 71, "digest": "7ed6dec4073596c7"}
+{"unit": "mol:318639", "ablation": "connective_scramble", "dose": 1.0, "cdg": 0.21898778279622397, "words": 9704, "seconds": 1.46, "gpu_temp": 72, "digest": "3834bb3d8ca6cf37"}
+{"unit": "mol:318639", "ablation": "dialogue_flatten", "dose": 0.15, "cdg": 0.21722845236460367, "words": 9704, "seconds": 1.67, "gpu_temp": 71, "digest": "8f2d30f72b3911a9"}
+{"unit": "mol:318639", "ablation": "dialogue_flatten", "dose": 0.35, "cdg": 0.25903956095377606, "words": 9704, "seconds": 1.62, "gpu_temp": 71, "digest": "7de2634e3607d58e"}
+{"unit": "mol:318639", "ablation": "dialogue_flatten", "dose": 0.65, "cdg": 0.2295380433400472, "words": 9704, "seconds": 1.71, "gpu_temp": 72, "digest": "ee8dde869237563a"}
+{"unit": "mol:318639", "ablation": "dialogue_flatten", "dose": 1.0, "cdg": 0.2505109707514445, "words": 9704, "seconds": 1.78, "gpu_temp": 71, "digest": "3f7f77bab9494b0c"}
+{"unit": "mol:318639", "ablation": "transplant", "dose": 0.15, "cdg": 0.1966389020284017, "words": 9711, "seconds": 1.75, "gpu_temp": 74, "digest": "1d8733dd296778ef"}
+{"unit": "mol:318639", "ablation": "transplant", "dose": 0.35, "cdg": 0.2206703027089437, "words": 9736, "seconds": 1.55, "gpu_temp": 70, "digest": "f5413cc78a30e132"}
+{"unit": "mol:318639", "ablation": "transplant", "dose": 0.65, "cdg": 0.23792151610056558, "words": 9738, "seconds": 1.6, "gpu_temp": 71, "digest": "be11d2da3cff7e0d"}
+{"unit": "mol:318639", "ablation": "transplant", "dose": 1.0, "cdg": 0.3235744635264079, "words": 9732, "seconds": 1.59, "gpu_temp": 68, "digest": "b03a82de98473470"}
+{"unit": "mol:318639", "ablation": "sentence_deletion", "dose": 0.15, "cdg": 0.3462998867034912, "words": 8199, "seconds": 1.57, "gpu_temp": 72, "digest": "3ad22006c20caf3b"}
+{"unit": "mol:318639", "ablation": "sentence_deletion", "dose": 0.35, "cdg": 0.26848745346069336, "words": 6477, "seconds": 1.62, "gpu_temp": 72, "digest": "ceefa44932118e20"}
+{"unit": "mol:318639", "ablation": "sentence_deletion", "dose": 0.65, "cdg": 0.24781394004821777, "words": 4457, "seconds": 1.35, "gpu_temp": 72, "digest": "7ed6f8beeef887de"}
+{"unit": "mol:318639", "ablation": "sentence_deletion", "dose": 1.0, "cdg": 0.31017351150512695, "words": 2905, "seconds": 1.01, "gpu_temp": 68, "digest": "e85617389f448bcf"}
+{"unit": "mol:318639", "ablation": "rename_entities", "dose": 0.15, "digest": "32466ed730a71aa7", "cdg": 0.279560128847758, "words": 9704, "seconds": 1.71, "gpu_temp": 71}
+{"unit": "mol:318639", "ablation": "rename_entities", "dose": 0.35, "digest": "18a48f64883d5e7b", "cdg": 0.2742738723754883, "words": 9704, "seconds": 1.68, "gpu_temp": 71}
+{"unit": "mol:318639", "ablation": "rename_entities", "dose": 0.65, "digest": "b2e54e6894ac4506", "cdg": 0.27859218915303546, "words": 9704, "seconds": 1.68, "gpu_temp": 70}
+{"unit": "mol:318639", "ablation": "rename_entities", "dose": 1.0, "digest": "3135c66b5c2c43ab", "cdg": 0.3007781505584717, "words": 9704, "seconds": 1.56, "gpu_temp": 71}
+{"unit": "mol:318639", "ablation": "respell", "dose": 0.15, "cdg": 0.2372054656346639, "words": 9704, "seconds": 1.71, "gpu_temp": 71, "digest": "ede5011147157dd2"}
+{"unit": "mol:318639", "ablation": "respell", "dose": 0.35, "cdg": 0.2376911242802938, "words": 9704, "seconds": 1.65, "gpu_temp": 70, "digest": "3e11243b1aec2fc2"}
+{"unit": "mol:318639", "ablation": "respell", "dose": 0.65, "cdg": 0.23832575480143228, "words": 9704, "seconds": 1.6, "gpu_temp": 71, "digest": "86e0ad4165e55d70"}
+{"unit": "mol:318639", "ablation": "respell", "dose": 1.0, "cdg": 0.23925602436065674, "words": 9704, "seconds": 1.56, "gpu_temp": 71, "digest": "0e4d89896129f46e"}
+{"unit": "mol:319853", "ablation": "original", "dose": 0.0, "cdg": 0.2973336378733317, "words": 7952, "seconds": 1.52, "gpu_temp": 73, "digest": "6198abdf62643eca"}
+{"unit": "mol:319853", "ablation": "paragraph_shuffle", "dose": 0.15, "cdg": 0.25147151947021484, "words": 7952, "seconds": 1.55, "gpu_temp": 72, "digest": "533c8c24d5888005"}
+{"unit": "mol:319853", "ablation": "paragraph_shuffle", "dose": 0.35, "cdg": 0.3371438980102539, "words": 7952, "seconds": 1.47, "gpu_temp": 71, "digest": "1a41bce8ea46ffa9"}
+{"unit": "mol:319853", "ablation": "paragraph_shuffle", "dose": 0.65, "cdg": 0.2989811102549235, "words": 7952, "seconds": 1.58, "gpu_temp": 72, "digest": "daed37532730a7ca"}
+{"unit": "mol:319853", "ablation": "paragraph_shuffle", "dose": 1.0, "cdg": 0.3465783993403117, "words": 7952, "seconds": 1.52, "gpu_temp": 71, "digest": "0d0c803505666f6d"}
+{"unit": "mol:319853", "ablation": "sentence_shuffle", "dose": 0.15, "cdg": 0.27506450812021893, "words": 7952, "seconds": 1.55, "gpu_temp": 72, "digest": "bac3df8dd80c32da"}
+{"unit": "mol:319853", "ablation": "sentence_shuffle", "dose": 0.35, "cdg": 0.31738221645355225, "words": 7952, "seconds": 1.57, "gpu_temp": 74, "digest": "7b267a38d1e3f4c9"}
+{"unit": "mol:319853", "ablation": "sentence_shuffle", "dose": 0.65, "cdg": 0.2886531750361125, "words": 7952, "seconds": 1.5, "gpu_temp": 72, "digest": "18d1047b01f14207"}
+{"unit": "mol:319853", "ablation": "sentence_shuffle", "dose": 1.0, "cdg": 0.2940512498219808, "words": 7952, "seconds": 1.68, "gpu_temp": 71, "digest": "a89fafbee794d73e"}
+{"unit": "mol:319853", "ablation": "connective_scramble", "dose": 0.15, "cdg": 0.29823923110961914, "words": 7952, "seconds": 1.63, "gpu_temp": 71, "digest": "70accbae3adf44e5"}
+{"unit": "mol:319853", "ablation": "connective_scramble", "dose": 0.35, "cdg": 0.29820942878723145, "words": 7952, "seconds": 1.57, "gpu_temp": 71, "digest": "96c3735510eabb1f"}
+{"unit": "mol:319853", "ablation": "connective_scramble", "dose": 0.65, "cdg": 0.2946473757425944, "words": 7952, "seconds": 1.52, "gpu_temp": 70, "digest": "94b93a9c82fa7a40"}
+{"unit": "mol:319853", "ablation": "connective_scramble", "dose": 1.0, "cdg": 0.3023635546366374, "words": 7952, "seconds": 1.55, "gpu_temp": 72, "digest": "74a6e28f07285a34"}
+{"unit": "mol:319853", "ablation": "dialogue_flatten", "dose": 0.15, "cdg": 0.3060862223307292, "words": 7952, "seconds": 1.63, "gpu_temp": 71, "digest": "f3bc202db09d5b39"}
+{"unit": "mol:319853", "ablation": "dialogue_flatten", "dose": 0.35, "cdg": 0.30445059140523273, "words": 7952, "seconds": 1.62, "gpu_temp": 72, "digest": "6855aa1b5f9f3eac"}
+{"unit": "mol:319853", "ablation": "dialogue_flatten", "dose": 0.65, "cdg": 0.30674628416697186, "words": 7952, "seconds": 1.54, "gpu_temp": 70, "digest": "e0272e768fbe54f2"}
+{"unit": "mol:319853", "ablation": "dialogue_flatten", "dose": 1.0, "cdg": 0.3073509136835734, "words": 7952, "seconds": 1.5, "gpu_temp": 71, "digest": "172c7adf59049206"}
+{"unit": "mol:319853", "ablation": "transplant", "dose": 0.15, "cdg": 0.2973336378733317, "words": 8013, "seconds": 1.57, "gpu_temp": 67, "digest": "381c4b838e51f327"}
+{"unit": "mol:319853", "ablation": "transplant", "dose": 0.35, "cdg": 0.24524633089701334, "words": 7993, "seconds": 1.59, "gpu_temp": 72, "digest": "266d3218e1809e48"}
+{"unit": "mol:319853", "ablation": "transplant", "dose": 0.65, "cdg": 0.27484583854675293, "words": 7965, "seconds": 1.59, "gpu_temp": 72, "digest": "2ffab737b928f929"}
+{"unit": "mol:319853", "ablation": "transplant", "dose": 1.0, "cdg": 0.25351691246032715, "words": 6105, "seconds": 1.54, "gpu_temp": 72, "digest": "6c644749ca58c0e0"}
+{"unit": "mol:319853", "ablation": "sentence_deletion", "dose": 0.15, "cdg": 0.22272721926371256, "words": 6906, "seconds": 1.61, "gpu_temp": 70, "digest": "62a350f6dea342d2"}
+{"unit": "mol:319853", "ablation": "sentence_deletion", "dose": 0.35, "cdg": 0.25202635924021405, "words": 5748, "seconds": 1.5, "gpu_temp": 71, "digest": "5ecd3445a43cce7c"}
+{"unit": "mol:319853", "ablation": "sentence_deletion", "dose": 0.65, "cdg": 0.31648457050323486, "words": 3976, "seconds": 1.13, "gpu_temp": 71, "digest": "eeb1a8113cbf5e32"}
+{"unit": "mol:319853", "ablation": "sentence_deletion", "dose": 1.0, "cdg": 0.36519742012023926, "words": 2376, "seconds": 0.7, "gpu_temp": 56, "digest": "fe4977f2fff6de82"}
+{"unit": "mol:319853", "ablation": "rename_entities", "dose": 0.15, "digest": "17fa19db5b316480", "cdg": 0.348443071047465, "words": 7952, "seconds": 1.58, "gpu_temp": 72}
+{"unit": "mol:319853", "ablation": "rename_entities", "dose": 0.35, "digest": "1eefdd7c89339ede", "cdg": 0.3050934871037801, "words": 7952, "seconds": 1.63, "gpu_temp": 72}
+{"unit": "mol:319853", "ablation": "rename_entities", "dose": 0.65, "digest": "1c9f83b4b2d6091f", "cdg": 0.32726311683654785, "words": 7952, "seconds": 1.62, "gpu_temp": 71}
+{"unit": "mol:319853", "ablation": "rename_entities", "dose": 1.0, "digest": "0dd98c5c12ccee44", "cdg": 0.326980193456014, "words": 7952, "seconds": 1.62, "gpu_temp": 73}
+{"unit": "mol:319853", "ablation": "respell", "dose": 0.15, "cdg": 0.3054467837015788, "words": 7952, "seconds": 1.52, "gpu_temp": 71, "digest": "3f29c863845dc230"}
+{"unit": "mol:319853", "ablation": "respell", "dose": 0.35, "cdg": 0.3048284451166789, "words": 7952, "seconds": 1.57, "gpu_temp": 72, "digest": "6c3de21b9c203bdd"}
+{"unit": "mol:319853", "ablation": "respell", "dose": 0.65, "cdg": 0.3053724765777588, "words": 7952, "seconds": 1.65, "gpu_temp": 71, "digest": "62ad5c15cca1e8ac"}
+{"unit": "mol:319853", "ablation": "respell", "dose": 1.0, "cdg": 0.3048113187154134, "words": 7952, "seconds": 1.57, "gpu_temp": 72, "digest": "ca9780b27683e905"}
+{"unit": "mol:320672", "ablation": "original", "dose": 0.0, "cdg": 0.30231038729349774, "words": 7318, "seconds": 1.63, "gpu_temp": 71, "digest": "98fcfd2a6e8e6f5d"}
+{"unit": "mol:320672", "ablation": "paragraph_shuffle", "dose": 0.15, "cdg": 0.31354284286499023, "words": 7318, "seconds": 1.46, "gpu_temp": 71, "digest": "d0bd894b571e8f7f"}
+{"unit": "mol:320672", "ablation": "paragraph_shuffle", "dose": 0.35, "cdg": 0.32757075627644855, "words": 7318, "seconds": 1.54, "gpu_temp": 71, "digest": "ecf7d2929583d8fa"}
+{"unit": "mol:320672", "ablation": "paragraph_shuffle", "dose": 0.65, "cdg": 0.33037392298380536, "words": 7318, "seconds": 1.54, "gpu_temp": 71, "digest": "97f3ac7d17239699"}
+{"unit": "mol:320672", "ablation": "paragraph_shuffle", "dose": 1.0, "cdg": 0.3840869665145874, "words": 7318, "seconds": 1.53, "gpu_temp": 73, "digest": "d6002d6485b5c748"}
+{"unit": "mol:320672", "ablation": "sentence_shuffle", "dose": 0.15, "cdg": 0.2807212670644124, "words": 7318, "seconds": 1.54, "gpu_temp": 71, "digest": "fed3423197372652"}
+{"unit": "mol:320672", "ablation": "sentence_shuffle", "dose": 0.35, "cdg": 0.2963414192199707, "words": 7318, "seconds": 1.49, "gpu_temp": 71, "digest": "c5270875d88d85ac"}
+{"unit": "mol:320672", "ablation": "sentence_shuffle", "dose": 0.65, "cdg": 0.29046499729156494, "words": 7318, "seconds": 1.47, "gpu_temp": 71, "digest": "d8656239c850aabd"}
+{"unit": "mol:320672", "ablation": "sentence_shuffle", "dose": 1.0, "cdg": 0.32536514600118, "words": 7318, "seconds": 1.54, "gpu_temp": 72, "digest": "32a5998d3e0847ac"}
+{"unit": "mol:320672", "ablation": "connective_scramble", "dose": 0.15, "cdg": 0.30084113279978436, "words": 7318, "seconds": 1.54, "gpu_temp": 72, "digest": "1bc6c896c338b350"}
+{"unit": "mol:320672", "ablation": "connective_scramble", "dose": 0.35, "cdg": 0.2999464273452759, "words": 7318, "seconds": 1.47, "gpu_temp": 71, "digest": "1bbeca2397b11237"}
+{"unit": "mol:320672", "ablation": "connective_scramble", "dose": 0.65, "cdg": 0.3033345540364583, "words": 7318, "seconds": 1.51, "gpu_temp": 71, "digest": "45e41d88b3ddbc33"}
+{"unit": "mol:320672", "ablation": "connective_scramble", "dose": 1.0, "cdg": 0.3053031762440999, "words": 7318, "seconds": 1.56, "gpu_temp": 71, "digest": "ee05ff603c449671"}
+{"unit": "mol:320672", "ablation": "dialogue_flatten", "dose": 0.15, "cdg": 0.3219741980234782, "words": 7318, "seconds": 1.5, "gpu_temp": 74, "digest": "5dfb75f666fe4465"}
+{"unit": "mol:320672", "ablation": "dialogue_flatten", "dose": 0.35, "cdg": 0.32803205649058026, "words": 7318, "seconds": 1.63, "gpu_temp": 71, "digest": "bdb3c468eb20a727"}
+{"unit": "mol:320672", "ablation": "dialogue_flatten", "dose": 0.65, "cdg": 0.31924331188201904, "words": 7318, "seconds": 1.47, "gpu_temp": 72, "digest": "5c0cd4665168a3b2"}
+{"unit": "mol:320672", "ablation": "dialogue_flatten", "dose": 1.0, "cdg": 0.31835989157358807, "words": 7318, "seconds": 1.52, "gpu_temp": 72, "digest": "8cee547e38fa22ac"}
+{"unit": "mol:320672", "ablation": "transplant", "dose": 0.15, "cdg": 0.2852643330891927, "words": 7372, "seconds": 1.53, "gpu_temp": 70, "digest": "dbe478a095a74b0b"}
+{"unit": "mol:320672", "ablation": "transplant", "dose": 0.35, "cdg": 0.3070437510808309, "words": 7332, "seconds": 1.53, "gpu_temp": 73, "digest": "81ba077a11c267f7"}
+{"unit": "mol:320672", "ablation": "transplant", "dose": 0.65, "cdg": 0.2811962366104126, "words": 7348, "seconds": 1.54, "gpu_temp": 64, "digest": "0e219d2fb5f8460e"}
+{"unit": "mol:320672", "ablation": "transplant", "dose": 1.0, "cdg": 0.3324478069941203, "words": 7406, "seconds": 1.45, "gpu_temp": 71, "digest": "6aa59efbb69c7b2a"}
+{"unit": "mol:320672", "ablation": "sentence_deletion", "dose": 0.15, "cdg": 0.31412096818288165, "words": 6398, "seconds": 1.55, "gpu_temp": 73, "digest": "6037d820527b1ea9"}
+{"unit": "mol:320672", "ablation": "sentence_deletion", "dose": 0.35, "cdg": 0.30358195304870605, "words": 5102, "seconds": 1.26, "gpu_temp": 72, "digest": "f94c43f3e732f8e1"}
+{"unit": "mol:320672", "ablation": "sentence_deletion", "dose": 0.65, "cdg": 0.18566447496414185, "words": 3424, "seconds": 1.08, "gpu_temp": 69, "digest": "93c5c9a029eacf91"}
+{"unit": "mol:320672", "ablation": "sentence_deletion", "dose": 1.0, "cdg": 0.2932947874069214, "words": 2232, "seconds": 0.64, "gpu_temp": 68, "digest": "47a2c649fdcc15d3"}
+{"unit": "mol:320672", "ablation": "rename_entities", "dose": 0.15, "digest": "234b9ea7b2fc286b", "cdg": 0.33242249488830566, "words": 7318, "seconds": 1.62, "gpu_temp": 71}
+{"unit": "mol:320672", "ablation": "rename_entities", "dose": 0.35, "digest": "b706da00fafa4387", "cdg": 0.33135735988616943, "words": 7318, "seconds": 1.64, "gpu_temp": 72}
+{"unit": "mol:320672", "ablation": "rename_entities", "dose": 0.65, "digest": "d6ad9350001fe1a0", "cdg": 0.33398691813151044, "words": 7318, "seconds": 1.61, "gpu_temp": 62}
+{"unit": "mol:320672", "ablation": "rename_entities", "dose": 1.0, "digest": "d8ffcbc5957d6445", "cdg": 0.30950601895650226, "words": 7318, "seconds": 1.69, "gpu_temp": 71}
+{"unit": "mol:320672", "ablation": "respell", "dose": 0.15, "cdg": 0.3212500810623169, "words": 7318, "seconds": 1.57, "gpu_temp": 71, "digest": "20097207695d9db6"}
+{"unit": "mol:321479", "ablation": "original", "dose": 0.0, "cdg": 0.38626404603322345, "words": 9611, "seconds": 1.48, "gpu_temp": 71, "digest": "1db738341eaef67a"}
+{"unit": "mol:321479", "ablation": "paragraph_shuffle", "dose": 0.15, "cdg": 0.3689756393432617, "words": 9611, "seconds": 1.49, "gpu_temp": 72, "digest": "6c79f8fc3eb99e79"}
+{"unit": "mol:321479", "ablation": "paragraph_shuffle", "dose": 0.35, "cdg": 0.33234918117523193, "words": 9611, "seconds": 1.47, "gpu_temp": 71, "digest": "8f7b8cef4116770a"}
+{"unit": "mol:321479", "ablation": "paragraph_shuffle", "dose": 0.65, "cdg": 0.2748015721638997, "words": 9611, "seconds": 1.5, "gpu_temp": 71, "digest": "6cbcc1242c1a300c"}
+{"unit": "mol:321479", "ablation": "paragraph_shuffle", "dose": 1.0, "cdg": 0.2831518252690633, "words": 9611, "seconds": 1.45, "gpu_temp": 71, "digest": "6f6abb710304ab83"}
+{"unit": "mol:321479", "ablation": "sentence_shuffle", "dose": 0.15, "cdg": 0.38131892681121826, "words": 9611, "seconds": 1.55, "gpu_temp": 71, "digest": "097665dfdb2cff67"}
+{"unit": "mol:321479", "ablation": "sentence_shuffle", "dose": 0.35, "cdg": 0.38535642623901367, "words": 9611, "seconds": 1.54, "gpu_temp": 72, "digest": "4c39249113db7002"}
+{"unit": "mol:321479", "ablation": "sentence_shuffle", "dose": 0.65, "cdg": 0.36906540393829346, "words": 9611, "seconds": 1.54, "gpu_temp": 71, "digest": "1699798b066d5c20"}
+{"unit": "mol:321479", "ablation": "sentence_shuffle", "dose": 1.0, "cdg": 0.3908688227335612, "words": 9611, "seconds": 1.52, "gpu_temp": 74, "digest": "89763eb0a407d34b"}
+{"unit": "mol:321479", "ablation": "connective_scramble", "dose": 0.15, "cdg": 0.38648808002471924, "words": 9611, "seconds": 1.54, "gpu_temp": 71, "digest": "00c72060d6d4125c"}
+{"unit": "mol:321479", "ablation": "connective_scramble", "dose": 0.35, "cdg": 0.3752584457397461, "words": 9611, "seconds": 1.5, "gpu_temp": 72, "digest": "35cfcea5cb5eaf38"}
+{"unit": "mol:321479", "ablation": "connective_scramble", "dose": 0.65, "cdg": 0.3736296494801839, "words": 9611, "seconds": 1.6, "gpu_temp": 72, "digest": "4122202e791a05e3"}
+{"unit": "mol:321479", "ablation": "connective_scramble", "dose": 1.0, "cdg": 0.37238935629526776, "words": 9611, "seconds": 1.51, "gpu_temp": 71, "digest": "e328c95e1d24504c"}
+{"unit": "mol:321479", "ablation": "dialogue_flatten", "dose": 0.15, "cdg": 0.3974355061848958, "words": 9611, "seconds": 1.56, "gpu_temp": 71, "digest": "b74b621da74688fd"}
+{"unit": "mol:321479", "ablation": "dialogue_flatten", "dose": 0.35, "cdg": 0.36261669794718426, "words": 9611, "seconds": 1.49, "gpu_temp": 72, "digest": "189e4a1fd51109d9"}
+{"unit": "mol:321479", "ablation": "dialogue_flatten", "dose": 0.65, "cdg": 0.41103895505269367, "words": 9611, "seconds": 1.46, "gpu_temp": 71, "digest": "359a7c51572eb0c6"}
+{"unit": "mol:321479", "ablation": "dialogue_flatten", "dose": 1.0, "cdg": 0.37745821475982666, "words": 9611, "seconds": 1.54, "gpu_temp": 71, "digest": "3a2a1d06fc5c4dd1"}
+{"unit": "mol:321479", "ablation": "transplant", "dose": 0.15, "cdg": 0.38626404603322345, "words": 9750, "seconds": 1.53, "gpu_temp": 71, "digest": "6ef4415aa856ae11"}
+{"unit": "mol:321479", "ablation": "transplant", "dose": 0.35, "cdg": 0.359799861907959, "words": 9689, "seconds": 1.55, "gpu_temp": 72, "digest": "65ed0ad04bc3d30e"}
+{"unit": "mol:321479", "ablation": "transplant", "dose": 0.65, "cdg": 0.3393899202346802, "words": 9638, "seconds": 1.48, "gpu_temp": 71, "digest": "46bf86554e9648bc"}
+{"unit": "mol:321479", "ablation": "transplant", "dose": 1.0, "cdg": 0.41690492630004883, "words": 9624, "seconds": 1.46, "gpu_temp": 71, "digest": "c8e6df4d5ded3e20"}
+{"unit": "mol:321479", "ablation": "sentence_deletion", "dose": 0.15, "cdg": 0.3063102165857951, "words": 8355, "seconds": 1.53, "gpu_temp": 72, "digest": "ae3573266e93fa36"}
+{"unit": "mol:321479", "ablation": "sentence_deletion", "dose": 0.35, "cdg": 0.31318803628285724, "words": 6783, "seconds": 1.57, "gpu_temp": 72, "digest": "efa50aaaa086c918"}
+{"unit": "mol:321479", "ablation": "sentence_deletion", "dose": 0.65, "cdg": 0.2518739700317383, "words": 4448, "seconds": 1.37, "gpu_temp": 72, "digest": "e24cd1fa0e9ba043"}
+{"unit": "mol:321479", "ablation": "sentence_deletion", "dose": 1.0, "cdg": 0.3097323576609294, "words": 2591, "seconds": 0.95, "gpu_temp": 69, "digest": "00bcaf9ac6a0b5da"}
+{"unit": "mol:321479", "ablation": "rename_entities", "dose": 0.15, "digest": "71b1bfffa6ce0977", "cdg": 0.39124099413553876, "words": 9611, "seconds": 1.65, "gpu_temp": 73}
+{"unit": "mol:321479", "ablation": "rename_entities", "dose": 0.35, "digest": "fa76df29e351bf7b", "cdg": 0.4026740789413452, "words": 9611, "seconds": 1.68, "gpu_temp": 71}
+{"unit": "mol:321479", "ablation": "rename_entities", "dose": 0.65, "digest": "068dd4d7c58d2f46", "cdg": 0.3933158318201701, "words": 9611, "seconds": 1.56, "gpu_temp": 72}
+{"unit": "mol:321479", "ablation": "rename_entities", "dose": 1.0, "digest": "15d9024b04451b8f", "cdg": 0.38449764251708984, "words": 9611, "seconds": 1.65, "gpu_temp": 71}
+{"unit": "mol:321479", "ablation": "respell", "dose": 0.15, "cdg": 0.4037357568740845, "words": 9611, "seconds": 1.57, "gpu_temp": 70, "digest": "73226efdcec67463"}
+{"unit": "mol:321479", "ablation": "respell", "dose": 0.35, "cdg": 0.40461889902750653, "words": 9611, "seconds": 1.45, "gpu_temp": 73, "digest": "f2162219fd86509d"}
+{"unit": "mol:321479", "ablation": "respell", "dose": 0.65, "cdg": 0.40444878737131756, "words": 9611, "seconds": 1.55, "gpu_temp": 72, "digest": "1f4b9754cf09345a"}
+{"unit": "mol:321479", "ablation": "respell", "dose": 1.0, "cdg": 0.4059818188349406, "words": 9611, "seconds": 1.63, "gpu_temp": 71, "digest": "45374e96a2fa3269"}
+{"unit": "mol:322443", "ablation": "original", "dose": 0.0, "cdg": 0.3461422920227051, "words": 6857, "seconds": 1.46, "gpu_temp": 71, "digest": "eca01a26771028e7"}
+{"unit": "mol:322443", "ablation": "paragraph_shuffle", "dose": 0.15, "cdg": 0.22277069091796875, "words": 6857, "seconds": 1.53, "gpu_temp": 73, "digest": "5c18ac0b7df8d738"}
+{"unit": "mol:322443", "ablation": "paragraph_shuffle", "dose": 0.35, "cdg": 0.28180400530497235, "words": 6857, "seconds": 1.55, "gpu_temp": 72, "digest": "f82644604561f892"}
+{"unit": "mol:322443", "ablation": "paragraph_shuffle", "dose": 0.65, "cdg": 0.2708274920781453, "words": 6857, "seconds": 1.6, "gpu_temp": 71, "digest": "b249bd0064bff816"}
+{"unit": "mol:322443", "ablation": "paragraph_shuffle", "dose": 1.0, "cdg": 0.2534969250361125, "words": 6857, "seconds": 1.52, "gpu_temp": 73, "digest": "67088f364c9daa9f"}
+{"unit": "mol:322443", "ablation": "sentence_shuffle", "dose": 0.15, "cdg": 0.35015634695688885, "words": 6857, "seconds": 1.54, "gpu_temp": 71, "digest": "fc346d28208997c4"}
+{"unit": "mol:322443", "ablation": "sentence_shuffle", "dose": 0.35, "cdg": 0.359571894009908, "words": 6857, "seconds": 1.51, "gpu_temp": 70, "digest": "a70e586989c61004"}
+{"unit": "mol:322443", "ablation": "sentence_shuffle", "dose": 0.65, "cdg": 0.34404416879018146, "words": 6857, "seconds": 1.57, "gpu_temp": 71, "digest": "19ef5e647662c916"}
+{"unit": "mol:322443", "ablation": "sentence_shuffle", "dose": 1.0, "cdg": 0.3575210968653361, "words": 6857, "seconds": 1.48, "gpu_temp": 73, "digest": "2ae1bb78bb194c48"}
+{"unit": "mol:322443", "ablation": "connective_scramble", "dose": 0.15, "cdg": 0.34667420387268066, "words": 6857, "seconds": 1.46, "gpu_temp": 71, "digest": "f1e17dbdd5c5b794"}
+{"unit": "mol:322443", "ablation": "connective_scramble", "dose": 0.35, "cdg": 0.34465571244557697, "words": 6857, "seconds": 1.47, "gpu_temp": 73, "digest": "472a8f9f1f67bd5d"}
+{"unit": "mol:322443", "ablation": "connective_scramble", "dose": 0.65, "cdg": 0.35012344519297284, "words": 6857, "seconds": 1.68, "gpu_temp": 71, "digest": "2107f3a1ef3eb024"}
+{"unit": "mol:322443", "ablation": "connective_scramble", "dose": 1.0, "cdg": 0.34843210379282635, "words": 6857, "seconds": 1.61, "gpu_temp": 71, "digest": "0d909266ff17861d"}
+{"unit": "mol:322443", "ablation": "dialogue_flatten", "dose": 0.15, "cdg": 0.3927684823671977, "words": 6857, "seconds": 1.53, "gpu_temp": 72, "digest": "601af848c2140017"}
+{"unit": "mol:322443", "ablation": "dialogue_flatten", "dose": 0.35, "cdg": 0.3649356961250305, "words": 6857, "seconds": 1.55, "gpu_temp": 72, "digest": "98488e6e15037bba"}
+{"unit": "mol:322443", "ablation": "dialogue_flatten", "dose": 0.65, "cdg": 0.36120152473449707, "words": 6857, "seconds": 1.63, "gpu_temp": 71, "digest": "7724bfb6a84be445"}
+{"unit": "mol:322443", "ablation": "dialogue_flatten", "dose": 1.0, "cdg": 0.3788033723831177, "words": 6857, "seconds": 1.61, "gpu_temp": 72, "digest": "4618a486bafcbda7"}
+{"unit": "mol:322443", "ablation": "transplant", "dose": 0.15, "cdg": 0.2789523204167684, "words": 6870, "seconds": 1.52, "gpu_temp": 71, "digest": "c6687ee4d7f5ac34"}
+{"unit": "mol:322443", "ablation": "transplant", "dose": 0.35, "cdg": 0.2535804907480876, "words": 6877, "seconds": 1.52, "gpu_temp": 72, "digest": "c9d9c59e659d51fd"}
+{"unit": "mol:322443", "ablation": "transplant", "dose": 0.65, "cdg": 0.27599183718363446, "words": 6978, "seconds": 1.56, "gpu_temp": 70, "digest": "f40d70a202d4b9cd"}
+{"unit": "mol:322443", "ablation": "transplant", "dose": 1.0, "cdg": 0.26588694254557294, "words": 6919, "seconds": 1.6, "gpu_temp": 71, "digest": "2ab18be538735017"}
+{"unit": "mol:322443", "ablation": "sentence_deletion", "dose": 0.15, "cdg": 0.29144640763600665, "words": 5912, "seconds": 1.56, "gpu_temp": 74, "digest": "5b420922327ec414"}
+{"unit": "mol:322443", "ablation": "sentence_deletion", "dose": 0.35, "cdg": 0.24115729331970215, "words": 4501, "seconds": 1.45, "gpu_temp": 71, "digest": "6e4c83ec8dc21d92"}
+{"unit": "mol:322443", "ablation": "sentence_deletion", "dose": 0.65, "cdg": 0.22726829846700033, "words": 2960, "seconds": 0.92, "gpu_temp": 67, "digest": "a1737eca6d4e72ad"}
+{"unit": "mol:322443", "ablation": "sentence_deletion", "dose": 1.0, "cdg": 0.28353679180145264, "words": 1759, "seconds": 0.65, "gpu_temp": 59, "digest": "b0fda30bf9cc51c8"}
+{"unit": "mol:322443", "ablation": "rename_entities", "dose": 0.15, "digest": "de87a1e7ee961a95", "cdg": 0.3974294463793437, "words": 6857, "seconds": 1.48, "gpu_temp": 71}
+{"unit": "mol:322443", "ablation": "rename_entities", "dose": 0.35, "digest": "1875145eeea57854", "cdg": 0.40523483355840045, "words": 6857, "seconds": 1.48, "gpu_temp": 72}
+{"unit": "mol:322443", "ablation": "rename_entities", "dose": 0.65, "digest": "5ab22c77954a6307", "cdg": 0.43490831057230633, "words": 6857, "seconds": 1.68, "gpu_temp": 70}
+{"unit": "mol:322443", "ablation": "rename_entities", "dose": 1.0, "digest": "cd0dd7e4a7e597d7", "cdg": 0.41572968165079754, "words": 6857, "seconds": 1.35, "gpu_temp": 74}
+{"unit": "mol:322443", "ablation": "respell", "dose": 0.15, "cdg": 0.3680272102355957, "words": 6857, "seconds": 1.49, "gpu_temp": 72, "digest": "ab40b843bd5750ae"}
+{"unit": "mol:322443", "ablation": "respell", "dose": 0.65, "cdg": 0.36822118361790973, "words": 6857, "seconds": 1.64, "gpu_temp": 71, "digest": "6fc68ce46c034ab5"}
+{"unit": "mol:323436", "ablation": "original", "dose": 0.0, "cdg": 0.33723004659016925, "words": 6384, "seconds": 1.58, "gpu_temp": 70, "digest": "1bb0ec2d4e27dd36"}
+{"unit": "mol:323436", "ablation": "paragraph_shuffle", "dose": 0.15, "cdg": 0.2798943519592285, "words": 6384, "seconds": 1.58, "gpu_temp": 73, "digest": "17b7b24aff6befad"}
+{"unit": "mol:323436", "ablation": "paragraph_shuffle", "dose": 0.35, "cdg": 0.32869112491607666, "words": 6384, "seconds": 1.6, "gpu_temp": 72, "digest": "4c5ab67e3297c921"}
+{"unit": "mol:323436", "ablation": "paragraph_shuffle", "dose": 0.65, "cdg": 0.2856227954228719, "words": 6384, "seconds": 1.66, "gpu_temp": 71, "digest": "811d7c33937d4a19"}
+{"unit": "mol:323436", "ablation": "paragraph_shuffle", "dose": 1.0, "cdg": 0.3082209825515747, "words": 6384, "seconds": 1.53, "gpu_temp": 71, "digest": "785e53bda55645aa"}
+{"unit": "mol:323436", "ablation": "sentence_shuffle", "dose": 0.15, "cdg": 0.33813750743865967, "words": 6384, "seconds": 1.55, "gpu_temp": 71, "digest": "86ec208d2b38d560"}
+{"unit": "mol:323436", "ablation": "sentence_shuffle", "dose": 0.35, "cdg": 0.3298870325088501, "words": 6384, "seconds": 1.53, "gpu_temp": 72, "digest": "af2ab0db29b0a963"}
+{"unit": "mol:323436", "ablation": "sentence_shuffle", "dose": 0.65, "cdg": 0.34020670255025226, "words": 6384, "seconds": 1.53, "gpu_temp": 71, "digest": "a258f6a4c6d0e34d"}
+{"unit": "mol:323436", "ablation": "sentence_shuffle", "dose": 1.0, "cdg": 0.3344087203343709, "words": 6384, "seconds": 1.54, "gpu_temp": 72, "digest": "a1ac397dd3c32097"}
+{"unit": "mol:323436", "ablation": "connective_scramble", "dose": 0.15, "cdg": 0.33630438645680744, "words": 6384, "seconds": 1.73, "gpu_temp": 71, "digest": "b5deffe91876b6b2"}
+{"unit": "mol:323436", "ablation": "connective_scramble", "dose": 0.35, "cdg": 0.337577223777771, "words": 6384, "seconds": 1.35, "gpu_temp": 72, "digest": "e60808586f7beb5b"}
+{"unit": "mol:323436", "ablation": "connective_scramble", "dose": 0.65, "cdg": 0.341760794321696, "words": 6384, "seconds": 1.64, "gpu_temp": 72, "digest": "529316e4d60ab48c"}
+{"unit": "mol:323436", "ablation": "connective_scramble", "dose": 1.0, "cdg": 0.34108829498291016, "words": 6384, "seconds": 1.65, "gpu_temp": 71, "digest": "1dd38a8c64eb602b"}
+{"unit": "mol:323436", "ablation": "dialogue_flatten", "dose": 0.15, "cdg": 0.3244425853093465, "words": 6384, "seconds": 1.53, "gpu_temp": 71, "digest": "535843376d4e026a"}
+{"unit": "mol:323436", "ablation": "dialogue_flatten", "dose": 0.35, "cdg": 0.33409392833709717, "words": 6384, "seconds": 1.51, "gpu_temp": 72, "digest": "608d199f6eb0baa1"}
+{"unit": "mol:323436", "ablation": "dialogue_flatten", "dose": 0.65, "cdg": 0.34039302666982013, "words": 6384, "seconds": 1.65, "gpu_temp": 73, "digest": "809fbcdf4940f54c"}
+{"unit": "mol:323436", "ablation": "dialogue_flatten", "dose": 1.0, "cdg": 0.37981100877126056, "words": 6384, "seconds": 1.53, "gpu_temp": 70, "digest": "88313be0ee6cbe74"}
+{"unit": "mol:323436", "ablation": "transplant", "dose": 0.15, "cdg": 0.28715837001800537, "words": 6389, "seconds": 1.48, "gpu_temp": 74, "digest": "98099194f61115ac"}
+{"unit": "mol:323436", "ablation": "transplant", "dose": 0.35, "cdg": 0.31568439801534015, "words": 6431, "seconds": 1.46, "gpu_temp": 72, "digest": "80ce2d8eb87405ec"}
+{"unit": "mol:323436", "ablation": "transplant", "dose": 0.65, "cdg": 0.3618069092432658, "words": 6406, "seconds": 1.51, "gpu_temp": 72, "digest": "e5f15048aec81f40"}
+{"unit": "mol:323436", "ablation": "transplant", "dose": 1.0, "cdg": 0.31521375974019367, "words": 6393, "seconds": 1.6, "gpu_temp": 71, "digest": "4539939c663a664f"}
+{"unit": "mol:323436", "ablation": "sentence_deletion", "dose": 0.15, "cdg": 0.4226060112317403, "words": 5544, "seconds": 1.56, "gpu_temp": 71, "digest": "414b3ed4bd93c6a7"}
+{"unit": "mol:323436", "ablation": "sentence_deletion", "dose": 0.35, "cdg": 0.34076485633850095, "words": 4311, "seconds": 1.26, "gpu_temp": 63, "digest": "2140f9fb3ec33a51"}
+{"unit": "mol:323436", "ablation": "sentence_deletion", "dose": 0.65, "cdg": 0.2771771748860677, "words": 2983, "seconds": 0.69, "gpu_temp": 71, "digest": "6ff9381d4e4f5dd5"}
+{"unit": "mol:323436", "ablation": "sentence_deletion", "dose": 1.0, "cdg": 0.3535010814666748, "words": 1874, "seconds": 0.61, "gpu_temp": 64, "digest": "de7ee6da34ada256"}
+{"unit": "mol:323436", "ablation": "rename_entities", "dose": 0.15, "digest": "dc6d2ffd7be9f6d8", "cdg": 0.3173034191131592, "words": 6384, "seconds": 1.58, "gpu_temp": 71}
+{"unit": "mol:323436", "ablation": "rename_entities", "dose": 0.35, "digest": "4aaabc44c7cfd6b1", "cdg": 0.4106033643086751, "words": 6384, "seconds": 1.61, "gpu_temp": 71}
+{"unit": "mol:323436", "ablation": "rename_entities", "dose": 0.65, "digest": "437332e9672c6023", "cdg": 0.4178314208984375, "words": 6384, "seconds": 1.81, "gpu_temp": 71}
+{"unit": "mol:323436", "ablation": "rename_entities", "dose": 1.0, "digest": "97c6feff38254c24", "cdg": 0.40076641241709393, "words": 6384, "seconds": 1.66, "gpu_temp": 72}
+{"unit": "mol:323436", "ablation": "respell", "dose": 0.15, "cdg": 0.358670433362325, "words": 6384, "seconds": 1.57, "gpu_temp": 71, "digest": "1c337128156cfe39"}
+{"unit": "mol:323436", "ablation": "respell", "dose": 0.65, "cdg": 0.35856902599334717, "words": 6384, "seconds": 1.46, "gpu_temp": 73, "digest": "158a23419edd7ee4"}
+{"unit": "mol:323436", "ablation": "respell", "dose": 1.0, "cdg": 0.357927401860555, "words": 6384, "seconds": 1.58, "gpu_temp": 72, "digest": "fdb5d6ba6139db9a"}
+{"unit": "mol:324123", "ablation": "original", "dose": 0.0, "cdg": 0.37342437108357746, "words": 6347, "seconds": 1.53, "gpu_temp": 71, "digest": "768767a11b1e0093"}
+{"unit": "mol:324123", "ablation": "paragraph_shuffle", "dose": 0.15, "cdg": 0.32706089814503986, "words": 6347, "seconds": 1.53, "gpu_temp": 72, "digest": "cba69a4826185c0b"}
+{"unit": "mol:324123", "ablation": "paragraph_shuffle", "dose": 0.35, "cdg": 0.28014341990152997, "words": 6347, "seconds": 1.52, "gpu_temp": 71, "digest": "1bc4c6a305922e74"}
+{"unit": "mol:324123", "ablation": "paragraph_shuffle", "dose": 0.65, "cdg": 0.3021003802617391, "words": 6347, "seconds": 1.55, "gpu_temp": 71, "digest": "d30ab3f428e8d05d"}
+{"unit": "mol:324123", "ablation": "paragraph_shuffle", "dose": 1.0, "cdg": 0.31793518861134845, "words": 6347, "seconds": 1.49, "gpu_temp": 64, "digest": "d6adea140e955e02"}
+{"unit": "mol:324123", "ablation": "sentence_shuffle", "dose": 0.15, "cdg": 0.37158071994781494, "words": 6347, "seconds": 1.6, "gpu_temp": 74, "digest": "e0781cbdbe6cdcbe"}
+{"unit": "mol:324123", "ablation": "sentence_shuffle", "dose": 0.35, "cdg": 0.33052035172780353, "words": 6347, "seconds": 1.55, "gpu_temp": 70, "digest": "7790c15111ca72bd"}
+{"unit": "mol:324123", "ablation": "sentence_shuffle", "dose": 0.65, "cdg": 0.34597023328145343, "words": 6347, "seconds": 1.59, "gpu_temp": 71, "digest": "1d0a7d8de6d02b15"}
+{"unit": "mol:324123", "ablation": "sentence_shuffle", "dose": 1.0, "cdg": 0.3274468978246053, "words": 6347, "seconds": 1.6, "gpu_temp": 73, "digest": "715c2d8a49e49124"}
+{"unit": "mol:324123", "ablation": "connective_scramble", "dose": 0.15, "cdg": 0.37133606274922687, "words": 6347, "seconds": 1.53, "gpu_temp": 72, "digest": "5084c3477b13d7b9"}
+{"unit": "mol:324123", "ablation": "connective_scramble", "dose": 0.35, "cdg": 0.37468703587849933, "words": 6347, "seconds": 1.54, "gpu_temp": 71, "digest": "58ce22e528f100b6"}
+{"unit": "mol:324123", "ablation": "connective_scramble", "dose": 0.65, "cdg": 0.37571736176808673, "words": 6347, "seconds": 1.5, "gpu_temp": 72, "digest": "f7672d47e4e1d7ba"}
+{"unit": "mol:324123", "ablation": "connective_scramble", "dose": 1.0, "cdg": 0.3801937898000081, "words": 6347, "seconds": 1.62, "gpu_temp": 72, "digest": "6206c696060922d9"}
+{"unit": "mol:324123", "ablation": "dialogue_flatten", "dose": 0.15, "cdg": 0.3598228693008423, "words": 6347, "seconds": 1.62, "gpu_temp": 65, "digest": "39d255aa5485c063"}
+{"unit": "mol:324123", "ablation": "dialogue_flatten", "dose": 0.35, "cdg": 0.3735305468241374, "words": 6347, "seconds": 1.47, "gpu_temp": 72, "digest": "9f3d4948ec01f8be"}
+{"unit": "mol:324123", "ablation": "dialogue_flatten", "dose": 0.65, "cdg": 0.35254708925882977, "words": 6347, "seconds": 1.47, "gpu_temp": 71, "digest": "de389e3b9454142f"}
+{"unit": "mol:324123", "ablation": "dialogue_flatten", "dose": 1.0, "cdg": 0.34959761301676434, "words": 6347, "seconds": 1.51, "gpu_temp": 73, "digest": "b51b963ef7879aff"}
+{"unit": "mol:324123", "ablation": "transplant", "dose": 0.15, "cdg": 0.38635047276814777, "words": 6395, "seconds": 1.62, "gpu_temp": 71, "digest": "bc5cd5a507e865c3"}
+{"unit": "mol:324123", "ablation": "transplant", "dose": 0.35, "cdg": 0.31071197986602783, "words": 6375, "seconds": 1.61, "gpu_temp": 72, "digest": "6508212e5d44620f"}
+{"unit": "mol:324123", "ablation": "transplant", "dose": 0.65, "cdg": 0.3562433322270711, "words": 6388, "seconds": 1.52, "gpu_temp": 71, "digest": "cc6df04408e8e8fc"}
+{"unit": "mol:324123", "ablation": "transplant", "dose": 1.0, "cdg": 0.2648839553197225, "words": 6404, "seconds": 1.54, "gpu_temp": 73, "digest": "24d8ee36d281e60f"}
+{"unit": "mol:324123", "ablation": "sentence_deletion", "dose": 0.15, "cdg": 0.3047049045562744, "words": 5311, "seconds": 1.31, "gpu_temp": 71, "digest": "317fa460a33fcd73"}
+{"unit": "mol:324123", "ablation": "sentence_deletion", "dose": 0.35, "cdg": 0.3254008889198303, "words": 4008, "seconds": 1.14, "gpu_temp": 70, "digest": "b9ca34fdf1d47f97"}
+{"unit": "mol:324123", "ablation": "sentence_deletion", "dose": 0.65, "cdg": 0.27437663078308105, "words": 2638, "seconds": 0.69, "gpu_temp": 70, "digest": "ff9916ed7d7392c5"}
+{"unit": "mol:324123", "ablation": "sentence_deletion", "dose": 1.0, "cdg": 0.28592586517333984, "words": 1620, "seconds": 0.42, "gpu_temp": 63, "digest": "6010abeae52cf3ff"}
+{"unit": "mol:324123", "ablation": "rename_entities", "dose": 0.15, "digest": "3b74786897cd6eec", "cdg": 0.4169510006904602, "words": 6347, "seconds": 1.62, "gpu_temp": 71}
+{"unit": "mol:324123", "ablation": "rename_entities", "dose": 0.35, "digest": "71880bf00d2ca31a", "cdg": 0.441820760567983, "words": 6347, "seconds": 1.75, "gpu_temp": 71}
+{"unit": "mol:324123", "ablation": "rename_entities", "dose": 0.65, "digest": "693f4f83f91393b4", "cdg": 0.42390479644139606, "words": 6347, "seconds": 1.59, "gpu_temp": 71}
+{"unit": "mol:324123", "ablation": "rename_entities", "dose": 1.0, "digest": "d277ced3f881ada0", "cdg": 0.4090699950853984, "words": 6347, "seconds": 1.6, "gpu_temp": 74}
+{"unit": "mol:324123", "ablation": "respell", "dose": 0.15, "cdg": 0.3820788661638896, "words": 6347, "seconds": 1.58, "gpu_temp": 72, "digest": "85e9869169d2b292"}
+{"unit": "mol:324123", "ablation": "respell", "dose": 0.65, "cdg": 0.3828880588213603, "words": 6347, "seconds": 1.54, "gpu_temp": 71, "digest": "c6a9166e21bdca77"}
+{"unit": "mol:325051", "ablation": "original", "dose": 0.0, "cdg": 0.2790420452753703, "words": 7728, "seconds": 1.5, "gpu_temp": 71, "digest": "fe06861259b4a0b9"}
+{"unit": "mol:325051", "ablation": "paragraph_shuffle", "dose": 0.15, "cdg": 0.23547633488972983, "words": 7728, "seconds": 1.59, "gpu_temp": 72, "digest": "6282f7f2201422a3"}
+{"unit": "mol:325051", "ablation": "paragraph_shuffle", "dose": 0.35, "cdg": 0.23970588048299155, "words": 7728, "seconds": 1.61, "gpu_temp": 71, "digest": "4821e14ffb2e4e3b"}
+{"unit": "mol:325051", "ablation": "paragraph_shuffle", "dose": 0.65, "cdg": 0.29997897148132324, "words": 7728, "seconds": 1.5, "gpu_temp": 71, "digest": "bd06eab37fff049e"}
+{"unit": "mol:325051", "ablation": "paragraph_shuffle", "dose": 1.0, "cdg": 0.2878810564676921, "words": 7728, "seconds": 1.47, "gpu_temp": 72, "digest": "6814b42d79da6e1d"}
+{"unit": "mol:325051", "ablation": "sentence_shuffle", "dose": 0.15, "cdg": 0.27762893835703534, "words": 7728, "seconds": 1.52, "gpu_temp": 72, "digest": "97d6d6bf823df8b5"}
+{"unit": "mol:325051", "ablation": "sentence_shuffle", "dose": 0.35, "cdg": 0.30322810014088947, "words": 7728, "seconds": 1.55, "gpu_temp": 71, "digest": "8f42a88fe3963ad8"}
+{"unit": "mol:325051", "ablation": "sentence_shuffle", "dose": 0.65, "cdg": 0.28395938873291016, "words": 7728, "seconds": 1.48, "gpu_temp": 71, "digest": "57826d001e86c79f"}
+{"unit": "mol:325051", "ablation": "sentence_shuffle", "dose": 1.0, "cdg": 0.3097246090571086, "words": 7728, "seconds": 1.62, "gpu_temp": 70, "digest": "1bce79111cfb88c8"}
+{"unit": "mol:325051", "ablation": "connective_scramble", "dose": 0.15, "cdg": 0.28094931443532306, "words": 7728, "seconds": 1.6, "gpu_temp": 72, "digest": "ce7d5516cb9c73e8"}
+{"unit": "mol:325051", "ablation": "connective_scramble", "dose": 0.35, "cdg": 0.27906755606333417, "words": 7728, "seconds": 1.52, "gpu_temp": 72, "digest": "aa8c176022378e82"}
+{"unit": "mol:325051", "ablation": "connective_scramble", "dose": 0.65, "cdg": 0.27890121936798096, "words": 7728, "seconds": 1.57, "gpu_temp": 71, "digest": "982a6dec1d1582bc"}
+{"unit": "mol:325051", "ablation": "connective_scramble", "dose": 1.0, "cdg": 0.278447429339091, "words": 7728, "seconds": 1.57, "gpu_temp": 71, "digest": "9af75c9baa28aba6"}
+{"unit": "mol:325051", "ablation": "dialogue_flatten", "dose": 0.15, "cdg": 0.28680117925008136, "words": 7728, "seconds": 1.62, "gpu_temp": 72, "digest": "0932915733d357c9"}
+{"unit": "mol:325051", "ablation": "dialogue_flatten", "dose": 0.35, "cdg": 0.3219262758890788, "words": 7728, "seconds": 1.54, "gpu_temp": 74, "digest": "3dba1e1b0cf941d4"}
+{"unit": "mol:325051", "ablation": "dialogue_flatten", "dose": 0.65, "cdg": 0.3243778546651204, "words": 7728, "seconds": 1.67, "gpu_temp": 70, "digest": "91bcec47635b00f8"}
+{"unit": "mol:325051", "ablation": "dialogue_flatten", "dose": 1.0, "cdg": 0.2701558272043864, "words": 7728, "seconds": 1.53, "gpu_temp": 71, "digest": "bc705152b4ef4b56"}
+{"unit": "mol:325051", "ablation": "transplant", "dose": 0.15, "cdg": 0.24143493175506592, "words": 7728, "seconds": 1.54, "gpu_temp": 71, "digest": "b2dfdc6315d45930"}
+{"unit": "mol:325051", "ablation": "transplant", "dose": 0.35, "cdg": 0.2744251887003581, "words": 7752, "seconds": 1.53, "gpu_temp": 71, "digest": "49bc9f6a774789f1"}
+{"unit": "mol:325051", "ablation": "transplant", "dose": 0.65, "cdg": 0.26138563950856525, "words": 7731, "seconds": 1.55, "gpu_temp": 73, "digest": "2a8fcd9b7e1a72fb"}
+{"unit": "mol:325051", "ablation": "transplant", "dose": 1.0, "cdg": 0.25289011001586914, "words": 5898, "seconds": 1.67, "gpu_temp": 71, "digest": "946675133c966f46"}
+{"unit": "mol:325051", "ablation": "sentence_deletion", "dose": 0.15, "cdg": 0.32046782970428467, "words": 6784, "seconds": 1.51, "gpu_temp": 72, "digest": "560f80c88da354c5"}
+{"unit": "mol:325051", "ablation": "sentence_deletion", "dose": 0.35, "cdg": 0.2558835744857788, "words": 5549, "seconds": 1.6, "gpu_temp": 72, "digest": "189e36ed2838fe97"}
+{"unit": "mol:325051", "ablation": "sentence_deletion", "dose": 0.65, "cdg": 0.1954439878463745, "words": 3782, "seconds": 1.18, "gpu_temp": 70, "digest": "3f478802f744b86a"}
+{"unit": "mol:325051", "ablation": "sentence_deletion", "dose": 1.0, "cdg": 0.29013001918792725, "words": 2210, "seconds": 0.69, "gpu_temp": 57, "digest": "a09e86d419c1a3a4"}
+{"unit": "mol:325051", "ablation": "rename_entities", "dose": 0.15, "digest": "25f26478625840d7", "cdg": 0.33519967397054035, "words": 7728, "seconds": 1.69, "gpu_temp": 70}
+{"unit": "mol:325051", "ablation": "rename_entities", "dose": 0.35, "digest": "cb44cd7f8395611d", "cdg": 0.32581035296122235, "words": 7728, "seconds": 1.77, "gpu_temp": 71}
+{"unit": "mol:325051", "ablation": "rename_entities", "dose": 0.65, "digest": "25cf40088cdfcd10", "cdg": 0.32950735092163086, "words": 7728, "seconds": 1.68, "gpu_temp": 71}
+{"unit": "mol:325051", "ablation": "rename_entities", "dose": 1.0, "digest": "07a79164d97d53d5", "cdg": 0.3118065595626831, "words": 7728, "seconds": 1.54, "gpu_temp": 73}
+{"unit": "mol:325051", "ablation": "respell", "dose": 0.15, "cdg": 0.30179206530253094, "words": 7728, "seconds": 1.76, "gpu_temp": 70, "digest": "1d66696f6226e162"}
+{"unit": "mol:325051", "ablation": "respell", "dose": 0.35, "cdg": 0.3036042054494222, "words": 7728, "seconds": 1.62, "gpu_temp": 72, "digest": "0eb129282c42a353"}
+{"unit": "mol:325051", "ablation": "respell", "dose": 0.65, "cdg": 0.3035974105199178, "words": 7728, "seconds": 1.52, "gpu_temp": 66, "digest": "041fb5e34f321b7b"}
+{"unit": "mol:325051", "ablation": "respell", "dose": 1.0, "cdg": 0.303438663482666, "words": 7728, "seconds": 1.51, "gpu_temp": 71, "digest": "48c98b803476fbbd"}
+{"unit": "mol:326028", "ablation": "original", "dose": 0.0, "cdg": 0.44487492243448895, "words": 8262, "seconds": 1.64, "gpu_temp": 72, "digest": "b21229d05ee748df"}
+{"unit": "mol:326028", "ablation": "paragraph_shuffle", "dose": 0.15, "cdg": 0.32555830478668213, "words": 8262, "seconds": 1.59, "gpu_temp": 71, "digest": "0b29143a2dcf5212"}
+{"unit": "mol:326028", "ablation": "paragraph_shuffle", "dose": 0.35, "cdg": 0.3347924550374349, "words": 8262, "seconds": 1.53, "gpu_temp": 71, "digest": "c60d7b2db6552591"}
+{"unit": "mol:326028", "ablation": "paragraph_shuffle", "dose": 0.65, "cdg": 0.374397079149882, "words": 8262, "seconds": 1.54, "gpu_temp": 71, "digest": "48162164123f7714"}
+{"unit": "mol:326028", "ablation": "paragraph_shuffle", "dose": 1.0, "cdg": 0.25220529238382977, "words": 8262, "seconds": 1.54, "gpu_temp": 72, "digest": "9343352446860b6c"}
+{"unit": "mol:326028", "ablation": "sentence_shuffle", "dose": 0.15, "cdg": 0.43657978375752765, "words": 8262, "seconds": 1.7, "gpu_temp": 71, "digest": "a0a27cc15880a92e"}
+{"unit": "mol:326028", "ablation": "sentence_shuffle", "dose": 0.35, "cdg": 0.43769272168477374, "words": 8262, "seconds": 1.61, "gpu_temp": 72, "digest": "c0361799cef00e80"}
+{"unit": "mol:326028", "ablation": "sentence_shuffle", "dose": 0.65, "cdg": 0.43641146024068195, "words": 8262, "seconds": 1.52, "gpu_temp": 72, "digest": "001f87d107eaa911"}
+{"unit": "mol:326028", "ablation": "sentence_shuffle", "dose": 1.0, "cdg": 0.4379814068476359, "words": 8262, "seconds": 1.54, "gpu_temp": 71, "digest": "9ff5391ebd80a71a"}
+{"unit": "mol:326028", "ablation": "connective_scramble", "dose": 0.15, "cdg": 0.4480291207631429, "words": 8262, "seconds": 1.61, "gpu_temp": 72, "digest": "11a246d741341608"}
+{"unit": "mol:326028", "ablation": "connective_scramble", "dose": 0.35, "cdg": 0.45022451877593994, "words": 8262, "seconds": 1.69, "gpu_temp": 70, "digest": "886b7e775b890a6c"}
+{"unit": "mol:326028", "ablation": "connective_scramble", "dose": 0.65, "cdg": 0.44852209091186523, "words": 8262, "seconds": 1.61, "gpu_temp": 72, "digest": "df71da2b5ab8a600"}
+{"unit": "mol:326028", "ablation": "connective_scramble", "dose": 1.0, "cdg": 0.45154523849487305, "words": 8262, "seconds": 1.59, "gpu_temp": 72, "digest": "fcf73921f86c3f3c"}
+{"unit": "mol:326028", "ablation": "dialogue_flatten", "dose": 0.15, "cdg": 0.43145453929901123, "words": 8262, "seconds": 1.77, "gpu_temp": 71, "digest": "ea4ab4994831bb69"}
+{"unit": "mol:326028", "ablation": "dialogue_flatten", "dose": 0.35, "cdg": 0.41817378997802734, "words": 8262, "seconds": 1.52, "gpu_temp": 72, "digest": "3536e111def685e6"}
+{"unit": "mol:326028", "ablation": "dialogue_flatten", "dose": 0.65, "cdg": 0.38377579053243, "words": 8262, "seconds": 1.55, "gpu_temp": 71, "digest": "0733ca8496839d7a"}
+{"unit": "mol:326028", "ablation": "dialogue_flatten", "dose": 1.0, "cdg": 0.4607695738474528, "words": 8262, "seconds": 1.61, "gpu_temp": 71, "digest": "6301562cbe271a03"}
+{"unit": "mol:326028", "ablation": "transplant", "dose": 0.15, "cdg": 0.44487492243448895, "words": 8279, "seconds": 1.5, "gpu_temp": 71, "digest": "d8e3a0b1449452c1"}
+{"unit": "mol:326028", "ablation": "transplant", "dose": 0.35, "cdg": 0.44487492243448895, "words": 8311, "seconds": 1.61, "gpu_temp": 71, "digest": "265d30566d7841b4"}
+{"unit": "mol:326028", "ablation": "transplant", "dose": 0.65, "cdg": 0.4220004479090373, "words": 8273, "seconds": 1.54, "gpu_temp": 72, "digest": "b721a26e9f61ef44"}
+{"unit": "mol:326028", "ablation": "transplant", "dose": 1.0, "cdg": 0.35291314125061035, "words": 8269, "seconds": 1.44, "gpu_temp": 72, "digest": "41eb88aee717eefd"}
+{"unit": "mol:326028", "ablation": "sentence_deletion", "dose": 0.15, "cdg": 0.43819185098012287, "words": 7115, "seconds": 1.72, "gpu_temp": 72, "digest": "3dc21a48d7d8bf73"}
+{"unit": "mol:326028", "ablation": "sentence_deletion", "dose": 0.35, "cdg": 0.3273489872614543, "words": 5885, "seconds": 1.63, "gpu_temp": 71, "digest": "4f47697ba2f5bbaa"}
+{"unit": "mol:326028", "ablation": "sentence_deletion", "dose": 0.65, "cdg": 0.32052260637283325, "words": 4083, "seconds": 1.14, "gpu_temp": 70, "digest": "ea2498ce40f3797a"}
+{"unit": "mol:326028", "ablation": "sentence_deletion", "dose": 1.0, "cdg": 0.34549760818481445, "words": 2359, "seconds": 0.66, "gpu_temp": 60, "digest": "2435f0e2aa10ff4a"}
+{"unit": "mol:326028", "ablation": "rename_entities", "dose": 0.15, "digest": "442957a3a321f369", "cdg": 0.36113890012105304, "words": 8262, "seconds": 1.56, "gpu_temp": 70}
+{"unit": "mol:326028", "ablation": "rename_entities", "dose": 0.35, "digest": "4c29d1422c306c76", "cdg": 0.3759009043375651, "words": 8262, "seconds": 1.6, "gpu_temp": 72}
+{"unit": "mol:326028", "ablation": "rename_entities", "dose": 0.65, "digest": "49f6b55aab3b7f80", "cdg": 0.3876509666442871, "words": 8262, "seconds": 1.54, "gpu_temp": 71}
+{"unit": "mol:326028", "ablation": "rename_entities", "dose": 1.0, "digest": "3dc5998a4898167e", "cdg": 0.42771005630493164, "words": 8262, "seconds": 1.6, "gpu_temp": 71}
+{"unit": "mol:326028", "ablation": "respell", "dose": 0.15, "cdg": 0.46698586146036786, "words": 8262, "seconds": 1.64, "gpu_temp": 71, "digest": "a3d128bf195cead5"}
+{"unit": "mol:326028", "ablation": "respell", "dose": 0.35, "cdg": 0.46410274505615234, "words": 8262, "seconds": 1.66, "gpu_temp": 71, "digest": "1496fbaccaac1d3f"}
+{"unit": "mol:326028", "ablation": "respell", "dose": 0.65, "cdg": 0.46410274505615234, "words": 8262, "seconds": 1.58, "gpu_temp": 71, "digest": "c6cde5e783bb5a8a"}
+{"unit": "mol:326028", "ablation": "respell", "dose": 1.0, "cdg": 0.4657106399536133, "words": 8262, "seconds": 1.66, "gpu_temp": 72, "digest": "4052f765de851298"}

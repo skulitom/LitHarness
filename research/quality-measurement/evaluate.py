@@ -7,27 +7,39 @@ refutation ledger died to a control that was computed afterwards or not at all.
 
 **Four numbers, and the headline is the least important of them.**
 
-1. `detect_auc` — rank AUC separating degraded texts from their originals. The headline.
+1. `detect_auc` — the rate at which a chapter's degraded variants move the score in the
+   declared damage direction (ties at half), averaged over chapters. This is the rank AUC of
+   each chapter's variants against that chapter's own original, so 0.5 is chance. The headline.
 2. `sham_auc` — the same statistic against `SHAMS`, which change the text and should not change
    quality. **This is the era control's analogue.** A metric with detect 0.85 and sham 0.80 has
    found *edited-ness*, not damage, and is dead exactly as `tricolon_rate` was dead at 0.629
-   against a control of 0.606. The reported margin `detect_auc - sham_auc` is the real result.
+   against a control of 0.606. The reported margin charges the sham as a distance from chance,
+   in either direction — see `Result.margin` for the measured reason.
 3. `dose_rho` — Spearman of score against ablation strength, per degrader. Monotonicity is the
    claim; detection at full strength alone is detection of vandalism.
-4. `length_auc` — the same separation achieved by raw word count. §1a.1's shallow incumbent. A
-   metric that does not beat it is measuring length.
+4. `length_auc` — the same within-chapter statistic computed for raw word count. §1a.1's
+   shallow incumbent. Five of six degraders preserve length exactly, so their variants tie at
+   half and this number is `sentence_deletion`'s — which is the honest shape: length can only
+   claim what length can see, and a metric has to beat what it claims.
 
-**Paired by construction.** Every comparison is within one chapter: the degraded text and its
-own original. Author, era, story, genre, tags, maturity and cadence are identical on both sides
-of every pair, which is the property the refutation ledger says the between-cohort designs never
-had. What it costs is that a within-chapter effect says nothing about between-chapter ranking,
-and `paired_rate` is reported rather than `detect_auc` alone for that reason: the fraction of
-pairs scored in the right direction is the statistic that matches the design.
+**Paired by construction — in the statistics, not only in the design.** Every comparison is
+within one chapter: the degraded text and its own original. Author, era, story, genre, tags,
+maturity and cadence are identical on both sides of every pair, which is the property the
+refutation ledger says the between-cohort designs never had. The first version of this file
+said that while computing `detect_auc` as a *pooled* AUC of all originals against all degraded
+texts — mostly cross-chapter comparisons, which readmit exactly the chapter-level differences
+the pairing was built to hold fixed. Every `_auc` here is now a mean of within-chapter
+comparisons. What pairing costs is that a within-chapter effect says nothing about
+between-chapter ranking, and nothing here claims one. `paired_ci` is a chapter-resampled
+bootstrap rather than a Wilson interval over pooled pairs, because ~24 pairs that share one
+original, one author and one stretch of one story are not 24 independent trials — the Wilson
+interval was narrower than the evidence supported, and it fed the clause that separates
+UNDETERMINED from SURVIVES, which is the clause a false survivor would enter through.
 """
 
 from __future__ import annotations
 
-import math
+import random
 import statistics
 from collections.abc import Callable, Iterable, Sequence
 from dataclasses import dataclass, field
@@ -41,8 +53,10 @@ def auc(positive: Sequence[float], negative: Sequence[float]) -> float:
     """Rank AUC with ties at half. Copied in behaviour from `tools/build_craft_profile.py`.
 
     Reimplemented rather than imported so this file runs under either interpreter, and checked
-    against that one in `selftest()` — a silently divergent AUC would make every number here
-    incomparable with the committed profile.
+    in `selftest()` against the O(n²) pairwise definition on tie-heavy draws — tie handling is
+    where rank implementations usually diverge, and it is the check that keeps this and the
+    `tools/` twin comparable. **If you change tie handling here, change it there**, or two
+    experiments stop being comparable and nothing will say so.
     """
     if not positive or not negative:
         return 0.5
@@ -88,20 +102,52 @@ def spearman(xs: Sequence[float], ys: Sequence[float]) -> float:
     return num / den if den else float("nan")
 
 
-def binomial_ci(successes: int, trials: int, z: float = 1.96) -> tuple[float, float]:
-    """Wilson interval. Used on `paired_rate`, where the null is exactly 0.5.
+def directional_rate(deltas: Sequence[float], direction: int) -> float:
+    """Fraction of deltas that moved in the declared direction, ties at half.
 
-    Wilson rather than normal-approximation because the rates of interest here sit near 0.5
-    and near 1.0 at small n, and the normal interval is badly wrong at the top end — which is
-    the end a promising result lands on.
+    Over one chapter's variants this *is* the rank AUC of the variants against the chapter's
+    single original — P(variant on the damaged side of its own original), ties split — which
+    is why the fields it feeds keep the `_auc` suffix and the 0.5-is-chance reading.
     """
-    if trials == 0:
+    moved = sum(1.0 if delta * direction > 0 else 0.5 if delta == 0 else 0.0 for delta in deltas)
+    return moved / len(deltas)
+
+
+def cluster_ci(
+    chapter_counts: Sequence[tuple[int, int]], draws: int = 2000, seed: int = 11
+) -> tuple[float, float]:
+    """95% chapter-resampled bootstrap interval for the pooled win rate.
+
+    Replaces a Wilson interval over pooled pairs. Wilson answers the right question only for
+    independent trials, and these are not: every chapter contributes ~24 pairs that share one
+    original, one author and one stretch of one story, so the effective sample size sits
+    nearer the chapter count than the pair count. Resampling whole chapters keeps that
+    dependence inside every draw, and the interval widens accordingly — the honest direction,
+    since this interval feeds the clause that separates UNDETERMINED from SURVIVES and a
+    too-narrow interval is how a false survivor gets minted.
+
+    Deterministic: the seed is fixed, so a re-run reports the interval its predecessor did.
+    Fewer than two chapters support no resampling — one cluster drawn from itself has width
+    zero and would dress certainty in interval notation — so the interval is (0.0, 1.0), which
+    no verdict clause can read as evidence.
+    """
+    usable = [(wins, pairs) for wins, pairs in chapter_counts if pairs]
+    if len(usable) < 2:
         return (0.0, 1.0)
-    p = successes / trials
-    denom = 1 + z * z / trials
-    centre = (p + z * z / (2 * trials)) / denom
-    half = z * math.sqrt(p * (1 - p) / trials + z * z / (4 * trials * trials)) / denom
-    return (round(max(0.0, centre - half), 4), round(min(1.0, centre + half), 4))
+    rng = random.Random(seed)
+    rates: list[float] = []
+    for _ in range(draws):
+        wins = 0
+        pairs = 0
+        for _ in range(len(usable)):
+            w, p = usable[rng.randrange(len(usable))]
+            wins += w
+            pairs += p
+        rates.append(wins / pairs)
+    rates.sort()
+    low = rates[round(0.025 * (draws - 1))]
+    high = rates[round(0.975 * (draws - 1))]
+    return (round(low, 4), round(high, 4))
 
 
 @dataclass
@@ -110,10 +156,16 @@ class Result:
 
     metric: str
     n_chapters: int
+    #: Mean over chapters of the within-chapter damaged-side rate; 0.5 is chance.
     detect_auc: float = 0.5
+    #: The same statistic over sham variants. Distance from 0.5 is bad in either direction.
     sham_auc: float = 0.5
+    #: The same statistic computed for raw word count in place of the metric.
     length_auc: float = 0.5
+    #: Pooled fraction of degraded variants moved strictly the declared way; a tie is not
+    #: evidence of movement, so ties count against — stricter than the `_auc` fields.
     paired_rate: float = 0.5
+    #: Chapter-resampled bootstrap 95% interval for `paired_rate` — see `cluster_ci`.
     paired_ci: tuple[float, float] = (0.0, 1.0)
     paired_n: int = 0
     per_ablation: dict[str, dict[str, float]] = field(default_factory=dict)
@@ -121,19 +173,31 @@ class Result:
 
     @property
     def margin(self) -> float:
-        """detect minus sham. The number that is actually the result."""
-        return round(self.detect_auc - self.sham_auc, 4)
+        """Detect's height above chance minus the sham's distance from chance, either way.
+
+        The first formulation was `detect_auc - sham_auc`, and the first CDG battery measured
+        why that is wrong: its sham moved *opposite* to the declared damage direction (sham
+        0.28 against detect 0.52), and the subtraction rewarded the wrong-way movement with a
+        margin of +0.23 — the control that should have spent the result was credited to it.
+        A sham response is disqualifying whichever way it points, so it is charged as a
+        distance. A metric moving *with* damage and *away* from shams is the only shape that
+        scores here.
+        """
+        return round((self.detect_auc - 0.5) - abs(self.sham_auc - 0.5), 4)
 
     def verdict(self) -> str:
         """A one-line reading, phrased so it can say "dead" without hedging."""
-        if abs(self.detect_auc - 0.5) < 0.05:
-            return "DEAD — does not separate damaged prose from its own original"
-        if abs(self.margin) < 0.05:
+        if self.detect_auc < 0.55:
             return (
-                f"DEAD — detect {self.detect_auc} but sham {self.sham_auc}; it is responding "
-                "to the text having been edited, not to the damage"
+                f"DEAD — detect {self.detect_auc}: damage does not move the score in the "
+                "declared direction"
             )
-        if abs(self.detect_auc - 0.5) <= abs(self.length_auc - 0.5):
+        if self.margin < 0.05:
+            return (
+                f"DEAD — detect {self.detect_auc} but sham at {self.sham_auc}; it is "
+                "responding to the text having been edited, not to the damage"
+            )
+        if self.detect_auc - 0.5 <= abs(self.length_auc - 0.5):
             return (
                 f"DEAD — raw word count separates as well ({self.length_auc}); §1a.1's "
                 "shallow incumbent is not beaten"
@@ -164,60 +228,61 @@ def evaluate(
     +1 if damage raises it. It is required rather than inferred, for the reason
     `calibration.Direction`'s own docstring gives — a guessed direction inverts the result
     silently, "the failure mode that produces a confidently backwards quality signal". Nothing
-    here fits the direction to the data.
+    here fits the direction to the data, and movement *against* the declared direction is
+    never credited: a metric that separates the wrong way is dead, not inverted.
     """
     chapters = list(texts)
     degrader_keys = {ablation.key for ablation in DEGRADERS}
     sham_keys = {ablation.key for ablation in SHAMS}
 
-    originals: list[float] = []
-    original_lengths: list[float] = []
-    degraded: list[float] = []
-    degraded_lengths: list[float] = []
-    shammed: list[float] = []
     per_key: dict[str, list[tuple[float, float]]] = {}
+    detect_rates: list[float] = []
+    sham_rates: list[float] = []
+    length_rates: list[float] = []
+    chapter_pairs: list[tuple[int, int]] = []
     wins = 0
     pairs = 0
 
     for index, text in enumerate(chapters):
         donor = donors[index % len(donors)] if donors else ""
         base: float | None = None
+        base_length = 0.0
+        degrader_deltas: list[float] = []
+        length_deltas: list[float] = []
+        sham_deltas: list[float] = []
         for key, _sign, _item, dose, damaged in variants(text, donor=donor, doses=doses):
             score = scorer(damaged)
             length = float(len(damaged.split()))
             if key == "original":
                 base = score
-                originals.append(score)
-                original_lengths.append(length)
+                base_length = length
                 continue
             if base is None:  # pragma: no cover - `variants` yields the original first
                 continue
             if key in degrader_keys:
-                degraded.append(score)
-                degraded_lengths.append(length)
+                degrader_deltas.append(score - base)
+                length_deltas.append(length - base_length)
                 per_key.setdefault(key, []).append((dose, score - base))
-                # The paired test: did this chapter's own damaged copy move the expected way?
-                pairs += 1
-                if (score - base) * direction > 0:
-                    wins += 1
             elif key in sham_keys:
-                shammed.append(score)
+                sham_deltas.append(score - base)
+        # The paired test: did this chapter's own damaged copies move the expected way?
+        # Wins are strict — a tie is not evidence of movement.
+        chapter_wins = sum(1 for delta in degrader_deltas if delta * direction > 0)
+        wins += chapter_wins
+        pairs += len(degrader_deltas)
+        chapter_pairs.append((chapter_wins, len(degrader_deltas)))
+        if degrader_deltas:
+            detect_rates.append(directional_rate(degrader_deltas, direction))
+            length_rates.append(directional_rate(length_deltas, direction))
+        if sham_deltas:
+            sham_rates.append(directional_rate(sham_deltas, direction))
 
     result = Result(metric=metric, n_chapters=len(chapters))
-    # Orientation: `auc(positive, negative)` reads "positive scores above negative". Damage is
-    # put on whichever side `direction` says it should be *higher* on, so a surviving metric
-    # always reports an AUC above 0.5 and the number means the same thing for every candidate.
-    if direction < 0:
-        result.detect_auc = auc(originals, degraded)
-        result.sham_auc = auc(originals, shammed)
-        result.length_auc = auc(original_lengths, degraded_lengths)
-    else:
-        result.detect_auc = auc(degraded, originals)
-        result.sham_auc = auc(shammed, originals)
-        result.length_auc = auc(degraded_lengths, original_lengths)
-
+    result.detect_auc = round(statistics.fmean(detect_rates), 4) if detect_rates else 0.5
+    result.sham_auc = round(statistics.fmean(sham_rates), 4) if sham_rates else 0.5
+    result.length_auc = round(statistics.fmean(length_rates), 4) if length_rates else 0.5
     result.paired_rate = round(wins / pairs, 4) if pairs else 0.5
-    result.paired_ci = binomial_ci(wins, pairs)
+    result.paired_ci = cluster_ci(chapter_pairs)
     result.paired_n = pairs
 
     for key, observations in sorted(per_key.items()):
@@ -237,21 +302,22 @@ def evaluate(
 
     if result.length_auc > 0.6:
         result.notes.append(
-            f"length alone separates at {result.length_auc}; `sentence_deletion` is the only "
-            "length-changing degrader and dominates this number — rerun without it to read "
-            "the rest"
+            f"raw length separates at {result.length_auc}; `sentence_deletion` is the only "
+            "length-changing degrader and every other variant ties at half, so this is "
+            "deletion's number — read the metric's own `sentence_deletion` row against it"
         )
-    if not shammed:
+    if not sham_rates:
         result.notes.append("no sham variants were produced; the control did not run")
     return result
 
 
 def selftest() -> None:
-    """Three scorers with known answers, because an evaluation harness needs its own control.
+    """Scorers with known answers, because an evaluation harness needs its own control.
 
     A harness that reports 0.85 for a real metric is only believable if it reports the right
-    thing for scorers whose answers are known in advance. The middle case is the one worth
-    reading, and it is why this harness exists rather than a plain AUC:
+    thing for scorers whose answers are known in advance. First `auc` itself is checked
+    against the O(n²) definition it compresses; then three scorers run, and the middle case
+    is the one worth reading — it is why this harness exists rather than a plain AUC:
 
     - **random** — must land at chance and must be called dead.
     - **change-detector** — an oracle that perfectly answers "was this text modified at all".
@@ -262,6 +328,9 @@ def selftest() -> None:
       nothing else in this directory can be believed.
     - **damage-detector** — an oracle that responds to degraders and ignores shams. The only
       one that may survive.
+
+    Each expectation is asserted, not only printed — a selftest whose failures scroll past is
+    a selftest nobody runs twice.
     """
     import random as _random
     import sys
@@ -269,6 +338,18 @@ def selftest() -> None:
 
     sys.path.insert(0, str(Path(__file__).resolve().parent))
     from corpus_io import mol_chapters
+
+    # `auc` against the pairwise definition, on small integer grids because collisions are
+    # where rank implementations diverge. Tolerance is the 4-decimal rounding `auc` applies.
+    check = _random.Random(1)
+    for _ in range(300):
+        pos = [check.randrange(6) / 2.0 for _ in range(check.randrange(1, 9))]
+        neg = [check.randrange(6) / 2.0 for _ in range(check.randrange(1, 9))]
+        brute = sum(
+            1.0 if a > b else 0.5 if a == b else 0.0 for a in pos for b in neg
+        ) / (len(pos) * len(neg))
+        assert abs(auc(pos, neg) - brute) <= 5.1e-5, (pos, neg, auc(pos, neg), brute)
+    print("auc matches the pairwise definition over 300 tie-heavy draws")
 
     chapters = [unit.text for unit in mol_chapters()[:8]]
     donors = [unit.text for unit in mol_chapters()[60:68]]
@@ -280,6 +361,7 @@ def selftest() -> None:
     print(f"random scorer      detect={blind.detect_auc} sham={blind.sham_auc} "
           f"paired={blind.paired_rate} {blind.paired_ci}")
     print(f"  -> {blind.verdict()}")
+    assert blind.verdict().startswith("DEAD"), blind.verdict()
 
     originals = set(chapters)
     changed = evaluate(
@@ -289,6 +371,7 @@ def selftest() -> None:
     print(f"change-detector    detect={changed.detect_auc} sham={changed.sham_auc} "
           f"margin={changed.margin} paired={changed.paired_rate}")
     print(f"  -> {changed.verdict()}")
+    assert changed.verdict().startswith("DEAD"), changed.verdict()
 
     # The positive control. Built by scoring the *sham* variants as undamaged, which is the
     # information a real metric would have to earn: shams are edits that preserve craft, and
@@ -308,6 +391,7 @@ def selftest() -> None:
     print(f"damage-detector    detect={damage.detect_auc} sham={damage.sham_auc} "
           f"margin={damage.margin} paired={damage.paired_rate} {damage.paired_ci}")
     print(f"  -> {damage.verdict()}")
+    assert damage.verdict().startswith("SURVIVES"), damage.verdict()
 
 
 if __name__ == "__main__":
