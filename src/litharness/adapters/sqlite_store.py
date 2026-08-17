@@ -1,10 +1,9 @@
-"""SQLite persistence for revisions, events, the outbox and jobs.
+"""SQLite persistence for revisions, events and jobs.
 
 SQLite is the plan's sanctioned single-node alpha store (§11), and it makes the hardest
 Stage 0 property free: **everything a state change touches commits in one transaction.**
-A revision, its node versions, its events and its outbox rows go in together or not at
-all, so there is no window in which accepted prose exists without the event that records
-it.
+A revision, its node versions and its events go in together or not at all, so there is
+no window in which accepted prose exists without the event that records it.
 
 **Write-ordering rule, recorded now because it will matter later.** There is no separate
 blob store at this stage — node content is a TEXT column, inside the same transaction.
@@ -53,14 +52,7 @@ from litharness.domain.calibration import (
 )
 from litharness.domain.craft import CraftMetric
 from litharness.domain.directives import Directive, DirectiveKind, DirectiveStatus
-from litharness.domain.events import (
-    MAX_DELIVERY_ATTEMPTS,
-    Event,
-    EventType,
-    OutboxEntry,
-    OutboxState,
-    delivery_backoff,
-)
+from litharness.domain.events import Event, EventType
 from litharness.domain.exceptions import ExceptionKind, ExceptionRecord, ExceptionStatus
 from litharness.domain.findings import UNRESOLVED_STATUSES
 from litharness.domain.findings import Finding as DomainFinding
@@ -83,9 +75,9 @@ from litharness.domain.policy import (
 )
 from litharness.domain.revision import Revision, node_version_id
 
-#: How long a writer waits for a contended database before reporting it locked. Two
-#: overlapping cron ticks contend on `BEGIN IMMEDIATE` by design (§4.1), so this is the
-#: scheduler's tolerance, not a library default.
+#: How long a writer waits for a contended database before reporting it locked. An
+#: operator command (`status`, `backup`) contends on `BEGIN IMMEDIATE` with the ticking
+#: session by design, so this is the operator's tolerance, not a library default.
 BUSY_TIMEOUT_MS = 5000
 
 
@@ -247,10 +239,11 @@ class SqliteStore:
             connection.execute("PRAGMA journal_mode=WAL")
             connection.execute("PRAGMA foreign_keys=ON")
             connection.execute("PRAGMA synchronous=FULL")
-            # Explicit rather than inherited. Python's default is 5s, which is fine, but a
-            # scheduler's tolerance for a busy database is a decision the scheduler should
-            # own: two overlapping cron ticks contend on `BEGIN IMMEDIATE` by design, and
-            # how long the loser waits before reporting it locked belongs here, in writing.
+            # Explicit rather than inherited. Python's default is 5s, which is fine, but
+            # tolerance for a busy database is a decision this store should own: an
+            # operator command contends with the ticking session on `BEGIN IMMEDIATE` by
+            # design, and how long the loser waits before reporting it locked belongs
+            # here, in writing.
             connection.execute(f"PRAGMA busy_timeout={BUSY_TIMEOUT_MS}")
             store = cls(connection)
             store.migrate(migrations or migrations_dir())
@@ -301,7 +294,7 @@ class SqliteStore:
         **This must use SQLite's backup API, not a file copy**, and the reason is specific
         to this store: it runs in WAL mode, so committed data lives partly in the `-wal`
         sidecar until a checkpoint. Copying the main database file — the obvious thing an
-        operator reaches for, and what a naive `shutil.copy` in a cron job would do —
+        operator reaches for, and what a naive scheduled `shutil.copy` would do —
         silently omits everything committed since the last checkpoint. The backup API
         walks the pages under a read lock and produces a file that is a database.
 
@@ -663,7 +656,7 @@ class SqliteStore:
             block_payload=payload,
         )
 
-    # -- events and outbox ----------------------------------------------------
+    # -- events ---------------------------------------------------------------
 
     def append_events(self, events: Iterable[Event]) -> None:
         with self.transaction() as connection:
@@ -673,7 +666,9 @@ class SqliteStore:
     @staticmethod
     def _insert_event(connection: sqlite3.Connection, event: Event) -> None:
         envelope = event.to_contract()
-        cursor = connection.execute(
+        # INSERT OR IGNORE on the content-derived key is the event dedupe: replaying the
+        # same logical event collapses onto the existing row.
+        connection.execute(
             "INSERT OR IGNORE INTO events (idempotency_key, event_id, event_type, created_at, "
             "actor, project_id, book_id, branch_id, revision_id, causation_id, correlation_id, "
             "payload, payload_digest) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
@@ -693,13 +688,6 @@ class SqliteStore:
                 envelope.payload_digest or "",
             ),
         )
-        # Only enqueue an outbox row for a genuinely new event; a duplicate delivery must
-        # not resurrect an already-dispatched one.
-        if cursor.rowcount:
-            connection.execute(
-                "INSERT OR IGNORE INTO outbox (idempotency_key, state) VALUES (?, ?)",
-                (envelope.idempotency_key, OutboxState.PENDING.value),
-            )
 
     def read_log(self, *, since: int = 0) -> list[StoredEvent]:
         return [
@@ -723,88 +711,6 @@ class SqliteStore:
             correlation_id=row["correlation_id"],
             payload=json.loads(row["payload"]),
         )
-
-    def pending_outbox(self, limit: int = 100, *, now: float | None = None) -> list[OutboxEntry]:
-        """Entries due for delivery, oldest first.
-
-        `now` filters out entries still inside their backoff window. It defaults to None —
-        meaning "everything pending, ignore backoff" — because that is what an operator
-        inspecting the queue wants and what most tests assert against. The Conductor always
-        passes it; a drain that ignored backoff would reintroduce the spin.
-        """
-        if now is None:
-            rows = self._connection.execute(
-                "SELECT outbox.idempotency_key, outbox.state, outbox.delivery_attempts, "
-                "events.* FROM outbox JOIN events USING (idempotency_key) "
-                "WHERE outbox.state = ? ORDER BY events.sequence LIMIT ?",
-                (OutboxState.PENDING.value, limit),
-            ).fetchall()
-        else:
-            rows = self._connection.execute(
-                "SELECT outbox.idempotency_key, outbox.state, outbox.delivery_attempts, "
-                "events.* FROM outbox JOIN events USING (idempotency_key) "
-                "WHERE outbox.state = ? "
-                "AND (outbox.next_attempt_at IS NULL OR outbox.next_attempt_at <= ?) "
-                "ORDER BY events.sequence LIMIT ?",
-                (OutboxState.PENDING.value, now, limit),
-            ).fetchall()
-        return [
-            OutboxEntry(
-                idempotency_key=row["idempotency_key"],
-                event=self._event_from_row(row),
-                state=OutboxState(row["state"]),
-                delivery_attempts=row["delivery_attempts"],
-            )
-            for row in rows
-        ]
-
-    def mark_sent(self, idempotency_key: str) -> None:
-        """Called only after delivery succeeded — send-then-mark, never the reverse."""
-        with self.transaction() as connection:
-            connection.execute(
-                "UPDATE outbox SET state = ?, delivery_attempts = delivery_attempts + 1 "
-                "WHERE idempotency_key = ?",
-                (OutboxState.SENT.value, idempotency_key),
-            )
-
-    def record_delivery_attempt(self, idempotency_key: str, *, now: float) -> bool:
-        """Record a refused delivery, back it off, and park it once the budget is spent.
-
-        Returns True if the entry is now terminal. The event itself is never lost — it
-        stays in `events`, which is the durable log. What stops is the *delivery*, which is
-        the right thing to bound: a sink that has refused eleven times across an hour of
-        backoff will not accept the twelfth, and continuing to ask costs a synchronous
-        write per entry per tick, forever.
-        """
-        with self.transaction() as connection:
-            row = connection.execute(
-                "SELECT delivery_attempts FROM outbox WHERE idempotency_key = ?",
-                (idempotency_key,),
-            ).fetchone()
-            if row is None:
-                return False
-            attempts = int(row["delivery_attempts"]) + 1
-            if attempts >= MAX_DELIVERY_ATTEMPTS:
-                connection.execute(
-                    "UPDATE outbox SET delivery_attempts = ?, state = ?, next_attempt_at = NULL "
-                    "WHERE idempotency_key = ?",
-                    (attempts, OutboxState.FAILED.value, idempotency_key),
-                )
-                return True
-            connection.execute(
-                "UPDATE outbox SET delivery_attempts = ?, next_attempt_at = ? "
-                "WHERE idempotency_key = ?",
-                (attempts, now + delivery_backoff(attempts), idempotency_key),
-            )
-            return False
-
-    def outbox_counts_by_state(self) -> dict[str, int]:
-        return {
-            row["state"]: int(row["n"])
-            for row in self._connection.execute(
-                "SELECT state, COUNT(*) AS n FROM outbox GROUP BY state ORDER BY state"
-            )
-        }
 
     # -- jobs -----------------------------------------------------------------
 
@@ -1722,15 +1628,6 @@ class SqliteStore:
 
     # -- operator controls ----------------------------------------------------
 
-    def set_control(self, key: str, value: str, *, at: str, by: str | None = None) -> None:
-        self._jobs.set_control(key, value, at=at, by=by)
-
-    def control(self, key: str) -> str | None:
-        return self._jobs.control(key)
-
-    def is_paused(self) -> bool:
-        return self._jobs.is_paused()
-
     def job_counts_by_status(self) -> dict[str, int]:
         """Queue depth per status — the operator's first question.
 
@@ -1756,72 +1653,6 @@ class SqliteStore:
         spent, and reviving it without changing anything would just spend it again.
         """
         return self._jobs.revive(job_id)
-
-    # -- instance lease -------------------------------------------------------
-
-    def acquire_instance_lease(self, scope: str, holder: str, now: float, duration: float) -> bool:
-        """Claim the Conductor role for ``scope``. False means someone else holds it.
-
-        A single IMMEDIATE transaction, so two overlapping cron invocations cannot both
-        win. Re-claiming while still holding is allowed and extends the lease, which is
-        what makes a long tick able to renew rather than losing its own role.
-        """
-        with self.transaction() as connection:
-            row = connection.execute(
-                "SELECT holder, expires_at FROM instance_leases WHERE scope = ?", (scope,)
-            ).fetchone()
-            if row is not None and row["expires_at"] > now and row["holder"] != holder:
-                return False
-            connection.execute(
-                "INSERT INTO instance_leases (scope, holder, expires_at, acquired_at) "
-                "VALUES (?, ?, ?, ?) ON CONFLICT (scope) DO UPDATE SET "
-                "holder = excluded.holder, expires_at = excluded.expires_at, "
-                "acquired_at = excluded.acquired_at",
-                (scope, holder, now + duration, now),
-            )
-            return True
-
-    def release_instance_lease(self, scope: str, holder: str) -> None:
-        with self.transaction() as connection:
-            connection.execute(
-                "DELETE FROM instance_leases WHERE scope = ? AND holder = ?", (scope, holder)
-            )
-
-    def instance_lease_holder(self, scope: str, now: float) -> str | None:
-        row = self._connection.execute(
-            "SELECT holder FROM instance_leases WHERE scope = ? AND expires_at > ?",
-            (scope, now),
-        ).fetchone()
-        return None if row is None else str(row["holder"])
-
-    def instance_lease(self, scope: str) -> tuple[str | None, float | None]:
-        """Holder and expiry, unfiltered by time.
-
-        Deliberately not the boolean `instance_lease_holder` answers. A crashed holder
-        still owns its lease for the full duration, so "is someone leading" says yes for
-        five minutes after the process died. Returning the expiry lets a caller show that
-        to a human instead of reporting a corpse as healthy.
-        """
-        row = self._connection.execute(
-            "SELECT holder, expires_at FROM instance_leases WHERE scope = ?", (scope,)
-        ).fetchone()
-        if row is None:
-            return None, None
-        return str(row["holder"]), float(row["expires_at"])
-
-    def last_tick(self) -> dict[str, Any] | None:
-        """The most recent tick — the system's liveness signal.
-
-        `tick_records.started_at` has been stored and indexed since migration 002 and read
-        by nothing, which is why "when did it last run" had no answer.
-        """
-        row = self._connection.execute(
-            "SELECT tick_id, holder, started_at, outcome, job_id FROM tick_records "
-            "ORDER BY started_at DESC, rowid DESC LIMIT 1"
-        ).fetchone()
-        return None if row is None else dict(row)
-
-    # -- digest and ticks -----------------------------------------------------
 
     # -- directives -----------------------------------------------------------
 
@@ -2083,12 +1914,6 @@ class SqliteStore:
         ).fetchone()["n"]
         if orphans:
             raise IntegrityFailure(f"{orphans} revision_nodes rows reference missing versions")
-        unlogged = self._connection.execute(
-            "SELECT COUNT(*) AS n FROM outbox "
-            "WHERE idempotency_key NOT IN (SELECT idempotency_key FROM events)"
-        ).fetchone()["n"]
-        if unlogged:
-            raise IntegrityFailure(f"{unlogged} outbox rows have no event")
         return len(rows)
 
 

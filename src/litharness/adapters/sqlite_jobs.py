@@ -243,22 +243,6 @@ class SqliteJobRepository:
         ).fetchone()
         return row is not None
 
-    def set_control(self, key: str, value: str, *, at: str, by: str | None = None) -> None:
-        with self._transaction() as connection:
-            connection.execute(
-                "INSERT INTO control (key, value, set_at, set_by) VALUES (?, ?, ?, ?) "
-                "ON CONFLICT (key) DO UPDATE SET value = excluded.value, "
-                "set_at = excluded.set_at, set_by = excluded.set_by",
-                (key, value, at, by),
-            )
-
-    def control(self, key: str) -> str | None:
-        row = self._connection.execute("SELECT value FROM control WHERE key = ?", (key,)).fetchone()
-        return None if row is None else str(row["value"])
-
-    def is_paused(self) -> bool:
-        return self.control("paused") == "true"
-
     def job_counts_by_status(self) -> dict[str, int]:
         return {
             row["status"]: int(row["n"])

@@ -151,19 +151,6 @@ def test_ingest_runs_before_selection(store: SqliteStore) -> None:
     assert seen == [0]
 
 
-def test_a_non_leader_tick_does_not_touch_the_inbox(store: SqliteStore) -> None:
-    """Ingest mutates shared state, so it sits inside the leadership guard with everything
-    else. Two overlapping cron ticks must not both drain."""
-    store.submit_directive(directive("More dungeon crawling."), received_at=STAMP)
-    conductor(store, holder="leader").tick(START)
-
-    follower = Conductor(store=store, holder="follower", project_id=PROJECT_ID)
-    result = follower.tick(START + 1.0)
-
-    assert result.outcome is TickOutcome.NOT_LEADER
-    assert result.ingested == 0
-
-
 def test_a_no_op_tick_with_an_empty_inbox_stays_a_no_op(store: SqliteStore) -> None:
     """The endurance property: ingest must not add per-tick state growth when there is
     nothing to ingest."""

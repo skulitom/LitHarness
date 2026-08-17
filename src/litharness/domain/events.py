@@ -1,18 +1,9 @@
-"""The event log and the transactional outbox.
-
-Two properties, both of which are about surviving a crash rather than about modelling.
+"""The event log.
 
 **Events are written in the same transaction as the state change they describe.** If a
 revision is accepted, the `ManuscriptRevisionAccepted` event is committed atomically with
 it. Anything else loses events on a crash between the two writes, and a lost event means
 derived state can never be rebuilt (§19's recovery clause).
-
-**The outbox is send-then-mark, so delivery is at-least-once and consumers dedupe.** A
-row is inserted in that same transaction, a dispatcher delivers it, and only then marks
-it sent. Crashing after delivery but before the mark redelivers — which is why every
-envelope carries an `idempotency_key` with a uniqueness constraint at the consuming end.
-Mark-then-send would be at-most-once, i.e. silent loss, which is the worse failure for a
-system whose whole audit story rests on the event log.
 
 `idempotency_key` is derived from the event's own identity rather than randomly, so a
 retry of the *same* logical event produces the same key and collapses on insert.
@@ -123,38 +114,3 @@ class Event:
             payload=dict(self.payload),
             payload_digest=payload_digest(self.payload),
         )
-
-
-class OutboxState(enum.StrEnum):
-    PENDING = "pending"
-    SENT = "sent"
-    #: Delivery gave up after `MAX_DELIVERY_ATTEMPTS`. Terminal, and the reason it exists:
-    #: without a state to stop in, an entry whose sink never accepts it is retried on every
-    #: tick forever — §19's "nothing spins", violated by the audit trail itself.
-    FAILED = "failed"
-
-
-#: Delivery attempts before an outbox entry is parked as FAILED.
-#:
-#: The event is never lost: it stays in `events`, which is the durable log. What stops is
-#: the *delivery*, and that is the right thing to bound — a sink that has refused eleven
-#: times across an hour of backoff is not going to accept the twelfth, and continuing to
-#: ask costs a synchronous write per tick per entry.
-MAX_DELIVERY_ATTEMPTS = 11
-
-#: Backoff schedule: 1 minute doubling to roughly an hour, then flat.
-DELIVERY_BACKOFF_SECONDS = 60.0
-MAX_DELIVERY_BACKOFF_SECONDS = 3600.0
-
-
-def delivery_backoff(attempts: int) -> float:
-    """Seconds to wait before attempt ``attempts + 1``. Exponential, capped."""
-    return float(min(DELIVERY_BACKOFF_SECONDS * (2**attempts), MAX_DELIVERY_BACKOFF_SECONDS))
-
-
-@dataclass(frozen=True, slots=True)
-class OutboxEntry:
-    idempotency_key: str
-    event: Event
-    state: OutboxState = OutboxState.PENDING
-    delivery_attempts: int = 0

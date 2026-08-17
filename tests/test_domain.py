@@ -1,8 +1,8 @@
 """Domain-layer gates for Stage 0's exit criterion.
 
 The exit sentence is "revisions, patches, events, and restore work end-to-end without a
-model". This module covers revisions and patches; `test_store.py` covers events, jobs,
-outbox and restore.
+model". This module covers revisions and patches; `test_store.py` covers events, jobs
+and restore.
 """
 
 from __future__ import annotations

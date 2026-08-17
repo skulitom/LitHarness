@@ -20,7 +20,7 @@ from litharness.adapters.sqlite_store import SqliteStore
 from litharness.cli import EXIT_ATTENTION, EXIT_FAULT, EXIT_OK, build_parser, main
 from litharness.domain.beats import TemplateMismatch
 from litharness.domain.directives import DirectiveStatus
-from litharness.domain.events import Event, EventType
+from litharness.domain.events import EventType
 from litharness.domain.jobs import Job, JobStatus
 from litharness.domain.policy import Outcome
 from litharness.providers import build_default_registry
@@ -122,20 +122,14 @@ def test_an_operational_fault_exits_two_not_one(tmp_path, capsys) -> None:
 # --- status --------------------------------------------------------------------------
 
 
-def test_status_reports_a_never_ticked_system_as_stalled(db, capsys) -> None:
-    run(db, "init")
-    assert run(db, "status") == EXIT_ATTENTION
-    assert "STALLED" in capsys.readouterr().out
-
-
-def test_status_is_clean_after_a_tick(db, capsys) -> None:
+def test_status_reports_the_queue_and_exits_zero(db, capsys) -> None:
     run(db, "init")
     run(db, "tick")
     capsys.readouterr()
     assert run(db, "status") == EXIT_OK
     out = capsys.readouterr().out
-    assert "STALLED" not in out
-    assert "no_work" in out
+    assert "jobs" in out
+    assert "needs attention 0" in out
 
 
 def test_status_json_is_machine_readable(db, capsys) -> None:
@@ -144,12 +138,14 @@ def test_status_json_is_machine_readable(db, capsys) -> None:
     capsys.readouterr()
     run(db, "status", "--json")
     report = json.loads(capsys.readouterr().out)
-    assert report["stalled"] is False
     assert report["needs_attention"] == 0
-    assert report["lease_holder"] == "cron"
+    assert report["digest"]["ticks"] == 1
+    assert "jobs" in report and "spend" in report
 
 
-def test_status_surfaces_units_that_need_attention(db, capsys) -> None:
+def test_status_surfaces_units_that_need_attention_and_still_exits_zero(db, capsys) -> None:
+    """The count is shown to the operator driving the session; status is not an external
+    monitor, so nothing keys on its exit code."""
     run(db, "init")
     store = SqliteStore.open(db)
     store.enqueue(Job(job_id="mystery-1", job_kind="no_such_handler"))
@@ -158,7 +154,7 @@ def test_status_surfaces_units_that_need_attention(db, capsys) -> None:
         run(db, "tick")
     capsys.readouterr()
 
-    assert run(db, "status") == EXIT_ATTENTION
+    assert run(db, "status") == EXIT_OK
     assert "needs attention 1" in capsys.readouterr().out
 
 
@@ -254,34 +250,6 @@ def test_the_same_directive_twice_is_reported_as_a_duplicate(db, capsys) -> None
     assert "dir-" in first and "dir-" in second
 
 
-def test_pause_survives_the_process(db, capsys) -> None:
-    """The whole reason pause moved into storage. Under §4.1's cron model every tick is a
-    fresh process, so an in-memory flag was reconstructed as False every time and
-    `TickOutcome.PAUSED` was unreachable in the deployment the plan specifies."""
-    run(db, "init")
-    assert run(db, "pause") == EXIT_OK
-    capsys.readouterr()
-
-    run(db, "tick")
-    assert "paused" in capsys.readouterr().out
-
-    run(db, "resume")
-    capsys.readouterr()
-    run(db, "tick")
-    assert "no_work" in capsys.readouterr().out
-
-
-def test_a_paused_tick_does_no_work_but_still_records(db) -> None:
-    run(db, "init")
-    run(db, "pause")
-    run(db, "tick")
-    store = SqliteStore.open(db)
-    try:
-        assert store.last_tick()["outcome"] == "paused"
-    finally:
-        store.close()
-
-
 # --- inspection and recovery ---------------------------------------------------------
 
 
@@ -308,94 +276,7 @@ def test_revive_refuses_a_job_that_is_not_parked(db) -> None:
         run(db, "revive", "a")
 
 
-# --- notification delivery -----------------------------------------------------------
-
-
-def _pending_event(db) -> None:
-    """One undelivered event in the outbox, without a model anywhere in the path."""
-    store = SqliteStore.open(db)
-    try:
-        store.append_events(
-            [
-                Event(
-                    event_type=EventType.PLAN_CHANGED,
-                    project_id="00000000-0000-5000-8000-000000000000",
-                    created_at="2026-08-12T00:00:00Z",
-                    payload={"reason": "somewhere to deliver"},
-                )
-            ]
-        )
-    finally:
-        store.close()
-
-
-def test_a_tick_delivers_the_outbox_to_the_configured_sink(db, tmp_path, capsys) -> None:
-    """The count `tick` prints was structurally zero until this flag existed: nothing ever
-    passed a dispatcher, so every event ever written stayed pending forever."""
-    run(db, "init")
-    _pending_event(db)
-    notifications = tmp_path / "notifications.jsonl"
-    capsys.readouterr()
-
-    assert run(db, "--notify-file", str(notifications), "tick") == EXIT_OK
-    assert "dispatched=1" in capsys.readouterr().out
-
-    [envelope] = [
-        json.loads(line) for line in notifications.read_text(encoding="utf-8").splitlines()
-    ]
-    assert envelope["event_type"] == "PlanChanged"
-    assert envelope["payload"] == {"reason": "somewhere to deliver"}
-
-    store = SqliteStore.open(db)
-    try:
-        assert store.pending_outbox() == []
-        assert store.outbox_counts_by_state() == {"sent": 1}
-    finally:
-        store.close()
-
-
-def test_a_tick_with_no_sink_configured_leaves_the_outbox_pending(db, capsys) -> None:
-    """The honest default survives the flag. Nowhere to deliver means nothing delivered,
-    not a delivery claimed into a destination nobody agreed to read."""
-    run(db, "init")
-    _pending_event(db)
-    capsys.readouterr()
-
-    assert run(db, "tick") == EXIT_OK
-    assert "dispatched=0" in capsys.readouterr().out
-
-    store = SqliteStore.open(db)
-    try:
-        assert len(store.pending_outbox()) == 1
-    finally:
-        store.close()
-
-
-def test_an_unwritable_sink_leaves_the_entry_pending_and_does_not_stop_the_tick(
-    db, tmp_path, capsys
-) -> None:
-    """Delivery is drained *before* work selection, so a sink that raised would stop the
-    book from being written at all. It refuses instead: the tick still ingests its
-    direction, the entry stays pending with its attempt counted, and the operator is told
-    why rather than left with a configured sink that is silently receiving nothing."""
-    run(db, "init")
-    run(db, "directive", "More rain on the glass.", "--kind", "arc_note")
-    blocker = tmp_path / "not-a-directory"
-    blocker.write_text("", encoding="utf-8")
-    capsys.readouterr()
-
-    assert run(db, "--notify-file", str(blocker / "out.jsonl"), "tick") == EXIT_OK
-
-    captured = capsys.readouterr()
-    assert "ingested=1" in captured.out and "dispatched=0" in captured.out
-    assert "undelivered" in captured.err
-
-    store = SqliteStore.open(db)
-    try:
-        [pending] = store.pending_outbox()
-        assert pending.delivery_attempts == 1
-    finally:
-        store.close()
+# --- backup and verify ---------------------------------------------------------------
 
 
 def test_backup_and_verify_are_operator_reachable(db, tmp_path, capsys) -> None:

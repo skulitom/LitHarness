@@ -119,11 +119,14 @@ oldest-first — and **everything dropped is recorded** on the job payload with 
 because a baseline that packs by priority rather than relevance will drop things a scorer
 would have kept and has no way to know it. Relevance scoring is LongRangeContext's, per §12.
 
-On Windows Task Scheduler or cron, every 5–15 minutes (§4.1). **Exit codes are the
-interface**: `0` the tick did its job, including finding nothing to do; `1` a unit failed
-or parked and a human should eventually look; `2` an operational fault — locked or corrupt
-database, missing migrations, full disk, a bad argument — which a supervisor should retry
-next cadence rather than escalate.
+One book runs as one foreground session: a single process drives `tick` in a loop until
+the book is done. Ctrl+C is the pause — ticks are idempotent, so restarting the session is
+safe at any moment, and a job lease left behind by a killed process expires and is
+reclaimed on the next tick. **Exit codes are `tick`'s contract with whatever drives it**:
+`0` the tick did its job, including finding nothing to do; `1` a unit failed or parked and
+a human should eventually look; `2` an operational fault — locked or corrupt database,
+missing migrations, full disk, a bad argument — which the driving loop should retry next
+iteration rather than escalate.
 
 ## Operating it
 
@@ -131,9 +134,9 @@ next cadence rather than escalate.
 uv run litharness --database book.db status
 ```
 
-Reports liveness, queue depth by status, how many units need attention, outbox state, and
-unread direction. `--json` for machine consumption. Exits non-zero when the system is
-stalled or something needs attention, so it works as a cheap external check.
+Reports queue depth by status, how many units need attention, unread direction, and the
+day's digest and spend. `--json` for machine consumption. Always exits `0`: it is a report
+for the operator driving the session, not an external monitor.
 
 Everything else the director does:
 
@@ -197,7 +200,6 @@ uv run litharness --database book.db directive "No combat in the midpoint." \
   parked unit whose head has since moved would be revived onto a stale base. It does not
   overrule the gate — a beat blocked by a finding blocks again unless the finding is
   dismissed first.
-- `pause` / `resume` — durable, so it survives the process a cron tick starts and ends in.
 - `exceptions` / `resolve` — what policy could not resolve. Resolving closes your side; it
   deliberately does not requeue the unit, because an escalation may have been *right*.
 - `revert <revision> --book --branch` — restore an earlier revision as the new head. Goes
@@ -206,28 +208,13 @@ uv run litharness --database book.db directive "No combat in the midpoint." \
   this store runs in WAL mode and a file copy would silently omit everything since the
   last checkpoint.
 
-Events reach the outside world through the transactional outbox, which needs somewhere to
-drain:
-
-```bash
-uv run litharness --database book.db --notify-file events.jsonl tick
-```
-
-Each delivered event is appended as one line of JSON — a full `EventEnvelope`, so a consumer
-parses it with the contracts package rather than a shape invented here — and the line is
-fsynced before the entry is marked sent, because send-then-mark is only at-least-once if the
-send is durable first. `LITHARNESS_NOTIFY_FILE` sets it for a cron entry that should not
-carry the flag. Delivery is at-least-once by design, so a consumer dedupes on
-`idempotency_key`. **Without the flag nothing is delivered and nothing claims to have been**:
-the outbox accumulates visibly in `status` rather than marking events sent into a destination
-nobody agreed to read. A sink that cannot be written refuses rather than raising — the drain
-runs before work selection, so a mistyped path must not stop the book from being written —
-and the entry stays pending under the existing backoff while `tick` prints the reason on
-stderr.
+Every state change writes its event into the store's `events` table in the same
+transaction, so the audit trail is always in the database itself — there is no separate
+delivery channel to configure or monitor.
 
 **Choosing who writes it.** Both flags also read the environment — `LITHARNESS_PREFER`
-and `LITHARNESS_NO_BILLING` — so a machine can be told once to stay local, which is what a
-cron entry needs since it passes no flags. `plan/provider-adapters.md` §5 says selection "is
+and `LITHARNESS_NO_BILLING` — so a machine can be told once to stay local rather than
+repeating the flags on every invocation. `plan/provider-adapters.md` §5 says selection "is
 config, versioned like every other policy, never hardcoded"; it was hardcoded. The order this
 project *ships* is unchanged, because §5 and §1a settle it on prose quality rather than cost.
 
@@ -572,5 +559,6 @@ Stated plainly, because a system that runs is easy to mistake for a system that 
   remains true: a book whose scenes carry no `[STATUS]` line extracts nothing, which for a
   book outside the genre is abstention working as designed, not a gap.
 - **Operator controls are not narrative plan edits.** A directive whose kind is `control`
-  remains visible in the inbox; use the durable `pause` / `resume` commands for process
-  control. The planner does not reinterpret words like “stop” as story constraints.
+  remains visible in the inbox; process control is the session itself — Ctrl+C stops the
+  loop, and restarting is safe because ticks are idempotent. The planner does not
+  reinterpret words like “stop” as story constraints.

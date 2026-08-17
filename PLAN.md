@@ -359,10 +359,16 @@ engine — the "author" role decomposed into machine-checkable parts.
 
 ### 4.1 Heartbeat and scheduling
 
-- A cron-style tick (Windows Task Scheduler / cron; every 5–15 minutes) launches or
+*(Amended by §63: the deployment model is a foreground session driving `tick` in one
+process — §57 measured the one-process loop as what a daemon does, and cheaper. The
+cron framing below is retained as record; leader election, durable pause, and outbox
+delivery went with it. Ticks stay idempotent and one-bounded-unit; a killed session
+restarts safely because expired job leases are reclaimed and replayed ticks converge.)*
+
+- ~~A cron-style tick (Windows Task Scheduler / cron; every 5–15 minutes) launches or
   wakes the Conductor. A lease/lock guarantees single-instance execution; a missed
   heartbeat is observable. A resident daemon with the same tick contract is an
-  optimization, not a requirement.
+  optimization, not a requirement.~~
 - Each tick: (1) ingest directives, (2) reconcile state (crashed jobs, expired
   leases, stale approvals), (3) select work, (4) execute one bounded unit, (5)
   commit artifacts + events atomically, (6) update the digest. Ticks are idempotent;

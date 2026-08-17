@@ -16,7 +16,7 @@ all, so this file is the only description of a generator the layer has.
 from __future__ import annotations
 
 from collections.abc import Collection, Iterable, Sequence
-from typing import Any, Protocol
+from typing import Protocol
 
 import litharness_contracts as lc
 
@@ -25,7 +25,7 @@ from litharness.domain.budget import Spend
 from litharness.domain.calibration import Calibration
 from litharness.domain.craft import CraftMetric
 from litharness.domain.directives import Directive, DirectiveStatus
-from litharness.domain.events import Event, OutboxEntry
+from litharness.domain.events import Event
 from litharness.domain.exceptions import ExceptionRecord
 from litharness.domain.findings import Finding
 from litharness.domain.findings import Status as FindingStatus
@@ -216,26 +216,8 @@ class AuditRepository(Protocol):
 class EventRepository(Protocol):
     def append_events(self, events: Iterable[Event]) -> None: ...
 
-    def pending_outbox(
-        self, limit: int = ..., *, now: float | None = ...
-    ) -> list[OutboxEntry]: ...
-
-    def mark_sent(self, idempotency_key: str) -> None: ...
-
-    def record_delivery_attempt(self, idempotency_key: str, *, now: float) -> bool: ...
-
-    def outbox_counts_by_state(self) -> dict[str, int]: ...
-
 
 class OperationsRepository(Protocol):
-    def acquire_instance_lease(
-        self, scope: str, holder: str, now: float, duration: float
-    ) -> bool: ...
-
-    def instance_lease(self, scope: str) -> tuple[str | None, float | None]: ...
-
-    def is_paused(self) -> bool: ...
-
     def record_tick(
         self,
         *,
@@ -247,8 +229,6 @@ class OperationsRepository(Protocol):
         reconciled: int,
         dispatched: int,
     ) -> bool: ...
-
-    def last_tick(self) -> dict[str, Any] | None: ...
 
     def bump_digest(self, day: str, metric: str, value: int = ...) -> None: ...
 

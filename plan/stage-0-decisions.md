@@ -3217,3 +3217,50 @@ retirement note, §16 retitled retired-with-record, Stage 6 struck with its surv
 rehomed (backup drills and budget reviews to §19's playbook; calibration cadence to the
 preference engine's operation). Stage 7's "provider failover" mention falls to Cut 2's
 entry, not this one.
+
+## 63. The cron armor comes off, and the loop keeps what a crash still needs
+
+Cut 1 of §61's programme. §57 already drove a whole book from one process and noted the
+loop "is also what a daemon does"; §10's own text concedes its endurance criterion was
+"evidenced, not met" and measured state growth, never uptime. Every mechanism whose only
+customer was the cron deployment is now gone — **net −1,103 lines** — and migration 021
+drops the three tables that stored it.
+
+**Removed, each with the cron premise that justified it.** The instance lease (leader
+election among overlapping invocations; one process has nobody to lose the claim to).
+Durable pause via the `control` table (an in-memory flag "is a comment" under cron;
+Ctrl+C is the pause in a session — and the table's one key was never joined by the
+others its comment reserved room for). The entire outbox *delivery* path — dispatcher,
+JSONL sink with its fsync discipline, backoff constants, `--notify-file` — which carried
+events to a consumer who was not looking at a terminal; the operator now is the
+terminal, and the event log was always the durable half. Status-as-external-monitor:
+the cadence-derived stalled check (hardcoded 4×300s), lease reporting, and the
+exit-code-for-monitoring-scripts contract; `litharness status` survives demoted to an
+operator glance (jobs, exceptions, digest, spend) that always exits 0. `last_tick`
+lost its only caller with it and went too, per §51.1's promise-with-no-caller rule.
+The week-scale endurance simulations shrink to 50-tick pins of the same properties.
+
+**Kept, because a foreground session still crashes.** The events table (provenance —
+the `INSERT OR IGNORE` on content-derived keys is the dedupe, and it survived the
+outbox mint's removal untouched). Idempotent ticks (`tick_records`, §9) — replay
+convergence is what makes kill-and-restart safe, and it is pinned by tests. The **job**
+lease and its reclaim/requeue path — "who is working this unit" is a question a
+suspended laptop session needs answered exactly as a crashed cron tick did; the
+RUNNING→QUEUED edge exists only for that reclaim. Transient/parked attempt give-back
+(§24 — an outage costs time, never the unit). The digest (the planner writes
+`context_omitted` and `beats_enqueued` into it). `backup_to`. `reset_health` per tick,
+which matters *more* in a resident process (§16's bug), and which Cut 2 re-prices.
+
+**Two mechanics worth recording.** The architecture suite pins every test name this
+ledger cites to an existing test — so the 50-tick bounded-growth pin keeps the week
+test's name, with a docstring recording the demotion; the name is load-bearing for the
+citation checker even though the magnitude changed, which is exactly the §-drift the
+plan header warns about, recorded here so the name is never read as the old claim. And
+`record_tick` keeps its `dispatched` column (the §9 KEEP list is inviolable); the
+conductor passes 0, and the column is historical vocabulary now.
+
+**The restart drill, stated as the operating model.** One process runs `litharness
+tick` in a loop (or a shell loop does); killing it mid-job loses nothing — the expired
+job lease is reclaimed, the replayed tick converges on its recorded decision, and
+accepted work was committed atomically with its events. That is the §57 run's shape,
+now the only shape.

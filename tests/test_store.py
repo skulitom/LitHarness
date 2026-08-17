@@ -20,7 +20,7 @@ from litharness.adapters.sqlite_store import (
     SqliteStore,
     migrations_dir,
 )
-from litharness.domain.events import Event, EventType, OutboxState
+from litharness.domain.events import Event, EventType
 from litharness.domain.jobs import IllegalTransition, Job, JobStatus, LeaseError
 from litharness.domain.patch import apply_patch
 from litharness.domain.policy import Outcome, PolicyDecision
@@ -150,7 +150,7 @@ def test_a_vetoed_patch_leaves_storage_untouched(store: SqliteStore, revision: R
     assert store._connection.execute("SELECT COUNT(*) AS n FROM revisions").fetchone()["n"] == 1
 
 
-# --- events and the outbox --------------------------------------------------------
+# --- events -----------------------------------------------------------------------
 
 
 def test_events_commit_atomically_with_their_revision(
@@ -160,7 +160,6 @@ def test_events_commit_atomically_with_their_revision(
     log = store.read_log()
     assert len(log) == 1
     assert log[0].event.revision_id == revision.revision_id
-    assert len(store.pending_outbox()) == 1
 
 
 def test_duplicate_event_delivery_is_idempotent(store: SqliteStore, revision: Revision) -> None:
@@ -183,33 +182,14 @@ def test_out_of_order_delivery_still_yields_one_row_each(
 def test_redelivery_after_dispatch_does_not_requeue_the_outbox(
     store: SqliteStore, revision: Revision
 ) -> None:
-    """The send-then-mark hazard: a duplicate must not resurrect a dispatched event."""
+    """The dedupe the outbox leaned on, kept after the outbox itself (migration 021): the
+    event insert is `INSERT OR IGNORE` on the content-derived key, so a duplicate arriving
+    in a *later* call — not merely a later position in one batch — collapses onto the
+    existing row. The name is load-bearing: stage-0 §7 cites it."""
     event = accepted_event(revision)
     store.append_events([event])
-    store.mark_sent(event.idempotency_key)
-    assert store.pending_outbox() == []
     store.append_events([event])
-    assert store.pending_outbox() == [], "a duplicate event re-opened a delivered outbox row"
-
-
-def test_outbox_is_drained_in_log_order(store: SqliteStore, revision: Revision) -> None:
-    events = [accepted_event(revision, note=str(index)) for index in range(5)]
-    store.append_events(events)
-    pending = store.pending_outbox()
-    assert [entry.event.payload["note"] for entry in pending] == ["0", "1", "2", "3", "4"]
-    for entry in pending:
-        store.mark_sent(entry.idempotency_key)
-    assert store.pending_outbox() == []
-
-
-def test_an_undelivered_event_stays_pending(store: SqliteStore, revision: Revision) -> None:
-    event = accepted_event(revision)
-    store.append_events([event])
-    store.record_delivery_attempt(event.idempotency_key, now=0.0)
-    pending = store.pending_outbox()
-    assert len(pending) == 1
-    assert pending[0].state is OutboxState.PENDING
-    assert pending[0].delivery_attempts == 1
+    assert len(store.read_log()) == 1
 
 
 # --- jobs and leases --------------------------------------------------------------
@@ -385,9 +365,9 @@ def test_backup_refuses_to_overwrite_or_target_the_live_database(tmp_path) -> No
 
 def test_a_destroyed_database_restores_from_backup_with_everything_intact(tmp_path) -> None:
     """The drill §19 Recovery actually asks for: not "a file exists" but "the system comes
-    back". Prose, the policy decision that accepted it, and the undelivered outbox all have
-    to survive — a restore that returns the manuscript and loses the audit trail or the
-    pending events has not restored the system."""
+    back". Prose, the policy decision that accepted it, and the event log all have to
+    survive — a restore that returns the manuscript and loses the audit trail has not
+    restored the system."""
     live = tmp_path / "live.db"
     store = SqliteStore.open(live)
     revision = make_revision()
@@ -408,8 +388,8 @@ def test_a_destroyed_database_restores_from_backup_with_everything_intact(tmp_pa
         ),
         decided_at="2026-08-12T00:00:00Z",
     )
-    pending_before = [entry.idempotency_key for entry in store.pending_outbox()]
-    assert pending_before
+    logged_before = [entry.event.idempotency_key for entry in store.read_log()]
+    assert logged_before
 
     store.backup_to(tmp_path / "backup.db")
     store.close()
@@ -435,7 +415,7 @@ def test_a_destroyed_database_restores_from_backup_with_everything_intact(tmp_pa
     assert recovered.load_revision(revision.revision_id).node("scene-1").content == SCENES[0]
     decision = recovered.decision_for_revision(revision.revision_id)
     assert decision is not None and decision.outcome is Outcome.ACCEPT
-    assert [entry.idempotency_key for entry in recovered.pending_outbox()] == pending_before
+    assert [entry.event.idempotency_key for entry in recovered.read_log()] == logged_before
 
 
 # --- failure surfaces ----------------------------------------------------------------

@@ -12,19 +12,12 @@ are drained and recorded first, then the selector can materialise deterministic 
 or bounded Narrative Planner work before prose. Unresolved direction stays visibly
 `RECEIVED` rather than disappearing as silence or an invented reading.
 
-Three properties matter more than the loop itself.
+Two properties matter more than the loop itself.
 
 **Ticks are idempotent.** A tick id is derived from `(holder, instant)`, and recording one
-is `INSERT OR IGNORE`, so replaying a tick — the realistic case being a cron invocation
-retried after a crash at the wrong moment — cannot double-count work or the digest. This is
-what Stage 0's "ticks idempotently for a week unattended" actually asks for, and
-`test_a_week_of_no_op_ticks_changes_nothing` measures it over the tick count a week
-produces rather than over a week of waiting.
-
-**Exactly one instance is the Conductor.** Every tick starts by claiming an instance lease.
-A tick that loses the claim returns `NOT_LEADER` and does nothing at all — it does not
-reconcile, select, or dispatch, because each of those mutates shared state. The job-level
-lease is a separate mechanism answering a different question; see the migration comment.
+is `INSERT OR IGNORE`, so replaying a tick — a restarted session re-driving an instant it
+already ran — cannot double-count work or the digest. This is what makes restarting the
+foreground loop safe at any moment: the replay is refused at the store, not reasoned about.
 
 **One bounded unit per tick.** The loop executes at most one job, then returns. A blocked or
 failing unit therefore cannot starve the queue or spin: it fails, its attempts increment,
@@ -32,7 +25,7 @@ and either it requeues or it poisons (§4.2's "the failure mode is a parked unit
 spin loop").
 
 Time is injected everywhere. A scheduler whose correctness depends on the wall clock cannot
-be tested without waiting, and this one is tested over two thousand simulated ticks.
+be tested without waiting.
 """
 
 from __future__ import annotations
@@ -46,7 +39,7 @@ from typing import Protocol
 
 from litharness.application.ports import ApplicationStore, TextGenerator
 from litharness.domain.directives import VERBATIM_KINDS
-from litharness.domain.events import Event, EventType, OutboxEntry
+from litharness.domain.events import Event, EventType
 from litharness.domain.exceptions import ExceptionKind, ExceptionRecord, exception_id_for
 from litharness.domain.failures import OperationalFailure, ParkedFailure, TransientFailure
 from litharness.domain.jobs import Job, JobStatus
@@ -56,8 +49,6 @@ DEFAULT_SCOPE = "conductor"
 
 
 class TickOutcome(enum.StrEnum):
-    NOT_LEADER = "not_leader"
-    PAUSED = "paused"
     NO_WORK = "no_work"
     RAN_JOB = "ran_job"
     JOB_FAILED = "job_failed"
@@ -72,7 +63,6 @@ class TickResult:
     outcome: TickOutcome
     job_id: str | None = None
     reconciled: int = 0
-    dispatched: int = 0
     #: Directives drained from the inbox this tick (§4.3).
     ingested: int = 0
     events: tuple[Event, ...] = ()
@@ -95,25 +85,6 @@ class JobHandler(Protocol):
     """
 
     def __call__(self, job: Job, now: float) -> Sequence[Event]: ...
-
-
-class Dispatcher(Protocol):
-    """Delivers one outbox entry. Returning False leaves it pending for a later tick."""
-
-    def __call__(self, entry: OutboxEntry) -> bool: ...
-
-
-def null_dispatcher(entry: OutboxEntry) -> bool:
-    """Deliver nowhere and say so, which is the honest default when no sink is configured.
-    Marking undelivered events as sent would be silent loss dressed as success.
-
-    Named rather than private since `adapters.notifications` gave the outbox somewhere real
-    to drain: with two dispatchers the choice belongs to the composition root, and a
-    composition root that cannot name the default it is choosing has to express "no sink"
-    by omitting an argument — which is how this stayed the *only* dispatcher for nine
-    slices without anyone deciding that it should be.
-    """
-    return False
 
 
 class WorkSelector(Protocol):
@@ -144,15 +115,13 @@ class Conductor:
     project_id: str
     handlers: dict[str, JobHandler] = field(default_factory=dict)
     select: WorkSelector = fifo_selector
-    dispatch: Dispatcher = null_dispatcher
     scope: str = DEFAULT_SCOPE
-    lease_duration: float = 300.0
     job_lease_duration: float = 600.0
-    paused: bool = False
-    #: Cleared once per leading tick. `ProviderRegistry.reset_health` documents "called at
+    #: Cleared once per tick. `ProviderRegistry.reset_health` documents "called at
     #: the start of a tick" and had no caller, so a provider marked dead by one failed
-    #: probe stayed dead for the life of the process and never recovered. Harmless while
-    #: nothing owned a registry; a real bug the moment a handler does.
+    #: probe stayed dead for the life of the process and never recovered. In a resident
+    #: foreground loop the process lives for the whole book, so without the per-tick
+    #: reset one blip would silence a provider permanently.
     registry: TextGenerator | None = None
 
     # -- tick -----------------------------------------------------------------
@@ -160,22 +129,8 @@ class Conductor:
     def tick(self, now: float) -> TickResult:
         tick_id = self._tick_id(now)
 
-        if not self.store.acquire_instance_lease(
-            self.scope, self.holder, now, self.lease_duration
-        ):
-            # Another instance is the Conductor. Do nothing — not even reconcile.
-            return TickResult(tick_id, TickOutcome.NOT_LEADER)
-
-        # Durable, not in-memory. §4.1 runs this as a cron tick, so every tick is a fresh
-        # process and a dataclass field would be reconstructed as False every time — the
-        # pause control was unreachable in exactly the deployment the plan specifies.
-        if self.paused or self.store.is_paused():
-            self._finish(tick_id, now, TickOutcome.PAUSED, None, 0, 0)
-            return TickResult(tick_id, TickOutcome.PAUSED)
-
-        # Fresh health verdicts for this tick. Deliberately after the leadership guard —
-        # a non-leader must not touch shared state, and deliberately before reconcile, so
-        # every probe in the tick sees one consistent verdict per provider.
+        # Fresh health verdicts for this tick, before reconcile, so every probe in the
+        # tick sees one consistent verdict per provider.
         if self.registry is not None:
             self.registry.reset_health()
 
@@ -190,30 +145,27 @@ class Conductor:
         # no poison, no escalation — which is the bug this loop shipped with until the
         # non-starvation test caught it.
         reconciled = len(self.store.reclaim_expired(now)) + len(self.store.requeue_failed())
-        dispatched = self._drain_outbox(now)
 
         job = self.select(self.store, self.holder, now, self.job_lease_duration)
         if job is None:
             outcome = TickOutcome.NO_WORK
-            if not self._finish(tick_id, now, outcome, None, reconciled, dispatched):
+            if not self._finish(tick_id, now, outcome, None, reconciled):
                 return TickResult(tick_id, TickOutcome.REPLAYED)
             return TickResult(
                 tick_id,
                 outcome,
                 reconciled=reconciled,
-                dispatched=dispatched,
                 ingested=ingested,
             )
 
         outcome, events = self._run(job, now)
-        if not self._finish(tick_id, now, outcome, job.job_id, reconciled, dispatched):
+        if not self._finish(tick_id, now, outcome, job.job_id, reconciled):
             return TickResult(tick_id, TickOutcome.REPLAYED, job_id=job.job_id)
         return TickResult(
             tick_id,
             outcome,
             job_id=job.job_id,
             reconciled=reconciled,
-            dispatched=dispatched,
             ingested=ingested,
             events=tuple(events),
         )
@@ -517,24 +469,6 @@ class Conductor:
         self.store.bump_digest(self._day(now), "directives_ingested", len(pending))
         return len(pending)
 
-    def _drain_outbox(self, now: float, limit: int = 50) -> int:
-        """Send-then-mark, with a refused delivery backed off rather than retried at once.
-
-        `now` is not decorative: without it this loop re-attempted the first 50 pending
-        entries on *every* tick forever. Measured over the week the endurance test
-        simulates, the head entries reached 2016 delivery attempts while entries 51 and
-        beyond reached zero — an unbounded spin and permanent head-of-line starvation at
-        once, both invisible because the endurance test asserts an empty outbox.
-        """
-        sent = 0
-        for entry in self.store.pending_outbox(limit, now=now):
-            if self.dispatch(entry):
-                self.store.mark_sent(entry.idempotency_key)
-                sent += 1
-            elif self.store.record_delivery_attempt(entry.idempotency_key, now=now):
-                self.store.bump_digest(self._day(now), "outbox_failed")
-        return sent
-
     def _finish(
         self,
         tick_id: str,
@@ -542,7 +476,6 @@ class Conductor:
         outcome: TickOutcome,
         job_id: str | None,
         reconciled: int,
-        dispatched: int,
     ) -> bool:
         fresh = self.store.record_tick(
             tick_id=tick_id,
@@ -551,7 +484,7 @@ class Conductor:
             outcome=outcome.value,
             job_id=job_id,
             reconciled=reconciled,
-            dispatched=dispatched,
+            dispatched=0,
         )
         if fresh:
             self.store.bump_digest(self._day(now), "ticks")
@@ -576,18 +509,16 @@ class Conductor:
 
 
 def no_op_handler(job: Job, now: float) -> Sequence[Event]:
-    """The workload Stage 0's endurance criterion runs on: succeeds, emits nothing."""
+    """The workload the bounded-state-growth pins run on: succeeds, emits nothing."""
     return ()
 
 
 __all__ = [
     "Conductor",
-    "Dispatcher",
     "JobHandler",
     "TickOutcome",
     "TickResult",
     "WorkSelector",
     "fifo_selector",
     "no_op_handler",
-    "null_dispatcher",
 ]

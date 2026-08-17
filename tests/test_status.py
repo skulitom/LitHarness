@@ -82,7 +82,7 @@ def test_a_litrpg_book_with_no_evaluator_wired_says_the_rules_pack_is_off(
     rendered into every later prompt as the state to carry forward.
 
     There is nowhere to default *to* — the pack's path belongs to a machine, not to this
-    package — so the fix is the outbox's: keep the null and make it visible.
+    package — so the fix is §30's: keep the null and make it visible.
     """
     _book(store, "litrpg")
 

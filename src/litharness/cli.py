@@ -1,22 +1,19 @@
-"""The operator surface: what cron runs, and what a human runs to look inside.
+"""The operator surface: the session that drives ticks, and what a human runs to look inside.
 
-Until this module existed the system could not be operated at all. §4.1 specifies "a
-cron-style tick (Windows Task Scheduler / cron; every 5-15 minutes) launches or wakes the
-Conductor", and there was no launchable target — no console script, no `__main__`, and no
-caller of `Conductor.tick` outside the test suite. §17's Stage 0 exit criterion ("the
-Conductor ticks idempotently for a week unattended") could not be attempted, only
-simulated.
+One book runs as one foreground session driving `tick` in one process (stage-0 §57).
+Ctrl+C is the pause; restarting is safe because ticks are idempotent and a job lease left
+behind by a killed process expires and is reclaimed on the next tick.
 
-**Exit codes are the interface to the scheduler, so they are part of the contract.**
-0 means the tick did what it was asked, including finding nothing to do — a quiet system
-is a healthy one and must not page anyone. 1 is reserved for a unit that failed or parked,
-which is a fact a human should eventually see but not an emergency. 2 is an operational
-fault: the database is locked, the migrations are missing, the disk is full. A supervisor
-should retry 2 on the next cadence and never treat it as the system reporting on its work.
+**Exit codes are `tick`'s contract with whatever drives it.** 0 means the tick did what it
+was asked, including finding nothing to do — a quiet system is a healthy one. 1 is
+reserved for a unit that failed or parked, which is a fact a human should eventually see
+but not an emergency. 2 is an operational fault: the database is locked, the migrations
+are missing, the disk is full. A driver should retry 2 on the next iteration and never
+treat it as the system reporting on its work.
 
 The tick deliberately does **not** swallow storage errors. A locked database means another
-tick is mid-flight, and the correct response is to exit and let the next cadence pick it
-up — not to wait, and certainly not to force it.
+writer is mid-flight, and the correct response is to exit and let the next iteration pick
+it up — not to wait, and certainly not to force it.
 """
 
 from __future__ import annotations
@@ -39,16 +36,10 @@ import litharness_contracts as lc
 
 from litharness.adapters import contracts_fixtures, evaluation_artifact
 from litharness.adapters.continuity_cli import ContinuityCliRunner
-from litharness.adapters.notifications import JsonlDispatcher
 from litharness.adapters.sqlite_store import MigrationsMissing, SqliteStore
 from litharness.application import export as export_module
 from litharness.application import status as status_module
-from litharness.application.conductor import (
-    Conductor,
-    Dispatcher,
-    TickOutcome,
-    null_dispatcher,
-)
+from litharness.application.conductor import Conductor, TickOutcome
 from litharness.application.directive_planner import DIRECTIVE_PLAN, make_directive_plan_handler
 from litharness.application.evaluation import (
     CompositeEvaluator,
@@ -94,7 +85,8 @@ from litharness.domain.revision import import_manuscript, new_book
 from litharness.domain.state import import_state
 from litharness.providers import build_default_registry
 
-#: Exit codes, which are how the scheduler reads the outcome. See the module docstring.
+#: Exit codes, which are how whatever drives `tick` reads the outcome. See the module
+#: docstring.
 EXIT_OK = 0
 EXIT_ATTENTION = 1
 EXIT_FAULT = 2
@@ -115,9 +107,9 @@ def _env_flag(name: str) -> bool:
 
     `plan/provider-adapters.md` §5 says provider selection "is config, versioned like every
     other policy, never hardcoded", and it was hardcoded — so the only way to run a book on
-    local models was to pass flags on every invocation, which a cron entry does not do. These
-    two variables are how a machine says "free by default here" without changing the order
-    this project ships, which §5 and §1a settle on prose quality rather than on cost.
+    local models was to pass flags on every invocation. These two variables are how a
+    machine says "free by default here" without changing the order this project ships,
+    which §5 and §1a settle on prose quality rather than on cost.
     """
     return os.environ.get(name, "").strip().lower() in {"1", "true", "yes", "on"}
 
@@ -193,21 +185,11 @@ def _conductor(store: SqliteStore, args: argparse.Namespace) -> Conductor:
     evaluator: Evaluator = (
         evaluators[0] if len(evaluators) == 1 else CompositeEvaluator(evaluators)
     )
-    # No destination configured means the null dispatcher, and the outbox stays visibly
-    # undelivered — which is what it did for every installation until this flag existed.
-    # Defaulting to *some* file instead would be worse than the old silence: events would
-    # be marked sent into a path nobody agreed to read.
-    dispatch: Dispatcher = (
-        JsonlDispatcher(Path(args.notify_file))
-        if args.notify_file is not None
-        else null_dispatcher
-    )
     return Conductor(
         store=store,
         holder=args.holder,
         project_id=args.project,
         registry=registry,
-        dispatch=dispatch,
         # §4.1's "work selection is a policy over the book's state", replacing the FIFO
         # placeholder. It drains the queue first, so retries and hand-enqueued work still
         # outrank planning; only when nothing is claimable does it materialise a beat.
@@ -269,7 +251,7 @@ def _conductor(store: SqliteStore, args: argparse.Namespace) -> Conductor:
 
 
 def cmd_tick(args: argparse.Namespace) -> int:
-    """One bounded unit of work. This is what the scheduler invokes."""
+    """One bounded unit of work. This is what the session's loop invokes."""
     store = _store(args)
     loop = _conductor(store, args)
     try:
@@ -280,27 +262,7 @@ def cmd_tick(args: argparse.Namespace) -> int:
     print(f"{result.outcome.value} tick={result.tick_id}", end="")
     if result.job_id:
         print(f" job={result.job_id}", end="")
-    print(
-        f" reconciled={result.reconciled} dispatched={result.dispatched}"
-        f" ingested={result.ingested}"
-    )
-    # **A sink that refused says so, and does not change the exit code.** The tick did its
-    # work; what failed is the telling. Delivery has its own bounded retry with backoff and
-    # reports itself through `status`, so escalating a transient refusal here would page a
-    # supervisor every five minutes for a condition the loop is already handling. What must
-    # not happen is the refusal being invisible — an operator who configured a sink and is
-    # receiving nothing needs the OSError, not a silence indistinguishable from no events.
-    sink = loop.dispatch
-    if isinstance(sink, JsonlDispatcher) and sink.failures:
-        # Both streams usually land in the same cron log, where stdout is block-buffered
-        # and stderr is not — so without this the diagnostic arrives *before* the tick line
-        # it is about, and reads as a complaint about the previous cadence.
-        sys.stdout.flush()
-        print(
-            f"litharness: {sink.failures} event(s) undelivered to {sink.destination}: "
-            f"{sink.last_error}",
-            file=sys.stderr,
-        )
+    print(f" reconciled={result.reconciled} ingested={result.ingested}")
     if result.outcome in {TickOutcome.JOB_FAILED, TickOutcome.JOB_PARKED}:
         return EXIT_ATTENTION
     return EXIT_OK
@@ -321,9 +283,7 @@ def cmd_status(args: argparse.Namespace) -> int:
         store.close()
 
     print(json.dumps(report.as_dict(), indent=2) if args.json else report.render())
-    # A stalled or backed-up system is worth a non-zero exit so `status` is usable in a
-    # cheap external check without parsing its output.
-    return EXIT_ATTENTION if (report.stalled or report.needs_attention) else EXIT_OK
+    return EXIT_OK
 
 
 def cmd_init(args: argparse.Namespace) -> int:
@@ -1569,28 +1529,6 @@ def cmd_revert_plan(args: argparse.Namespace) -> int:
     return EXIT_OK
 
 
-def cmd_pause(args: argparse.Namespace) -> int:
-    now = _now()
-    store = _store(args)
-    try:
-        store.set_control("paused", "true", at=_stamp(now), by=args.holder)
-    finally:
-        store.close()
-    print("paused; ticks will report 'paused' until resumed")
-    return EXIT_OK
-
-
-def cmd_resume(args: argparse.Namespace) -> int:
-    now = _now()
-    store = _store(args)
-    try:
-        store.set_control("paused", "false", at=_stamp(now), by=args.holder)
-    finally:
-        store.close()
-    print("resumed")
-    return EXIT_OK
-
-
 def cmd_revert(args: argparse.Namespace) -> int:
     """Restore an earlier revision's content as a new head (§19 reversibility).
 
@@ -1898,8 +1836,8 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument(
         "--holder",
-        default="cron",
-        help="instance identity for the Conductor lease (default: cron)",
+        default="session",
+        help="identity recorded on tick ids and job leases (default: session)",
     )
     parser.add_argument(
         "--max-tokens-per-operation", type=int, default=None,
@@ -1976,20 +1914,12 @@ def build_parser() -> argparse.ArgumentParser:
         "LITHARNESS_NO_BILLING. Not the same as --prefer: a preference for a free provider "
         "still bills the moment that provider blips",
     )
-    parser.add_argument(
-        "--notify-file",
-        type=Path,
-        default=os.environ.get("LITHARNESS_NOTIFY_FILE"),
-        help="append delivered events to this file as JSON Lines, one EventEnvelope per "
-        "line; also read from LITHARNESS_NOTIFY_FILE. Without it the outbox accumulates "
-        "undelivered rather than claiming a delivery it did not make",
-    )
     sub = parser.add_subparsers(dest="command", required=True)
 
-    tick = sub.add_parser("tick", help="run one bounded unit of work (what cron invokes)")
+    tick = sub.add_parser("tick", help="run one bounded unit of work")
     tick.set_defaults(func=cmd_tick)
 
-    status = sub.add_parser("status", help="is it alive, and is anything stuck")
+    status = sub.add_parser("status", help="queue depth, attention counts, digest and spend")
     status.add_argument("--json", action="store_true", help="machine-readable output")
     status.set_defaults(func=cmd_status)
 
@@ -2042,12 +1972,6 @@ def build_parser() -> argparse.ArgumentParser:
         help="close without action: the escalation was right and the unit stays stopped",
     )
     resolve.set_defaults(func=cmd_resolve)
-
-    pause = sub.add_parser("pause", help="stop doing work; ticks still record")
-    pause.set_defaults(func=cmd_pause)
-
-    resume = sub.add_parser("resume", help="undo pause")
-    resume.set_defaults(func=cmd_resume)
 
     revert = sub.add_parser("revert", help="restore an earlier revision as the new head")
     revert.add_argument("revision", help="revision id to restore")
@@ -2359,15 +2283,15 @@ def main(argv: Sequence[str] | None = None) -> int:
     except (OSError, FileExistsError, ValueError, sqlite3.Error) as error:
         # Operational faults — a locked or missing database, a backup destination that
         # already exists, a bad argument. Distinguished from EXIT_ATTENTION because a
-        # supervisor should retry these next cadence rather than surface them as the
+        # driver should retry these next iteration rather than surface them as the
         # system reporting on its work.
         #
         # **`sqlite3.Error` is not an `OSError`**, which made the one fault this contract
         # names first — a locked database — the one it did not handle: it escaped as an
         # unhandled traceback and exit 1, the code reserved for "a unit needs a human".
-        # A supervisor built on the documented contract escalated the fault it was told to
-        # absorb. Two overlapping cron ticks contend on `BEGIN IMMEDIATE` by design (§4.1),
-        # so this is the *expected* fault at the plan's cadence, not an exotic one.
+        # A driver built on the documented contract escalated the fault it was told to
+        # absorb. An operator command contends with the ticking session on
+        # `BEGIN IMMEDIATE` by design, so this is the *expected* fault, not an exotic one.
         print(f"litharness: {type(error).__name__}: {error}", file=sys.stderr)
         return EXIT_FAULT
 
