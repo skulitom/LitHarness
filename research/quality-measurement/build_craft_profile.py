@@ -2,15 +2,23 @@
 
 Run offline, never from the loop:
 
-    uv run --extra corpus python tools/build_craft_profile.py --out plan/craft-profile.json
+    uv run --extra corpus python research/quality-measurement/build_craft_profile.py \
+        --out plan/craft-profile.json
+
+Archived beside the metrics it profiles: the four instrumented proxies failed the
+era-controlled refutation (BRIEF.md §2, Pass 2) and moved to `refuted_metrics.py`, and this
+tool moved with them so the committed `plan/craft-profile.json` stays rebuildable and
+disputable for the record. The profile is still read by the live POPULATION calibration
+route (`litharness calibrate --evidence-class population`).
 
 **What this supplies and what it does not.** §10.6 asks for a corpus of *good* prose so a
 proxy can be tested for whether it separates good from weak. This is not that. It is a corpus
 of **published** LitRPG, which gives two things that are worth having and one that is not:
 
-- **A reference distribution.** Every metric in `domain/craft.py` currently reports a number
-  with nothing to compare it to. Against this profile the same number becomes "the 99th
-  percentile of published LitRPG", which is a *fact* rather than a hypothesis, and §1a.5's
+- **A reference distribution.** Each profiled metric (`refuted_metrics.py`'s four, formerly
+  `domain/craft.py`'s) reports a bare number on its own. Against this profile the same number
+  becomes "the 99th percentile of published LitRPG", which is a *fact* rather than a
+  hypothesis, and §1a.5's
   first bar — "blinded genre readers cannot reliably distinguish accepted chapters from
   published human LitRPG at the same tier" — is a statement about exactly this population.
 - **A testable hypothesis for §1a.3 item 6, "absence of AI tells".** Two independent handles
@@ -43,9 +51,13 @@ from collections import defaultdict
 from pathlib import Path
 from typing import Any
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
+HERE = Path(__file__).resolve().parent
+sys.path.insert(0, str(HERE))
+sys.path.insert(0, str(HERE.parents[1] / "src"))
 
-from litharness.domain.craft import METRICS, band_for, measure
+from refuted_metrics import METRICS  # noqa: E402
+
+from litharness.domain.craft import band_for  # noqa: E402
 
 DATASET = "OmniAICreator/RoyalRoad-1.61M"
 
@@ -108,10 +120,10 @@ def auc(positive: list[float], negative: list[float]) -> float:
     accuracy would bake in a cutoff nobody has justified, and §10.4 says a threshold is a
     property of a *calibration*. 0.5 is no separation; the distance from 0.5 is the signal.
 
-    **Duplicated in `research/quality-measurement/evaluate.py` and deliberately not shared.**
-    Neither tree is importable from the other — this one runs against the package, that one
-    against a 12.5GB corpus outside it — and a shared helper module would be a third place to
-    look. The duplication is safe only while they agree, so they were checked: identical over
+    **Duplicated in `evaluate.py` beside this file and deliberately not shared.** The two were
+    written in separate trees (this one lived in `tools/` until the archive move) and each
+    must stay runnable standalone; a shared helper module would be a third place to look. The
+    duplication is safe only while they agree, so they were checked: identical over
     300 random inputs and on the tie-heavy and all-tied cases, where rank statistics usually
     diverge. **If you change tie handling here, change it there**, or two experiments stop
     being comparable and nothing will say so.
@@ -189,7 +201,7 @@ def main() -> int:
             band = band_for(words)
             if band is not None:
                 band_counts[(cohort, band)] += 1
-            for metric in measure(text):
+            for metric in (fn(text) for fn in METRICS):
                 samples[cohort][metric.metric_id].append(metric.value)
                 if band is not None:
                     banded[(cohort, band)][metric.metric_id].append(metric.value)

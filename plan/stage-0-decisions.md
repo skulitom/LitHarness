@@ -3365,3 +3365,36 @@ generator the only independent variable left. Its hand-mirrored CLI namespace ha
 already rotted against §63/§64 (four deleted flags) and is fixed to the shipped
 shape, which is itself the argument for the script driving `cli._conductor` rather
 than reconstructing the loop: what it measures is the shipped configuration.
+
+## 66. The four refuted metrics leave the page, and the control that killed them keeps its referee
+
+Cut 3 of §61's programme. BRIEF §2 Pass 2 is the license and has been for months: all
+four instrumented metrics failed era-controlled AUC against ~13,000 published chapters
+(0.445 / 0.455 / 0.461 / 0.528), and `tricolon_rate`'s 0.629 against pre-2023 prose —
+the closest thing this project ever had to a working AI-tell detector — was exposed as
+**year detection** by the 0.606 control beside it. They kept being computed per
+accepted scene anyway, six annotation gates on every decision, because nothing had
+spent the afternoon to stop them. Stopped: `measure()` now computes the two survivors
+(`scene_echo.v1`, `repeated_span.v0` — repetition claims, §53-adjacent, deliberately
+never refuted), and each accepted scene's decision carries two CRAFT annotations
+instead of six. Decision digests change shape going forward; recorded history stands.
+
+**Archived, not deleted, and the arithmetic is pinned.** The four functions, their
+helpers, and the original `METRICS` tuple moved to
+`research/quality-measurement/refuted_metrics.py`; the moved profile build tool
+imports them from there; and the archive was verified to reproduce the shipped
+arithmetic to four decimals before anything landed. `conversion_separation.py` — which
+asks the four a *different*, still-open question — re-points at the archive and stays
+runnable in the MirrorBench venv.
+
+**What deliberately stays, because it is the referee, not the defendant.** The entire
+population-calibration route (percentiles, bands, `MIN_BAND_CHAPTERS`, the committed
+`plan/craft-profile.json`) is untouched. The profile's only contents are the four
+refuted metrics, which makes it look like cargo — it is the opposite: it is the
+committed evidence artifact behind the live test proving the tricolon threshold is
+**refused by its own control**, and population calibrations key on metric-id strings,
+so the proof outlives the functions. The next metrics to enter the craft table are
+§61 Add 2's structural ones, and when they seek population anchors this is the
+machinery that will refuse them the same way. The directive's standing rule takes
+effect exactly as written: the craft table records only metrics with a live
+calibration candidate.

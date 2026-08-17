@@ -17,60 +17,38 @@ most), `silent_ledger` fires on the fixture's best prose, `progression_cost` is 
 inserting a token gold decrement, and Burrows Delta separates within-book from between-book by
 0.6% over a program containing 77 words of dialogue.
 
-What is left, and what this module measures, is items 5 and 6 — line-level craft and AI tells.
-§1a.1 is blunt about what that is worth: *"beware the metric that is easy because it is
-shallow"*. These are instrumentation, not a verdict, and the module is built so that no
-caller can mistake one for the other: `craft_gates` marks every result `blocking=False`, and
-`PolicyDecision.__post_init__` raises if a blocking craft gate arrives without a
-`calibration_id`. The bar is structural in two places rather than promised in one.
+What is left, and what this module measures, is the mechanical half of item 6: duplication.
+§1a.1 is blunt about what line-level proxies are worth: *"beware the metric that is easy
+because it is shallow"*. These are instrumentation, not a verdict, and the module is built so
+that no caller can mistake one for the other: `craft_gates` marks every result
+`blocking=False`, and `PolicyDecision.__post_init__` raises if a blocking craft gate arrives
+without a `calibration_id`. The bar is structural in two places rather than promised in one.
 
-**Every metric here is named by the plan.** Sentence-length distribution and dialogue ratio
-are §10.2's own list; the tricolon habit and "the same three sentence shapes" are §1a.3 item 6
-verbatim. That is the entire selection rule — §10.6 exists because these proxies get
-re-proposed otherwise, and inventing a fifth one on a hunch is how its findings get quietly
-overwritten.
+**The four line-level proxies this module used to lead with are archived.** All four failed
+the era-controlled refutation in `research/quality-measurement/BRIEF.md` §2 (Pass 2); the
+functions and the full record live in `research/quality-measurement/refuted_metrics.py`.
 
-**`scene_echo` is the fifth, and the rule above is why it needs a defence rather than a
-mention.** Two things separate it from the proxies §10.6 refuted. It was **measured before it
-was built**: the obvious form — whole-book compression ratio — turned out to track scene count
-rather than authorship, since a machine-written six-scene book scored 0.704 against human books
-at 0.625 and 0.757, and only the pairwise form survived that control. And it makes a **claim of
-a different kind**: the four above assert something about quality, which is why they need human
-judgment to be worth anything; this asserts that two scenes are largely the same text, which is
-checkable without asking anyone. It is still advisory, still uncalibrated, and still cannot
-gate — but "this scene is a copy of that one" is a fact rather than an opinion, and §10.6's
-finding is about opinions.
+**What survives is the pair of duplicate detectors, and they make a claim of a different
+kind.** The archived four asserted something about quality, which is why they needed human
+judgment to be worth anything; these assert that two scenes are largely the same text, which
+is checkable without asking anyone. `scene_echo` was also **measured before it was built**:
+the obvious form — whole-book compression ratio — turned out to track scene count rather than
+authorship, since a machine-written six-scene book scored 0.704 against human books at 0.625
+and 0.757, and only the pairwise form survived that control. Both are still advisory, still
+uncalibrated, and still cannot gate — but "this scene is a copy of that one" is a fact rather
+than an opinion, and §10.6's finding is about opinions.
 
-It exists because a Book Zero run passed every gate in this system while writing the same scene
-repeatedly: fifteen accepted scenes, zero exceptions, `verify` clean, and scene 13 was scene 12
-with two words changed and a digit incremented.
+They exist because a Book Zero run passed every gate in this system while writing the same
+scene repeatedly: fifteen accepted scenes, zero exceptions, `verify` clean, and scene 13 was
+scene 12 with two words changed and a digit incremented.
 
-**All four have since been measured against published LitRPG, and all four failed.** See
-`plan/craft-profile.json`, built by `tools/build_craft_profile.py` over ~13,000 LitRPG-tagged
-chapters from a 1.61M-chapter RoyalRoad corpus. Holding the era fixed — 2025 chapters whose
-author declared `AI-Assisted Content` against 2025 chapters that did not — every rank AUC
-falls within 0.06 of chance:
-
-    dialogue_ratio            0.445      opening_shape_repetition  0.455
-    sentence_length_cv        0.461      tricolon_rate             0.528
-
-`tricolon_rate` scores 0.629 against *pre-2023* chapters, which looks like a result until the
-control is read beside it: undeclared 2025 chapters score 0.606 against the same baseline. The
-metric is detecting the **year**, not the machine. That is the confound the era control exists
-to expose, and it fired on the one metric that looked promising.
-
-So these are **not AI-tell detectors** and this module must not be read as claiming they are.
-Three caveats keep the finding from being stronger than it is: the declared-AI cohort is 55
-stories, self-declaration is certainly under-reported, and the cohorts differ wildly in
-maturity (median followers 16, 88 and 314), so a separation could have been story-size rather
-than prose. That makes this "no separation detected, with named confounds" rather than "proven
-no signal" — which is still the most anyone has measured about them, and strictly better than
-the unmeasured hope they carried before.
-
-**What they are still good for is anchoring.** `percentile_of` places a generated scene
-against the published distribution, so "the 99th percentile of published LitRPG for tricolon
-rate" is a fact about an outlier even though the metric does not sort machine from human. That
-is a smaller claim than the module started with, and it is the one the evidence supports.
+**The profile and anchoring machinery stays, and not out of nostalgia.** `percentile_of`
+places a measurement against the published distribution, `quantile_stop` is what a
+corpus-derived threshold *is*, and the POPULATION evidence class in `domain/calibration.py`
+reads exclusively through them. The committed `plan/craft-profile.json` currently carries
+stops only for the four archived ids — it is a measured record and the referent for the
+control-refusal test — so the placement clause never fires for the survivors. That is
+expected, and the route stays live for any future metric that earns a profile build.
 
 **A metric reports a number, never a judgment.** No metric here has a threshold, a pass, or a
 direction. Those are properties of a *calibration* (`domain/calibration.py`), which is a claim
@@ -83,7 +61,6 @@ from __future__ import annotations
 import gzip
 import json
 import re
-import statistics
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from functools import lru_cache
@@ -94,31 +71,11 @@ from typing import Any
 from litharness.domain.events import payload_digest
 from litharness.domain.policy import GateKind, GateOutcome, VerdictSource
 
-#: Sentence terminators, kept deliberately crude. A real sentence splitter would be better and
-#: is not worth a dependency here: these are advisory numbers and a splitter that mis-handles
-#: "Mr." changes a coefficient of variation in the third decimal. Recorded so nobody later
-#: mistakes the crudeness for an oversight.
-_SENTENCE_END = re.compile(r"[.!?]+[\s\"'\u201d\u2019]*")
-_WORD = re.compile(r"[\w'\u2019-]+", re.UNICODE)
-#: Straight and curly pairs both, because canonicalization is NFC and does not unify quotes.
-_DIALOGUE = re.compile("[\"“]([^\"“”]*)[\"”]")
-#: Three coordinated items: "a, b, and c" — §1a.3 item 6's "tricolon habit", the single most
-#: recognisable shape in generated prose.
-_TRICOLON = re.compile(
-    r"\b[\w'\u2019-]+(?:\s+[\w'\u2019-]+){0,3},\s+[\w'\u2019-]+(?:\s+[\w'\u2019-]+){0,3},"
-    r"\s+(?:and|or)\s+[\w'\u2019-]+",
-    re.IGNORECASE,
-)
-
-#: How many leading tokens define a sentence's "shape" for repetition purposes. Two, because
-#: one collapses every sentence starting "The" and three splits near-identical openings apart.
-_SHAPE_TOKENS = 2
-
 #: Edge punctuation stripped before two words are called equal, so that a repeated span is
 #: not broken by the comma that ends it. Both quote families, since canonicalization is NFC
-#: and does not unify them. Spelled with escapes for the same reason `_WORD` is: the dashes
-#: and curly quotes are confusable with ASCII on sight, and this is the one place where the
-#: difference is the whole point.
+#: and does not unify them. Spelled with escapes because the dashes and curly quotes are
+#: confusable with ASCII on sight, and this is the one place where the difference is the
+#: whole point.
 _SPAN_TRIM = ".,;:!?\"'()[]\u2014\u2013\u2026\u201c\u201d\u2018\u2019"
 
 
@@ -135,112 +92,6 @@ class CraftMetric:
     #: What §1a.3 item this gestures at, and why it is not evidence about it.
     caveat: str
     detail: str | None = None
-
-
-def sentences(text: str) -> list[str]:
-    parts = [part.strip() for part in _SENTENCE_END.split(text) if part.strip()]
-    return parts
-
-
-def words(text: str) -> list[str]:
-    return _WORD.findall(text)
-
-
-def sentence_length_variation(text: str) -> CraftMetric:
-    """Coefficient of variation of sentence lengths — §1a.3 item 5, "varied sentence rhythm".
-
-    A ratio rather than a standard deviation so that a scene of long sentences and a scene of
-    short ones are comparable; raw sd tracks mean length, which is a style choice rather than
-    a defect.
-    """
-    lengths = [len(words(sentence)) for sentence in sentences(text)]
-    lengths = [length for length in lengths if length]
-    if len(lengths) < 2:
-        value = 0.0
-    else:
-        mean = statistics.fmean(lengths)
-        value = (statistics.pstdev(lengths) / mean) if mean else 0.0
-    return CraftMetric(
-        metric_id="craft.sentence_length_cv.v0",
-        value=round(value, 4),
-        caveat=(
-            "§1a.3 item 5 only. Uniform rhythm is one symptom of flat prose and varied "
-            "rhythm is not evidence of good prose; no threshold has been calibrated"
-        ),
-        detail=f"{len(lengths)} sentence(s)",
-    )
-
-
-def dialogue_ratio(text: str) -> CraftMetric:
-    """Share of characters inside quotation marks — §10.2's own list.
-
-    Reported because §10.2 asks for it, and with the warning §10.6 earned: the entire golden
-    program contains 77 words of dialogue, so nothing in this project has any idea what value
-    is good. It is a distribution to accumulate, not a number to act on.
-    """
-    quoted = sum(len(match.group(0)) for match in _DIALOGUE.finditer(text))
-    value = (quoted / len(text)) if text else 0.0
-    return CraftMetric(
-        metric_id="craft.dialogue_ratio.v0",
-        value=round(value, 4),
-        caveat=(
-            "§10.2 asks for it; §10.6 measured that the program holds 77 words of dialogue "
-            "in total, so no baseline exists for what this number should be"
-        ),
-    )
-
-
-def tricolon_rate(text: str) -> CraftMetric:
-    """Three-item coordinated lists per thousand words — §1a.3 item 6, named verbatim.
-
-    The one metric here aimed at a tell rather than at a texture, and the one most likely to
-    survive calibration, because "the tricolon habit" is a specific reproducible behaviour
-    rather than a quality abstraction.
-    """
-    count = len(_TRICOLON.findall(text))
-    total = len(words(text))
-    value = (1000.0 * count / total) if total else 0.0
-    return CraftMetric(
-        metric_id="craft.tricolon_rate.v0",
-        value=round(value, 4),
-        caveat=(
-            "§1a.3 item 6. A tricolon is a legitimate figure; a *rate* is the hypothesis, "
-            "and it is untested against any human judgment"
-        ),
-        detail=f"{count} in {total} word(s)",
-    )
-
-
-def opening_shape_repetition(text: str) -> CraftMetric:
-    """Share of sentences sharing the modal opening — §1a.3 item 6, "the same three shapes".
-
-    Keyed on the first two tokens, lowercased. One token collapses everything beginning "The";
-    three splits near-identical openings apart. The choice is arbitrary within that range and
-    is recorded rather than tuned, because tuning it against the fixtures would be fitting a
-    proxy to six scenes.
-    """
-    shapes = [
-        " ".join(words(sentence)[:_SHAPE_TOKENS]).lower()
-        for sentence in sentences(text)
-    ]
-    shapes = [shape for shape in shapes if shape]
-    if len(shapes) < 2:
-        return CraftMetric(
-            metric_id="craft.opening_shape_repetition.v0",
-            value=0.0,
-            caveat="§1a.3 item 6. Fewer than two sentences; nothing to compare",
-        )
-    modal = max(set(shapes), key=shapes.count)
-    value = shapes.count(modal) / len(shapes)
-    return CraftMetric(
-        metric_id="craft.opening_shape_repetition.v0",
-        value=round(value, 4),
-        caveat=(
-            "§1a.3 item 6. Deliberate anaphora scores identically to an exhausted model; "
-            "only a human reading tells them apart, which is what §10.5's audit is for"
-        ),
-        detail=f"modal opening {modal!r} in {shapes.count(modal)}/{len(shapes)}",
-    )
 
 
 #: System-voice blocks, stripped before two scenes are compared. The litrpg fixture's own plan
@@ -507,23 +358,12 @@ def repeated_span(text: str, others: Sequence[str]) -> CraftMetric:
     )
 
 
-#: The metric set, in a fixed order so a decision record's gate list is stable.
-METRICS = (
-    sentence_length_variation,
-    dialogue_ratio,
-    tricolon_rate,
-    opening_shape_repetition,
-)
-
-
-#: Every metric id `measure` reports. `scene_echo` is not in `METRICS` because it cannot be
-#: computed from one scene alone, so "one result per entry in METRICS" stopped being the
-#: invariant — this is the one that replaced it, and it pins the ids rather than the count.
+#: Every metric id `measure` reports, pinning the ids rather than the count. It shrank from
+#: six when the four refuted proxies were archived off the accept path (BRIEF §2, Pass 2);
+#: the historical ids live on in stored `craft_metrics` rows and in
+#: `research/quality-measurement/refuted_metrics.py`, and the craft table records only
+#: metrics with a live calibration candidate.
 MEASURED_IDS = (
-    "craft.sentence_length_cv.v0",
-    "craft.dialogue_ratio.v0",
-    "craft.tricolon_rate.v0",
-    "craft.opening_shape_repetition.v0",
     "craft.scene_echo.v1",
     "craft.repeated_span.v0",
 )
@@ -532,15 +372,15 @@ MEASURED_IDS = (
 def measure(text: str, others: Sequence[str] = ()) -> tuple[CraftMetric, ...]:
     """Every craft metric over one scene's prose. Pure, deterministic, model-free.
 
-    `others` is the book's other accepted scenes. Every metric in `METRICS` reads one scene
-    alone; the last two cannot, because "this scene is a copy of another" is not a property a
-    scene has by itself. They also disagree by design — `scene_echo` measures the whole
-    scene and dilutes a local duplicate, `repeated_span` finds the local duplicate and says
-    nothing about the whole — and the pair is kept because the case that separates them was
-    measured in a real run, not imagined.
+    `others` is the book's other accepted scenes. Neither metric reads one scene alone,
+    because "this scene is a copy of another" is not a property a scene has by itself. They
+    also disagree by design — `scene_echo` measures the whole scene and dilutes a local
+    duplicate, `repeated_span` finds the local duplicate and says nothing about the whole —
+    and the pair is kept because the case that separates them was measured in a real run,
+    not imagined. The four single-scene proxies that used to lead this tuple were refuted
+    and archived (`research/quality-measurement/refuted_metrics.py`).
     """
     return (
-        *(metric(text) for metric in METRICS),
         scene_echo(text, others),
         repeated_span(text, others),
     )
@@ -735,6 +575,10 @@ def craft_gates(
     refutation was, in the drafting path, never computed. Passing the scene's length attaches
     it here. Omitting `words` is honest abstention rather than a default: without the length
     there is no matched stratum, so no percentile is claimed.
+
+    Since the four refuted proxies were archived, the committed profile holds stops only for
+    ids `measure` no longer reports, so today this clause attaches nothing — expected, not a
+    defect. The path stays because POPULATION anchoring is how a future metric arrives.
     """
     placed = {}
     if words is not None:
@@ -767,7 +611,7 @@ def craft_gates(
 
 __all__ = [
     "LENGTH_BANDS",
-    "METRICS",
+    "MEASURED_IDS",
     "MIN_BAND_CHAPTERS",
     "PROFILE_PATH",
     "REFERENCE_COHORT",
@@ -776,18 +620,12 @@ __all__ = [
     "band_chapters",
     "band_for",
     "craft_gates",
-    "dialogue_ratio",
     "load_profile",
     "longest_repeated_span",
     "measure",
-    "opening_shape_repetition",
     "percentile_of",
     "profile_digest",
     "quantile_stop",
     "repeated_span",
     "scene_echo",
-    "sentence_length_variation",
-    "sentences",
-    "tricolon_rate",
-    "words",
 ]

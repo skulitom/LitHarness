@@ -40,17 +40,11 @@ from litharness.domain.calibration import (
 )
 from litharness.domain.craft import (
     MEASURED_IDS,
-    METRICS,
     CraftMetric,
     craft_gates,
-    dialogue_ratio,
     measure,
-    opening_shape_repetition,
     repeated_span,
     scene_echo,
-    sentence_length_variation,
-    sentences,
-    tricolon_rate,
 )
 from litharness.domain.patch import Veto
 from litharness.domain.policy import (
@@ -183,38 +177,6 @@ def test_metrics_are_deterministic() -> None:
     assert measure(text) == measure(text)
 
 
-def test_sentence_variation_separates_uniform_prose_from_varied_prose() -> None:
-    """The metric measures what it claims to, which is separate from whether that matters."""
-    uniform = "He went out. She came in. They sat down. It grew dark. The fire died."
-    varied = (
-        "He went out. She came in through the side door with the rain still on her coat and "
-        "did not look at him once. They sat. It grew dark."
-    )
-    assert sentence_length_variation(varied).value > sentence_length_variation(uniform).value
-
-
-def test_the_tricolon_habit_is_detected_and_named() -> None:
-    plain = "The room was cold and the window was open."
-    habit = "The room was cold, dark, and silent. He was tired, hungry, and afraid."
-    assert tricolon_rate(plain).value == 0.0
-    assert tricolon_rate(habit).value > 0.0
-
-
-def test_repeated_openings_are_detected() -> None:
-    same = "The door opened. The door closed. The door opened again."
-    mixed = "A door opened. Rain fell. She waited."
-    assert opening_shape_repetition(same).value > opening_shape_repetition(mixed).value
-
-
-def test_dialogue_ratio_sees_both_quote_styles() -> None:
-    """Canonicalization is NFC and does not unify quotes, so a metric reading only straight
-    quotes would report zero dialogue for every scene the fixtures actually contain."""
-    straight = dialogue_ratio('He said, "I was in the city all week."')
-    curly = dialogue_ratio("He said, “I was in the city all week.”")
-    assert straight.value > 0.0
-    assert curly.value > 0.0
-
-
 def test_a_metric_survives_prose_it_cannot_parse() -> None:
     """Empty, whitespace and single-sentence text all reach these functions in normal
     operation — a gate refusal path is not a reason for a measurement to raise."""
@@ -222,20 +184,20 @@ def test_a_metric_survives_prose_it_cannot_parse() -> None:
         assert [m.metric_id for m in measure(text)] == list(MEASURED_IDS)
 
 
-def test_sentence_splitting_is_crude_and_says_so() -> None:
-    assert len(sentences("Mr. Vane died.")) == 2, "the docstring claims crude; keep it honest"
-
-
 def test_metrics_are_stored_per_accepted_revision(store: SqliteStore) -> None:
     """A metric whose history begins on the day it is promoted has no held-out data to be
-    promoted on, which is the whole reason these are logged before anything reads them."""
+    promoted on, which is the whole reason these are logged before anything reads them.
+
+    Keyed to `craft.scene_echo.v1` since the four refuted proxies were archived
+    (`research/quality-measurement/refuted_metrics.py`); the store path is unchanged.
+    """
     metrics = measure("The room was cold, dark, and silent. She waited by the door.")
     assert store.record_craft_metrics(
         "rev-1", "scene-1", metrics, measured_at=TODAY
     ) == len(MEASURED_IDS)
     # Immutable revision, so a re-measure can only produce the same numbers.
     assert store.record_craft_metrics("rev-1", "scene-1", metrics, measured_at=TODAY) == 0
-    rows = store.craft_metrics(metric_id="craft.tricolon_rate.v0")
+    rows = store.craft_metrics(metric_id="craft.scene_echo.v1")
     assert [(r[0], r[1]) for r in rows] == [("rev-1", "scene-1")]
 
 
@@ -756,7 +718,10 @@ def test_the_profile_exists_and_names_what_it_is_not() -> None:
     from litharness.domain.craft import load_profile
 
     profile = load_profile()
-    assert profile, "plan/craft-profile.json is missing; tools/build_craft_profile.py builds it"
+    assert profile, (
+        "plan/craft-profile.json is missing; "
+        "research/quality-measurement/build_craft_profile.py builds it"
+    )
     assert profile["source"]["dataset"] == "OmniAICreator/RoyalRoad-1.61M"
     assert profile["source"]["genre_tag"] == "LitRPG"
     assert "null" in profile["disclaimer"]
@@ -775,11 +740,22 @@ def test_no_prose_is_stored_in_the_profile() -> None:
 
 def test_every_metric_was_measured_against_the_corpus() -> None:
     """A metric added later without being profiled would silently have no anchor and no
-    separation number — it would look measured because its neighbours are."""
+    separation number — it would look measured because its neighbours are.
+
+    Pinned to the four archived id strings since the refuted proxies left the package
+    (`research/quality-measurement/refuted_metrics.py`): the committed profile is the
+    measured record of exactly those four, and the two surviving duplicate detectors were
+    never profiled — the placement clause abstains for them by design.
+    """
     from litharness.domain.craft import load_profile
 
     profile = load_profile()
-    ids = {fn("x. y.").metric_id for fn in METRICS}
+    ids = {
+        "craft.dialogue_ratio.v0",
+        "craft.opening_shape_repetition.v0",
+        "craft.sentence_length_cv.v0",
+        "craft.tricolon_rate.v0",
+    }
     assert set(profile["separation"]) == ids
     assert set(profile["cohorts"]["human_pre_llm"]["metrics"]) == ids
 
@@ -815,15 +791,18 @@ def test_the_era_control_catches_the_confound() -> None:
 
 def test_a_scene_can_be_placed_against_published_litrpg() -> None:
     """What survives the refutation: the metrics do not sort machine from human, but an
-    outlier against the published distribution is still a fact."""
-    from litharness.domain.craft import measure, percentile_of
+    outlier against the published distribution is still a fact.
 
-    tell = (
-        "The room was cold, dark, and silent. He was tired, hungry, and afraid. "
-        "She was calm, sure, and ready."
-    )
-    metrics = {m.metric_id: m for m in measure(tell)}
-    assert percentile_of(metrics["craft.tricolon_rate.v0"], words=900) == 0.99
+    The value is constructed directly since `measure` stopped reporting the archived four;
+    `percentile_of` places by metric-id string against the committed profile, and that
+    machinery — not the metric arithmetic — is what this pins. 157.8947 is what the old
+    tell fixture measured (three tricolons in nineteen words), far beyond the pre-LLM p99
+    of 4.3478 in the 700-1100 band.
+    """
+    from litharness.domain.craft import percentile_of
+
+    tell = CraftMetric(metric_id="craft.tricolon_rate.v0", value=157.8947, caveat="test")
+    assert percentile_of(tell, words=900) == 0.99
 
 
 def test_a_checkout_without_a_profile_still_works() -> None:
@@ -925,17 +904,34 @@ def test_the_craft_ladder_places_a_scene_it_can_and_says_nothing_when_it_cannot(
     Zero run wrote scenes of 138 to 205 words, so **every scene it produced sits outside the
     support of the corpus this system calibrates against**. Before banding, the pooled ladder
     answered anyway.
-    """
-    metrics = measure("The room was cold, dark, and silent. She waited a while by the door.")
 
-    placed = _craft_ladder(store, metrics, today=TODAY, words=900)
-    unplaced = _craft_ladder(store, metrics, today=TODAY, words=180)
-    unstated = _craft_ladder(store, metrics, today=TODAY)
+    The placed half is driven by a directly-constructed metric carrying an archived id, since
+    the committed profile holds stops only for those four and `measure` no longer reports
+    them; the placement machinery keys on the id string, which is what is under test. The
+    survivors' half of the bargain — the clause attaches nothing to ids the profile never
+    measured, at any length — is asserted alongside, because that abstention is the decided
+    post-archive state, not an accident.
+    """
+    archived = (a_metric(6.0),)
+
+    placed = _craft_ladder(store, archived, today=TODAY, words=900)
+    unplaced = _craft_ladder(store, archived, today=TODAY, words=180)
+    unstated = _craft_ladder(store, archived, today=TODAY)
 
     assert any("of human_pre_llm at 700-1100 words" in (g.detail or "") for g in placed)
     assert not any("percentile" in (g.detail or "") for g in unplaced)
     assert not any("of human_pre_llm" in (g.detail or "") for g in unplaced), "below MIN_WORDS"
     assert not any("of human_pre_llm" in (g.detail or "") for g in unstated), "no length given"
+
+    survivors = _craft_ladder(
+        store,
+        measure("The room was cold, dark, and silent. She waited a while by the door."),
+        today=TODAY,
+        words=900,
+    )
+    assert not any("of human_pre_llm" in (g.detail or "") for g in survivors), (
+        "the profile has no stops for the surviving metrics; the clause must abstain"
+    )
 
 
 def test_compression_distance_does_not_count_the_container_header() -> None:

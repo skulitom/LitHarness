@@ -167,7 +167,8 @@ MAX_CONTROL_RATIO = 2.0
 MAX_REFERENCE_EXCEEDANCE = 1.0 / MAX_CONTROL_RATIO
 
 #: Chapters that must actually sit at or beyond a quantile stop before it may be a threshold.
-#: **Derived rather than placed.** `tools/build_craft_profile.py` indexes a stop at
+#: **Derived rather than placed.** `research/quality-measurement/build_craft_profile.py`
+#: indexes a stop at
 #: `round(p * (n - 1))`, so a p99 over a 200-chapter band rests on two observations and a p99
 #: is exactly where a population threshold wants to live. Measured against the committed
 #: profile, the reference cohort's bands give 3, 5, 21, 37 and 6 observations at p99 — so five

@@ -443,7 +443,7 @@ To rebuild the published-LitRPG reference profile (optional, needs the `corpus` 
 downloads shards of a 12.5GB dataset — no prose is stored, only percentiles):
 
 ```bash
-uv run --extra corpus python tools/build_craft_profile.py --out plan/craft-profile.json
+uv run --extra corpus python research/quality-measurement/build_craft_profile.py --out plan/craft-profile.json
 ```
 
 ## Development
@@ -508,7 +508,8 @@ Stated plainly, because a system that runs is easy to mistake for a system that 
 - **No craft gate, and the reason is measured — but the path to one is now wired end to
   end.** The blocking ladder is shape then integrity: a draft exists, is the right size, did
   not overwrite anything, and nothing unresolved stands against its node. Nothing *blocks* on
-  whether the prose is any good (PLAN.md §1a). Four craft metrics are logged per accepted
+  whether the prose is any good (PLAN.md §1a). Two duplicate-detection craft metrics
+  (`craft.scene_echo.v1`, `craft.repeated_span.v0`) are logged per accepted
   scene and can only annotate — `craft_gates` has no branch that could set `blocking`, and
   `PolicyDecision` raises on a blocking craft gate with no calibration.
   What changed is that the *other* door is now reachable and has a decided behaviour behind
@@ -518,9 +519,12 @@ Stated plainly, because a system that runs is easy to mistake for a system that 
   none does — with an empty table the wired path costs one indexed query and cannot construct
   a gate, which is what made it safe to build before the evidence. It is plumbing waiting on
   judgment, and the emptiness of `calibrations` is still the measure of the gap.
-  All four metrics were measured against 13,000 chapters of published LitRPG and
+  The four line-level proxies this list used to lead with were measured against 13,000
+  chapters of published LitRPG and
   **all four failed to separate declared-AI prose from human prose at the same date**; the one
-  that looked promising turned out to be detecting the year. For how many candidate proxies
+  that looked promising turned out to be detecting the year. They are archived off the accept
+  path in `research/quality-measurement/refuted_metrics.py`, with `plan/craft-profile.json`
+  kept as the measured record. For how many candidate proxies
   stand refuted, [research/quality-measurement/BRIEF.md](research/quality-measurement/BRIEF.md)
   §2 is canonical — this sentence used to restate a count and the restatement was stale
   within days, which is exactly why the ledger owns the number. The blocker is human

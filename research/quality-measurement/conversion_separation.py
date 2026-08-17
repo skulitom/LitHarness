@@ -56,8 +56,7 @@ sys.path.insert(0, str(REPO / "src"))
 
 from corpus_io import royalroad_chapters  # noqa: E402
 from evaluate import auc  # noqa: E402
-
-from litharness.domain.craft import (  # noqa: E402
+from refuted_metrics import (  # noqa: E402
     dialogue_ratio,
     opening_shape_repetition,
     sentence_length_variation,

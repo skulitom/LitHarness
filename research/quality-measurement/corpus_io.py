@@ -42,8 +42,8 @@ MOL = Path("C:/DEV/BookCrawler/data/mother-of-learning-20220313")
 HF_CACHE = Path.home() / ".cache/huggingface/hub/datasets--OmniAICreator--RoyalRoad-1.61M"
 
 #: Which shard is which cohort. Not arbitrary: the corpus is ordered so low shard numbers are
-#: recent. `tools/build_craft_profile.py` picked the same two and its cohort logic is the
-#: reference for anything computed here.
+#: recent. `build_craft_profile.py` (beside this file since the archive move) picked the same
+#: two and its cohort logic is the reference for anything computed here.
 SHARDS = {3: "recent", 30: "older"}
 
 GENRE_TAG = "LitRPG"
@@ -197,7 +197,7 @@ def _shard_path(shard: int) -> Path:
 def era_cohort(released_at: str | None, warnings_json: str | None) -> str | None:
     """The cohort a chapter belongs to, or None to skip it.
 
-    Reproduced from `tools/build_craft_profile.py::cohort_of` rather than imported, because
+    Reproduced from `build_craft_profile.py::cohort_of` rather than imported, because
     that tool is a committed artifact-builder and this is research code that must be free to
     disagree with it. Any disagreement is a finding; a silent shared import would hide one.
     """

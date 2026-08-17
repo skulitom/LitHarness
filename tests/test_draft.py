@@ -1004,9 +1004,15 @@ def with_a_failing_craft_gate(store: SqliteStore) -> None:
 
     The threshold is derived from the measurement rather than written down, so the test
     cannot silently stop exercising the gate if the metric's definition moves.
+
+    Keyed to `craft.scene_echo.v1` (originally `craft.dialogue_ratio.v0`) since the four
+    refuted proxies were archived: the ladder only consults a calibration for a metric this
+    draft measured, and `measure` no longer reports the archived ids. The derived
+    threshold (`value + 1.0`, direction BELOW) fails for any measured value, so the re-key
+    changes which id carries the gate and nothing about the park behaviour under test.
     """
     value = {metric.metric_id: metric.value for metric in measure(PROSE)}
-    metric_id = "craft.dialogue_ratio.v0"
+    metric_id = "craft.scene_echo.v1"
     # **The holdout has to actually be in the store now.** `why_not_promotable` compares
     # `holdout_size` against the number of answered audit samples, because nothing ever did:
     # a row claiming fifty held-out judgments promoted against a store holding none, and the

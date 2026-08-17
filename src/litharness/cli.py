@@ -755,7 +755,7 @@ def _population_from_profile(
     if digest is None:
         print(
             "litharness: no craft profile is built, so there is no distribution to read a "
-            "threshold out of; run tools/build_craft_profile.py",
+            "threshold out of; run research/quality-measurement/build_craft_profile.py",
             file=sys.stderr,
         )
         return EXIT_FAULT

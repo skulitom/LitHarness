@@ -50,7 +50,8 @@ Scorer = Callable[[str], float]
 
 
 def auc(positive: Sequence[float], negative: Sequence[float]) -> float:
-    """Rank AUC with ties at half. Copied in behaviour from `tools/build_craft_profile.py`.
+    """Rank AUC with ties at half. Copied in behaviour from `build_craft_profile.py` (beside
+    this file since the archive move; formerly `tools/`).
 
     Reimplemented rather than imported so this file runs under either interpreter, and checked
     in `selftest()` against the O(n²) pairwise definition on tie-heavy draws — tie handling is
