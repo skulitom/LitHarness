@@ -51,15 +51,38 @@ class Runner(Protocol):
 def subprocess_runner(
     argv: Sequence[str], *, timeout: float, cwd: str | None = None
 ) -> CommandResult:
-    """Real execution. stdin is closed, never inherited.
+    """Real execution. stdin is closed, never inherited, and the pipe is read as UTF-8.
 
     `claude -p` waits on stdin and prints "no stdin data received in 3s" otherwise —
     three seconds of dead time on every single call.
+
+    **`encoding` is not a default worth inheriting, and the defect it caused is measured.**
+    `text=True` alone decodes with `locale.getpreferredencoding()`, which is `cp1252` on a
+    Windows host — so every non-ASCII character in a scene these adapters return was mangled
+    on the way in. Measured on a real `claude -p` draft: the em dash the generator wrote came
+    back as `â€"`, the three UTF-8 bytes of U+2014 reinterpreted one at a time.
+
+    That is worse than cosmetic here, because `STATUS_PATTERN` matches on U+2014 exactly. A
+    mangled dash means the status line does not parse, which means `extract_state` reads
+    **nothing** from any scene a CLI provider wrote — the silent shape `extraction.py`'s
+    docstring names, where a scene that established no state is indistinguishable from one
+    nobody could read. Curly quotes, ellipses and accented names in the prose were corrupted
+    the same way, and that text goes into an immutable store.
+
+    It survived because every test injects a `Runner` and this function is the one part of the
+    adapter a fake cannot exercise, and because no run had ever put a CLI provider in front of
+    generation. `OllamaProvider` was never affected: it decodes its own body explicitly.
+
+    `errors="replace"` rather than strict: an undecodable byte should arrive as a visible
+    U+FFFD, not raise and cost the unit an attempt, and not be silently transliterated into
+    characters that look deliberate.
     """
     completed = subprocess.run(
         list(argv),
         capture_output=True,
         text=True,
+        encoding="utf-8",
+        errors="replace",
         timeout=timeout,
         stdin=subprocess.DEVNULL,
         cwd=cwd,

@@ -15,6 +15,7 @@ from __future__ import annotations
 import json
 import os
 import subprocess
+import sys
 from collections.abc import Sequence
 from pathlib import Path
 
@@ -867,3 +868,44 @@ def test_the_whole_suite_runs_with_the_billing_guard_active() -> None:
     )
     assert [provider.name for provider in real.candidates()] == ["ollama", "fake"]
     assert_no_billing_reachable(real)
+
+
+# --- the one part of the adapter a fake runner cannot exercise ----------------------
+
+
+def test_the_real_runner_decodes_utf8_rather_than_the_host_locale() -> None:
+    """The bug every other test in this file is structurally unable to see.
+
+    `subprocess_runner` is the seam the injected `Runner` replaces, so the whole adapter
+    suite runs without ever decoding a real pipe. It shipped with `text=True` and no
+    `encoding`, which decodes with `locale.getpreferredencoding()` — `cp1252` on a Windows
+    host. Measured on a real `claude -p` draft: the em dash the generator wrote arrived as
+    `â€”`, the three UTF-8 bytes of U+2014 read one at a time.
+
+    **The em dash is not incidental.** `extraction.STATUS_PATTERN` matches on U+2014
+    exactly, so a mangled dash means the status line does not parse and `extract_state`
+    reads nothing — every scene a CLI provider drafts would establish no state, silently,
+    which is the exact failure `extraction.py` warns about. The assertion below therefore
+    checks the parser rather than the codepoint: a test that only compared strings would
+    pass on a repair that fixed the dash and broke the pipe.
+    """
+    from litharness.domain.extraction import STATUS_PATTERN
+    from litharness.providers.cli import subprocess_runner
+
+    line = "[STATUS] rook — Level 1 | HP 12/18 | MP 4/4 | Gold 25"
+    result = subprocess_runner(
+        [
+            sys.executable,
+            "-c",
+            "import sys; sys.stdout.reconfigure(encoding='utf-8'); "
+            f"print({line!r})",
+        ],
+        timeout=60.0,
+    )
+
+    assert result.returncode == 0, result.stderr
+    assert "—" in result.stdout, f"em dash did not survive the pipe: {result.stdout!r}"
+    assert STATUS_PATTERN.search(result.stdout), (
+        "a status line written by a CLI provider does not parse; extraction would read "
+        f"nothing from every scene it drafts. Got {result.stdout!r}"
+    )

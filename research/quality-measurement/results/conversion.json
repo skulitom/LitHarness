@@ -1,0 +1,181 @@
+{
+  "stories": 354,
+  "decile_size": 35,
+  "cohorts": {
+    "undeclared_2025": 141,
+    "declared_ai_2025": 27,
+    "null": 10,
+    "human_pre_llm": 176
+  },
+  "permutation_draws": 400,
+  "table": [
+    {
+      "metric": "dialogue_ratio",
+      "reads_prose": true,
+      "conversion_auc": 0.3886,
+      "null_p05": 0.3902,
+      "null_p95": 0.6139,
+      "outside_null": true,
+      "era_auc": 0.5076
+    },
+    {
+      "metric": "opening_shape_repetition",
+      "reads_prose": true,
+      "conversion_auc": 0.3665,
+      "null_p05": 0.3935,
+      "null_p95": 0.6139,
+      "outside_null": true,
+      "era_auc": 0.4172
+    },
+    {
+      "metric": "sentence_length_cv",
+      "reads_prose": true,
+      "conversion_auc": 0.4833,
+      "null_p05": 0.3967,
+      "null_p95": 0.618,
+      "outside_null": false,
+      "era_auc": 0.5546
+    },
+    {
+      "metric": "tricolon_rate",
+      "reads_prose": true,
+      "conversion_auc": 0.5518,
+      "null_p05": 0.3845,
+      "null_p95": 0.6163,
+      "outside_null": false,
+      "era_auc": 0.6438
+    },
+    {
+      "metric": "word_count",
+      "reads_prose": true,
+      "conversion_auc": 0.5747,
+      "null_p05": 0.3902,
+      "null_p95": 0.618,
+      "outside_null": false,
+      "era_auc": 0.4857
+    },
+    {
+      "metric": "chapters_seen",
+      "reads_prose": false,
+      "conversion_auc": 0.3082,
+      "null_p05": 0.3853,
+      "null_p95": 0.6363,
+      "outside_null": true,
+      "era_auc": 0.6892
+    },
+    {
+      "metric": "mean_words",
+      "reads_prose": false,
+      "conversion_auc": 0.5747,
+      "null_p05": 0.3902,
+      "null_p95": 0.618,
+      "outside_null": false,
+      "era_auc": 0.4857
+    },
+    {
+      "metric": "log_views",
+      "reads_prose": false,
+      "conversion_auc": 0.5796,
+      "null_p05": 0.3886,
+      "null_p95": 0.6188,
+      "outside_null": false,
+      "era_auc": 0.4572
+    },
+    {
+      "metric": "followers",
+      "reads_prose": false,
+      "conversion_auc": 0.8139,
+      "null_p05": 0.3849,
+      "null_p95": 0.6212,
+      "outside_null": true,
+      "era_auc": 0.5098
+    }
+  ],
+  "verdict": "SEPARATION IS PROSE-BLIND. A baseline that reads no prose separates the deciles at least as well as the best craft metric, so the label is carrying story size rather than writing. Any \u00a74.3 critic must take the prose-blind baseline as a covariate from line one, and must beat it rather than beat chance.",
+  "best_prose_metric": "opening_shape_repetition",
+  "best_prose_auc": 0.3665,
+  "best_independent_blind_metric": "chapters_seen",
+  "best_independent_blind_auc": 0.3082,
+  "label_components": {
+    "log_views": 0.5796,
+    "followers": 0.8139
+  },
+  "stratified_by_followers": {
+    "by": "followers",
+    "bands": 3,
+    "min_band": 118,
+    "per_band": {
+      "dialogue_ratio": [
+        0.2479,
+        0.5455,
+        0.2893
+      ],
+      "opening_shape_repetition": [
+        0.438,
+        0.3719,
+        0.3471
+      ],
+      "sentence_length_cv": [
+        0.3223,
+        0.6198,
+        0.3802
+      ],
+      "tricolon_rate": [
+        0.405,
+        0.7603,
+        0.5537
+      ],
+      "word_count": [
+        0.595,
+        0.5207,
+        0.6612
+      ]
+    },
+    "pooled_auc": {
+      "dialogue_ratio": 0.3609,
+      "opening_shape_repetition": 0.3857,
+      "sentence_length_cv": 0.4408,
+      "tricolon_rate": 0.573,
+      "word_count": 0.5923
+    }
+  },
+  "stratified_by_length": {
+    "by": "mean_words",
+    "bands": 3,
+    "min_band": 118,
+    "per_band": {
+      "dialogue_ratio": [
+        0.4132,
+        0.3884,
+        0.3884
+      ],
+      "opening_shape_repetition": [
+        0.3471,
+        0.2727,
+        0.4132
+      ],
+      "sentence_length_cv": [
+        0.4959,
+        0.4793,
+        0.6281
+      ],
+      "tricolon_rate": [
+        0.3967,
+        0.6364,
+        0.6529
+      ],
+      "word_count": [
+        0.405,
+        0.6198,
+        0.6612
+      ]
+    },
+    "pooled_auc": {
+      "dialogue_ratio": 0.3967,
+      "opening_shape_repetition": 0.3443,
+      "sentence_length_cv": 0.5344,
+      "tricolon_rate": 0.562,
+      "word_count": 0.562
+    }
+  }
+}
