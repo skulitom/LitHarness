@@ -18,6 +18,7 @@ import pytest
 
 from litharness.adapters.sqlite_store import SqliteStore
 from litharness.cli import EXIT_ATTENTION, EXIT_FAULT, EXIT_OK, build_parser, main
+from litharness.domain.beats import TemplateMismatch
 from litharness.domain.directives import DirectiveStatus
 from litharness.domain.events import Event, EventType
 from litharness.domain.jobs import Job, JobStatus
@@ -547,6 +548,31 @@ def test_import_needs_exactly_one_source(db) -> None:
     run(db, "init")
     with pytest.raises(SystemExit):
         run(db, "import")
+
+
+def test_a_refused_scene_count_leaves_no_trace_of_the_book(db) -> None:
+    """`arc_template` refuses a book of fewer scenes than named beats — but it was consulted
+    only after the decision, revision, premise and any seed state were durably committed, so
+    `new --scenes 1` raised *and* half-created the book. A create that fails must fail whole:
+    what remains is invisible to the operator who was told nothing was made, and their retry
+    under the same ids collides with the wreckage of the refused one."""
+    run(db, "init")
+
+    with pytest.raises(TemplateMismatch):
+        run(db, "new", "Book Zero", "--premise", "a harness learns to write", "--scenes", "1")
+
+    store = SqliteStore.open(db)
+    try:
+        assert store.branches() == []
+        assert store.read_log() == []
+        counts = {
+            table: store._connection.execute(f"SELECT COUNT(*) AS n FROM {table}").fetchone()["n"]
+            for table in ("revisions", "node_versions", "policy_decisions", "plan_items",
+                          "state_records", "events")
+        }
+        assert counts == dict.fromkeys(counts, 0), counts
+    finally:
+        store.close()
 
 
 # --- the promotion path (§10.4) ------------------------------------------------------

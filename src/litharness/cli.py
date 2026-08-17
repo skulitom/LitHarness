@@ -1186,6 +1186,10 @@ def cmd_new(args: argparse.Namespace) -> int:
     book_id = args.book or str(uuid.uuid4())
     branch_id = args.branch or str(uuid.uuid4())
     revision = new_book(book_id, branch_id, title=args.title, scenes=args.scenes)
+    # `arc_template` refuses fewer scenes than named beats, and it must refuse *before* the
+    # store opens: a raise after `commit_revision` would leave the book, decision, premise
+    # and seed state durably committed behind a command that reported failure.
+    template = arc_template(args.scenes)
 
     # Attributed like every other mutation (§19). An author's act, so no gate results: the
     # only check that runs is the scene count, and it raises before a decision exists.
@@ -1258,7 +1262,6 @@ def cmd_new(args: argparse.Namespace) -> int:
     finally:
         store.close()
 
-    template = arc_template(args.scenes)
     print(revision.revision_id)
     print(f"  book={book_id} branch={branch_id}")
     print(f"  {args.scenes} empty scene(s); template {template.template_id}")
