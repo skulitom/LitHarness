@@ -3432,3 +3432,33 @@ died on label validity, and what remains is the channel that was never funded �
 is §61's whole argument. Also swept: `--no-outline`'s help no longer frames the flag
 as §54's control arm (that measurement concluded, §57/§65); it is the hand-outlining
 flag now.
+
+## 68. Cut 4 was already true, and this entry is the audit that proves it
+
+Cut 4 of §61's programme — remove the sub-frontier support paths and fixtures — landed
+with **zero tracked edits**, because §64's registry rewrite had absorbed every item:
+the live extraction check already re-pointed at the frontier provider (the one thing
+FakeProvider structurally cannot verify, kept alive because it caught the `{subject}`
+placeholder defect); the capable-vs-small length contrast already deleted with its
+concluded question; stub names already neutral; budget tests already keyed to `fake`;
+the Sampler merge coverage already re-hosted model-free. Rather than assume, the pass
+verified each item against the tree and swept for residue.
+
+**The residue audit, which is the entry's real content.** A case-insensitive sweep of
+src+tests for every retired model name found **twenty hits, nineteen of them
+docstring/comment provenance** — measurement records for kept code (the Sampler
+determinism numbers, the target-words phrasing rationale, `_SEED_MODULUS`'s 32-bit
+seed origin, the codex health-probe lesson now shaping the kept health contract, the
+duplicate-paragraph run behind `repeated_span`) — each pointing at its canonical home
+in this ledger, per the house rule that history is corrected in place, never scrubbed.
+The **one executable mention** is deliberate and pinned: `test_budget` asserts the
+retired provider names now project at `DEFAULT_TAX_TOKENS` — historical decision rows
+name `ollama`/`codex`, and the safe-direction shift (they project *high* now) is
+exactly the property worth a test. Replacing those strings would unpin it.
+
+**What this entry is for.** §52 and §56 answered the sub-frontier arms' questions
+(872-word verbatim runs; 49-of-49 ledger copies); their research is concluded, results
+committed, scripts frozen as records. The maintenance burden the directive named is
+measured at zero remaining paths. A cut that finds itself already landed still gets
+its entry, because the alternative is a programme item that quietly never happened —
+and the audit that distinguishes "done" from "assumed done" is cheap exactly once.
