@@ -23,6 +23,7 @@ import litharness_contracts as lc
 from litharness.domain.audit import AuditSample
 from litharness.domain.budget import Spend
 from litharness.domain.calibration import Calibration
+from litharness.domain.candidates import CandidateStatus, SpanCandidate
 from litharness.domain.craft import CraftMetric
 from litharness.domain.directives import Directive, DirectiveStatus
 from litharness.domain.events import Event
@@ -259,6 +260,49 @@ class PreferenceRepository(Protocol):
     ) -> bool: ...
 
 
+class SpanCandidateRepository(Protocol):
+    """The tournament's persistence (§61 Add 3): candidate drafts awaiting selection.
+
+    A sibling of `PreferenceRepository` rather than an extension of it, for the reason
+    every repository here is a sibling: a candidate is not a pair sample and not a
+    revision — it is a draft that must never reach `commit_revision`, parked in its own
+    table with its own content-derived identity. `commit_tournament` is the module's one
+    commit seam, mirroring `commit_revision`: everything a tournament produces — corpus
+    rows, candidates, sibling samples, the follow-up job and the settlement decision —
+    lands in one transaction, so a crashed handler replays into convergence instead of
+    into half a tournament.
+    """
+
+    def span_candidates(
+        self,
+        book_id: str,
+        branch_id: str,
+        *,
+        logical_id: str | None = ...,
+        job_id: str | None = ...,
+        status: CandidateStatus | None = ...,
+    ) -> list[SpanCandidate]: ...
+
+    def pending_span_candidates(self) -> list[SpanCandidate]: ...
+
+    def set_span_candidate_status(
+        self, candidate_id: str, status: CandidateStatus
+    ) -> bool: ...
+
+    def commit_tournament(
+        self,
+        *,
+        protocol: PreferenceProtocol,
+        excerpts: Sequence[ComparisonExcerpt],
+        candidates: Sequence[SpanCandidate],
+        samples: Sequence[PairSample],
+        decision: PolicyDecision,
+        decided_at: str,
+        events: Sequence[Event] = ...,
+        jobs: Sequence[Job] = ...,
+    ) -> None: ...
+
+
 class EventRepository(Protocol):
     def append_events(self, events: Iterable[Event]) -> None: ...
 
@@ -415,6 +459,46 @@ class DraftStore(
     pass
 
 
+class PlanSearchStore(
+    ManuscriptReader,
+    PlanReader,
+    DecisionRepository,
+    FindingRepository,
+    StateRepository,
+    # Read-only, for the same DetectorInput assembly the draft handler uses: the ledger's
+    # open rows feed `promise.overdue.v0` during candidate gating.
+    PromiseRepository,
+    # `calibrations` and `pair_samples`, read-only: the judge-license check is Add 1's
+    # staleness wiring applied to the selection task's own calibration.
+    AuditRepository,
+    PreferenceRepository,
+    SpanCandidateRepository,
+    Protocol,
+):
+    """What one tournament reads and the one seam it writes through: the frozen base and
+    plan it drafts against, the standing findings and spend it pre-flights on, and
+    `commit_tournament` for everything it produces."""
+
+
+class SpanSelectStore(
+    ManuscriptReader,
+    ManuscriptWriter,
+    PlanReader,
+    PlanWriter,
+    DecisionRepository,
+    FindingRepository,
+    StateRepository,
+    PromiseRepository,
+    AuditRepository,
+    PreferenceRepository,
+    SpanCandidateRepository,
+    Protocol,
+):
+    """What selection reads and writes: the winner's commit through the normal accept
+    path (`ManuscriptWriter`), the ONE plan acceptance (`PlanWriter`), the judge's
+    verdicts through the same pair machinery, and the candidate statuses."""
+
+
 class NarrativePlanningStore(
     DirectiveInbox,
     PlanReader,
@@ -435,6 +519,10 @@ class EvaluationStore(
     FindingRepository,
     StateRepository,
     JobQueue,
+    # Read-only: the repair-license extension (§61 Add 3, item 5) asks whether a finding
+    # cites a *current* calibration before minting a repair for it, and `calibrations` is
+    # the only read that answer needs.
+    AuditRepository,
     Protocol,
 ):
     pass
@@ -446,6 +534,10 @@ class RepairStore(
     FindingRepository,
     StateRepository,
     DecisionRepository,
+    # Read-only, and the second enforcement of the same license the evaluation handler
+    # checked at mint time: a calibration that lapsed between mint and claim must refuse
+    # the repair at run time too, or the license outlives its evidence.
+    AuditRepository,
     Protocol,
 ):
     pass
@@ -486,6 +578,7 @@ class ApplicationStore(
     StateRepository,
     AuditRepository,
     PreferenceRepository,
+    SpanCandidateRepository,
     SummaryRepository,
     PromiseRepository,
     EventRepository,
@@ -555,10 +648,13 @@ __all__ = [
     "Named",
     "NarrativePlanningStore",
     "PlanRefinementStore",
+    "PlanSearchStore",
     "PlanningStore",
     "PreferenceRepository",
     "PromiseRepository",
     "RepairStore",
+    "SpanCandidateRepository",
+    "SpanSelectStore",
     "StatusStore",
     "TextGenerator",
 ]

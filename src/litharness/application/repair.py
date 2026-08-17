@@ -18,6 +18,7 @@ from litharness.application.ports import EvaluationStore, RepairStore, TextGener
 from litharness.domain import propagation
 from litharness.domain.budget import BudgetPolicy
 from litharness.domain.budget import check as budget_check
+from litharness.domain.calibration import Calibration, NotPromotable, veto_for
 from litharness.domain.events import Event, EventType
 from litharness.domain.extraction import extract_state
 from litharness.domain.findings import UNRESOLVED_STATUSES, Finding, primary_span_of
@@ -155,6 +156,52 @@ def summary_job_for(
     )
 
 
+def cited_calibration_id(finding: Finding) -> str | None:
+    """The calibration a finding's claim cites, or None when it cites none.
+
+    Carried in the contract finding's free-form `claim` — the field a calibrated detector
+    owns — rather than in a new column: no calibrated finding exists in production today,
+    and the citation's shape is pinned by the tests that exercise the license.
+    """
+    claim = finding.source.get("claim")
+    if not isinstance(claim, dict):
+        return None
+    cited = claim.get("calibration_id")
+    return cited if isinstance(cited, str) and cited else None
+
+
+def calibration_licenses(
+    finding: Finding, calibrations: Sequence[Calibration], *, today: str
+) -> bool:
+    """Whether a *current* calibration licenses a scoped repair of this finding.
+
+    §61 Add 3's item 5, and the whole of it: the cited `calibration_id` must be present,
+    its stored row must be current today, and its evidence class must be one whose
+    promotion the domain accepts — checked through `veto_for`, which is total over the
+    enum precisely so a class with no refusal license raises here instead of inheriting
+    one. §1a.2's discipline is untouched on both sides of this check: an *uncalibrated*
+    non-blocking finding still licenses nothing, and what a calibrated one licenses is
+    still a span-scoped patch under `licensed_by_finding_id` — never freeform revision.
+
+    No such finding exists today; the calibrations table holds no row a claim could cite.
+    This path is exercised by tests with a synthetic row, which is the intended state:
+    the gate is the license, and the license opens when the evidence does.
+    """
+    cited = cited_calibration_id(finding)
+    if cited is None:
+        return False
+    row = next(
+        (item for item in calibrations if item.calibration_id == cited), None
+    )
+    if row is None or not row.is_current(today):
+        return False
+    try:
+        veto_for(row.evidence_class)
+    except NotPromotable:
+        return False
+    return True
+
+
 def repair_job_for(
     finding: Finding,
     *,
@@ -162,9 +209,21 @@ def repair_job_for(
     branch_id: str,
     revision_id: str,
     repair_depth: int,
+    calibrated: bool = False,
 ) -> Job | None:
+    """One repair unit for a finding the licensing predicate accepts, else None.
+
+    **The predicate, and its one extension (§61 Add 3, item 5).** The original license —
+    blocking AND deterministic AND span-carrying — stands unchanged. The extension is
+    exactly one new disjunct: a finding that carries a primary span AND cites a current
+    calibration (`calibrated`, computed by the caller via `calibration_licenses`) may
+    license a scoped repair even when non-blocking. The span requirement is common to both
+    arms and non-negotiable: without a located span there is nothing `apply_patch` can
+    license, and relaxing it would weaken the `UNLICENSED_DELETION` guarantee — the exact
+    trade the planning-drafting map warns the generalization against.
+    """
     span = primary_span_of(finding)
-    if not finding.blocks or not finding.deterministic or span is None:
+    if span is None or not ((finding.blocks and finding.deterministic) or calibrated):
         return None
     payload: dict[str, object] = {
         "book_id": book_id,
@@ -310,6 +369,11 @@ def make_evaluation_handler(
         repairs: list[Job] = []
         persistent = matching_finding(original, run.findings) if original is not None else None
         if complete and repair_depth < MAX_AUTO_REPAIRS:
+            # Read once, only when a repair could be minted: the calibrated-license arm
+            # asks whether a finding's cited calibration is current *today*, so the check
+            # runs at mint time and again at claim time in the repair handler.
+            calibrations = store.calibrations()
+            today = _timestamp(now)[:10]
             ordered = sorted(
                 run.findings,
                 key=lambda finding: (-finding.severity.rank, finding.finding_id),
@@ -327,6 +391,9 @@ def make_evaluation_handler(
                     branch_id=branch_id,
                     revision_id=revision.revision_id,
                     repair_depth=repair_depth + 1,
+                    calibrated=calibration_licenses(
+                        candidate, calibrations, today=today
+                    ),
                 )
                 if repair is not None:
                     repairs.append(repair)
@@ -451,7 +518,13 @@ def make_repair_handler(
         )
         if finding is None:
             raise RepairInputError(f"finding {finding_id} is not in {book_id}/{branch_id}")
-        if not finding.blocks:
+        # The mint-time license, re-checked at claim time: a blocking finding may have
+        # been dismissed since the job was minted, and a calibrated license may have
+        # lapsed with its calibration — either way the repair no longer has a license
+        # and quietly completing is the honest outcome (the job was legitimate work).
+        if not finding.blocks and not calibration_licenses(
+            finding, store.calibrations(), today=_timestamp(now)[:10]
+        ):
             return ()
         span = primary_span_of(finding)
         if span is None or span.source.logical_id != logical_id:
@@ -718,6 +791,8 @@ __all__ = [
     "SUMMARY_PRIORITY",
     "EvaluationIncomplete",
     "RepairInputError",
+    "calibration_licenses",
+    "cited_calibration_id",
     "evaluation_job_for",
     "make_evaluation_handler",
     "make_repair_handler",

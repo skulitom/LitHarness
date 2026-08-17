@@ -50,6 +50,7 @@ from litharness.domain.calibration import (
     Grain,
     Population,
 )
+from litharness.domain.candidates import CandidateStatus, SpanCandidate
 from litharness.domain.craft import CraftMetric
 from litharness.domain.directives import Directive, DirectiveKind, DirectiveStatus
 from litharness.domain.events import Event, EventType
@@ -1721,6 +1722,183 @@ class SqliteStore:
             for event in events:
                 self._insert_event(connection, event)
         return True
+
+    # -- span candidates (§61 Add 3) ------------------------------------------------------
+
+    @staticmethod
+    def _insert_candidate(connection: sqlite3.Connection, candidate: SpanCandidate) -> bool:
+        """INSERT OR IGNORE on the content-derived id: a replayed tournament converges."""
+        cursor = connection.execute(
+            "INSERT OR IGNORE INTO span_candidates (candidate_id, job_id, book_id, "
+            "branch_id, logical_id, alternative_index, statement, text, "
+            "base_revision_id, plan_epoch, created_at, status) "
+            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            (
+                candidate.candidate_id,
+                candidate.job_id,
+                candidate.book_id,
+                candidate.branch_id,
+                candidate.logical_id,
+                candidate.alternative_index,
+                candidate.statement,
+                candidate.text,
+                candidate.base_revision_id,
+                candidate.plan_epoch,
+                candidate.created_at,
+                candidate.status.value,
+            ),
+        )
+        return cursor.rowcount > 0
+
+    @staticmethod
+    def _candidate_from_row(row: sqlite3.Row) -> SpanCandidate:
+        return SpanCandidate(
+            candidate_id=row["candidate_id"],
+            job_id=row["job_id"],
+            book_id=row["book_id"],
+            branch_id=row["branch_id"],
+            logical_id=row["logical_id"],
+            alternative_index=int(row["alternative_index"]),
+            statement=row["statement"],
+            text=row["text"],
+            base_revision_id=row["base_revision_id"],
+            plan_epoch=int(row["plan_epoch"]),
+            created_at=row["created_at"],
+            status=CandidateStatus(row["status"]),
+        )
+
+    def span_candidates(
+        self,
+        book_id: str,
+        branch_id: str,
+        *,
+        logical_id: str | None = None,
+        job_id: str | None = None,
+        status: CandidateStatus | None = None,
+    ) -> list[SpanCandidate]:
+        sql = "SELECT * FROM span_candidates WHERE book_id = ? AND branch_id = ?"
+        params: list[object] = [book_id, branch_id]
+        if logical_id is not None:
+            sql += " AND logical_id = ?"
+            params.append(logical_id)
+        if job_id is not None:
+            sql += " AND job_id = ?"
+            params.append(job_id)
+        if status is not None:
+            sql += " AND status = ?"
+            params.append(status.value)
+        sql += " ORDER BY alternative_index, candidate_id"
+        return [
+            self._candidate_from_row(row)
+            for row in self._connection.execute(sql, params)
+        ]
+
+    def pending_span_candidates(self) -> list[SpanCandidate]:
+        """Every candidate still awaiting selection, across all books.
+
+        The selector's readiness scan reads this first and it is one indexed query, empty
+        in the normal state — which is what makes scanning on every tick affordable.
+        """
+        return [
+            self._candidate_from_row(row)
+            for row in self._connection.execute(
+                "SELECT * FROM span_candidates WHERE status = ? "
+                "ORDER BY book_id, branch_id, logical_id, alternative_index",
+                (CandidateStatus.CANDIDATE.value,),
+            )
+        ]
+
+    def set_span_candidate_status(
+        self, candidate_id: str, status: CandidateStatus
+    ) -> bool:
+        """Move one candidate to `selected` or `discarded`. False when nothing moved.
+
+        Idempotent by construction — setting the status a row already holds is a no-op
+        UPDATE — because the selection handler finalizes statuses after its commit and a
+        replayed finalization must converge rather than error.
+        """
+        with self.transaction() as connection:
+            cursor = connection.execute(
+                "UPDATE span_candidates SET status = ? WHERE candidate_id = ?",
+                (status.value, candidate_id),
+            )
+            return cursor.rowcount > 0
+
+    def commit_tournament(
+        self,
+        *,
+        protocol: PreferenceProtocol,
+        excerpts: Sequence[ComparisonExcerpt],
+        candidates: Sequence[SpanCandidate],
+        samples: Sequence[PairSample],
+        decision: PolicyDecision,
+        decided_at: str,
+        events: Sequence[Event] = (),
+        jobs: Sequence[Job] = (),
+    ) -> None:
+        """Persist one tournament's outcome atomically: the plan-search commit seam.
+
+        Everything a `plan_search` job produces lands together — the internal protocol
+        (INSERT OR IGNORE, a pre-registration collides rather than re-stamps), the
+        candidate texts as corpus rows, the candidates, the sibling pair samples, any
+        follow-up selection job, and the settlement decision. One transaction is what
+        makes the K-way handler crash-safe under the decision-before-commit pattern: a
+        replay either finds the decision beside its candidates or finds nothing, never
+        half a tournament; and the Conductor, which settles on `latest_decision_for`,
+        can never read a tournament's decision before the evidence it settles exists.
+        """
+        with self.transaction() as connection:
+            connection.execute(
+                "INSERT OR IGNORE INTO preference_protocols (protocol_id, "
+                "comparator_frame, tie_policy, grain, declared_at) VALUES (?, ?, ?, ?, ?)",
+                (
+                    protocol.protocol_id,
+                    protocol.comparator_frame,
+                    protocol.tie_policy.value,
+                    protocol.grain.value,
+                    protocol.declared_at,
+                ),
+            )
+            for excerpt in excerpts:
+                connection.execute(
+                    "INSERT OR IGNORE INTO comparison_corpus (excerpt_id, text, source, "
+                    "genre, era, words, added_at) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                    (
+                        excerpt.excerpt_id,
+                        excerpt.text,
+                        excerpt.source,
+                        excerpt.genre,
+                        excerpt.era,
+                        excerpt.words,
+                        excerpt.added_at,
+                    ),
+                )
+            for candidate in candidates:
+                self._insert_candidate(connection, candidate)
+            for sample in samples:
+                connection.execute(
+                    "INSERT OR IGNORE INTO pair_samples (sample_id, pair_id, "
+                    "orientation, protocol_id, left_addr, right_addr, grain, book_id, "
+                    "sampled_at, rate, bucket) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                    (
+                        sample.sample_id,
+                        sample.pair_id,
+                        sample.orientation,
+                        sample.protocol_id,
+                        sample.left_addr,
+                        sample.right_addr,
+                        sample.grain.value,
+                        sample.book_id,
+                        sample.sampled_at,
+                        sample.rate,
+                        sample.bucket,
+                    ),
+                )
+            for job in jobs:
+                self._jobs.insert_job(connection, job)
+            for event in events:
+                self._insert_event(connection, event)
+            self._insert_decision(connection, decision, decided_at=decided_at)
 
     def record_calibration(self, calibration: Calibration, *, events: Sequence[Event] = ()) -> bool:
         """Store measured evidence that a metric predicts human judgment.

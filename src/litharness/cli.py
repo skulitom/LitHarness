@@ -54,6 +54,13 @@ from litharness.application.narrative_planner import (
 )
 from litharness.application.outline import BOOK_OUTLINE, make_outline_handler
 from litharness.application.plan_refinement import accept_plan_proposal
+from litharness.application.plan_search import (
+    PLAN_SEARCH,
+    SPAN_SELECT,
+    TOURNAMENT_SOURCE,
+    make_plan_search_handler,
+    make_span_select_handler,
+)
 from litharness.application.planner import make_plan_selector
 from litharness.application.repair import (
     EVALUATE_REVISION,
@@ -197,6 +204,7 @@ def _conductor(store: SqliteStore, args: argparse.Namespace) -> Conductor:
             project_id=args.project,
             policy=_draft_policy(args),
             outline=not args.no_outline,
+            plan_search=args.plan_search,
             **(
                 {"token_budget": args.context_budget}
                 if args.context_budget is not None
@@ -242,6 +250,27 @@ def _conductor(store: SqliteStore, args: argparse.Namespace) -> Conductor:
             ),
             REPAIR_FINDING: make_repair_handler(
                 registry, store, args.project, budget=_budget(args)
+            ),
+            # §61 Add 3: the tournament and its selection. Registered unconditionally —
+            # like every handler here, a kind with no queued work costs nothing — while
+            # the *minting* of tournaments sits behind `--plan-search` above, which is
+            # what keeps the search arm operator-selectable.
+            PLAN_SEARCH: make_plan_search_handler(
+                registry,
+                store,
+                args.project,
+                draft_policy=_draft_policy(args),
+                budget=_budget(args),
+            ),
+            SPAN_SELECT: make_span_select_handler(
+                registry,
+                store,
+                args.project,
+                draft_policy=_draft_policy(args),
+                budget=_budget(args),
+                schedule_evaluation=True,
+                schedule_summary=True,
+                actor=args.holder,
             ),
         },
     )
@@ -1185,9 +1214,14 @@ def cmd_pair_draw(args: argparse.Namespace) -> int:
         if args.siblings:
             corpus = [address for address, _ in candidates]
         else:
+            # Tournament candidates (§61 Add 3) live in the corpus table so the pair
+            # queue can render them, and they are OUR prose — drawn into the external
+            # frame they would sit on the comparator side of the superiority claim,
+            # which is a comparison against ourselves wearing the human corpus's label.
             corpus = [
                 preference.excerpt_address(excerpt.excerpt_id)
                 for excerpt in store.excerpts()
+                if not excerpt.source.startswith(TOURNAMENT_SOURCE)
             ]
             if not corpus:
                 print(
@@ -2531,6 +2565,16 @@ def build_parser() -> argparse.ArgumentParser:
         "LITHARNESS_NO_OUTLINE. The right flag for a book somebody outlines by hand — a "
         "scene with no statement drafts exactly as it did before outlines existed. "
         "(Formerly §54's control arm; that measurement concluded, §57/§65)",
+    )
+    parser.add_argument(
+        "--plan-search",
+        action="store_true",
+        default=_env_flag("LITHARNESS_PLAN_SEARCH"),
+        help="draft each span by tournament (§61 Add 3): K alternative beat-plans, K "
+        "candidate drafts, pairwise selection, one committed winner; also read from "
+        "LITHARNESS_PLAN_SEARCH. Off by default — this is the search arm of the K=3 "
+        "acceptance experiment (research/plan-search/RUNBOOK.md), and the default is "
+        "its control",
     )
     sub = parser.add_subparsers(dest="command", required=True)
 

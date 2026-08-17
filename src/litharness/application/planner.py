@@ -60,6 +60,13 @@ from litharness.application.outline import (
     OUTLINE_PRIORITY,
     outline_job_id,
 )
+from litharness.application.plan_search import (
+    PLAN_SEARCH,
+    PLAN_SEARCH_PRIORITY,
+    plan_search_job_id,
+    span_select_job,
+    span_select_job_id,
+)
 from litharness.application.ports import ApplicationStore, PlanningStore
 from litharness.domain.beats import (
     SIX_BEAT,
@@ -68,6 +75,11 @@ from litharness.domain.beats import (
     TemplateMismatch,
     beats_for,
     template_for,
+)
+from litharness.domain.candidates import (
+    CandidateStatus,
+    SpanCandidate,
+    evidence_complete,
 )
 from litharness.domain.context import (
     COUNTER_ID,
@@ -81,7 +93,7 @@ from litharness.domain.draft import DraftPolicy, is_draftable
 from litharness.domain.events import payload_digest
 from litharness.domain.extraction import progression_target, system_voice_example
 from litharness.domain.jobs import Job, input_digest_for
-from litharness.domain.plans import premise_of, scene_plan_for
+from litharness.domain.plans import premise_of, scene_plan_for, scene_plan_line
 from litharness.domain.revision import Revision
 from litharness.domain.text import content_hash
 
@@ -169,6 +181,59 @@ def _enqueue_interpretive_direction(store: PlanningStore) -> bool:
         ):
             return True
     return False
+
+
+def _enqueue_ready_selections(store: ApplicationStore) -> bool:
+    """Materialise `span_select` work for every parked tournament whose evidence is ready.
+
+    The human path (§61 Add 3): a `plan_search` job parks its span awaiting reader
+    verdicts, and nothing about a parked unit can wake itself — so the selector, which
+    already materialises directives and outlines, is the seam that notices the evidence
+    arriving. Readiness is derived, not stored: the required sample ids are content
+    addresses over the candidate texts, `evidence_complete` demands an answered verdict on
+    BOTH orientations of every sibling pair, and the whole scan opens with one indexed
+    query that is empty in the normal state.
+
+    A group whose plan epoch has moved is discarded here rather than judged: the epoch
+    machinery already cancelled its queued selection job, and its candidates are evidence
+    about a dead plan. Discarding keeps the pending scan self-cleaning instead of
+    re-checking a dead tournament every tick forever. A group whose *head* moved is still
+    enqueued — the selection handler owns that refusal, because a stale tournament must
+    discard with a recorded decision, and the selector records nothing.
+    """
+    pending = store.pending_span_candidates()
+    if not pending:
+        return False
+    groups: dict[tuple[str, str, str, str], list[SpanCandidate]] = {}
+    for candidate in pending:
+        key = (
+            candidate.book_id,
+            candidate.branch_id,
+            candidate.logical_id,
+            candidate.job_id,
+        )
+        groups.setdefault(key, []).append(candidate)
+    samples = store.pair_samples()
+    enqueued = False
+    for (book_id, branch_id, logical_id, search_job_id), group in sorted(groups.items()):
+        epoch = group[0].plan_epoch
+        if store.plan_epoch(book_id, branch_id) != epoch:
+            for candidate in group:
+                store.set_span_candidate_status(
+                    candidate.candidate_id, CandidateStatus.DISCARDED
+                )
+            continue
+        if store.has_job(span_select_job_id(book_id, branch_id, logical_id, epoch)):
+            continue
+        if not evidence_complete(group, samples):
+            continue
+        if store.enqueue(
+            span_select_job(
+                book_id, branch_id, logical_id, epoch, search_job_id=search_job_id
+            )
+        ):
+            enqueued = True
+    return enqueued
 
 
 def beat_job_id(
@@ -293,9 +358,7 @@ def render_prompt(
     # for the reason the beat line already went last: the final thing in a prompt is the thing
     # a model acts on, and between "rising" and "Kestrel is refused entry at the archive",
     # this is the one to act on.
-    plan_line = (
-        f" This scene: {scene_plan.strip()}" if scene_plan and scene_plan.strip() else ""
-    )
+    plan_line = scene_plan_line(scene_plan) if scene_plan else ""
     prompt = (
         f"{packet.render()}\n\n"
         f"Now write {title}{beat.title or beat.logical_id} — scene {beat.ordinal} of "
@@ -427,6 +490,7 @@ def make_plan_selector(
     project_id: str = "",
     token_budget: int = DEFAULT_TOKEN_BUDGET,
     outline: bool = True,
+    plan_search: bool = False,
 ) -> WorkSelector:
     """Build a `WorkSelector` that materialises the next unblocked beat.
 
@@ -446,6 +510,15 @@ def make_plan_selector(
     `token_budget` bounds the *context* a beat is drafted against, and is separate from
     `BudgetPolicy`'s ceilings, which bound the spend. They fail differently and on purpose: a
     context budget drops the oldest scene from the packet, a spend ceiling refuses the call.
+
+    **`plan_search=True` is the §61 Add 3 arm: a span is drafted by tournament.** Instead
+    of one `scene_draft` per beat, the selector mints one `plan_search` job — K alternative
+    beat-plans, K candidate drafts, pairwise selection — and the winner arrives through the
+    selection job's commit. Off by default for the same reason `outline` is a flag: the
+    acceptance experiment (search book vs no-search book) needs two arms an operator can
+    reproduce without editing code, and the no-search arm is exactly the behaviour that
+    shipped before this existed. A beat whose scene-plan item is director-locked drafts the
+    ordinary way even under the flag — alternatives touch only unlocked SCENE_PLAN items.
     """
 
     def select(
@@ -455,6 +528,12 @@ def make_plan_selector(
         #    this tick must affect the next scene, not the scene after it.
         _enqueue_verbatim_direction(store)
         _enqueue_interpretive_direction(store)
+
+        # 1b. Wake any parked tournament whose evidence arrived since the last tick.
+        #     Unconditional rather than gated on `plan_search`: verdicts answer whenever
+        #     readers answer, and a tournament minted under the flag must still complete
+        #     after the flag is turned off — evidence paid for is evidence consumed.
+        _enqueue_ready_selections(store)
 
         # 2. Drain. Retries, revived units and hand-enqueued work retain their ordering,
         #    except for explicit direction; one draft at a time keeps lineage linear.
@@ -470,8 +549,24 @@ def make_plan_selector(
             plan_progress(store, book_id, branch_id, template=template, policy=policy)
             for book_id, branch_id, _ in store.branches()
         ]
+        # A tournament awaiting selection IS this book's one draft in flight (§21), even
+        # though its job row is parked: the candidates were drafted against the current
+        # head and the selection will commit one of them. Minting more draft work for the
+        # same book would guarantee that whichever commits first invalidates the other —
+        # paid drafts systematically discarded as stale. So the *book's drafting* waits on
+        # the evidence while the Conductor works elsewhere: other books, and every queued
+        # non-draft unit, which the drain above claims before this loop is reached. A
+        # stale group (epoch moved) was already discarded by the readiness scan.
+        awaiting = {
+            (candidate.book_id, candidate.branch_id)
+            for candidate in store.pending_span_candidates()
+            if candidate.plan_epoch
+            == store.plan_epoch(candidate.book_id, candidate.branch_id)
+        }
         for progress in sorted(books, key=lambda item: (item.drafted, item.book_id)):
             if progress.blocked_reason is not None:
+                continue
+            if (progress.book_id, progress.branch_id) in awaiting:
                 continue
             head = store.head(progress.book_id, progress.branch_id)
             if head is None:  # pragma: no cover - plan_progress already excluded this
@@ -534,6 +629,24 @@ def make_plan_selector(
                 )
                 for beat in beats
             ]
+            # A tournament or its selection is this book's one draft in flight too: K
+            # candidates ride one frozen base inside the search job, and the selection
+            # commits against that same base — a scene_draft planned beside either would
+            # fork the branch exactly as two scene_drafts would. PARKED is deliberately
+            # not "unfinished" here (§4.2: a parked unit never stalls the queue), which is
+            # what lets the book draft elsewhere while a span awaits verdicts.
+            ids += [
+                plan_search_job_id(
+                    progress.book_id, progress.branch_id, beat.logical_id, epoch
+                )
+                for beat in beats
+            ]
+            ids += [
+                span_select_job_id(
+                    progress.book_id, progress.branch_id, beat.logical_id, epoch
+                )
+                for beat in beats
+            ]
             # One draft in flight per book. Drain-first usually achieves this, but not when
             # the queued job is leased by another holder — and a second beat planned against
             # the same base is exactly how the branch forks.
@@ -544,9 +657,26 @@ def make_plan_selector(
                 # 4. The selector's precondition IS the gate's — one function, no drift.
                 if not is_draftable(head, beat.logical_id, policy=policy):
                     continue
-                job_id = beat_job_id(
-                    progress.book_id, progress.branch_id, beat.logical_id,
-                    template_for(head, template).template_id, epoch,
+                plan_item = scene_plan_for(
+                    store.plan_items(progress.book_id, progress.branch_id),
+                    beat.logical_id,
+                )
+                # Alternatives touch only unlocked SCENE_PLAN items: a director-locked
+                # statement is direction, and searching over direction would put the
+                # tournament's winner where the director's word was. That beat drafts
+                # the ordinary way, statement intact.
+                searching = plan_search and not (
+                    plan_item is not None and plan_item.locked
+                )
+                job_id = (
+                    plan_search_job_id(
+                        progress.book_id, progress.branch_id, beat.logical_id, epoch
+                    )
+                    if searching
+                    else beat_job_id(
+                        progress.book_id, progress.branch_id, beat.logical_id,
+                        template_for(head, template).template_id, epoch,
+                    )
                 )
                 if store.has_job(job_id):
                     # Already planned under this epoch: in flight, or burned by a poison.
@@ -583,23 +713,21 @@ def make_plan_selector(
                         at=beat.story_order_key,
                     ),
                     target_words=(policy or DraftPolicy()).target_words,
+                    # Under search the statement line is deliberately ABSENT: the handler
+                    # appends one alternative per candidate draft, in the same last-line
+                    # position (`scene_plan_line`, one function, two callers), so the K
+                    # drafts differ exactly where the generator is most sensitive.
                     scene_plan=(
-                        item.text
-                        if (
-                            item := scene_plan_for(
-                                store.plan_items(progress.book_id, progress.branch_id),
-                                beat.logical_id,
-                            )
-                        )
-                        is not None
-                        else None
+                        None
+                        if searching
+                        else (plan_item.text if plan_item is not None else None)
                     ),
                     progression=progression_target(
                         store.state_records(progress.book_id, progress.branch_id),
                         at=beat.story_order_key,
                     ),
                 )
-                payload = {
+                payload: dict[str, object] = {
                     "revision_id": head.revision_id,
                     "book_id": progress.book_id,
                     "branch_id": progress.branch_id,
@@ -647,19 +775,28 @@ def make_plan_selector(
                         for item in packet.omitted
                     ],
                 }
+                if searching:
+                    # The tournament reads the epoch at the top of the payload (the
+                    # handler's stale pre-flight and the candidates' provenance both key
+                    # on it), and outranks scene work for the same reason the outline
+                    # does: it IS this span's drafting, one lane up.
+                    payload["plan_epoch"] = epoch
                 inserted = store.enqueue(
                     Job(
                         job_id=job_id,
-                        job_kind=SCENE_DRAFT,
+                        job_kind=PLAN_SEARCH if searching else SCENE_DRAFT,
                         payload=payload,
                         input_digest=input_digest_for(payload),
+                        priority=PLAN_SEARCH_PRIORITY if searching else 0,
                     )
                 )
                 if not inserted:
                     # A row exists that `has_job` did not see. Counting it as planned would
                     # be reporting a write that did nothing.
                     continue
-                store.bump_digest(day, "beats_enqueued")
+                store.bump_digest(
+                    day, "tournaments_enqueued" if searching else "beats_enqueued"
+                )
                 return store.claim_next(holder, now=now, duration=duration)
 
         # 5. Nothing draftable anywhere. NO_WORK, which `status` distinguishes from

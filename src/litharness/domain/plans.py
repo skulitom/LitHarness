@@ -81,6 +81,20 @@ def scene_plan_id_for(logical_id: str) -> str:
     return f"{logical_id}-plan"
 
 
+def scene_plan_line(statement: str) -> str:
+    """The prompt fragment that hands one scene its statement — rendered LAST, always.
+
+    One function, two callers, no drift: `render_prompt` appends it when the plan already
+    holds the statement, and the plan-search handler (§61 Add 3) appends one *alternative*
+    per candidate draft. The empirical bet §61 names — alternatives differ exactly where
+    the generator is most sensitive, the final line of the prompt — is only a controlled
+    comparison while both callers render the line byte-identically, which is why this is a
+    function rather than two f-strings that agree today.
+    """
+    stripped = statement.strip()
+    return f" This scene: {stripped}" if stripped else ""
+
+
 def scene_plan_for(
     items: Sequence[lc.PlanItem], logical_id: str
 ) -> lc.PlanItem | None:
@@ -124,4 +138,5 @@ __all__ = [
     "premise_of",
     "scene_plan_for",
     "scene_plan_id_for",
+    "scene_plan_line",
 ]

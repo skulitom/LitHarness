@@ -3570,3 +3570,65 @@ written and not executed — it spends live quota, and its `--reset` must run on
 copy): twenty-four frontier scenes can show effect direction for overdue-promise
 and zero-delta flags against Add 1's coming pairwise data, and cannot show
 prediction at any confidence worth recording. §57 already wrote that entry once.
+
+## 72. Selection pressure arrives at the plan level, and its license expires on use
+
+§61 Add 3 — the loop that could exceed the baseline, re-founding Narrative Planning on
+measured ground as §57 demanded. Under `--plan-search`: **one** structured call asks
+for K structurally distinct beat-plan statements for a span (instructed distinctness
+gated deterministically — sampler variation is not a diversity mechanism on a provider
+that drops samplers, §64); each alternative is drafted and run through the *pure*
+gates off one frozen base; survivors persist as `span_candidates` (migration 024) and
+their sibling pairs — all C(K,2), both orientations, the internal protocol — enter the
+preference engine. Losers **never** reach `commit_revision`: §21 is preserved by
+construction (`gate_draft` returns un-persisted revisions) and pinned by a
+history-untouched test, then *extended* — a book with candidates awaiting selection is
+its own draft in flight, and drafting pauses on that book (not the queue) so a
+cross-span commit cannot systematically invalidate paid tournaments. The whole
+tournament is budget-projected at K+1 calls before the first one; the winner commits
+through the full ladder and ONE `accept_plan_proposal` (one epoch bump; the
+queued-work cancel filter now names all three plan-derived job kinds — the map's
+hardcoded-filter trap, closed and tested).
+
+**Two selection paths, one license.** The human path parks the span until every
+sibling pair is answered in **both orientations** — the stricter reading, because a
+one-sided answer is RevisionBench's positional artifact unmeasured — then selects by
+canonical win count with a content-derived tie-break (a tournament the readers cannot
+separate resolves by a *repeatable* arbitrary choice, stated in the code rather than
+hidden). The judge path ships **dormant**: it opens only when a current
+PREFERENCE-class calibration exists for `judge.span_select.v0` — calibration on the
+selection task itself, per §6.6's rejection-sampling argument, never passive flag
+precision — and judge verdicts are recorded through the same pair machinery with the
+calibration id as reader provenance. And the license behaves exactly as the machinery
+promised: **judge verdicts move the answered-verdict digest and stale the calibration
+that licensed them** — one calibration buys roughly one judged tournament before
+re-measurement. That is not a defect; that is §6.6 arriving as an operational fact,
+and it prices what "current evidence" costs when evidence is consumed by selection.
+
+**A comparator-frame near-miss, caught in the build.** Candidates ride the corpus
+table (Add 1's candidates-as-corpus sibling mechanism), and the external pair draw
+originally saw *all* excerpts — which would have put this system's own prose on the
+published-human side of the superiority frame. Tournament-sourced excerpts are now
+excluded from external draws by source prefix, with a test. A headline claim that
+quietly compared the system to itself would have been the most expensive kind of
+wrong.
+
+**The repair generalization is one predicate.** `repair_job_for` licenses a scoped
+repair from a span-carrying finding that is (blocking AND deterministic) — unchanged —
+OR cites a **current** calibration whose evidence class holds a veto (JUDGMENT,
+POPULATION). PREFERENCE is refused by the same `veto_for` raise that keeps it off
+blocking gates: preference evidence selects between candidates; it never licenses
+touching prose. Freeform revision stays structurally impossible (§1a.2); the patch is
+still span-scoped and licensed by a named finding.
+
+**Recorded judgments, not silences.** Refused candidates land as non-blocking failing
+gates on the tournament's settlement decision rather than as rows or standing findings
+— a loser's defect made standing would park the *winner's* commit. Director-locked
+scene plans draft the ordinary way (a tournament must not overwrite the director's
+word, and skipping would stall the book). A sole survivor selects immediately with
+deterministic attribution. Two parks are operator-recoverable rather than
+self-healing (`replan`/`revive`), and `_settle`'s attempt-ceiling poisoning of a
+parked tournament is noted as a degraded record with the readiness scan as the reason
+it stays harmless. Acceptance stands as §61 wrote it, runbook at
+`research/plan-search/RUNBOOK.md`: a K=3 search book beats a no-search book in
+blinded pairwise at n≥50, or this ledger records that it didn't.
