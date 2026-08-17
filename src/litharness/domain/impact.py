@@ -17,7 +17,7 @@ repo, and its one standing rule is a *blocker* — no threshold ships until repl
 second model family. There is nothing to defer to.
 
 **And the material is in-sample.** Both suites are generated from the same `def.json` that
-authors the prose they grade, and ship in `fixtures/golden/`, the tree six test modules
+authors the prose they grade, and ship inside the contracts package, which six test modules
 already read. 37 expectations across two fixtures, against this project's own
 `MIN_HOLDOUT = 50`. So a number from here is a **dev-set** number and every caller is made to
 say so — see `ImpactScore.caveat`.

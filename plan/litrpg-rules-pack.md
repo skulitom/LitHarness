@@ -38,7 +38,7 @@ one, if missed, produces a green gate that proves nothing.
 
 ## 1. The exact gold target
 
-Eight findings in `fixtures/golden/litrpg/findings.json` — six `open` defects to
+Eight findings in the litrpg fixture's `findings.json` — six `open` defects to
 detect, two `accepted_intentional` controls to leave alone.
 
 | finding_id | category | subtype | rule_or_critic_id | severity |

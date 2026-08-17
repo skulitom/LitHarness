@@ -1,19 +1,30 @@
-"""Finding the golden fixtures, which live in the contracts *checkout* and not in its wheel.
+"""Finding the golden fixtures, which ship inside the contracts wheel.
 
-`litharness-contracts` ships schemas and dataclasses as a package, but the mystery and
-litrpg fixture books sit under `fixtures/golden/` at the repository root — outside the
-importable package, so `importlib.resources` cannot reach them and a wheel install does not
-carry them. They still have to be findable, because §17's Stage 1 exit criterion names
-those two books by name.
+As of `litharness-contracts` 0.2.0 the mystery and litrpg fixture books live at
+`src/litharness_contracts/fixtures/golden/` — *inside* the importable package — and the
+package exposes `litharness_contracts.fixtures.golden_path` as the one canonical lookup.
+This module is a thin translation over it: it keeps the names and the failure type the rest
+of this repository already depends on, and adds one link in front.
 
-**Discovery is a chain, and every link is checked against the artifact rather than the
-directory.** A path that exists but has no `manuscript.json` in it is not the contracts
-checkout, and treating it as one produces a confusing failure three layers down.
-`LITHARNESS_CONTRACTS_ROOT` comes first because LongRangeContext already established that
-variable for the same question, and a second name for one setting is how two checkouts end
-up configured differently. Hard-coding an absolute path is deliberately not in the chain:
-PLAN.md §20.2 records a machine-bound `samefile("C:/DEV/litharness-contracts/schemas")` as
-a defect worth fixing in a sibling, and reintroducing it here would be the same bug.
+**What used to be here, and why it is gone.** The books sat outside the package, so no wheel
+carried them and this module had to find a *checkout* — an environment variable, then a walk
+up from the installed package's own `__file__` (which only worked because the dependency was
+an editable path install), then a guess at a sibling directory beside this repository. Each
+link existed because the one before it could fail, and together they meant a clone of this
+repository on its own could not run its own suite. The dependency is now a git rev pinned in
+`uv.lock`, so `import litharness_contracts` is the whole of discovery and both heuristics are
+deleted rather than merely unused.
+
+**`LITHARNESS_CONTRACTS_ROOT` survives, with a narrower job.** It is the escape hatch for
+work-in-progress fixtures: point it at a contracts checkout and the books there win over the
+installed ones, without reinstalling. It still names a checkout *root* — the path beneath it
+changed with the move, and `GOLDEN` records that — and it is still the variable
+LongRangeContext uses, because a second name for one setting is how two checkouts end up
+configured differently. It is checked against the artifact rather than the directory: a root
+that does not hold the file falls through to the installed package instead of failing three
+layers down. Hard-coding an absolute path is deliberately still not in the chain; PLAN.md
+§20.2 records a machine-bound `samefile("C:/DEV/litharness-contracts/schemas")` as a defect
+worth fixing in a sibling, and reintroducing it here would be the same bug.
 """
 
 from __future__ import annotations
@@ -21,34 +32,32 @@ from __future__ import annotations
 import os
 from pathlib import Path
 
-import litharness_contracts as lc
+# `FIXTURE_IDS` names the books §17 Stage 1 is graded against. It is re-exported here (via
+# `__all__`) rather than restated, so this repository cannot come to disagree with the
+# contracts package about which books exist.
+from litharness_contracts.fixtures import FIXTURE_IDS, golden_root
 
-#: The books §17 Stage 1 is graded against.
-FIXTURE_IDS = ("mystery", "litrpg")
+#: Where a contracts *checkout* keeps them, relative to its root. Only
+#: `LITHARNESS_CONTRACTS_ROOT` needs this: an installed package is located by the accessor.
+GOLDEN = Path("src") / "litharness_contracts" / "fixtures" / "golden"
 
-#: Where a checkout keeps them, relative to its root.
-GOLDEN = Path("fixtures") / "golden"
+#: The one setting that redirects fixture reads, named in every failure this module raises.
+CONTRACTS_ROOT_ENV = "LITHARNESS_CONTRACTS_ROOT"
 
 
 class FixturesUnavailable(FileNotFoundError):
-    """The contracts checkout, or the fixture inside it, could not be found.
+    """The fixture could not be found in the installed contracts package or the override.
 
     A `FileNotFoundError` so `cli.main` reports it as an operational fault (exit 2) — a
-    missing checkout is the system failing to start, not the system reporting on its work.
+    broken install is the system failing to start, not the system reporting on its work.
     """
 
 
-def _candidate_roots() -> list[Path]:
-    configured = os.environ.get("LITHARNESS_CONTRACTS_ROOT")
-    roots = [Path(configured)] if configured else []
-    # An installed-from-source path dependency, which is what `pyproject.toml` declares:
-    # `<root>/src/litharness_contracts/__init__.py` is three levels below the checkout.
-    package = Path(lc.__file__).resolve()
-    if len(package.parents) >= 3:
-        roots.append(package.parents[2])
-    # A sibling checkout, for the case where contracts is installed as a built wheel and
-    # the package path lands in site-packages instead.
-    roots.append(Path(__file__).resolve().parents[4] / "litharness-contracts")
+def _golden_roots() -> list[Path]:
+    """Directories that may hold `<fixture_id>/<filename>`, most specific first."""
+    configured = os.environ.get(CONTRACTS_ROOT_ENV)
+    roots = [Path(configured) / GOLDEN] if configured else []
+    roots.append(golden_root())
     return roots
 
 
@@ -59,15 +68,15 @@ def _fixture_file(fixture_id: str, filename: str) -> Path:
             f"unknown fixture {fixture_id!r}; the golden books are {', '.join(FIXTURE_IDS)}"
         )
     tried: list[Path] = []
-    for root in _candidate_roots():
-        candidate = root / GOLDEN / fixture_id / filename
+    for root in _golden_roots():
+        candidate = root / fixture_id / filename
         if candidate.is_file():
             return candidate
         tried.append(candidate)
     raise FixturesUnavailable(
-        f"no {fixture_id} {filename} in any known contracts checkout (tried "
+        f"no {fixture_id} {filename} in the installed litharness-contracts (tried "
         + ", ".join(str(path) for path in tried)
-        + "); set LITHARNESS_CONTRACTS_ROOT to the litharness-contracts checkout"
+        + f"); reinstall the dependency, or set {CONTRACTS_ROOT_ENV} to a contracts checkout"
     )
 
 

@@ -1005,7 +1005,7 @@ dev = [
 requires-dist = [
     { name = "datasets", marker = "extra == 'corpus'", specifier = ">=3.0" },
     { name = "hypothesis", marker = "extra == 'dev'", specifier = ">=6.130" },
-    { name = "litharness-contracts", editable = "../litharness-contracts" },
+    { name = "litharness-contracts", git = "https://github.com/skulitom/litharness-contracts?rev=8f264369009d7a1eaa28caa648976a48f690a949" },
     { name = "mypy", marker = "extra == 'dev'", specifier = ">=1.15" },
     { name = "pytest", marker = "extra == 'dev'", specifier = ">=8.3" },
     { name = "pytest-cov", marker = "extra == 'dev'", specifier = ">=6.0" },
@@ -1015,16 +1015,8 @@ provides-extras = ["dev", "corpus"]
 
 [[package]]
 name = "litharness-contracts"
-version = "0.1.0"
-source = { editable = "../litharness-contracts" }
-
-[package.metadata]
-
-[package.metadata.requires-dev]
-dev = [
-    { name = "jsonschema", specifier = ">=4.21" },
-    { name = "pytest", specifier = ">=8" },
-]
+version = "0.2.0"
+source = { git = "https://github.com/skulitom/litharness-contracts?rev=8f264369009d7a1eaa28caa648976a48f690a949#8f264369009d7a1eaa28caa648976a48f690a949" }
 
 [[package]]
 name = "multidict"

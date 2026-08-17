@@ -30,12 +30,15 @@ in it yet measures whether the book is any *good*.** See
 
 ## Setup
 
-This repo depends on a sibling checkout: `../litharness-contracts` must exist next to it.
-That is a path dependency in `pyproject.toml`, not a published package, and nothing will
-install without it.
+One clone, and nothing has to sit beside it. `litharness-contracts` is a git dependency
+pinned to a commit in `uv.lock`, and the golden fixture books ship inside that package, so
+`uv sync` fetches everything the suite reads.
 
 ```bash
+git clone https://github.com/skulitom/LitHarness
+cd LitHarness
 uv sync --extra dev
+uv run pytest
 ```
 
 The six-rule LitRPG pack is an optional subprocess integration rather than a runtime
@@ -290,8 +293,13 @@ and siblings depend on contracts rather than on each other (§13) — so finding
 `EvaluationArtifact`, a file of a shared schema:
 
 ```bash
-uv run litharness --database book.db ingest ../litharness-contracts/fixtures/golden/litrpg/findings.json
+uv run litharness --database book.db ingest ../litharness-contracts/src/litharness_contracts/fixtures/golden/litrpg/findings.json
 ```
+
+That path is the file in a contracts *checkout*; the same artifact ships inside the installed
+package, so with no checkout at all `python -c "from litharness_contracts.fixtures import
+golden_path; print(golden_path('litrpg', 'findings.json'))"` prints the one `uv sync` already
+fetched.
 
 ```bash
 uv run litharness --database book.db findings
@@ -474,7 +482,17 @@ The package has executable architecture boundaries in `tests/test_architecture.p
 code depends on structural capabilities in `application/ports.py` rather than SQLite, and
 internal import cycles are rejected. Change that allow-list only as an explicit architecture
 decision, not to make a convenient import pass. CI runs the suite on Python 3.11 and 3.13 on
-both Linux and Windows, then builds the wheel once.
+both Linux and Windows, then builds the wheel once — from one checkout, since the contracts
+rev in `uv.lock` is the whole of what it needs.
+
+**Co-developing against a local contracts checkout.** `uv pip install -e ../litharness-contracts`
+puts your checkout in front of the pinned rev for as long as the venv lasts; the next
+`uv sync` reverts it, which is the property that keeps the experiment from becoming the
+configuration. For fixture edits that are not yet committed anywhere, `LITHARNESS_CONTRACTS_ROOT`
+points at a contracts checkout root and its golden books win over the installed ones. When the
+contracts change is ready, advance the pin: bump `rev` in `pyproject.toml`, run `uv lock`, and
+land that with the code that needs it in **one commit** — the pin is part of the behaviour,
+not part of the infrastructure.
 
 SQLite is composed behind the stable `SqliteStore` facade: durable jobs, controls, and plan
 epochs live in `adapters/sqlite_jobs.py`, while immutable plan revisions and proposals live

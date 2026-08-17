@@ -32,7 +32,12 @@ corpus = [
 ]
 
 [tool.uv.sources]
-litharness-contracts = { path = "../litharness-contracts", editable = true }
+# A git rev, not a relative path: the path form needed a checkout beside this one and could
+# not be pinned, so `uv.lock` recorded where contracts was and nothing about *which* of it —
+# which is why CI carried a hand-maintained second checkout at a hand-written SHA. The rev
+# below is the whole pin, recorded in `uv.lock`, and advancing it is bump-rev + `uv lock` in
+# one commit. See CONTRIBUTING.md for co-developing against a local contracts checkout.
+litharness-contracts = { git = "https://github.com/skulitom/litharness-contracts", rev = "8f264369009d7a1eaa28caa648976a48f690a949" }  # tag v0.2.0
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/litharness"]

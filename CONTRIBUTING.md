@@ -6,11 +6,10 @@ an ordinary local change.
 
 ## Set up and verify
 
-The sibling `../litharness-contracts` checkout is required because `pyproject.toml` uses it
-as an editable path dependency. A path dependency is the one thing `uv.lock` cannot pin, so
-CI pins the contracts commit by SHA in `.github/workflows/ci.yml`; if your local checkout
-sits elsewhere, your run and CI's are testing different contracts. Advancing the pin is a
-deliberate change that lands with the code that needs it, not a maintenance chore.
+One clone is enough. `litharness-contracts` is a git dependency whose rev is recorded in
+`uv.lock`, and the golden fixture books ship inside that package, so `uv sync` gets you
+exactly the contracts CI builds against — there is nothing to check out beside this repo and
+nothing for the workflow to pin by hand.
 
 ```bash
 uv sync --extra dev
@@ -18,6 +17,15 @@ uv run pytest
 uv run ruff check .
 uv run mypy
 ```
+
+Advancing the contracts pin is still a deliberate change that lands with the code that needs
+it, not a maintenance chore — the discipline survives the mechanism. It is now bump the `rev`
+in `[tool.uv.sources]`, run `uv lock`, and commit `pyproject.toml` and `uv.lock` **together
+with the code the new contracts version is for**. One commit, because a lockfile that moved
+without a reason is a change nobody can review. To develop against an uncommitted contracts
+checkout in the meantime, `uv pip install -e ../litharness-contracts` overrides the pin until
+the next `uv sync`, and `LITHARNESS_CONTRACTS_ROOT` redirects fixture reads to a checkout root
+without touching the install.
 
 Tests force `LITHARNESS_ENV=test`, so the provider registry cannot select a billing provider.
 Live provider tests require the explicit `LITHARNESS_LIVE_PROVIDERS=1` opt-in.

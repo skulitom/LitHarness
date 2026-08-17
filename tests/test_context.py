@@ -1,6 +1,6 @@
 """Context assembly (§12 step 2), graded against the golden `GoldContextSuite`.
 
-The suite in `fixtures/golden/*/context_gold.json` has existed since contracts 0.1.0 and
+The suite in each fixture's `context_gold.json` has existed since contracts 0.1.0 and
 nothing in this repository referenced it, because the thing it grades did not exist. It is
 the reason these tests assert correctness rather than shape: `q1-draft-scene-6` says, in
 span-exact and hash-checked terms, what the packet for the mystery's resolution scene must

@@ -485,12 +485,16 @@ purpose: the two checks that run raise *before* a decision exists, so recording 
 passed would be a gate that cannot fail, which is the objection §8.3 raises against
 recall-only fixture grading. An import is attributed, not gated.
 
-**Fixture discovery is a chain, and no link is an absolute path.** The golden books live
+~~**Fixture discovery is a chain, and no link is an absolute path.** The golden books live
 under `fixtures/golden/` at the contracts repository root, outside the importable package,
 so `importlib.resources` cannot reach them. `LITHARNESS_CONTRACTS_ROOT` first (the variable
 LongRangeContext already uses — a second name for one setting is how two checkouts end up
 configured differently), then the installed package's own location, then a sibling checkout.
-Each candidate is tested for the *manuscript*, not the directory. PLAN.md §20.2 records a
+Each candidate is tested for the *manuscript*, not the directory.~~ — **The chain is retired;
+see §60.** Its premise stopped being true when contracts 0.2.0 moved the books inside the
+package, and the two heuristic links are deleted rather than left unused. The environment
+variable survives with a narrower job. What still stands unchanged is the clause it ended
+with: PLAN.md §20.2 records a
 machine-bound `samefile("C:/DEV/litharness-contracts/schemas")` as a defect worth fixing in
 a sibling repository; hard-coding one here would have been the same bug.
 
@@ -3041,3 +3045,56 @@ guarding usefulness rather than correctness), and the selection/split/generator/
 
 Also landed: BRIEF §6, the six questions that decide whether a real measurement may become a
 decision — §5 governs whether a number is real, and those are separate failures.
+
+## 60. The fixtures ship in the wheel, and the discovery chain is deleted
+
+`adapters/contracts_fixtures.py`, `pyproject.toml`, `.github/workflows/ci.yml`. §19's last
+entry recorded a three-link chain for finding the golden books —
+`LITHARNESS_CONTRACTS_ROOT`, then the installed package's own location, then a sibling
+checkout — and defended it as the honest answer to a real constraint: the books lived at
+`fixtures/golden/` in the contracts repository root, outside the importable package, so no
+wheel carried them and `importlib.resources` could not reach them. That entry is superseded
+here. **The constraint was not a fact about packaging; it was a fact about where six JSON
+files happened to sit, and it was one `git mv` deep.**
+
+**What the chain was actually costing.** Each link existed because the one before it could
+fail, so the failure modes compounded rather than narrowed: link two only worked because the
+dependency was an *editable path install* (it walked three directories up from
+`lc.__file__`), and link three guessed at a sibling directory beside this repository. Both
+were load-bearing and neither was checkable — a clone of this repository on its own could
+not run its own suite, and the suite was the only thing that would have said so. CI paid for
+the same premise with a second checkout of contracts at a hand-written SHA, under a comment
+calling it "the one dependency `uv.lock` cannot pin". That comment was true of a path
+dependency and false of the dependency it was describing after this change.
+
+**The move, in three parts.** Contracts 0.2.0 puts the books at
+`src/litharness_contracts/fixtures/golden/` and exposes
+`litharness_contracts.fixtures.golden_path` as the one canonical lookup, so they travel with
+the wheel. `[tool.uv.sources]` here switches from `path = "../litharness-contracts"` to a git
+rev, which `uv.lock` records — the pin moves out of a YAML comment and into the lockfile,
+where `uv sync --locked` enforces it. CI drops the second checkout, the named subdirectory
+and every `working-directory:` line. The `fixtures/source/` prose and annotations stay
+outside the package: they are authoring input, the wheel has no reason to carry them, and
+the drift test that rebuilds golden from source runs in the repository that owns both.
+
+**`LITHARNESS_CONTRACTS_ROOT` survives, and the reasoning is not the old reasoning.** It is
+no longer a link in a chain that has to succeed; it is an override in front of one that
+always does. Its job is work-in-progress fixtures — edit a book in a contracts checkout and
+read it here without reinstalling — and it still names a checkout *root*, so the path
+beneath it moved with the files. It is still checked against the artifact rather than the
+directory, which now buys something specific: a root that does not hold the file falls
+through to the installed package instead of failing three layers down.
+
+**Why this is a decision and not a chore.** The old arrangement made "can a stranger clone
+this and run the tests" unanswerable, and the project had no way to notice, because every
+machine that ran the suite already had the sibling. The check that pins it is not a unit
+test — it is cloning this repository into a directory with no sibling checkout anywhere and
+running `uv sync --locked --extra dev && uv run pytest` there. That is also the only thing
+that catches the *next* instance of this defect class, since anything else read through a
+checkout-root path fails in the same run.
+
+**One thing deliberately not fixed here.** The contracts repository's root `schemas/`
+directory is still outside the package, and ContinuityEvaluation still reaches it by path —
+PLAN.md §20.2's `samefile("C:/DEV/litharness-contracts/schemas")`. It is the same defect
+class and a separately-tracked one; moving it is a change to a sibling's consumption, not to
+this repository's, and bundling them would have hidden which of the two this suite proves.

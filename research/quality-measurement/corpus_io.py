@@ -33,6 +33,10 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Any
 
+#: Fallback only. The golden books ship inside `litharness_contracts` as of 0.2.0 and
+#: `fixture_scenes` asks the package for them; this checkout path is what it falls back to
+#: under an interpreter that does not have the package installed — MirrorBench's venv, which
+#: `baseline.py` explains is in play for anything touching torch.
 CONTRACTS = Path("C:/DEV/litharness-contracts")
 MOL = Path("C:/DEV/BookCrawler/data/mother-of-learning-20220313")
 HF_CACHE = Path.home() / ".cache/huggingface/hub/datasets--OmniAICreator--RoyalRoad-1.61M"
@@ -84,7 +88,15 @@ def fixture_scenes(book: str = "mystery") -> list[Unit]:
     two anchors on a six-item list, not a full ranking, and an experiment claiming more from
     this fixture than "did it get those two right" is over-reading 800 words.
     """
-    path = CONTRACTS / "fixtures/golden" / book / "manuscript.json"
+    # Imported here rather than at module scope: the other loaders in this file are used from
+    # interpreters that do not have `litharness_contracts` installed (see CONTRACTS above),
+    # and only this function needs it.
+    try:
+        from litharness_contracts.fixtures import golden_path
+
+        path = golden_path(book, "manuscript.json")
+    except ImportError:
+        path = CONTRACTS / "src/litharness_contracts/fixtures/golden" / book / "manuscript.json"
     manuscript = json.loads(path.read_text(encoding="utf-8"))
     units = []
     for node in manuscript["nodes"]:

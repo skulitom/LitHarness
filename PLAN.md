@@ -94,10 +94,10 @@ Acceptance is earned by passing deterministic gates first, calibrated critics se
 and sampled human audit third.
 
 The sibling projects remain research incubators feeding validated pieces into this
-product behind versioned contracts. `litharness-contracts` v0.1.0 now exists with
+product behind versioned contracts. `litharness-contracts` v0.2.0 now exists with
 two span-exact golden fixtures (a six-scene mystery and a six-scene LitRPG book with
-planted, mechanically checkable defects); all subsystems consume it rather than
-importing each other.
+planted, mechanically checkable defects) that ship inside the package; all subsystems
+consume it rather than importing each other.
 
 ## 1a. Core philosophy: the text is the product
 
@@ -395,7 +395,7 @@ flowchart LR
   CE --> RP["RevisionPropagation"]
   CE --> LH
   RP --> LH
-  CONTRACTS["litharness-contracts v0.1.0<br/>(exists)"] --- LH
+  CONTRACTS["litharness-contracts v0.2.0<br/>(exists)"] --- LH
 ```
 
 Priority order for the autonomous goal: Game-System Engine and Narrative Planning
@@ -411,9 +411,15 @@ where they were wrong, because the *direction* of the error matters — this pla
 consistently understated maturity and therefore scheduled work that was already
 done, and **the v2.1 pass did it again in six more places**:
 
+**The litharness-contracts row was re-inspected on 2026-08-17** when the fixtures moved
+into the package, and it had gone stale on five separate facts — schema version, test
+count, remote, tags and license — none of which the move touched. The struck values are in
+that row's notes. Nothing else in this table was re-checked that day, so treat every other
+row as carrying its 2026-08-12 date.
+
 | Project | State | Role in v2 |
 |---|---|---|
-| litharness-contracts | **Wire schema 1.1.0**, 124 tests, 30 schemas, mystery + litrpg golden fixtures. Git repo (branch `main`, clean tree, no remote, no tags). **Still no LICENSE** — README says "License: TBD", and that is a decision for the owner rather than a gap to fill | Shared schemas + gold benchmarks. §20.3's minors have shipped except the game-system schemas, which stay deferred for want of a consumer. Version (don't freeze) after Book Zero. *(Struck: "untracked, no git repo" and "version-controlling it is the single cheapest unblock" — the commit landed 2026-08-12 17:36, eight minutes **before** the v2.1 edit that still called it untracked.)* |
+| litharness-contracts | **Re-verified at the pin 2026-08-17: package v0.2.0, wire schema 1.2.0, 130 tests, 30 schemas, mystery + litrpg golden fixtures.** Git repo (branch `main`, 7 commits, clean tree), public remote `github.com/skulitom/litharness-contracts`, tag `v0.2.0`, Apache-2.0 LICENSE | Shared schemas + gold benchmarks. §20.3's minors have shipped except the game-system schemas, which stay deferred for want of a consumer. Version (don't freeze) after Book Zero. **The fixtures now ship inside the package** (`src/litharness_contracts/fixtures/golden/`) behind one accessor, and LitHarness consumes the repo as a git rev pinned in `uv.lock` — see plan/stage-0-decisions.md §60. *(Struck: "untracked, no git repo" and "version-controlling it is the single cheapest unblock" — the commit landed 2026-08-12 17:36, eight minutes **before** the v2.1 edit that still called it untracked. Struck at the 2026-08-17 pass, and every one of them was a fact this table asserted rather than checked: "wire schema 1.1.0" — 1.2.0 shipped in `404eb9a`; "124 tests" — 126 at the previous pin and 130 now; "no remote" — origin has existed since before `32d9728`; "no tags" — `v0.2.0` exists; "Still no LICENSE / README says License: TBD" — Apache-2.0 landed 2026-08-13 **in `32d9728`, the very commit this plan's CI had pinned**, and the README line outlived it until 0.2.0.)* |
 | **LitHarness (this repo)** | **Stages 0–2 met against their exit clauses (§17 carries the caveats): 787 tests passing + 8 opt-in live (2026-08-17; the header restates this number and the two have drifted apart once — when they disagree, the suite is the referee), ruff clean, mypy strict clean (`warn_unreachable` on). Under version control** (`.gitattributes` pins `eol=lf`; `core.autocrlf=true` is set globally on this machine and has already bitten this project once) | The product. **This table previously audited every sibling's VCS status and had no row for the product repo, which was itself untracked.** |
 | BookWorldState | Committed, Apache-2.0, tagged `v0.1.0`, pushed to GitHub; **13 commits, working tree clean**; 100 tests passing. Ships an authenticated versioned WSGI API, transactional outbox with capped-exponential-retry worker, signed webhook publication, migration checksums, online backup/restore + destructive-corruption drill — **Milestone 4/5 infrastructure, not "~Milestone 2"**. What is *not* done is M3's evaluation corpus | State substrate. Its closed predicate registry is **not** injectable yet (§20.5) — but §8.4 routes around this deliberately, so it is not a blocker for §8. *(Struck: "working tree is not clean", "4 commits", "~Milestone 2 complete", "the real blocker for §8" — all four false.)* |
 | RevisionBench | Mature (**411** tests). A2d complaint-gated repair, the LitRPG stratum, **and A3d** have landed — A3d shipped *under the name A2d*, and best-of-N repair ranked by minimal intervention closed the last element in `22a228d` | Source of repair policy, mechanical vetoes, LitRPG stratum evidence. **Its M5 decomposition is done and has already answered the question §20.7 was scheduled to ask** — see the redirect there. *(Struck: "405 tests", "A3d is next".)* |
@@ -434,9 +440,11 @@ the eight subprojects **plus this one**, BookWorldState, RevisionBench,
 RevisionJudge, MirrorBench, litharness-contracts and LitHarness are now git
 repositories. **Only RevisionPropagation is not, and it is one file** — the
 version-control gap this plan tracked across three revisions is closed.
-Remaining licensing gaps, both deliberate: litharness-contracts says "License:
-TBD" and ContinuityEvaluation has none, and naming a license is the owner's call
-rather than a task an agent should complete.
+~~Remaining licensing gaps, both deliberate: litharness-contracts says "License:
+TBD" and ContinuityEvaluation has none~~ — **litharness-contracts is Apache-2.0
+and has been since `32d9728` (2026-08-13); only its README still said "License:
+TBD", and that line is corrected as of contracts 0.2.0.** Naming a license
+remains the owner's call rather than a task an agent should complete.
 
 ## 8. Game-System Engine (new pillar)
 
@@ -887,10 +895,12 @@ input), never as mid-flight mutation of a running job.
 
 ## 13. Contracts
 
-`litharness-contracts` v0.1.0 exists and is the interchange layer (IDs, evidence
+`litharness-contracts` v0.2.0 exists and is the interchange layer (IDs, evidence
 spans, envelopes, findings, change sets, gold suites; **30 schemas**; two golden
-fixtures with span-exact annotations). It is **now under version control** (5
-commits, clean tree) — §20.1. Policy for v2:
+fixtures with span-exact annotations, which as of 0.2.0 ship *inside* the package
+and are read through `litharness_contracts.fixtures.golden_path`). It is **now
+under version control** (7 commits, clean tree, tagged `v0.2.0`, pushed) — §20.1.
+Policy for v2:
 
 - **Version, don't freeze.** Expect additive minor versions after Book Zero; treat
   the first breaking rework (2.0) as a scheduled consequence of Book Zero's
@@ -1235,8 +1245,8 @@ exist:
   complaint count strictly falls — re-derived against this project's `PatchOp` vocabulary.
 - **"Held-out material" does not exist either**, and this is the one the replacement does
   not solve. Both gold impact suites are generated from the same `def.json` that authors
-  the prose they grade and ship in `fixtures/golden/`, which six test modules already
-  read. 37 expectations against this project's own `MIN_HOLDOUT = 50`.
+  the prose they grade, and ship inside the contracts package, which six test modules
+  already read. 37 expectations against this project's own `MIN_HOLDOUT = 50`.
 
 **Exit, as it can actually be run:**
 
@@ -1727,8 +1737,14 @@ every unstruck action below as a claim to re-verify rather than a task to start.
 1. ~~**`git init` and commit litharness-contracts**~~ — **DONE.** Branch `main`,
    3 commits, clean tree. The commit landed at 17:36 on 2026-08-12; the v2.1 edit
    that called this "the actual cheapest unblock" was written at 17:45.
-   **Remaining and real: it still has no LICENSE** (README says "License: TBD"),
-   which is the follow-up the original action deferred to the owner.
+   ~~**Remaining and real: it still has no LICENSE** (README says "License: TBD"),
+   which is the follow-up the original action deferred to the owner.~~ —
+   **Closed. Apache-2.0 landed 2026-08-13 in `32d9728`, which is the commit this
+   plan's CI was already pinning**, so the claim was false in the same file that
+   recorded its own contradiction. Only the contracts README still carried the
+   "License: TBD" line, and it is corrected as of contracts 0.2.0 (§7's row,
+   re-verified 2026-08-17). The owner's decision was made; the documents lagged it
+   by four days, which is this action's own recorded pattern applied to itself.
    **Superseded by a bigger instance of the same defect, now also done:** LitHarness
    *itself* was untracked while carrying 15 modules and 119 passing tests, and §7's
    inventory audited every sibling's VCS status without having a row for the product

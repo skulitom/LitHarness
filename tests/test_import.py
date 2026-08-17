@@ -20,9 +20,12 @@ from __future__ import annotations
 
 import dataclasses
 import json
+from pathlib import Path
 
+import litharness_contracts
 import litharness_contracts as lc
 import pytest
+from litharness_contracts.fixtures import golden_path
 
 from litharness.adapters import contracts_fixtures
 from litharness.domain.draft import gate_draft
@@ -196,8 +199,11 @@ def test_canonicalization_leaves_the_litrpg_em_dashes_alone() -> None:
 # --- finding the fixtures --------------------------------------------------------------
 
 
-def test_a_missing_checkout_names_the_variable_that_fixes_it(monkeypatch, tmp_path) -> None:
-    monkeypatch.setattr(contracts_fixtures, "_candidate_roots", lambda: [tmp_path])
+def test_a_missing_fixture_names_the_variable_that_fixes_it(monkeypatch, tmp_path) -> None:
+    """The fixtures ship inside the contracts wheel, so this state means a broken install —
+    but `LITHARNESS_CONTRACTS_ROOT` is still the lever that redirects the read, and a failure
+    that does not name it leaves the reader with nothing to try."""
+    monkeypatch.setattr(contracts_fixtures, "_golden_roots", lambda: [tmp_path])
 
     with pytest.raises(contracts_fixtures.FixturesUnavailable, match="LITHARNESS_CONTRACTS_ROOT"):
         contracts_fixtures.fixture_manuscript("mystery")
@@ -208,13 +214,38 @@ def test_an_unknown_fixture_lists_the_ones_that_exist() -> None:
         contracts_fixtures.fixture_manuscript("thriller")
 
 
-def test_a_directory_without_the_manuscript_is_not_a_checkout(monkeypatch, tmp_path) -> None:
-    """Every link in the discovery chain is checked against the artifact, not the directory
-    name — a path that exists but holds no manuscript is not the contracts checkout, and
-    accepting it would fail three layers further down."""
-    empty = tmp_path / "litharness-contracts"
-    (empty / "fixtures" / "golden" / "mystery").mkdir(parents=True)
-    real = contracts_fixtures.fixture_manuscript("mystery")
-    monkeypatch.setattr(contracts_fixtures, "_candidate_roots", lambda: [empty, real.parents[3]])
+def test_the_fixtures_are_read_from_the_installed_package(monkeypatch) -> None:
+    """No checkout, no environment variable: the default path is the contracts package's own
+    accessor, which is what makes a lone clone of this repository able to run its own suite."""
+    monkeypatch.delenv(contracts_fixtures.CONTRACTS_ROOT_ENV, raising=False)
 
-    assert contracts_fixtures.fixture_manuscript("mystery") == real
+    manuscript = contracts_fixtures.fixture_manuscript("mystery")
+
+    assert manuscript.is_file()
+    assert manuscript == golden_path("mystery", "manuscript.json")
+    assert manuscript.parents[2] == Path(litharness_contracts.__file__).parent / "fixtures"
+
+
+def test_the_override_wins_over_the_installed_package(monkeypatch, tmp_path) -> None:
+    """The escape hatch for work-in-progress fixtures: point the variable at a contracts
+    checkout and its books win, with no reinstall. It names a checkout *root*, so the path
+    beneath it is the in-checkout one — which moved when the fixtures entered the package."""
+    checkout = tmp_path / "litharness-contracts"
+    wip = checkout / contracts_fixtures.GOLDEN / "mystery"
+    wip.mkdir(parents=True)
+    (wip / "manuscript.json").write_text("{}", encoding="utf-8")
+    monkeypatch.setenv(contracts_fixtures.CONTRACTS_ROOT_ENV, str(checkout))
+
+    assert contracts_fixtures.fixture_manuscript("mystery") == wip / "manuscript.json"
+
+
+def test_an_override_without_the_artifact_falls_through(monkeypatch, tmp_path) -> None:
+    """The override is checked against the artifact, not the directory name — a checkout that
+    does not hold the file is not an answer, and accepting it would fail three layers down."""
+    empty = tmp_path / "litharness-contracts"
+    (empty / contracts_fixtures.GOLDEN / "mystery").mkdir(parents=True)
+    monkeypatch.setenv(contracts_fixtures.CONTRACTS_ROOT_ENV, str(empty))
+
+    assert contracts_fixtures.fixture_manuscript("mystery") == golden_path(
+        "mystery", "manuscript.json"
+    )

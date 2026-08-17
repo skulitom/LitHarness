@@ -197,7 +197,7 @@ predictive distribution over the text. Zero.
   review **text** (a vocabulary of located complaints) and as a within-book prose corpus of
   806k human-written words — not as a score label. Any proposal resting on these scores as
   ground truth is refuted before it starts.
-- **Golden fixtures**: `C:/DEV/litharness-contracts/fixtures/golden/{mystery,litrpg}/` —
+- **Golden fixtures**: `litharness_contracts.fixtures.golden_path("{mystery,litrpg}", ...)` —
   6 scenes each, ~130 words per scene. Mystery scene 6 (confession and arrest) is the dramatic
   peak, scene 1 (pure exposition) is the flattest; `scene_change_profile` ranked these upside
   down.
