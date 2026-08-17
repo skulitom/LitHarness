@@ -3178,3 +3178,42 @@ pilot, not a test**: twenty-four frontier-arm scenes can show effect direction f
 overdue-promise and zero-delta flags, and cannot show prediction at any confidence worth
 recording — §57 already wrote down what happens when a run is sized for the wrong
 question, and that entry does not need a sequel.
+
+## 62. The serial-publication pillar measures out at two enum values, and both stay
+
+Cut 5 of §61's programme, and the measurement that licenses it was taken in this pass
+rather than inherited: PLAN §16 — a *pillar*, with a stage of the roadmap named after it —
+has a total code footprint of **two inert vocabulary values**. `LockKind.PUBLISHED` is
+enforced by `Node.with_content`/`tombstone` and round-trips through contracts 1.1, and
+nothing in src/ ever sets it; `ExceptionKind.PUBLICATION_DECISION` mirrors the contracts
+enum and has zero producers. There is no chapter-release unit, no hook placement (the only
+"hook" in src/ is the word "webhook" in a docstring), no recap generation, no per-chapter
+export, no publication policy object, no posting scheduler, and no publication table
+anywhere in migrations 001–020. The pillar was prose.
+
+**What was already true, ratified rather than built.** `litharness export` renders one
+revision as Markdown or print-CSS HTML with derived front matter — exactly §16's "(export
+only)" manual mode, in real use (exports/ holds two rendered books). Publication is that
+export, run when the book clears §1a.5's bar. Shipping on schedule is the opposite
+gradient from quality (§61), and the retention bar that serialization was to feed was
+struck with it.
+
+**The cadence-economics half (§15).** The throughput framing — scenes-per-tick, a draft
+in two weeks, "the binding constraint will be gate failure rates" — is retired as a goal
+and had **zero code representation**: no scenes-per-day counter, no cadence target,
+nothing to delete. §15's other half is measured record and stays load-bearing: the
+per-invocation harness tax (measured 2026-08-12, re-measured §56.1), the budget ceilings,
+`spend_on` — that is §4.2 gate 4 and §18, untouched.
+
+**Kept, and worth naming so nothing sweeps them up later.** Both enum values (contract
+vocabulary; deleting them breaks wire round-trips for a claim nobody is making);
+`resolve_branch`, which lives in export.py but is imported by seven non-export CLI
+commands; and the recap *measurements* — published-serial recap spans of 70–93 words are
+the calibration datum behind `DUPLICATE_SPAN_WORDS`, which is quality machinery, not
+publication machinery.
+
+**PLAN edits, all in place with the superseded text visible:** §2's serial bullet, §15's
+retirement note, §16 retitled retired-with-record, Stage 6 struck with its survivors
+rehomed (backup drills and budget reviews to §19's playbook; calibration cadence to the
+preference engine's operation). Stage 7's "provider failover" mention falls to Cut 2's
+entry, not this one.

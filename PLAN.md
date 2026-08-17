@@ -315,7 +315,9 @@ violate this section.
   inputs, tool/model versions, and the policy that accepted it.
 - Operate continuously within hard token/cost budgets, degrade gracefully, recover
   from crashes without losing or corrupting accepted work.
-- Publish serially (chapter cadence with hooks and recaps) and export whole books.
+- ~~Publish serially (chapter cadence with hooks and recaps) and export whole books.~~
+  Export whole books (`litharness export`); publication is a manual act taken when the
+  book clears the quality bar, not a pipeline (§62).
 - Work with local models or API providers behind adapters. Four: a deterministic
   fake, the local Claude Code session (default), the local Codex CLI (fallback),
   and Ollama (iterative testing and all mechanical calls). See
@@ -1010,6 +1012,13 @@ panels are deferred until a human editing workflow is actually wanted.
 
 ## 15. Cost model and throughput (to validate in Book Zero)
 
+**The throughput half of this section is retired as a goal (§62).** Scenes-per-tick,
+drafts-per-fortnight, and cadence as an operating target are no longer goals (§61) — and
+they never had code: no throughput accounting exists anywhere in src/, so retiring them
+changes no behaviour. The cost half — the measured harness tax below, the ceilings, the
+spend accounting — is the budget governor's basis and stays load-bearing (§18, §4.2
+gate 4).
+
 Order-of-magnitude estimate, marked as hypothesis: a 100k-word draft ≈ 140–160
 scenes. Per accepted scene: generation 2–4k output tokens, extraction ~1k,
 evaluation ~1–2k, retries/repairs amortized ×1.5–2.5 → roughly **10–20k model
@@ -1047,7 +1056,19 @@ process, and `ClaudeCodeProvider.health()` is a real billed round trip — measu
 cold — that passes neither `budget_check` nor any recorded decision, so no ceiling can see
 it.
 
-## 16. Serial publication
+## 16. Serial publication *(retired, §62)*
+
+**Retired, licensed by measurement rather than preference: this pillar was never
+built.** Its entire code footprint measures out at two inert vocabulary values —
+`LockKind.PUBLISHED` and `ExceptionKind.PUBLICATION_DECISION`, both contract-coupled
+and both kept — plus the whole-book export, which already exists in exactly the demoted
+form the refoundation asks for (`litharness export`, the "(export only)" manual mode
+below, already in real use). No chapter-release unit, no hook placement, no recap
+generation, no posting scheduler, no publication table in migrations 001–020.
+Publication is now an export someone runs when the book is good. Recaps survive only
+inverted, as the published-serial calibration datum behind the duplication threshold
+(`DUPLICATE_SPAN_WORDS`) — that belongs to the quality area and is untouched. The
+design as written, kept for the record:
 
 LitRPG's native form is serialized chapters (Royal Road cadence), so serialization
 precedes book-shaped export:
@@ -1619,13 +1640,17 @@ is re-argued from measurements on the production generator, not inherited from �
 **Exit:** the dominant Book Zero failure class measurably reduced in a Book One+
 draft at equal budget.
 
-### Stage 6 — Serial operation
-Publication pipeline (§16), chapter cadence, recaps, publication policies;
+### Stage 6 — ~~Serial operation~~ *(retired, §62)*
+~~Publication pipeline (§16), chapter cadence, recaps, publication policies;
 multi-book direction (a second book started while the first serializes); operator
-playbook (backup/restore drills, budget reviews, calibration cadence).
-**Exit:** one book serializing on schedule under a queued-or-scheduled policy;
+playbook (backup/restore drills, budget reviews, calibration cadence).~~
+~~**Exit:** one book serializing on schedule under a queued-or-scheduled policy;
 a second in drafting; a month of unattended operation with only directive/exception
-/calibration touches.
+/calibration touches.~~
+*Retired by §62: serializing-on-schedule and unattended-months are the old goals.
+What survives moves elsewhere — backup/restore drills and budget reviews into the
+operator playbook (§19); calibration cadence into the preference engine's operation
+(§61 Add 1).*
 
 ### Stage 7 — Series and steady state
 Series continuity (cross-book canon via BookWorldState branches), genre profile
