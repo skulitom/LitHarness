@@ -1,0 +1,1094 @@
+\documentclass[11pt]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{xcolor}
+\usepackage[margin=0.82in]{geometry}
+\usepackage{enumitem}
+\usepackage[colorlinks=true,linkcolor=blue!45!black,citecolor=blue!45!black,urlcolor=blue!55!black]{hyperref}
+
+\definecolor{ink}{HTML}{17212B}
+\definecolor{navy}{HTML}{173F5F}
+\definecolor{teal}{HTML}{168C86}
+\definecolor{pale}{HTML}{EEF5F4}
+\definecolor{warm}{HTML}{F3EEE6}
+\definecolor{muted}{HTML}{536471}
+
+\color{ink}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.48em}
+\setlength{\emergencystretch}{2em}
+\setlist[itemize]{leftmargin=1.45em,itemsep=0.22em,topsep=0.25em}
+\setlist[enumerate]{leftmargin=1.55em,itemsep=0.22em,topsep=0.25em}
+\renewcommand{\arraystretch}{1.18}
+
+\newtheorem{definition}{Definition}
+\newtheorem{assumption}{Assumption}
+\newtheorem{lemma}{Lemma}
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}{Proposition}
+\newtheorem{corollary}{Corollary}
+\theoremstyle{remark}
+\newtheorem{remark}{Remark}
+
+\newcommand{\system}{\textsc{LitHarness}}
+\newcommand{\RGC}{\textsc{RGC}}
+\newcommand{\good}{\mathsf{Good}}
+\newcommand{\bad}{\mathsf{Bad}}
+\newcommand{\cert}{\mathsf{Cert}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\Prb}{\mathbb{P}}
+\newcommand{\ind}{\mathbf{1}}
+\newcommand{\code}[1]{\texttt{\detokenize{#1}}}
+
+\begin{document}
+
+\hypersetup{pageanchor=false}
+\begin{titlepage}
+\vspace*{0.45in}
+{\color{teal}\rule{\textwidth}{2.2pt}}
+
+\vspace{0.32in}
+{\Huge\bfseries Proof-Carrying Prose\par}
+\vspace{0.10in}
+{\LARGE A Reader-Grounded Statistical Certificate for\par Autonomous Long-Form Generation\par}
+
+\vspace{0.34in}
+{\large A method for turning ``this manuscript is good'' into a\par
+falsifiable, content-addressed, independently verifiable claim\par}
+
+\vfill
+\begin{minipage}{0.94\textwidth}
+\color{navy}
+\textbf{Central result.} Fix what ``good'' means before looking at outcomes: a named
+reader population, a frozen manuscript, controlled exposures, reader-level success
+variables, and numerical quality thresholds. Evaluate each autonomous manuscript with
+fresh blinded readers and anytime-valid evidence, while spending from a lifetime error
+budget. Under the stated sampling and integrity assumptions, the probability that the
+system ever certifies a manuscript violating any required threshold is at most that
+budget, even if it watches results continuously and generates later manuscripts
+adaptively.
+\end{minipage}
+
+\vfill
+{\large LitHarness Research Note\par}
+{\large 17 August 2026\par}
+\vspace{0.22in}
+{\small Proposal and mathematical analysis. No reader trial is reported in this paper.}
+
+\vspace{0.34in}
+{\color{teal}\rule{\textwidth}{2.2pt}}
+\end{titlepage}
+
+\hypersetup{pageanchor=true}
+\pagenumbering{roman}
+
+\begin{abstract}
+The sentence ``autonomous long-form generation cannot presently prove that its prose is
+good'' is correct only if \emph{good} denotes universal aesthetic value. It is too strong if
+\emph{good} denotes a declared, reader-grounded product claim. This paper defines a
+Reader-Grounded Certificate (\RGC) for a content-addressed manuscript. The contract names
+the target reader population, comparator distribution, exposure grain, outcome mapping,
+quality thresholds, assay-validity controls, and a system-wide error budget before outcomes
+exist. Blinded randomized panels then measure direct preference, voluntary continuation,
+finish-and-recommend behavior, and the dramatic properties that matter to LitRPG: scene
+function, costly progression, escalation and payoff, voice, and line-level craft. Outcomes
+are aggregated at the reader level, not the scene level.
+
+For each binary endpoint we construct a finite-mixture likelihood-ratio e-process. Ville's
+inequality makes the evidence valid under continuous monitoring and arbitrary stopping.
+An intersection-union rule requires every endpoint to pass. A predictable alpha-spending
+ledger extends the guarantee over an unbounded, adaptively generated sequence of manuscript
+versions. We prove that, conditional on the declared sampling, blinding, and log-integrity
+assumptions, the probability of ever issuing a certificate to a contract-bad manuscript is
+at most the ledger budget $\delta$. We also give an exact dynamic program for power, a
+tamper-evident certificate schema, controls against the most economical attacks, and an
+integration design for \system. The result is not a proof of beauty. It is a finite-sample
+proof that a particular immutable manuscript cleared a particular reader-quality bar with a
+declared maximum false-certification risk. That narrower claim is both useful and presently
+implementable.
+\end{abstract}
+
+\textbf{Keywords:} long-form generation; human evaluation; e-values; confidence sequences;
+sequential testing; multiple attempts; preregistration; reader behavior; LitRPG.
+
+\tableofcontents
+\newpage
+\pagenumbering{arabic}
+
+\section{The challenge and the change of quantifier}
+
+\system\ is an autonomous book-production system. It already content-addresses prose,
+separates generation from evaluation, preserves audit history, blocks deterministic
+integrity failures, and refuses to promote an uncalibrated craft critic. Its internal
+quality-measurement program has also killed twenty proposed static proxies with controls.
+The transferable failures are familiar: a tricolon statistic detected publication year;
+comment counts detected archive capture date; compression statistics detected sample size
+or text length; model judges exhibited order artifacts; and a progression-cost heuristic
+was satisfied by the bookkeeping it was meant to prevent. The local brief records the
+essential rule: a metric is a number, while a quality threshold is a claim about human
+judgment.
+
+Those failures do not imply that quality is unmeasurable. They imply that an isolated scalar
+computed from prose is not entitled to stand in for reader response. Human evaluation is
+itself difficult: terminology varies, designs are often incompletely reported, interfaces
+change judgments, and replication can fail \cite{vanderlee2021,howcroft2020,khashabi2022}.
+The answer is therefore not ``ask a few people.'' It is to make the reader claim the object
+of inference and to control every degree of freedom that lets the generator, evaluator, or
+operator select a lucky result.
+
+The apparent impossibility comes from a hidden universal quantifier:
+\[
+  \good_{\mathrm{univ}}(m)
+  = ``\text{manuscript $m$ is aesthetically good for all readers and purposes}.''
+\]
+No finite experiment identifies this predicate. The project does not need it. Its product
+goal is already narrower: books that a genre reader chooses to keep reading and recommends.
+That is a claim about a population and a distribution of controlled encounters with one
+manuscript. It can be false, sampled, and certified with bounded error.
+
+This paper makes three contributions.
+
+\begin{enumerate}
+  \item It defines a \emph{quality contract} whose referent is explicit: one immutable text,
+  one reader population, one exposure protocol, and a conjunction of behavior and judgment
+  thresholds. It forbids scene-level evidence from silently licensing a whole-book claim.
+  \item It supplies an anytime-valid test for every endpoint and a lifetime alpha ledger for
+  arbitrary autonomous retries. The central theorem bounds the probability of \emph{any}
+  false certificate across the entire adaptive sequence.
+  \item It turns the proof into an auditable software artifact: a third party can verify the
+  manuscript root, registration time, assignment transcript, outcome mapping, evidence
+  path, stopping rule, and remaining error wealth without trusting the generator.
+\end{enumerate}
+
+The proposal is intentionally not an empirical victory lap. No \system\ manuscript has yet
+earned this certificate. What is established here is that the certificate can exist now,
+what it would prove, and exactly which failures would void it.
+
+\section{What the certificate proves}
+
+\subsection{The contract, not a metaphysical definition}
+
+Let $m$ be a canonical manuscript byte string and let $h(m)$ be its Merkle root. Let
+$\mathcal P$ be a named target population of readers, $\mathcal H$ a fixed distribution of
+matched human comparators, and $J$ a finite set of required endpoints. A contract is
+\[
+ \mathcal C = \bigl(h(m),\mathcal P,\mathcal H,G,D,
+       \{(Y_j,\theta_j)\}_{j=1}^{J},V,A,W\bigr).
+\]
+Here $G$ is the exposure grain, $D$ the trial design, $Y_j$ an executable mapping from one
+reader cluster's raw event record to a binary outcome, $\theta_j$ the minimum acceptable
+success probability, $V$ the assay-validity preconditions, $A$ the error ledger, and $W$ the
+versioned verifier.
+
+The manuscript root uses a canonical manifest: UTF-8 text normalized to NFC, LF line endings,
+ordered chapter identifiers, byte lengths, and SHA-256 chapter digests under a domain
+separator. A one-character revision creates a new root and therefore a new candidate. This
+is not administrative detail. Without it, evidence collected for one text can be attached
+to a later text that no reader saw.
+
+\begin{definition}[Contract goodness]
+For a valid assay $V=1$, manuscript $m$ is good under contract $\mathcal C$ when
+\[
+  \good_{\mathcal C}(m)
+    \quad\Longleftrightarrow\quad
+  \bigwedge_{j=1}^{J} \mu_j(m)>\theta_j,
+  \qquad
+  \mu_j(m)=\Prb_{\mathcal P,D}\{Y_j=1\}.
+\]
+It is contract-bad when at least one component satisfies $\mu_j(m)\leq\theta_j$.
+\end{definition}
+
+The strict inequality is deliberate. Equality belongs to the null and cannot earn a
+certificate. The probability includes the registered sampling frame, assignment,
+comparator draw, presentation order, and tie randomization. Thus the estimand is not hidden
+inside prose. It is the result of a documented encounter between prose and readers.
+
+\subsection{Three grains and no granularity laundering}
+
+Long-form quality is not scene quality multiplied by the number of scenes. A passage can be
+polished while a book fails to escalate; an exciting chapter can spend promises planted
+elsewhere; a voice can drift only after 70,000 words. The contract therefore declares one of
+three scopes.
+
+\begin{center}
+\small
+\begin{tabular}{p{0.16\textwidth}p{0.29\textwidth}p{0.42\textwidth}}
+\toprule
+Certificate & Exposure required & Claim licensed \\
+\midrule
+\code{SCENE} & The entire named scene & Local readability and line-level preference only. \\
+\code{ARC} & A preregistered complete arc, including setup and payoff & Dramatic function,
+progression consequence, payoff, voice, and continuation across that arc. \\
+\code{BOOK} & Whole-book behavior plus hidden, position-stratified arcs & The full conjunction:
+reader behavior over the book and structural/craft endpoints across its length. \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+A \code{SCENE} certificate is not promotable to \code{BOOK} at any sample size. This mirrors
+\system's existing distinction between unit-, chapter-, and story-grain calibration and
+closes an ecological fallacy before statistics begin.
+
+\subsection{Interpretation}
+
+An accepted certificate supports exactly this sentence:
+
+\begin{quote}
+With system-wide false-certification risk at most $\delta$, this content-addressed manuscript
+exceeded every preregistered threshold in contract $\mathcal C$ for readers sampled by the
+declared protocol, conditional on the registered validity assumptions.
+\end{quote}
+
+It does not prove literary permanence, individual enjoyment, cross-cultural universality,
+commercial success, or causal superiority under different covers, prices, platforms, and
+release schedules. A narrow statement with a proof is stronger than a large statement whose
+referent changes whenever challenged.
+
+\section{The BOOK-GOOD-v1 reader contract}
+
+This section instantiates the abstract contract for \system. Numerical thresholds must be
+set by a human-only calibration study before a candidate's outcomes are observed. Values
+shown as examples are design values, not measured facts.
+
+\subsection{Target population and comparator distribution}
+
+The population record must specify language, geography if relevant, age/consent criteria,
+recent LitRPG reading behavior, subgenre familiarity, recruitment frames, device constraints,
+quota weights, exclusion rules, and the calendar window during which inference is intended
+to generalize. ``Online workers'' and ``readers'' are not population definitions. A useful
+example is adult English-language readers who voluntarily read at least three LitRPG
+chapters per week, recruited in prespecified proportions from two independent panels and a
+genre-community frame.
+
+The comparator pool is frozen separately from the candidate. It contains human-authored
+LitRPG matched on subgenre tags, target length, story maturity, publication era, and content
+warnings. The renderer removes title, author, cover, typography, ratings, and popularity.
+Comparators are sampled by a committed rule; an operator cannot substitute a weak book after
+seeing outcomes. An independent human-only calibration panel must show that the pool itself
+clears an absolute reader-health bar. This prevents ``better than a bad baseline'' from being
+renamed good.
+
+Publication status is not ground truth. It is only a way to define a relevant comparison
+distribution. The actual labels still come from readers in the registered trial.
+
+\subsection{Endpoint registry}
+
+Every primary endpoint produces one binary value per independent reader or reader block.
+Ties and unavailable primary responses are handled by rules fixed in advance; they are not
+deleted after inspection.
+
+\begin{center}
+\footnotesize
+\begin{tabular}{p{0.08\textwidth}p{0.19\textwidth}p{0.36\textwidth}p{0.25\textwidth}}
+\toprule
+ID & Project value & Reader-level success variable & Required comparison \\
+\midrule
+$Q_1$ & Revealed continuation & Reader voluntarily spends the registered extra reading
+interval, reaches the next checkpoint, and does not immediately opt out. & Absolute success
+above a human-calibrated floor. \\
+
+$Q_2$ & Whole-book value & Candidate reader reaches the registered completion fraction and
+recommends the book; paired comparator behavior is converted to a randomized block win. & At
+least superiority to the matched human pool, or a declared noninferiority margin. \\
+
+$Q_3$ & Dramatic function & After one hidden position-stratified arc, reader chooses the
+candidate as changing goals, stakes, relationships, or available action more than the matched
+arc. & Pairwise win probability above one half. \\
+
+$Q_4$ & Progression as drama & At a progression-bearing arc, reader chooses the candidate as
+making advancement more consequential and costly, rather than merely accounting for it. &
+Pairwise win probability above one half. \\
+
+$Q_5$ & Escalation and payoff & After setup and resolution are both exposed, reader chooses
+the candidate as making earlier promises matter and the resolution feel earned. & Pairwise
+win probability above one half. \\
+
+$Q_6$ & Voice and line craft & Reader chooses the candidate as having the more particular,
+stable narrative voice and the prose they would rather continue reading. & Pairwise win
+probability above one half. \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Absence of ``AI tells'' is not a separate source-detection target. Training the generator to
+fool an authorship discriminator would recreate the project's failed proxy program and make
+the discriminator an optimization target. Register drift, summary in place of scene,
+formulaic resolution, and repetitive sentence shapes matter insofar as they reduce $Q_3$ to
+$Q_6$. Post-choice source guesses are diagnostic only.
+
+An endpoint must contain its exact prompt, renderer, response options, time window, event
+parser, tie rule, missing-data rule, and aggregation code. A label such as ``engaging'' is
+not executable and therefore cannot appear in a certificate.
+
+\subsection{Why both behavior and attributed judgment are required}
+
+Continuation alone is gameable by abrupt cliffhangers. Completion alone can reward sunk
+cost. Recommendation alone is a cheap self-report. Fine-grained ratings alone invite
+criterion coaching. Requiring all endpoints is a defense in depth:
+
+\begin{itemize}
+  \item $Q_1$ and $Q_2$ put opportunity cost into the outcome and observe long-range value.
+  \item $Q_3$ to $Q_5$ prevent a superficial page-turner from hiding flat dramatic
+  structure or consequence-free progression.
+  \item $Q_6$ prevents sound plotting from excusing generic or unpleasant prose.
+\end{itemize}
+
+The conjunction is not claimed to exhaust literature. It operationalizes the priorities
+already declared by this project.
+
+\section{Trial design: readers are the experimental units}
+
+\subsection{Panels and exposures}
+
+\code{BOOK-GOOD-v1} uses three mutually isolated panels.
+
+\begin{enumerate}
+  \item \textbf{Opening panel.} A reader sees a candidate and a matched human opening in
+  randomized order and makes a forced preference after equal exposure. This supplies a
+  fast, cheap falsifier and an opening-level continuation measure. It cannot certify the
+  book by itself.
+  \item \textbf{Structural panel.} A reader is assigned one arc position from a hidden
+  stratified schedule (early, middle, late, and resolution-bearing). The reader receives all
+  context needed for setup and payoff, then compares it with the same functional position in
+  a matched human work. Sampling positions after the manuscript is frozen prevents the
+  generator from polishing only known test passages.
+  \item \textbf{Long-form panel.} Readers are randomized between the candidate and a matched
+  comparator in identical, source-blind reading interfaces. Checkpoint events and a final
+  recommendation are logged. Compensation cannot depend on liking either text, and the
+  opportunity to continue must be genuine rather than a demanded survey task.
+\end{enumerate}
+
+No reader contributes more than one primary observation to the same endpoint for a candidate.
+If a person evaluates several passages for diagnostics, those records are first reduced to
+one reader-level value by the registered mapping. Treating twenty scene ratings from one
+reader as twenty independent readers is pseudoreplication, however small the resulting
+$p$-value.
+
+\subsection{A common Bernoulli representation}
+
+Direct preference is binary: candidate win $=1$, comparator win $=0$. A declared tie can be
+resolved by an independent fair bit from a commit-reveal seed. Counting ties as failures is
+also valid but changes the estimand and loses power; dropping ties is not permitted unless
+the population and threshold were defined conditionally on decisive responses.
+
+Behavioral comparisons use randomized reader blocks. In block $i$, one fresh reader receives
+the candidate and another receives a sampled human comparator. Let $B_i^C,B_i^H\in\{0,1\}$
+be the registered finish-and-recommend outcomes. Define
+\[
+ X_i =
+ \begin{cases}
+  1,&B_i^C>B_i^H,\\
+  0,&B_i^C<B_i^H,\\
+  U_i,&B_i^C=B_i^H,
+ \end{cases}
+ \qquad U_i\sim\mathrm{Bernoulli}(1/2),
+\]
+where $U_i$ is independent and auditable.
+
+\begin{proposition}[Behavioral win identity]
+If the two readers in a block are independent conditional on its registered stratum, with
+success probabilities $p_C$ and $p_H$, then
+\[
+  \E[X_i]=\frac12+\frac12(p_C-p_H).
+\]
+Thus testing $\E[X_i]>1/2$ is exactly a superiority test for the behavioral success
+probability. A noninferiority margin $p_C-p_H>-\varepsilon$ uses threshold
+$\theta=1/2-\varepsilon/2$.
+\end{proposition}
+
+\begin{proof}
+The candidate wins outright with probability $p_C(1-p_H)$. The outcomes tie with
+probability $p_Cp_H+(1-p_C)(1-p_H)$ and then win with probability one half. Expanding and
+collecting terms gives the identity.
+\end{proof}
+
+This reduction lets preference, continuation, and long-form behavior share one verified
+sequential-testing implementation.
+
+\subsection{Blinding, randomization, and controls in the same pass}
+
+The evaluator, not the generator, owns recruitment and assignment. Candidate and comparator
+are rendered through the same deterministic pipeline. Display order, comparator draw, arc
+position, and tie bits use a seed whose commitment is published before the first outcome and
+whose value is revealed after lock. Readers are not told authorship. Analysts see arms as
+opaque labels until the primary event table is sealed.
+
+Each run includes the confound controls most likely to fail:
+
+\begin{itemize}
+  \item \textbf{Order and renderer control:} identical or human-versus-human sham pairs,
+  balanced left/right, measure interface preference and order drift.
+  \item \textbf{Assay sensitivity control:} an independently chosen fluent passage against
+  a prespecified damaged version checks that the panel can detect a large known defect. It
+  is run in a separate subpanel so it does not teach the primary criterion.
+  \item \textbf{Comparator-health control:} the frozen human pool must retain its calibrated
+  absolute behavior on a concurrent sample.
+  \item \textbf{Identity and duplication control:} reader-cluster deduplication, delayed
+  duplicate items, and reversed-order repeats quantify bots and answer inconsistency.
+  \item \textbf{Attrition control:} randomized assignment counts are reconciled with event
+  logs. Missing primary outcomes count as failures when ethically and legally permitted;
+  otherwise a preregistered missingness cap invalidates the run.
+\end{itemize}
+
+Controls are not magic. Passing them does not prove that an online panel equals every genre
+reader. They make named alternative explanations capable of killing the assay, which is the
+standard the project's failed proxy program earned.
+
+Ethics is part of validity. The protocol requires informed consent, fair compensation,
+privacy-preserving reader identifiers, content warnings, withdrawal handling, and review by
+the applicable ethics process. Source masking is disclosed as methodological blinding; it
+must not be used to conceal risk or manipulate compensation.
+
+\section{Anytime-valid evidence for one endpoint}
+
+Fixed-horizon tests become invalid when an autonomous system watches them after every reader
+and stops on a lucky fluctuation. Always-valid inference and confidence sequences were
+developed precisely for such continuous monitoring \cite{howard2021,johari2022}. E-values
+are nonnegative evidence measures with expectation at most one under the null and remain
+valid under optional continuation \cite{grunwald2024}.
+
+Fix an endpoint and suppress manuscript and endpoint indices. Let
+$X_t\in\{0,1\}$ be the $t$th reader-level result, $\mathcal F_t$ the information available
+after it, and $\theta\in(0,1)$ the registered quality threshold. The null is the conditional
+form
+\[
+ H_0:\quad \E[X_t\mid\mathcal F_{t-1}]\leq\theta
+ \quad\text{for every }t.
+\]
+For an iid probability sample this is the ordinary hypothesis $p\leq\theta$. The conditional
+form also permits preregistered strata and time-varying reader mixtures whose null means
+remain bounded.
+
+Choose alternative points $q_1,\ldots,q_L\in(\theta,1)$ and fixed weights
+$w_\ell>0$ summing to one. Define
+\[
+ M_t(q_\ell,\theta)
+ =\prod_{i=1}^{t}
+   \left(\frac{q_\ell}{\theta}\right)^{X_i}
+   \left(\frac{1-q_\ell}{1-\theta}\right)^{1-X_i},
+ \qquad
+ E_t(\theta)=\sum_{\ell=1}^{L}w_\ell M_t(q_\ell,\theta).
+\]
+The finite mixture is preferred to an opaque fitted prior: every number can be stored in the
+contract and recomputed with log-sum-exp arithmetic.
+
+\begin{lemma}[Endpoint e-process]
+Under $H_0$, $\{E_t(\theta)\}_{t\geq0}$ is a nonnegative supermartingale with $E_0=1$.
+\end{lemma}
+
+\begin{proof}
+For one $q>\theta$, the next likelihood-ratio factor has conditional expectation
+\[
+ \E\!\left[
+  \left(\frac q\theta\right)^{X_t}
+  \left(\frac{1-q}{1-\theta}\right)^{1-X_t}
+  \middle|\mathcal F_{t-1}\right]
+ =p_t\frac q\theta+(1-p_t)\frac{1-q}{1-\theta},
+\]
+where $p_t=\E[X_t\mid\mathcal F_{t-1}]$. This expression equals one at $p_t=\theta$ and has
+derivative $(q-\theta)/(\theta(1-\theta))>0$ in $p_t$. It is therefore at most one whenever
+$p_t\leq\theta$. Each $M_t$ is a nonnegative supermartingale. A convex combination of them
+is also a nonnegative supermartingale and starts at one.
+\end{proof}
+
+\begin{theorem}[Anytime-valid endpoint certificate]
+For any $\alpha\in(0,1)$ and any stopping time $T$, the rule
+\[
+  \text{pass endpoint if }E_T(\theta)\geq 1/\alpha
+\]
+has Type I error at most $\alpha$. More strongly,
+\[
+ \Prb_{H_0}\!\left\{\sup_{t\geq0}E_t(\theta)\geq1/\alpha\right\}\leq\alpha.
+\]
+\end{theorem}
+
+\begin{proof}
+Apply Ville's maximal inequality to the nonnegative supermartingale in the lemma
+\cite{ville1939}. The event of passing at any stopping time is contained in the displayed
+crossing event.
+\end{proof}
+
+\begin{corollary}[Peeking is harmless]
+The trial may report its current evidence after every completed reader cluster, stop early
+for success, stop for futility, or run to a maximum sample size without changing the false
+pass bound. The alternative grid and outcome mapping may not be changed after outcomes are
+observed.
+\end{corollary}
+
+A conventional $p$-value asks how surprising a terminal statistic would be under a fixed
+plan. Here the evidence path itself is licensed for continuous use. This is essential for a
+24/7 system rather than a statistical ornament.
+
+\section{All endpoints and all autonomous manuscripts}
+
+One valid trial does not solve autonomous search. A generator can create manuscripts until
+sampling luck produces a pass. Content addressing identifies each attempt; an alpha ledger
+makes the total selection risk finite.
+
+Index manuscript attempts by $a=1,2,\ldots$. Attempt $a$ is registered with an error spend
+$\alpha_a$ before its first outcome. The spend may depend on the complete history of earlier
+attempts, but not on current outcomes, and must satisfy pathwise
+\[
+  \sum_{a=1}^{\infty}\alpha_a\leq\delta.
+\]
+A simple default is $\alpha_a=\delta 2^{-a}$. With lifetime risk $\delta=0.01$, the first
+attempt tests at $0.005$, the second at $0.0025$, and so on. Unused budget can be handled by a
+more elaborate prespecified wealth rule, but it cannot be invented after a near miss.
+
+Within one attempt, every required endpoint is tested at level $\alpha_a$, and the manuscript
+passes only when every endpoint e-process crosses $1/\alpha_a$. No Bonferroni division by
+$J$ is needed. This is an intersection-union test: the bad-manuscript null is a union of
+component nulls, and rejection requires rejection of every component.
+
+\begin{assumption}[Fresh conditional validity]
+Conditional on all history before attempt $a$, its manuscript, contract, and comparator rule
+are fixed; its reader clusters are fresh under the registered sampling design; every
+contract-bad manuscript has at least one endpoint satisfying the conditional-mean null; and
+the event log, blinding, and outcome mapping have integrity.
+\end{assumption}
+
+\begin{theorem}[Lifetime false-certification control]
+Let $\cert_a$ denote issuance of the full certificate for attempt $a$. Under the assumption
+above and a predictable ledger with total spend at most $\delta$,
+\[
+ \Prb\!\left\{\exists a:\ \bad_{\mathcal C_a}(m_a)
+                 \ \text{and}\ \cert_a\right\}\leq\delta,
+\]
+even when manuscripts and future spends are chosen adaptively from all previous results.
+\end{theorem}
+
+\begin{proof}
+Fix the history before attempt $a$ and suppose $m_a$ is contract-bad. At least one endpoint,
+say $j^*$, obeys its null. Full certification implies that endpoint $j^*$ crossed
+$1/\alpha_a$. By the endpoint theorem,
+\[
+ \Prb(\cert_a\mid\mathcal F_{a-1},\bad_a)\leq\alpha_a.
+\]
+This argument does not require endpoint independence and does not require knowing which
+component null is true. Apply the union bound over attempts and the tower property:
+\[
+ \Prb(\exists a:\bad_a\cap\cert_a)
+ \leq \sum_a \E\!\left[
+     \ind\{\bad_a\}\Prb(\cert_a\mid\mathcal F_{a-1})
+   \right]
+ \leq \sum_a \E[\alpha_a]\leq\delta.
+\]
+Adaptive generation changes the history on which the next conditional guarantee is based;
+it does not spend the same error probability twice.
+\end{proof}
+
+\begin{remark}[What the theorem does not absorb]
+Optional stopping and repeated manuscripts are statistical selection problems and are
+covered. Recruiting only known fans, leaking authorship, changing the renderer, duplicating
+reader identities, suppressing dropouts, or modifying the manuscript after registration are
+violations of the estimand or data-generating assumptions. They require prevention and audit,
+not a smaller $\alpha$.
+\end{remark}
+
+\section{Power, cost, and a reproducible design calculation}
+
+False-certification control says nothing about how many readers a genuinely good book needs.
+An underpowered proof protocol is formally valid and operationally useless. This section
+provides two planning calculations for a Bernoulli endpoint with threshold $\theta=0.5$ and
+first-attempt level $\alpha=0.005$.
+
+For a fixed-horizon exact binomial test, let $k_n$ be the smallest integer with
+\[
+  \Prb_{0.5}\{\mathrm{Bin}(n,0.5)\geq k_n\}\leq0.005.
+\]
+The minimum $n$ for power $\gamma$ at true success probability $p$ is the first $n$ with
+$\Prb_p\{\mathrm{Bin}(n,p)\geq k_n\}\geq\gamma$.
+
+For the anytime design, use the registered grid
+\[
+  q=(0.55,0.60,0.65,0.70,0.75),\qquad w_\ell=0.2.
+\]
+Because $E_t$ depends only on $(t,x)$, where $x$ is cumulative success, define the crossing
+boundary
+\[
+ b_t=\min\{x:E_t(0.5;t,x)\geq200\}.
+\]
+Starting with $g_0(0)=1$, propagate the probability of not yet crossing:
+\[
+ g_t(x)=\ind\{x<b_t\}\bigl[(1-p)g_{t-1}(x)+p g_{t-1}(x-1)\bigr].
+\]
+Then the exact probability of certification by $n$ is $1-\sum_x g_n(x)$. No Monte Carlo is
+needed. The resulting reader-level sample requirements are:
+
+\begin{center}
+\small
+\begin{tabular}{c rr rr r}
+\toprule
+True $p$ & \multicolumn{2}{c}{Fixed exact test} & \multicolumn{2}{c}{Anytime mixture} &
+Anytime $n$ for 0.9833 \\
+ & 80\% & 90\% & 80\% & 90\% & power \\
+\midrule
+0.60 & 291 & 373 & 444 & 552 & 793 \\
+0.65 & 131 & 164 & 184 & 231 & 330 \\
+0.70 & 73  & 92  & 101 & 123 & 175 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+At $p=0.5$, the exact probability that this mixture crosses by $n=3000$ is $0.00440766$,
+below the theorem's $0.005$ infinite-horizon bound. As expected, optional-stopping safety has
+a sample cost. The grid is efficient when it places weight near the true effect and remains
+valid when it does not.
+
+The last column is useful for a six-endpoint contract. If every endpoint passes with
+probability at least $1-0.1/6=0.9833$, the union bound guarantees at least 90\% probability
+that all six pass; endpoint independence is unnecessary. In practice, outcomes have
+different effects and costs, so the registered study simulator should use pilot estimates,
+reader-level correlation, attrition, strata, and maximum panel capacity. The weakest
+endpoint determines certification.
+
+These numbers expose the honest price of the word ``prove.'' Hundreds of \emph{independent
+reader-level outcomes} can be necessary when the true advantage is modest. Scene ratings
+cannot be multiplied to make this cost disappear. A staged program controls expense:
+
+\begin{enumerate}
+  \item run controls and an opening panel as cheap falsifiers;
+  \item run arc endpoints only for manuscripts that survive;
+  \item reserve full-book behavioral trials and alpha spend for a release candidate;
+  \item stop any endpoint for futility under a preregistered rule, which cannot create a false
+  pass.
+\end{enumerate}
+
+\section{The cheapest ways to game the proof}
+
+The project's strongest design question is: what is the cheapest repair that satisfies the
+metric, and is that repair the disease? For direct reader outcomes, some optimization is the
+goal. If fresh target readers consistently prefer the prose, voluntarily continue, finish,
+and recommend it across structural endpoints, improving the test statistic means improving
+the declared product outcome. The remaining shortcuts attack the assay rather than the book.
+
+\begin{center}
+\footnotesize
+\begin{tabular}{p{0.19\textwidth}p{0.30\textwidth}p{0.39\textwidth}}
+\toprule
+Attack & Why it can produce a false story & Contract defense \\
+\midrule
+Outcome peeking & Stop at the first lucky excess of wins. & E-process and Ville boundary;
+every prefix is covered. \\
+Unlimited candidates & Generate versions until one passes by chance. & New content root for
+every version; predictable lifetime alpha ledger. \\
+Endpoint shopping & Drop payoff or redefine a tie after a near miss. & Signed contract and
+executable outcome mapping committed before outcomes. \\
+Weak comparators & Beat unpopular, stale, or mismatched human work. & Frozen matched pool,
+committed sampling, and concurrent comparator-health control. \\
+Friendly readers or bots & Change the population rather than the book. & External recruitment,
+frame quotas, identity clusters, duplication audits, and fresh holdout panels. \\
+Presentation leakage & Let covers, author names, typography, or labels drive choice. & Common
+renderer, opaque arms, assignment audit, and order shams. \\
+Polished test excerpts & Optimize known passages while the long form remains weak. & Freeze the
+book before hidden position sampling; require whole-book behavior. \\
+Cliffhanger hacking & Raise short continuation while destroying satisfaction. & Require
+completion, recommendation, payoff, and voice endpoints simultaneously. \\
+Pseudoreplication & Count many ratings from one person as independent evidence. & One primary
+value per reader cluster per endpoint. \\
+Outcome suppression & Delete ties, withdrawals, or failed checkpoints. & Intention-to-treat
+event reconciliation; failure coding or run invalidation fixed in advance. \\
+Model-judge mimicry & Optimize recognizable judge preferences. & No model verdict is primary;
+panel prompts and passage locations are outside the generation loop. \\
+Post-pass revision & Attach evidence to prose no reader saw. & Merkle-root identity; any text
+change opens a new attempt. \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+An autonomous generator may learn from earlier pass/fail outcomes. The lifetime theorem
+allows this adaptation when every attempt uses fresh valid data and pays fresh alpha. To
+reduce construct overfitting, detailed individual responses remain quarantined until the
+attempt closes; later validation uses a separately recruited frame; and contract versions
+rotate only on a public schedule, never in response to one manuscript. If the system learns
+to satisfy actual readers under these constraints, the ``gaming'' is substantially aligned
+with the construct. If it learns to infiltrate the panel, the certificate is void.
+
+\section{A proof artifact that another machine can verify}
+
+The paper certificate should not be a PDF badge or an evaluator's conclusion. It is a small,
+signed data object plus committed evidence tables. At minimum it contains:
+
+\begin{itemize}
+  \item contract ID and digest; manuscript Merkle root and chapter manifest;
+  \item population and recruitment-frame version; consent and ethics record identifiers;
+  \item comparator-pool root; renderer hash; allocation and commit-reveal seed records;
+  \item endpoint IDs, exact prompts, thresholds, tie and missingness rules;
+  \item reader-cluster commitments, assignment transcript, raw-event Merkle root, and
+  exclusion ledger;
+  \item e-process grid, weights, numerical precision, evidence path, crossing time, and
+  maximum sample size for every endpoint;
+  \item assay-control outcomes and validity decision;
+  \item lifetime ledger root, prior spends, this attempt's spend, and remaining wealth;
+  \item verifier version, environment digest, timestamp, and evaluator signature.
+\end{itemize}
+
+Reader privacy does not require unverifiable statistics. The public artifact can store salted
+cluster commitments and aggregate event proofs while encrypted row-level records remain with
+an independent evaluator. A permitted auditor can recompute from rows; the public can verify
+hash continuity, registration order, arithmetic, and signatures. Stronger zero-knowledge
+machinery is possible but not required for the first implementation.
+
+The verifier performs a fail-closed sequence:
+
+\begin{enumerate}
+  \item recompute the manuscript and comparator roots;
+  \item prove that the contract and seed commitment predate all primary outcomes;
+  \item validate assignments, unique reader clusters, exposures, and event reconciliation;
+  \item execute each $Y_j$ mapping and reproduce the reader-level binary sequence;
+  \item recompute every log e-value in registered order and its first crossing time;
+  \item verify that all endpoints crossed $1/\alpha_a$ and all controls satisfy $V$;
+  \item replay the alpha ledger and prove cumulative spend does not exceed $\delta$;
+  \item emit the exact claim sentence, never the unqualified label ``good.''
+\end{enumerate}
+
+Any unverifiable field yields \code{INVALID}, not \code{INCONCLUSIVE} or an advisory pass.
+
+\section{Integration with LitHarness}
+
+The proposal fits \system's architecture but should not be squeezed into the current proxy
+calibration row. The existing calibration object estimates whether a metric predicts human
+judgment at unit, chapter, or story grain. The \RGC\ is direct story-grain evidence about one
+immutable manuscript and a declared reader population. It belongs beside calibration as a
+new artifact type.
+
+\subsection{Suggested domain objects}
+
+\begin{itemize}
+  \item \code{QualityContract}: immutable hashes, population, grain, endpoints, controls,
+  comparator policy, and verifier version.
+  \item \code{AlphaLedger}: append-only spends keyed by manuscript root and contract family;
+  it rejects a spend that would exceed lifetime wealth.
+  \item \code{ReaderTrial}: external job boundary that receives opaque rendered units and
+  returns signed event commitments, never generation instructions.
+  \item \code{QualityCertificate}: endpoint evidence, control status, ledger proof, and exact
+  licensed claim.
+  \item \code{CertificateVerification}: deterministic result with reason codes and a digest
+  that policy can consume.
+\end{itemize}
+
+\subsection{Policy placement}
+
+Deterministic integrity gates still run first. They are cheap necessary conditions and should
+not spend readers on contradictions or broken state. Advisory craft detectors and scoped
+repair remain useful for located defects, but they cannot issue the quality certificate. A
+release candidate is frozen, exported through the blinded renderer, and sent to the external
+reader trial. Only a verified \code{BOOK} certificate may satisfy a story-level
+\code{QUALITY_BELOW_BAR} veto.
+
+The primary reader stream is never passed to the generating model during an open attempt.
+The evaluator is a separate principal with separate credentials. The generator can receive
+the terminal state \code{PASS}, \code{FUTILITY}, or \code{INVALID}; any detailed feedback
+used for revision becomes history, and the revision must obtain a new root and spend.
+
+This preserves the project's existing trust posture: generation proposes; independent
+evidence licenses acceptance; content address and policy record what happened.
+
+\subsection{State machine}
+
+\begin{center}
+\small
+\begin{tabular}{p{0.19\textwidth}p{0.65\textwidth}}
+\toprule
+State & Only valid transition \\
+\midrule
+\code{DRAFT} & deterministic integrity pass $\rightarrow$ \code{CANDIDATE} \\
+\code{CANDIDATE} & freeze manifest and register contract/spend $\rightarrow$ \code{SEALED} \\
+\code{SEALED} & successful seed commitment and evaluator acceptance $\rightarrow$ \code{TRIAL} \\
+\code{TRIAL} & all endpoint crossings plus controls $\rightarrow$ \code{CERTIFIED}; futility
+or cap $\rightarrow$ \code{FAILED}; protocol breach $\rightarrow$ \code{INVALID} \\
+\code{CERTIFIED} & publication of the exact sealed root only; any edit $\rightarrow$ new
+\code{DRAFT} and attempt \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section{Falsification program before deployment}
+
+A theorem conditional on bad instrumentation can certify the wrong thing perfectly. The
+implementation must first try to break itself.
+
+\begin{enumerate}
+  \item \textbf{Arithmetic property tests.} Generate Bernoulli null streams over many seeds,
+  endpoints, stopping rules, and candidate schedules. Empirical crossings should remain
+  compatible with the exact boundary, while exhaustive small-state dynamic programs must
+  match the verifier bit for bit.
+  \item \textbf{Ledger adversary tests.} Let an agent choose the next candidate, endpoint
+  correlation, stop time, and sample cap from all previous results. It should never reuse a
+  spend, mutate a registered endpoint, or attach old evidence to a new root.
+  \item \textbf{Renderer A/A tests.} Human work rendered through both nominal arms should show
+  no arm effect. Deliberately inject author names, pagination differences, and order imbalance
+  and require the control to fail.
+  \item \textbf{Population replay.} Reweight the same responses under each registered frame
+  and show that the certificate's claim changes when its population changes. A system that
+  silently preserves the pass is mislabeling its estimand.
+  \item \textbf{Pseudoreplication trap.} Feed the verifier many scene rows from a few readers.
+  It must aggregate or reject them and leave the effective $n$ unchanged.
+  \item \textbf{Missingness attack.} Delete unfavorable checkpoints and withdrawals. Event
+  reconciliation must convert them under the fixed rule or invalidate the run.
+  \item \textbf{Known-quality ladder.} Before any autonomous book can pass, run the full assay
+  on source-blind strong, ordinary, and deliberately damaged human texts selected without the
+  candidate. The ordering is a construct check, not a threshold-fitting opportunity.
+  \item \textbf{Independent replication.} A second evaluator recruits a new frame and reruns
+  the sealed contract. Disagreement does not erase the first sample; it blocks renewal and
+  triggers a population or assay investigation.
+\end{enumerate}
+
+The first production certificate should be treated as a registered validation study, not a
+marketing launch. Publish failures, including controls that invalidate an apparent pass.
+
+\section{Limitations and boundaries}
+
+\textbf{Construct validity.} Readers may continue for reasons the six endpoints do not name,
+and prompts can shape judgments. The contract is defensible because it combines revealed
+behavior with attributed structural comparisons, not because the list is ontologically
+complete.
+
+\textbf{External validity.} Probability sampling of genre readers is difficult. Panel
+members, community volunteers, and paying customers have different incentives. The claim
+must name the frame actually sampled. Replication across frames expands evidence; it does not
+retroactively make the first frame universal.
+
+\textbf{Interference and contamination.} Readers may discuss books, recognize prose, or
+participate in multiple panels. Cluster identities, staggered release, and sealed text reduce
+but cannot eliminate interference. Material contamination invalidates the affected attempt.
+
+\textbf{Long-form cost.} Whole-book exposure is slow and attrition is part of the outcome.
+Cheap excerpt panels are valuable falsifiers but cannot substitute for book-level behavior.
+The cost is a property of the claim, not a software inefficiency.
+
+\textbf{Composite incentives.} A fixed contract can still become culturally stale or reward
+formula. Contract renewal must occur on a public calendar using human-only evidence and an
+independent validation sample. It must never be tuned to rescue a current manuscript.
+
+\textbf{Statistical proof is conditional.} The theorem proves an error bound under sampling,
+mapping, and integrity assumptions. It cannot prove that recruitment vendors are honest or
+that readers understood a question. Those are audited empirical premises. Calling them out
+is a strength: it tells a critic exactly what must be falsified.
+
+\textbf{No result yet.} This paper provides a method, proof, and implementation protocol. It
+does not assert that an autonomous \system\ manuscript currently clears any threshold. A
+certificate exists only after the registered readers have supplied the evidence.
+
+\section{Conclusion}
+
+The original sentence can be replaced by a more accurate one:
+
+\begin{quote}
+Autonomous long-form generation cannot prove universal aesthetic goodness, but it can
+present an independently verifiable, reader-grounded proof that one immutable manuscript
+exceeds preregistered quality thresholds, with a finite-sample bound on the chance of any
+false certificate across continuous monitoring and adaptive retries.
+\end{quote}
+
+The method succeeds by refusing to discover goodness inside a proxy. It makes the reader
+claim primary, freezes its meaning before outcomes, pays the true sample cost of long-form
+evidence, and turns every optimization loophole into either an included endpoint, a measured
+control, or an explicit assumption. The mathematics handles luck. Content addressing handles
+version substitution. The alpha ledger handles autonomous search. Blinding and recruitment
+audits handle the most dangerous confounds. The resulting certificate is narrow, expensive,
+and falsifiable. Those are the properties that make it a proof rather than a score.
+
+\appendix
+
+\section{Reference verifier pseudocode}
+
+\small
+\begin{verbatim}
+verify(certificate, registry, encrypted_rows):
+    require hash(certificate.contract) == certificate.contract_digest
+    require merkle_root(canonicalize(manuscript)) == contract.manuscript_root
+    require registry.time(contract_digest) < min(primary_outcome_times)
+    require hash(reveal_seed) == registry.seed_commitment
+    require comparator_root == contract.comparator_root
+    require renderer_hash == contract.renderer_hash
+
+    assignments = replay_assignments(reveal_seed, contract.design)
+    require reconcile(assignments, encrypted_rows, contract.missing_rule)
+    require unique_reader_clusters(encrypted_rows, contract.cluster_rule)
+    require controls_pass(encrypted_rows, contract.validity_rules)
+
+    for endpoint in contract.required_endpoints:
+        x = endpoint.mapping(encrypted_rows)       # one bit per reader cluster
+        require len(x) == endpoint.reported_n
+        logM = [log(w) for w in endpoint.weights]
+        first_crossing = NONE
+        for t, bit in enumerate(x, start=1):
+            for ell, q in enumerate(endpoint.q_grid):
+                logM[ell] += bit * log(q / theta)
+                logM[ell] += (1-bit) * log((1-q) / (1-theta))
+            logE = logsumexp(logM)
+            if first_crossing is NONE and logE >= log(1 / attempt_alpha):
+                first_crossing = t
+        require first_crossing is not NONE
+        require first_crossing == endpoint.reported_crossing
+
+    require replay_ledger(registry) <= contract.lifetime_delta
+    return VERIFIED(contract.exact_claim, contract.manuscript_root)
+\end{verbatim}
+\normalsize
+
+The implementation should use a documented floating-point tolerance only for display. The
+authoritative comparison can use high-precision decimal arithmetic or interval bounds so a
+rounding difference near $1/\alpha$ fails closed rather than selecting a pass.
+
+\section{Minimal certificate schema}
+
+\small
+\begin{verbatim}
+quality_certificate:
+  schema: litharness.quality-certificate.v1
+  contract_digest: sha256:...
+  manuscript_root: sha256:...
+  population_id: target-litrpg-readers.v1
+  grain: BOOK
+  comparator_root: sha256:...
+  renderer_digest: sha256:...
+  registration_timestamp: ...
+  attempt_index: 1
+  lifetime_delta: 0.01
+  attempt_alpha: 0.005
+  ledger_parent: sha256:...
+  controls:
+    status: PASS
+    evidence_root: sha256:...
+  endpoints:
+    - id: book.finish-and-recommend.win.v1
+      theta: 0.5
+      q_grid: [0.55, 0.60, 0.65, 0.70, 0.75]
+      weights: [0.2, 0.2, 0.2, 0.2, 0.2]
+      reader_cluster_n: ...
+      outcome_root: sha256:...
+      first_crossing: ...
+      terminal_log_e: ...
+  verifier_digest: sha256:...
+  evaluator_signature: ...
+\end{verbatim}
+\normalsize
+
+The example contains no certificate outcome and is not evidence. A production object lists
+every required endpoint and the exact licensed claim.
+
+\section{A worked evidence calculation}
+
+Take $\theta=0.5$, $\alpha=0.005$, and the five-point equal-weight grid used in Section 7.
+Suppose a sealed endpoint has $n=164$ reader-level results with $x=107$ successes. Its
+terminal evidence is
+\[
+ E_{164} = \frac15\sum_{q\in\{.55,.60,.65,.70,.75\}}
+       \left(\frac q{.5}\right)^{107}
+       \left(\frac{1-q}{.5}\right)^{57}
+       \approx 856.96.
+\]
+Because $856.96>1/0.005=200$, that endpoint passes. This does not mean a manuscript with
+``107 of 164'' automatically earns a certificate: the path must be computed in registered
+order, all other endpoints must cross, controls must pass, the alpha spend must be valid, and
+the data-generating assumptions must hold. The example shows only that the arithmetic is
+transparent enough to reproduce without a statistical service.
+
+\section{Assumption audit checklist}
+
+\begin{center}
+\small
+\begin{tabular}{p{0.24\textwidth}p{0.31\textwidth}p{0.32\textwidth}}
+\toprule
+Assumption & Evidence to retain & Failure consequence \\
+\midrule
+Candidate fixed before outcomes & Timestamped manifest and chapter roots & New attempt; old
+evidence cannot transfer. \\
+Target sampling followed & Recruitment exports, quotas, weights, vendor audit & Claim narrows
+to observed frame or attempt invalidates. \\
+Reader clusters independent enough & Identity commitments, duplicate/device audit & Collapse
+to clusters or invalidate. \\
+Blinded common presentation & Renderer build, screenshots, opaque assignments, A/A controls &
+Invalidate affected panel. \\
+Outcome mapping fixed & Contract digest, executable parser, test vectors & Any change creates
+a new registered analysis. \\
+No favorable missingness & Assignment/event reconciliation and withdrawal ledger & Apply
+failure rule or invalidate. \\
+Fresh data for adaptive retry & Cross-attempt identity and exposure checks & Reused reader
+cannot count as fresh evidence. \\
+Alpha spend predictable & Append-only ledger with registration timestamps & Certificate
+invalid if spend was late or oversubscribed. \\
+Evaluator independent & Credential boundary and signed artifacts & Evidence becomes advisory,
+not certifying. \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\footnotesize
+\begin{thebibliography}{99}
+
+\bibitem{bradley1952}
+R. A. Bradley and M. E. Terry.
+Rank analysis of incomplete block designs: I. The method of paired comparisons.
+\emph{Biometrika}, 39(3/4):324--345, 1952.
+\url{https://doi.org/10.1093/biomet/39.3-4.324}.
+
+\bibitem{grunwald2024}
+P. Grunwald, R. de Heide, and W. Koolen.
+Safe testing.
+\emph{Journal of the Royal Statistical Society: Series B}, 86(5):1091--1128, 2024.
+\url{https://doi.org/10.1093/jrsssb/qkae011}.
+
+\bibitem{howard2021}
+S. R. Howard, A. Ramdas, J. McAuliffe, and J. Sekhon.
+Time-uniform, nonparametric, nonasymptotic confidence sequences.
+\emph{Annals of Statistics}, 49(2):1055--1080, 2021.
+\url{https://doi.org/10.1214/20-AOS1991}.
+
+\bibitem{howcroft2020}
+D. M. Howcroft, A. Belz, M.-A. Clinciu, D. Gkatzia, S. A. Hasan, S. Mahamood,
+S. Mille, E. van Miltenburg, S. Santhanam, and V. Rieser.
+Twenty years of confusion in human evaluation: NLG needs evaluation sheets and
+standardised definitions.
+In \emph{Proceedings of INLG}, pages 169--182, 2020.
+\url{https://doi.org/10.18653/v1/2020.inlg-1.23}.
+
+\bibitem{johari2022}
+R. Johari, P. Koomen, L. Pekelis, and D. Walsh.
+Always valid inference: Continuous monitoring of A/B tests.
+\emph{Operations Research}, 70(3):1806--1821, 2022.
+\url{https://doi.org/10.1287/opre.2021.2135}.
+
+\bibitem{khashabi2022}
+D. Khashabi, G. Stanovsky, J. Bragg, N. Lourie, J. Kasai, Y. Choi,
+N. A. Smith, and D. Weld.
+GENIE: Toward reproducible and standardized human evaluation for text generation.
+In \emph{Proceedings of EMNLP}, pages 11444--11458, 2022.
+\url{https://doi.org/10.18653/v1/2022.emnlp-main.787}.
+
+\bibitem{manheim2019}
+D. Manheim and S. Garrabrant.
+Categorizing variants of Goodhart's law.
+\emph{arXiv:1803.04585}, 2019.
+\url{https://arxiv.org/abs/1803.04585}.
+
+\bibitem{vanderlee2021}
+C. van der Lee, A. Gatt, E. van Miltenburg, and E. Krahmer.
+Human evaluation of automatically generated text: Current trends and best practice
+guidelines.
+\emph{Computer Speech \& Language}, 67:101151, 2021.
+\url{https://doi.org/10.1016/j.csl.2020.101151}.
+
+\bibitem{ville1939}
+J. Ville.
+\emph{Etude critique de la notion de collectif}.
+Gauthier-Villars, Paris, 1939.
+
+\bibitem{zheng2023}
+L. Zheng, W.-L. Chiang, Y. Sheng, S. Zhuang, Z. Wu, Y. Zhuang, Z. Lin,
+Z. Li, D. Li, E. Xing, H. Zhang, J. E. Gonzalez, and I. Stoica.
+Judging LLM-as-a-judge with MT-Bench and Chatbot Arena.
+\emph{arXiv:2306.05685}, 2023.
+\url{https://arxiv.org/abs/2306.05685}.
+
+\end{thebibliography}
+\normalsize
+
+\end{document}

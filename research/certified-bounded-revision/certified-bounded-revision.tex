@@ -1,0 +1,1141 @@
+\documentclass[11pt]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{xcolor}
+\usepackage{geometry}
+\usepackage{enumitem}
+\usepackage{hyperref}
+
+\geometry{margin=1in}
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue!45!black,
+  citecolor=blue!45!black,
+  urlcolor=blue!55!black,
+  pdftitle={Certified Bounded Revision},
+  pdfsubject={Safety and finite-sample risk control for autonomous long-form generation}
+}
+\setlist{leftmargin=*,itemsep=0.25em,topsep=0.4em}
+\setlength{\parskip}{0.35em}
+\setlength{\parindent}{1.2em}
+\raggedbottom
+
+\pagestyle{plain}
+
+\newtheorem{definition}{Definition}[section]
+\newtheorem{theorem}[definition]{Theorem}
+\newtheorem{proposition}[definition]{Proposition}
+\newtheorem{lemma}[definition]{Lemma}
+\newtheorem{corollary}[definition]{Corollary}
+\newtheorem{assumption}[definition]{Assumption}
+\newtheorem{remark}[definition]{Remark}
+
+\newcommand{\code}[1]{\texttt{#1}}
+\newcommand{\Prob}{\mathbb{P}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\ind}{\mathbf{1}}
+\newcommand{\sha}{\operatorname{SHA256}}
+\newcommand{\BetaInv}{\operatorname{Beta}^{-1}}
+
+\title{\textbf{Certified Bounded Revision}\\[0.35em]
+\large Deterministic Safety and Finite-Sample Risk Control\\
+for Autonomous Long-Form Generation}
+\author{Technical report prepared for the LitHarness project}
+\date{17 August 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Autonomous long-form generation has an asymmetric evaluation problem. It is easy to
+verify that a manuscript exists, that a patch is syntactically bounded, or that a ledger
+balances. It is substantially harder to verify dramatic function, voice, escalation, and
+payoff. Treating a noisy quality proxy as an objective creates an optimization channel;
+treating it as a blocking test creates an evidence problem. This paper develops a safety
+case for an autonomous manuscript-revision system that keeps these problems separate.
+
+We formalize a manuscript as a content-addressed ordered state and a repair as an
+interval-certified partial transformation. We prove four deterministic properties:
+localized noninterference outside licensed spans, rejection of stale patches, atomic
+auditability of accepted revisions, and finite repair cascades. For the concrete
+LitHarness bounds, repair depth $D=3$ and propagation fan-out $F=12$ imply that one root
+evaluation can create at most 55 evaluation and repair jobs, before idempotent
+deduplication. We then model a craft gate as selective prediction with abstention and show
+that the current point-estimate rule, observed precision at least 0.80 with at least 17
+flags, does not establish a 0.80 precision guarantee. An executable counterexample with
+14 correct flags out of 17 is promotable while its exact two-sided 95\% Clopper-Pearson
+lower limit is 0.566. We propose a schema-complete promotion certificate that stores
+integer confusion counts, separates threshold selection from safety testing, and requires
+an exact lower confidence bound, with family-wise correction when several thresholds are
+tested.
+
+The result is deliberately narrower than a proof of literary quality. It is a proof that
+uncertified generators cannot silently rewrite unrelated prose, cannot close findings on
+detector failure, cannot recurse without bound, and cannot turn a quality hypothesis into
+a blocking policy without reconstructible statistical evidence. That narrower claim is
+both enforceable and useful.
+\end{abstract}
+
+\noindent\textbf{Keywords:} autonomous agents; long-form generation; runtime assurance;
+selective prediction; exact binomial confidence bounds; bounded repair; content-addressed
+state; Goodhart effects.
+
+\section{Introduction}
+
+Long-form generation is not merely repeated next-token prediction. A book-production
+system must preserve commitments across scenes, maintain a changing world state, apply
+director constraints, repair local defects, and decide when generated text becomes canon.
+The decision boundary is the difficult part. A language model can propose a paragraph, but
+its proposal is not evidence that the paragraph is correct, safe to splice into the book,
+or worth keeping.
+
+The usual response is to add a critic. For open-ended prose this substitutes one uncertain
+model for another. LLM judges are known to exhibit position, verbosity, and self-enhancement
+biases \cite{zheng2023judge}, and intrinsic self-correction can degrade reasoning without
+external feedback \cite{huang2024selfcorrect}. The LitHarness project supplies a sharper
+empirical warning. Twenty static quality proxies were rejected under controls; candidate
+signals measured era, annotation density, chapter count, compression-window mechanics, or
+sampling coverage rather than the intended defect \cite{litharnessbrief}. The lesson is not
+that measurement is futile. It is that a measurement must earn the particular decision it
+is allowed to make.
+
+This paper asks a different question:
+
+\begin{quote}
+What can be certified about an autonomous revision process even when prose quality itself
+cannot yet be certified?
+\end{quote}
+
+Our answer is a two-layer architecture.
+
+\begin{enumerate}
+  \item A small deterministic safety kernel constrains where and how generated text may
+  change the manuscript. Its properties are universal over generator behavior.
+  \item Statistical craft gates are optional selective decisions. They may block only when
+  the evidence record supports an exact finite-sample risk statement at the same unit of
+  analysis as the blocked decision.
+\end{enumerate}
+
+This resembles runtime-enforcement work, in which an untrusted action stream is mediated by
+a trusted monitor \cite{ligatti2005edit}, and Seldonian design, in which the output may be
+``no solution found'' unless a high-probability behavioral constraint is established
+\cite{thomas2019seldonian}. The prose setting changes the specification. We do not have a
+formal predicate for ``good scene.'' We do have formal predicates for scope preservation,
+version freshness, transaction completeness, bounded scheduling, and the provenance of a
+statistical claim.
+
+\subsection{Contributions}
+
+The paper makes five contributions.
+
+\begin{enumerate}
+  \item It gives a formal model of content-addressed manuscript revision and a repair
+  certificate whose accepted effect is confined to cited intervals.
+  \item It proves localized noninterference, stale-write rejection, and atomic auditability
+  for the implemented repair path.
+  \item It derives a finite upper bound for detect-repair-propagate cascades. The bound is
+  expressed by a second-order recurrence and instantiated from the repository constants.
+  \item It identifies a finite-sample gap in the current craft-promotion rule and provides an
+  executable counterexample. The proposed correction uses exact binomial lower bounds and
+  multiplicity-aware candidate selection.
+  \item It formalizes an optimization firewall: a craft failure parks the unit instead of
+  feeding a proxy into repeated generation, while deterministic defects may license bounded
+  retries or located repair.
+\end{enumerate}
+
+\subsection{Non-claims}
+
+The following distinctions are load-bearing.
+
+\begin{itemize}
+  \item Preservation is not quality. Byte-identical untouched prose may still be poor.
+  \item Detector completion is not detector soundness or completeness. A complete run can
+  miss a defect.
+  \item A finite cascade is not a successful cascade. Termination can end in a parked job.
+  \item Precision among flagged units is not recall, coverage, utility, or reader value.
+  \item A passed deterministic gate means ``no encoded violation was found,'' not ``the
+  scene is good.''
+\end{itemize}
+
+\section{System Model and Threat Model}
+
+\subsection{Manuscripts, versions, and heads}
+
+Let $\Sigma^*$ be the set of finite byte strings after a declared canonicalization function.
+A manuscript revision is
+\[
+  M = (B, R, p, \mathcal{V}),
+\]
+where $B$ is a book identifier, $R$ is a branch identifier, $p$ is an optional parent
+revision identifier, and $\mathcal{V}=(v_1,\ldots,v_n)$ is an ordered finite tuple of nodes.
+A node is
+\[
+  v_i=(\ell_i,\pi_i,k_i,c_i,h_i,z_i),
+\]
+with stable logical identifier $\ell_i$, position key $\pi_i$, node kind $k_i$, content
+$c_i\in\Sigma^*\cup\{\bot\}$, content hash $h_i=\sha(c_i)$ when content exists, and lock
+state $z_i$. The node version identifier is a digest of its serialized fields. The revision
+identifier is a digest of the ordered node versions and branch metadata.
+
+The mutable operational state contains a single head pointer $H(B,R)$ to an immutable
+revision. Moving the head forward creates history; it does not overwrite an earlier
+revision. This is compatible with optimistic concurrency control: work proceeds against a
+read version and validates that version before commit \cite{kung1981optimistic}.
+
+\subsection{Generated components and trusted components}
+
+The generator, critic, and information extractor are \emph{untrusted} for safety purposes.
+They may return malformed output, choose an incorrect span, cite stale text, propose a
+whole-scene rewrite, or systematically optimize a shallow proxy. Provider failures and
+timeouts are also permitted.
+
+The trusted computing base for the claims in this paper consists of:
+
+\begin{itemize}
+  \item canonical serialization and cryptographic hashing;
+  \item interval and policy checks in the patch applicator;
+  \item the pure decision mapping from gate results to workflow outcomes;
+  \item transaction semantics of the SQLite store;
+  \item content-derived job identity and the explicit depth and fan-out counters; and
+  \item the statistical certificate checker proposed in Section~\ref{sec:statistics}.
+\end{itemize}
+
+Cryptographic collision resistance is assumed. We do not claim protection against a hostile
+process that can arbitrarily modify the trusted code, database engine, or host filesystem.
+
+\subsection{Adversarial and accidental failure modes}
+
+The threat model includes five classes.
+
+\begin{enumerate}
+  \item \textbf{Spatial overreach:} a local complaint licenses a global rewrite.
+  \item \textbf{Temporal staleness:} a valid patch is applied after the target has changed.
+  \item \textbf{False completion:} an evaluator error is interpreted as zero findings.
+  \item \textbf{Unbounded work:} repair, re-evaluation, and propagation create a cycle or
+  combinatorial queue explosion.
+  \item \textbf{Epistemic overreach:} a population statistic or point estimate is recorded
+  as evidence of scene quality, or a critic is optimized against until it passes.
+\end{enumerate}
+
+The first four admit deterministic controls. The fifth requires a statistical protocol and
+an explicit refusal to optimize the measuring instrument.
+
+\section{Interval-Certified Repair}
+
+\subsection{Repair certificates}
+
+\begin{definition}[Repair certificate]
+For target node $v=(\ell,\pi,k,c,h,z)$, a repair certificate is
+\[
+ P=(\ell,\nu,h,\{(a_j,b_j,s_j,g_j)\}_{j=1}^m,f),
+\]
+where $\nu$ is the expected node-version identifier, $h$ is the expected base-content hash,
+$[a_j,b_j)$ is a half-open interval in $c$, $s_j$ is replacement text, $g_j$ is an optional
+hash of the cited substring, and $f$ is an optional finding identifier that licenses the
+operation.
+\end{definition}
+
+The deterministic policy accepts $P$ only when all of the following hold.
+
+\begin{enumerate}[label=(C\arabic*)]
+  \item The target exists, has content, and is not content-locked.
+  \item $\nu$ and $h$ equal the current node version and content hash.
+  \item $0\le a_j\le b_j\le |c|$ for every $j$.
+  \item If $g_j$ is present, then $g_j=\sha(c[a_j:b_j])$.
+  \item Intervals are pairwise disjoint.
+  \item A deletion is licensed when deletion licensing is required.
+  \item The number of operations is at most $m_{\max}$ and
+  $\sum_j(b_j-a_j)/|c|\le\rho$.
+  \item The result-length ratio lies in $[\lambda_{\min},\lambda_{\max}]$.
+\end{enumerate}
+
+LitHarness currently uses $m_{\max}=32$, $\rho=0.5$,
+$\lambda_{\min}=0.5$, and $\lambda_{\max}=2.0$. These are policy values, not empirical
+claims about ideal prose revision.
+
+Sort the intervals by start position and decompose the original content uniquely as
+\[
+ c=u_0\,x_1\,u_1\,x_2\cdots x_m\,u_m,
+\]
+where $x_j=c[a_j:b_j]$ and each $u_j$ is untouched. The patch result is
+\[
+ T_P(c)=u_0\,s_1\,u_1\,s_2\cdots s_m\,u_m.
+\]
+
+\subsection{Localized noninterference}
+
+\begin{theorem}[Localized noninterference]
+\label{thm:noninterference}
+If a repair certificate $P$ is accepted, then every untouched segment $u_j$ occurs in
+$T_P(c)$ byte-identically and in the same order. No accepted repair can insert, delete, or
+substitute a byte outside the union of the cited intervals.
+\end{theorem}
+
+\begin{proof}
+Conditions (C3) and (C5) make the sorted intervals a disjoint ordered family. Therefore the
+decomposition $c=u_0x_1u_1\cdots x_mu_m$ exists and is unique. The splice construction copies
+each $u_j$ directly from $c$ and substitutes only $x_j$ with $s_j$. The preservation verifier
+independently walks the result using the cumulative replacement-length changes and compares
+the result slice with each $u_j$. A mismatch rejects the patch. Hence acceptance implies
+byte equality of every untouched segment, and their concatenation order is unchanged.
+\end{proof}
+
+\begin{remark}[Offsets versus identity]
+Replacement lengths may differ, so an untouched suffix need not retain its numeric offset.
+The invariant is segment identity and order under the induced offset map, not equality of
+absolute offsets. This distinction avoids the common but false claim that a variable-length
+patch leaves all later coordinates unchanged.
+\end{remark}
+
+\begin{corollary}[Bounded edit surface]
+At most a fraction $\rho$ of the original node is licensed as a target, regardless of whether
+replacement text has the same length. Thus a same-length whole-scene rewrite is rejected when
+$\rho<1$.
+\end{corollary}
+
+The corollary matters because length checks alone do not distinguish a repair from a rewrite.
+A generated scene of length $n$ can be replaced by unrelated text of the same length while
+passing every global length-ratio test. Interval coverage closes that channel.
+
+\subsection{Stale-patch rejection}
+
+\begin{theorem}[Stale-write safety]
+\label{thm:stale}
+Suppose patch $P$ was constructed against node $v$ with version $\nu$ and content hash $h$.
+If the current target node $v'$ has a different version identifier or content hash, then
+$P$ is rejected before splicing.
+\end{theorem}
+
+\begin{proof}
+Condition (C2) is necessary for acceptance. If either equality fails, the policy emits a
+stale-base veto. The applicator returns without calling the splice operation. Therefore the
+current content is unchanged by $P$.
+\end{proof}
+
+The version and full-content checks are complemented by per-span hashes. The full hash
+protects the base object; the span hash catches a caller that presents inconsistent interval
+evidence even when coordinates remain in range. Under collision resistance, an accepted
+patch is bound to the exact bytes it claims to replace.
+
+\subsection{Atomic auditability}
+
+Let an accepted transition write the tuple
+\[
+ W=(M',H',S,E,D,J),
+\]
+where $M'$ is the immutable revision, $H'$ the branch head, $S$ extracted and retracted
+state, $E$ events, $D$ the policy decision, and $J$ follow-on jobs.
+
+\begin{theorem}[Atomic repair acceptance]
+\label{thm:atomic}
+Under atomic database transaction semantics, an accepted repair committed through the
+LitHarness repair path has only two externally visible outcomes: none of $W$ is committed,
+or all of $W$ is committed. In particular, the head cannot point to the accepted repair
+without its policy decision and scheduled verification job.
+\end{theorem}
+
+\begin{proof}
+The repair handler passes the new revision, head move, extracted state, retractions, events,
+policy decision, verification job, and propagation jobs to one \code{commit\_revision}
+invocation. That method encloses every corresponding write in one \code{BEGIN IMMEDIATE}
+transaction and commits only after all writes and the head update succeed. On an exception,
+the transaction rolls back. Atomicity therefore gives the stated all-or-none result.
+\end{proof}
+
+\begin{remark}
+The theorem covers the implemented accepted-repair path. It is not a claim that every
+possible future caller of the general storage method supplies a policy decision. The
+artifact mapping in Section~\ref{sec:artifact} states the exact boundary.
+\end{remark}
+
+\section{Detect, Repair, Verify, and Propagate}
+
+\subsection{Workflow semantics}
+
+Let $E_d$ denote an evaluation job at repair depth $d$ and $R_d$ a repair job at depth $d$.
+For a maximum depth $D$ and fan-out $F$, the implemented scheduler obeys these production
+rules:
+\[
+\begin{aligned}
+  E_d &\longrightarrow \text{at most one }R_{d+1}, && d<D,\\
+  E_D &\longrightarrow \varnothing,\\
+  R_d &\longrightarrow E_d + \text{at most }F E_{d+1}, && d<D,\\
+  R_D &\longrightarrow E_D.
+\end{aligned}
+\]
+The $E_d$ created directly by $R_d$ is verification of the repaired node. The $E_{d+1}$
+jobs are re-evaluations of other nodes reached by state-change propagation. An evaluation
+schedules at most one repair because findings are severity-sorted and the loop stops after
+the first actionable one.
+
+\subsection{No false clean from an incomplete run}
+
+\begin{proposition}[Completion before closure]
+\label{prop:completion}
+Let $f$ be an unresolved finding associated with detector rule $r$. The verification handler
+marks $f$ fixed only if (i) the run reports complete, (ii) $r$ is in the set of checked rule
+identifiers, and (iii) no returned finding matches $f$. Therefore detector error or omission
+of $r$ cannot by itself close $f$.
+\end{proposition}
+
+\begin{proof}
+The handler constructs the required-rule set from $f$, computes missing rules by set
+difference, and defines completion as reported completion conjoined with an empty missing
+set. The fixed transition is guarded by that completion value and absence of a matching
+finding. Failure of (i) or (ii) makes the guard false. The unresolved state is retained.
+\end{proof}
+
+This is a fail-closed statement about execution evidence. It does not establish that a
+detector which ran is semantically complete. If $r$ has a false negative, condition (iii) can
+hold while the defect remains.
+
+\subsection{Finite cascade bound}
+
+\begin{theorem}[Finite repair cascade]
+\label{thm:finite}
+Assume no exogenous work is introduced, every evaluation schedules at most one repair, every
+repair has propagation fan-out at most $F$, and depths are restricted to
+$0,1,\ldots,D$. Let $r_d$ be the maximum number of repair jobs at depth $d$ descended from a
+single root $E_0$. Then
+\[
+ r_0=0,\qquad r_1=1,\qquad
+ r_d\le r_{d-1}+F r_{d-2}\quad(2\le d\le D).
+\]
+The total number of evaluation and repair jobs is bounded by
+\begin{equation}
+  J(D,F)\le 1 + 2\sum_{d=1}^{D}r_d
+                + F\sum_{d=1}^{D-1}r_d.
+  \label{eq:jobbound}
+\end{equation}
+Hence every repair cascade is finite.
+\end{theorem}
+
+\begin{proof}
+The root $E_0$ creates at most one $R_1$, so $r_1=1$. A repair at depth $d$ can arise in two
+ways. First, the verification evaluation emitted by a repair at depth $d-1$ can emit one
+repair at depth $d$, contributing at most $r_{d-1}$. Second, each repair at depth $d-2$
+emits at most $F$ propagated evaluations at depth $d-1$, each of which can emit one repair at
+depth $d$, contributing at most $F r_{d-2}$. There are no other production rules, proving
+the recurrence.
+
+Each repair job contributes itself and one verification evaluation, giving
+$2\sum_{d=1}^D r_d$. Each repair below the maximum depth contributes at most $F$ propagated
+evaluations, giving $F\sum_{d=1}^{D-1}r_d$. Adding the root evaluation yields
+Equation~\eqref{eq:jobbound}. Every sum is finite because $D$ is finite.
+\end{proof}
+
+\begin{corollary}[Concrete LitHarness bound]
+For $D=3$ and $F=12$, the recurrence gives
+\[
+ (r_1,r_2,r_3)=(1,1,13)
+\]
+and
+\[
+ J(3,12)\le 1+2(1+1+13)+12(1+1)=55.
+\]
+Thus one root evaluation can create at most 15 repair jobs and 40 evaluation jobs. Content-
+derived job IDs, persistent-finding suppression, absent findings, and smaller observed
+fan-out can only reduce this count.
+\end{corollary}
+
+The bound is intentionally about scheduling, not model invocations. Individual jobs also
+have bounded attempt budgets, so a persistent malformed response ends in a parked or poisoned
+unit instead of extending the cascade indefinitely.
+
+\subsection{Propagation abstention}
+
+Propagation is a routing claim, not a defect claim. A recognized fact change may reach later
+scenes that mention the subject and predicate; an unrecognized change kind must return
+``unhandled,'' not an empty affected set. Formally, let
+\[
+ \Gamma:\mathcal{C}\rightharpoonup 2^{\mathcal{V}}
+\]
+be a partial propagation function over change descriptions. The undefined value $\bot$ is
+semantically different from $\Gamma(c)=\varnothing$. Collapsing $\bot$ to the empty set turns
+``no rule applies'' into ``a rule proved no impact,'' a false completeness claim.
+
+This distinction is valuable beyond narrative systems. Any autonomous dependency analyzer
+should expose abstention as first-class state, because empty outputs are otherwise
+indistinguishable from missing analysis.
+
+\section{Risk-Controlled Craft Gates}
+\label{sec:statistics}
+
+\subsection{Craft gating as selective prediction}
+
+Selective classification trades coverage for risk by allowing a system to reject or abstain
+\cite{elyaniv2010selective}. A craft gate has the inverse operational phrasing but the same
+mathematics. For unit $X$ and human defect label $Y\in\{0,1\}$, let a deterministic metric
+$s(X)$ and threshold $t$ produce a flag
+\[
+ A_t(X)=\ind\{s(X)>t\}
+\]
+for an upper-tail defect. The selective precision is
+\[
+ p_t=\Prob(Y=1\mid A_t(X)=1).
+\]
+The gate's coverage, or workload, is
+\[
+ q_t=\Prob(A_t(X)=1).
+\]
+
+A lower bound on $p_t$ controls false refusals among flagged scenes. It says nothing about
+unflagged defects unless recall is separately measured, and it says nothing about utility
+unless the label itself represents the desired literary judgment.
+
+\subsection{Evidence class and grain}
+
+Before sampling uncertainty, a gate must match its evidence referent.
+
+\begin{definition}[Grain compatibility]
+Let $g_e$ be the grain at which the label is observed and $g_d$ the grain of the blocked
+decision. Evidence is grain-compatible only if it is no coarser than the decision. A
+story-level conversion label cannot license a scene-level refusal.
+\end{definition}
+
+Human judgments about the system's own scenes can support a scene-quality claim. A published
+corpus percentile can support only an out-of-distribution claim. Story-level reader behavior
+can rank stories but cannot identify which scene caused the behavior. This is the ecological
+fallacy expressed as a type check.
+
+\subsection{The point-estimate gap}
+
+The current judgment-evidence rule requires:
+
+\begin{enumerate}
+  \item point precision $\widehat p\ge 0.80$;
+  \item at least 50 held-out judgments; and
+  \item at least 17 flagged judgments.
+\end{enumerate}
+
+The value 17 has a valid but narrow derivation. If all 17 flags are correct, the lower end of
+a two-sided 95\% Clopper-Pearson interval is
+\[
+ (0.025)^{1/17}=0.8049>0.80.
+\]
+It does not follow that any observed precision above 0.80 with 17 flags has a lower bound
+above 0.80.
+
+Let $K\sim\operatorname{Binomial}(n,p)$ be the number of correct flags among $n$ flagged
+holdout units. The exact two-sided $1-\alpha$ lower confidence limit is
+\begin{equation}
+ L_{\alpha}(K,n)=
+ \begin{cases}
+ 0, & K=0,\\
+ \BetaInv(\alpha/2;K,n-K+1), & K>0,
+ \end{cases}
+ \label{eq:cp}
+\end{equation}
+where $\BetaInv(u;a,b)$ is the $u$ quantile of a Beta$(a,b)$ distribution
+\cite{clopper1934}.
+
+\begin{table}[ht]
+\centering
+\caption{Point precision does not imply a 0.80 lower confidence bound. Exact limits are
+two-sided 95\% Clopper-Pearson values.}
+\label{tab:cp}
+\begin{tabular}{rrrrl}
+\toprule
+Correct $K$ & Flagged $n$ & $\widehat p$ & Exact lower limit & Current rule \\
+\midrule
+17 & 17 & 1.000 & 0.805 & promotable \\
+14 & 17 & 0.824 & 0.566 & promotable \\
+40 & 50 & 0.800 & 0.663 & promotable \\
+45 & 50 & 0.900 & 0.782 & promotable \\
+48 & 50 & 0.960 & 0.863 & promotable \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The second row is an executable counterexample in the current domain model: with a holdout
+size of 50, a flagged count of 17, and precision $14/17$,
+\code{why\_not\_promotable} returns \code{None}. The problem is
+also representational. The calibration schema stores a floating-point precision and the
+number flagged, but not the integer $K$ of true-positive flags. The exact interval cannot be
+reconstructed from the durable record, and an inconsistent non-integer product
+$n\widehat p$ is not rejected.
+
+\subsection{A certificate with an exact guarantee}
+
+We propose that a judgment calibration store the tuple
+\[
+ C=(t,d,N,n,K,m,\alpha,p_0,q_{\min},\delta,\mathcal{H}),
+\]
+where $t$ is the threshold, $d$ its direction, $N$ total holdout units, $n$ flagged units,
+$K$ correct flags, $m$ the number of candidate gates simultaneously safety-tested,
+$\alpha$ the family-wise error budget, $p_0$ the required precision floor, $q_{\min}$ a
+minimum operational coverage, $\delta$ an expiration or shift policy, and $\mathcal{H}$ a
+content digest of labels, metric implementation, generator configuration, split assignment,
+and selection protocol.
+
+For a threshold fixed before the safety-test split, promotion requires
+\begin{align}
+  L_{\alpha}(K,n)&\ge p_0, \label{eq:single}\\
+  n&\ge n_{\min},\\
+  N&\ge N_{\min},\\
+  n/N&\ge q_{\min},
+\end{align}
+plus evidence-class, grain, currency, and digest checks. A one-sided exact limit may replace
+Equation~\eqref{eq:cp} if the protocol declares the directional claim in advance. The key is
+that the confidence convention is part of $\mathcal{H}$ rather than chosen after seeing the
+data.
+
+\begin{theorem}[Single-candidate promotion guarantee]
+\label{thm:singlecp}
+Assume the flagged safety-test units are independent Bernoulli trials with constant selective
+precision $p_t$, and threshold $t$ is fixed independently of the safety-test labels. If the
+gate is promoted only when the exact lower limit satisfies
+$L_{\alpha}(K,n)\ge p_0$, then
+\[
+ \Prob_{p_t}\bigl(\text{promote and }p_t<p_0\bigr)\le\alpha.
+\]
+\end{theorem}
+
+\begin{proof}
+Clopper-Pearson inversion gives coverage at least $1-\alpha$ for every binomial parameter:
+$\Prob_{p_t}(L_{\alpha}(K,n)\le p_t)\ge1-\alpha$. If $p_t<p_0$ and the rule promotes, then
+$L_{\alpha}(K,n)\ge p_0>p_t$, an event contained in the confidence-coverage failure event.
+Its probability is at most $\alpha$.
+\end{proof}
+
+This is a high-probability statement over the sampled calibration data, in the spirit of
+behavioral constraints on a selected algorithm \cite{thomas2019seldonian}. It is not a
+distribution-free guarantee under arbitrary deployment shift.
+
+\subsection{Threshold search and multiplicity}
+
+If one examines many thresholds on the same holdout and records only the best, the fixed-
+candidate assumption in Theorem~\ref{thm:singlecp} is false. A digest of the final verdict
+set does not reveal how many candidates were tried.
+
+The preferred protocol uses three disjoint roles:
+
+\begin{enumerate}
+  \item \textbf{development data} for metric design;
+  \item \textbf{selection data} for choosing one threshold and direction; and
+  \item \textbf{safety-test data} for the one final promotion test.
+\end{enumerate}
+
+When $m$ candidates must be tested on the same safety set, a conservative correction uses
+$\alpha/m$ for each candidate.
+
+\begin{theorem}[Family-wise promotion guarantee]
+\label{thm:family}
+Let $m$ candidate gates be tested, and suppose each candidate $j$ is promoted only if its
+exact lower limit at error level $\alpha/m$ exceeds $p_0$. Under each candidate's binomial
+sampling assumptions,
+\[
+ \Prob\bigl(\exists j:\text{ gate }j\text{ is promoted and }p_j<p_0\bigr)\le\alpha.
+\]
+No independence between candidates is required for this bound.
+\end{theorem}
+
+\begin{proof}
+For candidate $j$, Theorem~\ref{thm:singlecp} bounds erroneous promotion by $\alpha/m$.
+The union bound over $m$ candidates gives at most
+$\sum_{j=1}^{m}\alpha/m=\alpha$.
+\end{proof}
+
+For a one-sided 95\% lower bound and perfect observed precision, the minimum number of flags
+needed to establish $p_0=0.80$ is
+\[
+ n\ge\left\lceil\frac{\log(\alpha/m)}{\log(0.80)}\right\rceil.
+\]
+This gives 14 flags for $m=1$, 24 for $m=10$, and 35 for $m=100$. Search multiplicity is not
+a philosophical caveat; it changes the sample size even when every observed flag is correct.
+
+Conformal risk control provides a broader framework when the loss is monotone in a tuning
+parameter and the desired risk is not simply binomial precision \cite{angelopoulos2024crc}.
+The exact-binomial certificate is attractive here because the claim is conditional precision,
+the sufficient statistics are small integers, and the resulting refusal is readily auditable.
+
+\subsection{Exchangeability, clustering, and shift}
+
+Scenes from the same book are not independent. They share author, generator, prompt profile,
+arc position, and revision history. Treating 50 scenes from one book as 50 independent units
+can make a narrow confidence interval out of one effective cluster.
+
+The certificate should therefore declare a sampling unit and cluster identifier. Practical
+options are:
+
+\begin{itemize}
+  \item split by book or generation run, never randomly by scene across the same book;
+  \item report the number of independent books and generators represented;
+  \item use cluster bootstrap or beta-binomial sensitivity analysis for exploratory work;
+  \item reserve exact binomial promotion for a preregistered design whose Bernoulli model is
+  defensible; and
+  \item expire the certificate when generator, prompt profile, metric implementation, genre
+  stratum, or judgment protocol changes materially.
+\end{itemize}
+
+The existing content digest and expiration date are good foundations. The proposed protocol
+digest extends them to the selection procedure and configuration that generated the prose.
+Without this, evidence can remain byte-current while its data-generating process has changed.
+
+\section{The Optimization Firewall}
+
+\subsection{Why a calibrated proxy should not become a reward}
+
+Goodhart effects arise when selection pressure is applied to a proxy and the selected region
+no longer preserves the proxy-target relationship \cite{manheim2018goodhart}. A craft gate
+can create that pressure even without gradient descent. Repeatedly regenerate until the
+metric passes, and the system is performing rejection sampling against the metric.
+
+\begin{lemma}[Retry amplification]
+Let independent candidate generations pass a proxy gate with probability $q\in(0,1)$. With
+at most $B$ attempts, the probability that the system returns some passing candidate is
+\[
+ 1-(1-q)^B.
+\]
+Conditional on success, the returned candidate distribution is supported entirely on the
+proxy-passing region. This statement makes no claim about true quality.
+\end{lemma}
+
+\begin{proof}
+All $B$ attempts fail with probability $(1-q)^B$; the complement is the first expression.
+The stopping rule returns only after observing a pass, so every returned candidate lies in
+the passing event by construction.
+\end{proof}
+
+Even $B=3$ materially increases proxy selection. If $q=0.5$, the probability of finding a
+pass rises from $0.5$ to $0.875$. A weak metric is therefore not merely observed three times;
+it becomes an optimizer that selects the half of the generator distribution it favors.
+
+\subsection{Outcome classes}
+
+The workflow should distinguish three cases.
+
+\begin{center}
+\begin{tabular}{p{0.22\textwidth}p{0.31\textwidth}p{0.35\textwidth}}
+\toprule
+Failure class & Permitted response & Reason \\
+\midrule
+Deterministic, candidate-local defect & bounded retry or located repair & The veto names a
+mechanical property whose satisfaction is independently checkable. \\
+Stale or malformed base & regenerate from current inputs & Repeating the same candidate
+cannot resolve temporal inconsistency. \\
+Calibrated craft or distribution signal & park and request judgment & Retrying would optimize
+the proxy and invalidate the passive calibration claim. \\
+Unknown or anonymous veto & escalate & The system lacks a justified automated action. \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+This policy is a form of optimization firewall. The craft signal may stop a scene, but its
+value does not enter the generator prompt, candidate ranking, or retry loop. A human can
+inspect the parked unit, amend policy, or authorize a new plan. The proxy remains an
+instrument rather than becoming the objective.
+
+\subsection{Self-report and critic independence}
+
+A generating model's assertion that its own output is correct is not an independent test.
+The policy layer therefore rejects a blocking gate sourced from model self-report and
+requires calibration identity for blocking craft gates. This structural rule is stronger
+than a prompt instruction asking the model to be impartial. It removes the untrusted verdict
+from the type of evidence that can authorize acceptance.
+
+Model-family separation alone is not sufficient. Two models may share training data,
+stylistic priors, and benchmark artifacts. The proposed statistical certificate therefore
+tests verdicts against human labels and treats critic identity as part of the protocol digest.
+Order-swapped evaluation and abstention rates are useful diagnostics, given observed judge
+position bias \cite{zheng2023judge}, but diagnostics do not replace held-out human evidence.
+
+\section{Artifact Mapping and Validation}
+\label{sec:artifact}
+
+This paper is grounded in LitHarness source commit
+\code{04cf06d5af09}. Table~\ref{tab:mapping} maps each formal
+claim to its implementation surface.
+
+\begin{table}[ht]
+\centering
+\caption{Formal claims and repository evidence. Paths are relative to the repository root.}
+\label{tab:mapping}
+\small
+\begin{tabular}{p{0.25\textwidth}p{0.31\textwidth}p{0.34\textwidth}}
+\toprule
+Claim & Implementation & Executable evidence \\
+\midrule
+Localized noninterference &
+\code{domain/patch.py}: \code{apply\_patch}, \code{\_splice},
+\code{\_verify\_preservation} &
+Property-based preservation tests and patch veto tests in \code{tests/test\_domain.py} and
+the repair workflow suite. \\
+
+Stale-write rejection &
+\code{domain/patch.py}: base version, base content, and span-hash checks &
+Stale-base and stale-span cases in domain, draft, planner, and repair tests. \\
+
+Completion before closure &
+\code{application/repair.py}: \code{make\_evaluation\_handler} &
+The incomplete-verification workflow test in
+\path{tests/test_repair_workflow.py}. \\
+
+Finite cascade &
+\code{application/repair.py}: depth cap 3 and propagation fan-out cap 12 &
+Depth, persistent-finding, propagation, and end-to-end repair tests in
+\code{tests/test\_repair\_workflow.py}. \\
+
+Atomic auditability &
+\code{adapters/sqlite\_store.py}: \code{commit\_revision} in one immediate transaction &
+Store, event, state-retraction, and conductor crash/replay tests. \\
+
+Promotion provenance &
+\code{domain/calibration.py}, migrations 014, 015, and 018 &
+69 calibration tests covering evidence class, grain, expiration, digests, controls, and
+promotion refusal. \\
+
+Optimization firewall &
+\code{domain/policy.py}: \code{PARKABLE}, \code{decide}, and the policy-decision
+constructor &
+Mixed-veto, park, retry, self-report, and uncalibrated-critic tests. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+On 17 August 2026, the repository collected 795 tests. The full default suite completed with
+787 passed and 8 skipped in 86.52 seconds on the project machine. This establishes that the
+mapped executable properties are mutually compatible in that environment. It does not turn
+unit tests into a proof of the Python runtime, SQLite, cryptographic primitives, or detector
+semantics. The mathematical proofs are conditional on the stated implementation contracts;
+the tests check that the current artifact follows those contracts across a broad set of
+examples and property-generated inputs.
+
+\subsection{Executable statistical counterexample}
+
+The following construction uses only the public calibration domain object:
+
+\begin{verbatim}
+c = Calibration(
+    calibration_id="cal-demo", metric_id="m",
+    holdout_size=50, precision=14/17,
+    threshold=1.0, direction=Direction.ABOVE,
+    verdicts_digest="d", measured_at="2026-08-17",
+    evidence_class=EvidenceClass.JUDGMENT,
+    grain=Grain.UNIT, flagged=17,
+)
+assert c.why_not_promotable(
+    "2026-08-17", "d", answered=50
+) is None
+\end{verbatim}
+
+The assertion passes. This does not contradict the source comments; they explicitly state
+that the 17-flag floor does not make 0.80 a confidence bound in general. The contribution
+here is to turn that caveat into a complete promotion rule and identify the schema fields
+needed to enforce it.
+
+\section{Recommended Minimal Change Set}
+
+No quality metric should be added merely to exercise this design. The following changes are
+useful when the first real human-labeled calibration exists.
+
+\subsection{Calibration schema}
+
+Add the fields below, with old rows defaulting to an explicitly unpromotable protocol class.
+
+\begin{itemize}
+  \item \code{true\_positives INTEGER}: the integer $K$.
+  \item An integer false-positive count: redundant with flagged count but valuable for
+  direct integrity checks; require $K+FP=n$.
+  \item \code{confidence\_alpha REAL} and \code{confidence\_sidedness TEXT}.
+  \item \code{precision\_lower\_bound REAL}: derived and verified on read, not trusted as an
+  independent input.
+  \item \code{selection\_family\_size INTEGER} and \code{selection\_protocol\_digest TEXT}.
+  \item \code{split\_digest TEXT}: content address over unit-to-split assignment.
+  \item \code{generator\_config\_digest TEXT}, \code{critic\_config\_digest TEXT}, and a
+  declared cluster key such as book or generation run.
+\end{itemize}
+
+Do not infer $K$ by rounding \code{precision * flagged}; doing so turns a malformed record
+into apparently exact evidence. Compute and store the point precision from counts instead.
+
+\subsection{Promotion predicate}
+
+For judgment evidence, replace the point-estimate check with:
+
+\begin{verbatim}
+require integer confusion counts are internally consistent
+require evidence grain covers decision grain
+require threshold was fixed outside the safety-test labels
+alpha_each = alpha_family / selection_family_size
+lower = exact_binomial_lower(K, flagged, alpha_each, sidedness)
+require lower >= required_precision
+require holdout_size >= minimum_holdout
+require flagged / holdout_size >= minimum_coverage
+require evidence and configuration digests are current
+\end{verbatim}
+
+The operation should return the exact reason for refusal, as the current promotion path
+already does. A failed statistical certificate should remain advisory and visible; it should
+not silently disappear.
+
+\subsection{Testing strategy}
+
+Add property tests for:
+
+\begin{enumerate}
+  \item monotonicity of the lower bound in $K$ for fixed $n$;
+  \item non-promotion of every $(K,n)$ pair whose exact lower bound is below $p_0$;
+  \item refusal of non-integer or inconsistent confusion counts;
+  \item multiplicity making promotion weakly harder as $m$ increases;
+  \item byte changes in split assignment, generator configuration, or selection protocol
+  changing the certificate identity; and
+  \item backward compatibility making pre-migration rows advisory rather than inventing
+  missing evidence.
+\end{enumerate}
+
+\section{Limitations and Falsification Criteria}
+
+\subsection{Limits of the deterministic proofs}
+
+The patch theorem is only as strong as the target intervals. A detector can cite the wrong
+passage, and the repair can perfectly preserve everything outside that wrong passage. Hashes
+prove identity, not relevance. Likewise, a propagation rule can route evaluation to the wrong
+set of nodes. The existing perfect propagation score is on four in-sample development cases
+and is not evidence of generalization \cite{litharnessbrief}.
+
+The cascade bound excludes exogenous work such as a new director directive, a newly accepted
+draft, or manual revival. These are new roots, not descendants of the bounded root. The bound
+also assumes the scheduler respects depth fields and fan-out caps; arbitrary database
+tampering is outside the threat model.
+
+\subsection{Limits of the statistical guarantee}
+
+The exact interval controls binomial sampling uncertainty, not label validity, dependence,
+or distribution shift. The result is falsified as a deployment claim if any of the following
+occurs:
+
+\begin{itemize}
+  \item blocked units are at a different grain from the labels;
+  \item threshold selection examined the safety-test labels without correction;
+  \item scenes are treated as independent although a few books dominate the sample;
+  \item generator, prompt, genre, or judgment protocol changes without invalidating the
+  certificate;
+  \item a human audit on a preregistered fresh sample yields a lower bound below $p_0$; or
+  \item the metric is fed back into generation, changing the deployment distribution from
+  the passive one on which it was calibrated.
+\end{itemize}
+
+These are not post hoc caveats. Each should be represented in the certificate schema or in a
+test that makes promotion fail.
+
+\subsection{Literary validity remains open}
+
+The most important qualities in long-form fiction are causal and longitudinal: a scene must
+change something, progression must cost something, promises must be paid, and voice must
+remain particular. A confidence interval around a shallow metric does not make the label more
+meaningful. The correct outcome when no valid metric exists is an empty blocking-craft table,
+not a weaker promotion standard.
+
+The research direction that survives is intervention plus human attribution: construct
+minimal controlled edits that alter one dramatic property, collect blinded judgments at the
+same grain, and test whether a proposed signal distinguishes the intervention from a
+placebo. Until such labels exist, the statistical machinery in this paper should protect the
+empty state rather than pressure the project to fill it.
+
+\section{Discussion}
+
+The central design choice is to certify the boundary around creativity instead of claiming
+to certify creativity itself. This is analogous to runtime assurance for an advanced but
+unverified controller: the high-performance component remains free to propose actions, while
+a smaller trusted layer restricts the state transitions those actions may cause. Unlike a
+physical controller, a manuscript has no complete safety specification. The monitor therefore
+enforces only properties that are both meaningful and decidable: scope, freshness,
+attribution, completion, and boundedness.
+
+This separation produces a useful asymmetry. Deterministic failures may drive repair because
+their postcondition is independently testable. Statistical craft failures park because a
+retry would change the population the statistic describes. The same gate can be valid as a
+passive alarm and invalid as an optimization target.
+
+The finite-sample result also illustrates a broader engineering rule. Evidence provenance is
+not only a digest of the observations. It includes how a candidate was selected. Recording
+50 judgments and their hash does not reveal whether one threshold was specified in advance or
+100 thresholds were tried and the best retained. A reconstructible safety claim needs counts,
+splits, candidate-family size, configurations, grain, and time.
+
+Finally, a bounded autonomous system need not pretend that every refusal is recoverable by
+more autonomy. Park and abstain are legitimate outcomes. Selective-prediction theory treats
+coverage as a first-class trade-off; an authoring system should do the same. The ability to
+say ``this unit requires judgment'' is not a failure of automation. It is the control that
+makes the rest of the automation defensible.
+
+\section{Conclusion}
+
+Autonomous long-form generation cannot presently prove that its prose is good. It can prove
+substantial facts about how uncertain prose becomes part of a book. Interval-certified
+patches preserve uncited text; content addresses reject stale work; transactional acceptance
+keeps revisions, decisions, state, events, and verification jobs together; incomplete
+detector runs cannot close findings; and explicit depth and fan-out limits make repair
+cascades finite. In the current LitHarness configuration, the worst-case descendant count
+from one evaluation is 55 jobs.
+
+Craft gates require a different proof obligation. Point precision and a fixed minimum number
+of flags are not a confidence guarantee. Exact count-based lower bounds, selection-test
+separation, multiplicity correction, grain compatibility, and configuration provenance turn
+promotion from a number in a row into a reconstructible statistical certificate. The gate
+must then remain outside the optimization loop.
+
+The resulting architecture makes a modest claim with strong consequences: an untrusted model
+may propose, but only a small deterministic and statistically accountable kernel may decide
+what the proposal is allowed to change and what evidence is sufficient to stop the book.
+
+\appendix
+
+\section{Closed Form and Growth of the Cascade Recurrence}
+
+The recurrence $r_d=r_{d-1}+F r_{d-2}$ has characteristic equation
+\[
+ x^2=x+F,
+\]
+with roots
+\[
+ \lambda_{\pm}=\frac{1\pm\sqrt{1+4F}}{2}.
+\]
+For the equality case with $r_0=0$ and $r_1=1$,
+\[
+ r_d=\frac{\lambda_+^d-\lambda_-^d}{\lambda_+-\lambda_-}.
+\]
+Thus work grows exponentially in $D$ for fixed $F>0$, even though it remains finite. This is
+why both controls are necessary: a depth limit alone permits a large finite burst when $F$
+is large, and a fan-out limit alone permits an infinite chain when $D$ is absent.
+
+For $F=12$, $\lambda_+=4$ and $\lambda_-=-3$, so
+\[
+ r_d=\frac{4^d-(-3)^d}{7}.
+\]
+At $D=3$ this yields $(1,1,13)$ as above. Raising the depth to 4 would yield $r_4=25$ and
+increase the total bound from 55 to
+\[
+ 1+2(1+1+13+25)+12(1+1+13)=261.
+\]
+A one-step depth change therefore has a sixfold operational effect in this configuration.
+
+\section{Exact-Bound Reference Values}
+
+Table~\ref{tab:reference} gives reference values useful for implementation tests. Values use
+the two-sided 95\% Clopper-Pearson lower limit from Equation~\eqref{eq:cp}.
+
+\begin{table}[ht]
+\centering
+\caption{Reference exact lower limits for implementation tests.}
+\label{tab:reference}
+\begin{tabular}{rrrr}
+\toprule
+$K$ & $n$ & $K/n$ & $L_{0.05}(K,n)$ \\
+\midrule
+17 & 17 & 1.00 & 0.804936 \\
+14 & 17 & 0.823529 & 0.565682 \\
+16 & 20 & 0.80 & 0.563386 \\
+40 & 50 & 0.80 & 0.662817 \\
+45 & 50 & 0.90 & 0.781865 \\
+48 & 50 & 0.96 & 0.862862 \\
+49 & 50 & 0.98 & 0.893530 \\
+50 & 50 & 1.00 & 0.928878 \\
+90 & 100 & 0.90 & 0.823777 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+An observed precision exactly equal to $p_0$ cannot have a nontrivial lower confidence bound
+at least $p_0$ for finite $n$. Consequently, a rule that requires both
+$\widehat p\ge p_0$ and $L\ge p_0$ will promote only observations strictly above $p_0$, apart
+from degenerate confidence levels. This is expected: uncertainty requires margin.
+
+\section{Safety-Case Checklist}
+
+For a new automated repair or gate, the following questions are sufficient to expose most
+category errors discussed in this paper.
+
+\begin{enumerate}
+  \item What exact bytes or nodes may change, and is the untouched complement checked?
+  \item What binds the action to the version it was generated against?
+  \item Can detector failure be represented separately from a clean result?
+  \item What is the maximum descendant work from one accepted change?
+  \item Does an unsupported case abstain, or collapse to an empty answer?
+  \item What is the label's grain, and what is the decision's grain?
+  \item Are integer confusion counts stored, or only rounded rates?
+  \item Was the tested threshold fixed without access to the safety labels?
+  \item How many candidate gates were examined?
+  \item Which generator, critic, prompt, stratum, and split produced the evidence?
+  \item Does failure cause observation, parking, repair, regeneration, or optimization?
+  \item What event or digest makes every one of these answers reconstructible later?
+\end{enumerate}
+
+\begin{thebibliography}{99}
+
+\bibitem{angelopoulos2024crc}
+A. N. Angelopoulos, S. Bates, A. Fisch, L. Lei, and T. Schuster.
+Conformal risk control.
+\emph{International Conference on Learning Representations}, 2024.
+\url{https://arxiv.org/abs/2208.02814}
+
+\bibitem{clopper1934}
+C. J. Clopper and E. S. Pearson.
+The use of confidence or fiducial limits illustrated in the case of the binomial.
+\emph{Biometrika}, 26(4):404--413, 1934.
+\url{https://doi.org/10.1093/biomet/26.4.404}
+
+\bibitem{elyaniv2010selective}
+R. El-Yaniv and Y. Wiener.
+On the foundations of noise-free selective classification.
+\emph{Journal of Machine Learning Research}, 11:1605--1641, 2010.
+\url{https://jmlr.csail.mit.edu/papers/v11/el-yaniv10a.html}
+
+\bibitem{huang2024selfcorrect}
+J. Huang, X. Chen, S. Mishra, H. S. Zheng, A. W. Yu, X. Song, and D. Zhou.
+Large language models cannot self-correct reasoning yet.
+\emph{International Conference on Learning Representations}, 2024.
+\url{https://arxiv.org/abs/2310.01798}
+
+\bibitem{kung1981optimistic}
+H. T. Kung and J. T. Robinson.
+On optimistic methods for concurrency control.
+\emph{ACM Transactions on Database Systems}, 6(2):213--226, 1981.
+\url{https://doi.org/10.1145/319566.319567}
+
+\bibitem{ligatti2005edit}
+J. Ligatti, L. Bauer, and D. Walker.
+Edit automata: Enforcement mechanisms for run-time security policies.
+\emph{International Journal of Information Security}, 4(1--2):2--16, 2005.
+\url{https://doi.org/10.1007/s10207-004-0046-8}
+
+\bibitem{manheim2018goodhart}
+D. Manheim and S. Garrabrant.
+Categorizing variants of Goodhart's law.
+\emph{arXiv:1803.04585}, 2018.
+\url{https://arxiv.org/abs/1803.04585}
+
+\bibitem{thomas2019seldonian}
+P. S. Thomas, B. Castro da Silva, A. G. Barto, S. Giguere, Y. Brun, and E. Brunskill.
+Preventing undesirable behavior of intelligent machines.
+\emph{Science}, 366(6468):999--1004, 2019.
+\url{https://doi.org/10.1126/science.aag3311}
+
+\bibitem{zheng2023judge}
+L. Zheng, W.-L. Chiang, Y. Sheng, S. Zhuang, Z. Wu, Y. Zhuang, Z. Lin, Z. Li,
+D. Li, E. P. Xing, H. Zhang, J. E. Gonzalez, and I. Stoica.
+Judging LLM-as-a-judge with MT-Bench and Chatbot Arena.
+\emph{Advances in Neural Information Processing Systems}, 36, 2023.
+\url{https://arxiv.org/abs/2306.05685}
+
+\bibitem{litharnessbrief}
+LitHarness contributors.
+The unsolved quality-measurement problem in LitHarness.
+Internal research brief, revision of 17 August 2026,
+\code{research/quality-measurement/BRIEF.md}.
+
+\bibitem{litharnessartifact}
+LitHarness contributors.
+LitHarness autonomous book-production system, source artifact.
+Commit \code{04cf06d5af09eb1c9b11e9a59968ad179912e4cf}, 17 August 2026.
+
+\end{thebibliography}
+
+\end{document}
