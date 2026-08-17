@@ -4,7 +4,7 @@
 **Status:** Master plan; **Stages 0, 1 and 2 met against their exit clauses — with Stage 0's endurance clause *evidenced rather than met* and Stage 2's propagation number a *dev-set* one that does not generalise; both caveats are in §17 beside the claims they qualify. 787 passing tests + 8 opt-in live; operable via `litharness tick`; a book goes in (`import`), drafts itself against a context packet, is refused when a planted defect stands against it, repairs a located finding within a serial cap (`evaluate_revision`/`repair_finding`), notifies out of the outbox to a configured sink (`--notify-file`), can have its plan history read and rolled back (`plans`/`revert-plan`), re-checks the scenes a repair's change reaches instead of only the scene it repaired (`propagate`, dev-set precision 1.000 against a 0.481 base rate), and comes out readable (`export`); Stage 3 (Book Zero) is now startable rather than blocked — a book with no imported snapshot drafts, states its game state on the page, and reads it back; two of §19's seven clauses met outright — scorecard in §19.1**
 
 *(Corrected here, because this line was the instance: it read "four of §19's seven clauses met" while §19.1's table said two. §19.1 contains a paragraph recording that exact drift happening once before, four lines above the table that contradicted it, and the header carrying the same wrong number went unnoticed through three revisions. The readiness number this project reports about itself is the number to distrust first.)*
-**Role:** A 24/7 autonomous system that plans, drafts, evaluates, repairs, and versions quality LitRPG books — directed by a human, never blocked on one
+**Role:** An autonomous system that plans, drafts, evaluates, repairs, and versions LitRPG books to a measured quality bar — directed by a human, never blocked on one. *("24/7" struck by [stage-0 §61](plan/stage-0-decisions.md): always-on operation served a cadence goal the project no longer holds; the loop still runs without human input, as a foreground session.)*
 **Inspection baseline:** Local projects inspected 2026-08-12; v2 rewrite same day; §7/§8/§13/§15/§17/§20 re-verified later the same day (v2.1); **§7/§8.4/§13/§17/§20 re-verified against all nine repositories that evening (v2.2)**
 
 **What v2.1 adds.** A core philosophy section (§1a): **the text is the product.**
@@ -31,6 +31,21 @@ subsystems that do not exist yet" was **wrong about the one that was actually
 buildable** — the real obstacle was a missing column no document named. The
 standing instruction that follows: **an unstruck action in §20 is a claim to
 re-verify, not a task to start.** Every row in §7 now carries what was checked.
+
+**What v2.3 refounds (2026-08-17, [stage-0 §61](plan/stage-0-decisions.md)): the goal
+is superiority, and it is allowed to fail.** The goal is now superhuman literary
+quality, operationalised in §1a.5 as a pre-registered pairwise bar: the lower bound of
+a 95% confidence interval on blinded, position-swapped pairwise win rate against
+matched published-human prose exceeds 0.5, judged by paid genre readers. Throughput,
+uptime and publication cadence are no longer goals. The refoundation is licensed by
+the measurement record, not by ambition: every other evidence channel is measured dead
+(BRIEF §2's 21 proxies; unpaid solicited judgment at 2 verdicts per 104 pairs;
+revealed-preference labels refuted at §56.3 and craft-corpus §4.4; raw model judges at
+BRIEF §2 Pass 4), §57 voided the roadmap ordering Stage 5 was built on, and §59 built
+the exact bound/family/cluster machinery the bar's statistics need. §3's "better than
+human is not a measurable target" is superseded in place — the operationalisation is
+what makes it one. Each cut and addition lands as its own stage-0 entry citing its
+licensing measurement; this header is the pointer, not the record.
 
 **What v2.1 corrects.** The v2 inventory was written from a partly stale reading and
 consistently *understated* subsystem maturity, which mattered because it scheduled
@@ -215,17 +230,59 @@ against human judgment, solicited *or revealed*.** Details, measured labels and 
 validity limits of each direction are in
 [plan/craft-corpus.md](plan/craft-corpus.md).
 
+**Second amendment (2026-08-17, §61): the revealed half died on its labels, and the
+solicited half is being funded.** The amendment above pivoted to revealed judgment on
+the measured failure of *unpaid* solicited judgment — two verdicts against 104 exported
+pairs. Since then the revealed labels available to this project have been measured too,
+and they do not reach prose: conversion does not separate prose at the decile grain
+(stage-0 §56.3), and a corpus selected from its deciles pairs on story size and era,
+not craft ([plan/craft-corpus.md](plan/craft-corpus.md) §4.4, refused before selection).
+Raw model judges died earlier (RevisionBench: 43–65% positional artifacts, survivors
+preferring human originals ~80%), and the one model-based instrument died to its own
+memorisation sham (stage-0 §58). What remains is the channel this project never funded:
+**paid, blinded, position-swapped pairwise judgment from external genre readers** —
+solicited, but bought rather than volunteered, which is the variable the 2-of-104
+measurement never tested. It is the primary instrument now (§61), and the rule stands
+in its final form: any craft proxy is a hypothesis until validated against human
+judgment, and the human judgment this project trusts at prose grain is a paid blinded
+pairwise verdict, content-addressed in the calibration schema.
+
 ### 1a.5 Set a bar that can fail, and refuse volume as a proxy
 
 "A genre reader rates it readable" (§17 Stage 4, as written) is not a quality
-target — it is a floor restated. Replace it with bars that can actually be failed:
+target — it is a floor restated. The first bar below can be failed, and it is the
+project's definition of its own goal (§61): "superhuman" means exactly this and
+nothing more.
 
-- Blinded genre readers cannot reliably distinguish accepted chapters from
-  published human LitRPG at the same tier.
+- **The superiority bar.** In blinded, position-swapped pairwise comparison against
+  matched published-human prose (same genre, comparable premise and length), judged
+  by paid genre readers, the lower bound of a 95% confidence interval on the win
+  rate exceeds 0.5. Five pre-registrations, each bought by a measurement: the
+  interval is clustered over both readers and items (§59's `clusters` lesson — a
+  binomial interval over correlated judgments carries confidence it has not
+  earned); the tie policy is declared before the first judgment; judgments where
+  the reader recognises either passage are excluded (§58 measured familiarity
+  swinging a score several times harder than damage, and human judges do not get
+  an exemption); the comparator sampling frame is declared before the first reader
+  is paid, because beating median tier-matched serials and beating the genre's
+  best are different claims and **the frame is the claim**; and if more than one
+  book could have been reported, the confidence level is divided by the number of
+  candidates (BRIEF §6.4 applies to the headline claim too).
 - A majority of sampled chapters earn "I would keep reading" from readers who were
-  not told what produced them.
-- Once serialized, retention across consecutive chapters is measured and does not
-  decay faster than a comparable human-written serial.
+  not told what produced them — subsidiary evidence, collected by the same
+  pipeline, never a substitute for the bar above.
+- ~~Blinded genre readers cannot reliably distinguish accepted chapters from
+  published human LitRPG at the same tier.~~ *(Struck by §61: parity was the
+  ceiling this plan dared to name, and the goal is now above it. Note what the
+  strike does to [plan/craft-corpus.md](plan/craft-corpus.md) §4.2, which called
+  this "the bar the plan already wrote": a discriminator separating system prose
+  from human no longer proves the bar failed, because distinguishable-and-preferred
+  passes the superiority bar. §4.2 survives as a cheap adversarial probe, not as
+  the bar's proxy.)*
+- ~~Once serialized, retention across consecutive chapters is measured and does not
+  decay faster than a comparable human-written serial.~~ *(Struck by §61: cadence
+  is no longer a goal, so there is no serial to measure retention on. The pairwise
+  bar replaces it as the falsifiable target.)*
 
 And one explicit anti-goal: **word count is not a success metric.** A 50k-word book
 that reads is worth more than a 120k-word book that does not. This needs saying
@@ -268,11 +325,22 @@ violate this section.
 
 - Inline human approval as a required step of the production loop. (Humans gate
   *policies*, exceptions, and samples — not each commit.)
-- A promise that generated prose is objectively "better" than human prose. The
+- ~~A promise that generated prose is objectively "better" than human prose. The
   claim this project will actually defend is narrower and testable: accepted prose
   meets a measured bar against human judgment (§1a.5), and its game-system
   arithmetic is never wrong. "Better than human" is not a measurable target;
-  "indistinguishable from published genre work to a blinded reader" is.
+  "indistinguishable from published genre work to a blinded reader" is.~~
+  *Superseded by §61, and the struck sentence names its own error: "better than
+  human" was unfalsifiable only for lack of an operationalisation. §1a.5's
+  superiority bar supplies one, so the claim is now measurable, now pre-registered,
+  and now the goal. What stays a non-goal is any superiority assertion **outside**
+  that measurement — "superhuman" spoken without a comparator frame, a clustered
+  interval and a declared candidate family is still marketing, and this plan still
+  refuses it.*
+- Publication cadence, uptime, and throughput as success measures (§61). The system
+  still runs without human input; nothing about the quality goal restores an inline
+  human gate — human judgment enters asynchronously as calibration evidence, gating
+  promotions, never ticks.
 - One universal style/structure/pacing formula; craft targets are per-book profiles.
 - A general-purpose authoring editor for human writers. (v1's §14 UI is cut.)
 - Autonomous publication to external platforms without an explicit human-set

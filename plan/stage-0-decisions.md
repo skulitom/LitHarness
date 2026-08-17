@@ -3098,3 +3098,83 @@ directory is still outside the package, and ContinuityEvaluation still reaches i
 PLAN.md §20.2's `samefile("C:/DEV/litharness-contracts/schemas")`. It is the same defect
 class and a separately-tracked one; moving it is a change to a sibling's consumption, not to
 this repository's, and bundling them would have hidden which of the two this suite proves.
+
+## 61. "Better than human" became measurable, so it became the goal
+
+The goal is now **superhuman literary quality**, and this entry is what keeps that sentence
+from being marketing: "superhuman" means the lower bound of a 95% confidence interval on
+blinded, position-swapped pairwise win rate against matched published-human prose exceeds
+0.5, judged by paid genre readers. Throughput, uptime and publication cadence stop being
+goals. PLAN.md §1a.5 carries the bar; this entry carries why it is the only bar left and
+what the refoundation does to the rest of the plan.
+
+**The record forces the instrument, which is the strongest argument for the pivot.** Four
+evidence channels have been tried and measured:
+
+    channel                          measured result                                 where
+    unpaid solicited judgment        2 verdicts against 104 exported pairs           §1a.4 amendment, README
+    revealed preference (labels)     conversion does not separate prose;             §56.3; craft-corpus §4.4 (refused)
+                                     deciles select story size and era
+    raw model judges                 43–65% positional artifacts; order-consistent   BRIEF §2 Pass 4
+                                     survivors prefer human originals ~80%
+    model-based scoring (CDG)        dead to its own pre-registered memorisation     §58; BRIEF §2 Pass 6
+                                     sham; word count beat it
+
+Paid pairwise judgment from external genre readers is the one channel with no refutation
+against it, because it is the one channel this project never funded. "Bought rather than
+volunteered" is the variable the 2-of-104 measurement never tested, and the first month of
+operation is its kill-switch: if paid throughput cannot fund a promotable calibration row
+(§59's bound, not the deleted `MIN_FLAGGED` constant), that result lands here like every
+other dead instrument.
+
+**Five pre-registrations, each bought by an existing measurement, none negotiable.**
+(1) The interval is clustered over both readers and items — §59 added `clusters` for
+exactly the reason a binomial interval over fifty scenes of one book is one observation
+wearing an interval; the same readers judging many pairs is the same failure from the other
+side. (2) The tie policy is declared before the first judgment. (3) A judgment where the
+reader recognises either passage is excluded — §58 measured a scorer's familiarity with
+published text swinging a score several times harder than real damage, and there is no
+reason to believe human judges are exempt; the matched-human corpus includes some of the
+genre's most-read serials, so recognition is not an edge case, it is the expected case.
+(4) The comparator sampling frame is declared before the first reader is paid: beating
+median tier-matched RoyalRoad serials and beating the genre's best are different claims,
+and the frame *is* the claim. (5) If more than one book could have been reported, the
+confidence level is divided by the candidate count — §6.4's selection family applied to
+the headline claim itself. Sizing, so the money is honest: at a true win rate of 0.60,
+roughly 100–150 decisive judgments clear the bound; at 0.55, 400–500; clustering inflates
+both. A thin margin is expensive to certify, and pretending otherwise is how the bar gets
+quietly weakened.
+
+**Autonomy is unchanged, and the reconciliation is one sentence.** The production loop
+requires no human input: human judgment enters asynchronously as calibration evidence,
+gates *promotions* (§17 gate 3, §26's parking discipline), never ticks, and with zero
+verdicts in the store the system drafts entire books with every structural annotation held
+advisory. The goal does not restore an inline human gate; it prices the evidence that was
+always the missing instrument (§1a.4).
+
+**What this entry changes in PLAN.md, all in place with superseded text visible:** the
+Role line loses "24/7"; a v2.3 header block records the refoundation; §1a.4 gains the
+second amendment (revealed labels dead, paid solicited funded); §1a.5's bars are replaced
+by the superiority bar (parity bar struck — with the note that craft-corpus §4.2's
+discriminator loses its "bar already written" status, since distinguishable-and-preferred
+now passes); §3's "better than human is not a measurable target" is superseded by its own
+operationalisation, and cadence/uptime/throughput join the non-goals.
+
+**The programme this licenses, landing as separate entries.** Seven cuts (unattended-
+operation hardening; provider plurality; the four refuted craft metrics on the accept
+path; sub-frontier support paths; the serial-publication pillar; the duplication-premised
+roadmap ordering; the solo audit queue as primary evidence) and three additions (the
+pairwise preference engine; promise/payoff and scene-delta instrumentation; plan-level
+search licensed by calibration). Each cut cites its licensing measurement in its own
+entry; nothing is deleted from `research/`; the calibration promotion rules are
+load-bearing and do not weaken. Two corrections to the directive as drafted, accepted
+before anything lands: **the §53 duplicate gate stays** — §53 classified whole-scene
+duplication as integrity, not craft; the gate refused nothing on the frontier arm, so
+removing it saves nothing measurable, while a pinned provider still changes model
+versions underneath a book and a never-firing deterministic gate is cheap insurance
+(§24: a refusal costs time, never the unit). What dies is Stage 5's ordering and the
+outline-as-duplication-fix justification, per §57. And **Add 2's acceptance is a wiring
+pilot, not a test**: twenty-four frontier-arm scenes can show effect direction for
+overdue-promise and zero-delta flags, and cannot show prediction at any confidence worth
+recording — §57 already wrote down what happens when a run is sized for the wrong
+question, and that entry does not need a sequel.
