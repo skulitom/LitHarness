@@ -188,11 +188,19 @@ class EvidenceClass(enum.StrEnum):
     refused here; it was *unlabelled*, which is worse, because the refusal looked like it was
     working.
 
-    These are not three grades of one thing. They have different referents, and a gate may
+    These are not grades of one thing. They have different referents, and a gate may
     make only the claim its referent supports:
 
     - `JUDGMENT` — a human's answer about one of *our* units at the grain being gated. This
       is the only class that may say a scene is not good enough.
+    - `PREFERENCE` — a human's blinded, position-swapped choice between two texts (§61):
+      the same reader, the same standing as `JUDGMENT`, but the answer is *relative*, so
+      what it licenses is selection between candidates (§61 Add 3), never absolute refusal
+      of one text. Its holdout is answered pair verdicts, so its staleness digest and its
+      answered count come from the pair table, not the audit queue — checked with the
+      judgment arithmetic, which is denominated in counts and never inspects what a sample
+      is. Deliberately absent from `veto_for`, whose total-raise refuses a blocking gate
+      for it with zero code.
     - `POPULATION` — membership in a named published cohort at matched length and genre. It
       may refuse, and what it refuses on is "this value is outside the range published LitRPG
       of this length occupies". Not quality. A different veto, so the record cannot be read
@@ -206,6 +214,7 @@ class EvidenceClass(enum.StrEnum):
     """
 
     JUDGMENT = "judgment"
+    PREFERENCE = "preference"
     POPULATION = "population"
     BEHAVIOUR = "behaviour"
     UNCLASSIFIED = "unclassified"
@@ -439,6 +448,10 @@ class Calibration:
             )
         if self.evidence_class is EvidenceClass.POPULATION:
             return self._why_not_population(today, verdicts_digest)
+        # `JUDGMENT` and `PREFERENCE` share this arithmetic: both are counts of human
+        # answers over a holdout, and no check below inspects what a sample is. What
+        # separates them is supplied by the caller — the per-class digest and answered
+        # count — and by `veto_for`, which refuses `PREFERENCE` a blocking gate outright.
         return self._why_not_judgment(today, verdicts_digest, answered)
 
     def _why_not_population(self, today: str, profile_digest: str | None) -> str | None:

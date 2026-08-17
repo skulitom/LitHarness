@@ -73,6 +73,14 @@ from litharness.domain.policy import (
     PolicyDecision,
     VerdictSource,
 )
+from litharness.domain.preference import (
+    ComparisonExcerpt,
+    PairGrain,
+    PairSample,
+    PairVerdict,
+    PreferenceProtocol,
+    TiePolicy,
+)
 from litharness.domain.revision import Revision, node_version_id
 
 #: How long a writer waits for a contended database before reporting it locked. An
@@ -1421,6 +1429,186 @@ class SqliteStore:
             )
         }
         return counts
+
+    # -- the pairwise preference engine (§61) --------------------------------
+
+    def record_excerpt(
+        self, excerpt: ComparisonExcerpt, *, events: Sequence[Event] = ()
+    ) -> bool:
+        """Add one matched published-human excerpt. False if it was already on record.
+
+        `INSERT OR IGNORE` on the content-derived `excerpt_id`: the same passage added
+        twice is one excerpt, and an excerpt already cited by judgments can never be
+        replaced underneath them.
+        """
+        with self.transaction() as connection:
+            cursor = connection.execute(
+                "INSERT OR IGNORE INTO comparison_corpus (excerpt_id, text, source, "
+                "genre, era, words, added_at) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                (
+                    excerpt.excerpt_id,
+                    excerpt.text,
+                    excerpt.source,
+                    excerpt.genre,
+                    excerpt.era,
+                    excerpt.words,
+                    excerpt.added_at,
+                ),
+            )
+            inserted = cursor.rowcount > 0
+            for event in events:
+                self._insert_event(connection, event)
+        return inserted
+
+    def excerpts(self) -> list[ComparisonExcerpt]:
+        return [
+            ComparisonExcerpt(
+                excerpt_id=row["excerpt_id"],
+                text=row["text"],
+                source=row["source"],
+                genre=row["genre"],
+                era=row["era"],
+                words=int(row["words"]),
+                added_at=row["added_at"],
+            )
+            for row in self._connection.execute(
+                "SELECT * FROM comparison_corpus ORDER BY added_at, excerpt_id"
+            )
+        ]
+
+    def record_protocol(
+        self, protocol: PreferenceProtocol, *, events: Sequence[Event] = ()
+    ) -> bool:
+        """Store one pre-registered comparison frame. False if it was already declared.
+
+        `INSERT OR IGNORE`, and the ignore *is* the refusal path: `protocol_id` derives
+        from the declaration's content with `declared_at` outside the hash, so re-declaring
+        the same frame collides here and keeps its original pre-registration date rather
+        than being quietly re-stamped.
+        """
+        with self.transaction() as connection:
+            cursor = connection.execute(
+                "INSERT OR IGNORE INTO preference_protocols (protocol_id, "
+                "comparator_frame, tie_policy, grain, declared_at) VALUES (?, ?, ?, ?, ?)",
+                (
+                    protocol.protocol_id,
+                    protocol.comparator_frame,
+                    protocol.tie_policy.value,
+                    protocol.grain.value,
+                    protocol.declared_at,
+                ),
+            )
+            inserted = cursor.rowcount > 0
+            for event in events:
+                self._insert_event(connection, event)
+        return inserted
+
+    def protocols(self) -> list[PreferenceProtocol]:
+        return [
+            PreferenceProtocol(
+                protocol_id=row["protocol_id"],
+                comparator_frame=row["comparator_frame"],
+                tie_policy=TiePolicy(row["tie_policy"]),
+                grain=PairGrain(row["grain"]),
+                declared_at=row["declared_at"],
+            )
+            for row in self._connection.execute(
+                "SELECT * FROM preference_protocols ORDER BY declared_at, protocol_id"
+            )
+        ]
+
+    def record_pair_sample(self, sample: PairSample, *, events: Sequence[Event] = ()) -> bool:
+        """Queue one presented pair for a reader. False if it was already drawn.
+
+        Idempotent on the derived `sample_id` — the audit draw's replay-convergence
+        property, inherited (§67): a replayed draw re-draws the same pairs onto the same
+        rows rather than growing the queue.
+        """
+        with self.transaction() as connection:
+            cursor = connection.execute(
+                "INSERT OR IGNORE INTO pair_samples (sample_id, pair_id, orientation, "
+                "protocol_id, left_addr, right_addr, grain, book_id, sampled_at, rate, "
+                "bucket) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                (
+                    sample.sample_id,
+                    sample.pair_id,
+                    sample.orientation,
+                    sample.protocol_id,
+                    sample.left_addr,
+                    sample.right_addr,
+                    sample.grain.value,
+                    sample.book_id,
+                    sample.sampled_at,
+                    sample.rate,
+                    sample.bucket,
+                ),
+            )
+            inserted = cursor.rowcount > 0
+            for event in events:
+                self._insert_event(connection, event)
+        return inserted
+
+    def pair_samples(self, *, pending_only: bool = False) -> list[PairSample]:
+        sql = "SELECT * FROM pair_samples"
+        if pending_only:
+            sql += " WHERE verdict IS NULL"
+        sql += " ORDER BY sampled_at, sample_id"
+        return [self._pair_from_row(row) for row in self._connection.execute(sql)]
+
+    @staticmethod
+    def _pair_from_row(row: sqlite3.Row) -> PairSample:
+        return PairSample(
+            sample_id=row["sample_id"],
+            pair_id=row["pair_id"],
+            orientation=int(row["orientation"]),
+            protocol_id=row["protocol_id"],
+            left_addr=row["left_addr"],
+            right_addr=row["right_addr"],
+            grain=PairGrain(row["grain"]),
+            book_id=row["book_id"],
+            sampled_at=row["sampled_at"],
+            rate=float(row["rate"]),
+            bucket=int(row["bucket"]),
+            reader_id=row["reader_id"],
+            verdict=PairVerdict(row["verdict"]) if row["verdict"] else None,
+            recognized=None if row["recognized"] is None else bool(row["recognized"]),
+            note=row["note"],
+            judged_at=row["judged_at"],
+        )
+
+    def record_pair_verdict(
+        self,
+        sample_id: str,
+        verdict: PairVerdict,
+        *,
+        at: str,
+        by: str,
+        recognized: bool,
+        note: str | None = None,
+        events: Sequence[Event] = (),
+    ) -> bool:
+        """Store one pairwise judgment. False if there is no such unanswered sample.
+
+        **A verdict is never overwritten** — `WHERE verdict IS NULL`, exactly
+        `record_verdict`'s pattern and for the same reason: the first reading is the blind
+        one, and a reader who has since seen provenance is a different instrument.
+
+        `recognized` is required, not defaulted at this seam's edge: §61 pre-registration
+        (3) excludes recognised judgments from analysis, and a row whose flag was never
+        asked for cannot be excluded — the flag is stored either way, and the row is never
+        dropped.
+        """
+        with self.transaction() as connection:
+            cursor = connection.execute(
+                "UPDATE pair_samples SET verdict = ?, recognized = ?, note = ?, "
+                "judged_at = ?, reader_id = ? WHERE sample_id = ? AND verdict IS NULL",
+                (verdict.value, int(recognized), note, at, by, sample_id),
+            )
+            if cursor.rowcount == 0:
+                return False
+            for event in events:
+                self._insert_event(connection, event)
+        return True
 
     def record_calibration(self, calibration: Calibration, *, events: Sequence[Event] = ()) -> bool:
         """Store measured evidence that a metric predicts human judgment.

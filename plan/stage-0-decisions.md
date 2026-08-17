@@ -3462,3 +3462,63 @@ committed, scripts frozen as records. The maintenance burden the directive named
 measured at zero remaining paths. A cut that finds itself already landed still gets
 its entry, because the alternative is a programme item that quietly never happened —
 and the audit that distinguishes "done" from "assumed done" is cheap exactly once.
+
+## 69. The preference engine lands, and the first thing it judged was itself
+
+§61 Add 1 — the evidence source, and the first subsystem aimed directly at the goal.
+Blinded, position-swapped pairwise judgment at scene grain: system vs matched
+published-human excerpts and system vs system, content-addressed end to end in the
+§10.5 draw's discipline — no RNG anywhere; pair identity from the unordered pair,
+orientation a content-derived bit, both presentations minted as sibling rows so
+positional consistency is *measurable*, not assumed away. Protocols are pre-registered
+records (comparator frame, tie policy, grain) that refuse redeclaration by
+construction, because **the frame is the claim** (§61); the win-rate bound is a
+two-way cluster bootstrap over readers × pairs (§58's addendum extended a dimension),
+seeded from the judgment-set digest, refused below two clusters of either kind.
+`EvidenceClass.PREFERENCE` joins the promotion machinery with `veto_for` deliberately
+refusing it a veto: preference evidence licenses *selection between candidates*
+(§61 Add 3), never absolute refusal of one text, and the total-raise enforces that
+with zero code. Eight CLI verbs; migration 022; the production loop is untouched at
+zero verdicts — judgment gates promotions, never ticks. Operated per
+plan/preference-runbook.md; acceptance stands as §61 wrote it: a §59-promotable row
+within one month of funded operation, or this entry gets the sequel every dead
+instrument got.
+
+**Building it found two latent defects in the machinery that was already trusted.**
+`cmd_calibrations` passed the answered-audit digest to every evidence class, so
+POPULATION rows listed as falsely stale against a digest they never claimed — the
+per-class dispatch that §58's fix installed in the ladder and `cmd_calibrate` had
+never reached the listing verb. And `_craft_ladder` passed the audit-queue count as
+`answered` for every class — the exact wrong-population defect BRIEF §6 question 1
+warns about, one table over. Both fixed with per-class dicts beside the digests.
+
+**Then the engine was adversarially reviewed before it was trusted, which is the
+point of having promotion rules at all.** An independent pass re-derived the
+orientation mapping, the system-side attribution, and the bootstrap from first
+principles — different resampler, different RNG, 100k replicates — and reproduced
+every pinned value, so the tests do not share a bug with the module. What it found
+was at the seams, and all of it landed before this entry: **recognition was
+bypassable by omission** at the paid-reader import (absent field defaulted to "not
+recognized" — the §58 exclusion structurally skippable exactly where the headline
+evidence enters; import now refuses any entry without an explicit boolean, and the
+judge verb demands yes/no); **positional balance was unmeasured** (addresses sort
+`exc:` before `rev:`, so orientation is confounded with side for every mixed pair;
+win-rate now reports per-orientation counts and rates, refuses the bound when all
+decisive judgments share one presented order, and warns past 2:1); the bootstrap
+quantile rank was **anti-conservative by one position** (fixed to the ceil
+convention; two DROP-policy pins moved, 0.35 → 1/3 and 0.25 → 0.2, recorded in the
+test as the correction landing); and the NUL-join pair-id ambiguity, reachable only
+by abandoning constructor discipline, is now unrepresentable rather than unreached.
+
+**Recorded honestly rather than fixed, with the measurement that says why.** The
+percentile cluster bootstrap under-covers at small cluster counts — 2×2 all-wins
+prints a "97.5% lower bound" of 1.0, which no calibrated interval can — so the CLI
+prints a descriptive-bound caveat below five clusters per dimension and the docstring
+carries the measurement; the promotion floors are the real gate, and an estimator
+upgrade (basic/BCa) is future work that must not move the bar silently. Chapter grain
+is a refusal with a reason, not a feature: production books hold no chapter nodes and
+inventing an assembly scheme mid-build is exactly what the spec forbade; the enum and
+schema carry the grain so no future migration is needed. And the analysable-judgment
+count for PREFERENCE holdouts excludes abstentions and recognized rows while
+deliberately pooling protocols — the digest pools too, and over-invalidation is the
+safe direction.

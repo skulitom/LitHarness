@@ -1156,8 +1156,13 @@ def test_every_evidence_class_has_a_decided_side(store: SqliteStore) -> None:
     for member in EvidenceClass:
         row = a_calibration(evidence_class=member, verdicts_digest=digest)
         why = row.why_not_promotable(TODAY, digest, answered=MIN_HOLDOUT)
-        if member is EvidenceClass.JUDGMENT:
-            assert why is None, "human verdicts about our own scenes are the promotable class"
+        if member in {EvidenceClass.JUDGMENT, EvidenceClass.PREFERENCE}:
+            # Both are counts of human answers over a holdout, and the evidence checks are
+            # denominated in counts, so both can be sound and current. PREFERENCE's decided
+            # side lives one door later: `veto_for` refuses it a veto, so sound preference
+            # evidence licenses selection between candidates (§61 Add 3) and never a
+            # blocking gate — asserted below and in test_preference.py.
+            assert why is None, "human answers about our own prose can be sound evidence"
         else:
             assert why is not None, (
                 f"{member.value} has no decided side: it neither promotes nor names why not"
@@ -1170,7 +1175,14 @@ def test_a_class_that_licenses_no_refusal_raises_rather_than_inheriting_one() ->
     thing."""
     assert veto_for(EvidenceClass.JUDGMENT) is Veto.CRAFT_BELOW_BAR
     assert veto_for(EvidenceClass.POPULATION) is Veto.CRAFT_OUT_OF_DISTRIBUTION
-    for member in (EvidenceClass.BEHAVIOUR, EvidenceClass.UNCLASSIFIED):
+    # PREFERENCE is in this list deliberately, not by omission: preference evidence
+    # licenses selection between candidates (§61 Add 3), never absolute refusal of one
+    # text, and the total-raise here is the zero-code enforcement of that.
+    for member in (
+        EvidenceClass.PREFERENCE,
+        EvidenceClass.BEHAVIOUR,
+        EvidenceClass.UNCLASSIFIED,
+    ):
         with pytest.raises(NotPromotable):
             veto_for(member)
 

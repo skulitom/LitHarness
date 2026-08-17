@@ -74,6 +74,7 @@ from litharness.domain.policy import (
     gates_for_draft,
     policy_digest,
 )
+from litharness.domain.preference import analysable_judgments, pair_verdicts_digest_for
 from litharness.domain.revision import Revision, node_version_id
 from litharness.domain.text import content_hash
 
@@ -201,16 +202,24 @@ def _craft_ladder(
     # Read once, not per metric: this is the whole audit queue, and the digest is what makes
     # a calibration stale when the verdicts move under it.
     #
-    # **Two digests, and which one a calibration is checked against is chosen by its own
+    # **Three digests, and which one a calibration is checked against is chosen by its own
     # evidence class.** One digest for all of them was the hole: `litharness calibrate`
     # defaulted a missing `--verdicts-digest` to the store's answered-audit digest, this
     # function recomputed that identical digest at every draft, the staleness clause could
     # therefore never fire, and a threshold measured over 13,000 strangers' chapters promoted
     # by omission. A population calibration is now compared against the *profile* digest,
     # which a verdict digest can never equal — so even a hand-written row claiming
-    # `population` while carrying the audit digest is stale on arrival.
+    # `population` while carrying the audit digest is stale on arrival. A preference
+    # calibration (§61) is compared against the answered *pair*-verdict digest for the same
+    # reason in the other direction: `digests.get` returns None for an unmapped class and
+    # `why_not_promotable` reads a None digest as "no staleness check requested", so a class
+    # without an entry here has its staleness clause silently disabled — the hole the map
+    # of this area names, closed by never adding a class without adding its digest.
     answered = [
         sample for sample in store.audit_samples() if sample.verdict is not None
+    ]
+    pair_answered = [
+        sample for sample in store.pair_samples() if sample.verdict is not None
     ]
     digests = {
         EvidenceClass.JUDGMENT: verdicts_digest_for(
@@ -219,6 +228,20 @@ def _craft_ladder(
             if sample.verdict is not None
         ),
         EvidenceClass.POPULATION: profile_digest(),
+        EvidenceClass.PREFERENCE: pair_verdicts_digest_for(pair_answered),
+    }
+    # The answered count is per class for the same reason the digest is: `holdout_size` is
+    # compared against the population the holdout was drawn from, and a preference row's
+    # holdout is pair verdicts. Checking it against the audit queue would let a claimed
+    # pair holdout clear the count on the strength of the wrong table — the `answered`
+    # parameter is just an int, so the domain cannot catch a wrong one here. The
+    # preference count is `analysable_judgments`, not every answered row: recognised
+    # judgments and abstentions are excluded from analysis, so a holdout claim must not be
+    # licensed by rows the analysis will skip. The digest still covers every answered row
+    # — over-invalidation is the safe direction for staleness.
+    answered_counts = {
+        EvidenceClass.JUDGMENT: len(answered),
+        EvidenceClass.PREFERENCE: len(analysable_judgments(pair_answered)),
     }
     measured = {metric.metric_id: metric for metric in metrics}
     seen: set[str] = set()
@@ -238,7 +261,7 @@ def _craft_ladder(
                 # A craft gate refuses a scene, so evidence coarser than a scene refuses
                 # nothing here — the clause that keeps a story-level label out.
                 decision_grain=Grain.UNIT,
-                answered=len(answered),
+                answered=answered_counts.get(calibration.evidence_class),
             )
         except NotPromotable as exc:
             advisory = annotations[calibration.metric_id]

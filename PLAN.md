@@ -1636,17 +1636,20 @@ ledger did not move** (2 distinct states), which is expected and leaves taxonomy
 it was — blocked on the level curve the game-mechanics pack owns.
 
 ### Stage 4 — Calibrated quality gate
-Stand up the weekly calibration program (RevisionJudge protocol) over Book Zero
-output; validate/discard craft metrics against human judgment; promote the first
-calibrated critic thresholds to blocking; author the craft reference corpus (§10.6);
-regenerate or repair Book Zero's worst chapters under the new gates → **Book One**.
-Target per §1a.5, not "readable": blinded genre readers cannot reliably distinguish
-accepted chapters from published human LitRPG at the same tier, a majority of
-sampled chapters earn "I would keep reading" from readers not told what produced
-them, and the system math is flawless. The first two can fail; "readable" could not,
-which is why it was the wrong bar.
-**Exit:** a blocking craft gate with measured held-out precision exists; Book One
-produced under it.
+~~Stand up the weekly calibration program (RevisionJudge protocol) over Book Zero
+output~~ *(struck, §67/§69: the weekly-session design's measured throughput was 2
+verdicts per 104 pairs; the instrument is now the pairwise preference engine —
+paid external genre readers, blinded, position-swapped, operated per
+[plan/preference-runbook.md](plan/preference-runbook.md))*; validate/discard craft
+metrics against human judgment; promote the first calibrated thresholds under §59's
+bound; the reference corpus is the preference engine's comparison corpus, selected
+under a declared comparator frame rather than authored (§10.6's demand, §61's form);
+regenerate or repair the worst chapters under the new gates → **Book One**.
+Target per §1a.5 as refounded by §61: the superiority bar (the CI lower bound on
+blinded pairwise win rate against matched published-human prose exceeds 0.5), with
+"I would keep reading" as subsidiary evidence and flawless system math throughout.
+**Exit:** a promotable calibration row exists under §59's bound and a selection
+mechanism consumes preference evidence (§61 Add 3); Book One produced under them.
 
 ### Stage 5 — Scale the weak subsystem
 Integrate LongRangeContext / ContinuityEvaluation prose detectors /

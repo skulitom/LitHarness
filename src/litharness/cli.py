@@ -64,7 +64,7 @@ from litharness.application.repair import (
     make_repair_handler,
 )
 from litharness.application.summarize import make_summary_handler
-from litharness.domain import audit, calibration, extraction, impact, propagation
+from litharness.domain import audit, calibration, extraction, impact, preference, propagation
 
 # Aliased: `build_parser` binds a local `craft` for the subparser, and a module named the
 # same thing would work only by scope luck.
@@ -78,6 +78,7 @@ from litharness.domain.events import Event, EventType
 from litharness.domain.exceptions import ExceptionStatus
 from litharness.domain.findings import Status as finding_status
 from litharness.domain.jobs import Job, JobStatus, input_digest_for
+from litharness.domain.nodes import NodeKind
 from litharness.domain.plan_refinement import PlanProposalStatus, rollback_proposal
 from litharness.domain.plans import import_plan, premise_of
 from litharness.domain.policy import Outcome, PolicyDecision, decision_id_for
@@ -664,14 +665,42 @@ def cmd_calibrations(args: argparse.Namespace) -> int:
             for sample in store.audit_samples()
             if sample.verdict is not None
         ]
+        pair_samples = store.pair_samples()
     finally:
         store.close()
 
-    digest = calibration.verdicts_digest_for(verdicts)
+    # Per-class, the same dispatch the craft ladder runs at every draft: a class checked
+    # against another class's digest is either falsely stale forever or never stale at all,
+    # and both misreadings have already happened once each in this file's history. The
+    # answered counts ride along for the same reason — a listing that skipped the
+    # holdout-vs-store comparison would print BLOCKING-ELIGIBLE for a row the ladder
+    # refuses, and the operator reads the listing.
+    digests: dict[calibration.EvidenceClass, str | None] = {
+        calibration.EvidenceClass.JUDGMENT: calibration.verdicts_digest_for(verdicts),
+        calibration.EvidenceClass.POPULATION: craft_domain.profile_digest(),
+        calibration.EvidenceClass.PREFERENCE: preference.pair_verdicts_digest_for(
+            pair_samples
+        ),
+    }
+    answered_counts = {
+        calibration.EvidenceClass.JUDGMENT: len(verdicts),
+        calibration.EvidenceClass.PREFERENCE: len(
+            preference.analysable_judgments(pair_samples)
+        ),
+    }
     today = _stamp(_now())[:10]
     for item in items:
-        why = item.why_not_promotable(today, digest)
-        state = "BLOCKING-ELIGIBLE" if why is None else "advisory"
+        why = item.why_not_promotable(
+            today,
+            digests.get(item.evidence_class),
+            answered=answered_counts.get(item.evidence_class),
+        )
+        if why is None and item.evidence_class is calibration.EvidenceClass.PREFERENCE:
+            # Sound and current, and still may not block: preference evidence licenses
+            # selection between candidates (§61 Add 3), and `veto_for` refuses it a veto.
+            state = "selection-only"
+        else:
+            state = "BLOCKING-ELIGIBLE" if why is None else "advisory"
         print(f"{item.calibration_id}  {state:<18} {item.metric_id}")
         print(f"    {_evidence_line(item)}; fails {item.direction.value} {item.threshold}")
         if why is not None:
@@ -911,12 +940,22 @@ def cmd_calibrate(args: argparse.Namespace) -> int:
             for sample in answered
             if sample.verdict is not None
         )
+        # The preference class's evidence lives in the pair table, so both its digest and
+        # its answered count come from there. Counting the audit queue instead would let a
+        # claimed pair holdout clear the answered-count check on the strength of the wrong
+        # population — `answered` is just an int to the domain, so this caller is the check.
+        pair_answered = [
+            sample for sample in store.pair_samples() if sample.verdict is not None
+        ]
+        pair_digest = preference.pair_verdicts_digest_for(pair_answered)
         population: calibration.Population | None = None
         if evidence_class is calibration.EvidenceClass.POPULATION:
             built = _population_from_profile(args)
             if isinstance(built, int):
                 return built
             population, digest, threshold = built
+        elif evidence_class is calibration.EvidenceClass.PREFERENCE:
+            digest, threshold = pair_digest, args.threshold
         else:
             digest, threshold = current, args.threshold
         record = calibration.Calibration(
@@ -965,15 +1004,26 @@ def cmd_calibrate(args: argparse.Namespace) -> int:
 
     record = stored[0] if stored else record
     today = _stamp(_now())[:10]
-    # Checked against the digest for its own class, and against the answered count this store
-    # actually holds — the comparison nothing anywhere was making, which is why a row claiming
-    # fifty held-out judgments promoted against a store holding two.
-    against = (
-        craft_domain.profile_digest()
-        if record.evidence_class is calibration.EvidenceClass.POPULATION
-        else current
+    # Checked against the digest for its own class, and against the answered count of its
+    # own holdout population — the comparison nothing anywhere was making, which is why a
+    # row claiming fifty held-out judgments promoted against a store holding two. For a
+    # preference row both come from the pair table: fifty answered audit scenes say nothing
+    # about how many pair judgments exist.
+    if record.evidence_class is calibration.EvidenceClass.POPULATION:
+        against = craft_domain.profile_digest()
+    elif record.evidence_class is calibration.EvidenceClass.PREFERENCE:
+        against = pair_digest
+    else:
+        against = current
+    # Analysable rows only: recognised judgments and abstentions are excluded from
+    # analysis, so they must not license a holdout claim. Protocols pool, as the digest
+    # pools — over-invalidation is the safe direction.
+    answered_count = (
+        len(preference.analysable_judgments(pair_answered))
+        if record.evidence_class is calibration.EvidenceClass.PREFERENCE
+        else len(answered)
     )
-    why = record.why_not_promotable(today, against, answered=len(answered))
+    why = record.why_not_promotable(today, against, answered=answered_count)
     verb = "recorded" if inserted else "already on record"
     print(f"{record.calibration_id}  {verb}  {record.metric_id}")
     print(f"    evidence: {record.evidence_class.value} at {record.grain.value} grain")
@@ -989,10 +1039,602 @@ def cmd_calibrate(args: argparse.Namespace) -> int:
     else:
         print(f"    {_evidence_line(record)}")
     print(f"    fails {record.direction.value} {record.threshold}")
-    if why is None:
+    if why is None and record.evidence_class is calibration.EvidenceClass.PREFERENCE:
+        # Sound, current, and still not a gate: preference evidence licenses selection
+        # between candidates (§61 Add 3), never absolute refusal of one text, and
+        # `veto_for` refuses it a veto with zero code. Printing BLOCKING-ELIGIBLE here
+        # would announce a gate that can never be built.
+        print("    selection-only: sound evidence, and preference may never block")
+    elif why is None:
         print("    BLOCKING-ELIGIBLE: this metric may now park a scene it refuses")
     else:
         print(f"    advisory — not promotable: {why}")
+    return EXIT_OK
+
+
+# -- the pairwise preference engine (§61 Add 1) --------------------------------------------
+
+
+def cmd_corpus_add(args: argparse.Namespace) -> int:
+    """Add one matched published-human excerpt: the other side of the superiority claim.
+
+    Source, genre and era are required because they are the matching covariates — §56.3
+    measured revealed labels selecting story size and era rather than prose, so an excerpt
+    that cannot say what it was matched on is a comparison against a confound waiting to be
+    reported as a result.
+    """
+    text = args.path.read_text(encoding="utf-8") if args.path else sys.stdin.read()
+    if not text.strip():
+        print("litharness: an empty excerpt is not prose anyone can prefer", file=sys.stderr)
+        return EXIT_FAULT
+    excerpt = preference.ComparisonExcerpt.from_text(
+        text, source=args.source, genre=args.genre, era=args.era, added_at=_stamp(_now())
+    )
+    store = _store(args)
+    try:
+        inserted = store.record_excerpt(excerpt)
+    finally:
+        store.close()
+    verb = "recorded" if inserted else "already on record"
+    print(f"{excerpt.excerpt_id}  {verb}  ({excerpt.words} words, {excerpt.source}, "
+          f"{excerpt.genre}, {excerpt.era})")
+    return EXIT_OK
+
+
+def cmd_protocol(args: argparse.Namespace) -> int:
+    """Pre-register one comparison frame. §61 pre-registration (4): the frame *is* the claim.
+
+    Declared once: the protocol id derives from the frame, the tie policy and the grain,
+    with the declaration date outside the hash — so re-declaring the same frame collides
+    with the original and is refused by name rather than re-stamped with a newer date, which
+    would be exactly the quiet re-registration a pre-registration exists to prevent.
+    """
+    tie_policy = preference.TiePolicy(args.tie_policy)
+    grain = preference.PairGrain(args.grain)
+    protocol = preference.PreferenceProtocol(
+        protocol_id=preference.protocol_id_for(args.frame, tie_policy=tie_policy, grain=grain),
+        comparator_frame=args.frame,
+        tie_policy=tie_policy,
+        grain=grain,
+        declared_at=_stamp(_now()),
+    )
+    store = _store(args)
+    try:
+        inserted = store.record_protocol(protocol)
+        stored = next(
+            item for item in store.protocols() if item.protocol_id == protocol.protocol_id
+        )
+    finally:
+        store.close()
+    if not inserted:
+        print(
+            f"litharness: protocol {protocol.protocol_id} was already declared at "
+            f"{stored.declared_at}. A pre-registration is declared once; the original "
+            "declaration stands",
+            file=sys.stderr,
+        )
+        return EXIT_ATTENTION
+    print(f"{protocol.protocol_id}  declared  ({tie_policy.value} ties, {grain.value} grain)")
+    print(f"    frame: {protocol.comparator_frame}")
+    return EXIT_OK
+
+
+def _scene_candidates(store: SqliteStore) -> list[tuple[str, str | None]]:
+    """Every accepted scene with prose, addressed at the branch head that holds it.
+
+    Revision-addressed on purpose: revision ids are content-addressed, so a drawn pair pins
+    exactly the text a reader judged even after the book moves on.
+    """
+    candidates: list[tuple[str, str | None]] = []
+    for book_id, _branch_id, head in store.branches():
+        revision = store.load_revision(head)
+        for node in revision.nodes:
+            if node.kind is not NodeKind.SCENE or node.tombstoned or not node.content:
+                continue
+            candidates.append((preference.revision_address(head, node.logical_id), book_id))
+    return candidates
+
+
+def cmd_pair_draw(args: argparse.Namespace) -> int:
+    """Draw blinded pairs for a protocol — content-derived, replay-convergent, no RNG.
+
+    The draw refuses to run without a stored protocol (§59's discipline: required, no
+    default), because a judgment collected under no declared frame is a number whose claim
+    gets chosen after the fact. `--siblings` draws system-vs-system pairs under the
+    built-in internal-v0 frame, recording it first; the external-comparison frame must be
+    declared by the operator before the first reader is paid (§61 pre-registration 4).
+    """
+    stamp = _stamp(_now())
+    store = _store(args)
+    try:
+        if args.siblings and not args.protocol:
+            protocol = preference.INTERNAL_PROTOCOL
+            store.record_protocol(protocol)
+        else:
+            if not args.protocol:
+                print(
+                    "litharness: a draw needs --protocol; declare the comparison frame "
+                    "first (`litharness protocol`) — the frame is the claim (§61)",
+                    file=sys.stderr,
+                )
+                return EXIT_FAULT
+            found = [
+                item for item in store.protocols() if item.protocol_id == args.protocol
+            ]
+            if not found:
+                print(
+                    f"litharness: no protocol {args.protocol} on record; a pair drawn "
+                    "under no stored protocol is refused. Declare it with "
+                    "`litharness protocol`",
+                    file=sys.stderr,
+                )
+                return EXIT_FAULT
+            [protocol] = found
+        if protocol.grain is preference.PairGrain.CHAPTER:
+            print(
+                "litharness: chapter-grain drawing is not built — production books hold "
+                "no chapter nodes and no assembly scheme is decided, so scene grain ships "
+                "first rather than improvising one",
+                file=sys.stderr,
+            )
+            return EXIT_FAULT
+        candidates = _scene_candidates(store)
+        if not candidates:
+            print("0 pair(s) drawn: no accepted scene holds prose yet")
+            return EXIT_OK
+        if args.siblings:
+            corpus = [address for address, _ in candidates]
+        else:
+            corpus = [
+                preference.excerpt_address(excerpt.excerpt_id)
+                for excerpt in store.excerpts()
+            ]
+            if not corpus:
+                print(
+                    "0 pair(s) drawn: the comparison corpus is empty. Add matched "
+                    "published-human excerpts with `litharness corpus-add`"
+                )
+                return EXIT_OK
+        samples = preference.draw_pairs(
+            candidates, corpus, protocol, args.rate, sampled_at=stamp
+        )
+        inserted = sum(1 for sample in samples if store.record_pair_sample(sample))
+    finally:
+        store.close()
+    pair_count = len({sample.pair_id for sample in samples})
+    print(
+        f"{pair_count} pair(s) drawn at rate {args.rate} -> {len(samples)} presented "
+        f"sample(s) ({inserted} new) under {protocol.protocol_id}"
+    )
+    return EXIT_OK
+
+
+def _member_text(store: SqliteStore, excerpts: dict[str, str], address: str) -> str | None:
+    member = preference.Member.parse(address)
+    if member.kind is preference.MemberKind.CORPUS_EXCERPT:
+        assert member.excerpt_id is not None  # Member.__post_init__ enforced it
+        return excerpts.get(member.excerpt_id)
+    assert member.revision_id is not None and member.logical_id is not None
+    try:
+        return store.load_revision(member.revision_id).node(member.logical_id).content
+    except KeyError:
+        return None
+
+
+def cmd_pairs(args: argparse.Namespace) -> int:
+    """The blinded pair queue: both texts, no provenance, presented order per the row.
+
+    Deliberately nothing that says which side is which — not the addresses, not the
+    protocol internals, not which member is ours. cmd_audit's blinding discipline, doubled:
+    RevisionBench measured 43-65% positional artifacts in judges told nothing at all, and a
+    reader told which side is the system is not blind in any sense worth recording.
+    """
+    store = _store(args)
+    try:
+        samples = store.pair_samples(pending_only=args.pending)
+        excerpts = {excerpt.excerpt_id: excerpt.text for excerpt in store.excerpts()}
+        texts: dict[str, tuple[str | None, str | None]] = {
+            sample.sample_id: (
+                _member_text(store, excerpts, sample.left_addr),
+                _member_text(store, excerpts, sample.right_addr),
+            )
+            for sample in samples
+        }
+    finally:
+        store.close()
+
+    for sample in samples:
+        state = sample.verdict.value if sample.verdict else "PENDING"
+        print(f"{sample.sample_id}  {state:<13} {sample.grain.value}  ({sample.sampled_at})")
+        if args.quiet:
+            continue
+        first, second = texts.get(sample.sample_id, (None, None))
+        print()
+        print("  FIRST:")
+        print(first or "  (no prose at that address)")
+        print()
+        print("  SECOND:")
+        print(second or "  (no prose at that address)")
+        print()
+        print(
+            f"  litharness pair-judge {sample.sample_id} "
+            "prefer_first|prefer_second|tie|not_sure --reader <id> --recognized yes|no"
+        )
+        print()
+    pending = sum(1 for sample in samples if sample.pending)
+    print(f"({len(samples)} sample(s), {pending} awaiting a reader)")
+    return EXIT_OK
+
+
+def cmd_pair_judge(args: argparse.Namespace) -> int:
+    """Record one pairwise preference verdict, relative to presented position.
+
+    `--recognized` is §61 pre-registration (3) and is a required yes/no, not an optional
+    flag: §58 measured a scorer's familiarity with published text swinging a score several
+    times harder than real damage, the matched corpus includes some of the genre's
+    most-read serials, and a judgment that never answered the question cannot be excluded
+    — an absent answer is not "no", it is a judgment this engine may not analyse. The
+    answer is stored and a recognised row is excluded from analysis, never dropped,
+    because the exclusion count is itself a finding.
+    """
+    verdict = preference.PairVerdict(args.verdict)
+    recognized = args.recognized == "yes"
+    if not args.reader.strip():
+        print(
+            "litharness: --reader must name who judged; the reader is a cluster "
+            "dimension of the bound, and an anonymous judgment cannot cluster",
+            file=sys.stderr,
+        )
+        return EXIT_FAULT
+    stamp = _stamp(_now())
+    store = _store(args)
+    try:
+        sample = next(
+            (item for item in store.pair_samples() if item.sample_id == args.sample_id),
+            None,
+        )
+        if sample is not None and all(
+            item.protocol_id != sample.protocol_id for item in store.protocols()
+        ):
+            # Unreachable through this CLI's own draw, which refuses protocol-less pairs;
+            # belt and braces against rows arriving by any other road.
+            print(
+                f"litharness: sample {args.sample_id} references no stored protocol; "
+                "judging under an undeclared frame is refused (§61: the frame is the claim)",
+                file=sys.stderr,
+            )
+            return EXIT_FAULT
+        recorded = store.record_pair_verdict(
+            args.sample_id,
+            verdict,
+            at=stamp,
+            by=args.reader,
+            recognized=recognized,
+            note=args.note,
+            events=[
+                Event(
+                    event_type=EventType.EVALUATION_COMPLETED,
+                    project_id=args.project,
+                    created_at=stamp,
+                    actor=args.reader,
+                    payload={
+                        "sample_id": args.sample_id,
+                        "verdict": verdict.value,
+                        "recognized": recognized,
+                        "pair": True,
+                    },
+                )
+            ],
+        )
+    finally:
+        store.close()
+    if not recorded:
+        print(
+            f"litharness: no unanswered pair sample {args.sample_id}. A verdict is never "
+            "overwritten — the first reading is the blind one",
+            file=sys.stderr,
+        )
+        return EXIT_ATTENTION
+    suffix = "  (recognised — stored, excluded from analysis)" if recognized else ""
+    print(f"{args.sample_id} -> {verdict.value}{suffix}")
+    return EXIT_OK
+
+
+def cmd_pair_export(args: argparse.Namespace) -> int:
+    """Pending pairs as JSONL for external paid readers — blinded, frame attached.
+
+    Each line carries the sample id, the declared comparator frame (the question the reader
+    answers — the frame is the claim, so it travels with the pair), both texts in presented
+    order, and a `recognized` slot that ships as null: the recognition question (§61
+    pre-registration 3) is part of the packet, so reader tooling must answer it — import
+    refuses a verdict whose slot was never filled, and a default here would let the
+    highest-leverage exclusion be bypassed by omission. No provenance of any kind.
+    """
+    store = _store(args)
+    try:
+        pending = store.pair_samples(pending_only=True)
+        protocols = {item.protocol_id: item for item in store.protocols()}
+        excerpts = {excerpt.excerpt_id: excerpt.text for excerpt in store.excerpts()}
+        lines: list[str] = []
+        unresolved = 0
+        for sample in pending:
+            protocol = protocols.get(sample.protocol_id)
+            first = _member_text(store, excerpts, sample.left_addr)
+            second = _member_text(store, excerpts, sample.right_addr)
+            if protocol is None or first is None or second is None:
+                unresolved += 1
+                continue
+            lines.append(
+                json.dumps(
+                    {
+                        "sample_id": sample.sample_id,
+                        "frame": protocol.comparator_frame,
+                        "grain": sample.grain.value,
+                        "first": first,
+                        "second": second,
+                        "verdicts": [member.value for member in preference.PairVerdict],
+                        # Shipped null so the answer must be written, not inherited.
+                        "recognized": None,
+                    },
+                    ensure_ascii=False,
+                )
+            )
+    finally:
+        store.close()
+    payload = "\n".join(lines) + ("\n" if lines else "")
+    summary = f"({len(lines)} pending sample(s) exported"
+    summary += f", {unresolved} unresolvable skipped)" if unresolved else ")"
+    if args.destination:
+        args.destination.write_text(payload, encoding="utf-8")
+        print(summary)
+    else:
+        sys.stdout.write(payload)
+        print(summary, file=sys.stderr)
+    return EXIT_OK
+
+
+def cmd_pair_import(args: argparse.Namespace) -> int:
+    """Verdicts JSONL back from external readers. At-least-once friendly by construction.
+
+    Re-importing the same file is safe — an already-answered sample is skipped with a
+    count, never overwritten, because the write-once rule is the blinding guarantee. A
+    verdict naming a sample this store never drew is refused: accepting it would let a
+    judgment claim membership in a queue it was never part of. And a verdict whose
+    `recognized` slot is not an explicit boolean is refused by name: the export packet
+    ships the slot as null so reader tooling must answer the recognition question (§61
+    pre-registration 3), and a default at this seam would let the exclusion §58 paid for
+    be bypassed by omission.
+    """
+    raw = args.path.read_text(encoding="utf-8") if args.path else sys.stdin.read()
+    stamp = _stamp(_now())
+    recorded = skipped = 0
+    unknown: list[str] = []
+    unanswered_recognition: list[str] = []
+    store = _store(args)
+    try:
+        known = {sample.sample_id for sample in store.pair_samples()}
+        for number, line in enumerate(raw.splitlines(), start=1):
+            if not line.strip():
+                continue
+            entry = json.loads(line)
+            sample_id = entry.get("sample_id")
+            verdict_value = entry.get("verdict")
+            reader = entry.get("reader")
+            if not sample_id or not verdict_value or not reader:
+                raise ValueError(
+                    f"pair-import line {number}: a verdict line needs sample_id, verdict "
+                    "and reader"
+                )
+            verdict = preference.PairVerdict(verdict_value)
+            if sample_id not in known:
+                unknown.append(str(sample_id))
+                continue
+            recognized = entry.get("recognized")
+            # `isinstance` rather than truthiness: null, an absent key and the string
+            # "false" are all non-answers, and a non-answer is not "no".
+            if not isinstance(recognized, bool):
+                unanswered_recognition.append(str(sample_id))
+                continue
+            accepted = store.record_pair_verdict(
+                str(sample_id),
+                verdict,
+                at=stamp,
+                by=str(reader),
+                recognized=recognized,
+                note=entry.get("note"),
+                events=[
+                    Event(
+                        event_type=EventType.EVALUATION_COMPLETED,
+                        project_id=args.project,
+                        created_at=stamp,
+                        actor=str(reader),
+                        payload={
+                            "sample_id": str(sample_id),
+                            "verdict": verdict.value,
+                            "recognized": recognized,
+                            "pair": True,
+                        },
+                    )
+                ],
+            )
+            if accepted:
+                recorded += 1
+            else:
+                skipped += 1
+    finally:
+        store.close()
+    print(
+        f"{recorded} verdict(s) recorded, {skipped} already answered (skipped), "
+        f"{len(unknown)} unknown sample id(s) refused, {len(unanswered_recognition)} "
+        "refused without an explicit recognition answer"
+    )
+
+    def _name(refused: list[str]) -> str:
+        shown = ", ".join(refused[:5])
+        return shown + (f" (+{len(refused) - 5} more)" if len(refused) > 5 else "")
+
+    if unknown:
+        print(
+            "litharness: refused verdicts for samples this store never drew: "
+            f"{_name(unknown)}",
+            file=sys.stderr,
+        )
+    if unanswered_recognition:
+        print(
+            "litharness: refused verdicts that never answered the recognition question "
+            f"(recognized must be true or false): {_name(unanswered_recognition)}",
+            file=sys.stderr,
+        )
+    return EXIT_ATTENTION if unknown or unanswered_recognition else EXIT_OK
+
+
+def cmd_win_rate(args: argparse.Namespace) -> int:
+    """The system's win rate under one protocol, led by the clustered lower bound.
+
+    The bound, not the estimate, is what any claim turns on (§59: 14 of 17 reads as a
+    confident 0.82 and bounds at 0.566). `--alpha` is the two-sided level for *this*
+    protocol's evidence alone; the headline claim additionally divides it by the
+    candidate-book count when more than one book could have been reported — §61
+    pre-registration (5), §6.4's selection family applied to the claim itself.
+    """
+    store = _store(args)
+    try:
+        protocols = [
+            item for item in store.protocols() if item.protocol_id == args.protocol
+        ]
+        if not protocols:
+            print(
+                f"litharness: no protocol {args.protocol} on record",
+                file=sys.stderr,
+            )
+            return EXIT_FAULT
+        [protocol] = protocols
+        answered = [
+            sample
+            for sample in store.pair_samples()
+            if sample.protocol_id == args.protocol and sample.verdict is not None
+        ]
+    finally:
+        store.close()
+
+    # One judgment per (pair, orientation, protocol, reader), earliest first. Today the
+    # only producer mints one queue row per (pair, orientation, protocol), so duplicates
+    # cannot exist — but the sample identity supports pre-assigned per-reader rows, and
+    # the day one coexists with an unassigned row answered by the same reader, counting
+    # both would double one reader's one opinion. The earliest judged row is the blind
+    # first reading, which is the one this engine trusts everywhere else.
+    earliest: dict[tuple[str, int, str, str], preference.PairSample] = {}
+    for sample in sorted(answered, key=lambda item: (item.judged_at or "", item.sample_id)):
+        key = (sample.pair_id, sample.orientation, sample.protocol_id, sample.reader_id or "")
+        earliest.setdefault(key, sample)
+    answered = list(earliest.values())
+
+    recognized = abstained = internal = ties = decisive = 0
+    orientation_decisive = {0: 0, 1: 0}
+    orientation_wins = {0: 0, 1: 0}
+    observations: list[preference.WinObservation] = []
+    for sample in answered:
+        if sample.recognized:
+            recognized += 1
+            continue
+        if preference.system_side(sample.left_addr, sample.right_addr) is None:
+            internal += 1
+            continue
+        if sample.verdict is preference.PairVerdict.NOT_SURE:
+            abstained += 1
+            continue
+        outcome = preference.system_outcome(sample)
+        assert outcome is not None  # every exclusion was counted above
+        if outcome is preference.PairOutcome.TIE:
+            ties += 1
+        else:
+            decisive += 1
+            orientation_decisive[sample.orientation] += 1
+            if outcome is preference.PairOutcome.WIN:
+                orientation_wins[sample.orientation] += 1
+        observations.append(
+            preference.WinObservation(
+                pair_id=sample.pair_id,
+                reader_id=sample.reader_id or "",
+                outcome=outcome,
+            )
+        )
+
+    print(f"protocol {protocol.protocol_id} ({protocol.tie_policy.value} ties)")
+    print(
+        f"    {decisive} decisive, {ties} tie(s), {recognized} excluded by recognition, "
+        f"{abstained} abstention(s), {internal} system-vs-system (no human side)"
+    )
+    if decisive:
+        # Position is a recorded fact, so the split is reportable — and must be: for
+        # mixed pairs orientation 0 is always human-first (the addresses sort that way),
+        # so a pooled rate over an unbalanced queue quietly weights one presentation.
+        parts: list[str] = []
+        for orientation in (0, 1):
+            count = orientation_decisive[orientation]
+            if count:
+                rate = orientation_wins[orientation] / count
+                parts.append(f"orientation {orientation}: {count} decisive, observed {rate:.3f}")
+            else:
+                parts.append(f"orientation {orientation}: 0 decisive")
+        print("    " + "; ".join(parts))
+    if not observations:
+        print(
+            "    no analysable judgment yet; the counts above are the honest measure of "
+            "the gap"
+        )
+        return EXIT_OK
+    if decisive and (orientation_decisive[0] == 0 or orientation_decisive[1] == 0):
+        print(
+            "    no bound: every decisive judgment was collected at one presented order. "
+            "A rate over a single orientation cannot separate preference from the 43-65% "
+            "positional artifact RevisionBench measured; judge the position-swapped "
+            "complements first",
+            file=sys.stderr,
+        )
+        return EXIT_ATTENTION
+    low_side, high_side = sorted((orientation_decisive[0], orientation_decisive[1]))
+    if decisive and low_side * 2 < high_side:
+        print(
+            f"    positional imbalance: {orientation_decisive[0]} vs "
+            f"{orientation_decisive[1]} decisive judgments by orientation is worse than "
+            "2:1; the position-swapped complements are sitting unanswered"
+        )
+    try:
+        observed = preference.observed_win_rate(
+            observations, tie_policy=protocol.tie_policy
+        )
+        bound = preference.win_rate_lower_bound(
+            observations, alpha=args.alpha, tie_policy=protocol.tie_policy
+        )
+    except ValueError as error:
+        print(f"    no bound: {error}", file=sys.stderr)
+        return EXIT_ATTENTION
+    print(
+        f"    win rate at least {bound:.3f} (observed {observed:.3f}) at two-sided "
+        f"alpha {args.alpha}"
+    )
+    # The clusters the bound actually rested on: ties leave the analysis set under a
+    # drop policy, mirroring what the bound itself did.
+    analysis = [
+        observation
+        for observation in observations
+        if protocol.tie_policy is preference.TiePolicy.HALF_WIN
+        or observation.outcome is not preference.PairOutcome.TIE
+    ]
+    reader_clusters = len({observation.reader_id for observation in analysis})
+    pair_clusters = len({observation.pair_id for observation in analysis})
+    floor = preference.DESCRIPTIVE_CLUSTER_FLOOR
+    if reader_clusters < floor or pair_clusters < floor:
+        print(
+            f"    caveat: {reader_clusters} reader and {pair_clusters} pair cluster(s) — "
+            "the bootstrap under-covers at this size, so the bound is descriptive; the "
+            "promotion floors are the real gate"
+        )
+    print(
+        "    the headline claim divides alpha by the candidate-book count "
+        "(§61 pre-registration 5)"
+    )
     return EXIT_OK
 
 
@@ -2118,10 +2760,11 @@ def build_parser() -> argparse.ArgumentParser:
             for member in calibration.EvidenceClass
             if member is not calibration.EvidenceClass.UNCLASSIFIED
         ],
-        help="what the numbers are about: judgment (humans read our scenes), population "
-        "(published-corpus distribution), behaviour (aggregate reader behaviour on other "
-        "authors' stories). Required, because a default would hand the permissive class to "
-        "a caller that said nothing",
+        help="what the numbers are about: judgment (humans read our scenes), preference "
+        "(humans chose between paired texts, §61), population (published-corpus "
+        "distribution), behaviour (aggregate reader behaviour on other authors' stories). "
+        "Required, because a default would hand the permissive class to a caller that "
+        "said nothing",
     )
     calibrate.add_argument(
         "--grain",
@@ -2150,6 +2793,146 @@ def build_parser() -> argparse.ArgumentParser:
     )
     calibrate.add_argument("--note")
     calibrate.set_defaults(func=cmd_calibrate)
+
+    corpus_add = sub.add_parser(
+        "corpus-add",
+        help="add one matched published-human excerpt to the comparison corpus (§61)",
+    )
+    corpus_add.add_argument(
+        "path", type=Path, nargs="?", help="text file to read; stdin if omitted"
+    )
+    corpus_add.add_argument(
+        "--source",
+        required=True,
+        help="where the excerpt is from, e.g. a serial title. A matching covariate, "
+        "required rather than defaulted",
+    )
+    corpus_add.add_argument(
+        "--genre", required=True, help="matching covariate, e.g. litrpg"
+    )
+    corpus_add.add_argument(
+        "--era",
+        required=True,
+        help="matching covariate, e.g. pre-2023 — the confound the craft profile's "
+        "control cohort exists to hold fixed",
+    )
+    corpus_add.set_defaults(func=cmd_corpus_add)
+
+    protocol_cmd = sub.add_parser(
+        "protocol",
+        help="pre-register a pairwise comparison frame — the frame is the claim (§61)",
+    )
+    protocol_cmd.add_argument(
+        "--frame",
+        required=True,
+        help="the comparator sampling frame, as prose: what population the other side is "
+        "drawn from and what question the reader answers. Declared before the first "
+        "reader is paid",
+    )
+    protocol_cmd.add_argument(
+        "--tie-policy",
+        required=True,
+        choices=[member.value for member in preference.TiePolicy],
+        help="how a tie enters the win rate: half_win counts it as half a win, drop "
+        "excludes it. Declared before the first judgment (§61 pre-registration 2)",
+    )
+    protocol_cmd.add_argument(
+        "--grain",
+        required=True,
+        choices=[member.value for member in preference.PairGrain],
+        help="what a reader is handed: one scene, or one chapter (chapter drawing is not "
+        "yet built)",
+    )
+    protocol_cmd.set_defaults(func=cmd_protocol)
+
+    pair_draw = sub.add_parser(
+        "pair-draw",
+        help="draw blinded pairs for a protocol — content-derived, never random",
+    )
+    pair_draw.add_argument(
+        "--protocol", help="a declared protocol id; required unless --siblings"
+    )
+    pair_draw.add_argument(
+        "--siblings",
+        action="store_true",
+        help="draw system-vs-system pairs under the built-in internal-v0 frame "
+        "(selection evidence, not the superiority claim)",
+    )
+    pair_draw.add_argument(
+        "--rate",
+        type=float,
+        default=1.0,
+        help="share of the pair space to draw, by bucket arithmetic on pair identity. "
+        "1.0 draws the whole cross product; raising a rate later draws a superset of "
+        "every earlier draw, never a reshuffle",
+    )
+    pair_draw.set_defaults(func=cmd_pair_draw)
+
+    pairs_cmd = sub.add_parser(
+        "pairs", help="the blinded pair queue: both texts, no provenance"
+    )
+    pairs_cmd.add_argument(
+        "--pending", action="store_true", help="only samples awaiting a reader"
+    )
+    pairs_cmd.add_argument(
+        "--quiet", action="store_true", help="list the samples without printing prose"
+    )
+    pairs_cmd.set_defaults(func=cmd_pairs)
+
+    pair_judge = sub.add_parser(
+        "pair-judge", help="record one pairwise preference verdict"
+    )
+    pair_judge.add_argument("sample_id")
+    pair_judge.add_argument(
+        "verdict",
+        choices=[member.value for member in preference.PairVerdict],
+        help="relative to presented position; not_sure is abstention and is measured",
+    )
+    pair_judge.add_argument(
+        "--reader", required=True, help="who judged it — a cluster dimension of the bound"
+    )
+    pair_judge.add_argument(
+        "--recognized",
+        required=True,
+        choices=["yes", "no"],
+        help="did the reader recognise either passage? Required, because a judgment that "
+        "never answered the question cannot be excluded — §58 measured familiarity "
+        "swinging a score several times harder than real damage. yes is stored and "
+        "excluded from analysis (§61 pre-registration 3)",
+    )
+    pair_judge.add_argument("--note", help="what the reader noticed")
+    pair_judge.set_defaults(func=cmd_pair_judge)
+
+    pair_export = sub.add_parser(
+        "pair-export", help="pending pairs as JSONL for external paid readers"
+    )
+    pair_export.add_argument(
+        "destination", type=Path, nargs="?", help="file to write; stdout if omitted"
+    )
+    pair_export.set_defaults(func=cmd_pair_export)
+
+    pair_import = sub.add_parser(
+        "pair-import",
+        help="verdicts JSONL back from external readers (safe to re-run; duplicates skip)",
+    )
+    pair_import.add_argument(
+        "path", type=Path, nargs="?", help="JSONL file to read; stdin if omitted"
+    )
+    pair_import.set_defaults(func=cmd_pair_import)
+
+    win_rate = sub.add_parser(
+        "win-rate",
+        help="win rate against the matched corpus, led by its clustered lower bound",
+    )
+    win_rate.add_argument("--protocol", required=True, help="the declared protocol id")
+    win_rate.add_argument(
+        "--alpha",
+        type=float,
+        default=calibration.PROMOTION_ALPHA,
+        help="two-sided confidence level for this protocol alone; the headline claim "
+        "divides it by the candidate-book count (§61 pre-registration 5)",
+    )
+    win_rate.set_defaults(func=cmd_win_rate)
 
     craft = sub.add_parser("craft", help="advisory craft measurements, and their limits")
     craft.add_argument("--metric")

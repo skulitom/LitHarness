@@ -37,6 +37,12 @@ from litharness.domain.generation import (
 from litharness.domain.jobs import Job
 from litharness.domain.plan_refinement import PlanApplication, PlanRevision
 from litharness.domain.policy import PolicyDecision
+from litharness.domain.preference import (
+    ComparisonExcerpt,
+    PairSample,
+    PairVerdict,
+    PreferenceProtocol,
+)
 from litharness.domain.revision import Revision
 
 
@@ -213,6 +219,45 @@ class AuditRepository(Protocol):
     ) -> int: ...
 
 
+class PreferenceRepository(Protocol):
+    """The pairwise preference engine's persistence (§61 Add 1).
+
+    A sibling of `AuditRepository` rather than an extension of it, so that contract stays
+    exactly what its existing implementors satisfy — a pair sample is a different thing
+    with a different identity, not a second meaning for an audit method to grow.
+    """
+
+    def excerpts(self) -> list[ComparisonExcerpt]: ...
+
+    def record_excerpt(
+        self, excerpt: ComparisonExcerpt, *, events: Sequence[Event] = ...
+    ) -> bool: ...
+
+    def protocols(self) -> list[PreferenceProtocol]: ...
+
+    def record_protocol(
+        self, protocol: PreferenceProtocol, *, events: Sequence[Event] = ...
+    ) -> bool: ...
+
+    def pair_samples(self, *, pending_only: bool = ...) -> list[PairSample]: ...
+
+    def record_pair_sample(
+        self, sample: PairSample, *, events: Sequence[Event] = ...
+    ) -> bool: ...
+
+    def record_pair_verdict(
+        self,
+        sample_id: str,
+        verdict: PairVerdict,
+        *,
+        at: str,
+        by: str,
+        recognized: bool,
+        note: str | None = ...,
+        events: Sequence[Event] = ...,
+    ) -> bool: ...
+
+
 class EventRepository(Protocol):
     def append_events(self, events: Iterable[Event]) -> None: ...
 
@@ -311,6 +356,10 @@ class DraftStore(
     FindingRepository,
     StateRepository,
     AuditRepository,
+    # The craft ladder's per-class staleness dispatch reads answered pair verdicts for
+    # `EvidenceClass.PREFERENCE` rows, the same way it reads answered audit samples for
+    # judgment rows. Read-only from the draft path; nothing on a tick writes here.
+    PreferenceRepository,
     Protocol,
 ):
     pass
@@ -386,6 +435,7 @@ class ApplicationStore(
     FindingRepository,
     StateRepository,
     AuditRepository,
+    PreferenceRepository,
     SummaryRepository,
     EventRepository,
     OperationsRepository,
@@ -455,6 +505,7 @@ __all__ = [
     "NarrativePlanningStore",
     "PlanRefinementStore",
     "PlanningStore",
+    "PreferenceRepository",
     "RepairStore",
     "StatusStore",
     "TextGenerator",
