@@ -1,6 +1,11 @@
 # LitHarness
 
-An autonomous book-production system with a human director. See [PLAN.md](PLAN.md) for the
+An autonomous book-production system with a human director, refounded on one goal:
+**superhuman literary quality**, operationalised as a pre-registered pairwise bar —
+the lower bound of a 95% CI on blinded, position-swapped win rate against matched
+published-human prose exceeds 0.5, judged by paid genre readers
+([stage-0 §61](plan/stage-0-decisions.md)). Throughput, uptime, and publication
+cadence are not goals. See [PLAN.md](PLAN.md) for the
 master plan and [plan/](plan/) for companion design documents — in particular
 [plan/stage-0-decisions.md](plan/stage-0-decisions.md), which records the load-bearing
 design decisions and why each went the way it did, and
@@ -26,8 +31,10 @@ the scenes that state it.
 It writes a book whose scenes know about each other, refuses one that contradicts itself, and
 — since it now asks its generator to state game state on the page and reads that back — can
 do both on a book with no imported snapshot, which is what makes Stage 3 startable. **Nothing
-in it yet measures whether the book is any *good*.** See
-[What is not built](#what-is-not-built).
+in it yet measures whether the book is any *good* — but the instrument that could is now
+built and waiting on funded judgment**: the pairwise preference engine, whose empty
+verdict store is the honest measure of the gap, exactly as the empty `calibrations`
+table was before it. See [What is not built](#what-is-not-built).
 
 ## Setup
 
@@ -494,9 +501,14 @@ Stated plainly, because a system that runs is easy to mistake for a system that 
   proposals are validated and accepted against a baseline, interpret directives atomically,
   detect concurrent changes, preserve rationale/model provenance, and roll back through a
   new forward revision. A model now produces one bounded proposal for each premise, arc,
-  tone, or chapter note. What does not exist is full-book plan generation, foreshadow/payoff
-  or progression scheduling, structural/mechanical plan critics, or replacement of the
-  fixed six-scene template.
+  tone, or chapter note. The book-level outline writes one statement per scene plus a
+  progression schedule; the promise/payoff ledger tracks what each scene opens, pays,
+  and still owes with due positions surfacing into the drafting context; and under
+  `--plan-search`, K alternative beat-plans per span are drafted and selected by
+  pairwise judgment (human verdicts first; a judge only when a current
+  PREFERENCE-class calibration licenses it on the selection task). What does not exist
+  is structural/mechanical plan critics or replacement of the fixed six-beat arc
+  template.
 - **A context packet with no relevance scoring.** It carries prior prose, locked
   constraints, open threads and POV-filtered state, and it is graded against the contracts
   `GoldContextSuite` — mandatory items present, forbidden POV leak absent. What it does not
@@ -528,7 +540,16 @@ Stated plainly, because a system that runs is easy to mistake for a system that 
   stand refuted, [research/quality-measurement/BRIEF.md](research/quality-measurement/BRIEF.md)
   §2 is canonical — this sentence used to restate a count and the restatement was stale
   within days, which is exactly why the ledger owns the number. The blocker is human
-  judgment, not effort: `litharness audit` is the queue that collects it.
+  judgment, not effort — and the instrument for collecting it at scale is now built:
+  the **pairwise preference engine** (`corpus-add`, `protocol`, `pair-draw`, `pairs`,
+  `pair-judge`, `pair-export`, `pair-import`, `win-rate`) runs blinded,
+  position-swapped comparisons against matched published-human prose under a
+  pre-registered protocol, with a reader-by-pair clustered lower bound on the win
+  rate; [plan/preference-runbook.md](plan/preference-runbook.md) is the operating
+  procedure. `litharness audit` remains as the smoke-check queue whose deterministic
+  draw the engine inherited. Structural instrumentation aimed at what moves readers —
+  overdue promises and zero-delta scenes — is recorded per accepted scene, advisory
+  until calibrated.
 - **The full deterministic pack is opt-in, and its live inputs are still thin.** Every
   accepted draft is automatically evaluated by `state.contradiction.v0`. When the
   ContinuityEvaluation executable is configured, the same durable job also runs all six
