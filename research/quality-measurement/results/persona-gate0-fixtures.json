@@ -1,0 +1,235 @@
+{
+ "metric": "persona_panel.would_stop.v0",
+ "protocol": "plan/persona-reader-validity.md",
+ "entry": "plan/stage-0-decisions.md \u00a770",
+ "transport": "cli",
+ "panel_model": "claude-haiku-4-5",
+ "spot_model": "claude-opus-5",
+ "personas": [
+  "grinder",
+  "stakes",
+  "voice",
+  "newcomer"
+ ],
+ "n_samples": 5,
+ "passages": [
+  "mystery:scene-1",
+  "mystery:scene-2",
+  "mystery:scene-3",
+  "mystery:scene-4",
+  "mystery:scene-5",
+  "mystery:scene-6"
+ ],
+ "passage_source": "fixture:golden",
+ "variants_scored": 6,
+ "api_calls": 246,
+ "replayed_calls": 0,
+ "refused_samples": 5,
+ "usage": {
+  "input": 221028,
+  "output": 256923,
+  "cache_read": 5005273,
+  "cache_write": 742593,
+  "equivalent_usd": 3.8138
+ },
+ "minutes": 22.0,
+ "persona_fidelity": [
+  {
+   "persona": "grinder",
+   "held_out": 2,
+   "matched": 0,
+   "verdict_agreement": 0.0,
+   "reason_agreement": 0.0,
+   "detail": []
+  },
+  {
+   "persona": "stakes",
+   "held_out": 2,
+   "matched": 0,
+   "verdict_agreement": 0.0,
+   "reason_agreement": 0.0,
+   "detail": []
+  },
+  {
+   "persona": "voice",
+   "held_out": 2,
+   "matched": 2,
+   "verdict_agreement": 0.5,
+   "reason_agreement": 0.0,
+   "detail": [
+    {
+     "work": "Cradle (Unsouled)",
+     "expected_verdict": "not-sure",
+     "got_verdict": "not-sure",
+     "verdict_ok": true,
+     "expected_reason": "flat-voice",
+     "got_reason": "padding",
+     "reason_ok": false
+    },
+    {
+     "work": "Mother of Learning",
+     "expected_verdict": "not-sure",
+     "got_verdict": "keep-reading",
+     "verdict_ok": false,
+     "expected_reason": "flat-voice",
+     "got_reason": "voice-landed",
+     "reason_ok": false
+    }
+   ]
+  },
+  {
+   "persona": "newcomer",
+   "held_out": 2,
+   "matched": 0,
+   "verdict_agreement": 0.0,
+   "reason_agreement": 0.0,
+   "detail": []
+  }
+ ],
+ "gate0_icc_pooled": {
+  "icc1": 0.4892,
+  "groups": 6,
+  "k_mean": 19.17,
+  "ms_between": 0.7992,
+  "ms_within": 0.04128
+ },
+ "gate0_icc_per_persona": {
+  "grinder": {
+   "icc1": 0.4854,
+   "groups": 6,
+   "k_mean": 4.83,
+   "ms_between": 0.29007,
+   "ms_within": 0.05217
+  },
+  "stakes": {
+   "icc1": 0.1027,
+   "groups": 6,
+   "k_mean": 4.83,
+   "ms_between": 0.05065,
+   "ms_within": 0.03261
+  },
+  "voice": {
+   "icc1": NaN,
+   "groups": 6,
+   "k_mean": 4.83,
+   "ms_between": 0.0,
+   "ms_within": 0.0
+  },
+  "newcomer": {
+   "icc1": 1.0,
+   "groups": 6,
+   "k_mean": 4.67,
+   "ms_between": 0.77857,
+   "ms_within": 0.0
+  }
+ },
+ "gate1": {
+  "verdict": "NOT RUN \u2014 --gate0 scored the originals only, no ablation ladder"
+ },
+ "stake_coverage": {
+  "mystery:scene-1": {
+   "sentences": 11,
+   "stake_sentences": 3,
+   "stake_sentence_share": 0.2727,
+   "stake_word_share": 0.3253
+  },
+  "mystery:scene-2": {
+   "sentences": 12,
+   "stake_sentences": 0,
+   "stake_sentence_share": 0.0,
+   "stake_word_share": 0.0
+  },
+  "mystery:scene-3": {
+   "sentences": 10,
+   "stake_sentences": 1,
+   "stake_sentence_share": 0.1,
+   "stake_word_share": 0.0703
+  },
+  "mystery:scene-4": {
+   "sentences": 7,
+   "stake_sentences": 0,
+   "stake_sentence_share": 0.0,
+   "stake_word_share": 0.0
+  },
+  "mystery:scene-5": {
+   "sentences": 12,
+   "stake_sentences": 2,
+   "stake_sentence_share": 0.1667,
+   "stake_word_share": 0.2595
+  },
+  "mystery:scene-6": {
+   "sentences": 6,
+   "stake_sentences": 0,
+   "stake_sentence_share": 0.0,
+   "stake_word_share": 0.0
+  }
+ },
+ "destake_vs_matched_deletion": {
+  "available": false,
+  "note": "--gate0 ran no ablations"
+ },
+ "kill_conditions": {
+  "caricature": {
+   "persona_ss": 0.09448,
+   "passage_ss": 0.71302,
+   "ratio": 0.1325
+  },
+  "collapse": {
+   "mean_rho": 1.0,
+   "pairs": [
+    {
+     "a": "grinder",
+     "b": "newcomer",
+     "rho": 1.0
+    },
+    {
+     "a": "grinder",
+     "b": "stakes",
+     "rho": 1.0
+    },
+    {
+     "a": "grinder",
+     "b": "voice",
+     "rho": null
+    },
+    {
+     "a": "newcomer",
+     "b": "stakes",
+     "rho": 1.0
+    },
+    {
+     "a": "newcomer",
+     "b": "voice",
+     "rho": null
+    },
+    {
+     "a": "stakes",
+     "b": "voice",
+     "rho": null
+    }
+   ],
+   "undefined_pairs": 3,
+   "undefined_note": "a pair is undefined when one persona's rate is constant across passages \u2014 read it with the positivity floor, not as missing data",
+   "null_p95": 1.0,
+   "null_replicates": 962,
+   "null_discarded": 1038,
+   "note": "independent-persona null simulated at this run's passages x base rate"
+  },
+  "positivity_floor": {
+   "would_stop_base_rate": 0.0783,
+   "scored_samples": 115,
+   "note": "a rate at or near 0 on passages a human majority stops on is dead as a stop predictor; the human majority is gate 2's to supply"
+  },
+  "reason_code_counts": {
+   "stakes-real": 44,
+   "curious": 28,
+   "voice-landed": 23,
+   "pulled-forward": 6,
+   "nothing-at-stake": 5,
+   "flat-voice": 3,
+   "no-payoff": 3,
+   "lost-track": 2,
+   "numbers-meaningless": 1
+  }
+ }
+}

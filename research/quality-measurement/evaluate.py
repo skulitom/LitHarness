@@ -44,7 +44,7 @@ import statistics
 from collections.abc import Callable, Iterable, Sequence
 from dataclasses import dataclass, field
 
-from ablate import DEGRADERS, DOSES, SHAMS, variants
+from ablate import ALL, DOSES, Ablation, variants
 
 Scorer = Callable[[str], float]
 
@@ -222,6 +222,7 @@ def evaluate(
     donors: Sequence[str] = (),
     doses: tuple[float, ...] = DOSES,
     direction: int = -1,
+    ablations: tuple[Ablation, ...] | None = None,
 ) -> Result:
     """Run the ablation ladder and every control over a set of chapters.
 
@@ -233,8 +234,13 @@ def evaluate(
     never credited: a metric that separates the wrong way is dead, not inverted.
     """
     chapters = list(texts)
-    degrader_keys = {ablation.key for ablation in DEGRADERS}
-    sham_keys = {ablation.key for ablation in SHAMS}
+    # Derived from `sign` rather than from `DEGRADERS`/`SHAMS` membership, so an extended set
+    # (`ablate.PERSONA_SET`) classifies correctly without this function knowing the tuples it
+    # came from. `Ablation.sign` is -1 for a degrader and 0 for a sham, and there is
+    # deliberately no +1 — nothing here claims to improve prose.
+    active = ALL if ablations is None else ablations
+    degrader_keys = {ablation.key for ablation in active if ablation.sign == -1}
+    sham_keys = {ablation.key for ablation in active if ablation.sign == 0}
 
     per_key: dict[str, list[tuple[float, float]]] = {}
     detect_rates: list[float] = []
@@ -251,7 +257,9 @@ def evaluate(
         degrader_deltas: list[float] = []
         length_deltas: list[float] = []
         sham_deltas: list[float] = []
-        for key, _sign, _item, dose, damaged in variants(text, donor=donor, doses=doses):
+        for key, _sign, _item, dose, damaged in variants(
+            text, donor=donor, doses=doses, ablations=active
+        ):
             score = scorer(damaged)
             length = float(len(damaged.split()))
             if key == "original":

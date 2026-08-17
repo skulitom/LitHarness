@@ -31,6 +31,15 @@ dev = [
 corpus = [
   "datasets>=3.0",
 ]
+# The persona-reader validity program (stage-0 §70, plan/persona-reader-validity.md). Its own
+# extra for the same reason `corpus` is: this pulls an API client and a network stack into a repo
+# whose only runtime dependency is its own contracts package, and nothing in `src/` imports it —
+# `research/quality-measurement/elicit.py` is the only consumer and it imports lazily, so the
+# suite runs and the wheel builds with this uninstalled. It also spends money, which is a second
+# reason not to have it installed by default.
+persona = [
+  "anthropic>=0.70",
+]
 
 [tool.uv.sources]
 # A git rev, not a relative path: the path form needed a checkout beside this one and could

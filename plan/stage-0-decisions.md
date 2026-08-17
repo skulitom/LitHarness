@@ -3523,9 +3523,192 @@ count for PREFERENCE holdouts excludes abstentions and recognized rows while
 deliberately pooling protocols — the digest pools too, and over-invalidation is the
 safe direction.
 
-*(§70 is reserved by a parallel session's persona-reader validity program; this ledger
-skips it here rather than colliding, per the §60 lesson. If that programme lands under
-another number, §70 is a recorded gap and this note is why.)*
+## 70. The reader question was never asked, so it is untested rather than dead
+
+The instrument: a system-prompted model held in a reader persona, asked what reading a
+passage was *like* rather than how to improve it, answering in the audit queue's own
+`--keep-reading` / `--would-stop` / `--not-sure` vocabulary. This entry is the licensing
+argument and the four corrections the record forces; the protocol is
+[plan/persona-reader-validity.md](persona-reader-validity.md). **Nothing is promoted here and
+no gate changes.** What lands is a pre-registered validity program with kill conditions, in
+the shape §61 used for every other channel.
+
+**Why this is not just another candidate proxy, stated against the ledger rather than
+asserted.** Every refutation on the books bounds a different instrument than this one.
+BRIEF.md §2's twenty-one dead proxies are deterministic and correlational (§3's diagnosis:
+static, absolute, correlational). Pass 4's model judges were asked to *improve* prose and
+made it worse — an expert-frame revision result, which is why the architecture is
+`detect → scoped repair → verify`. Pass 6's CDG read a log-probability distribution, not a
+report. Pass 3 died on archive capture date; Pass 2 detected the year. **No pass in the
+record asked a model, in character as a reader, what the passage did to it.** BRIEF §3's
+status note is careful about which doors it closed, and it closed the surprisal door and the
+RoyalRoad within-story door — not this one. So the honest classification is *untested*, and
+in this project untested means a validity study with pre-registered kill conditions, never a
+feature build.
+
+**The reframe that makes it tractable, and it settles three design arguments at once.** A
+persona reader is a **predictor, not a witness**. Whether its report is faithful to any
+internal state is out of scope by construction; the only target is report–population
+agreement against human reader responses on held-out material. So the datum is a
+*distribution* and aggregation is distribution-matching, never averaging; "is this persona
+realistic" is unaskable and "is this persona calibrated" replaces it; and every known failure
+mode of persona prompting converts into a pre-registerable control rather than a worry —
+caricature, collapse-to-one-judge, positivity floor, knowledge leak, demand characteristics,
+and reason confabulation each get a row in the protocol's kill table.
+
+**One consistency argument in its favour, because it is a port rather than an invention.**
+This project already made exactly this choice on the human side: the audit vocabulary is
+keep-reading/would-stop deliberately, "§1a.5's bar rather than a rubric". Pointing the same
+question at a model puts instrument and ground truth in one vocabulary by construction, which
+is what makes gate 2's agreement computable without a mapping layer. Borrowing the words
+borrows none of the standing — §67 demoted that queue to a smoke check.
+
+**Four corrections to the directive as drafted, accepted before anything lands.**
+
+**(1) The memorisation fork, which changes the shape rather than a detail.** BRIEF §2 Pass 6's
+transferable rule is that a model-based measure validated on published fiction either runs on
+text the model provably has not memorised or measures its familiarity term explicitly — the
+rename sham moved CDG **2.0× further than the strongest real degrader**, upward and
+dose-monotone, while real damage sat at chance. A persona validated on published serials sits
+in that trap. So gates 0–1 run on this system's own generated prose (`research/frontier-arm/`),
+which BRIEF §3 names as the one remaining untried direction *and* prices in the same
+sentence — no published-reader label reaches it, which is exactly why sensitivity cannot be
+the last gate. Gates 2–3 run on published material with a persona-facing **recognition probe**
+recorded as a covariate: §61's pre-registration (3) and the preference runbook's recognition
+question, pointed at the model.
+
+**(2) A gate 0 the record demands and the directive omitted.** Pass 5 earned "check
+within-unit reliability before believing any per-unit statistic" and tree-Haar died to it at
+`ICC(1) = 0.270`, within-book sd equal to between-book sd. The directive's own `n ≥ 5`
+samples per persona per boundary makes ICC computable here for the first time, so it becomes
+the first gate: a panel whose within-boundary variance matches its between-boundary variance
+is noise wearing a verdict, and that is the cheapest available kill.
+
+**(3) `UntrustedVerdict` is unnecessary, and the mechanism already in the tree is better.**
+`EvidenceClass` is a total dispatcher and `veto_for` raises `NotPromotable` for any class it
+does not map, so a new member absent from `veto_for` **licenses no refusal with zero code** —
+precisely how `PREFERENCE` landed (§69). A parallel wrapper type would duplicate a guarantee
+the enum already provides by construction. It lands when gate 3 passes and not before: a row
+that cannot yet be earned is not a row. **And the ceiling the directive did not state:**
+`JUDGMENT` is *a human's answer about one of our units* and the only class that may say a
+scene is not good enough, so a persona panel can never be a `JUDGMENT` row however well it
+calibrates. Validated, it earns selection between candidates and advisory annotation, never
+absolute refusal — the same ceiling §61 Add 3 put on preference.
+
+**(4) Distance is a threat to this design specifically, and the closed design left the
+number.** feasibility.md §4.3 measured an interventional effect on a model-based readout
+decaying to nothing with distance: real − placebo `+0.2615` at gap 0 (12/12, p = 0.0005),
+`+0.0608` at 256 tokens (11/12, p = 0.0063), `+0.0102` at 512 tokens (8/12, **p = 0.388**). A
+persona reporting at a scene boundary is routinely further from a manipulation than 512
+tokens, so manipulation position is a declared covariate and the decay curve is reported. It
+also hands the program a control it would not otherwise have had: sensitivity that decays on
+*the same curve* as a log-probability readout is a surface-locality measure in a costume,
+while a flinch that survives 512+ tokens is something the closed design could not reach.
+
+**What is reused rather than built, which is most of the sensitivity arm.**
+`research/quality-measurement/ablate.py` already implements `rename_entities` and `respell` as
+pre-registered shams with within-chapter paired AUC and a chapter-resampled bootstrap CI, and
+`evaluate.verdict()` already carries the whole pass/fail ladder — `detect < 0.55`, then
+`margin = (detect − 0.5) − |sham − 0.5| < 0.05` read per sham and never as `detect − sham`
+(the subtraction reported `+0.2342` on the battery whose sham effect was the largest in the
+table), then §1a.1's word-count incumbent, then the paired interval. **So the panel inherits
+the rung that actually finished CDG**: word count separated that variant pool at 0.5229
+against CDG's 0.5188, and a persona panel that cannot out-separate a word count is an
+expensive word count. Gate 1 is a new elicitation front-end on a burned-in battery — no new
+pass/fail arithmetic — which makes the placebo arm close to free, and it is not optional,
+because the ledger already contains an instrument that died to renames.
+
+**What this entry changes elsewhere: nothing.** PLAN.md's bar is untouched — §1a.5 still
+carries the superiority bar and this program is not evidence against or for it. No metric
+id, no enum member, no migration, no CLI verb. §61's four-channel table gains a fifth row
+only when a gate reports: *persona-reader elicitation — program pre-registered, unmeasured*.
+
+**What it licenses, and the sequencing is the argument for doing it now.** Gates 0 and 1 are
+model-only and fundable today; they compete for no money with the preference engine whose
+first funded month is already §61's kill-switch. The two gates most likely to kill the
+program are the two that need no budget, and a clause that fails there costs nothing but the
+entry recording it — which, on this project's record, is the normal outcome and the reason
+the gates are ordered this way.
+
+**Addendum: the instrument is built, and two of its parts were wrong on first inspection.**
+`research/quality-measurement/personas.py` (four taste-anchored readers, held-out anchors as the
+fidelity and drift probe), `elicit.py` (two-stage elicitation, stage 2 constrained by
+`output_config.format`, digest-keyed replay cache, refusals recorded as refusals) and
+`persona_battery.py` (gate 0's ICC, gate 1 through `evaluate.verdict()`, the pre-registered kill
+conditions with the collapse threshold's null simulated at the run's own n). `corpus_io.
+generated_scenes` reads drafted scenes straight out of a book database through
+`application/export.collect`, which is what makes the un-memorised arm of correction (1) runnable
+rather than aspirational. No metric id, no enum member, no migration, no CLI verb; `anthropic`
+enters as an optional `persona` extra that nothing in `src/` imports. Suite green at 784.
+
+**§5's manipulation set is now partly discharged, by a construction whose control is the claim.**
+`ablate.destake` deletes the sentences that assert what failure costs; `ablate.deplete_matched`
+deletes the *same word count* — verified exact — from sentences that assert none. The difference
+between the two arms is the effect of removing stakes with length, position and quantity of
+deletion held fixed, and it is the only number in that summary that speaks to the reader
+hypothesis: if they move the panel equally, the lexicon selected nothing and de-stake is deletion
+wearing a name. `rewhitespace` completes the placebo pair. All three are kept out of `ablate.ALL`
+and reached through a new `ablations=` parameter, so §58's recorded battery still schedules exactly
+the variants it scored. **Filler-inject and confusion-inject stay unbuilt** — a confusion
+injection has to know what a passage's referents are, and the only thing that knows is a
+generator, which `dialogue_flatten`'s docstring already refused to admit to this ground truth.
+
+**The two defects are worth the space because both are the ledger's own recurring shape.** The
+stake lexicon's first version scored *"the shrill whistle of the incoming train broke him out of
+his concentration"* as the most stake-bearing sentence in a Mother of Learning chapter — `broke`
+matching figuratively — and three of its next four hits were selected by `finally` and `last`
+alone. A membership test had quietly selected a grammatical category nobody meant, which is
+`rename_entities`'s stopword bug one function over. Fixed by pruning the polysemous cost words and
+demoting finality to an amplifier that cannot open a score. And the summary's `passage_source`
+was a chained conditional ending in `else "published"`, so `--book-db` fell through it and a run on
+this system's own prose recorded itself as having scored the memorised corpus — the warning was
+keyed separately and stayed right, so nothing failed and the record simply described a different
+experiment. Both were found by printing what the code selected rather than by reading it.
+
+**Addendum 2: gate 0 has been run, and it is not passed — the corpus could not support it.** 246
+calls of `claude-haiku-4-5` through `claude -p` (the local install's own authentication, so
+subscription quota rather than an API key; $3.81 equivalent, 22 minutes), 4 personas x 5 samples
+over the six golden fixture scenes, un-memorised and 103–166 words each. Pooled `ICC(1)` came back
+**0.489**, comfortably above the 0.270 that killed tree-Haar — and the number is an artifact.
+**Five of the six passages produced zero would-stop across every persona and every sample; all
+nine stops came from scene 6.** So the between-group variance the ICC is made of is one passage
+differing from five identical ones, which is a step function wearing a reliability estimate. The
+per-persona breakdown says the same thing louder: `voice` never once said would-stop in thirty
+samples (zero variance everywhere, ICC undefined), `newcomer` scored exactly 1.0 on zero
+within-passage variance, `stakes` sat at 0.103, and only `grinder` at 0.485 looks like a reader
+with signal. The would-stop base rate over the whole run is **0.078**.
+
+**Two things did work, and one of them is a method rule paying out.** The caricature condition
+passes cleanly — passage sum-of-squares 0.713 against persona 0.094, a ratio of 0.13, so the
+response tracks the text about seven times harder than it tracks the costume, which is the single
+most encouraging number the program has produced. And the collapse condition returned an observed
+mean inter-persona rank correlation of **1.0** — which, read against the pre-registered 0.9
+threshold alone, says "one judge in costumes, kill the panel". Its simulated null at this run's
+own dimensions also reaches **1.0** at the 95th percentile: with six passages and a 0.078 base
+rate, independent personas produce identical all-zero rankings by chance constantly, so the
+statistic has no power here and the observed value carries no information. Pass 5's "simulate the
+null at your own n" is the only reason that was visible rather than acted on, and this entry is
+what that rule bought.
+
+**Scene 6 is the mystery's confession-and-arrest — its ending — which makes the one signal in the
+run the most suspicious thing in it.** A reader handed the final scene of a story out of context
+has an obvious reason to say "would stop" that has nothing to do with craft. The next run does not
+need more samples; it needs passages long enough and mid-book enough for stopping to mean
+something, which is what `corpus_io.generated_scenes` and `--book-db` exist to supply.
+
+**And the fidelity probe was broken by construction, which the run exposed on its first four
+calls.** Held-out anchors were withheld from the system prompt entirely, so the probe asked each
+persona about books the prompt had never said it read — and three of four answered, correctly and
+fatally, "I haven't actually read these books." A model's whole reading history *is* its prompt,
+so holding out the title holds out the premise, and the probe was measuring willingness to
+confabulate rather than stability of taste. Fixed by naming held-out titles with their verdicts
+withheld. Retested live, the mechanism still cannot separate three different failures: `grinder`
+refuses the frame outright, `voice` answered *correctly and in register* — "Cradle: not-sure, the
+voice flattens out", matching its held-out anchor — but in prose rather than JSON and scored zero,
+and only `stakes` and `newcomer` produced parseable verdicts to actually disagree with. **A gate
+that drops personas cannot be allowed to conflate "wouldn't answer", "answered in the wrong
+format" and "answered differently".** That is the transport's missing structured-output guarantee
+reaching a decision it should never touch, and it is the next thing to fix.
 
 ## 71. The book now owes things on the record, and a scene that changes nothing says so
 

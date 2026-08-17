@@ -344,6 +344,229 @@ def respell(text: str, strength: float) -> str:
     return pattern.sub(swap, text).replace("“", '"').replace("”", '"')
 
 
+# ------------------------------------------------- stakes (the persona-reader extension)
+
+#: Words that name a cost. The core of the stake lexicon: what failure would take.
+#:
+#: **Pruned once already, by inspection, and the pruning is the interesting part.** The first
+#: version also carried `break`/`broke`/`broken`, `shatter`, `burn`, `hang`, `collapse` and
+#: `hurt`. Printed against Mother of Learning chapter 10, its top-scoring "stake" sentence was
+#: *"the shrill whistle of the incoming train broke him out of his concentration"* — `broke`
+#: matching a figurative use, in a sentence about nothing being at risk. Those words are too
+#: polysemous to carry a cost claim ("broke into a run", "burned with shame", "collapsed into a
+#: chair"), and this is the same defect class as `rename_entities`'s stopword bug one function
+#: over: a frequency-or-membership selector quietly selecting the wrong grammatical category.
+#: The cost of pruning is missing a genuine figurative stake, which only makes the transform
+#: gentler — the safe direction for something whose effect is the claim.
+_STAKE_COST = frozenset({
+    "die", "dies", "died", "dying", "death", "deaths", "dead", "kill", "kills", "killed",
+    "killing", "murder", "murdered", "perish", "perished", "execute", "executed",
+    "lose", "loses", "lost", "losing", "loss", "ruin", "ruined", "ruins",
+    "destroy", "destroyed", "destroys", "destruction", "doomed", "doom",
+    "fail", "fails", "failed", "failing", "failure", "starve", "starved", "starving",
+    "drown", "drowned", "bleed", "bleeding", "bled", "wound", "wounded", "maimed",
+    "debt", "debts", "owe", "owes", "owed", "forfeit", "forfeited",
+    "sacrifice", "sacrificed", "betray", "betrayed", "trapped",
+    "cost", "costs", "price", "harm", "harmed", "danger", "dangerous",
+    "threat", "threatened", "threatens", "risk", "risks", "risked", "risking",
+})
+#: Words that name irreversibility — but only as an **amplifier**, never a source. A cost that
+#: can be undone is a smaller stake than one that cannot, so finality raises a score that
+#: already exists; it cannot create one.
+#:
+#: This too was learned by inspection. The first version treated finality as a source and
+#: included `finally`, `always`, `last`, `only` and `final`, which are discourse adverbs and
+#: ordinals far more often than they are claims about permanence. Three of the four
+#: top-scoring sentences on the chapter above were selected purely by `finally` and `last`.
+#: Requiring a cost word before finality counts is what stops the transform from being "delete
+#: sentences containing common adverbs".
+_STAKE_FINAL = frozenset({
+    "never", "forever", "permanent", "permanently", "irreversible", "irrevocably",
+    "irreparably", "gone", "unrecoverable",
+})
+#: The "if X then something bad" shape. Scored as a bonus for co-occurrence rather than on
+#: either half alone: `if` is one of the most common words in English and a bare modal says
+#: nothing, but the two together in one sentence is the syntax consequence is written in.
+_STAKE_CONDITIONAL = frozenset({"if", "unless", "otherwise", "else", "lest", "when"})
+_STAKE_MODAL = frozenset({"would", "will", "could", "might", "must", "shall", "may"})
+
+
+def stake_score(sentence: str) -> int:
+    """How much this sentence asserts about the cost of failure. A lexical proxy, and named
+    as one.
+
+    **This cannot identify stakes; it identifies stake vocabulary.** Real stakes are semantic
+    and often global — a scene can be unbearably tense without a single word from the lists
+    above, and "the last light left the window" scores two on pure imagery. A model could do
+    better and is disqualified: `dialogue_flatten`'s docstring already refused to put a
+    generator inside this module's ground truth, and the same refusal binds here.
+
+    What makes the proxy usable anyway is that it ships with `deplete_matched`, a control that
+    deletes the same *number of words* of zero-scoring sentences. If this lexicon is really
+    selecting arbitrary sentences, the two transforms move a metric identically and the pair
+    reports itself dead. The control is what carries the claim, not the lexicon.
+
+    **A cost word is necessary.** Finality and the conditional-consequence shape only amplify a
+    score that a cost word already opened, which is what keeps the transform from degenerating
+    into "delete sentences containing `if` or `never`" — see the two lexicon comments above for
+    the inspection that forced this structure.
+    """
+    tokens = [match.group(0).lower() for match in _WORD.finditer(sentence)]
+    if not tokens:
+        return 0
+    cost = sum(1 for token in tokens if token in _STAKE_COST)
+    if cost == 0:
+        return 0
+    present = set(tokens)
+    score = cost
+    score += min(sum(1 for token in tokens if token in _STAKE_FINAL), 2)
+    if present & _STAKE_CONDITIONAL and present & _STAKE_MODAL:
+        score += 1
+    return score
+
+
+def _sentences(text: str) -> list[list[str]]:
+    return [_SENT.split(block) for block in paragraphs(text)]
+
+
+def _rebuild(pieces: list[list[str]], drop: set[tuple[int, int]]) -> str:
+    kept_blocks = []
+    for block_index, sentences in enumerate(pieces):
+        kept = [
+            sentence
+            for sentence_index, sentence in enumerate(sentences)
+            if (block_index, sentence_index) not in drop
+        ]
+        joined = " ".join(piece for piece in kept if piece.strip())
+        if joined.strip():
+            kept_blocks.append(joined)
+    return _join(kept_blocks)
+
+
+def _stake_plan(text: str, strength: float) -> tuple[set[tuple[int, int]], int]:
+    """Which sentences `destake` removes at this dose, and how many words that is.
+
+    Factored out so `deplete_matched` can match the word count exactly rather than
+    approximately — a control matched on "roughly as much text" would leave length as the
+    difference between the two arms, and length is §1a.1's shallow incumbent.
+    """
+    if strength <= 0:
+        return set(), 0
+    pieces = _sentences(text)
+    scored = [
+        (block_index, sentence_index, stake_score(sentence), len(sentence.split()))
+        for block_index, sentences in enumerate(pieces)
+        for sentence_index, sentence in enumerate(sentences)
+    ]
+    staked = [entry for entry in scored if entry[2] > 0]
+    if not staked:
+        return set(), 0
+    budget = strength * sum(entry[3] for entry in staked)
+    rng = _rng(text, "destake")
+    # Highest-scoring first; the random second key breaks ties deterministically rather than
+    # by position, so the transform is not secretly "delete the earliest sentences".
+    staked.sort(key=lambda entry: (-entry[2], rng.random()))
+    drop: set[tuple[int, int]] = set()
+    removed = 0
+    for block_index, sentence_index, _score, words in staked:
+        if removed >= budget:
+            break
+        drop.add((block_index, sentence_index))
+        removed += words
+    return drop, removed
+
+
+def destake(text: str, strength: float) -> str:
+    """Delete the sentences that assert what failure costs. §1a.3 item 1, aimed at stakes.
+
+    The manipulation `plan/persona-reader-validity.md` §5 names first, and the one a persona
+    reader is supposed to be uniquely sensitive to: a passage where nothing is at risk should
+    read differently to somebody reading *for* risk, and identically to somebody reading for
+    prose texture. That per-persona asymmetry is a prediction this transform makes and the
+    structural degraders do not.
+
+    Length-changing, and marked so. Its control is `deplete_matched`, which removes the same
+    number of words from sentences that scored zero — read the two `per_ablation` rows against
+    each other, because the difference between them is the entire claim.
+    """
+    drop, _removed = _stake_plan(text, strength)
+    if not drop:
+        return text
+    return _rebuild(_sentences(text), drop)
+
+
+def deplete_matched(text: str, strength: float) -> str:
+    """Delete the same word count as `destake`, from sentences that name no cost.
+
+    The control that makes `destake` a claim about stakes rather than about deletion. If a
+    metric responds to this as strongly as to `destake`, then `destake`'s effect is the effect
+    of removing text, the stake lexicon selected nothing, and the reader-specific reading is
+    unsupported — exactly the shape of the `tricolon_rate` failure, where the headline survived
+    only until its control was read beside it.
+
+    Selection among zero-scoring sentences is seeded-random rather than positional, so this arm
+    does not become "delete the opening" while `destake` deletes from wherever stakes happen to
+    sit. Returns the text unchanged when there is not enough zero-scoring material to match the
+    budget — `variants` drops an unchanged text rather than emitting a mislabelled pair, so the
+    comparison is simply absent for that passage instead of being made against a short measure.
+    """
+    _drop, target = _stake_plan(text, strength)
+    if target <= 0:
+        return text
+    pieces = _sentences(text)
+    neutral = [
+        (block_index, sentence_index, len(sentence.split()))
+        for block_index, sentences in enumerate(pieces)
+        for sentence_index, sentence in enumerate(sentences)
+        if stake_score(sentence) == 0 and sentence.strip()
+    ]
+    if sum(entry[2] for entry in neutral) < target:
+        return text
+    rng = _rng(text, "deplete")
+    rng.shuffle(neutral)
+    # Fill under the target in shuffled order, then close the residual with the one remaining
+    # sentence nearest to it. A plain "add until `removed >= target`" overshot by 40% at low
+    # dose — measured, not feared: stake sentences are sparse (under 3% of sentences on the
+    # chapter this was inspected against), so the budget is small and one long neutral sentence
+    # blows past it. Length is §1a.1's shallow incumbent, and an arm that deletes half again as
+    # much as the arm it controls for differs from it in length as well as in content.
+    drop: set[tuple[int, int]] = set()
+    removed = 0
+    remaining: list[tuple[int, int, int]] = []
+    for entry in neutral:
+        if removed + entry[2] <= target:
+            drop.add((entry[0], entry[1]))
+            removed += entry[2]
+        else:
+            remaining.append(entry)
+    if removed < target and remaining:
+        residual = target - removed
+        best = min(remaining, key=lambda entry: abs(entry[2] - residual))
+        drop.add((best[0], best[1]))
+    return _rebuild(pieces, drop)
+
+
+def rewhitespace(text: str, strength: float) -> str:
+    """Re-flow whitespace and nothing else. Should change no quality.
+
+    The protocol's second placebo, and a different footprint again from the two existing shams:
+    `rename_entities` changes tokens, `respell` changes spellings, this changes not one
+    character of any word. A metric that moves on this is responding to layout.
+    """
+    if strength <= 0:
+        return text
+    rng = _rng(text, "space")
+    blocks = []
+    for block in paragraphs(text):
+        if rng.random() <= strength:
+            block = re.sub(r"[ \t]{2,}", " ", block)
+            block = re.sub(r"(?<=[.!?]) (?=[A-Z\"'“])", "  ", block)
+        blocks.append(block)
+    # Paragraph separator convention is itself whitespace, and `paragraphs` adapts to either.
+    separator = "\n\n" if rng.random() <= strength else "\n"
+    return separator.join(blocks)
+
+
 DEGRADERS = (
     Ablation("paragraph_shuffle", 3, -1, True, paragraph_shuffle,
              "setup lands after payoff; same paragraphs, reordered"),
@@ -366,16 +589,45 @@ SHAMS = (
              "spelling and quote-style variants; many words touched lightly"),
 )
 
+#: The stakes extension, kept out of `ALL` on purpose. Adding these to the default set would
+#: change the variant schedule every existing caller iterates — `cdg_battery.py`'s recorded
+#: numbers are pooled over a particular set of variants, and silently widening it would make a
+#: re-run of that battery incomparable with the summary §58 already published. Callers who want
+#: these pass `ablations=PERSONA_SET`; everyone else is unaffected.
+PERSONA_DEGRADERS = (
+    Ablation("destake", 1, -1, False, destake,
+             "removes the sentences that assert what failure costs; length-changing"),
+    Ablation("deplete_matched", 1, -1, False, deplete_matched,
+             "removes the same word count from zero-stake sentences — destake's control"),
+)
+PERSONA_SHAMS = (
+    Ablation("rewhitespace", None, 0, True, rewhitespace,
+             "layout only; not one character of any word changes"),
+)
+
 ALL = DEGRADERS + SHAMS
-BY_KEY = {ablation.key: ablation for ablation in ALL}
+#: `ALL` plus the stakes extension. The set `persona_battery.py` runs.
+PERSONA_SET = DEGRADERS + PERSONA_DEGRADERS + SHAMS + PERSONA_SHAMS
+BY_KEY = {ablation.key: ablation for ablation in PERSONA_SET}
 
 #: The dose ladder. Monotonicity across these is the claim a candidate metric has to support;
 #: detection at 1.0 alone is detection of vandalism.
 DOSES = (0.0, 0.15, 0.35, 0.65, 1.0)
 
 
-def variants(text: str, *, donor: str = "", doses: tuple[float, ...] = DOSES):
+def variants(
+    text: str,
+    *,
+    donor: str = "",
+    doses: tuple[float, ...] = DOSES,
+    ablations: tuple[Ablation, ...] = ALL,
+):
     """Every (ablation, dose) variant of one text, including the untouched original at 0.0.
+
+    `ablations` defaults to `ALL` so every existing caller's schedule is byte-for-byte what it
+    was; `PERSONA_SET` adds the stakes extension. It is a parameter rather than a module-level
+    switch because two batteries with different sets have to be able to run in one process
+    without one of them silently rescheduling the other.
 
     Yields `(key, sign, item, dose, text)`. The original is emitted once rather than once per
     ablation, because a caller scoring it repeatedly would weight it six-fold in any pooled
@@ -391,7 +643,7 @@ def variants(text: str, *, donor: str = "", doses: tuple[float, ...] = DOSES):
     """
     yield ("original", 0, None, 0.0, text)
     emitted = {text}
-    for ablation in ALL:
+    for ablation in ablations:
         for dose in doses:
             if dose == 0.0:
                 continue

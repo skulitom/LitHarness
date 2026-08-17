@@ -116,6 +116,84 @@ def fixture_scenes(book: str = "mystery") -> list[Unit]:
     return sorted(units, key=lambda unit: unit.position)
 
 
+# --------------------------------------------------------------------- generated prose
+
+
+#: A fixed stamp for `export.collect`. The generated-at field only reaches the rendered
+#: document's front matter, which this loader discards — and a wall-clock value would put the
+#: run time into an otherwise deterministic read.
+_EXPORT_STAMP = "1970-01-01T00:00:00Z"
+
+
+def generated_scenes(
+    database: str | Path,
+    *,
+    book: str | None = None,
+    branch: str | None = None,
+    revision: str | None = None,
+    min_words: int = 200,
+) -> list[Unit]:
+    """Drafted scenes from a book database — this system's own prose, in reading order.
+
+    **The only un-memorised source in this file, and that is the whole reason it exists.**
+    BRIEF.md §2 Pass 6's transferable rule is that a model-based measure validated on published
+    fiction either runs on text the scoring model provably has not memorised or measures its
+    familiarity term explicitly; §3's status note names this system's own generated prose as the
+    one remaining untried direction, *and* prices it in the same sentence — no published-reader
+    label reaches it. Both halves are true of what this returns: gates 0 and 1 of
+    `plan/persona-reader-validity.md` can run on it honestly, and gate 3 cannot.
+
+    Reads through `application/export.collect` rather than querying tables, so it sees exactly
+    the prose `litharness export` would show a reader — one revision, live nodes, reading order,
+    with the same branch-resolution rules. A scene that has not been drafted carries no content
+    and is skipped rather than emitted empty; `min_words` drops the stubs that are technically
+    drafted and too short for a paragraph-level ablation to do anything to.
+
+    Imported lazily for the reason the rest of this module gives: these loaders are called from
+    interpreters that do not have this project installed, and only this one needs it.
+    """
+    from litharness.adapters.sqlite_store import SqliteStore
+    from litharness.application import export as export_module
+    from litharness.domain.nodes import NodeKind
+
+    store = SqliteStore.open(str(database))
+    try:
+        book_id, branch_id = export_module.resolve_branch(store, book, branch)
+        document = export_module.collect(
+            store,
+            book_id=book_id,
+            branch_id=branch_id,
+            revision_id=revision,
+            generated_at=_EXPORT_STAMP,
+        )
+    finally:
+        store.close()
+
+    ordinals = {scene.logical_id: scene.ordinal for scene in document.scenes}
+    units: list[Unit] = []
+    for node in document.body:
+        if node.kind is not NodeKind.SCENE or not node.content:
+            continue
+        if len(node.content.split()) < min_words:
+            continue
+        units.append(
+            Unit(
+                unit_id=f"gen:{node.logical_id}",
+                source="generated",
+                text=node.content,
+                position=ordinals.get(node.logical_id, 0),
+                work_id=document.book_id,
+                meta={
+                    "title": node.title,
+                    "branch_id": document.branch_id,
+                    "revision_id": document.revision_id,
+                    "book_title": document.title,
+                },
+            )
+        )
+    return sorted(units, key=lambda unit: unit.position)
+
+
 # ------------------------------------------------------------------------------- MoL
 
 
