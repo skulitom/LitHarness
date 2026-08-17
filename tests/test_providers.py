@@ -909,3 +909,57 @@ def test_the_real_runner_decodes_utf8_rather_than_the_host_locale() -> None:
         "a status line written by a CLI provider does not parse; extraction would read "
         f"nothing from every scene it drafts. Got {result.stdout!r}"
     )
+
+
+def test_the_recorded_model_is_the_one_that_wrote_the_prose() -> None:
+    """`claude -p` bills more than one model per call, and taking the first named the wrong one.
+
+    Measured envelope shape from a real call requesting `claude-opus-5`: `modelUsage` came
+    back keyed `['claude-haiku-4-5-20251001', 'claude-opus-5']` — Opus wrote the prose, Haiku
+    is the CLI's own overhead — and `next(iter(...))` reported Haiku. That value lands on the
+    `PolicyDecision` of every accepted scene, so a book drafted by Opus was attributable to a
+    model that did not write a word of it. §19's attribution chain is what that breaks, and a
+    provenance record which is confidently wrong is worse than one that is missing.
+    """
+    envelope = dict(CLAUDE_ENVELOPE)
+    envelope["modelUsage"] = {
+        "claude-haiku-4-5-20251001": {
+            "inputTokens": 4,
+            "outputTokens": 21,
+            "canonicalModel": "claude-haiku-4-5",
+        },
+        "claude-opus-5": {
+            "inputTokens": 6000,
+            "outputTokens": 1170,
+            "canonicalModel": "claude-opus-5",
+        },
+    }
+
+    result = ClaudeCodeProvider(
+        model="claude-opus-5", runner=claude_runner(envelope)
+    ).complete(CompletionRequest(prompt="write a scene"))
+
+    assert result.model == "claude-opus-5", (
+        "the requested model billed output on this call and is what wrote the text"
+    )
+
+
+def test_a_silent_downgrade_is_recorded_as_the_model_that_answered() -> None:
+    """The other direction, and why the requested model is not simply trusted.
+
+    If the CLI serves a different model than the one asked for, reporting the request would
+    be the same lie inverted — a decision claiming Opus wrote prose Haiku wrote. With the
+    requested model absent from the billing, the entry that produced the output is the honest
+    answer.
+    """
+    envelope = dict(CLAUDE_ENVELOPE)
+    envelope["modelUsage"] = {
+        "claude-haiku-4-5-20251001": {"outputTokens": 900, "canonicalModel": "claude-haiku-4-5"},
+        "some-router-model": {"outputTokens": 3, "canonicalModel": "some-router-model"},
+    }
+
+    result = ClaudeCodeProvider(
+        model="claude-opus-5", runner=claude_runner(envelope)
+    ).complete(CompletionRequest(prompt="write a scene"))
+
+    assert result.model == "claude-haiku-4-5"

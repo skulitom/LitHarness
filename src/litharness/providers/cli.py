@@ -226,10 +226,7 @@ class ClaudeCodeProvider:
         text = strip_fences(str(envelope.get("result", "")))
         usage_block = envelope.get("usage") or {}
         model_usage = envelope.get("modelUsage") or {}
-        resolved = next(
-            (info.get("canonicalModel", self.model) for info in model_usage.values()),
-            self.model,
-        )
+        resolved = _resolved_model(model_usage, self.model)
         return CompletionResult(
             text=text,
             provider=self.name,
@@ -246,6 +243,52 @@ class ClaudeCodeProvider:
             wall_ms=wall_ms,
             raw=envelope,
         )
+
+
+def _resolved_model(model_usage: dict[str, Any], requested: str) -> str:
+    """Which model actually wrote the text, out of every model the invocation billed.
+
+    **`claude -p` bills more than one model per call, and taking the first was reporting the
+    wrong one.** Measured: a call requesting `claude-opus-5` returned `modelUsage` keyed
+    `['claude-haiku-4-5-20251001', 'claude-opus-5']` — Opus wrote the prose and Haiku is the
+    CLI's own overhead — and `next(iter(...))` reported `claude-haiku-4-5`. That value is
+    recorded on the `PolicyDecision` for every accepted scene, so a run drafted by Opus is
+    attributable to Haiku in the store. §56.2 caught it during the frontier arm and the
+    frontier duplication run wrote four such rows before this landed.
+
+    §19's attribution chain is one of the things §18 says is kept absolutely, and a provenance
+    record that names a model which did not write the prose is the failure it exists to
+    prevent — worse than a missing field, because it is confidently wrong.
+
+    The requested model wins when it is present, since that is what the call asked for and
+    got. Otherwise the entry that produced the most output tokens does, because the model that
+    wrote the answer is the one that wrote the most of it — and that also covers a CLI which
+    silently downgrades, where reporting the requested model would be the same lie inverted.
+    """
+    if not model_usage:
+        return requested
+
+    def canonical(key: str, info: Any) -> str:
+        if isinstance(info, dict):
+            named = info.get("canonicalModel")
+            if isinstance(named, str) and named:
+                return named
+        return key
+
+    named = {key: canonical(key, info) for key, info in model_usage.items()}
+    for key, name in named.items():
+        if requested in (key, name):
+            return name
+
+    def output_of(info: Any) -> int:
+        block = info if isinstance(info, dict) else {}
+        try:
+            return int(block.get("outputTokens", block.get("output_tokens", 0)) or 0)
+        except (TypeError, ValueError):
+            return 0
+
+    busiest = max(model_usage.items(), key=lambda item: output_of(item[1]))
+    return named[busiest[0]]
 
 
 @dataclass
