@@ -21,7 +21,7 @@ from litharness.application.handlers import (
     HandlerInputError,
     make_scene_draft_handler,
 )
-from litharness.domain.audit import AuditSample, Verdict
+from litharness.domain.audit import AuditSample, Verdict, sample_id_for
 from litharness.domain.calibration import (
     MIN_HOLDOUT,
     Calibration,
@@ -493,6 +493,38 @@ def test_replaying_the_job_converges_instead_of_duplicating(store: SqliteStore) 
 
     assert store.verify_integrity() == 2  # base + one accepted, not two accepted
     assert len(store.read_log()) == 1
+
+
+def test_an_accepted_scene_is_drawn_for_audit_through_the_handler(
+    store: SqliteStore,
+) -> None:
+    """The §10.5 draw, driven end to end through the handler for the first time.
+
+    Every prior pin exercised `draw` and the store directly; the on-acceptance wiring —
+    draw after commit, recorded idempotently, addressed by the committed revision — ran
+    only in production. §61 demoted the queue to a smoke check and made its
+    deterministic draw the sampler feeding the pairwise engine, which is exactly why
+    the seam gets its own pin now: the demoted instrument's remaining job is this
+    wiring, and an untested feed is not a feed.
+    """
+    registry, _ = registry_with(PROSE)
+    seeded(store, {"book_id": BOOK_ID, "branch_id": BRANCH_ID})
+    handler = make_scene_draft_handler(registry, store, PROJECT_ID, audit_rate=1.0)
+    job = store.claim_next("worker-a", now=START, duration=600.0)
+    assert job is not None
+
+    handler(job, START)
+
+    committed = store.head(BOOK_ID, BRANCH_ID)
+    assert committed is not None
+    [sample] = store.audit_samples()
+    assert sample.revision_id == committed.revision_id
+    assert sample.logical_id == "scene-1"
+    assert sample.sample_id == sample_id_for(committed.revision_id, "scene-1")
+    assert sample.pending
+
+    handler(job, START)  # replay converges on the same sample, not a second one
+    assert len(store.audit_samples()) == 1
 
 
 def test_a_malformed_payload_fails_the_job_rather_than_committing_anything(

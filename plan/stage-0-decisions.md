@@ -3398,3 +3398,37 @@ so the proof outlives the functions. The next metrics to enter the craft table a
 machinery that will refuse them the same way. The directive's standing rule takes
 effect exactly as written: the craft table records only metrics with a live
 calibration candidate.
+
+## 67. The audit queue is a smoke check, and its draw is the engine's inheritance
+
+Cut 7 of §61's programme, and mostly a ratification: the README already called the solo
+audit queue "a confirmation sample, not the plan for measuring quality", and §1a.4's
+amendment already carried the measurement that demoted it — **two verdicts against 104
+exported pairs** is the throughput of judgment-by-sitting-down, and no rate parameter
+fixes a design whose bottleneck is a human deciding to sit. What this entry adds is the
+part worth keeping precise: the queue's *draw* is not demoted. Content-derived,
+replay-convergent, non-re-rollable, auditable-after-the-fact — that sampling discipline
+is exactly what §61 Add 1's pair draw must copy, so the demoted instrument's remaining
+job is to keep the seam alive and measured.
+
+**Three hygiene defects fixed while demoting, each a small lie left standing.**
+`domain/audit.py` claimed an `--audit-rate` flag existed; none was ever built — no
+parser defines it and production runs pinned at `DEFAULT_RATE`, which the comment now
+says plainly. The module docstring called the queue "the highest-leverage part of the
+craft programme"; superseded in place, record kept. And the on-acceptance draw — the
+one production wiring of the whole feature — had **no end-to-end test at a nonzero
+rate**: every prior pin exercised `draw` and the store directly, so the handler seam
+(draw after commit, addressed by the committed revision, idempotent under replay) ran
+only in production. It now has its own pin, which also demonstrates the replay
+convergence the pairwise engine will inherit.
+
+**PLAN §10.3's inversion is itself superseded, closing the loop §61 opened.** That
+section declared revealed judgment the primary source on the strength of the same
+2-of-104 measurement; the revealed labels then died on their own controls (§56.3,
+craft-corpus §4.4). Both demotions were correct; neither instrument is primary. §10.3
+and §10.5 now point at the pairwise engine, and the historical paragraphs stand as the
+record of how the project walked here: unpaid solicited died on throughput, revealed
+died on label validity, and what remains is the channel that was never funded — which
+is §61's whole argument. Also swept: `--no-outline`'s help no longer frames the flag
+as §54's control arm (that measurement concluded, §57/§65); it is the hand-outlining
+flag now.

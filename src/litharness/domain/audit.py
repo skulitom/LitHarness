@@ -1,10 +1,17 @@
-"""§10.5's standing audit: the only thing in this system that asks a human about the prose.
+"""§10.5's standing audit, demoted to a smoke check whose draw feeds the pairwise engine.
 
 "Even at full autonomy, the policy engine routes a sample (e.g. 5% of accepted chapters) to
 the digest for human spot-reading; audit disagreement re-opens calibration."
 
-**Why this is the highest-leverage part of the craft programme, measured rather than
-asserted.** §1a.4 states that human judgment is the only ground truth for §1a.3's six items.
+**Demoted (stage-0 §61/§67): this queue is a confirmation sample, not the plan for
+measuring quality.** The measured throughput of judgment-by-sitting-down is two verdicts
+against 104 exported pairs, and the primary instrument is now paid, blinded, position-
+swapped pairwise judgment. What survives here at full value is the *draw*: deterministic,
+content-derived, non-re-rollable — the sampling discipline the pairwise engine's pair
+draw copies, and the seam the end-to-end handler test pins.
+
+**Why this was called the highest-leverage part of the craft programme, kept for the
+record.** §1a.4 states that human judgment is the only ground truth for §1a.3's six items.
 The instrument for collecting it exists — RevisionJudge — and holds 104 exported pairs against
 *two* collected verdicts, at roughly 57 seconds of attention each. Judgment is not scarce
 because it is slow; it is scarce because nothing asks for it as a by-product of normal
@@ -42,7 +49,9 @@ from hashlib import sha256
 #: §10.5's own example, and a default rather than a recommendation — nothing here has measured
 #: what rate produces enough judgment to calibrate on without exhausting the reader. At six
 #: scenes per fixture book it draws roughly one scene every three books, which is honest about
-#: how little a small run yields and is the reason `--audit-rate` exists.
+#: how little a small run yields. (An earlier version of this comment claimed an
+#: `--audit-rate` flag existed; none was ever built — production runs at this constant, and
+#: the handler's `audit_rate` parameter is the only lever, exercised by tests.)
 DEFAULT_RATE = 0.05
 
 #: Buckets the hash is reduced to. Ten thousand, so a rate is expressible to one hundredth of

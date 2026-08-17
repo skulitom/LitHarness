@@ -1886,9 +1886,9 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         default=_env_flag("LITHARNESS_NO_OUTLINE"),
         help="do not plan a statement for each scene before drafting; also read from "
-        "LITHARNESS_NO_OUTLINE. The control arm of the measurement in §54, and the right "
-        "flag for a book somebody outlines by hand — a scene with no statement drafts "
-        "exactly as it did before outlines existed",
+        "LITHARNESS_NO_OUTLINE. The right flag for a book somebody outlines by hand — a "
+        "scene with no statement drafts exactly as it did before outlines existed. "
+        "(Formerly §54's control arm; that measurement concluded, §57/§65)",
     )
     sub = parser.add_subparsers(dest="command", required=True)
 

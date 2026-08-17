@@ -736,7 +736,13 @@ order-consistent survivors preferred human originals ~80% of the time. So:
    **dialogue distinctiveness** between characters. These are harder and less
    reliable than counting sentence lengths, which is exactly why they are worth
    building — the easy proxies measure the things that matter least.
-3. **Calibration against human judgment, and revealed judgment is the primary source.**
+3. **Calibration against human judgment, ~~and revealed judgment is the primary
+   source~~.** *(Superseded by §61 and §1a.4's second amendment: the revealed labels
+   available to this project were subsequently measured dead for prose claims — §56.3,
+   craft-corpus §4.4 refused — and the primary instrument is now paid, blinded,
+   position-swapped pairwise judgment through the preference engine. The paragraphs
+   below stand as the record of why unpaid sessions were demoted; that demotion was
+   correct and remains.)*
    The calibration target is a corpus of *published* LitRPG carrying reader behaviour —
    follower conversion, retention, abandonment — not a schedule of judging sessions. See
    [plan/craft-corpus.md](plan/craft-corpus.md) for the corpus, the measured label, and the
@@ -769,9 +775,12 @@ order-consistent survivors preferred human originals ~80% of the time. So:
    held-out calibration shows usable precision at an acceptable workload, with
    order-consistency and abstention measured. Until then the Conductor treats it as
    annotation.
-5. **Standing audit.** Even at full autonomy, the policy engine routes a sample
-   (e.g. 5% of accepted chapters) to the digest for human spot-reading; audit
-   disagreement re-opens calibration.
+5. **Standing audit — demoted to a smoke check (§67).** Even at full autonomy, a
+   sample of accepted scenes (5%, content-derived draw) stays available for human
+   spot-reading, and audit disagreement still re-opens calibration. It is a
+   confirmation sample, never the evidence plan: the measured throughput of
+   judgment-by-sitting-down is 2 verdicts per 104 pairs. Its deterministic draw is
+   the sampling discipline the pairwise engine (§61 Add 1) inherits.
 6. **A craft reference corpus.** Both golden fixtures encode *defects* — planted
    errors with negative controls. Nothing in the program encodes what good looks
    like, so craft work currently has nothing to be measured against (§1a.4).
