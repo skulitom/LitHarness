@@ -53,6 +53,7 @@ from litharness.domain.beats import Beat, beats_for, template_for
 from litharness.domain.budget import BudgetPolicy
 from litharness.domain.budget import check as budget_check
 from litharness.domain.events import Event, EventType, payload_digest
+from litharness.domain.extraction import MAX_SUFFIX, impossible_fields
 from litharness.domain.generation import CompletionRequest, CompletionResult, Resolution
 from litharness.domain.jobs import Job
 from litharness.domain.patch import Veto
@@ -366,6 +367,28 @@ def _milestones(
             raise OutlineOutputError(
                 "two consecutive milestones are identical; a schedule with a flat stretch "
                 "tells those scenes to change nothing"
+            )
+    # **A schedule may not schedule an impossible state**, and this is the check the other
+    # three did not make. §56.5 measured it: an outline placed `mp 6` against the seed's
+    # `mp_max 4`, `milestone_records` wrote it as `PROPOSED`, and from then on every scene at
+    # or before that position was handed it by `progression_target` as the state to move
+    # toward. The merge above is what makes the check meaningful — a milestone that sets only
+    # `mp` inherits `mp_max` from the seed, which is exactly the state it is proposing.
+    #
+    # Refused with the whole outline rather than dropped, for the reason §55 gives for asking
+    # in one call: a schedule that fails validation refuses the outline too, rather than
+    # landing beside a good one.
+    for (beat, _), state in zip(out, merged, strict=True):
+        impossible = impossible_fields(state)
+        if impossible:
+            offending = ", ".join(
+                f"{field} {state[field]} against {field}{MAX_SUFFIX} "
+                f"{state[f'{field}{MAX_SUFFIX}']}"
+                for field in impossible
+            )
+            raise OutlineOutputError(
+                f"milestone at scene {beat.ordinal} schedules a state the sheet forbids "
+                f"({offending}); a ceiling is not a target"
             )
     return out
 

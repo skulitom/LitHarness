@@ -112,6 +112,48 @@ STATUS_TEMPLATE = (
 STATUS_FIELDS = ("level", "hp", "hp_max", "mp", "mp_max", "gold")
 
 
+#: The suffix that makes one field another's ceiling. Derived from the pair rather than
+#: hardcoding `hp`/`mp`, so a sheet that grows a `stamina_max` is covered without an edit.
+MAX_SUFFIX = "_max"
+
+
+def impossible_fields(value: Mapping[str, object]) -> tuple[str, ...]:
+    """Fields standing above their own ceiling in one snapshot — `mp 6` against `mp_max 4`.
+
+    **A snapshot can be impossible without contradicting anything, which is why this is
+    separate from `integrity.detect_contradictions`.** That detector groups on `(subject,
+    predicate, order_key)` and fires when two canon records disagree *at one position*; a
+    single internally incoherent record is invisible to it by construction. §56.5 measured the
+    consequence: `MP 6/4` reached accepted canon twice across twelve ACCEPT decisions and zero
+    findings, and `system_voice_example` then rendered it into every later prompt as "the state
+    as it stands", with an instruction to carry it forward.
+
+    **This is a reading, not a detector, and deliberately so.** `stats.ceiling.v0` is built and
+    green in ContinuityEvaluation as one of the six-rule pack, and PLAN.md §8.4 gives that
+    sibling the game-system vocabulary. A second in-process implementation of the same rule
+    would be two sources of truth for one claim. What this supports is the check the pack
+    cannot make — a milestone is a *proposal*, refused before it is written, and never reaches
+    the evaluator at all.
+
+    Comparison is `>` on the pair, so a field with no ceiling, a non-numeric value, and a bool
+    are all silently not-impossible: this answers only the question it can answer.
+    """
+    impossible: list[str] = []
+    for key, ceiling in value.items():
+        if not key.endswith(MAX_SUFFIX):
+            continue
+        current = value.get(key[: -len(MAX_SUFFIX)])
+        if isinstance(current, bool) or isinstance(ceiling, bool):
+            continue
+        if (
+            isinstance(current, int | float)
+            and isinstance(ceiling, int | float)
+            and current > ceiling
+        ):
+            impossible.append(key[: -len(MAX_SUFFIX)])
+    return tuple(sorted(impossible))
+
+
 def render_status_line(subject: str, value: Mapping[str, object]) -> str:
     """A status line for a subject and a snapshot value — the inverse of `STATUS_PATTERN`.
 

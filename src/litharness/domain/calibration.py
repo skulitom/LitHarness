@@ -92,6 +92,28 @@ MIN_FLAGGED = 17
 #: nobody suspects. `tricolon_rate` fails it at better than five times that.
 MAX_CONTROL_RATIO = 2.0
 
+#: The share of the reference cohort a threshold may refuse before it stops being a threshold.
+#:
+#: **Derived from `MAX_CONTROL_RATIO` rather than placed, which is why it sits here.** The
+#: control clause below refuses a threshold when `control_exceedance > MAX_CONTROL_RATIO *
+#: reference_exceedance`. Exceedance is a share and cannot exceed 1.0, so once the reference
+#: cohort crosses the line more than `1 / MAX_CONTROL_RATIO` of the time there is no control
+#: value that can fail the clause — **the guard that carries this whole route's epistemic claim
+#: becomes arithmetically unfalsifiable, and it does so silently.**
+#:
+#: The only inertness guard before this was `reference_exceedance <= 0.0`, which catches a gate
+#: that can never fire and nothing at the other end. A threshold crossed by 99% of published
+#: human LitRPG in its own band was promotable, would have refused almost every scene, and
+#: would have carried a control clause incapable of objecting — the two failures reinforcing
+#: rather than catching each other.
+#:
+#: A stricter bar is defensible and deliberately not taken: an out-of-distribution claim
+#: arguably belongs at p95 or beyond (exceedance ~0.05), and 0.5 admits a threshold at the
+#: median. That is a judgment about what "out of distribution" should mean, and it belongs to
+#: whoever first has evidence to promote — the same reasoning `MIN_FLAGGED` records for not
+#: enforcing a confidence bound. This constant refuses only what is incoherent.
+MAX_REFERENCE_EXCEEDANCE = 1.0 / MAX_CONTROL_RATIO
+
 #: Chapters that must actually sit at or beyond a quantile stop before it may be a threshold.
 #: **Derived rather than placed.** `tools/build_craft_profile.py` indexes a stop at
 #: `round(p * (n - 1))`, so a p99 over a 200-chapter band rests on two observations and a p99
@@ -338,6 +360,15 @@ class Calibration:
                 "never fire. An inert gate is worse than an empty table: it retires the "
                 "emptiness that is currently the honest measure of the gap"
             )
+        if population.reference_exceedance > MAX_REFERENCE_EXCEEDANCE:
+            return (
+                f"the reference cohort {population.cohort} crosses this threshold "
+                f"{population.reference_exceedance:.2%} of the time, above the "
+                f"{MAX_REFERENCE_EXCEEDANCE:.0%} ceiling — a line most of the published "
+                "prose it was derived from also crosses is not an out-of-distribution "
+                "threshold, and above it the control clause below cannot fail whatever the "
+                "control cohort does"
+            )
         if population.control_n < MIN_BAND_CHAPTERS:
             return (
                 f"its control cohort {population.control_cohort} holds "
@@ -581,6 +612,7 @@ def promoted_gate(
 
 __all__ = [
     "MAX_CONTROL_RATIO",
+    "MAX_REFERENCE_EXCEEDANCE",
     "MIN_FLAGGED",
     "MIN_HOLDOUT",
     "MIN_PRECISION",

@@ -678,6 +678,42 @@ def test_a_schedule_may_not_invent_a_statistic() -> None:
         _milestones(with_schedule(12, invented), beats, SEED)
 
 
+def test_a_schedule_may_not_schedule_an_impossible_state() -> None:
+    """The check the other three did not make, and §56.5 measured what it costs.
+
+    A live outline placed `mp 6` against the seed's `mp_max 4`. It passed every existing
+    rule — the field is not invented, the schedule is not flat, the state is not stasis — so
+    `milestone_records` wrote it `PROPOSED`, and from then on `progression_target` handed
+    every earlier scene an impossible line as the state to move toward. `MP 6/4` then reached
+    accepted canon twice across twelve ACCEPT decisions and zero findings, because
+    `detect_contradictions` compares records against each other and cannot see one record
+    that is incoherent by itself.
+
+    The milestone need only name `mp`: the merge against the seed supplies `mp_max`, which is
+    what makes the proposed state checkable rather than the fragment checkable.
+    """
+    revision = new_book(BOOK_ID, BRANCH_ID, title="Book", scenes=12)
+    beats = beats_for(revision, arc_template(12))
+    over_ceiling = [
+        {"ordinal": 4, "state": {"gold": 20}},
+        {"ordinal": 9, "state": {"mp": 6}},
+    ]
+    with pytest.raises(OutlineOutputError, match="a ceiling is not a target"):
+        _milestones(with_schedule(12, over_ceiling), beats, SEED)
+
+
+def test_a_milestone_may_raise_a_ceiling_it_also_fills() -> None:
+    """The negative control for the rule above: levelling up raises `mp_max` and refills
+    `mp`, which is the genre's most ordinary progression beat. A check that only compared
+    against the *seed's* ceiling would refuse it, so the comparison is within the milestone's
+    own proposed state."""
+    revision = new_book(BOOK_ID, BRANCH_ID, title="Book", scenes=12)
+    beats = beats_for(revision, arc_template(12))
+    levelled = [{"ordinal": 6, "state": {"level": 2, "mp": 8, "mp_max": 8}}]
+    schedule = _milestones(with_schedule(12, levelled), beats, SEED)
+    assert [beat.ordinal for beat, _ in schedule] == [6]
+
+
 def test_costs_count_as_progression() -> None:
     """A debt story progresses by spending as well as by gaining, so a milestone that only
     lowers a number is a real milestone. Asserted because a check written as "the numbers go

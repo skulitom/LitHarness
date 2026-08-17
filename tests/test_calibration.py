@@ -1088,3 +1088,91 @@ def test_a_population_threshold_no_chapter_crosses_is_refused_as_inert(
     )
     why = row.why_not_promotable(TODAY, "profile-digest")
     assert why is not None and "can never fire" in why
+
+
+def test_tail_support_counts_the_failing_side_not_always_the_upper_one() -> None:
+    """`MIN_TAIL_SUPPORT` was bypassed by arithmetic rather than cleared by evidence.
+
+    `tail_support` is "chapters that actually sit on the failing side of the stop", and it
+    was computed as `reference_n - round(tail * (reference_n - 1))` regardless of
+    `Direction`. That is the *upper* tail. For a BELOW gate the failing side is the lower
+    one, so a `p01`/`BELOW` calibration reported ~99% of the band where its tail holds ~1% —
+    clearing a floor of 5 by roughly two orders of magnitude while resting on the same five
+    observations it always did.
+
+    Both directions are asserted, because a fix that inverted the condition would satisfy
+    BELOW and silently break every ABOVE calibration already reasoned about in §26.
+    """
+    import argparse
+
+    from litharness.cli import _population_from_profile
+    from litharness.domain import craft as craft_domain
+
+    profile = craft_domain.load_profile()
+    band, cohort = "700-1100", "human_pre_llm"
+    reference_n = craft_domain.band_chapters(cohort=cohort, band=band, profile=profile)
+    assert reference_n > 100, "the committed profile no longer carries this band"
+
+    def population_for(quantile: str, direction: Direction) -> Population:
+        result = _population_from_profile(
+            argparse.Namespace(
+                metric="craft.tricolon_rate.v0",
+                cohort=cohort,
+                control_cohort="undeclared_2025",
+                band=band,
+                quantile=quantile,
+                direction=direction.value,
+            )
+        )
+        assert not isinstance(result, int), f"refused with exit code {result}"
+        return result[0]
+
+    lower = population_for("p01", Direction.BELOW)
+    upper = population_for("p99", Direction.ABOVE)
+
+    assert lower.tail_support < reference_n // 10, (
+        f"a p01/BELOW stop reports {lower.tail_support} of {reference_n} chapters on its "
+        "failing side; the lower tail is not most of the band"
+    )
+    assert upper.tail_support < reference_n // 10, (
+        f"a p99/ABOVE stop reports {upper.tail_support} of {reference_n}"
+    )
+    assert lower.tail_support == upper.tail_support, (
+        "p01 and p99 sit the same distance from their own ends of the ladder, so they rest "
+        f"on the same number of observations: got {lower.tail_support} and "
+        f"{upper.tail_support}"
+    )
+
+
+def test_a_threshold_most_of_the_reference_cohort_crosses_is_refused() -> None:
+    """The other end of the inertness guard, and the one that was open.
+
+    `reference_exceedance <= 0.0` caught a gate that can never fire and nothing at the
+    opposite extreme. A threshold crossed by 99% of the cohort it was derived from would
+    have refused nearly every scene — and its control clause could not object, because
+    `control_exceedance > MAX_CONTROL_RATIO * 0.99` is unsatisfiable when exceedance is a
+    share bounded by 1.0. The two defects covered for each other.
+    """
+    row = a_calibration(
+        evidence_class=EvidenceClass.POPULATION,
+        direction=Direction.BELOW,
+        threshold=0.9,
+        verdicts_digest="profile-digest",
+        population=Population(
+            metric_id="craft.tricolon_rate.v0",
+            cohort="human_pre_llm",
+            band="700-1100",
+            quantile="p99",
+            reference_n=419,
+            tail_support=419,
+            control_cohort="undeclared_2025",
+            control_n=550,
+            reference_exceedance=0.99,
+            # Passes the control clause at 2.0x0.99, as any value must.
+            control_exceedance=1.0,
+            profile_digest="profile-digest",
+        ),
+    )
+    why = row.why_not_promotable(TODAY, "profile-digest")
+    assert why is not None, "a threshold refusing 99% of published human prose was promotable"
+    assert "ceiling" in why and "out-of-distribution" in why, why

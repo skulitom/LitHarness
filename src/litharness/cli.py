@@ -804,15 +804,27 @@ def _population_from_profile(
         args.metric, args.control_cohort, args.band, threshold, direction, profile
     )
     tail = round(float(args.quantile[1:]) / 100.0, 4)
+    # The index `build_craft_profile` reads the stop from, so the counts below are the number
+    # of observations the estimate actually rests on rather than a share of the band.
+    stop_index = round(tail * (reference_n - 1))
     population = calibration.Population(
         metric_id=args.metric,
         cohort=args.cohort,
         band=args.band,
         quantile=args.quantile,
         reference_n=reference_n,
-        # How many chapters actually sit at or beyond the stop. `build_craft_profile` indexes
-        # a stop at `round(p * (n - 1))`, so this is the count the estimate rests on.
-        tail_support=reference_n - round(tail * (reference_n - 1)),
+        # **How many chapters sit on the *failing* side of the stop, which depends on the
+        # direction.** This was `reference_n - stop_index` unconditionally, which is the
+        # upper tail — right for ABOVE and inverted for BELOW. A p01/BELOW gate reported
+        # ≈0.99n where its failing tail holds ≈0.01n, so `MIN_TAIL_SUPPORT` — the guard
+        # against a tail estimated from noise — was cleared by roughly two orders of
+        # magnitude by the arithmetic rather than by the evidence. Measured on the committed
+        # profile's `human_pre_llm` 700-1100 band (n=419): 415 reported against 5 actual.
+        tail_support=(
+            reference_n - stop_index
+            if direction is calibration.Direction.ABOVE
+            else stop_index + 1
+        ),
         control_cohort=args.control_cohort,
         control_n=control_n,
         reference_exceedance=reference_exceedance,
