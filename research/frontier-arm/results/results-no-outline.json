@@ -1,0 +1,27 @@
+{
+  "arm": "no-outline",
+  "books": [
+    {
+      "book": 1,
+      "outline": false,
+      "scenes_drafted": 12,
+      "scenes_total": 12,
+      "duplicate_findings": 0,
+      "all_findings": 0,
+      "words": 12464,
+      "ticks": 38,
+      "wall_s": 1041
+    },
+    {
+      "book": 2,
+      "outline": false,
+      "scenes_drafted": 12,
+      "scenes_total": 12,
+      "duplicate_findings": 0,
+      "all_findings": 0,
+      "words": 12085,
+      "ticks": 39,
+      "wall_s": 935
+    }
+  ]
+}

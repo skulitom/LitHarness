@@ -2789,3 +2789,68 @@ n=7 and n=8 against a generator whose sampler this harness cannot hold — `clau
 temperature or seed, so the frontier draws are not paired with the local ones and their spread is
 not this experiment's to control. The mp column is contaminated by §56.5. What survives all of that
 is the between-arm comparison of rates, which is what the question needed.
+
+## 57. Twenty-four scenes, no outline, and the longest repeat is seventeen words
+
+§52's dominant failure was whole-scene duplication — five of thirty scenes near-copies, longest
+verbatim run **872 words** against a published-human maximum of 93 — and §54 answered it with
+Narrative Planning v0, measured at §54.1 as duplicate findings per book running **11, 8, 1, 2, 6
+without an outline against 0, 0, 0, 1, 1 with one**, mean 5.6 against 0.4, permutation
+p = 0.0238. That comparison is the whole justification for the outline call, and §52's taxonomy
+put Narrative Planning first on the strength of it.
+
+Every one of those ten books was drafted on `phi4:latest`. §56 then measured that same generator
+reproducing whichever status line was nearest to hand in 49 of 49 draws, never once computing a
+number. Copying prose and copying numbers are plausibly one behaviour, so the arm worth running
+is §54.1's **control** — the no-outline condition — on a generator that does not copy.
+
+**Measured: two 12-scene books, `--no-outline`, `claude_code` in front, everything else shipped
+defaults.**
+
+    book   scenes   words    duplicate findings   longest cross-scene verbatim span
+       1       12   12,464                    0                            17 words
+       2       12   12,085                    0                            12 words
+
+    for comparison
+       §52, phi4, 30 scenes, no outline                    872 words, 5 near-copies
+       §54, phi4, 30 scenes, with outline                   55 words
+       published human LitRPG, 24 serials (§49)             93 words (maximum observed)
+       golden fixtures, human-authored                      17 (mystery), 0 (litrpg)
+
+**The count metric proves nothing here, and the reason is a design error worth recording.**
+Twelve scenes was chosen to halve the quota, on the argument that the outline places four to
+eight milestones regardless of book length — which is sound for the *ledger* question §56 asked
+and wrong for this one. Duplication is a property of pairs: a 30-scene book offers 435 and a
+12-scene book 66, a factor of 6.6. §54.1's control mean of 5.6 findings over 435 pairs is
+0.0129 per pair, so two 12-scene books at an unchanged rate would be expected to produce
+**1.70** findings, and observing zero has Poisson p = **0.183**. Not a result. Had the arm been
+run at 30 scenes it would have cost about 2.5x and answered the question it was built for.
+
+**The span metric does carry, and it is the one §52 led with.** `longest_repeated_span` is a
+maximum over pairs rather than a count, so it does not lose power the same way — §52's 872 words
+came from a single pair, and 66 pairs is ample opportunity for one long repeat to appear if the
+generator produces them at all. It produced none: **17 and 12 words, below the 93-word maximum
+observed across 24 published human serials and at the level of the hand-authored mystery
+fixture.** The duplicate gate refused nothing, so the gate is not the explanation, and no outline
+was written, so Narrative Planning is not either.
+
+**What this licenses saying.** Whole-scene duplication at the magnitude §52 recorded is a
+property of `phi4:14b` and does not reproduce on a frontier generator drafting the same premise
+in the same condition. It does **not** say the outline is worthless — §54.1's effect on `phi4` is
+real and measured, and an outline plausibly does other work (a scene that knows what it is for is
+not only a scene that avoids repeating). What it says is that **the taxonomy entry the outline was
+built to close is not present in the generator §1a.5 requires**, so Stage 5's ordering — which
+§52 set from that entry — is aimed at a defect the real drafting arm does not exhibit, and
+Narrative Planning's value has to be re-argued on some other measured ground before more planner
+machinery is built on it.
+
+**Cost, and one thing it confirmed.** 24 scenes, 24,549 words, ~$0.215 equivalent per scene,
+about $5.20 for the pair — close to the §56.1 extrapolation, which makes that estimate measured.
+The loop was driven in one process rather than one per tick, which pays §56.2's unmetered health
+probe once instead of ~26 times; that is also what a daemon does. And the run wrote four
+`policy_decisions` attributing Opus-drafted scenes to `claude-haiku-4-5` before the provenance
+fix landed mid-run, which is §56.2's second defect arriving as data rather than as an argument.
+
+**What would settle the count metric**: the same arm at 30 scenes, matching §54.1 exactly, at
+about 2.5x this cost. Until then the honest reading is that the span evidence is strong and the
+count evidence is absent, and the two should not be quoted as if they were one result.

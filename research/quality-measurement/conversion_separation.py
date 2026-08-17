@@ -3,7 +3,7 @@
 **The question that has to be answered before §4.3, not after it.** `plan/craft-corpus.md` §4.1
 proposes calibrating craft proxies against `conversion = followers / total_views`, and §4.3
 proposes a model critic scored against the same label — "the only instrument on this list that
-could reach §1a.3 items 1–4". Both inherit one untested assumption: that the label separates
+could reach §1a.3 items 1-4". Both inherit one untested assumption: that the label separates
 *prose* from prose. It has never been checked. `results/` holds `baseline.json` and nothing
 else, and `corpus_io.royalroad_chapters` has computed `conversion` since it was written with no
 consumer.
@@ -18,9 +18,9 @@ afternoon. BRIEF.md's closing rule is that refuting is worth as much as confirmi
 
 1. **Prose-blind baselines.** `log(total_views)`, `followers`, chapters-in-shard, and mean
    chapter length read no prose at all. If one of them separates conversion deciles as well as
-   a craft metric, the craft metric is measuring story size, and §3's "Spearman ρ = 0.438
+   a craft metric, the craft metric is measuring story size, and §3's "Spearman rho = 0.438
    against raw followers, so it is not popularity restated" is a weaker guarantee than it
-   sounds — ρ = 0.438 leaves plenty of room for a size effect to dominate a decile split.
+   sounds - rho = 0.438 leaves plenty of room for a size effect to dominate a decile split.
 2. **Era.** The control that killed `tricolon_rate`. Reported for every metric against the same
    stories, so a metric that separates the year rather than the reader is visible in the row.
 3. **A permuted-label null at this exact n.** The deciles are small; an AUC of 0.60 on 30
@@ -40,12 +40,12 @@ Reads the two cached shards, writes numbers, redistributes no prose.
 from __future__ import annotations
 
 import argparse
+import contextlib
 import json
 import math
 import random
 import statistics
 import sys
-from collections.abc import Sequence
 from pathlib import Path
 from typing import Any
 
@@ -82,7 +82,7 @@ CRAFT = {
 #: reported as diagnostics rather than as controls.** `conversion = followers / total_views`,
 #: so neither is independent of the split; what they answer is *which component drives it*.
 #: A `followers` AUC near 1.0 says the top conversion decile is simply the popular stories —
-#: which is §1a.1's warning arriving as a measurement, and would mean §3's "ρ = 0.438 against
+#: which is §1a.1's warning arriving as a measurement, and would mean §3's "rho = 0.438 against
 #: raw followers, so it is not popularity restated" does not survive a decile split even
 #: though it holds across the middle of the distribution. `chapters_seen` and `mean_words` are
 #: the honest controls: neither appears in the label's arithmetic.
@@ -115,10 +115,10 @@ def summarise_stories(
         )
         row["cohorts"].append(meta["cohort"])
         for name, scorer in CRAFT.items():
-            try:
+            # A metric that dies on one chapter is data about that metric, not a reason to
+            # abandon 13,000 others; the story is dropped later if it ends up short a column.
+            with contextlib.suppress(Exception):
                 row["scores"][name].append(float(scorer(unit.text)))
-            except Exception:  # noqa: BLE001 - a metric that dies on one chapter is data
-                pass
 
     out: list[dict[str, Any]] = []
     for row in stories.values():
@@ -348,9 +348,9 @@ def main() -> int:
     )
     for row in result["table"]:
         print(
-            f"{row['metric']:<26} {str(row['reads_prose']):>6} "
+            f"{row['metric']:<26} {row['reads_prose']!s:>6} "
             f"{row['conversion_auc']:>9.4f} {row['null_p05']:>9.4f} "
-            f"{row['null_p95']:>9.4f} {str(row['outside_null']):>8} {row['era_auc']:>8.4f}"
+            f"{row['null_p95']:>9.4f} {row['outside_null']!s:>8} {row['era_auc']:>8.4f}"
         )
     for key in ("stratified_by_followers", "stratified_by_length"):
         block = result[key]

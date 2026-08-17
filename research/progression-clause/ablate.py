@@ -63,10 +63,10 @@ from typing import Any
 REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "src"))
 
-import litharness_contracts as lc  # noqa: E402
 
 from litharness.adapters.sqlite_store import SqliteStore  # noqa: E402
 from litharness.application.planner import packet_for, render_prompt  # noqa: E402
+from litharness.domain import state as state_mod  # noqa: E402
 from litharness.domain.beats import arc_template, beats_for  # noqa: E402
 from litharness.domain.draft import DraftPolicy, is_draftable  # noqa: E402
 from litharness.domain.extraction import (  # noqa: E402
@@ -78,7 +78,6 @@ from litharness.domain.extraction import (  # noqa: E402
 )
 from litharness.domain.generation import PROFILES, Sampler  # noqa: E402
 from litharness.domain.plans import scene_plan_for  # noqa: E402
-from litharness.domain import state as state_mod  # noqa: E402
 from litharness.providers.base import CompletionRequest  # noqa: E402
 from litharness.providers.ollama import OllamaProvider  # noqa: E402
 
@@ -557,7 +556,7 @@ def stage_ablate(
                         timeout_seconds=600.0,
                     )
                 ).text
-            except Exception as error:  # noqa: BLE001 - a dead draw is data, not a crash
+            except Exception as error:
                 rows.append(
                     {"arm": arm.key, "seed": seed, "tag": tag, "error": str(error)[:200]}
                 )

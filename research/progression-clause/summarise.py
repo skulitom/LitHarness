@@ -26,7 +26,7 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "src"))
 
-from litharness.domain.extraction import STATUS_PATTERN, STATUS_FIELDS  # noqa: E402
+from litharness.domain.extraction import STATUS_FIELDS, STATUS_PATTERN  # noqa: E402
 
 MUTABLE = ("level", "hp", "mp", "gold")
 

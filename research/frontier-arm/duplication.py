@@ -47,7 +47,6 @@ from typing import Any
 REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "src"))
 
-import litharness_contracts as lc  # noqa: E402
 
 from litharness import cli  # noqa: E402
 from litharness.adapters.sqlite_store import SqliteStore  # noqa: E402
