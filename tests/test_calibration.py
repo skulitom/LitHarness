@@ -24,7 +24,6 @@ from litharness.adapters.sqlite_store import SqliteStore
 from litharness.application.handlers import _craft_ladder
 from litharness.domain.audit import BUCKETS, AuditSample, Verdict, bucket_for, draw, should_audit
 from litharness.domain.calibration import (
-    MIN_FLAGGED,
     MIN_HOLDOUT,
     MIN_PRECISION,
     Calibration,
@@ -34,6 +33,7 @@ from litharness.domain.calibration import (
     NotPromotable,
     Population,
     calibration_id_for,
+    exact_lower_bound,
     promoted_gate,
     verdicts_digest_for,
     veto_for,
@@ -61,7 +61,7 @@ from litharness.domain.policy import (
     UntrustedVerdict,
     decide,
 )
-from tests.conftest import BOOK_ID, BRANCH_ID
+from tests.conftest import BOOK_ID, BRANCH_ID, PROMOTABLE_FLAGS
 
 TODAY = "2026-08-13"
 
@@ -106,8 +106,13 @@ def a_calibration(**kwargs) -> Calibration:
     fields = {
         "metric_id": "craft.tricolon_rate.v0",
         "holdout_size": MIN_HOLDOUT,
-        "flagged": MIN_FLAGGED,
-        "precision": MIN_PRECISION,
+        "flagged": PROMOTABLE_FLAGS,
+        "correct": PROMOTABLE_FLAGS,
+        # Stated rather than defaulted for the same reason `evidence_class` is: 1 candidate
+        # and 2 clusters are the permissive answers, and a helper that supplied them silently
+        # would let a test pass on evidence it never declared.
+        "selection_family_size": 1,
+        "clusters": 2,
         "threshold": 4.0,
         "direction": Direction.ABOVE,
         "verdicts_digest": "digest-1",
@@ -120,14 +125,19 @@ def a_calibration(**kwargs) -> Calibration:
     }
     fields.update(kwargs)
     flagged = fields["flagged"]
+    correct = fields["correct"]
+    family = fields["selection_family_size"]
+    clusters = fields["clusters"]
     fields["calibration_id"] = calibration_id_for(
         str(fields["metric_id"]),
         float(fields["threshold"]),
         str(fields["verdicts_digest"]),
         direction=Direction(fields["direction"]),
-        precision=float(fields["precision"]),
+        correct=None if correct is None else int(correct),  # type: ignore[arg-type]
         holdout_size=int(fields["holdout_size"]),  # type: ignore[arg-type]
         flagged=None if flagged is None else int(flagged),  # type: ignore[arg-type]
+        selection_family_size=None if family is None else int(family),  # type: ignore[arg-type]
+        clusters=None if clusters is None else int(clusters),  # type: ignore[arg-type]
         evidence_class=EvidenceClass(fields["evidence_class"]),
         grain=Grain(fields["grain"]),
     )
@@ -332,6 +342,64 @@ def test_the_readers_note_survives(store: SqliteStore) -> None:
     assert stored.note == "nothing changes; it is all setup"
 
 
+# -- the confidence bound (§10.4) -----------------------------------------------------------
+
+
+def test_the_bound_matches_an_independently_published_table() -> None:
+    """Every row of `research/certified-bounded-revision` Appendix B, to six places.
+
+    The promotion bar is only worth as much as this arithmetic, and the arithmetic is ours:
+    no `scipy`, a bisection on a binomial tail summed in log space. Checking it against a
+    table computed elsewhere is what makes that self-reliance safe rather than merely
+    convenient — a bug here would move the bar silently and every other test in this file
+    would agree with it.
+    """
+    reference = {
+        (17, 17): 0.804936,
+        (14, 17): 0.565682,
+        (16, 20): 0.563386,
+        (40, 50): 0.662817,
+        (45, 50): 0.781865,
+        (48, 50): 0.862862,
+        (49, 50): 0.893530,
+        (50, 50): 0.928878,
+        (90, 100): 0.823777,
+    }
+    for (correct, flagged), expected in reference.items():
+        assert exact_lower_bound(correct, flagged) == pytest.approx(expected, abs=5e-7)
+
+
+def test_the_bound_is_never_above_the_estimate_it_replaced() -> None:
+    """Why one check does the work of the two it replaces.
+
+    `L <= K/n` always, so requiring the bound to clear the floor implies the point estimate
+    clears it. The old rule checked only the estimate, which is the containment running the
+    wrong way — and 14 of 17 is how far apart the two can be at a size the old rule accepted.
+    """
+    for flagged in (5, 17, 50, 200):
+        for correct in range(flagged + 1):
+            assert exact_lower_bound(correct, flagged) <= correct / flagged
+
+
+def test_more_evidence_and_a_looser_level_can_only_help() -> None:
+    """Monotone in both arguments a maintainer might reach for, which is what makes the bar
+    non-gameable in the obvious directions: no gate is helped by finding fewer correct flags,
+    and none is helped by declaring more candidates."""
+    assert exact_lower_bound(0, 17) == 0.0
+    bounds = [exact_lower_bound(correct, 17) for correct in range(18)]
+    assert bounds == sorted(bounds), "increasing in correct flags"
+    levels = [exact_lower_bound(17, 17, alpha) for alpha in (0.2, 0.1, 0.05, 0.01, 0.001)]
+    assert levels == sorted(levels, reverse=True), "decreasing as the level tightens"
+
+
+def test_the_bound_refuses_inputs_that_are_not_counts() -> None:
+    for correct, flagged in ((18, 17), (-1, 17), (0, 0)):
+        with pytest.raises(ValueError, match="count pair"):
+            exact_lower_bound(correct, flagged)
+    with pytest.raises(ValueError, match="confidence level"):
+        exact_lower_bound(17, 17, 0.0)
+
+
 # -- the promotion bar (§10.4) --------------------------------------------------------------
 
 
@@ -355,10 +423,37 @@ def test_the_direction_decides_which_side_fails() -> None:
 
 
 def test_thin_evidence_cannot_promote() -> None:
-    with pytest.raises(NotPromotable, match="precision"):
-        promoted_gate(a_calibration(precision=MIN_PRECISION - 0.01), 6.0, today=TODAY)
+    with pytest.raises(NotPromotable, match="lower confidence bound"):
+        promoted_gate(a_calibration(correct=13), 6.0, today=TODAY)
     with pytest.raises(NotPromotable, match="held-out"):
         promoted_gate(a_calibration(holdout_size=MIN_HOLDOUT - 1), 6.0, today=TODAY)
+
+
+def test_the_bar_is_the_confidence_bound_and_not_the_point_estimate() -> None:
+    """The defect this module's promotion rule was rewritten to close.
+
+    14 correct flags out of 17 on a holdout of 50 is an observed precision of 0.824, above
+    the 0.80 floor, on more than the 17 flags the old `MIN_FLAGGED` demanded. It passed every
+    check there was. Its exact two-sided 95% lower limit is **0.566** — the metric could be
+    barely better than a coin and produce this table — and a floor that admits it is not a
+    floor on precision, it is a floor on one estimate of precision.
+    """
+    with pytest.raises(NotPromotable, match=r"0\.566"):
+        promoted_gate(a_calibration(correct=14, flagged=17), 6.0, today=TODAY)
+    # A perfect 17 is the smallest flagged set that clears the bound at one candidate, which
+    # is where `MIN_FLAGGED = 17` came from. The constant is gone because the bound implies
+    # it — and unlike the constant, it goes on implying it as precision falls. Asserted
+    # against `MIN_PRECISION` rather than against 0.80, so that moving the floor moves these
+    # numbers visibly instead of leaving a stale 17 behind.
+    assert exact_lower_bound(17, 17) >= MIN_PRECISION > exact_lower_bound(16, 16)
+    promoted_gate(a_calibration(correct=17, flagged=17), 6.0, today=TODAY)
+    with pytest.raises(NotPromotable, match="lower confidence bound"):
+        promoted_gate(a_calibration(correct=16, flagged=16), 6.0, today=TODAY)
+    # Imperfect evidence promotes too; it just has to be bigger. 45 of 50 bounds at 0.782 and
+    # 48 of 50 at 0.863, so the bar sits between them rather than at "no mistakes allowed".
+    with pytest.raises(NotPromotable, match="lower confidence bound"):
+        promoted_gate(a_calibration(correct=45, flagged=50), 6.0, today=TODAY)
+    promoted_gate(a_calibration(correct=48, flagged=50), 6.0, today=TODAY)
 
 
 def test_a_metric_that_fired_almost_never_cannot_promote() -> None:
@@ -368,15 +463,77 @@ def test_a_metric_that_fired_almost_never_cannot_promote() -> None:
     happens to be right scores precision 1.00 on a holdout of 50 — clearing both of the
     floors §10.4 established — while having demonstrated nothing at all. `recall` would have
     exposed it and is optional, so it cannot be what catches this.
+
+    `MIN_FLAGGED` used to be the answer and is no longer needed for it: two perfect flags
+    bound at 0.158, so the confidence bound refuses this on its own arithmetic.
     """
-    with pytest.raises(NotPromotable, match="fired on 1 of"):
+    with pytest.raises(NotPromotable, match="lower confidence bound"):
+        promoted_gate(a_calibration(flagged=2, correct=2, clusters=2), 6.0, today=TODAY)
+    # A single flag cannot reach the bound at all: it is refused one clause earlier, because
+    # one flag cannot span the two clusters independence needs.
+    with pytest.raises(NotPromotable, match="independent book"):
+        promoted_gate(a_calibration(flagged=1, correct=1, clusters=1), 6.0, today=TODAY)
+
+
+def test_the_candidate_family_divides_the_confidence_level() -> None:
+    """Scanning thresholds and keeping the best is not a threshold fixed in advance, and no
+    digest over the verdicts can tell the two apart — the count has to be declared.
+
+    The cost is sample rather than philosophy: a perfect 17 promotes at one candidate and is
+    refused at ten, where the level is 0.005 and 27 perfect flags are needed.
+
+    27 rather than the 24 `research/certified-bounded-revision` §5.6 tabulates, because that
+    table is one-sided and `PROMOTION_ALPHA` is declared two-sided. Three flags is what the
+    convention costs, and it is the reason the convention is a constant here rather than a
+    column somebody could set per row.
+    """
+    promoted_gate(a_calibration(selection_family_size=1), 6.0, today=TODAY)
+    with pytest.raises(NotPromotable, match="lower confidence bound"):
+        promoted_gate(a_calibration(selection_family_size=10), 6.0, today=TODAY)
+    with pytest.raises(NotPromotable, match="lower confidence bound"):
         promoted_gate(
-            a_calibration(flagged=1, precision=1.0), 6.0, today=TODAY
+            a_calibration(correct=26, flagged=26, selection_family_size=10), 6.0, today=TODAY
         )
-    # And the floor is where the arithmetic puts it, not near it.
-    with pytest.raises(NotPromotable, match="fired on"):
-        promoted_gate(a_calibration(flagged=MIN_FLAGGED - 1), 6.0, today=TODAY)
-    promoted_gate(a_calibration(flagged=MIN_FLAGGED), 6.0, today=TODAY)
+    promoted_gate(
+        a_calibration(correct=27, flagged=27, selection_family_size=10), 6.0, today=TODAY
+    )
+    for absent in (None, 0):
+        with pytest.raises(NotPromotable, match="candidate gates"):
+            promoted_gate(a_calibration(selection_family_size=absent), 6.0, today=TODAY)
+
+
+def test_flags_from_one_book_are_not_independent_trials() -> None:
+    """BRIEF §2 Pass 5's lesson, arriving where it was missing.
+
+    `research/quality-measurement/evaluate.py` resamples by chapter because scenes from one
+    book share generator, prompt profile and arc position. The promotion path had no cluster
+    concept at all, so an exact interval over 17 flags from a single book would have been a
+    confident statement about one observation — worse than the estimate it replaced, because
+    it carries authority it has not earned.
+    """
+    with pytest.raises(NotPromotable, match="independent book"):
+        promoted_gate(a_calibration(clusters=1), 6.0, today=TODAY)
+    with pytest.raises(NotPromotable, match="independent book"):
+        promoted_gate(a_calibration(clusters=None), 6.0, today=TODAY)
+    # More clusters than flags is not a count of anything.
+    with pytest.raises(NotPromotable, match="independent book"):
+        promoted_gate(a_calibration(clusters=18, flagged=17), 6.0, today=TODAY)
+    promoted_gate(a_calibration(clusters=2), 6.0, today=TODAY)
+
+
+def test_an_unrecorded_or_impossible_correct_count_cannot_promote() -> None:
+    """A stored rate is not a sufficient statistic, which is why the rate is gone.
+
+    `precision=0.83` beside `flagged=17` asserted 14.11 correct flags and nothing rejected
+    it, so a malformed record could present itself as exact evidence. Counts make that
+    unrepresentable; what remains to refuse is the pair that does not describe one set.
+    """
+    with pytest.raises(NotPromotable, match="does not record how many of its flags"):
+        promoted_gate(a_calibration(correct=None), 6.0, today=TODAY)
+    with pytest.raises(NotPromotable, match="not a count pair"):
+        promoted_gate(a_calibration(correct=18, flagged=17), 6.0, today=TODAY)
+    with pytest.raises(NotPromotable, match="not a count pair"):
+        promoted_gate(a_calibration(correct=-1, flagged=17), 6.0, today=TODAY)
 
 
 def test_an_unrecorded_flagged_count_cannot_promote() -> None:
@@ -457,17 +614,17 @@ def test_a_corrected_measurement_is_a_different_calibration() -> None:
     does not have to — re-measuring the same metric at the same threshold over the same
     holdout is exactly what a correction is. The two rows collided, `record_calibration` is
     INSERT OR IGNORE, and the correction vanished while the first row kept gating."""
-    original = a_calibration(precision=0.81, flagged=MIN_FLAGGED)
-    corrected = a_calibration(precision=0.94, flagged=MIN_FLAGGED)
+    original = a_calibration(correct=17, flagged=17)
+    corrected = a_calibration(correct=16, flagged=17)
     assert original.verdicts_digest == corrected.verdicts_digest
     assert original.calibration_id != corrected.calibration_id
 
 
 def test_a_correction_reaches_the_store_instead_of_being_ignored(store: SqliteStore) -> None:
     """The bite of the collision, at the layer that felt it."""
-    assert store.record_calibration(a_calibration(precision=0.81)) is True
-    assert store.record_calibration(a_calibration(precision=0.94)) is True
-    assert {row.precision for row in store.calibrations()} == {0.81, 0.94}
+    assert store.record_calibration(a_calibration(correct=17)) is True
+    assert store.record_calibration(a_calibration(correct=16)) is True
+    assert {row.correct for row in store.calibrations()} == {16, 17}
 
 
 def test_calibrations_round_trip_and_are_never_overwritten(store: SqliteStore) -> None:

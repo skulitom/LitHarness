@@ -243,3 +243,37 @@ predictive distribution over the text. Zero.
 - **Refuting is worth as much as confirming.** Four proxies were refuted in an afternoon and
   the project counts that as its best day of quality work. A proposal that fails fast and
   cheaply beats one that might work but takes a month to find out.
+
+## 6. Six questions before a number is allowed to refuse anything
+
+§5 governs whether a measurement is *real*. These govern whether it may become a *decision*,
+and they are separate failures: a metric can survive every control above and still be wired
+into a gate it does not license. Each one is a promotion that was possible in this repository
+until it was closed, so the list is a changelog rather than a checklist.
+
+1. **What grain is the label, and what grain is the decision?** Story-level evidence cannot
+   refuse a scene at any *n* or any AUC — `followers / total_views` is the label this project
+   most wants and it can never promote one. `Grain.covers` is the type check.
+2. **Are the counts stored, or only a rate?** A stored `precision` of 0.8235 cannot say
+   whether it was 14 of 17 or 140 of 170, and those are different evidence. It also cannot be
+   turned back into a confidence bound. Store integers.
+3. **Is the floor on the estimate or on its lower bound?** 14 correct flags of 17 is an
+   observed 0.82 above a 0.80 floor, and a true bound of **0.566**. That row was promotable
+   here until 2026-08-17. The estimate clearing a floor is not the estimate being above it.
+4. **How many candidates were tried?** A digest over the verdicts is identical whether one
+   threshold was fixed in advance or a hundred were scanned and the best kept. Nothing else
+   records it, so it has to be declared and the confidence level divided by it — at a perfect
+   score, clearing 0.80 costs 17 flags at one candidate and 27 at ten.
+5. **How many independent books do the flags span?** Fifty scenes from one book share
+   generator, prompt profile and arc position; a binomial interval over them is a confident
+   statement about one observation. This is Pass 5's ICC lesson, and `evaluate.py` already
+   obeys it — the promotion path did not until it was made to.
+6. **Does failing the gate cause observation, parking, or another attempt?** Retry is
+   rejection sampling: at per-attempt pass probability `q`, `B` attempts pass with
+   probability `1 - (1-q)**B`, so `q = 0.5` and `B = 3` returns a passing candidate seven
+   times in eight. The retry also moves the deployment distribution away from the passive one
+   the calibration was measured on, so it does not merely risk Goodhart — it voids the
+   evidence that licensed the gate. Craft failures park; `PARKABLE` is where that lives.
+
+Derived from `research/certified-bounded-revision`, whose §5 found (3) as an executable
+counterexample against this repository's own domain object.

@@ -2973,3 +2973,71 @@ section warned about had reported **+0.2342** for the same shape of data), lengt
 (0.4774, 0.5502)). Verdict unchanged at the first rung: **DEAD — damage does not move the
 score in the declared direction.** Entry 21 stands; every number in the two paragraphs above
 this addendum that disagrees with `results/cdg.json` is superseded by it.
+
+## 59. The gate's floor was on the estimate, and the row it admitted bounds at 0.566
+
+Two research notes landed on 2026-08-17 (`research/proof-carrying-prose`,
+`research/certified-bounded-revision`) and every number in both was reproduced against this
+artifact before anything was taken from them: all nine Clopper-Pearson values, the cascade
+recurrence and its closed form, the worked e-value, all six anytime power figures by
+independent dynamic program, and the null crossing probability 0.00440766. That check is what
+separated the one live defect from the four descriptive theorems.
+
+**The defect.** `Calibration.why_not_promotable` enforced `MIN_PRECISION` as a *point
+estimate*, so 14 correct flags of 17 on a holdout of 50 returned `None` — promotable — at an
+exact two-sided 95% lower bound of **0.566**. The metric could be barely better than a coin
+and produce that table. `MIN_FLAGGED = 17` was derived as the smallest *perfect* flagged set
+whose bound clears 0.80, and its own comment said it did not make 0.80 a confidence bound in
+general; it was right, and the gap it named was reachable in one line.
+
+**What was not in that comment, and is the reason the fix is a schema change rather than one
+`if`.** The bound was not reconstructible from a stored row at all: the schema held a float
+`precision` and `flagged`, never the integer numerator, and 0.8235 cannot say whether it was
+14 of 17 or 140 of 170. Nor was the pair checked — `precision=0.83` with `flagged=17` asserts
+14.11 correct flags and was accepted, so a malformed record could present itself as exact
+evidence.
+
+**The change.** `precision` is deleted as a stored column and derived from counts, which makes
+the incoherent case unrepresentable rather than merely refused. `correct`,
+`selection_family_size` and `clusters` are added (migration 020), all nullable and all refused
+when absent, on 015's reasoning about `flagged`. `exact_lower_bound` is a bisection on a
+binomial tail summed in log space — no `scipy`, and pinned to the nine published reference
+values so a bug in it cannot move the bar while every other test agrees with it.
+`MIN_FLAGGED` is **deleted**: the bound implies it at one candidate and goes on implying it as
+precision falls, which the constant never did. `MIN_PRECISION` survives as the floor the bound
+is compared against, and one check now does the work of the two it replaces, because the limit
+never exceeds the estimate.
+
+**Two additions the note argued for that this project had already half-earned.**
+`selection_family_size` is the union bound over candidates: a digest over the verdicts is
+identical whether one threshold was fixed in advance or a hundred were scanned, so the count
+has to be declared. It costs real sample — a perfect score needs 17 flags at one candidate and
+**27** at ten. (27 rather than §5.6's 24 because `PROMOTION_ALPHA` is declared two-sided;
+three flags is what the convention costs, which is why it is a module constant and not a
+column a maintainer could set per row after a near miss.) And `clusters` is BRIEF §2 Pass 5's
+ICC lesson arriving where it was missing: `evaluate.py` already resamples by chapter, the
+promotion path had no cluster concept, and adding an exact interval without one would have
+produced a *narrower* number resting on the same unexamined assumption — strictly worse than
+the estimate it replaced, because it carries authority it has not earned. Only the incoherent
+case is refused (fewer than two clusters is one observation wearing an interval); a
+concentration cap needs per-cluster counts nobody has measured.
+
+**Cost of doing it now: nothing.** `litharness calibrations` still prints nothing and the
+`calibrations` table is empty, which is the argument 018 used for making `evidence_class`
+required. The first real measurement is the last time that will be true.
+
+**What was deliberately not taken.** The four deterministic theorems (localized
+noninterference, stale-write rejection, atomic acceptance, the 55-job cascade bound) are
+*descriptive* — they document behaviour the suite already holds — so they are a safety case to
+cite, not a change list. `proof-carrying-prose`'s reader trial is not near-term at 793
+reader-level outcomes for one endpoint of six. And its anytime-valid machinery solves a
+problem this project does not have: all 21 dead proxies died to **confounds**, not to sampling
+noise, and an e-process would give a valid answer to the wrong question faster. Also dropped
+from the note's own recommendation set: a stored false-positive count (it is `flagged −
+correct`), a stored lower bound (derived, and a second copy is a disagreement surface), per-row
+alpha and sidedness columns (knobs, not evidence), a minimum-coverage floor (a placed constant
+guarding usefulness rather than correctness), and the selection/split/generator/critic digests
+(unenforceable today; `verdicts_digest` and `expires_at` already carry currency).
+
+Also landed: BRIEF §6, the six questions that decide whether a real measurement may become a
+decision — §5 governs whether a number is real, and those are separate failures.

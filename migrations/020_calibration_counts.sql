@@ -1,0 +1,43 @@
+-- Integer confusion counts, the candidate family they were selected from, and the clusters
+-- they span — the three things a precision *bound* needs and a precision *rate* does not.
+--
+-- 014 stored `precision REAL` and treated it as the evidence. 015 added `flagged` when it
+-- turned out precision alone does not say what it was computed over. This migration finishes
+-- that correction by removing the rate entirely: a float numerator is not a sufficient
+-- statistic, so `exact_lower_bound` cannot be recomputed from a stored row, and 0.8235 cannot
+-- say whether it was 14 of 17 or 140 of 170 — the same rate carrying very different evidence.
+--
+-- The rate was also unchecked against its own denominator. `precision = 0.83` with
+-- `flagged = 17` implies 14.11 correct flags; nothing rejected it, so a malformed record
+-- could present itself as exact evidence. Storing counts makes that unrepresentable instead
+-- of merely refused, and the domain derives the rate for display.
+--
+-- **`precision` is dropped rather than kept alongside.** Two columns encoding one number is
+-- a disagreement waiting to happen, and the reason this is free today is the reason 018 gave
+-- for making `evidence_class` required: the `calibrations` table is empty. `litharness
+-- calibrations` prints nothing. Every migration in this family has been able to say that,
+-- and the first real measurement is the last time it will be true.
+--
+-- `selection_family_size` is the one nothing anywhere recorded, and it is the one that makes
+-- the bound honest. The bound assumes the threshold was fixed before the labels were seen;
+-- scanning ten thresholds and keeping the best breaks that, and no content address can tell
+-- the two apart, because the digest over the verdicts is identical either way. Declaring the
+-- count and dividing the level by it is the union bound over candidates. It costs real
+-- sample: at a perfect score, clearing 0.80 needs 17 flags at one candidate, 24 at ten and
+-- 35 at a hundred.
+--
+-- `clusters` is BRIEF §2 Pass 5's lesson arriving where it was missing. Fifty scenes from one
+-- book are not fifty independent trials — they share generator, prompt profile, arc position
+-- and revision history — and `research/quality-measurement/evaluate.py` already resamples by
+-- chapter for exactly this reason. The promotion path had no cluster concept at all, so
+-- adding an exact interval without one would have produced a narrower number resting on the
+-- same unexamined assumption: strictly worse than the estimate it replaced, because it would
+-- carry authority it had not earned.
+--
+-- All three are nullable and all three are refused by the domain when absent, for the reason
+-- 015 gave about `flagged`: a row written before the column existed genuinely does not know
+-- its counts, and a default would turn "unrecorded" into a number nobody measured.
+ALTER TABLE calibrations DROP COLUMN precision;
+ALTER TABLE calibrations ADD COLUMN correct INTEGER;
+ALTER TABLE calibrations ADD COLUMN selection_family_size INTEGER;
+ALTER TABLE calibrations ADD COLUMN clusters INTEGER;

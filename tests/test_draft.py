@@ -23,7 +23,6 @@ from litharness.application.handlers import (
 )
 from litharness.domain.audit import AuditSample, Verdict
 from litharness.domain.calibration import (
-    MIN_FLAGGED,
     MIN_HOLDOUT,
     Calibration,
     Direction,
@@ -56,7 +55,7 @@ from litharness.domain.revision import Revision, build_revision
 from litharness.providers.base import CompletionRequest, CompletionResult, Usage
 from litharness.providers.fake import FakeProvider
 from litharness.providers.registry import ProviderRegistry
-from tests.conftest import BOOK_ID, BRANCH_ID, PROJECT_ID
+from tests.conftest import BOOK_ID, BRANCH_ID, PROJECT_ID, PROMOTABLE_FLAGS
 
 START = 1_760_000_000.0
 PROSE = (
@@ -1031,18 +1030,22 @@ def with_a_failing_craft_gate(store: SqliteStore) -> None:
                 value[metric_id] + 1.0,
                 digest,
                 direction=Direction.BELOW,
-                precision=0.86,
+                correct=PROMOTABLE_FLAGS,
                 holdout_size=MIN_HOLDOUT,
-                flagged=MIN_FLAGGED,
+                flagged=PROMOTABLE_FLAGS,
+                selection_family_size=1,
+                clusters=2,
                 evidence_class=EvidenceClass.JUDGMENT,
                 grain=Grain.UNIT,
             ),
             metric_id=metric_id,
             holdout_size=MIN_HOLDOUT,
-            flagged=MIN_FLAGGED,
+            flagged=PROMOTABLE_FLAGS,
+            correct=PROMOTABLE_FLAGS,
+            selection_family_size=1,
+            clusters=2,
             evidence_class=EvidenceClass.JUDGMENT,
             grain=Grain.UNIT,
-            precision=0.86,
             threshold=value[metric_id] + 1.0,
             direction=Direction.BELOW,
             verdicts_digest=digest,

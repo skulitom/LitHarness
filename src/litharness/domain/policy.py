@@ -93,6 +93,14 @@ REGENERABLE: frozenset[Veto] = frozenset(
 #: but the same shape, and it would arrive as a side effect of a retry class rather than as a
 #: decision anyone took.
 #:
+#: The amplification is arithmetic rather than a worry. If a candidate clears the gate with
+#: probability `q`, then `B` attempts return a passing one with probability `1 - (1-q)**B`:
+#: a gate a scene clears half the time is cleared by seven candidates in eight at `B = 3`.
+#: Three attempts do not observe a weak metric three times, they let it select the half of
+#: the generator's distribution it happens to favour — and the calibration that licensed it
+#: was measured on the *passive* distribution, so the retry invalidates the evidence that
+#: made the gate blocking in the first place.
+#:
 #: **Escalation breaks the product claim.** A gate firing on 5% of scenes is one director
 #: interruption per twenty accepted, in a system whose whole claim is that it runs without
 #: one. §4.2 already reserves escalation for what *policy could not resolve*, and a craft

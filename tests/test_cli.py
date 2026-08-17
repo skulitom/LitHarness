@@ -583,9 +583,13 @@ def _calibrate(db, **overrides: str) -> int:
         "--metric": "craft.tricolon_rate.v0",
         "--threshold": "4.0",
         "--direction": "above",
-        "--precision": "0.86",
         "--holdout": "50",
         "--flagged": "20",
+        "--correct": "20",
+        # 1 candidate and 2 clusters are the permissive answers, so the helper states them
+        # rather than letting a default supply evidence the caller never declared.
+        "--selection-family": "1",
+        "--clusters": "2",
         # Required, and there is no default: a caller that says nothing about what its
         # numbers are about must not be handed the class that may claim quality.
         "--evidence-class": "judgment",
@@ -599,8 +603,8 @@ def _answered(db, n: int = 50) -> None:
 
     Every test below that expects BLOCKING-ELIGIBLE needs this now, and needing it *is* the
     fix: `why_not_promotable` compares `holdout_size` against the answered samples the store
-    holds, and nothing had ever made that comparison. `--holdout 50 --flagged 20 --precision
-    0.86` against an empty store cleared every floor and promoted, and the digest clause was
+    holds, and nothing had ever made that comparison. `--holdout 50 --flagged 20 --correct 20`
+    against an empty store cleared every floor and promoted, and the digest clause was
     structurally unable to catch it because the digest of the empty set matches itself.
     """
     from litharness.domain.audit import AuditSample, Verdict
@@ -654,7 +658,7 @@ def test_a_calibration_that_cannot_promote_is_still_recorded_and_says_why(db, ca
     """Recording evidence that cannot yet promote is a legitimate act — it is how evidence
     accumulates toward evidence that can. What it must not do is look like promotion."""
     run(db, "init")
-    assert _calibrate(db, **{"--flagged": "1"}) == EXIT_OK
+    assert _calibrate(db, **{"--flagged": "1", "--correct": "1", "--clusters": "1"}) == EXIT_OK
     out = capsys.readouterr().out
     assert "not promotable" in out
     assert "BLOCKING-ELIGIBLE" not in out
@@ -664,8 +668,8 @@ def test_incoherent_numbers_are_refused_before_they_are_stored(db, capsys) -> No
     run(db, "init")
     assert _calibrate(db, **{"--flagged": "51", "--holdout": "50"}) == EXIT_FAULT
     assert "more flags than judgments" in capsys.readouterr().err
-    assert _calibrate(db, **{"--precision": "1.4"}) == EXIT_FAULT
-    assert "not a proportion" in capsys.readouterr().err
+    assert _calibrate(db, **{"--flagged": "17", "--correct": "18"}) == EXIT_FAULT
+    assert "not a count pair" in capsys.readouterr().err
 
 
 def test_a_corrected_measurement_is_reported_as_it_was_stored(db, capsys) -> None:
@@ -675,12 +679,12 @@ def test_a_corrected_measurement_is_reported_as_it_was_stored(db, capsys) -> Non
     not exist."""
     run(db, "init")
     _answered(db)
-    _calibrate(db, **{"--flagged": "1", "--precision": "1.0"})
+    _calibrate(db, **{"--flagged": "1", "--correct": "1", "--clusters": "1"})
     capsys.readouterr()
-    assert _calibrate(db, **{"--flagged": "21", "--precision": "0.86"}) == EXIT_OK
+    assert _calibrate(db, **{"--flagged": "21", "--correct": "21"}) == EXIT_OK
     out = capsys.readouterr().out
     assert "recorded" in out
-    assert "21 flag(s)" in out
+    assert "21/21 flags" in out
     assert "BLOCKING-ELIGIBLE" in out
 
     assert run(db, "calibrations") == EXIT_OK

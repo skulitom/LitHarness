@@ -714,20 +714,37 @@ def cmd_calibrations(args: argparse.Namespace) -> int:
         why = item.why_not_promotable(today, digest)
         state = "BLOCKING-ELIGIBLE" if why is None else "advisory"
         print(f"{item.calibration_id}  {state:<18} {item.metric_id}")
-        print(
-            f"    precision {item.precision:.2f} on {item.holdout_size} held-out; "
-            f"fails {item.direction.value} {item.threshold}"
-        )
+        print(f"    {_evidence_line(item)}; fails {item.direction.value} {item.threshold}")
         if why is not None:
             print(f"    not promotable: {why}")
     print(f"({len(items)} calibration(s); {len(verdicts)} verdict(s) on record)")
     if not items:
         print(
             "  no craft metric may block. §10.4 promotes a critic only on measured held-out "
-            f"precision (floor {calibration.MIN_PRECISION:.2f} on "
-            f"{calibration.MIN_HOLDOUT} judgments); §10.6's reference corpus is the gate."
+            f"precision whose lower confidence bound clears {calibration.MIN_PRECISION:.2f} "
+            f"on {calibration.MIN_HOLDOUT} judgments; §10.6's reference corpus is the gate."
         )
     return EXIT_OK
+
+
+def _evidence_line(record: calibration.Calibration) -> str:
+    """What a judgment row's numbers say, led by the bound rather than by the estimate.
+
+    The estimate is printed second and in parentheses because it is the number that reads as
+    the result and is not the one promotion turns on — 14 of 17 flags is a confident-looking
+    0.82 and a bound of 0.566.
+    """
+    bound = record.precision_lower_bound
+    if bound is None:
+        return (
+            f"counts not recorded ({record.correct}/{record.flagged} flags, family "
+            f"{record.selection_family_size}) on {record.holdout_size} held-out"
+        )
+    return (
+        f"precision at least {bound:.3f} (point {record.precision:.2f}, "
+        f"{record.correct}/{record.flagged} flags across {record.clusters} cluster(s), "
+        f"{record.selection_family_size} candidate(s)) on {record.holdout_size} held-out"
+    )
 
 
 def _population_from_profile(
@@ -897,9 +914,6 @@ def cmd_calibrate(args: argparse.Namespace) -> int:
     which is right when the measurement was made against this store and wrong if it was made
     elsewhere. Passing it explicitly is how a measurement computed off-line says so.
     """
-    if not 0.0 <= args.precision <= 1.0:
-        print(f"litharness: precision {args.precision} is not a proportion", file=sys.stderr)
-        return EXIT_FAULT
     if args.recall is not None and not 0.0 <= args.recall <= 1.0:
         print(f"litharness: recall {args.recall} is not a proportion", file=sys.stderr)
         return EXIT_FAULT
@@ -908,6 +922,13 @@ def cmd_calibrate(args: argparse.Namespace) -> int:
             f"litharness: the metric cannot have fired on {args.flagged} of {args.holdout} "
             "held-out judgments; more flags than judgments means the two numbers describe "
             "different sets",
+            file=sys.stderr,
+        )
+        return EXIT_FAULT
+    if not 0 <= args.correct <= args.flagged:
+        print(
+            f"litharness: {args.correct} correct of {args.flagged} flag(s) is not a count "
+            "pair; the human cannot have agreed with more flags than the metric raised",
             file=sys.stderr,
         )
         return EXIT_FAULT
@@ -945,21 +966,25 @@ def cmd_calibrate(args: argparse.Namespace) -> int:
                 threshold,
                 digest,
                 direction=calibration.Direction(args.direction),
-                precision=args.precision,
+                correct=args.correct,
                 holdout_size=args.holdout,
                 flagged=args.flagged,
+                selection_family_size=args.selection_family,
+                clusters=args.clusters,
                 evidence_class=evidence_class,
                 grain=grain,
             ),
             metric_id=args.metric,
             holdout_size=args.holdout,
-            precision=args.precision,
             threshold=threshold,
             direction=calibration.Direction(args.direction),
             verdicts_digest=digest,
             measured_at=_stamp(_now()),
             expires_at=args.expires,
             flagged=args.flagged,
+            correct=args.correct,
+            selection_family_size=args.selection_family,
+            clusters=args.clusters,
             recall=args.recall,
             note=args.note,
             evidence_class=evidence_class,
@@ -1003,10 +1028,7 @@ def cmd_calibrate(args: argparse.Namespace) -> int:
             f"{record.population.reference_exceedance:.4f}"
         )
     else:
-        print(
-            f"    precision {record.precision:.2f} over {record.flagged} flag(s) on "
-            f"{record.holdout_size} held-out"
-        )
+        print(f"    {_evidence_line(record)}")
     print(f"    fails {record.direction.value} {record.threshold}")
     if why is None:
         print("    BLOCKING-ELIGIBLE: this metric may now park a scene it refuses")
@@ -2143,16 +2165,38 @@ def build_parser() -> argparse.ArgumentParser:
         help="which side of the threshold is the failing side; guessing inverts the gate",
     )
     calibrate.add_argument(
-        "--precision", type=float, required=True, help="held-out precision over the flagged set"
-    )
-    calibrate.add_argument(
         "--holdout", type=int, required=True, help="held-out judgments it was measured on"
     )
     calibrate.add_argument(
         "--flagged",
         type=int,
         required=True,
-        help="how many of the holdout it fired on; the denominator of --precision",
+        help="how many of the holdout it fired on",
+    )
+    # **`--precision` is replaced by counts rather than kept beside them.** A rate cannot be
+    # turned back into the confidence bound promotion now turns on, and the operator typing
+    # 0.83 beside 17 flags was asserting 14.11 correct ones. Counts are also what the measurer
+    # actually has in front of them; the rate was always a division they did first.
+    calibrate.add_argument(
+        "--correct",
+        type=int,
+        required=True,
+        help="how many of --flagged the human agreed with; precision is derived from the pair",
+    )
+    calibrate.add_argument(
+        "--selection-family",
+        type=int,
+        required=True,
+        help="candidate gates safety-tested against this holdout — thresholds, directions and "
+        "metrics tried. 1 only if the threshold was fixed before these labels were seen; the "
+        "confidence level is divided by this",
+    )
+    calibrate.add_argument(
+        "--clusters",
+        type=int,
+        required=True,
+        help="independent books or generation runs the flagged set spans; flags from one book "
+        "are not independent trials",
     )
     calibrate.add_argument("--recall", type=float)
     calibrate.add_argument(

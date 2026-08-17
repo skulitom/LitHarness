@@ -1527,21 +1527,25 @@ class SqliteStore:
             population = calibration.population
             cursor = connection.execute(
                 "INSERT OR IGNORE INTO calibrations (calibration_id, metric_id, "
-                "holdout_size, precision, recall, flagged, threshold, direction, "
+                "holdout_size, correct, recall, flagged, selection_family_size, clusters, "
+                "threshold, direction, "
                 "verdicts_digest, measured_at, expires_at, note, evidence_class, grain, "
                 "population_cohort, population_band, population_quantile, "
                 "population_reference_n, population_tail_support, "
                 "population_control_cohort, population_control_n, "
                 "population_reference_exceedance, population_control_exceedance, "
                 "population_profile_digest) "
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, "
+                "?, ?, ?)",
                 (
                     calibration.calibration_id,
                     calibration.metric_id,
                     calibration.holdout_size,
-                    calibration.precision,
+                    calibration.correct,
                     calibration.recall,
                     calibration.flagged,
+                    calibration.selection_family_size,
+                    calibration.clusters,
                     calibration.threshold,
                     calibration.direction.value,
                     calibration.verdicts_digest,
@@ -1580,7 +1584,6 @@ class SqliteStore:
                 calibration_id=row["calibration_id"],
                 metric_id=row["metric_id"],
                 holdout_size=int(row["holdout_size"]),
-                precision=float(row["precision"]),
                 threshold=float(row["threshold"]),
                 direction=Direction(row["direction"]),
                 verdicts_digest=row["verdicts_digest"],
@@ -1588,6 +1591,13 @@ class SqliteStore:
                 expires_at=row["expires_at"],
                 recall=None if row["recall"] is None else float(row["recall"]),
                 flagged=None if row["flagged"] is None else int(row["flagged"]),
+                correct=None if row["correct"] is None else int(row["correct"]),
+                selection_family_size=(
+                    None
+                    if row["selection_family_size"] is None
+                    else int(row["selection_family_size"])
+                ),
+                clusters=None if row["clusters"] is None else int(row["clusters"]),
                 note=row["note"],
                 evidence_class=EvidenceClass(row["evidence_class"]),
                 grain=Grain(row["grain"]),

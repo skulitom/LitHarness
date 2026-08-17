@@ -22,11 +22,15 @@ statement about prose the system no longer writes. An expired calibration does n
 gate to advisory — `promoted_gate` refuses to build the gate at all, because a gate that
 silently stops blocking is worse than one that visibly cannot be built.
 
-**Precision has a floor and the holdout has a size.** §10.4 asks for "usable precision at an
-acceptable workload"; §10.5 adds that audit disagreement re-opens calibration. Numbers with no
-minimum are a rubber stamp, so the minimums are named constants here and a calibration below
-them cannot be promoted. They are **not** measured values — nothing in this project has
-measured what precision is usable, and the constants say so.
+**Precision has a floor, and the floor is a confidence bound rather than an estimate.** §10.4
+asks for "usable precision at an acceptable workload"; §10.5 adds that audit disagreement
+re-opens calibration. Numbers with no minimum are a rubber stamp, so the minimums are named
+constants here and a calibration below them cannot be promoted. They are **not** measured
+values — nothing in this project has measured what precision is usable, and the constants say
+so. What *is* derived is the bar the numbers must clear: a stored point estimate at 0.80 is
+not a claim that precision is 0.80, and 14 correct flags of 17 made that concrete by passing
+every check this module had at a true lower bound of 0.566. `exact_lower_bound` is that
+arithmetic, and the counts it needs are what the record stores.
 
 **Nothing here computes a calibration.** Fitting a threshold to human verdicts is a statistics
 problem this module deliberately does not solve, because solving it before any verdicts exist
@@ -37,6 +41,7 @@ evidence attached — which is the part that has to exist *before* the data, not
 from __future__ import annotations
 
 import enum
+import math
 from collections.abc import Iterable
 from dataclasses import dataclass
 from hashlib import sha256
@@ -60,33 +65,80 @@ MIN_PRECISION = 0.80
 #: number would have to be before anyone should believe it.
 MIN_HOLDOUT = 50
 
-#: Held-out judgments the metric must actually have **fired on**, and unlike the two above
-#: this one is derived rather than placed.
+#: Family-wise two-sided confidence level for the precision bound below. `MIN_PRECISION` says
+#: how good the metric must be; this says how sure we must be that it is. Two-sided rather
+#: than one-sided so the bar keeps the lineage of the `MIN_FLAGGED = 17` it replaces — 17 was
+#: derived as the smallest perfect flagged set whose two-sided 95% bound clears 0.80, and a
+#: silent switch to one-sided would have moved that to 14 while looking like a refactor.
 #:
-#: `MIN_HOLDOUT` alone does not constrain it, because precision is computed over the flagged
-#: set and not over the holdout: a metric that flags one scene out of fifty and happens to be
-#: right scores precision 1.00 on a holdout of 50 and clears both floors. `recall` would have
-#: caught that and is optional, so it cannot be relied on to.
-#:
-#: 17 is the smallest flagged set whose two-sided 95% Clopper-Pearson lower bound on a
-#: *perfect* score clears `MIN_PRECISION` — 0.025**(1/17) = 0.805, against 0.794 at 16.
-#:
-#: **What that does and does not buy, stated precisely because the first draft of this
-#: comment overclaimed it.** The floor rules out the case it was written for: a metric that
-#: fires once or twice, gets it right, and reports precision 1.00. It does *not* make
-#: `MIN_PRECISION` a confidence bound in general — at 17 flags and an observed 0.80 the
-#: lower bound is far below 0.80, and the code enforces the point estimate at every
-#: precision rather than requiring more flags as precision falls. Enforcing the bound at the
-#: *observed* precision is the stricter and more principled bar; it is deliberately not
-#: taken here, because it would redefine what `MIN_PRECISION` means and that is a decision
-#: for whoever first has evidence to promote, not for the commit that wired the path.
-MIN_FLAGGED = 17
+#: A one-sided limit is defensible — the claim *is* directional — and is deliberately not
+#: taken, for the same reason `MAX_REFERENCE_EXCEEDANCE` refuses only the incoherent: which
+#: convention to declare belongs to whoever first has evidence to promote. It is a module
+#: constant rather than a stored column so that it cannot become the knob a maintainer turns
+#: after a near miss.
+PROMOTION_ALPHA = 0.05
+
+
+def exact_lower_bound(correct: int, flagged: int, alpha: float = PROMOTION_ALPHA) -> float:
+    """Clopper-Pearson lower confidence limit on precision, at two-sided level `alpha`.
+
+    **The check `MIN_FLAGGED` was a proxy for, done exactly.** That constant ruled out the
+    case it was written for — a metric that fires twice, gets it right, and reports 1.00 —
+    and its own comment said it did not make `MIN_PRECISION` a confidence bound in general.
+    It did not: 14 correct flags out of 17 on a holdout of 50 passed every check this module
+    had, at a true lower bound of **0.566**. The bound is what the floor was reaching for, so
+    the floor is gone and this is the bar.
+
+    `L` solves `P(Bin(flagged, L) >= correct) = alpha / 2` and is computed by bisection on
+    that tail, which is increasing in `p`. No `scipy`: the sum is a few hundred terms of
+    exact-integer binomial coefficients taken in log space, and a promotion bar the project
+    cannot recompute from arithmetic it owns is a bar it has to take somebody's word for.
+    Verified against every row of `research/certified-bounded-revision` Appendix B.
+
+    Two properties the callers rely on: `L <= correct / flagged` always, so this check
+    subsumes the point-estimate check it replaces; and `L` is increasing in `correct` and
+    decreasing in `alpha`, so neither more evidence nor a stricter level can help a gate.
+    """
+    if not 0 <= correct <= flagged or flagged <= 0:
+        raise ValueError(f"{correct} correct of {flagged} flagged is not a count pair")
+    if not 0.0 < alpha < 1.0:
+        raise ValueError(f"alpha {alpha} is not a confidence level")
+    if correct == 0:
+        return 0.0
+    tail = alpha / 2.0
+
+    def at_least(p: float) -> float:
+        """`P(Bin(flagged, p) >= correct)`, summed in log space so large `n` cannot overflow."""
+        if p <= 0.0:
+            return 0.0
+        if p >= 1.0:
+            return 1.0
+        log_p, log_q = math.log(p), math.log1p(-p)
+        total = 0.0
+        for i in range(correct, flagged + 1):
+            total += math.exp(
+                math.lgamma(flagged + 1)
+                - math.lgamma(i + 1)
+                - math.lgamma(flagged - i + 1)
+                + i * log_p
+                + (flagged - i) * log_q
+            )
+        return total
+
+    low, high = 0.0, 1.0
+    for _ in range(200):
+        mid = (low + high) / 2.0
+        if at_least(mid) < tail:
+            low = mid
+        else:
+            high = mid
+    return low
 
 
 #: A population gate's control cohort may cross the reference cohort's threshold at most this
 #: many times as often before the threshold is refused. **A placed constant, and the one that
 #: guards this whole route's epistemic claim** — it has no derivation behind it the way
-#: `MIN_FLAGGED` does, and it is the lever a maintainer will reach for the first time a
+#: `PROMOTION_ALPHA`'s bound does, and it is the lever a maintainer will reach for the first time a
 #: population gate refuses something they wanted. 2.0 says: a line the reference cohort crosses
 #: 1% of the time may not be crossed more than 2% of the time by prose of the same era that
 #: nobody suspects. `tricolon_rate` fails it at better than five times that.
@@ -235,7 +287,6 @@ class Calibration:
     calibration_id: str
     metric_id: str
     holdout_size: int
-    precision: float
     threshold: float
     direction: Direction
     #: Content address of the evidence this was measured on — the answered verdict set for a
@@ -258,12 +309,76 @@ class Calibration:
     #: which is a claim about a moving target and should be rare enough to notice.
     expires_at: str | None = None
     #: How many of `holdout_size` the metric placed on the failing side — the denominator
-    #: `precision` was computed over. `None` means the measurement did not record it, which
-    #: is not promotable: an unrecorded flagged count is indistinguishable from a flagged
-    #: count of one, and see `MIN_FLAGGED` for why that matters.
+    #: `precision` is computed over. `None` means the measurement did not record it, which is
+    #: not promotable: an unrecorded flagged count is indistinguishable from a flagged count
+    #: of one, and a bound over one flag is 0.025.
     flagged: int | None = None
+    #: How many of `flagged` the human agreed with — the numerator, as an integer.
+    #:
+    #: **This replaced a stored `precision: float`, and the replacement is the point.** A
+    #: float numerator is not a sufficient statistic: `exact_lower_bound` needs the counts,
+    #: and a row storing 0.8235 cannot say whether that was 14 of 17 or 140 of 170, which are
+    #: the same rate and different evidence. Worse, the pair was never checked for coherence
+    #: — `precision=0.83, flagged=17` implies 14.11 correct flags and was accepted, so a
+    #: malformed record could present itself as exact evidence. Counts make that
+    #: unrepresentable rather than merely refused, and `precision` is now derived from them.
+    correct: int | None = None
+    #: How many candidate gates were safety-tested against this holdout — thresholds tried,
+    #: directions tried, metrics tried, all of it.
+    #:
+    #: **The field that makes the bound honest, and the one nothing anywhere recorded.** The
+    #: bound assumes the threshold was fixed before the labels were seen. Scan ten thresholds
+    #: and keep the best and it was not, and no digest reveals this: a content address over
+    #: the verdicts is identical whether one candidate was tested or a hundred. So the count
+    #: is declared and the level is divided by it, which is the union bound over candidates.
+    #: The cost is real rather than philosophical — at a perfect score the flags needed to
+    #: clear 0.80 go 17, 24, 35 for one, ten and a hundred candidates.
+    #:
+    #: `1` is the honest value only for a threshold fixed in advance on separate selection
+    #: data. It is not a default, for the reason `evidence_class` is not: the permissive
+    #: answer must be said rather than inherited.
+    selection_family_size: int | None = None
+    #: Independent books or generation runs the flagged set spans.
+    #:
+    #: **Without this the bound is a narrower number resting on the same unexamined
+    #: assumption, which is worse than no bound.** Fifty scenes from one book are not fifty
+    #: independent trials — they share generator, prompt profile, arc position and revision
+    #: history — and a binomial interval over them is a confident statement about one
+    #: observation. The project earned this in BRIEF §2 Pass 5 ("check within-book
+    #: reliability (ICC) before believing any per-book statistic") and already fixed it in
+    #: `research/quality-measurement/evaluate.py`, whose AUCs are chapter-resampled. The
+    #: promotion path had no cluster concept at all, so the lesson was half-applied.
+    #:
+    #: Only the incoherent case is refused: fewer than two clusters is one observation
+    #: wearing an interval. A stricter bar — cluster bootstrap, or a cap on how much one book
+    #: may contribute — is defensible and deliberately not taken, because it needs per-cluster
+    #: counts nobody has yet measured. Recording the number is what makes that fixable later.
+    clusters: int | None = None
     recall: float | None = None
     note: str | None = None
+
+    @property
+    def precision(self) -> float | None:
+        """Point precision, derived. `None` when the counts to derive it were not recorded.
+
+        A property rather than a field so there is one source of truth and no arithmetic to
+        disagree with itself. It is reporting, not evidence: `exact_lower_bound` is the
+        number promotion turns on, and it is always the smaller of the two.
+        """
+        if self.correct is None or not self.flagged:
+            return None
+        return self.correct / self.flagged
+
+    @property
+    def precision_lower_bound(self) -> float | None:
+        """The bound promotion turns on, at the level this row's candidate family earns."""
+        if self.correct is None or not self.flagged or not self.selection_family_size:
+            return None
+        if not 0 <= self.correct <= self.flagged:
+            return None
+        return exact_lower_bound(
+            self.correct, self.flagged, PROMOTION_ALPHA / self.selection_family_size
+        )
 
     def is_current(self, today: str) -> bool:
         return self.expires_at is None or today <= self.expires_at
@@ -286,9 +401,10 @@ class Calibration:
 
         **A dispatcher over `evidence_class`, because the checks below are not general.**
         Every constant in the judgment branch is denominated in human answers about our own
-        prose — `MIN_HOLDOUT` counts judgments, `MIN_FLAGGED` counts flags on those judgments
-        — and applying them to a corpus percentile does not make the percentile validated, it
-        makes the bar meaningless. The class picks the checks; the checks do not generalise.
+        prose — `MIN_HOLDOUT` counts judgments, and the precision bound is computed over
+        flags on those judgments — and applying them to a corpus percentile does not make the
+        percentile validated, it makes the bar meaningless. The class picks the checks; the
+        checks do not generalise.
 
         `decision_grain` is the grain of the thing being refused, so evidence coarser than
         the unit under judgment is refused ahead of every class-specific test. That single
@@ -402,17 +518,20 @@ class Calibration:
     def _why_not_judgment(
         self, today: str, verdicts_digest: str | None, answered: int | None
     ) -> str | None:
-        """Today's seven checks, unchanged, plus the count nothing was comparing."""
+        """Coherence of the counts, then the bound they support, then currency.
+
+        **The precision floor moved from the estimate to its lower confidence limit**, which
+        is the whole of this module's change and the reason `MIN_FLAGGED` is gone. The old
+        pair — point precision at least 0.80, at least 17 flags — admitted 14 correct of 17
+        on a holdout of 50, whose exact bound is 0.566. Because the limit never exceeds the
+        estimate, one check now does the work of the two it replaces and does it at every
+        precision instead of only at a perfect one.
+        """
         if answered is not None and self.holdout_size > answered:
             return (
                 f"claims {self.holdout_size} held-out judgment(s) against a store holding "
                 f"{answered} answered; the digest clause cannot catch this, because the "
                 "digest of the smaller set matches itself"
-            )
-        if self.precision < MIN_PRECISION:
-            return (
-                f"held-out precision {self.precision:.2f} is below the {MIN_PRECISION:.2f} "
-                "floor (§10.4: usable precision at an acceptable workload)"
             )
         if self.holdout_size < MIN_HOLDOUT:
             return (
@@ -424,16 +543,47 @@ class Calibration:
                 "does not record how many held-out judgments the metric fired on; precision "
                 "is computed over the flagged set, so without it the number is unreadable"
             )
-        if self.flagged < MIN_FLAGGED:
-            return (
-                f"fired on {self.flagged} of {self.holdout_size} held-out judgment(s), below "
-                f"the {MIN_FLAGGED} floor — a precision measured over so few flags clears "
-                f"{MIN_PRECISION:.2f} by luck at conventional confidence"
-            )
         if self.flagged > self.holdout_size:
             return (
                 f"fired on {self.flagged} of {self.holdout_size} held-out judgment(s), which "
                 "is more flags than judgments; the measurement is not about this holdout"
+            )
+        if self.correct is None:
+            return (
+                "does not record how many of its flags the human agreed with; a stored rate "
+                "is not a sufficient statistic, and the confidence bound promotion turns on "
+                "cannot be reconstructed from it"
+            )
+        if not 0 <= self.correct <= self.flagged:
+            return (
+                f"records {self.correct} correct flag(s) out of {self.flagged}, which is not "
+                "a count pair; the two numbers describe different sets"
+            )
+        if self.selection_family_size is None or self.selection_family_size < 1:
+            return (
+                "does not record how many candidate gates were safety-tested against this "
+                "holdout; a threshold chosen by scanning is not a threshold fixed in advance, "
+                "and no digest over the verdicts can tell the two apart. Declare 1 if the "
+                "threshold was fixed before these labels were seen"
+            )
+        if self.clusters is None or not 2 <= self.clusters <= self.flagged:
+            return (
+                f"spans {self.clusters} independent book(s) or run(s) across {self.flagged} "
+                "flag(s); flags from a single cluster share generator, prompt and arc "
+                "position, so a binomial bound over them is a confident interval around one "
+                "observation"
+            )
+        bound = self.precision_lower_bound
+        assert bound is not None  # every input it needs was checked above
+        if bound < MIN_PRECISION:
+            level = PROMOTION_ALPHA / self.selection_family_size
+            return (
+                f"has {self.correct} correct of {self.flagged} flag(s) — point precision "
+                f"{self.correct / self.flagged:.2f} — but its exact lower confidence bound "
+                f"is {bound:.3f}, below the {MIN_PRECISION:.2f} floor. At "
+                f"{self.selection_family_size} candidate(s) the two-sided level is "
+                f"{level:.4f}; the estimate clearing the floor is not the estimate being "
+                "above it with confidence"
             )
         if not self.is_current(today):
             return (
@@ -455,9 +605,11 @@ def calibration_id_for(
     verdicts_digest: str,
     *,
     direction: Direction,
-    precision: float,
+    correct: int | None,
     holdout_size: int,
     flagged: int | None,
+    selection_family_size: int | None = None,
+    clusters: int | None = None,
     evidence_class: EvidenceClass = EvidenceClass.UNCLASSIFIED,
     grain: Grain = Grain.UNIT,
 ) -> str:
@@ -495,9 +647,11 @@ def calibration_id_for(
             "threshold": threshold,
             "verdicts": verdicts_digest,
             "direction": direction.value,
-            "precision": precision,
+            "correct": correct,
             "holdout_size": holdout_size,
             "flagged": flagged,
+            "selection_family_size": selection_family_size,
+            "clusters": clusters,
             "evidence_class": evidence_class.value,
             "grain": grain.value,
         }
@@ -533,8 +687,14 @@ def _detail(calibration: Calibration, value: float) -> str:
             f"against {population.reference_exceedance:.4f}. A statement about range, "
             "not about quality"
         )
+    # The bound, not the estimate, because the bound is what licensed the refusal. An
+    # operator reading "precision 0.82" beside a scene this gate stopped would be reading the
+    # number that did *not* clear the bar.
+    bound = calibration.precision_lower_bound
+    assert bound is not None  # only reached through `promoted_gate`, which checked the counts
     return (
-        f"{common}; precision {calibration.precision:.2f} on "
+        f"{common}; precision at least {bound:.2f} "
+        f"({calibration.correct}/{calibration.flagged} flags) on "
         f"{calibration.holdout_size} held-out"
     )
 
@@ -613,10 +773,10 @@ def promoted_gate(
 __all__ = [
     "MAX_CONTROL_RATIO",
     "MAX_REFERENCE_EXCEEDANCE",
-    "MIN_FLAGGED",
     "MIN_HOLDOUT",
     "MIN_PRECISION",
     "MIN_TAIL_SUPPORT",
+    "PROMOTION_ALPHA",
     "Calibration",
     "Direction",
     "EvidenceClass",
@@ -624,6 +784,7 @@ __all__ = [
     "NotPromotable",
     "Population",
     "calibration_id_for",
+    "exact_lower_bound",
     "promoted_gate",
     "verdicts_digest_for",
     "veto_for",

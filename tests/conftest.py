@@ -20,6 +20,16 @@ PROJECT_ID = "11111111-1111-5111-8111-111111111111"
 BOOK_ID = "22222222-2222-5222-8222-222222222222"
 BRANCH_ID = "33333333-3333-5333-8333-333333333333"
 
+#: Flags a judgment calibration needs to promote, when every one of them is correct: the
+#: smallest set whose two-sided 95% Clopper-Pearson lower bound clears `MIN_PRECISION`, at
+#: 0.8049. Lives here because two test modules build promotable calibrations and the number
+#: is a property of the bar rather than of either of them.
+#:
+#: It is the same 17 the deleted `MIN_FLAGGED` named, and that coincidence is the point: the
+#: constant was derived from exactly this case and enforced at every *other* precision as a
+#: point estimate, which is how 14 of 17 — bound 0.5657 — used to promote.
+PROMOTABLE_FLAGS = 17
+
 SCENES = [
     "Rook counted the coins twice. Forty-five, and the lantern cost twenty.",
     "The gatekeeper wanted five more. Rook paid without looking up.",
