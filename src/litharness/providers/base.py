@@ -1,4 +1,4 @@
-"""The provider seam: one request shape, one result shape, four implementations.
+"""The provider seam: one request shape, one result shape, two implementations.
 
 Design recorded in `plan/provider-adapters.md`; this is that contract in code. Two things
 about it are load-bearing and easy to get wrong.
@@ -8,9 +8,9 @@ consumes paid quota decides whether a test run may touch it, and the registry en
 that (`registry.py`). Making it a property of the adapter means a new provider cannot be
 added without answering the question.
 
-**Structured output is a per-adapter capability, not a shared one.** Ollama enforces a
-JSON Schema natively; `codex exec` does too via `--output-schema`; `claude -p` does not —
-it returns fenced markdown, so its adapter strips fences, parses, and reports failure as
+**Structured output is a per-adapter capability, not a shared one.** The retired Ollama
+and Codex adapters enforced a JSON Schema natively; `claude -p` does not — it returns
+fenced markdown, so its adapter strips fences, parses, and reports failure as
 `parsed is None` rather than raising. A parse failure is a *shape-gate* result (§4.2 ladder
 step 1) that earns a bounded retry with structured feedback, not an exception that kills
 the unit of work.

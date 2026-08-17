@@ -117,11 +117,12 @@ class Conductor:
     select: WorkSelector = fifo_selector
     scope: str = DEFAULT_SCOPE
     job_lease_duration: float = 600.0
-    #: Cleared once per tick. `ProviderRegistry.reset_health` documents "called at
-    #: the start of a tick" and had no caller, so a provider marked dead by one failed
-    #: probe stayed dead for the life of the process and never recovered. In a resident
-    #: foreground loop the process lives for the whole book, so without the per-tick
-    #: reset one blip would silence a provider permanently.
+    #: `reset_health` is called once per tick, and it clears *negative* verdicts only:
+    #: a provider marked dead by one failed probe is re-probed next tick and can heal,
+    #: while a positive verdict — bought with a real, billed round trip that no budget
+    #: ceiling sees — is kept for the life of the process. Before the per-tick call
+    #: existed, one blip silenced a provider permanently in a resident loop; before the
+    #: asymmetry existed, a resident loop re-paid the probe every tick.
     registry: TextGenerator | None = None
 
     # -- tick -----------------------------------------------------------------
@@ -190,7 +191,7 @@ class Conductor:
             # Re-check the lease at the moment of doing work, not just at claim time.
             running.assert_held_by(self.holder, now)
             events = list(handler(running, now))
-        except TransientFailure as error:
+        except TransientFailure:
             # **Infrastructure failure must not consume the unit's attempt budget.**
             # `ProviderUnavailable` is raised by `resolve` *before* any work is attempted,
             # so the candidate was never produced and nothing about this unit is wrong.
@@ -204,21 +205,8 @@ class Conductor:
                 running.transition_to(JobStatus.QUEUED), attempts=job.attempts
             ).released()
             self.store.save_job(requeued)
-            diagnostic = error.diagnostic()
-            self.store.append_events(
-                [
-                    self._event(
-                        EventType.PROVIDER_FELL_BACK,
-                        {
-                            "job_id": job.job_id,
-                            "error": str(error),
-                            "requeued": True,
-                            **diagnostic,
-                        },
-                        now,
-                    )
-                ]
-            )
+            # No `PROVIDER_FELL_BACK` event: with one pinned provider there is nothing
+            # to fall back from, so the outage's durable record is the digest counter.
             self.store.bump_digest(self._day(now), "provider_unavailable")
             return TickOutcome.JOB_FAILED, ()
         except ParkedFailure as error:

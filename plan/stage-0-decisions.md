@@ -3264,3 +3264,58 @@ tick` in a loop (or a shell loop does); killing it mid-job loses nothing — the
 job lease is reclaimed, the replayed tick converges on its recorded decision, and
 accepted work was committed atomically with its events. That is the §57 run's shape,
 now the only shape.
+
+## 64. One provider writes the book, and falling back is reclassified as a defect
+
+Cut 2 of §61's programme. §1a.5 requires a frontier generator; §56.1 measured that the
+frontier arm was already the unflagged default (`DEFAULT_ORDER` put `claude_code`
+first, and every decision-log run needed `--prefer ollama` to *avoid* it); and the
+plurality machinery's real production behaviour was a hazard dressed as resilience —
+a mid-book fallback silently hands prose to a weaker model, which under the quality
+goal is a defect, not a save. The registry is now **one pinned provider**
+(`claude_code`, plus `FakeProvider` behind the explicit `LITHARNESS_FAKE_PAD_CHARS`
+opt-in): `resolve` returns it healthy or raises `ProviderUnavailable`, the unit parks
+or requeues on §24's terms, and the book is never degraded. Codex (the fallback tier)
+and the Ollama adapter are deleted; `--prefer`/`--no-billing`/`--model` and their env
+vars go with them. Skips dropped 8 → 2 because the sub-frontier live arms died with
+their adapters.
+
+**Three semantic changes worth their own record.**
+
+- **The billing guard filters nothing now; it refuses.** `LITHARNESS_ENV=test` used to
+  silently drop billed providers from the candidate list — a filter is a silent
+  substitution, the exact shape this cut exists to kill. A billed provider reached in
+  test mode now raises `BillingGuardViolation` *before* the health probe (the probe is
+  itself a billed call), and the Stage-0 exit clause "test provably cannot reach a paid
+  provider" holds by refusal instead of by filtering. A mis-wired test surfaces as a
+  FAILED job naming the guard — a wiring defect is loud, not quietly rerouted.
+- **The health cache goes asymmetric, closing §56.2's open cost.** Positive verdicts
+  now live for the process lifetime; `reset_health` clears only negatives. A resident
+  session pays the unmetered ~$0.34 probe once instead of per tick, and one failed
+  probe still cannot kill the provider for the process lifetime (§16's original bug).
+  Full metering of the probe remains open; its cost is now bounded per session.
+- **Cheap-call routing is deleted, and summaries move up a class.** Of the three
+  `CHEAP_CALL_CLASSES` only `mechanical` ever had a wired producer (scene summaries).
+  Those now route to the frontier provider and pay the measured harness tax — under
+  the quality goal that is an *upgrade*, not a cost bug: summaries feed the context
+  packet the next scene is drafted from, and a weak summary degrades frontier prose
+  from upstream. `call_class` survives on requests as provenance; the routing is what
+  died.
+
+**Kept, deliberately.** The sampler machinery (`draft_sampler`, `_SEED_MODULUS`,
+profiles) — inert on the pinned provider, which drops sampler and token caps entirely
+(measured; the per-attempt retry ladder was always Ollama-only), but load-bearing for
+replay-to-same-prose digests and FakeProvider determinism; removing it would churn
+recorded policy digests to delete dead weight. `PROVIDER_FELL_BACK` stays as
+historical vocabulary with its emission site removed — nothing can fall back, so
+nothing may claim to. Provenance columns (`provider`, `model`, `fell_back_from`)
+stay; historical rows naming `ollama`/`codex` project at `DEFAULT_TAX_TOKENS` now,
+which errs high — the safe direction.
+
+**Fallout accepted and recorded.** `research/progression-clause/ablate.py` imports
+the deleted adapter and no longer runs — its research is concluded (§52/§56) and its
+results are committed; the script is a record, not a tool.
+`research/frontier-arm/duplication.py` calls the old registry signature and is fixed
+by the roadmap entry that re-scopes it (Cut 6), since its new role needs the new CLI
+shape anyway. `plan/provider-adapters.md` carries a superseded banner and stays as
+the measured record (the harness-tax tables are still the cost model's basis).

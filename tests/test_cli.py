@@ -23,7 +23,6 @@ from litharness.domain.directives import DirectiveStatus
 from litharness.domain.events import EventType
 from litharness.domain.jobs import Job, JobStatus
 from litharness.domain.policy import Outcome
-from litharness.providers import build_default_registry
 
 
 @pytest.fixture
@@ -1119,35 +1118,12 @@ def test_a_surface_only_change_reaches_nothing_and_is_still_a_clean_run(
     assert "nothing" in capsys.readouterr().out.lower()
 
 
-def test_a_machine_can_be_told_to_stay_local_once_rather_than_every_tick(
-    db, monkeypatch, capsys
-) -> None:
-    """`plan/provider-adapters.md` §5 says provider selection "is config, versioned like
-    every other policy, never hardcoded" — and it was hardcoded, so the only way to run a
-    book on local models was to pass flags on every invocation. A cron entry does not pass
-    flags; it inherits an environment.
-
-    The shipped order is unchanged on purpose. §5 and §1a settle it on prose quality, not on
-    cost, and a machine saying "free here" is a deployment choice rather than a new default
-    for everyone.
-    """
-    monkeypatch.setenv("LITHARNESS_PREFER", "ollama")
-    monkeypatch.setenv("LITHARNESS_NO_BILLING", "1")
-    run(db, "init")
-
-    args = build_parser().parse_args(["--database", str(db), "tick"])
-
-    assert args.prefer == "ollama"
-    assert args.no_billing is True
-    registry = build_default_registry(args.prefer, refuse_billing=args.no_billing)
-    assert next(iter(registry.order)) == "ollama"
-    assert [p.name for p in registry.candidates("generation")] == ["ollama"]
-
-
 def test_the_environment_default_is_off_unless_it_says_a_true_thing(db, monkeypatch) -> None:
-    """An unset variable and `LITHARNESS_NO_BILLING=maybe` are both "no". A flag that read
-    any non-empty string as true would make `=0` mean yes."""
-    monkeypatch.setenv("LITHARNESS_NO_BILLING", "0")
-    assert build_parser().parse_args(["tick"]).no_billing is False
-    monkeypatch.setenv("LITHARNESS_NO_BILLING", "true")
-    assert build_parser().parse_args(["tick"]).no_billing is True
+    """An unset variable and `LITHARNESS_NO_OUTLINE=maybe` are both "no". A flag that read
+    any non-empty string as true would make `=0` mean yes. (This used to exercise
+    `LITHARNESS_NO_BILLING`, retired with provider selection; the parsing property is
+    generic and lives on with the surviving env flag.)"""
+    monkeypatch.setenv("LITHARNESS_NO_OUTLINE", "0")
+    assert build_parser().parse_args(["tick"]).no_outline is False
+    monkeypatch.setenv("LITHARNESS_NO_OUTLINE", "true")
+    assert build_parser().parse_args(["tick"]).no_outline is True

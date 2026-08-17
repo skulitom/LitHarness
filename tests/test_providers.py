@@ -1,13 +1,13 @@
-"""Provider adapter gates.
+"""Provider adapter gates, for the pinned world: `claude_code` plus the deterministic fake.
 
-The envelopes in this file are **real captured output** from the installed tools
-(`claude` 2.1.227, `codex-cli` 0.147.0, `ollama` 0.32.8), not invented shapes. Parsing is
-therefore tested against what the CLIs actually emit, without spawning a process or
-spending quota — which is the reason both CLI adapters take an injected runner.
+The envelope in this file is **real captured output** from the installed tool
+(`claude` 2.1.227), not an invented shape. Parsing is therefore tested against what the
+CLI actually emits, without spawning a process or spending quota — which is the reason the
+adapter takes an injected runner.
 
-Live round trips are opt-in via `LITHARNESS_LIVE_PROVIDERS=1`. They are skipped by default
+The live round trip is opt-in via `LITHARNESS_LIVE_PROVIDERS=1`. It is skipped by default
 because a suite that silently invokes a paid CLI on every run is a suite nobody can afford
-to run often, and because CI cannot assume the tools are installed.
+to run often, and because CI cannot assume the tool is installed.
 """
 
 from __future__ import annotations
@@ -17,7 +17,6 @@ import os
 import subprocess
 import sys
 from collections.abc import Sequence
-from pathlib import Path
 
 import pytest
 
@@ -36,10 +35,10 @@ from litharness.providers.base import (
     provider_error,
     strip_fences,
 )
-from litharness.providers.cli import ClaudeCodeProvider, CodexProvider, CommandResult
+from litharness.providers.cli import ClaudeCodeProvider, CommandResult
 from litharness.providers.fake import FakeProvider
-from litharness.providers.ollama import OllamaProvider
 from litharness.providers.registry import (
+    BillingGuardViolation,
     ProviderRegistry,
     assert_no_billing_reachable,
     in_test_mode,
@@ -52,7 +51,7 @@ SCHEMA = {
     "properties": {"ok": {"type": "boolean"}, "word": {"type": "string"}},
 }
 
-# --- real captured envelopes --------------------------------------------------------
+# --- the real captured envelope -----------------------------------------------------
 
 #: `claude -p '...' --output-format json --model claude-haiku-4-5`, warm cache.
 CLAUDE_ENVELOPE = {
@@ -88,35 +87,6 @@ CLAUDE_ENVELOPE = {
     "duration_ms": 3610,
 }
 
-#: `codex exec ... --json`. Four events per single turn; usage rides on turn.completed.
-CODEX_EVENTS = [
-    {"type": "thread.started"},
-    {"type": "turn.started"},
-    {"type": "item.completed"},
-    {
-        "type": "turn.completed",
-        "usage": {
-            "input_tokens": 14887,
-            "cached_input_tokens": 0,
-            "cache_write_input_tokens": 0,
-            "output_tokens": 21,
-            "reasoning_output_tokens": 0,
-        },
-    },
-]
-
-#: `POST /api/chat` with a `format` schema. Unfenced, no preamble.
-OLLAMA_ENVELOPE = {
-    "model": "llama3.2:latest",
-    "created_at": "2026-08-12T14:42:45.3336231Z",
-    "message": {"role": "assistant", "content": '{"ok": true, "word": "litharness"}'},
-    "done": True,
-    "done_reason": "stop",
-    "total_duration": 2814727200,
-    "prompt_eval_count": 33,
-    "eval_count": 14,
-}
-
 
 # --- helpers -----------------------------------------------------------------------
 
@@ -127,27 +97,6 @@ def claude_runner(envelope: dict) -> object:
         return CommandResult(0, json.dumps(envelope))
 
     return run
-
-
-def codex_runner(events: list[dict], answer: str) -> object:
-    """Writes the `-o` file the way the real CLI does, then emits JSONL on stdout."""
-
-    def run(argv: Sequence[str], *, timeout: float, cwd: str | None = None) -> CommandResult:
-        run.argv = list(argv)  # type: ignore[attr-defined]
-        target = Path(argv[argv.index("-o") + 1])
-        target.write_text(answer, encoding="utf-8")
-        return CommandResult(0, "\n".join(json.dumps(event) for event in events))
-
-    return run
-
-
-def ollama_transport(envelope: dict) -> object:
-    def transport(url: str, body: dict, timeout: float) -> dict:
-        transport.body = body  # type: ignore[attr-defined]
-        transport.url = url  # type: ignore[attr-defined]
-        return envelope
-
-    return transport
 
 
 # --- base helpers ------------------------------------------------------------------
@@ -186,6 +135,35 @@ def test_usage_separates_full_price_input_from_cache_reads() -> None:
     usage = Usage(input_tokens=10, cache_read_tokens=19057, cache_write_tokens=4982)
     assert usage.billable_input == 4992, "cache reads must not count as full-price input"
     assert usage.total == 24049
+
+
+def test_a_samplers_opinions_merge_over_defaults_field_by_field() -> None:
+    """Per-request decoding, and *partial* per-request decoding.
+
+    Field-by-field merging is what lets a request raise the temperature without also
+    having to restate the seed, and lets a field left `None` keep the adapter's. The
+    retired Ollama transport tests used to pin this at the wire; `Sampler` is kept (it
+    feeds `draft_sampler` and the policy digest), so the merge semantics are pinned here
+    directly, with no transport.
+    """
+    merged = Sampler(temperature=0.7, top_p=0.9, repeat_penalty=1.05).merged_over(
+        temperature=0.0, seed=7
+    )
+    assert merged == {"temperature": 0.7, "top_p": 0.9, "repeat_penalty": 1.05, "seed": 7}
+
+
+def test_a_sampler_field_left_none_stays_absent_rather_than_becoming_a_default() -> None:
+    """`None` means "no opinion", and no layer may translate that into a number.
+
+    The failure this refuses is silent and one-directional: a `None` serialised as `0`
+    makes every call greedy, which looks like working software and is the exact setting
+    the measurement in `domain/generation.py` says makes a retry return the same answer
+    three times.
+    """
+    merged = Sampler(temperature=0.7).merged_over(seed=7, top_p=None)
+    assert merged == {"temperature": 0.7, "seed": 7}
+    assert "top_p" not in merged
+    assert "repeat_penalty" not in merged
 
 
 @pytest.mark.parametrize(
@@ -295,201 +273,6 @@ def test_claude_schema_request_adds_a_json_only_instruction() -> None:
     assert "no code fence" in system, "the CLI has no native structured-output mode"
 
 
-# --- codex -------------------------------------------------------------------------
-
-
-def test_codex_adapter_parses_events_and_the_answer_file() -> None:
-    runner = codex_runner(CODEX_EVENTS, '{"ok":true,"word":"litharness"}')
-    result = CodexProvider(runner=runner).complete(CompletionRequest(prompt="x", schema=SCHEMA))
-
-    assert result.parsed == {"ok": True, "word": "litharness"}
-    assert result.usage.input_tokens == 14887
-    assert result.usage.cache_read_tokens == 0, "codex does not cache; measured across repeats"
-    assert result.usage.reasoning_tokens == 0
-    assert result.cost_usd is None, "ChatGPT-account auth is quota, not dollars"
-
-
-def test_codex_argv_carries_the_schema_and_repo_check_flags() -> None:
-    runner = codex_runner(CODEX_EVENTS, '{"ok":true,"word":"x"}')
-    CodexProvider(runner=runner).complete(CompletionRequest(prompt="x", schema=SCHEMA))
-    argv = runner.argv  # type: ignore[attr-defined]
-    assert "--skip-git-repo-check" in argv, "the LitHarness tree is not a git repository"
-    assert "--output-schema" in argv, "native schema enforcement is codex's advantage"
-    assert "mcp_servers={}" in argv
-    schema_path = Path(argv[argv.index("--output-schema") + 1])
-    assert schema_path.name == "schema.json"
-
-
-def test_codex_reasoning_tokens_are_counted() -> None:
-    events = [
-        *CODEX_EVENTS[:-1],
-        {
-            "type": "turn.completed",
-            "usage": {
-                "input_tokens": 14887,
-                "cached_input_tokens": 0,
-                "cache_write_input_tokens": 0,
-                "output_tokens": 21,
-                "reasoning_output_tokens": 4096,
-            },
-        },
-    ]
-    result = CodexProvider(runner=codex_runner(events, "answer")).complete(
-        CompletionRequest(prompt="x")
-    )
-    assert result.usage.reasoning_tokens == 4096
-    assert result.usage.total >= 4096, "reasoning must reach the budget governor"
-
-
-def test_codex_empty_answer_is_an_error_with_a_diagnostic() -> None:
-    """The 0.107.0 failure mode: exit 0, empty -o file, error only in the event stream."""
-    events = [{"type": "error", "detail": "The 'gpt-5.6-sol' model requires a newer version"}]
-    with pytest.raises(ProviderError, match="newer version"):
-        CodexProvider(runner=codex_runner(events, "")).complete(CompletionRequest(prompt="x"))
-
-
-# --- ollama ------------------------------------------------------------------------
-
-
-def test_ollama_adapter_parses_the_real_envelope() -> None:
-    transport = ollama_transport(OLLAMA_ENVELOPE)
-    result = OllamaProvider(transport=transport).complete(
-        CompletionRequest(prompt="x", schema=SCHEMA)
-    )
-    assert result.parsed == {"ok": True, "word": "litharness"}
-    assert result.usage.input_tokens == 33
-    assert result.usage.output_tokens == 14
-    assert result.cost_usd == 0.0, "hardware time only"
-    assert result.model == "llama3.2:latest"
-
-
-def test_ollama_sends_the_schema_and_a_request_with_no_sampler_is_unchanged() -> None:
-    """A request that expresses no sampler still gets the adapter's own settings.
-
-    This test was named `..._pins_determinism` and the second half of that name was false:
-    `temperature=0.0` with a fixed seed does not make Ollama reproducible — the same request
-    sent twice returns different text — and at temperature zero the seed selects nothing at
-    all, so three distinct seeds return byte-identical output. The measurement is in
-    `domain/generation.py`. What the assertions below actually pin is the property that
-    matters for the change that made the sampler per-request: **a call site with no opinion
-    behaves exactly as it did before the field existed.**
-    """
-    transport = ollama_transport(OLLAMA_ENVELOPE)
-    OllamaProvider(transport=transport, seed=7).complete(
-        CompletionRequest(prompt="x", schema=SCHEMA, system="be terse")
-    )
-    body = transport.body  # type: ignore[attr-defined]
-    assert body["format"] == SCHEMA, "native JSON-Schema output is the whole point"
-    assert body["stream"] is False
-    assert body["options"]["temperature"] == 0.0
-    assert body["options"]["seed"] == 7
-    assert [message["role"] for message in body["messages"]] == ["system", "user"]
-
-
-def test_a_requests_sampler_overrides_the_adapters_field_by_field() -> None:
-    """Per-request decoding, and *partial* per-request decoding.
-
-    The sampler was constructor state, so one process had one temperature for prose and for
-    schema-shaped extraction alike. Field-by-field merging is what lets a request raise the
-    temperature without also having to restate the seed, and lets a field left `None` keep
-    the adapter's — which is what makes the whole field additive rather than a change to
-    every existing caller.
-    """
-    transport = ollama_transport(OLLAMA_ENVELOPE)
-    OllamaProvider(transport=transport, seed=7, temperature=0.0).complete(
-        CompletionRequest(
-            prompt="x", sampler=Sampler(temperature=0.7, top_p=0.9, repeat_penalty=1.05)
-        )
-    )
-    options = transport.body["options"]  # type: ignore[attr-defined]
-    assert options["temperature"] == 0.7, "the request wins"
-    assert options["top_p"] == 0.9
-    assert options["repeat_penalty"] == 1.05
-    assert options["seed"] == 7, "a field the request leaves None keeps the adapter's"
-
-
-def test_a_sampler_field_left_unset_never_reaches_the_wire_as_a_default() -> None:
-    """`None` means "no opinion", and an adapter must not translate that into a number.
-
-    The failure this refuses is silent and one-directional: a `None` serialised as `0` makes
-    every call greedy, which looks like working software and is the exact setting the
-    measurement says makes a retry return the same answer three times.
-    """
-    transport = ollama_transport(OLLAMA_ENVELOPE)
-    OllamaProvider(transport=transport, seed=7, temperature=0.0).complete(
-        CompletionRequest(prompt="x", sampler=Sampler(temperature=0.7))
-    )
-    options = transport.body["options"]  # type: ignore[attr-defined]
-    assert "top_p" not in options
-    assert "repeat_penalty" not in options
-
-
-#: A **real captured** `qwen3:4b` reply to the health probe's own prompt at its own 16-token
-#: cap. A reasoning model spends the budget in `thinking` and `content` never opens — so the
-#: model generated, answered, and reported `done_reason: "length"`, and the field the probe
-#: read is empty.
-OLLAMA_TRUNCATED_REASONING = {
-    "model": "qwen3:4b",
-    "created_at": "2026-08-14T23:23:49.5321669Z",
-    "message": {
-        "role": "assistant",
-        "content": "",
-        "thinking": 'Hmm, the user just asked me to reply with the single word "OK".',
-    },
-    "done": True,
-    "done_reason": "length",
-    "prompt_eval_count": 17,
-    "eval_count": 16,
-}
-
-
-def test_a_reasoning_model_is_alive_even_when_the_probe_truncates_its_thinking() -> None:
-    """**The probe answered "is this model dead" with "did it finish a sentence".**
-
-    `health()` capped its own probe at 16 output tokens and required non-empty `content`. A
-    reasoning model spends those tokens in `thinking`, so `content` is still empty when the
-    cap bites — and the model was marked dead. Permanently: `reset_health` re-runs the same
-    probe and gets the same answer every tick, so a provider that works is never selected
-    again. Measured on `qwen3:4b`, which fails the probe and answers "OK" uncapped.
-
-    Liveness is whether the model *generated*, which `eval_count` reports exactly, and it is
-    the question the docstring already said this asks — "listed but not pulled, or too large
-    to load, fails only on generate". Emptiness is a shape problem and belongs to the caller
-    that set the cap.
-    """
-    provider = OllamaProvider(
-        model="qwen3:4b", transport=ollama_transport(OLLAMA_TRUNCATED_REASONING)
-    )
-
-    assert provider.complete(CompletionRequest(prompt="x")).text == ""
-    assert provider.health(), "a model that generated 16 tokens is not dead"
-
-
-def test_a_model_that_generates_nothing_is_still_unhealthy() -> None:
-    """The check the fix must not throw away: an empty answer with no tokens generated is the
-    listed-but-not-pulled case `health` exists to catch."""
-    silent = {**OLLAMA_TRUNCATED_REASONING, "message": {"role": "assistant", "content": ""}}
-    silent["eval_count"] = 0
-
-    assert not OllamaProvider(transport=ollama_transport(silent)).health()
-
-
-def test_ollama_error_field_becomes_a_provider_error() -> None:
-    transport = ollama_transport({"error": "model 'nope' not found"})
-    with pytest.raises(BlockedProviderError, match="not found") as raised:
-        OllamaProvider(transport=transport).complete(CompletionRequest(prompt="x"))
-    assert raised.value.kind is ProviderFailureKind.INVALID_REQUEST
-
-
-def test_ollama_unreachable_daemon_is_a_provider_error() -> None:
-    def transport(url, body, timeout):
-        raise OSError("connection refused")
-
-    with pytest.raises(RetryableProviderError, match="unreachable") as raised:
-        OllamaProvider(transport=transport).complete(CompletionRequest(prompt="x"))
-    assert raised.value.kind is ProviderFailureKind.UNAVAILABLE
-
-
 # --- fake --------------------------------------------------------------------------
 
 
@@ -541,11 +324,6 @@ def test_fake_consumes_a_scripted_sequence_of_results_and_failures() -> None:
 CONFORMANCE_CASES = [
     ("fake", lambda: FakeProvider()),
     ("claude_code", lambda: ClaudeCodeProvider(runner=claude_runner(CLAUDE_ENVELOPE))),
-    (
-        "codex",
-        lambda: CodexProvider(runner=codex_runner(CODEX_EVENTS, '{"ok":true,"word":"c"}')),
-    ),
-    ("ollama", lambda: OllamaProvider(transport=ollama_transport(OLLAMA_ENVELOPE))),
 ]
 
 
@@ -586,7 +364,7 @@ class StubProvider:
     def __init__(self, name: str, *, bills: bool, healthy: bool = True, raises: bool = False):
         self.name = name
         self.bills = bills
-        self._healthy = healthy
+        self.healthy = healthy
         self._raises = raises
         self.probes = 0
 
@@ -594,66 +372,129 @@ class StubProvider:
         self.probes += 1
         if self._raises:
             raise RuntimeError("probe blew up")
-        return self._healthy
+        return self.healthy
 
     def complete(self, request: CompletionRequest):
         return FakeProvider(name=self.name).complete(request)
 
 
-def registry(*providers, order=None, environ=None, cheap_order=()) -> ProviderRegistry:
-    return ProviderRegistry(
-        providers=list(providers),
-        order=order or [provider.name for provider in providers],
-        cheap_order=cheap_order,
-        environ=environ if environ is not None else {},
-    )
+def registry(provider, environ=None) -> ProviderRegistry:
+    return ProviderRegistry(provider, environ=environ if environ is not None else {})
 
 
-def test_an_operator_can_refuse_to_bill_without_pretending_to_be_a_test() -> None:
-    """**Running a book on local models had exactly one lever, and it was the test guard.**
-
-    `LITHARNESS_ENV=test` filters billing providers, so it is what an operator reached for to
-    keep a run off a paid CLI — configuring production with a flag whose entire purpose is
-    proving that *test* runs cannot bill. `refuse_billing` says the same thing as a
-    deployment choice, and the two stay independent on purpose: Stage 0's exit criterion is
-    that a test run **provably** cannot reach a paid provider, and a guarantee that could be
-    switched off by configuration would not be one.
-    """
-    reg = registry(
-        StubProvider("claude_code", bills=True),
-        StubProvider("ollama", bills=False),
-        order=["claude_code", "ollama"],
-    )
-    assert reg.resolve()[0].name == "claude_code"
-
-    reg.refuse_billing = True
-
-    assert reg.resolve()[0].name == "ollama"
-    assert [p.name for p in reg.candidates()] == ["ollama"], "filtered, not deprioritised"
+def test_resolving_returns_the_pinned_provider_with_no_fallback() -> None:
+    """One provider, healthy: it serves, and the resolution records no switch — the
+    `fell_back_from` slot is schema'd vocabulary that stays empty going forward."""
+    stub = StubProvider("pinned", bills=False)
+    provider, resolution = registry(stub).resolve()
+    assert provider is stub
+    assert resolution.provider == "pinned"
+    assert resolution.fell_back_from == ()
+    assert not resolution.is_fallback
 
 
-def test_the_test_guard_holds_whatever_the_operator_configured() -> None:
-    """The guard is not the flag. `LITHARNESS_ENV=test` filters billing providers with
-    `refuse_billing` left off, because §5 rule 2 does not depend on anyone remembering."""
-    reg = registry(
-        StubProvider("claude_code", bills=True),
-        StubProvider("ollama", bills=False),
-        order=["claude_code", "ollama"],
-        environ={"LITHARNESS_ENV": "test"},
-    )
-
-    assert reg.refuse_billing is False
-    assert [p.name for p in reg.candidates()] == ["ollama"]
+def test_an_unhealthy_provider_raises_rather_than_degrading() -> None:
+    """§1a.5: a silent mid-book fallback to a weaker model is a quality defect, not
+    resilience. With one pinned provider an outage is `ProviderUnavailable` — the
+    conductor requeues or parks the unit, and the book waits rather than degrades."""
+    reg = registry(StubProvider("pinned", bills=False, healthy=False))
+    with pytest.raises(ProviderUnavailable, match="unhealthy"):
+        reg.resolve()
 
 
-def test_preferring_a_provider_moves_it_first_and_keeps_the_chain() -> None:
-    """Preference, not exclusivity: a preferred provider that is dead still falls back, and
-    §5 rule 4 makes that fallback an event rather than a silent switch. An operator who wants
-    local *and* no surprises pairs this with `refuse_billing`."""
-    reg = build_default_registry(prefer="ollama")
+def test_a_probe_that_raises_counts_as_unhealthy() -> None:
+    reg = registry(StubProvider("pinned", bills=False, raises=True))
+    with pytest.raises(ProviderUnavailable):
+        reg.resolve()
 
-    assert list(reg.order) == ["ollama", "claude_code", "codex"], "the rest keep order"
-    assert next(iter(reg.cheap_order)) == "ollama"
+
+def test_a_negative_verdict_heals_after_reset() -> None:
+    """One failed probe must not kill the provider for the life of the process — the
+    dead-forever bug §16 recorded. `reset_health` clears the negative verdict, so the
+    next tick re-probes and a recovered provider serves again."""
+    flaky = StubProvider("pinned", bills=False, healthy=False)
+    reg = registry(flaky)
+
+    with pytest.raises(ProviderUnavailable):
+        reg.resolve()
+    flaky.healthy = True
+    with pytest.raises(ProviderUnavailable):
+        reg.resolve()
+    assert flaky.probes == 1, "a verdict must be cached until the next reset, not re-probed"
+
+    reg.reset_health()
+    provider, _ = reg.resolve()
+    assert provider is flaky
+    assert flaky.probes == 2
+
+
+def test_a_positive_verdict_survives_reset_because_the_probe_is_billed_work() -> None:
+    """The other half of the asymmetry. The pinned provider's probe is a real, metered
+    round trip that no budget ceiling sees (§56.2), so a positive verdict, once bought,
+    is kept for the life of the process — the per-tick reset must not re-pay it."""
+    stub = StubProvider("pinned", bills=False)
+    reg = registry(stub)
+
+    reg.resolve()
+    for _ in range(5):
+        reg.reset_health()
+        reg.resolve()
+
+    assert stub.probes == 1, "a reset re-paid a probe the process had already bought"
+
+
+# --- the test-mode guard -----------------------------------------------------------
+
+
+def test_the_billing_guard_raises_in_test_mode_before_any_probe() -> None:
+    """§5 rule 2, preserved by refusal instead of filtering. The plural registry filtered
+    billing providers and quietly proceeded on what remained; with one provider there is
+    nothing to substitute, and never substituting silently is the recorded lesson — so a
+    test run that reaches for a billing provider gets a dedicated, loud error. Before the
+    probe, because the probe is itself a billed call."""
+    paid = StubProvider("paid", bills=True)
+    reg = registry(paid, environ={"LITHARNESS_ENV": "test"})
+
+    with pytest.raises(BillingGuardViolation, match="LITHARNESS_ENV"):
+        reg.resolve()
+    assert paid.probes == 0, "the guard must refuse before paying for the health probe"
+
+    with pytest.raises(BillingGuardViolation):
+        reg.complete(CompletionRequest(prompt="x"))
+
+
+def test_the_guard_assertion_fails_loudly_outside_test_mode() -> None:
+    reg = registry(StubProvider("paid", bills=True), environ={})  # not test mode
+    with pytest.raises(AssertionError, match="not 'test'"):
+        assert_no_billing_reachable(reg)
+
+
+def test_the_guard_assertion_asserts_the_refusal() -> None:
+    """`assert_no_billing_reachable` now proves the guard by the raise: a registry
+    holding a billing provider must refuse to resolve it in test mode, and a non-billing
+    provider has nothing to refuse."""
+    paid = registry(StubProvider("paid", bills=True), environ={"LITHARNESS_ENV": "test"})
+    assert_no_billing_reachable(paid)
+
+    free = registry(StubProvider("free", bills=False), environ={"LITHARNESS_ENV": "test"})
+    assert_no_billing_reachable(free)
+
+
+def test_in_test_mode_reads_the_environment_case_insensitively() -> None:
+    assert in_test_mode({"LITHARNESS_ENV": "TEST"})
+    assert in_test_mode({"LITHARNESS_ENV": " test "})
+    assert not in_test_mode({"LITHARNESS_ENV": "production"})
+    assert not in_test_mode({})
+
+
+# --- the default registry ----------------------------------------------------------
+
+
+def test_the_default_registry_pins_claude_code(monkeypatch) -> None:
+    monkeypatch.delenv("LITHARNESS_FAKE_PAD_CHARS", raising=False)
+    reg = build_default_registry()
+    assert isinstance(reg.provider, ClaudeCodeProvider)
+    assert reg.provider.name == "claude_code"
 
 
 def test_an_outage_is_an_outage_and_not_a_writer_who_cannot_write(monkeypatch) -> None:
@@ -669,146 +510,25 @@ def test_an_outage_is_an_outage_and_not_a_writer_who_cannot_write(monkeypatch) -
     already handles correctly: the attempt is given back and the unit requeues, so the outage
     costs time rather than the work. §19.1's rule, fourth instance — and this one hid best,
     because nothing looked refused. A healthy provider answered; it simply could not write.
+    In the pinned world the same lesson reads: the default registry never holds the fake.
     """
     monkeypatch.delenv("LITHARNESS_FAKE_PAD_CHARS", raising=False)
-    assert "fake" not in build_default_registry().order
+    assert not isinstance(build_default_registry().provider, FakeProvider)
 
-    reg = ProviderRegistry(
-        providers=[StubProvider("ollama", bills=False, healthy=False), FakeProvider()],
-        order=list(build_default_registry().order),
-        environ={"LITHARNESS_ENV": "test"},
-    )
+    down = registry(StubProvider("pinned", bills=False, healthy=False))
     with pytest.raises(ProviderUnavailable):
-        reg.resolve("generation")
+        down.resolve("generation")
 
 
 def test_padding_the_fake_is_how_you_ask_for_a_model_free_loop(monkeypatch) -> None:
     """Setting the pad is the statement "I am deliberately running on the fake", so it is
-    also what makes the fake eligible to generate. The scaffolding stays reachable; what it
-    stops doing is arriving uninvited during an outage."""
+    also what selects the fake. The scaffolding stays reachable; what it stops doing is
+    arriving uninvited during an outage."""
     monkeypatch.setenv("LITHARNESS_FAKE_PAD_CHARS", "400")
 
-    assert list(build_default_registry().order)[-1] == "fake"
-
-
-def test_preferring_an_adapter_that_does_not_exist_is_refused_loudly() -> None:
-    """`order` ignores names it does not know, by design — so a typo would silently leave the
-    default order in place and the operator would find out from the bill. The one place a
-    name arrives from a human is the one place it has to be checked."""
-    with pytest.raises(ValueError, match="unknown provider 'ollamma'"):
-        build_default_registry(prefer="ollamma")
-
-
-def test_resolution_follows_the_configured_order() -> None:
-    reg = registry(
-        StubProvider("claude_code", bills=True),
-        StubProvider("codex", bills=True),
-        StubProvider("ollama", bills=False),
-    )
-    provider, resolution = reg.resolve()
-    assert provider.name == "claude_code"
-    assert not resolution.is_fallback
-
-
-def test_an_unhealthy_provider_is_skipped_and_the_fallback_is_recorded() -> None:
-    """§5 rule 4: a switch changes provenance, so it must not be silent."""
-    reg = registry(
-        StubProvider("claude_code", bills=True, healthy=False),
-        StubProvider("codex", bills=True),
-    )
-    provider, resolution = reg.resolve()
-    assert provider.name == "codex"
-    assert resolution.fell_back_from == ("claude_code",)
-    assert resolution.is_fallback
-
-
-def test_a_probe_that_raises_counts_as_unhealthy() -> None:
-    reg = registry(
-        StubProvider("claude_code", bills=True, raises=True),
-        StubProvider("ollama", bills=False),
-    )
-    assert reg.resolve()[0].name == "ollama"
-
-
-def test_no_healthy_provider_raises_rather_than_returning_none() -> None:
-    reg = registry(StubProvider("ollama", bills=False, healthy=False))
-    with pytest.raises(ProviderUnavailable, match="no healthy provider"):
-        reg.resolve()
-
-
-def test_health_is_probed_once_per_tick_and_reset_clears_it() -> None:
-    stub = StubProvider("ollama", bills=False)
-    reg = registry(stub)
-    reg.resolve()
-    reg.resolve()
-    assert stub.probes == 1, "a probe per call would make every tick pay a round trip"
-    reg.reset_health()
-    reg.resolve()
-    assert stub.probes == 2
-
-
-def test_cheap_call_classes_prefer_a_non_billing_provider_in_production() -> None:
-    """§3: the per-invocation harness tax dwarfs a small mechanical payload."""
-    reg = registry(
-        StubProvider("claude_code", bills=True),
-        StubProvider("ollama", bills=False),
-        order=["claude_code", "ollama"],
-        cheap_order=["ollama", "claude_code"],
-    )
-    assert reg.resolve("generation")[0].name == "claude_code"
-    assert reg.resolve("extraction")[0].name == "ollama"
-    assert reg.resolve("mechanical")[0].name == "ollama"
-
-
-# --- the test-mode guard -----------------------------------------------------------
-
-
-def test_test_mode_excludes_every_billing_provider() -> None:
-    reg = registry(
-        StubProvider("claude_code", bills=True),
-        StubProvider("codex", bills=True),
-        StubProvider("ollama", bills=False),
-        environ={"LITHARNESS_ENV": "test"},
-    )
-    assert reg.test_mode
-    assert [p.name for p in reg.candidates()] == ["ollama"]
-    assert reg.resolve()[0].name == "ollama"
-    assert_no_billing_reachable(reg)
-
-
-def test_the_guard_holds_even_when_the_order_names_only_paid_providers() -> None:
-    """The guard must not depend on `order` being configured correctly."""
-    reg = registry(
-        StubProvider("claude_code", bills=True),
-        StubProvider("codex", bills=True),
-        order=["claude_code", "codex"],
-        environ={"LITHARNESS_ENV": "test"},
-    )
-    with pytest.raises(ProviderUnavailable, match="test mode"):
-        reg.resolve()
-    assert_no_billing_reachable(reg)
-
-
-def test_the_guard_assertion_fails_loudly_if_a_paid_provider_becomes_reachable() -> None:
-    reg = registry(
-        StubProvider("claude_code", bills=True),
-        StubProvider("ollama", bills=False),
-        environ={},  # not test mode
-    )
-    with pytest.raises(AssertionError, match="not 'test'"):
-        assert_no_billing_reachable(reg)
-
-
-def test_in_test_mode_reads_the_environment_case_insensitively() -> None:
-    assert in_test_mode({"LITHARNESS_ENV": "TEST"})
-    assert in_test_mode({"LITHARNESS_ENV": " test "})
-    assert not in_test_mode({"LITHARNESS_ENV": "production"})
-    assert not in_test_mode({})
-
-
-def test_duplicate_provider_names_are_rejected() -> None:
-    with pytest.raises(ValueError, match="duplicate provider names"):
-        registry(StubProvider("ollama", bills=False), StubProvider("ollama", bills=False))
+    reg = build_default_registry()
+    assert isinstance(reg.provider, FakeProvider)
+    assert reg.provider.pad_to_chars == 400
 
 
 # --- opt-in live round trips -------------------------------------------------------
@@ -817,26 +537,6 @@ live = pytest.mark.skipif(
     os.environ.get("LITHARNESS_LIVE_PROVIDERS") != "1",
     reason="set LITHARNESS_LIVE_PROVIDERS=1 to exercise the installed tools (spends quota)",
 )
-
-
-@live
-def test_live_ollama_round_trip() -> None:
-    provider = OllamaProvider(model="llama3.2:latest")
-    assert provider.health()
-    result = provider.complete(
-        CompletionRequest(prompt="Return ok=true and word=litharness", schema=SCHEMA)
-    )
-    assert result.parsed == {"ok": True, "word": "litharness"}
-
-
-@live
-def test_live_codex_round_trip() -> None:
-    provider = CodexProvider()
-    result = provider.complete(
-        CompletionRequest(prompt="Return ok=true and word=litharness", schema=SCHEMA)
-    )
-    assert result.conforms
-    assert result.usage.input_tokens > 0
 
 
 @live
@@ -857,16 +557,14 @@ def test_the_whole_suite_runs_with_the_billing_guard_active() -> None:
 
     Asserted rather than assumed: this is the property Stage 0's exit criterion names, and
     a guard nobody checks is a guard that silently stops applying the day someone changes
-    the conftest.
+    the conftest. The pinned provider bills, so the registry must refuse to resolve it —
+    the guard is now the raise, not a filtered candidate list.
     """
     assert in_test_mode(), "LITHARNESS_ENV=test is not active for this run"
 
-    real = ProviderRegistry(
-        providers=[ClaudeCodeProvider(), CodexProvider(), OllamaProvider(), FakeProvider()],
-        order=["claude_code", "codex", "ollama", "fake"],
-        cheap_order=["ollama", "fake"],
-    )
-    assert [provider.name for provider in real.candidates()] == ["ollama", "fake"]
+    real = ProviderRegistry(ClaudeCodeProvider())
+    with pytest.raises(BillingGuardViolation):
+        real.resolve()
     assert_no_billing_reachable(real)
 
 

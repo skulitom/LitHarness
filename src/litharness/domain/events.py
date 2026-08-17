@@ -53,6 +53,8 @@ class EventType(enum.StrEnum):
     EXCEPTION_RAISED = "ExceptionRaised"
     EXCEPTION_RESOLVED = "ExceptionResolved"
     DIGEST_PUBLISHED = "DigestPublished"
+    #: Vestigial since the provider was pinned (nothing emits it — with one provider
+    #: there is nothing to fall back from), kept because historical events reference it.
     PROVIDER_FELL_BACK = "ProviderFellBack"
     BUDGET_EXHAUSTED = "BudgetExhausted"
 

@@ -237,9 +237,10 @@ def test_the_registry_still_satisfies_the_port_the_application_asks_for() -> Non
     knowing it exists.
     """
     from litharness.application.ports import TextGenerator
+    from litharness.providers.fake import FakeProvider
     from litharness.providers.registry import ProviderRegistry
 
-    registry = ProviderRegistry(providers=(), order=())
+    registry = ProviderRegistry(FakeProvider())
     generator: TextGenerator = registry
 
     for method in ("resolve", "complete", "reset_health"):

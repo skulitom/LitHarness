@@ -103,7 +103,7 @@ def store(tmp_path) -> SqliteStore:
 
 def _registry() -> tuple[ProviderRegistry, FakeProvider]:
     provider = FakeProvider(responses=[PROSE, '{"replacement": "Mara"}'])
-    return ProviderRegistry(providers=[provider], order=["fake"]), provider
+    return ProviderRegistry(provider), provider
 
 
 def _state_record(record_id: str, revision, logical_id: str) -> lc.StateRecord:
@@ -487,7 +487,7 @@ def _repair_tick(
         revision_id=revision.revision_id,
     )
     provider = FakeProvider(responses=[json.dumps({"replacement": replacement})])
-    registry = ProviderRegistry(providers=[provider], order=["fake"])
+    registry = ProviderRegistry(provider)
     job = repair_job_for(
         finding,
         book_id=revision.book_id,

@@ -52,9 +52,13 @@ def test_the_harness_tax_dominates_a_small_call() -> None:
 
 def test_an_unknown_provider_is_assumed_expensive() -> None:
     """Guessing low is the failure that spends money you had refused, so an unrecognised
-    provider makes the budget more cautious rather than less."""
+    provider makes the budget more cautious rather than less. The retired adapters'
+    names in historical decision rows now project the same way — over-cautious, which is
+    the safe direction."""
     assert projected_tokens("something_new", 0, 0) == DEFAULT_TAX_TOKENS
-    assert projected_tokens("ollama", 0, 0) == 0
+    assert projected_tokens("ollama", 0, 0) == DEFAULT_TAX_TOKENS
+    assert projected_tokens("codex", 0, 0) == DEFAULT_TAX_TOKENS
+    assert projected_tokens("fake", 0, 0) == 0
 
 
 # --- the ceilings --------------------------------------------------------------------
@@ -62,7 +66,7 @@ def test_an_unknown_provider_is_assumed_expensive() -> None:
 
 def test_a_call_within_every_ceiling_is_allowed() -> None:
     verdict = check(
-        BudgetPolicy(), Spend(), provider="ollama", prompt_chars=400, max_output_tokens=1000
+        BudgetPolicy(), Spend(), provider="fake", prompt_chars=400, max_output_tokens=1000
     )
     assert verdict.allowed and verdict.ceiling is None
 
@@ -86,7 +90,7 @@ def test_the_invocation_ceiling_refuses_where_tokens_would_not() -> None:
     verdict = check(
         policy,
         Spend(invocations=10, tokens=0),
-        provider="ollama",
+        provider="fake",
         prompt_chars=1,
         max_output_tokens=1,
     )
@@ -110,8 +114,8 @@ def test_the_daily_token_ceiling_counts_the_projection_not_just_the_past() -> No
 
 
 def test_dollars_are_never_the_only_ceiling() -> None:
-    """`claude -p` on a subscription reports no cost and Ollama's cost is hardware time, so
-    a dollars-only budget fails open on exactly the providers used by default."""
+    """`claude -p` on a subscription reports no cost and the fake's cost is zero, so a
+    dollars-only budget fails open on exactly the providers used by default."""
     policy = BudgetPolicy(
         max_tokens_per_operation=None,
         max_tokens_per_day=None,
@@ -128,7 +132,7 @@ def test_dollars_are_never_the_only_ceiling() -> None:
     assert generous.allowed, "this is the fail-open case the token ceilings exist to cover"
 
     exhausted = check(
-        policy, Spend(cost_usd=10.0), provider="ollama", prompt_chars=0, max_output_tokens=0
+        policy, Spend(cost_usd=10.0), provider="fake", prompt_chars=0, max_output_tokens=0
     )
     assert not exhausted.allowed and exhausted.ceiling == "max_cost_usd_per_day"
 
@@ -319,7 +323,7 @@ def test_a_sustained_outage_never_poisons_a_unit(store: SqliteStore) -> None:
     """
     from litharness.providers.registry import ProviderRegistry
 
-    registry = ProviderRegistry(providers=[DeadProvider()], order=["dead"])
+    registry = ProviderRegistry(DeadProvider())
     seeded(store)
     conductor = conductor_for(store, registry, UNLIMITED)
 
@@ -337,7 +341,7 @@ def test_the_unit_runs_normally_once_the_provider_returns(store: SqliteStore) ->
     dead = DeadProvider()
     from litharness.providers.registry import ProviderRegistry
 
-    outage = ProviderRegistry(providers=[dead], order=["dead"])
+    outage = ProviderRegistry(dead)
     seeded(store)
 
     conductor_for(store, outage, UNLIMITED).tick(START)

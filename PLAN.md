@@ -318,10 +318,14 @@ violate this section.
 - ~~Publish serially (chapter cadence with hooks and recaps) and export whole books.~~
   Export whole books (`litharness export`); publication is a manual act taken when the
   book clears the quality bar, not a pipeline (§62).
-- Work with local models or API providers behind adapters. Four: a deterministic
+- ~~Work with local models or API providers behind adapters. Four: a deterministic
   fake, the local Claude Code session (default), the local Codex CLI (fallback),
-  and Ollama (iterative testing and all mechanical calls). See
-  [plan/provider-adapters.md](plan/provider-adapters.md).
+  and Ollama (iterative testing and all mechanical calls).~~ One pinned frontier
+  provider (the local Claude Code session) plus the deterministic fake for tests
+  (§64): silent mid-book fallback to a weaker model is a quality defect, not
+  resilience — an unhealthy provider parks the unit; it never degrades the book.
+  See [plan/provider-adapters.md](plan/provider-adapters.md) (superseded, kept as
+  the measured record).
 
 ## 3. Non-goals
 
@@ -1660,16 +1664,17 @@ operator playbook (§19); calibration cadence into the preference engine's opera
 
 ### Stage 7 — Series and steady state
 Series continuity (cross-book canon via BookWorldState branches), genre profile
-variation, provider failover, cost optimization. Production claims per v1's
-reproducibility levels.
+variation, ~~provider failover~~ *(struck, §64 — fallback is a quality defect now)*,
+cost optimization. Production claims per v1's reproducibility levels.
 
 ## 18. Deferred / cut (explicitly)
 
 Deferred until a human-editing product is wanted: full editor UI, branch-merge UI,
 context-inspection panels, real-time collaboration. Deferred until distribution
 demands: DOCX/EPUB polish (Markdown/HTML first), plugin sandbox/permissions and
-third-party plugin surface, hosted-API providers beyond the four adapters in
-[plan/provider-adapters.md](plan/provider-adapters.md). Cut from the
+third-party plugin surface, any provider beyond the pinned frontier adapter and the
+deterministic fake (§64; [plan/provider-adapters.md](plan/provider-adapters.md) is
+the superseded record). Cut from the
 definition of done: v1 §26's commercial-SaaS bar (SLO dashboards, incident
 response org, support playbooks, accessibility audits, multi-tenant security).
 Kept absolutely: provenance, immutable versioning, deterministic gates, durable

@@ -1,5 +1,14 @@
 # Provider adapters: local-first inference for LitHarness
 
+> **SUPERSEDED (stage-0 §64).** The four-adapter plurality this document designs is
+> retired. Stage-0 §57 measured the frontier arm as what an unflagged tick already does,
+> and §1a.5's constraint settles the rest: a silent mid-book fallback to a weaker model
+> is a quality defect, not resilience. The system now pins one frontier provider
+> (`claude_code`) with the deterministic fake as the explicit model-free opt-in
+> (`LITHARNESS_FAKE_PAD_CHARS`); an unhealthy provider parks the unit and never degrades
+> the book, and `LITHARNESS_ENV=test` is enforced by refusal rather than by filtering.
+> The measured tax tables and the adapter contract below stay as record.
+
 **Status: BUILT AND GREEN.** `src/litharness/providers/` — focused adapter, recovery, and
 Conductor tests (+3 opt-in live), ruff clean, mypy strict clean. Parsing is verified against the real captured envelopes
 recorded in this document, not invented shapes.
@@ -181,7 +190,7 @@ codex exec <prompt>
   --output-schema <schema.json>       # native JSON Schema for the final response
   --output-last-message <out.txt>     # final message, isolated from event noise
   --json                              # JSONL events on stdout, for usage/provenance
-  --skip-git-repo-check               # LitHarness is not a git repo (verified)
+  --skip-git-repo-check               # rationale stale: the tree is a git repo now
   --sandbox read-only
   --color never
   -c 'mcp_servers={}'
@@ -208,9 +217,10 @@ Notes:
 - stderr still prints `Reading additional input from stdin...` even with
   `< /dev/null`. Harmless, but don't parse stderr for errors on this adapter —
   use the exit code and the presence of a non-empty `-o` file.
-- `--skip-git-repo-check` is required today because `C:\DEV\LitHarness` is not a
-  git repository. (Neither are `litharness-contracts`, `LongRangeContext`,
-  `ContinuityEvaluation`, or `RevisionPropagation` — worth fixing separately.)
+- ~~`--skip-git-repo-check` is required today because `C:\DEV\LitHarness` is not a
+  git repository.~~ **Stale: the tree is a git repository now** (and the adapter is
+  retired regardless; kept as record). `litharness-contracts`, `LongRangeContext`,
+  `ContinuityEvaluation`, and `RevisionPropagation` may still lack one.
 - `codex exec` starts configured MCP servers by default (observed:
   `node_repl`, `interface3d`, `agentui`); suppress with `-c 'mcp_servers={}'`.
 - `--oss --local-provider ollama` exists and routes codex through Ollama. Not

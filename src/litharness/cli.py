@@ -105,11 +105,9 @@ def _stamp(now: float) -> str:
 def _env_flag(name: str) -> bool:
     """A boolean from the environment, for a flag a machine should be able to set once.
 
-    `plan/provider-adapters.md` §5 says provider selection "is config, versioned like every
-    other policy, never hardcoded", and it was hardcoded — so the only way to run a book on
-    local models was to pass flags on every invocation. These two variables are how a
-    machine says "free by default here" without changing the order this project ships,
-    which §5 and §1a settle on prose quality rather than on cost.
+    A cron entry does not pass flags; it inherits an environment. Only a true-saying
+    value is true — an unset variable and `=maybe` are both "no", because a flag that
+    read any non-empty string as true would make `=0` mean yes.
     """
     return os.environ.get(name, "").strip().lower() in {"1", "true", "yes", "on"}
 
@@ -171,9 +169,10 @@ def _budget(args: argparse.Namespace) -> BudgetPolicy:
 
 
 def _conductor(store: SqliteStore, args: argparse.Namespace) -> Conductor:
-    registry = build_default_registry(
-        args.prefer, refuse_billing=args.no_billing, model=args.model
-    )
+    # The pinned provider, or the padded fake when LITHARNESS_FAKE_PAD_CHARS asks for a
+    # model-free run. No selection flags survive provider plurality: an unhealthy
+    # provider parks the unit, it never degrades the book.
+    registry = build_default_registry()
     evaluators: list[Evaluator] = [InProcessEvaluator()]
     if args.continuity_evaluator_command:
         evaluators.append(
@@ -1890,29 +1889,6 @@ def build_parser() -> argparse.ArgumentParser:
         "LITHARNESS_NO_OUTLINE. The control arm of the measurement in §54, and the right "
         "flag for a book somebody outlines by hand — a scene with no statement drafts "
         "exactly as it did before outlines existed",
-    )
-    parser.add_argument(
-        "--model",
-        default=os.environ.get("LITHARNESS_MODEL"),
-        help="the Ollama model to generate with, e.g. phi4:latest; also read from "
-        "LITHARNESS_MODEL. Ollama only, because the CLI adapters take vendor model names "
-        "from a different namespace. Scene length is a property of the generator, and until "
-        "this flag existed every run used the qwen3:4b default whatever the record says",
-    )
-    parser.add_argument(
-        "--prefer",
-        default=os.environ.get("LITHARNESS_PREFER"),
-        help="put this provider first, e.g. ollama for a local run; also read from "
-        "LITHARNESS_PREFER. It stays a preference: an unhealthy choice still falls back, "
-        "and the fallback is recorded",
-    )
-    parser.add_argument(
-        "--no-billing",
-        action="store_true",
-        default=_env_flag("LITHARNESS_NO_BILLING"),
-        help="refuse every billing provider for this run; also read from "
-        "LITHARNESS_NO_BILLING. Not the same as --prefer: a preference for a free provider "
-        "still bills the moment that provider blips",
     )
     sub = parser.add_subparsers(dest="command", required=True)
 

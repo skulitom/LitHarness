@@ -99,7 +99,7 @@ def conductor(
     *,
     budget: BudgetPolicy | None = None,
 ) -> Conductor:
-    registry = ProviderRegistry(providers=[provider], order=[provider.name])
+    registry = ProviderRegistry(provider)
     return Conductor(
         store=store,
         holder="narrative-test",

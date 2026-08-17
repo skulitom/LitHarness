@@ -282,7 +282,7 @@ def registry_with(text: str) -> tuple[ProviderRegistry, FakeProvider]:
 
     provider.complete = complete  # type: ignore[method-assign]
     assert request.prompt
-    return ProviderRegistry(providers=[provider], order=["fake"]), provider
+    return ProviderRegistry(provider), provider
 
 
 def seeded(store: SqliteStore, payload_extra: dict | None = None) -> Revision:
@@ -539,9 +539,11 @@ class FlakyProvider:
 
 def test_a_recovered_provider_is_usable_on_a_later_tick(store: SqliteStore) -> None:
     """`reset_health` documented a per-tick caller it never had. Without one, a provider
-    marked dead by a single failed probe stayed dead for the life of the process."""
+    marked dead by a single failed probe stayed dead for the life of the process. The
+    per-tick reset now clears negative verdicts only — which is exactly what this needs:
+    the failed probe is forgotten, the recovery is kept."""
     provider = FlakyProvider()
-    registry = ProviderRegistry(providers=[provider], order=["flaky"])
+    registry = ProviderRegistry(provider)
     seeded(store)
     conductor = conductor_for(store, registry)
 
@@ -554,9 +556,12 @@ def test_a_recovered_provider_is_usable_on_a_later_tick(store: SqliteStore) -> N
 
 
 def test_health_is_probed_once_per_tick_not_once_per_call(store: SqliteStore) -> None:
+    """A healthy verdict now outlives the tick (the probe is billed work — see
+    `ProviderRegistry.reset_health`); within the tick, the handler's resolve-for-budget
+    and the completion itself must still share one probe."""
     provider = FlakyProvider()
     provider.probes = 1  # already healthy
-    registry = ProviderRegistry(providers=[provider], order=["flaky"])
+    registry = ProviderRegistry(provider)
     seeded(store)
     conductor_for(store, registry).tick(START)
     assert provider.probes == 2  # exactly one probe inside the tick
@@ -565,30 +570,33 @@ def test_health_is_probed_once_per_tick_not_once_per_call(store: SqliteStore) ->
 def test_test_mode_still_blocks_a_billing_provider_through_the_handler(
     store: SqliteStore,
 ) -> None:
-    """The billing guard has to hold on the path that actually spends money."""
+    """The billing guard has to hold on the path that actually spends money.
+
+    It used to hold by filtering, which surfaced as `ProviderUnavailable` and a quiet
+    requeue. The pinned registry refuses instead: `BillingGuardViolation` is a loud
+    defect report — a test that wires a paid provider is misconfigured, not suffering an
+    outage — so the job fails with the guard's name on it and the provider is never
+    called, never even probed."""
 
     class Paid:
         name = "paid"
         bills = True
 
-        def health(self) -> bool:
-            return True
+        def health(self) -> bool:  # pragma: no cover - the guard runs before the probe
+            raise AssertionError("a test run paid for a health probe")
 
         def complete(self, request: CompletionRequest) -> CompletionResult:  # pragma: no cover
             raise AssertionError("a test run reached a paid provider")
 
-    registry = ProviderRegistry(providers=[Paid()], order=["paid"])
+    registry = ProviderRegistry(Paid())
     seeded(store)
 
     result = conductor_for(store, registry).tick(START)
 
     assert result.outcome is TickOutcome.JOB_FAILED
-    # The unit is requeued, not charged. `ProviderUnavailable` is a `TransientFailure`:
-    # it is raised before any work is attempted, so nothing about this unit is wrong.
-    # Charging it here is what used to turn a 15-minute outage into permanent poisoning.
     job = store.load_job("draft-1")
-    assert job.status is JobStatus.QUEUED
-    assert job.attempts == 0
+    assert job.status is JobStatus.FAILED
+    assert "BillingGuardViolation" in (job.error or "")
 
 
 # --- the acceptance policy engine ----------------------------------------------------
@@ -988,7 +996,7 @@ def registry_with_sequence(*texts: str) -> tuple[ProviderRegistry, FakeProvider]
         )
 
     provider.complete = complete  # type: ignore[method-assign]
-    return ProviderRegistry(providers=[provider], order=["fake"]), provider
+    return ProviderRegistry(provider), provider
 
 
 def with_a_failing_craft_gate(store: SqliteStore) -> None:

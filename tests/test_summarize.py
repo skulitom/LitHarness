@@ -157,11 +157,15 @@ def test_an_accepted_scene_is_recorded_as_what_it_contained(store) -> None:
     assert "ledger" in summary
 
 
-def test_it_is_a_mechanical_call_so_it_cannot_reach_a_billing_provider(store) -> None:
-    """§15: at ~1,000 invocations for a draft, the CLI adapters' 15-24k-token harness tax per
-    call would dwarf the payload, and this is the highest-count job class in the system."""
-    from litharness.providers.registry import CHEAP_CALL_CLASSES
+def test_it_is_a_mechanical_call_and_the_record_says_so(store) -> None:
+    """The call class is provenance now, not routing. Cheap-call routing died with
+    provider plurality — one pinned provider serves every class — but the record of
+    *what kind of work* a call was survives on the request, and §15's measured
+    harness-tax argument is why this is worth keeping visible: summaries are the
+    highest-count job class in the system.
 
+    (Named `test_it_is_a_mechanical_call_so_it_cannot_reach_a_billing_provider` before
+    Cut 2; the reachability half of that name described the retired routing.)"""
     revision = seeded(store)
     generator = StubGenerator()
     handle = make_summary_handler(generator, store, PROJECT_ID)
@@ -173,7 +177,7 @@ def test_it_is_a_mechanical_call_so_it_cannot_reach_a_billing_provider(store) ->
         START,
     )
     [request] = generator.requests
-    assert request.call_class in CHEAP_CALL_CLASSES  # type: ignore[attr-defined]
+    assert request.call_class == "mechanical"  # type: ignore[attr-defined]
     # And greedy, because a summary of fixed prose is an extraction: the same scene must
     # compress the same way twice or the packet is not reproducible.
     assert request.sampler.temperature == 0.0  # type: ignore[attr-defined]

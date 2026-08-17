@@ -41,7 +41,7 @@ from litharness.domain.beats import (
     beats_for,
 )
 from litharness.domain.context import assemble
-from litharness.domain.draft import DraftPolicy, gate_draft, is_draftable
+from litharness.domain.draft import DraftPolicy, is_draftable
 from litharness.domain.extraction import (
     extract_state,
     progression_target,
@@ -124,7 +124,7 @@ def _fixture(store: SqliteStore, name: str) -> tuple[str, str]:
 
 
 def _conductor(store: SqliteStore, *, pad: int = PAD, **kwargs) -> Conductor:
-    registry = ProviderRegistry(providers=[FakeProvider(pad_to_chars=pad)], order=["fake"])
+    registry = ProviderRegistry(FakeProvider(pad_to_chars=pad))
     return Conductor(
         store=store,
         holder="worker-a",
@@ -559,7 +559,7 @@ def test_the_planner_puts_the_system_voice_instruction_on_the_queued_job(
 
 def _writing(store: SqliteStore, prose: str) -> Conductor:
     """A loop whose generator writes exactly this scene, however the prompt asked."""
-    registry = ProviderRegistry(providers=[FakeProvider(responses=[prose] * 8)], order=["fake"])
+    registry = ProviderRegistry(FakeProvider(responses=[prose] * 8))
     return Conductor(
         store=store,
         holder="worker-a",
@@ -733,16 +733,13 @@ def test_every_scene_of_a_book_zero_run_is_placed_not_just_the_first(
     book_id, branch_id = _book_zero(store)
     balances = [45, 40, 38, 33, 30, 20]
     registry = ProviderRegistry(
-        providers=[
-            FakeProvider(
-                responses=[
-                    _scene({"level": 3, "hp": 24, "hp_max": 30, "mp": 8, "mp_max": 10,
-                            "gold": gold})
-                    for gold in balances
-                ]
-            )
-        ],
-        order=["fake"],
+        FakeProvider(
+            responses=[
+                _scene({"level": 3, "hp": 24, "hp_max": 30, "mp": 8, "mp_max": 10,
+                        "gold": gold})
+                for gold in balances
+            ]
+        )
     )
     loop = Conductor(
         store=store,
@@ -799,32 +796,32 @@ def test_a_template_that_does_not_say_it_runs_forwards_places_nothing(
 
 live = pytest.mark.skipif(
     os.environ.get("LITHARNESS_LIVE_PROVIDERS") != "1",
-    reason="set LITHARNESS_LIVE_PROVIDERS=1 to ask a real model (local Ollama; no quota)",
+    reason="set LITHARNESS_LIVE_PROVIDERS=1 to ask a real model (spends quota)",
 )
 
 
 @live
-@pytest.mark.parametrize("model", ["llama3.2:latest", "qwen3:4b", "phi4:latest"])
-def test_a_real_model_writes_a_line_this_extractor_can_read(store: SqliteStore, model) -> None:
+def test_a_real_model_writes_a_line_this_extractor_can_read(store: SqliteStore) -> None:
     """**The one thing `FakeProvider` structurally cannot check.** Every other test in this
     project runs on a provider that ignores the prompt, so nothing anywhere verifies that the
     instruction produces a line the extractor accepts — and the failure is silent, because a
     scene whose state nobody could read is indistinguishable from one that established none.
 
     It found a real defect. Shown `STATUS_TEMPLATE` with its `{subject}` slot intact, one of
-    these three wrote `[STATUS] {subject} — Level 3 | ...` out verbatim: the line matched the
-    parser, extracted nothing, and no gate objected. Showing the book's own current line
-    instead took it from two of three to three of three.
+    the three local models this once ran against wrote `[STATUS] {subject} — Level 3 | ...`
+    out verbatim: the line matched the parser, extracted nothing, and no gate objected.
+    Showing the book's own current line instead fixed it.
 
-    Local Ollama, so opting in spends no quota — and it skips rather than fails where the
-    model is not installed, since a suite that needs a 20GB download is one nobody runs.
+    The sub-frontier arms (llama3.2/qwen3/phi4 via Ollama) were retired with provider
+    plurality, so this now runs on the pinned frontier provider — opting in spends quota —
+    and it skips rather than fails where the CLI is not installed or authenticated.
     """
     from litharness.providers.base import CompletionRequest
-    from litharness.providers.ollama import OllamaProvider
+    from litharness.providers.cli import ClaudeCodeProvider
 
-    provider = OllamaProvider(model=model)
+    provider = ClaudeCodeProvider()
     if not provider.health():
-        pytest.skip(f"{model} is not installed locally")
+        pytest.skip(f"{provider.binary} is not installed or not answering")
 
     book_id, branch_id = _book_zero(store)
     head = store.head(book_id, branch_id)
@@ -853,7 +850,9 @@ def test_a_real_model_writes_a_line_this_extractor_can_read(store: SqliteStore, 
         version_id="v",
         stated_order_key=beat.story_order_key,
     )
-    assert extracted, f"{model} wrote a scene this extractor reads nothing out of:\n{text}"
+    assert extracted, (
+        f"{provider.model} wrote a scene this extractor reads nothing out of:\n{text}"
+    )
     assert extracted[0].subject == "rook"
 
 
@@ -1188,7 +1187,7 @@ def test_a_scene_contradicting_established_canon_is_refused_and_writes_nothing(
             line = "[STATUS] Rook — Level 4 | HP 34/30 | MP 6/10 | Gold 14"
             return replace(result, text=f"{line}\n\n{result.text}")
 
-    registry = ProviderRegistry(providers=[Contradicting(pad_to_chars=PAD)], order=["fake"])
+    registry = ProviderRegistry(Contradicting(pad_to_chars=PAD))
     loop = Conductor(
         store=store,
         holder="worker-a",
@@ -1318,87 +1317,6 @@ def test_story_order_keys_sort_as_story_order_past_nine_scenes(store: SqliteStor
     assert [beat.story_order_key for beat in beats_for(six, template_for(six))] == [
         f"s{n}" for n in range(1, 7)
     ], "the six-scene convention both fixtures author is unchanged"
-
-
-@live
-@pytest.mark.parametrize("model", ["llama3.2:latest", "phi4:latest"])
-def test_asking_for_a_length_moves_a_capable_model_and_not_a_small_one(
-    store: SqliteStore, model
-) -> None:
-    """**Measured, and the numbers this docstring used to carry were measuring nothing.**
-
-    It reported `llama3.2` 235 -> 232 ("ignored") and `phi4` 289 -> 426 ("+47%"). Both arms
-    called a `render_prompt` that dropped `target_words` on the floor, so both were draws
-    from byte-identical requests, and the assertion below routed through the same function
-    and could not fail. `test_the_target_length_reaches_the_prompt_at_all` is the model-free
-    test that catches that, and it is where the property belongs.
-
-    Re-measured with the instruction actually sent — three draws per arm, seeds held common
-    across arms, on the same beat and packet:
-
-        llama3.2:3b   none -> 279 words | 900 -> 384 words   (+38%)
-        phi4:14b      none -> 324 words | 900 -> 611 words   (+89%, 68% of the target)
-
-    So the model the record called incapable of following the instruction follows it, and
-    `phi4` reaches two thirds of the ask against the 19% the six stored runs averaged. It
-    still does not close the gap, and scale remains a function of the generator: an operator
-    choosing a scene count should divide by what their model actually writes.
-
-    **Two draws are not a measurement here, and the control says why.** The same request
-    sent twice at `temperature=0.0, seed=7` is *not* byte-identical — `llama3.2` returned
-    245 then 279 words for one unchanged request, a 12% swing, and the third and later draws
-    of that same request all returned 279. So the first draw against a given prompt comes
-    from a different state than the rest, and a one-draw-per-arm comparison measures the
-    warm-up as much as the arm. That is the mechanism behind the phantom +47%.
-
-    This asserts only that the target does not make scenes *shorter*, because that is the
-    property that must hold for every model, and it discards the first draw for the reason
-    above. The numbers are a record of one measurement, never a threshold.
-    """
-    from litharness.providers.base import CompletionRequest
-    from litharness.providers.ollama import OllamaProvider
-
-    provider = OllamaProvider(model=model)
-    if not provider.health():
-        pytest.skip(f"{model} is not installed locally")
-
-    book_id, branch_id = _book_zero(store)
-    head = store.head(book_id, branch_id)
-    assert head is not None
-    beat = beats_for(head, SIX_BEAT)[0]
-    packet = packet_for(store, head, beat)
-    example = system_voice_example(
-        store.state_records(book_id, branch_id), at=beat.story_order_key
-    )
-
-    lengths = {}
-    for target in (0, DraftPolicy().target_words):
-        system, prompt = render_prompt(
-            beat, book_title=None, packet=packet, status_example=example, target_words=target
-        )
-        # The arms must differ, or this test is the vacuous one it replaces. Asserted here
-        # rather than trusted, because trusting it is exactly what went wrong.
-        assert (target == 0) != (str(target) in system)
-        draws = [
-            provider.complete(
-                CompletionRequest(prompt=prompt, system=system, profile="default")
-            ).text
-            for _ in range(2)
-        ]
-        # Discard the first: see the docstring's control. The same request twice is not
-        # byte-identical, and the first draw against a prompt is the one that differs.
-        text = draws[-1]
-        lengths[target] = len(text.split())
-        assert gate_draft(head, beat.logical_id, text).accepted, (
-            f"{model} at target={target} wrote {len(text)} chars, which the shape gate "
-            "refused — a target that provokes a refusal is worse than no target"
-        )
-
-    asked = DraftPolicy().target_words
-    assert lengths[asked] >= lengths[0] * 0.8, (
-        f"{model} wrote {lengths[asked]} words when asked for {asked} and {lengths[0]} when "
-        "asked for nothing; the instruction must not make scenes shorter"
-    )
 
 
 def test_a_schedule_is_a_record_that_is_not_canon(store: SqliteStore) -> None:

@@ -116,12 +116,11 @@ def test_a_retryable_provider_failure_requeues_without_spending_an_attempt(
     job = store.load_job("provider-retry")
     assert result.outcome is TickOutcome.JOB_FAILED
     assert job.status is JobStatus.QUEUED and job.attempts == 0
-    [fallback] = [
-        entry.event
-        for entry in store.read_log()
-        if entry.event.event_type is EventType.PROVIDER_FELL_BACK
-    ]
-    assert fallback.payload["classification"] == "overloaded"
+    # No PROVIDER_FELL_BACK event: with one pinned provider there is nothing to fall
+    # back from, so the outage's durable record is the daily digest counter.
+    assert store.digest(Conductor._day(START))["provider_unavailable"] == 1
+    kinds = [entry.event.event_type for entry in store.read_log()]
+    assert EventType.PROVIDER_FELL_BACK not in kinds
 
 
 def test_a_provider_failure_needing_intervention_parks_and_escalates(

@@ -438,7 +438,9 @@ class TextGenerator(Protocol):
         ...
 
     def reset_health(self) -> None:
-        """Drop cached health verdicts. Called at the start of a tick."""
+        """Drop cached *negative* health verdicts, so an outage can heal. Called at the
+        start of a tick; a positive verdict may outlive it, because the probe that bought
+        it is a billed call."""
         ...
 
 

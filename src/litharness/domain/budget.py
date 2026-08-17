@@ -19,7 +19,7 @@ cost even if it returns nothing. Post-hoc recording still happens — that is wh
 next projection accurate — but the enforcement point is in front.
 
 **Dollars are optional and never the only ceiling.** `claude -p` on a subscription reports
-no cost at all (`cost_usd is None`) and Ollama's cost is hardware time, so a
+no cost at all (`cost_usd is None`) and the deterministic fake's cost is zero, so a
 dollars-only budget silently fails open on exactly the providers this system uses by
 default. Tokens and invocations always apply; dollars apply when the provider reports them.
 """
@@ -30,10 +30,13 @@ from dataclasses import dataclass, replace
 
 #: Measured per-invocation harness tax, in input tokens, before the prompt is counted
 #: (§15, plan/provider-adapters.md). Used as the floor when projecting a call's cost.
+#:
+#: Only the pinned provider and the fake are named. Historical decision rows still say
+#: `codex` (measured at 14.8k) and `ollama` (0); those names now project at
+#: `DEFAULT_TAX_TOKENS`, which is over-cautious — the safe direction, since the failure
+#: of guessing low is spending money you had refused.
 HARNESS_TAX_TOKENS: dict[str, int] = {
     "claude_code": 24_000,
-    "codex": 14_800,
-    "ollama": 0,
     "fake": 0,
 }
 

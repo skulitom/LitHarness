@@ -13,7 +13,8 @@ ticks, not a week of real scheduling), and Stage 2's propagation number is a **d
 measured on four in-sample cases, which rules out an engine that is obviously wrong and rules
 in nothing. Both are recorded in [PLAN.md](PLAN.md) §17 beside the claims they qualify.
 
-The manuscript spine, the Conductor loop, four provider adapters, recorded acceptance
+The manuscript spine, the Conductor loop, the pinned frontier provider plus a
+deterministic fake, recorded acceptance
 decisions, a direction inbox whose explicit instructions and model-interpreted notes reach an
 immutable plan revision before prose, a way to get a book in, a reading copy to get it out, a
 template planner that takes a six-scene fixture book from premise to six accepted scenes with
@@ -212,31 +213,22 @@ Every state change writes its event into the store's `events` table in the same
 transaction, so the audit trail is always in the database itself — there is no separate
 delivery channel to configure or monitor.
 
-**Choosing who writes it.** Both flags also read the environment — `LITHARNESS_PREFER`
-and `LITHARNESS_NO_BILLING` — so a machine can be told once to stay local rather than
-repeating the flags on every invocation. `plan/provider-adapters.md` §5 says selection "is
-config, versioned like every other policy, never hardcoded"; it was hardcoded. The order this
-project *ships* is unchanged, because §5 and §1a settle it on prose quality rather than cost.
+**Who writes it.** One pinned frontier provider: the local Claude Code session
+(`claude_code`). §1a.5 requires a frontier generator, and a silent mid-book fallback to a
+weaker model is a quality defect, not resilience — so there is no fallback chain and no
+provider-selection flag. When the provider is unhealthy the unit parks or requeues and the
+book waits; it never degrades. The retired plurality design and its measurements stay
+recorded in `plan/provider-adapters.md`.
 
-`--prefer ollama` puts a provider first — a preference, so an
-unhealthy choice still falls back and the fallback is recorded as an event. `--no-billing`
-refuses every billing provider outright, which is a different question: a *preference* for a
-free provider still bills the moment that provider blips. Pair them for a run that must stay
-local and free:
+The one alternative is the deterministic fake, and it has to be *asked for*:
+`LITHARNESS_FAKE_PAD_CHARS` (e.g. `400`) runs the whole loop model-free, with the fake's
+output padded past the shape gate's floor. Setting it is the statement "I am deliberately
+running on the fake" — the fake is never a silent generation backstop, because a backstop
+that cannot clear the gate it feeds once poisoned six units during an outage.
 
-```bash
-uv run litharness --database book.db --prefer ollama --no-billing tick
-```
-
-Measured on a 3B local model (`llama3.2`), a seeded book with no imported snapshot drafts all
-six scenes in 42 seconds at no cost, and seven revisions rebuild cleanly. Regenerating a
-*fixture* book is stricter, because its full state snapshot is imported and the integrity gate
-holds the prose to it: the same model was refused at scene 1 for writing `gold 15` where canon
-says 45. That is the gate working, and it is a measurement of the model rather than a fault.
-
-Before these flags the only lever was `LITHARNESS_ENV=test`, which filters billing providers —
-i.e. configuring a production run with the flag whose purpose is proving that *test* runs
-cannot bill. That flag keeps that job and nothing else.
+`LITHARNESS_ENV=test` keeps its one job: a test run provably cannot reach a paid
+provider. The registry now enforces it by refusal — resolving a billing provider in test
+mode raises rather than quietly substituting.
 
 `--context-budget` sets how much context a scene is drafted against, and **it moves with
 `--target-words`**: measured, a 900-word scene binds the 6,000-token default at scene 5 and
@@ -488,7 +480,7 @@ application workflows depend on a monolithic concrete store.
 
 The suite is model-free by default. `tests/conftest.py` sets `LITHARNESS_ENV=test` at
 import, which makes the provider registry refuse to resolve any billing provider — so a
-test run provably cannot reach a paid CLI. Three live round-trip tests are skipped unless
+test run provably cannot reach a paid CLI. The live round-trip tests are skipped unless
 `LITHARNESS_LIVE_PROVIDERS=1`.
 
 ## What is not built

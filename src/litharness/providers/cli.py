@@ -1,15 +1,16 @@
-"""The two CLI-backed adapters: local Claude Code, and Codex as fallback.
+"""The CLI-backed frontier adapter: local Claude Code, reduced to a completion endpoint.
 
-Both shell out, so both take an injected `runner`. That is not decoration — it is what
-makes the parsing testable against real captured envelopes without spawning a process or
-spending quota. Every flag below was verified against the installed CLIs (`claude`
-2.1.227, `codex-cli` 0.147.0) and the numbers in `plan/provider-adapters.md` are
-measurements, not estimates.
+It shells out, so it takes an injected `runner`. That is not decoration — it is what
+makes the parsing testable against the real captured envelope without spawning a process
+or spending quota. Every flag below was verified against the installed CLI (`claude`
+2.1.227) and the numbers in `plan/provider-adapters.md` are measurements, not estimates.
+(The Codex fallback adapter that used to live beside this one is retired with provider
+plurality; its measurements stay in that document.)
 
 The per-invocation harness tax is the reason `invocations` exists on `CompletionResult`:
 `claude -p` carries ~24k input tokens of its own system prompt and tool definitions per
-call (~19k cache-read, ~5k rewritten every time), and `codex exec` carries ~14.8k that
-**never** caches. Token accounting alone hides a cost that scales with call count.
+call (~19k cache-read, ~5k rewritten every time). Token accounting alone hides a cost
+that scales with call count.
 """
 
 from __future__ import annotations
@@ -18,9 +19,7 @@ import json
 import subprocess
 import time
 from collections.abc import Sequence
-from dataclasses import dataclass, field
-from pathlib import Path
-from tempfile import TemporaryDirectory
+from dataclasses import dataclass
 from typing import Any, Protocol
 
 from litharness.providers.base import (
@@ -71,7 +70,8 @@ def subprocess_runner(
 
     It survived because every test injects a `Runner` and this function is the one part of the
     adapter a fake cannot exercise, and because no run had ever put a CLI provider in front of
-    generation. `OllamaProvider` was never affected: it decodes its own body explicitly.
+    generation. The retired Ollama adapter was never affected: it decoded its own body
+    explicitly.
 
     `errors="replace"` rather than strict: an undecodable byte should arrive as a visible
     U+FFFD, not raise and cost the unit an attempt, and not be silently transliterated into
@@ -110,9 +110,10 @@ class ClaudeCodeProvider:
     subscription, and no API key is involved. `total_cost_usd` from the envelope is then an
     *equivalent* API price for quota already paid for, rather than money being charged.
 
-    **It is recorded anyway, and that is deliberate.** The obvious move is `CodexProvider`'s
-    — it reports `cost_usd=None` because "ChatGPT-account auth is quota rather than dollars"
-    — and it is the wrong move here. A subscription is *also* a bounded resource, the
+    **It is recorded anyway, and that is deliberate.** The obvious move is the one the
+    retired Codex adapter made — reporting `cost_usd=None` because "ChatGPT-account auth is
+    quota rather than dollars" — and it is the wrong move here. A subscription is *also* a
+    bounded resource, the
     equivalent price is the best available proxy for how fast it is being consumed, and
     `--max-cost-usd-per-day` is the only ceiling that tracks consumption rather than call
     count. Nulling the field would delete the operator's usage governor to win an argument
@@ -289,183 +290,3 @@ def _resolved_model(model_usage: dict[str, Any], requested: str) -> str:
 
     busiest = max(model_usage.items(), key=lambda item: output_of(item[1]))
     return named[busiest[0]]
-
-
-@dataclass
-class CodexProvider:
-    """`codex exec` as the fallback tier.
-
-    Advantages over `claude -p`: `--output-schema` enforces the shape natively, so no
-    fence-stripping heuristic, and the JSONL event stream is small and stable
-    (`thread.started`, `turn.started`, `item.completed`, `turn.completed`).
-
-    Disadvantages, both measured: it never caches (`cached_input_tokens` was 0 across
-    byte-identical repeat calls, so its ~14.8k tax is full price every time), and it
-    reports no cost, because ChatGPT-account auth is quota rather than dollars.
-
-    `--skip-git-repo-check` is required because the LitHarness tree is not a git
-    repository. `-c mcp_servers={}` suppresses the MCP servers it otherwise starts.
-    """
-
-    name: str = "codex"
-    bills: bool = True
-    model: str | None = None  # None = the CLI's own default
-    binary: str = "codex"
-    runner: Runner = subprocess_runner
-    sandbox: str = "read-only"
-    extra_args: tuple[str, ...] = ()
-    _workdir: str | None = field(default=None, repr=False)
-
-    def health(self) -> bool:
-        try:
-            result = self.complete(
-                CompletionRequest(
-                    prompt="Reply with the single word OK.",
-                    schema={
-                        "type": "object",
-                        "additionalProperties": False,
-                        "required": ["ok"],
-                        "properties": {"ok": {"type": "boolean"}},
-                    },
-                    timeout_seconds=180.0,
-                )
-            )
-        except ProviderError:
-            return False
-        return result.conforms
-
-    def complete(self, request: CompletionRequest) -> CompletionResult:
-        started = time.monotonic()
-        with TemporaryDirectory() as scratch:
-            schema_path = Path(scratch) / "schema.json"
-            answer_path = Path(scratch) / "last-message.txt"
-            argv = [
-                self.binary,
-                "exec",
-                self._prompt(request),
-                "-o",
-                str(answer_path),
-                "--json",
-                "--skip-git-repo-check",
-                "--sandbox",
-                self.sandbox,
-                "--color",
-                "never",
-                "-c",
-                "mcp_servers={}",
-            ]
-            if request.schema is not None:
-                schema_path.write_text(
-                    json.dumps(request.schema, sort_keys=True), encoding="utf-8"
-                )
-                argv += ["--output-schema", str(schema_path)]
-            if self.model:
-                argv += ["-m", self.model]
-            argv += list(self.extra_args)
-
-            try:
-                outcome = self.runner(
-                    argv, timeout=request.timeout_seconds, cwd=self._workdir
-                )
-            except subprocess.TimeoutExpired as error:
-                raise provider_error(
-                    f"{self.name} timed out after {request.timeout_seconds}s",
-                    kind=ProviderFailureKind.TIMEOUT,
-                ) from error
-            except (OSError, FileNotFoundError) as error:
-                raise provider_error(
-                    f"{self.name} could not be executed: {error}",
-                    kind=ProviderFailureKind.UNAVAILABLE,
-                ) from error
-
-            # The `-o` file is the contract for the final answer; the event stream is for
-            # usage and provenance. Reassembling the text from events would be fragile.
-            text = answer_path.read_text(encoding="utf-8").strip() if answer_path.exists() else ""
-
-        wall_ms = int((time.monotonic() - started) * 1000)
-        events = _parse_jsonl(outcome.stdout)
-        usage = _codex_usage(events)
-
-        if not text:
-            detail = _codex_error(events, outcome.stderr)
-            status = _codex_status(events)
-            raise provider_error(
-                f"{self.name} produced no answer (exit {outcome.returncode}): {detail}",
-                status=status,
-                raw=json.dumps({"events": events, "stderr": outcome.stderr}, ensure_ascii=False),
-            )
-
-        return CompletionResult(
-            text=strip_fences(text),
-            provider=self.name,
-            model=self.model or _codex_model(events) or "codex-default",
-            usage=usage,
-            parsed=parse_schema_payload(text, request.schema),
-            schema_requested=request.schema is not None,
-            cost_usd=None,  # subscription quota, not dollars
-            wall_ms=wall_ms,
-            raw={"events": events},
-        )
-
-    @staticmethod
-    def _prompt(request: CompletionRequest) -> str:
-        return f"{request.system}\n\n{request.prompt}" if request.system else request.prompt
-
-
-def _parse_jsonl(stream: str) -> list[dict[str, Any]]:
-    events: list[dict[str, Any]] = []
-    for line in stream.splitlines():
-        line = line.strip()
-        if not line.startswith("{"):
-            continue
-        try:
-            payload = json.loads(line)
-        except json.JSONDecodeError:
-            continue
-        if isinstance(payload, dict):
-            events.append(payload)
-    return events
-
-
-def _codex_usage(events: list[dict[str, Any]]) -> Usage:
-    for event in reversed(events):
-        if event.get("type") == "turn.completed":
-            block = event.get("usage") or {}
-            return Usage(
-                input_tokens=int(block.get("input_tokens", 0)),
-                output_tokens=int(block.get("output_tokens", 0)),
-                cache_read_tokens=int(block.get("cached_input_tokens", 0)),
-                cache_write_tokens=int(block.get("cache_write_input_tokens", 0)),
-                reasoning_tokens=int(block.get("reasoning_output_tokens", 0)),
-            )
-    return Usage()
-
-
-def _codex_model(events: list[dict[str, Any]]) -> str | None:
-    for event in events:
-        model = event.get("model")
-        if isinstance(model, str):
-            return model
-    return None
-
-
-def _codex_error(events: list[dict[str, Any]], stderr: str) -> str:
-    for event in reversed(events):
-        for key in ("error", "detail", "message"):
-            if key in event:
-                return str(event[key])[:200]
-    return stderr.strip()[:200] or "no diagnostic output"
-
-
-def _codex_status(events: list[dict[str, Any]]) -> int | None:
-    for event in reversed(events):
-        for key in ("status", "status_code", "http_status"):
-            value = event.get(key)
-            if isinstance(value, int):
-                return value
-        nested = event.get("error")
-        if isinstance(nested, dict):
-            value = nested.get("status") or nested.get("status_code")
-            if isinstance(value, int):
-                return value
-    return None
