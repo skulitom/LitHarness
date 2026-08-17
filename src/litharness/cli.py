@@ -309,7 +309,14 @@ def cmd_tick(args: argparse.Namespace) -> int:
 def cmd_status(args: argparse.Namespace) -> int:
     store = _store(args)
     try:
-        report = status_module.collect(store, _now(), budget=_budget(args))
+        report = status_module.collect(
+            store,
+            _now(),
+            budget=_budget(args),
+            # The CLI is the only caller that knows whether the sibling evaluator is wired,
+            # so it is the only one that can report the pack being off.
+            continuity_evaluator=args.continuity_evaluator_command is not None,
+        )
     finally:
         store.close()
 

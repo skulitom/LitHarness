@@ -382,6 +382,11 @@ class StatusStore(
     JobQueue,
     DecisionRepository,
     FindingRepository,
+    # Read-only, and the reason it is here is one line of the report: a book whose canon
+    # states game state on the page is one the six-rule LitRPG pack should be checking, and
+    # `speaks_system_voice` reads that off the records rather than off a genre flag. The
+    # writer half is a separate protocol, so status gains no ability to mutate state.
+    StateRepository,
     EventRepository,
     OperationsRepository,
     ExceptionRepository,

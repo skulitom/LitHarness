@@ -28,6 +28,7 @@ from litharness.application.conductor import DEFAULT_SCOPE
 from litharness.application.ports import StatusStore
 from litharness.domain.budget import BudgetPolicy, Spend
 from litharness.domain.directives import DirectiveStatus
+from litharness.domain.extraction import speaks_system_voice
 from litharness.domain.jobs import JobStatus
 
 
@@ -53,6 +54,21 @@ class Status:
     #: §19 Economics: "the operator can see spend vs. plan at any tick".
     spend: Spend = field(default_factory=Spend)
     budget: BudgetPolicy = field(default_factory=BudgetPolicy)
+    #: Books whose canon states game state on the page while no continuity evaluator is
+    #: configured — so the six-rule LitRPG pack is not running on them.
+    #:
+    #: **Reported rather than defaulted, which is §30's decision applied to a second null.**
+    #: The outbox keeps a null dispatcher and says so, because inventing a destination nobody
+    #: agreed to is worse than a visible silence. The same holds here and there is nowhere to
+    #: default *to*: the pack lives in a sibling checkout whose path is this machine's, not
+    #: this package's, so a hardcoded default would be wrong everywhere but one desk.
+    #:
+    #: What was not acceptable is the silence. `stats.ceiling.v0` and its five siblings are
+    #: built and green, `--continuity-evaluator-command` defaults to unset, and §52, §54.1,
+    #: §55.1 and §56 all drafted without them — §56.5 measured the cost, an `MP 6/4` reaching
+    #: accepted canon across twelve ACCEPT decisions and zero findings. A run missing the
+    #: genre's best deterministic quality claim now says so on the line an operator reads.
+    unchecked_system_voice_books: int = 0
 
     @property
     def needs_attention(self) -> int:
@@ -89,6 +105,7 @@ class Status:
             "unread_directives": self.unread_directives,
             "open_exceptions": self.open_exceptions,
             "blocking_findings": self.blocking_findings,
+            "unchecked_system_voice_books": self.unchecked_system_voice_books,
             "digest": self.digest,
             "spend": {
                 "invocations": self.spend.invocations,
@@ -131,6 +148,15 @@ class Status:
             f"exceptions      {self.open_exceptions} open",
             f"findings        {self.blocking_findings} blocking",
             f"digest today    {self.digest or '{}'}",
+            *(
+                [
+                    f"rules pack      NOT RUNNING on "
+                    f"{self.unchecked_system_voice_books} book(s) that state game state on "
+                    "the page; set --continuity-evaluator-command"
+                ]
+                if self.unchecked_system_voice_books
+                else []
+            ),
             f"spend today     {self.spend.invocations} call(s), "
             f"{self.spend.tokens} tokens"
             + (f", ${self.spend.cost_usd:.2f}" if self.spend.cost_usd else "")
@@ -145,7 +171,11 @@ def collect(
     *,
     scope: str = DEFAULT_SCOPE,
     budget: BudgetPolicy | None = None,
+    continuity_evaluator: bool = True,
 ) -> Status:
+    """`continuity_evaluator` defaults to True so this reports nothing unless a caller
+    states otherwise — an operator surface that accused every embedding of a missing
+    evaluator would be noise, and the CLI is the only caller that knows."""
     last = store.last_tick()
     holder, expires = store.instance_lease(scope)
     day = datetime.fromtimestamp(now, tz=UTC).date().isoformat()
@@ -170,6 +200,19 @@ def collect(
         digest=store.digest(day),
         spend=store.spend_on(day),
         budget=budget or BudgetPolicy(),
+        # Read off canon rather than declared by a genre flag, for the reason
+        # `speaks_system_voice` reads it that way: a flag is a second source of truth for
+        # something the records already answer, and the two eventually disagree. A mystery
+        # is not accused of missing a LitRPG evaluator.
+        unchecked_system_voice_books=(
+            0
+            if continuity_evaluator
+            else sum(
+                1
+                for book_id, branch_id, _ in store.branches()
+                if speaks_system_voice(store.state_records(book_id, branch_id))
+            )
+        ),
     )
 
 
