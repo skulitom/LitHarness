@@ -55,6 +55,7 @@ import litharness_contracts as lc
 from litharness.domain import state as state_mod
 from litharness.domain.craft import longest_repeated_span
 from litharness.domain.findings import (
+    UNRESOLVED_STATUSES,
     DetectorInput,
     Finding,
     Severity,
@@ -64,6 +65,7 @@ from litharness.domain.findings import (
     worst,
 )
 from litharness.domain.policy import GateKind, GateOutcome, VerdictSource
+from litharness.domain.promises import overdue_promises
 
 #: This module's own rule id, in the vocabulary the fixtures use for theirs.
 CONTRADICTION_RULE = "state.contradiction.v0"
@@ -240,13 +242,78 @@ def detect_duplicate_scene(subject: DetectorInput) -> list[Finding]:
     ]
 
 
-#: Detectors that run inside the loop. The tuple is the extension point: a second in-process
-#: check is appended here, and an out-of-process pack arrives through `standing` instead.
+#: Rule id for the overdue-promise check (§61 Add 2). Versioned like every other; the
+#: comparison is the rule, and a changed comparison would be a changed rule.
+OVERDUE_RULE = "promise.overdue.v0"
+
+
+def detect_overdue_promises(subject: DetectorInput) -> list[Finding]:
+    """A promise the book opened whose due position is behind the scene being drafted.
+
+    **PLAN §1a.3 item 3's first instrument, and it is advisory by construction.** The
+    arithmetic here is deterministic — `promises.overdue_promises` is string comparison over
+    zero-padded story keys — but the ledger it reads is model-sourced: the promise rows come
+    from the summary call's `promises_opened`/`promises_paid` answer, so the *inputs* carry a
+    model's judgment and §10.4's bar applies to the whole chain. Severity is MINOR and the
+    confidence basis is `heuristic`, which pins both halves of "never blocks, never parks":
+    MINOR is below `BLOCKING_SEVERITIES`, so the finding annotates the decision rather than
+    refusing it, and a MINOR finding recorded against the beat never trips the standing
+    pre-flight — a MAJOR here would become standing and park the beat until dismissed, which
+    for an uncalibrated instrument would be a park with no evidence behind it.
+
+    **Abstains exactly where milestones abstain.** `story_order_key` is None when the
+    template is not chronological — the sheet minted no position, so there is nothing to be
+    overdue *relative to* — and the check returns nothing rather than comparing against a
+    guessed coordinate. The evaluation lane assembles no promise input at all, so this
+    detector is silent there by the same defaults `prior_prose` set the precedent for.
+    """
+    findings: list[Finding] = []
+    for promise in overdue_promises(subject.open_promises, subject.story_order_key):
+        claim = {
+            "subject": promise.subject,
+            "opened_at": promise.opened_at_key,
+            "due": promise.due_key,
+            "current": subject.story_order_key,
+        }
+        findings.append(
+            Finding(
+                finding_id=finding_id_for(OVERDUE_RULE, subject.logical_id, claim),
+                category=lc.FindingCategory.PROMISE_PAYOFF.value,
+                severity=Severity.MINOR,
+                status=Status.OPEN,
+                subtype="overdue_promise",
+                rule_or_critic_id=OVERDUE_RULE,
+                logical_id=subject.logical_id,
+                # Not `deterministic`, although the comparison is: the basis describes the
+                # verdict's whole provenance, and the rows compared are a model's claims.
+                # This is the second guard against blocking — even a severity edit could
+                # not make this finding refuse, because `Finding.deterministic` is false.
+                confidence_basis=lc.ConfidenceBasis.HEURISTIC.value,
+                message=(
+                    f"promise {promise.subject!r} opened at {promise.opened_at_key} was due "
+                    f"by {promise.due_key}; the book is at {subject.story_order_key} and it "
+                    "is still open"
+                ),
+                source={"claim": claim},
+            )
+        )
+    return findings
+
+
+#: Detectors that run inside the loop. The tuple is the extension point: a further
+#: in-process check is appended here, and an out-of-process pack arrives through `standing`
+#: instead.
 #:
-#: `detect_duplicate_scene` is the second, and it is the first that reads prose rather than
-#: state. Both are checks no sibling can run — one because it needs the candidate's extracted
-#: records beside canon, the other because it needs the rest of the book this system wrote.
-IN_PROCESS: tuple[Any, ...] = (detect_contradictions, detect_duplicate_scene)
+#: `detect_duplicate_scene` was the second, and the first that reads prose rather than
+#: state. `detect_overdue_promises` is the third, and the first whose *inputs* are
+#: model-sourced — which is why it is the first that may only annotate. All are checks no
+#: sibling can run: one needs the candidate's extracted records beside canon, one needs the
+#: rest of the book this system wrote, one needs the promise ledger only this store keeps.
+IN_PROCESS: tuple[Any, ...] = (
+    detect_contradictions,
+    detect_duplicate_scene,
+    detect_overdue_promises,
+)
 
 
 def run_detectors(subject: DetectorInput) -> list[Finding]:
@@ -276,6 +343,17 @@ def gate_integrity(
     # output vanishes when it disagrees is worse than one that never ran.
     advisory = [item for item in findings if item.blocks and not item.deterministic]
 
+    # Findings below the blocking bar, named for the same reason the uncalibrated ones are:
+    # §10.2 wants the annotations instrumented from Book Zero onward, and an overdue-promise
+    # or zero-delta flag that only lived in the findings table would be invisible on the
+    # decision an operator actually reads. Scoped to unresolved statuses so a dismissed
+    # negative control does not re-announce itself on every later decision.
+    annotations = [
+        item
+        for item in findings
+        if not item.blocks and item.status in UNRESOLVED_STATUSES
+    ]
+
     detail_parts: list[str] = []
     if blocking:
         detail_parts.append(
@@ -289,6 +367,13 @@ def gate_integrity(
         detail_parts.append(
             f"{len(advisory)} uncalibrated finding(s) recorded but not blocking (§10.4): "
             + ", ".join(sorted({item.rule_or_critic_id or item.category for item in advisory}))
+        )
+    if annotations:
+        detail_parts.append(
+            f"{len(annotations)} advisory finding(s) recorded, not blocking: "
+            + ", ".join(
+                sorted({item.rule_or_critic_id or item.category for item in annotations})
+            )
         )
     if not findings:
         detail_parts.append(f"{len(IN_PROCESS)} detector(s) ran, nothing found")
@@ -354,9 +439,11 @@ __all__ = [
     "DUPLICATE_SPAN_WORDS",
     "INTEGRITY_GATE",
     "IN_PROCESS",
+    "OVERDUE_RULE",
     "STANDING_GATE",
     "detect_contradictions",
     "detect_duplicate_scene",
+    "detect_overdue_promises",
     "gate_integrity",
     "gate_standing",
     "run_detectors",

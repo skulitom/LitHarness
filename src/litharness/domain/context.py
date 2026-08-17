@@ -63,6 +63,7 @@ from types import MappingProxyType
 
 import litharness_contracts as lc
 
+from litharness.domain import promises as promises_mod
 from litharness.domain import state as state_mod
 from litharness.domain.nodes import NodeKind
 from litharness.domain.plans import constraints_of, premise_of
@@ -329,6 +330,7 @@ def assemble(
     reserved_output: int = DEFAULT_RESERVED_OUTPUT,
     story_time_cutoff: str | None = None,
     summaries: Mapping[str, str] = MappingProxyType({}),
+    promises: Sequence[promises_mod.Promise] = (),
 ) -> ContextPacket:
     """Build the packet for drafting ``target_logical_id``.
 
@@ -417,6 +419,31 @@ def assemble(
             used += item.tokens
         else:
             omitted.append(Omission(record.record_id, record.record_id, "budget: thread"))
+
+    # Open promises from the ledger (§61 Add 2), rendered as owed lines beside the canon
+    # threads — the same "what the book still owes" question answered from the model-sourced
+    # side. `DERIVED`, never canon: the analogous exclusion already keeps PROPOSED
+    # milestones out of this packet (`is_canon` above), and a promise reaching FACTS as an
+    # established record would launder a model's claim into canon by section label. The
+    # caller supplies open rows only; a paid promise is not owed.
+    for promise in promises:
+        text = promises_mod.describe_owed(promise)
+        item = PackedItem(
+            item_id=promise.promise_id,
+            kind=lc.ContextItemKind.THREAD,
+            source_logical_id=promise.promise_id,
+            source_kind=lc.ResourceKind.THREAD,
+            text=text,
+            tokens=count_tokens(text),
+            authority=lc.StateAuthority.DERIVED,
+        )
+        if fits(item):
+            threads.append(item)
+            used += item.tokens
+        else:
+            omitted.append(
+                Omission(promise.promise_id, promise.promise_id, "budget: promise")
+            )
     sections[THREADS] = tuple(threads)
 
     thread_ids = {item.item_id for item in threads}

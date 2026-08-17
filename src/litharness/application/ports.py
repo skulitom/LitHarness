@@ -16,7 +16,7 @@ all, so this file is the only description of a generator the layer has.
 from __future__ import annotations
 
 from collections.abc import Collection, Iterable, Sequence
-from typing import Protocol
+from typing import Any, Protocol
 
 import litharness_contracts as lc
 
@@ -43,6 +43,7 @@ from litharness.domain.preference import (
     PairVerdict,
     PreferenceProtocol,
 )
+from litharness.domain.promises import Promise
 from litharness.domain.revision import Revision
 
 
@@ -300,12 +301,54 @@ class SummaryRepository(Protocol):
         model: str,
         profile: str,
         created_at: str,
+        delta: dict[str, Any] | None = ...,
+        promises: dict[str, Any] | None = ...,
     ) -> bool: ...
 
     def scene_summaries(self, book_id: str, branch_id: str) -> dict[str, dict[str, str]]: ...
 
 
-class SummaryStore(ManuscriptReader, StateRepository, SummaryRepository, Protocol):
+class PromiseRepository(Protocol):
+    """The promise/payoff ledger (§61 Add 2): model-sourced rows, deterministic reads.
+
+    A sibling of `StateRepository` rather than an extension of it, for the reason the
+    extraction-state map makes binding: a promise folded into THREAD records would empty
+    `open_threads` (which tests `value == "open"` by exact equality), collide with the
+    contradiction detector's grouping, and trip `has_story_vocabulary`'s registry check.
+    A separate table with its own reader sidesteps all three.
+    """
+
+    def promises(
+        self, book_id: str, branch_id: str, *, open_only: bool = ...
+    ) -> list[Promise]: ...
+
+    def record_promise(
+        self, book_id: str, branch_id: str, promise: Promise
+    ) -> bool: ...
+
+    def pay_promise(
+        self,
+        book_id: str,
+        branch_id: str,
+        promise_id: str,
+        *,
+        paid_at_key: str,
+        paid_by_revision: str,
+    ) -> bool: ...
+
+
+class SummaryStore(
+    ManuscriptReader,
+    StateRepository,
+    SummaryRepository,
+    # The extended summary call reports promises opened and paid; the handler maintains the
+    # ledger from that answer, so the write half lives here and nowhere on the draft path.
+    PromiseRepository,
+    # For the zero-delta INFO annotation (`craft.scene_delta.v0`): a scene whose summary
+    # reports no value shift gets a finding on the record, never a gate change.
+    FindingRepository,
+    Protocol,
+):
     pass
 
 
@@ -342,6 +385,9 @@ class PlanningStore(
     PlanReader,
     StateRepository,
     SummaryRepository,
+    # Read-only: `packet_for` surfaces open promises in the packet's THREADS section so
+    # generation gets to see the ledger. Nothing on the planning path writes here.
+    PromiseRepository,
     OperationsRepository,
     Protocol,
 ):
@@ -360,6 +406,10 @@ class DraftStore(
     # `EvidenceClass.PREFERENCE` rows, the same way it reads answered audit samples for
     # judgment rows. Read-only from the draft path; nothing on a tick writes here.
     PreferenceRepository,
+    # Read-only: the detector-input assembly hands `promise.overdue.v0` the open ledger
+    # rows, the way it hands `detect_duplicate_scene` the prior prose. The draft path
+    # never writes a promise — only the summary handler does.
+    PromiseRepository,
     Protocol,
 ):
     pass
@@ -437,6 +487,7 @@ class ApplicationStore(
     AuditRepository,
     PreferenceRepository,
     SummaryRepository,
+    PromiseRepository,
     EventRepository,
     OperationsRepository,
     ExceptionRepository,
@@ -506,6 +557,7 @@ __all__ = [
     "PlanRefinementStore",
     "PlanningStore",
     "PreferenceRepository",
+    "PromiseRepository",
     "RepairStore",
     "StatusStore",
     "TextGenerator",

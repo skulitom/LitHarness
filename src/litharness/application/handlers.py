@@ -563,6 +563,20 @@ def make_scene_draft_handler(
                 ),
                 ordinal=int(selected.get("ordinal", 0) or 0),
                 of_total=int(selected.get("of_total", 0) or 0),
+                # The promise ledger's open rows, for `promise.overdue.v0` — supplied the
+                # way `prior_prose` is, so the detector stays a pure function of its input.
+                # Model-sourced rows; the detector can only annotate (MINOR, heuristic).
+                open_promises=tuple(
+                    store.promises(str(book_id), str(branch_id), open_only=True)
+                ),
+                # The template's coordinate for this beat, same payload slot extraction
+                # reads as `stated_order_key`. None when the sheet is not chronological,
+                # and None makes the overdue check abstain exactly as milestones do.
+                story_order_key=(
+                    str(selected["story_order_key"])
+                    if selected.get("story_order_key")
+                    else None
+                ),
             )
             # `standing` was read and cleared before the generation, so this pass judges
             # only what the in-process detectors say about *this* candidate — which is why

@@ -81,6 +81,7 @@ from litharness.domain.preference import (
     PreferenceProtocol,
     TiePolicy,
 )
+from litharness.domain.promises import PROMISE_OPEN, PROMISE_PAID, Promise
 from litharness.domain.revision import Revision, node_version_id
 
 #: How long a writer waits for a contended database before reporting it locked. An
@@ -1240,6 +1241,8 @@ class SqliteStore:
         model: str,
         profile: str,
         created_at: str,
+        delta: dict[str, Any] | None = None,
+        promises: dict[str, Any] | None = None,
     ) -> bool:
         """Store what one accepted scene contained, addressed by that scene's own text.
 
@@ -1248,12 +1251,17 @@ class SqliteStore:
         summary as far as the packet is concerned. A *repair* changes the text, mints a new
         hash, and gets its own row — which is the behaviour that keeps a summary from
         outliving the prose it describes.
+
+        `delta` and `promises` (§61 Add 2) ride on the same row under the same no-op rule:
+        they came out of the same model call as the summary text, so re-answering under an
+        unchanged hash would be a second reading of the same prose, and the first one wins.
+        Both are model-sourced; the row's `model` column is their provenance.
         """
         with self.transaction() as connection:
             cursor = connection.execute(
                 "INSERT OR IGNORE INTO scene_summaries (book_id, branch_id, logical_id, "
-                "content_hash, summary, model, profile, created_at) "
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                "content_hash, summary, model, profile, created_at, delta_json, "
+                "promises_json) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                 (
                     book_id,
                     branch_id,
@@ -1263,6 +1271,12 @@ class SqliteStore:
                     model,
                     profile,
                     created_at,
+                    None
+                    if delta is None
+                    else json.dumps(delta, sort_keys=True, ensure_ascii=False),
+                    None
+                    if promises is None
+                    else json.dumps(promises, sort_keys=True, ensure_ascii=False),
                 ),
             )
             return cursor.rowcount > 0
@@ -1285,6 +1299,104 @@ class SqliteStore:
         for row in rows:
             out.setdefault(row["logical_id"], {})[row["content_hash"]] = row["summary"]
         return out
+
+    # -- the promise/payoff ledger (§61 Add 2) ----------------------------------
+
+    def record_promise(self, book_id: str, branch_id: str, promise: Promise) -> bool:
+        """Open one promise. Returns False when the subject is already on the ledger.
+
+        `INSERT OR IGNORE` on the content-derived `promise_id`
+        (sha256 of book + subject), so a re-summarised scene re-reporting the same subject
+        converges on one row — same-subject re-open is a no-op, not a duplicate — and a
+        replayed job writes nothing. Write-once: an existing row is never updated here,
+        whatever its status, because a promise the book already paid is not re-opened by a
+        model describing the scene that opened it again.
+        """
+        with self.transaction() as connection:
+            cursor = connection.execute(
+                "INSERT OR IGNORE INTO promises (promise_id, book_id, branch_id, subject, "
+                "description, opened_at_key, due_key, opened_by_revision, paid_at_key, "
+                "paid_by_revision, status, model) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                (
+                    promise.promise_id,
+                    book_id,
+                    branch_id,
+                    promise.subject,
+                    promise.description,
+                    promise.opened_at_key,
+                    promise.due_key,
+                    promise.opened_by_revision,
+                    promise.paid_at_key,
+                    promise.paid_by_revision,
+                    promise.status,
+                    promise.model,
+                ),
+            )
+            return cursor.rowcount > 0
+
+    def pay_promise(
+        self,
+        book_id: str,
+        branch_id: str,
+        promise_id: str,
+        *,
+        paid_at_key: str,
+        paid_by_revision: str,
+    ) -> bool:
+        """The single open→paid transition. False when nothing was open to pay.
+
+        `UPDATE ... WHERE status = 'open'` is the write-once verdict pattern (the audit and
+        preference queues' rule, applied here): the first payoff wins, a replay is a no-op,
+        and a model re-reporting an already-paid subject changes nothing. Paying a subject
+        the ledger never opened is also a no-op rather than an insert — a payoff with no
+        recorded promise is not a debt this ledger can attest was owed.
+        """
+        with self.transaction() as connection:
+            cursor = connection.execute(
+                "UPDATE promises SET status = ?, paid_at_key = ?, paid_by_revision = ? "
+                "WHERE promise_id = ? AND book_id = ? AND branch_id = ? AND status = ?",
+                (
+                    PROMISE_PAID,
+                    paid_at_key,
+                    paid_by_revision,
+                    promise_id,
+                    book_id,
+                    branch_id,
+                    PROMISE_OPEN,
+                ),
+            )
+            return cursor.rowcount > 0
+
+    def promises(
+        self, book_id: str, branch_id: str, *, open_only: bool = False
+    ) -> list[Promise]:
+        """The ledger for one book, due-soonest first.
+
+        Ordered by `due_key` with NULLs last and `promise_id` as the tiebreak, matching
+        `in_story_order`'s discipline: two promises due at one position must pack into the
+        packet in the same order on every run, or the packet is not reproducible.
+        """
+        sql = "SELECT * FROM promises WHERE book_id = ? AND branch_id = ?"
+        params: list[Any] = [book_id, branch_id]
+        if open_only:
+            sql += " AND status = ?"
+            params.append(PROMISE_OPEN)
+        sql += " ORDER BY due_key IS NULL, due_key, promise_id"
+        return [
+            Promise(
+                promise_id=row["promise_id"],
+                subject=row["subject"],
+                description=row["description"],
+                opened_at_key=row["opened_at_key"],
+                due_key=row["due_key"],
+                opened_by_revision=row["opened_by_revision"],
+                status=row["status"],
+                paid_at_key=row["paid_at_key"],
+                paid_by_revision=row["paid_by_revision"],
+                model=row["model"],
+            )
+            for row in self._connection.execute(sql, params)
+        ]
 
     def record_craft_metrics(
         self,

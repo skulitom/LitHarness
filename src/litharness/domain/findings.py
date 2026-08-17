@@ -44,6 +44,7 @@ import litharness_contracts as lc
 
 from litharness.domain.events import payload_digest
 from litharness.domain.patch import Veto
+from litharness.domain.promises import Promise
 
 
 class Severity(enum.StrEnum):
@@ -243,6 +244,16 @@ class DetectorInput:
     #: Story position of the beat being drafted, for checks that only apply at the end.
     ordinal: int = 0
     of_total: int = 0
+    #: The promise ledger's open rows (§61 Add 2), for `promise.overdue.v0`. Added the way
+    #: `prior_prose` was: a new optional field with an empty default, so every caller that
+    #: has no ledger to pass — an evaluation replayed from an artifact, a store-local
+    #: check — is unchanged rather than obliged to assemble one. Model-sourced rows, which
+    #: is why nothing reading them may mint above MINOR.
+    open_promises: tuple[Promise, ...] = ()
+    #: The template's story order key for the beat being drafted, in `beats_for`'s padding —
+    #: the coordinate promise due positions compare against. None when the template is not
+    #: chronological, and None means the overdue check abstains, exactly as milestones do.
+    story_order_key: str | None = None
 
 
 def vetoes_for(findings: Sequence[Finding]) -> tuple[Veto, ...]:

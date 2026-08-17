@@ -3522,3 +3522,51 @@ schema carry the grain so no future migration is needed. And the analysable-judg
 count for PREFERENCE holdouts excludes abstentions and recognized rows while
 deliberately pooling protocols — the digest pools too, and over-invalidation is the
 safe direction.
+
+*(§70 is reserved by a parallel session's persona-reader validity program; this ledger
+skips it here rather than colliding, per the §60 lesson. If that programme lands under
+another number, §70 is a recorded gap and this note is why.)*
+
+## 71. The book now owes things on the record, and a scene that changes nothing says so
+
+§61 Add 2 — the first instrumentation aimed at PLAN §1a.3's items 1 and 3, the ones
+BRIEF §1 says nothing had ever touched. Two shapes, both advisory, both riding the
+existing machinery rather than growing new call sites: the per-scene summary call —
+already made, already provenance-stamped — now also answers three questions (the
+scene's value shift: *what changed for whom*; promises opened; promises paid), and a
+`promises` table turns the answers into a ledger with a due position per thread.
+The overdue check is deterministic arithmetic over those rows
+(`promise.overdue.v0`, category PROMISE_PAYOFF — the contract already had the word;
+both golden fixtures already ship an example), appended to `IN_PROCESS` at MINOR +
+heuristic, belt and braces so neither severity nor basis can ever block or park: §61
+said advisory until calibrated, and the promotion rules are how that changes, not a
+severity edit. A summary whose delta comes back empty mints `craft.scene_delta.v0`
+at INFO — "no extractable value shift; dramatic_function unverified" — which is
+`scene_change_profile`'s refutation honoured in design: ledger delta is not dramatic
+delta (the confession scene carried zero records), so the delta question goes to the
+model leg and its answer stays a hypothesis about human judgment until Add 1's data
+says otherwise.
+
+**The design is §46 arriving where it was always going.** A payoff-due position is a
+record that informs and contaminates nothing; generation *sees* the debt — open
+promises pack into the context packet's THREADS section as "owes: … (due by sNN)" —
+and §55.1's measured lesson governed the prompt wording: the delta question is asked
+unhedged, because the hedged progression clause was the documented stasis default.
+Three map traps dictated the separate table and are recorded in migration 023's
+header: `open_threads`' exact-equality contract, the contradiction detector's
+(subject, predicate, order_key) grouping, and `has_story_vocabulary`'s registry
+filter. `promise_id` derives from (book, subject) and is deliberately
+value-insensitive — reopening the same debt converges — with the docstring
+contrasting `record_id_for`'s opposite, equally deliberate, discipline.
+
+**Recorded limits, none hidden.** Two branches of one book collide on `promise_id`
+(single-branch reality today; the entry the branching feature writes must revisit).
+A payoff summarised before its opener's summary is a silent no-op pay — write-once
+by design, visible in pilot output. The evaluation lane's `checked_rule_ids`
+deliberately excludes the overdue rule: that lane assembles no promise input, and
+claiming a check that never ran is the §53 defect in reverse. And the acceptance
+run stays a **wiring pilot** (`research/structural-instrumentation/pilot.py`,
+written and not executed — it spends live quota, and its `--reset` must run on a
+copy): twenty-four frontier scenes can show effect direction for overdue-promise
+and zero-delta flags against Add 1's coming pairwise data, and cannot show
+prediction at any confidence worth recording. §57 already wrote that entry once.

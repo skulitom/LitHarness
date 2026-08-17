@@ -32,14 +32,20 @@ from __future__ import annotations
 from collections.abc import Sequence
 from datetime import UTC, datetime
 
+import litharness_contracts as lc
+
 from litharness.application.conductor import JobHandler
 from litharness.application.ports import SummaryStore, TextGenerator
 from litharness.application.repair import SCENE_SUMMARY
 from litharness.domain import state as state_mod
+from litharness.domain.beats import Beat, TemplateMismatch, beats_for, template_for
 from litharness.domain.events import Event
+from litharness.domain.extraction import normalise_subject
+from litharness.domain.findings import Finding, Severity, Status, finding_id_for
 from litharness.domain.generation import PROFILES, CompletionRequest
 from litharness.domain.jobs import Job
 from litharness.domain.nodes import NodeKind
+from litharness.domain.promises import Promise, parse_due_hint, promise_id_for
 from litharness.domain.text import content_hash
 
 #: The call class, which is what routes this to a non-billing provider even in production.
@@ -53,17 +59,80 @@ PROFILE = "mechanical"
 #: its prose to keep, and a summary that ran long would evict the prose it was meant to spare.
 TARGET_WORDS = 60
 
+#: §61 Add 2 extends the four packet fields with three structural ones, folded into this
+#: same call rather than a new one (§15: the per-invocation harness tax dwarfs the payload,
+#: so asks fold into one invocation). `delta` is the dramatic value shift — not ledger
+#: arithmetic, which is the distinction scene_change_profile died on: the confession scene
+#: carried zero state records. `promises_opened`/`promises_paid` feed the promise ledger
+#: (migration 023). Everything model-sourced here stays advisory.
+#:
+#: `delta`'s union type is written as `anyOf` on purpose: the shallow validator in
+#: `providers/base.py` reads a single top-level `"type"` per property, so a `["object",
+#: "null"]` list there would break it, while `anyOf` is simply not checked at that depth —
+#: a null answer passes, and a real provider still sees the full constraint.
 SUMMARY_SCHEMA = {
     "type": "object",
     "additionalProperties": False,
-    "required": ["setting", "characters", "events", "open"],
+    "required": [
+        "setting",
+        "characters",
+        "events",
+        "open",
+        "delta",
+        "promises_opened",
+        "promises_paid",
+    ],
     "properties": {
         "setting": {"type": "string"},
         "characters": {"type": "string"},
         "events": {"type": "string"},
         "open": {"type": "string"},
+        "delta": {
+            "anyOf": [
+                {
+                    "type": "object",
+                    "additionalProperties": False,
+                    "required": ["who", "what_changed", "from", "to"],
+                    "properties": {
+                        "who": {"type": "string"},
+                        "what_changed": {"type": "string"},
+                        "from": {"type": "string"},
+                        "to": {"type": "string"},
+                    },
+                },
+                {"type": "null"},
+            ]
+        },
+        "promises_opened": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "additionalProperties": False,
+                "required": ["subject", "description"],
+                "properties": {
+                    "subject": {"type": "string"},
+                    "description": {"type": "string"},
+                    "due_hint": {
+                        "anyOf": [
+                            {"type": "integer"},
+                            {"type": "string"},
+                            {"type": "null"},
+                        ]
+                    },
+                },
+            },
+        },
+        "promises_paid": {"type": "array", "items": {"type": "string"}},
     },
 }
+
+#: Rule id for the zero-delta annotation. INFO — it never blocks, never parks; it puts "this
+#: scene reported no value shift" on the record for §61 Add 1's correlation work, and that is
+#: all it does. No gate change of any kind rides on it.
+SCENE_DELTA_RULE = "craft.scene_delta.v0"
+
+#: The delta object's fields, in the order the prompt asks for them.
+DELTA_FIELDS = ("who", "what_changed", "from", "to")
 
 
 class SummaryInputError(Exception):
@@ -84,10 +153,17 @@ def render_summary_prompt(text: str, *, open_threads: Sequence[str] = ()) -> tup
     The book's own open threads go in the prompt so the OPEN field has something to notice
     rather than to invent. They are shown, never asserted: a scene that touches none of them
     should say so, and `check_open_threads` reads the answer rather than assuming it.
+
+    **The DELTA question is unhedged on purpose, and that is §55.1's measured lesson.** The
+    progression clause was hedged three times over and their sum was an instruction to leave
+    the numbers alone; the mechanism was complete and the wording decided the outcome. So
+    the delta ask is a direct imperative — state the one thing that changed, or say none —
+    with no "if any", no "where appropriate", no softening that would make stasis the
+    default answer for a scene that did move.
     """
     system = (
         "You are compressing one scene of a novel so a writer who cannot re-read it still "
-        f"knows what it contained. Answer in about {TARGET_WORDS} words in total, as four "
+        f"knows what it contained. Answer in about {TARGET_WORDS} words across the prose "
         "fields. State what is on the page and nothing else: no interpretation, no praise, "
         "no guesses about what happens next. Write each field fresh from this scene rather "
         "than continuing anything.\n"
@@ -95,7 +171,14 @@ def render_summary_prompt(text: str, *, open_threads: Sequence[str] = ()) -> tup
         "CHARACTERS: who was present, by the names the prose uses.\n"
         "EVENTS: what changed. Concrete actions and outcomes, not atmosphere.\n"
         "OPEN: what the scene left unresolved — promises made, questions raised, debts "
-        "owed. Say so plainly if it left nothing open."
+        "owed. Say so plainly if it left nothing open.\n"
+        "DELTA: state the one thing that changed for a character in this scene — who it "
+        "changed for, what changed, what it was before, what it is now — or say none by "
+        "answering null. A dramatic shift counts even when no number moves.\n"
+        "PROMISES_OPENED: new threads this scene opens that the book must later pay off. "
+        "For each: a short subject name, what is now owed, and the scene number it is due "
+        "by when the scene implies one.\n"
+        "PROMISES_PAID: the subject names of previously open threads this scene pays off."
     )
     owed = ""
     if open_threads:
@@ -159,6 +242,30 @@ def check_open_threads(summary_open: str, threads: Sequence[str]) -> tuple[int, 
     return mentioned, len(threads)
 
 
+def extract_delta(payload: object) -> dict[str, str] | None:
+    """The delta object if the model reported a usable one, else None.
+
+    None is a *reading* — "no extractable value shift" — not an error: null is the schema's
+    own answer for a scene where nothing changed, and a malformed shape (the wrong type, a
+    blank field) is treated as the same reading rather than failing the job, because the
+    summary beside it is still good and a scene with no delta annotation is exactly where
+    every scene stood before §61 Add 2.
+    """
+    if not isinstance(payload, dict):
+        return None
+    delta: dict[str, str] = {}
+    for field in DELTA_FIELDS:
+        value = payload.get(field)
+        if not isinstance(value, str) or not value.strip():
+            return None
+        delta[field] = value.strip()
+    return delta
+
+
+def _scene_beat(beats: Sequence[Beat], logical_id: str) -> Beat | None:
+    return next((beat for beat in beats if beat.logical_id == logical_id), None)
+
+
 def make_summary_handler(
     registry: TextGenerator,
     store: SummaryStore,
@@ -171,9 +278,20 @@ def make_summary_handler(
     Returns no events, and that is a decision rather than an omission. A summary is a derived
     read-side artifact: it mutates no manuscript, accepts no candidate, and §19's attribution
     clause — every mutation traceable to a recorded policy decision — does not reach it, so
-    minting a decision here would put a row on the record that decided nothing. The store
-    write is idempotent on the scene's content hash, which is what makes returning no events
-    safe under the replay the Conductor's two-transaction commit allows.
+    minting a decision here would put a row on the record that decided nothing. Every store
+    write here is idempotent — the summary row on the scene's content hash, the promise rows
+    on their content-derived ids (`INSERT OR IGNORE`), payment as a write-once open→paid
+    transition, and the zero-delta finding on its content-derived `finding_id` — which is
+    what makes returning no events safe under the replay the Conductor's two-transaction
+    commit allows.
+
+    **The promise ledger (§61 Add 2) is maintained here and only here.** The story keys a
+    promise carries are read off `beats_for`'s own minting — the scene's beat for
+    `opened_at_key`, the hinted scene's beat for `due_key`, the last beat when the hint is
+    absent or unparseable (a promise is at latest overdue if the book ends unpaid) — so
+    there is exactly one padding implementation in the project. A book whose template is not
+    chronological, or does not fit a template at all, gets no promise rows: the same
+    abstention milestones make, no key rather than a guessed one.
     """
 
     def handle(job: Job, now: float) -> Sequence[Event]:
@@ -236,6 +354,24 @@ def make_summary_handler(
                 f"job {job.job_id}: {result.provider} returned no conforming summary"
             )
 
+        # §61 Add 2's three structural fields, read tolerantly: the summary is the artifact
+        # the packet depends on, and a model that answered the four prose fields but fumbled
+        # a structural one has produced a usable summary with a missing annotation, not a
+        # failed job.
+        delta = extract_delta(result.parsed.get("delta"))
+        opened_raw = result.parsed.get("promises_opened")
+        opened = (
+            [item for item in opened_raw if isinstance(item, dict)]
+            if isinstance(opened_raw, list)
+            else []
+        )
+        paid_raw = result.parsed.get("promises_paid")
+        paid = (
+            [item for item in paid_raw if isinstance(item, str)]
+            if isinstance(paid_raw, list)
+            else []
+        )
+
         store.record_scene_summary(
             book_id,
             branch_id,
@@ -245,7 +381,86 @@ def make_summary_handler(
             model=result.model,
             profile=PROFILE,
             created_at=_timestamp(now),
+            delta=delta,
+            promises={"opened": opened, "paid": paid} if opened or paid else None,
         )
+
+        # The promise ledger. Story keys are read off `beats_for`'s minting, never formatted
+        # here — see the factory docstring — and a book the template machinery refuses, or a
+        # template that is not chronological, abstains whole.
+        beats: tuple[Beat, ...]
+        try:
+            beats = beats_for(revision, template_for(revision))
+        except TemplateMismatch:
+            beats = ()
+        beat = _scene_beat(beats, logical_id)
+        opened_key = beat.story_order_key if beat is not None else None
+        final_key = beats[-1].story_order_key if beats else None
+        if opened_key is not None and final_key is not None:
+            for item in opened:
+                subject = normalise_subject(str(item.get("subject", "") or ""))
+                description = str(item.get("description", "") or "").strip()
+                if not subject or not description:
+                    continue
+                hinted = parse_due_hint(item.get("due_hint"))
+                due_key = (
+                    beats[hinted - 1].story_order_key
+                    if hinted is not None and 1 <= hinted <= len(beats)
+                    else None
+                ) or final_key
+                store.record_promise(
+                    book_id,
+                    branch_id,
+                    Promise(
+                        promise_id=promise_id_for(book_id, subject),
+                        subject=subject,
+                        description=description,
+                        opened_at_key=opened_key,
+                        due_key=due_key,
+                        opened_by_revision=revision_id,
+                        model=result.model,
+                    ),
+                )
+            for name in paid:
+                subject = normalise_subject(name)
+                if not subject:
+                    continue
+                store.pay_promise(
+                    book_id,
+                    branch_id,
+                    promise_id_for(book_id, subject),
+                    paid_at_key=opened_key,
+                    paid_by_revision=revision_id,
+                )
+
+        # Scene-delta annotation: a null delta is recorded as an INFO finding against this
+        # scene's revision — never a gate change of any kind. INFO never blocks and never
+        # becomes standing-that-parks; it puts "dramatic_function unverified" on the record
+        # where §61 Add 1's correlation work can find it.
+        if delta is None:
+            store.record_findings(
+                book_id,
+                branch_id,
+                [
+                    Finding(
+                        finding_id=finding_id_for(
+                            SCENE_DELTA_RULE, logical_id, {"content_hash": actual}
+                        ),
+                        category=lc.FindingCategory.PACING.value,
+                        severity=Severity.INFO,
+                        status=Status.OPEN,
+                        subtype="zero_delta",
+                        rule_or_critic_id=SCENE_DELTA_RULE,
+                        logical_id=logical_id,
+                        # The verdict is the model's own reading of its scene, uncalibrated.
+                        confidence_basis=lc.ConfidenceBasis.HEURISTIC.value,
+                        message="no extractable value shift; dramatic_function unverified",
+                        source={"claim": {"content_hash": actual}},
+                    )
+                ],
+                created_at=_timestamp(now),
+                revision_id=revision_id,
+            )
         return ()
 
     return handle
@@ -253,12 +468,15 @@ def make_summary_handler(
 
 __all__ = [
     "CALL_CLASS",
+    "DELTA_FIELDS",
     "PROFILE",
+    "SCENE_DELTA_RULE",
     "SCENE_SUMMARY",
     "SUMMARY_SCHEMA",
     "TARGET_WORDS",
     "SummaryInputError",
     "check_open_threads",
+    "extract_delta",
     "flatten",
     "make_summary_handler",
     "render_summary_prompt",

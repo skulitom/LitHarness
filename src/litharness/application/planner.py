@@ -354,6 +354,13 @@ def packet_for(
         pov_character_id=pov_character_id,
         token_budget=token_budget,
         summaries=summaries,
+        # The promise ledger's open rows (§61 Add 2), surfaced in the THREADS section so
+        # generation gets to SEE what the book owes and by when. Read-only, and `assemble`
+        # packs them as DERIVED — a model-sourced debt informs the scene without entering
+        # canon, the property §46 built for milestones.
+        promises=tuple(
+            store.promises(revision.book_id, revision.branch_id, open_only=True)
+        ),
     )
 
 
