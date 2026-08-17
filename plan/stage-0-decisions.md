@@ -3319,3 +3319,49 @@ results are committed; the script is a record, not a tool.
 by the roadmap entry that re-scopes it (Cut 6), since its new role needs the new CLI
 shape anyway. `plan/provider-adapters.md` carries a superseded banner and stays as
 the measured record (the harness-tax tables are still the cost model's basis).
+
+## 65. The gate stays; the roadmap built on its defect does not
+
+Cut 6 of §61's programme, landed as §61 amended it rather than as the directive drafted
+it. The directive said remove the duplicate gate from the default ladder; §61 recorded
+the refusal and this entry executes it: **the §53 gate stays.** §53 classified a copied
+scene as an integrity defect, not a craft opinion — deterministic string arithmetic
+needing no calibration — and the asymmetry has only sharpened since: the gate refused
+nothing across both frontier books (§57), so removing it saves nothing measurable,
+while §64 pinned the generator and made model-version drift the one silent way the
+defect returns. A never-firing deterministic gate in front of a single point of drift
+is insurance priced at zero (§24: a refusal costs time, never the unit). Nothing about
+the gate, its 120-word threshold, or its two call sites changes.
+
+**What dies is the ordering that §52's taxonomy dictated.** PLAN Stage 5's "in the
+order Book Zero's taxonomy demands" is struck: that taxonomy was measured on
+`phi4:14b`, its first entry does not reproduce on the generator §1a.5 requires, and
+the outline's justification-by-duplication died in §57. The ordering source is now the
+frontier arm's own defect taxonomy — which does not exist yet and is collected by the
+pairwise engine and the structural instrumentation (§61 Adds 1–2): **the defects that
+predict pairwise losses order Stage 5.** Until that data exists, no slice is scheduled
+on taxonomy grounds; §56.4's context-packet arithmetic stands as the one
+frontier-measured candidate.
+
+**Narrative Planning is kept and demoted to unproven.** §57's own caveat holds — an
+outline plausibly does other work than suppressing duplication — so the machinery
+(outline handler, beat templates, `--no-outline` for hand-outlined books, the
+directive lane) stays wired. Its *value* on the pinned generator is unmeasured, and
+§57's demand is now the standing rule: no further planner machinery is built on it
+until pairwise evidence re-argues it. §61 Add 3 is exactly that re-arguing — beat-plan
+alternatives selected by pairwise judgment — so the outline's next justification will
+be bought with verdicts or not at all. The §52-taxonomy argument threaded through
+outline/beats/planner docstrings is left in place: each cites this ledger, the
+scoping lives here (§57, this entry), and rewriting history out of docstrings is the
+correction-in-place rule violated in the other direction.
+
+**The span instrument gets a standing role and a trigger.**
+`research/frontier-arm/duplication.py` is re-scoped from experiment to regression
+harness: its question is answered, its instrument survives as the *below-threshold*
+measurement the in-ladder gate cannot provide (the gate sees nothing under 120 words;
+drift from 17 toward 93 is invisible to it). **Trigger: the pinned provider's model
+identity changes** — model identity, not calendar time, because §64 made the
+generator the only independent variable left. Its hand-mirrored CLI namespace had
+already rotted against §63/§64 (four deleted flags) and is fixed to the shipped
+shape, which is itself the argument for the script driving `cli._conductor` rather
+than reconstructing the loop: what it measures is the shipped configuration.

@@ -1641,14 +1641,19 @@ produced under it.
 
 ### Stage 5 — Scale the weak subsystem
 Integrate LongRangeContext / ContinuityEvaluation prose detectors /
-RevisionPropagation slices **in the order Book Zero's taxonomy demands**, each
-through its own incubator gates. Likely first: distant-callback context and
-overdue-payoff detection. (The taxonomy's order is currently unsettled: §57 measured its
-first entry — whole-scene duplication — as a `phi4:14b` artifact absent on the frontier
-generator, and §56.4's dark-scene arithmetic argues the context packet moved up. The order
-is re-argued from measurements on the production generator, not inherited from §52.)
-**Exit:** the dominant Book Zero failure class measurably reduced in a Book One+
-draft at equal budget.
+RevisionPropagation slices, each through its own incubator gates.
+~~**in the order Book Zero's taxonomy demands**~~ *(struck, §65: Book Zero's taxonomy
+was measured on `phi4:14b` and its first entry does not reproduce on the pinned
+generator — §57. The ordering source is now the frontier arm's own defect taxonomy,
+which does not exist yet and is collected by the pairwise preference engine (§61
+Add 1) and the structural instrumentation (§61 Add 2): the defects that predict
+pairwise losses order this stage. Until that data exists, no Stage 5 slice is
+scheduled on taxonomy grounds. §56.4's dark-scene arithmetic remains the one
+frontier-measured candidate — the context packet stops representing the book at
+about forty scenes — and overdue-payoff detection ships with Add 2 rather than
+waiting here.)*
+**Exit:** the dominant *frontier-arm* failure class — as ranked by prediction of
+blinded pairwise losses — measurably reduced in a later draft at equal budget.
 
 ### Stage 6 — ~~Serial operation~~ *(retired, §62)*
 ~~Publication pipeline (§16), chapter cadence, recaps, publication policies;

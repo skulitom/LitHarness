@@ -1,4 +1,17 @@
-"""Does whole-scene duplication survive the generator swap? §54.1's metric, frontier arm.
+"""Span-regression harness for the pinned generator. Was: §54.1's metric, frontier arm.
+
+**Standing role (stage-0 §65).** The question this script was built to ask is answered:
+§57 measured the frontier control arm at 17- and 12-word maxima against phi4's 872, and
+Stage 5's duplication-first ordering died with it. What survives is the instrument. The
+in-ladder §53 gate is the always-on insurance at the 120-word threshold; this script is
+the *below-threshold* measurement — the only way to see a generator drifting toward
+duplication before the gate ever fires. **Re-run it when the pinned provider's model
+identity changes** (`ClaudeCodeProvider.model`, or the provider itself), one arm,
+default flags, and compare `longest_repeat_words` against the recorded 17/12 and the
+published-human 93. The trigger is model identity, not calendar time: §64 pinned one
+provider precisely because the generator is the independent variable here.
+
+The original question, kept for the record:
 
 **The claim under test is Narrative Planning v0's entire justification.** §54.1 measured
 duplicate findings per book at **11, 8, 1, 2, 6 without an outline against 0, 0, 0, 1, 1 with
@@ -108,23 +121,19 @@ def seed_snapshot(book_id: str, branch_id: str) -> dict[str, Any]:
 def make_args(db: Path, *, outline: bool, ceiling: float) -> argparse.Namespace:
     """The shipped defaults, with only the two levers this experiment sets.
 
-    `prefer` is left `None` on purpose: `DEFAULT_ORDER` already puts `claude_code` first for
-    the `generation` call class, so naming it would suggest the arm needed a flag when §56.1's
-    point is that it is the default. `no_billing` stays False, which is what makes the arm the
-    arm.
+    Mirrors the post-§63/§64 CLI: no provider levers exist any more — the registry is
+    pinned (`--prefer`/`--no-billing`/`--model` deleted), and the outbox sink went with
+    the cron deployment (`--notify-file` deleted). Running under `LITHARNESS_ENV=test`
+    now *raises* `BillingGuardViolation` instead of silently filtering the billed
+    provider out; this harness is a live run and must not set it.
     """
     return argparse.Namespace(
-        database=str(db),
         holder="frontier-dup",
         project="00000000-0000-5000-8000-000000000000",
-        prefer=None,
-        model=None,
-        no_billing=False,
         no_outline=not outline,
         continuity_evaluator_command=None,
         context_budget=None,
         target_words=900,
-        notify_file=None,
         max_tokens_per_operation=None,
         max_tokens_per_day=None,
         max_invocations_per_day=None,
