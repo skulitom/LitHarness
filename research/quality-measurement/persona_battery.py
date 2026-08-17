@@ -86,7 +86,7 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 
-from ablate import _SENT, PERSONA_SET, paragraphs, stake_score, variants  # noqa: E402
+from ablate import _SENT, DOSES, PERSONA_SET, paragraphs, stake_score, variants  # noqa: E402
 from elicit import PANEL_MODEL, SPOT_MODEL, Elicitor, digest  # noqa: E402
 from evaluate import evaluate, spearman  # noqa: E402
 from personas import PANEL  # noqa: E402
@@ -431,10 +431,20 @@ def main() -> None:
     parser.add_argument("--fidelity", action="store_true",
                         help="run the held-out anchor probe. Off by default and a diagnostic "
                              "rather than a gate — see the docstring")
+    parser.add_argument("--doses", default=None,
+                        help="comma-separated ablation strengths, e.g. '1.0' to screen at full "
+                             "dose only. Default is ablate.DOSES (0.15,0.35,0.65,1.0). See the "
+                             "screen-then-confirm note in the docstring before narrowing it")
     parser.add_argument("--dry-run", action="store_true", help="build the schedule, call nothing")
     parser.add_argument("--yes", action="store_true", help="proceed past the call guard")
     parser.add_argument("--out", default="persona-gate01.json")
     args = parser.parse_args()
+
+    doses = DOSES
+    if args.doses:
+        doses = tuple(sorted({float(piece) for piece in args.doses.split(",") if piece.strip()}))
+        if not doses or any(not 0.0 < dose <= 1.0 for dose in doses):
+            raise SystemExit(f"--doses must be strengths in (0, 1]; got {args.doses!r}")
 
     passages, donors = load_passages(args)
 
@@ -450,7 +460,7 @@ def main() -> None:
     for index, (passage_id, text) in enumerate(passages):
         donor = donors[index % len(donors)] if donors else ""
         for key, _sign, _item, dose, damaged in variants(
-            text, donor=donor, ablations=PERSONA_SET
+            text, donor=donor, doses=doses, ablations=PERSONA_SET
         ):
             variant_of[digest(damaged)] = (passage_id, key, dose)
 
@@ -521,6 +531,7 @@ def main() -> None:
                 metric="persona_panel.would_stop.v0",
                 donors=donors,
                 direction=+1,
+                doses=doses,
                 ablations=PERSONA_SET,
             )
 
@@ -574,6 +585,7 @@ def main() -> None:
         "spot_model": None if args.no_spot else args.spot_model,
         "personas": [persona.persona_id for persona in PANEL],
         "n_samples": args.n_samples,
+        "doses": list(doses),
         "passages": [passage_id for passage_id, _ in passages],
         "passage_source": source_label(args),
         "variants_scored": len(by_variant),
