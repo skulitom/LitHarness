@@ -35,10 +35,18 @@ claim.** §5 of the protocol names de-stake, filler-inject, voice-flatten and co
 with character-rename and re-whitespace as the placebo pair. Present now: `destake` with its
 matched control `deplete_matched`, `dialogue_flatten` (voice-flatten), `rename_entities` and
 `rewhitespace` (the placebo pair, exactly), plus the structural set the CDG battery already used.
-**Still absent: filler-inject and confusion-inject**, and the reason is the same one that shaped
-de-stake — a confusion injection has to know what a passage's referents are, and the only thing
-that knows is a generator, which `ablate.dialogue_flatten`'s docstring already refused to put
-inside this ground truth.
+`filler_inject` covers the fourth, and is the only arm that *adds* words — which also forces
+§1a.1's word-count incumbent to separate two arms whose lengths move in opposite directions for
+the same declared damage direction. **Still absent: confusion-inject**, because it has to know
+what a passage's referents are and the only thing that knows is a generator, which
+`ablate.dialogue_flatten`'s docstring already refused to admit to this ground truth. A gate-1 pass
+therefore leaves one named damage class untested, and the entry recording it has to say so.
+
+**Filler's confound is checked interventionally, not argued away.** Canned filler is not in the
+passage's voice, so a reader may be answering "these lines do not belong" rather than "this is
+padded". `filler_reason_signature` in the summary reads which codes the filler arm actually drew:
+`padding` is the intended response and `flat-voice` is the intrusion's signature, so a filler arm
+dominated by `flat-voice` has measured a style intrusion and not bloat.
 
 **De-stake is read against `deplete_matched` or it is not read at all.** The two arms delete the
 *same number of words* — verified exact on the chapters this was built against — and differ only
@@ -263,6 +271,46 @@ def stake_coverage(text: str) -> dict[str, float]:
         "stake_sentences": len(scored),
         "stake_sentence_share": round(len(scored) / max(len(sentences), 1), 4),
         "stake_word_share": round(words / total_words, 4),
+    }
+
+
+def filler_reason_signature(by_variant: dict[str, list], panel_model: str) -> dict[str, object]:
+    """Which reason codes the filler arm drew, against the codes everything else drew.
+
+    The interventional check on `filler_inject`'s confound. Canned filler is out of voice, so the
+    arm can move a panel for the wrong reason; the protocol's rule is that a reason code is valid
+    only if a repair aimed at it would move the verdict, and the weaker version available here is
+    whether the *intended* code dominates. `padding` is the intended response, `flat-voice` is the
+    intrusion's signature, and a filler arm reading mostly `flat-voice` has measured the intrusion.
+
+    Reported as counts and a ratio rather than a verdict, because the threshold is not
+    pre-registered and inventing one after seeing the data is the move this project keeps
+    refusing.
+    """
+    filler: dict[str, int] = {}
+    baseline: dict[str, int] = {}
+    for variant_id, samples in by_variant.items():
+        bucket = filler if "|filler_inject@" in variant_id else baseline
+        for sample in samples:
+            if sample.model != panel_model or sample.refused or not sample.reason_code:
+                continue
+            bucket[sample.reason_code] = bucket.get(sample.reason_code, 0) + 1
+    total = sum(filler.values())
+    padding = filler.get("padding", 0)
+    flat = filler.get("flat-voice", 0)
+    return {
+        "available": total > 0,
+        "filler_codes": dict(sorted(filler.items(), key=lambda kv: -kv[1])),
+        "other_codes": dict(sorted(baseline.items(), key=lambda kv: -kv[1])),
+        "filler_samples": total,
+        "padding_share": round(padding / total, 4) if total else None,
+        "flat_voice_share": round(flat / total, 4) if total else None,
+        "reading": (
+            "`padding` is the intended response to injected filler; `flat-voice` is the "
+            "signature of the out-of-voice confound. A filler arm dominated by flat-voice has "
+            "measured a style intrusion rather than bloat. No threshold is pre-registered — "
+            "these are counts, not a verdict"
+        ),
     }
 
 
@@ -554,6 +602,7 @@ def main() -> None:
         "stake_coverage": {
             passage_id: stake_coverage(text) for passage_id, text in passages
         },
+        "filler_reason_signature": filler_reason_signature(by_variant, args.model),
         "destake_vs_matched_deletion": (
             _destake_comparison(result.per_ablation) if result is not None
             else {"available": False, "note": "--gate0 ran no ablations"}

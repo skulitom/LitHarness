@@ -546,6 +546,60 @@ def deplete_matched(text: str, strength: float) -> str:
     return _rebuild(pieces, drop)
 
 
+#: Filler clauses for `filler_inject`. Chosen to be grammatical, genre-neutral, and to assert
+#: nothing a later sentence could contradict — a filler that introduced a fact would be a
+#: continuity edit rather than padding, and the integrity gates would have opinions about it.
+_FILLER = (
+    "It was not a small thing.",
+    "He considered that for a moment.",
+    "There was nothing else to say about it.",
+    "That was how it went, more or less.",
+    "It took a moment to settle.",
+    "Nothing about that was simple.",
+    "He let the thought finish itself.",
+    "It amounted to much the same thing.",
+)
+
+
+def filler_inject(text: str, strength: float) -> str:
+    """Pad paragraphs with content-free sentences. §1a.3 item 1, from the opposite direction.
+
+    The protocol's §5 names this and it is the **only manipulation in the set that adds rather
+    than removes, reorders or substitutes**, which is the reason to have it: every other degrader
+    here takes something away, so a panel that responds to all of them might simply be responding
+    to damage-shaped absence. Bloat is the failure mode a serial reader complains about most and
+    the one nothing else in this module can produce.
+
+    Length-changing, and in the *opposite* direction from `sentence_deletion` — which is useful,
+    because §1a.1's word-count incumbent then has to separate two arms that move length opposite
+    ways for the same declared damage direction. A metric riding on length alone cannot do that.
+
+    **The confound this ships with, named rather than controlled away.** Canned sentences are not
+    in the passage's voice, so a reader may be responding to "these lines do not belong here"
+    rather than to "this is padded" — a style intrusion masquerading as bloat. There is no
+    deterministic way to write in-voice filler without a generator, and `dialogue_flatten`'s
+    docstring already refused that trade. What makes the confound *checkable* instead is the
+    reason codes: padding is the intended response and `flat-voice` is the confound's signature,
+    so the interventional test is whether filler-injected variants draw `padding` specifically.
+    A run where they draw `flat-voice` has measured the intrusion, not the padding.
+    """
+    if strength <= 0:
+        return text
+    blocks = paragraphs(text)
+    if not blocks:
+        return text
+    rng = _rng(text, "filler")
+    # One filler sentence per selected paragraph, appended rather than inserted mid-paragraph:
+    # a sentence dropped between two others can sever a pronoun from its referent, which is a
+    # continuity defect and not the padding this claims to be.
+    out = []
+    for block in blocks:
+        out.append(block)
+        if rng.random() <= strength:
+            out[-1] = f"{block.rstrip()} {_FILLER[rng.randrange(len(_FILLER))]}"
+    return _join(out)
+
+
 def rewhitespace(text: str, strength: float) -> str:
     """Re-flow whitespace and nothing else. Should change no quality.
 
@@ -599,6 +653,8 @@ PERSONA_DEGRADERS = (
              "removes the sentences that assert what failure costs; length-changing"),
     Ablation("deplete_matched", 1, -1, False, deplete_matched,
              "removes the same word count from zero-stake sentences — destake's control"),
+    Ablation("filler_inject", 1, -1, False, filler_inject,
+             "the only arm that adds words; length-changing upward, unlike every other"),
 )
 PERSONA_SHAMS = (
     Ablation("rewhitespace", None, 0, True, rewhitespace,

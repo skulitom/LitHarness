@@ -98,8 +98,34 @@ never reaches the store.
 
 ## 3. Elicitation
 
-**Incremental, at scene boundaries.** `n ≥ 5` samples per persona per boundary — the datum
-is a response distribution, never a point.
+**One passage per conversation for gates 0 and 1; incremental reading is a gate-3 requirement.**
+`n ≥ 5` samples per persona per boundary — the datum is a response distribution, never a point.
+
+This section originally said "incremental, at scene boundaries" throughout, and the
+implementation does something narrower: each cell is an independent conversation carrying one
+passage and no history. **The divergence is real and the resolution is per-gate rather than a
+correction to one side.** Isolated reading is the *right* frame for gate 1, because every
+manipulation in §5 is a within-passage edit — reading the passage cold is what isolates the edit
+from context effects, and accumulated history would let a de-stake in scene 7 be judged against
+stakes established in scene 3, which is a different experiment. It is also what keeps the `n`
+samples of a cell independent, which gate 0's ICC assumes. But it means the panel cannot notice a
+promise left unpaid across scenes, and that is much of what the `stakes` and `grinder` personas
+are defined to read *for* — so a null from these gates does not bound the incremental question.
+
+**What isolated reading demonstrably costs, measured rather than argued:** the first gate-0 run
+put every would-stop on the last scene of a six-scene story. A reader handed a story's final scene
+with no history has an obvious reason to stop that has nothing to do with craft, and no way to
+express the one thing a serial reader actually stops over — a book that stopped going anywhere.
+Gate 3's drop-point prediction is inherently sequential and cannot be run this way at all.
+
+**Drift, and why it does not apply yet.** A persona collapsing into assistant register mid-read is
+a threat to *incremental* elicitation, where one conversation accumulates. With one passage per
+conversation there is no accumulation and nothing to drift within, so no drift probe runs for gates
+0 and 1 — and the anchor-based probe this section used to specify is gone regardless, for the
+reason §1 records. When the incremental arm is built, drift is checked by **test-retest inside the
+run**: re-elicit an early boundary at the end and compare its response distribution against its
+own first pass. That needs no remembered books, measures the thing drift would actually break, and
+costs a handful of cells.
 
 **Two stages, in this order.** Stage 1 is unprimed free text: *"you've just read this —
 what's going on for you?"* Recorded as colour, never calibrated. Stage 2 is forced choice in
@@ -116,8 +142,9 @@ choice against a real alternative (other books on the nightstand). The verbal-vs
 agreement of the instrument is itself a measurement — the stated/revealed gap, one level
 down, and the one channel §61's table shows this project has never had both sides of.
 
-**Drift probe.** At late boundaries, re-ask a held-out anchor verdict from §1. A persona that
-has collapsed into assistant register is flagged and its late data quarantined.
+Both the behavioural arm and the incremental arm it implies are **unbuilt**. What exists today is
+the isolated-passage elicitation described above; §8's kill table applies to that, and any clause
+here that presumes accumulated context is a design note rather than a description.
 
 ## 4. Gate 0 — reliability, before anything else is believed
 
@@ -137,17 +164,28 @@ Per passage, a manipulation set with declared directions — **de-stake** (remov
 costs), **filler-inject**, **voice-flatten**, **confusion-inject** — and a **placebo pair**:
 **character rename** and **re-whitespace**.
 
-**Two of those four cannot be built deterministically, and that is a constraint on this gate
-rather than a task list.** `ablate.py` supplies voice-flatten (`dialogue_flatten`) and the rename
-placebo (`rename_entities`) directly, plus a structural degrader set and a second
-surface-perturbation sham (`respell`). **De-stake and confusion-inject are not implementable
-without a generator**: both need to know what a passage's stakes or referents are, and
-`ablate.dialogue_flatten`'s docstring already refused to put a model inside this ground truth —
-it strips quotation marks rather than rewriting into reported speech for exactly that reason. The
-consequence is explicit: a gate-1 run on today's harness exercises the placebo arm in full and
-the sensitivity arm only over *structural* damage, so **passing it does not discharge this
-section**. Either de-stake gets a deterministic construction, or the gate is amended to say that
-reader-specific damage went untested and what that leaves unbounded.
+**Three of the four are built; one cannot be, and the reason bounds the gate.** `ablate.py`
+supplies de-stake (`destake`, with its matched-deletion control `deplete_matched`), filler-inject
+(`filler_inject`) and voice-flatten (`dialogue_flatten`), plus both placebos exactly
+(`rename_entities`, `rewhitespace`), a second surface sham (`respell`) and the structural set the
+CDG battery already used. **Confusion-inject is not implementable without a generator**: it has to
+know what a passage's referents are, and `ablate.dialogue_flatten`'s docstring already refused to
+put a model inside this ground truth — it strips quotation marks rather than rewriting into
+reported speech for exactly that reason. So a gate-1 pass leaves one named damage class untested,
+and the entry recording it has to say which.
+
+**Two of the built three carry a confound that is checkable rather than removable, and the
+checking is what makes them admissible.** De-stake is read only against `deplete_matched`, which
+removes the same word count — exact — from sentences that name no cost; the difference is the
+effect of removing stakes with length, position and quantity held fixed, and a difference at or
+below zero means the lexicon selected nothing a reader noticed. Filler-inject uses canned
+sentences, which are not in the passage's voice, so a reader may be answering "these lines do not
+belong" rather than "this is padded". Its check is interventional and uses the reason codes: the
+intended response is `padding` and the confound's signature is `flat-voice`, so a filler arm that
+draws `flat-voice` has measured a style intrusion and not bloat. Filler is also the **only** arm
+that lengthens the text, which is independently useful — §1a.1's word-count incumbent now has to
+separate two arms whose lengths move in opposite directions for the same declared damage
+direction, and a metric riding on length alone cannot.
 
 **This arm reuses an existing burned-in battery rather than building one.**
 `research/quality-measurement/ablate.py` already implements `rename_entities` and `respell`

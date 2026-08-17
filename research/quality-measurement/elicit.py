@@ -25,6 +25,16 @@ defect this project has already been bitten by once.
 rather than reading them as `not-sure`. Silently coercing a refusal into the middle category
 would put a safety classifier's behaviour into a reader-response distribution.
 
+**One passage per conversation, which is narrower than "incremental reading" and deliberately so.**
+Each cell is an independent two-turn conversation carrying one passage and no history. That is the
+right frame for gate 1 — every manipulation in the protocol's §5 is a within-passage edit, so
+reading cold is what isolates the edit from context effects — and it is what keeps a cell's `n`
+samples independent, which gate 0's ICC assumes. The cost is that the panel cannot notice a promise
+left unpaid across scenes, which is much of what the `stakes` and `grinder` personas are defined to
+read *for*, and it is why gate 3's drop-point prediction cannot run through this module as written.
+The protocol's §3 carries the per-gate reasoning; this note exists so the narrower claim is visible
+where somebody would otherwise assume the broader one.
+
 **`n` samples per persona per boundary means `n` byte-identical requests.** The datum is a
 response distribution, so variation has to come from the model's own sampling — not from
 perturbing the prompt, which would confound sample variance with prompt variance, and not from
