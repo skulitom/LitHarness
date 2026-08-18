@@ -3119,9 +3119,9 @@ evidence channels have been tried and measured:
                                      survivors prefer human originals ~80%
     model-based scoring (CDG)        dead to its own pre-registered memorisation     §58; BRIEF §2 Pass 6
                                      sham; word count beat it
-    persona-reader elicitation       absolute verdict DEAD — a constant function,   §70 addendum 3;
-    (added by §70, not in the        195/196 keep-reading across two model tiers;   plan/persona-
-    original four)                   pairwise successor built, untested             reader-validity.md
+    persona-reader elicitation       absolute verdict DEAD; pairwise separates on   §70 addenda 3-4;
+    (added by §70, not in the        edited-ness (sham 0.78) and its pre-registered plan/persona-
+    original four)                   de-stake arm ran backwards                     reader-validity.md
 
 **The fifth row is a later addition and is not evidence yet.** §70 added it under a standing
 condition — the table gains a row when a gate reports, and gate 0 reported. It is listed here so
@@ -3771,6 +3771,64 @@ that the persona was writing in essay register rather than reader register. And 
 does not track model size: `gemma3:4b` answers in first-person reader register where `phi4`,
 nearly three times its size, returns "This passage conveys a gritty, almost oppressive atmosphere"
 — the critic frame §1a.2 refuted. `elicit.probe_adherence` makes that a four-call precondition.
+
+
+**Addendum 4: the pairwise instrument clears the ladder and fails the claim it was built to test.**
+Three runs over the same ten drafted scenes at full dose, one comparison per persona per
+orientation, ties on `half_win`:
+
+    question     model            ties   detect    sham   margin   chose-A   verdict
+    preference   claude-haiku-4-5  0.18   0.9056  0.7833   0.1223    0.5874   SURVIVES this rung
+    intensity    gemma3:4b         0.98   0.5340  0.4750   0.0090    0.8095   DEAD
+    preference   gemma3:4b         0.57   0.4667  0.4250  -0.1083    0.8021   DEAD
+
+**The two local rows say nothing about the questions, because the panel failed the condition
+that is read first.** `gemma3:4b` chose position A on 80.2% of decided preference comparisons
+(z = +11.9) and 81.0% of intensity ones. §8's pairwise table puts that condition above all
+others for exactly this reason: a panel answering a *side* has reported on layout, and no
+preference it states means anything. So the capability floor for this task sits above 4B, the
+free local path is not available at that size, and **the intensity question remains untested on a
+competent panel** — the one cell of the 2×2 still missing. What the local rows do establish is
+that `probe_adherence` was necessary and not sufficient: the same model writes first-person
+reader prose beautifully and then answers a closed-enum comparison by position.
+`elicit.probe_discrimination` is the precondition that would have caught it in eight calls
+against `transplant` at full dose, and a resolution floor is now read before a panel is trusted.
+
+**The one interpretable run separates strongly and for the wrong reason.** Preference on Haiku
+reaches detect 0.9056 against sham 0.7833, so the margin rule passes at 0.1223 — but a sham
+response of 0.78 means the panel is separating *edited-ness* nearly as hard as damage, which is
+the `change-detector` shape `evaluate.selftest` keeps an oracle for. Its own positional bias is
+0.5874 (z = +4.73), so a real share of the answer is still layout. And `transplant` — a
+length-matched graft from a different story, the strongest degrader available — comes back at
+−0.0125 with a hit rate of 0.3, while `sentence_deletion` reaches −0.5. A panel that misses a
+foreign story and reliably notices missing sentences is not reading for content.
+
+**The pre-registered primary comparison fails, with the sign reversed.** §5 named one arm in
+advance as carrying the reader claim: de-stake against its matched-deletion control, same word
+count removed, differing only in which sentences went. Measured: `destake` −0.3503,
+`deplete_matched` −0.4375, difference **+0.0872**. Under `direction = -1` the more negative arm is
+the more damaging one, so **removing arbitrary neutral sentences hurt more than removing the
+sentences that assert what failure costs.** The stake lexicon selected material whose removal
+mattered *less* than a random sample of the same size. That is the reader-specific hypothesis
+unsupported, by the comparison declared before the data precisely so this could not be argued
+afterwards. `dose_rho` is `nan` on every arm because the screen ran a single dose, so §5's
+monotonicity claim is untested rather than failed.
+
+**A parser had been selecting the evidence, and it inverted a verdict.** `_strip_fence` was
+applied when a record was written rather than when it was read, and `claude -p` answers with the
+JSON object followed by a stray fence and prose commentary. 370 of 512 pair records were dropped
+as unparseable — not refused, not malformed, merely suffixed. The loss was selective: the
+surviving subset showed chose-A 0.680 against 0.551 for the recovered records, and on that subset
+the run read detect 0.7125, sham 0.6833, margin 0.029, **DEAD on rung 2**. On the full 904 it
+reads SURVIVES. Both numbers came from the same calls; only the parser differed. Parsing now runs
+through the extractor at every read site, because stripping at write time cannot repair a cache
+already written, and the record kept the raw text throughout — which is the only reason this was
+recoverable at zero cost.
+
+**Standing after three runs: the absolute form is dead, the pairwise form is not yet a reader.**
+It discriminates, which the absolute form never did; it discriminates largely on edited-ness; and
+the arm that would have made it reader-specific ran backwards. Nothing here licenses a row, and
+§70's ceiling is unchanged.
 
 ## 71. The book now owes things on the record, and a scene that changes nothing says so
 
