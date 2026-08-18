@@ -4797,3 +4797,79 @@ certify 0.55.** A thin true margin yields a lower bound below 0.5, and the corre
 on that axis is *empty* — the original number was an artifact and the corrected arm is void with an
 interval containing 0.5. A human column there would not be an agreement measurement; it would be the
 first measurement of that axis by anything.
+
+## 81. The panel can see the interiority go and cannot see the stats flatten
+
+`interiority_strip` and `stat_flatten` have existed since §74 and had never run. 224 comparisons,
+`claude-haiku-4-5`, zero refusals, $8.34. `results/reader-defects.json`.
+
+    arm                        pairs   win rate   bias     interval          ladder
+    interiority_vs_matched         9     0.3889   0.5278   [0.1667, 0.6667]  DETECTS
+    stat_flatten_vs_original      10     0.5437   0.5696   [0.4062, 0.6937]  BLIND
+    interiority_vs_original        9     0.1111   0.6111   [0.0000, 0.2361]  VOID on bias
+
+**The primary arm is the first clean single-variable comparison this instrument has produced, and
+its two sides are matched to one word.** `interiority_strip` removes the sentences reporting an
+inner state; `interiority_deplete_matched` removes the same word count from sentences reporting
+none. Measured on the run: 9,602 words against 9,603, a 0.01% gap, and `layout_matched: true` —
+both route through `_rebuild`, so both carry §78.1's separator downgrade and neither side has a
+formatting advantage. The only difference left is *which* sentences went.
+
+**The panel prefers the text that kept its interiority, and the honest reading is "suggestive"
+rather than "established".** The ladder returns DETECTS because the pre-registered rule is a point
+estimate at 0.40 and the arm reads 0.3889 — it clears by 0.011. **The interval is [0.1667, 0.6667]
+and contains 0.5.** Both facts are reported because the second is the one that governs what may be
+built on this: at 9 passages and 4 personas this arm cannot exclude indifference, and a result that
+clears its threshold by a hundredth while spanning the null is not a licence for anything.
+
+**That is a defect in the pre-registration I wrote, and it is recorded rather than repaired after
+the fact.** §78.2's branches were also point-estimate rules and that was defensible there because
+the effect under test was enormous; carrying the same shape into an arm designed to detect a subtle
+defect was the wrong choice, and the right rule — threshold *and* an interval excluding 0.5 — has to
+be declared before the next run rather than applied to this one. Under that rule this arm is
+undecided. Under the rule actually pre-registered it is DETECTS. The two readings are both written
+down so that neither can be quietly selected later.
+
+**`stat_flatten` is a mapped hole.** The panel is indifferent to having the last live values in the
+stat block blanked, at 0.5437 with an interval spanning 0.5 — and the point estimate sits on the
+*wrong* side of indifference, meaning the panel very slightly preferred the flattened text. §74
+predicted a near-null "because the book's stats are already flat, so there is nothing left to
+flatten", and that prediction was wrong about the transform: the arm blanks 30 values across the ten
+scenes, three per scene, exactly the `Level`, `HP` and `MP` slots §74 counted as the only informative
+ones left. So the defect was manufactured and the panel did not see it. **BLIND here means "no
+preference detectable at this n", not "proven blind"** — the interval is wide — but the direction of
+the estimate makes "the panel quietly likes flat stat blocks" the live alternative to "the panel
+cannot tell", and neither licenses selection on this axis.
+
+**The confounded arm is void and its number is still the most useful thing in the table.** §78.2
+predicted that comparing `interiority_strip` against the *original* would read stronger than the
+matched comparison, because the original differs from it by formatting as well as by interiority.
+Measured: **0.1111 against 0.3889**, with the confounded arm's interval `[0.0000, 0.2361]` not even
+overlapping the clean arm's point estimate. It is void on positional bias at 0.6111 so it cannot
+license a reading of its own, and the gap is not a clean estimate of the confound either — but the
+direction is exactly the predicted one, and it is the second measurement in two entries of the same
+thing: **an unmatched formatting difference produces a large, confident, meaningless preference.**
+§78 found that at 0.0417 and this finds it at 0.1111.
+
+**What this does and does not license.**
+
+- **Interiority is the only axis in this repository with any evidence that the panel tracks a
+  reader-named defect on a comparison whose confounds are matched.** It is not yet an axis anything
+  may be optimised on: the interval spans indifference, and §72's licence requires more than a point
+  estimate clearing a threshold.
+- **Stats join the mapped holes.** A human named the defect; the instrument does not see it. Nothing
+  may select on stat quality.
+- Both rows now have machine numbers, which is the precondition
+  [reader-batch-1.md](reader-batch-1.md) §6 names before the paid batch can be funded — and the
+  batch is the way to find out whether *humans* separate on either axis, which is the comparison
+  that would make interiority an optimisable axis rather than a suggestive one.
+
+**One code gap, recorded.** `verdict`'s `confound_note` only fires when the matched and confounded
+interiority arms read `{DETECTS, BLIND}`; here the confounded arm was VOID, so the note stayed null
+and the comparison above was written by hand. The condition should key on the *presence* of both
+arms rather than on a particular pair of outcomes.
+
+**No sham arm ran, and not paying for it is the point.** §78 measured why `rewhitespace` cannot be
+this design's floor, its number is already recorded twice and already called unusable, and the
+primary arm needs no floor because its two sides carry identical formatting by construction. That is
+80 comparisons and about $2.80 not spent on reproducing a figure the ledger already refuses to use.

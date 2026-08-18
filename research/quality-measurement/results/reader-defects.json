@@ -1,0 +1,165 @@
+{
+  "api_calls": 224,
+  "book_db": "research/quality-measurement/corpora/toll.db",
+  "comparisons": 224,
+  "expectations": {
+    "interiority_vs_matched": "below 0.5 \u2014 the panel prefers the text that kept its interiority. PRIMARY: word-matched and formatting-matched, so only the choice of deleted sentences differs",
+    "interiority_vs_original": "below 0.5 \u2014 but confounded by the \u00a778.1 separator downgrade; read only beside the primary",
+    "stat_flatten_vs_original": "below 0.5 \u2014 the panel prefers live stat values. Layout-preserving, so this one is clean"
+  },
+  "intervals": {
+    "interiority_vs_matched": {
+      "high": 0.6667,
+      "low": 0.1667,
+      "passages": 9,
+      "personas": 4,
+      "reading": "resamples passages and personas both; `gate1.paired_ci` resamples passages only and over-rejects at 3.8-23.9% against a nominal 2.5% at this n. Read the fourth rung of `evaluate.verdict()` against this interval, not that one"
+    },
+    "interiority_vs_original": {
+      "high": 0.2361,
+      "low": 0.0,
+      "passages": 9,
+      "personas": 4,
+      "reading": "resamples passages and personas both; `gate1.paired_ci` resamples passages only and over-rejects at 3.8-23.9% against a nominal 2.5% at this n. Read the fourth rung of `evaluate.verdict()` against this interval, not that one"
+    },
+    "stat_flatten_vs_original": {
+      "high": 0.6937,
+      "low": 0.4062,
+      "passages": 10,
+      "personas": 4,
+      "reading": "resamples passages and personas both; `gate1.paired_ci` resamples passages only and over-rejects at 3.8-23.9% against a nominal 2.5% at this n. Read the fourth rung of `evaluate.verdict()` against this interval, not that one"
+    }
+  },
+  "ladder": {
+    "conditions": {
+      "blind": "0.40 < win rate < 0.60: the panel cannot see the defect. A mapped hole \u2014 a human found it in one read and no instrument here detects it, so nothing may be selected on this axis",
+      "detects": "win rate <= 0.40: the panel prefers the text retaining the feature, so it detects the defect. This is an axis a reader model could be optimised on in the human's direction",
+      "no_sham_floor": "no layout sham is run. \u00a778 measured why rewhitespace cannot be this design's floor, and the primary arm needs none: its two sides carry identical formatting by construction, so there is no layout difference for a floor to bound. See SHAM_NOT_RUN",
+      "precondition": "per-arm positional bias within 0.40-0.60. Pooling was wrong in \u00a774 and the per-arm rule is pre-registered here rather than adopted mid-run",
+      "prefers": "win rate >= 0.60: the panel prefers the defect. A mapped hole of the worse kind and a hard prohibition: a reader model in the loop would select FOR it, which is what \u00a774 believed it had shown about the em dash before \u00a778 withdrew the number",
+      "primary": "interiority_vs_matched is the arm that decides the interiority question. interiority_vs_original is confounded by formatting and cannot license a reading on its own; if the two disagree, the difference between them is the size of the \u00a778.1 confound and is itself the finding"
+    },
+    "confound_note": null,
+    "interiority": "DETECTS",
+    "mapped_holes": [
+      "stat_flatten"
+    ],
+    "optimisable_axes": [
+      "interiority"
+    ],
+    "per_arm": {
+      "interiority_vs_matched": "DETECTS",
+      "interiority_vs_original": "VOID",
+      "stat_flatten_vs_original": "BLIND"
+    },
+    "stats": "BLIND"
+  },
+  "pairs_per_arm": {
+    "interiority_vs_matched": 9,
+    "interiority_vs_original": 9,
+    "stat_flatten_vs_original": 10
+  },
+  "panel_model": "claude-haiku-4-5",
+  "per_arm_bias": {
+    "interiority_vs_matched": {
+      "chose_A_rate": 0.5278,
+      "decided": 72,
+      "note": "0.5 is unbiased; distance from it is the share of the answer that is layout",
+      "per_persona_chose_A": {
+        "grinder": 0.4444,
+        "newcomer": 0.5556,
+        "stakes": 0.4444,
+        "voice": 0.6667
+      }
+    },
+    "interiority_vs_original": {
+      "chose_A_rate": 0.6111,
+      "decided": 72,
+      "note": "0.5 is unbiased; distance from it is the share of the answer that is layout",
+      "per_persona_chose_A": {
+        "grinder": 0.5556,
+        "newcomer": 0.6111,
+        "stakes": 0.5556,
+        "voice": 0.7222
+      }
+    },
+    "stat_flatten_vs_original": {
+      "chose_A_rate": 0.5696,
+      "decided": 79,
+      "note": "0.5 is unbiased; distance from it is the share of the answer that is layout",
+      "per_persona_chose_A": {
+        "grinder": 0.65,
+        "newcomer": 0.6,
+        "stakes": 0.5,
+        "voice": 0.5263
+      }
+    }
+  },
+  "planned_calls": 240,
+  "positional_bias": {
+    "chose_A_rate": 0.5695,
+    "decided": 223,
+    "note": "0.5 is unbiased; distance from it is the share of the answer that is layout",
+    "per_persona_chose_A": {
+      "grinder": 0.5536,
+      "newcomer": 0.5893,
+      "stakes": 0.5,
+      "voice": 0.6364
+    }
+  },
+  "protocol": "plan/stage-0-decisions.md \u00a779",
+  "refused": 0,
+  "replayed": 0,
+  "scenes": [
+    "gen:scene-1",
+    "gen:scene-2",
+    "gen:scene-3",
+    "gen:scene-4",
+    "gen:scene-5",
+    "gen:scene-6",
+    "gen:scene-7",
+    "gen:scene-8",
+    "gen:scene-9",
+    "gen:scene-10"
+  ],
+  "spend": {
+    "cache_read": 4520152,
+    "cache_write": 1502360,
+    "equivalent_usd": 8.3387,
+    "input": 770776,
+    "output": 822246
+  },
+  "tie_policy": "half_win",
+  "transform": {
+    "interiority_vs_matched": {
+      "layout_matched": true,
+      "left_paragraph_breaks": 33,
+      "left_words": 9602,
+      "right_paragraph_breaks": 33,
+      "right_words": 9603,
+      "word_gap_pct": 0.01
+    },
+    "interiority_vs_original": {
+      "layout_matched": false,
+      "left_paragraph_breaks": 420,
+      "left_words": 10049,
+      "right_paragraph_breaks": 33,
+      "right_words": 9603,
+      "word_gap_pct": -4.438
+    },
+    "stat_flatten_vs_original": {
+      "layout_matched": true,
+      "left_paragraph_breaks": 420,
+      "left_words": 10049,
+      "right_paragraph_breaks": 420,
+      "right_words": 10049,
+      "word_gap_pct": 0.0
+    }
+  },
+  "transport": "cli",
+  "win_rates": {
+    "interiority_vs_matched": 0.3889,
+    "interiority_vs_original": 0.1111,
+    "stat_flatten_vs_original": 0.5437
+  }
+}
