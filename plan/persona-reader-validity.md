@@ -267,6 +267,58 @@ rises because the between-persona variance never enters the resample.
 `persona_battery.two_way_ci` resamples both margins and lands at 0.33%–4.83% over the same sweep,
 at roughly double the width. That width is the evidence: ten passages and four personas do not
 support a narrow bound.
+## 5a. The scale the panel reads, measured — and the questions it therefore cannot be asked
+
+Gate 1's battery answered a question nobody set out to ask, and the answer constrains every
+later use of this instrument, so it belongs in the protocol rather than only in the ledger
+entry that recorded it (`plan/stage-0-decisions.md` §70 addendum 4).
+
+Detection over nine arms correlates with length change at ρ = +0.321, which at that n is
+nothing. The informative comparison is between the arms that change **no length at all**:
+
+| arm | length | detected |
+| --- | --- | --- |
+| `connective_scramble` | 0.0% | −0.4714 |
+| `sentence_shuffle` | 0.0% | −0.3750 |
+| `paragraph_shuffle` | 0.0% | −0.3554 |
+| `dialogue_flatten` | 0.0% | −0.2045 |
+| `transplant` | 0.0% | **−0.0125** |
+
+Four transformations that touch not one word of length, spread from −0.47 to −0.01, and what
+separates them is **whether the damage is local**. Connective inversion wrecks argument
+structure a clause at a time; the shuffles make the text locally incoherent. `transplant`
+grafts a length-matched run from a *different story* — the graft reads perfectly well, it
+simply does not belong — and the panel is near-blind to it.
+
+**This is a scope limit on the protocol, not a defect to tune away.** A panel that catches a
+scrambled connective and misses a foreign story is reading at clause-to-paragraph scale. So
+until the prediction below is tested and passes, this instrument may not be pointed at:
+
+- whether a scene belongs in the book it is in,
+- whether a promise opened in chapter 2 is paid in chapter 9,
+- whether an arc holds together across scenes,
+
+and gate 3's drop-point prediction is *doubly* out of reach — §3 already records that one
+passage per conversation cannot see across scenes, and this says the panel would be blind at
+that scale even if the conversation were extended.
+
+**It also explains gate 1's primary running backwards**, which was otherwise an unexplained
+sign reversal. De-stake removes whole sentences selected for meaning and leaves the remainder
+locally smooth; `deplete_matched` removes the same word count at random, which far more often
+strands a pronoun or severs a clause from its referent. Matched deletion hurt more because it
+broke more *local* coherence, not because it removed more that mattered. The instrument was
+not reading at the scale the hypothesis was about.
+
+**The falsifiable prediction, recorded before the run that tests it.** A manipulation that
+damages global structure while preserving local coherence — swapping whole scenes between
+books, reordering a chapter's scenes — comes back near-null like `transplant`; one that damages
+local coherence while preserving meaning comes back strong. If that fails, this reading is
+wrong and the transplant null needs another explanation.
+
+**Where the global-structure question went instead.** Not to a bigger panel. §73 gates it on
+the summariser: a measure that reads *across* scenes has to run through the per-scene summary
+call, so that call's re-sample variance is measured first, against a between-scene contrast,
+before any flow or drift number over it is interpreted at all.
 
 ## 6. Gate 2 — convergent, small-n humans
 
@@ -291,6 +343,14 @@ over other authors' whole stories is `BEHAVIOUR`-class evidence at `STORY` grain
 `Grain.covers` will not let story-grain evidence license a unit-grain refusal — the
 ecological fallacy this project has already conceded in prose (craft-corpus §4.1). Gate 3
 establishes that the instrument predicts. It does **not** thereby license refusing a scene.
+
+**And it is currently unreachable for a second, measured reason.** §5a found the panel
+near-blind to `transplant` — a length-matched graft from a different story, damage that is
+global rather than local — while catching every local manipulation in the battery. A drop
+point is a global-structure event by construction: readers leave because an arc stopped
+paying, not because a clause got scrambled. So gate 3 needs *two* things this instrument does
+not have, and §3's one-passage-per-conversation limit is only the first of them. Extending the
+conversation would fix the aperture and not the scale.
 
 ## 8. Pre-registered kill conditions
 
