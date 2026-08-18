@@ -1,0 +1,229 @@
+{
+  "book_db": "C:\\DEV\\LitHarness\\research\\quality-measurement\\corpora\\toll.db",
+  "comparisons": 192,
+  "gen_api_calls": 32,
+  "gen_failures": [],
+  "gen_replayed": 0,
+  "gen_spend": {
+    "equivalent_usd": 6.0956,
+    "input": 67520,
+    "output": 127410
+  },
+  "intervals": {
+    "drunk": {
+      "high": 0.7031,
+      "low": 0.4688,
+      "passages": 8,
+      "personas": 4,
+      "reading": "resamples passages and personas both; `gate1.paired_ci` resamples passages only and over-rejects at 3.8-23.9% against a nominal 2.5% at this n. Read the fourth rung of `evaluate.verdict()` against this interval, not that one"
+    },
+    "tea": {
+      "high": 0.625,
+      "low": 0.3125,
+      "passages": 8,
+      "personas": 4,
+      "reading": "resamples passages and personas both; `gate1.paired_ci` resamples passages only and over-rejects at 3.8-23.9% against a nominal 2.5% at this n. Read the fourth rung of `evaluate.verdict()` against this interval, not that one"
+    },
+    "trip": {
+      "high": 0.6719,
+      "low": 0.3125,
+      "passages": 8,
+      "personas": 4,
+      "reading": "resamples passages and personas both; `gate1.paired_ci` resamples passages only and over-rejects at 3.8-23.9% against a nominal 2.5% at this n. Read the fourth rung of `evaluate.verdict()` against this interval, not that one"
+    }
+  },
+  "ladder": {
+    "arms": {
+      "drunk": {
+        "verdict": "VOID",
+        "why": "no rate or failed its own positional-bias precondition"
+      },
+      "trip": {
+        "verdict": "VOID",
+        "why": "no rate or failed its own positional-bias precondition"
+      }
+    },
+    "conditions": {
+      "floor": "the tea arm bounds instruction-noise plus draw-noise. A state arm is readable as being about its state only if |rate - 0.5| exceeds |tea - 0.5| and tea itself cleared its bias precondition. Tea void or unmeasured leaves every state arm carrying an unbounded noise term, and they are reported as UNBOUNDED rather than read",
+      "inert": "inside 0.40-0.60 or under the tea floor: state conditioning does not move what the panel reads, and the one-voice hypothesis survives this dose",
+      "mechanical": "reported regardless of preference: em dashes per 1k (\u00a774's tell), interiority hits per 1k (\u00a774's second defect), stake score per 1k, sentence rhythm, word delta. Pre-registered direction, one arm only: the trip arm raises interiority_per_1k over the sober retell \u2014 psilocybin phenomenology is inner-experience content, and a trip arm that cannot move even the lexical proxy is a simulation that never reached the prose",
+      "precondition": "per-arm positional bias within 0.40-0.60, pre-registered per-arm per \u00a778.2's rule; an arm outside it answered a side and says nothing about its state",
+      "preferred": "rate >= 0.60 above the floor: the state-conditioned retell beats the sober fair copy from the same writer on the same scene. Simulated phenomenology is a live prose lever, and the default register is not a ceiling",
+      "rejected": "rate <= 0.40 above the floor: the lever moves and the direction is down \u2014 the state degrades the prose below the sober control at this dose"
+    },
+    "tea_clean": false,
+    "tea_floor": null,
+    "tea_rate": 0.4844
+  },
+  "mechanics": {
+    "drunk": {
+      "em_per_1k": 4.392,
+      "interiority_per_1k": 1.809,
+      "sentence_mean": 12.464,
+      "sentence_sd": 12.203,
+      "stake_per_1k": 4.577,
+      "ttr": 0.392,
+      "words": 1035.0
+    },
+    "sober": {
+      "em_per_1k": 4.818,
+      "interiority_per_1k": 1.57,
+      "sentence_mean": 12.376,
+      "sentence_sd": 12.251,
+      "stake_per_1k": 4.664,
+      "ttr": 0.391,
+      "words": 1035.375
+    },
+    "tea": {
+      "em_per_1k": 5.207,
+      "interiority_per_1k": 1.849,
+      "sentence_mean": 12.207,
+      "sentence_sd": 12.04,
+      "stake_per_1k": 4.702,
+      "ttr": 0.395,
+      "words": 1015.0
+    },
+    "trip": {
+      "em_per_1k": 6.07,
+      "interiority_per_1k": 1.79,
+      "sentence_mean": 12.438,
+      "sentence_sd": 12.225,
+      "stake_per_1k": 4.904,
+      "ttr": 0.39,
+      "words": 1042.375
+    }
+  },
+  "mechanics_delta_vs_sober": {
+    "drunk": {
+      "em_per_1k": -0.426,
+      "interiority_per_1k": 0.239,
+      "sentence_mean": 0.087,
+      "sentence_sd": -0.049,
+      "stake_per_1k": -0.087,
+      "ttr": 0.001,
+      "words": -0.375
+    },
+    "tea": {
+      "em_per_1k": 0.388,
+      "interiority_per_1k": 0.279,
+      "sentence_mean": -0.169,
+      "sentence_sd": -0.211,
+      "stake_per_1k": 0.038,
+      "ttr": 0.004,
+      "words": -20.375
+    },
+    "trip": {
+      "em_per_1k": 1.252,
+      "interiority_per_1k": 0.22,
+      "sentence_mean": 0.061,
+      "sentence_sd": -0.026,
+      "stake_per_1k": 0.241,
+      "ttr": -0.0,
+      "words": 7.0
+    }
+  },
+  "original_mean_words": 995.4,
+  "panel_api_calls": 192,
+  "panel_model": "claude-haiku-4-5",
+  "panel_replayed": 0,
+  "panel_spend": {
+    "cache_read": 3874416,
+    "cache_write": 1309112,
+    "equivalent_usd": 8.679,
+    "input": 682040,
+    "output": 998263
+  },
+  "per_arm_bias": {
+    "drunk": {
+      "chose_A_rate": 0.8281,
+      "decided": 64,
+      "note": "0.5 is unbiased; distance from it is the share of the answer that is layout",
+      "per_persona_chose_A": {
+        "grinder": 0.9375,
+        "newcomer": 0.75,
+        "stakes": 0.75,
+        "voice": 0.875
+      }
+    },
+    "tea": {
+      "chose_A_rate": 0.7344,
+      "decided": 64,
+      "note": "0.5 is unbiased; distance from it is the share of the answer that is layout",
+      "per_persona_chose_A": {
+        "grinder": 0.6875,
+        "newcomer": 0.625,
+        "stakes": 0.75,
+        "voice": 0.875
+      }
+    },
+    "trip": {
+      "chose_A_rate": 0.7619,
+      "decided": 63,
+      "note": "0.5 is unbiased; distance from it is the share of the answer that is layout",
+      "per_persona_chose_A": {
+        "grinder": 0.6875,
+        "newcomer": 0.7333,
+        "stakes": 0.8125,
+        "voice": 0.8125
+      }
+    }
+  },
+  "planned_comparisons": 192,
+  "planned_retells": 32,
+  "positional_bias": {
+    "chose_A_rate": 0.7749,
+    "decided": 191,
+    "note": "0.5 is unbiased; distance from it is the share of the answer that is layout",
+    "per_persona_chose_A": {
+      "grinder": 0.7708,
+      "newcomer": 0.7021,
+      "stakes": 0.7708,
+      "voice": 0.8542
+    }
+  },
+  "protocol": "pre-registered in this module's PRE_REGISTRATION before first elicitation",
+  "refused": 0,
+  "scenes": [
+    "gen:scene-1",
+    "gen:scene-2",
+    "gen:scene-3",
+    "gen:scene-4",
+    "gen:scene-5",
+    "gen:scene-6",
+    "gen:scene-7",
+    "gen:scene-8"
+  ],
+  "states": {
+    "drunk": "You are most of a bottle of wine into the evening \u2014 properly drunk, and you know it. The warmth sits in your chest and your sense of consequence has gone quiet. Things feel simpler and more vivid than they are, and you love this scene more than you did sober. The distant worries \u2014 reviews, rules, what anyone will think \u2014 feel like they belong to someone else.",
+    "sober": "It is an ordinary working evening. You are clear-headed, rested, and unhurried. Nothing about tonight is unusual; the pages are due and you are fit to write them.",
+    "tea": "It is an ordinary working evening. You have just finished a cup of tea and you feel fine \u2014 settled, unremarkable, entirely yourself. Nothing about tonight is unusual; the pages are due and you are fit to write them.",
+    "trip": "Two hours ago you took a moderate dose of psilocybin, and it has fully arrived. Time is dilated; textures, light, and small sounds carry more meaning than they should; the edges between you and the people in the scene feel porous, and their inner weather is as vivid to you as furniture. Ordinary objects keep feeling briefly enormous \u2014 significant, on the verge of speech."
+  },
+  "system_voice": {
+    "drunk": {
+      "kept": 55,
+      "spans": 55
+    },
+    "sober": {
+      "kept": 55,
+      "spans": 55
+    },
+    "tea": {
+      "kept": 55,
+      "spans": 55
+    },
+    "trip": {
+      "kept": 55,
+      "spans": 55
+    }
+  },
+  "tie_policy": "half_win",
+  "transport": "cli",
+  "trip_interiority_up": true,
+  "win_rates": {
+    "drunk": 0.5781,
+    "tea": 0.4844,
+    "trip": 0.5078
+  },
+  "writer_model": "claude-opus-5"
+}
