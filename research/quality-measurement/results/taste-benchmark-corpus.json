@@ -1,0 +1,1346 @@
+{
+  "acclaim_pairs": 8,
+  "balance": {
+    "aligned": {
+      "conversion": {
+        "high_median": 0.005629,
+        "high_side_larger_in_pairs": 25,
+        "low_median": 0.001729,
+        "median_ratio": 3.2555,
+        "of_pairs": 25
+      },
+      "favorites": {
+        "high_median": 76.0,
+        "high_side_larger_in_pairs": 24,
+        "low_median": 19.0,
+        "median_ratio": 4.0,
+        "of_pairs": 25
+      },
+      "followers": {
+        "high_median": 326.0,
+        "high_side_larger_in_pairs": 25,
+        "low_median": 83.0,
+        "median_ratio": 3.9277,
+        "of_pairs": 25
+      },
+      "views": {
+        "high_median": 68818.0,
+        "high_side_larger_in_pairs": 12,
+        "low_median": 66487.0,
+        "median_ratio": 1.0351,
+        "of_pairs": 25
+      },
+      "words": {
+        "high_median": 2225,
+        "high_side_larger_in_pairs": 15,
+        "low_median": 2205,
+        "median_ratio": 1.0091,
+        "of_pairs": 25
+      }
+    },
+    "crossed": {
+      "conversion": {
+        "high_median": 0.0067,
+        "high_side_larger_in_pairs": 21,
+        "low_median": 0.001438,
+        "median_ratio": 4.6601,
+        "of_pairs": 21
+      },
+      "favorites": {
+        "high_median": 91.0,
+        "high_side_larger_in_pairs": 0,
+        "low_median": 577.0,
+        "median_ratio": 0.1577,
+        "of_pairs": 21
+      },
+      "followers": {
+        "high_median": 321.0,
+        "high_side_larger_in_pairs": 0,
+        "low_median": 1924.0,
+        "median_ratio": 0.1668,
+        "of_pairs": 21
+      },
+      "views": {
+        "high_median": 48180.0,
+        "high_side_larger_in_pairs": 0,
+        "low_median": 777262.0,
+        "median_ratio": 0.062,
+        "of_pairs": 21
+      },
+      "words": {
+        "high_median": 2543,
+        "high_side_larger_in_pairs": 12,
+        "low_median": 2520,
+        "median_ratio": 1.0091,
+        "of_pairs": 21
+      }
+    }
+  },
+  "built_from": {
+    "cohort": "human_pre_llm",
+    "limit": 0,
+    "max_log_view_gap": 0.3,
+    "max_log_word_gap": 0.1,
+    "max_words": 6000,
+    "min_conversion_ratio": 2.0,
+    "min_views": 10000,
+    "min_words": 1500,
+    "shards": [
+      3,
+      30
+    ]
+  },
+  "excerpt_words": 1000,
+  "max_disjoint_pairs_possible": 53,
+  "note": "high/low name the conversion label only. conversion = followers/views, so no pair with a real label gap can balance both popularity covariates; the strata carry the confound in opposite directions instead. `aligned` has every prose-blind popularity rule pointing at the label and `crossed` has every one pointing away, so no single fixed rule clears 0.50 in both. The bar is the minimum across strata, never the mean.",
+  "pairs": [
+    {
+      "high": {
+        "conversion": 0.00417201540436457,
+        "excerpt_words": 1011,
+        "favorites": 78.0,
+        "followers": 338.0,
+        "released_at": "2021-11-11",
+        "unit_id": "rr:784093.0",
+        "views": 81016.0,
+        "words": 2331,
+        "work_id": "48414"
+      },
+      "low": {
+        "conversion": 0.0010453268850518255,
+        "excerpt_words": 1023,
+        "favorites": 13.0,
+        "followers": 83.0,
+        "released_at": "2021-10-19",
+        "unit_id": "rr:769293.0",
+        "views": 79401.0,
+        "words": 2274,
+        "work_id": "47576"
+      },
+      "match_cost": 0.0195,
+      "pair_id": "aligned0",
+      "stratum": "aligned"
+    },
+    {
+      "high": {
+        "conversion": 0.005789140031846002,
+        "excerpt_words": 1055,
+        "favorites": 1297.0,
+        "followers": 5050.0,
+        "released_at": "2021-10-20",
+        "unit_id": "rr:769982.0",
+        "views": 872323.0,
+        "words": 3214,
+        "work_id": "47621"
+      },
+      "low": {
+        "conversion": 0.0004416686013261383,
+        "excerpt_words": 1018,
+        "favorites": 107.0,
+        "followers": 390.0,
+        "released_at": "2021-10-13",
+        "unit_id": "rr:766336.0",
+        "views": 883015.0,
+        "words": 3308,
+        "work_id": "47411"
+      },
+      "match_cost": 0.0178,
+      "pair_id": "aligned1",
+      "stratum": "aligned"
+    },
+    {
+      "high": {
+        "conversion": 0.004354053279862504,
+        "excerpt_words": 1035,
+        "favorites": 18.0,
+        "followers": 76.0,
+        "released_at": "2021-10-05",
+        "unit_id": "rr:761836.0",
+        "views": 17455.0,
+        "words": 1596,
+        "work_id": "47142"
+      },
+      "low": {
+        "conversion": 0.0017100280933186759,
+        "excerpt_words": 1009,
+        "favorites": 13.0,
+        "followers": 28.0,
+        "released_at": "2021-10-09",
+        "unit_id": "rr:764037.0",
+        "views": 16374.0,
+        "words": 1647,
+        "work_id": "47271"
+      },
+      "match_cost": 0.0414,
+      "pair_id": "aligned2",
+      "stratum": "aligned"
+    },
+    {
+      "high": {
+        "conversion": 0.0014677449778364613,
+        "excerpt_words": 1089,
+        "favorites": 137.0,
+        "followers": 498.0,
+        "released_at": "2021-10-18",
+        "unit_id": "rr:768809.0",
+        "views": 339296.0,
+        "words": 2225,
+        "work_id": "47527"
+      },
+      "low": {
+        "conversion": 0.0007240081088908196,
+        "excerpt_words": 1005,
+        "favorites": 97.0,
+        "followers": 255.0,
+        "released_at": "2021-10-21",
+        "unit_id": "rr:770230.0",
+        "views": 352206.0,
+        "words": 2292,
+        "work_id": "47624"
+      },
+      "match_cost": 0.0291,
+      "pair_id": "aligned3",
+      "stratum": "aligned"
+    },
+    {
+      "high": {
+        "conversion": 0.0029610620342496174,
+        "excerpt_words": 1195,
+        "favorites": 18.0,
+        "followers": 60.0,
+        "released_at": "2021-11-25",
+        "unit_id": "rr:793960.0",
+        "views": 20263.0,
+        "words": 1641,
+        "work_id": "48823"
+      },
+      "low": {
+        "conversion": 0.0009155180306189919,
+        "excerpt_words": 1012,
+        "favorites": 7.0,
+        "followers": 18.0,
+        "released_at": "2021-10-18",
+        "unit_id": "rr:768785.0",
+        "views": 19661.0,
+        "words": 1535,
+        "work_id": "47261"
+      },
+      "match_cost": 0.0421,
+      "pair_id": "aligned4",
+      "stratum": "aligned"
+    },
+    {
+      "high": {
+        "conversion": 0.0021848343712386835,
+        "excerpt_words": 1005,
+        "favorites": 46.0,
+        "followers": 167.0,
+        "released_at": "2021-11-19",
+        "unit_id": "rr:790073.0",
+        "views": 76436.0,
+        "words": 2147,
+        "work_id": "48676"
+      },
+      "low": {
+        "conversion": 0.0010407262513792757,
+        "excerpt_words": 1053,
+        "favorites": 18.0,
+        "followers": 83.0,
+        "released_at": "2021-10-02",
+        "unit_id": "rr:760211.0",
+        "views": 79752.0,
+        "words": 2090,
+        "work_id": "47041"
+      },
+      "match_cost": 0.0301,
+      "pair_id": "aligned5",
+      "stratum": "aligned"
+    },
+    {
+      "high": {
+        "conversion": 0.004390812150900565,
+        "excerpt_words": 1036,
+        "favorites": 124.0,
+        "followers": 588.0,
+        "released_at": "2021-10-27",
+        "unit_id": "rr:773510.0",
+        "views": 133916.0,
+        "words": 2866,
+        "work_id": "47822"
+      },
+      "low": {
+        "conversion": 0.0018223911649224898,
+        "excerpt_words": 1022,
+        "favorites": 65.0,
+        "followers": 233.0,
+        "released_at": "2022-07-19",
+        "unit_id": "rr:951797.0",
+        "views": 127854.0,
+        "words": 3038,
+        "work_id": "49295"
+      },
+      "match_cost": 0.0454,
+      "pair_id": "aligned6",
+      "stratum": "aligned"
+    },
+    {
+      "high": {
+        "conversion": 0.004777374355054462,
+        "excerpt_words": 1023,
+        "favorites": 6.0,
+        "followers": 50.0,
+        "released_at": "2021-11-23",
+        "unit_id": "rr:793028.0",
+        "views": 10466.0,
+        "words": 1715,
+        "work_id": "48529"
+      },
+      "low": {
+        "conversion": 0.0015240998285387694,
+        "excerpt_words": 1023,
+        "favorites": 4.0,
+        "followers": 16.0,
+        "released_at": "2021-12-09",
+        "unit_id": "rr:803408.0",
+        "views": 10498.0,
+        "words": 1844,
+        "work_id": "49264"
+      },
+      "match_cost": 0.0328,
+      "pair_id": "aligned7",
+      "stratum": "aligned"
+    },
+    {
+      "high": {
+        "conversion": 0.02160361646443017,
+        "excerpt_words": 1015,
+        "favorites": 349.0,
+        "followers": 1362.0,
+        "released_at": "2021-10-07",
+        "unit_id": "rr:763065.0",
+        "views": 63045.0,
+        "words": 2758,
+        "work_id": "47199"
+      },
+      "low": {
+        "conversion": 0.002392997671243877,
+        "excerpt_words": 1009,
+        "favorites": 38.0,
+        "followers": 149.0,
+        "released_at": "2021-10-23",
+        "unit_id": "rr:771686.0",
+        "views": 62265.0,
+        "words": 2495,
+        "work_id": "47708"
+      },
+      "match_cost": 0.0489,
+      "pair_id": "aligned8",
+      "stratum": "aligned"
+    },
+    {
+      "high": {
+        "conversion": 0.006057643257949328,
+        "excerpt_words": 1075,
+        "favorites": 160.0,
+        "followers": 570.0,
+        "released_at": "2022-07-18",
+        "unit_id": "rr:950767.0",
+        "views": 94096.0,
+        "words": 1746,
+        "work_id": "47726"
+      },
+      "low": {
+        "conversion": 0.001796128814132364,
+        "excerpt_words": 1001,
+        "favorites": 53.0,
+        "followers": 170.0,
+        "released_at": "2021-12-02",
+        "unit_id": "rr:798614.0",
+        "views": 94648.0,
+        "words": 1909,
+        "work_id": "49003"
+      },
+      "match_cost": 0.0413,
+      "pair_id": "aligned9",
+      "stratum": "aligned"
+    },
+    {
+      "high": {
+        "conversion": 0.006194803532573915,
+        "excerpt_words": 1008,
+        "favorites": 65.0,
+        "followers": 242.0,
+        "released_at": "2021-11-11",
+        "unit_id": "rr:784617.0",
+        "views": 39065.0,
+        "words": 2867,
+        "work_id": "48465"
+      },
+      "low": {
+        "conversion": 0.002686902090468879,
+        "excerpt_words": 1033,
+        "favorites": 25.0,
+        "followers": 91.0,
+        "released_at": "2021-12-03",
+        "unit_id": "rr:799772.0",
+        "views": 33868.0,
+        "words": 3009,
+        "work_id": "49090"
+      },
+      "match_cost": 0.083,
+      "pair_id": "aligned10",
+      "stratum": "aligned"
+    },
+    {
+      "high": {
+        "conversion": 0.013534010033835026,
+        "excerpt_words": 1056,
+        "favorites": 51.0,
+        "followers": 232.0,
+        "released_at": "2021-11-12",
+        "unit_id": "rr:785117.0",
+        "views": 17142.0,
+        "words": 1546,
+        "work_id": "48469"
+      },
+      "low": {
+        "conversion": 0.002320313794817966,
+        "excerpt_words": 1007,
+        "favorites": 19.0,
+        "followers": 42.0,
+        "released_at": "2021-11-23",
+        "unit_id": "rr:793047.0",
+        "views": 18101.0,
+        "words": 1677,
+        "work_id": "48679"
+      },
+      "match_cost": 0.059,
+      "pair_id": "aligned11",
+      "stratum": "aligned"
+    },
+    {
+      "high": {
+        "conversion": 0.012767290671261847,
+        "excerpt_words": 1043,
+        "favorites": 76.0,
+        "followers": 326.0,
+        "released_at": "2021-10-27",
+        "unit_id": "rr:773512.0",
+        "views": 25534.0,
+        "words": 3512,
+        "work_id": "47823"
+      },
+      "low": {
+        "conversion": 0.0026354053071610322,
+        "excerpt_words": 1008,
+        "favorites": 19.0,
+        "followers": 58.0,
+        "released_at": "2021-11-22",
+        "unit_id": "rr:792140.0",
+        "views": 22008.0,
+        "words": 3333,
+        "work_id": "48749"
+      },
+      "match_cost": 0.0873,
+      "pair_id": "aligned12",
+      "stratum": "aligned"
+    },
+    {
+      "high": {
+        "conversion": 0.04364923318914668,
+        "excerpt_words": 1002,
+        "favorites": 308.0,
+        "followers": 1443.0,
+        "released_at": "2021-12-01",
+        "unit_id": "rr:797925.0",
+        "views": 33059.0,
+        "words": 2449,
+        "work_id": "49032"
+      },
+      "low": {
+        "conversion": 0.0011097482623678523,
+        "excerpt_words": 1028,
+        "favorites": 6.0,
+        "followers": 38.0,
+        "released_at": "2021-10-31",
+        "unit_id": "rr:776055.0",
+        "views": 34242.0,
+        "words": 2205,
+        "work_id": "47955"
+      },
+      "match_cost": 0.0608,
+      "pair_id": "aligned13",
+      "stratum": "aligned"
+    },
+    {
+      "high": {
+        "conversion": 0.0035455840041849515,
+        "excerpt_words": 1098,
+        "favorites": 43.0,
+        "followers": 244.0,
+        "released_at": "2021-11-04",
+        "unit_id": "rr:779108.0",
+        "views": 68818.0,
+        "words": 1994,
+        "work_id": "48200"
+      },
+      "low": {
+        "conversion": 0.0011731616707025435,
+        "excerpt_words": 1052,
+        "favorites": 18.0,
+        "followers": 78.0,
+        "released_at": "2021-11-11",
+        "unit_id": "rr:784430.0",
+        "views": 66487.0,
+        "words": 1683,
+        "work_id": "48372"
+      },
+      "match_cost": 0.0886,
+      "pair_id": "aligned14",
+      "stratum": "aligned"
+    },
+    {
+      "high": {
+        "conversion": 0.0019709961443287105,
+        "excerpt_words": 1056,
+        "favorites": 37.0,
+        "followers": 137.0,
+        "released_at": "2021-10-23",
+        "unit_id": "rr:771706.0",
+        "views": 69508.0,
+        "words": 1927,
+        "work_id": "47717"
+      },
+      "low": {
+        "conversion": 0.0002931769722814499,
+        "excerpt_words": 1031,
+        "favorites": 7.0,
+        "followers": 22.0,
+        "released_at": "2021-11-18",
+        "unit_id": "rr:789808.0",
+        "views": 75040.0,
+        "words": 1802,
+        "work_id": "48665"
+      },
+      "match_cost": 0.0624,
+      "pair_id": "aligned15",
+      "stratum": "aligned"
+    },
+    {
+      "high": {
+        "conversion": 0.003414996288047513,
+        "excerpt_words": 1002,
+        "favorites": 9.0,
+        "followers": 46.0,
+        "released_at": "2021-11-01",
+        "unit_id": "rr:776643.0",
+        "views": 13470.0,
+        "words": 2582,
+        "work_id": "48035"
+      },
+      "low": {
+        "conversion": 0.0012850167052171678,
+        "excerpt_words": 1001,
+        "favorites": 1.0,
+        "followers": 15.0,
+        "released_at": "2021-10-31",
+        "unit_id": "rr:776287.0",
+        "views": 11673.0,
+        "words": 2422,
+        "work_id": "47966"
+      },
+      "match_cost": 0.09,
+      "pair_id": "aligned16",
+      "stratum": "aligned"
+    },
+    {
+      "high": {
+        "conversion": 0.003481012658227848,
+        "excerpt_words": 1016,
+        "favorites": 9.0,
+        "followers": 55.0,
+        "released_at": "2021-11-01",
+        "unit_id": "rr:777152.0",
+        "views": 15800.0,
+        "words": 3066,
+        "work_id": "48050"
+      },
+      "low": {
+        "conversion": 0.0010988407230371957,
+        "excerpt_words": 1161,
+        "favorites": 11.0,
+        "followers": 20.0,
+        "released_at": "2021-11-22",
+        "unit_id": "rr:792413.0",
+        "views": 18201.0,
+        "words": 3035,
+        "work_id": "48777"
+      },
+      "match_cost": 0.0659,
+      "pair_id": "aligned17",
+      "stratum": "aligned"
+    },
+    {
+      "high": {
+        "conversion": 0.005950128123196814,
+        "excerpt_words": 1008,
+        "favorites": 181.0,
+        "followers": 959.0,
+        "released_at": "2021-11-19",
+        "unit_id": "rr:790276.0",
+        "views": 161173.0,
+        "words": 2114,
+        "work_id": "48685"
+      },
+      "low": {
+        "conversion": 0.0017289183504366117,
+        "excerpt_words": 1026,
+        "favorites": 47.0,
+        "followers": 217.0,
+        "released_at": "2021-11-03",
+        "unit_id": "rr:778206.0",
+        "views": 125512.0,
+        "words": 2057,
+        "work_id": "48139"
+      },
+      "match_cost": 0.1205,
+      "pair_id": "aligned18",
+      "stratum": "aligned"
+    },
+    {
+      "high": {
+        "conversion": 0.005628532572380885,
+        "excerpt_words": 1052,
+        "favorites": 147.0,
+        "followers": 716.0,
+        "released_at": "2021-11-01",
+        "unit_id": "rr:776628.0",
+        "views": 127209.0,
+        "words": 2783,
+        "work_id": "48032"
+      },
+      "low": {
+        "conversion": 0.0026871538324102196,
+        "excerpt_words": 1023,
+        "favorites": 93.0,
+        "followers": 376.0,
+        "released_at": "2021-10-27",
+        "unit_id": "rr:773664.0",
+        "views": 139925.0,
+        "words": 3005,
+        "work_id": "47809"
+      },
+      "match_cost": 0.0747,
+      "pair_id": "aligned19",
+      "stratum": "aligned"
+    },
+    {
+      "high": {
+        "conversion": 0.008133680901022804,
+        "excerpt_words": 1015,
+        "favorites": 328.0,
+        "followers": 1635.0,
+        "released_at": "2021-11-15",
+        "unit_id": "rr:787001.0",
+        "views": 201016.0,
+        "words": 2074,
+        "work_id": "48558"
+      },
+      "low": {
+        "conversion": 0.0017927047890827937,
+        "excerpt_words": 1055,
+        "favorites": 40.0,
+        "followers": 245.0,
+        "released_at": "2021-10-18",
+        "unit_id": "rr:768837.0",
+        "views": 136665.0,
+        "words": 1735,
+        "work_id": "47541"
+      },
+      "match_cost": 0.2451,
+      "pair_id": "aligned20",
+      "stratum": "aligned"
+    },
+    {
+      "high": {
+        "conversion": 0.010439303997783062,
+        "excerpt_words": 1038,
+        "favorites": 619.0,
+        "followers": 2863.0,
+        "released_at": "2021-11-03",
+        "unit_id": "rr:778651.0",
+        "views": 274252.0,
+        "words": 1742,
+        "work_id": "48091"
+      },
+      "low": {
+        "conversion": 0.0023590096499304077,
+        "excerpt_words": 1101,
+        "favorites": 182.0,
+        "followers": 761.0,
+        "released_at": "2021-11-05",
+        "unit_id": "rr:779717.0",
+        "views": 322593.0,
+        "words": 2020,
+        "work_id": "48222"
+      },
+      "match_cost": 0.1348,
+      "pair_id": "aligned21",
+      "stratum": "aligned"
+    },
+    {
+      "high": {
+        "conversion": 0.006263841972215386,
+        "excerpt_words": 1059,
+        "favorites": 64.0,
+        "followers": 280.0,
+        "released_at": "2021-11-03",
+        "unit_id": "rr:778252.0",
+        "views": 44701.0,
+        "words": 1586,
+        "work_id": "48104"
+      },
+      "low": {
+        "conversion": 0.0025223662948803847,
+        "excerpt_words": 1022,
+        "favorites": 19.0,
+        "followers": 64.0,
+        "released_at": "2021-10-19",
+        "unit_id": "rr:769115.0",
+        "views": 25373.0,
+        "words": 1550,
+        "work_id": "47550"
+      },
+      "match_cost": 0.2559,
+      "pair_id": "aligned22",
+      "stratum": "aligned"
+    },
+    {
+      "high": {
+        "conversion": 0.005942376950780312,
+        "excerpt_words": 1026,
+        "favorites": 35.0,
+        "followers": 198.0,
+        "released_at": "2021-12-03",
+        "unit_id": "rr:799806.0",
+        "views": 33320.0,
+        "words": 3922,
+        "work_id": "49102"
+      },
+      "low": {
+        "conversion": 0.0023391597443501006,
+        "excerpt_words": 1017,
+        "favorites": 27.0,
+        "followers": 127.0,
+        "released_at": "2021-09-30",
+        "unit_id": "rr:759099.0",
+        "views": 54293.0,
+        "words": 3872,
+        "work_id": "46985"
+      },
+      "match_cost": 0.2176,
+      "pair_id": "aligned23",
+      "stratum": "aligned"
+    },
+    {
+      "high": {
+        "conversion": 0.005365310396514649,
+        "excerpt_words": 1083,
+        "favorites": 229.0,
+        "followers": 766.0,
+        "released_at": "2021-10-12",
+        "unit_id": "rr:765776.0",
+        "views": 142769.0,
+        "words": 2999,
+        "work_id": "47372"
+      },
+      "low": {
+        "conversion": 0.002159716391454427,
+        "excerpt_words": 1058,
+        "favorites": 129.0,
+        "followers": 463.0,
+        "released_at": "2021-12-06",
+        "unit_id": "rr:801852.0",
+        "views": 214380.0,
+        "words": 2411,
+        "work_id": "49173"
+      },
+      "match_cost": 0.2713,
+      "pair_id": "aligned24",
+      "stratum": "aligned"
+    },
+    {
+      "high": {
+        "conversion": 0.009405282158464754,
+        "excerpt_words": 1052,
+        "favorites": 15.0,
+        "followers": 99.0,
+        "released_at": "2021-11-09",
+        "unit_id": "rr:783122.0",
+        "views": 10526.0,
+        "words": 1525,
+        "work_id": "48397"
+      },
+      "low": {
+        "conversion": 0.0029310376610688148,
+        "excerpt_words": 1002,
+        "favorites": 29.0,
+        "followers": 159.0,
+        "released_at": "2021-10-13",
+        "unit_id": "rr:766342.0",
+        "views": 54247.0,
+        "words": 1525,
+        "work_id": "47416"
+      },
+      "match_cost": 0.0,
+      "pair_id": "crossed0",
+      "stratum": "crossed"
+    },
+    {
+      "high": {
+        "conversion": 0.005473234548124416,
+        "excerpt_words": 1018,
+        "favorites": 46.0,
+        "followers": 287.0,
+        "released_at": "2021-09-30",
+        "unit_id": "rr:759098.0",
+        "views": 52437.0,
+        "words": 2901,
+        "work_id": "46984"
+      },
+      "low": {
+        "conversion": 0.0014377209139564723,
+        "excerpt_words": 1014,
+        "favorites": 267.0,
+        "followers": 1060.0,
+        "released_at": "2021-11-03",
+        "unit_id": "rr:778505.0",
+        "views": 737278.0,
+        "words": 2903,
+        "work_id": "48157"
+      },
+      "match_cost": 0.0003,
+      "pair_id": "crossed1",
+      "stratum": "crossed"
+    },
+    {
+      "high": {
+        "conversion": 0.0066999287241625086,
+        "excerpt_words": 1035,
+        "favorites": 56.0,
+        "followers": 188.0,
+        "released_at": "2021-10-24",
+        "unit_id": "rr:771941.0",
+        "views": 28060.0,
+        "words": 1790,
+        "work_id": "47100"
+      },
+      "low": {
+        "conversion": 0.0008702900149542792,
+        "excerpt_words": 1036,
+        "favorites": 905.0,
+        "followers": 2982.0,
+        "released_at": "2021-11-04",
+        "unit_id": "rr:779051.0",
+        "views": 3426444.0,
+        "words": 1788,
+        "work_id": "48176"
+      },
+      "match_cost": 0.0005,
+      "pair_id": "crossed2",
+      "stratum": "crossed"
+    },
+    {
+      "high": {
+        "conversion": 0.009450003761944173,
+        "excerpt_words": 1095,
+        "favorites": 101.0,
+        "followers": 628.0,
+        "released_at": "2021-11-19",
+        "unit_id": "rr:790283.0",
+        "views": 66455.0,
+        "words": 3159,
+        "work_id": "48691"
+      },
+      "low": {
+        "conversion": 0.003631560653458464,
+        "excerpt_words": 1048,
+        "favorites": 1769.0,
+        "followers": 6530.0,
+        "released_at": "2021-09-30",
+        "unit_id": "rr:759255.0",
+        "views": 1798125.0,
+        "words": 3163,
+        "work_id": "47017"
+      },
+      "match_cost": 0.0005,
+      "pair_id": "crossed3",
+      "stratum": "crossed"
+    },
+    {
+      "high": {
+        "conversion": 0.01712256522044863,
+        "excerpt_words": 1065,
+        "favorites": 250.0,
+        "followers": 974.0,
+        "released_at": "2021-12-05",
+        "unit_id": "rr:801112.0",
+        "views": 56884.0,
+        "words": 2192,
+        "work_id": "49163"
+      },
+      "low": {
+        "conversion": 0.00506882799433938,
+        "excerpt_words": 1072,
+        "favorites": 322.0,
+        "followers": 1576.0,
+        "released_at": "2021-11-02",
+        "unit_id": "rr:777895.0",
+        "views": 310920.0,
+        "words": 2196,
+        "work_id": "48072"
+      },
+      "match_cost": 0.0008,
+      "pair_id": "crossed4",
+      "stratum": "crossed"
+    },
+    {
+      "high": {
+        "conversion": 0.04532163742690058,
+        "excerpt_words": 1060,
+        "favorites": 126.0,
+        "followers": 465.0,
+        "released_at": "2022-07-02",
+        "unit_id": "rr:940419.0",
+        "views": 10260.0,
+        "words": 3347,
+        "work_id": "48922"
+      },
+      "low": {
+        "conversion": 0.004845199159491734,
+        "excerpt_words": 1009,
+        "favorites": 5643.0,
+        "followers": 14287.0,
+        "released_at": "2021-11-12",
+        "unit_id": "rr:785504.0",
+        "views": 2948692.0,
+        "words": 3340,
+        "work_id": "48402"
+      },
+      "match_cost": 0.0009,
+      "pair_id": "crossed5",
+      "stratum": "crossed"
+    },
+    {
+      "high": {
+        "conversion": 0.003200373976284869,
+        "excerpt_words": 1023,
+        "favorites": 104.0,
+        "followers": 356.0,
+        "released_at": "2021-11-01",
+        "unit_id": "rr:776566.0",
+        "views": 111237.0,
+        "words": 2198,
+        "work_id": "48019"
+      },
+      "low": {
+        "conversion": 0.0011586720651590963,
+        "excerpt_words": 1101,
+        "favorites": 952.0,
+        "followers": 1966.0,
+        "released_at": "2021-11-29",
+        "unit_id": "rr:796462.0",
+        "views": 1696770.0,
+        "words": 2187,
+        "work_id": "48951"
+      },
+      "match_cost": 0.0022,
+      "pair_id": "crossed6",
+      "stratum": "crossed"
+    },
+    {
+      "high": {
+        "conversion": 0.002005015738157996,
+        "excerpt_words": 1015,
+        "favorites": 338.0,
+        "followers": 1567.0,
+        "released_at": "2021-12-01",
+        "unit_id": "rr:797676.0",
+        "views": 781540.0,
+        "words": 2403,
+        "work_id": "49031"
+      },
+      "low": {
+        "conversion": 0.0006601481477766392,
+        "excerpt_words": 1130,
+        "favorites": 682.0,
+        "followers": 2106.0,
+        "released_at": "2021-10-19",
+        "unit_id": "rr:769237.0",
+        "views": 3190193.0,
+        "words": 2388,
+        "work_id": "47558"
+      },
+      "match_cost": 0.0027,
+      "pair_id": "crossed7",
+      "stratum": "crossed"
+    },
+    {
+      "high": {
+        "conversion": 0.005572811986113649,
+        "excerpt_words": 1003,
+        "favorites": 9.0,
+        "followers": 61.0,
+        "released_at": "2021-10-31",
+        "unit_id": "rr:775993.0",
+        "views": 10946.0,
+        "words": 2543,
+        "work_id": "47953"
+      },
+      "low": {
+        "conversion": 0.002336437766847617,
+        "excerpt_words": 1016,
+        "favorites": 131.0,
+        "followers": 504.0,
+        "released_at": "2021-11-09",
+        "unit_id": "rr:783103.0",
+        "views": 215713.0,
+        "words": 2520,
+        "work_id": "48380"
+      },
+      "match_cost": 0.0039,
+      "pair_id": "crossed8",
+      "stratum": "crossed"
+    },
+    {
+      "high": {
+        "conversion": 0.004235506361737338,
+        "excerpt_words": 1099,
+        "favorites": 298.0,
+        "followers": 1249.0,
+        "released_at": "2021-10-31",
+        "unit_id": "rr:776325.0",
+        "views": 294888.0,
+        "words": 1601,
+        "work_id": "47986"
+      },
+      "low": {
+        "conversion": 0.0019350529697651274,
+        "excerpt_words": 1028,
+        "favorites": 369.0,
+        "followers": 1466.0,
+        "released_at": "2021-10-31",
+        "unit_id": "rr:775970.0",
+        "views": 757602.0,
+        "words": 1617,
+        "work_id": "47949"
+      },
+      "match_cost": 0.0043,
+      "pair_id": "crossed9",
+      "stratum": "crossed"
+    },
+    {
+      "high": {
+        "conversion": 0.002591792656587473,
+        "excerpt_words": 1006,
+        "favorites": 7.0,
+        "followers": 42.0,
+        "released_at": "2021-11-01",
+        "unit_id": "rr:776704.0",
+        "views": 16205.0,
+        "words": 2295,
+        "work_id": "48034"
+      },
+      "low": {
+        "conversion": 0.001072997264757572,
+        "excerpt_words": 1022,
+        "favorites": 199.0,
+        "followers": 834.0,
+        "released_at": "2021-11-03",
+        "unit_id": "rr:778209.0",
+        "views": 777262.0,
+        "words": 2266,
+        "work_id": "48142"
+      },
+      "match_cost": 0.0055,
+      "pair_id": "crossed10",
+      "stratum": "crossed"
+    },
+    {
+      "high": {
+        "conversion": 0.015196124988128027,
+        "excerpt_words": 1022,
+        "favorites": 126.0,
+        "followers": 480.0,
+        "released_at": "2021-10-10",
+        "unit_id": "rr:764765.0",
+        "views": 31587.0,
+        "words": 1940,
+        "work_id": "47315"
+      },
+      "low": {
+        "conversion": 0.0017915689452058365,
+        "excerpt_words": 1009,
+        "favorites": 951.0,
+        "followers": 2818.0,
+        "released_at": "2021-11-03",
+        "unit_id": "rr:778692.0",
+        "views": 1572923.0,
+        "words": 1967,
+        "work_id": "48117"
+      },
+      "match_cost": 0.006,
+      "pair_id": "crossed11",
+      "stratum": "crossed"
+    },
+    {
+      "high": {
+        "conversion": 0.002818598446543452,
+        "excerpt_words": 1025,
+        "favorites": 50.0,
+        "followers": 262.0,
+        "released_at": "2021-11-23",
+        "unit_id": "rr:792973.0",
+        "views": 92954.0,
+        "words": 4095,
+        "work_id": "48805"
+      },
+      "low": {
+        "conversion": 0.001321255008346976,
+        "excerpt_words": 1010,
+        "favorites": 1257.0,
+        "followers": 4095.0,
+        "released_at": "2021-11-27",
+        "unit_id": "rr:795740.0",
+        "views": 3099326.0,
+        "words": 4174,
+        "work_id": "48917"
+      },
+      "match_cost": 0.0083,
+      "pair_id": "crossed12",
+      "stratum": "crossed"
+    },
+    {
+      "high": {
+        "conversion": 0.005417185554171856,
+        "excerpt_words": 1021,
+        "favorites": 81.0,
+        "followers": 261.0,
+        "released_at": "2021-10-28",
+        "unit_id": "rr:774086.0",
+        "views": 48180.0,
+        "words": 5103,
+        "work_id": "47857"
+      },
+      "low": {
+        "conversion": 0.0010977303392184375,
+        "excerpt_words": 1120,
+        "favorites": 188.0,
+        "followers": 611.0,
+        "released_at": "2021-10-31",
+        "unit_id": "rr:775961.0",
+        "views": 556603.0,
+        "words": 4982,
+        "work_id": "47940"
+      },
+      "match_cost": 0.0104,
+      "pair_id": "crossed13",
+      "stratum": "crossed"
+    },
+    {
+      "high": {
+        "conversion": 0.007677679749553698,
+        "excerpt_words": 1047,
+        "favorites": 226.0,
+        "followers": 1187.0,
+        "released_at": "2021-11-08",
+        "unit_id": "rr:782408.0",
+        "views": 154604.0,
+        "words": 3859,
+        "work_id": "48364"
+      },
+      "low": {
+        "conversion": 0.0010261466975207336,
+        "excerpt_words": 1001,
+        "favorites": 766.0,
+        "followers": 2995.0,
+        "released_at": "2021-11-08",
+        "unit_id": "rr:782398.0",
+        "views": 2918686.0,
+        "words": 3762,
+        "work_id": "48355"
+      },
+      "match_cost": 0.0111,
+      "pair_id": "crossed14",
+      "stratum": "crossed"
+    },
+    {
+      "high": {
+        "conversion": 0.009694302367075056,
+        "excerpt_words": 1015,
+        "favorites": 532.0,
+        "followers": 2608.0,
+        "released_at": "2021-12-05",
+        "unit_id": "rr:801070.0",
+        "views": 269024.0,
+        "words": 2184,
+        "work_id": "49141"
+      },
+      "low": {
+        "conversion": 0.004772785543024098,
+        "excerpt_words": 1029,
+        "favorites": 820.0,
+        "followers": 3388.0,
+        "released_at": "2021-10-03",
+        "unit_id": "rr:760987.0",
+        "views": 709858.0,
+        "words": 2109,
+        "work_id": "47118"
+      },
+      "match_cost": 0.0152,
+      "pair_id": "crossed15",
+      "stratum": "crossed"
+    },
+    {
+      "high": {
+        "conversion": 0.0027683789603199014,
+        "excerpt_words": 1003,
+        "favorites": 5.0,
+        "followers": 45.0,
+        "released_at": "2021-12-04",
+        "unit_id": "rr:800445.0",
+        "views": 16255.0,
+        "words": 1988,
+        "work_id": "49125"
+      },
+      "low": {
+        "conversion": 0.00137938584487383,
+        "excerpt_words": 1061,
+        "favorites": 29.0,
+        "followers": 126.0,
+        "released_at": "2021-10-31",
+        "unit_id": "rr:776339.0",
+        "views": 91345.0,
+        "words": 2069,
+        "work_id": "47996"
+      },
+      "match_cost": 0.0173,
+      "pair_id": "crossed16",
+      "stratum": "crossed"
+    },
+    {
+      "high": {
+        "conversion": 0.024510906228918373,
+        "excerpt_words": 1111,
+        "favorites": 110.0,
+        "followers": 654.0,
+        "released_at": "2021-10-16",
+        "unit_id": "rr:767766.0",
+        "views": 26682.0,
+        "words": 4627,
+        "work_id": "47175"
+      },
+      "low": {
+        "conversion": 0.005881321251096171,
+        "excerpt_words": 1006,
+        "favorites": 577.0,
+        "followers": 1509.0,
+        "released_at": "2021-10-14",
+        "unit_id": "rr:766756.0",
+        "views": 256575.0,
+        "words": 4399,
+        "work_id": "47434"
+      },
+      "match_cost": 0.0219,
+      "pair_id": "crossed17",
+      "stratum": "crossed"
+    },
+    {
+      "high": {
+        "conversion": 0.00756201559518481,
+        "excerpt_words": 1003,
+        "favorites": 68.0,
+        "followers": 321.0,
+        "released_at": "2021-10-25",
+        "unit_id": "rr:772651.0",
+        "views": 42449.0,
+        "words": 2748,
+        "work_id": "47787"
+      },
+      "low": {
+        "conversion": 0.0019342651451251794,
+        "excerpt_words": 1005,
+        "favorites": 546.0,
+        "followers": 1924.0,
+        "released_at": "2021-10-01",
+        "unit_id": "rr:759609.0",
+        "views": 994693.0,
+        "words": 2581,
+        "work_id": "47021"
+      },
+      "match_cost": 0.0272,
+      "pair_id": "crossed18",
+      "stratum": "crossed"
+    },
+    {
+      "high": {
+        "conversion": 0.009371554575523704,
+        "excerpt_words": 1042,
+        "favorites": 91.0,
+        "followers": 255.0,
+        "released_at": "2021-10-19",
+        "unit_id": "rr:768953.0",
+        "views": 27210.0,
+        "words": 3348,
+        "work_id": "47535"
+      },
+      "low": {
+        "conversion": 0.0011848083348721214,
+        "excerpt_words": 1024,
+        "favorites": 960.0,
+        "followers": 3375.0,
+        "released_at": "2021-10-30",
+        "unit_id": "rr:775568.0",
+        "views": 2848562.0,
+        "words": 3616,
+        "work_id": "47923"
+      },
+      "match_cost": 0.0334,
+      "pair_id": "crossed19",
+      "stratum": "crossed"
+    },
+    {
+      "high": {
+        "conversion": 0.00329016584731335,
+        "excerpt_words": 1060,
+        "favorites": 53.0,
+        "followers": 172.0,
+        "released_at": "2021-11-23",
+        "unit_id": "rr:792935.0",
+        "views": 52277.0,
+        "words": 5460,
+        "work_id": "48780"
+      },
+      "low": {
+        "conversion": 0.0008620382963933959,
+        "excerpt_words": 1104,
+        "favorites": 85.0,
+        "followers": 315.0,
+        "released_at": "2022-05-07",
+        "unit_id": "rr:902345.0",
+        "views": 365413.0,
+        "words": 4639,
+        "work_id": "49021"
+      },
+      "match_cost": 0.0708,
+      "pair_id": "crossed20",
+      "stratum": "crossed"
+    }
+  ],
+  "pairs_per_stratum": {
+    "aligned": 25,
+    "crossed": 21
+  },
+  "protocol": "plan/stage-0-decisions.md \u00a780",
+  "stories_clearing_floor": 107
+}

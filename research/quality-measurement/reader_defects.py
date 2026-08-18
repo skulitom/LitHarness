@@ -196,7 +196,7 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
         "transport": args.transport,
         "tie_policy": args.tie_policy,
         "planned_calls": planned,
-        "protocol": "plan/stage-0-decisions.md §79",
+        "protocol": "plan/stage-0-decisions.md §81",
         "expectations": {key: reading for key, _l, _r, reading in ARMS},
     }
 

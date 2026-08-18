@@ -4667,3 +4667,133 @@ a power increase adopted because a precondition failed, and its direction is wor
 surviving point estimate is unfavourable to the panel, so tightening it cannot buy the panel a
 pass.** That is the same test §74 applied to its own post-hoc rule change, and it is the reason this
 remedy is legitimate where re-reading the band would not be.
+
+## 79. The engagement label cannot be matched, so its confound's sign becomes the instrument
+
+§77.1 left the external-label programme without a usable label: the one arm carrying a measured
+reader outcome was void on positional bias and its two sides differed 255x in views. The obvious
+repair is to match the covariates and scale up. **The obvious repair is impossible, and the reason is
+arithmetic.**
+
+`conversion = followers / total_views` is a ratio of the two prose-blind quantities anyone would want
+to hold fixed, so
+
+    followers_hi / followers_lo = (conv_hi / conv_lo) x (views_hi / views_lo)
+
+Match the denominator and the numerator becomes a perfect predictor. Measured, not argued: the first
+build of `taste_benchmark.py` matched views to within a factor of two and produced followers
+imbalanced 7.6x with the high-conversion side larger in **21 of 21 pairs**. Match followers instead
+and views takes the role, which is §77.1's configuration. **For any pair with a real label gap, at
+least one prose-blind popularity covariate orders the pair, and no choice of tolerances removes
+both.** This is the mechanism behind §56.3's measured `followers` AUC of 0.814 — that number is
+partly arithmetic, as `conversion.json`'s own verdict says — and it is why §56.6 item 4 refused
+selecting a corpus from conversion deciles.
+
+**So the design stops trying to remove the confound and starts using its sign.** Pairs are selected
+into two strata, disjoint at story level, length-matched in both:
+
+    stratum   pairs   conversion   views      followers   favorites   high-side larger
+    aligned      25        3.26x    1.04x         3.93x       4.00x   followers 25/25, views 12/25
+    crossed      21        4.66x    0.062x        0.167x      0.158x  followers 0/21, views 0/21
+
+In `aligned` every popularity rule points **at** the label. In `crossed` every one points **away**
+from it: the higher-converting story is the one with 16x fewer views and 5.9x fewer followers. A
+judge reading prose should agree with the label in both. A judge proxying popularity must agree in
+one and disagree in the other, and **their mean is 0.5 — indistinguishable from a coin.** So the
+benchmark never averages the strata; the statistic is `min(agreement_aligned, agreement_crossed)`,
+and that is a bar rather than a number.
+
+**The bar is 0.52, and it was 0.5714 until two leaks were closed.** Both are worth recording because
+both are the kind of residual that would have quietly become the result:
+
+- **The view residual had a direction.** Matching views inside `aligned` to within a factor of two
+  left 15 of 23 pairs with the high-conversion side *less* viewed, because higher conversion
+  correlates with fewer views. "Pick the less-viewed side" then scored 0.652 in `aligned` and 1.000
+  in `crossed` — a minimum of 0.652, so a prose-blind rule cleared 0.50 in **both** strata and the
+  design's central property was already gone. Filling the two view-signs evenly inside `aligned`
+  (12/25 now) drives that rule to 0.52 and 1.000.
+- **One rule reads a quantity no judge can see.** `pick_longer_chapter` scored a minimum of 0.5714,
+  but `_excerpt` cuts both sides to about 1,000 words, so source chapter length is invisible in what
+  is actually compared. It is reported and **excluded from the bar** as `NOT_A_ROUTE`; the covariate
+  that matters is excerpt length, which is matched at 1036/1023 words in `aligned` and 1025/1024 in
+  `crossed`, and `pick_longer_excerpt` sits at a minimum of 0.476.
+
+    rule                     aligned   crossed   min
+    pick_more_followers        1.000     0.000   0.000
+    pick_fewer_followers       0.000     1.000   0.000
+    pick_more_views            0.480     0.000   0.000
+    pick_fewer_views           0.520     1.000   0.520   <- the bar
+    pick_more_favorites        0.960     0.000   0.000
+    pick_longer_excerpt        0.640     0.476   0.476
+    pick_longer_chapter        0.600     0.571   0.571   not a route: erased by excerpting
+
+**A judge passes only by exceeding 0.52 as a minimum across strata with both interval lower bounds
+above 0.50 and positional bias in band, all pre-registered in `PRE_REGISTRATION` before the first
+elicitation.** What a candidate may vary is model, transport, pair question, and which existing
+personas are seated. It may not introduce a persona or a rubric: §77's 2x2 measured one plain word
+outperforming four authored personas, and a criterion we wrote cannot be evidence about a judge we
+are selecting.
+
+**The corpus ceiling is 46 pairs, not the hundreds the programme asked for, and that is a fact about
+the disk rather than the design.** 107 pre-LLM LitRPG stories clear a 10,000-view floor at
+1,500–6,000 words across the two cached shards, one chapter per story because `conversion` is a
+fiction-level constant — verified: the `(followers, total_views)` tuple does not vary across a
+fiction's chapters. That caps disjoint pairs at 53, and the strata take 46 of them. The dataset has
+47 shards and two are cached, so reaching hundreds is a download, not a redesign. The floor is not
+the binding constraint either: dropping it to 1,000 views triples the story count and reinstates the
+noise the floor exists to remove, since §77.1's high-conversion pool sat at 174–1,667 views where one
+follower moves the label by 0.006.
+
+**Also fixed here: era is filtered rather than trusted.** `royalroad_chapters` yields every cohort
+`era_cohort` can label, so §77's pools admitted 2025 and declared-AI chapters and the eight pairs it
+happened to compare were pre-LLM by luck (§77.1). The builder takes `human_pre_llm` only.
+
+The corpus text is gitignored under the rule bbc6560 established; the committed record is
+`results/taste-benchmark-corpus.json`, which carries every pair's covariates and no third-party
+prose, so the balance table above is auditable without redistributing anything.
+
+**No judge has been run against it yet.** The benchmark is the deliverable and the first candidate
+costs 368 comparisons at panel width — the elicitation channel was occupied by §81's run. What the
+build already establishes is independent of any candidate: the label is unmatched-able, the strata
+make that usable, and the bar is 0.52.
+
+## 80. The first paid batch is designed to answer two questions, and is not funded
+
+[reader-batch-1.md](reader-batch-1.md) drafts the batch so one set of paid verdicts pilots the
+headline protocol *and* anchors the machine panel. **It is not funded. Payment starts §59's
+one-month clock and is an operator act.**
+
+418 raw judgments over 209 pairs in four classes: 110 headline pairs (ours against matched human), 75
+defect-manufacture pairs (ours against ours, on the three reader-named axes), 16 attention checks and
+8 layout shams. Ten readers at ~42 judgments each, which is what makes the §59 clustered lower bound
+computable on both dimensions at all.
+
+**The design's load-bearing constraint is that classes B and C must never be the same instrument.**
+Both look like "does the reader notice damage", and the runbook excludes readers who prefer planted
+defects. If the planted defects were the reader-named ones, then excluding readers who miss the
+interiority strip would **manufacture agreement with the human reader on exactly the axis the batch
+exists to measure** — the batch would report that humans detect interiority loss because everyone who
+did not was discarded. So attention checks use gross damage (`sentence_deletion`,
+`connective_scramble` at full dose) where any attentive reader agrees, class B uses the subtle
+reader-named defects where the answer is unknown, and **no reader is ever excluded on a class-B
+judgment.** That rule is written before payment because it is the kind that gets relaxed when the
+numbers come in thin.
+
+**The declared frame is mid-list, deliberately.** Pre-LLM RoyalRoad LitRPG, one chapter per story,
+10,000+ views, excerpted to ~1,000 words — the same frame §79 builds, so the covariates are already
+recorded per pair. §61's fourth pre-registration says the frame *is* the claim, so what this batch
+can support is "beats mid-list tier-matched human LitRPG" and nothing wider. *Mother of Learning* is
+**excluded from the headline class** despite being the panel's most confident arm at 0.9844: it is
+famous, recognition exclusions are paid-for judgments thrown away, and §77.1 already records why that
+arm cannot carry a claim.
+
+**What the batch can and cannot detect, stated before it is bought.** At §61's sizing, ~176 decisive
+class-A judgments after an assumed 20% recognition-and-tie attrition sits inside the 100–150 band for
+a true rate of 0.60 and nowhere near the 400–500 for 0.55. **This batch can certify 0.60 and cannot
+certify 0.55.** A thin true margin yields a lower bound below 0.5, and the correct conclusion is then
+"not shown" rather than "nearly shown".
+
+**The em-dash row is why the batch is worth buying even so.** After §78 and §78.3 the machine column
+on that axis is *empty* — the original number was an artifact and the corrected arm is void with an
+interval containing 0.5. A human column there would not be an agreement measurement; it would be the
+first measurement of that axis by anything.

@@ -128,7 +128,7 @@ SEPARATOR_DOWNGRADING_ARMS = frozenset({
     "deplete_matched",
     "interiority_strip",
     # Added deliberately, and the only member whose downgrade is load-bearing rather than a defect:
-    # `interiority_deplete_matched` is `interiority_strip`'s control, and §79's primary comparison
+    # `interiority_deplete_matched` is `interiority_strip`'s control, and §81's primary comparison
     # puts the two against *each other*. Both must carry the same formatting, so the control has to
     # route through `_rebuild` exactly as the arm does. If `_join` is ever fixed, both leave this
     # set together and that comparison stays valid — the property to preserve when it happens.
@@ -162,7 +162,7 @@ def test_interiority_deplete_matched_matches_the_interiority_budget() -> None:
     Exact rather than approximate: `_interiority_plan` returns the budget and the fill closes the
     residual with the nearest remaining sentence, so the two arms differ by at most one sentence's
     rounding. Measured at 446 against 447 words over the ten drafted scenes. If this drifts, the
-    interiority arm has a length confound again and §79's primary comparison stops being one.
+    interiority arm has a length confound again and §81's primary comparison stops being one.
     """
     base = len(FIXTURE.split())
     arm = base - len(ablate.interiority_strip(FIXTURE, 1.0).split())
