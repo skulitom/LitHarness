@@ -3720,6 +3720,58 @@ that drops personas cannot be allowed to conflate "wouldn't answer", "answered i
 format" and "answered differently".** That is the transport's missing structured-output guarantee
 reaching a decision it should never touch, and it is the next thing to fix.
 
+
+**Addendum 3: the panel is a constant function, and the response variable is why.** Gate 0 re-run
+on the substrate the fixtures could not provide — ten drafted scenes of "The Toll Road", ~1,000
+words each, generated on the pinned provider and un-memorised by construction. 412 calls, 39
+minutes, $12.86 equivalent. The result needs no interval: **195 of 196 scored verdicts were
+`keep-reading`, one was `not-sure`, and not one was `would-stop`.** The six frontier spot checks
+returned `keep-reading` as well, so this is not the cheap tier being agreeable. Of the closed
+reason-code set, only the four positive codes were ever drawn — `stakes-real` 136, `voice-landed`
+37, `curious` 18, `pulled-forward` 5 — and none of the seven stop codes was used once.
+
+**Every kill condition came back undefined rather than passed, which is the honest reading.**
+`ms_between` and `ms_within` are both exactly 0.0, so `ICC(1)` is `nan` pooled and `nan` for all
+four personas; the caricature ratio is `inf` over two zero terms; every inter-persona pair is
+undefined. A statistic cannot decompose variance that does not exist. The one condition that
+*fires* is the positivity floor: §8 pre-registered "would-stop base rate ≈ 0 ⇒ dead as a stop
+predictor", and 0.000 over 196 draws across ten passages and two model tiers is that condition
+without ambiguity. **Gate 1 is unrunnable against this response variable** — a constant scalar
+gives `detect_auc` 0.5 by construction, and no manipulation, however severe, can move it.
+
+**What died is the absolute judgment, not the reader question — and this project already learned
+that distinction once.** §61's channel table records raw model judges dying to 43–65% positional
+artifacts, and the answer that programme reached for was not a better rating scale: it was
+blinded, position-swapped **pairwise** comparison, which is what §69 built and what
+`plan/preference-runbook.md` operates. §1a.5 words this project's own bar in revealed terms for
+the same reason. The persona panel was handed the audit queue's three-way vocabulary — designed
+for whole-unit judgment with an accumulated book behind it — and asked to apply it to a single
+mid-book scene in isolation. A reader four scenes into a book does not abandon it because one
+scene was ordinary. The question is real; the frame gave it no room to vary, and 196 draws is
+enough to say so.
+
+**The redirection the ledger's own history implies is to ask the panel to compare rather than to
+rate**, and it is cheaper than what it replaces: present the original and a manipulated variant
+blinded and position-swapped, ask which one the persona would rather keep reading, and the answer
+varies by construction. It inherits §69's machinery — per-reader positional consistency, the
+declared tie policy, the clustered bound — costs one call per comparison instead of a twenty-cell
+panel per variant, and needs no two-stage protocol, since a forced choice cannot plant a category
+the way an unprimed-then-forced sequence was built to avoid. It also lands exactly where §70's
+integration note already put the ceiling: a persona panel can never be a `JUDGMENT` row and can at
+most earn selection-between-candidates standing, so **the measurement should have been pairwise
+from the start, because pairwise standing is the only standing it could ever earn.**
+
+**Cost of learning this: about $16.70 across both gate-0 runs**, and the cheap death is the point —
+the instrument was killed by its own pre-registered condition before any human money was spent,
+which is what the gate ordering in §61 and the protocol's §4 exist to produce. Two implementation
+findings ride along, both recorded because they would bite the pairwise design too. The `claude -p`
+transport silently drops `max_tokens` — it has no such flag — so mean output ran to 1,928 tokens
+per call on long passages against a stage-1 cap of 350, which is a third of the spend and a signal
+that the persona was writing in essay register rather than reader register. And persona adherence
+does not track model size: `gemma3:4b` answers in first-person reader register where `phi4`,
+nearly three times its size, returns "This passage conveys a gritty, almost oppressive atmosphere"
+— the critic frame §1a.2 refuted. `elicit.probe_adherence` makes that a four-call precondition.
+
 ## 71. The book now owes things on the record, and a scene that changes nothing says so
 
 §61 Add 2 — the first instrumentation aimed at PLAN §1a.3's items 1 and 3, the ones

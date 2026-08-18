@@ -1,0 +1,206 @@
+{
+ "metric": "persona_panel.would_stop.v0",
+ "protocol": "plan/persona-reader-validity.md",
+ "entry": "plan/stage-0-decisions.md \u00a770",
+ "transport": "cli",
+ "panel_model": "claude-haiku-4-5",
+ "spot_model": "claude-opus-5",
+ "personas": [
+  "grinder",
+  "stakes",
+  "voice",
+  "newcomer"
+ ],
+ "n_samples": 5,
+ "passages": [
+  "gen:scene-1",
+  "gen:scene-2",
+  "gen:scene-3",
+  "gen:scene-4",
+  "gen:scene-5",
+  "gen:scene-6",
+  "gen:scene-7",
+  "gen:scene-8",
+  "gen:scene-9",
+  "gen:scene-10"
+ ],
+ "passage_source": "generated:book-db",
+ "variants_scored": 10,
+ "api_calls": 412,
+ "replayed_calls": 0,
+ "refused_samples": 4,
+ "usage": {
+  "input": 1127996,
+  "output": 794578,
+  "cache_read": 13673693,
+  "cache_write": 2443164,
+  "equivalent_usd": 12.8577
+ },
+ "minutes": 39.0,
+ "persona_fidelity_diagnostic": "not run (--fidelity)",
+ "gate0_icc_pooled": {
+  "icc1": NaN,
+  "groups": 10,
+  "k_mean": 19.6,
+  "ms_between": 0.0,
+  "ms_within": 0.0
+ },
+ "gate0_icc_per_persona": {
+  "grinder": {
+   "icc1": NaN,
+   "groups": 10,
+   "k_mean": 4.9,
+   "ms_between": 0.0,
+   "ms_within": 0.0
+  },
+  "stakes": {
+   "icc1": NaN,
+   "groups": 10,
+   "k_mean": 4.9,
+   "ms_between": 0.0,
+   "ms_within": 0.0
+  },
+  "voice": {
+   "icc1": NaN,
+   "groups": 10,
+   "k_mean": 4.9,
+   "ms_between": 0.0,
+   "ms_within": 0.0
+  },
+  "newcomer": {
+   "icc1": NaN,
+   "groups": 10,
+   "k_mean": 4.9,
+   "ms_between": 0.0,
+   "ms_within": 0.0
+  }
+ },
+ "gate1": {
+  "verdict": "NOT RUN \u2014 --gate0 scored the originals only, no ablation ladder"
+ },
+ "stake_coverage": {
+  "gen:scene-1": {
+   "sentences": 79,
+   "stake_sentences": 3,
+   "stake_sentence_share": 0.038,
+   "stake_word_share": 0.0263
+  },
+  "gen:scene-2": {
+   "sentences": 88,
+   "stake_sentences": 3,
+   "stake_sentence_share": 0.0341,
+   "stake_word_share": 0.0345
+  },
+  "gen:scene-3": {
+   "sentences": 69,
+   "stake_sentences": 6,
+   "stake_sentence_share": 0.087,
+   "stake_word_share": 0.1389
+  },
+  "gen:scene-4": {
+   "sentences": 79,
+   "stake_sentences": 3,
+   "stake_sentence_share": 0.038,
+   "stake_word_share": 0.0635
+  },
+  "gen:scene-5": {
+   "sentences": 94,
+   "stake_sentences": 5,
+   "stake_sentence_share": 0.0532,
+   "stake_word_share": 0.0577
+  },
+  "gen:scene-6": {
+   "sentences": 101,
+   "stake_sentences": 5,
+   "stake_sentence_share": 0.0495,
+   "stake_word_share": 0.045
+  },
+  "gen:scene-7": {
+   "sentences": 103,
+   "stake_sentences": 6,
+   "stake_sentence_share": 0.0583,
+   "stake_word_share": 0.1751
+  },
+  "gen:scene-8": {
+   "sentences": 83,
+   "stake_sentences": 5,
+   "stake_sentence_share": 0.0602,
+   "stake_word_share": 0.1055
+  },
+  "gen:scene-9": {
+   "sentences": 106,
+   "stake_sentences": 2,
+   "stake_sentence_share": 0.0189,
+   "stake_word_share": 0.071
+  },
+  "gen:scene-10": {
+   "sentences": 90,
+   "stake_sentences": 1,
+   "stake_sentence_share": 0.0111,
+   "stake_word_share": 0.0236
+  }
+ },
+ "destake_vs_matched_deletion": {
+  "available": false,
+  "note": "--gate0 ran no ablations"
+ },
+ "kill_conditions": {
+  "caricature": {
+   "persona_ss": 0.0,
+   "passage_ss": 0.0,
+   "ratio": Infinity
+  },
+  "collapse": {
+   "mean_rho": NaN,
+   "pairs": [
+    {
+     "a": "grinder",
+     "b": "newcomer",
+     "rho": null
+    },
+    {
+     "a": "grinder",
+     "b": "stakes",
+     "rho": null
+    },
+    {
+     "a": "grinder",
+     "b": "voice",
+     "rho": null
+    },
+    {
+     "a": "newcomer",
+     "b": "stakes",
+     "rho": null
+    },
+    {
+     "a": "newcomer",
+     "b": "voice",
+     "rho": null
+    },
+    {
+     "a": "stakes",
+     "b": "voice",
+     "rho": null
+    }
+   ],
+   "undefined_pairs": 6,
+   "undefined_note": "a pair is undefined when one persona's rate is constant across passages \u2014 read it with the positivity floor, not as missing data",
+   "null_p95": NaN,
+   "null_replicates": 0,
+   "null_discarded": 2000,
+   "note": "independent-persona null simulated at this run's passages x base rate"
+  },
+  "positivity_floor": {
+   "would_stop_base_rate": 0.0,
+   "scored_samples": 196,
+   "note": "a rate at or near 0 on passages a human majority stops on is dead as a stop predictor; the human majority is gate 2's to supply"
+  },
+  "reason_code_counts": {
+   "stakes-real": 136,
+   "voice-landed": 37,
+   "curious": 18,
+   "pulled-forward": 5
+  }
+ }
+}
