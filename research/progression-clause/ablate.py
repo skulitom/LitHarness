@@ -79,7 +79,6 @@ from litharness.domain.extraction import (  # noqa: E402
 from litharness.domain.generation import PROFILES, Sampler  # noqa: E402
 from litharness.domain.plans import scene_plan_for  # noqa: E402
 from litharness.providers.base import CompletionRequest  # noqa: E402
-from litharness.providers.ollama import OllamaProvider  # noqa: E402
 
 # --- the book under measurement ----------------------------------------------------------
 
@@ -419,7 +418,14 @@ def make_provider(name: str, model: str) -> tuple[Any, bool]:
     question needs.
     """
     if name == "ollama":
-        return OllamaProvider(model=model), True
+        # §64 cut provider plurality and deleted `providers/ollama.py`; this arm has had no
+        # implementation since c99dd47. Refusing by name beats a dangling import, which is what
+        # was here and what broke CI: `litharness.providers.ollama` no longer resolves, so ruff
+        # reclassified it as third-party and the isort rule failed on every platform.
+        raise SystemExit(
+            "the ollama arm was removed with the provider (§64); re-run with "
+            "--provider claude_code, or restore a local provider first"
+        )
     if name == "claude_code":
         from litharness.providers.cli import ClaudeCodeProvider
 

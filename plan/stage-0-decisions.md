@@ -3825,6 +3825,42 @@ through the extractor at every read site, because stripping at write time cannot
 already written, and the record kept the raw text throughout — which is the only reason this was
 recoverable at zero cost.
 
+**And the pattern across arms says what the panel is actually reading: local coherence.** Length
+was the first suspect and it does not carry the result — Spearman between absolute word-count
+change and damage detected is +0.321 over nine arms, which at that n is nothing. The informative
+comparison is between arms that change no length at all:
+
+    arm                   length      detected
+    sentence_deletion     -52.9%      -0.5000
+    connective_scramble     0.0%      -0.4714
+    sentence_shuffle        0.0%      -0.3750
+    paragraph_shuffle       0.0%      -0.3554
+    dialogue_flatten        0.0%      -0.2045
+    transplant              0.0%      -0.0125
+
+Four transformations that touch not one word of length, spread from -0.47 to -0.01. What
+separates them is **whether the damage is local**. Connective inversion wrecks argument structure
+a clause at a time; the shuffles make the text locally incoherent; deletion leaves holes.
+`transplant` grafts a length-matched run from a *different story* — and the graft itself reads
+perfectly well, it simply does not belong. The panel is near-blind to it.
+
+**That single contrast explains the de-stake failure too.** De-stake removes whole sentences
+selected for meaning and leaves the remainder locally smooth; `deplete_matched` removes the same
+word count at random, which is far likelier to strand a pronoun or sever a clause from its
+referent. Matched deletion hurt more because it broke more *local* coherence, not because it
+removed more that mattered. The primary comparison ran backwards for a reason, and the reason is
+that the instrument is not reading at the scale the hypothesis is about.
+
+**This is feasibility.md §4.3's distance decay arriving through a different door.** That study
+measured an interventional effect on a model-based readout falling to nothing by 512 tokens; a
+panel that catches a scrambled connective and misses a foreign story is the same locality, stated
+in reader vocabulary instead of log-probabilities. It also yields a falsifiable prediction for the
+next run, recorded before it: a manipulation that damages global structure while preserving local
+coherence — swapping whole scenes between books, reordering a chapter's scenes — should come back
+near-null like `transplant`, and one that damages local coherence while preserving meaning should
+come back strong. If that fails, this reading is wrong and the transplant null needs another
+explanation.
+
 **Standing after three runs: the absolute form is dead, the pairwise form is not yet a reader.**
 It discriminates, which the absolute form never did; it discriminates largely on edited-ness; and
 the arm that would have made it reader-specific ran backwards. Nothing here licenses a row, and
