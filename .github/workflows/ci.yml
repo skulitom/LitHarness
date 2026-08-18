@@ -24,6 +24,11 @@ jobs:
         python-version: ["3.11", "3.13"]
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # Full history, for `corpus_leak_audit.py` below. On the default shallow clone the
+          # audit would see one commit, find nothing and pass — a check that cannot fail, which
+          # is the shape of every proxy this project has had to refute.
+          fetch-depth: 0
       - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: ${{ matrix.python-version }}
@@ -34,5 +39,12 @@ jobs:
       - run: uv run ruff check .
       - run: uv run mypy
       - run: uv run pytest --cov=litharness
+      # This repository is public and its measurements run over corpora it does not own —
+      # Mother of Learning, ~68,000 RoyalRoad chapters. A results file that recorded a passage
+      # instead of a passage id would put someone else's novel into a public history, where
+      # deleting it afterwards does not remove it. The audit reads every blob any commit ever
+      # pointed at, so it catches a leak that was committed and then deleted.
+      - run: uv run python research/quality-measurement/corpus_leak_audit.py
+        if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.13'
       - run: uv build --wheel
         if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.13'
