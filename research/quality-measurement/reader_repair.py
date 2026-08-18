@@ -90,13 +90,41 @@ PRE_REGISTRATION: dict[str, str] = {
 }
 
 
-def verdict(rates: dict[str, float], bias: dict[str, object]) -> dict[str, object]:
-    """The pre-registered branches, read in order. The precondition is read first, always."""
-    chose_a = bias.get("chose_A_rate")
-    if not isinstance(chose_a, float) or not 0.40 <= chose_a <= 0.60:
+def verdict(
+    rates: dict[str, float],
+    bias: dict[str, object],
+    per_arm_bias: dict[str, dict[str, object]] | None = None,
+) -> dict[str, object]:
+    """The pre-registered branches, read in order. The precondition is read first, always.
+
+    **The bias precondition is per-arm, and that is a correction made after the first run.** The
+    pre-registration said "positional bias within 0.40-0.60" and the first implementation read it
+    on the pooled comparisons, which is what §70's battery does. Pooling was wrong here and the
+    first run showed why: the three arms differ enormously in how discriminable their pair is, so
+    they carry wildly different bias — 0.486 on the strip, 0.857 on the inject, and 0.938 on a
+    sham whose 79% tie rate leaves 16 decided comparisons to compute it from. The pooled 0.706
+    voided a run in which the arm of interest was clean.
+
+    **This change is post-hoc and it is recorded as post-hoc**, because that is the only thing
+    that makes it readable. What licenses it is the direction: reading the precondition per arm
+    *un-voids a result that goes against the instrument*, promoting an arm to a strong OPPOSES
+    rather than rescuing a favourable number. A post-hoc rule that costs the panel its excuse is
+    a different object from one that buys it a pass, and this ladder still refuses to call the
+    result confirmed — `reader_repair` re-runs with the per-arm rule pre-registered, and the
+    confirmation is that run rather than this reasoning.
+    """
+    per_arm_bias = per_arm_bias or {}
+
+    def clean(arm: str) -> bool:
+        value = per_arm_bias.get(arm, {}).get("chose_A_rate")
+        return isinstance(value, float) and 0.40 <= value <= 0.60
+
+    readable = [arm for arm, _, _ in ARMS if clean(arm)]
+    if not readable:
         return {
             "verdict": "VOID",
-            "why": f"positional bias {chose_a} outside 0.40-0.60; the panel answered a side",
+            "why": "no arm cleared the per-arm positional-bias precondition",
+            "per_arm_bias": {a: per_arm_bias.get(a, {}).get("chose_A_rate") for a, _, _ in ARMS},
             "conditions": PRE_REGISTRATION,
         }
 
@@ -113,6 +141,14 @@ def verdict(rates: dict[str, float], bias: dict[str, object]) -> dict[str, objec
             "conditions": PRE_REGISTRATION,
         }
 
+    if "em_dash_strip" not in readable:
+        return {
+            "verdict": "VOID",
+            "why": "the strip arm failed its own positional-bias precondition",
+            "readable_arms": readable,
+            "conditions": PRE_REGISTRATION,
+        }
+
     if strip >= 0.60 and inject <= 0.40:
         outcome, why = "AGREES", "the panel shares the human's taste on the mark"
     elif strip <= 0.40 or inject >= 0.60:
@@ -121,7 +157,13 @@ def verdict(rates: dict[str, float], bias: dict[str, object]) -> dict[str, objec
         outcome, why = "BLIND", "the panel cannot see the defect a human found in one read"
     else:
         outcome, why = "SPLIT", "the two arms disagree; neither branch is supported"
-    return {"verdict": outcome, "why": why, "conditions": PRE_REGISTRATION}
+    return {
+        "verdict": outcome,
+        "why": why,
+        "readable_arms": readable,
+        "voided_arms": [arm for arm, _, _ in ARMS if arm not in readable],
+        "conditions": PRE_REGISTRATION,
+    }
 
 
 def run(args: argparse.Namespace) -> dict[str, Any]:
@@ -199,7 +241,11 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
         }
         report["refused"] = sum(1 for c in every if c.refused)
         report["comparisons"] = len(every)
-        report["ladder"] = verdict(rates, report["positional_bias"])
+        report["per_arm_bias"] = {
+            key: positional_bias([c for c in every if c.pair_id.endswith(f"|{key}")])
+            for key, _, _ in ARMS
+        }
+        report["ladder"] = verdict(rates, report["positional_bias"], report["per_arm_bias"])
         report["spend"] = elicitor.spend()
         report["api_calls"] = elicitor.api_calls
         report["replayed"] = elicitor.replayed
