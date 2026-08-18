@@ -1115,6 +1115,64 @@ def adherence_flags(text: str) -> list[str]:
     return flags
 
 
+def probe_discrimination(
+    original: str, variant: str, *, transport: str, model: str,
+    personas: tuple[Persona, ...] = PANEL, cache: Path | None = None,
+) -> dict[str, Any]:
+    """Can this model *decide* between two texts at all? The precondition `probe_adherence` misses.
+
+    **Register and discrimination are different capabilities, and checking only the first cost a
+    105-minute run.** `gemma3:4b` passes the adherence probe beautifully — it answers in
+    first-person reader register, four personas visibly differentiating. Put the same model behind
+    a closed-enum schema and it collapses: 97.7% `neither` across 904 comparisons, uniform over all
+    four personas (1.3%-3.5% decided), with one reason code taking 78% of the answers. A near
+    constant, which is the same failure the absolute verdict died of, at a different constant.
+
+    So this probes the other half: hand the panel the **strongest** manipulation available and
+    check it decides. `transplant` at full dose grafts a length-matched run from another story —
+    if a reader cannot separate a scene from a foreign graft, it will not separate a de-stake, and
+    every subtler arm in the schedule is below its resolution. That makes the strongest arm a
+    resolution *floor* rather than another measurement, and eight calls establish it.
+
+    Returns the decided rate and the choice distribution. There is no threshold here: a floor is
+    read, not passed, and what counts as usable depends on how much of the schedule sits below it.
+    """
+    rows: list[dict[str, Any]] = []
+    with Elicitor(
+        cache or (HERE / "results" / "persona-discrimination.jsonl"),
+        transport=transport, model=model, spot_model=None,
+    ) as elicitor:
+        for persona in personas:
+            for orientation in (0, 1):
+                comparison = elicitor._compare(
+                    persona, "__discrimination__", original, variant,
+                    orientation=orientation, sample=0, model=model, effort=None,
+                )
+                rows.append({
+                    "persona": persona.persona_id,
+                    "orientation": orientation,
+                    "choice": comparison.choice,
+                    "reason_code": comparison.reason_code,
+                })
+    decided = [r for r in rows if r["choice"] in ("A", "B")]
+    counts: dict[str, int] = {}
+    for row in rows:
+        key = str(row["choice"])
+        counts[key] = counts.get(key, 0) + 1
+    return {
+        "model": model,
+        "comparisons": len(rows),
+        "decided": len(decided),
+        "decided_rate": round(len(decided) / len(rows), 4) if rows else 0.0,
+        "choices": counts,
+        "rows": rows,
+        "reading": (
+            "the strongest manipulation is a resolution floor: a panel that ties on a foreign "
+            "graft cannot separate anything subtler, and every arm below it is unmeasurable"
+        ),
+    }
+
+
 def probe_adherence(
     passage: str, *, transport: str, model: str, personas: tuple[Persona, ...] = PANEL,
     cache: Path | None = None,
