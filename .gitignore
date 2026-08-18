@@ -19,3 +19,12 @@ htmlcov/
 
 # LaTeX build output for research/*.tex — a build product, like dist/ and exports/.
 output/
+
+# Third-party prose staged for measurement, never redistributed. `human-excerpts.json` holds
+# ~294k words of Mother of Learning and RoyalRoad chapters and this repository is public;
+# it is a build product of `taste_calibration.py --dump` over corpora that live on the machine,
+# and it regenerates in one command. The *results* files carry only ids and verdicts.
+research/quality-measurement/corpora/human-excerpts.json
+
+# Run logs. The JSON and JSONL beside them are the artifacts.
+research/quality-measurement/results/*.log
