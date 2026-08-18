@@ -4617,3 +4617,53 @@ they are the next experiment, and the pair of them is what the separation needs 
 punctuation edit touching no dash bounds edited-ness, and a period-strip run over the *same* dash
 positions as a comma-strip separates the mark from its replacement, with the token delta held
 equal because both substitutions remove the spaced dash's own token.
+
+### 78.3 The corrected arm is void, and the em-dash question is open rather than answered
+
+Run against the pre-registration in §78.2, 72 new elicitations with 160 replayed from the existing
+cache, 5 refusals, $2.65 of new spend. `results/reader-repair-fixed.json`.
+
+    arm              buggy    corrected   per-arm bias (was)   interval
+    em_dash_strip   0.0417       0.3641   0.6032 (0.4857)      [0.2273, 0.5139]
+    em_dash_inject  0.3527       0.3527   0.8571 (unchanged)   replayed, structurally sound
+    rewhitespace    0.4375       0.4375   0.9375 (unchanged)   replayed, structurally sound
+
+**Roughly 70% of the effect was the reformatting.** The arm's distance from indifference falls from
+0.4583 to 0.1359. What is left leans the same way — the panel still picked the em-dashed original in
+about 64% of comparisons rather than 96% — and **none of it is readable**, for two independent
+reasons that both have to be reported because either alone would be enough:
+
+1. **The arm is VOID on the precondition §78.2 pre-registered.** Its positional bias is **0.6032**,
+   outside the declared 0.40–0.60 band. It misses by 0.0032, which is precisely the kind of margin
+   that invites a second look at the rule, and the rule was fixed in advance for that reason. §74's
+   per-arm precondition was itself adopted mid-run and recorded as post-hoc; §78.2 declared it
+   before this run so that this sentence could not be an argument. It is not one.
+2. **The interval spans indifference.** `[0.2273, 0.5139]` over 9 passages and 4 personas contains
+   0.5, so even a bias-clean arm at this n could not have licensed a branch. The 72-comparison
+   design was sized for an effect of the magnitude the artifact was producing.
+
+**So the pre-registered branch that fires is none of them, and the discriminating control does not
+run.** §78.2 made commit 56ca535's control — a matched-count punctuation edit touching no em dash,
+plus a period-strip over the same dash positions — conditional on OPPOSES, on the reasoning that
+separating three readings of a preference is only worth paying for once a preference is established.
+VOID is not OPPOSES. Running the control now would be spending on the discrimination of a number
+that has no interval. It stays built-but-unrun by design, and §78.2 is the record that this was
+decided before the number arrived rather than after.
+
+**The bias moved 0.12 when only the variant text changed, which settles a §74 side claim.** Same
+panel, same model, same personas, same originals, same 72 cells: the only difference between 0.4857
+and 0.6032 is that the compared text is no longer flattened. §74 concluded that positional bias is a
+property of the pair rather than of the panel, on the weaker evidence of three arms differing from
+each other. This is the same claim measured within one arm, and it is the strongest form of it the
+project has: **a bias figure cannot be inherited across a change to the texts, let alone across
+experiments.**
+
+**What the em dash now is: an open question with a named cost to close.** The human named the tell,
+the count is real (61 dashes, 5.9 per 1k words, §74), and no instrument here has an opinion about it
+that survives its own preconditions. Closing it needs draws per cell above one — `compare_pair`'s
+`n` multiplies the two orientations rather than replacing them — which tightens the bias estimate
+and the interval together. At three draws per cell that is 216 new elicitations, about $8. **This is
+a power increase adopted because a precondition failed, and its direction is worth stating: the
+surviving point estimate is unfavourable to the panel, so tightening it cannot buy the panel a
+pass.** That is the same test §74 applied to its own post-hoc rule change, and it is the reason this
+remedy is legitimate where re-reading the band would not be.
