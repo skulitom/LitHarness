@@ -4055,3 +4055,79 @@ a gap of exactly zero. The synthetic answer also opens exactly one promise every
 which fires the positivity guard on `n_promises_opened` and demonstrates the guard on
 data whose behaviour is known. A pipeline whose statistics have never executed is a
 pipeline whose first real run is also its first integration test; this one has run.
+
+## 74. A human read the book, and the instrument cannot see anything he found
+
+The first human read of a fully generated book happened on 2026-08-18, on `The Toll Road` —
+ten drafted scenes, 10,049 words, the same corpus every reader measurement in §70 ran on.
+Three defects were named. All three measured true, one was worse than stated, and measuring
+them turned up a fourth that nobody had looked for.
+
+| named | measured |
+| --- | --- |
+| stats are monotone; a standard `HP ?` is meaningless | all ten `[STATUS]` lines read `Level 2 \| HP x/22 \| MP ?/? \| Gold ?`. Level never moves. MP and Gold are literally `?` — 20 unresolved values. Nine of twelve slots carry no information. |
+| first-person experience is rare; it reads as examining a human rather than being one | 82 body-part nouns against 18 interiority verbs, a **4.56:1** ratio. 26 uses of "hand". |
+| AI tells remain, especially em dashes | **61 em dashes**, 5.9 per 1k words, 6.1 per scene. Other tells are near-absent: zero "not X but Y", zero sentence-initial "But". The em dash carries the signature almost alone. |
+| *(not named — found while checking)* | HP gains **+4 in scene 5 and +2 in scene 8** with no healing language anywhere in either scene. The one stat that moves is also wrong, and `state.contradiction.v0` ships to catch that class. |
+
+**The sharper version of the stats complaint is the one worth keeping.** The book prices its
+tolls in *days off a man's remaining life* — 7, 9, 5 and 6 days charged across ten scenes. That
+is the stat with unusual purchase on this world, it already exists in the prose, and the
+`[STATUS]` block tracks generic HP/MP/Gold beside it and never once shows the debt or the days
+left. The interesting number was invented by the premise and ignored by the system voice.
+
+**The finding that reframes the programme: not one of these is visible to the instrument, and
+the reason is structural rather than a matter of tuning.** Every arm in `ablate.ALL`
+manufactures damage by spoiling something good, and `evaluate` validates a panel on telling the
+spoiled copy from the original. All three named defects are present in **both** copies. They are
+not a degradation of the baseline; they *are* the baseline. A panel that cleared §70's detection
+rung at 0.906 has therefore never been asked to find a defect a human actually found, and one
+read produced more diagnostic information than three paid runs did.
+
+**`ablate.READER_DEFECT_SET` closes the manufacturing gap** — `em_dash_inject`,
+`interiority_strip` (with `deplete_matched` as its matched-deletion control, exactly as
+`destake` has), and `stat_flatten`, which is expected to read as a near-null here *for a reason
+that is itself the finding*: the book's stats are already flat, so there is nothing left to
+flatten. The set is kept out of `ALL` and out of `PERSONA_SET` for the reason
+`PERSONA_DEGRADERS` gives — widening a set that recorded batteries pooled over would make a
+re-run incomparable with the published summary.
+
+**The repair direction is deliberately not an `Ablation`.** `em_dash_strip` is a plain function
+kept out of every registry. The `Ablation` contract says `sign` is -1 or 0 with no +1, on
+§1a.2's measured finding that models asked to improve prose make it worse, and that prohibition
+is right: this function makes no claim about quality. It applies one mechanical substitution in
+the direction a named human said they wanted, and whether the panel agrees is the question
+rather than the assumption. Keeping it out of the registries is load-bearing rather than tidy —
+`evaluate` multiplies every per-arm delta by the metric's expected `direction`, so an arm whose
+expected direction is opposite would report `hit_rate` and `dose_rho` backwards while looking
+like any other row.
+
+**A confound was caught before the run and is recorded because it nearly wasn't.** The first
+strip turned `**TOLL PAID — 9 days**` into `**TOLL PAID, 9 days**` and `[STATUS] wren — Level 2`
+into `[STATUS] wren, Level 2`. A panel preferring the original would then have been telling us
+it liked em dashes *or* that it liked unmangled stat blocks, with no way to separate them.
+`ablate._PROTECTED` excludes bolded system-voice headers and `[STATUS]` lines from both em-dash
+arms. After the fix: **35 prose em dashes replaced, 24 structural ones untouched**, mean word
+change -0.30%, one possible comma splice across 10,000 words.
+
+**Pre-registered, and two-sided on purpose.** `research/quality-measurement/reader_repair.py`
+runs three arms over the same ten scenes at one comparison per persona per orientation — the
+strip, the inject, and `rewhitespace` as the sham floor. The precondition is read first as
+always: positional bias outside 0.40–0.60 voids the run, which is what both `gemma3:4b` runs
+earned. Then the sham floor: if `rewhitespace` moves as far from indifference as the strip does,
+the preference is edited-ness and not the mark — a live risk, because §70's pairwise sham sits
+at 0.783 and both arms here are small edits to the same prose.
+
+| branch | condition | what it would mean |
+| --- | --- | --- |
+| AGREES | strip ≥ 0.60 and inject ≤ 0.40 | the panel shares the human's taste, and a reader model inside the writing loop would push against the tell |
+| OPPOSES | strip ≤ 0.40 or inject ≥ 0.60 | the panel has the machine's taste, and a reader in the loop selects **for** the tell |
+| BLIND | both arms inside 0.40–0.60, sham cleared | the panel cannot see a defect a human found in one read |
+
+**OPPOSES is the branch §5a predicts, and it is written down here before the run so that it
+cannot be reported afterwards as a surprise.** The panel is measured sharp on local coherence
+and near-blind to global belonging; an em dash is the maximally locally-smooth punctuation,
+welding any two clauses without requiring the sentence to earn the join. If that reading is
+right, the panel should prefer the em-dashed text. That is also the direct answer to the
+question this entry exists under — *should the writer simulate a reader while writing?* — which
+is: yes, but not this reader, because this one would optimise the defect.

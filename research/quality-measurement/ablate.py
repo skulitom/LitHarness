@@ -743,3 +743,244 @@ if __name__ == "__main__":
             else ("orig" if key == "original" else f"i{item}")
         )
         print(f"{key:<22} {dose:>5.2f} {words_of(damaged):>7} {delta:>+7} {changed:>8}  {tag}")
+
+
+# ---------------------------------------------- reader-named defects (human read, 2026-08-18)
+#
+# The first human read of a fully generated book named three defects, and measurement confirmed
+# all three: 61 em dashes (5.9 per 1k words), a body-part-to-interiority-verb ratio of 4.56:1,
+# and ten `[STATUS]` lines that never move off `Level 2 | HP x/22 | MP ?/? | Gold ?`.
+#
+# **None of them is a degradation of the text — they are the text.** Every arm above manufactures
+# damage by spoiling something good, and the battery validates a panel on telling the spoiled copy
+# from the original. A defect present in *both* copies is invisible to that design no matter how
+# well the panel scores. These arms exist so the three named defects can at least be manufactured,
+# which is the precondition for asking whether any instrument here can see them.
+#
+# The dual — a transform that *removes* a named defect — is deliberately not an `Ablation`. See
+# `em_dash_strip`.
+
+#: The mark itself. Named rather than inlined because the ASCII source of this file is easier to
+#: read than a bare glyph, and because the strip and inject arms have to agree exactly.
+_EM = "—"
+
+#: Spans where an em dash is structure rather than punctuation: bolded system-voice headers
+#: (`**FERROUS GATE — POSTED TOLL**`) and `[STATUS]` lines. Both em-dash arms skip these, and
+#: that exclusion is not fastidiousness — it was measured. Without it, stripping turned
+#: `**TOLL PAID — 9 days**` into `**TOLL PAID, 9 days**` and `[STATUS] wren — Level 2` into
+#: `[STATUS] wren, Level 2`, so a panel preferring the original would have been telling us it
+#: liked em dashes *or* that it liked unmangled stat blocks, with no way to separate the two.
+#: The human named a prose tell; these lines are not prose.
+_PROTECTED = re.compile(r"\*\*[^*\n]*\*\*|^.*\[STATUS\].*$", re.MULTILINE)
+
+
+def _protected_spans(text: str) -> list[tuple[int, int]]:
+    return [(match.start(), match.end()) for match in _PROTECTED.finditer(text)]
+
+
+def _is_protected(position: int, spans: list[tuple[int, int]]) -> bool:
+    return any(start <= position < end for start, end in spans)
+
+
+#: Verbs that report an inner state rather than an observable one. Same list the read-defect
+#: measurement used, so the arm removes exactly what was counted.
+_INTERIOR = re.compile(
+    r"\b(?:thought|realised|realized|wondered|remembered|felt|knew|hoped|feared|wanted|"
+    r"decided|understood|noticed|hated|loved|regretted)\b",
+    re.IGNORECASE,
+)
+
+
+def em_dash_inject(text: str, strength: float) -> str:
+    """Replace a fraction of comma joins with spaced em dashes. The named tell, manufactured.
+
+    Word-count-changing by exactly one token per replacement, which is why `preserves_length` is
+    False on its `Ablation` — a spaced em dash is its own `split()` token and an unspaced one
+    welds two tokens into one, so there is no substitution that leaves the count alone. On a
+    ~1,000-word scene at full dose this is well under one percent, and the arm reports its own
+    delta rather than asking anyone to assume that.
+
+    Only comma joins are targeted. Replacing a period would change sentence count, which is a
+    different manipulation wearing this one's name.
+    """
+    if strength <= 0 or ", " not in text:
+        return text
+    spans = _protected_spans(text)
+    spots = [
+        match.start() for match in re.finditer(r", ", text)
+        if not _is_protected(match.start(), spans)
+    ]
+    if not spots:
+        return text
+    rng = _rng(text, "emdash-in")
+    count = max(1, round(strength * len(spots)))
+    chosen = set(rng.sample(spots, min(count, len(spots))))
+    out = []
+    index = 0
+    while index < len(text):
+        if index in chosen and text.startswith(", ", index):
+            out.append(f" {_EM} ")
+            index += 2
+        else:
+            out.append(text[index])
+            index += 1
+    return "".join(out)
+
+
+def em_dash_strip(text: str, strength: float) -> str:
+    """Replace em dashes with the comma they are standing in for. **Not an `Ablation`.**
+
+    This is the dual of `em_dash_inject` and it is deliberately kept out of every registry in
+    this module, because the `Ablation` contract says `sign` is -1 for a degrader and 0 for a
+    sham with *no* +1 — nothing here claims to improve prose, on §1a.2's measured finding that
+    models asked to improve prose make it worse. That prohibition is right and this function does
+    not challenge it: it makes no claim about quality at all. It applies one mechanical
+    substitution in the direction a named human said they wanted, and whether a panel agrees with
+    that human is the question, not the assumption.
+
+    Keeping it out of the registries is load-bearing rather than tidy. `evaluate.evaluate`
+    partitions arms into degraders and shams by `sign` and multiplies every per-arm delta by the
+    metric's expected `direction`; an arm whose expected direction is the opposite would report
+    `hit_rate` and `dose_rho` backwards while looking exactly like every other row. So the repair
+    direction is read through an explicit pairwise comparison where the orientation is written
+    down, and never through machinery that assumes damage.
+
+    A spaced em dash is doing a comma's work with more emphasis, so a comma is grammatical
+    wherever it sat — except where the dash joined two independent clauses, which yields a comma
+    splice. `em_dash_report` counts those rather than this docstring waving them away.
+    """
+    if strength <= 0 or _EM not in text:
+        return text
+    spans = _protected_spans(text)
+    spots = [
+        match.start() for match in re.finditer(rf"\s*{_EM}\s*", text)
+        if not _is_protected(match.start(), spans)
+    ]
+    if not spots:
+        return text
+    rng = _rng(text, "emdash-out")
+    count = max(1, round(strength * len(spots)))
+    chosen = set(rng.sample(spots, min(count, len(spots))))
+    out: list[str] = []
+    last = 0
+    for match in re.finditer(rf"\s*{_EM}\s*", text):
+        if match.start() not in chosen:
+            continue
+        out.append(text[last : match.start()])
+        # A dash that already follows punctuation needs no comma of its own, and a dash that ends
+        # a line is a cut-off rather than a join — neither takes the substitution.
+        preceding = text[: match.start()].rstrip()
+        out.append(" " if preceding.endswith((",", ";", ":", ".", "!", "?")) else ", ")
+        last = match.end()
+    out.append(text[last:])
+    return re.sub(r"\s+", " ", "".join(out)).replace(" ,", ",").strip()
+
+
+def em_dash_report(original: str, stripped: str) -> dict[str, float]:
+    """What the substitution actually did, including the grammar it may have broken.
+
+    Reported beside any result that uses `em_dash_strip`, because "the panel preferred the
+    repaired text" and "the panel preferred the text with fewer comma splices in it" are
+    different findings and only one of them is about em dashes.
+    """
+    splices = len(re.findall(r",\s+(?:he|she|they|it|the|there|that)\s+\w+ed\b", stripped))
+    before = len(re.findall(_EM, original))
+    return {
+        "em_dashes_before": before,
+        "em_dashes_after": len(re.findall(_EM, stripped)),
+        "words_before": len(original.split()),
+        "words_after": len(stripped.split()),
+        "word_delta_pct": round(
+            100.0 * (len(stripped.split()) - len(original.split())) / max(len(original.split()), 1),
+            3,
+        ),
+        "possible_comma_splices": splices,
+    }
+
+
+def _interiority_plan(text: str, strength: float) -> tuple[set[tuple[int, int]], int]:
+    """Which sentences report an inner state, and how many words removing them costs.
+
+    Factored out for the same reason `_stake_plan` is: `deplete_matched` can then match this
+    arm's word count exactly, so "the panel noticed the interiority went" is separable from
+    "the panel noticed text went".
+    """
+    if strength <= 0:
+        return set(), 0
+    pieces = _sentences(text)
+    inner = [
+        (block_index, sentence_index, len(_INTERIOR.findall(sentence)), len(sentence.split()))
+        for block_index, sentences in enumerate(pieces)
+        for sentence_index, sentence in enumerate(sentences)
+        if _INTERIOR.search(sentence)
+    ]
+    if not inner:
+        return set(), 0
+    budget = strength * sum(entry[3] for entry in inner)
+    rng = _rng(text, "interior")
+    inner.sort(key=lambda entry: (-entry[2], rng.random()))
+    drop: set[tuple[int, int]] = set()
+    removed = 0
+    for block_index, sentence_index, _hits, words in inner:
+        if removed >= budget:
+            break
+        drop.add((block_index, sentence_index))
+        removed += words
+    return drop, removed
+
+
+def interiority_strip(text: str, strength: float) -> str:
+    """Delete the sentences that report what a character thought, knew, or felt.
+
+    The second named defect, manufactured: prose that describes a body instead of inhabiting a
+    mind. Its control is `deplete_matched`, exactly as `destake`'s is — read the two rows against
+    each other, because a panel that responds to this as hard as to matched deletion has
+    responded to deletion.
+
+    Aimed at the same measurement that found the defect: 82 body-part nouns against 18
+    interiority verbs in the drafted book, a 4.56:1 ratio. At full dose this arm drives that
+    ratio to infinity, which is the extreme the real text is already most of the way toward.
+    """
+    drop, _removed = _interiority_plan(text, strength)
+    if not drop:
+        return text
+    return _rebuild(_sentences(text), drop)
+
+
+def stat_flatten(text: str, strength: float) -> str:
+    """Blank the varying values in system-voice stat blocks. Near-null on the book that named it.
+
+    Kept, and kept honest about being nearly a no-op here: the drafted book's stat lines are
+    *already* flat — `Level 2 | HP x/22 | MP ?/? | Gold ?` in all ten, with only HP moving — so
+    this arm has almost nothing left to flatten. It manufactures the defect in text that does not
+    already have it, which is what makes it usable against published LitRPG, and against this
+    book it is expected to read as a near-null for a reason that is a finding rather than a bug.
+    """
+    if strength <= 0:
+        return text
+    rng = _rng(text, "statflat")
+    def blank(match: re.Match[str]) -> str:
+        return match.group(0) if rng.random() > strength else f"{match.group(1)} ?"
+    return re.sub(r"\b(HP|MP|Gold|Level|XP|Stamina)\s+[\d/?]+", blank, text)
+
+
+#: The reader-named arms, kept out of `ALL` and out of `PERSONA_SET` for the reason
+#: `PERSONA_DEGRADERS` gives: widening a set that recorded batteries pooled over would make a
+#: re-run incomparable with the summary already published. Callers who want these pass
+#: `ablations=READER_DEFECT_SET`.
+READER_DEFECT_DEGRADERS = (
+    Ablation("em_dash_inject", None, -1, False, em_dash_inject,
+             "the named surface tell, manufactured; one token per replacement"),
+    Ablation("interiority_strip", None, -1, False, interiority_strip,
+             "removes the sentences that report an inner state; deplete_matched is its control"),
+    Ablation("stat_flatten", None, -1, True, stat_flatten,
+             "blanks varying stat values; near-null on a book whose stats are already flat"),
+)
+
+#: The reader-defect battery: the three new degraders, the matched-deletion control that makes
+#: `interiority_strip` a claim about interiority, and the layout sham that bounds every arm.
+READER_DEFECT_SET = (
+    *READER_DEFECT_DEGRADERS,
+    BY_KEY["deplete_matched"],
+    BY_KEY["rewhitespace"],
+)
