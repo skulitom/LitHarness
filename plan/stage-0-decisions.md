@@ -4096,6 +4096,16 @@ pipeline whose first real run is also its first integration test; this one has r
 
 ## 74. A human read the book, and the instrument cannot see anything he found
 
+> **Partly retracted by §78, on the same day.** `ablate.em_dash_strip` collapsed every blank line
+> in the passage it edited, so the `em_dash_strip` arm compared a paragraphed text against an
+> unparagraphed one and its win rate is an artifact. **Every `em_dash_strip` number in this entry
+> and in Addendum 1 is withdrawn, and with them the `OPPOSES` verdict and the reading that a
+> reader model in the loop would select *for* the em dash.** The human read itself, all four
+> measured defects, `_PROTECTED`, `em_dash_inject`, `rewhitespace` and the structural finding that
+> reader-named defects sit in *both* copies of an ablation pair are unaffected. §78 carries the
+> proof, the fix and the pre-registration for the corrected run; the struck passages below stay
+> visible because the decision log is append-only.
+
 The first human read of a fully generated book happened on 2026-08-18, on `The Toll Road` —
 ten drafted scenes, 10,049 words, the same corpus every reader measurement in §70 ran on.
 Three defects were named. All three measured true, one was worse than stated, and measuring
@@ -4166,30 +4176,48 @@ at 0.783 and both arms here are small edits to the same prose.
 cannot be reported afterwards as a surprise.** The panel is measured sharp on local coherence
 and near-blind to global belonging; an em dash is the maximally locally-smooth punctuation,
 welding any two clauses without requiring the sentence to earn the join. If that reading is
-right, the panel should prefer the em-dashed text. That is also the direct answer to the
+right, the panel should prefer the em-dashed text. ~~That is also the direct answer to the
 question this entry exists under — *should the writer simulate a reader while writing?* — which
-is: yes, but not this reader, because this one would optimise the defect.
+is: yes, but not this reader, because this one would optimise the defect.~~ **Struck by §78: the
+arm that appeared to confirm this prediction was measuring paragraph loss, so the prediction is
+untested rather than confirmed.** The local-scale reading of §5a still predicts OPPOSES and §78.2
+pre-registers the branch that would license it; what is withdrawn is the claim that it happened.
 
 **Addendum 1: the tier check rules out a capability floor, and its gradient argues against the
 reading it was meant to confirm.** The same three arms ran on `claude-opus-5`, 232 comparisons,
 zero refusals.
 
     model             em_dash_strip   bias    em_dash_inject   bias    rewhitespace   ties
-    claude-haiku-4-5         0.0417  0.4857           0.3527  0.8571         0.4375   79%
-    claude-opus-5            0.0000  0.5000           0.2000  0.7000         0.4813   69%
+    claude-haiku-4-5    [WITHDRAWN]  0.4857           0.3527  0.8571         0.4375   79%
+    claude-opus-5       [WITHDRAWN]  0.5000           0.2000  0.7000         0.4813   69%
 
-**Opus preferred the em-dashed original in 72 of 72 comparisons, at a positional bias of exactly
+The withdrawn column read 0.0417 and 0.0000. It is struck rather than deleted because the decision
+log is append-only and because the number is still evidence — of how large an effect a layout
+confound produces in this instrument, which is the most useful thing left in it: a 96–100%
+preference, on the strongest tier available, at textbook-clean positional bias, produced entirely
+by removing blank lines. `results/reader-repair.json` and `results/reader-repair-opus.json` are
+left exactly as they were so the superseded numbers stay pointable; the corrected run writes to
+`results/reader-repair-fixed.json`.
+
+~~**Opus preferred the em-dashed original in 72 of 72 comparisons, at a positional bias of exactly
 0.5000.** So this is not a weak-model artifact: the strongest tier available is *more* certain
-than the cheap one and its bias is textbook-clean. Buying a better panel model does not move it.
+than the cheap one and its bias is textbook-clean. Buying a better panel model does not move it.~~
+**Struck by §78: both tiers ran the reformatting transform, so the Opus column measures the same
+artifact on a better model. The 0.5000 bias and the zero refusals stand as facts about the run.**
 
-**But the direction of that gradient is evidence against "the panel has the machine's taste".**
+~~**But the direction of that gradient is evidence against "the panel has the machine's taste".**
 If replacing an em dash with a comma genuinely damages the sentence, a stronger reader should
 detect the damage *more* reliably — Opus 0.000 below Haiku 0.042 is the expected shape for real
-damage and the wrong shape for a shared aesthetic quirk. The `possible_comma_splices: 1` this
-protocol reported is a crude regex and not a syntax check, so it is not evidence against that
-either. The decisive control is one arm: strip em dashes to periods rather than commas. If the
-panel accepts a period-strip while rejecting the comma-strip, its objection is syntax and the
-repair was the defect; if it rejects both, the objection is the mark.
+damage and the wrong shape for a shared aesthetic quirk.~~ **Struck by §78, and it is the most
+instructive sentence in this entry: the inference was sound and the damage was real — it was the
+paragraph loss. A stronger reader detecting a wall of text more reliably than a weaker one is
+precisely the observed gradient, so the argument pointed straight at the confound and was read as
+pointing away from it.** The `possible_comma_splices: 1` this protocol reported is a crude regex
+and not a syntax check, so it is not evidence against that either. The decisive control is one
+arm: strip em dashes to periods rather than commas. If the panel accepts a period-strip while
+rejecting the comma-strip, its objection is syntax and the repair was the defect; if it rejects
+both, the objection is the mark. **§78.2 makes that control conditional on the corrected arm
+still showing a preference to explain.**
 
 `rewhitespace` drew "neither" on 69% of Opus comparisons against 79% on Haiku. Both tiers decline
 to choose between texts differing only in layout, which is the correct answer and the first clean
@@ -4360,3 +4388,146 @@ position; `ours_win_vs_mol_stakes` applies both. The second is covariate **match
 a quality selection — it uses this project's own stake lexicon, which identifies stake vocabulary
 and not stakes — and its only claim is that the comparison is no longer decided by which side
 happened to be about something costly.
+
+## 78. The em-dash finding measured a reformatting bug, and the guards could not have seen it
+
+§74's headline number is an artifact. `ablate.em_dash_strip` ended with
+
+```python
+return re.sub(r"\s+", " ", "".join(out)).replace(" ,", ",").strip()
+```
+
+and `\s` matches newlines, so the tidy-up applied to the whole passage rather than to the spacing
+around a replaced dash. Over the ten drafted scenes of `The Toll Road` the transform took the
+newline count from **858 to 90** and the blank-line count from **420 to 45** — and the survivors
+are all scene 7, which contains no em dash and returns early. **Nine of the ten
+"em-dash-stripped" variants were the entire scene run together as a single block.**
+
+**This is not an inference about what the code would do; it is what the panel was sent.** All
+**72** `em_dash_strip` comparisons in `results/reader-repair-raw.jsonl` were checked by rebuilding
+each request digest from the flattened variant and looking the key up in the committed cache:
+72/72 matched. `elicit.Elicitor._call` keys on `digest({'params': params, 'transport': ...})`, so
+the key is a function of the exact bytes sent, and a match is proof of content rather than
+evidence about it. The panel's 0.0417 was a preference for a paragraphed text over an
+unparagraphed one, elicited at one comparison per persona per orientation, and it was never a
+verdict about the mark.
+
+**What that retracts.** §74's `em_dash_strip` rate, its `OPPOSES` verdict, and the reading built
+on it — "the panel prefers the tell; a reader in the loop selects **for** it" — are withdrawn.
+Addendum 1 goes with them: the Opus tier check ran the same transform, so its 0.0000 across 72 of
+72 comparisons is the same artifact measured on a better model, and the gradient argument that
+entry made — *"Opus 0.000 below Haiku 0.042 is the expected shape for real damage and the wrong
+shape for a shared aesthetic quirk"* — was reasoning correctly about damage that was real and
+misidentified. The damage was the paragraph loss. A stronger reader noticing a wall of text more
+reliably than a weaker one is exactly the gradient that was observed, and it pointed at the
+confound rather than away from it.
+
+**What survives, and it is most of the entry.** The three defects the human named, and every
+measurement of them — the twelve `[STATUS]` slots with nine carrying no information, the 4.56:1
+body-part-to-interiority ratio, 61 em dashes at 5.9 per 1k words, the uncommented HP gains in
+scenes 5 and 8 — are untouched. So is the finding that reframes the programme: all three sit in
+**both** copies of every ablation pair, so a battery that validates a panel on telling a spoiled
+copy from an original cannot see them however well it scores. So is `_PROTECTED` and the confound
+it fixed, 35 prose dashes against 24 structural ones. So is `em_dash_inject` (0.3527 Haiku, 0.2000
+Opus), which does not route through the broken tail — and it was already void on positional bias
+at 0.857 and 0.700. So is `rewhitespace`, which preserves structure exactly and drew "neither" on
+79% of Haiku and 69% of Opus comparisons. And so is the conclusion that positional bias is a
+property of the pair rather than of the panel.
+
+**The reason no guard caught it is the transferable part.** Every guard in place was a length
+guard. `em_dash_report` counts em dashes, words and possible comma splices; `Ablation.preserves_length`
+is a word-count property; and `str.split()` treats `"\n\n"` and `" "` identically. So the report
+beside the result read `word_delta_pct: -0.30%`, `em_dashes_before: 59`, `em_dashes_after: 24`,
+`possible_comma_splices: 1` — **every one of those numbers was correct** and not one of them could
+move when the paragraphing went. A layout change is invisible to a length invariant. `rewhitespace`
+existed to bound exactly this and could not, because it perturbs layout *without* destroying it:
+the sham was a weaker edit than the arm it was bounding, in the one dimension that mattered.
+
+**The fix and its check.** Both whitespace patterns in `em_dash_strip` are now horizontal-only
+(`_HSPACE = r"[^\S\n]"`), which also stops the match crossing a line boundary — a dash at a line
+start previously consumed the newline before it and replaced it with `", "`. After the fix the
+transform is the one that was always intended: newlines 858 → 858, blank lines 420 → 420, **35
+prose em dashes replaced, 1 possible comma splice** — the published transform figures, now with
+the layout left alone. `tests/test_ablate_structure.py` carries the invariant that was missing:
+`test_em_dash_strip_preserves_paragraph_structure` asserts this arm's layout exactly,
+`test_no_transform_collapses_a_passage_to_one_block` bans the class across every registered arm,
+and `test_em_dash_strip_leaves_protected_system_voice_alone` keeps §74's confound fix asserted.
+The suite gets research code for the first time, deliberately and narrowly, on a synthetic fixture
+rather than `corpora/toll.db` — the database is gitignored and a guard that runs only where the
+corpus happens to sit is not a guard.
+
+### 78.1 A second defect in the same audit: seven arms lose the blank line
+
+Auditing every transform for the same class turned up a milder version of it in the shared
+sentence machinery. `paragraphs()` adapts to whichever separator convention the source uses —
+its docstring exists because a fixed blank-line split once turned every paragraph-level ablation
+into a no-op on *Mother of Learning* — but `_join` does not adapt: it is `"\n".join(blocks)`. The
+round trip is therefore lossy for a blank-line-separated source, and every arm routing through
+`_rebuild` returns single-newline-separated text. Measured over the same ten scenes, newlines go
+858 → 438 and blank lines 420 → 0.
+
+    arm                 blank lines        class
+    sentence_deletion   420 -> 0           separator downgraded
+    sentence_shuffle    420 -> 0           separator downgraded
+    paragraph_shuffle   420 -> 0           separator downgraded
+    filler_inject       420 -> 0           separator downgraded
+    destake             420 -> 0           separator downgraded
+    deplete_matched     420 -> 0           separator downgraded
+    interiority_strip   420 -> 33          separator downgraded
+    em_dash_strip       420 -> 45          TOTAL flattening (fixed above)
+    the other eight     420 -> 420         structure preserved
+
+This is a real confound and a smaller one: the variant still has line breaks, so it is not a wall
+of text, but it is formatted differently from the original it is compared against, and
+`rewhitespace` does not bound it for the same reason it failed above. Three of these arms sit in
+`DEGRADERS`, which is what §70's detection rung and the CDG battery pool over, so part of the
+`detect 0.906 / sham 0.783` margin is a formatting difference rather than damage.
+
+**It is pinned rather than fixed, and that is an operator call rather than a judgement about
+which is correct.** Changing `_join` changes the variant text of seven arms; the replay caches key
+on the request digest, so nothing would silently replay stale numbers — every affected comparison
+would simply re-elicit, at the cost of re-running the persona battery and the CDG battery.
+`test_rebuild_arms_downgrade_the_paragraph_separator` records the exact set so it cannot change
+in either direction without a test failing: an arm leaving it means someone fixed `_join` and the
+numbers pooled over that arm need re-reading, and an arm joining it means a new transform
+inherited the defect.
+
+**One arm's paired control is also misdescribed, and this is a correction to §74 rather than a new
+defect.** §74 introduced `interiority_strip` "with `deplete_matched` as its matched-deletion
+control, exactly as `destake` has". `deplete_matched` takes its budget from `_stake_plan`, so it
+is matched to `destake` and to nothing else: over the ten scenes it removes **7.44%** of the words
+where `interiority_strip` removes **4.44%**. A control that deletes 1.7x the text is the length
+confound it exists to remove. `test_deplete_matched_does_not_match_the_interiority_budget` asserts
+the mismatch so the claim cannot be re-inherited from a docstring, and the interiority arm needs a
+control built against `_interiority_plan`'s own budget before it is read.
+
+### 78.2 Pre-registration for the corrected em-dash run
+
+Written and committed **before** the corrected arm is elicited, so the ordering is a fact in the
+git record rather than an assertion in this paragraph. The run re-elicits `em_dash_strip` against
+the same ten scenes with the fixed transform and replays `em_dash_inject` and `rewhitespace` from
+the existing cache unchanged; output goes to `results/reader-repair-fixed.json` so that
+`results/reader-repair.json` stays exactly as §74 cites it.
+
+The precondition is read first and it is now pre-registered rather than post-hoc: per-arm
+positional bias within 0.40–0.60, the rule §74 adopted mid-flight and recorded as needing a run
+where it was declared in advance. This is that run. `rewhitespace`'s sham floor is reported and
+**is not treated as usable** — it was void on bias at 0.9375 from 16 decided comparisons, and
+§78's finding is that it is the weaker edit in the dimension that matters anyway.
+
+| branch | condition | what it licenses |
+| --- | --- | --- |
+| AGREES | strip ≥ 0.60 | the panel prefers the comma-stripped text, sharing the human's taste. §74's OPPOSES is retracted and em-dash density becomes an axis a reader model could be optimised on in the direction a named human asked for. |
+| BLIND | 0.40 < strip < 0.60 | the panel cannot see the tell. OPPOSES retracted; the em dash joins the mapped holes — a defect one human found in one read and the instrument cannot detect. This is the outcome the artifact explanation predicts, and it is written down here as the prediction. |
+| OPPOSES | strip ≤ 0.40 | the panel prefers the em dashes on structure-preserving evidence. Only then do the three surviving readings of §74's number — machine taste for the mark, edited-ness detection, or the comma genuinely degrading the sentence — need separating, and only then is the discriminating control commit 56ca535 named worth running. |
+
+**The discriminating control is therefore conditional, and that is a change of plan recorded as
+one.** Commit 56ca535 named "an equal number of punctuation edits that touch no em dash" as the
+control the third explanation needs, and §74's addendum named a period-strip as the decisive one.
+Both were designed to separate readings of a number that has now been withdrawn. Running them
+first would be spending on the discrimination of an artifact. If the corrected arm returns BLIND
+or AGREES there is no preference left to explain and the controls are moot; if it returns OPPOSES
+they are the next experiment, and the pair of them is what the separation needs — a matched-count
+punctuation edit touching no dash bounds edited-ness, and a period-strip run over the *same* dash
+positions as a comma-strip separates the mark from its replacement, with the token delta held
+equal because both substitutions remove the spaced dash's own token.

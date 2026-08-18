@@ -43,6 +43,12 @@ _SENT = re.compile(r"(?<=[.!?])[\"'”\u2019]*\s+")
 _QUOTED = re.compile("[\"“][^\"“”]*[\"”]")
 _WORD = re.compile(r"[\w'\u2019-]+", re.UNICODE)
 
+#: Horizontal whitespace: any space character that is **not** a newline. Written out because the
+#: obvious `\s` is what broke `em_dash_strip` — a transform that tidies the spacing it disturbed
+#: must not be able to reach a line boundary while doing it, or it silently reformats the passage
+#: and every length-based guard reports that nothing happened. See `em_dash_strip`'s docstring.
+_HSPACE = r"[^\S\n]"
+
 #: Discourse connectives, mapped to one that inverts or flattens the logical relation. Used by
 #: `connective_scramble`, the one degrader that changes almost no tokens: it is here to answer
 #: "is the metric just noticing that many words moved?" with a damage that moves nine.
@@ -848,12 +854,33 @@ def em_dash_strip(text: str, strength: float) -> str:
     A spaced em dash is doing a comma's work with more emphasis, so a comma is grammatical
     wherever it sat — except where the dash joined two independent clauses, which yields a comma
     splice. `em_dash_report` counts those rather than this docstring waving them away.
+
+    **This function reformatted the whole passage until 2026-08-18, and that defect produced
+    §74's headline number.** The tail was `re.sub(r"\\s+", " ", ...)`, and `\\s` matches newlines,
+    so every blank line in the text collapsed to a single space: on the ten drafted scenes it took
+    the newline count from 858 to 90 — the 90 being scene 7, which contains no em dash and returns
+    early — and the paragraph count from 420 to 45. Nine of ten "em-dash-stripped" variants were
+    the entire scene run together as one block. All 72 cached `em_dash_strip` comparisons were
+    verified to carry that flattened text by rebuilding their request digests, so the panel's
+    0.0417 was a preference for a paragraphed text over an unparagraphed one and never a verdict
+    about the mark. Both whitespace patterns are now horizontal-only (`[^\\S\\n]`), which is why
+    the match cannot cross a line boundary either: a dash sitting at a line start used to consume
+    the newline before it and replace it with ", ".
+
+    **The reason no guard caught it is worth keeping.** `em_dash_report` counts em dashes, words
+    and comma splices, and `str.split()` treats "\\n\\n" and " " identically, so `word_delta_pct`
+    read -0.30% while all the paragraphing was gone. A length invariant cannot see a layout
+    change, so it needs an invariant of its own. `tests/test_ablate_structure.py` is that
+    invariant: `test_em_dash_strip_preserves_paragraph_structure` asserts this function's layout
+    exactly, and `test_no_transform_collapses_a_passage_to_one_block` bans the class across every
+    registered arm.
     """
     if strength <= 0 or _EM not in text:
         return text
     spans = _protected_spans(text)
+    pattern = rf"{_HSPACE}*{_EM}{_HSPACE}*"
     spots = [
-        match.start() for match in re.finditer(rf"\s*{_EM}\s*", text)
+        match.start() for match in re.finditer(pattern, text)
         if not _is_protected(match.start(), spans)
     ]
     if not spots:
@@ -863,7 +890,7 @@ def em_dash_strip(text: str, strength: float) -> str:
     chosen = set(rng.sample(spots, min(count, len(spots))))
     out: list[str] = []
     last = 0
-    for match in re.finditer(rf"\s*{_EM}\s*", text):
+    for match in re.finditer(pattern, text):
         if match.start() not in chosen:
             continue
         out.append(text[last : match.start()])
@@ -873,7 +900,7 @@ def em_dash_strip(text: str, strength: float) -> str:
         out.append(" " if preceding.endswith((",", ";", ":", ".", "!", "?")) else ", ")
         last = match.end()
     out.append(text[last:])
-    return re.sub(r"\s+", " ", "".join(out)).replace(" ,", ",").strip()
+    return re.sub(rf"{_HSPACE}+", " ", "".join(out)).replace(" ,", ",").strip()
 
 
 def em_dash_report(original: str, stripped: str) -> dict[str, float]:

@@ -1,5 +1,13 @@
 """Does the panel share a human reader's taste, on the one defect that can be manufactured cleanly?
 
+**The first run of this module is withdrawn; see §78.** `em_dash_strip` collapsed every blank line
+in the passage it edited, so the arm compared a paragraphed text against an unparagraphed one and
+its 0.0417 measured layout rather than punctuation. The transform is fixed and the arm re-elicits;
+`results/reader-repair.json` and `results/reader-repair-opus.json` are frozen as the superseded
+record and the corrected run writes `results/reader-repair-fixed.json`. Everything this docstring
+says about the *design* stands — it is the two-sided pre-registration that made the withdrawal
+legible instead of invisible, since a one-sided protocol would have banked the number as a finding.
+
 A human read the first fully generated book on 2026-08-18 and named three defects. All three
 measured true, and the important thing about them is what they are *not*: none is a degradation
 of good prose. Every arm in `ablate.ALL` spoils something and the battery validates a panel on
