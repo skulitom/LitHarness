@@ -608,6 +608,10 @@ def main() -> None:
                              "screen-then-confirm note in the docstring before narrowing it")
     parser.add_argument("--dry-run", action="store_true", help="build the schedule, call nothing")
     parser.add_argument("--yes", action="store_true", help="proceed past the call guard")
+    parser.add_argument("--cache", default="persona-raw.jsonl",
+                        help="append-only call log under results/. Give a concurrent run its "
+                             "own file: the write lock is per-process, so two batteries "
+                             "sharing one log can interleave a line and corrupt it")
     parser.add_argument("--out", default="persona-gate01.json")
     args = parser.parse_args()
 
@@ -653,7 +657,7 @@ def main() -> None:
     started = time.time()
 
     with Elicitor(
-        results_dir / "persona-raw.jsonl",
+        results_dir / args.cache,
         model=args.model,
         spot_model=None if args.no_spot else args.spot_model,
         transport=args.transport,

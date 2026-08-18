@@ -3119,9 +3119,9 @@ evidence channels have been tried and measured:
                                      survivors prefer human originals ~80%
     model-based scoring (CDG)        dead to its own pre-registered memorisation     §58; BRIEF §2 Pass 6
                                      sham; word count beat it
-    persona-reader elicitation       OPEN — gate 0 inconclusive on a corpus that     §70; plan/persona-
-    (added by §70, not in the        could not support it; caricature control        reader-validity.md
-    original four)                   passed, collapse statistic had no power
+    persona-reader elicitation       absolute verdict DEAD — a constant function,   §70 addendum 3;
+    (added by §70, not in the        195/196 keep-reading across two model tiers;   plan/persona-
+    original four)                   pairwise successor built, untested             reader-validity.md
 
 **The fifth row is a later addition and is not evidence yet.** §70 added it under a standing
 condition — the table gains a row when a gate reports, and gate 0 reported. It is listed here so

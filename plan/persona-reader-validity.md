@@ -148,6 +148,17 @@ here that presumes accumulated context is a design note rather than a descriptio
 
 ## 4. Gate 0 — reliability, before anything else is believed
 
+> **Status: run twice, and it killed the instrument it was written for.** This gate describes the
+> *absolute* response variable — a per-passage verdict whose repeat-sample variance ICC can
+> decompose. That variable is dead (§70 addendum 3): asked for a three-way verdict, the panel
+> returned `keep-reading` on 195 of 196 draws across two model tiers, `ms_between` and
+> `ms_within` both exactly 0.0, every variance statistic undefined rather than failed, and the
+> pre-registered positivity floor fired. **Gate 0 as written does not apply to the pairwise
+> successor**, which produces choices rather than ratings and has no per-passage rating to
+> decompose; its analogues are `positional_bias` and the placebo arms inside §5. The section
+> stays because the rule it encodes is general and because the next instrument to propose an
+> absolute response variable has to clear it first.
+
 BRIEF §2 Pass 5 earned the rule and a proxy died to it: check within-unit reliability before
 believing any per-unit statistic — tree-Haar scale energy was 73% measurement-window noise
 at `ICC(1) = 0.270`, its within-book sd equal to its between-book sd.
@@ -284,18 +295,32 @@ establishes that the instrument predicts. It does **not** thereby license refusi
 ## 8. Pre-registered kill conditions
 
 Each is stated so it *can* fire — Pass 5's first rule is to ask whether a control can fail
-before running it.
+before running it. **One of them has now fired**: the positivity-floor row killed the absolute
+response variable (§70 addendum 3). The rows below marked *(absolute)* describe that dead
+instrument and are retained because the next absolute variable proposed has to clear them; the
+rows marked *(both)* apply to the pairwise successor as well, and the pairwise-specific
+conditions follow the table.
 
 | condition | what it kills |
 |---|---|
-| Within-boundary variance ≈ between-boundary variance (gate 0) | The panel outright; noise wearing a verdict. |
+| Within-boundary variance ≈ between-boundary variance (gate 0) *(absolute)* | The panel outright; noise wearing a verdict. |
 | Persona main effect ≥ passage main effect on the sensitivity set | Caricature machine — the response tracks the costume, not the text. |
 | Mean inter-persona rank correlation ≥ 0.9 (threshold's null simulated at the actual `n` first) | One judge in costumes; collapse to a single reader and re-run. |
-| `would-stop` base rate ≈ 0 where a human majority stops | Positivity floor. A reader who never stops cannot predict stopping. |
+| `would-stop` base rate ≈ 0 where a human majority stops *(absolute)* | Positivity floor. A reader who never stops cannot predict stopping. **FIRED** — 0.000 over 196 draws, ten passages, two model tiers. |
 | Newcomer persona recognizes trope-traps, or sails through jargon probes | Knowledge leak. A model that has read the genre cannot *be* confused, only predict confusion — a different act wearing the same words. Its knowledge-dependent reports are void. |
-| Raw word count separates the manipulated pool as well as the panel does | The panel, by §1a.1's shallow incumbent — the rung that finished CDG. |
-| Sensitivity decays on the same distance curve as feasibility §4.3 | Surface-locality readout, not a reader. |
+| Raw word count separates the manipulated pool as well as the panel does *(both)* | The panel, by §1a.1's shallow incumbent — the rung that finished CDG. |
+| Sensitivity decays on the same distance curve as feasibility §4.3 *(both)* | Surface-locality readout, not a reader. |
 | A repair targeted at a stated reason code does not move the verdict | That code. **Reason codes are valid only interventionally**; codes without this property are demoted to colour and never routed to repair. A persona can predict stopping correctly and confabulate why, and repairs aimed at confabulated reasons fail silently. |
+
+**Pairwise-specific conditions**, declared before its first run:
+
+| condition | what it kills |
+|---|---|
+| `positional_bias` chose-A rate far from 0.5 | Everything. A panel answering a *side* has reported on layout, and no preference it states means anything. Read this first. |
+| The placebo arms separate as strongly as the real manipulations | The instrument, as a diff-spotter rather than a reader — `evaluate.selftest`'s `change-detector` oracle, which scores detect 1.0 and is still called dead. |
+| `destake` minus `deplete_matched` at or below zero | The reader claim specifically. The stake lexicon selected nothing a reader responded to, and de-stake is deletion wearing a name. |
+| Ties dominate the decided comparisons | The pair as posed. If readers cannot separate a scene from its manipulated copy, the manipulation is below the instrument's resolution and the dose ladder is the answer, not more samples. |
+
 
 ## 9. Integration, and the standing a persona panel can never earn
 

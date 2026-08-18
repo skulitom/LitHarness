@@ -172,16 +172,31 @@ predictive distribution over the text. Zero.
 > which is why it enters as a validity study with pre-registered kill conditions rather than as
 > a candidate proxy.
 >
-> **Gate 0 has been run and is not passed.** 246 calls over the golden fixtures returned a
-> pooled `ICC(1)` of 0.489 that is an artifact — five of six passages produced zero would-stop
-> and every stop came from the last scene of the story. The caricature decomposition passed
-> cleanly (passage sum-of-squares about seven times the persona term); the collapse statistic
-> returned 1.0 against a simulated null that *also* reaches 1.0, so it carried no information at
-> that n. The corpus, not the panel, was the limit; `results/persona-gate0-fixtures.json` holds
-> the numbers. **Read it as an open experiment with one inconclusive gate, not as a channel with
-> evidence behind it** — and note that the validity problem the paragraph above names is
-> untouched: no published-reader label reaches generated prose, which is what gates 2 and 3
-> exist to buy and neither has been attempted.
+> **Gate 0 has been run twice and the absolute form of the instrument is dead.** The first run,
+> 246 calls over the golden fixtures, returned a pooled `ICC(1)` of 0.489 that was an artifact:
+> five of six passages produced zero would-stop and every stop came from the last scene of the
+> story, so the corpus looked like the limit. The second run answered that — ten drafted scenes
+> of ~1,000 words each, un-memorised, mid-book — and the answer was worse. **195 of 196 verdicts
+> were `keep-reading`, one was `not-sure`, none was `would-stop`**, and six frontier spot checks
+> agreed, so it was not the cheap tier being agreeable. `ms_between` and `ms_within` are both
+> exactly 0.0, which leaves every variance statistic undefined rather than failed; the one
+> pre-registered condition that *fires* is the positivity floor. A constant scalar also makes
+> gate 1 unrunnable, since `detect_auc` is 0.5 by construction however severe the manipulation.
+>
+> **What died is the absolute judgment, not the reader question**, and this ledger had already
+> recorded that distinction once: §2 Pass 4's model judges died to positional artifacts, and the
+> answer was not a better rating scale but blinded, position-swapped **pairwise** comparison —
+> what stage-0 §69 built for the human channel. The panel had been handed the audit queue's
+> three-way vocabulary, designed for whole-unit judgment with an accumulated book behind it, and
+> asked to apply it to one mid-book scene in isolation. The instrument is now pairwise, and a
+> second response variable (which passage *hit harder*, rather than which would be kept) is under
+> test for dynamic range. `results/persona-gate0-fixtures.json` and
+> `results/persona-gate0-tollroad.json` hold both runs. Cost of learning it: about $16.70.
+>
+> **Read this as one instrument killed cheaply and its successor untested**, not as a channel
+> with evidence behind it — and note the validity problem the paragraph above names is untouched:
+> no published-reader label reaches generated prose, which is what gates 2 and 3 exist to buy and
+> neither has been attempted.
 
 ## 4. What is available to experiment with, verified present on this machine
 

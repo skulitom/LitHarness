@@ -553,8 +553,13 @@ Stated plainly, because a system that runs is easy to mistake for a system that 
   system-prompted model, in character as a reader, what a passage did to it — untested
   rather than refuted, since every refutation on the books bounds an expert-frame or
   distributional instrument instead. It reaches no gate, mints no row and has no CLI
-  surface; it is a validity study with pre-registered kill conditions, its first one
-  inconclusive ([plan/persona-reader-validity.md](plan/persona-reader-validity.md),
+  surface. Its first form is already dead: asked for an absolute verdict it answered
+  "keep reading" to 195 of 196 passages across two model tiers, a constant function that
+  no manipulation could move, and the pre-registered positivity floor fired. The successor
+  asks the panel to *choose* between a passage and a manipulated copy of it, blinded and
+  position-swapped — the shape the pairwise engine above already uses, and the only
+  standing this channel could ever earn — and is untested
+  ([plan/persona-reader-validity.md](plan/persona-reader-validity.md),
   `plan/stage-0-decisions.md` §70).
 - **The full deterministic pack is opt-in, and its live inputs are still thin.** Every
   accepted draft is automatically evaluated by `state.contradiction.v0`. When the
