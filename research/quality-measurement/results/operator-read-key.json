@@ -1,0 +1,44 @@
+[
+  {
+    "pair": 1,
+    "scene": "gen:scene-4",
+    "axis": "exemplar",
+    "A": "anchor",
+    "B": "variant"
+  },
+  {
+    "pair": 2,
+    "scene": "gen:scene-8",
+    "axis": "repair_interiority",
+    "A": "variant",
+    "B": "anchor"
+  },
+  {
+    "pair": 3,
+    "scene": "gen:scene-2",
+    "axis": "repair_interiority",
+    "A": "anchor",
+    "B": "variant"
+  },
+  {
+    "pair": 4,
+    "scene": "gen:scene-3",
+    "axis": "repair_emdash",
+    "A": "anchor",
+    "B": "variant"
+  },
+  {
+    "pair": 5,
+    "scene": "gen:scene-1",
+    "axis": "exemplar",
+    "A": "variant",
+    "B": "anchor"
+  },
+  {
+    "pair": 6,
+    "scene": "gen:scene-6",
+    "axis": "repair_emdash",
+    "A": "anchor",
+    "B": "variant"
+  }
+]

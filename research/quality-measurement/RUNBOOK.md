@@ -96,6 +96,25 @@ uv run python research/quality-measurement/summary_reliability.py --book-db $TOL
 Add `--level 2 --window 3` for the summaries-of-summaries arm (+15 calls). Its numbers are
 diagnostics unless level 1 clears identity — the module records which, in `level2.gated_by`.
 
+## Writer states — §83
+
+32 retells (`claude-opus-5`, the book's own drafter) + 192 panel comparisons
+(`claude-haiku-4-5`), ~75 minutes, zero refusals, $6.10 + $8.68 equivalent. The generation
+cache drops transport failures on load and replays everything else, so an interrupted run
+resumes for free; the run that produced `results/writer-states.json` absorbed a startup-lock
+herd (three concurrent first `claude -p` calls all exiting non-zero) through the retry the
+module now carries.
+
+```bash
+uv run python research/quality-measurement/writer_states.py --yes
+```
+
+`--generate-only` produces and measures the retells without spending panel calls;
+`--dry-run --yes` runs the arithmetic on a null. Panel verdict: all three arms VOID on
+per-arm positional bias (chose-A 0.73–0.83) — near-twin pairs sit below this panel's
+positional resolution, the §78-tail law at its extreme. The finding lives in the mechanics;
+read §83, not the win rates.
+
 ## Four ways to waste a paid run, all of them already paid for once
 
 **Do not share a cache file between concurrent runs.** `Elicitor`'s write lock is per-process.
@@ -130,3 +149,18 @@ uv run ruff check --no-cache . && uv run mypy && uv run pytest --cov=litharness
 
 `--no-cache` is load-bearing. A cached ruff pass reported green on `research/progression-clause/ablate.py`
 while it imported a provider deleted in `c99dd47`, and main stayed red for 10 runs.
+
+## Repair generation — §85
+
+32 generations (`claude-opus-5`) + 192 panel comparisons (`claude-haiku-4-5`), ~55 minutes,
+$7.41 + $7.26 equivalent. Requires §83's cached sober retells (`--states-cache`) for the
+exemplar anchor.
+
+```bash
+uv run python research/quality-measurement/repair_generation.py --yes
+```
+
+Headline: `repair_interiority` at 0.9509, bias 0.4918, interval [0.871, 1.0] — the first
+bias-clean interval-excluding arm in the project, in the repair direction. `repair_emdash`
+mechanically perfect (8/8 scenes to zero prose dashes at sim ≥ 0.978) and VOID at the panel
+per the near-twin law. Read §85 before quoting any number.

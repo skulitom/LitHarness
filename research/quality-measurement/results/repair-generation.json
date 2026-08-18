@@ -1,0 +1,491 @@
+{
+  "book_db": "C:\\DEV\\LitHarness\\research\\quality-measurement\\corpora\\toll.db",
+  "comparisons": 192,
+  "compliance": {
+    "repair_emdash": [
+      {
+        "complies": false,
+        "interior_delta": -0.014,
+        "prose_em_after": 0,
+        "prose_em_before": 4,
+        "scene": "gen:scene-1",
+        "similarity": 0.9798,
+        "system_voice_ok": true,
+        "word_growth_pct": 0.55
+      },
+      {
+        "complies": true,
+        "interior_delta": 0.0,
+        "prose_em_after": 0,
+        "prose_em_before": 1,
+        "scene": "gen:scene-2",
+        "similarity": 0.9899,
+        "system_voice_ok": true,
+        "word_growth_pct": 0.0
+      },
+      {
+        "complies": true,
+        "interior_delta": 0.0,
+        "prose_em_after": 0,
+        "prose_em_before": 7,
+        "scene": "gen:scene-3",
+        "similarity": 0.9779,
+        "system_voice_ok": true,
+        "word_growth_pct": 0.1
+      },
+      {
+        "complies": false,
+        "interior_delta": -0.016,
+        "prose_em_after": 0,
+        "prose_em_before": 3,
+        "scene": "gen:scene-4",
+        "similarity": 0.9868,
+        "system_voice_ok": true,
+        "word_growth_pct": 0.29
+      },
+      {
+        "complies": false,
+        "interior_delta": 0.013,
+        "prose_em_after": 0,
+        "prose_em_before": 3,
+        "scene": "gen:scene-5",
+        "similarity": 0.9876,
+        "system_voice_ok": true,
+        "word_growth_pct": -0.41
+      },
+      {
+        "complies": false,
+        "interior_delta": -0.002,
+        "prose_em_after": 0,
+        "prose_em_before": 6,
+        "scene": "gen:scene-6",
+        "similarity": 0.9804,
+        "system_voice_ok": true,
+        "word_growth_pct": 0.1
+      },
+      {
+        "complies": true,
+        "interior_delta": 0.0,
+        "prose_em_after": 0,
+        "prose_em_before": 0,
+        "scene": "gen:scene-7",
+        "similarity": 0.9835,
+        "system_voice_ok": true,
+        "word_growth_pct": 3.36
+      },
+      {
+        "complies": false,
+        "interior_delta": -0.003,
+        "prose_em_after": 0,
+        "prose_em_before": 3,
+        "scene": "gen:scene-8",
+        "similarity": 0.9899,
+        "system_voice_ok": true,
+        "word_growth_pct": 0.29
+      }
+    ],
+    "repair_interiority": [
+      {
+        "complies": false,
+        "interior_delta": 1.803,
+        "prose_em_after": 4,
+        "prose_em_before": 4,
+        "scene": "gen:scene-1",
+        "similarity": 0.9426,
+        "system_voice_ok": true,
+        "word_growth_pct": 12.17
+      },
+      {
+        "complies": true,
+        "interior_delta": 1.724,
+        "prose_em_after": 1,
+        "prose_em_before": 1,
+        "scene": "gen:scene-2",
+        "similarity": 0.9485,
+        "system_voice_ok": true,
+        "word_growth_pct": 10.65
+      },
+      {
+        "complies": true,
+        "interior_delta": 1.916,
+        "prose_em_after": 7,
+        "prose_em_before": 7,
+        "scene": "gen:scene-3",
+        "similarity": 0.9496,
+        "system_voice_ok": true,
+        "word_growth_pct": 10.19
+      },
+      {
+        "complies": true,
+        "interior_delta": 1.344,
+        "prose_em_after": 3,
+        "prose_em_before": 3,
+        "scene": "gen:scene-4",
+        "similarity": 0.9471,
+        "system_voice_ok": true,
+        "word_growth_pct": 10.55
+      },
+      {
+        "complies": false,
+        "interior_delta": -0.288,
+        "prose_em_after": 3,
+        "prose_em_before": 3,
+        "scene": "gen:scene-5",
+        "similarity": 0.9523,
+        "system_voice_ok": true,
+        "word_growth_pct": 9.79
+      },
+      {
+        "complies": false,
+        "interior_delta": 1.485,
+        "prose_em_after": 6,
+        "prose_em_before": 6,
+        "scene": "gen:scene-6",
+        "similarity": 0.9363,
+        "system_voice_ok": true,
+        "word_growth_pct": 13.4
+      },
+      {
+        "complies": true,
+        "interior_delta": 1.519,
+        "prose_em_after": 0,
+        "prose_em_before": 0,
+        "scene": "gen:scene-7",
+        "similarity": 0.9461,
+        "system_voice_ok": true,
+        "word_growth_pct": 10.98
+      },
+      {
+        "complies": false,
+        "interior_delta": 3.363,
+        "prose_em_after": 3,
+        "prose_em_before": 3,
+        "scene": "gen:scene-8",
+        "similarity": 0.9405,
+        "system_voice_ok": true,
+        "word_growth_pct": 12.66
+      }
+    ],
+    "repair_placebo": [
+      {
+        "complies": null,
+        "interior_delta": 0.0,
+        "prose_em_after": 4,
+        "prose_em_before": 4,
+        "scene": "gen:scene-1",
+        "similarity": 1.0,
+        "system_voice_ok": true,
+        "word_growth_pct": 0.0
+      },
+      {
+        "complies": null,
+        "interior_delta": 0.0,
+        "prose_em_after": 1,
+        "prose_em_before": 1,
+        "scene": "gen:scene-2",
+        "similarity": 1.0,
+        "system_voice_ok": true,
+        "word_growth_pct": 0.0
+      },
+      {
+        "complies": null,
+        "interior_delta": 0.0,
+        "prose_em_after": 7,
+        "prose_em_before": 7,
+        "scene": "gen:scene-3",
+        "similarity": 1.0,
+        "system_voice_ok": true,
+        "word_growth_pct": 0.0
+      },
+      {
+        "complies": null,
+        "interior_delta": 0.0,
+        "prose_em_after": 3,
+        "prose_em_before": 3,
+        "scene": "gen:scene-4",
+        "similarity": 1.0,
+        "system_voice_ok": true,
+        "word_growth_pct": 0.0
+      },
+      {
+        "complies": null,
+        "interior_delta": 0.0,
+        "prose_em_after": 3,
+        "prose_em_before": 3,
+        "scene": "gen:scene-5",
+        "similarity": 1.0,
+        "system_voice_ok": true,
+        "word_growth_pct": 0.0
+      },
+      {
+        "complies": null,
+        "interior_delta": 0.0,
+        "prose_em_after": 6,
+        "prose_em_before": 6,
+        "scene": "gen:scene-6",
+        "similarity": 1.0,
+        "system_voice_ok": true,
+        "word_growth_pct": 0.0
+      },
+      {
+        "complies": null,
+        "interior_delta": 0.0,
+        "prose_em_after": 0,
+        "prose_em_before": 0,
+        "scene": "gen:scene-7",
+        "similarity": 1.0,
+        "system_voice_ok": true,
+        "word_growth_pct": 0.0
+      },
+      {
+        "complies": null,
+        "interior_delta": 0.0,
+        "prose_em_after": 3,
+        "prose_em_before": 3,
+        "scene": "gen:scene-8",
+        "similarity": 1.0,
+        "system_voice_ok": true,
+        "word_growth_pct": 0.0
+      }
+    ]
+  },
+  "complies": {
+    "repair_emdash": "3/8",
+    "repair_interiority": "4/8"
+  },
+  "exemplar_indices": [
+    3,
+    6
+  ],
+  "exemplar_interior_per_1k": [
+    15.311,
+    7.477
+  ],
+  "exemplar_movement": {
+    "moved_more_than_sober": 6,
+    "nearer_centroid_than_sober": 8,
+    "per_scene": [
+      {
+        "exemplar_from_original": 4.2349,
+        "scene": "gen:scene-1",
+        "sober_from_original": 3.6508
+      },
+      {
+        "exemplar_from_original": 5.6258,
+        "scene": "gen:scene-2",
+        "sober_from_original": 2.2479
+      },
+      {
+        "exemplar_from_original": 3.3847,
+        "scene": "gen:scene-3",
+        "sober_from_original": 2.6631
+      },
+      {
+        "exemplar_from_original": 2.6112,
+        "scene": "gen:scene-4",
+        "sober_from_original": 3.0833
+      },
+      {
+        "exemplar_from_original": 4.3224,
+        "scene": "gen:scene-5",
+        "sober_from_original": 3.2737
+      },
+      {
+        "exemplar_from_original": 3.9078,
+        "scene": "gen:scene-6",
+        "sober_from_original": 1.4986
+      },
+      {
+        "exemplar_from_original": 3.7806,
+        "scene": "gen:scene-7",
+        "sober_from_original": 1.423
+      },
+      {
+        "exemplar_from_original": 2.2542,
+        "scene": "gen:scene-8",
+        "sober_from_original": 2.6444
+      }
+    ],
+    "scenes": 8,
+    "toward_centroid": [
+      {
+        "exemplar_to_centroid": 11.497,
+        "scene": "gen:scene-1",
+        "sober_to_centroid": 12.995
+      },
+      {
+        "exemplar_to_centroid": 11.6745,
+        "scene": "gen:scene-2",
+        "sober_to_centroid": 11.7319
+      },
+      {
+        "exemplar_to_centroid": 13.6081,
+        "scene": "gen:scene-3",
+        "sober_to_centroid": 13.7814
+      },
+      {
+        "exemplar_to_centroid": 11.1336,
+        "scene": "gen:scene-4",
+        "sober_to_centroid": 11.5119
+      },
+      {
+        "exemplar_to_centroid": 12.8678,
+        "scene": "gen:scene-5",
+        "sober_to_centroid": 12.9803
+      },
+      {
+        "exemplar_to_centroid": 12.1973,
+        "scene": "gen:scene-6",
+        "sober_to_centroid": 12.9443
+      },
+      {
+        "exemplar_to_centroid": 13.2294,
+        "scene": "gen:scene-7",
+        "sober_to_centroid": 13.5464
+      },
+      {
+        "exemplar_to_centroid": 11.923,
+        "scene": "gen:scene-8",
+        "sober_to_centroid": 12.3619
+      }
+    ]
+  },
+  "gen_api_calls": 32,
+  "gen_failures": [],
+  "gen_replayed": 0,
+  "gen_spend": {
+    "equivalent_usd": 7.4101,
+    "input": 66732,
+    "output": 144823
+  },
+  "intervals": {
+    "exemplar": {
+      "high": 0.8125,
+      "low": 0.4844,
+      "passages": 8,
+      "personas": 4,
+      "reading": "resamples passages and personas both; `gate1.paired_ci` resamples passages only and over-rejects at 3.8-23.9% against a nominal 2.5% at this n. Read the fourth rung of `evaluate.verdict()` against this interval, not that one"
+    },
+    "repair_emdash": {
+      "high": 0.4141,
+      "low": 0.1406,
+      "passages": 8,
+      "personas": 4,
+      "reading": "resamples passages and personas both; `gate1.paired_ci` resamples passages only and over-rejects at 3.8-23.9% against a nominal 2.5% at this n. Read the fourth rung of `evaluate.verdict()` against this interval, not that one"
+    },
+    "repair_interiority": {
+      "high": 1.0,
+      "low": 0.871,
+      "passages": 8,
+      "personas": 4,
+      "reading": "resamples passages and personas both; `gate1.paired_ci` resamples passages only and over-rejects at 3.8-23.9% against a nominal 2.5% at this n. Read the fourth rung of `evaluate.verdict()` against this interval, not that one"
+    }
+  },
+  "panel_api_calls": 192,
+  "panel_model": "claude-haiku-4-5",
+  "panel_replayed": 0,
+  "panel_spend": {
+    "cache_read": 3874416,
+    "cache_write": 1313648,
+    "equivalent_usd": 7.2592,
+    "input": 686576,
+    "output": 711568
+  },
+  "per_arm_bias": {
+    "exemplar": {
+      "chose_A_rate": 0.7656,
+      "decided": 64,
+      "note": "0.5 is unbiased; distance from it is the share of the answer that is layout",
+      "per_persona_chose_A": {
+        "grinder": 0.75,
+        "newcomer": 0.75,
+        "stakes": 0.6875,
+        "voice": 0.875
+      }
+    },
+    "repair_emdash": {
+      "chose_A_rate": 0.6949,
+      "decided": 59,
+      "note": "0.5 is unbiased; distance from it is the share of the answer that is layout",
+      "per_persona_chose_A": {
+        "grinder": 0.7333,
+        "newcomer": 0.5333,
+        "stakes": 0.8,
+        "voice": 0.7143
+      }
+    },
+    "repair_interiority": {
+      "chose_A_rate": 0.4918,
+      "decided": 61,
+      "note": "0.5 is unbiased; distance from it is the share of the answer that is layout",
+      "per_persona_chose_A": {
+        "grinder": 0.4667,
+        "newcomer": 0.4375,
+        "stakes": 0.5625,
+        "voice": 0.5
+      }
+    },
+    "repair_placebo": {
+      "chose_A_rate": NaN,
+      "decided": 0,
+      "note": "no decided comparisons"
+    }
+  },
+  "placebo_band": {
+    "em": 0,
+    "interior": 0.0,
+    "interior_drift": 0.0
+  },
+  "planned_comparisons": 256,
+  "planned_generations": 32,
+  "positional_bias": {
+    "chose_A_rate": 0.6522,
+    "decided": 184,
+    "note": "0.5 is unbiased; distance from it is the share of the answer that is layout",
+    "per_persona_chose_A": {
+      "grinder": 0.6522,
+      "newcomer": 0.5745,
+      "stakes": 0.6809,
+      "voice": 0.7045
+    }
+  },
+  "pre_registration": {
+    "exemplar": "MOVES if the exemplar retell's z-scored feature distance from its original exceeds the cached sober retell's, AND lands nearer the exemplar centroid than the sober retell does. The first condition says the voice moved; the second says it moved toward the demonstration rather than merely away from the original",
+    "floor": "no repair arm is read except against repair_placebo: its similarity is the minimality ceiling and its per-axis drift is the band any repair's off-axis movement must stay inside",
+    "panel": "secondary by pre-registration: repair pairs are near-twins and \u00a783 measured that near-twin pairs void this panel on positional bias, so VOID is the expected outcome and is not a failure of the repairs. Per-arm bias 0.40-0.60 precondition as always. If an arm survives it: >=0.60 means the panel shares the human's direction on a generative repair \u2014 the first evidence on an axis \u00a778.3 left empty; <=0.40 means the panel prefers the defect, \u00a778.2's OPPOSES branch resurrected on substitution-free evidence. Intervals reported; at n=8 they will span 0.5 and the claims are sized accordingly",
+    "repair_emdash": "COMPLIES if prose em dashes (outside protected spans) fall to <=10% of the original's count, word-level similarity >=0.80, interiority delta inside the placebo band, and every protected span survives byte-for-byte. A repair that moves the other axis certifies nothing",
+    "repair_interiority": "COMPLIES if interior_per_1k rises by at least 2x the placebo's absolute drift and at least +0.5, word growth <=12%, prose em dashes inside the placebo band, similarity >=0.60 (added sentences lower it by construction), protected spans byte-for-byte"
+  },
+  "prose_stats": {
+    "exemplar": [
+      {
+        "em_per_1k": 4.566,
+        "interiority_per_1k": 2.74,
+        "sentence_mean": 12.88,
+        "sentence_sd": 12.57,
+        "stake_per_1k": 2.74,
+        "ttr": 0.3717,
+        "words": 1095
+      }
+    ]
+  },
+  "protocol": "pre-registered in this module's PRE_REGISTRATION before first elicitation",
+  "refused": 3,
+  "scenes": [
+    "gen:scene-1",
+    "gen:scene-2",
+    "gen:scene-3",
+    "gen:scene-4",
+    "gen:scene-5",
+    "gen:scene-6",
+    "gen:scene-7",
+    "gen:scene-8"
+  ],
+  "tie_policy": "half_win",
+  "win_rates": {
+    "exemplar": 0.6406,
+    "repair_emdash": 0.2734,
+    "repair_interiority": 0.9509
+  },
+  "writer_model": "claude-opus-5"
+}

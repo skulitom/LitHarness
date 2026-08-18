@@ -5067,3 +5067,74 @@ narrow.
 hardest discrimination material this project owns. A future panel that can separate them is a
 different instrument from the one that just answered a side, and `writer-states-gen-raw.jsonl`
 is the fixture that test was missing.
+
+## 84. The taste gap becomes the priority, and the plan for closing it is a programme
+
+Operator directive, 2026-08-18: researching a machine panel that can stand in for human
+judgment is the project's priority. [machine-taste-program.md](machine-taste-program.md) is the
+plan — written under §82's constraint rather than against it, since "as good as human judgment"
+is only earnable as **scoped licences anchored by one paid human batch**, never as a blanket a
+machine-only result could confer.
+
+The programme in one breath: **JudgeBench** (five fixture families this repo already owns,
+including §83's near-twins read for *calibrated indifference* rather than forced choice — the
+single largest design change) grades a ladder of candidate judges; the winner is frozen as
+panel v2 in a ledger entry *before* [reader-batch-1.md](reader-batch-1.md) is funded, so the
+batch's per-axis agreement matrix is read against a judge nobody could shop for after the
+numbers arrived; the matrix assigns per-axis licences (selection between discriminable
+candidates, then in-loop feedback under monthly probes) with §72's expiry rules attached. The
+certified repair pairs now generating join the batch's class B in the repair direction, which
+is the interventional test `personas.py`'s reason codes have owed since §70. Kill condition at
+programme level: no candidate clears §79's 0.52 external-label bar with clean bias — then
+machine taste is unavailable at this frontier, and the fallback (humans judge, machines
+certify) is written in the plan rather than discovered in disappointment.
+
+## 85. The repair direction lands: the panel's first clean interval, and a voice that moves when shown
+
+`repair_generation.py`, pre-registered in-module: three minimal revisions of each of 8 scenes
+(em-dash removal by rewrite, interiority addition, typo-fix placebo) plus an exemplar-voiced
+retell, 32 generations and 192 panel comparisons, zero generation refusals, $7.41 + $7.26.
+`results/repair-generation.json`.
+
+**The placebo came back byte-identical, which is the floor at its best and a band at its
+worst.** All eight typo-fix revisions returned the scene unchanged — the revision operation at
+an inert instruction drifts nothing, so every pair was skipped as a manufactured tie (the NaN
+bias row is zero elicited pairs, not a failure). But a zero-drift placebo makes the
+pre-registered containment band zero-width, and the em-dash arm's compliance reads 3/8 because
+interiority deltas of |0.002–0.016| per 1k — one word's worth — formally exceed a band of 0.0.
+§81's lesson repeats in a new costume: the rule as registered is reported (3/8), the defect in
+the rule is recorded here, and nothing is retro-passed. The *on-axis* fact is unambiguous:
+**8 of 8 scenes had every prose em dash removed at word-similarity ≥ 0.978 and growth ≤ 3.4%**,
+with every protected span byte-intact. The certified pairs §80's class B needs exist.
+
+**`repair_interiority` is the first arm in this project's history to clear its bias
+precondition and exclude indifference, and it does so in the repair direction: 0.9509, bias
+0.4918, interval [0.8710, 1.0000].** Read against §81's damage direction (0.3889, interval
+spanning 0.5), the two now agree in sign: the panel dislikes interiority removed and strongly
+prefers it added. Length is the named confound — the treatment grows scenes ~10-13% — and the
+existing evidence against "prefers more words" is `filler_inject`'s standing as a detected
+DEGRADER: matched-scale padding is *dispreferred* by this same panel. What no machine can
+answer is the sharper worry: the added sentences are *reported* inner state, and a panel
+preferring told feelings is machine taste for exactly the defect craft warns about. The
+operator read (below) is the arbiter, and the question rides on it.
+
+**`repair_emdash` voids on the near-twin law, as pre-registered.** Bias 0.6949 at similarity
+0.98 — §83's prediction confirmed on fresh pairs, and the panel's directional lean (0.2734,
+toward the dashed original) is therefore not read. The em-dash axis stays a human question,
+which is what §80 already budgeted for.
+
+**The exemplar arm answers §83's open question: the register moves when the voice is
+demonstrated rather than described.** 8/8 scenes land nearer the exemplar-source centroid than
+the sober retell does; 6/8 move further from their original in z-scored feature space. The
+described-state channel is closed (§83) and the demonstrated-voice channel is open — the first
+working register lever this project has measured. Its panel arm voids at bias 0.7656 and its
+interval [0.4844, 0.8125] spans 0.5, so whether the moved voice is *better* is unmeasured; it
+joins the operator read.
+
+**An operator read is issued with this entry**: six blinded pairs (two per axis), orientation
+derived from the pair digest, key at `results/operator-read-key.json` and deliberately not
+printed in the session. The operator has seen the defect names all day, so this read is
+directional evidence, not a naive measurement — recorded here so nobody later mistakes it for
+one. What it uniquely answers: whether the panel's 0.95 on interiority is a preference for
+prose or for bolted-on feeling, and whether the exemplar arm's measured movement reads as a
+voice or as noise.
