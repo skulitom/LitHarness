@@ -4131,3 +4131,79 @@ welding any two clauses without requiring the sentence to earn the join. If that
 right, the panel should prefer the em-dashed text. That is also the direct answer to the
 question this entry exists under — *should the writer simulate a reader while writing?* — which
 is: yes, but not this reader, because this one would optimise the defect.
+
+## 75. Twenty-one proxies asked whether the text was good; this one asks whether it is ours
+
+Every refuted proxy in BRIEF §2 was trying to answer *is this text good?*, and every label
+available for that question is contaminated — engagement tracks cover art and launch timing,
+comment counts track archive capture date, declared-AI tracks the year. §74's human read forces
+a different question, because the three defects it named are not degradations of good prose but
+properties of our baseline. The question that fits them is *is this text ours?*, and it has the
+one uncontaminated label this project will ever own: **we know with certainty which scenes our
+pipeline wrote.** Pass 2 failed because it tried to detect *other people's* AI text through an
+unreliable declaration. Nothing here depends on anyone declaring anything.
+
+`research/quality-measurement/authorship_tells.py` fits a logistic discriminator on 24 surface
+counts — no model calls, no corpus statistics, nothing that can leak across the split.
+
+**The null is the finding, not the AUC.** Ten drafted scenes cannot train anything, so the run
+scores our side leave-one-out and then executes *the identical procedure* with ten randomly
+drawn human chapters standing in for ours, forty times, to learn what this method reports at
+this n when there is nothing to find. Controlled run — human side length-matched to our scenes
+at 700–1,400 words, system-voice lines stripped from **both** sides, the `words` feature dropped
+because the first pass gave it a weight of −0.96:
+
+| cohort | human n | our AUC | null median | null p95 | null max | p |
+| --- | --- | --- | --- | --- | --- | --- |
+| RoyalRoad 2021-22 (pre-LLM) | 876 | **1.0000** | 0.4956 | 0.7289 | 0.7786 | 0.0 |
+| RoyalRoad 2025 | 1,618 | **1.0000** | 0.4143 | 0.6053 | 0.6637 | 0.0 |
+
+Ten human chapters do not separate from other human chapters. Ours separate perfectly, in both
+eras, with formatting and length removed as explanations.
+
+**Six tells hold their sign across a four-year gap that contains the LLM transition**, so none of
+them is the year. Weights are standardised contributions to the joint model; a positive weight is
+a feature we produce *more* of.
+
+| feature | pre-LLM | 2025 | reading |
+| --- | --- | --- | --- |
+| `adverb_ly_per_1k` | −1.891 | −1.546 | humans use far more -ly adverbs. We are scrubbed, not styled. |
+| `word_len_mean` | −1.360 | −2.711 | our words are shorter |
+| `sentence_len_cv` | **+1.064** | **+1.632** | the only one where we are higher — we over-vary sentence length |
+| `question_per_1k` | −0.913 | −1.629 | humans ask far more questions |
+| `first_person_per_1k` | −0.902 | −1.279 | §74's second defect, independently recovered |
+| `participle_open_per_1k` | −0.619 | −0.854 | humans open with `-ing` more than we do, which inverts the folklore |
+
+In the pre-LLM run specifically, `body_per_1k` reads +0.843 and `interior_per_1k` −0.681 — the
+human's "examining a human rather than being one" arriving as a *pair* of features rather than as
+an impression.
+
+**Five of the six are shortfalls.** Only sentence-length variation is an excess. The signature of
+this pipeline is not that it adds machine mannerisms; it is that it under-produces the ordinary
+texture of human prose — adverbs, questions, first person, long words, participial openers — and
+compensates with rhythm.
+
+**`sentence_length_cv` is the entry that vindicates the reframe.** Pass 2 measured it at rank AUC
+0.461 for declared-AI detection and buried it as dead. It is dead — as a general detector of
+anyone's machine prose. It is simultaneously one of the strongest features separating *our*
+output from human LitRPG. Both readings are true because the questions differ, and the second
+question is the one with a clean label.
+
+**Em dashes are real and not the biggest thing.** §74 measured our rate at 5.50 per 1k against a
+pre-LLM human median of **0.00** (p90 1.91), which puts us at roughly the 95.5th percentile — the
+human read was right. But once length is matched and system voice stripped, `em_per_1k` falls out
+of the top ten, because other features carry more. The mark is a tell; it is not the tell.
+
+**A methodological finding, and it costs the 2025 shard its standing as a negative class.** Human
+em dashes per 1k moved from median 0.00 / p90 1.91 in 2021-22 to median 1.11 / p90 11.86 in 2025.
+Interiority did not move at all across the same gap (3.69 → 3.61). The 2025 corpus has drifted
+toward the machine on exactly the axis where drift would be expected, which is either LLM
+contamination of RoyalRoad or a real style shift — and either way **the pre-LLM shard is the only
+clean reference for tell work.** Recorded here so a future run does not measure against 2025 and
+conclude it is fine.
+
+**What this does not license.** The ten scenes are one book, one premise, one narrator. A
+signature separating *The Toll Road* from human LitRPG may be that book's rather than this
+pipeline's, and nothing here separates the two. A second generated book with a different premise
+is the control, it is the obvious next measurement, and until it runs this reads as *this book is
+distinguishable* rather than *our pipeline is*.

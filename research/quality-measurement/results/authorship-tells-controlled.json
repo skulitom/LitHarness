@@ -1,0 +1,166 @@
+{
+  "active_features": [
+    "em_per_1k",
+    "comma_per_1k",
+    "semicolon_per_1k",
+    "colon_per_1k",
+    "question_per_1k",
+    "exclaim_per_1k",
+    "interior_per_1k",
+    "body_per_1k",
+    "body_to_interior",
+    "hedge_per_1k",
+    "first_person_per_1k",
+    "third_person_per_1k",
+    "adverb_ly_per_1k",
+    "participle_open_per_1k",
+    "and_opener_per_1k",
+    "but_opener_per_1k",
+    "triple_per_1k",
+    "dialogue_ratio",
+    "sentence_len_mean",
+    "sentence_len_cv",
+    "paragraph_len_mean",
+    "type_token",
+    "word_len_mean"
+  ],
+  "cohorts": {
+    "post_llm_2025": {
+      "auc": 1.0,
+      "human_n": 1618,
+      "null_max": 0.6637,
+      "null_median": 0.4143,
+      "null_p95": 0.6053,
+      "null_replicates": 40,
+      "p_value": 0.0,
+      "separates": true,
+      "top_features": [
+        {
+          "feature": "word_len_mean",
+          "weight": -2.711
+        },
+        {
+          "feature": "sentence_len_cv",
+          "weight": 1.632
+        },
+        {
+          "feature": "question_per_1k",
+          "weight": -1.6291
+        },
+        {
+          "feature": "adverb_ly_per_1k",
+          "weight": -1.5463
+        },
+        {
+          "feature": "colon_per_1k",
+          "weight": -1.4853
+        },
+        {
+          "feature": "first_person_per_1k",
+          "weight": -1.2789
+        },
+        {
+          "feature": "but_opener_per_1k",
+          "weight": -0.9556
+        },
+        {
+          "feature": "exclaim_per_1k",
+          "weight": -0.945
+        },
+        {
+          "feature": "sentence_len_mean",
+          "weight": -0.8686
+        },
+        {
+          "feature": "participle_open_per_1k",
+          "weight": -0.8535
+        }
+      ]
+    },
+    "pre_llm_2021_22": {
+      "auc": 1.0,
+      "human_n": 876,
+      "null_max": 0.7786,
+      "null_median": 0.4956,
+      "null_p95": 0.7289,
+      "null_replicates": 40,
+      "p_value": 0.0,
+      "separates": true,
+      "top_features": [
+        {
+          "feature": "adverb_ly_per_1k",
+          "weight": -1.8913
+        },
+        {
+          "feature": "word_len_mean",
+          "weight": -1.3603
+        },
+        {
+          "feature": "comma_per_1k",
+          "weight": 1.2726
+        },
+        {
+          "feature": "sentence_len_cv",
+          "weight": 1.0643
+        },
+        {
+          "feature": "type_token",
+          "weight": -1.0073
+        },
+        {
+          "feature": "question_per_1k",
+          "weight": -0.9132
+        },
+        {
+          "feature": "first_person_per_1k",
+          "weight": -0.9024
+        },
+        {
+          "feature": "body_per_1k",
+          "weight": 0.8434
+        },
+        {
+          "feature": "interior_per_1k",
+          "weight": -0.6808
+        },
+        {
+          "feature": "participle_open_per_1k",
+          "weight": -0.6187
+        }
+      ]
+    }
+  },
+  "features": [
+    "em_per_1k",
+    "comma_per_1k",
+    "semicolon_per_1k",
+    "colon_per_1k",
+    "question_per_1k",
+    "exclaim_per_1k",
+    "interior_per_1k",
+    "body_per_1k",
+    "body_to_interior",
+    "hedge_per_1k",
+    "first_person_per_1k",
+    "third_person_per_1k",
+    "adverb_ly_per_1k",
+    "participle_open_per_1k",
+    "and_opener_per_1k",
+    "but_opener_per_1k",
+    "triple_per_1k",
+    "dialogue_ratio",
+    "sentence_len_mean",
+    "sentence_len_cv",
+    "paragraph_len_mean",
+    "type_token",
+    "word_len_mean",
+    "words"
+  ],
+  "human_word_band": [
+    700,
+    1400
+  ],
+  "ours_n": 10,
+  "protocol": "plan/stage-0-decisions.md \u00a775",
+  "strip_system": true
+}

@@ -1,0 +1,137 @@
+{
+  "cohorts": {
+    "post_llm_2025": {
+      "auc": 1.0,
+      "human_n": 800,
+      "null_max": 0.7323,
+      "null_median": 0.4779,
+      "null_p95": 0.6794,
+      "null_replicates": 40,
+      "p_value": 0.0,
+      "separates": true,
+      "top_features": [
+        {
+          "feature": "adverb_ly_per_1k",
+          "weight": -1.6947
+        },
+        {
+          "feature": "word_len_mean",
+          "weight": -1.6357
+        },
+        {
+          "feature": "sentence_len_cv",
+          "weight": 1.4917
+        },
+        {
+          "feature": "first_person_per_1k",
+          "weight": -0.876
+        },
+        {
+          "feature": "exclaim_per_1k",
+          "weight": -0.8553
+        },
+        {
+          "feature": "words",
+          "weight": -0.8391
+        },
+        {
+          "feature": "but_opener_per_1k",
+          "weight": -0.7409
+        },
+        {
+          "feature": "semicolon_per_1k",
+          "weight": 0.6895
+        },
+        {
+          "feature": "question_per_1k",
+          "weight": -0.5818
+        },
+        {
+          "feature": "em_per_1k",
+          "weight": 0.571
+        }
+      ]
+    },
+    "pre_llm_2021_22": {
+      "auc": 1.0,
+      "human_n": 800,
+      "null_max": 0.7335,
+      "null_median": 0.4077,
+      "null_p95": 0.6603,
+      "null_replicates": 40,
+      "p_value": 0.0,
+      "separates": true,
+      "top_features": [
+        {
+          "feature": "adverb_ly_per_1k",
+          "weight": -1.2832
+        },
+        {
+          "feature": "word_len_mean",
+          "weight": -1.0075
+        },
+        {
+          "feature": "em_per_1k",
+          "weight": 1.0057
+        },
+        {
+          "feature": "words",
+          "weight": -0.962
+        },
+        {
+          "feature": "comma_per_1k",
+          "weight": 0.8217
+        },
+        {
+          "feature": "but_opener_per_1k",
+          "weight": -0.7232
+        },
+        {
+          "feature": "sentence_len_cv",
+          "weight": 0.7158
+        },
+        {
+          "feature": "first_person_per_1k",
+          "weight": -0.6337
+        },
+        {
+          "feature": "dialogue_ratio",
+          "weight": 0.5683
+        },
+        {
+          "feature": "exclaim_per_1k",
+          "weight": -0.5555
+        }
+      ]
+    }
+  },
+  "features": [
+    "em_per_1k",
+    "comma_per_1k",
+    "semicolon_per_1k",
+    "colon_per_1k",
+    "question_per_1k",
+    "exclaim_per_1k",
+    "interior_per_1k",
+    "body_per_1k",
+    "body_to_interior",
+    "hedge_per_1k",
+    "first_person_per_1k",
+    "third_person_per_1k",
+    "adverb_ly_per_1k",
+    "participle_open_per_1k",
+    "and_opener_per_1k",
+    "but_opener_per_1k",
+    "triple_per_1k",
+    "dialogue_ratio",
+    "sentence_len_mean",
+    "sentence_len_cv",
+    "paragraph_len_mean",
+    "type_token",
+    "word_len_mean",
+    "words"
+  ],
+  "ours_n": 10,
+  "protocol": "plan/stage-0-decisions.md \u00a775",
+  "strip_system": false
+}
