@@ -3971,3 +3971,82 @@ parked tournament is noted as a degraded record with the readiness scan as the r
 it stays harmless. Acceptance stands as §61 wrote it, runbook at
 `research/plan-search/RUNBOOK.md`: a K=3 search book beats a no-search book in
 blinded pairwise at n≥50, or this ledger records that it didn't.
+
+## 73. Before asking whether summaries flow, ask whether the summariser holds still
+
+**Pre-registered. Written before the first call, and that is the point.** §69's
+selection-family rule is that a family is one comparison when it was named before the
+data; this entry names four conditions and the instrument that will answer them, and
+it is committed ahead of the run so the numbers cannot choose the thresholds.
+
+The direction is a good one and it arrived from outside: *summarise each scene, then
+measure how well one summary flows into the next*, and then *summarise the summaries
+and measure the drift*. Long-range structure is the thing this project has no working
+instrument for — §58's `transplant` arm is the one the persona panel is blind to, and
+the panel's own local-coherence reading says why — so a measure that reads across
+scenes rather than inside them is aimed at the right gap. But both proposals are
+measurements **through** the §71 summary call, and neither is interpretable before
+that call's own re-sample variance is known.
+
+**The precedent is exact and it is a death.** `tree-Haar scale energy` died at
+ICC(1) = 0.270 with within-book sd equal to between-book sd: its replicates of one
+book disagreed as much as different books did, so every hierarchy built on it was
+arithmetic over noise. A summariser is the same shape — a compression re-sampled per
+unit — and a flow measure over unstable summaries reproduces that death one level up,
+after paying for a full sweep to find out. So the summariser is measured first, and
+the cost is two orders of magnitude below the sweep it gates.
+
+**Reliability alone is a trap; separation is the test.** A summariser that answers
+"two characters, one promise opened" for every scene in the book is perfectly reliable
+and carries nothing. Every statistic in `research/quality-measurement/summary_reliability.py`
+is therefore reported against a between-scene contrast — within-scene agreement counts
+only in the amount by which it exceeds agreement between summaries of *different*
+scenes — which is the sham discipline moved one instrument over: a detection rate is
+read against its placebo, never alone. The Jaccard convention makes the trap explicit
+rather than hiding it. Two summaries that both report no promises paid have agreed, so
+empty-against-empty scores 1.0; the degenerate case that opens — a field empty
+everywhere, scoring 1.0 for every pair — is caught by the contrast, which is also 1.0,
+so the separation is zero and the field reads as carrying nothing.
+
+**The conditions, with their numbers, before the data.**
+
+| Condition | Threshold | What failing it kills |
+| --- | --- | --- |
+| identity | `characters` within − between Jaccard ≥ 0.30 | The summary does not identify its own scene. No flow or drift measure over it is interpretable, and the proposal stops here. |
+| ledger | ICC(1) on `n_promises_opened` ≥ 0.50 | The promise ledger's inputs are re-sample noise; migration 023 is recording the sampler rather than the book. |
+| delta | ICC(1) on `delta_present` ≥ 0.50 | §61 Add 1's delta correlation work has no stable left-hand side. |
+| positivity | no numeric field constant across the whole grid | The gate-0 shape: 195 of 196 `keep-reading`, both mean squares exactly 0.0, every variance statistic undefined. A field that never varies is a finding, not a number. |
+| level 2 *(gated)* | own-window retention − foreign-window retention ≥ 0.20 | The summary-of-summaries is not carrying what it summarises, and "drift" is measuring the sampler. |
+
+The positivity row is stamped from experience rather than caution: it is the exact
+condition that ended gate 0 of `plan/persona-reader-validity.md`, and it took a manual
+read of the raw records to see that the undefined statistic *was* the finding. Here
+the degenerate case is detected before the ICC is computed and reported as
+`status: constant` beside it.
+
+**What is measured is the prompt, not the job — and the gap is named here rather than
+discovered later.** `render_summary_prompt` is a pure function and `SUMMARY_SCHEMA` is
+a constant, so both run without the store, the queue, or a provider profile. The
+production path runs the `mechanical` profile through the configured provider; this
+runs a flag-selected model through `elicit`'s transport with `--effort` unset. Where
+the two agree, this bounds the shipped call; where they do not, it measures the
+prompt's own stability, which is the part every downstream proposal inherits whatever
+provider runs it.
+
+**Level 2 is a proposal, not a component, and it is gated.** `context.py` evicts
+summaries under budget, so summaries-of-summaries do not exist in this system — their
+absence is what the eviction costs, and that is the honest statement of what the
+`--level 2` arm would buy. Its window rendering is a first draft whose wording is a
+free parameter the measurement cannot separate from the summariser's behaviour, so it
+is kept plain and said so in the code. And it is read only if level 1 clears identity:
+a drift number over summaries that do not identify their own scenes is a measurement
+of the sampler with a narrative attached.
+
+**The null already runs, which gate 0's arithmetic never did.** The dry-run arm
+answers from a hash of the request digest and ignores the scene entirely, so it is a
+draw from the null — and it lands where a null should: separation −0.0347, delta
+ICC 0.0909, and own-window retention 0.200 against foreign-window retention 0.200 for
+a gap of exactly zero. The synthetic answer also opens exactly one promise every time,
+which fires the positivity guard on `n_promises_opened` and demonstrates the guard on
+data whose behaviour is known. A pipeline whose statistics have never executed is a
+pipeline whose first real run is also its first integration test; this one has run.

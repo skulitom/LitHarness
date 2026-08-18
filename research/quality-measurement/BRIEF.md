@@ -272,6 +272,20 @@ predictive distribution over the text. Zero.
 - LitHarness source: `src/litharness/domain/craft.py` (the four metrics),
   `domain/calibration.py` (the promotion bar), `tools/build_craft_profile.py` (the corpus
   harness, including a working rank-AUC implementation and the cohort logic).
+- **The shipped summariser, callable without the system around it.**
+  `litharness.application.summarize.render_summary_prompt` is a pure function and
+  `SUMMARY_SCHEMA` is a constant, so §71's per-scene structured summary — `setting`,
+  `characters`, `events`, `open`, `delta`, `promises_opened`, `promises_paid` — can be measured
+  with no store, no queue and no provider profile. That matters because two attractive
+  directions (does one summary flow into the next; how far does a summary-of-summaries drift)
+  are measurements *through* this call, and neither is readable before its re-sample variance
+  is. `research/quality-measurement/summary_reliability.py` is that check: the same scene
+  summarised *k* times, ICC(1) over the scalars, and within-scene against **between-scene**
+  Jaccard on the sets, because reliability without the between contrast is the trap a
+  constant summariser passes perfectly. Conditions pre-registered in
+  `plan/stage-0-decisions.md` §73 before the first call. The precedent is `tree-Haar scale
+  energy`, dead at ICC(1) = 0.270 with within-book sd equal to between-book sd; a flow measure
+  over an unstable summariser reproduces that death one level up after paying for the sweep.
 
 ## 5. Rules any proposal must obey (these are the project's, not negotiable)
 
