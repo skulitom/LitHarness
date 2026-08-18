@@ -4757,6 +4757,60 @@ costs 368 comparisons at panel width — the elicitation channel was occupied by
 build already establishes is independent of any candidate: the label is unmatched-able, the strata
 make that usable, and the bar is 0.52.
 
+### 79.1 The first candidate is void, and the shape of its failure is the one the strata were built to show
+
+The default panel — `claude-haiku-4-5`, four personas, `preference`, `half_win` — against all 46
+pairs. 368 comparisons, **zero refusals**, $11.71.
+
+    stratum   pairs   agreement   interval          positional bias   decided
+    aligned      25      0.6100   [0.460, 0.745]             0.3800       200
+    crossed      21      0.4107   [0.256, 0.560]             0.3274       168
+    minimum               0.4107                                          368 pooled bias 0.356
+
+**VOID on the pre-registered precondition, and it fails the bar independently.** Both strata sit far
+outside the 0.40–0.60 positional band, so nothing here licenses a reading. And even setting the
+precondition aside the candidate does not clear the bar: the minimum agreement is **0.4107** against
+a best prose-blind minimum of **0.52**, and neither interval lower bound reaches 0.50. Two
+independent failures, reported together because either alone decides it — the same shape §78.3 had
+to report, and the reason both preconditions exist.
+
+**This bias failure is not the marginal kind.** §78.3's arm missed the band by 0.0032 on 72
+comparisons. This misses it by 0.14 on **368 decided comparisons**, roughly 5.8 standard errors from
+indifference. The panel picked the second slot in 64% of these comparisons. So on ~1,000-word
+human-against-human excerpt pairs the instrument has a large, well-estimated slot preference — a
+third measurement of §74's conclusion that positional bias is a property of the pair rather than of
+the panel, and the most strongly estimated one. Any future use of this instrument on this kind of
+material has to measure bias on its own pairs; inheriting a figure from a different experiment
+remains unsupported.
+
+**The pattern, offered as a direction and not a result.** Agreement runs **0.61 in `aligned` and
+0.41 in `crossed`** — higher where every popularity covariate points at the label, lower where they
+all point away, a spread of 0.20. That is the signature the strata were constructed to expose: a
+judge reading prose scores above 0.5 in both, a pure popularity proxy scores near 1.0 and near 0.0,
+and this sits between them and tilted toward popularity. **It cannot be reported as a finding.** The
+arm is void, both intervals contain 0.5, and 46 pairs is thin. What can be said is narrower and
+still worth writing down: **the first candidate produced no evidence that the panel orders matched
+human prose on a reader-behaviour label, and what structure it did produce leans the wrong way.**
+
+**The benchmark itself behaved as designed, which is the other thing this run tested.** The
+prose-blind table came out exactly as constructed — `pick_more_followers` at 1.000/0.000,
+`pick_fewer_followers` at 0.000/1.000, `pick_more_favorites` at 0.960/0.000 — so every popularity
+rule is perfect in one stratum and worthless in the other, and the binding minimum is
+`pick_fewer_views` at 0.52. That is the property the whole design rests on and it held on real
+elicitation rather than only in the selection code. Had the strata been pooled, this candidate would
+have averaged to **0.51** and read as an unremarkable near-chance result instead of a 0.20 spread
+with a direction; `PRE_REGISTRATION["never_average"]` exists for exactly that reason and this run is
+its first vindication.
+
+**What this does and does not say about the programme.** It is one candidate, and the benchmark's
+purpose is to rank candidates — a single failure does not condemn the instrument class. The obvious
+next candidates are the ones §77's 2x2 already pointed at (a single plain question outperformed four
+authored personas) and a stronger tier; both are configuration changes the harness already takes as
+flags, at about $12 each. What it does say is that the cheap assumption — that the existing panel
+would track an external label once the corpus was clean — is not supported, and §82's conclusion
+stands unchanged and now for a second reason: this candidate could not be proposed for the §72
+licence even if BEHAVIOUR were the right evidence class, which it is not.
+
 ## 80. The first paid batch is designed to answer two questions, and is not funded
 
 [reader-batch-1.md](reader-batch-1.md) drafts the batch so one set of paid verdicts pilots the
@@ -4948,3 +5002,68 @@ decided on was an artifact (§78), the one external-label result was void and co
 did not before is an instrument with a real bar, two defect axes with machine readings, and a
 costed batch design. The gap itself is still unmeasured, and it is now clear that measuring it costs
 money rather than compute.
+
+## 83. Four states of mind, one voice: the register is invariant to simulated phenomenology
+
+The directive asked whether simulating unconventional writer states — alcohol, hallucinogens —
+moves the output. `research/quality-measurement/writer_states.py` is the instrument; its module
+docstring carries the design and `PRE_REGISTRATION` the branches, committed before the first
+call. 32 retells on the book's own drafter, 192 panel comparisons, zero refusals anywhere,
+$6.10 + $8.68 equivalent. `results/writer-states.json`.
+
+**The design in one paragraph.** Every scene of `toll.db` was retold four times by the model
+that drafted it, differing only in a system-prompt state block: clear-headed (`sober`, the
+anchor), most of a bottle of wine (`drunk`), a moderate psilocybin dose two hours in (`trip`),
+and a cup of tea (`tea`) — a placebo state, semantically inert, whose pair against sober bounds
+instruction-noise plus draw-noise the way `rewhitespace` bounds edited-ness. States are
+phenomenology, never style instructions — what the evening is like, not what the sentences
+should do — because "write looser" would measure prompt-following, which §70 already measures.
+One craft rule bans the caricature (no typos, no slurring), so the panel could not be handed
+orthographic damage and call it a state. Every comparison is retell-vs-retell so the retell
+operation cancels; system-voice preservation is verified rather than trusted.
+
+**The controls all held, which is what makes the null a measurement.** 55 of 55 protected
+system-voice spans byte-identical in every arm; arm word counts 1,015–1,042 against the sober
+1,035; the drafter never declined a state. Nothing §74-shaped is under this result.
+
+**The panel voided itself on all three arms, and the voiding is the third measurement of the
+same law.** Chose-A rates: drunk 0.828, trip 0.762, tea 0.734 — every arm outside the
+pre-registered 0.40–0.60, so no preference here is read. §78's tail observed that positional
+bias is a property of the pair rather than the panel, discriminable pairs running clean and
+indiscriminable ones running biased. Two same-model fair copies of the same scene are the most
+similar pairs this panel has ever been shown, and they produced its most positional answering.
+The consequence for the writing loop is worth the run on its own: **in-loop selection between
+same-model rewrites would be mostly layout**, whatever the win rates appear to say.
+
+**The mechanics are not voided, and they say the states never reached the prose.** Against the
+sober retell, per 1k words, with tea as the drift floor:
+
+    arm      em dash   interiority   stakes    sent. mean   words
+    tea       +0.39      +0.28        +0.04      -0.17      -20.4
+    drunk     -0.43      +0.24        -0.09      +0.09       -0.4
+    trip      +1.25      +0.22        +0.24      +0.06       +7.0
+
+The one pre-registered mechanical prediction — trip raises `interiority_per_1k`, psilocybin
+phenomenology being inner-experience content — is **refuted**: the placebo moved the proxy more
+(+0.28) than the trip did (+0.22). The trip em-dash bump, the largest delta on the table and in
+the direction of the machine tell, dissolves per-scene: mean +1.25 against a per-scene sd of
+2.53, carried by two scenes of eight, sign test 5/8. Drunk's em-dash cut is 4/8 at sd 3.13.
+Sentence rhythm and TTR did not move at the second decimal in any arm. Reading the openings
+confirms what the numbers say: the four retells of a scene are near-twins.
+
+**What this prices and what it does not.** At this dose — state as system-prompt phenomenology,
+under fair-copy craft rules that pin events, order, POV, length and typography — simulated
+intoxication does not move the prose in any direction any instrument here can see. The INERT
+branch, reached through the mechanics while the panel branch reads VOID. It does *not* price
+three doses above it, named now so a later run doesn't rediscover them: state under **free
+drafting** (a fresh scene from a brief, where attention has room to wander and event selection
+itself can carry the state); an **explicit licence to deviate** (the caricature ban and the
+retell clamp may suppress exactly the variance a state would carry — a declared trade, made so
+the first run could not be won by typos); and state expressed through **revision** rather than
+generation. The clamp was chosen to make a positive result clean; the cost is that the null is
+narrow.
+
+**The residue is a corpus.** 32 fair copies, four per scene, near-twins by measurement — the
+hardest discrimination material this project owns. A future panel that can separate them is a
+different instrument from the one that just answered a side, and `writer-states-gen-raw.jsonl`
+is the fixture that test was missing.
