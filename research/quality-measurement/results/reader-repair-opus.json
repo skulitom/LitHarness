@@ -1,0 +1,136 @@
+{
+  "api_calls": 232,
+  "book_db": "C:\\DEV\\LitHarness\\research\\quality-measurement\\corpora\\toll.db",
+  "comparisons": 232,
+  "expectations": {
+    "em_dash_inject": "below 0.5 \u2014 the tell, added",
+    "em_dash_strip": "above 0.5 \u2014 the human's direction",
+    "rewhitespace": "0.5 \u2014 the sham floor, layout only"
+  },
+  "intervals": {
+    "em_dash_inject": {
+      "high": 0.35,
+      "low": 0.0625,
+      "passages": 10,
+      "personas": 4,
+      "reading": "resamples passages and personas both; `gate1.paired_ci` resamples passages only and over-rejects at 3.8-23.9% against a nominal 2.5% at this n. Read the fourth rung of `evaluate.verdict()` against this interval, not that one"
+    },
+    "em_dash_strip": {
+      "high": 0.0,
+      "low": 0.0,
+      "passages": 9,
+      "personas": 4,
+      "reading": "resamples passages and personas both; `gate1.paired_ci` resamples passages only and over-rejects at 3.8-23.9% against a nominal 2.5% at this n. Read the fourth rung of `evaluate.verdict()` against this interval, not that one"
+    },
+    "rewhitespace": {
+      "high": 0.5437,
+      "low": 0.4062,
+      "passages": 10,
+      "personas": 4,
+      "reading": "resamples passages and personas both; `gate1.paired_ci` resamples passages only and over-rejects at 3.8-23.9% against a nominal 2.5% at this n. Read the fourth rung of `evaluate.verdict()` against this interval, not that one"
+    }
+  },
+  "ladder": {
+    "conditions": {
+      "agrees": "strip >= 0.60 and inject <= 0.40: the panel shares the human's taste and a reader model inside the writing loop would push against the tell",
+      "blind": "both arms inside 0.40-0.60 with the sham floor cleared: the panel cannot see the defect at all, and the human read is doing work no instrument in this repo does",
+      "opposes": "strip <= 0.40 or inject >= 0.60: the panel has the machine's taste. This is the consequential branch \u2014 it would mean a reader in the loop selects FOR the tell, and the local-scale reading of \u00a75a predicts exactly this (an em dash is the maximally locally-smooth punctuation, and the panel is sharp on local coherence)",
+      "precondition": "positional bias within 0.40-0.60. Outside it the panel answered a side and the run says nothing about em dashes, exactly as gemma3:4b's two runs said nothing",
+      "sham_floor": "|rewhitespace rate - 0.5| must be smaller than |strip rate - 0.5|, or the preference is edited-ness detection and not a preference about the mark"
+    },
+    "readable_arms": [
+      "em_dash_strip"
+    ],
+    "verdict": "OPPOSES",
+    "voided_arms": [
+      "em_dash_inject",
+      "rewhitespace"
+    ],
+    "why": "the panel prefers the tell; a reader in the loop selects for it"
+  },
+  "panel_model": "claude-opus-5",
+  "per_arm_bias": {
+    "em_dash_inject": {
+      "chose_A_rate": 0.7,
+      "decided": 80,
+      "note": "0.5 is unbiased; distance from it is the share of the answer that is layout",
+      "per_persona_chose_A": {
+        "grinder": 0.7,
+        "newcomer": 0.75,
+        "stakes": 0.8,
+        "voice": 0.55
+      }
+    },
+    "em_dash_strip": {
+      "chose_A_rate": 0.5,
+      "decided": 72,
+      "note": "0.5 is unbiased; distance from it is the share of the answer that is layout",
+      "per_persona_chose_A": {
+        "grinder": 0.5,
+        "newcomer": 0.5,
+        "stakes": 0.5,
+        "voice": 0.5
+      }
+    },
+    "rewhitespace": {
+      "chose_A_rate": 1.0,
+      "decided": 25,
+      "note": "0.5 is unbiased; distance from it is the share of the answer that is layout",
+      "per_persona_chose_A": {
+        "grinder": 1.0,
+        "newcomer": 1.0,
+        "stakes": 1.0,
+        "voice": 1.0
+      }
+    }
+  },
+  "planned_calls": 240,
+  "positional_bias": {
+    "chose_A_rate": 0.661,
+    "decided": 177,
+    "note": "0.5 is unbiased; distance from it is the share of the answer that is layout",
+    "per_persona_chose_A": {
+      "grinder": 0.6739,
+      "newcomer": 0.641,
+      "stakes": 0.7111,
+      "voice": 0.617
+    }
+  },
+  "protocol": "plan/stage-0-decisions.md \u00a774",
+  "refused": 0,
+  "replayed": 0,
+  "scenes": [
+    "gen:scene-1",
+    "gen:scene-2",
+    "gen:scene-3",
+    "gen:scene-4",
+    "gen:scene-5",
+    "gen:scene-6",
+    "gen:scene-7",
+    "gen:scene-8",
+    "gen:scene-9",
+    "gen:scene-10"
+  ],
+  "spend": {
+    "cache_read": 6085928,
+    "cache_write": 2287312,
+    "equivalent_usd": 26.8778,
+    "input": 808600,
+    "output": 8879
+  },
+  "tie_policy": "half_win",
+  "transform": {
+    "em_dashes_after": 24,
+    "em_dashes_before": 59,
+    "note": "dashes remaining are inside protected system-voice spans; see ablate._PROTECTED",
+    "possible_comma_splices": 1,
+    "prose_dashes_replaced": 35,
+    "word_delta_pct": -0.301
+  },
+  "transport": "cli",
+  "win_rates": {
+    "em_dash_inject": 0.2,
+    "em_dash_strip": 0.0,
+    "rewhitespace": 0.4813
+  }
+}
