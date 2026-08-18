@@ -1,0 +1,325 @@
+{
+ "metric": "persona_panel.would_stop.v0",
+ "protocol": "plan/persona-reader-validity.md",
+ "entry": "plan/stage-0-decisions.md \u00a770",
+ "transport": "ollama",
+ "panel_model": "gemma3:4b",
+ "spot_model": null,
+ "personas": [
+  "grinder",
+  "stakes",
+  "voice",
+  "newcomer"
+ ],
+ "n_samples": 1,
+ "doses": [
+  1.0
+ ],
+ "mode": "pairwise",
+ "tie_policy": "half_win",
+ "pair_question": "intensity",
+ "positional_bias": {
+  "decided": 21,
+  "chose_A_rate": 0.8095,
+  "per_persona_chose_A": {
+   "grinder": 0.6667,
+   "newcomer": 1.0,
+   "stakes": 0.875,
+   "voice": 0.6667
+  },
+  "note": "0.5 is unbiased; distance from it is the share of the answer that is layout"
+ },
+ "pairwise_two_way_ci": {
+  "low": 0.4878,
+  "high": 0.5,
+  "passages": 10,
+  "personas": 4,
+  "reading": "resamples passages and personas both; `gate1.paired_ci` resamples passages only and over-rejects at 3.8-23.9% against a nominal 2.5% at this n. Read the fourth rung of `evaluate.verdict()` against this interval, not that one"
+ },
+ "passages": [
+  "gen:scene-1",
+  "gen:scene-2",
+  "gen:scene-3",
+  "gen:scene-4",
+  "gen:scene-5",
+  "gen:scene-6",
+  "gen:scene-7",
+  "gen:scene-8",
+  "gen:scene-9",
+  "gen:scene-10"
+ ],
+ "passage_source": "generated:book-db",
+ "variants_scored": 113,
+ "api_calls": 348,
+ "replayed_calls": 556,
+ "refused_samples": 0,
+ "usage": {
+  "input": 2849388,
+  "output": 19231,
+  "cache_read": 0,
+  "cache_write": 0,
+  "equivalent_usd": 0.0
+ },
+ "minutes": 36.5,
+ "persona_fidelity_diagnostic": "not run (--fidelity)",
+ "gate0_icc_pooled": null,
+ "gate0_icc_per_persona": {},
+ "gate1": {
+  "detect_auc": 0.534,
+  "sham_auc": 0.475,
+  "margin": 0.009,
+  "length_auc": 0.6188,
+  "paired_rate": 0.1176,
+  "paired_ci": [
+   0.0595,
+   0.1818
+  ],
+  "paired_n": 85,
+  "per_ablation": {
+   "connective_scramble": {
+    "n": 5,
+    "mean_delta": 0.0,
+    "dose_rho": NaN,
+    "hit_rate": 0.0
+   },
+   "deplete_matched": {
+    "n": 10,
+    "mean_delta": -0.00625,
+    "dose_rho": NaN,
+    "hit_rate": 0.1
+   },
+   "destake": {
+    "n": 10,
+    "mean_delta": 0.0,
+    "dose_rho": NaN,
+    "hit_rate": 0.0
+   },
+   "dialogue_flatten": {
+    "n": 10,
+    "mean_delta": 0.0,
+    "dose_rho": NaN,
+    "hit_rate": 0.0
+   },
+   "filler_inject": {
+    "n": 10,
+    "mean_delta": 0.0,
+    "dose_rho": NaN,
+    "hit_rate": 0.1
+   },
+   "paragraph_shuffle": {
+    "n": 10,
+    "mean_delta": -0.00625,
+    "dose_rho": NaN,
+    "hit_rate": 0.1
+   },
+   "sentence_deletion": {
+    "n": 10,
+    "mean_delta": -0.0625,
+    "dose_rho": NaN,
+    "hit_rate": 0.4
+   },
+   "sentence_shuffle": {
+    "n": 10,
+    "mean_delta": 0.0,
+    "dose_rho": NaN,
+    "hit_rate": 0.0
+   },
+   "transplant": {
+    "n": 10,
+    "mean_delta": 0.0,
+    "dose_rho": NaN,
+    "hit_rate": 0.3
+   }
+  },
+  "pre_registration": {
+   "arms": {
+    "connective_scramble": {
+     "n": 5,
+     "mean_delta": 0.0,
+     "dose_rho": NaN,
+     "hit_rate": 0.0,
+     "standing": "exploratory"
+    },
+    "deplete_matched": {
+     "n": 10,
+     "mean_delta": -0.00625,
+     "dose_rho": NaN,
+     "hit_rate": 0.1,
+     "standing": "primary-control"
+    },
+    "destake": {
+     "n": 10,
+     "mean_delta": 0.0,
+     "dose_rho": NaN,
+     "hit_rate": 0.0,
+     "standing": "primary"
+    },
+    "dialogue_flatten": {
+     "n": 10,
+     "mean_delta": 0.0,
+     "dose_rho": NaN,
+     "hit_rate": 0.0,
+     "standing": "exploratory"
+    },
+    "filler_inject": {
+     "n": 10,
+     "mean_delta": 0.0,
+     "dose_rho": NaN,
+     "hit_rate": 0.1,
+     "standing": "exploratory"
+    },
+    "paragraph_shuffle": {
+     "n": 10,
+     "mean_delta": -0.00625,
+     "dose_rho": NaN,
+     "hit_rate": 0.1,
+     "standing": "exploratory"
+    },
+    "sentence_deletion": {
+     "n": 10,
+     "mean_delta": -0.0625,
+     "dose_rho": NaN,
+     "hit_rate": 0.4,
+     "standing": "exploratory"
+    },
+    "sentence_shuffle": {
+     "n": 10,
+     "mean_delta": 0.0,
+     "dose_rho": NaN,
+     "hit_rate": 0.0,
+     "standing": "exploratory"
+    },
+    "transplant": {
+     "n": 10,
+     "mean_delta": 0.0,
+     "dose_rho": NaN,
+     "hit_rate": 0.3,
+     "standing": "exploratory"
+    }
+   },
+   "primary_comparison": "destake minus deplete_matched",
+   "family_size": 1,
+   "unregistered_arms": [],
+   "reading": "one primary comparison declared before the data, so the family is C=1 and no alpha division applies \u2014 FINDINGS.md \u00a77 measured that dividing alpha turns this bound into a seed lottery. Placebos are controls, not comparisons. Exploratory arms generate hypotheses for a fresh run and cannot close one"
+  },
+  "notes": [
+   "raw length separates at 0.6188; `sentence_deletion` is the only length-changing degrader and every other variant ties at half, so this is deletion's number \u2014 read the metric's own `sentence_deletion` row against it"
+  ],
+  "verdict": "DEAD \u2014 detect 0.534: damage does not move the score in the declared direction"
+ },
+ "stake_coverage": {
+  "gen:scene-1": {
+   "sentences": 79,
+   "stake_sentences": 3,
+   "stake_sentence_share": 0.038,
+   "stake_word_share": 0.0263
+  },
+  "gen:scene-2": {
+   "sentences": 88,
+   "stake_sentences": 3,
+   "stake_sentence_share": 0.0341,
+   "stake_word_share": 0.0345
+  },
+  "gen:scene-3": {
+   "sentences": 69,
+   "stake_sentences": 6,
+   "stake_sentence_share": 0.087,
+   "stake_word_share": 0.1389
+  },
+  "gen:scene-4": {
+   "sentences": 79,
+   "stake_sentences": 3,
+   "stake_sentence_share": 0.038,
+   "stake_word_share": 0.0635
+  },
+  "gen:scene-5": {
+   "sentences": 94,
+   "stake_sentences": 5,
+   "stake_sentence_share": 0.0532,
+   "stake_word_share": 0.0577
+  },
+  "gen:scene-6": {
+   "sentences": 101,
+   "stake_sentences": 5,
+   "stake_sentence_share": 0.0495,
+   "stake_word_share": 0.045
+  },
+  "gen:scene-7": {
+   "sentences": 103,
+   "stake_sentences": 6,
+   "stake_sentence_share": 0.0583,
+   "stake_word_share": 0.1751
+  },
+  "gen:scene-8": {
+   "sentences": 83,
+   "stake_sentences": 5,
+   "stake_sentence_share": 0.0602,
+   "stake_word_share": 0.1055
+  },
+  "gen:scene-9": {
+   "sentences": 106,
+   "stake_sentences": 2,
+   "stake_sentence_share": 0.0189,
+   "stake_word_share": 0.071
+  },
+  "gen:scene-10": {
+   "sentences": 90,
+   "stake_sentences": 1,
+   "stake_sentence_share": 0.0111,
+   "stake_word_share": 0.0236
+  }
+ },
+ "filler_reason_signature": {
+  "available": true,
+  "filler_codes": {
+   "jargon-wall": 70,
+   "stakes-real": 9,
+   "numbers-meaningless": 1
+  },
+  "other_codes": {
+   "jargon-wall": 635,
+   "stakes-real": 168,
+   "numbers-meaningless": 11,
+   "lost-track": 6,
+   "flat-voice": 2,
+   "voice-landed": 1,
+   "pulled-forward": 1
+  },
+  "filler_samples": 80,
+  "padding_share": 0.0,
+  "flat_voice_share": 0.0,
+  "reading": "`padding` is the intended response to injected filler; `flat-voice` is the signature of the out-of-voice confound. A filler arm dominated by flat-voice has measured a style intrusion rather than bloat. No threshold is pre-registered \u2014 these are counts, not a verdict"
+ },
+ "destake_vs_matched_deletion": {
+  "available": true,
+  "destake": {
+   "n": 10,
+   "mean_delta": 0.0,
+   "dose_rho": NaN,
+   "hit_rate": 0.0
+  },
+  "deplete_matched": {
+   "n": 10,
+   "mean_delta": -0.00625,
+   "dose_rho": NaN,
+   "hit_rate": 0.1
+  },
+  "mean_delta_difference": 0.00625,
+  "destake_dose_rho": NaN,
+  "matched_dose_rho": NaN,
+  "reading": "positive difference = removing stakes moved would-stop further than removing the same word count of neutral sentences; at or below zero the de-stake arm is deletion"
+ },
+ "kill_conditions": {
+  "not_applicable": "ICC, caricature, collapse and the positivity floor describe a per-passage rating; the pairwise instrument produces choices, not ratings. Its analogues are `positional_bias` and the sham arms in `gate1.per_ablation`",
+  "reason_code_counts": {
+   "jargon-wall": 705,
+   "stakes-real": 177,
+   "numbers-meaningless": 12,
+   "lost-track": 6,
+   "flat-voice": 2,
+   "voice-landed": 1,
+   "pulled-forward": 1
+  },
+  "tie_rate": 0.9768
+ }
+}

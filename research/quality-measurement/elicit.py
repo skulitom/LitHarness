@@ -865,7 +865,7 @@ class Elicitor:
         verdict = reason = None
         if not stage2["refused"] and stage2["text"]:
             try:
-                parsed = json.loads(stage2["text"])
+                parsed = json.loads(_strip_fence(stage2["text"]))
                 verdict = parsed.get("verdict")
                 reason = parsed.get("reason_code")
             except (json.JSONDecodeError, AttributeError):
@@ -908,7 +908,7 @@ class Elicitor:
         choice = reason = None
         if not record["refused"] and record["text"]:
             try:
-                parsed = json.loads(record["text"])
+                parsed = json.loads(_strip_fence(record["text"]))
                 choice, reason = parsed.get("choice"), parsed.get("reason_code")
             except (json.JSONDecodeError, AttributeError):
                 choice = reason = None
@@ -1049,7 +1049,7 @@ class Elicitor:
                     "matched": 0, "verdict_agreement": 0.0, "reason_agreement": 0.0,
                     "refused": True, "detail": []}
         try:
-            answers = json.loads(record["text"]).get("verdicts", [])
+            answers = json.loads(_strip_fence(record["text"])).get("verdicts", [])
         except (json.JSONDecodeError, AttributeError):
             answers = []
         return anchor_agreement(persona, answers)
