@@ -1,0 +1,66 @@
+{
+  "human": {
+    "post_llm_2025": {
+      "mean_coverage": 0.1879,
+      "median_coverage": 0.0,
+      "p90": 0.5714,
+      "share_at_zero": 0.6036,
+      "stories_seen": 178,
+      "stories_with_costs": 111
+    },
+    "pre_llm_2021_22": {
+      "mean_coverage": 0.1684,
+      "median_coverage": 0.0,
+      "p90": 0.5,
+      "share_at_zero": 0.5895,
+      "stories_seen": 151,
+      "stories_with_costs": 95
+    }
+  },
+  "ours": {
+    "book_level": {
+      "cost_units": {
+        "day": 9,
+        "laden": 1
+      },
+      "coverage": 0.5,
+      "covered": [
+        "day"
+      ],
+      "tracked": [
+        "days owed",
+        "days paid",
+        "gold",
+        "hp",
+        "level",
+        "mp",
+        "query of account"
+      ],
+      "uncovered": [
+        "laden"
+      ],
+      "weighted_coverage": 0.9
+    },
+    "scenes": 10,
+    "unexplained_gains": [
+      {
+        "delta": 4,
+        "field": "hp",
+        "from": 13,
+        "from_scene": "gen:scene-4",
+        "to": 17,
+        "to_scene": "gen:scene-5"
+      },
+      {
+        "delta": 2,
+        "field": "hp",
+        "from": 15,
+        "from_scene": "gen:scene-7",
+        "to": 17,
+        "to_scene": "gen:scene-8"
+      }
+    ]
+  },
+  "protocol": "plan/stage-0-decisions.md \u00a776",
+  "reading": "our coverage 0.5 is at or above the human mean"
+}
