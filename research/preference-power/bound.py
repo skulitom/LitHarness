@@ -108,16 +108,15 @@ def cells_for(
     return cells, len(readers), len(pairs)
 
 
-def bound_from_cells(
+def _resampled_rates(
     cells: list[tuple[int, int, int, float]],
     n_readers: int,
     n_pairs: int,
     *,
-    alpha: float,
     seed: int,
-    resamples: int = BOOTSTRAP_RESAMPLES,
-) -> float:
-    """The §61 lower bound, computed over cells instead of observations.
+    resamples: int,
+) -> list[float]:
+    """The sorted bootstrap rates every bound is a quantile of — the whole cost of the estimator.
 
     Refuses below two clusters in either dimension for the shipped reason: an interval clustered
     over fewer than two of either is one observation wearing an interval. The refusal is a real
@@ -125,8 +124,6 @@ def bound_from_cells(
     design lands here, because a panel that cannot be bounded at all is a panel that wasted its
     whole budget, and that is a cost the power number alone would hide.
     """
-    if not 0.0 < alpha < 1.0:
-        raise ValueError(f"alpha {alpha} is not a confidence level")
     if not cells:
         raise ValueError("no decisive judgment to bound a rate over")
     if n_readers < 2 or n_pairs < 2:
@@ -160,8 +157,57 @@ def bound_from_cells(
             "readers and pairs to bound"
         )
     rates.sort()
+    return rates
+
+
+def bound_from_cells(
+    cells: list[tuple[int, int, int, float]],
+    n_readers: int,
+    n_pairs: int,
+    *,
+    alpha: float,
+    seed: int,
+    resamples: int = BOOTSTRAP_RESAMPLES,
+) -> float:
+    """The §61 lower bound, computed over cells instead of observations."""
+    if not 0.0 < alpha < 1.0:
+        raise ValueError(f"alpha {alpha} is not a confidence level")
+    rates = _resampled_rates(cells, n_readers, n_pairs, seed=seed, resamples=resamples)
     index = max(0, math.ceil((alpha / 2.0) * len(rates)) - 1)
     return rates[min(index, len(rates) - 1)]
+
+
+def bounds_at(
+    cells: list[tuple[int, int, int, float]],
+    n_readers: int,
+    n_pairs: int,
+    *,
+    alphas: tuple[float, ...],
+    seed: int,
+    resamples: int = BOOTSTRAP_RESAMPLES,
+) -> list[float]:
+    """Every requested alpha's bound out of ONE bootstrap, on the shipped rank convention.
+
+    The 2,000 resamples are the entire cost; reading several quantiles off the sorted rates is
+    free. That matters because the estimator turned out to be far more conservative than its
+    nominal level, which makes a type-I event rare and a rare-event rate expensive to measure —
+    2,000 replicates of a 0.1% event is two events, and two events distinguish nothing. Reading
+    a whole coverage curve instead turns the same compute into an answer to the question that
+    actually spends money: **what alpha would have to be requested for the bound to hold at a
+    true 2.5%**.
+
+    Every element uses `win_rate_lower_bound`'s exact index rule, so `bounds_at(..., (0.05,))[0]`
+    is that function's return value and not an approximation of it.
+    """
+    for alpha in alphas:
+        if not 0.0 < alpha < 1.0:
+            raise ValueError(f"alpha {alpha} is not a confidence level")
+    rates = _resampled_rates(cells, n_readers, n_pairs, seed=seed, resamples=resamples)
+    out = []
+    for alpha in alphas:
+        index = max(0, math.ceil((alpha / 2.0) * len(rates)) - 1)
+        out.append(rates[min(index, len(rates) - 1)])
+    return out
 
 
 def twin_bound(judgments: list[WinObservation], *, alpha: float, tie_policy: TiePolicy) -> float:
