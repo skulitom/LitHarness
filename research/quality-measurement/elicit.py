@@ -229,15 +229,60 @@ def _flatten_turns(turns: list[dict[str, Any]]) -> str:
 
 
 def _strip_fence(text: str) -> str:
-    """Unwrap a ```json fence. `claude -p` has no structured-output mode and returns them."""
+    """Recover the JSON object from a transport with no structured-output guarantee.
+
+    **This replaced a stricter version that discarded 72% of a metered run.** The first
+    implementation only unwrapped text that *began* with a fence. `claude -p` answers the pair
+    question with the object first and then keeps talking:
+
+        {"choice": "A", "reason_code": "stakes-real"} ``` Passage A is a complete scene that
+        lands on stakes I can feel...
+
+    That is a well-formed answer with a suffix, and `json.loads` over the whole string fails on
+    it. 370 of 512 pair records were being dropped as unparseable — not refused, not malformed,
+    just followed by commentary. Scanning for the first balanced object recovers all of them, and
+    because the raw text is cached, re-running re-parses the existing log without a single new
+    call.
+
+    **This loosens the parser, never the schema.** The caller still checks the decoded value
+    against the closed choice and reason-code enums, so a recovered object that says something
+    outside them is still discarded. What is given up is the "no regex, no salvage" property the
+    SDK transport has by construction — and that property was never true here, which `_call_cli`
+    already records: on this transport the schema is an instruction rather than a guarantee.
+    Silently binning three-quarters of the evidence is the worse failure, and a *selective* one,
+    since a model that adds commentary is plausibly a model that was less decisive.
+    """
     stripped = text.strip()
-    if not stripped.startswith("```"):
+    if stripped.startswith("```"):
+        lines = stripped.splitlines()
+        if len(lines) >= 2:
+            body = lines[1:-1] if lines[-1].strip().startswith("```") else lines[1:]
+            stripped = "\n".join(body).strip()
+    start = stripped.find("{")
+    if start < 0:
         return stripped
-    lines = stripped.splitlines()
-    if len(lines) < 2:
-        return stripped
-    body = lines[1:-1] if lines[-1].strip().startswith("```") else lines[1:]
-    return "\n".join(body).strip()
+    depth = 0
+    in_string = False
+    escaped = False
+    for index in range(start, len(stripped)):
+        character = stripped[index]
+        if in_string:
+            if escaped:
+                escaped = False
+            elif character == "\\":
+                escaped = True
+            elif character == '"':
+                in_string = False
+            continue
+        if character == '"':
+            in_string = True
+        elif character == "{":
+            depth += 1
+        elif character == "}":
+            depth -= 1
+            if depth == 0:
+                return stripped[start : index + 1]
+    return stripped
 
 
 def _synthetic_text(key: str, tag: dict[str, Any]) -> str:
