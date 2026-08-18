@@ -125,6 +125,13 @@ PRE_REGISTRATION: dict[str, str] = {
         "hard prohibition: a reader model in the loop would select FOR it, which is what §74 "
         "believed it had shown about the em dash before §78 withdrew the number"
     ),
+    "strict_from_next_run": (
+        "DECLARED 2026-08-18, AFTER §81's run and governing from the NEXT one, never applied "
+        "backwards: DETECTS and PREFERS additionally require the two-way interval to exclude 0.50 "
+        "in the claimed direction. §81's interiority arm cleared the registered 0.40 threshold by "
+        "0.011 with an interval of [0.1667, 0.6667], which is not evidence. `per_arm_strict` "
+        "reports it now so the two readings are visible side by side rather than swapped"
+    ),
     "no_sham_floor": (
         "no layout sham is run. §78 measured why rewhitespace cannot be this design's floor, and "
         "the primary arm needs none: its two sides carry identical formatting by construction, so "
@@ -133,8 +140,26 @@ PRE_REGISTRATION: dict[str, str] = {
 }
 
 
-def verdict(rates: dict[str, float], per_arm_bias: dict[str, dict[str, Any]]) -> dict[str, object]:
-    """The pre-registered branches, read per arm, precondition first."""
+def verdict(rates: dict[str, float], per_arm_bias: dict[str, dict[str, Any]],
+            intervals: dict[str, dict[str, Any]] | None = None) -> dict[str, object]:
+    """The pre-registered branches, read per arm, precondition first — and the stricter rule beside.
+
+    **Two ladders, reported together, because the first run showed the registered one is too
+    weak.** `per_arm` is the rule pre-registered before §81's elicitation: a point estimate against
+    0.40 and 0.60 with the bias band read first. It returned DETECTS for the interiority arm at
+    0.3889 — clearing by 0.011 while its interval `[0.1667, 0.6667]` contained 0.5. A threshold
+    cleared by a hundredth over an interval spanning the null is not evidence, and carrying
+    §78.2's point-estimate shape into an arm built for a subtle defect was the wrong choice.
+
+    `per_arm_strict` adds the requirement that should have been registered: the interval must
+    exclude 0.5 in the direction claimed. **It is reported rather than substituted**, because
+    swapping the rule after seeing the number is the move this project keeps catching in itself
+    (§74's post-hoc bias rule, §77's confound). The registered ladder stays the one §81's result is
+    read under; the strict ladder governs from the next run, which is declared here and in
+    `PRE_REGISTRATION["strict_from_next_run"]` rather than applied retroactively.
+    """
+    intervals = intervals or {}
+
     def band(arm: str) -> bool:
         value = per_arm_bias.get(arm, {}).get("chose_A_rate")
         return isinstance(value, float) and 0.40 <= value <= 0.60
@@ -152,18 +177,36 @@ def verdict(rates: dict[str, float], per_arm_bias: dict[str, dict[str, Any]]) ->
         else:
             per_arm[key] = "BLIND"
 
+    per_arm_strict: dict[str, str] = {}
+    for key, outcome in per_arm.items():
+        interval = intervals.get(key) or {}
+        low, high = interval.get("low"), interval.get("high")
+        excludes_half = (
+            isinstance(low, float) and isinstance(high, float)
+            and (high < 0.50 or low > 0.50)
+        )
+        if outcome in {"DETECTS", "PREFERS"} and not excludes_half:
+            per_arm_strict[key] = "UNDECIDED"
+        else:
+            per_arm_strict[key] = outcome
+
     interiority = per_arm.get("interiority_vs_matched", "ABSENT")
     stats = per_arm.get("stat_flatten_vs_original", "ABSENT")
+    # Keyed on both arms being present rather than on a particular pair of outcomes. The first
+    # version fired only for {DETECTS, BLIND} and so stayed silent when the confounded arm voided
+    # on bias — which is exactly the run where the comparison was most worth reporting (§81).
     confound = None
-    if {per_arm.get("interiority_vs_matched"), per_arm.get("interiority_vs_original")} == {
-        "DETECTS", "BLIND"
-    }:
+    matched, confounded = rates.get("interiority_vs_matched"), rates.get("interiority_vs_original")
+    if isinstance(matched, float) and isinstance(confounded, float):
         confound = (
-            "the formatting-matched and formatting-confounded interiority arms disagree, which "
-            "sizes the §78.1 separator downgrade directly: the confounded arm is reading layout"
+            f"formatting-matched arm {matched} against formatting-confounded {confounded}: a gap "
+            f"of {abs(matched - confounded):.4f}. §78.1's separator downgrade is the only "
+            "difference between the two comparisons, so the gap is its contribution — read as a "
+            "direction, not an estimate, and only when both arms clear their preconditions"
         )
     return {
         "per_arm": per_arm,
+        "per_arm_strict": per_arm_strict,
         "interiority": interiority,
         "stats": stats,
         "mapped_holes": [
@@ -173,6 +216,11 @@ def verdict(rates: dict[str, float], per_arm_bias: dict[str, dict[str, Any]]) ->
         "optimisable_axes": [
             name for name, outcome in (("interiority", interiority), ("stat_flatten", stats))
             if outcome == "DETECTS"
+        ],
+        "optimisable_axes_strict": [
+            name for name, key in (("interiority", "interiority_vs_matched"),
+                                   ("stat_flatten", "stat_flatten_vs_original"))
+            if per_arm_strict.get(key) == "DETECTS"
         ],
         "confound_note": confound,
         "conditions": PRE_REGISTRATION,
@@ -264,7 +312,7 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
         }
         report["refused"] = sum(1 for c in every if c.refused)
         report["comparisons"] = len(every)
-        report["ladder"] = verdict(rates, report["per_arm_bias"])
+        report["ladder"] = verdict(rates, report["per_arm_bias"], report["intervals"])
         report["spend"] = elicitor.spend()
         report["api_calls"] = elicitor.api_calls
         report["replayed"] = elicitor.replayed

@@ -1,5 +1,5 @@
 {
-  "api_calls": 224,
+  "api_calls": 0,
   "book_db": "research/quality-measurement/corpora/toll.db",
   "comparisons": 224,
   "expectations": {
@@ -37,9 +37,10 @@
       "no_sham_floor": "no layout sham is run. \u00a778 measured why rewhitespace cannot be this design's floor, and the primary arm needs none: its two sides carry identical formatting by construction, so there is no layout difference for a floor to bound. See SHAM_NOT_RUN",
       "precondition": "per-arm positional bias within 0.40-0.60. Pooling was wrong in \u00a774 and the per-arm rule is pre-registered here rather than adopted mid-run",
       "prefers": "win rate >= 0.60: the panel prefers the defect. A mapped hole of the worse kind and a hard prohibition: a reader model in the loop would select FOR it, which is what \u00a774 believed it had shown about the em dash before \u00a778 withdrew the number",
-      "primary": "interiority_vs_matched is the arm that decides the interiority question. interiority_vs_original is confounded by formatting and cannot license a reading on its own; if the two disagree, the difference between them is the size of the \u00a778.1 confound and is itself the finding"
+      "primary": "interiority_vs_matched is the arm that decides the interiority question. interiority_vs_original is confounded by formatting and cannot license a reading on its own; if the two disagree, the difference between them is the size of the \u00a778.1 confound and is itself the finding",
+      "strict_from_next_run": "DECLARED 2026-08-18, AFTER \u00a781's run and governing from the NEXT one, never applied backwards: DETECTS and PREFERS additionally require the two-way interval to exclude 0.50 in the claimed direction. \u00a781's interiority arm cleared the registered 0.40 threshold by 0.011 with an interval of [0.1667, 0.6667], which is not evidence. `per_arm_strict` reports it now so the two readings are visible side by side rather than swapped"
     },
-    "confound_note": null,
+    "confound_note": "formatting-matched arm 0.3889 against formatting-confounded 0.1111: a gap of 0.2778. \u00a778.1's separator downgrade is the only difference between the two comparisons, so the gap is its contribution \u2014 read as a direction, not an estimate, and only when both arms clear their preconditions",
     "interiority": "DETECTS",
     "mapped_holes": [
       "stat_flatten"
@@ -47,8 +48,14 @@
     "optimisable_axes": [
       "interiority"
     ],
+    "optimisable_axes_strict": [],
     "per_arm": {
       "interiority_vs_matched": "DETECTS",
+      "interiority_vs_original": "VOID",
+      "stat_flatten_vs_original": "BLIND"
+    },
+    "per_arm_strict": {
+      "interiority_vs_matched": "UNDECIDED",
       "interiority_vs_original": "VOID",
       "stat_flatten_vs_original": "BLIND"
     },
@@ -107,9 +114,9 @@
       "voice": 0.6364
     }
   },
-  "protocol": "plan/stage-0-decisions.md \u00a779",
+  "protocol": "plan/stage-0-decisions.md \u00a781",
   "refused": 0,
-  "replayed": 0,
+  "replayed": 224,
   "scenes": [
     "gen:scene-1",
     "gen:scene-2",
