@@ -74,6 +74,7 @@ Run offline. This spends money:
 from __future__ import annotations
 
 import argparse
+import collections
 import itertools
 import json
 import math
@@ -82,12 +83,19 @@ import statistics
 import sys
 import time
 from pathlib import Path
+from typing import Any
 
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 
 from ablate import _SENT, DOSES, PERSONA_SET, paragraphs, stake_score, variants  # noqa: E402
-from elicit import PANEL_MODEL, SPOT_MODEL, Elicitor, digest  # noqa: E402
+from elicit import (  # noqa: E402
+    PANEL_MODEL,
+    SPOT_MODEL,
+    Elicitor,
+    digest,
+    positional_bias,
+)
 from evaluate import evaluate, spearman  # noqa: E402
 from personas import PANEL  # noqa: E402
 
@@ -416,6 +424,12 @@ def main() -> None:
     source.add_argument("--fixtures", action="store_true", help="this project's golden scenes")
     source.add_argument("--published", action="store_true",
                         help="published corpus; memorised by the scoring model (stamped)")
+    parser.add_argument("--pairwise", action="store_true",
+                        help="blinded, position-swapped preference against each variant's "
+                             "own original (§70 addendum 3). Replaces the absolute verdict, "
+                             "which measured out as a constant function")
+    parser.add_argument("--tie-policy", choices=("half_win", "drop"), default="half_win",
+                        help="how `neither` scores. Declared before the run, per §61")
     parser.add_argument("--gate0", action="store_true",
                         help="reliability only: score the originals, run no ablations. The "
                              "protocol's first gate and roughly a fifteenth of the calls")
@@ -451,6 +465,7 @@ def main() -> None:
             raise SystemExit(f"--doses must be strengths in (0, 1]; got {args.doses!r}")
 
     passages, donors = load_passages(args)
+    original_of = {passage_id: text for passage_id, text in passages}
 
     # The variant schedule, precomputed so each opaque scorer call can be attributed — the same
     # digest-keyed mapping `cdg_battery.py` uses, and for the same reason: `ablate` seeds every
@@ -520,8 +535,55 @@ def main() -> None:
                 return 0.5
             return sum(1 for s in panel_only if s.would_stop) / len(panel_only)
 
+        comparisons: list[Any] = []
+
+        def pair_scorer(text: str) -> float:
+            """P(the panel prefers this variant over its own original). See `variant_win_rate`.
+
+            The original scores 0.5 without being elicited: a text compared against itself is
+            indifference by construction, and spending calls to rediscover that would buy
+            nothing. `evaluate` takes the original's score as each chapter's baseline, so 0.5 is
+            exactly the value it should be subtracting.
+            """
+            text_digest = digest(text)
+            passage_id, key, dose = variant_of.get(text_digest, ("unmapped", "unmapped", -1.0))
+            if key == "original":
+                return 0.5
+            original = original_of.get(passage_id)
+            if original is None:
+                return 0.5
+            pair_id = f"{passage_id}|{key}@{dose}"
+            batch = elicitor.compare_pair(pair_id, original, text, n=args.n_samples)
+            comparisons.extend(batch)
+            by_variant[pair_id] = list(batch)
+            scored = [c for c in batch if c.model == args.model and not c.refused]
+            ties = sum(1 for c in scored if c.choice == "neither")
+            chose = sum(1 for c in scored if c.chose_variant)
+            values = [
+                0.5 if c.choice == "neither" else (1.0 if c.chose_variant else 0.0)
+                for c in scored
+                if not (c.choice == "neither" and args.tie_policy == "drop")
+            ]
+            rate = sum(values) / len(values) if values else 0.5
+            print(f"  [{len(by_variant):3d}] {pair_id:<46} variant {chose}/{len(scored)} "
+                  f"(ties {ties}) -> {rate:.2f}", file=sys.stderr, flush=True)
+            return rate
+
         result = None
-        if args.gate0:
+        if args.pairwise:
+            # Blinded, position-swapped preference — §70 addendum 3. Damage is declared to
+            # *lower* the variant's win rate, so `direction` is -1 here where the absolute
+            # instrument used +1.
+            result = evaluate(
+                pair_scorer,
+                [text for _, text in passages],
+                metric="persona_panel.pairwise.v0",
+                donors=donors,
+                direction=-1,
+                doses=doses,
+                ablations=PERSONA_SET,
+            )
+        elif args.gate0:
             # Reliability only. Gate 0 asks whether repeated samples of one passage agree more
             # than samples of different passages, and that question is answered by the originals
             # alone — running the ablation ladder to answer it would spend fifteen times the
@@ -549,8 +611,33 @@ def main() -> None:
     scored = [s for s in flat if s.model == args.model and not s.refused]  # type: ignore[attr-defined]
     refusals = sum(1 for s in flat if s.refused)  # type: ignore[attr-defined]
 
-    per_persona_icc = {}
-    for persona in PANEL:
+    # **The absolute instrument's kill conditions do not transfer to the pairwise one**, and are
+    # reported as not-applicable rather than computed over a different unit. ICC, the caricature
+    # split, the collapse correlation and the positivity floor are all statements about a
+    # per-passage *rating*; a comparison has no rating to decompose. Their pairwise analogues are
+    # `positional_bias` (§69's own check) and the sham arms inside `gate1`. Running the old
+    # arithmetic over `Comparison` objects would produce numbers with the old names and a
+    # different meaning, which is the conflation `EvidenceClass` exists to stop one layer down.
+    if args.pairwise:
+        summary_kills: dict[str, object] = {
+            "not_applicable": (
+                "ICC, caricature, collapse and the positivity floor describe a per-passage "
+                "rating; the pairwise instrument produces choices, not ratings. Its analogues "
+                "are `positional_bias` and the sham arms in `gate1.per_ablation`"
+            ),
+            "reason_code_counts": dict(sorted(
+                collections.Counter(
+                    c.reason_code for c in scored if getattr(c, "reason_code", None)
+                ).items(), key=lambda kv: -kv[1],
+            )),
+            "tie_rate": round(
+                sum(1 for c in scored if getattr(c, "choice", None) == "neither")
+                / max(len(scored), 1), 4,
+            ),
+        }
+
+    per_persona_icc: dict[str, object] = {}
+    for persona in (() if args.pairwise else PANEL):
         groups = [
             [float(s.would_stop) for s in samples  # type: ignore[union-attr]
              if s.persona_id == persona.persona_id and s.model == args.model and not s.refused]
@@ -558,14 +645,14 @@ def main() -> None:
         ]
         per_persona_icc[persona.persona_id] = icc1(groups)
 
-    pooled_groups = [
+    pooled_groups = [] if args.pairwise else [
         [float(s.would_stop) for s in samples  # type: ignore[union-attr]
          if s.model == args.model and not s.refused]
         for samples in by_variant.values()
     ]
 
     cells: dict[tuple[str, str], float] = {}
-    for variant_id, samples in by_variant.items():
+    for variant_id, samples in ({} if args.pairwise else by_variant).items():
         for persona in PANEL:
             mine = [s for s in samples  # type: ignore[union-attr]
                     if s.persona_id == persona.persona_id and s.model == args.model
@@ -575,9 +662,12 @@ def main() -> None:
                     float(s.would_stop) for s in mine
                 )
 
-    base_rate = statistics.fmean(float(s.would_stop) for s in scored) if scored else float("nan")
+    base_rate = (
+        float("nan") if args.pairwise or not scored
+        else statistics.fmean(float(s.would_stop) for s in scored)
+    )
     reason_counts: dict[str, int] = {}
-    for sample in scored:
+    for sample in (() if args.pairwise else scored):
         code = sample.reason_code or "unset"  # type: ignore[attr-defined]
         reason_counts[code] = reason_counts.get(code, 0) + 1
 
@@ -591,6 +681,9 @@ def main() -> None:
         "personas": [persona.persona_id for persona in PANEL],
         "n_samples": args.n_samples,
         "doses": list(doses),
+        "mode": "pairwise" if args.pairwise else ("gate0" if args.gate0 else "absolute"),
+        "tie_policy": args.tie_policy,
+        "positional_bias": positional_bias(comparisons) if comparisons else None,
         "passages": [passage_id for passage_id, _ in passages],
         "passage_source": source_label(args),
         "variants_scored": len(by_variant),
@@ -600,7 +693,7 @@ def main() -> None:
         "usage": spend,
         "minutes": round((time.time() - started) / 60, 1),
         "persona_fidelity_diagnostic": fidelity or "not run (--fidelity)",
-        "gate0_icc_pooled": icc1(pooled_groups),
+        "gate0_icc_pooled": None if args.pairwise else icc1(pooled_groups),
         "gate0_icc_per_persona": per_persona_icc,
         "gate1": {
             "detect_auc": result.detect_auc,
@@ -624,7 +717,7 @@ def main() -> None:
             _destake_comparison(result.per_ablation) if result is not None
             else {"available": False, "note": "--gate0 ran no ablations"}
         ),
-        "kill_conditions": {
+        "kill_conditions": summary_kills if args.pairwise else {
             "caricature": variance_split(cells),
             "collapse": inter_persona_rho(cells),
             "positivity_floor": {
@@ -652,7 +745,12 @@ def main() -> None:
 
     out = results_dir / args.out
     out.write_text(json.dumps(summary, indent=1, default=str) + "\n", encoding="utf-8")
-    print(f"\ngate 0 pooled ICC(1): {summary['gate0_icc_pooled']['icc1']}", file=sys.stderr)
+    if args.pairwise:
+        bias = summary["positional_bias"] or {}
+        print(f"\npositional bias (chose-A rate): {bias.get('chose_A_rate')} "
+              f"over {bias.get('decided')} decided", file=sys.stderr)
+    else:
+        print(f"\ngate 0 pooled ICC(1): {summary['gate0_icc_pooled']['icc1']}", file=sys.stderr)
     print(f"gate 1: {summary['gate1']['verdict']}", file=sys.stderr)
     print(f"written to {out}", file=sys.stderr)
 

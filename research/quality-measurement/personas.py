@@ -312,6 +312,63 @@ STAGE2_SCHEMA: dict[str, object] = {
 }
 
 
+# ------------------------------------------------------------------- pairwise elicitation
+
+#: The pairwise choice. `neither` exists because forcing a choice between two texts a reader
+#: genuinely cannot separate manufactures signal; the tie policy that handles it is declared
+#: before the first comparison, which is §61's pre-registration (2) one instrument over.
+PAIR_CHOICES: tuple[str, ...] = ("A", "B", "neither")
+
+PAIR_SCHEMA: dict[str, object] = {
+    "type": "object",
+    "properties": {
+        "choice": {"type": "string", "enum": list(PAIR_CHOICES)},
+        "reason_code": {"type": "string", "enum": list(REASON_CODES)},
+    },
+    "required": ["choice", "reason_code"],
+    "additionalProperties": False,
+}
+
+PAIR_QUESTION = (
+    "Two passages. Which one would you rather keep reading — A, B, or neither if you truly "
+    "cannot separate them?\n\nThen the single thing that most decided it, from this list: "
+    "{codes}, or none if nothing on the list fits."
+)
+
+
+def pair_turn(text_a: str, text_b: str) -> str:
+    """One blinded comparison, presented without saying what the pair is.
+
+    **Why the absolute question was replaced.** Gate 0 measured the three-way verdict returning
+    `keep-reading` on 195 of 196 draws across ten passages and two model tiers — a constant
+    function, every variance statistic undefined. This project had already learned that lesson in
+    its human channel: §61's raw model judges died to positional artifacts and the answer was
+    blinded, position-swapped pairwise comparison, which is what §69 built. A forced choice
+    produces variance by construction, and it is also the only standing §70 concluded a persona
+    panel could ever earn — selection between candidates, never absolute refusal of one text.
+
+    **The demand characteristic this creates, and the control that answers it.** For a gate-1
+    pair the two passages are one scene and its manipulated copy, so they are near-identical and
+    a reader will notice. The risk is that noticing turns the task into diff-spotting — an
+    editing frame, which is the §1a.2 question this whole programme exists to avoid. Nothing in
+    the wording invites a comparison of *edits*: it asks which the reader would rather keep
+    reading, not what changed. And the risk is measurable rather than argued away, because the
+    placebo arms sit in the same schedule — a diff-spotter detects a character rename exactly as
+    readily as a de-stake, so a panel that separates real damage while sitting at chance on the
+    shams is choosing on content. That is `evaluate.selftest`'s `change-detector` oracle, and it
+    is why the sham control exists at all.
+
+    There is no stage 1 here. Its purpose was to keep the category out of the asking, and a
+    forced choice between two texts plants no category — the reader is handed no vocabulary to
+    agree with, only two passages.
+    """
+    listed = ", ".join(f"`{code}`" for code in REASON_CODES if code != "none")
+    return (
+        f"PASSAGE A\n\n{text_a}\n\n---\n\nPASSAGE B\n\n{text_b}\n\n---\n\n"
+        + PAIR_QUESTION.format(codes=listed)
+    )
+
+
 def fidelity_probe(persona: Persona) -> tuple[str, dict[str, object]] | None:
     """Ask a persona for its own held-out anchor verdicts. Also the drift probe.
 

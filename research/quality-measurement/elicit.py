@@ -92,6 +92,8 @@ sys.path.insert(0, str(HERE))
 from personas import (  # noqa: E402
     BY_ID,
     KEEP_CODES,
+    PAIR_CHOICES,
+    PAIR_SCHEMA,
     PANEL,
     REASON_CODES,
     STAGE2_SCHEMA,
@@ -100,6 +102,7 @@ from personas import (  # noqa: E402
     Persona,
     anchor_agreement,
     fidelity_probe,
+    pair_turn,
     stage1_turn,
     stage2_turn,
     system_prompt,
@@ -123,6 +126,8 @@ SPOT_EFFORT: str | None = "low"
 STAGE1_MAX_TOKENS = 350
 STAGE2_MAX_TOKENS = 120
 PROBE_MAX_TOKENS = 400
+#: A pair answer is one JSON object; the passages are input, not output.
+PAIR_MAX_TOKENS = 160
 
 MAX_WORKERS = 8
 MAX_RETRIES = 6
@@ -252,6 +257,15 @@ def _synthetic_text(key: str, tag: dict[str, Any]) -> str:
     somebody quotes six months later.
     """
     marker = int(key.split(":")[0][:8], 16)
+    if tag.get("stage") == "pair":
+        # Orientation is in the key, so the two orientations of a pair draw independently —
+        # which is what lets a dry run exercise `positional_bias` rather than only the win rate.
+        choice = PAIR_CHOICES[marker % len(PAIR_CHOICES)]
+        codes = STOP_CODES if choice == "neither" else KEEP_CODES
+        return json.dumps({
+            "choice": choice,
+            "reason_code": codes[(marker // 3) % len(codes)],
+        })
     if tag.get("stage") == 2:
         verdict = VERDICTS[marker % len(VERDICTS)]
         codes = STOP_CODES if verdict == "would-stop" else KEEP_CODES
@@ -297,6 +311,58 @@ class Sample:
     @property
     def would_stop(self) -> bool:
         return self.verdict == "would-stop"
+
+
+@dataclass(frozen=True, slots=True)
+class Comparison:
+    """One persona's blinded choice between a passage and its manipulated copy.
+
+    `orientation` records which side the original was shown on, so positional bias is
+    recoverable from the log rather than only from the aggregate: a persona answering the same
+    *position* across both orientations has reported on layout, not on prose.
+    """
+
+    pair_id: str
+    persona_id: str
+    sample: int
+    model: str
+    orientation: int
+    choice: str | None
+    reason_code: str | None
+    refused: bool
+    usage: dict[str, int] = field(default_factory=dict)
+
+    @property
+    def chose_variant(self) -> bool:
+        """Whether the choice landed on the manipulated text, undoing the orientation swap."""
+        if self.choice not in ("A", "B"):
+            return False
+        variant_side = "B" if self.orientation == 0 else "A"
+        return self.choice == variant_side
+
+
+def positional_bias(comparisons: list[Comparison]) -> dict[str, object]:
+    """How often the panel picked a *side* rather than a text. §69's check, ported.
+
+    RevisionBench measured 43-65% positional artifacts in model judges, which is the measurement
+    that made position-swapping non-optional for the human channel; a persona panel gets checked
+    on the same terms rather than trusted. A rate far from 0.5 means the instrument is reading
+    layout, and every preference it reports is suspect regardless of how cleanly it separates.
+    """
+    decided = [c for c in comparisons if c.choice in ("A", "B")]
+    if not decided:
+        return {"decided": 0, "chose_A_rate": float("nan"), "note": "no decided comparisons"}
+    chose_a = sum(1 for c in decided if c.choice == "A")
+    per_persona: dict[str, float] = {}
+    for persona in sorted({c.persona_id for c in decided}):
+        mine = [c for c in decided if c.persona_id == persona]
+        per_persona[persona] = round(sum(1 for c in mine if c.choice == "A") / len(mine), 4)
+    return {
+        "decided": len(decided),
+        "chose_A_rate": round(chose_a / len(decided), 4),
+        "per_persona_chose_A": per_persona,
+        "note": "0.5 is unbiased; distance from it is the share of the answer that is layout",
+    }
 
 
 class Elicitor:
@@ -765,6 +831,99 @@ class Elicitor:
                  for k in ("input", "output", "cache_read", "cache_write")}
         return Sample(passage_id, persona.persona_id, sample, model, stage1["text"],
                       verdict, reason, verdict is None, stage2["key"], usage)
+
+    # ------------------------------------------------------------------------- pairwise
+
+    def _compare(
+        self, persona: Persona, pair_id: str, original: str, variant: str,
+        *, orientation: int, sample: int, model: str, effort: str | None,
+    ) -> Comparison:
+        """One blinded comparison. `orientation` 0 puts the original in A, 1 puts it in B.
+
+        Both orientations are run for every pair, which is what makes positional bias
+        *measurable* rather than assumed away — §69's discipline, whose docstring notes that
+        RevisionBench measured 43-65% positional artifacts in model judges and that humans get
+        checked rather than trusted. A persona that answers "A" in both orientations has told us
+        about position, not about the passages, and `Comparison.chose_variant` is what the caller
+        aggregates precisely so that case cannot be mistaken for a preference.
+        """
+        first, second = (original, variant) if orientation == 0 else (variant, original)
+        turns = [{"role": "user", "content": pair_turn(first, second)}]
+        record = self._call(
+            self._params(persona, turns, model=model, effort=effort,
+                         max_tokens=PAIR_MAX_TOKENS, schema=PAIR_SCHEMA),
+            sample=sample,
+            tag={"passage": pair_id, "persona": persona.persona_id, "stage": "pair",
+                 "orientation": orientation, "sample": sample},
+        )
+        choice = reason = None
+        if not record["refused"] and record["text"]:
+            try:
+                parsed = json.loads(record["text"])
+                choice, reason = parsed.get("choice"), parsed.get("reason_code")
+            except (json.JSONDecodeError, AttributeError):
+                choice = reason = None
+        if choice not in PAIR_CHOICES:
+            choice = reason = None
+        return Comparison(
+            pair_id=pair_id, persona_id=persona.persona_id, sample=sample, model=model,
+            orientation=orientation, choice=choice, reason_code=reason,
+            refused=choice is None, usage=record.get("usage", {}),
+        )
+
+    def compare_pair(
+        self, pair_id: str, original: str, variant: str, *, n: int = 1,
+        personas: tuple[Persona, ...] = PANEL,
+    ) -> list[Comparison]:
+        """Every persona x sample x **both orientations** for one pair.
+
+        `n` defaults to 1 because the two orientations already give each persona two independent
+        draws on the same pair; `n` multiplies that rather than replacing it.
+        """
+        jobs: list[Callable[[], Comparison]] = []
+        for persona in personas:
+            for sample in range(n):
+                for orientation in (0, 1):
+                    jobs.append(
+                        lambda p=persona, s=sample, o=orientation: self._compare(
+                            p, pair_id, original, variant, orientation=o, sample=s,
+                            model=self.model, effort=self.effort,
+                        )
+                    )
+        with ThreadPoolExecutor(max_workers=self.max_workers) as pool:
+            return list(pool.map(lambda job: job(), jobs))
+
+    def variant_win_rate(
+        self, pair_id: str, original: str, variant: str, *, n: int = 1,
+        tie_policy: str = "half_win",
+    ) -> float:
+        """P(the panel prefers the variant over its own original). The gate-1 scalar.
+
+        0.5 is indifference, so **damage is declared to lower it** and `persona_battery` passes
+        `direction=-1`. The original compared against itself is 0.5 by construction and never
+        elicited, which is why `evaluate`'s per-chapter baseline costs nothing here.
+
+        `tie_policy` is declared, not discovered: `half_win` scores `neither` as half a win —
+        §69's option of the same name — and `drop` removes it from the denominator. Refused or
+        unparseable comparisons are always dropped and counted separately; they are a transport
+        failure, not a reader's indifference, and conflating the two would put format errors into
+        a preference distribution.
+        """
+        comparisons = [
+            c for c in self.compare_pair(pair_id, original, variant, n=n)
+            if c.model == self.model and not c.refused
+        ]
+        scores = []
+        for comparison in comparisons:
+            if comparison.choice == "neither":
+                if tie_policy == "drop":
+                    continue
+                scores.append(0.5)
+            else:
+                scores.append(1.0 if comparison.chose_variant else 0.0)
+        if not scores:
+            return 0.5
+        return sum(scores) / len(scores)
 
     def _is_spot(self, passage_id: str, persona_id: str) -> bool:
         """Deterministic spot-check membership, so the subset is a function of the schedule.
