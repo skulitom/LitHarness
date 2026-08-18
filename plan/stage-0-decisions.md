@@ -4873,3 +4873,78 @@ arms rather than on a particular pair of outcomes.
 this design's floor, its number is already recorded twice and already called unusable, and the
 primary arm needs no floor because its two sides carry identical formatting by construction. That is
 80 comparisons and about $2.80 not spent on reproducing a figure the ledger already refuses to use.
+
+## 82. The §72 licence is not earned, and no machine measurement can earn it
+
+The taste-gap programme's terminal item was: *only after the em-dash control, the defect-manufacture
+arms and the external-label benchmark, and if and only if a judge configuration passes
+human-external agreement on the defect axes, run the PREFERENCE calibration on
+`judge.span_select.v0` and propose activating plan-level search.* All three precursors have now run
+(§78.3, §81, §79). **The licence is refused, and the reason is structural rather than a matter of
+the numbers falling short.**
+
+**Two definitions already in the code decide it.**
+
+`domain/calibration.py` defines PREFERENCE as *"a **human's** blinded, position-swapped choice
+between two texts"*. Not a judge's, not a panel's. The class §72's judge path requires is
+constituted by human answers, so **no quantity of machine elicitation can produce a
+PREFERENCE-class row** — the panel could agree with every external label in existence and still not
+be the kind of evidence the gate names.
+
+And the same enum classifies the label this programme spent its effort on: BEHAVIOUR is *"reader
+behaviour aggregated over other authors' whole stories, e.g. `followers / total_views` …
+**recordable, rankable, and it refuses nothing**, because its grain is STORY and nothing in this
+system gates a story."* That is precisely `conversion`. So §79's benchmark, however clean, produces
+BEHAVIOUR-class evidence at STORY grain. It can **rank judge candidates**, which is what a
+benchmark is for. It cannot **license** one.
+
+`application/plan_search.py` states the position plainly and correctly: *"No such row exists today;
+the human path is the production path, and the gate being the license is the entire point."* That is
+still true and this entry does not change it.
+
+**So the ordering the programme was written under was wrong in a useful way.** Items 1–3 were all
+machine measurements, and the gate they were supposed to open is one that only item 4 — the paid
+reader batch — can supply evidence for. The dependency is not *benchmark → licence*; it is:
+
+    §79 benchmark (BEHAVIOUR, rankable)  ->  selects WHICH judge configuration is worth paying to
+                                             validate
+    §80 paid batch (PREFERENCE, human)   ->  supplies the evidence class the gate actually names,
+                                             on the selection task itself per §6.6
+    §72 judge path                       ->  opens, and its calibration goes stale on use
+
+**The state of the defect axes, for the record, since the gate is refused on class rather than on
+these.** Even taking the machine numbers at face value, no axis supports a licence:
+
+    axis          machine state                                   human state
+    em dash       VOID on bias, interval [0.2273, 0.5139] (§78.3)  none
+    interiority   0.3889; DETECTS registered / UNDECIDED strict,
+                  interval [0.1667, 0.6667] contains 0.5 (§81)     none
+    stats         BLIND at 0.5437, estimate on the wrong side
+                  of indifference (§81)                            none
+
+**The human column is empty for every axis, so "human-external agreement" is not a bar this project
+currently fails — it is a bar nothing has been measured against.** One axis (interiority) has
+suggestive machine evidence on a properly matched comparison, which is one more than existed before
+§81 and none at all under the stricter rule.
+
+**Actions taken, and not taken.** The PREFERENCE calibration on `judge.span_select.v0` is **not**
+run and no activation of plan-level search or bounded revision is proposed. Wiring the current panel
+into generation stays refused, now on firmer ground than §74's: that entry refused it on a number
+§78 withdrew, and the refusal survives its own evidence being withdrawn because the remaining
+grounds are independent — the panel is measured near-blind to global belonging (`transplant`
+−0.0125), it cannot see one of the two defects a human named (§81's stats row), and the axis it may
+be able to see cannot exclude indifference at this n.
+
+**What would change this, in order.** Close the em-dash axis at higher n (§78.3's named remedy, ~216
+elicitations); run §79's benchmark across judge candidates and pick the one that clears 0.52 as a
+minimum across strata; then fund §80's batch, whose class-B pairs put the same defect axes to humans
+and whose class-A pairs pilot the headline. Only the third step produces PREFERENCE evidence, and
+only on the selection task does it license §72.
+
+**A note on what this programme actually bought.** It set out to close the panel–human taste gap and
+instead established that the gap was unmeasured in both directions: the one axis the panel appeared
+decided on was an artifact (§78), the one external-label result was void and covariate-imbalanced
+(§77.1), and the label underneath it cannot be covariate-matched at all (§79). What exists now that
+did not before is an instrument with a real bar, two defect axes with machine readings, and a
+costed batch design. The gap itself is still unmeasured, and it is now clear that measuring it costs
+money rather than compute.
