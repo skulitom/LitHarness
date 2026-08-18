@@ -164,3 +164,35 @@ Headline: `repair_interiority` at 0.9509, bias 0.4918, interval [0.871, 1.0] —
 bias-clean interval-excluding arm in the project, in the repair direction. `repair_emdash`
 mechanically perfect (8/8 scenes to zero prose dashes at sim ≥ 0.978) and VOID at the panel
 per the near-twin law. Read §85 before quoting any number.
+
+## Axiom battery — §86
+
+Tier 0 of [the unanchored-judge programme](../../plan/judge-validity-program.md): the axioms a
+candidate judge satisfies before it costs anything else. Six disqualifiers plus per-arm
+positional bias, on this system's own prose. **Run the two free commands first** — the selftest
+is the argument that the battery is non-trivial, and the dry run is the argument that its
+arithmetic works, and both execute before a call is bought.
+
+```bash
+uv run python research/quality-measurement/axiom_battery.py --selftest
+```
+
+```bash
+uv run python research/quality-measurement/axiom_battery.py --dry-run
+```
+
+The dry run must read **DISQUALIFIED** — it answers uniformly from a request hash, so it is the
+coin oracle in the real plumbing, and the module exits non-zero if a null ever clears.
+
+```bash
+uv run python research/quality-measurement/axiom_battery.py --yes
+```
+
+6 scenes, 54 pairs, **720 comparisons, ~$25, ~2.5 hours** at the CLI transport's measured 4.9
+calls/min. `--yes` is required; without it the plan is printed and nothing is spent. Reads
+`corpora/toll-scenes.json` — the *committed* export, not the gitignored `toll.db`, so this module
+survives a fresh clone where the §70 runs above do not. `--book-db` overrides it.
+
+The pre-registration lives in the module and the run copies it into the result file. Read §86
+before quoting any number, and note the registered prediction: **the default panel is expected to
+fail A1**, because §78 already measured it preferring blank lines at 0.0417 with clean bias.

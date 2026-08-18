@@ -5138,3 +5138,223 @@ directional evidence, not a naive measurement — recorded here so nobody later 
 one. What it uniquely answers: whether the panel's 0.95 on interiority is a preference for
 prose or for bolted-on feeling, and whether the exemplar arm's measured movement reads as a
 voice or as noise.
+
+## 86. The anchor is priced, and three of the four unanchored tiers are blocked by something other than money
+
+Operator directive, 2026-08-19: price the anchor — find out whether a validation stack using
+zero solicited human labour can bound judge divergence and exploitation tightly enough to earn
+scoped selection licences, so that the anchoring question stops being an assumption on either
+side. [judge-validity-program.md](judge-validity-program.md) is the pre-registration, one tier
+is built and selftested, none has been run, and **the pricing exercise returned a price for
+every tier before a single call was bought**, which is the outcome the directive asked for even
+though it is not the one it hoped for.
+
+    tier   what it is                       money          calendar     blocked by
+    T0     axiom battery                    $25            2.5 h        nothing; built
+    T1     cross-lineage convergence        $12-40/lineage days         provider access
+    T2     prospective retention forecast   ~$15/run       11-13 weeks  its own premise
+    T3     exploitation / Goodhart budget   ~$40-80        days         T1
+
+**The falsifier the directive pre-registered is accepted for one of the two claims inside it and
+refused for the other.** *"If T2 and T3 pass, selection requires solicited human evidence is
+refuted at those scopes"* welds together an empirical claim — no machine-only evidence can bound
+judge–reader divergence — which is falsifiable and worth buying, and an instrumental claim —
+§72's judge path requires human evidence — which is true **by definition** in
+`domain/calibration.py`, where `PREFERENCE` is constituted as *"a human's blinded,
+position-swapped choice between two texts"*. No experiment refutes a definition. §82 refused the
+licence on evidence class, and an entry claiming a machine measurement had overturned that would
+be claiming a definition had been measured away. The amendment that *would* be proposed if T2
+performed is written down now rather than after the numbers — a `FORECAST` class at `STORY`
+grain, absent from `veto_for` so it refuses nothing with zero code, and **not** accepted by
+`plan_search`'s judge path — so that the class cannot be shopped for later, which is §84's
+freeze rule pointed at the instrument instead of at the judge.
+
+### 86.1 The class boundary the whole ceiling rests on is enforced by a docstring
+
+Checked in source while writing that section, because everything above depends on it:
+
+- `plan_search` records a licensed judge's verdicts through **the same pair machinery humans
+  use**, `reader_id` set to the licensing calibration id, `recognized=False`. The comment says
+  so and §72 records the intent.
+- `preference.analysable_judgments` — the function deciding which rows a PREFERENCE holdout may
+  be denominated in — filters on `verdict is not None`, `not recognized`, and `verdict is not
+  NOT_SURE`. **It never inspects `reader_id`.** Neither does `pair_verdicts_digest_for`.
+- There is no source column, no `CHECK` constraint and no runtime predicate anywhere asserting
+  that a preference verdict came from a person. The human-only property is prose in an enum
+  docstring.
+
+**So once one human-anchored calibration licenses one judged tournament, the judge's own
+verdicts join the pool the next PREFERENCE calibration is measured on, and nothing counts them
+separately.** §72's expiry bites first — the judge's writes move the digest and stale its own
+licence — but staleness forces re-calibration, and re-calibration is where the contamination
+enters, because the re-measured holdout now contains machine answers under a class whose
+definition says human. This is inert today, because the calibrations table is empty and there is
+no row to launder into. **It stops being inert the day §80's batch lands**, which is the argument
+for closing it while it is free: a reserved reader-id prefix at the one write site, excluded in
+`analysable_judgments`, with a test that fails if a machine row ever counts toward a preference
+holdout. Not done here — that is production promotion semantics and outside a research
+directive's scope — and recorded so that no licence in the programme reads as safe until it is.
+
+### 86.2 T0 is built, its null is verified, and it predicts the incumbent's disqualification
+
+`research/quality-measurement/axiom_battery.py`. Six axioms as disqualifiers — indifference,
+format invariance, dose monotonicity, transitivity, paraphrase stability, within-item
+consistency — plus per-arm positional bias computed free on all of them. 6 scenes, 54 pairs,
+**720 comparisons, ~$25, ~2.5 hours** of wall clock at the CLI transport's measured 4.9 calls
+per minute. `--dry-run` — the null through the real plumbing — reads **DISQUALIFIED** on six
+axioms with transitivity unreadable, and the module exits non-zero if a null ever clears.
+
+**Three of its arms have never been elicited in this project.** `Elicitor.variant_win_rate` says
+in its own docstring that "the original compared against itself is 0.5 by construction and never
+elicited"; that assumption has been load-bearing since §70 and A0 is the first check of it.
+Within-item repeat consistency has no measurement at all, because every pairwise run to date used
+`n_samples = 1`. And question-wording stability has never been asked, which is the gap that
+matters most: across the pairwise record the persona is nearly inert — persona-to-passage
+sum-of-squares ratios of 0.0028, 0.0071 and 0.0342 — while one word of question change moved the
+sham from 0.7833 to 0.6833 and the bias from 0.5874 to 0.6111. **The question is the load-bearing
+knob and nothing has ever tested whether a verdict survives rewording it.**
+
+**The incumbent is predicted to fail A1, and the prediction is registered so it cannot be
+reported later as a surprise.** §78 measured this panel preferring blank lines at 0.0417 on Haiku
+and 0.0000 on Opus at textbook-clean bias 0.5000, so the instrument is not format-invariant. What
+the arm buys given that is the magnitude at the *mild* dose — the separator downgrade riding
+silently on seven registered ablations — currently known only as the 0.2778 gap between §81's
+matched arm and its confounded twin, and that twin is void on bias at 0.6111.
+
+**Two defects in the pre-registration were caught by the selftest before any call was made**, and
+neither is repaired after the fact because neither had a number yet. The monotonicity rule first
+demanded a strictly falling win rate end to end, which a *perfect* judge cannot produce — it
+saturates at 0.0 on every rung — so the rule now reads "non-increasing and top rung below 0.5",
+which still excludes the tie-everything strategy. The ICC arm first computed between-pair
+variance inside the ladder alone, where a perfect judge answers every pair identically and the
+statistic kills what it exists to certify; it now runs over the whole battery's pairs and gates
+on Spearman–Brown aggregate reliability, because a bar on the single-comparison figure would
+disqualify an instrument that is noisy per call and fine at panel width.
+
+**The battery is jointly non-trivial and the selftest executes that claim rather than asserting
+it.** Ten synthetic oracles run through the whole arithmetic offline: the perfect judge clears
+every axiom, every pathology dies somewhere, and A0–A4 each have an oracle they are the *sole*
+cause of death for — including `unseparable_forced`, a judge that answers correctly wherever a
+difference exists and manufactures a choice where none does, which is §83's near-twin failure
+written as a unit test. A5 and A6 have no sole-cause oracle and the output says so and says why,
+rather than leaving them looking proven.
+
+**The ladder is nested by construction and the reason is measured.** On the CDG battery at five
+doses **no degrader was dose-monotone in the declared direction, and the cleanest dose-response
+curve belonged to the rename sham** — the transformation that damages nothing. So the ladder here
+rotates a prefix of one fixed permutation, every position displaced at a low dose stays displaced
+at every higher one, and the certificate records displaced count, word-multiset identity and
+layout identity per rung. `rewhitespace` is deliberately not an arm: void twice on bias (0.9375
+Haiku from 16 decided, 1.0000 Opus from 25) and already refused as a floor.
+
+### 86.3 T2's premise is self-contradicting, and that is only its first blocker
+
+`taste_benchmark.MIN_VIEWS = 10_000` exists because below it `followers / total_views` is noise.
+Measured on the population a prospective design would actually enrol — 2025-cohort LitRPG serials
+in the cached shards — **median total views 1,245 at a median age of 98 days, median followers 5,
+p10 of 74 views and 0 followers, and only 22.3% ever clearing the floor.** A serial is newly
+published exactly when its counters are near zero, and a retention ratio needs a denominator.
+Restricting to serials that do clear the floor conditions on an outcome correlated with the
+label, which is a collider rather than a filter. **"Prospective retention on newly published
+serials" cannot have both halves at 30 days**; the repair is not a better metric but a longer
+calendar, and the memorisation-safety property survives that while the schedule does not.
+
+**§79's arithmetic carries over and §79's repair does not.** The identity
+`followers_hi/followers_lo = (conv_hi/conv_lo) × (views_hi/views_lo)` is a property of *ratios*,
+not of those two counters, so any retention defined as `ΔF/ΔV` inherits it and differencing buys
+nothing. Defining retention against a t0 baseline escapes the identity — `F(t+30)` is
+post-treatment and invisible to the judge — but **the `crossed` stratum is built by testing the
+popularity covariates against the already-known label, and at t0 the label does not exist.** So
+the sign-as-instrument repair is structurally unavailable prospectively: T2 inherits §79's
+confound without §79's antidote. What is left is incremental validity against a prose-blind
+forecaster computed in the same pass, which turns the bar from a number into a formula at
+pre-registration time and is acceptable only if declared that way in advance.
+
+**The positional precondition is the third blocker and it has the largest measurement behind
+it.** T2's fixture is a matched pair of ~1,000-word openings by two different authors, and on
+that class the record reads: `mol_vs_rr` 0.4375 (64 decided, in band, unmatched material),
+`rr_high_vs_low` 0.3810 (64, VOID), and §79.1's benchmark 0.3800 aligned / 0.3274 crossed /
+**0.356 pooled over 368 decided, missing the band by 0.14 at roughly 5.8 standard errors**. The
+two arms whose construction is closest to T2's are the two that voided. The generalisation is the
+ledger's own — bias is a property of the pair, demonstrated most sharply by the same 72 cells
+moving from 0.4857 to 0.6032 when only the compared text changed — so `mol_vs_rr`'s clean figure
+cannot be inherited into T2's pairs either, and the rule is not "T2 will void" but **"T2's bias
+must be measured on T2's own pairs, and the only two measurements on the nearest material both
+voided."** The screen for that already exists and costs $12: §79's benchmark, read for positional
+band first and agreement second.
+
+**And the rest of the price, measured rather than estimated.** No live data path exists — the
+RoyalRoad source is a frozen snapshot whose newest chapter is 430 days old, and BookCrawler is a
+Wayback-only client that rewrites royalroad.com URLs into archive replays and never fetches the
+site. Terms of service are unread: a grep of that repository for terms, robots or legal returns
+zero hits, and the only compliance reasoning on disk concerns the Internet Archive, a different
+party. **Every byte this project has ever taken from RoyalRoad came through Wayback**, so a daily
+direct crawl is a new outward-facing act and an operator decision. Calendar is 11–13 weeks
+minimum: ~3 weeks of enrolment (241 new LitRPG fictions in a real 3-week window, 182 enrollable at
+≥3 chapters in 30 days, 88 disjoint pairs after matching on first-30-day word volume), then two
+30-day readings. Only 43.0% of shard-3 LitRPG fictions published anything in days 30–60, and
+abandonment is plausibly caused by the same latent quantity retention measures, so the censoring
+is informative and has to be pre-registered as an outcome rather than a filter. And 17.7% of 2025
+LitRPG serials declare AI-assisted content against 0.3% in 2021, while `era_cohort` labels every
+post-2022 fiction outside the `human_pre_llm` pool `taste_benchmark` admits — so a prospective
+corpus is not comparable with §79's without a declared change of frame.
+
+**Even a clean pass licenses nothing on its own.** Retention over other authors' whole stories is
+`BEHAVIOUR` at `Grain.STORY`; `veto_for` refuses it **by class, before grain is consulted**, and
+`Grain.covers` independently bars story-grain evidence from licensing a unit-grain decision.
+§82's ruling on §79's benchmark applies verbatim — it can rank judge candidates, it cannot license
+one — and the transfer from "orders other authors' openings" to "may choose between two drafts of
+our span" runs from the easiest discrimination in the corpus to the hardest, since candidate spans
+are near-twins and §83 measured near-twins void.
+
+### 86.4 T1 and T3, and the one thing T3 can already say
+
+**T1 needs provider access this machine does not have.** One frontier lineage is reachable; the
+local tier is measured below the instrument's capability floor, `gemma3:4b` being void on bias
+twice at chose-A 0.8021 over 389 decided (z = +11.9) and 0.8095 on intensity. Three corrections
+ride with the design: the within-lineage floor must be a *protocol* resample rather than a
+temperature one, or the control cannot fail in the intended direction at either extreme;
+convergence may be computed only on bias-clean arms, since four lineages sharing a positional
+artifact would converge beautifully and mean nothing; and **a stronger tier is not the known fix
+for bias** — Opus-5 read the same three repair arms at 0.5000, 0.7000 and 1.0000, pooled 0.661
+over 177 decided.
+
+**T3 is blocked on T1 by definition, since "held out" means "another lineage".** Within one
+lineage it would bound *protocol* exploitation and say nothing about the taste exploitation that
+matters. Two things survive that anyway. The axiom battery is the one fully independent
+off-target measure, because it is not a judge: prose optimised toward A while drifting into ties,
+length or layout is caught by A0–A2 whatever any judge thinks. And **one implication is checkable
+the day the number lands, for nothing**: `plan_search` runs K=3, so a measured budget of
+"divergence begins at N=2" puts the search this project already ships over budget on arrival, and
+the comparison has to be made in the same units.
+
+### 86.5 What the stack cannot bound, and the correction to the directive's own framing
+
+The directive says whatever these tiers cannot bound is *the measured residual that human batches
+exist to cover*. **T0–T3 bound divergence from axioms, from other judges and from a behavioural
+label; none of them bounds divergence from reader preference, because that quantity is
+constituted by reader preference and no unsolicited source of it exists.** The residual can be
+named — absolute quality, told-versus-shown interiority (exactly what §85's 0.9509 leaves open),
+the near-twin region where every measurement voids, and global structure, where the panel sits at
+`transplant` −0.0125 and the CDG scorer is independently near-null at AUC 0.5090 — and it cannot
+be sized without the thing it is the residual of. So the programme prices the anchor in the sense
+of naming what must be bought and in what order; it does not price it in the sense of measuring
+what is missing, and that limit is pre-registered here so no later result can be read as having
+achieved the stronger thing.
+
+**What this reclassifies the programme as.** Not a substitute for the anchor — **insurance on
+it.** §84 froze panel v2 before funding so nobody could shop for a judge after the human numbers
+arrived; the risk that rule manages is paying four figures to anchor a judge that turns out void
+on its own preconditions, which is precisely what §79.1's candidate was. T0 at $25 and the §79
+screen at $12 make that outcome cheap to discover, and the batch stays the only source of the
+residual. The sequence that follows differs from the directive's by one edge: **the batch is
+funded in parallel with the machine tiers rather than after them**, because T2 alone spends more
+calendar than the batch's whole turnaround and must not be allowed to delay the one instrument
+that reaches what the tiers cannot.
+
+**Actions taken.** The programme document and this entry; `axiom_battery.py` with its
+pre-registration, its ten-oracle selftest and its verified null; one paraphrase question added to
+`personas.PAIR_QUESTIONS` under four declared invariants, additive so no cached record changes.
+**Not taken**: no paid elicitation, no production change to the preference plumbing, no T2
+pre-registration issued, and no scraper written against a site whose terms nobody in this project
+has read.

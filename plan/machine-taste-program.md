@@ -116,9 +116,21 @@ lists, and the operator's acceptance of the §59 clock remain.
 
 ## 6. Sequencing
 
-1. **Now, machine-only (~$50–100 total):** land the repair run (in flight); build the
-   JudgeBench harness from existing fixtures; run the A1/A2 ladder; freeze panel v2 in a
-   ledger entry.
+**Amended 2026-08-19 by [judge-validity-program.md](judge-validity-program.md) (§86), on one
+edge only.** That programme priced a machine-only stack that tried to replace Track B and found
+it cannot: its prospective tier is blocked by its own premise, its cross-lineage tier by provider
+access, and none of the tiers reaches divergence from reader *preference*, which is the quantity
+Track B exists to measure. What it did produce is a cheaper front end for step 1 — an axiom
+battery (`axiom_battery.py`, $25, built) that disqualifies an incoherent candidate before
+JudgeBench costs anything — and one ordering change: **Track B is funded in parallel with Track
+A's ladder rather than after it**, because the calendar the machine tiers spend is longer than
+the batch's turnaround and the batch is the only source of the residual. The freeze rule in §3 is
+unchanged: panel v2 is frozen in a ledger entry before the batch's agreement analysis is read.
+
+1. **Now, machine-only (~$50–100 total):** land the repair run (in flight); run the T0 axiom
+   battery on each candidate first, since it is $25 and kills incoherent candidates before a
+   benchmark is bought; build the JudgeBench harness from existing fixtures; run the A1/A2
+   ladder; freeze panel v2 in a ledger entry.
 2. **Operator gate:** fund the batch. Fund it only when v2 is frozen *and* the book pipeline
    is ready to consume L2 within the month the §59 clock allows.
 3. **After the batch:** agreement matrix → licence assignment (pre-registered rule, §5) →

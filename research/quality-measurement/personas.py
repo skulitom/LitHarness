@@ -358,9 +358,28 @@ PAIR_INTENSITY_QUESTION = (
     "nothing on the list fits."
 )
 
+#: The same act, worded differently, and it exists to be a *control* rather than a variant. A
+#: verdict that changes when the question is rephrased is a property of the wording, which is the
+#: axiom `axiom_battery.py` A4 tests — and the agreement it measures is also the within-lineage
+#: floor the cross-lineage tier compares against, since two lineages that agree no better than one
+#: lineage agrees with its own rephrasing are one judge in costumes.
+#:
+#: **Four invariants are declared before it is used and none of them may be relaxed afterwards**:
+#: the tie option keeps equal prominence, the act stays "carry on reading" rather than "judge" or
+#: "improve", the reason-code request is unchanged, and the register stays plain so that no rubric
+#: enters through the paraphrase. What varies is sentence shape and lexis, which is the whole point;
+#: a paraphrase that also changed how forcing the choice is would confound wording with the tie
+#: policy and measure the wrong thing.
+PAIR_PARAPHRASE_QUESTION = (
+    "Here are two passages. Suppose you could carry on with only one of them — which do you "
+    "pick: A, B, or neither, if the two really are level for you?\n\nThen the single thing that "
+    "most decided your pick, from this list: {codes}, or none if nothing on the list fits."
+)
+
 PAIR_QUESTIONS: dict[str, str] = {
     "preference": PAIR_QUESTION,
     "intensity": PAIR_INTENSITY_QUESTION,
+    "preference_paraphrase": PAIR_PARAPHRASE_QUESTION,
 }
 
 
