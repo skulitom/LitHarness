@@ -558,8 +558,18 @@ Stated plainly, because a system that runs is easy to mistake for a system that 
   no manipulation could move, and the pre-registered positivity floor fired. The successor
   asks the panel to *choose* between a passage and a manipulated copy of it, blinded and
   position-swapped — the shape the pairwise engine above already uses, and the only
-  standing this channel could ever earn — and is untested
-  ([plan/persona-reader-validity.md](plan/persona-reader-validity.md),
+  standing this channel could ever earn. It has now run, and **it discriminates without yet
+  being a reader.** It clears the detection rung against its sham (0.906 vs 0.783, margin
+  0.122), but the sham itself sits at 0.78, so much of what it separates is *edited-ness*;
+  positional bias measures 0.587 (z = +4.73), so a real share of the rest is layout; and the
+  one pre-registered arm that would have made it reader-specific ran **backwards** — removing
+  sentences chosen for stakes hurt less than deleting the same word count at random. The
+  battery says why: the panel catches every local manipulation and is near-blind to
+  `transplant`, a length-matched graft from a different story, so it reads at
+  clause-to-paragraph scale and may not be asked whether a scene belongs in its book. A 4B
+  local model fails the positional-bias precondition outright, putting the capability floor
+  above it. Nothing here mints a row and the ceiling is unchanged
+  ([plan/persona-reader-validity.md](plan/persona-reader-validity.md) §5a,
   `plan/stage-0-decisions.md` §70).
 - **The full deterministic pack is opt-in, and its live inputs are still thin.** Every
   accepted draft is automatically evaluated by `state.contradiction.v0`. When the

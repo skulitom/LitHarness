@@ -3784,7 +3784,12 @@ orientation, ties on `half_win`:
 
 **The two local rows say nothing about the questions, because the panel failed the condition
 that is read first.** `gemma3:4b` chose position A on 80.2% of decided preference comparisons
-(z = +11.9) and 81.0% of intensity ones. §8's pairwise table puts that condition above all
+(389 decided, z = +11.9) and 81.0% of intensity ones — but that second rate rests on **21
+decided comparisons**, because the ties column above is not a rounding artifact: the model
+answered `neither` to 98% of the intensity pairs. Its intensity row is therefore refused twice
+over, once for bias and once for having almost no data under the bias, and the more useful
+reading of that cell is that a 4B model asked which passage *hit harder* declines to answer at
+all. §8's pairwise table puts the bias condition above all
 others for exactly this reason: a panel answering a *side* has reported on layout, and no
 preference it states means anything. So the capability floor for this task sits above 4B, the
 free local path is not available at that size, and **the intensity question remains untested on a
