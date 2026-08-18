@@ -282,6 +282,99 @@ def stake_coverage(text: str) -> dict[str, float]:
     }
 
 
+def two_way_ci(
+    cells: dict[tuple[str, str], tuple[float, int]],
+    *, draws: int = 2000, seed: int = 11,
+) -> tuple[float, float]:
+    """95% interval for a rate, resampling **both** cluster margins: passages and personas.
+
+    **`evaluate.cluster_ci` is anti-conservative for this instrument, and the amount was
+    measured rather than suspected.** It resamples passages only, pooling the four personas
+    inside each passage as if independent — but a taste-anchored panel is heterogeneous *by
+    construction*, which is exactly the condition `research/preference-power/FINDINGS.md` §5
+    identifies as governing the bound: "whichever cluster dimension is small and heterogeneous".
+    Four personas is as starved as a dimension gets.
+
+    Measured under the null at this battery's own n (10 passages x 4 personas x 2 orientations,
+    4,000 replicates, nominal one-sided 2.5%):
+
+        sigma_persona   one-way   two-way
+                  0.0     4.70%     0.33%
+                  0.4     8.60%     1.00%
+                  0.8    17.97%     3.12%
+                  1.2    23.88%     4.83%
+
+    The one-way interval also *narrows* as heterogeneity rises (0.202 to 0.176 mean width), which
+    is the mechanism rather than a curiosity: between-persona variance never enters the resample,
+    so pooling more correlated observations inside a passage makes each passage's rate look more
+    precise than it is. Two-way errs conservative where one-way errs anti-conservative, at roughly
+    double the width — and that width is the evidence: ten passages and four personas do not
+    support a narrow bound. Conservative is the direction this project already chose for the same
+    reason §69 chose over-invalidation.
+
+    The resampling shape is the bilinear form `research/preference-power/bound.py` verifies for
+    the shipped estimator: with `na` the passage multiplicities and `nb` the persona
+    multiplicities, `total = na' C nb` and `won = na' S nb`. Aggregating a cell before weighting
+    it is algebra, not approximation.
+    """
+    passages = sorted({a for a, _ in cells})
+    personas = sorted({b for _, b in cells})
+    if len(passages) < 2 or len(personas) < 2:
+        return (0.0, 1.0)
+    rng = random.Random(seed)
+    rates: list[float] = []
+    for _ in range(draws):
+        na: dict[str, int] = {}
+        for _ in passages:
+            key = passages[rng.randrange(len(passages))]
+            na[key] = na.get(key, 0) + 1
+        nb: dict[str, int] = {}
+        for _ in personas:
+            key = personas[rng.randrange(len(personas))]
+            nb[key] = nb.get(key, 0) + 1
+        won = total = 0.0
+        for (a, b), (score, count) in cells.items():
+            weight = na.get(a, 0) * nb.get(b, 0)
+            if weight:
+                won += weight * score
+                total += weight * count
+        if total:
+            rates.append(won / total)
+    if not rates:
+        return (0.0, 1.0)
+    rates.sort()
+    return (round(rates[round(0.025 * (len(rates) - 1))], 4),
+            round(rates[round(0.975 * (len(rates) - 1))], 4))
+
+
+def pairwise_interval(comparisons: list[Any], panel_model: str,
+                      tie_policy: str) -> dict[str, object]:
+    """The two-way interval over every scored comparison, with its own reading attached."""
+    cells: dict[tuple[str, str], tuple[float, int]] = {}
+    for comparison in comparisons:
+        if comparison.model != panel_model or comparison.refused:
+            continue
+        if comparison.choice == "neither" and tie_policy == "drop":
+            continue
+        score = 0.5 if comparison.choice == "neither" else float(comparison.chose_variant)
+        passage = comparison.pair_id.split("|")[0]
+        key = (passage, comparison.persona_id)
+        prior_score, prior_count = cells.get(key, (0.0, 0))
+        cells[key] = (prior_score + score, prior_count + 1)
+    low, high = two_way_ci(cells)
+    return {
+        "low": low,
+        "high": high,
+        "passages": len({a for a, _ in cells}),
+        "personas": len({b for _, b in cells}),
+        "reading": (
+            "resamples passages and personas both; `gate1.paired_ci` resamples passages only and "
+            "over-rejects at 3.8-23.9% against a nominal 2.5% at this n. Read the fourth rung of "
+            "`evaluate.verdict()` against this interval, not that one"
+        ),
+    }
+
+
 def filler_reason_signature(by_variant: dict[str, list], panel_model: str) -> dict[str, object]:
     """Which reason codes the filler arm drew, against the codes everything else drew.
 
@@ -428,6 +521,11 @@ def main() -> None:
                         help="blinded, position-swapped preference against each variant's "
                              "own original (§70 addendum 3). Replaces the absolute verdict, "
                              "which measured out as a constant function")
+    parser.add_argument("--pair-question", choices=("preference", "intensity"),
+                        default="preference",
+                        help="preference asks which the reader would rather keep reading; "
+                             "intensity asks which hit harder. Same pairs, different response "
+                             "variable — run both to see which discriminates")
     parser.add_argument("--tie-policy", choices=("half_win", "drop"), default="half_win",
                         help="how `neither` scores. Declared before the run, per §61")
     parser.add_argument("--gate0", action="store_true",
@@ -504,6 +602,7 @@ def main() -> None:
         model=args.model,
         spot_model=None if args.no_spot else args.spot_model,
         transport=args.transport,
+        pair_question=args.pair_question,
         **({} if args.rest_ratio is None else {'rest_ratio': args.rest_ratio}),
         dry_run=args.dry_run,
     ) as elicitor:
@@ -683,7 +782,12 @@ def main() -> None:
         "doses": list(doses),
         "mode": "pairwise" if args.pairwise else ("gate0" if args.gate0 else "absolute"),
         "tie_policy": args.tie_policy,
+        "pair_question": args.pair_question,
         "positional_bias": positional_bias(comparisons) if comparisons else None,
+        "pairwise_two_way_ci": (
+            pairwise_interval(comparisons, args.model, args.tie_policy)
+            if comparisons else None
+        ),
         "passages": [passage_id for passage_id, _ in passages],
         "passage_source": source_label(args),
         "variants_scored": len(by_variant),

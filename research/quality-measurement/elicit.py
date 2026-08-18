@@ -386,6 +386,7 @@ class Elicitor:
         spot_effort: str | None = SPOT_EFFORT,
         max_workers: int | None = None,
         transport: str = "cli",
+        pair_question: str = "preference",
         temperature: float = 0.8,
         no_think: bool = True,
         rest_ratio: float = OLLAMA_REST_RATIO,
@@ -398,6 +399,7 @@ class Elicitor:
         self.effort = effort
         self.spot_effort = spot_effort
         self.transport = transport
+        self.pair_question = pair_question
         self.temperature = temperature
         self.no_think = no_think
         self.rest_ratio = rest_ratio
@@ -848,12 +850,14 @@ class Elicitor:
         aggregates precisely so that case cannot be mistaken for a preference.
         """
         first, second = (original, variant) if orientation == 0 else (variant, original)
-        turns = [{"role": "user", "content": pair_turn(first, second)}]
+        turns = [{"role": "user",
+                  "content": pair_turn(first, second, question=self.pair_question)}]
         record = self._call(
             self._params(persona, turns, model=model, effort=effort,
                          max_tokens=PAIR_MAX_TOKENS, schema=PAIR_SCHEMA),
             sample=sample,
             tag={"passage": pair_id, "persona": persona.persona_id, "stage": "pair",
+                 "question": self.pair_question,
                  "orientation": orientation, "sample": sample},
         )
         choice = reason = None

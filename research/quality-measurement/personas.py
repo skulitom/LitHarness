@@ -335,8 +335,36 @@ PAIR_QUESTION = (
     "{codes}, or none if nothing on the list fits."
 )
 
+#: The intensity form of the same comparison, and the whole reason it exists is dynamic range.
+#: The original directive for this programme asked "how did reading this passage make you feel";
+#: what got built asked whether the reader would keep going, and that question measured out as a
+#: constant. The free text of stage 1 always had the range the forced choice threw away — one 4B
+#: model wrote "the 3,999 is wrong, in a way that makes my breath catch" and then answered
+#: `keep-reading` like everything else. Intensity is the variable with room in it.
+#:
+#: **Asked comparatively on purpose.** "How strongly did you feel?" invites performance — a
+#: reader told the study is about strong feeling supplies strong feeling, which is demand
+#: characteristics manufacturing the effect. "Which one hit you harder" cannot be inflated:
+#: turning both dials up changes no answer. It also needs no scale, so it does not smuggle back
+#: the rubric §1a.5 refused, and it stays inside selection-between-candidates standing.
+#:
+#: Deliberately agnostic about *which* emotion. A passage can land through dread, grief, delight
+#: or affront, and an instrument that named one would measure that one's presence rather than the
+#: reading. The reason code carries the flavour; the choice carries the magnitude.
+PAIR_INTENSITY_QUESTION = (
+    "Two passages. Which one hit you harder — A, B, or neither if they landed the same?\n\n"
+    "Any reaction counts, whatever it was, as long as it is what actually happened to you while "
+    "reading.\n\nThen the single thing that most decided it, from this list: {codes}, or none if "
+    "nothing on the list fits."
+)
 
-def pair_turn(text_a: str, text_b: str) -> str:
+PAIR_QUESTIONS: dict[str, str] = {
+    "preference": PAIR_QUESTION,
+    "intensity": PAIR_INTENSITY_QUESTION,
+}
+
+
+def pair_turn(text_a: str, text_b: str, *, question: str = "preference") -> str:
     """One blinded comparison, presented without saying what the pair is.
 
     **Why the absolute question was replaced.** Gate 0 measured the three-way verdict returning
@@ -362,10 +390,12 @@ def pair_turn(text_a: str, text_b: str) -> str:
     forced choice between two texts plants no category — the reader is handed no vocabulary to
     agree with, only two passages.
     """
+    if question not in PAIR_QUESTIONS:
+        raise ValueError(f"{question!r} is not one of {sorted(PAIR_QUESTIONS)}")
     listed = ", ".join(f"`{code}`" for code in REASON_CODES if code != "none")
     return (
         f"PASSAGE A\n\n{text_a}\n\n---\n\nPASSAGE B\n\n{text_b}\n\n---\n\n"
-        + PAIR_QUESTION.format(codes=listed)
+        + PAIR_QUESTIONS[question].format(codes=listed)
     )
 
 
