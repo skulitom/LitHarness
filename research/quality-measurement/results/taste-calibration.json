@@ -1,0 +1,136 @@
+{
+  "arms": [
+    "ours_vs_mol",
+    "ours_vs_rr",
+    "mol_vs_rr",
+    "rr_high_vs_low",
+    "mol_vs_mol"
+  ],
+  "comparisons": 320,
+  "excerpt_words": 1000,
+  "pairs_per_arm": 8,
+  "panel_model": "claude-haiku-4-5",
+  "per_arm_bias": {
+    "mol_vs_mol": {
+      "chose_A_rate": 0.375,
+      "decided": 64,
+      "note": "0.5 is unbiased; distance from it is the share of the answer that is layout",
+      "per_persona_chose_A": {
+        "grinder": 0.375,
+        "newcomer": 0.5,
+        "stakes": 0.375,
+        "voice": 0.25
+      }
+    },
+    "mol_vs_rr": {
+      "chose_A_rate": 0.4375,
+      "decided": 64,
+      "note": "0.5 is unbiased; distance from it is the share of the answer that is layout",
+      "per_persona_chose_A": {
+        "grinder": 0.5,
+        "newcomer": 0.5,
+        "stakes": 0.375,
+        "voice": 0.375
+      }
+    },
+    "ours_vs_mol": {
+      "chose_A_rate": 0.5156,
+      "decided": 64,
+      "note": "0.5 is unbiased; distance from it is the share of the answer that is layout",
+      "per_persona_chose_A": {
+        "grinder": 0.5,
+        "newcomer": 0.5,
+        "stakes": 0.5,
+        "voice": 0.5625
+      }
+    },
+    "ours_vs_rr": {
+      "chose_A_rate": 0.5,
+      "decided": 64,
+      "note": "0.5 is unbiased; distance from it is the share of the answer that is layout",
+      "per_persona_chose_A": {
+        "grinder": 0.5,
+        "newcomer": 0.5,
+        "stakes": 0.5,
+        "voice": 0.5
+      }
+    },
+    "rr_high_vs_low": {
+      "chose_A_rate": 0.381,
+      "decided": 63,
+      "note": "0.5 is unbiased; distance from it is the share of the answer that is layout",
+      "per_persona_chose_A": {
+        "grinder": 0.4,
+        "newcomer": 0.375,
+        "stakes": 0.3125,
+        "voice": 0.4375
+      }
+    }
+  },
+  "planned_calls": 320,
+  "positional_bias": {
+    "chose_A_rate": 0.442,
+    "decided": 319,
+    "note": "0.5 is unbiased; distance from it is the share of the answer that is layout",
+    "per_persona_chose_A": {
+      "grinder": 0.4557,
+      "newcomer": 0.475,
+      "stakes": 0.4125,
+      "voice": 0.425
+    }
+  },
+  "protocol": "plan/stage-0-decisions.md \u00a777",
+  "reading": {
+    "notes": [
+      "OURS PREFERRED over Mother of Learning at 0.9844 \u2014 the machine-taste reading, and the one the confounds cannot manufacture, since recognition and the RevisionBench prior both push toward the human",
+      "the panel ranks human prose by quality, so its verdict on our prose is a verdict"
+    ],
+    "readable_arms": [
+      "ours_vs_mol",
+      "ours_vs_rr",
+      "mol_vs_rr"
+    ],
+    "voided_arms": [
+      "rr_high_vs_low",
+      "mol_vs_mol"
+    ]
+  },
+  "refused": 1,
+  "rr_conversion": {
+    "high": [
+      0.021604,
+      0.022831,
+      0.023065,
+      0.024511,
+      0.028571,
+      0.034483,
+      0.036254,
+      0.043649
+    ],
+    "low": [
+      0.000293,
+      0.000442,
+      0.00066,
+      0.000662,
+      0.000724,
+      0.000793,
+      0.000812,
+      0.000862
+    ]
+  },
+  "skipped_arms": [],
+  "spend": {
+    "cache_read": 6402135,
+    "cache_write": 2251105,
+    "equivalent_usd": 10.4335,
+    "input": 1123802,
+    "output": 833462
+  },
+  "win_rates": {
+    "mol_vs_mol": 0.4062,
+    "mol_vs_rr": 0.9062,
+    "ours_vs_mol": 0.9844,
+    "ours_vs_rr": 1.0,
+    "rr_high_vs_low": 0.7857
+  }
+}

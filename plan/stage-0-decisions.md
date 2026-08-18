@@ -3871,6 +3871,44 @@ It discriminates, which the absolute form never did; it discriminates largely on
 the arm that would have made it reader-specific ran backwards. Nothing here licenses a row, and
 §70's ceiling is unchanged.
 
+**Addendum 5: the 2x2 closes, and the question matters more than the costume.** The missing
+cell ran on 2026-08-18 — intensity on `claude-haiku-4-5`, 904 calls, 184.7 minutes, 13 refused.
+
+    question     model            detect    sham   margin   chose-A   destake vs deplete_matched
+    preference   claude-haiku-4-5  0.9056  0.7833   0.1223    0.5874   -0.3503 vs -0.4375  BACKWARDS
+    intensity    claude-haiku-4-5  0.8514  0.6833   0.1681    0.6111   -0.3750 vs -0.3589  as predicted
+    preference   gemma3:4b         0.4667  0.4250  -0.1083    0.8021   void on bias
+    intensity    gemma3:4b         0.5340  0.4750   0.0090    0.8095   void on bias, 21 decided
+
+**Intensity is the better question and it was not the one the protocol led with.** It detects
+less (0.8514 against 0.9056) and that is the *point*: its sham is 0.6833 rather than 0.7833, so
+less of what it separates is edited-ness, and the margin is wider at 0.1681. Most of all, the
+pre-registered stakes arm — which ran backwards on preference and cost that run its central
+claim — runs in the predicted direction here. `destake` -0.3750 against `deplete_matched`
+-0.3589 is the right sign, though the gap is +0.0161 at n=10 and is not on its own a result.
+
+**`transplant` replicates the §5a blindness independently**: -0.05 with a hit rate of 0.4,
+against -0.0125 on preference. Two questions, two runs, the same near-null on a length-matched
+graft from a foreign story. The scope limit is not an artifact of one question.
+
+Positional bias is 0.6111, marginally outside the 0.40-0.60 band §74 later pre-registered, so
+this cell is read as suggestive rather than clean under that rule.
+
+**And the costume does nothing, which is measured rather than assumed.** Running
+`variance_split` over every cached pairwise comparison — the caricature check that had never
+been run on the pairwise records — gives a persona-to-passage sum-of-squares ratio of **0.0028**
+on preference, **0.0071** on intensity and **0.0342** on §74's repair arms. Win rates across the
+four personas spread by 0.036 to 0.081. Mean pairwise persona agreement is 0.786 on intensity,
+against a chance-at-marginal value of about 0.745 when every persona answers "original" ~85% of
+the time — so they agree because they say the same thing, not because they share a reading.
+
+One word of question change moved the sham by 0.10 and fixed the sign of the primary arm; four
+personas move the answer by less than a tenth of that. **The question is the load-bearing knob
+and the persona is not**, which retires "write better personas" as the obvious next move. What
+it does not retire is the persona *mechanism*: this cannot distinguish personas that are too
+alike from a model that drops the costume under a forced binary choice, and the cheap test that
+separates them is one run with two deliberately opposed readers.
+
 ## 71. The book now owes things on the record, and a scene that changes nothing says so
 
 §61 Add 2 — the first instrumentation aimed at PLAN §1a.3's items 1 and 3, the ones
@@ -4132,6 +4170,35 @@ right, the panel should prefer the em-dashed text. That is also the direct answe
 question this entry exists under — *should the writer simulate a reader while writing?* — which
 is: yes, but not this reader, because this one would optimise the defect.
 
+**Addendum 1: the tier check rules out a capability floor, and its gradient argues against the
+reading it was meant to confirm.** The same three arms ran on `claude-opus-5`, 232 comparisons,
+zero refusals.
+
+    model             em_dash_strip   bias    em_dash_inject   bias    rewhitespace   ties
+    claude-haiku-4-5         0.0417  0.4857           0.3527  0.8571         0.4375   79%
+    claude-opus-5            0.0000  0.5000           0.2000  0.7000         0.4813   69%
+
+**Opus preferred the em-dashed original in 72 of 72 comparisons, at a positional bias of exactly
+0.5000.** So this is not a weak-model artifact: the strongest tier available is *more* certain
+than the cheap one and its bias is textbook-clean. Buying a better panel model does not move it.
+
+**But the direction of that gradient is evidence against "the panel has the machine's taste".**
+If replacing an em dash with a comma genuinely damages the sentence, a stronger reader should
+detect the damage *more* reliably — Opus 0.000 below Haiku 0.042 is the expected shape for real
+damage and the wrong shape for a shared aesthetic quirk. The `possible_comma_splices: 1` this
+protocol reported is a crude regex and not a syntax check, so it is not evidence against that
+either. The decisive control is one arm: strip em dashes to periods rather than commas. If the
+panel accepts a period-strip while rejecting the comma-strip, its objection is syntax and the
+repair was the defect; if it rejects both, the objection is the mark.
+
+`rewhitespace` drew "neither" on 69% of Opus comparisons against 79% on Haiku. Both tiers decline
+to choose between texts differing only in layout, which is the correct answer and the first clean
+behaviour the sham machinery has produced.
+
+`em_dash_inject` is void on both tiers (0.857 and 0.700). The same transform run in opposite
+directions produces pairs the panel answers positionally in one direction and cleanly in the
+other, which is a further reason positional bias cannot be inherited across experiments.
+
 ## 75. Twenty-one proxies asked whether the text was good; this one asks whether it is ours
 
 Every refuted proxy in BRIEF §2 was trying to answer *is this text good?*, and every label
@@ -4207,3 +4274,89 @@ signature separating *The Toll Road* from human LitRPG may be that book's rather
 pipeline's, and nothing here separates the two. A second generated book with a different premise
 is the control, it is the obvious next measurement, and until it runs this reads as *this book is
 distinguishable* rather than *our pipeline is*.
+
+## 76. The ledger does not track what the story charges, and neither does anyone else's
+
+§74's first defect in the only form that survives the two proxies which already died on it.
+`progression_cost` was satisfied by a token gold decrement beside each level-up — the cheapest
+repair that satisfies it *is* the disease — and `silent_ledger` fires on the fixture's best
+prose. Both measured annotation **density**. The human's complaint is not about density: `The
+Toll Road` prices its tolls in days off a man's remaining life (7, 9, 5 and 6 days charged
+across ten scenes) and the `[STATUS]` block tracks HP / MP / Gold beside it and never shows the
+debt. So `state_coverage.py` measures **correspondence** — the units the prose charges people in
+against the units the record keeps. Padding the ledger cannot raise it.
+
+**It refuted itself on its own control, twice, and the first refutation was false.** Run one
+reported human median coverage 0.0 with `share_at_zero` **1.0** — every human chapter, no
+exceptions — which is too clean to be a fact about the genre. It was a fact about the extractor:
+`_STATUS_LINE` matched only a bracketed `[STATUS]` tag, which is what this system emits and what
+**0.0% of 1,200 human RoyalRoad chapters** contain. Published LitRPG writes sheets as `Name: Dix`
+/ `Level: 0` line runs and `[ Strength : 0.1 ( Tier 0 ) ]` bracket runs. The control could not
+have passed. Reading both shapes took detection from 0% to 18%.
+
+**Run two was mis-specified in a second way** — human coverage per *chapter* against ours per
+*book*, when most single chapters carry no sheet at all. Grouped by story, both sides book-level:
+
+    cohort                  stories with costs   median   mean    p90   share at zero
+    RoyalRoad 2021-22 pre-LLM        95 of 151      0.0   0.168   0.50           0.590
+    RoyalRoad 2025                  111 of 178      0.0   0.188   0.571          0.604
+
+**The verdict is DOES NOT SEPARATE US, which is not the same as REFUTED and the first reading
+conflated them.** The axis has real variance — 41% of human books track something they charge,
+and the top decile reaches 0.5 — so it is not a constant and could discriminate. It simply does
+not discriminate *us*: our 0.0 sits with the ~59% majority. So this formalisation fails to
+capture the complaint that prompted it. Whatever makes flat stats feel flat, "the record omits
+the charged unit" is not it, because most published LitRPG omits it too and is read anyway.
+
+**The other half stands and is not a proxy for anything.** `unexplained_gains` flags a tracked
+value rising with nothing in the prose licensing the rise, and it found both defects in this
+book deterministically: HP **+4 between scenes 4 and 5** and **+2 between scenes 7 and 8**, no
+healing language in either scene. Straight continuity, no quality claim, and the class
+`state.contradiction.v0` ships to catch and did not.
+
+## 77. The panel can rank human prose, and the arm that showed it is not the arm that was designed
+
+Every comparison this project had run put our prose against our own prose, so the panel had
+never judged our work against anyone else's. `taste_calibration.py` fixes that with five arms
+over ~1,000-word excerpts, `claude-haiku-4-5`, 320 comparisons.
+
+    arm                          n   win rate   chose-A   reading
+    ours vs Mother of Learning  64     0.9844    0.5156   confounded — see below
+    ours vs RoyalRoad median    64     1.0000    0.5000   confounded — see below
+    MoL vs RoyalRoad median     64     0.9062    0.4375   clean
+    RR high vs low conversion   63     0.7857    0.3810   large, marginally outside the bias band
+    MoL vs MoL (floor)          64     0.4062    0.3750   void on bias
+
+**The calibration arms are the result.** Both are excerpt-against-excerpt, the same treatment on
+both sides, and the panel ranks a fan-acclaimed serial above a median RoyalRoad chapter at 0.906
+and high-conversion above low-conversion at 0.786 across eight distinct stories per side. The
+second is the one that matters: `conversion = followers / total_views` is a label nobody told
+the panel about, both sides are equally obscure, and era and platform are held fixed. **This is
+the first positive result the persona instrument has produced** — it is not tasteless, and a
+panel that can order human prose on an external label is a panel worth repairing.
+
+**The headline arms are confounded and the confound is one this protocol introduced.** The
+docstring written *before* the run claimed a win for us would be the reading "the confounds
+cannot manufacture", and that was wrong twice over. Our units are complete scenes; the human
+side is an arbitrary window cut 20% into a chapter, so ours has a beginning and an ending theirs
+does not. And this book is premised on a man paying tolls in days of his life, so it is
+stakes-dense by construction. The panel's own reason codes say exactly that: `stakes-real`
+carries **38 of 63** wins against MoL and **43 of 64** against RoyalRoad. Pre-registering the
+wrong claim is worse than not pre-registering, because it lends a number authority it has not
+earned, and this entry exists partly to say so.
+
+**A deeper problem the confound points at.** The reason vocabulary — `stakes-real`,
+`voice-landed`, `pulled-forward` — is one *we* wrote, and the generator optimises the same
+things (§71's promise ledger, the delta annotation, the `stakes` persona). A reader built to
+read for stakes preferring a writer built to write for stakes is not taste; it is two
+specifications we authored agreeing with each other. That is not fixed by better personas
+either. It is fixed by criteria sourced from outside this project, and `rr_high_vs_low` is the
+first evidence that such criteria are usable here at all.
+
+**Three controls run against it**, all reading against the same cached arms at no extra cost:
+`ours_win_vs_mol_win` cuts both sides to ~700-word windows so neither has a beginning or an
+ending; `ours_vs_mol_stakes` selects the MoL window by stake-vocabulary density instead of
+position; `ours_win_vs_mol_stakes` applies both. The second is covariate **matching** rather than
+a quality selection — it uses this project's own stake lexicon, which identifies stake vocabulary
+and not stakes — and its only claim is that the comparison is no longer decided by which side
+happened to be about something costly.
