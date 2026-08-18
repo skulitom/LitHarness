@@ -4,9 +4,12 @@
     "ours_vs_rr",
     "mol_vs_rr",
     "rr_high_vs_low",
-    "mol_vs_mol"
+    "mol_vs_mol",
+    "ours_win_vs_mol_win",
+    "ours_vs_mol_stakes",
+    "ours_win_vs_mol_stakes"
   ],
-  "comparisons": 320,
+  "comparisons": 512,
   "excerpt_words": 1000,
   "pairs_per_arm": 8,
   "panel_model": "claude-haiku-4-5",
@@ -44,6 +47,17 @@
         "voice": 0.5625
       }
     },
+    "ours_vs_mol_stakes": {
+      "chose_A_rate": 0.5156,
+      "decided": 64,
+      "note": "0.5 is unbiased; distance from it is the share of the answer that is layout",
+      "per_persona_chose_A": {
+        "grinder": 0.5,
+        "newcomer": 0.5,
+        "stakes": 0.5,
+        "voice": 0.5625
+      }
+    },
     "ours_vs_rr": {
       "chose_A_rate": 0.5,
       "decided": 64,
@@ -52,6 +66,28 @@
         "grinder": 0.5,
         "newcomer": 0.5,
         "stakes": 0.5,
+        "voice": 0.5
+      }
+    },
+    "ours_win_vs_mol_stakes": {
+      "chose_A_rate": 0.5938,
+      "decided": 64,
+      "note": "0.5 is unbiased; distance from it is the share of the answer that is layout",
+      "per_persona_chose_A": {
+        "grinder": 0.625,
+        "newcomer": 0.625,
+        "stakes": 0.5,
+        "voice": 0.625
+      }
+    },
+    "ours_win_vs_mol_win": {
+      "chose_A_rate": 0.5312,
+      "decided": 64,
+      "note": "0.5 is unbiased; distance from it is the share of the answer that is layout",
+      "per_persona_chose_A": {
+        "grinder": 0.5625,
+        "newcomer": 0.5,
+        "stakes": 0.5625,
         "voice": 0.5
       }
     },
@@ -67,16 +103,16 @@
       }
     }
   },
-  "planned_calls": 320,
+  "planned_calls": 512,
   "positional_bias": {
-    "chose_A_rate": 0.442,
-    "decided": 319,
+    "chose_A_rate": 0.4814,
+    "decided": 511,
     "note": "0.5 is unbiased; distance from it is the share of the answer that is layout",
     "per_persona_chose_A": {
-      "grinder": 0.4557,
-      "newcomer": 0.475,
-      "stakes": 0.4125,
-      "voice": 0.425
+      "grinder": 0.4961,
+      "newcomer": 0.5,
+      "stakes": 0.4531,
+      "voice": 0.4766
     }
   },
   "protocol": "plan/stage-0-decisions.md \u00a777",
@@ -88,7 +124,10 @@
     "readable_arms": [
       "ours_vs_mol",
       "ours_vs_rr",
-      "mol_vs_rr"
+      "mol_vs_rr",
+      "ours_win_vs_mol_win",
+      "ours_vs_mol_stakes",
+      "ours_win_vs_mol_stakes"
     ],
     "voided_arms": [
       "rr_high_vs_low",
@@ -120,17 +159,20 @@
   },
   "skipped_arms": [],
   "spend": {
-    "cache_read": 6402135,
-    "cache_write": 2251105,
-    "equivalent_usd": 10.4335,
-    "input": 1123802,
-    "output": 833462
+    "cache_read": 10276551,
+    "cache_write": 3399193,
+    "equivalent_usd": 16.1216,
+    "input": 1644818,
+    "output": 1330152
   },
   "win_rates": {
     "mol_vs_mol": 0.4062,
     "mol_vs_rr": 0.9062,
     "ours_vs_mol": 0.9844,
+    "ours_vs_mol_stakes": 0.9844,
     "ours_vs_rr": 1.0,
+    "ours_win_vs_mol_stakes": 0.9062,
+    "ours_win_vs_mol_win": 0.9688,
     "rr_high_vs_low": 0.7857
   }
 }

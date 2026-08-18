@@ -4352,16 +4352,25 @@ over ~1,000-word excerpts, `claude-haiku-4-5`, 320 comparisons.
     ours vs Mother of Learning  64     0.9844    0.5156   confounded — see below
     ours vs RoyalRoad median    64     1.0000    0.5000   confounded — see below
     MoL vs RoyalRoad median     64     0.9062    0.4375   clean
-    RR high vs low conversion   63     0.7857    0.3810   large, marginally outside the bias band
+    RR high vs low conversion   63     0.7857    0.3810   VOID on bias (§77.1); covariates unmatched
     MoL vs MoL (floor)          64     0.4062    0.3750   void on bias
 
 **The calibration arms are the result.** Both are excerpt-against-excerpt, the same treatment on
 both sides, and the panel ranks a fan-acclaimed serial above a median RoyalRoad chapter at 0.906
-and high-conversion above low-conversion at 0.786 across eight distinct stories per side. The
+and high-conversion above low-conversion at 0.786 across eight distinct stories per side. ~~The
 second is the one that matters: `conversion = followers / total_views` is a label nobody told
 the panel about, both sides are equally obscure, and era and platform are held fixed. **This is
 the first positive result the persona instrument has produced** — it is not tasteless, and a
-panel that can order human prose on an external label is a panel worth repairing.
+panel that can order human prose on an external label is a panel worth repairing.~~
+
+**Struck by §77.1.** The second arm is **void on this protocol's own positional-bias precondition**
+at `chose_A_rate` 0.3810, and "both sides are equally obscure" is false by two orders of magnitude:
+the compared pairs differ **255x** in median views and 6.4x in median followers, with the
+high-conversion side being the *less*-read story in 7 of 8 pairs. Era and platform *are* held fixed
+— that clause survives, verified chapter by chapter. What does not survive is the conclusion: the
+only readable calibration arm is `mol_vs_rr`, which recognition alone predicts, so **the panel has
+not been shown to order human prose on an external label.** §77.1 carries the covariate table and
+what the benchmark has to do instead.
 
 **The headline arms are confounded and the confound is one this protocol introduced.** The
 docstring written *before* the run claimed a win for us would be the reading "the confounds
@@ -4388,6 +4397,83 @@ position; `ours_win_vs_mol_stakes` applies both. The second is covariate **match
 a quality selection — it uses this project's own stake lexicon, which identifies stake vocabulary
 and not stakes — and its only claim is that the comparison is no longer decided by which side
 happened to be about something costly.
+
+### 77.1 The three controls land, and the arm they were not aimed at is the one that fails
+
+The controls §77 describes as "run against it" had their numbers on disk and not in this log. All
+three clear the per-arm positional-bias precondition, which the headline arms also clear and which
+`rr_high_vs_low` and `mol_vs_mol` do not.
+
+    arm                        n   win rate   chose-A   bias band
+    ours vs MoL               64     0.9844    0.5156   clean
+    ours_win vs mol_win       64     0.9688    0.5312   clean
+    ours vs mol_stakes        64     0.9844    0.5156   clean
+    ours_win vs mol_stakes    64     0.9062    0.5938   clean
+
+512 comparisons, one refusal, `claude-haiku-4-5`, $16.12 equivalent. **Neither confound §77
+identified explains the result.** Windowing our side so that it also starts and ends mid-flow costs
+1.6 points; selecting the human window by stake-vocabulary density costs nothing; applying both
+costs 7.8 points and still leaves 0.906. So "our units were complete scenes and theirs were
+arbitrary cuttings" and "our book is stakes-dense by construction" are both bounded and neither is
+the answer. What §77 says about the *reason vocabulary* is untouched by this and remains the live
+objection: a reader built to read for stakes preferring a writer built to write for stakes is two
+specifications we authored agreeing with each other, and no amount of windowing addresses it.
+
+**The correction is to the arm §77 called the result.** Reading the artifact rather than the entry:
+
+- **`rr_high_vs_low` is void on its own pre-registered precondition.** Its `chose_A_rate` is
+  **0.3810**, outside the declared 0.40–0.60 band, and `taste_calibration._read` duly lists it in
+  `voided_arms`. §77's table says "marginally outside the bias band" and then the prose calls it
+  "the one that matters" and "the first positive result the persona instrument has produced".
+  ~~Both readings are withdrawn~~ — **the arm is void, so the only readable calibration arm is
+  `mol_vs_rr`, which is the fame-confounded one.** The claim that the panel "ranks human prose by
+  quality" currently rests on a fan-acclaimed serial beating a median chapter, which recognition
+  alone predicts. The instrument has not been shown to track an external label.
+- **"Both sides are equally obscure" is false, by two orders of magnitude.** For the eight pairs
+  actually compared:
+
+        covariate      low-conversion median   high-conversion median   imbalance
+        conversion                   0.00069                  0.02654      38.3x
+        total_views                  213,623                    837.5    1/255x
+        followers                      138.5                     21.5     1/6.4x
+        favorites                         46                        5     1/9.2x
+        words                        2,370.5                  2,362.5       1.0x
+
+  Length is matched and everything about audience size is not. Because `conversion =
+  followers / total_views` and followers are comparably small on both sides, the high-conversion
+  side is **the side almost nobody read**: in **7 of 8 pairs** the "high quality" chapter belongs
+  to the less-viewed story, with view counts of 174, 219, 280 and 331 against 3.19M, 883k, 365k
+  and 352k. A ratio with a denominator that small is dominated by its own noise, and the arm is
+  closer to a low-traffic-versus-high-traffic contrast than to a quality contrast.
+- **`era` and `platform` *are* held fixed, and that part of §77 stands.** Every one of the sixteen
+  chapters in the eight compared pairs carries `cohort == human_pre_llm`. The single
+  `undeclared_2025` chapter in the pool — the 0.44751 outlier, 665 followers on 1,486 views — sits
+  at index 9 of `rr_high` and falls outside the eight pairs. That is luck rather than design: the
+  dump filters on `era_cohort(...) is not None`, which admits all three cohorts, so a `--pairs`
+  above 9 would have pulled AI-era text into a comparison the entry describes as pre-LLM.
+- **§56.6 item 4 already refused this selection, and §77 does not cite it.** "Do not select §4.4's
+  corpus from conversion deciles" was landed on 2026-08-17 because the deciles are recoverable from
+  prose-blind `followers` at **AUC 0.814** and from `chapters_seen` at 0.308
+  ([craft-corpus.md](craft-corpus.md) §4.1). `rr_high_vs_low` selects top-ten against bottom-ten
+  conversion, which is that refusal's shape. The refusal was written about a craft-exemplar corpus
+  and this is judge calibration, so it is not the identical use — but the bite is the same and
+  sharper here: if a judge is *selected* by agreement with a label recoverable prose-blind from
+  story size, the selection prefers whichever judge best proxies story size. `conversion.json`'s
+  own verdict already words the requirement — a critic scored against conversion "takes the
+  prose-blind baseline as a covariate from line one".
+- **The committed corpus does not regenerate from the committed defaults.** `human-excerpts.json`
+  records `rr_stories_scored: 229`; `taste_calibration.dump`'s `--limit` default of 4000 yields
+  **167**. Reproducing 229 needs `--limit` ≥ 6000. The payload should record the limit it was built
+  with, since the file is gitignored and regenerating it is the only way to check anything about it.
+
+**What this does to the programme.** The taste-gap work was to be anchored by scaling this label
+from 8 pairs toward hundreds and selecting judge configurations by agreement with it. The label is
+not usable in the form the 8 pairs used it, so scaling first would scale the confound. The
+benchmark has to pair **within** view and follower bands rather than across global conversion
+deciles, impose a views floor so the ratio is not noise — 175 of the 490 distinct LitRPG stories in
+the two cached shards clear 10,000 views while keeping a 9.1x p10–p90 conversion spread — and
+report every judge candidate against a prose-blind size baseline in the same table. That is a
+different experiment from the one §77 piloted, and it is the one worth building.
 
 ## 78. The em-dash finding measured a reformatting bug, and the guards could not have seen it
 

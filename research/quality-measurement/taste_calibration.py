@@ -324,8 +324,18 @@ def _read(rates: dict[str, float], bias: dict[str, dict[str, Any]]) -> dict[str,
 
     readable = [arm for arm in rates if clean(arm)]
     notes: list[str] = []
+    # **The two calibration arms license different claims and are no longer pooled.** Pooling them
+    # let `mol_vs_rr` alone carry the note "the panel ranks human prose by quality", which is how
+    # §77 came to report a positive external-label result while `rr_high_vs_low` — the only arm
+    # carrying a label nobody told the panel about — sat in `voided_arms` at a bias of 0.381.
+    # Acclaim is not an external label: a fan-famous serial beating a median chapter is what
+    # recognition predicts on its own. See §77.1.
+    def separates(arm: str) -> bool:
+        return arm in readable and abs(rates[arm] - 0.5) >= 0.10
+
+    ranks_acclaim = separates("mol_vs_rr")
+    ranks_external = separates("rr_high_vs_low")
     calibration = [rates[a] for a in ("mol_vs_rr", "rr_high_vs_low") if a in readable]
-    ranks = bool(calibration) and max(abs(value - 0.5) for value in calibration) >= 0.10
 
     if "ours_vs_mol" in readable and rates["ours_vs_mol"] > 0.5:
         notes.append(
@@ -333,19 +343,33 @@ def _read(rates: dict[str, float], bias: dict[str, dict[str, Any]]) -> dict[str,
             "reading, and the one the confounds cannot manufacture, since recognition and the "
             "RevisionBench prior both push toward the human"
         )
-    if not ranks and calibration:
+    if ranks_external:
         notes.append(
-            "NO TASTE: the human-vs-human arms sit within 0.10 of indifference, so the panel "
-            "cannot rank prose whose quality differs by a measured label. Any preference it "
-            "shows for humans over us is authorship detection rather than judgement."
+            "the panel orders human prose on an EXTERNAL label (rr_high_vs_low separates and "
+            "clears its own bias precondition), so its verdict on our prose is a verdict"
         )
-    elif ranks:
+    elif "rr_high_vs_low" in rates:
+        why = ("void on positional bias" if "rr_high_vs_low" not in readable
+               else "within 0.10 of indifference")
         notes.append(
-            "the panel ranks human prose by quality, so its verdict on our prose is a verdict"
+            "NO EXTERNAL-LABEL RESULT: rr_high_vs_low is the only arm carrying a label nobody "
+            f"told the panel about and it is {why}. Whatever the acclaim arm does, the panel is "
+            "not shown to track a measured reader outcome, and any preference it shows for "
+            "humans over us may be authorship detection."
+        )
+    if ranks_acclaim and not ranks_external:
+        notes.append(
+            "the panel ranks a fan-acclaimed serial above a median chapter, which recognition "
+            "predicts on its own; this is not evidence of taste (§77.1)"
+        )
+    if not calibration:
+        notes.append(
+            "NO TASTE MEASURED: no human-vs-human calibration arm cleared its bias precondition"
         )
     if not readable:
         notes.append("VOID: no arm cleared its own positional-bias precondition")
     return {"readable_arms": readable, "voided_arms": [a for a in rates if a not in readable],
+            "ranks_external_label": ranks_external, "ranks_acclaim": ranks_acclaim,
             "notes": notes}
 
 
