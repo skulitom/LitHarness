@@ -974,6 +974,55 @@ def interiority_strip(text: str, strength: float) -> str:
     return _rebuild(_sentences(text), drop)
 
 
+def interiority_deplete_matched(text: str, strength: float) -> str:
+    """Delete the same word count as `interiority_strip`, from sentences reporting no inner state.
+
+    **`interiority_strip`'s actual matched control.** §74 said `deplete_matched` was that control
+    "exactly as `destake` has", and it is not: `deplete_matched` takes its budget from
+    `_stake_plan`, so it is matched to `destake` and to nothing else. Over the ten drafted scenes
+    it removes 7.44% of the words where `interiority_strip` removes 4.44%, and a control deleting
+    1.7x the text is the length confound it exists to remove. §78.1 records the correction.
+
+    Read the two rows against each other and nothing else: both route through `_rebuild`, so both
+    carry the same paragraph-separator downgrade §78.1 measured, and both remove the same number of
+    words. The one remaining difference is *which* sentences went — the ones reporting a mind
+    against the ones reporting a body — which is the entire claim `interiority_strip` makes. A
+    panel responding to this control as strongly as to the arm has responded to deletion.
+
+    The fill algorithm is `deplete_matched`'s, deliberately: fill under the target in seeded-random
+    order, then close the residual with the single remaining sentence nearest to it. Selection is
+    seeded rather than positional so the control does not become "delete the opening".
+    """
+    _drop, target = _interiority_plan(text, strength)
+    if target <= 0:
+        return text
+    pieces = _sentences(text)
+    neutral = [
+        (block_index, sentence_index, len(sentence.split()))
+        for block_index, sentences in enumerate(pieces)
+        for sentence_index, sentence in enumerate(sentences)
+        if not _INTERIOR.search(sentence) and sentence.strip()
+    ]
+    if sum(entry[2] for entry in neutral) < target:
+        return text
+    rng = _rng(text, "deplete-interior")
+    rng.shuffle(neutral)
+    drop: set[tuple[int, int]] = set()
+    removed = 0
+    remaining: list[tuple[int, int, int]] = []
+    for entry in neutral:
+        if removed + entry[2] <= target:
+            drop.add((entry[0], entry[1]))
+            removed += entry[2]
+        else:
+            remaining.append(entry)
+    if removed < target and remaining:
+        residual = target - removed
+        best = min(remaining, key=lambda entry: abs(entry[2] - residual))
+        drop.add((best[0], best[1]))
+    return _rebuild(pieces, drop)
+
+
 def stat_flatten(text: str, strength: float) -> str:
     """Blank the varying values in system-voice stat blocks. Near-null on the book that named it.
 
@@ -999,15 +1048,25 @@ READER_DEFECT_DEGRADERS = (
     Ablation("em_dash_inject", None, -1, False, em_dash_inject,
              "the named surface tell, manufactured; one token per replacement"),
     Ablation("interiority_strip", None, -1, False, interiority_strip,
-             "removes the sentences that report an inner state; deplete_matched is its control"),
+             "removes the sentences that report an inner state; "
+             "interiority_deplete_matched is its control, not deplete_matched (§78.1)"),
     Ablation("stat_flatten", None, -1, True, stat_flatten,
              "blanks varying stat values; near-null on a book whose stats are already flat"),
+)
+
+#: `interiority_strip`'s word-matched control. A degrader by `sign` because it does remove text,
+#: and it is the row the interiority arm is read against rather than a claim in its own right.
+READER_DEFECT_CONTROLS = (
+    Ablation("interiority_deplete_matched", 1, -1, False, interiority_deplete_matched,
+             "removes interiority_strip's exact word count from sentences reporting no inner "
+             "state; the arm's matched control"),
 )
 
 #: The reader-defect battery: the three new degraders, the matched-deletion control that makes
 #: `interiority_strip` a claim about interiority, and the layout sham that bounds every arm.
 READER_DEFECT_SET = (
     *READER_DEFECT_DEGRADERS,
+    *READER_DEFECT_CONTROLS,
     BY_KEY["deplete_matched"],
     BY_KEY["rewhitespace"],
 )

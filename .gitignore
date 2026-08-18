@@ -25,6 +25,12 @@ output/
 # it is a build product of `taste_calibration.py --dump` over corpora that live on the machine,
 # and it regenerates in one command. The *results* files carry only ids and verdicts.
 research/quality-measurement/corpora/human-excerpts.json
+# Matched-pair benchmark corpus: third-party RoyalRoad and Mother of Learning prose, staged for
+# measurement and never redistributed. Same rule as human-excerpts.json above — it is a build
+# product of `taste_benchmark.py --build` and regenerates in one command. The committed record is
+# the text-free sidecar results/taste-benchmark-corpus.json, which carries every pair's covariates.
+research/quality-measurement/corpora/taste-benchmark.json
+
 
 # Run logs. The JSON and JSONL beside them are the artifacts.
 research/quality-measurement/results/*.log

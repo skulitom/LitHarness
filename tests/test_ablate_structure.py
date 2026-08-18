@@ -127,6 +127,12 @@ SEPARATOR_DOWNGRADING_ARMS = frozenset({
     "destake",
     "deplete_matched",
     "interiority_strip",
+    # Added deliberately, and the only member whose downgrade is load-bearing rather than a defect:
+    # `interiority_deplete_matched` is `interiority_strip`'s control, and §79's primary comparison
+    # puts the two against *each other*. Both must carry the same formatting, so the control has to
+    # route through `_rebuild` exactly as the arm does. If `_join` is ever fixed, both leave this
+    # set together and that comparison stays valid — the property to preserve when it happens.
+    "interiority_deplete_matched",
 })
 
 
@@ -147,6 +153,44 @@ def test_rebuild_arms_downgrade_the_paragraph_separator() -> None:
     assert downgraded == set(SEPARATOR_DOWNGRADING_ARMS), (
         f"the set of separator-downgrading arms changed: {sorted(downgraded)} "
         f"!= {sorted(SEPARATOR_DOWNGRADING_ARMS)}; see §78 before updating this constant"
+    )
+
+
+def test_interiority_deplete_matched_matches_the_interiority_budget() -> None:
+    """The replacement control removes the same word count as the arm it controls.
+
+    Exact rather than approximate: `_interiority_plan` returns the budget and the fill closes the
+    residual with the nearest remaining sentence, so the two arms differ by at most one sentence's
+    rounding. Measured at 446 against 447 words over the ten drafted scenes. If this drifts, the
+    interiority arm has a length confound again and §79's primary comparison stops being one.
+    """
+    base = len(FIXTURE.split())
+    arm = base - len(ablate.interiority_strip(FIXTURE, 1.0).split())
+    control = base - len(ablate.interiority_deplete_matched(FIXTURE, 1.0).split())
+    assert arm > 0, "fixture must contain interiority sentences"
+    assert control > 0, "fixture must contain non-interiority sentences to delete"
+    assert abs(arm - control) <= max(2, round(0.15 * arm)), (
+        f"interiority_deplete_matched removed {control} words against the arm's {arm}; "
+        "the control is no longer matched"
+    )
+
+
+def test_interiority_deplete_matched_keeps_the_interiority_it_controls_for() -> None:
+    """The control must not remove interiority itself, or both sides lose the same thing.
+
+    `interiority_strip` drives the interiority-verb count to zero. Its control has to leave that
+    count alone, otherwise the primary comparison is between two texts that both lack interiority
+    and it measures nothing.
+    """
+    before = len(ablate._INTERIOR.findall(FIXTURE))
+    stripped = len(ablate._INTERIOR.findall(ablate.interiority_strip(FIXTURE, 1.0)))
+    controlled = len(ablate._INTERIOR.findall(
+        ablate.interiority_deplete_matched(FIXTURE, 1.0)))
+    assert before > 0
+    assert stripped == 0, "the arm should remove every interiority-reporting sentence"
+    assert controlled == before, (
+        f"the control removed interiority too ({controlled} of {before} left); "
+        "it must delete only sentences reporting no inner state"
     )
 
 
