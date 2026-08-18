@@ -77,6 +77,9 @@ import os
 import subprocess
 import sys
 import threading
+import time
+import urllib.error
+import urllib.request
 from collections.abc import Callable
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import asdict, dataclass, field
@@ -141,6 +144,35 @@ CLI_HARDENING = (
     "--no-session-persistence",
     "--permission-mode", "manual",
 )
+
+
+#: The local transport. Ollama on the 4090 — see BRIEF.md §4 for what is in the cache.
+OLLAMA_URL = "http://localhost:11434/api/chat"
+#: One GPU serialises anyway, and concurrent requests only compete for the same VRAM.
+OLLAMA_MAX_WORKERS = 1
+OLLAMA_TIMEOUT_SECONDS = 300.0
+#: Sleep this multiple of each call's duration after it, and hold while the card is hot.
+#: `cdg_battery.py` earned these numbers the expensive way — a thermal shutdown killed a run at
+#: call 431 — and its measured constants are 3.0 / 72 / 66 for a transformers workload that
+#: saturates the card with back-to-back forward passes. Ollama at 4B is lighter per call, so the
+#: duty cycle defaults lower and the **temperature governor is the actual protection**; the rest
+#: ratio is only a coarse pre-emptive measure. Raise `--rest-ratio` if the card still climbs.
+OLLAMA_REST_RATIO = 1.0
+OLLAMA_PAUSE_ABOVE_C = 72
+OLLAMA_RESUME_BELOW_C = 66
+OLLAMA_POLL_SECONDS = 5.0
+
+
+def gpu_temperature() -> int | None:
+    """Current GPU core temperature, or None on a machine this cannot read."""
+    try:
+        out = subprocess.run(
+            ["nvidia-smi", "--query-gpu=temperature.gpu", "--format=csv,noheader"],
+            capture_output=True, text=True, timeout=10, check=True,
+        )
+        return int(out.stdout.strip().splitlines()[0])
+    except (OSError, subprocess.SubprocessError, ValueError, IndexError):
+        return None
 
 
 def _supports_effort(model: str) -> bool:
@@ -288,6 +320,9 @@ class Elicitor:
         spot_effort: str | None = SPOT_EFFORT,
         max_workers: int | None = None,
         transport: str = "cli",
+        temperature: float = 0.8,
+        no_think: bool = True,
+        rest_ratio: float = OLLAMA_REST_RATIO,
         dry_run: bool = False,
     ) -> None:
         self.cache_path = cache_path
@@ -297,9 +332,12 @@ class Elicitor:
         self.effort = effort
         self.spot_effort = spot_effort
         self.transport = transport
-        self.max_workers = max_workers if max_workers is not None else (
-            CLI_MAX_WORKERS if transport == "cli" else MAX_WORKERS
-        )
+        self.temperature = temperature
+        self.no_think = no_think
+        self.rest_ratio = rest_ratio
+        self.max_workers = max_workers if max_workers is not None else {
+            "cli": CLI_MAX_WORKERS, "ollama": OLLAMA_MAX_WORKERS,
+        }.get(transport, MAX_WORKERS)
         self.dry_run = dry_run
         self._client: Any | None = None
         self._lock = threading.Lock()
@@ -430,6 +468,8 @@ class Elicitor:
                 "usage": {},
                 "dry_run": True,
             }
+        if self.transport == "ollama":
+            return self._call_ollama(params, sample=sample, key=key, tag=tag)
         if self.transport == "cli":
             return self._call_cli(params, key=key, tag=tag)
 
@@ -459,6 +499,128 @@ class Elicitor:
             self._cache[key] = record
             self.api_calls += 1
             self._persist(record)
+        return record
+
+    def _throttle(self, elapsed: float) -> None:
+        """Duty-cycle, then hold while the card is hot. See the constants above.
+
+        Three consecutive unreadable temperatures end a hold rather than one: `cdg_battery`
+        measured a single transient `nvidia-smi` hiccup cancelling a cooldown at 69C that should
+        have run to 66, and un-governed beats hanging on a dead sensor.
+        """
+        time.sleep(self.rest_ratio * elapsed)
+        temperature = gpu_temperature()
+        if temperature is None or temperature < OLLAMA_PAUSE_ABOVE_C:
+            return
+        print(f"      gpu at {temperature}C; holding until below {OLLAMA_RESUME_BELOW_C}C",
+              file=sys.stderr, flush=True)
+        failures = 0
+        while True:
+            time.sleep(OLLAMA_POLL_SECONDS)
+            temperature = gpu_temperature()
+            if temperature is None:
+                failures += 1
+                if failures >= 3:
+                    return
+                continue
+            failures = 0
+            if temperature < OLLAMA_RESUME_BELOW_C:
+                return
+
+    def _call_ollama(
+        self, params: dict[str, Any], *, sample: int, key: str, tag: dict[str, Any]
+    ) -> dict[str, Any]:
+        """One call to a local model. Free, offline, and better instrumented than either API path.
+
+        **The reason to prefer this is not only cost.** On three of the protocol's requirements
+        the local transport is the *strictest* of the three available, not a cheap substitute:
+
+        - **The schema is enforced, not requested.** Ollama's `format` takes the JSON schema
+          directly, so a malformed verdict is impossible — the property the SDK transport has and
+          the `claude -p` transport cannot have, since it has no structured-output mode and falls
+          back to instruction-plus-fence-stripping.
+        - **The output cap is real.** `options.num_predict` is honoured. `claude -p` has no
+          max-tokens flag at all, which is why that transport's mean output ran to 1,049 tokens
+          against a stage-1 cap of 350 — the cap was built and silently dropped.
+        - **The response distribution is reproducible.** `options.seed` is set to the sample
+          index, so the `n` draws of a cell are distinct *and* a re-run reproduces them exactly.
+          No API path offers this: there, `n` byte-identical requests draw from an unseeded
+          sampler and the distribution can never be reproduced, only re-drawn.
+
+        Stage 2 is also a genuine assistant turn here rather than the transcript reconstruction
+        `_flatten_turns` performs for `claude -p`, so the two-stage conditioning matches the SDK
+        path exactly.
+
+        What is given up is capability, and that is the whole question gates 0 and 1 exist to
+        answer: a local panel that passes them is a validated instrument with no quota cost, and
+        one that fails has priced the capability floor cheaply.
+        """
+        messages = [{"role": "system", "content": params["system"]}]
+        for turn in params["messages"]:
+            messages.append({"role": turn["role"], "content": _block_text(turn["content"])})
+        schema = (
+            params.get("output_config", {}).get("format", {}).get("schema")
+            if isinstance(params.get("output_config"), dict) else None
+        )
+        payload: dict[str, Any] = {
+            "model": params["model"],
+            "messages": messages,
+            "stream": False,
+            "options": {
+                "num_predict": params["max_tokens"],
+                "temperature": self.temperature,
+                # The sample index *is* the seed, which is what makes the distribution
+                # reproducible. A fixed seed would collapse all n draws onto one answer.
+                "seed": sample,
+            },
+        }
+        if schema is not None:
+            payload["format"] = schema
+        if self.no_think:
+            # Reasoning models spend the whole `num_predict` budget on hidden thinking and
+            # return empty content with `done_reason: length`. Measured on qwen3:4b before this
+            # flag existed. Top-level, not an option — inside `options` it is silently ignored.
+            payload["think"] = False
+
+        begun = time.time()
+        try:
+            request = urllib.request.Request(
+                OLLAMA_URL, data=json.dumps(payload).encode("utf-8"),
+                headers={"Content-Type": "application/json"},
+            )
+            with urllib.request.urlopen(request, timeout=OLLAMA_TIMEOUT_SECONDS) as response:
+                envelope = json.loads(response.read())
+        except (urllib.error.URLError, TimeoutError, OSError, json.JSONDecodeError) as error:
+            record = {**tag, "key": key, "model": params["model"], "text": "", "refused": True,
+                      "stop_reason": f"transport_error:{type(error).__name__}", "usage": {}}
+            with self._lock:
+                self._cache[key] = record
+                self.api_calls += 1
+                self._persist(record)
+            return record
+        elapsed = time.time() - begun
+
+        text = _strip_fence(str(envelope.get("message", {}).get("content", "")))
+        record = {
+            **tag,
+            "key": key,
+            "model": params["model"],
+            "text": text,
+            "refused": not text,
+            "stop_reason": str(envelope.get("done_reason") or "stop"),
+            "usage": {
+                "input": int(envelope.get("prompt_eval_count", 0) or 0),
+                "output": int(envelope.get("eval_count", 0) or 0),
+                "cache_read": 0,
+                "cache_write": 0,
+                "seconds": round(elapsed, 2),
+            },
+        }
+        with self._lock:
+            self._cache[key] = record
+            self.api_calls += 1
+            self._persist(record)
+        self._throttle(elapsed)
         return record
 
     def _call_cli(self, params: dict[str, Any], *, key: str, tag: dict[str, Any]) -> dict[str, Any]:
@@ -704,22 +866,120 @@ def samples_to_rows(samples: list[Sample]) -> list[dict[str, Any]]:
     return [{**asdict(sample), "would_stop": sample.would_stop} for sample in samples]
 
 
-if __name__ == "__main__":
-    # A dry run: builds every request and touches no network, so the schedule and the prompt
-    # bytes can be inspected before any money is spent.
-    passage = "The gate held. It should not have held.\n\nHe checked the ledger again."
-    with Elicitor(HERE / "results" / "persona-dryrun.jsonl", dry_run=True) as elicitor:
-        turn = [{"role": "user", "content": [{
-            "type": "text", "text": stage1_turn(passage),
-            "cache_control": {"type": "ephemeral"},
-        }]}]
-        for persona in PANEL:
-            params = elicitor._params(
-                persona, turn, model=PANEL_MODEL, effort=PANEL_EFFORT,
-                max_tokens=STAGE1_MAX_TOKENS, schema=None,
+#: Openings that say the model is narrating its task instead of reading. Measured on qwen3:4b,
+#: whose first 350 tokens were "Hmm, the user wants me to act as a reader who's experienced..."
+_NARRATION_MARKERS = (
+    "the user wants", "the user is asking", "i need to respond", "i should respond",
+    "as a reader, i should", "my task", "the system prompt", "the instruction",
+    "okay, ", "hmm, ", "first, i need", "let me ",
+)
+#: Openings that say the model is reviewing rather than reading. Measured on phi4, which is
+#: larger than both 4B models and further from the register this instrument needs.
+_CRITIC_MARKERS = (
+    "this passage", "this scene", "this chapter", "this excerpt", "the passage",
+    "the author", "the writer", "the prose ", "the narrative", "the text ",
+    "conveys", "the reader is", "readers will", "it is clear that",
+)
+
+
+def adherence_flags(text: str) -> list[str]:
+    """Register problems visible in an opening. **A screen, not a classifier.**
+
+    A lexical detector for register is exactly the shape of thing this directory keeps killing —
+    `tricolon_rate` detected the year, and the stake lexicon's first draft selected discourse
+    adverbs. So this does not decide anything: it flags a candidate and the caller prints the
+    actual text, because the only reliable check is reading what the model wrote. It exists to
+    make a cheap failure cheap to *find*, not to automate the judgement.
+
+    Two failure registers, both measured rather than imagined. **Task-narration** is the model
+    describing the instruction it was given instead of following it. **Critic register** is the
+    expert frame the entire program exists to avoid — a model writing "this passage conveys" has
+    answered §1a.2's refuted question, not the reader question.
+    """
+    opening = " ".join(text.strip().split())[:400].lower()
+    flags = []
+    if any(marker in opening for marker in _NARRATION_MARKERS):
+        flags.append("task-narration")
+    if any(marker in opening for marker in _CRITIC_MARKERS):
+        flags.append("critic-register")
+    if not opening:
+        flags.append("empty")
+    return flags
+
+
+def probe_adherence(
+    passage: str, *, transport: str, model: str, personas: tuple[Persona, ...] = PANEL,
+    cache: Path | None = None,
+) -> list[dict[str, Any]]:
+    """Can this model hold a reader persona at all? The cheapest precondition there is.
+
+    **Run this before spending a panel budget on any model.** Persona adherence turned out not
+    to track model size: on one generated scene, `gemma3:4b` (3.3GB) answered in first-person
+    reader register — "The numbers are a weight... the 3,999 is wrong, in a way that makes my
+    breath catch" — while `qwen3:4b` spent its whole budget narrating the task and `phi4`, larger
+    than both, returned "This passage conveys a gritty, almost oppressive atmosphere", which is
+    the critic frame §1a.2 already refuted. Parameters do not predict it; whether the model can
+    inhabit a voice rather than analyse one does.
+
+    That makes this a *precondition* rather than a gate: a model failing here would corrupt the
+    two-stage design silently, because stage 1 would be task-narration and stage 2 would be a
+    category committed on the back of it. Four calls answer it; gate 0 costs hundreds.
+    """
+    rows: list[dict[str, Any]] = []
+    with Elicitor(
+        cache or (HERE / "results" / "persona-adherence.jsonl"),
+        transport=transport, model=model, spot_model=None,
+    ) as elicitor:
+        for persona in personas:
+            turn = [{"role": "user", "content": stage1_turn(passage)}]
+            record = elicitor._call(
+                elicitor._params(persona, turn, model=model, effort=None,
+                                 max_tokens=STAGE1_MAX_TOKENS, schema=None),
+                sample=0,
+                tag={"passage": "__adherence__", "persona": persona.persona_id,
+                     "stage": 1, "sample": 0},
             )
-            prefix = len(params["system"]) + len(params["messages"][0]["content"][0]["text"])
-            spot = elicitor._is_spot("demo:1", persona.persona_id)
-            print(f"{persona.persona_id:<10} digest={digest(params)}  spot={spot}  "
-                  f"cacheable_prefix={prefix}b (~{prefix // 4} tok)")
-        print(f"\nstage-2 turn:\n{stage2_turn()}")
+            text = str(record.get("text", ""))
+            rows.append({
+                "persona": persona.persona_id,
+                "model": model,
+                "flags": adherence_flags(text),
+                "opening": " ".join(text.strip().split())[:200],
+            })
+    return rows
+
+
+if __name__ == "__main__":
+    # Persona-adherence probe: the precondition check `probe_adherence` documents. Four calls
+    # against one real passage, printing what each persona actually wrote — the flags are a
+    # screen and the text is the evidence.
+    #
+    #   python elicit.py ollama gemma3:4b
+    #   python elicit.py cli claude-haiku-4-5
+    import argparse
+
+    parser = argparse.ArgumentParser(description="probe whether a model can hold a reader persona")
+    parser.add_argument("transport", choices=("cli", "sdk", "ollama"))
+    parser.add_argument("model")
+    parser.add_argument("--book-db", help="a book database; defaults to the golden fixtures")
+    options = parser.parse_args()
+
+    if options.book_db:
+        from corpus_io import generated_scenes
+
+        passage = generated_scenes(options.book_db, min_words=500)[0].text
+    else:
+        from corpus_io import fixture_scenes
+
+        passage = fixture_scenes()[2].text
+
+    words = len(passage.split())
+    print(f"probing {options.model} via {options.transport} on a {words}-word passage\n")
+    failures = 0
+    for row in probe_adherence(passage, transport=options.transport, model=options.model):
+        mark = "FLAG" if row["flags"] else "ok  "
+        failures += bool(row["flags"])
+        print(f"{mark} {row['persona']:<10} {','.join(row['flags']) or 'reader register'}")
+        print(f"     {row['opening'][:150]}")
+    print(f"\n{failures}/{len(PANEL)} persona(s) flagged. Read the openings — the flags are "
+          "a screen, not a verdict.")

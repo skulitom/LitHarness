@@ -422,9 +422,13 @@ def main() -> None:
     parser.add_argument("--n-passages", type=int, default=3)
     parser.add_argument("--n-samples", type=int, default=5,
                         help="samples per persona per passage; the protocol floor is 5")
-    parser.add_argument("--transport", choices=("cli", "sdk"), default="cli",
-                        help="cli routes through `claude -p` and the local install's own "
-                             "auth (a subscription); sdk needs an API key")
+    parser.add_argument("--transport", choices=("cli", "sdk", "ollama"), default="cli",
+                        help="cli routes through `claude -p` on the local install's own "
+                             "auth (a subscription); sdk needs an API key; ollama runs a "
+                             "local model — free, offline, seeded, and schema-enforced")
+    parser.add_argument("--rest-ratio", type=float, default=None,
+                        help="ollama only: sleep this multiple of each call after it. The "
+                             "temperature governor is the real protection; this is coarse")
     parser.add_argument("--model", default=PANEL_MODEL)
     parser.add_argument("--spot-model", default=SPOT_MODEL)
     parser.add_argument("--no-spot", action="store_true", help="skip frontier spot checks")
@@ -485,6 +489,7 @@ def main() -> None:
         model=args.model,
         spot_model=None if args.no_spot else args.spot_model,
         transport=args.transport,
+        **({} if args.rest_ratio is None else {'rest_ratio': args.rest_ratio}),
         dry_run=args.dry_run,
     ) as elicitor:
 
