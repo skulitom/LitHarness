@@ -282,6 +282,61 @@ def stake_coverage(text: str) -> dict[str, float]:
     }
 
 
+#: Which arm carries a claim, declared here so it is declared *before* the data rather than
+#: chosen after it. This is the answer to the selection-family question, and the answer is not an
+#: alpha division: `research/preference-power/FINDINGS.md` §7 measured what dividing alpha does to
+#: this family of estimator — it divides the *rank* the bootstrap reads, down to the 3rd of 2,000
+#: at C=20, where Monte Carlo noise dominates the data and one fixed verdict set certifies under
+#: 35% of seeds. A correction that turns a bound into a seed lottery is not a correction.
+#:
+#: The protocol never needed one. §5 names a single primary comparison in advance — de-stake
+#: against its matched-deletion control — so the family is C=1 and there is nothing to divide.
+#: The placebos are controls rather than discoveries: they were declared to sit at chance, and a
+#: control confirming its own prediction adds no comparison. Everything else is **exploratory**
+#: and is labelled so in the summary, because an arm that happens to move must not be readable as
+#: a result. An interesting exploratory arm is a hypothesis for a fresh run, not a finding.
+PRE_REGISTRATION: dict[str, str] = {
+    "destake": "primary",
+    "deplete_matched": "primary-control",
+    "rename_entities": "placebo",
+    "respell": "placebo",
+    "rewhitespace": "placebo",
+    "filler_inject": "exploratory",
+    "dialogue_flatten": "exploratory",
+    "paragraph_shuffle": "exploratory",
+    "sentence_shuffle": "exploratory",
+    "connective_scramble": "exploratory",
+    "transplant": "exploratory",
+    "sentence_deletion": "exploratory",
+}
+
+
+def annotate_arms(per_ablation: dict[str, dict[str, float]]) -> dict[str, object]:
+    """Tag each arm with the standing it was given before the run.
+
+    Carried in the summary so the reading order is fixed by the record rather than by whoever
+    reads it: one primary comparison, three controls that must sit at chance, and a set of
+    exploratory arms that can generate hypotheses and cannot close them.
+    """
+    tagged = {
+        key: {**row, "standing": PRE_REGISTRATION.get(key, "unregistered")}
+        for key, row in per_ablation.items()
+    }
+    unregistered = sorted(k for k, v in tagged.items() if v["standing"] == "unregistered")
+    return {
+        "arms": tagged,
+        "primary_comparison": "destake minus deplete_matched",
+        "family_size": 1,
+        "unregistered_arms": unregistered,
+        "reading": (
+            "one primary comparison declared before the data, so the family is C=1 and no alpha "
+            "division applies — FINDINGS.md §7 measured that dividing alpha turns this bound into "
+            "a seed lottery. Placebos are controls, not comparisons. Exploratory arms generate "
+            "hypotheses for a fresh run and cannot close one"
+        ),
+    }
+
+
 def two_way_ci(
     cells: dict[tuple[str, str], tuple[float, int]],
     *, draws: int = 2000, seed: int = 11,
@@ -808,6 +863,7 @@ def main() -> None:
             "paired_ci": list(result.paired_ci),
             "paired_n": result.paired_n,
             "per_ablation": result.per_ablation,
+            "pre_registration": annotate_arms(result.per_ablation),
             "notes": result.notes,
             "verdict": result.verdict(),
         } if result is not None else {

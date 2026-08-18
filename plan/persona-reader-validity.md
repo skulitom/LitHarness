@@ -231,6 +231,32 @@ measuring something the closed design could not.
 the headline means nothing. `tricolon_rate` looked like an AI-tell detector at 0.629 until
 its control was read beside it at 0.606.
 
+**The selection family is answered by declaring the primary comparison, not by dividing alpha.**
+Twelve manipulation arms run in one schedule, which is §6.4's selection family and would normally
+demand a correction. It does not here, because the family is **C = 1**: this section names one
+primary comparison in advance — de-stake against its matched-deletion control — and that is the
+only arm permitted to close a question. The placebos are *controls* rather than discoveries, and a
+control confirming the prediction it was given adds no comparison. Every remaining arm is
+**exploratory** and tagged so in the summary, because an arm that happens to move must not be
+readable as a result; an interesting exploratory arm is a hypothesis for a fresh run.
+
+Declaring rather than correcting is also the only safe option available. `research/preference-power/FINDINGS.md`
+§7 measured what an alpha division does to this family of estimator: it divides the *rank* the
+bootstrap reads, down to the 3rd of 2,000 resamples at C = 20, where Monte Carlo noise dominates
+the data and one fixed verdict set certifies under 35% of seeds. A correction that converts a
+bound into a seed lottery is not a correction, and the pre-registered alternative costs nothing.
+
+**Read the fourth rung against the two-way interval.** `evaluate.cluster_ci` resamples passages
+only, pooling the personas inside each as if independent — and a taste-anchored panel is
+heterogeneous by construction, which FINDINGS.md §5 identifies as the condition that governs the
+bound. Measured under the null at this battery's own dimensions (10 passages × 4 personas × 2
+orientations, 4,000 replicates, nominal one-sided 2.5%), the one-way interval over-rejects at
+4.70% with no persona heterogeneity at all and 23.88% at σ = 1.2, and *narrows* as heterogeneity
+rises because the between-persona variance never enters the resample.
+`persona_battery.two_way_ci` resamples both margins and lands at 0.33%–4.83% over the same sweep,
+at roughly double the width. That width is the evidence: ten passages and four personas do not
+support a narrow bound.
+
 ## 6. Gate 2 — convergent, small-n humans
 
 A human panel, the same passages, the same two-stage protocol, the same vocabulary.
