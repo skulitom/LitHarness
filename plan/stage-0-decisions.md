@@ -4811,6 +4811,46 @@ would track an external label once the corpus was clean — is not supported, an
 stands unchanged and now for a second reason: this candidate could not be proposed for the §72
 licence even if BEHAVIOUR were the right evidence class, which it is not.
 
+### 79.2 The band holds at the stronger tier, and the first readable candidate fails toward popularity
+
+The two candidates §79.1 named, run 2026-08-19: the question change alone, then the tier change on
+the better question. 368 comparisons each, zero refusals, $11.67 and $26.58.
+`results/taste-benchmark-intensity.json` and `results/taste-benchmark-sonnet-intensity.json`.
+
+    candidate                     aligned   crossed   min      bias al/cr      outcome
+    haiku, preference (79.1)       0.6100    0.4107   0.4107   0.380 / 0.327   VOID
+    haiku, intensity               0.5550    0.4405   0.4405   0.335 / 0.298   VOID
+    sonnet, intensity              0.6500    0.4048   0.4048   0.540 / 0.429   FAILS
+
+**The question is not the bias lever.** §77's 2x2 measured intensity beating preference on sham
+floor and margin, and none of that transferred here: the Haiku slot preference *worsened* slightly
+(0.335/0.298 against 0.380/0.327), still five-plus standard errors outside the band. Whatever one
+word of question buys on ablation pairs, it buys nothing on ~1,000-word matched human pairs.
+
+**The tier is.** Sonnet at the same question holds both strata inside the band — 0.540 aligned,
+0.429 crossed — so the positional collapse that voided §79.1, this run's first cell, and §83/§85's
+near-twin arms is **capability-limited, not intrinsic to the pair class**. That is the most useful
+instrument fact this benchmark has produced: bias-clean single judges exist one tier up, and every
+"the panel cannot see X" result earned at Haiku now carries an implicit "at Haiku" that a ~$25 rerun
+can test. The §85 near-twin voids are the first candidates for that rerun.
+
+**And the first readable candidate fails the bar, with the signature §79.1 could only gesture at.**
+Minimum agreement 0.4048 against the prose-blind floor of 0.52. The shape is no longer a direction
+offered without standing: 0.650 with a lower bound of 0.51 where every popularity covariate points
+at the label, 0.4048 with an interval spanning 0.5 where they all point away, a spread of 0.245 on
+clean bias. A judge reading prose holds above 0.5 in both strata by construction. Two readings
+survive and the benchmark cannot separate them: the judge proxies popularity's prose correlates, or
+the conversion label is wrong exactly where it disagrees with popularity. Separating them is a
+human question — §80's batch puts crossed-stratum pairs to paid readers, and that row of the batch
+just became its most load-bearing.
+
+**Programme position after three candidates.** No candidate has produced evidence of ordering
+matched human prose by the reader-behaviour label; §82 stands for a third reason. What changed is
+narrower and real: the bias precondition is now passable, so the protocol track (ensembles,
+notice-then-judge) runs on a tier where its results are readable rather than void by default. Next
+candidates in cost order: the §85 near-twin rerun at Sonnet (~$8, tests whether the near-twin law
+is also tier-limited), then protocol variants at Sonnet against this bar (~$25 each).
+
 ## 80. The first paid batch is designed to answer two questions, and is not funded
 
 [reader-batch-1.md](reader-batch-1.md) drafts the batch so one set of paid verdicts pilots the
@@ -5139,11 +5179,51 @@ one. What it uniquely answers: whether the panel's 0.95 on interiority is a pref
 prose or for bolted-on feeling, and whether the exemplar arm's measured movement reads as a
 voice or as noise.
 
+### 85.1 One tier up, the repair is unanimous, the voice arm turns readable, and the dash stays dark
+
+§79.2's cheapest named follow-up, run 2026-08-19: §85's panel re-elicited at `claude-sonnet-5`,
+same pairs, same question, generations replayed 32/32 from cache. 192 comparisons, zero
+refusals, $13.62. `results/repair-generation-sonnet.json`.
+
+    arm                  haiku (§85)          sonnet               bias h → s        sonnet interval
+    repair_interiority   0.9509 (clean)       1.0000 (clean)       0.492 → 0.500     [1.000, 1.000]
+    exemplar             0.6406 (VOID .766)   0.6484 (clean .490)  0.766 → 0.490     [0.500, 0.797]
+    repair_emdash        0.2734 (VOID .695)   0.4844 (VOID .609)   0.695 → 0.609     [0.359, 0.594]
+
+**The interiority repair saturates: 64 of 64 comparisons, both orientations, bias exactly 0.5.**
+Two tiers now agree with clean preconditions — 0.95 at Haiku, 1.00 at Sonnet — that the panel
+prefers the scene with its inner life restored. This is the strongest machine result the project
+has, and its one open reading is unchanged and un-machinable: the added sentences *report* inner
+state, and a panel drawn to told feelings would look exactly like this. The operator read holds
+the axis's casting vote.
+
+**The exemplar arm crosses from void to readable, and reads preferred.** Sonnet's bias lands at
+0.4898 where Haiku's was 0.766, and the rate holds at 0.6484 — the pre-registered PREFERRED
+branch at the point threshold, with an interval whose lower bound sits exactly on 0.5. Under
+§81's stricter rule (threshold and interval excluding the null) it is suggestive rather than
+established at n=8. Read with the mechanics (8/8 scenes nearer the exemplar centroid), the
+demonstrated-voice lever now has direction, magnitude, and a panel that does not object —
+what it lacks is n.
+
+**The em-dash axis stays dark, by 0.0087.** Sonnet's bias on the nearest-twin pairs is 0.6087
+against a band edge of 0.60 — §78.3 refused a 0.0032 miss and this one is not closer. What can
+be said without reading the arm: the point estimate moved from Haiku's 0.2734 to 0.4844, so the
+lean toward the dashed original did not survive the tier, and the axis looks BLIND-shaped rather
+than OPPOSES-shaped. It remains the batch's question, exactly as §80 budgeted.
+
+**The law gets its cleanest measurement yet, within one run at one tier.** Bias against pair
+similarity: interiority (+10% added text) 0.500, exemplar (full retell) 0.490, em-dash (0.98
+word-similarity) 0.609. Same panel, same day, same question — discriminability alone moves the
+bias, and the near-twin collapse is now measured as *mostly* tier-limited: Sonnet cleans two of
+three pair classes that voided Haiku wholesale, and shrinks the third from 0.695 to the band's
+doorstep. Panel-v2 selection under the programme should treat tier as the first debiasing lever
+and protocol as the second.
+
 ### 86.6 The laundering path §86.1 named is closed at the denominator and left open at the digest
 
 (§86 and its subsections land on `claude/judge-validity-pricing-9ea30a`; this addendum is
-numbered to sit under §86.1, whose defect it closes. On this branch the ledger reads §85 →
-§86.6 until that branch merges.)
+numbered to sit under §86.1, whose defect it closes. Until that branch merges the ledger
+reads §85.1 → §86.6, with §86 itself absent.)
 
 **What changed.** `domain/preference.py` now reserves a reader-id prefix for rows a machine
 wrote — `MACHINE_READER_PREFIX = "judge:"`, with `machine_reader_id` to mint one and
