@@ -95,3 +95,30 @@ def test_the_byte_identical_placebo_family_really_is_byte_identical() -> None:
     placebo = families[latent_fixtures.IDENTITY_FAMILY]
     assert placebo, "the placebo family should not be empty"
     assert all(pair.positive == pair.negative for pair in placebo)
+
+
+def test_clopper_pearson_matches_textbook_values() -> None:
+    """The interval is bisected by hand, so it is checked against published figures.
+
+    An earlier draft flipped the comparison for the upper bound and returned 0.0 — an interval
+    whose top was below its bottom, reported as a number rather than raised as an error.
+    """
+    assert latent_fixtures.clopper_pearson(18, 25) == pytest.approx((0.5061, 0.8793), abs=5e-4)
+    assert latent_fixtures.clopper_pearson(5, 10) == pytest.approx((0.1871, 0.8129), abs=5e-4)
+    assert latent_fixtures.clopper_pearson(0, 10) == pytest.approx((0.0, 0.3085), abs=5e-4)
+    assert latent_fixtures.clopper_pearson(10, 10) == pytest.approx((0.6915, 1.0), abs=5e-4)
+
+
+def test_the_conversion_bar_is_attainable_and_the_interval_is_the_binding_half() -> None:
+    """§79's 0.52 bar is reachable at both strata sizes; its interval condition is the real one.
+
+    Pins the figures `PRE_REGISTRATION_B4["bar_attainability"]` states, so the claim that the arm
+    can pass at all stays checkable — the failure mode stage-0 §87 recorded three times is a bar
+    declared in a form its own design could never reach.
+    """
+    for groups, first_over_bar, first_ci_clear in ((25, 14, 18), (21, 11, 16)):
+        assert min(k for k in range(groups + 1) if k / groups > 0.52) == first_over_bar
+        assert min(
+            k for k in range(groups + 1) if latent_fixtures.clopper_pearson(k, groups)[0] > 0.50
+        ) == first_ci_clear
+        assert first_ci_clear > first_over_bar, "the interval must be the binding condition"

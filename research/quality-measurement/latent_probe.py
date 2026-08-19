@@ -78,10 +78,12 @@ from latent_fixtures import (  # noqa: E402
     P0_PLUS_NAMES,
     Pair,
     build_families,
+    conversion_families,
     drop_degenerate,
     exact_flip_null,
     gram,
     p0_features,
+    sampled_flip_null,
     signs_from_gram,
     unscoreable,
 )
@@ -202,6 +204,65 @@ PRE_REGISTRATION: dict[str, Any] = {
     ),
 }
 
+
+PRE_REGISTRATION_B4: dict[str, Any] = {
+    "written": "2026-08-19, before the first conversion-family forward pass",
+    "why_this_family_is_different": (
+        "Every other family in this module is manufactured: we made the difference, so a readout "
+        "separating it says only that the difference is there. §79's conversion pairs carry an "
+        "EXTERNAL label — followers/total_views, a reader BEHAVIOUR aggregated over other "
+        "authors' whole stories — so here k/G IS agreement with that label, in the same units as "
+        "§79's 0.52 bar. It is the only family in the file from which a direction may be read at "
+        "all, and it is the anchor the directive names for any quality-direction claim."
+    ),
+    "statistic": (
+        "min(agreement_aligned, agreement_crossed). NEVER the mean. §79.1 measured why: pooled, "
+        "its first candidate averaged to 0.51 and read as unremarkable, while the strata showed a "
+        "0.20 spread tilted toward popularity. `taste_benchmark.PRE_REGISTRATION['never_average']` "
+        "is the same rule and this arm inherits it verbatim."
+    ),
+    "bar": (
+        "Clears only if min agreement across strata EXCEEDS 0.52 — the best prose-blind rule's "
+        "minimum, `pick_fewer_views` — AND both strata's Clopper-Pearson lower bounds exceed "
+        "0.50. Two conditions, both pre-registered, either alone decides against."
+    ),
+    "bar_attainability": (
+        "COMPUTED before committing, not estimated — the §87 lesson applied one entry later, and "
+        "the first draft of this very entry got it wrong by eye. Measured: exceeding 0.52 needs "
+        "k>=14 of 25 (0.5600; 13/25 lands exactly ON 0.52 and does not exceed it) and k>=11 of 21 "
+        "(0.5238). The INTERVAL condition is far more binding and is what the arm will actually "
+        "fail on if it fails: a Clopper-Pearson lower bound above 0.50 needs k>=18 of 25 (0.7200, "
+        "CI [0.5061, 0.8793]) and k>=16 of 21 (0.7619, CI [0.5283, 0.9178]). So this design can "
+        "only pass by ordering roughly three pairs in four — a far higher standard than 0.52 "
+        "suggests, stated now so a near-miss is not later described as nearly passing. "
+        "`test_the_conversion_bar_is_attainable_and_the_interval_is_the_binding_half` pins it."
+    ),
+    "null": (
+        "Sampled, not exhaustive: 2**25 is 33.5 million re-runs. 20,000 flip draws at seed "
+        "20260819, with the Monte-Carlo standard error reported beside every p and a p of zero "
+        "reported as '< 1/draws' rather than as zero."
+    ),
+    "positional_bias_precondition": (
+        "§79's third condition is bias in band. It is VACUOUS for a probe and is recorded as "
+        "vacuous rather than as passed: a readout scores one text at a time and never sees an "
+        "order, so there is no slot for it to prefer. That is a structural advantage of this "
+        "instrument over the panel on exactly the material where §79.1's candidate voided at "
+        "0.356 pooled bias — and it is the one thing the probe brings that the counter does not."
+    ),
+    "valence_ceiling": (
+        "Even a clean pass licenses NOTHING. §82 classifies conversion as BEHAVIOUR-class "
+        "evidence at STORY grain: rankable, and constitutionally unable to license, because "
+        "`domain/calibration.py` defines PREFERENCE as a HUMAN's blinded choice. A pass here "
+        "would mean 'this readout ranks matched human prose by a reader-behaviour label better "
+        "than chance and better than any popularity proxy', which is a judge-selection signal "
+        "and not a statement that either side is better prose."
+    ),
+    "leak_rule": (
+        "The texts are third-party RoyalRoad prose. No excerpt is written anywhere: the "
+        "activation dump keys on sha digests and is gitignored, `corpus_leak_audit` refuses a "
+        "committed .npz outright, and the results JSON carries pair_ids and verdicts only."
+    ),
+}
 
 #: What the panel is recorded as doing on each family, transcribed from the ledger rather than
 #: re-measured. These are the *other* half of a B6 pair: a fixture belongs in the proposal only
@@ -369,7 +430,7 @@ def extract(args: argparse.Namespace) -> dict[str, Any]:
     )
     model.to("cuda").eval()
 
-    families = build_families()
+    families = {**build_families(), **conversion_families()}
     texts: dict[str, str] = {}
     for name, pairs in families.items():
         kept, _ = drop_degenerate(name, pairs)
@@ -490,6 +551,64 @@ def baseline_row(pairs: list[Pair], names: tuple[str, ...], *, steelman: bool) -
     return row
 
 
+#: §79's best prose-blind rule, `pick_fewer_views`, as a minimum across strata. A judge that does
+#: not exceed it has shown nothing a popularity heuristic could not.
+PROSE_BLIND_BAR = 0.52
+
+
+def _conversion_row(
+    pairs: list[Pair], names: tuple[str, ...], *, steelman: bool
+) -> dict[str, Any]:
+    positives = [
+        [p0_features(pair.positive, steelman=steelman)[n] for n in names] for pair in pairs
+    ]
+    negatives = [
+        [p0_features(pair.negative, steelman=steelman)[n] for n in names] for pair in pairs
+    ]
+    return sampled_flip_null(_fold_scaled_deltas(positives, negatives))
+
+
+def _conversion_probe_row(
+    pairs: list[Pair], family: str, readout: str, dump: Any
+) -> dict[str, Any]:
+    """Best layer by agreement, with the layer named — three depths, one external label."""
+    best: dict[str, Any] = {}
+    for layer in READOUT_LAYERS:
+        positives, negatives = [], []
+        for pair in pairs:
+            stem = f"{readout}|{layer}|{family}|{pair.scene}"
+            positives.append(dump[f"{stem}|+"].tolist())
+            negatives.append(dump[f"{stem}|-"].tolist())
+        row = sampled_flip_null(_fold_scaled_deltas(positives, negatives))
+        row["layer"] = layer
+        if not best or row["agreement"] > best["agreement"]:
+            best = row
+    return best
+
+
+def _conversion_verdict(arm: dict[str, Any]) -> dict[str, Any]:
+    """Both pre-registered conditions, per channel, with the binding one named."""
+    out: dict[str, Any] = {}
+    for channel, minimum in arm["minimum_across_strata"].items():
+        lows = [arm["strata"][s][channel]["agreement_interval"][0] for s in arm["strata"]]
+        clears_bar = minimum > PROSE_BLIND_BAR
+        clears_interval = all(low > 0.50 for low in lows)
+        out[channel] = {
+            "min_agreement": minimum,
+            "exceeds_prose_blind_bar": clears_bar,
+            "all_interval_lower_bounds_above_half": clears_interval,
+            "passes": clears_bar and clears_interval,
+            "reading": (
+                "PASSES both pre-registered conditions." if clears_bar and clears_interval
+                else "FAILS: does not exceed the 0.52 prose-blind minimum."
+                if not clears_bar
+                else "FAILS on the interval, which was pre-registered as the binding condition: "
+                "the point estimate clears 0.52 but a lower bound does not exclude 0.50."
+            ),
+        }
+    return out
+
+
 def _check_manifest(dump: Any, families: dict[str, list[Pair]]) -> str:
     """Is this dump the one these fixtures produced? Digests, not key names."""
     if MANIFEST_KEY not in dump.files:
@@ -538,11 +657,12 @@ def score(args: argparse.Namespace) -> dict[str, Any]:
     import numpy as np
 
     families = build_families()
+    conversion = conversion_families()
     dump = None
     manifest_state = "absent"
     if Path(args.activations).exists():
         dump = np.load(args.activations)
-        manifest_state = _check_manifest(dump, families)
+        manifest_state = _check_manifest(dump, {**families, **conversion})
         if manifest_state != "matches":
             raise SystemExit(
                 f"activation dump does not match the fixtures on disk ({manifest_state}). "
@@ -590,7 +710,45 @@ def score(args: argparse.Namespace) -> dict[str, Any]:
 
     report["verdict"] = verdict(report)
     report["b6_proposal"] = propose_b6(report)
+    report["conversion_arm"] = conversion_arm(conversion, dump)
     return report
+
+
+def conversion_arm(conversion: dict[str, list[Pair]], dump: Any) -> dict[str, Any]:
+    """§79's external-label strata: the one arm from which a direction may be read.
+
+    Reported per stratum and never pooled. The verdict takes the MINIMUM across strata, because a
+    readout proxying popularity scores high in `aligned` and low in `crossed` and their mean is a
+    coin — which is what the strata were built to expose and what §79.1 caught its first candidate
+    doing.
+    """
+    if not conversion:
+        return {
+            "status": "NOT RUN — §79's corpus is absent from this machine.",
+            "rebuild": "uv run python research/quality-measurement/taste_benchmark.py --build",
+        }
+    out: dict[str, Any] = {"pre_registration": PRE_REGISTRATION_B4, "strata": {}}
+    channels: dict[str, dict[str, float]] = {}
+    for name, pairs in conversion.items():
+        stratum = name.rsplit("_", 1)[1]
+        entry: dict[str, Any] = {"pairs": len(pairs)}
+        rows: dict[str, dict[str, Any]] = {
+            "p0": _conversion_row(pairs, P0_NAMES, steelman=False),
+            "p0_plus": _conversion_row(pairs, P0_PLUS_NAMES, steelman=True),
+        }
+        if dump is not None:
+            for readout in ("text_mean", "judge_last"):
+                rows[readout] = _conversion_probe_row(pairs, name, readout, dump)
+        entry |= rows
+        out["strata"][stratum] = entry
+        for channel, row in rows.items():
+            channels.setdefault(channel, {})[stratum] = row["agreement"]
+
+    out["minimum_across_strata"] = {
+        channel: round(min(by_stratum.values()), 4) for channel, by_stratum in channels.items()
+    }
+    out["verdict"] = _conversion_verdict(out)
+    return out
 
 
 def verdict(report: dict[str, Any]) -> dict[str, Any]:

@@ -44,12 +44,14 @@ readable from the same process. See RUNBOOK.md.
 from __future__ import annotations
 
 import json
+import random
 import re
 import statistics
 import sys
 from collections.abc import Callable
 from dataclasses import dataclass
 from itertools import product
+from math import comb
 from pathlib import Path
 from typing import Any
 
@@ -74,6 +76,25 @@ REPAIRS_JSONL = RESULTS / "repair-gen-raw.jsonl"
 #: This system's own drafted prose, committed (`corpus_leak_audit.OURS`), so family C needs no
 #: `litharness` import and no `toll.db`.
 SCENES_JSON = CORPORA / "toll-scenes.json"
+
+#: §79's matched-pair benchmark corpus — **third-party RoyalRoad prose**, gitignored, and a build
+#: product of `taste_benchmark.py --build`. It lives in the main checkout rather than in a
+#: worktree, so both locations are tried and neither is created.
+#:
+#: **Nothing derived from this file may carry its text.** The activation dump keys on digests, the
+#: results JSON carries `pair_id` and verdicts only, and `corpus_leak_audit` refuses a committed
+#: `.npz` outright. That chain is the reason this family can be measured at all in a public repo.
+BENCHMARK_JSON_CANDIDATES = (
+    CORPORA / "taste-benchmark.json",
+    Path("C:/DEV/LitHarness/research/quality-measurement/corpora/taste-benchmark.json"),
+)
+
+#: §79's two strata, never averaged. In `aligned` every prose-blind popularity covariate points
+#: at the conversion label; in `crossed` every one points away from it. A judge reading prose
+#: agrees with the label in both; a judge proxying popularity agrees in one and disagrees in the
+#: other, and their mean is 0.5 — which is why `PRE_REGISTRATION["never_average"]` exists in
+#: `taste_benchmark.py` and why the statistic here is a minimum across strata rather than a mean.
+CONVERSION_STRATA = ("aligned", "crossed")
 
 
 # ------------------------------------------------------------------------------- the corpus
@@ -202,6 +223,36 @@ def build_families() -> dict[str, list[Pair]]:
         "filler_inject": _transform_family("filler_inject", src, filler_inject, None),
     }
     return {name: pairs for name, pairs in fams.items() if pairs}
+
+
+def benchmark_path() -> Path | None:
+    """The §79 corpus, if this machine has it. Absent is a normal state, not an error."""
+    return next((path for path in BENCHMARK_JSON_CANDIDATES if path.is_file()), None)
+
+
+def conversion_families() -> dict[str, list[Pair]]:
+    """§79's conversion pairs, one family per stratum, or nothing if the corpus is absent.
+
+    The positive side is the **higher-converting** story, so `k / G` is literally agreement with
+    the external label — the same quantity §79's 0.52 bar is denominated in, which is what makes
+    this the one family in the file that a direction may be read from at all.
+
+    The group is the pair. §79 selects pairs disjoint at story level, so leaving one out holds out
+    two whole stories and there is no near-duplicate to straddle a split.
+    """
+    path = benchmark_path()
+    if path is None:
+        return {}
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    out: dict[str, list[Pair]] = {}
+    for stratum in CONVERSION_STRATA:
+        rows = payload.get(f"axis_conversion_{stratum}", [])
+        family = f"conversion_{stratum}"
+        out[family] = [
+            Pair(family, row["pair_id"], row["high"], row["low"], "rr_high", "rr_low")
+            for row in rows
+        ]
+    return {name: pairs for name, pairs in out.items() if pairs}
 
 
 #: Families whose two sides are the same string, or differ only by formatting or a sampling
@@ -340,6 +391,73 @@ def loso_signs(deltas: list[list[float]], flips: tuple[int, ...] | None = None) 
 def unscoreable(deltas: list[list[float]]) -> int:
     """Pairs whose difference vector is exactly zero, so no direction can order them."""
     return sum(1 for row in deltas if not any(row))
+
+
+def clopper_pearson(successes: int, trials: int, *, alpha: float = 0.05) -> tuple[float, float]:
+    """Exact two-sided interval for `k / G`, by bisection on the binomial tail.
+
+    Used only where the pairs are genuinely independent — §79's conversion strata, which are
+    disjoint at story level. It is **not** used on the manufactured families, where eight or ten
+    variants of the same ten scenes are anything but independent and the flip null is the honest
+    instrument. Bisection rather than a beta quantile so the module keeps its stdlib-only promise.
+    """
+    def tail(probability: float, at_least: int) -> float:
+        return sum(
+            comb(trials, i) * probability**i * (1 - probability) ** (trials - i)
+            for i in range(at_least, trials + 1)
+        )
+
+    def bisect(target: float, at_least: int) -> float:
+        # `tail` rises monotonically in `probability` for a fixed `at_least`, so BOTH bounds
+        # bisect in the same direction. An earlier version flipped the comparison for the upper
+        # bound and returned 0.0 for it — a wrong number rather than an error, which is the
+        # failure mode this repository keeps having to catch.
+        lower, upper = 0.0, 1.0
+        for _ in range(60):
+            middle = (lower + upper) / 2
+            if tail(middle, at_least) < target:
+                lower = middle
+            else:
+                upper = middle
+        return round((lower + upper) / 2, 4)
+
+    low = 0.0 if successes == 0 else bisect(alpha / 2, successes)
+    high = 1.0 if successes == trials else bisect(1 - alpha / 2, successes + 1)
+    return low, high
+
+
+def sampled_flip_null(
+    deltas: list[list[float]], *, draws: int = 20000, seed: int = 20260819
+) -> dict[str, Any]:
+    """The flip null where `2**G` is out of reach, by sampling instead of enumerating.
+
+    §79's strata run 21 and 25 pairs, so exhaustive enumeration would be 2 million and 34 million
+    re-runs. The estimator and the statistic are unchanged; only the null's coverage is. The
+    Monte-Carlo standard error is reported beside the p-value so a reader can see how much of the
+    number is sampling — a sampled p of 0.0 is reported as `< 1/draws`, never as zero.
+    """
+    matrix = gram(deltas)
+    groups = len(deltas)
+    observed = sum(signs_from_gram(matrix))
+    rng = random.Random(seed)
+    at_least = 0
+    for _ in range(draws):
+        flips = tuple(rng.choice((1, -1)) for _ in range(groups))
+        if sum(signs_from_gram(matrix, flips)) >= observed:
+            at_least += 1
+    proportion = at_least / draws
+    low, high = clopper_pearson(observed, groups)
+    return {
+        "groups": groups,
+        "k": observed,
+        "agreement": round(observed / groups, 4),
+        "agreement_interval": [low, high],
+        "p_sampled": round(proportion, 6),
+        "p_note": None if at_least else f"no draw of {draws} reached k; p < {1 / draws}",
+        "draws": draws,
+        "mc_stderr": round((proportion * (1 - proportion) / draws) ** 0.5, 6),
+        "seed": seed,
+    }
 
 
 def exact_flip_null(deltas: list[list[float]]) -> dict[str, Any]:
