@@ -73,6 +73,60 @@ SCREEN_FAMILY = "repair_interiority"
 #: reporting it as either would put a number where there is not one.
 DECIDED_FLOOR = 30
 
+#: **A correction to the floor above, made the day the floor was written, because seating four
+#: personas turned out not to buy four times the evidence.**
+#:
+#: `DECIDED_FLOOR` counts *comparisons*. Stage-0 §89 screened `qwen3:14b` at 4 personas x 8 scenes
+#: x 2 orientations and got 64 decided comparisons — and **one distinct answer vector across all
+#: four personas**, byte-identical. The model ignores the persona system prompt, so the panel is
+#: one judge replicated four times and the 64 comparisons are 16 independent decisions. A rate
+#: computed over them has the precision of 16, not of 64.
+#:
+#: That is §87.3's lesson in a second costume. There the inflated number came from abstention —
+#: 1.000 resting on eleven decisions — and here it comes from replication, which is harder to see
+#: because nothing is missing from the table. So the independent unit is the **(pair, orientation)
+#: cell**, personas are replicates on it, and both readings print: the as-registered count and the
+#: independent-cell count, with the status each implies.
+#:
+#: The consequence is worth stating plainly rather than repairing: on an 8-pair fixture there are
+#: 16 cells, so **a judge that ignores personas cannot reach a 30-decision floor on this material
+#: at all**, however many personas are seated. That is the fourth bar in this project's history
+#: whose own design could not reach it (§81, §85, §87, this), and it is recorded rather than
+#: lowered.
+INDEPENDENT_UNIT = "(pair, orientation) cell; personas are replicates when they answer alike"
+
+
+def _persona_degeneracy(comparisons: list[Any]) -> dict[str, Any]:
+    """Do the seated personas answer differently, or is this one judge wearing four hats?"""
+    by_persona: dict[str, dict[tuple[str, int], str | None]] = {}
+    for row in comparisons:
+        by_persona.setdefault(row.persona_id, {})[(row.pair_id, row.orientation)] = row.choice
+    cells = sorted({cell for mine in by_persona.values() for cell in mine})
+    vectors = {
+        persona: tuple(mine.get(cell) for cell in cells) for persona, mine in by_persona.items()
+    }
+    distinct = len(set(vectors.values()))
+    decided_cells = sum(
+        1 for cell in cells
+        if any(vectors[p][i] in ("A", "B") for i, c in enumerate(cells) if c == cell
+               for p in vectors)
+    )
+    return {
+        "personas_seated": len(vectors),
+        "distinct_answer_vectors": distinct,
+        "degenerate": distinct < len(vectors),
+        "independent_cells": len(cells),
+        "decided_cells": decided_cells,
+        "unit": INDEPENDENT_UNIT,
+        "per_persona_chose_A": {
+            persona: round(
+                sum(1 for v in vec if v == "A") / max(sum(1 for v in vec if v in ("A", "B")), 1), 4
+            )
+            for persona, vec in sorted(vectors.items())
+        },
+    }
+
+
 PRE_REGISTRATION: dict[str, Any] = {
     "written": "2026-08-19, before the first local elicitation",
     "measures": "positional bias only — the eligibility precondition, not a preference.",
@@ -169,9 +223,23 @@ def screen(model: str, args: argparse.Namespace) -> dict[str, Any]:
     # when it never answered at all, and would let a broken install masquerade as evidence about
     # judges. NOT_SCREENABLE is its own state and it is a fact about this machine, not the model.
     decided = int(bias.get("decided", 0) or 0)
+    degeneracy = _persona_degeneracy([c for c in every if not c.refused])
+    # The corrected count, and it is unconditional rather than conditional on degeneracy.
+    #
+    # The first draft used cells only when the personas answered alike, which is the wrong rule
+    # for a reason `elicitation_study.PRE_REGISTRATION` states about itself the same morning:
+    # *personas and orientations within a pair are repeated measures on the same scene, not
+    # independent draws, and pooling them would inflate every p-value by the replication factor.*
+    # Orientation is part of the stimulus here — it is the thing bias is *about* — so the unit is
+    # the (pair, orientation) cell and personas are replicates on it whether or not they happen to
+    # agree. Four personas that differ are still four correlated readings of sixteen cells.
+    #
+    # Applying it only to degenerate panels would have been a rule chosen after seeing which
+    # candidate it rescued, which is what §81 refused to do.
+    effective = degeneracy["decided_cells"]
     if not every or refused == len(every):
         status = "NOT_SCREENABLE"
-    elif decided < DECIDED_FLOOR:
+    elif effective < DECIDED_FLOOR:
         # Four outcomes now, and this is the one §87.3 had to write in prose. A candidate that
         # abstained its way below the floor has not been shown eligible *or* biased: the band is
         # simply not readable at that depth, and forcing it into either verdict would report a
@@ -192,16 +260,55 @@ def screen(model: str, args: argparse.Namespace) -> dict[str, Any]:
         "eligible": status == "ELIGIBLE",
         "decided": decided,
         "decided_floor": DECIDED_FLOOR,
+        "persona_degeneracy": degeneracy,
+        "effective_decisions": effective,
+        "readings": {
+            "as_registered": (
+                "ELIGIBLE" if in_band and decided >= DECIDED_FLOOR
+                else "INSUFFICIENT_DECIDED" if decided < DECIDED_FLOOR else "INELIGIBLE_ON_BIAS"
+            ),
+            "corrected": status,
+            "note": (
+                "as-registered counts comparisons; corrected counts independent cells, because "
+                "personas that answer alike are replicates. Both print (rail 5) and nothing "
+                "retro-passes."
+            ),
+        },
+        # **The code gate was stricter than the declared rule, and the declared rule governs.**
+        # `PRE_REGISTRATION["withholding_rule"]` withholds a win rate *"for any candidate whose
+        # bias falls outside the band"*, and the reason it gives is that a preference read off a
+        # positionally-biased judge is what §83, §85 and §79.1 each had to void. The first draft
+        # gated on `status == "ELIGIBLE"` instead, which also withholds from a candidate that
+        # cleared the band and merely lacks depth — a different failure with a different remedy.
+        #
+        # Aligning the code to the pre-registration rather than the pre-registration to the code:
+        # a candidate inside the band gets its number printed with the precision that produced it
+        # attached, which is what §87.3 did with `phi4`'s 0.9688 ("heavily qualified — 32
+        # comparisons, two personas, a model the operator has closed"). Suppressing a figure that
+        # was legitimately obtained under the declared condition would be moving a rule after
+        # seeing what it hid.
         "win_rate": (
-            round(statistics.fmean(rates), 4) if status == "ELIGIBLE" and rates
-            else "WITHHELD — see PRE_REGISTRATION.withholding_rule"
+            round(statistics.fmean(rates), 4) if in_band and rates
+            else "WITHHELD — bias outside the band; see PRE_REGISTRATION.withholding_rule"
+        ),
+        "win_rate_precision": (
+            f"read on {degeneracy['decided_cells']} independent cells, not "
+            f"{decided} comparisons; the standard error on a rate here is about "
+            f"{(0.25 / max(degeneracy['decided_cells'], 1)) ** 0.5:.3f}"
         ),
     }
     if status == "INSUFFICIENT_DECIDED":
         row["insufficient_because"] = (
-            f"{decided} of {len(every)} comparisons decided, below the {DECIDED_FLOOR} floor; "
-            f"the candidate answered `neither` to {len(every) - decided - refused} and refused "
-            f"{refused}. Neither eligible nor disqualified — the band is not readable here."
+            f"{effective} independent decisions, below the {DECIDED_FLOOR} floor. "
+            + (f"{decided} of {len(every)} comparisons were decided, but the "
+               f"{degeneracy['personas_seated']} seated personas produced "
+               f"{degeneracy['distinct_answer_vectors']} distinct answer "
+               f"vector(s) — the panel is one judge replicated, so the evidence is "
+               f"{degeneracy['decided_cells']} cells and not {decided} comparisons."
+               if degeneracy["degenerate"] else
+               f"the candidate answered `neither` to {len(every) - decided - refused} and refused "
+               f"{refused}.")
+            + " Neither eligible nor disqualified — the band is not readable here."
         )
     if status == "NOT_SCREENABLE":
         # `Comparison` carries no stop reason — that lives in the cache record beside it, which is

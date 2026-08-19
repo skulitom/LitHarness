@@ -4,9 +4,25 @@
       "comparisons": 64,
       "decided": 64,
       "decided_floor": 30,
-      "eligible": true,
+      "effective_decisions": 16,
+      "eligible": false,
       "in_band": true,
+      "insufficient_because": "16 independent decisions, below the 30 floor. 64 of 64 comparisons were decided, but the 4 seated personas produced 1 distinct answer vector(s) \u2014 the panel is one judge replicated, so the evidence is 16 cells and not 64 comparisons. Neither eligible nor disqualified \u2014 the band is not readable here.",
       "model": "qwen3:14b",
+      "persona_degeneracy": {
+        "decided_cells": 16,
+        "degenerate": true,
+        "distinct_answer_vectors": 1,
+        "independent_cells": 16,
+        "per_persona_chose_A": {
+          "grinder": 0.5625,
+          "newcomer": 0.5625,
+          "stakes": 0.5625,
+          "voice": 0.5625
+        },
+        "personas_seated": 4,
+        "unit": "(pair, orientation) cell; personas are replicates when they answer alike"
+      },
       "positional_bias": {
         "chose_A_rate": 0.5625,
         "decided": 64,
@@ -18,17 +34,39 @@
           "voice": 0.5625
         }
       },
+      "readings": {
+        "as_registered": "ELIGIBLE",
+        "corrected": "INSUFFICIENT_DECIDED",
+        "note": "as-registered counts comparisons; corrected counts independent cells, because personas that answer alike are replicates. Both print (rail 5) and nothing retro-passes."
+      },
       "refused": 0,
-      "status": "ELIGIBLE",
-      "win_rate": 0.9375
+      "status": "INSUFFICIENT_DECIDED",
+      "win_rate": 0.9375,
+      "win_rate_precision": "read on 16 independent cells, not 64 comparisons; the standard error on a rate here is about 0.125"
     },
     {
       "comparisons": 64,
       "decided": 64,
       "decided_floor": 30,
-      "eligible": true,
+      "effective_decisions": 16,
+      "eligible": false,
       "in_band": true,
+      "insufficient_because": "16 independent decisions, below the 30 floor. 64 of 64 comparisons were decided, but the 4 seated personas produced 3 distinct answer vector(s) \u2014 the panel is one judge replicated, so the evidence is 16 cells and not 64 comparisons. Neither eligible nor disqualified \u2014 the band is not readable here.",
       "model": "gemma3:12b",
+      "persona_degeneracy": {
+        "decided_cells": 16,
+        "degenerate": true,
+        "distinct_answer_vectors": 3,
+        "independent_cells": 16,
+        "per_persona_chose_A": {
+          "grinder": 0.5,
+          "newcomer": 0.25,
+          "stakes": 0.5,
+          "voice": 0.5625
+        },
+        "personas_seated": 4,
+        "unit": "(pair, orientation) cell; personas are replicates when they answer alike"
+      },
       "positional_bias": {
         "chose_A_rate": 0.4531,
         "decided": 64,
@@ -40,9 +78,15 @@
           "voice": 0.5625
         }
       },
+      "readings": {
+        "as_registered": "ELIGIBLE",
+        "corrected": "INSUFFICIENT_DECIDED",
+        "note": "as-registered counts comparisons; corrected counts independent cells, because personas that answer alike are replicates. Both print (rail 5) and nothing retro-passes."
+      },
       "refused": 0,
-      "status": "ELIGIBLE",
-      "win_rate": 0.9219
+      "status": "INSUFFICIENT_DECIDED",
+      "win_rate": 0.9219,
+      "win_rate_precision": "read on 16 independent cells, not 64 comparisons; the standard error on a rate here is about 0.125"
     }
   ],
   "family": "repair_interiority",
@@ -62,5 +106,5 @@
     "withholding_rule": "Win rates are computed and NOT reported for any candidate whose bias falls outside the band. A preference read off a positionally-biased judge is what \u00a783, \u00a785's em-dash arm and \u00a779.1 each had to void, and printing one here would also pre-empt the operator's reserved choice of cross-family judge.",
     "written": "2026-08-19, before the first local elicitation"
   },
-  "reading": "ELIGIBLE (bias in band, preference still unread): qwen3:14b, gemma3:12b. Track S may be funded on one of these at the operator's choice."
+  "reading": "NO LOCAL CANDIDATE IS ELIGIBLE, so the directive's kill condition is DISCHARGED BY MEASUREMENT rather than asserted: Track S waits on a judge the operator selects, and no degraded protocol is substituted to force a number."
 }
