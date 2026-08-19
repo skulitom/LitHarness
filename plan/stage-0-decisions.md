@@ -6103,3 +6103,67 @@ ceiling rather than moving it.
 V2 kill condition is a plateau by N=4 under every selector; the pool is four draws deep, so the
 curve stops exactly where the condition starts. §87.1 reports the shape within N≤4 and the ratio
 to the certified revision, and nothing about N=8..32.
+
+## 88. B6 is admitted, and the control that rides along disagrees with its own counter
+
+Operator, 2026-08-19, on §87's `b6_proposal`: *"B6: ADMIT. All three members, a priori counters
+as proposed in `results/latent-taste-probe.json`. Record the admission as its own ledger entry
+before any E-track arm uses them."* §87 proposed the family and refused to admit it — *"Only the
+operator moves what panel v2 is selected on"* (§84) — so this entry is the reserved act, taken.
+`b6_benchmark.py`, `tests/test_b6_benchmark.py`. Local, deterministic, no quota.
+
+**The admission is an artifact for the same reason the proposal was.** `propose_b6` emitted a
+candidate so that admitting it would be a decision rather than a re-derivation; a membership
+re-read out of a results file on each use is a membership nobody decided. So the decision, its
+quote, and the three members live in a module, and `verify_against_proposal` checks that what is
+admitted here is still what was proposed there — membership, counter, and decidable count — and
+fails loudly rather than drifting.
+
+    member                     counter (named a priori)  decidable   panel
+    stat_flatten               system_digit_count            10/10   BLIND 0.5437 (§81)
+    interiority_strip_matched  interior_per_1k                 9/9   SPANS_NULL 0.3889 (§81)
+    repair_emdash              em_per_1k                       7/8   VOID 0.2734 (§85, §85.1)
+
+`repair_emdash`'s eighth pair is `gen:scene-7`, whose original had no prose em dashes to remove.
+It stays a scene id rather than a miss: an instrument asked to order a tie and declining is not
+wrong.
+
+**What admission changes is one thing, and the entry says so because silence here would be read
+as more.** It changes which fixtures an experiment may select an instrument on. It does not move
+a licence, it does not upgrade BEHAVIOUR-class evidence, and it does not make a counter a judge —
+§82 governs verbatim and `domain/calibration.py` still defines PREFERENCE as a human's blinded
+choice. What B6 measures is whether an instrument's channel carries a difference **provably
+present in the material**; whether that difference matters to a reader is untouched and stays
+with §80's batch.
+
+**The positive control turns out not to agree with its own counter, and the disagreement is the
+length confound arriving from underneath.** `repair_interiority` rides along as the thing every
+protocol should preserve — 0.9509 at Haiku (§85), 1.0000 at Sonnet (§85.1), 0.9688 at `phi4`
+(§87.3), three judge families. Scoring it the way B6 members are scored gives **7 of 8**, not 8:
+on `gen:scene-5` `interior_per_1k` moves the *wrong way*, 3.165 down to 2.876. Nothing is broken.
+§85's repair adds interiority and adds words with it — §87.1 measured +11.8% — and a per-1k
+density can fall while the absolute count rises. The consequence is a rule rather than a
+footnote: **the positive control is scored as a preference and never as a counter alignment**,
+because scoring it against its counter would import the confound into the one arm that exists to
+be clean. Recorded rather than repaired, per §81's refusal to tighten a rule against numbers
+already seen; `test_the_positive_control_counter_disagrees_on_exactly_one_scene` pins it so the
+exception cannot later be mistaken for a fixture bug.
+
+**The two mandatory controls are not symmetric, and the asymmetry is §87's own correction kept
+in force.** `placebo_identical` is the floor: both sides are the same string, `k = 0` on all four
+of §87's channels, and an instrument that separates it separates anything. `rewhitespace_sham` is
+**not** a floor — §78.1 measured why it cannot be one and §81 said so in terms while §87
+registered it as one anyway — it is the void control: it differs only in formatting, and an
+instrument that recovers discrimination there is reading layout. That reading is VOID, not
+weakened.
+
+**A precondition landed before this entry rather than beside it.** `f506ee7` extends the corpus
+leak audit ahead of Track C's first shard. `long_strings` walked `payload[:400]` of any list and
+said nothing about the rest; every product this repository has written peaked at 108, so the cap
+never bit, and Track C's expansion is the first thing designed to carry hundreds of prose-bearing
+rows in one list. Verified in a throwaway repository rather than by reading the code, which is
+the standard `f2a2aba` and `6b073cb` set: on a history whose only excerpt sits at index 450 of a
+500-row list, the committed audit prints **CLEAN and exits 0**. It now refuses and names the
+unwalked range. That is `f2a2aba`'s lesson in a second costume — there a suffix no scanner
+admitted, here a slice no walk reached — and the same verdict, a check that cannot fail on the
+material it was pointed at.
