@@ -100,6 +100,32 @@ DATA_SUFFIXES = (".json", ".jsonl", ".csv", ".txt")
 #: finding.
 BINARY_DERIVATIVE_SUFFIXES = (".npz", ".npy", ".pt", ".safetensors")
 
+#: How far into one JSON list, and how far into one `.jsonl`, the walk goes before it stops.
+#:
+#: **These were silent truncations and they are now refusals, which is the whole point of the
+#: change.** The walk has always stopped at 400 list items and 5,000 JSONL lines. Every build
+#: product this repository has ever written sat far below both — `human-excerpts.json` peaks at a
+#: 108-item list, `taste-benchmark.json` at 25 — so the caps never bit and nobody noticed that
+#: when they did bite they would bite *silently*: the tail of an over-long list was skipped and
+#: the blob reported clean. Stage-0 §88's conversion expansion is the first product designed to
+#: carry hundreds of prose-bearing rows in a single list, which is exactly the shape that walks
+#: past 400, and it is third-party RoyalRoad prose in every one of them.
+#:
+#: A cap that silently skips is a check that cannot fail on the material it was pointed at —
+#: `f2a2aba`'s lesson in a second costume, where the first was an `.npz` that no suffix admitted.
+#: So the limits stay (an unbounded walk over every blob in history is a real cost) and hitting
+#: one is now **a finding that exits 1 and names the blob**. Raise the constant and re-run, or
+#: split the product; do not let a truncated walk report clean.
+LIST_WALK_LIMIT = 400
+JSONL_LINE_LIMIT = 5000
+
+#: A `.csv`/`.txt` blob has no JSON structure to walk, so the whole file is scored as one run of
+#: prose. Named rather than a literal so it is visibly **far above** :data:`EXCERPT_WORDS`: a
+#: 1,900-word third-party excerpt in a `.txt` passes this check and would not pass the same
+#: threshold applied to a JSON field. No such product exists today; the constant is here so the
+#: gap is legible to whoever writes the first one.
+WHOLE_FILE_WORDS = 2000
+
 
 def _run(args: list[str]) -> str:
     return subprocess.run(
@@ -107,8 +133,16 @@ def _run(args: list[str]) -> str:
     ).stdout
 
 
-def long_strings(payload: object, path: str = "") -> list[tuple[str, int, str]]:
-    """Every string value in a decoded JSON structure that is excerpt-sized."""
+def long_strings(
+    payload: object, path: str = "", *, unwalked: list[str] | None = None
+) -> list[tuple[str, int, str]]:
+    """Every string value in a decoded JSON structure that is excerpt-sized.
+
+    `unwalked` collects the path of every list this walk stopped short of finishing. It is an
+    out-parameter rather than a second return value so that the recursion stays a single
+    accumulate — and it is not optional in spirit: a caller that passes `None` is choosing not
+    to know whether the answer covered the whole blob. :func:`scan_blob` always passes one.
+    """
     found: list[tuple[str, int, str]] = []
     if isinstance(payload, str):
         count = len(payload.split())
@@ -116,33 +150,47 @@ def long_strings(payload: object, path: str = "") -> list[tuple[str, int, str]]:
             found.append((path, count, payload[:160].replace("\n", " ")))
     elif isinstance(payload, dict):
         for key, value in payload.items():
-            found.extend(long_strings(value, f"{path}.{key}"))
+            found.extend(long_strings(value, f"{path}.{key}", unwalked=unwalked))
     elif isinstance(payload, list):
-        for index, value in enumerate(payload[:400]):
-            found.extend(long_strings(value, f"{path}[{index}]"))
+        if len(payload) > LIST_WALK_LIMIT and unwalked is not None:
+            unwalked.append(f"{path or '<root>'}[{LIST_WALK_LIMIT}:{len(payload)}]")
+        for index, value in enumerate(payload[:LIST_WALK_LIMIT]):
+            found.extend(long_strings(value, f"{path}[{index}]", unwalked=unwalked))
     return found
 
 
-def scan_blob(name: str, content: str) -> list[tuple[str, int, str]]:
-    """Excerpt-sized strings in one blob, whatever shape it is in."""
+def scan_blob(name: str, content: str) -> tuple[list[tuple[str, int, str]], list[str]]:
+    """Excerpt-sized strings in one blob, and the parts of it the walk did not reach.
+
+    The second element is empty for every blob this repository has ever committed. It is not
+    decoration: a non-empty one means the verdict below covers part of a file, and the audit
+    refuses rather than reporting on the part it managed to read.
+    """
+    unwalked: list[str] = []
     if name.endswith(".jsonl"):
         found = []
-        for number, line in enumerate(content.splitlines()[:5000], start=1):
+        lines = content.splitlines()
+        if len(lines) > JSONL_LINE_LIMIT:
+            unwalked.append(f"<lines {JSONL_LINE_LIMIT}:{len(lines)}>")
+        for number, line in enumerate(lines[:JSONL_LINE_LIMIT], start=1):
             try:
                 found.extend(
-                    (f"line{number}{p}", c, s) for p, c, s in long_strings(json.loads(line))
+                    (f"line{number}{p}", c, s)
+                    for p, c, s in long_strings(json.loads(line), unwalked=unwalked)
                 )
             except json.JSONDecodeError:
                 continue
-        return found
+        return found, unwalked
     if name.endswith(".json"):
         try:
-            return long_strings(json.loads(content))
+            return long_strings(json.loads(content), unwalked=unwalked), unwalked
         except json.JSONDecodeError:
-            return []
+            return [], unwalked
     # csv/txt: a single run of prose with no JSON structure to walk.
     words = len(content.split())
-    return [("<whole file>", words, content[:160].replace("\n", " "))] if words >= 2000 else []
+    if words >= WHOLE_FILE_WORDS:
+        return [("<whole file>", words, content[:160].replace("\n", " "))], unwalked
+    return [], unwalked
 
 
 def history_blobs() -> list[tuple[str, str]]:
@@ -205,13 +253,16 @@ def main(argv: list[str] | None = None) -> int:
     blobs = history_blobs()
     print(f"scanning {len(blobs)} data blobs across {commits} commits", file=sys.stderr)
     findings: list[tuple[str, str, str, int, str]] = []
+    truncated: list[tuple[str, str, str]] = []
     responses = 0
     ours = 0
     for sha, path in blobs:
         content = _run(["git", "cat-file", "-p", sha])
         if not content:
             continue
-        for field, count, sample in scan_blob(path, content):
+        scanned, unwalked = scan_blob(path, content)
+        truncated.extend((path, sha[:8], where) for where in unwalked)
+        for field, count, sample in scanned:
             if count < args.words:
                 continue
             leaf = field.rsplit(".", 1)[-1] if "." in field else field
@@ -222,6 +273,21 @@ def main(argv: list[str] | None = None) -> int:
                 ours += 1
                 continue
             findings.append((path, sha[:8], field, count, sample))
+
+    # Refused before the findings are read, and deliberately before the clean report: a partial
+    # walk cannot license either verdict. "No excerpt found in the first 400 of 900 rows" is not
+    # a clean result, and printing it as one is the failure mode this branch exists to remove.
+    if truncated:
+        print(
+            f"\nREFUSING: {len(truncated)} blob region(s) were not walked, so this audit covers "
+            f"part of the history and cannot report on the rest. Raise LIST_WALK_LIMIT "
+            f"({LIST_WALK_LIMIT}) or JSONL_LINE_LIMIT ({JSONL_LINE_LIMIT}) and run again, or "
+            "split the product that grew past them:",
+            file=sys.stderr,
+        )
+        for path, sha, where in truncated[: args.show]:
+            print(f"  {path}  {sha}  {where}", file=sys.stderr)
+        return 1
 
     if not findings:
         print(
