@@ -5178,3 +5178,43 @@ directional evidence, not a naive measurement — recorded here so nobody later 
 one. What it uniquely answers: whether the panel's 0.95 on interiority is a preference for
 prose or for bolted-on feeling, and whether the exemplar arm's measured movement reads as a
 voice or as noise.
+
+### 85.1 One tier up, the repair is unanimous, the voice arm turns readable, and the dash stays dark
+
+§79.2's cheapest named follow-up, run 2026-08-19: §85's panel re-elicited at `claude-sonnet-5`,
+same pairs, same question, generations replayed 32/32 from cache. 192 comparisons, zero
+refusals, $13.62. `results/repair-generation-sonnet.json`.
+
+    arm                  haiku (§85)          sonnet               bias h → s        sonnet interval
+    repair_interiority   0.9509 (clean)       1.0000 (clean)       0.492 → 0.500     [1.000, 1.000]
+    exemplar             0.6406 (VOID .766)   0.6484 (clean .490)  0.766 → 0.490     [0.500, 0.797]
+    repair_emdash        0.2734 (VOID .695)   0.4844 (VOID .609)   0.695 → 0.609     [0.359, 0.594]
+
+**The interiority repair saturates: 64 of 64 comparisons, both orientations, bias exactly 0.5.**
+Two tiers now agree with clean preconditions — 0.95 at Haiku, 1.00 at Sonnet — that the panel
+prefers the scene with its inner life restored. This is the strongest machine result the project
+has, and its one open reading is unchanged and un-machinable: the added sentences *report* inner
+state, and a panel drawn to told feelings would look exactly like this. The operator read holds
+the axis's casting vote.
+
+**The exemplar arm crosses from void to readable, and reads preferred.** Sonnet's bias lands at
+0.4898 where Haiku's was 0.766, and the rate holds at 0.6484 — the pre-registered PREFERRED
+branch at the point threshold, with an interval whose lower bound sits exactly on 0.5. Under
+§81's stricter rule (threshold and interval excluding the null) it is suggestive rather than
+established at n=8. Read with the mechanics (8/8 scenes nearer the exemplar centroid), the
+demonstrated-voice lever now has direction, magnitude, and a panel that does not object —
+what it lacks is n.
+
+**The em-dash axis stays dark, by 0.0087.** Sonnet's bias on the nearest-twin pairs is 0.6087
+against a band edge of 0.60 — §78.3 refused a 0.0032 miss and this one is not closer. What can
+be said without reading the arm: the point estimate moved from Haiku's 0.2734 to 0.4844, so the
+lean toward the dashed original did not survive the tier, and the axis looks BLIND-shaped rather
+than OPPOSES-shaped. It remains the batch's question, exactly as §80 budgeted.
+
+**The law gets its cleanest measurement yet, within one run at one tier.** Bias against pair
+similarity: interiority (+10% added text) 0.500, exemplar (full retell) 0.490, em-dash (0.98
+word-similarity) 0.609. Same panel, same day, same question — discriminability alone moves the
+bias, and the near-twin collapse is now measured as *mostly* tier-limited: Sonnet cleans two of
+three pair classes that voided Haiku wholesale, and shrinks the third from 0.695 to the band's
+doorstep. Panel-v2 selection under the programme should treat tier as the first debiasing lever
+and protocol as the second.
