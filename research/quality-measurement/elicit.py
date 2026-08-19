@@ -80,6 +80,7 @@ import threading
 import time
 import urllib.error
 import urllib.request
+from collections import Counter
 from collections.abc import Callable
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import asdict, dataclass, field
@@ -514,6 +515,12 @@ class Elicitor:
         #: :func:`_is_transport_failure`. A run that reports a verdict beside a
         #: non-zero count here is reporting on the cells that answered.
         self.transport_failures = 0
+        #: Failures tallied by stop reason. Not caching them was right — a hiccup must not be
+        #: baked into every future replay — but the first version threw the reason away with the
+        #: record, and a run that reports 390 failures and cannot say whether they were timeouts
+        #: or rate limits has recorded a symptom instead of a cause. The count is kept even though
+        #: the record is not.
+        self.failure_reasons: Counter[str] = Counter()
         self._load_cache()
 
     # ------------------------------------------------------------------ cache plumbing
@@ -837,6 +844,7 @@ class Elicitor:
             with self._lock:
                 self.api_calls += 1
                 self.transport_failures += 1
+                self.failure_reasons[record["stop_reason"]] += 1
             return record
 
         text, stop_reason, usage = "", "cli_error", {}
@@ -869,6 +877,7 @@ class Elicitor:
             self.api_calls += 1
             if _is_transport_failure(stop_reason):
                 self.transport_failures += 1
+                self.failure_reasons[stop_reason] += 1
             else:
                 self._cache[key] = record
                 self._persist(record)

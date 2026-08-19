@@ -1075,6 +1075,7 @@ def study(args: argparse.Namespace) -> dict[str, Any]:
             # declining to answer, and §87.3 is the entry that had to make that distinction after
             # the fact. A non-zero count means the verdict describes the cells that answered.
             "transport_failures": elicitor.transport_failures,
+            "failure_reasons": dict(elicitor.failure_reasons),
         }
 
     survivors = [name for name, entry in report["protocols"].items()

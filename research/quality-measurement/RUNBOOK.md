@@ -204,13 +204,28 @@ made before them fails the manifest check loudly rather than scoring a subset. `
 NOT RUN with the rebuild command. The screen is its own module and needs ollama rather than torch:
 
 ```bash
-uv run python research/quality-measurement/latent_crossfamily.py --models gemma3:4b qwen3:4b
+uv run python research/quality-measurement/latent_crossfamily.py --models qwen3:14b gemma3:12b --personas 4
 ```
 
-It reports positional bias only. Win rates are withheld for any candidate outside the 0.40-0.60
-band, which on this material is every current local model tried — `gemma3:4b` picks the first slot
-32 times out of 32. Do not remove the withholding to "just see" the number; that is the reading
-§83, §85 and §79.1 each had to void.
+It reports positional bias only. Win rates are withheld for any candidate whose **bias** falls
+outside the 0.40-0.60 band. Do not remove the withholding to "just see" the number; that is the
+reading §83, §85 and §79.1 each had to void.
+
+~~which on this material is every current local model tried — `gemma3:4b` picks the first slot 32
+times out of 32.~~ **Both halves of that sentence are wrong and both were corrected by
+measurement.** §87.3 records the first: `gemma3:4b` *decided* only 11 of its 32 comparisons and
+picked the first slot on all eleven, which is a judge that mostly abstains rather than one that
+answers 32 slots. §89 records the second: `qwen3:14b` reads 0.5625 and `gemma3:12b` 0.4531, both
+inside the band, so "every local model is outside the band" stopped being true the day two larger
+ones were pulled.
+
+**Read the `readings` block, not the `status`, and the reason is §89.** Seating four personas buys
+four times the comparisons and not four times the evidence: `qwen3:14b` returned **one distinct
+answer vector across all four personas**, byte-identical, so its 64 comparisons are 16 independent
+decisions. The independent unit is the `(pair, orientation)` cell and personas are replicates on
+it, so an 8-pair fixture yields 16 cells and **no judge that ignores personas can reach the
+30-decision floor on this material at all**. Both readings print; neither candidate is eligible
+under the corrected one.
 
 **Track S and V's judge-free arms** need neither GPU nor quota, so they run under either
 interpreter and belong with the panel runs above.

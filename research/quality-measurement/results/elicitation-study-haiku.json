@@ -1,8 +1,8 @@
 {
   "calls": {
-    "api": 744,
-    "replayed": 104,
-    "transport_failures": 724
+    "api": 212,
+    "replayed": 212,
+    "transport_failures": 188
   },
   "fixtures": {
     "interiority_strip_matched": 9,
@@ -96,44 +96,32 @@
       "elicitation": "pairwise forced choice, ties scored as half a win \u2014 the incumbent",
       "members": [
         {
-          "aligned": 4,
+          "aligned": 6,
           "alpha": 0.05,
-          "attainable_floor": 0.0625,
-          "decided_pairs": 5,
+          "attainable_floor": 0.003906,
+          "decided_pairs": 9,
           "direction": "positive_side",
           "family": "stat_flatten",
-          "k_required": null,
-          "p_two_sided": 0.375,
+          "k_required": 8,
+          "p_two_sided": 0.507812,
           "undecided_pairs": [
-            "gen:scene-10",
-            "gen:scene-6",
-            "gen:scene-7",
-            "gen:scene-8",
-            "gen:scene-9"
+            "gen:scene-8"
           ],
-          "verdict": "NOT_ATTAINABLE"
+          "verdict": "FAILS"
         },
         {
-          "aligned": 0,
+          "aligned": 4,
           "alpha": 0.05,
-          "attainable_floor": 1.0,
-          "decided_pairs": 0,
+          "attainable_floor": 0.007812,
+          "decided_pairs": 8,
           "direction": "positive_side",
           "family": "interiority_strip_matched",
-          "k_required": null,
+          "k_required": 8,
           "p_two_sided": 1.0,
           "undecided_pairs": [
-            "gen:scene-1",
-            "gen:scene-10",
-            "gen:scene-2",
-            "gen:scene-4",
-            "gen:scene-5",
-            "gen:scene-6",
-            "gen:scene-7",
-            "gen:scene-8",
-            "gen:scene-9"
+            "gen:scene-6"
           ],
-          "verdict": "NOT_ATTAINABLE"
+          "verdict": "FAILS"
         },
         {
           "aligned": 6,
@@ -152,13 +140,13 @@
         }
       ],
       "positional_precondition": {
-        "chose_A_rate": 0.6627,
-        "decided": 83,
+        "chose_A_rate": 0.6408,
+        "decided": 142,
         "decided_floor": 30,
         "note": "0.5 is unbiased; distance from it is the share of the answer that is layout",
         "per_persona_chose_A": {
-          "grinder": 0.6341,
-          "stakes": 0.6905
+          "grinder": 0.6571,
+          "stakes": 0.625
         },
         "precondition": "OUT_OF_BAND"
       },
@@ -187,14 +175,14 @@
       },
       "tie_accounting": {
         "comparisons": 212,
-        "decided": 83,
-        "refused": 90,
+        "decided": 142,
+        "refused": 3,
         "tie_policy": "half_win",
-        "tie_rate": 0.3197,
-        "ties": 39
+        "tie_rate": 0.3206,
+        "ties": 67
       },
       "verdict": {
-        "because": "chose-A 0.6627 outside (0.4, 0.6) on 83 decided comparisons",
+        "because": "chose-A 0.6408 outside (0.4, 0.6) on 142 decided comparisons",
         "families_cleared": [
           "repair_emdash"
         ],
@@ -256,44 +244,32 @@
       "elicitation_shared_with": "E1",
       "members": [
         {
-          "aligned": 4,
+          "aligned": 6,
           "alpha": 0.05,
-          "attainable_floor": 0.0625,
-          "decided_pairs": 5,
+          "attainable_floor": 0.003906,
+          "decided_pairs": 9,
           "direction": "positive_side",
           "family": "stat_flatten",
-          "k_required": null,
-          "p_two_sided": 0.375,
+          "k_required": 8,
+          "p_two_sided": 0.507812,
           "undecided_pairs": [
-            "gen:scene-10",
-            "gen:scene-6",
-            "gen:scene-7",
-            "gen:scene-8",
-            "gen:scene-9"
+            "gen:scene-8"
           ],
-          "verdict": "NOT_ATTAINABLE"
+          "verdict": "FAILS"
         },
         {
-          "aligned": 0,
+          "aligned": 4,
           "alpha": 0.05,
-          "attainable_floor": 1.0,
-          "decided_pairs": 0,
+          "attainable_floor": 0.007812,
+          "decided_pairs": 8,
           "direction": "positive_side",
           "family": "interiority_strip_matched",
-          "k_required": null,
+          "k_required": 8,
           "p_two_sided": 1.0,
           "undecided_pairs": [
-            "gen:scene-1",
-            "gen:scene-10",
-            "gen:scene-2",
-            "gen:scene-4",
-            "gen:scene-5",
-            "gen:scene-6",
-            "gen:scene-7",
-            "gen:scene-8",
-            "gen:scene-9"
+            "gen:scene-6"
           ],
-          "verdict": "NOT_ATTAINABLE"
+          "verdict": "FAILS"
         },
         {
           "aligned": 6,
@@ -312,13 +288,13 @@
         }
       ],
       "positional_precondition": {
-        "chose_A_rate": 0.6627,
-        "decided": 83,
+        "chose_A_rate": 0.6408,
+        "decided": 142,
         "decided_floor": 30,
         "note": "0.5 is unbiased; distance from it is the share of the answer that is layout",
         "per_persona_chose_A": {
-          "grinder": 0.6341,
-          "stakes": 0.6905
+          "grinder": 0.6571,
+          "stakes": 0.625
         },
         "precondition": "OUT_OF_BAND"
       },
@@ -347,362 +323,18 @@
       },
       "tie_accounting": {
         "comparisons": 212,
-        "decided": 83,
-        "refused": 90,
+        "decided": 142,
+        "refused": 3,
         "tie_policy": "drop",
-        "tie_rate": 0.3197,
-        "ties": 39
+        "tie_rate": 0.3206,
+        "ties": 67
       },
       "verdict": {
-        "because": "chose-A 0.6627 outside (0.4, 0.6) on 83 decided comparisons",
+        "because": "chose-A 0.6408 outside (0.4, 0.6) on 142 decided comparisons",
         "families_cleared": [
           "repair_emdash"
         ],
         "verdict": "VOID"
-      }
-    },
-    "E4": {
-      "controls": [
-        {
-          "aligned": 0,
-          "alpha": 0.05,
-          "attainable_floor": 1.0,
-          "consequence": "no separation, as required",
-          "control_verdict": "INDIFFERENT",
-          "decided_pairs": 0,
-          "direction": "positive_side",
-          "family": "placebo_identical",
-          "k_required": null,
-          "p_two_sided": 1.0,
-          "role": "floor",
-          "undecided_pairs": [
-            "gen:scene-1",
-            "gen:scene-2",
-            "gen:scene-3",
-            "gen:scene-4",
-            "gen:scene-5",
-            "gen:scene-6",
-            "gen:scene-7",
-            "gen:scene-8"
-          ],
-          "verdict": "NOT_ATTAINABLE"
-        },
-        {
-          "aligned": 0,
-          "alpha": 0.05,
-          "attainable_floor": 1.0,
-          "consequence": "no separation, as required",
-          "control_verdict": "INDIFFERENT",
-          "decided_pairs": 0,
-          "direction": "positive_side",
-          "family": "rewhitespace_sham",
-          "k_required": null,
-          "p_two_sided": 1.0,
-          "role": "void-control",
-          "undecided_pairs": [
-            "gen:scene-1",
-            "gen:scene-10",
-            "gen:scene-2",
-            "gen:scene-3",
-            "gen:scene-4",
-            "gen:scene-5",
-            "gen:scene-6",
-            "gen:scene-7",
-            "gen:scene-8",
-            "gen:scene-9"
-          ],
-          "verdict": "NOT_ATTAINABLE"
-        }
-      ],
-      "elicitation": "single-text scalar rating 0-100, each side alone, paired difference \u2014 no pair in the prompt at all",
-      "members": [
-        {
-          "aligned": 0,
-          "alpha": 0.05,
-          "attainable_floor": 1.0,
-          "decided_pairs": 0,
-          "direction": "positive_side",
-          "family": "stat_flatten",
-          "k_required": null,
-          "p_two_sided": 1.0,
-          "undecided_pairs": [
-            "gen:scene-1",
-            "gen:scene-10",
-            "gen:scene-2",
-            "gen:scene-3",
-            "gen:scene-4",
-            "gen:scene-5",
-            "gen:scene-6",
-            "gen:scene-7",
-            "gen:scene-8",
-            "gen:scene-9"
-          ],
-          "verdict": "NOT_ATTAINABLE"
-        },
-        {
-          "aligned": 0,
-          "alpha": 0.05,
-          "attainable_floor": 1.0,
-          "decided_pairs": 0,
-          "direction": "positive_side",
-          "family": "interiority_strip_matched",
-          "k_required": null,
-          "p_two_sided": 1.0,
-          "undecided_pairs": [
-            "gen:scene-1",
-            "gen:scene-10",
-            "gen:scene-2",
-            "gen:scene-4",
-            "gen:scene-5",
-            "gen:scene-6",
-            "gen:scene-7",
-            "gen:scene-8",
-            "gen:scene-9"
-          ],
-          "verdict": "NOT_ATTAINABLE"
-        },
-        {
-          "aligned": 0,
-          "alpha": 0.05,
-          "attainable_floor": 1.0,
-          "decided_pairs": 0,
-          "direction": "positive_side",
-          "family": "repair_emdash",
-          "k_required": null,
-          "p_two_sided": 1.0,
-          "undecided_pairs": [
-            "gen:scene-1",
-            "gen:scene-2",
-            "gen:scene-3",
-            "gen:scene-4",
-            "gen:scene-5",
-            "gen:scene-6",
-            "gen:scene-7",
-            "gen:scene-8"
-          ],
-          "verdict": "NOT_ATTAINABLE"
-        }
-      ],
-      "positional_precondition": {
-        "note": "one passage per call; there is no position to prefer",
-        "precondition": "NO_SLOT"
-      },
-      "positive_control": {
-        "clopper_pearson": [
-          0.0,
-          1.0
-        ],
-        "comparison_level_win_rate": null,
-        "decided_pairs": 0,
-        "family": "repair_interiority",
-        "note": "prior readings are cited for what they measured and are not used as a value here (\u00a779.1); `preserved` is decided only by the interval measured on this run",
-        "pairs_preferring_the_repair": 0,
-        "preserved": false,
-        "prior_readings": {
-          "haiku_\u00a785": 0.9509,
-          "phi4_\u00a787.3": 0.9688,
-          "sonnet_\u00a785.1": 1.0
-        }
-      },
-      "protocol": "E4",
-      "readings": {
-        "as_registered": "FAILS",
-        "corrected": "FAILS",
-        "note": "as-registered and corrected coincide: no rule in PRE_REGISTRATION was found unattainable or wrongly specified during this run. Both print anyway (rail 5) so that a later correction has a slot to appear in rather than replacing a number that was already published."
-      },
-      "scalar_accounting": {
-        "flat_observations": 0,
-        "flat_rate": null,
-        "graded_observations": 0,
-        "mean_rating_difference": {
-          "interiority_strip_matched": 0.0,
-          "placebo_identical": 0.0,
-          "repair_emdash": 0.0,
-          "repair_interiority": 0.0,
-          "rewhitespace_sham": 0.0,
-          "stat_flatten": 0.0
-        },
-        "note": "a flat rate near 1.0 is gate 0's constant function returning on a wider scale. `mean_rating_difference` is the magnitude the sign discards and prints beside it (rail 5): a protocol can be systematically ordered and numerically flat, and that combination is a finding rather than a wash",
-        "persona_vote_rate": {
-          "interiority_strip_matched": 0.0,
-          "placebo_identical": 0.0,
-          "repair_emdash": 0.0,
-          "repair_interiority": 0.0,
-          "rewhitespace_sham": 0.0,
-          "stat_flatten": 0.0
-        },
-        "scale": 100
-      },
-      "verdict": {
-        "because": "cleared 0 of 3, needs 2",
-        "families_cleared": [],
-        "verdict": "FAILS"
-      }
-    },
-    "E5": {
-      "controls": [
-        {
-          "aligned": 0,
-          "alpha": 0.05,
-          "attainable_floor": 1.0,
-          "consequence": "no separation, as required",
-          "control_verdict": "INDIFFERENT",
-          "decided_pairs": 0,
-          "direction": "positive_side",
-          "family": "placebo_identical",
-          "k_required": null,
-          "p_two_sided": 1.0,
-          "role": "floor",
-          "undecided_pairs": [
-            "gen:scene-1",
-            "gen:scene-2",
-            "gen:scene-3",
-            "gen:scene-4",
-            "gen:scene-5",
-            "gen:scene-6",
-            "gen:scene-7",
-            "gen:scene-8"
-          ],
-          "verdict": "NOT_ATTAINABLE"
-        },
-        {
-          "aligned": 0,
-          "alpha": 0.05,
-          "attainable_floor": 1.0,
-          "consequence": "no separation, as required",
-          "control_verdict": "INDIFFERENT",
-          "decided_pairs": 0,
-          "direction": "positive_side",
-          "family": "rewhitespace_sham",
-          "k_required": null,
-          "p_two_sided": 1.0,
-          "role": "void-control",
-          "undecided_pairs": [
-            "gen:scene-1",
-            "gen:scene-10",
-            "gen:scene-2",
-            "gen:scene-3",
-            "gen:scene-4",
-            "gen:scene-5",
-            "gen:scene-6",
-            "gen:scene-7",
-            "gen:scene-8",
-            "gen:scene-9"
-          ],
-          "verdict": "NOT_ATTAINABLE"
-        }
-      ],
-      "elicitation": "describe each passage in turn, then the identical E1 choice",
-      "members": [
-        {
-          "aligned": 0,
-          "alpha": 0.05,
-          "attainable_floor": 1.0,
-          "decided_pairs": 0,
-          "direction": "positive_side",
-          "family": "stat_flatten",
-          "k_required": null,
-          "p_two_sided": 1.0,
-          "undecided_pairs": [
-            "gen:scene-1",
-            "gen:scene-10",
-            "gen:scene-2",
-            "gen:scene-3",
-            "gen:scene-4",
-            "gen:scene-5",
-            "gen:scene-6",
-            "gen:scene-7",
-            "gen:scene-8",
-            "gen:scene-9"
-          ],
-          "verdict": "NOT_ATTAINABLE"
-        },
-        {
-          "aligned": 0,
-          "alpha": 0.05,
-          "attainable_floor": 1.0,
-          "decided_pairs": 0,
-          "direction": "positive_side",
-          "family": "interiority_strip_matched",
-          "k_required": null,
-          "p_two_sided": 1.0,
-          "undecided_pairs": [
-            "gen:scene-1",
-            "gen:scene-10",
-            "gen:scene-2",
-            "gen:scene-4",
-            "gen:scene-5",
-            "gen:scene-6",
-            "gen:scene-7",
-            "gen:scene-8",
-            "gen:scene-9"
-          ],
-          "verdict": "NOT_ATTAINABLE"
-        },
-        {
-          "aligned": 0,
-          "alpha": 0.05,
-          "attainable_floor": 1.0,
-          "decided_pairs": 0,
-          "direction": "positive_side",
-          "family": "repair_emdash",
-          "k_required": null,
-          "p_two_sided": 1.0,
-          "undecided_pairs": [
-            "gen:scene-1",
-            "gen:scene-2",
-            "gen:scene-3",
-            "gen:scene-4",
-            "gen:scene-5",
-            "gen:scene-6",
-            "gen:scene-7",
-            "gen:scene-8"
-          ],
-          "verdict": "NOT_ATTAINABLE"
-        }
-      ],
-      "positional_precondition": {
-        "chose_A_rate": NaN,
-        "decided": 0,
-        "decided_floor": 30,
-        "note": "no decided comparisons",
-        "precondition": "INSUFFICIENT_DECIDED"
-      },
-      "positive_control": {
-        "clopper_pearson": [
-          0.0,
-          1.0
-        ],
-        "comparison_level_win_rate": null,
-        "decided_pairs": 0,
-        "family": "repair_interiority",
-        "note": "prior readings are cited for what they measured and are not used as a value here (\u00a779.1); `preserved` is decided only by the interval measured on this run",
-        "pairs_preferring_the_repair": 0,
-        "preserved": false,
-        "prior_readings": {
-          "haiku_\u00a785": 0.9509,
-          "phi4_\u00a787.3": 0.9688,
-          "sonnet_\u00a785.1": 1.0
-        }
-      },
-      "protocol": "E5",
-      "readings": {
-        "as_registered": "NOT_READABLE",
-        "corrected": "NOT_READABLE",
-        "note": "as-registered and corrected coincide: no rule in PRE_REGISTRATION was found unattainable or wrongly specified during this run. Both print anyway (rail 5) so that a later correction has a slot to appear in rather than replacing a number that was already published."
-      },
-      "tie_accounting": {
-        "comparisons": 212,
-        "decided": 0,
-        "refused": 212,
-        "tie_policy": "half_win",
-        "tie_rate": null,
-        "ties": 0
-      },
-      "verdict": {
-        "because": "0 usable comparisons, below the 30 floor (\u00a786.7); a band is not read at this depth",
-        "families_cleared": [],
-        "verdict": "NOT_READABLE"
       }
     },
     "E6": {
@@ -718,7 +350,7 @@
           "p_two_sided": null,
           "rate_on_this_control": 0.0,
           "role": "floor",
-          "same_axis_rate_on_its_own_family": null,
+          "same_axis_rate_on_its_own_family": 1.0,
           "worst_axis": "stat_flatten"
         },
         {
@@ -732,7 +364,7 @@
           "p_two_sided": null,
           "rate_on_this_control": 0.0,
           "role": "void-control",
-          "same_axis_rate_on_its_own_family": null,
+          "same_axis_rate_on_its_own_family": 1.0,
           "worst_axis": "stat_flatten"
         }
       ],
@@ -762,7 +394,7 @@
             },
             "stat_flatten": {
               "fired": 0,
-              "responses": 0
+              "responses": 24
             }
           },
           "repair_emdash": {
@@ -787,8 +419,8 @@
               "responses": 0
             },
             "stat_flatten": {
-              "fired": 0,
-              "responses": 0
+              "fired": 1,
+              "responses": 24
             }
           },
           "stat_flatten": {
@@ -813,8 +445,8 @@
               "responses": 0
             },
             "stat_flatten": {
-              "fired": 0,
-              "responses": 0
+              "fired": 24,
+              "responses": 24
             }
           }
         },
@@ -822,14 +454,14 @@
           "interiority_strip_matched": {
             "confabulation_rate": null,
             "fisher_p": 1.0,
-            "null_rate": null,
+            "null_rate": 0.0,
             "own_rate": null,
             "verdict": "DOES_NOT"
           },
           "repair_emdash": {
             "confabulation_rate": null,
             "fisher_p": 1.0,
-            "null_rate": null,
+            "null_rate": 0.0417,
             "own_rate": null,
             "verdict": "DOES_NOT"
           },
@@ -837,20 +469,20 @@
             "confabulation_rate": null,
             "fisher_p": 1.0,
             "null_rate": null,
-            "own_rate": null,
+            "own_rate": 1.0,
             "verdict": "DOES_NOT"
           }
         }
       },
       "members": [
         {
-          "aligned": 0,
+          "aligned": 24,
           "attainable_floor": null,
-          "decided_pairs": 0,
+          "decided_pairs": 24,
           "family": "stat_flatten",
           "k_required": null,
           "null_rate": null,
-          "own_rate": null,
+          "own_rate": 1.0,
           "p_two_sided": 1.0,
           "statistic": "one-sided Fisher exact against a null measured on the other families",
           "verdict": "FAILS"
@@ -861,7 +493,7 @@
           "decided_pairs": 0,
           "family": "interiority_strip_matched",
           "k_required": null,
-          "null_rate": null,
+          "null_rate": 0.0,
           "own_rate": null,
           "p_two_sided": 1.0,
           "statistic": "one-sided Fisher exact against a null measured on the other families",
@@ -873,7 +505,7 @@
           "decided_pairs": 0,
           "family": "repair_emdash",
           "k_required": null,
-          "null_rate": null,
+          "null_rate": 0.0417,
           "own_rate": null,
           "p_two_sided": 1.0,
           "statistic": "one-sided Fisher exact against a null measured on the other families",
@@ -901,22 +533,22 @@
         },
         "stat_flatten": {
           "fires_by_orientation": {
-            "0": null,
-            "1": null
+            "0": 1.0,
+            "1": 1.0
           },
           "note": "not positional_bias \u2014 E6 asks for no choice; see orientation_symmetry",
           "precondition": "NO_CHOICE_TO_COUNT",
-          "responses": 0
+          "responses": 24
         }
       },
       "positional_precondition": {
         "fires_by_orientation": {
-          "0": null,
-          "1": null
+          "0": 1.0,
+          "1": 1.0
         },
         "note": "not positional_bias \u2014 E6 asks for no choice; see orientation_symmetry",
         "precondition": "NO_CHOICE_TO_COUNT",
-        "responses": 0
+        "responses": 24
       },
       "positive_control": null,
       "protocol": "E6",
@@ -926,19 +558,19 @@
       },
       "statistic": "one-sided Fisher exact, not the two-sided sign test the other protocols use. Only firing is evidence here, so the direction is not arbitrary and the null is the matcher's own unprompted rate rather than 1/2",
       "verdict": {
-        "because": "0 usable comparisons, below the 30 floor (\u00a786.7); a band is not read at this depth",
+        "because": "24 usable comparisons, below the 30 floor (\u00a786.7); a band is not read at this depth",
         "families_cleared": [],
         "verdict": "NOT_READABLE"
       }
     }
   },
-  "seconds": 369.5,
+  "seconds": 422.6,
   "spend": {
-    "cache_read": 35399627,
-    "cache_write": 9894170,
-    "equivalent_usd": 52.0015,
-    "input": 4997272,
-    "output": 4434555
+    "cache_read": 37641364,
+    "cache_write": 10600632,
+    "equivalent_usd": 55.4878,
+    "input": 5383404,
+    "output": 4727176
   },
   "transport": "cli",
   "verdict": {

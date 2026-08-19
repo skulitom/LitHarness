@@ -36,6 +36,7 @@ spends and layers 1 and 2 are free.
 
 from __future__ import annotations
 
+import argparse
 import json
 import re
 import sys
@@ -280,17 +281,65 @@ def selftest() -> int:
     return 1 if failures else 0
 
 
-def main(argv: list[str] | None = None) -> int:
-    import argparse
+def through_battery(composite: Composite, *, scenes: int, samples: int) -> dict[str, Any]:
+    """Run the composite through T0 (§86.7's corrected battery) and return the whole summary.
 
+    **The composite, not its parts.** §86.6 disqualified the incumbent panel on three axioms; what
+    is under test here is the assembled instrument, because a veto layer that rescues an axiom the
+    verdict layer fails is exactly the thing the architecture claims and exactly the thing that
+    cannot be seen by testing layer 3 alone.
+
+    Costs whatever layer 3 costs, which is **nothing when there is no layer 3** — a composite with
+    no verdict source answers `neither` without calling anything, and that run is the pre-registered
+    "no protocol survived" branch rather than a substitute for the real one.
+    """
+    import axiom_battery
+
+    scene_rows = axiom_battery.load_scenes(
+        argparse.Namespace(scenes_json=str(HERE / "corpora" / "toll-scenes.json"),
+                           book_db=None, min_words=500)
+    )[:scenes]
+    pairs, certificate = axiom_battery.build_pairs(scene_rows, samples=samples)
+    battery = axiom_battery.run_battery(
+        pairs, composite, model=f"composite/{composite.verdict_source}"
+    )
+    return {
+        "pre_registration": axiom_battery.PRE_REGISTRATION,
+        "pre_registration_corrected": axiom_battery.PRE_REGISTRATION_CORRECTED,
+        "composite": composite.report(),
+        "scenes": [scene for scene, _ in scene_rows],
+        "pairs": len(pairs),
+        "ladder_certificate": certificate,
+        "verdict": battery.verdict(),
+        "operating_characteristic": axiom_battery.operating_characteristic(pairs),
+    }
+
+
+def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--selftest", action="store_true")
     parser.add_argument("--describe", action="store_true", help="print the declared aggregation")
+    parser.add_argument("--battery", action="store_true",
+                        help="run T0 on the composite; free when there is no verdict layer")
+    parser.add_argument("--scenes", type=int, default=6)
+    parser.add_argument("--samples", type=int, default=3)
+    parser.add_argument("--out", default="composite-battery.json")
     args = parser.parse_args(argv)
     if args.selftest:
         return selftest()
     if args.describe:
         print(json.dumps(AGGREGATION, indent=2))
+        return 0
+    if args.battery:
+        if selftest():
+            print("refusing to run: selftest failed", file=sys.stderr)
+            return 1
+        # No verdict layer: this is the "no Track E protocol survived" branch, and it is free.
+        composite = Composite(None)
+        summary = through_battery(composite, scenes=args.scenes, samples=args.samples)
+        (RESULTS / args.out).write_text(json.dumps(summary, indent=2), encoding="utf-8")
+        print(json.dumps(summary["verdict"], indent=2))
+        print(f"\nwrote {RESULTS / args.out}", file=sys.stderr)
         return 0
     parser.print_help()
     return 0
