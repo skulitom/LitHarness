@@ -1,0 +1,92 @@
+{
+  "pre_registration": {
+    "confounds_named": "Length: \u00a785 measured the interiority treatment growing scenes 10-13%, and it is reported per arm below rather than adjusted away. Anchor: retells are measured against the sober retell and repairs against the original, because that is what each was generated from; the two are not interchangeable and the report says which is which.",
+    "governs": "stage-0 \u00a782 verbatim: nothing here upgrades any licence.",
+    "track_s_claim_form": "The told/shown decomposition characterises the STIMULUS. It cannot show self-preference on its own \u2014 a human might prefer the same text, which is what \u00a780's batch and the \u00a785 operator read exist to find out. It removes the question of what was in the treatment from the list of things the cross-family judge would have to settle.",
+    "track_v_claim_form": "The ONLY sentence this arm may produce: 'on axis X, an oracle selector over N draws of this generator moves the axis by D, against D2 for one certified revision.' It is a statement about the SUPPORT of a distribution and about REACH, never about quality \u2014 an oracle over a surface proxy is not an oracle over good prose.",
+    "track_v_kill": "The directive's V2 condition is a plateau by N=4. The pool is four draws deep, so the curve is only computable to N=4 and the plateau cannot be confirmed beyond it. What is reportable is the SHAPE within N<=4 and the ratio to the intervention; anything about N=8..32 requires generation spend and is not claimed here.",
+    "written": "2026-08-19, with Track P's run"
+  },
+  "reading": {
+    "track_s": "\u00a785's preferred treatment raised told inner state in 7 of 8 scenes and raised shown bodily state in 1. Whatever the panel preferred at 0.9509, the thing it preferred was told-not-shown. This characterises the stimulus and does not, on its own, show self-preference: a human reader might prefer the same text, which is the question \u00a780's batch and the \u00a785 operator read exist to answer.",
+    "track_v": "An oracle selector over four draws of this generator reaches 34% of the certified revision on interior_per_1k, 54% of the certified revision on em_per_1k. No selector can do better, because the oracle is the ceiling. Reach only \u2014 these axes are surface proxies a reader named, not measures of quality."
+  },
+  "track_s_told_versus_shown": {
+    "exemplar_vs_sober": {
+      "scenes": 8,
+      "shown_delta_per_1k": -0.8248,
+      "shown_scenes_up": 4,
+      "told_delta_per_1k": 0.346,
+      "told_scenes_up": 4,
+      "word_growth_pct": 9.78
+    },
+    "repair_interiority": {
+      "scenes": 8,
+      "shown_delta_per_1k": -0.6268,
+      "shown_scenes_up": 1,
+      "told_delta_per_1k": 1.6082,
+      "told_scenes_up": 7,
+      "word_growth_pct": 11.75
+    }
+  },
+  "track_v_selection_ceiling": {
+    "em_per_1k": {
+      "certified_intervention_arm": "repair_emdash",
+      "certified_intervention_delta": -3.5337,
+      "direction": -1,
+      "increments": {
+        "2": -1.0204,
+        "3": -0.5804,
+        "4": -0.3202
+      },
+      "max_n_available": 4,
+      "oracle_curve_minus_anchor": {
+        "1": 0.2962,
+        "2": -0.7243,
+        "3": -1.3046,
+        "4": -1.6248
+      },
+      "scenes": [
+        "gen:scene-1",
+        "gen:scene-2",
+        "gen:scene-3",
+        "gen:scene-4",
+        "gen:scene-5",
+        "gen:scene-6",
+        "gen:scene-7",
+        "gen:scene-8"
+      ],
+      "selection_as_fraction_of_intervention": 0.5436,
+      "selection_gain_1_to_n": -1.921
+    },
+    "interior_per_1k": {
+      "certified_intervention_arm": "repair_interiority",
+      "certified_intervention_delta": 1.6082,
+      "direction": 1,
+      "increments": {
+        "2": 0.3575,
+        "3": 0.1372,
+        "4": 0.0496
+      },
+      "max_n_available": 4,
+      "oracle_curve_minus_anchor": {
+        "1": 0.1668,
+        "2": 0.5243,
+        "3": 0.6615,
+        "4": 0.7111
+      },
+      "scenes": [
+        "gen:scene-1",
+        "gen:scene-2",
+        "gen:scene-3",
+        "gen:scene-4",
+        "gen:scene-5",
+        "gen:scene-6",
+        "gen:scene-7",
+        "gen:scene-8"
+      ],
+      "selection_as_fraction_of_intervention": 0.3385,
+      "selection_gain_1_to_n": 0.5443
+    }
+  }
+}

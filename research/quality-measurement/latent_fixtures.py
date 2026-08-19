@@ -263,6 +263,44 @@ P0_PLUS_NAMES: tuple[str, ...] = (*FEATURE_NAMES, "digit_per_1k", "system_digit_
 # ------------------------------------------------------------------------------- the test
 
 
+def gram(deltas: list[list[float]]) -> list[list[float]]:
+    """The `G x G` matrix of inner products between scenes' difference vectors.
+
+    **This is the whole test, and the reason the exhaustive null is affordable.** With the
+    estimator fixed to a mean of paired differences, leave-one-scene-out has a closed form. Let
+    `S` be the sum of every difference vector; the direction fitted without scene *i* is
+    proportional to `S - d_i`, and normalising it cannot change a sign, so the held-out scene is
+    ordered correctly exactly when
+
+        (S - d_i) . d_i > 0
+
+    Under a flip vector `e` in {+1,-1}^G the same quantity is `e_i (M e)_i - M_ii` where `M` is
+    this matrix. So every one of the `2**G` re-runs is a `G x G` matrix-vector product rather
+    than a refit over 2,560 dimensions: at ten scenes that is 1,024 products of a 10x10 matrix,
+    which is milliseconds, against the hours a literal refit costs. The numbers are identical by
+    algebra rather than by approximation, and `tests/test_latent_probe.py` asserts it against the
+    literal implementation on random data.
+    """
+    width = len(deltas)
+    return [
+        [sum(a * b for a, b in zip(deltas[i], deltas[j], strict=True)) for j in range(width)]
+        for i in range(width)
+    ]
+
+
+def signs_from_gram(
+    matrix: list[list[float]], flips: tuple[int, ...] | None = None
+) -> list[int]:
+    """Held-out orderings under one flip vector. See :func:`gram` for the algebra."""
+    size = len(matrix)
+    eps = flips or (1,) * size
+    out: list[int] = []
+    for i in range(size):
+        projected = sum(eps[j] * matrix[i][j] for j in range(size))
+        out.append(1 if eps[i] * projected - matrix[i][i] > 0 else 0)
+    return out
+
+
 def paired_direction(deltas: list[list[float]]) -> list[float]:
     """The mean difference vector, scaled to unit length. The whole estimator.
 
@@ -312,12 +350,13 @@ def exact_flip_null(deltas: list[list[float]]) -> dict[str, Any]:
     enumerated ones and is counted, which is what keeps the smallest attainable p at `1 / 2**G`
     rather than zero.
     """
+    matrix = gram(deltas)
     groups = len(deltas)
-    observed = sum(loso_signs(deltas))
-    at_least = 0
-    for flips in product((1, -1), repeat=groups):
-        if sum(loso_signs(deltas, flips)) >= observed:
-            at_least += 1
+    observed = sum(signs_from_gram(matrix))
+    at_least = sum(
+        1 for flips in product((1, -1), repeat=groups)
+        if sum(signs_from_gram(matrix, flips)) >= observed
+    )
     return {
         "groups": groups,
         "k": observed,

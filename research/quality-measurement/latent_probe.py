@@ -64,6 +64,14 @@ from typing import Any
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 
+from cdg_battery import (  # noqa: E402
+    PAUSE_ABOVE_C,
+    REST_RATIO,
+    RESUME_BELOW_C,
+    digest,
+    gpu_temperature,
+    throttle,
+)
 from latent_fixtures import (  # noqa: E402
     FLOOR_FAMILIES,
     P0_NAMES,
@@ -72,12 +80,17 @@ from latent_fixtures import (  # noqa: E402
     build_families,
     drop_degenerate,
     exact_flip_null,
-    loso_signs,
+    gram,
     p0_features,
+    signs_from_gram,
     unscoreable,
 )
 
 RESULTS = HERE / "results"
+
+#: The digest manifest's slot inside the dump. Prefixed so it can never collide with a vector
+#: key, which are all `readout|layer|family|scene|sign`.
+MANIFEST_KEY = "__manifest__"
 
 #: Pinned by commit, not by branch: a probe number is a property of a specific set of weights.
 MODEL_ID = "google/gemma-3-4b-it"
@@ -180,19 +193,20 @@ PRE_REGISTRATION: dict[str, Any] = {
 # --------------------------------------------------------------------------------- extraction
 
 
-def _governor(seconds_of_work: float, *, rest_ratio: float = 1.0) -> None:
-    """Duty-cycle rest after a GPU call. This box hard-shuts-down under sustained inference.
-
-    The full hysteresis governor lives in `cdg_battery.py` and was paid for by a thermal
-    shutdown at call 431. This run is two orders of magnitude shorter — a couple of hundred
-    forward passes rather than a thousand generations — so it carries the cheap half of the
-    recipe rather than none of it.
-    """
-    time.sleep(min(seconds_of_work * rest_ratio, 2.0))
-
-
 def extract(args: argparse.Namespace) -> dict[str, Any]:
-    """One forward pass per (text, readout); write mean-pooled residuals to a gitignored dump."""
+    """One forward pass per (text, readout); write mean-pooled residuals to a gitignored dump.
+
+    The dump carries a digest manifest beside the vectors. That is not tidiness: RUNBOOK's rule
+    is that a replay cache keys on text digest rather than on labels, because a cache keyed
+    `(family, scene, side)` replays numbers computed on texts that no longer exist the moment a
+    transform is edited. An activation dump is exactly that kind of cache — the vectors outlive
+    the prose they were read from — so :func:`score` refuses to read one whose manifest does not
+    match the fixtures currently on disk.
+
+    The thermal governor is `cdg_battery`'s, imported rather than reimplemented: this box
+    hard-shut-down at call 431 of that run, and 72/66 with a three-failure tolerance are the
+    constants the shutdown paid for. This run is far shorter, and it is governed anyway.
+    """
     import numpy as np
     import torch
     from transformers import AutoModelForCausalLM, AutoTokenizer
@@ -221,11 +235,11 @@ def extract(args: argparse.Namespace) -> dict[str, Any]:
 
     keys = sorted(texts)
     store: dict[str, Any] = {}
-    token_counts: dict[str, int] = {}
+    token_counts: list[int] = []
     started = time.time()
     with torch.no_grad():
         for readout in ("text_mean", "judge_last"):
-            for index, key in enumerate(keys):
+            for key in keys:
                 body = texts[key]
                 prompt = body if readout == "text_mean" else JUDGE_PROMPT.format(text=body)
                 encoded = tokenizer(prompt, return_tensors="pt", add_special_tokens=True)
@@ -233,14 +247,16 @@ def extract(args: argparse.Namespace) -> dict[str, Any]:
                 call = time.time()
                 hidden = model(**encoded, output_hidden_states=True, use_cache=False).hidden_states
                 elapsed = time.time() - call
-                token_counts[f"{readout}|{key}"] = int(encoded["input_ids"].shape[1])
+                token_counts.append(int(encoded["input_ids"].shape[1]))
                 for layer in READOUT_LAYERS:
                     block = hidden[layer][0].float()
                     vector = block.mean(0) if readout == "text_mean" else block[-1]
                     store[f"{readout}|{layer}|{key}"] = vector.cpu().numpy().astype(np.float32)
-                if index % 8 == 0:
-                    _governor(elapsed, rest_ratio=args.rest_ratio)
+                throttle(elapsed * args.rest_ratio / REST_RATIO, gpu_temperature())
 
+    store[MANIFEST_KEY] = np.array(
+        json.dumps({key: digest(text) for key, text in texts.items()}, sort_keys=True)
+    )
     RESULTS.mkdir(parents=True, exist_ok=True)
     np.savez_compressed(args.activations, **store)
     return {
@@ -250,11 +266,20 @@ def extract(args: argparse.Namespace) -> dict[str, Any]:
         "d_model": D_MODEL,
         "readout_layers": list(READOUT_LAYERS),
         "texts": len(keys),
-        "vectors": len(store),
-        "tokens_min": min(token_counts.values()),
-        "tokens_max": max(token_counts.values()),
-        "tokens_mean": round(statistics.fmean(token_counts.values()), 1),
+        "vectors": len(store) - 1,
+        "tokens_min": min(token_counts),
+        "tokens_max": max(token_counts),
+        "tokens_mean": round(statistics.fmean(token_counts), 1),
         "seconds": round(time.time() - started, 1),
+        "gpu_c_after": gpu_temperature(),
+        # Recorded rather than assumed: a run that says nothing about its governor cannot be
+        # told apart afterwards from one that had none.
+        "throttle": {
+            "rest_ratio": args.rest_ratio,
+            "pause_above_c": PAUSE_ABOVE_C,
+            "resume_below_c": RESUME_BELOW_C,
+            "source": "cdg_battery.throttle",
+        },
         "dump": str(args.activations),
     }
 
@@ -290,11 +315,12 @@ def layer_max_null(per_layer: dict[int, list[list[float]]]) -> dict[str, Any]:
     """Null of `max(k)` across layers, with one flip vector applied to every layer at once."""
     layers = sorted(per_layer)
     groups = len(per_layer[layers[0]])
-    observed_per_layer = {layer: sum(loso_signs(per_layer[layer])) for layer in layers}
+    matrices = {layer: gram(per_layer[layer]) for layer in layers}
+    observed_per_layer = {layer: sum(signs_from_gram(matrices[layer])) for layer in layers}
     observed = max(observed_per_layer.values())
     at_least = 0
     for flips in product((1, -1), repeat=groups):
-        if max(sum(loso_signs(per_layer[layer], flips)) for layer in layers) >= observed:
+        if max(sum(signs_from_gram(matrices[layer], flips)) for layer in layers) >= observed:
             at_least += 1
     return {
         "groups": groups,
@@ -320,14 +346,66 @@ def baseline_row(pairs: list[Pair], names: tuple[str, ...], *, steelman: bool) -
     return row
 
 
+def _check_manifest(dump: Any, families: dict[str, list[Pair]]) -> str:
+    """Is this dump the one these fixtures produced? Digests, not key names."""
+    if MANIFEST_KEY not in dump.files:
+        return "no manifest — dump predates the digest rule"
+    recorded = json.loads(str(dump[MANIFEST_KEY]))
+    expected: dict[str, str] = {}
+    for name, pairs in families.items():
+        kept, _ = drop_degenerate(name, pairs)
+        for pair in kept:
+            expected[f"{name}|{pair.scene}|+"] = digest(pair.positive)
+            expected[f"{name}|{pair.scene}|-"] = digest(pair.negative)
+    if recorded == expected:
+        return "matches"
+    missing = sorted(set(expected) - set(recorded))
+    changed = sorted(key for key in set(expected) & set(recorded)
+                     if expected[key] != recorded[key])
+    return f"{len(missing)} texts missing, {len(changed)} texts changed since extraction"
+
+
+def best_single_feature(pairs: list[Pair]) -> dict[str, Any]:
+    """The strongest *single* surface feature on a family, as a post-hoc diagnostic.
+
+    **Not part of any bar, and deliberately so.** The pre-registered baseline is a mean-difference
+    direction over all 25 (or 28) features, and that estimator dilutes: averaging 25 z-scored
+    deltas can score worse than one feature that carries the whole difference. So "the probe beat
+    P0" can be an artifact of P0's aggregation rather than a limit of surface measurement, and a
+    reader needs this column to tell those apart. It is computed after the fact and it may not be
+    substituted into `beats_p0` for this run — that would be tightening a rule against numbers
+    already seen, which is exactly what §81 refused to do. The corrected rule is declared in the
+    ledger for the next run instead.
+    """
+    perfect: list[str] = []
+    best_k = 0
+    for name in P0_PLUS_NAMES:
+        positives = [[p0_features(pair.positive, steelman=True)[name]] for pair in pairs]
+        negatives = [[p0_features(pair.negative, steelman=True)[name]] for pair in pairs]
+        row = exact_flip_null([[a[0] - b[0]] for a, b in zip(positives, negatives, strict=True)])
+        best_k = max(best_k, row["k"])
+        if row["k"] == len(pairs):
+            perfect.append(name)
+    return {"best_k": best_k, "perfect_single_features": perfect}
+
+
 def score(args: argparse.Namespace) -> dict[str, Any]:
     """Score every family: two surface baselines, then the probe if a dump exists."""
     import numpy as np
 
     families = build_families()
     dump = None
+    manifest_state = "absent"
     if Path(args.activations).exists():
         dump = np.load(args.activations)
+        manifest_state = _check_manifest(dump, families)
+        if manifest_state != "matches":
+            raise SystemExit(
+                f"activation dump does not match the fixtures on disk ({manifest_state}). "
+                "Re-run --extract. Scoring a stale dump would compute a verdict from vectors "
+                "read off texts that no longer exist, which is the failure the digest-keyed "
+                "cache rule exists to refuse."
+            )
 
     report: dict[str, Any] = {
         "pre_registration": PRE_REGISTRATION,
@@ -335,6 +413,7 @@ def score(args: argparse.Namespace) -> dict[str, Any]:
         "revision": MODEL_REVISION,
         "readout_layers": list(READOUT_LAYERS),
         "activations_present": dump is not None,
+        "manifest": manifest_state,
         "families": {},
     }
 
@@ -348,6 +427,7 @@ def score(args: argparse.Namespace) -> dict[str, Any]:
             "negative_arm": raw_pairs[0].negative_arm,
             "p0": baseline_row(pairs, P0_NAMES, steelman=False),
             "p0_plus": baseline_row(pairs, P0_PLUS_NAMES, steelman=True),
+            "p0_best_single_DIAGNOSTIC": best_single_feature(pairs),
         }
         if dump is not None:
             for readout in ("text_mean", "judge_last"):
@@ -471,7 +551,9 @@ def main(argv: list[str] | None = None) -> int:
     )
     parser.add_argument("--extract", action="store_true",
                         help="run the forward passes and write the activation dump (needs CUDA)")
-    parser.add_argument("--rest-ratio", type=float, default=1.0,
+    # Defaults to the value `cdg_battery` measured safe on this box rather than to something
+    # faster. The card took the machine down mid-run once; four minutes is not worth relitigating.
+    parser.add_argument("--rest-ratio", type=float, default=REST_RATIO,
                         help="duty-cycle rest as a multiple of call time; this box runs hot")
     parser.add_argument("--activations",
                         default=str(RESULTS / "latent-taste-activations.npz"))
