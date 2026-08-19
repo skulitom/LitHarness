@@ -6167,3 +6167,334 @@ the standard `f2a2aba` and `6b073cb` set: on a history whose only excerpt sits a
 unwalked range. That is `f2a2aba`'s lesson in a second costume — there a suffix no scanner
 admitted, here a slice no walk reached — and the same verdict, a check that cannot fail on the
 material it was pointed at.
+
+## 89. Seven declared quantities that could not do what they said, and five were caught before they cost anything
+
+The verdict-locus directive (2026-08-19). The question was scientific rather than infrastructural
+— *where, between representation and verdict, does discrimination die, and is any elicitation
+protocol lossless?* — and B6's admission (§88) gave it ground truth for the first time. What the
+session mostly produced is an answer to a different question, and the honest headline is that the
+instrument-statistics rulebook this repository has been paying for since §81 **worked**: it caught
+seven bars, thresholds and units that could not do what their own declaration implied, five of them
+before a single call was bought.
+
+    #  the declared quantity                          what it could not do                caught
+    1  the 2/2**G floor, with §87's reason            transfer: §87's invariance is a       before
+                                                      property of a *fitted* direction
+    2  E4's per-pair sign as a persona vote           decide: two personas tie whenever     before
+                                                      they disagree, ~half the pairs
+    3  E6 on the shared two-sided sign test           discriminate: it credits silence      before
+                                                      exactly as much as naming
+    4  the leak audit's list walk                     see: it stopped at 400 silently       before
+    5  a view-matched sub-stratum in `crossed`        populate: zero pairs qualify at       before
+                                                      the only principled threshold
+    6  the 30-decided floor, counted in comparisons   bind: four personas gave one judge    after
+                                                      four times, 64 -> 16 cells
+    7  the screen's withholding gate                  match its own pre-registration:       after
+                                                      it withheld more than the rule said
+
+None of the seven is exotic and all seven are the same shape — the shape §81's point estimate,
+§85's zero-width band and §87's sign-flip floor already had. The difference is that this time the
+checking is a rail rather than a habit, and four of the five caught early were caught by a dry run
+and a covariate distribution rather than by anyone being clever.
+
+**What each track produced is below. Nothing here moves a licence; §82 governs verbatim.**
+
+### 89.1 Track S: two eligible judges, and then one judge four times
+
+Operator directive: screen-then-decide, eligibility measured rather than assumed (§79.1, §87.3),
+`qwen3:14b` and `gemma3:12b`, first to clear the precondition at the 30-decided floor takes the
+track. `latent_crossfamily.py`, four personas x 8 scenes x 2 orientations, local inference, no
+quota. `results/latent-crossfamily-screen-v2.json`.
+
+    candidate    comparisons  decided  chose-A  cells  vectors  as registered  corrected
+    qwen3:14b            64       64   0.5625     16      1/4   ELIGIBLE       INSUFFICIENT_DECIDED
+    gemma3:12b           64       64   0.4531     16      3/4   ELIGIBLE       INSUFFICIENT_DECIDED
+
+**As registered both clear, and the correction is the entry.** `qwen3:14b` returned **one distinct
+answer vector across all four personas, byte-identical**. The persona system prompt is inert for
+it, so the panel is one judge replicated and the 64 comparisons are 16 independent decisions; the
+standard error on its bias estimate is 0.125 rather than 0.063. `gemma3:12b` returned three vectors
+of four, which is better and not different in kind.
+
+That is §87.3's lesson in a second costume. There the inflated number came from **abstention** —
+1.000 resting on eleven decisions — and here it comes from **replication**, which is harder to see
+because nothing is missing from the table. The independent unit is now the `(pair, orientation)`
+cell and personas are replicates on it, **unconditionally**: applying the rule only to degenerate
+panels would have been a rule chosen after seeing which candidate it rescued, which is what §81
+refused to do, and `elicitation_study`'s own pre-registration — written the same morning — already
+says that personas within a pair are repeated measures rather than independent draws.
+
+**The consequence is recorded rather than lowered.** An 8-pair fixture holds 16 cells, so **no
+judge that ignores personas can reach a 30-decision floor on this material however many personas
+are seated.** Track S still waits on a judge the operator selects, and the kill condition stays
+discharged by measurement rather than asserted.
+
+**One code gate was stricter than the rule it implemented, and the rule won.** `withholding_rule`
+withholds a win rate for a candidate whose *bias* falls outside the band; the code withheld unless
+the candidate was ELIGIBLE, which also hides a candidate that cleared the band and merely lacks
+depth. Those are different failures with different remedies, and suppressing a figure legitimately
+obtained under the declared condition would be moving a rule after seeing what it hid. So, with
+their precision attached: **0.9375 and 0.9219**, on 16 cells each.
+
+**Beside §85's 0.9509, §85.1's 1.0000 and §87.3's 0.9688, that is five judges across four vendors
+preferring the same told-not-shown repair.** D2 — the hypothesis that panel preference tracks
+generator-judge family match — now has four independent non-Anthropic families arguing against it.
+Whether the preference is *correct* is untouched: that is craft doctrine's claim, it is what §80's
+class B and the operator read arbitrate, and the operator read is PENDING, so every told-versus-
+shown reading in this entry is provisional.
+
+### 89.2 Track C: the corpus reaches 281 pairs and the tier control has no members
+
+`FROZEN_READOUT` was committed first (`0651a48`), before the corpus was rebuilt and before any new
+pair or label was read: `text_mean`, layer 17, unit-normalised mean paired-difference direction.
+§87.2 chose that depth by maximising `min(aligned, crossed)` over three and disclosed that it gave
+the probe three shots where a surface counter gets one. Carrying the same selection into a larger
+corpus would re-select against labels the first selection had already been fitted to, so 17 stops
+being a choice and becomes a **prediction**. Every depth is still extracted and reported — a freeze
+nobody can falsify is not one — and P0/P0+ run beside it unchanged, so the comparison is one shot
+each for the first time.
+
+**The corpus.** Twelve shards instead of two at the pinned snapshot: 616 stories clearing §79's
+floor against 107, and **281 pairs against 46** — 144 aligned, 137 crossed. All 562 slots
+story-disjoint.
+
+**The view-matched sub-stratum cannot be a threshold, because every threshold worth naming is
+empty.** §87.2 named the residual confound as tier: `crossed`'s high-conversion side carries 16x
+fewer views, so a readout could be reading amateur-versus-established register. The obvious control
+is to match views at the factor-of-two tolerance `aligned` already uses — and **zero of the 21
+crossed pairs qualify at n=46, and zero of the 137 do at n=281.** The tightest sits at 2.1x and the
+median at 12.2x.
+
+    |log10 view ratio| <= 0.30  (2.0x):   0/137
+                        <= 0.50  (3.2x):  13/137
+                        <= 0.70  (5.0x):  30/137
+                        <= 1.00 (10.0x):  59/137
+
+So the split is a **rule and not a number**: the tighter-matched half of `crossed` against the
+looser half. It always populates, its size is n/2 so attainability is computable before any label
+is read, and the contrast between halves is the measurement — a readout reading establishment
+register scores in the loose half and not the tight one. Both halves print whatever they show.
+
+**Bars, declared before extraction and verified attainable.**
+
+    stratum               n   k for 0.52   k for CP lower > 0.50   binding
+    aligned             144           75                      85   interval
+    crossed             137           72                      81   interval
+    crossed, tight half  68           36                      43   interval
+    crossed, loose half  69           36                      44   interval
+
+The interval remains the binding half at the new n, which is `PRE_REGISTRATION_B4`'s logic
+surviving a 6x change of scale. The required rate falls from **0.762 at n=21 to 0.591 at n=137** —
+so §87.2's 0.667 on `crossed` would now pass. That is what makes the expansion a test rather than a
+larger version of a failure, and it is also why the readout had to be frozen before it ran.
+
+**Author disjointness, measured rather than assumed.** §79 enforces disjointness at story level,
+which is a different and weaker property than author level, and at 616 stories the gap stops being
+ignorable. `author` and `average_views` now travel with every unit and neither is selected on:
+**zero pairs share an author across their two sides**, and 43 authors recur across different pairs
+— 51 of 562 slots. That is a clustering caveat on the interval rather than a bias, and it is now a
+number instead of a hope. `chapters` = `total_views / average_views` recovers each fiction's true
+published length, since `pages` is 100% null in these shards; the median is 39.
+
+**The leak audit's scope extension landed before the first shard** (`f506ee7`), as the directive
+required, and it turned out to be closing a live hole rather than a formality. `long_strings`
+walked `payload[:400]` of any list and said nothing about the rest; every product this repository
+had written peaked at 108, so the cap never bit, and Track C's expansion is the first thing designed
+to carry hundreds of prose-bearing rows in one list. Verified in a throwaway repository rather than
+by reading the code, which is the standard `f2a2aba` and `6b073cb` set: **on a history whose only
+excerpt sits at index 450 of a 500-row list, the committed audit prints CLEAN and exits 0.** It now
+refuses and names the unwalked range. Same lesson as `f2a2aba` in a second costume — there a suffix
+no scanner admitted, here a slice no walk reached.
+
+**The frozen readout does not survive the corpus it was frozen for, and that is the point of
+freezing it.** `text_mean` at layer 17, committed before the rebuild:
+
+    stratum    n    k   agreement   Clopper-Pearson      §87.2 at n=46
+    aligned  144   91      0.6319   [0.5476, 0.7107]     0.800
+    crossed  137   72      0.5255   [0.4385, 0.6114]     0.667
+    minimum across strata 0.5255                          0.667
+
+**FAILS on the interval, which was pre-registered as the binding half.** So does the as-registered
+reading that still selects a depth across strata — it picks layer 9 and reports minima of 0.5547
+(`text_mean`) and 0.5839 (`judge_last`), and both miss the interval too. Both readings print and
+neither passes.
+
+**§87.2's headline reverses.** That entry's finding was that on the one family carrying an
+externally produced label, internals beat surface counting — 0.667 against P0's 0.600 and P0+'s
+0.560. At six times the corpus with the readout frozen, the order inverts: **P0 0.5693 and P0+
+0.5764 against `text_mean`'s 0.5547.** The surface baselines now win the minimum-across-strata
+statistic. §87.2 disclosed that its comparison favoured the probe by construction, because the
+probe got three depths and each counter got one; removing that asymmetry removes the result.
+
+**And the residual §87.2 named third is the one that bites.** Its three reasons not to believe the
+number were corpus size, the 21-pair `crossed` stratum, and *tier* — the worry that a readout could
+be reading amateur-versus-established register rather than anything about quality. The median split
+measures it:
+
+    sub-stratum       n    agreement   Clopper-Pearson      P0      P0+
+    crossed, tight   68       0.5147   [0.3903, 0.6378]   0.6029  0.6029
+    crossed, loose   69       0.5797   [0.4548, 0.6976]   0.5362  0.5507
+
+**The readout scores in the loose half and not the tight one**, which is the signature of a tier
+reading rather than a prose reading — and where views are matched, the plain surface baseline beats
+it by nearly nine points. Neither interval excludes 0.50 and neither half is a result on its own;
+the contrast is, and it points the way §87.2 feared.
+
+### 89.3 Panel v2: layer 1 votes on nothing, and that is the design
+
+`composite_panel.py`. §86.6 disqualified the incumbent on three axioms and §87 explained why in a
+way that changes the architecture rather than the tuning: **every instrument that answers a slot
+fails and every instrument that measures without being asked succeeds.**
+
+    layer 1  counters   deterministic. Can VETO a comparison; can never pick a side.
+    layer 2  readout    FROZEN_READOUT, BEHAVIOUR-class. Recorded; decides nothing.
+    layer 3  verdicts   the Track E survivor, if one survives. The only source of preference.
+
+**Layer 1 vetoes rather than votes, and the reason is §82 rather than caution.** A counter measures
+that two texts differ on a named axis; it does not measure which is better, and supplying that
+valence would assert craft doctrine — "told feeling is worse", "em dashes are a tell" — as a
+premise, when §87.1 and §87.3 record it as the hypothesis under test. So a counter here is licensed
+to say *"there is nothing here to prefer"* and nothing else. That is a statement about the material
+rather than about taste.
+
+What it buys is structural: **the composite cannot express a preference between a string and itself,
+or between two texts differing only in whitespace.** Those are the two failures §83, §85 and §78.1
+each had to void an arm over, and they are now unreachable rather than merely unlikely.
+
+The aggregation was declared before the battery ran: layer 3 alone decides, layer 1 decides only
+that there is nothing to decide, layer 2 is recorded, and **disagreement between layers 2 and 3
+produces a diagnostic and no change of verdict** — resolving it in the readout's favour would let
+BEHAVIOUR-class evidence decide a preference, and resolving it in the verdict's favour would discard
+the only signal that §87's report deficit is present inside the instrument.
+
+**A composite with no layer 3 is still a composite, and the battery says exactly what it is.**
+Run through T0 with no verdict layer — free, because nothing is called — against the incumbent's
+own run on the same 54 pairs:
+
+    axiom                        incumbent (as-reg / corrected)        composite, no layer 3
+    A0_indifference              FAIL / PASS   tie 0.875, bias 1.000   PASS   tie 1.000, 0 decided
+    A1_format_invariance         FAIL / PASS   tie 0.542, bias 0.727   PASS   tie 1.000, 0 decided
+    A2_dose_monotonicity         FAIL / FAIL                           FAIL
+    A3_transitivity              -                                     UNREADABLE
+    A5_within_item_consistency   PASS                                  FAIL   (ICC undefined)
+    A6_position                  FAIL / FAIL                           UNREADABLE
+
+**The two axioms the veto layer was built for are the two the incumbent measurably failed**, and
+the composite passes them deterministically rather than luckily: A0 and A1 put two texts of
+identical content in front of the instrument, and layer 1 refuses them before any judge is asked.
+The incumbent's as-registered failures there are bias 1.000 on six decided comparisons and 0.727 on
+twenty-two.
+
+**Everything that needs a decision is failed or unreadable, and the battery is right to say so.**
+A2's own reading is the sentence to quote — *"all-ties is not monotonicity"* — and A3 and A6 come
+back UNREADABLE rather than passed, so the battery already refuses to credit an instrument for
+having no opinion. That refusal is worth noting because it is what stops this run being a fake
+improvement: a composite that ties everything is not a better judge, it is a judge with the verdict
+layer removed. A5 is the honest regression — its ICC is undefined on a constant answer, where the
+incumbent passed.
+
+So the composite is **not a v2 candidate on this evidence** and is not offered as one. What the run
+establishes is that the assembled object satisfies the battery's contract, that layer 1 does the
+job it was designed for on the axioms that measure it, and that everything else waits on Track E.
+§84's freeze remains an operator act and nothing here asks for it.
+
+### 89.4 Track E: the verdict channel is 4,676x more about position than about the passages
+
+`elicitation_study.py` carries E1, E2, E4, E5 and E6 with `PRE_REGISTRATION` committed before the
+first elicitation (`b9fd89a`); `verdict_locus.py` carries E3 and the locus ladder (`a70975a`).
+**E3 is the arm that answered the question, and it is the free one.**
+
+**The ladder, on `gemma-3-4b-it` at the pinned revision. 53 pairs, 106 forward passes, no quota.**
+Stations 1 and 2 are the probe's single-text readouts; 3 and 4 are this module's pairwise pass.
+
+    family                        st1 text_mean  st2 judge_last  st3 logits  st4 sampled
+    stat_flatten                       10/10          10/10          6/10        0/0
+    interiority_strip_matched           9/9            5/9           6/9         0/0
+    repair_emdash                       8/8            8/8           5/7         0/0
+    placebo_identical  FLOOR            0/8            0/8           0/0         0/0
+    rewhitespace_sham  VOID           10/10          10/10           4/8         0/0
+
+**Station 4 is a total collapse and it is not close.** The greedy verdict is `A` on **106 of 106**
+passes — every pair, both orientations, every family, the byte-identical placebo included. The
+argmax was a valid answer token every time, so this is not a formatting failure: the model answers,
+and the answer carries no information about which passages it was shown. Every family reads 0/0
+decided, because a constant slot answer cancels between orientations by construction.
+
+**Station 3 says why, one step earlier.** Splitting the answer distribution into the component
+invariant under swapping the passages and the component that flips with them:
+
+    pooled     |positional| 0.9998      |text| 0.000214      ratio 4676x
+
+The text-dependent residual is real — `placebo_identical` cancels to **exactly** 0.000000, which is
+the arithmetic check that the rest is a difference and not floating-point noise — and it is about
+two ten-thousandths of the answer distribution. Read as a sign test it is 6/10, 6/9 and 5/7 on B6's
+three families: the right direction on all three and significant on none.
+
+**So the loss is not at sampling, and that is the finding.** The directive framed the two
+possibilities precisely — alive at station 3 and dead at station 4 means the loss is in sampling
+and a protocol can recover it; already dead at station 3 means it is upstream of the verdict and no
+protocol can. It is already dead at station 3: 0.02% of the distribution at the position the
+verdict's first token comes from. **A better way of asking cannot be the fix for this model**, and
+the composite's architecture — put the deterministic counters in front rather than behind — is the
+correct response rather than the fallback one.
+
+Bounded exactly as §87 bounds it. This is a 4B open model and not the Haiku panel, so it is a lower
+bound on decodability rather than a statement about what Haiku perceives. What it does explain is
+§83's and §85's positional voids: the panel answering the slot is not a quirk of those arms, it is
+the dominant term. And `rewhitespace_sham` is worth its own line — 10/10 at stations 1 and 2 and
+4/8 at station 3 — so the channel is not selectively losing prose, it is losing everything,
+formatting included.
+
+**Three faults surfaced in the dry run, before anything was bought.** E6 cannot use the sign test
+the other five share: a two-sided test credits consistent *silence* exactly as much as consistent
+naming, because `k` is the larger of the two counts by construction, so a matcher that fires on no
+pair reads `k = G` and prints CLEARS. It now uses a one-sided Fisher exact against a null measured
+in the same run. E4's sign was a persona vote, which with two personas ties whenever they disagree
+— about half the pairs under a null, dropping G below the floor for arithmetic reasons of our own;
+it is now the paired difference of means, and G went 3/3/2 to 10/9/8. And `_synthetic_text` knew
+none of the new stages, so the dry run marked every E4/E5/E6 answer refused and exercised none of
+their scorers — a check that could not fail on the paths it existed to check.
+
+**The directive's floor is kept and its stated reason is not.** `2/2**G` was inherited from §87
+with §87's justification, invariance under a global sign flip. That invariance is a property of
+§87's *fitted* direction, and B6's counters are named a priori with nothing fitted, so no twin
+exists and the one-sided floor would be `1/2**G`. The floor holds for a stronger reason: **the
+alternative is non-directional** — B6 certifies that a difference exists and never which side is
+better — and taking the one-sided test would have been taking the more permissive statistic after
+seeing which way §81's rates pointed. Declared before the run: k = 9 of 10, 8 of 9, 7 of 7, and
+`repair_emdash` at G=7 clears only on a perfect seven with no margin at all.
+
+**The API arms are incomplete, and the reason is a measurement rather than an excuse.** The first
+full run reported `api: 490, replayed: 146, transport_failures: 390` — 390 of 490 calls obtained no
+answer at all. Measured afterwards: a serial call succeeds in 46s; two workers ran 4 of 4 in 130s;
+four workers ran 8 of 8 in 137s. **Four workers is fine**, and the failures coincided with the full
+pytest suite, mypy, a 14B ollama screen and a torch extraction sharing the box. The transport is
+sensitive to local load rather than to its own concurrency, which is a fact about this machine.
+
+Those 390 failures cost quota and cost no data, because of a fix made the same morning for an
+unrelated reason: `elicit.py` used to persist a transport failure as a refusal, so one hiccup would
+be baked into every future replay and no resume could repair it. §87.3's distinction — a broken
+install is not evidence about judges — has teeth in the cache as well as in the report. The first
+version of that fix threw the *reason* away with the record; `failure_reasons` now tallies by stop
+reason without caching it.
+
+E1, E2 and E6 are running at four workers against the shared digest cache and will finish on the
+resume. **No API protocol's verdict is claimed in this entry**, and the pre-registered outcome
+those arms decide — JudgeBench A2's verdict layer, or the composite proven rather than adopted —
+stays open. What E3 has already established is the narrower and harder half: whatever an
+elicitation protocol does at this tier, it is working with two ten-thousandths of a distribution.
+
+### 89.5 What was not run, and what it would cost
+
+- **Track V's two funded arms** (voice-binding dose $9.30, persistence $1.90; operator: FUND) are
+  designed and unstarted. They need `claude-opus-5` generations through the same transport that
+  Track E is queued on, and running them concurrently is what produced the 390 failures.
+- **E5**, the describe-then-judge two-stage, is the most expensive protocol at two calls per
+  comparison and was dropped from the running schedule so that E1/E2 and E6 — the incumbent and the
+  purest report test — would land first. Deferred rather than cancelled.
+- **The axiom battery on the composite with a real layer 3** waits on Track E's verdict. The
+  free branch — no verdict layer, the "no protocol survived" case — is what ran here, and it is the
+  pre-registered fallback rather than a substitute for the real one.
+- **No licence moved, no bar was re-declared after numbers arrived, and the §85 operator read was
+  not opened.**
