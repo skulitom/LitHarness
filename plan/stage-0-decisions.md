@@ -6560,8 +6560,11 @@ the difference-detection in a channel that reports, and route preference to a hu
 ### 89.5 What was not run, and what it would cost
 
 - **Track V's two funded arms** (voice-binding dose $9.30, persistence $1.90; operator: FUND) are
-  designed and unstarted. They need `claude-opus-5` generations through the same transport that
-  Track E is queued on, and running them concurrently is what produced the 390 failures.
+  built, pre-registered and **launched once Track E's arms finished**, not before: they need
+  `claude-opus-5` generations through the same transport, and two CLI jobs sharing this box is what
+  produced the 390 failures. 48 generations, ~$11.20. Their numbers are not in this entry and land
+  in their own; `voice_binding.py` carries the pre-registration and `results/voice-binding.json`
+  the result.
 - **E4 and E5** were dropped from the running schedule so E1/E2 and E6 — the incumbent and the
   purest report test — would land first, and they are the two the result now makes most worth
   buying. E5 asks E1's question with a description already in the context, which is precisely the
