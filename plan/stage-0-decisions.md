@@ -6486,8 +6486,11 @@ seeing which way §81's rates pointed. Declared before the run: k = 9 of 10, 8 o
 
 **The API arms landed after all, and one protocol survives.** 212 comparisons for E1/E2 and 212
 responses for E6, on Haiku, at four workers: **172 calls, 252 replayed, and zero transport
-failures**, $9.98. The 252 replays are §85's repair-panel records covering two whole fixture
-families for nothing, which is what rail 6 is for.
+failures**, $9.98. The 252 replays came from a cache seeded with three prior runs' records —
+`repair-panel-raw` 192, `persona-raw` 1,566, `cdg-raw` 962 — and covered about sixty per cent of
+the schedule for nothing, which is what rail 6 is for. Which records they were is identifiable
+where it matters: the two repair families reproduce §85's bias figures *exactly*, 0.6949 and
+0.4918, because they **are** §85's records rather than fresh measurements of them.
 
     protocol  precondition                                     verdict
     E1        OUT_OF_BAND  chose-A 0.6408 on 142 decided       VOID
