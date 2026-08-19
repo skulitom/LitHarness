@@ -77,11 +77,42 @@ HELD_OUT_POOL = "rr_mid"
 #: seventeen words, so eight is comfortably inside "not a coincidence" without being a whole line.
 BORROW_N = 8
 
+#: Windows' `CreateProcess` command-line ceiling. **A transport constraint that caps this arm's
+#: ladder, discovered by spending eight generations on it.**
+#:
+#: `claude -p` passes the system prompt as an argv element, so the whole voice block travels on the
+#: command line. Measured on this pool: dose 1 is 5,747 characters, dose 2 is 11,674, dose 4 is
+#: 25,478 and **dose 8 is 48,529** — and the scene text rides in a second argv element beside it.
+#: Dose 8 therefore cannot be sent from this machine at all, and the first run of this module
+#: reported `transport_error:FileNotFoundError` on all eight of its dose-8 calls, which is what
+#: `CreateProcess` returns when the line is too long.
+#:
+#: **A dose that cannot be sent is NOT_RUNNABLE and is not a measurement about the lever** — the
+#: same distinction §87.3 drew for `gpt-oss:20b`, where folding a broken load into "ineligible"
+#: would have reported a model as answering a question it never saw. So the ladder is checked
+#: against this ceiling *before* anything is spent, unreachable rungs are recorded with their
+#: measured size, and the persistence arm runs off the highest rung that actually ran.
+ARGV_LIMIT = 32767
+
+#: Headroom for the executable path, the flags, and the scene text in the neighbouring argv slot.
+#: Deliberately generous: the failure mode is silent on the calling side and costs a generation.
+ARGV_HEADROOM = 12000
+
+
+def dose_fits(system: str) -> bool:
+    """Can this dose's voice block travel on a Windows command line beside its scene?"""
+    return len(system) + ARGV_HEADROOM <= ARGV_LIMIT
+
+
 PRE_REGISTRATION: dict[str, Any] = {
     "written": "2026-08-19, before the first generation of this module",
     "arms": {
         "dose": "exemplar doses 0/1/2/4/8 x 8 scenes, nested; 40 generations",
-        "persistence": "each dose-8 output revised once through repair_interiority; 8 generations",
+        "persistence": (
+            "each top-dose output revised once through repair_interiority; 8 generations. "
+            "'Top dose' is the highest rung the transport can carry — see ARGV_LIMIT, which "
+            "excluded dose 8 on this machine after the fact."
+        ),
     },
     "primary": (
         "centroid distance in the run's own z-space between a generated scene and the centroid of "
@@ -167,7 +198,7 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
     order = pick_exemplars(shown_pool, count=len(shown_pool))
     ladder = {dose: [shown_pool[i] for i in order[:dose]] for dose in DOSES}
 
-    planned = len(units) * len(DOSES) + len(units)
+    planned = len(units) * len(DOSES) + len(units)  # upper bound; unrunnable rungs drop out
     if planned > args.guard and not args.yes:
         raise SystemExit(f"{planned} generations exceeds the {args.guard} guard; pass --yes")
 
@@ -181,13 +212,40 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
         "planned_generations": planned,
     }
 
+    # The ladder is filtered against the transport *before* anything is spent. A rung that cannot
+    # be sent is recorded with the size that made it unsendable, so the entry says NOT_RUNNABLE
+    # rather than reporting a rung of zero scenes as if the lever had failed there.
+    systems = {dose: (writer_system(SOBER) if dose == 0 else exemplar_system(ladder[dose]))
+               for dose in DOSES}
+    runnable = [dose for dose in DOSES if dose_fits(systems[dose])]
+    report["not_runnable"] = {
+        str(dose): {
+            "system_prompt_chars": len(systems[dose]),
+            "argv_limit": ARGV_LIMIT,
+            "why": "the voice block travels as an argv element and this rung exceeds the ceiling",
+        }
+        for dose in DOSES if dose not in runnable
+    }
+    report["runnable_doses"] = runnable
+    top = max(runnable)
+    if top != max(DOSES):
+        report["persistence_runs_off"] = {
+            "dose": top,
+            "instead_of": max(DOSES),
+            "why": (
+                "the persistence arm revises the most-conditioned output there is, and the "
+                "highest rung that ran is the most-conditioned output there is. Substituting the "
+                "top *runnable* dose is not a choice about the result — the substitution is "
+                "forced by the transport and would be identical whatever the numbers said."
+            ),
+        }
+
     outputs: dict[tuple[str, int], str] = {}
     revised: dict[str, str] = {}
     with Generator(Path(args.gen_cache), model=args.writer_model, dry_run=args.dry_run) as gen:
         for unit in units:
-            for dose in DOSES:
-                system = (writer_system(SOBER) if dose == 0
-                          else exemplar_system(ladder[dose]))
+            for dose in runnable:
+                system = systems[dose]
                 record = gen.generate(
                     {"scene": unit.unit_id, "arm": "dose", "dose": dose},
                     system, retell_turn(unit.text),
@@ -197,7 +255,7 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
                     outputs[(unit.unit_id, dose)] = record["text"]
                 print(f"  dose {dose} {unit.unit_id}", file=sys.stderr, flush=True)
         for unit in units:
-            moved = outputs.get((unit.unit_id, max(DOSES)))
+            moved = outputs.get((unit.unit_id, top))
             if moved is None:
                 continue
             record = gen.generate(
@@ -212,15 +270,15 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
             print(f"  persistence {unit.unit_id}", file=sys.stderr, flush=True)
         report["calls"] = {"api": gen.api_calls, "replayed": gen.replayed}
 
-    every = list(outputs.values()) + list(revised.values()) + shown_pool[: max(DOSES)]
+    every = list(outputs.values()) + list(revised.values()) + shown_pool[: top]
     if len(every) < 2:
         report["status"] = "NOT RUN — no generations survived"
         return report
     scale = feature_scale(_rows(every))
-    exemplar_centroid = centroid(_rows(shown_pool[: max(DOSES)]))
+    exemplar_centroid = centroid(_rows(shown_pool[: top]))
 
     per_dose: dict[str, Any] = {}
-    for dose in DOSES:
+    for dose in runnable:
         texts = [outputs[(u.unit_id, dose)] for u in units if (u.unit_id, dose) in outputs]
         if not texts:
             per_dose[str(dose)] = {"scenes": 0}
@@ -230,7 +288,7 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
             "centroid_distance": round(statistics.fmean(
                 z_distance(row, exemplar_centroid, scale) for row in _rows(texts)), 4),
             "borrow_shown": round(statistics.fmean(
-                borrow_rate(t, ladder[max(DOSES)]) for t in texts), 6),
+                borrow_rate(t, ladder[top]) for t in texts), 6),
             "borrow_held_out": round(statistics.fmean(
                 borrow_rate(t, held_out) for t in texts), 6),
             "interior_per_1k": round(statistics.fmean(
@@ -245,10 +303,10 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
             "centroid_distance": round(statistics.fmean(
                 z_distance(row, exemplar_centroid, scale) for row in _rows(texts)), 4),
             "similarity_to_moved": round(statistics.fmean(
-                word_similarity(outputs[(scene, max(DOSES))], text)
+                word_similarity(outputs[(scene, top)], text)
                 for scene, text in revised.items()), 4),
             "borrow_shown": round(statistics.fmean(
-                borrow_rate(t, ladder[max(DOSES)]) for t in texts), 6),
+                borrow_rate(t, ladder[top]) for t in texts), 6),
         }
     report["reading"] = _reading(report)
     return report

@@ -1,0 +1,93 @@
+{
+  "calls": {
+    "api": 40,
+    "replayed": 0
+  },
+  "dose_arm": {
+    "0": {
+      "borrow_held_out": 0.0,
+      "borrow_shown": 0.0,
+      "centroid_distance": 7.3976,
+      "interior_per_1k": 2.149,
+      "scenes": 8
+    },
+    "1": {
+      "borrow_held_out": 0.0,
+      "borrow_shown": 0.0,
+      "centroid_distance": 6.6525,
+      "interior_per_1k": 3.122,
+      "scenes": 8
+    },
+    "2": {
+      "borrow_held_out": 0.0,
+      "borrow_shown": 0.0,
+      "centroid_distance": 6.6498,
+      "interior_per_1k": 2.897,
+      "scenes": 8
+    },
+    "4": {
+      "borrow_held_out": 0.0,
+      "borrow_shown": 0.0,
+      "centroid_distance": 6.4754,
+      "interior_per_1k": 2.322,
+      "scenes": 8
+    },
+    "8": {
+      "scenes": 0
+    }
+  },
+  "doses": [
+    0,
+    1,
+    2,
+    4,
+    8
+  ],
+  "held_out_pool": {
+    "key": "rr_mid",
+    "size": 15
+  },
+  "planned_generations": 48,
+  "pre_registration": {
+    "arms": {
+      "dose": "exemplar doses 0/1/2/4/8 x 8 scenes, nested; 40 generations",
+      "persistence": "each dose-8 output revised once through repair_interiority; 8 generations"
+    },
+    "floor": "Dose 0 is the same prompt with no voice block, so the dose-0 scenes are the anchor and any movement is measured against them. A dose-0 scene that already sits at the exemplar centroid would mean the z-space has no room and the arm says so rather than reporting a flat curve as a plateau.",
+    "no_dose_monotonicity_bar": "No threshold is declared on the dose curve, and the reason is \u00a789's own rule about bars the design cannot reach: with five rungs and eight scenes the exact permutation null on a monotone trend has a smallest attainable p of 2/5! = 0.0167 per scene, which is attainable, but the *shape* question ('does it plateau') is not a null-hypothesis question at all and dressing it as one would manufacture a verdict. The curve is reported with its increments and the plateau is described rather than tested.",
+    "persistence_reading": "The certified revision is single-variable and on a different axis (interiority), so it should not move the voice centroid at all. If the revised scene's centroid distance returns toward the dose-0 value, the lever resets on first use and is a demo; if it holds, the voice survives the pipeline that would follow it.",
+    "primary": "centroid distance in the run's own z-space between a generated scene and the centroid of the SHOWN exemplars. Falling with dose is the lever binding.",
+    "the_control_is_the_finding": "Movement is read as deep-feature movement only if n-gram overlap with the shown passages rises no faster with dose than overlap with a held-out pool the model never saw. If shown overlap rises faster, the lever is mimicry and the centroid movement is a side effect of copying. Both curves print whatever they show.",
+    "what_it_cannot_say": "Nothing about quality. Register movement is not improvement; \u00a782 governs verbatim and a scene that moved toward a human exemplar's feature centroid has moved, not improved.",
+    "written": "2026-08-19, before the first generation of this module"
+  },
+  "reading": {
+    "borrowing": "shown-overlap +0.000000 against held-out +0.000000: movement is not explained by borrowing \u2014 shown overlap rose no faster than the pool the model never saw",
+    "dose": "centroid distance 7.3976 -> 6.4754 (+0.9222 over doses 0..4); the lever binds"
+  },
+  "scenes": [
+    "gen:scene-1",
+    "gen:scene-2",
+    "gen:scene-3",
+    "gen:scene-4",
+    "gen:scene-5",
+    "gen:scene-6",
+    "gen:scene-7",
+    "gen:scene-8"
+  ],
+  "shown_pool": {
+    "key": "rr_high",
+    "order": [
+      3,
+      6,
+      4,
+      0,
+      1,
+      2,
+      8,
+      5
+    ],
+    "size": 10
+  },
+  "writer_model": "claude-opus-5"
+}
