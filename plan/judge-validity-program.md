@@ -9,8 +9,12 @@ machine-only stack can settle from the half it cannot reach at any price.
 **The programme's headline, stated before any tier runs, because the build produced it.** Three
 of the four tiers are not runnable today and none of the three is blocked by money:
 
-- **T1** is blocked by provider access this machine does not have. One frontier lineage is
-  reachable; the local tier is measured below the instrument's capability floor.
+- **T1** is blocked by two things this document originally collapsed into one — see §86.8, which
+  corrects it at the merge. The screen *is* runnable locally and has since been run: of four local
+  candidates, two are ineligible on bias measured on our own pairs, one fails to load, and
+  `phi4:latest` cleared the band at 0.531 and returned the project's first cross-family reading.
+  What blocks the tier is **operator acceptability** of the eligible local candidates and
+  **frontier API access** for the ≥4 lineages it asks for.
 - **T2 is blocked by its own premise.** "Newly published" and "readable retention label" are
   mutually exclusive on the measured distribution: the label needs accumulated views and a new
   serial has none. Median total views for a 2025 LitRPG serial at a median age of 98 days is
@@ -238,13 +242,32 @@ The design is sound and the blocker is procurement, so it is priced rather than 
 
 **What is reachable here.** One frontier lineage: Anthropic, via `ANTHROPIC_BASE_URL` and the
 `claude` CLI. No OpenAI, Google, Mistral or DeepSeek key exists in this environment. Ollama holds
-small open-weight models, and §70 already measured what that tier is worth as a judge:
-`gemma3:4b` is void on bias twice — chose-A **0.8021 over 389 decided** on the preference
-question (z = +11.9) and 0.8095 on intensity. The RUNBOOK records that this bounds *the
-capability floor of the instrument*, not the questions. A 4B judge is not a lineage; it is a coin
-with a vocabulary.
+small open-weight models.
 
-**So T1's price is provider access: small money, non-trivial setup.** An account and key per
+**This section originally dismissed the local tier by citing §70's `gemma3:4b` bias of 0.8021 and
+0.8095. That citation was the inheritance §79.1 forbids** — those figures come from `toll.db`
+passages against their own ablations, not from the pairs a screen would use — and §4.3 below
+quotes that very rule against T2. §87.3 measured it properly instead, on §85's certified repair
+pairs, at no quota cost:
+
+    candidate      status                decided   chose-A   preference
+    gemma3:4b      INELIGIBLE_ON_BIAS      11/32     1.000    withheld
+    qwen3:4b       INELIGIBLE_ON_BIAS      32/32     0.750    withheld
+    phi4:latest    ELIGIBLE                32/32     0.531    0.9688
+    gpt-oss:20b    NOT_SCREENABLE           0/32         —    weights fail to load
+
+**The dismissal survives and its evidence does not**, which is the same shape the correction takes
+everywhere else in this repository. `gemma3:4b` reads 1.000 rather than 0.802 — on eleven decisions
+of thirty-two, a judge that mostly abstains and is perfectly positional when it does not. And
+`phi4:latest` is the counter-example the original sentence ruled out by assertion: it cleared the
+band and then preferred §85's interiority repair at **0.9688**, beside Haiku's 0.9509 and Sonnet's
+1.0000 — a cross-family judge liking the repair about as much as the generator's own family does,
+which points away from self-preference. It is excluded as a *candidate* by operator judgement about
+model currency, which is a reserved call, not a measurement.
+
+**So T1's price is not "provider access" flatly; it is provider access for the frontier lineages
+plus an operator decision about the local ones.** For the frontier half: small money, non-trivial
+setup. An account and key per
 lineage, an adapter per transport, and roughly **$12–40 per lineage per JudgeBench-equivalent
 run** (§79.1's 368 comparisons cost $11.71 on the cheap Anthropic tier; other labs' frontier
 tiers cost more per token, not less). The larger cost is that every lineage must clear T0 before
@@ -263,7 +286,11 @@ its agreement counts for anything, and on this material T0 is not a formality.
 - **A stronger tier is not the known fix for bias.** Opus-5 was measured on the same three
   repair arms as Haiku and read em_dash_strip 0.5000, em_dash_inject 0.7000 and rewhitespace
   1.0000, pooled **0.661 over 177 decided**. Any T1 candidate ladder that assumes tier buys
-  positional resolution is assuming something the ledger has already measured against.
+  positional resolution is assuming something the ledger has already measured against — and
+  `phi4:latest`, a 2024-era 14B model, cleared the band that Opus-5 missed on three arms.
+- **Screen every candidate on the pairs it will be used on.** The correction above is this rule
+  applied to a sentence that broke it, and it cost nothing to fix because local inference is free.
+  The rule is §79.1's and it has now caught this document once.
 
 **And the assumption T1 rests on should be stated where it can be attacked:** that training
 lineages are independent. Labs train on overlapping web corpora and on preference data with
@@ -362,8 +389,14 @@ nearest material both voided.**"
 already *is* the screen for that precondition, it already exists, and it costs about **$12 per
 candidate**. The ordering is therefore forced:
 
-    T0 axioms ($25, built)  ->  §79 bias screen per candidate ($12)  ->  only a candidate that
+    T0 axioms ($26, run)  ->  §79 bias screen per candidate ($12)  ->  only a candidate that
     holds 0.40-0.60 on between-author pairs may have a T2 pre-registration issued for it
+
+**Read that screen for the band first and the interval second, never the point estimate.** §87.2
+re-derives what §79's bar costs: clearing 0.52 takes 14 of 25 and 11 of 21 pairs, while the
+pre-registered binding half — a Clopper-Pearson lower bound clear of 0.50 — takes **18 of 25 and 16
+of 21**, roughly three pairs in four. A candidate that clears 0.52 on the nose has not cleared the
+bar.
 
 ### 4.4 The rest of the price, measured
 
@@ -474,7 +507,8 @@ read as having achieved the stronger thing.**
 
     tier   status              money         calendar      engineering        blocker
     T0     RUN; incumbent out  $26.09        ~4 h          done               none
-    T1     designed            $12-40/lineage days          adapter per lab    provider access
+    T1     screened locally    $12-40/lineage days          adapter per lab    frontier access +
+                                                                              operator call
     T2     designed            ~$15/run      11-13 weeks   scraper + store    premise, label
                                                                               floor, ToS
     T3     designed            ~$40-80       days          optimiser harness  T1

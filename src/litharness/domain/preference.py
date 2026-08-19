@@ -81,6 +81,35 @@ DESCRIPTIVE_CLUSTER_FLOOR = 5
 #: is what makes "each (pair, orientation, protocol, reader) is one judgment" expressible.
 UNASSIGNED_READER = ""
 
+#: Reader-id prefix reserved for rows a *machine* wrote. The §72 judge path records its
+#: verdicts through this same pair table — same draw, same write-once discipline, the
+#: licensing calibration id as provenance — and that sharing is deliberate: a judged
+#: tournament is real selection evidence and belongs on the record beside the human rows it
+#: imitates. What it must never be is *countable* as a human's judgment, and nothing marked
+#: the difference before this prefix: `reader_id` was free text, and every consumer read the
+#: verdict, the recognition flag and the abstention, never the author.
+MACHINE_READER_PREFIX = "judge:"
+
+
+def machine_reader_id(calibration_id: str) -> str:
+    """The reader id a machine-written pair verdict is stamped with.
+
+    The mint and the test (`is_machine_reader`) are named together, beside the prefix they
+    share, because the mint is where the discipline actually lives: a machine row that
+    forgets the prefix is indistinguishable from a person's, and no check downstream can
+    recover an author the row never recorded.
+    """
+    return f"{MACHINE_READER_PREFIX}{calibration_id}"
+
+
+def is_machine_reader(reader_id: str | None) -> bool:
+    """Whether this row was written by a machine rather than answered by a person.
+
+    `None` and `UNASSIGNED_READER` are both false: a drawn row awaiting a reader is a
+    human row that has not been answered yet, not a machine one.
+    """
+    return (reader_id or "").startswith(MACHINE_READER_PREFIX)
+
 
 class MemberKind(enum.StrEnum):
     """What one side of a pair is. The values are the address prefixes.
@@ -748,6 +777,17 @@ def analysable_judgments(samples: Iterable[PairSample]) -> tuple[PairSample, ...
     and a staleness digest that over-invalidate are the safe direction, and per-protocol
     slicing belongs to the consumer that knows which protocol a calibration was measured
     under.
+
+    **Machine-written rows are excluded, because the class is constituted as human.**
+    `EvidenceClass.PREFERENCE` *is* "a human's blinded, position-swapped choice between two
+    texts", and that property had no enforcement anywhere — no source column, no CHECK, no
+    predicate — while the §72 judge writes its verdicts through this very table. So one
+    human-anchored calibration licensing one judged tournament put the judge's own verdicts
+    into the pool the NEXT preference calibration's holdout is denominated in, with nothing
+    counting them separately: the class laundering itself one licence at a time. The
+    exclusion is of the *count* only. The rows stay on record and stay in the staleness
+    digest below — the same shape recognition already has, and for the same reason: a row
+    the analysis must skip is still a fact about the verdict set.
     """
     return tuple(
         sample
@@ -755,6 +795,7 @@ def analysable_judgments(samples: Iterable[PairSample]) -> tuple[PairSample, ...
         if sample.verdict is not None
         and not sample.recognized
         and sample.verdict is not PairVerdict.NOT_SURE
+        and not is_machine_reader(sample.reader_id)
     )
 
 
@@ -767,6 +808,15 @@ def pair_verdicts_digest_for(samples: Iterable[PairSample]) -> str:
     closes: an `EvidenceClass` with no digest entry gets None from the dispatch, and
     `why_not_promotable` reads a None digest as "no staleness check requested", not as
     stale — so preference calibrations would never re-open when the pair verdicts moved.
+
+    **Machine-written rows move this digest, and that is the decided side.** They are cut
+    from `analysable_judgments` above and kept here on purpose: §72 states that "judge
+    verdicts move the answered-verdict digest and stale the calibration that licensed them
+    — one calibration buys roughly one judged tournament before re-measurement", and that
+    expiry is the whole price of the judge path. The laundering fix is about the holdout
+    *denominator*, not the staleness *address*; reading the exclusion into this function
+    would quietly turn one licence into unlimited judged tournaments, which is a far more
+    expensive direction than over-invalidation.
     """
     return verdicts_digest_for(
         (sample.sample_id, sample.verdict.value)
@@ -780,6 +830,7 @@ __all__ = [
     "DESCRIPTIVE_CLUSTER_FLOOR",
     "INTERNAL_FRAME",
     "INTERNAL_PROTOCOL",
+    "MACHINE_READER_PREFIX",
     "UNASSIGNED_READER",
     "ComparisonExcerpt",
     "Member",
@@ -795,6 +846,8 @@ __all__ = [
     "draw_pairs",
     "excerpt_address",
     "excerpt_id_for",
+    "is_machine_reader",
+    "machine_reader_id",
     "observed_win_rate",
     "pair_bucket",
     "pair_id_for",

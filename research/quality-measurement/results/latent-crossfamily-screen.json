@@ -1,0 +1,93 @@
+{
+  "candidates": [
+    {
+      "comparisons": 32,
+      "eligible": false,
+      "in_band": false,
+      "model": "gemma3:4b",
+      "positional_bias": {
+        "chose_A_rate": 1.0,
+        "decided": 11,
+        "note": "0.5 is unbiased; distance from it is the share of the answer that is layout",
+        "per_persona_chose_A": {
+          "grinder": 1.0,
+          "stakes": 1.0
+        }
+      },
+      "refused": 0,
+      "status": "INELIGIBLE_ON_BIAS",
+      "win_rate": "WITHHELD \u2014 see PRE_REGISTRATION.withholding_rule"
+    },
+    {
+      "comparisons": 32,
+      "eligible": false,
+      "in_band": false,
+      "model": "qwen3:4b",
+      "positional_bias": {
+        "chose_A_rate": 0.75,
+        "decided": 32,
+        "note": "0.5 is unbiased; distance from it is the share of the answer that is layout",
+        "per_persona_chose_A": {
+          "grinder": 0.9375,
+          "stakes": 0.5625
+        }
+      },
+      "refused": 0,
+      "status": "INELIGIBLE_ON_BIAS",
+      "win_rate": "WITHHELD \u2014 see PRE_REGISTRATION.withholding_rule"
+    },
+    {
+      "comparisons": 32,
+      "eligible": true,
+      "in_band": true,
+      "model": "phi4:latest",
+      "operator_excluded": "operator: too old to serve as Track S's cross-family judge",
+      "positional_bias": {
+        "chose_A_rate": 0.5312,
+        "decided": 32,
+        "note": "0.5 is unbiased; distance from it is the share of the answer that is layout",
+        "per_persona_chose_A": {
+          "grinder": 0.5,
+          "stakes": 0.5625
+        }
+      },
+      "refused": 0,
+      "status": "ELIGIBLE",
+      "win_rate": 0.9688
+    },
+    {
+      "cache": "crossfamily-gpt-oss-20b-raw.jsonl",
+      "comparisons": 32,
+      "eligible": false,
+      "in_band": false,
+      "model": "gpt-oss:20b",
+      "not_screenable_because": "every comparison refused; see crossfamily-gpt-oss-20b-raw.jsonl",
+      "operator_excluded": "operator: too old; also NOT_SCREENABLE on this machine (weights fail to load)",
+      "positional_bias": {
+        "chose_A_rate": NaN,
+        "decided": 0,
+        "note": "no decided comparisons"
+      },
+      "refused": 32,
+      "status": "NOT_SCREENABLE",
+      "win_rate": "WITHHELD \u2014 see PRE_REGISTRATION.withholding_rule"
+    }
+  ],
+  "family": "repair_interiority",
+  "operator_excluded": {
+    "gpt-oss:20b": "operator: too old; also NOT_SCREENABLE on this machine (weights fail to load)",
+    "phi4:latest": "operator: too old to serve as Track S's cross-family judge"
+  },
+  "pre_registration": {
+    "band": [
+      0.4,
+      0.6
+    ],
+    "measures": "positional bias only \u2014 the eligibility precondition, not a preference.",
+    "power": "Deliberately a screen. At the default 32 comparisons the standard error on a bias estimate is about 0.088, which separates a 0.80-biased judge from an unbiased one at roughly 3.4 standard errors and does NOT resolve a candidate sitting near the band edge. A candidate that lands inside the band here is a candidate worth funding a real arm on, never a candidate that has passed.",
+    "reserved": "Which cross-family judge is acceptable \u2014 cost, terms, protocol fidelity \u2014 is the operator's call (directive \u00a76). This module narrows the field to the eligible; it does not choose from it.",
+    "withholding_rule": "Win rates are computed and NOT reported for any candidate whose bias falls outside the band. A preference read off a positionally-biased judge is what \u00a783, \u00a785's em-dash arm and \u00a779.1 each had to void, and printing one here would also pre-empt the operator's reserved choice of cross-family judge.",
+    "written": "2026-08-19, before the first local elicitation"
+  },
+  "reading": "NO LOCAL CANDIDATE IS ELIGIBLE, so the directive's kill condition is DISCHARGED BY MEASUREMENT rather than asserted: Track S waits on a judge the operator selects, and no degraded protocol is substituted to force a number. Answered a slot rather than a text: gemma3:4b, qwen3:4b. Could not be elicited from on this machine at all: gpt-oss:20b."
+}

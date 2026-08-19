@@ -34,3 +34,14 @@ research/quality-measurement/corpora/taste-benchmark.json
 
 # Run logs. The JSON and JSONL beside them are the artifacts.
 research/quality-measurement/results/*.log
+
+# Residual-stream activation dumps from the latent-taste probe (stage-0 Track P). One vector per
+# (text, layer) at 2,560 dims — a few MB, small enough to be tempting, and ignored anyway. Two
+# reasons: it is a build product that `latent_probe.py --extract` regenerates from committed
+# fixtures in one command, and the moment a family is added whose source is somebody else's prose
+# the dump becomes a derived work of a corpus this repository does not own. Deciding that
+# case-by-case later is how the 294k near-miss happened (commit bbc6560), so the rule is the same
+# for every dump regardless of source. The committed record is the results JSON, which carries
+# scene ids, verdicts and provenance and no vectors.
+research/quality-measurement/results/*.npz
+research/quality-measurement/results/latent-taste-activations*.jsonl

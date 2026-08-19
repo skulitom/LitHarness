@@ -1,0 +1,268 @@
+{
+  "agreement": {
+    "aligned": 0.65,
+    "crossed": 0.4048
+  },
+  "comparisons": 368,
+  "corpus_meta": {
+    "acclaim_pairs": 8,
+    "balance": {
+      "aligned": {
+        "conversion": {
+          "high_median": 0.005629,
+          "high_side_larger_in_pairs": 25,
+          "low_median": 0.001729,
+          "median_ratio": 3.2555,
+          "of_pairs": 25
+        },
+        "favorites": {
+          "high_median": 76.0,
+          "high_side_larger_in_pairs": 24,
+          "low_median": 19.0,
+          "median_ratio": 4.0,
+          "of_pairs": 25
+        },
+        "followers": {
+          "high_median": 326.0,
+          "high_side_larger_in_pairs": 25,
+          "low_median": 83.0,
+          "median_ratio": 3.9277,
+          "of_pairs": 25
+        },
+        "views": {
+          "high_median": 68818.0,
+          "high_side_larger_in_pairs": 12,
+          "low_median": 66487.0,
+          "median_ratio": 1.0351,
+          "of_pairs": 25
+        },
+        "words": {
+          "high_median": 2225,
+          "high_side_larger_in_pairs": 15,
+          "low_median": 2205,
+          "median_ratio": 1.0091,
+          "of_pairs": 25
+        }
+      },
+      "crossed": {
+        "conversion": {
+          "high_median": 0.0067,
+          "high_side_larger_in_pairs": 21,
+          "low_median": 0.001438,
+          "median_ratio": 4.6601,
+          "of_pairs": 21
+        },
+        "favorites": {
+          "high_median": 91.0,
+          "high_side_larger_in_pairs": 0,
+          "low_median": 577.0,
+          "median_ratio": 0.1577,
+          "of_pairs": 21
+        },
+        "followers": {
+          "high_median": 321.0,
+          "high_side_larger_in_pairs": 0,
+          "low_median": 1924.0,
+          "median_ratio": 0.1668,
+          "of_pairs": 21
+        },
+        "views": {
+          "high_median": 48180.0,
+          "high_side_larger_in_pairs": 0,
+          "low_median": 777262.0,
+          "median_ratio": 0.062,
+          "of_pairs": 21
+        },
+        "words": {
+          "high_median": 2543,
+          "high_side_larger_in_pairs": 12,
+          "low_median": 2520,
+          "median_ratio": 1.0091,
+          "of_pairs": 21
+        }
+      }
+    },
+    "built_from": {
+      "cohort": "human_pre_llm",
+      "limit": 0,
+      "max_log_view_gap": 0.3,
+      "max_log_word_gap": 0.1,
+      "max_words": 6000,
+      "min_conversion_ratio": 2.0,
+      "min_views": 10000,
+      "min_words": 1500,
+      "shards": [
+        3,
+        30
+      ]
+    },
+    "excerpt_words": 1000,
+    "max_disjoint_pairs_possible": 53,
+    "note": "high/low name the conversion label only. conversion = followers/views, so no pair with a real label gap can balance both popularity covariates; the strata carry the confound in opposite directions instead. `aligned` has every prose-blind popularity rule pointing at the label and `crossed` has every one pointing away, so no single fixed rule clears 0.50 in both. The bar is the minimum across strata, never the mean.",
+    "pairs_per_stratum": {
+      "aligned": 25,
+      "crossed": 21
+    },
+    "protocol": "plan/stage-0-decisions.md \u00a780",
+    "stories_clearing_floor": 107
+  },
+  "intervals": {
+    "aligned": {
+      "high": 0.775,
+      "low": 0.51,
+      "passages": 25,
+      "personas": 4,
+      "reading": "resamples passages and personas both; `gate1.paired_ci` resamples passages only and over-rejects at 3.8-23.9% against a nominal 2.5% at this n. Read the fourth rung of `evaluate.verdict()` against this interval, not that one"
+    },
+    "crossed": {
+      "high": 0.5595,
+      "low": 0.256,
+      "passages": 21,
+      "personas": 4,
+      "reading": "resamples passages and personas both; `gate1.paired_ci` resamples passages only and over-rejects at 3.8-23.9% against a nominal 2.5% at this n. Read the fourth rung of `evaluate.verdict()` against this interval, not that one"
+    }
+  },
+  "judge": {
+    "model": "claude-sonnet-5",
+    "pair_question": "intensity",
+    "personas": [
+      "grinder",
+      "stakes",
+      "voice",
+      "newcomer"
+    ],
+    "tie_policy": "half_win",
+    "transport": "cli"
+  },
+  "pairs_per_axis": {
+    "aligned": 25,
+    "crossed": 21
+  },
+  "per_axis_bias": {
+    "aligned": {
+      "chose_A_rate": 0.54,
+      "decided": 200,
+      "note": "0.5 is unbiased; distance from it is the share of the answer that is layout",
+      "per_persona_chose_A": {
+        "grinder": 0.66,
+        "newcomer": 0.7,
+        "stakes": 0.46,
+        "voice": 0.34
+      }
+    },
+    "crossed": {
+      "chose_A_rate": 0.4286,
+      "decided": 168,
+      "note": "0.5 is unbiased; distance from it is the share of the answer that is layout",
+      "per_persona_chose_A": {
+        "grinder": 0.4762,
+        "newcomer": 0.5952,
+        "stakes": 0.3571,
+        "voice": 0.2857
+      }
+    }
+  },
+  "planned_calls": 368,
+  "positional_bias": {
+    "chose_A_rate": 0.4891,
+    "decided": 368,
+    "note": "0.5 is unbiased; distance from it is the share of the answer that is layout",
+    "per_persona_chose_A": {
+      "grinder": 0.5761,
+      "newcomer": 0.6522,
+      "stakes": 0.413,
+      "voice": 0.3152
+    }
+  },
+  "pre_registration": {
+    "bar": "min(agreement_aligned, agreement_crossed) must exceed the best prose-blind rule's own minimum across the same strata, and the interval lower bound in EACH stratum must clear 0.50. The minimum is the statistic because conversion = followers/views makes some popularity rule perfect within any single stratum",
+    "fails": "otherwise. A judge that cannot do this has no external warrant, whatever it scores on our own reason vocabulary (\u00a777's reason codes are ours; \u00a756.3 refused the raw bar)",
+    "never_average": "the strata are never pooled or averaged. A popularity-proxying judge scores near 1.0 in aligned and near 0.0 in crossed, and their mean is 0.5 \u2014 indistinguishable from a coin and from a genuine partial signal. Pooling would discard the only discriminating structure the corpus has",
+    "passes": "bar met with bias in band in both strata: this configuration orders matched human prose on a label nobody told it about, against the popularity covariates in one stratum, and may be considered for the \u00a772 judge licence",
+    "precondition": "per-stratum positional bias within 0.40-0.60, read on the point estimate exactly as \u00a774 and \u00a777 read it. Not loosened: these strata carry more pairs than the 63-comparison arm that rule voided, so the estimate is tighter rather than more forgiving",
+    "primary_axis": "conversion, both strata. acclaim is reported and cannot license a judge: MoL is famous and off-platform, so recognition explains agreement without a claim about prose (\u00a777.1)"
+  },
+  "prose_blind_baselines": {
+    "pick_fewer_followers": {
+      "min_across_strata": 0.0,
+      "per_stratum": {
+        "aligned": 0.0,
+        "crossed": 1.0
+      }
+    },
+    "pick_fewer_views": {
+      "min_across_strata": 0.52,
+      "per_stratum": {
+        "aligned": 0.52,
+        "crossed": 1.0
+      }
+    },
+    "pick_longer_chapter_not_shown": {
+      "min_across_strata": 0.5714,
+      "per_stratum": {
+        "aligned": 0.6,
+        "crossed": 0.5714
+      }
+    },
+    "pick_longer_excerpt": {
+      "min_across_strata": 0.4762,
+      "per_stratum": {
+        "aligned": 0.64,
+        "crossed": 0.4762
+      }
+    },
+    "pick_more_favorites": {
+      "min_across_strata": 0.0,
+      "per_stratum": {
+        "aligned": 0.96,
+        "crossed": 0.0
+      }
+    },
+    "pick_more_followers": {
+      "min_across_strata": 0.0,
+      "per_stratum": {
+        "aligned": 1.0,
+        "crossed": 0.0
+      }
+    },
+    "pick_more_views": {
+      "min_across_strata": 0.0,
+      "per_stratum": {
+        "aligned": 0.48,
+        "crossed": 0.0
+      }
+    }
+  },
+  "protocol": "plan/stage-0-decisions.md \u00a779",
+  "refused": 0,
+  "replayed": 0,
+  "spend": {
+    "cache_read": 24513386,
+    "cache_write": 8778438,
+    "equivalent_usd": 49.9676,
+    "input": 3849983,
+    "output": 1851733
+  },
+  "verdict": {
+    "agreement_per_stratum": {
+      "aligned": 0.65,
+      "crossed": 0.4048
+    },
+    "best_prose_blind_min": 0.52,
+    "conditions": {
+      "bar": "min(agreement_aligned, agreement_crossed) must exceed the best prose-blind rule's own minimum across the same strata, and the interval lower bound in EACH stratum must clear 0.50. The minimum is the statistic because conversion = followers/views makes some popularity rule perfect within any single stratum",
+      "fails": "otherwise. A judge that cannot do this has no external warrant, whatever it scores on our own reason vocabulary (\u00a777's reason codes are ours; \u00a756.3 refused the raw bar)",
+      "never_average": "the strata are never pooled or averaged. A popularity-proxying judge scores near 1.0 in aligned and near 0.0 in crossed, and their mean is 0.5 \u2014 indistinguishable from a coin and from a genuine partial signal. Pooling would discard the only discriminating structure the corpus has",
+      "passes": "bar met with bias in band in both strata: this configuration orders matched human prose on a label nobody told it about, against the popularity covariates in one stratum, and may be considered for the \u00a772 judge licence",
+      "precondition": "per-stratum positional bias within 0.40-0.60, read on the point estimate exactly as \u00a774 and \u00a777 read it. Not loosened: these strata carry more pairs than the 63-comparison arm that rule voided, so the estimate is tighter rather than more forgiving",
+      "primary_axis": "conversion, both strata. acclaim is reported and cannot license a judge: MoL is famous and off-platform, so recognition explains agreement without a claim about prose (\u00a777.1)"
+    },
+    "lower_bounds": {
+      "aligned": 0.51,
+      "crossed": 0.256
+    },
+    "min_agreement": 0.4048,
+    "outcome": "FAILS",
+    "why": "minimum agreement 0.4048; best prose-blind minimum 0.52 (NOT beaten); lower bounds {'aligned': 0.51, 'crossed': 0.256} (clears: {'aligned': True, 'crossed': False})"
+  }
+}

@@ -57,6 +57,23 @@ OURS = (
 #: text, it must not call the field one of these.
 RESPONSE_FIELDS = frozenset({"text", "result", "completion", "reason", "note", "reading"})
 
+#: Blocks that hold what **we** wrote, never what a model read. A `pre_registration` block is the
+#: rules of an experiment declared before it ran; it is our own prose, it is committed to the
+#: ledger as well, and `plan/` is already exempt in :data:`OURS` for exactly that reason.
+#:
+#: Added 2026-08-19, when §87.2's `bar_attainability` note came to 126 words and failed the audit.
+#: Shortening it would have cleared the working tree and not the history — the audit reads every
+#: blob any commit ever pointed at — so the choice was to rewrite a branch whose commit boundaries
+#: are the evidence that its bars predate its numbers, or to say structurally what is true: an
+#: experiment's own declared rules are not third-party prose.
+#:
+#: **The soft spot is the same one `RESPONSE_FIELDS` has and it is named for the same reason.** A
+#: future file that buried corpus text under a key containing `pre_registration` would pass. The
+#: match is on an ancestor key rather than the leaf, so it is broader than the response rule and
+#: deserves more suspicion, not less: if a schema ever needs to record source text, it must not
+#: put it inside a pre-registration block.
+OURS_FIELDS = ("pre_registration",)
+
 #: Below this many commits the history is shallow and the audit cannot do its job. It fails
 #: rather than reporting clean, because a check that passes on a shallow clone is a check that
 #: cannot fail — the shape of every proxy BRIEF §2 had to refute.
@@ -68,6 +85,20 @@ MIN_COMMITS = 50
 #: them our own documents, which is the shape of a check that cannot fail informatively. Corpus
 #: text would arrive as a *data* field in a results file, and that is what this looks at.
 DATA_SUFFIXES = (".json", ".jsonl", ".csv", ".txt")
+
+#: Extensions this audit refuses **on sight**, without opening them. Added for stage-0 §86's
+#: activation dumps: `latent_probe.py --extract` writes an `.npz` of residual-stream vectors, and
+#: the moment a fixture family sources somebody else's prose that dump is a derived work of a
+#: corpus this repository does not own.
+#:
+#: **Scanning inside one is not an option, which is why the rule is presence rather than content.**
+#: An `.npz` is a zip of binary arrays: `git cat-file -p` returns bytes that `long_strings` cannot
+#: walk and `str.split()` would score as gibberish, so a scanner would open it, find nothing, and
+#: report clean — a check that cannot fail, which is the shape BRIEF §2 exists to refuse. A
+#: committed activation dump has no legitimate reason to be in this history in the first place:
+#: `.gitignore` already excludes it and it regenerates in one command. So its *presence* is the
+#: finding.
+BINARY_DERIVATIVE_SUFFIXES = (".npz", ".npy", ".pt", ".safetensors")
 
 
 def _run(args: list[str]) -> str:
@@ -128,6 +159,20 @@ def history_blobs() -> list[tuple[str, str]]:
     return sorted(seen.items(), key=lambda pair: pair[1])
 
 
+def binary_derivatives() -> list[tuple[str, str]]:
+    """(sha, path) for every model-derived binary any commit ever pointed at.
+
+    Presence is the finding — see :data:`BINARY_DERIVATIVE_SUFFIXES` for why these are not opened.
+    """
+    listing = _run(["git", "rev-list", "--objects", "--all"])
+    seen: dict[str, str] = {}
+    for line in listing.splitlines():
+        parts = line.split(maxsplit=1)
+        if len(parts) == 2 and parts[1].endswith(BINARY_DERIVATIVE_SUFFIXES):
+            seen.setdefault(parts[0], parts[1])
+    return sorted(seen.items(), key=lambda pair: pair[1])
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--words", type=int, default=EXCERPT_WORDS)
@@ -146,10 +191,22 @@ def main(argv: list[str] | None = None) -> int:
         )
         return 2
 
+    binaries = binary_derivatives()
+    if binaries:
+        print(
+            f"\nLEAK RISK: {len(binaries)} model-derived binary blob(s) in this history. These "
+            "cannot be scanned for excerpts and must not be committed at all:",
+            file=sys.stderr,
+        )
+        for sha, path in binaries[:12]:
+            print(f"  {path}  {sha[:8]}", file=sys.stderr)
+        return 1
+
     blobs = history_blobs()
     print(f"scanning {len(blobs)} data blobs across {commits} commits", file=sys.stderr)
     findings: list[tuple[str, str, str, int, str]] = []
     responses = 0
+    ours = 0
     for sha, path in blobs:
         content = _run(["git", "cat-file", "-p", sha])
         if not content:
@@ -160,6 +217,9 @@ def main(argv: list[str] | None = None) -> int:
             leaf = field.rsplit(".", 1)[-1] if "." in field else field
             if leaf in RESPONSE_FIELDS:
                 responses += 1
+                continue
+            if any(f".{part}." in f"{field}." for part in OURS_FIELDS):
+                ours += 1
                 continue
             findings.append((path, sha[:8], field, count, sample))
 
@@ -172,6 +232,11 @@ def main(argv: list[str] | None = None) -> int:
             f"({responses} long strings sit in {sorted(RESPONSE_FIELDS)} — what the panel said, "
             f"never what it read. Threshold {args.words} words.)"
         )
+        if ours:
+            print(
+                f"({ours} more sit inside {list(OURS_FIELDS)} blocks — rules we declared before a "
+                "run, not prose anyone else wrote.)"
+            )
         return 0
 
     print(f"\n{len(findings)} excerpt-sized strings found, in {len({f[0] for f in findings})} "

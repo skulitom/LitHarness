@@ -44,9 +44,12 @@ from litharness.domain.preference import (
     PreferenceProtocol,
     TiePolicy,
     WinObservation,
+    analysable_judgments,
     draw_pairs,
     excerpt_address,
     excerpt_id_for,
+    is_machine_reader,
+    machine_reader_id,
     observed_win_rate,
     pair_bucket,
     pair_id_for,
@@ -618,6 +621,93 @@ def test_the_pair_digest_is_order_independent_and_shape_agnostic(store: SqliteSt
         if sample.verdict is not None
     )
     assert pair_verdicts_digest_for([]) == verdicts_digest_for([])
+
+
+# -- the evidence class is constituted as human (§86.1) -----------------------------------
+
+
+def _machine_pair_verdict(store: SqliteStore, index: int, calibration_id: str) -> PairSample:
+    """One row exactly as the §72 judge path writes it: same table, same write-once call,
+    unrecognised, stamped with the reserved machine reader id."""
+    sample = a_pair_sample(index)
+    store.record_pair_sample(sample)
+    store.record_pair_verdict(
+        sample.sample_id,
+        PairVerdict.PREFER_FIRST,
+        at=TODAY,
+        by=machine_reader_id(calibration_id),
+        recognized=False,
+        note=f"model judge under {calibration_id}",
+    )
+    return sample
+
+
+def test_a_machine_written_row_can_never_denominate_a_preference_holdout(
+    store: SqliteStore,
+) -> None:
+    """The laundering path, closed at the denominator. `EvidenceClass.PREFERENCE` is
+    defined as "a human's blinded, position-swapped choice between two texts" and nothing
+    enforced that: no source column, no CHECK, no predicate — while the §72 judge records
+    through this same pair table with the licensing calibration id as its reader. So one
+    human-anchored calibration licensing one judged tournament put the judge's own verdicts
+    into the pool the NEXT preference calibration is measured against, and nothing counted
+    them separately. Inert while the calibrations table is empty; live the day a paid batch
+    is funded, which is the wrong day to discover it."""
+    store.record_protocol(PROTOCOL)
+    human = [a_pair_sample(index) for index in range(MIN_HOLDOUT)]
+    for sample in human:
+        store.record_pair_sample(sample)
+        store.record_pair_verdict(
+            sample.sample_id, PairVerdict.PREFER_FIRST, at=TODAY, by="reader",
+            recognized=False,
+        )
+    assert len(analysable_judgments(store.pair_samples())) == MIN_HOLDOUT
+
+    for index in range(MIN_HOLDOUT, MIN_HOLDOUT + 20):
+        _machine_pair_verdict(store, index, "cal-judge-1")
+
+    samples = store.pair_samples()
+    assert len(samples) == MIN_HOLDOUT + 20, "the rows are kept, as recognised rows are"
+    counted = analysable_judgments(samples)
+    assert len(counted) == MIN_HOLDOUT, "20 machine verdicts inflated a human holdout"
+    assert not any(is_machine_reader(sample.reader_id) for sample in counted)
+
+    # And the arithmetic that consumes the count agrees: a calibration claiming a holdout
+    # the machine rows would have covered is refused for its size, not quietly promoted.
+    row = a_calibration(
+        evidence_class=EvidenceClass.PREFERENCE,
+        verdicts_digest=pair_verdicts_digest_for(samples),
+        holdout_size=MIN_HOLDOUT + 20,
+    )
+    why = row.why_not_promotable(TODAY, row.verdicts_digest, answered=len(counted))
+    assert why is not None
+    assert (
+        f"claims {MIN_HOLDOUT + 20} held-out judgment(s) against a store holding "
+        f"{MIN_HOLDOUT} answered"
+    ) in why
+
+
+def test_machine_rows_still_stale_the_licence_that_bought_them(store: SqliteStore) -> None:
+    """The half of §86.1 that is deliberately NOT changed. §72: "judge verdicts move the
+    answered-verdict digest and stale the calibration that licensed them — one calibration
+    buys roughly one judged tournament before re-measurement". That expiry is the price of
+    the judge path, and the holdout fix must not quietly refund it: cutting machine rows
+    from the digest as well as from the count would turn one licence into unlimited judged
+    tournaments. Over-invalidation is the safe direction; under-invalidation buys free
+    selection pressure with human evidence."""
+    before = answered_pair_holdout(store)
+    row = a_calibration(evidence_class=EvidenceClass.PREFERENCE, verdicts_digest=before)
+    assert row.why_not_promotable(TODAY, before, answered=MIN_HOLDOUT) is None
+
+    _machine_pair_verdict(store, MIN_HOLDOUT + 1, "cal-judge-1")
+    after = pair_verdicts_digest_for(store.pair_samples())
+    assert after != before, "a machine verdict must still move the staleness address"
+    assert len(analysable_judgments(store.pair_samples())) == MIN_HOLDOUT, (
+        "and must still not be counted: the digest and the denominator are two questions"
+    )
+
+    why = row.why_not_promotable(TODAY, after, answered=MIN_HOLDOUT)
+    assert why is not None and "verdict set has changed" in why
 
 
 # -- the operator surface -----------------------------------------------------------------
