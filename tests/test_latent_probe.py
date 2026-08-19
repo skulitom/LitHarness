@@ -1,4 +1,4 @@
-"""The arithmetic under stage-0 §86's Track P, checked rather than asserted.
+"""The arithmetic under stage-0 §87's Track P, checked rather than asserted.
 
 Three claims in `research/quality-measurement/latent_fixtures.py` are load-bearing enough that
 the ledger cites them, and all three are the kind that fail silently — they produce a number, not
@@ -11,7 +11,7 @@ an error:
 2. The exact null's floor is `2 / 2**G`, not `1 / 2**G`. The statistic is invariant under a
    global sign flip, so the observed assignment always has a twin. The pre-registration written
    before the run declared `1 / 2**G` and was wrong by a factor of two, which made its
-   family-wise alpha unattainable at eight scenes; §86 records that rather than repairing it, and
+   family-wise alpha unattainable at eight scenes; §87 records that rather than repairing it, and
    this test is what makes the corrected figure checkable.
 3. A byte-identical pair is unscoreable and must return `k = 0`. That is the floor the whole
    design rests on: a pipeline that separates a string from itself would separate anything.
@@ -72,7 +72,7 @@ def test_the_statistic_is_invariant_under_a_global_sign_flip() -> None:
 
 
 def test_a_perfectly_separating_family_cannot_beat_the_null_floor() -> None:
-    """Even a noiseless separation reports p = 2/2**G — the figure §86 corrects to."""
+    """Even a noiseless separation reports p = 2/2**G — the figure §87 corrects to."""
     groups = 6
     deltas = [[1.0, 0.0] for _ in range(groups)]
     row = latent_fixtures.exact_flip_null(deltas)

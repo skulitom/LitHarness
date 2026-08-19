@@ -138,7 +138,7 @@ call 431. The temperature governor is the actual protection; the rest ratio is a
 pre-emptive measure, so raise it if the card still climbs. The CLI and SDK transports run on
 remote compute and need none of this.
 
-## Latent-taste probe — §86, and the one place the other interpreter is mandatory
+## Latent-taste probe — §87, and the one place the other interpreter is mandatory
 
 Track P is the only measurement in this directory that reads a model's **internals**, so it is the
 only one that needs torch and the GPU. The two-interpreter rule above decides it: `latent_probe.py`
@@ -178,7 +178,7 @@ vectors.
 
 **Read the verdict, not the table.** The floor families are scored first and a floor that clears
 its null voids everything above it — `rewhitespace_sham` does exactly that, which §78.1 and §81 had
-already established it would. §86 records the defect in the pre-registration rather than dropping
+already established it would. §87 records the defect in the pre-registration rather than dropping
 the floor after the fact, so the file's own `reading` says VOID while the entry explains why the
 conclusion is unchanged. And `p0_best_single_DIAGNOSTIC` is a diagnostic: it is not in any bar.
 

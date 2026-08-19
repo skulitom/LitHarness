@@ -135,13 +135,13 @@ PRE_REGISTRATION: dict[str, Any] = {
     # verbatim — §82's rule is that a bar does not move after numbers arrive, and quietly
     # repairing the sentence that states it would be the same act as moving it. The correction
     # travels beside the declaration instead.
-    "CORRECTION_86_null_floor": (
+    "CORRECTION_87_null_floor": (
         "WRONG AS DECLARED. The smallest attainable p is 2/2**G, not 1/2**G — 0.0078 at G=8 and "
         "0.0020 at G=10. The statistic is invariant under a global sign flip (relabelling every "
         "pair swaps the fitted direction with it), so the observed assignment always has a twin "
         "in the enumeration. Consequence: `alpha_family_wise` below is UNATTAINABLE at G=8, and "
         "no eight-scene family could have cleared it however clean its separation. Recorded in "
-        "stage-0 §86; pinned by `test_a_perfectly_separating_family_cannot_beat_the_null_floor` "
+        "stage-0 §87; pinned by `test_a_perfectly_separating_family_cannot_beat_the_null_floor` "
         "and `test_the_statistic_is_invariant_under_a_global_sign_flip`."
     ),
     "alpha_uncorrected": 0.05,
@@ -236,7 +236,7 @@ UNDECIDED_READS = ("BLIND", "VOID", "SPANS_NULL")
 #: **This exists because `best_k` is a maximum over twenty-seven features and cannot be read as
 #: one counter's score.** The first draft of the rule admitted §83's state arms at 7 of 8 on that
 #: basis; with twenty-seven features scanned, 7 of 8 somewhere is unremarkable, and those arms are
-#: precisely the families §86 records as undecided by surface *and* internals. A benchmark member
+#: precisely the families §87 records as undecided by surface *and* internals. A benchmark member
 #: has to be a difference somebody could have specified in advance, not the best of a sweep.
 A_PRIORI_COUNTER: dict[str, str] = {
     "stat_flatten": "system_digit_count",
