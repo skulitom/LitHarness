@@ -534,6 +534,32 @@ Stated plainly, because a system that runs is easy to mistake for a system that 
   nothing at all until readers give it a direction.
   [plan/reader-judge-loop.md](plan/reader-judge-loop.md) is the design and its
   pre-registration.
+- **A library folder, and it is a copy button rather than the publication pillar.**
+  `litharness library` (or `--library DIR`, which republishes after every tick) writes what
+  the system has written to disk in two shapes, because they have opposite requirements. The
+  **reading copy** is `export`'s document — the whole book, a progress table, and undrafted
+  scenes as visible gaps, so two copies a day apart differ in a way you can read at a glance.
+  The **pastable copy** is one file per chapter carrying none of that: no progress table, no
+  revision id, and no title heading, because a serial platform takes the title in its own
+  field and a heading in the body is published twice. Minimal HTML — only `<p>`,
+  `<blockquote>` and `<hr>`, no classes or styles — as a fragment rather than a document, so
+  "open it and copy" and "paste into an HTML source view" are the same file; a `.txt` sits
+  beside each one because **this repository cannot verify how any particular platform's
+  editor treats a paste**, and a fallback is the honest response to that rather than a claim.
+  **A chapter holding an undrafted scene is withheld and counted, never emitted with a hole
+  in it.** One scene is one chapter by default, which asserts nothing: production books hold
+  no chapter nodes and no assembly scheme is decided, so `--chapter-scenes N` makes grouping
+  an operator act rather than a guess.
+  **What this is not is the serial-publication pillar**, which §62 cut after measuring it at
+  two inert enum values. Of the seven things that entry found missing, this adds exactly one
+  — the per-chapter export, as a file format — and none of the other six: no chapter-release
+  unit, no recap generation, no publication policy object, no posting scheduler, no
+  publication table. §62 also settled what publishing means here — the export, run when the
+  book clears §1a.5's bar — and **no book has cleared it**, which the library's own index says
+  where somebody about to paste will read it. Each shelf also carries a `NOTES.md` that is
+  written once and never overwritten, because a human read is not only a progress check: a
+  named defect is one of only two doors an axis can enter the registry by, and all three the
+  system measures came from one read of one book.
 - **A Director role: a personality that says what a book is, and never whether it is good.**
   The third role, and it is safe for a different reason from the other two rather than the same
   one. Every frame this project has buried was *evaluative and downstream* — handed prose that

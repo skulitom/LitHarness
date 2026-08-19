@@ -38,6 +38,7 @@ from litharness.adapters import contracts_fixtures, evaluation_artifact
 from litharness.adapters.continuity_cli import ContinuityCliRunner
 from litharness.adapters.sqlite_store import MigrationsMissing, SqliteStore
 from litharness.application import export as export_module
+from litharness.application import library as library_module
 from litharness.application import status as status_module
 from litharness.application.conductor import Conductor, TickOutcome
 from litharness.application.directive_planner import DIRECTIVE_PLAN, make_directive_plan_handler
@@ -325,8 +326,18 @@ def cmd_tick(args: argparse.Namespace) -> int:
     """One bounded unit of work. This is what the session's loop invokes."""
     store = _store(args)
     loop = _conductor(store, args)
+    published: tuple[int, int] | None = None
     try:
         result = loop.tick(_now())
+        if args.library is not None:
+            # **After the tick and inside the same store session, but outside anything the
+            # tick commits.** The library is derived output: a filesystem failure here must
+            # not fail a unit of work that already landed, and a republish that raced the
+            # commit would show the previous revision. Suppressed rather than propagated for
+            # the same reason — a full disk is a reason to stop publishing, not to stop
+            # writing the book.
+            with suppress(OSError):
+                published = _publish_library(args, store)
     finally:
         store.close()
 
@@ -334,6 +345,9 @@ def cmd_tick(args: argparse.Namespace) -> int:
     if result.job_id:
         print(f" job={result.job_id}", end="")
     print(f" reconciled={result.reconciled} ingested={result.ingested}")
+    if published is not None:
+        books, chapters = published
+        print(f"  library: {books} book(s), {chapters} pastable chapter(s)")
     if result.outcome in {TickOutcome.JOB_FAILED, TickOutcome.JOB_PARKED}:
         return EXIT_ATTENTION
     return EXIT_OK
@@ -1286,6 +1300,48 @@ def cmd_blame(args: argparse.Namespace) -> int:
                 print(f"                             {found.dropped} item(s) dropped by the cap")
         if not seen:
             print("  (no accepted scene carries prose yet)")
+    finally:
+        store.close()
+    return EXIT_OK
+
+
+def _publish_library(args: argparse.Namespace, store: SqliteStore) -> tuple[int, int]:
+    """Republish the library, returning (books, chapters). Shared by `library` and `tick`."""
+    published = library_module.publish(
+        store,
+        root=args.library or library_module.DEFAULT_ROOT,
+        generated_at=_stamp(_now()),
+        scenes_per_chapter=args.chapter_scenes,
+    )
+    return len(published), sum(len(book.chapters) for book in published)
+
+
+def cmd_library(args: argparse.Namespace) -> int:
+    """Republish the library: reading copies, pastable chapters, and the index.
+
+    Not called `publish`, and the name is doing work. §62 settled what publication means here
+    — the export, run when the book clears §1a.5's bar — and no book has cleared it. A verb
+    called `publish` would make a claim the tool is in no position to make; this one writes
+    files and says so.
+    """
+    store = _store(args)
+    try:
+        published = library_module.publish(
+            store,
+            root=args.library or library_module.DEFAULT_ROOT,
+            generated_at=_stamp(_now()),
+            scenes_per_chapter=args.chapter_scenes,
+        )
+        root = args.library or library_module.DEFAULT_ROOT
+        for book in published:
+            held = f", {book.withheld} chapter(s) withheld" if book.withheld else ""
+            print(
+                f"{root / book.slug}  {book.title}  {book.summary}  "
+                f"{len(book.chapters)} pastable chapter(s){held}"
+            )
+        if not published:
+            print("(no book in this store yet)")
+        print(f"{root / 'README.md'}: the index")
     finally:
         store.close()
     return EXIT_OK
@@ -3274,6 +3330,27 @@ def build_parser() -> argparse.ArgumentParser:
         "its control",
     )
     parser.add_argument(
+        "--library",
+        type=Path,
+        default=(
+            Path(os.environ["LITHARNESS_LIBRARY"])
+            if os.environ.get("LITHARNESS_LIBRARY")
+            else None
+        ),
+        help="republish the library into this folder after every tick, so checking on "
+        "progress is opening a file rather than remembering a command; also read from "
+        "LITHARNESS_LIBRARY. The `library` verb does the same thing on demand, and both "
+        "default to ./library when the folder is not named",
+    )
+    parser.add_argument(
+        "--chapter-scenes",
+        type=int,
+        default=library_module.DEFAULT_SCENES_PER_CHAPTER,
+        help="how many scenes make one pastable chapter. One by default, which asserts "
+        "nothing: production books hold no chapter nodes and no assembly scheme is decided, "
+        "so grouping is an operator act rather than a guess the tool makes",
+    )
+    parser.add_argument(
         "--director",
         default=os.environ.get("LITHARNESS_DIRECTOR", ""),
         help="run this registered Director (name or id): a personality that says what the "
@@ -3325,6 +3402,12 @@ def build_parser() -> argparse.ArgumentParser:
         help="the standing instruction, about the story and never about the prose",
     )
     directors_cmd.set_defaults(func=cmd_directors)
+
+    library_cmd = sub.add_parser(
+        "library",
+        help="republish the reading copies and pastable chapters (not a publication; §62)",
+    )
+    library_cmd.set_defaults(func=cmd_library)
 
     jobs = sub.add_parser("jobs", help="queue depth, or the units in one status")
     jobs.add_argument("--status", choices=[state.value for state in JobStatus])

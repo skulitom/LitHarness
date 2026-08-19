@@ -6936,3 +6936,82 @@ Admitting a personality is an operator act (§84's rule), and the three built-in
 examples written to exercise the distinctness control — nothing claims any of them is good.
 
 **No director has been compared to another on prose, and none will be until a reader exists.**
+
+## 92. The library is a copy button, and the two shapes it writes have opposite requirements
+
+An operator ask (2026-08-19): a folder inside the harness that the work is periodically
+published to, so progress can be checked by looking rather than by remembering a command — and,
+added mid-build, output that pastes cleanly into Royal Road. `application/library.py`,
+`litharness library`, and `--library DIR` which republishes after every tick.
+
+**Most of this already existed and had no cadence and no place.** §62 ratified `export` as the
+manual publication mode and its own docstring anticipated the use in as many words: *"two exports
+a day apart should differ in a way you can read at a glance, which is what 'see progress over
+time' means mechanically."* What was missing was that nobody ran it, `exports/` was a scratch
+directory of hand-run renders, and there was no index. So this entry is mostly a cadence, and the
+one genuinely new thing is the second shape.
+
+**The two shapes have opposite requirements, which is why they are two files and not one.** The
+*reading copy* is `export`'s document unchanged — whole book, derived front matter, progress
+table, undrafted scenes as visible placeholders, and the gaps are the most useful thing on the
+page. The *pastable copy* must contain none of that: a progress table pasted into a chapter body
+publishes the scaffolding, and a placeholder publishes the words `[not yet drafted]` to readers.
+So the pastable file carries no front matter, no revision id, and **no title heading** — a serial
+platform takes the chapter title in its own field, so a heading in the body is published twice.
+
+**A chapter holding an undrafted scene is withheld whole and counted.** Not emitted with a hole,
+and not silently reduced to its drafted scenes either: a chapter that dropped its gap and kept
+the rest would publish a jump-cut, which is worse than publishing nothing because nothing is
+visible and a jump-cut is not. The withheld count is on the index, because a pastable set that
+silently skipped its gaps would read as a finished serial — the one way this folder could
+mislead about the thing it exists to report.
+
+**One scene is one chapter by default, and that is the chapter-grain refusal inherited rather
+than a new opinion.** Production books hold no chapter nodes and no assembly scheme is decided;
+`pair-draw` already refuses chapter grain on exactly that ground rather than improvising one.
+`--chapter-scenes N` exists because a real serial wants grouping, and it makes the assembly
+scheme an operator act.
+
+**The HTML is a fragment and the claim about it is bounded.** Only `<p>`, `<blockquote>` and
+`<hr>`, no classes, ids or styles — the conservative subset every rich-text editor preserves —
+and a fragment rather than a document, so a browser renders it for select-all-and-copy while an
+HTML source view gets no `<head>` to strip. **What this repository cannot do is verify how any
+particular platform's editor treats a paste**, so a `.txt` sits beside every fragment: plain text
+with blank lines between paragraphs pastes as paragraphs everywhere. A fallback is the honest
+response to an unverifiable claim; asserting the HTML works would not have been.
+
+System-voice lines become `<blockquote>`, and that is labelled as a rendering choice rather than
+a fact about the prose: a stat block set as an ordinary paragraph reads as a sentence, and the
+genre sets it apart.
+
+**What this is not, stated because the name would otherwise claim it.** §62 cut the
+serial-publication pillar after measuring it at two inert enum values, and enumerated seven
+things it lacked: chapter-release unit, hook placement, recap generation, **per-chapter export**,
+publication policy object, posting scheduler, publication table. This adds exactly one of the
+seven and none of the other six. §62 also settled what publishing *is* here — "publication is
+that export, run when the book clears §1a.5's bar" — and no book has cleared it. So the verb is
+`library` and not `publish`: a verb called `publish` would make a claim the tool is in no
+position to make. The index says the same thing where somebody about to paste will read it.
+
+**Each shelf carries a `NOTES.md`, written once and never overwritten, and it is the part with
+the most leverage.** A human read is not only a progress check. §90's admission path makes "a
+human read named a defect" the first of exactly two doors an axis can enter the registry by, and
+all three axes the system currently measures came from one read of one book that named flat
+stats, no interiority and em dashes. A read with somewhere to put what it noticed is a defect
+harvest; a read without one is a memory. The template says what makes a note useful — a defect
+that can be pointed at is one a counter can be built for, "chapter four dragged" is a feeling and
+"nothing changed across chapter four" is an axis — and carries the caveat that this read is **not
+blinded**, so a note from here is evidence of the same class as the first human read rather than
+of the class a paid blinded reader produces.
+
+**One contamination note, narrow and worth having.** Reading your own book and dropping a
+directive is the intended workflow (§4.3: direct, don't operate). What it makes the operator is a
+*steering* reader — so their reader id belongs in the steering pool and never in the measurement
+pool, or the prose they shaped and the prose they later judge would be the same prose, which is
+what §90's firewall exists to prevent. `litharness pools --who <id>` answers it, and the library
+index says so.
+
+**Generated and gitignored**, like `exports/` and `dist/`: the tree is rewritten from the store on
+every publish, and a generated tree in the index would leave the working copy permanently dirty
+for every parallel session sharing this repository. `NOTES.md` is the exception an operator may
+want to keep, and `git add -f` is how.

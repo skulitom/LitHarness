@@ -45,3 +45,10 @@ research/quality-measurement/results/*.log
 # scene ids, verdicts and provenance and no vectors.
 research/quality-measurement/results/*.npz
 research/quality-measurement/results/latent-taste-activations*.jsonl
+
+# The library: reading copies and pastable chapters, derived from the store on every
+# publish. Generated like exports/ and dist/, and gitignored for the same reason — a tree
+# rewritten on every tick would leave the working copy permanently dirty for every parallel
+# session. NOTES.md is the exception worth knowing about: it is yours, never overwritten,
+# and if you want it kept, `git add -f library/*/NOTES.md`.
+library/
