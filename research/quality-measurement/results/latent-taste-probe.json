@@ -1,5 +1,30 @@
 {
   "activations_present": true,
+  "extraction": {
+    "d_model": 2560,
+    "dump": "results/latent-taste-activations.npz",
+    "gpu_c_after": 55,
+    "model": "google/gemma-3-4b-it",
+    "n_layers": 34,
+    "readout_layers": [
+      9,
+      17,
+      25
+    ],
+    "revision": "093f9f388b31de276ce2de164bdc2081324b9767",
+    "seconds": 164.3,
+    "texts": 190,
+    "throttle": {
+      "pause_above_c": 72,
+      "rest_ratio": 3.0,
+      "resume_below_c": 66,
+      "source": "cdg_battery.throttle"
+    },
+    "tokens_max": 1890,
+    "tokens_mean": 1403.7,
+    "tokens_min": 1179,
+    "vectors": 1140
+  },
   "families": {
     "exemplar_vs_sober": {
       "dropped_identical_scenes": [],

@@ -569,7 +569,15 @@ def main(argv: list[str] | None = None) -> int:
             print(f"{name:28s} G={len(pairs):2d} dropped={dropped}{flag}")
         return 0
 
+    # Scoring is cheap and re-run often; extraction is the GPU pass and happens once. Carrying
+    # the previous file's provenance forward keeps a re-score from silently deleting the only
+    # record of which weights, how many tokens and what temperature produced the vectors.
     report: dict[str, Any] = {}
+    existing = Path(args.out)
+    if existing.is_file():
+        prior = json.loads(existing.read_text(encoding="utf-8"))
+        if "extraction" in prior:
+            report["extraction"] = prior["extraction"]
     if args.extract:
         report["extraction"] = extract(args)
         print(json.dumps(report["extraction"], indent=2))

@@ -138,6 +138,69 @@ call 431. The temperature governor is the actual protection; the rest ratio is a
 pre-emptive measure, so raise it if the card still climbs. The CLI and SDK transports run on
 remote compute and need none of this.
 
+## Latent-taste probe — §86, and the one place the other interpreter is mandatory
+
+Track P is the only measurement in this directory that reads a model's **internals**, so it is the
+only one that needs torch and the GPU. The two-interpreter rule above decides it: `latent_probe.py`
+runs under **MirrorBench's** venv, never `uv run python`, and it never imports `litharness` — the
+fixtures come from committed JSONL and `corpora/toll-scenes.json` rather than from `toll.db`, which
+is what makes that possible.
+
+```bash
+export MB=C:/DEV/MirrorBench/.venv/Scripts/python.exe
+```
+
+**The fixture table, with no model and no scoring.** Cheap, and the first thing to run after
+touching `ablate.py` — a transform edit changes which pairs are byte-identical and therefore which
+scenes drop.
+
+```bash
+"$MB" research/quality-measurement/latent_probe.py --fixtures-only
+```
+
+**The GPU pass.** 190 texts, 380 forward passes, ~164 seconds wall clock, ~9 GB VRAM, peak 55 °C.
+It writes `results/latent-taste-activations.npz` (~8.8 MB), which is **gitignored** — the rule and
+its reason are in `.gitignore` beside the entry. The dump carries a digest manifest and `--score`
+refuses a dump whose manifest does not match the fixtures on disk, so an edited transform produces
+a loud error rather than vectors read off prose that no longer exists.
+
+```bash
+"$MB" research/quality-measurement/latent_probe.py --extract
+```
+
+**Scoring alone** needs no GPU and re-runs in about 30 seconds. It carries the previous file's
+`extraction` block forward, so re-scoring does not delete the record of which weights produced the
+vectors.
+
+```bash
+"$MB" research/quality-measurement/latent_probe.py
+```
+
+**Read the verdict, not the table.** The floor families are scored first and a floor that clears
+its null voids everything above it — `rewhitespace_sham` does exactly that, which §78.1 and §81 had
+already established it would. §86 records the defect in the pre-registration rather than dropping
+the floor after the fact, so the file's own `reading` says VOID while the entry explains why the
+conclusion is unchanged. And `p0_best_single_DIAGNOSTIC` is a diagnostic: it is not in any bar.
+
+**Why it is fast enough to enumerate an exact null.** The leave-one-scene-out sign test collapses
+to a `G x G` Gram matrix, so `2**G` re-runs are `2**G` matrix-vector products rather than `2**G`
+refits over 2,560 dimensions. The literal implementation is kept beside the closed form and
+`tests/test_latent_probe.py` asserts they agree; the first draft ran the literal one and had not
+finished a single family in the time the whole run now takes.
+
+**Track S and V's judge-free arms** need neither GPU nor quota, so they run under either
+interpreter and belong with the panel runs above.
+
+```bash
+uv run python research/quality-measurement/latent_support.py
+```
+
+**The GPU governor is not optional even here.** This run is two orders of magnitude shorter than
+the one that took the machine down, and it imports `cdg_battery.throttle` anyway — same 72/66
+hysteresis, same three-failed-reads tolerance, `--rest-ratio` defaulting to the measured-safe 3.0.
+The run never reached the pause threshold; that is the outcome the governor is for, not evidence it
+was unnecessary. This box hard-shut-down again on 2026-08-19 during this directive's session.
+
 ## Verifying before you push
 
 CI runs three commands, and the third and second were both skipped for a stretch here while a

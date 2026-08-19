@@ -5275,3 +5275,185 @@ mutation: dropping the filter fails all three; adding the same filter to the dig
 - **No backfill.** §86.1's premise holds: the calibrations table is empty on every branch, so
   no licensed tournament has ever run outside a test and no bare-calibration-id machine row
   exists to rewrite.
+## 87. The instrument does perceive more than it reports, and a digit counter shows it better than a probe
+
+Track P of the latent-taste directive (2026-08-19). `latent_probe.py` and `latent_fixtures.py`
+carry the design; `PRE_REGISTRATION` was committed in `8fa24e7` **before the first forward pass**,
+which is what makes §82's "no bar moves after numbers arrive" checkable here rather than asserted.
+190 texts, 380 forward passes on `google/gemma-3-4b-it` pinned at
+`093f9f388b31de276ce2de164bdc2081324b9767`, 34 layers, mean-pooled at depths 9/17/25, 164 seconds,
+GPU peaking at 55 °C under `cdg_battery`'s governor. No quota. `results/latent-taste-probe.json`.
+
+**The hypothesis was that near-twin discrimination exists in a model's internals and fails to reach
+the verbal verdict — a report failure rather than a perception failure. The report failure is real
+and the probe is not what shows it.** On every fixture family this project owns, internals add
+nothing a surface counter does not already have.
+
+    family                     G   P0   P0+  best1   text_mean      judge_last
+    placebo_identical  FLOOR    8    0     0      0   0 (1.000)      0 (1.000)
+    states_tea_v_sober FLOOR    8    4     4      6   5 (0.680)      5 (0.703)
+    rewhitespace_sham  FLOOR   10    9     9      5  10 (0.002)     10 (0.008)
+    stat_flatten               10    0    10     10  10 (0.002)     10 (0.002)
+    interiority_strip_matched   9    9     9      9   9 (0.004)      5 (0.840)
+    repair_interiority          8    8     8      8   8 (0.008)      8 (0.031)
+    repair_emdash               8    8     8      7   8 (0.016)      8 (0.031)
+    exemplar_vs_sober           8    7     7      8   8 (0.008)      7 (0.117)
+    states_drunk_v_sober        8    2     2      7   7 (0.180)      7 (0.195)
+    states_trip_v_sober         8    3     3      7   7 (0.188)      4 (0.867)
+    filler_inject              10   10    10     10  10 (0.002)     10 (0.002)
+
+`k` of `G` scenes ordered correctly under leave-one-scene-out; p is exact, from enumerating all
+`2**G` within-pair label flips. `best1` is the strongest *single* surface feature.
+
+**The design is a paired sign count and not an AUC, and that is what made it measurable at eight
+scenes.** Sixteen texts in 2,560 dimensions separate under any fitted classifier. A unit-normalised
+mean of paired difference vectors has no hyperparameter, so the held-out sign test means what it
+appears to mean — and it collapses to a `G x G` Gram matrix (`gram`, `signs_from_gram`), which is
+the only reason the exhaustive null is affordable at all: 1,024 re-runs become 1,024 matrix-vector
+products. `test_closed_form_matches_the_literal_leave_one_scene_out_refit` asserts the algebra
+against a literal per-fold refit. **A probe also cannot have positional bias** — it scores one text
+at a time — so the exact mechanism that voided §83's and §85's twin arms is structurally absent.
+
+**Two floors held and one did not, and the one that did not was refused as a floor two entries
+ago.** `placebo_identical` — §85's typo-fix placebo, byte-identical on both sides — returns `k=0`
+on all four channels, so the pipeline does not separate a string from itself. §83's inert-state
+placebo does not separate either (5 of 8, p 0.68), so nothing here is the probe reading a sampling
+draw. `rewhitespace` clears everything, exactly as §78.1 measured and §81 said in terms: *"§78
+measured why `rewhitespace` cannot be this design's floor … already called unusable"*. I registered
+it as a floor with that sentence on the page. **The run reports VOID as registered.** The corrected
+floor set is the other two, and under it the verdict is UNREPLICATED rather than positive — so the
+defect changed the wording of the conclusion and not the conclusion.
+
+**The one apparent internal win dissolves under its own diagnostic.** `exemplar_vs_sober` is the
+only family where the probe cleared and beat the registered baseline: 8 of 8 against P0's 7 of 8.
+But `dialogue_ratio` alone orders that family 8 of 8, and so does `word_len_mean`. P0's shortfall
+was **dilution across twenty-five z-scored deltas**, not absent surface information. That column is
+recorded as `p0_best_single_DIAGNOSTIC` and is deliberately *not* substituted into the bar: doing
+so would be tightening a rule against numbers already seen, which is what §81 refused to do. The
+corrected rule for any successor run is declared here instead — **the surface baseline is the
+maximum of the aggregate direction and the best single feature**, and it must be beaten in that
+form.
+
+**The stat-flatten row is the entry's finding, and it is in the surface column.** §81 recorded the
+panel BLIND at 0.5437 with the estimate on the wrong side of indifference. Here the plain P0 space
+is blind too — **0 of 10** — for a reason that is ours: `strip_system` deletes the `[STATUS]` line,
+which is the only line the transform edits. The steelman baseline that exists to catch exactly that
+scores **10 of 10**, and so does a *single* count of digits inside the status block. So the defect a
+human named and the panel cannot see is ordered perfectly by one deterministic counter. **Nothing
+in this stack fails to perceive stat-flatten; the verdict channel fails to carry it.** Had P0 not
+been steelmanned before the run, this entry would have reported the probe seeing what surface
+cannot, and it would have been an artifact of a feature list we wrote.
+
+**Where the near-twins actually sit.** §83's state arms are the hard case and they stay hard: the
+probe reads 7 of 8 on both and clears neither null (p 0.180, 0.188), while P0 reads 2 of 8 and 3 of
+8 — *below* chance, actively anti-ordered. These are the only families where surface and internals
+are both undecided, and they are the ones superhuman selection would live in. For them the
+directive's second quadrant row stands: **perception-limited at 4B**, recorded and closed.
+
+**One divergence worth naming for whoever runs the successor.** On `interiority_strip_matched` the
+mean-pooled text readout scores 9 of 9 and the judge-position readout 5 of 9. The difference is
+present in a representation of the prose and gone by the position a verdict is generated from. That
+is the shape the report-deficit hypothesis predicts; it is reported as a diagnostic and not as a
+result, because the family is closed to P by the surface rule and one family is not a finding.
+
+**A second pre-registration defect, recorded rather than repaired.** The smallest attainable
+p-value is `2 / 2**G`, not `1 / 2**G` as declared. The statistic is invariant under a global sign
+flip — relabelling every pair swaps the fitted direction with it — so the observed assignment
+always has a twin in the enumeration. The declared family-wise alpha of 0.00625 is therefore
+**unattainable at eight scenes**, and no eight-scene family could have cleared it however clean the
+separation. `test_the_statistic_is_invariant_under_a_global_sign_flip` and
+`test_a_perfectly_separating_family_cannot_beat_the_null_floor` pin the corrected figure. That is
+the third bar in this project's history declared in a form the design could not reach (§81's point
+estimate, §85's zero-width band, this), and the pattern is now explicit enough to check for: **a
+declared bar should be tested against the best attainable value of its own statistic before it is
+committed.**
+
+**Which kill condition fired, precisely.** Not the one the directive wrote. Several probes cleared
+their nulls, so "no probe on any fixture family clears its null" is false. Track P closes on
+**redundancy** instead: on no family does an internal readout beat the best surface baseline, so
+there is no family where internals buy anything. That is a more useful negative than the one
+anticipated — it says the ceiling on this fixture set is not adapter-shaped *or* pretraining-shaped
+but **fixture-shaped**, and the successor experiment is a harder fixture, not a bigger model.
+
+**The quadrant, read with `surface` in the probe column, since internals added nothing.**
+
+    separates / panel void       stat_flatten (§81 BLIND), repair_emdash (§85 bias .695),
+                                 exemplar_vs_sober (§85 bias .766), interiority_strip_matched
+                                 (§81 interval spans 0.5)         -> report-channel deficit
+    separates / panel separates  repair_interiority (§85 0.9509, §85.1 1.0000)  -> agree
+    fails / panel void           states_drunk, states_trip        -> perception-limited at 4B
+
+**What is proposed, and to whom.** The directive's B6 was "probe–panel divergence pairs". The run
+says the cheaper family is better: **counter-decidable / panel-void pairs** — fixtures a
+deterministic counter orders at `k = G` and the panel cannot read. It needs no GPU, no open
+weights, and no model pin; it reproduces from committed fixtures in one command; and it tests the
+verdict channel directly, which is what B6 was for. **It is proposed and not admitted. Only the
+operator moves what panel v2 is selected on** (§84), and the hardware-ladder question is moot
+rather than answered: 12B would have to beat a digit counter, not a 4B model.
+
+**What this does not license.** Nothing. A sign count is discrimination, and the panel was asked
+for preference — the two are not the same question, and the honest comparison is narrower than it
+looks: what the panel fails at on these pairs is *registering a difference at all*, answering the
+slot instead (§83, §85), and that is the failure a counter is being compared against. Whether any
+of these differences matters to a reader is untouched here and stays with §80's batch. §82 governs
+verbatim; no licence moves.
+
+### 87.1 Two arms that were designed to need a judge and turned out not to
+
+Both run at zero quota from committed fixtures. `latent_support.py`,
+`results/latent-taste-support.json`.
+
+**Track S — the treatment the panel preferred is told-not-shown, measured at the stimulus.** D2
+asks whether §85's 0.9509 is taste for the model's own register rather than for prose. The judged
+form of that question needs a cross-family judge, which the directive reserves to the operator. The
+unjudged half was never asked: *what did the treatment actually add?* `authorship_tells` already
+separates reported inner state (`_INTERIOR`: thought, felt, knew) from demonstrated bodily state
+(`_BODY`: jaw, hands, breath), which is the distinction the craft worry turns on.
+
+    repair_interiority (n=8)   told  +1.608 per 1k, up in 7 of 8 scenes
+                               shown -0.627 per 1k, up in 1 of 8 scenes
+                               words +11.8%  (§85 measured 10-13%)
+    exemplar        (n=8)      told  +0.346, up in 4 of 8;  shown -0.825, up in 4 of 8
+
+**The treatment added telling and removed showing.** So whatever the panel preferred at 0.9509,
+the thing it preferred was told-not-shown — established without a second judge and without
+asserting anything about the first.
+
+**Read against §85.1, which landed the same day from a parallel session, this acquires a
+direction.** That entry re-elicited the identical pairs one tier up: `repair_interiority` goes
+0.9509 at Haiku to **1.0000 at Sonnet**, 64 of 64, bias exactly 0.500. Capability and family match
+predict opposite signs here — a *stronger* judge should be less taken in by a craft defect, and a
+judge closer to the generator's own register should be more so. **Preference for the told-not-shown
+treatment saturates as tier rises.** That is the sharpest evidence D2 has, and it is still not
+proof: "told feeling is worse" is craft doctrine, not a measured reader fact, and a human may
+prefer the same text. What it does is remove a question from the cross-family judge's list — the
+stimulus is characterised now, so the operator read and §80's class B arbitrate preference alone.
+The two readings enter the ledger together, as the directive asked.
+
+**Track V — the selection ceiling, measured with no selector at all.** "Selection cannot exceed the
+support of the generator's distribution" has been asserted here and never measured. It needs no
+judge: for any axis, `E[best of N]` under an **oracle** selector is an order statistic of the
+generator's own draws, and no panel, probe or human can beat an oracle. §83 left the pool — four
+retells of each scene from one prompt, measured there as near-twins — so the curve is exact by
+enumeration over subsets.
+
+    axis                  E[best of 1..4] minus sober          gain    one certified revision
+    interiority (up)      +0.167 +0.524 +0.661 +0.711         +0.544   +1.608  (34%)
+    prose em dash (down)  +0.296 -0.724 -1.305 -1.625         -1.921   -3.534  (54%)
+
+**An oracle selector over four draws of this generator reaches a third of one certified revision on
+interiority and half of one on em dashes.** The increments decelerate hard — +0.357, +0.137, +0.050
+— but the pool is four deep, so the directive's plateau-by-N=4 condition **cannot be confirmed
+beyond N=4** and is not claimed to be. What is claimed is the bound: on the two axes a human reader
+named, revision reaches further than selection can, and the gap is not close. The axes are surface
+proxies rather than measures of quality, and an oracle over a proxy is not an oracle over prose —
+this bounds **reach**, not value.
+
+**What waits, and for whom.** Track S's cross-family judge stays reserved to the operator (model
+choice, cost, protocol fidelity), and the only free local candidate is already disqualified on
+protocol rather than on cost: RUNBOOK records `gemma3:4b` failing the positional-bias precondition
+on this material at chose-A 0.802/0.810, so running it would be substituting a degraded protocol to
+force a number, which the directive forbids by name. The tier ladder was **not** run here because
+§85.1 and §79.2 were running it in parallel; coordinating rather than duplicating was the
+directive's instruction and it saved the arm. Track V's N=8..32 curve needs fresh generations and
+is not started.
