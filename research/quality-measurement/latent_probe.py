@@ -131,6 +131,19 @@ PRE_REGISTRATION: dict[str, Any] = {
         "The family statistic is max(k) over the three readout layers, and its null is built by "
         "applying each flip vector to all three layers at once. Exact, and no Bonferroni."
     ),
+    # The two entries above and below are the text as declared before the run and are left
+    # verbatim — §82's rule is that a bar does not move after numbers arrive, and quietly
+    # repairing the sentence that states it would be the same act as moving it. The correction
+    # travels beside the declaration instead.
+    "CORRECTION_86_null_floor": (
+        "WRONG AS DECLARED. The smallest attainable p is 2/2**G, not 1/2**G — 0.0078 at G=8 and "
+        "0.0020 at G=10. The statistic is invariant under a global sign flip (relabelling every "
+        "pair swaps the fitted direction with it), so the observed assignment always has a twin "
+        "in the enumeration. Consequence: `alpha_family_wise` below is UNATTAINABLE at G=8, and "
+        "no eight-scene family could have cleared it however clean its separation. Recorded in "
+        "stage-0 §86; pinned by `test_a_perfectly_separating_family_cannot_beat_the_null_floor` "
+        "and `test_the_statistic_is_invariant_under_a_global_sign_flip`."
+    ),
     "alpha_uncorrected": 0.05,
     "alpha_family_wise": 0.00625,
     "family_wise_rule": (
@@ -220,9 +233,9 @@ UNDECIDED_READS = ("BLIND", "VOID", "SPANS_NULL")
 #: quantity the edit is defined in terms of. A family with no entry here has no a-priori counter
 #: and cannot join B6, whatever a scan turns up.
 #:
-#: **This exists because `best_k` is a maximum over twenty-eight features and cannot be read as
+#: **This exists because `best_k` is a maximum over twenty-seven features and cannot be read as
 #: one counter's score.** The first draft of the rule admitted §83's state arms at 7 of 8 on that
-#: basis; with twenty-eight features scanned, 7 of 8 somewhere is unremarkable, and those arms are
+#: basis; with twenty-seven features scanned, 7 of 8 somewhere is unremarkable, and those arms are
 #: precisely the families §86 records as undecided by surface *and* internals. A benchmark member
 #: has to be a difference somebody could have specified in advance, not the best of a sweep.
 A_PRIORI_COUNTER: dict[str, str] = {
@@ -269,7 +282,7 @@ def propose_b6(report: dict[str, Any]) -> dict[str, Any]:
         if counter is None:
             row["why_not"] = (
                 "no counter is nameable from the transform, so any separation would be the best "
-                "of a sweep over twenty-eight features"
+                "of a sweep over twenty-seven features"
             )
             rejected.append(row)
             continue
@@ -500,7 +513,7 @@ def best_single_feature(pairs: list[Pair]) -> dict[str, Any]:
     """The strongest *single* surface feature on a family, as a post-hoc diagnostic.
 
     **Not part of any bar, and deliberately so.** The pre-registered baseline is a mean-difference
-    direction over all 25 (or 28) features, and that estimator dilutes: averaging 25 z-scored
+    direction over all 24 (or 27) features, and that estimator dilutes: averaging 24 z-scored
     deltas can score worse than one feature that carries the whole difference. So "the probe beat
     P0" can be an artifact of P0's aggregation rather than a limit of surface measurement, and a
     reader needs this column to tell those apart. It is computed after the fact and it may not be

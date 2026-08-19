@@ -69,6 +69,20 @@ MIN_COMMITS = 50
 #: text would arrive as a *data* field in a results file, and that is what this looks at.
 DATA_SUFFIXES = (".json", ".jsonl", ".csv", ".txt")
 
+#: Extensions this audit refuses **on sight**, without opening them. Added for stage-0 §86's
+#: activation dumps: `latent_probe.py --extract` writes an `.npz` of residual-stream vectors, and
+#: the moment a fixture family sources somebody else's prose that dump is a derived work of a
+#: corpus this repository does not own.
+#:
+#: **Scanning inside one is not an option, which is why the rule is presence rather than content.**
+#: An `.npz` is a zip of binary arrays: `git cat-file -p` returns bytes that `long_strings` cannot
+#: walk and `str.split()` would score as gibberish, so a scanner would open it, find nothing, and
+#: report clean — a check that cannot fail, which is the shape BRIEF §2 exists to refuse. A
+#: committed activation dump has no legitimate reason to be in this history in the first place:
+#: `.gitignore` already excludes it and it regenerates in one command. So its *presence* is the
+#: finding.
+BINARY_DERIVATIVE_SUFFIXES = (".npz", ".npy", ".pt", ".safetensors")
+
 
 def _run(args: list[str]) -> str:
     return subprocess.run(
@@ -128,6 +142,20 @@ def history_blobs() -> list[tuple[str, str]]:
     return sorted(seen.items(), key=lambda pair: pair[1])
 
 
+def binary_derivatives() -> list[tuple[str, str]]:
+    """(sha, path) for every model-derived binary any commit ever pointed at.
+
+    Presence is the finding — see :data:`BINARY_DERIVATIVE_SUFFIXES` for why these are not opened.
+    """
+    listing = _run(["git", "rev-list", "--objects", "--all"])
+    seen: dict[str, str] = {}
+    for line in listing.splitlines():
+        parts = line.split(maxsplit=1)
+        if len(parts) == 2 and parts[1].endswith(BINARY_DERIVATIVE_SUFFIXES):
+            seen.setdefault(parts[0], parts[1])
+    return sorted(seen.items(), key=lambda pair: pair[1])
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--words", type=int, default=EXCERPT_WORDS)
@@ -145,6 +173,17 @@ def main(argv: list[str] | None = None) -> int:
             file=sys.stderr,
         )
         return 2
+
+    binaries = binary_derivatives()
+    if binaries:
+        print(
+            f"\nLEAK RISK: {len(binaries)} model-derived binary blob(s) in this history. These "
+            "cannot be scanned for excerpts and must not be committed at all:",
+            file=sys.stderr,
+        )
+        for sha, path in binaries[:12]:
+            print(f"  {path}  {sha[:8]}", file=sys.stderr)
+        return 1
 
     blobs = history_blobs()
     print(f"scanning {len(blobs)} data blobs across {commits} commits", file=sys.stderr)

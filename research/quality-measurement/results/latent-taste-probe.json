@@ -74,7 +74,7 @@
           "read": "VOID",
           "where": "\u00a783"
         },
-        "why_not": "no counter is nameable from the transform, so any separation would be the best of a sweep over twenty-eight features"
+        "why_not": "no counter is nameable from the transform, so any separation would be the best of a sweep over twenty-seven features"
       },
       {
         "a_priori_counter": null,
@@ -86,7 +86,7 @@
           "read": "VOID",
           "where": "\u00a783"
         },
-        "why_not": "no counter is nameable from the transform, so any separation would be the best of a sweep over twenty-eight features"
+        "why_not": "no counter is nameable from the transform, so any separation would be the best of a sweep over twenty-seven features"
       },
       {
         "a_priori_counter": null,
@@ -98,7 +98,7 @@
           "read": "READABLE_AT_SONNET",
           "where": "\u00a785, \u00a785.1"
         },
-        "why_not": "no counter is nameable from the transform, so any separation would be the best of a sweep over twenty-eight features"
+        "why_not": "no counter is nameable from the transform, so any separation would be the best of a sweep over twenty-seven features"
       },
       {
         "a_priori_counter": "words",
@@ -814,6 +814,7 @@
   "manifest": "matches",
   "model": "google/gemma-3-4b-it",
   "pre_registration": {
+    "CORRECTION_86_null_floor": "WRONG AS DECLARED. The smallest attainable p is 2/2**G, not 1/2**G \u2014 0.0078 at G=8 and 0.0020 at G=10. The statistic is invariant under a global sign flip (relabelling every pair swaps the fitted direction with it), so the observed assignment always has a twin in the enumeration. Consequence: `alpha_family_wise` below is UNATTAINABLE at G=8, and no eight-scene family could have cleared it however clean its separation. Recorded in stage-0 \u00a786; pinned by `test_a_perfectly_separating_family_cannot_beat_the_null_floor` and `test_the_statistic_is_invariant_under_a_global_sign_flip`.",
     "alpha_family_wise": 0.00625,
     "alpha_uncorrected": 0.05,
     "beats_p0": "An internal claim on a family requires probe max-k STRICTLY GREATER than both surface baselines' max-k on that same family, under the identical pipeline and null. P0 is `authorship_tells.features` over system-stripped prose \u2014 the space \u00a783 and \u00a785 measure register movement in. P0+ adds three digit and status-slot counts on unstripped text, because `strip_system` deletes the only line `stat_flatten` edits and a probe beating an omission of ours would not be beating surface measurement. If either baseline clears its own null on a family, that family is CLOSED to P: surface features already separate it and internals add nothing there.",

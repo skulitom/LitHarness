@@ -5327,7 +5327,7 @@ defect changed the wording of the conclusion and not the conclusion.
 **The one apparent internal win dissolves under its own diagnostic.** `exemplar_vs_sober` is the
 only family where the probe cleared and beat the registered baseline: 8 of 8 against P0's 7 of 8.
 But `dialogue_ratio` alone orders that family 8 of 8, and so does `word_len_mean`. P0's shortfall
-was **dilution across twenty-five z-scored deltas**, not absent surface information. That column is
+was **dilution across twenty-four z-scored deltas**, not absent surface information. That column is
 recorded as `p0_best_single_DIAGNOSTIC` and is deliberately *not* substituted into the bar: doing
 so would be tightening a rule against numbers already seen, which is what §81 refused to do. The
 corrected rule for any successor run is declared here instead — **the surface baseline is the
@@ -5402,8 +5402,8 @@ re-derivation. Three members, and the membership rule is stricter than the sente
 
 **The counter has to be nameable before any result is read** — `A_PRIORI_COUNTER` maps each family
 to the quantity its transform is *defined* in terms of — because the diagnostic column is a maximum
-over twenty-eight features and cannot be read as one counter's score. The first draft of this rule
-used that maximum and admitted §83's state arms at 7 of 8; with twenty-eight features swept, 7 of 8
+over twenty-seven features and cannot be read as one counter's score. The first draft of this rule
+used that maximum and admitted §83's state arms at 7 of 8; with twenty-seven features swept, 7 of 8
 somewhere is unremarkable, and those are exactly the arms this entry records as undecided by
 surface *and* internals. They are rejected now, with the reason recorded beside them. `repair_emdash`
 carries one **structural tie** — `gen:scene-7`'s original had no prose em dashes to remove — which
