@@ -1,0 +1,227 @@
+{
+  "study": "promise_kinds",
+  "pre_registration": {
+    "candidates": [
+      "plot",
+      "character",
+      "progression",
+      "mystery",
+      "tone"
+    ],
+    "minor_share": 0.05,
+    "nominate_share": 0.1,
+    "rule": "zero reports cuts; under minor_share cuts unless it was some promise's only kind; out-of-set at nominate_share or above is a nomination requiring an operator act; per model, never pooled; the frozen set is the intersection of the two arms",
+    "known_defect": "the intersection clause requires a registered label to appear verbatim in a free-vocabulary arm, which asks the model to share our terminology; kept on the record and reported as registered, with a corrected reading beside it",
+    "arms": [
+      "constrained",
+      "open"
+    ]
+  },
+  "source": "C:\\DEV\\LitHarness\\research\\quality-measurement\\corpora\\toll-scenes.json",
+  "scenes": 10,
+  "samples": 3,
+  "model": "qwen3:14b",
+  "transport": "ollama",
+  "dry_run": false,
+  "arms": {
+    "constrained": {
+      "answers": 30,
+      "untyped_promises": 0,
+      "reported_promises": 51,
+      "counts": {
+        "mystery": 27,
+        "plot": 20,
+        "progression": 3,
+        "character": 1
+      },
+      "keep": [
+        "plot",
+        "progression",
+        "mystery"
+      ],
+      "cut": [
+        {
+          "kind": "character",
+          "reports": 1,
+          "share": 0.0196,
+          "why": "under 5% and never the only kind a promise got"
+        },
+        {
+          "kind": "tone",
+          "reports": 0,
+          "share": 0.0,
+          "why": "never reported"
+        }
+      ],
+      "unregistered": [],
+      "nominations": []
+    },
+    "open": {
+      "answers": 30,
+      "untyped_promises": 2,
+      "reported_promises": 54,
+      "counts": {
+        "mystery": 18,
+        "debt": 5,
+        "clue": 4,
+        "obligation": 3,
+        "revelation": 3,
+        "explanation": 2,
+        "legacy": 2,
+        "legal": 2,
+        "arc": 1,
+        "clarification": 1,
+        "code": 1,
+        "consequence": 1,
+        "enigma": 1,
+        "exposition": 1,
+        "historical": 1,
+        "injury": 1,
+        "placement": 1,
+        "resolution": 1,
+        "reveal": 1,
+        "time": 1,
+        "unresolved": 1
+      },
+      "keep": [
+        "mystery"
+      ],
+      "cut": [
+        {
+          "kind": "plot",
+          "reports": 0,
+          "share": 0.0,
+          "why": "never reported"
+        },
+        {
+          "kind": "character",
+          "reports": 0,
+          "share": 0.0,
+          "why": "never reported"
+        },
+        {
+          "kind": "progression",
+          "reports": 0,
+          "share": 0.0,
+          "why": "never reported"
+        },
+        {
+          "kind": "tone",
+          "reports": 0,
+          "share": 0.0,
+          "why": "never reported"
+        }
+      ],
+      "unregistered": [
+        {
+          "kind": "debt",
+          "reports": 5
+        },
+        {
+          "kind": "clue",
+          "reports": 4
+        },
+        {
+          "kind": "obligation",
+          "reports": 3
+        },
+        {
+          "kind": "revelation",
+          "reports": 3
+        },
+        {
+          "kind": "explanation",
+          "reports": 2
+        },
+        {
+          "kind": "legacy",
+          "reports": 2
+        },
+        {
+          "kind": "legal",
+          "reports": 2
+        },
+        {
+          "kind": "arc",
+          "reports": 1
+        },
+        {
+          "kind": "clarification",
+          "reports": 1
+        },
+        {
+          "kind": "code",
+          "reports": 1
+        },
+        {
+          "kind": "consequence",
+          "reports": 1
+        },
+        {
+          "kind": "enigma",
+          "reports": 1
+        },
+        {
+          "kind": "exposition",
+          "reports": 1
+        },
+        {
+          "kind": "historical",
+          "reports": 1
+        },
+        {
+          "kind": "injury",
+          "reports": 1
+        },
+        {
+          "kind": "placement",
+          "reports": 1
+        },
+        {
+          "kind": "resolution",
+          "reports": 1
+        },
+        {
+          "kind": "reveal",
+          "reports": 1
+        },
+        {
+          "kind": "time",
+          "reports": 1
+        },
+        {
+          "kind": "unresolved",
+          "reports": 1
+        }
+      ],
+      "nominations": []
+    }
+  },
+  "readings": {
+    "registered": {
+      "frozen_set": [
+        "mystery"
+      ],
+      "rule": "the intersection of the two arms"
+    },
+    "corrected_proposal": {
+      "frozen_set": [
+        "plot",
+        "progression",
+        "mystery"
+      ],
+      "rule": "the constrained arm alone prunes; the open arm nominates and never cuts",
+      "why": "the open arm has a free vocabulary, so a registered kind can be absent from it because the model chose a synonym; requiring the label verbatim asks the model to share our terminology, which AXIS_MATCHERS' rule forbids. Post-hoc, so it is a proposal and not a result: freezing it is an operator act."
+    }
+  },
+  "frozen_set": [
+    "mystery"
+  ],
+  "spend": {
+    "input": 95550,
+    "output": 19995,
+    "cache_read": 0,
+    "cache_write": 0,
+    "equivalent_usd": 0.0
+  }
+}

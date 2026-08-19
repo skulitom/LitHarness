@@ -298,3 +298,144 @@ survives a fresh clone where the §70 runs above do not. `--book-db` overrides i
 The pre-registration lives in the module and the run copies it into the result file. Read §86
 before quoting any number, and note the registered prediction: **the default panel is expected to
 fail A1**, because §78 already measured it preferring blank lines at 0.0417 with clean bias.
+
+## Promises and payoffs, and the budgeted reader — §94
+
+Four modules landed together and three of them have a free leg that must run first. The rule
+they share is the one this file already records twice: **run the arithmetic before the calls or
+after them, never during**. Everything below with `--transport ollama` touches the 4090 and
+carries the duty-cycle and temperature governor; everything with `--selftest` or `--dry-run` is
+CPU-only, and starting one of those beside a live elicitation is the combination that took this
+workstation down on 2026-08-19.
+
+### W1 — what kinds of debt the summariser actually reports
+
+The derivation behind `domain/promises.PROMISE_KINDS`. Two arms per scene: the **constrained**
+arm sends the shipped schema, whose `kind` is an enum and can therefore only prune; the **open**
+arm drops the enum and is the only arm a nomination can come from. 10 scenes x 3 samples x 2
+arms = 60 calls, about 25 minutes on a 14B local model.
+
+```bash
+uv run python research/quality-measurement/promise_kinds.py --selftest
+```
+
+```bash
+uv run python research/quality-measurement/promise_kinds.py --yes --model qwen3:14b
+```
+
+```bash
+uv run python research/quality-measurement/promise_kinds.py --yes --model gemma3:12b --cache promise-kinds-gemma-raw.jsonl --out promise-kinds-gemma.json
+```
+
+**Read the `readings` block, not `frozen_set`.** The registered rule takes the intersection of
+the two arms, and running it is what showed the rule is wrong: the open arm has a free
+vocabulary, so a registered kind can be absent from it because the model chose a synonym. The
+defect is recorded in the pre-registration rather than dropped after the fact (§87's precedent),
+and the corrected reading prints beside it as a proposal an operator freezes, not as a result.
+
+### W3 — can a reader name a cadence difference?
+
+E6's byte-frozen question, imported from `domain/discrimination.py`, over three payoff cadences
+of the same span. **The premise is checked before any call**: `certify` refuses to run if the
+three variants do not carry identical words, so a manipulation that stopped being about
+placement fails loudly instead of reporting a rate.
+
+```bash
+uv run python research/quality-measurement/cadence_discrimination.py --selftest
+```
+
+```bash
+uv run python research/quality-measurement/cadence_discrimination.py --yes --model qwen3:14b
+```
+
+Both controls ride every batch and either one firing makes the batch VOID. A NAMES_CADENCE
+verdict makes cadence a **nominated** axis and nothing more — `domain/axes.py`'s admission path
+still wants a counter, a validation on fresh pairs, and a reader direction.
+
+### W4 — did the payoff land?
+
+```bash
+uv run python research/quality-measurement/payoff_landing.py --selftest
+```
+
+```bash
+uv run python research/quality-measurement/payoff_landing.py --yes --book-db $TOLL
+```
+
+**Two arms have no substrate and the module says so on every run.** The only promise ledger in
+this repository holds 32 promises, all open, none paid, so the `paid` and `mismatched` arms
+cannot be built. What runs is the false-positive half — does the instrument name a matching debt
+when the ledger says nothing was settled — which is cheap and can kill the instrument before its
+expensive half is bought. The verdict stays NOT VALIDATED until both a ledger with payments and
+an owner-read set exist; `--emit-owner-sheet` writes the blind sheet for the second.
+
+### Part A — the Budgeted Continuation Reader
+
+**Three free legs, in this order.** The second is the argument that the declared bands can be
+met at all, and it is the one that has caught seven prior declarations in this project.
+
+```bash
+uv run python research/quality-measurement/bcr.py --selftest
+```
+
+```bash
+uv run python research/quality-measurement/bcr.py --attainability
+```
+
+```bash
+uv run python research/quality-measurement/bcr.py --dry-run --seat
+```
+
+Then seating, which is `BUDGET` sequential calls per session — 3 shelves x 3 replicates x 2
+orientations x 12 fetches = 216 calls:
+
+```bash
+uv run python research/quality-measurement/bcr.py --seat --model qwen3:14b --yes
+```
+
+And the battery, which is far larger: five families x four doses x replicates x two
+orientations, at twelve calls each. Size it with `--families` and `--doses` before running it
+whole, and expect hours rather than minutes under the governor.
+
+```bash
+uv run python research/quality-measurement/bcr.py --battery --model qwen3:14b --families paragraph_shuffle --yes
+```
+
+**No model can be seated on this corpus and the module refuses to say otherwise.** V1's variance
+floor needs twenty own-generated texts of 3,600+ words and D2's transplant check needs a second
+own-generated book as donor; this repository holds one book of 10,049 words. Both print NOT RUN
+with their price, and `seated` is false while either is unrun — transplant-blindness is a
+declared kill, and an unasked kill is not a passed one.
+
+### The BCR model screen, and why it costs six sessions instead of seventy-two
+
+**Run the pilot before the seating, on every candidate family.** Six sessions — three shelves,
+both orientations, one replicate — is 72 calls and about five minutes per family, and on
+2026-08-19 it disqualified two of four before a seating budget was spent:
+
+```bash
+uv run python research/quality-measurement/bcr.py --seat --model qwen3:14b --replicates 1 --yes --cache bcr-pilot.jsonl --out bcr-pilot.json
+```
+
+    qwen3:14b     ABABABABABAB every session   P5 FAIL   taking turns
+    gemma3:12b    AAAAAAAAAAAA every session   P5 FAIL   never leaves slot A
+    phi4:latest   all-in per session           P5 PASS   the one live candidate
+    gpt-oss:20b   no answer at all             NOT RUN   broken install, not a result
+
+**Read P5 first and everything else second.** A fixed-pattern allocator passes the placebo,
+both shams and the positional check *perfectly* — a strict alternator spends exactly half its
+budget on each side of every shelf — so the other four controls say nothing until P5 has held.
+`gpt-oss:20b`'s zero is a local install returning `tensor "blk.0.ffn_down_exps.weight" size
+overflow`, and §87.3's rule applies: NOT SCREENABLE is its own state, never folded into
+"ineligible".
+
+Then the seating, on the survivors only. 12 replicates is 24 sessions per control arm, which is
+the count `--attainability` supports — at 16 an unbiased reader fails its own control almost a
+quarter of the time:
+
+```bash
+uv run python research/quality-measurement/bcr.py --seat --model phi4:latest --replicates 12 --yes --cache bcr-seat-phi4.jsonl --out bcr-seat-phi4.json
+```
+
+864 calls, roughly an hour under the governor. The cache is per fetch, so an interrupted run
+resumes for free — which is the checkpoint-per-unit rule this box needs.

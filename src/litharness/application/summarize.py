@@ -45,7 +45,13 @@ from litharness.domain.findings import Finding, Severity, Status, finding_id_for
 from litharness.domain.generation import PROFILES, CompletionRequest
 from litharness.domain.jobs import Job
 from litharness.domain.nodes import NodeKind
-from litharness.domain.promises import Promise, parse_due_hint, promise_id_for
+from litharness.domain.promises import (
+    PROMISE_KINDS,
+    Promise,
+    normalise_kind,
+    parse_due_hint,
+    promise_id_for,
+)
 from litharness.domain.text import content_hash
 
 #: The call class, which is what routes this to a non-billing provider even in production.
@@ -70,6 +76,12 @@ TARGET_WORDS = 60
 #: `providers/base.py` reads a single top-level `"type"` per property, so a `["object",
 #: "null"]` list there would break it, while `anyOf` is simply not checked at that depth —
 #: a null answer passes, and a real provider still sees the full constraint.
+#:
+#: **W1 (§94) adds `kind` to each opened promise and adds no call**, which is the same rule
+#: applied a second time: the ask that already holds the scene is the ask that gains the
+#: question. What a kind buys is the per-kind open-versus-paid density the Goodhart tripwire
+#: on any continuation metric needs — five opened against five paid nets to zero however
+#: mismatched the kinds are.
 SUMMARY_SCHEMA = {
     "type": "object",
     "additionalProperties": False,
@@ -112,6 +124,19 @@ SUMMARY_SCHEMA = {
                 "properties": {
                     "subject": {"type": "string"},
                     "description": {"type": "string"},
+                    # W1 (§94). **Optional rather than required, and the choice is the
+                    # safety argument.** A required field would make a model that cannot
+                    # classify a debt return a malformed answer and lose the promise
+                    # entirely; optional means the worst case is an untyped row, which is
+                    # exactly where every row stood before migration 028. `enum` states the
+                    # frozen set to a provider that enforces schemas, and
+                    # `promises.normalise_kind` re-checks it for the transports that cannot.
+                    "kind": {
+                        "anyOf": [
+                            {"type": "string", "enum": list(PROMISE_KINDS)},
+                            {"type": "null"},
+                        ]
+                    },
                     "due_hint": {
                         "anyOf": [
                             {"type": "integer"},
@@ -176,8 +201,9 @@ def render_summary_prompt(text: str, *, open_threads: Sequence[str] = ()) -> tup
         "changed for, what changed, what it was before, what it is now — or say none by "
         "answering null. A dramatic shift counts even when no number moves.\n"
         "PROMISES_OPENED: new threads this scene opens that the book must later pay off. "
-        "For each: a short subject name, what is now owed, and the scene number it is due "
-        "by when the scene implies one.\n"
+        "For each: a short subject name, what is now owed, which kind of debt it is "
+        f"({', '.join(PROMISE_KINDS)}), and the scene number it is due by when the scene "
+        "implies one.\n"
         "PROMISES_PAID: the subject names of previously open threads this scene pays off."
     )
     owed = ""
@@ -419,6 +445,12 @@ def make_summary_handler(
                         due_key=due_key,
                         opened_by_revision=revision_id,
                         model=result.model,
+                        # W1: read as tolerantly as every other structural field here. An
+                        # unrecognised kind is untyped, never an error and never mapped to a
+                        # near neighbour — an unregistered category is a nomination, and
+                        # nominations are weighed by an operator over the derivation run's
+                        # distribution, not by a synonym table in a handler.
+                        kind=normalise_kind(item.get("kind")),
                     ),
                 )
             for name in paid:

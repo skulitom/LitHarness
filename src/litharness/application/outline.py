@@ -31,7 +31,17 @@ it. None of that had to be built here.
 What this is **not**, so the gap stays visible: it is not a foreshadow-payoff ledger and not a
 progression schedule. §20.6's ordering trap still holds for the second — the schedule needs a
 level curve the game-mechanics pack owns, and the litrpg fixture has no XP figure to build one
-from. `open_threads` already carries promises; nothing here schedules their payoff.
+from. ~~`open_threads` already carries promises; nothing here schedules their payoff.~~
+
+**W2 (§94) closes exactly the last sentence and nothing else.** The promise ledger (migration
+023) now feeds this call and comes back with **payoff windows** — the scene range each open
+debt should be paid inside — validated by `_payoff_windows` the way milestones are and stored
+as PROPOSED-grade columns on the promise row. What is still not here: no progression schedule
+against a game-system simulator, because there is none in this repository to schedule against
+(§8.4 put that vocabulary in the game-mechanics pack), and no "missed its window" finding,
+because a model-scheduled window missed by a model-reported payoff is two model claims
+disagreeing and neither may raise a finding about the other. `promise.overdue.v0` remains the
+whole evaluator side.
 """
 
 from __future__ import annotations
@@ -76,6 +86,7 @@ from litharness.domain.policy import (
     decide,
     decision_id_for,
 )
+from litharness.domain.promises import Promise, schedule_fault, window_fault
 
 #: Job kind this handler answers to.
 BOOK_OUTLINE = "book_outline"
@@ -101,7 +112,14 @@ class OutlineOutputError(Exception):
 OUTLINE_SCHEMA: dict[str, Any] = {
     "type": "object",
     "additionalProperties": False,
-    "required": ["summary", "rationale", "expected_outcome", "scenes", "milestones"],
+    "required": [
+        "summary",
+        "rationale",
+        "expected_outcome",
+        "scenes",
+        "milestones",
+        "payoff_windows",
+    ],
     "properties": {
         "summary": {"type": "string"},
         "rationale": {"type": "string"},
@@ -135,6 +153,27 @@ OUTLINE_SCHEMA: dict[str, Any] = {
                 },
             },
         },
+        # W2 (§94): milestones schedule *state*; nothing scheduled *payment*. Same call, for
+        # the same §15 reason, and the same reason the milestone ask lives here rather than in
+        # a call of its own — the model is already holding the premise and the whole beat
+        # sheet, which is exactly what a payoff schedule has to be consistent with.
+        #
+        # Required by the schema and legitimately empty: a book with no open promises has
+        # nothing to schedule, and `[]` says that where an absent key would be
+        # indistinguishable from a model that ignored the question.
+        "payoff_windows": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "additionalProperties": False,
+                "required": ["subject", "first_scene", "last_scene"],
+                "properties": {
+                    "subject": {"type": "string"},
+                    "first_scene": {"type": "integer"},
+                    "last_scene": {"type": "integer"},
+                },
+            },
+        },
     },
 }
 
@@ -151,22 +190,62 @@ def outline_job_id(book_id: str, branch_id: str, epoch: int) -> str:
     return f"outline-{material[:24]}"
 
 
+def _ordinal_of(beats: Sequence[Beat]) -> dict[str, int]:
+    """`{story_order_key: ordinal}` for the beats that have a position.
+
+    The ledger speaks in `beats_for`'s zero-padded keys and a model speaks in scene numbers,
+    so exactly one translation exists and it is this one — built from the sheet rather than by
+    parsing a key, because parsing the padding back out would be a second implementation of
+    the thing the padding exists to make unnecessary.
+    """
+    return {
+        beat.story_order_key: beat.ordinal
+        for beat in beats
+        if beat.story_order_key is not None
+    }
+
+
 def render_outline_request(
     premise: str,
     beats: Sequence[Beat],
     *,
     base: PlanRevision,
     seed: Mapping[str, Any] | None = None,
+    promises: Sequence[Promise] = (),
 ) -> CompletionRequest:
     """Freeze the premise and the whole beat sheet into one structured-output request.
 
     The *entire* sheet goes in, not a window: the model is being asked to make thirty scenes
     differ from one another, and it cannot do that against a sheet it can only see part of.
+
+    **Open promises go in as debts, and the register is `describe_owed`'s** (W2). They are
+    shown so the schedule can be about the book's actual debts rather than about debts the
+    model invents while answering, and they are shown as *owed* rather than as established
+    fact for the same reason the packet shows them that way — a model-reported promise
+    rendered in the indicative would be laundered into premise by register alone. A book with
+    no open promises is asked for no windows at all, exactly as a book with no starting sheet
+    is asked for no milestones: an empty ask produces an empty answer to validate, which is
+    worse than not asking.
     """
+    ordinals = _ordinal_of(beats)
+    owed = [
+        {
+            "subject": promise.subject,
+            "owed": promise.description,
+            "opened_at_scene": ordinals.get(promise.opened_at_key),
+            "due_by_scene": ordinals.get(promise.due_key or ""),
+        }
+        for promise in promises
+        if promise.opened_at_key in ordinals
+    ]
     prompt = json.dumps(
         {
             "premise": premise,
             "base_plan_revision_id": base.plan_revision_id,
+            # The debts this book has already opened, for the payoff schedule. Absent for a
+            # book that owes nothing — which is every book at its first outline, since
+            # promises are written by the summary handler after a scene is accepted.
+            "open_promises": owed or None,
             # The book's own starting numbers, so the schedule is expressed in the game
             # system this book actually has rather than one the model invents. Absent for a
             # book that does not speak system voice, and then no schedule is asked for — a
@@ -205,6 +284,20 @@ def render_outline_request(
                     "are progression too.",
                 ]
                 if seed
+                else []
+            )
+            + (
+                [
+                    "Also return payoff_windows: for each open promise, the scene range in "
+                    "which the book should pay it off.",
+                    "Use the subject names given in open_promises. Do not invent promises.",
+                    "A window may not open before the scene that opened the promise, and may "
+                    "not close after the scene it is due by.",
+                    "Spread the payments out. A schedule that pays every debt in the last "
+                    "third of the book, or every debt in one place, is the thing a reader "
+                    "feels as nothing happening and then everything happening.",
+                ]
+                if owed
                 else []
             ),
         },
@@ -390,6 +483,84 @@ def _milestones(
                 f"milestone at scene {beat.ordinal} schedules a state the sheet forbids "
                 f"({offending}); a ceiling is not a target"
             )
+    return out
+
+
+def _payoff_windows(
+    payload: Mapping[str, Any],
+    beats: Sequence[Beat],
+    promises: Sequence[Promise],
+) -> list[tuple[Promise, str, str]]:
+    """The payoff schedule as (promise, first_key, last_key), or a refusal naming what broke.
+
+    **The same three-part shape `_milestones` has, because the failure modes are the same
+    three.** A window may name a scene that does not exist (unsatisfiable), may be about a
+    promise the ledger never opened (an invented debt), or may be individually valid while the
+    *set* schedules the defect it was asked to plan around. `domain/promises.py` owns the last
+    two checks — `window_fault` per promise, `schedule_fault` over the set — because they are
+    arithmetic over story keys and this module owns none of that arithmetic.
+
+    **Refused with the whole outline rather than dropped**, for the reason §55 gives for asking
+    in one call: a schedule that fails validation refuses the outline too, rather than landing
+    beside a good one. And an *absent* schedule is not a refusal — a book with no open
+    promises was asked for none, so an empty list is the correct answer and validates as one.
+
+    Windows are placed at beats, so a template that cannot say where its scenes sit in story
+    time gets no schedule rather than an invented one. `story_order_key` is None exactly when
+    the sheet is not entitled to answer, and `by_ordinal` below simply has no entry for it.
+    """
+    raw = payload.get("payoff_windows")
+    if raw is None or (isinstance(raw, list) and not raw):
+        return []
+    if not isinstance(raw, list):
+        raise OutlineOutputError("payoff_windows must be a list")
+    by_ordinal = {
+        beat.ordinal: beat.story_order_key
+        for beat in beats
+        if beat.story_order_key is not None
+    }
+    by_subject = {promise.subject: promise for promise in promises}
+    keys = [key for _, key in sorted(by_ordinal.items())]
+
+    out: list[tuple[Promise, str, str]] = []
+    seen: set[str] = set()
+    for entry in raw:
+        if not isinstance(entry, Mapping):
+            raise OutlineOutputError("each payoff window must be an object")
+        subject = entry.get("subject")
+        first = entry.get("first_scene")
+        last = entry.get("last_scene")
+        if not isinstance(subject, str) or subject not in by_subject:
+            raise OutlineOutputError(
+                f"payoff window names promise {subject!r}, which this book has not opened; "
+                "a schedule may not invent a debt"
+            )
+        if subject in seen:
+            raise OutlineOutputError(f"promise {subject!r} carries more than one window")
+        bounds: list[str] = []
+        for name, ordinal in (("first_scene", first), ("last_scene", last)):
+            if not isinstance(ordinal, int) or isinstance(ordinal, bool):
+                raise OutlineOutputError(
+                    f"payoff window for {subject!r} has {name} {ordinal!r}, "
+                    "which is not a scene number"
+                )
+            if ordinal not in by_ordinal:
+                raise OutlineOutputError(
+                    f"payoff window for {subject!r} names scene {ordinal}, which either does "
+                    "not exist or has no story position"
+                )
+            bounds.append(by_ordinal[ordinal])
+        promise = by_subject[subject]
+        start_key, end_key = bounds
+        fault = window_fault(promise, start_key, end_key, keys=keys)
+        if fault is not None:
+            raise OutlineOutputError(f"payoff window for {subject!r}: {fault}")
+        seen.add(subject)
+        out.append((promise, start_key, end_key))
+
+    fault = schedule_fault([(start, end) for _, start, end in out], keys=keys)
+    if fault is not None:
+        raise OutlineOutputError(fault)
     return out
 
 
@@ -661,7 +832,13 @@ def make_outline_handler(
             None,
         )
         seed = dict(seed_record.value) if seed_record is not None else {}
-        request = render_outline_request(premise, beats, base=base, seed=seed or None)
+        # W2: the debts this book has already opened. Empty at a book's first outline —
+        # promises are written by the summary handler after a scene is accepted — so the
+        # payoff ask is silent there and this feature costs an un-replanned book nothing.
+        open_promises = store.promises(book_id, branch_id, open_only=True)
+        request = render_outline_request(
+            premise, beats, base=base, seed=seed or None, promises=open_promises
+        )
         day = stamp[:10]
         provider, _ = registry.resolve(request.call_class)
         verdict = budget_check(
@@ -727,6 +904,7 @@ def make_outline_handler(
             schedule = (
                 _milestones(result.parsed, beats, seed) if seed else []
             )
+            windows = _payoff_windows(result.parsed, beats, open_promises)
             preview = apply_plan_proposal(base, proposal)
         except (OutlineOutputError, PlanProposalError, TypeError, ValueError) as error:
             # RETRY rather than escalate: the request is unchanged and a second draw of a
@@ -792,6 +970,19 @@ def make_outline_handler(
                     schedule, subject=seed_record.subject, seed=seed
                 ),
                 created_at=stamp,
+            )
+        # The payoff schedule lands under the same rule and for the same reason: after the
+        # plan, never before, so a refused outline leaves no windows behind. The write is an
+        # UPDATE restricted to open rows and idempotent in its values, so a replayed job
+        # converges rather than accumulating anything — there is nothing here to accumulate.
+        for promise, start_key, end_key in windows:
+            store.schedule_payoff_window(
+                book_id,
+                branch_id,
+                promise.promise_id,
+                window_start_key=start_key,
+                window_end_key=end_key,
+                plan_revision_id=preview.after.plan_revision_id,
             )
         return ()
 

@@ -1,0 +1,540 @@
+{
+  "study": "cadence_discrimination",
+  "pre_registration": {
+    "channel": "report (E6), imported byte-for-byte from domain/discrimination.py",
+    "no_preference_leg": true,
+    "cadences": {
+      "even": [
+        0.2,
+        0.4,
+        0.6,
+        0.8
+      ],
+      "front_loaded": [
+        0.08,
+        0.16,
+        0.24,
+        0.32
+      ],
+      "starved_dumped": [
+        0.72,
+        0.8,
+        0.88,
+        0.96
+      ]
+    },
+    "payoffs": [
+      "The question that had been hanging since the first morning finally had its answer, and the answer cost something.",
+      "What had been promised at the gate was made good, in full and in front of witnesses.",
+      "The debt that everyone had been pretending not to count was counted, out loud.",
+      "The thing that had been set aside to deal with later was dealt with, and it stayed dealt with."
+    ],
+    "matcher": "\\b(cadence|pacing|paced|pace\\b|rhythm|tempo|spread out|spaced|interval|front[- ]?load|back[- ]?load|early on|toward the end|at the end|throughout|distribut|cluster|bunch|timing|when (?:the |these |those )?(?:payoff|resolution|answer|revelation)|order (?:of|in which)|sequence|resolv\\w* (?:early|late|throughout)|payoff|pay[- ]?off|resolution|closure|answered|settled|ties? up|wrap(?:ped|s)? up)\\w*",
+    "alpha": 0.05,
+    "bar": "the measured null on the same matcher and the same pairs, never 0.5",
+    "controls": "placebo and whitespace sham ride every batch; either firing VOIDs it"
+  },
+  "source": "C:\\DEV\\LitHarness\\research\\quality-measurement\\corpora\\toll-scenes.json",
+  "model": "gemma3:12b",
+  "transport": "ollama",
+  "dry_run": false,
+  "spans": 5,
+  "pairs": 25,
+  "spend": {
+    "input": 285320,
+    "output": 1676,
+    "cache_read": 0,
+    "cache_write": 0,
+    "equivalent_usd": 0.0
+  },
+  "cadence": {
+    "fired": 2,
+    "responses": 30
+  },
+  "placebo": {
+    "fired": 1,
+    "responses": 10
+  },
+  "sham": {
+    "fired": 0,
+    "responses": 10
+  },
+  "null": {
+    "fired": 1,
+    "responses": 20
+  },
+  "cadence_rate": 0.0667,
+  "null_rate": 0.05,
+  "fisher_p": 0.65102,
+  "alpha": 0.05,
+  "controls_hold": false,
+  "verdict": "VOID",
+  "DIAGNOSTIC_omission_claims": {
+    "cadence": {
+      "claims": 3,
+      "responses": 30
+    },
+    "placebo": {
+      "claims": 2,
+      "responses": 10
+    },
+    "sham": {
+      "claims": 1,
+      "responses": 10
+    }
+  },
+  "DIAGNOSTIC_reading": "post-hoc and in no bar: the cadence variants are word-identical by construction and asserted by `certify`, so every omission claim on that arm is false about the text; a gap between its rate and the placebo's is the size of the artifact",
+  "reading": "a NAMES_CADENCE verdict makes cadence a *nominated* axis and nothing more: `domain/axes.py`'s admission path still requires a deterministic counter, an E6-family validation on fresh pairs this corpus never touched, and a reader-established direction, before anything is emitted",
+  "responses": [
+    {
+      "pair": "cadence-0-even-vs-front_loaded",
+      "arm": "cadence",
+      "orientation": 0,
+      "said": "The second passage omits the detail that Wren underlined his entry in his personal ledger, indicating a significant deviation from his usual practices and suggesting a growing concern about the discrepancy in his toll records.",
+      "refused": false,
+      "named_cadence": false,
+      "claims_omission": true
+    },
+    {
+      "pair": "cadence-0-even-vs-front_loaded",
+      "arm": "cadence",
+      "orientation": 1,
+      "said": "The second passage omits the detail about the last porter's entry not matching the sum of her tolls, which appears in the first passage.",
+      "refused": false,
+      "named_cadence": false,
+      "claims_omission": true
+    },
+    {
+      "pair": "cadence-0-even-vs-starved_dumped",
+      "arm": "cadence",
+      "orientation": 0,
+      "said": "The second passage includes an unexplained discrepancy of one day in the ledger, indicated by a 'C' and a numeral in the margin, which was not present in the first passage.",
+      "refused": false,
+      "named_cadence": false,
+      "claims_omission": false
+    },
+    {
+      "pair": "cadence-0-even-vs-starved_dumped",
+      "arm": "cadence",
+      "orientation": 1,
+      "said": "The second passage repeats almost all of the first passage's content, except for the addition of a query of account line in the Chalk Gate's ledger, indicating a discrepancy in Wren's debt.",
+      "refused": false,
+      "named_cadence": false,
+      "claims_omission": false
+    },
+    {
+      "pair": "cadence-0-front_loaded-vs-starved_dumped",
+      "arm": "cadence",
+      "orientation": 0,
+      "said": "The second passage repeats almost all of the text from the first, except for the addition of a 'Query of account: 2 days' line at the Chalk Gate, suggesting a discrepancy in Wren's ledger that requires further investigation.",
+      "refused": false,
+      "named_cadence": false,
+      "claims_omission": false
+    },
+    {
+      "pair": "cadence-0-front_loaded-vs-starved_dumped",
+      "arm": "cadence",
+      "orientation": 1,
+      "said": "The second passage removes the detail about the last porter's entry and the discrepancy in their paid total, which was present in the first passage.",
+      "refused": false,
+      "named_cadence": false,
+      "claims_omission": false
+    },
+    {
+      "pair": "placebo-0",
+      "arm": "placebo",
+      "orientation": 0,
+      "said": "The second passage includes the notation 'C' in the ledger, indicating a query of the account, which is absent in the first passage.",
+      "refused": false,
+      "named_cadence": false,
+      "claims_omission": true
+    },
+    {
+      "pair": "placebo-0",
+      "arm": "placebo",
+      "orientation": 1,
+      "said": "The second passage includes a notation of 'Query of account: 2 days' in the ledger, which was absent from the first passage.",
+      "refused": false,
+      "named_cadence": false,
+      "claims_omission": true
+    },
+    {
+      "pair": "sham-0",
+      "arm": "sham",
+      "orientation": 0,
+      "said": "The second passage includes a notation of 'Query of account: 2 days' added to Wren's ledger, which is absent in the first passage.",
+      "refused": false,
+      "named_cadence": false,
+      "claims_omission": true
+    },
+    {
+      "pair": "sham-0",
+      "arm": "sham",
+      "orientation": 1,
+      "said": "The second passage repeats the entirety of the first, indicating it serves as a redundant copy.",
+      "refused": false,
+      "named_cadence": false,
+      "claims_omission": false
+    },
+    {
+      "pair": "cadence-1-even-vs-front_loaded",
+      "arm": "cadence",
+      "orientation": 0,
+      "said": "The second passage is an exact duplicate of the first, with no discernible changes made to the text.",
+      "refused": false,
+      "named_cadence": false,
+      "claims_omission": false
+    },
+    {
+      "pair": "cadence-1-even-vs-front_loaded",
+      "arm": "cadence",
+      "orientation": 1,
+      "said": "The second passage is an exact duplicate of the first, indicating it serves to emphasize the repetitive and cyclical nature of Wren's journey and the unchanging, albeit perplexing, accounting system he navigates.",
+      "refused": false,
+      "named_cadence": false,
+      "claims_omission": false
+    },
+    {
+      "pair": "cadence-1-even-vs-starved_dumped",
+      "arm": "cadence",
+      "orientation": 0,
+      "said": "The second passage is a direct copy of the first, except for the final sentence, which indicates Wren's health status has worsened from HP 16/22 to 13/22.",
+      "refused": false,
+      "named_cadence": false,
+      "claims_omission": false
+    },
+    {
+      "pair": "cadence-1-even-vs-starved_dumped",
+      "arm": "cadence",
+      "orientation": 1,
+      "said": "The second passage is a direct repetition of the first, indicating an intentional mirroring or cyclical nature to the events described.",
+      "refused": false,
+      "named_cadence": false,
+      "claims_omission": false
+    },
+    {
+      "pair": "cadence-1-front_loaded-vs-starved_dumped",
+      "arm": "cadence",
+      "orientation": 0,
+      "said": "The second passage is a direct copy of the first, differing only in the inclusion of a sentence stating, 'The question that had been hanging since the first morning finally had its answer, and the answer cost something.'",
+      "refused": false,
+      "named_cadence": false,
+      "claims_omission": false
+    },
+    {
+      "pair": "cadence-1-front_loaded-vs-starved_dumped",
+      "arm": "cadence",
+      "orientation": 1,
+      "said": "The second passage repeats nearly all of the content of the first, with only minor alterations to certain phrases and sentences, indicating it's a deliberate variation rather than a fundamentally different narrative.",
+      "refused": false,
+      "named_cadence": false,
+      "claims_omission": false
+    },
+    {
+      "pair": "placebo-1",
+      "arm": "placebo",
+      "orientation": 0,
+      "said": "The second passage is a direct repetition of the first, implying a cyclical or repetitive nature to Wren's journey and the accrual of debt.",
+      "refused": false,
+      "named_cadence": false,
+      "claims_omission": false
+    },
+    {
+      "pair": "placebo-1",
+      "arm": "placebo",
+      "orientation": 1,
+      "said": "The second passage is an exact duplicate of the first, indicating it serves as a repetition for emphasis or potentially to highlight a cyclical or recurring pattern within the narrative.",
+      "refused": false,
+      "named_cadence": false,
+      "claims_omission": false
+    },
+    {
+      "pair": "sham-1",
+      "arm": "sham",
+      "orientation": 0,
+      "said": "The second passage is a verbatim copy of the first, indicating that the narrative is being repeated, likely to emphasize a cyclical or inescapable pattern.",
+      "refused": false,
+      "named_cadence": false,
+      "claims_omission": false
+    },
+    {
+      "pair": "sham-1",
+      "arm": "sham",
+      "orientation": 1,
+      "said": "The second passage is an exact duplicate of the first, indicating a potential error or intentional repetition within the provided text.",
+      "refused": false,
+      "named_cadence": false,
+      "claims_omission": false
+    },
+    {
+      "pair": "cadence-2-even-vs-front_loaded",
+      "arm": "cadence",
+      "orientation": 0,
+      "said": "The second passage is a direct repetition of the first, offering no new information or variation in content.",
+      "refused": false,
+      "named_cadence": false,
+      "claims_omission": false
+    },
+    {
+      "pair": "cadence-2-even-vs-front_loaded",
+      "arm": "cadence",
+      "orientation": 1,
+      "said": "The second passage is a direct repetition of the first, indicating an intentional redundancy or emphasis on the presented information.",
+      "refused": false,
+      "named_cadence": false,
+      "claims_omission": false
+    },
+    {
+      "pair": "cadence-2-even-vs-starved_dumped",
+      "arm": "cadence",
+      "orientation": 0,
+      "said": "The second passage is a direct repetition of the first, lacking any substantive changes or additions.",
+      "refused": false,
+      "named_cadence": false,
+      "claims_omission": false
+    },
+    {
+      "pair": "cadence-2-even-vs-starved_dumped",
+      "arm": "cadence",
+      "orientation": 1,
+      "said": "The second passage is a direct repetition of the first, indicating an intentional redundancy or emphasis on the details and events described.",
+      "refused": false,
+      "named_cadence": false,
+      "claims_omission": false
+    },
+    {
+      "pair": "cadence-2-front_loaded-vs-starved_dumped",
+      "arm": "cadence",
+      "orientation": 0,
+      "said": "The second passage is a direct repetition of the first, omitting only the final status report at the end.",
+      "refused": false,
+      "named_cadence": true,
+      "claims_omission": true
+    },
+    {
+      "pair": "cadence-2-front_loaded-vs-starved_dumped",
+      "arm": "cadence",
+      "orientation": 1,
+      "said": "The second passage replicates the entirety of the first, with minor adjustments to sentence structure and phrasing, demonstrating a deliberate effort to mirror the original text's narrative and style.",
+      "refused": false,
+      "named_cadence": false,
+      "claims_omission": false
+    },
+    {
+      "pair": "placebo-2",
+      "arm": "placebo",
+      "orientation": 0,
+      "said": "The second passage is a direct repetition of the first, suggesting a deliberate mirroring or cyclical nature within the narrative.",
+      "refused": false,
+      "named_cadence": false,
+      "claims_omission": false
+    },
+    {
+      "pair": "placebo-2",
+      "arm": "placebo",
+      "orientation": 1,
+      "said": "The second passage is a direct repetition of the first, indicating an intentional duplication for comparison or emphasis.",
+      "refused": false,
+      "named_cadence": false,
+      "claims_omission": false
+    },
+    {
+      "pair": "sham-2",
+      "arm": "sham",
+      "orientation": 0,
+      "said": "The second passage is an exact duplicate of the first, suggesting a deliberate repetition or potential commentary on the nature of the narrative itself.",
+      "refused": false,
+      "named_cadence": false,
+      "claims_omission": false
+    },
+    {
+      "pair": "sham-2",
+      "arm": "sham",
+      "orientation": 1,
+      "said": "The second passage is a direct repetition of the first, indicating an effort to ensure complete understanding or a potential narrative loop.",
+      "refused": false,
+      "named_cadence": false,
+      "claims_omission": false
+    },
+    {
+      "pair": "cadence-3-even-vs-front_loaded",
+      "arm": "cadence",
+      "orientation": 0,
+      "said": "The second passage is an exact duplicate of the first, serving to emphasize the cyclical and repetitive nature of Wren's work and debt.",
+      "refused": false,
+      "named_cadence": false,
+      "claims_omission": false
+    },
+    {
+      "pair": "cadence-3-even-vs-front_loaded",
+      "arm": "cadence",
+      "orientation": 1,
+      "said": "The second passage is a verbatim repetition of the first, indicating its purpose is likely to highlight redundancy or emphasize a specific detail through reiteration.",
+      "refused": false,
+      "named_cadence": false,
+      "claims_omission": false
+    },
+    {
+      "pair": "cadence-3-even-vs-starved_dumped",
+      "arm": "cadence",
+      "orientation": 0,
+      "said": "The second passage is a direct repetition of the first, preserving all text and formatting, indicating it serves as a duplicate or confirmation rather than presenting new information.",
+      "refused": false,
+      "named_cadence": false,
+      "claims_omission": false
+    },
+    {
+      "pair": "cadence-3-even-vs-starved_dumped",
+      "arm": "cadence",
+      "orientation": 1,
+      "said": "The second passage repeats nearly all of the first, with minor omissions and rearrangements, effectively serving as a direct copy with some textual alterations.",
+      "refused": false,
+      "named_cadence": false,
+      "claims_omission": false
+    },
+    {
+      "pair": "cadence-3-front_loaded-vs-starved_dumped",
+      "arm": "cadence",
+      "orientation": 0,
+      "said": "The second passage is a direct repetition of the first, exhibiting no alterations in narrative content or structure.",
+      "refused": false,
+      "named_cadence": false,
+      "claims_omission": false
+    },
+    {
+      "pair": "cadence-3-front_loaded-vs-starved_dumped",
+      "arm": "cadence",
+      "orientation": 1,
+      "said": "The second passage repeats nearly all of the first, except for the omission of the final paragraph detailing the clerk's explanation of the 'issue number' and Wren's subsequent reflection on his father's debt.",
+      "refused": false,
+      "named_cadence": false,
+      "claims_omission": false
+    },
+    {
+      "pair": "placebo-3",
+      "arm": "placebo",
+      "orientation": 0,
+      "said": "The second passage is an exact duplicate of the first, differing only in the inclusion of a final status report at the end.",
+      "refused": false,
+      "named_cadence": true,
+      "claims_omission": false
+    },
+    {
+      "pair": "placebo-3",
+      "arm": "placebo",
+      "orientation": 1,
+      "said": "The two passages are identical, indicating a repetition rather than a divergence in content.",
+      "refused": false,
+      "named_cadence": false,
+      "claims_omission": false
+    },
+    {
+      "pair": "sham-3",
+      "arm": "sham",
+      "orientation": 0,
+      "said": "The second passage is an exact duplicate of the first, implying a repetition or emphasis on the established narrative and details.",
+      "refused": false,
+      "named_cadence": false,
+      "claims_omission": false
+    },
+    {
+      "pair": "sham-3",
+      "arm": "sham",
+      "orientation": 1,
+      "said": "The two passages are identical, indicating a repetition rather than a divergence in content.",
+      "refused": false,
+      "named_cadence": false,
+      "claims_omission": false
+    },
+    {
+      "pair": "cadence-4-even-vs-front_loaded",
+      "arm": "cadence",
+      "orientation": 0,
+      "said": "The second passage is a direct copy of the first, but with a slight change in Wren's status report at the end, indicating a reduction in his health points.",
+      "refused": false,
+      "named_cadence": true,
+      "claims_omission": false
+    },
+    {
+      "pair": "cadence-4-even-vs-front_loaded",
+      "arm": "cadence",
+      "orientation": 1,
+      "said": "The second passage is a direct repetition of the first, indicating its significance and emphasizing the cyclical nature of Wren's struggles.",
+      "refused": false,
+      "named_cadence": false,
+      "claims_omission": false
+    },
+    {
+      "pair": "cadence-4-even-vs-starved_dumped",
+      "arm": "cadence",
+      "orientation": 0,
+      "said": "The second passage is a direct repetition of the first, implying a cyclical or recurring nature to the events described.",
+      "refused": false,
+      "named_cadence": false,
+      "claims_omission": false
+    },
+    {
+      "pair": "cadence-4-even-vs-starved_dumped",
+      "arm": "cadence",
+      "orientation": 1,
+      "said": "The second passage is a direct repetition of the first, indicating an effort to reinforce the narrative details and thematic elements through redundancy.",
+      "refused": false,
+      "named_cadence": false,
+      "claims_omission": false
+    },
+    {
+      "pair": "cadence-4-front_loaded-vs-starved_dumped",
+      "arm": "cadence",
+      "orientation": 0,
+      "said": "The second passage is a direct repetition of the first, implying a cyclical or recurring nature to the events described.",
+      "refused": false,
+      "named_cadence": false,
+      "claims_omission": false
+    },
+    {
+      "pair": "cadence-4-front_loaded-vs-starved_dumped",
+      "arm": "cadence",
+      "orientation": 1,
+      "said": "The second passage is a direct, verbatim repetition of the first passage, indicating a cyclical or recurring nature of the events described.",
+      "refused": false,
+      "named_cadence": false,
+      "claims_omission": false
+    },
+    {
+      "pair": "placebo-4",
+      "arm": "placebo",
+      "orientation": 0,
+      "said": "The second passage is a direct repetition of the first, illustrating the cyclical and inescapable nature of Wren's predicament.",
+      "refused": false,
+      "named_cadence": false,
+      "claims_omission": false
+    },
+    {
+      "pair": "placebo-4",
+      "arm": "placebo",
+      "orientation": 1,
+      "said": "The second passage is a direct, verbatim copy of the first passage.",
+      "refused": false,
+      "named_cadence": false,
+      "claims_omission": false
+    },
+    {
+      "pair": "sham-4",
+      "arm": "sham",
+      "orientation": 0,
+      "said": "The second passage is a direct, verbatim copy of the first, suggesting it's intended to highlight a repetition or cyclical nature within the narrative.",
+      "refused": false,
+      "named_cadence": false,
+      "claims_omission": false
+    },
+    {
+      "pair": "sham-4",
+      "arm": "sham",
+      "orientation": 1,
+      "said": "The second passage is a verbatim copy of the first, indicating a deliberate repetition or emphasis within the narrative.",
+      "refused": false,
+      "named_cadence": false,
+      "claims_omission": false
+    }
+  ]
+}

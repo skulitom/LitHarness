@@ -7084,3 +7084,186 @@ policy object, no publication table — the six things §62 measured the serial-
 to lack and which §92 added none of. A cadence for *rendering files locally* is not a publication
 cadence, and §62's condition on the second one is untouched: publication is the export, run when
 the book clears §1a.5's bar, and no book has cleared it.
+
+## 94. The ledger learns what kind of debt it holds, and a budgeted reader is priced before it is believed
+
+The promises-and-payoffs directive (2026-08-19), executing
+[plan/llm-reader-engagement.md](llm-reader-engagement.md). Two halves that only look unrelated:
+the unbuilt half of PLAN.md §9.1's foreshadow-payoff ledger, and a reader instrument whose
+whole reason to exist is that the cheapest way to game a continuation metric is to open loops
+and never pay them. The design is [plan/promise-payoff-development.md](promise-payoff-development.md);
+this entry carries the scope, the pre-registered bars, and — because it was found before a
+single call was bought — the substrate finding that decides how much of the second half can
+currently be said at all.
+
+**§92 and §93 were taken by parallel sessions while this was being written**, which is the
+house rule working: this is §94 and nothing above it was renumbered.
+
+### 94.1 What is added, and what deliberately is not
+
+The ledger that landed as §61 Add 2 records *that* a book owes something and *whether* it was
+paid. It does not record **what kind** of debt it is, nobody schedules **when** payment is
+due beyond a model's one-shot `due_hint`, "a cadence a reader can feel" is an **unmeasured
+claim** in PLAN.md §1a.3's own words, and payment is asserted by the **same call** that
+reports it. Four gaps, and they are deliberately not four features: two are code (W1, W2) and
+two are studies whose null is a publishable result (W3, W4).
+
+**The LitRPG progression schedule stays out, and the reason is a verified absence rather than a
+scheduling preference.** Checked in source: there is no forward Game-System Engine interface in
+this repository — no `GameSystem`, no `WorldRule`, no `BookWorldState` under `src/` — because
+§8.4 put the rule and predicate vocabulary in the game-mechanics pack inside
+ContinuityEvaluation and §8.1's forward interface "has no consumer until Stage 0/1 exists".
+What this repository has is a schedule *validator* (`outline._milestones`, `impossible_fields`)
+and a schedule *reader* (`extraction.progression_target`), not a simulator. So W2 schedules
+payoffs — which need no engine, because a window names scenes and scenes are `beats_for`'s own
+minting — and says nothing about levels or currency.
+
+### 94.2 The bars, declared before the first row and checked against I7 first
+
+Every bar below was run through the range/direction/unit/non-emptiness check *and* an
+attainability simulation before it was committed, because seven prior declarations named a
+quantity that could not do what it said and the check is what caught them:
+
+- **W3 cadence discrimination** clears the **measured null for the same matcher on the same
+  pairs** — the placebo pair and the whitespace sham, both riding every batch — never a nominal
+  0.5. Both shams must hold or the batch is VOID and reports no rate.
+- **W4 payoff landing** clears the agreement its own **mismatched control** achieves, not
+  chance. A control that shares every nuisance property is the only comparison that means
+  anything, and "agrees with the owner more often than a coin" would be cleared by an
+  instrument that says *yes* to everything.
+- **Part A's seating controls are equivalence tests, not point checks.** The placebo shelf and
+  the two shams pass when the interval on allocation share lies **inside** a declared band, so
+  insufficient evidence fails rather than passes — the direction a control has to fail in.
+- The unit everywhere is the **cell**, never the comparison: §89 item 6's correction, where a
+  30-decided floor could not bind because four personas were one judge four times.
+
+### 94.3 The substrate finding, and it is the load-bearing result of this entry
+
+The Budgeted Continuation Reader needs a shelf of two texts, each long enough that the budget
+cannot exhaust it — at the registered shape, 3,600 words. Counted before anything was bought:
+
+    corpora/toll.db                  10 scenes, 10,049 words   ONE own-generated book
+    exports/book-snapshots.db         2 books,  ~950 words each — imported, not generated
+    contracts golden fixtures         2 books,  ~800 words each — authored fixtures
+
+**There is exactly one own-generated text in this repository long enough to be a shelf member.**
+That is not a uniform shortage and pretending it were would be the more comfortable error. The
+placebo, the positional-symmetry check, both shams, the dose-response battery, budget
+invariance and cross-family agreement all compare a text against a **transform of itself** and
+run today on the corpus in hand. The **variance floor needs twenty own-generated texts** and the
+**transplant check needs a second own-generated book as donor**, and neither exists.
+
+**So the two that cannot run are recorded as NOT RUN with a price, never omitted**, and the
+sharper of the two decides the seating: the design calls transplant-blindness a **kill**, so a
+model that has not been asked cannot be seated no matter how the other five legs read. A
+battery reporting four of six passes with two absences unmarked would read as a seated model,
+which is exactly the shape §89's no-silent-caps rail exists to refuse. Until roughly $81 of
+frontier drafting buys the fitness books, every BCR number in this repository is a statement
+about the instrument's own controls and about no book.
+
+**The order this forces is the order the design already asked for**, which is the cross-check:
+seat, then battery, then freeze and register, then arms. Nothing in the optimization half
+starts before the kills have had their chance, and with two legs unrunnable the kills have not
+had it.
+
+### 94.4 What shipped, and the two features cost no model call between them
+
+**W1 — the ledger learns its kinds** (migration 028). A `kind` on every promise, reported by
+the summary invocation that already reports the promise, and **derived rather than declared**:
+the set started as a five-way guess and `tone` is gone because two disjoint local families
+reported it **zero times across 120 promises**. `mystery` (53% / 45%) and `plot` (39% / 41%)
+dominate both distributions; `character` and `progression` are each kept by one family and cut
+by the other, and the rule's own "per model, never pooled" clause settles that by keeping both,
+because two models disagreeing at low rates is not evidence for either.
+
+**W2 — the planner schedules payment** (migration 029). Open promises go into the outline call
+that already holds the beat sheet and come back with payoff windows, validated the way
+milestones are and stored as PROPOSED-grade columns on the promise row, rendered into the packet
+by `describe_owed` as part of the debt line. Six validation rules, and only one of them is about
+the reader: **a schedule may not close every window inside the final act.** That is
+`_milestones`' anti-stasis rule in the promise dimension — and it abstains below two windows and
+below three acts rather than firing on a book too short to have the structure it describes,
+which is the I7 check seven prior declarations failed.
+
+**Neither adds an invocation**, which is §15 applied twice, and neither can refuse anything:
+windows mint no finding and `promise.overdue.v0` remains the entire evaluator side. A "missed
+its window" sibling was considered and deliberately not built — a model-scheduled window missed
+by a model-reported payoff is two model claims disagreeing, and neither is entitled to raise a
+finding about the other.
+
+### 94.5 Three studies, three refusals, and each one is cheaper than the thing it stopped
+
+Nothing below is a headline. All three ran on local families over this system's own prose, and
+all three stopped before the expensive half — which is the whole point of running them in this
+order.
+
+**W3 — cadence is not nameable, on the one family whose controls held.** The frozen matcher
+names cadence on 3 of 30 cells against a measured null of 0 of 20 (Fisher p = 0.207) on
+`qwen3:14b`; `gemma3:12b` is **VOID** because its byte-identical placebo drew *"an exact
+duplicate of the first, differing only in the inclusion of a final status report at the end"* —
+a confabulated difference on identical text. So no cadence detector is built and no candidate
+axis is nominated.
+
+**The interesting half is a diagnostic, and the second family is what stopped it becoming a
+claim.** 22 of 30 of qwen's cadence responses assert that one passage "includes additional
+details" the other "omits" — about passages certified to carry identical word multisets,
+character counts and paragraph counts. That family detects the manipulation reliably and names
+it as *deletion* rather than as *placement*, and the frozen matcher earns its keep by refusing
+to read that as a hit. gemma's rate is 3 of 30, so displacement-read-as-deletion is a property
+of one model rather than of E6 at 2,000 words — a single-family run would have supported the
+wider sentence and it would have been wrong. One register entry falls out: the byte-identical
+placebo **cannot** catch a displacement artifact, and a word-identical reordering control is
+what would.
+
+**W4 — the scorer does not transfer, which is a shorter sentence than the study expected.** Two
+substrate absences were known before the first call: no owner-read set, and **no paid promise
+anywhere to build a `paid` or `mismatched` arm from**. What ran was the false-positive half,
+which came back 0 of 32 on unpaid pairs and 0 of 8 on the placebo — and that reads as clean
+behaviour and is not. A constructed positive, added after the first run and labelled DIAGNOSTIC,
+puts the ledger's *own sentence* in the paying passage; it fires on **6 of 32**. So the scoring
+ceiling is 19%, a zero elsewhere is what a near-dead matcher produces, and the module withholds
+every rate rather than printing one — `latent_crossfamily`'s rule, for its reason.
+
+The cause is that `check_open_threads` was built to ask whether a summary of the *same prose*
+mentions a recorded thread, and here it is asked whether a one-sentence **paraphrase** names the
+same debt: *"The identity and origin of the crate's contents and sender are settled"* against a
+ledger saying *"The crate's contents, its unfamiliar wax mark, and who sent it must be
+revealed"* is a correct answer sharing almost no distinctive word. Reusing the shipped matcher
+was the defensible choice and it was wrong; nothing was wired, and `promise.landing.v0` does not
+exist.
+
+### 94.6 The instrument's first six sessions killed two of four candidate readers, and the control that did it was not in the design
+
+The Budgeted Continuation Reader ran its pilot on four local families — three shelves, both
+orientations, twelve forced fetches — and the first thing it produced was not a measurement of
+prose:
+
+    qwen3:14b     ABABABABABAB in all six sessions      taking turns
+    gemma3:12b    AAAAAAAAAAAA in all six sessions      never leaves slot A
+    phi4:latest   all-in per session, slot varies       the one live candidate
+    gpt-oss:20b   no answer at all                      broken install, NOT SCREENABLE
+
+**Both fixed-pattern readers would have passed every declared control.** A strict alternator
+spends exactly half its budget on each side of every shelf, so the placebo, both shams and the
+positional check read perfectly clean while nothing measures anything — the 195/196 constant
+function wearing a budget, which is precisely the failure V1 is declared to catch and which V1
+cannot catch here for want of twenty own-generated texts. So **P5** was added: the standard
+deviation of the *slot* share across a run must exceed a floor. It needs no substrate the corpus
+lacks, it fires at six sessions, and it is not a bar tuned to an answer — the pre-registration
+already names this kill; P5 is that kill in the form this corpus can reach.
+
+**P5's first formulation was wrong and the next pilot caught it**, which is the second time in
+this entry that running a check is what found its defect. It read the *target* share, and the
+orientation swap moves the target between slots — so `gemma3:12b`'s answer-A-every-time reader
+scores maximal target-share variance and the check would have reported the most rigidly
+positional family available as the most discriminating one.
+
+**One more declared number was wrong in the direction of false failure.** `--attainability`,
+run before any seating, measured the equivalence control at the declared band: at 16 sessions an
+**unbiased** reader clears it only 76.5% of the time. That is I7's catalogued failure — T0's own
+registered bar disqualified a good judge 82 to 100% of the time — so the floor moved to 24,
+where an unbiased reader clears 91% and a 0.60 allocator is refused 93.5% of the time.
+
+**No model is seated and none can be on this corpus**, which is §94.3's finding arriving through
+the statistics rather than through the shelf builder. What the six-session screen bought is the
+right to spend a seating budget on one family instead of four.

@@ -1,0 +1,36 @@
+-- W2 (§94): the planner schedules payment, not only state.
+--
+-- **The gap PLAN.md §9.1 names and nothing filled.** Milestones schedule what the *sheet*
+-- should have become by a given scene; `outline._milestones` validates them and refuses a
+-- schedule that plans stasis or an impossible state. Nothing scheduled *payment*. So a book
+-- pays a promise when the summariser happens to notice a payoff, which is how "everything
+-- resolves in the last scene" gets written — §52's frozen ledger (31 status records holding
+-- two distinct states) arriving in the promise dimension instead of the numeric one.
+--
+-- **Two keys, both `beats_for`'s own minting, and the window is inclusive.** `window_start_key`
+-- and `window_end_key` are story order keys read off the beat sheet exactly as `opened_at_key`
+-- and `due_key` are, so there is still one zero-padding implementation in this project and
+-- `s10 < s2` stays impossible. A book whose template is not chronological gets no windows at
+-- all — the same abstention milestones and the ledger itself already make: no key rather than
+-- a guessed one.
+--
+-- **PROPOSED-grade, and the grade is the whole safety argument.** A window is a model's plan
+-- for a model-reported debt. It mints no finding, promotes nothing, and the existing
+-- `promise.overdue.v0` remains the entire evaluator side — deliberately not duplicated with a
+-- "missed its window" sibling, because a model-scheduled window missed by a model-reported
+-- payoff is two model claims disagreeing and neither is entitled to raise a finding about the
+-- other. What a window does is ride the context packet as part of the debt line
+-- (`describe_owed`), where it reads as owed rather than as established fact.
+--
+-- **Re-schedulable, unlike payment.** Payment is the write-once open->paid transition and stays
+-- that way. A window is a *plan*, and plans in this system are versioned and re-proposable, so
+-- a replan may move one — restricted to rows still open, because scheduling payment for a debt
+-- already paid is bookkeeping about the past. Re-scheduling to the same window is a no-op, so a
+-- replayed outline job converges.
+--
+-- `scheduled_by_plan_revision` is the provenance: which plan revision's outline answer proposed
+-- this window. §2's traceability clause, and the field that makes "why is this promise due
+-- there" answerable after the plan has moved on.
+ALTER TABLE promises ADD COLUMN window_start_key TEXT;
+ALTER TABLE promises ADD COLUMN window_end_key TEXT;
+ALTER TABLE promises ADD COLUMN scheduled_by_plan_revision TEXT;

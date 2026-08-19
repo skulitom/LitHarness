@@ -1,0 +1,180 @@
+{
+  "study": "bcr",
+  "pre_registration": {
+    "version": "bcr.v0",
+    "shelf_size": 2,
+    "chunk_words": 300,
+    "opening_chunks": 1,
+    "budget": 12,
+    "double_budget": 24,
+    "system": "You are reading for pleasure. You have two books on the go and a fixed amount of reading time left, measured in sections.\nEach time you are asked, choose which book to read the next section of. You must spend every section of reading time; there is no option to stop.\nAnswer with a single JSON object naming the book you continue: {\"continue\": \"A\"} or {\"continue\": \"B\"}.",
+    "fetch_turn": "{left} section(s) of reading time left. Which book do you continue?",
+    "fetch_schema": {
+      "type": "object",
+      "properties": {
+        "continue": {
+          "type": "string",
+          "enum": [
+            "A",
+            "B"
+          ]
+        }
+      },
+      "required": [
+        "continue"
+      ],
+      "additionalProperties": false
+    },
+    "control_band": 0.1,
+    "control_alpha": 0.1,
+    "control_min_sessions": 24,
+    "descriptive_clusters": 5,
+    "alpha": 0.05,
+    "doses": [
+      0.15,
+      0.35,
+      0.65,
+      1.0
+    ],
+    "d1_families": [
+      "paragraph_shuffle",
+      "sentence_deletion",
+      "stat_flatten",
+      "interiority_strip",
+      "interiority_deplete_matched"
+    ],
+    "tau_floor": 0.6,
+    "family_band": 0.15,
+    "icc_floor": 0.2,
+    "v1_min_texts": 20,
+    "degenerate_sd": 0.05,
+    "kills": {
+      "D1": "a dose-response inversion — strongest allocation at the smallest dose — kills the instrument, not the arm",
+      "D2": "transplant-blindness is a kill: a continuation instrument that does not care whether the text belongs to its book is not measuring wanting-to-continue"
+    }
+  },
+  "registration_digest": "137886d57494c977",
+  "source": "C:\\DEV\\LitHarness\\research\\quality-measurement\\corpora\\toll-scenes.json",
+  "model": "gpt-oss:20b",
+  "transport": "ollama",
+  "replicates": 1,
+  "dry_run": false,
+  "spend": {
+    "input": 0,
+    "output": 0,
+    "cache_read": 0,
+    "cache_write": 0,
+    "equivalent_usd": 0.0
+  },
+  "sessions": [
+    {
+      "shelf_id": "p1-placebo",
+      "arm": "P1",
+      "model": "gpt-oss:20b",
+      "orientation": 0,
+      "replicate": 0,
+      "dose": 0.0,
+      "fetches": [],
+      "unanswered": 1,
+      "exit_note": ""
+    },
+    {
+      "shelf_id": "p1-placebo",
+      "arm": "P1",
+      "model": "gpt-oss:20b",
+      "orientation": 1,
+      "replicate": 0,
+      "dose": 0.0,
+      "fetches": [],
+      "unanswered": 1,
+      "exit_note": ""
+    },
+    {
+      "shelf_id": "p3-whitespace",
+      "arm": "P3",
+      "model": "gpt-oss:20b",
+      "orientation": 0,
+      "replicate": 0,
+      "dose": 0.0,
+      "fetches": [],
+      "unanswered": 1,
+      "exit_note": ""
+    },
+    {
+      "shelf_id": "p3-whitespace",
+      "arm": "P3",
+      "model": "gpt-oss:20b",
+      "orientation": 1,
+      "replicate": 0,
+      "dose": 0.0,
+      "fetches": [],
+      "unanswered": 1,
+      "exit_note": ""
+    },
+    {
+      "shelf_id": "p4-rename",
+      "arm": "P4",
+      "model": "gpt-oss:20b",
+      "orientation": 0,
+      "replicate": 0,
+      "dose": 0.0,
+      "fetches": [],
+      "unanswered": 1,
+      "exit_note": ""
+    },
+    {
+      "shelf_id": "p4-rename",
+      "arm": "P4",
+      "model": "gpt-oss:20b",
+      "orientation": 1,
+      "replicate": 0,
+      "dose": 0.0,
+      "fetches": [],
+      "unanswered": 1,
+      "exit_note": ""
+    }
+  ],
+  "seating": {
+    "model": "gpt-oss:20b",
+    "controls": {
+      "p1_placebo": {
+        "verdict": "NOT RUN",
+        "why": "no sessions on this arm"
+      },
+      "p3_whitespace": {
+        "verdict": "NOT RUN",
+        "why": "no sessions on this arm"
+      },
+      "p4_rename": {
+        "verdict": "NOT RUN",
+        "why": "no sessions on this arm"
+      },
+      "p2_positional": {
+        "verdict": "NOT RUN",
+        "why": "no non-placebo sessions to read a slot share from"
+      },
+      "p5_non_degenerate": {
+        "verdict": "NOT RUN",
+        "why": "no scorable sessions"
+      },
+      "v1_variance": {
+        "verdict": "NOT RUN",
+        "why": "the variance floor needs 20 own-generated texts of at least 3900 words; this repository holds one (§94.3)",
+        "icc_floor": 0.2
+      }
+    },
+    "sessions": 6,
+    "scorable": 0,
+    "unanswered_sessions": 6,
+    "skipped_shelves": [],
+    "seated": false,
+    "unseated_by": [
+      "p1_placebo",
+      "p3_whitespace",
+      "p4_rename",
+      "p2_positional",
+      "p5_non_degenerate",
+      "v1_variance"
+    ]
+  }
+}

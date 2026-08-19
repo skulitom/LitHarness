@@ -716,8 +716,42 @@ constraints and vetoes retain their higher-priority model-free lane. Every accep
 change advances the plan epoch and cancels queued scene prompts frozen against the old plan.
 
 This is deliberately not the full Narrative Planner in §9.1. It does not generate a book
-plan from scratch, schedule foreshadowing or progression, replace the fixed beat template,
-or run structural, mechanical-satisfiability, or calibrated arc-quality critics.
+plan from scratch, ~~schedule foreshadowing or progression~~ *(§9.4: foreshadowing now, but
+not progression)*, replace the fixed beat template, or run structural,
+mechanical-satisfiability, or calibrated arc-quality critics.
+
+### 9.4 The foreshadow-payoff ledger against §9.1's bullet, scored
+
+§9.1's second bullet asks for three things: *every planted promise carries a target window; the
+planner schedules payoffs; the evaluator flags overdue ones*. Stage-0 §94 closes the first two
+and had already closed the third. What each cost, and what is deliberately still missing:
+
+| §9.1 asks for | state | where |
+|---|---|---|
+| a promise ledger | **shipped** (§61 Add 2) | migration 023, `domain/promises.py` |
+| every promise carries a target window | **shipped** (§94 W2) | migration 029, `outline._payoff_windows` |
+| the planner schedules payoffs | **shipped** (§94 W2) | the outline call, folded per §15 |
+| the evaluator flags overdue ones | **shipped** (§61 Add 2) | `promise.overdue.v0`, MINOR/advisory |
+| *(not asked for; the tripwire needs it)* promise **kind** | **shipped** (§94 W1) | migration 028 |
+| a progression schedule against the Game-System Engine | **not built, and the engine is not here** | §8.4 |
+| "a cadence a reader can feel" as a measured quantity | **question asked, detector refused** | §94 W3 |
+| an independent check that a payoff landed | **designed, substrate absent** | §94 W4 |
+
+**Three of those rows are refusals rather than omissions and each carries its reason.** The
+progression schedule needs a forward Game-System Engine interface, and §8.4 put that vocabulary
+in the game-mechanics pack inside ContinuityEvaluation — verified absent from `src/` rather than
+assumed. The cadence detector is refused *until measured*: "a cadence a reader can feel" is an
+unmeasured claim in §1a.3's own words, and building a detector for a property nobody has shown a
+reader can perceive is how twenty-one proxies entered this project. And the landing check is
+blocked on a substrate finding worth stating plainly, because it is a measurement of this
+system's own output: **the only promise ledger this repository holds records 32 promises opened
+and none paid across a ten-scene book.** That is §1a.3 item 3's defect, in our own book, counted.
+
+**What did not move.** Windows are PROPOSED-grade, mint no finding and cannot refuse anything;
+`promise.overdue.v0` remains the entire evaluator side. A "missed its window" sibling was
+considered and deliberately not built — a model-scheduled window missed by a model-reported
+payoff is two model claims disagreeing, and neither is entitled to raise a finding about the
+other.
 
 ## 10. Quality gates and the calibration program (critical path)
 

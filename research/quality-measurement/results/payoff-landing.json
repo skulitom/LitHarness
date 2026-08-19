@@ -1,0 +1,791 @@
+{
+  "study": "payoff_landing",
+  "pre_registration": {
+    "channel": "report; the question names a debt and never rates or chooses",
+    "question": "Two passages from the same book. The second comes later.\n\nName the one thing left unresolved by the first passage that the second passage settles, in one sentence — or say none if the second settles nothing the first left open.\n\nDescribe what is settled, not how well it is written.",
+    "excerpt_words": 450,
+    "matcher": "summarize.check_open_threads, the shipped thread matcher",
+    "bar": "agreement with an owner-read set on its held-out half, clearing the agreement the mismatched control achieves — never chance",
+    "alpha": 0.05,
+    "owner_set": "out-of-loop validation only; never steers, never in a prompt"
+  },
+  "book_db": "C:\\DEV\\LitHarness\\research\\quality-measurement\\corpora\\toll.db",
+  "model": "qwen3:14b",
+  "transport": "ollama",
+  "dry_run": false,
+  "spend": {
+    "input": 39671,
+    "output": 1382,
+    "cache_read": 0,
+    "cache_write": 0,
+    "equivalent_usd": 0.0
+  },
+  "arms": {
+    "unpaid": {
+      "matched": 0,
+      "none": 0,
+      "responses": 32
+    },
+    "placebo": {
+      "matched": 0,
+      "none": 0,
+      "responses": 8
+    },
+    "constructed_positive": {
+      "matched": 6,
+      "none": 0,
+      "responses": 32
+    }
+  },
+  "landing_bar": {
+    "verdict": "NOT RUN",
+    "why": "the ledger records no paid promise to pair"
+  },
+  "false_positive_rate_unpaid": null,
+  "false_positive_withheld": "withheld: the scorer fires on 6/32 of the constructed positives, below the 50% floor, so a zero here is a matcher that cannot fire rather than an instrument that found nothing",
+  "scorer_usable": false,
+  "DIAGNOSTIC_constructed_positive_rate": 0.1875,
+  "DIAGNOSTIC_reading": "post-hoc and in no bar: the second passage is built from the ledger's own sentence, so this is a floor test of the matcher and not evidence about the instrument. A low rate here means the unpaid arm's zero is a dead matcher rather than a clean instrument, which is the reading that would otherwise flatter it",
+  "census": {
+    "promises": 32,
+    "paid": 0,
+    "open": 32,
+    "scenes": 10,
+    "arms": {
+      "paid": 0,
+      "mismatched": 0,
+      "unpaid": 32,
+      "placebo": 8,
+      "constructed_positive": 32
+    },
+    "unrunnable": [
+      "paid",
+      "mismatched"
+    ]
+  },
+  "verdict": "SCORER_UNUSABLE",
+  "why": "the pre-registered scorer does not transfer: `check_open_threads` was built to ask whether a summary of the same prose mentions a recorded thread, and here it is asked whether a one-sentence paraphrase names the same debt. On the constructed positive it fires on 6/32, so no other rate in this run is readable. W4 needs a different scorer before it can be run at all",
+  "wired": false,
+  "responses": [
+    {
+      "pair": "unpaid-prm-04d27404",
+      "arm": "unpaid",
+      "promise": "sealed_crate",
+      "ledger_says": "The crate's contents, its unfamiliar wax mark, and who sent it must be revealed; Wren carried it from the low bridges without asking.",
+      "said": "The second passage settles the unresolved issue of the exact number of days owed by Wren, which was left ambiguous in the first passage.",
+      "refused": false,
+      "named_none": false,
+      "matches_ledger": false
+    },
+    {
+      "pair": "unpaid-prm-3a8062ca",
+      "arm": "unpaid",
+      "promise": "wrens_private_ledger",
+      "ledger_says": "Wren keeps his own count against Haro's book; the two records must be set against each other.",
+      "said": "The second passage settles the unresolved issue of the exact number of days owed by Wren, which was left ambiguous in the first passage.",
+      "refused": false,
+      "named_none": false,
+      "matches_ledger": false
+    },
+    {
+      "pair": "unpaid-prm-4a5f3e8a",
+      "arm": "unpaid",
+      "promise": "gates_discretion",
+      "ledger_says": "Haro's power to price above the posted board on unopened cargo is established and must be tested again.",
+      "said": "The second passage settles the unresolved issue of the exact number of days owed by Wren, which was left ambiguous in the first passage.",
+      "refused": false,
+      "named_none": false,
+      "matches_ledger": false
+    },
+    {
+      "pair": "unpaid-prm-519a101f",
+      "arm": "unpaid",
+      "promise": "margin_column_mark",
+      "ledger_says": "The narrow ruled column beside Wren's totals bears a letter and numeral against today, possibly a C — what it records must be explained.",
+      "said": "The second passage settles the unresolved debt from the first passage, specifically the toll owed by Wren for passing through the Chalk Gate.",
+      "refused": false,
+      "named_none": false,
+      "matches_ledger": false
+    },
+    {
+      "pair": "unpaid-prm-da304d01",
+      "arm": "unpaid",
+      "promise": "query_of_account",
+      "ledger_says": "The posted 2-day toll to query the account is now known to Wren and refused once; the book must show what asking costs and what it yields.",
+      "said": "The second passage settles the unresolved debt from the first passage, specifically the toll owed by Wren for passing through the Chalk Gate.",
+      "refused": false,
+      "named_none": false,
+      "matches_ledger": false
+    },
+    {
+      "pair": "unpaid-prm-e6c78ee8",
+      "arm": "unpaid",
+      "promise": "collectors_recoil_from_seal",
+      "ledger_says": "The Chalk collector stepped back from the wax rather than touching it as Haro did, and said the seal isn't hers to price — the seal's authority and who fears it must be shown.",
+      "said": "The second passage settles the unresolved debt from the first passage, specifically the toll owed by Wren for passing through the Chalk Gate.",
+      "refused": false,
+      "named_none": false,
+      "matches_ledger": false
+    },
+    {
+      "pair": "unpaid-prm-2317beb9",
+      "arm": "unpaid",
+      "promise": "liner_sheet_evidence",
+      "ledger_says": "Wren's hidden tally sheet under the crate rim, marked ALONE, must be produced, found, or destroyed.",
+      "said": "The first passage leaves unresolved the status of Wren's debt and his ability to pay it, which the second passage settles by showing that Wren has paid 442 days, but still owes 3,999, and is now marked as delinquent until the account is regularized.",
+      "refused": false,
+      "named_none": false,
+      "matches_ledger": false
+    },
+    {
+      "pair": "unpaid-prm-61a55144",
+      "arm": "unpaid",
+      "promise": "wren_injury_and_illness",
+      "ledger_says": "A tear across his thumb and a rattle in his chest, both carried while walking under load.",
+      "said": "The first passage leaves unresolved the status of Wren's debt and his ability to pay it, which the second passage settles by showing that Wren has paid 442 days, but still owes 3,999, and is now marked as delinquent until the account is regularized.",
+      "refused": false,
+      "named_none": false,
+      "matches_ledger": false
+    },
+    {
+      "pair": "unpaid-prm-8a74267f",
+      "arm": "unpaid",
+      "promise": "alone_witness_rule",
+      "ledger_says": "The overcharge occurs only at unwitnessed gates and is marked by a letter in the margin — the mechanism and who writes it must be explained.",
+      "said": "The first passage leaves unresolved the status of Wren's debt and his ability to pay it, which the second passage settles by showing that Wren has paid 442 days, but still owes 3,999, and is now marked as delinquent until the account is regularized.",
+      "refused": false,
+      "named_none": false,
+      "matches_ledger": false
+    },
+    {
+      "pair": "unpaid-prm-b4774220",
+      "arm": "unpaid",
+      "promise": "wren_return_to_ferrous",
+      "ledger_says": "Wren turns back toward the Ferrous Gate with proof in hand — the confrontation he intends must arrive.",
+      "said": "The first passage leaves unresolved the status of Wren's debt and his ability to pay it, which the second passage settles by showing that Wren has paid 442 days, but still owes 3,999, and is now marked as delinquent until the account is regularized.",
+      "refused": false,
+      "named_none": false,
+      "matches_ledger": false
+    },
+    {
+      "pair": "unpaid-prm-2c557019",
+      "arm": "unpaid",
+      "promise": "wren_shoulder_injury",
+      "ledger_says": "The left shoulder that let go under double load must have consequences for a porter who carries for a living.",
+      "said": "The first passage leaves unresolved the nature and origin of the debt the porter owes the Road, which the second passage settles by revealing that the debt is inherited from his father and is based on days carried rather than days lived.",
+      "refused": false,
+      "named_none": false,
+      "matches_ledger": false
+    },
+    {
+      "pair": "unpaid-prm-4c35a254",
+      "arm": "unpaid",
+      "promise": "through_carry_fate",
+      "ledger_says": "The woman's claim that nobody takes the through-carry twice, and that nobody says what happened to those who did it once, must be answered.",
+      "said": "The first passage leaves unresolved the nature and origin of the debt the porter owes the Road, which the second passage settles by revealing that the debt is inherited from his father and is based on days carried rather than days lived.",
+      "refused": false,
+      "named_none": false,
+      "matches_ledger": false
+    },
+    {
+      "pair": "unpaid-prm-cb15a8d6",
+      "arm": "unpaid",
+      "promise": "ferrous_delivery",
+      "ledger_says": "The consignment is due at the Ferrous window, nine miles on.",
+      "said": "The first passage leaves unresolved the nature and origin of the debt the porter owes the Road, which the second passage settles by revealing that the debt is inherited from his father and is based on days carried rather than days lived.",
+      "refused": false,
+      "named_none": false,
+      "matches_ledger": false
+    },
+    {
+      "pair": "unpaid-prm-2e4cf6d4",
+      "arm": "unpaid",
+      "promise": "ferrous_reassigned_route",
+      "ledger_says": "Wren consented to take Mekk's consignment to the Ferrous window, one-armed, five miles out.",
+      "said": "The second passage settles the unresolved issue of Wren's debt to the Road, revealing that it stems from his father's unpaid tolls, which were transferred to him as principal.",
+      "refused": false,
+      "named_none": false,
+      "matches_ledger": false
+    },
+    {
+      "pair": "unpaid-prm-686b455d",
+      "arm": "unpaid",
+      "promise": "two_day_query",
+      "ledger_says": "The audit query costs two days and returns only 'the account is correct as recorded' — established as the mechanism nobody uses.",
+      "said": "The second passage settles the unresolved issue of Wren's debt to the Road, revealing that it stems from his father's unpaid tolls, which were transferred to him as principal.",
+      "refused": false,
+      "named_none": false,
+      "matches_ledger": false
+    },
+    {
+      "pair": "unpaid-prm-78723cae",
+      "arm": "unpaid",
+      "promise": "mekk_overdrawn_toll_death",
+      "ledger_says": "Mekk had three days remaining, consented to four, and died; the collector records only that consent went through. The System charging past a man's balance must be answered.",
+      "said": "The second passage settles the unresolved issue of Wren's debt to the Road, revealing that it stems from his father's unpaid tolls, which were transferred to him as principal.",
+      "refused": false,
+      "named_none": false,
+      "matches_ledger": false
+    },
+    {
+      "pair": "unpaid-prm-f86aaf8e",
+      "arm": "unpaid",
+      "promise": "mekk_chit_archive",
+      "ledger_says": "Wren carries eleven years of Mekk's punched, threaded chits — every date, gate, and number — inside his coat; the record must be used or surrendered.",
+      "said": "The second passage settles the unresolved issue of Wren's debt to the Road, revealing that it stems from his father's unpaid tolls, which were transferred to him as principal.",
+      "refused": false,
+      "named_none": false,
+      "matches_ledger": false
+    },
+    {
+      "pair": "unpaid-prm-2780de34",
+      "arm": "unpaid",
+      "promise": "the_unprinted_column's_heading",
+      "ledger_says": "The heading Wren read three times and copied must be revealed, along with why newer books stopped printing it.",
+      "said": "The unresolved issue of the disputed toll sums and the need to settle them at the Ferrous window is settled in the second passage.",
+      "refused": false,
+      "named_none": false,
+      "matches_ledger": false
+    },
+    {
+      "pair": "unpaid-prm-39ed23bf",
+      "arm": "unpaid",
+      "promise": "the_sealed_crate",
+      "ledger_says": "The sealed crate is not the clerk's and remains uncleared on Wren's shoulder.",
+      "said": "The unresolved issue of the disputed toll sums and the need to settle them at the Ferrous window is settled in the second passage.",
+      "refused": false,
+      "named_none": false,
+      "matches_ledger": false
+    },
+    {
+      "pair": "unpaid-prm-99b90e52",
+      "arm": "unpaid",
+      "promise": "mekk's_death",
+      "ledger_says": "Mekk died at the Tallow post this morning; the clerk's stopped pen implies the road knows something about it.",
+      "said": "The unresolved issue of the disputed toll sums and the need to settle them at the Ferrous window is settled in the second passage.",
+      "refused": false,
+      "named_none": false,
+      "matches_ledger": false
+    },
+    {
+      "pair": "unpaid-prm-bd9e4fd2",
+      "arm": "unpaid",
+      "promise": "the_paired_margin_letter_and_numeral",
+      "ledger_says": "The knot tied at both ends — where the doubled days went — must be explained.",
+      "said": "The unresolved issue of the disputed toll sums and the need to settle them at the Ferrous window is settled in the second passage.",
+      "refused": false,
+      "named_none": false,
+      "matches_ledger": false
+    },
+    {
+      "pair": "unpaid-prm-ef2db648",
+      "arm": "unpaid",
+      "promise": "salt_debt_to_the_clerk",
+      "ledger_says": "Wren owes six more unpaid nights hauling salt, beginning at the ninth hour tomorrow.",
+      "said": "The unresolved issue of the disputed toll sums and the need to settle them at the Ferrous window is settled in the second passage.",
+      "refused": false,
+      "named_none": false,
+      "matches_ledger": false
+    },
+    {
+      "pair": "unpaid-prm-5c51a2e6",
+      "arm": "unpaid",
+      "promise": "wren_barge_lip_nights",
+      "ledger_says": "Wren owes six more nights at the barge lip at the ninth hour, a thing Haro says he agreed to and has not been asked about.",
+      "said": "The first passage leaves unresolved the issue of Wren's debt and the possibility of disputing it, which the second passage settles by showing that the debt is frozen pending closure at the Ferrous window.",
+      "refused": false,
+      "named_none": false,
+      "matches_ledger": false
+    },
+    {
+      "pair": "unpaid-prm-cf368bd4",
+      "arm": "unpaid",
+      "promise": "idren_name",
+      "ledger_says": "Haro's old whitewashed book calls Wren \"Idren\" and bears a date Wren handled six hours earlier; what the name and date mean is unexplained.",
+      "said": "The first passage leaves unresolved the issue of Wren's debt and the possibility of disputing it, which the second passage settles by showing that the debt is frozen pending closure at the Ferrous window.",
+      "refused": false,
+      "named_none": false,
+      "matches_ledger": false
+    },
+    {
+      "pair": "unpaid-prm-30f64602",
+      "arm": "unpaid",
+      "promise": "issue_number_1142",
+      "ledger_says": "The issue number links Idren's Millrace death to Wren's opening chit; what is done with that proof is owed.",
+      "said": "The first passage leaves unresolved the status of Wren's debt, which the second passage settles by showing that he has six days remaining to pay it.",
+      "refused": false,
+      "named_none": false,
+      "matches_ledger": false
+    },
+    {
+      "pair": "unpaid-prm-5abed73f",
+      "arm": "unpaid",
+      "promise": "ferrous_gate_penman",
+      "ledger_says": "The man with the pen behind the shuttered window put the numeral in the margin and knew what it was for; Wren must reach him.",
+      "said": "The first passage leaves unresolved the status of Wren's debt, which the second passage settles by showing that he has six days remaining to pay it.",
+      "refused": false,
+      "named_none": false,
+      "matches_ledger": false
+    },
+    {
+      "pair": "unpaid-prm-eb919656",
+      "arm": "unpaid",
+      "promise": "wren_five_nights",
+      "ledger_says": "Five more nights of dock work remain to be worked while his lung worsens.",
+      "said": "The first passage leaves unresolved the status of Wren's debt, which the second passage settles by showing that he has six days remaining to pay it.",
+      "refused": false,
+      "named_none": false,
+      "matches_ledger": false
+    },
+    {
+      "pair": "unpaid-prm-4c10d220",
+      "arm": "unpaid",
+      "promise": "porters_party",
+      "ledger_says": "Pell, Ossa and Coble consented alongside him and now carry disputed entries of their own.",
+      "said": "The first passage leaves unresolved the question of whether Wren's debt will be fully accounted for and settled, which the second passage settles by showing that he reaches Kell Gate with the exact remaining amount of six, thus fulfilling his obligation.",
+      "refused": false,
+      "named_none": false,
+      "matches_ledger": false
+    },
+    {
+      "pair": "unpaid-prm-a1e944de",
+      "arm": "unpaid",
+      "promise": "millrace_withheld",
+      "ledger_says": "Wren withheld Millrace and the oilcloth from the porters; both must surface.",
+      "said": "The first passage leaves unresolved the question of whether Wren's debt will be fully accounted for and settled, which the second passage settles by showing that he reaches Kell Gate with the exact remaining amount of six, thus fulfilling his obligation.",
+      "refused": false,
+      "named_none": false,
+      "matches_ledger": false
+    },
+    {
+      "pair": "unpaid-prm-b14e8042",
+      "arm": "unpaid",
+      "promise": "wren_body_failing",
+      "ledger_says": "The left shoulder that won't take weight and the rattle in his chest must come due.",
+      "said": "The first passage leaves unresolved the question of whether Wren's debt will be fully accounted for and settled, which the second passage settles by showing that he reaches Kell Gate with the exact remaining amount of six, thus fulfilling his obligation.",
+      "refused": false,
+      "named_none": false,
+      "matches_ledger": false
+    },
+    {
+      "pair": "unpaid-prm-b3645073",
+      "arm": "unpaid",
+      "promise": "ferrous_dispute_closure",
+      "ledger_says": "Eleven frozen sums must be closed at the Ferrous window, with Wren and Ossa going there.",
+      "said": "The first passage leaves unresolved the question of whether Wren's debt will be fully accounted for and settled, which the second passage settles by showing that he reaches Kell Gate with the exact remaining amount of six, thus fulfilling his obligation.",
+      "refused": false,
+      "named_none": false,
+      "matches_ledger": false
+    },
+    {
+      "pair": "unpaid-prm-bc53c609",
+      "arm": "unpaid",
+      "promise": "collector_margin_column",
+      "ledger_says": "The collector's hand reaching for the narrow ruled margin column, and stopping — what the margin is for must be explained.",
+      "said": "The first passage leaves unresolved the question of whether Wren's debt will be fully accounted for and settled, which the second passage settles by showing that he reaches Kell Gate with the exact remaining amount of six, thus fulfilling his obligation.",
+      "refused": false,
+      "named_none": false,
+      "matches_ledger": false
+    },
+    {
+      "pair": "placebo-prm-04d27404",
+      "arm": "placebo",
+      "promise": "sealed_crate",
+      "ledger_says": "The crate's contents, its unfamiliar wax mark, and who sent it must be revealed; Wren carried it from the low bridges without asking.",
+      "said": "The second passage settles the mystery of what is inside the sealed crate that Wren has been carrying.",
+      "refused": false,
+      "named_none": false,
+      "matches_ledger": false
+    },
+    {
+      "pair": "placebo-prm-3a8062ca",
+      "arm": "placebo",
+      "promise": "wrens_private_ledger",
+      "ledger_says": "Wren keeps his own count against Haro's book; the two records must be set against each other.",
+      "said": "The second passage settles the mystery of what is inside the sealed crate that Wren has been carrying.",
+      "refused": false,
+      "named_none": false,
+      "matches_ledger": false
+    },
+    {
+      "pair": "placebo-prm-4a5f3e8a",
+      "arm": "placebo",
+      "promise": "gates_discretion",
+      "ledger_says": "Haro's power to price above the posted board on unopened cargo is established and must be tested again.",
+      "said": "The second passage settles the mystery of what is inside the sealed crate that Wren has been carrying.",
+      "refused": false,
+      "named_none": false,
+      "matches_ledger": false
+    },
+    {
+      "pair": "placebo-prm-519a101f",
+      "arm": "placebo",
+      "promise": "margin_column_mark",
+      "ledger_says": "The narrow ruled column beside Wren's totals bears a letter and numeral against today, possibly a C — what it records must be explained.",
+      "said": "The second passage settles the unresolved issue of what happens to the cargo after the toll is paid and the seal is inspected.",
+      "refused": false,
+      "named_none": false,
+      "matches_ledger": false
+    },
+    {
+      "pair": "placebo-prm-da304d01",
+      "arm": "placebo",
+      "promise": "query_of_account",
+      "ledger_says": "The posted 2-day toll to query the account is now known to Wren and refused once; the book must show what asking costs and what it yields.",
+      "said": "The second passage settles the unresolved issue of what happens to the cargo after the toll is paid and the seal is inspected.",
+      "refused": false,
+      "named_none": false,
+      "matches_ledger": false
+    },
+    {
+      "pair": "placebo-prm-e6c78ee8",
+      "arm": "placebo",
+      "promise": "collectors_recoil_from_seal",
+      "ledger_says": "The Chalk collector stepped back from the wax rather than touching it as Haro did, and said the seal isn't hers to price — the seal's authority and who fears it must be shown.",
+      "said": "The second passage settles the unresolved issue of what happens to the cargo after the toll is paid and the seal is inspected.",
+      "refused": false,
+      "named_none": false,
+      "matches_ledger": false
+    },
+    {
+      "pair": "placebo-prm-2317beb9",
+      "arm": "placebo",
+      "promise": "liner_sheet_evidence",
+      "ledger_says": "Wren's hidden tally sheet under the crate rim, marked ALONE, must be produced, found, or destroyed.",
+      "said": "The debt that Wren owed at the Slate Gate is settled in the second passage.",
+      "refused": false,
+      "named_none": false,
+      "matches_ledger": false
+    },
+    {
+      "pair": "placebo-prm-61a55144",
+      "arm": "placebo",
+      "promise": "wren_injury_and_illness",
+      "ledger_says": "A tear across his thumb and a rattle in his chest, both carried while walking under load.",
+      "said": "The debt that Wren owed at the Slate Gate is settled in the second passage.",
+      "refused": false,
+      "named_none": false,
+      "matches_ledger": false
+    },
+    {
+      "pair": "positive-prm-04d27404",
+      "arm": "constructed_positive",
+      "promise": "sealed_crate",
+      "ledger_says": "The crate's contents, its unfamiliar wax mark, and who sent it must be revealed; Wren carried it from the low bridges without asking.",
+      "said": "The identity and origin of the crate's contents and sender are settled in the second passage.",
+      "refused": false,
+      "named_none": false,
+      "matches_ledger": false
+    },
+    {
+      "pair": "positive-prm-3a8062ca",
+      "arm": "constructed_positive",
+      "promise": "wrens_private_ledger",
+      "ledger_says": "Wren keeps his own count against Haro's book; the two records must be set against each other.",
+      "said": "The debt that Wren owes to the System is settled.",
+      "refused": false,
+      "named_none": false,
+      "matches_ledger": false
+    },
+    {
+      "pair": "positive-prm-4a5f3e8a",
+      "arm": "constructed_positive",
+      "promise": "gates_discretion",
+      "ledger_says": "Haro's power to price above the posted board on unopened cargo is established and must be tested again.",
+      "said": "The debt that Wren owes at the Ferrous Gate",
+      "refused": false,
+      "named_none": false,
+      "matches_ledger": false
+    },
+    {
+      "pair": "positive-prm-519a101f",
+      "arm": "constructed_positive",
+      "promise": "margin_column_mark",
+      "ledger_says": "The narrow ruled column beside Wren's totals bears a letter and numeral against today, possibly a C — what it records must be explained.",
+      "said": "The debt from the toll at the Chalk Gate is settled.",
+      "refused": false,
+      "named_none": false,
+      "matches_ledger": false
+    },
+    {
+      "pair": "positive-prm-da304d01",
+      "arm": "constructed_positive",
+      "promise": "query_of_account",
+      "ledger_says": "The posted 2-day toll to query the account is now known to Wren and refused once; the book must show what asking costs and what it yields.",
+      "said": "The posted 2-day toll to query the account is settled.",
+      "refused": false,
+      "named_none": false,
+      "matches_ledger": false
+    },
+    {
+      "pair": "positive-prm-e6c78ee8",
+      "arm": "constructed_positive",
+      "promise": "collectors_recoil_from_seal",
+      "ledger_says": "The Chalk collector stepped back from the wax rather than touching it as Haro did, and said the seal isn't hers to price — the seal's authority and who fears it must be shown.",
+      "said": "The authority and fear associated with the seal are settled in the second passage.",
+      "refused": false,
+      "named_none": false,
+      "matches_ledger": false
+    },
+    {
+      "pair": "positive-prm-2317beb9",
+      "arm": "constructed_positive",
+      "promise": "liner_sheet_evidence",
+      "ledger_says": "Wren's hidden tally sheet under the crate rim, marked ALONE, must be produced, found, or destroyed.",
+      "said": "The hidden tally sheet under the crate rim, marked ALONE, must be produced, found, or destroyed.",
+      "refused": false,
+      "named_none": false,
+      "matches_ledger": true
+    },
+    {
+      "pair": "positive-prm-61a55144",
+      "arm": "constructed_positive",
+      "promise": "wren_injury_and_illness",
+      "ledger_says": "A tear across his thumb and a rattle in his chest, both carried while walking under load.",
+      "said": "The debt owed by Wren at the Slate Gate",
+      "refused": false,
+      "named_none": false,
+      "matches_ledger": false
+    },
+    {
+      "pair": "positive-prm-8a74267f",
+      "arm": "constructed_positive",
+      "promise": "alone_witness_rule",
+      "ledger_says": "The overcharge occurs only at unwitnessed gates and is marked by a letter in the margin — the mechanism and who writes it must be explained.",
+      "said": "The overcharge at unwitnessed gates and the mechanism by which it is marked.",
+      "refused": false,
+      "named_none": false,
+      "matches_ledger": true
+    },
+    {
+      "pair": "positive-prm-b4774220",
+      "arm": "constructed_positive",
+      "promise": "wren_return_to_ferrous",
+      "ledger_says": "Wren turns back toward the Ferrous Gate with proof in hand — the confrontation he intends must arrive.",
+      "said": "The debt owed by Wren at the Slate Gate",
+      "refused": false,
+      "named_none": false,
+      "matches_ledger": false
+    },
+    {
+      "pair": "positive-prm-2c557019",
+      "arm": "constructed_positive",
+      "promise": "wren_shoulder_injury",
+      "ledger_says": "The left shoulder that let go under double load must have consequences for a porter who carries for a living.",
+      "said": "The debt from the through-carry is settled by the depot, resolving the consequence of the porter's injured shoulder from carrying double load.",
+      "refused": false,
+      "named_none": false,
+      "matches_ledger": false
+    },
+    {
+      "pair": "positive-prm-4c35a254",
+      "arm": "constructed_positive",
+      "promise": "through_carry_fate",
+      "ledger_says": "The woman's claim that nobody takes the through-carry twice, and that nobody says what happened to those who did it once, must be answered.",
+      "said": "The through-carry is a dangerous task that no one survives, and the woman's claim about those who took it once is confirmed.",
+      "refused": false,
+      "named_none": false,
+      "matches_ledger": false
+    },
+    {
+      "pair": "positive-prm-cb15a8d6",
+      "arm": "constructed_positive",
+      "promise": "ferrous_delivery",
+      "ledger_says": "The consignment is due at the Ferrous window, nine miles on.",
+      "said": "The debt from the three days credit against owing is settled by the second passage.",
+      "refused": false,
+      "named_none": false,
+      "matches_ledger": false
+    },
+    {
+      "pair": "positive-prm-2e4cf6d4",
+      "arm": "constructed_positive",
+      "promise": "ferrous_reassigned_route",
+      "ledger_says": "Wren consented to take Mekk's consignment to the Ferrous window, one-armed, five miles out.",
+      "said": "The debt or responsibility that Wren had to fulfill by taking Mekk's consignment to the Ferrous window.",
+      "refused": false,
+      "named_none": false,
+      "matches_ledger": true
+    },
+    {
+      "pair": "positive-prm-686b455d",
+      "arm": "constructed_positive",
+      "promise": "two_day_query",
+      "ledger_says": "The audit query costs two days and returns only 'the account is correct as recorded' — established as the mechanism nobody uses.",
+      "said": "The audit query's cost and outcome",
+      "refused": false,
+      "named_none": false,
+      "matches_ledger": false
+    },
+    {
+      "pair": "positive-prm-78723cae",
+      "arm": "constructed_positive",
+      "promise": "mekk_overdrawn_toll_death",
+      "ledger_says": "Mekk had three days remaining, consented to four, and died; the collector records only that consent went through. The System charging past a man's balance must be answered.",
+      "said": "The unresolved issue of Mekk's debt and the system's requirement to answer the charge against him is settled in the second passage.",
+      "refused": false,
+      "named_none": false,
+      "matches_ledger": false
+    },
+    {
+      "pair": "positive-prm-f86aaf8e",
+      "arm": "constructed_positive",
+      "promise": "mekk_chit_archive",
+      "ledger_says": "Wren carries eleven years of Mekk's punched, threaded chits — every date, gate, and number — inside his coat; the record must be used or surrendered.",
+      "said": "The unresolved issue of Wren carrying Mekk's record of tolls and the implications of that record is settled in the second passage.",
+      "refused": false,
+      "named_none": false,
+      "matches_ledger": false
+    },
+    {
+      "pair": "positive-prm-2780de34",
+      "arm": "constructed_positive",
+      "promise": "the_unprinted_column's_heading",
+      "ledger_says": "The heading Wren read three times and copied must be revealed, along with why newer books stopped printing it.",
+      "said": "The debt Wren owes to the clerk for the salt moving task is settled by the second passage.",
+      "refused": false,
+      "named_none": false,
+      "matches_ledger": false
+    },
+    {
+      "pair": "positive-prm-39ed23bf",
+      "arm": "constructed_positive",
+      "promise": "the_sealed_crate",
+      "ledger_says": "The sealed crate is not the clerk's and remains uncleared on Wren's shoulder.",
+      "said": "The sealed crate's status and responsibility",
+      "refused": false,
+      "named_none": false,
+      "matches_ledger": false
+    },
+    {
+      "pair": "positive-prm-99b90e52",
+      "arm": "constructed_positive",
+      "promise": "mekk's_death",
+      "ledger_says": "Mekk died at the Tallow post this morning; the clerk's stopped pen implies the road knows something about it.",
+      "said": "The debt from the unpaid work for moving salt is settled by the clerk agreeing to accept one week of unpaid work as payment.",
+      "refused": false,
+      "named_none": false,
+      "matches_ledger": false
+    },
+    {
+      "pair": "positive-prm-bd9e4fd2",
+      "arm": "constructed_positive",
+      "promise": "the_paired_margin_letter_and_numeral",
+      "ledger_says": "The knot tied at both ends — where the doubled days went — must be explained.",
+      "said": "The unresolved issue of the unpaid work and the debt owed by Wren for moving the salt is settled in the second passage.",
+      "refused": false,
+      "named_none": false,
+      "matches_ledger": false
+    },
+    {
+      "pair": "positive-prm-ef2db648",
+      "arm": "constructed_positive",
+      "promise": "salt_debt_to_the_clerk",
+      "ledger_says": "Wren owes six more unpaid nights hauling salt, beginning at the ninth hour tomorrow.",
+      "said": "The unresolved matter of Wren owing unpaid nights for hauling salt is settled in the second passage.",
+      "refused": false,
+      "named_none": false,
+      "matches_ledger": true
+    },
+    {
+      "pair": "positive-prm-5c51a2e6",
+      "arm": "constructed_positive",
+      "promise": "wren_barge_lip_nights",
+      "ledger_says": "Wren owes six more nights at the barge lip at the ninth hour, a thing Haro says he agreed to and has not been asked about.",
+      "said": "Wren's debt for irregular inspection of a closed account",
+      "refused": false,
+      "named_none": false,
+      "matches_ledger": false
+    },
+    {
+      "pair": "positive-prm-cf368bd4",
+      "arm": "constructed_positive",
+      "promise": "idren_name",
+      "ledger_says": "Haro's old whitewashed book calls Wren \"Idren\" and bears a date Wren handled six hours earlier; what the name and date mean is unexplained.",
+      "said": "The identity and significance of the name 'Idren' and the date associated with it in Haro's old book are settled in the second passage.",
+      "refused": false,
+      "named_none": false,
+      "matches_ledger": false
+    },
+    {
+      "pair": "positive-prm-30f64602",
+      "arm": "constructed_positive",
+      "promise": "issue_number_1142",
+      "ledger_says": "The issue number links Idren's Millrace death to Wren's opening chit; what is done with that proof is owed.",
+      "said": "The debt from Millrace's death is settled by linking it to Wren's account.",
+      "refused": false,
+      "named_none": false,
+      "matches_ledger": false
+    },
+    {
+      "pair": "positive-prm-5abed73f",
+      "arm": "constructed_positive",
+      "promise": "ferrous_gate_penman",
+      "ledger_says": "The man with the pen behind the shuttered window put the numeral in the margin and knew what it was for; Wren must reach him.",
+      "said": "The debt represented by the numeral 1142, which Wren had been carrying for eleven years, is settled in the second passage.",
+      "refused": false,
+      "named_none": false,
+      "matches_ledger": false
+    },
+    {
+      "pair": "positive-prm-eb919656",
+      "arm": "constructed_positive",
+      "promise": "wren_five_nights",
+      "ledger_says": "Five more nights of dock work remain to be worked while his lung worsens.",
+      "said": "The debt that Wren owes is settled in the second passage.",
+      "refused": false,
+      "named_none": false,
+      "matches_ledger": false
+    },
+    {
+      "pair": "positive-prm-4c10d220",
+      "arm": "constructed_positive",
+      "promise": "porters_party",
+      "ledger_says": "Pell, Ossa and Coble consented alongside him and now carry disputed entries of their own.",
+      "said": "The unresolved issue of whether Wren and the others would be priced as a party and face the corresponding levy is settled in the second passage, as Pell, Ossa, and Coble consent to carry disputed entries of their own, indicating they have agreed to the terms and resolved the potential levy issue.",
+      "refused": false,
+      "named_none": false,
+      "matches_ledger": true
+    },
+    {
+      "pair": "positive-prm-a1e944de",
+      "arm": "constructed_positive",
+      "promise": "millrace_withheld",
+      "ledger_says": "Wren withheld Millrace and the oilcloth from the porters; both must surface.",
+      "said": "The unresolved issue of whether Wren would reveal the information about Millrace and the oilcloth is settled in the second passage when it is stated that he withheld them from the porters, and both must surface.",
+      "refused": false,
+      "named_none": false,
+      "matches_ledger": true
+    },
+    {
+      "pair": "positive-prm-b14e8042",
+      "arm": "constructed_positive",
+      "promise": "wren_body_failing",
+      "ledger_says": "The left shoulder that won't take weight and the rattle in his chest must come due.",
+      "said": "The debt that Wren owes due to his injury and the tolls he has accumulated.",
+      "refused": false,
+      "named_none": false,
+      "matches_ledger": false
+    },
+    {
+      "pair": "positive-prm-b3645073",
+      "arm": "constructed_positive",
+      "promise": "ferrous_dispute_closure",
+      "ledger_says": "Eleven frozen sums must be closed at the Ferrous window, with Wren and Ossa going there.",
+      "said": "The debt that Wren and Ossa had to settle at the Ferrous window",
+      "refused": false,
+      "named_none": false,
+      "matches_ledger": false
+    },
+    {
+      "pair": "positive-prm-bc53c609",
+      "arm": "constructed_positive",
+      "promise": "collector_margin_column",
+      "ledger_says": "The collector's hand reaching for the narrow ruled margin column, and stopping — what the margin is for must be explained.",
+      "said": "The collector's discretion in pricing convoys and whether the rules for tolls are consistent across different boards.",
+      "refused": false,
+      "named_none": false,
+      "matches_ledger": false
+    }
+  ]
+}

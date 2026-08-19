@@ -299,6 +299,31 @@ _DRY_DIFFERENCES: tuple[str, ...] = (
 )
 
 
+#: Stand-in answers for §94's payoff-landing question. Some name a debt, one names none, and
+#: none of them is drawn from the pair being asked about — the same no-signal rule as
+#: `_DRY_DIFFERENCES`, so a dry run's agreement with the ledger is whatever chance gives and the
+#: study's own controls have something to be measured against.
+_DRY_DEBTS: tuple[str, ...] = (
+    "(dry run) the debt about the sealed crate",
+    "(dry run) the promise that the ledger would be checked",
+    "(dry run) a question about who sent the shipment",
+    "(dry run) nothing; the second passage pays no debt the first opened",
+    "(dry run) some earlier obligation I could not name",
+)
+
+#: Stand-in answers for §94's cadence question. Two of the six name a cadence property and four
+#: do not, so a dry run fires the cadence matcher at a fixed rate **independent of the arm** —
+#: which is the null the study's Fisher test needs, and is why writing a plausible cadence
+#: answer here would be worse than useless.
+_DRY_CADENCE: tuple[str, ...] = (
+    "(dry run) One pays things off steadily and the other saves it all for the end.",
+    "(dry run) The rhythm of when questions get answered is different.",
+    "(dry run) One has more dialogue.",
+    "(dry run) The paragraphs are ordered differently.",
+    "(dry run) One is more descriptive than the other.",
+    "(dry run) They read the same to me.",
+)
+
 #: Stop reasons that mean **no judgment was ever obtained** — the process died, timed out, or the
 #: CLI returned an error envelope. They are not cached, and the distinction is §87.3's:
 #: `gpt-oss:20b` returned 32 of 32 transport errors there and folding those into "ineligible"
@@ -371,6 +396,43 @@ def _synthetic_text(key: str, tag: dict[str, Any]) -> str:
         # some do not; which one a call draws is the hash's business, so the *rate* at which any
         # matcher fires is the same on every family, which is the null E6's Fisher test needs.
         return json.dumps({"difference": _DRY_DIFFERENCES[marker % len(_DRY_DIFFERENCES)]})
+    # §94's three persona-free protocols, on the same terms: the answer is a function of the
+    # request key and never of which side is being asked about, so a dry run is a draw from the
+    # null and every one of them should read as no-signal. `bcr.py` asserts exactly that in its
+    # selftest — a dry BCR allocator must land inside the placebo band, because a synthetic
+    # answer that leaned would make the instrument's own control pass on nothing.
+    if tag.get("stage") == "fetch":
+        # Slot rather than text: the whole BCR signal is which slot a budgeted reader spends
+        # on, so a dry run that always answered A would fabricate a positional failure and one
+        # that answered by content would fabricate a preference. The key already carries the
+        # step, so consecutive fetches in one session draw independently.
+        return json.dumps({"continue": "AB"[marker % 2]})
+    if tag.get("stage") == "landing":
+        return json.dumps({"debt": _DRY_DEBTS[marker % len(_DRY_DEBTS)]})
+    if tag.get("stage") == "cadence":
+        return json.dumps({"difference": _DRY_CADENCE[marker % len(_DRY_CADENCE)]})
+    if tag.get("stage") == "summary_kind":
+        # The full extended summary shape, because the kind-derivation run reads
+        # `promises_opened[].kind` and nothing shallower would exercise its parser. The kind is
+        # drawn from the frozen set *and* from one value outside it, so a dry run also
+        # exercises the out-of-set path that `normalise_kind` degrades to untyped.
+        kinds = ("plot", "character", "progression", "mystery", "tone", "worldbuilding")
+        return json.dumps({
+            "setting": "(dry run) a room",
+            "characters": "(dry run) two people",
+            "events": "(dry run) something was said",
+            "open": "(dry run) something was left unsaid",
+            "delta": None,
+            "promises_opened": [
+                {
+                    "subject": f"dry_subject_{marker % 4}",
+                    "description": "(dry run) a debt the book now owes",
+                    "kind": kinds[marker % len(kinds)],
+                    "due_hint": None,
+                }
+            ],
+            "promises_paid": [],
+        })
     if tag.get("stage") == 0:
         persona = BY_ID.get(str(tag.get("persona", "")))
         anchors = persona.held_out_anchors if persona else ()
@@ -602,10 +664,41 @@ class Elicitor:
         look like caching and never cache. `_cell` puts it after the passage instead, which is
         the longest prefix shared by both stages and all `n` samples.
         """
+        return self._params_for_system(
+            system_prompt(persona),
+            turns,
+            model=model,
+            effort=effort,
+            max_tokens=max_tokens,
+            schema=schema,
+        )
+
+    def _params_for_system(
+        self,
+        system: str,
+        turns: list[dict[str, Any]],
+        *,
+        model: str,
+        effort: str | None,
+        max_tokens: int,
+        schema: dict[str, object] | None,
+    ) -> dict[str, Any]:
+        """`_params` with the system block supplied rather than rendered from a persona.
+
+        Extracted rather than added beside, so the dict this builds stays byte-identical for
+        persona callers: the cache key is a digest **of these params**, and a refactor that
+        reordered a key or added one would miss every cached record in this directory at once.
+
+        The seam exists because not every protocol here has a persona. §94's Budgeted
+        Continuation Reader is behavioral — its system prompt is minimal and byte-frozen, with
+        no reading taste, no anchors and no evaluation framing — and rendering it through
+        `personas.system_prompt` would mean the instrument's own prompt was a function of a
+        module written for a different question.
+        """
         params: dict[str, Any] = {
             "model": model,
             "max_tokens": max_tokens,
-            "system": system_prompt(persona),
+            "system": system,
             "messages": turns,
         }
         output_config: dict[str, Any] = {}
@@ -1007,6 +1100,30 @@ class Elicitor:
         return self._call(
             self._params(persona, turns, model=self.model, effort=self.effort,
                          max_tokens=max_tokens, schema=schema),
+            sample=sample, tag=tag,
+        )
+
+    def ask_raw(
+        self, system: str, turns: list[dict[str, Any]], *, schema: dict[str, object] | None,
+        max_tokens: int, tag: dict[str, Any], sample: int = 0,
+        model: str | None = None,
+    ) -> dict[str, Any]:
+        """`ask` for a protocol that has no persona. The system block is the caller's.
+
+        Everything under the asking is unchanged — the digest keying, the replay cache, the
+        transport, the ollama seed and the thermal governor — so a run of a persona-free
+        protocol resumes and replays exactly as every other run in this directory does.
+
+        `model` is a parameter here and deliberately is not on `ask`: `ask` exists to compare
+        *protocols*, and an arm that varied the tier would not be comparing protocols. This
+        seam's callers compare *models* — which local families can be seated at all is the
+        question §94's seating gate asks — so the model has to be sayable per call.
+        """
+        return self._call(
+            self._params_for_system(
+                system, turns, model=model or self.model, effort=self.effort,
+                max_tokens=max_tokens, schema=schema,
+            ),
             sample=sample, tag=tag,
         )
 

@@ -1,0 +1,540 @@
+{
+  "study": "cadence_discrimination",
+  "pre_registration": {
+    "channel": "report (E6), imported byte-for-byte from domain/discrimination.py",
+    "no_preference_leg": true,
+    "cadences": {
+      "even": [
+        0.2,
+        0.4,
+        0.6,
+        0.8
+      ],
+      "front_loaded": [
+        0.08,
+        0.16,
+        0.24,
+        0.32
+      ],
+      "starved_dumped": [
+        0.72,
+        0.8,
+        0.88,
+        0.96
+      ]
+    },
+    "payoffs": [
+      "The question that had been hanging since the first morning finally had its answer, and the answer cost something.",
+      "What had been promised at the gate was made good, in full and in front of witnesses.",
+      "The debt that everyone had been pretending not to count was counted, out loud.",
+      "The thing that had been set aside to deal with later was dealt with, and it stayed dealt with."
+    ],
+    "matcher": "\\b(cadence|pacing|paced|pace\\b|rhythm|tempo|spread out|spaced|interval|front[- ]?load|back[- ]?load|early on|toward the end|at the end|throughout|distribut|cluster|bunch|timing|when (?:the |these |those )?(?:payoff|resolution|answer|revelation)|order (?:of|in which)|sequence|resolv\\w* (?:early|late|throughout)|payoff|pay[- ]?off|resolution|closure|answered|settled|ties? up|wrap(?:ped|s)? up)\\w*",
+    "alpha": 0.05,
+    "bar": "the measured null on the same matcher and the same pairs, never 0.5",
+    "controls": "placebo and whitespace sham ride every batch; either firing VOIDs it"
+  },
+  "source": "C:\\DEV\\LitHarness\\research\\quality-measurement\\corpora\\toll-scenes.json",
+  "model": "qwen3:14b",
+  "transport": "ollama",
+  "dry_run": false,
+  "spans": 5,
+  "pairs": 25,
+  "spend": {
+    "input": 273752,
+    "output": 1779,
+    "cache_read": 0,
+    "cache_write": 0,
+    "equivalent_usd": 0.0
+  },
+  "cadence": {
+    "fired": 3,
+    "responses": 30
+  },
+  "placebo": {
+    "fired": 0,
+    "responses": 10
+  },
+  "sham": {
+    "fired": 0,
+    "responses": 10
+  },
+  "null": {
+    "fired": 0,
+    "responses": 20
+  },
+  "cadence_rate": 0.1,
+  "null_rate": 0.0,
+  "fisher_p": 0.207143,
+  "alpha": 0.05,
+  "controls_hold": true,
+  "verdict": "DOES_NOT",
+  "DIAGNOSTIC_omission_claims": {
+    "cadence": {
+      "claims": 22,
+      "responses": 30
+    },
+    "placebo": {
+      "claims": 0,
+      "responses": 10
+    },
+    "sham": {
+      "claims": 0,
+      "responses": 10
+    }
+  },
+  "DIAGNOSTIC_reading": "post-hoc and in no bar: the cadence variants are word-identical by construction and asserted by `certify`, so every omission claim on that arm is false about the text; a gap between its rate and the placebo's is the size of the artifact",
+  "reading": "a NAMES_CADENCE verdict makes cadence a *nominated* axis and nothing more: `domain/axes.py`'s admission path still requires a deterministic counter, an E6-family validation on fresh pairs this corpus never touched, and a reader-established direction, before anything is emitted",
+  "responses": [
+    {
+      "pair": "cadence-0-even-vs-front_loaded",
+      "arm": "cadence",
+      "orientation": 0,
+      "said": "Passage One includes detailed descriptions of Wren's interactions with the Ferrous Gate and the Chalk Gate, including the toll collection process, the ledger entries, and the impact of the tolls on his life, while Passage Two omits some of these detailed interactions and focuses more on the toll collection process and the effects of the tolls without the same level of narrative depth.",
+      "refused": false,
+      "named_cadence": false,
+      "claims_omission": true
+    },
+    {
+      "pair": "cadence-0-even-vs-front_loaded",
+      "arm": "cadence",
+      "orientation": 1,
+      "said": "The passages are identical; there is no salient difference between them.",
+      "refused": false,
+      "named_cadence": false,
+      "claims_omission": false
+    },
+    {
+      "pair": "cadence-0-even-vs-starved_dumped",
+      "arm": "cadence",
+      "orientation": 0,
+      "said": "The passages are identical, with no discernible differences between them.",
+      "refused": false,
+      "named_cadence": false,
+      "claims_omission": false
+    },
+    {
+      "pair": "cadence-0-even-vs-starved_dumped",
+      "arm": "cadence",
+      "orientation": 1,
+      "said": "Passage One includes a detailed account of Wren's interaction with the Chalk Gate collector and the discovery of a discrepancy in the ledger, while Passage Two omits these events and ends immediately after Wren pays the toll at the Ferrous Gate.",
+      "refused": false,
+      "named_cadence": false,
+      "claims_omission": true
+    },
+    {
+      "pair": "cadence-0-front_loaded-vs-starved_dumped",
+      "arm": "cadence",
+      "orientation": 0,
+      "said": "The passages are identical, with no discernible differences between them.",
+      "refused": false,
+      "named_cadence": false,
+      "claims_omission": false
+    },
+    {
+      "pair": "cadence-0-front_loaded-vs-starved_dumped",
+      "arm": "cadence",
+      "orientation": 1,
+      "said": "Passage One includes a detailed account of Wren's interaction with the collector at the Chalk Gate, while Passage Two omits this section and ends immediately after Wren pays the toll at the Ferrous Gate.",
+      "refused": false,
+      "named_cadence": false,
+      "claims_omission": true
+    },
+    {
+      "pair": "placebo-0",
+      "arm": "placebo",
+      "orientation": 0,
+      "said": "The two passages are identical and contain no differences.",
+      "refused": false,
+      "named_cadence": false,
+      "claims_omission": false
+    },
+    {
+      "pair": "placebo-0",
+      "arm": "placebo",
+      "orientation": 1,
+      "said": "The two passages are identical, with no differences between them.",
+      "refused": false,
+      "named_cadence": false,
+      "claims_omission": false
+    },
+    {
+      "pair": "sham-0",
+      "arm": "sham",
+      "orientation": 0,
+      "said": "The two passages are identical; there is no salient difference between them.",
+      "refused": false,
+      "named_cadence": false,
+      "claims_omission": false
+    },
+    {
+      "pair": "sham-0",
+      "arm": "sham",
+      "orientation": 1,
+      "said": "The two passages are identical and contain no differences.",
+      "refused": false,
+      "named_cadence": false,
+      "claims_omission": false
+    },
+    {
+      "pair": "cadence-1-even-vs-front_loaded",
+      "arm": "cadence",
+      "orientation": 0,
+      "said": "Passage One includes additional details about Wren's physical struggles, interactions with other characters, and the full progression of his journey, while Passage Two is a condensed version that omits some of these elements and focuses more on the core narrative and key events.",
+      "refused": false,
+      "named_cadence": false,
+      "claims_omission": true
+    },
+    {
+      "pair": "cadence-1-even-vs-front_loaded",
+      "arm": "cadence",
+      "orientation": 1,
+      "said": "Passage One includes the detailed account of Wren's journey through the Hask Gate and the subsequent calculation of his days owed and paid, while Passage Two omits this specific segment, ending before reaching the Hask Gate.",
+      "refused": false,
+      "named_cadence": false,
+      "claims_omission": true
+    },
+    {
+      "pair": "cadence-1-even-vs-starved_dumped",
+      "arm": "cadence",
+      "orientation": 0,
+      "said": "Passage One includes additional narrative details about Wren's physical struggle and emotional state after the Hask Gate, while Passage Two omits these sections, ending earlier with Wren's reflection on the tolls and credits.",
+      "refused": false,
+      "named_cadence": false,
+      "claims_omission": true
+    },
+    {
+      "pair": "cadence-1-even-vs-starved_dumped",
+      "arm": "cadence",
+      "orientation": 1,
+      "said": "Passage One includes a detailed account of Wren's journey through the Slate Gate, the Rushet Gate, the Millrace crossing, the Sedge Gate, and the subsequent events at the Hask and Ovenstone Gates, while Passage Two omits these specific details and ends earlier, focusing on the initial tolls and the discovery of the paper liner.",
+      "refused": false,
+      "named_cadence": false,
+      "claims_omission": true
+    },
+    {
+      "pair": "cadence-1-front_loaded-vs-starved_dumped",
+      "arm": "cadence",
+      "orientation": 0,
+      "said": "Passage One includes additional details about Wren's physical condition and the conclusion of his journey, while Passage Two ends earlier, omitting these later developments.",
+      "refused": false,
+      "named_cadence": false,
+      "claims_omission": true
+    },
+    {
+      "pair": "cadence-1-front_loaded-vs-starved_dumped",
+      "arm": "cadence",
+      "orientation": 1,
+      "said": "Passage One includes the full narrative of Wren's journey through multiple gates and his interactions with various characters, while Passage Two omits some of these details and focuses more on the initial events at the Slate Gate and the subsequent toll collection.",
+      "refused": false,
+      "named_cadence": false,
+      "claims_omission": true
+    },
+    {
+      "pair": "placebo-1",
+      "arm": "placebo",
+      "orientation": 0,
+      "said": "The two passages are identical and contain no differences.",
+      "refused": false,
+      "named_cadence": false,
+      "claims_omission": false
+    },
+    {
+      "pair": "placebo-1",
+      "arm": "placebo",
+      "orientation": 1,
+      "said": "The two passages are identical and contain no differences.",
+      "refused": false,
+      "named_cadence": false,
+      "claims_omission": false
+    },
+    {
+      "pair": "sham-1",
+      "arm": "sham",
+      "orientation": 0,
+      "said": "The two passages are identical and contain no differences.",
+      "refused": false,
+      "named_cadence": false,
+      "claims_omission": false
+    },
+    {
+      "pair": "sham-1",
+      "arm": "sham",
+      "orientation": 1,
+      "said": "The two passages are identical, with no differences between them.",
+      "refused": false,
+      "named_cadence": false,
+      "claims_omission": false
+    },
+    {
+      "pair": "cadence-2-even-vs-front_loaded",
+      "arm": "cadence",
+      "orientation": 0,
+      "said": "Passage One includes detailed descriptions of Wren discovering and examining Mekk's chits and uncovering the hidden column in the old books, while Passage Two omits these specific details and ends earlier, before Wren's discovery of the hidden column.",
+      "refused": false,
+      "named_cadence": false,
+      "claims_omission": true
+    },
+    {
+      "pair": "cadence-2-even-vs-front_loaded",
+      "arm": "cadence",
+      "orientation": 1,
+      "said": "Passage One includes additional details about Wren's actions after Mekk's death, including his interaction with the clerk, the discovery of the old books, and the revelation of the hidden column with the heading, while Passage Two omits these later developments and ends shortly after Mekk's death.",
+      "refused": false,
+      "named_cadence": false,
+      "claims_omission": true
+    },
+    {
+      "pair": "cadence-2-even-vs-starved_dumped",
+      "arm": "cadence",
+      "orientation": 0,
+      "said": "Passage One includes additional details about Wren's actions and interactions with the clerk, including the resolution of the salt-moving task and the discovery of the hidden column's heading, while Passage Two ends before these developments occur.",
+      "refused": false,
+      "named_cadence": true,
+      "claims_omission": true
+    },
+    {
+      "pair": "cadence-2-even-vs-starved_dumped",
+      "arm": "cadence",
+      "orientation": 1,
+      "said": "Passage One includes a detailed account of Wren discovering and examining Mekk's old books, revealing the hidden column and its implications, while Passage Two omits this section, ending before Wren uncovers the hidden records.",
+      "refused": false,
+      "named_cadence": false,
+      "claims_omission": true
+    },
+    {
+      "pair": "cadence-2-front_loaded-vs-starved_dumped",
+      "arm": "cadence",
+      "orientation": 0,
+      "said": "Passage One includes additional narrative details about Wren discovering and analyzing old gate books in the depot, while Passage Two omits this section and ends earlier.",
+      "refused": false,
+      "named_cadence": false,
+      "claims_omission": true
+    },
+    {
+      "pair": "cadence-2-front_loaded-vs-starved_dumped",
+      "arm": "cadence",
+      "orientation": 1,
+      "said": "Passage One includes a detailed account of Wren discovering and examining Mekk's old books, uncovering a hidden column and a mysterious heading, while Passage Two omits this specific discovery and focuses more on the immediate aftermath of Mekk's death and the interaction with the clerk.",
+      "refused": false,
+      "named_cadence": false,
+      "claims_omission": true
+    },
+    {
+      "pair": "placebo-2",
+      "arm": "placebo",
+      "orientation": 0,
+      "said": "The two passages are identical; there is no salient difference between them.",
+      "refused": false,
+      "named_cadence": false,
+      "claims_omission": false
+    },
+    {
+      "pair": "placebo-2",
+      "arm": "placebo",
+      "orientation": 1,
+      "said": "The two passages are identical, with no discernible difference between them.",
+      "refused": false,
+      "named_cadence": false,
+      "claims_omission": false
+    },
+    {
+      "pair": "sham-2",
+      "arm": "sham",
+      "orientation": 0,
+      "said": "The two passages are identical, with no salient difference between them.",
+      "refused": false,
+      "named_cadence": false,
+      "claims_omission": false
+    },
+    {
+      "pair": "sham-2",
+      "arm": "sham",
+      "orientation": 1,
+      "said": "The two passages are identical, with no salient differences between them.",
+      "refused": false,
+      "named_cadence": false,
+      "claims_omission": false
+    },
+    {
+      "pair": "cadence-3-even-vs-front_loaded",
+      "arm": "cadence",
+      "orientation": 0,
+      "said": "Passage One includes detailed descriptions of Wren's physical and emotional state after consenting to the toll, while Passage Two omits these details and focuses more on the dialogue and the transaction between Wren and Haro.",
+      "refused": false,
+      "named_cadence": false,
+      "claims_omission": true
+    },
+    {
+      "pair": "cadence-3-even-vs-front_loaded",
+      "arm": "cadence",
+      "orientation": 1,
+      "said": "The passages are identical, with no salient difference between them.",
+      "refused": false,
+      "named_cadence": false,
+      "claims_omission": false
+    },
+    {
+      "pair": "cadence-3-even-vs-starved_dumped",
+      "arm": "cadence",
+      "orientation": 0,
+      "said": "The passages are identical, with no salient difference between them.",
+      "refused": false,
+      "named_cadence": false,
+      "claims_omission": false
+    },
+    {
+      "pair": "cadence-3-even-vs-starved_dumped",
+      "arm": "cadence",
+      "orientation": 1,
+      "said": "Passage One includes detailed descriptions of Wren's physical actions and the full resolution of his debt and understanding of his father's past, while Passage Two omits these details and ends abruptly with Wren looking back toward the Ferrous Gate.",
+      "refused": false,
+      "named_cadence": true,
+      "claims_omission": true
+    },
+    {
+      "pair": "cadence-3-front_loaded-vs-starved_dumped",
+      "arm": "cadence",
+      "orientation": 0,
+      "said": "The passages are nearly identical, but Passage One includes the line 'The question that had been hanging since the first morning finally had its answer, and the answer cost something.' whereas Passage Two includes the line 'The debt that everyone had been pretending not to count was counted, out loud.'",
+      "refused": false,
+      "named_cadence": false,
+      "claims_omission": false
+    },
+    {
+      "pair": "cadence-3-front_loaded-vs-starved_dumped",
+      "arm": "cadence",
+      "orientation": 1,
+      "said": "Passage One includes the full narrative with detailed descriptions and the complete story progression, while Passage Two is a condensed version with some parts omitted and others presented out of order.",
+      "refused": false,
+      "named_cadence": false,
+      "claims_omission": true
+    },
+    {
+      "pair": "placebo-3",
+      "arm": "placebo",
+      "orientation": 0,
+      "said": "The two passages are identical in content and structure, with no discernible differences between them.",
+      "refused": false,
+      "named_cadence": false,
+      "claims_omission": false
+    },
+    {
+      "pair": "placebo-3",
+      "arm": "placebo",
+      "orientation": 1,
+      "said": "The two passages are identical and do not differ in any way.",
+      "refused": false,
+      "named_cadence": false,
+      "claims_omission": false
+    },
+    {
+      "pair": "sham-3",
+      "arm": "sham",
+      "orientation": 0,
+      "said": "The two passages are identical in content and structure, with no discernible differences between them.",
+      "refused": false,
+      "named_cadence": false,
+      "claims_omission": false
+    },
+    {
+      "pair": "sham-3",
+      "arm": "sham",
+      "orientation": 1,
+      "said": "The two passages are identical and do not contain any differences.",
+      "refused": false,
+      "named_cadence": false,
+      "claims_omission": false
+    },
+    {
+      "pair": "cadence-4-even-vs-front_loaded",
+      "arm": "cadence",
+      "orientation": 0,
+      "said": "Passage One includes detailed descriptions of Wren's physical struggle and emotional state during his journey, while Passage Two omits these details, focusing more on the dialogue and the legal dispute.",
+      "refused": false,
+      "named_cadence": false,
+      "claims_omission": true
+    },
+    {
+      "pair": "cadence-4-even-vs-front_loaded",
+      "arm": "cadence",
+      "orientation": 1,
+      "said": "Passage One includes additional narrative details and extended descriptions of Wren's physical state and the aftermath of the dispute, while Passage Two is a condensed version with some narrative elements omitted and a slightly altered structure.",
+      "refused": false,
+      "named_cadence": false,
+      "claims_omission": true
+    },
+    {
+      "pair": "cadence-4-even-vs-starved_dumped",
+      "arm": "cadence",
+      "orientation": 0,
+      "said": "The passages are identical, with no salient differences between them.",
+      "refused": false,
+      "named_cadence": false,
+      "claims_omission": false
+    },
+    {
+      "pair": "cadence-4-even-vs-starved_dumped",
+      "arm": "cadence",
+      "orientation": 1,
+      "said": "Passage One includes additional details about Wren's physical struggle and emotional state during his journey to Ferrous, while Passage Two omits these elements and focuses more narrowly on the events at Kell Gate and the dispute resolution.",
+      "refused": false,
+      "named_cadence": true,
+      "claims_omission": true
+    },
+    {
+      "pair": "cadence-4-front_loaded-vs-starved_dumped",
+      "arm": "cadence",
+      "orientation": 0,
+      "said": "Passage One includes the line 'The question that had been hanging since the first morning finally had its answer, and the answer cost something.' whereas Passage Two includes the line 'The debt that everyone had been pretending not to count was counted, out loud.'",
+      "refused": false,
+      "named_cadence": false,
+      "claims_omission": false
+    },
+    {
+      "pair": "cadence-4-front_loaded-vs-starved_dumped",
+      "arm": "cadence",
+      "orientation": 1,
+      "said": "Passage One includes the full narrative of Wren's journey and interactions, while Passage Two is a condensed version with some details omitted and the story presented in a more fragmented manner.",
+      "refused": false,
+      "named_cadence": false,
+      "claims_omission": true
+    },
+    {
+      "pair": "placebo-4",
+      "arm": "placebo",
+      "orientation": 0,
+      "said": "The two passages are identical and do not differ in any way.",
+      "refused": false,
+      "named_cadence": false,
+      "claims_omission": false
+    },
+    {
+      "pair": "placebo-4",
+      "arm": "placebo",
+      "orientation": 1,
+      "said": "The two passages are identical and do not contain any differences.",
+      "refused": false,
+      "named_cadence": false,
+      "claims_omission": false
+    },
+    {
+      "pair": "sham-4",
+      "arm": "sham",
+      "orientation": 0,
+      "said": "The two passages are identical and do not contain any differences.",
+      "refused": false,
+      "named_cadence": false,
+      "claims_omission": false
+    },
+    {
+      "pair": "sham-4",
+      "arm": "sham",
+      "orientation": 1,
+      "said": "The two passages are identical, with no discernible differences between them.",
+      "refused": false,
+      "named_cadence": false,
+      "claims_omission": false
+    }
+  ]
+}

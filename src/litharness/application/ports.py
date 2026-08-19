@@ -482,6 +482,29 @@ class PromiseRepository(Protocol):
     ) -> bool: ...
 
 
+class PayoffScheduler(Protocol):
+    """Proposing when an open promise should be paid (W2, §94).
+
+    **Split from `PromiseRepository` rather than added to it**, following `PlanReader` /
+    `PlanWriter` and `StateRepository` / `StateWriter`: `PlanningStore` composes the promise
+    reader with the comment "read-only; nothing on the planning path writes here", and folding
+    a write into that protocol would make the comment false by construction while every caller
+    stayed honest. Exactly one store composes this — the outline handler's — because exactly
+    one call proposes windows.
+    """
+
+    def schedule_payoff_window(
+        self,
+        book_id: str,
+        branch_id: str,
+        promise_id: str,
+        *,
+        window_start_key: str,
+        window_end_key: str,
+        plan_revision_id: str,
+    ) -> bool: ...
+
+
 class SummaryStore(
     ManuscriptReader,
     StateRepository,
@@ -504,11 +527,17 @@ class OutlineStore(
     DecisionRepository,
     StateRepository,
     StateWriter,
+    # W2: open promises go into the outline request and the windows it answers with come back
+    # here. The one store that composes `PayoffScheduler`, because the one call that has the
+    # whole beat sheet in view is the only one entitled to say where a debt should be paid.
+    PromiseRepository,
+    PayoffScheduler,
     OperationsRepository,
     Protocol,
 ):
     """What the outline handler reads and writes: the manuscript's beats, the plan it edits,
-    the decision that attributes the edit, and the day's spend it is checked against."""
+    the decision that attributes the edit, the ledger it schedules payment against, and the
+    day's spend it is checked against."""
 
 
 class ConductorStore(
@@ -802,6 +831,7 @@ __all__ = [
     "JobQueue",
     "Named",
     "NarrativePlanningStore",
+    "PayoffScheduler",
     "PlanRefinementStore",
     "PlanSearchStore",
     "PlanningStore",

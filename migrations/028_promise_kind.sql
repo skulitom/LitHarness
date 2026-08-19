@@ -1,0 +1,38 @@
+-- W1 (§94): the ledger learns what kind of debt it holds.
+--
+-- **Why an untyped ledger is not enough, stated as a reader effect rather than as taxonomy.**
+-- "The book owes a duel" and "the book owes a tonal register" are different debts with
+-- different payoff shapes, and a reader feels a missed duel and does not feel a missed
+-- register. Every counter built over the ledger inherits that blindness — including the one
+-- this column exists for. §94's Goodhart tripwire on a continuation metric is
+-- open-versus-paid density, and the cheapest way to game a continuation metric is to open
+-- loops and never pay them; per-kind density is what makes a book opening cheap mystery hooks
+-- while paying only tone debts visible at all. Raw density cannot see it, because five opened
+-- and five paid nets to zero however mismatched the kinds are.
+--
+-- **Reported by the call that already reports the promise.** §15's fold-asks rule: the summary
+-- invocation gains a `kind` field on each `promises_opened` item and no new model call exists.
+-- The taxonomy started as a five-way guess and was pruned against what the summary model
+-- actually reports before the set was frozen — `research/quality-measurement/promise_kinds.py`
+-- is that derivation and `domain/promises.PROMISE_KINDS` is the result. A category invented
+-- because it sounded like part of a complete taxonomy is a category with no evidence behind
+-- it, which is how twenty-one proxies entered this project (BRIEF.md §2).
+--
+-- **Nullable, and NULL means untyped rather than erroneous.** Every promise row written before
+-- this column existed reads back as untyped, a model answering a kind outside the frozen set
+-- degrades to untyped, and nothing anywhere blocks on the value. That is the same discipline
+-- `delta` already has one table over: a fumbled structural annotation leaves a usable artifact
+-- with a missing field, not a failed job.
+--
+-- **The kind is fixed when the row is inserted and never updated, and that is forced by the
+-- id.** `promise_id` is sha256(book_id + subject) precisely so a re-summarised scene
+-- re-reporting the same subject converges on one row instead of stacking duplicates — the
+-- `INSERT OR IGNORE` that makes replay converge is also what fixes the kind. A kind that could
+-- be updated would make "what does this book owe" depend on when the question was asked, which
+-- is the property the content-derived id was chosen to remove.
+ALTER TABLE promises ADD COLUMN kind TEXT;
+
+-- Per-kind open-versus-paid density is the read this column exists for, and it is asked per
+-- book and branch with the status already in the index. Adding kind to that index rather than
+-- making a second one keeps the existing open-only reads on the same covering path.
+CREATE INDEX promises_kind_idx ON promises (book_id, branch_id, kind, status);

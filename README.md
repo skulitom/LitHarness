@@ -612,7 +612,8 @@ Stated plainly, because a system that runs is easy to mistake for a system that 
   new forward revision. A model now produces one bounded proposal for each premise, arc,
   tone, or chapter note. The book-level outline writes one statement per scene plus a
   progression schedule; the promise/payoff ledger tracks what each scene opens, pays,
-  and still owes with due positions surfacing into the drafting context; and under
+  and still owes — typed by kind, with due positions and planner-scheduled payoff
+  windows surfacing into the drafting context as debts rather than as facts; and under
   `--plan-search`, K alternative beat-plans per span are drafted and selected by
   pairwise judgment (human verdicts first; a judge only when a current
   PREFERENCE-class calibration licenses it on the selection task). What does not exist

@@ -1325,12 +1325,19 @@ class SqliteStore:
         replayed job writes nothing. Write-once: an existing row is never updated here,
         whatever its status, because a promise the book already paid is not re-opened by a
         model describing the scene that opened it again.
+
+        **The kind is fixed here and nowhere else** (W1). `INSERT OR IGNORE` is what makes the
+        ledger converge, and it is therefore also what fixes the kind: a re-summarisation that
+        reports a different kind for the same subject changes nothing. A kind that could be
+        updated would make "what does this book owe" depend on when it was asked, which is the
+        property the content-derived id exists to remove.
         """
         with self.transaction() as connection:
             cursor = connection.execute(
                 "INSERT OR IGNORE INTO promises (promise_id, book_id, branch_id, subject, "
                 "description, opened_at_key, due_key, opened_by_revision, paid_at_key, "
-                "paid_by_revision, status, model) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                "paid_by_revision, status, model, kind) "
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                 (
                     promise.promise_id,
                     book_id,
@@ -1344,6 +1351,45 @@ class SqliteStore:
                     promise.paid_by_revision,
                     promise.status,
                     promise.model,
+                    promise.kind,
+                ),
+            )
+            return cursor.rowcount > 0
+
+    def schedule_payoff_window(
+        self,
+        book_id: str,
+        branch_id: str,
+        promise_id: str,
+        *,
+        window_start_key: str,
+        window_end_key: str,
+        plan_revision_id: str,
+    ) -> bool:
+        """Propose when one open promise should be paid. False when nothing open matched.
+
+        **Not the write-once pattern, and the difference from `pay_promise` is deliberate.**
+        Payment is a fact about what the book did and the first payoff wins forever; a window
+        is a *plan*, and plans in this system are versioned and re-proposable, so a replan may
+        move one. What it may not do is schedule payment for a debt already settled —
+        `status = 'open'` in the WHERE clause — because that is bookkeeping about the past.
+
+        Re-scheduling to the same window writes the same values, so a replayed outline job
+        converges; the returned bool reports that a row matched, not that anything changed.
+        """
+        with self.transaction() as connection:
+            cursor = connection.execute(
+                "UPDATE promises SET window_start_key = ?, window_end_key = ?, "
+                "scheduled_by_plan_revision = ? WHERE promise_id = ? AND book_id = ? "
+                "AND branch_id = ? AND status = ?",
+                (
+                    window_start_key,
+                    window_end_key,
+                    plan_revision_id,
+                    promise_id,
+                    book_id,
+                    branch_id,
+                    PROMISE_OPEN,
                 ),
             )
             return cursor.rowcount > 0
@@ -1408,6 +1454,13 @@ class SqliteStore:
                 paid_at_key=row["paid_at_key"],
                 paid_by_revision=row["paid_by_revision"],
                 model=row["model"],
+                # NULL on every row written before migrations 028/029, and read as untyped and
+                # unscheduled rather than as an error — which is what lets a ledger written by
+                # an older build come back through this projection unchanged.
+                kind=row["kind"],
+                window_start_key=row["window_start_key"],
+                window_end_key=row["window_end_key"],
+                scheduled_by_plan_revision=row["scheduled_by_plan_revision"],
             )
             for row in self._connection.execute(sql, params)
         ]
