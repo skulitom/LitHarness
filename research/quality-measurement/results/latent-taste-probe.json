@@ -122,6 +122,32 @@
     "what_it_tests": "The verdict channel, not perception: every member is a difference that is provably present in the text and provably absent from the panel's answer."
   },
   "conversion_arm": {
+    "all_layers": {
+      "judge_last": {
+        "aligned": {
+          "17": 0.64,
+          "25": 0.6,
+          "9": 0.68
+        },
+        "crossed": {
+          "17": 0.3333,
+          "25": 0.5714,
+          "9": 0.3333
+        }
+      },
+      "text_mean": {
+        "aligned": {
+          "17": 0.8,
+          "25": 0.8,
+          "9": 0.64
+        },
+        "crossed": {
+          "17": 0.6667,
+          "25": 0.5714,
+          "9": 0.6667
+        }
+      }
+    },
     "minimum_across_strata": {
       "judge_last": 0.5714,
       "p0": 0.6,
@@ -131,6 +157,7 @@
     "pre_registration": {
       "bar": "Clears only if min agreement across strata EXCEEDS 0.52 \u2014 the best prose-blind rule's minimum, `pick_fewer_views` \u2014 AND both strata's Clopper-Pearson lower bounds exceed 0.50. Two conditions, both pre-registered, either alone decides against.",
       "bar_attainability": "COMPUTED before committing, not estimated \u2014 the \u00a787 lesson applied one entry later, and the first draft of this very entry got it wrong by eye. Measured: exceeding 0.52 needs k>=14 of 25 (0.5600; 13/25 lands exactly ON 0.52 and does not exceed it) and k>=11 of 21 (0.5238). The INTERVAL condition is far more binding and is what the arm will actually fail on if it fails: a Clopper-Pearson lower bound above 0.50 needs k>=18 of 25 (0.7200, CI [0.5061, 0.8793]) and k>=16 of 21 (0.7619, CI [0.5283, 0.9178]). So this design can only pass by ordering roughly three pairs in four \u2014 a far higher standard than 0.52 suggests, stated now so a near-miss is not later described as nearly passing. `test_the_conversion_bar_is_attainable_and_the_interval_is_the_binding_half` pins it.",
+      "layer_selection": "ONE readout depth for the whole arm, chosen to maximise min(aligned, crossed) \u2014 never a different depth per stratum, which would report a minimum no single readout achieved. Every layer's agreement is kept under `all_layers` so the spread is visible. This is still a selection over three depths that the surface baselines do not get, so the probe-versus-P0 comparison on this family favours the probe by construction and any ranking read off it carries that asymmetry. It cannot manufacture a PASS, because the bar's binding half is an interval and selection on a point estimate does not narrow one.",
       "leak_rule": "The texts are third-party RoyalRoad prose. No excerpt is written anywhere: the activation dump keys on sha digests and is gitignored, `corpus_leak_audit` refuses a committed .npz outright, and the results JSON carries pair_ids and verdicts only.",
       "null": "Sampled, not exhaustive: 2**25 is 33.5 million re-runs. 20,000 flip draws at seed 20260819, with the Monte-Carlo standard error reported beside every p and a p of zero reported as '< 1/draws' rather than as zero.",
       "positional_bias_precondition": "\u00a779's third condition is bias in band. It is VACUOUS for a probe and is recorded as vacuous rather than as passed: a readout scores one text at a time and never sees an order, so there is no slot for it to prefer. That is a structural advantage of this instrument over the panel on exactly the material where \u00a779.1's candidate voided at 0.356 pooled bias \u2014 and it is the one thing the probe brings that the counter does not.",
@@ -139,21 +166,25 @@
       "why_this_family_is_different": "Every other family in this module is manufactured: we made the difference, so a readout separating it says only that the difference is there. \u00a779's conversion pairs carry an EXTERNAL label \u2014 followers/total_views, a reader BEHAVIOUR aggregated over other authors' whole stories \u2014 so here k/G IS agreement with that label, in the same units as \u00a779's 0.52 bar. It is the only family in the file from which a direction may be read at all, and it is the anchor the directive names for any quality-direction claim.",
       "written": "2026-08-19, before the first conversion-family forward pass"
     },
+    "selected_layer": {
+      "judge_last": 25,
+      "text_mean": 17
+    },
     "strata": {
       "aligned": {
         "judge_last": {
-          "agreement": 0.68,
+          "agreement": 0.6,
           "agreement_interval": [
-            0.465,
-            0.8505
+            0.3867,
+            0.7887
           ],
           "draws": 20000,
           "groups": 25,
-          "k": 17,
-          "layer": 9,
-          "mc_stderr": 0.002133,
+          "k": 15,
+          "layer": 25,
+          "mc_stderr": 0.003192,
           "p_note": null,
-          "p_sampled": 0.1012,
+          "p_sampled": 0.28515,
           "seed": 20260819
         },
         "p0": {
@@ -255,10 +286,10 @@
           "draws": 20000,
           "groups": 21,
           "k": 14,
-          "layer": 9,
-          "mc_stderr": 0.002529,
+          "layer": 17,
+          "mc_stderr": 0.002559,
           "p_note": null,
-          "p_sampled": 0.15065,
+          "p_sampled": 0.155,
           "seed": 20260819
         }
       }

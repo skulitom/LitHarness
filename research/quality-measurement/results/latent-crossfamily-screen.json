@@ -54,6 +54,23 @@
       "refused": 0,
       "status": "ELIGIBLE",
       "win_rate": 0.9688
+    },
+    {
+      "cache": "crossfamily-gpt-oss-20b-raw.jsonl",
+      "comparisons": 32,
+      "eligible": false,
+      "in_band": false,
+      "model": "gpt-oss:20b",
+      "not_screenable_because": "every comparison refused; see crossfamily-gpt-oss-20b-raw.jsonl",
+      "operator_excluded": "operator: too old; also NOT_SCREENABLE on this machine (weights fail to load)",
+      "positional_bias": {
+        "chose_A_rate": NaN,
+        "decided": 0,
+        "note": "no decided comparisons"
+      },
+      "refused": 32,
+      "status": "NOT_SCREENABLE",
+      "win_rate": "WITHHELD \u2014 see PRE_REGISTRATION.withholding_rule"
     }
   ],
   "family": "repair_interiority",
@@ -72,5 +89,5 @@
     "withholding_rule": "Win rates are computed and NOT reported for any candidate whose bias falls outside the band. A preference read off a positionally-biased judge is what \u00a783, \u00a785's em-dash arm and \u00a779.1 each had to void, and printing one here would also pre-empt the operator's reserved choice of cross-family judge.",
     "written": "2026-08-19, before the first local elicitation"
   },
-  "reading": "NO LOCAL CANDIDATE IS ELIGIBLE, so the directive's kill condition is DISCHARGED BY MEASUREMENT rather than asserted: Track S waits on a judge the operator selects, and no degraded protocol is substituted to force a number. Answered a slot rather than a text: gemma3:4b, qwen3:4b."
+  "reading": "NO LOCAL CANDIDATE IS ELIGIBLE, so the directive's kill condition is DISCHARGED BY MEASUREMENT rather than asserted: Track S waits on a judge the operator selects, and no degraded protocol is substituted to force a number. Answered a slot rather than a text: gemma3:4b, qwen3:4b. Could not be elicited from on this machine at all: gpt-oss:20b."
 }

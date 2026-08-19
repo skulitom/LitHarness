@@ -162,8 +162,10 @@ def screen(model: str, args: argparse.Namespace) -> dict[str, Any]:
         ),
     }
     if status == "NOT_SCREENABLE":
-        reasons = {c.stop_reason for c in every if c.refused}
-        row["not_screenable_because"] = sorted(reasons)[:4]
+        # `Comparison` carries no stop reason — that lives in the cache record beside it, which is
+        # where a reader has to look anyway to tell a refusal from a transport failure.
+        row["not_screenable_because"] = f"every comparison refused; see {cache.name}"
+        row["cache"] = cache.name
     return row
 
 

@@ -5280,9 +5280,9 @@ mutation: dropping the filter fails all three; adding the same filter to the dig
 Track P of the latent-taste directive (2026-08-19). `latent_probe.py` and `latent_fixtures.py`
 carry the design; `PRE_REGISTRATION` was committed in `8fa24e7` **before the first forward pass**,
 which is what makes §82's "no bar moves after numbers arrive" checkable here rather than asserted.
-190 texts, 380 forward passes on `google/gemma-3-4b-it` pinned at
-`093f9f388b31de276ce2de164bdc2081324b9767`, 34 layers, mean-pooled at depths 9/17/25, 164 seconds,
-GPU peaking at 55 °C under `cdg_battery`'s governor. No quota. `results/latent-taste-probe.json`.
+282 texts, 564 forward passes on `google/gemma-3-4b-it` pinned at
+`093f9f388b31de276ce2de164bdc2081324b9767`, 34 layers, read at depths 9/17/25, 252 seconds, GPU at
+59 °C when the run ended and held twice at 72 °C on the way by `cdg_battery`'s governor. No quota. `results/latent-taste-probe.json`.
 
 **The hypothesis was that near-twin discrimination exists in a model's internals and fails to reach
 the verbal verdict — a report failure rather than a perception failure. The report failure is real
@@ -5291,15 +5291,15 @@ nothing a surface counter does not already have.
 
     family                     G   P0   P0+  best1   text_mean      judge_last
     placebo_identical  FLOOR    8    0     0      0   0 (1.000)      0 (1.000)
-    states_tea_v_sober FLOOR    8    4     4      6   5 (0.680)      5 (0.703)
+    states_tea_vs_sober FLOOR    8    4     4      6   5 (0.680)      5 (0.703)
     rewhitespace_sham  FLOOR   10    9     9      5  10 (0.002)     10 (0.008)
     stat_flatten               10    0    10     10  10 (0.002)     10 (0.002)
     interiority_strip_matched   9    9     9      9   9 (0.004)      5 (0.840)
     repair_interiority          8    8     8      8   8 (0.008)      8 (0.031)
     repair_emdash               8    8     8      7   8 (0.016)      8 (0.031)
     exemplar_vs_sober           8    7     7      8   8 (0.008)      7 (0.117)
-    states_drunk_v_sober        8    2     2      7   7 (0.180)      7 (0.195)
-    states_trip_v_sober         8    3     3      7   7 (0.188)      4 (0.867)
+    states_drunk_vs_sober        8    2     2      7   7 (0.180)      7 (0.195)
+    states_trip_vs_sober         8    3     3      7   7 (0.188)      4 (0.867)
     filler_inject              10   10    10     10  10 (0.002)     10 (0.002)
 
 `k` of `G` scenes ordered correctly under leave-one-scene-out; p is exact, from enumerating all
@@ -5478,10 +5478,13 @@ proxies rather than measures of quality, and an oracle over a proxy is not an or
 this bounds **reach**, not value.
 
 **What waits, and for whom.** Track S's cross-family judge stays reserved to the operator (model
-choice, cost, protocol fidelity), and the only free local candidate is already disqualified on
+choice, cost, protocol fidelity), and ~~the only free local candidate is already disqualified on
 protocol rather than on cost: RUNBOOK records `gemma3:4b` failing the positional-bias precondition
-on this material at chose-A 0.802/0.810, so running it would be substituting a degraded protocol to
-force a number, which the directive forbids by name. The tier ladder was **not** run here because
+on this material at chose-A 0.802/0.810~~ — **struck; see §87.3.** Two errors in one sentence.
+Those figures come from §70's `toll.db` runs, not from this material, so citing them here was the
+inheritance §79.1 forbids by name; and there is not one free local candidate but four, of which
+§87.3 finds one eligible. The conclusion — no acceptable local candidate, so the track waits — is
+unchanged, and §87.3 reaches it by measuring rather than by citing. The tier ladder was **not** run here because
 §85.1 and §79.2 were running it in parallel; coordinating rather than duplicating was the
 directive's instruction and it saved the arm. Track V's N=8..32 curve needs fresh generations and
 is not started.
@@ -5497,11 +5500,25 @@ words a side, length-matched by §79's builder. No quota. `results/latent-taste-
 
 **On this family, and only on this family, internals beat surface counting.**
 
-    channel      aligned (25)   crossed (21)   minimum   aligned CI      crossed CI
-    P0           15  0.600      13  0.619       0.600    [0.387, 0.789]  [0.384, 0.819]
-    P0+          14  0.560      12  0.571       0.560    [0.349, 0.756]  [0.340, 0.782]
-    text_mean    20  0.800      14  0.667       0.667    [0.593, 0.932]  [0.430, 0.854]
-    judge_last   17  0.680      12  0.571       0.571    [0.465, 0.851]  [0.340, 0.782]
+    channel           aligned (25)   crossed (21)   minimum   aligned CI      crossed CI
+    P0                15  0.600      13  0.619       0.600    [0.387, 0.789]  [0.384, 0.819]
+    P0+               14  0.560      12  0.571       0.560    [0.349, 0.756]  [0.340, 0.782]
+    text_mean  (L17)  20  0.800      14  0.667       0.667    [0.593, 0.932]  [0.430, 0.854]
+    judge_last (L25)  15  0.600      12  0.571       0.571    [0.387, 0.789]  [0.340, 0.782]
+
+**The probe rows are one readout depth, chosen across both strata at once, and every depth is
+reported.** Picking the best layer in `aligned` and a different one in `crossed` would report a
+minimum no single readout ever achieved, which is double-dipping on exactly the axis the strata
+exist to police; `_select_layer` therefore maximises `min(aligned, crossed)` and `all_layers` keeps
+the rest:
+
+    text_mean   L9 0.640/0.667   L17 0.800/0.667   L25 0.800/0.571
+    judge_last  L9 0.680/0.333   L17 0.640/0.333   L25 0.600/0.571
+
+That is still a selection over three depths **which the surface baselines do not get**, so the
+probe-versus-P0 comparison on this family favours the probe by construction. It cannot manufacture
+a pass — the binding half of the bar is an interval, and selecting on a point estimate does not
+narrow one — but every ranking below inherits the asymmetry and is written knowing it.
 
 `k / G` here **is** agreement with the external label, in the same units as §79's 0.52 bar. The
 mean-pooled readout's minimum across strata is 0.667 against P0's 0.600 and P0+'s 0.560 — the
@@ -5524,8 +5541,9 @@ disagrees in the other. §79.1's panel candidate read **0.6100 aligned and 0.410
 popularity signature, crossed below a coin — and voided at 0.356 pooled positional bias.
 `text_mean` reads **0.800 and 0.667: both above 0.5**, with a 0.133 spread against the panel's
 0.20. So on the benchmark this project built to *rank* judges, a free local 4B linear readout
-ranks above the panel candidate §79.1 measured, and it does so with the precondition that voided
-that candidate structurally unavailable to it — a readout scores one text at a time and has no
+ranks above the panel candidate §79.1 measured — with the asymmetry named above attached, since
+the readout's figure is the best of three depths and the panel's is a single shot — and it does so
+with the precondition that voided that candidate structurally unavailable to it — a readout scores one text at a time and has no
 slot to prefer. Recorded as a ranking, which is all §82 permits BEHAVIOUR-class evidence at STORY
 grain to be, and it is the machine-side input the directive licenses P to hand A2(iii).
 
@@ -5552,16 +5570,24 @@ measure bias on its own pairs; inheriting a figure from a different experiment r
 unsupported."* `latent_crossfamily.py` measures it. Local inference, no quota, 32 comparisons per
 candidate on §85's interiority pairs. `results/latent-crossfamily-screen.json`.
 
-    candidate      status                chose-A   per-persona        preference
-    gemma3:4b      INELIGIBLE_ON_BIAS      1.000   1.000 / 1.000      withheld
-    qwen3:4b       INELIGIBLE_ON_BIAS      0.750   0.938 / 0.563      withheld
-    phi4:latest    ELIGIBLE                0.531   0.500 / 0.563      0.9688
-    gpt-oss:20b    NOT_SCREENABLE              —   weights fail to load on this box
+    candidate      status               decided   chose-A   per-persona     preference
+    gemma3:4b      INELIGIBLE_ON_BIAS     11/32     1.000   1.000 / 1.000   withheld
+    qwen3:4b       INELIGIBLE_ON_BIAS     32/32     0.750   0.938 / 0.563   withheld
+    phi4:latest    ELIGIBLE               32/32     0.531   0.500 / 0.563   0.9688
+    gpt-oss:20b    NOT_SCREENABLE          0/32         —   weights fail to load here
+
+`chose-A` is computed over *decided* comparisons only (`elicit.positional_bias` counts A and B and
+drops `neither`), which is why the `decided` column has to be read with it.
 
 **The conclusion §87.1 reached survives; its evidence does not.** Measured on the right pairs
-`gemma3:4b` is not at 0.802 but at **1.000** — it picks the first slot in 32 of 32, both personas,
-a total positional collapse. So the disqualification is real and it is now *ours*, on our own
-material, rather than borrowed from an experiment that asked something else.
+`gemma3:4b` reads **1.000** rather than 0.802 — but the honest sentence is narrower than the
+number: it *decided* only 11 of its 32 comparisons, answering `neither` to the other 21, and every
+one of those 11 landed on the first slot. So it is a judge that mostly abstains and is perfectly
+positional when it does not, on eleven decisions. That is comfortably outside the band and it
+disqualifies the candidate; it is not the "32 of 32 total collapse" an earlier draft of this
+paragraph claimed, and the difference matters because eleven decisions is thin. The
+disqualification is real and it is now *ours*, on our own material, rather than borrowed from an
+experiment that asked something else.
 
 **Three outcomes, not two, and the third is a fact about this machine.** `gpt-oss:20b` returned 32
 of 32 transport errors — the weights fail to load with a tensor size overflow — so no judgment was
@@ -5630,7 +5656,7 @@ generations, and §85 measured that channel at 32 generations for $7.41 — abou
                              the certified path; does the voice hold
                              or drift back? a lever that resets on
                              first use is a demo
-    best-of-N to N=32        32 draws x 8 scenes, to extend §87.1's           256  $59.00
+    best-of-N to N=32        32 draws x 8 scenes, to extend §87.1's           256  $59.30
                              oracle curve past its four-deep pool
 
 The first two are the ones worth buying: §85 measured the demonstrated-voice channel *open* and

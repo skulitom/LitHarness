@@ -242,6 +242,15 @@ PRE_REGISTRATION_B4: dict[str, Any] = {
         "20260819, with the Monte-Carlo standard error reported beside every p and a p of zero "
         "reported as '< 1/draws' rather than as zero."
     ),
+    "layer_selection": (
+        "ONE readout depth for the whole arm, chosen to maximise min(aligned, crossed) — never a "
+        "different depth per stratum, which would report a minimum no single readout achieved. "
+        "Every layer's agreement is kept under `all_layers` so the spread is visible. This is "
+        "still a selection over three depths that the surface baselines do not get, so the "
+        "probe-versus-P0 comparison on this family favours the probe by construction and any "
+        "ranking read off it carries that asymmetry. It cannot manufacture a PASS, because the "
+        "bar's binding half is an interval and selection on a point estimate does not narrow one."
+    ),
     "positional_bias_precondition": (
         "§79's third condition is bias in band. It is VACUOUS for a probe and is recorded as "
         "vacuous rather than as passed: a readout scores one text at a time and never sees an "
@@ -576,11 +585,11 @@ def _conversion_row(
     return sampled_flip_null(_fold_scaled_deltas(positives, negatives))
 
 
-def _conversion_probe_row(
+def _conversion_layer_rows(
     pairs: list[Pair], family: str, readout: str, dump: Any
-) -> dict[str, Any]:
-    """Best layer by agreement, with the layer named — three depths, one external label."""
-    best: dict[str, Any] = {}
+) -> dict[int, dict[str, Any]]:
+    """Every readout depth on one stratum. Selection happens later, across strata at once."""
+    rows: dict[int, dict[str, Any]] = {}
     for layer in READOUT_LAYERS:
         positives, negatives = [], []
         for pair in pairs:
@@ -589,9 +598,27 @@ def _conversion_probe_row(
             negatives.append(dump[f"{stem}|-"].tolist())
         row = sampled_flip_null(_fold_scaled_deltas(positives, negatives))
         row["layer"] = layer
-        if not best or row["agreement"] > best["agreement"]:
-            best = row
-    return best
+        rows[layer] = row
+    return rows
+
+
+def _select_layer(per_stratum: dict[str, dict[int, dict[str, Any]]]) -> int:
+    """One layer for the whole arm, chosen to maximise the arm's own statistic.
+
+    **Never a different layer per stratum.** The statistic §79 defines is the MINIMUM across
+    strata, so picking the best depth in `aligned` and a different one in `crossed` reports a
+    minimum no single readout ever achieved — it takes the best of three in each stratum and then
+    pretends one instrument produced both. That is double-dipping across the exact axis the strata
+    exist to police. Selecting the layer that maximises `min(aligned, crossed)` is still a
+    selection over three, and it is disclosed rather than corrected away: the probe gets three
+    shots where a surface counter gets one, so the comparison to P0 favours the probe by
+    construction, and every layer's number is reported so a reader can see the spread.
+    """
+    strata = list(per_stratum)
+    return max(
+        READOUT_LAYERS,
+        key=lambda layer: min(per_stratum[s][layer]["agreement"] for s in strata),
+    )
 
 
 def _conversion_verdict(arm: dict[str, Any]) -> dict[str, Any]:
@@ -737,20 +764,39 @@ def conversion_arm(conversion: dict[str, list[Pair]], dump: Any) -> dict[str, An
         }
     out: dict[str, Any] = {"pre_registration": PRE_REGISTRATION_B4, "strata": {}}
     channels: dict[str, dict[str, float]] = {}
+    by_readout: dict[str, dict[str, dict[int, dict[str, Any]]]] = {}
+    surface: dict[str, dict[str, dict[str, Any]]] = {}
+
     for name, pairs in conversion.items():
         stratum = name.rsplit("_", 1)[1]
-        entry: dict[str, Any] = {"pairs": len(pairs)}
-        rows: dict[str, dict[str, Any]] = {
+        surface[stratum] = {
             "p0": _conversion_row(pairs, P0_NAMES, steelman=False),
             "p0_plus": _conversion_row(pairs, P0_PLUS_NAMES, steelman=True),
         }
+        out["strata"][stratum] = {"pairs": len(pairs), **surface[stratum]}
         if dump is not None:
             for readout in ("text_mean", "judge_last"):
-                rows[readout] = _conversion_probe_row(pairs, name, readout, dump)
-        entry |= rows
-        out["strata"][stratum] = entry
+                by_readout.setdefault(readout, {})[stratum] = _conversion_layer_rows(
+                    pairs, name, readout, dump
+                )
+
+    for stratum, rows in surface.items():
         for channel, row in rows.items():
             channels.setdefault(channel, {})[stratum] = row["agreement"]
+
+    # One layer per readout, chosen across strata at once, with every layer's number kept.
+    out["selected_layer"] = {}
+    out["all_layers"] = {}
+    for readout, per_stratum in by_readout.items():
+        layer = _select_layer(per_stratum)
+        out["selected_layer"][readout] = layer
+        out["all_layers"][readout] = {
+            stratum: {str(lay): rows[lay]["agreement"] for lay in READOUT_LAYERS}
+            for stratum, rows in per_stratum.items()
+        }
+        for stratum, rows in per_stratum.items():
+            out["strata"][stratum][readout] = rows[layer]
+            channels.setdefault(readout, {})[stratum] = rows[layer]["agreement"]
 
     out["minimum_across_strata"] = {
         channel: round(min(by_stratum.values()), 4) for channel, by_stratum in channels.items()
