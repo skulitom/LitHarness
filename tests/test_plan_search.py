@@ -77,6 +77,8 @@ from litharness.domain.policy import GateKind, Outcome, VerdictSource
 from litharness.domain.preference import (
     INTERNAL_PROTOCOL,
     PairVerdict,
+    analysable_judgments,
+    machine_reader_id,
     pair_verdicts_digest_for,
 )
 from litharness.domain.revision import Revision, new_book, node_version_id
@@ -793,8 +795,23 @@ def test_a_licensed_judge_selects_through_the_same_pair_machinery(
 
     samples = store.pair_samples()
     assert all(sample.verdict is not None for sample in samples)
-    assert {sample.reader_id for sample in samples} == {calibration.calibration_id}
+    assert {sample.reader_id for sample in samples} == {
+        machine_reader_id(calibration.calibration_id)
+    }
     assert all(sample.recognized is False for sample in samples)
+
+    # §86.1's two halves, end to end on the one path that writes machine rows. The judge's
+    # verdicts are evidence about selection and they are auditable here forever; what they
+    # may not do is denominate the holdout of the NEXT preference calibration, which is a
+    # claim about human judgment. And they must still stale this licence: that expiry is
+    # §72's stated price of the judge path, not a side effect to be optimised away.
+    assert analysable_judgments(samples) == (), (
+        "a licensed judge's own verdicts became countable as human preference evidence"
+    )
+    assert pair_verdicts_digest_for(samples) != calibration.verdicts_digest
+    assert judge_license(store, "2026-08-17") is None, (
+        "the licence outlived the tournament it paid for (§72)"
+    )
 
     # "Prefer the presented-first passage" cancels across orientations, so the winner is
     # the deterministic tie-break — and the commit happened exactly once.

@@ -122,6 +122,7 @@ from litharness.domain.preference import (
     ComparisonExcerpt,
     PairSample,
     PairVerdict,
+    machine_reader_id,
     pair_verdicts_digest_for,
 )
 from litharness.domain.revision import Revision, node_version_id
@@ -1491,14 +1492,19 @@ def make_span_select_handler(
                     spend.add(judged)
                     verdict_value = _judge_verdict(judged)
                     if verdict_value is not None:
-                        # The SAME pair-sample machinery humans use; reader_id is the
-                        # judge's calibration id — provenance, not a person, and the
+                        # The SAME pair-sample machinery humans use, under a reader id
+                        # the reserved machine prefix marks as provenance rather than a
+                        # person. Two things follow from the prefix and both are meant:
+                        # `analysable_judgments` will never count this row toward a
+                        # PREFERENCE holdout — that class is constituted as a human's
+                        # choice — and it still moves the answered-verdict digest, which
+                        # is what stales the very licence being spent here (§72). The
                         # write-once discipline (verdict IS NULL) holds unchanged.
                         store.record_pair_verdict(
                             sample.sample_id,
                             verdict_value,
                             at=stamp,
-                            by=license_row.calibration_id,
+                            by=machine_reader_id(license_row.calibration_id),
                             recognized=False,
                             note=f"model judge under {license_row.calibration_id}",
                         )

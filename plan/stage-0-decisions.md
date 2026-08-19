@@ -5138,3 +5138,60 @@ directional evidence, not a naive measurement — recorded here so nobody later 
 one. What it uniquely answers: whether the panel's 0.95 on interiority is a preference for
 prose or for bolted-on feeling, and whether the exemplar arm's measured movement reads as a
 voice or as noise.
+
+### 86.6 The laundering path §86.1 named is closed at the denominator and left open at the digest
+
+(§86 and its subsections land on `claude/judge-validity-pricing-9ea30a`; this addendum is
+numbered to sit under §86.1, whose defect it closes. On this branch the ledger reads §85 →
+§86.6 until that branch merges.)
+
+**What changed.** `domain/preference.py` now reserves a reader-id prefix for rows a machine
+wrote — `MACHINE_READER_PREFIX = "judge:"`, with `machine_reader_id` to mint one and
+`is_machine_reader` to test one, all three named beside `UNASSIGNED_READER` so a future write
+site cannot acquire the mint without the test. The single machine write site — the §72 judge
+in `plan_search`, which is still the only one — stamps `machine_reader_id(calibration_id)`
+instead of the bare calibration id, and `analysable_judgments` excludes the prefix. That
+function is the one chokepoint every consumer of the preference holdout count already went
+through (`handlers._craft_ladder`, both CLI surfaces), so the exclusion needed no second site.
+
+**The decision §86.1 left open: machine rows still move `pair_verdicts_digest_for`, and that
+is deliberate.** §72 states the price of the judge path — "judge verdicts move the
+answered-verdict digest and stale the calibration that licensed them", one calibration buying
+roughly one judged tournament — and refunding it would turn one licence into unlimited judged
+tournaments. The laundering defect was never about the staleness *address*; it was about the
+holdout *denominator*, and the two are now separately correct. §86.1's sharper reading — that
+staleness forces re-calibration and re-calibration is where the contamination entered — is
+what this closes: the judge still burns its own licence, and the re-measurement it forces is
+now denominated in human rows only. The rows themselves are kept on record and in the digest,
+the same shape recognition already has (§61 pre-registration 3): a row analysis must skip is
+still a fact about the verdict set.
+
+**Pinned in both directions**, because either half silently reverting restores a live defect:
+`test_a_machine_written_row_can_never_denominate_a_preference_holdout` (20 machine verdicts
+must not inflate a 50-row human holdout, and the calibration arithmetic that consumes the
+count refuses on size rather than promoting quietly),
+`test_machine_rows_still_stale_the_licence_that_bought_them` (the digest moves, the count does
+not), and the end-to-end pin inside
+`test_a_licensed_judge_selects_through_the_same_pair_machinery` — after a real licensed
+tournament, `analysable_judgments` is empty and `judge_license` has gone stale. Verified by
+mutation: dropping the filter fails all three; adding the same filter to the digest fails two.
+
+**Deliberately left alone.**
+
+- **No source column, `CHECK` constraint or store-level refusal.** The prefix is a mint-time
+  convention honoured at one write site, which is weaker than a schema and is the whole of
+  what "minimal" bought here. The dangerous direction — a *future* machine write site that
+  forgets the prefix — is not catchable by any constraint on a free-text column anyway; it is
+  held by there being one write site, by the mint and test being named together, and by the
+  tests above. A real fix is a `source` column on the pair table with a migration, and it is
+  worth doing the day a second machine writer exists.
+- **No guard refusing a human `--reader judge:…` at the CLI or import path.** That mistake
+  under-counts a real reader's row, which is the safe direction, and adding the guard means
+  touching two operator surfaces to prevent an error nobody has made.
+- **The win-rate path is untouched, because it was never exposed.** Judge rows are internal
+  (`rev` vs `rev`) under `INTERNAL_PROTOCOL`, and `system_side` returns None for a pair with no
+  human member, so `cmd_win_rate` already counted them as system-vs-system and kept them out of
+  every observation and every bound. The hole was the holdout denominator alone.
+- **No backfill.** §86.1's premise holds: the calibrations table is empty on every branch, so
+  no licensed tournament has ever run outside a test and no bare-calibration-id machine row
+  exists to rewrite.
