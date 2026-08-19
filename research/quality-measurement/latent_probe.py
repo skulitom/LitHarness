@@ -499,10 +499,18 @@ def _fold_scaled_deltas(
 
     Scaling is by the population sd of every text in the family — the same construction
     `repair_generation.feature_scale` uses, so a P0 number here is in the units §85 reports
-    register movement in. It is deliberately NOT fitted inside the fold: the scale is a property
-    of the family's texts and carries no label, so using all of them leaks nothing about which
-    side is which. What must never cross the fold is the *direction*, and that is fitted on
-    training scenes only inside :func:`loso_signs`.
+    register movement in. It is deliberately NOT fitted inside the fold, and the justification is
+    stronger than "it carries no label".
+
+    **The scale is exactly ancillary to the null.** The flip null relabels which side of a pair is
+    called positive. That swaps a row between the positive and negative lists and leaves their
+    *union* — the set this sd is computed over — bit-for-bit identical, so every one of the `2**G`
+    re-runs sees the same scale the observed assignment saw. A quantity invariant under the null's
+    group action cannot shift the null distribution relative to the observed statistic, so no
+    p-value in this module is inflated by using held-out rows to set units. What must never cross
+    the fold is the *direction*, and that is fitted on training scenes only inside
+    :func:`loso_signs`. The same scale is applied to P0, P0+ and the probe, so the comparison
+    between them is unaffected either way.
     """
     width = len(positives[0])
     everything = positives + negatives

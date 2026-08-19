@@ -122,3 +122,29 @@ def test_the_conversion_bar_is_attainable_and_the_interval_is_the_binding_half()
             k for k in range(groups + 1) if latent_fixtures.clopper_pearson(k, groups)[0] > 0.50
         ) == first_ci_clear
         assert first_ci_clear > first_over_bar, "the interval must be the binding condition"
+
+
+def test_the_fold_scale_is_ancillary_to_the_flip_null() -> None:
+    """Relabelling a pair leaves the scaling untouched, so the exact null stays exact.
+
+    `_fold_scaled_deltas` sets units from every text in the family, held-out rows included. That
+    is only defensible because the null's group action — swapping which side of a pair is called
+    positive — leaves the *union* of the two sides identical, so all 2**G re-runs share the
+    observed run's scale. A quantity invariant under the null cannot shift it.
+    """
+    import statistics as stats
+
+    rng = random.Random(3)
+
+    def scale(positives: list[list[float]], negatives: list[list[float]]) -> list[float]:
+        every = positives + negatives
+        return [stats.pstdev([row[i] for row in every]) for i in range(len(positives[0]))]
+
+    for _ in range(5):
+        groups, width = 6, 4
+        pos = [[rng.gauss(0, 1) for _ in range(width)] for _ in range(groups)]
+        neg = [[rng.gauss(0, 1) for _ in range(width)] for _ in range(groups)]
+        flipped_pos, flipped_neg = [r[:] for r in pos], [r[:] for r in neg]
+        for scene in (0, 3):
+            flipped_pos[scene], flipped_neg[scene] = flipped_neg[scene], flipped_pos[scene]
+        assert scale(pos, neg) == pytest.approx(scale(flipped_pos, flipped_neg))
