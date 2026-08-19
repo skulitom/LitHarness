@@ -42,6 +42,7 @@ from litharness.adapters.sqlite_errors import (
 from litharness.adapters.sqlite_jobs import SqliteJobRepository
 from litharness.adapters.sqlite_plans import SqlitePlanRepository
 from litharness.domain.audit import AuditSample, Verdict
+from litharness.domain.axes import Pole
 from litharness.domain.budget import Spend
 from litharness.domain.calibration import (
     Calibration,
@@ -52,9 +53,19 @@ from litharness.domain.calibration import (
 )
 from litharness.domain.candidates import CandidateStatus, SpanCandidate
 from litharness.domain.craft import CraftMetric
+from litharness.domain.directions import AxisDirection
 from litharness.domain.directives import Directive, DirectiveKind, DirectiveStatus
+from litharness.domain.directors import DIRECTOR_AUTHOR_PREFIX
+from litharness.domain.directors import Director as DomainDirector
 from litharness.domain.events import Event, EventType
 from litharness.domain.exceptions import ExceptionKind, ExceptionRecord, ExceptionStatus
+from litharness.domain.feedback import (
+    DifferenceStatus,
+    DiscardReason,
+    JudgeDiscard,
+    LocatedDifference,
+    SceneFeedback,
+)
 from litharness.domain.findings import UNRESOLVED_STATUSES
 from litharness.domain.findings import Finding as DomainFinding
 from litharness.domain.findings import Severity as DomainSeverity
@@ -74,6 +85,7 @@ from litharness.domain.policy import (
     PolicyDecision,
     VerdictSource,
 )
+from litharness.domain.pools import Pool, PoolRegistration
 from litharness.domain.preference import (
     ComparisonExcerpt,
     PairGrain,
@@ -144,6 +156,7 @@ def _directive_from_row(row: sqlite3.Row) -> Directive:
         interpreted_at=row["interpreted_at"],
         precedence=row["precedence"],
         superseded_by=row["superseded_by"],
+        author=row["author"],
         metadata=json.loads(row["metadata"]) if row["metadata"] else {},
     )
 
@@ -1900,6 +1913,419 @@ class SqliteStore:
                 self._insert_event(connection, event)
             self._insert_decision(connection, decision, decided_at=decided_at)
 
+    # --- the reader -> writer loop -----------------------------------------------------
+
+    def pool_registration(self) -> PoolRegistration | None:
+        """The active measurement firewall, or None when nothing has been registered.
+
+        The **earliest** row wins. A firewall that could be moved after the verdicts arrived
+        would not be one, so a later registration is kept as history and is never the one the
+        routing checks read.
+        """
+        row = self._connection.execute(
+            "SELECT * FROM pool_registrations ORDER BY registered_at, registration_id LIMIT 1"
+        ).fetchone()
+        if row is None:
+            return None
+        return PoolRegistration(
+            registration_id=row["registration_id"],
+            registered_at=row["registered_at"],
+            reader_salt=row["reader_salt"],
+            reader_steering_share=float(row["reader_steering_share"]),
+            passage_salt=row["passage_salt"],
+            passage_steering_share=float(row["passage_steering_share"]),
+            note=row["note"],
+        )
+
+    def record_pool_registration(
+        self, registration: PoolRegistration, *, events: Sequence[Event] = ()
+    ) -> bool:
+        """Declare the split. False when this exact split was already declared.
+
+        Idempotent on the content-addressed id, so re-running the declaration converges; a
+        *different* split is a second row rather than an overwrite, and `pool_registration`
+        keeps reading the first.
+        """
+        with self.transaction() as connection:
+            cursor = connection.execute(
+                "INSERT OR IGNORE INTO pool_registrations (registration_id, registered_at, "
+                "reader_salt, reader_steering_share, passage_salt, passage_steering_share, "
+                "note) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                (
+                    registration.registration_id,
+                    registration.registered_at,
+                    registration.reader_salt,
+                    registration.reader_steering_share,
+                    registration.passage_salt,
+                    registration.passage_steering_share,
+                    registration.note,
+                ),
+            )
+            inserted = cursor.rowcount > 0
+            for event in events:
+                self._insert_event(connection, event)
+        return inserted
+
+    def axis_directions(self, *, axis_id: str | None = None) -> list[AxisDirection]:
+        """Established directions, newest first — the ordering `calibrations` uses, for the
+        same reason: the first row for an axis is its current evidence and a superseded
+        measurement is history, not a second claim."""
+        sql = "SELECT * FROM axis_directions"
+        params: tuple[str, ...] = ()
+        if axis_id is not None:
+            sql += " WHERE axis_id = ?"
+            params = (axis_id,)
+        sql += " ORDER BY established_at DESC, direction_id"
+        return [
+            AxisDirection(
+                axis_id=row["axis_id"],
+                preferred=Pole(row["preferred_pole"]),
+                high_win_rate=float(row["high_win_rate"]),
+                lower_bound=float(row["lower_bound"]),
+                alpha=float(row["alpha"]),
+                cells=int(row["cells"]),
+                readers=int(row["readers"]),
+                pairs=int(row["pairs"]),
+                verdicts_digest=row["verdicts_digest"],
+                established_at=row["established_at"],
+                note=row["note"],
+            )
+            for row in self._connection.execute(sql, params)
+        ]
+
+    def record_axis_direction(
+        self, direction: AxisDirection, *, events: Sequence[Event] = ()
+    ) -> bool:
+        """Establish one direction. False when this exact evidence already established it."""
+        with self.transaction() as connection:
+            cursor = connection.execute(
+                "INSERT OR IGNORE INTO axis_directions (direction_id, axis_id, "
+                "preferred_pole, high_win_rate, lower_bound, alpha, cells, readers, pairs, "
+                "verdicts_digest, established_at, note) "
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                (
+                    direction.direction_id,
+                    direction.axis_id,
+                    direction.preferred.value,
+                    direction.high_win_rate,
+                    direction.lower_bound,
+                    direction.alpha,
+                    direction.cells,
+                    direction.readers,
+                    direction.pairs,
+                    direction.verdicts_digest,
+                    direction.established_at,
+                    direction.note,
+                ),
+            )
+            inserted = cursor.rowcount > 0
+            for event in events:
+                self._insert_event(connection, event)
+        return inserted
+
+    def located_differences(
+        self,
+        *,
+        book_id: str | None = None,
+        branch_id: str | None = None,
+        status: DifferenceStatus | None = None,
+    ) -> list[LocatedDifference]:
+        clauses: list[str] = []
+        params: list[str] = []
+        if book_id is not None:
+            clauses.append("book_id = ?")
+            params.append(book_id)
+        if branch_id is not None:
+            clauses.append("branch_id = ?")
+            params.append(branch_id)
+        if status is not None:
+            clauses.append("status = ?")
+            params.append(status.value)
+        sql = "SELECT * FROM located_differences"
+        if clauses:
+            sql += " WHERE " + " AND ".join(clauses)
+        sql += " ORDER BY created_at, difference_id"
+        return [
+            LocatedDifference(
+                difference_id=row["difference_id"],
+                batch_id=row["batch_id"],
+                book_id=row["book_id"],
+                branch_id=row["branch_id"],
+                logical_id=row["logical_id"],
+                axis_id=row["axis_id"],
+                high_address=row["high_address"],
+                low_address=row["low_address"],
+                span=row["span"],
+                sentence=row["sentence"],
+                judge_id=row["judge_id"],
+                pool=Pool(row["pool"]),
+                created_at=row["created_at"],
+                status=DifferenceStatus(row["status"]),
+            )
+            for row in self._connection.execute(sql, params)
+        ]
+
+    def record_located_differences(
+        self, differences: Sequence[LocatedDifference], *, events: Sequence[Event] = ()
+    ) -> int:
+        """Persist one judge batch's output. Idempotent on the content-addressed id."""
+        written = 0
+        with self.transaction() as connection:
+            for difference in differences:
+                cursor = connection.execute(
+                    "INSERT OR IGNORE INTO located_differences (difference_id, batch_id, "
+                    "book_id, branch_id, logical_id, axis_id, high_address, low_address, "
+                    "span, sentence, judge_id, pool, created_at, status) "
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                    (
+                        difference.difference_id,
+                        difference.batch_id,
+                        difference.book_id,
+                        difference.branch_id,
+                        difference.logical_id,
+                        difference.axis_id,
+                        difference.high_address,
+                        difference.low_address,
+                        difference.span,
+                        difference.sentence,
+                        difference.judge_id,
+                        difference.pool.value,
+                        difference.created_at,
+                        difference.status.value,
+                    ),
+                )
+                written += 1 if cursor.rowcount > 0 else 0
+            for event in events:
+                self._insert_event(connection, event)
+        return written
+
+    def record_judge_discards(
+        self, discards: Sequence[JudgeDiscard], *, events: Sequence[Event] = ()
+    ) -> int:
+        """Persist the sentences that located nothing. Idempotent on the content-addressed id.
+
+        Written for **every** batch, including a void one, and before the caller decides
+        whether the batch is usable: the rows from a void batch are evidence about the judge
+        and are marked `batch_ok = 0` rather than dropped.
+        """
+        written = 0
+        with self.transaction() as connection:
+            for discard in discards:
+                cursor = connection.execute(
+                    "INSERT OR IGNORE INTO judge_discards (discard_id, batch_id, book_id, "
+                    "branch_id, logical_id, reason, sentence, orientation, left_address, "
+                    "right_address, separating, judge_id, batch_ok, created_at) "
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                    (
+                        discard.discard_id,
+                        discard.batch_id,
+                        discard.book_id,
+                        discard.branch_id,
+                        discard.logical_id,
+                        discard.reason.value,
+                        discard.sentence,
+                        discard.orientation,
+                        discard.left_address,
+                        discard.right_address,
+                        discard.separating,
+                        discard.judge_id,
+                        1 if discard.batch_ok else 0,
+                        discard.created_at,
+                    ),
+                )
+                written += 1 if cursor.rowcount > 0 else 0
+            for event in events:
+                self._insert_event(connection, event)
+        return written
+
+    def judge_discards(
+        self,
+        *,
+        book_id: str | None = None,
+        reason: DiscardReason | None = None,
+        limit: int | None = None,
+    ) -> list[JudgeDiscard]:
+        clauses: list[str] = []
+        params: list[object] = []
+        if book_id is not None:
+            clauses.append("book_id = ?")
+            params.append(book_id)
+        if reason is not None:
+            clauses.append("reason = ?")
+            params.append(reason.value)
+        sql = "SELECT * FROM judge_discards"
+        if clauses:
+            sql += " WHERE " + " AND ".join(clauses)
+        sql += " ORDER BY created_at, discard_id"
+        if limit is not None:
+            sql += " LIMIT ?"
+            params.append(limit)
+        return [
+            JudgeDiscard(
+                discard_id=row["discard_id"],
+                batch_id=row["batch_id"],
+                book_id=row["book_id"],
+                branch_id=row["branch_id"],
+                logical_id=row["logical_id"],
+                reason=DiscardReason(row["reason"]),
+                sentence=row["sentence"],
+                orientation=int(row["orientation"]),
+                left_address=row["left_address"],
+                right_address=row["right_address"],
+                separating=row["separating"],
+                judge_id=row["judge_id"],
+                batch_ok=bool(row["batch_ok"]),
+                created_at=row["created_at"],
+            )
+            for row in self._connection.execute(sql, params)
+        ]
+
+    def spend_located_difference(self, difference_id: str) -> bool:
+        """Mark one located difference materialised. False when it was already spent.
+
+        **One-shot is enforced here rather than by the caller**, and the `status = 'minted'`
+        clause is what enforces it: feedback that only accumulates becomes an unreadable prompt
+        and a system that cannot show improvement, and a second materialisation is exactly how
+        that starts.
+        """
+        with self.transaction() as connection:
+            cursor = connection.execute(
+                "UPDATE located_differences SET status = ? WHERE difference_id = ? "
+                "AND status = ?",
+                (
+                    DifferenceStatus.SPENT.value,
+                    difference_id,
+                    DifferenceStatus.MINTED.value,
+                ),
+            )
+            return cursor.rowcount > 0
+
+    def record_scene_feedback(self, record: SceneFeedback) -> bool:
+        """Record what shaped one accepted scene — including that nothing did.
+
+        `INSERT OR IGNORE` on `(revision_id, logical_id)`: the address is content-derived, so a
+        replayed acceptance writes the same provenance and converges rather than duplicating.
+        """
+        with self.transaction() as connection:
+            cursor = connection.execute(
+                "INSERT OR IGNORE INTO scene_feedback (revision_id, logical_id, job_id, "
+                "digest, items, dropped, recorded_at) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                (
+                    record.revision_id,
+                    record.logical_id,
+                    record.job_id,
+                    record.digest,
+                    json.dumps(list(record.items), sort_keys=True),
+                    record.dropped,
+                    record.recorded_at,
+                ),
+            )
+            return cursor.rowcount > 0
+
+    def scene_feedback(self, *, revision_id: str | None = None) -> list[SceneFeedback]:
+        sql = "SELECT * FROM scene_feedback"
+        params: tuple[str, ...] = ()
+        if revision_id is not None:
+            sql += " WHERE revision_id = ?"
+            params = (revision_id,)
+        sql += " ORDER BY recorded_at, revision_id, logical_id"
+        return [
+            SceneFeedback(
+                revision_id=row["revision_id"],
+                logical_id=row["logical_id"],
+                job_id=row["job_id"],
+                digest=row["digest"],
+                items=tuple(json.loads(row["items"])),
+                dropped=int(row["dropped"]),
+                recorded_at=row["recorded_at"],
+            )
+            for row in self._connection.execute(sql, params)
+        ]
+
+    # --- the Director role -------------------------------------------------------------
+
+    def directors(self) -> list[DomainDirector]:
+        """Every admitted personality, by name.
+
+        A brief is validated at construction (`legal_brief`), so a row that somehow held an
+        illegal brief raises on read rather than being served to a drafting prompt. That is the
+        right direction to fail in: the guard exists to keep prose doctrine out of the context
+        packet, and a quiet skip would leave the packet unprotected while the listing looked fine.
+        """
+        return [
+            DomainDirector(
+                director_id=row["director_id"],
+                name=row["name"],
+                brief=row["brief"],
+                note=row["note"],
+            )
+            for row in self._connection.execute(
+                "SELECT * FROM directors ORDER BY name, director_id"
+            )
+        ]
+
+    def director(self, director_id: str) -> DomainDirector | None:
+        row = self._connection.execute(
+            "SELECT * FROM directors WHERE director_id = ?", (director_id,)
+        ).fetchone()
+        if row is None:
+            return None
+        return DomainDirector(
+            director_id=row["director_id"],
+            name=row["name"],
+            brief=row["brief"],
+            note=row["note"],
+        )
+
+    def record_director(
+        self, director: DomainDirector, *, registered_at: str, events: Sequence[Event] = ()
+    ) -> bool:
+        """Admit one personality. False when this exact brief was already admitted.
+
+        Idempotent on the content-addressed id, so re-registering the same brief converges and
+        an *edited* brief is a different director rather than a silent rewrite of the one that
+        directed the books already on disk.
+        """
+        with self.transaction() as connection:
+            cursor = connection.execute(
+                "INSERT OR IGNORE INTO directors (director_id, name, brief, note, "
+                "registered_at) VALUES (?, ?, ?, ?, ?)",
+                (
+                    director.director_id,
+                    director.name,
+                    director.brief,
+                    director.note,
+                    registered_at,
+                ),
+            )
+            inserted = cursor.rowcount > 0
+            for event in events:
+                self._insert_event(connection, event)
+        return inserted
+
+    def machine_directives(
+        self, book_id: str, branch_id: str, *, live_only: bool = False
+    ) -> list[Directive]:
+        """Directives a Director wrote for this book.
+
+        `live_only` means still awaiting interpretation, which is the bound the selector reads:
+        one live machine directive per book at a time, so the inbox cannot fill with machine
+        direction and bury what a person dropped in it.
+        """
+        sql = (
+            "SELECT * FROM directives WHERE book_id = ? AND branch_id = ? "
+            "AND author LIKE ?"
+        )
+        params: list[object] = [book_id, branch_id, f"{DIRECTOR_AUTHOR_PREFIX}%"]
+        if live_only:
+            sql += " AND status = ?"
+            params.append(DirectiveStatus.RECEIVED.value)
+        sql += " ORDER BY rowid"
+        return [
+            _directive_from_row(row)
+            for row in self._connection.execute(sql, params)
+        ]
+
     def record_calibration(self, calibration: Calibration, *, events: Sequence[Event] = ()) -> bool:
         """Store measured evidence that a metric predicts human judgment.
 
@@ -2146,8 +2572,8 @@ class SqliteStore:
                 "INSERT OR IGNORE INTO directives (directive_id, kind, body, status, "
                 "book_id, branch_id, target_logical_ids, interpretation, "
                 "produced_constraint_ids, received_at, ingested_at, interpreted_at, "
-                "precedence, superseded_by, metadata) "
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, ?, ?, ?, ?)",
+                "precedence, superseded_by, author, metadata) "
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, ?, ?, ?, ?, ?)",
                 (
                     directive.directive_id,
                     directive.kind.value,
@@ -2162,6 +2588,7 @@ class SqliteStore:
                     directive.interpreted_at,
                     directive.precedence,
                     directive.superseded_by,
+                    directive.author,
                     json.dumps(directive.metadata) if directive.metadata else None,
                 ),
             )

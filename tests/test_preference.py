@@ -32,6 +32,7 @@ from litharness.domain.calibration import (
     veto_for,
 )
 from litharness.domain.craft import CraftMetric
+from litharness.domain.pools import Pool, passage_pool, reader_pool
 from litharness.domain.preference import (
     INTERNAL_PROTOCOL,
     ComparisonExcerpt,
@@ -721,6 +722,66 @@ def _seed_book(db) -> None:
         store.close()
 
 
+def _register_pools(db):
+    """Declare the measurement firewall, which every draw and every verdict now requires.
+
+    §61's claim dies if the prose was shaped by the readers who later judge it, so readers
+    and passages are split before the first verdict is routed and the split is stored rather
+    than defaulted (`plan/reader-judge-loop.md` §1). Every operator-surface test here starts
+    with this for the same reason an operator does: nothing routes until it exists.
+    """
+    assert run(db, "pools", "--register", "--note", "test split") == EXIT_OK
+    store = SqliteStore.open(db)
+    try:
+        registration = store.pool_registration()
+    finally:
+        store.close()
+    assert registration is not None
+    return registration
+
+
+def _readers_in(registration, pool: Pool, count: int = 1) -> list[str]:
+    """`count` reader ids that fall in `pool` under this split.
+
+    Searched rather than asserted, because the assignment is a content hash and picking the
+    names by hand would encode the hash into the test. What the test cares about is that the
+    readers are on the same side of the firewall as the passages they answer — everything
+    else about the split is `test_the_firewall_refuses_a_cross_pool_verdict`'s business.
+    """
+    found: list[str] = []
+    index = 0
+    while len(found) < count:
+        candidate = f"reader-{pool.value[:4]}-{index}"
+        if reader_pool(candidate, registration) is pool:
+            found.append(candidate)
+        index += 1
+        assert index < 10_000, f"no reader id landed in {pool}"
+    return found
+
+
+def _scenes_in(db, registration, pool: Pool) -> list[str]:
+    """The seeded book's scenes on one side of the firewall.
+
+    Computed rather than written down: the assignment is a content hash of the revision id,
+    so a hard-coded list would encode the hash and break the moment the fixture's prose
+    changed. The point the tests are making is "every scene on this side", which is what this
+    says.
+    """
+    store = SqliteStore.open(db)
+    try:
+        [(_book, _branch, head)] = store.branches()
+        revision = store.load_revision(head)
+        return [
+            node.logical_id
+            for node in revision.nodes
+            if node.kind.value == "scene"
+            and node.content
+            and passage_pool(head, node.logical_id, registration) is pool
+        ]
+    finally:
+        store.close()
+
+
 def _excerpt_file(tmp_path, name: str, text: str):
     path = tmp_path / name
     path.write_text(text, encoding="utf-8")
@@ -733,6 +794,7 @@ def test_the_corpus_to_win_rate_round_trip(db, tmp_path, capsys) -> None:
     (1.0) is the expected print — the plumbing is under test here, not the statistics."""
     run(db, "init")
     _seed_book(db)
+    registration = _register_pools(db)
     for index, text in enumerate(
         ("The lantern held its breath while the toll was counted twice.",
          "Nobody crossed the ford after dark, and the ferryman knew why."),
@@ -757,11 +819,22 @@ def test_the_corpus_to_win_rate_round_trip(db, tmp_path, capsys) -> None:
 
     assert run(db, "pair-draw", "--protocol", protocol_id) == EXIT_OK
     drawn = capsys.readouterr().out
-    assert "12 pair(s) drawn" in drawn, "6 scenes x 2 excerpts"
-    assert "24 presented sample(s)" in drawn
+    # **The measurement half of the firewall, visible in the count.** Only scenes on the
+    # measurement side of the split enter §61's own comparison; the steering-side scenes are
+    # held back and the draw says how many, because a bound coverage that says nothing reads
+    # as "covered everything" when it did not.
+    measurement = _scenes_in(db, registration, Pool.MEASUREMENT)
+    steering = _scenes_in(db, registration, Pool.STEERING)
+    assert measurement and steering, "the fixture must exercise both sides"
+    assert f"{len(measurement) * 2} pair(s) drawn" in drawn, "measurement scenes x 2 excerpts"
+    assert f"{len(measurement) * 4} presented sample(s)" in drawn
+    assert f"{len(steering)} scene(s) held back by the measurement firewall" in drawn
 
     assert run(db, "pairs", "--pending", "--quiet") == EXIT_OK
-    assert "24 sample(s), 24 awaiting a reader" in capsys.readouterr().out
+    assert (
+        f"{len(measurement) * 4} sample(s), {len(measurement) * 4} awaiting a reader"
+        in capsys.readouterr().out
+    )
 
     store = SqliteStore.open(db)
     try:
@@ -772,13 +845,17 @@ def test_the_corpus_to_win_rate_round_trip(db, tmp_path, capsys) -> None:
         chosen = sorted(by_pair)[:2]
     finally:
         store.close()
+    # Readers on the measurement side, because a steering reader may not answer a
+    # measurement pair: §61's claim dies if the prose was shaped by the readers who later
+    # judge it, and the two pools are answered by disjoint sets of people.
+    who = _readers_in(registration, Pool.MEASUREMENT, 2)
     for pair_index, pair_id in enumerate(chosen):
         for sample in by_pair[pair_id]:
             system_first = sample.left_addr.startswith("rev:")
             verdict = "prefer_first" if system_first else "prefer_second"
             assert run(
                 db, "pair-judge", sample.sample_id, verdict,
-                "--reader", f"reader-{pair_index}", "--recognized", "no",
+                "--reader", who[pair_index], "--recognized", "no",
             ) == EXIT_OK
             capsys.readouterr()
 
@@ -801,6 +878,7 @@ def test_the_pair_queue_is_blinded(db, tmp_path, capsys) -> None:
     measures as."""
     run(db, "init")
     _seed_book(db)
+    _register_pools(db)
     excerpt_text = "Nobody crossed the ford after dark, and the ferryman knew why."
     run(
         db, "corpus-add", str(_excerpt_file(tmp_path, "one.txt", excerpt_text)),
@@ -846,10 +924,16 @@ def test_the_sibling_draw_runs_under_the_built_in_internal_protocol(db, capsys) 
     internal frame has no human side, and `win-rate` says so instead of counting them."""
     run(db, "init")
     _seed_book(db)
+    registration = _register_pools(db)
     capsys.readouterr()
     assert run(db, "pair-draw", "--siblings") == EXIT_OK
     drawn = capsys.readouterr().out
-    assert "15 pair(s) drawn" in drawn, "6 scenes choose 2"
+    # Sibling pairs are steering evidence, so the draw takes the steering side of the split
+    # and holds the measurement side back — the mirror of the external draw, and the reason
+    # a span answers one question or the other and never both.
+    steering = _scenes_in(db, registration, Pool.STEERING)
+    expected = len(steering) * (len(steering) - 1) // 2
+    assert f"{expected} pair(s) drawn" in drawn, "steering scenes choose 2"
     assert INTERNAL_PROTOCOL.protocol_id in drawn
 
     store = SqliteStore.open(db)
@@ -859,7 +943,7 @@ def test_the_sibling_draw_runs_under_the_built_in_internal_protocol(db, capsys) 
         store.close()
     run(
         db, "pair-judge", sample.sample_id, "prefer_first",
-        "--reader", "reader-a", "--recognized", "no",
+        "--reader", _readers_in(registration, Pool.STEERING)[0], "--recognized", "no",
     )
     capsys.readouterr()
     assert run(db, "win-rate", "--protocol", INTERNAL_PROTOCOL.protocol_id) == EXIT_OK
@@ -871,6 +955,7 @@ def test_the_sibling_draw_runs_under_the_built_in_internal_protocol(db, capsys) 
 def test_a_judgment_records_once_from_the_command_line(db, tmp_path, capsys) -> None:
     run(db, "init")
     _seed_book(db)
+    _register_pools(db)
     run(
         db, "corpus-add", str(_excerpt_file(tmp_path, "one.txt", "A ford, unwatched.")),
         "--source", "test-serial", "--genre", "litrpg", "--era", "pre-2023",
@@ -909,6 +994,7 @@ def test_export_and_import_round_trip_for_external_readers(db, tmp_path, capsys)
     never drew is refused rather than adopted."""
     run(db, "init")
     _seed_book(db)
+    registration = _register_pools(db)
     run(
         db, "corpus-add", str(_excerpt_file(tmp_path, "one.txt", "A ford, unwatched.")),
         "--source", "test-serial", "--genre", "litrpg", "--era", "pre-2023",
@@ -918,10 +1004,11 @@ def test_export_and_import_round_trip_for_external_readers(db, tmp_path, capsys)
     capsys.readouterr()
 
     export_path = tmp_path / "pairs.jsonl"
+    expected = len(_scenes_in(db, registration, Pool.MEASUREMENT)) * 2
     assert run(db, "pair-export", str(export_path)) == EXIT_OK
-    assert "12 pending sample(s) exported" in capsys.readouterr().out
+    assert f"{expected} pending sample(s) exported" in capsys.readouterr().out
     lines = [json.loads(line) for line in export_path.read_text(encoding="utf-8").splitlines()]
-    assert len(lines) == 12
+    assert len(lines) == expected
     for line in lines:
         assert set(line) == {
             "sample_id", "frame", "grain", "first", "second", "verdicts", "recognized",
@@ -933,30 +1020,31 @@ def test_export_and_import_round_trip_for_external_readers(db, tmp_path, capsys)
         assert "rev:" not in json.dumps(line)
 
     verdicts_path = tmp_path / "verdicts.jsonl"
+    paid = _readers_in(registration, Pool.MEASUREMENT, 2)
     answered = [
-        {"sample_id": lines[0]["sample_id"], "verdict": "prefer_first", "reader": "paid-1",
+        {"sample_id": lines[0]["sample_id"], "verdict": "prefer_first", "reader": paid[0],
          "recognized": False},
-        {"sample_id": lines[1]["sample_id"], "verdict": "tie", "reader": "paid-2",
+        {"sample_id": lines[1]["sample_id"], "verdict": "tie", "reader": paid[1],
          "recognized": True, "note": "I have read this serial"},
     ]
     verdicts_path.write_text(
         "\n".join(json.dumps(entry) for entry in answered) + "\n", encoding="utf-8"
     )
-    assert run(db, "pair-import", str(verdicts_path)) == EXIT_OK
+    assert run(db, "pair-import", str(verdicts_path), "--source", "test-panel") == EXIT_OK
     assert "2 verdict(s) recorded, 0 already answered" in capsys.readouterr().out
 
-    assert run(db, "pair-import", str(verdicts_path)) == EXIT_OK
+    assert run(db, "pair-import", str(verdicts_path), "--source", "test-panel") == EXIT_OK
     assert "0 verdict(s) recorded, 2 already answered" in capsys.readouterr().out
 
     with_unknown = [
         *answered,
-        {"sample_id": "pj-000000000000000000000000", "verdict": "tie", "reader": "paid-3",
-         "recognized": False},
+        {"sample_id": "pj-000000000000000000000000", "verdict": "tie",
+         "reader": _readers_in(registration, Pool.MEASUREMENT, 3)[2], "recognized": False},
     ]
     verdicts_path.write_text(
         "\n".join(json.dumps(entry) for entry in with_unknown) + "\n", encoding="utf-8"
     )
-    assert run(db, "pair-import", str(verdicts_path)) == EXIT_ATTENTION
+    assert run(db, "pair-import", str(verdicts_path), "--source", "test-panel") == EXIT_ATTENTION
     output = capsys.readouterr()
     assert "1 unknown sample id(s) refused" in output.out
     assert "never drew" in output.err
@@ -980,6 +1068,7 @@ def test_an_import_without_an_explicit_recognition_answer_is_refused(
     boolean — an absent answer is not "no"."""
     run(db, "init")
     _seed_book(db)
+    _register_pools(db)
     run(
         db, "corpus-add", str(_excerpt_file(tmp_path, "one.txt", "A ford, unwatched.")),
         "--source", "test-serial", "--genre", "litrpg", "--era", "pre-2023",
@@ -1003,7 +1092,7 @@ def test_an_import_without_an_explicit_recognition_answer_is_refused(
     verdicts_path.write_text(
         "\n".join(json.dumps(entry) for entry in entries) + "\n", encoding="utf-8"
     )
-    assert run(db, "pair-import", str(verdicts_path)) == EXIT_ATTENTION
+    assert run(db, "pair-import", str(verdicts_path), "--source", "test-panel") == EXIT_ATTENTION
     output = capsys.readouterr()
     assert "0 verdict(s) recorded" in output.out
     assert "2 refused without an explicit recognition answer" in output.out
@@ -1026,6 +1115,7 @@ def test_a_single_presented_order_is_refused_and_an_imbalance_is_warned(
     artifact. All-one-orientation refuses the bound; worse than 2:1 warns and computes."""
     run(db, "init")
     _seed_book(db)
+    registration = _register_pools(db)
     run(
         db, "corpus-add", str(_excerpt_file(tmp_path, "one.txt", "A ford, unwatched.")),
         "--source", "test-serial", "--genre", "litrpg", "--era", "pre-2023",
@@ -1042,7 +1132,8 @@ def test_a_single_presented_order_is_refused_and_an_imbalance_is_warned(
         by_orientation[sample.orientation].append(sample)
     capsys.readouterr()
 
-    for reader, sample in zip(("r0", "r1"), by_orientation[0][:2], strict=True):
+    r0, r1 = _readers_in(registration, Pool.MEASUREMENT, 2)
+    for reader, sample in zip((r0, r1), by_orientation[0][:2], strict=True):
         run(db, "pair-judge", sample.sample_id, "prefer_first",
             "--reader", reader, "--recognized", "no")
     capsys.readouterr()
@@ -1052,9 +1143,9 @@ def test_a_single_presented_order_is_refused_and_an_imbalance_is_warned(
     assert "positional artifact" in output.err, "the refusal names what it guards against"
 
     run(db, "pair-judge", by_orientation[0][2].sample_id, "prefer_first",
-        "--reader", "r0", "--recognized", "no")
+        "--reader", r0, "--recognized", "no")
     run(db, "pair-judge", by_orientation[1][0].sample_id, "prefer_first",
-        "--reader", "r1", "--recognized", "no")
+        "--reader", r1, "--recognized", "no")
     capsys.readouterr()
     assert run(db, "win-rate", "--protocol", PROTOCOL.protocol_id) == EXIT_OK
     reported = capsys.readouterr().out
@@ -1127,10 +1218,15 @@ def test_the_zero_verdict_world_degrades_to_informative_emptiness(db, capsys) ->
     capsys.readouterr()
     assert run(db, "win-rate", "--protocol", PROTOCOL.protocol_id) == EXIT_OK
     assert "no analysable judgment yet" in capsys.readouterr().out
-    assert run(db, "pair-draw", "--protocol", PROTOCOL.protocol_id) == EXIT_OK
-    assert "no accepted scene holds prose yet" in capsys.readouterr().out
+    # **Before the split is declared the draw refuses, and that is the firewall rather than a
+    # gap in the empty-store story.** "Before the first verdict is routed" is only meaningful
+    # if nothing can be routed first, so this is a fault and it names its remedy.
+    assert run(db, "pair-draw", "--protocol", PROTOCOL.protocol_id) == EXIT_FAULT
+    assert "no pool registration" in capsys.readouterr().err
 
     _seed_book(db)
+    _register_pools(db)
+    capsys.readouterr()
     assert run(db, "pair-draw", "--protocol", PROTOCOL.protocol_id) == EXIT_OK
     assert "the comparison corpus is empty" in capsys.readouterr().out
 
@@ -1149,6 +1245,7 @@ def test_the_pairwise_engine_never_touches_a_provider(db, tmp_path, monkeypatch,
     monkeypatch.setattr(cli_module, "build_default_registry", explode)
     run(db, "init")
     _seed_book(db)
+    _register_pools(db)
     run(
         db, "corpus-add", str(_excerpt_file(tmp_path, "one.txt", "A ford, unwatched.")),
         "--source", "test-serial", "--genre", "litrpg", "--era", "pre-2023",

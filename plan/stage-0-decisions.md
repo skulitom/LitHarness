@@ -6598,3 +6598,341 @@ the difference-detection in a channel that reports, and route preference to a hu
   a run.
 - **No licence moved, no bar was re-declared after numbers arrived, and the §85 operator read was
   not opened.**
+
+## 90. The loop closes on two roles split by valence, and the split is measured rather than chosen
+
+The reader→writer directive (2026-08-19). Until this entry, nothing a reader said about prose
+reached the thing that writes the next prose, by any path — `audit_samples` at 0 rows,
+`calibrations` at 0 rows, and the one machine channel touching drafting (`plan_search`'s licensed
+judge) rendering *verdicts*, which is the frame this project has now measured dead three times.
+The design is `plan/reader-judge-loop.md`; this entry carries what it decided and the three
+things the build found that the design did not predict.
+
+**The split is not human-versus-machine. It is valence-versus-location, and the record forces
+it.** A **READER** owns valence — would I keep reading, which of these two would I rather
+continue — and nothing else may. A **JUDGE** owns location and axis and never valence. The
+licence in each direction is a measurement, not a preference:
+
+    frame                                   result                                    where
+    verdict, T0 axiom battery               DISQUALIFIED; A6 chose-A 0.8151 / 568     §86.6
+    verdict, E1/E2                          VOID on precondition; 0.6408 / 142        §89.4
+    verdict, persona absolute               keep-reading on 195 of 196                §70
+    report, E6 "name the difference"        clears 3 of 3 B6 families                 §89.4
+
+**Neither source is a signal alone, and that is the load-bearing rule.** A reader establishes,
+over few and expensive verdicts, the **direction** of an axis; a judge applies, cheaply and per
+span, the **discrimination** on it. Direction without discrimination cannot be applied to a
+draft; discrimination without direction cannot say which way to move. In code this is a
+constructor precondition rather than a convention — `FeedbackItem` cannot exist without an
+`AxisDirection`, and a judged difference on an undirected axis is discarded and *kept* (below).
+
+**The counter decides which side; the judge only decides which axis and where.** This is what
+makes seating a T0-disqualified model family as Judge defensible rather than hopeful: every arm
+T0 fired on is a property of the *verdict channel* — A6 is chose-A over **decided comparisons**,
+and a protocol asking for no choice produces none. The sharpest evidence is §89's own: §81
+measured this panel on `stat_flatten` at **0.5437, BLIND, on the wrong side of indifference**;
+E6 asked the same family about the same pairs and got the axis named **40 of 40**. Nothing about
+its access to the text changed. Only the question did. So the judge is admitted, confined to E6's
+frame, with `E6_QUESTION` and `AXIS_MATCHERS` copied **byte-for-byte** under a test, and with a
+placebo and a whitespace sham riding every batch. §82 is untouched and JudgeBench A2's verdict
+layer is still empty.
+
+**Three axes, and the shortlist is an intersection rather than a choice**: §74's human read named
+flat stats, no interiority and em dashes, and those are the same three families E6 clears on.
+`plan/reader-judge-loop.md` §2.1 makes that birth story the **only** admission path — a named
+defect from a human read, or a nomination from the discard corpus — which also gives every future
+human read a defined product: a read is a *defect harvest*.
+
+### 90.1 The prerequisite was closed by a parallel session, and separating the roles reopened two holes
+
+§86.1's laundering path — `analysable_judgments` never inspecting `reader_id` while `plan_search`
+wrote a licensed judge's verdicts through the same pair table — was closed as §86.6 before this
+work began (`MACHINE_READER_PREFIX`, excluded from the denominator, kept in the staleness digest,
+guarded by `test_a_machine_written_row_can_never_denominate_a_preference_holdout`). Verified in
+source rather than assumed.
+
+**Separating the roles makes the residuals worse rather than better**, because the entire point
+of the split is to run judges at volume and volume is what turns an open path into a laundered
+pool. Two closed here:
+
+1. **The prefix was opt-in at one write site and unowned everywhere else.** `pair-judge` and
+   `pair-import` accepted any reader id including a reserved-prefix one, so a *human* row wearing
+   it would vanish from every PREFERENCE denominator silently. Both human paths now refuse it,
+   and the prefix means exactly one thing.
+2. **The Judge writes no `PREFERENCE`-shaped row at all.** `located_differences` is its own table
+   with its own columns — no verdict, no pair sample, no laundering surface **by construction
+   rather than by filter**. That is the structural version of the same fix, and it is the half
+   that scales.
+
+What cannot be closed: an importer claiming a human name for machine output. `--source` is now
+required and recorded on every row's event, which is the honest half — a dump cannot arrive
+anonymously even though it can arrive mislabelled.
+
+### 90.2 The firewall binds §61's own runbook, and that is the correct blast radius
+
+I1 requires readers *and* comparison passages split before the first verdict is routed. Built as
+a write-once `PoolRegistration` with content-derived draws, `audit.bucket_for`'s discipline
+inherited whole. **The consequence is larger than the new loop**: `pair-draw`, `pair-judge`,
+`pair-import` and `directions` all refuse until the split exists, external pairs draw only over
+measurement-pool scenes and sibling pairs only over steering-pool spans, and every
+operator-surface test in `tests/test_preference.py` now starts by declaring it. One operator
+command lands in front of the existing preference runbook.
+
+That is the right blast radius and the smaller version would have been wrong: a passage split
+protecting only the steering side would leave §61's own side open, which is the wrong half to
+leave open. **What the two halves buy is not equal and the design says so**: the *reader* split is
+the lock (a reader is in one pool for life, so the two questions are answered by disjoint people);
+the *passage* split is weaker, because if the loop works at all every scene of a steered book is
+shaped and no passage-level split undoes that. What it buys is narrower and still worth having —
+a passage's own verdicts never feed back into the prose it is later compared as.
+
+**The residual is stated rather than discovered later**: nothing stops one person holding two
+reader ids in different pools. `litharness pools` prints that sentence under every listing.
+
+### 90.3 The bar was wrong in the direction of false failure, and checking it is what found that
+
+I7 asks for range, direction, unit and non-emptiness before a threshold is committed, and notes
+that T0's own registered bar disqualified a *good* judge 82–100% of the time. Running the same
+check on this design's bar found two defects before any verdict existed:
+
+- **The reader-cluster floor was 3 and is now `DESCRIPTIVE_CLUSTER_FLOOR` = 5.**
+  `win_rate_lower_bound`'s own docstring records that below roughly five clusters per dimension
+  the percentile bootstrap is descriptive rather than calibrated. Reading a direction off a
+  descriptive number is reading an interval that has not earned its level.
+- **A zero-width-band refusal was written and then deleted, and the deletion is the finding.**
+  The rule read "both one-sided bounds summing to 1.0 is degenerate, refuse". At the *two*-reader
+  floor that is §85's zero-width defect; at *these* floors it is **unanimity** — thirty cells over
+  five readers and eight pairs all pointing one way, the strongest evidence the channel can
+  produce — and the rule would have refused it. The cluster floors already exclude the
+  four-observation case it was aimed at.
+
+**And the floor turned out not to be a sample size, which is the number an operator actually
+needs.** Measured at the declared shape:
+
+    smallest clearing k    22 of 30 cells
+
+    true rate   power at 30 cells   cells for 80% power
+      0.55            0.031                 220
+      0.60            0.094                  90
+      0.65            0.225                  60
+      0.70            0.432                  50
+      0.80            0.871                  30
+
+At a true 0.60 the floor fires under a tenth of the time, so a null from thirty judgments would
+say nothing about the axis. `litharness directions --attainability` prints the last column and
+says that in words. It lands where §61's independent sizing landed — 90 cells at 0.60 against
+§61's "roughly 100–150 decisive judgments" — which is a cross-check nobody arranged.
+
+**The unit is the `(reader, pair)` cell, not the comparison.** §89 item 6 recorded a 30-decided
+floor that could not bind because four personas were one judge four times; the same failure is
+available from the other side, since both orientations of one pair answered by one reader are
+**one** decision. A reader who flips with position has said nothing and collapses to a tie, which
+is the only reading under which a position-swapped design measures anything.
+
+### 90.4 The discard bucket is retained verbatim, and it is the one change that would have lost data by waiting
+
+Arrived as an operator addendum mid-build. The E6 channel is scored by a frozen matcher over three
+axes, and steps that find no match, no direction, or no counter separation each *discard* a
+sentence. Counting them throws away the most interesting thing the channel produces: **an
+unmatched sentence is a field report about a salient difference the axis registry cannot yet
+name** — the same object §74's human read produced, from a channel that runs at volume instead of
+once.
+
+Every one is now stored verbatim with its provenance (pair addresses, batch, orientation, judge
+id, separating counters, whether the batch's controls held), under five reason codes that are
+different facts about different things — `unmatched` is discovery, `undirected` is the
+composition rule biting and a queue of what reader evidence would unlock, `unseparated` is the
+judge claiming a difference the material does not carry and is therefore a *judge*-quality
+signal. A sentence from a VOID batch is retained and marked, because a confabulating judge's own
+words are the evidence.
+
+**The rail, in the table's own comment as well as the domain's**: this corpus may **nominate** a
+candidate axis and may never **validate** one. A matcher drafted from these sentences and scored
+against them is a rubric fitted to its own answers, which is exactly what freezing the matchers
+prevents. A nominated axis takes the full path — counter, E6-family validation on *fresh pairs
+the corpus never touched*, reader direction — before it emits anything.
+
+### 90.5 What was run, and what it refuses to say
+
+`research/quality-measurement/feedback_ablation.py`, pre-registered before any arm was generated,
+four arms (`off`, `reader_only`, `judge_only`, `both`) because two would not say which half did
+the work. Its selftest passes on ten constructed claims. Its `--wiring` run drives all four arms
+through the real loop on the padded fake provider with a synthetic direction:
+
+    arm            scenes carrying feedback    target counter
+    off                       0                 baseline
+    reader_only               6                 unchanged
+    judge_only                0                 unchanged, BY CONSTRUCTION
+    both                      6                 unchanged
+    overall:  INERT_GENERATOR      reader side:  UNDECIDABLE (0/30 cells, 0/5 readers, 0/8 pairs)
+
+It establishes that the feedback text reaches the frozen payload of every drafted scene in the
+arms that should have it and none of the arms that should not. **It refuses to read the flat
+counters as a null**: `INERT_GENERATOR` is its own verdict, because a generator that answers
+every prompt identically has said nothing about the loop and a bare NULL would be quotable as
+"feedback does not work". §57's lesson, wired in rather than remembered. And `judge_only` carried
+nothing because the pilot runs no tournament — the report says so in its own field rather than
+letting the control-under-another-name read as a measured null.
+
+**No licence moved. No axis has a direction. No reader has been paid.** With no direction the
+judge half refuses before it spends anything and the whole loop resolves to an empty feedback
+set, which is recorded explicitly rather than omitted — `scene_feedback` carries an empty item
+list and the empty set's real digest, because "this scene had no feedback" and "nobody recorded
+whether this scene had feedback" are different facts. The emptiness of `axis_directions` is now
+the measure of the gap, the way the emptiness of `calibrations` already was.
+
+**Two register entries, designed and named and not built**: a **paraphrase sham** (same content,
+different surface) to catch a judge or counter firing on surface features carrying no
+reader-visible difference — a register entry rather than a task because certifying "same content"
+honestly is the hard part, and a sham whose own premise is unverified is a control that cannot
+fail; and the **promise/payoff ledger** as a candidate counter family, which is the right shape
+(deterministic, span-locating, judge-free) and is strictly a hypothesis axis under §2.1's
+admission path.
+
+**The CLI verb `judge` is renamed `read`**, because it records a *reader* verdict and was
+backwards under this split. The old name still works and warns; the cost of the rename was small
+now and grows with every row.
+
+## 91. A third role, safe for the opposite reason to the other two: it measures nothing
+
+The Director directive (2026-08-19), landing beside §90. The operator asked for a Director role
+with a personality, experimentable across several, taking human feedback but working with none by
+default. The design is `plan/director-role.md`; this entry carries the licence argument, the third
+costume of the laundering path, and the two defects the build found in its own rails.
+
+**The objection to answer first, because this project has spent months earning it.** A machine
+cannot be trusted to have opinions about prose — T0's panel DISQUALIFIED, §89's E1/E2 VOID, the
+persona reader constant at 195 of 196. A third role that opines sounds like a fourth attempt.
+
+**It is not, and the distinction is structural rather than rhetorical: every dead frame was
+evaluative and downstream.** Each was handed prose that existed and asked how good it is. A
+Director is *generative and upstream* — it says what the book should be, before any of it exists.
+That is not a measurement, so it cannot be an invalid one.
+
+    role      acts     on            answers                     licensed by
+    DIRECTOR  before   nothing yet   what should this book be    nothing; it measures nothing
+    JUDGE     after    two drafts    what differs, and where     E6, 3 of 3 families
+    READER    after    two drafts    which would I keep reading  the only surviving valence channel
+
+So the Director needs no validity licence. What it needs is **containment**, because a role that
+measures nothing is exactly the role through which unmeasured taste walks in wearing something
+else's authority.
+
+### 91.1 The laundering path, third costume, closed while still free
+
+`judge-validity-program` §1.1 found it in the pair table; §90 found two more when the Judge was
+split out. Checked in source before the design was written, not assumed:
+
+- `directive_planner` writes an explicit constraint or veto into a plan item with `locked=True`,
+  verbatim and by design, because those words are the director's.
+- **`narrative_planner` lets the model set `locked` on every edit it proposes** — the schema
+  carries the boolean and the parser accepts what comes back.
+- `plans.constraints_of` selects locked constraints and `context.assemble` puts them in the
+  packet's CONSTRAINTS section, priority 2, above threads, facts and prose, effectively never
+  dropped.
+- **`Directive` had no author.** Not a column, not a field, not a check.
+
+So the moment a machine writes a directive, its words enter every subsequent context packet as a
+locked constraint carrying the director's authority, with nothing on the record saying a machine
+wrote them. §86.1's shape exactly — a property enforced by who happens to hold the pen — and inert
+only because the table had no machine rows.
+
+**Closed at three points.** `Directive.author` is stored and is part of `directive_id_for`'s
+material, so the same words from a person and from a Director are two directives and a machine row
+cannot be silently reattributed; existing ids are unchanged, because a migration that moved them
+would break every `produced_constraint_ids` reference pointing at one. The **verbatim** lane
+refuses machine authorship outright. The **interpretive** lane forces `locked=False` on every edit
+derived from a machine-authored directive, downgrading rather than refusing — the direction is
+legitimate and only its authority is not — which also empties that proposal's produced-constraint
+list, so there is nothing left to cite.
+
+The licence rule falls out in one line: **a Director's kinds are exactly `INTERPRETIVE_KINDS`.**
+Constraint and veto are the verbatim pair and a veto is a *refusal*, which is authority; `CONTROL`
+is pause/resume/kill, which is operator state. A Director says what the book is about; it may not
+refuse anything and it may not stop the machine.
+
+### 91.2 A brief may name what the book is about and not what good prose is — and reusing the Judge's matchers to enforce that failed
+
+The sharper rail, because the Reader/Judge loop would otherwise have a back door straight through
+it. §90's §2.1 makes axis admission a four-step path — human read, counter, E6 validation, reader
+direction — and a Director brief goes **straight into the drafting context**. A brief saying "cut
+the em dashes" would inject a prose axis with none of the four. Not hypothetical: `em_dash`'s own
+pre-registered hypothesis is still VOID with the estimate leaning *toward* the mark (§78.3), so
+that director would be asserting as premise the thing the loop exists to test.
+
+**The first guard reused `AXIS_MATCHERS` and had to be withdrawn, which is the finding.** Reuse
+looked obviously right — those matchers define what naming an axis means, and a second vocabulary
+would drift. Run once, it rejected this design's own first example brief, on the sentence *"every
+level gained should have cost something"*: `stat_flatten`'s matcher contains `level`, `tier`,
+`stat`, `value` and `count`, which are ordinary LitRPG **story** words.
+
+The lesson generalises. `elicitation_study` says in as many words that those matchers are
+*"deliberately generous about vocabulary and strict about topic"*, because E6 asks whether an axis
+reached the output at all. **They are tuned for recall on a description task, and a refusal gate
+inverts the error economics** — in E6 a generous list costs a false positive that reads as a miss;
+as a gate it costs a refusal of legitimate direction. Same list, opposite cost. The brief guard
+now has its own narrow, precision-tuned vocabulary and states the trade: it catches "avoid em
+dashes", it does not catch a paraphrase, and no regex would.
+
+**And the strongest containment needed no vocabulary at all: the Director is never shown the
+prose.** It gets the premise, the scene statements, the ledger's open promises and the scene
+*summaries* — what happened, never how it reads. `DirectorStore` has no `ManuscriptWriter` and the
+handler never reads `node.content`. A role that cannot see the text cannot render a verdict on it,
+which turns "may not evaluate prose" from an instruction into a property of what it was handed.
+
+### 91.3 A personality has to be earned, and the control that checks it could not fail
+
+The prior against "give it a personality" is this repo's own: §89.1's `qwen3:14b` returned **one
+distinct answer vector across four personas, byte-identical**; §83 found the register invariant to
+simulated phenomenology; §77 measured persona-to-passage sum-of-squares ratios of 0.0028, 0.0071
+and 0.0342 while one word of question change moved a rate ten points. So "experiment with
+different directors" is a claim to check before it is made, or it is §89.1 in a third costume.
+
+`director_distinctness.py` draws from each director on the same book state and requires the
+between-director distance to clear the within-director spread. **Its first version had four
+readings and the fifth exists because running it produced one.** On the fake provider every pair
+came back `DISTINCT` at `within = 0.0000` — every draw byte-identical to its siblings, because a
+deterministic generator handed the same request returns the same answer. With no wobble to clear,
+*"between exceeds within"* is satisfied by a single differing character: **the rail passed and
+could not have failed** (§50: a control which cannot fail is not a control).
+
+`DISTINCT_NO_FLOOR` now carries that case. It keeps what the weaker reading does establish — the
+briefs are *not inert*, which is what §89.1's failure was about — and refuses it the word that
+implies a margin. The run: three built-in briefs, all pairs `DISTINCT_NO_FLOOR`, `between 0.8462`
+against `within 0.0000`, `COMPARABLE`, floor warning attached. It establishes that the briefs
+reach the request and change it; it establishes nothing about a real model's personality, and the
+results file says so in its own field.
+
+### 91.4 What experimenting with directors costs, computed rather than waved at
+
+**N directors divide §61's alpha by N.** Pre-registration (5) is explicit: *"If more than one book
+could have been reported, the confidence level is divided by the candidate count."* Picking the
+best of N directors and then measuring that book against matched published prose is precisely
+reporting one of N candidates. At three directors the superiority claim is made at **α = 0.0167**,
+and §61's own sizing records what a thinner margin costs — 100–150 decisive judgments at a true
+0.60, 400–500 at 0.55, clustering inflating both.
+
+The harness prints this beside every verdict rather than leaving it to be discovered after the
+money is spent. The comparison itself rides the internal frame in the steering pool, so it does
+not contaminate §61 directly; what it costs is the headline's confidence level, which is the one
+currency this project is shortest of.
+
+### 91.5 Bounded, subordinate, off by default
+
+One directive per block of `DIRECTIVE_EVERY = 6` accepted scenes, keyed into the job id so a
+replayed tick converges. The obvious alternative — one per plan epoch — is a spin loop wearing a
+bound: a directive becomes a plan application and a plan application bumps the epoch, so the bound
+resets itself. Tying the cadence to accepted scenes cannot do that, because nothing a Director
+says drafts a scene. A second bound sits beside it: a Director with a directive still awaiting
+interpretation stays quiet, so the inbox cannot fill with machine direction while a person's sits
+behind it. `DIRECT_PRIORITY = 400` is beneath both human lanes (1000+, 500+) and above the
+drafting it shapes.
+
+`--director <name>` mirrors `--plan-search`, for the reason that flag gives in its own help text:
+a director is an arm and no director is its control. An unregistered name is **refused loudly**
+rather than defaulted to no director, because a typo that silently produced the control arm would
+be the worst possible failure for an experiment whose whole question is whether the arms differ.
+Admitting a personality is an operator act (§84's rule), and the three built-in briefs are
+examples written to exercise the distinctness control — nothing claims any of them is good.
+
+**No director has been compared to another on prose, and none will be until a reader exists.**

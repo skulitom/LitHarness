@@ -28,6 +28,7 @@ from litharness.domain.directives import (
     DirectiveKind,
     DirectiveStatus,
 )
+from litharness.domain.directors import is_machine_author
 from litharness.domain.events import Event, payload_digest
 from litharness.domain.jobs import Job
 from litharness.domain.plan_refinement import (
@@ -64,8 +65,23 @@ def constraint_logical_id(directive_id: str) -> str:
 
 
 def is_verbatim_actionable(directive: Directive) -> bool:
-    """True only where preserving the original words is a complete interpretation."""
-    return directive.status is DirectiveStatus.RECEIVED and directive.kind in VERBATIM_KINDS
+    """True only where preserving the original words is a complete interpretation.
+
+    **A machine-authored directive is never verbatim-actionable, and that is the containment
+    rather than a technicality.** This lane's whole product is a `locked=True` constraint that
+    then sits in every subsequent context packet as the director's word (`plans.constraints_of`
+    → the packet's CONSTRAINTS section, priority 2, effectively never dropped). The lock is the
+    *human* director's authority; a Director personality has none to spend
+    (`plan/director-role.md` §1). It is also unreachable by construction — `VERBATIM_KINDS` is
+    constraint and veto, and `directors.DIRECTOR_KINDS` is exactly the interpretive set — so this
+    clause is the belt to that braces, put here because "unreachable" is a property of today's
+    call sites and this is a property of the lane.
+    """
+    return (
+        directive.status is DirectiveStatus.RECEIVED
+        and directive.kind in VERBATIM_KINDS
+        and not is_machine_author(directive.author)
+    )
 
 
 def _constraint_text(directive: Directive) -> str:

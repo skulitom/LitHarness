@@ -55,6 +55,7 @@ from typing import Any, Protocol
 import litharness_contracts as lc
 
 from litharness.application.conductor import JobHandler
+from litharness.application.feedback_loop import record_provenance
 
 # Private siblings imported deliberately: the craft ladder and the seed modulus each have
 # exactly one definition, and a second copy here is the drift `draft_block`'s "one function,
@@ -1765,6 +1766,22 @@ def make_span_select_handler(
         )
         if audit_sample is not None:
             store.record_audit_sample(audit_sample)
+
+        # **Provenance for the scenes the loop actually steers (invariant I4).** The winner's
+        # prose was drafted under the *tournament* job's frozen payload, not this one's, so
+        # the feedback set is read back from there rather than recomputed — recomputing it
+        # here would record what the loop believes now instead of what the prose was written
+        # under, which is the difference between provenance and a guess. Without this, the
+        # scenes drafted under `--plan-search` would be exactly the scenes with no row.
+        with suppress(KeyError):
+            record_provenance(
+                store,
+                revision_id=outcome.revision.revision_id,
+                logical_id=logical_id,
+                job_id=search_job_id,
+                payload=store.load_job(search_job_id).payload,
+                recorded_at=stamp,
+            )
 
         # Finalize: ONE plan acceptance (single epoch bump), then the statuses. Losers
         # become discarded records; they were never passed to commit_revision.

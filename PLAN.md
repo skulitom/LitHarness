@@ -421,6 +421,15 @@ mode is a parked unit plus an exception, never a spin loop.
 - **Calibration sessions:** batch blinded judgments (RevisionJudge's protocol) that
   train and re-anchor the craft gates. Scheduled, bounded (30–60 min), and the only
   place human quality opinion enters the system.
+- **The Director role (stage-0 §91, [plan/director-role.md](plan/director-role.md)).** This
+  section's inbox now has a second kind of writer: a named machine personality that says what
+  a book is about, one bounded directive per six accepted scenes, running with nothing from a
+  person. It is safe for the opposite reason to the Reader/Judge split — it is *generative and
+  upstream*, so it measures nothing and cannot measure wrongly — and it is contained rather
+  than licensed: interpretive kinds only (a veto is authority, not direction), never a locked
+  plan item, never a word about prose, and **never shown the prose**. Off by default behind
+  `--director`; a director is an arm and no director is its control. Human direction still
+  outranks it in this queue, always.
 - **Daily digest:** words drafted/accepted, findings opened/closed, spend vs.
   budget, escalations, samples for spot-reading.
 - **Controls:** pause/resume per book, kill switch, policy editing (gate thresholds,
@@ -775,6 +784,17 @@ order-consistent survivors preferred human originals ~80% of the time. So:
    held-out calibration shows usable precision at an acceptable workload, with
    order-consistency and abstention measured. Until then the Conductor treats it as
    annotation.
+
+   **§10.4 now has a second door that is not a gate, and the distinction is the point.**
+   [plan/reader-judge-loop.md](plan/reader-judge-loop.md) (stage-0 §90) routes reader
+   evidence into a *draft prompt* rather than into a threshold, so it needs no promotion
+   and can refuse nothing: readers and judges may shape a prompt and select among
+   candidates, and neither may set `blocking`, construct a gate, or park a unit — a
+   reader-derived gate is still a gate. The two roles are split by what each is licensed
+   to answer rather than by human-versus-machine: a **reader** owns valence, a **judge**
+   owns location and axis and never valence, and neither is a signal without the other.
+   Nothing in it is live: no axis has a direction and no reader has been paid, so every
+   book drafts with an explicitly empty feedback set.
 5. **Standing audit — demoted to a smoke check (§67).** Even at full autonomy, a
    sample of accepted scenes (5%, content-derived draw) stays available for human
    spot-reading, and audit disagreement still re-opens calibration. It is a

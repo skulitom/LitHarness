@@ -41,13 +41,16 @@ from litharness.application import export as export_module
 from litharness.application import status as status_module
 from litharness.application.conductor import Conductor, TickOutcome
 from litharness.application.directive_planner import DIRECTIVE_PLAN, make_directive_plan_handler
+from litharness.application.director import DIRECT, make_director_handler
 from litharness.application.evaluation import (
     CompositeEvaluator,
     ContinuityEvaluator,
     Evaluator,
     InProcessEvaluator,
 )
+from litharness.application.feedback_loop import live_directions, readings, resolve
 from litharness.application.handlers import SCENE_DRAFT, make_scene_draft_handler
+from litharness.application.judge_panel import machine_judge_id, run_batch
 from litharness.application.narrative_planner import (
     NARRATIVE_PLAN,
     make_narrative_plan_handler,
@@ -71,11 +74,23 @@ from litharness.application.repair import (
     make_repair_handler,
 )
 from litharness.application.summarize import make_summary_handler
-from litharness.domain import audit, calibration, extraction, impact, preference, propagation
+from litharness.domain import (
+    audit,
+    calibration,
+    extraction,
+    impact,
+    preference,
+    propagation,
+)
+from litharness.domain import axes as axes_domain
 
 # Aliased: `build_parser` binds a local `craft` for the subparser, and a module named the
 # same thing would work only by scope luck.
 from litharness.domain import craft as craft_domain
+from litharness.domain import directions as directions_domain
+from litharness.domain import directors as directors_domain
+from litharness.domain import feedback as feedback_domain
+from litharness.domain import pools as pools_domain
 from litharness.domain import state as state_mod
 from litharness.domain.beats import SIX_BEAT, arc_template
 from litharness.domain.budget import BudgetPolicy
@@ -176,6 +191,27 @@ def _budget(args: argparse.Namespace) -> BudgetPolicy:
     )
 
 
+def _director_id(store: SqliteStore, args: argparse.Namespace) -> str:
+    """Resolve `--director` to a registered personality's id, or the empty string.
+
+    Accepts a name or an id, because an operator types a name and the store keys on a content
+    address. **An unregistered name is refused loudly rather than defaulted to no director**: a
+    typo that silently produced the control arm would be the worst possible failure for an
+    experiment whose whole question is whether the arms differ.
+    """
+    wanted = (getattr(args, "director", "") or "").strip()
+    if not wanted:
+        return ""
+    for director in store.directors():
+        if wanted in {director.name, director.director_id}:
+            return director.director_id
+    raise SystemExit(
+        f"litharness: no director {wanted!r} is registered. Admitting a personality is an "
+        "operator act — `litharness directors --register <name>` — and a typo here would "
+        "silently give you the no-director control arm"
+    )
+
+
 def _conductor(store: SqliteStore, args: argparse.Namespace) -> Conductor:
     # The pinned provider, or the padded fake when LITHARNESS_FAKE_PAD_CHARS asks for a
     # model-free run. No selection flags survive provider plurality: an unhealthy
@@ -205,6 +241,7 @@ def _conductor(store: SqliteStore, args: argparse.Namespace) -> Conductor:
             policy=_draft_policy(args),
             outline=not args.no_outline,
             plan_search=args.plan_search,
+            director_id=_director_id(store, args),
             **(
                 {"token_budget": args.context_budget}
                 if args.context_budget is not None
@@ -213,6 +250,11 @@ def _conductor(store: SqliteStore, args: argparse.Namespace) -> Conductor:
         ),
         handlers={
             DIRECTIVE_PLAN: make_directive_plan_handler(store, args.project, actor=args.holder),
+            # The Director role. Registered unconditionally — a kind with no queued work
+            # costs nothing — while the *minting* sits behind `--director` above, which is
+            # what keeps the personality operator-selectable and the no-director arm the
+            # control (`plan/director-role.md` §6).
+            DIRECT: make_director_handler(registry, store, args.project),
             NARRATIVE_PLAN: make_narrative_plan_handler(
                 registry,
                 store,
@@ -362,8 +404,71 @@ def cmd_directives(args: argparse.Namespace) -> int:
     finally:
         store.close()
     for item in items:
-        print(f"{item.directive_id}  {item.kind.value:<14} p{item.precedence:<4} {item.body}")
-    print(f"({len(items)} {args.status})")
+        # **Who wrote it, on every line.** A machine-authored directive that looked exactly
+        # like a person's on the operator surface would be the listing half of the laundering
+        # path the author column closed (`plan/director-role.md` §1).
+        who = item.author or "human"
+        print(
+            f"{item.directive_id}  {item.kind.value:<14} p{item.precedence:<4} "
+            f"{who:<28} {item.body}"
+        )
+    machine = sum(1 for item in items if directors_domain.is_machine_author(item.author))
+    print(f"({len(items)} {args.status}, {machine} written by a director)")
+    return EXIT_OK
+
+
+def cmd_directors(args: argparse.Namespace) -> int:
+    """The admitted personalities, or admit one.
+
+    **Admission is an operator act**, for the reason §84 gives for fixture admission: a rule the
+    code could apply is a rule somebody could satisfy without having done the work. The three
+    built-ins are examples written to exercise the distinctness control, not recommendations —
+    nothing here claims any of them is a good director.
+    """
+    stamp = _stamp(_now())
+    store = _store(args)
+    try:
+        if args.register:
+            source = directors_domain.BUILTIN.get(args.register)
+            if source is None and not args.brief:
+                print(
+                    f"litharness: {args.register!r} is not a built-in personality. Give "
+                    "--brief to write one, or pick from: "
+                    + ", ".join(sorted(directors_domain.BUILTIN)),
+                    file=sys.stderr,
+                )
+                return EXIT_FAULT
+            try:
+                director = (
+                    directors_domain.build(args.register, args.brief)
+                    if args.brief is not None
+                    # `source` is not None here: the branch above returned when a name is
+                    # neither a built-in nor accompanied by a brief.
+                    else source
+                )
+            except directors_domain.IllegalBrief as error:
+                print(f"litharness: {error}", file=sys.stderr)
+                return EXIT_FAULT
+            assert director is not None
+            fresh = store.record_director(director, registered_at=stamp)
+            print(
+                f"{director.director_id} {'admitted' if fresh else 'already admitted'} "
+                f"as {director.name}"
+            )
+        admitted = store.directors()
+        for director in admitted:
+            print(f"{director.director_id}  {director.name}")
+            print(f"  {director.brief}")
+            if director.note:
+                print(f"  ({director.note})")
+        if not admitted:
+            print("(no director admitted; the loop runs with no direction, which is the control)")
+        print(
+            "  A brief says what the book is about. What good prose is comes from readers "
+            "through the axis admission path, never from direction."
+        )
+    finally:
+        store.close()
     return EXIT_OK
 
 
@@ -622,21 +727,34 @@ def cmd_audit(args: argparse.Namespace) -> int:
         print()
         print(texts.get(sample.sample_id) or "  (no prose at that node)")
         print()
-        print(f"  litharness judge {sample.sample_id} --keep-reading|--would-stop|--not-sure")
+        print(f"  litharness read {sample.sample_id} --keep-reading|--would-stop|--not-sure")
         print()
     counts = {"pending": sum(1 for item in pending if item.pending)}
     print(f"({len(pending)} sample(s), {counts['pending']} awaiting a reader)")
     return EXIT_OK
 
 
-def cmd_judge(args: argparse.Namespace) -> int:
-    """Record one human judgment. The only input to this system nothing else can supply.
+def cmd_read(args: argparse.Namespace) -> int:
+    """Record one human READER verdict. The only input to this system nothing else can supply.
 
     §1a.5's bar is "a majority of sampled chapters earn *I would keep reading* from readers
     who were not told what produced them", so that is the question asked rather than a rubric.
     `--not-sure` is a real answer: §10.4 asks for abstention to be measured, and a scale with
     no way to decline pushes a reader into a verdict they do not hold.
+
+    **This verb was called `judge` and the name was backwards.** Under the Reader/Judge split
+    a READER owns valence — would I keep reading — and a JUDGE owns location and axis and
+    never valence. What this records is a reader's verdict, so `read` is what it is called.
+    `judge` still works and warns; the cost of the rename is small now and grows with every
+    row (`plan/reader-judge-loop.md` §8).
     """
+    if getattr(args, "deprecated_verb", False):
+        print(
+            "litharness: `judge` is the old name for `read` and still records the same row. "
+            "Under the Reader/Judge split a reader owns valence and a judge owns location, "
+            "so this verb is `read`",
+            file=sys.stderr,
+        )
     verdict = (
         audit.Verdict.KEEP_READING if args.keep_reading
         else audit.Verdict.WOULD_STOP if args.would_stop
@@ -675,6 +793,501 @@ def cmd_judge(args: argparse.Namespace) -> int:
         )
         return EXIT_ATTENTION
     print(f"{args.sample_id} -> {verdict.value}")
+    return EXIT_OK
+
+
+#: What the human write paths say to a reader id wearing the machine prefix.
+#:
+#: **The prefix was opt-in at one write site and unowned everywhere else, and separating the
+#: Reader and Judge roles makes that worse rather than better** — the whole point of the split
+#: is to run judges at volume, and volume is what turns an open path into a laundered pool.
+#: `analysable_judgments` cuts `judge:` rows from the PREFERENCE denominator (§86.6), so a
+#: *human* row wearing the prefix would vanish from the count silently, and nothing owned the
+#: namespace in the other direction either. Refusing here makes the prefix mean exactly one
+#: thing: written by the in-process judge path.
+_RESERVED_READER_COMPLAINT = (
+    "litharness: reader id {reader} starts with the reserved machine prefix "
+    f"'{preference.MACHINE_READER_PREFIX}'. That prefix marks rows a machine wrote, which "
+    "`analysable_judgments` excludes from every PREFERENCE holdout — a human judgment "
+    "wearing it would be silently uncounted. Use a name that is not reserved"
+)
+
+
+def _sample_pool(
+    store: SqliteStore,
+    sample: preference.PairSample,
+    registration: pools_domain.PoolRegistration,
+) -> pools_domain.Pool | None:
+    """Which side of the firewall this pair sits on, or None when it cannot be decided.
+
+    Two shapes, because a pair has two shapes. A **mixed** pair — ours against the matched
+    published corpus, which is §61's own comparison — takes its pool from the revision node it
+    contains. A **sibling** pair is two candidate texts, and its pool is the pool of the *span*
+    those candidates were drafted for, so all K siblings share one side and a span can never be
+    half-steering.
+
+    None rather than a guess when neither resolves: routing a verdict under an undecidable pool
+    is exactly the silent contamination the firewall exists to prevent, and the caller refuses.
+    """
+    for address in (sample.left_addr, sample.right_addr):
+        member = preference.Member.parse(address)
+        if member.kind is preference.MemberKind.REVISION_NODE:
+            assert member.revision_id is not None and member.logical_id is not None
+            return pools_domain.passage_pool(
+                member.revision_id, member.logical_id, registration
+            )
+    spans = {
+        candidate.address: (candidate.base_revision_id, candidate.logical_id)
+        for book_id, branch_id, _ in store.branches()
+        for candidate in store.span_candidates(book_id, branch_id)
+    }
+    for address in (sample.left_addr, sample.right_addr):
+        found = spans.get(address)
+        if found is not None:
+            return pools_domain.passage_pool(found[0], found[1], registration)
+    return None
+
+
+def _routing_complaint(
+    store: SqliteStore, sample: preference.PairSample, reader: str
+) -> str | None:
+    """The reason this reader may not answer this sample, or None when they may.
+
+    Enforced at the write site rather than checked in analysis, because §61's claim dies on
+    *contamination*, not on a mis-labelled row: once a steering-pool reader has answered a
+    measurement pair, no later filter can un-shape the prose that reader's verdicts went on to
+    influence. `plan/reader-judge-loop.md` §1.4 lists this as one of four mechanical locks and
+    lists the one residual it cannot close.
+    """
+    registration = store.pool_registration()
+    if registration is None:
+        return (
+            "no pool registration. The measurement firewall is declared once, before the "
+            "first verdict is routed — `litharness pools register` "
+            "(plan/reader-judge-loop.md §1)"
+        )
+    pool = _sample_pool(store, sample, registration)
+    if pool is None:
+        return (
+            f"sample {sample.sample_id} resolves to no span, so which side of the firewall "
+            "it sits on cannot be decided. A verdict routed under an undecidable pool is the "
+            "contamination the split exists to prevent"
+        )
+    reader_side = pools_domain.reader_pool(reader, registration)
+    if reader_side is not pool:
+        return (
+            f"reader {reader} is in the {reader_side.value} pool and this pair is "
+            f"{pool.value}. §61's claim dies if the prose was shaped by the readers who "
+            "later judge it, so the two pools are answered by disjoint sets of people"
+        )
+    return None
+
+
+def _registration_or_complaint(store: SqliteStore) -> pools_domain.PoolRegistration | None:
+    registration = store.pool_registration()
+    if registration is None:
+        print(
+            "litharness: no pool registration. The measurement firewall is declared once, "
+            "before the first verdict is routed — `litharness pools register` "
+            "(plan/reader-judge-loop.md §1)",
+            file=sys.stderr,
+        )
+    return registration
+
+
+def cmd_pools(args: argparse.Namespace) -> int:
+    """Show the measurement firewall, or declare it.
+
+    §61's claim — a clustered lower bound on win rate against matched published prose —
+    **dies if the prose was shaped by the readers who later judge it**, and once reader
+    verdicts reach a draft prompt that stops being hypothetical. So readers and comparison
+    passages are split before the first verdict is routed, and the split is declared here
+    rather than defaulted: a firewall nobody declared is §61 pre-registration (4)'s own
+    failure — the frame *is* the claim, and a frame chosen by a constant in a source file was
+    not declared by anyone.
+    """
+    stamp = _stamp(_now())
+    store = _store(args)
+    try:
+        if args.register:
+            registration = pools_domain.PoolRegistration(
+                registration_id=pools_domain.registration_id_for(
+                    reader_salt=args.reader_salt,
+                    reader_steering_share=args.reader_share,
+                    passage_salt=args.passage_salt,
+                    passage_steering_share=args.passage_share,
+                ),
+                registered_at=stamp,
+                reader_salt=args.reader_salt,
+                reader_steering_share=args.reader_share,
+                passage_salt=args.passage_salt,
+                passage_steering_share=args.passage_share,
+                note=args.note or "",
+            )
+            existing = store.pool_registration()
+            if (
+                existing is not None
+                and existing.registration_id != registration.registration_id
+            ):
+                print(
+                    f"litharness: {existing.registration_id} is already the active split, "
+                    f"declared {existing.registered_at}. A firewall that could be moved "
+                    "after the verdicts arrived would not be one",
+                    file=sys.stderr,
+                )
+                return EXIT_FAULT
+            fresh = store.record_pool_registration(registration)
+            print(
+                f"{registration.registration_id} "
+                f"{'declared' if fresh else 'already declared'}"
+            )
+        active = store.pool_registration()
+        if active is None:
+            print("(no split declared; nothing may be routed)")
+            return EXIT_ATTENTION
+        print(f"{active.registration_id}  declared {active.registered_at}")
+        print(
+            f"  readers  steering share {active.reader_steering_share:.3f}  "
+            f"salt {active.reader_salt}"
+        )
+        print(
+            f"  passages steering share {active.passage_steering_share:.3f}  "
+            f"salt {active.passage_salt}"
+        )
+        if active.note:
+            print(f"  note: {active.note}")
+        for reader in args.who or ():
+            print(f"  {reader} -> {pools_domain.reader_pool(reader, active).value}")
+        print(f"  {pools_domain.RESIDUAL}")
+    finally:
+        store.close()
+    return EXIT_OK
+
+
+def cmd_axes(args: argparse.Namespace) -> int:
+    """The registered axes, their counters, the hypothesis each tests, and how each got in.
+
+    The hypotheses are printed and are **not** what steers anything: they are the §74 human
+    read's three named defects written down before readers answer, so the answer can be
+    reported as confirming or refuting something rather than as a discovery. §78.3's em-dash
+    arm is VOID with its estimate leaning toward the mark, so at least one may well be wrong.
+    """
+    for axis in axes_domain.AXES.values():
+        print(f"{axis.axis_id:<14} counter {axis.counter_id}")
+        print(f"  hypothesis: readers prefer {axis.hypothesis.value}")
+        print(f"    high: {axis.high_phrase}")
+        print(f"    low:  {axis.low_phrase}")
+        print(f"  admitted via: {axis.admitted_via}")
+        print(f"  {axis.provenance}")
+    if args.text:
+        text = args.text.read_text(encoding="utf-8")
+        print(f"\ncounters over {args.text}:")
+        for axis_id, value in axes_domain.counts(text).items():
+            print(f"  {axis_id:<14} {value:.4f}")
+    return EXIT_OK
+
+
+def cmd_directions(args: argparse.Namespace) -> int:
+    """What steering readers say about each axis, and what it would take to say anything.
+
+    Every registered axis prints a row, including the silent ones. §89's rulebook is the
+    reason: five of seven declared quantities that could not do their job were caught by a
+    dry run printing *which* precondition was unmet, and a listing that omitted the axes with
+    no evidence would have hidden every one of them.
+    """
+    stamp = _stamp(_now())
+    if args.attainability:
+        report = directions_domain.attainability()
+        print(
+            f"bar: clustered lower bound > {directions_domain.DIRECTION_BAR} at alpha "
+            f"{directions_domain.DIRECTION_ALPHA}"
+        )
+        print(
+            f"floors: {directions_domain.MIN_CELLS} decided cells, "
+            f"{directions_domain.MIN_READER_CLUSTERS} readers, "
+            f"{directions_domain.MIN_PAIR_CLUSTERS} pairs"
+        )
+        if not report.attainable:
+            print(
+                "UNATTAINABLE: no win count at the declared shape clears the bar. The bar "
+                "cannot do what it says and must be changed before anything is spent"
+            )
+            return EXIT_ATTENTION
+        clearing = report.smallest_clearing_k or 0
+        print(
+            f"smallest clearing k: {clearing} of {report.cells} cells "
+            f"({clearing / report.cells:.3f})"
+        )
+        print(
+            f"true rate   power at {report.cells} cells   cells for "
+            f"{directions_domain.TARGET_POWER:.0%} power"
+        )
+        for rate, power in sorted(report.power.items()):
+            needed = report.cells_for_power.get(rate)
+            shown = str(needed) if needed is not None else f">{400}"
+            print(f"  {rate:.2f}            {power:.3f}                {shown}")
+        print(
+            "  A bar that rejects a true 0.65 most of the time is wrong in the direction of "
+            "false failure; T0's own bar disqualified a good judge 82-100% of the time until "
+            "this was measured."
+        )
+        print(
+            "  The floor is a COHERENCE floor, not a sample size. Read the last column "
+            "before buying a batch: at a true 0.60 the floor fires under a tenth of the time, "
+            "and a null from thirty judgments would say nothing about the axis."
+        )
+        return EXIT_OK
+
+    store = _store(args)
+    try:
+        if store.pool_registration() is None and _registration_or_complaint(store) is None:
+            return EXIT_FAULT
+        rows = readings(store, at=stamp)
+        live, stale = live_directions(store)
+        established = {direction.axis_id for direction in live}
+        stale_axes = {direction.axis_id for direction in stale}
+        for reading in rows:
+            state = (
+                "ESTABLISHED"
+                if reading.axis_id in established
+                else "STALE"
+                if reading.axis_id in stale_axes
+                else "-"
+            )
+            if reading.direction is not None:
+                detail = (
+                    f"prefers {reading.direction.preferred.value} "
+                    f"(bound {reading.direction.lower_bound:.4f}, "
+                    f"hypothesis {reading.hypothesis_status})"
+                )
+            else:
+                detail = f"no direction: {reading.why_not.value if reading.why_not else '-'}"
+            print(
+                f"{reading.axis_id:<14} {state:<12} cells {reading.cells:<4} "
+                f"readers {reading.readers:<3} pairs {reading.pairs:<3} {detail}"
+            )
+            if reading.multi_axis_pairs:
+                print(
+                    f"  {reading.multi_axis_pairs} pair(s) moved this axis and another at "
+                    "once, so they carry no single-axis evidence"
+                )
+        if args.establish:
+            written = 0
+            for reading in rows:
+                if reading.direction is None:
+                    continue
+                if store.record_axis_direction(
+                    reading.direction,
+                    events=[
+                        Event(
+                            event_type=EventType.EVALUATION_COMPLETED,
+                            project_id=args.project,
+                            created_at=stamp,
+                            actor=args.holder,
+                            payload={
+                                "axis_id": reading.axis_id,
+                                "preferred_pole": reading.direction.preferred.value,
+                                "lower_bound": reading.direction.lower_bound,
+                                "direction": True,
+                            },
+                        )
+                    ],
+                ):
+                    written += 1
+            print(f"{written} direction(s) established")
+    finally:
+        store.close()
+    return EXIT_OK
+
+
+def cmd_feedback(args: argparse.Namespace) -> int:
+    """What would reach the next draft prompt for this book, and why it is usually nothing.
+
+    Read-only: it resolves without spending anything, so an operator can see the loop's state
+    without moving it. `resolve` marks nothing spent — only the planner does, and only after
+    the job carrying the item exists.
+    """
+    store = _store(args)
+    try:
+        head = store.head(args.book, args.branch)
+        materialised = resolve(
+            store, book_id=args.book, branch_id=args.branch, head=head
+        )
+        if materialised.feedback.empty:
+            registration = store.pool_registration()
+            live, stale = live_directions(store) if registration else ((), ())
+            reason = (
+                "no pool registration"
+                if registration is None
+                else "no live direction"
+                if not live
+                else "no minted located difference on a directed axis"
+            )
+            print(f"(nothing would reach the prompt: {reason})")
+            if stale:
+                print(
+                    f"  {len(stale)} direction(s) stale: the verdicts moved under them "
+                    "(`litharness directions --establish` re-measures)"
+                )
+            return EXIT_OK
+        print(materialised.feedback.render())
+        print()
+        print(
+            f"digest {materialised.feedback.digest}  "
+            f"dropped {materialised.feedback.dropped}"
+        )
+        if materialised.spend:
+            print(
+                f"  {len(materialised.spend)} located item(s) would be spent by the next "
+                "enqueue; a located item is one-shot"
+            )
+    finally:
+        store.close()
+    return EXIT_OK
+
+
+def cmd_contrast(args: argparse.Namespace) -> int:
+    """Run one judge batch over a span's sibling candidates: what differs, and where.
+
+    The judge is asked E6's question verbatim and never which passage is better. It refuses
+    before spending when no reader has given any axis a direction, because discrimination
+    without direction cannot say which way to move and half a signal is not worth buying.
+    """
+    stamp = _stamp(_now())
+    store = _store(args)
+    try:
+        candidates = store.span_candidates(
+            args.book, args.branch, logical_id=args.logical_id
+        )
+        if not candidates:
+            print(f"litharness: no candidates for {args.logical_id}", file=sys.stderr)
+            return EXIT_ATTENTION
+        registry = build_default_registry()
+        result = run_batch(
+            registry,
+            store,
+            candidates,
+            judge_id=machine_judge_id(args.judge),
+            created_at=stamp,
+        )
+        print(f"{result.batch_id or '(no batch)'}  {result.verdict.value}  {result.calls} call(s)")
+        for name, reading in sorted(result.controls.items()):
+            print(f"  control {name}: {reading}")
+        if result.orientation is not None:
+            print(
+                f"  orientation {result.orientation.reading.value} over "
+                f"{result.orientation.responses} response(s)"
+            )
+        print(
+            f"  discarded: {result.unnamed} unnamed, {result.ambiguous} ambiguous, "
+            f"{result.undirected} on an undirected axis, {result.unseparated} unseparated"
+        )
+        # **Written for every batch, void ones included, and before the usability check.**
+        # An unmatched sentence is a field report about a salient difference the axis registry
+        # cannot yet name — the same object §74's human read produced, from a channel that runs
+        # at volume — and a corpus not persisted from the first batch is gone.
+        kept = store.record_judge_discards(result.discards)
+        if kept:
+            print(f"  {kept} judge sentence(s) retained in the discard corpus")
+        if not result.usable:
+            return EXIT_ATTENTION
+        written = store.record_located_differences(result.differences)
+        print(f"{written} located difference(s) recorded")
+        for difference in result.differences:
+            print(f"  {difference.axis_id:<14} {difference.span[:80]}")
+    finally:
+        store.close()
+    return EXIT_OK
+
+
+def cmd_discards(args: argparse.Namespace) -> int:
+    """Judge sentences that located nothing, verbatim — the corpus for axes we cannot yet name.
+
+    **Read-only, and the rail matters more than the report.** These sentences may *nominate* a
+    candidate axis; they may never *validate* one. A matcher drafted from them and then scored
+    against them is a rubric fitted to its own answers, which is the failure the frozen
+    `AXIS_MATCHERS` exists to prevent. A nominated axis takes the full admission path: a
+    deterministic counter, an E6-family validation on fresh pairs this corpus never touched,
+    and a reader-established direction, before it emits anything.
+    """
+    store = _store(args)
+    try:
+        reason = (
+            feedback_domain.DiscardReason(args.reason) if args.reason else None
+        )
+        rows = store.judge_discards(
+            book_id=args.book, reason=reason, limit=args.limit
+        )
+        counts: dict[str, int] = {}
+        for row in store.judge_discards(book_id=args.book):
+            counts[row.reason.value] = counts.get(row.reason.value, 0) + 1
+        if not counts:
+            print("(no judge sentences recorded; the discrimination channel has not run)")
+            return EXIT_OK
+        print("  ".join(f"{name} {count}" for name, count in sorted(counts.items())))
+        print()
+        for row in rows:
+            flag = "" if row.batch_ok else "  [batch VOID: evidence about the judge]"
+            print(f"{row.reason.value:<12} {row.logical_id:<12} slot {row.orientation}{flag}")
+            print(f"  {row.sentence}")
+            if row.separating:
+                print(f"  counters separating this pair: {row.separating}")
+        print()
+        print(
+            "  These may nominate a candidate axis and may never validate one: a matcher "
+            "drafted from these sentences and scored against them is a rubric fitted to its "
+            "own answers (plan/reader-judge-loop.md §2)."
+        )
+    finally:
+        store.close()
+    return EXIT_OK
+
+
+def cmd_blame(args: argparse.Namespace) -> int:
+    """Per accepted scene, in order: one axis's counter beside the feedback live when it drafted.
+
+    **The read side of invariant I4.** When a counter trend turns, this answers "which standing
+    direction or located item was in the prompt when it turned" the way a bisect answers which
+    commit — from rows that already exist, with no new writes and no thresholds.
+
+    It renders values and provenance and never a score: per I2 there is no aggregate here to
+    read as a quality number, and per I3 nothing it prints can refuse anything.
+    """
+    store = _store(args)
+    try:
+        head = store.head(args.book, args.branch)
+        if head is None:
+            print(f"litharness: no head for {args.book}/{args.branch}", file=sys.stderr)
+            return EXIT_ATTENTION
+        # Latest row per node, by the order the store returns (recorded_at ascending).
+        by_node: dict[str, feedback_domain.SceneFeedback] = {
+            record.logical_id: record for record in store.scene_feedback()
+        }
+        print(f"axis {args.axis} ({axes_domain.AXES[args.axis].counter_id})")
+        seen = False
+        for node in head.in_reading_order():
+            if node.kind is not NodeKind.SCENE or not node.content or node.tombstoned:
+                continue
+            seen = True
+            value = axes_domain.count(args.axis, node.content)
+            found = by_node.get(node.logical_id)
+            if found is None:
+                shaped = "(no provenance row: drafted before the loop existed)"
+            elif not found.items:
+                shaped = "(empty feedback set)"
+            else:
+                shaped = "; ".join(
+                    f"{item.get('role')}:{item.get('axis_id')}"
+                    f"->{item.get('preferred_pole')}"
+                    for item in found.items
+                )
+            print(f"  {node.logical_id:<14} {value:>9.4f}  {shaped}")
+            if found is not None and found.dropped:
+                print(f"                             {found.dropped} item(s) dropped by the cap")
+        if not seen:
+            print("  (no accepted scene carries prose yet)")
+    finally:
+        store.close()
     return EXIT_OK
 
 
@@ -1148,20 +1761,37 @@ def cmd_protocol(args: argparse.Namespace) -> int:
     return EXIT_OK
 
 
-def _scene_candidates(store: SqliteStore) -> list[tuple[str, str | None]]:
-    """Every accepted scene with prose, addressed at the branch head that holds it.
+def _scene_candidates(
+    store: SqliteStore,
+    *,
+    pool: pools_domain.Pool | None = None,
+    registration: pools_domain.PoolRegistration | None = None,
+) -> tuple[list[tuple[str, str | None]], int]:
+    """Accepted scenes with prose, addressed at the branch head, and how many were held back.
 
     Revision-addressed on purpose: revision ids are content-addressed, so a drawn pair pins
     exactly the text a reader judged even after the book moves on.
+
+    **`pool` is the passage half of the measurement firewall, applied at the draw.** A pair
+    nobody in the matching reader pool may answer is a queue that cannot drain, so the filter
+    belongs here rather than at the verdict. The count of what it held back is returned rather
+    than swallowed: a bound coverage that says nothing reads as "covered everything" when it
+    did not.
     """
     candidates: list[tuple[str, str | None]] = []
+    held = 0
     for book_id, _branch_id, head in store.branches():
         revision = store.load_revision(head)
         for node in revision.nodes:
             if node.kind is not NodeKind.SCENE or node.tombstoned or not node.content:
                 continue
+            if pool is not None and (
+                pools_domain.passage_pool(head, node.logical_id, registration) is not pool
+            ):
+                held += 1
+                continue
             candidates.append((preference.revision_address(head, node.logical_id), book_id))
-    return candidates
+    return candidates, held
 
 
 def cmd_pair_draw(args: argparse.Namespace) -> int:
@@ -1207,9 +1837,31 @@ def cmd_pair_draw(args: argparse.Namespace) -> int:
                 file=sys.stderr,
             )
             return EXIT_FAULT
-        candidates = _scene_candidates(store)
+        # **The passage half of the measurement firewall, applied at the draw.** A sibling
+        # pair is steering evidence and an external pair is §61's own comparison, so a span
+        # answers one question or the other and never both — that is what keeps a passage's
+        # own reader verdicts out of the prose that passage is later compared as. The split
+        # must exist first: a pair drawn before the firewall was declared could not have been
+        # routed by it, which is what "before the first verdict is routed" means.
+        registration = _registration_or_complaint(store)
+        if registration is None:
+            return EXIT_FAULT
+        wanted = (
+            pools_domain.Pool.STEERING if args.siblings else pools_domain.Pool.MEASUREMENT
+        )
+        candidates, held = _scene_candidates(
+            store, pool=wanted, registration=registration
+        )
+        if held:
+            print(
+                f"({held} scene(s) held back by the measurement firewall: they are on the "
+                f"other side of the split from {wanted.value})"
+            )
         if not candidates:
-            print("0 pair(s) drawn: no accepted scene holds prose yet")
+            print(
+                "0 pair(s) drawn: no accepted scene on the "
+                f"{wanted.value} side holds prose yet"
+            )
             return EXIT_OK
         if args.siblings:
             corpus = [address for address, _ in candidates]
@@ -1266,6 +1918,15 @@ def cmd_pairs(args: argparse.Namespace) -> int:
     store = _store(args)
     try:
         samples = store.pair_samples(pending_only=args.pending)
+        if args.reader:
+            # **The queue one reader may actually answer.** Without this the operator hands
+            # a reader a list and half of it is refused at the verdict, which teaches the
+            # reader that the tool is broken rather than that the firewall is working.
+            samples = [
+                sample
+                for sample in samples
+                if _routing_complaint(store, sample, args.reader) is None
+            ]
         excerpts = {excerpt.excerpt_id: excerpt.text for excerpt in store.excerpts()}
         texts: dict[str, tuple[str | None, str | None]] = {
             sample.sample_id: (
@@ -1320,6 +1981,9 @@ def cmd_pair_judge(args: argparse.Namespace) -> int:
             file=sys.stderr,
         )
         return EXIT_FAULT
+    if preference.is_machine_reader(args.reader):
+        print(_RESERVED_READER_COMPLAINT.format(reader=args.reader), file=sys.stderr)
+        return EXIT_FAULT
     stamp = _stamp(_now())
     store = _store(args)
     try:
@@ -1338,6 +2002,11 @@ def cmd_pair_judge(args: argparse.Namespace) -> int:
                 file=sys.stderr,
             )
             return EXIT_FAULT
+        if sample is not None:
+            complaint = _routing_complaint(store, sample, args.reader)
+            if complaint is not None:
+                print(f"litharness: {complaint}", file=sys.stderr)
+                return EXIT_FAULT
         recorded = store.record_pair_verdict(
             args.sample_id,
             verdict,
@@ -1444,9 +2113,11 @@ def cmd_pair_import(args: argparse.Namespace) -> int:
     recorded = skipped = 0
     unknown: list[str] = []
     unanswered_recognition: list[str] = []
+    misrouted: list[str] = []
     store = _store(args)
     try:
-        known = {sample.sample_id for sample in store.pair_samples()}
+        samples = {sample.sample_id: sample for sample in store.pair_samples()}
+        known = set(samples)
         for number, line in enumerate(raw.splitlines(), start=1):
             if not line.strip():
                 continue
@@ -1469,6 +2140,24 @@ def cmd_pair_import(args: argparse.Namespace) -> int:
             if not isinstance(recognized, bool):
                 unanswered_recognition.append(str(sample_id))
                 continue
+            # **The same two locks the interactive path applies, because this is the road a
+            # bulk machine dump would take.** The reserved prefix means "written by the
+            # in-process judge path" and nothing else; the pool check keeps steering readers
+            # off measurement pairs, since §61's claim dies on contamination rather than on a
+            # mis-labelled row. What no predicate can check is an importer *claiming* a human
+            # name for machine output — provenance of an imported row is the importer's claim
+            # — which is why `--source` is required and recorded on every line's event.
+            if preference.is_machine_reader(str(reader)):
+                raise ValueError(
+                    f"pair-import line {number}: "
+                    + _RESERVED_READER_COMPLAINT.format(reader=reader).removeprefix(
+                        "litharness: "
+                    )
+                )
+            complaint = _routing_complaint(store, samples[str(sample_id)], str(reader))
+            if complaint is not None:
+                misrouted.append(f"{sample_id}: {complaint}")
+                continue
             accepted = store.record_pair_verdict(
                 str(sample_id),
                 verdict,
@@ -1487,6 +2176,10 @@ def cmd_pair_import(args: argparse.Namespace) -> int:
                             "verdict": verdict.value,
                             "recognized": recognized,
                             "pair": True,
+                            # Provenance of an imported row is a claim by the importer and
+                            # no predicate can check it. Recording the claim is all this
+                            # seam can honestly do, and it is more than it used to do.
+                            "source": args.source,
                         },
                     )
                 ],
@@ -1500,12 +2193,16 @@ def cmd_pair_import(args: argparse.Namespace) -> int:
     print(
         f"{recorded} verdict(s) recorded, {skipped} already answered (skipped), "
         f"{len(unknown)} unknown sample id(s) refused, {len(unanswered_recognition)} "
-        "refused without an explicit recognition answer"
+        f"refused without an explicit recognition answer, {len(misrouted)} refused by the "
+        "measurement firewall"
     )
 
     def _name(refused: list[str]) -> str:
         shown = ", ".join(refused[:5])
         return shown + (f" (+{len(refused) - 5} more)" if len(refused) > 5 else "")
+
+    for line in misrouted[:5]:
+        print(f"  firewall: {line}", file=sys.stderr)
 
     if unknown:
         print(
@@ -2576,6 +3273,15 @@ def build_parser() -> argparse.ArgumentParser:
         "acceptance experiment (research/plan-search/RUNBOOK.md), and the default is "
         "its control",
     )
+    parser.add_argument(
+        "--director",
+        default=os.environ.get("LITHARNESS_DIRECTOR", ""),
+        help="run this registered Director (name or id): a personality that says what the "
+        "book is about, one directive per six accepted scenes, and never a word about the "
+        "prose; also read from LITHARNESS_DIRECTOR. Off by default — a director is an arm "
+        "and no director is its control (plan/director-role.md §6). An unregistered name is "
+        "refused rather than ignored",
+    )
     sub = parser.add_subparsers(dest="command", required=True)
 
     tick = sub.add_parser("tick", help="run one bounded unit of work")
@@ -2606,6 +3312,19 @@ def build_parser() -> argparse.ArgumentParser:
         choices=[state.value for state in DirectiveStatus],
     )
     directives.set_defaults(func=cmd_directives)
+
+    directors_cmd = sub.add_parser(
+        "directors", help="admitted director personalities, or admit one"
+    )
+    directors_cmd.add_argument(
+        "--register",
+        help="admit a personality by name: a built-in, or a new one with --brief",
+    )
+    directors_cmd.add_argument(
+        "--brief",
+        help="the standing instruction, about the story and never about the prose",
+    )
+    directors_cmd.set_defaults(func=cmd_directors)
 
     jobs = sub.add_parser("jobs", help="queue depth, or the units in one status")
     jobs.add_argument("--status", choices=[state.value for state in JobStatus])
@@ -2718,17 +3437,109 @@ def build_parser() -> argparse.ArgumentParser:
     )
     audit_cmd.set_defaults(func=cmd_audit)
 
-    judge = sub.add_parser("judge", help="record one human verdict on a sampled scene")
-    judge.add_argument("sample_id")
-    answer = judge.add_mutually_exclusive_group(required=True)
-    answer.add_argument("--keep-reading", action="store_true")
-    answer.add_argument("--would-stop", action="store_true")
-    answer.add_argument(
-        "--not-sure", action="store_true", help="abstention is a real answer and is measured"
+    # `read` and its deprecated alias `judge`. Same arguments, same rows, one warning — under
+    # the Reader/Judge split a READER owns valence and a JUDGE owns location, and this verb
+    # records a reader's verdict. See `cmd_read`.
+    for verb in ("read", "judge"):
+        reader_verb = sub.add_parser(
+            verb,
+            help=(
+                "record one human reader verdict on a sampled scene"
+                if verb == "read"
+                else "deprecated alias for `read`"
+            ),
+        )
+        reader_verb.add_argument("sample_id")
+        answer = reader_verb.add_mutually_exclusive_group(required=True)
+        answer.add_argument("--keep-reading", action="store_true")
+        answer.add_argument("--would-stop", action="store_true")
+        answer.add_argument(
+            "--not-sure",
+            action="store_true",
+            help="abstention is a real answer and is measured",
+        )
+        reader_verb.add_argument(
+            "--note", help="what you noticed; the most useful field here"
+        )
+        reader_verb.add_argument("--by", help="who read it (defaults to --holder)")
+        reader_verb.set_defaults(func=cmd_read, deprecated_verb=verb == "judge")
+
+    pools = sub.add_parser(
+        "pools", help="the measurement firewall: who steers and who measures (§61)"
     )
-    judge.add_argument("--note", help="what you noticed; the most useful field here")
-    judge.add_argument("--by", help="who read it (defaults to --holder)")
-    judge.set_defaults(func=cmd_judge)
+    pools.add_argument(
+        "--register", action="store_true", help="declare the split; refused once one exists"
+    )
+    pools.add_argument("--reader-salt", default="reader-pool-v1")
+    pools.add_argument("--reader-share", type=float, default=0.5)
+    pools.add_argument("--passage-salt", default="passage-pool-v1")
+    pools.add_argument("--passage-share", type=float, default=0.5)
+    pools.add_argument("--note", help="why this split, in the operator's own words")
+    pools.add_argument(
+        "--who", action="append", help="print which pool a reader id falls in"
+    )
+    pools.set_defaults(func=cmd_pools)
+
+    axes_cmd = sub.add_parser(
+        "axes", help="the named axes feedback may be about, and their counters"
+    )
+    axes_cmd.add_argument(
+        "--text", type=Path, help="count every axis over one file of prose"
+    )
+    axes_cmd.set_defaults(func=cmd_axes)
+
+    directions = sub.add_parser(
+        "directions", help="what steering readers say about each axis, and what is missing"
+    )
+    directions.add_argument(
+        "--establish",
+        action="store_true",
+        help="record every direction that clears its bar (an operator act, like `calibrate`)",
+    )
+    directions.add_argument(
+        "--attainability",
+        action="store_true",
+        help="check the bar can do what it says: smallest clearing k, and power",
+    )
+    directions.set_defaults(func=cmd_directions)
+
+    feedback_cmd = sub.add_parser(
+        "feedback", help="what would reach the next draft prompt for a book, and why"
+    )
+    feedback_cmd.add_argument("--book", required=True)
+    feedback_cmd.add_argument("--branch", required=True)
+    feedback_cmd.set_defaults(func=cmd_feedback)
+
+    contrast = sub.add_parser(
+        "contrast", help="run one judge batch over a span's candidates (E6, never a verdict)"
+    )
+    contrast.add_argument("--book", required=True)
+    contrast.add_argument("--branch", required=True)
+    contrast.add_argument("--logical-id", required=True)
+    contrast.add_argument(
+        "--judge", default="unnamed", help="the model staffing the judge role, for provenance"
+    )
+    contrast.set_defaults(func=cmd_contrast)
+
+    discards = sub.add_parser(
+        "discards",
+        help="judge sentences that located nothing — the corpus for axes we cannot yet name",
+    )
+    discards.add_argument("--book")
+    discards.add_argument(
+        "--reason", choices=[member.value for member in feedback_domain.DiscardReason]
+    )
+    discards.add_argument("--limit", type=int, default=40)
+    discards.set_defaults(func=cmd_discards)
+
+    blame = sub.add_parser(
+        "blame",
+        help="counter value beside the feedback live when each scene was drafted",
+    )
+    blame.add_argument("--book", required=True)
+    blame.add_argument("--branch", required=True)
+    blame.add_argument("--axis", required=True, choices=sorted(axes_domain.AXES))
+    blame.set_defaults(func=cmd_blame)
 
     calibrations = sub.add_parser(
         "calibrations", help="evidence that a craft metric predicts human judgment"
@@ -2921,6 +3732,10 @@ def build_parser() -> argparse.ArgumentParser:
     pairs_cmd.add_argument(
         "--quiet", action="store_true", help="list the samples without printing prose"
     )
+    pairs_cmd.add_argument(
+        "--reader",
+        help="show only what this reader may answer under the measurement firewall",
+    )
     pairs_cmd.set_defaults(func=cmd_pairs)
 
     pair_judge = sub.add_parser(
@@ -2961,6 +3776,15 @@ def build_parser() -> argparse.ArgumentParser:
     )
     pair_import.add_argument(
         "path", type=Path, nargs="?", help="JSONL file to read; stdin if omitted"
+    )
+    pair_import.add_argument(
+        "--source",
+        required=True,
+        help=(
+            "where these verdicts came from — a panel name, a contractor, a session. "
+            "Required and recorded on every event: provenance of an imported row is a claim "
+            "by the importer and no predicate can check it, so the claim is at least on file"
+        ),
     )
     pair_import.set_defaults(func=cmd_pair_import)
 

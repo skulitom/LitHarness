@@ -9,7 +9,25 @@ every other dead instrument.** Nothing here is code; every step is an operator a
 
 ## 0. Pre-register before paying anyone
 
-Declare the external-comparison protocol first — `litharness protocol` — and treat the
+**Declare the measurement firewall first — `litharness pools register` — and it now comes
+before everything else in this document.** Nothing draws and nothing judges until it exists.
+Readers and passages are split into a **steering** pool and a **measurement** pool, and the
+reason is this runbook's own acceptance criterion: §61's claim dies if the prose was shaped by
+the readers who later judge it, and since `plan/reader-judge-loop.md` wired reader verdicts
+into the draft prompt that is no longer hypothetical. Consequences an operator feels
+immediately:
+
+- `pair-draw` draws external pairs only over **measurement-pool** scenes and sibling pairs only
+  over **steering-pool** spans, and prints how many scenes it held back. A span answers one
+  question or the other, never both.
+- A reader may only answer pairs on their own side. `litharness pairs --reader <id>` shows the
+  queue that reader may actually answer — hand that out, not the whole queue.
+- The split is write-once. A second, different declaration is refused: a firewall that could be
+  moved after the verdicts arrived would not be one.
+- What it cannot enforce: one physical person holding two reader ids in different pools. That
+  is operator discipline, and `litharness pools` prints the sentence under every listing.
+
+Then declare the external-comparison protocol — `litharness protocol` — and treat the
 declaration as unchangeable (redeclaration collides by construction):
 
 - **Comparator frame** — written sentence naming the sampling frame of the human prose

@@ -40,6 +40,7 @@ from hashlib import sha256
 import litharness_contracts as lc
 
 from litharness.application.conductor import JobHandler
+from litharness.application.feedback_loop import record_provenance
 from litharness.application.policy_events import policy_decision_event
 from litharness.application.ports import DraftStore, TextGenerator
 from litharness.application.repair import evaluation_job_for, summary_job_for
@@ -829,6 +830,23 @@ def make_scene_draft_handler(
         )
         if sample is not None:
             store.record_audit_sample(sample)
+
+        # **Provenance, including the negative case (invariant I4).** What shaped this scene,
+        # projected from the frozen payload onto the address the prose actually has. The
+        # payload is the primary, crash-safe record — it was written in the enqueue
+        # transaction and the prompt is frozen there — so this is a queryable projection and
+        # not the evidence itself, which is why it sits beside `record_craft_metrics` rather
+        # than inside `commit_revision`. A scene drafted with no feedback gets a row carrying
+        # an empty item list and the empty set's digest, because an absent row cannot say
+        # whether nothing shaped the scene or nobody recorded what did.
+        record_provenance(
+            store,
+            revision_id=outcome.revision.revision_id,
+            logical_id=logical_id,
+            job_id=job.job_id,
+            payload=payload,
+            recorded_at=_timestamp(now),
+        )
 
         # `acceptance` is deliberately **not** returned: `commit_revision` already persisted it
         # in the same transaction as the revision, and returning it as well would ask the

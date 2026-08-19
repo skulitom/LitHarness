@@ -28,6 +28,7 @@ from litharness.application.ports import NarrativePlanningStore, TextGenerator
 from litharness.domain.budget import BudgetPolicy
 from litharness.domain.budget import check as budget_check
 from litharness.domain.directives import INTERPRETIVE_KINDS, Directive, DirectiveStatus
+from litharness.domain.directors import is_machine_author
 from litharness.domain.events import Event, EventType, payload_digest
 from litharness.domain.generation import (
     CompletionRequest,
@@ -253,6 +254,16 @@ def proposal_from_model(
             raise NarrativePlanOutputError(f"edit {index} locked must be boolean")
 
         existing = current.get(logical_id)
+        if locked and is_machine_author(directive.author):
+            # **A machine-authored directive may not mint a locked plan item, whatever the
+            # model returned.** The lock is the human director's authority: a locked constraint
+            # lands in the packet's CONSTRAINTS section at priority 2 and is effectively never
+            # dropped, so a Director that could set it would put its own words in every
+            # subsequent prompt wearing a person's standing (`plan/director-role.md` §1).
+            # Downgraded rather than refused, because the *direction* is legitimate and only
+            # its authority is not — refusing would throw away a usable proposal to punish one
+            # boolean the model had no reason to know it could not set.
+            locked = False
         item = lc.PlanItem(
             logical_id=logical_id,
             kind=kind,

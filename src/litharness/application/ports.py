@@ -25,9 +25,18 @@ from litharness.domain.budget import Spend
 from litharness.domain.calibration import Calibration
 from litharness.domain.candidates import CandidateStatus, SpanCandidate
 from litharness.domain.craft import CraftMetric
+from litharness.domain.directions import AxisDirection
 from litharness.domain.directives import Directive, DirectiveStatus
+from litharness.domain.directors import Director
 from litharness.domain.events import Event
 from litharness.domain.exceptions import ExceptionRecord
+from litharness.domain.feedback import (
+    DifferenceStatus,
+    DiscardReason,
+    JudgeDiscard,
+    LocatedDifference,
+    SceneFeedback,
+)
 from litharness.domain.findings import Finding
 from litharness.domain.findings import Status as FindingStatus
 from litharness.domain.generation import (
@@ -38,6 +47,7 @@ from litharness.domain.generation import (
 from litharness.domain.jobs import Job
 from litharness.domain.plan_refinement import PlanApplication, PlanRevision
 from litharness.domain.policy import PolicyDecision
+from litharness.domain.pools import PoolRegistration
 from litharness.domain.preference import (
     ComparisonExcerpt,
     PairSample,
@@ -129,6 +139,18 @@ class JobQueue(Protocol):
     def any_unfinished(self, job_ids: Sequence[str]) -> bool: ...
 
     def job_counts_by_status(self) -> dict[str, int]: ...
+
+
+class JobReader(Protocol):
+    """Read one queued unit by id.
+
+    Separate from `JobQueue`, which is the *claiming* contract: selection needs to read the
+    payload of the tournament job that produced its candidates — the record of what was
+    actually asked, frozen at enqueue — and giving every claiming caller a load method would
+    invite exactly the rebuild-at-render-time this design forbids (invariant I5).
+    """
+
+    def load_job(self, job_id: str) -> Job: ...
 
 
 class DecisionRepository(Protocol):
@@ -303,6 +325,85 @@ class SpanCandidateRepository(Protocol):
     ) -> None: ...
 
 
+class FeedbackRepository(Protocol):
+    """The reader -> writer loop's persistence (`plan/reader-judge-loop.md`).
+
+    A sibling of `PreferenceRepository` for the reason every repository here is a sibling,
+    and here the separation is load-bearing rather than tidy: a **located difference is not
+    a pair verdict**. §86.1 records that the human-only property of `EvidenceClass.PREFERENCE`
+    was prose in an enum docstring while the judge path wrote through the same pair table, so
+    the half of this design that runs at *volume* writes no PREFERENCE-shaped row at all. It
+    has no laundering surface by construction rather than by filter.
+    """
+
+    def pool_registration(self) -> PoolRegistration | None: ...
+
+    def record_pool_registration(
+        self, registration: PoolRegistration, *, events: Sequence[Event] = ...
+    ) -> bool: ...
+
+    def axis_directions(self, *, axis_id: str | None = ...) -> list[AxisDirection]: ...
+
+    def record_axis_direction(
+        self, direction: AxisDirection, *, events: Sequence[Event] = ...
+    ) -> bool: ...
+
+    def located_differences(
+        self,
+        *,
+        book_id: str | None = ...,
+        branch_id: str | None = ...,
+        status: DifferenceStatus | None = ...,
+    ) -> list[LocatedDifference]: ...
+
+    def record_located_differences(
+        self, differences: Sequence[LocatedDifference], *, events: Sequence[Event] = ...
+    ) -> int: ...
+
+    def record_judge_discards(
+        self, discards: Sequence[JudgeDiscard], *, events: Sequence[Event] = ...
+    ) -> int: ...
+
+    def judge_discards(
+        self,
+        *,
+        book_id: str | None = ...,
+        reason: DiscardReason | None = ...,
+        limit: int | None = ...,
+    ) -> list[JudgeDiscard]: ...
+
+    def spend_located_difference(self, difference_id: str) -> bool: ...
+
+    def record_scene_feedback(self, record: SceneFeedback) -> bool: ...
+
+    def scene_feedback(self, *, revision_id: str | None = ...) -> list[SceneFeedback]: ...
+
+
+class DirectorRepository(Protocol):
+    """The Director role's persistence (`plan/director-role.md`).
+
+    Admitted personalities and the directives they wrote. Separate from `DirectiveInbox`, which
+    is the *drain* contract every consumer of direction already has: what a Director needs is the
+    ability to write into that inbox and to count what it has already written, and widening the
+    inbox protocol would hand every existing consumer a machine-authorship vocabulary it has no
+    use for.
+    """
+
+    def directors(self) -> list[Director]: ...
+
+    def director(self, director_id: str) -> Director | None: ...
+
+    def record_director(
+        self, director: Director, *, registered_at: str, events: Sequence[Event] = ...
+    ) -> bool: ...
+
+    def machine_directives(
+        self, book_id: str, branch_id: str, *, live_only: bool = ...
+    ) -> list[Directive]: ...
+
+    def submit_directive(self, directive: Directive, *, received_at: str) -> bool: ...
+
+
 class EventRepository(Protocol):
     def append_events(self, events: Iterable[Event]) -> None: ...
 
@@ -433,6 +534,16 @@ class PlanningStore(
     # generation gets to see the ledger. Nothing on the planning path writes here.
     PromiseRepository,
     OperationsRepository,
+    # The reader -> writer loop attaches at *enqueue*, which is why it is on the planning
+    # store and not the draft store: the feedback set is materialised into the frozen
+    # payload here, and a handler that rebuilt it at render time from live tables would
+    # make every replay a different experiment (invariant I5). Read-only except
+    # `spend_located_difference`, which is what makes a located item one-shot.
+    FeedbackRepository,
+    # Steering verdicts live in the pair table, and a direction's staleness is read off
+    # them. Read-only from the planning path.
+    PreferenceRepository,
+    SpanCandidateRepository,
     Protocol,
 ):
     pass
@@ -454,6 +565,11 @@ class DraftStore(
     # rows, the way it hands `detect_duplicate_scene` the prior prose. The draft path
     # never writes a promise — only the summary handler does.
     PromiseRepository,
+    # Write-only, and only `record_scene_feedback`: what shaped this scene is recorded
+    # against the address the prose actually has, including the empty set for a scene
+    # drafted with no feedback (invariant I4). The draft path never *reads* feedback —
+    # it reads the frozen payload, which is the record of what was actually asked.
+    FeedbackRepository,
     Protocol,
 ):
     pass
@@ -492,6 +608,13 @@ class SpanSelectStore(
     AuditRepository,
     PreferenceRepository,
     SpanCandidateRepository,
+    # The search job's frozen payload is where the winner's feedback provenance lives.
+    JobReader,
+    # Write-only, and only `record_scene_feedback`: a tournament's winner is committed
+    # here rather than by the draft handler, so this is where the winning scene's
+    # provenance is recorded. Without it, exactly the scenes drafted under search — the
+    # ones the loop actually steers — would be the scenes with no provenance row.
+    FeedbackRepository,
     Protocol,
 ):
     """What selection reads and writes: the winner's commit through the normal accept
@@ -511,6 +634,31 @@ class NarrativePlanningStore(
 
 class PlanRefinementStore(PlanReader, PlanWriter, Protocol):
     pass
+
+
+class DirectorStore(
+    ManuscriptReader,
+    PlanReader,
+    SummaryRepository,
+    PromiseRepository,
+    DirectorRepository,
+    Protocol,
+):
+    """What one piece of direction is produced from: the book's SHAPE and never its prose.
+
+    The absence is the interesting half of this protocol. There is no `ManuscriptWriter` here
+    because a Director writes no prose, and the reader it does have is used for scene *nodes*
+    and their statements — `application/director.py` never reads `node.content`. A role that
+    cannot see the text cannot render a verdict on it, which turns "a Director may not evaluate
+    prose" from an instruction into a property of what it was handed.
+    """
+
+
+class FeedbackLoopStore(FeedbackRepository, PreferenceRepository, Protocol):
+    """What `application/feedback_loop.py` reads: the loop's own rows and the verdicts under
+    them. Both halves are needed together and neither is enough alone — a direction is a
+    *reading of pair verdicts*, so a store that had the directions and not the verdicts could
+    not tell a live one from a stale one."""
 
 
 class EvaluationStore(
@@ -584,6 +732,13 @@ class ApplicationStore(
     EventRepository,
     OperationsRepository,
     ExceptionRepository,
+    # The reader -> writer loop's rows, because work selection is where feedback is
+    # materialised into the frozen payload (invariant I5) and where a located item is spent.
+    FeedbackRepository,
+    JobReader,
+    # Work selection mints the Director's unit and enforces its bound, so it needs to see both
+    # the admitted personalities and what this book's Director has already said.
+    DirectorRepository,
     Protocol,
 ):
     """Aggregate accepted by the composition root and pluggable work selectors."""

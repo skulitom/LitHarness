@@ -123,6 +123,13 @@ class Directive:
     interpreted_at: str | None = None
     precedence: int = -1
     superseded_by: str | None = None
+    #: Who wrote this. **Recorded because the property it carries was enforced by nothing.**
+    #: A directive's words become a locked plan constraint sitting in every subsequent context
+    #: packet with the director's authority; until this column existed, "the director's word"
+    #: meant "only a human can write one", which stops being true the moment a machine
+    #: Director runs (`plan/director-role.md` §1). `None` is "unrecorded" for rows written
+    #: before the column and is never read as "human".
+    author: str | None = None
     metadata: dict[str, object] = field(default_factory=dict)
 
     def __post_init__(self) -> None:
@@ -169,15 +176,33 @@ class Directive:
         )
 
 
-def directive_id_for(kind: DirectiveKind, body: str, received_at: str) -> str:
+def directive_id_for(
+    kind: DirectiveKind, body: str, received_at: str, author: str | None = None
+) -> str:
     """Content-derived, so submitting the same directive twice at the same instant
     collapses instead of queueing two readings of one instruction.
 
     `received_at` is deliberately part of the material: a director who says "more dungeon
     crawling" again next week means it again, and that is a second directive rather than a
     duplicate of the first.
+
+    **`author` is in the material too, and that is what stops a machine row being silently
+    reattributed.** The same words from a person and from a Director are two directives with two
+    ids, so an instruction cannot be quietly relabelled and a machine's cannot collapse onto a
+    human's. It is keyed in only when present, so every id minted before the column existed
+    addresses exactly what it always did — a migration that changed existing ids would break
+    every `produced_constraint_ids` reference pointing at one.
     """
-    material = payload_digest({"kind": kind.value, "body": body, "received_at": received_at})
+    material = payload_digest(
+        {"kind": kind.value, "body": body, "received_at": received_at}
+        if author is None
+        else {
+            "kind": kind.value,
+            "body": body,
+            "received_at": received_at,
+            "author": author,
+        }
+    )
     return f"dir-{sha256(material.encode()).hexdigest()[:24]}"
 
 

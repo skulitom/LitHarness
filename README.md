@@ -499,6 +499,69 @@ test run provably cannot reach a paid CLI. The live round-trip tests are skipped
 
 Stated plainly, because a system that runs is easy to mistake for a system that works:
 
+- **The reader → writer loop is wired and it has no evidence in it.** Until now nothing a
+  reader said about prose reached the thing that writes the next prose, by any path. There is
+  one now, and it is built as **two roles split by what each is licensed to answer** rather
+  than by human-versus-machine: a **reader** owns valence (would I keep reading, which of
+  these two would I rather continue) and a **judge** owns location and axis and never valence.
+  The split is measured rather than chosen — three independent attempts to get a *verdict*
+  about prose out of a machine died (a positional bias of 0.8151 over 568 decided comparisons;
+  a VOID precondition at 0.6408 over 142; "keep reading" on 195 of 196 passages), and exactly
+  one frame survived: asked to *name the difference* between two passages, the same model on
+  the same pairs cleared three of three families.
+  What exists: three axes with deterministic counters (`litharness axes`), a measurement
+  firewall splitting readers and passages before any verdict is routed (`pools`), a path from
+  steering-pool reader verdicts to a **direction** on an axis (`directions`), a judge channel
+  that names *which axis and where* over a contrast pair and never which is better
+  (`contrast`), composition into a draft prompt with provenance on the resulting scene
+  (`feedback`, `blame`), and an ablation harness
+  (`research/quality-measurement/feedback_ablation.py`).
+  **What does not exist is a single reader verdict.** `audit_samples` is at 0 rows, no reader
+  has been paid, no axis has a direction, and with no direction the judge half refuses before
+  it spends anything — so the whole loop resolves to an empty feedback set and every book
+  drafts exactly as it did before. The ablation's machine side reads `INERT_GENERATOR` on the
+  fake provider and its reader side reads `UNDECIDABLE`, which is the honest state of both.
+  Neither source can block: nothing on this path can construct a gate, and a reader-derived
+  gate would still be a gate (§10.4).
+  Designed and deliberately not built, each with its condition:
+  a **certified single-axis transform** as a second source of direction pairs, if sibling
+  yield or confounding makes siblings unusable; a **paraphrase sham** (same content, different
+  surface) to catch a judge or counter firing on surface features carrying no reader-visible
+  difference — a register entry rather than a task because certifying "same content" honestly
+  is the hard part; and the **promise/payoff ledger** as a candidate counter family, which is
+  the right shape (deterministic, span-locating, judge-free) and is strictly a *hypothesis*
+  axis: it earns nothing until a human read names it or the discard corpus nominates it, and
+  nothing at all until readers give it a direction.
+  [plan/reader-judge-loop.md](plan/reader-judge-loop.md) is the design and its
+  pre-registration.
+- **A Director role: a personality that says what a book is, and never whether it is good.**
+  The third role, and it is safe for a different reason from the other two rather than the same
+  one. Every frame this project has buried was *evaluative and downstream* — handed prose that
+  existed and asked how good it is. A Director is *generative and upstream*: it says what the
+  book should be, before any of it exists, so it makes no measurement and cannot make an invalid
+  one. `--director <name>` runs one; off by default, because a director is an arm and no
+  director is its control.
+  What exists: a content-addressed personality with a brief (`litharness directors`), one
+  bounded directive per six accepted scenes, written into the same inbox a person writes into
+  and **marked with its author** — and a distinctness control
+  (`research/quality-measurement/director_distinctness.py`) that has to pass before two
+  directors may be compared at all.
+  **Four things it cannot do**, each closing a path that was open: it emits only the
+  interpretive directive kinds, so it cannot issue a veto or a constraint — refusal is the human
+  director's authority; it cannot produce a **locked** plan item by either lane, so its words
+  cannot sit in every context packet wearing a person's standing; its brief may name what the
+  book is about and not what good prose is, so it cannot pre-empt an axis the Reader/Judge loop
+  is actively measuring; and **it is never shown the prose**, only the plan and the scene
+  summaries, which makes "a Director may not evaluate prose" a property of what it was handed
+  rather than an instruction it might drift from.
+  **What is not established is whether any director is any good.** That is a reader question
+  and it waits with every other reader question — and it is not free: §61 pre-registration (5)
+  divides the superiority claim's confidence level by the candidate-book count, so **running N
+  directors divides §61's alpha by N**. At three directors the headline is made at α/3. The
+  distinctness harness prints that price rather than leaving it to be discovered.
+  Also not built: directors that read their own books' reception, which would be a second
+  steering loop with none of the measurement firewall's discipline.
+  [plan/director-role.md](plan/director-role.md) is the design.
 - **A template planner plus a bounded directive planner, not a full narrative
   generator.** `tick` does decide what to write next: a
   fixed six-beat sheet (`domain/beats.py`) is zipped against the book's live scenes and the
@@ -546,13 +609,20 @@ Stated plainly, because a system that runs is easy to mistake for a system that 
   §2 is canonical — this sentence used to restate a count and the restatement was stale
   within days, which is exactly why the ledger owns the number. The blocker is human
   judgment, not effort — and the instrument for collecting it at scale is now built:
-  the **pairwise preference engine** (`corpus-add`, `protocol`, `pair-draw`, `pairs`,
-  `pair-judge`, `pair-export`, `pair-import`, `win-rate`) runs blinded,
+  the **pairwise preference engine** (`corpus-add`, `protocol`, `pools`, `pair-draw`,
+  `pairs`, `pair-judge`, `pair-export`, `pair-import`, `win-rate`) runs blinded,
   position-swapped comparisons against matched published-human prose under a
   pre-registered protocol, with a reader-by-pair clustered lower bound on the win
   rate; [plan/preference-runbook.md](plan/preference-runbook.md) is the operating
-  procedure. `litharness audit` remains as the smoke-check queue whose deterministic
-  draw the engine inherited. Structural instrumentation aimed at what moves readers —
+  procedure. **`pools` is new and now comes first**: readers and passages are split
+  into a steering pool and a measurement pool before the first verdict is routed,
+  because the superiority claim dies if the prose was shaped by the readers who later
+  judge it — and once reader verdicts reach a draft prompt that stops being
+  hypothetical. Nothing draws or judges until the split is declared.
+  `litharness audit` remains as the smoke-check queue whose deterministic
+  draw the engine inherited; its verdict verb is now `read` rather than `judge`, since
+  under the Reader/Judge split what it records is a reader's verdict (`judge` still
+  works and warns). Structural instrumentation aimed at what moves readers —
   overdue promises and zero-delta scenes — is recorded per accepted scene, advisory
   until calibrated. A second channel is being *tested* rather than operated: asking a
   system-prompted model, in character as a reader, what a passage did to it — untested

@@ -1,0 +1,66 @@
+{
+  "pre_registration": {
+    "written": "2026-08-19, before any director was drawn from and before any distance was computed",
+    "question": "Do two director personalities produce different direction, or is the brief inert?",
+    "design": "Each director answers on the SAME book state 3 times, varying only the sampler seed. Within-director spread is the generator's noise; between-director distance must clear it.",
+    "statistic": "Mean pairwise normalised compression distance, `domain/craft.py`'s measure, reused rather than invented because this project has refuted enough hand-rolled text distances to be suspicious of a new one.",
+    "reads": [
+      "IDENTICAL \u2014 byte-identical directive sets. One director in costumes (\u00a789.1's measured failure), and the comparison stops here.",
+      "INDISTINCT \u2014 between-director distance <= within. The brief is decorative.",
+      "DISTINCT \u2014 between > within, with a within-director noise floor above zero. The personalities clear the generator's own wobble.",
+      "DISTINCT_NO_FLOOR \u2014 the sets differ and the within-director floor was ZERO, so the gap cleared nothing. It establishes that the briefs are not inert and not that the difference is large: with no wobble, 'between exceeds within' is satisfied by one differing character. A deterministic generator always reads this way.",
+      "UNREADABLE \u2014 fewer than 3 draws. Says so rather than passing."
+    ],
+    "rail": "A comparison between directors may not be reported until they read DISTINCT. Anything else is comparing one director against itself and reporting the seed.",
+    "price_of_a_pass": "\u00a761 pre-registration (5) divides the confidence level by the candidate-book count, so N directors divide \u00a761's alpha by N. This is payable and it is payable in the currency the project is shortest of.",
+    "not_claimed": "A DISTINCT reading says two directors write differently. It says nothing about whether either writes a better book \u2014 that is a reader question, and no arrangement of these numbers answers it."
+  },
+  "directors": [
+    "cartwright",
+    "chandler",
+    "delver"
+  ],
+  "pairs": [
+    {
+      "left": "cartwright",
+      "right": "chandler",
+      "reading": "distinct_no_floor",
+      "within": 0.0,
+      "between": 0.8462,
+      "draws": 3,
+      "comparable": true
+    },
+    {
+      "left": "cartwright",
+      "right": "delver",
+      "reading": "distinct_no_floor",
+      "within": 0.0,
+      "between": 0.8462,
+      "draws": 3,
+      "comparable": true
+    },
+    {
+      "left": "chandler",
+      "right": "delver",
+      "reading": "distinct_no_floor",
+      "within": 0.0,
+      "between": 0.8462,
+      "draws": 3,
+      "comparable": true
+    }
+  ],
+  "verdict": "COMPARABLE",
+  "alpha_cost": {
+    "directors": 3,
+    "base_alpha": 0.05,
+    "divided_alpha": 0.016666666666666666,
+    "note": "reporting the best of 3 candidate books makes the superiority claim at alpha 0.0167 rather than 0.05, per \u00a761 pre-registration (5)"
+  },
+  "kind": "wiring pilot, not a test: the padded fake provider answers by request digest, so a DISTINCT reading here is a fact about the prompts and not about any personality",
+  "draws_collected": {
+    "cartwright": 3,
+    "chandler": 3,
+    "delver": 3
+  },
+  "floor_warning": "At least one pair read DISTINCT_NO_FLOOR: every draw from a director came back byte-identical to its siblings, so the between-director gap cleared a floor of zero. Expected here \u2014 the fake provider answers by request digest and this pilot's requests do not vary across draws \u2014 and it means the comparison was not tested against noise. A real generator at nonzero temperature is what makes this reading DISTINCT instead."
+}

@@ -49,6 +49,12 @@ from litharness.application.directive_planner import (
     directive_job_id,
     is_verbatim_actionable,
 )
+from litharness.application.director import (
+    direct_job_id,
+    director_job,
+    scene_block,
+)
+from litharness.application.feedback_loop import payload_fields, resolve
 from litharness.application.handlers import SCENE_DRAFT
 from litharness.application.narrative_planner import (
     NARRATIVE_PLAN,
@@ -92,6 +98,7 @@ from litharness.domain.directives import Directive, DirectiveStatus
 from litharness.domain.draft import DraftPolicy, is_draftable
 from litharness.domain.events import payload_digest
 from litharness.domain.extraction import progression_target, system_voice_example
+from litharness.domain.feedback import FeedbackSet
 from litharness.domain.jobs import Job, input_digest_for
 from litharness.domain.plans import premise_of, scene_plan_for, scene_plan_line
 from litharness.domain.revision import Revision
@@ -183,6 +190,32 @@ def _enqueue_interpretive_direction(store: PlanningStore) -> bool:
     return False
 
 
+def _enqueue_direction(store: ApplicationStore, director_id: str) -> bool:
+    """Mint one Director unit for a book whose current scene-block has not been spoken for.
+
+    Two bounds, and they answer different failure modes. The **block** key means a book hears
+    from its Director once per `DIRECTIVE_EVERY` accepted scenes rather than once per tick, and
+    it is keyed on progress rather than on plan epoch because a directive *causes* an epoch bump
+    and a bound that its own effect resets is a spin loop. The **live** check means a Director
+    that has already spoken and not yet been interpreted stays quiet, so the inbox cannot fill
+    with machine direction while a person's sits behind it.
+    """
+    enqueued = False
+    for book_id, branch_id, _head in store.branches():
+        head = store.head(book_id, branch_id)
+        if head is None:
+            continue
+        if store.machine_directives(book_id, branch_id, live_only=True):
+            continue
+        block = scene_block(head)
+        job_id = direct_job_id(book_id, branch_id, block)
+        if store.has_job(job_id):
+            continue
+        if store.enqueue(director_job(book_id, branch_id, block, director_id)):
+            enqueued = True
+    return enqueued
+
+
 def _enqueue_ready_selections(store: ApplicationStore) -> bool:
     """Materialise `span_select` work for every parked tournament whose evidence is ready.
 
@@ -266,6 +299,7 @@ def render_prompt(
     target_words: int = 0,
     progression: str | None = None,
     scene_plan: str | None = None,
+    feedback: FeedbackSet | None = None,
 ) -> tuple[str, str]:
     """(system, prompt) for one beat, grounded in an assembled context packet.
 
@@ -305,6 +339,16 @@ def render_prompt(
     could not fail. Measured after wiring it (three draws per arm, seeds held common):
     `llama3.2` 279 -> 384 and `phi4` 324 -> 612 words. The instruction the record called
     ignored by a 3B model moves it 38%, because it had never been sent.
+
+    **`feedback` is the seam the reader → writer loop attaches to, and it goes in the system
+    message rather than in the packet.** The packet's own contract is "established and may be
+    relied on; do not contradict it" — a craft instruction is neither established nor a fact
+    about the story, and putting the two under one heading is how an instruction becomes canon.
+    It sits beside `target_words` and the status-line instruction because those are the two
+    existing inputs of the same kind: things about *how* to write, not about *what* is true.
+    Empty by default and empty is the common case: with no pool registration, no established
+    direction or no located difference, `feedback_loop.resolve` returns an empty set and this
+    renders nothing (`plan/reader-judge-loop.md` §5.1).
     """
     system = (
         "You are drafting one scene of a novel. Write only the scene's prose: no headings, "
@@ -349,6 +393,8 @@ def render_prompt(
             "of being told in summary. Do not pad it with restatement to reach the length; "
             "give the scene enough events to fill it."
         )
+    if feedback is not None and not feedback.empty:
+        system += f"\n{feedback.render()}"
     title = f"{book_title}: " if book_title else ""
     # **What this scene is for, which until now was one word shared with twenty-four others.**
     # `arc_template(30)` yields 25 `rising` beats, and the line below was the whole of the
@@ -491,6 +537,7 @@ def make_plan_selector(
     token_budget: int = DEFAULT_TOKEN_BUDGET,
     outline: bool = True,
     plan_search: bool = False,
+    director_id: str = "",
 ) -> WorkSelector:
     """Build a `WorkSelector` that materialises the next unblocked beat.
 
@@ -528,6 +575,14 @@ def make_plan_selector(
         #    this tick must affect the next scene, not the scene after it.
         _enqueue_verbatim_direction(store)
         _enqueue_interpretive_direction(store)
+
+        # 1a. The Director speaks, if one is selected and this book's block is unspoken for.
+        #     **After both human lanes and before the drain**, which is the whole ordering
+        #     argument: a person's direction is materialised first and can never be buried by
+        #     a machine's, and direction that exists before this tick shapes the next scene
+        #     rather than the one after it (§4.1's reason for putting ingest first).
+        if director_id:
+            _enqueue_direction(store, director_id)
 
         # 1b. Wake any parked tournament whose evidence arrived since the last tick.
         #     Unconditional rather than gated on `plan_search`: verdicts answer whenever
@@ -704,10 +759,23 @@ def make_plan_selector(
                         "context_omitted",
                         len(packet.omitted),
                     )
+                # **The reader → writer loop is materialised HERE, at enqueue, and never at
+                # render time (invariant I5).** The payload is the record of what was
+                # actually asked and per-attempt replay fidelity depends on it: a handler
+                # that rebuilt the prompt from live tables would make every replay a
+                # different experiment, and the retry ladder — which deliberately re-reads
+                # the same frozen prompt and varies only the sampler seed — would stop
+                # varying only the seed. Empty is the common case and costs two indexed
+                # queries; with no registration or no established direction, `resolve`
+                # returns an empty set and the book drafts exactly as it did before.
+                materialised = resolve(
+                    store, book_id=progress.book_id, branch_id=progress.branch_id, head=head
+                )
                 system, prompt = render_prompt(
                     beat,
                     book_title=_book_title(head),
                     packet=packet,
+                    feedback=materialised.feedback,
                     status_example=system_voice_example(
                         store.state_records(progress.book_id, progress.branch_id),
                         at=beat.story_order_key,
@@ -774,6 +842,13 @@ def make_plan_selector(
                         {"source": item.source_logical_id, "reason": item.reason}
                         for item in packet.omitted
                     ],
+                    # What shaped the prose, beside what grounded it. **Always present and
+                    # `[]` when there was none** — invariant I4's negative case: "this scene
+                    # had no feedback" and "nobody recorded whether this scene had feedback"
+                    # are different facts, and an absent key cannot tell them apart. The
+                    # digest of the empty list is a real digest, never null, which is what
+                    # makes the two distinguishable after the fact.
+                    **payload_fields(materialised.feedback),
                 }
                 if searching:
                     # The tournament reads the epoch at the top of the payload (the
@@ -794,6 +869,19 @@ def make_plan_selector(
                     # A row exists that `has_job` did not see. Counting it as planned would
                     # be reporting a write that did nothing.
                     continue
+                # **One-shot, and spent only after the job that carries it exists.** A
+                # located difference materialised into a payload that failed to enqueue
+                # would be spent on nothing, which is the one way this loop could silently
+                # lose feedback. Spending after the insert makes the failure mode "the same
+                # item is offered again", which is recoverable.
+                for difference_id in materialised.spend:
+                    store.spend_located_difference(difference_id)
+                if materialised.feedback.dropped:
+                    # The cap is reported, never silent: a bound coverage reads as "covered
+                    # everything" when it did not (§89's rail, four modules deep).
+                    store.bump_digest(
+                        day, "feedback_dropped", materialised.feedback.dropped
+                    )
                 store.bump_digest(
                     day, "tournaments_enqueued" if searching else "beats_enqueued"
                 )

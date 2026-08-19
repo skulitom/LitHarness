@@ -1,0 +1,186 @@
+{
+  "axis": "interiority",
+  "toward": "high",
+  "arms": {
+    "off": {
+      "profile": {
+        "scenes": 6,
+        "words": 685,
+        "counters": {
+          "stat_flatten": 0.0,
+          "interiority": 0.0,
+          "em_dash": 1.4598540145985401
+        },
+        "layout": [
+          17,
+          38,
+          0
+        ]
+      },
+      "scenes_with_feedback": 0
+    },
+    "reader_only": {
+      "profile": {
+        "scenes": 6,
+        "words": 685,
+        "counters": {
+          "stat_flatten": 0.0,
+          "interiority": 0.0,
+          "em_dash": 1.4598540145985401
+        },
+        "layout": [
+          17,
+          38,
+          0
+        ]
+      },
+      "scenes_with_feedback": 6
+    },
+    "judge_only": {
+      "profile": {
+        "scenes": 6,
+        "words": 685,
+        "counters": {
+          "stat_flatten": 0.0,
+          "interiority": 0.0,
+          "em_dash": 1.4598540145985401
+        },
+        "layout": [
+          17,
+          38,
+          0
+        ]
+      },
+      "scenes_with_feedback": 0
+    },
+    "both": {
+      "profile": {
+        "scenes": 6,
+        "words": 685,
+        "counters": {
+          "stat_flatten": 0.0,
+          "interiority": 0.0,
+          "em_dash": 1.4598540145985401
+        },
+        "layout": [
+          17,
+          38,
+          0
+        ]
+      },
+      "scenes_with_feedback": 6
+    }
+  },
+  "comparison": {
+    "axis": "interiority",
+    "toward": "high",
+    "arms": {
+      "reader_only": {
+        "target_ratio": 0.0,
+        "off_target": {
+          "stat_flatten": 0.0,
+          "em_dash": 0.0
+        },
+        "word_drift": 0.0,
+        "layout_moved": false,
+        "read": "NULL"
+      },
+      "judge_only": {
+        "target_ratio": 0.0,
+        "off_target": {
+          "stat_flatten": 0.0,
+          "em_dash": 0.0
+        },
+        "word_drift": 0.0,
+        "layout_moved": false,
+        "read": "NULL"
+      },
+      "both": {
+        "target_ratio": 0.0,
+        "off_target": {
+          "stat_flatten": 0.0,
+          "em_dash": 0.0
+        },
+        "word_drift": 0.0,
+        "layout_moved": false,
+        "read": "NULL"
+      }
+    },
+    "read": "INERT_GENERATOR"
+  },
+  "reader_side": {
+    "verdict": "UNDECIDABLE",
+    "unmet": [
+      "decided cells 0 < 30",
+      "reader clusters 0 < 5",
+      "pair clusters 0 < 8"
+    ],
+    "have": {
+      "cells": 0,
+      "readers": 0,
+      "pairs": 0
+    },
+    "attainability": {
+      "smallest_clearing_k": 22,
+      "cells": 30,
+      "power": {
+        "0.55": 0.0312,
+        "0.6": 0.094,
+        "0.65": 0.2247,
+        "0.7": 0.4315,
+        "0.8": 0.8713
+      },
+      "cells_for_power": {
+        "0.55": 220,
+        "0.6": 90,
+        "0.65": 60,
+        "0.7": 50,
+        "0.8": 30
+      },
+      "target_power": 0.8
+    },
+    "note": "The floor is a coherence floor, not a sample size. At a true win rate of 0.60 the floor fires under a tenth of the time, so a null from thirty judgments would say nothing about the loop."
+  },
+  "judge_arm": "NOT_EXERCISED: this pilot runs no tournament, so `judge_only` carried no located difference and is the control under another name. Exercising it needs --plan-search and a judge batch, which is a live run.",
+  "pre_registration": {
+    "written": "2026-08-19, before any arm was generated and before any counter was read",
+    "question": "Does feedback materialised into the draft prompt move the prose on the axis it names, and which of the two sources does the moving?",
+    "arms": [
+      "off",
+      "reader_only",
+      "judge_only",
+      "both"
+    ],
+    "held_fixed": [
+      "the beat sheet and the book premise",
+      "the sampler seed, which is derived from the job's input digest and attempt",
+      "the provider and the model",
+      "the context packet's token budget"
+    ],
+    "machine_side": {
+      "primary": "the target axis's counter, per arm, against the `off` arm. Movement is a ratio of at least 0.15 toward the direction the feedback names.",
+      "off_target": "every other registered counter, reported beside the primary. A feedback item names one axis; a move on the others is the loop doing something it did not say.",
+      "drift": "word-count ratio and layout identity. An on-target move that rides a drifted certificate (word ratio beyond 0.1) is reported as DRIFT and never as effect \u2014 \u00a778's confound, which produced a 96-100% preference from layout alone.",
+      "reads": [
+        "MOVED \u2014 the target counter moved past the ratio, in the named direction, with no drift and no larger off-target move",
+        "DRIFT \u2014 it moved and so did length or layout; the gain is not attributable",
+        "OFF_TARGET \u2014 another counter moved further than the target one",
+        "NULL \u2014 no arm moved its target counter past the ratio",
+        "INERT_GENERATOR \u2014 every arm's counters are identical to the control's on every axis. The generator did not respond to any instruction, so the run says nothing about the loop and its NULL must not be read as one. \u00a757's lesson: a run sized for the wrong question does not get a second chance to answer the right one."
+      ]
+    },
+    "reader_side": {
+      "protocol": "blinded, position-swapped pairs between arms under a declared steering protocol, judged by steering-pool readers only",
+      "bar": "the clustered lower bound on the arm's win rate exceeds 0.5 at the declared floors",
+      "state": "UNDECIDABLE until the floors are met. `audit_samples` is at 0 rows and no reader has been paid, so this arm has no n and says so rather than reporting a number from what it has."
+    },
+    "kill_conditions": [
+      "The machine side reads NULL on every arm: the feedback never reached the prose, and the reader-side arm is not worth buying. Archive beside refuted_metrics.py.",
+      "The machine side reads DRIFT: the loop moves length or layout rather than the axis, which is \u00a778's finding recurring and is reported as such.",
+      "The reader side, once it has n, shows no separation between `off` and `both`: the loop does not work and the entry says so.",
+      "The reader side separates `off` from `both` but not `off` from `judge_only` once `reader_only` is held fixed: that is a finding about JUDGES and belongs in plan/judge-validity-program.md, not here."
+    ],
+    "not_claimed": "Nothing here is evidence that revised prose is better prose. The counters are surface proxies and a move on one is a move on a proxy; \u00a761's paid pairwise judgment is the only instrument that can say better, and it is not this."
+  },
+  "kind": "wiring pilot, not a test: synthetic direction, fake provider"
+}
