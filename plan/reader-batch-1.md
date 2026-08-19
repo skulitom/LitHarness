@@ -1,10 +1,13 @@
-# Reader batch 1: one set of paid verdicts, two jobs
+# Reader batch 1: one set of paid verdicts, ~~two jobs~~ **three jobs**
 
 **Status: designed, costed, and NOT funded.** Funding starts §59's one-month kill switch and is an
 operator act. Nothing in this document authorises spending; it exists so that when the money is
-committed, the batch that gets bought is the one that answers two questions instead of one.
+committed, the batch that gets bought is the one that answers ~~two questions~~ **three questions**
+instead of one. **The third job and the re-costing are in [§7](#7-addendum-the-third-job-and-what-it-changes-above),
+appended 2026-08-19 under stage-0 §89; everything above it is the original design and is left
+standing so the change is visible rather than merged away.**
 
-The two jobs:
+~~The two jobs:~~ **Two jobs as originally designed; a third was added in [§7](#7-addendum-the-third-job-and-what-it-changes-above) and job 2 was widened there from the panel to the composite. The original wording stands below.**
 
 1. **Pilot the headline protocol.** The §1a.4/§1a.5 claim is a blinded, position-swapped pairwise
    win rate against matched published human prose, lower bound of a 95% CI above 0.5. This batch is
@@ -157,3 +160,140 @@ plausible rate this is a four-figure commitment, and it starts the §59 clock on
 - [ ] Class B and class C transform lists are fixed in the protocol declaration, so the
       no-exclusion-on-class-B rule cannot be revisited once the numbers are in.
 - [ ] The operator accepts that the §59 month starts on payment.
+
+## 7. Addendum: the third job, and what it changes above
+
+*Appended 2026-08-19 under stage-0 §89. Everything in §1–§6 is the original design and stands; this
+section adds one job, one class-B axis, one new class, and a re-costing. Where it supersedes a
+number above, it says so and the old number stays visible.*
+
+**Why a third job exists at all.** §87 set out to show that a model's internals perceive more than
+its verdicts report, and the finding was sharper and more awkward than that: on every fixture family
+this project owns, **a deterministic counter beats the internals**, and the panel is blind to a
+defect one line of arithmetic orders perfectly. Track P closed on redundancy rather than on failure.
+The lesson §87 named is the one this addendum acts on — *"the ceiling on this fixture set is not
+adapter-shaped or pretraining-shaped but fixture-shaped, and the successor experiment is a harder
+fixture, not a bigger model."* A harder fixture cannot be manufactured by us, because every fixture
+we manufacture comes with a counter we could have named. **Only a human can certify that a pair
+differs in a way no counter reaches.** That is job three, and this batch is the only instrument that
+can buy it.
+
+The three jobs, restated:
+
+1. **Pilot the headline protocol.** Unchanged from above.
+2. ~~**Anchor the machine panel.**~~ **Anchor the composite instrument, per axis and per layer.**
+   The object being anchored changed under §89's Track A2′: what will ship is not a panel but a
+   three-layer composite — deterministic counters, then a frozen readout, then a verdict layer —
+   and an agreement matrix against "the panel" would now anchor a component rather than the
+   instrument. Every axis therefore gets **three machine columns**, so a disagreement is
+   attributable to a layer instead of to the whole.
+3. **Certify the fixture frontier.** Pairs that humans discriminate and no counter can. Class E
+   below.
+
+### 7.1 Class B gains a fourth axis: told-versus-shown
+
+§85's interiority repair is the one arm three separate judge families agree on — 0.9509 at Haiku,
+1.0000 at Sonnet, 0.9688 at `phi4` outside the generator's family (§85, §85.1, §87.3). §87.1 then
+measured **what the treatment actually put there**: told inner state up 1.608 per 1k words and
+demonstrated bodily state *down* 0.627, rising in seven of eight scenes against one of eight. The
+machines like it, and the thing they like is told-not-shown.
+
+**Craft doctrine says told feeling is worse. That is a hypothesis, not a finding, and this is the
+row that tests it.** §87.1 first read the Haiku-to-Sonnet gradient as evidence that the preference
+was family match; §87.3 struck that reading, because a cross-family judge preferred the same repair
+just as hard. So the machine column is now three-way consistent and craft doctrine is the only thing
+standing against it — and craft doctrine has never been measured on a reader in this project.
+
+| axis | pairs | machine column | where |
+| --- | --- | --- | --- |
+| told-vs-shown (interiority repair vs original) | 25 | 0.9509 / 1.0000 / 0.9688, bias 0.500 at Sonnet | §85, §85.1, §87.3 |
+
+Pre-registered readings, before any reader is paid:
+
+- **Humans prefer the repair** → told-not-shown is not a defect at this dose on this material, three
+  judge families are right, and a piece of craft doctrine this project has been treating as a
+  constraint is retired *with a measurement behind the retirement*.
+- **Humans prefer the original** → the machine panel's single most confident arm is machine taste,
+  measured against the axis §87.1 identified, and the size of the gap is the first calibration
+  number the taste-gap programme has.
+- **Humans tie** → the treatment is invisible to readers and the panel's 0.95–1.00 is reading
+  something below the threshold of the thing the batch exists to serve.
+
+**Read against the §85 operator read when it lands, and marked provisional until then.** The
+operator's six-pair read is PENDING as of 2026-08-19 (`results/operator-read-key.json`, which no
+agent opens). Every told-versus-shown conclusion in this project is therefore currently provisional,
+this row included, and the addendum says so rather than letting the qualifier lapse.
+
+### 7.2 Class E: the fixture frontier, which only humans can certify
+
+**What it is.** Pairs where **no a-priori counter is nameable** and no readout has separated them —
+the material §87 recorded as *"the only families where surface and internals are both undecided, and
+they are the ones superhuman selection would live in."*
+
+| pairs | both sides | recorded machine status |
+| --- | --- | --- |
+| 8 | drunk-state narration vs sober | probe 7/8, p 0.180; P0 2/8 (**below chance**); panel VOID, bias 0.828 (§83, §87) |
+| 8 | tripping-state narration vs sober | probe 7/8, p 0.188; P0 3/8; panel VOID, bias 0.762 (§83, §87) |
+| 8 | exemplar-conditioned vs sober | no nameable counter; panel VOID at Haiku, 0.6484 at Sonnet (§85, §85.1) |
+
+These are §83's four states in one voice: the same scene written by a narrator in a different
+simulated phenomenology, which §83 found the register invariant to. They are the only pairs this
+project holds that **every instrument it owns has failed on**, and they failed for the right reason
+— the difference was not defined in terms of a quantity, so nobody could have named a counter for it
+in advance. B6's membership rule (§88) rejects them by name for exactly that property, which is what
+makes them the frontier rather than a leftover.
+
+**Pre-registered readings:**
+
+- **Humans discriminate them above chance** → the fixture frontier is certified. The next fixture
+  generation is built on the property these pairs have, a benchmark exists that a digit counter
+  cannot win, and §87's "harder fixture, not a bigger model" acquires a target. This is the outcome
+  that most changes what gets built next.
+- **Humans do not discriminate them** → §83's finding is confirmed on a reader rather than on an
+  instrument: simulated phenomenology does not reach the page, the arms are closed, and no
+  successor experiment should be funded on them. Also worth buying: it converts "perception-limited
+  at 4B" into "not there to perceive".
+- **Humans discriminate and cannot say why** → the most useful outcome for the composite, because it
+  says the property is real and unnamed, and it is the only condition under which a *learned* layer
+  earns its place over a counter.
+
+**Class E is never an exclusion instrument.** Same rule as class B, and for the same reason with
+more force: the correct answer is not merely unknown here, it is the measurement. A reader who
+cannot separate a drunk narrator from a sober one may be reading correctly.
+
+### 7.3 The re-costing, which supersedes §4's table
+
+    class A   110 pairs x 2 orientations                    = 220 raw judgments
+    class B   100 pairs x 2 orientations                    = 200 raw judgments   (was 75 / 150)
+    class C    16 pairs x 2 orientations                    =  32 raw judgments
+    class D     8 pairs x 2 orientations                    =  16 raw judgments
+    class E    24 pairs x 2 orientations                    =  48 raw judgments   (new)
+                                                              ---
+                                                              516 raw judgments   (was 418)
+
+**+98 judgments, +23%, and the headline claim's power is unchanged** — class A is untouched at 110
+pairs, so §4's honest statement stands verbatim: this batch can certify a win rate at or above 0.60
+and cannot certify 0.55. The added judgments buy per-axis anchoring and the frontier, neither of
+which competes with the headline for statistical power because neither draws on class A's pairs.
+
+**Readers:** 10 readers × ~52 judgments, up from ~42. That is the number to watch. §59's clustering
+requirement is unaffected, but a 52-judgment session is long enough that fatigue becomes a real
+threat to the last class read, so **class order is randomised per reader and recorded**, and class E
+— the one whose null result is as informative as its positive one — must not be systematically last.
+
+**Class E adds no new transform.** Its pairs already exist as committed fixtures from §83 and §85,
+which is why the third job costs 48 judgments rather than a generation budget.
+
+### 7.4 What must be true before this is funded, extending §6
+
+- [ ] Panel v2 is **frozen** (§84), and the freeze is a ledger entry the operator has signed. §89's
+      Track A2′ produces the candidate; the freeze is not automatic on it.
+- [ ] §84 §6.2's pipeline-ready condition holds, unchanged.
+- [ ] The composite's three machine columns are filled from committed artifacts before the protocol
+      is declared, so §2's rule — *filled in from the committed artifacts, not from memory* — covers
+      all three layers.
+- [ ] Class E's pairs are fixed by digest in the protocol declaration. They are the one class whose
+      membership could be quietly improved after a disappointing result, and that would convert the
+      frontier from a measurement into a search.
+- [ ] The §85 operator read is either recorded or its absence is declared in the protocol, so §7.1's
+      row is not read as settled when it is provisional.

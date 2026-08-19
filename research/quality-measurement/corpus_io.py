@@ -315,6 +315,15 @@ def royalroad_chapters(
     columns = [
         "tags", "warnings", "release_datetime", "text", "fiction_id",
         "followers", "favorites", "total_views", "chapter_id", "title",
+        # Added under stage-0 §89, for two confounds the pairing could not see without them.
+        # `author` — §79 selects pairs disjoint at *story* level, which is not the same as
+        # disjoint at author level; at 107 stories the pool held 105 authors and the gap was
+        # ignorable, and the expansion to 616 makes it something to measure rather than assume.
+        # `average_views` — mean views per chapter, the only unexploited rate covariate, and
+        # `round(total_views / average_views)` recovers a fiction's true published chapter count
+        # (`pages` is 100% null), which is per-story maturity independent of which shards are
+        # cached. Both are recorded and neither changes selection.
+        "author", "average_views",
     ]
     emitted = 0
     for shard in shards:
@@ -348,6 +357,8 @@ def royalroad_chapters(
                     "total_views": views,
                     "conversion": (followers / views) if views else None,
                     "title": row.get("title"),
+                    "author": row.get("author"),
+                    "average_views": float(row.get("average_views") or 0),
                 },
             )
             emitted += 1

@@ -1,0 +1,66 @@
+{
+  "candidates": [
+    {
+      "comparisons": 64,
+      "decided": 64,
+      "decided_floor": 30,
+      "eligible": true,
+      "in_band": true,
+      "model": "qwen3:14b",
+      "positional_bias": {
+        "chose_A_rate": 0.5625,
+        "decided": 64,
+        "note": "0.5 is unbiased; distance from it is the share of the answer that is layout",
+        "per_persona_chose_A": {
+          "grinder": 0.5625,
+          "newcomer": 0.5625,
+          "stakes": 0.5625,
+          "voice": 0.5625
+        }
+      },
+      "refused": 0,
+      "status": "ELIGIBLE",
+      "win_rate": 0.9375
+    },
+    {
+      "comparisons": 64,
+      "decided": 64,
+      "decided_floor": 30,
+      "eligible": true,
+      "in_band": true,
+      "model": "gemma3:12b",
+      "positional_bias": {
+        "chose_A_rate": 0.4531,
+        "decided": 64,
+        "note": "0.5 is unbiased; distance from it is the share of the answer that is layout",
+        "per_persona_chose_A": {
+          "grinder": 0.5,
+          "newcomer": 0.25,
+          "stakes": 0.5,
+          "voice": 0.5625
+        }
+      },
+      "refused": 0,
+      "status": "ELIGIBLE",
+      "win_rate": 0.9219
+    }
+  ],
+  "family": "repair_interiority",
+  "operator_excluded": {
+    "gpt-oss:20b": "operator: too old; also NOT_SCREENABLE on this machine (weights fail to load)",
+    "phi4:latest": "operator: too old to serve as Track S's cross-family judge"
+  },
+  "pre_registration": {
+    "band": [
+      0.4,
+      0.6
+    ],
+    "decided_floor": "A chose-A rate is read as a band only on at least 30 decided comparisons (\u00a786.7). Below that the candidate is INSUFFICIENT_DECIDED, which is neither eligible nor disqualified: \u00a787.3 disqualified `gemma3:4b` on a rate resting on eleven decisions and had to say so in prose, and a state the code cannot express is a state the next run will get wrong. The screen is therefore seated at four personas \u2014 4 x 8 scenes x 2 orientations = 64 comparisons \u2014 so a candidate abstaining on half of them still clears the floor. \u00a787.3's figures were taken at two personas on the same material and are cited as prior context, never used as a value here (\u00a779.1).",
+    "measures": "positional bias only \u2014 the eligibility precondition, not a preference.",
+    "power": "Deliberately a screen. At the default 64 comparisons the standard error on a bias estimate is about 0.063, which separates a 0.80-biased judge from an unbiased one at roughly 4.8 standard errors and still does NOT resolve a candidate sitting near the band edge \u2014 0.40 and 0.50 are 1.6 standard errors apart. A candidate that lands inside the band here is a candidate worth funding a real arm on, never a candidate that has passed. (The figure was 0.088 at the 32 comparisons this screen defaulted to for \u00a787.3; the default moved with `decided_floor` and this sentence moved with it.)",
+    "reserved": "Which cross-family judge is acceptable \u2014 cost, terms, protocol fidelity \u2014 is the operator's call (directive \u00a76). This module narrows the field to the eligible; it does not choose from it.",
+    "withholding_rule": "Win rates are computed and NOT reported for any candidate whose bias falls outside the band. A preference read off a positionally-biased judge is what \u00a783, \u00a785's em-dash arm and \u00a779.1 each had to void, and printing one here would also pre-empt the operator's reserved choice of cross-family judge.",
+    "written": "2026-08-19, before the first local elicitation"
+  },
+  "reading": "ELIGIBLE (bias in band, preference still unread): qwen3:14b, gemma3:12b. Track S may be funded on one of these at the operator's choice."
+}

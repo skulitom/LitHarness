@@ -124,6 +124,16 @@ def _story_pool(args: argparse.Namespace) -> list[dict[str, Any]]:
             "views": views, "followers": float(unit.meta.get("followers") or 0),
             "favorites": float(unit.meta.get("favorites") or 0), "words": words,
             "released_at": unit.released_at, "text": unit.text,
+            # Recorded, never selected on (stage-0 §89). `author` is what makes story-level
+            # disjointness checkable against author-level disjointness, which is a different and
+            # weaker property; `chapters` is the fiction's true published length, recovered as
+            # total_views / average_views because `pages` is 100% null in these shards.
+            "author": unit.meta.get("author"),
+            "average_views": float(unit.meta.get("average_views") or 0),
+            "chapters": (
+                round(views / float(unit.meta["average_views"]))
+                if unit.meta.get("average_views") else None
+            ),
         }
     return sorted(pool.values(), key=lambda s: s["conversion"])
 
@@ -278,7 +288,7 @@ def build(args: argparse.Namespace) -> int:
         # and the prose-blind table ranks on the excerpt.
         out = {key: side[key] for key in
                ("unit_id", "work_id", "conversion", "views", "followers", "favorites", "words",
-                "released_at")}
+                "released_at", "author", "average_views", "chapters")}
         out["excerpt_words"] = len(_excerpt(side["text"]).split())
         return out
 

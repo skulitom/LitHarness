@@ -53,6 +53,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 import os
 import statistics
 import sys
@@ -786,6 +787,57 @@ def score(args: argparse.Namespace) -> dict[str, Any]:
     return report
 
 
+#: The sub-stratum split inside `crossed`, declared before the expanded corpus was scored.
+#:
+#: **A median split rather than a threshold, and the reason is that every threshold worth naming is
+#: empty.** §87.2 named the residual confound as *tier*: `crossed`'s high-conversion side carries
+#: 16x fewer views, so a readout could be reading amateur-versus-established register rather than
+#: anything about quality. The obvious control is to match views inside `crossed` at the same
+#: factor-of-two tolerance `aligned` uses — and **zero of the 21 pairs at n=46 qualified, and zero
+#: of the 137 at n=281 do either.** The tightest `crossed` pair in the expanded corpus sits at
+#: 2.1x and the median at 12.2x. Declaring that threshold would have been the fourth bar in this
+#: project's history written in a form its own design could never reach (§81, §85, §87), and it
+#: was checked against the covariate distribution before being declared rather than after.
+#:
+#: So the split is a *rule*, not a number: the tighter-matched half of `crossed` by absolute log
+#: view ratio against the looser half. It always populates, its size is `n/2` and therefore its
+#: attainability is computable before any label is read, and the **contrast between the halves is
+#: the measurement** — a readout reading establishment register should score in the loose half and
+#: not the tight one. Both halves are reported whatever they show.
+VIEW_SPLIT = {
+    "rule": "median split of `crossed` on |log10(views_high / views_low)|",
+    "declared": "2026-08-19, before the expanded corpus was extracted or scored",
+    "why_not_a_threshold": (
+        "no `crossed` pair sits inside the factor-of-two tolerance `aligned` uses, at either "
+        "corpus size; the tightest is 2.1x and the median 12.2x"
+    ),
+    "reads": "tight vs loose is the tier-confound contrast; neither half alone is the finding",
+}
+
+
+def _view_gap_split(pairs: list[Pair], sidecar: Path) -> dict[str, set[str]]:
+    """Which `crossed` pairs land in the tight half and which in the loose one.
+
+    Joined to the covariate sidecar by `pair_id`, because the view counts are properties of the
+    corpus and not of the fixture. Returns empty sets when the sidecar is absent, so a machine
+    without the corpus reports the sub-strata as unavailable rather than inventing a split.
+    """
+    if not sidecar.is_file():
+        return {"tight": set(), "loose": set()}
+    rows = json.loads(sidecar.read_text(encoding="utf-8"))["pairs"]
+    gaps = {
+        row["pair_id"]: abs(math.log10(row["high"]["views"] / row["low"]["views"]))
+        for row in rows
+        if row["stratum"] == "crossed" and row["low"]["views"] and row["high"]["views"]
+    }
+    mine = sorted((gaps[p.scene], p.scene) for p in pairs if p.scene in gaps)
+    if not mine:
+        return {"tight": set(), "loose": set()}
+    half = len(mine) // 2
+    return {"tight": {scene for _, scene in mine[:half]},
+            "loose": {scene for _, scene in mine[half:]}}
+
+
 def conversion_arm(conversion: dict[str, list[Pair]], dump: Any) -> dict[str, Any]:
     """§79's external-label strata: the one arm from which a direction may be read.
 
@@ -839,6 +891,56 @@ def conversion_arm(conversion: dict[str, list[Pair]], dump: Any) -> dict[str, An
         channel: round(min(by_stratum.values()), 4) for channel, by_stratum in channels.items()
     }
     out["verdict"] = _conversion_verdict(out)
+
+    # ---- stage-0 §89: the frozen reading, and the tier-confound contrast beside it ----
+    #
+    # Everything above is §87.2's reading, kept verbatim so the two print together (rail 5): it
+    # selects a depth across strata, discloses that this gives the probe three shots where a
+    # surface counter gets one, and is the number §87.2 published. Everything below reads
+    # `FROZEN_READOUT` alone — one channel, one depth, committed before this corpus existed — so
+    # the probe-versus-P0 comparison is symmetric for the first time.
+    if dump is not None and by_readout:
+        channel, layer = FROZEN_READOUT["channel"], FROZEN_READOUT["layer"]
+        frozen: dict[str, Any] = {"spec": FROZEN_READOUT, "strata": {}, "sub_strata": {}}
+        for stratum, rows in by_readout.get(channel, {}).items():
+            frozen["strata"][stratum] = rows[layer]
+        split = _view_gap_split(conversion.get("conversion_crossed", []),
+                               RESULTS / "taste-benchmark-corpus.json")
+        crossed = conversion.get("conversion_crossed", [])
+        for half, scenes in split.items():
+            subset = [pair for pair in crossed if pair.scene in scenes]
+            if len(subset) < 2:
+                frozen["sub_strata"][f"crossed_{half}"] = {"status": "UNAVAILABLE", "pairs": 0}
+                continue
+            rows = _conversion_layer_rows(subset, "conversion_crossed", channel, dump)
+            frozen["sub_strata"][f"crossed_{half}"] = {
+                **rows[layer],
+                "pairs": len(subset),
+                "p0": _conversion_row(subset, P0_NAMES, steelman=False),
+                "p0_plus": _conversion_row(subset, P0_PLUS_NAMES, steelman=True),
+            }
+        frozen["split_rule"] = VIEW_SPLIT
+        frozen["minimum_across_strata"] = (
+            round(min(row["agreement"] for row in frozen["strata"].values()), 4)
+            if frozen["strata"] else None
+        )
+        frozen["verdict"] = _conversion_verdict({
+            "minimum_across_strata": {channel: frozen["minimum_across_strata"]},
+            "strata": {s: {channel: row} for s, row in frozen["strata"].items()},
+        }) if frozen["strata"] else {}
+        tight = frozen["sub_strata"].get("crossed_tight", {})
+        loose = frozen["sub_strata"].get("crossed_loose", {})
+        frozen["tier_confound_reading"] = (
+            "UNAVAILABLE — the sub-strata could not be formed"
+            if "agreement" not in tight or "agreement" not in loose else
+            f"tight {tight['agreement']} vs loose {loose['agreement']}: "
+            + ("the readout scores where views are matched as well as where they are not, which "
+               "is what a reading of prose rather than of tier predicts"
+               if tight["agreement"] >= loose["agreement"] else
+               "the readout scores in the loose half and not the tight one, which is the "
+               "signature of a tier reading and not of a prose reading")
+        )
+        out["frozen"] = frozen
     return out
 
 
