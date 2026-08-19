@@ -39,6 +39,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import statistics
 import sys
 import time
 from pathlib import Path
@@ -225,6 +226,53 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
     return out
 
 
+def decompose(raw: dict[str, Any]) -> dict[str, Any]:
+    """Split the answer distribution into the part that is position and the part that is text.
+
+    **This is the ladder's actual measurement and the sign test is downstream of it.** Each pair is
+    read twice, once in each orientation, and both readings are expressed in the variant's frame.
+    Writing them `vf` and `vr`, the half-difference `(vf - vr)/2` is the component that does not
+    change when the texts swap slots — a pure slot preference — and the half-sum `(vf + vr)/2` is
+    the component that does. A judge reading prose has a large half-sum; a judge reading layout has
+    a large half-difference and a half-sum near zero.
+
+    `placebo_identical` is the check that the arithmetic is exact rather than approximately right:
+    its two orientations are byte-identical prompts, so its half-sum must be **exactly** zero, and
+    any other value would mean the decomposition is measuring floating-point noise.
+    """
+    out: dict[str, Any] = {}
+    pooled_position: list[float] = []
+    pooled_text: list[float] = []
+    for family, rows in raw["families"].items():
+        position, text = [], []
+        for row in rows.values():
+            forward, reverse = row["orientation_split"]
+            position.append((forward - reverse) / 2)
+            text.append((forward + reverse) / 2)
+        pooled_position.extend(position)
+        pooled_text.extend(text)
+        mean_position = statistics.fmean(abs(value) for value in position)
+        mean_text = statistics.fmean(abs(value) for value in text)
+        out[family] = {
+            "mean_abs_positional": round(mean_position, 6),
+            "mean_abs_text": round(mean_text, 9),
+            "ratio": (round(mean_position / mean_text, 1) if mean_text else None),
+            "pairs": len(position),
+        }
+    total_position = statistics.fmean(abs(value) for value in pooled_position)
+    total_text = statistics.fmean(abs(value) for value in pooled_text)
+    out["__pooled__"] = {
+        "mean_abs_positional": round(total_position, 6),
+        "mean_abs_text": round(total_text, 9),
+        "ratio": (round(total_position / total_text, 1) if total_text else None),
+        "reading": (
+            "the share of the answer distribution that is a slot preference rather than a report "
+            "on the passages; a ratio far above 1 means the verdict channel is carrying position"
+        ),
+    }
+    return out
+
+
 def score(raw: dict[str, Any]) -> dict[str, Any]:
     """Stations 3 and 4 on the shared statistic, so they print in one table with E1-E6."""
     stations: dict[str, dict[str, dict[str, int]]] = {"answer_logits": {}, "sampled": {}}
@@ -244,7 +292,11 @@ def score(raw: dict[str, Any]) -> dict[str, Any]:
             sampled_signs[scene] = sign_of(sum(picks) / len(picks) if picks else None)
         stations["answer_logits"][name] = logit_signs
         stations["sampled"][name] = sampled_signs
-    report: dict[str, Any] = {"pre_registration": PRE_REGISTRATION, "stations": {}}
+    report: dict[str, Any] = {
+        "pre_registration": PRE_REGISTRATION,
+        "answer_distribution": decompose(raw),
+        "stations": {},
+    }
     for station, per_family in stations.items():
         report["stations"][station] = {
             "members": [family_reading(name, per_family[name]) for name in MEMBERS
@@ -312,6 +364,9 @@ def main(argv: list[str] | None = None) -> int:
 
     report = score(raw)
     Path(args.out).write_text(json.dumps(report, indent=2, sort_keys=True), encoding="utf-8")
+    pooled = report["answer_distribution"]["__pooled__"]
+    print(f"\nanswer distribution: |positional| {pooled['mean_abs_positional']:.4f} vs "
+          f"|text| {pooled['mean_abs_text']:.6f}  ->  {pooled['ratio']}x more position than text")
     for station, entry in report["stations"].items():
         print(f"\n{station}")
         for row in entry["members"] + entry["controls"]:

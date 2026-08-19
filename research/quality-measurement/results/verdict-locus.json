@@ -1,0 +1,294 @@
+{
+  "answer_distribution": {
+    "__pooled__": {
+      "mean_abs_positional": 0.999777,
+      "mean_abs_text": 0.000213821,
+      "ratio": 4675.8,
+      "reading": "the share of the answer distribution that is a slot preference rather than a report on the passages; a ratio far above 1 means the verdict channel is carrying position"
+    },
+    "interiority_strip_matched": {
+      "mean_abs_positional": 0.998716,
+      "mean_abs_text": 0.001251056,
+      "pairs": 9,
+      "ratio": 798.3
+    },
+    "placebo_identical": {
+      "mean_abs_positional": 0.999993,
+      "mean_abs_text": 0.0,
+      "pairs": 8,
+      "ratio": null
+    },
+    "repair_emdash": {
+      "mean_abs_positional": 0.999995,
+      "mean_abs_text": 1.139e-06,
+      "pairs": 8,
+      "ratio": 877585.6
+    },
+    "repair_interiority": {
+      "mean_abs_positional": 0.999993,
+      "mean_abs_text": 3.404e-06,
+      "pairs": 8,
+      "ratio": 293747.2
+    },
+    "rewhitespace_sham": {
+      "mean_abs_positional": 0.999994,
+      "mean_abs_text": 2.447e-06,
+      "pairs": 10,
+      "ratio": 408633.7
+    },
+    "stat_flatten": {
+      "mean_abs_positional": 0.999996,
+      "mean_abs_text": 1.216e-06,
+      "pairs": 10,
+      "ratio": 822189.4
+    }
+  },
+  "pre_registration": {
+    "controls": "`placebo_identical` must return no separation at any station \u2014 at station 3 the two orientations of a byte-identical pair are the same prompt, so P(A)-P(B) must cancel to zero exactly, which is a stronger floor than any of the API protocols can offer. `rewhitespace_sham` separating at any station is a layout reading and is VOID (\u00a778.1).",
+    "ladder_order": [
+      "text_mean",
+      "judge_last",
+      "answer_logits",
+      "sampled"
+    ],
+    "no_positional_precondition_at_station_3": "Station 3 averages the two orientations of the same pair before taking a sign, so a constant slot preference cancels rather than being screened for. The residual orientation asymmetry is reported as a diagnostic (`orientation_split`) instead of as a precondition, because a precondition that cannot fail is not one (\u00a789's rule for E4).",
+    "question": "Between a representation of the prose and a sampled verdict, at which station does discrimination die? Scored on B6 (\u00a788), whose counter certifies the difference is there.",
+    "station_4_is_greedy": "The sampled verdict is taken at temperature 0. A temperature-sampled verdict would put sampling noise into the one station that exists to show what sampling costs, and the comparison wanted is distribution-versus-argmax rather than distribution-versus-draw.",
+    "stations_1_and_2_are_joined_not_recomputed": "They come from `latent_probe`'s dump, which is a single-text extraction; stations 3 and 4 are pairwise. The ladder is therefore two readings of the representation and two of the verdict channel joined on the fixture, not four readings of one tensor.",
+    "statistic": "The same two-sided exact binomial sign test over pairs that `elicitation_study` uses, so the four stations and the five API protocols land in one table. Station 3's per-pair score is P(A)-P(B) averaged over both orientations, which removes a constant positional preference by construction; its sign is the sign of that average.",
+    "why_this_order": "It is the order the signal has to survive in, so the first station at which k falls is a location and not a ranking. Declared before the run so that whichever station drops cannot be described afterwards as the one we expected.",
+    "why_two_sided": "Identical to `elicitation_study.PRE_REGISTRATION`: B6 certifies that a difference exists and never which side is better, so a protocol that consistently prefers either side has registered it. Inherited deliberately \u2014 the two modules must not disagree about what counts as a pass.",
+    "written": "2026-08-19, before the first forward pass of this module"
+  },
+  "stations": {
+    "answer_logits": {
+      "controls": [
+        {
+          "aligned": 0,
+          "alpha": 0.05,
+          "attainable_floor": 1.0,
+          "decided_pairs": 0,
+          "direction": "positive_side",
+          "family": "placebo_identical",
+          "k_required": null,
+          "p_two_sided": 1.0,
+          "undecided_pairs": [
+            "gen:scene-1",
+            "gen:scene-2",
+            "gen:scene-3",
+            "gen:scene-4",
+            "gen:scene-5",
+            "gen:scene-6",
+            "gen:scene-7",
+            "gen:scene-8"
+          ],
+          "verdict": "NOT_ATTAINABLE"
+        },
+        {
+          "aligned": 4,
+          "alpha": 0.05,
+          "attainable_floor": 0.007812,
+          "decided_pairs": 8,
+          "direction": "positive_side",
+          "family": "rewhitespace_sham",
+          "k_required": 8,
+          "p_two_sided": 1.0,
+          "undecided_pairs": [
+            "gen:scene-6",
+            "gen:scene-7"
+          ],
+          "verdict": "FAILS"
+        }
+      ],
+      "members": [
+        {
+          "aligned": 6,
+          "alpha": 0.05,
+          "attainable_floor": 0.001953,
+          "decided_pairs": 10,
+          "direction": "negative_side",
+          "family": "stat_flatten",
+          "k_required": 9,
+          "p_two_sided": 0.753906,
+          "undecided_pairs": [],
+          "verdict": "FAILS"
+        },
+        {
+          "aligned": 6,
+          "alpha": 0.05,
+          "attainable_floor": 0.003906,
+          "decided_pairs": 9,
+          "direction": "negative_side",
+          "family": "interiority_strip_matched",
+          "k_required": 8,
+          "p_two_sided": 0.507812,
+          "undecided_pairs": [],
+          "verdict": "FAILS"
+        },
+        {
+          "aligned": 5,
+          "alpha": 0.05,
+          "attainable_floor": 0.015625,
+          "decided_pairs": 7,
+          "direction": "negative_side",
+          "family": "repair_emdash",
+          "k_required": 7,
+          "p_two_sided": 0.453125,
+          "undecided_pairs": [
+            "gen:scene-2"
+          ],
+          "verdict": "FAILS"
+        }
+      ],
+      "positive_control": {
+        "aligned": 7,
+        "alpha": 0.05,
+        "attainable_floor": 0.007812,
+        "decided_pairs": 8,
+        "direction": "negative_side",
+        "family": "repair_interiority",
+        "k_required": 8,
+        "p_two_sided": 0.070312,
+        "undecided_pairs": [],
+        "verdict": "FAILS"
+      }
+    },
+    "sampled": {
+      "controls": [
+        {
+          "aligned": 0,
+          "alpha": 0.05,
+          "attainable_floor": 1.0,
+          "decided_pairs": 0,
+          "direction": "positive_side",
+          "family": "placebo_identical",
+          "k_required": null,
+          "p_two_sided": 1.0,
+          "undecided_pairs": [
+            "gen:scene-1",
+            "gen:scene-2",
+            "gen:scene-3",
+            "gen:scene-4",
+            "gen:scene-5",
+            "gen:scene-6",
+            "gen:scene-7",
+            "gen:scene-8"
+          ],
+          "verdict": "NOT_ATTAINABLE"
+        },
+        {
+          "aligned": 0,
+          "alpha": 0.05,
+          "attainable_floor": 1.0,
+          "decided_pairs": 0,
+          "direction": "positive_side",
+          "family": "rewhitespace_sham",
+          "k_required": null,
+          "p_two_sided": 1.0,
+          "undecided_pairs": [
+            "gen:scene-1",
+            "gen:scene-10",
+            "gen:scene-2",
+            "gen:scene-3",
+            "gen:scene-4",
+            "gen:scene-5",
+            "gen:scene-6",
+            "gen:scene-7",
+            "gen:scene-8",
+            "gen:scene-9"
+          ],
+          "verdict": "NOT_ATTAINABLE"
+        }
+      ],
+      "members": [
+        {
+          "aligned": 0,
+          "alpha": 0.05,
+          "attainable_floor": 1.0,
+          "decided_pairs": 0,
+          "direction": "positive_side",
+          "family": "stat_flatten",
+          "k_required": null,
+          "p_two_sided": 1.0,
+          "undecided_pairs": [
+            "gen:scene-1",
+            "gen:scene-10",
+            "gen:scene-2",
+            "gen:scene-3",
+            "gen:scene-4",
+            "gen:scene-5",
+            "gen:scene-6",
+            "gen:scene-7",
+            "gen:scene-8",
+            "gen:scene-9"
+          ],
+          "verdict": "NOT_ATTAINABLE"
+        },
+        {
+          "aligned": 0,
+          "alpha": 0.05,
+          "attainable_floor": 1.0,
+          "decided_pairs": 0,
+          "direction": "positive_side",
+          "family": "interiority_strip_matched",
+          "k_required": null,
+          "p_two_sided": 1.0,
+          "undecided_pairs": [
+            "gen:scene-1",
+            "gen:scene-10",
+            "gen:scene-2",
+            "gen:scene-4",
+            "gen:scene-5",
+            "gen:scene-6",
+            "gen:scene-7",
+            "gen:scene-8",
+            "gen:scene-9"
+          ],
+          "verdict": "NOT_ATTAINABLE"
+        },
+        {
+          "aligned": 0,
+          "alpha": 0.05,
+          "attainable_floor": 1.0,
+          "decided_pairs": 0,
+          "direction": "positive_side",
+          "family": "repair_emdash",
+          "k_required": null,
+          "p_two_sided": 1.0,
+          "undecided_pairs": [
+            "gen:scene-1",
+            "gen:scene-2",
+            "gen:scene-3",
+            "gen:scene-4",
+            "gen:scene-5",
+            "gen:scene-6",
+            "gen:scene-7",
+            "gen:scene-8"
+          ],
+          "verdict": "NOT_ATTAINABLE"
+        }
+      ],
+      "positive_control": {
+        "aligned": 0,
+        "alpha": 0.05,
+        "attainable_floor": 1.0,
+        "decided_pairs": 0,
+        "direction": "positive_side",
+        "family": "repair_interiority",
+        "k_required": null,
+        "p_two_sided": 1.0,
+        "undecided_pairs": [
+          "gen:scene-1",
+          "gen:scene-2",
+          "gen:scene-3",
+          "gen:scene-4",
+          "gen:scene-5",
+          "gen:scene-6",
+          "gen:scene-7",
+          "gen:scene-8"
+        ],
+        "verdict": "NOT_ATTAINABLE"
+      }
+    }
+  }
+}

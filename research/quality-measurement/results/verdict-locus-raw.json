@@ -1,0 +1,817 @@
+{
+  "answer_token_ids": {
+    "A": 236776,
+    "B": 236799
+  },
+  "families": {
+    "interiority_strip_matched": {
+      "gen:scene-1": {
+        "argmax_is_answer": [
+          true,
+          true
+        ],
+        "logit_score": -4.503309673964395e-05,
+        "orientation_split": [
+          -0.999999249585926,
+          0.9999091833924467
+        ],
+        "sampled": [
+          "A",
+          "A"
+        ]
+      },
+      "gen:scene-10": {
+        "argmax_is_answer": [
+          true,
+          true
+        ],
+        "logit_score": 3.002492007908586e-06,
+        "orientation_split": [
+          -0.9999904465335021,
+          0.9999964515175179
+        ],
+        "sampled": [
+          "A",
+          "A"
+        ]
+      },
+      "gen:scene-2": {
+        "argmax_is_answer": [
+          true,
+          true
+        ],
+        "logit_score": 0.010928641646387405,
+        "orientation_split": [
+          -0.9780261320993304,
+          0.9998834153921052
+        ],
+        "sampled": [
+          "A",
+          "A"
+        ]
+      },
+      "gen:scene-4": {
+        "argmax_is_answer": [
+          true,
+          true
+        ],
+        "logit_score": -1.3947953902970767e-06,
+        "orientation_split": [
+          -0.9999904465335021,
+          0.9999876569427215
+        ],
+        "sampled": [
+          "A",
+          "A"
+        ]
+      },
+      "gen:scene-5": {
+        "argmax_is_answer": [
+          true,
+          true
+        ],
+        "logit_score": 0.00026042850004159845,
+        "orientation_split": [
+          -0.9993293141305912,
+          0.9998501711306744
+        ],
+        "sampled": [
+          "A",
+          "A"
+        ]
+      },
+      "gen:scene-6": {
+        "argmax_is_answer": [
+          true,
+          true
+        ],
+        "logit_score": -3.379298604500036e-06,
+        "orientation_split": [
+          -0.9999993364699264,
+          0.9999925778727174
+        ],
+        "sampled": [
+          "A",
+          "A"
+        ]
+      },
+      "gen:scene-7": {
+        "argmax_is_answer": [
+          true,
+          true
+        ],
+        "logit_score": -5.101235387883207e-06,
+        "orientation_split": [
+          -0.9999978594134973,
+          0.9999876569427215
+        ],
+        "sampled": [
+          "A",
+          "A"
+        ]
+      },
+      "gen:scene-8": {
+        "argmax_is_answer": [
+          true,
+          true
+        ],
+        "logit_score": -6.420326258194109e-06,
+        "orientation_split": [
+          -0.9999925778727174,
+          0.9999797372202011
+        ],
+        "sampled": [
+          "A",
+          "A"
+        ]
+      },
+      "gen:scene-9": {
+        "argmax_is_answer": [
+          true,
+          true
+        ],
+        "logit_score": -6.10429663083778e-06,
+        "orientation_split": [
+          -0.9999964515175179,
+          0.9999842429242563
+        ],
+        "sampled": [
+          "A",
+          "A"
+        ]
+      }
+    },
+    "placebo_identical": {
+      "gen:scene-1": {
+        "argmax_is_answer": [
+          true,
+          true
+        ],
+        "logit_score": 0.0,
+        "orientation_split": [
+          -0.9999942366648611,
+          0.9999942366648611
+        ],
+        "sampled": [
+          "A",
+          "A"
+        ]
+      },
+      "gen:scene-2": {
+        "argmax_is_answer": [
+          true,
+          true
+        ],
+        "logit_score": 0.0,
+        "orientation_split": [
+          -0.9999942366648611,
+          0.9999942366648611
+        ],
+        "sampled": [
+          "A",
+          "A"
+        ]
+      },
+      "gen:scene-3": {
+        "argmax_is_answer": [
+          true,
+          true
+        ],
+        "logit_score": 0.0,
+        "orientation_split": [
+          -0.9999995760423133,
+          0.9999995760423133
+        ],
+        "sampled": [
+          "A",
+          "A"
+        ]
+      },
+      "gen:scene-4": {
+        "argmax_is_answer": [
+          true,
+          true
+        ],
+        "logit_score": 0.0,
+        "orientation_split": [
+          -0.9999971985313323,
+          0.9999971985313323
+        ],
+        "sampled": [
+          "A",
+          "A"
+        ]
+      },
+      "gen:scene-5": {
+        "argmax_is_answer": [
+          true,
+          true
+        ],
+        "logit_score": 0.0,
+        "orientation_split": [
+          -0.9999942366648611,
+          0.9999942366648611
+        ],
+        "sampled": [
+          "A",
+          "A"
+        ]
+      },
+      "gen:scene-6": {
+        "argmax_is_answer": [
+          true,
+          true
+        ],
+        "logit_score": 0.0,
+        "orientation_split": [
+          -0.9999942366648611,
+          0.9999942366648611
+        ],
+        "sampled": [
+          "A",
+          "A"
+        ]
+      },
+      "gen:scene-7": {
+        "argmax_is_answer": [
+          true,
+          true
+        ],
+        "logit_score": 0.0,
+        "orientation_split": [
+          -0.9999942366648611,
+          0.9999942366648611
+        ],
+        "sampled": [
+          "A",
+          "A"
+        ]
+      },
+      "gen:scene-8": {
+        "argmax_is_answer": [
+          true,
+          true
+        ],
+        "logit_score": 0.0,
+        "orientation_split": [
+          -0.9999797372202011,
+          0.9999797372202011
+        ],
+        "sampled": [
+          "A",
+          "A"
+        ]
+      }
+    },
+    "repair_emdash": {
+      "gen:scene-1": {
+        "argmax_is_answer": [
+          true,
+          true
+        ],
+        "logit_score": 3.289861069788458e-06,
+        "orientation_split": [
+          -0.9999876569427215,
+          0.9999942366648611
+        ],
+        "sampled": [
+          "A",
+          "A"
+        ]
+      },
+      "gen:scene-2": {
+        "argmax_is_answer": [
+          true,
+          true
+        ],
+        "logit_score": 0.0,
+        "orientation_split": [
+          -0.9999925778727174,
+          0.9999925778727174
+        ],
+        "sampled": [
+          "A",
+          "A"
+        ]
+      },
+      "gen:scene-3": {
+        "argmax_is_answer": [
+          true,
+          true
+        ],
+        "logit_score": -1.0647408998920582e-07,
+        "orientation_split": [
+          -0.9999997362926933,
+          0.9999995233445134
+        ],
+        "sampled": [
+          "A",
+          "A"
+        ]
+      },
+      "gen:scene-4": {
+        "argmax_is_answer": [
+          true,
+          true
+        ],
+        "logit_score": -1.1074263284172048e-06,
+        "orientation_split": [
+          -0.9999964515175179,
+          0.9999942366648611
+        ],
+        "sampled": [
+          "A",
+          "A"
+        ]
+      },
+      "gen:scene-5": {
+        "argmax_is_answer": [
+          true,
+          true
+        ],
+        "logit_score": -1.8950656794913812e-06,
+        "orientation_split": [
+          -0.9999942366648611,
+          0.9999904465335021
+        ],
+        "sampled": [
+          "A",
+          "A"
+        ]
+      },
+      "gen:scene-6": {
+        "argmax_is_answer": [
+          true,
+          true
+        ],
+        "logit_score": -4.4847260483038554e-07,
+        "orientation_split": [
+          -0.9999987563587069,
+          0.9999978594134973
+        ],
+        "sampled": [
+          "A",
+          "A"
+        ]
+      },
+      "gen:scene-7": {
+        "argmax_is_answer": [
+          true,
+          true
+        ],
+        "logit_score": 3.735069071808539e-07,
+        "orientation_split": [
+          -0.9999964515175179,
+          0.9999971985313323
+        ],
+        "sampled": [
+          "A",
+          "A"
+        ]
+      },
+      "gen:scene-8": {
+        "argmax_is_answer": [
+          true,
+          true
+        ],
+        "logit_score": -1.8950656794913812e-06,
+        "orientation_split": [
+          -0.9999942366648611,
+          0.9999904465335021
+        ],
+        "sampled": [
+          "A",
+          "A"
+        ]
+      }
+    },
+    "repair_interiority": {
+      "gen:scene-1": {
+        "argmax_is_answer": [
+          true,
+          true
+        ],
+        "logit_score": -1.667457695475605e-05,
+        "orientation_split": [
+          -0.9999904465335021,
+          0.9999570973795926
+        ],
+        "sampled": [
+          "A",
+          "A"
+        ]
+      },
+      "gen:scene-2": {
+        "argmax_is_answer": [
+          true,
+          true
+        ],
+        "logit_score": 7.249722330016084e-06,
+        "orientation_split": [
+          -0.9999797372202011,
+          0.9999942366648611
+        ],
+        "sampled": [
+          "A",
+          "A"
+        ]
+      },
+      "gen:scene-3": {
+        "argmax_is_answer": [
+          true,
+          true
+        ],
+        "logit_score": -1.9991138344721548e-07,
+        "orientation_split": [
+          -0.9999997362926933,
+          0.9999993364699264
+        ],
+        "sampled": [
+          "A",
+          "A"
+        ]
+      },
+      "gen:scene-4": {
+        "argmax_is_answer": [
+          true,
+          true
+        ],
+        "logit_score": -2.7178115402648473e-07,
+        "orientation_split": [
+          -0.9999997931482341,
+          0.999999249585926
+        ],
+        "sampled": [
+          "A",
+          "A"
+        ]
+      },
+      "gen:scene-5": {
+        "argmax_is_answer": [
+          true,
+          true
+        ],
+        "logit_score": -1.448413286198047e-06,
+        "orientation_split": [
+          -0.9999954746992898,
+          0.9999925778727174
+        ],
+        "sampled": [
+          "A",
+          "A"
+        ]
+      },
+      "gen:scene-6": {
+        "argmax_is_answer": [
+          true,
+          true
+        ],
+        "logit_score": -4.4847260483038554e-07,
+        "orientation_split": [
+          -0.9999987563587069,
+          0.9999978594134973
+        ],
+        "sampled": [
+          "A",
+          "A"
+        ]
+      },
+      "gen:scene-7": {
+        "argmax_is_answer": [
+          true,
+          true
+        ],
+        "logit_score": -2.372967173869256e-07,
+        "orientation_split": [
+          -0.999998334006932,
+          0.9999978594134973
+        ],
+        "sampled": [
+          "A",
+          "A"
+        ]
+      },
+      "gen:scene-8": {
+        "argmax_is_answer": [
+          true,
+          true
+        ],
+        "logit_score": -7.039479896775447e-07,
+        "orientation_split": [
+          -0.9999978594134973,
+          0.9999964515175179
+        ],
+        "sampled": [
+          "A",
+          "A"
+        ]
+      }
+    },
+    "rewhitespace_sham": {
+      "gen:scene-1": {
+        "argmax_is_answer": [
+          true,
+          true
+        ],
+        "logit_score": 1.3947953902970767e-06,
+        "orientation_split": [
+          -0.9999876569427215,
+          0.9999904465335021
+        ],
+        "sampled": [
+          "A",
+          "A"
+        ]
+      },
+      "gen:scene-10": {
+        "argmax_is_answer": [
+          true,
+          true
+        ],
+        "logit_score": 5.677377998836164e-07,
+        "orientation_split": [
+          -0.9999971985313323,
+          0.999998334006932
+        ],
+        "sampled": [
+          "A",
+          "A"
+        ]
+      },
+      "gen:scene-2": {
+        "argmax_is_answer": [
+          true,
+          true
+        ],
+        "logit_score": -5.615887516796647e-06,
+        "orientation_split": [
+          -0.9999954746992898,
+          0.9999842429242563
+        ],
+        "sampled": [
+          "A",
+          "A"
+        ]
+      },
+      "gen:scene-3": {
+        "argmax_is_answer": [
+          true,
+          true
+        ],
+        "logit_score": 1.535913497718866e-06,
+        "orientation_split": [
+          -0.9999964515175179,
+          0.9999995233445134
+        ],
+        "sampled": [
+          "A",
+          "A"
+        ]
+      },
+      "gen:scene-4": {
+        "argmax_is_answer": [
+          true,
+          true
+        ],
+        "logit_score": -1.1923571037186775e-06,
+        "orientation_split": [
+          -0.9999978594134973,
+          0.9999954746992898
+        ],
+        "sampled": [
+          "A",
+          "A"
+        ]
+      },
+      "gen:scene-5": {
+        "argmax_is_answer": [
+          true,
+          true
+        ],
+        "logit_score": -6.10429663083778e-06,
+        "orientation_split": [
+          -0.9999964515175179,
+          0.9999842429242563
+        ],
+        "sampled": [
+          "A",
+          "A"
+        ]
+      },
+      "gen:scene-6": {
+        "argmax_is_answer": [
+          true,
+          true
+        ],
+        "logit_score": 0.0,
+        "orientation_split": [
+          -0.9999978594134973,
+          0.9999978594134973
+        ],
+        "sampled": [
+          "A",
+          "A"
+        ]
+      },
+      "gen:scene-7": {
+        "argmax_is_answer": [
+          true,
+          true
+        ],
+        "logit_score": 0.0,
+        "orientation_split": [
+          -0.9999942366648611,
+          0.9999942366648611
+        ],
+        "sampled": [
+          "A",
+          "A"
+        ]
+      },
+      "gen:scene-8": {
+        "argmax_is_answer": [
+          true,
+          true
+        ],
+        "logit_score": -3.289861069788458e-06,
+        "orientation_split": [
+          -0.9999942366648611,
+          0.9999876569427215
+        ],
+        "sampled": [
+          "A",
+          "A"
+        ]
+      },
+      "gen:scene-9": {
+        "argmax_is_answer": [
+          true,
+          true
+        ],
+        "logit_score": 4.7707943053865165e-06,
+        "orientation_split": [
+          -0.9999876569427215,
+          0.9999971985313323
+        ],
+        "sampled": [
+          "A",
+          "A"
+        ]
+      }
+    },
+    "stat_flatten": {
+      "gen:scene-1": {
+        "argmax_is_answer": [
+          true,
+          true
+        ],
+        "logit_score": -3.002492007908586e-06,
+        "orientation_split": [
+          -0.9999964515175179,
+          0.9999904465335021
+        ],
+        "sampled": [
+          "A",
+          "A"
+        ]
+      },
+      "gen:scene-10": {
+        "argmax_is_answer": [
+          true,
+          true
+        ],
+        "logit_score": -1.9991138344721548e-07,
+        "orientation_split": [
+          -0.9999997362926933,
+          0.9999993364699264
+        ],
+        "sampled": [
+          "A",
+          "A"
+        ]
+      },
+      "gen:scene-2": {
+        "argmax_is_answer": [
+          true,
+          true
+        ],
+        "logit_score": -4.884091140411329e-07,
+        "orientation_split": [
+          -0.9999964515175179,
+          0.9999954746992898
+        ],
+        "sampled": [
+          "A",
+          "A"
+        ]
+      },
+      "gen:scene-3": {
+        "argmax_is_answer": [
+          true,
+          true
+        ],
+        "logit_score": -1.0647408998920582e-07,
+        "orientation_split": [
+          -0.9999997362926933,
+          0.9999995233445134
+        ],
+        "sampled": [
+          "A",
+          "A"
+        ]
+      },
+      "gen:scene-4": {
+        "argmax_is_answer": [
+          true,
+          true
+        ],
+        "logit_score": 5.01231497196386e-07,
+        "orientation_split": [
+          -0.999998334006932,
+          0.9999993364699264
+        ],
+        "sampled": [
+          "A",
+          "A"
+        ]
+      },
+      "gen:scene-5": {
+        "argmax_is_answer": [
+          true,
+          true
+        ],
+        "logit_score": 3.37599891508944e-06,
+        "orientation_split": [
+          -0.9999904465335021,
+          0.9999971985313323
+        ],
+        "sampled": [
+          "A",
+          "A"
+        ]
+      },
+      "gen:scene-6": {
+        "argmax_is_answer": [
+          true,
+          true
+        ],
+        "logit_score": -1.162406590538012e-06,
+        "orientation_split": [
+          -0.9999995233445134,
+          0.9999971985313323
+        ],
+        "sampled": [
+          "A",
+          "A"
+        ]
+      },
+      "gen:scene-7": {
+        "argmax_is_answer": [
+          true,
+          true
+        ],
+        "logit_score": 1.1923571037186775e-06,
+        "orientation_split": [
+          -0.9999954746992898,
+          0.9999978594134973
+        ],
+        "sampled": [
+          "A",
+          "A"
+        ]
+      },
+      "gen:scene-8": {
+        "argmax_is_answer": [
+          true,
+          true
+        ],
+        "logit_score": 1.3947953902970767e-06,
+        "orientation_split": [
+          -0.9999876569427215,
+          0.9999904465335021
+        ],
+        "sampled": [
+          "A",
+          "A"
+        ]
+      },
+      "gen:scene-9": {
+        "argmax_is_answer": [
+          true,
+          true
+        ],
+        "logit_score": -7.385282145833116e-07,
+        "orientation_split": [
+          -0.9999993364699264,
+          0.9999978594134973
+        ],
+        "sampled": [
+          "A",
+          "A"
+        ]
+      }
+    }
+  },
+  "model": "google/gemma-3-4b-it",
+  "revision": "093f9f388b31de276ce2de164bdc2081324b9767"
+}

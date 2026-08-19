@@ -1,0 +1,1235 @@
+{
+  "activations_present": true,
+  "b6_proposal": {
+    "members": [
+      {
+        "a_priori_counter": "system_digit_count",
+        "decidable_pairs": 10,
+        "family": "stat_flatten",
+        "groups": 10,
+        "orders_all": true,
+        "panel": {
+          "note": "estimate on the wrong side of indifference; interval spans 0.5",
+          "rate": 0.5437,
+          "read": "BLIND",
+          "where": "\u00a781"
+        },
+        "structural_ties": []
+      },
+      {
+        "a_priori_counter": "interior_per_1k",
+        "decidable_pairs": 9,
+        "family": "interiority_strip_matched",
+        "groups": 9,
+        "orders_all": true,
+        "panel": {
+          "note": "DETECTS as registered, UNDECIDED strict; interval [0.1667, 0.6667]",
+          "rate": 0.3889,
+          "read": "SPANS_NULL",
+          "where": "\u00a781"
+        },
+        "structural_ties": []
+      },
+      {
+        "a_priori_counter": "em_per_1k",
+        "decidable_pairs": 7,
+        "family": "repair_emdash",
+        "groups": 8,
+        "orders_all": true,
+        "panel": {
+          "note": "bias 0.6949 at Haiku and 0.6087 at Sonnet \u2014 void at both tiers",
+          "rate": 0.2734,
+          "read": "VOID",
+          "where": "\u00a785, \u00a785.1"
+        },
+        "structural_ties": [
+          "gen:scene-7"
+        ]
+      }
+    ],
+    "name": "B6 counter-decidable / panel-undecided",
+    "rejected": [
+      {
+        "a_priori_counter": "interior_per_1k",
+        "decidable_pairs": 8,
+        "family": "repair_interiority",
+        "groups": 8,
+        "orders_all": false,
+        "panel": {
+          "note": "1.0000 at Sonnet, bias 0.500",
+          "rate": 0.9509,
+          "read": "SEPARATES",
+          "where": "\u00a785, \u00a785.1"
+        },
+        "structural_ties": [],
+        "why_not": "the panel decides this family"
+      },
+      {
+        "a_priori_counter": null,
+        "family": "states_drunk_vs_sober",
+        "groups": 8,
+        "panel": {
+          "note": "bias 0.828",
+          "rate": null,
+          "read": "VOID",
+          "where": "\u00a783"
+        },
+        "why_not": "no counter is nameable from the transform, so any separation would be the best of a sweep over twenty-seven features"
+      },
+      {
+        "a_priori_counter": null,
+        "family": "states_trip_vs_sober",
+        "groups": 8,
+        "panel": {
+          "note": "bias 0.762",
+          "rate": null,
+          "read": "VOID",
+          "where": "\u00a783"
+        },
+        "why_not": "no counter is nameable from the transform, so any separation would be the best of a sweep over twenty-seven features"
+      },
+      {
+        "a_priori_counter": null,
+        "family": "exemplar_vs_sober",
+        "groups": 8,
+        "panel": {
+          "note": "VOID at Haiku (bias 0.766), clean at Sonnet (bias 0.490)",
+          "rate": 0.6484,
+          "read": "READABLE_AT_SONNET",
+          "where": "\u00a785, \u00a785.1"
+        },
+        "why_not": "no counter is nameable from the transform, so any separation would be the best of a sweep over twenty-seven features"
+      },
+      {
+        "a_priori_counter": "words",
+        "decidable_pairs": 10,
+        "family": "filler_inject",
+        "groups": 10,
+        "orders_all": true,
+        "panel": {
+          "note": "a detected DEGRADER",
+          "rate": null,
+          "read": "SEPARATES",
+          "where": "\u00a770"
+        },
+        "structural_ties": [],
+        "why_not": "the panel decides this family"
+      }
+    ],
+    "rule": "A pair joins B6 when the counter its transform is DEFINED in terms of \u2014 named in A_PRIORI_COUNTER before any result is read \u2014 orders every decidable pair in one direction, structurally tied pairs are listed rather than counted, at least G-1 pairs are decidable, AND the ledger records the panel as BLIND, VOID or interval-spanning on the same fixture.",
+    "status": "PROPOSED \u2014 NOT ADMITTED. Only the operator moves what panel v2 is selected on.",
+    "what_it_cannot_test": "Preference. A counter orders a pair; it does not prefer one side. B6 grades whether a judge REGISTERS a difference, and \u00a780's paid batch remains the only instrument that can say whether the difference matters to a reader.",
+    "what_it_tests": "The verdict channel, not perception: every member is a difference that is provably present in the text and provably absent from the panel's answer."
+  },
+  "conversion_arm": {
+    "all_layers": {
+      "judge_last": {
+        "aligned": {
+          "17": 0.6181,
+          "25": 0.6111,
+          "9": 0.625
+        },
+        "crossed": {
+          "17": 0.4672,
+          "25": 0.5547,
+          "9": 0.5839
+        }
+      },
+      "text_mean": {
+        "aligned": {
+          "17": 0.6319,
+          "25": 0.6458,
+          "9": 0.6319
+        },
+        "crossed": {
+          "17": 0.5255,
+          "25": 0.4745,
+          "9": 0.5547
+        }
+      }
+    },
+    "frozen": {
+      "minimum_across_strata": 0.5255,
+      "spec": {
+        "channel": "text_mean",
+        "cites": "\u00a787.2, which selected this depth across strata at n=46",
+        "direction": "unit-normalised mean of paired difference vectors, leave-one-pair-out",
+        "frozen": "2026-08-19, before the corpus rebuild and before any new pair or label was read",
+        "layer": 17,
+        "no_depth_selection": "`_select_layer` is not called on a frozen run. Every depth is still extracted and reported, because hiding the others would make the freeze unfalsifiable, but the verdict reads layer 17 alone and no other depth may be substituted into it.",
+        "what_freezing_buys": "The asymmetry \u00a787.2 disclosed \u2014 three shots for the probe against one for each surface baseline \u2014 is gone, so a probe-versus-P0 ranking on the expanded corpus is a comparison rather than a construction. What it costs is the chance that 17 was the wrong depth, which is the correct thing to pay: \u00a784's rule is that a v2 candidate is frozen before the numbers that would tempt a re-selection arrive."
+      },
+      "split_rule": {
+        "declared": "2026-08-19, before the expanded corpus was extracted or scored",
+        "reads": "tight vs loose is the tier-confound contrast; neither half alone is the finding",
+        "rule": "median split of `crossed` on |log10(views_high / views_low)|",
+        "why_not_a_threshold": "no `crossed` pair sits inside the factor-of-two tolerance `aligned` uses, at either corpus size; the tightest is 2.1x and the median 12.2x"
+      },
+      "strata": {
+        "aligned": {
+          "agreement": 0.6319,
+          "agreement_interval": [
+            0.5476,
+            0.7107
+          ],
+          "draws": 20000,
+          "groups": 144,
+          "k": 91,
+          "layer": 17,
+          "mc_stderr": 0.000444,
+          "p_note": null,
+          "p_sampled": 0.00395,
+          "seed": 20260819
+        },
+        "crossed": {
+          "agreement": 0.5255,
+          "agreement_interval": [
+            0.4385,
+            0.6114
+          ],
+          "draws": 20000,
+          "groups": 137,
+          "k": 72,
+          "layer": 17,
+          "mc_stderr": 0.0034,
+          "p_note": null,
+          "p_sampled": 0.3629,
+          "seed": 20260819
+        }
+      },
+      "sub_strata": {
+        "crossed_loose": {
+          "agreement": 0.5797,
+          "agreement_interval": [
+            0.4548,
+            0.6976
+          ],
+          "draws": 20000,
+          "groups": 69,
+          "k": 40,
+          "layer": 17,
+          "mc_stderr": 0.002655,
+          "p0": {
+            "agreement": 0.5362,
+            "agreement_interval": [
+              0.412,
+              0.6572
+            ],
+            "draws": 20000,
+            "groups": 69,
+            "k": 37,
+            "mc_stderr": 0.003401,
+            "p_note": null,
+            "p_sampled": 0.36335,
+            "seed": 20260819
+          },
+          "p0_plus": {
+            "agreement": 0.5507,
+            "agreement_interval": [
+              0.4262,
+              0.6708
+            ],
+            "draws": 20000,
+            "groups": 69,
+            "k": 38,
+            "mc_stderr": 0.003216,
+            "p_note": null,
+            "p_sampled": 0.2924,
+            "seed": 20260819
+          },
+          "p_note": null,
+          "p_sampled": 0.16975,
+          "pairs": 69,
+          "seed": 20260819
+        },
+        "crossed_tight": {
+          "agreement": 0.5147,
+          "agreement_interval": [
+            0.3903,
+            0.6378
+          ],
+          "draws": 20000,
+          "groups": 68,
+          "k": 35,
+          "layer": 17,
+          "mc_stderr": 0.003534,
+          "p0": {
+            "agreement": 0.6029,
+            "agreement_interval": [
+              0.477,
+              0.7197
+            ],
+            "draws": 20000,
+            "groups": 68,
+            "k": 41,
+            "mc_stderr": 0.002184,
+            "p_note": null,
+            "p_sampled": 0.10675,
+            "seed": 20260819
+          },
+          "p0_plus": {
+            "agreement": 0.6029,
+            "agreement_interval": [
+              0.477,
+              0.7197
+            ],
+            "draws": 20000,
+            "groups": 68,
+            "k": 41,
+            "mc_stderr": 0.002156,
+            "p_note": null,
+            "p_sampled": 0.1037,
+            "seed": 20260819
+          },
+          "p_note": null,
+          "p_sampled": 0.486,
+          "pairs": 68,
+          "seed": 20260819
+        }
+      },
+      "tier_confound_reading": "tight 0.5147 vs loose 0.5797: the readout scores in the loose half and not the tight one, which is the signature of a tier reading and not of a prose reading",
+      "verdict": {
+        "text_mean": {
+          "all_interval_lower_bounds_above_half": false,
+          "exceeds_prose_blind_bar": true,
+          "min_agreement": 0.5255,
+          "passes": false,
+          "reading": "FAILS on the interval, which was pre-registered as the binding condition: the point estimate clears 0.52 but a lower bound does not exclude 0.50."
+        }
+      }
+    },
+    "minimum_across_strata": {
+      "judge_last": 0.5839,
+      "p0": 0.5693,
+      "p0_plus": 0.5764,
+      "text_mean": 0.5547
+    },
+    "pre_registration": {
+      "bar": "Clears only if min agreement across strata EXCEEDS 0.52 \u2014 the best prose-blind rule's minimum, `pick_fewer_views` \u2014 AND both strata's Clopper-Pearson lower bounds exceed 0.50. Two conditions, both pre-registered, either alone decides against.",
+      "bar_attainability": "COMPUTED before committing, not estimated \u2014 the \u00a787 lesson applied one entry later, and the first draft of this very entry got it wrong by eye. Measured: exceeding 0.52 needs k>=14 of 25 (0.5600; 13/25 lands exactly ON 0.52 and does not exceed it) and k>=11 of 21 (0.5238). The INTERVAL condition is far more binding and is what the arm will actually fail on if it fails: a Clopper-Pearson lower bound above 0.50 needs k>=18 of 25 (0.7200, CI [0.5061, 0.8793]) and k>=16 of 21 (0.7619, CI [0.5283, 0.9178]). So this design can only pass by ordering roughly three pairs in four \u2014 a far higher standard than 0.52 suggests, stated now so a near-miss is not later described as nearly passing. `test_the_conversion_bar_is_attainable_and_the_interval_is_the_binding_half` pins it.",
+      "layer_selection": "ONE readout depth for the whole arm, chosen to maximise min(aligned, crossed) \u2014 never a different depth per stratum, which would report a minimum no single readout achieved. Every layer's agreement is kept under `all_layers` so the spread is visible. This is still a selection over three depths that the surface baselines do not get, so the probe-versus-P0 comparison on this family favours the probe by construction and any ranking read off it carries that asymmetry. It cannot manufacture a PASS, because the bar's binding half is an interval and selection on a point estimate does not narrow one.",
+      "leak_rule": "The texts are third-party RoyalRoad prose. No excerpt is written anywhere: the activation dump keys on sha digests and is gitignored, `corpus_leak_audit` refuses a committed .npz outright, and the results JSON carries pair_ids and verdicts only.",
+      "null": "Sampled, not exhaustive: 2**25 is 33.5 million re-runs. 20,000 flip draws at seed 20260819, with the Monte-Carlo standard error reported beside every p and a p of zero reported as '< 1/draws' rather than as zero.",
+      "positional_bias_precondition": "\u00a779's third condition is bias in band. It is VACUOUS for a probe and is recorded as vacuous rather than as passed: a readout scores one text at a time and never sees an order, so there is no slot for it to prefer. That is a structural advantage of this instrument over the panel on exactly the material where \u00a779.1's candidate voided at 0.356 pooled bias \u2014 and it is the one thing the probe brings that the counter does not.",
+      "statistic": "min(agreement_aligned, agreement_crossed). NEVER the mean. \u00a779.1 measured why: pooled, its first candidate averaged to 0.51 and read as unremarkable, while the strata showed a 0.20 spread tilted toward popularity. `taste_benchmark.PRE_REGISTRATION['never_average']` is the same rule and this arm inherits it verbatim.",
+      "valence_ceiling": "Even a clean pass licenses NOTHING. \u00a782 classifies conversion as BEHAVIOUR-class evidence at STORY grain: rankable, and constitutionally unable to license, because `domain/calibration.py` defines PREFERENCE as a HUMAN's blinded choice. A pass here would mean 'this readout ranks matched human prose by a reader-behaviour label better than chance and better than any popularity proxy', which is a judge-selection signal and not a statement that either side is better prose.",
+      "why_this_family_is_different": "Every other family in this module is manufactured: we made the difference, so a readout separating it says only that the difference is there. \u00a779's conversion pairs carry an EXTERNAL label \u2014 followers/total_views, a reader BEHAVIOUR aggregated over other authors' whole stories \u2014 so here k/G IS agreement with that label, in the same units as \u00a779's 0.52 bar. It is the only family in the file from which a direction may be read at all, and it is the anchor the directive names for any quality-direction claim.",
+      "written": "2026-08-19, before the first conversion-family forward pass"
+    },
+    "selected_layer": {
+      "judge_last": 9,
+      "text_mean": 9
+    },
+    "strata": {
+      "aligned": {
+        "judge_last": {
+          "agreement": 0.625,
+          "agreement_interval": [
+            0.5405,
+            0.7042
+          ],
+          "draws": 20000,
+          "groups": 144,
+          "k": 90,
+          "layer": 9,
+          "mc_stderr": 0.000528,
+          "p_note": null,
+          "p_sampled": 0.0056,
+          "seed": 20260819
+        },
+        "p0": {
+          "agreement": 0.5833,
+          "agreement_interval": [
+            0.4983,
+            0.6648
+          ],
+          "draws": 20000,
+          "groups": 144,
+          "k": 84,
+          "mc_stderr": 0.001728,
+          "p_note": null,
+          "p_sampled": 0.0638,
+          "seed": 20260819
+        },
+        "p0_plus": {
+          "agreement": 0.5764,
+          "agreement_interval": [
+            0.4913,
+            0.6582
+          ],
+          "draws": 20000,
+          "groups": 144,
+          "k": 83,
+          "mc_stderr": 0.001952,
+          "p_note": null,
+          "p_sampled": 0.08315,
+          "seed": 20260819
+        },
+        "pairs": 144,
+        "text_mean": {
+          "agreement": 0.6319,
+          "agreement_interval": [
+            0.5476,
+            0.7107
+          ],
+          "draws": 20000,
+          "groups": 144,
+          "k": 91,
+          "layer": 9,
+          "mc_stderr": 0.000457,
+          "p_note": null,
+          "p_sampled": 0.0042,
+          "seed": 20260819
+        }
+      },
+      "crossed": {
+        "judge_last": {
+          "agreement": 0.5839,
+          "agreement_interval": [
+            0.4967,
+            0.6675
+          ],
+          "draws": 20000,
+          "groups": 137,
+          "k": 80,
+          "layer": 9,
+          "mc_stderr": 0.00167,
+          "p_note": null,
+          "p_sampled": 0.0593,
+          "seed": 20260819
+        },
+        "p0": {
+          "agreement": 0.5693,
+          "agreement_interval": [
+            0.482,
+            0.6536
+          ],
+          "draws": 20000,
+          "groups": 137,
+          "k": 78,
+          "mc_stderr": 0.002214,
+          "p_note": null,
+          "p_sampled": 0.11015,
+          "seed": 20260819
+        },
+        "p0_plus": {
+          "agreement": 0.5766,
+          "agreement_interval": [
+            0.4894,
+            0.6605
+          ],
+          "draws": 20000,
+          "groups": 137,
+          "k": 79,
+          "mc_stderr": 0.001993,
+          "p_note": null,
+          "p_sampled": 0.087,
+          "seed": 20260819
+        },
+        "pairs": 137,
+        "text_mean": {
+          "agreement": 0.5547,
+          "agreement_interval": [
+            0.4675,
+            0.6396
+          ],
+          "draws": 20000,
+          "groups": 137,
+          "k": 76,
+          "layer": 9,
+          "mc_stderr": 0.002722,
+          "p_note": null,
+          "p_sampled": 0.1809,
+          "seed": 20260819
+        }
+      }
+    },
+    "verdict": {
+      "judge_last": {
+        "all_interval_lower_bounds_above_half": false,
+        "exceeds_prose_blind_bar": true,
+        "min_agreement": 0.5839,
+        "passes": false,
+        "reading": "FAILS on the interval, which was pre-registered as the binding condition: the point estimate clears 0.52 but a lower bound does not exclude 0.50."
+      },
+      "p0": {
+        "all_interval_lower_bounds_above_half": false,
+        "exceeds_prose_blind_bar": true,
+        "min_agreement": 0.5693,
+        "passes": false,
+        "reading": "FAILS on the interval, which was pre-registered as the binding condition: the point estimate clears 0.52 but a lower bound does not exclude 0.50."
+      },
+      "p0_plus": {
+        "all_interval_lower_bounds_above_half": false,
+        "exceeds_prose_blind_bar": true,
+        "min_agreement": 0.5764,
+        "passes": false,
+        "reading": "FAILS on the interval, which was pre-registered as the binding condition: the point estimate clears 0.52 but a lower bound does not exclude 0.50."
+      },
+      "text_mean": {
+        "all_interval_lower_bounds_above_half": false,
+        "exceeds_prose_blind_bar": true,
+        "min_agreement": 0.5547,
+        "passes": false,
+        "reading": "FAILS on the interval, which was pre-registered as the binding condition: the point estimate clears 0.52 but a lower bound does not exclude 0.50."
+      }
+    }
+  },
+  "extraction": {
+    "d_model": 2560,
+    "dump": "C:\\DEV\\LitHarness\\research\\quality-measurement\\results\\latent-taste-activations.npz",
+    "gpu_c_after": 57,
+    "model": "google/gemma-3-4b-it",
+    "n_layers": 34,
+    "readout_layers": [
+      9,
+      17,
+      25
+    ],
+    "revision": "093f9f388b31de276ce2de164bdc2081324b9767",
+    "seconds": 919.3,
+    "texts": 752,
+    "throttle": {
+      "pause_above_c": 72,
+      "rest_ratio": 3.0,
+      "resume_below_c": 66,
+      "source": "cdg_battery.throttle"
+    },
+    "tokens_max": 3539,
+    "tokens_mean": 1367.1,
+    "tokens_min": 909,
+    "vectors": 4512
+  },
+  "families": {
+    "exemplar_vs_sober": {
+      "dropped_identical_scenes": [],
+      "groups": 8,
+      "is_floor": false,
+      "judge_last": {
+        "best_layer": 9,
+        "groups": 8,
+        "k": 7,
+        "k_by_layer": {
+          "17": 6,
+          "25": 7,
+          "9": 7
+        },
+        "null_size": 256,
+        "p_exact": 0.117188,
+        "smallest_attainable_p": 0.003906,
+        "unscoreable_pairs": 0
+      },
+      "negative_arm": "sober",
+      "p0": {
+        "features": 24,
+        "groups": 8,
+        "k": 7,
+        "null_size": 256,
+        "p_exact": 0.070312,
+        "smallest_attainable_p": 0.003906,
+        "unscoreable_pairs": 0
+      },
+      "p0_best_single_DIAGNOSTIC": {
+        "best_k": 8,
+        "perfect_single_features": [
+          "dialogue_ratio",
+          "word_len_mean"
+        ]
+      },
+      "p0_plus": {
+        "features": 27,
+        "groups": 8,
+        "k": 7,
+        "null_size": 256,
+        "p_exact": 0.070312,
+        "smallest_attainable_p": 0.003906,
+        "unscoreable_pairs": 0
+      },
+      "positive_arm": "exemplar",
+      "text_mean": {
+        "best_layer": 9,
+        "groups": 8,
+        "k": 8,
+        "k_by_layer": {
+          "17": 8,
+          "25": 8,
+          "9": 8
+        },
+        "null_size": 256,
+        "p_exact": 0.007812,
+        "smallest_attainable_p": 0.003906,
+        "unscoreable_pairs": 0
+      }
+    },
+    "filler_inject": {
+      "dropped_identical_scenes": [],
+      "groups": 10,
+      "is_floor": false,
+      "judge_last": {
+        "best_layer": 9,
+        "groups": 10,
+        "k": 10,
+        "k_by_layer": {
+          "17": 10,
+          "25": 10,
+          "9": 10
+        },
+        "null_size": 1024,
+        "p_exact": 0.001953,
+        "smallest_attainable_p": 0.000977,
+        "unscoreable_pairs": 0
+      },
+      "negative_arm": "original",
+      "p0": {
+        "features": 24,
+        "groups": 10,
+        "k": 10,
+        "null_size": 1024,
+        "p_exact": 0.001953,
+        "smallest_attainable_p": 0.000977,
+        "unscoreable_pairs": 0
+      },
+      "p0_best_single_DIAGNOSTIC": {
+        "best_k": 10,
+        "perfect_single_features": [
+          "comma_per_1k",
+          "colon_per_1k",
+          "interior_per_1k",
+          "body_per_1k",
+          "body_to_interior",
+          "first_person_per_1k",
+          "adverb_ly_per_1k",
+          "dialogue_ratio",
+          "sentence_len_mean",
+          "paragraph_len_mean",
+          "type_token",
+          "word_len_mean",
+          "words",
+          "digit_per_1k"
+        ]
+      },
+      "p0_plus": {
+        "features": 27,
+        "groups": 10,
+        "k": 10,
+        "null_size": 1024,
+        "p_exact": 0.001953,
+        "smallest_attainable_p": 0.000977,
+        "unscoreable_pairs": 0
+      },
+      "positive_arm": "filler_inject",
+      "text_mean": {
+        "best_layer": 9,
+        "groups": 10,
+        "k": 10,
+        "k_by_layer": {
+          "17": 10,
+          "25": 10,
+          "9": 10
+        },
+        "null_size": 1024,
+        "p_exact": 0.001953,
+        "smallest_attainable_p": 0.000977,
+        "unscoreable_pairs": 0
+      }
+    },
+    "interiority_strip_matched": {
+      "dropped_identical_scenes": [
+        "gen:scene-3"
+      ],
+      "groups": 9,
+      "is_floor": false,
+      "judge_last": {
+        "best_layer": 25,
+        "groups": 9,
+        "k": 5,
+        "k_by_layer": {
+          "17": 1,
+          "25": 5,
+          "9": 2
+        },
+        "null_size": 512,
+        "p_exact": 0.839844,
+        "smallest_attainable_p": 0.001953,
+        "unscoreable_pairs": 0
+      },
+      "negative_arm": "interiority_deplete_matched",
+      "p0": {
+        "features": 24,
+        "groups": 9,
+        "k": 9,
+        "null_size": 512,
+        "p_exact": 0.003906,
+        "smallest_attainable_p": 0.001953,
+        "unscoreable_pairs": 0
+      },
+      "p0_best_single_DIAGNOSTIC": {
+        "best_k": 9,
+        "perfect_single_features": [
+          "interior_per_1k",
+          "sentence_len_mean"
+        ]
+      },
+      "p0_plus": {
+        "features": 27,
+        "groups": 9,
+        "k": 9,
+        "null_size": 512,
+        "p_exact": 0.003906,
+        "smallest_attainable_p": 0.001953,
+        "unscoreable_pairs": 0
+      },
+      "positive_arm": "interiority_strip",
+      "text_mean": {
+        "best_layer": 9,
+        "groups": 9,
+        "k": 9,
+        "k_by_layer": {
+          "17": 9,
+          "25": 9,
+          "9": 9
+        },
+        "null_size": 512,
+        "p_exact": 0.003906,
+        "smallest_attainable_p": 0.001953,
+        "unscoreable_pairs": 0
+      }
+    },
+    "placebo_identical": {
+      "dropped_identical_scenes": [],
+      "groups": 8,
+      "is_floor": true,
+      "judge_last": {
+        "best_layer": 9,
+        "groups": 8,
+        "k": 0,
+        "k_by_layer": {
+          "17": 0,
+          "25": 0,
+          "9": 0
+        },
+        "null_size": 256,
+        "p_exact": 1.0,
+        "smallest_attainable_p": 0.003906,
+        "unscoreable_pairs": 8
+      },
+      "negative_arm": "original",
+      "p0": {
+        "features": 24,
+        "groups": 8,
+        "k": 0,
+        "null_size": 256,
+        "p_exact": 1.0,
+        "smallest_attainable_p": 0.003906,
+        "unscoreable_pairs": 8
+      },
+      "p0_best_single_DIAGNOSTIC": {
+        "best_k": 0,
+        "perfect_single_features": []
+      },
+      "p0_plus": {
+        "features": 27,
+        "groups": 8,
+        "k": 0,
+        "null_size": 256,
+        "p_exact": 1.0,
+        "smallest_attainable_p": 0.003906,
+        "unscoreable_pairs": 8
+      },
+      "positive_arm": "repair_placebo",
+      "text_mean": {
+        "best_layer": 9,
+        "groups": 8,
+        "k": 0,
+        "k_by_layer": {
+          "17": 0,
+          "25": 0,
+          "9": 0
+        },
+        "null_size": 256,
+        "p_exact": 1.0,
+        "smallest_attainable_p": 0.003906,
+        "unscoreable_pairs": 8
+      }
+    },
+    "repair_emdash": {
+      "dropped_identical_scenes": [],
+      "groups": 8,
+      "is_floor": false,
+      "judge_last": {
+        "best_layer": 9,
+        "groups": 8,
+        "k": 8,
+        "k_by_layer": {
+          "17": 4,
+          "25": 5,
+          "9": 8
+        },
+        "null_size": 256,
+        "p_exact": 0.03125,
+        "smallest_attainable_p": 0.003906,
+        "unscoreable_pairs": 0
+      },
+      "negative_arm": "original",
+      "p0": {
+        "features": 24,
+        "groups": 8,
+        "k": 8,
+        "null_size": 256,
+        "p_exact": 0.007812,
+        "smallest_attainable_p": 0.003906,
+        "unscoreable_pairs": 0
+      },
+      "p0_best_single_DIAGNOSTIC": {
+        "best_k": 7,
+        "perfect_single_features": []
+      },
+      "p0_plus": {
+        "features": 27,
+        "groups": 8,
+        "k": 8,
+        "null_size": 256,
+        "p_exact": 0.007812,
+        "smallest_attainable_p": 0.003906,
+        "unscoreable_pairs": 0
+      },
+      "positive_arm": "repair_emdash",
+      "text_mean": {
+        "best_layer": 25,
+        "groups": 8,
+        "k": 8,
+        "k_by_layer": {
+          "17": 7,
+          "25": 8,
+          "9": 7
+        },
+        "null_size": 256,
+        "p_exact": 0.015625,
+        "smallest_attainable_p": 0.003906,
+        "unscoreable_pairs": 0
+      }
+    },
+    "repair_interiority": {
+      "dropped_identical_scenes": [],
+      "groups": 8,
+      "is_floor": false,
+      "judge_last": {
+        "best_layer": 17,
+        "groups": 8,
+        "k": 8,
+        "k_by_layer": {
+          "17": 8,
+          "25": 7,
+          "9": 7
+        },
+        "null_size": 256,
+        "p_exact": 0.03125,
+        "smallest_attainable_p": 0.003906,
+        "unscoreable_pairs": 0
+      },
+      "negative_arm": "original",
+      "p0": {
+        "features": 24,
+        "groups": 8,
+        "k": 8,
+        "null_size": 256,
+        "p_exact": 0.007812,
+        "smallest_attainable_p": 0.003906,
+        "unscoreable_pairs": 0
+      },
+      "p0_best_single_DIAGNOSTIC": {
+        "best_k": 8,
+        "perfect_single_features": [
+          "comma_per_1k",
+          "first_person_per_1k",
+          "third_person_per_1k",
+          "dialogue_ratio",
+          "paragraph_len_mean",
+          "type_token",
+          "words",
+          "digit_per_1k"
+        ]
+      },
+      "p0_plus": {
+        "features": 27,
+        "groups": 8,
+        "k": 8,
+        "null_size": 256,
+        "p_exact": 0.007812,
+        "smallest_attainable_p": 0.003906,
+        "unscoreable_pairs": 0
+      },
+      "positive_arm": "repair_interiority",
+      "text_mean": {
+        "best_layer": 9,
+        "groups": 8,
+        "k": 8,
+        "k_by_layer": {
+          "17": 8,
+          "25": 8,
+          "9": 8
+        },
+        "null_size": 256,
+        "p_exact": 0.007812,
+        "smallest_attainable_p": 0.003906,
+        "unscoreable_pairs": 0
+      }
+    },
+    "rewhitespace_sham": {
+      "dropped_identical_scenes": [],
+      "groups": 10,
+      "is_floor": true,
+      "judge_last": {
+        "best_layer": 9,
+        "groups": 10,
+        "k": 10,
+        "k_by_layer": {
+          "17": 8,
+          "25": 8,
+          "9": 10
+        },
+        "null_size": 1024,
+        "p_exact": 0.007812,
+        "smallest_attainable_p": 0.000977,
+        "unscoreable_pairs": 0
+      },
+      "negative_arm": "original",
+      "p0": {
+        "features": 24,
+        "groups": 10,
+        "k": 9,
+        "null_size": 1024,
+        "p_exact": 0.035156,
+        "smallest_attainable_p": 0.000977,
+        "unscoreable_pairs": 0
+      },
+      "p0_best_single_DIAGNOSTIC": {
+        "best_k": 5,
+        "perfect_single_features": []
+      },
+      "p0_plus": {
+        "features": 27,
+        "groups": 10,
+        "k": 9,
+        "null_size": 1024,
+        "p_exact": 0.035156,
+        "smallest_attainable_p": 0.000977,
+        "unscoreable_pairs": 0
+      },
+      "positive_arm": "rewhitespace",
+      "text_mean": {
+        "best_layer": 9,
+        "groups": 10,
+        "k": 10,
+        "k_by_layer": {
+          "17": 10,
+          "25": 10,
+          "9": 10
+        },
+        "null_size": 1024,
+        "p_exact": 0.001953,
+        "smallest_attainable_p": 0.000977,
+        "unscoreable_pairs": 0
+      }
+    },
+    "stat_flatten": {
+      "dropped_identical_scenes": [],
+      "groups": 10,
+      "is_floor": false,
+      "judge_last": {
+        "best_layer": 9,
+        "groups": 10,
+        "k": 10,
+        "k_by_layer": {
+          "17": 10,
+          "25": 10,
+          "9": 10
+        },
+        "null_size": 1024,
+        "p_exact": 0.001953,
+        "smallest_attainable_p": 0.000977,
+        "unscoreable_pairs": 0
+      },
+      "negative_arm": "original",
+      "p0": {
+        "features": 24,
+        "groups": 10,
+        "k": 0,
+        "null_size": 1024,
+        "p_exact": 1.0,
+        "smallest_attainable_p": 0.000977,
+        "unscoreable_pairs": 10
+      },
+      "p0_best_single_DIAGNOSTIC": {
+        "best_k": 10,
+        "perfect_single_features": [
+          "digit_per_1k",
+          "system_digit_count",
+          "system_slot_count"
+        ]
+      },
+      "p0_plus": {
+        "features": 27,
+        "groups": 10,
+        "k": 10,
+        "null_size": 1024,
+        "p_exact": 0.001953,
+        "smallest_attainable_p": 0.000977,
+        "unscoreable_pairs": 0
+      },
+      "positive_arm": "stat_flatten",
+      "text_mean": {
+        "best_layer": 9,
+        "groups": 10,
+        "k": 10,
+        "k_by_layer": {
+          "17": 10,
+          "25": 10,
+          "9": 10
+        },
+        "null_size": 1024,
+        "p_exact": 0.001953,
+        "smallest_attainable_p": 0.000977,
+        "unscoreable_pairs": 0
+      }
+    },
+    "states_drunk_vs_sober": {
+      "dropped_identical_scenes": [],
+      "groups": 8,
+      "is_floor": false,
+      "judge_last": {
+        "best_layer": 25,
+        "groups": 8,
+        "k": 7,
+        "k_by_layer": {
+          "17": 5,
+          "25": 7,
+          "9": 6
+        },
+        "null_size": 256,
+        "p_exact": 0.195312,
+        "smallest_attainable_p": 0.003906,
+        "unscoreable_pairs": 0
+      },
+      "negative_arm": "sober",
+      "p0": {
+        "features": 24,
+        "groups": 8,
+        "k": 2,
+        "null_size": 256,
+        "p_exact": 0.890625,
+        "smallest_attainable_p": 0.003906,
+        "unscoreable_pairs": 0
+      },
+      "p0_best_single_DIAGNOSTIC": {
+        "best_k": 7,
+        "perfect_single_features": []
+      },
+      "p0_plus": {
+        "features": 27,
+        "groups": 8,
+        "k": 2,
+        "null_size": 256,
+        "p_exact": 0.890625,
+        "smallest_attainable_p": 0.003906,
+        "unscoreable_pairs": 0
+      },
+      "positive_arm": "drunk",
+      "text_mean": {
+        "best_layer": 9,
+        "groups": 8,
+        "k": 7,
+        "k_by_layer": {
+          "17": 3,
+          "25": 5,
+          "9": 7
+        },
+        "null_size": 256,
+        "p_exact": 0.179688,
+        "smallest_attainable_p": 0.003906,
+        "unscoreable_pairs": 0
+      }
+    },
+    "states_tea_vs_sober": {
+      "dropped_identical_scenes": [],
+      "groups": 8,
+      "is_floor": true,
+      "judge_last": {
+        "best_layer": 17,
+        "groups": 8,
+        "k": 5,
+        "k_by_layer": {
+          "17": 5,
+          "25": 4,
+          "9": 4
+        },
+        "null_size": 256,
+        "p_exact": 0.703125,
+        "smallest_attainable_p": 0.003906,
+        "unscoreable_pairs": 0
+      },
+      "negative_arm": "sober",
+      "p0": {
+        "features": 24,
+        "groups": 8,
+        "k": 4,
+        "null_size": 256,
+        "p_exact": 0.601562,
+        "smallest_attainable_p": 0.003906,
+        "unscoreable_pairs": 0
+      },
+      "p0_best_single_DIAGNOSTIC": {
+        "best_k": 6,
+        "perfect_single_features": []
+      },
+      "p0_plus": {
+        "features": 27,
+        "groups": 8,
+        "k": 4,
+        "null_size": 256,
+        "p_exact": 0.601562,
+        "smallest_attainable_p": 0.003906,
+        "unscoreable_pairs": 0
+      },
+      "positive_arm": "tea",
+      "text_mean": {
+        "best_layer": 9,
+        "groups": 8,
+        "k": 5,
+        "k_by_layer": {
+          "17": 3,
+          "25": 4,
+          "9": 5
+        },
+        "null_size": 256,
+        "p_exact": 0.679688,
+        "smallest_attainable_p": 0.003906,
+        "unscoreable_pairs": 0
+      }
+    },
+    "states_trip_vs_sober": {
+      "dropped_identical_scenes": [],
+      "groups": 8,
+      "is_floor": false,
+      "judge_last": {
+        "best_layer": 17,
+        "groups": 8,
+        "k": 4,
+        "k_by_layer": {
+          "17": 4,
+          "25": 3,
+          "9": 2
+        },
+        "null_size": 256,
+        "p_exact": 0.867188,
+        "smallest_attainable_p": 0.003906,
+        "unscoreable_pairs": 0
+      },
+      "negative_arm": "sober",
+      "p0": {
+        "features": 24,
+        "groups": 8,
+        "k": 3,
+        "null_size": 256,
+        "p_exact": 0.773438,
+        "smallest_attainable_p": 0.003906,
+        "unscoreable_pairs": 0
+      },
+      "p0_best_single_DIAGNOSTIC": {
+        "best_k": 7,
+        "perfect_single_features": []
+      },
+      "p0_plus": {
+        "features": 27,
+        "groups": 8,
+        "k": 3,
+        "null_size": 256,
+        "p_exact": 0.773438,
+        "smallest_attainable_p": 0.003906,
+        "unscoreable_pairs": 0
+      },
+      "positive_arm": "trip",
+      "text_mean": {
+        "best_layer": 17,
+        "groups": 8,
+        "k": 7,
+        "k_by_layer": {
+          "17": 7,
+          "25": 6,
+          "9": 6
+        },
+        "null_size": 256,
+        "p_exact": 0.1875,
+        "smallest_attainable_p": 0.003906,
+        "unscoreable_pairs": 0
+      }
+    }
+  },
+  "manifest": "matches",
+  "model": "google/gemma-3-4b-it",
+  "pre_registration": {
+    "CORRECTION_87_null_floor": "WRONG AS DECLARED. The smallest attainable p is 2/2**G, not 1/2**G \u2014 0.0078 at G=8 and 0.0020 at G=10. The statistic is invariant under a global sign flip (relabelling every pair swaps the fitted direction with it), so the observed assignment always has a twin in the enumeration. Consequence: `alpha_family_wise` below is UNATTAINABLE at G=8, and no eight-scene family could have cleared it however clean its separation. Recorded in stage-0 \u00a787; pinned by `test_a_perfectly_separating_family_cannot_beat_the_null_floor` and `test_the_statistic_is_invariant_under_a_global_sign_flip`.",
+    "alpha_family_wise": 0.00625,
+    "alpha_uncorrected": 0.05,
+    "beats_p0": "An internal claim on a family requires probe max-k STRICTLY GREATER than both surface baselines' max-k on that same family, under the identical pipeline and null. P0 is `authorship_tells.features` over system-stripped prose \u2014 the space \u00a783 and \u00a785 measure register movement in. P0+ adds three digit and status-slot counts on unstripped text, because `strip_system` deletes the only line `stat_flatten` edits and a probe beating an omission of ours would not be beating surface measurement. If either baseline clears its own null on a family, that family is CLOSED to P: surface features already separate it and internals add nothing there.",
+    "family_wise_rule": "0.05 divided by the eight non-floor families. Attainable only at k=G for G=8 (p=0.0039) and at k=G for G=10 (p=0.0010); k=9 of 10 reads p=0.0107 and clears the uncorrected bar only. Both numbers are reported for every family so neither can be chosen afterwards \u2014 \u00a781's lesson, which is that a rule registered as a point estimate cannot be tightened once the numbers are in.",
+    "floors": "placebo_identical (byte-identical sides, \u00a785), states_tea_vs_sober (\u00a783's inert placebo) and rewhitespace_sham (\u00a778.1's formatting sham) are scored FIRST. The floor band's floor is declared here rather than derived, because \u00a785's zero-drift placebo made a zero-width band and the arm it was supposed to protect failed a rule that was really an artifact: ANY floor family clearing alpha_uncorrected=0.05 voids every non-floor family measured under the same readout, and the run reports VOID rather than a corrected number. placebo_identical additionally must return k=0 with unscoreable_pairs=G; anything else is a bug in this module, not a finding.",
+    "governs": "stage-0 \u00a782 verbatim: no result in this file upgrades any licence.",
+    "kill": "No non-floor family clears its null under scene-grouped CV on either readout => record 'perception-limited at 4B', close Track P, and let the quadrant's second row stand.",
+    "layer_multiplicity": "The family statistic is max(k) over the three readout layers, and its null is built by applying each flip vector to all three layers at once. Exact, and no Bonferroni.",
+    "not_measured": "Preference. Quality. Anything about what claude-haiku-4-5 perceives \u2014 the probe reads gemma-3-4b-it because open weights are the only internals available, and that substitution is a limit of the result, not a detail of the method.",
+    "null": "Exact and exhaustive: all 2**G within-pair label flips, each re-running the full leave-one-scene-out pipeline. p is the fraction of flips reaching the observed k or better, the observed assignment included. Smallest attainable p is 1/2**G \u2014 0.0039 at G=8, 0.0010 at G=10. No sampling, no asymptotics, no bootstrap.",
+    "quadrant": {
+      "probe_fails_panel_separates": "Panel outran 4B internals; scale ladder to the operator.",
+      "probe_fails_panel_void": "Perception deficit at this scale. Record the negative; close.",
+      "probe_separates_panel_separates": "Instruments agree; probe is a free cross-check.",
+      "probe_separates_panel_void": "Report-channel deficit confirmed at 4B. Propose fixture family B6 (probe-panel divergence pairs) FOR OPERATOR ADMISSION ONLY."
+    },
+    "readouts": "text_mean is primary (the directive's 'mean-pooled'). judge_last is secondary and may not carry the B6 proposal alone; it is reported in full regardless of outcome.",
+    "replication": "A Track-P positive requires TWO distinct non-floor families that each clear the uncorrected bar AND beat both baselines. One family clearing alone is recorded as unreplicated and proposes nothing.",
+    "statistic": "k = the number of scenes whose held-out pair is ordered correctly under leave-one-scene-out, out of G. The estimator is the unit-normalised mean of the training scenes' paired difference vectors; it has no hyperparameter, which is the only reason a held-out sign test on it means what it appears to mean.",
+    "written": "2026-08-19, before the first forward pass"
+  },
+  "readout_layers": [
+    9,
+    17,
+    25
+  ],
+  "revision": "093f9f388b31de276ce2de164bdc2081324b9767",
+  "verdict": {
+    "cleared_and_beat_surface": {
+      "judge_last": [],
+      "text_mean": [
+        "exemplar_vs_sober"
+      ]
+    },
+    "cleared_and_beat_surface_family_wise": {
+      "judge_last": [],
+      "text_mean": []
+    },
+    "closed_to_p_surface_already_separates": [
+      "stat_flatten",
+      "repair_interiority",
+      "interiority_strip_matched",
+      "repair_emdash",
+      "filler_inject"
+    ],
+    "floor_breaks": {
+      "judge_last": [
+        "rewhitespace_sham"
+      ],
+      "p0": [
+        "rewhitespace_sham"
+      ],
+      "p0_plus": [
+        "rewhitespace_sham"
+      ],
+      "text_mean": [
+        "rewhitespace_sham"
+      ]
+    },
+    "identity_family_sane": true,
+    "reading": "VOID ON FLOOR: {\"judge_last\": [\"rewhitespace_sham\"], \"p0\": [\"rewhitespace_sham\"], \"p0_plus\": [\"rewhitespace_sham\"], \"text_mean\": [\"rewhitespace_sham\"]} \u2014 a sham or placebo family cleared its null, so separation on the arms above it is not attributable to the named difference. Pre-registered outcome, not a corrected number.",
+    "replicated_primary": false
+  }
+}

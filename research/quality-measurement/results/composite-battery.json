@@ -1,0 +1,827 @@
+{
+  "pre_registration": {
+    "status": "declared before the first elicitation. Six axioms, each a disqualifier; a candidate failing any one is out of the programme and no other tier is bought for it",
+    "A0_indifference": "two byte-identical copies of the same scene. The panel must answer `neither` on at least 0.50 of non-refused comparisons, and among the decided remainder chose-A must sit inside 0.40-0.60. FAIL on either. A judge that picks a side between identical texts has reported on position, and every preference it states elsewhere inherits that. This pair has been assumed to be 0.5 by construction since \u00a770 and has never been elicited",
+    "A1_format_invariance": "the same scene against itself with only the paragraph separator changed, which is the edit `_join` performs on every transform routing through `paragraphs` (\u00a778.1). Same bars as A0. **The axiom is already refuted at a stronger dose and the prediction is registered here rather than discovered afterwards**: \u00a778 measured a full flatten (newlines 858->90, blank lines 420->45) at a win rate of 0.0417 on Haiku and 0.0000 on Opus with textbook positional bias 0.5000, so this instrument is not format-invariant and the default panel is PREDICTED TO FAIL A1. What this arm buys is the magnitude at the *mild* dose \u2014 the separator downgrade that silently rides on seven registered ablations \u2014 which is currently known only as the 0.2778 gap between \u00a781's matched arm (0.3889) and its formatting-confounded twin (0.1111), and that twin is void on bias at 0.6111. A prediction that can be wrong is the point: if the mild dose ties, the confound riding on those seven arms is smaller than the ledger currently has to assume",
+    "A2_dose_monotonicity": "a nested ladder at doses (0.0, 0.25, 0.50, 1.0) of paragraphs displaced, every rung sharing the base's word multiset and layout. A scene is ORDERED when its three win rates against the base are non-increasing in dose AND the top rung's rate is strictly below 0.5 \u2014 monotonicity alone is satisfied by a judge that ties everything, so the second clause is what makes the arm non-vacuous. That clause is a floor the instrument already clears: \u00a770 measured 0.906 detection on this material, so it admits nothing new. The null is simulated at the actual n with a coin judge answering the same number of comparisons per pair, and the bar is that null's 95th percentile \u2014 a hand-derived 1/6 would ignore the tie structure the instrument actually produces",
+    "A3_transitivity": "the same ladder read as a tournament over four texts, per (scene, persona), each edge the majority verdict of both orientations. The statistic is 3-cycles per tournament over the four triangles. A random tournament carries 1.0 cycles in expectation; the bar is the 5th percentile of the null simulated at the actual number of tournaments, not the expectation. If fewer than 0.50 of triangles are determined the arm is UNREADABLE rather than passed: a judge that ties everything has not demonstrated coherence",
+    "A4_paraphrase_stability": "the ladder's base-vs-top pair re-asked under a semantically identical rephrasing that preserves four invariants declared here \u2014 the tie option at equal prominence, the keep-reading act, the reason-code request, and plain register with no rubric. Agreement across wordings must not fall more than 0.10 below agreement across resamples of the SAME wording. The floor is measured in the same pass, because an instrument that disagrees with itself cannot be asked to agree with a rephrasing",
+    "A5_within_item_consistency": "ICC(1) over **every pair in the battery except the paraphrase arm**, replicates being (persona, sample) cells. The pair set has to include the identity and format arms and not only the ladder: a judge that is right about every rung answers all ladder pairs identically, so between-pair variance computed inside the ladder alone is zero for a *perfect* judge and the statistic would kill the thing it is meant to certify. The bar is on the **aggregate** the arms actually report, not on a single comparison: Spearman-Brown at the battery's replicate width, lower bound above 0.50, with ICC(1) reported beside it. Gating the single-comparison figure would disqualify an instrument that is noisy per call and perfectly usable at panel width, which is a bar about the wrong quantity. A constant judge leaves both undefined and FAILS rather than passing on a null \u2014 \u00a770's positivity floor in its pairwise form. Bootstrap draws that resample only constant pairs are undefined too; their share is reported rather than silently dropped",
+    "A6_position": "chose-A within 0.40-0.60 per arm, reported for every arm at no extra cost. Never pooled across arms and never inherited from another experiment: \u00a779.1 established that positional bias is a property of the pair, at 0.356 on 368 comparisons",
+    "reading": "PASS licenses nothing. It says the candidate is coherent enough to be worth paying to test against a label. FAIL ends the candidate. The failure is the more informative outcome because it is the cheaper one",
+    "no_bar_moves": "if an axiom fails narrowly the failure is recorded as a failure. \u00a781's lesson: the rule as registered is reported, the defect in the rule is written down beside it, and nothing is retro-passed",
+    "dry_run_expectation": "a dry run answers uniformly over (A, B, neither) from a request hash. It is the coin oracle in the real plumbing and it must read DISQUALIFIED. A dry run reading CLEARED is a broken statistic, not a good judge"
+  },
+  "pre_registration_corrected": {
+    "provenance": "written while the first paid run was in flight, from `--operating-characteristic`, with no elicited verdict inspected. It changes no request text, so every comparison already bought replays unchanged and the correction costs nothing in quota",
+    "bias_floor": "a positional band is read only on arms carrying at least BIAS_MIN_DECIDED decided comparisons. Below that the arm reports bias_readable false and cannot fail on bias. The identity and format arms will usually sit below the floor for a *correct* judge, and that is the finding rather than a gap: a judge that properly declines to choose between identical texts cannot have its slot preference estimated on them",
+    "unchanged": "every other bar, including the 0.40-0.60 band itself, the tie floor, the monotonicity rule, the cycle null and the aggregate-reliability floor. The correction is about how many comparisons a band needs before it may be read, not about where the band sits",
+    "known_residual": "A3's cycle null and A4's paraphrase floor still treat scenes as independent, and the operating characteristic shows A3 degrading from 0.16 to 0.57 as scene heterogeneity rises. Reported and not repaired here, because a clustered null needs a heterogeneity parameter that would be chosen rather than measured"
+  },
+  "composite": {
+    "aggregation": {
+      "declared": "2026-08-19, before the composite was run through the axiom battery",
+      "who_decides": "Layer 3 alone decides a preference. Layer 1 decides only that there is no preference to be had. Layer 2 decides nothing and is recorded.",
+      "who_abstains": "Layer 1 abstains on every pair that is not byte-identical and not layout-only \u2014 it has no valence for any axis and inventing one would assert craft doctrine as a premise (\u00a787.1, \u00a787.3). Layer 3 abstains by answering `neither`, which is preserved and never overwritten. Layer 2 abstains from preference by construction (\u00a782, BEHAVIOUR at STORY grain).",
+      "what_disagreement_produces": "A recorded diagnostic and no change of verdict. Layer 2 ranking one way while layer 3 prefers the other is exactly \u00a787's report deficit showing up inside one instrument, and it is the composite's most informative output \u2014 but resolving it in the readout's favour would let BEHAVIOUR-class evidence decide a preference, which \u00a782 forbids, and resolving it in the verdict's favour would discard the only signal that the deficit is present.",
+      "veto_precedence": "Layer 1 runs first and its veto is final. A vetoed comparison is `neither` with `reason_code='none'`, layer 3 is never called, and no money is spent on it.",
+      "what_it_cannot_do": "Express a preference between a string and itself, or between two texts differing only in whitespace. Both were live failure modes of the incumbent (\u00a783, \u00a785, \u00a778.1) and both are now unreachable rather than merely unlikely."
+    },
+    "verdict_source": "none \u2014 no Track E protocol survived (\u00a789)",
+    "layer_3_present": false,
+    "vetoed": 12,
+    "veto_detail": [
+      {
+        "pair_id": "gen:scene-1|A0",
+        "why": "byte-identical: there is no difference to prefer",
+        "live_axes": {
+          "stat_flatten": {
+            "counter": "system_digit_count",
+            "delta": 0.0,
+            "live": false
+          },
+          "interiority_strip_matched": {
+            "counter": "interior_per_1k",
+            "delta": 0.0,
+            "live": false
+          },
+          "repair_emdash": {
+            "counter": "em_per_1k",
+            "delta": 0.0,
+            "live": false
+          }
+        }
+      },
+      {
+        "pair_id": "gen:scene-1|A1",
+        "why": "layout-only: \u00a778.1 measured this producing 96-100% preference alone",
+        "live_axes": {
+          "stat_flatten": {
+            "counter": "system_digit_count",
+            "delta": 0.0,
+            "live": false
+          },
+          "interiority_strip_matched": {
+            "counter": "interior_per_1k",
+            "delta": 0.0,
+            "live": false
+          },
+          "repair_emdash": {
+            "counter": "em_per_1k",
+            "delta": 0.0,
+            "live": false
+          }
+        }
+      },
+      {
+        "pair_id": "gen:scene-2|A0",
+        "why": "byte-identical: there is no difference to prefer",
+        "live_axes": {
+          "stat_flatten": {
+            "counter": "system_digit_count",
+            "delta": 0.0,
+            "live": false
+          },
+          "interiority_strip_matched": {
+            "counter": "interior_per_1k",
+            "delta": 0.0,
+            "live": false
+          },
+          "repair_emdash": {
+            "counter": "em_per_1k",
+            "delta": 0.0,
+            "live": false
+          }
+        }
+      },
+      {
+        "pair_id": "gen:scene-2|A1",
+        "why": "layout-only: \u00a778.1 measured this producing 96-100% preference alone",
+        "live_axes": {
+          "stat_flatten": {
+            "counter": "system_digit_count",
+            "delta": 0.0,
+            "live": false
+          },
+          "interiority_strip_matched": {
+            "counter": "interior_per_1k",
+            "delta": 0.0,
+            "live": false
+          },
+          "repair_emdash": {
+            "counter": "em_per_1k",
+            "delta": 0.0,
+            "live": false
+          }
+        }
+      },
+      {
+        "pair_id": "gen:scene-3|A0",
+        "why": "byte-identical: there is no difference to prefer",
+        "live_axes": {
+          "stat_flatten": {
+            "counter": "system_digit_count",
+            "delta": 0.0,
+            "live": false
+          },
+          "interiority_strip_matched": {
+            "counter": "interior_per_1k",
+            "delta": 0.0,
+            "live": false
+          },
+          "repair_emdash": {
+            "counter": "em_per_1k",
+            "delta": 0.0,
+            "live": false
+          }
+        }
+      },
+      {
+        "pair_id": "gen:scene-3|A1",
+        "why": "layout-only: \u00a778.1 measured this producing 96-100% preference alone",
+        "live_axes": {
+          "stat_flatten": {
+            "counter": "system_digit_count",
+            "delta": 0.0,
+            "live": false
+          },
+          "interiority_strip_matched": {
+            "counter": "interior_per_1k",
+            "delta": 0.0,
+            "live": false
+          },
+          "repair_emdash": {
+            "counter": "em_per_1k",
+            "delta": 0.0,
+            "live": false
+          }
+        }
+      },
+      {
+        "pair_id": "gen:scene-4|A0",
+        "why": "byte-identical: there is no difference to prefer",
+        "live_axes": {
+          "stat_flatten": {
+            "counter": "system_digit_count",
+            "delta": 0.0,
+            "live": false
+          },
+          "interiority_strip_matched": {
+            "counter": "interior_per_1k",
+            "delta": 0.0,
+            "live": false
+          },
+          "repair_emdash": {
+            "counter": "em_per_1k",
+            "delta": 0.0,
+            "live": false
+          }
+        }
+      },
+      {
+        "pair_id": "gen:scene-4|A1",
+        "why": "layout-only: \u00a778.1 measured this producing 96-100% preference alone",
+        "live_axes": {
+          "stat_flatten": {
+            "counter": "system_digit_count",
+            "delta": 0.0,
+            "live": false
+          },
+          "interiority_strip_matched": {
+            "counter": "interior_per_1k",
+            "delta": 0.0,
+            "live": false
+          },
+          "repair_emdash": {
+            "counter": "em_per_1k",
+            "delta": 0.0,
+            "live": false
+          }
+        }
+      },
+      {
+        "pair_id": "gen:scene-5|A0",
+        "why": "byte-identical: there is no difference to prefer",
+        "live_axes": {
+          "stat_flatten": {
+            "counter": "system_digit_count",
+            "delta": 0.0,
+            "live": false
+          },
+          "interiority_strip_matched": {
+            "counter": "interior_per_1k",
+            "delta": 0.0,
+            "live": false
+          },
+          "repair_emdash": {
+            "counter": "em_per_1k",
+            "delta": 0.0,
+            "live": false
+          }
+        }
+      },
+      {
+        "pair_id": "gen:scene-5|A1",
+        "why": "layout-only: \u00a778.1 measured this producing 96-100% preference alone",
+        "live_axes": {
+          "stat_flatten": {
+            "counter": "system_digit_count",
+            "delta": 0.0,
+            "live": false
+          },
+          "interiority_strip_matched": {
+            "counter": "interior_per_1k",
+            "delta": 0.0,
+            "live": false
+          },
+          "repair_emdash": {
+            "counter": "em_per_1k",
+            "delta": 0.0,
+            "live": false
+          }
+        }
+      },
+      {
+        "pair_id": "gen:scene-6|A0",
+        "why": "byte-identical: there is no difference to prefer",
+        "live_axes": {
+          "stat_flatten": {
+            "counter": "system_digit_count",
+            "delta": 0.0,
+            "live": false
+          },
+          "interiority_strip_matched": {
+            "counter": "interior_per_1k",
+            "delta": 0.0,
+            "live": false
+          },
+          "repair_emdash": {
+            "counter": "em_per_1k",
+            "delta": 0.0,
+            "live": false
+          }
+        }
+      },
+      {
+        "pair_id": "gen:scene-6|A1",
+        "why": "layout-only: \u00a778.1 measured this producing 96-100% preference alone",
+        "live_axes": {
+          "stat_flatten": {
+            "counter": "system_digit_count",
+            "delta": 0.0,
+            "live": false
+          },
+          "interiority_strip_matched": {
+            "counter": "interior_per_1k",
+            "delta": 0.0,
+            "live": false
+          },
+          "repair_emdash": {
+            "counter": "em_per_1k",
+            "delta": 0.0,
+            "live": false
+          }
+        }
+      }
+    ],
+    "readout": null,
+    "personas": [
+      "grinder",
+      "stakes"
+    ]
+  },
+  "scenes": [
+    "gen:scene-1",
+    "gen:scene-2",
+    "gen:scene-3",
+    "gen:scene-4",
+    "gen:scene-5",
+    "gen:scene-6"
+  ],
+  "pairs": 54,
+  "ladder_certificate": [
+    {
+      "scene": "gen:scene-1",
+      "usable": true,
+      "layout_changed": true,
+      "rungs": [
+        {
+          "dose": 0.0,
+          "displaced": 0,
+          "blocks": 38,
+          "words_match_base": true,
+          "blocks_match_base": true
+        },
+        {
+          "dose": 0.25,
+          "displaced": 10,
+          "blocks": 38,
+          "words_match_base": true,
+          "blocks_match_base": true
+        },
+        {
+          "dose": 0.5,
+          "displaced": 19,
+          "blocks": 38,
+          "words_match_base": true,
+          "blocks_match_base": true
+        },
+        {
+          "dose": 1.0,
+          "displaced": 38,
+          "blocks": 38,
+          "words_match_base": true,
+          "blocks_match_base": true
+        }
+      ]
+    },
+    {
+      "scene": "gen:scene-2",
+      "usable": true,
+      "layout_changed": true,
+      "rungs": [
+        {
+          "dose": 0.0,
+          "displaced": 0,
+          "blocks": 39,
+          "words_match_base": true,
+          "blocks_match_base": true
+        },
+        {
+          "dose": 0.25,
+          "displaced": 10,
+          "blocks": 39,
+          "words_match_base": true,
+          "blocks_match_base": true
+        },
+        {
+          "dose": 0.5,
+          "displaced": 20,
+          "blocks": 39,
+          "words_match_base": true,
+          "blocks_match_base": true
+        },
+        {
+          "dose": 1.0,
+          "displaced": 39,
+          "blocks": 39,
+          "words_match_base": true,
+          "blocks_match_base": true
+        }
+      ]
+    },
+    {
+      "scene": "gen:scene-3",
+      "usable": true,
+      "layout_changed": true,
+      "rungs": [
+        {
+          "dose": 0.0,
+          "displaced": 0,
+          "blocks": 34,
+          "words_match_base": true,
+          "blocks_match_base": true
+        },
+        {
+          "dose": 0.25,
+          "displaced": 8,
+          "blocks": 34,
+          "words_match_base": true,
+          "blocks_match_base": true
+        },
+        {
+          "dose": 0.5,
+          "displaced": 17,
+          "blocks": 34,
+          "words_match_base": true,
+          "blocks_match_base": true
+        },
+        {
+          "dose": 1.0,
+          "displaced": 34,
+          "blocks": 34,
+          "words_match_base": true,
+          "blocks_match_base": true
+        }
+      ]
+    },
+    {
+      "scene": "gen:scene-4",
+      "usable": true,
+      "layout_changed": true,
+      "rungs": [
+        {
+          "dose": 0.0,
+          "displaced": 0,
+          "blocks": 42,
+          "words_match_base": true,
+          "blocks_match_base": true
+        },
+        {
+          "dose": 0.25,
+          "displaced": 10,
+          "blocks": 42,
+          "words_match_base": true,
+          "blocks_match_base": true
+        },
+        {
+          "dose": 0.5,
+          "displaced": 21,
+          "blocks": 42,
+          "words_match_base": true,
+          "blocks_match_base": true
+        },
+        {
+          "dose": 1.0,
+          "displaced": 42,
+          "blocks": 42,
+          "words_match_base": true,
+          "blocks_match_base": true
+        }
+      ]
+    },
+    {
+      "scene": "gen:scene-5",
+      "usable": true,
+      "layout_changed": true,
+      "rungs": [
+        {
+          "dose": 0.0,
+          "displaced": 0,
+          "blocks": 42,
+          "words_match_base": true,
+          "blocks_match_base": true
+        },
+        {
+          "dose": 0.25,
+          "displaced": 10,
+          "blocks": 42,
+          "words_match_base": true,
+          "blocks_match_base": true
+        },
+        {
+          "dose": 0.5,
+          "displaced": 21,
+          "blocks": 42,
+          "words_match_base": true,
+          "blocks_match_base": true
+        },
+        {
+          "dose": 1.0,
+          "displaced": 42,
+          "blocks": 42,
+          "words_match_base": true,
+          "blocks_match_base": true
+        }
+      ]
+    },
+    {
+      "scene": "gen:scene-6",
+      "usable": true,
+      "layout_changed": true,
+      "rungs": [
+        {
+          "dose": 0.0,
+          "displaced": 0,
+          "blocks": 49,
+          "words_match_base": true,
+          "blocks_match_base": true
+        },
+        {
+          "dose": 0.25,
+          "displaced": 12,
+          "blocks": 49,
+          "words_match_base": true,
+          "blocks_match_base": true
+        },
+        {
+          "dose": 0.5,
+          "displaced": 24,
+          "blocks": 49,
+          "words_match_base": true,
+          "blocks_match_base": true
+        },
+        {
+          "dose": 1.0,
+          "displaced": 49,
+          "blocks": 49,
+          "words_match_base": true,
+          "blocks_match_base": true
+        }
+      ]
+    }
+  ],
+  "verdict": {
+    "overall": "DISQUALIFIED",
+    "failed": [
+      "A2_dose_monotonicity",
+      "A5_within_item_consistency"
+    ],
+    "unreadable": [
+      "A3_transitivity",
+      "A6_position"
+    ],
+    "axioms": {
+      "A0_indifference": {
+        "axiom": "A0_indifference",
+        "comparisons": 24,
+        "tie_rate": 1.0,
+        "tie_floor": 0.5,
+        "positional_bias": {
+          "decided": 0,
+          "chose_A_rate": NaN,
+          "note": "no decided comparisons"
+        },
+        "verdict": "PASS",
+        "verdict_corrected": "PASS",
+        "bias_readable": false,
+        "bias_min_decided": 30,
+        "reading": "two texts that are identical in content; anything but a tie is a report on position or on layout, and the win rate is not reported because there is no variant to win"
+      },
+      "A1_format_invariance": {
+        "axiom": "A1_format_invariance",
+        "comparisons": 24,
+        "tie_rate": 1.0,
+        "tie_floor": 0.5,
+        "positional_bias": {
+          "decided": 0,
+          "chose_A_rate": NaN,
+          "note": "no decided comparisons"
+        },
+        "verdict": "PASS",
+        "verdict_corrected": "PASS",
+        "bias_readable": false,
+        "bias_min_decided": 30,
+        "reading": "two texts that are identical in content; anything but a tie is a report on position or on layout, and the win rate is not reported because there is no variant to win"
+      },
+      "A2_dose_monotonicity": {
+        "axiom": "A2_dose_monotonicity",
+        "scenes": 6,
+        "ordered": 0,
+        "null_95th": 3,
+        "per_scene_rates": {
+          "gen:scene-1": [
+            0.5,
+            0.5,
+            0.5
+          ],
+          "gen:scene-2": [
+            0.5,
+            0.5,
+            0.5
+          ],
+          "gen:scene-3": [
+            0.5,
+            0.5,
+            0.5
+          ],
+          "gen:scene-4": [
+            0.5,
+            0.5,
+            0.5
+          ],
+          "gen:scene-5": [
+            0.5,
+            0.5,
+            0.5
+          ],
+          "gen:scene-6": [
+            0.5,
+            0.5,
+            0.5
+          ]
+        },
+        "verdict": "FAIL",
+        "reading": "the damaged side's win rate against the base must not rise with dose and must fall somewhere; all-ties is not monotonicity. The bar is a coin judge's 95th percentile at this n, simulated with the tie structure the run actually produced"
+      },
+      "A3_transitivity": {
+        "axiom": "A3_transitivity",
+        "tournaments": 12,
+        "cycles": 0,
+        "mean_cycles": 0.0,
+        "null_5th": 0.0833,
+        "determined_share": 0.0,
+        "determined_floor": 0.5,
+        "verdict": "UNREADABLE",
+        "reading": "a preference relation over four texts that contains a cycle is not a preference relation. Ties leave a triangle undetermined rather than acyclic, so a judge that declines everything reads UNREADABLE and not PASS"
+      },
+      "A4_paraphrase_stability": {
+        "axiom": "A4_paraphrase_stability",
+        "across_wording": 1.0,
+        "within_wording_floor": 1.0,
+        "margin": 0.1,
+        "n_across": 24,
+        "n_within": 24,
+        "verdict": "PASS",
+        "reading": "the floor is the instrument's agreement with its own resamples under one wording. A judge cannot be asked to survive a rephrasing more reliably than it survives itself, and the same number is the within-lineage floor the cross-lineage tier compares against"
+      },
+      "A5_within_item_consistency": {
+        "axiom": "A5_within_item_consistency",
+        "pairs": 48,
+        "icc1": null,
+        "interval": null,
+        "replicates": 3.5,
+        "aggregate_floor": 0.5,
+        "aggregate_icc_low": null,
+        "undefined_bootstrap_share": 1.0,
+        "verdict": "FAIL",
+        "reading": "between-pair variance against within-cell variance, over the whole battery's pairs. An undefined ICC is a FAIL and not a pass on a null: \u00a770's constant instrument left every variance statistic undefined and that was the kill, not an absence of evidence"
+      },
+      "A6_position": {
+        "axiom": "A6_position",
+        "arms": {
+          "A0_indifference": {
+            "bias": {
+              "decided": 0,
+              "chose_A_rate": NaN,
+              "note": "no decided comparisons"
+            },
+            "in_band": false
+          },
+          "A1_format_invariance": {
+            "bias": {
+              "decided": 0,
+              "chose_A_rate": NaN,
+              "note": "no decided comparisons"
+            },
+            "in_band": false
+          },
+          "A2_A3_ladder": {
+            "bias": {
+              "decided": 0,
+              "chose_A_rate": NaN,
+              "note": "no decided comparisons"
+            },
+            "in_band": false
+          },
+          "A4_paraphrase": {
+            "bias": {
+              "decided": 0,
+              "chose_A_rate": NaN,
+              "note": "no decided comparisons"
+            },
+            "in_band": false
+          }
+        },
+        "band": [
+          0.4,
+          0.6
+        ],
+        "bias_min_decided": 30,
+        "estimable_arms": [],
+        "verdict": "UNREADABLE",
+        "verdict_corrected": "UNREADABLE",
+        "reading": "per arm, never pooled and never inherited. \u00a779.1 measured 0.356 on 368 comparisons and called positional bias a property of the pair; an arm outside the band is unreadable whatever it says about prose"
+      }
+    },
+    "as_registered": {
+      "overall": "DISQUALIFIED",
+      "failed": [
+        "A2_dose_monotonicity",
+        "A5_within_item_consistency"
+      ],
+      "unreadable": [
+        "A3_transitivity",
+        "A6_position"
+      ]
+    },
+    "corrected": {
+      "overall": "DISQUALIFIED",
+      "failed": [
+        "A2_dose_monotonicity",
+        "A5_within_item_consistency"
+      ],
+      "unreadable": [
+        "A3_transitivity",
+        "A6_position"
+      ]
+    },
+    "two_readings": "`as_registered` is the rule committed before the first call; `corrected` adds only the decided-count floor below which a positional band may not be read, declared mid-run from simulation with no elicited verdict inspected. Both are printed, neither is selected, and a disagreement between them is a fact about the battery rather than about the judge",
+    "reading": "CLEARED means the candidate is coherent enough to be worth paying to test against a label. It is not evidence about taste and licenses nothing"
+  },
+  "operating_characteristic": {
+    "draws": 120,
+    "scenarios": {
+      "homogeneous": {
+        "params": {
+          "beta": 3.0,
+          "tau_null": 0.79,
+          "scene_sd": 0.0,
+          "persona_sd": 0.0
+        },
+        "as_registered": {
+          "DISQUALIFIED": 0.817,
+          "CLEARED": 0.183
+        },
+        "corrected": {
+          "DISQUALIFIED": 0.342,
+          "CLEARED": 0.65,
+          "UNREADABLE": 0.008
+        },
+        "corrected_fail_by_axiom": {
+          "A3_transitivity": 0.217,
+          "A5_within_item_consistency": 0.092,
+          "A4_paraphrase_stability": 0.033,
+          "A2_dose_monotonicity": 0.025
+        }
+      },
+      "measured_heterogeneity": {
+        "params": {
+          "beta": 3.0,
+          "tau_null": 0.79,
+          "scene_sd": 0.6,
+          "persona_sd": 0.15
+        },
+        "as_registered": {
+          "DISQUALIFIED": 0.825,
+          "CLEARED": 0.158,
+          "UNREADABLE": 0.017
+        },
+        "corrected": {
+          "CLEARED": 0.583,
+          "DISQUALIFIED": 0.333,
+          "UNREADABLE": 0.083
+        },
+        "corrected_fail_by_axiom": {
+          "A3_transitivity": 0.25,
+          "A4_paraphrase_stability": 0.092,
+          "A2_dose_monotonicity": 0.025,
+          "A5_within_item_consistency": 0.017,
+          "A6_position": 0.008
+        }
+      },
+      "strong_heterogeneity": {
+        "params": {
+          "beta": 3.0,
+          "tau_null": 0.79,
+          "scene_sd": 1.2,
+          "persona_sd": 0.15
+        },
+        "as_registered": {
+          "DISQUALIFIED": 0.867,
+          "CLEARED": 0.117,
+          "UNREADABLE": 0.017
+        },
+        "corrected": {
+          "CLEARED": 0.408,
+          "UNREADABLE": 0.05,
+          "DISQUALIFIED": 0.542
+        },
+        "corrected_fail_by_axiom": {
+          "A3_transitivity": 0.458,
+          "A4_paraphrase_stability": 0.15,
+          "A2_dose_monotonicity": 0.058,
+          "A6_position": 0.025
+        }
+      },
+      "weak_dose_response": {
+        "params": {
+          "beta": 1.5,
+          "tau_null": 0.79,
+          "scene_sd": 0.6,
+          "persona_sd": 0.15
+        },
+        "as_registered": {
+          "DISQUALIFIED": 0.992,
+          "UNREADABLE": 0.008
+        },
+        "corrected": {
+          "DISQUALIFIED": 0.975,
+          "UNREADABLE": 0.017,
+          "CLEARED": 0.008
+        },
+        "corrected_fail_by_axiom": {
+          "A4_paraphrase_stability": 0.767,
+          "A5_within_item_consistency": 0.692,
+          "A2_dose_monotonicity": 0.358,
+          "A3_transitivity": 0.233,
+          "A6_position": 0.1
+        }
+      },
+      "forced_choice_habit": {
+        "params": {
+          "beta": 3.0,
+          "tau_null": 0.35,
+          "scene_sd": 0.6,
+          "persona_sd": 0.15
+        },
+        "as_registered": {
+          "DISQUALIFIED": 1.0
+        },
+        "corrected": {
+          "DISQUALIFIED": 1.0
+        },
+        "corrected_fail_by_axiom": {
+          "A0_indifference": 0.975,
+          "A1_format_invariance": 0.958,
+          "A6_position": 0.3,
+          "A3_transitivity": 0.275,
+          "A5_within_item_consistency": 0.092,
+          "A4_paraphrase_stability": 0.067,
+          "A2_dose_monotonicity": 0.05
+        }
+      }
+    },
+    "reading": "the fraction of runs on which a GOOD judge is disqualified. Under the rule as registered this ran 0.83-1.00, which is why the decided-count floor was declared; under the corrected rule the residual driver is A3, whose null treats scenes as independent and whose false-fail rate therefore rises with scene heterogeneity"
+  }
+}
