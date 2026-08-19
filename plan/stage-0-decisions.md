@@ -4811,6 +4811,46 @@ would track an external label once the corpus was clean — is not supported, an
 stands unchanged and now for a second reason: this candidate could not be proposed for the §72
 licence even if BEHAVIOUR were the right evidence class, which it is not.
 
+### 79.2 The band holds at the stronger tier, and the first readable candidate fails toward popularity
+
+The two candidates §79.1 named, run 2026-08-19: the question change alone, then the tier change on
+the better question. 368 comparisons each, zero refusals, $11.67 and $26.58.
+`results/taste-benchmark-intensity.json` and `results/taste-benchmark-sonnet-intensity.json`.
+
+    candidate                     aligned   crossed   min      bias al/cr      outcome
+    haiku, preference (79.1)       0.6100    0.4107   0.4107   0.380 / 0.327   VOID
+    haiku, intensity               0.5550    0.4405   0.4405   0.335 / 0.298   VOID
+    sonnet, intensity              0.6500    0.4048   0.4048   0.540 / 0.429   FAILS
+
+**The question is not the bias lever.** §77's 2x2 measured intensity beating preference on sham
+floor and margin, and none of that transferred here: the Haiku slot preference *worsened* slightly
+(0.335/0.298 against 0.380/0.327), still five-plus standard errors outside the band. Whatever one
+word of question buys on ablation pairs, it buys nothing on ~1,000-word matched human pairs.
+
+**The tier is.** Sonnet at the same question holds both strata inside the band — 0.540 aligned,
+0.429 crossed — so the positional collapse that voided §79.1, this run's first cell, and §83/§85's
+near-twin arms is **capability-limited, not intrinsic to the pair class**. That is the most useful
+instrument fact this benchmark has produced: bias-clean single judges exist one tier up, and every
+"the panel cannot see X" result earned at Haiku now carries an implicit "at Haiku" that a ~$25 rerun
+can test. The §85 near-twin voids are the first candidates for that rerun.
+
+**And the first readable candidate fails the bar, with the signature §79.1 could only gesture at.**
+Minimum agreement 0.4048 against the prose-blind floor of 0.52. The shape is no longer a direction
+offered without standing: 0.650 with a lower bound of 0.51 where every popularity covariate points
+at the label, 0.4048 with an interval spanning 0.5 where they all point away, a spread of 0.245 on
+clean bias. A judge reading prose holds above 0.5 in both strata by construction. Two readings
+survive and the benchmark cannot separate them: the judge proxies popularity's prose correlates, or
+the conversion label is wrong exactly where it disagrees with popularity. Separating them is a
+human question — §80's batch puts crossed-stratum pairs to paid readers, and that row of the batch
+just became its most load-bearing.
+
+**Programme position after three candidates.** No candidate has produced evidence of ordering
+matched human prose by the reader-behaviour label; §82 stands for a third reason. What changed is
+narrower and real: the bias precondition is now passable, so the protocol track (ensembles,
+notice-then-judge) runs on a tier where its results are readable rather than void by default. Next
+candidates in cost order: the §85 near-twin rerun at Sonnet (~$8, tests whether the near-twin law
+is also tier-limited), then protocol variants at Sonnet against this bar (~$25 each).
+
 ## 80. The first paid batch is designed to answer two questions, and is not funded
 
 [reader-batch-1.md](reader-batch-1.md) drafts the batch so one set of paid verdicts pilots the
