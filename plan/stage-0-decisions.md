@@ -6500,6 +6500,23 @@ answers the slot. Its tie rate is 0.3206, which is why `repair_emdash` fell to G
 arithmetic §89 predicted for E4 turns out to bite E1 instead, and the family that "clears" at 6/6
 inside a VOID protocol is not read.
 
+**The VOID is not an artifact of pooling, which is the first objection to make to it.** The
+precondition here is protocol-level — one chose-A rate over every family — and that is stricter
+than §78.2's per-arm rule, so a single bad family could in principle void a protocol whose B6
+families were clean. They are not clean. Read per family, each of the three is out of band on its
+own and each clears the 30-decided floor:
+
+    family                     decided   chose-A   in band
+    stat_flatten                    42     0.619      no      (new here)
+    interiority_strip_matched       36     0.6111     no      (new here)
+    repair_emdash                   59     0.6949     no      (replayed from §85)
+    repair_interiority              61     0.4918     yes     (replayed from §85)
+
+The last two are §85's own records replayed by digest rather than fresh measurements, and they
+reproduce §85's figures exactly because they *are* §85's figures — which is a cache check rather
+than a replication and is labelled as such (§79.1). The first two are new. The one family that
+sits inside the band is the one §85 already found clean, and it is not a B6 member.
+
 **E6 clears all three families, and the confusion matrix is what makes it credible.**
 
     axis matcher \ family      interiority  placebo  em dash  repair_int  sham  stat_flatten
