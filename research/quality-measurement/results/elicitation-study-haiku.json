@@ -1,8 +1,9 @@
 {
   "calls": {
-    "api": 212,
-    "replayed": 212,
-    "transport_failures": 188
+    "api": 172,
+    "failure_reasons": {},
+    "replayed": 252,
+    "transport_failures": 0
   },
   "fixtures": {
     "interiority_strip_matched": 9,
@@ -340,32 +341,32 @@
     "E6": {
       "controls": [
         {
-          "aligned": 0.0,
+          "aligned": 0.1875,
           "attainable_floor": null,
           "consequence": "named below its own-family rate, as required",
           "control_verdict": "INDIFFERENT",
-          "decided_pairs": 0,
+          "decided_pairs": 32,
           "family": "placebo_identical",
           "k_required": null,
           "p_two_sided": null,
-          "rate_on_this_control": 0.0,
+          "rate_on_this_control": 0.1875,
           "role": "floor",
-          "same_axis_rate_on_its_own_family": 1.0,
-          "worst_axis": "stat_flatten"
+          "same_axis_rate_on_its_own_family": 0.9375,
+          "worst_axis": "repair_emdash"
         },
         {
-          "aligned": 0.0,
+          "aligned": 0.375,
           "attainable_floor": null,
           "consequence": "named below its own-family rate, as required",
           "control_verdict": "INDIFFERENT",
-          "decided_pairs": 0,
+          "decided_pairs": 40,
           "family": "rewhitespace_sham",
           "k_required": null,
           "p_two_sided": null,
-          "rate_on_this_control": 0.0,
+          "rate_on_this_control": 0.375,
           "role": "void-control",
-          "same_axis_rate_on_its_own_family": 1.0,
-          "worst_axis": "stat_flatten"
+          "same_axis_rate_on_its_own_family": 0.9375,
+          "worst_axis": "repair_emdash"
         }
       ],
       "elicitation": "name the single most salient difference; scored by a matcher frozen before the run, against a null measured in the same run",
@@ -373,163 +374,163 @@
         "confusion": {
           "interiority_strip_matched": {
             "interiority_strip_matched": {
-              "fired": 0,
-              "responses": 0
+              "fired": 18,
+              "responses": 36
             },
             "placebo_identical": {
               "fired": 0,
-              "responses": 0
+              "responses": 32
             },
             "repair_emdash": {
-              "fired": 0,
-              "responses": 0
+              "fired": 5,
+              "responses": 32
             },
             "repair_interiority": {
-              "fired": 0,
-              "responses": 0
+              "fired": 32,
+              "responses": 32
             },
             "rewhitespace_sham": {
               "fired": 0,
-              "responses": 0
+              "responses": 40
             },
             "stat_flatten": {
               "fired": 0,
-              "responses": 24
+              "responses": 40
             }
           },
           "repair_emdash": {
             "interiority_strip_matched": {
-              "fired": 0,
-              "responses": 0
+              "fired": 12,
+              "responses": 36
             },
             "placebo_identical": {
-              "fired": 0,
-              "responses": 0
+              "fired": 6,
+              "responses": 32
             },
             "repair_emdash": {
-              "fired": 0,
-              "responses": 0
+              "fired": 30,
+              "responses": 32
             },
             "repair_interiority": {
-              "fired": 0,
-              "responses": 0
+              "fired": 23,
+              "responses": 32
             },
             "rewhitespace_sham": {
-              "fired": 0,
-              "responses": 0
+              "fired": 15,
+              "responses": 40
             },
             "stat_flatten": {
-              "fired": 1,
-              "responses": 24
+              "fired": 3,
+              "responses": 40
             }
           },
           "stat_flatten": {
             "interiority_strip_matched": {
-              "fired": 0,
-              "responses": 0
+              "fired": 10,
+              "responses": 36
             },
             "placebo_identical": {
-              "fired": 0,
-              "responses": 0
+              "fired": 2,
+              "responses": 32
             },
             "repair_emdash": {
-              "fired": 0,
-              "responses": 0
+              "fired": 8,
+              "responses": 32
             },
             "repair_interiority": {
-              "fired": 0,
-              "responses": 0
+              "fired": 9,
+              "responses": 32
             },
             "rewhitespace_sham": {
-              "fired": 0,
-              "responses": 0
+              "fired": 2,
+              "responses": 40
             },
             "stat_flatten": {
-              "fired": 24,
-              "responses": 24
+              "fired": 40,
+              "responses": 40
             }
           }
         },
         "readings": {
           "interiority_strip_matched": {
-            "confabulation_rate": null,
-            "fisher_p": 1.0,
-            "null_rate": 0.0,
-            "own_rate": null,
-            "verdict": "DOES_NOT"
+            "confabulation_rate": 0.0,
+            "fisher_p": 0.005124,
+            "null_rate": 0.2569,
+            "own_rate": 0.5,
+            "verdict": "NAMES_THE_AXIS"
           },
           "repair_emdash": {
-            "confabulation_rate": null,
-            "fisher_p": 1.0,
-            "null_rate": 0.0417,
-            "own_rate": null,
-            "verdict": "DOES_NOT"
+            "confabulation_rate": 0.1875,
+            "fisher_p": 0.0,
+            "null_rate": 0.3581,
+            "own_rate": 0.9375,
+            "verdict": "NAMES_THE_AXIS"
           },
           "stat_flatten": {
-            "confabulation_rate": null,
-            "fisher_p": 1.0,
-            "null_rate": null,
+            "confabulation_rate": 0.0625,
+            "fisher_p": 0.0,
+            "null_rate": 0.2071,
             "own_rate": 1.0,
-            "verdict": "DOES_NOT"
+            "verdict": "NAMES_THE_AXIS"
           }
         }
       },
       "members": [
         {
-          "aligned": 24,
+          "aligned": 40,
           "attainable_floor": null,
-          "decided_pairs": 24,
+          "decided_pairs": 40,
           "family": "stat_flatten",
           "k_required": null,
-          "null_rate": null,
+          "null_rate": 0.2071,
           "own_rate": 1.0,
-          "p_two_sided": 1.0,
+          "p_two_sided": 0.0,
           "statistic": "one-sided Fisher exact against a null measured on the other families",
-          "verdict": "FAILS"
+          "verdict": "CLEARS"
         },
         {
-          "aligned": 0,
+          "aligned": 18,
           "attainable_floor": null,
-          "decided_pairs": 0,
+          "decided_pairs": 36,
           "family": "interiority_strip_matched",
           "k_required": null,
-          "null_rate": 0.0,
-          "own_rate": null,
-          "p_two_sided": 1.0,
+          "null_rate": 0.2569,
+          "own_rate": 0.5,
+          "p_two_sided": 0.005124,
           "statistic": "one-sided Fisher exact against a null measured on the other families",
-          "verdict": "FAILS"
+          "verdict": "CLEARS"
         },
         {
-          "aligned": 0,
+          "aligned": 30,
           "attainable_floor": null,
-          "decided_pairs": 0,
+          "decided_pairs": 32,
           "family": "repair_emdash",
           "k_required": null,
-          "null_rate": 0.0417,
-          "own_rate": null,
-          "p_two_sided": 1.0,
+          "null_rate": 0.3581,
+          "own_rate": 0.9375,
+          "p_two_sided": 0.0,
           "statistic": "one-sided Fisher exact against a null measured on the other families",
-          "verdict": "FAILS"
+          "verdict": "CLEARS"
         }
       ],
       "orientation_symmetry": {
         "interiority_strip_matched": {
           "fires_by_orientation": {
-            "0": null,
-            "1": null
+            "0": 0.5,
+            "1": 0.5
           },
           "note": "not positional_bias \u2014 E6 asks for no choice; see orientation_symmetry",
-          "precondition": "NO_CHOICE_TO_COUNT",
-          "responses": 0
+          "precondition": "SYMMETRIC",
+          "responses": 36
         },
         "repair_emdash": {
           "fires_by_orientation": {
-            "0": null,
-            "1": null
+            "0": 0.9375,
+            "1": 0.9375
           },
           "note": "not positional_bias \u2014 E6 asks for no choice; see orientation_symmetry",
-          "precondition": "NO_CHOICE_TO_COUNT",
-          "responses": 0
+          "precondition": "SYMMETRIC",
+          "responses": 32
         },
         "stat_flatten": {
           "fires_by_orientation": {
@@ -537,8 +538,8 @@
             "1": 1.0
           },
           "note": "not positional_bias \u2014 E6 asks for no choice; see orientation_symmetry",
-          "precondition": "NO_CHOICE_TO_COUNT",
-          "responses": 24
+          "precondition": "SYMMETRIC",
+          "responses": 40
         }
       },
       "positional_precondition": {
@@ -547,8 +548,8 @@
           "1": 1.0
         },
         "note": "not positional_bias \u2014 E6 asks for no choice; see orientation_symmetry",
-        "precondition": "NO_CHOICE_TO_COUNT",
-        "responses": 24
+        "precondition": "SYMMETRIC",
+        "responses": 40
       },
       "positive_control": null,
       "protocol": "E6",
@@ -558,24 +559,30 @@
       },
       "statistic": "one-sided Fisher exact, not the two-sided sign test the other protocols use. Only firing is evidence here, so the direction is not arbitrary and the null is the matcher's own unprompted rate rather than 1/2",
       "verdict": {
-        "because": "24 usable comparisons, below the 30 floor (\u00a786.7); a band is not read at this depth",
-        "families_cleared": [],
-        "verdict": "NOT_READABLE"
+        "because": "cleared 3 of 3: ['stat_flatten', 'interiority_strip_matched', 'repair_emdash']",
+        "families_cleared": [
+          "stat_flatten",
+          "interiority_strip_matched",
+          "repair_emdash"
+        ],
+        "verdict": "SURVIVES"
       }
     }
   },
-  "seconds": 422.6,
+  "seconds": 4494.9,
   "spend": {
-    "cache_read": 37641364,
-    "cache_write": 10600632,
-    "equivalent_usd": 55.4878,
-    "input": 5383404,
-    "output": 4727176
+    "cache_read": 41270478,
+    "cache_write": 11813464,
+    "equivalent_usd": 60.7636,
+    "input": 6037432,
+    "output": 5093815
   },
   "transport": "cli",
   "verdict": {
     "licenses": "Nothing. B6's counter is a discrimination oracle, not a taste; \u00a782 governs verbatim and PREFERENCE remains a human's blinded choice. A surviving protocol is a candidate for JudgeBench A2's verdict layer and nothing more.",
-    "reading": "No protocol carried the difference. The composite instrument (\u00a73 of the directive) is the correct architecture by measurement rather than by adoption, and verdict-tier climbing ends with a citation instead of a budget.",
-    "survivors": []
+    "reading": "1 of 3 protocols carried a difference B6 certifies is present, on at least two families, with both controls indifferent.",
+    "survivors": [
+      "E6"
+    ]
   }
 }

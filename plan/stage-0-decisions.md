@@ -6168,15 +6168,34 @@ unwalked range. That is `f2a2aba`'s lesson in a second costume — there a suffi
 admitted, here a slice no walk reached — and the same verdict, a check that cannot fail on the
 material it was pointed at.
 
-## 89. Seven declared quantities that could not do what they said, and five were caught before they cost anything
+## 89. The verdict channel cannot carry it and the report channel can, on the same model and the same pairs
 
-The verdict-locus directive (2026-08-19). The question was scientific rather than infrastructural
-— *where, between representation and verdict, does discrimination die, and is any elicitation
-protocol lossless?* — and B6's admission (§88) gave it ground truth for the first time. What the
-session mostly produced is an answer to a different question, and the honest headline is that the
-instrument-statistics rulebook this repository has been paying for since §81 **worked**: it caught
-seven bars, thresholds and units that could not do what their own declaration implied, five of them
-before a single call was bought.
+The verdict-locus directive (2026-08-19). The question was scientific rather than infrastructural —
+*where, between representation and verdict, does discrimination die, and is any elicitation protocol
+lossless?* — and B6's admission (§88) gave it ground truth for the first time. **Both halves are
+answered.**
+
+**Where it dies.** On `gemma-3-4b-it` the greedy verdict is `A` on **106 of 106** pairwise passes,
+and one step earlier the answer distribution at the verdict token decomposes into |positional|
+**0.9998** against |text| **0.000214**. The signal is not lost at sampling; it is two
+ten-thousandths of the distribution before anything samples. So the loss is upstream of the verdict,
+and a better way of *preferring* cannot be the fix.
+
+**Whether any protocol is lossless.** One is, and it is the one that does not ask for a preference
+at all. On Haiku, same pairs, same session: asked which passage it would rather keep reading, the
+panel answers the slot at chose-A **0.6408** on 142 decided comparisons and is VOID. Asked to
+**name the single most salient difference**, it clears all three B6 families — 40/40 on
+`stat_flatten`, 30/32 on `repair_emdash`, 18/36 on `interiority_strip_matched` against measured
+nulls of 0.21/0.36/0.26 — while reporting *"the passages are identical"* on the placebo and
+*"double spaces after periods"* on the sham.
+
+**So the instrument is not blind. It is being asked the one kind of question its verdict channel
+cannot carry.** That is a design instruction rather than a budget, and it is narrower than it
+sounds: E6 reports a *difference*, never a preference, so it can staff a discrimination layer and
+JudgeBench A2's verdict layer is still empty. §82 is untouched.
+
+**The second result is the rulebook.** Seven declared quantities could not do what their own
+declaration implied, and five were caught before a single call was bought:
 
     #  the declared quantity                          what it could not do                caught
     1  the 2/2**G floor, with §87's reason            transfer: §87's invariance is a       before
@@ -6193,10 +6212,10 @@ before a single call was bought.
     7  the screen's withholding gate                  match its own pre-registration:       after
                                                       it withheld more than the rule said
 
-None of the seven is exotic and all seven are the same shape — the shape §81's point estimate,
-§85's zero-width band and §87's sign-flip floor already had. The difference is that this time the
-checking is a rail rather than a habit, and four of the five caught early were caught by a dry run
-and a covariate distribution rather than by anyone being clever.
+None is exotic and all seven are the shape §81's point estimate, §85's zero-width band and §87's
+sign-flip floor already had. The difference is that the checking is now a rail rather than a habit,
+and four of the five caught early were caught by a dry run and a covariate distribution rather than
+by anyone being clever.
 
 **What each track produced is below. Nothing here moves a licence; §82 governs verbatim.**
 
@@ -6399,7 +6418,7 @@ establishes is that the assembled object satisfies the battery's contract, that 
 job it was designed for on the axioms that measure it, and that everything else waits on Track E.
 §84's freeze remains an operator act and nothing here asks for it.
 
-### 89.4 Track E: the verdict channel is 4,676x more about position than about the passages
+### 89.4 Track E: the verdict channel cannot carry it, and the report channel can
 
 `elicitation_study.py` carries E1, E2, E4, E5 and E6 with `PRE_REGISTRATION` committed before the
 first elicitation (`b9fd89a`); `verdict_locus.py` carries E3 and the locus ladder (`a70975a`).
@@ -6465,36 +6484,86 @@ better — and taking the one-sided test would have been taking the more permiss
 seeing which way §81's rates pointed. Declared before the run: k = 9 of 10, 8 of 9, 7 of 7, and
 `repair_emdash` at G=7 clears only on a perfect seven with no margin at all.
 
-**The API arms are incomplete, and the reason is a measurement rather than an excuse.** The first
-full run reported `api: 490, replayed: 146, transport_failures: 390` — 390 of 490 calls obtained no
-answer at all. Measured afterwards: a serial call succeeds in 46s; two workers ran 4 of 4 in 130s;
-four workers ran 8 of 8 in 137s. **Four workers is fine**, and the failures coincided with the full
-pytest suite, mypy, a 14B ollama screen and a torch extraction sharing the box. The transport is
-sensitive to local load rather than to its own concurrency, which is a fact about this machine.
+**The API arms landed after all, and one protocol survives.** 212 comparisons for E1/E2 and 212
+responses for E6, on Haiku, at four workers: **172 calls, 252 replayed, and zero transport
+failures**, $9.98. The 252 replays are §85's repair-panel records covering two whole fixture
+families for nothing, which is what rail 6 is for.
 
-Those 390 failures cost quota and cost no data, because of a fix made the same morning for an
-unrelated reason: `elicit.py` used to persist a transport failure as a refusal, so one hiccup would
-be baked into every future replay and no resume could repair it. §87.3's distinction — a broken
-install is not evidence about judges — has teeth in the cache as well as in the report. The first
-version of that fix threw the *reason* away with the record; `failure_reasons` now tallies by stop
-reason without caching it.
+    protocol  precondition                                     verdict
+    E1        OUT_OF_BAND  chose-A 0.6408 on 142 decided       VOID
+    E2        OUT_OF_BAND  (same records, ties dropped)        VOID
+    E6        SYMMETRIC                                        SURVIVES, 3 of 3 families
 
-E1, E2 and E6 are running at four workers against the shared digest cache and will finish on the
-resume. **No API protocol's verdict is claimed in this entry**, and the pre-registered outcome
-those arms decide — JudgeBench A2's verdict layer, or the composite proven rather than adopted —
-stays open. What E3 has already established is the narrower and harder half: whatever an
-elicitation protocol does at this tier, it is working with two ten-thousandths of a distribution.
+**E1 and E2 are void on their own precondition, on this material, with the depth to say so.**
+142 decided comparisons is well past §86.7's floor, and the chose-A rate is 0.6408. The incumbent
+answers the slot. Its tie rate is 0.3206, which is why `repair_emdash` fell to G=6 — the tie
+arithmetic §89 predicted for E4 turns out to bite E1 instead, and the family that "clears" at 6/6
+inside a VOID protocol is not read.
+
+**E6 clears all three families, and the confusion matrix is what makes it credible.**
+
+    axis matcher \ family      interiority  placebo  em dash  repair_int  sham  stat_flatten
+    interiority_strip_matched       18/36     0/32     5/32      32/32     0/40     0/40
+    repair_emdash                   12/36     6/32    30/32      23/32    15/40     3/40
+    stat_flatten                    10/36     2/32     8/32       9/32     2/40    40/40
+
+    axis                        own     null    confabulation   Fisher p
+    stat_flatten              1.0000   0.2071      0.0625        <1e-6
+    interiority_strip_matched 0.5000   0.2569      0.0000        0.00512
+    repair_emdash             0.9375   0.3581      0.1875        <1e-6
+
+The diagonal dominates and the off-diagonal is *structured rather than noisy*: the interiority
+matcher fires 32 of 32 on `repair_interiority` — a genuine interiority edit — and 0 of 40 on
+`stat_flatten`. Because `repair_interiority` sits inside the null pool, that 32/32 **inflates the
+interiority null to 0.2569 and makes its test conservative**; the pass is understated rather than
+flattered.
+
+**The responses are the check the matcher cannot be.** On `stat_flatten`: *"Passage A shows Wren's
+status with concrete values (Level 2, HP 19/22) while Passage B shows all status values as unknown
+(?)"*. On the em-dash arm: *"Passage A uses em dashes to set off appositional phrases... while
+Passage B replaces those em dashes with periods"*. On the **placebo**: *"The passages are
+identical; there is no discernible difference between them."* On the **sham**: *"Passage A uses
+single spaces after periods; Passage B uses double spaces after periods."* The model names
+formatting as formatting and declines to invent prose differences where there are none — which is
+the behaviour §83 and §85 could never get out of the same model through a preference question.
+
+**Interiority's 0.50 is a fixture ceiling and not a perception limit.** `interiority_strip_matched`
+is *matched*: one side loses interiority and the other loses a comparable quantity of something
+else, so the pair genuinely has two salient differences and E6 asks for the single most salient
+one. The misses are responses naming the other real difference — *"Passage B ends with a full game
+status interface… while Passage A ends with only a fragment"* — which is a correct answer to the
+question asked. §87's lesson that the fixtures are the ceiling recurs here in the one place it can
+be seen directly.
+
+**What E6 surviving does and does not buy, stated narrowly.** It is a **report** protocol: it asks
+what differs, never which is better. So it can staff a *discrimination* layer and it cannot staff
+a preference layer, and JudgeBench A2's verdict layer — the thing that would let a composite
+express a preference — is **still empty**. §82 is untouched: PREFERENCE remains a human's blinded
+choice and no arrangement of these results changes that.
+
+**Read against E3, the two halves make one finding.** Same model, same pairs, same session: asked
+to prefer, Haiku answers the slot at 0.6408 and is void; asked to name the difference, it clears
+three of three. And a 4B model's internals show the mechanism the API cannot expose — at the
+verdict token the answer distribution is 4,676x position over text. **The instrument is not blind.
+It is being asked the one kind of question its verdict channel cannot carry.** That is the
+directive's question answered, and the answer is a design instruction rather than a budget: put
+the difference-detection in a channel that reports, and route preference to a human.
 
 ### 89.5 What was not run, and what it would cost
 
 - **Track V's two funded arms** (voice-binding dose $9.30, persistence $1.90; operator: FUND) are
   designed and unstarted. They need `claude-opus-5` generations through the same transport that
   Track E is queued on, and running them concurrently is what produced the 390 failures.
-- **E5**, the describe-then-judge two-stage, is the most expensive protocol at two calls per
-  comparison and was dropped from the running schedule so that E1/E2 and E6 — the incumbent and the
-  purest report test — would land first. Deferred rather than cancelled.
-- **The axiom battery on the composite with a real layer 3** waits on Track E's verdict. The
-  free branch — no verdict layer, the "no protocol survived" case — is what ran here, and it is the
-  pre-registered fallback rather than a substitute for the real one.
+- **E4 and E5** were dropped from the running schedule so E1/E2 and E6 — the incumbent and the
+  purest report test — would land first, and they are the two the result now makes most worth
+  buying. E5 asks E1's question with a description already in the context, which is precisely the
+  seam E6 just showed is open; E4 removes the slot entirely, which is the other half. Deferred
+  rather than cancelled, ~$11 the pair at the measured rate.
+- **The axiom battery on the composite with a real layer 3** is now runnable and was not run.
+  E6 survived, but it is a report protocol and the battery asks for preferences, so wiring it in as
+  layer 3 would require deciding what a named difference implies about which side is better —
+  which is exactly the valence §89.3 refuses to invent. The honest next step is a battery run with
+  E6 feeding layer 1's veto rather than layer 3's verdict, and that is a design change rather than
+  a run.
 - **No licence moved, no bar was re-declared after numbers arrived, and the §85 operator read was
   not opened.**
