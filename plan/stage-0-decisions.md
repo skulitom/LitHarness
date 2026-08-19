@@ -6512,6 +6512,14 @@ inside a VOID protocol is not read.
     interiority_strip_matched 0.5000   0.2569      0.0000        0.00512
     repair_emdash             0.9375   0.3581      0.1875        <1e-6
 
+**The sharpest pair of numbers in the session is on one row.** §81 measured the panel on
+`stat_flatten` at **0.5437 — BLIND, with the estimate on the wrong side of indifference**. E6 asks
+the same model family about the same pairs and gets the axis named **40 times out of 40**, in
+sentences like the one quoted below. The transform is not subtle — digits become question marks —
+and that is what makes the contrast diagnostic rather than merely favourable: a difference this
+easy to *describe* was invisible to the same instrument asked to *prefer*. Nothing about the
+model's access to the text changed between those two numbers. Only the question did.
+
 The diagonal dominates and the off-diagonal is *structured rather than noisy*: the interiority
 matcher fires 32 of 32 on `repair_interiority` — a genuine interiority edit — and 0 of 40 on
 `stat_flatten`. Because `repair_interiority` sits inside the null pool, that 32/32 **inflates the
