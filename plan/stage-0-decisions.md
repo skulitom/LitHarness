@@ -5442,11 +5442,21 @@ direction.** That entry re-elicited the identical pairs one tier up: `repair_int
 0.9509 at Haiku to **1.0000 at Sonnet**, 64 of 64, bias exactly 0.500. Capability and family match
 predict opposite signs here — a *stronger* judge should be less taken in by a craft defect, and a
 judge closer to the generator's own register should be more so. **Preference for the told-not-shown
-treatment saturates as tier rises.** That is the sharpest evidence D2 has, and it is still not
-proof: "told feeling is worse" is craft doctrine, not a measured reader fact, and a human may
-prefer the same text. What it does is remove a question from the cross-family judge's list — the
-stimulus is characterised now, so the operator read and §80's class B arbitrate preference alone.
-The two readings enter the ledger together, as the directive asked.
+treatment saturates as tier rises.** ~~That is the sharpest evidence D2 has~~ — **corrected below**
+— and it is still not proof: "told feeling is worse" is craft doctrine, not a measured reader fact,
+and a human may prefer the same text. What it does is remove a question from the cross-family
+judge's list — the stimulus is characterised now, so the operator read and §80's class B arbitrate
+preference alone. The two readings enter the ledger together, as the directive asked.
+
+> **Correction, same day, from §87.3.** The tier gradient is **not** diagnostic of family match, so
+> it is not evidence for D2 at all. §87.3 screened the local judges and found one that cleared the
+> positional-bias precondition: `phi4:latest`, a 2024-era 14B outside the generator's family, which
+> then preferred the same repair at **0.9688** — beside Haiku's 0.9509 and Sonnet's 1.0000. A
+> cross-family judge showing the same preference is what the family-match explanation predicts
+> against. Both readings stand as measured; what changes is which way they point, and the honest
+> statement is now that **the one direct cross-family reading available argues against D2** at
+> n=32, on a model the operator has closed as a candidate. The rest of this section is unaffected:
+> the *stimulus* is told-not-shown whatever any judge thinks of it.
 
 **Track V — the selection ceiling, measured with no selector at all.** "Selection cannot exceed the
 support of the generator's distribution" has been asserted here and never measured. It needs no
@@ -5475,3 +5485,162 @@ force a number, which the directive forbids by name. The tier ladder was **not**
 §85.1 and §79.2 were running it in parallel; coordinating rather than duplicating was the
 directive's instruction and it saved the arm. Track V's N=8..32 curve needs fresh generations and
 is not started.
+
+### 87.2 The external-label family reverses the entry above, and fails the bar anyway
+
+§87 was scored without the fixture the directive names as Track P's valence anchor: §79's
+conversion-labelled pairs, the only material in this project carrying a label a *reader produced*
+rather than one we manufactured. They are added here with their bars declared first (`e31540e`,
+before the forward pass) and run on the same 282-text extraction. 46 pairs, story-disjoint, ~1,000
+words a side, length-matched by §79's builder. No quota. `results/latent-taste-probe.json`,
+`conversion_arm`.
+
+**On this family, and only on this family, internals beat surface counting.**
+
+    channel      aligned (25)   crossed (21)   minimum   aligned CI      crossed CI
+    P0           15  0.600      13  0.619       0.600    [0.387, 0.789]  [0.384, 0.819]
+    P0+          14  0.560      12  0.571       0.560    [0.349, 0.756]  [0.340, 0.782]
+    text_mean    20  0.800      14  0.667       0.667    [0.593, 0.932]  [0.430, 0.854]
+    judge_last   17  0.680      12  0.571       0.571    [0.465, 0.851]  [0.340, 0.782]
+
+`k / G` here **is** agreement with the external label, in the same units as §79's 0.52 bar. The
+mean-pooled readout's minimum across strata is 0.667 against P0's 0.600 and P0+'s 0.560 — the
+reversal of §87's headline, on the one family where the difference was not manufactured by us.
+That is not a contradiction of the entry above: everywhere else, the thing to be detected is a
+thing we made, and a counter that knows what we made is unbeatable. Here nobody knows what makes
+the label move.
+
+**It fails, on the condition pre-registered as the binding one.** The bar has two halves and
+`PRE_REGISTRATION_B4` declared before the run that the interval is the half that would decide it:
+exceeding 0.52 takes 14 of 25 and 11 of 21, while a Clopper-Pearson lower bound clear of 0.50
+takes **18 of 25 and 16 of 21** — roughly three pairs in four. `text_mean` clears the first half in
+both strata and misses the second in `crossed`, whose lower bound is 0.430. **Every channel fails,
+and the reading is FAILS rather than nearly passes**, which is the sentence the attainability note
+was written in advance to make unavailable.
+
+**The shape is the interesting part, and it is the shape §79 built the strata to expose.** A judge
+reading prose agrees with the label in both strata; a judge proxying popularity agrees in one and
+disagrees in the other. §79.1's panel candidate read **0.6100 aligned and 0.4107 crossed** — the
+popularity signature, crossed below a coin — and voided at 0.356 pooled positional bias.
+`text_mean` reads **0.800 and 0.667: both above 0.5**, with a 0.133 spread against the panel's
+0.20. So on the benchmark this project built to *rank* judges, a free local 4B linear readout
+ranks above the panel candidate §79.1 measured, and it does so with the precondition that voided
+that candidate structurally unavailable to it — a readout scores one text at a time and has no
+slot to prefer. Recorded as a ranking, which is all §82 permits BEHAVIOUR-class evidence at STORY
+grain to be, and it is the machine-side input the directive licenses P to hand A2(iii).
+
+**Three reasons not to believe it yet, in the order they would bite.** The corpus ceiling is 46
+pairs and §79 already named the remedy — *"reaching hundreds is a download, not a redesign"*, two
+of the dataset's 47 shards being cached. The `crossed` stratum is 21 pairs and carries the whole
+minimum. And the residual confound is not popularity but *tier*: `crossed`'s high-conversion side
+has 16x fewer views, so a readout could be reading amateur-versus-established register rather than
+anything about quality. Agreement above 0.5 in **both** strata argues against a pure popularity
+proxy, which is exactly what the design was for, and it does not rule the tier confound out.
+
+**What it does not license.** Nothing, and the ceiling was declared before the numbers: §82
+classifies conversion as BEHAVIOUR at STORY grain, `domain/calibration.py` defines PREFERENCE as a
+*human's* blinded choice, and a pass here would still have been a judge-selection signal rather
+than a statement that either side is better prose. It did not pass.
+
+### 87.3 The cross-family screen: the kill condition is discharged by measurement, and D2 loses its best evidence
+
+§87.1 ruled Track S's local option out by citing RUNBOOK's `gemma3:4b` bias of 0.802/0.810. **That
+citation was the inheritance §79.1 forbids** — those figures come from §70's material, ~1,000-word
+`toll.db` passages against their own ablations, not from §85's certified repair pairs. §79.1's
+closing rule is explicit: *"any future use of this instrument on this kind of material has to
+measure bias on its own pairs; inheriting a figure from a different experiment remains
+unsupported."* `latent_crossfamily.py` measures it. Local inference, no quota, 32 comparisons per
+candidate on §85's interiority pairs. `results/latent-crossfamily-screen.json`.
+
+    candidate      status                chose-A   per-persona        preference
+    gemma3:4b      INELIGIBLE_ON_BIAS      1.000   1.000 / 1.000      withheld
+    qwen3:4b       INELIGIBLE_ON_BIAS      0.750   0.938 / 0.563      withheld
+    phi4:latest    ELIGIBLE                0.531   0.500 / 0.563      0.9688
+    gpt-oss:20b    NOT_SCREENABLE              —   weights fail to load on this box
+
+**The conclusion §87.1 reached survives; its evidence does not.** Measured on the right pairs
+`gemma3:4b` is not at 0.802 but at **1.000** — it picks the first slot in 32 of 32, both personas,
+a total positional collapse. So the disqualification is real and it is now *ours*, on our own
+material, rather than borrowed from an experiment that asked something else.
+
+**Three outcomes, not two, and the third is a fact about this machine.** `gpt-oss:20b` returned 32
+of 32 transport errors — the weights fail to load with a tensor size overflow — so no judgment was
+ever obtained. Folding that into "ineligible" would have reported a model as answering a slot when
+it never answered at all, and would have let a broken install masquerade as evidence about judges.
+`NOT_SCREENABLE` is its own state.
+
+**The eligible candidate is excluded by the operator, which is the reserved half of the question.**
+Operator, 2026-08-19: *"let's ignore gpt oss it's too old anyway, like phi4"*. Acceptability —
+cost, terms, currency of the model — is directive §6's reserved call and not something a screen
+decides. So **no acceptable local candidate is eligible, and the directive's kill condition is
+discharged by measurement rather than asserted**: Track S waits on a judge the operator selects,
+and no degraded protocol is substituted to force a number.
+
+**But `phi4`'s number was legitimately obtained, and it is the first cross-family reading this
+project has.** It cleared the precondition at 0.531 and then preferred the interiority repair at
+**0.9688** — beside Haiku's 0.9509 (§85) and Sonnet's 1.0000 (§85.1). A 2024-era 14B model outside
+the generator's family, judging prose written by `claude-opus-5`, likes the told-not-shown repair
+about as much as the generator's own family does. **If family match were driving the preference, a
+cross-family judge should have been markedly cooler. It was not.** The reading is heavily
+qualified — 32 comparisons, two personas, a model the operator has closed as a candidate, and the
++11.8% length confound present for every judge alike — and it is still the only direct evidence on
+D2 in the file, and it points away from self-preference.
+
+### 87.4 What was not run, and the one assumption that dissolved on inspection
+
+The directive names three things this session did not produce. Each is recorded with its reason
+and its price, so the next session inherits a decision rather than a silence.
+
+**P2 — the J-lens readout is not run, and its blocking assumption turns out not to exist.** The
+directive made the `pt → it` lens transfer a named assumption requiring *"its own recorded verdict
+before any P2 number is read."* The verdict is that **the assumption is unnecessary**:
+`neuronpedia/jacobian-lens` (revision `a4114d7752d11eb546e6cf372213d7e75526d3a1`, MIT, ungated)
+ships **both** lenses for this model —
+
+    base (pt)      gemma-3-4b/jlens/Salesforce-wikitext/gemma-3-4b-pt_jacobian_lens.pt
+                   sha256 70311caa74c3933bea8154850e88464936e07c8641ee14f9304968ec1681108a
+    instruct (it)  gemma-3-4b-it/jlens/Salesforce-wikitext/gemma-3-4b-it_jacobian_lens.pt
+                   sha256 dcb23c8627b2ef94225f45550d792d7608bd96f6cf89aa8d1701bd6a4681277c
+
+so a run against `gemma-3-4b-it` reads through the `-it` lens and transfers nothing. **A different
+assumption replaces it, and it is the one to record a verdict on before any P2 number:** the two
+fits are not equally good. Early stopping fired at 616 prompts for the base lens at a final
+identity distance of **0.684** and at 546 prompts for the instruct lens at **0.960** — the instruct
+fit converged to something much closer to the identity map, and whether that is a property of the
+`-it` model or a weaker fit is unsettled upstream. Also pinned for whoever runs it: `jlens` at
+`581d398613e5602a5af361e1c34d3a92ea82ba8e`, which requires `transformers >= 5.5`, positions 0–15
+are unfitted so `-2` is the last fitted position, and `JacobianLens.save` defaults to fp16 and
+overflows without range checks, so every loaded lens needs a `torch.isfinite` gate.
+
+**P2 is nonetheless the right thing to skip.** The directive scopes it as *"only to interpret what
+P1 found"*, and P1 found nothing to interpret: no internal readout beat a surface counter on any
+manufactured family. Running an interpretability layer over a null would be interpreting our own
+arithmetic.
+
+**Track V's two generation arms are designed and unfunded.** Both need fresh `claude-opus-5`
+generations, and §85 measured that channel at 32 generations for $7.41 — about $0.23 each.
+
+    arm                      shape                                    generations   ~cost
+    voice-binding dose       exemplar dose 0,1,2,4,8 passages x 8              40   $9.30
+                             scenes; measure z-space movement and
+                             centroid distance against an n-gram
+                             borrowing control, so deep-feature
+                             movement is separable from mimicry
+    persistence              revise each moved scene once through              8    $1.90
+                             the certified path; does the voice hold
+                             or drift back? a lever that resets on
+                             first use is a demo
+    best-of-N to N=32        32 draws x 8 scenes, to extend §87.1's           256  $59.00
+                             oracle curve past its four-deep pool
+
+The first two are the ones worth buying: §85 measured the demonstrated-voice channel *open* and
+§87.1 measured selection reaching only a third to a half of one certified revision, so how deep
+the voice lever binds and whether it survives a revision are the two open questions about the only
+working register lever this project has. The third is the expensive one and the least informative
+per dollar — the oracle curve already bounds every selector, and extending it to 32 refines a
+ceiling rather than moving it.
+
+**Track V's plateau condition remains unsettled and is not claimed either way.** The directive's
+V2 kill condition is a plateau by N=4 under every selector; the pool is four draws deep, so the
+curve stops exactly where the condition starts. §87.1 reports the shape within N≤4 and the ratio
+to the certified revision, and nothing about N=8..32.

@@ -188,6 +188,20 @@ refits over 2,560 dimensions. The literal implementation is kept beside the clos
 `tests/test_latent_probe.py` asserts they agree; the first draft ran the literal one and had not
 finished a single family in the time the whole run now takes.
 
+**The conversion strata and the cross-family screen** were added after the first run, so a dump
+made before them fails the manifest check loudly rather than scoring a subset. `--extract` covers
+282 texts once §79's corpus is present; without it the run is 190 and `conversion_arm` reports
+NOT RUN with the rebuild command. The screen is its own module and needs ollama rather than torch:
+
+```bash
+uv run python research/quality-measurement/latent_crossfamily.py --models gemma3:4b qwen3:4b
+```
+
+It reports positional bias only. Win rates are withheld for any candidate outside the 0.40-0.60
+band, which on this material is every current local model tried — `gemma3:4b` picks the first slot
+32 times out of 32. Do not remove the withholding to "just see" the number; that is the reading
+§83, §85 and §79.1 each had to void.
+
 **Track S and V's judge-free arms** need neither GPU nor quota, so they run under either
 interpreter and belong with the panel runs above.
 

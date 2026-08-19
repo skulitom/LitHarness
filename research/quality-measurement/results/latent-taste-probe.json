@@ -121,10 +121,183 @@
     "what_it_cannot_test": "Preference. A counter orders a pair; it does not prefer one side. B6 grades whether a judge REGISTERS a difference, and \u00a780's paid batch remains the only instrument that can say whether the difference matters to a reader.",
     "what_it_tests": "The verdict channel, not perception: every member is a difference that is provably present in the text and provably absent from the panel's answer."
   },
+  "conversion_arm": {
+    "minimum_across_strata": {
+      "judge_last": 0.5714,
+      "p0": 0.6,
+      "p0_plus": 0.56,
+      "text_mean": 0.6667
+    },
+    "pre_registration": {
+      "bar": "Clears only if min agreement across strata EXCEEDS 0.52 \u2014 the best prose-blind rule's minimum, `pick_fewer_views` \u2014 AND both strata's Clopper-Pearson lower bounds exceed 0.50. Two conditions, both pre-registered, either alone decides against.",
+      "bar_attainability": "COMPUTED before committing, not estimated \u2014 the \u00a787 lesson applied one entry later, and the first draft of this very entry got it wrong by eye. Measured: exceeding 0.52 needs k>=14 of 25 (0.5600; 13/25 lands exactly ON 0.52 and does not exceed it) and k>=11 of 21 (0.5238). The INTERVAL condition is far more binding and is what the arm will actually fail on if it fails: a Clopper-Pearson lower bound above 0.50 needs k>=18 of 25 (0.7200, CI [0.5061, 0.8793]) and k>=16 of 21 (0.7619, CI [0.5283, 0.9178]). So this design can only pass by ordering roughly three pairs in four \u2014 a far higher standard than 0.52 suggests, stated now so a near-miss is not later described as nearly passing. `test_the_conversion_bar_is_attainable_and_the_interval_is_the_binding_half` pins it.",
+      "leak_rule": "The texts are third-party RoyalRoad prose. No excerpt is written anywhere: the activation dump keys on sha digests and is gitignored, `corpus_leak_audit` refuses a committed .npz outright, and the results JSON carries pair_ids and verdicts only.",
+      "null": "Sampled, not exhaustive: 2**25 is 33.5 million re-runs. 20,000 flip draws at seed 20260819, with the Monte-Carlo standard error reported beside every p and a p of zero reported as '< 1/draws' rather than as zero.",
+      "positional_bias_precondition": "\u00a779's third condition is bias in band. It is VACUOUS for a probe and is recorded as vacuous rather than as passed: a readout scores one text at a time and never sees an order, so there is no slot for it to prefer. That is a structural advantage of this instrument over the panel on exactly the material where \u00a779.1's candidate voided at 0.356 pooled bias \u2014 and it is the one thing the probe brings that the counter does not.",
+      "statistic": "min(agreement_aligned, agreement_crossed). NEVER the mean. \u00a779.1 measured why: pooled, its first candidate averaged to 0.51 and read as unremarkable, while the strata showed a 0.20 spread tilted toward popularity. `taste_benchmark.PRE_REGISTRATION['never_average']` is the same rule and this arm inherits it verbatim.",
+      "valence_ceiling": "Even a clean pass licenses NOTHING. \u00a782 classifies conversion as BEHAVIOUR-class evidence at STORY grain: rankable, and constitutionally unable to license, because `domain/calibration.py` defines PREFERENCE as a HUMAN's blinded choice. A pass here would mean 'this readout ranks matched human prose by a reader-behaviour label better than chance and better than any popularity proxy', which is a judge-selection signal and not a statement that either side is better prose.",
+      "why_this_family_is_different": "Every other family in this module is manufactured: we made the difference, so a readout separating it says only that the difference is there. \u00a779's conversion pairs carry an EXTERNAL label \u2014 followers/total_views, a reader BEHAVIOUR aggregated over other authors' whole stories \u2014 so here k/G IS agreement with that label, in the same units as \u00a779's 0.52 bar. It is the only family in the file from which a direction may be read at all, and it is the anchor the directive names for any quality-direction claim.",
+      "written": "2026-08-19, before the first conversion-family forward pass"
+    },
+    "strata": {
+      "aligned": {
+        "judge_last": {
+          "agreement": 0.68,
+          "agreement_interval": [
+            0.465,
+            0.8505
+          ],
+          "draws": 20000,
+          "groups": 25,
+          "k": 17,
+          "layer": 9,
+          "mc_stderr": 0.002133,
+          "p_note": null,
+          "p_sampled": 0.1012,
+          "seed": 20260819
+        },
+        "p0": {
+          "agreement": 0.6,
+          "agreement_interval": [
+            0.3867,
+            0.7887
+          ],
+          "draws": 20000,
+          "groups": 25,
+          "k": 15,
+          "mc_stderr": 0.003167,
+          "p_note": null,
+          "p_sampled": 0.27775,
+          "seed": 20260819
+        },
+        "p0_plus": {
+          "agreement": 0.56,
+          "agreement_interval": [
+            0.3493,
+            0.756
+          ],
+          "draws": 20000,
+          "groups": 25,
+          "k": 14,
+          "mc_stderr": 0.003454,
+          "p_note": null,
+          "p_sampled": 0.39335,
+          "seed": 20260819
+        },
+        "pairs": 25,
+        "text_mean": {
+          "agreement": 0.8,
+          "agreement_interval": [
+            0.593,
+            0.9317
+          ],
+          "draws": 20000,
+          "groups": 25,
+          "k": 20,
+          "layer": 17,
+          "mc_stderr": 0.000657,
+          "p_note": null,
+          "p_sampled": 0.0087,
+          "seed": 20260819
+        }
+      },
+      "crossed": {
+        "judge_last": {
+          "agreement": 0.5714,
+          "agreement_interval": [
+            0.3402,
+            0.7818
+          ],
+          "draws": 20000,
+          "groups": 21,
+          "k": 12,
+          "layer": 25,
+          "mc_stderr": 0.003488,
+          "p_note": null,
+          "p_sampled": 0.4179,
+          "seed": 20260819
+        },
+        "p0": {
+          "agreement": 0.619,
+          "agreement_interval": [
+            0.3844,
+            0.8189
+          ],
+          "draws": 20000,
+          "groups": 21,
+          "k": 13,
+          "mc_stderr": 0.003084,
+          "p_note": null,
+          "p_sampled": 0.25545,
+          "seed": 20260819
+        },
+        "p0_plus": {
+          "agreement": 0.5714,
+          "agreement_interval": [
+            0.3402,
+            0.7818
+          ],
+          "draws": 20000,
+          "groups": 21,
+          "k": 12,
+          "mc_stderr": 0.003442,
+          "p_note": null,
+          "p_sampled": 0.38575,
+          "seed": 20260819
+        },
+        "pairs": 21,
+        "text_mean": {
+          "agreement": 0.6667,
+          "agreement_interval": [
+            0.4303,
+            0.8541
+          ],
+          "draws": 20000,
+          "groups": 21,
+          "k": 14,
+          "layer": 9,
+          "mc_stderr": 0.002529,
+          "p_note": null,
+          "p_sampled": 0.15065,
+          "seed": 20260819
+        }
+      }
+    },
+    "verdict": {
+      "judge_last": {
+        "all_interval_lower_bounds_above_half": false,
+        "exceeds_prose_blind_bar": true,
+        "min_agreement": 0.5714,
+        "passes": false,
+        "reading": "FAILS on the interval, which was pre-registered as the binding condition: the point estimate clears 0.52 but a lower bound does not exclude 0.50."
+      },
+      "p0": {
+        "all_interval_lower_bounds_above_half": false,
+        "exceeds_prose_blind_bar": true,
+        "min_agreement": 0.6,
+        "passes": false,
+        "reading": "FAILS on the interval, which was pre-registered as the binding condition: the point estimate clears 0.52 but a lower bound does not exclude 0.50."
+      },
+      "p0_plus": {
+        "all_interval_lower_bounds_above_half": false,
+        "exceeds_prose_blind_bar": true,
+        "min_agreement": 0.56,
+        "passes": false,
+        "reading": "FAILS on the interval, which was pre-registered as the binding condition: the point estimate clears 0.52 but a lower bound does not exclude 0.50."
+      },
+      "text_mean": {
+        "all_interval_lower_bounds_above_half": false,
+        "exceeds_prose_blind_bar": true,
+        "min_agreement": 0.6667,
+        "passes": false,
+        "reading": "FAILS on the interval, which was pre-registered as the binding condition: the point estimate clears 0.52 but a lower bound does not exclude 0.50."
+      }
+    }
+  },
   "extraction": {
     "d_model": 2560,
-    "dump": "results/latent-taste-activations.npz",
-    "gpu_c_after": 55,
+    "dump": "C:\\DEV\\LitHarness\\.claude\\worktrees\\latent-taste-perception-e0da96\\research\\quality-measurement\\results\\latent-taste-activations.npz",
+    "gpu_c_after": 59,
     "model": "google/gemma-3-4b-it",
     "n_layers": 34,
     "readout_layers": [
@@ -133,8 +306,8 @@
       25
     ],
     "revision": "093f9f388b31de276ce2de164bdc2081324b9767",
-    "seconds": 164.3,
-    "texts": 190,
+    "seconds": 252.4,
+    "texts": 282,
     "throttle": {
       "pause_above_c": 72,
       "rest_ratio": 3.0,
@@ -142,9 +315,9 @@
       "source": "cdg_battery.throttle"
     },
     "tokens_max": 1890,
-    "tokens_mean": 1403.7,
-    "tokens_min": 1179,
-    "vectors": 1140
+    "tokens_mean": 1384.7,
+    "tokens_min": 1150,
+    "vectors": 1692
   },
   "families": {
     "exemplar_vs_sober": {
