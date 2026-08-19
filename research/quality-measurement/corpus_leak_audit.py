@@ -57,6 +57,23 @@ OURS = (
 #: text, it must not call the field one of these.
 RESPONSE_FIELDS = frozenset({"text", "result", "completion", "reason", "note", "reading"})
 
+#: Blocks that hold what **we** wrote, never what a model read. A `pre_registration` block is the
+#: rules of an experiment declared before it ran; it is our own prose, it is committed to the
+#: ledger as well, and `plan/` is already exempt in :data:`OURS` for exactly that reason.
+#:
+#: Added 2026-08-19, when §87.2's `bar_attainability` note came to 126 words and failed the audit.
+#: Shortening it would have cleared the working tree and not the history — the audit reads every
+#: blob any commit ever pointed at — so the choice was to rewrite a branch whose commit boundaries
+#: are the evidence that its bars predate its numbers, or to say structurally what is true: an
+#: experiment's own declared rules are not third-party prose.
+#:
+#: **The soft spot is the same one `RESPONSE_FIELDS` has and it is named for the same reason.** A
+#: future file that buried corpus text under a key containing `pre_registration` would pass. The
+#: match is on an ancestor key rather than the leaf, so it is broader than the response rule and
+#: deserves more suspicion, not less: if a schema ever needs to record source text, it must not
+#: put it inside a pre-registration block.
+OURS_FIELDS = ("pre_registration",)
+
 #: Below this many commits the history is shallow and the audit cannot do its job. It fails
 #: rather than reporting clean, because a check that passes on a shallow clone is a check that
 #: cannot fail — the shape of every proxy BRIEF §2 had to refute.
@@ -189,6 +206,7 @@ def main(argv: list[str] | None = None) -> int:
     print(f"scanning {len(blobs)} data blobs across {commits} commits", file=sys.stderr)
     findings: list[tuple[str, str, str, int, str]] = []
     responses = 0
+    ours = 0
     for sha, path in blobs:
         content = _run(["git", "cat-file", "-p", sha])
         if not content:
@@ -199,6 +217,9 @@ def main(argv: list[str] | None = None) -> int:
             leaf = field.rsplit(".", 1)[-1] if "." in field else field
             if leaf in RESPONSE_FIELDS:
                 responses += 1
+                continue
+            if any(f".{part}." in f"{field}." for part in OURS_FIELDS):
+                ours += 1
                 continue
             findings.append((path, sha[:8], field, count, sample))
 
@@ -211,6 +232,11 @@ def main(argv: list[str] | None = None) -> int:
             f"({responses} long strings sit in {sorted(RESPONSE_FIELDS)} — what the panel said, "
             f"never what it read. Threshold {args.words} words.)"
         )
+        if ours:
+            print(
+                f"({ours} more sit inside {list(OURS_FIELDS)} blocks — rules we declared before a "
+                "run, not prose anyone else wrote.)"
+            )
         return 0
 
     print(f"\n{len(findings)} excerpt-sized strings found, in {len({f[0] for f in findings})} "
