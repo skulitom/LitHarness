@@ -326,10 +326,10 @@ def cmd_tick(args: argparse.Namespace) -> int:
     """One bounded unit of work. This is what the session's loop invokes."""
     store = _store(args)
     loop = _conductor(store, args)
-    published: tuple[int, int] | None = None
+    published: tuple[Path, tuple[library_module.PublishedBook, ...]] | None = None
     try:
         result = loop.tick(_now())
-        if args.library is not None:
+        if not args.no_library:
             # **After the tick and inside the same store session, but outside anything the
             # tick commits.** The library is derived output: a filesystem failure here must
             # not fail a unit of work that already landed, and a republish that raced the
@@ -346,8 +346,16 @@ def cmd_tick(args: argparse.Namespace) -> int:
         print(f" job={result.job_id}", end="")
     print(f" reconciled={result.reconciled} ingested={result.ingested}")
     if published is not None:
-        books, chapters = published
-        print(f"  library: {books} book(s), {chapters} pastable chapter(s)")
+        root, books = published
+        moved = [book for book in books if book.rewritten]
+        if moved:
+            # Only when something was actually written. A line on every tick saying nothing
+            # changed is a line nobody reads, and the whole point of the folder is that a
+            # change is visible.
+            print(
+                f"  library: {root} · "
+                + ", ".join(f"{book.title} {book.summary}" for book in moved)
+            )
     if result.outcome in {TickOutcome.JOB_FAILED, TickOutcome.JOB_PARKED}:
         return EXIT_ATTENTION
     return EXIT_OK
@@ -1305,15 +1313,29 @@ def cmd_blame(args: argparse.Namespace) -> int:
     return EXIT_OK
 
 
-def _publish_library(args: argparse.Namespace, store: SqliteStore) -> tuple[int, int]:
-    """Republish the library, returning (books, chapters). Shared by `library` and `tick`."""
-    published = library_module.publish(
+def _library_root(args: argparse.Namespace) -> Path:
+    """Where this run's library lives: `--library` if given, else beside the database.
+
+    Beside the database rather than under the working directory, which is what makes
+    publishing safe to have on by default — nothing writes a folder into whatever directory a
+    command happened to be run from, and a test against a temporary database takes its output
+    away with it.
+    """
+    return args.library or library_module.root_for(args.database)
+
+
+def _publish_library(
+    args: argparse.Namespace, store: SqliteStore
+) -> tuple[Path, tuple[library_module.PublishedBook, ...]]:
+    """Republish, returning where and what. Shared by `library` and every tick."""
+    root = _library_root(args)
+    return root, library_module.publish(
         store,
-        root=args.library or library_module.DEFAULT_ROOT,
+        root=root,
         generated_at=_stamp(_now()),
         scenes_per_chapter=args.chapter_scenes,
+        force=getattr(args, "force", False),
     )
-    return len(published), sum(len(book.chapters) for book in published)
 
 
 def cmd_library(args: argparse.Namespace) -> int:
@@ -1326,18 +1348,13 @@ def cmd_library(args: argparse.Namespace) -> int:
     """
     store = _store(args)
     try:
-        published = library_module.publish(
-            store,
-            root=args.library or library_module.DEFAULT_ROOT,
-            generated_at=_stamp(_now()),
-            scenes_per_chapter=args.chapter_scenes,
-        )
-        root = args.library or library_module.DEFAULT_ROOT
+        root, published = _publish_library(args, store)
         for book in published:
             held = f", {book.withheld} chapter(s) withheld" if book.withheld else ""
+            state = "rewritten" if book.rewritten else "already current"
             print(
                 f"{root / book.slug}  {book.title}  {book.summary}  "
-                f"{len(book.chapters)} pastable chapter(s){held}"
+                f"{len(book.chapters)} pastable chapter(s){held}  [{state}]"
             )
         if not published:
             print("(no book in this store yet)")
@@ -3337,10 +3354,18 @@ def build_parser() -> argparse.ArgumentParser:
             if os.environ.get("LITHARNESS_LIBRARY")
             else None
         ),
-        help="republish the library into this folder after every tick, so checking on "
-        "progress is opening a file rather than remembering a command; also read from "
-        "LITHARNESS_LIBRARY. The `library` verb does the same thing on demand, and both "
-        "default to ./library when the folder is not named",
+        help=f"where the library lives; also read from LITHARNESS_LIBRARY. Defaults to "
+        f"{library_module.LIBRARY_DIRNAME}/ BESIDE THE DATABASE rather than under the "
+        "working directory, because the library is derived from one store and belongs with "
+        "it",
+    )
+    parser.add_argument(
+        "--no-library",
+        action="store_true",
+        default=_env_flag("LITHARNESS_NO_LIBRARY"),
+        help="do not republish after a tick. On by default is the point: a reading copy you "
+        "have to remember to ask for is one nobody has. A book whose head has not moved is "
+        "skipped, so a quiet system rewrites nothing",
     )
     parser.add_argument(
         "--chapter-scenes",
@@ -3406,6 +3431,12 @@ def build_parser() -> argparse.ArgumentParser:
     library_cmd = sub.add_parser(
         "library",
         help="republish the reading copies and pastable chapters (not a publication; §62)",
+    )
+    library_cmd.add_argument(
+        "--force",
+        action="store_true",
+        help="rebuild every shelf even when its book has not moved. The way to adopt a "
+        "changed rendering: the files are derived, so the fix is to derive them again",
     )
     library_cmd.set_defaults(func=cmd_library)
 

@@ -47,20 +47,45 @@ one anywhere is an operator decision that condition already governs.
 from __future__ import annotations
 
 import html
+import json
 import re
 from collections.abc import Sequence
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from pathlib import Path
 
 from litharness.application.export import NOT_DRAFTED, BookExport, collect
 from litharness.application.ports import ExportStore
 from litharness.domain.nodes import Node, NodeKind
 
-#: Where the library lands when nobody says otherwise. Beside `exports/`, which holds
-#: hand-run one-off renders, and gitignored for the same reason: it is derived from the
-#: store on every publish, and a generated tree in the index would leave the working copy
-#: permanently dirty for every parallel session sharing this repository.
-DEFAULT_ROOT = Path("library")
+#: The folder name, resolved **beside the database it is derived from** rather than against
+#: the working directory (`root_for`). That is what lets publishing be on by default without
+#: littering: a run against `bz3.db` in the repository writes `book-library/` there, and a test
+#: against a database in a temporary directory writes into that temporary directory and takes
+#: its output away with it.
+#:
+#: It supersedes `exports/`, which held hand-run one-off renders and was never a default.
+#: Gitignored for the reason that one is: it is derived from the store on every publish, and a
+#: generated tree in the index would leave the working copy permanently dirty for every
+#: parallel session sharing this repository.
+LIBRARY_DIRNAME = "book-library"
+
+#: Kept as the bare relative path for callers that have no database to sit beside.
+DEFAULT_ROOT = Path(LIBRARY_DIRNAME)
+
+#: Where the per-book publish state lives: which revision each shelf was built from, so a
+#: republish over an unchanged book is a no-op. Dotted so it sorts out of the way of the books.
+STATE_FILENAME = ".state.json"
+
+
+def root_for(database: Path | str) -> Path:
+    """The library folder for this database: beside it, named `book-library`.
+
+    Beside rather than under the working directory because the library is *derived from* one
+    store and belongs with it. It also makes an on-by-default publish safe: nothing can write
+    a folder into whatever directory a command happened to be run from.
+    """
+    return Path(database).expanduser().resolve().parent / LIBRARY_DIRNAME
+
 
 #: One scene per chapter. See the module docstring: no assembly scheme is decided, and this
 #: is the only grouping that asserts nothing.
@@ -144,6 +169,13 @@ class PublishedBook:
     #: Chapters not emitted because they hold a scene with no prose yet. Counted rather than
     #: dropped: a pastable set that silently skipped its gaps would read as a finished serial.
     withheld: int
+    #: The revision this shelf was built from, and when. Together they are what makes a
+    #: republish over an unchanged book a no-op — and what lets the index answer "is this
+    #: current" with a fact rather than with the time somebody last ran the command.
+    revision_id: str = ""
+    published_at: str = ""
+    #: False when this shelf was already current and nothing was written for it.
+    rewritten: bool = True
 
 
 def _blocks(content: str) -> list[str]:
@@ -320,22 +352,48 @@ you are on.
 """
 
 
-def index_markdown(books: Sequence[PublishedBook], *, generated_at: str) -> str:
-    lines = [INDEX_PREAMBLE, "", f"*Published {generated_at}*", ""]
+def index_markdown(books: Sequence[PublishedBook], *, checked_at: str) -> str:
+    """The shelf listing, with the two times that answer different questions.
+
+    **`Last checked` is when the publisher last looked; `Changed` is when that book last
+    moved.** They are separated because collapsing them is how a folder starts lying about
+    freshness: one restamped timestamp says "published just now" about a book nothing has
+    touched for a week, which is exactly the reassurance somebody checking on progress must
+    not be given.
+    """
+    lines = [INDEX_PREAMBLE, "", f"*Last checked {checked_at}*", ""]
     if not books:
         lines += ["No book in this store yet. `litharness new` or `litharness import`.", ""]
         return "\n".join(lines)
     lines += [
-        "| Book | Drafted | Words | Chapters | Withheld |",
-        "| --- | --: | --: | --: | --: |",
+        "| Book | Drafted | Words | Chapters | Withheld | Changed |",
+        "| --- | --: | --: | --: | --: | --- |",
     ]
     for book in books:
         lines.append(
             f"| [{book.title}]({book.slug}/{book.slug}.md) | {book.drafted}/{book.total} "
-            f"| {book.words:,} | {len(book.chapters)} | {book.withheld} |"
+            f"| {book.words:,} | {len(book.chapters)} | {book.withheld} "
+            f"| {book.published_at or '-'} |"
         )
     lines.append("")
     return "\n".join(lines)
+
+
+def _read_state(root: Path) -> dict[str, dict[str, str]]:
+    """What each shelf was last built from. A missing or unreadable file means "rebuild all".
+
+    Unreadable rather than raising: this file is a cache of a fact the store already holds, so
+    a corrupted one costs a republish and never a run. The books are the truth; this is only
+    how the publisher avoids rewriting them for nothing.
+    """
+    path = root / STATE_FILENAME
+    if not path.is_file():
+        return {}
+    try:
+        loaded = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return {}
+    return loaded if isinstance(loaded, dict) else {}
 
 
 def publish(
@@ -344,21 +402,84 @@ def publish(
     root: Path = DEFAULT_ROOT,
     generated_at: str,
     scenes_per_chapter: int = DEFAULT_SCENES_PER_CHAPTER,
+    force: bool = False,
 ) -> tuple[PublishedBook, ...]:
     """Republish every book in the store. Pure output: reads the store, writes files.
 
     Every branch, rather than a resolved one: the library is the shelf, and a shelf that held
     whichever book sorted lowest would be the wrong thing to check progress against.
+
+    **A book whose head has not moved is skipped, and that is what makes this safe to run on
+    every tick.** Revisions are content-addressed, so "the head is the revision this shelf was
+    built from" is an exact statement rather than a heuristic about timestamps. A quiet system
+    therefore rewrites nothing but the index, and the index is rewritten every time because its
+    job is to answer *is this current* — which needs the time somebody last checked as well as
+    the time the content last changed. `force` is the escape hatch for a publisher change: the
+    files are derived, so the way to adopt a new rendering is to rebuild them all.
     """
+    state = {} if force else _read_state(root)
     published: list[PublishedBook] = []
-    for book_id, branch_id, _head in store.branches():
+    for book_id, branch_id, head_id in store.branches():
+        known = state.get(book_id, {})
+        if known.get("revision_id") == head_id and known.get("scenes_per_chapter") == str(
+            scenes_per_chapter
+        ):
+            # Already current. The recorded `published_at` is kept rather than restamped: it
+            # says when this book last *changed*, and overwriting it with now would turn the
+            # index's most useful column into a synonym for "the publisher ran".
+            document = collect(
+                store, book_id=book_id, branch_id=branch_id, generated_at=generated_at
+            )
+            chapters, withheld = chapters_for(
+                document, scenes_per_chapter=scenes_per_chapter
+            )
+            published.append(
+                PublishedBook(
+                    book_id=book_id,
+                    branch_id=branch_id,
+                    slug=slugify(document.title, book_id),
+                    title=document.title,
+                    summary=document.summary,
+                    drafted=document.drafted,
+                    total=document.total,
+                    words=document.words,
+                    chapters=chapters,
+                    withheld=withheld,
+                    revision_id=head_id,
+                    published_at=known.get("published_at", generated_at),
+                    rewritten=False,
+                )
+            )
+            continue
         document = collect(
             store, book_id=book_id, branch_id=branch_id, generated_at=generated_at
         )
+        book = publish_book(document, root=root, scenes_per_chapter=scenes_per_chapter)
         published.append(
-            publish_book(document, root=root, scenes_per_chapter=scenes_per_chapter)
+            replace(
+                book,
+                revision_id=document.revision_id,
+                published_at=generated_at,
+                rewritten=True,
+            )
         )
-    _write(root / "README.md", index_markdown(published, generated_at=generated_at))
+    _write(root / "README.md", index_markdown(published, checked_at=generated_at))
+    _write(
+        root / STATE_FILENAME,
+        json.dumps(
+            {
+                book.book_id: {
+                    "revision_id": book.revision_id,
+                    "published_at": book.published_at,
+                    "scenes_per_chapter": str(scenes_per_chapter),
+                }
+                for book in published
+            },
+            indent=2,
+            sort_keys=True,
+        )
+        + "\n",
+    )
     return tuple(published)
 
 
@@ -366,9 +487,11 @@ __all__ = [
     "DEFAULT_ROOT",
     "DEFAULT_SCENES_PER_CHAPTER",
     "INDEX_PREAMBLE",
+    "LIBRARY_DIRNAME",
     "NOTES_FILENAME",
     "NOTES_TEMPLATE",
     "NOT_DRAFTED",
+    "STATE_FILENAME",
     "Chapter",
     "PublishedBook",
     "chapters_for",
@@ -377,5 +500,6 @@ __all__ = [
     "paste_plain",
     "publish",
     "publish_book",
+    "root_for",
     "slugify",
 ]

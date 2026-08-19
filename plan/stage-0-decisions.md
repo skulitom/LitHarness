@@ -6939,10 +6939,15 @@ examples written to exercise the distinctness control — nothing claims any of 
 
 ## 92. The library is a copy button, and the two shapes it writes have opposite requirements
 
+*(§93 revises this entry's folder name and its cadence: the folder is `book-library/`, resolved
+beside the database, and publishing is on by default rather than behind `--library`. Everything
+below about the two shapes, the withholding rule and the §62 boundary stands.)*
+
 An operator ask (2026-08-19): a folder inside the harness that the work is periodically
 published to, so progress can be checked by looking rather than by remembering a command — and,
 added mid-build, output that pastes cleanly into Royal Road. `application/library.py`,
-`litharness library`, and `--library DIR` which republishes after every tick.
+`litharness library`, and ~~`--library DIR` which republishes after every tick~~ *(§93: on by
+default)*.
 
 **Most of this already existed and had no cadence and no place.** §62 ratified `export` as the
 manual publication mode and its own docstring anticipated the use in as many words: *"two exports
@@ -7015,3 +7020,67 @@ index says so.
 every publish, and a generated tree in the index would leave the working copy permanently dirty
 for every parallel session sharing this repository. `NOTES.md` is the exception an operator may
 want to keep, and `git add -f` is how.
+
+## 93. The library publishes itself, and the cadence question was already answered by §63
+
+Three operator asks in one message (2026-08-19), following §92: name the folder `book-library`
+and let it supersede `exports/`; make publishing *enforced* rather than remembered; and do it at
+least every few hours, "maybe you can have a cron setup".
+
+**The folder.** `book-library/`, and the interesting part is not the name but where it resolves:
+**beside the database it is derived from**, not under the working directory. That is what makes
+the second ask safe. A library rooted at the current directory could not be on by default —
+every test that runs a tick would write one into whatever directory pytest was invoked from —
+whereas one rooted beside the store follows the store: `bz3.db` in the repository publishes
+`book-library/` there, and a test against a database in a temporary directory publishes into
+that temporary directory and takes its output away when the directory goes. Verified: the suite
+runs green and `git status` is unchanged after it.
+
+**The cadence, and the thing that made it cheap.** Publishing is now on by default after every
+tick, with `--no-library` as the opt-out, because a reading copy you have to remember to ask for
+is one nobody has. What makes that affordable is a skip: **a book whose head has not moved is not
+rewritten.** Revisions are content-addressed, so "the head is the revision this shelf was built
+from" is an exact statement rather than a heuristic about timestamps — a `.state.json` records it
+per book and the publisher compares. Measured on a six-scene run: the two ticks that drafted a
+scene republished, and the evaluation and summary ticks between them wrote nothing.
+
+**The index gained a column, and the reason is that one timestamp would have lied.** It now
+carries *Last checked* beside *Changed* per book. Collapsing them is the obvious simplification
+and it is the wrong one: a single restamped time says "published just now" about a book nothing
+has touched for a week, which is precisely the reassurance somebody checking on progress must not
+be given. Two facts, two columns, and the one that answers "is anything happening" is the one
+that does not move on its own.
+
+### 93.1 Cron was cut, and the ask is already satisfied by what replaced it
+
+The third request named cron, and §63 is the answer that already exists. **Cut 1 of §61's
+programme removed the cron deployment entirely** — leader election, durable pause, the outbox
+delivery path, status-as-external-monitor, net −1,103 lines and three tables — and stated the
+replacement in one sentence: *"One process runs `litharness tick` in a loop (or a shell loop
+does); killing it mid-job loses nothing."*
+
+**Read against that, "publish every few hours" is already beaten by what the loop does.** With
+publishing on every tick, the folder is exactly as fresh as the book *at all times*. A wall-clock
+schedule cannot improve on that; it can only make it staler, and when the loop is off there is
+nothing new to publish anyway. So the answer to the ask is `tools/run-loop.ps1` — §63's operating
+model written down so it is the same loop every time — rather than a scheduler.
+
+**A schedule is still shipped, and the distinction that makes it safe is worth recording.**
+`tools/schedule-library.ps1` registers a task that runs `library` and **never `tick`**. §63
+removed the instance lease that made overlapping invocations safe — *"leader election among
+overlapping invocations; one process has nobody to lose the claim to"* — so a scheduled `tick`
+firing beside a running loop is exactly the case that lease used to cover and which no longer
+exists. `library` is read-only against the store: no lease, no job claim, no mutation. It is safe
+to fire whenever, including alongside a running loop, and that is the only reason a scheduled
+version of it exists at all.
+
+The script does nothing without `-Install`, and its bare output says why the operator probably
+does not want it. Registering a standing task on somebody's machine is persistent configuration
+and stays their act rather than an agent's; the artifact is checked in, reviewable, and one
+command away.
+
+**What none of this re-opens.** No chapter-release unit, no posting scheduler, no publication
+policy object, no publication table — the six things §62 measured the serial-publication pillar
+to lack and which §92 added none of. A cadence for *rendering files locally* is not a publication
+cadence, and §62's condition on the second one is untouched: publication is the export, run when
+the book clears §1a.5's bar, and no book has cleared it.

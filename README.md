@@ -535,8 +535,14 @@ Stated plainly, because a system that runs is easy to mistake for a system that 
   [plan/reader-judge-loop.md](plan/reader-judge-loop.md) is the design and its
   pre-registration.
 - **A library folder, and it is a copy button rather than the publication pillar.**
-  `litharness library` (or `--library DIR`, which republishes after every tick) writes what
-  the system has written to disk in two shapes, because they have opposite requirements. The
+  `book-library/`, republished after **every tick without being asked** and resolved beside the
+  database it is derived from, so nothing writes into whatever directory a command was run from
+  and a run against a scratch store takes its output away with it. `--no-library` opts out;
+  `litharness library` rebuilds on demand. A book whose head has not moved is skipped, because
+  revisions are content-addressed and "the head is what this shelf was built from" is exact —
+  so a quiet system rewrites nothing, and the index carries **when it was last checked** beside
+  **when each book last changed**, which are different questions and would lie if collapsed.
+  It supersedes `exports/`. Two shapes, because they have opposite requirements. The
   **reading copy** is `export`'s document — the whole book, a progress table, and undrafted
   scenes as visible gaps, so two copies a day apart differ in a way you can read at a glance.
   The **pastable copy** is one file per chapter carrying none of that: no progress table, no
@@ -560,6 +566,15 @@ Stated plainly, because a system that runs is easy to mistake for a system that 
   written once and never overwritten, because a human read is not only a progress check: a
   named defect is one of only two doors an axis can enter the registry by, and all three the
   system measures came from one read of one book.
+  **On "publish it every few hours": the loop already beats that.** §63 cut the cron deployment
+  (−1,103 lines, three tables) and named what replaced it — one process running `tick` in a
+  loop, which `tools/run-loop.ps1` now writes down. With publishing on every tick the folder is
+  as fresh as the book at all times, which no wall-clock schedule can improve on; when the loop
+  is off there is nothing new to publish. `tools/schedule-library.ps1` exists for the case the
+  loop does not cover and registers a task that runs `library` and **never `tick`**: §63 also
+  removed the instance lease that made overlapping invocations safe, so a scheduled tick beside
+  a running loop is exactly the case that no longer has a guard — while `library` is read-only
+  against the store and safe to fire whenever. It does nothing without `-Install`.
 - **A Director role: a personality that says what a book is, and never whether it is good.**
   The third role, and it is safe for a different reason from the other two rather than the same
   one. Every frame this project has buried was *evaluative and downstream* — handed prose that

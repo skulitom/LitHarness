@@ -15,13 +15,16 @@ from litharness.adapters.sqlite_store import SqliteStore
 from litharness.application.export import collect
 from litharness.application.library import (
     DEFAULT_SCENES_PER_CHAPTER,
+    LIBRARY_DIRNAME,
     NOTES_FILENAME,
     NOTES_TEMPLATE,
+    STATE_FILENAME,
     chapters_for,
     index_markdown,
     paste_fragment,
     paste_plain,
     publish,
+    root_for,
     slugify,
 )
 from litharness.domain.nodes import Node, NodeKind
@@ -265,7 +268,9 @@ def test_a_stale_chapter_file_is_removed_on_republish(tmp_path) -> None:
         [book] = publish(store, root=root, generated_at=STAMP)
         stale = root / book.slug / "chapters" / "99-gone.html"
         stale.write_text("<p>from a scene that no longer exists</p>", encoding="utf-8")
-        publish(store, root=root, generated_at=STAMP)
+        # `force`, because the head has not moved: the skip that makes a per-tick publish
+        # cheap would otherwise leave the stale file exactly where it was.
+        publish(store, root=root, generated_at=STAMP, force=True)
         assert not stale.exists()
         assert len(list((root / book.slug / "chapters").glob("*.html"))) == 2
     finally:
@@ -275,7 +280,7 @@ def test_a_stale_chapter_file_is_removed_on_republish(tmp_path) -> None:
 def test_the_index_says_the_library_is_not_a_publication() -> None:
     """§62 settled what publishing is here — the export, run when the book clears the bar —
     and no book has cleared it. The folder says so where somebody about to paste will read it."""
-    index = index_markdown((), generated_at=STAMP)
+    index = index_markdown((), checked_at=STAMP)
     assert "not a publication" in index
     assert "steering pool" in index, (
         "reading your own book and directing makes you a steering reader; the caveat belongs "
@@ -296,3 +301,103 @@ def test_publishing_an_empty_store_says_so(tmp_path) -> None:
     finally:
         store.close()
     assert "No book in this store yet" in (root / "README.md").read_text(encoding="utf-8")
+
+
+# -- the cadence: on by default, and cheap because it skips what has not moved -------------
+
+
+def test_the_library_sits_beside_its_database_rather_than_the_working_directory(
+    tmp_path,
+) -> None:
+    """**What makes publishing safe to have on by default.** Resolved against the store it is
+    derived from, so nothing writes a folder into whatever directory a command was run from,
+    and a run against a temporary database takes its output away with it."""
+    assert root_for(tmp_path / "bz3.db") == tmp_path.resolve() / LIBRARY_DIRNAME
+    assert root_for("bz3.db").name == LIBRARY_DIRNAME
+    assert LIBRARY_DIRNAME == "book-library"
+
+
+def test_a_book_whose_head_has_not_moved_is_not_rewritten(tmp_path) -> None:
+    """Revisions are content-addressed, so "the head is what this shelf was built from" is an
+    exact statement rather than a guess about timestamps. A quiet system rewrites nothing."""
+    store = SqliteStore.open(tmp_path / "l.db")
+    root = tmp_path / LIBRARY_DIRNAME
+    try:
+        a_document(store, drafted=2, total=2)
+        [first] = publish(store, root=root, generated_at="2026-08-19T00:00:00Z")
+        assert first.rewritten
+        chapter = root / first.slug / "chapters" / f"{first.chapters[0].stem}.html"
+        chapter.write_text("<p>edited by hand</p>", encoding="utf-8")
+
+        [second] = publish(store, root=root, generated_at="2026-08-19T06:00:00Z")
+        assert not second.rewritten
+        assert chapter.read_text(encoding="utf-8") == "<p>edited by hand</p>", (
+            "an unchanged book is skipped entirely, not re-rendered"
+        )
+    finally:
+        store.close()
+
+
+def test_the_index_separates_when_it_was_checked_from_when_the_book_changed(
+    tmp_path,
+) -> None:
+    """Collapsing them is how a folder starts lying about freshness: one restamped timestamp
+    says "published just now" about a book nothing has touched for a week, which is exactly
+    the reassurance somebody checking on progress must not be given."""
+    store = SqliteStore.open(tmp_path / "l.db")
+    root = tmp_path / LIBRARY_DIRNAME
+    try:
+        a_document(store, drafted=2, total=2)
+        publish(store, root=root, generated_at="2026-08-19T00:00:00Z")
+        publish(store, root=root, generated_at="2026-08-19T06:00:00Z")
+    finally:
+        store.close()
+    index = (root / "README.md").read_text(encoding="utf-8")
+    assert "Last checked 2026-08-19T06:00:00Z" in index
+    assert "2026-08-19T00:00:00Z" in index, "the Changed column keeps when it last moved"
+    assert (root / STATE_FILENAME).is_file()
+
+
+def test_a_corrupt_state_file_costs_a_republish_and_never_a_run(tmp_path) -> None:
+    """The state file is a cache of a fact the store already holds. The books are the truth."""
+    store = SqliteStore.open(tmp_path / "l.db")
+    root = tmp_path / LIBRARY_DIRNAME
+    try:
+        a_document(store, drafted=2, total=2)
+        publish(store, root=root, generated_at="2026-08-19T00:00:00Z")
+        (root / STATE_FILENAME).write_text("{not json", encoding="utf-8")
+        [again] = publish(store, root=root, generated_at="2026-08-19T06:00:00Z")
+        assert again.rewritten
+    finally:
+        store.close()
+
+
+def test_a_tick_publishes_without_being_asked_and_writes_beside_the_database(
+    tmp_path, monkeypatch
+) -> None:
+    """On by default is the point: a reading copy you have to remember to ask for is one
+    nobody has. `--no-library` is the opt-out, and neither writes into the working directory."""
+    from litharness.cli import EXIT_OK, main
+
+    monkeypatch.setenv("LITHARNESS_FAKE_PAD_CHARS", "400")
+    db = tmp_path / "cli.db"
+    assert main(["--database", str(db), "init"]) == EXIT_OK
+    assert main([
+        "--database", str(db), "new", "The Toll Road",
+        "--premise", "A debtor works off an impossible debt.", "--scenes", "6",
+    ]) == EXIT_OK
+    for _ in range(4):
+        main(["--database", str(db), "tick"])
+    root = tmp_path / LIBRARY_DIRNAME
+    assert (root / "README.md").is_file(), "no flag was passed and the library exists"
+    assert list(root.glob("*/chapters/*.html")), "and it holds pastable chapters"
+
+
+def test_no_library_turns_the_cadence_off(tmp_path, monkeypatch) -> None:
+    from litharness.cli import EXIT_OK, main
+
+    monkeypatch.setenv("LITHARNESS_FAKE_PAD_CHARS", "400")
+    db = tmp_path / "cli.db"
+    assert main(["--database", str(db), "init"]) == EXIT_OK
+    main(["--database", str(db), "--no-library", "tick"])
+    assert not (tmp_path / LIBRARY_DIRNAME).exists()
