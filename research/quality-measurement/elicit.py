@@ -285,6 +285,39 @@ def _strip_fence(text: str) -> str:
     return stripped
 
 
+#: Stand-in answers for the verbalize protocol, spanning the axes its matchers look for and some
+#: they do not. Kept beside `_synthetic_text` rather than in `elicitation_study` so that every
+#: dry-run answer in this project is written in one place, under the same no-signal rule.
+_DRY_DIFFERENCES: tuple[str, ...] = (
+    "(dry run) One has numbers in the status block and the other does not.",
+    "(dry run) One gives access to the character's thoughts and the other stays outside.",
+    "(dry run) One uses em dashes where the other uses full stops.",
+    "(dry run) One is longer.",
+    "(dry run) The paragraphs are broken up differently.",
+    "(dry run) They read the same to me.",
+)
+
+
+#: Stop reasons that mean **no judgment was ever obtained** — the process died, timed out, or the
+#: CLI returned an error envelope. They are not cached, and the distinction is §87.3's:
+#: `gpt-oss:20b` returned 32 of 32 transport errors there and folding those into "ineligible"
+#: would have reported a model as answering a slot it never answered, letting a broken install
+#: masquerade as evidence about judges. `NOT_SCREENABLE` is its own state.
+#:
+#: **The cache is where that distinction has teeth.** A refusal is a measurement and belongs in
+#: the replay cache; a transport failure is the absence of one, and caching it bakes a network
+#: hiccup into every future run of the same schedule — a thousand-call sweep would carry its own
+#: flakiness forward permanently and no resume could ever repair it. So these records are
+#: returned to the caller, which marks the cell unscored for *this* run, and are not persisted:
+#: a resume re-issues exactly them and nothing else.
+_TRANSPORT_FAILURES = ("transport_error", "cli_error", "cli_is_error")
+
+
+def _is_transport_failure(stop_reason: str) -> bool:
+    """Did this call fail to obtain an answer at all, as opposed to obtaining a refusal?"""
+    return stop_reason.startswith(_TRANSPORT_FAILURES)
+
+
 def _synthetic_text(key: str, tag: dict[str, Any]) -> str:
     """A dry run's stand-in answer: deterministic, and deliberately carrying **no signal**.
 
@@ -318,6 +351,25 @@ def _synthetic_text(key: str, tag: dict[str, Any]) -> str:
             "verdict": verdict,
             "reason_code": codes[(marker // 3) % len(codes)],
         })
+    # `elicitation_study.py`'s protocols, on the same terms as everything above: the answer is a
+    # function of the request key and never of which side or which family is being asked about,
+    # so a dry run is a draw from the null and every protocol should read FAILS on it. Without
+    # these the study's scorers parse nothing, every response counts as refused, and the dry run
+    # exercises exactly the code path a real run never takes.
+    if tag.get("stage") == "scalar":
+        return json.dumps({"rating": marker % 101})
+    if tag.get("stage") == "describe":
+        return "(dry run) The first passage read one way and the second read another."
+    if tag.get("stage") == "judge":
+        choice = PAIR_CHOICES[marker % len(PAIR_CHOICES)]
+        codes = STOP_CODES if choice == "neither" else KEEP_CODES
+        return json.dumps({"choice": choice, "reason_code": codes[(marker // 3) % len(codes)]})
+    if tag.get("stage") == "verbalize":
+        # Phrases rather than one string, because E6 is scored by regex matchers and a fixed
+        # answer would make every matcher fire always or never. Some of these hit an axis and
+        # some do not; which one a call draws is the hash's business, so the *rate* at which any
+        # matcher fires is the same on every family, which is the null E6's Fisher test needs.
+        return json.dumps({"difference": _DRY_DIFFERENCES[marker % len(_DRY_DIFFERENCES)]})
     if tag.get("stage") == 0:
         persona = BY_ID.get(str(tag.get("persona", "")))
         anchors = persona.held_out_anchors if persona else ()
@@ -458,6 +510,10 @@ class Elicitor:
         self._handle: Any = None
         self.api_calls = 0
         self.replayed = 0
+        #: Calls that obtained no answer at all. Counted, never cached — see
+        #: :func:`_is_transport_failure`. A run that reports a verdict beside a
+        #: non-zero count here is reporting on the cells that answered.
+        self.transport_failures = 0
         self._load_cache()
 
     # ------------------------------------------------------------------ cache plumbing
@@ -779,9 +835,8 @@ class Elicitor:
             record = {**tag, "key": key, "model": params["model"], "text": "", "refused": True,
                       "stop_reason": f"transport_error:{type(error).__name__}", "usage": {}}
             with self._lock:
-                self._cache[key] = record
                 self.api_calls += 1
-                self._persist(record)
+                self.transport_failures += 1
             return record
 
         text, stop_reason, usage = "", "cli_error", {}
@@ -811,9 +866,12 @@ class Elicitor:
             "usage": usage,
         }
         with self._lock:
-            self._cache[key] = record
             self.api_calls += 1
-            self._persist(record)
+            if _is_transport_failure(stop_reason):
+                self.transport_failures += 1
+            else:
+                self._cache[key] = record
+                self._persist(record)
         return record
 
     # ------------------------------------------------------------------- the two stages
@@ -918,6 +976,29 @@ class Elicitor:
             pair_id=pair_id, persona_id=persona.persona_id, sample=sample, model=model,
             orientation=orientation, choice=choice, reason_code=reason,
             refused=choice is None, usage=record.get("usage", {}),
+        )
+
+    def ask(
+        self, persona: Persona, turns: list[dict[str, Any]], *, schema: dict[str, object] | None,
+        max_tokens: int, tag: dict[str, Any], sample: int = 0,
+    ) -> dict[str, Any]:
+        """One cached call whose turns and schema the caller chose. The generic seam.
+
+        Every other public method here fixes a protocol: `panel` asks two stages about one
+        passage, `compare_pair` asks one blinded choice between two. A study *of* protocols has
+        to vary exactly that — the turns and the answer's shape — while holding the persona, the
+        transport, the digest keying and the replay cache identical underneath, so that what
+        differs between two arms is the asking and nothing below it.
+
+        Deliberately thin, and it returns the raw cache record rather than a typed result: what
+        counts as an answer is the calling protocol's definition, and a shared parser here would
+        quietly impose one protocol's shape on the rest. `model` and `effort` are not parameters
+        because a protocol comparison that varied the tier between arms would not be one.
+        """
+        return self._call(
+            self._params(persona, turns, model=self.model, effort=self.effort,
+                         max_tokens=max_tokens, schema=schema),
+            sample=sample, tag=tag,
         )
 
     def compare_pair(
