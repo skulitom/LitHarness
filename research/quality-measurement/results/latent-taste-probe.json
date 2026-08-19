@@ -1,5 +1,126 @@
 {
   "activations_present": true,
+  "b6_proposal": {
+    "members": [
+      {
+        "a_priori_counter": "system_digit_count",
+        "decidable_pairs": 10,
+        "family": "stat_flatten",
+        "groups": 10,
+        "orders_all": true,
+        "panel": {
+          "note": "estimate on the wrong side of indifference; interval spans 0.5",
+          "rate": 0.5437,
+          "read": "BLIND",
+          "where": "\u00a781"
+        },
+        "structural_ties": []
+      },
+      {
+        "a_priori_counter": "interior_per_1k",
+        "decidable_pairs": 9,
+        "family": "interiority_strip_matched",
+        "groups": 9,
+        "orders_all": true,
+        "panel": {
+          "note": "DETECTS as registered, UNDECIDED strict; interval [0.1667, 0.6667]",
+          "rate": 0.3889,
+          "read": "SPANS_NULL",
+          "where": "\u00a781"
+        },
+        "structural_ties": []
+      },
+      {
+        "a_priori_counter": "em_per_1k",
+        "decidable_pairs": 7,
+        "family": "repair_emdash",
+        "groups": 8,
+        "orders_all": true,
+        "panel": {
+          "note": "bias 0.6949 at Haiku and 0.6087 at Sonnet \u2014 void at both tiers",
+          "rate": 0.2734,
+          "read": "VOID",
+          "where": "\u00a785, \u00a785.1"
+        },
+        "structural_ties": [
+          "gen:scene-7"
+        ]
+      }
+    ],
+    "name": "B6 counter-decidable / panel-undecided",
+    "rejected": [
+      {
+        "a_priori_counter": "interior_per_1k",
+        "decidable_pairs": 8,
+        "family": "repair_interiority",
+        "groups": 8,
+        "orders_all": false,
+        "panel": {
+          "note": "1.0000 at Sonnet, bias 0.500",
+          "rate": 0.9509,
+          "read": "SEPARATES",
+          "where": "\u00a785, \u00a785.1"
+        },
+        "structural_ties": [],
+        "why_not": "the panel decides this family"
+      },
+      {
+        "a_priori_counter": null,
+        "family": "states_drunk_vs_sober",
+        "groups": 8,
+        "panel": {
+          "note": "bias 0.828",
+          "rate": null,
+          "read": "VOID",
+          "where": "\u00a783"
+        },
+        "why_not": "no counter is nameable from the transform, so any separation would be the best of a sweep over twenty-eight features"
+      },
+      {
+        "a_priori_counter": null,
+        "family": "states_trip_vs_sober",
+        "groups": 8,
+        "panel": {
+          "note": "bias 0.762",
+          "rate": null,
+          "read": "VOID",
+          "where": "\u00a783"
+        },
+        "why_not": "no counter is nameable from the transform, so any separation would be the best of a sweep over twenty-eight features"
+      },
+      {
+        "a_priori_counter": null,
+        "family": "exemplar_vs_sober",
+        "groups": 8,
+        "panel": {
+          "note": "VOID at Haiku (bias 0.766), clean at Sonnet (bias 0.490)",
+          "rate": 0.6484,
+          "read": "READABLE_AT_SONNET",
+          "where": "\u00a785, \u00a785.1"
+        },
+        "why_not": "no counter is nameable from the transform, so any separation would be the best of a sweep over twenty-eight features"
+      },
+      {
+        "a_priori_counter": "words",
+        "decidable_pairs": 10,
+        "family": "filler_inject",
+        "groups": 10,
+        "orders_all": true,
+        "panel": {
+          "note": "a detected DEGRADER",
+          "rate": null,
+          "read": "SEPARATES",
+          "where": "\u00a770"
+        },
+        "structural_ties": [],
+        "why_not": "the panel decides this family"
+      }
+    ],
+    "rule": "A pair joins B6 when the counter its transform is DEFINED in terms of \u2014 named in A_PRIORI_COUNTER before any result is read \u2014 orders every decidable pair in one direction, structurally tied pairs are listed rather than counted, at least G-1 pairs are decidable, AND the ledger records the panel as BLIND, VOID or interval-spanning on the same fixture.",
+    "status": "PROPOSED \u2014 NOT ADMITTED. Only the operator moves what panel v2 is selected on.",
+    "what_it_cannot_test": "Preference. A counter orders a pair; it does not prefer one side. B6 grades whether a judge REGISTERS a difference, and \u00a780's paid batch remains the only instrument that can say whether the difference matters to a reader.",
+    "what_it_tests": "The verdict channel, not perception: every member is a difference that is provably present in the text and provably absent from the panel's answer."
+  },
   "extraction": {
     "d_model": 2560,
     "dump": "results/latent-taste-activations.npz",

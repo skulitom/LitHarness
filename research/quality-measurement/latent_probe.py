@@ -190,6 +190,137 @@ PRE_REGISTRATION: dict[str, Any] = {
 }
 
 
+#: What the panel is recorded as doing on each family, transcribed from the ledger rather than
+#: re-measured. These are the *other* half of a B6 pair: a fixture belongs in the proposal only
+#: when a counter decides it and the panel does not. Every row cites the entry it came from so a
+#: reader can check the transcription, and `read` is the ledger's own word for the outcome.
+PANEL_VERDICTS: dict[str, dict[str, Any]] = {
+    "stat_flatten": {"read": "BLIND", "rate": 0.5437, "note": "estimate on the wrong side of "
+                     "indifference; interval spans 0.5", "where": "§81"},
+    "interiority_strip_matched": {"read": "SPANS_NULL", "rate": 0.3889, "note": "DETECTS as "
+                                  "registered, UNDECIDED strict; interval [0.1667, 0.6667]",
+                                  "where": "§81"},
+    "repair_emdash": {"read": "VOID", "rate": 0.2734, "note": "bias 0.6949 at Haiku and 0.6087 "
+                      "at Sonnet — void at both tiers", "where": "§85, §85.1"},
+    "exemplar_vs_sober": {"read": "READABLE_AT_SONNET", "rate": 0.6484, "note": "VOID at Haiku "
+                          "(bias 0.766), clean at Sonnet (bias 0.490)", "where": "§85, §85.1"},
+    "repair_interiority": {"read": "SEPARATES", "rate": 0.9509, "note": "1.0000 at Sonnet, bias "
+                           "0.500", "where": "§85, §85.1"},
+    "filler_inject": {"read": "SEPARATES", "rate": None, "note": "a detected DEGRADER",
+                      "where": "§70"},
+    "states_drunk_vs_sober": {"read": "VOID", "rate": None, "note": "bias 0.828", "where": "§83"},
+    "states_trip_vs_sober": {"read": "VOID", "rate": None, "note": "bias 0.762", "where": "§83"},
+}
+
+#: The panel readings that mean "this instrument did not decide the pair". A B6 member needs one
+#: of these *and* a counter nameable in advance that decides every decidable pair.
+UNDECIDED_READS = ("BLIND", "VOID", "SPANS_NULL")
+
+#: The counter each family's transform makes obvious **before anyone looks at a result** — the
+#: quantity the edit is defined in terms of. A family with no entry here has no a-priori counter
+#: and cannot join B6, whatever a scan turns up.
+#:
+#: **This exists because `best_k` is a maximum over twenty-eight features and cannot be read as
+#: one counter's score.** The first draft of the rule admitted §83's state arms at 7 of 8 on that
+#: basis; with twenty-eight features scanned, 7 of 8 somewhere is unremarkable, and those arms are
+#: precisely the families §86 records as undecided by surface *and* internals. A benchmark member
+#: has to be a difference somebody could have specified in advance, not the best of a sweep.
+A_PRIORI_COUNTER: dict[str, str] = {
+    "stat_flatten": "system_digit_count",
+    "interiority_strip_matched": "interior_per_1k",
+    "repair_interiority": "interior_per_1k",
+    "repair_emdash": "em_per_1k",
+    "filler_inject": "words",
+}
+
+
+def _counter_orders_all(pairs: list[Pair], counter: str) -> bool:
+    """Does one named counter separate every decidable pair in a single direction?"""
+    signs = set()
+    for pair in pairs:
+        after = p0_features(pair.positive, steelman=True)[counter]
+        before = p0_features(pair.negative, steelman=True)[counter]
+        if after != before:
+            signs.add(after > before)
+    return len(signs) == 1
+
+
+def propose_b6(report: dict[str, Any]) -> dict[str, Any]:
+    """The fixture family this run proposes, derived from the results rather than chosen.
+
+    **Proposed, never admitted.** §84 puts what panel v2 is selected on in the operator's hands,
+    and §82 forbids any machine result from moving a licence. This function emits a candidate and
+    the rule that produced it; admitting it is somebody else's act.
+
+    The directive's B6 was "probe-panel divergence pairs". The run says the cheaper family is
+    strictly better: the probe never beat a counter, so the divergence worth benchmarking is
+    **counter-decidable / panel-undecided**. It needs no GPU, no open weights and no model pin,
+    it reproduces from committed fixtures in one command, and it tests the same channel.
+    """
+    families = build_families()
+    members, rejected = [], []
+    for name, entry in report["families"].items():
+        if entry["is_floor"] or name not in PANEL_VERDICTS:
+            continue
+        panel = PANEL_VERDICTS[name]
+        counter = A_PRIORI_COUNTER.get(name)
+        row: dict[str, Any] = {"family": name, "groups": entry["groups"], "panel": panel,
+                               "a_priori_counter": counter}
+        if counter is None:
+            row["why_not"] = (
+                "no counter is nameable from the transform, so any separation would be the best "
+                "of a sweep over twenty-eight features"
+            )
+            rejected.append(row)
+            continue
+        pairs, _ = drop_degenerate(name, families[name])
+        deltas, ties = [], []
+        for pair in pairs:
+            after = p0_features(pair.positive, steelman=True)[counter]
+            before = p0_features(pair.negative, steelman=True)[counter]
+            (ties if after == before else deltas).append(pair.scene)
+        signs = [
+            1 for pair in pairs
+            if p0_features(pair.positive, steelman=True)[counter]
+            != p0_features(pair.negative, steelman=True)[counter]
+        ]
+        decidable = len(signs)
+        # One direction, one counter, every decidable pair: no fitting and nothing to hold out,
+        # which is the point — a benchmark member should be checkable by inspection.
+        ordered = _counter_orders_all(pairs, counter)
+        row |= {"decidable_pairs": decidable, "structural_ties": ties, "orders_all": ordered}
+        if ordered and decidable >= entry["groups"] - 1 and panel["read"] in UNDECIDED_READS:
+            members.append(row)
+        else:
+            row["why_not"] = (
+                "the panel decides this family" if panel["read"] not in UNDECIDED_READS
+                else "the a-priori counter does not order every decidable pair"
+            )
+            rejected.append(row)
+    return {
+        "status": "PROPOSED — NOT ADMITTED. Only the operator moves what panel v2 is selected on.",
+        "name": "B6 counter-decidable / panel-undecided",
+        "rule": (
+            "A pair joins B6 when the counter its transform is DEFINED in terms of — named in "
+            "A_PRIORI_COUNTER before any result is read — orders every decidable pair in one "
+            "direction, structurally tied pairs are listed rather than counted, at least G-1 "
+            "pairs are decidable, AND the ledger records the panel as BLIND, VOID or "
+            "interval-spanning on the same fixture."
+        ),
+        "what_it_tests": (
+            "The verdict channel, not perception: every member is a difference that is provably "
+            "present in the text and provably absent from the panel's answer."
+        ),
+        "what_it_cannot_test": (
+            "Preference. A counter orders a pair; it does not prefer one side. B6 grades whether "
+            "a judge REGISTERS a difference, and §80's paid batch remains the only instrument "
+            "that can say whether the difference matters to a reader."
+        ),
+        "members": members,
+        "rejected": rejected,
+    }
+
+
 # --------------------------------------------------------------------------------- extraction
 
 
@@ -445,6 +576,7 @@ def score(args: argparse.Namespace) -> dict[str, Any]:
         report["families"][name] = entry
 
     report["verdict"] = verdict(report)
+    report["b6_proposal"] = propose_b6(report)
     return report
 
 

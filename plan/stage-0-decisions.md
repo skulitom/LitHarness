@@ -5391,6 +5391,24 @@ verdict channel directly, which is what B6 was for. **It is proposed and not adm
 operator moves what panel v2 is selected on** (§84), and the hardware-ladder question is moot
 rather than answered: 12B would have to beat a digit counter, not a 4B model.
 
+**The proposal is an artifact rather than a paragraph**, emitted by `propose_b6` into
+`results/latent-taste-probe.json` under `b6_proposal`, so admitting it is a decision rather than a
+re-derivation. Three members, and the membership rule is stricter than the sentence above:
+
+    member                     counter (named a priori)  decidable   panel
+    stat_flatten               system_digit_count            10/10   BLIND 0.5437 (§81)
+    interiority_strip_matched  interior_per_1k                 9/9   spans null 0.3889 (§81)
+    repair_emdash              em_per_1k                       7/8   VOID .695 / .609 (§85, §85.1)
+
+**The counter has to be nameable before any result is read** — `A_PRIORI_COUNTER` maps each family
+to the quantity its transform is *defined* in terms of — because the diagnostic column is a maximum
+over twenty-eight features and cannot be read as one counter's score. The first draft of this rule
+used that maximum and admitted §83's state arms at 7 of 8; with twenty-eight features swept, 7 of 8
+somewhere is unremarkable, and those are exactly the arms this entry records as undecided by
+surface *and* internals. They are rejected now, with the reason recorded beside them. `repair_emdash`
+carries one **structural tie** — `gen:scene-7`'s original had no prose em dashes to remove — which
+is listed as a scene id rather than counted as a miss, since an unscoreable pair is not a failure.
+
 **What this does not license.** Nothing. A sign count is discrimination, and the panel was asked
 for preference — the two are not the same question, and the honest comparison is narrower than it
 looks: what the panel fails at on these pairs is *registering a difference at all*, answering the
