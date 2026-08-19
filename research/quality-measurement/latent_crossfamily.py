@@ -58,6 +58,21 @@ BIAS_BAND = (0.40, 0.60)
 #: the inheritance problem this module exists to fix.
 SCREEN_FAMILY = "repair_interiority"
 
+#: §86.7's floor: a rate is not read as a band below this many **decided** comparisons.
+#:
+#: **§87.3 is why this is a constant rather than a caveat.** That screen disqualified `gemma3:4b`
+#: on a chose-A rate of 1.000 — perfectly positional — and the honest sentence had to be written
+#: in prose beside it: the rate rested on **eleven** decisions, because the model answered
+#: `neither` to the other twenty-one. The disqualification was right and the number was thin, and
+#: nothing in the code said so. A judge that mostly abstains and is perfectly positional on the
+#: few it decides is a different object from one that answers every comparison from the first
+#: slot, and a screen that returns the same status for both is not measuring eligibility.
+#:
+#: So `INSUFFICIENT_DECIDED` is its own state, on the same principle as `NOT_SCREENABLE`: a
+#: candidate that did not decide enough to be read is neither eligible nor disqualified, and
+#: reporting it as either would put a number where there is not one.
+DECIDED_FLOOR = 30
+
 PRE_REGISTRATION: dict[str, Any] = {
     "written": "2026-08-19, before the first local elicitation",
     "measures": "positional bias only — the eligibility precondition, not a preference.",
@@ -69,11 +84,23 @@ PRE_REGISTRATION: dict[str, Any] = {
         "reserved choice of cross-family judge."
     ),
     "power": (
-        "Deliberately a screen. At the default 32 comparisons the standard error on a bias "
-        "estimate is about 0.088, which separates a 0.80-biased judge from an unbiased one at "
-        "roughly 3.4 standard errors and does NOT resolve a candidate sitting near the band edge. "
-        "A candidate that lands inside the band here is a candidate worth funding a real arm on, "
-        "never a candidate that has passed."
+        "Deliberately a screen. At the default 64 comparisons the standard error on a bias "
+        "estimate is about 0.063, which separates a 0.80-biased judge from an unbiased one at "
+        "roughly 4.8 standard errors and still does NOT resolve a candidate sitting near the band "
+        "edge — 0.40 and 0.50 are 1.6 standard errors apart. A candidate that lands inside the "
+        "band here is a candidate worth funding a real arm on, never a candidate that has passed. "
+        "(The figure was 0.088 at the 32 comparisons this screen defaulted to for §87.3; the "
+        "default moved with `decided_floor` and this sentence moved with it.)"
+    ),
+    "decided_floor": (
+        "A chose-A rate is read as a band only on at least 30 decided comparisons (§86.7). Below "
+        "that the candidate is INSUFFICIENT_DECIDED, which is neither eligible nor disqualified: "
+        "§87.3 disqualified `gemma3:4b` on a rate resting on eleven decisions and had to say so "
+        "in prose, and a state the code cannot express is a state the next run will get wrong. "
+        "The screen is therefore seated at four personas — 4 x 8 scenes x 2 orientations = 64 "
+        "comparisons — so a candidate abstaining on half of them still clears the floor. §87.3's "
+        "figures were taken at two personas on the same material and are cited as prior context, "
+        "never used as a value here (§79.1)."
     ),
     "reserved": (
         "Which cross-family judge is acceptable — cost, terms, protocol fidelity — is the "
@@ -141,8 +168,15 @@ def screen(model: str, args: argparse.Namespace) -> dict[str, Any]:
     # obtained. Folding that into "ineligible" would report a model as having answered a slot
     # when it never answered at all, and would let a broken install masquerade as evidence about
     # judges. NOT_SCREENABLE is its own state and it is a fact about this machine, not the model.
+    decided = int(bias.get("decided", 0) or 0)
     if not every or refused == len(every):
         status = "NOT_SCREENABLE"
+    elif decided < DECIDED_FLOOR:
+        # Four outcomes now, and this is the one §87.3 had to write in prose. A candidate that
+        # abstained its way below the floor has not been shown eligible *or* biased: the band is
+        # simply not readable at that depth, and forcing it into either verdict would report a
+        # measurement nobody took.
+        status = "INSUFFICIENT_DECIDED"
     elif in_band:
         status = "ELIGIBLE"
     else:
@@ -156,11 +190,19 @@ def screen(model: str, args: argparse.Namespace) -> dict[str, Any]:
         "positional_bias": bias,
         "in_band": in_band,
         "eligible": status == "ELIGIBLE",
+        "decided": decided,
+        "decided_floor": DECIDED_FLOOR,
         "win_rate": (
             round(statistics.fmean(rates), 4) if status == "ELIGIBLE" and rates
             else "WITHHELD — see PRE_REGISTRATION.withholding_rule"
         ),
     }
+    if status == "INSUFFICIENT_DECIDED":
+        row["insufficient_because"] = (
+            f"{decided} of {len(every)} comparisons decided, below the {DECIDED_FLOOR} floor; "
+            f"the candidate answered `neither` to {len(every) - decided - refused} and refused "
+            f"{refused}. Neither eligible nor disqualified — the band is not readable here."
+        )
     if status == "NOT_SCREENABLE":
         # `Comparison` carries no stop reason — that lives in the cache record beside it, which is
         # where a reader has to look anyway to tell a refusal from a transport failure.
@@ -176,8 +218,9 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--models", nargs="+", default=["gpt-oss:20b"],
                         help="ollama tags already pulled on this machine")
     parser.add_argument("--scenes", type=int, default=8)
-    parser.add_argument("--personas", type=int, default=2,
-                        help="personas seated; 2 x 8 scenes x 2 orientations = 32 comparisons")
+    parser.add_argument("--personas", type=int, default=4,
+                        help="personas seated; 4 x 8 scenes x 2 orientations = 64 comparisons, "
+                             "which keeps a half-abstaining candidate above the 30-decided floor")
     parser.add_argument("--rest-ratio", type=float, default=1.0,
                         help="this box thermal-shuts-down under sustained local inference")
     parser.add_argument("--dry-run", action="store_true")

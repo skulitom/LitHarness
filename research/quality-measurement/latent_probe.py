@@ -572,6 +572,43 @@ def baseline_row(pairs: list[Pair], names: tuple[str, ...], *, steelman: bool) -
 #: not exceed it has shown nothing a popularity heuristic could not.
 PROSE_BLIND_BAR = 0.52
 
+#: **The readout Track C is frozen on, committed before the expanded corpus was built and before
+#: any new pair or conversion label was read.** Stage-0 §89.
+#:
+#: §87.2 read the conversion arm at whichever of three depths maximised `min(aligned, crossed)`,
+#: disclosed that this gave the probe three shots where a surface counter gets one, and wrote
+#: every ranking below it knowing the asymmetry was inherited. This retires the asymmetry rather
+#: than re-inheriting it: one channel, one depth, chosen once, named here, and used unchanged at
+#: whatever the corpus turns out to be.
+#:
+#: **Layer 17 and `text_mean` are §87.2's numbers and that is exactly why they must be frozen
+#: now.** They were the best of a selection over three depths at n=46. Carried into a bigger
+#: corpus without being frozen they would be re-selected, and the second selection would be made
+#: against labels the first one had already been fitted to. Frozen, they are a *prediction*: the
+#: readout that read 0.800/0.667 on 46 pairs is committed to reading the expanded corpus at the
+#: same depth, and if it was a depth-selection artifact the larger n is what exposes it.
+#:
+#: P0 and P0+ run beside it unchanged, so the comparison is now symmetric — one shot each.
+FROZEN_READOUT: dict[str, Any] = {
+    "frozen": "2026-08-19, before the corpus rebuild and before any new pair or label was read",
+    "channel": "text_mean",
+    "layer": 17,
+    "direction": "unit-normalised mean of paired difference vectors, leave-one-pair-out",
+    "cites": "§87.2, which selected this depth across strata at n=46",
+    "no_depth_selection": (
+        "`_select_layer` is not called on a frozen run. Every depth is still extracted and "
+        "reported, because hiding the others would make the freeze unfalsifiable, but the "
+        "verdict reads layer 17 alone and no other depth may be substituted into it."
+    ),
+    "what_freezing_buys": (
+        "The asymmetry §87.2 disclosed — three shots for the probe against one for each surface "
+        "baseline — is gone, so a probe-versus-P0 ranking on the expanded corpus is a comparison "
+        "rather than a construction. What it costs is the chance that 17 was the wrong depth, "
+        "which is the correct thing to pay: §84's rule is that a v2 candidate is frozen before "
+        "the numbers that would tempt a re-selection arrive."
+    ),
+}
+
 
 def _conversion_row(
     pairs: list[Pair], names: tuple[str, ...], *, steelman: bool
