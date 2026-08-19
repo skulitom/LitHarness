@@ -115,7 +115,7 @@ per-arm positional bias (chose-A 0.73–0.83) — near-twin pairs sit below this
 positional resolution, the §78-tail law at its extreme. The finding lives in the mechanics;
 read §83, not the win rates.
 
-## Four ways to waste a paid run, all of them already paid for once
+## Five ways to waste a paid run, all of them already paid for once
 
 **Do not share a cache file between concurrent runs.** `Elicitor`'s write lock is per-process.
 `--cache` exists because two runs sharing one JSONL interleave and corrupt each other's records.
@@ -129,6 +129,16 @@ protect, and it was the only reason those runs died.
 cache for exactly the affected records and replays everything else. That is the intended
 behaviour and it means an interrupted run resumes for free — but it also means an edit made
 mid-run silently splits the run across two prompt versions. Finish, then edit.
+
+**Do not run a CPU-heavy simulation next to an elicitation, even on a remote transport.**
+The thermal governor in the next paragraph guards `--transport ollama`, and it is easy to read
+that as "the CLI and SDK transports are thermally free". They are not free *of the machine*: the
+`claude -p` transport spawns one process per call at four workers, and on 2026-08-19 an axiom
+battery running on that transport was killed at comparison 158 of 720 by a workstation shutdown
+while a null-simulation sweep held the CPU at full load beside it. **The elicitation was not the
+load; it was the thing that died.** The digest cache made the restart lossless — 158 comparisons
+replayed for nothing — so the cost was wall clock again, which is the same lesson the `timeout`
+guard taught one entry up. Run the arithmetic before the calls or after them, never during.
 
 **GPU runs need the thermal governor.** `--transport ollama` is the only arm that touches the
 card, and this workstation hard-shuts-down under sustained inference. `Elicitor._throttle`

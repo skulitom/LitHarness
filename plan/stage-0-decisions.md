@@ -5188,7 +5188,9 @@ verdicts join the pool the next PREFERENCE calibration is measured on, and nothi
 separately.** §72's expiry bites first — the judge's writes move the digest and stale its own
 licence — but staleness forces re-calibration, and re-calibration is where the contamination
 enters, because the re-measured holdout now contains machine answers under a class whose
-definition says human. This is inert today, because the calibrations table is empty and there is
+definition says human. **§86.6 corrects this entry twice more in the same direction**: the
+selection door checks no measured number at all, and the grain guard cited below is wired to a
+different door. This is inert today, because the calibrations table is empty and there is
 no row to launder into. **It stops being inert the day §80's batch lands**, which is the argument
 for closing it while it is free: a reserved reader-id prefix at the one write site, excluded in
 `analysable_judgments`, with a test that fails if a machine row ever counts toward a preference
@@ -5302,6 +5304,8 @@ corpus is not comparable with §79's without a declared change of frame.
 **Even a clean pass licenses nothing on its own.** Retention over other authors' whole stories is
 `BEHAVIOUR` at `Grain.STORY`; `veto_for` refuses it **by class, before grain is consulted**, and
 `Grain.covers` independently bars story-grain evidence from licensing a unit-grain decision.
+**Both of those guard the refusal door rather than the selection one — see §86.6, which measures
+which door is actually wired.**
 §82's ruling on §79's benchmark applies verbatim — it can rank judge candidates, it cannot license
 one — and the transfer from "orders other authors' openings" to "may choose between two drafts of
 our span" runs from the easiest discrimination in the corpus to the hardest, since candidate spans
@@ -5358,3 +5362,145 @@ pre-registration, its ten-oracle selftest and its verified null; one paraphrase 
 **Not taken**: no paid elicitation, no production change to the preference plumbing, no T2
 pre-registration issued, and no scraper written against a site whose terms nobody in this project
 has read.
+
+### 86.6 T0 runs: the incumbent is disqualified on three axioms, and the battery that disqualified it needed a correction first
+
+720 comparisons, 562 fresh and 158 replayed, `claude-haiku-4-5`, **$26.09**,
+`results/axiom-battery.json`. The run was killed at comparison 158 by a workstation shutdown and
+resumed losslessly off the digest cache — a fifth entry now sits in the RUNBOOK's list of ways to
+waste a paid run, because the load that killed it was a CPU-bound null simulation running *beside*
+the elicitation on a transport whose compute is remote. The elicitation was what died, not what
+caused it.
+
+**Verdict, both readings, neither selected:**
+
+    reading          overall        failed                                    unreadable
+    as registered    DISQUALIFIED   A0, A1, A2, A4, A6                        A3
+    corrected        DISQUALIFIED   A2, A4, A6                                A3
+
+#### The correction, declared mid-run from simulation with no elicited verdict read
+
+`--operating-characteristic` asks the question the selftest cannot: not whether a *deterministic*
+perfect oracle clears the battery — it does — but what the battery does to a judge that is right
+on average and noisy per call. **As registered, this battery disqualifies a genuinely good
+stochastic judge 82-100% of the time.** The mechanism is arithmetic and it is embarrassing: A0, A1
+and A6 read a positional band off the *decided* comparisons, and a judge that correctly declines
+to choose leaves almost none. At the tie rate §85 measured on layout-only shams, an identity arm
+yields about ten decided comparisons across six scenes, and at that count an **unbiased** judge
+violates 0.40-0.60 by sampling alone 35% of the time. **The band was failing the judge for having
+behaved correctly** — §85's zero-width containment band in a new costume, and the second defect in
+this programme's own pre-registration to be caught by simulation rather than by data.
+
+The repair is one constant: a band is read only on arms carrying at least 30 decided comparisons,
+which is where the standard error of a rate falls under the band's half-width. It changes no
+request text, so every comparison already bought replayed unchanged and the correction cost nothing
+in quota. Both readings are computed and printed for every run from here.
+
+**It is not a full repair and the number says so.** Corrected, the battery still disqualifies a
+good judge on 0.31 of runs at the repo's measured heterogeneity and 0.65 at strong heterogeneity,
+the residual driver being A3, whose cycle null treats scenes as independent. **So a bare
+DISQUALIFIED from this instrument is not yet evidence about a judge.** What licenses the reading
+below is that the three surviving failures carry effect sizes the false-fail rate cannot produce.
+
+#### A6 is the finding, and it is the largest positional bias this project has measured
+
+    arm             chose-A   decided   in band
+    ladder            0.8151      568   no
+    paraphrase        0.7872       47   no
+    format            0.7273       22   no  (below the 30-decided floor; not read)
+    identity          1.0000        6   no  (below the floor; not read)
+
+**0.8151 on 568 decided comparisons is roughly 15 standard errors from indifference** — against
+§79.1's 0.356 on 368, which the ledger already called "the most strongly estimated" bias failure on
+record. That record now belongs here, and on this system's *own* prose against manipulated copies
+of itself, which is the material this instrument was built for and is used on. §70 measured 0.5874
+on the same corpus with the full ablation set at a single dose; the difference is that this ladder
+carries *small* doses, and a two-paragraph rotation is a near-twin pair. §83's law arrives on the
+one material anybody hoped was exempt.
+
+#### A2 fails in the informative direction: the panel sees local dislocation and not global reordering
+
+Zero of six scenes ordered against a null 95th percentile of 3. The per-scene win rates for the
+damaged side, at doses 0.25 / 0.50 / 1.0:
+
+    gen:scene-1  0.1304  0.3333  0.3636      gen:scene-4  0.2174  0.5417  0.5000
+    gen:scene-2  0.1304  0.4167  0.5417      gen:scene-5  0.2083  0.3043  0.3478
+    gen:scene-3  0.4583  0.3478  0.5000      gen:scene-6  0.1250  0.2917  0.2917
+
+**The preference for the undamaged text is strongest at the smallest dose and decays toward
+indifference as damage grows** — inverted, not merely flat, in five of six scenes. Two paragraphs
+out of place is caught hard; every paragraph out of place is barely caught at all. That is §5a's
+`transplant` blindness (−0.0125) reproduced on a dose ladder: a fully rotated scene is a *global*
+structural change, and this instrument is measured near-blind to those while catching local jars.
+It is also the first dose-ladder measurement the pairwise instrument has ever had — every prior
+pairwise run in this repository used a single dose, so `dose_rho` was NaN on all nine arms of the
+2x2 and monotonicity was untested rather than failed. It is now tested and it failed.
+
+#### A4: the first measurement of question-wording stability, and it fails
+
+Agreement across a semantically identical rephrasing is **0.7234**, against a floor of **0.8646**
+for agreement across resamples of the *same* wording — a drop of 0.141 past a 0.10 margin, on 47
+and 48 cells. **Roughly fourteen points of a verdict is the wording.** Read against the persona
+being nearly inert on this instrument (persona-to-passage sum-of-squares ratios of 0.0028, 0.0071
+and 0.0342), this is the direct confirmation that the question is the load-bearing knob and the
+costume is not. The four declared invariants held — tie option, keep-reading act, reason-code
+request, plain register — so this is wording sensitivity, not a changed task.
+
+#### A0 and A1: the assumption is approximately true, and whitespace alone moves the tie rate
+
+**A0 is the first elicitation of a pair `variant_win_rate` has called 0.5 by construction since
+§70, and the assumption survives: the panel answers `neither` on 0.875 of 48 comparisons between
+byte-identical texts.** Six comparisons were decided and all six picked the same slot, which is
+p ≈ 0.03 two-sided and is **flagged rather than read** — six is a fifth of the floor this entry
+just registered, and reading it would be the exact move the floor exists to forbid.
+
+**A1 is void on bias and still returns the number it was built for, because that number is a tie
+rate rather than a preference.** The separator downgrade changes not one character of any word, and
+it takes the decided share from **12.5% to 45.8%** (Fisher two-sided p = 0.0006). Whitespace alone
+makes this panel **3.7x more willing to state a preference at all.** The direction of the
+preference matches §78 — 0.818 toward the blank-line original against §78's 0.958 on the harder
+flatten — but that half is unreadable at chose-A 0.7273 and is recorded for shape only. **The
+registered prediction was that A1 would fail; under the corrected rule it formally PASSES, because
+its band went unreadable, while the mechanism it predicted is confirmed on the one statistic that
+needs no bias precondition.** Both halves are written down so neither can be selected later.
+
+#### A5 passes, and vindicates gating the aggregate rather than the call
+
+ICC(1) is **0.284, interval [0.169, 0.384]** — a single comparison is mostly noise — while
+Spearman-Brown at the battery's measured width of 7 replicates puts the aggregate lower bound at
+**0.5867**, clearing the 0.50 floor. A bar set on ICC(1) at the conventional 0.50 would have
+disqualified an instrument that is adequately reliable at the width its arms are actually read at,
+which is why that bar was moved to the aggregate before any number existed.
+
+#### Three corrections to §86, from the adversarial pass, all pointing the same way
+
+- **`judge_license` reads no measured number.** Its three clauses are `evidence_class is
+  PREFERENCE`, currency, and digest equality. It never calls `why_not_promotable`, so precision,
+  holdout size, flagged count and §59's lower bound are not consulted at the selection door.
+- **`cmd_calibrate` records without enforcing promotability**, and says so: *"This command records;
+  it does not promote... printed here as information rather than enforced here as a precondition."*
+  So the row that opens the selection door need never have cleared a floor.
+- **`decision_grain` is passed at exactly one call site** — `handlers.py:263`, `Grain.UNIT`, inside
+  `_craft_ladder`. Selection never consults grain, so the `Grain.covers` guard §86.3 cites protects
+  the *refusal* door and not the *selection* one.
+
+**Net: the ceiling on selection rests on one clause, and §86.1 records that clause's human-only
+meaning as enforced by a docstring.** §86 named three independent guards; there is one, and it is
+the unenforced one. The task chip to close it stands, and its priority rises with this entry.
+
+#### What this does to the programme
+
+**The incumbent panel is out at T0, so §79's $12 screen is moot for it** — the ordering registered
+in [judge-validity-program.md](judge-validity-program.md) §7 did its job on the first candidate, at
+$26 instead of at four figures. Panel v2 selection begins from candidates that have cleared this
+battery, and the two the ledger already points at — a single plain question, and a stronger tier —
+are now both suspect for the same reason: §85's Opus arms read positional bias 0.5000 / 0.7000 /
+1.0000, pooled 0.661, so tier does not buy positional resolution, and A4 says the question moves
+0.14 of the verdict, which makes "change the question" a candidate axis rather than a fix.
+
+**And the battery is a candidate for its own treatment.** Its corrected false-disqualification rate
+of 0.31-0.65 against a good judge is too high for a tier whose whole purpose is to be a cheap,
+trustworthy kill. The named repairs, in order: cluster A3's null over scenes rather than treating
+tournaments as independent; raise the identity and format arms past the 30-decided floor so their
+bands become readable rather than merely unfailable; and report the battery's operating
+characteristic beside every verdict, which this run now does.

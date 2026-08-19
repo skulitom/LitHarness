@@ -1,6 +1,6 @@
 # Pricing the anchor: the unanchored-judge validity programme
 
-**Status: pre-registered, one tier built and selftested, none run, all four priced.** This
+**Status: pre-registered, T0 built and RUN, the other three priced and blocked.** This
 document answers the directive "bound judge divergence and exploitation tightly enough to earn
 scoped selection licences using zero solicited human labour". It is written under §82's rule
 rather than against it, and its first job is to separate the half of the anchoring question a
@@ -20,9 +20,11 @@ of the four tiers are not runnable today and none of the three is blocked by mon
 - **T3** is blocked on T1, because "held out" means "another lineage" and there is one lineage
   here.
 
-**What is runnable is T0. It is built, its null is verified, and it costs $25 and about two and
-a half hours of wall clock.** Its expected first result is that the incumbent panel is
-disqualified.
+**What was runnable was T0, and it has run: $26.09, 720 comparisons, and the incumbent panel is
+DISQUALIFIED under both readings** — on positional bias at **0.8151 over 568 decided comparisons**,
+on dose monotonicity, and on paraphrase stability. §86.6 has the numbers, and the correction the
+battery itself needed first. The registered expectation that the incumbent would fail is met; the
+axiom it was predicted to fail on is not among the three that decided it.
 
 ---
 
@@ -109,7 +111,7 @@ answer about one of our units, and a machine cannot become one.
 
 ---
 
-## 2. T0 — the axiom battery. Built, selftested, unrun, $25
+## 2. T0 — the axiom battery. Built, selftested, run, $26.09
 
 `research/quality-measurement/axiom_battery.py`. Machine-only, runs first, disqualifier
 semantics: a candidate failing any axiom is out before it costs anything else.
@@ -203,12 +205,27 @@ call was made**, and both are recorded rather than quietly repaired:
   on ICC(1) would disqualify an instrument that is noisy per call and perfectly usable at panel
   width, which is a bar about the wrong quantity.
 
-**Cost and status.** 6 scenes, 54 pairs, **720 comparisons, ~$25** at the measured rate
-($0.031–0.049 per comparison across six runs, median $0.035) and **~2.5 hours** of wall clock at the CLI
-transport's measured 4.9 calls per minute. `--selftest` passes; `--dry-run` — the null through
-the real plumbing — reads **DISQUALIFIED** on six axioms with transitivity unreadable, which is
-the pre-registered expectation, and the module exits non-zero if a null ever clears. No paid
-call has been made; the module refuses to spend without `--yes`.
+**Cost and result.** 6 scenes, 54 pairs, **720 comparisons, $26.09** — 562 fresh calls and 158
+replayed after a workstation shutdown killed the first attempt at comparison 158 and the digest
+cache made the restart free. `--selftest` passes; `--dry-run` reads DISQUALIFIED as pre-registered.
+
+**The run disqualifies the incumbent under both readings, and the battery needed a correction
+before its verdict could be read at all.** `--operating-characteristic` — added mid-run, from
+simulation, with no elicited verdict inspected — measures what the battery does to a judge that is
+right on average and noisy per call, which the deterministic selftest cannot. As registered it
+disqualifies a *good* judge 82–100% of the time, because three axioms read a positional band off
+the decided comparisons and a judge that correctly declines to choose leaves almost none: at §85's
+measured tie rate an identity arm yields ~10 decided comparisons, and at that count an unbiased
+judge violates the band by sampling alone 35% of the time. A 30-decided floor drops that to
+0.31–0.65, which is still too high, and the residual driver is A3's unclustered cycle null.
+
+**So a bare DISQUALIFIED from this battery is not yet evidence about a judge.** What licenses the
+reading is effect size: A6 at **0.8151 chose-A over 568 decided comparisons** is roughly 15 standard
+errors from indifference and now the largest positional-bias figure in the project, past §79.1's
+0.356 over 368. A2 inverts rather than merely flattening — the preference for the undamaged text is
+strongest at the *smallest* dose and decays as damage grows, which is §5a's global-structure
+blindness on a ladder. A4 puts ~14 points of a verdict on the question's wording. Full numbers in
+§86.6.
 
 **What a T0 pass licenses: nothing.** It says a candidate is coherent enough to be worth paying
 to test against a label.
@@ -382,7 +399,12 @@ candidate**. The ordering is therefore forced:
 It would refute claim (a), which is the one thing in this programme that could. It would remain
 `BEHAVIOUR`-class evidence at `Grain.STORY`, which `veto_for` refuses **by class, before grain is
 even consulted**, and which `Grain.covers` independently bars from licensing a `UNIT`-grain
-decision. §82's ruling on §79's benchmark applies verbatim: it can rank judge candidates; it
+decision. **Both of those guard the *refusal* door. The *selection* door is `judge_license`, which
+never consults grain and never reads a measured number — it tests a class name, an expiry date and
+a digest, and `cmd_calibrate` records a row without enforcing promotability. So the ceiling on
+selection rests on one clause, `evidence_class is PREFERENCE`, whose human-only meaning §1.1
+records as unenforced. That is a materially thinner guard than three independent ones, and it is
+recorded here rather than left as the impression the previous sentence gives.** §82's ruling on §79's benchmark applies verbatim: it can rank judge candidates; it
 cannot license one. And the transfer from "orders other authors' openings the way retention
 orders their stories" to "may pick between two drafts of our span" runs from the easiest
 discrimination in the corpus to the hardest, since candidate spans are near-twins of one another
@@ -451,7 +473,7 @@ read as having achieved the stronger thing.**
 ## 7. The price, totalled, against the batch it defers
 
     tier   status              money         calendar      engineering        blocker
-    T0     built, selftested   $25           2.5 h         done               none
+    T0     RUN; incumbent out  $26.09        ~4 h          done               none
     T1     designed            $12-40/lineage days          adapter per lab    provider access
     T2     designed            ~$15/run      11-13 weeks   scraper + store    premise, label
                                                                               floor, ToS
@@ -473,7 +495,7 @@ burnt month.
 
 **The recommended sequence, which differs from the directive's by one edge:**
 
-1. **Now, $25** — run T0 on the default panel. Built, null verified, incumbent predicted to fail.
+1. ~~**Now, $25** — run T0 on the default panel.~~ **Done, $26.09: the incumbent is out on three axioms (§86.6), so the $12 screen below is moot for it.** Later candidates enter at T0, not at the screen.
 2. **Per candidate, $12** — the §79 screen, read for **positional band first and agreement
    second**. This is panel-v2 selection and the T2 precondition in one purchase.
 3. **Fund the batch in parallel, not after.** T2 does not gate it and must not delay it: the batch

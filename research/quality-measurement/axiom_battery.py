@@ -82,6 +82,7 @@ from __future__ import annotations
 import argparse
 import itertools
 import json
+import math
 import random
 import statistics
 import sys
@@ -131,7 +132,49 @@ MONOTONE_NULL_QUANTILE = 0.95
 PARAPHRASE_MARGIN = 0.10
 DETERMINED_FLOOR = 0.50
 ICC_AGGREGATE_FLOOR = 0.50
+
+#: Minimum decided comparisons before a positional-bias band may be *read*. Added mid-run on
+#: simulation evidence with the elicited verdicts unread — see `PRE_REGISTRATION_CORRECTED` and
+#: §86.6. Below this count the band fails a correct judge for having behaved correctly: a judge
+#: that ties 79% of the time on an identity pair (the rate §85 measured on layout-only shams)
+#: leaves about 10 decided comparisons pooled across six scenes, and at that count an *unbiased*
+#: judge violates 0.40-0.60 by sampling alone 35% of the time. 30 is where the standard error of
+#: a rate (<= 0.091) falls under the band's half-width.
+BIAS_MIN_DECIDED = 30
 NULL_DRAWS = 4_000
+
+#: **Declared after the first elicitation began and before any elicited verdict was read**, on
+#: the evidence of a simulation rather than of the run: the battery as registered disqualifies a
+#: genuinely good *stochastic* judge 83-100% of the time, because three of its seven axioms read a
+#: positional band off a handful of decided comparisons. `--operating-characteristic` is that
+#: measurement and it runs offline for nothing. Both readings are computed and reported for every
+#: run; neither is selected. §81's rule one instrument over: the rule as registered is reported,
+#: the defect in the rule is recorded beside it, and nothing is retro-passed.
+PRE_REGISTRATION_CORRECTED: dict[str, str] = {
+    "provenance": (
+        "written while the first paid run was in flight, from `--operating-characteristic`, with "
+        "no elicited verdict inspected. It changes no request text, so every comparison already "
+        "bought replays unchanged and the correction costs nothing in quota"
+    ),
+    "bias_floor": (
+        "a positional band is read only on arms carrying at least BIAS_MIN_DECIDED decided "
+        "comparisons. Below that the arm reports bias_readable false and cannot fail on bias. The "
+        "identity and format arms will usually sit below the floor for a *correct* judge, and "
+        "that is the finding rather than a gap: a judge that properly declines to choose between "
+        "identical texts cannot have its slot preference estimated on them"
+    ),
+    "unchanged": (
+        "every other bar, including the 0.40-0.60 band itself, the tie floor, the monotonicity "
+        "rule, the cycle null and the aggregate-reliability floor. The correction is about how "
+        "many comparisons a band needs before it may be read, not about where the band sits"
+    ),
+    "known_residual": (
+        "A3's cycle null and A4's paraphrase floor still treat scenes as independent, and the "
+        "operating characteristic shows A3 degrading from 0.16 to 0.57 as scene heterogeneity "
+        "rises. Reported and not repaired here, because a clustered null needs a heterogeneity "
+        "parameter that would be chosen rather than measured"
+    ),
+}
 
 PRE_REGISTRATION: dict[str, str] = {
     "status": (
@@ -646,13 +689,19 @@ class Battery:
         chose_a = bias.get("chose_A_rate", float("nan"))
         decided = bias.get("decided", 0)
         band_ok = decided == 0 or BIAS_BAND[0] <= float(chose_a) <= BIAS_BAND[1]
+        readable = int(decided) >= BIAS_MIN_DECIDED
         verdict = "UNREADABLE" if not scored else (
             "PASS" if (ties >= TIE_FLOOR and band_ok) else "FAIL"
+        )
+        corrected = "UNREADABLE" if not scored else (
+            "PASS" if (ties >= TIE_FLOOR and (band_ok or not readable)) else "FAIL"
         )
         return {
             "axiom": key, "comparisons": len(scored),
             "tie_rate": round(ties, 4) if scored else None,
             "tie_floor": TIE_FLOOR, "positional_bias": bias, "verdict": verdict,
+            "verdict_corrected": corrected,
+            "bias_readable": readable, "bias_min_decided": BIAS_MIN_DECIDED,
             "reading": (
                 "two texts that are identical in content; anything but a tie is a report on "
                 "position or on layout, and the win rate is not reported because there is no "
@@ -816,10 +865,16 @@ class Battery:
                 BIAS_BAND[0] <= float(chose_a) <= BIAS_BAND[1])
             arms[arm] = {"bias": bias, "in_band": in_band}
         readable = [arm for arm, row in arms.items() if row["bias"].get("decided", 0)]
+        estimable = [arm for arm, row in arms.items()
+                     if int(row["bias"].get("decided", 0)) >= BIAS_MIN_DECIDED]
         return {
             "axiom": "A6_position", "arms": arms, "band": list(BIAS_BAND),
+            "bias_min_decided": BIAS_MIN_DECIDED, "estimable_arms": estimable,
             "verdict": ("UNREADABLE" if not readable else
                         ("PASS" if all(arms[arm]["in_band"] for arm in readable) else "FAIL")),
+            "verdict_corrected": ("UNREADABLE" if not estimable else
+                                  ("PASS" if all(arms[arm]["in_band"] for arm in estimable)
+                                   else "FAIL")),
             "reading": (
                 "per arm, never pooled and never inherited. §79.1 measured 0.356 on 368 "
                 "comparisons and called positional bias a property of the pair; an arm outside "
@@ -838,12 +893,31 @@ class Battery:
             self.position(),
         ]
         rows = {row["axiom"]: row for row in axioms}
-        failed = sorted(key for key, row in rows.items() if row["verdict"] == "FAIL")
-        unreadable = sorted(key for key, row in rows.items() if row["verdict"] == "UNREADABLE")
-        overall = "CLEARED" if not failed and not unreadable else (
-            "DISQUALIFIED" if failed else "UNREADABLE")
+
+        def read(field: str) -> dict[str, Any]:
+            hit = sorted(k for k, r in rows.items() if r.get(field, r["verdict"]) == "FAIL")
+            unread = sorted(k for k, r in rows.items()
+                            if r.get(field, r["verdict"]) == "UNREADABLE")
+            return {
+                "overall": ("CLEARED" if not hit and not unread else
+                            ("DISQUALIFIED" if hit else "UNREADABLE")),
+                "failed": hit, "unreadable": unread,
+            }
+
+        as_registered = read("verdict")
+        corrected = read("verdict_corrected")
+        failed, unreadable = as_registered["failed"], as_registered["unreadable"]
+        overall = as_registered["overall"]
         return {
             "overall": overall, "failed": failed, "unreadable": unreadable, "axioms": rows,
+            "as_registered": as_registered, "corrected": corrected,
+            "two_readings": (
+                "`as_registered` is the rule committed before the first call; `corrected` adds "
+                "only the decided-count floor below which a positional band may not be read, "
+                "declared mid-run from simulation with no elicited verdict inspected. Both are "
+                "printed, neither is selected, and a disagreement between them is a fact about "
+                "the battery rather than about the judge"
+            ),
             "reading": (
                 "CLEARED means the candidate is coherent enough to be worth paying to test "
                 "against a label. It is not evidence about taste and licenses nothing"
@@ -856,6 +930,100 @@ def run_battery(pairs: list[Pair], elicit: Elicit, *, model: str) -> Battery:
     for pair in pairs:
         battery.comparisons[pair.pair_id] = elicit(pair)
     return battery
+
+
+# ------------------------------------------------------------------- operating characteristic
+
+#: Scenarios for `operating_characteristic`, each a *good* judge with a different amount of the
+#: heterogeneity the repo has measured. `beta` is the logit weight on the dose gap, `tau_null` the
+#: tie rate on a pair with no real difference (§85 measured 0.79 on layout-only shams, which is
+#: where the default comes from), `scene_sd` and `persona_sd` the random effects — the repo's
+#: `variance_split` ratios of 0.0028-0.0342 say the passage dimension dominates the persona one by
+#: 5-19x, which is why they are never set equal here.
+OC_SCENARIOS: tuple[tuple[str, dict[str, float]], ...] = (
+    ("homogeneous", {"beta": 3.0, "tau_null": 0.79, "scene_sd": 0.0, "persona_sd": 0.0}),
+    ("measured_heterogeneity", {"beta": 3.0, "tau_null": 0.79, "scene_sd": 0.6,
+                                "persona_sd": 0.15}),
+    ("strong_heterogeneity", {"beta": 3.0, "tau_null": 0.79, "scene_sd": 1.2,
+                              "persona_sd": 0.15}),
+    ("weak_dose_response", {"beta": 1.5, "tau_null": 0.79, "scene_sd": 0.6, "persona_sd": 0.15}),
+    ("forced_choice_habit", {"beta": 3.0, "tau_null": 0.35, "scene_sd": 0.6, "persona_sd": 0.15}),
+)
+
+
+def _good_judge_run(pairs: list[Pair], rng: random.Random, *, beta: float, tau_null: float,
+                    scene_sd: float, persona_sd: float, tie_slope: float = 1.2) -> Battery:
+    """One synthetic run of a judge that is genuinely invariant, monotone and wording-stable."""
+    scenes = {pair.scene for pair in pairs}
+    scene_effect = {scene: rng.gauss(0, scene_sd) for scene in scenes}
+    persona_effect = {persona.persona_id: rng.gauss(0, persona_sd) for persona in PANEL}
+    battery = Battery(pairs=pairs, model="operating-characteristic")
+    for pair in pairs:
+        gap = pair.right_dose - pair.left_dose
+        out: list[Comparison] = []
+        for persona in PANEL:
+            for sample in range(pair.samples):
+                for orientation in (0, 1):
+                    if pair.left == pair.right or gap == 0:
+                        choice = ("neither" if rng.random() < tau_null
+                                  else rng.choice(("A", "B")))
+                    else:
+                        latent = (-beta * gap + scene_effect[pair.scene]
+                                  + persona_effect[persona.persona_id])
+                        if rng.random() < tau_null * math.exp(-tie_slope * abs(latent)):
+                            choice = "neither"
+                        else:
+                            prefer_right = rng.random() < 1 / (1 + math.exp(-latent))
+                            choice = _side(pair, orientation, prefer_right)
+                    out.append(Comparison(
+                        pair_id=pair.pair_id, persona_id=persona.persona_id, sample=sample,
+                        model="operating-characteristic", orientation=orientation,
+                        choice=choice, reason_code="none", refused=False))
+        battery.comparisons[pair.pair_id] = out
+    return battery
+
+
+def operating_characteristic(pairs: list[Pair], *, draws: int = 120) -> dict[str, Any]:
+    """P(disqualify | a genuinely good but *stochastic* judge), at the battery's own geometry.
+
+    **The selftest is not this measurement and cannot be.** Its perfect oracle is deterministic,
+    and the question a disqualifier tier has to answer is what it does to a judge that is right on
+    average and noisy per call. Seven conjunctive bars compound, so the answer is not any single
+    bar's false-fail rate — which is BRIEF §6 item 4 pointed at the battery instead of at a
+    threshold scan.
+
+    **This is a simulation whose parameters were chosen, not measured**, so it is an argument about
+    the arithmetic rather than evidence about any judge. It is reported for exactly that: to say
+    how much of a DISQUALIFIED verdict could be the battery.
+    """
+    rows: dict[str, Any] = {}
+    for label, params in OC_SCENARIOS:
+        rng = random.Random(int(digest(["oc", label])[:8], 16))
+        counts = {"as_registered": Counter(), "corrected": Counter()}
+        per_axiom: Counter = Counter()
+        for _ in range(draws):
+            verdict = _good_judge_run(pairs, rng, **params).verdict()
+            for reading in counts:
+                counts[reading][verdict[reading]["overall"]] += 1
+            for key in verdict["corrected"]["failed"]:
+                per_axiom[key] += 1
+        rows[label] = {
+            "params": params,
+            "as_registered": {k: round(v / draws, 3) for k, v in counts["as_registered"].items()},
+            "corrected": {k: round(v / draws, 3) for k, v in counts["corrected"].items()},
+            "corrected_fail_by_axiom": {k: round(v / draws, 3)
+                                        for k, v in sorted(per_axiom.items(),
+                                                           key=lambda kv: -kv[1])},
+        }
+    return {
+        "draws": draws, "scenarios": rows,
+        "reading": (
+            "the fraction of runs on which a GOOD judge is disqualified. Under the rule as "
+            "registered this ran 0.83-1.00, which is why the decided-count floor was declared; "
+            "under the corrected rule the residual driver is A3, whose null treats scenes as "
+            "independent and whose false-fail rate therefore rises with scene heterogeneity"
+        ),
+    }
 
 
 # --------------------------------------------------------------------------- selftest
@@ -965,12 +1133,20 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--cache", default="axiom-battery-raw.jsonl")
     parser.add_argument("--out", default="axiom-battery.json")
     parser.add_argument("--selftest", action="store_true", help="offline oracles; no calls")
+    parser.add_argument("--operating-characteristic", action="store_true",
+                        help="P(disqualify | a good stochastic judge); offline, no calls")
     parser.add_argument("--dry-run", action="store_true", help="the null, through the plumbing")
     parser.add_argument("--yes", action="store_true", help="required before any paid call")
     options = parser.parse_args(argv)
 
     if options.selftest:
         print(json.dumps(selftest(), indent=2))
+        return 0
+
+    if options.operating_characteristic:
+        scenes = load_scenes(options)[:options.scenes]
+        pairs, _ = build_pairs(scenes, samples=options.samples)
+        print(json.dumps(operating_characteristic(pairs), indent=2))
         return 0
 
     scenes = load_scenes(options)[:options.scenes]
@@ -994,6 +1170,7 @@ def main(argv: list[str] | None = None) -> int:
 
     summary = {
         "pre_registration": PRE_REGISTRATION,
+        "pre_registration_corrected": PRE_REGISTRATION_CORRECTED,
         "panel_model": options.model, "transport": options.transport,
         "personas": [persona.persona_id for persona in PANEL],
         "doses": list(LADDER_DOSES), "samples": options.samples,
@@ -1002,6 +1179,7 @@ def main(argv: list[str] | None = None) -> int:
         "dry_run": options.dry_run, "spend": spend, "calls": calls,
         "verdict": battery.verdict(),
         "selftest": selftest(),
+        "operating_characteristic": operating_characteristic(pairs),
     }
     (HERE / "results" / options.out).write_text(json.dumps(summary, indent=2), encoding="utf-8")
     print(json.dumps(summary["verdict"], indent=2))
