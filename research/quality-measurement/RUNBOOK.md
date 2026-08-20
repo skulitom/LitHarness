@@ -437,5 +437,226 @@ quarter of the time:
 uv run python research/quality-measurement/bcr.py --seat --model phi4:latest --replicates 12 --yes --cache bcr-seat-phi4.jsonl --out bcr-seat-phi4.json
 ```
 
-864 calls, roughly an hour under the governor. The cache is per fetch, so an interrupted run
-resumes for free — which is the checkpoint-per-unit rule this box needs.
+864 calls, about two hours under the governor at the measured ~5 calls/min. The cache is per
+fetch, so an interrupted run resumes for free — which is the checkpoint-per-unit rule this box
+needs.
+
+**Size the arm from `sizing_from_observed`, never from `--attainability`, once a run exists.**
+The simulated table draws each session's share as twelve independent coins; a reader that
+commits to a pattern for a whole session breaks that assumption completely. Measured on phi4:
+session shares of exactly 0.0, 0.5 or 1.0, per-session sd **0.4025** against the simulator's
+0.1443, so every control failed as `imprecise` with two of them sitting on a point estimate of
+exactly 0.5. `seating.sizing_from_observed` prices the fix from the run's own shares — 64
+sessions per arm rather than 24 — and it is a price, not a verdict.
+
+**Read `failure_kind` before reacting to a FAIL.** `imprecise` means the interval still contains
+the centre and is merely too wide, which is a batch size to buy; `off_centre` means the reader
+has moved, which is a finding about the reader.
+
+## The force programme — §95
+
+Five modules, one shared harness, two pinned local families, **zero solicited judgment of any
+kind**. `plan/force-program.md` is the pre-registration and is authoritative for every constant;
+this section is the commands. Everything except the FM dry-run needs the GPU and therefore the
+**MirrorBench** interpreter — `uv run python` has no torch and no pyarrow.
+
+```bash
+export MB=C:/DEV/MirrorBench/.venv/Scripts/python.exe
+```
+
+**Arm the watchdog before any GPU arm, and leave it running.** It is a separate process on
+purpose: `force_gpu.Governor` throttles *between* calls and cannot act while the job is inside
+one, and a batched 512-token generation is forty seconds of uninterruptible work.
+
+```bash
+uv run python research/quality-measurement/thermal_watch.py --interval 10 --log research/quality-measurement/results/thermal-<run>.csv
+```
+
+**The thermal story on this box, because it cost two killed runs and one shutdown to learn.**
+The default rest ratio is **3.0** — a 25% duty cycle — and it is 3.0 because lowering it to 0.25
+to fit the GPU-hour cap is what took the machine down on 2026-08-20. The core-temperature hold
+never fired in that run or the two before it: every sample sat between 47 and 65 °C against a
+72 °C threshold. Do not read that as "the core is fine, push harder"; read it as "the protection
+was not running".
+
+`temperature.gpu.tlimit` looks like the sensor the core governor was missing and **is not usable
+on its own**. Measured: the margin fell 13 °C in ten seconds while the core fell 5 °C and the
+draw fell 200 W, which nothing thermal does. Both the governor and the watchdog now require a low
+margin to **persist** across consecutive samples before it stops anything; the core reading and
+the card's own throttle flag are still trusted on one sample. The shutdowns themselves remain
+undiagnosed — `nvidia-smi -pl 260` from an Administrator shell is the untried intervention.
+
+**Run these three first, in this order, and read them before spending a GPU-hour.** They cost
+nothing and each one has already caught something.
+
+```bash
+uv run python research/quality-measurement/force_harness.py
+```
+
+The arithmetic, on constructed inputs. It reproduces §89.2's published attainability table
+(85/144, 81/137, 43/68, 44/69) or it is wrong, and it derives `MIN_REFUTING_N = 110` rather than
+declaring it — the smallest n whose interval bar still demands 0.6000 or less, which is the floor
+below which a stratum returns `DEGRADED_STRATUM` instead of a FAIL nobody could have avoided.
+
+```bash
+uv run python research/quality-measurement/corpus_leak_audit.py --derived-only
+```
+
+The §1.6 extension. The history walk catches a committed excerpt *after* the fact, which in a
+public repository is the thing that cannot be undone; this runs on the **working tree** and
+answers the question that still has an answer — is `research/quality-measurement/derived/`
+ignored, and is nothing under it tracked? Every continuation, retelling and cloze window this
+programme produces lands there.
+
+```bash
+"$MB" research/quality-measurement/determinism_probe.py --tokens 64
+```
+
+**This decides a control's tolerance, so it runs before any force and never after one fails.**
+Measured on this box, both families: forward-pass replay and batched sampled continuations are
+**bit-exact**, so `placebo_identical` keeps its arithmetic-check role at tolerance `0.0`. If it
+ever reads NOISY the placebo is downgraded to an equivalence test against the measured scale and
+the weakening is a recorded property of the box.
+
+### F1 — register half-life, the flagship
+
+Pilot first. It buys throughput, the censoring rate and the tie rate, and its **agreement is not
+a result** — at n=16 the interval bar demands 13 of 16.
+
+```bash
+"$MB" research/quality-measurement/register_halflife.py --families gemma-3-4b --pairs 8 --tokens 384 --sham 8 --placebo 8 --rest-ratio 3.0 --out research/quality-measurement/results/force-f1-pilot.json
+```
+
+Then the full corpus, both families. ~670 batched generations per family; the placebo costs
+**nothing** because its two sides are byte-identical and the cache is keyed on the text digest.
+
+```bash
+"$MB" research/quality-measurement/register_halflife.py --tokens 384 --rest-ratio 3.0
+```
+
+**Read `pilot_corrections` in the result file before reading any number.** The first pilot found
+the declared anchor censored 97.9% of trajectories — own-generated LitRPG is its own register,
+not a neutral centre — and the declared median-over-K tied almost every pair. Both were corrected
+on **label-blind** criteria (censoring rate, tie rate) that §2.5 named in advance, and the
+pilot's own agreement was discarded.
+
+### F1 on the remote transport — §95.10
+
+F1 is the one arm that can leave this box, because sampling is all it needs. F2 and F3 cannot
+follow it: both are built on teacher-forced token logprobs and **the Messages API exposes none**.
+
+Smoke first, always. It goes through the real plumbing — transport, ledger, cache key, the
+downgraded placebo — and the first one died on a `KeyError` after thirteen seeds, for about twenty
+cents, on a bug that would otherwise have surfaced hours into a fifty-two-dollar arm.
+
+```bash
+uv run python research/quality-measurement/register_halflife.py --families haiku-4-5 --pairs 1 --k 2 --sham 1 --placebo 1 --ceiling-usd 3.0 --out research/quality-measurement/results/force-f1-haiku-smoke.json
+```
+
+Then the full arm. **Do not run a second `claude -p` job beside it** — §89.5 records 390 transport
+failures from exactly that. Workers *inside* the job are fine; three is what turns a 21-hour
+serial run into seven hours, and the K replicates of a seed stay sequential so Claude Code's
+26k-token prefix is written once and read seven times.
+
+```bash
+uv run python research/quality-measurement/register_halflife.py --families haiku-4-5 --sham 60 --placebo 24 --ceiling-usd 55
+```
+
+**Read the `ledger` block before the verdict.** It carries spend, calls, cache reads and writes,
+and thinking tokens. `force_remote.Ledger` stops the run *at* the ceiling rather than reporting an
+overrun afterwards; everything bought is cached, so a stopped run resumes for free.
+
+**Read `placebo_identical.kind` too.** On this transport it is `equivalence`, not `exact` — there
+is no seed parameter, so byte-identical sides cannot produce byte-identical outputs and the
+placebo is read the way a sham is. §1.7 pre-registered that branch; it is still weaker, and a
+result file that does not say so reads exactly like one that had the strong control.
+
+### F2 — retention under distance
+
+The cheap arm: twelve teacher-forced passes per pair per family, nothing sampled. ~2.6 s a pass.
+
+```bash
+"$MB" research/quality-measurement/retention_distance.py --rest-ratio 3.0
+```
+
+**A SPLIT_FAMILY here may be architectural.** `gemma-3-4b` attends 1,024 tokens on five layers in
+six and `qwen2.5-3b` is fully global to 32k, so at D=8k the two families route long-range
+information through very different amounts of the network. Pre-registered in
+`force_gpu.ATTENTION_SHAPE` before the first pass, and printed in every F2 result.
+
+### F3 — compression progress
+
+Survey first; it walks twelve parquet shards for metadata only and needs no GPU. **Do not run it
+while a GPU arm is running** — CPU load beside GPU load is what took this box down once already.
+
+```bash
+"$MB" research/quality-measurement/compression_progress.py --survey-only
+```
+
+```bash
+"$MB" research/quality-measurement/compression_progress.py --rest-ratio 3.0
+```
+
+The run reads `--max-fictions` (default 200) **before** pairing, so the command above builds 64
+pairs — 41 aligned and 23 crossed. The survey prints that shape and the uncapped one side by
+side; the difference is the cap and not a discrepancy. At every shape this substrate yields, the
+interval bar demands 0.6017 or more, so **F3 can PASS and cannot FAIL** and a miss reads
+`INSUFFICIENT_N` (§95.15).
+
+Both §1.3 controls ride this arm and cost forward passes: `--controls` (default 20) sets how many
+fictions carry them. The placebo re-scores a chapter list through a replicate cache key — an
+actual second set of forward passes over byte-identical input, not a dictionary lookup — and the
+sham scores a re-whitespaced copy of the same fiction. Unlike F1's, **this sham can fail**: F3's
+statistic is token-level NLL and re-whitespacing changes tokenisation, so a PASS here is evidence
+rather than a restatement of a feature space's blindness.
+
+### FX — transmission chains, pilot only
+
+```bash
+"$MB" research/quality-measurement/transmission_chains.py --rest-ratio 3.0
+```
+
+At n=8 the interval bar demands 8 of 8, so **the pilot cannot clear a bar and is not asked to**.
+Read `kill_conditions_fired`, not an agreement.
+
+### Reading the programme's state — one command
+
+Four tracks across two transports, several refusal states and a gated market: opening six files
+in the right order is not a reporting method. This collects them and prints the table, and it
+**computes nothing** — every verdict was decided by the module that produced it under bars
+declared before that module ran, and a reporter that recomputed one would be a second
+implementation of the bars.
+
+```bash
+uv run python research/quality-measurement/force_report.py
+```
+
+When a combining rule changes after a run was scored, the committed artifacts hold a stale
+headline. Recompute each one's `combined` and `force_verdict` from its stored `per_family` — the
+per-family stratum readings are never touched, and a `WITHDRAWN` artifact is skipped because its
+headline is a retraction rather than a combining step:
+
+```bash
+uv run python research/quality-measurement/force_report.py --reassemble
+```
+
+Dry run by default; add `--apply` to rewrite. Each rewritten file records the before-and-after
+under `reassembled`, so the change is legible in the artifact and not only in the console.
+
+`NOT_RUN`, `SURVEY_ONLY`, `NOT_SCREENABLE`, `DEGRADED_STRATUM`, `INSUFFICIENT_N`,
+`INERT_GENERATOR`, `SPLIT_FAMILY` and `VOID` print as themselves. A table that collapsed them
+into pass/fail would be the exact failure §1.5's states exist to prevent.
+
+### FM — the market, gated
+
+No GPU, no quota, no bets. The gate is a force clearing §1.2's bars, and until it opens this
+ships the mechanism and the null through it.
+
+```bash
+uv run python research/quality-measurement/force_market.py --dry-run
+```
+
+The dry-run's load-bearing line is the last one: a prose-blind followers rule scores
+**−0.2877** mean log score in `aligned` and **−1.3863** in `crossed`, ending on bankrolls of
+448.3 and 8.2. That is §79's two-stratum design working — and the reason a market run on one
+stratum would promote a popularity proxy and call it taste.

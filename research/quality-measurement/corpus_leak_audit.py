@@ -221,13 +221,74 @@ def binary_derivatives() -> list[tuple[str, str]]:
     return sorted(seen.items(), key=lambda pair: pair[1])
 
 
+#: **Scope extension, force programme §1.6, landed before the first generation.**
+#:
+#: Until now "third-party prose" meant prose this repository *read*. The force programme produces
+#: prose *derived* from it — a continuation sampled from a RoyalRoad seed, a retelling six hops
+#: down a transmission chain, a cloze window cut out of an excerpt — and every one of those is
+#: excerpt-bearing: a continuation carries its seed's register and frequently its sentences, and
+#: a retelling is a derivative work of the passage it retells. So they fall under exactly the
+#: rule that already keeps `corpora/` out of the tree.
+#:
+#: The history walk above would catch one of these *after* it had been committed, which is the
+#: thing that cannot be undone in a public repository. This check runs on the **working tree**
+#: and answers the question that still has an answer: is every derived-text root ignored, and is
+#: nothing under it tracked? The 294k near-miss (`bbc6560`) was staged and not committed by luck;
+#: this is the version of that luck which is a check.
+DERIVED_TEXT_ROOTS = (
+    "research/quality-measurement/derived/",
+)
+
+
+def derived_text_guard(roots: tuple[str, ...] = DERIVED_TEXT_ROOTS) -> list[str]:
+    """Complaints about derived-text roots that are not ignored, or that hold tracked files."""
+    problems: list[str] = []
+    for root in roots:
+        probe = f"{root}__leak_audit_probe__.jsonl"
+        ignored = subprocess.run(
+            ["git", "check-ignore", "-q", probe],
+            capture_output=True, text=True, check=False,
+        )
+        if ignored.returncode != 0:
+            problems.append(
+                f"{root} is NOT gitignored — derived text written there could be committed"
+            )
+        tracked = _run(["git", "ls-files", "--", root]).split()
+        if tracked:
+            problems.append(
+                f"{root} holds {len(tracked)} TRACKED file(s), first {tracked[0]!r} — derived "
+                "text is in the index"
+            )
+    return problems
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--words", type=int, default=EXCERPT_WORDS)
     parser.add_argument("--show", type=int, default=12, help="findings to print")
     parser.add_argument("--min-commits", type=int, default=MIN_COMMITS,
                         help="refuse to report clean below this depth")
+    parser.add_argument("--derived-only", action="store_true",
+                        help="run only the working-tree derived-text guard (§1.6 extension)")
     args = parser.parse_args(argv)
+
+    derived = derived_text_guard()
+    if derived:
+        print(
+            "\nLEAK RISK: derived third-party text is not contained. A continuation of someone "
+            "else's passage is excerpt-bearing and must never reach a public history:",
+            file=sys.stderr,
+        )
+        for problem in derived:
+            print(f"  {problem}", file=sys.stderr)
+        return 1
+    print(
+        f"derived-text guard: {len(DERIVED_TEXT_ROOTS)} root(s) ignored and untracked "
+        f"({', '.join(DERIVED_TEXT_ROOTS)})",
+        file=sys.stderr,
+    )
+    if args.derived_only:
+        return 0
 
     commits = len(_run(["git", "rev-list", "--all"]).split())
     if commits < args.min_commits:

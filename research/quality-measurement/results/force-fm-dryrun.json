@@ -1,0 +1,239 @@
+{
+  "attainability": [
+    {
+      "attainable": true,
+      "binding": "interval",
+      "insufficient_n_available": true,
+      "k_interval_cp_gt_0_50": 46,
+      "k_point_0_52": 39,
+      "label": "holdout_aligned",
+      "n": 74,
+      "required_rate": 0.6216
+    },
+    {
+      "attainable": true,
+      "binding": "interval",
+      "insufficient_n_available": true,
+      "k_interval_cp_gt_0_50": 45,
+      "k_point_0_52": 38,
+      "label": "holdout_crossed",
+      "n": 72,
+      "required_rate": 0.625
+    }
+  ],
+  "dry_run": {
+    "all_checks_pass": true,
+    "calibration_example": [
+      {
+        "bin": [
+          0.0,
+          0.2
+        ],
+        "empirical_rate": 0.0,
+        "mean_forecast": 0.05,
+        "n": 58
+      },
+      {
+        "bin": [
+          0.8,
+          1.0
+        ],
+        "empirical_rate": 1.0,
+        "mean_forecast": 0.95,
+        "n": 88
+      }
+    ],
+    "checks": {
+      "abstainer_never_bet": true,
+      "anti_oracle_bankrupt": true,
+      "coin_is_flat": true,
+      "confidence_alone_loses": true,
+      "oracle_beats_confidence": true,
+      "oracle_grows": true,
+      "popularity_split_by_stratum": true
+    },
+    "market": {
+      "leaderboard": [
+        {
+          "abstentions": 0,
+          "asks_a_model_a_question": false,
+          "bankroll": 10836.8057,
+          "bankrupt_at_bet": null,
+          "beats_coin": true,
+          "bets": 146,
+          "mean_brier": 0.0025,
+          "mean_log_score": -0.0513,
+          "name": "oracle",
+          "solvent": true
+        },
+        {
+          "abstentions": 146,
+          "asks_a_model_a_question": false,
+          "bankroll": 100.0,
+          "bankrupt_at_bet": null,
+          "beats_coin": null,
+          "bets": 0,
+          "mean_brier": null,
+          "mean_log_score": null,
+          "name": "abstainer",
+          "solvent": true
+        },
+        {
+          "abstentions": 0,
+          "asks_a_model_a_question": false,
+          "bankroll": 100.0,
+          "bankrupt_at_bet": null,
+          "beats_coin": false,
+          "bets": 146,
+          "mean_brier": 0.25,
+          "mean_log_score": -0.6931,
+          "name": "coin",
+          "solvent": true
+        },
+        {
+          "abstentions": 0,
+          "asks_a_model_a_question": false,
+          "bankroll": 36.9683,
+          "bankrupt_at_bet": null,
+          "beats_coin": false,
+          "bets": 146,
+          "mean_brier": 0.3091,
+          "mean_log_score": -0.8295,
+          "name": "prose_blind_followers",
+          "solvent": true
+        },
+        {
+          "abstentions": 0,
+          "asks_a_model_a_question": false,
+          "bankroll": 2.1209,
+          "bankrupt_at_bet": null,
+          "beats_coin": false,
+          "bets": 146,
+          "mean_brier": 0.36,
+          "mean_log_score": -1.221,
+          "name": "confident_constant",
+          "solvent": true
+        },
+        {
+          "abstentions": 0,
+          "asks_a_model_a_question": false,
+          "bankroll": 0.8913,
+          "bankrupt_at_bet": 41,
+          "beats_coin": false,
+          "bets": 41,
+          "mean_brier": 0.9025,
+          "mean_log_score": -2.9957,
+          "name": "anti_oracle",
+          "solvent": false
+        }
+      ],
+      "no_survivors_is_a_result": false,
+      "pairs": 146,
+      "promotion": {
+        "before_any_seat": "a forecast analog of \u00a786.7 \u2014 calibration, resolution, refinement, format invariance, dose monotonicity \u2014 plus \u00a786's T3 exploitation budget instrumented from the first optimization step",
+        "members": {
+          "oracle": 1.0
+        },
+        "status": "FORECAST_CLASS_CANDIDATE",
+        "what_it_is_not": "not a judge, not a licence, not a member of veto_for, not accepted by plan_search's judge path. \u00a795's promotion of FORECAST is exactly \u00a786's pre-registered text and not one word further."
+      },
+      "survivors": [
+        "oracle",
+        "abstainer",
+        "coin",
+        "prose_blind_followers",
+        "confident_constant"
+      ]
+    },
+    "prose_blind_by_stratum": {
+      "aligned": {
+        "bankroll": 448.2679,
+        "bets": 74,
+        "mean_log_score": -0.2877
+      },
+      "crossed": {
+        "bankroll": 8.2469,
+        "bets": 72,
+        "mean_log_score": -1.3863
+      }
+    },
+    "reading": "the mechanism does what it was declared to do on forecasters whose behaviour was known in advance, and the prose-blind popularity rule scores in `aligned` and loses in `crossed` \u2014 which is \u00a779's design working, and the reason a market run on one stratum would promote a popularity proxy"
+  },
+  "gate": {
+    "condition": "at least one force clears \u00a71.2's bars on the held-out split",
+    "consequence": "design and dry-run only; no configuration is funded and E4/E5 are not bought",
+    "status": "CLOSED"
+  },
+  "holdout_sizes": {
+    "aligned": 74,
+    "crossed": 72
+  },
+  "pre_registration": {
+    "axiom": "no solicited human judgment, ever \u2014 not hired, not operator, not one blinded pair",
+    "binding_half": "interval, at every n in this programme (verified, not asserted)",
+    "clustering_caveat": "0 pairs share an author across their sides; 43 authors recur across pairs (51 of 562 slots) \u2014 a caveat on every interval, printed with every result (\u00a789.2)",
+    "controls": {
+      "placebo_identical": "exactly zero effect; arithmetic check, not a null (\u00a789.4)",
+      "rewhitespace_sham": "reads nothing, or the force is reading formatting and is VOID (\u00a778.1)"
+    },
+    "families": {
+      "gemma-3-4b": {
+        "base": "google/gemma-3-4b-pt",
+        "base_revision": "cc012e0a6d0787b4adcc0fa2c4da74402494554d",
+        "chat": "google/gemma-3-4b-it",
+        "chat_revision": "093f9f388b31de276ce2de164bdc2081324b9767",
+        "lineage": "google/gemma-3"
+      },
+      "qwen2.5-3b": {
+        "base": "Qwen/Qwen2.5-3B",
+        "base_revision": "3aab1f1954e9cc14eb9509a215f9e5ca08227a9b",
+        "chat": "Qwen/Qwen2.5-3B-Instruct",
+        "chat_revision": "aa8e72537993ba99e69dfaafa59ed015b17504d1",
+        "lineage": "alibaba/qwen2.5"
+      }
+    },
+    "family_rule": "reported per family, never pooled; disagreement is SPLIT_FAMILY",
+    "insufficient_n_above": 0.6,
+    "interval_bar": "Clopper-Pearson 95% lower bound clear of 0.50",
+    "label": "conversion = followers / total_views, BEHAVIOUR class at STORY grain (\u00a782)",
+    "ledger": "plan/stage-0-decisions.md \u00a795",
+    "min_decided_share": 0.9,
+    "point_bar": 0.52,
+    "programme": "plan/force-program.md",
+    "strata": "aligned and crossed, never averaged; the crossed halves are a contrast not a bar",
+    "written_before": "any continuation sampled, any logprob read, any chain run"
+  },
+  "pre_registration_track": {
+    "bankroll": {
+      "bankrupt_at": 1.0,
+      "rule": "bankroll *= exp(stake_fraction * (log_score - log(0.5))) \u2014 a configuration beating a coin grows and one below it shrinks, at a rate no leverage choice can inflate",
+      "stake_fraction": 0.05,
+      "start": 100.0
+    },
+    "battery_before_seat": "a forecast analog of \u00a786.7 \u2014 calibration, resolution, refinement, format invariance, dose monotonicity \u2014 plus \u00a786's T3 exploitation budget instrumented from the first optimization step",
+    "clip": 0.02,
+    "declared_before": "the first bet",
+    "e4_e5": "admitted as asking baselines to be beaten (operator \u00a77.6: YES); they are never a valence channel and never a judge",
+    "holdout": "story- and author-disjoint, split by a stable hash of pair_id",
+    "presentation": "the two sides are swapped on a deterministic, label-blind coin derived from pair_id, so the settled outcome varies and a competitor is paid for being right rather than for being loud. Corrected 2026-08-20: the first implementation settled every bet as 'yes', which made the ranking a function of stated confidence alone.",
+    "promotion_rule": "the surviving ensemble is the inverse-log-score-weighted average of every configuration that is still solvent AND beat a coin over the full held-out sequence, and it is a FORECAST-class CANDIDATE \u2014 never a judge, never a licence. Solvency alone admitted a coin and a constant 0.95.",
+    "question_every_competitor_answers": "P(the high-conversion side is side A) for a pair it has never seen",
+    "scoring_rule": "log score (primary, proper); Brier printed beside it",
+    "settlement": "instant, already downloaded; conversion sits in the corpus sidecar and nothing human is solicited",
+    "status": "GATED \u2014 design and dry-run only until a force clears \u00a71.2's bars",
+    "track": "FM the market"
+  },
+  "t3_exploitation_budget": {
+    "kill": "selection stops when the held-out score falls while the selected score rises for two consecutive steps",
+    "recorded_from_step_zero": [
+      "the force's score on the selected candidate and on the rejected ones",
+      "the force's score on a held-out set never used for selection, same step",
+      "the gap between the two, which is the exploitation signal",
+      "the a priori counters (\u00a788) on the same candidates, which no optimizer may see",
+      "divergence between the two pinned families, which rises first under Goodhart"
+    ],
+    "status": "NOT_RUN",
+    "why": "no optimization step exists; the FM gate is closed"
+  },
+  "track": "FM"
+}

@@ -1,0 +1,126 @@
+{
+  "attainability": [
+    {
+      "attainable": true,
+      "binding": "interval",
+      "insufficient_n_available": true,
+      "k_interval_cp_gt_0_50": 71,
+      "k_point_0_52": 62,
+      "label": "aligned",
+      "n": 118,
+      "required_rate": 0.6017
+    },
+    {
+      "attainable": true,
+      "binding": "interval",
+      "insufficient_n_available": true,
+      "k_interval_cp_gt_0_50": 46,
+      "k_point_0_52": 38,
+      "label": "crossed",
+      "n": 73,
+      "required_rate": 0.6301
+    }
+  ],
+  "chapters_required": 8,
+  "cohort": "human_pre_llm",
+  "fictions_qualifying": 585,
+  "min_views": 10000,
+  "pairing_order_defect": {
+    "after_fix": "aligned 118, crossed 73",
+    "found": "2026-08-20, by running the survey",
+    "measured": "aligned 196, crossed 1 \u2014 the second stratum was effectively empty",
+    "what": "both strata drew from one pool under a shared work/author disjointness set, and `aligned` was built first",
+    "why_it_matters": "a force could clear `aligned` by proxying popularity with nothing to contradict it, which is exactly what \u00a779's second stratum prevents"
+  },
+  "pairs": 191,
+  "pre_registration": {
+    "axiom": "no solicited human judgment, ever \u2014 not hired, not operator, not one blinded pair",
+    "binding_half": "interval, at every n in this programme (verified, not asserted)",
+    "clustering_caveat": "0 pairs share an author across their sides; 43 authors recur across pairs (51 of 562 slots) \u2014 a caveat on every interval, printed with every result (\u00a789.2)",
+    "controls": {
+      "placebo_identical": "exactly zero effect; arithmetic check, not a null (\u00a789.4)",
+      "rewhitespace_sham": "reads nothing, or the force is reading formatting and is VOID (\u00a778.1)"
+    },
+    "families": {
+      "gemma-3-4b": {
+        "base": "google/gemma-3-4b-pt",
+        "base_revision": "cc012e0a6d0787b4adcc0fa2c4da74402494554d",
+        "chat": "google/gemma-3-4b-it",
+        "chat_revision": "093f9f388b31de276ce2de164bdc2081324b9767",
+        "lineage": "google/gemma-3"
+      },
+      "qwen2.5-3b": {
+        "base": "Qwen/Qwen2.5-3B",
+        "base_revision": "3aab1f1954e9cc14eb9509a215f9e5ca08227a9b",
+        "chat": "Qwen/Qwen2.5-3B-Instruct",
+        "chat_revision": "aa8e72537993ba99e69dfaafa59ed015b17504d1",
+        "lineage": "alibaba/qwen2.5"
+      }
+    },
+    "family_rule": "reported per family, never pooled; disagreement is SPLIT_FAMILY",
+    "insufficient_n_above": 0.6,
+    "interval_bar": "Clopper-Pearson 95% lower bound clear of 0.50",
+    "label": "conversion = followers / total_views, BEHAVIOUR class at STORY grain (\u00a782)",
+    "ledger": "plan/stage-0-decisions.md \u00a795",
+    "min_decided_share": 0.9,
+    "point_bar": 0.52,
+    "programme": "plan/force-program.md",
+    "strata": "aligned and crossed, never averaged; the crossed halves are a contrast not a bar",
+    "written_before": "any continuation sampled, any logprob read, any chain run"
+  },
+  "pre_registration_track": {
+    "asks_nothing": "teacher-forced NLL only; nothing is sampled and nothing is asked",
+    "bar_declared_on": "the largest stratum the substrate yields, up to EXTENSION_FICTIONS; the capped-40 subset prints beside it as the directive's declared cap",
+    "cap_fictions": 40,
+    "chapters": 8,
+    "cohort": "human_pre_llm",
+    "controls_in_the_statistic": {
+      "foreign": "token-length-matched context from a different fiction \u2014 holds context LENGTH fixed and varies only provenance",
+      "shuffled": "the fiction's own chapters in destroyed order \u2014 same provenance, no structure; reported as a second comparison"
+    },
+    "extension_fictions": 200,
+    "hypothesis": "a book with real structure teaches the model to read it: later-chapter predictability improves with true earlier context in a way flat episodic prose cannot",
+    "label": "conversion = followers / total_views, declared before selection",
+    "ladder": [
+      1,
+      3,
+      5,
+      7
+    ],
+    "own_generated_arm": "NOT_RUN \u2014 needs \u00a77.1's fitness books; \u00a794.3 counted exactly one own-generated text long enough to carry a slope",
+    "prior_art": "\u00a758 killed CDG, which is this statistic's level. The slope is what subtracts the level artifact that killed it; if F3 fails, \u00a758 gains a second entry.",
+    "statistic": "OLS slope of [NLL_foreign(j) - NLL_true(j)] over j",
+    "strata": "aligned and crossed, built with \u00a779's tolerances so no prose-blind popularity rule can clear both",
+    "track": "F3 compression progress"
+  },
+  "price": {
+    "chapters": 8,
+    "gpu_hours_per_family_at_25pct_duty": 27.2,
+    "passes_per_family": 6112,
+    "passes_per_fiction": 16,
+    "verdict": "NOT RUN \u2014 unaffordable at the duty cycle \u00a795.6 fixed after the shutdown"
+  },
+  "refutation_ceiling": {
+    "note": "both strata demand more than the declared 0.6000 INSUFFICIENT_N ceiling (aligned 0.6017, crossed 0.6301), so at this substrate F3 can PASS or return INSUFFICIENT_N but cannot deliver a FAIL that means anything"
+  },
+  "shards": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    28,
+    29,
+    30,
+    31,
+    32,
+    33
+  ],
+  "status": "SURVEY_ONLY \u2014 no forward pass has been run",
+  "stratum_sizes": {
+    "aligned": 118,
+    "crossed": 73
+  },
+  "track": "F3 substrate survey"
+}

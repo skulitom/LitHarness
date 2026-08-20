@@ -1,0 +1,83 @@
+{
+  "per_family": [
+    {
+      "copy_vs_original_max_abs_delta": 0.0,
+      "family": {
+        "family": "gemma-3-4b",
+        "head": "base",
+        "lineage": "google/gemma-3",
+        "model_id": "google/gemma-3-4b-pt",
+        "revision": "cc012e0a6d0787b4adcc0fa2c4da74402494554d"
+      },
+      "forward_repeat_max_abs_delta": 0.0,
+      "forward_repeat_mean_abs_delta": 0.0,
+      "governor": {
+        "calls": 5,
+        "gpu_c_now": 48,
+        "gpu_seconds": 9.9,
+        "pause_above_c": 72,
+        "rest_ratio": 0.5,
+        "resume_below_c": 66,
+        "source": "cdg_battery.throttle",
+        "wall_seconds": 28.1
+      },
+      "sample_digests": [
+        "84d060bbabeb1381",
+        "51bc6100db980790",
+        "84d060bbabeb1381",
+        "51bc6100db980790"
+      ],
+      "sampled_continuations_identical": [
+        true,
+        true
+      ],
+      "scored_tokens": 666,
+      "verdict": "EXACT"
+    },
+    {
+      "copy_vs_original_max_abs_delta": 0.0,
+      "family": {
+        "family": "qwen2.5-3b",
+        "head": "base",
+        "lineage": "alibaba/qwen2.5",
+        "model_id": "Qwen/Qwen2.5-3B",
+        "revision": "3aab1f1954e9cc14eb9509a215f9e5ca08227a9b"
+      },
+      "forward_repeat_max_abs_delta": 0.0,
+      "forward_repeat_mean_abs_delta": 0.0,
+      "governor": {
+        "calls": 5,
+        "gpu_c_now": 51,
+        "gpu_seconds": 6.8,
+        "pause_above_c": 72,
+        "rest_ratio": 0.5,
+        "resume_below_c": 66,
+        "source": "cdg_battery.throttle",
+        "wall_seconds": 15.3
+      },
+      "sample_digests": [
+        "7ae4c227113bea4f",
+        "df95aee0824da6f6",
+        "7ae4c227113bea4f",
+        "df95aee0824da6f6"
+      ],
+      "sampled_continuations_identical": [
+        true,
+        true
+      ],
+      "scored_tokens": 638,
+      "verdict": "EXACT"
+    }
+  ],
+  "placebo_tolerance": 0.0,
+  "pre_registration": {
+    "branch_exact": "placebo tolerance 0.0; the control is an arithmetic check (\u00a789.4)",
+    "branch_noisy": "placebo becomes an equivalence test against the MEASURED noise scale, and the weakening is a recorded property of the box",
+    "declared_before": "any force ran",
+    "not_measured": "batched-generation determinism \u2014 the programme generates replicates one at a time so batch composition never enters",
+    "question": "is replay bit-exact on this box, for the two operations every force uses"
+  },
+  "probe_text_digest": "9f67423104d166a5",
+  "reading": "replay is bit-exact on both families; placebo_identical keeps its arithmetic-check role and its tolerance is 0.0",
+  "verdict": "EXACT"
+}

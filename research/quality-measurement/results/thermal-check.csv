@@ -1,0 +1,4 @@
+elapsed_s,temperature.gpu,temperature.gpu.tlimit,power.draw,utilization.gpu,memory.used,clocks_event_reasons.hw_thermal_slowdown,clocks_event_reasons.sw_thermal_slowdown,clocks_event_reasons.hw_power_brake_slowdown
+0.1,58,16,114.34,100,22169,Not Active,Not Active,Not Active
+5.1,59,16,136.44,100,22169,Not Active,Not Active,Not Active
+10.2,58,16,125.62,100,22183,Not Active,Not Active,Not Active

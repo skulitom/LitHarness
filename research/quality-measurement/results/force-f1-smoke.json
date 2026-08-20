@@ -1,0 +1,508 @@
+{
+  "attainability": [
+    {
+      "attainable": false,
+      "binding": "point",
+      "insufficient_n_available": true,
+      "k_interval_cp_gt_0_50": null,
+      "k_point_0_52": 2,
+      "label": "aligned",
+      "n": 3,
+      "required_rate": 0.6667
+    },
+    {
+      "attainable": false,
+      "binding": "point",
+      "insufficient_n_available": true,
+      "k_interval_cp_gt_0_50": null,
+      "k_point_0_52": 2,
+      "label": "crossed",
+      "n": 3,
+      "required_rate": 0.6667
+    },
+    {
+      "attainable": false,
+      "binding": "point",
+      "insufficient_n_available": true,
+      "k_interval_cp_gt_0_50": null,
+      "k_point_0_52": 1,
+      "label": "crossed_tight",
+      "n": 1,
+      "required_rate": 1.0
+    },
+    {
+      "attainable": false,
+      "binding": "point",
+      "insufficient_n_available": true,
+      "k_interval_cp_gt_0_50": null,
+      "k_point_0_52": 2,
+      "label": "crossed_loose",
+      "n": 2,
+      "required_rate": 1.0
+    }
+  ],
+  "combined": {
+    "aligned": {
+      "never_pooled": true,
+      "per_family": {
+        "gemma-3-4b": "FAIL"
+      },
+      "status": "NOT_SCREENABLE",
+      "stratum": "aligned",
+      "why": "1 family reported; the two-family minimum (\u00a71.4) is not met, so no reading here is the force's however its strata came out"
+    },
+    "aligned__raw_DIAGNOSTIC": {
+      "never_pooled": true,
+      "per_family": {
+        "gemma-3-4b": "INERT_GENERATOR"
+      },
+      "status": "NOT_SCREENABLE",
+      "stratum": "aligned__raw_DIAGNOSTIC",
+      "why": "1 family reported; the two-family minimum (\u00a71.4) is not met, so no reading here is the force's however its strata came out"
+    },
+    "crossed": {
+      "never_pooled": true,
+      "per_family": {
+        "gemma-3-4b": "FAIL"
+      },
+      "status": "NOT_SCREENABLE",
+      "stratum": "crossed",
+      "why": "1 family reported; the two-family minimum (\u00a71.4) is not met, so no reading here is the force's however its strata came out"
+    },
+    "crossed__raw_DIAGNOSTIC": {
+      "never_pooled": true,
+      "per_family": {
+        "gemma-3-4b": "INERT_GENERATOR"
+      },
+      "status": "NOT_SCREENABLE",
+      "stratum": "crossed__raw_DIAGNOSTIC",
+      "why": "1 family reported; the two-family minimum (\u00a71.4) is not met, so no reading here is the force's however its strata came out"
+    },
+    "crossed_loose": {
+      "never_pooled": true,
+      "per_family": {
+        "gemma-3-4b": "FAIL"
+      },
+      "status": "NOT_SCREENABLE",
+      "stratum": "crossed_loose",
+      "why": "1 family reported; the two-family minimum (\u00a71.4) is not met, so no reading here is the force's however its strata came out"
+    },
+    "crossed_loose__raw_DIAGNOSTIC": {
+      "never_pooled": true,
+      "per_family": {
+        "gemma-3-4b": "INERT_GENERATOR"
+      },
+      "status": "NOT_SCREENABLE",
+      "stratum": "crossed_loose__raw_DIAGNOSTIC",
+      "why": "1 family reported; the two-family minimum (\u00a71.4) is not met, so no reading here is the force's however its strata came out"
+    },
+    "crossed_tight": {
+      "never_pooled": true,
+      "per_family": {
+        "gemma-3-4b": "FAIL"
+      },
+      "status": "NOT_SCREENABLE",
+      "stratum": "crossed_tight",
+      "why": "1 family reported; the two-family minimum (\u00a71.4) is not met, so no reading here is the force's however its strata came out"
+    },
+    "crossed_tight__raw_DIAGNOSTIC": {
+      "never_pooled": true,
+      "per_family": {
+        "gemma-3-4b": "FAIL"
+      },
+      "status": "NOT_SCREENABLE",
+      "stratum": "crossed_tight__raw_DIAGNOSTIC",
+      "why": "1 family reported; the two-family minimum (\u00a71.4) is not met, so no reading here is the force's however its strata came out"
+    }
+  },
+  "force_verdict": "NOT_SCREENABLE",
+  "force_verdict_detail": {
+    "arm_states": {
+      "gemma-3-4b": "READ"
+    },
+    "binding": {
+      "aligned": "NOT_SCREENABLE",
+      "crossed": "NOT_SCREENABLE"
+    },
+    "verdict": "NOT_SCREENABLE"
+  },
+  "pairs": 6,
+  "per_family": {
+    "gemma-3-4b": {
+      "aligned": {
+        "agreement": 0.3333,
+        "attainability": {
+          "attainable": false,
+          "binding": "point",
+          "insufficient_n_available": true,
+          "k_interval_cp_gt_0_50": null,
+          "k_point_0_52": 2,
+          "label": "aligned",
+          "n": 3,
+          "required_rate": 0.6667
+        },
+        "clopper_pearson": [
+          0.0084,
+          0.9057
+        ],
+        "clustering_caveat": "0 pairs share an author across their sides; 43 authors recur across pairs (51 of 562 slots) \u2014 a caveat on every interval, printed with every result (\u00a789.2)",
+        "decided": 3,
+        "interval_bar_cleared": false,
+        "pairs": 3,
+        "point_bar_cleared": false,
+        "reading": "residual (BAR)",
+        "status": "FAIL",
+        "stratum": "aligned",
+        "ties": 0,
+        "wins": 1
+      },
+      "aligned__raw_DIAGNOSTIC": {
+        "attainability": {
+          "attainable": false,
+          "binding": "point",
+          "insufficient_n_available": true,
+          "k_interval_cp_gt_0_50": null,
+          "k_point_0_52": 2,
+          "label": "aligned",
+          "n": 2,
+          "required_rate": 1.0
+        },
+        "clustering_caveat": "0 pairs share an author across their sides; 43 authors recur across pairs (51 of 562 slots) \u2014 a caveat on every interval, printed with every result (\u00a789.2)",
+        "decided": 2,
+        "pairs": 3,
+        "reading": "raw (DIAGNOSTIC)",
+        "status": "INERT_GENERATOR",
+        "stratum": "aligned",
+        "ties": 1,
+        "why": "2 of 3 pairs decided, below the declared 0.9 share; a statistic mostly made of ties has said nothing about prose",
+        "wins": 0
+      },
+      "cache": {
+        "cache": "C:\\DEV\\LitHarness\\research\\quality-measurement\\derived\\f1-gemma-3-4b.jsonl",
+        "computed_units": 21,
+        "replayed_units": 7,
+        "rows_on_disk": 21
+      },
+      "context": {
+        "censoring_rate": 0.975,
+        "median_digest": "0b7ef4c466ad1829",
+        "neutral_pool_continuations": 32,
+        "neutral_pool_seeds": 8,
+        "scale_digest": "f4ccb745b648e5b3",
+        "windows_in_scale": 1136
+      },
+      "crossed": {
+        "agreement": 0.0,
+        "attainability": {
+          "attainable": false,
+          "binding": "point",
+          "insufficient_n_available": true,
+          "k_interval_cp_gt_0_50": null,
+          "k_point_0_52": 2,
+          "label": "crossed",
+          "n": 3,
+          "required_rate": 0.6667
+        },
+        "clopper_pearson": [
+          0.0,
+          0.7076
+        ],
+        "clustering_caveat": "0 pairs share an author across their sides; 43 authors recur across pairs (51 of 562 slots) \u2014 a caveat on every interval, printed with every result (\u00a789.2)",
+        "decided": 3,
+        "interval_bar_cleared": false,
+        "pairs": 3,
+        "point_bar_cleared": false,
+        "reading": "residual (BAR)",
+        "status": "FAIL",
+        "stratum": "crossed",
+        "ties": 0,
+        "wins": 0
+      },
+      "crossed__raw_DIAGNOSTIC": {
+        "attainability": {
+          "attainable": false,
+          "binding": "point",
+          "insufficient_n_available": true,
+          "k_interval_cp_gt_0_50": null,
+          "k_point_0_52": 1,
+          "label": "crossed",
+          "n": 1,
+          "required_rate": 1.0
+        },
+        "clustering_caveat": "0 pairs share an author across their sides; 43 authors recur across pairs (51 of 562 slots) \u2014 a caveat on every interval, printed with every result (\u00a789.2)",
+        "decided": 1,
+        "pairs": 3,
+        "reading": "raw (DIAGNOSTIC)",
+        "status": "INERT_GENERATOR",
+        "stratum": "crossed",
+        "ties": 2,
+        "why": "1 of 3 pairs decided, below the declared 0.9 share; a statistic mostly made of ties has said nothing about prose",
+        "wins": 0
+      },
+      "crossed_loose": {
+        "agreement": 0.0,
+        "attainability": {
+          "attainable": false,
+          "binding": "point",
+          "insufficient_n_available": true,
+          "k_interval_cp_gt_0_50": null,
+          "k_point_0_52": 2,
+          "label": "crossed_loose",
+          "n": 2,
+          "required_rate": 1.0
+        },
+        "clopper_pearson": [
+          0.0,
+          0.8419
+        ],
+        "clustering_caveat": "0 pairs share an author across their sides; 43 authors recur across pairs (51 of 562 slots) \u2014 a caveat on every interval, printed with every result (\u00a789.2)",
+        "decided": 2,
+        "interval_bar_cleared": false,
+        "pairs": 2,
+        "point_bar_cleared": false,
+        "reading": "residual (BAR)",
+        "status": "FAIL",
+        "stratum": "crossed_loose",
+        "ties": 0,
+        "wins": 0
+      },
+      "crossed_loose__raw_DIAGNOSTIC": {
+        "attainability": {
+          "attainable": false,
+          "label": "crossed_loose",
+          "n": 0,
+          "why": "empty stratum"
+        },
+        "clustering_caveat": "0 pairs share an author across their sides; 43 authors recur across pairs (51 of 562 slots) \u2014 a caveat on every interval, printed with every result (\u00a789.2)",
+        "decided": 0,
+        "pairs": 2,
+        "reading": "raw (DIAGNOSTIC)",
+        "status": "INERT_GENERATOR",
+        "stratum": "crossed_loose",
+        "ties": 2,
+        "why": "0 of 2 pairs decided, below the declared 0.9 share; a statistic mostly made of ties has said nothing about prose",
+        "wins": 0
+      },
+      "crossed_tight": {
+        "agreement": 0.0,
+        "attainability": {
+          "attainable": false,
+          "binding": "point",
+          "insufficient_n_available": true,
+          "k_interval_cp_gt_0_50": null,
+          "k_point_0_52": 1,
+          "label": "crossed_tight",
+          "n": 1,
+          "required_rate": 1.0
+        },
+        "clopper_pearson": [
+          0.0,
+          0.975
+        ],
+        "clustering_caveat": "0 pairs share an author across their sides; 43 authors recur across pairs (51 of 562 slots) \u2014 a caveat on every interval, printed with every result (\u00a789.2)",
+        "decided": 1,
+        "interval_bar_cleared": false,
+        "pairs": 1,
+        "point_bar_cleared": false,
+        "reading": "residual (BAR)",
+        "status": "FAIL",
+        "stratum": "crossed_tight",
+        "ties": 0,
+        "wins": 0
+      },
+      "crossed_tight__raw_DIAGNOSTIC": {
+        "agreement": 0.0,
+        "attainability": {
+          "attainable": false,
+          "binding": "point",
+          "insufficient_n_available": true,
+          "k_interval_cp_gt_0_50": null,
+          "k_point_0_52": 1,
+          "label": "crossed_tight",
+          "n": 1,
+          "required_rate": 1.0
+        },
+        "clopper_pearson": [
+          0.0,
+          0.975
+        ],
+        "clustering_caveat": "0 pairs share an author across their sides; 43 authors recur across pairs (51 of 562 slots) \u2014 a caveat on every interval, printed with every result (\u00a789.2)",
+        "decided": 1,
+        "interval_bar_cleared": false,
+        "pairs": 1,
+        "point_bar_cleared": false,
+        "reading": "raw (DIAGNOSTIC)",
+        "status": "FAIL",
+        "stratum": "crossed_tight",
+        "ties": 0,
+        "wins": 0
+      },
+      "family": {
+        "family": "gemma-3-4b",
+        "head": "base",
+        "lineage": "google/gemma-3",
+        "model_id": "google/gemma-3-4b-pt",
+        "revision": "cc012e0a6d0787b4adcc0fa2c4da74402494554d"
+      },
+      "governor": {
+        "calls": 21,
+        "gpu_c_now": 56,
+        "gpu_seconds": 366.9,
+        "pause_above_c": 72,
+        "rest_ratio": 0.25,
+        "resume_below_c": 66,
+        "source": "cdg_battery.throttle",
+        "wall_seconds": 473.8
+      },
+      "half_life_secondary_DIAGNOSTIC": {
+        "finite_share": 0.9,
+        "median": 4.9954,
+        "note": "secondary and diagnostic; the primary read is the crossover index"
+      },
+      "inverted_u_alternative": {
+        "covariate_range": [
+          4.6519,
+          6.5592
+        ],
+        "interior_peak": true,
+        "linear": 10.329836,
+        "n": 20,
+        "peak_at": 5.756,
+        "quadratic": -0.897314,
+        "reading": "binding rises with distinctiveness and then falls \u2014 the garish-prose shape",
+        "status": "READ"
+      },
+      "placebo_identical": {
+        "control": "placebo_identical",
+        "effect": 0.0,
+        "kind": "exact",
+        "status": "PASS",
+        "tolerance": 0.0,
+        "why": ""
+      },
+      "rewhitespace_sham": {
+        "control": "rewhitespace_sham",
+        "decided": 0,
+        "pairs": 2,
+        "status": "NOT_SCREENABLE",
+        "why": "the sham decided nothing, so it cannot certify anything either",
+        "wins": 0
+      },
+      "status": "READ"
+    }
+  },
+  "pre_registration": {
+    "axiom": "no solicited human judgment, ever \u2014 not hired, not operator, not one blinded pair",
+    "binding_half": "interval, at every n in this programme (verified, not asserted)",
+    "clustering_caveat": "0 pairs share an author across their sides; 43 authors recur across pairs (51 of 562 slots) \u2014 a caveat on every interval, printed with every result (\u00a789.2)",
+    "controls": {
+      "placebo_identical": "exactly zero effect; arithmetic check, not a null (\u00a789.4)",
+      "rewhitespace_sham": "reads nothing, or the force is reading formatting and is VOID (\u00a778.1)"
+    },
+    "families": {
+      "gemma-3-4b": {
+        "base": "google/gemma-3-4b-pt",
+        "base_revision": "cc012e0a6d0787b4adcc0fa2c4da74402494554d",
+        "chat": "google/gemma-3-4b-it",
+        "chat_revision": "093f9f388b31de276ce2de164bdc2081324b9767",
+        "lineage": "google/gemma-3"
+      },
+      "qwen2.5-3b": {
+        "base": "Qwen/Qwen2.5-3B",
+        "base_revision": "3aab1f1954e9cc14eb9509a215f9e5ca08227a9b",
+        "chat": "Qwen/Qwen2.5-3B-Instruct",
+        "chat_revision": "aa8e72537993ba99e69dfaafa59ed015b17504d1",
+        "lineage": "alibaba/qwen2.5"
+      }
+    },
+    "family_rule": "reported per family, never pooled; disagreement is SPLIT_FAMILY",
+    "insufficient_n_above": 0.6,
+    "interval_bar": "Clopper-Pearson 95% lower bound clear of 0.50",
+    "label": "conversion = followers / total_views, BEHAVIOUR class at STORY grain (\u00a782)",
+    "ledger": "plan/stage-0-decisions.md \u00a795",
+    "min_decided_share": 0.9,
+    "point_bar": 0.52,
+    "programme": "plan/force-program.md",
+    "strata": "aligned and crossed, never averaged; the crossed halves are a contrast not a bar",
+    "written_before": "any continuation sampled, any logprob read, any chain run"
+  },
+  "pre_registration_track": {
+    "adjustment": "label-blind nuisance regression; the fit never sees conversion",
+    "alternatives": {
+      "inverted_u": "a quadratic term in the covariate is signed for an interior peak \u2014 binding rises with distinctiveness and then falls",
+      "monotone": "residual crossover separates high- from low-conversion sides at the bars"
+    },
+    "asks_nothing": "the seed goes in as raw prose on a pretrained head; no instruction, no question, no slot, no position",
+    "bar_declared_on": "the residual agreement, because the raw number cannot tell the hypothesis from the confound",
+    "censoring": "a continuation that never crosses within L is censored at the last window and ranks above every observed value; the censoring rate prints",
+    "confound": "distinctiveness \u2014 garish prose also binds",
+    "covariate": "seed's t=0 z-distance from the model median centroid",
+    "excluded_features": [
+      "words"
+    ],
+    "hypothesis": "strong prose holds the model's continuations in its register longer before they decay to the model's median centroid",
+    "max_new_tokens": 512,
+    "neutral_pool": "own-generated prose (corpora/toll-scenes.json), NEUTRAL_SEEDS seeds x K",
+    "pilot_may_set": "only L, and only from the censoring rate; the label is never consulted, and the pilot's own agreement is not a result",
+    "primary_statistic": "crossover window index \u2014 the first window at which distance to the seed's register exceeds distance to the model median",
+    "replicate_reduction": "median over K",
+    "replicates": 8,
+    "secondary_statistic": "exponential half-life of r_w - 0.5; DIAGNOSTIC, because a fit is a functional-form assumption and the primary read may not rest on one",
+    "sham_subsample": 100,
+    "stride_words": 25,
+    "track": "F1 register half-life",
+    "window_words": 100,
+    "z_scale": "the run's own per-feature population sd over every window in the run; run-dependent, so numbers are not comparable across runs and the scale's digest is recorded"
+  },
+  "reading": "F1 does not clear both binding strata; the per-family and per-stratum rows below say which reading failed and in which of the declared ways",
+  "reassembled": [
+    {
+      "combined_after": {
+        "aligned": "NOT_SCREENABLE",
+        "crossed": "NOT_SCREENABLE",
+        "crossed_loose": "NOT_SCREENABLE",
+        "crossed_tight": "NOT_SCREENABLE"
+      },
+      "combined_before": {
+        "aligned": "FAIL",
+        "crossed": "FAIL",
+        "crossed_loose": "FAIL",
+        "crossed_tight": "FAIL"
+      },
+      "when": "2026-08-20, after adversarial review",
+      "why": "the stored verdicts predate two harness corrections \u2014 the two-family minimum being enforced in combine_families, and DEGRADED_STRATUM no longer folding into FAIL. The per-family measurements below are untouched; only the roll-up was recomputed, so the file of record matches the module that decides it."
+    },
+    {
+      "now": {
+        "combined": {
+          "aligned": "NOT_SCREENABLE",
+          "aligned__raw_DIAGNOSTIC": "NOT_SCREENABLE",
+          "crossed": "NOT_SCREENABLE",
+          "crossed__raw_DIAGNOSTIC": "NOT_SCREENABLE",
+          "crossed_loose": "NOT_SCREENABLE",
+          "crossed_loose__raw_DIAGNOSTIC": "NOT_SCREENABLE",
+          "crossed_tight": "NOT_SCREENABLE",
+          "crossed_tight__raw_DIAGNOSTIC": "NOT_SCREENABLE"
+        },
+        "force_verdict": "NOT_SCREENABLE"
+      },
+      "was": {
+        "combined": {
+          "aligned": "NOT_SCREENABLE",
+          "crossed": "NOT_SCREENABLE",
+          "crossed_loose": "NOT_SCREENABLE",
+          "crossed_tight": "NOT_SCREENABLE"
+        },
+        "force_verdict": "NOT_SCREENABLE"
+      },
+      "why": "combining rules changed after this run was scored; per-family readings untouched"
+    }
+  ],
+  "stratum_sizes": {
+    "aligned": 3,
+    "crossed": 3,
+    "crossed_loose": 2,
+    "crossed_tight": 1
+  },
+  "track": "F1"
+}

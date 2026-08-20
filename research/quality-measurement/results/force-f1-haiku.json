@@ -1,0 +1,596 @@
+{
+  "attainability": [
+    {
+      "attainable": true,
+      "binding": "interval",
+      "insufficient_n_available": false,
+      "k_interval_cp_gt_0_50": 85,
+      "k_point_0_52": 75,
+      "label": "aligned",
+      "n": 144,
+      "required_rate": 0.5903
+    },
+    {
+      "attainable": true,
+      "binding": "interval",
+      "insufficient_n_available": false,
+      "k_interval_cp_gt_0_50": 81,
+      "k_point_0_52": 72,
+      "label": "crossed",
+      "n": 137,
+      "required_rate": 0.5912
+    },
+    {
+      "attainable": true,
+      "binding": "interval",
+      "insufficient_n_available": true,
+      "k_interval_cp_gt_0_50": 43,
+      "k_point_0_52": 36,
+      "label": "crossed_tight",
+      "n": 68,
+      "required_rate": 0.6324
+    },
+    {
+      "attainable": true,
+      "binding": "interval",
+      "insufficient_n_available": true,
+      "k_interval_cp_gt_0_50": 44,
+      "k_point_0_52": 36,
+      "label": "crossed_loose",
+      "n": 69,
+      "required_rate": 0.6377
+    }
+  ],
+  "combined": {
+    "aligned": {
+      "never_pooled": true,
+      "per_family": {
+        "haiku-4-5": "FAIL"
+      },
+      "status": "NOT_SCREENABLE",
+      "stratum": "aligned",
+      "why": "1 family reported; the two-family minimum (\u00a71.4) is not met, so no reading here is the force's however its strata came out"
+    },
+    "aligned__raw_DIAGNOSTIC": {
+      "never_pooled": true,
+      "per_family": {
+        "haiku-4-5": "INERT_GENERATOR"
+      },
+      "status": "NOT_SCREENABLE",
+      "stratum": "aligned__raw_DIAGNOSTIC",
+      "why": "1 family reported; the two-family minimum (\u00a71.4) is not met, so no reading here is the force's however its strata came out"
+    },
+    "crossed": {
+      "never_pooled": true,
+      "per_family": {
+        "haiku-4-5": "DEGRADED_STRATUM"
+      },
+      "status": "NOT_SCREENABLE",
+      "stratum": "crossed",
+      "why": "1 family reported; the two-family minimum (\u00a71.4) is not met, so no reading here is the force's however its strata came out"
+    },
+    "crossed__raw_DIAGNOSTIC": {
+      "never_pooled": true,
+      "per_family": {
+        "haiku-4-5": "DEGRADED_STRATUM"
+      },
+      "status": "NOT_SCREENABLE",
+      "stratum": "crossed__raw_DIAGNOSTIC",
+      "why": "1 family reported; the two-family minimum (\u00a71.4) is not met, so no reading here is the force's however its strata came out"
+    },
+    "crossed_loose": {
+      "never_pooled": true,
+      "per_family": {
+        "haiku-4-5": "FAIL"
+      },
+      "status": "NOT_SCREENABLE",
+      "stratum": "crossed_loose",
+      "why": "1 family reported; the two-family minimum (\u00a71.4) is not met, so no reading here is the force's however its strata came out"
+    },
+    "crossed_loose__raw_DIAGNOSTIC": {
+      "never_pooled": true,
+      "per_family": {
+        "haiku-4-5": "FAIL"
+      },
+      "status": "NOT_SCREENABLE",
+      "stratum": "crossed_loose__raw_DIAGNOSTIC",
+      "why": "1 family reported; the two-family minimum (\u00a71.4) is not met, so no reading here is the force's however its strata came out"
+    },
+    "crossed_tight": {
+      "never_pooled": true,
+      "per_family": {
+        "haiku-4-5": "FAIL"
+      },
+      "status": "NOT_SCREENABLE",
+      "stratum": "crossed_tight",
+      "why": "1 family reported; the two-family minimum (\u00a71.4) is not met, so no reading here is the force's however its strata came out"
+    },
+    "crossed_tight__raw_DIAGNOSTIC": {
+      "never_pooled": true,
+      "per_family": {
+        "haiku-4-5": "INERT_GENERATOR"
+      },
+      "status": "NOT_SCREENABLE",
+      "stratum": "crossed_tight__raw_DIAGNOSTIC",
+      "why": "1 family reported; the two-family minimum (\u00a71.4) is not met, so no reading here is the force's however its strata came out"
+    }
+  },
+  "force_verdict": "NOT_SCREENABLE",
+  "force_verdict_detail": {
+    "arm_states": {
+      "haiku-4-5": "NOT_SCREENABLE"
+    },
+    "binding": {
+      "aligned": "NOT_SCREENABLE",
+      "crossed": "NOT_SCREENABLE"
+    },
+    "verdict": "NOT_SCREENABLE",
+    "why": "a family's arm reads NOT_SCREENABLE; its controls do not license a reading"
+  },
+  "pairs": 281,
+  "per_family": {
+    "haiku-4-5": {
+      "aligned": {
+        "agreement": 0.5429,
+        "attainability": {
+          "attainable": true,
+          "binding": "interval",
+          "insufficient_n_available": false,
+          "k_interval_cp_gt_0_50": 83,
+          "k_point_0_52": 73,
+          "label": "aligned",
+          "n": 140,
+          "required_rate": 0.5929
+        },
+        "clopper_pearson": [
+          0.4566,
+          0.6272
+        ],
+        "clustering_caveat": "0 pairs share an author across their sides; 43 authors recur across pairs (51 of 562 slots) \u2014 a caveat on every interval, printed with every result (\u00a789.2)",
+        "decided": 140,
+        "dropped_before_scoring": 4,
+        "interval_bar_cleared": false,
+        "n_before_drops": 144,
+        "pairs": 140,
+        "point_bar_cleared": true,
+        "reading": "residual (BAR)",
+        "status": "FAIL",
+        "stratum": "aligned",
+        "ties": 0,
+        "wins": 76
+      },
+      "aligned__raw_DIAGNOSTIC": {
+        "attainability": {
+          "attainable": true,
+          "binding": "interval",
+          "insufficient_n_available": false,
+          "k_interval_cp_gt_0_50": 73,
+          "k_point_0_52": 64,
+          "label": "aligned",
+          "n": 123,
+          "required_rate": 0.5935
+        },
+        "clustering_caveat": "0 pairs share an author across their sides; 43 authors recur across pairs (51 of 562 slots) \u2014 a caveat on every interval, printed with every result (\u00a789.2)",
+        "decided": 123,
+        "dropped_before_scoring": 4,
+        "n_before_drops": 144,
+        "pairs": 140,
+        "reading": "raw (DIAGNOSTIC)",
+        "status": "INERT_GENERATOR",
+        "stratum": "aligned",
+        "ties": 17,
+        "why": "123 of 140 pairs decided, below the declared 0.9 share; a statistic mostly made of ties has said nothing about prose",
+        "wins": 70
+      },
+      "cache": {
+        "cache": "C:\\DEV\\LitHarness\\research\\quality-measurement\\derived\\f1-haiku-4-5.jsonl",
+        "computed_units": 242,
+        "replayed_units": 263,
+        "rows_on_disk": 531
+      },
+      "context": {
+        "anchor": "centroid of every continuation window in the run (corrected; see PILOT_CORRECTIONS)",
+        "censoring_rate": 0.0301,
+        "median_digest": "1d0bc9a3465fdb74",
+        "neutral_pool_continuations": 64,
+        "neutral_pool_seeds": 8,
+        "pool_anchor_distance_DIAGNOSTIC": 3.0096,
+        "scale_digest": "b436c266b75a8a9f",
+        "windows_in_scale": 62646
+      },
+      "control_states": {
+        "placebo_identical": "NOT_SCREENABLE",
+        "rewhitespace_sham": "NOT_SCREENABLE"
+      },
+      "crossed": {
+        "attainability": {
+          "attainable": true,
+          "binding": "interval",
+          "insufficient_n_available": true,
+          "k_interval_cp_gt_0_50": 41,
+          "k_point_0_52": 34,
+          "label": "crossed",
+          "n": 65,
+          "required_rate": 0.6308
+        },
+        "clustering_caveat": "0 pairs share an author across their sides; 43 authors recur across pairs (51 of 562 slots) \u2014 a caveat on every interval, printed with every result (\u00a789.2)",
+        "decided": 65,
+        "dropped_before_scoring": 72,
+        "n_before_drops": 137,
+        "pairs": 65,
+        "reading": "residual (BAR)",
+        "status": "DEGRADED_STRATUM",
+        "stratum": "crossed",
+        "ties": 0,
+        "why": "65 decided pairs is below the 110 floor at which this stratum's interval bar still demands 0.6000 or less; a FAIL here would be a statement about power rather than about the force",
+        "wins": 26
+      },
+      "crossed__raw_DIAGNOSTIC": {
+        "attainability": {
+          "attainable": true,
+          "binding": "interval",
+          "insufficient_n_available": true,
+          "k_interval_cp_gt_0_50": 37,
+          "k_point_0_52": 31,
+          "label": "crossed",
+          "n": 58,
+          "required_rate": 0.6379
+        },
+        "clustering_caveat": "0 pairs share an author across their sides; 43 authors recur across pairs (51 of 562 slots) \u2014 a caveat on every interval, printed with every result (\u00a789.2)",
+        "decided": 58,
+        "dropped_before_scoring": 72,
+        "n_before_drops": 137,
+        "pairs": 65,
+        "reading": "raw (DIAGNOSTIC)",
+        "status": "DEGRADED_STRATUM",
+        "stratum": "crossed",
+        "ties": 7,
+        "why": "58 decided pairs is below the 110 floor at which this stratum's interval bar still demands 0.6000 or less; a FAIL here would be a statement about power rather than about the force",
+        "wins": 24
+      },
+      "crossed_loose": {
+        "agreement": 0.4054,
+        "attainability": {
+          "attainable": true,
+          "binding": "interval",
+          "insufficient_n_available": true,
+          "k_interval_cp_gt_0_50": 25,
+          "k_point_0_52": 20,
+          "label": "crossed_loose",
+          "n": 37,
+          "required_rate": 0.6757
+        },
+        "clopper_pearson": [
+          0.2475,
+          0.579
+        ],
+        "clustering_caveat": "0 pairs share an author across their sides; 43 authors recur across pairs (51 of 562 slots) \u2014 a caveat on every interval, printed with every result (\u00a789.2)",
+        "decided": 37,
+        "dropped_before_scoring": 32,
+        "interval_bar_cleared": false,
+        "n_before_drops": 69,
+        "pairs": 37,
+        "point_bar_cleared": false,
+        "reading": "residual (BAR)",
+        "status": "FAIL",
+        "stratum": "crossed_loose",
+        "ties": 0,
+        "wins": 15
+      },
+      "crossed_loose__raw_DIAGNOSTIC": {
+        "agreement": 0.4118,
+        "attainability": {
+          "attainable": true,
+          "binding": "interval",
+          "insufficient_n_available": true,
+          "k_interval_cp_gt_0_50": 24,
+          "k_point_0_52": 18,
+          "label": "crossed_loose",
+          "n": 34,
+          "required_rate": 0.7059
+        },
+        "clopper_pearson": [
+          0.2465,
+          0.593
+        ],
+        "clustering_caveat": "0 pairs share an author across their sides; 43 authors recur across pairs (51 of 562 slots) \u2014 a caveat on every interval, printed with every result (\u00a789.2)",
+        "decided": 34,
+        "dropped_before_scoring": 32,
+        "interval_bar_cleared": false,
+        "n_before_drops": 69,
+        "pairs": 37,
+        "point_bar_cleared": false,
+        "reading": "raw (DIAGNOSTIC)",
+        "status": "FAIL",
+        "stratum": "crossed_loose",
+        "ties": 3,
+        "wins": 14
+      },
+      "crossed_tight": {
+        "agreement": 0.3929,
+        "attainability": {
+          "attainable": true,
+          "binding": "interval",
+          "insufficient_n_available": true,
+          "k_interval_cp_gt_0_50": 20,
+          "k_point_0_52": 15,
+          "label": "crossed_tight",
+          "n": 28,
+          "required_rate": 0.7143
+        },
+        "clopper_pearson": [
+          0.215,
+          0.5942
+        ],
+        "clustering_caveat": "0 pairs share an author across their sides; 43 authors recur across pairs (51 of 562 slots) \u2014 a caveat on every interval, printed with every result (\u00a789.2)",
+        "decided": 28,
+        "dropped_before_scoring": 40,
+        "interval_bar_cleared": false,
+        "n_before_drops": 68,
+        "pairs": 28,
+        "point_bar_cleared": false,
+        "reading": "residual (BAR)",
+        "status": "FAIL",
+        "stratum": "crossed_tight",
+        "ties": 0,
+        "wins": 11
+      },
+      "crossed_tight__raw_DIAGNOSTIC": {
+        "attainability": {
+          "attainable": true,
+          "binding": "interval",
+          "insufficient_n_available": true,
+          "k_interval_cp_gt_0_50": 18,
+          "k_point_0_52": 13,
+          "label": "crossed_tight",
+          "n": 24,
+          "required_rate": 0.75
+        },
+        "clustering_caveat": "0 pairs share an author across their sides; 43 authors recur across pairs (51 of 562 slots) \u2014 a caveat on every interval, printed with every result (\u00a789.2)",
+        "decided": 24,
+        "dropped_before_scoring": 40,
+        "n_before_drops": 68,
+        "pairs": 28,
+        "reading": "raw (DIAGNOSTIC)",
+        "status": "INERT_GENERATOR",
+        "stratum": "crossed_tight",
+        "ties": 4,
+        "why": "24 of 28 pairs decided, below the declared 0.9 share; a statistic mostly made of ties has said nothing about prose",
+        "wins": 10
+      },
+      "family": {
+        "base_or_instruct": "instruct \u2014 \u00a795's local families are base checkpoints on purpose, so this measures a different distribution and is labelled as one",
+        "determinism": "NONE \u2014 no seed parameter; placebo_identical is downgraded from an arithmetic check to an equivalence test (\u00a71.7's pre-registered branch)",
+        "family": "haiku-4-5",
+        "head": "chat",
+        "instruction": "Continue this passage of fiction. Write only the continuation, in the same voice, with no preamble, no commentary and no headings.",
+        "lineage": "anthropic/claude-haiku",
+        "model_id": "claude-haiku-4-5",
+        "revision": "UNPINNED \u2014 an alias, not a commit sha",
+        "system_prompt_digest": "582095ae5fa184d3",
+        "transport": "claude -p"
+      },
+      "governor": {
+        "binding_sensor": "temperature.gpu.tlimit (hotspot margin), not core",
+        "calls": 0,
+        "duty_cycle": 0.0,
+        "gpu_c_now": 43,
+        "gpu_seconds": 0.0,
+        "hold_seconds": 0.0,
+        "holds": 0,
+        "long_holds": 0,
+        "min_tlimit_margin_c": null,
+        "pause_above_c": 58,
+        "pause_margin_c": 14,
+        "peak_core_c": 0.0,
+        "peak_power_w": 0.0,
+        "rest_ratio": 3.0,
+        "resume_below_c": 52,
+        "resume_margin_c": 20,
+        "soak_every_calls": 25,
+        "soak_seconds": 90.0,
+        "soaks": 0,
+        "source": "force_gpu.Governor (hardened 2026-08-20 after a mid-run shutdown)",
+        "throttle_events": 0,
+        "wall_seconds": 3297.1
+      },
+      "half_life_secondary_DIAGNOSTIC": {
+        "finite_share": 0.6306,
+        "median": 3.1718,
+        "note": "secondary and diagnostic; the primary read is the crossover index"
+      },
+      "inverted_u_alternative": {
+        "covariate_range": [
+          1.4345,
+          12.9017
+        ],
+        "interior_peak": true,
+        "linear": 0.162081,
+        "n": 578,
+        "peak_at": 4.6407,
+        "quadratic": -0.017463,
+        "reading": "binding rises with distinctiveness and then falls \u2014 the garish-prose shape",
+        "status": "READ"
+      },
+      "ledger": {
+        "cache_read_tokens": 50866857,
+        "cache_write_tokens": 1364878,
+        "calls": 1975,
+        "ceiling_usd": 22.0,
+        "note": "equivalent quota on a subscription, not billed dollars \u2014 `providers/cli.py`'s position, and \u00a785's convention",
+        "output_tokens": 1991105,
+        "spent_usd": 22.1248,
+        "thinking_tokens": 748082,
+        "transport": "claude -p (Claude Code CLI)",
+        "transport_failures": 0,
+        "usd_per_call": 0.0112
+      },
+      "pilot_corrections": {
+        "anchor": {
+          "after_correction": "censoring rate 0.250 on the same cached generations",
+          "corrected_to": "M = centroid of EVERY continuation window in the run, pooled across both strata, both sides and the neutral pool \u2014 literally the model's median continuation on this material",
+          "criterion": "censoring rate \u2014 label-blind",
+          "declared": "M = centroid of continuations from the own-generated neutral pool",
+          "measured": "censoring rate 0.979 \u2014 almost no continuation ever left the seed's register for that anchor, because own-generated LitRPG with [STATUS] blocks is not a neutral centre: it is its own register, and every RoyalRoad continuation sits far from it at every window",
+          "why_not_circular": "M is one global constant shared by both sides of every pair, so it cannot create a systematic high/low difference; it is a nuisance anchor, not a fitted one"
+        },
+        "replicate_reduction": {
+          "corrected_to": "mean over K",
+          "declared": "median over K",
+          "why": "the crossover index is a small integer, so a median over eight replicates takes few distinct values and pairs tie constantly; a mean takes eighths and the decided share stays above the declared 0.90 floor. The tie rate is the label-blind criterion \u00a72.5 named in advance."
+        }
+      },
+      "placebo_identical": {
+        "control": "placebo_identical",
+        "decided": 0,
+        "kind": "equivalence",
+        "observed_max_abs_effect": 0.0,
+        "pairs": 24,
+        "status": "NOT_SCREENABLE",
+        "why": "the sham decided nothing, so it cannot certify anything either",
+        "why_downgraded": "no determinism on the remote transport; \u00a71.7's declared branch",
+        "wins": 0
+      },
+      "rewhitespace_sham": {
+        "agreement": 0.4889,
+        "clopper_pearson": [
+          0.337,
+          0.6423
+        ],
+        "control": "rewhitespace_sham",
+        "decided": 45,
+        "measured_identical_feature_rows": "100/100",
+        "pairs": 60,
+        "status": "NOT_SCREENABLE",
+        "status_before_retraction": "PASS",
+        "why": "RETRACTED. F1's windows join words with a single space, so no window contains a newline, and `ablate.rewhitespace` changes only newlines and intra-line spacing. Measured on 100 real sham pairs: 100 of 100 produce byte-identical feature rows. The agreement below is sampling noise on identical inputs and certifies nothing.",
+        "wins": 22
+      },
+      "seed_budget": {
+        "cap": 900,
+        "max_log10_ratio_before_cut": 0.4549,
+        "pairs": 281,
+        "pairs_over_0_04": 23,
+        "pairs_truncated": 281,
+        "unit": "words"
+      },
+      "status": "NOT_SCREENABLE",
+      "why": "placebo_identical, rewhitespace_sham could not be read, so nothing certifies that this force is reading prose rather than formatting"
+    }
+  },
+  "pre_registration": {
+    "axiom": "no solicited human judgment, ever \u2014 not hired, not operator, not one blinded pair",
+    "binding_half": "interval, at every n in this programme (verified, not asserted)",
+    "clustering_caveat": "0 pairs share an author across their sides; 43 authors recur across pairs (51 of 562 slots) \u2014 a caveat on every interval, printed with every result (\u00a789.2)",
+    "controls": {
+      "placebo_identical": "exactly zero effect; arithmetic check, not a null (\u00a789.4)",
+      "rewhitespace_sham": "reads nothing, or the force is reading formatting and is VOID (\u00a778.1)"
+    },
+    "families": {
+      "gemma-3-4b": {
+        "base": "google/gemma-3-4b-pt",
+        "base_revision": "cc012e0a6d0787b4adcc0fa2c4da74402494554d",
+        "chat": "google/gemma-3-4b-it",
+        "chat_revision": "093f9f388b31de276ce2de164bdc2081324b9767",
+        "lineage": "google/gemma-3"
+      },
+      "qwen2.5-3b": {
+        "base": "Qwen/Qwen2.5-3B",
+        "base_revision": "3aab1f1954e9cc14eb9509a215f9e5ca08227a9b",
+        "chat": "Qwen/Qwen2.5-3B-Instruct",
+        "chat_revision": "aa8e72537993ba99e69dfaafa59ed015b17504d1",
+        "lineage": "alibaba/qwen2.5"
+      }
+    },
+    "family_rule": "reported per family, never pooled; disagreement is SPLIT_FAMILY",
+    "insufficient_n_above": 0.6,
+    "interval_bar": "Clopper-Pearson 95% lower bound clear of 0.50",
+    "label": "conversion = followers / total_views, BEHAVIOUR class at STORY grain (\u00a782)",
+    "ledger": "plan/stage-0-decisions.md \u00a795",
+    "min_decided_share": 0.9,
+    "point_bar": 0.52,
+    "programme": "plan/force-program.md",
+    "strata": "aligned and crossed, never averaged; the crossed halves are a contrast not a bar",
+    "written_before": "any continuation sampled, any logprob read, any chain run"
+  },
+  "pre_registration_track": {
+    "adjustment": "label-blind nuisance regression; the fit never sees conversion",
+    "alternatives": {
+      "inverted_u": "a quadratic term in the covariate is signed for an interior peak \u2014 binding rises with distinctiveness and then falls",
+      "monotone": "residual crossover separates high- from low-conversion sides at the bars"
+    },
+    "asks_nothing": "the seed goes in as raw prose on a pretrained head; no instruction, no question, no slot, no position",
+    "bar_declared_on": "the residual agreement, because the raw number cannot tell the hypothesis from the confound",
+    "censoring": "a continuation that never crosses within L is censored at the last window and ranks above every observed value; the censoring rate prints",
+    "confound": "distinctiveness \u2014 garish prose also binds",
+    "covariate": "seed's t=0 z-distance from the model median centroid",
+    "excluded_features": [
+      "words"
+    ],
+    "hypothesis": "strong prose holds the model's continuations in its register longer before they decay to the model's median centroid",
+    "max_new_tokens": 512,
+    "neutral_pool": "own-generated prose (corpora/toll-scenes.json), NEUTRAL_SEEDS seeds x K",
+    "pilot_may_set": "only L, and only from the censoring rate; the label is never consulted, and the pilot's own agreement is not a result",
+    "primary_statistic": "crossover window index \u2014 the first window at which distance to the seed's register exceeds distance to the model median",
+    "replicate_reduction": "median over K",
+    "replicates": 8,
+    "secondary_statistic": "exponential half-life of r_w - 0.5; DIAGNOSTIC, because a fit is a functional-form assumption and the primary read may not rest on one",
+    "sham_subsample": 100,
+    "stride_words": 25,
+    "track": "F1 register half-life",
+    "window_words": 100,
+    "z_scale": "the run's own per-feature population sd over every window in the run; run-dependent, so numbers are not comparable across runs and the scale's digest is recorded"
+  },
+  "reading": "F1 does not clear both binding strata; the per-family and per-stratum rows below say which reading failed and in which of the declared ways",
+  "reassembled": [
+    {
+      "combined_after": {
+        "aligned": "NOT_SCREENABLE",
+        "crossed": "NOT_SCREENABLE",
+        "crossed_loose": "NOT_SCREENABLE",
+        "crossed_tight": "NOT_SCREENABLE"
+      },
+      "combined_before": {
+        "aligned": "FAIL",
+        "crossed": "DEGRADED_STRATUM",
+        "crossed_loose": "FAIL",
+        "crossed_tight": "FAIL"
+      },
+      "sham_retraction": "the sham's PASS was withdrawn after adversarial review demonstrated it perturbs nothing this feature space can see; the numbers are unchanged and the certification is removed",
+      "when": "2026-08-20, after adversarial review",
+      "why": "the stored verdicts predate two harness corrections \u2014 the two-family minimum being enforced in combine_families, and DEGRADED_STRATUM no longer folding into FAIL. The per-family measurements below are untouched; only the roll-up was recomputed, so the file of record matches the module that decides it."
+    },
+    {
+      "now": {
+        "combined": {
+          "aligned": "NOT_SCREENABLE",
+          "aligned__raw_DIAGNOSTIC": "NOT_SCREENABLE",
+          "crossed": "NOT_SCREENABLE",
+          "crossed__raw_DIAGNOSTIC": "NOT_SCREENABLE",
+          "crossed_loose": "NOT_SCREENABLE",
+          "crossed_loose__raw_DIAGNOSTIC": "NOT_SCREENABLE",
+          "crossed_tight": "NOT_SCREENABLE",
+          "crossed_tight__raw_DIAGNOSTIC": "NOT_SCREENABLE"
+        },
+        "force_verdict": "NOT_SCREENABLE"
+      },
+      "was": {
+        "combined": {
+          "aligned": "NOT_SCREENABLE",
+          "crossed": "NOT_SCREENABLE",
+          "crossed_loose": "NOT_SCREENABLE",
+          "crossed_tight": "NOT_SCREENABLE"
+        },
+        "force_verdict": "NOT_SCREENABLE"
+      },
+      "why": "combining rules changed after this run was scored; per-family readings untouched"
+    }
+  ],
+  "stratum_sizes": {
+    "aligned": 144,
+    "crossed": 137,
+    "crossed_loose": 69,
+    "crossed_tight": 68
+  },
+  "track": "F1"
+}

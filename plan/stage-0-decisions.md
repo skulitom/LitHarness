@@ -7267,3 +7267,954 @@ where an unbiased reader clears 91% and a 0.60 allocator is refused 93.5% of the
 **No model is seated and none can be on this corpus**, which is §94.3's finding arriving through
 the statistics rather than through the shelf builder. What the six-session screen bought is the
 right to spend a seating budget on one family instead of four.
+
+### 94.7 The seating ran, every control failed, and the number that was wrong was ours
+
+72 sessions on `phi4:latest`, 864 forced fetches, **every one answered** — and all four
+equivalence controls FAIL:
+
+    control            verdict  failure kind   point   interval
+    p1_placebo          FAIL     imprecise     0.500   [0.354, 0.625]
+    p3_whitespace       FAIL     imprecise     0.396   [0.271, 0.521]
+    p4_rename           FAIL     imprecise     0.500   [0.354, 0.625]
+    p2_positional       FAIL     imprecise     0.615   [0.396, 0.833]
+    p5_non_degenerate   PASS
+
+**Two of them sit on a point estimate of exactly 0.5 and fail anyway.** That is a bar wrong in
+the direction of false failure — I7's catalogued defect, on our own bar, for the third time in
+this entry after `CONTROL_MIN_SESSIONS` and P5's first formulation. A verdict of FAIL alone
+reads as a statement about the reader, so the two kinds are now named apart: an interval that
+still *contains* the centre while being wider than the band is `imprecise`, and only an
+interval that has moved off the band is `off_centre`.
+
+**The cause is that `--attainability` simulated a reader nobody is.** It draws each session's
+share as twelve independent coins, per-session sd about 0.144. phi4's sessions produced shares
+of exactly **0.0, 0.5 or 1.0 and nothing else** — the reader picks one of four fixed patterns
+(all-A, all-B, ABAB…, BABA…) and holds it for a whole session, so the fetches within a session
+are perfectly correlated, the effective sample size is the **session** count rather than the
+fetch count, and the observed per-session sd is **0.4025**. The interval is 2.8x wider than the
+table assumed and the declared band could not have been met at any batch this programme had
+budgeted.
+
+**So sizing moved from an assumed distribution to an observed one.**
+`empirical_sessions_needed` resamples the run's own session shares, centred on 0.5 so it prices
+*precision* rather than certifying a bias away: at this reader's variance the band needs **64
+sessions per control arm**, not 24 — 2,304 fetches per arm, roughly seven hours of governed GPU
+time across the three shelves. It is reported beside a failing seating as a **price and not a
+verdict**, and deliberately as a sibling of the controls rather than one of them, so a
+diagnostic cannot enter the seating decision through `all(... == "PASS")`.
+
+**This is also why the D1 battery was not started.** Its arms would have been sized off the
+same broken assumption, bought thousands of calls, and produced the same uninterpretable FAIL.
+The design's order — seat, then battery — is what kept that from happening, and the seating is
+the step that has now returned its answer: not a reading about prose, a correction to the
+instrument's own arithmetic.
+
+**What the run does not say.** Nothing here is evidence that phi4 is unbiased; the intervals are
+too wide to speak about the centre at all, which is what `imprecise` means. And nothing here
+faults the instrument's shape: the forced budget worked, every session answered, no transport
+failed, and P5 held. What failed was a declared number, caught by the first run declared
+against it.
+
+## 95. The programme stops asking, and everything it measured before a force had a number was its own instrument
+
+The force directive (2026-08-19), the first issued under the **scope axiom**: *no solicited human
+judgment, ever* — not hired, not operator, not one blinded pair. Its instruction was to stop
+asking the model questions and start measuring what the text does to it. The design is
+[plan/force-program.md](force-program.md); this entry carries the scope amendment, the bars, and
+the corrections that arrived before any force had a number.
+
+**There is no exact count in this sentence, and that is the finding.** Every attempt to write one
+was out of date within the hour: the tally went ten, twelve, fourteen, and was still climbing when
+this paragraph was rewritten to stop claiming a number it kept having to revise. What can be said
+precisely is the *shape* of them. Two are in the harness's own arithmetic; three in the inference
+layer; two in F1's declared statistic; four in the transport; two in this programme's own
+selection code; one is a confound the corpus has carried since §79; and two are in the thermal
+governor this repository believed it already had — including one where the *diagnosis* was wrong
+and had to be withdrawn after it killed two healthy runs.
+
+**That ratio is the entry.** A programme that spent its first day finding defect after defect in
+its own instrument and none in the world is not a programme that failed to start; it is §89's
+rulebook working at the only time it is cheap. Most of them returned a number rather than raising,
+which is the class this repository keeps building rails for. Three are worth naming for their
+shape rather than their content: one was caught by a thirteen-seed smoke run for about twenty
+cents instead of by the fifty-two-dollar arm behind it; one was a problem `elicit.py` had already
+solved on line 931, so the fix was in the repository, in the sibling module, and simply not
+copied; and one — the `aligned`-first pairing that left F3's second stratum with a single pair —
+would have produced a clean-looking result that meant nothing at all.
+
+**Nothing above this entry was renumbered.** §92 and §93 were taken by parallel sessions while
+§94 was being written; §95 was free when this began and the check was run again before it was
+written.
+
+### 95.1 Track 0: PREFERENCE is retired by choice, and FORECAST is promoted exactly as §86 wrote it
+
+**This subsection is a decision, not a measurement, which is why it is first.** A scope that
+arrives after the numbers is not a scope.
+
+§82 refused §72's judge-path licence **on evidence class**: `domain/calibration.py` constitutes
+`PREFERENCE` as *"a human's blinded, position-swapped choice between two texts"*, so — §82's
+words — **no quantity of machine elicitation can produce a PREFERENCE-class row**. That left the
+class *unearned* and not *unearnable*: the door stayed open and §80's paid batch was the key
+beside it. Under the scope axiom the key is destroyed. There will be no paid batch, no operator
+read and no blinded pair, so no PREFERENCE-class row will ever exist here.
+
+So the class is **retired rather than refuted**. Nothing measured it away and nothing could —
+§86's own falsifier paragraph says *"No experiment refutes a definition."* What changed is what
+this project will do, and that belongs in the ledger, where a future session reading only the
+code cannot drift back into it. Three consequences, stated so silence cannot re-litigate them:
+`plan_search`'s judge path is shut permanently rather than currently; **Track B
+([reader-batch-1.md](reader-batch-1.md)) is buried with its budget**, and its money is not
+reallocated to a smaller version of itself because a smaller paid reader batch is still a paid
+reader batch; and the §85 operator read is retired **UNREAD** — `results/operator-read-key.json`
+is **SEALED** on disk (operator §7.2), so the commitment lives in this ledger rather than in a
+deletion. Every told-versus-shown reading in §85, §87 and §89 that was marked provisional pending
+that read is now **permanently provisional**, which is the honest status rather than a defect.
+
+**`FORECAST` at `STORY` grain is promoted from pre-declared to active, and the promotion is
+checkable against the text that pre-declared it.** §86 wrote the amendment down before the
+numbers precisely so this could not be a new invention: *a `FORECAST` class at `STORY` grain,
+absent from `veto_for` so it refuses nothing with zero code, and **not** accepted by
+`plan_search`'s judge path — so that the class cannot be shopped for later.* It is promoted at
+that grain, absent from `veto_for`, not accepted by the judge path, and it therefore licenses
+nothing. It is a class an instrument may be *classified into*, never a door.
+
+The promotion is not licensed by T2 performing; T2 never ran and §86.3 recorded its premise as
+self-contradicting. **The branch condition changed.** The class was written as the amendment that
+would be proposed if a machine-only instrument were the one on the table, and under the scope
+axiom a machine-only instrument is the only thing that ever will be. A class that can never be
+reached is a dead letter rather than a safeguard, and §84's freeze rule is satisfied by the
+promotion matching the frozen text, not by the text never being used.
+
+§82 is untouched. `veto_for` gains no member, `plan_search` gains no accepted class, `AXIS_MATCHERS`
+and `E6_QUESTION` are not reopened, JudgeBench A2's verdict layer is still empty, and the verdict
+channel stays dead **as measured** — §89.4's 4,676x positional-to-text ratio. No arm here routes
+through it.
+
+### 95.2 The harness, and the floor that had to be computed rather than chosen
+
+`force_harness.py` holds the standard, so no track can re-decide it. It reproduces §89.2's
+published attainability table or it is wrong — 85 of 144, 81 of 137, 43 of 68, 44 of 69, the
+interval binding at every n — and its selftest asserts exactly that before any GPU is touched.
+
+**Two rules were declared numerically before the first force ran, and both are computed rather
+than picked.**
+
+`INSUFFICIENT_N` is available only to a stratum whose *interval* bar demands more than **0.6000**.
+At this programme's n that admits `crossed-tight` (0.6324), `crossed-loose` (0.6377), F3 (0.7500)
+and FX's pilot (1.0000), and admits **neither** `aligned` (0.5903) **nor** `crossed` (0.5912) —
+the two strata that decide whether a force passes. On those two, FAIL is FAIL.
+
+`DEGRADED_STRATUM` is new and it exists because of a rail that did not previously reach far
+enough. `pair_agreement` skips a pair it has no score for, so a stratum that lost half its pairs
+to a drop would have reported a clean decided share over the survivors. Drops are now counted
+against the stratum's original size, and a **binding** stratum whose decided count falls below
+**MIN_REFUTING_N = 110** returns `DEGRADED_STRATUM` rather than a FAIL nobody could have avoided.
+110 is derived in the selftest — the smallest n that is both attainable and demands 0.6000 or
+less — and the first derivation of it was wrong in the instructive direction: omitting the
+`attainable` guard returned **5**, an n at which no k clears the interval at all and the stratum
+is worse than excusable rather than better. That is the seventh entry in §89's rulebook and it
+was caught by a check rather than by a reader.
+
+`combine_families` needed two corrections, and both are in the direction of claiming more than
+the evidence allows. It folded `DEGRADED_STRATUM` into `FAIL` — precisely the
+folding-a-refusal-into-a-verdict §1.5 forbids, in the function whose whole job is to combine
+refusals — and, worse, **it did not enforce the two-family minimum it exists for**. With a single
+family in the dict, `all(status == "PASS")` is trivially true, so a single-lineage arm that
+cleared both strata would have reported `PASS`: the exact claim §94.5 says cannot be made, from
+the exact function written to prevent it. Found while reasoning about what F1 would report on
+Haiku alone, before the arm returned. A run with fewer than two families now reads
+`NOT_SCREENABLE` whatever its strata did.
+
+### 95.3 What this box actually is, measured before anything was assumed
+
+Four measurements, all of them cheap, all of them made before a force ran, and every one changed
+something.
+
+**Replay is bit-exact, so the placebo keeps its arithmetic-check role.** `placebo_identical` is
+not a null in this programme — §89.4 made it an arithmetic check — and its exactness is bought by
+construction: every stochastic step seeds its RNG from the **digest of the text it acts on**, so
+byte-identical sides produce byte-identical outputs. Whether the hardware honours that is a
+question about bf16 reduction order and not about intentions, so `determinism_probe.py` ran
+first. On both pinned families, forward-pass replay and batched sampled continuations are
+**bit-exact**: placebo tolerance `0.0`. Had it read NOISY the placebo would have been downgraded
+to an equivalence test against the measured scale, with the weakening recorded as a property of
+the box — the branch was written before the probe, which is the point of writing it before.
+
+**What a zero placebo is and is not evidence of, corrected after review.** An earlier draft said
+"every placebo in every arm below has read exactly `0.000000`" as though that were the arithmetic
+being checked. On a deterministic transport with text-digest seeding, byte-identical sides
+*cannot* produce anything else — the zero is a property of the construction, not a measurement of
+it. It still catches a real class of failure (a pipeline that separates a string from itself), and
+it certifies nothing about the force. Where the construction supplies the zero by deduplication
+instead, it does not even do that: see §95.11's vacuous remote placebo.
+
+**Batching is 8.7x, and it is the difference between F1 existing and not.** Eight 512-token
+continuations from a 1,310-token prompt: **44s** as one batch against **384s** looped. The
+replicates are batched and the batch composition is a pure function of the text — always exactly
+K continuations of one prompt — so the determinism the placebo needs survives.
+
+**Full-sequence logits do not fit, and the check was made before the out-of-memory.** Gemma-3's
+vocabulary is **262,208** tokens, so materialising logits for F2's 9.7k-token condition is about
+8 GB in float32 on a card already holding the model, and F3's ladder is longer again.
+`surprisal.py` gets away with it because its sequences are 1,152 tokens. `logits_to_keep` fixes
+it, both pinned architectures accept it, and the fixed path was verified **bit-identical** to the
+full-logits reference before it was used.
+
+**The two families are not the same instrument on the long-context arms, and that is
+pre-registered rather than discovered later.** Read from the configs: `gemma-3-4b` interleaves
+five sliding-attention layers (window **1,024**) to every one full-attention layer and has
+131,072 positions; `Qwen2.5-3B` is fully global with **32,768**. So at F2's D=8k and at every
+rung of F3's ladder, gemma routes long-range information through one layer in six while Qwen
+routes it through all of them. **A `SPLIT_FAMILY` on those arms may be architectural rather than
+about prose**, and that reading is recorded in `force_gpu.ATTENTION_SHAPE` and printed in every
+result — before the first pass, so it cannot be reached for afterwards.
+
+Qwen's 32,768 is also what set F3's shape. Ten chapters at j=9 runs the true-context prefix past
+the ceiling, and the obvious repair — truncating the prefix from the left — is the worst option
+available: a truncated top rung beside an untruncated bottom one puts a **level artifact back
+into the slope**, and subtracting that artifact is the only reason F3 is a slope rather than the
+CDG §58 killed. So the ladder is shortened for every fiction and every family alike, and a
+fiction whose top rung still does not fit is **dropped and counted**.
+
+### 95.4 The corpus carried an unmatched length confound, and §79 could not have seen it
+
+Measured on the real 281 pairs while wiring F1's seeds: `taste_benchmark` matches pairs on the
+**source chapter's** word count at `MAX_LOG_WORD_GAP = 0.10`, and the 1,000-word **excerpt** it
+actually hands a judge was never matched at all.
+
+    |log10 excerpt word ratio|     max 0.4549  (one side 2.85x the other)
+                                   23 of 281 pairs above 0.04
+
+Nothing in §79, §87.2 or §89.2 is wrong because of it — those arms read whole excerpts and a
+readout over rates is not obviously length-driven — but a *generative* force is. A fixed prompt
+ceiling truncates the longer side and not the shorter one, and a force that read seed length
+would have scored on the asymmetry with nothing about prose in it. So both sides of every pair
+are now cut to the **same** token count, `min(high, low, 1400)`, and the pre-cut ratio travels
+with the result as a printed covariate rather than an invisible one. The lesson is §89.2's
+author-disjointness lesson in a second costume: a property the selection matched at one grain is
+not matched at the grain the experiment actually reads.
+
+### 95.5 F1's pilot corrected F1 twice, on criteria it had declared in advance
+
+The design gave the pilot one job — buy the throughput, the censoring rate and the tie rate, with
+its own agreement explicitly **not a result** — and the pilot spent it on finding that the
+declared statistic was degenerate as specified.
+
+**The anchor was wrong.** F1 measures when a continuation stops being nearer its seed's register
+than the *model's median centroid*, and the design defined that centroid from continuations of
+the own-generated neutral pool, reasoning that a centroid computed from the corpus would make
+each side its own baseline. Measured: **censoring rate 0.979** — almost no trajectory ever
+crossed, because own-generated LitRPG with `[STATUS]` blocks is not a neutral centre, it is its
+own register, and every RoyalRoad continuation sits far from it at every window. Recomputed on
+the identical cached generations with the anchor as the centroid of **every** continuation window
+in the run: **0.250**. The corrected anchor is one global constant shared by both sides of every
+pair, so it cannot manufacture a high/low difference; it is a nuisance anchor, not a fitted one.
+
+**The reduction was wrong.** The crossover index is a small integer, so a median over eight
+replicates takes few distinct values and pairs tie constantly — which the harness would correctly
+have reported as `INERT_GENERATOR`, a true statement about a statistic nobody should have
+declared. The mean over K takes eighths and clears the declared 0.90 decided-share floor.
+
+Both criteria — censoring rate and tie rate — are **label-blind**: neither looks at `conversion`,
+and the pilot's agreement was discarded. This is §94.6 twice in one run, where P5's first
+formulation read the wrong share and the next pilot caught it. The corrections are recorded in
+the module as `PILOT_CORRECTIONS` and printed in every F1 result file, so no future reader has to
+take this paragraph's word for it.
+
+### 95.6 The box went down, the governor had never fired, and the first diagnosis was wrong too
+
+Mid-run on 2026-08-20, during F1's pilot, this machine hard-shut-down for the third recorded time.
+The run was at `--rest-ratio 0.25` — an **80% duty cycle** — lowered from `cdg_battery`'s 3.0 on
+the reasoning RUNBOOK states: the temperature governor is the actual protection, and the rest
+ratio is only a coarse pre-emptive measure.
+
+**The governor's hold had never fired, in this session or in the two shutdowns before it.** Every
+core-temperature sample logged sat between 47 and 65 °C against a 72 °C pause threshold. So the
+protection this repository believed it had was not running, and the rest ratio was doing all of
+the work — which is the one clear conclusion this subsection is entitled to.
+
+**The second conclusion was reached, written down, and then refuted by more of the same
+measurement, which is why it is recorded here rather than quietly dropped.** `nvidia-smi` exposes
+`temperature.gpu.tlimit`, degrees of margin remaining, and a first trace made it look like the
+sensor the core governor had been missing:
+
+    t =  60 s   core 56 C   margin 20 C   power  278 W
+    t =  70 s   core 54 C   margin 12 C   power  164 W      core FELL, margin fell 8 C
+
+Read alone, that says `tlimit` tracks something hotter than the core — a hotspot — and explains
+three shutdowns whose core traces looked comfortable. A watchdog was built to kill on it, the
+governor was rewired to hold on it, and **both promptly killed healthy runs**. A longer trace says
+why:
+
+    t = 201 s   core 58 C   margin 19 C   power  296 W
+    t = 211 s   core 53 C   margin  6 C   power   93 W
+
+The margin fell 13 °C while the core fell 5 °C **and the draw fell by 200 W**. Nothing thermal
+moves that way. The same shape appeared at t = 50 s and recovered to 21 °C on the very next
+sample. So these are **transient dips in a sensor whose semantics this entry does not know**, and
+gating on a single one is a false positive that ends a run that was never in danger.
+
+**What the box is entitled to claim, after two wrong readings of it, is narrower than either
+draft:** core temperature and power draw are interpretable and were never near a limit;
+`tlimit` is not interpretable from here; and the shutdowns remain **undiagnosed**. A whole-system
+power-off with a cool core is at least as consistent with supply transients on a 382.5 W card as
+with any die temperature, and this session owns no measurement of the supply. `nvidia-smi -pl 260`
+returns *Insufficient Permissions* from a normal shell, so the one intervention that would settle
+it is an operator action and remains **unapplied**.
+
+The protections that survive all three readings are the ones that do not depend on knowing which
+sensor is right: rest ratio back to **3.0** (25% duty); a core pause that was retuned twice more
+before it worked and ended at **64 / 56 °C** (§95.12 records why 58 / 52 was unworkable — an
+earlier draft of this paragraph claimed 62 / 55, which was never what the code held); a **soak
+break** of 90 s every **25** calls, because per-call rest cools the die and does nothing about
+heat soaked into a closed case over hours; an **independent watchdog** sampling every 10 s,
+because an in-process governor cannot act *during* a call and a batched 512-token generation is
+forty seconds of uninterruptible work; and — the correction the two false kills bought — **any
+trip on `tlimit` must persist across consecutive samples before it stops anything**, while the
+core and the card's own throttle flag are still trusted on one reading.
+
+**The forty-GPU-hour cap turned out to be a duty-cycle cap, and that is what scoped this
+programme — no result did.** At a 25% duty cycle forty hours of wall clock is roughly ten hours of
+computation. The consequences are arithmetic and are recorded as prices rather than as omissions:
+
+    track   at the declared shape          measured price       disposition
+    F1      630 seeds x K=8, two families  ~18.6 h per family   left the machine entirely;
+                                           ~37 h both           ran on Haiku instead (§95.10)
+    F2      281 pairs, 12 passes each,     ~8.4 h per family    ladder amended, then run
+            D to 8k, two families                               (§95.7)
+    F3      191 pairs, 4-rung ladder,      6,112 passes and     NOT RUN, priced by survey
+            8 chapters                     ~27.2 h per family   rather than by estimate
+    FX      8 pairs, 6 hops, 4 chains      ~4 h GPU, or ~$8     NOT RUN; two priced routes
+                                           on the remote route
+
+**Every one of those prices is measured rather than estimated**, which is the one improvement
+this session can claim over §94.3's accounting: that entry priced its two unrunnable legs from a
+shelf count, and this one priced them from a stopwatch and a survey. F1's is the interesting
+case — the price was what sent it off the machine altogether, and §95.10 records where it went
+and what that cost in things other than hours.
+
+### 95.7 The ladder F2 had to give up, and a saving that was overstated
+
+**The distance ladder was amended before F2 ran at any n, on a criterion that never touches the
+label.** Forward-pass cost is roughly linear in context length, and the 8,192-token rung looked
+like the bulk of F2's bill; at the hardened duty cycle the declared ladder priced the arm at ~8.4
+GPU-hours per family and appeared to put the **two-family minimum out of reach**. A single-family
+force claims nothing by construction (§94.5's rule), so the choice looked like one between a
+shorter ladder on two families and a longer one on a family whose reading would be inadmissible.
+The ladder went from (512, 2048, 8192) to **(512, 1536, 4608)** — a factor of three per rung, log
+spacing still exact.
+
+**The saving was overstated and is corrected here: about 26%, not 45%.** Total context across the
+three rungs falls from 15,852 tokens to 11,756, a ratio of 0.742, because every pass also carries
+a ~1,400-token passage and a ~300-token probe that the amendment does not touch — the original
+figure divided only the distractor lengths. So **the two-family argument rested on a number wrong
+in the direction that favoured the decision**, and a 26% saving would not have bought two families
+on its own. What actually decided F2's shape was a parallel session taking the card (§95.12).
+
+**What that gives up is stated rather than buried: the longest distance is now 4,608 tokens, so a
+force that would only separate beyond 4.6k is one this run cannot see.** That is a narrower claim
+than the design asked for, and it is the claim the run is entitled to.
+
+**This subsection was written under the title "F2 ran" before F2 had produced anything**, and the
+two controls it reported as holding were the *smoke run's*, on three pairs, presented in a
+paragraph about the full arm. The seed cap and the zero-drop claim were also the smoke's. F2's
+real numbers are in §95.12 and §95.14; what belongs here is the amendment and nothing else.
+
+**One defect in F2's controls is recorded rather than repaired mid-run.** The control subsamples
+were taken as `live[:n]`, and `load_pairs` returns `aligned` and then `crossed` — so F2's sham and
+placebo are drawn **entirely from `aligned`**. A sham that only ever sees one stratum certifies
+that a force ignores formatting on half the corpus and says nothing about the half §79 built to
+be adversarial. `force_harness.stratified_subsample` fixes it with an even stride and no draw, and
+F1 uses it; F2's run was already hours in when it was found, and restarting to re-shuffle a
+control would have cost more than the control is worth on a force whose primary strata are
+unaffected. **F2's sham therefore covers `aligned` only, and that is a caveat on F2's sham rather
+than on F2's reading.**
+
+### 95.8 The market's dry run, and the line in it that turned out to be an identity
+
+FM is gated — a force must clear §1.2's bars before a bet is funded — so what ran is the
+mechanism against forecasters whose behaviour was known in advance, at zero GPU and zero quota.
+A coin stays flat, an oracle grows, an anti-oracle goes bankrupt and stops betting, an abstainer
+never bets, and the log score is clipped at 0.02 so one confident error cannot decide a market.
+
+**The fifth competitor is worth printing and is NOT a demonstration**, which an earlier draft of
+this subsection got wrong. A prose-blind rule that bets on whichever side has more followers
+scores, on the held-out half:
+
+    stratum    bets   mean log score   bankroll
+    aligned      74         -0.2877     448.27
+    crossed      72         -1.3863       8.25
+
+The draft called that "§79's two-stratum design working exactly as designed… a demonstration
+rather than an argument." It is neither: it is an **identity**. §79 *constructs* `aligned` so the
+high-conversion side carries more followers in 144 of 144 pairs and `crossed` so it carries fewer,
+so a follower rule is right by definition in one stratum and wrong by definition in the other.
+The market recovered the corpus's own construction and nothing else, and a number that could not
+have come out otherwise is not evidence.
+
+What the run does establish is narrower and still worth having: the **mechanism** behaves as
+declared — a coin stays flat, an oracle grows, an anti-oracle goes bankrupt and stops betting, an
+abstainer never bets, and the log score is clipped so one confident error cannot decide a market.
+The sentence that survives is about the arithmetic, not about taste: **a market run on one
+stratum would promote a popularity proxy**, which follows from §79's construction rather than
+from this run.
+
+The survivor of a funded market would be a `FORECAST`-class **candidate** and nothing more, and
+§6.2's battery — a forecast analog of §86.7's axioms, plus §86's T3 exploitation budget
+instrumented from the first optimization step — stands between it and any seat.
+
+### 95.9 What was not run, and what it would cost
+
+- **F1 at full n**, ~18.6 GPU-hours per family and ~37 h for the two, measured rather than
+  estimated. Its pilot corrected its anchor and its reduction (§95.5), so the instrument is ready
+  and the substrate is affordability. A power cap applied from an Administrator shell would
+  change this arithmetic more than any code change available here.
+- **F3**, and the survey **was** walked, which turned a guess into three numbers and found a
+  defect in this programme's own pairing code. The cached shards hold **585 fictions** with eight
+  or more chapters at the pre-LLM cohort and the 10,000-view floor — far more than the directive's
+  40-fiction cap assumed. Pairing them yielded **196 aligned and 1 crossed**, and the second
+  stratum being empty is not a fact about RoyalRoad: both strata drew from one pool under a
+  shared work/author disjointness set and `aligned` was built **first**, so it consumed 392 of
+  the 585 fictions before `crossed` — which needs the high-conversion side to carry *fewer* views
+  and *fewer* followers — could look. Building the scarcer stratum first gives **118 aligned and
+  73 crossed**. Had this run as written, a force could have cleared `aligned` by proxying
+  popularity with nothing to contradict it, which is the exact failure §79's second stratum
+  exists to prevent, and the survey is the only reason it was visible before a GPU-hour was
+  spent.
+
+  Two consequences, both recorded rather than resolved. **F3 cannot deliver a meaningful FAIL at
+  this substrate**: `aligned` demands 0.6017 and `crossed` 0.6301, both above the 0.6000 ceiling
+  §1.2 declared for `INSUFFICIENT_N`, so the arm can pass or abstain and not refute. And the full
+  191-pair shape prices at **27.2 GPU-hours per family** — 6,112 forward passes each, at the duty
+  cycle §95.6 fixed after the shutdown — so it is `NOT_RUN` for the same reason F1 was, with the
+  numbers now measured rather than assumed. `results/force-f3-survey.json` carries all of it. Its
+  **own-generated arm stays `NOT_RUN`** regardless until §7.1's fitness books exist — §94.3
+  counted exactly one own-generated text long enough to carry a slope.
+- **FX's pilot**, ~4 GPU-hours, module built and selftested. At n=8 the interval demands 8 of 8,
+  so it was never going to clear a bar; it is a kill screen, and it has not been run.
+- **The fitness books, funded at §7.1 and DELIVERED.** Twenty own-generated books, **20 of 20
+  clearing the 3,600-word shelf shape**, 3,918 to 4,059 words each, for **$26.69 of the $81
+  authorised** — a third of the estimate, because §94.3 priced from a per-scene figure that
+  included a book's planning overhead twice. This closes the substrate absence §94.3 called the
+  load-bearing result of its entry: *"until roughly $81 of frontier drafting buys the fitness
+  books, every BCR number in this repository is a statement about the instrument's own controls
+  and about no book."* The BCR's variance floor wanted twenty own-generated texts and had one;
+  it now has twenty. Its transplant check wanted a second book as donor; it now has nineteen.
+  Neither is run here — this entry bought the substrate, and the seating is the next session's.
+
+  Four driver defects were found on the way, and all four were the driver's rather than the
+  pipeline's: an arc needs at least six scenes (`domain/beats.py` refuses five); `--no-library` is
+  a top-level flag rather than one of `tick`'s, so three argparse errors had been counted as
+  ticks; the stop condition tested for outcome strings the conductor never emits, so a finished
+  book would have spun its whole tick budget; and a per-book cost cap cannot bound a shelf, so
+  spend is now read from each book's own `policy_decisions` rows against a cumulative ceiling.
+  The fifth is the one worth keeping: **the first slot reported `0 words` after 36 ticks and
+  $2.79**, which reads exactly like a drafter that produced nothing. It was not. Two earlier
+  failed attempts had each left a book behind, and `export` refuses once a store holds more than
+  one — so the count failed while the prose sat there. That slot holds **two** complete books,
+  4,047 and 4,028 words. A plausible zero standing in for a fact it was not measuring, one more
+  time.
+- **E4/E5**, admitted by operator §7.6 as FM baselines and **not bought**, because the gate they
+  compete inside has not opened. Building them early would be the elicitation §8 prohibits, built
+  early.
+- **No licence moved. No bar was re-declared after numbers arrived. The §85 operator read was not
+  opened**, and under §95.1 it never will be.
+
+### 95.10 F1 leaves the machine, and the transport charges three things that are not money
+
+**Operator amendment, 2026-08-20, mid-session.** §95.6 priced F1 at ~37 GPU-hours for two
+families and recorded it `NOT_RUN`. The operator asked the obvious question — *why not Haiku?* —
+and the answer splits the programme cleanly along a line nobody had drawn:
+
+**F1 needs only sampling. F2 and F3 need token logprobs, and the Messages API exposes none.**
+There is no `logprobs` parameter on `/v1/messages` in any form, so the two arms built on
+teacher-forced scoring cannot leave this box at any price. F1 can, and FX could.
+
+**The transport was priced by running it rather than by estimating it.** `claude -p` prepends
+Claude Code's own system prompt — **26,357 tokens** — to every call, which dwarfs a 900-word
+seed. It caches, and F1's shape is unusually kind to that, because the K replicates of one seed
+are the same prompt byte for byte:
+
+    new seed, cold prefix     $0.0210      (5,677 written, 20,807 read)
+    same seed, warm prefix    $0.0089      (0 written, 26,357 read)
+    one seed at K=8           $0.0833
+    full arm, 630 seeds      ~$52
+
+That is a fact about the *transport*, not about Haiku: a direct SDK call carrying only the system
+prompt and the seed prices the same arm near $5, and near $2.50 through the Batch API. This box
+has no `anthropic` package, no `ANTHROPIC_API_KEY` and no `ant`, so the cheap path was not
+available and the operator raised §7.5's cap from $15 to **~$55** to buy the expensive one. The
+figures are equivalent subscription quota rather than billed dollars, which is `providers/cli.py`'s
+position and §85's convention. `force_remote.Ledger` **stops the run at the ceiling** instead of
+discovering an overrun afterwards, and the run's own economics — spend, calls, cache reads and
+writes, thinking tokens — print in the result file.
+
+**The transport charges three things that are not money, and all three are declared here rather
+than found in a result.**
+
+1. **Determinism is gone.** No seed parameter and no guarantee, so `text_seed` cannot buy
+   byte-identical replay and `placebo_identical` **cannot** be §89.4's exact arithmetic check. It
+   is read the way a sham is read: identical sides must produce an agreement whose interval
+   contains 0.50. That is §1.7's pre-registered branch, so the design survives — and it is
+   strictly weaker, because an equivalence test is also passed by an instrument too noisy to show
+   anything, which the exact check could never be.
+2. **Instruct, not base.** §95's local families are pretrained checkpoints on purpose:
+   `surprisal.py` argues that instruction tuning reshapes the very distribution F1 measures. Haiku
+   is heavily post-trained and cannot be prompted into raw continuation, so the seed enters under
+   a frozen continuation instruction. **The axiom holds** — nothing is asked about quality, no
+   slot is offered, and valence still comes from measuring generated text rather than from
+   anything the model says about it — but the instrument is a *prompted* continuation field and a
+   reading from it is not interchangeable with one from family A or B.
+3. **Unpinned.** `claude-haiku-4-5` is an alias. Every local family carries a 40-character commit
+   sha; this one cannot, so a re-run later may not be measuring the same weights. `UNPINNED`
+   prints in the provenance block of every result that uses it.
+
+**And one correctness fix the transport forced, which the local path never needed.** Locally
+`max_new_tokens` makes every trajectory the same length by construction; here the model stops when
+it stops, and the first three probe calls returned 300, 815 and 1,040 output tokens. F1's
+statistic is a **window index**, so a side whose continuations run longer has more windows to
+cross in and a different censoring rate — a length confound sitting directly on the outcome. Every
+continuation is now cut to 280 words, one shorter than 180 words is dropped and counted, and both
+constants are in the cache key so a normalised row can never be replayed beside an un-normalised
+one.
+
+**A second transport defect was biased rather than random, which is why it gets its own
+paragraph.** `subprocess.run(..., text=True)` decodes with the Windows console codepage, and
+Claude's prose is full of characters cp1252 cannot represent — a single curly apostrophe raises
+`UnicodeDecodeError` inside subprocess's reader thread. `UnicodeDecodeError` is a `ValueError`,
+so the transport's own retry path caught it and counted the call as a transport failure. The loss
+that produces is **not random**: it falls on exactly those seeds whose continuations happen to
+contain a smart quote, which on this corpus is most of the literary ones. Measured after the fix,
+no cached row had actually lost a replicate — the retries had absorbed every instance — so the
+bias stayed potential rather than realised, and the honest reading is that the run was lucky and
+not that the bug was harmless. `elicit.py:931` already passed `encoding="utf-8",
+errors="replace"`; the sibling module had solved it and this one did not copy it.
+
+**The most expensive defect in this entry was not in any force. It was `pkill`.**
+
+`pkill -f register_halflife` matches nothing on this box, and it exits 0 while matching nothing.
+So two "relaunches" of F1 — one to raise the worker count, one to apply the utf-8 fix — did not
+replace the running arm, they **added** to it. Three copies of F1 ran against one cache for
+sixteen minutes before the third crash report made the pattern visible, and the damage is
+measurable from the cache itself rather than estimated:
+
+    248 completed seed-runs        140 distinct seeds
+    108 duplicate computations     35 seeds bought once, 102 twice, 3 three times
+    1 corrupt line                 three appenders, and `Checkpoint`'s lock is per-process
+
+That is roughly **$9 of paid work bought twice**, inside a total of about $20.70 spent before the
+duplicates were stopped — and it was found by a *cost* audit rather than a correctness one,
+because every individual number the run produced was fine. A cache with 108 duplicate keys and
+one interleaved line is not a wrong measurement; it is the same measurement paid for repeatedly.
+
+Three repairs, and only the first is about this bug:
+
+1. **`force_remote.SingleRun`**, a PID lock file, so *relaunch* means replace. A stale lock whose
+   holder is gone is taken over rather than honoured — a crashed run must not block the next one
+   — and a live holder is named in the refusal. Verified by launching a second arm and reading
+   the refusal.
+2. **The spend ceiling now degrades instead of discarding.** It used to abandon the run and
+   return `NOT_RUN`, throwing away a corpus that had already been paid for. A closed ledger now
+   yields no continuations for that seed, the pair is dropped and *counted*, and the arm reports
+   over what it could afford — with the shortfall visible as `dropped_before_scoring`, and a
+   binding stratum that falls under `MIN_REFUTING_N` reading `DEGRADED_STRATUM` rather than a
+   `FAIL` it did not earn.
+3. **The generation order was wrong, and working out why is the third repair.** Seeds were
+   generated pool first, then the live pairs, then the controls — which looked protective, since
+   a ceiling that binds would take the sham and leave the strata the bar rests on intact. Priced
+   against the actual remaining budget, that ordering guaranteed the sham would receive **no
+   seeds at all**; and under the rule added the same hour, an arm whose sham is unscreenable
+   reports `NOT_SCREENABLE` whatever its strata say. The protective-looking order therefore
+   guaranteed a null. **The controls are now generated first**, so a shortfall trims *n* — which
+   `DEGRADED_STRATUM` already handles — and leaves a certified reading over whatever the budget
+   reached. The placebo costs nothing either way: its sides are the high sides, so it dedups to
+   nothing.
+
+   The rule it depends on is worth stating on its own, because it is a change to §1.3. A control
+   that could not be read is **not** a detail a clean stratum can outvote: a force that has not
+   been shown to ignore formatting has not been shown to be reading prose.
+   `force_harness.arm_status` is the single place that decides it, and a *moved* control still
+   outranks an *unscreened* one — disqualification beats "we could not tell".
+
+The arm was relaunched with a ceiling of **$34** — the ~$55 the operator authorised, less the
+$20.70 the race consumed — so the duplication is paid for out of F1's own budget rather than out
+of a number nobody agreed to.
+
+**And the smoke run earned its keep on the first attempt.** Thirteen seeds in, it died on a
+`KeyError: 'log10_token_ratio'`: the two transports cap seeds in different units — tokens locally
+because a tokenizer is there, words remotely because none is — and the summary block read the
+local key unconditionally. Nothing about that is subtle, and nothing about it would have surfaced
+before the arm had run for hours. It cost about twenty cents to find. That is the whole argument
+for a smoke run that goes through the real plumbing rather than a dry run that mocks it.
+
+**What a Haiku-only F1 is entitled to say is nothing on its own.** One lineage does not meet the
+two-family minimum, so it reads `NOT_SCREENABLE` until a second family runs — §94.6's shape, where
+a cheap screen bought the right to spend a seating budget on one family instead of four.
+### 95.11 F1 returned, and what it returned is a reading about the instrument again
+
+The arm completed on Haiku at its spend ceiling: **531 distinct seeds of 630**, and on the final
+leg **1,975 calls for `$22.12`** at `$0.0112` a call — that leg metered by `force_remote.Ledger`.
+The two earlier legs were **not metered**: their ledgers died with their processes, so the
+often-repeated "about $55-58 across all three legs" is one measured number plus two reconstructed
+from a per-seed rate and a duplicate count. The honest form is **$22.12 measured, ~$33-36
+reconstructed, ~$55-58 total**, and only the first of those three is a fact. Two numbers in it are worth having
+and one is a defect.
+
+**RETRACTED: the sham certified nothing, and the sentence that stood here was the worst error in
+this entry.** It read: *"The sham is clean, and it is the first thing this programme has
+certified… F1 does not read layout… this is the control that would have caught §78."* The numbers
+were real — 0.4889 on 45 decided of 60, interval [0.337, 0.6423] — and they measured **sampling
+noise on identical inputs**.
+
+`windows()` joins words with a single space, so no window ever contains a newline; and
+`ablate.rewhitespace` changes newlines and intra-line spacing and **nothing else**. Measured on
+100 real sham pairs after the review named it: **100 of 100 produce byte-identical feature rows.**
+The perturbation never reached anything F1's feature space can see. A control that cannot move
+the statistic is not a control that passed — it is the placebo defect of §95.11 a second time, in
+the arm's other control, found by an adversarial review rather than by me, and celebrated in this
+entry as the programme's first certification before anyone checked whether it could fail.
+
+Two consequences fall out of the same fact and are recorded rather than tidied: F1's space is
+**22 features, not 23** — `paragraph_len_mean` is a constant 100.0 in all 62,646 windows, because
+every window is exactly 100 words — and **a whitespace sham cannot be F1's formatting control at
+all**. F1's `rewhitespace_sham` now reports `NOT_SCREENABLE` with the measurement attached, so
+both of F1's controls are unscreenable and the arm certifies nothing whatsoever.
+
+**Every stratum was re-scored from the same 531 cached seeds under the corrected arithmetic, at
+no cost, and F1 publishes no refutation at all.** The generation is what was paid for; every
+correction the review forced is in the *scoring*, so the same seeds re-read give corrected
+numbers for free. `results/force-f1-haiku-corrected.json` is the file of record.
+
+    stratum          published (wrong)                    corrected
+    aligned          FAIL  0.5429  140 dec,  0 ties       INERT_GENERATOR  124 dec, 16 ties
+    crossed          DEGRADED_STRATUM  65 dec,  0 ties    DEGRADED_STRATUM  61 dec,  4 ties
+    crossed tight    FAIL  0.3929   28 dec,  0 ties       DEGRADED_STRATUM  25 dec,  3 ties
+    crossed loose    FAIL  0.4054   37 dec,  0 ties       DEGRADED_STRATUM  36 dec,  1 tie
+
+**Three FAILs became refusals and none of them survived contact with its own rails.** `aligned`'s
+was manufactured by the tie-breaking; the two halves' were emitted only because they had been
+exempted from the refuting floor. The censoring rate barely moved (0.0301 → 0.0298) and the
+anchor shifted 0.036 z-units once the control sides were removed from it, so the corrections
+were about *what the numbers were allowed to mean*, not about the measurement.
+
+**So the honest F1 sentence is that it refuses, and refuses in every stratum.** Not "the
+generation field does not bend" — F1 has not been in a position to say anything about the
+generation field. One lineage, an instruct head where §1.4 pins base checkpoints, a prompted
+continuation rather than a raw one, an unpinned revision, **both** controls vacuous, a statistic
+sitting at its floor for 68% of continuations, and a `crossed` stratum truncated in corpus order
+by a spend ceiling. `combine_families` reads `NOT_SCREENABLE` on the two-family minimum before
+any of that is reached, which is the correct verdict and was reached for the right reason only
+after the review.
+
+**RETRACTED: that `aligned` row is manufactured by the adjustment, and the FAIL is not one.**
+(The retracted sentence also compared a Clopper-Pearson **lower bound**, 0.4566, against a
+**required agreement rate**, 0.5903, as though they were the same quantity and at an n they were
+not both computed at. The interval bar is cleared when the lower bound exceeds 0.50; the required
+rate is what an agreement must reach for that to happen at a given n. Conflating them makes a
+miss look like a near-miss of a specific size.)
+
+The residual reading shows 140 of 140 pairs *decided* where the raw reading decided 123 — because
+`residualise` subtracts `a + b*x` from each side, so two sides with the **same** crossover come
+out differing by `-b*(x_hi - x_lo)`: a decision whose sign is set entirely by the covariate, with
+zero contribution from the statistic the bar is about. The covariate explains essentially nothing
+(R² = 3.4e-05). All 17 of `aligned`'s raw ties were converted this way, eleven of them from pairs
+where **both sides sat at the statistic's floor**.
+
+So the rail that exists to catch exactly this could never fire on the reading the bar is declared
+on: `MIN_DECIDED_SHARE` sees `ties: 0` in every residual stratum by construction. The raw reading
+is `INERT_GENERATOR` — 123 decided of 140, below the 0.90 floor — and **a raw refusal was turned
+into a residual refutation by an adjustment that added no information.** On raw-decided pairs
+only, `aligned` is 70 of 123 = 0.5691, and its honest state is a refusal.
+
+`crossed`'s loss is also mis-described above. It was not power: the ceiling truncated the corpus
+in **stratum order**, so `aligned` lost nothing and `crossed` lost a clean corpus-order suffix of
+72 of 137 pairs — non-random with respect to stratum, position and view gap, with the survivors
+skewed toward the loose half. `DEGRADED_STRATUM` is the right state for the wrong reason.
+
+And the two `crossed` halves were never entitled to the FAILs printed for them: `binding` is set
+only for `aligned` and `crossed`, so the halves bypass `MIN_REFUTING_N` entirely. The same pairs
+are refused a refutation when read whole and emit two when read as halves.
+
+**The censoring rate is the one clean instrument number.** 0.0301 against the 0.979 the declared
+anchor produced and the 0.250 the correction produced locally (§95.5): on Haiku the corrected
+anchor censors almost nothing, so the statistic is measuring what it was designed to measure.
+The raw, unadjusted reading is `INERT_GENERATOR` — 123 decided of 140, below the 0.90 floor —
+which is the tie rate §95.5's mean-over-K correction was aimed at, still biting on the raw
+statistic and not on the residual one the bar is declared on.
+
+**And the placebo was vacuous, which is the defect.** It reads `NOT_SCREENABLE`: 0 decided of 24
+pairs, every one a tie. The cause is not the budget. `placebo_identical` builds both sides from
+the same text, and the deduplication added to stop the remote transport buying identical seeds
+twice handed both sides **one** generation set — numerically identical by construction. On the
+local transport that is precisely the intended arithmetic check, because seeding on the text
+digest makes byte-identical sides byte-identical anyway. On the remote transport it is the
+opposite of the intended test: §1.7 downgraded the placebo to an *equivalence* check against
+sampling noise, and that requires the two sides to be sampled **independently**. A cost
+optimisation silently removed the only thing the remote placebo measures.
+
+So `arm_status` reads the arm `NOT_SCREENABLE`, and that is the correct verdict rather than a
+technicality: one control passed, one measured nothing, and a force with a vacuous placebo has
+not had its arithmetic checked. The fix — the placebo's low side generated under its own cache
+key whenever the transport is non-deterministic — is in the module and unrun, because the budget
+that would pay for it is spent.
+
+**What F1 is therefore entitled to say, and it is less than it looks.** Not "the generation field
+does not bend": one lineage, an instruct head where §1.4 pins base checkpoints, a prompted
+continuation rather than a raw one, an unpinned revision, a vacuous placebo, and `crossed`
+underpowered. `combine_families` reports `NOT_SCREENABLE` on the two-family minimum before any of
+that is reached. What it *is* entitled to say is narrow and real: **on this model, this
+transport and 140 aligned pairs, the residual crossover index does not separate the sides at the
+declared bar, and it is not reading formatting.** §9's negative sentence — that the taste is not
+recoverable from these models by measurement — remains unearned and unclaimed.
+
+### 95.12 F2 did not finish, and the reason was neither thermal nor F2's
+
+F2 stopped at **1,364 of 1,686 scored units on `gemma-3-4b`**, with the second family not begun.
+Its cache is intact and it resumes for free. The interesting part is the diagnosis, which this
+entry got wrong once before getting it right.
+
+**The wrong diagnosis.** The arm fell to eight scored units in twenty minutes, and the governor
+was the obvious suspect: after the shutdown its pause/resume had been tightened to 58/52 °C, and
+the card's *between-calls* floor under load is 53-58, so the hold could almost never release and
+exited on its timeout instead. That is a real defect — it is §94's resume-threshold lesson for the
+third time, *a resume must sit just under the between-calls floor, not far below it* — and it was
+fixed to 64/56 with both thresholds promoted from constants to recorded flags. **It was not what
+stalled F2.**
+
+**The right one is in the memory column, and nothing about it is subtle once looked at.**
+
+    t = 12,462 s   mem 11,628 MiB   util   0%     F2 alone, resting between governed bursts
+    t = 12,865 s   mem 23,961 MiB   util 100%
+    t = 13,676 s   mem 24,035 MiB   util 100%     pinned, at 115 W
+
+Memory near the card's 24 GB ceiling with utilisation pinned at 100% and power *low* is thrashing,
+not computation. A **parallel session had started its own GPU job on the same card** — the house
+rule that parallel sessions share this repository, arriving through the hardware instead of
+through the ledger. F2 was not throttling; it was queueing.
+
+**The banked units were scored anyway, and that is the part worth copying.** Scoring an F2 unit
+needs a *tokenizer* — matched filler lengths, distractor flushes, probe offsets — and no weights
+at all; only the forward passes need the card, and those were already on disk. A tokenizer-only
+load path and a `--from-cache-only` mode turned 1,364 abandoned units into a reported result
+without evicting anybody. On this box that should be the default reflex for any interrupted GPU
+arm: the expensive half is bought and cached, and refusing to read it because the run did not
+reach the end is discarding paid work for tidiness.
+
+    control / stratum        n    decided   wins   agreement   Clopper-Pearson    status
+    placebo_identical        24         -      -      0.0000   exact              PASS
+    rewhitespace_sham         1         0      -           -   -                  NOT_SCREENABLE
+    aligned                 144       144     73      0.5069   [0.4224, 0.5912]   FAIL
+    crossed                 137        76     43      0.5658   -                  DEGRADED_STRATUM
+
+**The placebo is the cleanest control this programme has produced.** Byte-identical sides, effect
+exactly `0.000000` — §89.4's arithmetic check doing precisely its job, on a deterministic local
+transport where the text-digest seeding can deliver it. Set beside F1's vacuous remote placebo
+(§95.11) it is the whole argument for §1.7's branch: the same control is an exact check on one
+transport and an equivalence test on the other, and only one of those two can actually fail.
+
+**And the sham was never reached, which is the reordering fix arriving one run too late.** F2's
+process was launched before controls were moved ahead of the corpus, so it generated the sham
+last and stopped before it — one pair, nothing decided. `arm_status` therefore reads the arm
+`NOT_SCREENABLE`, correctly: nothing certifies that F2 is reading prose rather than layout. The
+identical defect was fixed for F1 hours earlier and F1's sham came back **PASS**. Same class,
+same night, one caught in time and one not — which is a fair summary of the whole entry.
+
+`aligned` at **0.5069** with an interval spanning half is chance, and it fails the point bar
+before the interval is consulted. `crossed`'s survivors sit at 0.5658 and are not entitled to say
+so at n=76.
+
+**So the card was yielded rather than raced.** At 23.4 GB of 24.5 GB in use, continuing would have
+risked an out-of-memory for the other session's job as much as for this one, and every GPU arm
+here checkpoints per unit — which makes stopping cost time and nothing else. F2 is `NOT_RUN` past
+gemma with 1,364 units banked.
+
+**And the watchdog had to be disarmed, which is the part worth carrying forward.**
+`thermal_watch.py` terminates *"python processes holding GPU memory"*. That set is defined by a
+**resource**, not by an identity — so the moment this programme's own run ended, the set became
+**the other session's job**, and the next thermal trip would have SIGTERMed hours of somebody
+else's compute to protect a card that was in no danger from it. It now requires an `--only`
+pattern and can kill nothing but the run it was armed for. A safety mechanism that selects its
+victims by resource rather than by name is a hazard on a shared machine, and this one was armed
+and pointed at a stranger for roughly twenty minutes.
+
+### 95.13 An adversarial review read this entry back, and most of what it found was in here
+
+Eighty-nine agents across six lenses — the statistics, F1's statistic, F2's and F3's, the
+transport, the controls, and **the claims in this entry** — each finding then handed to a separate
+agent instructed to refute it by default. Seventy claims survived refutation, about fifty-four
+distinct defects. The synthesis is committed verbatim at
+`results/force-review-findings.md`; this subsection records only what it changes.
+
+**The review was run because the session's own pattern demanded it.** Every defect found by hand
+that night had returned a plausible number rather than raising, and by 05:00 the entry was full
+of numbers nobody had tried to break. What came back is that the entry's two proudest sentences
+were both wrong, and that the reviewer found them and the author did not.
+
+**Retracted, and both retractions are in §95.11 above rather than hidden here.** The sham
+certified nothing — 100 of 100 sham pairs produce byte-identical feature rows, because F1's
+windows join words with a space and `rewhitespace` only touches newlines. And `aligned`'s FAIL was
+manufactured by the residual adjustment, which converts every raw tie into a decision whose sign
+comes from a covariate explaining R² = 3.4e-05 of the variance, turning a raw `INERT_GENERATOR`
+into a published refutation.
+
+**Four code defects fixed the same hour, each of which would have produced a number rather than
+an error on the next run:**
+
+- the model-median anchor was built from **every** continuation including both controls, and both
+  controls are made from the *high* side — so M was 64.9% high-derived against 33.8% low, shifted
+  0.0824 z-units toward the label. The claim in `PILOT_CORRECTIONS` that the anchor "cannot create
+  a systematic high/low difference" was false, and is now corrected in place rather than deleted.
+- the `crossed` view-gap halves were exempted from the refuting floor, so they emitted FAILs at
+  n=28 and n=37 — the same pairs that are refused a refutation when read whole.
+- raw ties no longer survive as decisions (above), so `MIN_DECIDED_SHARE` can fire on the reading
+  the bar is declared on.
+- **the placebo fix orphaned the paid cache.** Adding a `cache_salt` parameter changed every key,
+  including for seeds that had no salt — so a resumed F1 would have re-bought all 531 seeds,
+  roughly $50, to produce identical numbers. The salt now participates only when set. A cache key
+  must change when the *measurement* changes, not when the *signature* does.
+
+**What the review did not settle, and is therefore still open.** Its finding that the primary
+statistic sits at its floor — 3,278 of 4,805 continuations crossing at window index 0, because the
+global centroid is nearer than the seed anchor on 72.9% of windows — is not a bug with a one-line
+fix. If it holds, F1's censoring rate of 0.0301 is low *mechanically* rather than because a decay
+resolved, and §95.11's "the statistic is measuring what it was designed to measure" does not
+follow. That is the next thing to settle and it is unsettled.
+
+### 95.14 F2's numbers are withdrawn, because it scored the wrong token every time
+
+F2's partial reading in §95.12 — `aligned` 0.5069 on 144 pairs, the placebo at exactly zero — is
+**withdrawn in full**. The arm scored the token *after* the site it had matched.
+
+`_site_logprobs` located each probe site by re-tokenising the window's prefix **plus a trailing
+space**, and a trailing space tokenises as a token of its own. Verified on both pinned tokenizers:
+a site whose intended word is `' the'` reads the logprob of `' river'`. The offset is +1 on
+**6,744 of 6,744 sites**.
+
+**That is not a small error, because it destroys the one thing F2's extractor exists for.**
+`matched_sites` trims the two sides of a pair to a frequency-matched subset precisely so that the
+force cannot measure *rarity* instead of retention. The matching was performed on the intended
+word and the measurement taken from its successor — a word with no matching at all. The review
+measured the damage: mean |Δlog10 frequency| between the two sides rises from **0.175 at the
+matched word to 1.143 at the scored position**, and 35% of scored words fall above the
+`MAX_COUNT` ceiling the extractor uses to reject a candidate outright.
+
+**It cannot be repaired from the cache.** F2 stores the aggregated uplift per (passage, window,
+sites, distance), not the per-token logprobs, so there is nothing on disk to re-read at the
+corrected offset — unlike F1, whose corrections were all in scoring and re-ran for free (§95.11).
+Fixing F2 means buying its forward passes again: 1,866 units at the measured rate, roughly four
+and a half GPU-hours per family. The fix is in the module and the cache key now carries an
+`offset-v2` marker so a corrected row can never be replayed beside an uncorrected one; the run
+was stopped rather than allowed to finish producing numbers already known to be void.
+
+**So no force in this programme has produced a valid reading.** F1 refuses in every stratum with
+both controls vacuous (§95.11); F2 is void at the site level; F3 has a surveyed substrate and no
+forward pass; FX has not run; FM is gated and its one apparent demonstration turned out to be an
+identity (§95.8). The programme's §9 negative sentence — *the taste is not recoverable from these
+models by measurement* — remains not merely unearned but **unapproached**, and the entry that
+would have claimed a step toward it instead documents an instrument that was not yet able to
+take one.
+
+### 95.15 The second sweep through the review, and the four defects that were each other's cover
+
+§95.13 worked the adversarial review's A-list and the first third of its B-list. This entry
+closes the rest of what could be closed without a forward pass, and the thing worth recording is
+not the count. It is that **four of the fixes are the same defect wearing different clothes: a
+guard that ran, produced a value, and had no path to a verdict.**
+
+- `arm_status({})` returned `READ`. The loop over an empty dict finds no VOID and no unscreened
+  name, so *absence certified itself*. F3 is the demonstration: it imported no control, wrote
+  `report["status"] = "READ"` as a literal, and a statistic reading **only newline counts**
+  published `aligned PASS / crossed PASS / READ` and fired the headline sentence — while the
+  identical statistic VOIDs in F1, F2 and FX, which run their controls. F3 now builds both
+  controls at its own grain (chapter lists, not strings), and `REQUIRED_CONTROLS` makes a missing
+  control a `NOT_SCREENABLE` rather than a silence.
+- `MIN_REFUTING_N = 110` was the minimum of a **non-monotone predicate**. `required_rate` is
+  sawtoothed: n in {111, 113, 116, 118} each demand 0.6017 to 0.6036, above the declared 0.6000
+  ceiling, yet each clears the floor the guard compared against. F3's `aligned` stratum is
+  exactly 118 — the arm with the least power was the one the threshold waved through. The
+  requirement is now read at the n in hand.
+- The two power guards ran **before** the bars, so a small stratum with decisive agreement was
+  published as a corpus-power complaint: 95 of 100 gives a Clopper-Pearson lower bound of 0.887
+  and read `DEGRADED_STRATUM`, with prose explaining that it could not refute. Their argument is
+  about what a *FAIL* at this n would mean and is silent about a PASS; they now run after.
+- `SPLIT_FAMILY` outranked `DEGRADED_STRATUM` and `INERT_GENERATOR`, so a family that said
+  nothing was published as a family that **disagreed** — inventing a lineage finding out of an
+  absence, on the first real two-family run.
+
+**FM ranked confidence and never skill, and the correction was already written down.** `settle`
+took no outcome: `ForcePair` always carries the high-conversion text in `high`, nothing swapped
+the sides, so the mean log score was the log geometric mean of the stated probability. A
+perfectly calibrated force at 0.52 scored -0.6923; a constant 0.95 scored -0.0513; the accuracy a
+real force needed to out-earn a text-blind constant was **0.9920**. The committed dry run gave
+the text-blind entry a bankroll of 10836.81 and **0.8804 of the promoted ensemble**. The module's
+own pre-registration had said the question was *"P(the high-conversion side is side A)"* all
+along — the code simply never asked it. Sides are now swapped on a deterministic, label-blind
+coin from `pair_id`; the constant 0.95 falls to a bankroll of 2.12, below the coin's 100, and the
+dry run carries `confidence_alone_loses` as a check it would have failed on the day it shipped.
+
+Two things fell out of that fix rather than being sought:
+
+- The **promoted ensemble admitted anything solvent**, and a flat stake leaves a sub-coin
+  forecaster standing at the end of 146 bets. It promoted `coin` at 0.0628 and the constant at
+  0.0357 — a FORECAST-class candidate part-built from a coin and from something that loses to
+  one. Promotion now requires beating the coin, and the dry run's ensemble is the oracle alone.
+- The per-stratum block selected its competitor by `constructed_competitors()[-1]`, so adding a
+  competitor silently changed which forecaster was reported under the popularity rule's name. By
+  name now: the rule scores **-0.2877 in `aligned` and -1.3863 in `crossed`** — right on every
+  aligned pair and wrong on every crossed one, which is §79's two-stratum design demonstrating
+  itself through a mechanism that had been reporting a constant.
+
+**F1's pre-registered alternative was firing on noise, and the pre-registration was not the thing
+that had drifted.** `inverted_u` read `quad < 0 and the peak is interior` with no standard error
+anywhere in the function. The fit it declared READ on was quadratic **-0.017463 +/- 0.013543**
+(t = -1.29, R^2 = 0.003), and on 2,000 synthetic samples with y independent of x the rule fires
+**42% of the time**. `plan/force-program.md` said *significant*; the module had quietly weakened
+it to *signed*. With the standard error computed and a |t| >= 1.96 bar, the measured
+false-positive rate is **2.55%** — about half of alpha, which is what a negative-coefficient
+restriction of a two-sided test should give. The fit also ran on `scores`, which carries the
+control sides: 168 of 578 rows were controls and 105 were exact duplicates, and `n: 578` was
+printed as a sample size. It fits live sides only.
+
+**F3's substrate cannot refute, at any shape it can produce, and that is now declared rather than
+discovered.** Measured from the cached survey before any forward pass:
+
+    585 fictions (uncapped)   191 pairs   118 / 73   required 0.6017 / 0.6301
+    200 fictions (declared)    64 pairs    41 / 23   required 0.6829 / 0.7391
+     40 fictions (directive)   12 pairs    11 /  1   required 0.9091 / 1.0000
+
+Every one of those rates is above the 0.6000 ceiling, so **F3 is one-directional: it can PASS and
+it cannot FAIL**, and a miss returns INSUFFICIENT_N. Raising `EXTENSION_FICTIONS` to chase a
+refutable n would be moving a declared bar after seeing that the declared one is unattainable,
+which is exactly what §89's rulebook exists to forbid. Related, and a correction to what this
+ledger has been quoting: the **191/118/73 shape was never the shape a run reads.** `--survey-only`
+reported the unsliced corpus while `run()` sliced at `--max-fictions` before pairing, so the
+documented full-run command builds 64 pairs, not 191. Both shapes now print, from both paths.
+
+Three more F3 defects, all of which put a systematic artifact into the slope the arm exists to
+read: the ceiling abort was **per-family and mislabelled** (Qwen loses 56 pairs to its 32,768
+positions where gemma loses none — 29% of `aligned` and 34% of `crossed` would have existed for
+one family only, every one filed as *"a side had missing chapters"*, while `combine_families`
+compared two different corpora and called the difference lineage); the foreign donor was **one
+chapter tiled** to fill each rung, growing from a mean 2.27 repetitions at j=1 to 12.86 at j=7,
+differing between the two sides of 171 of 191 pairs and growing faster on the high-conversion
+side in ~60% of them; and `directive_cap_40_fictions` **head-sliced a crossed-first list**, so
+the directive's cap was twenty crossed pairs and zero aligned.
+
+**One finding turned out to be cheaper than its fix, and one cache turned out to be worth less
+than its size.** F2's cache key omitted the distractor and the filler — the two texts read from
+`corpora/toll-scenes.json` that every uplift depends on — so editing the pool replayed stale rows
+under `computed_units: 0`. Before adding the digests, the 1,751 banked rows were checked rather
+than assumed: **every key matches the pre-`offset-v2` key space and none matches the post-fix
+one**, so they are §95.14's withdrawn measurement and not the four GPU-hours they look like. The
+file's mtime is *later* than the fix, which is why this needed checking. It is retired under a
+name that says so.
+
+**Where the programme stands is unchanged, and that is the point of saying it again.** These are
+eleven more instrument defects found before any force has a number — twelve in §95.13, eleven
+here — and not one of them moved a result, because there are no results. What has changed is that
+the arithmetic which will read the first real run now refuses in the places it used to certify.
+Still outstanding and needing a forward pass rather than an edit: **B5** (F2's uplift does not
+decay, so the slope may be scatter — unanswerable until the corrected run exists), **B12** (local
+F1's 4x continuation-length band, which makes §95.9's "the instrument is ready" false for the
+local transport), and the four LOW findings that describe declarations rather than defects.

@@ -54,3 +54,12 @@ research/quality-measurement/results/latent-taste-activations*.jsonl
 # NOTES.md is the exception worth knowing about: it is yours, never overwritten, and if you
 # want it kept, `git add -f book-library/*/NOTES.md`.
 book-library/
+
+# Derived text of third-party prose, produced by the force programme
+# (plan/force-program.md §1.6). Continuations sampled from a RoyalRoad seed, retellings in a
+# transmission chain and cloze materials cut from an excerpt are all **excerpt-bearing**: a
+# continuation carries its seed's register and frequently its sentences, so it falls under the
+# same rule that already gitignores the corpora it derives from. Local-only, audited by
+# `corpus_leak_audit.py`, regenerable from the pinned families in one command. The committed
+# record is `results/force-*.json`, which carries ids, digests and numbers and no prose.
+research/quality-measurement/derived/
