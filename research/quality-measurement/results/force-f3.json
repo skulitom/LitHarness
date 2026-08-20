@@ -1,0 +1,562 @@
+{
+  "attainability": [
+    {
+      "attainable": true,
+      "binding": "interval",
+      "insufficient_n_available": true,
+      "k_interval_cp_gt_0_50": 24,
+      "k_point_0_52": 18,
+      "label": "aligned",
+      "n": 34,
+      "required_rate": 0.7059
+    },
+    {
+      "attainable": true,
+      "binding": "interval",
+      "insufficient_n_available": true,
+      "k_interval_cp_gt_0_50": 11,
+      "k_point_0_52": 7,
+      "label": "crossed",
+      "n": 13,
+      "required_rate": 0.8462
+    }
+  ],
+  "chapters_fetched": 2340,
+  "combined": {
+    "aligned": {
+      "never_pooled": true,
+      "per_family": {
+        "gemma-3-4b": "INSUFFICIENT_N",
+        "qwen2.5-3b": "INSUFFICIENT_N"
+      },
+      "status": "INSUFFICIENT_N",
+      "stratum": "aligned",
+      "why": "a family's stratum could not clear its interval bar at any outcome"
+    },
+    "crossed": {
+      "never_pooled": true,
+      "per_family": {
+        "gemma-3-4b": "INSUFFICIENT_N",
+        "qwen2.5-3b": "INSUFFICIENT_N"
+      },
+      "status": "INSUFFICIENT_N",
+      "stratum": "crossed",
+      "why": "a family's stratum could not clear its interval bar at any outcome"
+    }
+  },
+  "excluded_before_scoring": [],
+  "fictions_after_cap": 140,
+  "force_verdict": "INSUFFICIENT_N",
+  "force_verdict_detail": {
+    "arm_states": {
+      "gemma-3-4b": "READ",
+      "qwen2.5-3b": "READ"
+    },
+    "binding": {
+      "aligned": "INSUFFICIENT_N",
+      "crossed": "INSUFFICIENT_N"
+    },
+    "verdict": "INSUFFICIENT_N"
+  },
+  "max_fictions": 200,
+  "own_generated_arm": {
+    "price": "~$81 of frontier drafting (operator \u00a77.1: FUND) for twenty own-generated texts; \u00a794.3 counted exactly one in this repository",
+    "status": "NOT_RUN",
+    "why": "F3's eventual real target is own-generated books, and a third-party-only reading is a statement about RoyalRoad rather than about what this system writes"
+  },
+  "pairs": 47,
+  "pairs_offered": 47,
+  "per_family": {
+    "gemma-3-4b": {
+      "aligned": {
+        "agreement": 0.5588,
+        "attainability": {
+          "attainable": true,
+          "binding": "interval",
+          "insufficient_n_available": true,
+          "k_interval_cp_gt_0_50": 24,
+          "k_point_0_52": 18,
+          "label": "aligned",
+          "n": 34,
+          "required_rate": 0.7059
+        },
+        "clopper_pearson": [
+          0.3789,
+          0.7281
+        ],
+        "clustering_caveat": "0 pairs share an author across their sides; 43 authors recur across pairs (51 of 562 slots) \u2014 a caveat on every interval, printed with every result (\u00a789.2)",
+        "decided": 34,
+        "interval_bar_cleared": false,
+        "pairs": 34,
+        "point_bar_cleared": true,
+        "status": "INSUFFICIENT_N",
+        "stratum": "aligned",
+        "ties": 0,
+        "why": "the interval bar at n=34 demands 0.7059, above the declared 0.6 ceiling for calling a miss a refutation (the headline floor is n=110, but the requirement is sawtoothed in n, so it is read at this n rather than compared to it)",
+        "wins": 19
+      },
+      "aligned__shuffled_DIAGNOSTIC": {
+        "agreement": 0.5,
+        "attainability": {
+          "attainable": true,
+          "binding": "interval",
+          "insufficient_n_available": true,
+          "k_interval_cp_gt_0_50": 24,
+          "k_point_0_52": 18,
+          "label": "aligned",
+          "n": 34,
+          "required_rate": 0.7059
+        },
+        "clopper_pearson": [
+          0.3243,
+          0.6757
+        ],
+        "clustering_caveat": "0 pairs share an author across their sides; 43 authors recur across pairs (51 of 562 slots) \u2014 a caveat on every interval, printed with every result (\u00a789.2)",
+        "decided": 34,
+        "interval_bar_cleared": false,
+        "pairs": 34,
+        "point_bar_cleared": false,
+        "status": "INSUFFICIENT_N",
+        "stratum": "aligned",
+        "ties": 0,
+        "why": "the interval bar at n=34 demands 0.7059, above the declared 0.6 ceiling for calling a miss a refutation (the headline floor is n=110, but the requirement is sawtoothed in n, so it is read at this n rather than compared to it)",
+        "wins": 17
+      },
+      "cache": {
+        "cache": "C:\\DEV\\LitHarness\\research\\quality-measurement\\derived\\f3-gemma-3-4b.jsonl",
+        "computed_units": 564,
+        "replayed_units": 0,
+        "rows_on_disk": 564
+      },
+      "control_states": {
+        "placebo_identical": "PASS",
+        "rewhitespace_sham": "PASS"
+      },
+      "crossed": {
+        "agreement": 0.6154,
+        "attainability": {
+          "attainable": true,
+          "binding": "interval",
+          "insufficient_n_available": true,
+          "k_interval_cp_gt_0_50": 11,
+          "k_point_0_52": 7,
+          "label": "crossed",
+          "n": 13,
+          "required_rate": 0.8462
+        },
+        "clopper_pearson": [
+          0.3158,
+          0.8614
+        ],
+        "clustering_caveat": "0 pairs share an author across their sides; 43 authors recur across pairs (51 of 562 slots) \u2014 a caveat on every interval, printed with every result (\u00a789.2)",
+        "decided": 13,
+        "interval_bar_cleared": false,
+        "pairs": 13,
+        "point_bar_cleared": true,
+        "status": "INSUFFICIENT_N",
+        "stratum": "crossed",
+        "ties": 0,
+        "why": "the interval bar at n=13 demands 0.8462, above the declared 0.6 ceiling for calling a miss a refutation (the headline floor is n=110, but the requirement is sawtoothed in n, so it is read at this n rather than compared to it)",
+        "wins": 8
+      },
+      "crossed__shuffled_DIAGNOSTIC": {
+        "agreement": 0.3077,
+        "attainability": {
+          "attainable": true,
+          "binding": "interval",
+          "insufficient_n_available": true,
+          "k_interval_cp_gt_0_50": 11,
+          "k_point_0_52": 7,
+          "label": "crossed",
+          "n": 13,
+          "required_rate": 0.8462
+        },
+        "clopper_pearson": [
+          0.0909,
+          0.6143
+        ],
+        "clustering_caveat": "0 pairs share an author across their sides; 43 authors recur across pairs (51 of 562 slots) \u2014 a caveat on every interval, printed with every result (\u00a789.2)",
+        "decided": 13,
+        "interval_bar_cleared": false,
+        "pairs": 13,
+        "point_bar_cleared": false,
+        "status": "INSUFFICIENT_N",
+        "stratum": "crossed",
+        "ties": 0,
+        "why": "the interval bar at n=13 demands 0.8462, above the declared 0.6 ceiling for calling a miss a refutation (the headline floor is n=110, but the requirement is sawtoothed in n, so it is read at this n rather than compared to it)",
+        "wins": 4
+      },
+      "directive_cap_40_fictions": {
+        "agreement": 0.5,
+        "attainability": {
+          "attainable": true,
+          "binding": "interval",
+          "insufficient_n_available": true,
+          "k_interval_cp_gt_0_50": 15,
+          "k_point_0_52": 11,
+          "label": "cap40",
+          "n": 20,
+          "required_rate": 0.75
+        },
+        "clopper_pearson": [
+          0.272,
+          0.728
+        ],
+        "clustering_caveat": "0 pairs share an author across their sides; 43 authors recur across pairs (51 of 562 slots) \u2014 a caveat on every interval, printed with every result (\u00a789.2)",
+        "decided": 20,
+        "interval_bar_cleared": false,
+        "pairs": 20,
+        "point_bar_cleared": false,
+        "status": "INSUFFICIENT_N",
+        "stratum": "cap40",
+        "ties": 0,
+        "why": "the interval bar at n=20 demands 0.75, above the declared 0.6 ceiling for calling a miss a refutation (the headline floor is n=110, but the requirement is sawtoothed in n, so it is read at this n rather than compared to it)",
+        "wins": 10
+      },
+      "dropped": [],
+      "family": {
+        "attention_shape": {
+          "max_positions": 131072,
+          "pattern": "5 sliding : 1 full",
+          "sliding_window": 1024
+        },
+        "family": "gemma-3-4b",
+        "head": "base",
+        "lineage": "google/gemma-3",
+        "model_id": "google/gemma-3-4b-pt",
+        "revision": "cc012e0a6d0787b4adcc0fa2c4da74402494554d"
+      },
+      "governor": {
+        "binding_sensor": "temperature.gpu.tlimit (hotspot margin), not core",
+        "calls": 1128,
+        "duty_cycle": 0.065,
+        "gpu_c_now": 49,
+        "gpu_seconds": 388.8,
+        "hold_seconds": 105.0,
+        "holds": 21,
+        "long_holds": 0,
+        "min_tlimit_margin_c": 3.0,
+        "pause_above_c": 64,
+        "pause_margin_c": 14,
+        "peak_core_c": 70.0,
+        "peak_power_w": 269.89,
+        "rest_ratio": 3.0,
+        "resume_below_c": 56,
+        "resume_margin_c": 20,
+        "sensor_samples": 2277,
+        "soak_every_calls": 25,
+        "soak_seconds": 90.0,
+        "soaks": 45,
+        "source": "force_gpu.Governor (hardened 2026-08-20 after a mid-run shutdown)",
+        "throttle_events": 0,
+        "wall_seconds": 5998.3
+      },
+      "placebo_identical": {
+        "control": "placebo_identical",
+        "effect": 0.0,
+        "kind": "exact",
+        "pairs": 20,
+        "status": "PASS",
+        "tolerance": 0.0,
+        "why": ""
+      },
+      "rewhitespace_sham": {
+        "agreement": 0.7368,
+        "clopper_pearson": [
+          0.488,
+          0.9085
+        ],
+        "control": "rewhitespace_sham",
+        "decided": 19,
+        "note": "unlike F1's, this sham can fail: F3's statistic is token-level NLL and re-whitespacing changes tokenisation, so a PASS here is evidence rather than a restatement of the feature space's blindness",
+        "pairs": 19,
+        "status": "PASS",
+        "wins": 14
+      },
+      "status": "READ"
+    },
+    "qwen2.5-3b": {
+      "aligned": {
+        "agreement": 0.5294,
+        "attainability": {
+          "attainable": true,
+          "binding": "interval",
+          "insufficient_n_available": true,
+          "k_interval_cp_gt_0_50": 24,
+          "k_point_0_52": 18,
+          "label": "aligned",
+          "n": 34,
+          "required_rate": 0.7059
+        },
+        "clopper_pearson": [
+          0.3513,
+          0.7022
+        ],
+        "clustering_caveat": "0 pairs share an author across their sides; 43 authors recur across pairs (51 of 562 slots) \u2014 a caveat on every interval, printed with every result (\u00a789.2)",
+        "decided": 34,
+        "interval_bar_cleared": false,
+        "pairs": 34,
+        "point_bar_cleared": true,
+        "status": "INSUFFICIENT_N",
+        "stratum": "aligned",
+        "ties": 0,
+        "why": "the interval bar at n=34 demands 0.7059, above the declared 0.6 ceiling for calling a miss a refutation (the headline floor is n=110, but the requirement is sawtoothed in n, so it is read at this n rather than compared to it)",
+        "wins": 18
+      },
+      "aligned__shuffled_DIAGNOSTIC": {
+        "agreement": 0.4706,
+        "attainability": {
+          "attainable": true,
+          "binding": "interval",
+          "insufficient_n_available": true,
+          "k_interval_cp_gt_0_50": 24,
+          "k_point_0_52": 18,
+          "label": "aligned",
+          "n": 34,
+          "required_rate": 0.7059
+        },
+        "clopper_pearson": [
+          0.2978,
+          0.6487
+        ],
+        "clustering_caveat": "0 pairs share an author across their sides; 43 authors recur across pairs (51 of 562 slots) \u2014 a caveat on every interval, printed with every result (\u00a789.2)",
+        "decided": 34,
+        "interval_bar_cleared": false,
+        "pairs": 34,
+        "point_bar_cleared": false,
+        "status": "INSUFFICIENT_N",
+        "stratum": "aligned",
+        "ties": 0,
+        "why": "the interval bar at n=34 demands 0.7059, above the declared 0.6 ceiling for calling a miss a refutation (the headline floor is n=110, but the requirement is sawtoothed in n, so it is read at this n rather than compared to it)",
+        "wins": 16
+      },
+      "cache": {
+        "cache": "C:\\DEV\\LitHarness\\research\\quality-measurement\\derived\\f3-qwen2.5-3b.jsonl",
+        "computed_units": 564,
+        "replayed_units": 0,
+        "rows_on_disk": 564
+      },
+      "control_states": {
+        "placebo_identical": "PASS",
+        "rewhitespace_sham": "PASS"
+      },
+      "crossed": {
+        "agreement": 0.6154,
+        "attainability": {
+          "attainable": true,
+          "binding": "interval",
+          "insufficient_n_available": true,
+          "k_interval_cp_gt_0_50": 11,
+          "k_point_0_52": 7,
+          "label": "crossed",
+          "n": 13,
+          "required_rate": 0.8462
+        },
+        "clopper_pearson": [
+          0.3158,
+          0.8614
+        ],
+        "clustering_caveat": "0 pairs share an author across their sides; 43 authors recur across pairs (51 of 562 slots) \u2014 a caveat on every interval, printed with every result (\u00a789.2)",
+        "decided": 13,
+        "interval_bar_cleared": false,
+        "pairs": 13,
+        "point_bar_cleared": true,
+        "status": "INSUFFICIENT_N",
+        "stratum": "crossed",
+        "ties": 0,
+        "why": "the interval bar at n=13 demands 0.8462, above the declared 0.6 ceiling for calling a miss a refutation (the headline floor is n=110, but the requirement is sawtoothed in n, so it is read at this n rather than compared to it)",
+        "wins": 8
+      },
+      "crossed__shuffled_DIAGNOSTIC": {
+        "agreement": 0.3846,
+        "attainability": {
+          "attainable": true,
+          "binding": "interval",
+          "insufficient_n_available": true,
+          "k_interval_cp_gt_0_50": 11,
+          "k_point_0_52": 7,
+          "label": "crossed",
+          "n": 13,
+          "required_rate": 0.8462
+        },
+        "clopper_pearson": [
+          0.1386,
+          0.6842
+        ],
+        "clustering_caveat": "0 pairs share an author across their sides; 43 authors recur across pairs (51 of 562 slots) \u2014 a caveat on every interval, printed with every result (\u00a789.2)",
+        "decided": 13,
+        "interval_bar_cleared": false,
+        "pairs": 13,
+        "point_bar_cleared": false,
+        "status": "INSUFFICIENT_N",
+        "stratum": "crossed",
+        "ties": 0,
+        "why": "the interval bar at n=13 demands 0.8462, above the declared 0.6 ceiling for calling a miss a refutation (the headline floor is n=110, but the requirement is sawtoothed in n, so it is read at this n rather than compared to it)",
+        "wins": 5
+      },
+      "directive_cap_40_fictions": {
+        "agreement": 0.5,
+        "attainability": {
+          "attainable": true,
+          "binding": "interval",
+          "insufficient_n_available": true,
+          "k_interval_cp_gt_0_50": 15,
+          "k_point_0_52": 11,
+          "label": "cap40",
+          "n": 20,
+          "required_rate": 0.75
+        },
+        "clopper_pearson": [
+          0.272,
+          0.728
+        ],
+        "clustering_caveat": "0 pairs share an author across their sides; 43 authors recur across pairs (51 of 562 slots) \u2014 a caveat on every interval, printed with every result (\u00a789.2)",
+        "decided": 20,
+        "interval_bar_cleared": false,
+        "pairs": 20,
+        "point_bar_cleared": false,
+        "status": "INSUFFICIENT_N",
+        "stratum": "cap40",
+        "ties": 0,
+        "why": "the interval bar at n=20 demands 0.75, above the declared 0.6 ceiling for calling a miss a refutation (the headline floor is n=110, but the requirement is sawtoothed in n, so it is read at this n rather than compared to it)",
+        "wins": 10
+      },
+      "dropped": [],
+      "family": {
+        "attention_shape": {
+          "max_positions": 32768,
+          "pattern": "full attention",
+          "sliding_window": null
+        },
+        "family": "qwen2.5-3b",
+        "head": "base",
+        "lineage": "alibaba/qwen2.5",
+        "model_id": "Qwen/Qwen2.5-3B",
+        "revision": "3aab1f1954e9cc14eb9509a215f9e5ca08227a9b"
+      },
+      "governor": {
+        "binding_sensor": "temperature.gpu.tlimit (hotspot margin), not core",
+        "calls": 1128,
+        "duty_cycle": 0.1,
+        "gpu_c_now": 51,
+        "gpu_seconds": 718.3,
+        "hold_seconds": 75.0,
+        "holds": 15,
+        "long_holds": 0,
+        "min_tlimit_margin_c": 2.0,
+        "pause_above_c": 64,
+        "pause_margin_c": 14,
+        "peak_core_c": 73.0,
+        "peak_power_w": 342.99,
+        "rest_ratio": 3.0,
+        "resume_below_c": 56,
+        "resume_margin_c": 20,
+        "sensor_samples": 2272,
+        "soak_every_calls": 25,
+        "soak_seconds": 90.0,
+        "soaks": 45,
+        "source": "force_gpu.Governor (hardened 2026-08-20 after a mid-run shutdown)",
+        "throttle_events": 0,
+        "wall_seconds": 7218.3
+      },
+      "placebo_identical": {
+        "control": "placebo_identical",
+        "effect": 0.0,
+        "kind": "exact",
+        "pairs": 20,
+        "status": "PASS",
+        "tolerance": 0.0,
+        "why": ""
+      },
+      "rewhitespace_sham": {
+        "agreement": 0.5,
+        "clopper_pearson": [
+          0.272,
+          0.728
+        ],
+        "control": "rewhitespace_sham",
+        "decided": 20,
+        "note": "unlike F1's, this sham can fail: F3's statistic is token-level NLL and re-whitespacing changes tokenisation, so a PASS here is evidence rather than a restatement of the feature space's blindness",
+        "pairs": 20,
+        "status": "PASS",
+        "wins": 10
+      },
+      "status": "READ"
+    }
+  },
+  "pre_registration": {
+    "axiom": "no solicited human judgment, ever \u2014 not hired, not operator, not one blinded pair",
+    "binding_half": "interval, at every n in this programme (verified, not asserted)",
+    "clustering_caveat": "0 pairs share an author across their sides; 43 authors recur across pairs (51 of 562 slots) \u2014 a caveat on every interval, printed with every result (\u00a789.2)",
+    "controls": {
+      "placebo_identical": "exactly zero effect; arithmetic check, not a null (\u00a789.4)",
+      "rewhitespace_sham": "reads nothing, or the force is reading formatting and is VOID (\u00a778.1)"
+    },
+    "families": {
+      "gemma-3-4b": {
+        "base": "google/gemma-3-4b-pt",
+        "base_revision": "cc012e0a6d0787b4adcc0fa2c4da74402494554d",
+        "chat": "google/gemma-3-4b-it",
+        "chat_revision": "093f9f388b31de276ce2de164bdc2081324b9767",
+        "lineage": "google/gemma-3"
+      },
+      "qwen2.5-3b": {
+        "base": "Qwen/Qwen2.5-3B",
+        "base_revision": "3aab1f1954e9cc14eb9509a215f9e5ca08227a9b",
+        "chat": "Qwen/Qwen2.5-3B-Instruct",
+        "chat_revision": "aa8e72537993ba99e69dfaafa59ed015b17504d1",
+        "lineage": "alibaba/qwen2.5"
+      }
+    },
+    "family_rule": "reported per family, never pooled; disagreement is SPLIT_FAMILY",
+    "insufficient_n_above": 0.6,
+    "interval_bar": "Clopper-Pearson 95% lower bound clear of 0.50",
+    "label": "conversion = followers / total_views, BEHAVIOUR class at STORY grain (\u00a782)",
+    "ledger": "plan/stage-0-decisions.md \u00a795",
+    "min_decided_share": 0.9,
+    "point_bar": 0.52,
+    "programme": "plan/force-program.md",
+    "strata": "aligned and crossed, never averaged; the crossed halves are a contrast not a bar",
+    "written_before": "any continuation sampled, any logprob read, any chain run"
+  },
+  "pre_registration_track": {
+    "asks_nothing": "teacher-forced NLL only; nothing is sampled and nothing is asked",
+    "bar_declared_on": "the largest stratum the substrate yields, up to EXTENSION_FICTIONS; the capped-40 subset prints beside it as the directive's declared cap",
+    "can_refute": false,
+    "cap_fictions": 40,
+    "cap_set_by": "attention memory measured on this box, not the models' position limits: qwen2.5-3b at 11,701 tokens costs 25.4 GiB and 43.5 s per pass against 14.7 GiB and 2.2 s at 7,801. Declared before the run, with the ladder.",
+    "chapters": 4,
+    "cohort": "human_pre_llm",
+    "context_cap_tokens": 8192,
+    "controls_in_the_statistic": {
+      "foreign": "token-length-matched context from a different fiction \u2014 holds context LENGTH fixed and varies only provenance",
+      "shuffled": "the fiction's own chapters in destroyed order \u2014 same provenance, no structure; reported as a second comparison"
+    },
+    "extension_fictions": 200,
+    "hypothesis": "a book with real structure teaches the model to read it: later-chapter predictability improves with true earlier context in a way flat episodic prose cannot",
+    "label": "conversion = followers / total_views, declared before selection",
+    "ladder": [
+      1,
+      2,
+      3
+    ],
+    "ladder_amended": "2026-08-20: (1,3,5,7) over eight chapters became (1,2,3) over four. The bars are untouched; the instrument is what the hardware can hold. Three equally spaced rungs make the OLS slope the endpoint difference, so the middle rung informs the fit not at all \u2014 stated because it is a real weakening and not a detail.",
+    "one_directional": "PASS is available at every shape this substrate yields; FAIL is not, because the interval bar demands 0.6017 or more at every n. A miss returns INSUFFICIENT_N and is not evidence against the force.",
+    "own_generated_arm": "NOT_RUN \u2014 needs \u00a77.1's fitness books; \u00a794.3 counted exactly one own-generated text long enough to carry a slope",
+    "population": "web fiction whose first four chapters fit in 8,192 tokens on BOTH pinned tokenizers \u2014 a narrower population than 'web fiction', selected before pairing and applying equally to both sides of every pair",
+    "prior_art": "\u00a758 killed CDG, which is this statistic's level. The slope is what subtracts the level artifact that killed it; if F3 fails, \u00a758 gains a second entry.",
+    "statistic": "OLS slope of [NLL_foreign(j) - NLL_true(j)] over j",
+    "strata": "aligned and crossed, built with \u00a779's tolerances so no prose-blind popularity rule can clear both",
+    "track": "F3 compression progress"
+  },
+  "stratum_sizes": {
+    "aligned": 34,
+    "crossed": 13
+  },
+  "stratum_sizes_excluded_by_ceiling": {
+    "aligned": 0,
+    "crossed": 0
+  },
+  "surveyed_fictions": 585,
+  "track": "F3"
+}

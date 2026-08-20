@@ -8589,3 +8589,105 @@ a cost of the wider set and not an objection to it, recorded before it is paid r
 **Acquiring the anchor text itself is a separate decision and is not assumed.** The narrower step
 — fetching public popularity metadata only, so each named work carries the §0.3 citation while no
 prose moves — is the cheaper half and would settle admissibility without touching RS1's boundary.
+
+## 98. F3 ran, and it found the mechanism it was built to find and no trace of the thing it was built to predict
+
+**The first force in this programme to produce a valid reading**, and the reading splits cleanly
+in two. The statistic works. The statistic does not track readers.
+
+Configuration as amended and committed before the run (§95.15, commit `506f6dd`): ladder (1,2,3)
+over four chapters under an 8,192-token cap, 47 pairs — 34 `aligned`, 13 `crossed` — drawn from
+140 feasible fictions of 585 surveyed, both pinned families, 1,367 cached units. Nothing was
+excluded by the ceiling at scoring time: the feasibility filter and the scorer agreed exactly,
+which is what the retained `fit_filter` cross-check was for.
+
+### 98.1 The controls, which is the part that had to come first
+
+| family | placebo | sham |
+|---|---|---|
+| gemma-3-4b | **PASS**, effect exactly `0.0` over 20 pairs | **PASS**, 14 of 19, CP `[0.488, 0.9085]` |
+| qwen2.5-3b | **PASS**, effect exactly `0.0` over 20 pairs | **PASS**, 10 of 20, CP `[0.272, 0.728]` |
+
+Both arms read `READ`. This is the first arm in the programme whose controls certify anything —
+F1's were vacuous (§95.11) and F2's were void at the site level (§95.14).
+
+**The placebo is a real zero here, unlike F1's.** Its two passes are independent sets of forward
+passes over byte-identical input under a replicate cache key, not a dictionary lookup returning
+the row it just wrote; the `replicate` flag exists precisely so that the zero is measured. On a
+deterministic local stack it came back exactly `0.0` on 40 of 40 comparisons.
+
+**Gemma's sham is a weak pass and is flagged rather than banked.** 14 of 19 is an agreement of
+0.7368, and its Clopper-Pearson lower bound is **0.488** — it contains 0.50 by twelve
+thousandths. It passed the rule as written, and it would not take many more sham pairs pointing
+the same way to VOID the arm. Qwen's sham at 10 of 20 is the clean result gemma's is not. Anyone
+extending F3 should buy sham pairs before buying live ones.
+
+### 98.2 The mechanism is real, on both families, decisively
+
+The shuffled arm was the refutable half: same chapters, same provenance, destroyed order. If
+destroying order changed nothing, then "a book teaches the model to read it" would be a claim
+about vocabulary rather than about structure.
+
+    ordered slope > shuffled slope, paired within side, 94 sides per family
+
+    gemma-3-4b   88 of 94   mean difference +0.05240   sign test p < 0.0001
+    qwen2.5-3b   89 of 94   mean difference +0.05196   sign test p < 0.0001
+
+    ordered slope positive   gemma 94 of 94      qwen 93 of 94
+
+So: a fiction's own earlier chapters make its later chapter more predictable than
+length-matched foreign prose does; the advantage **grows** as more of the book is supplied; and
+it grows **more when the chapters are in their real order** than when they are reversed. Two
+independent lineages agree on every part of that.
+
+**This is a positive result about the instrument and it is worth stating plainly, because this
+ledger has recorded very few.** §58 killed CDG, whose shape F3 borrowed, and the pre-registration
+said in as many words that if F3 failed, §58 would gain a second entry. It did not fail. The
+level artifact that killed CDG is absent from a slope, exactly as designed.
+
+### 98.3 And it does not predict a single thing about readers
+
+| stratum | required | gemma | qwen |
+|---|---|---|---|
+| `aligned` (n=34) | 0.7059 | 0.5588 — 19 of 34, CP `[0.3789, 0.7281]` | 0.5294 — 18 of 34, CP `[0.3513, 0.7022]` |
+| `crossed` (n=13) | 0.8462 | 0.6154 — 8 of 13, CP `[0.3158, 0.8614]` | 0.6154 — 8 of 13, CP `[0.3158, 0.8614]` |
+
+**Headline: `INSUFFICIENT_N`**, both strata, both families, combined the same way. Every point
+estimate sits above 0.50 and every one of them sits far below its bar, and the intervals are wide
+enough to contain both.
+
+**What this is not.** It is not a refutation, and §95.15 declared before the run that it could not
+be one: at n = 34 and 13 the interval bar demands 0.7059 and 0.8462, so a true effect of 0.60
+would return `INSUFFICIENT_N` exactly as an effect of 0.50 would. **A miss here is a statement
+about power.** The declaration that F3 is one-directional was made on 2026-08-20 before any
+forward pass, and it is now doing the work it was declared for rather than being invented to
+soften a disappointment.
+
+**Where the power went is the interesting part.** The same run answered one question at
+p < 0.0001 and could not answer the other at all, and the difference is not sample size in the
+naive sense — it is *pairing*. The mechanism test is **within side**: the same fiction, ordered
+against shuffled, 94 paired comparisons whose between-book variance cancels. The label test is
+**across books**: fiction A against fiction B, where every difference between two different
+novels enters the comparison as noise and only the conversion label is signal. 47 such pairs is
+very little against that variance, and the corpus cannot supply more at this ladder.
+
+### 98.4 What the programme may now say
+
+**A force exists that reads structure, and no force yet reads taste.** Those are different
+sentences and this entry is careful to keep them apart.
+
+- §9's negative sentence is **not** earned. It requires every force to fail with controls clean
+  across two families; F3's controls are clean and F3 did not fail, it abstained.
+- FM's gate stays **closed**. §95's market opens on a force clearing §1.2's bars on the held-out
+  split, and `INSUFFICIENT_N` is not clearing.
+- The one-directional declaration is now a **cost that has been paid rather than a hypothetical**.
+  F3 cannot be run to a refutation on this substrate, and a version that could would need a
+  corpus with more short-chaptered fictions than this one holds — 140 feasible of 585 surveyed.
+- The mechanism result stands on its own and is reusable. A slope that is positive on 187 of 188
+  sides across two lineages, and order-sensitive on 177 of 188, is a property of prose that can be
+  measured cheaply and does not need the conversion label to be meaningful. What it is *for* is
+  now an open question rather than an answered one.
+
+**The honest one-line summary: the instrument works and the hypothesis it was pointed at did not
+survive contact with the corpus's sample size.** Nobody should read that as evidence that
+structure does not matter to readers. It is evidence that 47 cross-book pairs cannot see it.
