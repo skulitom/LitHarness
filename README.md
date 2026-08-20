@@ -1,9 +1,9 @@
 <p align="center">
-  <img src="docs/banner.svg" width="100%" alt="LitHarness — a star-atlas dragon rising from an open book, six scenes as stars along its spine, a castle gatehouse and observatory below, one refused star set apart in a dashed ring, under a measuring arc whose needle rests just past 0.5">
+  <img src="docs/banner.png" width="100%" alt="LitHarness — a constellation dragon rising from an open book in a workshop of one-eyed archive creatures, six green stars joined along its body, one refused star sealed alone in a vault at the lower right">
 </p>
 
 <p align="center"><em>The lines are what the gate can prove; the dragon is what the reader sees.<br>
-Six scenes along its spine; one candidate refused, joined to nothing; a needle that must come to rest past ½.</em></p>
+Six scenes along its spine; one candidate refused, sealed in its vault, joined to nothing.</em></p>
 
 An autonomous book-production system with a human director, refounded on one goal:
 **superhuman literary quality**, operationalised as a pre-registered pairwise bar —
