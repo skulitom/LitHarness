@@ -8691,3 +8691,118 @@ sentences and this entry is careful to keep them apart.
 **The honest one-line summary: the instrument works and the hypothesis it was pointed at did not
 survive contact with the corpus's sample size.** Nobody should read that as evidence that
 structure does not matter to readers. It is evidence that 47 cross-book pairs cannot see it.
+
+## 99. F4, the surprisal field — and the formatting control goes vacuous the moment the directive's own default is applied
+
+**Registered 2026-08-20, before any F4 code was written.** F4 inherits the force harness whole:
+shared bars, controls first, refusal states, both readings, digest-keyed caches, two base lineages
+minimum. It is a **base-head instrument by construction** — surprisal is precisely the quantity
+RLHF warps — local-only, free tier.
+
+**The non-claim, first, because it disqualifies arms rather than caveating them.** Quality is
+**not monotone in surprisal at any level.** Maximal surprise is noise; minimal is cliché; the
+published perplexity-as-quality record is weak for exactly this reason. Every F4 statistic is a
+**shape** statistic, and any arm whose reading reduces to *"higher (or lower) mean surprisal is
+better"* is mis-specified and **VOID by this paragraph** rather than by a later measurement.
+
+**F4 is the only instrument in this shop with an external scientific validation target.**
+Human reading times are approximately linear in surprisal (Levy 2008; Smith & Levy 2013) and the
+N400 tracks it. Published reading-time corpora are unsolicited, public and axiom-clean, so F4 may
+calibrate against them. When run, that calibration is **its own sub-entry and is evidence about
+the instrument, never about any book.**
+
+### 99.1 The control the directive specified cannot fail, and the default is what does it
+
+§2 of the addendum says, correctly, that surprisal is tokenization-sensitive and that this is
+**the first F-instrument whose formatting control can genuinely move**. It then offers two
+choices and defaults to (i): compute every F4 statistic on **canonicalized text**, with the
+canonicalization function committed, *"sham must then read ~0, any movement is VOID-the-arm"*.
+
+**Both halves of that are right and together they make the sham vacuous.** Under (i) the sham
+compares `canonical(x)` against `canonical(rewhitespace(x))`. `rewhitespace` perturbs exactly
+what a whitespace canonicalizer normalizes — runs of spaces, sentence spacing, the paragraph
+separator — so if the canonicalizer is total over whitespace the two strings are **byte-identical
+before a model sees either of them**. The effect is then exactly zero for any model, including a
+broken one, on any text. That is a control that cannot fail, which §50 says is not a control, and
+it is the same shape as `writer-roster.md`'s permuted-dossier sham found earlier the same day.
+
+The resolution keeps the directive's default and stops mislabelling what it buys:
+
+- **`rewhitespace_sham` is retained and reclassified as a canonicalization-coverage check.** It
+  asserts that the canonicalizer actually absorbs the transform. That is worth running and worth
+  failing on — a non-zero reading means the canonicalizer is not total and choice (i) is not in
+  force — but it is a **unit test of our own function**, not evidence that the model ignores
+  layout. It is reported under `canonicalization_coverage`, never as the §78.1 formatting control.
+- **A second sham is added that survives canonicalization: `paragraph_break_sham`.** A
+  canonicalizer may normalize the paragraph *separator*; it must not move where paragraphs
+  *break*, or it would be rewriting the text rather than normalizing it. So relocating a
+  paragraph boundary leaves every word, every canonical whitespace convention and the whole
+  vocabulary untouched while genuinely changing the token stream. It can move surprisal, and so it
+  can fail. **This is F4's §78.1 control**, and the arm is VOID if its interval excludes 0.50.
+
+Stated at design time and not after numbers, which is what §2 asked for.
+
+### 99.2 The statistics, each with its confound named before the run
+
+**F4a — earned surprise, the flagship.** The craft law made computable: *surprising forward,
+inevitable backward*.
+
+    forward_spike        surprisal of the event's tokens given prior context
+    retro_compression    NLL(setup text | context + event)
+                           minus NLL(setup text | context + length-matched neutral continuation)
+    earned               forward_spike x retro_compression
+
+Cheap surprise is a spike whose backward term is ~0: it startles and explains nothing. This is
+F3's machinery pointed in reverse, and F3 has just been shown to work in the forward direction —
+§98's ordered-versus-shuffled result at p < 0.0001 on both lineages is the evidence that
+conditioning on a book's own text changes its predictability in a measurable, order-sensitive
+way. F4a asks whether that conditioning runs *backward* from a payoff to its setup.
+
+It gives §94's promise ledger its physics: a paid promise should be a spike that retro-compresses;
+an unpaid one explains nothing. **F4a is wired to the promise ledger as a covariate source only —
+no verdict, no licence**, and §94's machinery keeps its own rules.
+
+**F4b — trajectory shape.** Variance, burstiness, autocorrelation and spectral summaries of the
+surprisal series at sentence, scene and chapter grain. **Named confound, declared now: the
+dialogue/exposition mix moves every one of these.** Dialogue is short-lined, high-variance and
+low-surprisal per token; exposition is the reverse. The mix is recorded as a covariate on every
+F4b row before any reading is taken.
+
+**F4c — abandonment, the reader-sim bridge.** Pre-registered as a **two-sided hazard**:
+abandonment follows sustained low-variance low-surprise (boredom) *or* sustained unstructured
+high-surprise (confusion). Two-sided is the whole point — a one-sided version would be the
+monotone claim §99's opening paragraph voids. Validation against story-grain retention labels.
+F4c is the BCR body's native food: a base-headed sim reads continuation from probabilities and
+never answers a question.
+
+### 99.3 Controls, substrate, and the gate that blocks everything above the pilot
+
+- **`placebo_identical` must read exactly zero on every F4 statistic.** Arithmetic check, and F3
+  has just demonstrated it can be a measured zero rather than a cache artifact (§98.1).
+- **The memorization probe is a hard gate.** Verbatim-continuation threshold pre-registered
+  before use; any pretraining-era text that fails it is quarantined from all NLL readings.
+  **Mother of Learning and every RoyalRoad text are presumed contaminated until probed.** Nothing
+  above the pilot runs until the probe has landed.
+- Two base lineages minimum for any claim (§94.5), pinned revisions, paired same-head contrasts
+  only. Where both heads of a lineage run, the base–instruct delta is a first-class reading.
+
+Substrate order follows contamination status, not convenience: **the twenty fitness books first**
+— contamination-proof by construction, and every F4 statistic debuts there including F4a against
+their promise-ledger records — then the own-generated pool as it grows, and only then RoyalRoad
+and the anchors, per text, after each clears the probe.
+
+### 99.4 Decisions, taken on the directive's stated defaults
+
+- **GPU-hours for the F4 pilot: 8**, inside the standing 40-hour cap. Recorded beside the fact
+  that F3 has just finished, so the card is free for the first time today.
+- **Reading-time calibration (G4): RUN.** It is free and it is the only external anchor any
+  instrument in this repository has ever had.
+- **Canonicalization: choice (i), canonical text** — confirmed as the directive specifies, with
+  §99.1's reclassification of what the whitespace sham then measures.
+
+### 99.5 Anti-scope
+
+No quality claim monotone in surprisal level. No F4 reading on unprobed pretraining-era text. No
+instruct-head F4 numbers except as the paired delta beside the same lineage's base head. No
+promise-ledger verdicts — F4a feeds covariates and nothing else. No new licences: F4 competes
+under FORECAST/BEHAVIOUR like every other force, and the operator gate stays untouched.

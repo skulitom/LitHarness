@@ -1,0 +1,50 @@
+{
+  "controls": {
+    "canonicalization_coverage": {
+      "cannot_fail_on_the_model": true,
+      "control": "canonicalization_coverage",
+      "identical_after_canonicalization": true,
+      "kind": "unit test of our own canonicalizer, not a model control",
+      "status": "PASS",
+      "why": ""
+    }
+  },
+  "dialogue_share": 0.0,
+  "families": {
+    "gemma-3-4b": {
+      "gpu_min_per_100k_tokens": 484.66,
+      "placebo_max_abs_delta": 0.0,
+      "seconds_per_series": 30.53,
+      "sham_mean_delta": 0.021025,
+      "sham_tokens": 106,
+      "shape": {
+        "autocorrelation_lag1": 0.00051,
+        "burstiness": -0.04702,
+        "mean_surprisal_NOT_A_QUALITY_READING": 2.98966,
+        "sd": 2.72112,
+        "status": "READ",
+        "tokens": 105
+      },
+      "tokens": 105
+    },
+    "qwen2.5-3b": {
+      "gpu_min_per_100k_tokens": 108.96,
+      "placebo_max_abs_delta": 0.0,
+      "seconds_per_series": 6.73,
+      "sham_mean_delta": 0.030573,
+      "sham_tokens": 103,
+      "shape": {
+        "autocorrelation_lag1": -0.09149,
+        "burstiness": -0.04099,
+        "mean_surprisal_NOT_A_QUALITY_READING": 3.38585,
+        "sd": 3.11921,
+        "status": "READ",
+        "tokens": 103
+      },
+      "tokens": 103
+    }
+  },
+  "pre_registration_note": "G0 establishes that the input arrives and the arithmetic is sound. It establishes nothing about prose. The cost figures INCLUDE model load on the first series of each family, so gemma's 484 GPU-min/100k is an upper bound dominated by loading rather than scoring; qwen's 109 is closer to the marginal rate. Amortised figures need the pilot.",
+  "reading": "placebo exactly 0.0 on both families; canonicalization total, so the whitespace control is confirmed vacuous-by-construction and is reported as a unit test; the paragraph-break sham DOES reach the model (mean surprisal moves 0.021 nats on gemma, 0.031 on qwen, and gemma's token count changes 105 to 106) while changing not one word, which is what makes it a control that can fail. Whether it DOES fail is a pairwise interval question and is G1's.",
+  "sham_changes_words": false
+}
