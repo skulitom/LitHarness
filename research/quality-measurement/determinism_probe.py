@@ -45,7 +45,7 @@ HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 
 import force_gpu  # noqa: E402
-from force_harness import RESULTS, digest, load_pairs  # noqa: E402
+from force_harness import FAMILIES, RESULTS, digest, load_pairs  # noqa: E402
 
 #: Below this the two runs are the same number in every digit anyone will read.
 EXACT_EPS = 0.0
@@ -126,7 +126,7 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--families", nargs="+", default=["gemma-3-4b", "qwen2.5-3b"])
+    parser.add_argument("--families", nargs="+", default=list(FAMILIES))
     parser.add_argument("--tokens", type=int, default=64)
     parser.add_argument("--out", default=str(RESULTS / "force-determinism.json"))
     args = parser.parse_args(argv)

@@ -193,8 +193,21 @@ def test_f3_refuses_a_conversion_gap_below_the_declared_floor():
 
 
 def test_f3_ladder_fits_inside_the_smaller_family_context():
-    """Qwen2.5-3B is 32,768 positions; the ladder was shortened for it, not for preference."""
+    """The ladder is bounded by the substrate, not by preference.
+
+    The bound has moved twice and the docstring should not outlive the reason. It was Qwen2.5-3B's
+    32,768 *positions*; then it was attention memory, which is a much tighter ceiling and is what
+    `CONTEXT_CAP` records; and Qwen2.5-3B was retired on 2026-08-20 for Qwen3.5-4B, which is
+    hybrid rather than fully global. What has to stay true regardless of the family is that the
+    top rung leaves a target chapter to predict.
+    """
+    import force_gpu
+
     assert max(compression_progress.LADDER) < compression_progress.CHAPTERS
+    smallest_ceiling = min(
+        shape["max_positions"] for shape in force_gpu.ATTENTION_SHAPE.values()
+    )
+    assert smallest_ceiling >= compression_progress.CONTEXT_CAP
 
 
 # ------------------------------------------------------------------------------------ FX

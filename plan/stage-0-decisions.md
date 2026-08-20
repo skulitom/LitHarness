@@ -8806,3 +8806,68 @@ No quality claim monotone in surprisal level. No F4 reading on unprobed pretrain
 instruct-head F4 numbers except as the paired delta beside the same lineage's base head. No
 promise-ledger verdicts — F4a feeds covariates and nothing else. No new licences: F4 competes
 under FORECAST/BEHAVIOUR like every other force, and the operator gate stays untouched.
+
+## 100. The Qwen lineage moves to 3.5, and the architectural case for it did not survive the card
+
+**Operator directive 2026-08-21: switch to the latest models.** Acted on, with one correction
+recorded against my own reasoning rather than buried in it.
+
+**Two of my "not found" reports were wrong, both the same way.** Told that qwen3.5 and gemma4 were
+available, I checked `ollama list` — which shows what has been *pulled* — and HF under *Gemma 3's*
+naming convention (`-pt`), then reported absence as fact. Both exist. Gemma 4 is current in
+ollama's registry with tags `e2b/e4b/12b/26b/31b` and no `latest`, which is why `ollama show
+gemma4` failed. Qwen3.5 ships a small series at 0.8B/2B/4B/9B **with base checkpoints**. Absence
+from a local cache is not absence from the world, and the authoritative check was the registry and
+the HF config, not the machine.
+
+### 100.1 What was predicted, and what the card said
+
+The configs argued strongly for the swap. Qwen2.5-3B runs **full attention on all 36 layers** and
+was therefore — not gemma — the family binding every teacher-forced context budget in this
+programme. Qwen3.5-4B is **hybrid like gemma-3**: 8 full-attention layers of 32, the same 16 query
+heads, and a position ceiling of 262,144 against 32,768. That predicted real head-room on exactly
+the axis that has bound F3 and F4 all week.
+
+Measured, single pass, prefix plus target:
+
+| tokens | Qwen2.5-3B (retired) | Qwen3.5-4B (pinned) |
+|---|---|---|
+| 7,801 | 14.7 GiB, 2.2 s | **17.1 GiB, 3.2 s** |
+| 11,701 | 25.4 GiB, 43.5 s | **28.1 GiB, 62.4 s** |
+| 15,601 | 40.2 GiB, 285.5 s | **43.1 GiB, 183.6 s** |
+| OOM at | 19,501 | 23,401 |
+
+**It is worse at every length this card can reach, by about 2.5 GiB.** The prediction confused two
+quantities. Peak memory is resident weights plus *one* layer's attention matrix — layers are freed
+as inference walks them — and both families have 16 query heads, so that matrix is identical in
+size. A 4B model simply carries ~2.5 GiB more weight than a 3B one. Fewer full-attention layers
+reduces **time** at long context, not peak memory, and at the lengths available here it is not
+visibly faster either.
+
+**`SINGLE_PASS_CEILING` therefore stays at 8,192**, re-verified on the new pin at 17.1 GiB and
+3.2 s, with less margin than before rather than more.
+
+### 100.2 What the swap actually buys, stated without the argument that failed
+
+A current model, and a second lineage **architecturally closer to gemma-3**. That second point is
+worth more than it looks: `RUNBOOK` warned that a SPLIT_FAMILY on F2 might be *architectural*
+rather than about lineage, because gemma-3 was hybrid and Qwen2.5 was fully global. Both pinned
+families are now hybrid, so a future SPLIT_FAMILY is likelier to mean what the rule intends.
+
+Not chosen, and worth recording: **`Qwen/Qwen3-4B-Base` is also newer than 2.5 and would have been
+far worse** — 32 query heads and full attention on every layer, double the matrix at equal length.
+"Later version", "better instrument" and "cheaper instrument" are three different claims.
+
+**Gemma 4 is not pinned, and the blocker is ours rather than Google's.** transformers 5.15.0 in the
+MirrorBench venv raises `'head_dim' is a per-layer attribute and may vary across layers` on every
+Gemma 4 config, so the installed stack predates the architecture. Upgrading is worth doing as its
+own change with its own verification — that venv is shared with other work and F3's completed
+result sits on the current stack — not folded into a family swap.
+
+### 100.3 What this costs the record
+
+`qwen2.5-3b` moves to `RETIRED_FAMILIES` rather than being deleted. **§98's F3 result was computed
+on it and is not thereby stale**: it is correctly labelled with the family it used, and re-running
+F3 against the new pin produces a *different* reading rather than a corrected one. The old cache
+(`derived/f3-qwen2.5-3b.jsonl`) is keyed on model id and revision, so it cannot collide with the
+new one and no orphaning is required.

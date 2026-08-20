@@ -579,10 +579,14 @@ The cheap arm: twelve teacher-forced passes per pair per family, nothing sampled
 "$MB" research/quality-measurement/retention_distance.py --rest-ratio 3.0
 ```
 
-**A SPLIT_FAMILY here may be architectural.** `gemma-3-4b` attends 1,024 tokens on five layers in
-six and `qwen2.5-3b` is fully global to 32k, so at D=8k the two families route long-range
-information through very different amounts of the network. Pre-registered in
-`force_gpu.ATTENTION_SHAPE` before the first pass, and printed in every F2 result.
+**A SPLIT_FAMILY here may be architectural**, and the size of that worry changed on 2026-08-20.
+`gemma-3-4b` attends 1,024 tokens on five layers in six. The retired `qwen2.5-3b` was fully global
+on all 36 layers, so at D=8k the two families routed long-range information through very different
+amounts of the network and an architectural split was a live alternative to a lineage one. Its
+replacement `qwen3.5-4b` is **hybrid too** — 8 full-attention layers of 32 — so the two pinned
+families are now closer in shape, and a SPLIT_FAMILY is correspondingly more likely to be about
+lineage than about routing. Pre-registered in `force_gpu.ATTENTION_SHAPE` before the first pass,
+and printed in every F2 and F3 result.
 
 ### F3 — compression progress
 

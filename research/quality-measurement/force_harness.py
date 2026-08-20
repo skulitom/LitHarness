@@ -94,12 +94,59 @@ FAMILIES: dict[str, dict[str, str]] = {
         "chat": "google/gemma-3-4b-it",
         "chat_revision": "093f9f388b31de276ce2de164bdc2081324b9767",
     },
+    # **Qwen2.5-3B was retired for Qwen3.5-4B on 2026-08-21, and the architectural argument for
+    # the swap did not survive measurement.** Recorded that way round because the prediction is
+    # the instructive part.
+    #
+    # Predicted from the configs: Qwen2.5-3B runs full attention on all 36 layers where
+    # Qwen3.5-4B is hybrid like gemma-3 — 8 full layers of 32, same 16 query heads, position
+    # ceiling 262,144 rather than 32,768 — so the newer model should have bought head-room on
+    # exactly the axis that binds every teacher-forced budget here.
+    #
+    # Measured on this card, single pass, prefix plus target:
+    #
+    #     tokens     Qwen2.5-3B (retired)      Qwen3.5-4B (pinned)
+    #      7,801     14.7 GiB    2.2 s         17.1 GiB    3.2 s
+    #     11,701     25.4 GiB   43.5 s         28.1 GiB   62.4 s
+    #     15,601     40.2 GiB  285.5 s         43.1 GiB  183.6 s
+    #     19,501     OOM                       (23,401 OOM)
+    #
+    # **It is worse at every length we can reach, by about 2.5 GiB.** Peak is dominated by
+    # resident weights plus *one* layer's attention matrix, and both families have 16 query heads
+    # so that matrix is identical; a 4B model simply carries ~2.5 GiB more weight than a 3B one.
+    # Fewer full-attention layers reduces *time* at long context, not peak memory, and at the
+    # lengths this card admits it is not visibly faster either.
+    #
+    # So the swap does **not** raise SINGLE_PASS_CEILING; 8,192 stands, with less margin than
+    # before. What it buys is a current model and a second lineage architecturally closer to
+    # gemma-3, which makes a future SPLIT_FAMILY likelier to be about lineage than about routing.
+    #
+    # Note what was *not* chosen. `Qwen/Qwen3-4B-Base` is also newer than 2.5 and would have been
+    # far worse: 32 query heads and full attention on every layer, i.e. double the matrix at
+    # equal length. "Later version" and "better instrument" are different claims, and neither of
+    # them is "cheaper instrument".
+    "qwen3.5-4b": {
+        "lineage": "alibaba/qwen3.5",
+        "base": "Qwen/Qwen3.5-4B-Base",
+        "base_revision": "1001bb4d826a52d1f399e183466143f4da7b741b",
+        "chat": "Qwen/Qwen3.5-4B",
+        "chat_revision": "851bf6e806efd8d0a36b00ddf55e13ccb7b8cd0a",
+    },
+}
+
+#: The family this programme ran on before 2026-08-20, kept as a record rather than as a fixture.
+#: §98's F3 result was computed on it, so an artifact naming `qwen2.5-3b` is not stale — it is
+#: correctly labelled with the family it used, and re-running F3 against the new pin produces a
+#: *different* reading rather than a corrected one.
+RETIRED_FAMILIES: dict[str, dict[str, str]] = {
     "qwen2.5-3b": {
         "lineage": "alibaba/qwen2.5",
         "base": "Qwen/Qwen2.5-3B",
         "base_revision": "3aab1f1954e9cc14eb9509a215f9e5ca08227a9b",
         "chat": "Qwen/Qwen2.5-3B-Instruct",
         "chat_revision": "aa8e72537993ba99e69dfaafa59ed015b17504d1",
+        "retired": "2026-08-20, for Qwen3.5-4B; full attention on all 36 layers made it the "
+                   "binding constraint on every teacher-forced context budget",
     },
 }
 

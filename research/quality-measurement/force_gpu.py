@@ -482,7 +482,13 @@ ATTENTION_SHAPE = {
     "gemma-3-4b": {
         "sliding_window": 1024, "pattern": "5 sliding : 1 full", "max_positions": 131_072,
     },
-    "qwen2.5-3b": {"sliding_window": None, "pattern": "full attention", "max_positions": 32_768},
+    # Hybrid, like gemma-3, and that property is what retired Qwen2.5-3B: it ran full
+    # attention on all 36 layers and was the binding constraint on every teacher-forced
+    # context budget in this programme.
+    "qwen3.5-4b": {
+        "sliding_window": None, "pattern": "8 full of 32 layers",
+        "max_positions": 262_144,
+    },
 }
 
 
