@@ -1,11 +1,11 @@
 """Track F3: does a book with real structure teach the model to read it?
 
 The only arm in the force programme that touches **book grain**, which is the grain the project
-is actually about. Every other measurement here reads a thousand words; this one reads nine
-chapters and asks whether the tenth got easier because of them.
+is actually about. Every other measurement here reads a thousand words; this one reads three
+chapters and asks whether the fourth got easier because of them.
 
-    NLL_true(j)     = NLL(chapter 10 | chapters 1..j)
-    NLL_foreign(j)  = NLL(chapter 10 | token-length-matched context from a different fiction)
+    NLL_true(j)     = NLL(chapter 4 | chapters 1..j)
+    NLL_foreign(j)  = NLL(chapter 4 | token-length-matched context from a different fiction)
 
     learnability slope = OLS slope of [NLL_foreign(j) - NLL_true(j)] over j
 
@@ -70,19 +70,50 @@ from force_harness import force_verdict as headline_verdict  # noqa: E402
 DERIVED = HERE / "derived"
 SURVEY = DERIVED / "f3-survey.json"
 
-#: The context ladder, and the chapter count, both set by **Qwen2.5-3B's 32,768-position
-#: ceiling** rather than by preference. Ten chapters with j=9 runs the true-context prefix to
-#: roughly 30k tokens before the target chapter is added, which does not fit — and the obvious
-#: repair, truncating the prefix from the left, is the worst available option here: a truncated
-#: rung at j=9 beside an untruncated one at j=3 puts a *level* artifact back into the slope, and
-#: subtracting exactly that artifact is the only reason F3 is a slope rather than CDG (§58).
+#: The context ladder and the chapter count, both set by **what this card can hold in one
+#: forward pass** rather than by preference — see CONTEXT_CAP below for the measurement.
 #:
-#: So the ladder is shortened for every fiction and every family alike, and a fiction whose top
-#: rung still does not fit under **either** family's ceiling is **dropped and counted** — never
-#: measured on a shorter ladder than its pair-mate, which would be the same artifact wearing a
-#: different hat. Odd j only: the slope needs spread more than density.
-LADDER = (1, 3, 5, 7)
-CHAPTERS = 8
+#: Truncating an over-long rung from the left is never the repair: a truncated top rung beside an
+#: untruncated bottom one puts a *level* artifact back into the slope, and subtracting exactly
+#: that artifact is the only reason F3 is a slope rather than CDG (§58). So the ladder is the
+#: same for every fiction and every family, and a fiction whose top rung does not fit under
+#: **either** family's ceiling is dropped before pairing and counted.
+LADDER = (1, 2, 3)
+CHAPTERS = 4
+
+#: **Amendment 2026-08-20: the ladder is (1,2,3) over four chapters, and attention memory is why.**
+#:
+#: The ladder was (1,3,5,7) over eight chapters, sized by Qwen's 32,768-*position* ceiling. That
+#: was the wrong ceiling. Neither pinned family has flash-attention (not installed) or
+#: FlexAttention (needs Triton, which does not exist on Windows), so SDPA falls back to the math
+#: backend and materialises a `heads x L x L` attention matrix on every full-attention layer.
+#: Measured on this box, single pass, prefix plus target:
+#:
+#:     gemma-3-4b   7,802 tok  12.9 GiB   1.2 s      qwen2.5-3b   7,801 tok  14.7 GiB    2.2 s
+#:     gemma-3-4b  11,702 tok  18.6 GiB   1.1 s      qwen2.5-3b  11,701 tok  25.4 GiB   43.5 s
+#:     gemma-3-4b  15,602 tok  26.5 GiB  12.3 s      qwen2.5-3b  15,601 tok  40.2 GiB  285.5 s
+#:     gemma-3-4b  23,402 tok  48.8 GiB  71.5 s      qwen2.5-3b  19,501 tok  OOM
+#:
+#: Past ~20 GiB the allocator spills to host memory rather than failing, so the arm does not
+#: crash — it slows by two orders of magnitude, which is the more expensive way to discover a
+#: limit. **Qwen binds first**: sixteen query heads to gemma's eight is twice the matrix at equal
+#: length. The declared ladder's top rung reached 74,030 tokens on the largest fiction (median
+#: 18,695) and asked for a 28.8 GiB attention matrix on a 24 GiB card.
+#:
+#: The repair that would have preserved the ladder — read the context in chunks behind a KV cache
+#: — was implemented and then **rejected on measurement**: on gemma-3 under transformers 5.15 a
+#: chunked prefill does not reproduce a single pass, by 0.19 to 2.9 nats per token, and it fails
+#: identically through the multimodal wrapper and the inner text model, with an explicit cache
+#: class, explicit `cache_position`, an explicit attention mask, and at every chunk size. A faster
+#: instrument that returns different numbers is not the same instrument.
+#:
+#: So the ladder is what the hardware can hold. What it costs, stated rather than buried: three
+#: rungs is the minimum a slope can be fitted to, and with three equally spaced points the OLS
+#: slope is algebraically the endpoint difference — the middle rung contributes nothing to it.
+#: F3 now asks *"do three chapters teach the model to read the fourth"* rather than *"do seven
+#: teach the eighth"*. That is a weaker claim about a shorter span, and it is the claim this
+#: hardware can actually test.
+CONTEXT_CAP = 8192
 
 #: §79's constants, reused rather than re-chosen so F3's pairs are the same kind of object as
 #: the B4 pairs. A second definition of `conversion` appearing in one experiment is how two
@@ -138,6 +169,18 @@ PRE_REGISTRATION: dict[str, Any] = {
     # property of the substrate, not a concession made after seeing a result, and raising
     # EXTENSION_FICTIONS to chase a refutable n would be moving a declared bar — which is the
     # thing §89's rulebook exists to forbid.
+    "context_cap_tokens": 8192,
+    "cap_set_by": "attention memory measured on this box, not the models' position limits: "
+                  "qwen2.5-3b at 11,701 tokens costs 25.4 GiB and 43.5 s per pass against "
+                  "14.7 GiB and 2.2 s at 7,801. Declared before the run, with the ladder.",
+    "population": "web fiction whose first four chapters fit in 8,192 tokens on BOTH pinned "
+                  "tokenizers — a narrower population than 'web fiction', selected before "
+                  "pairing and applying equally to both sides of every pair",
+    "ladder_amended": "2026-08-20: (1,3,5,7) over eight chapters became (1,2,3) over four. The "
+                      "bars are untouched; the instrument is what the hardware can hold. Three "
+                      "equally spaced rungs make the OLS slope the endpoint difference, so the "
+                      "middle rung informs the fit not at all — stated because it is a real "
+                      "weakening and not a detail.",
     "can_refute": False,
     "one_directional": "PASS is available at every shape this substrate yields; FAIL is not, "
                        "because the interval bar demands 0.6017 or more at every n. A miss "
@@ -342,7 +385,11 @@ def learnability_slope(
         # does not fit is **not** truncated: it aborts the whole fiction, because a truncated
         # top rung beside an untruncated bottom one is a level artifact re-entering the slope,
         # and subtracting that artifact is F3's entire reason to exist (§58).
-        budget = force_gpu.context_limit(family) - force_gpu.count_tokens(family, target) - 256
+        # The same ceiling `ladder_fits` screens on, so the pre-pass and the scorer cannot
+        # disagree about what fits. Reading `context_limit` alone here was how a rung 44,000
+        # tokens long reached a forward pass that could not hold it.
+        ceiling = min(CONTEXT_CAP, force_gpu.context_limit(family))
+        budget = ceiling - force_gpu.count_tokens(family, target) - 256
         if tokens > budget:
             return None
         key = unit_key(
@@ -377,16 +424,22 @@ def learnability_slope(
 
 
 def ladder_fits(family: str, chapters: Sequence[str]) -> bool:
-    """Does every rung of this fiction's ladder fit under `family`'s position ceiling?
+    """Does every rung of this fiction's ladder fit under `family`'s memory cap?
 
     Tokenizer only — no weights, no CUDA — so this can run over the whole corpus before a single
     forward pass. Both chapter orders are checked because the shuffled arm reverses the body, so
     `body[:j]` and `body[::-1][:j]` are different chapters and different token counts.
+
+    **The binding ceiling is attention memory, not the position limit.** gemma's positions run to
+    131,072 and its attention runs out around 12,000; Qwen's positions run to 32,768 and its
+    attention runs out around 8,000. Reading the position limit here is what let F3's first run
+    ask for a 28.8 GiB attention matrix on a 24 GiB card and die.
     """
     if len(chapters) < 2:
         return False
     target, body = chapters[-1], list(chapters[:-1])
-    budget = force_gpu.context_limit(family) - force_gpu.count_tokens(family, target) - 256
+    ceiling = min(CONTEXT_CAP, force_gpu.context_limit(family))
+    budget = ceiling - force_gpu.count_tokens(family, target) - 256
     for order in (body, body[::-1]):
         for j in LADDER:
             if j > len(order):
@@ -394,6 +447,37 @@ def ladder_fits(family: str, chapters: Sequence[str]) -> bool:
             if force_gpu.count_tokens(family, "\n\n".join(order[:j])) > budget:
                 return False
     return True
+
+
+def feasible_fictions(
+    fictions: Sequence[dict[str, Any]], texts: dict[str, str], families: Sequence[str]
+) -> list[dict[str, Any]]:
+    """Fictions whose ladder fits under every family's cap, filtered **before** pairing.
+
+    **Order matters quadratically here.** A pair survives only if both of its sides do, so
+    filtering after pairing squares the loss: on this corpus the identical cap left **4** pairs
+    when applied to formed pairs and **47** when applied to the pool the pairing draws from. Same
+    cap, same fictions, same tolerances — the earlier order discarded pairs that a different
+    partner would have kept.
+
+    This selects for **fictions with short chapters**, which narrows what the arm's claim is
+    about. It cannot bias a comparison, because the constraint applies to both sides of every
+    pair — but "web fiction whose first four chapters fit in 8,192 tokens" is a smaller
+    population than "web fiction", and a result here is a statement about the smaller one.
+    """
+    out = []
+    for fiction in fictions:
+        chapters = [texts.get(cid, "") for cid in fiction["chapter_ids"][:CHAPTERS]]
+        if len(chapters) < CHAPTERS or any(not c for c in chapters):
+            continue
+        if all(ladder_fits(family, chapters) for family in families):
+            # **The slice happens here and nowhere else.** The survey stores every chapter id it
+            # found; a fiction that leaves this function still carrying eight of them means the
+            # scorer, the donor and the fit check each decide independently how many to read,
+            # and they will not agree. Caught by `fit_filter`, which excluded all 47 pairs
+            # because it was building a ladder to chapter 8 out of text fetched for chapter 4.
+            out.append({**fiction, "chapter_ids": list(fiction["chapter_ids"][:CHAPTERS])})
+    return out
 
 
 def fit_filter(
@@ -672,8 +756,19 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
         surveyed = survey(shards)
         DERIVED.mkdir(parents=True, exist_ok=True)
         SURVEY.write_text(json.dumps(surveyed, indent=2, sort_keys=True), encoding="utf-8")
-    fictions = surveyed["fictions"][: args.max_fictions] if args.max_fictions \
-        else surveyed["fictions"]
+    pool = surveyed["fictions"]
+    # The pool's chapter text is fetched before pairing, because the feasibility filter is what
+    # the pairing must draw from. One parquet walk serves both.
+    texts = chapter_texts(shards, {c for f in pool for c in f["chapter_ids"][:CHAPTERS]})
+    # **`--max-fictions` caps the fictions the arm READS, and so it applies after feasibility.**
+    # Capping the survey first and filtering second is a different experiment: the cap would fall
+    # on fictions that were never going to be scored, and the arm would end up reading a small
+    # fraction of its own budget. On this corpus 585 surveyed fictions yield 140 feasible ones,
+    # which is under the declared EXTENSION_FICTIONS ceiling of 200 — so the ceiling does not
+    # bind here, and it is applied rather than assumed.
+    fictions = feasible_fictions(pool, texts, args.families)
+    if args.max_fictions:
+        fictions = fictions[: args.max_fictions]
     pairs = pair_fictions(fictions)
     if args.max_pairs:
         pairs = pairs[: args.max_pairs]
@@ -687,9 +782,11 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
             surveyed_fictions=len(surveyed["fictions"]),
         )
 
-    wanted = {cid for p in pairs for side in ("high", "low") for cid in p[side]["chapter_ids"]}
-    texts = chapter_texts(shards, wanted)
     offered = len(pairs)
+    # `fit_filter` still runs, and against a pool already filtered it should exclude nothing. It
+    # is kept as the check that the two paths agree rather than as a second gate: if it ever
+    # drops a pair, the feasibility filter and the scorer disagree about what fits, and the
+    # artifact says so instead of the run quietly shrinking.
     pairs, excluded = fit_filter(pairs, texts, args.families)
     if not pairs:
         return provenance(

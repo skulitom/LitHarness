@@ -114,6 +114,23 @@ TOP_P = 0.95
 #: the same number of tokens, and what was cut is recorded rather than assumed to be nothing.
 SEED_CAP_TOKENS = 1400
 
+#: The longest sequence (prefix plus target) either pinned family will read in one pass.
+#:
+#: **Measured on this card, not inferred from the position limits.** Neither family has
+#: flash-attention (not installed) or FlexAttention (needs Triton, absent on Windows), so SDPA
+#: falls back to the math backend and materialises a `heads x L x L` attention matrix on every
+#: full-attention layer:
+#:
+#:     gemma-3-4b   7,802 tok  12.9 GiB   1.2 s      qwen2.5-3b   7,801 tok  14.7 GiB    2.2 s
+#:     gemma-3-4b  11,702 tok  18.6 GiB   1.1 s      qwen2.5-3b  11,701 tok  25.4 GiB   43.5 s
+#:     gemma-3-4b  15,602 tok  26.5 GiB  12.3 s      qwen2.5-3b  15,601 tok  40.2 GiB  285.5 s
+#:     gemma-3-4b  23,402 tok  48.8 GiB  71.5 s      qwen2.5-3b  19,501 tok  OOM
+#:
+#: Past ~20 GiB the allocator spills to host memory instead of failing, so an over-long pass does
+#: not crash — it slows by two orders of magnitude. **Qwen binds first**: sixteen query heads to
+#: gemma's eight is twice the matrix at equal length. 8,192 is where both stay resident and fast.
+SINGLE_PASS_CEILING = 8192
+
 
 def gpu_sensors() -> dict[str, Any]:
     """Core temperature, power draw and throttle reasons in one nvidia-smi call.
@@ -660,13 +677,30 @@ def token_logprobs(
     target_ids = tokenizer(target, return_tensors="pt", add_special_tokens=False)["input_ids"][0]
     if prefix_ids.shape[0] > max_prefix_tokens:
         prefix_ids = prefix_ids[-max_prefix_tokens:]
+    # The scored block is the prefix's LAST token followed by the whole target, so the block's
+    # position i predicts target token i and the arithmetic below is the same whether the rest of
+    # the prefix arrived in one pass or in twenty. Everything before it is context and is only
+    # ever needed as keys and values.
     ids = torch.cat([prefix_ids, target_ids]).unsqueeze(0).to(model.device)
+    # **One pass, always, and a refusal rather than a fallback when it will not fit.** A chunked
+    # prefill behind a KV cache was written here and then removed: on gemma-3 under transformers
+    # 5.15 it does not reproduce a single pass (0.19 to 2.9 nats per token, through both the
+    # multimodal wrapper and the inner text model, with an explicit cache class, explicit
+    # `cache_position`, an explicit attention mask, at every chunk size). It sat behind a
+    # `if context > chunk` branch for one hour, during which F3 silently computed 305 units
+    # through it, because F3's contexts are 5-8k and the chunk was 2,048. A fallback that
+    # changes the measurement is worse than a crash: the crash is visible.
+    if int(ids.shape[1]) > SINGLE_PASS_CEILING:
+        raise ValueError(
+            f"{int(ids.shape[1])} tokens exceeds the {SINGLE_PASS_CEILING}-token single-pass "
+            "ceiling. Shorten the caller's ladder; do not chunk, and do not raise this number "
+            "without re-measuring attention memory on the card in front of you."
+        )
     keep = int(target_ids.shape[0]) + 1
     call = time.time()
     with torch.no_grad():
-        # `use_cache=False`: nothing is generated from this pass, so a KV cache for a 10k-token
-        # context is pure allocation on a card that F2's longest condition already runs to
-        # within a few hundred megabytes of full.
+        # `use_cache=False`: nothing is generated from this pass, so a KV cache is pure
+        # allocation on a card that F2's longest condition already runs close to full.
         logits = model(ids, logits_to_keep=keep, use_cache=False).logits.float()
     governor.after(time.time() - call)
     # With `logits_to_keep=n` the returned block is the LAST n positions, so position -1 of the
