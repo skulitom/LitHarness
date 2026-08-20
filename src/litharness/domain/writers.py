@@ -1,0 +1,350 @@
+"""The Writer role: a named professional who drafts, and never says whether a draft is good.
+
+Companion to `domain/directors.py`, and the divergences from it are the interesting part. A
+Director acts *before* prose exists and emits directives; a Writer is the role that has been
+acting all along — every scene in this system was drafted by somebody — and has never had an
+identity. `application/planner.py`'s system message was the whole of the drafter's self: *"You
+are drafting one scene of a novel"*, plus mechanics. Nothing named a person, a career, a taste or
+a subject.
+
+**The prior says this will probably be decorative, and it is stated here rather than discovered
+later.** §89.1 measured `qwen3:14b` returning one distinct answer vector across four personas,
+byte-identical. §83 found register invariant to simulated phenomenology. §77 measured
+persona-to-passage sum-of-squares ratios of 0.0028, 0.0071 and 0.0342 while changing *the
+question* by one word moved a rate ten points. A roster that has not been checked is §89.1 in a
+fourth costume.
+
+What makes this design not simply that experiment again: **those were personas held to make a
+judgment, and a Writer makes none.** Inertness in a judging persona silently converts N opinions
+into one and the panel still reports N. Inertness in a drafting persona is directly measurable
+against the drafts themselves, at no model cost beyond prose that was going to be generated
+anyway. So the prior does not veto the roster — it dictates the shape of the dossier
+(`legal_dossier`, and *deep in domain, shallow in demography*) and the gate that must clear before
+any writer comparison may be reported (`distinctness`, reused from `directors` rather than
+reimplemented).
+
+See `plan/writer-roster.md`. Nothing here casts, scores, or reads reception: R3 says a writer
+never judges, and a writer that did would be a judge in a hat.
+"""
+
+from __future__ import annotations
+
+from collections.abc import Mapping, Sequence
+from dataclasses import dataclass, field
+from hashlib import sha256
+
+from litharness.domain.directors import (
+    IllegalBrief,
+    prose_axes_named,
+)
+from litharness.domain.text import canonicalize
+
+#: Prefix for a writer's content address. `wtr-` rather than `dtor-`: the two are different roles
+#: in different tables, and a shared prefix would invite a shared lookup.
+WRITER_ID_PREFIX = "wtr-"
+
+#: Separator inside the addressed material. `\x00` cannot occur in canonicalised text, so no
+#: dossier can forge a field boundary by containing the separator.
+_FIELD = "\x00"
+
+#: Separator between interests inside their own field, distinct from `_FIELD` so that
+#: `("a", "b")` and `("a\x00b",)` cannot address to the same writer.
+_ITEM = "\x1f"
+
+
+class IllegalDossier(IllegalBrief):
+    """A dossier a Writer is not licensed to carry.
+
+    Subclasses `IllegalBrief` deliberately: R1 is *inherited* from the Director's rail rather
+    than restated, so a caller that already refuses illegal briefs refuses illegal dossiers by
+    the same `except`. The rule is one rule — a role may name what it knows, never what good
+    prose is — and two exception types would let it drift into two rules.
+    """
+
+
+def legal_dossier(text: str) -> None:
+    """Raise unless `text` says what a writer knows rather than what good prose is.
+
+    **R1, and it matters more here than it does for a brief.** A brief reaches the narrative
+    planner and the writer sees its consequences; a dossier rides in the system message of *every
+    scene call*, beside `feedback` — which is the one channel `plan/reader-judge-loop.md` §2.1
+    guards with a four-step admission path. One sentence in a dossier about sentence rhythm,
+    punctuation, or how much interiority belongs on a page injects a prose axis into every prompt
+    for a whole book, with no counter, no validation and no reader behind it.
+
+    Not hypothetical: `em_dash`'s own pre-registered hypothesis is still VOID with the estimate
+    leaning *toward* the mark (§78.3), so a dossier saying "she never could stand a dash" would
+    assert as premise the thing the loop exists to test.
+
+    The guard is `directors.prose_axes_named` unchanged — narrow, high-precision vocabulary, and
+    a paraphrase gets through. No regex fixes that, and the trade is stated in `_CRAFT_INSTRUCTION`
+    rather than hidden here. What it buys is that the axes the loop is **actively measuring**
+    cannot be pre-empted by a dossier that says so plainly.
+    """
+    if not text.strip():
+        raise IllegalDossier("a writer with no dossier is not a writer; it is the anonymous call")
+    named = prose_axes_named(text)
+    if named:
+        raise IllegalDossier(
+            f"this dossier names the registered prose axis/axes {', '.join(named)}. A dossier "
+            "says what this writer knows the inside of; what good prose is comes from readers "
+            "through the axis admission path (plan/reader-judge-loop.md §2.1), never from a "
+            f"drafting prompt — {named[0]}'s own hypothesis is still under test"
+        )
+
+
+def writer_id_for(
+    *,
+    name: str,
+    dossier: str,
+    interests: Sequence[str],
+    exemplar_digest: str | None = None,
+) -> str:
+    """Content address over the writer itself, so a roster cannot drift under the books it wrote.
+
+    **`exemplar_digest` participates from the first mint, and that is the whole point of it being
+    here before anything populates it** (`plan/writer-roster.md` §3.1). Two different id changes
+    have to stay distinguishable:
+
+    * populating an exemplar later *should* mint a new writer, because an exemplar changes what
+      the writer drafts and that is identity rather than drift;
+    * adding the *field* later would re-address every writer that already existed without changing
+      what any of them does — a schema re-mint, which is pure loss.
+
+    Including it now, canonically empty, buys the first and avoids the second. `None` addresses as
+    the empty string; since the roster is empty as of 2026-08-20 there is nothing to re-mint.
+    """
+    # **The interest field is length-prefixed, because joining alone is forgeable.** Without the
+    # count, `("a", "b")` and `("a\x1fb",)` join to the same bytes and address to the same
+    # writer — two different rosters, one id. Measured, not reasoned about: the first version of
+    # this function returned equal ids for that pair. A content address that can collide is the
+    # one kind of defect this scheme exists to make impossible.
+    subjects = tuple(canonicalize(subject) for subject in interests)
+    material = _FIELD.join(
+        (
+            name,
+            canonicalize(dossier),
+            _ITEM.join((str(len(subjects)), *subjects)),
+            exemplar_digest or "",
+        )
+    ).encode()
+    return f"{WRITER_ID_PREFIX}{sha256(material).hexdigest()[:24]}"
+
+
+@dataclass(frozen=True, slots=True)
+class Writer:
+    """One named professional: what they know the inside of, and nothing about good prose."""
+
+    writer_id: str
+    name: str
+    #: The backstory: career, training, the work they did before this, how they came to it, which
+    #: questions in the subject still bother them. **Deep in domain, shallow in demography** — no
+    #: age, no hometown, no commute. `research/quality-measurement/personas.py` opens with why:
+    #: a persona described demographically elicits *stereotype performance*, a model writing what
+    #: it thinks that person sounds like, which is a different behaviour wearing the same words.
+    dossier: str
+    #: Named subjects this writer knows from the inside, ordered. The roster's actual variable:
+    #: professional competence is held constant across every writer per the directive, so nobody
+    #: is new, struggling, or bad at this. Craft is not what varies here.
+    interests: tuple[str, ...] = ()
+    #: **Socket, deliberately unpopulated.** Own-generated only if ever admitted — third-party
+    #: prose here is leak-audit class, and this is the most-repeated text in the system. Admission
+    #: sits on R1's boundary, because an exemplar demonstrates what good prose looks like, which
+    #: is exactly what a dossier may not assert. An operator act, not a build decision.
+    exemplar_digest: str | None = None
+    #: Operator annotation. Never sent to a model, and therefore not addressed either — an
+    #: annotation that minted a new writer would make note-keeping a versioning event.
+    note: str = field(default="", compare=False)
+
+    def __post_init__(self) -> None:
+        legal_dossier(self.dossier)
+        if not self.name.strip():
+            raise IllegalDossier("a writer needs a name; provenance is the whole point")
+        if len(set(self.interests)) != len(self.interests):
+            raise IllegalDossier(f"{self.name} lists a subject twice: {self.interests}")
+        expected = writer_id_for(
+            name=self.name,
+            dossier=self.dossier,
+            interests=self.interests,
+            exemplar_digest=self.exemplar_digest,
+        )
+        if self.writer_id != expected:
+            raise IllegalDossier(
+                f"writer_id {self.writer_id} does not address this writer"
+            )
+
+    def render(self) -> str:
+        """The dossier as it reaches a drafting call, and nothing else reaches one.
+
+        `name` and `interests` are provenance and indexing; the model receives the dossier's
+        prose. Sending the interest list as a bare enumeration would hand the model a checklist,
+        and a checklist is what turns "knows the inside of tides" into "mentions tides" — which is
+        G3's contamination failure arriving by invitation rather than by accident.
+        """
+        return self.dossier.strip()
+
+
+def build(
+    name: str,
+    dossier: str,
+    *,
+    interests: Sequence[str] = (),
+    exemplar_digest: str | None = None,
+    note: str = "",
+) -> Writer:
+    """A writer from its own words, with the id derived rather than supplied."""
+    return Writer(
+        writer_id=writer_id_for(
+            name=name,
+            dossier=dossier,
+            interests=tuple(interests),
+            exemplar_digest=exemplar_digest,
+        ),
+        name=name,
+        dossier=dossier,
+        interests=tuple(interests),
+        exemplar_digest=exemplar_digest,
+        note=note,
+    )
+
+
+#: The first slate: **examples rather than recommendations**, the same status `directors.BUILTIN`
+#: carries. Nothing here claims any of them is a good writer for any book; which roster is worth
+#: running is an operator act, the way admitting a fixture family is (§84).
+#:
+#: **Two pairs are deliberately adjacent, and that is the load-bearing part of the slate.** Ten
+#: far-apart subjects can only ask whether binding happens at all — a single bit — and a far-pair
+#: pass has fooled this project before (§77's persona ratios looked like separation until one word
+#: of question change moved a rate ten points). `volcanology` neighbours `geology`, and
+#: `estuarine` neighbours `marine`: same tradition, same instruments, different hazard and
+#: different timescale. The registered prediction is that far pairs separate more than near pairs
+#: and near pairs still separate more than a writer against itself. Far and near reading alike
+#: means the label bound and the subject did not.
+BUILTIN: Mapping[str, Writer] = {
+    writer.name: writer
+    for writer in (
+        build(
+            "geology",
+            "You spent eleven seasons mapping ground nobody had mapped, most of them above four "
+            "thousand metres, before you wrote anything anyone read. You know what a slope does "
+            "in the hour before it goes, and how long it takes to get a body down from one. You "
+            "learned to read rock the way other people read weather: not as scenery but as a "
+            "record of pressure and time, and you cannot look at a cut bank without reading it. "
+            "What still bothers you is how much of what you were taught about a formation turned "
+            "out to be somebody's guess repeated until it hardened.",
+            interests=("field geology", "high-altitude survey"),
+            note="example: earth science, far anchor; neighbour of volcanology",
+        ),
+        build(
+            "volcanology",
+            "You worked eruption response for nine years, running instruments on a flank "
+            "that might clear in a month or might not, plus the standing argument with "
+            "people whose town it "
+            "was about what the numbers meant. You know the sound of a swarm on a seismometer "
+            "before the count comes back, and you know what it costs to be the one who says "
+            "evacuate and be wrong. Gas ratios, tilt, the specific dishonesty of an average. "
+            "What still bothers you is that the ones that killed people were rarely the ones "
+            "that looked dangerous.",
+            interests=("volcanology", "eruption monitoring"),
+            note="example: earth science, NEAR neighbour of geology , graded binding probe",
+        ),
+        build(
+            "marine",
+            "You did fourteen long-voyage seasons, most of them out of sight of anything, "
+            "counting and tagging and losing gear to weather. You know how a ship smells on day "
+            "forty and what happens to a watch schedule when the science goes wrong at three in "
+            "the morning. You think about scale constantly: what a transect can and cannot see, "
+            "and how much of an ocean is inferred from a line of dots. What still bothers you is "
+            "how much of the record is where the ships happened to go.",
+            interests=("marine biology", "long-voyage fieldwork"),
+            note="example: marine, far anchor; neighbour of estuarine",
+        ),
+        build(
+            "estuarine",
+            "You worked coastal survey and fisheries assessment, which means you worked with "
+            "people whose livelihood was the number you were about to publish. Tidal creeks, "
+            "salinity wedges, a nursery ground that moves. You know how a stock assessment is "
+            "actually assembled and where the uncertainty is buried, and you have sat in the "
+            "room when the quota came down. What still bothers you is that the fishers were "
+            "usually right about where the fish were and never right about why.",
+            interests=("estuarine ecology", "fisheries survey"),
+            note="example: marine, NEAR neighbour of marine , graded binding probe",
+        ),
+        build(
+            "logistics",
+            "You moved things for a living, which meant fuel, ammunition, food and people, "
+            "across distances where the plan and the road disagreed. You know that an army "
+            "is a queue and that the interesting failures are never at the front. Load "
+            "plans, throughput, the difference between what a bridge is rated for and "
+            "what crosses it. What still "
+            "bothers you is how often the shortage was somewhere in the system all along and "
+            "nobody could see it because nobody owned the whole picture.",
+            interests=("military logistics", "supply"),
+            note="example: far",
+        ),
+        build(
+            "tenure",
+            "You read manor rolls for a decade: who held what of whom, what was owed at "
+            "Michaelmas, which fields went out of cultivation and in whose lifetime. You know "
+            "that most of the past was agricultural and that most agricultural history is a "
+            "dispute about boundaries. You think in seasons and in obligations that outlive the "
+            "people who made them. What still bothers you is how much of the record was written "
+            "by the party with an interest in it.",
+            interests=("medieval agriculture", "land tenure"),
+            note="example: far",
+        ),
+        build(
+            "orbital",
+            "You flew payload operations, which is to say you spent years in a room where "
+            "everything that happens has already happened eight minutes ago. You know how a "
+            "burn is planned and how a plan survives contact with a thruster that under-performs "
+            "by two percent. Windows, margins, the tyranny of the ephemeris. What still bothers "
+            "you is how many procedures exist because of one incident nobody involved will "
+            "discuss.",
+            interests=("orbital mechanics", "flight operations"),
+            note="example: far",
+        ),
+        build(
+            "forensic",
+            "You traced money for a living, which is mostly reading things people wrote when "
+            "they thought nobody would. You know what a ledger looks like when it has been "
+            "tidied and what a legitimate business looks like when it is having a bad year, and "
+            "you know that the difference is smaller than anyone comfortable would like. What "
+            "still bothers you is how many of them were not clever, only patient, and how long "
+            "patience works.",
+            interests=("forensic accounting", "fraud"),
+            note="example: far",
+        ),
+        build(
+            "linguistics",
+            "You worked on languages with few speakers and worse records, reconstructing what "
+            "must have been said from what survived being written down by somebody who did not "
+            "speak it. You know how a sound change propagates and how a translation decides "
+            "things the original left open. What still bothers you is that the confident "
+            "reconstructions and the shaky ones are printed in the same typeface.",
+            interests=("historical linguistics", "translation"),
+            note="example: far",
+        ),
+        build(
+            "outbreak",
+            "You did field epidemiology, the part that is interviews and shoe leather rather "
+            "than models. You know what a case definition does to a curve and how quickly a "
+            "number becomes a policy and then becomes a fact. You have been the person asking a "
+            "family what they ate. What still bothers you is how much of the response was "
+            "decided in the first week on the worst information anyone would have.",
+            interests=("epidemiology", "outbreak fieldwork"),
+            note="example: far",
+        ),
+    )
+}
+
+
+__all__ = [
+    "BUILTIN",
+    "WRITER_ID_PREFIX",
+    "IllegalDossier",
+    "Writer",
+    "build",
+    "legal_dossier",
+    "writer_id_for",
+]

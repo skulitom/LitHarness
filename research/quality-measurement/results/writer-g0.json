@@ -1,0 +1,54 @@
+{
+  "cost": {
+    "anonymous_system_chars": 466,
+    "note": "characters, not tokens: no tokenizer is loaded here, and a chars-per-token rule of thumb would be a number nobody could check. Repairs re-send the system message and are not counted in scenes_per_book.",
+    "per_writer_overhead_chars": {
+      "estuarine": 468,
+      "forensic": 421,
+      "geology": 552,
+      "linguistics": 388,
+      "logistics": 472,
+      "marine": 469,
+      "orbital": 411,
+      "outbreak": 390,
+      "tenure": 439,
+      "volcanology": 515
+    },
+    "scenes_per_book": 30,
+    "worst_book_overhead_chars": 16560,
+    "worst_overhead_chars": 552,
+    "worst_overhead_ratio_vs_anonymous": 1.185,
+    "worst_writer": "geology"
+  },
+  "dossier_absent_from_packet_side": true,
+  "dossier_reaches_the_request": true,
+  "every_writer_differs_from_anonymous": true,
+  "pre_registration": {
+    "asks": [
+      "does the dossier reach the system message",
+      "do two writers differ, and does one writer repeat",
+      "does the dossier stay out of the context packet (\u00a73.2, R5)",
+      "what does it cost per scene call, and per book"
+    ],
+    "calls_no_model": true,
+    "design": "plan/writer-roster.md \u00a76",
+    "establishes": "the input arrives and changes the request's bytes; nothing about prose",
+    "gate": "G0 wiring",
+    "what_a_pass_does_not_license": "any comparison between writers. That is G1's, behind writer_distinctness on a real model with a real sampler, with the shuffle control in the same run."
+  },
+  "roster_size": 10,
+  "same_writer_renders_identically": true,
+  "writers": {
+    "estuarine": "wtr-113dec911efe0bfdf9b0979d",
+    "forensic": "wtr-d687579ecddd26fbd8722bcb",
+    "geology": "wtr-24eb0752019b8a3192f1f3d0",
+    "linguistics": "wtr-1dda3298964d672d267c4097",
+    "logistics": "wtr-41b6f24a7b1e4071ce2e20b0",
+    "marine": "wtr-ebfce6c5c1f589931721bc71",
+    "orbital": "wtr-229794ec75e863842456fcd0",
+    "outbreak": "wtr-2ec610acf54b36934abe9824",
+    "tenure": "wtr-39534172062a20ddb419b371",
+    "volcanology": "wtr-75d161f2a020098535e66688"
+  },
+  "writers_differ_from_each_other": true
+}

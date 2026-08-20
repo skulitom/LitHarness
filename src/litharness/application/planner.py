@@ -103,6 +103,7 @@ from litharness.domain.jobs import Job, input_digest_for
 from litharness.domain.plans import premise_of, scene_plan_for, scene_plan_line
 from litharness.domain.revision import Revision
 from litharness.domain.text import content_hash
+from litharness.domain.writers import Writer
 
 DEFAULT_TEMPLATE = SIX_BEAT
 
@@ -300,6 +301,7 @@ def render_prompt(
     progression: str | None = None,
     scene_plan: str | None = None,
     feedback: FeedbackSet | None = None,
+    writer: Writer | None = None,
 ) -> tuple[str, str]:
     """(system, prompt) for one beat, grounded in an assembled context packet.
 
@@ -349,12 +351,34 @@ def render_prompt(
     Empty by default and empty is the common case: with no pool registration, no established
     direction or no located difference, `feedback_loop.resolve` returns an empty set and this
     renders nothing (`plan/reader-judge-loop.md` §5.1).
+
+    **`writer` is the drafter's identity, and `None` is the control.** Until 2026-08-20 the
+    drafter had none: the paragraph above was the whole of its self, and everything topical it
+    knew arrived through the packet, which is a *book*-shaped input. A dossier is the first
+    *writer*-shaped one. Off by default because **no writer is the control** — a change to
+    drafting behaviour that could only be produced by editing code is an arm nobody can
+    reproduce — and because the prior in `plan/writer-roster.md` §2 says a roster is more likely
+    decorative than not until `writer_distinctness` says otherwise.
     """
     system = (
         "You are drafting one scene of a novel. Write only the scene's prose: no headings, "
         "no commentary, no summary of what you wrote. The context below is established and "
         "may be relied on; do not contradict it."
     )
+    if writer is not None:
+        # **Ahead of the mechanics and never in the packet** (`plan/writer-roster.md` §3.2).
+        # The packet's contract is "established and may be relied on; do not contradict it",
+        # and a novelist's career is not a fact about the story — putting one under that
+        # heading is how a writer's biography becomes canon in the book they are writing.
+        # This is the boundary `feedback` already observes, for the same stated reason.
+        #
+        # It goes *first* because it is who is writing, and the mechanics that follow are
+        # what to do; the packet and the beat still come last in `prompt`, where a model
+        # acts on them. And R5 holds regardless of order: where the dossier and the packet
+        # meet, the packet outranks it. A writer who knows metallurgy from the inside is
+        # being asked to write *this* book, not a book about metallurgy — which is the
+        # contamination G3 exists to measure.
+        system = f"{writer.render()}\n\n{system}"
     if status_example:
         # Values as well as shape. A model asked for a status line with no numbers in view
         # invents them, and an invented balance is a contradiction the gate refuses and the
