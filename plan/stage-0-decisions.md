@@ -8533,3 +8533,50 @@ Recorded as outstanding rather than defaulted, because each blank gates somethin
 Until the anchor names and the grab criterion arrive, the programme can build RS1's provenance
 rail and its CI check, the property-ledger structure, and G0's wiring — none of which needs to
 know which works were named.
+
+### 97.10 The anchor set is wider than §7.1 declared, and the corpus cannot supply it
+
+**The cap moves from 3–5 to the operator's full named set** (2026-08-20). The argument is the
+operator's and it is correct on its own terms: a taste function mined from ten summits generalises
+further than one mined from three, and §7.1's cap was a declared number rather than a derived one.
+Recorded as an amendment rather than argued with.
+
+**What blocks the anchor set is availability, and it was never the count.** Measured against the
+cached RoyalRoad shards — 411,943 distinct titles — before any download was proposed:
+
+| named work | in corpus | followers | views | reading |
+|---|---|---|---|---|
+| Paranoid Mage | yes | **17,850** | 9,579,197 | summit: corpus p99.9 is 15,681 and the maximum is 18,718 |
+| Mark of the Crijik | yes | 3,586 | 10,554 | ~p97. Not a summit, and the row is **incoherent** — views below followers where Paranoid Mage runs 536 views per follower |
+| Mother of Learning | **no** | — | — | only *"Mother of Learning: The AU Chapters"*, a fan work at 2,256 followers. MoL proper lives outside the shards, in `BookCrawler/data` |
+| Chrysalis | **no** | — | — | nearest is *"The Chrysalis Shogunate"*, 4 followers, a different work |
+| Defiance of the Fall, The Primal Hunter, All the Skills, Bog Standard Isekai, Portal to Nova Roma, Blessed Time, The Mage of Shimmer Mountain | **no** | — | — | absent under loose substring match, not only exact |
+
+**The absences share a mechanism, and the mechanism is adverse to this entire design.** Every
+missing title is a work that left RoyalRoad for Amazon or Kindle Unlimited, which is what
+commercial success does to a serial on that platform. So **a RoyalRoad scrape systematically
+under-samples the summit**: the corpus's own follower ceiling of 18,718 is a *platform retention*
+ceiling and not a popularity ceiling, and the works the operator names as summits are missing
+precisely *because* they are summits. Reverse survivorship.
+
+Two consequences follow and both are the programme's problem rather than the list's:
+
+1. **The mid-tier contrast is measured against a truncated top.** §1's contrast corpus is drawn
+   from the same platform, so "mid-tier" is defined relative to a distribution whose upper tail
+   has been removed by commerce. A far-pair fidelity gate built this way is easier than it looks.
+2. **Harry Potter cannot enter under the matched-contrast rule at all.** Not RoyalRoad, no
+   story-grain follower or view metric, different era and medium. §1 requires a contrast of the
+   same genre and era band, length-matched, population-labelled *by the same metric*, and none of
+   that is constructible against a RoyalRoad mid-tier. Its population-consensus status is beyond
+   argument; its usability under this design is nil unless it is given its own band with its own
+   contrast corpus, which is a second programme.
+
+**A wider anchor set also multiplies the contrast corpus.** A summit spanning progression
+fantasy, LitRPG, isekai and children's fantasy cannot share one matched mid-tier set; matching is
+per-anchor, so the contrast download scales with the anchor count rather than being fixed. That is
+a cost of the wider set and not an objection to it, recorded before it is paid rather than after.
+
+**What is still needed from the operator:** §7.4's ALLOW covered the *contrast* corpus.
+**Acquiring the anchor text itself is a separate decision and is not assumed.** The narrower step
+— fetching public popularity metadata only, so each named work carries the §0.3 citation while no
+prose moves — is the cheaper half and would settle admissibility without touching RS1's boundary.
