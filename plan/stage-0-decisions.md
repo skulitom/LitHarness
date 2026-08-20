@@ -8542,28 +8542,37 @@ further than one mined from three, and §7.1's cap was a declared number rather 
 Recorded as an amendment rather than argued with.
 
 **What blocks the anchor set is availability, and it was never the count.** Measured against the
-cached RoyalRoad shards — 411,943 distinct titles — before any download was proposed:
+cached RoyalRoad shards before any download was proposed. **The first pass of this table was wrong
+and is corrected here rather than quietly amended**: it counted one row per *chapter* and called
+the result distinct titles, so every percentile it published was chapter-weighted and over-weighted
+long fictions. Per **fiction**: 22,397 of them, p50 = 2 followers, p90 = 57, p99 = 2,035,
+p99.9 = 8,136, maximum 18,718.
 
-| named work | in corpus | followers | views | reading |
-|---|---|---|---|---|
-| Paranoid Mage | yes | **17,850** | 9,579,197 | summit: corpus p99.9 is 15,681 and the maximum is 18,718 |
-| Mark of the Crijik | yes | 3,586 | 10,554 | ~p97. Not a summit, and the row is **incoherent** — views below followers where Paranoid Mage runs 536 views per follower |
-| Mother of Learning | **no** | — | — | only *"Mother of Learning: The AU Chapters"*, a fan work at 2,256 followers. MoL proper lives outside the shards, in `BookCrawler/data` |
-| Chrysalis | **no** | — | — | nearest is *"The Chrysalis Shogunate"*, 4 followers, a different work |
-| Defiance of the Fall, The Primal Hunter, All the Skills, Bog Standard Isekai, Portal to Nova Roma, Blessed Time, The Mage of Shimmer Mountain | **no** | — | — | absent under loose substring match, not only exact |
+| named work | in corpus | followers | reading |
+|---|---|---|---|
+| Paranoid Mage | yes | **17,850** | **second of 22,397**, behind only *The Path of Ascension* at 18,718 |
+| Mark of the Crijik | yes | **3,586** | **above p99** (2,035). The first pass called this "~p97" on the chapter-weighted figures and understated it. Its 10,554 views remain incoherent against 3,586 followers where Paranoid Mage runs 536 views per follower, so the *row* is still suspect even though the rank is not |
+| Mother of Learning | **no** | — | only *"Mother of Learning: The AU Chapters"*, a fan work at 2,256. MoL proper lives in `BookCrawler/data`, outside the shards |
+| Chrysalis | **no** | — | nearest is *"The Chrysalis Shogunate"*, 4 followers, a different work |
+| Defiance of the Fall, The Primal Hunter, All the Skills, Bog Standard Isekai, Portal to Nova Roma, Blessed Time, The Mage of Shimmer Mountain | **no** | — | absent under loose substring match, not only exact |
 
-**The absences share a mechanism, and the mechanism is adverse to this entire design.** Every
-missing title is a work that left RoyalRoad for Amazon or Kindle Unlimited, which is what
-commercial success does to a serial on that platform. So **a RoyalRoad scrape systematically
-under-samples the summit**: the corpus's own follower ceiling of 18,718 is a *platform retention*
-ceiling and not a popularity ceiling, and the works the operator names as summits are missing
-precisely *because* they are summits. Reverse survivorship.
+**Retracted: the reverse-survivorship mechanism.** The first version of this entry claimed the
+missing works were absent *because* commercial success pulls a serial off RoyalRoad, and called
+the 18,718 ceiling a platform-retention ceiling rather than a popularity one. That claim does not
+survive its own evidence. The corpus's top ten contains **"The Calamitous Bob (stubbed)"** at
+15,913 — *stubbed* being RoyalRoad's own word for a work whose chapters were removed for Amazon —
+so stubbed works are plainly **not** excluded from this corpus. The plainer explanation is the
+right one: **22,397 fictions is a sample of a much larger catalogue**, absence from a sample is a
+fact about the sample, and no mechanism needs inventing to explain it.
 
-Two consequences follow and both are the programme's problem rather than the list's:
+What survives the retraction is the only part that was load-bearing: **the corpus cannot supply
+most of the named anchors, so they have to be acquired.** The two consequences below stand on
+that, not on the mechanism.
 
-1. **The mid-tier contrast is measured against a truncated top.** §1's contrast corpus is drawn
-   from the same platform, so "mid-tier" is defined relative to a distribution whose upper tail
-   has been removed by commerce. A far-pair fidelity gate built this way is easier than it looks.
+1. **The mid-tier contrast is still drawn from this sample**, so whatever "mid-tier" means it
+   means it relative to 22,397 fictions with a median of two followers — a distribution whose
+   mass is inactive work. The contrast rule's real difficulty is that the population label has
+   almost no dynamic range below p90.
 2. **Harry Potter cannot enter under the matched-contrast rule at all.** Not RoyalRoad, no
    story-grain follower or view metric, different era and medium. §1 requires a contrast of the
    same genre and era band, length-matched, population-labelled *by the same metric*, and none of
