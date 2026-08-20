@@ -8218,3 +8218,97 @@ Still outstanding and needing a forward pass rather than an edit: **B5** (F2's u
 decay, so the slope may be scatter — unanswerable until the corrected run exists), **B12** (local
 F1's 4x continuation-length band, which makes §95.9's "the instrument is ready" false for the
 local transport), and the four LOW findings that describe declarations rather than defects.
+
+## 96. The project simulates a writing process, and the version of that sentence which is already dead stays dead
+
+**A frame, not a finding.** Nothing here was measured, nothing here licenses anything, and no
+document above it is rewritten. It exists because the parts this project keeps building — a
+Director that says what a book is, a Writer with a dossier, a reader that locates rather than
+scores, revision operators, a promise ledger that tracks debt — have been arriving one at a time
+without a sentence saying what they are collectively. This is that sentence, and its second half
+matters more than its first.
+
+**The frame: the project simulates the writing *process*, rendered functionally.** A writer's
+working mind as a set of operations that can be performed and measured — drafting, read-back that
+**locates** what is on the page and what is missing (the E6 frame), revision operators, direction,
+promise debt, backstory. Every one of those is a workflow step. Every one either changes prose or
+does not, and the difference is visible in the prose.
+
+**The rule of the frame, which is the whole of its content: simulate the workflow, never the
+feelings.** The phenomenological version of this idea — a machine given an inner life and asked
+to report from it — is not unexplored here. It has been adjudicated, four separate times, and it
+lost every time:
+
+| what was tried | what it returned |
+|---|---|
+| described inner states, asked to move register (§83) | **0 of 4** — the register was invariant to simulated phenomenology |
+| personas as judges (§86.2, §89.1) | inert; `qwen3:14b` returned **one distinct answer vector across four personas, byte-identical** |
+| demographic backstory (`research/quality-measurement/personas.py`) | **stereotype performance** — a model writing what it thinks that person sounds like, which is a different behaviour wearing the same words |
+| self-preference, the verdict channel (§89.4) | dead; position outweighed text **4,676 to 1** |
+
+So the frame is not a licence to build organs. It is a statement about which half of the
+metaphor is load-bearing. A writing *process* is a sequence of things done to a manuscript, and
+this project can measure whether each of them does anything. A writing *mind* is a claim about
+interior states, and every instrument this project has pointed at one came back with a refusal.
+**The goal is unchanged and is not a metaphor at all: superhuman books, no human in the loop.**
+
+### 96.1 The standing experiment class this frame creates
+
+**Mind-component ablations.** Any organ — a Director's brief, a Writer's dossier, inner speech,
+the promise ledger — toggled across matched books and reported as a **component** effect. That is
+a real experimental class rather than a description, and it comes with an arithmetic obligation
+that is easy to forget precisely because each component looks like one small switch.
+
+**§61's α division applies to the full component grid, not to each toggle separately.** §61
+pre-registration (5): if more than one book could have been reported, the confidence level is
+divided by the candidate count. `director-role.md` §4 applies it to N directors and
+`writer-roster.md` R4 makes it multiplicative for N×M director-writer pairs. A component grid
+multiplies again — four binary organs is sixteen configurations before a single director or writer
+is chosen — and §61's own sizing says what a thinner margin costs: at a true win rate of 0.60,
+roughly 100–150 decisive judgments; at 0.55, 400–500; clustering inflating both.
+
+**No best-of-grid book is ever reported as the book.** The way out is not to pretend the division
+does not apply. It is to fix the configuration *before* the book is measured and report that book.
+
+### 96.2 Anti-scope, which is the operative part
+
+- **No organ is built because minds have organs.** A part earns its place by clearing its own
+  gate ladder — wiring, decorativeness, causal ablation — or it does not exist. The frame is a
+  way of naming what has already been built; it is not a shopping list.
+- **A part that fails its ladder is buried the way the personas were**, in this ledger, with the
+  number that killed it. §58 has two entries because CDG earned the first one; the roster will
+  earn its own entry either way, and a decorative roster reported as a decorative roster is a
+  result.
+- **No self-judgment anywhere.** The frame licenses no new judges. An organ that scores, ranks,
+  prefers or reads its own reception is the dead verdict channel with a new name, and R3's rule
+  from `writer-roster.md` generalises to every component: **a part may locate; it may not
+  prefer.**
+
+### 96.3 What is declared and not yet designed
+
+**Inner speech** — a private think-aloud workspace a writer emits before and during a scene,
+consumed only by its own continuation, built on the E6 frame (name what is on the page, what is
+missing, and where; never how good, never a score, nothing any selector may read). Transient:
+never persisted into the context packet, never canon.
+
+Two arms are **pre-registered now, before the component is designed**, because the prediction is
+the interesting part and registering it afterwards would be worthless:
+
+- **(a) deliberation-as-description** — the writer says what it intends;
+- **(b) deliberation-that-produces** — trial fragments, discarded alternatives, the writer
+  demonstrating to itself.
+
+**Operator prediction, registered 2026-08-20: (a) is inert, (b) binds.** This is §83's
+description-versus-demonstration line applied inward, and it is the same line that has already
+come up twice this week from the other side — §83 found register invariant to *described* inner
+states, and the Writer roster found that a dossier written with em dashes *demonstrates* the mark
+on every draft where a dossier instructing about it merely says so. If (a) binds, §83 is in
+question and that is worth more than a confirmation.
+
+Two constraints that bind before the first line of it is written. Its gate ladder is the usual
+one — G0 wiring on the fake provider, a decorativeness check that scrambles inner speech across
+scenes (**if prose does not degrade, the channel is ornament**), and a causal ablation at book
+grain that rides the next fitness batch rather than bespoke drafting. And **the leak-audit scope
+is extended before the first dump, not after**: an inner-speech transcript may quote packet or
+library material, which makes the dumps potentially excerpt-bearing, so they are local-only and
+gitignored under the same rule as `research/quality-measurement/derived/`.
