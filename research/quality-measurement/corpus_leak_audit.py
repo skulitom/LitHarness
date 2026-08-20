@@ -27,6 +27,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import subprocess
 import sys
 
@@ -187,10 +188,64 @@ def scan_blob(name: str, content: str) -> tuple[list[tuple[str, int, str]], list
         except json.JSONDecodeError:
             return [], unwalked
     # csv/txt: a single run of prose with no JSON structure to walk.
+    if is_delimited_telemetry(content):
+        return [], unwalked
     words = len(content.split())
     if words >= WHOLE_FILE_WORDS:
         return [("<whole file>", words, content[:160].replace("\n", " "))], unwalked
     return [], unwalked
+
+
+#: A row is telemetry-shaped when every field is a number, a flag, or a short enumerated token —
+#: never a clause. At most **two** whitespace-separated words per field, so `Not Active` and
+#: `[N/A]` pass and *"and she left the room"* does not, and no sentence punctuation at all.
+_TELEMETRY_FIELD = re.compile(r"^[\w.+\-\[\]/]+(?: [\w.+\-\[\]/]+)?$")
+
+#: Longest a telemetry field may be. Comfortably above `234.06` and `Not Active`, comfortably
+#: below a clause. The CSV *header* has names longer than this and is expected to fail — one row
+#: in several thousand, which is what the tolerance below is for.
+_TELEMETRY_FIELD_CHARS = 32
+
+#: How much of a file has to be telemetry-shaped before the file is. Not 100%: a trailing
+#: partial line from a killed process is normal and is not prose.
+_TELEMETRY_SHARE = 0.98
+
+
+def is_delimited_telemetry(content: str) -> bool:
+    """Is this machine telemetry rather than prose? Narrow, and it has to stay narrow.
+
+    **This exists because the audit went red on two of its own thermal traces**, and the reason
+    is worth keeping: `nvidia-smi` output has no spaces, so `content.split()` counted one "word"
+    per *line* and read a 5,837-line CSV as a 5,837-word excerpt. The blobs were
+    `results/thermal-f2c.csv` and `thermal-f2d.csv` — GPU temperature, power draw and throttle
+    flags, which are not anybody's novel.
+
+    **An exemption in a leak audit is a dangerous thing to add, so this one is shaped to be
+    unusable for smuggling.** Every field of every row must be a number, a timestamp, an empty
+    cell, or a single bare token of at most forty characters with no whitespace in it. One
+    sentence anywhere in the file — one field with a space and a lowercase word after it — drops
+    the file below the threshold and it is scanned as prose again. Prose cannot be encoded as
+    rows of numbers without ceasing to be prose, which is the property that makes this safe.
+
+    It is also **reported rather than silent**: `main` prints how many blobs were skipped this
+    way, because a check that quietly excludes material is the shape of every proxy this project
+    has had to refute.
+    """
+    rows = [row for row in content.splitlines() if row.strip()]
+    if len(rows) < 3:
+        return False
+    delimited = 0
+    for row in rows:
+        fields = row.split(",")
+        if len(fields) < 2:
+            continue
+        if all(
+            len(field.strip()) <= _TELEMETRY_FIELD_CHARS
+            and _TELEMETRY_FIELD.match(field.strip())
+            for field in fields
+        ):
+            delimited += 1
+    return delimited / len(rows) >= _TELEMETRY_SHARE
 
 
 def history_blobs() -> list[tuple[str, str]]:
@@ -317,9 +372,13 @@ def main(argv: list[str] | None = None) -> int:
     truncated: list[tuple[str, str, str]] = []
     responses = 0
     ours = 0
+    telemetry: list[str] = []
     for sha, path in blobs:
         content = _run(["git", "cat-file", "-p", sha])
         if not content:
+            continue
+        if not path.endswith((".json", ".jsonl")) and is_delimited_telemetry(content):
+            telemetry.append(path)
             continue
         scanned, unwalked = scan_blob(path, content)
         truncated.extend((path, sha[:8], where) for where in unwalked)
@@ -359,6 +418,16 @@ def main(argv: list[str] | None = None) -> int:
             f"({responses} long strings sit in {sorted(RESPONSE_FIELDS)} — what the panel said, "
             f"never what it read. Threshold {args.words} words.)"
         )
+        if telemetry:
+            # **Reported, never silent.** A check that quietly excludes material is the shape of
+            # every proxy this project has had to refute, so the exemption prints its own count
+            # and names its files. If this list ever grows a file that is not machine output,
+            # that is the finding.
+            print(
+                f"({len(telemetry)} blob(s) skipped as delimited telemetry — rows of numbers, "
+                f"timestamps and bare tokens, no sentences: "
+                f"{', '.join(sorted({t for t in telemetry}))})"
+            )
         if ours:
             print(
                 f"({ours} more sit inside {list(OURS_FIELDS)} blocks — rules we declared before a "

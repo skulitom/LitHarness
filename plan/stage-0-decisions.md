@@ -8312,3 +8312,201 @@ grain that rides the next fitness batch rather than bespoke drafting. And **the 
 is extended before the first dump, not after**: an inner-speech transcript may quote packet or
 library material, which makes the dumps potentially excerpt-bearing, so they are local-only and
 gitignored under the same rule as `research/quality-measurement/derived/`.
+
+## 97. The readership becomes the reward model, and the one bit a person still gets is the one that trains nothing
+
+**Registered 2026-08-20, before any code in this programme was written and before any anchor text
+was downloaded.** The architecture is named plainly here so that no later session has to
+reconstruct it from the parts: **RLHF for literature with unsolicited behaviour as the feedback.**
+A simulated readership is the reward model — FORECAST-class, cheap, per-draft. The real
+population, reached through the library, is the settlement layer. The operator is a one-bit
+acceptance gate that a general system has to earn. The goal is unchanged and is not a metaphor:
+**superhuman books, no human in the production loop.**
+
+It reuses rather than rebuilds: the BCR body (§94), the market as corrected in §95.15, the force
+harness, the E6 located channel (§89.4), the twenty fitness books, the library (§92–93).
+
+### 97.1 Three amendments, recorded before any code
+
+**PREFERENCE is reserved, not retired, and the distinction is exactly one line wide.** §95.1
+retired `PREFERENCE` because §82 refused the licence on evidence class and the scope axiom
+destroyed the only key. **That retirement stands for machines at every grain, forever.** The
+amendment is narrower than it looks: preference at **BOOK grain, at acceptance time, is reserved
+to the operator** — one bit, accept or reject, no diagnostic riders. A rejection carries no
+explanation into the system. Diagnosis comes from population signals or it does not come.
+
+> **The apparent contradiction, resolved here rather than left for a later session to trip on.**
+> The scope axiom is *no solicited human judgment, ever — not hired, not operator, not one
+> blinded pair*, and an acceptance gate is a person being asked something. The axiom is about
+> **measurement**, and the gate is not a measurement: it never trains, calibrates, weights or
+> selects any instrument, it produces no number, and it enters no fit. It is the same shape as
+> §96's argument for the Director — a role that measures nothing cannot be an invalid
+> measurement — and it carries the same obligation in exchange: **containment**, which is what
+> the cadence cap in §7.3 is for. A gate consulted constantly is a training signal wearing a
+> gate's name.
+
+**The generalization objective is codified.** No instrument in this repository is ever trained,
+calibrated, or selected on operator traces, operator A/B responses, or operator diagnostics.
+Operator design input enters by exactly one door: as a **registered prior** — the em-dash template
+(§78.3, §80) — falsifiable, VOID until evidence, and never protected spec. §78's own em-dash
+hypothesis is still VOID with the estimate leaning *toward* the mark, which is what a registered
+prior looks like when it is honoured.
+
+**Anchor admissibility.** Operator-named works are admissible calibration corpora **iff** they are
+population-consensus summits, which is checkable — the named set's popularity is a public number
+and not a taste claim — and they live on the **measurement side only** (RS1 below).
+
+### 97.2 The gate's information policy, pre-registered before the first consultation
+
+Operator amendment, 2026-08-20, arriving with the directive rather than after a disappointing
+gate. The one-bit gate stays one bit **in band**; what changes is that the bit stops being the
+only thing recorded about the event.
+
+**(a) The acceptance read leaves a behavioural trace, in the BCR's vocabulary and no other.**
+Where the read was abandoned, whether it was returned to, whether it survived a reread. Recorded
+at every consultation and **used for exactly one thing: comparison against the frozen sim's
+forecast.** Never a training input, never a selection input, never a weight.
+
+> The line here is thin enough to be worth drawing explicitly, because §97.1 forbids calibrating
+> any instrument on operator traces and this records operator traces. The permission is to
+> **read** the comparison; the prohibition is on **feeding it back**. A trace that shows the sim
+> forecast a finish where the operator abandoned at scene four is a fact about the sim's error,
+> and a programme that then tuned the sim to that trace would have quietly made one person the
+> reward model — which is the failure this whole architecture is built to avoid.
+
+**(b) The divergence trigger, declared with its threshold now.** If **three consecutive
+candidates** clear every machine gate and every sim threshold and still fail the grab, the
+**operator-harvest leg opens**. Three consecutive is a statement about the sim, not about the
+books: a reward model that passes what the population's proxy rejects three times running has
+been shown to be modelling something other than the target.
+
+What the harvest leg admits is fenced on three sides. Operator-located defects enter as
+**candidate axes only** — never as instructions, never as spec. Each is subject to **the fidelity
+gate before any sim or writer may act on it**, and that gate is against *real readers on held-out
+material*, not against the operator. **Verbatim operator prose stays quarantined in the ledger
+entry**; what crosses into the system is the located axis. So the operator may point at where a
+book failed; the population still decides whether the thing pointed at matters. That is the same
+shape as `reader-judge-loop.md` §2.1's four-step admission path, entered from a new door.
+
+**(c) Described taste never crosses at the gate itself.** A rejection remains explanation-free
+in band, exactly as §97.1 says. The channel widens only through (a) and (b), both of which are
+out of band, both of which are gated, and neither of which is a training signal.
+
+### 97.3 RS1, the rail with a near-miss already behind it
+
+Anchor and contrast text may enter measurement, mining, and validation. **It may never enter a
+drafting, revision, or planning prompt — whole or in part, paraphrased or verbatim.** Same
+boundary class as `writer-roster.md`'s R1, and it fails the same way: a vocabulary guard is not
+comprehension.
+
+So RS1 is enforced by **provenance rather than by pattern**: corpus digests are never referenced
+by any generation-side module, and that is checkable in CI rather than asserted in a docstring.
+The reason it gets a mechanism instead of a rule is that this project has already walked toward
+the edge of it once — the 294k near-miss was this exact text heading for the public repo — and
+`writer-roster.md` found the same boundary from the other side days later, when the R1 guard
+refused four dossiers for *containing* em dashes rather than for instructing about them. **Prose
+that is present demonstrates**, whatever it was put there to do, which is §83's line and now the
+most frequently rediscovered sentence in this repository.
+
+### 97.4 What a sim is allowed to be
+
+- **Valence is behavioural or it is nothing.** A sim's output vocabulary is the BCR's: *continue,
+  abandon, return*, under a declared budget. **No verdict slot exists anywhere in a sim** — §89.4
+  stands, and it stands at 4,676-to-1.
+- **No sim narrates its psychology as signal.** This repository has measured a model confabulating
+  a difference between byte-identical texts (§94.5), so a sim's account of itself is data about
+  the sim and never about the text.
+- **The "why" is located, not narrated.** Candidate taste-properties are mined as **E6-located
+  contrasts** between summit and matched mid-tier text — named, positioned differences, the one
+  channel that survived §87–§89. Each property enters a property ledger with its counter or
+  locator committed **first**.
+- **The fidelity gate, FORECAST-class per §86 exactly.** A property is promoted into a sim only if
+  injecting or removing it through §85's certified operators moves the sim's behaviour **in the
+  same direction it moves real readers**, on held-out, story- and author-disjoint material. A sim
+  responsive to properties the population ignores is a mirror, not a reader, and the gate is the
+  entire difference between the two.
+- Candidate sims face §94.6's battery. **Two of four reader candidates are already dead**; new
+  ones earn seats the same way, controls first, refusal states intact.
+
+### 97.5 Selection, containment, and why the market's corrections are load-bearing
+
+Sim configurations bet on real behavioural outcomes — the 281-pair conversion labels now, library
+telemetry when it exists — under proper scoring with skill-weighted promotion, splits **story-
+disjoint and author-disjoint**, settlement instant on scraped labels, nothing solicited ever.
+
+**§95.15's market fixes are not history here, they are the mechanism.** That entry is one day old:
+`settle` took no outcome, so the market ranked stated confidence and a text-blind constant took
+0.8804 of the promoted ensemble; promotion admitted anything solvent, including a coin at 0.0628.
+Both are repaired, the coin and the constant are seated as baselines, and `confidence_alone_loses`
+runs as a check. A programme that selects reward models through that market would have selected
+for confidence.
+
+Containment of the loop itself:
+
+- **The sim is frozen per production cycle.** The writer optimises against a frozen sim; sims
+  update only *between* cycles, from new unsolicited data, and never from the writer's outputs
+  within the cycle they are judging.
+- **T3 becomes the central instrument** (§86). The exploitation budget is instrumented from the
+  first optimisation step, and a cycle that exhausts it **halts the writer, not the budget**.
+- **The writer never sees sim internals.** Feedback crosses only through the existing
+  reader → writer schema — `AxisDirection`, located, actionable, preference-free. R3 holds on both
+  sides: a reader may locate and may not prefer; a writer may draft and may not judge.
+- FORECAST licences are §86's unchanged: STORY grain, absent from `veto_for`, never accepted by
+  `plan_search`'s judge path. Any expansion is its own entry with its own containment argument.
+- **Publication is the debugger.** Reality is the one thing the writer cannot exploit.
+
+### 97.6 The registered hypothesis, and the three ways it dies
+
+**Operator's prior, registered before the first property is mined:** *the taste function of the
+named summit's readership is extractable from pretrained models at accessible scale, because
+those readers are in the training data.*
+
+Declared kills, all three now rather than after a disappointing number:
+
+1. every mined property fails the fidelity gate **in both directions**;
+2. all sim candidates fail §94.6's battery;
+3. the market's skill-weighted survivor is **the coin**.
+
+Any one closes the programme with the negative as the finding, and **the negative is publishable**:
+it would be the first evidence that population taste is not recoverable from these models by
+behavioural simulation. That is a real result and the programme is sized to be able to return it.
+
+### 97.7 Gates, in order, nothing skipped
+
+| gate | what it establishes | cost |
+|---|---|---|
+| **G0** | wiring on the fake provider: properties reach a sim, sims reach the market | zero |
+| **G1** | sim distinctness — a sim must differ from seed-resampling of itself (§89.1's class); IDENTICAL or INDISTINCT buries the config | cheap |
+| **G2** | fidelity on far pairs, summit against mid-tier: §97.4's gate at its easiest setting | moderate |
+| **G3** | near-pair honesty — on §83-class twins a sim must **refuse** rather than confabulate; a sim that always has an answer is measuring its own noise | moderate |
+| **G4** | first frozen-sim production cycle on fitness-book substrate, T3 instrumented; **the operator gate stays untouched until every machine gate has cleared** | GPU |
+| **G5** | publication settlement: sim forecasts against real telemetry, the only scoreboard that compounds | slow |
+
+### 97.8 Anti-scope
+
+No operator-trace training, ever. No anchor text on the generation side, ever (RS1). No
+narrated-psychology signal. No verdict slots, no new judges, no exposure of sim internals to the
+writer. No licence movement by implication — §82's and §86's classes stand, and every expansion is
+its own entry. **No consultation of the operator gate before G4 clears.**
+
+### 97.9 §7 is unfilled, and three of its four items cannot be filled by a session
+
+Recorded as outstanding rather than defaulted, because each blank gates something specific:
+
+- **Anchor set names** — `Mother of Learning` plus two to four more, each carrying its
+  population-consensus citation. Blocks `plan/anchor-set.md`, the contrast corpus, and every
+  mining step. **A session cannot invent these**: the whole admissibility argument in §97.1 is
+  that the set is *operator-named and population-checkable*, and a set chosen here would be a
+  machine's taste claim wearing an operator's authority.
+- **The grab criterion** — the acceptance event defined behaviourally, **in the operator's own
+  wording, recorded verbatim and unchanged thereafter**. Blocks G4's exit. Paraphrasing it would
+  defeat the point of recording it verbatim.
+- **Gate cadence cap** — blocks nothing before G4, and must be set before the first candidate
+  reaches the gate.
+- **Spend caps** — GPU-hours (default 40, check-in at 24) and API dollars (default $25) have
+  declared defaults and can proceed on them. **Contrast-corpus download ALLOW/REFUSE has no
+  default** and blocks the contrast corpus.
+
+Until the anchor names and the grab criterion arrive, the programme can build RS1's provenance
+rail and its CI check, the property-ledger structure, and G0's wiring — none of which needs to
+know which works were named.
