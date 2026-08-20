@@ -8501,11 +8501,34 @@ Recorded as outstanding rather than defaulted, because each blank gates somethin
 - **The grab criterion** — the acceptance event defined behaviourally, **in the operator's own
   wording, recorded verbatim and unchanged thereafter**. Blocks G4's exit. Paraphrasing it would
   defeat the point of recording it verbatim.
-- **Gate cadence cap** — blocks nothing before G4, and must be set before the first candidate
-  reaches the gate.
-- **Spend caps** — GPU-hours (default 40, check-in at 24) and API dollars (default $25) have
-  declared defaults and can proceed on them. **Contrast-corpus download ALLOW/REFUSE has no
-  default** and blocks the contrast corpus.
+**Filled at issuance, 2026-08-20, and pre-registered here before anything they gate exists:**
+
+- **Gate cadence cap: at most one consultation per candidate, and at most one per week.** The
+  loosest of the three options offered, and the record should say what that costs and buys. It
+  buys the fastest possible divergence signal: §97.2's trigger needs three consecutive failures,
+  which at this cadence can fire in three weeks rather than six. It costs containment margin —
+  the cap is doing less of the work §97.1's argument leans on, and the weekly ceiling is now the
+  binding half rather than the per-candidate one. One read a week is still nothing like a
+  training cadence, which is the property that has to hold; but the margin is thinner and a later
+  session should not quietly assume otherwise.
+- **Spend caps: the declared defaults.** GPU-hours **40**, with a check-in at **24**; API
+  **$25**. Recorded with the fact that makes the GPU figure smaller than it looks: the force
+  programme's F3 is running on the same single card, so the two tracks share one budget of wall
+  clock whatever their separate hour counts say.
+- **Contrast-corpus download: ALLOW**, local-only and audited. The matched mid-tier corpus may be
+  fetched, and it is fenced by the same three rules as the anchor set: never committed,
+  gitignored, leak-audited **before the first byte lands** rather than after, and RS1-fenced to
+  the measurement side by provenance. Without it G2's far-pair fidelity gate has no contrast and
+  the programme's easiest gate could not be run at all.
+
+**Still outstanding, and neither can be filled by a session:**
+
+- **Anchor set names** (§7.1) — `Mother of Learning` plus two to four more, each carrying its
+  population-consensus citation. Blocks `plan/anchor-set.md`, the contrast corpus's selection
+  rule (which is *matched to* the summit set and cannot be written before it exists), and every
+  mining step.
+- **The grab criterion** (§7.2) — the acceptance event defined behaviourally, in the operator's
+  own wording, recorded verbatim and unchanged thereafter. Blocks G4's exit.
 
 Until the anchor names and the grab criterion arrive, the programme can build RS1's provenance
 rail and its CI check, the property-ledger structure, and G0's wiring — none of which needs to
