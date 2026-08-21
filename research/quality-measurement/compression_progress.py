@@ -641,6 +641,12 @@ def run_controls(
         placebo["pairs"] = placebo_read
     return {
         "placebo_identical": placebo,
+        # **The sham's raw per-side slopes, recorded because the verdict alone could not be
+        # audited.** The first two-family run returned a byte-identical sham block for gemma and
+        # qwen3.5 — same wins, same decided, same interval — while their ordered slopes differed
+        # on 94 of 94 sides. That is either an aliasing bug or two models agreeing exactly, and
+        # a control whose output cannot distinguish those two is not yet a control.
+        "sham_slopes": {k: dict(v) for k, v in sham_scores.items()},
         "rewhitespace_sham": {
             **sham_verdict("rewhitespace_sham", *pair_agreement(sham_scores, sham_members)),
             "note": "unlike F1's, this sham can fail: F3's statistic is token-level NLL and "

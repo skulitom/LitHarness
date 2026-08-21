@@ -1,0 +1,1322 @@
+{
+  "attainability": [
+    {
+      "attainable": true,
+      "binding": "interval",
+      "insufficient_n_available": true,
+      "k_interval_cp_gt_0_50": 24,
+      "k_point_0_52": 18,
+      "label": "aligned",
+      "n": 34,
+      "required_rate": 0.7059
+    },
+    {
+      "attainable": true,
+      "binding": "interval",
+      "insufficient_n_available": true,
+      "k_interval_cp_gt_0_50": 11,
+      "k_point_0_52": 7,
+      "label": "crossed",
+      "n": 13,
+      "required_rate": 0.8462
+    }
+  ],
+  "chapters_fetched": 2340,
+  "combined": {
+    "aligned": {
+      "never_pooled": true,
+      "per_family": {
+        "gemma-3-4b": "INSUFFICIENT_N",
+        "qwen3.5-4b": "INSUFFICIENT_N"
+      },
+      "status": "INSUFFICIENT_N",
+      "stratum": "aligned",
+      "why": "a family's stratum could not clear its interval bar at any outcome"
+    },
+    "crossed": {
+      "never_pooled": true,
+      "per_family": {
+        "gemma-3-4b": "INSUFFICIENT_N",
+        "qwen3.5-4b": "INSUFFICIENT_N"
+      },
+      "status": "INSUFFICIENT_N",
+      "stratum": "crossed",
+      "why": "a family's stratum could not clear its interval bar at any outcome"
+    }
+  },
+  "excluded_before_scoring": [],
+  "fictions_after_cap": 140,
+  "force_verdict": "INSUFFICIENT_N",
+  "force_verdict_detail": {
+    "arm_states": {
+      "gemma-3-4b": "READ",
+      "qwen3.5-4b": "READ"
+    },
+    "binding": {
+      "aligned": "INSUFFICIENT_N",
+      "crossed": "INSUFFICIENT_N"
+    },
+    "verdict": "INSUFFICIENT_N"
+  },
+  "max_fictions": 200,
+  "own_generated_arm": {
+    "price": "~$81 of frontier drafting (operator \u00a77.1: FUND) for twenty own-generated texts; \u00a794.3 counted exactly one in this repository",
+    "status": "NOT_RUN",
+    "why": "F3's eventual real target is own-generated books, and a third-party-only reading is a statement about RoyalRoad rather than about what this system writes"
+  },
+  "pairs": 47,
+  "pairs_offered": 47,
+  "per_family": {
+    "gemma-3-4b": {
+      "aligned": {
+        "agreement": 0.5588,
+        "attainability": {
+          "attainable": true,
+          "binding": "interval",
+          "insufficient_n_available": true,
+          "k_interval_cp_gt_0_50": 24,
+          "k_point_0_52": 18,
+          "label": "aligned",
+          "n": 34,
+          "required_rate": 0.7059
+        },
+        "clopper_pearson": [
+          0.3789,
+          0.7281
+        ],
+        "clustering_caveat": "0 pairs share an author across their sides; 43 authors recur across pairs (51 of 562 slots) \u2014 a caveat on every interval, printed with every result (\u00a789.2)",
+        "decided": 34,
+        "interval_bar_cleared": false,
+        "pairs": 34,
+        "point_bar_cleared": true,
+        "status": "INSUFFICIENT_N",
+        "stratum": "aligned",
+        "ties": 0,
+        "why": "the interval bar at n=34 demands 0.7059, above the declared 0.6 ceiling for calling a miss a refutation (the headline floor is n=110, but the requirement is sawtoothed in n, so it is read at this n rather than compared to it)",
+        "wins": 19
+      },
+      "aligned__shuffled_DIAGNOSTIC": {
+        "agreement": 0.5,
+        "attainability": {
+          "attainable": true,
+          "binding": "interval",
+          "insufficient_n_available": true,
+          "k_interval_cp_gt_0_50": 24,
+          "k_point_0_52": 18,
+          "label": "aligned",
+          "n": 34,
+          "required_rate": 0.7059
+        },
+        "clopper_pearson": [
+          0.3243,
+          0.6757
+        ],
+        "clustering_caveat": "0 pairs share an author across their sides; 43 authors recur across pairs (51 of 562 slots) \u2014 a caveat on every interval, printed with every result (\u00a789.2)",
+        "decided": 34,
+        "interval_bar_cleared": false,
+        "pairs": 34,
+        "point_bar_cleared": false,
+        "status": "INSUFFICIENT_N",
+        "stratum": "aligned",
+        "ties": 0,
+        "why": "the interval bar at n=34 demands 0.7059, above the declared 0.6 ceiling for calling a miss a refutation (the headline floor is n=110, but the requirement is sawtoothed in n, so it is read at this n rather than compared to it)",
+        "wins": 17
+      },
+      "cache": {
+        "cache": "C:\\DEV\\LitHarness\\research\\quality-measurement\\derived\\f3-gemma-3-4b.jsonl",
+        "computed_units": 0,
+        "replayed_units": 564,
+        "rows_on_disk": 683
+      },
+      "control_states": {
+        "placebo_identical": "PASS",
+        "rewhitespace_sham": "PASS"
+      },
+      "crossed": {
+        "agreement": 0.6154,
+        "attainability": {
+          "attainable": true,
+          "binding": "interval",
+          "insufficient_n_available": true,
+          "k_interval_cp_gt_0_50": 11,
+          "k_point_0_52": 7,
+          "label": "crossed",
+          "n": 13,
+          "required_rate": 0.8462
+        },
+        "clopper_pearson": [
+          0.3158,
+          0.8614
+        ],
+        "clustering_caveat": "0 pairs share an author across their sides; 43 authors recur across pairs (51 of 562 slots) \u2014 a caveat on every interval, printed with every result (\u00a789.2)",
+        "decided": 13,
+        "interval_bar_cleared": false,
+        "pairs": 13,
+        "point_bar_cleared": true,
+        "status": "INSUFFICIENT_N",
+        "stratum": "crossed",
+        "ties": 0,
+        "why": "the interval bar at n=13 demands 0.8462, above the declared 0.6 ceiling for calling a miss a refutation (the headline floor is n=110, but the requirement is sawtoothed in n, so it is read at this n rather than compared to it)",
+        "wins": 8
+      },
+      "crossed__shuffled_DIAGNOSTIC": {
+        "agreement": 0.3077,
+        "attainability": {
+          "attainable": true,
+          "binding": "interval",
+          "insufficient_n_available": true,
+          "k_interval_cp_gt_0_50": 11,
+          "k_point_0_52": 7,
+          "label": "crossed",
+          "n": 13,
+          "required_rate": 0.8462
+        },
+        "clopper_pearson": [
+          0.0909,
+          0.6143
+        ],
+        "clustering_caveat": "0 pairs share an author across their sides; 43 authors recur across pairs (51 of 562 slots) \u2014 a caveat on every interval, printed with every result (\u00a789.2)",
+        "decided": 13,
+        "interval_bar_cleared": false,
+        "pairs": 13,
+        "point_bar_cleared": false,
+        "status": "INSUFFICIENT_N",
+        "stratum": "crossed",
+        "ties": 0,
+        "why": "the interval bar at n=13 demands 0.8462, above the declared 0.6 ceiling for calling a miss a refutation (the headline floor is n=110, but the requirement is sawtoothed in n, so it is read at this n rather than compared to it)",
+        "wins": 4
+      },
+      "directive_cap_40_fictions": {
+        "agreement": 0.5,
+        "attainability": {
+          "attainable": true,
+          "binding": "interval",
+          "insufficient_n_available": true,
+          "k_interval_cp_gt_0_50": 15,
+          "k_point_0_52": 11,
+          "label": "cap40",
+          "n": 20,
+          "required_rate": 0.75
+        },
+        "clopper_pearson": [
+          0.272,
+          0.728
+        ],
+        "clustering_caveat": "0 pairs share an author across their sides; 43 authors recur across pairs (51 of 562 slots) \u2014 a caveat on every interval, printed with every result (\u00a789.2)",
+        "decided": 20,
+        "interval_bar_cleared": false,
+        "pairs": 20,
+        "point_bar_cleared": false,
+        "status": "INSUFFICIENT_N",
+        "stratum": "cap40",
+        "ties": 0,
+        "why": "the interval bar at n=20 demands 0.75, above the declared 0.6 ceiling for calling a miss a refutation (the headline floor is n=110, but the requirement is sawtoothed in n, so it is read at this n rather than compared to it)",
+        "wins": 10
+      },
+      "dropped": [],
+      "family": {
+        "attention_shape": {
+          "max_positions": 131072,
+          "pattern": "5 sliding : 1 full",
+          "sliding_window": 1024
+        },
+        "family": "gemma-3-4b",
+        "head": "base",
+        "lineage": "google/gemma-3",
+        "model_id": "google/gemma-3-4b-pt",
+        "revision": "cc012e0a6d0787b4adcc0fa2c4da74402494554d"
+      },
+      "governor": {
+        "binding_sensor": "temperature.gpu.tlimit (hotspot margin), not core",
+        "calls": 0,
+        "duty_cycle": 0.0,
+        "gpu_c_now": 39,
+        "gpu_seconds": 0.0,
+        "hold_seconds": 0.0,
+        "holds": 0,
+        "long_holds": 0,
+        "min_tlimit_margin_c": null,
+        "pause_above_c": 64,
+        "pause_margin_c": 14,
+        "peak_core_c": 0.0,
+        "peak_power_w": 0.0,
+        "rest_ratio": 3.0,
+        "resume_below_c": 56,
+        "resume_margin_c": 20,
+        "sensor_samples": 0,
+        "soak_every_calls": 25,
+        "soak_seconds": 90.0,
+        "soaks": 0,
+        "source": "force_gpu.Governor (hardened 2026-08-20 after a mid-run shutdown)",
+        "throttle_events": 0,
+        "wall_seconds": 8.1
+      },
+      "placebo_identical": {
+        "control": "placebo_identical",
+        "effect": 0.0,
+        "kind": "exact",
+        "pairs": 20,
+        "status": "PASS",
+        "tolerance": 0.0,
+        "why": ""
+      },
+      "rewhitespace_sham": {
+        "agreement": 0.7368,
+        "clopper_pearson": [
+          0.488,
+          0.9085
+        ],
+        "control": "rewhitespace_sham",
+        "decided": 19,
+        "note": "unlike F1's, this sham can fail: F3's statistic is token-level NLL and re-whitespacing changes tokenisation, so a PASS here is evidence rather than a restatement of the feature space's blindness",
+        "pairs": 19,
+        "status": "PASS",
+        "wins": 14
+      },
+      "side_slopes_ordered": {
+        "f3-aligned13": {
+          "high": 0.09955742230794273,
+          "low": 0.04903836429092334
+        },
+        "f3-aligned14": {
+          "high": 0.07673094309031803,
+          "low": 0.0714749882436998
+        },
+        "f3-aligned15": {
+          "high": 0.0650593930671961,
+          "low": 0.06765527415918726
+        },
+        "f3-aligned16": {
+          "high": 0.06426236053799084,
+          "low": 0.04123274294191148
+        },
+        "f3-aligned17": {
+          "high": 0.04089460547846713,
+          "low": 0.03673108112070489
+        },
+        "f3-aligned18": {
+          "high": 0.09661095083153981,
+          "low": 0.024734995608236998
+        },
+        "f3-aligned19": {
+          "high": 0.07499558197560807,
+          "low": 0.06099083545694817
+        },
+        "f3-aligned20": {
+          "high": 0.06718657309492304,
+          "low": 0.30495267147957605
+        },
+        "f3-aligned21": {
+          "high": 0.039631650178765465,
+          "low": 0.07059006937080525
+        },
+        "f3-aligned22": {
+          "high": 0.028040980466097265,
+          "low": 0.17446576209073816
+        },
+        "f3-aligned23": {
+          "high": 0.04227561306153094,
+          "low": 0.02675380028630392
+        },
+        "f3-aligned24": {
+          "high": 0.07846730252481304,
+          "low": 0.02031456675993626
+        },
+        "f3-aligned25": {
+          "high": 0.04754428244534137,
+          "low": 0.0999086668719531
+        },
+        "f3-aligned26": {
+          "high": 0.06464255525965745,
+          "low": 0.021897626009089066
+        },
+        "f3-aligned27": {
+          "high": 0.04452458472370413,
+          "low": 0.06994549016862517
+        },
+        "f3-aligned28": {
+          "high": 0.07269929554789378,
+          "low": 0.10298432804201063
+        },
+        "f3-aligned29": {
+          "high": 0.10731196302733137,
+          "low": 0.04196145314986599
+        },
+        "f3-aligned30": {
+          "high": 0.024958376199550214,
+          "low": 0.03940077042164658
+        },
+        "f3-aligned31": {
+          "high": 0.06944611365936493,
+          "low": 0.08272292610365661
+        },
+        "f3-aligned32": {
+          "high": 0.07895961675995444,
+          "low": 0.03381934950626353
+        },
+        "f3-aligned33": {
+          "high": 0.049456352363130396,
+          "low": 0.049295565061990176
+        },
+        "f3-aligned34": {
+          "high": 0.09732229092090261,
+          "low": 0.05374868250453679
+        },
+        "f3-aligned35": {
+          "high": 0.08329513583331938,
+          "low": 0.06308048933300214
+        },
+        "f3-aligned36": {
+          "high": 0.024487391427579164,
+          "low": 0.16931640435209394
+        },
+        "f3-aligned37": {
+          "high": 0.07769421197621629,
+          "low": 0.11279830944273461
+        },
+        "f3-aligned38": {
+          "high": 0.04776059301956548,
+          "low": 0.08743764179573765
+        },
+        "f3-aligned39": {
+          "high": 0.060674717537327894,
+          "low": 0.28442394538319304
+        },
+        "f3-aligned40": {
+          "high": 0.06918090800790666,
+          "low": 0.14338279583189562
+        },
+        "f3-aligned41": {
+          "high": 0.10987831118628244,
+          "low": 0.023004310219982838
+        },
+        "f3-aligned42": {
+          "high": 0.019346430870502918,
+          "low": 0.02854712901209311
+        },
+        "f3-aligned43": {
+          "high": 0.07558105119995906,
+          "low": 0.04879846640591512
+        },
+        "f3-aligned44": {
+          "high": 0.08288163243207414,
+          "low": 0.05081533135664751
+        },
+        "f3-aligned45": {
+          "high": 0.10693525052833319,
+          "low": 0.06051777151414495
+        },
+        "f3-aligned46": {
+          "high": 0.042887969873632414,
+          "low": 0.029320497883549734
+        },
+        "f3-crossed0": {
+          "high": 0.059117413750892744,
+          "low": 0.06266240390528055
+        },
+        "f3-crossed1": {
+          "high": 0.06293225255393642,
+          "low": 0.0323832672479345
+        },
+        "f3-crossed10": {
+          "high": 0.14412788097774265,
+          "low": 0.21131597897968146
+        },
+        "f3-crossed11": {
+          "high": 0.040623012255579516,
+          "low": 0.020897743794571877
+        },
+        "f3-crossed12": {
+          "high": 0.030785249255136593,
+          "low": 0.026083675288153918
+        },
+        "f3-crossed2": {
+          "high": 0.0434836142344861,
+          "low": 0.04864861706189094
+        },
+        "f3-crossed3": {
+          "high": 0.05946609627894128,
+          "low": 0.04079260191344236
+        },
+        "f3-crossed4": {
+          "high": 0.04815087530988649,
+          "low": 0.03376619130869152
+        },
+        "f3-crossed5": {
+          "high": 0.053275840806986885,
+          "low": 0.03753953046751635
+        },
+        "f3-crossed6": {
+          "high": 0.11431747854384477,
+          "low": 0.04342411653327494
+        },
+        "f3-crossed7": {
+          "high": 0.07072933606793663,
+          "low": 0.08327711885485312
+        },
+        "f3-crossed8": {
+          "high": 0.04261282092952734,
+          "low": 0.08353222001594429
+        },
+        "f3-crossed9": {
+          "high": 0.05976830381927267,
+          "low": 0.05790685339999602
+        }
+      },
+      "side_slopes_shuffled": {
+        "f3-aligned13": {
+          "high": 0.01186977413909629,
+          "low": 0.05125457615094842
+        },
+        "f3-aligned14": {
+          "high": 0.052411188802097275,
+          "low": 0.02500513512028313
+        },
+        "f3-aligned15": {
+          "high": 0.011912847493876777,
+          "low": 0.0014144340452990622
+        },
+        "f3-aligned16": {
+          "high": -0.011885652692629645,
+          "low": 0.008863661869425998
+        },
+        "f3-aligned17": {
+          "high": -0.0014180167947644984,
+          "low": 0.02486313433243348
+        },
+        "f3-aligned18": {
+          "high": 0.007556172357102264,
+          "low": 0.029891467429887575
+        },
+        "f3-aligned19": {
+          "high": 0.06507535086289029,
+          "low": -0.013375472554103318
+        },
+        "f3-aligned20": {
+          "high": 0.0014926427977126622,
+          "low": 0.02664570942952249
+        },
+        "f3-aligned21": {
+          "high": 0.023592130949524615,
+          "low": 0.014985031953028471
+        },
+        "f3-aligned22": {
+          "high": -0.007709729374274943,
+          "low": 0.05988602981739666
+        },
+        "f3-aligned23": {
+          "high": 0.005559914086924467,
+          "low": -0.003910111889625867
+        },
+        "f3-aligned24": {
+          "high": -0.014404206270793418,
+          "low": -0.004794621316037917
+        },
+        "f3-aligned25": {
+          "high": 0.016885842995310707,
+          "low": 0.006270787284351931
+        },
+        "f3-aligned26": {
+          "high": 0.019385483049806362,
+          "low": 0.03361465397151542
+        },
+        "f3-aligned27": {
+          "high": 0.008096359582153934,
+          "low": 0.06054072261942167
+        },
+        "f3-aligned28": {
+          "high": -0.0055758486092121196,
+          "low": 0.009416400557324511
+        },
+        "f3-aligned29": {
+          "high": -0.007572947889324055,
+          "low": 0.02663019770376507
+        },
+        "f3-aligned30": {
+          "high": 0.014530927797687054,
+          "low": -0.006465865828160888
+        },
+        "f3-aligned31": {
+          "high": 0.02470650565664112,
+          "low": 0.026623009725034397
+        },
+        "f3-aligned32": {
+          "high": 0.009242457345852273,
+          "low": -0.000903496349452082
+        },
+        "f3-aligned33": {
+          "high": 0.014911781820448056,
+          "low": 0.00455374208572179
+        },
+        "f3-aligned34": {
+          "high": 0.07316592048054815,
+          "low": -0.00581560142221238
+        },
+        "f3-aligned35": {
+          "high": 0.006539575387905838,
+          "low": 0.020462048315455617
+        },
+        "f3-aligned36": {
+          "high": 0.07845224356900626,
+          "low": 0.05661296216866829
+        },
+        "f3-aligned37": {
+          "high": 0.006840610603205066,
+          "low": 0.1618765545710713
+        },
+        "f3-aligned38": {
+          "high": 0.008837010099675302,
+          "low": -0.09208109955804122
+        },
+        "f3-aligned39": {
+          "high": 0.0056546522906257835,
+          "low": 0.011010614790354367
+        },
+        "f3-aligned40": {
+          "high": 0.029394526610235783,
+          "low": 0.13000305643811205
+        },
+        "f3-aligned41": {
+          "high": 0.0463665985329782,
+          "low": 0.012051153102449419
+        },
+        "f3-aligned42": {
+          "high": 0.013846248639164838,
+          "low": 0.0038356620228159333
+        },
+        "f3-aligned43": {
+          "high": 0.0389435019209079,
+          "low": -0.00478993712999487
+        },
+        "f3-aligned44": {
+          "high": -0.006190170587339838,
+          "low": -0.007876593464595016
+        },
+        "f3-aligned45": {
+          "high": 0.007254074661635634,
+          "low": 0.015507399368344332
+        },
+        "f3-aligned46": {
+          "high": 0.005998417191179661,
+          "low": -0.005557092155514143
+        },
+        "f3-crossed0": {
+          "high": 0.0023640384384027158,
+          "low": 0.02012054501181959
+        },
+        "f3-crossed1": {
+          "high": 0.018910218395954304,
+          "low": 0.010747870991223651
+        },
+        "f3-crossed10": {
+          "high": 0.019025962367418048,
+          "low": 0.14208965933515993
+        },
+        "f3-crossed11": {
+          "high": 0.005405269847490901,
+          "low": 0.02874665943587318
+        },
+        "f3-crossed12": {
+          "high": -0.0045205578457852,
+          "low": -0.0009033778190559172
+        },
+        "f3-crossed2": {
+          "high": -0.0005366830793531729,
+          "low": 0.0032097477440979905
+        },
+        "f3-crossed3": {
+          "high": -0.008849324945975567,
+          "low": 0.005153023279703239
+        },
+        "f3-crossed4": {
+          "high": 0.008128965040198555,
+          "low": 0.029327089856393318
+        },
+        "f3-crossed5": {
+          "high": 0.011097685452132078,
+          "low": 0.007676075729269094
+        },
+        "f3-crossed6": {
+          "high": -0.008255358888941577,
+          "low": 0.008238999022968763
+        },
+        "f3-crossed7": {
+          "high": 0.024356407048450324,
+          "low": 0.003680558131378131
+        },
+        "f3-crossed8": {
+          "high": -0.0023878059574036214,
+          "low": 0.005049618765104125
+        },
+        "f3-crossed9": {
+          "high": 0.003361117919525647,
+          "low": 0.0017505815698735105
+        }
+      },
+      "status": "READ"
+    },
+    "qwen3.5-4b": {
+      "aligned": {
+        "agreement": 0.4706,
+        "attainability": {
+          "attainable": true,
+          "binding": "interval",
+          "insufficient_n_available": true,
+          "k_interval_cp_gt_0_50": 24,
+          "k_point_0_52": 18,
+          "label": "aligned",
+          "n": 34,
+          "required_rate": 0.7059
+        },
+        "clopper_pearson": [
+          0.2978,
+          0.6487
+        ],
+        "clustering_caveat": "0 pairs share an author across their sides; 43 authors recur across pairs (51 of 562 slots) \u2014 a caveat on every interval, printed with every result (\u00a789.2)",
+        "decided": 34,
+        "interval_bar_cleared": false,
+        "pairs": 34,
+        "point_bar_cleared": false,
+        "status": "INSUFFICIENT_N",
+        "stratum": "aligned",
+        "ties": 0,
+        "why": "the interval bar at n=34 demands 0.7059, above the declared 0.6 ceiling for calling a miss a refutation (the headline floor is n=110, but the requirement is sawtoothed in n, so it is read at this n rather than compared to it)",
+        "wins": 16
+      },
+      "aligned__shuffled_DIAGNOSTIC": {
+        "agreement": 0.4706,
+        "attainability": {
+          "attainable": true,
+          "binding": "interval",
+          "insufficient_n_available": true,
+          "k_interval_cp_gt_0_50": 24,
+          "k_point_0_52": 18,
+          "label": "aligned",
+          "n": 34,
+          "required_rate": 0.7059
+        },
+        "clopper_pearson": [
+          0.2978,
+          0.6487
+        ],
+        "clustering_caveat": "0 pairs share an author across their sides; 43 authors recur across pairs (51 of 562 slots) \u2014 a caveat on every interval, printed with every result (\u00a789.2)",
+        "decided": 34,
+        "interval_bar_cleared": false,
+        "pairs": 34,
+        "point_bar_cleared": false,
+        "status": "INSUFFICIENT_N",
+        "stratum": "aligned",
+        "ties": 0,
+        "why": "the interval bar at n=34 demands 0.7059, above the declared 0.6 ceiling for calling a miss a refutation (the headline floor is n=110, but the requirement is sawtoothed in n, so it is read at this n rather than compared to it)",
+        "wins": 16
+      },
+      "cache": {
+        "cache": "C:\\DEV\\LitHarness\\research\\quality-measurement\\derived\\f3-qwen3.5-4b.jsonl",
+        "computed_units": 564,
+        "replayed_units": 0,
+        "rows_on_disk": 564
+      },
+      "control_states": {
+        "placebo_identical": "PASS",
+        "rewhitespace_sham": "PASS"
+      },
+      "crossed": {
+        "agreement": 0.6923,
+        "attainability": {
+          "attainable": true,
+          "binding": "interval",
+          "insufficient_n_available": true,
+          "k_interval_cp_gt_0_50": 11,
+          "k_point_0_52": 7,
+          "label": "crossed",
+          "n": 13,
+          "required_rate": 0.8462
+        },
+        "clopper_pearson": [
+          0.3857,
+          0.9091
+        ],
+        "clustering_caveat": "0 pairs share an author across their sides; 43 authors recur across pairs (51 of 562 slots) \u2014 a caveat on every interval, printed with every result (\u00a789.2)",
+        "decided": 13,
+        "interval_bar_cleared": false,
+        "pairs": 13,
+        "point_bar_cleared": true,
+        "status": "INSUFFICIENT_N",
+        "stratum": "crossed",
+        "ties": 0,
+        "why": "the interval bar at n=13 demands 0.8462, above the declared 0.6 ceiling for calling a miss a refutation (the headline floor is n=110, but the requirement is sawtoothed in n, so it is read at this n rather than compared to it)",
+        "wins": 9
+      },
+      "crossed__shuffled_DIAGNOSTIC": {
+        "agreement": 0.4615,
+        "attainability": {
+          "attainable": true,
+          "binding": "interval",
+          "insufficient_n_available": true,
+          "k_interval_cp_gt_0_50": 11,
+          "k_point_0_52": 7,
+          "label": "crossed",
+          "n": 13,
+          "required_rate": 0.8462
+        },
+        "clopper_pearson": [
+          0.1922,
+          0.7487
+        ],
+        "clustering_caveat": "0 pairs share an author across their sides; 43 authors recur across pairs (51 of 562 slots) \u2014 a caveat on every interval, printed with every result (\u00a789.2)",
+        "decided": 13,
+        "interval_bar_cleared": false,
+        "pairs": 13,
+        "point_bar_cleared": false,
+        "status": "INSUFFICIENT_N",
+        "stratum": "crossed",
+        "ties": 0,
+        "why": "the interval bar at n=13 demands 0.8462, above the declared 0.6 ceiling for calling a miss a refutation (the headline floor is n=110, but the requirement is sawtoothed in n, so it is read at this n rather than compared to it)",
+        "wins": 6
+      },
+      "directive_cap_40_fictions": {
+        "agreement": 0.55,
+        "attainability": {
+          "attainable": true,
+          "binding": "interval",
+          "insufficient_n_available": true,
+          "k_interval_cp_gt_0_50": 15,
+          "k_point_0_52": 11,
+          "label": "cap40",
+          "n": 20,
+          "required_rate": 0.75
+        },
+        "clopper_pearson": [
+          0.3153,
+          0.7694
+        ],
+        "clustering_caveat": "0 pairs share an author across their sides; 43 authors recur across pairs (51 of 562 slots) \u2014 a caveat on every interval, printed with every result (\u00a789.2)",
+        "decided": 20,
+        "interval_bar_cleared": false,
+        "pairs": 20,
+        "point_bar_cleared": true,
+        "status": "INSUFFICIENT_N",
+        "stratum": "cap40",
+        "ties": 0,
+        "why": "the interval bar at n=20 demands 0.75, above the declared 0.6 ceiling for calling a miss a refutation (the headline floor is n=110, but the requirement is sawtoothed in n, so it is read at this n rather than compared to it)",
+        "wins": 11
+      },
+      "dropped": [],
+      "family": {
+        "attention_shape": {
+          "max_positions": 262144,
+          "pattern": "8 full of 32 layers",
+          "sliding_window": null
+        },
+        "family": "qwen3.5-4b",
+        "head": "base",
+        "lineage": "alibaba/qwen3.5",
+        "model_id": "Qwen/Qwen3.5-4B-Base",
+        "revision": "1001bb4d826a52d1f399e183466143f4da7b741b"
+      },
+      "governor": {
+        "binding_sensor": "temperature.gpu.tlimit (hotspot margin), not core",
+        "calls": 1128,
+        "duty_cycle": 0.142,
+        "gpu_c_now": 47,
+        "gpu_seconds": 1424.9,
+        "hold_seconds": 0.0,
+        "holds": 0,
+        "long_holds": 0,
+        "min_tlimit_margin_c": 5.0,
+        "pause_above_c": 64,
+        "pause_margin_c": 14,
+        "peak_core_c": 67.0,
+        "peak_power_w": 302.73,
+        "rest_ratio": 3.0,
+        "resume_below_c": 56,
+        "resume_margin_c": 20,
+        "sensor_samples": 2256,
+        "soak_every_calls": 25,
+        "soak_seconds": 90.0,
+        "soaks": 45,
+        "source": "force_gpu.Governor (hardened 2026-08-20 after a mid-run shutdown)",
+        "throttle_events": 0,
+        "wall_seconds": 10018.2
+      },
+      "placebo_identical": {
+        "control": "placebo_identical",
+        "effect": 0.0,
+        "kind": "exact",
+        "pairs": 20,
+        "status": "PASS",
+        "tolerance": 0.0,
+        "why": ""
+      },
+      "rewhitespace_sham": {
+        "agreement": 0.7368,
+        "clopper_pearson": [
+          0.488,
+          0.9085
+        ],
+        "control": "rewhitespace_sham",
+        "decided": 19,
+        "note": "unlike F1's, this sham can fail: F3's statistic is token-level NLL and re-whitespacing changes tokenisation, so a PASS here is evidence rather than a restatement of the feature space's blindness",
+        "pairs": 19,
+        "status": "PASS",
+        "wins": 14
+      },
+      "side_slopes_ordered": {
+        "f3-aligned13": {
+          "high": 0.12269490969609587,
+          "low": 0.05117842043690213
+        },
+        "f3-aligned14": {
+          "high": 0.10195241763293472,
+          "low": 0.07466146572319299
+        },
+        "f3-aligned15": {
+          "high": 0.07288832686709079,
+          "low": 0.08327994463535215
+        },
+        "f3-aligned16": {
+          "high": 0.08055401476504698,
+          "low": 0.04916126302408874
+        },
+        "f3-aligned17": {
+          "high": 0.03913703514324551,
+          "low": 0.04147413782067377
+        },
+        "f3-aligned18": {
+          "high": 0.10018092914073584,
+          "low": -0.019428992818575352
+        },
+        "f3-aligned19": {
+          "high": 0.08529631445570751,
+          "low": 0.06595566363203353
+        },
+        "f3-aligned20": {
+          "high": 0.07196918740279967,
+          "low": 0.3036303471383468
+        },
+        "f3-aligned21": {
+          "high": 0.0405836525113632,
+          "low": 0.08598310861211567
+        },
+        "f3-aligned22": {
+          "high": 0.0392942818887041,
+          "low": 0.1885084385423963
+        },
+        "f3-aligned23": {
+          "high": 0.05489813785945952,
+          "low": 0.027322849829171325
+        },
+        "f3-aligned24": {
+          "high": 0.08367213658398764,
+          "low": 0.021818733303451854
+        },
+        "f3-aligned25": {
+          "high": 0.03980926434489973,
+          "low": 0.11162709651799219
+        },
+        "f3-aligned26": {
+          "high": 0.06999612908577557,
+          "low": 0.02469429257405631
+        },
+        "f3-aligned27": {
+          "high": 0.03926120981741077,
+          "low": 0.06816466434751178
+        },
+        "f3-aligned28": {
+          "high": 0.08104087975379604,
+          "low": 0.1148570815747676
+        },
+        "f3-aligned29": {
+          "high": 0.09985674594602467,
+          "low": 0.055806318573557556
+        },
+        "f3-aligned30": {
+          "high": 0.03760529601149787,
+          "low": 0.04803508916910748
+        },
+        "f3-aligned31": {
+          "high": 0.08189170326381334,
+          "low": 0.10229417487231496
+        },
+        "f3-aligned32": {
+          "high": 0.08772668006969409,
+          "low": 0.03789542700023141
+        },
+        "f3-aligned33": {
+          "high": 0.04496010783222415,
+          "low": 0.05617203467779075
+        },
+        "f3-aligned34": {
+          "high": 0.0563772147924404,
+          "low": 0.06144544852702394
+        },
+        "f3-aligned35": {
+          "high": 0.08777815690123347,
+          "low": 0.07762256090970188
+        },
+        "f3-aligned36": {
+          "high": 0.03240068033406862,
+          "low": 0.20022524691461774
+        },
+        "f3-aligned37": {
+          "high": 0.08421498898752988,
+          "low": 0.10887908520650225
+        },
+        "f3-aligned38": {
+          "high": 0.04544651979473868,
+          "low": 0.17270412148492453
+        },
+        "f3-aligned39": {
+          "high": 0.058037229260730516,
+          "low": 0.28578467422771114
+        },
+        "f3-aligned40": {
+          "high": 0.06900265206310174,
+          "low": 0.15417136006300303
+        },
+        "f3-aligned41": {
+          "high": 0.09650900809648344,
+          "low": 0.026827939596907324
+        },
+        "f3-aligned42": {
+          "high": 0.014301257718550842,
+          "low": 0.028470904242267503
+        },
+        "f3-aligned43": {
+          "high": 0.0777554064965833,
+          "low": 0.061635123168116035
+        },
+        "f3-aligned44": {
+          "high": 0.08352377140320433,
+          "low": 0.05097991372249755
+        },
+        "f3-aligned45": {
+          "high": 0.1122688142246906,
+          "low": 0.0707186096184318
+        },
+        "f3-aligned46": {
+          "high": 0.05544246881068149,
+          "low": 0.036210423768272326
+        },
+        "f3-crossed0": {
+          "high": 0.07835290626603686,
+          "low": 0.056388790568628666
+        },
+        "f3-crossed1": {
+          "high": 0.053340271015091756,
+          "low": 0.03654602376028304
+        },
+        "f3-crossed10": {
+          "high": 0.15950219768530638,
+          "low": 0.23223165905672127
+        },
+        "f3-crossed11": {
+          "high": 0.0342773649218735,
+          "low": 0.0246962984297856
+        },
+        "f3-crossed12": {
+          "high": 0.037339754997272046,
+          "low": 0.025990653705388445
+        },
+        "f3-crossed2": {
+          "high": 0.044441361898208465,
+          "low": 0.05918319796866767
+        },
+        "f3-crossed3": {
+          "high": 0.07028831268799052,
+          "low": 0.05286539936077306
+        },
+        "f3-crossed4": {
+          "high": 0.06558548815099496,
+          "low": 0.03775062977977672
+        },
+        "f3-crossed5": {
+          "high": 0.0571981534239574,
+          "low": 0.04106685994219461
+        },
+        "f3-crossed6": {
+          "high": 0.13904400382221915,
+          "low": 0.06419696642417727
+        },
+        "f3-crossed7": {
+          "high": 0.05956549433071889,
+          "low": 0.10769131659693909
+        },
+        "f3-crossed8": {
+          "high": 0.04777082944537514,
+          "low": 0.1034387095326732
+        },
+        "f3-crossed9": {
+          "high": 0.0738701937935975,
+          "low": 0.07195267069441069
+        }
+      },
+      "side_slopes_shuffled": {
+        "f3-aligned13": {
+          "high": 0.014514642059018312,
+          "low": 0.0537570776471592
+        },
+        "f3-aligned14": {
+          "high": 0.06181152838501669,
+          "low": 0.028562125930386095
+        },
+        "f3-aligned15": {
+          "high": 0.023856676815791955,
+          "low": 0.0013048219419241613
+        },
+        "f3-aligned16": {
+          "high": 0.0028794098369981924,
+          "low": 0.022241854034679154
+        },
+        "f3-aligned17": {
+          "high": -0.0006410513201979828,
+          "low": 0.02886666696207274
+        },
+        "f3-aligned18": {
+          "high": 0.013392828835221415,
+          "low": 0.06353186760349772
+        },
+        "f3-aligned19": {
+          "high": 0.07682145038153143,
+          "low": -0.005080745482720861
+        },
+        "f3-aligned20": {
+          "high": 0.01305045134733862,
+          "low": 0.019354111138940144
+        },
+        "f3-aligned21": {
+          "high": 0.042267491747610464,
+          "low": 0.02961609741377491
+        },
+        "f3-aligned22": {
+          "high": -0.009564707973300557,
+          "low": 0.07316719325414955
+        },
+        "f3-aligned23": {
+          "high": 0.01404905806868828,
+          "low": -0.00273316635181331
+        },
+        "f3-aligned24": {
+          "high": 0.0008113844750510246,
+          "low": 0.0011271103434893348
+        },
+        "f3-aligned25": {
+          "high": 0.012856953075807365,
+          "low": 0.004395436876815539
+        },
+        "f3-aligned26": {
+          "high": 0.029136229985015305,
+          "low": 0.040186262763735714
+        },
+        "f3-aligned27": {
+          "high": 0.01300756134247405,
+          "low": 0.0641861752348083
+        },
+        "f3-aligned28": {
+          "high": 0.01175783990690693,
+          "low": 0.013073445360370695
+        },
+        "f3-aligned29": {
+          "high": 0.0012672297136981925,
+          "low": 0.03784122519676281
+        },
+        "f3-aligned30": {
+          "high": 0.01618020717956936,
+          "low": -0.012295947385252415
+        },
+        "f3-aligned31": {
+          "high": 0.024561569453812382,
+          "low": 0.02763450261052336
+        },
+        "f3-aligned32": {
+          "high": 0.013081257176267957,
+          "low": 0.0052690288609900104
+        },
+        "f3-aligned33": {
+          "high": 0.012684719295879221,
+          "low": 0.007359380082974987
+        },
+        "f3-aligned34": {
+          "high": 0.08981450130750623,
+          "low": 0.005528114725263933
+        },
+        "f3-aligned35": {
+          "high": 0.015752652020304625,
+          "low": 0.016129606942479002
+        },
+        "f3-aligned36": {
+          "high": 0.08100298621755697,
+          "low": 0.08912037257900352
+        },
+        "f3-aligned37": {
+          "high": 0.005569515705708961,
+          "low": 0.16370261606643743
+        },
+        "f3-aligned38": {
+          "high": 0.012992488079103914,
+          "low": -0.1348229295580421
+        },
+        "f3-aligned39": {
+          "high": 0.0055340636288694345,
+          "low": 0.009726116437849708
+        },
+        "f3-aligned40": {
+          "high": 0.03204750850433591,
+          "low": 0.14192811540075234
+        },
+        "f3-aligned41": {
+          "high": 0.04379358658046817,
+          "low": 0.021313205365328658
+        },
+        "f3-aligned42": {
+          "high": 0.007109214032051225,
+          "low": -0.0031289957119218226
+        },
+        "f3-aligned43": {
+          "high": 0.04112988477651092,
+          "low": 0.014916182819857626
+        },
+        "f3-aligned44": {
+          "high": 0.00042970491678073763,
+          "low": -0.004806371832381862
+        },
+        "f3-aligned45": {
+          "high": 0.011051928669076005,
+          "low": 0.019993375800561264
+        },
+        "f3-aligned46": {
+          "high": 0.001471347627474695,
+          "low": -0.005584894211490887
+        },
+        "f3-crossed0": {
+          "high": 0.01493589544800522,
+          "low": 0.011442188689070099
+        },
+        "f3-crossed1": {
+          "high": 0.021968385198520513,
+          "low": 0.006316255550136374
+        },
+        "f3-crossed10": {
+          "high": 0.02201104922653241,
+          "low": 0.1555698966090191
+        },
+        "f3-crossed11": {
+          "high": 0.0120467311610164,
+          "low": 0.02158592361374745
+        },
+        "f3-crossed12": {
+          "high": 0.0010298983713703525,
+          "low": -0.0006449225213882581
+        },
+        "f3-crossed2": {
+          "high": 0.0023103850918735347,
+          "low": 0.016461886040046503
+        },
+        "f3-crossed3": {
+          "high": -0.004214579000775265,
+          "low": -0.00042861938250282616
+        },
+        "f3-crossed4": {
+          "high": 0.017353608614410154,
+          "low": 0.02626217575966927
+        },
+        "f3-crossed5": {
+          "high": 0.01455333757729771,
+          "low": 0.004826464311570966
+        },
+        "f3-crossed6": {
+          "high": -0.008438422224487763,
+          "low": 0.015499182387988197
+        },
+        "f3-crossed7": {
+          "high": 0.02152907877987742,
+          "low": -0.008073989915849067
+        },
+        "f3-crossed8": {
+          "high": -0.0021396209230462038,
+          "low": -0.000346782297848236
+        },
+        "f3-crossed9": {
+          "high": 0.009699419160418499,
+          "low": 0.006185753658464632
+        }
+      },
+      "status": "READ"
+    }
+  },
+  "pre_registration": {
+    "axiom": "no solicited human judgment, ever \u2014 not hired, not operator, not one blinded pair",
+    "binding_half": "interval, at every n in this programme (verified, not asserted)",
+    "clustering_caveat": "0 pairs share an author across their sides; 43 authors recur across pairs (51 of 562 slots) \u2014 a caveat on every interval, printed with every result (\u00a789.2)",
+    "controls": {
+      "placebo_identical": "exactly zero effect; arithmetic check, not a null (\u00a789.4)",
+      "rewhitespace_sham": "reads nothing, or the force is reading formatting and is VOID (\u00a778.1)"
+    },
+    "families": {
+      "gemma-3-4b": {
+        "base": "google/gemma-3-4b-pt",
+        "base_revision": "cc012e0a6d0787b4adcc0fa2c4da74402494554d",
+        "chat": "google/gemma-3-4b-it",
+        "chat_revision": "093f9f388b31de276ce2de164bdc2081324b9767",
+        "lineage": "google/gemma-3"
+      },
+      "qwen3.5-4b": {
+        "base": "Qwen/Qwen3.5-4B-Base",
+        "base_revision": "1001bb4d826a52d1f399e183466143f4da7b741b",
+        "chat": "Qwen/Qwen3.5-4B",
+        "chat_revision": "851bf6e806efd8d0a36b00ddf55e13ccb7b8cd0a",
+        "lineage": "alibaba/qwen3.5"
+      }
+    },
+    "family_rule": "reported per family, never pooled; disagreement is SPLIT_FAMILY",
+    "insufficient_n_above": 0.6,
+    "interval_bar": "Clopper-Pearson 95% lower bound clear of 0.50",
+    "label": "conversion = followers / total_views, BEHAVIOUR class at STORY grain (\u00a782)",
+    "ledger": "plan/stage-0-decisions.md \u00a795",
+    "min_decided_share": 0.9,
+    "point_bar": 0.52,
+    "programme": "plan/force-program.md",
+    "strata": "aligned and crossed, never averaged; the crossed halves are a contrast not a bar",
+    "written_before": "any continuation sampled, any logprob read, any chain run"
+  },
+  "pre_registration_track": {
+    "asks_nothing": "teacher-forced NLL only; nothing is sampled and nothing is asked",
+    "bar_declared_on": "the largest stratum the substrate yields, up to EXTENSION_FICTIONS; the capped-40 subset prints beside it as the directive's declared cap",
+    "can_refute": false,
+    "cap_fictions": 40,
+    "cap_set_by": "attention memory measured on this box, not the models' position limits: qwen2.5-3b at 11,701 tokens costs 25.4 GiB and 43.5 s per pass against 14.7 GiB and 2.2 s at 7,801. Declared before the run, with the ladder.",
+    "chapters": 4,
+    "cohort": "human_pre_llm",
+    "context_cap_tokens": 8192,
+    "controls_in_the_statistic": {
+      "foreign": "token-length-matched context from a different fiction \u2014 holds context LENGTH fixed and varies only provenance",
+      "shuffled": "the fiction's own chapters in destroyed order \u2014 same provenance, no structure; reported as a second comparison"
+    },
+    "extension_fictions": 200,
+    "hypothesis": "a book with real structure teaches the model to read it: later-chapter predictability improves with true earlier context in a way flat episodic prose cannot",
+    "label": "conversion = followers / total_views, declared before selection",
+    "ladder": [
+      1,
+      2,
+      3
+    ],
+    "ladder_amended": "2026-08-20: (1,3,5,7) over eight chapters became (1,2,3) over four. The bars are untouched; the instrument is what the hardware can hold. Three equally spaced rungs make the OLS slope the endpoint difference, so the middle rung informs the fit not at all \u2014 stated because it is a real weakening and not a detail.",
+    "one_directional": "PASS is available at every shape this substrate yields; FAIL is not, because the interval bar demands 0.6017 or more at every n. A miss returns INSUFFICIENT_N and is not evidence against the force.",
+    "own_generated_arm": "NOT_RUN \u2014 needs \u00a77.1's fitness books; \u00a794.3 counted exactly one own-generated text long enough to carry a slope",
+    "population": "web fiction whose first four chapters fit in 8,192 tokens on BOTH pinned tokenizers \u2014 a narrower population than 'web fiction', selected before pairing and applying equally to both sides of every pair",
+    "prior_art": "\u00a758 killed CDG, which is this statistic's level. The slope is what subtracts the level artifact that killed it; if F3 fails, \u00a758 gains a second entry.",
+    "statistic": "OLS slope of [NLL_foreign(j) - NLL_true(j)] over j",
+    "strata": "aligned and crossed, built with \u00a779's tolerances so no prose-blind popularity rule can clear both",
+    "track": "F3 compression progress"
+  },
+  "stratum_sizes": {
+    "aligned": 34,
+    "crossed": 13
+  },
+  "stratum_sizes_excluded_by_ceiling": {
+    "aligned": 0,
+    "crossed": 0
+  },
+  "surveyed_fictions": 585,
+  "track": "F3"
+}

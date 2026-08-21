@@ -8999,3 +8999,86 @@ new Director kinds. One writer per serial is the default for voice continuity an
 per-arc casting is a registered open question and is not built. §61/R4's α division now counts
 **serials** as the reported unit. Canon-store contents follow the existing leak rules wherever any
 third-party-derived text is involved.
+
+## 102. F3 replicates on a third checkpoint, and the control that nearly moved in §98 has now nearly moved twice
+
+The re-run §100 called for, on the new pinned pair (`gemma-3-4b` + `qwen3.5-4b`), 683 fresh
+Qwen units. **The pair shape held exactly** — 47 pairs, 34 `aligned`, 13 `crossed`, identical to
+§98 despite a different tokenizer, so this is a like-for-like replication rather than the same
+design on a different corpus. That was a live risk and it did not materialise.
+
+### 102.1 The mechanism replicates, and now stands on three checkpoints
+
+| checkpoint | ordered > shuffled | mean difference | sign test | slope positive |
+|---|---|---|---|---|
+| gemma-3-4b | 88 / 94 | +0.0524 | p = 8.8e-20 | 94 / 94 |
+| qwen2.5-3b *(retired, §98)* | 89 / 94 | +0.0520 | p < 1e-18 | 93 / 94 |
+| **qwen3.5-4b** | **87 / 94** | **+0.0549** | **p = 1.1e-18** | **93 / 94** |
+
+Three independent checkpoints across two lineages, one of them a model that did not exist when
+the hypothesis was registered. A fiction's own earlier chapters make its later chapter more
+predictable, the advantage grows with more of the book, and it grows **more in the real chapter
+order than reversed**. This is now the most replicated positive finding in the repository.
+
+### 102.2 The sham looks real, and the per-family rule says PASS
+
+§98.1 flagged gemma's sham as a weak pass rather than banking it: 14 of 19, agreement 0.7368,
+Clopper-Pearson lower bound **0.488**, containing 0.50 by twelve thousandths. On the new pair
+**both families landed on 14 of 19**, to four decimal places, in the same direction.
+
+That coincidence was checked before it was reported, because a byte-identical control block
+across two families is what an aliasing bug looks like. It is not one: **0 of 19 sham slope rows
+are identical across the families**, and they disagree about *which* pairs — only 10 of the 14
+wins overlap, and 8 pairs are won by one family and lost by the other. The computation is
+per-family and correct; the summary agreement is chance.
+
+**Which makes the reading worse rather than better.** Two independent lineages, disagreeing at
+the level of individual pairs, both arriving at 74% agreement *in the same direction* — the
+untouched side beating the re-whitespaced one. Pooled that is 28 of 38, CP **[0.5690, 0.8660]**,
+which **excludes 0.50**.
+
+**Pooling is not the rule and this is not a verdict.** §94.5's never-pool rule exists so that one
+family's artifact cannot masquerade as a finding, and the per-family readings both PASS. But the
+rule guards against the opposite situation to this one: here the two families *agree*, and the
+accumulating evidence points at a control that is moving. The honest statement is that
+**F3's formatting control has now nearly failed twice, and the second time on two lineages at
+once.**
+
+**Why this is probably real, and it is the problem §99 was written to avoid.** F3 computes its
+slope on raw text. F4's pre-registration opens by observing that surprisal is
+tokenization-sensitive and therefore mandates canonicalization before any statistic is taken.
+**F3 has the defect F4 was designed around.** `rewhitespace` changes paragraph separators, which
+changes the token stream of the *true-context* condition, and the measured direction is exactly
+what that predicts: destroying the whitespace convention reduces how much a book's own context
+appears to help.
+
+**What survives it, and this is the load-bearing distinction.** The ordered-versus-shuffled
+comparison is **whitespace-matched by construction** — both arms are the same chapters joined by
+the same separator, differing only in order — so §102.1's result is untouched by whitespace
+sensitivity. **The label reading is not protected the same way**, and it is the reading that was
+already `INSUFFICIENT_N`.
+
+### 102.3 The label reading, unchanged in verdict and newly split in direction
+
+| stratum | required | gemma-3-4b | qwen3.5-4b |
+|---|---|---|---|
+| `aligned` (n=34) | 0.7059 | 0.5588 (19/34) | **0.4706 (16/34)** |
+| `crossed` (n=13) | 0.8462 | 0.6154 (8/13) | 0.6923 (9/13) |
+
+**Headline `INSUFFICIENT_N`**, both strata, both families, exactly as §95.15 declared before any
+forward pass. Worth noting without over-reading: qwen3.5 puts `aligned` **below** 0.50 where
+gemma puts it above, so the two families now disagree in *direction* on the binding stratum. At
+these n both are refusals and the disagreement changes no verdict, but it is not evidence of a
+weak effect — it is evidence of no detectable effect.
+
+### 102.4 What to do about it
+
+- **Buy sham pairs before live ones**, as §98.1 already said and this run makes urgent. The
+  control is at 19 decided pairs per family against a `MIN_SCREENING_N` of 12. Doubling it would
+  settle whether F3 is VOID, and it is cheap.
+- **Canonicalize F3's text**, adopting F4's committed canonicalizer, and re-run. If the sham
+  reads nothing afterwards, the sensitivity was tokenization and the arm is repaired; if it still
+  moves, F3 reads layout and §78.1 voids it. Either outcome is worth the GPU time and neither is
+  available without the change.
+- **§102.1 stands regardless of both.** It is whitespace-matched by construction, replicated on
+  three checkpoints, and does not depend on the label the rest of the arm failed to predict.
