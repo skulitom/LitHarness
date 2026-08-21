@@ -5,7 +5,7 @@
     "artifact_kind": "state_snapshot",
     "created_at": "2026-08-21T00:00:00Z",
     "actor": "operator",
-    "tool": {"name": "serial-pilot-1", "version": "0.2.0"},
+    "tool": {"name": "serial-pilot-1", "version": "0.3.0"},
     "source_revisions": [],
     "dependencies": [],
     "warnings": []
@@ -180,6 +180,58 @@
       "authority": "accepted_canon",
       "pov_visibility": [],
       "evidence": []
+    },
+    {
+      "record_id": "rec-seed-want-standing",
+      "kind": "knowledge",
+      "subject": "silas",
+      "predicate": "wants",
+      "value": "the senior appraiser's seal on his card, and to be one of the names the assay house says out loud",
+      "story_position": {"order_key": "s1"},
+      "authority": "accepted_canon",
+      "pov_visibility": [],
+      "evidence": [],
+      "predicate_registry_version": "litharness.planned-position.v0",
+      "note": "story position is this eight-scene book's own beat key; re-key if the book is ever re-planned at ten scenes or more, where beats_for pads to s01 and s1 no longer sorts first"
+    },
+    {
+      "record_id": "rec-seed-fear-price",
+      "kind": "knowledge",
+      "subject": "silas",
+      "predicate": "fears",
+      "value": "that the System read him correctly, and that the cheapest evidence he was carrying is what he is worth",
+      "story_position": {"order_key": "s2"},
+      "authority": "accepted_canon",
+      "pov_visibility": [],
+      "evidence": [],
+      "predicate_registry_version": "litharness.planned-position.v0",
+      "note": "story position is this eight-scene book's own beat key; re-key if the book is ever re-planned at ten scenes or more, where beats_for pads to s01 and s1 no longer sorts first"
+    },
+    {
+      "record_id": "rec-seed-want-compound",
+      "kind": "knowledge",
+      "subject": "silas",
+      "predicate": "wants",
+      "value": "to learn the nine days well enough to spend them, instead of surviving them one at a time",
+      "story_position": {"order_key": "s5"},
+      "authority": "accepted_canon",
+      "pov_visibility": [],
+      "evidence": [],
+      "predicate_registry_version": "litharness.planned-position.v0",
+      "note": "story position is this eight-scene book's own beat key; re-key if the book is ever re-planned at ten scenes or more, where beats_for pads to s01 and s1 no longer sorts first"
+    },
+    {
+      "record_id": "rec-seed-fear-cost",
+      "kind": "knowledge",
+      "subject": "silas",
+      "predicate": "fears",
+      "value": "that everyone he saves is unmade by the next reset, and that he will get used to it",
+      "story_position": {"order_key": "s7"},
+      "authority": "accepted_canon",
+      "pov_visibility": [],
+      "evidence": [],
+      "predicate_registry_version": "litharness.planned-position.v0",
+      "note": "story position is this eight-scene book's own beat key; re-key if the book is ever re-planned at ten scenes or more, where beats_for pads to s01 and s1 no longer sorts first"
     }
   ]
 }
