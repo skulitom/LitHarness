@@ -404,8 +404,11 @@ pandoc book.md -o book.pdf
 operator's one judgment is a **single accept/reject bit** at book grain: no diagnostic, at most
 once per candidate and once per week, feeding no fit. Valence comes from a simulated readership
 validated against what a real population *did* (§97); see
-[plan/force-program.md](plan/force-program.md) for the instruments and §95–§102 of the ledger
-for what each returned.
+[plan/force-program.md](plan/force-program.md) for the instruments, §95–§102 of the ledger
+for what each returned, and
+[plan/sim-readership-calibration.md](plan/sim-readership-calibration.md) for the return leg —
+whether that population's own aggregates may ever *correct* the readership rather than only
+grade it, which is registered and deliberately undecided (§106).
 
 The one input this system cannot generate. §10.5 routes a share of accepted scenes to a
 queue as they are drafted, so evidence accumulates as a by-product of operation rather than

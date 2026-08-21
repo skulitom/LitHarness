@@ -9622,3 +9622,215 @@ scope axiom is unchanged: nothing built here solicits judgment from anyone and n
 any loop. `variation_step` is deliberately **not** in `PLAN_DERIVED_JOB_KINDS` — a repair session is
 licensed by a finding, not by a plan alternative, and `repair_finding` is not there either. No claim
 is made from the comparison beyond the mechanism it measured.
+
+## 106. A method exists for correcting the simulated readership against what the population did, and the decision that would license it has not been taken
+
+**Registered 2026-08-21, before any book of this project's has a retention curve and before the
+question below has an answer.** A second research extraction landed: SYN-DIGITS (arXiv 2604.07513,
+Columbia, April 2026), a post-hoc calibration framework for LLM persona simulations. It stacks a
+real response matrix on a simulated one and treats the sim-to-real gap as a synthetic-control /
+matrix-completion problem. The design registration is
+[plan/sim-readership-calibration.md](sim-readership-calibration.md); this entry carries what is
+being registered, what is prohibited, what is gated, and what triggers revisiting.
+
+**Nothing is built and nothing is proposed to be built.** No code, no schema, no table, no number.
+This is a registration and a set of constraints on work that may never be authorised.
+
+### 106.1 The routing decision, taken first because it was the hard part
+
+The material belongs to §97's programme — the readership is the reward model, the population
+through the library is the settlement layer, and G5 is *"sim forecasts against real telemetry."*
+This is G5's **return leg**, and it had no home. Four candidate homes were read in full and each
+refused it for a different reason, which is what makes the vacancy real rather than a filing
+preference:
+
+- `plan/machine-taste-program.md` is **RETIRED** at its own line 3 — *"Nothing below may be
+  executed"* — and §104.4 has already refused an additive scope note there on the grounds that it
+  *"would have extended a closed channel."*
+- `plan/judge-validity-program.md` is judge-side, and §97.4's *"no verdict slot exists anywhere in
+  a sim"* makes a sim-calibration section there a re-welding of the roles §87–§89 separated.
+- `plan/force-program.md` excludes the object constitutively: a force is obtained *without asking
+  any model a question*, and a persona sim is nothing but asking a model a question.
+- `plan/persona-reader-validity.md` says the objective in the right words — *"the datum is always a
+  distribution, so aggregation is distribution-matching and never averaging"* — but it predates the
+  scope axiom by a day. The string §95 appears in it zero times, its §6 still specifies a paid human
+  panel and its §10 still calls that *"the first line item that pays humans."* Seating a 2026-08-21
+  registration whose entire argument is that it solicits nothing two sections above a budget for
+  solicited labels would put the contradiction inside the home.
+
+**And the ordering rule is the filing rule**, which is the argument that actually decided it.
+Calibration sits above instrument validity; instrument defect-hunting stays upstream. Filing the
+layer that must stay downstream one heading below the gates that must stay upstream is how an order
+of operations gets lost. So a new companion doc under §97 — the shape `plan/anchor-set.md` already
+is — and it is not a second home for one question but the first home for the question above it.
+
+### 106.2 The mechanism, and the half that is closed twice over
+
+**Individual-level calibration is the paper's headline and is unavailable to this project.** It
+predicts a *named person's* response to a new item from that person's responses to past items plus
+the sim's, for up to **+50% correlation** over uncalibrated simulation. It needs solicited
+per-person response rows, so §95 closes it — *not hired, not operator, not one blinded pair*. And
+RoyalRoad exposes aggregates and never per-reader rows, so there is no column to read. **The second
+closure is the one worth recording**: an axiom can be argued with by a later session and a missing
+column cannot.
+
+**Distributional calibration survives.** It needs only marginal distributions per item: reweight
+the *n* simulated personas plus *K* degenerate always-one-answer members — which is how the
+ensemble is guaranteed full support — on the probability simplex by mirror descent, until the
+ensemble's distribution matches the observed marginals on past items, then read the new item's
+distribution off the reweighted ensemble. Reported: **50–90% reductions in distributional
+divergence**, TV and KL the most robust objectives, error decomposing into an irreducible
+reweighting gap plus a term of order `sqrt(K/n)` that degrades as the new item leaves the span of
+the past ones. Retention curves, follow counts and rating histograms are marginals, and they are
+unsolicited by construction.
+
+**The number that reframes the method, and it is a control rather than a headline.** Handing the
+simulation 249 ground-truth ratings in context bought **+16%**; calibration bought **+50%**. The
+sim's error is a systematic displacement of its output distribution and not a shortfall of
+evidence, so **prompt enrichment is the weaker lever** — which contradicts the instinct this
+project reaches for first whenever a reader model underperforms.
+
+**One coincidence worth not mistaking for a design.** The distributional variant is defined for
+structured or categorical responses; free-form text is open. §97.4 independently fixed the sim
+vocabulary as *continue, abandon, return* and abolished the verdict slot. The admissible half of the
+method happens to require exactly the response type this project had already restricted itself to,
+for unrelated reasons.
+
+### 106.3 The gate, posed and deliberately not closed — and the two §97 clauses that disagree
+
+Whether the settlement layer may correct the reward model is **an unmade decision**. The README
+constrains the *operator*, who *"trains, calibrates and selects nothing"*; that sentence says
+nothing about the population. §97 is not silent, and the trouble is that it points both ways:
+
+- **§97.5 reads as licensing it and fixing its cadence** — *"sims update only between cycles, from
+  new unsolicited data, and never from the writer's outputs within the cycle they are judging."* A
+  reweighting against platform marginals is a between-cycle update from new unsolicited data.
+- **§97.2 forbids the same shape for a different source** — *"The permission is to **read** the
+  comparison; the prohibition is on **feeding it back**."* Its stated reason, that tuning the sim to
+  an operator trace *"would have quietly made one person the reward model"*, does not transfer to a
+  population. The reason does not, but the shape does: G5 is a comparison and reweighting is
+  feeding it back.
+
+**The narrow question, which is the contribution of this entry:** *does correcting the reward model
+against settlement marginals count as §97.5's permitted between-cycle update, or as §97.2's
+prohibited feeding-back of the settlement comparison?* Nobody has reconciled the two clauses; this
+entry poses the question and does not answer it, because answering a §97 ambiguity from a companion
+doc is not how anything here has been decided.
+
+**Trigger for deciding it, declared now so it is not decided by drift: books of this project's are
+live on RoyalRoad with real aggregate data accumulating against them.** Before that the input set is
+empty, which is why the deferral costs nothing and adds no line to §97's cost table — and it is also
+why the question cannot be answered well today: nobody yet knows which marginals a serial of ours
+will actually expose, and a rule written against imagined columns is a rule written against nothing.
+
+### 106.4 Calibration sits above instrument validity, and this repository has already measured why
+
+**Reweighting a channel with a known defect calibrates noise.** Three measurements, all in hand:
+
+- T0's verdict channel carried a positional bias of **0.8151** over 568 decided comparisons. Fit its
+  marginals to a population and it will match them while still answering a *side* — a defect that
+  has acquired agreement with the data.
+- §94.6 is sharper. `qwen3:14b` returned `ABABABABABAB` in all six sessions, `gemma3:12b` returned
+  `AAAAAAAAAAAA`, and **"both fixed-pattern readers would have passed every declared control."**
+  Constant behaviour survives placebos, shams and positional checks. It also fits marginals
+  beautifully.
+- §95.15's class — *a guard that ran, produced a value, and had no path to a verdict* — is what a
+  calibration layer becomes if it is added before the instrument beneath it can fail.
+
+So instrument defect-hunting **stays upstream**: §94.6's preconditions, `llm-reader-engagement.md`
+§A3's battery and §97.7's G1–G3 clear before any weight is fitted. A calibrated broken instrument is
+strictly worse than an uncalibrated one, because it has gained agreement with the data and lost the
+disagreement that would have exposed it.
+
+**And the Goodhart caution, which is separate from all of that.** The paper's guarantee is
+*predictive*, not optimisation-robust. A reward model calibrated to aggregates and then optimised
+against is a proxy of a proxy, and §61's α discipline applies unchanged — as does §97.5's
+containment, T3 instrumentation and the frozen-per-cycle rule. Calibration buys accuracy against
+observed marginals; it buys no protection at all from pressure applied afterward.
+
+### 106.5 The constraints that bind now, because four of the five cannot be retrofitted
+
+Recorded here because they are cheap today and expensive or impossible after the fact, and they hold
+whether or not §106.3's gate ever opens:
+
+1. **Per-reader × per-item responses persist in matrix-completable form.** A readership storing only
+   pooled statistics would have to re-run every simulation to obtain a response matrix, which on
+   §94.6's substrate is GPU time nobody budgeted.
+2. **The sim and the settlement layer must be made to answer the same item — and today they do
+   not.** The BCR's datum is an allocation share *between two texts* under a forced budget; a
+   platform marginal is retention on *chapter k* of one text. Different item spaces, and a matrix
+   cannot be completed against columns that mean something else. This is the constraint the other
+   four assume, it is the one that can silently fail, and a fit obtained without declaring the
+   mapping first would be an artefact of the join.
+3. **The degenerate members are fenced, and this is the constraint the source material does not
+   see.** *K* always-one-answer members are how the method guarantees support — and in this
+   repository that object has a history: it is exactly the fixed-pattern reader §94.6 killed two of
+   four candidates over, and the text-blind constant that took **0.8804** of a promoted ensemble in
+   §97.5 before the market was repaired. So their total fitted weight prints beside every headline
+   and is never folded into it; a fit in which they carry the majority of the mass is a **refusal
+   state and not a result**; and they are support machinery, never counted as personas and never
+   merged into the panel-size arithmetic.
+4. **Ensemble concentration is standing health reporting**, not a diagnostic somebody runs when a
+   result looks wrong — predicted-variance over true-variance, two-sided, with a declared refusal
+   state for the case the denominator is zero, which this project has already measured (195 of 196,
+   *"every variance statistic undefined rather than failed"*).
+5. **A correction that cannot refuse is not accepted.** Every learned correction ships with an
+   in-span diagnostic and a raw fallback. This is §97.7's G3 one layer up — *"a sim that always has
+   an answer is measuring its own noise"* — and the paper's own evidence is that the refusal is
+   where the value was: adaptive transfer **doubled** the gain, 19–21% to 50%.
+
+### 106.6 What is declared, what is refused, and the bar that is deliberately absent
+
+One bar is stated now, because it is a statement about a diagnostic's own behaviour rather than
+about an effect size: **the fallback rate must be strictly between 0 and 1** on the set the
+correction is applied to — a dimensionless share, two-sided, both endpoints reachable and both
+already reached in this repository's history. At 0 the diagnostic never refuses, which G3 calls a
+failure; at 1 the layer is inert. It is reported decomposed, because
+`persona-reader-validity.md` §1 measured that *"wouldn't answer", "answered in the wrong format"*
+and *"answered differently"* are three failures and the middle one is a property of the transport.
+
+**No divergence-reduction bar is stated, and the omission is the point.** The 50–90% figure is
+theirs on their task; no σ exists for any response distribution of this project's. Worse, a
+percentage-reduction bar **gets easier the weaker the raw arm is** — which is exactly what §106.7's
+equalizer says happens — so it is clearable by degrading the baseline. If a bar is ever stated it
+goes on the calibrated *absolute* divergence with the raw printed beside it, against the baselines
+§97.5 already seats: the coin, and the text-blind constant. **This is §101.4's pattern unchanged:
+the σ comes first and the bar is signed after it**, because inventing a bar and then discovering
+whether it was reachable is the failure §87's rulebook exists to prevent.
+
+Three traps in the marginals themselves are recorded before anyone reaches for them: at the measured
+population (median 1,245 views at 98 days, median 5 followers, 22.3% ever clearing the 10,000-view
+floor) a launching serial's marginal has almost no mass, and restricting to serials that clear the
+floor is a collider rather than a filter; a follow-derived marginal is orderable by size rather than
+by prose, since the deciles are recoverable from follower count alone at **AUC 0.814** (§56.3); and
+retention is informatively censored, with only **43.0%** of shard-3 LitRPG fictions publishing
+anything in days 30–60, so a statistic computed on survivors measures survival.
+
+### 106.7 The equalizer, recorded as a decision input and not as a claim
+
+Calibration compressed the paper's model spread from baselines of **.048–.205** to **.204–.243**,
+and **reordered** them: the best raw model was not the best calibrated one, and their fine-tuned
+simulation went from worst raw (.048) to best calibrated (.243). If that transfers, **cheap personas
+plus a correction layer may dominate expensive personas run raw**, which is a real input to the
+force programme's model-choice economics and contests `llm-reader-engagement.md`'s working premise
+that the frontier ordering is the reference.
+
+Recorded as an input, not a claim. The numbers are theirs on their task, and this project has twice
+measured that a model ranking does not transfer — §94.6 killed two of four candidates on a control
+absent from the design, and §97.5's market ranked stated confidence until it was repaired. **No seat
+is reopened on it**, and a calibrator that reorders models must not become a reason to reopen model
+selection after the marginals have been read.
+
+### 106.8 Anti-scope
+
+No code, no migration, no table, no fitted anything — no mirror descent, no reweighting, no
+calibration implementation. `research/quality-measurement/`, the pools, preference and judge stores,
+and provider code are untouched by this entry and by its companion doc. No new quality or craft
+metric. **No individual-level calibration, ever**, on either of §106.2's two closures. No RoyalRoad
+scraping, collection, polling or account activity of any kind — no live data path exists, terms of
+service are unread and unpriced, and fetching the site directly is an operator decision rather than
+an implementation detail. Nothing here solicits judgment from anyone (§95) and no human data enters
+any loop. **§106.3's gate is not closed by this entry and may not be treated as closed by anything
+citing it.** No licence moves: FORECAST stays at STORY grain, absent from `veto_for`, and a
+calibrated sim earns exactly what an uncalibrated one earned until an entry says otherwise. §97.8's
+anti-scope stands whole and is extended by none of this.
