@@ -112,17 +112,41 @@ class BookExport:
 
     @property
     def summary(self) -> str:
-        return (
-            f"{self.drafted} of {self.total} scene(s) drafted · {self.words:,} word(s)"
-        )
+        return f"{self.drafted} of {self.total} scene(s) drafted · {self.words:,} word(s)"
 
     # -- markdown -------------------------------------------------------------
 
-    def as_markdown(self) -> str:
+    def chapter_groups(
+        self, scenes_per_chapter: int = 1
+    ) -> list[tuple[str, tuple[SceneProgress, ...]]]:
+        """The book as a reader receives it: numbered chapters holding scenes.
+
+        One scene is one chapter by default, which asserts nothing — the same refusal
+        `library.DEFAULT_SCENES_PER_CHAPTER` makes. What it buys is that no output has to name
+        a scene in order to say where something sits.
+        """
+        size = max(scenes_per_chapter, 1)
+        groups: list[tuple[str, tuple[SceneProgress, ...]]] = []
+        for start in range(0, len(self.scenes), size):
+            groups.append((f"Chapter {len(groups) + 1}", tuple(self.scenes[start : start + size])))
+        return groups
+
+    def reading_summary(self, scenes_per_chapter: int = 1) -> str:
+        """The completeness line for the document itself, counted in chapters.
+
+        `summary` stays counted in scenes because its readers are operator surfaces — the tick
+        log, the library index — where the unit of work is the right unit. The document is not
+        one of those: it is the thing being read, so it says how many chapters are whole.
+        """
+        groups = self.chapter_groups(scenes_per_chapter)
+        whole = sum(1 for _, group in groups if all(scene.drafted for scene in group))
+        return f"{whole} of {len(groups)} chapter(s) complete · {self.words:,} word(s)"
+
+    def as_markdown(self, scenes_per_chapter: int = 1) -> str:
         lines = [
             f"# {self.title}",
             "",
-            f"*{self.summary} · {self.generated_at}*",
+            f"*{self.reading_summary(scenes_per_chapter)} · {self.generated_at}*",
             "",
             f"- revision `{self.revision_id}`",
             f"- book `{self.book_id}` · branch `{self.branch_id}`",
@@ -130,20 +154,35 @@ class BookExport:
         ]
         if self.premise:
             lines += [f"> **Premise.** {_markdown_safe(self.premise)}", ""]
-        lines += self._progress_table()
+        lines += self._progress_table(scenes_per_chapter)
         lines += ["", "---", ""]
 
+        chapters = self.chapter_groups(scenes_per_chapter)
+        # **A book that asserts its own structure keeps it, and gets no synthetic chapters on
+        # top.** Parts and chapters in the manuscript are the author's; the grouping below is
+        # this harness's way of giving a flat book a reader-facing unit, and running both
+        # would put two competing outlines over one text.
+        flat = all(node.kind is NodeKind.SCENE for node in self.body)
+        opens = {group[0].logical_id: title for title, group in chapters if group} if flat else {}
         for node, level in _levelled(self.body):
-            lines += _markdown_node(node, level, self._ordinals)
+            title = opens.get(node.logical_id)
+            if title is not None:
+                lines += [f"## {title}", ""]
+            lines += _markdown_node(node, level, self._ordinals, first=title is not None)
         return "\n".join(lines).rstrip() + "\n"
 
-    def _progress_table(self) -> list[str]:
-        rows = ["| # | Scene | Words | State |", "| --: | --- | --: | --- |"]
-        for scene in self.scenes:
-            words = f"{scene.words:,}" if scene.drafted else "—"
-            rows.append(
-                f"| {scene.ordinal} | {_cell(scene.label)} | {words} | {scene.state} |"
-            )
+    def _progress_table(self, scenes_per_chapter: int = 1) -> list[str]:
+        """Gap visibility at the grain the reader is handed, which is the chapter.
+
+        A per-scene table was the last place the word "scene" reached a reader, and a partly
+        drafted chapter is exactly what `library.chapters_for` withholds — so "2 of 4 drafted"
+        reports the same gap without teaching the vocabulary."""
+        rows = ["| Chapter | Words | State |", "| --- | --: | --- |"]
+        for title, group in self.chapter_groups(scenes_per_chapter):
+            drafted = sum(1 for scene in group if scene.drafted)
+            words = sum(scene.words for scene in group if scene.drafted)
+            state = "complete" if drafted == len(group) else f"{drafted} of {len(group)} drafted"
+            rows.append(f"| {_cell(title)} | {words:,} | {state} |")
         return rows
 
     @property
@@ -152,7 +191,7 @@ class BookExport:
 
     # -- html -----------------------------------------------------------------
 
-    def as_html(self) -> str:
+    def as_html(self, scenes_per_chapter: int = 1) -> str:
         parts = [
             "<!DOCTYPE html>",
             '<html lang="en">',
@@ -164,7 +203,7 @@ class BookExport:
             "<body>",
             '<header class="front">',
             f"<h1>{html.escape(self.title)}</h1>",
-            f'<p class="summary">{html.escape(self.summary)}</p>',
+            f'<p class="summary">{html.escape(self.reading_summary(scenes_per_chapter))}</p>',
             f'<p class="provenance">revision <code>{html.escape(self.revision_id)}</code>'
             f"<br>book <code>{html.escape(self.book_id)}</code>"
             f" · branch <code>{html.escape(self.branch_id)}</code>"
@@ -175,27 +214,42 @@ class BookExport:
                 f'<blockquote class="premise"><strong>Premise.</strong> '
                 f"{html.escape(self.premise)}</blockquote>"
             )
-        parts += self._progress_html()
+        parts += self._progress_html(scenes_per_chapter)
         parts.append("</header>")
 
+        flat = all(node.kind is NodeKind.SCENE for node in self.body)
+        opens = (
+            {
+                group[0].logical_id: title
+                for title, group in self.chapter_groups(scenes_per_chapter)
+                if group
+            }
+            if flat
+            else {}
+        )
         for node, level in _levelled(self.body):
-            parts += _html_node(node, level, self._ordinals)
+            title = opens.get(node.logical_id)
+            if title is not None:
+                parts.append(f"<h2>{html.escape(title)}</h2>")
+            parts += _html_node(node, level, self._ordinals, first=title is not None)
         parts += ["</body>", "</html>"]
         return "\n".join(parts) + "\n"
 
-    def _progress_html(self) -> list[str]:
+    def _progress_html(self, scenes_per_chapter: int = 1) -> list[str]:
         rows = [
             '<table class="progress">',
-            "<thead><tr><th>#</th><th>Scene</th><th>Words</th><th>State</th></tr></thead>",
+            "<thead><tr><th>Chapter</th><th>Words</th><th>State</th></tr></thead>",
             "<tbody>",
         ]
-        for scene in self.scenes:
-            words = f"{scene.words:,}" if scene.drafted else "—"
-            state = "drafted" if scene.drafted else "pending"
+        for title, group in self.chapter_groups(scenes_per_chapter):
+            drafted = sum(1 for scene in group if scene.drafted)
+            words = sum(scene.words for scene in group if scene.drafted)
+            complete = drafted == len(group)
+            state = "complete" if complete else f"{drafted} of {len(group)} drafted"
             rows.append(
-                f'<tr class="{state}"><td>{scene.ordinal}</td>'
-                f"<td>{html.escape(scene.label)}</td><td>{words}</td>"
-                f"<td>{html.escape(scene.state)}</td></tr>"
+                f'<tr class="{"drafted" if complete else "pending"}">'
+                f"<td>{html.escape(title)}</td><td>{words:,}</td>"
+                f"<td>{html.escape(state)}</td></tr>"
             )
         rows += ["</tbody>", "</table>"]
         return rows
@@ -243,8 +297,22 @@ def _heading(node: Node, ordinals: dict[str, int]) -> str:
     return node.title or node.logical_id
 
 
-def _markdown_node(node: Node, level: int, ordinals: dict[str, int]) -> list[str]:
-    lines = [f"{'#' * level} {_markdown_safe(_heading(node, ordinals))}", ""]
+#: The break between two scenes inside one chapter. A reader sees a pause; nobody sees a
+#: scene number.
+SCENE_BREAK = "* * *"
+
+
+def _markdown_node(
+    node: Node, level: int, ordinals: dict[str, int], *, first: bool = True
+) -> list[str]:
+    """**A scene never gets a heading.** The scene is this system's unit of work, not the
+    book's unit of reading, and a reader who is shown "Scene 5" has been shown the machinery.
+    Author-made structure — parts, chapters a book actually has — keeps its heading, because
+    that is the book asserting it rather than the harness leaking it."""
+    if node.kind is NodeKind.SCENE:
+        lines = [] if first else [SCENE_BREAK, ""]
+    else:
+        lines = [f"{'#' * level} {_markdown_safe(_heading(node, ordinals))}", ""]
     if node.kind is NodeKind.BLOCK:
         # §11 wants game-system displays rendered from their payload rather than from
         # prose. Nothing renders one yet, so the block's text is shown set apart and the
@@ -259,13 +327,23 @@ def _markdown_node(node: Node, level: int, ordinals: dict[str, int]) -> list[str
     return lines
 
 
-def _html_node(node: Node, level: int, ordinals: dict[str, int]) -> list[str]:
+def _html_node(
+    node: Node, level: int, ordinals: dict[str, int], *, first: bool = True
+) -> list[str]:
     tag = f"h{level}"
-    section = "scene" if node.kind is NodeKind.SCENE else node.kind.value
-    parts = [
-        f'<section class="{section}">',
-        f"<{tag}>{html.escape(_heading(node, ordinals))}</{tag}>",
-    ]
+    # "prose" rather than "scene": nothing styles this class, and the scene is internal, so
+    # naming it here would leak the unit of work into the markup of the one artifact a reader
+    # is handed. Author-made structure keeps its own kind.
+    section = "prose" if node.kind is NodeKind.SCENE else node.kind.value
+    parts = [f'<section class="{section}">']
+    if node.kind is NodeKind.SCENE:
+        # No heading, ever — see `_markdown_node`. An `<hr>` marks the pause between two
+        # scenes inside one chapter, because it survives a paste as structure rather than as
+        # three characters.
+        if not first:
+            parts.append("<hr>")
+    else:
+        parts.append(f"<{tag}>{html.escape(_heading(node, ordinals))}</{tag}>")
     if node.kind is NodeKind.BLOCK:
         body = node.content or NOT_DRAFTED
         parts.append(f'<aside class="block">{_paragraphs(body)}</aside>')

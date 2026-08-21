@@ -92,7 +92,13 @@ def test_an_undrafted_scene_is_a_visible_gap_not_an_omission(db) -> None:
 
     markdown = document.as_markdown()
     assert markdown.count(export.NOT_DRAFTED) == 2
-    assert "Scene the 4" in markdown, "an undrafted scene keeps its heading"
+    # The gap is visible in the body and counted in the front matter. What it no longer does
+    # is announce itself with a scene title: the scene is internal, so the reading copy says
+    # "2 of 4 drafted" at the chapter it belongs to instead of naming the unit of work.
+    assert "Scene the 4" not in markdown
+    # One scene is one chapter at the default grouping, so an empty one reports itself as a
+    # chapter that is not complete rather than as a scene that is missing.
+    assert "0 of 1 drafted" in markdown
     assert export.NOT_DRAFTED in document.as_html()
 
 
@@ -105,7 +111,11 @@ def test_the_front_matter_counts_what_is_there(db) -> None:
     # em-dash is one of them, which is what "approximate" means here and why nothing in the
     # system bills against this number.
     assert document.words == 14
-    assert "2 of 4 scene(s) drafted" in document.as_markdown()
+    assert document.summary.startswith("2 of 4 scene(s) drafted")
+    # The document itself counts chapters, because it is the thing being read rather than an
+    # operator surface. At the default grouping one scene is one chapter, so the numbers agree
+    # and the vocabulary does not.
+    assert "2 of 4 chapter(s) complete" in document.as_markdown()
     assert [scene.state for scene in document.scenes] == [
         "drafted",
         "drafted",
@@ -121,8 +131,8 @@ def test_progress_between_two_revisions_is_readable_as_a_diff(db) -> None:
     later = book(drafted=3, scenes=4)
     commit(db, build_revision(BOOK_ID, BRANCH_ID, later.nodes, parent=first), at=STAMP)
 
-    assert "1 of 4 scene(s) drafted" in collect(db, revision_id=first).as_markdown()
-    assert "3 of 4 scene(s) drafted" in collect(db).as_markdown()
+    assert "1 of 4 chapter(s) complete" in collect(db, revision_id=first).as_markdown()
+    assert "3 of 4 chapter(s) complete" in collect(db).as_markdown()
 
 
 def test_a_content_locked_empty_scene_is_not_merely_pending(db) -> None:
@@ -203,17 +213,23 @@ def test_a_pipe_in_a_title_does_not_split_the_progress_table(db) -> None:
     ]
     commit(db, build_revision(BOOK_ID, BRANCH_ID, nodes))
 
-    row = next(
-        line for line in collect(db).as_markdown().splitlines() if "Rook" in line and "|" in line
-    )
-    assert r"Rook \| Marrow" in row
-    delimiters = row.count("|") - row.count(r"\|")
-    assert delimiters == 5, "four cells, so five delimiters; an unescaped pipe would make six"
+    markdown = collect(db).as_markdown()
+
+    # The progress table no longer carries scene titles at all, so the pipe cannot reach it.
+    # That is the fix rather than an escape: a cell that never holds author text cannot be
+    # split by one. `_cell` still guards the chapter titles it does hold.
+    assert "Rook" not in markdown.split("---", 1)[0], "no scene title reaches the front matter"
+    row = next(line for line in markdown.splitlines() if line.startswith("| Chapter 1"))
+    assert row.count("|") == 4, "three cells, so four delimiters"
 
 
 def test_heading_level_follows_the_tree_not_the_kind(db) -> None:
-    """A scene directly under the book and a scene under a chapter are at different depths
-    and must not both be `<h2>`, or the outline contradicts the manuscript."""
+    """A chapter directly under the book and one under a part are at different depths and
+    must not both be `<h2>`, or the outline contradicts the manuscript.
+
+    Scenes are absent from this entirely now: they carry no heading at any depth, so the only
+    headings in a structured book are the ones the manuscript itself asserts.
+    """
     keys = initial_keys(2)
     nodes = [
         Node(logical_id="book", kind=NodeKind.BOOK, position_key="010", title="T"),
@@ -234,9 +250,11 @@ def test_heading_level_follows_the_tree_not_the_kind(db) -> None:
     commit(db, build_revision(BOOK_ID, BRANCH_ID, nodes))
 
     markdown = collect(db).as_markdown()
-    assert "## One" in markdown
-    assert "### 1. Deep" in markdown
-    assert "## 2. Shallow" in markdown
+    assert "## One" in markdown, "the chapter the manuscript asserts keeps its heading"
+    assert "Deep" not in markdown, "a scene is never a heading, at any depth"
+    assert "Shallow" not in markdown
+    # Both scenes' prose is still there; only the machinery's names for them are gone.
+    assert markdown.count("Prose.") == 2
 
 
 # --- selection and refusal -----------------------------------------------------------
@@ -320,6 +338,8 @@ def test_writing_to_a_file_reports_progress_on_stdout(db, tmp_path, capsys) -> N
 
     assert run(db, "export", str(tmp_path / "book.md")) == EXIT_OK
     out = capsys.readouterr().out
+    # The CLI's own progress line is an operator surface, so it keeps counting the unit of
+    # work. Only the document counts chapters.
     assert "2 of 4 scene(s) drafted" in out
     assert "markdown from revision" in out
 
@@ -331,5 +351,5 @@ def test_stdout_carries_the_book_and_nothing_else(db, capsys) -> None:
     assert run(db, "export") == EXIT_OK
     out = capsys.readouterr().out
     assert out.startswith("# The Hollow Ledger")
-    assert "scene(s) drafted ·" in out, "the front matter still says how far along it is"
+    assert "chapter(s) complete ·" in out, "the front matter still says how far along it is"
     assert "from revision" not in out

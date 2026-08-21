@@ -50,15 +50,22 @@ def a_book(*, drafted: int, total: int = 4) -> object:
         if index < drafted:
             nodes.append(
                 Node.text_node(
-                    f"scene-{index + 1}", NodeKind.SCENE, keys[index], DRAFTED,
-                    parent_logical_id="book", title=title,
+                    f"scene-{index + 1}",
+                    NodeKind.SCENE,
+                    keys[index],
+                    DRAFTED,
+                    parent_logical_id="book",
+                    title=title,
                 )
             )
         else:
             nodes.append(
                 Node(
-                    logical_id=f"scene-{index + 1}", kind=NodeKind.SCENE,
-                    position_key=keys[index], parent_logical_id="book", title=title,
+                    logical_id=f"scene-{index + 1}",
+                    kind=NodeKind.SCENE,
+                    position_key=keys[index],
+                    parent_logical_id="book",
+                    title=title,
                 )
             )
     return build_revision(BOOK_ID, BRANCH_ID, nodes)
@@ -120,7 +127,7 @@ def test_the_pastable_chapter_carries_no_scaffolding(tmp_path) -> None:
         "a serial platform takes the chapter title in its own field, so a heading in the "
         "body is published twice"
     )
-    assert chapter.title in chapter.stem or chapter.slug in chapter.stem
+    assert chapter.stem == f"Chapter{chapter.number}"
 
 
 def test_only_the_conservative_tag_subset_is_emitted(tmp_path) -> None:
@@ -144,9 +151,7 @@ def test_prose_is_escaped_as_text() -> None:
     """A stray `<` in prose swallows everything up to the next `>` and the loss is silent —
     `export._paragraphs`'s reason, and it applies with more force here because this output is
     pasted somewhere that renders it."""
-    scene = Node.text_node(
-        "scene-1", NodeKind.SCENE, "010", "He wrote <3 & meant it.", title="S"
-    )
+    scene = Node.text_node("scene-1", NodeKind.SCENE, "010", "He wrote <3 & meant it.", title="S")
     fragment = paste_fragment([scene])
     assert "&lt;3 &amp; meant it." in fragment
     assert "<3" not in fragment
@@ -177,11 +182,21 @@ def test_one_scene_is_one_chapter_by_default(tmp_path) -> None:
     chapters, _ = chapters_for(document)
     assert len(chapters) == 4
     assert [chapter.logical_ids for chapter in chapters] == [
-        ("scene-1",), ("scene-2",), ("scene-3",), ("scene-4",)
+        ("scene-1",),
+        ("scene-2",),
+        ("scene-3",),
+        ("scene-4",),
     ]
 
 
-def test_grouping_names_the_range_it_covers(tmp_path) -> None:
+def test_grouping_names_the_chapter_and_never_the_scenes(tmp_path) -> None:
+    """A chapter is named for what it is to a reader, and the file is named the same way.
+
+    It used to be titled `Scene 1 (1-4)` and filed as `01-scene-1-1-4`, so the unit of *work*
+    reached the one artifact that exists to be handed to a reader — and the title travels to a
+    serial platform in its own field, which would have published the harness's vocabulary under
+    the book's name. The scene is internal; nothing a reader receives may name one.
+    """
     store = SqliteStore.open(tmp_path / "l.db")
     try:
         document = a_document(store, drafted=4, total=4)
@@ -189,7 +204,8 @@ def test_grouping_names_the_range_it_covers(tmp_path) -> None:
         store.close()
     chapters, _ = chapters_for(document, scenes_per_chapter=2)
     assert len(chapters) == 2
-    assert "1-2" in chapters[0].title and "3-4" in chapters[1].title
+    assert [chapter.title for chapter in chapters] == ["Chapter 1", "Chapter 2"]
+    assert [chapter.stem for chapter in chapters] == ["Chapter1", "Chapter2"]
     assert "<hr>" in chapters[0].fragment, "a scene break inside a grouped chapter"
     assert "* * *" in chapters[0].plain
 
@@ -198,9 +214,7 @@ def test_the_plain_text_fallback_is_blank_line_separated() -> None:
     """Here because the HTML claim is unverifiable from this repository. Plain text with blank
     lines pastes as paragraphs in every editor there is, so the uncertainty costs one small
     file rather than a failed publish."""
-    plain = paste_plain(
-        [Node.text_node("scene-1", NodeKind.SCENE, "010", DRAFTED, title="S")]
-    )
+    plain = paste_plain([Node.text_node("scene-1", NodeKind.SCENE, "010", DRAFTED, title="S")])
     assert "<" not in plain
     assert plain.count("\n\n") == 2
 
@@ -382,10 +396,21 @@ def test_a_tick_publishes_without_being_asked_and_writes_beside_the_database(
     monkeypatch.setenv("LITHARNESS_FAKE_PAD_CHARS", "400")
     db = tmp_path / "cli.db"
     assert main(["--database", str(db), "init"]) == EXIT_OK
-    assert main([
-        "--database", str(db), "new", "The Toll Road",
-        "--premise", "A debtor works off an impossible debt.", "--scenes", "6",
-    ]) == EXIT_OK
+    assert (
+        main(
+            [
+                "--database",
+                str(db),
+                "new",
+                "The Toll Road",
+                "--premise",
+                "A debtor works off an impossible debt.",
+                "--scenes",
+                "6",
+            ]
+        )
+        == EXIT_OK
+    )
     for _ in range(4):
         main(["--database", str(db), "tick"])
     root = tmp_path / LIBRARY_DIRNAME

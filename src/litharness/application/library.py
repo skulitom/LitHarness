@@ -143,9 +143,13 @@ def slugify(title: str, fallback: str) -> str:
 class Chapter:
     """One pastable unit: the scenes it holds, and the two renderings of them."""
 
+    #: Which chapter this is, counted from the grouping rather than from the scenes inside
+    #: it, so a withheld chapter leaves a gap in the numbering instead of renaming the ones
+    #: after it. Chapter 3 stays chapter 3 when chapter 2 is not ready.
+    number: int
+    #: The first scene's ordinal. Provenance only: nothing a reader sees is derived from it.
     ordinal: int
     title: str
-    slug: str
     logical_ids: tuple[str, ...]
     words: int
     fragment: str
@@ -153,7 +157,13 @@ class Chapter:
 
     @property
     def stem(self) -> str:
-        return f"{self.ordinal:02d}-{self.slug}"
+        """`Chapter3` — the filename an operator pastes from.
+
+        **It used to be `03-scene-3-3-4`, and that was the harness talking.** The stem was
+        built from the first scene's title and the scene range it covered, so the unit of work
+        reached the one artifact that exists to be handed to a reader. A scene is internal; the
+        file is not."""
+        return f"Chapter{self.number}"
 
 
 @dataclass(frozen=True, slots=True)
@@ -240,21 +250,22 @@ def chapters_for(
     ordinals = {scene.logical_id: scene.ordinal for scene in document.scenes}
     chapters: list[Chapter] = []
     withheld = 0
-    for start in range(0, len(scenes), max(scenes_per_chapter, 1)):
-        group = scenes[start : start + max(scenes_per_chapter, 1)]
+    size = max(scenes_per_chapter, 1)
+    for start in range(0, len(scenes), size):
+        group = scenes[start : start + size]
+        number = start // size + 1
         if any(not (node.content or "").strip() for node in group):
             withheld += 1
             continue
-        ordinal = ordinals.get(group[0].logical_id, len(chapters) + 1)
-        title = group[0].title or f"Scene {ordinal}"
-        if len(group) > 1:
-            last = ordinals.get(group[-1].logical_id, ordinal + len(group) - 1)
-            title = f"{title} ({ordinal}-{last})"
+        ordinal = ordinals.get(group[0].logical_id, number)
         chapters.append(
             Chapter(
+                number=number,
                 ordinal=ordinal,
-                title=title,
-                slug=slugify(title, group[0].logical_id),
+                # **Named for what it is to a reader.** The title travels to a serial platform
+                # in its own field, so a scene's title reaching it would publish the harness's
+                # vocabulary under the book's name.
+                title=f"Chapter {number}",
                 logical_ids=tuple(node.logical_id for node in group),
                 words=sum(len((node.content or "").split()) for node in group),
                 fragment=paste_fragment(group),
@@ -278,8 +289,8 @@ def publish_book(
     """Write one book's shelf: the reading copies, the pastable chapters, and the notes file."""
     slug = slugify(document.title, document.book_id)
     shelf = root / slug
-    _write(shelf / f"{slug}.md", document.as_markdown())
-    _write(shelf / f"{slug}.html", document.as_html())
+    _write(shelf / f"{slug}.md", document.as_markdown(scenes_per_chapter))
+    _write(shelf / f"{slug}.html", document.as_html(scenes_per_chapter))
 
     chapters, withheld = chapters_for(document, scenes_per_chapter=scenes_per_chapter)
     folder = shelf / "chapters"
@@ -433,9 +444,7 @@ def publish(
             document = collect(
                 store, book_id=book_id, branch_id=branch_id, generated_at=generated_at
             )
-            chapters, withheld = chapters_for(
-                document, scenes_per_chapter=scenes_per_chapter
-            )
+            chapters, withheld = chapters_for(document, scenes_per_chapter=scenes_per_chapter)
             published.append(
                 PublishedBook(
                     book_id=book_id,
@@ -454,9 +463,7 @@ def publish(
                 )
             )
             continue
-        document = collect(
-            store, book_id=book_id, branch_id=branch_id, generated_at=generated_at
-        )
+        document = collect(store, book_id=book_id, branch_id=branch_id, generated_at=generated_at)
         book = publish_book(document, root=root, scenes_per_chapter=scenes_per_chapter)
         published.append(
             replace(
