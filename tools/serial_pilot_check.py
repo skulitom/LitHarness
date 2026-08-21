@@ -30,6 +30,7 @@ spent a paid call on prose. A directive that poisoned is cheap to fix then (re-i
 from __future__ import annotations
 
 import argparse
+import json
 import sys
 from collections.abc import Mapping
 from datetime import UTC, datetime
@@ -43,9 +44,20 @@ from litharness.domain.extraction import STATUS_PREDICATE, sheet_for
 from litharness.domain.jobs import JobStatus
 from litharness.domain.plans import scene_plan_for
 
-#: What the pilot declared. Kept here so a drifted run is caught rather than described.
-EXPECTED_SCENES = 8
-EXPECTED_DIRECTIVES = 8
+#: What the pilot declared. Read from the extracted spec rather than hardcoded, so adding a
+#: directive to the package cannot leave this gate quietly checking an older number.
+SPEC = Path(__file__).resolve().parent.parent / "plan" / "serial-pilot-directives.json"
+
+
+def _declared() -> tuple[int, int]:
+    try:
+        spec = json.loads(SPEC.read_text(encoding="utf-8"))
+        return int(spec["scenes"]), len(spec["directives"])
+    except (OSError, ValueError, KeyError):
+        return 8, 8
+
+
+EXPECTED_SCENES, EXPECTED_DIRECTIVES = _declared()
 
 OK = "  ok   "
 BAD = " FAIL  "
@@ -98,7 +110,7 @@ def _directives(store: SqliteStore, report: Report) -> None:
     report.check(
         total == EXPECTED_DIRECTIVES,
         f"{total} directive(s) in the inbox, expected {EXPECTED_DIRECTIVES}",
-        "four constraints, one tone note, one arc note, two chapter notes (§4)",
+        f"as extracted from {SPEC.name}",
     )
     received = store.directives_by_status(DirectiveStatus.RECEIVED)
     report.check(

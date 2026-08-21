@@ -85,7 +85,7 @@ retyped — and because one of the defects was a quoting bug no reader would cat
 ```
 
 That refuses an existing database, `LITHARNESS_ENV=test`, a set `LITHARNESS_FAKE_PAD_CHARS`, a
-missing `claude`, and a spec that is not eight directives; then runs `init`, `new`, `state` and
+missing `claude`, and a spec whose directive count disagrees with the package; then runs `init`, `new`, `state` and
 all eight `directive` commands, and verifies what landed. It makes no provider call.
 
 Then the loop, **in two phases**. Phase 1 lands the direction before a paid call is spent on
@@ -158,6 +158,36 @@ uv run litharness --database serial.db directive "Never name, quote, or imitate 
 
 ```powershell
 uv run litharness --database serial.db directive "Every gain — a Skill, an item, an acquaintance, a fact learned by Appraisal — carries a price paid on the page in the same scene or earlier: time, coin, pain, exposure, or a foreclosed option. The System gives nothing away." --kind constraint
+```
+
+### 4.5 Craft constraints — added after the first read, locked lane
+
+**These three are an arm, and run 2 is its control.** The operator read chapter 1 and named five
+prose defects (`plan/reader-read-2.md`). None was disobedience: the tone note reached the plan,
+became locked constraints and sat in every packet. What the eight directives did not contain was
+any direction about *beginnings*, any bound on how much is introduced before something happens,
+and any rule at the level of the phrase. These add exactly those three and nothing else, so the
+comparison between the two runs is about direction rather than about luck.
+
+They are constraints rather than tone notes deliberately: the deterministic lane preserves their
+words, and a rule the planner paraphrases is a rule that can be paraphrased away.
+
+**C5 — how a scene begins:**
+
+```powershell
+uv run litharness --database serial.db directive "Openings: the first sentence of a scene puts a person in a situation, never a place in a condition. Do not open on weather, light, the time of day, or how a street looks. Open where someone wants something and something is in the way, or where a fact has just landed that changes what matters. The first line has one job: to make the second line necessary." --kind constraint
+```
+
+**C6 — what may be introduced, and when:**
+
+```powershell
+uv run litharness --database serial.db directive "Introductions are rationed. In the first three hundred words of a scene, name at most three things a reader is expected to remember — people, places, businesses, or objects with proper names. Everything else stays unnamed until the scene has given a reason to care about it. A detail earns its name by mattering to what is happening, not by being in the room." --kind constraint
+```
+
+**C7 — the phrase:**
+
+```powershell
+uv run litharness --database serial.db directive "Plain words, and every phrase must survive being read twice. Use the ordinary word unless the exact one means something different. No stacks of three or more nouns where a preposition would do: the door of the assay house, not the assay house door. A comparison must explain the less familiar by the more familiar, so if a reader has to stop and picture the thing being compared to, it is the wrong comparison. Never write a phrase that cancels itself, and never write one that a later clause in the same sentence then states properly — cut to the clause that states it properly." --kind constraint
 ```
 
 ### 4.2 Tone note — interpretive lane

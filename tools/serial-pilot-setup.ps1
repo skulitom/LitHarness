@@ -79,8 +79,12 @@ if (-not (Get-Command claude -ErrorAction SilentlyContinue)) {
 }
 
 $pilot = Get-Content -Raw -Encoding UTF8 $Spec | ConvertFrom-Json
-if ($pilot.directives.Count -ne 8) {
-    Fail "$Spec holds $($pilot.directives.Count) directive(s); the package declares 8 (four constraints, one tone note, one arc note, two chapter notes)."
+# The count comes from the spec, which is extracted from the package -- hardcoding it here
+# would be one more number somebody has to remember to change, which is the defect class this
+# whole run kept finding.
+$expected = $pilot.directives.Count
+if ($expected -lt 1) {
+    Fail "$Spec holds no directives; re-extract it from plan/serial-pilot-1.md."
 }
 
 Write-Host "setup: $Database"
@@ -132,8 +136,8 @@ Push-Location $repo
 try {
     $listed = uv run litharness --database $Database directives 2>&1
     $listed | Select-Object -Last 1 | ForEach-Object { Write-Host "        $_" }
-    if (($listed -join "`n") -notmatch '\(8 received') {
-        Fail "the inbox does not hold 8 received directives. Nothing has been drafted; inspect with ``litharness --database $Database directives``."
+    if (($listed -join "`n") -notmatch "\($expected received") {
+        Fail "the inbox does not hold $expected received directives. Nothing has been drafted; inspect with ``litharness --database $Database directives``."
     }
 }
 finally {

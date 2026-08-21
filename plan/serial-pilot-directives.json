@@ -1,6 +1,6 @@
 {
   "source": "plan/serial-pilot-1.md",
-  "source_sha256": "d290aa04d96dae712dc5b162e76098b21052d7dcc6d1f7ebff07f1db93634120",
+  "source_sha256": "8b9748315bf7d0deb1691037815b5afa1cda789987201d3f51522f50690c5cd5",
   "title": "Reappraisal",
   "scenes": 8,
   "premise": "Silas Marrow, a junior appraiser at the Corvessa assay house, dies two days after the Advent — and wakes on the morning it began. Each death returns him to that morning, keeping nothing but his Skills and what he has learned: every coin, wound, and acquaintance resets. The System has made his trade literal: Appraiser, a class that reads the value, provenance, and remaining time of whatever he studies — priced cheap by a System that read his guild card, in the one situation where knowledge is the only currency that compounds. The city has nine days. Silas has as many as he can pay for.",
@@ -24,6 +24,21 @@
       "label": "C4 price on the page",
       "kind": "constraint",
       "text": "Every gain — a Skill, an item, an acquaintance, a fact learned by Appraisal — carries a price paid on the page in the same scene or earlier: time, coin, pain, exposure, or a foreclosed option. The System gives nothing away."
+    },
+    {
+      "label": "C5 openings",
+      "kind": "constraint",
+      "text": "Openings: the first sentence of a scene puts a person in a situation, never a place in a condition. Do not open on weather, light, the time of day, or how a street looks. Open where someone wants something and something is in the way, or where a fact has just landed that changes what matters. The first line has one job: to make the second line necessary."
+    },
+    {
+      "label": "C6 introduction budget",
+      "kind": "constraint",
+      "text": "Introductions are rationed. In the first three hundred words of a scene, name at most three things a reader is expected to remember — people, places, businesses, or objects with proper names. Everything else stays unnamed until the scene has given a reason to care about it. A detail earns its name by mattering to what is happening, not by being in the room."
+    },
+    {
+      "label": "C7 the phrase",
+      "kind": "constraint",
+      "text": "Plain words, and every phrase must survive being read twice. Use the ordinary word unless the exact one means something different. No stacks of three or more nouns where a preposition would do: the door of the assay house, not the assay house door. A comparison must explain the less familiar by the more familiar, so if a reader has to stop and picture the thing being compared to, it is the wrong comparison. Never write a phrase that cancels itself, and never write one that a later clause in the same sentence then states properly — cut to the clause that states it properly."
     },
     {
       "label": "tone note",
