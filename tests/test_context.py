@@ -41,6 +41,7 @@ from litharness.domain.context import (
     assemble,
     count_tokens,
 )
+from litharness.domain.extraction import SHEET_PREDICATE
 from litharness.domain.nodes import Node, NodeKind
 from litharness.domain.revision import Revision, build_revision, import_manuscript
 from litharness.domain.text import content_hash
@@ -647,3 +648,35 @@ def test_a_summary_is_derived_and_never_accepted_canon() -> None:
         assert item.authority is lc.StateAuthority.DERIVED
         assert item.kind is lc.ContextItemKind.SUMMARY
         assert item.span is None, "a summary is not a quotation of a span of the book"
+
+
+def test_a_sheet_declaration_never_reaches_a_packet() -> None:
+    """What configures the telling is not part of the told.
+
+    Measured on the first reseeded Serial Pilot rehearsal: the book's own `status_sheet`
+    declaration arrived in the scene's Established facts block as
+    `silas status_sheet fields=[{'label': 'Loop', 'name': 'loop'}...]`, which hands a writer a
+    configuration blob and calls it a fact about the world. It is the narrow instance of the
+    defect `plan/state-model-abilities.md` §2 names, and the narrow fix is this exclusion.
+    """
+    declaration = lc.StateRecord(
+        record_id="rec-sheet",
+        kind=lc.StateRecordKind.WORLD_RULE,
+        subject="rook",
+        predicate=SHEET_PREDICATE,
+        value={"fields": [{"name": "loop", "label": "Loop"}]},
+        authority=lc.StateAuthority.ACCEPTED_CANON,
+        pov_visibility=[],
+        evidence=[],
+    )
+    records = [*load_state("litrpg").records, declaration]
+
+    packet = assemble(
+        load_book("litrpg"), "scene-6", state_records=records, token_budget=8000
+    )
+
+    assert SHEET_PREDICATE not in packet.render()
+    assert packet.sections.get(FACTS), "ordinary world facts must still arrive"
+    # And it is not an omission: `context_omitted` is the counter that says a scene was
+    # written without part of its book, and a configuration record was never part of it.
+    assert not [item for item in packet.omitted if item.source_logical_id == "rec-sheet"]

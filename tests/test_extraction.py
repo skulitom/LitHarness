@@ -15,17 +15,28 @@ import json
 
 import litharness_contracts as lc
 import pytest
+from hypothesis import assume, given
+from hypothesis import strategies as st
 
 from litharness.adapters.contracts_fixtures import fixture_manuscript, fixture_state
 from litharness.domain.extraction import (
+    DEFAULT_SHEET,
+    MAX_SUFFIX,
+    SHEET_PREDICATE,
     STATUS_FIELDS,
     STATUS_PATTERN,
     STATUS_PREDICATE,
+    STATUS_TEMPLATE,
+    MalformedSheet,
+    Sheet,
+    SheetField,
     attested_position,
     extract_state,
     normalise_subject,
+    parse_sheet,
     record_id_for,
     render_status_line,
+    sheet_for,
     speaks_system_voice,
     stated_position,
 )
@@ -418,3 +429,139 @@ def test_a_proposed_status_record_does_not_make_a_book_speak_system_voice() -> N
     )
 
     assert not speaks_system_voice([proposed])
+
+
+# -- the sheet a book declares for itself ----------------------------------------------
+
+
+def _sheet_record(fields: list[dict[str, object]]) -> lc.StateRecord:
+    return lc.StateRecord(
+        record_id="rec-sheet",
+        kind=lc.StateRecordKind.WORLD_RULE,
+        subject="silas",
+        predicate=SHEET_PREDICATE,
+        value={"fields": fields},
+        authority=lc.StateAuthority.ACCEPTED_CANON,
+        pov_visibility=[],
+        evidence=[],
+    )
+
+
+def _subject_record() -> lc.StateRecord:
+    return lc.StateRecord(
+        record_id="rec-silas",
+        kind=lc.StateRecordKind.ASSERTION,
+        subject="silas",
+        predicate="is_a",
+        value="an appraiser",
+        authority=lc.StateAuthority.ACCEPTED_CANON,
+        pov_visibility=[],
+        evidence=[],
+    )
+
+
+_NAMES = st.text(alphabet="abcdefghijklmnopqrstuvwxyz", min_size=1, max_size=8)
+_LABELS = st.text(alphabet="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",
+                  min_size=1, max_size=8)
+
+
+@given(
+    st.lists(
+        st.tuples(_NAMES, _LABELS, st.booleans()), min_size=1, max_size=5, unique_by=(
+            lambda item: item[0], lambda item: item[1],
+        )
+    ),
+    st.data(),
+)
+def test_a_declared_sheet_round_trips(fields, data) -> None:
+    """The property the two literals used to hold by hand.
+
+    `STATUS_TEMPLATE` and `STATUS_PATTERN` were separate strings a human had to keep in
+    agreement, and the failure when they drift is silent: a prompt asking for a form the parser
+    does not accept yields prose that reads correctly and extracts nothing. Deriving both from
+    one field list turns that from a discipline into a property, so this asserts it for *any*
+    sheet rather than for the one that happened to be written down.
+    """
+    keys = [name for name, _, _ in fields]
+    keys += [f"{name}{MAX_SUFFIX}" for name, _, paired in fields if paired]
+    assume(len(set(keys)) == len(keys))
+    sheet = Sheet(tuple(SheetField(name, label, paired) for name, label, paired in fields))
+    value = {key: data.draw(st.integers(min_value=0, max_value=9999)) for key in sheet.value_keys}
+
+    line = render_status_line("Silas", value, sheet=sheet)
+    match = sheet.pattern.search(line)
+
+    assert match is not None, f"the extractor cannot read the line it asks for: {line!r}"
+    assert match.group("subject") == "Silas"
+    assert {key: int(match.group(key)) for key in sheet.value_keys} == value
+
+
+def test_the_default_sheet_reproduces_the_line_this_module_shipped_with() -> None:
+    """Both golden fixtures and every store already on disk declare no sheet, so the default
+    has to be the old constants exactly — untouched by construction rather than by a
+    compatibility branch."""
+    assert STATUS_TEMPLATE == (
+        "[STATUS] {subject} — Level {level} | HP {hp}/{hp_max} | MP {mp}/{mp_max} | Gold {gold}"
+    )
+    assert STATUS_FIELDS == ("level", "hp", "hp_max", "mp", "mp_max", "gold")
+    assert sheet_for(state_of("litrpg").records) is DEFAULT_SHEET
+
+
+def test_a_book_reads_the_sheet_it_declared_and_not_the_default_one() -> None:
+    """A book whose progression is a loop counter and a day is read in *its* vocabulary. The
+    defect this rules out is the one that has no symptom: the default pattern would match none
+    of its lines, so every scene would extract nothing and look like a scene that established
+    nothing."""
+    known = [_subject_record(), _sheet_record([{"name": "loop", "label": "Loop"},
+                                               {"name": "day", "label": "Day"}])]
+    sheet = sheet_for(known)
+    line = render_status_line("Silas", {"loop": 2, "day": 1}, sheet=sheet)
+
+    extracted = extract_state(
+        f"He woke on the same morning.\n\n{line}\n",
+        known=known, project_id="p", book_id="b", branch_id="br",
+        logical_id="s1", version_id="v", stated_order_key="s1",
+    )
+
+    assert line == "[STATUS] Silas — Loop 2 | Day 1"
+    assert [(r.subject, r.value) for r in extracted] == [("silas", {"loop": 2, "day": 1})]
+    assert STATUS_PATTERN.search(line) is None, "the default line must not read this book"
+
+
+def test_two_sheet_declarations_abstain_to_the_default() -> None:
+    """Two declarations are the book disagreeing with itself about its own vocabulary, and
+    picking either would be this module choosing which of the author's answers is real — the
+    same abstention `attested_position` makes."""
+    first = _sheet_record([{"name": "loop", "label": "Loop"}])
+    second = lc.StateRecord(
+        record_id="rec-sheet-2", kind=lc.StateRecordKind.WORLD_RULE, subject="silas",
+        predicate=SHEET_PREDICATE, value={"fields": [{"name": "day", "label": "Day"}]},
+        authority=lc.StateAuthority.ACCEPTED_CANON, pov_visibility=[], evidence=[],
+    )
+
+    assert sheet_for([first, second]) is DEFAULT_SHEET
+
+
+@pytest.mark.parametrize(
+    "value",
+    [
+        "Loop and Day",
+        {},
+        {"fields": []},
+        {"fields": [{"label": "Loop"}]},
+        {"fields": [{"name": "1loop", "label": "Loop"}]},
+        {"fields": [{"name": "loop", "label": "  "}]},
+        {
+            "fields": [
+                {"name": "hp", "label": "HP", "paired": True},
+                {"name": "hp_max", "label": "Cap"},
+            ]
+        },
+    ],
+)
+def test_a_malformed_sheet_declaration_is_refused_rather_than_defaulted(value) -> None:
+    """Silently falling back would ask every scene for a form the book's own canon does not
+    use. `cmd_new` calls this on the seed, so the refusal lands before the book exists."""
+    with pytest.raises(MalformedSheet):
+        parse_sheet(value)
+

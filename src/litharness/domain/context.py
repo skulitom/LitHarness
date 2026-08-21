@@ -63,6 +63,7 @@ from types import MappingProxyType
 
 import litharness_contracts as lc
 
+from litharness.domain import extraction as extraction_mod
 from litharness.domain import promises as promises_mod
 from litharness.domain import state as state_mod
 from litharness.domain.nodes import NodeKind
@@ -400,6 +401,12 @@ def assemble(
     for record in state_mod.records_before(state_records, story_time_cutoff):
         if not state_mod.is_canon(record):
             continue  # A proposal is not an omission; it was never a candidate.
+        if record.predicate in extraction_mod.CONFIGURATION_PREDICATES:
+            # What configures the telling is not part of the told, and like a proposal it was
+            # never a candidate — so it is not an omission either. Counting it as one inflates
+            # the `context_omitted` digest, which an operator reads as "this scene was written
+            # without part of its book".
+            continue
         if not state_mod.visible_to(record, pov_character_id):
             omitted.append(
                 Omission(

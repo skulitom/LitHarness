@@ -2463,6 +2463,15 @@ def cmd_new(args: argparse.Namespace) -> int:
             lc.StateSnapshot, json.loads(Path(args.state).read_text(encoding="utf-8"))
         )
         records = list(import_state(snapshot, book_id=book_id, branch_id=branch_id).records)
+        # **A sheet the extractor cannot build a line from is refused before the book
+        # exists.** Falling back to the default would ask every scene for a form this book's
+        # own canon does not use, so it would extract nothing and look exactly like a book
+        # that established nothing — the silence `domain/extraction.py` says no gate catches.
+        # Raised here, where the only cost is a command that did nothing.
+        try:
+            extraction.sheet_for(records)
+        except extraction.MalformedSheet as error:
+            raise SystemExit(f"litharness: {args.state}: {error}") from error
 
     store = _store(args)
     try:

@@ -70,6 +70,8 @@ from __future__ import annotations
 import re
 import unicodedata
 from collections.abc import Mapping, Sequence
+from dataclasses import dataclass
+from functools import cache
 from hashlib import sha256
 
 import litharness_contracts as lc
@@ -78,43 +80,189 @@ from litharness.domain import state as state_mod
 from litharness.domain.events import payload_digest
 from litharness.domain.text import content_hash
 
-#: The system-voice status line, anchored at the start of a line so it cannot match prose
-#: that merely mentions a bracket. The name runs to an em dash, which is how both the fixture
-#: and the genre write it; `[^\S\n]` rather than `\s` keeps the match on one line.
-STATUS_PATTERN = re.compile(
-    r"^\[STATUS\][^\S\n]*(?P<subject>[^\n|]+?)[^\S\n]*—[^\S\n]*"
-    r"Level[^\S\n]+(?P<level>\d+)[^\S\n]*\|"
-    r"[^\S\n]*HP[^\S\n]+(?P<hp>\d+)/(?P<hp_max>\d+)[^\S\n]*\|"
-    r"[^\S\n]*MP[^\S\n]+(?P<mp>\d+)/(?P<mp_max>\d+)[^\S\n]*\|"
-    r"[^\S\n]*Gold[^\S\n]+(?P<gold>\d+)",
-    re.MULTILINE,
-)
+#: The suffix that makes one field another's ceiling. Derived from the pair rather than
+#: hardcoding `hp`/`mp`, so a sheet that grows a `stamina_max` is covered without an edit.
+MAX_SUFFIX = "_max"
+
 
 #: The predicate every record from this module carries. One predicate, because the detector
 #: groups on it and a vocabulary invented here would be a second answer to a question §8.4
 #: gives ContinuityEvaluation.
 STATUS_PREDICATE = "status_snapshot"
 
-#: The status line as a *shape*, for asking a generator to write one this module can read.
+#: The predicate a book declares its own sheet under. Canon, and read rather than configured:
+#: a flag would be a second source of truth for something the records already answer.
+SHEET_PREDICATE = "status_sheet"
+
+#: Predicates that configure how a book is written down rather than stating anything about its
+#: world. Canon, because the book declared them — and they must never reach a context packet.
 #:
-#: **The pattern and the instruction have to be the same statement, or extraction reads
-#: nothing and nobody finds out.** A prompt asking for a form the parser does not accept
-#: produces prose that looks right to a human and yields zero records — the exact failure
-#: mode this project keeps finding, and one no gate would catch, because a scene with no
-#: extractable state is indistinguishable from a scene that established none. They are kept
-#: honest by a round-trip test rather than by care: fill this in, parse it with
-#: `STATUS_PATTERN`, and the numbers must come back.
-STATUS_TEMPLATE = (
-    "[STATUS] {subject} — Level {level} | HP {hp}/{hp_max} | MP {mp}/{mp_max} | Gold {gold}"
+#: **Measured on the first reseeded rehearsal**: the sheet declaration arrived in the scene's
+#: Established facts block as `silas status_sheet fields=[{'label': 'Loop', 'name': 'loop'}…]`,
+#: which hands a writer a configuration blob and calls it a fact about the world. It is the
+#: small instance of the general defect `plan/state-model-abilities.md` §2 names — a record
+#: shaped for a machine, rendered into a prompt — and the general fix is a projection layer.
+#: This is the narrow one: what configures the telling is not part of the told.
+CONFIGURATION_PREDICATES = frozenset({SHEET_PREDICATE})
+
+
+class MalformedSheet(Exception):
+    """A book declared a sheet this module cannot build a line from.
+
+    Raised rather than defaulted, and the difference is the whole point. A book that declared
+    `Loop | Day` and silently got `Level | HP | MP | Gold` would ask every scene for a form
+    its own canon does not use, extract nothing, and look exactly like a book that established
+    no state — the silence this module's docstring says no gate catches. `cmd_new` calls
+    `sheet_for` on the seed, so a malformed declaration is refused before the book exists.
+    """
+
+
+@dataclass(frozen=True, slots=True)
+class SheetField:
+    """One column of a status line: a canon value key and how the line writes it.
+
+    `paired` is the `current/maximum` shape — `HP 27/34` — which also gives
+    `impossible_fields` the `_max` key it derives ceilings from.
+    """
+
+    name: str
+    label: str
+    paired: bool = False
+
+
+@dataclass(frozen=True, slots=True)
+class Sheet:
+    """The status line a book actually uses, as fields rather than as a hardcoded string.
+
+    **The vocabulary was welded in, and that made the model a genre.** `Level | HP | MP | Gold`
+    was a literal in three constants, so a world whose numbers are different ones — or whose
+    progression is not numeric at all — could not speak system voice without a code change, and
+    a book with no combat had to borrow a combat sheet to be read back at all. Declaring the
+    sheet in canon moves that choice to where the rest of the book's facts live.
+
+    `DEFAULT_SHEET` reproduces the old constants exactly, so a book that declares nothing —
+    which is both golden fixtures and every store written before this — is untouched by
+    construction rather than by a compatibility branch.
+
+    The template and the pattern are derived from **one** field list, which is what keeps the
+    instruction and the parser the same statement. They used to be two literals that a human
+    had to keep in agreement; `test_a_declared_sheet_round_trips` now asserts the agreement for
+    any sheet rather than for the one that happened to be written down.
+    """
+
+    fields: tuple[SheetField, ...]
+
+    def __post_init__(self) -> None:
+        if not self.fields:
+            raise MalformedSheet("a sheet needs at least one field")
+        seen = [key for key in self.value_keys]
+        if len(set(seen)) != len(seen):
+            raise MalformedSheet(f"a sheet may not repeat a value key: {sorted(seen)}")
+
+    @property
+    def value_keys(self) -> tuple[str, ...]:
+        """The canon value keys this line writes, in the order it writes them."""
+        keys: list[str] = []
+        for field_ in self.fields:
+            keys.append(field_.name)
+            if field_.paired:
+                keys.append(f"{field_.name}{MAX_SUFFIX}")
+        return tuple(keys)
+
+    @property
+    def template(self) -> str:
+        """The line as a shape, for asking a generator to write one this module can read."""
+        parts = [
+            f"{field_.label} {{{field_.name}}}/{{{field_.name}{MAX_SUFFIX}}}"
+            if field_.paired
+            else f"{field_.label} {{{field_.name}}}"
+            for field_ in self.fields
+        ]
+        return "[STATUS] {subject} — " + " | ".join(parts)
+
+    @property
+    def pattern(self) -> re.Pattern[str]:
+        """The parser for this line. Compiled once per distinct sheet."""
+        return _compile_pattern(self.fields)
+
+
+@cache
+def _compile_pattern(fields: tuple[SheetField, ...]) -> re.Pattern[str]:
+    """Anchored at the start of a line so it cannot match prose that merely mentions a
+    bracket. The name runs to an em dash, which is how both the fixture and the genre write
+    it; `[^\\S\\n]` rather than `\\s` keeps the match on one line."""
+    columns = [
+        rf"{re.escape(field_.label)}[^\S\n]+(?P<{field_.name}>\d+)"
+        + (rf"/(?P<{field_.name}{MAX_SUFFIX}>\d+)" if field_.paired else "")
+        for field_ in fields
+    ]
+    return re.compile(
+        r"^\[STATUS\][^\S\n]*(?P<subject>[^\n|]+?)[^\S\n]*—[^\S\n]*"
+        + r"[^\S\n]*\|[^\S\n]*".join(columns),
+        re.MULTILINE,
+    )
+
+
+#: The sheet a book gets when it declares none: the LitRPG line this module shipped with.
+#: Kept as the default because changing what an undeclared book means would rewrite the
+#: reading of every store already on disk.
+DEFAULT_SHEET = Sheet(
+    (
+        SheetField("level", "Level"),
+        SheetField("hp", "HP", paired=True),
+        SheetField("mp", "MP", paired=True),
+        SheetField("gold", "Gold"),
+    )
 )
 
-#: The fields `STATUS_TEMPLATE` needs, in the order the line writes them.
-STATUS_FIELDS = ("level", "hp", "hp_max", "mp", "mp_max", "gold")
+#: Back-compatible names for the default sheet's three parts. Every caller that predates
+#: per-book sheets keeps working, and the round-trip test still pins them.
+STATUS_PATTERN = DEFAULT_SHEET.pattern
+STATUS_TEMPLATE = DEFAULT_SHEET.template
+STATUS_FIELDS = DEFAULT_SHEET.value_keys
 
 
-#: The suffix that makes one field another's ceiling. Derived from the pair rather than
-#: hardcoding `hp`/`mp`, so a sheet that grows a `stamina_max` is covered without an edit.
-MAX_SUFFIX = "_max"
+def parse_sheet(value: object) -> Sheet:
+    """A `status_sheet` record's value as a `Sheet`, or `MalformedSheet`.
+
+    Closed in every direction that matters. A field needs a `name` the extractor can use as a
+    regex group and a `label` the line can print; anything else is a declaration this module
+    would have to guess at, and guessing is what produces a line the parser cannot read.
+    """
+    if not isinstance(value, Mapping):
+        raise MalformedSheet(f"a sheet declaration must be an object, got {type(value).__name__}")
+    raw = value.get("fields")
+    if not isinstance(raw, list) or not raw:
+        raise MalformedSheet("a sheet declaration needs a non-empty 'fields' list")
+    fields: list[SheetField] = []
+    for entry in raw:
+        if not isinstance(entry, Mapping):
+            raise MalformedSheet(f"each field must be an object, got {entry!r}")
+        name = entry.get("name")
+        label = entry.get("label")
+        if not isinstance(name, str) or not name.isidentifier():
+            raise MalformedSheet(f"field name {name!r} is not usable as a value key")
+        if not isinstance(label, str) or not label.strip():
+            raise MalformedSheet(f"field {name!r} needs a label the line can print")
+        fields.append(SheetField(name, label.strip(), bool(entry.get("paired", False))))
+    return Sheet(tuple(fields))
+
+
+def sheet_for(records: Sequence[lc.StateRecord]) -> Sheet:
+    """The sheet this book declared, or the default.
+
+    **Abstains when the book says more than one thing**, exactly as `attested_position` does:
+    two declarations are a disagreement about the book's own vocabulary, and picking either
+    would be this module choosing which of the author's answers is real.
+    """
+    declared = [
+        record
+        for record in records
+        if record.predicate == SHEET_PREDICATE and state_mod.is_canon(record)
+    ]
+    if len(declared) != 1:
+        return DEFAULT_SHEET
+    return parse_sheet(declared[0].value)
 
 
 def impossible_fields(value: Mapping[str, object]) -> tuple[str, ...]:
@@ -154,16 +302,21 @@ def impossible_fields(value: Mapping[str, object]) -> tuple[str, ...]:
     return tuple(sorted(impossible))
 
 
-def render_status_line(subject: str, value: Mapping[str, object]) -> str:
-    """A status line for a subject and a snapshot value — the inverse of `STATUS_PATTERN`.
+def render_status_line(
+    subject: str, value: Mapping[str, object], *, sheet: Sheet = DEFAULT_SHEET
+) -> str:
+    """A status line for a subject and a snapshot value — the inverse of `sheet.pattern`.
 
     The subject is written as the book's records hold it. `normalise_subject` is not
     invertible (it casefolds and collapses whitespace), and inventing a display name by
     title-casing would be this module minting the one thing it is most careful not to: a fact
     about a character that no canon record states.
+
+    `sheet` defaults to the LitRPG line rather than to the caller's book, so a caller that has
+    records in hand must pass `sheet_for(records)` — the default is for callers that have none.
     """
-    return STATUS_TEMPLATE.format(
-        subject=subject, **{field: value.get(field, "?") for field in STATUS_FIELDS}
+    return sheet.template.format(
+        subject=subject, **{field: value.get(field, "?") for field in sheet.value_keys}
     )
 
 
@@ -361,22 +514,18 @@ def extract_state(
     #: audit that could not tell them apart would be worth less than one that says nothing.
     minted = attested_position(known, logical_id) is None
     subjects = {record.subject for record in known if state_mod.is_canon(record)}
+    # The book's own line, not this module's. A book that declared `Loop | Day` writes and is
+    # read in `Loop | Day`; one that declared nothing gets exactly what it always got.
+    sheet = sheet_for(known)
 
     extracted: list[lc.StateRecord] = []
-    for match in STATUS_PATTERN.finditer(text):
+    for match in sheet.pattern.finditer(text):
         subject = normalise_subject(match.group("subject"))
         # A name canon has never used is a claim about someone new, which is a proposal
         # rather than a reading of what the book already established.
         if subject not in subjects:
             continue
-        value = {
-            "level": int(match.group("level")),
-            "hp": int(match.group("hp")),
-            "hp_max": int(match.group("hp_max")),
-            "mp": int(match.group("mp")),
-            "mp_max": int(match.group("mp_max")),
-            "gold": int(match.group("gold")),
-        }
+        value = {key: int(match.group(key)) for key in sheet.value_keys}
         # Already established, identically, at this position: the record adds nothing, and
         # writing it anyway costs a permanent duplicate in every later context packet.
         if _already_canon(
@@ -452,13 +601,21 @@ def _already_canon(
 
 
 __all__ = [
+    "CONFIGURATION_PREDICATES",
+    "DEFAULT_SHEET",
     "REGISTRY_VERSION",
+    "SHEET_PREDICATE",
     "STATUS_PATTERN",
     "STATUS_PREDICATE",
+    "MalformedSheet",
+    "Sheet",
+    "SheetField",
     "attested_position",
     "extract_state",
     "normalise_subject",
+    "parse_sheet",
     "record_id_for",
+    "sheet_for",
 ]
 
 
@@ -510,4 +667,4 @@ def system_voice_example(
     ]
     chosen = exact or earlier or snapshots
     latest = max(chosen, key=lambda record: state_mod.order_key_of(record) or "")
-    return render_status_line(latest.subject, latest.value)
+    return render_status_line(latest.subject, latest.value, sheet=sheet_for(records))
