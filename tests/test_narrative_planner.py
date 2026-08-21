@@ -329,3 +329,42 @@ def test_a_scope_naming_no_scene_of_this_book_is_refused(store: SqliteStore) -> 
             scene_ids=["scene-1"],
             project_id=PROJECT_ID,
         )
+
+
+def test_a_constraint_a_person_directed_is_locked_and_therefore_reaches_a_scene(
+    store: SqliteStore,
+) -> None:
+    """`locked` is not a style preference: `plans.constraints_of` selects on it, so an unlocked
+    constraint reaches no context packet at all.
+
+    The model was never told that and duly returned `locked: false` for every constraint it
+    minted from Serial Pilot 1's tone note. Measured on both runs, the drafting prompt carried
+    only the verbatim-lane constraints — not one word of "close third person", "dry, exact",
+    "dramatize rather than summarize" or "avoid rule-of-three flourishes" ever reached a scene.
+    The plan showed them. `litharness plans` reported them. They shaped nothing.
+    """
+    from litharness.domain.plans import constraints_of
+
+    note = directive(store, directive_id="dir-tone-lock")
+    base = store.plan_revision(BOOK_ID, BRANCH_ID)
+    assert base is not None
+    payload = json.loads(response())
+    payload["edits"] = [
+        {
+            "action": "create",
+            "logical_id": "constraint-voice-dry-exact",
+            "kind": "constraint",
+            "text": "Voice: dry, exact, quietly funny. Avoid rule-of-three flourishes.",
+            "authority": "intended",
+            "locked": False,
+            "scope": "none",
+            "reason": "the tone note says so",
+        }
+    ]
+    result = CompletionResult(text="", provider="fake", model="fake-v1")
+
+    proposal = proposal_from_model(payload, base=base, directive=note, result=result)
+
+    [edit] = [item for item in proposal.edits if item.item is not None]
+    assert edit.item is not None and edit.item.locked, "a person's constraint carries authority"
+    assert constraints_of([edit.item]), "and is therefore visible to context assembly"

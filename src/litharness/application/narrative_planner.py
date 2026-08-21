@@ -177,6 +177,9 @@ def render_request(
                 "is about one scene, and above all for every scene_plan: an unscoped scene "
                 "plan reaches no scene and shapes nothing.",
                 "Set scope to none for items about the whole book or a chapter.",
+                "A constraint must be locked to reach a scene at all: unlocked constraints are "
+                "filtered out of every context packet. Set locked true on any constraint you "
+                "want the prose to obey.",
             ],
         },
         ensure_ascii=False,
@@ -322,6 +325,21 @@ def proposal_from_model(
             # its authority is not — refusing would throw away a usable proposal to punish one
             # boolean the model had no reason to know it could not set.
             locked = False
+        elif kind is lc.PlanKind.CONSTRAINT:
+            # **And the symmetric rule, which is the one that was missing.** `locked` is not a
+            # style preference: `plans.constraints_of` selects on it, so an *unlocked*
+            # constraint reaches no context packet at all. The model was never told that, and
+            # duly returned `locked: false` for every constraint it minted from the tone note —
+            # so on both Serial Pilot runs the drafting prompt carried only the four verbatim
+            # constraints, and not one word of "close third person", "dry, exact", "dramatize
+            # rather than summarize" or "avoid rule-of-three flourishes" ever reached a scene.
+            #
+            # The plan showed them. `litharness plans` reported them. They shaped nothing.
+            #
+            # A constraint a *person* directed carries that person's authority by construction,
+            # exactly as the branch above denies it to a machine. The two together mean the lock
+            # follows the author rather than a boolean the model guesses at.
+            locked = True
         item = lc.PlanItem(
             logical_id=logical_id,
             kind=kind,

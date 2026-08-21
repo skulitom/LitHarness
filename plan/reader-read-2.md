@@ -42,10 +42,27 @@ as if trying to seem smart 'assay house door'??"* The named example is a three-n
 
 ## Why the directives did not catch them
 
+> **Correction, 2026-08-21, after the craft arm.** The paragraph below originally said the tone
+> note "was decomposed into locked constraints, and sat in every packet". **The second half was
+> false, and it is the more important fact.** `plans.constraints_of` selects on `item.locked`,
+> and the narrative planner's model — never told what the flag does — returned `locked: false`
+> for every constraint it minted from the tone note. Measured on both Serial Pilot runs: the
+> drafting prompt carried only the four verbatim-lane constraints, and not one word of "close
+> third person", "dry, exact", "dramatize rather than summarize", "scenes end on movement or
+> cost" or "avoid rule-of-three flourishes" ever reached a scene. The plan showed them.
+> `litharness plans` reported them. They shaped nothing. Fixed in `narrative_planner.py`: a
+> constraint a person directed is locked by construction, the mirror of the rule that already
+> denied the lock to a machine.
+>
+> The analysis below stands but splits in two. Defects **1** and **3** are still genuine gaps —
+> nothing in any directive addressed openings or name density. Defects **2**, **4** and **5**
+> are now something worse than a gap: the tone note *did* address them, and the prose never saw
+> it.
+
 This is the part worth keeping. **None of these is disobedience.** The tone note reached the
-plan, was decomposed into locked constraints, and sat in every packet: *"Voice: dry, exact,
-quietly funny. Prefer concrete specifics to abstraction"*, *"Dramatize rather than summarize"*,
-*"Scenes end on movement or on cost"*.
+plan and was decomposed into constraints: *"Voice: dry, exact, quietly funny. Prefer concrete
+specifics to abstraction"*, *"Dramatize rather than summarize"*, *"Scenes end on movement or on
+cost"*.
 
 Read against the defects, three things follow.
 
