@@ -1,0 +1,49 @@
+{
+  "source": "plan/serial-pilot-1.md",
+  "source_sha256": "d290aa04d96dae712dc5b162e76098b21052d7dcc6d1f7ebff07f1db93634120",
+  "title": "Reappraisal",
+  "scenes": 8,
+  "premise": "Silas Marrow, a junior appraiser at the Corvessa assay house, dies two days after the Advent — and wakes on the morning it began. Each death returns him to that morning, keeping nothing but his Skills and what he has learned: every coin, wound, and acquaintance resets. The System has made his trade literal: Appraiser, a class that reads the value, provenance, and remaining time of whatever he studies — priced cheap by a System that read his guild card, in the one situation where knowledge is the only currency that compounds. The city has nine days. Silas has as many as he can pay for.",
+  "directives": [
+    {
+      "label": "C1 loop invariant",
+      "kind": "constraint",
+      "text": "Loop rule: when Silas dies, time returns to the morning of the Advent. Day returns to 1 and Loop increases by one. He keeps his Skills and his memories; every coin, wound, possession and acquaintance returns to what it was that morning. Nobody else remembers a previous loop unless the story explicitly reveals otherwise."
+    },
+    {
+      "label": "C2 system voice",
+      "kind": "constraint",
+      "text": "System voice: when Loop or Day changes on the page, the System prints one line of the exact form [STATUS] Silas — Loop 1 | Day 1, with current values. It never explains itself, never advises, and never answers a question it was not asked. Its flatness is a choice it is making and not an absence of anything: never call it neutral, mechanical, or empty, and never have it emote."
+    },
+    {
+      "label": "C3 originality / RS1",
+      "kind": "constraint",
+      "text": "Never name, quote, or imitate any real-world person, brand, or published fictional work, character, or game system. Every name, place, and mechanic in this book is original to it."
+    },
+    {
+      "label": "C4 price on the page",
+      "kind": "constraint",
+      "text": "Every gain — a Skill, an item, an acquaintance, a fact learned by Appraisal — carries a price paid on the page in the same scene or earlier: time, coin, pain, exposure, or a foreclosed option. The System gives nothing away."
+    },
+    {
+      "label": "tone note",
+      "kind": "tone_note",
+      "text": "Close third person, past tense, anchored to Silas throughout. Voice: dry, exact, quietly funny; an appraiser's habit of pricing what he sees, used sparingly and never as a tic. Concrete specifics over abstraction; varied sentence length and shape; scenes end on movement or cost, never on a tidy emotional summary. Dramatize rather than summarize: if it matters, it happens on the page. Avoid rule-of-three flourishes and moralizing final lines."
+    },
+    {
+      "label": "arc note",
+      "kind": "arc_note",
+      "text": "This book is the two-chapter opening of an open-ended serial, four scenes per chapter. Chapter 1 is the first loop: ordinary competence, the Advent, a demeaning class assignment, one small clever appraisal, and death on the second day — ending on the reset that reveals the loop. Chapter 2 is the second loop: testing what persists, the cost of relationships that reset, one compounding win built on foreknowledge, and an ending that resolves the loop-two plan at a price while opening a larger question. Scene 8 resolves the chapter, not the serial: it must end on a hook."
+    },
+    {
+      "label": "chapter 1 note",
+      "kind": "chapter_note",
+      "text": "Chapter 1, scenes 1 to 4. Scene 1: Silas at work in the Corvessa assay house, his craft shown by catching a forgery; the city textured and ordinary; the Advent sirens end the scene. Scene 2: the System arrives; combat classes bloom around him; Silas draws Appraiser and is dismissed as support; his first read of a strange tarnished token returns a provenance older than its materials and a countdown: nine days. Scene 3: day two, the Tide breaches the river quarter; one good read saves Marta the bursar for an hour and costs Silas his own way out. Scene 4: Silas dies at the Lowgate and wakes on Advent morning; skills and memory intact, purse and body reset; he proves the loop to himself by pricing the day before it happens. End the chapter there."
+    },
+    {
+      "label": "chapter 2 note",
+      "kind": "chapter_note",
+      "text": "Chapter 2, scenes 5 to 8. Scene 5: loop two; Silas tests what persists with method — skills yes, coin no, wounds no, the token's countdown unchanged — and Marta does not know him, which costs more than the coin. Scene 6: foreknowledge compounds; he preempts the forgery, banks the saved hours, and buys the token before the Tide reaches its stall; its appraisal now runs one line longer. Scene 7: a plan past mere survival — get the assay house's acquisitions ledger out of the river quarter before it burns, knowledge compounding where goods cannot — and the plan forces a choice between the ledger and a stranger. Scene 8: the run succeeds at a price that stays paid within the loop; then one appraisal returns a different value than it did in loop one. Something besides Silas is changing between loops. End on that line."
+    }
+  ]
+}

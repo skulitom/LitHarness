@@ -1,0 +1,185 @@
+{
+  "meta": {
+    "schema_version": "1.2.0",
+    "artifact_id": "0d3f7b2a-9c41-5e88-b1a6-2f5c8d7e4a10",
+    "artifact_kind": "state_snapshot",
+    "created_at": "2026-08-21T00:00:00Z",
+    "actor": "operator",
+    "tool": {"name": "serial-pilot-1", "version": "0.2.0"},
+    "source_revisions": [],
+    "dependencies": [],
+    "warnings": []
+  },
+  "book_id": "00000000-0000-5000-8000-000000000001",
+  "branch_id": "00000000-0000-5000-8000-000000000002",
+  "revision_id": "00000000-0000-5000-8000-000000000003",
+  "records": [
+    {
+      "record_id": "rec-seed-sheet",
+      "kind": "world_rule",
+      "subject": "silas",
+      "predicate": "status_sheet",
+      "value": {
+        "fields": [
+          {"name": "loop", "label": "Loop"},
+          {"name": "day", "label": "Day"}
+        ]
+      },
+      "authority": "author_locked",
+      "pov_visibility": [],
+      "evidence": []
+    },
+    {
+      "record_id": "rec-seed-status",
+      "kind": "assertion",
+      "subject": "silas",
+      "predicate": "status_snapshot",
+      "value": {"loop": 1, "day": 1},
+      "authority": "accepted_canon",
+      "pov_visibility": [],
+      "evidence": []
+    },
+    {
+      "record_id": "rec-seed-silas",
+      "kind": "assertion",
+      "subject": "silas",
+      "predicate": "is_a",
+      "value": "junior appraiser at the Corvessa assay house; good at the work, unpromoted, and known to nobody who matters",
+      "authority": "accepted_canon",
+      "pov_visibility": [],
+      "evidence": []
+    },
+    {
+      "record_id": "rec-seed-appraisal",
+      "kind": "assertion",
+      "subject": "appraisal",
+      "predicate": "ability",
+      "value": {
+        "returns": "what a thing is worth, who made it and when, and how long it has left",
+        "medium": "sustained attention on one object; a read cannot be hurried or divided",
+        "cost": "the minutes it takes, and the attention it takes from everything else in the room",
+        "limit": "it answers only what it was asked; a vague question returns a vague price"
+      },
+      "authority": "accepted_canon",
+      "pov_visibility": [],
+      "evidence": []
+    },
+    {
+      "record_id": "rec-seed-silas-has-appraisal",
+      "kind": "relationship",
+      "subject": "silas",
+      "predicate": "has_ability",
+      "object_ref": "appraisal",
+      "value": "granted at the Advent and kept across every reset",
+      "authority": "accepted_canon",
+      "pov_visibility": [],
+      "evidence": []
+    },
+    {
+      "record_id": "rec-seed-appraisal-acts-on",
+      "kind": "relationship",
+      "subject": "appraisal",
+      "predicate": "acts_on",
+      "object_ref": "made_things",
+      "value": "anything worked by hands: coin, cloth, tool, seal, document, building",
+      "authority": "accepted_canon",
+      "pov_visibility": [],
+      "evidence": []
+    },
+    {
+      "record_id": "rec-seed-appraisal-cannot-read",
+      "kind": "relationship",
+      "subject": "appraisal",
+      "predicate": "cannot_read",
+      "object_ref": "living_things",
+      "value": "a person returns nothing; the System prices work, not life",
+      "authority": "accepted_canon",
+      "pov_visibility": [],
+      "evidence": []
+    },
+    {
+      "record_id": "rec-seed-appraisal-deepens",
+      "kind": "relationship",
+      "subject": "appraisal",
+      "predicate": "deepens_with",
+      "object_ref": "familiarity",
+      "value": "a second read of the same object returns a line the first did not; this is the only way the ability grows",
+      "authority": "accepted_canon",
+      "pov_visibility": [],
+      "evidence": []
+    },
+    {
+      "record_id": "rec-seed-appraisal-reveals",
+      "kind": "relationship",
+      "subject": "appraisal",
+      "predicate": "reveals",
+      "object_ref": "provenance",
+      "value": "the history is the price; that is the whole of the trade",
+      "authority": "accepted_canon",
+      "pov_visibility": [],
+      "evidence": []
+    },
+    {
+      "record_id": "rec-seed-provenance",
+      "kind": "world_rule",
+      "subject": "provenance",
+      "predicate": "world_rule",
+      "value": "every made thing carries the history of its making, and that history is what fixes its price; two identical objects with different histories are not worth the same",
+      "authority": "accepted_canon",
+      "pov_visibility": [],
+      "evidence": []
+    },
+    {
+      "record_id": "rec-seed-system",
+      "kind": "world_rule",
+      "subject": "the_system",
+      "predicate": "world_rule",
+      "value": "it arrived at the Advent, it reads the evidence of what a person has already done, and it names a class for that; it states, it does not explain, and it never argues",
+      "authority": "accepted_canon",
+      "pov_visibility": [],
+      "evidence": []
+    },
+    {
+      "record_id": "rec-seed-system-read-card",
+      "kind": "relationship",
+      "subject": "the_system",
+      "predicate": "assigned_class_from",
+      "object_ref": "guild_card",
+      "value": "it priced him by the cheapest evidence he was carrying",
+      "authority": "accepted_canon",
+      "pov_visibility": [],
+      "evidence": []
+    },
+    {
+      "record_id": "rec-seed-guild-card",
+      "kind": "assertion",
+      "subject": "guild_card",
+      "predicate": "is_a",
+      "value": "an assay-house credential naming Silas a junior appraiser; the least impressive true thing about him",
+      "authority": "accepted_canon",
+      "pov_visibility": [],
+      "evidence": []
+    },
+    {
+      "record_id": "rec-seed-token",
+      "kind": "assertion",
+      "subject": "tarnished_token",
+      "predicate": "is_a",
+      "value": "a small worn token of no obvious worth, in a stall in the river quarter",
+      "authority": "accepted_canon",
+      "pov_visibility": [],
+      "evidence": []
+    },
+    {
+      "record_id": "rec-seed-token-contradicts",
+      "kind": "relationship",
+      "subject": "tarnished_token",
+      "predicate": "contradicts",
+      "object_ref": "provenance",
+      "value": "its history is older than the metal it is made of, which is not a thing the rule permits",
+      "authority": "accepted_canon",
+      "pov_visibility": [],
+      "evidence": []
+    }
+  ]
+}
