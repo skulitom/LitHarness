@@ -10,9 +10,10 @@ describe scenes already written.
 cases reach it:
 
 - **Out-of-order drafting, with no seeding at all.** §4.1's rule is that "a blocked beat is
-  skipped, not waited on", so beat 3 can poison, beats 4-8 draft, and `revive` then re-runs
-  beat 3 against a store whose canon already holds what scenes 4-8 established. Records about
-  scenes not yet written is exactly the state the docstring said could not arise.
+  skipped, not waited on", so beat 3 can park or poison while beats 4-8 draft. `cmd_replan`
+  then "plans the still-empty beats afresh against the current head" — a fresh `packet_for`
+  for beat 3 against a store whose canon already holds what scenes 4-8 established. Records
+  about scenes not yet written is exactly the state the docstring said could not arise.
 - **Seeded records**, which are future-dated by construction. A want or a fear that changes
   across a book has to be dated ahead of the scene that will hold it, so with no cutoff scene
   one is handed what the character will want in chapter two.
@@ -39,6 +40,7 @@ from litharness.adapters.sqlite_store import SqliteStore
 from litharness.application.planner import packet_for
 from litharness.domain.beats import Beat, beats_for, template_for
 from litharness.domain.context import FACTS, assemble
+from litharness.domain.draft import is_draftable
 from litharness.domain.extraction import (
     PLANNED_POSITION_VERSION,
     extract_state,
@@ -47,8 +49,14 @@ from litharness.domain.extraction import (
 )
 from litharness.domain.findings import DetectorInput
 from litharness.domain.integrity import detect_contradictions
+from litharness.domain.nodes import Node
 from litharness.domain.plans import import_plan
-from litharness.domain.revision import Revision, import_manuscript, new_book
+from litharness.domain.revision import (
+    Revision,
+    build_revision,
+    import_manuscript,
+    new_book,
+)
 from litharness.domain.state import import_state, order_key_of
 from tests.conftest import BOOK_ID, BRANCH_ID
 
@@ -98,6 +106,36 @@ def _book_zero(store: SqliteStore, records: list[lc.StateRecord], *, scenes: int
 
 def _beat(revision: Revision, ordinal: int) -> Beat:
     return beats_for(revision, template_for(revision))[ordinal - 1]
+
+
+def _with_prose(store: SqliteStore, revision: Revision, drafted: dict[str, str]) -> Revision:
+    """Commit prose into some scenes and leave the rest empty — the shape a skipped beat leaves.
+
+    Built by hand rather than by running the Conductor because what is under test is the
+    packet, not the loop: a scene with content and a scene without is all `is_draftable` and
+    `assemble` read of the manuscript, and driving a provider to produce them would be testing
+    the provider.
+    """
+    nodes = [
+        Node.text_node(
+            node.logical_id,
+            node.kind,
+            node.position_key,
+            drafted[node.logical_id],
+            parent_logical_id=node.parent_logical_id,
+            title=node.title,
+        )
+        if node.logical_id in drafted
+        else node
+        for node in revision.nodes
+    ]
+    updated = build_revision(
+        revision.book_id, revision.branch_id, nodes, parent=revision.revision_id
+    )
+    store.commit_revision(updated, created_at=CREATED)
+    head = store.head(revision.book_id, revision.branch_id)
+    assert head is not None
+    return head
 
 
 def _seed_records() -> list[lc.StateRecord]:
@@ -173,35 +211,55 @@ def test_a_record_the_extractor_wrote_for_a_later_scene_does_not_reach_an_earlie
 ) -> None:
     """The same leak with nothing seeded, which is why this change stands on its own merits.
 
-    §4.1: "a blocked or parked item never stalls the queue", so beat 3 can poison while beats
-    4-8 draft, and `revive` then re-runs beat 3. The record here is genuinely `extract_state`'s
-    output rather than an imitation of one, so what is asserted is the shape the loop actually
-    writes.
+    **The book shape is built rather than assumed.** §4.1 skips a blocked beat instead of
+    waiting on it, so a beat that parks or poisons leaves a hole while the ones after it
+    draft; `cmd_replan` then "plans the still-empty beats afresh against the current head",
+    which is a fresh `packet_for` for the hole against canon that already holds what the later
+    scenes established. So scenes 4 and 5 carry prose here and scene 3 does not, and the test
+    asserts scene 3 is still draftable — the selector's own precondition — before asking what
+    its packet carries.
+
+    The records are genuinely `extract_state`'s output rather than imitations of one, so what
+    is asserted is the shape the loop actually writes.
     """
     seed = _seed_records()
     head = _book_zero(store, seed)
-    later = extract_state(
-        f"Silas turned the token over.\n\n{STATUS_LINE}\n\nHe put it away.\n",
-        known=seed,
-        project_id="11111111-1111-5111-8111-111111111111",
-        book_id=BOOK_ID,
-        branch_id=BRANCH_ID,
-        logical_id="scene-4",
-        version_id="v4",
-        stated_order_key="s4",
-    )
-    assert len(later) == 1, "the pilot's declared sheet must actually read back"
+    drafted = {
+        "scene-4": f"Silas turned the token over.\n\n{STATUS_LINE}\n\nHe put it away.\n",
+        "scene-5": (
+            "Marta did not know him, which was the price of the morning.\n\n"
+            "[STATUS] silas — Loop 2 | Day 2\n\nHe counted what was left.\n"
+        ),
+    }
+    head = _with_prose(store, head, drafted)
+    assert is_draftable(head, "scene-3"), "the hole a parked beat leaves is still selectable"
+
+    later: list[lc.StateRecord] = []
+    for index, (logical_id, text) in enumerate(drafted.items(), start=4):
+        read = extract_state(
+            text,
+            known=[*seed, *later],
+            project_id="11111111-1111-5111-8111-111111111111",
+            book_id=BOOK_ID,
+            branch_id=BRANCH_ID,
+            logical_id=logical_id,
+            version_id=f"v{index}",
+            stated_order_key=f"s{index}",
+        )
+        assert len(read) == 1, "the pilot's declared sheet must actually read back"
+        later.extend(read)
     store.record_state_records(BOOK_ID, BRANCH_ID, later, created_at=CREATED)
     head = store.head(BOOK_ID, BRANCH_ID)
     assert head is not None
 
-    early = packet_for(store, head, _beat(head, 2), token_budget=16000)
-    assert not early.contains_ref(later[0].record_id)
+    early = packet_for(store, head, _beat(head, 3), token_budget=16000)
+    assert not any(early.contains_ref(record.record_id) for record in later)
     assert "loop=2" not in early.render()
-    # And the scene it was read from is still told it.
-    assert packet_for(store, head, _beat(head, 4), token_budget=16000).contains_ref(
-        later[0].record_id
-    )
+    # And the scenes they were read from are still told them.
+    for index, record in enumerate(later, start=4):
+        assert packet_for(store, head, _beat(head, index), token_budget=16000).contains_ref(
+            record.record_id
+        )
 
 
 # -- what must not change -----------------------------------------------------------------------
