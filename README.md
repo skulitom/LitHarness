@@ -5,17 +5,26 @@
 <p align="center"><em>The lines are what the gate can prove; the dragon is what the reader sees.<br>
 Six scenes along its spine; one candidate refused, sealed in its vault, joined to nothing.</em></p>
 
-An autonomous book-production system with a human director, refounded on one goal:
-**superhuman literary quality**, operationalised as a pre-registered pairwise bar —
-the lower bound of a 95% CI on blinded, position-swapped win rate against matched
-published-human prose exceeds 0.5, judged by paid genre readers
-([stage-0 §61](plan/stage-0-decisions.md)). Throughput, uptime, and publication
-cadence are not goals. See [PLAN.md](PLAN.md) for the
-master plan and [plan/](plan/) for companion design documents — in particular
-[plan/stage-0-decisions.md](plan/stage-0-decisions.md), which records the load-bearing
-design decisions and why each went the way it did, and
-[plan/craft-corpus.md](plan/craft-corpus.md), which sets out how prose quality gets measured
-without a human in the loop.
+An autonomous fiction-production system, refounded on one goal: **superhuman literary
+quality**, with **no human in the production loop**.
+
+**Two things about that sentence changed in August 2026 and the old version is still quoted
+in places below.** The bar was *"judged by paid genre readers"*; it is not, and cannot be.
+The **scope axiom** ([stage-0 §95](plan/stage-0-decisions.md)) is now *no solicited human
+judgment, ever — not hired, not operator, not one blinded pair*, so the `PREFERENCE` class
+that bar depended on is retired for machines at every grain. What replaces it is **unsolicited
+behaviour**: a simulated readership as the reward model, the real population through the
+library as the settlement layer, and the operator as a **one-bit acceptance gate** that
+trains nothing (§97). And the unit of production is no longer a fixed short book but an
+**open-ended serial**, published chapter-wise at cadence, with the six-scene books demoted
+from product to measurement substrate (§101).
+
+"Endless" is not a testable claim, and the project does not make it. The testable form is
+**no degradation trend over measured length, claimed only at lengths actually reached**.
+
+See [PLAN.md](PLAN.md) for the master plan and [plan/](plan/) for companion design documents
+— in particular [plan/stage-0-decisions.md](plan/stage-0-decisions.md), which records the
+load-bearing decisions and why each went the way it did, including the ones since reversed.
 
 **Status: Stages 0, 1 and 2 met against their exit clauses** — with two caveats that travel
 with the claim: Stage 0's endurance clause is *evidenced rather than met* (2,016 simulated
@@ -35,11 +44,28 @@ the scenes that state it.
 
 It writes a book whose scenes know about each other, refuses one that contradicts itself, and
 — since it now asks its generator to state game state on the page and reads that back — can
-do both on a book with no imported snapshot, which is what makes Stage 3 startable. **Nothing
-in it yet measures whether the book is any *good* — but the instrument that could is now
-built and waiting on funded judgment**: the pairwise preference engine, whose empty
-verdict store is the honest measure of the gap, exactly as the empty `calibrations`
-table was before it. See [What is not built](#what-is-not-built).
+do both on a book with no imported snapshot.
+
+**Nothing in it yet measures whether the book is any *good*, and the instrument that was
+going to is retired.** The pairwise preference engine is still in the tree and its verdict
+store is still empty, but it is no longer the plan: it depended on paid blinded readers, and
+the scope axiom removed that key permanently. The honest status of the quality question as of
+2026-08-21:
+
+- **Four candidate measurements have been attempted and none has produced a valid reading of
+  taste.** F1 refuses in every stratum with both controls vacuous; F2's numbers are withdrawn
+  because it scored the token *after* the one it matched, on 6,744 of 6,744 sites; FX has not
+  run; the market's one apparent demonstration turned out to be an identity.
+- **F3 is the exception and it split in two** (§98). Its controls are the first in the
+  programme to certify anything, and its mechanism is real: a book's own earlier chapters make
+  a later chapter more predictable, more so **in the real chapter order than reversed**, on
+  88 of 94 and 89 of 94 sides across two model lineages, *p* < 0.0001. And it predicts
+  **nothing** about which books readers stayed with — that reading is `INSUFFICIENT_N` at the
+  corpus's 47 cross-book pairs, which is a statement about power rather than about structure.
+- What the programme has instead is **23 instrument defects found before any force had a
+  number**, and arithmetic that now refuses where it used to certify.
+
+That is the gap, stated as it stands. See [What is not built](#what-is-not-built).
 
 ## Setup
 
@@ -377,6 +403,19 @@ pandoc book.md -o book.pdf
 
 ## Judging it
 
+> **This section describes a channel the project closed on 2026-08-19.** The **scope axiom**
+> ([stage-0 §95](plan/stage-0-decisions.md)) is *no solicited human judgment, ever — not
+> hired, not operator, not one blinded pair*. The audit queue and `judge` command below still
+> work and are still the right shape for what they do; what changed is that **nothing
+> downstream may be trained, calibrated or selected on what they collect** (§97.1). The
+> operator's one remaining judgment is a **single accept/reject bit** at book grain, carrying
+> no diagnostic, consulted at most once per candidate and once per week, and feeding no fit.
+>
+> The replacement is unsolicited: a simulated readership as reward model (§97), validated
+> against what a real population *did* rather than what anyone was asked. See
+> [plan/force-program.md](plan/force-program.md) for the instruments and §95–§101 of the
+> ledger for what each of them returned.
+
 The one input this system cannot generate. §10.5 routes a share of accepted scenes to a
 queue as they are drafted, so evidence accumulates as a by-product of operation rather than
 requiring a session someone has to schedule:
@@ -516,8 +555,13 @@ Stated plainly, because a system that runs is easy to mistake for a system that 
   (`contrast`), composition into a draft prompt with provenance on the resulting scene
   (`feedback`, `blame`), and an ablation harness
   (`research/quality-measurement/feedback_ablation.py`).
-  **What does not exist is a single reader verdict.** `audit_samples` is at 0 rows, no reader
-  has been paid, no axis has a direction, and with no direction the judge half refuses before
+  **What does not exist is a single reader verdict, and as of 2026-08-19 none ever will.**
+  The scope axiom closed the channel: `audit_samples` is at 0 rows and no reader will be paid,
+  which is now a decision rather than a gap. The loop's shape survives it — a reader owning
+  valence and a judge owning location is exactly the split a *simulated* readership needs
+  (§97), and the sim's output vocabulary is behavioural (continue, abandon, return) precisely
+  because the verdict channel died. What changed is where the valence comes from. Meanwhile no
+  axis has a direction, and with no direction the judge half refuses before
   it spends anything — so the whole loop resolves to an empty feedback set and every book
   drafts exactly as it did before. The ablation's machine side reads `INERT_GENERATOR` on the
   fake provider and its reader side reads `UNDECIDABLE`, which is the honest state of both.

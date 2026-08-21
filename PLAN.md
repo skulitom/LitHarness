@@ -37,7 +37,21 @@ is superiority, and it is allowed to fail.** The goal is now superhuman literary
 quality, operationalised in §1a.5 as a pre-registered pairwise bar: the lower bound of
 a 95% confidence interval on blinded, position-swapped pairwise win rate against
 matched published-human prose exceeds 0.5, judged by paid genre readers. Throughput,
-uptime and publication cadence are no longer goals. The refoundation is licensed by
+uptime and publication cadence are no longer goals.
+
+> **Superseded twice since, and the original is left standing because the reversals only
+> make sense against it.** (1) *"Judged by paid genre readers"* is dead: the **scope axiom**
+> of 2026-08-19 ([stage-0 §95](plan/stage-0-decisions.md)) is *no solicited human judgment,
+> ever — not hired, not operator, not one blinded pair*, and §95.1 retires the `PREFERENCE`
+> class the bar rested on for machines at every grain. The replacement is unsolicited
+> behaviour: a simulated readership as reward model, the library population as settlement
+> layer, and the operator as a one-bit acceptance gate that trains nothing (§97). (2)
+> *"Publication cadence is no longer a goal"* is also reversed: §101 makes the unit of
+> production an **open-ended serial** published chapter-wise **at cadence**, with the
+> six-scene books demoted from product to measurement substrate. The superiority goal itself
+> — superhuman literary quality, allowed to fail — is unchanged.
+
+The refoundation is licensed by
 the measurement record, not by ambition: every other evidence channel is measured dead
 (BRIEF §2's 21 proxies; unpaid solicited judgment at 2 verdicts per 104 pairs;
 revealed-preference labels refuted at §56.3 and craft-corpus §4.4; raw model judges at
@@ -92,8 +106,12 @@ and changes the product identity:
 
 ## 1. Executive summary
 
-LitHarness is an always-on book factory with a human director. It runs on a
-cron-like heartbeat: every tick, the Conductor ingests any new human directives,
+LitHarness is an always-on fiction factory. Since §101 (2026-08-21) its unit of
+production is an **open-ended serial** — arc, chapter, scene — published chapter-wise at
+cadence, rather than a fixed short book; the six-scene books this document describes
+throughout are now **measurement substrate**. The human is a **one-bit acceptance gate**
+rather than a director in the loop: no instrument here is ever trained, calibrated or
+selected on operator traces (§97.1). It runs on a cron-like heartbeat: every tick, the Conductor ingests any new human directives,
 selects the highest-value unit of work (draft a scene, evaluate a chapter, repair a
 finding, propagate an accepted change, recompute derived artifacts), executes it
 within budget, applies machine-checkable acceptance policy, and commits or
@@ -242,10 +260,21 @@ preferring human originals ~80%), and the one model-based instrument died to its
 memorisation sham (stage-0 §58). What remains is the channel this project never funded:
 **paid, blinded, position-swapped pairwise judgment from external genre readers** —
 solicited, but bought rather than volunteered, which is the variable the 2-of-104
-measurement never tested. It is the primary instrument now (§61), and the rule stands
-in its final form: any craft proxy is a hypothesis until validated against human
-judgment, and the human judgment this project trusts at prose grain is a paid blinded
-pairwise verdict, content-addressed in the calibration schema.
+measurement never tested. It was the primary instrument (§61), and it never ran.
+
+> **Retired 2026-08-19 and the paragraph above is kept as the record of what was tried.**
+> The **scope axiom** ([stage-0 §95](plan/stage-0-decisions.md)) closed this channel
+> permanently — *no solicited human judgment, ever — not hired, not operator, not one blinded
+> pair* — so "the channel this project never funded" is now the channel it will not fund.
+> §95.1 retires `PREFERENCE` for machines at every grain; the single exception is the
+> operator's **one-bit** accept/reject at book grain, which carries no diagnostic and trains
+> nothing (§97.1).
+>
+> The rule it closes with survives in an altered form and is worth restating precisely,
+> because it is what the whole force programme is built on: **any craft proxy is a hypothesis
+> until validated against reader behaviour** — unsolicited, revealed by what a population
+> did, never asked for. The validation target moved from a verdict to a behaviour; the
+> demand for validation did not move at all.
 
 ### 1a.5 Set a bar that can fail, and refuse volume as a proxy
 
@@ -257,7 +286,14 @@ nothing more.
 - **The superiority bar.** In blinded, position-swapped pairwise comparison against
   matched published-human prose (same genre, comparable premise and length), judged
   by paid genre readers, the lower bound of a 95% confidence interval on the win
-  rate exceeds 0.5. Five pre-registrations, each bought by a measurement: the
+  rate exceeds 0.5. **[RETIRED 2026-08-19 — the judging half only.]** The scope axiom
+  (stage-0 §95) forbids soliciting this judgment from anyone, so the bar as stated can
+  never be evaluated. The five pre-registrations below are *not* retired with it: every
+  one of them — clustered intervals, a tie policy declared in advance, exclusion on
+  recognition, a comparator frame fixed before the first comparison, and a bar that can
+  fail — carries over intact to the behavioural instruments that replaced it (§95's force
+  harness, §97's simulated readership), and several were re-learned the hard way there
+  anyway. What changed is who answers, not what a defensible answer requires. Five pre-registrations, each bought by a measurement: the
   interval is clustered over both readers and items (§59's `clusters` lesson — a
   binomial interval over correlated judgments carries confidence it has not
   earned); the tie policy is declared before the first judgment; judgments where
