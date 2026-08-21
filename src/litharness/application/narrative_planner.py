@@ -25,6 +25,7 @@ from litharness.application.conductor import JobHandler
 from litharness.application.plan_refinement import accept_plan_proposal
 from litharness.application.policy_events import policy_decision_event
 from litharness.application.ports import NarrativePlanningStore, TextGenerator
+from litharness.domain.beats import scene_nodes
 from litharness.domain.budget import BudgetPolicy
 from litharness.domain.budget import check as budget_check
 from litharness.domain.directives import INTERPRETIVE_KINDS, Directive, DirectiveStatus
@@ -60,11 +61,7 @@ NARRATIVE_PLAN = "narrative_plan"
 PROFILE = "planner.directive.v0"
 MAX_EDITS = 12
 
-_PLAN_KINDS = tuple(
-    kind.value
-    for kind in lc.PlanKind
-    if kind is not lc.PlanKind.UNKNOWN
-)
+_PLAN_KINDS = tuple(kind.value for kind in lc.PlanKind if kind is not lc.PlanKind.UNKNOWN)
 _AUTHORITIES = (lc.PlanAuthority.INTENDED.value, lc.PlanAuthority.POSSIBLE.value)
 
 PROPOSAL_SCHEMA: dict[str, Any] = {
@@ -96,6 +93,7 @@ PROPOSAL_SCHEMA: dict[str, Any] = {
                     "text",
                     "authority",
                     "locked",
+                    "scope",
                     "reason",
                 ],
                 "properties": {
@@ -113,6 +111,14 @@ PROPOSAL_SCHEMA: dict[str, Any] = {
                         "enum": [*_AUTHORITIES, "none"],
                     },
                     "locked": {"type": "boolean"},
+                    # **A scene plan that cannot say which scene it is for is unreachable.**
+                    # `plans.scene_plan_for` matches on scope first and a derived id second,
+                    # and a directive-minted item can satisfy neither, so before this field
+                    # existed every scene plan a chapter note produced sat in the plan looking
+                    # complete and reached no draft. Measured on Serial Pilot 1: eight correct
+                    # scene plans, none of them addressable. "none" for items that scope to the
+                    # book rather than to one scene.
+                    "scope": {"type": "string"},
                     "reason": {"type": "string"},
                 },
             },
@@ -127,25 +133,29 @@ class NarrativePlanOutputError(PlanProposalError):
 
 def narrative_job_id(directive_id: str, epoch: int) -> str:
     """Stable within one recovery epoch; ``replan`` deliberately creates a fresh unit."""
-    material = payload_digest(
-        {"directive_id": directive_id, "epoch": epoch, "lane": PROFILE}
-    )
+    material = payload_digest({"directive_id": directive_id, "epoch": epoch, "lane": PROFILE})
     return f"narrative-{sha256(material.encode()).hexdigest()[:24]}"
 
 
 def is_interpretive_actionable(directive: Directive) -> bool:
-    return (
-        directive.status is DirectiveStatus.RECEIVED
-        and directive.kind in INTERPRETIVE_KINDS
-    )
+    return directive.status is DirectiveStatus.RECEIVED and directive.kind in INTERPRETIVE_KINDS
 
 
-def render_request(base: PlanRevision, directive: Directive) -> CompletionRequest:
-    """Freeze the plan and original direction into one structured-output request."""
+def render_request(
+    base: PlanRevision, directive: Directive, scene_ids: Sequence[str] = ()
+) -> CompletionRequest:
+    """Freeze the plan, the book's scenes, and the original direction into one request.
+
+    **The scene list is not decoration.** A `scene_plan` reaches a draft only when it is scoped
+    to a scene, and a model cannot scope to an id it was never shown — so before the book's
+    scenes were named here, a chapter note could produce eight perfect scene plans that no
+    scene could ever find.
+    """
     plan_payload = [lc.to_jsonable(item) for item in base.items]
     prompt = json.dumps(
         {
             "base_plan_revision_id": base.plan_revision_id,
+            "scenes_in_reading_order": list(scene_ids),
             "directive": {
                 "directive_id": directive.directive_id,
                 "kind": directive.kind.value,
@@ -163,6 +173,10 @@ def render_request(base: PlanRevision, directive: Directive) -> CompletionReques
                 "Preserve an existing logical_id when updating it.",
                 "If target_logical_ids is non-empty, update or delete only those items.",
                 "Interpret the director's words; do not overwrite or paraphrase the input.",
+                "Set scope to the scene's id from scenes_in_reading_order for any item that "
+                "is about one scene, and above all for every scene_plan: an unscoped scene "
+                "plan reaches no scene and shapes nothing.",
+                "Set scope to none for items about the whole book or a chapter.",
             ],
         },
         ensure_ascii=False,
@@ -190,12 +204,50 @@ def _text(payload: Mapping[str, Any], key: str) -> str:
     return value
 
 
+def _scope_from(
+    raw: object,
+    index: int,
+    *,
+    existing: lc.PlanItem | None,
+    scene_ids: Sequence[str],
+    base: PlanRevision,
+    project_id: str,
+) -> lc.ResourceRef | None:
+    """What this plan item is *about*, when the model says so and the book agrees.
+
+    **The narrow opening, and its narrowness is the argument.** A model may scope an item only
+    to a scene this book actually has; anything else is refused rather than coerced, because a
+    scope naming a node that does not exist is a plan item addressed to nowhere and would fail
+    the same silent way the missing scope did. `scene_ids` empty means the caller is not in a
+    position to check, and then this preserves what was there before rather than trusting an
+    unvalidated answer.
+    """
+    if not isinstance(raw, str) or not raw.strip() or raw.strip().lower() == "none":
+        return existing.scope if existing is not None else None
+    wanted = raw.strip()
+    if not scene_ids:
+        return existing.scope if existing is not None else None
+    if wanted not in scene_ids:
+        raise NarrativePlanOutputError(
+            f"edit {index} scopes to {wanted!r}, which is not a scene in this book"
+        )
+    return lc.ResourceRef(
+        project_id=project_id,
+        book_id=base.book_id,
+        branch_id=base.branch_id,
+        logical_id=wanted,
+        kind=lc.ResourceKind.MANUSCRIPT_SCENE,
+    )
+
+
 def proposal_from_model(
     payload: Mapping[str, Any],
     *,
     base: PlanRevision,
     directive: Directive,
     result: CompletionResult,
+    scene_ids: Sequence[str] = (),
+    project_id: str = "",
 ) -> PlanProposal:
     """Parse the shallow provider payload into strict domain objects."""
     raw_edits = payload.get("edits")
@@ -243,9 +295,7 @@ def proposal_from_model(
             lc.PlanAuthority.INTENDED,
             lc.PlanAuthority.POSSIBLE,
         }:
-            raise NarrativePlanOutputError(
-                f"edit {index} uses a reserved kind or authority"
-            )
+            raise NarrativePlanOutputError(f"edit {index} uses a reserved kind or authority")
         text = raw.get("text")
         locked = raw.get("locked")
         if not isinstance(text, str) or not text.strip():
@@ -253,6 +303,14 @@ def proposal_from_model(
         if not isinstance(locked, bool):
             raise NarrativePlanOutputError(f"edit {index} locked must be boolean")
 
+        scope = _scope_from(
+            raw.get("scope"),
+            index,
+            existing=current.get(logical_id),
+            scene_ids=scene_ids,
+            base=base,
+            project_id=project_id,
+        )
         existing = current.get(logical_id)
         if locked and is_machine_author(directive.author):
             # **A machine-authored directive may not mint a locked plan item, whatever the
@@ -270,7 +328,7 @@ def proposal_from_model(
             text=text,
             authority=authority,
             locked=locked,
-            scope=existing.scope if existing is not None else None,
+            scope=scope,
             links=list(existing.links) if existing is not None else [],
         )
         edits.append(PlanEdit(action, logical_id, item, reason))
@@ -278,9 +336,7 @@ def proposal_from_model(
     produced = tuple(
         edit.logical_id
         for edit in edits
-        if edit.item is not None
-        and edit.item.kind is lc.PlanKind.CONSTRAINT
-        and edit.item.locked
+        if edit.item is not None and edit.item.kind is lc.PlanKind.CONSTRAINT and edit.item.locked
     )
     proposal = PlanProposal(
         base_plan_revision_id=base.plan_revision_id,
@@ -317,9 +373,7 @@ def _stamp(now: float) -> str:
 
 
 def _policy_digest() -> str:
-    return payload_digest(
-        {"profile": PROFILE, "schema": PROPOSAL_SCHEMA, "max_edits": MAX_EDITS}
-    )
+    return payload_digest({"profile": PROFILE, "schema": PROPOSAL_SCHEMA, "max_edits": MAX_EDITS})
 
 
 def _candidate_decision(
@@ -335,14 +389,10 @@ def _candidate_decision(
 ) -> PolicyDecision:
     gate = GateOutcome(
         gate=GateKind.SHAPE,
-        rule_or_critic_id=(
-            "shape.plan_base_current.v0" if stale else "shape.plan_proposal.v0"
-        ),
+        rule_or_critic_id=("shape.plan_base_current.v0" if stale else "shape.plan_proposal.v0"),
         passed=passed,
         vetoes=(
-            ()
-            if passed
-            else (Veto.STALE_BASE_VERSION if stale else Veto.SHAPE_NOT_CONFORMING,)
+            () if passed else (Veto.STALE_BASE_VERSION if stale else Veto.SHAPE_NOT_CONFORMING,)
         ),
         detail=detail,
     )
@@ -389,9 +439,7 @@ def make_narrative_plan_handler(
         branch_id = job.payload.get("branch_id")
         scoped_values = (directive_id, book_id, branch_id)
         if not all(isinstance(value, str) and value for value in scoped_values):
-            raise NarrativePlanOutputError(
-                f"job {job.job_id} lacks directive_id/book_id/branch_id"
-            )
+            raise NarrativePlanOutputError(f"job {job.job_id} lacks directive_id/book_id/branch_id")
         assert isinstance(directive_id, str)
         assert isinstance(book_id, str)
         assert isinstance(branch_id, str)
@@ -414,8 +462,13 @@ def make_narrative_plan_handler(
             raise NarrativePlanOutputError(
                 f"directive {directive.directive_id} targets a branch with no plan"
             )
+        # The scenes the plan may address, read off the manuscript rather than guessed. A
+        # book with no head has no scenes to scope to, and an unscoped proposal is what it
+        # got before this existed, so the empty tuple is the honest fallback.
+        head = store.head(book_id, branch_id)
+        scene_ids = tuple(scene_nodes(head)) if head is not None else ()
 
-        request = render_request(base, directive)
+        request = render_request(base, directive, scene_ids)
         stamp = _stamp(now)
         day = stamp[:10]
         provider, _ = registry.resolve(request.call_class)
@@ -476,6 +529,8 @@ def make_narrative_plan_handler(
                 base=base,
                 directive=directive,
                 result=result,
+                scene_ids=scene_ids,
+                project_id=project_id,
             )
             preview = apply_plan_proposal(base, proposal)
         except (PlanProposalError, TypeError, ValueError) as error:

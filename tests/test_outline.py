@@ -837,3 +837,30 @@ def test_running_the_outline_twice_writes_one_schedule(store: SqliteStore) -> No
     handle(_job(store), START + 1)
     records = store.state_records(BOOK_ID, BRANCH_ID)
     assert len([r for r in records if r.record_id.startswith("milestone-")]) == 3
+
+
+def test_volunteered_payoff_windows_are_ignored_when_the_book_owes_nothing(
+    store: SqliteStore,
+) -> None:
+    """An answer to a question that was not put must not refuse the outline.
+
+    The prompt asks for payoff windows **only** when the ledger has open rows, and the ledger
+    is empty at every book's *first* outline, because promises are written by the summary
+    handler after a scene is accepted. Measured on Serial Pilot 1: the model volunteered a
+    window naming a promise the book had never opened, and validating it burned two of the
+    outline's three attempts on a good outline. §19.1 — a refusal reached before the work
+    costs time, never the unit.
+    """
+    from litharness.domain.policy import Outcome
+
+    a_book(store, scenes=12)
+    payload = payload_for(12)
+    payload["payoff_windows"] = [
+        {"subject": "a debt this book never opened", "first_scene": 3, "last_scene": 9}
+    ]
+    handle = make_outline_handler(StubPlanner(payload), store, PROJECT_ID)
+
+    handle(_job(store), START)
+
+    [decision] = store.decisions_for_job("outline-job")
+    assert decision.outcome is Outcome.ACCEPT, decision.reason

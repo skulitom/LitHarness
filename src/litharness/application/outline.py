@@ -904,7 +904,18 @@ def make_outline_handler(
             schedule = (
                 _milestones(result.parsed, beats, seed) if seed else []
             )
-            windows = _payoff_windows(result.parsed, beats, open_promises)
+            # **Guarded exactly as the milestone schedule is, and for the same reason.** The
+            # prompt asks for payoff windows only when the ledger has open rows, so a book that
+            # owes nothing was asked for none — and validating an answer to a question that was
+            # not put refuses the whole outline over a field the model volunteered and this
+            # book could never use. Measured on Serial Pilot 1's first outline: the ledger is
+            # empty at every book's *first* outline, because promises are written by the
+            # summary handler after a scene is accepted, so this refused a good outline twice
+            # before landing. §19.1: a refusal reached before the work costs time, never the
+            # unit.
+            windows = (
+                _payoff_windows(result.parsed, beats, open_promises) if open_promises else []
+            )
             preview = apply_plan_proposal(base, proposal)
         except (OutlineOutputError, PlanProposalError, TypeError, ValueError) as error:
             # RETRY rather than escalate: the request is unchanged and a second draw of a

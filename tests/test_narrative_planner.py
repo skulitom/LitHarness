@@ -257,3 +257,75 @@ def test_parser_enforces_explicit_directive_targets(store: SqliteStore) -> None:
 
     with pytest.raises(NarrativePlanOutputError, match="outside the directive's targets"):
         proposal_from_model(payload, base=base, directive=note, result=result)
+
+
+def _scene_plan_edit(scope: str) -> dict:
+    return {
+        "action": "create",
+        "logical_id": "scene-plan-from-a-chapter-note",
+        "kind": "scene_plan",
+        "text": "Silas condemns the forgery; the Advent sirens end the scene.",
+        "authority": "intended",
+        "locked": False,
+        "scope": scope,
+        "reason": "the chapter note says what scene one is for",
+    }
+
+
+def test_a_directive_scene_plan_is_scoped_and_therefore_reaches_its_scene(
+    store: SqliteStore,
+) -> None:
+    """The defect this closes had no symptom.
+
+    `plans.scene_plan_for` matches on scope first and a derived id second, and a
+    directive-minted item could satisfy neither — so a chapter note's scene plans sat in the
+    plan, were reported by `litharness plans`, and reached no draft. Measured on Serial Pilot
+    1: eight correct scene plans, none of them addressable, and the drafts silently used an
+    outline written from the premise alone instead.
+    """
+    from litharness.domain.plans import scene_plan_for
+
+    note = directive(store, directive_id="dir-scoped")
+    base = store.plan_revision(BOOK_ID, BRANCH_ID)
+    assert base is not None
+    scenes = [
+        node.logical_id for node in make_revision().in_reading_order() if node.kind.value == "scene"
+    ]
+    payload = json.loads(response())
+    payload["edits"] = [_scene_plan_edit(scenes[0])]
+    result = CompletionResult(text="", provider="fake", model="fake-v1")
+
+    proposal = proposal_from_model(
+        payload,
+        base=base,
+        directive=note,
+        result=result,
+        scene_ids=scenes,
+        project_id=PROJECT_ID,
+    )
+
+    [edit] = [item for item in proposal.edits if item.item is not None]
+    assert edit.item is not None and edit.item.scope is not None
+    assert edit.item.scope.logical_id == scenes[0]
+    assert scene_plan_for([edit.item], scenes[0]) is edit.item
+
+
+def test_a_scope_naming_no_scene_of_this_book_is_refused(store: SqliteStore) -> None:
+    """A plan item addressed to a node that does not exist fails the same silent way the
+    missing scope did, so it is refused rather than coerced or dropped."""
+    note = directive(store, directive_id="dir-bad-scope")
+    base = store.plan_revision(BOOK_ID, BRANCH_ID)
+    assert base is not None
+    payload = json.loads(response())
+    payload["edits"] = [_scene_plan_edit("scene-does-not-exist")]
+    result = CompletionResult(text="", provider="fake", model="fake-v1")
+
+    with pytest.raises(NarrativePlanOutputError, match="not a scene in this book"):
+        proposal_from_model(
+            payload,
+            base=base,
+            directive=note,
+            result=result,
+            scene_ids=["scene-1"],
+            project_id=PROJECT_ID,
+        )

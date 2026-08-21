@@ -653,12 +653,15 @@ class SpanSelectStore(
 
 class NarrativePlanningStore(
     DirectiveInbox,
+    ManuscriptReader,
     PlanReader,
     PlanWriter,
     DecisionRepository,
     Protocol,
 ):
-    pass
+    """Reads the manuscript as well as the plan, because a plan item that is *about* a scene
+    has to name a scene the book actually has — and the book, not the plan, is what says
+    which those are."""
 
 
 class PlanRefinementStore(PlanReader, PlanWriter, Protocol):
