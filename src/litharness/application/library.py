@@ -123,7 +123,10 @@ feeling, and "nothing changed between the start and end of chapter four" is an a
 **One caveat on this read.** It is not blinded — the reading copy carries a progress table and
 a revision id, and `audit` deliberately shows neither. That does not make what you noticed
 wrong; it means a note from here is evidence of the same class as the first human read, and
-not of the class a paid blinded reader produces.
+not of the blinded pairwise class. That class is no longer reachable at all: the scope axiom
+(stage-0 §95) forbids soliciting judgment, so an unblinded operator note is not a weaker version
+of some better evidence that might be bought later — it is a different thing entirely, and what
+it is good for is *locating* a defect a counter can be built for.
 
 ---
 

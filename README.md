@@ -5,19 +5,15 @@
 <p align="center"><em>The lines are what the gate can prove; the dragon is what the reader sees.<br>
 Six scenes along its spine; one candidate refused, sealed in its vault, joined to nothing.</em></p>
 
-An autonomous fiction-production system, refounded on one goal: **superhuman literary
-quality**, with **no human in the production loop**.
+An autonomous fiction-production system with one goal: **superhuman literary quality**, with
+**no human in the production loop**.
 
-**Two things about that sentence changed in August 2026 and the old version is still quoted
-in places below.** The bar was *"judged by paid genre readers"*; it is not, and cannot be.
-The **scope axiom** ([stage-0 §95](plan/stage-0-decisions.md)) is now *no solicited human
-judgment, ever — not hired, not operator, not one blinded pair*, so the `PREFERENCE` class
-that bar depended on is retired for machines at every grain. What replaces it is **unsolicited
-behaviour**: a simulated readership as the reward model, the real population through the
-library as the settlement layer, and the operator as a **one-bit acceptance gate** that
-trains nothing (§97). And the unit of production is no longer a fixed short book but an
-**open-ended serial**, published chapter-wise at cadence, with the six-scene books demoted
-from product to measurement substrate (§101).
+The unit of production is an **open-ended serial** — arc, chapter, scene — published
+chapter-wise at cadence. Quality is measured from **unsolicited reader behaviour**: a
+simulated readership as the reward model, the real population through the library as the
+settlement layer, and the operator as a **one-bit acceptance gate** that trains, calibrates
+and selects nothing. No judgment is ever solicited from anyone — the **scope axiom**
+([stage-0 §95](plan/stage-0-decisions.md)): *not hired, not operator, not one blinded pair*.
 
 "Endless" is not a testable claim, and the project does not make it. The testable form is
 **no degradation trend over measured length, claimed only at lengths actually reached**.
@@ -46,11 +42,10 @@ It writes a book whose scenes know about each other, refuses one that contradict
 — since it now asks its generator to state game state on the page and reads that back — can
 do both on a book with no imported snapshot.
 
-**Nothing in it yet measures whether the book is any *good*, and the instrument that was
-going to is retired.** The pairwise preference engine is still in the tree and its verdict
-store is still empty, but it is no longer the plan: it depended on paid blinded readers, and
-the scope axiom removed that key permanently. The honest status of the quality question as of
-2026-08-21:
+**Nothing in it yet measures whether a book is any *good*.** The pairwise preference engine is
+still in the tree and its verdict store is still empty; it is not the plan, because it required
+soliciting judgment and the scope axiom closed that permanently. The honest status of the
+quality question as of 2026-08-21:
 
 - **Four candidate measurements have been attempted and none has produced a valid reading of
   taste.** F1 refuses in every stratum with both controls vacuous; F2's numbers are withdrawn
@@ -403,18 +398,14 @@ pandoc book.md -o book.pdf
 
 ## Judging it
 
-> **This section describes a channel the project closed on 2026-08-19.** The **scope axiom**
-> ([stage-0 §95](plan/stage-0-decisions.md)) is *no solicited human judgment, ever — not
-> hired, not operator, not one blinded pair*. The audit queue and `judge` command below still
-> work and are still the right shape for what they do; what changed is that **nothing
-> downstream may be trained, calibrated or selected on what they collect** (§97.1). The
-> operator's one remaining judgment is a **single accept/reject bit** at book grain, carrying
-> no diagnostic, consulted at most once per candidate and once per week, and feeding no fit.
->
-> The replacement is unsolicited: a simulated readership as reward model (§97), validated
-> against what a real population *did* rather than what anyone was asked. See
-> [plan/force-program.md](plan/force-program.md) for the instruments and §95–§101 of the
-> ledger for what each of them returned.
+**Nothing here may train, calibrate or select any instrument** — the scope axiom
+([stage-0 §95](plan/stage-0-decisions.md)) closed that on 2026-08-19. The audit queue and
+`judge` command are for *locating* defects a counter can be built for, never for scoring. The
+operator's one judgment is a **single accept/reject bit** at book grain: no diagnostic, at most
+once per candidate and once per week, feeding no fit. Valence comes from a simulated readership
+validated against what a real population *did* (§97); see
+[plan/force-program.md](plan/force-program.md) for the instruments and §95–§102 of the ledger
+for what each returned.
 
 The one input this system cannot generate. §10.5 routes a share of accepted scenes to a
 queue as they are drafted, so evidence accumulates as a by-product of operation rather than

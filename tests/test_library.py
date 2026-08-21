@@ -252,7 +252,7 @@ def test_the_notes_template_points_at_the_axis_admission_path() -> None:
     from one read of one book."""
     assert "reader-judge-loop.md" in NOTES_TEMPLATE
     assert "not blinded" in NOTES_TEMPLATE, (
-        "a note from here is evidence of the first-human-read class, not of a paid blinded "
+        "a note from here is evidence of the first-human-read class, not of a blinded "
         "reader's, and the file says so where it will be read"
     )
 

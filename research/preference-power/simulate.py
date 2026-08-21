@@ -1,8 +1,10 @@
 """What §61's bar costs: the operating characteristics of `win_rate_lower_bound`.
 
-The preference engine shipped with an empty verdict store, and the README calls it the
-instrument that could measure quality, "built and waiting on funded judgment". Nobody has said
-how much judgment. This module answers that by simulation, using the shipped estimator itself
+The preference engine shipped with an empty verdict store, and the README of the time called it
+the instrument that could measure quality, "built and waiting on funded judgment". Nobody had
+said how much judgment. (The channel was retired outright on 2026-08-19 by the scope axiom,
+ledger §95; this module's finding is about the *estimator* and survives the retirement.)
+This module answers that by simulation, using the shipped estimator itself
 (via `bound.py`'s bit-identical twin) rather than a normal approximation to it.
 
 **The bound's calibration is a function of reader heterogeneity, and the first pilot got that

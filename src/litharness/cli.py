@@ -2117,7 +2117,12 @@ def cmd_pair_judge(args: argparse.Namespace) -> int:
 
 
 def cmd_pair_export(args: argparse.Namespace) -> int:
-    """Pending pairs as JSONL for external paid readers — blinded, frame attached.
+    """Pending pairs as JSONL for an external reader channel — blinded, frame attached.
+
+    **The channel this was built for is closed.** It was written to export pairs to paid genre
+    readers; the scope axiom of 2026-08-19 (stage-0 §95) forbids soliciting judgment from anyone,
+    so no such reader will be engaged. The command still works and the export format is still
+    correct — what it may no longer do is feed a verdict back into any instrument (§97.1).
 
     Each line carries the sample id, the declared comparator frame (the question the reader
     answers — the frame is the claim, so it travels with the pair), both texts in presented
@@ -3877,7 +3882,7 @@ def build_parser() -> argparse.ArgumentParser:
     pair_judge.set_defaults(func=cmd_pair_judge)
 
     pair_export = sub.add_parser(
-        "pair-export", help="pending pairs as JSONL for external paid readers"
+        "pair-export", help="pending pairs as JSONL, blinded (reader channel closed; §95)"
     )
     pair_export.add_argument(
         "destination", type=Path, nargs="?", help="file to write; stdout if omitted"

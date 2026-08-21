@@ -4,7 +4,8 @@ Every arm in this repository so far has asked whether the panel can see a *defec
 asks something prior and cheaper: whether the instrument obeys the rules any preference relation
 has to obey before the word "preference" applies to it at all. The axioms are **disqualifiers**.
 Passing them licenses nothing whatever. Failing any one of them ends a candidate before it reaches
-the external-label benchmark (§79), the cross-lineage tier, or a single paid reader.
+the external-label benchmark (§79) or the cross-lineage tier. (It once also read "or a single
+paid reader"; the scope axiom of 2026-08-19 removed that tier permanently — §95.)
 
 **This tier has teeth because the week's two kills were both axiom failures.** §79.1 killed the
 default panel on 368 comparisons at chose-A 0.64 — a position axiom, not a taste question. §70's

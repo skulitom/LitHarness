@@ -1,8 +1,10 @@
 # What §61's bar costs, and the one place it stops being honest
 
-The preference engine shipped with an empty verdict store. The README calls it the instrument
-that could measure quality, "built and waiting on funded judgment", and treats that emptiness as
-the honest measure of the gap. Nobody had said **how much** judgment, what it would cost, or
+The preference engine shipped with an empty verdict store. The README of the time called it the
+instrument that could measure quality, "built and waiting on funded judgment", and treated that
+emptiness as the honest measure of the gap. (Both that sentence and the channel behind it are
+gone: the scope axiom of 2026-08-19 retired solicited judgment permanently — ledger §95. The
+measurement below stands as a fact about the estimator, which is what it always was.) Nobody had said **how much** judgment, what it would cost, or
 whether the estimator holds its stated level at the panel sizes anyone would actually buy.
 
 This is that measurement. Five sweeps plus a seed-stability experiment — 272,000 simulated panels
@@ -244,7 +246,7 @@ The cost is linear and one-off. The alternative is an interpolated or smoothed t
 
 **This is fixable now and only now.** The verdict store is empty. Changing the estimator after
 judgments exist is exactly the post-hoc move the pre-registration discipline exists to forbid, so
-the window is open until the first paid reader answers.
+the window was open until the first paid reader answered, and it closed unopened: the scope axiom (§95) retired that channel on 2026-08-19 and no reader was ever engaged.
 
 ## 8. What this licenses, and what it does not
 

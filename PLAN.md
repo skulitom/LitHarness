@@ -34,22 +34,11 @@ re-verify, not a task to start.** Every row in §7 now carries what was checked.
 
 **What v2.3 refounds (2026-08-17, [stage-0 §61](plan/stage-0-decisions.md)): the goal
 is superiority, and it is allowed to fail.** The goal is now superhuman literary
-quality, operationalised in §1a.5 as a pre-registered pairwise bar: the lower bound of
-a 95% confidence interval on blinded, position-swapped pairwise win rate against
-matched published-human prose exceeds 0.5, judged by paid genre readers. Throughput,
-uptime and publication cadence are no longer goals.
-
-> **Superseded twice since, and the original is left standing because the reversals only
-> make sense against it.** (1) *"Judged by paid genre readers"* is dead: the **scope axiom**
-> of 2026-08-19 ([stage-0 §95](plan/stage-0-decisions.md)) is *no solicited human judgment,
-> ever — not hired, not operator, not one blinded pair*, and §95.1 retires the `PREFERENCE`
-> class the bar rested on for machines at every grain. The replacement is unsolicited
-> behaviour: a simulated readership as reward model, the library population as settlement
-> layer, and the operator as a one-bit acceptance gate that trains nothing (§97). (2)
-> *"Publication cadence is no longer a goal"* is also reversed: §101 makes the unit of
-> production an **open-ended serial** published chapter-wise **at cadence**, with the
-> six-scene books demoted from product to measurement substrate. The superiority goal itself
-> — superhuman literary quality, allowed to fail — is unchanged.
+quality, allowed to fail. The bar is behavioural: an instrument validated against what a
+real readership **did**, never against judgment solicited from anyone (the **scope axiom**,
+[stage-0 §95](plan/stage-0-decisions.md)). The unit of production is an **open-ended
+serial** published chapter-wise at cadence (§101); the six-scene books this document
+describes throughout are measurement substrate. Throughput and uptime are not goals.
 
 The refoundation is licensed by
 the measurement record, not by ambition: every other evidence channel is measured dead
@@ -260,21 +249,15 @@ preferring human originals ~80%), and the one model-based instrument died to its
 memorisation sham (stage-0 §58). What remains is the channel this project never funded:
 **paid, blinded, position-swapped pairwise judgment from external genre readers** —
 solicited, but bought rather than volunteered, which is the variable the 2-of-104
-measurement never tested. It was the primary instrument (§61), and it never ran.
+measurement never tested. It never ran, and it never will: the **scope axiom** ([stage-0 §95](plan/stage-0-decisions.md))
+closed the channel on 2026-08-19, and §95.1 retires `PREFERENCE` for machines at every grain.
+The one exception is the operator's **one-bit** accept/reject at book grain, which carries no
+diagnostic and trains nothing (§97.1).
 
-> **Retired 2026-08-19 and the paragraph above is kept as the record of what was tried.**
-> The **scope axiom** ([stage-0 §95](plan/stage-0-decisions.md)) closed this channel
-> permanently — *no solicited human judgment, ever — not hired, not operator, not one blinded
-> pair* — so "the channel this project never funded" is now the channel it will not fund.
-> §95.1 retires `PREFERENCE` for machines at every grain; the single exception is the
-> operator's **one-bit** accept/reject at book grain, which carries no diagnostic and trains
-> nothing (§97.1).
->
-> The rule it closes with survives in an altered form and is worth restating precisely,
-> because it is what the whole force programme is built on: **any craft proxy is a hypothesis
-> until validated against reader behaviour** — unsolicited, revealed by what a population
-> did, never asked for. The validation target moved from a verdict to a behaviour; the
-> demand for validation did not move at all.
+The rule this leaves behind is what the whole force programme is built on: **any craft proxy is
+a hypothesis until validated against reader behaviour** — unsolicited, revealed by what a
+population did, never asked for. The validation target moved from a verdict to a behaviour; the
+demand for validation did not move at all.
 
 ### 1a.5 Set a bar that can fail, and refuse volume as a proxy
 
@@ -284,16 +267,15 @@ project's definition of its own goal (§61): "superhuman" means exactly this and
 nothing more.
 
 - **The superiority bar.** In blinded, position-swapped pairwise comparison against
-  matched published-human prose (same genre, comparable premise and length), judged
-  by paid genre readers, the lower bound of a 95% confidence interval on the win
-  rate exceeds 0.5. **[RETIRED 2026-08-19 — the judging half only.]** The scope axiom
-  (stage-0 §95) forbids soliciting this judgment from anyone, so the bar as stated can
-  never be evaluated. The five pre-registrations below are *not* retired with it: every
-  one of them — clustered intervals, a tie policy declared in advance, exclusion on
-  recognition, a comparator frame fixed before the first comparison, and a bar that can
-  fail — carries over intact to the behavioural instruments that replaced it (§95's force
-  harness, §97's simulated readership), and several were re-learned the hard way there
-  anyway. What changed is who answers, not what a defensible answer requires. Five pre-registrations, each bought by a measurement: the
+  matched published-human prose (same genre, comparable premise and length), the lower
+  bound of a 95% confidence interval on the win rate exceeds 0.5 — **judged by a
+  behavioural instrument validated against unsolicited reader behaviour**, never by
+  solicited judgment (scope axiom, stage-0 §95). The five pre-registrations below are
+  unchanged by that substitution: clustered intervals, a tie policy declared in advance,
+  exclusion on recognition, a comparator frame fixed before the first comparison, and a
+  bar that can fail. Every one carries over to the behavioural instruments, and several
+  were re-learned the hard way there. What changed is who answers, not what a defensible
+  answer requires. Five pre-registrations, each bought by a measurement: the
   interval is clustered over both readers and items (§59's `clusters` lesson — a
   binomial interval over correlated judgments carries confidence it has not
   earned); the tie policy is declared before the first judgment; judgments where

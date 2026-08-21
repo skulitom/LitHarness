@@ -1,5 +1,14 @@
 # Preference-engine runbook: the first month
 
+> **RETIRED 2026-08-19 — this document describes a channel that is permanently closed.**
+> The **scope axiom** ([stage-0 §95](stage-0-decisions.md)) is *no solicited human judgment,
+> ever — not hired, not operator, not one blinded pair*, and §95.1 retires the `PREFERENCE`
+> class for machines at every grain. Nothing below may be executed. It is kept because the
+> reasoning is the record of what was tried and why it was refused, and because several of its
+> pre-registrations — clustered intervals, a declared tie policy, exclusion on recognition, a
+> comparator frame fixed in advance — carried over intact to the behavioural instruments that
+> replaced it (`force-program.md`, ledger §95–§102).
+
 The pairwise preference engine (stage-0 §69) is the project's evidence source: blinded,
 position-swapped pairwise judgments from paid genre readers, content-addressed in the
 store. This runbook is the operating procedure for its first month, whose acceptance

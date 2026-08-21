@@ -1,5 +1,14 @@
 # Plan-search acceptance experiment (§61 Add 3): the K=3 runbook
 
+> **RETIRED 2026-08-19 — this document describes a channel that is permanently closed.**
+> The **scope axiom** ([stage-0 §95](../../plan/stage-0-decisions.md)) is *no solicited human judgment,
+> ever — not hired, not operator, not one blinded pair*, and §95.1 retires the `PREFERENCE`
+> class for machines at every grain. Nothing below may be executed. It is kept because the
+> reasoning is the record of what was tried and why it was refused, and because several of its
+> pre-registrations — clustered intervals, a declared tie policy, exclusion on recognition, a
+> comparator frame fixed in advance — carried over intact to the behavioural instruments that
+> replaced it (`force-program.md`, ledger §95–§102).
+
 Operator procedure, not code. The code ships the mechanism — `plan_search` tournaments,
 `span_select` selection, the dormant judge path — and this runbook is the experiment that
 decides whether the mechanism earns its keep. Nothing below runs automatically; every step
