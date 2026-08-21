@@ -1,0 +1,68 @@
+{
+  "window_words": 300,
+  "reappraisal": {
+    "Chapter1": {
+      "count": 8.0,
+      "names": [
+        "Weigh Street",
+        "Silas",
+        "Marta",
+        "Vance",
+        "Kelling",
+        "Hesk Turrow",
+        "Bellow and Sons",
+        "Vessil"
+      ],
+      "words": 4151
+    },
+    "Chapter2": {
+      "count": 5.0,
+      "names": [
+        "Turrow",
+        "Master Vance",
+        "Silas",
+        "Skill",
+        "Tuesday"
+      ],
+      "words": 4252
+    }
+  },
+  "toll_road": {
+    "per_scene": [
+      6.0,
+      5.0,
+      3.0,
+      7.0,
+      5.0,
+      9.0,
+      6.0,
+      3.0,
+      8.0,
+      8.0
+    ],
+    "summary": {
+      "n": 10,
+      "mean": 6.0,
+      "sd": 1.949,
+      "min": 3.0,
+      "max": 9.0,
+      "quantiles": {
+        "0.05": 3.0,
+        "0.1": 3.0,
+        "0.25": 5.0,
+        "0.5": 6.0,
+        "0.75": 8.0,
+        "0.9": 8.0,
+        "0.95": 9.0
+      }
+    },
+    "first_scene_names": [
+      "Wren",
+      "Ferrous Gate",
+      "Road",
+      "System",
+      "Seven",
+      "Haro"
+    ]
+  }
+}
