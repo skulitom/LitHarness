@@ -159,6 +159,26 @@ upstream.** §94.6's P1–P5 preconditions, `plan/llm-reader-engagement.md` §A3
 strictly worse than an uncalibrated broken one, because it has acquired agreement with the data as
 a property and lost the disagreement that would have exposed it.
 
+### 2.1 And a calibrated reward model buys no protection from the pressure applied to it afterward
+
+Separate from the ordering rule, and easier to lose because calibration *sounds* like a safety
+measure. **The paper's guarantee is predictive, not optimisation-robust.** It says the reweighted
+ensemble's distribution lands closer to the population's on held-out items. It says nothing about
+what happens when a writer is then pointed at that ensemble and told to maximise it.
+
+A reward model calibrated to aggregates and then optimised against is **a proxy of a proxy**, and
+the second hop is the one that has repeatedly gone wrong here: `research/quality-measurement/BRIEF.md`
+§6 item 6 is the arithmetic of rejection sampling against a weak metric, and
+`plan/llm-reader-engagement.md` §A3's escalation rule already voids a battery's evidence when
+pressure moves the deployment distribution off the passive one the battery was measured on.
+Calibrating the sim does not touch either fact — if anything it sharpens the hazard, because a
+better-fitting proxy is a more attractive thing to optimise.
+
+So **§61's α discipline applies unchanged**, and so does §97.5's containment: the sim stays frozen
+per production cycle, T3 is instrumented from the first optimisation step, and a cycle that
+exhausts the exploitation budget **halts the writer, not the budget**. A calibrated sim earns no
+relaxation of any of it, and nothing in this document may be cited as licensing one.
+
 This is also why this material is a **separate document** rather than a section inside
 `plan/persona-reader-validity.md`. That file owns the gates that must stay upstream; filing the
 layer that must stay downstream one heading below them is how an order of operations gets lost. A
