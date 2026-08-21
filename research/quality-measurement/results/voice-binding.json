@@ -1,39 +1,29 @@
 {
   "calls": {
-    "api": 40,
-    "replayed": 0
+    "api": 8,
+    "replayed": 24
   },
   "dose_arm": {
     "0": {
       "borrow_held_out": 0.0,
       "borrow_shown": 0.0,
-      "centroid_distance": 7.3976,
+      "centroid_distance": 10.9802,
       "interior_per_1k": 2.149,
       "scenes": 8
     },
     "1": {
       "borrow_held_out": 0.0,
       "borrow_shown": 0.0,
-      "centroid_distance": 6.6525,
+      "centroid_distance": 10.5778,
       "interior_per_1k": 3.122,
       "scenes": 8
     },
     "2": {
       "borrow_held_out": 0.0,
       "borrow_shown": 0.0,
-      "centroid_distance": 6.6498,
+      "centroid_distance": 10.5274,
       "interior_per_1k": 2.897,
       "scenes": 8
-    },
-    "4": {
-      "borrow_held_out": 0.0,
-      "borrow_shown": 0.0,
-      "centroid_distance": 6.4754,
-      "interior_per_1k": 2.322,
-      "scenes": 8
-    },
-    "8": {
-      "scenes": 0
     }
   },
   "doses": [
@@ -47,11 +37,34 @@
     "key": "rr_mid",
     "size": 15
   },
+  "not_runnable": {
+    "4": {
+      "argv_limit": 32767,
+      "system_prompt_chars": 25478,
+      "why": "the voice block travels as an argv element and this rung exceeds the ceiling"
+    },
+    "8": {
+      "argv_limit": 32767,
+      "system_prompt_chars": 48529,
+      "why": "the voice block travels as an argv element and this rung exceeds the ceiling"
+    }
+  },
+  "persistence_arm": {
+    "borrow_shown": 0.0,
+    "centroid_distance": 10.5266,
+    "scenes": 8,
+    "similarity_to_moved": 0.9469
+  },
+  "persistence_runs_off": {
+    "dose": 2,
+    "instead_of": 8,
+    "why": "the persistence arm revises the most-conditioned output there is, and the highest rung that ran is the most-conditioned output there is. Substituting the top *runnable* dose is not a choice about the result \u2014 the substitution is forced by the transport and would be identical whatever the numbers said."
+  },
   "planned_generations": 48,
   "pre_registration": {
     "arms": {
       "dose": "exemplar doses 0/1/2/4/8 x 8 scenes, nested; 40 generations",
-      "persistence": "each dose-8 output revised once through repair_interiority; 8 generations"
+      "persistence": "each top-dose output revised once through repair_interiority; 8 generations. 'Top dose' is the highest rung the transport can carry \u2014 see ARGV_LIMIT, which excluded dose 8 on this machine after the fact."
     },
     "floor": "Dose 0 is the same prompt with no voice block, so the dose-0 scenes are the anchor and any movement is measured against them. A dose-0 scene that already sits at the exemplar centroid would mean the z-space has no room and the arm says so rather than reporting a flat curve as a plateau.",
     "no_dose_monotonicity_bar": "No threshold is declared on the dose curve, and the reason is \u00a789's own rule about bars the design cannot reach: with five rungs and eight scenes the exact permutation null on a monotone trend has a smallest attainable p of 2/5! = 0.0167 per scene, which is attainable, but the *shape* question ('does it plateau') is not a null-hypothesis question at all and dressing it as one would manufacture a verdict. The curve is reported with its increments and the plateau is described rather than tested.",
@@ -63,8 +76,14 @@
   },
   "reading": {
     "borrowing": "shown-overlap +0.000000 against held-out +0.000000: movement is not explained by borrowing \u2014 shown overlap rose no faster than the pool the model never saw",
-    "dose": "centroid distance 7.3976 -> 6.4754 (+0.9222 over doses 0..4); the lever binds"
+    "dose": "centroid distance 10.9802 -> 10.5274 (+0.4528 over doses 0..2); the lever binds",
+    "persistence": "after one certified revision the centroid distance is 10.5266 against 10.5274 at dose 2 and 10.9802 at dose 0; the voice holds through the revision"
   },
+  "runnable_doses": [
+    0,
+    1,
+    2
+  ],
   "scenes": [
     "gen:scene-1",
     "gen:scene-2",

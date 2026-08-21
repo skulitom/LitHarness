@@ -626,6 +626,24 @@ def cluster_interval(
     )
 
 
+def _failure_kind(interval: Interval, band: float, centre: float) -> str:
+    """Why an equivalence check failed: the reader is off centre, or the batch is too small.
+
+    **The distinction the phi4 seating had to have and did not.** All four of its controls
+    failed while two of them sat on a point estimate of *exactly* 0.5, because an all-or-nothing
+    allocator's session shares are 0, 0.5 or 1 and the interval over 24 of them is wider than
+    the band can ever contain. Reporting that as "FAIL" alone reads as a biased reader, which is
+    a bar wrong in the direction of false failure — I7's catalogued defect, and the reason T0's
+    own registered bar disqualified a good judge 82 to 100% of the time.
+
+    So a failure whose interval still *contains* the centre while being wider than the band is
+    named as imprecision, and `empirical_sessions_needed` prices the fix in sessions.
+    """
+    if interval.low <= centre <= interval.high and (interval.high - interval.low) > 2 * band:
+        return "imprecise"
+    return "off_centre"
+
+
 def equivalence(
     values: Sequence[tuple[str, float]], *, band: float = CONTROL_BAND,
     alpha: float = CONTROL_ALPHA, centre: float = 0.5,
@@ -664,8 +682,13 @@ def equivalence(
             "observations": len(values),
             "cluster_dimension": dimension,
         }
+    passed = interval.inside(band, centre=centre)
     return {
-        "verdict": "PASS" if interval.inside(band, centre=centre) else "FAIL",
+        "verdict": "PASS" if passed else "FAIL",
+        # A FAIL is two different findings and a single word hides one of them. See
+        # `_failure_kind`: an interval that still contains the centre and is simply too wide is
+        # an under-sized batch, not a biased reader.
+        "failure_kind": None if passed else _failure_kind(interval, band, centre),
         "band": [centre - band, centre + band],
         "cluster_dimension": dimension,
         # **What the claim covers, carried on the claim.** Clustered over shelves it is about
@@ -836,6 +859,61 @@ def _detection(
         if interval is not None and interval.excludes(0.5):
             hits += 1
     return hits / _TRIALS
+
+
+def empirical_sessions_needed(
+    shares: Sequence[float], *, band: float = CONTROL_BAND, alpha: float = CONTROL_ALPHA,
+    sizes: Sequence[int] = (24, 32, 48, 64, 96, 128, 160, 224),
+) -> dict[str, Any]:
+    """Sessions needed to place the interval inside the band, from *observed* session shares.
+
+    **The simulated table sized every arm against a distribution readers do not produce, and
+    the first full seating is what showed it.** `attainability` draws each session's share as a
+    binomial over `BUDGET` fetches — twelve independent coins, per-session sd about 0.144. A
+    real reader commits to a pattern for a whole session: phi4's 72 sessions produced shares of
+    exactly 0.0, 0.5 or 1.0 and nothing else, at a per-session sd of **0.4025**, so the
+    fetches inside a session are perfectly correlated and the effective sample size is the
+    session count rather than the fetch count. The interval is 2.8x wider than the simulation
+    assumed and the declared band could not be met at any batch this programme had budgeted.
+
+    So sizing runs from the observations. The shares are centred on `0.5` before resampling —
+    what is being measured is the *precision* a reader's own variance affords, not whether that
+    reader is biased, and leaving a real bias in would price the batch needed to certify a
+    reader that should fail.
+
+    Returns the smallest listed size whose interval fits, or None with the sizes tried.
+    """
+    if len(shares) < 2:
+        return {"observed_sd": None, "sessions_needed": None, "why": "fewer than two sessions"}
+    observed_sd = statistics.pstdev(shares)
+    offset = 0.5 - statistics.fmean(shares)
+    centred = [share + offset for share in shares]
+    needed: int | None = None
+    table: dict[str, float] = {}
+    for size in sizes:
+        # Deterministic round-robin over the observed shares rather than a random draw, for
+        # `directions._synthetic`'s reason: a sizing number that moved with a seed would be a
+        # property of the seed.
+        values = [(f"session-{index}", centred[index % len(centred)]) for index in range(size)]
+        interval = cluster_interval(values, alpha=alpha)
+        if interval is None:
+            continue
+        width = interval.high - interval.low
+        table[str(size)] = round(width, 4)
+        if needed is None and interval.inside(band, centre=0.5):
+            needed = size
+    return {
+        "observed_sd": round(observed_sd, 4),
+        "binomial_sd_assumed_by_attainability": round((0.25 / BUDGET) ** 0.5, 4),
+        "interval_width_by_sessions": table,
+        "sessions_needed": needed,
+        "band": band,
+        "reading": (
+            "the simulated `--attainability` table assumes twelve independent fetches per "
+            "session; a reader that commits to a pattern for a whole session breaks that "
+            "assumption and needs this many sessions instead"
+        ),
+    }
 
 
 def attainability(
@@ -1121,6 +1199,15 @@ def seat(run: Run, *, model: str) -> dict[str, Any]:
         if scorable
         else {"verdict": "NOT RUN", "why": "no scorable sessions"}
     )
+    # **What a failing control would cost to make readable**, computed from this run's own
+    # session shares rather than from the simulator's binomial assumption. Printed whenever a
+    # control failed for imprecision, because "FAIL" plus a price is actionable and "FAIL"
+    # alone reads as a verdict about the reader.
+    sizing: dict[str, Any] | None = (
+        empirical_sessions_needed([session.target_share for session in scorable])
+        if any(block.get("failure_kind") == "imprecise" for block in controls.values())
+        else None
+    )
     controls["v1_variance"] = {
         "verdict": "NOT RUN",
         "why": (
@@ -1141,6 +1228,10 @@ def seat(run: Run, *, model: str) -> dict[str, Any]:
     return {
         "model": model,
         "controls": controls,
+        # Deliberately a sibling of `controls` and not one of them: it is a price, not a
+        # verdict, and a DIAGNOSTIC entry inside `controls` would enter the seating decision
+        # through `all(... == "PASS")` and unseat every model that needed one.
+        "sizing_from_observed": sizing,
         "sessions": len(run.sessions),
         "scorable": len(scorable),
         "unanswered_sessions": len(run.sessions) - len(scorable),

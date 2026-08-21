@@ -2244,3 +2244,35 @@ every unstruck action below as a claim to re-verify rather than a task to start.
     necessary-and-insufficient. §1a.2 already measured what happens when a model optimises
     prose against a signal — it gets worse, and order-consistent judges preferred the human
     originals ~80% of the time.
+
+11. **Give the writer an identity: a roster of named professionals, and a Director that casts
+    one** — see [plan/writer-roster.md](plan/writer-roster.md), written 2026-08-20 before any
+    code. **Operator directive:** directors select from writers they have access to; each writer
+    carries a deep backstory; all are professionals; their interests are deep and spread across
+    many subjects. **What is true today:** the drafter has no identity whatsoever — three
+    sentences of system prompt (`application/planner.py:354`), no name, no career, no genre —
+    and everything topical it knows arrives through the context packet. The Director's brief
+    never reaches it.
+
+    **The order to build it in, cheapest-first, and each step can kill the next.** (i)
+    `domain/writers.py` plus `--writer`, off by default with no-writer as the control, the
+    dossier landing in the drafting **system message** and never in the packet — the boundary
+    `feedback` already observes, because a novelist's career is not a fact about the story.
+    (ii) G0, the fake-provider wiring pilot: does the dossier reach the request and change its
+    bytes, and what does it cost in tokens re-sent on every scene call. (iii) G1,
+    `writer_distinctness.py` on a real local model — the prose-side twin of
+    `director_distinctness.py`, five readings and all — because §89.1 measured four personas
+    returning one byte-identical answer vector and an unchecked roster is that failure in a
+    fourth costume. **If G1 reads `INDISTINCT`, that finding is the deliverable and the rest is
+    not built.** (iv) G2, whether the *interest* binds rather than the name, via E6 "name the
+    difference" plus the dossier-shuffle control `persona-reader-validity.md` §6 already
+    specifies. (v) Director casting, which needs a fifth `DIRECTOR_KIND` and its own containment
+    argument, and is deliberately last.
+
+    **Two things to have read before starting.** The backstory is **deep in domain and shallow
+    in demography** — `research/quality-measurement/personas.py` records that demographic
+    persona description elicits stereotype performance, so a dossier says what a writer knows
+    and has done professionally, never their age or hometown. And **a roster multiplies §61's α
+    divisor**: `director-role.md` §4 divides confidence by N directors, and N directors × M
+    writers is N×M candidate books. Fix the casting before the book is measured; do not pick the
+    best of M afterwards.

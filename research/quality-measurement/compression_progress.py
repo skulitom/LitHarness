@@ -704,6 +704,14 @@ def run_family(
         "governor": governor.report(),
         "cache": cache.provenance(),
         "dropped": dropped,
+        # **The raw per-side slopes, both arms, because the verdicts cannot answer the question
+        # the shuffled arm exists to ask.** `crossed__shuffled_DIAGNOSTIC` reports whether the
+        # *shuffled* statistic ranks high above low — a second copy of the label test. What
+        # separates structure from familiarity is whether destroying chapter order changes the
+        # slope *on the same side*, which is a paired within-side comparison over every scored
+        # side and is not recoverable from a pair-agreement count. Numbers only; no prose.
+        "side_slopes_ordered": {p: dict(r) for p, r in scores.items()},
+        "side_slopes_shuffled": {p: dict(r) for p, r in shuffled_scores.items()},
     }
     report.update(run_controls(family, pairs, texts, cache, governor, args))
 

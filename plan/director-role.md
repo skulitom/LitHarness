@@ -252,3 +252,10 @@ as it does today.
 - **No director personality is claimed to be good.** The shipped briefs are examples with
   deliberately different subjects, written to exercise the distinctness control, not to be good
   directors. Which briefs are worth running is an operator act.
+- **A Director cannot choose who writes.** The drafter is anonymous — three sentences of system
+  prompt with no name, no career and no subject (`application/planner.py:354`) — so "select a
+  writer" is not a capability the role is missing so much as a role that does not exist yet.
+  Designed 2026-08-20 in [writer-roster.md](writer-roster.md), which also records why casting is
+  not expressible under §5's table as it stands: `DIRECTOR_KINDS` is `PREMISE`, `ARC_NOTE`,
+  `TONE_NOTE`, `CHAPTER_NOTE`, and casting is none of them. A fifth kind is a new containment
+  argument, because a Director choosing the writer is a Director acquiring a lever over prose.

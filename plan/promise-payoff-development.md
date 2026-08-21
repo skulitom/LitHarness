@@ -469,3 +469,41 @@ masquerade as evidence about readers.
 twenty own-generated texts and a second own-generated book, D2's transplant-blindness is a
 declared kill, and an unasked kill is not a passed one. What the screen bought is the right to
 spend the seating budget on one family instead of four.
+
+**The full seating on `phi4:latest` — 72 sessions, 864 fetches, all answered — and every
+control fails for the wrong reason.**
+
+    control            verdict  failure kind   point   interval
+    p1_placebo          FAIL     imprecise     0.500   [0.354, 0.625]
+    p3_whitespace       FAIL     imprecise     0.396   [0.271, 0.521]
+    p4_rename           FAIL     imprecise     0.500   [0.354, 0.625]
+    p2_positional       FAIL     imprecise     0.615   [0.396, 0.833]
+    p5_non_degenerate   PASS
+
+**Two of the four sit on a point estimate of exactly 0.5 and fail anyway**, which is a bar
+wrong in the direction of false failure — I7's catalogued defect, arriving on our own bar for
+the third time in this programme. The intervals are simply wider than a ±0.10 band can contain,
+so the module now names the two kinds of failure apart: an interval that still *contains* the
+centre and is merely too wide is `imprecise`, not `off_centre`.
+
+**The cause is that the attainability simulation modelled a reader nobody is.** It draws each
+session's share as twelve independent coins — per-session sd about 0.144. phi4's 72 sessions
+produced shares of exactly **0.0, 0.5 or 1.0 and nothing else**, at a per-session sd of
+**0.4025**: the reader picks one of four fixed patterns (all-A, all-B, ABAB…, BABA…) and holds
+it for the whole session, so the fetches inside a session are perfectly correlated and the
+effective sample size is the session count rather than the fetch count. The interval is 2.8x
+wider than the table assumed, and **the declared band could not have been met at any batch this
+programme had budgeted**.
+
+So sizing now runs from observations rather than from an assumed distribution
+(`empirical_sessions_needed`, reported beside a failing seating as a price rather than as a
+verdict): at this reader's own variance the band needs **64 sessions per control arm**, not the
+24 the simulated table prescribed — 2,304 fetches per arm, roughly seven hours of governed GPU
+time for the three shelves. That number is the finding. It is also the reason the D1 battery
+was not started: an arm sized off the same broken assumption would have bought thousands of
+calls and produced the same uninterpretable FAIL.
+
+**What this does not say.** It is not evidence that phi4 is unbiased — the intervals are too
+wide to say anything about the centre, which is precisely what `imprecise` means. And it is not
+a failure of the instrument's design: the forced budget did its job, every session answered,
+and P5 held. What failed is a declared number, caught by the run it was declared for.
