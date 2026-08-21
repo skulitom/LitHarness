@@ -456,9 +456,9 @@ def has_story_vocabulary(known: Sequence[lc.StateRecord]) -> bool:
     namespace, which is not somebody else's numbering either. Measured on the Serial Pilot
     seed: adding one such record with no declaration flips this to True, `stated_position`
     then abstains for the whole book, and §12 step 5 extracts **nothing from any scene** —
-    the same silence Book Zero produced, arriving by a different door. `state_records` was
-    read back at 0 extracted records with the declaration absent and at 1 per drafted scene
-    with it present.
+    the same silence Book Zero produced, arriving by a different door. On the same seed and
+    the same `Loop | Day` status line, `extract_state` returned 0 records with the declaration
+    absent and 1 with it present.
 
     **The default direction is unchanged and is the safe one.** A dated canon record that
     declares nothing still counts as a foreign vocabulary, so forgetting the declaration
