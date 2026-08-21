@@ -1712,7 +1712,7 @@ it was — blocked on the level curve the game-mechanics pack owns.
 output~~ *(struck, §67/§69: the weekly-session design's measured throughput was 2
 verdicts per 104 pairs; the instrument is now the pairwise preference engine —
 paid external genre readers, blinded, position-swapped, operated per
-[plan/preference-runbook.md](plan/preference-runbook.md))*; validate/discard craft
+the preference runbook, since deleted)*; validate/discard craft
 metrics against human judgment; promote the first calibrated thresholds under §59's
 bound; the reference corpus is the preference engine's comparison corpus, selected
 under a declared comparator frame rather than authored (§10.6's demand, §61's form);

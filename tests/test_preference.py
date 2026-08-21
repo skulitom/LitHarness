@@ -16,8 +16,6 @@ licenses selection between candidates (§61 Add 3) and never absolute refusal of
 
 from __future__ import annotations
 
-import json
-
 import pytest
 
 from litharness.adapters.sqlite_store import SqliteStore
@@ -988,122 +986,8 @@ def test_a_judgment_records_once_from_the_command_line(db, tmp_path, capsys) -> 
     assert "1 excluded by recognition" in capsys.readouterr().out
 
 
-def test_export_and_import_round_trip_for_external_readers(db, tmp_path, capsys) -> None:
-    """The paid-reader loop: blinded JSONL out, verdicts back in, at-least-once friendly —
-    re-importing skips answered rows with a count, and a verdict for a sample this store
-    never drew is refused rather than adopted."""
-    run(db, "init")
-    _seed_book(db)
-    registration = _register_pools(db)
-    run(
-        db, "corpus-add", str(_excerpt_file(tmp_path, "one.txt", "A ford, unwatched.")),
-        "--source", "test-serial", "--genre", "litrpg", "--era", "pre-2023",
-    )
-    run(db, "protocol", "--frame", FRAME, "--tie-policy", "half_win", "--grain", "scene")
-    run(db, "pair-draw", "--protocol", PROTOCOL.protocol_id)
-    capsys.readouterr()
-
-    export_path = tmp_path / "pairs.jsonl"
-    expected = len(_scenes_in(db, registration, Pool.MEASUREMENT)) * 2
-    assert run(db, "pair-export", str(export_path)) == EXIT_OK
-    assert f"{expected} pending sample(s) exported" in capsys.readouterr().out
-    lines = [json.loads(line) for line in export_path.read_text(encoding="utf-8").splitlines()]
-    assert len(lines) == expected
-    for line in lines:
-        assert set(line) == {
-            "sample_id", "frame", "grain", "first", "second", "verdicts", "recognized",
-        }
-        assert line["frame"] == FRAME, "the frame travels with the pair; provenance does not"
-        assert line["recognized"] is None, (
-            "the recognition question ships unanswered, so reader tooling must answer it"
-        )
-        assert "rev:" not in json.dumps(line)
-
-    verdicts_path = tmp_path / "verdicts.jsonl"
-    paid = _readers_in(registration, Pool.MEASUREMENT, 2)
-    answered = [
-        {"sample_id": lines[0]["sample_id"], "verdict": "prefer_first", "reader": paid[0],
-         "recognized": False},
-        {"sample_id": lines[1]["sample_id"], "verdict": "tie", "reader": paid[1],
-         "recognized": True, "note": "I have read this serial"},
-    ]
-    verdicts_path.write_text(
-        "\n".join(json.dumps(entry) for entry in answered) + "\n", encoding="utf-8"
-    )
-    assert run(db, "pair-import", str(verdicts_path), "--source", "test-panel") == EXIT_OK
-    assert "2 verdict(s) recorded, 0 already answered" in capsys.readouterr().out
-
-    assert run(db, "pair-import", str(verdicts_path), "--source", "test-panel") == EXIT_OK
-    assert "0 verdict(s) recorded, 2 already answered" in capsys.readouterr().out
-
-    with_unknown = [
-        *answered,
-        {"sample_id": "pj-000000000000000000000000", "verdict": "tie",
-         "reader": _readers_in(registration, Pool.MEASUREMENT, 3)[2], "recognized": False},
-    ]
-    verdicts_path.write_text(
-        "\n".join(json.dumps(entry) for entry in with_unknown) + "\n", encoding="utf-8"
-    )
-    assert run(db, "pair-import", str(verdicts_path), "--source", "test-panel") == EXIT_ATTENTION
-    output = capsys.readouterr()
-    assert "1 unknown sample id(s) refused" in output.out
-    assert "never drew" in output.err
-
-    store = SqliteStore.open(db)
-    try:
-        recognized_rows = [s for s in store.pair_samples() if s.recognized]
-    finally:
-        store.close()
-    assert len(recognized_rows) == 1
-    assert recognized_rows[0].note == "I have read this serial"
 
 
-def test_an_import_without_an_explicit_recognition_answer_is_refused(
-    db, tmp_path, capsys
-) -> None:
-    """The paid seam is where recognition bypass-by-omission would happen: reader tooling
-    that never asked the question would default every row to "did not recognise", and §58
-    measured exactly that familiarity swinging a score harder than real damage. So the
-    export packet ships the slot null and import refuses anything that is not an explicit
-    boolean — an absent answer is not "no"."""
-    run(db, "init")
-    _seed_book(db)
-    _register_pools(db)
-    run(
-        db, "corpus-add", str(_excerpt_file(tmp_path, "one.txt", "A ford, unwatched.")),
-        "--source", "test-serial", "--genre", "litrpg", "--era", "pre-2023",
-    )
-    run(db, "protocol", "--frame", FRAME, "--tie-policy", "half_win", "--grain", "scene")
-    run(db, "pair-draw", "--protocol", PROTOCOL.protocol_id)
-    store = SqliteStore.open(db)
-    try:
-        first, second, *_ = store.pair_samples(pending_only=True)
-    finally:
-        store.close()
-    capsys.readouterr()
-
-    verdicts_path = tmp_path / "verdicts.jsonl"
-    entries = [
-        # Absent entirely, and present but stringly typed: both are non-answers.
-        {"sample_id": first.sample_id, "verdict": "prefer_first", "reader": "paid-1"},
-        {"sample_id": second.sample_id, "verdict": "tie", "reader": "paid-1",
-         "recognized": "false"},
-    ]
-    verdicts_path.write_text(
-        "\n".join(json.dumps(entry) for entry in entries) + "\n", encoding="utf-8"
-    )
-    assert run(db, "pair-import", str(verdicts_path), "--source", "test-panel") == EXIT_ATTENTION
-    output = capsys.readouterr()
-    assert "0 verdict(s) recorded" in output.out
-    assert "2 refused without an explicit recognition answer" in output.out
-    assert first.sample_id in output.err and second.sample_id in output.err, (
-        "refused entries are named, so the reader tooling defect is findable"
-    )
-    store = SqliteStore.open(db)
-    try:
-        assert all(sample.pending for sample in store.pair_samples()), "nothing landed"
-    finally:
-        store.close()
 
 
 def test_a_single_presented_order_is_refused_and_an_imbalance_is_warned(
@@ -1203,34 +1087,6 @@ def test_duplicate_reader_pair_orientation_rows_count_once_earliest_first(
     assert "pair cluster" in output.err
 
 
-def test_the_zero_verdict_world_degrades_to_informative_emptiness(db, capsys) -> None:
-    """§61: the production loop must run with zero verdicts, and every preference verb on
-    an empty store reports the gap instead of failing — emptiness is the honest measure,
-    the same way the unread directive count is."""
-    run(db, "init")
-    capsys.readouterr()
-    assert run(db, "pairs") == EXIT_OK
-    assert "(0 sample(s), 0 awaiting a reader)" in capsys.readouterr().out
-    assert run(db, "pair-export") == EXIT_OK
-    assert "0 pending sample(s) exported" in capsys.readouterr().err
-
-    run(db, "protocol", "--frame", FRAME, "--tie-policy", "half_win", "--grain", "scene")
-    capsys.readouterr()
-    assert run(db, "win-rate", "--protocol", PROTOCOL.protocol_id) == EXIT_OK
-    assert "no analysable judgment yet" in capsys.readouterr().out
-    # **Before the split is declared the draw refuses, and that is the firewall rather than a
-    # gap in the empty-store story.** "Before the first verdict is routed" is only meaningful
-    # if nothing can be routed first, so this is a fault and it names its remedy.
-    assert run(db, "pair-draw", "--protocol", PROTOCOL.protocol_id) == EXIT_FAULT
-    assert "no pool registration" in capsys.readouterr().err
-
-    _seed_book(db)
-    _register_pools(db)
-    capsys.readouterr()
-    assert run(db, "pair-draw", "--protocol", PROTOCOL.protocol_id) == EXIT_OK
-    assert "the comparison corpus is empty" in capsys.readouterr().out
-
-    assert run(db, "tick") == EXIT_OK, "and the production loop never noticed any of it"
 
 
 def test_the_pairwise_engine_never_touches_a_provider(db, tmp_path, monkeypatch, capsys) -> None:

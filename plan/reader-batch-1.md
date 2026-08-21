@@ -11,7 +11,7 @@ standing so the change is visible rather than merged away.**
 
 1. **Pilot the headline protocol.** The §1a.4/§1a.5 claim is a blinded, position-swapped pairwise
    win rate against matched published human prose, lower bound of a 95% CI above 0.5. This batch is
-   the first real exercise of [preference-runbook.md](preference-runbook.md) and all five §61
+   the first real exercise of the preference runbook (deleted) and all five §61
    pre-registrations.
 2. **Anchor the machine panel.** Every axis where the machine panel has a recorded verdict gets the
    same pairs put to humans, so the batch yields a **panel-vs-human agreement matrix per axis**

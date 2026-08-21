@@ -690,7 +690,7 @@ Stated plainly, because a system that runs is easy to mistake for a system that 
   `pairs`, `pair-judge`, `pair-export`, `pair-import`, `win-rate`) runs blinded,
   position-swapped comparisons against matched published-human prose under a
   pre-registered protocol, with a reader-by-pair clustered lower bound on the win
-  rate; [plan/preference-runbook.md](plan/preference-runbook.md) is the operating
+  rate; the preference runbook (deleted 2026-08-21) was the operating
   procedure. **`pools` is new and now comes first**: readers and passages are split
   into a steering pool and a measurement pool before the first verdict is routed,
   because the superiority claim dies if the prose was shaped by the readers who later
