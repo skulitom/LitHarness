@@ -8871,3 +8871,131 @@ on it and is not thereby stale**: it is correctly labelled with the family it us
 F3 against the new pin produces a *different* reading rather than a corrected one. The old cache
 (`derived/f3-qwen2.5-3b.jsonl`) is keyed on model id and revision, so it cannot collide with the
 new one and no orphaning is required.
+
+## 101. The product becomes a serial, and the gate that would certify it cannot fail as written
+
+**Operator directive, 2026-08-21.** The unit of production is a **serial**: open-ended chapter
+count, produced at cadence (§63), published chapter-wise through the library. The twenty six-scene
+books are demoted from product to **measurement substrate**. Planning gains a grain — serial
+premise → **arc** → chapter → scene — with existing Director kinds applying at arc grain and no
+new lever. The operator gate is unchanged and a serial reaches it only after clearing its highest
+attempted rung.
+
+**"Endless" is not a testable claim and the directive says so itself.** The testable form is **no
+degradation trend over measured length, claimed only at lengths actually reached**, with every
+capacity claim carrying its N. That distinction is the entry's spine.
+
+### 101.1 The gate as specified makes the pass the null hypothesis
+
+§5: *"A rung PASSES only if no metric worsens past its bar."* Accepting a null is not a finding —
+**a noisy instrument passes automatically**, and the noisier the metric the more certainly it
+passes. This is the shape §50 keeps naming, arriving one level higher than usual: not a control
+inside a track but the ladder that certifies the whole product.
+
+The arithmetic, computed before any bar was proposed. For an OLS slope over *n* equally spaced
+chapter indices with residual standard deviation σ, `SE(slope) = σ / sqrt(n·(n²−1)/12)`:
+
+| rung N | tightest slope bound | **total drift bound across the rung** |
+|---|---|---|
+| 8 | 0.302 σ/chapter | **± 2.42 σ** |
+| 16 | 0.106 σ/chapter | ± 1.70 σ |
+| 32 | 0.038 σ/chapter | ± 1.20 σ |
+| 64 | 0.013 σ/chapter | **± 0.85 σ** |
+| 128 | 0.005 σ/chapter | ± 0.60 σ |
+
+**At rung 8 the tightest bound obtainable is ±2.42 standard deviations of the metric itself.** A
+"no degradation" pass there is compatible with voice drifting two and a half SDs across the
+serial. The rung cannot fail, so it certifies nothing.
+
+**Proposed fix, and it is §87's attainability rule applied to a trend.** Every degradation bar is
+stated as an **equivalence bound**, never as a null acceptance: a rung passes when the slope's
+confidence interval **excludes** degradation worse than δ. Insufficient data then returns
+`INSUFFICIENT_N` rather than PASS — exactly as F3's strata do, and exactly as §98 has just
+demonstrated is a real outcome rather than a hypothetical. Four metrics all required to clear is
+conservative in the pass direction, so no multiplicity correction is owed.
+
+**Consequence the operator should see before paying for a batch: rungs 8 and 16 cannot support a
+no-degradation claim at any useful δ.** They are wiring and feasibility rungs. **The first rung
+entitled to make a capacity claim is 32**, and 64 is where the bound gets genuinely tight.
+
+### 101.2 A chapter of four to five scenes does not fit the measurement twice
+
+Operator, 2026-08-21: a chapter is currently **4–5 scenes**. Against the fitness shelf's measured
+658 words per scene, and the **8,192-token single-pass ceiling** re-verified on the new Qwen pin
+in §100:
+
+| scenes/chapter | words | tokens | context left under the cap after the target chapter |
+|---|---|---|---|
+| 4 | 2,633 | ~3,555 | 4,381 tokens = **1.23 chapters** |
+| 5 | 3,291 | ~4,443 | 3,492 tokens = **0.79 chapters** |
+
+**At five scenes per chapter, one prior chapter plus the target does not fit in a single
+teacher-forced pass.** This is §3's *"no context window holds a serial"* arriving much sharper
+than intended: on this card no context window holds **two chapters** for scoring. Three
+consequences, none of which the directive's design contradicts, but all of which it assumes away:
+
+1. **The §5 degradation metrics are safe**, because they are within-chapter statistics compared
+   *across* chapter index. A surprisal series over one chapter fits comfortably. Trend-over-index
+   is the right shape and it is the shape that survives this ceiling.
+2. **Canon integrity at distance (§3) cannot be done by context.** "Sampled facts from chapter k
+   re-verified at chapter k+Δ" has no pass that holds both chapters. It must be a **retrieval**
+   check — query the canon store, score a short probe against the retrieved fact — which is what
+   §3's own query-against-durable-canon design implies but does not say.
+3. **F4a at serial scale must be excerpt-based, not chapter-based.** Its retro-compression term
+   conditions setup text on the payoff event; if setup and payoff sit in different chapters they
+   cannot share a pass. F4a operates on located setup/payoff *excerpts* drawn from the promise
+   ledger, not on whole chapters.
+
+**Recommendation, and it is a real trade rather than a preference: choose four scenes per chapter,
+not five.** Four leaves 1.23 chapters of context under the ceiling and five leaves 0.79. Anything
+wanting one chapter of prior context plus a target is measurable at four and impossible at five,
+on this hardware, today. If the product wants five, that is a legitimate choice and the cost is
+that a whole class of cross-chapter measurement stops being available.
+
+### 101.3 Substrate and spend, priced from the only own-generated cost data that exists
+
+The fitness shelf: 19 books, 6 scenes each, median 3,950 words, **$0.2097 per scene**, $23.90
+total.
+
+| shape | scenes | words | cost |
+|---|---|---|---|
+| **3 × 32 × 4** (the §9 default, four scenes) | 384 | ~253k | **$80.51** |
+| 3 × 32 × 5 (the §9 default, five scenes) | 480 | ~316k | $100.64 |
+| 2 × 32 × 4 | 256 | ~169k | $53.67 |
+| 5 × 16 × 4 | 320 | ~211k | $67.09 |
+| 3 × 64 × 4 | 768 | ~506k | $161.02 |
+
+**The §9 default of 3 × 32 fits the $120 budget at either scene count.** One wrinkle worth naming:
+the declared check-in at **$80 fires at 100% of the batch at four scenes and at 80% at five**, so
+as set it is a near-completion checkpoint rather than a mid-course one. If the check-in is meant
+to be a place to stop and look, **$50 would fire near the end of the first serial** and be worth
+something.
+
+Note what 3 × 32 × 4 actually buys: **~253,000 words**, against the entire fitness shelf's ~79,000.
+This is an order-of-magnitude change in what this project produces, and the substrate is
+contamination-proof by construction for the same reason the shelf is.
+
+### 101.4 What is proposed and what still needs a signature
+
+Proposed by the agent per §9, pending operator signature before rung 1 runs:
+
+- **Bars are equivalence bounds, not null acceptances** (§101.1). This is the load-bearing one.
+- **Rungs 8 and 16 are declared feasibility rungs** that make no capacity claim; the first
+  claim-bearing rung is 32.
+- **Four scenes per chapter** if cross-chapter measurement is wanted (§101.2).
+- **Check-in at $50** rather than $80, so it lands mid-course (§101.3).
+- δ per metric is **not** proposed here, and deliberately: δ is in units of each metric's own σ,
+  and three of the four metrics (voice drift, quality-by-index, canon-integrity rate) have never
+  been measured on serial-shaped text. Proposing δ before G1 has produced a σ would be inventing
+  a bar and then discovering whether it was reachable, which is the failure §87's rulebook exists
+  to prevent. **G1 at rung 8 produces the σ; δ is signed after it and before rung 32 binds.**
+
+Still operator's: the substrate split, the drafting budget, and G3's cadence per §63.
+
+### 101.5 Anti-scope, carried forward
+
+No "endless" claim at any finite N. No new judges, no licence movement, no per-scene casting, no
+new Director kinds. One writer per serial is the default for voice continuity and R4's arithmetic;
+per-arc casting is a registered open question and is not built. §61/R4's α division now counts
+**serials** as the reported unit. Canon-store contents follow the existing leak rules wherever any
+third-party-derived text is involved.
