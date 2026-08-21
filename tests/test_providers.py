@@ -92,8 +92,11 @@ CLAUDE_ENVELOPE = {
 
 
 def claude_runner(envelope: dict) -> object:
-    def run(argv: Sequence[str], *, timeout: float, cwd: str | None = None) -> CommandResult:
+    def run(
+        argv: Sequence[str], *, timeout: float, cwd: str | None = None, stdin: str | None = None
+    ) -> CommandResult:
         run.argv = list(argv)  # type: ignore[attr-defined]
+        run.stdin = stdin  # type: ignore[attr-defined]
         return CommandResult(0, json.dumps(envelope))
 
     return run
@@ -247,7 +250,7 @@ def test_claude_reports_an_error_envelope_as_a_provider_error() -> None:
 
 
 def test_claude_unparseable_stdout_is_a_provider_error() -> None:
-    def run(argv, *, timeout, cwd=None):
+    def run(argv, *, timeout, cwd=None, stdin=None):
         return CommandResult(1, "not json")
 
     with pytest.raises(ProviderError, match="unparseable"):
@@ -255,13 +258,11 @@ def test_claude_unparseable_stdout_is_a_provider_error() -> None:
 
 
 def test_claude_timeout_becomes_a_provider_error() -> None:
-    def run(argv, *, timeout, cwd=None):
+    def run(argv, *, timeout, cwd=None, stdin=None):
         raise subprocess.TimeoutExpired(cmd="claude", timeout=timeout)
 
     with pytest.raises(RetryableProviderError, match="timed out") as raised:
-        ClaudeCodeProvider(runner=run).complete(
-            CompletionRequest(prompt="x", timeout_seconds=1.0)
-        )
+        ClaudeCodeProvider(runner=run).complete(CompletionRequest(prompt="x", timeout_seconds=1.0))
     assert raised.value.kind is ProviderFailureKind.TIMEOUT
 
 
@@ -595,8 +596,7 @@ def test_the_real_runner_decodes_utf8_rather_than_the_host_locale() -> None:
         [
             sys.executable,
             "-c",
-            "import sys; sys.stdout.reconfigure(encoding='utf-8'); "
-            f"print({line!r})",
+            f"import sys; sys.stdout.reconfigure(encoding='utf-8'); print({line!r})",
         ],
         timeout=60.0,
     )
@@ -633,9 +633,9 @@ def test_the_recorded_model_is_the_one_that_wrote_the_prose() -> None:
         },
     }
 
-    result = ClaudeCodeProvider(
-        model="claude-opus-5", runner=claude_runner(envelope)
-    ).complete(CompletionRequest(prompt="write a scene"))
+    result = ClaudeCodeProvider(model="claude-opus-5", runner=claude_runner(envelope)).complete(
+        CompletionRequest(prompt="write a scene")
+    )
 
     assert result.model == "claude-opus-5", (
         "the requested model billed output on this call and is what wrote the text"
@@ -656,8 +656,30 @@ def test_a_silent_downgrade_is_recorded_as_the_model_that_answered() -> None:
         "some-router-model": {"outputTokens": 3, "canonicalModel": "some-router-model"},
     }
 
-    result = ClaudeCodeProvider(
-        model="claude-opus-5", runner=claude_runner(envelope)
-    ).complete(CompletionRequest(prompt="write a scene"))
+    result = ClaudeCodeProvider(model="claude-opus-5", runner=claude_runner(envelope)).complete(
+        CompletionRequest(prompt="write a scene")
+    )
 
     assert result.model == "claude-haiku-4-5"
+
+
+def test_the_prompt_travels_on_stdin_and_never_on_the_command_line() -> None:
+    """Windows caps a command line at 32,767 characters, and the prompt is unbounded.
+
+    Measured on Serial Pilot 1: a 35,714-character packet raised `[WinError 206] The filename
+    or extension is too long`, which arrives as an `OSError` and is classified `unavailable`
+    and therefore *retryable* — so the conductor refunded the attempt and requeued it forever.
+    The book stopped advancing while `status` reported no parked units, no poisoned units and
+    nothing needing attention, and the first five scenes had drafted fine, which is what made
+    it look like an outage rather than a ceiling.
+    """
+    long_prompt = "word " * 9000
+    runner = claude_runner({"result": "text", "usage": {}, "total_cost_usd": 0.1})
+    provider = ClaudeCodeProvider(runner=runner)  # type: ignore[arg-type]
+
+    provider.complete(CompletionRequest(prompt=long_prompt))
+
+    argv = runner.argv  # type: ignore[attr-defined]
+    assert long_prompt not in argv
+    assert sum(len(part) for part in argv) < 2000, argv
+    assert runner.stdin == long_prompt  # type: ignore[attr-defined]

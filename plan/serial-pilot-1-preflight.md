@@ -223,3 +223,62 @@ directive has been recorded against it, and nothing has been drafted. One comman
 Before that, §6 step 1 stands: **write the grab criterion first.** It is the one input here
 that no amount of preflight can supply, and the package makes it a precondition of the read
 rather than a note to write afterwards.
+
+---
+
+## 8. The run, as it happened
+
+**2026-08-21. Eight scenes, 8,385 words, gate green, exit 0.** Recorded here because a preflight
+that never says what the flight did is half a document.
+
+### What the run cost to get right
+
+Four harness defects, all found by running rather than by reading, all fixed and pushed before
+the book finished. Three were on the directive-to-draft path and none had a symptom an operator
+surface would show.
+
+1. **An outline refused for answering an unasked question.** `_payoff_windows` validated a
+   payoff schedule the prompt only requests when the promise ledger has open rows — and the
+   ledger is empty at every book's *first* outline. Two of three attempts burned on a good
+   outline.
+2. **A directive's scene plan was unreachable by construction.** New plan items were built with
+   `scope=None` and the schema offered no way to set one, so eight correct scene plans from the
+   chapter notes reached no scene. The drafts fell through to an outline written from the
+   premise alone — a different cast, a different ending, a milestone schedule reaching Loop 23
+   in a two-loop book. Caught because the gate printed statements that named a character the
+   directives never mentioned.
+3. **The prompt was a command-line argument.** Windows caps a command line at 32,767 characters;
+   scene 6's packet was 35,714. `OSError` classifies as retryable, so the loop refunded and
+   requeued 61 times while `status` reported nothing needing attention. Five scenes had drafted
+   cleanly first, which is what made a wall look like an outage.
+4. **A book could not declare its own numbers.** Not a defect so much as a missing seam, and the
+   reason the pilot could be reseeded at all.
+
+The first store is kept as `serial-run1-outline-divergence.db` in the session scratchpad; it is
+the only artifact showing what the outline planned when it could not see the direction.
+
+### What the run measured
+
+- **The loop mechanic reached the page and came back.** Eight `[STATUS]` lines written in the
+  book's own declared `Loop | Day` sheet, all eight read back into canon by `extract_state`, and
+  the reset landing at scene 4 exactly where chapter note 1 puts it: `s1 s2` Loop 1 Day 1, `s3`
+  Loop 1 Day 2, **`s4` Loop 2 Day 1**, then Loop 2 through Day 2. C1 and C2 both took.
+- **The promise ledger replicated this project's oldest measured defect, on a fresh book.**
+  **40 promises opened, 0 paid.** The prior record was 32 opened and none paid across ten
+  scenes; this is 40 across eight. §5 pre-registered that P2 pays at s6 and P3 at s5, and the
+  ledger recorded neither — divergence between intent and record, which §5 called pilot data
+  rather than failure, and which is now data on a book whose directives were followed.
+- **Nothing was parked, poisoned, or left unattributed.** 38 jobs succeeded, 9 revisions rebuild
+  cleanly, `context_omitted` zero at a 16,000-token budget across all eight scenes.
+- **Cost: roughly $11 across both runs** — $4.23 recorded on the finished book, about $3 on the
+  abandoned one, ~$2.9 of health probes no ceiling can see, and ~$0.7 of direct diagnostic
+  calls. The probe is **$0.12 warm**, not the $0.3386 cold figure §15 records, so §7's estimate
+  was conservative on its largest line.
+
+### What the operator surfaces still cannot say
+
+The reason defect 3 hid for 61 ticks: a genuine provider outage and a permanently unexecutable
+unit are the same `TransientFailure` and the same `provider_unavailable` counter, so "wait, the
+provider is down" and "retry this forever, it can never work" are indistinguishable everywhere an
+operator looks. And `run-loop.ps1` exits on the *last* tick's status, so a run that rode out an
+outage and left the book healthy still exits 1 — the gate is the signal, the exit code is not.
