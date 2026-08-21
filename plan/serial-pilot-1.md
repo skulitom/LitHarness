@@ -190,6 +190,19 @@ uv run litharness --database serial.db directive "Introductions are rationed. In
 uv run litharness --database serial.db directive "Plain words, and every phrase must survive being read twice. Use the ordinary word unless the exact one means something different. No stacks of three or more nouns where a preposition would do: the door of the assay house, not the assay house door. A comparison must explain the less familiar by the more familiar, so if a reader has to stop and picture the thing being compared to, it is the wrong comparison. Never write a phrase that cancels itself, and never write one that a later clause in the same sentence then states properly — cut to the clause that states it properly." --kind constraint
 ```
 
+**C8 — register** (added 2026-08-21 on the operator's standing direction that this project
+targets popcorn reading — LitRPG, progression fantasy, isekai — and never dense prose):
+
+The number in it is measured, not chosen. Against 800 RoyalRoad LitRPG chapters, sentences of
+thirty words or more are **2.6% of the median chapter's** and 5.5% at the genre's 75th
+percentile. Reappraisal chapter 1 ran at **17.9%** — seven times the genre median. Paragraph
+length, dialogue share and subordination all sat inside the genre's range, so density localises
+almost entirely to sentence length and the directive says only that.
+
+```powershell
+uv run litharness --database serial.db directive "Register: this is popcorn reading, meant to be read fast. Sentences run short and land: most under twenty words, and one past thirty should be rare — roughly one sentence in twenty. When a sentence grows, cut it into two rather than joining clauses with commas and subordinators. Keep paragraphs short and let dialogue carry what it can. Never write a sentence a reader has to go back and re-read to parse; if a clause needs unpacking, it is the wrong clause." --kind constraint
+```
+
 ### 4.2 Tone note — interpretive lane
 
 ```powershell

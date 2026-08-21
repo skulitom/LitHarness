@@ -1,6 +1,6 @@
 {
   "source": "plan/serial-pilot-1.md",
-  "source_sha256": "8b9748315bf7d0deb1691037815b5afa1cda789987201d3f51522f50690c5cd5",
+  "source_sha256": "9f30542dc997b3bea7f57c1713009deb42c20a58e365aa21da0a8aad318f53ed",
   "title": "Reappraisal",
   "scenes": 8,
   "premise": "Silas Marrow, a junior appraiser at the Corvessa assay house, dies two days after the Advent — and wakes on the morning it began. Each death returns him to that morning, keeping nothing but his Skills and what he has learned: every coin, wound, and acquaintance resets. The System has made his trade literal: Appraiser, a class that reads the value, provenance, and remaining time of whatever he studies — priced cheap by a System that read his guild card, in the one situation where knowledge is the only currency that compounds. The city has nine days. Silas has as many as he can pay for.",
@@ -39,6 +39,11 @@
       "label": "C7 the phrase",
       "kind": "constraint",
       "text": "Plain words, and every phrase must survive being read twice. Use the ordinary word unless the exact one means something different. No stacks of three or more nouns where a preposition would do: the door of the assay house, not the assay house door. A comparison must explain the less familiar by the more familiar, so if a reader has to stop and picture the thing being compared to, it is the wrong comparison. Never write a phrase that cancels itself, and never write one that a later clause in the same sentence then states properly — cut to the clause that states it properly."
+    },
+    {
+      "label": "C8 register",
+      "kind": "constraint",
+      "text": "Register: this is popcorn reading, meant to be read fast. Sentences run short and land: most under twenty words, and one past thirty should be rare — roughly one sentence in twenty. When a sentence grows, cut it into two rather than joining clauses with commas and subordinators. Keep paragraphs short and let dialogue carry what it can. Never write a sentence a reader has to go back and re-read to parse; if a clause needs unpacking, it is the wrong clause."
     },
     {
       "label": "tone note",
