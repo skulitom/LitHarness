@@ -9082,3 +9082,210 @@ weak effect — it is evidence of no detectable effect.
   available without the change.
 - **§102.1 stands regardless of both.** It is whitespace-matched by construction, replicated on
   three checkpoints, and does not depend on the label the rest of the arm failed to predict.
+
+## 104. The go-to-market has opinions, so they become manipulations — and the platform's own AI rule turns out to be a tag rather than a door
+
+**Registered 2026-08-21, before any variant was generated and before any battery ran.** The
+operator reviewed advice from a Royal Road author in the platform's top ~1% (~2,000 followers)
+on what sells there and had it distilled into seven claims. The design is
+[plan/royalroad-platform-priors.md](royalroad-platform-priors.md); this entry carries the scope,
+the bars, and the one fact in the set that is not a hypothesis.
+
+**Nothing above this entry was renumbered.** §102 was the last section when this began and the
+check was run again across every branch and worktree on this machine; §103 was then taken by a
+parallel session while this was being written, and this entry moved rather than the one that
+landed first.
+
+**The framing, and it is the whole entry.** A claim from a successful author about a platform is
+evidence about a readership, and this project has exactly one instrument that can put a question
+to a readership: a budgeted reader's allocation. So each load-bearing claim becomes a
+manipulation with a dose, and the answer is whatever the reader does. **A null is a result and
+is recorded as one; nothing here is compiled into a drafting directive.** Two of the seven are
+already this project's defaults — Serial Pilot 1's tone note declares close third person and
+past tense, and its C4 prices every gain on the page — so for those the informative outcome is
+the one that *refutes* the default we already have.
+
+### 104.1 D1P: a second battery tier, and the kill condition points the other way
+
+`bcr.D1_FAMILIES` is certified damage, which is exactly why §A3 can say a dose-response
+inversion there kills **the instrument**. Nothing in this programme is certified damage: "lyrical
+prose is a liability on this platform" is a claim whose sign is the hypothesis. So the tier is
+separate and the kill inverts.
+
+| tier | material | an inversion kills | order |
+|---|---|---|---|
+| D1 | certified damage | the **instrument** | first; it is what seats the reader |
+| **D1P** | platform priors | the **family** | second, on a model D1 has already passed |
+
+**A D1P family may be read only on a model already seated (§A2) and already through D1.** Run
+the other way round, a family that moves nothing is indistinguishable from a reader that
+perceives nothing. The ordering is written into the module's pre-registration so a later session
+cannot reverse it by accident.
+
+Six families, built this session in `research/quality-measurement/platform_priors.py` with
+`tests/test_platform_priors.py` holding the structural invariants: `purple_prose_dose`,
+`suffering_load`, `info_dump_dose`, `character_flood`, `pov_fragment`, `tense_shift`. Two lanes —
+a paragraph-aligned rewrite whose *changed set is discovered rather than requested*, so a dose is
+a set of the model's own edits; and a pure-insertion lane where the original survives
+byte-for-byte at every dose. **Dose grows from the front**, because every claim in the set is
+about the opening. **The grain a shelf reads is the book, not the scene**: a shelf member needs
+13 chunks and one own-generated scene is 912 words, so generation is per scene and the dose is
+applied across the assembled book. `platform_placebo` — the same contract with an inert
+instruction — is the floor no family certifies without clearing.
+
+**Three outcomes are named per family before the first session** (`confirms`, `refutes`, `null`)
+and the reading is two-sided for all six. `purple_prose_dose` is why: the platform claim and the
+general craft prior point in opposite directions, so a one-sided registration would have made one
+of the two answers unreportable.
+
+**Two costs are declared with the families rather than found afterwards.** `suffering_load` at
+high dose can contradict what a later paragraph assumes, so a confirm there honestly reads as
+"setbacks *or* the incoherence they introduce", and separating them needs a coherence-matched
+control this session did not build. And `tense_shift`'s ladder measures two things: dose 1.0 is a
+present-tense book, which is the claim, while every rung below it is part-present and part-past —
+*tense instability*, which nobody claimed anything about. The confirmatory reading is the top
+rung; the ladder is a shape reading under its own name.
+
+### 104.2 The bar is 0.15 because 0.10 was computed to be outside the budget
+
+Declared-bars rule, executed. Quantity: allocation share against the manipulated side, `[0, 1]`,
+direction named per family, unit a share of 12 fetches — except the only model ever seated
+commits for a whole session, so the binding unit is the session. Non-emptiness: the one
+own-generated book is 33 chunks against a floor of 13, and a rehearsal built **24 shelves with
+none skipped**.
+
+Sizing from the observed reader, never from the simulator (`phi4`'s 72 seating sessions, shares
+of exactly 0.0/0.5/1.0, per-session sd **0.4039**), through `bcr.cluster_interval`:
+
+| δ | α = 0.05 | α = 0.025 | α = 0.00833 (six-family adjusted) |
+|---|---|---|---|
+| 0.15 | 24 | 24 | **48** |
+| 0.10 | 64 | 96 | 128 |
+| 0.05 | 320 | 448 | 448 |
+
+At δ = 0.10 the six-family set is 768 sessions ≈ **31 GPU-hours** against §97.9's cap of 40
+*shared with F3*. Declaring 0.10 would have named a quantity the budget cannot reach, which is
+the failure seven prior declarations made. The declared shape is 6 sessions per intermediate rung
+and 48 at the top rung — 66 per family, ≈ 16 hours for six — behind a 36-session screen that
+costs 1.4 hours and can catch a broken variant set first. At six sessions per intermediate rung
+the isotonic fit sees only a gross inversion, and **no subtle non-monotonicity is claimed**.
+
+Each family reports at α = 0.05 with the adjusted 0.00833 printed beside it; any sentence about
+the *set* uses the adjusted level and there is no pooled headline.
+
+**Model spend, bounded before it is spent:** 70 generations (10 scenes × 6 families + placebo) on
+`claude-opus-5` at §85's measured $0.2316 each ≈ **$16.21**, hard ceiling **$25** enforced per
+call, digest-keyed replay cache so an interruption resumes free. The D1P sessions themselves are
+local and cost GPU wall clock rather than quota.
+
+### 104.3 The launch package and the opening-weighted arm, designed and not run
+
+**BSC — Browse-Shelf Choice.** K entries for the *same* book, each showing title, tags and blurb;
+the reader opens one and continues under a budget; the record is which entry was opened first. No
+verbal verdict anywhere, and the choice costs budget, so §89.4's dead channel is not involved.
+**Its honest limit is stated in the design**: with K entries pointing at one book everything
+after the first open is the same text, so the endpoint is the first-open share and nothing else —
+a continuation curve here would be the book reported under K labels. §A2's controls transfer at
+packaging grain and a licence does not: a candidate must pass them on *this* stimulus. Selection
+is best-of-K under §61 Add 3 / §72's expires-on-use.
+
+**Follower and view columns are never ground truth here, and the reason is sharper than the
+existing refutation.** BRIEF §3 records that the engagement label tracks **cover art and launch
+timing**. Scoring packaging against a label whose known confound is packaging plus timing, with
+no story-grain matching, is circular and refuted at once. It may sit beside a result as a
+covariate; it may never grade one. The cover itself has no instrument in this repository and
+enters as a declared **brief**, never a measured product.
+
+**The opening-weighted arm.** Shelf members truncated to their first 3,000 words — two chapters
+at the ~1,500-word Royal Road format — with the budget at 9 and the free opening chunk unchanged.
+An **alpha-divided secondary** beside the whole-book AUC primary, at α = 0.025. All four
+properties checked before registering: range `[0, 1]`; direction higher for the target; unit a
+share of 9 fetches, resolution 0.1111; non-empty on every substrate this project has (10,049
+words in hand, 3,950 median on the fitness shelf, 3,000 reached at chapter two of the publication
+format). **The division's price is recorded**: 96 sessions rather than 64 at δ = 0.10, a 50%
+surcharge. A fixed-sequence test would keep full α and be more powerful; the division is the
+conservative choice the operator asked for, and it was considered rather than overlooked.
+
+### 104.4 Trope-convention mining lands in §97.4, because the document it was addressed to is retired
+
+The instruction named `plan/machine-taste-program.md`. That document is **RETIRED** — §95.1
+retires the `PREFERENCE` class for machines at every grain and its own header says nothing in it
+may be executed — so an additive scope note there would have extended a closed channel. The live
+owner is **§97.4**'s property ledger: properties mined as E6-located contrasts between summit and
+matched mid-tier, each entering with its counter or locator committed **first**, each facing the
+fidelity gate before any sim or writer may act on it. The note is additive to that scope.
+
+Four convention properties, mining and measurement side only: **status-block idiom** (fields,
+placement, blocks per 1k words), **chapter-hook shapes** (what a chapter's last paragraph does,
+as a small closed set of located contrasts), **progression cadence** (interval between visible
+gains, which interlocks with W2's payoff windows and W3's discrimination — if a reader cannot
+name a cadence difference then a cadence convention is a property of the corpus and not of a
+reader), and **win-adjacency in openings** (distance in words between a named setback and the
+nearest named gain inside the first N words — RR4 as a measurable convention rather than an
+instruction).
+
+**RS1 with the specific risk this note adds.** The object that crosses to the generation side is
+the located axis restated in our own words, never the prose, enforced by provenance rather than
+pattern. The new risk is that a convention property restated too closely *is* a paraphrase:
+"status blocks appear about twice per thousand words" is a property, and a rendered example of
+one is text. Serial Pilot 1's directives are the existing safe form. **Nothing is mined yet**:
+the anchor set is three verified summits of eleven and anchor-text acquisition is an operator
+decision that has not been taken.
+
+### 104.5 The platform's AI rule, retrieved from the live site, and it is a tag rather than a door
+
+Retrieved **2026-08-21** through a real browser, because the plain fetcher gets HTTP 403 here —
+the same wall `plan/anchor-set.md` records. Every URL is checkable by opening it and the quotes
+in the plan doc are from the rendered pages.
+
+**AI-generated fiction is permitted and must be tagged.** The Content Guidelines
+(`knowledgebase/114`, section "A.I. Content") define **AI-Assisted** and **AI-Generated** tags
+and give four rules for the latter: quality must be retained and low-effort generation avoided;
+no AI-generated text in reviews, comments or forum posts; the content must not violate laws or
+site rules, with use "at your own risk"; and **"You must tag your story as 'AI-Generated'."** The
+linked authority is an OFFICIAL POLICY blog post of 21/06/2023 (`blog/57`), which chose to allow
+rather than ban on the reasoning that detection is unreliable and unenforceable rules are not
+worth writing; the blog index carries no later AI-policy post.
+
+**No discovery surface excludes AI-tagged work in the written rules.** `knowledgebase/78`
+describes every list including Rising Stars and contains **no AI clause at all**; the only stated
+eligibility rule of any kind is that recommendation lists need a fiction Ongoing or Completed.
+The submission page (`knowledgebase/84`) puts both AI tags under **Content Warnings** beside the
+mature-content ones, and the named rejection checks — plagiarism, synopsis links, fanfiction
+tagging, sexual, political/religious and disturbing content, with ~10% of submissions rejected —
+**do not include AI**. Advanced search lists both under Content Warnings, so readers can filter
+on them. The Terms of Service (last updated 2025-03-03) carry **no AI-content clause at all**.
+
+**Four GTM-level facts for the operator, and the launch is not blocked.**
+
+1. **The AI-Generated tag is mandatory and is a content warning** — a fixed field in any
+   packaging study, never a variable, and never omitted.
+2. **No written rule excludes tagged work from Rising Stars or any list.** What the rules cannot
+   settle is the *reader* discount the tag carries, which the platform's own "readers will
+   decide" language invites. **That is a population effect with no measurement here and it is not
+   estimated.**
+3. **The enforceable clause is the quality one** — "low-effort text generation" is the named
+   prohibition, with a discretionary human reviewer behind it at submission. It points at exactly
+   the goal §61 already set.
+4. **Two operational rails:** the ToS prohibits bots and automated access without permission, so
+   a posting path is a human or an authorised integration and never a scraper; and the General
+   Rules prohibit manipulating scores and rankings, which forecloses every seed-the-metrics
+   tactic outright.
+
+**Two adjacent clauses matter for the cover brief:** cover art "must relate directly to the
+story", and on the good-taste exception the rules allow for borderline art, **"No such exceptions
+are granted for AI-generated artwork."**
+
+None of this changes the value of the repository work. Whether the prose earns allocation and
+where a labelled book gets discounted are separate questions, and the second is the operator's.
+
+### 104.6 Anti-scope
+
+No claim here is a rule. No drafting, revision or planning prompt gains anything from this
+programme — RS1 and §97.4's crossing rule govern, and the mined object is a restated axis. No
+verdict slot, no preference leg, no new judge. No human feedback of any kind, including the
+platform's follower and view columns, which are a refuted label and stay one. No D1 family is
+touched and no D1P family is ever pooled with one. Serial Pilot 1 is untouched. And no D1P result
+may be worded as a statement about a follow decision: this instrument measures allocation between
+texts under scarcity, and the follow button is a population behaviour whose only proxy is the
+label §104.3 excludes.

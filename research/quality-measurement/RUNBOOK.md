@@ -664,3 +664,64 @@ The dry-run's load-bearing line is the last one: a prose-blind followers rule sc
 **−0.2877** mean log score in `aligned` and **−1.3863** in `crossed`, ending on bankrolls of
 448.3 and 8.2. That is §79's two-stratum design working — and the reason a market run on one
 stratum would promote a popularity proxy and call it taste.
+
+## Royal Road platform priors — D1P, §104
+
+`plan/royalroad-platform-priors.md` is the pre-registration and is authoritative for every
+constant; this section is the commands. **Nothing here has been run**: the module was built and
+its free legs exercised, and no variant has been generated.
+
+**Read the ordering before anything else.** D1P families are *hypotheses*, not certified damage,
+so a family that moves nothing on an unseated reader is indistinguishable from a reader that
+perceives nothing. **D1 on certified damage runs first and seats the reader; D1P runs second.**
+The module's `PRE_REGISTRATION["runs_only_on"]` carries the rule into every artifact.
+
+The two free legs, in this order. The selftest is the argument that the dose algebra holds, and
+it also **recomputes the attainability row the confirmatory bar is stated at** — it fails if
+0.15 stops being reachable at the six-family adjusted level, which is the check that decided the
+bar was 0.15 and not 0.10.
+
+```bash
+uv run python research/quality-measurement/platform_priors.py --selftest
+```
+
+```bash
+uv run python research/quality-measurement/platform_priors.py
+```
+
+The second prints the plan and spends nothing: 10 scenes x 7 arms = 70 generations, about
+$16.21 at §85's measured rate, and the registration digest. Then, on an operator signature:
+
+```bash
+uv run python research/quality-measurement/platform_priors.py --generate --yes --certify
+```
+
+`--ceiling-usd` defaults to 25 and stops the run **at** the ceiling rather than reporting an
+overrun afterwards. The cache is per generation and digest-keyed, so an interrupted run resumes
+for free — the checkpoint-per-unit rule this box needs. Run it alone: §89.5 records 390 transport
+failures from two `claude -p` jobs beside each other, and this one is deliberately sequential.
+
+**Read `by_family` before anything else in the result file, and read it as a statement about the
+manipulation.** A certified family is one whose variants are what they say they are — the rungs
+are distinct and nested, the signature counter moved further than the placebo's drift, the
+protected spans survived, and the insert lane lost no original paragraph. It says nothing about
+whether the platform claim holds.
+
+`--certify` alone re-scores the existing cache and costs nothing, which is the command to run
+after touching a matcher or a ladder: the pre-registration digest changes with it, and a result
+file whose digest differs from the module's came from a different instrument.
+
+**The battery is not wired to `bcr`'s CLI and the module says so.** `bcr.battery_shelves`
+iterates the frozen `D1_FAMILIES` tuple, so `register()` installing into `ablate.BY_KEY` is not
+enough on its own. `platform_priors.shelves(variants, scenes)` returns `bcr.Shelf` objects at
+book grain with `arm="D1P"` and a `skipped` list carrying every drop with its reason; wiring them
+into `bcr.play` is one additive line, left to the session that runs the battery because `bcr.py`
+is shared with parallel sessions.
+
+**The interpreter is `uv run python`, not MirrorBench, and that is the two-interpreter rule
+working rather than an exception to it.** MirrorBench is for the arms that read a model's
+internals and need torch — the latent probe, the force programme. This module calls `claude -p`
+through `writer_states.Generator` and computes regex counters, exactly like
+`repair_generation.py`, so it wants the repo's own environment. The D1P *sessions* that consume
+its variants are a different matter: they run on the local reader under the duty-cycle governor
+and belong with `bcr.py`'s commands above.
