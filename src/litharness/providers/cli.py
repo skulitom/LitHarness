@@ -43,17 +43,32 @@ class CommandResult:
 
 class Runner(Protocol):
     def __call__(
-        self, argv: Sequence[str], *, timeout: float, cwd: str | None = None
+        self,
+        argv: Sequence[str],
+        *,
+        timeout: float,
+        cwd: str | None = None,
+        stdin: str | None = None,
     ) -> CommandResult: ...
 
 
 def subprocess_runner(
-    argv: Sequence[str], *, timeout: float, cwd: str | None = None
+    argv: Sequence[str], *, timeout: float, cwd: str | None = None, stdin: str | None = None
 ) -> CommandResult:
-    """Real execution. stdin is closed, never inherited, and the pipe is read as UTF-8.
+    """Real execution. The prompt goes down stdin, and the pipe is read as UTF-8.
 
-    `claude -p` waits on stdin and prints "no stdin data received in 3s" otherwise —
-    three seconds of dead time on every single call.
+    **The prompt is not a command-line argument, and Windows is why.** `CreateProcess` caps a
+    command line at 32,767 characters, so once a book had enough prior prose to fill a 16k-token
+    packet, every draft raised `[WinError 206] The filename or extension is too long` — measured
+    at a 35,714-character prompt on Serial Pilot 1's sixth scene. It surfaced as an `OSError`,
+    which `classify_provider_failure` reads as `unavailable` and therefore *retryable*, so the
+    conductor refunded the attempt and requeued it forever: a book that stopped advancing while
+    `status` reported no parked units, no poisoned units and nothing needing attention. The
+    first five scenes had drafted fine, which is what made it look like an outage.
+
+    Passing the prompt on stdin removes the ceiling rather than raising it. It also costs
+    nothing that closing stdin was buying: `claude -p` waits three seconds only when stdin is an
+    open pipe with no data, and a pipe that is written and closed does not wait.
 
     **`encoding` is not a default worth inheriting, and the defect it caused is measured.**
     `text=True` alone decodes with `locale.getpreferredencoding()`, which is `cp1252` on a
@@ -84,7 +99,7 @@ def subprocess_runner(
         encoding="utf-8",
         errors="replace",
         timeout=timeout,
-        stdin=subprocess.DEVNULL,
+        input=stdin if stdin is not None else "",
         cwd=cwd,
         check=False,
     )
@@ -135,8 +150,9 @@ class ClaudeCodeProvider:
     def _argv(self, request: CompletionRequest) -> list[str]:
         argv = [
             self.binary,
+            # `-p` with no positional prompt: the prompt arrives on stdin. See
+            # `subprocess_runner` for the Windows command-line ceiling that forced this.
             "-p",
-            request.prompt,
             "--output-format",
             "json",
             "--model",
@@ -166,17 +182,14 @@ class ClaudeCodeProvider:
         if request.schema is not None:
             parts.append(
                 "Reply with a single JSON object conforming to this schema and nothing "
-                "else — no prose, no code fence:\n"
-                + json.dumps(request.schema, sort_keys=True)
+                "else — no prose, no code fence:\n" + json.dumps(request.schema, sort_keys=True)
             )
         return "\n\n".join(parts)
 
     def health(self) -> bool:
         try:
             result = self.complete(
-                CompletionRequest(
-                    prompt="Reply with the single word OK.", timeout_seconds=120.0
-                )
+                CompletionRequest(prompt="Reply with the single word OK.", timeout_seconds=120.0)
             )
         except ProviderError:
             return False
@@ -185,7 +198,9 @@ class ClaudeCodeProvider:
     def complete(self, request: CompletionRequest) -> CompletionResult:
         started = time.monotonic()
         try:
-            outcome = self.runner(self._argv(request), timeout=request.timeout_seconds)
+            outcome = self.runner(
+                self._argv(request), timeout=request.timeout_seconds, stdin=request.prompt
+            )
         except subprocess.TimeoutExpired as error:
             raise provider_error(
                 f"{self.name} timed out after {request.timeout_seconds}s",
