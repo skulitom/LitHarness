@@ -1,7 +1,11 @@
 # Interiority, both sides: the character's felt state and the reader who inhabits it
 
-**Status: DESIGN, 2026-08-21.** Not built. Claims marked ✅ were run against this repository;
-❌ marks a measured blocker with the check that produced it.
+**Status: DESIGN, 2026-08-21. §3 items 1 and 2 built 2026-08-22** — the packet's story-time
+cutoff, and the pilot's seeded wants and fears. What the packet carried before and after, and
+the three findings the work turned up, are in `plan/interiority-packet-results.md`; items 3 and
+4 are untouched and item 4 is still the operator's. Claims marked ✅ were run against this
+repository; ❌ marks a measured blocker with the check that produced it, and the ❌ in §1 is now
+closed.
 
 ## 0. What was asked
 
@@ -71,6 +75,14 @@ that it is the *planner's* claim rather than an inference about the book. The be
 carries that key into the job payload (`selected_by.story_order_key`). Passing it as the
 cutoff is the same move, one layer over, and it is the one change Side A cannot proceed without.
 
+✅ **Closed, 2026-08-22.** `packet_for` passes exactly that, and the failing case above now
+reads one line rather than two. Two things this section did not anticipate: the same leak is
+reachable in the live loop with **nothing seeded** — a beat that parks or poisons leaves a hole,
+and `replan` re-plans it against canon that already holds the later scenes — and a dated seed
+record with no provenance declaration turns `has_story_vocabulary` on, which silently disables
+both the new cutoff *and* §12 step 5 extraction for the whole book. Both are written up in
+`plan/interiority-packet-results.md` §2 and §6.
+
 ### The second gap
 
 ❌ **Nothing reads a changed desire off the page.** `extract_state` knows one line form, the
@@ -137,9 +149,13 @@ population we care about — but not on the ground that it feels like the right 
 
 1. **Pass the beat's story key as the packet's cutoff.** One change, unblocks everything in
    Side A, and is worth doing on its own merits: it is a latent correctness bug for any seeded
-   or scheduled record, not only for interiority.
+   or scheduled record, not only for interiority. ✅ **Done 2026-08-22**, and the "on its own
+   merits" half turned out to be a reachable live-loop bug rather than a latent one.
 2. **Seed the protagonist's wants and fears as canon**, dated, and let them reach the packet.
-   Zero code beyond (1). Static until (3).
+   Zero code beyond (1). Static until (3). ✅ **Done 2026-08-22** — four records at `s1`, `s2`,
+   `s5` and `s7`, 89 tokens for all four. It was *not* zero code beyond (1): a dated canon
+   record needs a way to say its position is the planner's own beat key, or it reads as a
+   foreign story vocabulary and turns the cutoff back off.
 3. **A second extractor family** so the page can change what the character wants. Shared with
    the ability graph; neither feature is worth building twice.
 4. **Decide the reader side** — replace, separate instrument, or nothing — and register it
