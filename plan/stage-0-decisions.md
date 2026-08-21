@@ -9082,3 +9082,132 @@ weak effect — it is evidence of no detectable effect.
   available without the change.
 - **§102.1 stands regardless of both.** It is whitespace-matched by construction, replicated on
   three checkpoints, and does not depend on the label the rest of the arm failed to predict.
+
+## 103. The prompt was frozen so it could be read, and for three stages nothing read it
+
+The write side of provenance has been complete since Stage 1 and it is unusually complete: the
+rendered prompt and system string are frozen onto the job payload at enqueue (invariant I5, so
+a retry re-reads the same bytes and varies only the sampler seed), every attempt gets a
+`policy_decisions` row with its gate ladder and its spend — refusals recorded as fully as
+acceptances — revisions are immutable and content-addressed, losing tournament drafts stay in
+`span_candidates` because deleting refused work is how a selection stops being auditable, and
+`migrations/021_foreground_loop.sql` states outright that the events table *is* the provenance
+record.
+
+**None of it had a reader.** `read_log`, `decision_for_revision` and `lineage` had no caller in
+`src/` at all — only the suite — the frozen prompt was printed by no command, and the per-scene
+statement that steers a draft was unreadable from the CLI. This is the third time this file has
+recorded the same shape: §31 for plans, §39 for state, and now for prompts, decisions and
+events. The pattern is not "the feature was missing"; in all three cases the data was there,
+correct, and written with care. What was missing was the sentence "and here is how you look at
+it", and the tell is identical every time — the only way to see any of it was to open the
+SQLite file.
+
+### 103.1 One dossier, because the question spans seven tables
+
+`litharness why --scene N` joins the accepted revision to its policy decision, the frozen job
+payload, the plan statement, the scene's feedback provenance, its craft measurements, its
+findings, and the tournament candidates that lost to it. Every one of those lives in a
+different table, and the operator's actual question — *why did this scene come out like this*
+— is not answerable from any one of them.
+
+**The verb is `why` and not a noun, which breaks this CLI's habit deliberately.** Nearly every
+other verb names an object (`plans`, `findings`, `state`, `discards`) or an action (`verify`,
+`replan`, `contrast`). The noun candidates here — `dossier`, `provenance` — name the *artifact*
+this prints, and the artifact is not what anyone is looking for. `blame` is the sibling verb
+and it is a question in a verb's clothing too, borrowed from the same place. The one word an
+operator or an agent types when a scene reads wrong is the one on the command.
+
+**The prompt prints last and whole.** It is the thing the verb exists to show and also the
+longest thing in the report, so a summary that came after it would be a summary nobody
+reaches. Nothing in the dossier is recomputed from the prose: every line is a column somebody
+wrote at the time. A dossier that re-rendered the prompt from live tables would be answering a
+question about today, which is the failure I5 exists to prevent on the generation side and is
+no less a failure on the reading side.
+
+**The accepting revision is found by walking the lineage for the *change*, not for the first
+appearance.** Oldest-first, remembering the revision at every change of the node's content
+hash, so a scene a repair rewrote reports the repair. The decision an operator wants is the one
+that produced the text they are reading.
+
+### 103.2 Absence is a value, and it took two tries to render it
+
+`unattributed_revisions` exists because §19's integrity clause was asserted rather than
+checked. The same discipline is what a forensic read needs, one scene at a time: a dossier
+printing a blank where the decision belongs reads exactly like a scene that had no decision to
+print. So every gap is named — in the text and in an `absent` list in the JSON — and three of
+them (`prose`, `decision`, `prompt`) mean the verb could not answer its own question and it
+exits 1. The other two do not: a book run with `--no-outline` has no plan statement and a scene
+older than the reader loop has no provenance row, and neither is a fault.
+
+**Two absences that are not the same absence, which the first renderer got wrong.** Walking the
+skill against a seeded store — the acceptance step, not an afterthought — turned up an
+undrafted scene reporting `no policy decision explains this revision` about a revision that
+does not exist. The `absent` list was already right; the *renderer* was sending a reader to
+hunt a §19 attribution failure that was not there. A scene nobody has written and a scene
+somebody wrote without attribution are different findings that happen to share an exit code.
+`test_an_undrafted_scene_is_not_reported_as_an_attribution_gap` pins the distinction.
+
+**The one the write side went to trouble over survives the trip.** A scene drafted with no
+feedback records an explicit `[]` whose digest is a real digest of the empty list; a scene
+drafted before the loop existed has no row at all. `payload_fields` documents that a nullable
+column cannot tell those apart, and neither can a reader that prints both as a blank line — so
+the dossier and `blame --json` both keep `null` for "nobody recorded" and `[]` for "recorded,
+and it was empty" (`test_an_empty_feedback_set_is_not_the_same_as_no_feedback_row`,
+`test_blame_json_keeps_an_empty_set_apart_from_no_row`).
+
+### 103.3 The log reads in write order, with a cursor
+
+`litharness events` is the log as it was written, which is the one view crossing jobs,
+decisions, plans and findings without a join — because the store commits each event in the
+same transaction as the change it describes. It is bounded by `--limit` and prints the sequence
+to resume from, because an agent reconstructing a long run reads it in passes and a reader that
+made the caller count lines would be a reader nobody uses twice. `--since` takes that cursor or
+an ISO-8601 instant; the stamps are Z-normalised, so a date prefix is a valid one.
+
+Text mode truncates a long payload to one line and says so. That is a pointer, and `--json`
+carries the record.
+
+### 103.4 The fence is the point, and it is now a test
+
+`plan/serial-pilot-1.md` §6 keeps diagnostics on the operator's side of the loop and §97.1 says
+a rejection carries no explanation back into the system. Everything here is a diagnostic, so
+none of it may become a channel into generation — and the cheapest guarantee of that is that
+reading changes nothing at all. `test_no_forensic_verb_writes_a_row` snapshots every table's
+row count, runs all eight read verbs, and asserts the counts are identical. The skill file says
+the same thing in the imperative, because the reader most likely to be tempted to act on a
+dossier is an agent.
+
+`--json` landed on `blame`, `feedback`, `plans` and `findings` besides, following the
+`status --json` precedent: the object is what an agent chains on and the text is what a human
+reads, and both are rendered from one structure in each verb so they cannot drift apart.
+
+### 103.5 A skill, because the reader is a machine that has never seen this repo
+
+`.claude/skills/debug-book/SKILL.md` teaches the workflow symptom-first — *scene reads flat*,
+*book drifted from the directive*, *scene ignores canon*, *scene was never written* — with the
+exact command for each and what every field means. It was walked end to end against a seeded
+store rather than written from the source, which is what caught the renderer defect above and
+two documentation errors: `directives` defaults to the *unread* inbox and shows nothing on a
+book that has already acted on its direction (`--status applied` is the one you want), and the
+missing-provenance line means "no row was written", of which "predates the loop" is only the
+commonest cause.
+
+### 103.6 Two write-side gaps this pass deliberately did not close
+
+Both are real and both stayed out of scope, because a read surface is worth having before the
+record it reads is perfect and widening a write path is not a read-only change:
+
+- **The context packet's contents are not persisted.** The payload records the counts, the
+  section sizes, the token budget and the omission list — which is enough to say *what was left
+  out* and not enough to say *what went in*. `context_omitted` is the honest half of a packet
+  whose other half is reconstructible only by re-running the assembler against tables that have
+  since moved.
+- **The raw provider envelope is discarded at the storage boundary.** `Usage` and the resolved
+  model survive on the decision; the response as the provider returned it does not. A question
+  about a refusal's exact wording, or about a field the adapter did not map, has no stored
+  answer today.
+
+The dossier says so where it applies rather than papering over it, and a question the store
+genuinely cannot answer is reported as unanswerable — which is the whole idiom this entry is
+about.
