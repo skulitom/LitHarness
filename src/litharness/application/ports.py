@@ -56,6 +56,12 @@ from litharness.domain.preference import (
 )
 from litharness.domain.promises import Promise
 from litharness.domain.revision import Revision
+from litharness.domain.variation import (
+    KnowledgeItem,
+    VariationAttempt,
+    VariationObjective,
+    VariationSession,
+)
 
 
 class BranchReader(Protocol):
@@ -404,6 +410,58 @@ class DirectorRepository(Protocol):
     def submit_directive(self, directive: Directive, *, received_at: str) -> bool: ...
 
 
+class VariationRepository(Protocol):
+    """The bounded variation loop's persistence (`plan/variation-session.md`).
+
+    A sibling of `SpanCandidateRepository` for the reason every repository here is a sibling,
+    and here the separation carries a boundary rather than a preference: a **variation attempt
+    is not a span candidate**. A candidate is a whole drafted scene awaiting *selection between
+    alternatives*, and selection is exactly what this loop may never do — there is no
+    instrument entitled to order prose, so the session commits the first mechanically valid
+    patch and stops. Folding attempts into the candidate table would put rows that must never
+    be ranked into the one table whose whole purpose is ranking, one refactor from a
+    `select_winner` call that nobody decided to make.
+
+    `commit_variation_step` is the module's one write seam, mirroring `commit_tournament`:
+    everything one mediated action produces — the session row, the attempt, the patch artifact,
+    derived knowledge, the follow-up step job, the events and the settling decision, and on the
+    accepting step the revision itself — lands in one transaction, so a crashed session replays
+    into convergence instead of into half a step.
+    """
+
+    def variation_session(self, session_id: str) -> VariationSession | None: ...
+
+    def open_variation_sessions(self) -> list[VariationSession]: ...
+
+    def variation_attempts(self, session_id: str) -> list[VariationAttempt]: ...
+
+    def variation_patch(self, patch_digest: str) -> dict[str, Any] | None: ...
+
+    def knowledge_items(
+        self,
+        *,
+        objective: VariationObjective = ...,
+        target_key: str | None = ...,
+    ) -> list[KnowledgeItem]: ...
+
+    def commit_variation_step(
+        self,
+        session: VariationSession,
+        *,
+        at: str,
+        attempts: Sequence[VariationAttempt] = ...,
+        patches: Sequence[tuple[str, str]] = ...,
+        knowledge: Sequence[KnowledgeItem] = ...,
+        consulted: Sequence[str] = ...,
+        decision: PolicyDecision | None = ...,
+        events: Sequence[Event] = ...,
+        jobs: Sequence[Job] = ...,
+        revision: Revision | None = ...,
+        state_records: Sequence[lc.StateRecord] = ...,
+        retract_state_for_nodes: Collection[str] = ...,
+    ) -> None: ...
+
+
 class EventRepository(Protocol):
     def append_events(self, events: Iterable[Event]) -> None: ...
 
@@ -723,6 +781,29 @@ class RepairStore(
     pass
 
 
+class VariationStore(
+    ManuscriptReader,
+    FindingRepository,
+    StateRepository,
+    DecisionRepository,
+    # Read-only, and the same licence the fixed repair path re-checks at claim time: a
+    # calibration that lapsed while a session was running must refuse the next step too, or a
+    # multi-tick session outlives the evidence that licensed it in a way a single-tick one
+    # could not.
+    AuditRepository,
+    VariationRepository,
+    Protocol,
+):
+    """What one bounded session reads and the one seam it writes through.
+
+    There is no `ManuscriptWriter` here and the absence is deliberate: a session never calls
+    `commit_revision`. Its accepted candidate reaches the manuscript through
+    `commit_variation_step`, which lands the revision in the same transaction as the session
+    row that accepted it — so a book cannot move while the session that moved it still reads
+    open, and there is no second path by which a session could write prose.
+    """
+
+
 class ExportStore(ManuscriptReader, PlanReader, Protocol):
     pass
 
@@ -761,6 +842,10 @@ class ApplicationStore(
     SpanCandidateRepository,
     SummaryRepository,
     PromiseRepository,
+    # The variation loop's rows, because a step job's follow-up is minted through the
+    # same seam that records the step, and the aggregate is what the composition root
+    # binds for every handler at once.
+    VariationRepository,
     EventRepository,
     OperationsRepository,
     ExceptionRepository,
@@ -845,4 +930,6 @@ __all__ = [
     "SpanSelectStore",
     "StatusStore",
     "TextGenerator",
+    "VariationRepository",
+    "VariationStore",
 ]

@@ -41,6 +41,7 @@ from litharness.adapters.sqlite_errors import (
 )
 from litharness.adapters.sqlite_jobs import SqliteJobRepository
 from litharness.adapters.sqlite_plans import SqlitePlanRepository
+from litharness.adapters.sqlite_variation import SqliteVariationRepository
 from litharness.domain.audit import AuditSample, Verdict
 from litharness.domain.axes import Pole
 from litharness.domain.budget import Spend
@@ -96,6 +97,12 @@ from litharness.domain.preference import (
 )
 from litharness.domain.promises import PROMISE_OPEN, PROMISE_PAID, Promise
 from litharness.domain.revision import Revision, node_version_id
+from litharness.domain.variation import (
+    KnowledgeItem,
+    VariationAttempt,
+    VariationObjective,
+    VariationSession,
+)
 
 #: How long a writer waits for a contended database before reporting it locked. An
 #: operator command (`status`, `backup`) contends on `BEGIN IMMEDIATE` with the ticking
@@ -246,6 +253,18 @@ class SqliteStore:
             insert_event=SqliteStore._insert_event,
             insert_decision=SqliteStore._insert_decision,
             decode_directive=_directive_from_row,
+            jobs=self._jobs,
+        )
+        self._variation = SqliteVariationRepository(
+            connection,
+            transaction,
+            insert_event=SqliteStore._insert_event,
+            insert_decision=SqliteStore._insert_decision,
+            # The gate projection is handed over rather than reimplemented, so an attempt's
+            # stored diagnostics and the decision recorded beside it cannot disagree about
+            # what a gate result is.
+            encode_gate=_gate_to_row,
+            decode_gate=_gate_from_row,
             jobs=self._jobs,
         )
 
@@ -403,109 +422,141 @@ class SqliteStore:
         unreachable on replay, because the handler returns early when a prior ACCEPT decision
         exists. Records therefore inherit the revision's crash semantics exactly: **they
         cannot exist for a revision that does not.**
+
+        The body is `write_revision`, which takes a caller-owned connection, so a workflow
+        that must land a revision *and* rows of its own in one transaction can compose the
+        two. That is the split every `_insert_state_record`-shaped helper here already has,
+        arriving at the one write that previously owned its transaction outright; the
+        transaction boundary moves, and nothing about what is written or in what order does.
         """
         with self.transaction() as connection:
+            self.write_revision(
+                connection,
+                revision,
+                created_at=created_at,
+                events=events,
+                state_records=state_records,
+                retract_state_from=retract_state_from,
+                retract_state_for_nodes=retract_state_for_nodes,
+                jobs=jobs,
+                decision=decision,
+            )
+
+    def write_revision(
+        self,
+        connection: sqlite3.Connection,
+        revision: Revision,
+        *,
+        created_at: str,
+        events: Sequence[Event] = (),
+        state_records: Sequence[lc.StateRecord] = (),
+        retract_state_from: Collection[str] = (),
+        retract_state_for_nodes: Collection[str] = (),
+        jobs: Sequence[Job] = (),
+        decision: PolicyDecision | None = None,
+    ) -> None:
+        """Everything `commit_revision` writes, on a transaction the caller already owns."""
+        connection.execute(
+            "INSERT OR IGNORE INTO revisions "
+            "(revision_id, book_id, branch_id, parent_revision_id, created_at) "
+            "VALUES (?, ?, ?, ?, ?)",
+            (
+                revision.revision_id,
+                revision.book_id,
+                revision.branch_id,
+                revision.parent_revision_id,
+                created_at,
+            ),
+        )
+        for node in revision.nodes:
+            version_id = node_version_id(node)
             connection.execute(
-                "INSERT OR IGNORE INTO revisions "
-                "(revision_id, book_id, branch_id, parent_revision_id, created_at) "
-                "VALUES (?, ?, ?, ?, ?)",
+                "INSERT OR IGNORE INTO node_versions (version_id, logical_id, kind, "
+                "position_key, parent_logical_id, title, content, content_sha256, "
+                "lock_kind, tombstoned, tombstone_reason, block_kind, block_payload) "
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                 (
-                    revision.revision_id,
-                    revision.book_id,
-                    revision.branch_id,
-                    revision.parent_revision_id,
-                    created_at,
+                    version_id,
+                    node.logical_id,
+                    node.kind.value,
+                    node.position_key,
+                    node.parent_logical_id,
+                    node.title,
+                    node.content,
+                    node.content_sha256,
+                    node.lock.value,
+                    int(node.tombstoned),
+                    node.tombstone_reason,
+                    node.block_kind.value if node.block_kind else None,
+                    json.dumps(node.block_payload, sort_keys=True)
+                    if node.block_payload
+                    else None,
                 ),
             )
-            for node in revision.nodes:
-                version_id = node_version_id(node)
-                connection.execute(
-                    "INSERT OR IGNORE INTO node_versions (version_id, logical_id, kind, "
-                    "position_key, parent_logical_id, title, content, content_sha256, "
-                    "lock_kind, tombstoned, tombstone_reason, block_kind, block_payload) "
-                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                    (
-                        version_id,
-                        node.logical_id,
-                        node.kind.value,
-                        node.position_key,
-                        node.parent_logical_id,
-                        node.title,
-                        node.content,
-                        node.content_sha256,
-                        node.lock.value,
-                        int(node.tombstoned),
-                        node.tombstone_reason,
-                        node.block_kind.value if node.block_kind else None,
-                        json.dumps(node.block_payload, sort_keys=True)
-                        if node.block_payload
-                        else None,
-                    ),
-                )
-                connection.execute(
-                    "INSERT OR IGNORE INTO revision_nodes (revision_id, logical_id, version_id) "
-                    "VALUES (?, ?, ?)",
-                    (revision.revision_id, node.logical_id, version_id),
-                )
-            # Atomic with the head move, for the reason the head move is atomic with the
-            # revision: a crash between them would leave canon read out of prose the book no
-            # longer contains, which is exactly the orphan retraction exists to prevent.
-            for source_revision_id in sorted(retract_state_from):
-                connection.execute(
-                    "UPDATE state_records SET retracted_by_revision_id = ?, retracted_at = ? "
-                    "WHERE book_id = ? AND branch_id = ? AND source_revision_id = ? "
-                    "AND retracted_by_revision_id IS NULL",
-                    (
-                        revision.revision_id,
-                        created_at,
-                        revision.book_id,
-                        revision.branch_id,
-                        source_revision_id,
-                    ),
-                )
-            for logical_id in sorted(retract_state_for_nodes):
-                connection.execute(
-                    "UPDATE state_records SET retracted_by_revision_id = ?, retracted_at = ? "
-                    "WHERE book_id = ? AND branch_id = ? "
-                    "AND retracted_by_revision_id IS NULL AND EXISTS ("
-                    "SELECT 1 FROM json_each(state_records.record_json, '$.evidence') "
-                    "AS evidence WHERE json_extract("
-                    "evidence.value, '$.source.logical_id') = ?)",
-                    (
-                        revision.revision_id,
-                        created_at,
-                        revision.book_id,
-                        revision.branch_id,
-                        logical_id,
-                    ),
-                )
-            for record in state_records:
-                self._insert_state_record(
-                    connection,
+            connection.execute(
+                "INSERT OR IGNORE INTO revision_nodes (revision_id, logical_id, version_id) "
+                "VALUES (?, ?, ?)",
+                (revision.revision_id, node.logical_id, version_id),
+            )
+        # Atomic with the head move, for the reason the head move is atomic with the
+        # revision: a crash between them would leave canon read out of prose the book no
+        # longer contains, which is exactly the orphan retraction exists to prevent.
+        for source_revision_id in sorted(retract_state_from):
+            connection.execute(
+                "UPDATE state_records SET retracted_by_revision_id = ?, retracted_at = ? "
+                "WHERE book_id = ? AND branch_id = ? AND source_revision_id = ? "
+                "AND retracted_by_revision_id IS NULL",
+                (
+                    revision.revision_id,
+                    created_at,
                     revision.book_id,
                     revision.branch_id,
-                    record,
-                    source_revision_id=revision.revision_id,
-                    created_at=created_at,
-                    restore_retracted=bool(retract_state_for_nodes),
-                )
-            for event in events:
-                self._insert_event(connection, event)
-            if decision is not None:
-                self._insert_decision(connection, decision, decided_at=created_at)
-            for job in jobs:
-                self._jobs.insert_job(connection, job)
-            # The head moves in the same transaction as the revision it points at, so a
-            # crash cannot leave a revision that exists but is not the head, or a head
-            # pointing at nothing. `revert` relies on this: it commits a revision whose
-            # content is older than the one it replaces, and only an explicit pointer can
-            # express that.
-            connection.execute(
-                "INSERT INTO branch_heads (book_id, branch_id, revision_id, updated_at) "
-                "VALUES (?, ?, ?, ?) ON CONFLICT (book_id, branch_id) DO UPDATE SET "
-                "revision_id = excluded.revision_id, updated_at = excluded.updated_at",
-                (revision.book_id, revision.branch_id, revision.revision_id, created_at),
+                    source_revision_id,
+                ),
             )
+        for logical_id in sorted(retract_state_for_nodes):
+            connection.execute(
+                "UPDATE state_records SET retracted_by_revision_id = ?, retracted_at = ? "
+                "WHERE book_id = ? AND branch_id = ? "
+                "AND retracted_by_revision_id IS NULL AND EXISTS ("
+                "SELECT 1 FROM json_each(state_records.record_json, '$.evidence') "
+                "AS evidence WHERE json_extract("
+                "evidence.value, '$.source.logical_id') = ?)",
+                (
+                    revision.revision_id,
+                    created_at,
+                    revision.book_id,
+                    revision.branch_id,
+                    logical_id,
+                ),
+            )
+        for record in state_records:
+            self._insert_state_record(
+                connection,
+                revision.book_id,
+                revision.branch_id,
+                record,
+                source_revision_id=revision.revision_id,
+                created_at=created_at,
+                restore_retracted=bool(retract_state_for_nodes),
+            )
+        for event in events:
+            self._insert_event(connection, event)
+        if decision is not None:
+            self._insert_decision(connection, decision, decided_at=created_at)
+        for job in jobs:
+            self._jobs.insert_job(connection, job)
+        # The head moves in the same transaction as the revision it points at, so a
+        # crash cannot leave a revision that exists but is not the head, or a head
+        # pointing at nothing. `revert` relies on this: it commits a revision whose
+        # content is older than the one it replaces, and only an explicit pointer can
+        # express that.
+        connection.execute(
+            "INSERT INTO branch_heads (book_id, branch_id, revision_id, updated_at) "
+            "VALUES (?, ?, ?, ?) ON CONFLICT (book_id, branch_id) DO UPDATE SET "
+            "revision_id = excluded.revision_id, updated_at = excluded.updated_at",
+            (revision.book_id, revision.branch_id, revision.revision_id, created_at),
+        )
 
     def load_revision(self, revision_id: str) -> Revision:
         row = self._connection.execute(
@@ -2294,6 +2345,97 @@ class SqliteStore:
             )
             for row in self._connection.execute(sql, params)
         ]
+
+    # --- the bounded variation loop ----------------------------------------------------
+
+    def variation_session(self, session_id: str) -> VariationSession | None:
+        return self._variation.variation_session(session_id)
+
+    def open_variation_sessions(self) -> list[VariationSession]:
+        """Every session still running, for an operator asking what is in flight.
+
+        A session whose next step job poisoned or was parked stays open with nothing queued
+        against it. That is not a leak: the Conductor files an exception for the stopped unit,
+        and `revive` re-queues the very step job the session stopped at, because the step id is
+        derived from the session and its ordinal. This read is how the pair is seen together.
+        """
+        return self._variation.open_variation_sessions()
+
+    def variation_attempts(self, session_id: str) -> list[VariationAttempt]:
+        return self._variation.variation_attempts(session_id)
+
+    def variation_patch(self, patch_digest: str) -> dict[str, Any] | None:
+        """The bounded patch one attempt proposed, as it was proposed."""
+        return self._variation.variation_patch(patch_digest)
+
+    def knowledge_items(
+        self,
+        *,
+        objective: VariationObjective = VariationObjective.CANDIDATE_REPAIR,
+        target_key: str | None = None,
+    ) -> list[KnowledgeItem]:
+        return self._variation.knowledge_items(objective=objective, target_key=target_key)
+
+    def commit_variation_step(
+        self,
+        session: VariationSession,
+        *,
+        at: str,
+        attempts: Sequence[VariationAttempt] = (),
+        patches: Sequence[tuple[str, str]] = (),
+        knowledge: Sequence[KnowledgeItem] = (),
+        consulted: Sequence[str] = (),
+        decision: PolicyDecision | None = None,
+        events: Sequence[Event] = (),
+        jobs: Sequence[Job] = (),
+        revision: Revision | None = None,
+        state_records: Sequence[lc.StateRecord] = (),
+        retract_state_for_nodes: Collection[str] = (),
+    ) -> None:
+        """Persist one mediated action atomically — including the one that commits prose.
+
+        The variation loop's single write seam, in the shape `commit_tournament` established:
+        everything one bounded unit produces lands in one transaction or none of it does. When
+        `revision` is given, the manuscript write rides the same transaction through
+        `write_revision`, and the events, jobs and decision travel with it rather than being
+        written twice — so a session that accepted a candidate cannot be found open beside a
+        book that already moved.
+        """
+        if revision is None:
+            self._variation.commit_step(
+                session,
+                at=at,
+                attempts=attempts,
+                patches=patches,
+                knowledge=knowledge,
+                consulted=consulted,
+                decision=decision,
+                events=events,
+                jobs=jobs,
+            )
+            return
+
+        def write(connection: sqlite3.Connection) -> None:
+            self.write_revision(
+                connection,
+                revision,
+                created_at=at,
+                events=events,
+                state_records=state_records,
+                retract_state_for_nodes=retract_state_for_nodes,
+                jobs=jobs,
+                decision=decision,
+            )
+
+        self._variation.commit_step(
+            session,
+            at=at,
+            attempts=attempts,
+            patches=patches,
+            knowledge=knowledge,
+            consulted=consulted,
+            write_revision=write,
+        )
 
     # --- the Director role -------------------------------------------------------------
 

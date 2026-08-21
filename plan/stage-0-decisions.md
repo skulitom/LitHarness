@@ -9418,3 +9418,207 @@ touched and no D1P family is ever pooled with one. Serial Pilot 1 is untouched. 
 may be worded as a statement about a follow decision: this instrument measures allocation between
 texts under scarcity, and the follow button is a population behaviour whose only proxy is the
 label §104.3 excludes.
+
+## 105. A repair gets many attempts instead of one, and the loop that grants them is forbidden to rank anything
+
+**Built 2026-08-21, from `plan/handoff-variation-session.md`.** A **variation session** is a
+durable, mediated, multi-attempt loop placed in front of the existing commit path, applied first
+and only to candidate-local repair. Design and measurements: `plan/variation-session.md`. Code:
+`domain/variation.py`, `application/variation.py`, `adapters/sqlite_variation.py`, migration 030.
+
+**What it is for.** NVIDIA's AVO work reports that an evolutionary search improves sharply when
+the variation step is an agent that inspects prior candidates, proposes an edit, evaluates it,
+reads the failure and revises before anything is committed. This repository already had the other
+half — immutable revisions, pure pre-commit gates, recorded decisions, a linear head, §4.2's
+park-never-spin ladder — and had no multi-attempt session at all. The fixed path spends one call,
+records the refusal, and lets the Conductor re-run the identical prompt; the model is never told
+what happened, three times, and then the unit poisons.
+
+**And the one thing that was not imported with it.** AVO's objective is ground truth. Ours does
+not exist: nothing here is entitled to order prose by quality, and
+`research/quality-measurement/BRIEF.md` is twenty refutations of the belief that something is. So
+the session **optimises nothing**. It repairs to mechanical feasibility and commits the first
+candidate that clears it. That is the entry's spine, and every other decision below follows from it.
+
+### 105.1 The lexicographic bar, and the tier that is structural rather than promised
+
+Four tiers, of which one is in play. **Mechanical feasibility** — `apply_patch`, `gates_for_patch`,
+`decide`, and the day's budget, unchanged. **Non-regression on protected dimensions** — the full
+gate vector is stored per attempt, passing gates included, so nothing is traded away silently.
+**Pareto improvement on an authorised objective** — none is authorised. **No literary-quality
+ordering** — the first mechanically valid candidate commits and the session closes.
+
+The fourth tier is enforced rather than declared:
+`test_the_variation_loop_imports_no_selection_machinery` refuses either variation module an import
+of the tournament's `select_winner` or of the pairwise preference engine. There is no score column
+in migration 030 and nowhere to put one. Cheaper to forbid the import than to review every future
+edit for the call it would enable.
+
+### 105.2 One action per tick, one job per action, and why the ordinal is in the job id
+
+§4.1 fixes one bounded unit per tick, so a session that takes many actions must span many ticks.
+Job ids are content-derived and `insert_job` is INSERT-OR-IGNORE; a SUCCEEDED row is terminal with
+its idempotency key burned, and no code path rewrites a job's payload. **A session that minted one
+job per step without a discriminator would enqueue its first step and then silently enqueue nothing
+ever again.** So the step ordinal rides in the payload and therefore in the derived id — the trick
+`span_select_job_id` already uses to distinguish itself from the tournament job that produced it —
+and each step mints the next step's job inside the transaction that records its own outcome,
+exactly as `plan_search` mints `span_select`.
+
+**Restart safety is then a property rather than a feature.** The whole of a session's state is
+rows; the prompt is re-rendered from them every step.
+`test_a_session_resumes_across_a_restart_because_its_state_is_rows` drives a session with one
+Conductor and finishes it with another. A reclaimed lease meets the recorded ACCEPT guard and
+returns without re-spending the call.
+
+**A session opened by a repair job takes its first action in the same tick.** A tick spent only on
+bookkeeping would cost every session one more tick than the fixed path for reasons unrelated to the
+loop, and §105.5's comparison would have measured that instead.
+
+### 105.3 What a step records, and the recorded refusal this design departs from
+
+Four tables. `variation_sessions` holds the target, six ceilings, the live counters, the
+consultation links and the ending. `variation_patches` is content-addressed and holds the proposed
+patch once — this is what "by reference" means here, because **there is no blob store and no path
+column anywhere in this repository** — and the digest is also what the repeat-patch predicate keys
+on. `variation_attempts` holds the gate vector whole, per-veto diagnostics read off
+`PatchOutcome.vetoes` rather than off the flattened gate detail, and a `strategy` label that is
+recorded and never enforced so that "structural early, micro late" can later be measured rather
+than assumed. `knowledge_items` holds deterministic claims about repeated mechanical failure with
+the attempt ids that support them.
+
+**The departure, named because it reverses something already written down.** `spend_on` derives the
+day's spend by summing decisions rather than keeping a counter, on the stated grounds that a counter
+and the decisions it summarises can disagree after a crash. The session's counters are stored
+anyway. The objection is exact and it is about *separate writes*: these counters advance in the
+same transaction as the attempt row, the settling decision and the follow-up job, so no crash can
+land one without the others — and three of them count things that mint no attempt row at all (a
+lineage inspection, a knowledge consultation, an unusable response), so they could not be derived
+even if the objection applied.
+
+**Every provider call still reaches `policy_decisions`, because nothing else is visible to the
+budget gate.** A loop making a dozen calls per finding whose calls never reached that table would
+spend them while the day's governor reported the day untouched.
+`test_the_session_spend_reaches_the_budget_governor` pins it.
+
+**Every attempt is recorded, including the failures — and that is a departure from §72 too.** §72
+records that a tournament's losers reach no rows and land as non-blocking gates on the settlement
+decision, because a loser's defect made standing would park the winner's commit. The reasoning
+holds and is not disturbed: an attempt row is not a finding, mints none, and is reachable by nothing
+that gates prose. What it is is the record AVO's own paper discards — a committed lineage of 40
+published beside 500+ explored directions that were not — and the difference between those two
+numbers is the only part of a run that can ever answer why.
+
+### 105.4 Which outcomes park, and why a refused action does not veto its own tick
+
+A **tripped ceiling** builds a PARK decision directly with a failing blocking BUDGET gate, so
+`refused_before_work` refunds the attempt and the Conductor parks the step rather than poisoning
+it; the exception queue names which ceiling stopped it
+(`test_a_tripped_ceiling_parks_the_session_and_names_which_one`). A **stall** and an agent **stop**
+park with a passing summary gate and PARK set directly, copying the parked tournament exactly. A
+**lapsed licence** settles ACCEPT and closes the session: the finding was dismissed, the work is
+moot, and the fixed path already treats that as quietly completing.
+
+**A refused action carries a non-blocking gate, and the word is load-bearing.** An unusable
+response, or a commit requested for a candidate that has not passed the gates, is recorded and does
+not veto the unit — because the unit of work is *one mediated action* and it executed exactly as
+the surface says it should. Making it blocking would send `decide` down the retry ladder, fail the
+step job and spend the Conductor's attempt budget on a bound the session's own ceilings already
+hold; three of those poison the step and orphan the session, which is the one failure here with no
+recovery short of an operator `revive`.
+
+**And `revive` is the recovery that does exist.** A step job poisoned by an outage leaves the
+session open with nothing queued; reviving it re-queues the very step the session stopped at,
+because the step id is derived from the session and its ordinal. `open_variation_sessions` is how
+the pair is seen together.
+
+**Two gate-set facts, stated because the handoff's wording implies more than the repo has.**
+Pre-commit the ladder is `shape.patch.v0` and nothing else — continuity and state are checked
+*post*-commit by the `evaluate_revision` job, and a session commit schedules the same verification
+and the same propagation from the same function the fixed path uses, at the same depths. And
+`gate_standing` is deliberately not applied: a repair session exists *because* a finding stands, so
+the standing-findings pre-flight would refuse every session on arrival.
+
+**No new `EventType` member.** `Event.to_contract` resolves against the pinned contracts rev and
+fails at insert time inside a handler. A session reuses ManuscriptCandidateCreated,
+ManuscriptRevisionAccepted, PolicyDecisionRecorded, BudgetExhausted and ImpactAnalyzed. Session open
+and close have no event of their own; their record is the row. Every session event payload carries
+`session_id` and the attempt ordinal, because event identity digests type, revision and payload
+alone and two attempts of one session against one revision would otherwise collapse onto a single
+row.
+
+### 105.5 The comparison, and it is a null result
+
+Fifteen cases — three books crossed with five ladders — both arms drawing from the *same* ordered
+generator under the same budget, differing in harness and nothing else. Full table in
+`plan/variation-session.md` §4; numbers in `plan/variation-comparison.json`.
+
+| metric | fixed | session |
+|---|---|---|
+| feasible commits | **9 / 15** | **9 / 15** |
+| calls per feasible commit | **4.00** | **9.00** |
+| tokens per feasible commit | 1,874 | 4,807 |
+| actions per feasible commit | 4.00 | 9.00 |
+| gate-pass rate | 0.250 | 0.400 |
+| repeated-failure rate | 0.556 | 0.556 |
+
+**The agentic path bought nothing on these cases and cost 2.25x the calls.** Three reads of that,
+all of which belong beside it:
+
+**The stall predicate stops the session where the fixed path's attempt budget stops it, and that is
+structural to this benchmark.** The only mechanical veto a replacement *string* can provoke against
+a small cited span is the length one, so every failure carries one signature — and
+`REPEATED_FAILURE_LIMIT` is 3 for the same reason `Job.max_attempts` is 3. The session can reach no
+rung the fixed path could not.
+`test_the_stall_detector_stops_the_session_where_the_fixed_path_poisons` pins it, so moving either
+constant fails a test and gets argued.
+
+**The higher gate-pass rate is an artefact and must not be read as a win.** A committing session
+gates the winning candidate twice — the evaluate action and the commit request — so its numerator
+gains a pass the fixed path had no opportunity to record. Calls per feasible commit is the metric
+with the same denominator on both sides.
+
+**And the benchmark holds constant exactly the mechanism the session exists for.** The
+deterministic fake has no capability to measure; the scripted agent uses only the *fact* of a
+refusal, never its content. So this is evidence about cost and control flow and **no evidence at
+all about whether feedback helps**. Asking that needs a case family whose failures carry different
+signatures, and a real-provider run under the replay conventions. Neither is done. Held-out books
+and length transfer are a later study and are not claimed.
+
+**Two standing statements this touches.** PLAN.md §20.7's verdict that detector coverage outranks
+further work on the repair loop is **unmoved** — a mechanism costing 2.25x for the same nine
+commits is not an argument against it, and the honest reading is that this table reinforces it. And
+§15's per-unit cost model, "retries/repairs amortized ×1.5–2.5 → roughly 10–20k model tokens", now
+describes the **fixed path only**; a bounded session has its own call ceiling and its own
+multiplier, and the numbers above are the ones to price it from.
+
+Consequently `--variation-repair` ships **off**. The fixed path stays the default, the two are
+alternative handlers for one job kind so the licence predicate and the minted work are identical on
+both arms, and the arm is selectable when there is a reason to select it.
+
+### 105.6 What a supervisor would need, and why there is not one
+
+The stall detector **stops**; it does not redirect. Choosing a different strategy in response to a
+wall is a judgment, and a variation supervisor that made it would be a new generative surface
+needing containment rather than a validity licence — the shape the Director role already has to
+argue. It is not built.
+
+What it would read is now on record and nothing else would be: the attempt and evaluation
+trajectory — ordinal, patch digest, strategy label, gate vector, veto signature, cost, outcome —
+plus the knowledge items derived from it. That is why `strategy` is stored and unenforced, and why
+the gate vector is stored whole rather than summarised. It may never touch prose, canon, locks,
+gates or budgets, and it would sit above the loop rather than inside it.
+
+### 105.7 Anti-scope, carried forward
+
+No general prose hill-climbing, and no selection among mechanically valid candidates by any quality
+proxy, score, ranking or preference signal — enforced by an import ban, not by intent. No new
+quality or craft metric. Context-packing search is the next objective target and is not started
+here; it waits on the gold suite growing binding-budget, long-book, evaluate and repair cases.
+Reward-guided prose selection stays behind a simulated-readership force clearing its own controls
+plus held-out validation, and is nowhere near this. The Director and every narrative-role module are
+untouched; the variation supervisor is a distinct future component and not a Director variant. §95's
+scope axiom is unchanged: nothing built here solicits judgment from anyone and no human data enters
+any loop. `variation_step` is deliberately **not** in `PLAN_DERIVED_JOB_KINDS` — a repair session is
+licensed by a finding, not by a plan alternative, and `repair_finding` is not there either. No claim
+is made from the comparison beyond the mechanism it measured.

@@ -249,7 +249,7 @@ def repair_job_for(
     )
 
 
-def _propagated_evaluations(
+def propagated_evaluations(
     known: Sequence[lc.StateRecord],
     extracted: Sequence[lc.StateRecord],
     *,
@@ -718,7 +718,7 @@ def make_repair_handler(
         # says what the repaired prose now asserts, and `changes_between` reads the difference
         # against the canon being retracted. Nothing is minted and nothing is guessed; a
         # change the producer cannot read reaches nothing and says so.
-        propagated, reached = _propagated_evaluations(
+        propagated, reached = propagated_evaluations(
             records,
             extracted,
             revision=outcome.revision,
@@ -796,6 +796,7 @@ __all__ = [
     "evaluation_job_for",
     "make_evaluation_handler",
     "make_repair_handler",
+    "propagated_evaluations",
     "repair_job_for",
     "summary_job_for",
 ]

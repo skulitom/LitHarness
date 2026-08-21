@@ -75,6 +75,11 @@ from litharness.application.repair import (
     make_repair_handler,
 )
 from litharness.application.summarize import make_summary_handler
+from litharness.application.variation import (
+    VARIATION_STEP,
+    make_variation_repair_handler,
+    make_variation_step_handler,
+)
 from litharness.domain import (
     audit,
     calibration,
@@ -296,9 +301,25 @@ def _conductor(store: SqliteStore, args: argparse.Namespace) -> Conductor:
             EVALUATE_REVISION: make_evaluation_handler(
                 evaluator, store, args.project
             ),
-            REPAIR_FINDING: make_repair_handler(
-                registry, store, args.project, budget=_budget(args)
+            # **Two handlers, one job kind, and the operator picks which serves it.** The
+            # evaluation handler's licence predicate is untouched either way — a repair is
+            # minted for a located, span-carrying, blocking-or-calibrated finding and for
+            # nothing else — so the two paths are comparable on identical work, which is what
+            # the comparison in `plan/variation-session.md` needs and what a separate job kind
+            # would have quietly destroyed.
+            REPAIR_FINDING: (
+                make_variation_repair_handler(
+                    registry, store, args.project, budget=_budget(args)
+                )
+                if args.variation_repair
+                else make_repair_handler(
+                    registry, store, args.project, budget=_budget(args)
+                )
             ),
+            # Registered unconditionally, like every kind here: a session opened under
+            # `--variation-repair` and still running when the flag is dropped must still be
+            # able to close, and an unhandled kind fails three times and poisons in silence.
+            VARIATION_STEP: make_variation_step_handler(registry, store, args.project),
             # §61 Add 3: the tournament and its selection. Registered unconditionally —
             # like every handler here, a kind with no queued work costs nothing — while
             # the *minting* of tournaments sits behind `--plan-search` above, which is
@@ -3922,6 +3943,17 @@ def build_parser() -> argparse.ArgumentParser:
         "LITHARNESS_PLAN_SEARCH. Off by default — this is the search arm of the K=3 "
         "acceptance experiment (research/plan-search/RUNBOOK.md), and the default is "
         "its control",
+    )
+    parser.add_argument(
+        "--variation-repair",
+        action="store_true",
+        default=_env_flag("LITHARNESS_VARIATION_REPAIR"),
+        help="repair a located finding with a bounded variation session instead of one "
+        "fixed attempt: the model proposes an edit, the deterministic gates judge it, the "
+        "exact refusal comes back, and it proposes again within the session's own ceilings; "
+        "also read from LITHARNESS_VARIATION_REPAIR. Off by default — the fixed path is the "
+        "control arm of the comparison in plan/variation-session.md. It orders nothing and "
+        "commits the first mechanically valid candidate",
     )
     parser.add_argument(
         "--library",

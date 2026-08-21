@@ -1114,7 +1114,10 @@ Order-of-magnitude estimate, marked as hypothesis: a 100k-word draft ≈ 140–1
 scenes. Per accepted scene: generation 2–4k output tokens, extraction ~1k,
 evaluation ~1–2k, retries/repairs amortized ×1.5–2.5 → roughly **10–20k model
 tokens per accepted scene**, i.e. **2–4M tokens per clean draft pass**, 5–10M with
-revision passes. At local-model cost: hardware time only. At API mid-tier pricing:
+revision passes. *(The repair multiplier here describes the **fixed** repair path, which
+spends one call per attempt under the Conductor's retry ladder. A bounded variation session
+— stage-0 §105, off by default — has its own call ceiling and measured 2.25× the calls per
+feasible commit; price that arm from `plan/variation-comparison.json`, not from this line.)* At local-model cost: hardware time only. At API mid-tier pricing:
 tens of dollars per draft. Throughput: even one accepted scene per 10-minute tick
 sustains a draft in under two weeks of wall-clock with large margin; the binding
 constraint will be gate failure rates, not raw generation. Book Zero instruments
@@ -1478,7 +1481,12 @@ wrong.**
 `domain/impact.py` and `tests/test_impact.py` are this clause, executable. The first exit item
 is now wired as durable `evaluate_revision` and `repair_finding` work: accepted drafts enqueue
 evaluation, one deterministic located complaint licenses one bounded replacement, and only a
-complete re-detection that explicitly checked the rule can mark it fixed. The chain is serial
+complete re-detection that explicitly checked the rule can mark it fixed. A `repair_finding`
+unit may alternatively be served by a bounded **variation session** (`--variation-repair`,
+stage-0 §105): many attempts against one licence, each refusal fed back as the gate vector,
+the first mechanically valid candidate committed and nothing ranked. The licence predicate,
+the verification and the propagation are the same on both arms; the arm is off by default
+because it bought no extra commits on the golden cases. The chain is serial
 and capped, so content-derived job ids cannot turn a persistent complaint into a spin loop.
 The live-book producer contract and subprocess adapter are now wired. Frozen fixture plans and
 live bundles use the same ContinuityEvaluation runner, and transport/schema failures become an
@@ -2185,6 +2193,11 @@ every unstruck action below as a claim to re-verify rather than a task to start.
    eight of nine candidate craft proxies are not buildable on defect fixtures, with the
    reasons recorded there. The redirect is followed; what it found is that the next step
    is not another detector.
+
+   **Unmoved by stage-0 §105.** A bounded variation session was built and measured against the
+   fixed repair path on fifteen golden cases: identical commits, 2.25× the provider calls per
+   feasible commit. A repair mechanism that costs more for the same result is not an argument
+   against this verdict, and the honest reading is that it reinforces it.
    *(Struck: "export current pairs to RevisionJudge" — done, 104 pairs on disk.
    The missing half is the verdict consumer; nothing reads `verdicts.jsonl`. Size
    the session before spending human attention: the 92-pair subjective set already
