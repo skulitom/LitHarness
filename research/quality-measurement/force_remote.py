@@ -52,7 +52,7 @@ import time
 from contextlib import suppress
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
@@ -252,7 +252,9 @@ def _call(prompt: str, model: str, *, timeout: int = 300) -> dict[str, Any]:
     )
     if completed.returncode != 0 or not completed.stdout.strip():
         raise RuntimeError(f"cli_error rc={completed.returncode}: {completed.stderr[:200]}")
-    return json.loads(completed.stdout)
+    # `claude --output-format json` always emits one JSON object; json.loads' `Any` is the
+    # only thing mypy sees for it.
+    return cast(dict[str, Any], json.loads(completed.stdout))
 
 
 def continuations(

@@ -41,7 +41,7 @@ import json
 import sys
 from collections import Counter
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
@@ -121,7 +121,7 @@ def open_system(shipped: str, kinds: tuple[str, ...]) -> str:
 
 def open_schema(shipped: dict[str, Any]) -> dict[str, Any]:
     """The shipped schema with `kind`'s enum dropped and nothing else touched."""
-    payload = json.loads(json.dumps(shipped))
+    payload = cast(dict[str, Any], json.loads(json.dumps(shipped)))
     item = payload["properties"]["promises_opened"]["items"]["properties"]
     item["kind"] = {"anyOf": [{"type": "string"}, {"type": "null"}]}
     return payload

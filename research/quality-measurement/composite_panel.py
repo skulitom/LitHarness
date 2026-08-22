@@ -251,7 +251,8 @@ def selftest() -> int:
     made = composite(_Pair("p1", "a b c", "a b c"))
     check("a veto answers every cell", len(made) == 2 * len(composite.personas))
     check("a veto answers `neither`", all(c.choice == "neither" for c in made))
-    check("a veto is recorded", composite.vetoed and composite.vetoed[0]["pair_id"] == "p1")
+    check("a veto is recorded",
+          bool(composite.vetoed and composite.vetoed[0]["pair_id"] == "p1"))
 
     # The frame check: a layer 3 that always names the *variant* must come back as
     # `chose_variant` in both orientations, or the slot translation is inverted.
