@@ -178,7 +178,7 @@ def scan_blob(name: str, content: str) -> tuple[list[tuple[str, int, str]], list
     """
     unwalked: list[str] = []
     if name.endswith(".jsonl"):
-        found = []
+        found: list[tuple[str, int, str]] = []
         lines = content.splitlines()
         if len(lines) > JSONL_LINE_LIMIT:
             unwalked.append(f"<lines {JSONL_LINE_LIMIT}:{len(lines)}>")

@@ -24,7 +24,7 @@ import argparse
 import json
 import sys
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
@@ -80,13 +80,15 @@ def _beat() -> Beat:
 
 
 def _render(writer: writers.Writer | None) -> tuple[str, str]:
-    return render_prompt(
+    # mypy cannot follow the editable install's path hook for `litharness`; the real signature
+    # in `application/planner.py` already guarantees this return type.
+    return cast("tuple[str, str]", render_prompt(
         _beat(),
         book_title="Test Book",
         packet=_packet(),
         target_words=900,
         writer=writer,
-    )
+    ))
 
 
 def run() -> dict[str, Any]:

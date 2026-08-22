@@ -405,9 +405,9 @@ def run_family(family: str, pairs: Sequence[ForcePair], args: argparse.Namespace
 
     placebo_effect = 0.0
     for pair in placebo:
-        row = scores.get(pair.pair_id)
-        if row:
-            placebo_effect = max(placebo_effect, abs(row["high"] - row["low"]))
+        if pair.pair_id in scores:
+            effect = abs(scores[pair.pair_id]["high"] - scores[pair.pair_id]["low"])
+            placebo_effect = max(placebo_effect, effect)
     report["placebo_identical"] = control_verdict(
         "placebo_identical", placebo_effect, tolerance=args.placebo_tolerance, kind="exact"
     )
