@@ -12,8 +12,10 @@ model call, no corpus or results read, no subprocess, no sleep — every expecta
 derived by hand from the functions' code before running them. `selftest()` is deliberately
 not called: it reads `corpora/toll-scenes.json`, so it is not hermetic. Spans passed through
 `place` keep at least four paragraphs, because below that the insert-position dedup walk can
-exhaust its distinct boundaries and never terminate; that hazard is noted here rather than
-pinned as a hanging test.
+exhaust its distinct boundaries and never terminate; that hazard is now guarded rather than
+merely noted — `place` raises `ValueError` when the inserts exceed the span's distinct
+paragraph boundaries, `certify` reports such a span as a premise fault instead of crashing,
+and the tests below pin both.
 """
 
 from __future__ import annotations
@@ -340,3 +342,37 @@ def test_score_counts_omission_claims_per_arm_from_optional_row_fields():
     assert "sham" not in report["DIAGNOSTIC_omission_claims"]
 
 
+# --------------------------------------------------------------- place / certify boundary guard
+
+
+def test_place_raises_value_error_promptly_when_inserts_exceed_distinct_boundaries():
+    two_paragraphs = _span(
+        "First paragraph stops. It starts again here.",
+        "Second paragraph stops. It stops for good.",
+    )
+    with pytest.raises(ValueError, match=r"only 2 paragraphs \(3 boundaries\)"):
+        cadence.place(two_paragraphs, (0.0, 0.33, 0.66, 1.0))
+
+
+def test_place_still_places_all_four_inserts_into_exactly_three_paragraphs():
+    three_paragraphs = _span(
+        "One seam. Two words.",
+        "One seam. Three words.",
+        "One seam. Four words.",
+    )
+    placed = cadence.place(three_paragraphs, cadence.CADENCES["even"])
+    # Four boundaries, four inserts: every payoff lands exactly once and no original
+    # paragraph is touched.
+    assert all(placed.count(payoff) == 1 for payoff in cadence.PAYOFFS)
+    assert all(block in placed.split("\n\n") for block in three_paragraphs.split("\n\n"))
+
+
+def test_certify_reports_a_too_short_span_as_a_fault_instead_of_raising():
+    two_paragraphs = _span(
+        "First paragraph stops. It starts again here.",
+        "Second paragraph stops. It stops for good.",
+    )
+    faults = cadence.certify([two_paragraphs])
+    assert faults
+    assert all(fault.startswith("span 0:") for fault in faults)
+    assert any("boundaries" in fault for fault in faults)
