@@ -17,13 +17,7 @@ floor is pinned here rather than asserted in prose:
 
 from __future__ import annotations
 
-import sys
-from pathlib import Path
-
 import pytest
-
-RESEARCH = Path(__file__).parents[1] / "research" / "quality-measurement"
-sys.path.insert(0, str(RESEARCH))
 
 study = pytest.importorskip(
     "elicitation_study",

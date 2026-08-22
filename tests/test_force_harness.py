@@ -29,13 +29,7 @@ needs torch, which CI's environment does not have.
 
 from __future__ import annotations
 
-import sys
-from pathlib import Path
-
 import pytest
-
-RESEARCH = Path(__file__).resolve().parents[1] / "research" / "quality-measurement"
-sys.path.insert(0, str(RESEARCH))
 
 force_harness = pytest.importorskip(
     "force_harness",

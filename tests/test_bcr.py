@@ -20,13 +20,7 @@ would otherwise only be visible by reading a result file carefully:
 
 from __future__ import annotations
 
-import sys
-from pathlib import Path
-
 import pytest
-
-RESEARCH = Path(__file__).parents[1] / "research" / "quality-measurement"
-sys.path.insert(0, str(RESEARCH))
 
 bcr = pytest.importorskip(
     "bcr",

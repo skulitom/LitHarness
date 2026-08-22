@@ -441,7 +441,7 @@ evidence exists that any of them predicts human judgment, and prints nothing tod
 emptiness is the honest state of §19's Quality clause.
 
 ```bash
-uv run litharness --database book.db calibrate --metric craft.tricolon_rate.v0 --threshold 4.0 --direction above --precision 0.86 --holdout 50 --flagged 21
+uv run litharness --database book.db calibrate --metric craft.tricolon_rate.v0 --threshold 4.0 --direction above --holdout 50 --flagged 21 --correct 18 --selection-family 1 --clusters 3
 ```
 
 `calibrate` is the write verb, and the only route to a gate that can refuse a scene. It
@@ -700,7 +700,7 @@ Stated plainly, because a system that runs is easy to mistake for a system that 
   within days, which is exactly why the ledger owns the number. The blocker is human
   judgment, not effort — and the instrument for collecting it at scale is now built:
   the **pairwise preference engine** (`corpus-add`, `protocol`, `pools`, `pair-draw`,
-  `pairs`, `pair-judge`, `pair-export`, `pair-import`, `win-rate`) runs blinded,
+  `pairs`, `pair-judge`, `win-rate`) runs blinded,
   position-swapped comparisons against matched published-human prose under a
   pre-registered protocol, with a reader-by-pair clustered lower bound on the win
   rate; the preference runbook (deleted 2026-08-21) was the operating

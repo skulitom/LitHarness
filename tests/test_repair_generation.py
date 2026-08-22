@@ -17,13 +17,8 @@ any generated repair actually moves a measured axis.
 from __future__ import annotations
 
 import math
-import sys
-from pathlib import Path
 
 import pytest
-
-RESEARCH = Path(__file__).resolve().parents[1] / "research" / "quality-measurement"
-sys.path.insert(0, str(RESEARCH))
 
 repair_generation = pytest.importorskip(
     "repair_generation",
