@@ -20,14 +20,9 @@ from __future__ import annotations
 
 import argparse
 import math
-import sys
-from pathlib import Path
 from typing import Any
 
 import pytest
-
-RESEARCH = Path(__file__).resolve().parents[1] / "research" / "quality-measurement"
-sys.path.insert(0, str(RESEARCH))
 
 taste_benchmark = pytest.importorskip(
     "taste_benchmark",

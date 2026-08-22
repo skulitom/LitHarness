@@ -17,13 +17,7 @@ pool the model never saw. Two properties make that comparison fair, and both fai
 
 from __future__ import annotations
 
-import sys
-from pathlib import Path
-
 import pytest
-
-RESEARCH = Path(__file__).parents[1] / "research" / "quality-measurement"
-sys.path.insert(0, str(RESEARCH))
 
 vb = pytest.importorskip(
     "voice_binding",

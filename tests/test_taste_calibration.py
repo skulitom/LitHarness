@@ -13,13 +13,7 @@ scheduling, no report reading, and no claim that stake vocabulary measures actua
 
 from __future__ import annotations
 
-import sys
-from pathlib import Path
-
 import pytest
-
-RESEARCH = Path(__file__).resolve().parents[1] / "research" / "quality-measurement"
-sys.path.insert(0, str(RESEARCH))
 
 taste_calibration = pytest.importorskip(
     "taste_calibration",

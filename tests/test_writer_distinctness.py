@@ -16,13 +16,7 @@ a database, a corpus or a results file is out of scope, as is `draw` and `main`.
 
 from __future__ import annotations
 
-import sys
-from pathlib import Path
-
 import pytest
-
-RESEARCH = Path(__file__).resolve().parents[1] / "research" / "quality-measurement"
-sys.path.insert(0, str(RESEARCH))
 
 writer_distinctness = pytest.importorskip(
     "writer_distinctness",
