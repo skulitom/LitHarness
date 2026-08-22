@@ -1,0 +1,51 @@
+{
+  "limit": 0,
+  "source": "corpus_io.royalroad_chapters (shards 3 and 30, LitRPG tag)",
+  "summary": {
+    "n": 14156,
+    "median_words": 2088.0,
+    "pct_with_a_system_line": 2.32,
+    "system_lines_per_1k_mean": 0.3181,
+    "system_lines_per_1k_median": 0.0,
+    "digits_on_system_lines_mean": 0.064,
+    "units_with_two_or_more_system_lines": 144,
+    "pct_of_those_whose_digits_differ": 43.75
+  },
+  "by_cohort": {
+    "declared_ai_2025": {
+      "n": 941,
+      "median_words": 1695.0,
+      "pct_with_a_system_line": 8.29,
+      "system_lines_per_1k_mean": 1.1461,
+      "system_lines_per_1k_median": 0.0,
+      "digits_on_system_lines_mean": 0.098,
+      "units_with_two_or_more_system_lines": 24,
+      "pct_of_those_whose_digits_differ": 37.5
+    },
+    "human_pre_llm": {
+      "n": 6717,
+      "median_words": 2163.0,
+      "pct_with_a_system_line": 1.16,
+      "system_lines_per_1k_mean": 0.0107,
+      "system_lines_per_1k_median": 0.0,
+      "digits_on_system_lines_mean": 0.058,
+      "units_with_two_or_more_system_lines": 23,
+      "pct_of_those_whose_digits_differ": 52.17
+    },
+    "undeclared_2025": {
+      "n": 6498,
+      "median_words": 2035.0,
+      "pct_with_a_system_line": 2.66,
+      "system_lines_per_1k_mean": 0.5158,
+      "system_lines_per_1k_median": 0.0,
+      "digits_on_system_lines_mean": 0.065,
+      "units_with_two_or_more_system_lines": 97,
+      "pct_of_those_whose_digits_differ": 43.3
+    }
+  },
+  "within_story": {
+    "stories": 394,
+    "mean_of_story_means_pct_with_a_system_line": 2.59,
+    "stories_with_at_least_one_system_line_chapter": 65
+  }
+}
