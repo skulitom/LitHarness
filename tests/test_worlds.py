@@ -200,6 +200,102 @@ def test_an_undeclared_predicate_is_unchecked_and_that_is_the_price() -> None:
     assert detect_contradictions(detector(records)) == []
 
 
+# --- the exception that belongs to one person -------------------------------------------------
+#
+# `plan/reader-read-3.md` note 1. The operator's own example of a hook is a cardinality maximum
+# that does not hold for one person — "everyone in the world has one cuff, the main character
+# broke the system and can now have as many as they like" — and until 2026-08-22 that was
+# undeclarable: `in_scope`'s scope is an `entity_role` or `*`, never a subject id, and the
+# docstring's reason for that stands. An exception is the other object, so it is declared as one.
+
+
+def _seal_world(excepts: str | None = None) -> list[lc.StateRecord]:
+    """One shape, two clerks under it, and optionally one of them excepted."""
+    records = [
+        canon(worlds.world_record("silas", worlds.ENTITY_ROLE_PREDICATE, value="cast")),
+        canon(worlds.world_record("marta", worlds.ENTITY_ROLE_PREDICATE, value="cast")),
+        canon(worlds.world_record("one_seal", worlds.TYPE_PREDICATE,
+                                  value=worlds.CARDINALITY_CONSTRAINT)),
+        canon(worlds.world_record("one_seal", worlds.PREDICATE_PREDICATE, value="wears")),
+        canon(worlds.world_record("one_seal", worlds.SCOPE_PREDICATE, value="cast")),
+        canon(worlds.world_record("one_seal", worlds.GROUP_KEY_PREDICATE,
+                                  value="subject,order_key")),
+        canon(worlds.world_record("one_seal", worlds.MAXIMUM_PREDICATE, value=1)),
+    ]
+    if excepts is not None:
+        records.append(
+            canon(
+                worlds.world_record(
+                    "one_seal", worlds.EXCEPTS_PREDICATE, object_ref=excepts
+                )
+            )
+        )
+    return records
+
+
+def _two_seals(subject: str) -> list[lc.StateRecord]:
+    """The planted violation: two of a thing the world admits one of, at one position."""
+    return [edge(subject, "wears", "lead_seal"), edge(subject, "wears", "brass_seal")]
+
+
+def test_a_shape_that_excepts_nobody_is_the_shape_it_always_was() -> None:
+    """The control. A world forged before `excepts` existed must check exactly what it checked.
+
+    This is Task 0.5's positive control, kept as the negative control for the change: the
+    planted violation fires, and it fires with an empty `except_subjects`.
+    """
+    [shape] = worlds.cardinality_shapes(_seal_world())
+    assert shape.except_subjects == ()
+    [violation] = detect_cardinality_violations(detector([*_seal_world(), *_two_seals("silas")]))
+    assert violation.severity is Severity.MAJOR
+    assert violation.blocks
+    assert "lead_seal" in violation.message and "brass_seal" in violation.message
+
+
+def test_the_excepted_subject_is_the_one_the_maximum_does_not_bind() -> None:
+    """**The exception is one person, not a hole in the shape**, and that is the whole test.
+
+    Three readings of one planted violation: it fires with no exception declared, it is silent
+    on the subject the shape excepts, and it still fires on a different subject of the same kind.
+    A change that made the detector blind to the *shape* would pass the middle assertion and fail
+    the last one, which is why the last one is here.
+    """
+    excepted = _seal_world(excepts="silas")
+    [shape] = worlds.cardinality_shapes(excepted)
+    assert shape.except_subjects == ("silas",)
+
+    assert detect_cardinality_violations(detector([*excepted, *_two_seals("silas")])) == []
+    [still] = detect_cardinality_violations(detector([*excepted, *_two_seals("marta")]))
+    assert "marta" in still.message
+
+    # And `in_scope` is where it is decided, so nothing else has to know about exceptions.
+    roles = worlds.entity_roles(excepted)
+    assert not worlds.in_scope(edge("silas", "wears", "lead_seal"), shape, roles)
+    assert worlds.in_scope(edge("marta", "wears", "lead_seal"), shape, roles)
+
+
+def test_the_writer_is_handed_the_exception_beside_the_rule_it_excepts() -> None:
+    """A packet that carried the maximum and not its exception would be a packet the scene that
+    has to show the difference is written against."""
+    excepted = _seal_world(excepts="silas")
+    projected = worlds.project(excepted)
+    anchor = next(
+        record.record_id
+        for record in excepted
+        if record.subject == "one_seal" and record.predicate == worlds.TYPE_PREDICATE
+    )
+    assert projected[anchor] == (
+        "at most 1 wears for anything that is a cast at one time, except for silas"
+    )
+    # The exception's own record is folded into that sentence rather than packed twice.
+    edge_id = next(
+        record.record_id
+        for record in excepted
+        if record.predicate == worlds.EXCEPTS_PREDICATE
+    )
+    assert projected[edge_id] == ""
+
+
 def test_a_cardinality_shape_missing_a_part_checks_nothing_and_says_so() -> None:
     """Half a shape is not a shape, and the complaint is at forge time rather than at draft time."""
     partial = [
@@ -333,6 +429,104 @@ def test_a_node_with_a_restricted_satellite_is_never_folded() -> None:
     ]
     projected = worlds.project(records)
     assert "" not in projected.values()
+
+
+# --- the briefs a planner is handed ------------------------------------------------------------
+#
+# `worlds.project` is what a *writer* is handed; these are what the two calls that write the
+# scene plan are handed. Until 2026-08-22 they were handed neither: `render_outline_request`
+# received the premise, the beat sheet, the status seed and the open promises, so on Serial
+# Pilot 3 it invented a protagonist who occurs nowhere in the forged world and every other named
+# person in the book, while the drafting packet carried 328 established facts out of that world
+# with `context_omitted = 0` (`plan/reader-read-3.md` notes 1 and 3).
+
+
+def peopled_world() -> list[lc.StateRecord]:
+    """Two clerks, one tie between them, one belief, one secret, one of them the protagonist."""
+    return [
+        canon(worlds.world_record("silas", worlds.ENTITY_ROLE_PREDICATE, value="cast")),
+        canon(worlds.world_record("silas", worlds.ENTITY_ROLE_PREDICATE, value="protagonist")),
+        canon(worlds.world_record("silas", "is_a", value="a junior clerk")),
+        canon(worlds.world_record("silas", "wants", value="to be read once by someone")),
+        canon(worlds.world_record("silas", worlds.EDGE_PREDICATE,
+                                  value="he prices a thing the assay has not seen")),
+        canon(worlds.world_record("silas", worlds.PRICE_PREDICATE,
+                                  value="every reading he signs is checked twice")),
+        canon(worlds.world_record("silas", worlds.EXCEPTION_PREDICATE,
+                                  object_ref="provenance")),
+        canon(worlds.world_record("silas", "owes", object_ref="marta",
+                                  value="nine months of rent")),
+        canon(worlds.world_record("silas_secret", worlds.CLAIM_CONTENT,
+                                  value="he has been shorting his own readings")),
+        canon(worlds.world_record("silas", "keeps_secret", object_ref="silas_secret")),
+        canon(worlds.world_record("marta", worlds.ENTITY_ROLE_PREDICATE, value="cast")),
+        canon(worlds.world_record("marta", "is_a", value="the bursar, and his landlord")),
+    ]
+
+
+def test_the_cast_brief_carries_the_people_and_their_ties_to_each_other() -> None:
+    """One entry per declared cast id, ordered by id so one world always renders one payload."""
+    marta, silas = worlds.cast_brief(peopled_world())
+    assert (marta.subject, silas.subject) == ("marta", "silas")
+    assert silas.is_a == "a junior clerk"
+    assert silas.wants == "to be read once by someone"
+    assert silas.relationships == ("silas owes nine months of rent (marta)",)
+    assert marta.relationships == ()
+    assert silas.to_jsonable() == {
+        "id": "silas",
+        "is_a": "a junior clerk",
+        "wants": "to be read once by someone",
+        "relationships": ["silas owes nine months of rent (marta)"],
+    }
+
+
+def test_a_tie_is_an_edge_to_somebody_and_never_to_a_claim() -> None:
+    """**The leak-safe direction, and the reason the filter is on the target's role.**
+
+    A cast member's edges also point at claims — `believes` at a false belief, `keeps_secret` at
+    a secret — and those are the iceberg's bookkeeping rather than the cast's ties. A secret's
+    *content* would never appear in one of these lines, because `state.describe` renders the id;
+    but a planner handed `keeps_secret (silas_secret)` for every person is being handed the shape
+    of what it is not allowed to plan against.
+    """
+    [silas] = [entry for entry in worlds.cast_brief(peopled_world()) if entry.subject == "silas"]
+    assert not [tie for tie in silas.relationships if "secret" in tie]
+    assert not [tie for tie in silas.relationships if "shorting" in tie]
+
+
+def test_the_protagonist_brief_is_what_canon_declared_and_nothing_more() -> None:
+    protagonist = worlds.protagonist_brief(peopled_world())
+    assert protagonist is not None
+    assert protagonist.subject == "silas"
+    assert protagonist.exception == "provenance"
+    assert protagonist.edge.startswith("he prices a thing")
+    assert protagonist.wants == "to be read once by someone"
+    assert protagonist.price.startswith("every reading he signs")
+
+
+def test_a_book_that_declares_no_world_has_no_cast_and_no_protagonist() -> None:
+    """The control, and it is what makes the outline request byte-identical for such a book.
+
+    `None` rather than an empty object: a key that is always present carrying `null` is a
+    payload that always changed, and `jobs.input_digest_for` covers the prompt and seeds the
+    decoder.
+    """
+    assert worlds.cast_brief([]) == ()
+    assert worlds.protagonist_brief([]) is None
+    just_a_rule = [canon(worlds.world_record("r", worlds.WORLD_RULE_PREDICATE, value="a rule"))]
+    assert worlds.cast_brief(just_a_rule) == ()
+    assert worlds.protagonist_brief(just_a_rule) is None
+
+
+def test_a_proposed_world_reaches_neither_brief() -> None:
+    """Rail one, at the two new seams. A forged world is a proposal until `--pick`, and a
+    proposal must not reach a planner any more than it reaches a packet."""
+    proposed = [
+        worlds.world_record("silas", worlds.ENTITY_ROLE_PREDICATE, value="cast"),
+        worlds.world_record("silas", worlds.ENTITY_ROLE_PREDICATE, value="protagonist"),
+    ]
+    assert worlds.cast_brief(proposed) == ()
+    assert worlds.protagonist_brief(proposed) is None
 
 
 # --- the iceberg -------------------------------------------------------------------------------

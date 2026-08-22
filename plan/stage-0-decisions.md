@@ -10838,3 +10838,226 @@ session's. No claim about prose quality and no comparison of prose between runs.
 persona, BCR, axis or pool change, and no pre-registration beyond S5′. No human reader, label or
 solicited judgment entered anything here (§95). RS1 holds: nothing under `src/litharness/`
 references a corpus, a digest or a RoyalRoad text.
+## 112. The world says whose book it is, and the exception it grants one person survives the gate
+
+**Built 2026-08-22, from [`plan/handoff-protagonist.md`](handoff-protagonist.md).** Code:
+`application/architect.py` (schema, one rule, records, gate complaints, three `report()` counters),
+`domain/worlds.py` (`protagonist` as a second entity role; `edge`, `price`, `exception_to`,
+`excepts`; `CardinalityShape.except_subjects`; `in_scope`; `cast_brief`; `protagonist_brief`),
+`application/outline.py` (`cast` and `protagonist` inputs, two rules), `application/planner.py`
+(`pov_character_id` threaded to the one production `packet_for`, `Point of view: <id>.` in the beat
+line), `domain/axes.py` (a behaviour-preserving extraction, `proper_noun_introductions`), and
+`research/quality-measurement/named_persons.py`. Measurements:
+[`research/quality-measurement/protagonist-results.md`](../research/quality-measurement/protagonist-results.md)
+and [`named-persons-results.md`](../research/quality-measurement/named-persons-results.md). The
+pre-registration is [`plan/serial-pilot-4.md`](serial-pilot-4.md) §4 and **the run it registers has
+not been made**.
+
+**It is §112 and not §111, and the gap is deliberate.** The check in `CLAUDE.md` was re-run at
+commit across `main` and all thirty `.claude/worktrees/*/plan/stage-0-decisions.md`, matching
+`^#{2,3} [0-9]+` so a sub-section could not hide a claimed parent.
+`claude/handoff-worldbuilding-plan-ae1861` has §111 **committed** on its branch and not yet merged
+to `main`; the committed entry owns the number, so this one moves after it and §111 stays free for
+that merge. That branch also adds a keyword argument to `render_outline_request` — see §112.7.
+
+**What licenses it is a count, and it was taken before a line was written.** The operator read the
+first two chapters of *What Takes* — Serial Pilot 3, the first book drafted on a world forged from
+a directed brief — and named four defects ([`plan/reader-read-3.md`](reader-read-3.md)). Measured
+against the machinery on `f947247`:
+
+| | count |
+|---|--:|
+| occurrences of *protagonist*, *main character* or *hero* in `application/architect.py` | **0** |
+| `StateRecord`s reaching `render_outline_request` | **0** |
+| references to `domain/worlds` in `application/outline.py` | **0** |
+| canon records loaded at the outline call site, and dropped | 328 of 328 |
+| `packet_for` call sites in the repository | 27 |
+| of those, passing `pov_character_id` | **0** |
+| `PlanKind.PREMISE` constructions in `src/` | 1, `locked=True` |
+| occurrences of "Kell" — the book's protagonist — in the forged world, its seed, its directives, its promises and its 328 canon records | **0** |
+| forged cast members reaching the prose, of five | **1** |
+| named persons the read counted across the two chapters | 17 |
+
+**What shipped.** A world may now declare a `protagonist`: a cast id, the one declared rule or
+cardinality shape that does not hold for them **by id**, the `edge` that gives them, what they
+want, and the `price`. Required of the forge and refused there field-by-field on *emptiness* (the
+2026-08-22 forge returned a world whose premise was the empty string under a schema that asked for
+a string, conformed, and failed the shape check — $1.48); tolerated as absent by `records_for`, so
+`plan/serial-pilot-2-world.json` regenerates to the same 329 records, gates clean, and emits not
+one record of the new vocabulary. The declaration reaches the outline as `cast` + `protagonist`
+(the request grows 1,785 → 4,856 characters on *What Takes*' own canon) and the writer as a
+labelled facts block and one beat-line fragment.
+
+**What was refused.** No verdict channel: no model is asked whether a hook is good, which premise
+hooks more, or which of K worlds to pick. No bar. And no instruction anywhere about how to *handle*
+a protagonist — the three added strings (the forge rule, the two outline rules, the beat-line
+fragment) are each checked by a test for the vocabulary such an instruction would need.
+
+### 112.1 The exception is the other object, and that is why scope could stay a role
+
+`in_scope`'s docstring gives the reason a shape's scope is an `entity_role` and never a subject id:
+a shape is a rule about a *kind* of thing, and one that named a carrier would be a fact about that
+carrier wearing a rule's clothes. That argument is correct and is untouched. An exception is the
+opposite object — a declared fact about **one** subject, which is what the word means — so it is
+declared as one, as an `excepts` edge from the shape, and `in_scope` consults it before it looks at
+roles.
+
+Traced on `f947247`, a subject id put where a role belongs is **silently ignored**, which is worse
+than refused: the schema enum excludes it, but that enum is prompt text — the CLI transport
+serialises the schema into the prompt and `providers/base.parse_schema_payload` is shallow by
+design and never descends into `worlds[].cardinality[].scope` — so the value survives parsing,
+`records_for` emits it, `cardinality_shapes` builds a well-formed shape from it, and `in_scope`
+matches it against a role table a subject id can never appear in. The shape then governs nobody and
+looks exactly like a shape that governs everybody.
+
+Three assertions are pinned together and **the third is the one that matters**: a shape that
+excepts nobody fires on the planted violation exactly as before; the same violation on the excepted
+subject yields zero findings; the same violation on a *different* subject of the same kind still
+fires. A change that made the detector blind to the shape would pass the second and fail the third.
+`tests/test_worlds.py::test_the_excepted_subject_is_the_one_the_maximum_does_not_bind` and
+`tests/test_integrity.py::test_the_declared_exception_reaches_the_live_detector_and_binds_nobody_else`.
+
+**One derivation, and it is a definition rather than an inference.** When a protagonist's
+`exception` names a declared cardinality shape, `records_for` also emits `<shape> excepts
+<protagonist>`. "X is the exception to S" and "S does not govern X" are one fact from two ends of
+one edge and only the second is what the detector reads; a world that declared the first and forgot
+the second would hand the writer an exception the gate still refuses, which is decoration.
+
+### 112.2 Every packet this system had ever built was built for no one
+
+`packet_for` has taken a `pov_character_id` since it was written and no production caller passed
+one. The seam is not neutral while unused: `state.visible_to` is a whitelist in which an absent POV
+**fails** a restriction, so any record carrying a `pov_visibility` would have been dropped from
+every packet in the book and logged `not visible to POV (none named)`. Measured, that has cost
+nothing so far — 0 of 328 records on a forged world carry one, because the iceberg is a claim with
+a disclosure and not packet access control (§107.4).
+
+So the observable effect of threading it is exactly the labelled heading, and that is what was
+measured rather than assumed. Scene 1 of *What Takes* at `--context-budget 16000`, with and
+without: items 305 → 305, established facts 224 → 224, hidden 23 → 23, tokens 7,493 → 7,493,
+omitted 0 → 0, and a two-line diff — `Established facts:` becomes `Established facts known to
+clerk_amble:`. The prompt diff is one line, and it sits before `Dramatic function:` and never after
+`plans.scene_plan_line`, which stays last so `plan_search`'s K candidates keep differing in exactly
+one place.
+
+### 112.3 The counter nominated by the read does not reproduce the read
+
+`research/quality-measurement/named_persons.py` counts distinct proper names a **chapter**
+introduces, with first-appearance offsets — C6's budget is a scene-opening budget and it resets
+four times before a reader reaches the end of one chapter. Run over 2,000 cached RoyalRoad chapters
+per cohort and our own four:
+
+| | median names per chapter | median per 1k words |
+|---|--:|--:|
+| RoyalRoad, all genres (n=2,000) | 17 | 10.15 |
+| RoyalRoad, LitRPG tag (n=2,000) | **24** | **10.90** |
+| *What Takes* ch. 1 / ch. 2 | **8** / **18** | 2.10 / 4.60 |
+| *Reappraisal* ch. 1 / ch. 2 | 30 / 29 | 7.23 / 6.82 |
+
+The two chapters the operator named as having too many names sit at the **11.8th** and **37.6th**
+percentiles of the LitRPG cohort; the book this read did not complain about sits at the 63.5th and
+61.6th. **A budget set from this distribution would license more names than the complained-about
+book has.** This is the second time a counter nominated by a human read has failed to order the
+case that nominated it — `opening_proper_nouns` placed the complained-about chapter at the 68.5th
+percentile of published openings (§87 / `opening-counters-results.md`). Reported as a result (§61):
+no bar is declared, and `plan/serial-pilot-4-craft.json` carries the chapter-grain constraint with
+its number **unset** and outside the array any script reads, so it cannot be issued by accident.
+
+What the null cannot rule out is stated with it: the read judged chapters whose named people were,
+four of five, not the world's — arriving without declared ties, wants or roles — and "eight names"
+and "eight names each of whom the reader has a reason to hold" are different experiences this
+counter cannot separate. Nor can it separate a person from a place: it returns `February` and
+`Marker` beside `Orne Marrow`, so every figure is a **name** count and the operator's person-only
+hand count is reported beside it, never in place of it.
+
+### 112.4 The craft file proposes two constraints and issues neither
+
+`plan/serial-pilot-4-craft.json` carries C3, C4, C5, C6 and C8 verbatim from pilot 2, C7 with one
+recorded edit — the lent-verb clause, from the read's fourth defect (*"Two rings of bark stood on
+her wrist"*), which C7's own enumerated failures did not cover — and **two proposals in a
+`proposed` array outside `directives`**: C9 (a chapter-grain introduction budget, `N` unset) and
+C10 (the first sentence of the book and of each chapter belongs to the protagonist). Outside,
+because `tools/serial-pilot-2-setup.ps1` issues every entry of `directives` verbatim and
+`serial_pilot_check.py` counts them: an entry with a literal `N` in it would have been issued as a
+directive reading "at most N people". Moving an entry into `directives` is the operator's act and
+is what issues it. C10 is direction, it is the operator's, and **no form of it is in code**.
+
+### 112.5 Pre-registered and not run
+
+[`plan/serial-pilot-4.md`](serial-pilot-4.md) §4 registers P1–P5 with outcomes named in advance,
+written before any paid call, and the run is **NOT RUN**: no forge, no pick, no book, no `pilot4/`,
+no `serial4.db`. §4's P1 carries the handoff's stop condition as a named outcome — if the new rule
+collapses the forge (`spread` well below pilot 3's measured **0.8959** on the same brief), the
+change is unsafe and that is written up instead of the book being run. The pick rule is recorded
+before the candidates exist: the first candidate clear of every gate whose real domain was not
+forged in pilots 2 or 3.
+
+### 112.6 Corrections in place
+
+Three, all to [`plan/reader-read-3.md`](reader-read-3.md), which was written from the same texts:
+
+1. *"the counter also flags `I'll` / `I'd` / `I've` as names — **four** false positives"* →
+   there are **five**, across four scenes; scene 8 carries two. The real-name row
+   (2, 3, 1, 2, 3, 1, 2, 2) is unaffected and C6 was honoured in every scene.
+2. *"**None** of the forged cast reaches the page"* and *"'Amble' … appear only as a place-name and
+   a surname the outline reused"* → the name-level intersection is **1 of 5**: `Amble` occurs six
+   times, three as a vocative to a clerk. Whether that clerk *is* `clerk_amble` is a judgment with
+   no instrument here. The direction of the finding is unchanged: four of five never reached the
+   page and all seventeen named persons were written by a call that had never seen the cast.
+3. *"his trade is first stated at word **804**"* → not wrong, and the apparent conflict with an
+   independent re-derivation's 802 is a convention. A plain `str.split` puts `clerk` at 802 and
+   `Assize` at 805; `domain/axes`' tokeniser puts `Assize` at **804**. The document's number is the
+   tokeniser's. Every offset in the new counter is a tokeniser offset and says so.
+
+`domain/axes.opening_proper_noun_names` was **not** changed. It is now
+`proper_noun_introductions` with the offsets dropped, and
+`tests/test_opening_counters.py::test_the_named_offsets_are_the_opening_names_with_positions` pins
+that the names it returns are the ones it returned before — this counter's figures are quoted in
+§87 and in `opening-counters-results.md`, and a silently drifted counter would redefine what those
+numbers were about.
+
+### 112.7 Two neighbours, and what the second merge owes
+
+`plan/handoff-promise-ledger.md` landed at `f947247` (§110) and touched `summarize.py` only; this
+branch builds on it and does not touch it.
+
+`claude/handoff-worldbuilding-plan-ae1861` is **not on `main`** and adds its own keyword to
+`render_outline_request` — a `world` brief whose contents include the cast, plus
+`domain/world_brief.py` and a `StateRepository` on `NarrativePlanningStore`. Its §111 is committed
+on that branch. The two changes are additive and independently correct, and both use the same
+absent-rather-than-null idiom so each keeps its own byte-identical control. **Whoever merges second
+owes one collapse**: a request that carries the same people twice is a request spending its budget
+saying one thing. Neither branch should silently drop the other's — the protagonist is not in the
+world brief, and the world brief's rules and claims are not here.
+
+### 112.8 Found, not fixed
+
+**Any cardinality shape with `group_key: "object"` can never fire.** `group_of(record, "object")`
+returns the `object_ref`, and `detect_cardinality_violations` then counts *distinct object_refs
+inside that bucket* — identically 1. So an object-keyed maximum is vacuous however it is declared,
+and `c_one_owner_per_trait`, one of pilot 3's four shapes, is dead. Verified structurally and
+empirically (2, 3 and more edges into one object all yield 0 findings). It is reported rather than
+fixed because a fix changes detector semantics for every world already forged and could newly
+refuse scenes in books already accepted — that is its own piece of work with its own control.
+
+A relationship still reaches both the packet and the new cast brief in `state.describe`'s flat
+form (`clerk_amble employed_by and is the only person who can find anything in it (the_assize)`).
+It reads badly and it reads *identically* badly in both, which is why it was not improved here: the
+sentence belongs in `worlds.project`, and changing it would change the packet of every book with a
+forged world.
+
+### 112.9 Anti-scope
+
+No paid call of any kind was made. No forge, no pick, no draft, no re-pick, no redraft of any
+accepted scene. `serial3.db`, `pilot3/`, `serial.db` and every `plan/serial-pilot-2-*` file were
+read read-only and never written; the two measurements needing a mutable database ran on copies in
+a scratch directory. No hook beat function, no change to `SIX_BEAT` or the arc template, no
+instruction to any model about how to write, open, end or pace a protagonist's scene. No judge,
+reader, persona, BCR, axis admission, pool change or pre-registration beyond P1–P5; `AXES` and
+`COUNTERS` are untouched and `named_persons.py` is registered nowhere. No model ranks, scores or
+selects anything; `domain/discrimination.py` is byte-frozen. No human reader, label or solicited
+judgment entered anything here (§95) — the operator's read is a defect harvest and not data, and
+no acceptance read was spent. No bar declared. The outline inventing answers to forged mysteries,
+the `lock-constraints` on `serial.db`, the chapter-ending clause and the `[STATUS]` line all remain
+where they were. RS1 holds: nothing under `src/litharness/` references a corpus, a digest or a
+RoyalRoad text, and no anchor or corpus prose crossed into any prompt, example or rule.

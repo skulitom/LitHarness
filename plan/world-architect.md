@@ -254,6 +254,26 @@ evaluation result, a cost an adverse effect, a carrier an entity whose possessio
 preconditions, a bond a composite subject, an agency a role, a hidden personality a claim not
 yet disclosed. The Architect writes vocabulary; the store holds four patterns.
 
+**3.8 The protagonist, added 2026-08-22.** A world may name one member of its cast as the
+`protagonist`, and the record patterns are the ones already here rather than new ones: a second
+`entity_role` on that cast member (roles are plural, so nothing has to choose between "cast" and
+"protagonist"), `edge` and `price` as assertions in the `manifests_as` register, `wants` as the
+cast pattern already carries it, and `exception_to` as an **edge** to the declared rule or
+cardinality shape that does not hold for them. The exception is the shape of a hook as the
+operator defines one — *an exception to the world's rule, belonging to one person*
+([`plan/reader-read-3.md`](reader-read-3.md) note 1) — and the inversion rule of §4 cannot express
+it, because an inversion changes a default for everyone.
+
+**The exception reaches the gate rather than decorating the schema.** `CardinalityShape` carries
+`except_subjects`, populated from an `excepts` edge on the shape, and `worlds.in_scope` returns
+`False` for an excepted subject before it consults roles. Scope stays an `entity_role` and §3's
+argument for that is untouched: a shape is a rule about a *kind* of thing. An exception is the
+other object — a declared fact about one subject — so it is declared as one and read beside the
+shape. Two declaration sites, one predicate, one reader: a shape may list its own `except`, and
+`records_for` also emits `<shape> excepts <protagonist>` when a protagonist's `exception` names a
+declared shape, because "X is the exception to S" and "S does not govern X" are one fact from two
+ends of one edge and only the second is what the detector reads.
+
 ---
 
 ## 4. How to prompt for *unique* — the part that is prompting
@@ -305,6 +325,8 @@ Ordered, and each step runnable and measured before the next. `plan/state-model-
 | 7 | second extractor family: a declared graph-line form, with promotion | `domain/extraction.py` | §5.9, §6.1 |
 | 8 | a `mystery`/`plot` promise per recorded reveal, opened from the seed | `application/architect.py` | §5.10 |
 | 9 | retrieval when the serial outgrows the packet | — | design note only, §101.2 |
+| 10 | *(2026-08-22)* a declared protagonist, and a cardinality exception belonging to one subject | `application/architect.py`, `domain/worlds.py`, `domain/integrity.py` | §112 |
+| 11 | *(2026-08-22)* the cast and the protagonist reach the outline; the viewpoint reaches the packet and the beat line | `application/outline.py`, `application/planner.py` | §112 |
 
 **Step 7's line form, because it is the one that could go wrong quietly.** The world declares
 its own graph line the way it already declares its sheet, and a world that declares none
@@ -373,6 +395,21 @@ answer measured here is **around scene ten at four scenes a chapter — and the 
 it is the promise ledger rather than the world**, which is the first number this project has had
 for it and not the number that was expected.
 
+### 5.2 The two planner calls — added 2026-08-22
+
+Until 2026-08-22 the Architect's world reached the
+*writer* — a flat 229–231 established facts per drafting prompt on pilot 2, `context_omitted = 0`
+— and reached neither call that writes the scene plan the writer executes. Measured on pilot 3:
+`render_outline_request` received the premise, the beat sheet, the status seed and the open
+promises, and **not one `StateRecord`**, so it invented a protagonist who occurs nowhere in the
+forged world and every other named person in the book, while four of the five forged cast members
+never reached the page. The change surface is two optional keyword inputs on that call —
+`cast` (the declared people, phrased by `worlds.project` first and `state.describe` as the
+fallback, which is `context._state_item`'s own two steps) and `protagonist` — plus
+`pov_character_id` finally passed at the one production `packet_for` call site, where the seam had
+existed unused since it was written. A book whose canon declares neither renders the bytes it
+rendered before, which is asserted rather than argued.
+
 ---
 
 ## 6. What is measured, and what it is not allowed to say
@@ -424,12 +461,15 @@ operator's `NOTES.md` defect harvest; anything else is a hypothesis and is label
 | | record the answer to a mystery, and the position where it is disclosed |
 | | propose directives of the interpretive kinds, and constraints that are *world facts* rather than prose doctrine |
 | | derive a premise from the world it built |
+| | *(2026-08-22)* name one member of its cast as the protagonist, the rule or shape that does not hold for them, what that lets them do, what they want and what it costs |
+| | *(2026-08-22)* declare that a cardinality shape does not govern a named subject |
 | **May not** | say what the book is about beat by beat — that is the Director |
 | | write prose, or name a scene's events — that is the Writer |
 | | judge anything, rank anything, or select among its own candidates |
 | | lock a plan item, or write `ACCEPTED_CANON` without a recorded decision |
 | | name, quote or imitate a real work, author, brand, game or system |
 | | require a world to have a system, a ladder, a sheet, a number, or combat |
+| | *(2026-08-22)* say how a protagonist should be **handled** — opened on, liked, shown winning, or progressing faster than anyone. An exception declared is a fact about the world; who wins is the book's, and the direction is the operator's |
 
 **And nothing here can block.** The Architect runs before a book exists; it has no gate, no
 veto, no `GateOutcome` of its own beyond the shape gate that refuses its own malformed output.
@@ -469,3 +509,13 @@ claim about book quality from a counter. The Director, Writer and Reader/Judge r
 untouched. Retrieval (step 9) is a design note and is not started. The golden fixtures are
 untouched by construction, not by a compatibility branch: a world that declares nothing gets
 exactly what it got before this existed.
+
+**Added 2026-08-22 with the protagonist.** No model is asked whether a hook is good, which premise
+hooks more, whether a protagonist is interesting, or which of K worlds to pick — the forge still
+stops and a person chooses. No instruction about how to *handle* a protagonist enters any prompt,
+template, beat function or system message; three tests check the three added strings for the
+vocabulary such an instruction would need. No hook beat function and no change to `SIX_BEAT`. No
+bar over any count the change produces, including the chapter-grain introduction distribution,
+whose number is left unset for the operator. A world that declares no protagonist regenerates
+byte-identically and its book renders the same outline request and the same drafting prompt it
+always did — [stage-0 §112](stage-0-decisions.md).

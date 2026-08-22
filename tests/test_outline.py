@@ -12,13 +12,18 @@ the commit that recorded §51.1.
 
 from __future__ import annotations
 
+import json
+from dataclasses import replace
+
 import litharness_contracts as lc
 import pytest
 
 from litharness.adapters.sqlite_store import SqliteStore
 from litharness.application.outline import (
     BOOK_OUTLINE,
+    CAST_RULES,
     OUTLINE_PRIORITY,
+    PROTAGONIST_RULES,
     OutlineOutputError,
     _milestones,
     make_outline_handler,
@@ -27,6 +32,7 @@ from litharness.application.outline import (
     outline_proposal,
     render_outline_request,
 )
+from litharness.domain import worlds
 from litharness.domain.beats import arc_template, beats_for
 from litharness.domain.generation import CompletionResult, Resolution, Usage
 from litharness.domain.jobs import Job, input_digest_for
@@ -152,6 +158,193 @@ def test_the_whole_sheet_goes_into_one_request() -> None:
         assert f'"ordinal": {ordinal}' in request.prompt
     assert request.schema is not None, "structured output, not a parsed paragraph"
     assert "different from every other" in request.prompt
+
+
+# -- the world's people, and whose book it is ---------------------------------------------
+#
+# `plan/reader-read-3.md` notes 1 and 3. Until 2026-08-22 this call was handed the premise, the
+# beat sheet, the status seed and the open promises, and **not one record of canon** — so on
+# Serial Pilot 3 it invented a protagonist who occurs nowhere in the forged world (0 hits for
+# "Kell" in `pilot3/direct1/forge.json`), and none of that world's five declared cast members
+# appears in either chapter. The writer had them all along: 328 established facts,
+# `context_omitted = 0`.
+
+
+def _bare_base():  # type: ignore[no-untyped-def]
+    class _Base:
+        plan_revision_id = "planrev-1"
+        items: tuple = ()
+
+    return _Base()
+
+
+def _eight_beats():  # type: ignore[no-untyped-def]
+    return beats_for(new_book(BOOK_ID, BRANCH_ID, title="Book", scenes=8), arc_template(8))
+
+
+CAST = (
+    worlds.CastMember("marta", "the bursar, and his landlord", "", ()),
+    worlds.CastMember(
+        "silas",
+        "a junior clerk",
+        "to be read once by someone who matters",
+        ("silas owes nine months of rent (marta)",),
+    ),
+)
+
+PROTAGONIST = worlds.Protagonist(
+    "silas",
+    "provenance",
+    "he prices a thing the assay has not seen",
+    "to be read once by someone who matters",
+    "every reading he signs is checked twice",
+)
+
+
+def test_a_book_whose_canon_declares_nobody_renders_the_bytes_it_always_did() -> None:
+    """**The control, and it is a byte comparison rather than a substring one.**
+
+    Every book written before a world could declare a protagonist passes nothing here, and
+    `json.dumps` writes `null` for a key whose value is `None` — so a key that is always
+    present is a payload that always changed. `jobs.input_digest_for` covers the prompt and
+    that digest is the sampler seed, so a silent payload change silently re-decodes every job
+    a book mints. The empty case must produce exactly the bytes that omitting the parameters
+    produces.
+    """
+    beats = _eight_beats()
+    absent = render_outline_request(PREMISE, beats, base=_bare_base())
+    empty = render_outline_request(
+        PREMISE, beats, base=_bare_base(), cast=(), protagonist=None
+    )
+    assert empty == absent
+    assert "cast" not in json.loads(absent.prompt)
+    assert "protagonist" not in json.loads(absent.prompt)
+
+
+def test_the_declared_people_reach_the_request_as_the_packet_phrases_them() -> None:
+    """Sentences rather than ids (§107.3), and the ties between people with them.
+
+    A cast whose ties live only in the world JSON is a cast the planner cannot use: it can put
+    two people in a room and has no reason to.
+    """
+    request = render_outline_request(
+        PREMISE, _eight_beats(), base=_bare_base(), cast=CAST, protagonist=PROTAGONIST
+    )
+    body = json.loads(request.prompt)
+    assert [entry["id"] for entry in body["cast"]] == ["marta", "silas"]
+    assert body["cast"][1]["wants"] == "to be read once by someone who matters"
+    assert body["cast"][1]["relationships"] == ["silas owes nine months of rent (marta)"]
+    # A member with no want and no ties carries neither key rather than two empty ones.
+    assert body["cast"][0] == {"id": "marta", "is_a": "the bursar, and his landlord"}
+    assert body["protagonist"] == {
+        "id": "silas",
+        "exception": "provenance",
+        "edge": "he prices a thing the assay has not seen",
+        "wants": "to be read once by someone who matters",
+        "price": "every reading he signs is checked twice",
+    }
+
+
+def test_the_rules_arrive_only_with_the_thing_they_are_about() -> None:
+    """A rule about a cast in a request with no cast is an instruction to obey nothing."""
+    beats = _eight_beats()
+    cast_only = json.loads(
+        render_outline_request(PREMISE, beats, base=_bare_base(), cast=CAST).prompt
+    )
+    assert any("listed in cast" in rule for rule in cast_only["rules"])
+    assert not any("protagonist is" in rule for rule in cast_only["rules"])
+
+    both = json.loads(
+        render_outline_request(
+            PREMISE, beats, base=_bare_base(), cast=CAST, protagonist=PROTAGONIST
+        ).prompt
+    )
+    assert any("The protagonist is silas." in rule for rule in both["rules"])
+    assert any("what silas does in that scene" in rule for rule in both["rules"])
+
+
+def test_the_protagonist_rules_name_a_person_and_never_an_outcome() -> None:
+    """**Boundary 1 of `plan/handoff-protagonist.md`, asserted rather than trusted.**
+
+    A protagonist is a declared fact of the world and a position — the same class as "scene 3
+    of 8" and the chapter cue. No default instruction about how to *handle* one may enter any
+    prompt this system renders: open on the hero, make them likeable, show them winning,
+    have them progress faster than anyone. That direction is the operator's, and the operator's
+    own words for the hook use exactly those verbs — which is why the rules that came out of
+    them must not. Written in the shape of
+    `test_the_chapter_cue_carries_no_verb_and_no_adjective`.
+    """
+    rendered = " ".join(
+        [*CAST_RULES, *(rule.format(subject="silas") for rule in PROTAGONIST_RULES)]
+    ).lower()
+    for forbidden in (
+        "win", "hero", "likeable", "likable", "sympathetic", "root for", "faster",
+        "fastest", "strongest", "best", "succeed", "success", "triumph", "interesting",
+        "compelling", "unique", "special", "open on", "first",
+    ):
+        assert forbidden not in rendered, forbidden
+
+
+def test_the_handler_reads_the_people_off_the_canon_it_already_read(
+    store: SqliteStore,
+) -> None:
+    """One query, not two. The drafting side's habit of calling `state_records` three times in
+    one render is the pattern this deliberately does not copy — and a second read is a second
+    answer to one question."""
+    a_book(store, scenes=12)
+    store.record_state_records(
+        BOOK_ID,
+        BRANCH_ID,
+        [
+            replace(built, authority=lc.StateAuthority.ACCEPTED_CANON)
+            for built in (
+                worlds.world_record("silas", worlds.ENTITY_ROLE_PREDICATE, value="cast"),
+                worlds.world_record(
+                    "silas", worlds.ENTITY_ROLE_PREDICATE, value="protagonist"
+                ),
+                worlds.world_record("silas", "is_a", value="a junior clerk"),
+                worlds.world_record(
+                    "silas", worlds.EDGE_PREDICATE, value="he prices what the assay has not"
+                ),
+                worlds.world_record("silas", worlds.EXCEPTION_PREDICATE,
+                                    object_ref="provenance"),
+            )
+        ],
+        created_at="2026-08-16T00:00:00Z",
+    )
+    planner = StubPlanner(payload_for(12))
+    make_outline_handler(planner, store, PROJECT_ID)(_job(store), START)
+
+    [request] = planner.requests
+    body = json.loads(request.prompt)
+    assert body["protagonist"]["id"] == "silas"
+    assert body["cast"] == [{"id": "silas", "is_a": "a junior clerk"}]
+
+
+def test_a_tick_over_an_already_outlined_book_mints_no_second_job(
+    store: SqliteStore,
+) -> None:
+    """`outline_job_id` is epoch-keyed and excludes the prompt, so telling the planner about
+    the world does not burn a new id for work already done.
+
+    The exclusion is deliberate and `planner.py`'s module docstring states it: editing a
+    template must not mint a second job for a book that has already been outlined.
+    """
+    a_book(store, scenes=12)
+    before = outline_job_id(BOOK_ID, BRANCH_ID, store.plan_epoch(BOOK_ID, BRANCH_ID))
+    store.record_state_records(
+        BOOK_ID,
+        BRANCH_ID,
+        [
+            replace(
+                worlds.world_record("silas", worlds.ENTITY_ROLE_PREDICATE, value="cast"),
+                authority=lc.StateAuthority.ACCEPTED_CANON,
+            )
+        ],
+        created_at="2026-08-16T00:00:00Z",
+    )
+    after = outline_job_id(BOOK_ID, BRANCH_ID, store.plan_epoch(BOOK_ID, BRANCH_ID))
+    assert after == before
 
 
 # -- the validation that is about the defect ----------------------------------------------

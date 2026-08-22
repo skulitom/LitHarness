@@ -330,23 +330,30 @@ def _proven_names(tokens: list[tuple[str, bool, bool]]) -> set[str]:
     return {word for word, starts, _ in tokens if not starts and _is_candidate(word)}
 
 
-def opening_proper_noun_names(text: str, window: int = OPENING_WINDOW_WORDS) -> tuple[str, ...]:
-    """The distinct names a reader is asked to hold in the first `window` words, in order.
+def proper_noun_introductions(
+    text: str, window: int = OPENING_WINDOW_WORDS
+) -> tuple[tuple[str, int], ...]:
+    """`(name, word offset of its first appearance)` for each distinct name, in order.
 
-    Multi-word names are joined, including across the closed set of lowercase connectors, so
-    "Hesk Turrow" and "Bellow and Sons" are one apiece rather than two and three. A bare
-    surname later in the window folds into the full name it belongs to: a reader introduced to
-    Hesk Turrow does not meet a second person when the next line says "Turrow said".
+    **The offset is the only thing this adds**, and it was extracted from
+    `opening_proper_noun_names` rather than written beside it: two walks over the same tokens
+    with the same joining rules would be two counters that agree until they do not, which is
+    the second-implementation failure `worlds.project`'s docstring records for `is_a`.
+    `opening_proper_noun_names` is now this function with the offsets dropped, and
+    `test_the_named_offsets_are_the_opening_names_with_positions` pins that the names it
+    returns are unchanged.
 
-    Returned as names rather than as a number because the number is not reviewable. The 2026
-    read named its nine; a counter that could only answer "eight" would have been impossible
-    to check against it.
+    The offset is an index into the token stream `_tokens` produces — whitespace-delimited
+    tokens with pure emphasis or break markers (`*`, `* * *`) removed. That is *not* the same
+    index as a plain `text.split()` offset in a text carrying scene breaks, and a reader
+    comparing the two has to know which they hold. See `research/quality-measurement/
+    named_persons.py`, which reports both.
     """
     tokens = [(_bare(word), starts, joins) for word, starts, joins in _tokens(strip_system(text))]
     proven = _proven_names(tokens)
     opening = tokens[:window]
 
-    names: list[str] = []
+    names: list[tuple[str, int]] = []
     seen: set[str] = set()
     index = 0
     while index < len(opening):
@@ -386,11 +393,26 @@ def opening_proper_noun_names(text: str, window: int = OPENING_WINDOW_WORDS) -> 
         components = {part for part in parts if _is_candidate(part)}
         # Already met, either as this exact name or as a component of a fuller one.
         if name not in seen and not (len(components) == 1 and components & seen):
-            names.append(name)
+            names.append((name, index))
             seen.add(name)
             seen |= components
         index = cursor
     return tuple(names)
+
+
+def opening_proper_noun_names(text: str, window: int = OPENING_WINDOW_WORDS) -> tuple[str, ...]:
+    """The distinct names a reader is asked to hold in the first `window` words, in order.
+
+    Multi-word names are joined, including across the closed set of lowercase connectors, so
+    "Hesk Turrow" and "Bellow and Sons" are one apiece rather than two and three. A bare
+    surname later in the window folds into the full name it belongs to: a reader introduced to
+    Hesk Turrow does not meet a second person when the next line says "Turrow said".
+
+    Returned as names rather than as a number because the number is not reviewable. The 2026
+    read named its nine; a counter that could only answer "eight" would have been impossible
+    to check against it.
+    """
+    return tuple(name for name, _ in proper_noun_introductions(text, window))
 
 
 def opening_proper_nouns(text: str) -> float:
@@ -502,6 +524,7 @@ __all__ = [
     "locate",
     "opening_proper_noun_names",
     "opening_proper_nouns",
+    "proper_noun_introductions",
     "separating",
     "strip_system",
     "system_digit_count",
