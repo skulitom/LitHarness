@@ -41,7 +41,7 @@ from litharness.domain.beats import (
     arc_template,
     beats_for,
 )
-from litharness.domain.context import assemble
+from litharness.domain.context import FACTS, assemble
 from litharness.domain.draft import DraftPolicy, is_draftable
 from litharness.domain.extraction import (
     extract_state,
@@ -642,6 +642,145 @@ def test_the_chapter_cue_carries_no_verb_and_no_adjective(store: SqliteStore) ->
     assert cue == " Chapter 1, scene 4 of 4. "
     for forbidden in ("hook", "cliff", "closing", "final", "last", "end", "stakes", "question"):
         assert forbidden not in cue.lower()
+
+
+# --- whose scene this is ---------------------------------------------------------------
+#
+# `plan/reader-read-3.md` note 3: *"Its too confusing who the main character is."* The first
+# two words of the book are a different person's name; the protagonist enters at word 17 with
+# no role and no want, and his trade is first stated at word 804 inside a line he reads aloud.
+# C5 — "the first sentence of a scene puts a person in a situation" — was in the packet and was
+# obeyed. *Which* person was unsaid, because nothing in the pipeline had a protagonist to name.
+#
+# `packet_for` has taken a `pov_character_id` since it was written and no production caller ever
+# passed one: every packet this system has ever built was built for no one.
+
+
+def test_the_prompt_is_byte_identical_when_canon_names_no_protagonist(
+    store: SqliteStore,
+) -> None:
+    """The control, and it is a byte comparison for the chapter cue's reason.
+
+    Every book written before a world could declare a protagonist passes `None` here, and
+    `input_digest_for` covers the prompt and is the sampler seed — so a fragment rendered under
+    the falsy case would silently move the decoding of every newly minted job.
+    """
+    book_id, branch_id = _fixture(store, "mystery")
+    head = store.head(book_id, branch_id)
+    assert head is not None
+    beat = beats_for(head, SIX_BEAT)[3]
+    packet = packet_for(store, head, beat)
+
+    absent = render_prompt(beat, book_title="The Vane House", packet=packet)
+    explicit = render_prompt(
+        beat, book_title="The Vane House", packet=packet, point_of_view=None
+    )
+    assert explicit == absent
+    assert "Point of view" not in absent[1]
+
+
+def test_the_prompt_says_whose_scene_it_is(store: SqliteStore) -> None:
+    """Position and fact, in the beat line, beside the chapter cue and before the function."""
+    book_id, branch_id = _fixture(store, "mystery")
+    head = store.head(book_id, branch_id)
+    assert head is not None
+    beat = beats_for(head, SIX_BEAT)[3]
+    packet = packet_for(store, head, beat)
+    position = chapter_positions(head, SerialShape(scenes_per_chapter=4))[beat.logical_id]
+
+    _, prompt = render_prompt(
+        beat, book_title=None, packet=packet, chapter=position, point_of_view="silas"
+    )
+    assert (
+        "scene 4 of 6. Chapter 1, scene 4 of 4. Point of view: silas. Dramatic function:"
+        in prompt
+    )
+
+    # And without a chapter scheme it sits directly after the ordinal.
+    _, alone = render_prompt(beat, book_title=None, packet=packet, point_of_view="silas")
+    assert "scene 4 of 6. Point of view: silas. Dramatic function:" in alone
+
+
+def test_the_point_of_view_fragment_carries_no_verb_and_no_adjective(
+    store: SqliteStore,
+) -> None:
+    """**The boundary, asserted rather than trusted** — the chapter cue's test, one field over.
+
+    The system may tell a writer whose scene this is; it may not tell it how to handle them.
+    Open on the hero, make them likeable, show them winning, have them progress faster than
+    anyone: that is the director's to say, and a default in this line would be this system's own
+    taste arriving in every prompt it renders (stage-0 §95, §97.1). The operator's own words for
+    a hook use exactly these verbs, which is why the fragment that came out of them must not.
+    """
+    book_id, branch_id = _fixture(store, "mystery")
+    head = store.head(book_id, branch_id)
+    assert head is not None
+    beat = beats_for(head, SIX_BEAT)[3]
+    packet = packet_for(store, head, beat)
+
+    _, prompt = render_prompt(
+        beat, book_title=None, packet=packet, point_of_view="silas"
+    )
+    cue = prompt.rsplit("scene 4 of 6.", 1)[1].split("Dramatic function:")[0]
+    assert cue == " Point of view: silas. "
+    for forbidden in (
+        "hero", "likeable", "sympathetic", "win", "open", "first", "faster", "best",
+        "should", "must", "make", "show",
+    ):
+        assert forbidden not in cue.lower()
+
+
+def test_the_point_of_view_goes_before_the_beat_and_never_after_the_statement(
+    store: SqliteStore,
+) -> None:
+    """`plans.scene_plan_line` is rendered last, always, and §61's comparison depends on it.
+
+    `plan_search` mints K candidate drafts that differ only in that final fragment; a viewpoint
+    appended after it would make the K prompts differ in two places and the tournament would
+    stop being a controlled comparison.
+    """
+    book_id, branch_id = _fixture(store, "mystery")
+    head = store.head(book_id, branch_id)
+    assert head is not None
+    beat = beats_for(head, SIX_BEAT)[-1]
+    packet = packet_for(store, head, beat)
+
+    _, planned = render_prompt(
+        beat,
+        book_title=None,
+        packet=packet,
+        point_of_view="silas",
+        scene_plan="Silas is refused entry at the archive.",
+    )
+    assert planned.rstrip().endswith("Silas is refused entry at the archive.")
+    assert planned.index("Point of view: silas.") < planned.index("Dramatic function:")
+
+
+def test_the_packet_is_built_for_the_protagonist_when_canon_names_one(
+    store: SqliteStore,
+) -> None:
+    """The seam that existed and was never passed anything, measured on a real packet.
+
+    Two effects and only two, both of them the packet's own: the facts block is labelled with
+    whose knowledge it is, and `state.visible_to` admits records restricted to that id. On a
+    forged world the second is a no-op — `records_for` writes no `pov_visibility` at all, because
+    the iceberg is a claim with a disclosure and not packet access control (§107.4) — so the
+    labelled heading is the whole of the observable difference, and that is what is asserted.
+    """
+    book_id, branch_id = _fixture(store, "mystery")
+    head = store.head(book_id, branch_id)
+    assert head is not None
+    beat = beats_for(head, SIX_BEAT)[3]
+
+    for_nobody = packet_for(store, head, beat)
+    for_silas = packet_for(store, head, beat, pov_character_id="silas")
+
+    assert "Established facts:" in for_nobody.render()
+    assert "Established facts known to silas:" in for_silas.render()
+    assert [item.item_id for item in for_silas.sections[FACTS]] == [
+        item.item_id for item in for_nobody.sections[FACTS]
+    ]
+    assert len(for_silas.omitted) == len(for_nobody.omitted)
 
 
 def test_the_chapter_cue_goes_before_the_beat_and_never_after_the_statement(

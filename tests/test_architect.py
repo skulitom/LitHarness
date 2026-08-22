@@ -43,7 +43,22 @@ def world(
         "geometry": geometry,
         "progression_means": "your read of a thing gets longer, never stronger",
         "inversion": "no combat class exists; the removed slot is filled by standing",
-        "premise": f"A clerk in {domain} learns what the ledger is really counting.",
+        # **Written as the protagonist's situation and naming him**, which is what the rule
+        # added on 2026-08-22 asks a world for and what `gate_candidate` checks arithmetically.
+        # It still varies with `domain`, so two fixtures built from different domains carry
+        # different premises and the collapse gate has something to compare.
+        "premise": (
+            f"Silas, a junior clerk in {domain}, is the one the provenance rule does not bind."
+        ),
+        "protagonist": {
+            "id": "silas",
+            "exception": "provenance",
+            "edge": "he prices a thing the assay has not seen, and the price holds",
+            # The same string the cast entry carries: two declarations of one fact produce one
+            # record, because `records_for` keys on content and `add` drops the duplicate.
+            "wants": "to be read once by someone who matters",
+            "price": "every reading he signs is checked twice, and the second check is not his",
+        },
         "systems": [
             {
                 "id": "assay",
@@ -340,6 +355,197 @@ def test_an_answer_that_compares_itself_to_something_outside_it_is_refused(
     leaky["systems"][0]["logic"] = f"every made thing carries its history, {borrowed}"
     complaints = gate(leaky)
     assert any("RS1" in complaint for complaint in complaints)
+
+
+# --- whose book it is ---------------------------------------------------------------------------
+#
+# `plan/reader-read-3.md` note 1: the operator read two chapters of the first book drafted on a
+# forged world and named the premise as the defect — a world premise is what is true of everyone,
+# and the hook the genre runs on is an exception belonging to one person. Measured against this
+# module, the words *protagonist*, *main character* and *hero* did not occur in it, and none of
+# the world's five declared cast members reached either chapter.
+#
+# What these tests grade is that a world can *declare* one and that the declaration refers.
+# Whether the hook is any good is not graded here and has no instrument in this project;
+# `test_the_architect_ranks_nothing_and_cannot_learn_to` is what keeps it that way.
+
+
+def test_a_world_that_names_no_protagonist_is_refused_at_the_forge() -> None:
+    """Required of the forge, and refused there rather than downstream.
+
+    `records_for` deliberately tolerates absence, because
+    `test_the_pilot_package_regenerates_the_world_it_was_run_on` runs it over a world forged
+    before the field existed. The refusal therefore lives where the model's answer arrives.
+    """
+    faceless = world()
+    del faceless["protagonist"]
+    with pytest.raises(architect.ArchitectOutputError, match="names no protagonist"):
+        architect.worlds_from(payload(faceless, world(domain="b", geometry="cycle")), 2)
+
+
+@pytest.mark.parametrize("field_name", ["id", "exception", "edge", "wants", "price"])
+def test_an_empty_protagonist_field_is_refused_by_name(field_name: str) -> None:
+    """Emptiness, not absence, because `minLength` is a request and not a guarantee.
+
+    The 2026-08-22 forge returned a world whose `premise` was the empty string under a schema
+    that asked for a string, conformed, and then failed the shape check — $1.48 for three worlds,
+    one of them unusable (`pilot3/forge.db`, `dec-fb00e71c…`).
+    """
+    hollow = world()
+    hollow["protagonist"] = {**hollow["protagonist"], field_name: "   "}
+    with pytest.raises(architect.ArchitectOutputError, match=f"protagonist has no {field_name}"):
+        architect.worlds_from(payload(hollow, world(domain="b", geometry="cycle")), 2)
+
+
+def test_the_protagonist_reaches_canon_as_records_and_not_as_a_field() -> None:
+    """Everything a world declares is a record here, and this is not the exception.
+
+    The role is a *second* one on a cast member — `entity_roles` returns the roles a subject
+    carries, plural, because a subject may be two things at once — so nothing has to choose
+    between "cast" and "protagonist".
+    """
+    records = architect.records_for(candidate(), scenes=SCENES)
+    assert worlds.entity_roles(records)["silas"] == ("cast", "protagonist")
+    assert worlds.entities_with_role(records, "protagonist") == ("silas",)
+
+    by_predicate = {
+        record.predicate: record
+        for record in records
+        if record.subject == "silas" and record.object_ref is None
+    }
+    assert by_predicate[worlds.EDGE_PREDICATE].value.startswith("he prices a thing")
+    assert by_predicate[worlds.PRICE_PREDICATE].value.startswith("every reading he signs")
+
+    [exception] = [
+        record
+        for record in records
+        if record.predicate == worlds.EXCEPTION_PREDICATE
+    ]
+    assert exception.subject == "silas"
+    assert exception.object_ref == "provenance"
+    assert exception.kind is lc.StateRecordKind.RELATIONSHIP
+
+    # One `wants`, though two places in the answer declared it: `records_for` keys a record on
+    # its content, so the cast entry's want and the protagonist's are one fact.
+    assert len([r for r in records if r.subject == "silas" and r.predicate == "wants"]) == 1
+    assert worlds.validate(records) == ()
+
+
+def test_an_exception_to_a_shape_reaches_the_shape_and_one_to_a_rule_does_not() -> None:
+    """**The one derivation in `records_for`, and it is a definition rather than an inference.**
+
+    "Silas is the exception to `one_seal`" and "`one_seal` does not govern silas" are the same
+    fact said from the two ends of one edge, and `worlds.in_scope` reads only the second. A world
+    that declared the first and forgot the second would hand the writer an exception the gate
+    still refuses — decoration, which is what `plan/handoff-protagonist.md` Task 1 exists to
+    prevent.
+
+    An exception naming a *rule* has no maximum to except, so it gets the edge and nothing more.
+    """
+    to_a_shape = candidate(
+        extra={
+            "protagonist": {
+                **world()["protagonist"],
+                "exception": "one_seal",
+            }
+        }
+    )
+    records = architect.records_for(to_a_shape, scenes=SCENES)
+    [shape] = worlds.cardinality_shapes(records)
+    assert shape.except_subjects == ("silas",)
+
+    # The fixture's own protagonist excepts a rule, and no shape is touched.
+    [plain] = worlds.cardinality_shapes(architect.records_for(candidate(), scenes=SCENES))
+    assert plain.except_subjects == ()
+
+
+def test_a_shape_may_declare_its_own_exceptions_without_a_protagonist() -> None:
+    """The second declaration site, so the field is not reachable only through one person."""
+    declared = world()
+    declared["cardinality"][0] = {**declared["cardinality"][0], "except": ["marta"]}
+    [shape] = worlds.cardinality_shapes(
+        architect.records_for(architect.Candidate(0, declared), scenes=SCENES)
+    )
+    assert shape.except_subjects == ("marta",)
+
+
+@pytest.mark.parametrize(
+    "change,complaint",
+    [
+        ({"id": "nobody"}, "not one of the declared cast"),
+        ({"exception": "no_such_rule"}, "neither a declared rule nor a declared cardinality"),
+    ],
+)
+def test_the_gate_complains_when_the_declaration_refers_to_nothing(
+    change: dict[str, str], complaint: str
+) -> None:
+    """Membership, never taste. The gate asks whether the declaration *refers*.
+
+    It never asks whether the hook is good, whether the edge is interesting, or whether this is
+    the right person to write about — that question has no instrument here and inventing one
+    would be the verdict channel `plan/world-architect.md` §2 keeps shut.
+    """
+    broken = world()
+    broken["protagonist"] = {**broken["protagonist"], **change}
+    assert any(complaint in item for item in gate(broken))
+
+
+def test_the_gate_complains_when_the_premise_never_names_the_protagonist() -> None:
+    """A premise that describes the world rather than this person's situation.
+
+    Checked for the name and for nothing else: whether it is *written as* their situation is a
+    judgment with no instrument, and whether it says their name is arithmetic.
+    """
+    worldly = world()
+    worldly["premise"] = "A city discovers what its ledger has really been counting."
+    assert any("never names" in item for item in gate(worldly))
+    assert not architect.premise_names_protagonist(architect.Candidate(0, worldly))
+    assert architect.premise_names_protagonist(candidate())
+
+
+def test_a_word_that_merely_contains_the_id_does_not_count_as_naming() -> None:
+    """Word boundaries rather than a bare substring.
+
+    `worlds.key_nouns` records the same failure class from its own first live run, where `mour`
+    and `ise` arrived out of the middle of longer ids.
+    """
+    inside = world()
+    inside["premise"] = "The assay's silasine ledger counts what nobody reads."
+    assert not architect.premise_names_protagonist(architect.Candidate(0, inside))
+
+
+def test_the_report_counts_the_declaration_and_orders_nothing() -> None:
+    note = architect.report(candidate(), scenes=SCENES)
+    assert note["protagonist_declared"] is True
+    assert note["exception_declared"] is True
+    assert note["premise_names_protagonist"] is True
+    # No score, no rank, no preference — the three counters are facts about one candidate.
+    assert not {key for key in note if "score" in key or "rank" in key.split("_")}
+
+
+def test_the_protagonist_rule_asks_for_a_declaration_and_never_an_outcome() -> None:
+    """**Boundary 1 of `plan/handoff-protagonist.md`, asserted rather than trusted.**
+
+    A protagonist is a declared fact of the world. No default instruction about how to *handle*
+    one — open on the hero, make them likeable, show them winning, have them progress faster
+    than anyone — may enter any prompt this system renders; that direction is the operator's.
+    The operator's own words for the hook use exactly these verbs, which is why the rule that
+    came out of them must not.
+
+    The word *reader* is deliberately **not** on the list: the rules beside this one already say
+    "a form a reader can SEE" and "teaches a reader that nothing here gets settled". It is this
+    module's register for what shows on the page, and forbidding it here would be a rule about a
+    word rather than about a boundary.
+    """
+    [rule] = [item for item in architect._RULES if "protagonist" in item]
+    lowered = rule.lower()
+    for forbidden in (
+        "win", "winning", "hero", "likeable", "likable", "sympathetic", "root for",
+        "faster", "fastest", "strongest", "best", "succeed", "success", "triumph",
+        "interesting", "compelling",
+    ):
+        assert forbidden not in lowered, forbidden
+    assert "declared id" in lowered and "does not hold for them" in lowered
 
 
 # --- the world as records ---------------------------------------------------------------------
@@ -645,6 +851,31 @@ def test_the_pilot_package_regenerates_the_world_it_was_run_on() -> None:
     assert len(records) - reported == len(worlds.disclosures(records))
     assert len(worlds.reveal_scenes(records)) == 6
     assert len(worlds.disclosures(records)) == 2
+
+    # **The protagonist field is additive, and this is where "additive" is a test.** This world
+    # was forged on 2026-08-22, before a world could declare whose book it was. It must therefore
+    # produce not one record of the new vocabulary, gate as clean as it gated, and hand the
+    # planner nothing new — the packet, the outline request and the drafting prompt of a book
+    # whose canon declares no protagonist are the bytes they were.
+    assert candidate.protagonist is None
+    assert worlds.protagonist_brief(records) is None
+    assert not [
+        record
+        for record in records
+        if record.predicate
+        in {
+            worlds.EXCEPTION_PREDICATE,
+            worlds.EDGE_PREDICATE,
+            worlds.PRICE_PREDICATE,
+            worlds.EXCEPTS_PREDICATE,
+        }
+        or (record.predicate == worlds.ENTITY_ROLE_PREDICATE and record.value == "protagonist")
+    ]
+    assert all(shape.except_subjects == () for shape in worlds.cardinality_shapes(records))
+    note = architect.report(candidate, scenes=8)
+    assert note["protagonist_declared"] is False
+    assert note["exception_declared"] is False
+    assert note["premise_names_protagonist"] is False
 
 
 def test_a_debt_the_serial_settles_later_is_opened_without_a_due_date(tmp_path: Path) -> None:

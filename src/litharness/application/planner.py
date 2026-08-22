@@ -310,6 +310,7 @@ def render_prompt(
     writer: Writer | None = None,
     criteria: str | None = None,
     chapter: Position | None = None,
+    point_of_view: str | None = None,
 ) -> tuple[str, str]:
     """(system, prompt) for one beat, grounded in an assembled context packet.
 
@@ -392,6 +393,18 @@ def render_prompt(
     after the statement. `plans.scene_plan_line` is rendered last always, and `plan_search`'s
     controlled comparison is only controlled while the K candidates differ in that final
     fragment and nowhere else.
+
+    **`point_of_view` is the same class of thing as `chapter`, and it is held to the same
+    boundary.** It says whose scene this is — one declared cast id, the one this book's canon
+    names as its protagonist — and then stops. `Point of view: kell.` has no verb and no
+    adjective, because *how* to handle a protagonist is the director's to say and a default here
+    would be this system's own taste arriving in every prompt it ever renders (stage-0 §95's
+    scope axiom, §97.1). Nothing here says open on them, make them likeable, or show them
+    winning; `test_the_point_of_view_fragment_carries_no_verb_and_no_adjective` checks it.
+
+    `None` renders nothing and is the control: every book written before a world could declare a
+    protagonist passes `None`, and its prompt is byte-identical to what it was. It sits beside
+    the chapter cue and before the dramatic function, for the chapter cue's reason.
     """
     system = (
         "You are drafting one scene of a novel. Write only the scene's prose: no headings, "
@@ -483,10 +496,12 @@ def render_prompt(
             f"{chapter.scenes_in_chapter}."
         )
     )
+    pov_line = "" if not point_of_view else f" Point of view: {point_of_view}."
     prompt = (
         f"{packet.render()}\n\n"
         f"Now write {title}{beat.title or beat.logical_id} — scene {beat.ordinal} of "
-        f"{beat.of_total}.{chapter_line} Dramatic function: {beat.function}.{plan_line}"
+        f"{beat.of_total}.{chapter_line}{pov_line} Dramatic function: {beat.function}."
+        f"{plan_line}"
     )
     return system, prompt
 
@@ -839,6 +854,25 @@ def make_plan_selector(
             if store.any_unfinished(ids):
                 continue
 
+            # **Whose book this is, read once per book rather than once per beat.** It is a
+            # position in the same sense `positions` is one: canon names one member of
+            # the cast as this book's protagonist, and the packet and the beat line are told
+            # which. Until this line existed `packet_for`'s `pov_character_id` seam had never
+            # been passed anything by any production caller — every packet this system has ever
+            # built was built for no one — while the outline invented whoever acted in the book
+            # (`plan/reader-read-3.md` notes 1 and 3).
+            #
+            # `None` for every book whose canon declares no protagonist, and then the packet
+            # filters nothing, the facts block keeps its old heading and the beat line renders
+            # no fragment — byte-identical to what it was, which `input_digest_for` makes
+            # load-bearing because that digest is also the sampler seed.
+            # Read here rather than beside `positions`, which is pure: this is a query, and
+            # a book whose work is already in flight has just `continue`d above without one.
+            pov = worlds.protagonist_brief(
+                store.state_records(progress.book_id, progress.branch_id)
+            )
+            pov_id = pov.subject if pov is not None else None
+
             for beat in beats:
                 # 4. The selector's precondition IS the gate's — one function, no drift.
                 if not is_draftable(head, beat.logical_id, policy=policy):
@@ -868,7 +902,11 @@ def make_plan_selector(
                     # Already planned under this epoch: in flight, or burned by a poison.
                     continue
                 try:
-                    packet = packet_for(store, head, beat, token_budget=token_budget)
+                    packet = packet_for(
+                        store, head, beat,
+                        token_budget=token_budget,
+                        pov_character_id=pov_id,
+                    )
                 except ContextBudgetTooSmall:
                     # A ceiling too small to hold the premise refuses the *book*, not this
                     # beat: every beat of it would refuse identically, and enqueueing six
@@ -929,6 +967,7 @@ def make_plan_selector(
                         store.state_records(progress.book_id, progress.branch_id)
                     ),
                     chapter=positions.get(beat.logical_id),
+                    point_of_view=pov_id,
                 )
                 payload: dict[str, object] = {
                     "revision_id": head.revision_id,

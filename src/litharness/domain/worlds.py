@@ -100,7 +100,29 @@ ENTITY_ROLES: tuple[str, ...] = (
     "carrier",
     "agency",
     "system",
+    # **A second role on a cast member, never a role of its own.** `entity_roles` returns the
+    # roles a subject carries because a subject may be two things at once, and the protagonist
+    # is the case that argument was written for: they are a member of the cast and they are
+    # additionally the one this book is about. A separate role list would make "protagonist"
+    # and "cast" alternatives, and a world would have to choose.
+    "protagonist",
 )
+
+# --- the one member of the cast this book is about -------------------------------------------
+
+#: What the exception lets them do that nobody else can, in the `manifests_as` register: how it
+#: shows on the page. A fact about the world, exactly as a rule is — never an instruction about
+#: how to write them. `plan/reader-read-3.md` note 1 is why the field exists at all.
+EDGE_PREDICATE = "edge"
+
+#: What the exception costs them, payable on the page. The counterpart of `cost_to_reach` on a
+#: rank: a gain declared with no price is the thing `_RULES` already refuses everywhere else.
+PRICE_PREDICATE = "price"
+
+#: The rule or cardinality shape this subject is the exception to, **by id**. An edge, because
+#: the second extractor family reads edges and because an exception that names its rule in prose
+#: is an exception nothing can check.
+EXCEPTION_PREDICATE = "exception_to"
 
 # --- rules and their consequences ----------------------------------------------------------
 
@@ -211,6 +233,18 @@ PREDICATE_PREDICATE = "predicate"
 #: The scope value that means "every subject", for a predicate whose exclusivity is a property
 #: of the predicate rather than of a kind of thing.
 ANY_SCOPE = "*"
+
+#: One subject this shape does not govern, as an edge from the shape to the subject.
+#:
+#: **Scope stays a role and this is why it can.** `in_scope`'s docstring records the reason a
+#: scope is an `entity_role` and not a subject id: a shape is a rule about a *kind* of thing, and
+#: a shape that named one carrier would be a fact about that carrier wearing a rule's clothes.
+#: An exception is the other object — a declared fact about *one* subject, which is what the word
+#: means — so it is declared as one and read beside the shape rather than inside it. Without it
+#: the hook `plan/reader-read-3.md` note 1 asks for is undeclarable: the operator's own example
+#: is "everyone in the world has one cuff, the main character broke the system and can have as
+#: many as they like", which is exactly a cardinality maximum that does not hold for one person.
+EXCEPTS_PREDICATE = "excepts"
 
 #: Group keys a shape may declare. Deliberately three, and deliberately not an expression
 #: language: `research/progression-generalization.md` §15.7 refuses a comparator DSL for the
@@ -666,6 +700,9 @@ class CardinalityShape:
     scope: str
     group_key: str
     maximum: int
+    #: Subjects this shape does not govern. Empty for every shape declared before
+    #: `EXCEPTS_PREDICATE` existed, and a shape with an empty tuple behaves exactly as it did.
+    except_subjects: tuple[str, ...] = ()
 
 
 def cardinality_shapes(
@@ -679,8 +716,14 @@ def cardinality_shapes(
     cost of the complaint is a candidate rather than a serial.
     """
     parts: dict[str, dict[str, lc.StateRecord]] = {}
+    #: Collected in its own pass because `parts` keeps one record per predicate and a shape may
+    #: except more than one subject. Keying the last one would silently drop the rest, which is
+    #: the failure `record_id_for`'s docstring records for edges generally.
+    excepted: dict[str, set[str]] = {}
     for record in records:
         parts.setdefault(record.subject, {})[record.predicate] = record
+        if record.predicate == EXCEPTS_PREDICATE and record.object_ref:
+            excepted.setdefault(record.subject, set()).add(record.object_ref)
     shapes: list[CardinalityShape] = []
     for subject in sorted(parts):
         rows = parts[subject]
@@ -707,7 +750,14 @@ def cardinality_shapes(
         if maximum.value < 1:
             continue
         shapes.append(
-            CardinalityShape(subject, predicate_name, scope_name, group, maximum.value)
+            CardinalityShape(
+                subject,
+                predicate_name,
+                scope_name,
+                group,
+                maximum.value,
+                tuple(sorted(excepted.get(subject, ()))),
+            )
         )
     return tuple(shapes)
 
@@ -730,7 +780,15 @@ def in_scope(
 
     Scope is an `entity_role`, or `*`. Not a subject id: a shape that named one carrier would be
     a fact about that carrier, and the thing being declared is a rule about a *kind* of thing.
+
+    **An exception is the other object, and it is checked first.** A subject the shape declares
+    it does not govern (`EXCEPTS_PREDICATE`) is out of scope whatever its roles are — which is
+    what makes the hook of `plan/reader-read-3.md` note 1 declarable without putting a hole in
+    the shape: the maximum still binds on every other subject of the same kind, and
+    `tests/test_integrity.py` pins all three of those cases against each other.
     """
+    if record.subject in shape.except_subjects:
+        return False
     if shape.scope == ANY_SCOPE:
         return True
     return shape.scope in roles.get(record.subject, ())
@@ -905,6 +963,148 @@ def _cardinality_parts(records: Sequence[lc.StateRecord]) -> dict[str, set[str]]
 # --- the projection ----------------------------------------------------------------------------
 
 
+@dataclass(frozen=True, slots=True)
+class CastMember:
+    """One declared person, in the words the packet would use for them."""
+
+    subject: str
+    is_a: str
+    wants: str
+    #: This subject's outgoing ties, each phrased the way `context._state_item` phrases a
+    #: record: the projection first, `state.describe` as the fallback.
+    relationships: tuple[str, ...]
+
+    def to_jsonable(self) -> dict[str, object]:
+        return {
+            "id": self.subject,
+            **({"is_a": self.is_a} if self.is_a else {}),
+            **({"wants": self.wants} if self.wants else {}),
+            **({"relationships": list(self.relationships)} if self.relationships else {}),
+        }
+
+
+@dataclass(frozen=True, slots=True)
+class Protagonist:
+    """The one member of the cast this book is about, as canon declares them."""
+
+    subject: str
+    exception: str
+    edge: str
+    wants: str
+    price: str
+
+    def to_jsonable(self) -> dict[str, object]:
+        return {
+            "id": self.subject,
+            **({"exception": self.exception} if self.exception else {}),
+            **({"edge": self.edge} if self.edge else {}),
+            **({"wants": self.wants} if self.wants else {}),
+            **({"price": self.price} if self.price else {}),
+        }
+
+
+#: **A tie is an edge to somebody the world declared, and nothing else.** A cast member's edges
+#: also point at *claims* — `believes` at a false belief, `keeps_secret` at a secret — and those
+#: are the iceberg's bookkeeping rather than the cast's ties. Filtering by "does the target carry
+#: an entity role" rather than by a list of allowed predicates keeps the filter honest in both
+#: directions: a world coins its own relation names, so an allow-list of predicates would be the
+#: arity table `detect_cardinality_violations` refuses, and a claim id can never satisfy it.
+#:
+#: It is also the leak-safe direction. A secret's *content* is never in one of these lines —
+#: `state.describe` renders the id — but a planner handed "keeps_secret (x_secret)" for every
+#: person is being handed the shape of what it is not allowed to plan against.
+_CAST_TIE_TARGET_ROLES = frozenset(ENTITY_ROLES)
+
+
+def cast_brief(records: Sequence[lc.StateRecord]) -> tuple[CastMember, ...]:
+    """The declared cast, for a planner that would otherwise invent one. Empty when none exists.
+
+    **The people, which is the half of a world that never reached the plan.** The world reaches
+    the *writer*: on Serial Pilot 3 the drafting packet carried 328 established facts with
+    `context_omitted = 0`. The scene plan the writer was told to execute was written by a model
+    that had been handed the premise and the beat sheet, so it invented a protagonist and every
+    other named person, and none of the five forged cast members appeared in either chapter
+    (`plan/reader-read-3.md` note 1).
+
+    **Phrased the way the packet phrases it, and by the same two steps**, so a planner and a
+    writer never see one fact in two wordings: `project` first, `state.describe` as the fallback
+    (§107.3, `context._state_item`). `is_a` and `wants` carry their values plainly, because the
+    field name already says what the flat rendering would repeat.
+
+    Canon only, and ordered by subject id so the same world always renders the same bytes.
+    """
+    canon = _canon(records)
+    subjects = entities_with_role(canon, "cast")
+    if not subjects:
+        return ()
+    projection = project(canon)
+    roles = entity_roles(canon)
+    wanted = set(subjects)
+    by_subject: dict[str, list[lc.StateRecord]] = {}
+    for record in canon:
+        if record.subject in wanted:
+            by_subject.setdefault(record.subject, []).append(record)
+    out: list[CastMember] = []
+    for subject in subjects:
+        rows = by_subject.get(subject, [])
+        attribute = {
+            record.predicate: str(record.value or "").strip()
+            for record in rows
+            if record.object_ref is None
+        }
+        ties = tuple(
+            projection.get(record.record_id) or state_mod.describe(record)
+            for record in rows
+            if record.object_ref
+            and set(roles.get(record.object_ref, ())) & _CAST_TIE_TARGET_ROLES
+        )
+        out.append(
+            CastMember(
+                subject,
+                attribute.get("is_a", ""),
+                attribute.get("wants", ""),
+                tuple(sorted({tie for tie in ties if tie})),
+            )
+        )
+    return tuple(out)
+
+
+def protagonist_brief(records: Sequence[lc.StateRecord]) -> Protagonist | None:
+    """The declared protagonist, or `None` for a book whose canon names none.
+
+    **`None` is every book written before 2026-08-22 and it is the control.** A caller that gets
+    `None` must render exactly the bytes it rendered before this function existed; a key that is
+    always present carrying `null` is a payload that always changed, and `input_digest_for`
+    covers the prompt and seeds the sampler.
+
+    More than one declared protagonist is not an error here and is not resolved here either: the
+    first by subject id is returned, deterministically, and `validate` is where a world that
+    declares two would be complained about if the operator ever wants that complaint. Nothing in
+    this project ranks people.
+    """
+    canon = _canon(records)
+    subjects = entities_with_role(canon, "protagonist")
+    if not subjects:
+        return None
+    subject = subjects[0]
+    values: dict[str, str] = {}
+    exception = ""
+    for record in canon:
+        if record.subject != subject:
+            continue
+        if record.predicate == EXCEPTION_PREDICATE and record.object_ref:
+            exception = record.object_ref
+        elif record.object_ref is None:
+            values[record.predicate] = str(record.value or "").strip()
+    return Protagonist(
+        subject,
+        exception,
+        values.get(EDGE_PREDICATE, ""),
+        values.get("wants", ""),
+        values.get(PRICE_PREDICATE, ""),
+    )
+
+
 def criterion_brief(records: Sequence[lc.StateRecord]) -> str | None:
     """One line per criterion, for the drafting system message. `None` when a world declares none.
 
@@ -973,6 +1173,7 @@ _SATELLITE = frozenset(
         GROUP_KEY_PREDICATE,
         MAXIMUM_PREDICATE,
         PREDICATE_PREDICATE,
+        EXCEPTS_PREDICATE,
         MEMBER,
         PERMITS,
     }
@@ -1090,7 +1291,20 @@ def _node_sentence(
             if scope is not None and (scope.object_ref or scope.value) not in (None, ANY_SCOPE)
             else ""
         )
-        return f"at most {limit} {name.replace('_', ' ')}{where} at one time"
+        # **The exception is rendered with the rule or it is not a fact the writer has.** A
+        # packet that carried "at most one owner per trait" and, separately, "kell is the
+        # exception to c_one_owner_per_trait" would hand the writer a rule and an id, and the
+        # scene that has to show the difference would be written against the rule. Absent for
+        # every shape that excepts nobody, which is every shape forged before this existed.
+        excepted = sorted(
+            {
+                row.object_ref
+                for row in parts.get(EXCEPTS_PREDICATE, ())
+                if row.object_ref
+            }
+        )
+        unless = f", except for {', '.join(excepted)}" if excepted else ""
+        return f"at most {limit} {name.replace('_', ' ')}{where} at one time{unless}"
 
     if node_type == VIEW:
         substrate = one(VIEW_SUBSTRATE)
@@ -1135,6 +1349,17 @@ def _record_sentence(
         return f"Because of {record.subject}, in {domain}: {value}"
     if record.predicate == MANIFESTS_PREDICATE and value:
         return f"{record.subject} shows on the page as: {value}"
+    # **The exception, its edge and its price, as three facts and no instruction.** The register
+    # is the one the rules and manifestations already use: what is so, never what to do about it.
+    # A sentence here that said "open on them" or "make the reader like them" would be this
+    # system's own taste arriving in every packet, which is the boundary stage-0 §95 draws and
+    # `plan/handoff-protagonist.md` boundary 1 restates for this field in particular.
+    if record.predicate == EXCEPTION_PREDICATE and record.object_ref:
+        return f"{record.subject} is the one the rule {record.object_ref} does not hold for"
+    if record.predicate == EDGE_PREDICATE and value:
+        return f"{record.subject} alone can: {value}"
+    if record.predicate == PRICE_PREDICATE and value:
+        return f"It costs {record.subject}: {value}"
     if record.predicate == ENTITY_ROLE_PREDICATE:
         return ""
     if record.predicate == PRECEDES_PREDICATE and record.object_ref:
@@ -1189,12 +1414,15 @@ __all__ = [
     "CONSTRAINT",
     "CRITERION",
     "DISCLOSED_TO",
+    "EDGE_PREDICATE",
     "ENTITY_ROLES",
     "ENTITY_ROLE_PREDICATE",
     "EVALUATES_PREDICATE",
     "EVALUATION_CRITERION",
     "EVALUATION_RESULT",
     "EVALUATION_SUBJECT",
+    "EXCEPTION_PREDICATE",
+    "EXCEPTS_PREDICATE",
     "GRAPH_LINE_PREDICATE",
     "GROUP_KEYS",
     "GROUP_KEY_PREDICATE",
@@ -1205,6 +1433,7 @@ __all__ = [
     "PERMITS",
     "PRECEDES_PREDICATE",
     "PREDICATE_PREDICATE",
+    "PRICE_PREDICATE",
     "QUESTION_PREDICATE",
     "READER",
     "RECOGNIZED_BY",
@@ -1218,10 +1447,13 @@ __all__ = [
     "VIEW_WITHHOLDS",
     "WORLD_RULE_PREDICATE",
     "CardinalityShape",
+    "CastMember",
     "Coverage",
     "IllegalWorld",
+    "Protagonist",
     "architect_id_for",
     "cardinality_shapes",
+    "cast_brief",
     "claims",
     "consequence_domains",
     "criteria",
@@ -1241,6 +1473,7 @@ __all__ = [
     "nodes_of_type",
     "normalise_id",
     "project",
+    "protagonist_brief",
     "questions",
     "rank_order",
     "record_id_for",

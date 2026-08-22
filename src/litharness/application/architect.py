@@ -94,6 +94,13 @@ class ArchitectOutputError(Exception):
 _ID = {"type": "string"}
 _TEXT = {"type": "string"}
 
+#: A string the answer is not allowed to leave empty. **Measured, not defensive.** The
+#: 2026-08-22 forge returned a world with an empty `premise` that conformed to this schema and
+#: then failed `worlds_from`'s shape check — $1.48 for three worlds, one of them unusable. The
+#: older fields keep `_TEXT` because tightening them would change the schema every existing
+#: world was forged under; the fields added since carry the floor.
+_SAID = {"type": "string", "minLength": 1}
+
 _CONSEQUENCE = {
     "type": "object",
     "additionalProperties": False,
@@ -239,6 +246,31 @@ _CARDINALITY = {
         "scope": {"type": "string", "enum": [*worlds_mod.ENTITY_ROLES, worlds_mod.ANY_SCOPE]},
         "group_key": {"type": "string", "enum": list(worlds_mod.GROUP_KEYS)},
         "maximum": {"type": "integer"},
+        # **The declared exceptions, and the reason they are not a `scope`.** `worlds.in_scope`
+        # keeps a scope an `entity_role` because a shape is a rule about a *kind* of thing; an
+        # exception is a declared fact about *one* subject. Omitted by almost every world, and a
+        # shape that omits it is byte-identical to one forged before this key existed.
+        "except": {
+            "type": "array",
+            "description": (
+                "Declared ids this maximum does not govern. Almost always empty. A world that "
+                "names a protagonist whose exception IS this shape lists them here."
+            ),
+            "items": _ID,
+        },
+    },
+}
+
+_PROTAGONIST = {
+    "type": "object",
+    "additionalProperties": False,
+    "required": ["id", "exception", "edge", "wants", "price"],
+    "properties": {
+        "id": _SAID,
+        "exception": _SAID,
+        "edge": _SAID,
+        "wants": _SAID,
+        "price": _SAID,
     },
 }
 
@@ -296,6 +328,7 @@ _WORLD = {
         "progression_means",
         "inversion",
         "premise",
+        "protagonist",
         "systems",
         "cast",
         "creatures",
@@ -308,6 +341,11 @@ _WORLD = {
         "progression_means": _TEXT,
         "inversion": _TEXT,
         "premise": _TEXT,
+        # **Required of the forge, tolerated as absent everywhere downstream.** A world the
+        # Architect proposes must say whose book it is; a book whose canon predates the field —
+        # every world forged before 2026-08-22, `plan/serial-pilot-2-world.json` among them —
+        # goes through `records_for` unchanged and renders the same packet it always did.
+        "protagonist": _PROTAGONIST,
         "systems": {"type": "array", "items": _SYSTEM},
         "agencies": {"type": "array", "items": _ENTITY},
         "carriers": {"type": "array", "items": _ENTITY},
@@ -363,6 +401,26 @@ _RULES: tuple[str, ...] = (
     "interface between them: the exchange rate, who can cheat whom, what the law says. The "
     "interface is the content.",
     "Remove or invert exactly one default of the genre, and say what fills the hole.",
+    # **The rule above inverts a default for everyone; this one declares an exception for one.**
+    # `plan/reader-read-3.md` note 1: the operator read two chapters of a book forged on this
+    # schema and named the premise as the defect — "readers desire … something that doesn't
+    # happen to anyone else" — and measured against the module the gap was exact. The words
+    # protagonist, main character and hero did not occur here, the outline invented whoever
+    # acted, and none of the five forged cast members reached the page.
+    #
+    # It is written as a rule about what a world DECLARES, in the register of the declared-shape
+    # rules beside it, and it stops there. Nothing in it says how to write the person, whether
+    # the reader should like them, or that they win: an exception declared is a fact about the
+    # world, and who wins is the book's. `tests/test_architect.py` checks the rule text for the
+    # verbs an outcome instruction would have to use.
+    "Name one member of the cast as this world's `protagonist`: their declared id; the ONE "
+    "rule or cardinality shape of this world — by its id — that does not hold for them or "
+    "holds differently; the `edge` that exception gives them, written the way `manifests_as` "
+    "is written — how it shows on the page, never an explanation; what they want; and "
+    "the price the exception charges them, payable on the page. If the exception is a "
+    "cardinality shape, that shape lists their id in its `except`. Write the `premise` as that "
+    "person's situation — who they are, what is singular about them, what is in the way — "
+    "rather than as a description of the world, and name them in it.",
     "Mysteries: each carries its ANSWER written down and the scene number where the reader "
     "learns it. A secret with no recorded answer is a debt the book can never pay. This world "
     "is an open-ended serial, so most answers land far out — but **at least one must be "
@@ -518,6 +576,17 @@ class Candidate:
     def geometry(self) -> str:
         return str(self.raw.get("geometry") or "").strip()
 
+    @property
+    def protagonist(self) -> Mapping[str, Any] | None:
+        """The world's declared protagonist, or `None` for a world that declares none.
+
+        `None` rather than an empty mapping: "this world says nothing about whose book it is"
+        and "this world says its protagonist is nobody" are different, and every world forged
+        before 2026-08-22 is the first.
+        """
+        raw = self.raw.get("protagonist")
+        return raw if isinstance(raw, Mapping) else None
+
     def rendered(self) -> str:
         """The candidate as one canonical string, for a distance measure to run over."""
         return json.dumps(self.raw, ensure_ascii=False, sort_keys=True, indent=1)
@@ -565,6 +634,25 @@ def worlds_from(payload: Mapping[str, Any], k: int) -> tuple[Candidate, ...]:
                 f"world {index} declares the geometry {candidate.geometry!r}; the allowed "
                 f"geometries are {', '.join(GEOMETRIES)}"
             )
+        # **Refused here and nowhere downstream.** The forge must say whose book this is;
+        # `records_for` must not, because `plan/serial-pilot-2-world.json` predates the field and
+        # regenerating it byte-for-byte is what "reproducible" means here
+        # (`test_the_pilot_package_regenerates_the_world_it_was_run_on`).
+        #
+        # Each field is checked for emptiness rather than for presence, because the schema's
+        # `minLength` is a request and not a guarantee: the 2026-08-22 forge returned a world
+        # whose `premise` was the empty string under a schema that asked for a string.
+        protagonist = candidate.protagonist
+        if protagonist is None:
+            raise ArchitectOutputError(
+                f"world {index} names no protagonist; a world says whose book it is, and the "
+                "one it does not is a world an outline will invent a person for"
+            )
+        for field_name in ("id", "exception", "edge", "wants", "price"):
+            if not str(protagonist.get(field_name) or "").strip():
+                raise ArchitectOutputError(
+                    f"world {index}'s protagonist has no {field_name}"
+                )
         candidates.append(candidate)
 
     for axis, values in (
@@ -589,19 +677,94 @@ def _items(candidate: Candidate, key: str) -> tuple[Mapping[str, Any], ...]:
     return tuple(entry for entry in raw if isinstance(entry, Mapping))
 
 
+def _declared_rule_ids(candidate: Candidate) -> frozenset[str]:
+    """Every rule id declared inside a system of this world."""
+    found: set[str] = set()
+    for system in _items(candidate, "systems"):
+        rules = system.get("rules")
+        for rule in rules if isinstance(rules, list) else ():
+            if isinstance(rule, Mapping) and _identifier(rule):
+                found.add(_identifier(rule))
+    return frozenset(found)
+
+
+def premise_names_protagonist(candidate: Candidate) -> bool:
+    """Whether this world's premise says its protagonist's name. `False` when it declares none.
+
+    Word-boundary rather than bare substring, so a two- or three-letter id part cannot be
+    satisfied by the middle of an unrelated word — the failure class `worlds.key_nouns` records
+    for its own first live run, where `mour` and `ise` arrived out of the middle of longer ids.
+
+    **It checks the name and nothing else.** Whether the premise is *written as* that person's
+    situation is a judgment and there is no instrument for it in this project; whether it says
+    their name is arithmetic, and the arithmetic is what gets reported.
+    """
+    protagonist = candidate.protagonist
+    if protagonist is None:
+        return False
+    premise = str(candidate.raw.get("premise") or "").casefold()
+    tokens = [part for part in _identifier(protagonist).split("_") if part]
+    return any(re.search(rf"\b{re.escape(part)}\b", premise) for part in tokens)
+
+
+def _protagonist_complaints(candidate: Candidate) -> tuple[str, ...]:
+    """Deterministic complaints about a world's declared protagonist. Empty when it declares none.
+
+    **Three membership checks and a substring, and deliberately nothing else.** No model is
+    asked whether the hook is good, whether the edge is interesting, or whether this person is
+    the right one to write about — that question has no instrument in this project and inventing
+    one here would be the verdict channel `plan/world-architect.md` §2 keeps shut. What is
+    checkable is whether the declaration *refers*: whether the person is somebody this world
+    declared, whether the exception names a rule or shape this world declared, and whether the
+    premise is about them.
+
+    Silent for a world with no protagonist, which is every world forged before 2026-08-22 and
+    the reason `test_the_pilot_package_regenerates_the_world_it_was_run_on` still gates clean.
+    """
+    protagonist = candidate.protagonist
+    if protagonist is None:
+        return ()
+    complaints: list[str] = []
+    subject = _identifier(protagonist)
+    cast_ids = {_identifier(entry) for entry in _items(candidate, "cast")} - {""}
+    if subject not in cast_ids:
+        complaints.append(
+            f"the protagonist is {subject or '(unnamed)'!r}, which is not one of the declared "
+            f"cast ({', '.join(sorted(cast_ids)) or 'none'}); a book is about somebody this "
+            "world has heard of"
+        )
+    exception = worlds_mod.normalise_id(_text(protagonist, "exception"))
+    shape_ids = {_identifier(entry) for entry in _items(candidate, "cardinality")} - {""}
+    declarable = _declared_rule_ids(candidate) | shape_ids
+    if exception not in declarable:
+        complaints.append(
+            f"the protagonist's exception names {exception or '(nothing)'!r}, which is neither "
+            "a declared rule nor a declared cardinality shape; an exception to nothing in "
+            "particular is a description"
+        )
+    if subject and not premise_names_protagonist(candidate):
+        complaints.append(
+            f"the premise never names {subject!r}; a premise that describes the world rather "
+            "than this person's situation is the shape `plan/reader-read-3.md` note 1 named"
+        )
+    return tuple(complaints)
+
+
 def gate_candidate(
     candidate: Candidate, *, scenes: int = DEFAULT_SCENES
 ) -> tuple[str, ...]:
     """Deterministic complaints about one world. Empty means it passed.
 
-    Five checks, each arithmetic or membership over the structured answer and none of them an
+    Six checks, each arithmetic or membership over the structured answer and none of them an
     opinion about whether the world is any good:
 
     1. every declared rule reaches `CONSEQUENCE_FLOOR` distinct domains of life;
     2. every declared feature says how it shows on the page;
     3. every mystery records an answer and a disclosure scene;
     4. **at least one answer lands inside the scenes being written now**;
-    5. nothing in the answer compares itself to something outside it (RS1 / C3).
+    5. the declared protagonist refers — to a cast member, to a rule or shape, and by name in
+       the premise (`_protagonist_complaints`; silent for a world that declares none);
+    6. nothing in the answer compares itself to something outside it (RS1 / C3).
     """
     complaints: list[str] = []
 
@@ -680,6 +843,8 @@ def gate_candidate(
             f"(earliest is {min(landed)}); an opening that asks and never settles teaches a "
             "reader that nothing here gets settled"
         )
+
+    complaints.extend(_protagonist_complaints(candidate))
 
     borrowed = sorted(set(_BORROWED.findall(candidate.rendered())))
     if borrowed:
@@ -1058,6 +1223,7 @@ def records_for(
                 )
             )
 
+    shape_ids: set[str] = set()
     for shape in _items(candidate, "cardinality"):
         shape_id = _identifier(shape)
         maximum = shape.get("maximum")
@@ -1086,6 +1252,66 @@ def records_for(
         )
         add(worlds_mod.world_record(shape_id, worlds_mod.GROUP_KEY_PREDICATE, value=group_key))
         add(worlds_mod.world_record(shape_id, worlds_mod.MAXIMUM_PREDICATE, value=maximum))
+        shape_ids.add(shape_id)
+        excepted = shape.get("except")
+        for entry in excepted if isinstance(excepted, list) else ():
+            subject = worlds_mod.normalise_id(str(entry))
+            if subject:
+                add(
+                    worlds_mod.world_record(
+                        shape_id, worlds_mod.EXCEPTS_PREDICATE, object_ref=subject
+                    )
+                )
+
+    # **The protagonist, as records rather than as a field.** Everything a world declares is a
+    # record here and this is not the exception — the packet, the gate and the second extractor
+    # family all read records, and a field would be a fact only this module could see.
+    #
+    # The role is a *second* one on a cast member, so the cast loop above has already written
+    # `entity_role cast` and this adds `entity_role protagonist` beside it. Nothing is emitted
+    # at all for a world that declares no protagonist, which is what keeps
+    # `plan/serial-pilot-2-world.json` regenerating byte-for-byte.
+    protagonist = candidate.protagonist
+    if protagonist is not None:
+        subject = _identifier(protagonist)
+        exception = worlds_mod.normalise_id(_text(protagonist, "exception"))
+        if subject:
+            add(
+                worlds_mod.world_record(
+                    subject, worlds_mod.ENTITY_ROLE_PREDICATE, value="protagonist"
+                )
+            )
+            for key, predicate in (
+                ("edge", worlds_mod.EDGE_PREDICATE),
+                ("wants", "wants"),
+                ("price", worlds_mod.PRICE_PREDICATE),
+            ):
+                if _text(protagonist, key):
+                    add(
+                        worlds_mod.world_record(
+                            subject, predicate, value=_text(protagonist, key)
+                        )
+                    )
+            if exception:
+                add(
+                    worlds_mod.world_record(
+                        subject, worlds_mod.EXCEPTION_PREDICATE, object_ref=exception
+                    )
+                )
+                # **The one derivation, and it is a definition rather than an inference.** "X is
+                # the exception to shape S" and "S does not govern X" are the same fact said from
+                # the two ends of one edge, and `worlds.in_scope` reads only the second. A world
+                # that declared the first and forgot the second would hand the writer an
+                # exception the gate still refuses — decoration, which is what
+                # `plan/handoff-protagonist.md` Task 1 exists to prevent. Only for a shape this
+                # world actually declared: an `exception` naming a *rule* has no maximum to
+                # except and gets the edge above and nothing more.
+                if exception in shape_ids:
+                    add(
+                        worlds_mod.world_record(
+                            exception, worlds_mod.EXCEPTS_PREDICATE, object_ref=subject
+                        )
+                    )
 
     graph_line = candidate.raw.get("graph_line")
     if isinstance(graph_line, Mapping) and graph_line.get("label"):
@@ -1222,6 +1448,16 @@ def report(candidate: Candidate, *, scenes: int = DEFAULT_SCENES) -> dict[str, A
         "manifestation_missing": list(coverage.missing),
         "criteria": worlds_mod.criteria(records),
         "cardinality_shapes": len(worlds_mod.cardinality_shapes(records)),
+        # **Three facts about the declaration, and not one about the hook.** Whether this world
+        # says whose book it is, whether it says what rule does not hold for them, and whether
+        # its premise says their name — each computed off the records this candidate produced.
+        # Nothing here orders one world above another and nothing may be read as doing so; the
+        # forge still stops and a person picks (`plan/world-architect.md` §2).
+        "protagonist_declared": bool(worlds_mod.entities_with_role(records, "protagonist")),
+        "exception_declared": any(
+            record.predicate == worlds_mod.EXCEPTION_PREDICATE for record in records
+        ),
+        "premise_names_protagonist": premise_names_protagonist(candidate),
         "claims_with_answers": len(worlds_mod.claims(records)),
         "reveals_scheduled": len(worlds_mod.disclosures(records)),
         "hidden_at_start": len(
@@ -1321,6 +1557,7 @@ __all__ = [
     "bundle_for",
     "directives_for",
     "gate_candidate",
+    "premise_names_protagonist",
     "promises_for",
     "records_for",
     "render_world_request",

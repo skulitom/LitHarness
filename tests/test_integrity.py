@@ -45,6 +45,7 @@ from litharness.adapters.evaluation_artifact import (
     load_findings,
 )
 from litharness.adapters.sqlite_store import SqliteStore
+from litharness.domain import worlds
 from litharness.domain.findings import (
     BLOCKING_SEVERITIES,
     DetectorInput,
@@ -55,6 +56,7 @@ from litharness.domain.findings import (
     vetoes_for,
 )
 from litharness.domain.integrity import (
+    CARDINALITY_RULE,
     CONTRADICTION_RULE,
     DUPLICATE_RULE,
     DUPLICATE_SPAN_WORDS,
@@ -62,6 +64,7 @@ from litharness.domain.integrity import (
     detect_contradictions,
     detect_duplicate_scene,
     gate_integrity,
+    run_detectors,
     summarise,
 )
 from litharness.domain.patch import Veto
@@ -232,6 +235,91 @@ def test_contradictory_records_at_one_story_position_are_a_finding() -> None:
     assert found.blocks
     assert found.deterministic
     assert "rook level holds 2 different values" in found.message
+
+
+def _accepted(built: lc.StateRecord) -> lc.StateRecord:
+    """`world_record` proposes; canon is what a policy decision makes of it."""
+    return replace(built, authority=lc.StateAuthority.ACCEPTED_CANON)
+
+
+def _seal_shape(*, excepts: str | None = None) -> list[lc.StateRecord]:
+    """A world that admits one worn seal per clerk, optionally excepting one clerk."""
+    accepted = _accepted
+    rows = [
+        accepted(worlds.world_record("silas", worlds.ENTITY_ROLE_PREDICATE, value="cast")),
+        accepted(worlds.world_record("marta", worlds.ENTITY_ROLE_PREDICATE, value="cast")),
+        accepted(
+            worlds.world_record(
+                "one_seal", worlds.TYPE_PREDICATE, value=worlds.CARDINALITY_CONSTRAINT
+            )
+        ),
+        accepted(worlds.world_record("one_seal", worlds.PREDICATE_PREDICATE, value="wears")),
+        accepted(worlds.world_record("one_seal", worlds.SCOPE_PREDICATE, value="cast")),
+        accepted(
+            worlds.world_record(
+                "one_seal", worlds.GROUP_KEY_PREDICATE, value="subject,order_key"
+            )
+        ),
+        accepted(worlds.world_record("one_seal", worlds.MAXIMUM_PREDICATE, value=1)),
+    ]
+    if excepts is not None:
+        rows.append(
+            accepted(
+                worlds.world_record("one_seal", worlds.EXCEPTS_PREDICATE, object_ref=excepts)
+            )
+        )
+    return rows
+
+
+def _wears_two(subject: str) -> list[lc.StateRecord]:
+    """The planted violation: two of a thing the world admits one of, at one position."""
+    return [
+        _accepted(worlds.world_record(subject, "wears", object_ref=seal, order_key="s4"))
+        for seal in ("lead_seal", "brass_seal")
+    ]
+
+
+def test_the_declared_exception_reaches_the_live_detector_and_binds_nobody_else() -> None:
+    """**The gate honours an exception a world declared, through the wired ladder.**
+
+    `plan/reader-read-3.md` note 1: the hook this genre runs on is an exception belonging to one
+    person, and the operator's own example — everyone has one, this one person may have many — is
+    a cardinality maximum that does not hold for them. Before 2026-08-22 there was no way to say
+    it: `worlds.in_scope` takes an `entity_role` or `*` and never a subject id, so a declared
+    exception was decoration and the shape refused its own protagonist.
+
+    Three readings of one planted violation, run through `run_detectors` rather than the
+    detector alone so this is a fact about the ladder and not about one function: it fires with
+    no exception declared, it is silent on the excepted subject, and it still fires on another
+    subject of the same kind. **The last assertion is the one that matters** — a change that
+    made the detector blind to the shape would pass the middle one.
+    """
+    plain = subject_for("litrpg", records=[*_seal_shape(), *_wears_two("silas")])
+    [before] = [
+        found
+        for found in run_detectors(plain)
+        if found.rule_or_critic_id == CARDINALITY_RULE
+    ]
+    assert before.blocks and "silas" in before.message
+
+    excepted = subject_for(
+        "litrpg", records=[*_seal_shape(excepts="silas"), *_wears_two("silas")]
+    )
+    assert not [
+        found
+        for found in run_detectors(excepted)
+        if found.rule_or_critic_id == CARDINALITY_RULE
+    ]
+
+    somebody_else = subject_for(
+        "litrpg", records=[*_seal_shape(excepts="silas"), *_wears_two("marta")]
+    )
+    [still] = [
+        found
+        for found in run_detectors(somebody_else)
+        if found.rule_or_critic_id == CARDINALITY_RULE
+    ]
+    assert still.blocks and "marta" in still.message
 
 
 def test_the_same_value_twice_is_not_a_contradiction() -> None:

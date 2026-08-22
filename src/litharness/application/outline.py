@@ -60,6 +60,7 @@ from litharness.application.policy_events import policy_decision_event
 from litharness.application.ports import OutlineStore, TextGenerator
 from litharness.domain import state as state_mod
 from litharness.domain import world_brief
+from litharness.domain import worlds as worlds_mod
 from litharness.domain.beats import Beat, beats_for, template_for
 from litharness.domain.budget import BudgetPolicy
 from litharness.domain.budget import check as budget_check
@@ -105,6 +106,31 @@ OUTLINE_PRIORITY = 300
 #: Words per statement, asked for rather than enforced. A statement is an instruction to the
 #: generator, not prose, and one that runs long starts writing the scene instead of placing it.
 TARGET_WORDS = 25
+
+#: Added to the request only when canon declares a cast, in the register the rules beside them
+#: already use — *"Use the subject names given in open_promises. Do not invent promises."*
+#:
+#: **It bounds invention; it does not direct it.** On Serial Pilot 3 the outline was told
+#: nothing about who lives in the world and invented every named person in the book — nine in
+#: chapter 1, seventeen across two chapters, none of them the world's (`plan/reader-read-3.md`
+#: note 2). What is said here is which people exist. Nothing is said about how many to use, when
+#: to introduce them, or which of them matters, because a budget is the operator's to set from a
+#: measured distribution and "which matters" is a judgment with no instrument.
+CAST_RULES: tuple[str, ...] = (
+    "Every named person in this book is one of the people listed in cast, under the id given "
+    "there. Do not invent a named person. An unnamed role needs no entry in cast.",
+)
+
+#: Added to the request only when canon declares a protagonist. **Position and fact, and the
+#: boundary is asserted rather than trusted**: whether the reader should like them, whether they
+#: win, and whether they progress faster than anyone are the operator's to say and are said
+#: through a directive, never from here (stage-0 §95, §97.1). The strings below are checked for
+#: the vocabulary such an instruction would have to use by
+#: `test_the_protagonist_rules_name_a_person_and_never_an_outcome`.
+PROTAGONIST_RULES: tuple[str, ...] = (
+    "The protagonist is {subject}. This is {subject}'s book, so each statement says what "
+    "{subject} does in that scene, or what is done to {subject}.",
+)
 
 
 class OutlineOutputError(Exception):
@@ -215,6 +241,8 @@ def render_outline_request(
     seed: Mapping[str, Any] | None = None,
     promises: Sequence[Promise] = (),
     world: WorldBrief | None = None,
+    cast: Sequence[worlds_mod.CastMember] = (),
+    protagonist: worlds_mod.Protagonist | None = None,
 ) -> CompletionRequest:
     """Freeze the premise and the whole beat sheet into one structured-output request.
 
@@ -227,6 +255,19 @@ def render_outline_request(
     the no-world payload byte-for-byte against what it was before this parameter existed.
     `domain/world_brief.py` owns what a planner may be told and what it may not — the answers
     reach a statement only where the world scheduled them.
+
+    **The world's people go in, and whose book it is** (`plan/reader-read-3.md` notes 1 and 3).
+    Until this parameter existed the model writing every scene's statement had been handed the
+    premise, the beat sheet, the status seed and the open promises, and **not one record of
+    canon** — so on Serial Pilot 3 it invented a protagonist who does not occur anywhere in the
+    forged world, and none of that world's five declared cast members reached either chapter.
+    The writer had them all along: 328 established facts, `context_omitted = 0`.
+
+    **Both are absent from the payload rather than null when the book has none.** `json.dumps`
+    writes `null` for a key whose value is `None`, so a key that is always present is a payload
+    that always changed — and `input_digest_for` covers the prompt and is the sampler seed, so a
+    payload that changed silently re-decodes every job a book mints. `tests/test_outline.py`
+    asserts the no-world request byte-for-byte against what it was before this existed.
 
     **Open promises go in as debts, and the register is `describe_owed`'s** (W2). They are
     shown so the schedule can be about the book's actual debts rather than about debts the
@@ -255,6 +296,14 @@ def render_outline_request(
             # The world this book runs on, when it has one. Spread rather than assigned so
             # that a book without one has no key at all — see the docstring.
             **({"world": world.to_jsonable()} if world is not None else {}),
+            # The declared people, and the one this book is about. Spread rather than assigned,
+            # so a book whose canon declares neither has no key at all — see the docstring.
+            **({"cast": [member.to_jsonable() for member in cast]} if cast else {}),
+            **(
+                {"protagonist": protagonist.to_jsonable()}
+                if protagonist is not None
+                else {}
+            ),
             # The debts this book has already opened, for the payoff schedule. Absent for a
             # book that owes nothing — which is every book at its first outline, since
             # promises are written by the summary handler after a scene is accepted.
@@ -313,7 +362,13 @@ def render_outline_request(
                 if owed
                 else []
             )
-            + (list(world_brief.WORLD_RULES) if world is not None else []),
+            + (list(world_brief.WORLD_RULES) if world is not None else [])
+            + (list(CAST_RULES) if cast else [])
+            + (
+                [rule.format(subject=protagonist.subject) for rule in PROTAGONIST_RULES]
+                if protagonist is not None
+                else []
+            ),
         },
         ensure_ascii=False,
         sort_keys=True,
@@ -850,11 +905,12 @@ def make_outline_handler(
         # promises are written by the summary handler after a scene is accepted — so the
         # payoff ask is silent there and this feature costs an un-replanned book nothing.
         open_promises = store.promises(book_id, branch_id, open_only=True)
-        # **The world, off the `canon` already read two statements above.** A second query
-        # would be a second answer to the same question, and the drafting side's habit of
-        # calling `state_records` three times is the pattern this deliberately does not copy.
-        # `brief_for` returns None for a book whose records this vocabulary does not
-        # recognise, and the request then carries no world field at all.
+        # **The world, its people, and whose book it is — all off the `canon` already read
+        # two statements above.** A second query would be a second answer to the same question,
+        # and the drafting side's habit of calling `state_records` three times in one render is
+        # the pattern this deliberately does not copy. Each returns nothing for a book whose
+        # records this vocabulary does not recognise — every book written before 2026-08-22 —
+        # and the request then carries no world, cast or protagonist field at all.
         request = render_outline_request(
             premise,
             beats,
@@ -862,6 +918,8 @@ def make_outline_handler(
             seed=seed or None,
             promises=open_promises,
             world=world_brief.brief_for(canon),
+            cast=worlds_mod.cast_brief(canon),
+            protagonist=worlds_mod.protagonist_brief(canon),
         )
         day = stamp[:10]
         provider, _ = registry.resolve(request.call_class)
