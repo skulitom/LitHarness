@@ -719,11 +719,17 @@ class NarrativePlanningStore(
     PlanReader,
     PlanWriter,
     DecisionRepository,
+    # Read-only, and only for `world_brief.brief_for`. A plan statement is the sentence a
+    # writer is told to execute, and until this line existed the model writing it had seen the
+    # premise and the beat sheet and nothing else while the writer was handed 229 established
+    # facts out of a forged world. `OutlineStore` already composes this; the two roles write
+    # the same kind of sentence and had different sight of the book.
+    StateRepository,
     Protocol,
 ):
     """Reads the manuscript as well as the plan, because a plan item that is *about* a scene
     has to name a scene the book actually has — and the book, not the plan, is what says
-    which those are."""
+    which those are. Reads canon too, for the world the statement has to be written against."""
 
 
 class PlanRefinementStore(PlanReader, PlanWriter, Protocol):
