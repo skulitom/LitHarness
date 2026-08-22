@@ -220,6 +220,38 @@ ECHO_MIN_TOKENS = 3
 #: are rejoined). What survives the render is every intra-paragraph whitespace change, which is
 #: the larger part of `rewhitespace`'s footprint, and `sham_grid_survives` still refuses any unit
 #: whose grid moved.
+#: The third pricing batch, twelve calls under the numbered grid, and what it left.
+#:
+#: The numbering worked on the thing it was for: **the length dependence is gone** -- Spearman of
+#: per-chapter misalignment against paragraph count moved from +0.50 to -0.02 -- and no answer
+#: was unparseable, where two of twelve had been. `bad_index`, `duplicate_index` and
+#: `out_of_order` were all zero: every entry named a real paragraph, once, in order. What
+#: remained was 204 misaligned entries of 763, and classifying them found two mechanics and no
+#: third:
+#:
+#: 1. **68 echoes came back as one run-together word** and 15 came back empty, all inside two
+#:    chapters that failed almost entirely (0.97 and 0.96). The asking said the echo was that
+#:    paragraph's first four words "letters and numbers only", and the model read that as an
+#:    instruction to drop the spaces as well. That is this instrument's wording, not the model's
+#:    failure, and the asking now says "as words separated by single spaces, with the punctuation
+#:    left out ... keep the spaces between them".
+#: 2. **112 echoes were of no paragraph at all** and were a tokenisation artefact of the same
+#:    instruction: told to leave punctuation out, the model wrote `dont` where the page has
+#:    `don't`, and a tokeniser that split on the apostrophe compared `dont` against `don`, `t`
+#:    and failed at the second token. Folding the apostrophe took ten of the twelve chapters to a
+#:    median misalignment of **0.03**, and left the two run-together chapters exactly where they
+#:    were -- which is what says the two mechanics are separate rather than one counted twice.
+NUMBERED_GRID_THIRD_BATCH = (
+    "2026-08-22, twelve calls under the numbered grid: the length dependence is gone (Spearman "
+    "+0.50 to -0.02), no answer was unparseable, and every entry named a real paragraph once and "
+    "in order. The 204 misaligned entries of 763 were two mechanics of one wording defect in this "
+    "instrument: 'letters and numbers only' made the model drop the spaces between the words "
+    "(two chapters lost almost entirely), and made it write `dont` where the page has `don't`, "
+    "which a tokeniser splitting on the apostrophe scored as a mismatch (112 entries). The asking "
+    "now asks for words separated by spaces and the tokeniser folds the apostrophe; on the same "
+    "answers that takes ten of twelve chapters to a median misalignment of 0.03."
+)
+
 NUMBERED_GRID_FOUND_AT_PRICING = (
     "2026-08-22, on twelve pricing calls under the fixed echo contract and before the census: "
     "asked to return one entry per paragraph of an unnumbered chapter, the model returned the "
@@ -247,9 +279,10 @@ SYSTEM = (
     "the first to the last, record three things:\n\n"
     "  n      that paragraph's number, exactly as it is printed\n"
     "  kind   whichever one of these ten fits the register that paragraph reaches for\n"
-    f"  echo   that paragraph's first {ECHO_WORDS} words after the number, letters "
-    "and numbers only: leave out every quotation mark, dash, asterisk, bracket and other "
-    f"punctuation. A paragraph shorter than {ECHO_WORDS} words gives all of it.\n\n"
+    f"  echo   that paragraph's first {ECHO_WORDS} words after the number, as words "
+    "separated by single spaces, with the punctuation left out: no quotation mark, dash, "
+    "asterisk or bracket. Keep the words themselves whole and keep the spaces between "
+    f"them. A paragraph shorter than {ECHO_WORDS} words gives all of it.\n\n"
     + "\n".join(f"    {name:14s}{KIND_DEFINITIONS[name]}" for name in KINDS)
     + "\n\nRules:\n"
     "  - Return exactly one entry per numbered paragraph, in order, including the ones you "
@@ -1389,6 +1422,7 @@ def registration_digest() -> str:
             "echo_min_tokens": ECHO_MIN_TOKENS,
             "echo_defects_found_at_pricing": ECHO_DEFECTS_FOUND_AT_PRICING,
             "numbered_grid_found_at_pricing": NUMBERED_GRID_FOUND_AT_PRICING,
+            "numbered_grid_third_batch": NUMBERED_GRID_THIRD_BATCH,
             "forbidden": list(FORBIDDEN_IN_ASKING),
             "statistics": [
                 TURN_WINDOW_WORDS, PAIRING_WINDOW_WORDS, END_STATE_WORDS, PERMUTATIONS,
@@ -1418,7 +1452,7 @@ def registration_digest() -> str:
 #: which is the whole mechanism: a reworded prompt or a re-defined statistic is a different
 #: instrument, and every number in `affect-trajectory-results.md` is attributable to this exact
 #: content or it is attributable to nothing.
-FROZEN_DIGEST = "bfb6b728b5b75cf47f45"
+FROZEN_DIGEST = "6bf5297e4ea3a7016e0a"
 
 
 # ------------------------------------------------------------------------- the echo alignment
@@ -1461,8 +1495,16 @@ def echo_tokens(text: str) -> list[str]:
     makes the rule immune to the failure that broke 1 of 6 pricing answers -- a paragraph
     opening on dialogue produced an echo opening on a double quote and the model emitted it
     unescaped, so the whole answer was unparseable JSON. See `ECHO_DEFECTS_FOUND_AT_PRICING`.
+
+    **The apostrophe is deleted before the split, not treated as a boundary**, so `don't` is one
+    token and not two. That is a fix to this tokeniser and not a leniency toward the model: the
+    rule says "the paragraph's opening words" and `don't` is one word. Splitting it made the
+    paragraph's tokens `don`, `t` while the model, told to leave punctuation out, wrote `dont`,
+    and the prefix comparison failed at the second token on every line of contracted dialogue.
+    Measured on the third pricing batch: folding it took ten of twelve chapters from a median
+    misalignment of 0.17 to 0.03, and changed no other verdict.
     """
-    return _TOKEN.findall(normalise(text))
+    return _TOKEN.findall(normalise(text).replace("'", ""))
 
 
 def echo_matches(paragraph: str, echo: str) -> bool:
@@ -4197,6 +4239,14 @@ def selftest() -> int:
     quoted["paragraphs"][2]["echo"] = "BREACH IMMINENT 3 minutes"
     check("punctuation is dropped rather than forgiven, so a stripped stat line matches",
           align(grid, quoted)["aligned"] == 8)
+    check("a contraction is one word on both sides of the comparison",
+          echo_tokens("I don't know") == ["i", "dont", "know"])
+    check("so an echo that dropped the apostrophe still identifies its paragraph",
+          echo_matches('"I don\'t know," he said.', "I dont know he") is True)
+    check("and one that kept it does too",
+          echo_matches('"I don\'t know," he said.', "I don't know he") is True)
+    check("words run together are not an identification and are not forgiven",
+          echo_matches("The gate would not hold", "Thegatewouldnot") is False)
     check("a short paragraph is identified by the whole of itself",
           echo_matches("Right.", "Right") is True)
     check("and not by something that is not its opening",
