@@ -261,10 +261,51 @@ _CARDINALITY = {
     },
 }
 
+#: Where the protagonist starts on one declared ordinal ladder: the criterion's id and the
+#: rung's id, both declared elsewhere in the same world. **Two ids and nothing else** — the
+#: rung's visible form and its price already live on the rank, and repeating either here would
+#: be a second copy of a fact the world states once (`plan/handoff-numbers-go-up.md`
+#: boundary 10).
+#:
+#: **Both carry `pattern` and a description saying AN ID AND NOTHING ELSE, and that is
+#: `_PROTAGONIST["exception"]`'s measured correction applied before it is paid for a second
+#: time.** The first forge under the protagonist rule returned three worlds, every one of which
+#: put a real declared id in `exception` and an em-dash gloss after it, and all three were
+#: refused. These two fields are the same shape of ask — "name the criterion by its id" — so
+#: they get the same answer without waiting for the same bill.
+_STANDING = {
+    "type": "object",
+    "additionalProperties": False,
+    "required": ["criterion", "rung"],
+    "properties": {
+        "criterion": {
+            **_SAID,
+            "pattern": "^[a-z0-9_]+$",
+            "description": (
+                "AN ID AND NOTHING ELSE — the snake_case id of a criterion declared in this "
+                "world, whose comparator is `ordinal` and whose `ranks` are a chain of at "
+                "least three. Write `crit_priority`, never `crit_priority - the order in "
+                "which gates are shut`. What the criterion judges is already written where "
+                "the criterion is declared."
+            ),
+        },
+        "rung": {
+            **_SAID,
+            "pattern": "^[a-z0-9_]+$",
+            "description": (
+                "AN ID AND NOTHING ELSE — the snake_case id of one of that criterion's own "
+                "`ranks`, and NOT the top one. Write `morning_right`, never `morning_right - "
+                "two seasons of proving use`. What the rung looks like and what it costs are "
+                "already written on the rank itself."
+            ),
+        },
+    },
+}
+
 _PROTAGONIST = {
     "type": "object",
     "additionalProperties": False,
-    "required": ["id", "exception", "edge", "wants", "price"],
+    "required": ["id", "exception", "edge", "wants", "price", "standing"],
     "properties": {
         "id": {**_SAID, "description": "The declared id of a member of this world's cast."},
         # **A bare id, and the `pattern` is a measured correction rather than a precaution.**
@@ -299,6 +340,7 @@ _PROTAGONIST = {
             **_SAID,
             "description": "What the exception costs them, payable on the page.",
         },
+        "standing": _STANDING,
     },
 }
 
@@ -422,13 +464,47 @@ _RULES: tuple[str, ...] = (
     "in how a stranger treats you. Never an explanation and never a lecture.",
     "Every rank has a form a reader can SEE, and every gain has a cost payable on the page in "
     "the same scene or earlier.",
+    # **The ladder the reader counts, and it is one rule about what a world declares.**
+    # `plan/handoff-numbers-go-up.md`: the operator's direction is that a rank ladder *is* the
+    # genre's number — "bronze to gold rank advance is the same as the number going up; say
+    # bronze is 1 and gold is 3" — so the quantity is the rung's place in the chain, counted
+    # from the bottom, and the chain has to run in that direction to be counted.
+    #
+    # **Measured, and the ordering clause is the measurement's.** Of the four worlds forged
+    # before this rule existed (pilots 2 and 3), two declared an ordinal criterion with a chain
+    # of three or more and two did not; of those two, *Senior Water* declared its chain
+    # highest-first (`first_water` at the bottom, `wash_right` at the top), so a reader counting
+    # up that ladder counts a person getting weaker. And **no cast member of any of the four
+    # stands anywhere on any chain**: a ladder with nobody on it is a costume with nobody in it.
+    #
+    # Nothing here says who rises, how fast, or how a rise should read. The opening standing is
+    # a fact about where a book starts, in the register of every declared shape beside it; the
+    # book is what happens next. `tests/test_architect.py` checks the rule text for the verbs an
+    # outcome instruction would have to use.
+    "At least one criterion has the comparator `ordinal` and carries `ranks`: a chain of AT "
+    "LEAST THREE, listed LOWEST FIRST, each with a `visible_form` a reader can see and a "
+    "`cost_to_reach` payable on the page. The protagonist's `standing` names that criterion by "
+    "id and one of its rungs by id, and the rung is NOT the top one. The number a reader counts "
+    "in this world is the rung's position from the bottom of that chain.",
     "Literalise one real domain of human work or knowledge and take the system's logic and its "
     "costs from that domain's real constraints. Name the domain. The book should run on real "
     "ideas rather than invented ones.",
     "Give the world two systems whose logics are incompatible, and say what happens at the "
     "interface between them: the exchange rate, who can cheat whom, what the law says. The "
     "interface is the content.",
-    "Remove or invert exactly one default of the genre, and say what fills the hole.",
+    # **The one default that is not on the table, and the amendment is measured.**
+    # `plan/handoff-numbers-go-up.md` Task 0.3: on the brief "progression fantasy", all three
+    # forged worlds inverted a piece of this exact rule — *Senior Water* removed "portable
+    # personal power", *What Takes* removed "a gain can be created", *The Closing Error* removed
+    # "monotonic growth" — and the picked one then wrote two chapters in which nothing anybody
+    # carried ever went up. An inversion rule with no floor deletes the genre's one
+    # non-negotiable default three times out of three.
+    #
+    # It fences the *declaration* and nothing else: a world may still price a rise brutally, make
+    # it revocable later by directive, or hand it to somebody who does not want it.
+    "Remove or invert exactly one default of the genre — any EXCEPT this one, which is not "
+    "invertible here: the protagonist's standing on a declared ordinal ladder can rise, and the "
+    "reader can count it. Say what fills the hole.",
     # **The rule above inverts a default for everyone; this one declares an exception for one.**
     # `plan/reader-read-3.md` note 1: the operator read two chapters of a book forged on this
     # schema and named the premise as the defect — "readers desire … something that doesn't
@@ -457,10 +533,15 @@ _RULES: tuple[str, ...] = (
     "is an open-ended serial, so most answers land far out — but **at least one must be "
     "answered inside the {scenes} scenes being written now**, because an opening that asks "
     "four things and settles none teaches a reader that nothing here gets settled.",
+    # The last clause is the operator's direction and not a softening of the rest of the rule:
+    # the ladder's rungs ARE the numbers this world counts, so a world that wanted a stat block
+    # to satisfy "numbers go up" has already been answered by the ladder rule above.
     "A world may have one system, several, or none; progression may be crafting, standing, "
     "understanding, access, or something else. Do not assume combat. Do not use levels, hit "
     "points, mana, experience points, currency, or any single number that means power, unless "
-    "this particular world genuinely needs one and you say why in the system's logic.",
+    "this particular world genuinely needs one and you say why in the system's logic. The "
+    "ladder's rungs are the numbers this world counts; hit points, mana, experience and "
+    "currency are still not assumed.",
     "Every name, place, creature and mechanic is original to this world. Never name, quote, "
     "imitate, or compare to any real person, brand, game, or published work.",
     "The prose this world will be written in is fast, plain, popcorn reading. The world shows "
@@ -471,11 +552,23 @@ _RULES: tuple[str, ...] = (
     "who blames whom, who outranks whom. Each is a snake_case predicate, another declared id, "
     "and the one thing about the tie a scene could use. A cast with no ties between its "
     "members is a list of people rather than a place.",
-    "`graph_line` is a PARSER, not a summary. Give it only if this world prints a line when "
-    "something changes: a bracket tag of one or two words, and short verb phrases of at most "
-    "six words, so that `[TAG] Sella now holds the second seal` reads as a line a scene would "
-    "actually print. If this world announces nothing in print, leave `graph_line` out — most "
-    "worlds should, and absence costs nothing.",
+    # **A world with a ladder declares the line the ladder is read off, and the predicate is
+    # named from `domain/worlds.py` rather than typed here.** The chain this handoff exists to
+    # close is *declare → ask → print → read*, and it was broken at the first link in a way no
+    # count showed: all four worlds forged before this rule declared a `graph_line`, none of
+    # their phrases meant "stands at", so `extract_graph_facts` had nothing to read a standing
+    # out of even where it ran on every accepted scene.
+    #
+    # "Most worlds should leave it out" becomes "a world with no ladder may": the shape bounds
+    # (`LABEL_WORDS`, `PHRASE_WORDS`) already refuse a paragraph, and a world that announces
+    # nothing still owes nothing.
+    "`graph_line` is a PARSER, not a summary: a bracket tag of one or two words, and short verb "
+    "phrases of at most six words, so that `[TAG] Sella now holds the second seal` reads as a "
+    "line a scene would actually print. A world that declares a ladder DECLARES a `graph_line`, "
+    "and at least one of its phrases carries the predicate "
+    f"`{worlds_mod.STANDS_AT_PREDICATE}` — the printed form this world says a change of "
+    "standing in, so that a scene prints the line and it can be read back. Only a world with no "
+    "ladder may leave `graph_line` out.",
 )
 
 _DISTINCTNESS_RULE = (
@@ -684,6 +777,22 @@ def worlds_from(payload: Mapping[str, Any], k: int) -> tuple[Candidate, ...]:
                 raise ArchitectOutputError(
                     f"world {index}'s protagonist has no {field_name}"
                 )
+        # **The standing is refused here for the same reason and on the same rail.** A forged
+        # world says where its protagonist starts on the ladder it declared; `records_for` still
+        # tolerates absence, so every world forged before 2026-08-22 regenerates unchanged.
+        # Checked for emptiness rather than presence — `minLength` is a request, and the
+        # 2026-08-22 forge returned an empty conforming `premise` for $1.48.
+        standing = protagonist.get("standing")
+        if not isinstance(standing, Mapping):
+            raise ArchitectOutputError(
+                f"world {index}'s protagonist names no standing; a world whose protagonist "
+                "stands nowhere on its own ladder has declared a ladder with nobody on it"
+            )
+        for field_name in ("criterion", "rung"):
+            if not str(standing.get(field_name) or "").strip():
+                raise ArchitectOutputError(
+                    f"world {index}'s protagonist standing has no {field_name}"
+                )
         candidates.append(candidate)
 
     for axis, values in (
@@ -793,6 +902,130 @@ def _protagonist_complaints(candidate: Candidate) -> tuple[str, ...]:
     return tuple(complaints)
 
 
+#: The shortest chain a rung's position can be a number on. Two rungs is a switch — you are
+#: either the one thing or the other — and a reader counting 1 then 2 has counted a state change
+#: rather than a ladder. Three is the floor the operator's own example sets: bronze is 1 and gold
+#: is 3. Stated here so nobody later quotes it as measured; it is a choice, like
+#: `CONSEQUENCE_FLOOR`, and it gates a candidate rather than a serial.
+LADDER_FLOOR = 3
+
+
+def _ladders_of(candidate: Candidate) -> dict[str, tuple[str, ...]]:
+    """Each declared criterion's id → its rank ids in declaration order, off the raw answer.
+
+    Read from the answer rather than from `records_for` because the gate runs on the answer and
+    a rank whose id normalises to nothing never becomes a record — which would make it invisible
+    to a check whose whole job is to notice that the chain is too short.
+    """
+    found: dict[str, tuple[str, ...]] = {}
+    for system in _items(candidate, "systems"):
+        criterion = system.get("criterion")
+        if not isinstance(criterion, Mapping):
+            continue
+        criterion_id = _identifier(criterion)
+        if not criterion_id:
+            continue
+        ranks = criterion.get("ranks")
+        found[criterion_id] = tuple(
+            _identifier(rank)
+            for rank in (ranks if isinstance(ranks, list) else ())
+            if isinstance(rank, Mapping) and _identifier(rank)
+        )
+    return found
+
+
+def _ladder_complaints(candidate: Candidate) -> tuple[str, ...]:
+    """Deterministic complaints about the ladder and the standing on it. Membership and counting.
+
+    Five checks, none of them an opinion: is there an ordinal chain long enough to count on, does
+    the protagonist's standing refer to a declared criterion and a declared rung of *that*
+    criterion, is the rung below the top, and does a world with a ladder declare the printed form
+    a change of standing is announced in.
+
+    **Silent for a world that declares no standing**, which is every world forged before
+    2026-08-22 — the same rail `_protagonist_complaints` runs on, and the reason
+    `test_the_pilot_package_regenerates_the_world_it_was_run_on` still gates clean.
+
+    Nothing here asks whether the ladder is a good ladder or the rung the right rung. Those are
+    judgments and `plan/world-architect.md` §2 keeps the channel that would answer them shut.
+    """
+    protagonist = candidate.protagonist
+    standing = protagonist.get("standing") if protagonist is not None else None
+    if not isinstance(standing, Mapping):
+        return ()
+
+    complaints: list[str] = []
+    comparators = {
+        _identifier(criterion): _text(criterion, "comparator")
+        for system in _items(candidate, "systems")
+        for criterion in (system.get("criterion"),)
+        if isinstance(criterion, Mapping) and _identifier(criterion)
+    }
+    ladders = _ladders_of(candidate)
+    countable = {
+        criterion
+        for criterion, ranks in ladders.items()
+        if comparators.get(criterion) == "ordinal" and len(ranks) >= LADDER_FLOOR
+    }
+    if not countable:
+        complaints.append(
+            f"no criterion has the comparator 'ordinal' and a chain of at least {LADDER_FLOOR} "
+            "ranks; the number a reader of this genre counts is a rung's place in such a chain, "
+            "and a world with none has nothing to count"
+        )
+
+    criterion = worlds_mod.normalise_id(_text(standing, "criterion"))
+    rung = worlds_mod.normalise_id(_text(standing, "rung"))
+    if criterion not in ladders:
+        complaints.append(
+            f"the protagonist stands on {criterion or '(nothing)'!r}, which is not a criterion "
+            f"this world declares ({', '.join(sorted(ladders)) or 'none'})"
+        )
+    elif criterion not in countable:
+        complaints.append(
+            f"the protagonist stands on {criterion}, whose comparator is "
+            f"{comparators.get(criterion) or '(none)'!r} over {len(ladders[criterion])} rank(s); "
+            f"a standing counts only on an 'ordinal' chain of at least {LADDER_FLOOR}"
+        )
+    chain = ladders.get(criterion, ())
+    if criterion in ladders and rung not in chain:
+        complaints.append(
+            f"the protagonist stands at {rung or '(nothing)'!r}, which is not a rank of "
+            f"{criterion} ({', '.join(chain) or 'none'})"
+        )
+    elif chain and rung == chain[-1]:
+        complaints.append(
+            f"the protagonist starts at {rung}, the top of {criterion}; a book that opens at the "
+            "top of the only ladder it declared has nowhere on it to go"
+        )
+
+    # The declaration, not the prose: whether this world says what a change of standing is
+    # printed as. `parse_graph_line`'s bounds are checked at `graph_line_for`; what is checked
+    # here is that the line exists and that one of its phrases means "stands at".
+    if ladders:
+        graph_line = candidate.raw.get("graph_line")
+        if not isinstance(graph_line, Mapping) or not str(graph_line.get("label") or "").strip():
+            complaints.append(
+                "this world declares a ladder and no graph_line; a standing nothing prints is a "
+                "standing no scene can announce and no parser can read back"
+            )
+        else:
+            edges = graph_line.get("edges")
+            printed = {
+                worlds_mod.normalise_id(_text(edge, "predicate"))
+                for edge in (edges if isinstance(edges, list) else ())
+                if isinstance(edge, Mapping)
+            }
+            if worlds_mod.STANDS_AT_PREDICATE not in printed:
+                complaints.append(
+                    "the graph_line carries no phrase whose predicate is "
+                    f"{worlds_mod.STANDS_AT_PREDICATE!r} "
+                    f"({', '.join(sorted(printed)) or 'no phrases at all'}); the line the ladder "
+                    "is read off is the one form this world does not announce"
+                )
+    return tuple(complaints)
+
+
 def gate_candidate(
     candidate: Candidate, *, scenes: int = DEFAULT_SCENES
 ) -> tuple[str, ...]:
@@ -807,7 +1040,10 @@ def gate_candidate(
     4. **at least one answer lands inside the scenes being written now**;
     5. the declared protagonist refers — to a cast member, to a rule or shape, and by name in
        the premise (`_protagonist_complaints`; silent for a world that declares none);
-    6. nothing in the answer compares itself to something outside it (RS1 / C3).
+    6. the ladder is countable and the standing sits on it below the top, and a world with a
+       ladder says what a change of standing is printed as (`_ladder_complaints`; silent for a
+       world that declares no standing);
+    7. nothing in the answer compares itself to something outside it (RS1 / C3).
     """
     complaints: list[str] = []
 
@@ -888,6 +1124,7 @@ def gate_candidate(
         )
 
     complaints.extend(_protagonist_complaints(candidate))
+    complaints.extend(_ladder_complaints(candidate))
 
     borrowed = sorted(set(_BORROWED.findall(candidate.rendered())))
     if borrowed:
@@ -1375,6 +1612,39 @@ def records_for(
                             exception, worlds_mod.EXCEPTS_PREDICATE, object_ref=subject
                         )
                     )
+            # **Where they start, as one flat edge with the criterion riding on it.** The shape
+            # mirrors `precedes` exactly (`value = criterion_id`) so that two ladders in one
+            # world cannot be spliced, and it is flat rather than the reified `EVALUATION_*`
+            # triple because the *page* can only print a flat edge — `[TAG] Kell now stands at
+            # two wood` — and the forge's copy of the fact has to be readable by the same
+            # function that reads the page's (`plan/handoff-numbers-go-up.md` boundary 9).
+            #
+            # **Placed at the opening rather than left unplaced, and the placement is load-
+            # bearing.** A standing is a fact that changes, so a `progression_target`-class
+            # lookup has to be able to ask "which standing is in force at this scene" and
+            # "which milestone is still ahead" — both of which compare order keys. An unplaced
+            # record asserts no position, and `records_before` keeps it in every window, so an
+            # unplaced standing could never be *before* a milestone and the schedule would aim
+            # at a target the book had already passed. Standing world rules are unplaced for
+            # exactly the opposite reason: they never change.
+            #
+            # Absent for a world that declares no standing, which is every world forged before
+            # 2026-08-22 — the condition that keeps
+            # `test_the_pilot_package_regenerates_the_world_it_was_run_on` green.
+            standing = protagonist.get("standing")
+            if isinstance(standing, Mapping):
+                criterion = worlds_mod.normalise_id(_text(standing, "criterion"))
+                rung = worlds_mod.normalise_id(_text(standing, "rung"))
+                if criterion and rung:
+                    add(
+                        worlds_mod.world_record(
+                            subject,
+                            worlds_mod.STANDS_AT_PREDICATE,
+                            object_ref=rung,
+                            value=criterion,
+                            order_key=story_key(1, scenes=scenes),
+                        )
+                    )
 
     graph_line = candidate.raw.get("graph_line")
     if isinstance(graph_line, Mapping) and graph_line.get("label"):
@@ -1484,6 +1754,57 @@ def spread(candidates: Sequence[Candidate]) -> float | None:
     return sum(pairs) / len(pairs) if pairs else None
 
 
+def _countable_ladders(
+    records: Sequence[lc.StateRecord],
+) -> dict[str, tuple[str, ...]]:
+    """Ordinal criteria whose results form a chain, as criterion id → chain. Read off records.
+
+    Off the records rather than off the raw answer, unlike `_ladders_of`, because this feeds a
+    *report* about the world the store will hold: a rank whose id normalises away is not on the
+    chain the writer or the extractor will ever see, and counting it here would report a ladder
+    nothing downstream has.
+    """
+    comparators = worlds_mod.criteria(records)
+    found = {
+        criterion: worlds_mod.ladder_of(records, criterion)
+        for criterion, comparator in comparators.items()
+        if comparator == "ordinal"
+    }
+    return {criterion: chain for criterion, chain in found.items() if chain}
+
+
+def _opening_rung_index(records: Sequence[lc.StateRecord]) -> int | None:
+    """The protagonist's 1-based rung at the opening, or `None` when there is no one number.
+
+    **Reads the edges directly rather than calling `worlds.standing_of`, and the difference is
+    the rail.** `standing_of` filters to canon, which is right for every caller downstream of a
+    pick — a proposal must not read as where the book's protagonist stands. A candidate's records
+    are `PROPOSED` by construction, so this report would be `None` for every world if it went
+    through that function, and a counter that is always empty reads as a world with no ladder.
+
+    `None` when the world declares no protagonist, no standing, or more than one standing whose
+    chain gives a number — one report field cannot answer for two ladders, and choosing between
+    them is the guess `rung_index` refuses.
+    """
+    subjects = worlds_mod.entities_with_role(records, "protagonist")
+    if not subjects:
+        return None
+    indices = [
+        found
+        for record in records
+        if record.predicate == worlds_mod.STANDS_AT_PREDICATE
+        and record.subject == subjects[0]
+        and record.object_ref
+        and (
+            found := worlds_mod.rung_index(
+                records, str(record.value or "").strip(), record.object_ref
+            )
+        )
+        is not None
+    ]
+    return indices[0] if len(indices) == 1 else None
+
+
 def report(candidate: Candidate, *, scenes: int = DEFAULT_SCENES) -> dict[str, Any]:
     """Every deterministic number this candidate has, computed over its own records.
 
@@ -1516,6 +1837,21 @@ def report(candidate: Candidate, *, scenes: int = DEFAULT_SCENES) -> dict[str, A
         # its premise says their name — each computed off the records this candidate produced.
         # Nothing here orders one world above another and nothing may be read as doing so; the
         # forge still stops and a person picks (`plan/world-architect.md` §2).
+        # **Five counters about the ladder, and not one verdict about it.** How many ordinal
+        # criteria carry a chain, how long each chain is, where the protagonist opens on theirs,
+        # whether the printed form exists, and the inversion verbatim so the run record can be
+        # read beside `plan/handoff-numbers-go-up.md` Task 0.3's four worlds without a
+        # classifier standing between them. `opening_rung_index` is `None` for a world that
+        # declares no standing and for one whose chain is not a chain — empty rather than a
+        # guess, `rung_index`'s own rule.
+        "ladders": len(_countable_ladders(records)),
+        "rungs_per_ladder": {
+            criterion: len(chain)
+            for criterion, chain in sorted(_countable_ladders(records).items())
+        },
+        "opening_rung_index": _opening_rung_index(records),
+        "graph_line_declared": bool(candidate.raw.get("graph_line")),
+        "inversion_text": str(candidate.raw.get("inversion") or ""),
         "protagonist_declared": bool(worlds_mod.entities_with_role(records, "protagonist")),
         "exception_declared": any(
             record.predicate == worlds_mod.EXCEPTION_PREDICATE for record in records

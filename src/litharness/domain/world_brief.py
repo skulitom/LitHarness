@@ -108,12 +108,55 @@ class Reveal:
 
 
 @dataclass(frozen=True, slots=True)
+class Ladder:
+    """The one ordinal chain this book's protagonist stands on, and where they start on it.
+
+    **The rungs carry their visible form and their price, and that is the whole of what a
+    planner needs to place one.** `plan/handoff-numbers-go-up.md` Task 2: a milestone at a scene
+    has to be a scene whose statement would plausibly change a standing, and a planner that was
+    handed four bare ids could only guess which. The forms are the world's own `manifests_as`
+    and `costs` values, unchanged — `criterion_brief` already hands the *writer* the chain as
+    ids, and this is the same chain with the two facts a schedule is written against.
+
+    The number is not carried. A rung's place in `rungs` is its number, counting from one; a
+    stored integer beside the list would be a second answer to the same question, which is the
+    rule `worlds.rung_index` states.
+    """
+
+    protagonist: str
+    criterion: str
+    #: `(rung_id, visible_form, cost_to_reach)`, lowest first. The chain, so index + 1 is the
+    #: number a reader counts.
+    rungs: tuple[tuple[str, str, str], ...]
+    opening_rung: str
+
+    def to_jsonable(self) -> dict[str, Any]:
+        return {
+            "protagonist": self.protagonist,
+            "criterion": self.criterion,
+            "rungs": [
+                {
+                    "id": rung,
+                    **({"visible_form": form} if form else {}),
+                    **({"cost_to_reach": cost} if cost else {}),
+                }
+                for rung, form, cost in self.rungs
+            ],
+            "opening_rung": self.opening_rung,
+        }
+
+
+@dataclass(frozen=True, slots=True)
 class WorldBrief:
     """What a scene planner may be told about the world its book runs on."""
 
     groups: tuple[tuple[str, tuple[str, ...]], ...]
     criteria: str | None
     reveals: tuple[Reveal, ...]
+    #: The one ordinal chain this book's protagonist stands on, when canon declares one.
+    #: `None` for every book written before 2026-08-22 and for every world that declares a
+    #: partial order rather than a chain — see `ladder_for`.
+    ladder: Ladder | None = None
 
     @property
     def facts(self) -> int:
@@ -125,6 +168,8 @@ class WorldBrief:
             payload["how_this_world_ranks_people"] = self.criteria
         if self.reveals:
             payload["mysteries"] = [reveal.to_jsonable() for reveal in self.reveals]
+        if self.ladder is not None:
+            payload["ladder"] = self.ladder.to_jsonable()
         return payload
 
 
@@ -176,9 +221,57 @@ def brief_for(records: Sequence[lc.StateRecord]) -> WorldBrief | None:
     reveals = _reveals(canon)
     groups = tuple((name, tuple(buckets[name])) for name in GROUPS if buckets[name])
     criteria = worlds_mod.criterion_brief(canon)
+    ladder = ladder_for(canon)
     if not groups and not criteria and not reveals:
         return None
-    return WorldBrief(groups=groups, criteria=criteria, reveals=reveals)
+    return WorldBrief(
+        groups=groups, criteria=criteria, reveals=reveals, ladder=ladder
+    )
+
+
+def ladder_for(records: Sequence[lc.StateRecord]) -> Ladder | None:
+    """The chain this book's protagonist stands on, or `None` when there is not exactly one.
+
+    **`None` in four cases, and every one of them is a book that had no ladder to schedule
+    against**: no declared protagonist, no standing, a standing whose criterion declares a
+    partial order rather than a chain, and a protagonist standing on two ladders at once. The
+    last is the only one that is a *choice*, and it is `worlds.criterion_of_rung`'s: which chain
+    a schedule counts on has to be one answer, and a brief that picked would be inventing which
+    ladder the world meant. Such a book gets today's outline request, which is the control this
+    whole slice is measured against.
+
+    Reads the standing off canon at no coordinate, so it is the *opening* rung for a book being
+    outlined before any of it exists and the *live* rung for one being replanned mid-book —
+    which is the behaviour a re-outline wants: the schedule is written from where the book
+    actually is. `worlds.standing_of` owns that rule.
+    """
+    subjects = worlds_mod.entities_with_role(records, "protagonist")
+    if not subjects:
+        return None
+    protagonist = subjects[0]
+    standing = worlds_mod.standing_of(records, protagonist)
+    if len(standing) != 1:
+        return None
+    [(criterion, rung)] = standing.items()
+    chain = worlds_mod.ladder_of(records, criterion)
+    if rung not in chain:
+        return None
+    forms = {
+        record.subject: str(record.value or "").strip()
+        for record in records
+        if record.predicate == worlds_mod.MANIFESTS_PREDICATE
+    }
+    costs = {
+        record.subject: str(record.value or "").strip()
+        for record in records
+        if record.predicate == "costs"
+    }
+    return Ladder(
+        protagonist=protagonist,
+        criterion=criterion,
+        rungs=tuple((step, forms.get(step, ""), costs.get(step, "")) for step in chain),
+        opening_rung=rung,
+    )
 
 
 def _group_of(
@@ -251,10 +344,40 @@ WORLD_RULES: tuple[str, ...] = (
 )
 
 
+#: The schedule ask, added only for a book whose canon declares a ladder. In the register the
+#: milestone rules beside them already use — shape and fact, what to return and what a returned
+#: schedule may not be — and deliberately **not one word about how a rise should read**.
+#:
+#: `plan/handoff-numbers-go-up.md` boundary 1: no "earn it", no "make the reader feel it", no
+#: "triumphant", no "pay it off". A rung and its price are declared facts of the world, the same
+#: class as the numbers the milestone rules already schedule; how a scene handles reaching one
+#: is the writer's and the operator's, and a rule here that reached for a verb about it would be
+#: this system's taste arriving in every outline. `tests/test_outline.py` checks the text.
+#:
+#: `{protagonist}` is filled by the caller with the declared id, exactly as `PROTAGONIST_RULES`
+#: fills its own.
+LADDER_RULES: tuple[str, ...] = (
+    "Also return standing_milestones: the rung ladder.protagonist stands at by the end of "
+    "certain scenes, as {{ordinal, rung}}.",
+    "Use only the rung ids given in ladder.rungs. Do not invent rungs and do not rename them.",
+    "The standing must actually move. A schedule where every milestone repeats the opening "
+    "rung plans a book in which nothing rises.",
+    "The standing never moves down: each milestone's rung is at or above the one before it, "
+    "starting from the opening rung, and at least one milestone is above the opening rung.",
+    "No two milestones in a row name the same rung.",
+    "Place them at scenes whose statement, as you wrote it, would plausibly change what "
+    "{protagonist} counts as.",
+    "Every rung carries a cost_to_reach. The statement at a milestone scene says what is paid.",
+)
+
+
 __all__ = [
     "GROUPS",
+    "LADDER_RULES",
     "WORLD_RULES",
+    "Ladder",
     "Reveal",
     "WorldBrief",
     "brief_for",
+    "ladder_for",
 ]

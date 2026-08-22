@@ -33,7 +33,7 @@ from litharness.application.planner import (
     render_prompt,
     template_for,
 )
-from litharness.domain import integrity
+from litharness.domain import integrity, worlds
 from litharness.domain.beats import (
     SIX_BEAT,
     BeatTemplate,
@@ -48,6 +48,8 @@ from litharness.domain.extraction import (
     progression_target,
     render_status_line,
     speaks_system_voice,
+    standing_example,
+    standing_target,
     system_voice_example,
 )
 from litharness.domain.jobs import JobStatus
@@ -1760,3 +1762,213 @@ def test_a_packet_that_fits_says_nothing(store: SqliteStore) -> None:
 
     day = datetime.fromtimestamp(START, tz=UTC).date().isoformat()
     assert store.digest(day).get("context_omitted", 0) == 0
+
+
+# --- the ladder reaches the writer (plan/handoff-numbers-go-up.md Task 2) ---------------------
+
+
+def _ladder_records(subject: str = "rook") -> list[lc.StateRecord]:
+    """A three-rung ordinal chain, a graph line that prints a change on it, and a standing."""
+    return [
+        worlds.world_record(
+            "assay_grade",
+            worlds.TYPE_PREDICATE,
+            value=worlds.CRITERION,
+            authority=lc.StateAuthority.ACCEPTED_CANON,
+        ),
+        worlds.world_record(
+            "assay_grade",
+            worlds.COMPARATOR_PREDICATE,
+            value="ordinal",
+            authority=lc.StateAuthority.ACCEPTED_CANON,
+        ),
+        *[
+            worlds.world_record(
+                rung,
+                worlds.MANIFESTS_PREDICATE,
+                value=form,
+                authority=lc.StateAuthority.ACCEPTED_CANON,
+            )
+            for rung, form in (
+                ("third_seal", "a lead seal that greens in a week"),
+                ("second_seal", "a brass seal worn at the throat"),
+                ("first_seal", "a silver seal nobody hands back"),
+            )
+        ],
+        *[
+            worlds.world_record(
+                lower,
+                worlds.PRECEDES_PREDICATE,
+                object_ref=higher,
+                value="assay_grade",
+                authority=lc.StateAuthority.ACCEPTED_CANON,
+            )
+            for lower, higher in (
+                ("third_seal", "second_seal"),
+                ("second_seal", "first_seal"),
+            )
+        ],
+        worlds.world_record(
+            subject,
+            worlds.ENTITY_ROLE_PREDICATE,
+            value="protagonist",
+            authority=lc.StateAuthority.ACCEPTED_CANON,
+        ),
+        worlds.world_record(
+            subject,
+            worlds.STANDS_AT_PREDICATE,
+            object_ref="third_seal",
+            value="assay_grade",
+            order_key="s1",
+            authority=lc.StateAuthority.ACCEPTED_CANON,
+        ),
+        worlds.world_record(
+            "book",
+            worlds.GRAPH_LINE_PREDICATE,
+            value={
+                "label": "ASSAY",
+                "edges": [
+                    {"phrase": "now stands at", "predicate": worlds.STANDS_AT_PREDICATE}
+                ],
+            },
+            authority=lc.StateAuthority.ACCEPTED_CANON,
+        ),
+    ]
+
+
+def _scheduled(subject: str = "rook") -> list[lc.StateRecord]:
+    """The outline's own PROPOSED rung schedule, as `standing_milestone_records` writes it."""
+    return [
+        lc.StateRecord(
+            record_id=f"standing-{key}",
+            kind=lc.StateRecordKind.RELATIONSHIP,
+            subject=subject,
+            predicate=worlds.STANDS_AT_PREDICATE,
+            value="assay_grade",
+            object_ref=rung,
+            authority=lc.StateAuthority.PROPOSED,
+            story_position=lc.StoryPosition(order_key=key),
+        )
+        for key, rung in (("s3", "second_seal"), ("s5", "first_seal"))
+    ]
+
+
+def test_a_standing_schedule_aims_at_the_next_rung_not_the_last() -> None:
+    """`progression_target`'s rule, transposed: a book aims at where it is going.
+
+    And it carries the number, because on this brief the number *is* the rung's place in the
+    chain — the operator's direction, bronze is 1 and gold is 3.
+    """
+    records = [*_ladder_records(), *_scheduled()]
+
+    at_one = standing_target(records, at="s1") or ""
+    assert "rook stands at third_seal (1 of 3)" in at_one
+    assert "the book's plan has them at second_seal (2 of 3)" in at_one
+    # The visible form travels with the rung: a rank a reader is told rather than shown is
+    # what `manifests_as` exists to refuse.
+    assert "a brass seal worn at the throat" in at_one
+
+    assert "first_seal (3 of 3)" in (standing_target(records, at="s4") or "")
+    assert standing_target(records, at="s6") is None, "nothing ahead is nothing to aim at"
+    # Never interpolated: the schedule's shape is the schedule's.
+    assert "second_seal" not in (standing_target(records, at="s4") or "")
+
+
+def test_the_writer_is_handed_the_next_rung_and_the_line_the_book_prints(
+    store: SqliteStore,
+) -> None:
+    """The ask, in the numeric block's own wording, and a filled example rather than a form."""
+    book_id, branch_id = _book_zero(store)
+    store.record_state_records(
+        book_id, branch_id, [*_ladder_records(), *_scheduled()],
+        created_at="2026-08-22T00:00:00Z",
+    )
+    records = store.state_records(book_id, branch_id)
+    head = store.head(book_id, branch_id)
+    assert head is not None
+    beat = beats_for(head, SIX_BEAT)[0]
+    packet = packet_for(store, head, beat)
+
+    system, _ = render_prompt(
+        beat,
+        book_title=None,
+        packet=packet,
+        standing=standing_target(records, at=beat.story_order_key),
+        standing_line=standing_example(records, at=beat.story_order_key),
+    )
+    assert "The book's plan has the standing reaching this later on:" in system
+    assert "Move it toward that in this scene where the events warrant it" in system
+    assert "[ASSAY] rook now stands at third_seal" in system
+    # A filled line, never a form with braces: the measurement `system_voice_example` records.
+    assert "{" not in system.split("print the line in this form")[-1]
+
+
+def test_the_standing_block_carries_no_verb_and_no_adjective(store: SqliteStore) -> None:
+    """**Boundary 1 of `plan/handoff-numbers-go-up.md`, asserted rather than trusted.**
+
+    Code carries facts, positions and schedules — never taste. The system may tell a writer
+    that the plan has a standing reaching a rung later on, in exactly the register it already
+    tells a writer that the plan has a *number* reaching one. It may not say the rise should be
+    earned, felt, triumphant or paid off: that is the operator's to say through a directive, and
+    a default here would be this system's own taste arriving in every prompt it renders. The
+    words below are the ones such an instruction would have to use.
+
+    `test_the_chapter_cue_carries_no_verb_and_no_adjective` is the pattern; this is the same
+    check one block down.
+    """
+    book_id, branch_id = _book_zero(store)
+    store.record_state_records(
+        book_id, branch_id, [*_ladder_records(), *_scheduled()],
+        created_at="2026-08-22T00:00:00Z",
+    )
+    records = store.state_records(book_id, branch_id)
+    head = store.head(book_id, branch_id)
+    assert head is not None
+    beat = beats_for(head, SIX_BEAT)[0]
+    packet = packet_for(store, head, beat)
+
+    bare, _ = render_prompt(beat, book_title=None, packet=packet)
+    withled, _ = render_prompt(
+        beat,
+        book_title=None,
+        packet=packet,
+        standing=standing_target(records, at=beat.story_order_key),
+        standing_line=standing_example(records, at=beat.story_order_key),
+    )
+    block = withled[len(bare):].lower()
+    assert block, "the standing block is what is being checked"
+    for forbidden in (
+        "earn", "earned", "deserve", "triumph", "victory", "feel", "felt", "emotion",
+        "satisfying", "satisfy", "reward", "rewarding", "celebrate", "climax", "pay it off",
+        "payoff", "exciting", "epic", "hard-won", "struggle", "moment",
+    ):
+        assert forbidden not in block, forbidden
+
+
+def test_a_book_with_no_ladder_renders_the_prompt_it_rendered_before(
+    store: SqliteStore,
+) -> None:
+    """The byte-identical control, and it is a byte comparison for `input_digest_for`'s reason.
+
+    The digest covers the prompt and is the sampler seed, so a block rendered for a book that
+    declares nothing would silently re-decode every job every existing book mints. Both golden
+    fixtures are in this state and stay in it.
+    """
+    book_id, branch_id = _fixture(store, "mystery")
+    head = store.head(book_id, branch_id)
+    assert head is not None
+    beat = beats_for(head, SIX_BEAT)[3]
+    packet = packet_for(store, head, beat)
+    records = store.state_records(book_id, branch_id)
+
+    assert standing_target(records) is None
+    assert standing_example(records) is None
+    absent = render_prompt(beat, book_title="The Vane House", packet=packet)
+    passed = render_prompt(
+        beat,
+        book_title="The Vane House",
+        packet=packet,
+        standing=standing_target(records),
+        standing_line=standing_example(records),
+    )
+    assert passed == absent

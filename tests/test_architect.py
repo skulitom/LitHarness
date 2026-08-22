@@ -58,6 +58,9 @@ def world(
             # record, because `records_for` keys on content and `add` drops the duplicate.
             "wants": "to be read once by someone who matters",
             "price": "every reading he signs is checked twice, and the second check is not his",
+            # Below the top of the one ordinal chain this world declares, which is what the rule
+            # added on 2026-08-22 asks for and what `_ladder_complaints` checks by membership.
+            "standing": {"criterion": "assay_grade", "rung": "second_seal"},
         },
         "systems": [
             {
@@ -80,6 +83,8 @@ def world(
                     "id": "assay_grade",
                     "comparator": "ordinal",
                     "evaluates": "appraiser",
+                    # Lowest first and three long, so the chain is one a rung's place can be
+                    # counted on: `third_seal` is 1, `first_seal` is 3.
                     "ranks": [
                         {
                             "id": "third_seal",
@@ -90,6 +95,11 @@ def world(
                             "id": "second_seal",
                             "visible_form": "a brass seal, worn at the throat",
                             "cost_to_reach": "a ruined reputation somewhere else",
+                        },
+                        {
+                            "id": "first_seal",
+                            "visible_form": "a silver seal nobody is allowed to hand back",
+                            "cost_to_reach": "the name of whoever held it before you",
                         },
                     ],
                 },
@@ -140,7 +150,12 @@ def world(
         ],
         "graph_line": {
             "label": "SYSTEM",
-            "edges": [{"phrase": "is recognised as", "predicate": "recognized_by"}],
+            "edges": [
+                {"phrase": "is recognised as", "predicate": "recognized_by"},
+                # The printed form a change of standing is announced in, which a world with a
+                # ladder owes: `[SYSTEM] Silas now stands at second seal`.
+                {"phrase": "now stands at", "predicate": worlds.STANDS_AT_PREDICATE},
+            ],
         },
         "directives": [
             {"kind": "constraint", "text": "Every reading costs the minutes it takes."}
@@ -580,23 +595,40 @@ def test_the_protagonist_rule_asks_for_a_declaration_and_never_an_outcome() -> N
     "a form a reader can SEE" and "teaches a reader that nothing here gets settled". It is this
     module's register for what shows on the page, and forbidding it here would be a rule about a
     word rather than about a boundary.
+
+    **Every rule that mentions the protagonist, not just the one that introduced them.** Two more
+    arrived on 2026-08-22 with `plan/handoff-numbers-go-up.md` — the ladder the reader counts and
+    the amendment fencing it off from the inversion — and both are about a person the genre's own
+    craft advice talks about in exactly the forbidden verbs. A test that checked only the first
+    rule would let the second and third in.
     """
-    [rule] = [item for item in architect._RULES if "protagonist" in item]
-    lowered = rule.lower()
+    rules = [item for item in architect._RULES if "protagonist" in item]
+    assert len(rules) == 3
+    for rule in rules:
+        lowered = rule.lower()
+        for forbidden in (
+            "win", "winning", "hero", "likeable", "likable", "sympathetic", "root for",
+            "faster", "fastest", "strongest", "best", "succeed", "success", "triumph",
+            "interesting", "compelling",
+        ):
+            assert forbidden not in lowered, (forbidden, rule)
+    [declaration] = [item for item in rules if "does not hold for them" in item.lower()]
+    lowered = declaration.lower()
+    assert "member of the cast" in lowered
     # **Measured, not stylistic.** The first live forge under this rule returned three worlds,
     # every one of which named a real declared id in `exception` and then glossed it in the
     # same field, and all three were refused by the gate for it. The ask now says which of the
-    # two the field is, and this is where that stays said.
+    # two the field is, and this is where that stays said — for the standing's two id fields
+    # as well, which are the same shape of ask and got the same answer before it was billed
+    # twice.
     assert "its id alone" in lowered
     assert "not an id" in lowered
     assert architect._PROTAGONIST["properties"]["exception"]["pattern"] == "^[a-z0-9_]+$"
-    for forbidden in (
-        "win", "winning", "hero", "likeable", "likable", "sympathetic", "root for",
-        "faster", "fastest", "strongest", "best", "succeed", "success", "triumph",
-        "interesting", "compelling",
-    ):
-        assert forbidden not in lowered, forbidden
-    assert "member of the cast" in lowered and "does not hold for them" in lowered
+    standing = architect._STANDING["properties"]
+    assert standing["criterion"]["pattern"] == "^[a-z0-9_]+$"
+    assert standing["rung"]["pattern"] == "^[a-z0-9_]+$"
+    assert "AN ID AND NOTHING ELSE" in standing["criterion"]["description"]
+    assert "AN ID AND NOTHING ELSE" in standing["rung"]["description"]
 
 
 # --- the world as records ---------------------------------------------------------------------
@@ -615,7 +647,10 @@ def test_the_records_carry_the_edges_nothing_in_this_repository_used_to_write() 
     assert sum(1 for record in records if record.object_ref) > 0
     assert worlds.entities_with_role(records, "creature") == ("ash_fox",)
     assert worlds.criteria(records) == {"assay_grade": "ordinal"}
-    assert worlds.rank_order(records, criterion="assay_grade") == (("third_seal", "second_seal"),)
+    assert worlds.rank_order(records, criterion="assay_grade") == (
+        ("second_seal", "first_seal"),
+        ("third_seal", "second_seal"),
+    )
     assert len(worlds.cardinality_shapes(records)) == 1
 
 
@@ -1126,3 +1161,178 @@ def test_a_scene_count_the_directives_were_not_written_for_is_refused(tmp_path: 
     tool = _rematerialise()
     assert tool.main(["--out", str(tmp_path / "y"), "--scenes", "12"]) == 2
     assert not (tmp_path / "y").exists()
+
+
+# --- the ladder the reader counts (plan/handoff-numbers-go-up.md Task 1) -----------------------
+
+
+def _no_standing(entry: dict[str, Any]) -> dict[str, Any]:
+    """The same world with its protagonist's standing removed — a world forged before 2026-08-22."""
+    protagonist = {
+        key: value for key, value in entry["protagonist"].items() if key != "standing"
+    }
+    return {**entry, "protagonist": protagonist}
+
+
+def test_a_forged_world_that_places_nobody_on_its_ladder_is_refused() -> None:
+    """The forge must say where its protagonist starts; `records_for` must not require it.
+
+    Measured on the four worlds forged before this rule (`plan/handoff-numbers-go-up.md`
+    Task 0.2): two of them declared an ordinal criterion with a chain of four and five rungs,
+    and **not one cast member of any of the four carried a standing on any chain**. A ladder
+    with nobody on it is a costume with nobody in it, and nothing downstream complained because
+    nothing downstream was looking.
+    """
+    with pytest.raises(architect.ArchitectOutputError, match="names no standing"):
+        architect.worlds_from(
+            payload(
+                _no_standing(world()),
+                world(domain="coopering", geometry="cycle"),
+                world(domain="glassblowing", geometry="chain"),
+            ),
+            3,
+        )
+    for missing in ("criterion", "rung"):
+        broken = world()
+        broken["protagonist"] = {
+            **broken["protagonist"],
+            "standing": {**broken["protagonist"]["standing"], missing: ""},
+        }
+        with pytest.raises(architect.ArchitectOutputError, match=f"standing has no {missing}"):
+            architect.worlds_from(
+                payload(
+                    broken,
+                    world(domain="coopering", geometry="cycle"),
+                    world(domain="glassblowing", geometry="chain"),
+                ),
+                3,
+            )
+
+
+def test_a_standing_round_trips_from_the_answer_to_a_rung_and_a_number() -> None:
+    """`records_for` → `standing_of` / `rung_index`, which is the whole of "the number".
+
+    The operator's direction is that the rank ladder *is* the number — bronze is 1 and gold is
+    3 — so what a round trip has to preserve is the rung's place in the chain counting from the
+    bottom, not an integer anybody stored.
+    """
+    records = architect.records_for(
+        candidate(), authority=lc.StateAuthority.ACCEPTED_CANON, scenes=SCENES
+    )
+    assert worlds.ladder_of(records, "assay_grade") == (
+        "third_seal",
+        "second_seal",
+        "first_seal",
+    )
+    assert worlds.standing_of(records, "silas") == {"assay_grade": "second_seal"}
+    assert worlds.rung_index(records, "assay_grade", "third_seal") == 1
+    assert worlds.rung_index(records, "assay_grade", "second_seal") == 2
+    assert worlds.rung_index(records, "assay_grade", "first_seal") == 3
+    assert worlds.criterion_of_rung(records, "second_seal") == "assay_grade"
+    # The edge is flat and carries its criterion in the value slot, exactly as `precedes` does,
+    # because the page can only print a flat edge and both copies have to read the same way.
+    [standing] = [
+        record for record in records if record.predicate == worlds.STANDS_AT_PREDICATE
+    ]
+    assert standing.subject == "silas"
+    assert standing.object_ref == "second_seal"
+    assert standing.value == "assay_grade"
+    # Placed at the opening, so a milestone can be *after* it. An unplaced standing sits in
+    # every window and could never be compared against a schedule.
+    assert standing.story_position is not None
+    assert standing.story_position.order_key == architect.story_key(1, scenes=SCENES)
+    assert worlds.validate(records) == ()
+
+
+def test_a_rung_in_two_chains_is_a_complaint_rather_than_a_guess() -> None:
+    """Which ladder a standing counts on has to be one answer (boundary 9)."""
+    entry = world()
+    entry["systems"].append(
+        {
+            "id": "the_bench",
+            "name": "the bench",
+            "logic": "a second order over the same seals",
+            "manifests_as": "a bench list read out on quarter-day",
+            "rules": [],
+            "criterion": {
+                "id": "bench_grade",
+                "comparator": "ordinal",
+                "evaluates": "appraiser",
+                "ranks": [
+                    {"id": "second_seal", "visible_form": "brass", "cost_to_reach": "a year"},
+                    {"id": "bench_two", "visible_form": "a chair", "cost_to_reach": "two years"},
+                    {"id": "bench_one", "visible_form": "the chair", "cost_to_reach": "a name"},
+                ],
+            },
+        }
+    )
+    records = architect.records_for(
+        architect.Candidate(0, entry),
+        authority=lc.StateAuthority.ACCEPTED_CANON,
+        scenes=SCENES,
+    )
+    assert worlds.criterion_of_rung(records, "second_seal") is None
+    complaints = worlds.validate(records)
+    assert any("sits in 2 chains" in item for item in complaints), complaints
+
+
+def test_the_gate_counts_the_ladder_and_never_judges_it() -> None:
+    """Five membership complaints, and silence for a world that declares no standing."""
+    assert gate(candidate()) == ()
+
+    # No chain long enough to count on.
+    short = world()
+    short["systems"][0]["criterion"]["ranks"] = short["systems"][0]["criterion"]["ranks"][:2]
+    short["protagonist"]["standing"] = {"criterion": "assay_grade", "rung": "third_seal"}
+    assert any("at least 3" in item for item in gate(short)), gate(short)
+
+    # A criterion this world never declared.
+    stray = world()
+    stray["protagonist"]["standing"] = {"criterion": "nowhere", "rung": "second_seal"}
+    assert any("not a criterion this world declares" in item for item in gate(stray))
+
+    # A rung that is not on that criterion's chain.
+    off = world()
+    off["protagonist"]["standing"] = {"criterion": "assay_grade", "rung": "fourth_seal"}
+    assert any("not a rank of assay_grade" in item for item in gate(off))
+
+    # The top of the only ladder declared.
+    top = world()
+    top["protagonist"]["standing"] = {"criterion": "assay_grade", "rung": "first_seal"}
+    assert any("nowhere on it to go" in item for item in gate(top))
+
+    # A ladder and no printed form for a change of standing.
+    silent = world()
+    silent["graph_line"] = {
+        "label": "SYSTEM",
+        "edges": [{"phrase": "is recognised as", "predicate": "recognized_by"}],
+    }
+    assert any("no phrase whose predicate is" in item for item in gate(silent))
+    del silent["graph_line"]
+    assert any("declares a ladder and no graph_line" in item for item in gate(silent))
+
+    # Silent for every world forged before 2026-08-22.
+    assert architect._ladder_complaints(architect.Candidate(0, _no_standing(world()))) == ()
+
+
+def test_the_report_counts_the_ladder_and_a_world_without_one_reports_zero() -> None:
+    """Counters, and the no-ladder control is byte-identical records."""
+    note = architect.report(candidate(), scenes=SCENES)
+    assert note["ladders"] == 1
+    assert note["rungs_per_ladder"] == {"assay_grade": 3}
+    assert note["opening_rung_index"] == 2
+    assert note["graph_line_declared"] is True
+    assert note["inversion_text"] == world()["inversion"]
+    # A counter, not a verdict: nothing in the report orders one candidate above another.
+    assert not {key for key in note if "score" in key or "rank" in key.split("_")}
+
+    bare = _no_standing(world())
+    bare["systems"][0]["criterion"]["comparator"] = "set_inclusion"
+    empty = architect.report(architect.Candidate(0, bare), scenes=SCENES)
+    assert empty["ladders"] == 0
+    assert empty["rungs_per_ladder"] == {}
+    assert empty["opening_rung_index"] is None
+    # And the records such a world makes are exactly the records it made before this existed:
+    # no `stands_at` edge at all.
+    records = architect.records_for(architect.Candidate(0, bare), scenes=SCENES)
+    assert not [r for r in records if r.predicate == worlds.STANDS_AT_PREDICATE]
