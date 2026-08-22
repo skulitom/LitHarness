@@ -384,6 +384,34 @@ fail on the code that shipped this morning:
 and `tests/test_architect.py::test_a_declared_protagonist_does_not_poison_its_own_book`, the
 second of which runs the whole wired ladder over `records_for`'s output and asserts silence.
 
+### 5.6 A second defect, and this one is the operator's
+
+`forge --pick` mints each reveal's disclosure position at `args.scenes`, which **defaults to
+`DEFAULT_SCENES = 6`**, and the pick on 2026-08-22 was run without `--scenes 8`. The setup script
+then created the book at 8. So `serial4.db` was seeded from a six-scene bundle into an eight-scene
+book, and `story_key` mints no position for a scene the book does not have:
+
+| | pick at `--scenes 6` (what ran) | pick at `--scenes 8` (correct) |
+|---|---|---|
+| seed records | 291 | **292** |
+| reveals given an in-book position | `myst_why_reeves_takes_fail` → `s4` | `myst_why_reeves_takes_fail` → `s4`, `myst_where_the_fourth_grade_went` → **`s8`** |
+
+**The reveal the eight scenes exist to settle would never have landed.** Its ordinal was stored,
+its position was not, and `undisclosed_claims` keeps a claim with no position hidden throughout —
+which is the 40-opened-0-paid defect reproduced by the machinery built to fix it, and exactly what
+`architect.story_key`'s docstring warns about in as many words.
+
+Nothing in the tooling could have caught it: `forge.json` does not record the scene count it was
+forged for, so `--pick` cannot default to it and an operator has to carry the number by hand
+between two commands. The `--scenes` flag is on both; only one of them was given it. **Recorded as
+a defect of the pick path, not fixed here** — `plan/handoff-protagonist.md` does not reach the
+forge CLI, and a change to what `--pick` defaults to is its own piece of work with its own test.
+
+**Consequence for this pilot: `serial4.db` is unusable and cannot be patched.** The `wants`
+duplicate is one record; the missing disclosure position is a different world. The bundle has been
+re-picked correctly (`dec-7f3ea41cdb149f2bb0b4bb80`, 292 records, two positions minted, wired
+ladder silent), and a book drafted on it has to start from a fresh database.
+
 **A finding the pick question exposed, worth more than the pick.** Of nine candidates forged from
 `"progression fantasy"` across pilots 3 and 4, **water law appears three times, land surveying
 twice, and the graft/immunology family twice.** The brief is the same string every time and the
