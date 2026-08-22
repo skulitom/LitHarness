@@ -10235,3 +10235,226 @@ architects divide §61's alpha by N exactly as N directors do, and nothing has m
 briefs produce two worlds rather than one world in hats. And the first quality question in this
 project with an answer outside the text is now live and unanswered: a world that literalises a real
 domain can be **wrong** about it, and nothing checks that.
+
+## 108. The only sentence anybody wrote about endings reached no prompt, and the writer was never told which chapter it was in
+
+**Built 2026-08-22, from [`plan/handoff-chapter-endings.md`](handoff-chapter-endings.md).** Three
+bounded pieces, none of which teaches this system how to end anything. Code:
+`application/constraint_locks.py` and `litharness lock-constraints`; `serials.Position` /
+`serials.chapter_positions` and a `chapter` parameter on `planner.render_prompt`;
+`research/quality-measurement/chapter_endings.py`. Measurements and the before/after packet:
+[`research/quality-measurement/chapter-endings-census.md`](../research/quality-measurement/chapter-endings-census.md).
+
+**Nothing above this entry was renumbered.** §107 was the last section when this began; the check
+was re-run across `main` and all ten `.claude/worktrees/*/plan/stage-0-decisions.md` at commit
+time, matching `^#{2,3} [0-9]+` so a sub-section could not hide a claimed parent (the §86.6
+collision's lesson). No §108 existed anywhere.
+
+**What licenses it is a count.** Measured against `serial.db` — the live eight-scene serial, plan
+head `953d066fd9ee`, all eight `scene_draft` jobs `succeeded` — and against every own-generated
+book on this machine, on 2026-08-22:
+
+| | count |
+|---|--:|
+| constraints the operator's tone note produced | **5** |
+| of those, `locked=True` | **0** |
+| stored drafting prompts containing any of their text | **0 of 8** |
+| stored prompts containing the string `scenes end` | **0 of 8** |
+| interpretive directives whose `produced_constraint_ids` names what it produced | **0 of 4** |
+| callers of `domain/serials.py` in `src/` | **0** |
+| own-generated units whose final prose paragraph ends on a question | **0 of 146** |
+| published RoyalRoad LitRPG chapters that do (n = 3,000) | **6.50%** |
+| published chapters of this project's one assembled book ending on a `[STATUS]` line | **2 of 2** |
+
+The operator asked whether the system incorporates any cliffhanger technique. The measured answer
+was no in three layers, and the middle layer is the one worth the entry: the direction existed, in
+the operator's own words, in the plan, on the record — and `plans.constraints_of` selects on
+`locked`, so it was shown to nobody. **A boolean, and it silenced the whole tone note.**
+
+### 108.1 The five constraints were in the plan and in no prompt, and the field that would have said so was empty
+
+`acf0e05` fixed the *minting* rule — a constraint from a human-authored directive now locks by
+construction — and a minting rule cannot reach a plan that was already minted. So the pilot's head
+still carried five unlocked constraints: close third person, dry and exact, concrete specifics,
+dramatize rather than summarize, and **"scenes end on movement or on a cost paid … they never end
+on a tidy emotional summary"**, which is the only sentence about endings anywhere in this system
+outside a planning document.
+
+**The defect is second-order as well as first.** `narrative_planner` fills
+`directives.produced_constraint_ids` from the constraints it minted **locked**, so a run that
+locked none recorded none: all four interpretive directives on this store cite `[]`. The one field
+designed to say which directive produced which plan item was emptied by the same boolean. The
+lineage survives only in `plan_proposals`, and `constraint_locks.produced_by` reconstructs it from
+there — walking `base_plan_revision_id -> resulting_plan_revision_id` rather than the rows' order,
+because `plan_proposals` sorts on `(created_at, proposal_id)` and proposals accepted inside one ISO
+second therefore sort on a content hash. That was found by
+`test_a_rollback_clears_the_lineage_because_it_reads_no_directive` failing, not by reading the
+code.
+
+### 108.2 The repair locks a boolean, refuses three things, and its one weakness is named rather than buried
+
+`litharness lock-constraints [--dry-run]` is deterministic, free, replayable, idempotent, and it
+does not call a model. It was chosen over re-issuing the tone note as a verbatim `constraint`
+because that spends a paid call **and** because `narrative_planner.render_request` shows the model
+`current_plan_items`: it may as easily `CREATE` five near-duplicates beside the five as `UPDATE`
+them, and a plan carrying two readings of one instruction has no way to say which governs. This
+route creates nothing, so it cannot produce that.
+
+It refuses more than it accepts, on purpose. **A machine-authored directive's constraint** — the
+lock is a person's standing and a Director has none to spend (`plan/director-role.md` §1). **A
+constraint whose producing directive cannot be recovered** — unattributable is not human. **Every
+kind that is not `CONSTRAINT`** — `narrative_planner`'s symmetric rule forces the lock only there,
+so widening it here would not restore what the fixed rule produces, it would be a wider rule
+invented by the repair; the pilot's two promises and eight scene plans stay unlocked, which is also
+what `plan_search` needs.
+
+**It carries no `DirectiveReading`, and that is load-bearing.** `commit_plan_application` acts on a
+reading by calling `Directive.interpret`, which is `RECEIVED -> INTERPRETED`; the directives this
+traces are already `APPLIED` and `TRANSITIONS[APPLIED]` is `{SUPERSEDED}`. A reading would not
+record provenance — it would raise and make the lane unrunnable. The lineage goes in the proposal's
+rationale and the decision digest instead.
+
+**The weakness, stated because the safe-looking version of this rule repairs nothing.** `author` is
+`None` on all eight of the pilot's directives — the column postdates them — and
+`directors.is_machine_author` reads `None` as "unrecorded", never as "machine". On this store that
+is certainly right, since no Director existed when they were written. On a future store it is a
+permission a row predating the column inherits by default. The narrower rule — lock only where
+`author` names a recorded person — would refuse all five and leave the tone note silent, so the
+wider rule ships with the trade named here and in the census note.
+
+### 108.3 What the rule arriving actually costs, which is not nothing
+
+Rendered from the store with no provider call, against a copy: plan head `953d066fd9ee` ->
+`d5820540fa41`, locked items 5 -> 10, unlocked constraints 5 -> 0, plan epoch 8 -> 9.
+
+| | `scene-1` | `scene-8` |
+|---|--:|--:|
+| CONSTRAINTS in the packet | 4 -> 9 | 4 -> 9 |
+| SUMMARIES in the packet | — | **5 -> 4** |
+| items omitted for budget | 0 -> 0 | **1 -> 2** |
+| packet tokens | 1,887 -> 2,145 | 4,458 -> **4,448** |
+
+**At the far end of the book the packet is already at its ceiling, so the direction arrives by
+displacing a scene summary** — and the token count falls, because what was dropped is larger than
+what pushed it out. That is the packer working as specified (constraints are priority 2) and it is
+a real trade rather than a free win. It is also the first concrete case of §12's known defect
+biting a *deliberate* change: the packer drops the oldest prose rather than the least relevant.
+
+**Nothing already written moved.** All 38 stored jobs compare identical on
+`(job_id, input_digest)` before and after; `plan_progress` reports 8 of 8 drafted, so the epoch
+advance re-mints nothing and cancels nothing. The claim made is "the rule is now in the packet",
+and only that. No accepted scene was redrafted.
+
+### 108.4 The writer is told where the scene sits, and told nothing about what to do there
+
+`domain/serials.py` had **zero** callers in `src/` — chapter grain existed only at publish time, as
+`--chapter-scenes`. It now has one: `chapter_positions` is called by the work selector, and the
+fragment `Chapter {c}, scene {k} of {n}.` goes into the beat line, after the ordinal and before the
+dramatic function.
+
+**No verb and no adjective, and that is asserted rather than trusted.**
+`test_the_chapter_cue_carries_no_verb_and_no_adjective` slices the cue out of a rendered prompt and
+checks it against the vocabulary a hook instruction would need. Telling a writer that a scene is
+the last of its chapter is position, the same class as "scene 3 of 8"; telling it what to do about
+that is taste, and a default here would be this system's taste in every prompt it ever renders
+(§95's scope axiom, §97.1).
+
+**The control is a byte comparison, and it matters beyond tidiness.** At `--chapter-scenes 1` —
+the default, which asserts nothing — `chapter_positions` returns an empty mapping and the prompt is
+byte-for-byte what it was. `input_digest_for` covers the prompt and **that digest is the sampler
+seed**, so a cue leaking into the default path would silently change the decoding of every newly
+minted job in the system. Pinned by
+`test_the_prompt_is_byte_identical_when_a_chapter_is_one_scene` and
+`test_the_default_selector_queues_the_prompt_it_always_queued`.
+
+Three more properties are pinned rather than assumed. The arithmetic is `chapters_of`'s, not a
+`divmod` beside it — `test_a_scenes_position_agrees_with_the_chapters_it_is_grouped_into` checks
+them against each other at every serial length from 0 to 29, and every pre-existing name in
+`tests/test_serials.py` is still alive. A trailing partial chapter reports its **real** complement,
+so scene 9 of a nine-scene serial reads `Chapter 3, scene 1 of 1` rather than `of 4`. And a book
+planned before the parameter existed converges instead of re-minting
+(`test_a_tick_over_a_book_planned_before_the_cue_remints_nothing`), because `beat_job_id` excludes
+the prompt by design.
+
+**The shape is per run, not per book.** A `serial.db` ticked without `--chapter-scenes 4` still
+drafts with no cue. Persisting a shape per book needs a migration, a plan item or a column; it is
+named as the next step and deliberately not built.
+
+### 108.5 The census: a locator, four counters, and a zero
+
+`research/quality-measurement/chapter_endings.py`. `final_paragraph` reuses
+`domain/axes.strip_system` rather than a second regex, dropping system lines *within* a block so a
+paragraph carrying a status line in its middle stays one paragraph. Four counters, none of which
+needs a model: final-paragraph word count, whether it is dialogue, whether it ends on a question,
+and whether the literal last line is a system line. **§104.4's chapter-hook-shape property is not
+touched**: classifying "a question opened / a reversal / a price paid" is a located-contrast
+judgment that belongs to E6 mining when the anchor set lands, a regex for it is the
+shallow-because-easy metric §1a.1 refuses, and a model asked for it is a new verbal protocol with
+no validity evidence.
+
+| | this project | RoyalRoad LitRPG |
+|---|--:|--:|
+| units | 146 (2 chapters + 144 scenes, 23 books) | 3,000 chapters, 102 stories |
+| final paragraph, median words | 18 | 17 |
+| **ends on a question** | **0.00%** | **6.50%** |
+| final paragraph is dialogue | 34–38% | 33.7% |
+| last line is a system line | 13.0% (100% at chapter grain) | 0.17% |
+
+**The era control is the point, and it passes.** BRIEF.md §2's headline is `tricolon_rate`
+separating declared-AI prose from pre-2023 at 0.629 while its *undeclared* 2025 control separated
+at 0.606 — the metric detected the year. This one does not: 6.91% human pre-2023, 6.20% undeclared
+2025, 5.38% declared-AI 2025, a spread of 1.53 points against a 6.50-point gap to this project's
+zero. Within story, 58 of 102 books have at least one chapter ending on a question, so the
+population rate is not carried by outliers. The **penultimate** paragraph, measured by the same
+rule in the same pass as a control, ends on a question *more* often than the final one on
+RoyalRoad (7.37% against 6.50%) — the opposite of what author-note contamination would produce, so
+the 6.50% is not an artefact of notes.
+
+**And the census got its own draw wrong first.** `royalroad_chapters` streams shard 3 then shard 30
+under one global `limit`, so `limit=3000` returned **no pre-2023 chapters at all** — two 2025
+cohorts and silently no control era, which looks identical to a corpus holding no old chapters. The
+budget is now split per shard, and the failure is recorded in the function's own docstring because
+it is invisible from the outside.
+
+**No bar is declared, and the census says what one would have to survive.** At chapter grain this
+project has produced **two** units, on which a rate takes the values 0, 50 or 100 and no bar
+between them is expressible; nothing measured says a question is better; the counter would be read
+off the same chapters the writer was directed to change, which is the Goodhart the §94 per-kind
+tripwire exists for; and any subgroup of two is empty. Four attainability checks, none of them
+answerable, so nothing is declared (§81, §85, §87, §89's lesson applied before the fact rather than
+after).
+
+### 108.6 Corrections in place
+
+**`plan/serial-pilot-1.md` §4.5** said the five prose defects the operator named after the first
+read were not disobedience because "the tone note reached the plan, became locked constraints and
+sat in every packet". The first clause is true and the other two are not: the constraints were
+minted unlocked and reached no packet at all. The conclusion is unchanged and its ground is
+stronger — the tone note could not have been disobeyed, because no scene was ever shown it. Struck
+through and corrected in place, pointing here.
+
+**`plan/handoff-chapter-endings.md`'s two coordination notes were stale by the time the work
+started, and the repo won.** §107 is merged on `main`, so §106 is not the last entry and this is
+§108 for a different reason than the one given; and worktree
+`.claude/worktrees/litharness-architect-stage-5ee368` is clean, its `planner.py` edits merged as
+`4e545bc`, so there was no parallel change to merge beside. Its substantive note stands and is
+carried forward below.
+
+### 108.7 Anti-scope
+
+No cliffhanger recipe, no hook instruction, no "end on a question", no "raise the stakes", no
+default about endings in any prompt, template, system message or beat function. `SIX_BEAT` is
+unchanged and no beat function was added. **No verdict channel**: no model was asked whether an
+ending is good, whether it is a hook, or which of two it prefers; E6 stays byte-frozen and no new
+verbal frame was written. No axis admitted, no counter registered — `chapter_endings.py` is
+research-side and `axes.AXES` and `axes.COUNTERS` are untouched. No pre-registration, no bar, no
+BCR change, no persona, judge, reader or panel change, no pool registration. No anchor set moved
+and §104.4 stays gated. RS1 holds: nothing under `src/litharness/` references a corpus, a digest or
+a RoyalRoad text, and no corpus prose crosses to the generation side as an example ending or a
+paraphrase. The `[STATUS]` line at the end of a published chapter was **counted and not moved** —
+that is an operator decision. No accepted scene was redrafted; `serial.db` was read read-only and
+every repair was demonstrated on a copy. **Serial Pilot 2 was not edited**, and the note it needs
+is recorded rather than acted on: `plan/serial-pilot-2-directives.json` holds six directives and
+not one of them contains an ending clause, and if the operator wants one there the safe form is a
+verbatim-lane `constraint`, which locks by construction and passes through no model. No human
+reader, label or feedback entered anything here (§95).

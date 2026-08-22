@@ -1,0 +1,79 @@
+{
+  "limit": 3000,
+  "genre_tag": "LitRPG",
+  "shards": [
+    3,
+    30
+  ],
+  "snapshot": "0e4df3f22999a7b7fa13b1e7564a09b5f3eb964e",
+  "overall": {
+    "n": 3000,
+    "final_words": {
+      "min": 0,
+      "median": 17.0,
+      "mean": 75.42,
+      "max": 8347
+    },
+    "penultimate_words_median": 22.5,
+    "pct_final_dialogue": 33.73,
+    "pct_final_question": 6.5,
+    "pct_last_line_is_system": 0.17,
+    "pct_penultimate_dialogue": 33.07,
+    "pct_penultimate_question": 7.37
+  },
+  "by_cohort": {
+    "declared_ai_2025": {
+      "n": 186,
+      "final_words": {
+        "min": 1,
+        "median": 19.5,
+        "mean": 57.0,
+        "max": 1887
+      },
+      "penultimate_words_median": 27.5,
+      "pct_final_dialogue": 22.04,
+      "pct_final_question": 5.38,
+      "pct_last_line_is_system": 0.0,
+      "pct_penultimate_dialogue": 25.27,
+      "pct_penultimate_question": 6.99
+    },
+    "human_pre_llm": {
+      "n": 1491,
+      "final_words": {
+        "min": 1,
+        "median": 17,
+        "mean": 75.02,
+        "max": 4319
+      },
+      "penultimate_words_median": 23,
+      "pct_final_dialogue": 35.75,
+      "pct_final_question": 6.91,
+      "pct_last_line_is_system": 0.0,
+      "pct_penultimate_dialogue": 36.96,
+      "pct_penultimate_question": 9.26
+    },
+    "undeclared_2025": {
+      "n": 1323,
+      "final_words": {
+        "min": 0,
+        "median": 17,
+        "mean": 78.45,
+        "max": 8347
+      },
+      "penultimate_words_median": 21,
+      "pct_final_dialogue": 33.11,
+      "pct_final_question": 6.2,
+      "pct_last_line_is_system": 0.38,
+      "pct_penultimate_dialogue": 29.78,
+      "pct_penultimate_question": 5.29
+    }
+  },
+  "stories": {
+    "n": 102,
+    "min_chapters": 5,
+    "pct_final_question": {
+      "mean_of_story_means": 6.428,
+      "stories_with_any": 58
+    }
+  }
+}

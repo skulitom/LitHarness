@@ -812,3 +812,38 @@ jobs beside each other; this programme ran at three workers beside a `litharness
 took 11 transport failures in 551 calls, which is what that costs. A dedicated cache per arm —
 `Elicitor`'s write lock is per process — and a PID lock beside the results so a second launch
 refuses. Never wrap a run in `timeout`. Stdout is buffered, so the cache JSONL is the progress bar.
+
+## Chapter endings — the locator and the census, §108
+
+**Free, deterministic, no model and no `claude -p`.** Three passes, two interpreters, and only the
+middle one needs the other venv. Under two minutes end to end.
+
+```bash
+uv run python research/quality-measurement/chapter_endings.py --substrate local
+```
+
+```bash
+C:/DEV/MirrorBench/.venv/Scripts/python.exe research/quality-measurement/chapter_endings.py --substrate royalroad
+```
+
+```bash
+uv run python research/quality-measurement/chapter_endings.py --substrate report
+```
+
+Each of the first two writes its JSON beside the script; `--substrate report` merges them and
+writes nothing, so it is safe to re-run after any analysis change. `--substrate report` with no
+`chapter-endings-royalroad.json` present reports that half as **NOT RUN** with the reason rather
+than merging a hole. `selftest()` runs the locator's own cases on every invocation, which is where
+its behaviour is pinned: `tests/` may not import from `research/`.
+
+**Draw per shard, not per corpus.** `corpus_io.royalroad_chapters` streams shard 3 then shard 30
+under one global `limit`, so any limit below shard 3's LitRPG population returns **no pre-2023
+chapters at all** — two 2025 cohorts, and silently no control era, which looks exactly like a
+corpus holding no old chapters. `run_royalroad` splits the budget across shards for that reason.
+The first run of this census got it wrong and reported two cohorts; the numbers in
+`chapter-endings-census.md` are the corrected draw.
+
+**The locator's blind spot, priced.** `axes.strip_system` sees bracketed all-caps tags and bold
+spans. The 21-book fitness corpus has neither — its system voice is *unbracketed* ALL-CAPS — so
+`pct_last_line_is_system` under-counts there. A one-off uppercase probe bounds it at 1 unit in 144
+on this corpus. The probe is not committed: a threshold on capitalisation is half a classifier.

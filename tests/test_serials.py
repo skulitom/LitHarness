@@ -24,10 +24,12 @@ from litharness.domain.nodes import Node, NodeKind
 from litharness.domain.revision import Revision
 from litharness.domain.serials import (
     CONTEXT_WINDOW_CHAPTERS,
+    Position,
     SerialShape,
     SerialShapeError,
     arcs_of,
     beats_for_arc,
+    chapter_positions,
     chapters_of,
     next_chapter,
     window_for,
@@ -64,6 +66,61 @@ def _serial(scenes: int) -> Revision:
         parent_revision_id=None,
         nodes=tuple(nodes),
     )
+
+
+# --------------------------------------------------- where one scene sits, for the drafter
+
+
+def test_a_scenes_position_agrees_with_the_chapters_it_is_grouped_into():
+    """The arithmetic and the grouping are one answer, checked across every length that matters.
+
+    `serials.py`'s own rule is that a second answer to "which chapter is fourth" would
+    eventually disagree with the first. `chapter_positions` is a caller of `chapters_of` rather
+    than a `divmod` beside it, and this is the assertion that would catch it becoming one.
+    """
+    for scenes in range(0, 30):
+        revision = _serial(scenes)
+        positions = chapter_positions(revision, SHAPE)
+        expected = {
+            logical_id: Position(chapter.index, index + 1, len(chapter.scene_ids))
+            for chapter in chapters_of(revision, SHAPE)
+            for index, logical_id in enumerate(chapter.scene_ids)
+        }
+        assert positions == expected
+        assert len(positions) == scenes
+
+
+def test_the_shape_that_asserts_nothing_yields_no_position_at_all():
+    """One scene per chapter is `library.py`'s refusal, and this is the same refusal.
+
+    An empty mapping rather than `Position(4, 1, 1)` for every scene: the default declares no
+    assembly scheme, and rendering one would turn the refusal into a scheme nobody chose.
+    """
+    assert chapter_positions(_serial(9), SerialShape(scenes_per_chapter=1)) == {}
+
+
+def test_a_trailing_partial_chapter_reports_the_scenes_it_actually_has():
+    """`scene 1 of 1`, not `scene 1 of 4`.
+
+    The last chapter is the one being written. Reporting the shape's full complement would tell
+    the writer about three scenes nobody has decided to write yet.
+    """
+    positions = chapter_positions(_serial(9), SHAPE)
+    assert positions["s0009"] == Position(chapter_index=3, index_in_chapter=1, scenes_in_chapter=1)
+    assert positions["s0008"] == Position(chapter_index=2, index_in_chapter=4, scenes_in_chapter=4)
+
+
+def test_positions_are_keyed_by_the_same_scene_ids_the_beats_are():
+    """Both read `scene_nodes`, so a beat's ordinal and its position are cut from one list.
+
+    A position looked up by a key the beat does not carry would silently render nothing, which
+    is the failure mode a `.get` cannot distinguish from "this book has no chapters".
+    """
+    revision = _serial(8)
+    positions = chapter_positions(revision, SHAPE)
+    beats = beats_for_arc(revision, arcs_of(revision, SerialShape(4, 2))[0])
+    assert {beat.logical_id for beat in beats} == set(positions)
+    assert [positions[beat.logical_id].chapter_index for beat in beats] == [1, 1, 1, 1, 2, 2, 2, 2]
 
 
 # ------------------------------------------------------------------ the reason arcs exist
