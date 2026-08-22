@@ -19,7 +19,6 @@ checked directly throughout.
 
 from __future__ import annotations
 
-
 import pytest
 
 refuted_metrics = pytest.importorskip(

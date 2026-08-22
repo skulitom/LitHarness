@@ -18,7 +18,6 @@ results file, model call, subprocess, or sleep involved.
 
 from __future__ import annotations
 
-
 import pytest
 
 reader_defects = pytest.importorskip(
