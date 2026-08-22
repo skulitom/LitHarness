@@ -4596,7 +4596,8 @@ def main(argv: list[str] | None = None) -> int:
         out = Path(args.out) if args.out else RESULTS / (
             "affect-trajectory-report" + ("-dry" if args.dry_run else "") + ".json"
         )
-        out.write_text(json.dumps(payload, indent=2, sort_keys=True), encoding="utf-8")
+        out.write_text(json.dumps(payload, indent=2, sort_keys=True), encoding="utf-8",
+                       newline="\n")
         print(json.dumps(payload["reading"], indent=2))
         print(f"\nwrote {out}", file=sys.stderr)
         return 0
@@ -4610,7 +4611,8 @@ def main(argv: list[str] | None = None) -> int:
         out = Path(args.out) if args.out else RESULTS / (
             f"affect-trajectory-{args.substrate}-price{'-dry' if args.dry_run else ''}.json"
         )
-        out.write_text(json.dumps(payload, indent=2, sort_keys=True), encoding="utf-8")
+        out.write_text(json.dumps(payload, indent=2, sort_keys=True), encoding="utf-8",
+                       newline="\n")
         print(json.dumps({"fit": payload["fit"], "projection": payload["projection"],
                           "measured_usd": payload["spend"]["equivalent_usd"]}, indent=2))
         print(f"\nwrote {out}", file=sys.stderr)
@@ -4634,7 +4636,8 @@ def main(argv: list[str] | None = None) -> int:
         args.substrate, args.arm, bool(args.dry_run)
     )
     out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(json.dumps(payload, indent=2, sort_keys=True), encoding="utf-8")
+    out.write_text(json.dumps(payload, indent=2, sort_keys=True), encoding="utf-8",
+                   newline="\n")
     render(payload)
     print(f"\nwrote {out}", file=sys.stderr)
     return 0
