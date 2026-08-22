@@ -904,12 +904,47 @@ def extract_graph_facts(
 
     Every record carries `GRAPH_REGISTRY_VERSION`, so a fact this family read is distinguishable
     from a status line's, from an author's snapshot, and from an Architect's proposal.
+
+    **One edge is canon at the position, and the exception is the module docstring's own
+    argument rather than a softening of the rule above.** A printed change of *standing* on a
+    ladder this world declared is the book's own statement about a fact the world already
+    holds — the same class as a `[STATUS]` line, whose records are `ACCEPTED_CANON` because *no
+    model returned them*: a recorded policy decision accepted the prose, and this is a mechanical
+    restatement of it. Nothing is minted. The subject must be one canon already uses, the rung
+    must be a declared rank of a declared chain, and the criterion is derived from which chain
+    holds the rung — so the three things `promotions` exists to guard against (a new name, a new
+    claim, a fact the book never came back to) are all absent by construction.
+
+    A rung the *page* minted is the general case and stays it: `[RANK] Kell now holds platinum`
+    with no `platinum` on any chain arrives `PROPOSED` and is promoted only by later causal
+    reuse, exactly as every other edge is.
     """
     line = graph_line_for(known)
     if line is None:
         return ()
     predicates = {edge.phrase: edge.predicate for edge in line.edges}
-    seen = {_edge_key(record) for record in known}
+    # **A scheduled standing does not suppress the reading of the printed one.** `seen` exists
+    # because repetition adds nothing, and it counts proposals as well as canon — but the
+    # outline's own rung schedule is a `PROPOSED` `stands_at` edge at a future position, and
+    # counting it here would mean the one scene that actually printed the rise read nothing,
+    # because the plan for it was already on record. The plan and the page are different
+    # claims: the schedule carries no registry version from this family, and the page's reading
+    # is what makes the rise true.
+    seen = {
+        _edge_key(record)
+        for record in known
+        if not (
+            record.predicate == worlds_mod.STANDS_AT_PREDICATE
+            and record.authority is lc.StateAuthority.PROPOSED
+            and record.predicate_registry_version != GRAPH_REGISTRY_VERSION
+        )
+    }
+    canon_subjects = {record.subject for record in known if state_mod.is_canon(record)}
+    declared_rungs = {
+        rung
+        for criterion in worlds_mod.criteria(_canon_of(known))
+        for rung in worlds_mod.ladder_of(_canon_of(known), criterion)
+    }
 
     extracted: list[lc.StateRecord] = []
     for match in line.pattern.finditer(text):
@@ -928,6 +963,14 @@ def extract_graph_facts(
         if key in seen or key in {_edge_key(row) for row in extracted}:
             continue
         start, end = match.span()
+        # The one canon-writable shape: a declared subject reaching a declared rung of a
+        # declared chain. See the docstring — nothing is minted and no model returned it.
+        stands = (
+            predicate == worlds_mod.STANDS_AT_PREDICATE
+            and subject in canon_subjects
+            and target in declared_rungs
+            and worlds_mod.criterion_of_rung(_canon_of(known), target) is not None
+        )
         extracted.append(
             lc.StateRecord(
                 record_id=graph_record_id_for(subject, predicate, target, order_key),
@@ -935,8 +978,20 @@ def extract_graph_facts(
                 subject=subject,
                 predicate=predicate,
                 object_ref=target,
+                # The criterion rides on the edge for the forge's own reason: two ladders in
+                # one world must not splice. Derived rather than printed — the page prints a
+                # rung and a reader knows which ladder it is on.
+                value=(
+                    worlds_mod.criterion_of_rung(_canon_of(known), target)
+                    if stands
+                    else None
+                ),
                 story_position=lc.StoryPosition(order_key=order_key),
-                authority=lc.StateAuthority.PROPOSED,
+                authority=(
+                    lc.StateAuthority.ACCEPTED_CANON
+                    if stands
+                    else lc.StateAuthority.PROPOSED
+                ),
                 pov_visibility=[],
                 evidence=[
                     lc.EvidenceSpan(
@@ -954,7 +1009,12 @@ def extract_graph_facts(
                     )
                 ],
                 predicate_registry_version=GRAPH_REGISTRY_VERSION,
-                note="named by the page; a proposal until the book uses it again",
+                note=(
+                    "read off the page: a declared subject at a declared rung of a declared "
+                    "chain, which is the book stating a fact its world already holds"
+                    if stands
+                    else "named by the page; a proposal until the book uses it again"
+                ),
             )
         )
     return tuple(extracted)
