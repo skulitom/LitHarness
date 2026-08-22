@@ -11441,6 +11441,36 @@ consecutive system lines and cannot tell a rise from a fall. The schedule valida
 `_milestones` already makes, and not a rate. §81, §85, §87 and §89 are each a bar declared over a
 quantity that could not do what it said.
 
+### 113.3a The forge ran, and P1 is answered
+
+**`dec-25c58304a408437ec81d74a3`, 2026-08-22, $1.4955, 98,521 tokens, one invocation, no
+fallback.** Same brief, shape, K and scene count as pilots 3 and 4, so the rule set is the only
+change. Recorded in full in [`plan/serial-pilot-5.md`](serial-pilot-5.md) §5; §3 did **not** run
+and **nothing was picked**, so P2–P5 stay open and no claim about prose exists.
+
+**3 of 3 candidates clear every gate and every validator.** Each declares exactly one ordinal
+ladder of **five rungs, lowest first**, with the protagonist standing on rung **3 of 5** — below
+the top in all three — every rung carrying a `visible_form` and a `cost_to_reach`, and a
+`graph_line` carrying a `stands_at` phrase. **Within-forge spread 0.9163** against 0.9302
+(pilot 2), 0.8959 (pilot 3) and 0.9158 (pilot 4): **the stop condition does not fire.**
+
+**3 of 3 inversions leave the ladder alone**, against 3 of 3 removing a rule-1 ingredient on the
+same brief before the amendment. Each removes something adjacent — "the private grind", "the solo
+climb", "choosing when to advance" — and each keeps the rung, the rise and the count.
+
+**Two convergences are recorded rather than smoothed over.** All three chose five rungs and the
+exact middle rung, against a rule naming a floor of three and "not the top"; and all three
+rendered the `stands_at` edge as the English `"now stands at"`, because naming the predicate by
+its constant is what fixes the phrase — their other four graph-line phrases are entirely their
+own. Neither is a gate failure and neither is amended here: a rule reinterpreted with three
+candidates already in view is what a pre-registration exists to prevent.
+
+**The pick was not made, and the reason is the rail.** The recorded rule turns on whether
+*assaying and hallmarking* counts as already-used — never *forged*, but the subject of Serial
+Pilot 1's hand-typed seed and of the only assembled book in this repository. `forge --pick` is
+`VerdictSource.HUMAN` and §112's own pilot-4 record (§5.4) is the precedent for putting exactly
+this ambiguity to the operator rather than resolving it from inside the session that found it.
+
 ### 113.4 What was refused
 
 **No taste in code.** No adjective and no verb about how a rise should read enters any prompt,

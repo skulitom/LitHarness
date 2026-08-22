@@ -303,15 +303,40 @@ tempted to read it as an AI tell owes the control BRIEF.md §2 demands first.
 
 ---
 
-## 5. P1–P5 — pre-registered, not yet answered
+## 5. P1 answered; P2–P5 pre-registered and not yet answered
 
-[`plan/serial-pilot-5.md`](../../plan/serial-pilot-5.md) §4 carries the five questions and their
-outcomes-named-in-advance. **The run has not happened**, so this section holds the priors each
-question will be read against and nothing else:
+**The forge ran on 2026-08-22** (`dec-25c58304a408437ec81d74a3`, $1.4955, 98,521 tokens, one
+invocation, no fallback). §3 did **not** run and nothing was picked, so P2–P5 are still open.
+[`plan/serial-pilot-5.md`](../../plan/serial-pilot-5.md) §5 is the full record; the short form:
+
+**P1 is answered, in the direction the rules were written for.** 3 of 3 candidates clear every
+gate and every validator. Each declares **exactly one ordinal ladder of five rungs, listed lowest
+first**, with the protagonist standing on rung **3 of 5** — below the top in all three. Each rung
+of all fifteen carries a `visible_form` and a `cost_to_reach`. All three declare a `graph_line`
+carrying a `stands_at` phrase. **Within-forge spread 0.9163** against pilot 2's 0.9302, pilot 3's
+0.8959 and pilot 4's 0.9158: the stop condition does not fire — the new rule set did not collapse
+the forge.
+
+**And 3 of 3 inversions leave the ladder alone**, against 3 of 3 removing a rule-1 ingredient on
+the same brief before it. Each removes something adjacent instead — "the private grind", "the solo
+climb", "choosing when to advance" — and each explicitly keeps the rung, the rise and the count.
+
+**Two convergences are recorded rather than smoothed over**, in `serial-pilot-5.md` §5.2: all
+three chose five rungs and the exact middle one, against a rule that named a floor of three and
+"not the top"; and all three rendered the `stands_at` edge as the English `"now stands at"`,
+because naming the predicate by its constant is what fixes the phrase. Their other four graph-line
+phrases are entirely their own.
+
+**The pick was not made.** The recorded rule turns on whether *assaying and hallmarking* counts as
+already-used — never *forged*, but the subject of the only assembled book in this repository. That
+is `VerdictSource.HUMAN`'s to resolve and pilot 4 §5.4 is the precedent for putting it to the
+operator rather than reading it away with the candidates in view.
+
+The priors each question is read against:
 
 | # | question | prior, from §1 and §3 |
 |---|---|---|
-| P1 | does the forge declare a ladder, place the protagonist below its top, and leave the ladder out of the inversion | 2 of 4 worlds had an ordinal chain of ≥3; **0 of 4** placed anybody on one; **3 of 3** on this brief inverted a rule-1 ingredient. `spread` 0.930 (pilot 2) and 0.896 (pilot 3) |
+| P1 | does the forge declare a ladder, place the protagonist below its top, and leave the ladder out of the inversion | prior: 2 of 4 worlds had an ordinal chain of ≥3; **0 of 4** placed anybody on one; **3 of 3** on this brief inverted a rule-1 ingredient. **Answered 2026-08-22: 3 of 3, 5 rungs each, protagonist at 3 of 5, 3 of 3 inversions leave the ladder alone, spread 0.9163** |
 | P2 | does the schedule rise | no outline in this project has ever been asked. `progression_target` was non-None at **0 of 9** positions across both books |
 | P3 | does the number move on the page | **0 rises, 0.0 graph lines per 1k** on both books; *What Takes* declared a line and printed none of it across 7,704 words |
 | P4 | is the rise the protagonist's | 0 standings for every subject on both books |
@@ -321,6 +346,7 @@ question will be read against and nothing else:
 
 ## 6. What is still not known
 
+- **~~Whether the forge declares a countable ladder at all.~~** Answered: 3 of 3, see §5.
 - **Whether a model, asked for a rising rung schedule, returns one that validates.** The
   validator refuses stasis, flat stretches and any fall; nothing has ever been asked the question.
   A first-attempt refusal is information about the rule text, not about the model.

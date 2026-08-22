@@ -187,6 +187,13 @@ def _moves(
     Canon and proposals are read apart rather than merged: the page and the plan are different
     claims and a table that added them would report a book as having risen because somebody
     scheduled a rise.
+
+    **The earliest standing is the baseline and is never a rise**, which is right for a forged
+    world — the opening standing is the forge's declaration and nothing moved to reach it — and
+    is worth naming because it is not free: a book whose *first* canon standing came off a page,
+    with no opening declaration behind it, has that first change counted as `unplaced` rather
+    than as a rise. `canon_standings` is reported beside `rises` so the difference is visible
+    rather than absorbed.
     """
     rows = [
         record

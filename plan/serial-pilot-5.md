@@ -1,10 +1,10 @@
 # Serial Pilot 5 — the same two chapters, on a world whose protagonist's rung can rise
 
-**Status: PRE-REGISTERED, 2026-08-22. NOT RUN.** Companion to
+**Status: FORGED, 2026-08-22. §3 NOT RUN; nothing picked.** Companion to
 [`plan/serial-pilot-2.md`](serial-pilot-2.md) and [`plan/serial-pilot-4.md`](serial-pilot-4.md);
 the design record is [`plan/world-architect.md`](world-architect.md), the build record is
 stage-0 §113, and the handoff is [`plan/handoff-numbers-go-up.md`](handoff-numbers-go-up.md).
-**§4 was written before any paid call**; §5 and §6 are empty until the run happens.
+**§4 was written before any paid call**; §5 records the forge; §6 is empty until §3 runs.
 
 ## 0. What this pilot is for, and the one thing it may not be read as
 
@@ -152,11 +152,119 @@ worse failure than a world whose number still does not move.
 
 ## 5. What was forged
 
-*Empty until the forge runs.* Records, per candidate: index, title, domain, geometry,
-`inversion_text` verbatim, `ladders`, `rungs_per_ladder`, `opening_rung_index`,
-`graph_line_declared`, `validator_complaints`, `gate_complaints`; and for the run as a whole
-`spread`, `usable`, `cost_usd`, `usage_total_tokens`. Then the pick: decision id, candidate index,
-and the rule text above quoted beside it.
+### 5.1 Forge 1 — P1 answered, and the stop condition does not fire
+
+`dec-25c58304a408437ec81d74a3`, `arch-d425316522615ff9fa369e68`, 2026-08-22T18:28:50Z. One
+invocation, `accept`, no fallback (`fell_back_from: []`), **98,521 tokens, $1.4955**, provider
+`claude_code`, model `claude-opus-5`, profile `architect.world.v0`. **3 of 3 clear of every gate**
+and every validator; nothing was refused and nothing was retried, so there is no transport failure
+to read before the counts.
+
+**Within-forge spread 0.9163** — against pilot 2's 0.9302, pilot 3's 0.8959 and pilot 4's 0.9158
+on the same brief. **The stop condition does not fire**: the new rule set did not collapse the
+forge onto one ladder shape, and §3 would have been reachable on this leg alone.
+
+| | [1] *The Full Mark* | [2] *What Two Eyes Hold* | [3] *Whole Skein* |
+|---|---|---|---|
+| real domain | assaying and hallmarking — fire assay by cupellation, the touchstone, the sealed trial plate | land surveying and geodesy — triangulation from a measured baseline, orders of control, loop closure | sericulture — five instars and their moults, the mulberry supply, cold storage, stifling, grading by longest filament |
+| geometry | chain | graph | cycle |
+| records / edges | 355 / 110 | 347 / 104 | 345 / 102 |
+| rules at min consequence domains | 6 at 3 | 5 at 3 | 5 at 3 |
+| manifestation coverage | 1.00 | 1.00 | 1.00 |
+| answered claims / reveals inside these 8 scenes / hidden at start | 34 / 1 / 23 | 34 / 1 / 23 | 34 / 1 / 23 |
+| cardinality shapes | 3 | 3 | 3 |
+| **`ladders`** | **1** | **1** | **1** |
+| **`rungs_per_ladder`** | `fineness_grade: 5` | `order_of_control: 5` | `instar_count: 5` |
+| **`opening_rung_index`** | **3** of 5 | **3** of 5 | **3** of 5 |
+| **`graph_line_declared`** | **True** (`ASSAY`) | **True** (`REGISTER`) | **True** (`TURN`) |
+| `gate_complaints` | **none** | **none** | **none** |
+| `validator_complaints` | **none** | **none** | **none** |
+| protagonist / exception / premise names them | yes / yes / yes | yes / yes / yes | yes / yes / yes |
+
+**The chains run lowest first, which is the clause the measurement forced.** *The Full Mark*:
+`sweep → quarter_mark → half_mark → three_quarter_mark → full_mark`, protagonist `neve_ardrick` at
+`half_mark`. *What Two Eyes Hold*: `unfixed → traverse_point → minor_station → principal_station →
+baseline_station`, `odile_sarn` at `minor_station`. *Whole Skein*: `first_skin → second_skin →
+third_skin → fourth_skin → fifth_skin`, `bel_cassoway` at `third_skin`. Every rung of all fifteen
+carries a `visible_form` a reader can see and a `cost_to_reach` payable on the page — the bottom
+rung of each costs nothing and says so as the fact it is ("nothing, which is exactly what it is
+worth").
+
+**P1's second half: 3 of 3 inversions leave the ladder alone**, verbatim:
+
+| world | what it removed |
+|---|---|
+| *The Full Mark* | "the private grind. Effort still puts metal in you, but nothing done alone moves your mark — the mark only changes in the Hall, in fire, in front of paid witnesses, and the test burns away the sample it reads." |
+| *What Two Eyes Hold* | "the solo climb. Nothing here is earned alone — an order is only ever conferred by other people occupying stations and writing you into their books, and one re-observation takes it back." |
+| *Whole Skein* | "choosing when to advance. Nobody here trains up to a rung; the fen warms and the whole town splits inside a fortnight, ready or not, and the only lever is cold." |
+
+Against pilots 2 and 3, where **3 of 3 on this brief removed a rule-1 ingredient** — portable
+personal power, that a gain can be created, monotonic growth. Every one of these three keeps the
+rung, keeps the rise and keeps it countable, and removes something adjacent instead: *who* moves
+it, *whether it is yours alone*, *whether you choose when*.
+
+### 5.2 Two convergences, reported because they are real and not because they are faults
+
+Neither is a gate failure and neither is a verdict. Both are descriptors a later reading should
+have rather than rediscover.
+
+1. **All three chose five rungs and put the protagonist on the exact middle one.** The rule asks
+   for a chain of *at least three* and a rung that is *not the top*; three of three answered five
+   and three-of-five. `opening_rung_index` is a counter and this is what it counted; whether a
+   rule that named a floor produced a de-facto default is a question for the next forge on this
+   brief, not an amendment to make with three candidates already in view.
+2. **The printed phrase is effectively fixed by naming the predicate.** All three rendered the
+   `stands_at` edge as the English `"now stands at"`, first in the edge list. That is the cost of
+   the graph-line amendment naming the predicate by its constant: the parser needs the predicate,
+   and the model reaches for the phrase that reads like it. The worlds' *other* four phrases are
+   entirely their own (`took a bead from`, `closed the loop at`, `was held over by`), so the
+   variety the graph line had is intact everywhere except on the one edge this handoff added.
+
+### 5.3 The pick is not made here
+
+**The recorded rule** (§1): *the first candidate, in the order the model returned them, that
+clears every gate and whose declared `domain` was not forged in pilots 2, 3 or 4.* Checked against
+what is on disk rather than from memory — pilot 4 forged three times, so the excluded set is
+larger than §1 anticipated:
+
+| forged before | where |
+|---|---|
+| Western water law and hydrology | pilot 2, picked (*First In Time*) |
+| prior-appropriation water law and irrigation hydrology | pilot 3 candidate 1 (*Senior Water*) |
+| horticultural grafting and rootstock science | pilot 3, picked (*What Takes*) |
+| land surveying and geodesy | pilot 3 candidate 3 (*The Closing Error*); pilot 4 forge 3 candidate 1 (*The Ninth Order*) |
+| glassworking, locksmithing, pomology | pilot 4 forge 1 |
+| municipal water engineering, historical linguistics | pilot 4 forge 2 |
+| water law in an arid basin, immunology — graded inoculation | pilot 4 forge 3; the second was picked (*A Good Take*) |
+
+So **[2] *What Two Eyes Hold* is excluded outright** — land surveying and geodesy, forged twice
+before. **[3] *Whole Skein* (sericulture) is untouched by the list.** And **[1] *The Full Mark*
+turns on the same one word pilot 4's pick turned on**: assaying and hallmarking has never been
+*forged*, so under the rule read literally it qualifies and, being first in returned order, it is
+the pick. Under the rule read as *a subject this project has not already written a book in*, it
+does not: Serial Pilot 1's operator-typed seed and the only assembled book in this repository —
+*Reappraisal* — are set in an assay house, and `tests/test_architect.py`'s fixture world is
+"assay and provenance". Pilot 1 was hand-typed rather than forged, which is exactly why the rule
+as written does not reach it.
+
+**That is not resolved here and it is not this session's to resolve.** `forge --pick` is
+`VerdictSource.HUMAN`, [`plan/world-architect.md`](world-architect.md) §2 says the forge stops and
+a person chooses, and pilot 4 §5.4 records the same ambiguity being put to the operator rather
+than read away by the session that found it. **Nothing was picked.** The three worlds are on disk
+at `pilot5/direct1/forge.json` with the ambiguity named, and the pick is one command that makes no
+provider call and records its own decision:
+
+```powershell
+uv run litharness --database pilot5\forge.db forge --out pilot5\direct1 --pick <n>
+```
+
+### 5.4 What this leg does not answer
+
+P2, P3, P4 and P5 need §3, and §3 has not run. The forge answers P1 and the stop condition and
+nothing else. In particular: **that three worlds declared a countable ladder says nothing about
+whether a schedule will rise, whether a scene will print the line, or whether anyone will read a
+rung back off prose.** Those are the three links this handoff built and the three that have never
+been exercised.
 
 ---
 
