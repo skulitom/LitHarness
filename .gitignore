@@ -53,7 +53,15 @@ research/quality-measurement/results/latent-taste-activations*.jsonl
 # ignored above so existing local renders do not suddenly surface in git status.
 # NOTES.md is the exception worth knowing about: it is yours, never overwritten, and if you
 # want it kept, `git add -f book-library/*/NOTES.md`.
-book-library/
+#
+# **The glob is `book-library*` and not `book-library`, and a near-miss is why.** `--library`
+# takes any root, and it has to be used whenever two runs share a title: `library.slugify` names
+# a shelf from the title alone, so a second book called *First In Time* overwrites the first
+# one's reading copy (Serial Pilot 2 §6.1). The obvious root for that second run is
+# `book-library-p4/`, which the bare rule did not cover — so the run that exists *because* of
+# the collision left a whole generated library sitting untracked, one `git add -A` away from
+# being committed.
+book-library*/
 
 # Derived text of third-party prose, produced by the force programme
 # (plan/force-program.md §1.6). Continuations sampled from a RoyalRoad seed, retellings in a
