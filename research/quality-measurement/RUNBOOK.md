@@ -252,6 +252,19 @@ uv run ruff check --no-cache . && uv run mypy && uv run pytest --cov=litharness
 `--no-cache` is load-bearing. A cached ruff pass reported green on `research/progression-clause/ablate.py`
 while it imported a provider deleted in `c99dd47`, and main stayed red for 10 runs.
 
+**After upgrading `claude`, re-run the CLAUDE.md guard before any paid arm** (stage-0 §109):
+
+```bash
+LITHARNESS_LIVE_PROVIDERS=1 uv run pytest tests/test_providers.py -k claude_md_from_the_working_directory -q
+```
+
+It spends one haiku call. Every `claude -p` call site here — `providers/cli.py`, `elicit.py`'s
+and `force_remote.py`'s `CLI_HARDENING` — carries `--setting-sources user` and a
+`claudeMdExcludes` setting so the repository's `CLAUDE.md` never enters a writer's or a judge's
+context; one of the two rests on observed rather than documented behaviour, which is why the
+outcome is what the test checks. `--bare` is not the answer: it skips keychain reads and logs a
+subscription out.
+
 ## Repair generation — §85
 
 32 generations (`claude-opus-5`) + 192 panel comparisons (`claude-haiku-4-5`), ~55 minutes,

@@ -79,12 +79,17 @@ CONTINUATION_SYSTEM = (
     "with no preamble, no commentary and no headings."
 )
 
+#: `elicit.CLI_HARDENING`, copied (this module runs beside it, not on it). The last two flags
+#: keep the repository's CLAUDE.md out of the continuation call — stage-0 §109; the reasons
+#: are on the tuple in `elicit.py`.
 CLI_HARDENING = (
     "--exclude-dynamic-system-prompt-sections",
     "--allowed-tools", "",
     "--strict-mcp-config", "--mcp-config", '{"mcpServers":{}}',
     "--no-session-persistence",
     "--permission-mode", "manual",
+    "--setting-sources", "user",
+    "--settings", '{"claudeMdExcludes":["**/CLAUDE.md","**/CLAUDE.local.md"]}',
 )
 
 #: Operator §7.5, amended 2026-08-20 from $15 to fund F1 on this transport.

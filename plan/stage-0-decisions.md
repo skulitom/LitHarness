@@ -10458,3 +10458,123 @@ is recorded rather than acted on: `plan/serial-pilot-2-directives.json` holds si
 not one of them contains an ending clause, and if the operator wants one there the safe form is a
 verbatim-lane `constraint`, which locks by construction and passes through no model. No human
 reader, label or feedback entered anything here (§95).
+
+## 109. The generation provider read the working directory's CLAUDE.md into every call, and the documented way to stop it logs you out
+
+**Built 2026-08-22.** Code: `providers/cli.py` — two flags on every `claude -p` call,
+`--setting-sources user` and `--settings` with `CLAUDE_MD_EXCLUDES`; tests in
+`tests/test_providers.py` — `test_claude_argv_carries_every_mandatory_flag` pins both and pins
+`--bare` *out*, `test_the_claude_md_exclusion_is_well_formed_and_names_the_files_it_must` parses
+the JSON, and the opt-in `test_live_claude_does_not_read_a_claude_md_from_the_working_directory`
+checks the outcome against the installed CLI. And a root `CLAUDE.md`, the first this repository
+has had, written for sessions and proven not to reach the writer.
+
+**Nothing above this entry was renumbered.** §108 was the last section on `main` and the highest
+in any worktree when this began; the check was re-run (`^#{2,3} [0-9]+` across `main` and every
+`.claude/worktrees/*/plan/stage-0-decisions.md`) before this was written.
+
+**What licenses it is a measurement, and it was taken before the file existed.** The operator
+asked why the repository had no `CLAUDE.md`. `git log --all` showed none had ever been added or
+removed, so there was no recorded reason — and one real one: `tools/run-loop.ps1` runs the loop
+from the repository root (`Push-Location $repo`), the adapter passes no `cwd`, and the headless
+documentation says a `-p` call loads the same context an interactive session would, with
+`--append-system-prompt` — the adapter's only system-prompt mechanism — appended *after*
+CLAUDE.md. So a root `CLAUDE.md` would have ridden into every drafting, summary, outline and
+forge call, and the frozen prompt (§103) would no longer have been the whole of what the model
+saw. That the repository had been safe was an accident of the file not existing. Eight probes on
+`claude-haiku-4-5`, `claude` 2.1.236, one-word answers, about $0.22 in total:
+
+| working directory | flag | answer | cache-read | cache-write |
+|---|---|---|--:|--:|
+| scratch dir holding `MARKER-LEAKED` in `CLAUDE.md` | none | **LEAKED** | 0 (cold) | 26,832 |
+| the same | `--bare` | *Not logged in* | — | — |
+| the same | `--system-prompt` instead of `--append-system-prompt` | **LEAKED** | 0 (cold) | 24,769 |
+| the same | `--setting-sources user` | NONE | 21,352 | 5,326 |
+| the same | `--setting-sources ""` | NONE | 21,352 | 5,188 |
+| the same | `--settings '{"claudeMdExcludes":[…]}'` | NONE | 21,352 | 5,329 |
+| repository root (no `CLAUDE.md` yet) | none | NONE | 21,352 | 7,113 |
+| the same | `--bare` | *Not logged in* | — | — |
+
+Then the live test, with the adapter's own argv carrying **both** flags, against a marker file in a
+temporary directory: NONE. The cold-cache zeros in the first rows are the first call of a prefix,
+not an effect of the marker, and are not read as one.
+
+### 109.1 What was refused, and why each refusal is on the record
+
+**`--bare`**, the documented full suppression — it also skips keychain reads, which is where the
+subscription login this adapter runs on lives (`ClaudeCodeProvider`'s docstring: no credential of
+its own). Not a fix that can be had here; it would be the fix under API-key auth. **`--system-
+prompt`** — documented to ignore CLAUDE.md and measured *not* to on this version; recorded so no
+later session trusts the sentence. **Relocating `cwd`** off the repository — would have worked
+and been invisible and machine-dependent; a flag in `_argv` is pinned by a test and a cwd is not.
+
+**Two mechanisms rather than one, because each covers the other's gap.** `claudeMdExcludes` is
+the control the documentation names for CLAUDE.md, and it was verified only against a
+working-directory file; `--setting-sources user` is docs-silent on CLAUDE.md but measured to work,
+and it also drops project and local `settings.json` — hooks, permissions, env — which this adapter
+never wanted and which the repository does not currently carry (`.claude/` holds a skill, the
+worktrees and a lock; no settings file), so nothing any call has received to date changes.
+The live test checks the outcome, not the mechanism, which is the only honest pin when one of the
+two rests on observed rather than documented behaviour.
+
+### 109.2 The overhead half of provider-adapters.md's experiment, now run
+
+That document's open item asked whether "settings that suppress CLAUDE.md/skill/plugin
+discovery" could cut the ~5k non-cacheable per-call overhead. The halves come apart: CLAUDE.md
+suppression costs nothing and saves nothing (the overhead is identical with and without it), and
+the skill/plugin tax is reachable only through `--bare`. Measured on 2.1.236: **21,352
+cache-read + 5.2–7.1k written per call**, against the ~19k + ~5k recorded when the adapter was
+built. Struck in place in `plan/provider-adapters.md` with these numbers; the module docstring's
+~24k carries the ~27k beside it.
+
+### 109.3 The file itself
+
+`CLAUDE.md` is the session-conduct layer that had no home: the parallel-session rules, the
+ledger-number procedure with its command, the citation checker, counts-point-to-homes,
+corrections-in-place, the standing axioms as one-liners with pointers, the box rules (`claude -p`
+fails under box load; kill by PID; two interpreters). It points at `CONTRIBUTING.md`, `README.md`,
+`BRIEF.md`, `RUNBOOK.md` and the handoffs rather than restating them, and it carries **no counts,
+no status and no test totals** — the PLAN.md header's own lesson, that the number the project
+reports about itself is the number to distrust first. Five `plan/handoff-*.md` files had each
+re-stated the same coordination rules, which is the defect the file closes.
+
+### 109.4 Anti-scope
+
+No prompt, packet, template or beat function changed; no call any book has received to date
+contained a CLAUDE.md, so no stored prompt is re-read differently. No overhead reduction is
+claimed — the number went up, and is recorded going up. No quality claim of any kind. No human
+judgment entered anything (§95). The `debug-book` skill, the handoffs and the planning documents
+are untouched; `CLAUDE.md` is additive and the only change to what a session is told is that it
+is now told once, in one place.
+
+### 109.5 Found after the entry was written: four instruments shell out to `claude -p` themselves
+
+**The provider was not the only caller, and `--system-prompt` is not a shield.** The operator
+asked whether the file would cause issues, and the grep that should have been run before §109.4
+was run after it: `research/quality-measurement/elicit.py` (`CLI_HARDENING`, imported by
+`comic_beats.py` and `writer_states.py`) and `force_remote.py` (its own copy of the tuple) build
+their own `claude -p` argv, run from the repository root, and use `--system-prompt` — which the
+table above already showed does **not** keep CLAUDE.md out. So with the file at the root and the
+flags only on the provider, every E6 elicitation, force-programme continuation, comic-beat census
+and writer-state call would have carried `CLAUDE.md` in the judge's context, and the replay cache
+— keyed on (system, messages, model, transport) — would not have noticed. A contamination of the
+*measurement* side rather than the generation side, and invisible from the cache.
+
+**Closed the same day, with the same two flags on both tuples**, copied rather than imported
+(research code must not depend on `src/`, and `comic_beats` runs under an interpreter that cannot
+import the package). Measured through the edited `elicit.CLI_HARDENING` — `--system-prompt` plus
+the two flags, marker file in the working directory — the answer is NONE (cache-read 21,092,
+write 3,525). `comic_beats --selftest` passes on the same registration digest, because
+`registration_digest()` never covered `CLI_HARDENING`; the four test files that import the
+modules pass. **No paid research call ran between the file's creation and this fix** — the
+process list was read at every step — so no cached answer carries it.
+
+**The rule this leaves, written into `CLAUDE.md` and the RUNBOOK:** every `claude -p` call site in
+this repository carries the two flags, the live test is the guard, and it is re-run after any
+`claude` upgrade — the suppression rests on one documented setting and one measured flag, and
+a CLI release could move either. The worktrees were also probed: a marker appended to the root
+`CLAUDE.md` did **not** reach a call made from `.claude/worktrees/<name>/` (answer NONE), while a
+plain child directory and a child that is its own git root both leaked a parent's file — so the
+worktree boundary is respected by this version and that, too, is observed rather than
+documented. Commit the flags and the file **together**, so no checkout ever has one without the
+other.

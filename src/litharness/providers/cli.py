@@ -3,14 +3,17 @@
 It shells out, so it takes an injected `runner`. That is not decoration — it is what
 makes the parsing testable against the real captured envelope without spawning a process
 or spending quota. Every flag below was verified against the installed CLI (`claude`
-2.1.227) and the numbers in `plan/provider-adapters.md` are measurements, not estimates.
+2.1.227; the CLAUDE.md suppression against 2.1.236) and the numbers in
+`plan/provider-adapters.md` are measurements, not estimates.
 (The Codex fallback adapter that used to live beside this one is retired with provider
 plurality; its measurements stay in that document.)
 
 The per-invocation harness tax is the reason `invocations` exists on `CompletionResult`:
 `claude -p` carries ~24k input tokens of its own system prompt and tool definitions per
-call (~19k cache-read, ~5k rewritten every time). Token accounting alone hides a cost
-that scales with call count.
+call (~19k cache-read, ~5k rewritten every time; ~27k on 2.1.236, measured 2026-08-22 as
+21,352 read + ~5.3k written — the user-level skills and plugins ride along, and only
+`--bare` would drop them). Token accounting alone hides a cost that scales with call
+count.
 """
 
 from __future__ import annotations
@@ -106,11 +109,16 @@ def subprocess_runner(
     return CommandResult(completed.returncode, completed.stdout, completed.stderr)
 
 
+#: Settings JSON passed on every call. Globs rather than one path so `.claude/CLAUDE.md`
+#: and `CLAUDE.local.md` in the working directory are covered as well as the root file.
+CLAUDE_MD_EXCLUDES = '{"claudeMdExcludes":["**/CLAUDE.md","**/CLAUDE.local.md"]}'
+
+
 @dataclass
 class ClaudeCodeProvider:
     """`claude -p` reduced from an agent to a single-shot completion.
 
-    Four flags are not optional, each for a reason that cost something to learn:
+    Five flags are not optional, each for a reason that cost something to learn:
 
     * `--allowed-tools ''` — without it this is an agent that can read and write files
       outside the revision store, violating "no subsystem mutates canon directly" (§5).
@@ -118,6 +126,10 @@ class ClaudeCodeProvider:
       whatever MCP servers the machine has configured: slow, and not reproducible, which
       §11 requires.
     * `--no-session-persistence` — otherwise every scene leaves a session on disk.
+    * `--setting-sources user --settings {claudeMdExcludes}` — otherwise the call reads
+      the repository's CLAUDE.md (and project/local settings) from the working directory,
+      none of which the frozen prompt records. See the comment on `_argv` for what was
+      measured and why `--bare` could not be the answer.
     * stdin closed — see `subprocess_runner`.
 
     **This runs against whatever authentication the local `claude` install already has**, and
@@ -165,6 +177,26 @@ class ClaudeCodeProvider:
             "--no-session-persistence",
             "--permission-mode",
             "manual",
+            # A `-p` call loads the same context an interactive session would: any CLAUDE.md
+            # in the working directory or its ancestors, plus `~/.claude`'s settings, skills
+            # and plugins — and `--append-system-prompt` goes in *after* it. The loop runs
+            # from the repository root, and the repository carries a CLAUDE.md written for
+            # sessions rather than for the writer, so without these flags it would ride into
+            # every drafting call and the frozen prompt (§103) would no longer be the whole
+            # of what the model saw. Measured 2026-08-22 on `claude` 2.1.236 with a marker
+            # CLAUDE.md in the working directory: without either flag the model echoed the
+            # marker; with either one it did not. `--bare` is the documented full
+            # suppression and skips keychain reads, which is where a subscription login
+            # lives ("Not logged in"), so it is unusable here; `--system-prompt` is
+            # documented to ignore CLAUDE.md and was measured *not* to. Two mechanisms
+            # because each covers the other's gap: `claudeMdExcludes` is the documented
+            # CLAUDE.md control, and `--setting-sources user` is docs-silent on CLAUDE.md but
+            # also drops project and local settings.json — hooks, permissions, env — which
+            # this adapter never wanted. The live test checks the outcome, not the mechanism.
+            "--setting-sources",
+            "user",
+            "--settings",
+            CLAUDE_MD_EXCLUDES,
         ]
         system = self._system_prompt(request)
         if system:
