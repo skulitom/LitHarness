@@ -1495,7 +1495,7 @@ def run_strip(args: argparse.Namespace) -> dict[str, Any]:
     with elicitor:
         rows, usages = _sweep(elicitor, jobs2, arm="strip", dry_run=args.dry_run,
                               workers=elicitor.max_workers, quote=quote)
-    scored = {label: row for label, row in zip(labels, rows, strict=True)}
+    scored = dict(zip(labels, rows, strict=True))
 
     base = {row["unit_id"]: row for row in census["rows"]}
     spread = {}
