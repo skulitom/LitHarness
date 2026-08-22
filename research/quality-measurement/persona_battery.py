@@ -622,7 +622,7 @@ def main() -> None:
             raise SystemExit(f"--doses must be strengths in (0, 1]; got {args.doses!r}")
 
     passages, donors = load_passages(args)
-    original_of = {passage_id: text for passage_id, text in passages}
+    original_of = dict(passages)
 
     # The variant schedule, precomputed so each opaque scorer call can be attributed — the same
     # digest-keyed mapping `cdg_battery.py` uses, and for the same reason: `ablate` seeds every

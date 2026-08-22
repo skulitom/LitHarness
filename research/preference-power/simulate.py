@@ -66,13 +66,13 @@ from __future__ import annotations
 import argparse
 import json
 import math
-import os
 import sys
 import time
 from multiprocessing import Pool
+from pathlib import Path
 from random import Random
 
-HERE = os.path.dirname(os.path.abspath(__file__))
+HERE = Path(__file__).resolve().parent
 if HERE not in sys.path:
     sys.path.insert(0, HERE)
 
@@ -527,7 +527,7 @@ def main() -> None:
                     f"{row['median_bound']:>10.4f} {row['seconds']:>4.0f}"
                 )
     if args.out:
-        with open(args.out, "w", encoding="utf-8") as handle:
+        with Path(args.out).open("w", encoding="utf-8") as handle:
             json.dump({"alphas": list(ALPHAS), "nominal": NOMINAL, "rows": rows}, handle, indent=2)
         print(f"\nwrote {len(rows)} rows to {args.out}")
 

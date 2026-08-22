@@ -106,7 +106,7 @@ def run() -> dict[str, Any]:
 
     # 2. Different writers differ; the same writer repeats. The byte-identity floor §89.1 earned.
     systems = {name: system for name, (system, _) in rendered.items()}
-    distinct_pairs = len({s for s in systems.values()}) == len(systems)
+    distinct_pairs = len(set(systems.values())) == len(systems)
     repeats = all(_render(w)[0] == systems[name] for name, w in roster.items())
 
     # 3. The dossier is nowhere in the prompt, which is where the packet lives. §3.2's boundary
