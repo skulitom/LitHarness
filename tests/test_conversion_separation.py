@@ -18,15 +18,10 @@ so its smallest case here is a nine-row table whose bands cannot be split.
 from __future__ import annotations
 
 import math
-import sys
-from pathlib import Path
 from types import SimpleNamespace
 from typing import Any
 
 import pytest
-
-RESEARCH = Path(__file__).resolve().parents[1] / "research" / "quality-measurement"
-sys.path.insert(0, str(RESEARCH))
 
 conversion_separation = pytest.importorskip(
     "conversion_separation",

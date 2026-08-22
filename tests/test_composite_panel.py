@@ -15,14 +15,9 @@ before:
 
 from __future__ import annotations
 
-import sys
 from dataclasses import dataclass
-from pathlib import Path
 
 import pytest
-
-RESEARCH = Path(__file__).parents[1] / "research" / "quality-measurement"
-sys.path.insert(0, str(RESEARCH))
 
 composite_panel = pytest.importorskip(
     "composite_panel",

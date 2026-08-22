@@ -20,13 +20,8 @@ Hermetic: no subprocess, no network, no calls. Every file read happens inside `t
 from __future__ import annotations
 
 import json
-import sys
-from pathlib import Path
 
 import pytest
-
-RESEARCH = Path(__file__).resolve().parents[1] / "research" / "quality-measurement"
-sys.path.insert(0, str(RESEARCH))
 
 force_report = pytest.importorskip(
     "force_report",
