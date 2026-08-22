@@ -126,7 +126,9 @@ the number going up. Say bronze is 1 and gold is 3."* Nothing here duplicates it
 half — a countable set of distinct named capabilities that grows, which is what "nine unique
 abilities" asks for — is a different axis and nobody owns it; the falsification test the operator
 called for is
-[`research/quality-measurement/mother-of-learning-model-fit.md`](../research/quality-measurement/mother-of-learning-model-fit.md).
+[`research/quality-measurement/mother-of-learning-model-fit.md`](../research/quality-measurement/mother-of-learning-model-fit.md),
+whose answer after adversarial review is that the model **can** hold an inventory today and is
+never asked to — six refutations, none standing.
 
 **2. The descriptions are of minutiae, and the packet hands them over as facts.**
 
