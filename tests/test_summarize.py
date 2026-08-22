@@ -22,8 +22,10 @@ from litharness.application.summarize import (
 )
 from litharness.domain.beats import beats_for
 from litharness.domain.context import SUMMARIES
+from litharness.domain.extraction import normalise_subject
 from litharness.domain.generation import CompletionResult, Resolution, Usage
 from litharness.domain.nodes import Node, NodeKind
+from litharness.domain.promises import Promise, describe_owed, promise_id_for
 from litharness.domain.revision import build_revision
 from litharness.domain.text import content_hash
 from tests.conftest import BOOK_ID, BRANCH_ID, PROJECT_ID
@@ -34,6 +36,18 @@ SCENE = (
     "up. Behind him the hounds turned in the wet, and he set the lantern down rather than "
     "let it shake in his hand. He would come back for the ledger. He said so aloud, to "
     "nobody, which is how a debt becomes a promise."
+)
+#: One open ledger row, for the prompt-rendering pins. The subject is stored normalised,
+#: because every subject is: `promise_id_for` keys on it and `pay_promise` matches nothing
+#: else.
+A_DEBT = Promise(
+    promise_id=promise_id_for(BOOK_ID, "gate_ledger"),
+    subject="gate_ledger",
+    description="the gate ledger must be read back before the toll is settled",
+    opened_at_key="s02",
+    due_key="s05",
+    opened_by_revision="rev-1",
+    model="stub-v1",
 )
 
 
@@ -283,6 +297,99 @@ def test_the_prompt_shows_the_book_its_own_open_threads() -> None:
 
     _, bare = render_summary_prompt(SCENE)
     assert "still owed" not in bare
+
+
+def test_the_prompt_shows_the_settling_call_the_ledger_it_settles() -> None:
+    """The one call that can mark a debt paid, shown what the book owes.
+
+    `promises_paid` is keyed through `promise_id_for(book_id, normalise_subject(name))`
+    against rows already open, so a payment lands only if a one-scene, no-memory call
+    reproduces a subject coined scenes earlier. Four books ran 32/0, 40/0, 41/0 and 47/0
+    with these rows absent from this prompt. The subject goes in verbatim because it is the
+    key, and `describe_owed` supplies the rest of the line because it is the ledger's own
+    wording — the same line `domain/context.py` puts in the writer's packet.
+    """
+    system, prompt = render_summary_prompt(SCENE, open_promises=(A_DEBT,))
+    assert "gate_ledger" in prompt, "the key the model has to reproduce, exactly as stored"
+    assert describe_owed(A_DEBT) in prompt, "the ledger's own line, not a paraphrase"
+    assert "copied exactly" in system
+
+
+def test_the_ledger_is_its_own_block_and_never_folded_into_the_threads() -> None:
+    """Two different classes of claim, and the register is the whole reason.
+
+    Open threads are canon-backed state records; a promise is a model-reported or
+    forge-seeded debt, which is why `domain/context.py` phrases `describe_owed` as a debt
+    rather than as a fact. One list under one heading would launder the second into the
+    register of the first — the packet's own rule, applied to the prompt that settles the
+    ledger rather than to the one that draws on it.
+    """
+    _, prompt = render_summary_prompt(
+        SCENE, open_threads=["Rook owes five gold"], open_promises=(A_DEBT,)
+    )
+    threads_at = prompt.index("The book records these as still owed")
+    ledger_at = prompt.index("The book's ledger of debts still unpaid")
+    assert threads_at < ledger_at, "two blocks, in this order"
+    between = prompt[threads_at:ledger_at]
+    assert "Rook owes five gold" in between and "gate_ledger" not in between, (
+        "the thread block closes before the ledger block opens"
+    )
+
+
+def test_an_empty_ledger_leaves_the_prompt_byte_identical() -> None:
+    """The control, and it has to be bytes rather than a resemblance.
+
+    Every book without a ledger row — the golden fixtures, every research caller of
+    `render_summary_prompt`, every scene before the first promise opens — must be asking
+    exactly the question it asked before this existed, or nothing measured against it
+    afterwards compares. The `PROMISES_PAID` line is conditional for this reason: a prompt
+    naming a list it does not carry asks a model to copy from nowhere.
+    """
+    with_threads = render_summary_prompt(SCENE, open_threads=["Rook owes five gold"])
+    assert render_summary_prompt(
+        SCENE, open_threads=["Rook owes five gold"], open_promises=()
+    ) == with_threads
+    assert render_summary_prompt(SCENE, open_promises=()) == render_summary_prompt(SCENE)
+    assert "ledger of debts" not in with_threads[1]
+    assert "copied exactly" not in with_threads[0]
+
+
+def test_a_rendered_subject_round_trips_through_normalise_subject() -> None:
+    """The identity that the whole block exists to make available, pinned as one.
+
+    Subjects are stored already normalised, so copying one off the rendered line and putting
+    it back through `normalise_subject` must return the same string and therefore the same
+    `promise_id`. A render that title-cased a subject, or re-spaced it, or wrapped it in
+    quotes would look right and silently break the one key it exists to supply.
+    """
+    _, prompt = render_summary_prompt(SCENE, open_promises=(A_DEBT,))
+    [line] = [row for row in prompt.splitlines() if row.startswith("- gate_ledger")]
+    copied = line[2:].split(" owes:")[0]
+    assert copied == A_DEBT.subject
+    assert normalise_subject(copied) == A_DEBT.subject
+    assert promise_id_for(BOOK_ID, normalise_subject(copied)) == A_DEBT.promise_id
+
+
+def test_the_ledger_block_tells_the_model_nothing_about_what_to_pay() -> None:
+    """Information, in the class the THREAD block already is — and asserted, not trusted.
+
+    Showing rows is information; "pay these", "this debt is due now", "resolve X by scene Y"
+    would be an instruction, and an instruction is how a model gets talked into claiming a
+    payoff the page does not contain. The added `PROMISES_PAID` wording is about the *shape*
+    of the answer — copy the name — which is the same class of ask as OPEN's "say so plainly
+    if it left nothing open".
+
+    `describe_owed`'s own text is exempt and named as exempt: `(due by …)` and, on a promise
+    an outline call has scheduled, `pay within …` are the ledger's stored wording, rendered
+    identically into the writer's packet already. What this checks is that nothing was added.
+    """
+    system, prompt = render_summary_prompt(SCENE, open_promises=(A_DEBT,))
+    header = prompt[prompt.index("The book's ledger") : prompt.index("\n- gate_ledger")]
+    for phrase in ("pay ", "due", "resolve", "should", "must", "now", "settle"):
+        assert phrase not in header.lower(), f"the header instructs: {phrase!r}"
+    added = system.rsplit("PROMISES_PAID:", 1)[1]
+    for phrase in ("due", "now", "should", "must", "overdue", "resolve"):
+        assert phrase not in added.lower(), f"the ask instructs: {phrase!r}"
 
 
 def test_a_summary_flattens_to_the_line_the_packet_will_render() -> None:

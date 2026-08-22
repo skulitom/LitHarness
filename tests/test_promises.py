@@ -146,6 +146,25 @@ class ExtendedStub:
         )
 
 
+def _promise_payloads(
+    store: SqliteStore, revision: Revision, logical_id: str
+) -> list[dict[str, object]]:
+    """The `promises` JSON stored beside one scene's summary, decoded.
+
+    Read from the row rather than recomputed, because that is the point of writing it there:
+    what the model said and which of it named an open row are the two halves of "did showing
+    the ledger change anything", and a measurement that has to re-derive the second from
+    prose is a measurement nobody re-runs.
+    """
+    text = revision.node(logical_id).content
+    assert text is not None
+    rows = store._connection.execute(
+        "SELECT promises_json FROM scene_summaries WHERE logical_id = ? AND content_hash = ?",
+        (logical_id, content_hash(text)),
+    ).fetchall()
+    return [json.loads(row["promises_json"]) for row in rows if row["promises_json"]]
+
+
 def summarise_scene(store: SqliteStore, revision: Revision, logical_id: str, generator) -> None:  # type: ignore[no-untyped-def]
     handle = make_summary_handler(generator, store, PROJECT_ID)
     text = revision.node(logical_id).content
@@ -313,6 +332,204 @@ def test_replaying_the_summary_job_converges_on_one_ledger_row(store: SqliteStor
     summarise_scene(store, revision, "sc2", generator)
     summarise_scene(store, revision, "sc2", generator)
     assert len(store.promises(BOOK_ID, BRANCH_ID)) == 1
+
+
+# -- the settling call is shown the ledger --------------------------------------------------
+#
+# `plan/handoff-promise-ledger.md`. The writer's packet has carried the open rows since §61
+# Add 2 and the outline call has seen their subjects since W2; this call — the only one that
+# can mark a debt paid — was the only one never shown them, and four books settled nothing.
+
+
+def test_the_call_that_settles_the_ledger_is_shown_the_ledger(store: SqliteStore) -> None:
+    """The regression test for the defect, and it fails on the build that had it.
+
+    Payment goes through `promise_id_for(book_id, normalise_subject(name))` against a row
+    whose `status` is still `open`, so a payoff lands only if a one-scene, no-memory call
+    reproduces a subject coined scenes earlier. Measured on `serial.db`: 41 subjects opened
+    across eight summaries and the model reproduced one of its own, once — in the *opened*
+    channel, never the paid one. That is an impossibility by construction rather than a
+    model failing, and the repair is that the rows are in the prompt.
+    """
+    revision = a_book()
+    store.commit_revision(revision, created_at="2026-08-17T00:00:00Z")
+    store.record_promise(BOOK_ID, BRANCH_ID, a_promise())
+
+    generator = ExtendedStub()
+    summarise_scene(store, revision, "sc4", generator)
+
+    [request] = generator.requests
+    assert "gate_ledger" in request.prompt, (  # type: ignore[attr-defined]
+        "the key the model must reproduce, in the call that would record it"
+    )
+    assert describe_owed(a_promise()) in request.prompt  # type: ignore[attr-defined]
+    assert "copied exactly" in request.system  # type: ignore[attr-defined]
+
+
+def test_the_whole_ledger_reaches_the_prompt_in_the_stores_order(store: SqliteStore) -> None:
+    """Uncapped, and in `promises()`' own order: due-soonest first, NULL due last.
+
+    Uncapped because the rows are one line each and the largest ledger this project has
+    measured is 47 of them, while a cap would drop exactly the debts a long book most needs
+    settled and report nothing about having done so. The store's order is passed through
+    rather than re-sorted, for `in_story_order`'s reason: two calls over one ledger must see
+    it the same way or nothing measured across them compares.
+    """
+    revision = a_book()
+    store.commit_revision(revision, created_at="2026-08-17T00:00:00Z")
+    for index, due in enumerate(["s09", None, "s03", "s06"]):
+        store.record_promise(
+            BOOK_ID, BRANCH_ID, a_promise(f"debt_{index}", due_key=due, opened_at_key="s01")
+        )
+
+    generator = ExtendedStub()
+    summarise_scene(store, revision, "sc5", generator)
+    [request] = generator.requests
+    rendered = [
+        line.split(" owes:")[0][2:]
+        for line in request.prompt.splitlines()  # type: ignore[attr-defined]
+        if line.startswith("- debt_")
+    ]
+    assert rendered == [row.subject for row in store.promises(BOOK_ID, BRANCH_ID, open_only=True)]
+    assert rendered == ["debt_2", "debt_3", "debt_0", "debt_1"], "due-soonest, NULL last"
+
+
+def test_a_name_copied_from_the_list_pays_its_row_and_the_row_records_it(
+    store: SqliteStore,
+) -> None:
+    """The whole claim, end to end: shown a key, the model can return one that settles.
+
+    Both halves land on the summary row. `paid` is what the model said and `paid_matched` is
+    which of it named an open row on the list — so "did showing the ledger change anything"
+    is answerable from the store rather than re-derived from prose months later, which is
+    what `research/quality-measurement/payoff_landing.py`'s `paid` arm needs.
+    """
+    revision = a_book()
+    store.commit_revision(revision, created_at="2026-08-17T00:00:00Z")
+    store.record_promise(BOOK_ID, BRANCH_ID, a_promise())
+
+    summarise_scene(store, revision, "sc4", ExtendedStub({"promises_paid": ["gate_ledger"]}))
+
+    [row] = store.promises(BOOK_ID, BRANCH_ID)
+    assert row.status == PROMISE_PAID
+    assert row.paid_at_key == "s04"
+    assert row.paid_by_revision == revision.revision_id
+    stored = store.scene_summaries(BOOK_ID, BRANCH_ID)["sc4"]
+    [recorded] = _promise_payloads(store, revision, "sc4")
+    assert recorded["paid"] == ["gate_ledger"]
+    assert recorded["paid_matched"] == ["gate_ledger"]
+    assert recorded["paid_unmatched"] == []
+    assert stored, "the summary itself is unaffected"
+
+
+def test_a_name_not_on_the_list_pays_nothing_and_the_row_records_that_too(
+    store: SqliteStore,
+) -> None:
+    """Exact match on purpose, and the record says which names missed.
+
+    A ledger that paid on a loose or majority-word match would be worse than one that pays
+    nothing: W4 grades payoff landing against the ledger's own wording, so a row marked paid
+    by a near-miss is a row whose description does not describe what it was matched to. The
+    two strings here are the ones `serial.db`'s summariser actually returned at scene 6 —
+    fluent prose names for debts, neither of which was ever a key.
+    """
+    revision = a_book()
+    store.commit_revision(revision, created_at="2026-08-17T00:00:00Z")
+    store.record_promise(BOOK_ID, BRANCH_ID, a_promise())
+
+    summarise_scene(
+        store,
+        revision,
+        "sc4",
+        ExtendedStub(
+            {"promises_paid": ["The tarnished blank at Kessel's stall", "the gate ledger, read"]}
+        ),
+    )
+
+    [row] = store.promises(BOOK_ID, BRANCH_ID)
+    assert row.status == PROMISE_OPEN, "no fuzzy match, and none may be added"
+    [recorded] = _promise_payloads(store, revision, "sc4")
+    assert recorded["paid_matched"] == []
+    assert len(recorded["paid_unmatched"]) == 2
+
+
+def test_a_seeded_promise_carries_no_model_and_is_payable_anyway(store: SqliteStore) -> None:
+    """§107.8's stated limit, checked rather than assumed.
+
+    A forged or operator-seeded row has `model = ""` — the ledger has no authored-versus-model
+    column and this handoff adds no migration for one — and `pay_promise` carries no condition
+    on it. Pilot 2 seeded six debts with their answers already in canon and paid none of them;
+    that they *could* be paid is a separate fact from whether they were.
+    """
+    revision = a_book()
+    store.commit_revision(revision, created_at="2026-08-17T00:00:00Z")
+    seeded = Promise(
+        promise_id=promise_id_for(BOOK_ID, "m_holts_date"),
+        subject="m_holts_date",
+        description="why does the Holt family, who dug the lateral, hold no date?",
+        opened_at_key="s01",
+        due_key="s04",
+        opened_by_revision="rev-0",
+        model="",
+    )
+    store.record_promise(BOOK_ID, BRANCH_ID, seeded)
+
+    generator = ExtendedStub({"promises_paid": ["m_holts_date"]})
+    summarise_scene(store, revision, "sc4", generator)
+
+    [row] = store.promises(BOOK_ID, BRANCH_ID)
+    assert row.model == "", "the row's provenance is untouched by being settled"
+    assert row.status == PROMISE_PAID
+    assert "m_holts_date" in generator.requests[0].prompt  # type: ignore[attr-defined]
+
+
+def test_a_paid_debt_leaves_the_prompt_as_it_leaves_the_packet(store: SqliteStore) -> None:
+    """`open_only=True` on both sides. A settled debt is not owed, so it stops costing the
+    packet a line and stops costing this prompt one — which is the first measurement any
+    ledger policy over packet pressure would need."""
+    revision = a_book()
+    store.commit_revision(revision, created_at="2026-08-17T00:00:00Z")
+    store.record_promise(BOOK_ID, BRANCH_ID, a_promise())
+    summarise_scene(store, revision, "sc4", ExtendedStub({"promises_paid": ["gate_ledger"]}))
+
+    later = ExtendedStub()
+    summarise_scene(store, revision, "sc6", later)
+    assert "gate_ledger" not in later.requests[0].prompt  # type: ignore[attr-defined]
+    assert "ledger of debts" not in later.requests[0].prompt  # type: ignore[attr-defined]
+
+
+def test_the_prompt_moves_with_the_ledger_and_the_stored_summary_does_not(
+    store: SqliteStore,
+) -> None:
+    """Nothing re-mints, and the reason is that the address excludes the prompt.
+
+    A summary is addressed by its scene's own content hash and the job's idempotency key is
+    built from the same hash and never from the prompt
+    (`test_the_job_is_keyed_on_the_scenes_text_and_not_on_the_revision`), which is exactly
+    what lets this change the prompt without invalidating a single stored job — a tick over
+    an already-summarised book enqueues nothing new. Driven here by calling the handler
+    twice, which is not what a tick does: the ledger grows between the passes, so the second
+    call genuinely sees a different prompt, and the stored artifact still does not move.
+    """
+    revision = a_book()
+    store.commit_revision(revision, created_at="2026-08-17T00:00:00Z")
+    first = ExtendedStub(
+        {"promises_opened": [{"subject": "gate_ledger", "description": "a reading is owed"}]}
+    )
+    summarise_scene(store, revision, "sc2", first)
+    second = ExtendedStub({"promises_paid": ["gate_ledger"]})
+    summarise_scene(store, revision, "sc2", second)
+
+    assert "gate_ledger" not in first.requests[0].prompt  # type: ignore[attr-defined]
+    assert "gate_ledger" in second.requests[0].prompt  # type: ignore[attr-defined]
+    assert len(store.scene_summaries(BOOK_ID, BRANCH_ID)["sc2"]) == 1
+    [recorded] = _promise_payloads(store, revision, "sc2")
+    assert recorded["paid"] == [], "the first pass's row stands; the second is ignored"
+    # The *ledger* is not addressed by the scene's hash and never was: a re-invoked handler
+    # re-applies its answer, and paying is idempotent because the transition is write-once.
+    # One row, and re-running the payer a third time would change nothing further.
+    assert len(store.promises(BOOK_ID, BRANCH_ID)) == 1
+    assert store.promises(BOOK_ID, BRANCH_ID)[0].status == PROMISE_PAID
 
 
 # -- due-key defaulting -------------------------------------------------------------------

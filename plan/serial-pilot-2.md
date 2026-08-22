@@ -182,6 +182,51 @@ the block is a **note and never a check**: a coined name on the page is not the 
 and deciding from prose that a hint has gone too far is exactly the judgment this project has no
 instrument for.
 
+### 4.1 S5′ — pre-registered 2026-08-22, before the third run and before any paid call
+
+**One thing changed since run B and it is one line of one prompt.** The summary call — the only
+call in this system that can mark a debt paid — is now shown the book's open ledger, in its own
+block, subjects verbatim beside `describe_owed`'s line, and its `PROMISES_PAID` ask says to copy a
+name exactly from that list. Nothing else moved: the world, the directives, the promises, the
+craft constraints, the commands, the budgets and the drafting prompt are all run B's. S5 asked
+whether seeding the answer was the binding constraint and answered no; S5′ asks whether *not
+being shown the ledger* was.
+
+**Why S5 could not have answered it, measured rather than argued** (`plan/handoff-promise-
+ledger.md` Task 0, on `serial.db`): payment goes through `promise_id_for(book_id,
+normalise_subject(name))` against a row whose status is still `open`, so it lands only when a
+one-scene, no-memory call reproduces a subject coined scenes earlier. Across eight summaries that
+book's summariser opened 41 subjects and re-produced one of its own — **once**, and in the
+`promises_opened` channel, never the paid one. The two strings it did return as paid, both at
+scene 6, matched no row that existed then and no row that ever existed. That is an impossibility
+by construction, not a model failing.
+
+| # | question | how it is answered | outcomes named in advance |
+|---|---|---|---|
+| **S5′** | with the open ledger shown to the call that settles it, does anything settle | per promise from the store: `subject`, `kind`, `opened_at_key`, `due_key`, `status`, `paid_at_key`, `paid_by_revision`, and seeded (`model = ""`) or model-opened; plus each summary row's `promises` JSON, now carrying `paid` beside `paid_matched` / `paid_unmatched`. **Counts, never a rate** | (i) **≥1 seeded debt paid at or after its scheduled scene** (`m_holts_date` s4, `m_orrin_last_call` s7) → not being shown the ledger was the block, and the ledger can settle; (ii) **0 of 6 seeded paid with the list shown** → S3 already showed the reveal reaching the writer mechanically, so "disclosed to the writer" ≠ "paid on the page", and that is the next question rather than this one's; (iii) **model-opened debts paid but seeded ones not** → a subject-vocabulary mismatch: check the render and the normalisation before reading anything else into it |
+
+**No bar is declared and none may be read in.** n is six seeded debts plus whatever the summariser
+opens, §108.5's "any subgroup of two is empty" applies to every split of it, and a pre-registered
+null is a result (§61). Nothing here asks any model whether a payoff was *good* — that is a
+verdict channel and this run has none.
+
+**Also pre-registered: the packet trace, in §6.2's own columns** — facts / hidden / threads /
+prose / summaries / prompt tokens, per scene, from the stored `scene_draft` payloads. Paid rows
+leave the packet (`promises(..., open_only=True)` on both the packet and now the summary prompt),
+so any debt that settles is the first measurement a ledger policy over packet pressure has ever
+had. Run B's threads column ran **6 → 41** against a world flat at 229–231 facts; that is the
+comparison.
+
+**And the control that says nothing else moved: the hidden-count trace must reproduce**
+`20, 20, 20, 19, 19, 19, 18, 18`. S3's machinery is untouched by this work, so if it moves,
+something was changed that should not have been.
+
+**What is deliberately not claimed by any outcome above.** Whether a scene that names a debt
+actually pays it on the page — that is `research/quality-measurement/payoff_landing.py`'s
+report-channel question, graded by its own controls on the research side, and this run supplies
+its substrate rather than its answer. And whether the prose is any good, which no run of this
+pilot is entitled to say.
+
 ---
 
 ## 5. Anti-scope

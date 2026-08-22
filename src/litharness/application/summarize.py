@@ -48,6 +48,7 @@ from litharness.domain.nodes import NodeKind
 from litharness.domain.promises import (
     PROMISE_KINDS,
     Promise,
+    describe_owed,
     normalise_kind,
     parse_due_hint,
     promise_id_for,
@@ -168,7 +169,12 @@ def _timestamp(now: float) -> str:
     return datetime.fromtimestamp(now, tz=UTC).isoformat().replace("+00:00", "Z")
 
 
-def render_summary_prompt(text: str, *, open_threads: Sequence[str] = ()) -> tuple[str, str]:
+def render_summary_prompt(
+    text: str,
+    *,
+    open_threads: Sequence[str] = (),
+    open_promises: Sequence[Promise] = (),
+) -> tuple[str, str]:
     """(system, prompt) for one scene.
 
     The fields are asked for by name so the answer is four short statements rather than one
@@ -178,6 +184,29 @@ def render_summary_prompt(text: str, *, open_threads: Sequence[str] = ()) -> tup
     The book's own open threads go in the prompt so the OPEN field has something to notice
     rather than to invent. They are shown, never asserted: a scene that touches none of them
     should say so, and `check_open_threads` reads the answer rather than assuming it.
+
+    **The promise ledger goes in beside them, and until this existed the one call that can
+    settle a debt was the one call never shown what the book owed.** `promises_paid` is put
+    through `normalise_subject` into `promise_id_for(book_id, subject)` and matched against a
+    row already open, so a payment lands only if a one-scene, no-memory call reproduces a
+    subject string coined scenes earlier. Four books measured 32/0, 40/0, 41/0 and 47/0
+    opened-against-paid with the ledger absent from this prompt, and on the live serial the
+    summariser reproduced a subject it had itself coined **once in forty-one** opportunities.
+    That is not a model failing; it is an impossibility by construction, and showing the rows
+    is the whole of the repair.
+
+    **Its own block, never folded into the thread block, because the two are different
+    classes of claim.** Open threads are canon-backed state records; promises are
+    model-reported or forge-seeded debts, which is exactly why `domain/context.py` renders
+    them through `describe_owed` as a debt rather than as a fact. One list under one heading
+    would launder the second into the register of the first — the packet's own rule, applied
+    to the prompt that settles the ledger rather than to the one that draws on it.
+
+    **Information, and nothing else.** No line added here says which debt is due, which to
+    pay, or that anything is owed *now*: the rows are shown exactly as the ledger stores
+    them, and the only instruction is about the shape of the answer — copy the name — which
+    is the same class of ask as OPEN's "say so plainly if it left nothing open". A model
+    choosing which debt to settle would be a verdict, and this call has no licence for one.
 
     **The DELTA question is unhedged on purpose, and that is §55.1's measured lesson.** The
     progression clause was hedged three times over and their sum was an instruction to leave
@@ -204,14 +233,36 @@ def render_summary_prompt(text: str, *, open_threads: Sequence[str] = ()) -> tup
         "For each: a short subject name, what is now owed, which kind of debt it is "
         f"({', '.join(PROMISE_KINDS)}), and the scene number it is due by when the scene "
         "implies one.\n"
-        "PROMISES_PAID: the subject names of previously open threads this scene pays off."
+        # **Conditional, and that is what keeps the empty-ledger prompt byte-identical.** A
+        # line naming a list the prompt does not carry would be asking a model to copy from
+        # nowhere, and a control that is not byte-for-byte the old prompt is not a control.
+        + (
+            "PROMISES_PAID: the subject names of previously open threads this scene pays "
+            "off."
+            if not open_promises
+            else "PROMISES_PAID: the names of open debts this scene pays off, each copied "
+            "exactly as the ledger writes it. Empty if this scene pays none."
+        )
     )
     owed = ""
     if open_threads:
         owed = "\n\nThe book records these as still owed; note any this scene touches:\n" + (
             "\n".join(f"- {thread}" for thread in open_threads)
         )
-    return system, f"The scene:\n\n{text}{owed}"
+    ledger = ""
+    if open_promises:
+        # The subject verbatim, then the ledger's own debt line. The subject is what
+        # `pay_promise` keys on and it is stored already normalised, so the rendered name
+        # round-trips through `normalise_subject` unchanged — a render that title-cased or
+        # re-spaced it would silently break the one key this block exists to supply.
+        ledger = (
+            "\n\nThe book's ledger of debts still unpaid, as it stores them. These are the "
+            "book's own record of what it owes rather than established fact; each line is "
+            "the name a debt is filed under, then what is owed:\n"
+        ) + "\n".join(
+            f"- {promise.subject} {describe_owed(promise)}" for promise in open_promises
+        )
+    return system, f"The scene:\n\n{text}{owed}{ledger}"
 
 
 def flatten(payload: dict[str, object]) -> str:
@@ -311,7 +362,13 @@ def make_summary_handler(
     what makes returning no events safe under the replay the Conductor's two-transaction
     commit allows.
 
-    **The promise ledger (§61 Add 2) is maintained here and only here.** The story keys a
+    **The promise ledger (§61 Add 2) is maintained here and only here — and, since
+    `plan/handoff-promise-ledger.md`, it is also *read* here and put in front of the call
+    that maintains it.** The writer's packet has always carried the open rows
+    (`planner.packet_for` → the THREADS section) and the outline call has always seen their
+    subjects; this call, the only one that can mark a debt paid, was the only one not shown
+    them, and four books settled nothing. Read-only from the ledger's side: nothing about
+    which debt is due, or due now, is computed or said. The story keys a
     promise carries are read off `beats_for`'s own minting — the scene's beat for
     `opened_at_key`, the hinted scene's beat for `due_key`, the last beat when the hint is
     absent or unparseable (a promise is at latest overdue if the book ends unpaid) — so
@@ -360,7 +417,16 @@ def make_summary_handler(
             state_mod.describe(record)
             for record in state_mod.open_threads(store.state_records(book_id, branch_id))
         ]
-        system, prompt = render_summary_prompt(node.content, open_threads=threads)
+        # **The ledger, in the one call that can settle it.** Open rows only — a paid debt is
+        # not owed — in the store's own due-soonest-first order and uncapped: the rows are one
+        # line each, the largest ledger this project has measured is 47 of them, and a cap
+        # would drop exactly the debts a long book most needs settled while reporting nothing.
+        # If one is ever needed it belongs in the summary row as what was dropped, never as a
+        # silent truncation.
+        open_promises = tuple(store.promises(book_id, branch_id, open_only=True))
+        system, prompt = render_summary_prompt(
+            node.content, open_threads=threads, open_promises=open_promises
+        )
         result, _ = registry.complete(
             CompletionRequest(
                 prompt=prompt,
@@ -398,6 +464,23 @@ def make_summary_handler(
             else []
         )
 
+        # **What the model said, and which of it named a row on the list it was shown.** The
+        # match is exact by construction — `pay_promise` keys on
+        # `promise_id_for(book_id, normalise_subject(name))` and updates only `status='open'`
+        # — so this is set membership against the subjects rendered into the prompt, and
+        # recording both halves is what makes "did showing the ledger change anything"
+        # answerable from the store rather than re-derived from prose. Deliberately not a
+        # looser test: a ledger that pays on near-matches is worse than one that pays
+        # nothing, because W4 grades payoff landing against the ledger's own wording.
+        #
+        # One case is neither, and it is named rather than folded in: a subject *this same
+        # scene* opens and pays in one answer was not on the list, so it is recorded
+        # unmatched, and the ledger below still settles it — pre-existing behaviour this
+        # change does not touch.
+        shown = {promise.subject for promise in open_promises}
+        paid_matched = [name for name in paid if normalise_subject(name) in shown]
+        paid_unmatched = [name for name in paid if normalise_subject(name) not in shown]
+
         store.record_scene_summary(
             book_id,
             branch_id,
@@ -408,7 +491,16 @@ def make_summary_handler(
             profile=PROFILE,
             created_at=_timestamp(now),
             delta=delta,
-            promises={"opened": opened, "paid": paid} if opened or paid else None,
+            promises=(
+                {
+                    "opened": opened,
+                    "paid": paid,
+                    "paid_matched": paid_matched,
+                    "paid_unmatched": paid_unmatched,
+                }
+                if opened or paid
+                else None
+            ),
         )
 
         # The promise ledger. Story keys are read off `beats_for`'s minting, never formatted
