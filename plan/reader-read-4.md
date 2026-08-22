@@ -78,6 +78,56 @@ not accumulate **structurally cannot deliver that**, however well the protagonis
 
 **Verdict: not a gap. Three instructions forbade it and a fourth kept removing the mechanism.**
 
+### 1a. The operator refined this defect, and the refinement is a better diagnosis than §1's
+
+> *"nine days and chalk board counting sounds like boring accounting instead of nine unique
+> abilities or level 9 neural speed system"*
+
+**§1 above says the presentation layer is missing. That is not the defect.** The quantity is not
+absent and its form is not the problem — *what it is attached to* is. Nine days is a countdown to
+an expiry; a chalk board is a ledger; both count what the protagonist **owes**. What the genre
+counts is what she **can do**. Measured across every world this project has forged — 24 distinct
+worlds, 156 rungs, deduplicated by content hash across ten artefact files:
+
+| | |
+|---|--:|
+| rungs whose `visible_form` is an insignia — a mark other people read | **135 / 156 = 86.5%** |
+| rungs granting permission ("you may …") | 104 |
+| rungs granting capability ("you can …") | **46** |
+| rungs granting neither | 6 |
+| worlds with **zero** capability rungs | **10 of 24**, *A Good Take* among them |
+
+**Two corrections to what this document said before.** First, "every gain is permission" was
+**overstated**: a third of rungs across the corpus are capabilities. What is true is that they are
+*quarantined* — ten worlds have none at all, and the book the operator read is one of them.
+Second, §1's framing of the defect as a missing presentation layer is **superseded** by the
+operator's own: the referent of the quantity is the defect, and a presentation layer bolted onto a
+ladder of permissions would print prettier accounting.
+
+**And the schema is why, measured rather than inferred.** `_RANK` is `additionalProperties: False`
+with exactly three properties — `id`, `visible_form`, `cost_to_reach` — so a rung can say what it
+**looks like** and what it **costs** and has **no slot for what it lets you do**. Every
+capability-shaped field in the whole forge schema is a single string with no plural: `reach`,
+`grants`, `recognises`, `joint_ability`, `edge`. The words *ability*, *abilities*, *skill*,
+*magnitude* and *capab-* occur **zero times** between them in the forge prompt (5,657 characters at
+k=3, scenes=8, re-measured directly). Meanwhile the forge emits 340
+records under `can_reach`, `grants`, `recognises` and `prices_the_present` that **no code in
+`src/` ever reads** — they reach the packet as flat notation because `worlds.project` has no
+sentence for them.
+
+So the rungs are insignia **because the schema has nowhere else for them to be**. That is not a
+prompt failure and not a drafting failure; it is the schema being followed correctly.
+
+**Where this is being worked, and by whom.** The *ladder* half — the protagonist's rung on a
+declared ordinal chain, rising within the arc and printed on the page — is
+[`plan/handoff-numbers-go-up.md`](handoff-numbers-go-up.md), in flight in its own worktree, which
+already carries the operator's resolution verbatim: *"bronze to gold rank advance is the same as
+the number going up. Say bronze is 1 and gold is 3."* Nothing here duplicates it. The *inventory*
+half — a countable set of distinct named capabilities that grows, which is what "nine unique
+abilities" asks for — is a different axis and nobody owns it; the falsification test the operator
+called for is
+[`research/quality-measurement/mother-of-learning-model-fit.md`](../research/quality-measurement/mother-of-learning-model-fit.md).
+
 **2. The descriptions are of minutiae, and the packet hands them over as facts.**
 
 > *"I feel like descriptions in the book are of minutia and irrelevant details"*
@@ -135,7 +185,7 @@ direction, and direction is the operator's to give.
 
 | # | defect | what governs it today | in the packet? | verdict |
 |---|---|---|---|---|
-| 1 | not crunchy, no lists of abilities | three instructions that **forbid** it: no stat vocabulary at the forge, never announce a rank at the draft, no sheet and no graph line declared | yes — the criterion brief was in every system message | **not a gap: forbidden**, and the inversion rule removed the mechanism three forges running |
+| 1 | not crunchy, no lists of abilities | three instructions that **forbid** it, plus a `_RANK` with no slot for what a rung lets you do | yes — the criterion brief was in every system message | **not a gap: forbidden by prompt and unsayable by schema** (see §1a) |
 | 2 | minutiae and irrelevant detail | C5 (openings), C7 (the phrase), C8 (register) — none bounds *what* is described; 32 manifestations arrive as established fact | yes; 11 of 12 measured on the page | gap: nothing budgets description or says what a scene is about |
 | 3 | not first person | nothing at all | `Point of view: <id>.` names whose, never how | gap: no step decides grammatical person |
 
