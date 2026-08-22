@@ -4711,7 +4711,14 @@ def main(argv: list[str] | None = None) -> int:
 
     from force_remote import AlreadyRunning, SingleRun
 
-    lock = RESULTS / f".affect-trajectory-{args.substrate}-{args.arm}.pid"
+    # The dry suffix is in the lock name, not only in the file names. A dry run issues no call,
+    # writes to its own `-dry` files and cannot touch a paid arm's results, so a paid arm holding
+    # the lock must not stop somebody checking the arithmetic beside it -- which is exactly when
+    # somebody wants to.
+    lock = RESULTS / (
+        f".affect-trajectory-{args.substrate}-{args.arm}"
+        f"{'-dry' if args.dry_run else ''}.pid"
+    )
     print(f"  results -> {result_path(args.substrate, args.arm, bool(args.dry_run)).name}",
           file=sys.stderr, flush=True)
     started = time.time()
