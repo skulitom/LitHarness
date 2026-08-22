@@ -17,9 +17,6 @@ by minting a writer, rendering a prompt, or returning an id, none of which raise
 
 from __future__ import annotations
 
-import sys
-from pathlib import Path
-
 import pytest
 
 from litharness.application.planner import render_prompt
@@ -27,9 +24,6 @@ from litharness.domain import writers
 from litharness.domain.beats import SIX_BEAT, Beat
 from litharness.domain.context import ContextPacket
 from litharness.domain.directors import IllegalBrief
-
-RESEARCH = Path(__file__).resolve().parents[1] / "research" / "quality-measurement"
-sys.path.insert(0, str(RESEARCH))
 
 
 def _beat() -> Beat:

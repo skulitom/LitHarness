@@ -16,14 +16,9 @@ from __future__ import annotations
 
 import math
 import random
-import sys
-from pathlib import Path
 from typing import Any
 
 import pytest
-
-RESEARCH = Path(__file__).resolve().parents[1] / "research" / "quality-measurement"
-sys.path.insert(0, str(RESEARCH))
 
 axiom_battery = pytest.importorskip(
     "axiom_battery",

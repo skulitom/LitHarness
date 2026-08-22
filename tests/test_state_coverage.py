@@ -13,13 +13,7 @@ arithmetic over strings the tests construct.
 
 from __future__ import annotations
 
-import sys
-from pathlib import Path
-
 import pytest
-
-RESEARCH = Path(__file__).resolve().parents[1] / "research" / "quality-measurement"
-sys.path.insert(0, str(RESEARCH))
 
 state_coverage = pytest.importorskip(
     "state_coverage",

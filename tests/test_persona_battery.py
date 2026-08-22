@@ -14,13 +14,8 @@ reliable — a passing run means the arithmetic is the arithmetic the protocol n
 from __future__ import annotations
 
 import math
-import sys
-from pathlib import Path
 
 import pytest
-
-RESEARCH = Path(__file__).resolve().parents[1] / "research" / "quality-measurement"
-sys.path.insert(0, str(RESEARCH))
 
 persona_battery = pytest.importorskip(
     "persona_battery",

@@ -21,13 +21,8 @@ Hermetic: no database, no corpus read, no subprocess, no network, no sleep.
 from __future__ import annotations
 
 import dataclasses
-import sys
-from pathlib import Path
 
 import pytest
-
-RESEARCH = Path(__file__).resolve().parents[1] / "research" / "quality-measurement"
-sys.path.insert(0, str(RESEARCH))
 
 payoff_landing = pytest.importorskip(
     "payoff_landing",
