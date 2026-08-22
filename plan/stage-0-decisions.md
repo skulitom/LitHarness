@@ -11304,6 +11304,43 @@ is about* is not a fact about a kind. The protagonist's own records — `edge`, 
 `exception_to` — do reach the brief's cast group as projected sentences, so the `protagonist` field
 is the pointer rather than the content, and it is five short fields.
 
+### 112.7a The protagonist's second role poisoned the first book that declared one
+
+**Found by Serial Pilot 4's early gate, 2026-08-22, and fixed the same day.** §112 above says a
+protagonist is *"a second role on a cast member, never a role of its own"*, and cites
+`entity_roles` returning roles plural as the reason nothing has to choose. That is right, and
+`state.contradiction.v1` did not know it: it groups on `(subject, predicate, object_ref,
+order_key)` and reports a group holding two values as MAJOR and blocking. So
+`nella_scur entity_role holds 2 different values … "cast", "protagonist"` refused two of eight
+scenes — one parked, one poisoned — **before a word of prose was judged**.
+
+**The defect is older than this entry and this entry is what tripped it.** `entity_roles`'
+docstring already named the case in as many words — the System is an `agency` and a `system`, a
+guild is an `institution` and, when it acts, `cast` — so any world declaring a subject with two
+roles would have done the same. None ever had. `integrity.MULTI_VALUED` now names `entity_role`
+as a set rather than a slot, and it is a **named set of one** on purpose: nothing in a record
+carries "this predicate is multi-valued", so the alternative is a heuristic, and a heuristic that
+guesses which disagreements are allowed is the frozen arity table
+`detect_cardinality_violations` refuses. A world wanting a second multi-valued predicate declares
+a cardinality shape, which is checkable.
+
+**A second finding on the same book, and it is the opposite fix.** `_ENTITY` carries `wants` for
+everybody and `_PROTAGONIST` restates it, so a world may declare it twice — and this one declared
+*"Fourth-grade material before Orin's throat-mark lapses in nine days."* on the protagonist and
+*"Fourth-grade material, in nine days, by any route."* on the cast entry. Two wants for one
+person at one position is a real contradiction, so the detector is right and `records_for` was
+wrong: canon now takes the cast entry's and drops the protagonist's copy, and `gate_candidate`
+complains when both are declared and differ.
+
+**What let it reach a paid run, stated because it is the part worth keeping.** No test ran a
+detector over a world that declares a protagonist. The suite had `run_detectors` over a planted
+cardinality violation, and `protagonist_brief` over a peopled world, and never the two together —
+so every piece was tested and the composition was not.
+`tests/test_architect.py::test_a_declared_protagonist_does_not_poison_its_own_book` now runs the
+whole wired ladder over `records_for`'s output and asserts silence, and
+`tests/test_integrity.py::test_a_subject_that_is_two_things_at_once_is_not_contradicting_itself`
+pins the detector half with its negative control beside it. Both fail on the code §112 shipped.
+
 ### 112.8 Found, not fixed
 
 **Any cardinality shape with `group_key: "object"` can never fire.** `group_of(record, "object")`

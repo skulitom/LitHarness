@@ -773,6 +773,18 @@ def _protagonist_complaints(candidate: Candidate) -> tuple[str, ...]:
             "a declared rule nor a declared cardinality shape; an exception to nothing in "
             "particular is a description"
         )
+    stated = {
+        _identifier(entry): _text(entry, "wants")
+        for entry in _items(candidate, "cast")
+        if _text(entry, "wants")
+    }
+    wants = _text(protagonist, "wants")
+    if subject in stated and wants and _fold(stated[subject]) != _fold(wants):
+        complaints.append(
+            f"{subject} wants {stated[subject]!r} as a cast member and {wants!r} as the "
+            "protagonist; one person wants one thing at a time, and the cast entry is the one "
+            "that reaches canon"
+        )
     if subject and not premise_names_protagonist(candidate):
         complaints.append(
             f"the premise never names {subject!r}; a premise that describes the world rather "
@@ -1312,11 +1324,31 @@ def records_for(
                     subject, worlds_mod.ENTITY_ROLE_PREDICATE, value="protagonist"
                 )
             )
+            # **`wants` is the cast entry's, and the protagonist's copy is a restatement.**
+            # `_ENTITY` already carries `wants` and the cast loop above has already written it,
+            # so emitting the protagonist's too puts two values in a single slot — which
+            # `state.contradiction.v1` reports as MAJOR and blocking, correctly, because a
+            # person wanting two different things at one position is a defect and not a set.
+            #
+            # Measured on the first book drafted on a world that declares one: the model wrote
+            # *"Fourth-grade material before Orin's throat-mark lapses in nine days."* on the
+            # protagonist and *"Fourth-grade material, in nine days, by any route."* on the cast
+            # entry — the same want in two wordings — and the book poisoned a scene over it.
+            # The cast entry wins because it is where the schema puts a want for everybody;
+            # `gate_candidate` complains when the two are both declared and differ, so the
+            # divergence is seen at forge time rather than at scene four.
+            declares_want = {
+                _identifier(entry)
+                for entry in _items(candidate, "cast")
+                if _text(entry, "wants")
+            }
             for key, predicate in (
                 ("edge", worlds_mod.EDGE_PREDICATE),
                 ("wants", "wants"),
                 ("price", worlds_mod.PRICE_PREDICATE),
             ):
+                if key == "wants" and subject in declares_want:
+                    continue
                 if _text(protagonist, key):
                     add(
                         worlds_mod.world_record(
