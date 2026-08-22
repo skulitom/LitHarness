@@ -249,6 +249,20 @@ it and is never asked to, which makes it a smaller piece of work than it looked:
 `_WORLD`, a rule naming it, two projection branches, and one entity role. Layer C — a magnitude on
 a named capacity — is the only part that needs new vocabulary.
 
+**Built 2026-08-23 as stage-0 §114**, and the estimate above was close: an **optional** array on
+`_WORLD`, one rule, **three** projection branches rather than two, one entity role, three gate
+complaints, three counters and a group in the world brief.
+[`ability-inventory-results.md`](ability-inventory-results.md) carries what shipped, the
+before/after packet render, and two deviations found in implementation — a capability is an
+ordinary subject rather than a `change` node, and only the three predicates no world had ever
+emitted could safely be given sentences.
+
+**Layer C was refused, and correctly by this note's own reckoning.** A magnitude on a named
+capacity collides with §113's resolution that a rank ladder *is* the number, and `numeric` and
+`threshold` remain members of `COMPARATORS` that no code computes with — so a magnitude added today
+would be a printed digit with no arithmetic behind it. §114.6 states what would have to be true for
+it to be worth adding. **The operator decides**; it is not a build.
+
 ## 7. Anti-scope
 
 Nothing was built, no schema was edited, no rule was written, no directive issued, no bar declared,

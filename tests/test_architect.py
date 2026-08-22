@@ -24,7 +24,10 @@ import pytest
 from litharness.application import architect
 from litharness.cli import main
 from litharness.domain import worlds
+from litharness.domain.findings import DetectorInput
+from litharness.domain.integrity import detect_cardinality_violations
 from litharness.domain.promises import PROMISE_OPEN
+from tests.conftest import BOOK_ID, BRANCH_ID
 
 
 def world(
@@ -178,6 +181,13 @@ SCENES = 8
 
 def candidate(**kwargs: Any) -> architect.Candidate:
     return architect.Candidate(0, world(**kwargs))
+
+
+def detector(records: list[lc.StateRecord]) -> DetectorInput:
+    """The cardinality detector's input, so an enforcement claim can be made over forged canon."""
+    return DetectorInput(
+        book_id=BOOK_ID, branch_id=BRANCH_ID, logical_id="scene-1", records=tuple(records)
+    )
 
 
 def gate(entry: architect.Candidate | dict[str, Any]) -> tuple[str, ...]:
@@ -768,6 +778,65 @@ def test_the_report_counts_the_inventory_and_declares_no_bar() -> None:
     # **No floor anywhere.** Nothing in the gate or the report mentions a minimum, and the
     # operator's "nine" is a word for an inventory rather than a threshold.
     assert not [item for item in gate(able()) if "at least" in item or "fewer" in item]
+
+
+def test_the_operators_hook_is_enforced_on_a_world_the_forge_built() -> None:
+    """**The enforcement demonstration, run through the forge instead of through fixtures.**
+
+    `tests/test_worlds.py` shows the shape works over hand-built records. That is a claim about
+    the vocabulary. This is the claim that matters for a paid run: a candidate as a model would
+    return it — a `capabilities` list, a protagonist holding two of them, and a `cardinality`
+    entry reading *at most one `can_do` per person* — goes through `records_for` and the
+    protagonist is quiet **because `records_for` wrote the `excepts` edge itself**, off the
+    `exception` field, with nobody hand-editing canon.
+
+    The control is the same world with the exception pointed at the rule it originally named:
+    same capabilities, same holder, same maximum, and now the protagonist blocks like anybody
+    else. Which is the point — an exception is a declared fact about one person, not a hole.
+
+    **Both halves are forged at `ACCEPTED_CANON`, which is not decoration.** `records_for`
+    defaults to `PROPOSED` because a candidate is a proposal until `forge --pick`, and
+    `detect_cardinality_violations` reads canon only — so a version of this test run at the
+    default authority passes its first assertion by finding no shapes at all, which is the same
+    false pass the `report()` readers were caught making. `--pick` is the call that promotes,
+    and this is the authority it promotes to (`cli.py:3208`).
+    """
+    one_art = {
+        "id": "one_art",
+        "predicate": worlds.CAN_DO,
+        "scope": "cast",
+        "group_key": "subject",
+        "maximum": 1,
+    }
+    excepted = able()
+    excepted["cardinality"] = [*excepted["cardinality"], {**one_art, "except": ["silas"]}]
+    excepted["protagonist"] = {**excepted["protagonist"], "exception": "one_art"}
+    assert gate(excepted) == ()
+    records = architect.records_for(architect.Candidate(0, excepted), scenes=SCENES,
+                                    authority=lc.StateAuthority.ACCEPTED_CANON)
+    # The edge nobody wrote by hand: the shape excepts the protagonist because the protagonist
+    # named the shape.
+    assert [
+        r.object_ref
+        for r in records
+        if r.subject == "one_art" and r.predicate == worlds.EXCEPTS_PREDICATE
+    ] == ["silas"]
+    assert len(worlds.capabilities_of(records, "silas")) == 2
+    assert detect_cardinality_violations(detector(records)) == []
+
+    bound = able()
+    bound["cardinality"] = [*bound["cardinality"], one_art]
+    [violation] = detect_cardinality_violations(
+        detector(
+            architect.records_for(
+                architect.Candidate(0, bound),
+                scenes=SCENES,
+                authority=lc.StateAuthority.ACCEPTED_CANON,
+            )
+        )
+    )
+    assert violation.blocks
+    assert "silas" in violation.message
 
 
 def test_the_capability_rule_asks_for_a_declaration_and_never_a_performance() -> None:

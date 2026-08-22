@@ -1,0 +1,37 @@
+{
+  "instrument": "ability_inventory",
+  "reports": "capabilities declared, held by the protagonist, named on the page, and the scene each is first named in",
+  "declares": "no bar, no pole, no axis; descriptive only",
+  "books": [
+    {
+      "status": "read",
+      "book": "serial.db",
+      "scenes": 8,
+      "protagonist": null,
+      "capabilities_declared": 0,
+      "protagonist_capabilities": null,
+      "capabilities_named": 0,
+      "capabilities": []
+    },
+    {
+      "status": "read",
+      "book": "serial3.db",
+      "scenes": 8,
+      "protagonist": null,
+      "capabilities_declared": 0,
+      "protagonist_capabilities": null,
+      "capabilities_named": 0,
+      "capabilities": []
+    },
+    {
+      "status": "read",
+      "book": "serial4.db",
+      "scenes": 8,
+      "protagonist": "nella_scur",
+      "capabilities_declared": 0,
+      "protagonist_capabilities": 0,
+      "capabilities_named": 0,
+      "capabilities": []
+    }
+  ]
+}

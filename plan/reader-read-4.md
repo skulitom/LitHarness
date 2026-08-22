@@ -130,6 +130,22 @@ called for is
 whose answer after adversarial review is that the model **can** hold an inventory today and is
 never asked to — six refutations, none standing.
 
+**Built 2026-08-23 as stage-0 §114**, from
+[`plan/handoff-ability-inventory.md`](handoff-ability-inventory.md): the forge is now asked for a
+countable `capabilities` inventory, a world says who holds what on a `can_do` edge, and three
+projection sentences put it to the writer in English. Results and every re-derived figure are in
+[`research/quality-measurement/ability-inventory-results.md`](../research/quality-measurement/ability-inventory-results.md).
+**Two numbers above are corrected there rather than here**, in place: the 340 records under
+`can_reach`, `grants`, `recognises` and `prices_the_present` re-count to **850** over the same 24
+worlds, and the 156 rungs re-count to **119** across 42 criteria by `worlds.rank_order` — different
+derivations over different file sets, printed side by side rather than reconciled. **The 86.5%
+insignia share does not depend on either**, and neither does this section's diagnosis.
+
+**The second half of the operator's phrase — *"level 9 neural speed system"* — was refused and the
+refusal is theirs to overturn.** A number attached to a named capacity collides with §113's
+resolution that a rank ladder *is* the number; §114.6 and the results note §6 set out what would
+have to be true for it to be worth adding. It is a decision, not a build.
+
 **2. The descriptions are of minutiae, and the packet hands them over as facts.**
 
 > *"I feel like descriptions in the book are of minutia and irrelevant details"*

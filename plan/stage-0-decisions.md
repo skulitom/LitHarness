@@ -11623,3 +11623,164 @@ real-world fact in a rule text is cited in a code comment pointing at this file,
 the prompt. `serial.db`, `serial3.db` and `pilot3/` were read and not written — every measurement
 ran against a copy or read-only, and no accepted scene was redrafted and nothing re-picked. No
 claim anywhere that a book whose number goes up is a better book.
+
+## 114. The schema could say what a rung looks like and what it costs, and had no slot for what it lets you do
+
+**Built 2026-08-23, from [`plan/handoff-ability-inventory.md`](handoff-ability-inventory.md).**
+Code: `domain/worlds.py` (`capability` in `ENTITY_ROLES`; `CAN_DO`, `REQUIRES`, `TAUGHT_BY`,
+`COSTS`; `capabilities`, `capabilities_of`, `requirement_depth`; three projection sentences),
+`application/architect.py` (an **optional** `capabilities` array on `_WORLD`, an optional
+`capabilities` list on the protagonist, one rule, three gate complaints, three `report()`
+counters), `domain/world_brief.py` (a `capabilities` group straight after `cast`). Measurement:
+`research/quality-measurement/ability_inventory.py`, with
+[`ability-inventory-results.md`](../research/quality-measurement/ability-inventory-results.md)
+and one committed result file. **No paid run happened here**; nothing in this entry is a claim
+about prose.
+
+### 114.1 What was measured first, and it is a fact about a schema rather than about a model
+
+The operator read *A Good Take* — the first book on a world whose protagonist the system chose
+(§112) — and said its progression is *"boring accounting instead of nine unique abilities or level
+9 neural speed system"* ([`plan/reader-read-4.md`](reader-read-4.md) §1a). Audited before anything
+was built:
+
+- **`_RANK` is `additionalProperties: false` with exactly `id`, `visible_form`, `cost_to_reach`,
+  all strings.** A rung can say what it **looks like** and what it **costs** and has **no slot for
+  what it lets you do.** The handoff's consequent count, quoted rather than re-run: 135 of 156
+  criterion rungs (86.5%) are a mark other people read, and permission beats capability 104 to 46.
+  That is not a prompt failure; it is the schema being followed correctly.
+- **The forge was never asked.** `_WORLD` had twelve array fields and none held abilities. The
+  words *ability*, *abilities*, *skill*, *magnitude* and *capab-* occurred **zero times** in the
+  5,657-character forge prompt.
+- **850 records with no reader in `src/`.** Over the 24 distinct worlds this project has forged
+  (9 contributing artefact files of 23 scanned, deduplicated by content hash, all 24 rebuilding
+  through `records_for` without error): `grants` 271, `prices_the_present` 245, `can_reach` 207,
+  `recognises` 127. Every capability-shaped field in the schema was a single string with no plural.
+- **`can_do`, `requires` and `taught_by` are emitted 0 times by all 24.** That is what licensed
+  giving exactly those three a projection sentence and nothing else.
+- **The vocabulary already held the thing, established adversarially.** Six agents were each given
+  one claimed gap and told to default to *refuted* unless they could show what breaks; **all six
+  refuted, none standing.** The operator's own definition of a hook — *everyone has one cuff, the
+  main character may have as many as they like* — was expressible **and blocking** before this
+  handoff started: the excepted subject holding three produced **0 findings**, a non-excepted
+  subject holding three produced **1 blocking MAJOR**. What was missing was a predicate worth
+  constraining.
+
+**Two figures disagree with the handoff's and both are printed rather than reconciled**: today's
+`rank_order` count over the corpus is **42 criteria carrying 119 rungs**, against the handoff's
+156 from a content-hash dedup over its own file set. Different denominators, and the 86.5% share
+does not depend on which.
+
+### 114.2 What shipped, and the one shape it is
+
+**A capability is an ordinary subject with a role, not a node type and not a field.** It reaches
+canon as records — `entity_role = capability`, `is_a`, `manifests_as`, `costs`, and the two edges
+`requires` and `taught_by` — and a person holds one on a free-form `can_do` edge. Three sentences
+say it to the writer in English: *"silas can do cap_read_a_seam"*, *"cap_price_unseen needs
+cap_read_a_seam first"*, *"cap_price_unseen is taught by marta"*.
+
+**Optional is the load-bearing word.** `capabilities` is not in `_WORLD["required"]`. A world about
+standing, or a place, or a debt declares none, and most should; a world that declares none
+regenerates byte-identically and reports three zeros.
+
+**A rung and a capability are different objects and meet at exactly one edge.** §113 built the
+ladder — a position in a recognised order, one per criterion. This is a set. `requires` is the one
+place they touch, where a capability may need a **rung** first. A world may declare either, both or
+neither. `test_the_inventory_is_a_set_and_the_ladder_is_a_position` pins it.
+
+**No number was added.** The forge schema still has **exactly two integer fields**
+(`mysteries[].disclosed_at_scene`, `cardinality[].maximum`), re-counted after the change.
+
+### 114.3 Two deviations from the handoff, both found in implementation
+
+1. **A capability is not a `change` node.** The handoff's adversarial pass showed it *could* be —
+   `change`'s eleven `CHANGE_ROLES` are all rendered by `_ROLE_PHRASE` — and that remains true.
+   It is still the wrong shape: `change` models one occurrence with many roles and renders
+   *"X happened"*, right for the morning somebody learned a thing and wrong for the thing itself.
+   The two coexist; `change` is still there for the acquisition.
+2. **Only three predicates got sentences.** `costs`, `permits` and `member` are illegible in
+   exactly the same way, and every one is already emitted by prior worlds. Giving them a sentence
+   would change the packet of all 24 worlds forged before today and break the byte-identity rail.
+
+### 114.4 The limitation this produced, named rather than fixed
+
+`is_a` (**550 records**) and `costs` (**156**) — *what the capability is* and *what it charges* —
+have no projection sentence and reach the writer through the `state.describe` fallback, as
+`cap_read_a_seam is_a he can see where two things were joined, and when`. That is notation with a
+sentence inside it, and `project()`'s own docstring calls itself *"the gate on the model being
+usable at all"*. Fixing it changes 24 worlds' packets, so it is a separate change with its own
+regeneration decision. Recorded here so it is not rediscovered as a surprise.
+
+### 114.5 Three defects in this session's own output, fixed before commit
+
+1. **The readers filtered canon**, so `report()` counted 0 capabilities for every forged world — a
+   candidate is `PROPOSED` until `forge --pick`. The same trap then caught the forge-side
+   enforcement test, which passed its first assertion **vacuously** (no shapes in canon → no
+   findings) until both halves were forged at `ACCEPTED_CANON`.
+2. **`requirement_depth` counted nodes where it documented edges.**
+3. **The new sentences un-snake-cased ids** while the rest of the packet does not. Removed.
+
+### 114.6 The magnitude is refused, and the refusal is the operator's to overturn
+
+The operator's phrase had two halves and only the first was built. **A number attached to a named
+capacity** — *Magnitude 12*, *level 9 neural speed* — collides with two standing positions: the
+forge's rule *"do not use levels, hit points, mana, experience points, currency, or any single
+number that means power"*, and **§113's resolution that a rank ladder *is* the number**
+(bronze is 1, gold is 3). A magnitude is a second numbering of one idea.
+
+What is genuinely missing is not the integer: `numeric` and `threshold` are members of `COMPARATORS`
+that **no code computes with**. A magnitude with no arithmetic behind it is a decoration, and a
+decoration is what *A Good Take* was already criticised for.
+
+Three things would have to be true, and they are set out in
+[`ability-inventory-results.md`](../research/quality-measurement/ability-inventory-results.md) §6:
+the number attaches to a **capacity** and never to a person (the operator's own reframing —
+*"the number is attached to the wrong thing"*); something computes with it; and §113 is reconciled
+in this ledger rather than worked around. **The operator decides. If they say yes it is its own
+handoff**, and that handoff opens by naming which of the three it is buying.
+
+### 114.7 The counter, no bar
+
+`research/quality-measurement/ability_inventory.py`, deterministic, no model anywhere in it,
+**not registered in `axes.COUNTERS`**. Per book, over the book's own canon (read-only) and its
+drafted prose via `corpus_io.generated_scenes`: capabilities declared, capabilities the
+protagonist holds, capabilities named on the page, and the scene each is first named in.
+
+| book | scenes | declared | held | named |
+|---|--:|--:|---|--:|
+| `serial.db` (pilot 2) | 8 | 0 | *no protagonist* | 0 |
+| `serial3.db` (pilot 3) | 8 | 0 | *no protagonist* | 0 |
+| `serial4.db` (pilot 4) | 8 | 0 | 0 (`nella_scur`) | 0 |
+
+**Every number is zero and every zero is correct** — each book was drafted before a world could
+declare a capability. Pilots 2 and 3 predate §112 and report `null` rather than `0` for the held
+column, because *"nobody is the protagonist"* and *"the protagonist can do nothing"* are different
+facts. A counter whose only evidence is a zero has not been run, so the naming half is exercised by
+`--selftest` over a synthetic world: eleven claims, all holding. The naming rule is
+`worlds.key_nouns`' rule narrowed to one subject, importing that module's own constants so the two
+cannot drift, and it is **crude and named as crude** — `cap_read_a_seam` matches the common word
+*seam* wherever it falls, reported as measured rather than repaired after the answer was known.
+
+### 114.8 What was refused, and the anti-scope
+
+**No bar, no pole, no axis, no floor.** Nothing in the gate or the report mentions a minimum; the
+operator's *"nine"* is a word for an inventory and not a threshold, and
+`test_the_report_counts_the_inventory_and_declares_no_bar` asserts the absence. No distribution was
+turned into a line.
+
+**No instruction about how to write a capability.** The system may say a person can do a thing; it
+may not say a scene should show it off, make it impressive, pace it, or let them win with it.
+`test_the_capability_rule_asks_for_a_declaration_and_never_a_performance` asserts this by verb list
+rather than by intent, in the shape §112's protagonist-rule test established.
+
+**Anti-scope.** Nothing touched the ladder, `rung_index`, `stands_at` or the rise on the page —
+§113 owns those. No beat function, no change to `SIX_BEAT`, the arc template or any chapter-ending
+default. No status sheet, `[STATUS]` line or graph line, and the forge's own rule about them is
+unchanged. No judge, reader, persona, BCR, axis admission, pool change or pre-registration. No
+human reader, label or solicited judgment entered anything here (§95) — the operator's read of
+*A Good Take* is a defect harvest that nominated the work and is not treated as data. RS1 holds:
+nothing under `src/litharness/` references a corpus, and no corpus text or digest crossed into any
+prompt, rule or example. `serial.db`, `serial3.db`, `serial4.db`, `pilot3/` and `pilot4/` were read
+**read-only** and never written; nothing was re-picked and no accepted scene redrafted. **And no
+claim anywhere that a world with an inventory produces a better book** — the measurement says the
+model could not previously *express* one, which is a fact about the model and nothing more.
