@@ -33,7 +33,7 @@ ALL_ARMS = (MATCHED, CONFOUNDED, STATS)
 
 def rates(**overrides: float) -> dict[str, float]:
     """Every arm present at the null 0.5 unless a test overrides named arms."""
-    values: dict[str, float] = {arm: 0.5 for arm in ALL_ARMS}
+    values: dict[str, float] = dict.fromkeys(ALL_ARMS, 0.5)
     values.update(overrides)
     return values
 

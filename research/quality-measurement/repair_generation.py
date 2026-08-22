@@ -217,7 +217,9 @@ def z_distance(
     for name, sd in scale.items():
         if sd > 0:
             total += ((row[name] - anchor[name]) / sd) ** 2
-    return round(total ** 0.5, 4)
+    # `float ** float` is typed Any in typeshed; the result is a float by construction.
+    magnitude: float = total ** 0.5
+    return round(magnitude, 4)
 
 
 def feature_scale(rows: list[dict[str, float]]) -> dict[str, float]:
@@ -413,7 +415,9 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
         remember(f"exemplar_source_{index}", text)
     for unit in units:
         remember(f"{unit.unit_id}|original", unit.text)
-        sober = cached_retells.get((unit.unit_id, SOBER))
+        # One local, two payloads: the cached retell text here, a feature row after the loop
+        # below; a union cannot survive the shared truthiness guards, so this stays open.
+        sober: Any = cached_retells.get((unit.unit_id, SOBER))
         if sober:
             remember(f"{unit.unit_id}|sober", sober)
         for arm in (*REPAIR_ARMS, "exemplar"):
@@ -429,7 +433,8 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
         for name in all_rows[0]
     }
 
-    moved, toward = [], []
+    moved: list[dict[str, Any]] = []
+    toward: list[dict[str, Any]] = []
     for unit in units:
         original = per_text_features.get(f"{unit.unit_id}|original")
         sober = per_text_features.get(f"{unit.unit_id}|sober")

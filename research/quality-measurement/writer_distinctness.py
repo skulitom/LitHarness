@@ -52,7 +52,7 @@ import random
 import re
 import sys
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 HERE = Path(__file__).resolve().parent
 REPO = HERE.parents[1]
@@ -170,13 +170,15 @@ def scramble_dossier(dossier: str) -> str:
 
 
 def prompts_for(writer: writers.Writer | None) -> tuple[str, str]:
-    return render_prompt(
+    # mypy cannot follow the editable install's path hook for `litharness`; the real signature
+    # in `application/planner.py` already guarantees this return type.
+    return cast("tuple[str, str]", render_prompt(
         _beat(),
         book_title="The Toll Road",
         packet=_packet(),
         target_words=TARGET_WORDS,
         writer=writer,
-    )
+    ))
 
 
 def draw(elicitor: Any, writer: writers.Writer | None, label: str) -> list[str]:

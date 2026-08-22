@@ -268,7 +268,7 @@ def certify(spans_: list[str]) -> list[str]:
         first = next(iter(words.values()))
         if any(other != first for other in words.values()):
             faults.append(f"span {index}: the variants do not carry identical words")
-        if len({text for text in variants.values()}) != len(variants):
+        if len(set(variants.values())) != len(variants):
             faults.append(f"span {index}: two cadence variants are byte-identical")
         for name, text in variants.items():
             if sum(text.count(payoff) for payoff in PAYOFFS) != INSERTS:

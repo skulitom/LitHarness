@@ -216,7 +216,7 @@ def run_market(competitors: Sequence[Competitor], pairs: Sequence[ForcePair]) ->
             if not competitor.solvent:
                 continue
             settle(competitor, competitor.forecast(shown), outcome)
-    table = []
+    table: list[dict[str, Any]] = []
     for competitor in competitors:
         n = len(competitor.log_scores)
         table.append({

@@ -83,7 +83,7 @@ import statistics
 import sys
 import time
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
@@ -92,7 +92,9 @@ from ablate import _SENT, DOSES, PERSONA_SET, paragraphs, stake_score, variants 
 from elicit import (  # noqa: E402
     PANEL_MODEL,
     SPOT_MODEL,
+    Comparison,
     Elicitor,
+    Sample,
     digest,
     positional_bias,
 )
@@ -430,7 +432,9 @@ def pairwise_interval(comparisons: list[Any], panel_model: str,
     }
 
 
-def filler_reason_signature(by_variant: dict[str, list], panel_model: str) -> dict[str, object]:
+def filler_reason_signature(
+    by_variant: dict[str, list[Sample] | list[Comparison]], panel_model: str,
+) -> dict[str, object]:
     """Which reason codes the filler arm drew, against the codes everything else drew.
 
     The interventional check on `filler_inject`'s confound. Canned filler is out of voice, so the
@@ -615,14 +619,14 @@ def main() -> None:
     parser.add_argument("--out", default="persona-gate01.json")
     args = parser.parse_args()
 
-    doses = DOSES
+    doses: tuple[float, ...] = DOSES
     if args.doses:
         doses = tuple(sorted({float(piece) for piece in args.doses.split(",") if piece.strip()}))
         if not doses or any(not 0.0 < dose <= 1.0 for dose in doses):
             raise SystemExit(f"--doses must be strengths in (0, 1]; got {args.doses!r}")
 
     passages, donors = load_passages(args)
-    original_of = {passage_id: text for passage_id, text in passages}
+    original_of = dict(passages)
 
     # The variant schedule, precomputed so each opaque scorer call can be attributed — the same
     # digest-keyed mapping `cdg_battery.py` uses, and for the same reason: `ablate` seeds every
@@ -677,7 +681,7 @@ def main() -> None:
                       f"{score['held_out']} matched)", file=sys.stderr)
 
         # Per-sample records for gate 0 and the decomposition, filled as the scorer runs.
-        by_variant: dict[str, list[object]] = {}
+        by_variant: dict[str, list[Sample] | list[Comparison]] = {}
 
         def scorer(text: str) -> float:
             text_digest = digest(text)
@@ -765,9 +769,9 @@ def main() -> None:
 
     # ------------------------------------------------------------------ the kill conditions
 
-    flat = [s for samples in by_variant.values() for s in samples]  # type: ignore[union-attr]
-    scored = [s for s in flat if s.model == args.model and not s.refused]  # type: ignore[attr-defined]
-    refusals = sum(1 for s in flat if s.refused)  # type: ignore[attr-defined]
+    flat = [s for samples in by_variant.values() for s in samples]
+    scored = [s for s in flat if s.model == args.model and not s.refused]
+    refusals = sum(1 for s in flat if s.refused)
 
     # **The absolute instrument's kill conditions do not transfer to the pairwise one**, and are
     # reported as not-applicable rather than computed over a different unit. ICC, the caricature
@@ -797,14 +801,16 @@ def main() -> None:
     per_persona_icc: dict[str, object] = {}
     for persona in (() if args.pairwise else PANEL):
         groups = [
-            [float(s.would_stop) for s in samples  # type: ignore[union-attr]
+            # only Sample lists reach here -- --pairwise skips this loop
+            [float(s.would_stop) for s in cast(list[Sample], samples)
              if s.persona_id == persona.persona_id and s.model == args.model and not s.refused]
             for samples in by_variant.values()
         ]
         per_persona_icc[persona.persona_id] = icc1(groups)
 
     pooled_groups = [] if args.pairwise else [
-        [float(s.would_stop) for s in samples  # type: ignore[union-attr]
+        # only Sample lists reach here -- --pairwise takes the [] arm above
+        [float(s.would_stop) for s in cast(list[Sample], samples)
          if s.model == args.model and not s.refused]
         for samples in by_variant.values()
     ]
@@ -812,7 +818,7 @@ def main() -> None:
     cells: dict[tuple[str, str], float] = {}
     for variant_id, samples in ({} if args.pairwise else by_variant).items():
         for persona in PANEL:
-            mine = [s for s in samples  # type: ignore[union-attr]
+            mine = [s for s in cast(list[Sample], samples)  # --pairwise skips this loop
                     if s.persona_id == persona.persona_id and s.model == args.model
                     and not s.refused]
             if mine:
@@ -822,11 +828,13 @@ def main() -> None:
 
     base_rate = (
         float("nan") if args.pairwise or not scored
-        else statistics.fmean(float(s.would_stop) for s in scored)
+        else statistics.fmean(
+            float(s.would_stop) for s in cast(list[Sample], scored)  # non-pairwise: Samples only
+        )
     )
     reason_counts: dict[str, int] = {}
     for sample in (() if args.pairwise else scored):
-        code = sample.reason_code or "unset"  # type: ignore[attr-defined]
+        code = sample.reason_code or "unset"
         reason_counts[code] = reason_counts.get(code, 0) + 1
 
     summary = {
@@ -977,8 +985,12 @@ def selftest() -> None:
         for persona in personas
     }
     collapse = inter_persona_rho(identical)
-    assert collapse["mean_rho"] > 0.9, f"identical personas reported rho {collapse['mean_rho']}"
-    assert not math.isnan(float(collapse["null_p95"])), "collapse null did not simulate"
+    assert cast(float, collapse["mean_rho"]) > 0.9, (
+        f"identical personas reported rho {collapse['mean_rho']}"
+    )
+    assert not math.isnan(float(cast(float, collapse["null_p95"]))), (
+        "collapse null did not simulate"
+    )
 
     print(f"noise ICC {noise_icc:+.4f} | reliable ICC {reliable_icc:+.4f} | "
           f"costume ratio {costume_ratio:.2f} | collapsed rho {collapse['mean_rho']:.3f} "

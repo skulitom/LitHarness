@@ -17,8 +17,6 @@ prompt or it is not.
 from __future__ import annotations
 
 import argparse
-import glob
-import os
 import sys
 from collections import defaultdict
 from pathlib import Path
@@ -51,10 +49,10 @@ def main() -> int:
 
     groups: dict[tuple[str, str], list[dict[str, int] | None]] = defaultdict(list)
     words: dict[tuple[str, str], list[int]] = defaultdict(list)
-    for path in sorted(glob.glob(str(args.prose / "*.txt"))):
-        name = os.path.basename(path)[: -len(".txt")]
+    for path in sorted(args.prose.glob("*.txt")):
+        name = path.name[: -len(".txt")]
         tag, arm = name.split("-", 1)[0], name.split("-", 1)[1].rsplit("-", 1)[0]
-        text = Path(path).read_text(encoding="utf-8")
+        text = path.read_text(encoding="utf-8")
         groups[(tag, arm)].append(last_status(text))
         words[(tag, arm)].append(len(text.split()))
 
