@@ -19,7 +19,10 @@ obviously empty.
 **Priority order, and why prose is last.** Constraints and promises are the director's word
 and are tiny; open threads are what the book still owes; established facts ground the scene;
 prose is the largest and the most redundant with the facts extracted from it. So the order is
-premise → constraints → threads → facts → prior prose, and under pressure prose is what goes.
+premise → constraints → threads → hidden → facts → prior prose, and under pressure prose is
+what goes. The hidden section — true, and not yet disclosed — packs *above* the ordinary facts
+and renders below them, because a scene written against a secret it was never given cannot be
+repaired later and a scene written with fewer ordinary facts is merely thinner.
 LongRangeContext measured a recent-window baseline for exactly this shape, which is why prose
 is *selected* nearest-scene-first — scene five matters more to scene six than scene one does —
 while being *rendered* in reading order, because a generator handed the story out of sequence
@@ -66,6 +69,7 @@ import litharness_contracts as lc
 from litharness.domain import extraction as extraction_mod
 from litharness.domain import promises as promises_mod
 from litharness.domain import state as state_mod
+from litharness.domain import worlds as worlds_mod
 from litharness.domain.nodes import NodeKind
 from litharness.domain.plans import constraints_of, premise_of
 from litharness.domain.revision import Revision
@@ -81,12 +85,21 @@ PREMISE = "premise"
 CONSTRAINTS = "constraints"
 THREADS = "threads"
 FACTS = "facts"
+#: True, and not yet disclosed to the reader. The one thing an iceberg is made of, and until
+#: `domain/worlds.py` existed it could not be said at all: `pov_visibility` is packet *access*
+#: and a secret written into it reaches no packet, which is the opposite of what a secret the
+#: writer must honour is for (`plan/state-model-abilities.md` §0.1 row 2).
+#:
+#: Beside `FACTS` in the order because it is the same size and the same kind of thing — a claim
+#: with a recorded answer — and above `SUMMARIES` and `PRIOR_PROSE` because a scene written
+#: against the wrong secret is wrong in a way no later scene can repair.
+HIDDEN = "hidden"
 #: What the scenes the budget could not hold actually contained. Above `PRIOR_PROSE` in the
 #: order for the same reason `FACTS` is: a summary is a compressed form of prose, so under
 #: pressure the compressed form is what survives and the raw text is what goes.
 SUMMARIES = "summaries"
 PRIOR_PROSE = "prior_prose"
-SECTION_ORDER = (PREMISE, CONSTRAINTS, THREADS, FACTS, SUMMARIES, PRIOR_PROSE)
+SECTION_ORDER = (PREMISE, CONSTRAINTS, THREADS, FACTS, HIDDEN, SUMMARIES, PRIOR_PROSE)
 
 #: The largest share of the packet summaries may claim, so that they can be placed at all.
 #:
@@ -292,6 +305,21 @@ class ContextPacket:
             lines = "\n".join(f"- {item.text}" for item in facts)
             pov = f" known to {self.pov_character_id}" if self.pov_character_id else ""
             blocks.append(f"Established facts{pov}:\n{lines}")
+        hidden = self.sections.get(HIDDEN, ())
+        if hidden:
+            lines = "\n".join(f"- {item.text}" for item in hidden)
+            # **Honour, never state.** The instruction is two clauses because the failure modes
+            # are opposite and a generator handed only one of them takes the other: told a
+            # secret with no prohibition it explains it on the page, and told a prohibition
+            # with no secret it writes around a hole. The register rule is the operative half
+            # — this is the section most likely to produce exposition, which is the one thing
+            # the popcorn direction forbids outright.
+            blocks.append(
+                "True, and the reader has not been told — write as if it is true and never "
+                "put it on the page. Nothing here may be explained, hinted at as a summary, "
+                "or spoken by a character who does not know it; the scene must simply stay "
+                f"consistent with it:\n{lines}"
+            )
         summaries = self.sections.get(SUMMARIES, ())
         if summaries:
             lines = "\n".join(
@@ -330,6 +358,7 @@ def assemble(
     token_budget: int = DEFAULT_TOKEN_BUDGET,
     reserved_output: int = DEFAULT_RESERVED_OUTPUT,
     story_time_cutoff: str | None = None,
+    disclosure_at: str | None = None,
     summaries: Mapping[str, str] = MappingProxyType({}),
     promises: Sequence[promises_mod.Promise] = (),
 ) -> ContextPacket:
@@ -418,9 +447,26 @@ def assemble(
             continue
         visible.append(record)
 
+    # **The projection, and it is the gate on the model being usable rather than merely
+    # checkable.** `state.describe` renders `subject predicate value (object_ref)`, which is
+    # right for a flat fact and is machine notation for a reified one — the blocker
+    # `plan/state-model-abilities.md` §2 measures. `worlds.project` returns a sentence per
+    # record it recognises, `""` for a satellite it folded into its node's sentence, and
+    # nothing at all for a record this vocabulary does not know. So a book that declares no
+    # world gets an empty mapping and packs byte-identically to what it did before.
+    projection = worlds_mod.project(visible)
+    # **`disclosure_at` is not `story_time_cutoff`, and separating them is deliberate.** The
+    # cutoff decides which *records exist yet* and `domain/state.py` refuses to invent one,
+    # because nothing defines a mapping from a manuscript scene to an author's order key. The
+    # disclosure coordinate answers a different question — *has the reader been told this yet* —
+    # against positions the Architect minted from the book's own beat sheet, so the two
+    # vocabularies are commensurable by construction. Passing the cutoff for both would tie the
+    # reveal schedule to a slicing decision the live path deliberately declines to make.
+    hidden_ids = worlds_mod.hidden_record_ids(visible, at=disclosure_at)
+
     threads: list[PackedItem] = []
     for record in state_mod.open_threads(visible):
-        item = _state_item(record)
+        item = _state_item(record, projection)
         if fits(item):
             threads.append(item)
             used += item.tokens
@@ -457,12 +503,42 @@ def assemble(
     in_order = [
         record for record in state_mod.in_story_order(visible)
         if record.record_id not in thread_ids
+        and record.record_id not in hidden_ids
+        # A record the projection folded into its node's sentence is the same information
+        # under a second id. Packing it would hand the generator the sentence and then its
+        # parts; recording it as an omission would tell an operator the scene was written
+        # without something it was in fact given. `CONFIGURATION_PREDICATES` above is the
+        # same judgment for the same reason.
+        and projection.get(record.record_id, None) != ""
     ]
+    # **The iceberg is packed BEFORE the facts, and the order was decided by a measurement.**
+    # It renders below them — `SECTION_ORDER` puts `HIDDEN` after `FACTS`, and that is a
+    # reading decision — but it is *packed* first, because a scene drafted against a secret it
+    # was never given is wrong in a way no later scene can repair, and a scene drafted with
+    # sixty fewer ordinary facts is merely thinner.
+    #
+    # The first version packed it after, and a forged world showed what that costs: at the
+    # 6,000-token default, one 316-record world put 183 facts in the packet and left the
+    # hidden section **empty** — 14 recorded answers, none of them shown to the writer, with
+    # every omission dutifully recorded and none of them the one that mattered. At 16,000 the
+    # question does not arise; a packet should not depend on that.
+    hidden_packed: list[PackedItem] = []
+    for record in state_mod.in_story_order(
+        record for record in visible if record.record_id in hidden_ids
+    ):
+        item = _state_item(record, projection)
+        if fits(item):
+            hidden_packed.append(item)
+            used += item.tokens
+        else:
+            omitted.append(Omission(record.record_id, record.record_id, "budget: hidden"))
+    sections[HIDDEN] = tuple(hidden_packed)
+
     # Nearest story-time first: under pressure the packet keeps what was established most
     # recently, which is the recent-window baseline LongRangeContext measured.
     selected: set[str] = set()
     for record in reversed(in_order):
-        item = _state_item(record)
+        item = _state_item(record, projection)
         if fits(item):
             selected.add(record.record_id)
             used += item.tokens
@@ -472,7 +548,7 @@ def assemble(
     # from `in_order` rather than sorted afterwards, because the packed items carry no story
     # position and sorting them by id would order the mystery's facts alphabetically.
     sections[FACTS] = tuple(
-        _state_item(record) for record in in_order if record.record_id in selected
+        _state_item(record, projection) for record in in_order if record.record_id in selected
     )
 
     # 4. Prior prose. Everything before the target in reading order that actually has text.
@@ -577,8 +653,16 @@ def assemble(
     )
 
 
-def _state_item(record: lc.StateRecord) -> PackedItem:
-    text = state_mod.describe(record)
+def _state_item(
+    record: lc.StateRecord, projection: Mapping[str, str] = MappingProxyType({})
+) -> PackedItem:
+    """One packed fact, in English where the world vocabulary can render it.
+
+    The projection is consulted first and `state.describe` is the fallback, which is what makes
+    this additive: an empty mapping — every book written before `domain/worlds.py` — reproduces
+    the previous text exactly rather than through a compatibility branch.
+    """
+    text = projection.get(record.record_id) or state_mod.describe(record)
     kind = (
         lc.ContextItemKind.THREAD
         if record.kind is lc.StateRecordKind.THREAD
@@ -604,6 +688,7 @@ __all__ = [
     "DEFAULT_RESERVED_OUTPUT",
     "DEFAULT_TOKEN_BUDGET",
     "FACTS",
+    "HIDDEN",
     "PREMISE",
     "PRIOR_PROSE",
     "SECTION_ORDER",

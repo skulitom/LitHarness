@@ -116,6 +116,31 @@ key.** Measured:
 A real contradiction is invisible, an ordinary fact is refused, and what decides which is
 whether the prose happened to annotate the two edges differently.
 
+**Correction, 2026-08-21, in place because the direction of the error is the informative part.**
+Row 3 is wrong as written. Re-run against this repository — the four spellings are in
+`tests/test_worlds.py::test_the_edge_cases_the_design_note_measured` — `ash trait → keen_scent`
+beside `→ night_sight`, written as **edges with no value**, produced **0** findings, not 1. What
+produced 1 was the same fact written with the trait in the `value` slot and no edge at all. This
+note did not record which spelling it measured, and the two are not the same case.
+
+The generalisation survives and gets stronger. The detector is not backwards on edges; it is
+**blind** to them in both directions, and the thing it actually keys on is the annotation. So the
+table's real shape is:
+
+| spelling | findings, before the fix |
+|---|--:|
+| `held_by → silas` / `→ marta`, no value | 0 |
+| the same, each edge annotated differently | 1, MAJOR, blocking |
+| `trait → keen_scent` / `→ night_sight`, no value | 0 |
+| `trait = keen_scent` / `= night_sight`, value only | 1, MAJOR, blocking |
+| `held_by = silas` / `= marta`, value only | 1, MAJOR, blocking |
+
+**Fixed 2026-08-21** by `plan/world-architect.md` §5 items 6: `object_ref` enters the grouping
+key, so two edges are two facts here, and exclusivity moves to `state.cardinality.v0`, which
+reads the world's own declared shape. Both changes are the pair — the key alone would make one
+object in two hands permanently invisible. Both golden fixtures hold zero records with
+`object_ref` set, so their silence is untouched by construction.
+
 **The fix is a scoped cardinality shape, not a frozen arity table** (§0.1 row 1). A world
 declares *this predicate, over subjects of this type, grouped by this key, across overlapping
 validity, admits at most one* — and an undeclared predicate stays untyped and non-blocking.

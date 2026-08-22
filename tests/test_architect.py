@@ -1,0 +1,723 @@
+"""The Architect: the gates a forged world clears, and the ordering it is forbidden to do.
+
+Grades `plan/world-architect.md` §2's three rails and §4's collapse refusal. What it deliberately
+does **not** grade is whether any world is good — there is no quality ordering over worlds in this
+project, `test_the_architect_ranks_nothing_and_cannot_learn_to` enforces the absence by import
+ban rather than by intent, and every claim about a world here is arithmetic over its own records.
+
+The end-to-end test runs the seam that matters: a bundle written to disk, `forge --pick`, then
+`new --state … --promises …`, with **no provider call anywhere in it**. That is the path
+`tools/serial-pilot-2-setup.ps1` walks, so a break in it fails here rather than nine ticks into a
+pilot.
+"""
+
+from __future__ import annotations
+
+import ast
+import json
+from pathlib import Path
+from typing import Any
+
+import litharness_contracts as lc
+import pytest
+
+from litharness.application import architect
+from litharness.cli import main
+from litharness.domain import worlds
+from litharness.domain.promises import PROMISE_OPEN
+
+
+def world(
+    *,
+    title: str = "The Long Weight",
+    domain: str = "assay and provenance",
+    geometry: str = "graph",
+    rule_domains: tuple[str, ...] = ("economy", "law", "daily_life"),
+    answer: str = "the tide is aimed at the assay house, not the city",
+    extra: dict[str, Any] | None = None,
+) -> dict[str, Any]:
+    """A world that clears every gate, so a test can break exactly one thing at a time."""
+    built: dict[str, Any] = {
+        "title": title,
+        "domain": domain,
+        "geometry": geometry,
+        "progression_means": "your read of a thing gets longer, never stronger",
+        "inversion": "no combat class exists; the removed slot is filled by standing",
+        "premise": f"A clerk in {domain} learns what the ledger is really counting.",
+        "systems": [
+            {
+                "id": "assay",
+                "name": "the assay",
+                "logic": "every made thing carries the history of its making",
+                "manifests_as": "a printed line of provenance nobody reads aloud",
+                "rules": [
+                    {
+                        "id": "provenance",
+                        "rule": "history fixes price",
+                        "manifests_as": "a price quoted twice for identical objects",
+                        "consequences": [
+                            {"domain": name, "consequence": f"what follows in {name}"}
+                            for name in rule_domains
+                        ],
+                    }
+                ],
+                "criterion": {
+                    "id": "assay_grade",
+                    "comparator": "ordinal",
+                    "evaluates": "appraiser",
+                    "ranks": [
+                        {
+                            "id": "third_seal",
+                            "visible_form": "a lead seal on the cuff that greens in a week",
+                            "cost_to_reach": "a year of unpaid readings",
+                        },
+                        {
+                            "id": "second_seal",
+                            "visible_form": "a brass seal, worn at the throat",
+                            "cost_to_reach": "a ruined reputation somewhere else",
+                        },
+                    ],
+                },
+            }
+        ],
+        "cast": [
+            {
+                "id": "silas",
+                "is_a": "a junior clerk",
+                "wants": "to be read once by someone who matters",
+                "false_belief": "the ledger is only counting coin",
+                "secret": "he has been shorting his own readings for a year",
+                "voice_tag": "prices everything, apologises for none of it",
+                "relationships": [
+                    {"predicate": "owes", "target": "marta", "note": "nine months of rent"}
+                ],
+            },
+            {"id": "marta", "is_a": "the bursar, and his landlord"},
+        ],
+        "creatures": [
+            {
+                "id": "ash_fox",
+                "is_a": "a fox the colour of banked ash",
+                "mechanism": "it hunts by heat rather than by scent",
+                "ecology": "it follows kiln smoke and dies in a cold winter",
+                "human_use": "kiln-keepers keep one to find a crack in a wall",
+                "behaviour": "it sits on whatever is warmest and refuses to move",
+                "manifests_as": "a shape on the kiln that nobody wants to shift",
+            }
+        ],
+        "mysteries": [
+            {
+                "id": "the_tide",
+                "question": "what is the tide actually aimed at",
+                "answer": answer,
+                "disclosed_at_scene": 7,
+                "kind": "mystery",
+            }
+        ],
+        "cardinality": [
+            {
+                "id": "one_seal",
+                "predicate": "possessed_by",
+                "scope": "carrier",
+                "group_key": "subject,order_key",
+                "maximum": 1,
+            }
+        ],
+        "graph_line": {
+            "label": "SYSTEM",
+            "edges": [{"phrase": "is recognised as", "predicate": "recognized_by"}],
+        },
+        "directives": [
+            {"kind": "constraint", "text": "Every reading costs the minutes it takes."}
+        ],
+    }
+    if extra:
+        built.update(extra)
+    return built
+
+
+def payload(*worlds_: dict[str, Any]) -> dict[str, Any]:
+    return {"worlds": list(worlds_)}
+
+
+#: The scene count the fixture world is written against: its one reveal lands at scene 7, so a
+#: run of eight scenes settles it and the `every answer lands after the last scene` gate is
+#: satisfied by construction rather than by luck.
+SCENES = 8
+
+
+def candidate(**kwargs: Any) -> architect.Candidate:
+    return architect.Candidate(0, world(**kwargs))
+
+
+def gate(entry: architect.Candidate | dict[str, Any]) -> tuple[str, ...]:
+    """`gate_candidate` at this file's scene count, so no test has to repeat it."""
+    if isinstance(entry, dict):
+        entry = architect.Candidate(0, entry)
+    return architect.gate_candidate(entry, scenes=SCENES)
+
+
+# --- the shape and collapse gates ---------------------------------------------------------------
+
+
+def test_the_forge_asks_for_exactly_k() -> None:
+    with pytest.raises(architect.ArchitectOutputError, match="exactly 3"):
+        architect.worlds_from(payload(world(), world(domain="b", geometry="cycle")), 3)
+
+
+def test_a_forge_over_one_candidate_is_not_a_search() -> None:
+    with pytest.raises(architect.ArchitectInputError, match="at least 2"):
+        architect.render_world_request("anything", k=1)
+
+
+@pytest.mark.parametrize(
+    "second,axis",
+    [
+        ({"geometry": "cycle"}, "domain"),
+        ({"domain": "coopering"}, "geometry"),
+    ],
+)
+def test_a_collapsed_forge_is_refused_before_a_scene_is_paid_for(
+    second: dict[str, Any], axis: str
+) -> None:
+    """Two worlds that agree on a declared axis are one world in two hats.
+
+    Stricter than `plan_search._alternatives`, which compares whole statements for exact equality
+    after casefolding and therefore cannot catch a re-worded collapse. Here the axes are declared,
+    so the check runs on the declaration.
+    """
+    with pytest.raises(architect.ArchitectOutputError, match=f"{axis} value"):
+        architect.worlds_from(payload(world(), world(**second)), 2)
+
+
+def test_a_geometry_outside_the_list_is_refused_by_name() -> None:
+    with pytest.raises(architect.ArchitectOutputError, match="spiral"):
+        architect.worlds_from(payload(world(geometry="spiral"), world(domain="b")), 2)
+
+
+def test_two_distinct_worlds_pass_the_shape_gate() -> None:
+    forged = architect.worlds_from(
+        payload(world(), world(title="Salt Court", domain="salvage law", geometry="threshold")), 2
+    )
+    assert [item.index for item in forged] == [0, 1]
+    assert architect.spread(forged) is not None
+
+
+# --- the per-candidate gates -----------------------------------------------------------------
+
+
+def test_a_clear_world_has_nothing_to_complain_about() -> None:
+    assert gate(candidate()) == ()
+    assert worlds.validate(architect.records_for(candidate())) == ()
+
+
+def test_a_rule_that_reaches_two_domains_of_life_is_refused() -> None:
+    """Uniqueness lives in consequences more than in names, so this is the load-bearing gate."""
+    [complaint] = gate(candidate(rule_domains=("economy", "law")))
+    assert "reaches 2 domain(s)" in complaint
+    assert f"the floor is {architect.CONSEQUENCE_FLOOR}" in complaint
+
+
+def test_three_consequences_in_one_domain_do_not_reach_the_floor() -> None:
+    [complaint] = gate(candidate(rule_domains=("economy", "economy", "economy")))
+    assert "reaches 1 domain(s)" in complaint
+
+
+def test_a_rank_you_are_told_rather_than_shown_is_refused() -> None:
+    unseen = world()
+    unseen["systems"][0]["criterion"]["ranks"][0]["visible_form"] = ""
+    complaints = gate(unseen)
+    assert any("no form a reader can see" in complaint for complaint in complaints)
+
+
+def test_a_rank_that_costs_nothing_is_refused() -> None:
+    free = world()
+    free["systems"][0]["criterion"]["ranks"][1]["cost_to_reach"] = "  "
+    complaints = gate(free)
+    assert any("costs nothing to reach" in complaint for complaint in complaints)
+
+
+def test_a_mystery_with_no_answer_is_refused_by_the_number_that_motivated_it() -> None:
+    empty = world()
+    empty["mysteries"] = []
+    [complaint] = gate(empty)
+    assert "40 opened and 0 paid" in complaint
+
+    unanswered = world(answer="   ")
+    assert any(
+        "records no answer" in complaint
+        for complaint in gate(unanswered)
+    )
+
+
+def test_a_world_whose_every_answer_lands_after_the_last_scene_is_refused() -> None:
+    """The defect the first live forge produced, and it produced it by doing as it was told.
+
+    With no scene count in the prompt, one forged world scheduled its four answers at scenes 17,
+    25, 33 and 41 — sensible for an open-ended serial and useless for the eight scenes actually
+    being written, which would have opened four debts and paid none. That is the measured
+    40-opened-0-paid defect reproduced by the machinery built to fix it, so the count goes in the
+    prompt and the gate checks it.
+    """
+    late = world()
+    late["mysteries"][0]["disclosed_at_scene"] = 41
+    [complaint] = gate(late)
+    assert "every answer lands after scene 8" in complaint
+    assert "earliest is 41" in complaint
+    # And a world with one answer inside the run is fine however far the others land.
+    mixed = world()
+    mixed["mysteries"] = [
+        {**mixed["mysteries"][0], "id": "near", "disclosed_at_scene": 6},
+        {**mixed["mysteries"][0], "id": "far", "disclosed_at_scene": 41},
+    ]
+    assert gate(mixed) == ()
+
+
+def test_the_scene_count_reaches_the_prompt() -> None:
+    request = architect.render_world_request("x", k=2, scenes=8)
+    assert '"scenes_being_written_now": 8' in request.prompt
+    assert "inside the 8 scenes being written now" in request.prompt
+
+
+def test_a_book_of_no_scenes_has_nowhere_to_put_a_reveal() -> None:
+    with pytest.raises(architect.ArchitectInputError, match="nowhere to put a reveal"):
+        architect.render_world_request("x", k=2, scenes=0)
+
+
+def test_a_creature_that_is_a_renamed_stock_monster_is_refused_field_by_field() -> None:
+    thin = world()
+    thin["creatures"][0]["mechanism"] = ""
+    thin["creatures"][0]["ecology"] = ""
+    complaints = gate(thin)
+    assert any("declares no mechanism" in complaint for complaint in complaints)
+    assert any("declares no ecology" in complaint for complaint in complaints)
+
+
+@pytest.mark.parametrize(
+    "ordinary",
+    [
+        "the port's franchise is the right to stand at the rail on assize day",
+        "a ward may surrender its franchise and lose a decade of goodwill",
+        "the relay series of marks runs north from the datum",
+    ],
+)
+def test_ordinary_legal_english_is_not_a_borrowed_reference(ordinary: str) -> None:
+    """The measured false positive, kept runnable.
+
+    The first live `domain_first` forge refused **two of three** worlds on a bare
+    `\\bfranchise\\b` — a port whose franchise is the vote, a ward surrendering its franchise —
+    in worlds literalising salvage law and civic charter. A guard that refuses legitimate
+    material is `directors._CRAFT_INSTRUCTION`'s recorded failure in a third costume.
+    """
+    legal = world()
+    legal["systems"][0]["logic"] = ordinary
+    assert not [
+        complaint
+        for complaint in gate(legal)
+        if "RS1" in complaint
+    ]
+
+
+@pytest.mark.parametrize(
+    "borrowed",
+    [
+        "inspired by the great work",
+        "a riff on the old ladder",
+        "it works like the Tempest Crown series",
+        "SEAL™",
+    ],
+)
+def test_an_answer_that_compares_itself_to_something_outside_it_is_refused(
+    borrowed: str,
+) -> None:
+    """RS1 / C3 at the gate as well as in the prompt, and honest about being shallow.
+
+    A vocabulary guard is not comprehension: this catches the shapes a model reaches for when it
+    borrows and would not catch a borrowed idea in original words. What it buys is that the
+    forge cannot ship an output that names its own source.
+    """
+    leaky = world()
+    leaky["systems"][0]["logic"] = f"every made thing carries its history, {borrowed}"
+    complaints = gate(leaky)
+    assert any("RS1" in complaint for complaint in complaints)
+
+
+# --- the world as records ---------------------------------------------------------------------
+
+
+def test_every_record_a_world_makes_is_a_proposal() -> None:
+    """Rail one, asserted over the whole output rather than at the constructor."""
+    records = architect.records_for(candidate(), scenes=SCENES)
+    assert records
+    assert {record.authority for record in records} == {lc.StateAuthority.PROPOSED}
+    assert {record.predicate_registry_version for record in records} == {worlds.REGISTRY_VERSION}
+
+
+def test_the_records_carry_the_edges_nothing_in_this_repository_used_to_write() -> None:
+    records = architect.records_for(candidate(), scenes=SCENES)
+    assert sum(1 for record in records if record.object_ref) > 0
+    assert worlds.entities_with_role(records, "creature") == ("ash_fox",)
+    assert worlds.criteria(records) == {"assay_grade": "ordinal"}
+    assert worlds.rank_order(records, criterion="assay_grade") == (("third_seal", "second_seal"),)
+    assert len(worlds.cardinality_shapes(records)) == 1
+
+
+def test_a_cast_relationship_becomes_an_edge_the_store_can_check() -> None:
+    """The capability nothing in this repository used to write.
+
+    `object_ref` has been on every `StateRecord` since the contract shipped and no code in `src/`
+    constructed one — the live serial's seven edges were typed by the operator. A cast whose ties
+    live only in prose is a cast the store cannot check and `state.cardinality.v0` has nothing to
+    count.
+    """
+    records = architect.records_for(candidate(), scenes=SCENES)
+    ties = [
+        record
+        for record in records
+        if record.subject == "silas" and record.predicate == "owes"
+    ]
+    assert len(ties) == 1
+    assert ties[0].object_ref == "marta"
+    assert ties[0].value == "nine months of rent"
+    assert ties[0].kind is lc.StateRecordKind.RELATIONSHIP
+    assert worlds.validate(records) == ()
+
+
+def test_a_false_belief_and_a_secret_are_claims_rather_than_fields() -> None:
+    """The gap between what is true, what a character holds and what the reader has been told."""
+    records = architect.records_for(candidate(), scenes=SCENES)
+    claims = worlds.claims(records)
+    assert "silas_belief" in claims
+    assert "silas_secret" in claims
+    assert any(
+        record.predicate == worlds.BELIEVES and record.object_ref == "silas_belief"
+        for record in records
+    )
+
+
+def test_a_reveal_inside_the_book_gets_a_position_and_one_outside_it_does_not() -> None:
+    """The key-width leak, pinned. `beats_for` mints `s1…s8` for eight scenes, so a two-digit
+    `s04` compares *below* `s1` and a claim scheduled for scene four reads as already told at
+    scene one. Measured on Serial Pilot 2 and fixed by minting in the book's own width — and by
+    minting no position at all for a scene the book does not have."""
+    records = architect.records_for(candidate(), scenes=SCENES)
+    assert worlds.claims(records)["the_tide"].startswith("the tide is aimed")
+    assert worlds.reveal_scenes(records) == {"the_tide": 7}
+    assert worlds.disclosures(records)["the_tide"] == ("s7",)
+    # Comparable to a beat key, which the two-digit form was not.
+    assert len(worlds.undisclosed_claims(records, at="s1")) >= 1
+    assert "the_tide" in {r.subject for r in worlds.undisclosed_claims(records, at="s1")}
+    assert "the_tide" not in {r.subject for r in worlds.undisclosed_claims(records, at="s7")}
+
+    # A hundred-scene book puts the same reveal at `s007`, still comparable to its own beats.
+    wide = architect.records_for(candidate(), scenes=100)
+    assert worlds.disclosures(wide)["the_tide"] == ("s007",)
+
+    # And a reveal past the end of the run gets the ordinal and no position, so it stays hidden.
+    far = world()
+    far["mysteries"][0]["disclosed_at_scene"] = 41
+    outside = architect.records_for(architect.Candidate(0, far), scenes=SCENES)
+    assert worlds.reveal_scenes(outside) == {"the_tide": 41}
+    assert worlds.disclosures(outside) == {}
+    assert "the_tide" in {r.subject for r in worlds.undisclosed_claims(outside, at="s8")}
+    assert worlds.validate(outside) == ()
+
+
+def test_the_manifestation_counter_sees_every_declared_feature() -> None:
+    note = architect.report(candidate(), scenes=SCENES)
+    assert note["manifestation_coverage"] == 1.0
+    assert note["min_consequence_domains"] == 3
+    assert note["claims_with_answers"] >= 1
+    assert note["key_nouns"]
+
+
+def test_the_two_prompt_shapes_differ_and_carry_the_same_rules() -> None:
+    direct = architect.render_world_request("salvage", k=3, shape=architect.DIRECT)
+    domain_first = architect.render_world_request("salvage", k=3, shape=architect.DOMAIN_FIRST)
+    assert direct.prompt != domain_first.prompt
+    assert direct.schema == domain_first.schema
+    for rule in architect._RULES:
+        rendered = rule.format(scenes=6) if "{scenes}" in rule else rule
+        assert rendered in direct.prompt
+        assert rendered in domain_first.prompt
+    assert "Work in this order" in domain_first.prompt
+    assert "Work in this order" not in direct.prompt
+
+
+def test_an_unknown_prompt_shape_is_refused_rather_than_defaulted() -> None:
+    with pytest.raises(architect.ArchitectInputError, match="unknown prompt shape"):
+        architect.render_world_request("x", shape="freeform")
+
+
+# --- the rail that is enforced rather than declared ---------------------------------------------
+
+
+def test_the_architect_ranks_nothing_and_cannot_learn_to() -> None:
+    """No selection machinery, by import ban rather than by intent.
+
+    §105.1's device, applied to the role that would be most tempting to give a taste: an
+    Architect that could order its own candidates would be a quality judge with no validity
+    licence, wearing the authority of the thing it generated.
+    """
+    source = Path(architect.__file__).read_text(encoding="utf-8")
+    tree = ast.parse(source)
+    imported: set[str] = set()
+    for node in ast.walk(tree):
+        if isinstance(node, ast.ImportFrom) and node.module:
+            for alias in node.names:
+                imported.add(f"{node.module}.{alias.name}")
+        elif isinstance(node, ast.Import):
+            for alias in node.names:
+                imported.add(alias.name)
+    forbidden = {
+        "litharness.domain.candidates.select_winner",
+        "litharness.domain.preference",
+        "litharness.application.judge_panel",
+        "litharness.application.plan_search",
+    }
+    assert not (imported & forbidden)
+    for banned in ("select_winner", "win_rate", "PairVerdict", "Calibration"):
+        assert banned not in source
+
+
+# --- the seam a pilot walks --------------------------------------------------------------------
+
+
+def test_a_forged_bundle_seeds_a_book_with_no_provider_call(tmp_path: Path) -> None:
+    """`forge --pick` then `new --state … --promises …`, end to end, offline.
+
+    The whole point of the bundle is that `new` consumes it *unchanged*, so this asserts the
+    file the forge writes is parseable as a `StateSnapshot` by the same `parse_artifact` call
+    `cmd_new` makes, and that the promises land as open rows with a due key from the book's own
+    beat sheet rather than from a format string.
+    """
+    out = tmp_path / "forge"
+    out.mkdir()
+    forged = architect.Candidate(0, world())
+    bundle = architect.bundle_for(
+        forged,
+        book_id="00000000-0000-5000-8000-00000000aa01",
+        branch_id="00000000-0000-5000-8000-00000000aa02",
+        revision_id="00000000-0000-5000-8000-00000000aa03",
+        architect_id=worlds.architect_id_for("a test brief"),
+        created_at="2026-08-21T00:00:00Z",
+        brief="a test brief",
+        shape=architect.DIRECT,
+    )
+    (out / "forge.json").write_text(
+        json.dumps(
+            {
+                "architect_id": bundle["architect_id"],
+                "k": 1,
+                "candidates": [bundle],
+            },
+            ensure_ascii=False,
+        ),
+        encoding="utf-8",
+    )
+
+    database = tmp_path / "pilot.db"
+    assert main(["--database", str(database), "init"]) == 0
+    assert (
+        main(
+            [
+                "--database",
+                str(database),
+                "forge",
+                "--out",
+                str(out),
+                "--pick",
+                "1",
+                "--scenes",
+                "8",
+            ]
+        )
+        == 0
+    )
+    seed = out / "seed.json"
+    snapshot = lc.parse_artifact(
+        lc.StateSnapshot, json.loads(seed.read_text(encoding="utf-8"))
+    )
+    assert snapshot.meta.actor.startswith(worlds.ARCHITECT_AUTHOR_PREFIX)
+    assert snapshot.records
+
+    assert (
+        main(
+            [
+                "--database",
+                str(database),
+                "new",
+                bundle["title"],
+                "--premise",
+                bundle["premise"],
+                "--scenes",
+                "8",
+                "--state",
+                str(seed),
+                "--promises",
+                str(out / "promises.json"),
+            ]
+        )
+        == 0
+    )
+
+    from litharness.adapters.sqlite_store import SqliteStore
+
+    store = SqliteStore.open(database)
+    try:
+        book_id, branch_id, _ = store.branches()[0]
+        rows = store.promises(book_id, branch_id, open_only=True)
+        assert [row.subject for row in rows] == ["the_tide"]
+        assert rows[0].status == PROMISE_OPEN
+        assert rows[0].due_key == "s7"
+        assert rows[0].kind == "mystery"
+        # **Canon, and only because a person picked.** The bundle on disk still holds the world
+        # as proposed; the pick is what admitted it, and without that step every record would be
+        # filtered out of the packet by `is_canon` and the serial would draft against a premise
+        # and nothing else.
+        records = store.state_records(book_id, branch_id)
+        assert {record.authority for record in records} == {lc.StateAuthority.ACCEPTED_CANON}
+        proposed = architect.records_for(forged)
+        assert {record.authority for record in proposed} == {lc.StateAuthority.PROPOSED}
+
+        # And the world now reaches the drafter: the criterion in the system message, the rules
+        # in the packet, the answer to the mystery under the heading that forbids stating it.
+        from litharness.domain import context as context_mod
+        from litharness.domain.revision import Revision  # noqa: F401 - documents the head type
+
+        head = store.head(book_id, branch_id)
+        assert head is not None
+        packet = context_mod.assemble(
+            head,
+            "scene-2",
+            plan_items=store.plan_items(book_id, branch_id),
+            state_records=records,
+        )
+        assert worlds.criterion_brief(records) is not None
+        # Both kinds of hidden truth: the mystery's recorded answer, which has a scheduled
+        # reveal, and a cast member's secret, which has none and is not owed one. The false
+        # belief is in neither — it is not true, so it is carried by its `believes` edge.
+        assert {item.text for item in packet.sections[context_mod.HIDDEN]} == {
+            "the tide is aimed at the assay house, not the city",
+            "he has been shorting his own readings for a year",
+        }
+        rendered = packet.render()
+        assert "Rule — history fixes price" in rendered
+        assert "never put it on the page" in rendered
+    finally:
+        store.close()
+
+
+def test_the_pilot_package_regenerates_the_world_it_was_run_on() -> None:
+    """`plan/serial-pilot-2-world.json` is the source; the 140KB seed is derived output.
+
+    Serial Pilot 1 committed its seed because a person typed it. Pilot 2's seed is 327 records
+    a function produced, so committing it would be a second copy of something derivable — and
+    two copies of one artefact are one artefact and one thing to notice has drifted. What is
+    committed is the model's answer; this pins that `records_for` still turns it back into
+    exactly the snapshot the pilot ran on, which is the whole of what "reproducible" means here.
+    """
+    package = json.loads(
+        (Path(__file__).resolve().parents[1] / "plan" / "serial-pilot-2-world.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    candidate = architect.Candidate(0, package["world"])
+    records = architect.records_for(
+        candidate, authority=lc.StateAuthority.ACCEPTED_CANON, scenes=8
+    )
+    again = architect.records_for(
+        candidate, authority=lc.StateAuthority.ACCEPTED_CANON, scenes=8
+    )
+    # Deterministic to the record id, which is what makes the committed answer the source and
+    # the 140KB snapshot derived output rather than a second copy.
+    assert [r.record_id for r in records] == [r.record_id for r in again]
+    assert {record.authority for record in records} == {lc.StateAuthority.ACCEPTED_CANON}
+    assert worlds.validate(records) == ()
+    assert architect.gate_candidate(candidate, scenes=8) == ()
+    # **Two more records than the forge reported, and the difference is a fix.** The committed
+    # `candidate_reports` are what the forge printed on 2026-08-22; `worlds.REVEAL_SCENE` landed
+    # afterwards, storing each mystery's ordinal beside its position, so a regeneration is two
+    # rows larger than the run record. The forge's numbers are left as the forge's numbers.
+    # The forge positioned every mystery; the fix stores an ordinal for each and a position only
+    # for the ones this book has a scene for, so the net gain is exactly the in-book positions.
+    reported = package["candidate_reports"][package["picked"] - 1]["records"]
+    assert len(records) - reported == len(worlds.disclosures(records))
+    assert len(worlds.reveal_scenes(records)) == 6
+    assert len(worlds.disclosures(records)) == 2
+
+
+def test_a_debt_the_serial_settles_later_is_opened_without_a_due_date(tmp_path: Path) -> None:
+    """An arc reveal at scene 41 is not late in an eight-scene opening.
+
+    Measured on Serial Pilot 2: the forged world scheduled six reveals, four of them past the
+    end of the two chapters being written. Clamping those to the final beat — which is what
+    `cmd_new` did first — would have `promise.overdue.v0` annotate four debts as late in a book
+    that was never going to reach them. `Promise.due_key` is `str | None` and `overdue_promises`
+    skips a row with none, so the debt is on the ledger, reaches the packet as something owed,
+    and nothing calls it late.
+    """
+    out = tmp_path / "forge"
+    out.mkdir()
+    far = world()
+    far["mysteries"] = [
+        {**far["mysteries"][0], "id": "near", "disclosed_at_scene": 3},
+        {**far["mysteries"][0], "id": "far", "disclosed_at_scene": 41},
+    ]
+    bundle = architect.bundle_for(
+        architect.Candidate(0, far),
+        book_id="00000000-0000-5000-8000-00000000bb01",
+        branch_id="00000000-0000-5000-8000-00000000bb02",
+        revision_id="00000000-0000-5000-8000-00000000bb03",
+        architect_id=worlds.architect_id_for("arc debts"),
+        created_at="2026-08-22T00:00:00Z",
+        brief="arc debts",
+        shape=architect.DIRECT,
+        scenes=8,
+    )
+    (out / "forge.json").write_text(
+        json.dumps({"architect_id": bundle["architect_id"], "k": 1, "candidates": [bundle]}),
+        encoding="utf-8",
+    )
+    database = tmp_path / "arc.db"
+    assert main(["--database", str(database), "init"]) == 0
+    assert main(["--database", str(database), "forge", "--out", str(out), "--pick", "1",
+                 "--scenes", "8"]) == 0
+    assert main(["--database", str(database), "new", bundle["title"], "--premise",
+                 bundle["premise"], "--scenes", "8", "--state", str(out / "seed.json"),
+                 "--promises", str(out / "promises.json")]) == 0
+
+    from litharness.adapters.sqlite_store import SqliteStore
+    from litharness.domain.promises import overdue_promises
+
+    store = SqliteStore.open(database)
+    try:
+        book_id, branch_id, _ = store.branches()[0]
+        rows = {row.subject: row for row in store.promises(book_id, branch_id)}
+        assert rows["near"].due_key == "s3"
+        assert rows["far"].due_key is None
+        # At the last scene of the run, the near debt is overdue and the arc debt is not.
+        late = overdue_promises(tuple(rows.values()), "s8")
+        assert [row.subject for row in late] == ["near"]
+    finally:
+        store.close()
+
+
+def test_picking_outside_the_field_is_refused_rather_than_clamped(tmp_path: Path) -> None:
+    out = tmp_path / "forge"
+    out.mkdir()
+    (out / "forge.json").write_text(
+        json.dumps({"architect_id": "arch-x", "k": 0, "candidates": []}), encoding="utf-8"
+    )
+    database = tmp_path / "pilot.db"
+    assert main(["--database", str(database), "init"]) == 0
+    assert main(["--database", str(database), "forge", "--out", str(out), "--pick", "1"]) == 2
+
+
+def test_picking_before_forging_says_which_file_is_missing(tmp_path: Path) -> None:
+    database = tmp_path / "pilot.db"
+    assert main(["--database", str(database), "init"]) == 0
+    assert (
+        main(["--database", str(database), "forge", "--out", str(tmp_path / "nope"), "--pick", "1"])
+        == 2
+    )

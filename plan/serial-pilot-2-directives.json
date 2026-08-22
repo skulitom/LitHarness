@@ -1,0 +1,38 @@
+{
+  "source": "pilot2\\direct2\\forge.json",
+  "title": "First In Time",
+  "premise": "In the Kettle Basin the river answers a date. Stand at your own headgate, say the year on your paper, and the water leaves every field junior to you and comes to yours — comes whether they are dry, whether their children are watching, whether it is fair. The whole valley is a line and the line is written down in one book in one town. Wren Holt rides ditch for the watermaster: she opens gates for other people's calls and closes them on her own neighbours, and she has no date at all, because her family used to and now does not, and nobody will tell her why. Meanwhile the drillers out on Ninefold Flat are pulling water up from underneath, and the table on the office wall says that water is a debt against the river coming due in seven to eleven years, and the clerk who keeps that table has known since the last drought that a third of it is wrong.",
+  "scenes": 8,
+  "directives": [
+    {
+      "kind": "constraint",
+      "text": "Nobody in this book ever explains the doctrine. Prior appropriation is shown only as a price somebody pays in front of somebody else: a name not read off a board, a dry mouth at a funeral, a gate that turns water out of a field with children standing in it.",
+      "label": "forged constraint"
+    },
+    {
+      "kind": "constraint",
+      "text": "No fight settles anything. Every reversal in this world is administrative — a line drawn through a row, a date spoken, a paper produced from a box — and the violence, when it comes, is aimed at capacity rather than at people: a burned crop, a broken arm, a moved survey mark.",
+      "label": "forged constraint"
+    },
+    {
+      "kind": "tone_note",
+      "text": "Fast, plain, popcorn. Short sentences, concrete nouns, water and iron and mud. The pleasure on offer is the click of a rule landing on somebody, not the beauty of the sentence.",
+      "label": "forged tone_note"
+    },
+    {
+      "kind": "tone_note",
+      "text": "Every scene should let the reader do one piece of arithmetic before a character does. The reader should see the fifth year coming.",
+      "label": "forged tone_note"
+    },
+    {
+      "kind": "arc_note",
+      "text": "Wren's rise is entirely made of other people's ruin and she never stops noticing. The book's engine is that the only ladder available to her is built out of vacancies.",
+      "label": "forged arc_note"
+    },
+    {
+      "kind": "chapter_note",
+      "text": "Open on a call being made and enforced against somebody sympathetic, from the side of the person opening the gate. Do not open on Wren wanting anything.",
+      "label": "forged chapter_note"
+    }
+  ]
+}

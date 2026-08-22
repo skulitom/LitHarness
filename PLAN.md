@@ -2307,3 +2307,26 @@ every unstruck action below as a claim to re-verify rather than a task to start.
     divisor**: `director-role.md` §4 divides confidence by N directors, and N directors × M
     writers is N×M candidate books. Fix the casting before the book is measured; do not pick the
     best of M afterwards.
+
+12. **Give the serial a world that exists behind it — the Architect** — see
+    [plan/world-architect.md](plan/world-architect.md), written 2026-08-21 before any code, and
+    [stage-0 §107](plan/stage-0-decisions.md). **Built, and the measurement that motivated it is
+    the thing to keep in view:** the live serial `serial.db` holds **23 canon records** for a
+    nine-scene book — 15 the operator typed into `plan/serial-pilot-seed.json` and 8 readings of
+    one `[STATUS]` line — while its prose carries an Advent, a tier system, a tide, an assay
+    house and a cast that canon has never heard of. Nothing in `src/` invented a world and
+    nothing persisted what the drafter improvised.
+
+    **What landed:** `domain/worlds.py` (record patterns over `StateRecord`, no migration),
+    `application/architect.py` + `litharness forge`, a projection and a `hidden` packet section,
+    `object_ref` in the contradiction key with `state.cardinality.v0` beside it,
+    a declared graph-line extractor with a promotion rule, and `new --promises`.
+
+    **What is not built, and each is a decision rather than an omission.** Retrieval when the
+    serial outgrows the packet is a design note only. No amendment surface exists: a world is
+    forged once, before scene one, and whether the growth path or the operator authors a
+    mid-serial change is undecided. The between-Architect comparison is not run — the
+    distinctness control is built for K candidates from one brief, and N architects would divide
+    §61's α by N exactly as N directors do. And **the first quality question in this project
+    with an answer outside the text is now live**: a world that literalises a real domain can be
+    *wrong* about it, and nothing checks that.

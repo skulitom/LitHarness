@@ -294,6 +294,18 @@ def _distance(left: str, right: str) -> float:
     return (both - min(a, b)) / max(max(a, b), 1)
 
 
+def distance(left: str, right: str) -> float:
+    """`_distance` under a name another module may call.
+
+    Added when the Architect needed the same crude are-these-the-same-bytes question over K
+    worlds. Exported rather than copied for the reason `_distance` gives for reusing
+    `craft._compressed`: this repo has refuted enough hand-rolled text distances to be
+    suspicious of a second one, and two measures called distinctness that disagreed would be
+    worse than either.
+    """
+    return _distance(left, right)
+
+
 def _mean_pairwise(texts: Sequence[str]) -> float | None:
     pairs = [
         _distance(texts[i], texts[j])
@@ -355,6 +367,7 @@ __all__ = [
     "IllegalBrief",
     "build",
     "director_id_for",
+    "distance",
     "distinctness",
     "is_machine_author",
     "legal_brief",

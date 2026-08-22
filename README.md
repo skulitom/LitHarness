@@ -657,9 +657,19 @@ Stated plainly, because a system that runs is easy to mistake for a system that 
   PREFERENCE-class calibration licenses it on the selection task). What does not exist
   is structural/mechanical plan critics or replacement of the fixed six-beat arc
   template.
+- **A world that exists behind the book, forged rather than typed.** `litharness forge` builds
+  K worlds from a brief in one structured call — systems and their prices, criteria whose ranks
+  have a visible form, cast, creatures, places, and mysteries **with their answers recorded** —
+  gates them deterministically (three second-order consequences per rule, a manifestation for
+  every feature, an answer and a scene for every mystery), and then stops. No model orders them;
+  a person picks, and the pick is its own decision row. The world lands as record patterns over
+  the existing `StateRecord` — no migration, no new record kind — and reaches the writer as
+  English rather than notation. What does not exist is any amendment surface: a world is forged
+  once, before scene one. See [plan/world-architect.md](plan/world-architect.md).
 - **A context packet with no relevance scoring.** It carries prior prose, locked
-  constraints, open threads and POV-filtered state, and it is graded against the contracts
-  `GoldContextSuite` — mandatory items present, forbidden POV leak absent. What it does not
+  constraints, open threads, POV-filtered state, and what is true but not yet disclosed to the
+  reader — that last under a heading that forbids stating it — and it is graded against the
+  contracts `GoldContextSuite` — mandatory items present, forbidden POV leak absent. What it does not
   do is *choose*: under a budget that binds, it drops the oldest prose rather than the least
   relevant, because nothing here measures relevance. On six-scene fixtures the budget never
   binds, so that limit is currently invisible and will not stay that way at Book Zero

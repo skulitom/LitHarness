@@ -74,6 +74,7 @@ from litharness.application.plan_search import (
     span_select_job_id,
 )
 from litharness.application.ports import ApplicationStore, PlanningStore
+from litharness.domain import worlds
 from litharness.domain.beats import (
     SIX_BEAT,
     Beat,
@@ -306,6 +307,7 @@ def render_prompt(
     scene_plan: str | None = None,
     feedback: FeedbackSet | None = None,
     writer: Writer | None = None,
+    criteria: str | None = None,
 ) -> tuple[str, str]:
     """(system, prompt) for one beat, grounded in an assembled context packet.
 
@@ -355,6 +357,15 @@ def render_prompt(
     Empty by default and empty is the common case: with no pool registration, no established
     direction or no located difference, `feedback_loop.resolve` returns an empty set and this
     renders nothing (`plan/reader-judge-loop.md` §5.1).
+
+    **`criteria` is the standard the scene is being judged against inside its own world**
+    (`plan/state-model-abilities.md` §5 item 11: *show the generator the criterion it is writing
+    against*). It goes in the system message for the boundary `feedback` and `writer` already
+    observe: a criterion is a rule about how this world judges, which is closer to how to write
+    the book than to what happened in it, and under the packet's "established and may be relied
+    on" heading it would invite a scene to *state* the ladder rather than show somebody moving
+    up it. `None` for every book that declares no criterion, which is every book written before
+    `domain/worlds.py` existed.
 
     **`writer` is the drafter's identity, and `None` is the control.** Until 2026-08-20 the
     drafter had none: the paragraph above was the whole of its self, and everything topical it
@@ -420,6 +431,19 @@ def render_prompt(
             "play out in real time — what is said, what is done, what is noticed — instead "
             "of being told in summary. Do not pad it with restatement to reach the length; "
             "give the scene enough events to fill it."
+        )
+    if criteria:
+        # **The criterion the scene is writing against** (`plan/state-model-abilities.md` §5
+        # item 11). It goes in the system message rather than in the packet for the boundary
+        # `feedback` and the writer dossier already observe: a criterion is a rule about how
+        # this world *judges*, which is closer to how to write the book than to what happened
+        # in it. Putting it under "established and may be relied on" would invite the scene to
+        # state the ladder rather than to show somebody moving up it.
+        system += (
+            "\nThis world judges people by the following, and a scene that changes where "
+            "someone stands must show the change rather than announce it — a rank is "
+            "something a reader sees, never something a narrator reports:\n"
+            f"{criteria}"
         )
     if feedback is not None and not feedback.empty:
         system += f"\n{feedback.render()}"
@@ -513,6 +537,18 @@ def packet_for(
         # returns the beat's key only for a book whose story positions nobody else chose.
         story_time_cutoff=stated_position(records, beat.story_order_key),
         summaries=summaries,
+        # **Where the book stands, and it is a different question from the cutoff above.**
+        # The cutoff decides which records *exist yet* and is gated by `stated_position`, so it
+        # is `None` for any book whose story positions somebody else chose. This asks whether
+        # the reader has been *told* a thing, against positions the Architect minted from this
+        # book's own beat sheet — so it is entitled to the beat's key unconditionally, and a
+        # forged world's schedule keeps working on an imported book where the cutoff abstains.
+        #
+        # The two lines were written by different sessions within a day of each other and the
+        # merge is where they met. They agree: a non-chronological template mints no key, both
+        # go `None`, the cutoff returns everything and every scheduled answer stays hidden —
+        # which is the safe direction for each of them separately.
+        disclosure_at=beat.story_order_key,
         # The promise ledger's open rows (§61 Add 2), surfaced in the THREADS section so
         # generation gets to SEE what the book owes and by when. Read-only, and `assemble`
         # packs them as DERIVED — a model-sourced debt informs the scene without entering
@@ -843,6 +879,9 @@ def make_plan_selector(
                     progression=progression_target(
                         store.state_records(progress.book_id, progress.branch_id),
                         at=beat.story_order_key,
+                    ),
+                    criteria=worlds.criterion_brief(
+                        store.state_records(progress.book_id, progress.branch_id)
                     ),
                 )
                 payload: dict[str, object] = {
