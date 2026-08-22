@@ -27,6 +27,7 @@ from pathlib import Path
 
 import litharness_contracts as lc
 
+from litharness.adapters import contracts_fixtures
 from litharness.adapters.sqlite_store import SqliteStore
 from litharness.application import architect, narrative_planner, outline
 from litharness.domain import world_brief, worlds
@@ -703,3 +704,24 @@ class _ByRevision:
     def __init__(self, prompt: str) -> None:
         payload = json.loads(prompt)
         self.plan_revision_id = str(payload["base_plan_revision_id"])
+
+
+def test_the_golden_books_produce_no_brief_at_all() -> None:
+    """Boundary 4's proof, on the two books this repository grades everything against.
+
+    Neither golden fixture declares a world — `mystery` states arrivals, claims and disinheritance
+    and `litrpg` states levels, purchases and quests, and not one of the 35 records between them
+    carries a predicate `domain/worlds.py` recognises. So `worlds.project` returns an empty mapping
+    for both and `brief_for` returns `None`, and the planner payload for either is the payload it
+    was before this feature existed. Asserted rather than assumed, because "untouched by
+    construction" is a claim about somebody else's package — `tests/test_worlds.py` makes the same
+    argument about the same two fixtures for the packet.
+    """
+    for fixture_id in contracts_fixtures.FIXTURE_IDS:
+        snapshot = lc.parse_artifact(
+            lc.StateSnapshot,
+            json.loads(contracts_fixtures.fixture_state(fixture_id).read_text(encoding="utf-8")),
+        )
+        assert snapshot.records, f"the {fixture_id} fixture has no state to test with"
+        assert worlds.project(snapshot.records) == {}
+        assert world_brief.brief_for(snapshot.records) is None, fixture_id
