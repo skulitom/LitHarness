@@ -178,7 +178,7 @@ def scan_blob(name: str, content: str) -> tuple[list[tuple[str, int, str]], list
     """
     unwalked: list[str] = []
     if name.endswith(".jsonl"):
-        found = []
+        found: list[tuple[str, int, str]] = []
         lines = content.splitlines()
         if len(lines) > JSONL_LINE_LIMIT:
             unwalked.append(f"<lines {JSONL_LINE_LIMIT}:{len(lines)}>")
@@ -435,7 +435,7 @@ def main(argv: list[str] | None = None) -> int:
             print(
                 f"({len(telemetry)} blob(s) skipped as delimited telemetry — rows of numbers, "
                 f"timestamps and bare tokens, no sentences: "
-                f"{', '.join(sorted({t for t in telemetry}))})"
+                f"{', '.join(sorted(set(telemetry)))})"
             )
         if ours:
             print(

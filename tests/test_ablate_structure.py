@@ -22,14 +22,7 @@ and a guard that only runs where the corpus happens to sit is not a guard.
 
 from __future__ import annotations
 
-import sys
-from pathlib import Path
-
 import pytest
-
-RESEARCH = Path(__file__).resolve().parents[1] / "research" / "quality-measurement"
-if str(RESEARCH) not in sys.path:  # pragma: no cover - import plumbing
-    sys.path.insert(0, str(RESEARCH))
 
 ablate = pytest.importorskip("ablate", reason="research/quality-measurement is not on the path")
 

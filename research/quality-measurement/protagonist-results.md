@@ -3,7 +3,7 @@
 **Status: MEASUREMENT AND BUILD, 2026-08-22.** Answers
 [`plan/handoff-protagonist.md`](../../plan/handoff-protagonist.md); the read that nominated the
 work is [`plan/reader-read-3.md`](../../plan/reader-read-3.md); the decision record is stage-0
-§111. Every number below was computed in this session against `main` at `f947247`, with the
+§112. Every number below was computed in this session against `main` at `f947247`, with the
 scripts named. Nothing here is a claim that any book got better.
 
 **Reading order.** §1 is the measurement that licensed the build; §2–§5 are what shipped, each
@@ -124,7 +124,7 @@ intersection is **1 of 5**, not 0: `Amble` is used three times as a vocative to 
 times inside a read-out record naming a `Rester Amble` the prose calls a grandfather. Whether that
 clerk *is* `clerk_amble` is a judgment with no instrument here; the name-level intersection is 1.
 The direction of the finding is unchanged — four of five forged people never reached the page, and
-all seventeen named persons in the book were written by a call that had never seen the cast.
+the seventeen named persons the read counted were written by a call that had never seen the cast.
 
 ### 1.6 The cardinality exception was undeclarable, and the detector proves it
 
@@ -220,12 +220,21 @@ difference is the in-book disclosure positions.)
 
 ## 3. Task 2 — the outline is told the world's people
 
-`render_outline_request` gains `cast` and `protagonist`, and **renders nothing new when both are
-empty**. Absent rather than null: `json.dumps` writes `null` for a key whose value is `None`, so a
-key that is always present is a payload that always changed — and `input_digest_for` covers the
-prompt and is the sampler seed.
+**Read the collapse first.** This section measures a `cast` input this call briefly took. Stage-0
+§111 — the worldbuilding branch — reached `origin/main` before this work did, and its `world` brief
+already renders every declared person from the same projection. So at the merge the `cast`
+parameter, its rule, and `worlds.cast_brief` / `worlds.CastMember` were **deleted**, and what
+ships is `world` (people included) + `protagonist`. §112.7 named that debt and this is it paid.
+The numbers below are what the separate rendering measured; they are kept because they are the
+before/after for *the world's people reaching the outline at all*, which is the finding, and they
+are no longer a description of the shipped call's byte count.
 
-Measured on *What Takes*' own canon, before and after:
+`render_outline_request` renders nothing new when its inputs are empty. Absent rather than null:
+`json.dumps` writes `null` for a key whose value is `None`, so a key that is always present is a
+payload that always changed — and `input_digest_for` covers the prompt and is the sampler seed.
+
+Measured on *What Takes*' own canon, before and after (this branch's `cast` rendering, since
+superseded):
 
 | | before | after |
 |---|--:|--:|
@@ -234,19 +243,18 @@ Measured on *What Takes*' own canon, before and after:
 | prompt characters | 1,785 | **4,856** |
 | system message | unchanged | unchanged |
 
-The one added rule, verbatim: *"Every named person in this book is one of the people listed in
-cast, under the id given there. Do not invent a named person. An unnamed role needs no entry in
-cast."* With a protagonist declared, a second is added: *"The protagonist is `{id}`. This is
-`{id}`'s book, so each statement says what `{id}` does in that scene, or what is done to `{id}`."*
-Both are position and fact; `test_the_protagonist_rules_name_a_person_and_never_an_outcome` checks
-them for the same vocabulary the Architect rule is checked for, plus *open on* and *first*.
+The rule that ships, verbatim: *"The protagonist is `{id}`. This is `{id}`'s book, so each
+statement says what `{id}` does in that scene, or what is done to `{id}`."* Position and fact;
+`test_the_protagonist_rules_name_a_person_and_never_an_outcome` checks it for the same vocabulary
+the Architect rule is checked for, plus *open on* and *first*. The cast rule this branch also wrote
+— *"Every named person in this book is one of the people listed in cast…"* — went with the `cast`
+parameter at the merge, because §111's `WORLD_RULES` already instruct the planner against the
+brief it is handed.
 
-The cast reaches the request **as the packet phrases it** — `worlds.project` first,
-`state.describe` as the fallback, which is `context._state_item`'s own two steps (§107.3). A tie is
-an edge to a subject that carries an entity role, so `believes` and `keeps_secret` — which point at
-claims — never appear: a secret's *content* would not be in one of those lines either way, but a
-planner handed `keeps_secret (x_secret)` for every person is being handed the shape of what it is
-not allowed to plan against.
+The people reach the request **as the packet phrases them** — `worlds.project` first,
+`state.describe` as the fallback, which is `context._state_item`'s own two steps (§107.3). That was
+true of this branch's rendering and it is true of §111's, which is why the collapse costs nothing:
+the two were the same two calls in the same order.
 
 `outline_job_id` is epoch-keyed and excludes the prompt, so a tick over an already-outlined book
 mints no second job; pinned.
@@ -333,9 +341,8 @@ nominated it. `plan/serial-pilot-4-craft.json` therefore carries C9 with its num
    belongs in `worlds.project`, and that would change the packet of every book with a forged world.
 3. **The outline invents answers to forged mysteries.** Named in the handoff as a separate piece of
    work and left alone.
-4. **`plan/handoff-worldbuilding.md`'s branch also adds a keyword to `render_outline_request`** —
-   a `world` brief whose contents include the cast. That work is on
-   `claude/handoff-worldbuilding-plan-ae1861` and not on `main`. The two changes are additive and
-   independently correct; **whoever merges second should collapse the two cast renderings into
-   one**, because a request carrying the same people twice is a request that spends its budget
-   saying one thing.
+4. ~~**`plan/handoff-worldbuilding.md`'s branch also adds a keyword to `render_outline_request`**
+   … whoever merges second should collapse the two cast renderings into one.~~ **Done at the
+   merge, not deferred.** §111 reached `origin/main` first; this branch merged second and deleted
+   its own `cast` parameter, `CAST_RULES`, `worlds.cast_brief` and `worlds.CastMember`. What ships
+   is `world` + `protagonist`. See §3 above and stage-0 §112.7.

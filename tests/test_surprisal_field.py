@@ -16,13 +16,7 @@ absent.
 
 from __future__ import annotations
 
-import sys
-from pathlib import Path
-
 import pytest
-
-RESEARCH = Path(__file__).resolve().parents[1] / "research" / "quality-measurement"
-sys.path.insert(0, str(RESEARCH))
 
 f4 = pytest.importorskip(
     "surprisal_field", reason="research module; needs torch and the quality-measurement path"

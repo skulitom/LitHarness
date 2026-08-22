@@ -446,6 +446,50 @@ def test_the_protagonist_reaches_canon_as_records_and_not_as_a_field() -> None:
     assert worlds.validate(records) == ()
 
 
+def test_a_declared_protagonist_does_not_poison_its_own_book() -> None:
+    """**The end-to-end check the first paid run had to discover for us.**
+
+    Every detector in the wired ladder, over a world that declares a protagonist, with no scene
+    and no prose — just the records `--pick` writes into canon. It must be silent. Two of eight
+    scenes of *A Good Take* went parked and poisoned on 2026-08-22 because nothing ran this:
+    the protagonist's second `entity_role` read as a contradiction, and a `wants` declared once
+    on the cast entry and once on the protagonist read as another.
+
+    `tests/test_integrity.py::test_a_subject_that_is_two_things_at_once_is_not_contradicting_itself`
+    pins the detector half; this pins that the Architect does not hand it the input.
+    """
+    from litharness.domain.findings import DetectorInput
+    from litharness.domain.integrity import run_detectors
+
+    records = architect.records_for(
+        candidate(), authority=lc.StateAuthority.ACCEPTED_CANON, scenes=SCENES
+    )
+    findings = run_detectors(
+        DetectorInput(book_id="b", branch_id="br", logical_id="scene-1", records=records)
+    )
+    assert findings == [], [item.message for item in findings]
+
+
+def test_a_want_declared_twice_reaches_canon_once_and_the_gate_says_when_they_differ() -> None:
+    """`_ENTITY` carries `wants` for everybody and `_PROTAGONIST` restates it, so a world can
+    say it twice. Canon takes the cast entry's, because two values in one slot is what
+    `state.contradiction.v1` refuses — and the gate names the divergence at forge time rather
+    than letting it surface as a poisoned scene."""
+    agreeing = architect.records_for(candidate(), scenes=SCENES)
+    assert len([r for r in agreeing if r.subject == "silas" and r.predicate == "wants"]) == 1
+    assert gate(candidate()) == ()
+
+    diverging = world()
+    diverging["protagonist"] = {
+        **diverging["protagonist"],
+        "wants": "to be read once, by anybody at all",
+    }
+    records = architect.records_for(architect.Candidate(0, diverging), scenes=SCENES)
+    [want] = [r for r in records if r.subject == "silas" and r.predicate == "wants"]
+    assert want.value == "to be read once by someone who matters", "the cast entry wins"
+    assert any("as the protagonist" in item for item in gate(diverging))
+
+
 def test_an_exception_to_a_shape_reaches_the_shape_and_one_to_a_rule_does_not() -> None:
     """**The one derivation in `records_for`, and it is a definition rather than an inference.**
 
@@ -569,7 +613,22 @@ def test_the_protagonist_rule_asks_for_a_declaration_and_never_an_outcome() -> N
         ):
             assert forbidden not in lowered, (forbidden, rule)
     [declaration] = [item for item in rules if "does not hold for them" in item.lower()]
-    assert "declared id" in declaration.lower()
+    lowered = declaration.lower()
+    assert "member of the cast" in lowered
+    # **Measured, not stylistic.** The first live forge under this rule returned three worlds,
+    # every one of which named a real declared id in `exception` and then glossed it in the
+    # same field, and all three were refused by the gate for it. The ask now says which of the
+    # two the field is, and this is where that stays said — for the standing's two id fields
+    # as well, which are the same shape of ask and got the same answer before it was billed
+    # twice.
+    assert "its id alone" in lowered
+    assert "not an id" in lowered
+    assert architect._PROTAGONIST["properties"]["exception"]["pattern"] == "^[a-z0-9_]+$"
+    standing = architect._STANDING["properties"]
+    assert standing["criterion"]["pattern"] == "^[a-z0-9_]+$"
+    assert standing["rung"]["pattern"] == "^[a-z0-9_]+$"
+    assert "AN ID AND NOTHING ELSE" in standing["criterion"]["description"]
+    assert "AN ID AND NOTHING ELSE" in standing["rung"]["description"]
 
 
 # --- the world as records ---------------------------------------------------------------------

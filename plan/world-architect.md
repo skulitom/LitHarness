@@ -443,11 +443,16 @@ Until 2026-08-22 the Architect's world reached the
 promises, and **not one `StateRecord`**, so it invented a protagonist who occurs nowhere in the
 forged world and every other named person in the book, while four of the five forged cast members
 never reached the page. The change surface is two optional keyword inputs on that call —
-`cast` (the declared people, phrased by `worlds.project` first and `state.describe` as the
-fallback, which is `context._state_item`'s own two steps) and `protagonist` — plus
-`pov_character_id` finally passed at the one production `packet_for` call site, where the seam had
-existed unused since it was written. A book whose canon declares neither renders the bytes it
-rendered before, which is asserted rather than argued.
+`world` (the declared world including its people, phrased by `worlds.project` first and
+`state.describe` as the fallback, which is `context._state_item`'s own two steps; stage-0 §111's
+`domain/world_brief.py`) and `protagonist`, which is the one thing a brief grouped by kind cannot
+say — plus `pov_character_id` finally passed at the one production `packet_for` call site, where
+the seam had existed unused since it was written. A book whose canon declares neither renders the
+bytes it rendered before, which is asserted rather than argued.
+
+Two branches met at this call within a day of each other and one input was collapsed rather than
+kept: a separate `cast` rendering was deleted when §111 landed first, because a request carrying
+the same people twice spends its budget saying one thing (stage-0 §112.7).
 
 ---
 

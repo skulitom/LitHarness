@@ -15,7 +15,6 @@ anything is bought.
 from __future__ import annotations
 
 import ast
-import sys
 from pathlib import Path
 
 import pytest
@@ -76,10 +75,6 @@ from litharness.domain.preference import (
     excerpt_id_for,
 )
 from tests.conftest import BOOK_ID, BRANCH_ID, make_revision
-
-RESEARCH = Path(__file__).parents[1] / "research" / "quality-measurement"
-if str(RESEARCH) not in sys.path:
-    sys.path.insert(0, str(RESEARCH))
 
 TODAY = "2026-08-19"
 

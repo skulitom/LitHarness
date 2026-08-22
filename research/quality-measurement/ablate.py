@@ -136,7 +136,7 @@ class Ablation:
     note: str
 
 
-# ------------------------------------------------------------------ degraders (sign = -1)
+# ---------------------------- degraders (sign = -1)  # noqa: ERA001 (divider, not dead code)
 
 
 def paragraph_shuffle(text: str, strength: float) -> str:
@@ -262,7 +262,7 @@ def sentence_deletion(text: str, strength: float) -> str:
     return _join(out)
 
 
-# ---------------------------------------------------------------------- shams (sign = 0)
+# ---------------------------- shams (sign = 0)  # noqa: ERA001 (divider, not dead code)
 
 
 def rename_entities(text: str, strength: float) -> str:

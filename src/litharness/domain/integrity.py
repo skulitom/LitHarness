@@ -109,6 +109,27 @@ def _value_key(value: Any) -> str:
     return json.dumps(value, sort_keys=True, ensure_ascii=False, default=str)
 
 
+#: Predicates whose values are a **set** and not a slot, so two of them are two facts rather
+#: than a disagreement. One member, and it is the one `domain/worlds.py` documents as plural:
+#: *"a subject may be two things at once — the System is an `agency` and a `system`, a guild is
+#: an `institution` and, when it acts, `cast`. Forcing one would be the type hierarchy arriving
+#: through a dictionary."*
+#:
+#: **Found by the first book ever drafted on a world that declares a protagonist**, 2026-08-22.
+#: A protagonist is a second `entity_role` on a cast member, so `nella_scur` carried `cast` and
+#: `protagonist`; this detector read that as `entity_role holds 2 different values`, MAJOR and
+#: blocking, and two of the book's eight scenes went parked and poisoned before any prose was
+#: judged. The defect is older than that change and the docstring above predicted it — no world
+#: had happened to give one subject two roles until one did.
+#:
+#: Deliberately a **named set of one** rather than a rule about shapes. "Multi-valued" is a
+#: property of a predicate's meaning and nothing in a record carries it, so the alternative is a
+#: heuristic — and a heuristic that guesses which disagreements are allowed is the frozen arity
+#: table `detect_cardinality_violations` refuses. A world that wants a second multi-valued
+#: predicate declares a cardinality shape instead, which is checkable.
+MULTI_VALUED: frozenset[str] = frozenset({worlds_mod.ENTITY_ROLE_PREDICATE})
+
+
 def detect_contradictions(subject: DetectorInput) -> list[Finding]:
     """Canon records that disagree with each other at the same story position.
 
@@ -138,6 +159,11 @@ def detect_contradictions(subject: DetectorInput) -> list[Finding]:
 
     Only canon takes part. A `PROPOSED` record is a candidate no decision has accepted, and
     two proposals disagreeing is what proposals are for.
+
+    **`MULTI_VALUED` predicates are skipped**, and there is exactly one of them. See the
+    constant: a subject carrying both `cast` and `protagonist` is two facts about one person and
+    not a disagreement, and reading it as one poisoned the first book ever drafted on a world
+    that declared a protagonist.
     """
     canon = [record for record in subject.records if state_mod.is_canon(record)]
     groups: dict[tuple[str, str, str, str], list[lc.StateRecord]] = {}
@@ -152,6 +178,8 @@ def detect_contradictions(subject: DetectorInput) -> list[Finding]:
 
     findings: list[Finding] = []
     for (subject_id, predicate, object_ref, order_key), members in sorted(groups.items()):
+        if predicate in MULTI_VALUED:
+            continue
         distinct = {_value_key(record.value): record for record in members}
         if len(distinct) < 2:
             continue
@@ -558,6 +586,7 @@ __all__ = [
     "DUPLICATE_SPAN_WORDS",
     "INTEGRITY_GATE",
     "IN_PROCESS",
+    "MULTI_VALUED",
     "OVERDUE_RULE",
     "STANDING_GATE",
     "detect_cardinality_violations",

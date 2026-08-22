@@ -22,14 +22,9 @@ so each is skipped rather than failed where torch is absent.
 
 from __future__ import annotations
 
-import sys
 from collections import Counter
-from pathlib import Path
 
 import pytest
-
-RESEARCH = Path(__file__).resolve().parents[1] / "research" / "quality-measurement"
-sys.path.insert(0, str(RESEARCH))
 
 SKIP = "research module; needs torch and the quality-measurement directory on the path"
 register_halflife = pytest.importorskip("register_halflife", reason=SKIP)

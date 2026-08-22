@@ -61,6 +61,7 @@ from litharness.domain.integrity import (
     DUPLICATE_RULE,
     DUPLICATE_SPAN_WORDS,
     IN_PROCESS,
+    MULTI_VALUED,
     detect_contradictions,
     detect_duplicate_scene,
     gate_integrity,
@@ -240,6 +241,50 @@ def test_contradictory_records_at_one_story_position_are_a_finding() -> None:
 def _accepted(built: lc.StateRecord) -> lc.StateRecord:
     """`world_record` proposes; canon is what a policy decision makes of it."""
     return replace(built, authority=lc.StateAuthority.ACCEPTED_CANON)
+
+
+def test_a_subject_that_is_two_things_at_once_is_not_contradicting_itself() -> None:
+    """**The defect that reached a paid book, pinned so it cannot reach another.**
+
+    `worlds.entity_roles` returns roles *plural* and its docstring says why — the System is an
+    `agency` and a `system`, a guild is an `institution` and, when it acts, `cast`. A
+    protagonist is the same shape: a second role on a cast member. Until 2026-08-22 no world had
+    happened to declare one, so nothing exercised this; the first book drafted on a world that
+    did carried `nella_scur entity_role holds 2 different values … "cast", "protagonist"` as a
+    MAJOR blocking finding, and two of its eight scenes went parked and poisoned before a word
+    of prose was judged.
+
+    The negative half is asserted with it and matters as much: a predicate that really is one
+    slot still contradicts. `wants` is the case the same book failed on, from the other
+    direction — the model declared one want on the cast entry and a differently worded one on
+    the protagonist, and two wants for one person at one position is a defect rather than a set.
+    """
+    roles = [
+        _accepted(worlds.world_record("nella_scur", worlds.ENTITY_ROLE_PREDICATE, value="cast")),
+        _accepted(
+            worlds.world_record(
+                "nella_scur", worlds.ENTITY_ROLE_PREDICATE, value="protagonist"
+            )
+        ),
+    ]
+    assert worlds.ENTITY_ROLE_PREDICATE in MULTI_VALUED
+    assert detect_contradictions(subject_for("litrpg", records=roles)) == []
+    assert not [
+        found
+        for found in run_detectors(subject_for("litrpg", records=roles))
+        if found.rule_or_critic_id == CONTRADICTION_RULE
+    ]
+
+    # An ordinary single-slot predicate is untouched: two different wants at one position is
+    # still MAJOR, still blocking, and still what poisons a scene.
+    wants = [
+        _accepted(worlds.world_record("nella_scur", "wants", value="fourth-grade material")),
+        _accepted(worlds.world_record("nella_scur", "wants", value="to be left alone")),
+    ]
+    [found] = detect_contradictions(subject_for("litrpg", records=wants))
+    assert found.severity is Severity.MAJOR
+    assert found.blocks
+    assert "wants holds 2 different values" in found.message
 
 
 def _seal_shape(*, excepts: str | None = None) -> list[lc.StateRecord]:

@@ -261,15 +261,45 @@ _CARDINALITY = {
     },
 }
 
-#: Where the protagonist starts on one declared ordinal ladder: the criterion's id and the rung's
-#: id, both declared elsewhere in the same world. **Two ids and nothing else** — the rung's
-#: visible form and its price already live on the rank, and repeating either here would be a
-#: second copy of a fact the world states once (`plan/handoff-numbers-go-up.md` boundary 10).
+#: Where the protagonist starts on one declared ordinal ladder: the criterion's id and the
+#: rung's id, both declared elsewhere in the same world. **Two ids and nothing else** — the
+#: rung's visible form and its price already live on the rank, and repeating either here would
+#: be a second copy of a fact the world states once (`plan/handoff-numbers-go-up.md`
+#: boundary 10).
+#:
+#: **Both carry `pattern` and a description saying AN ID AND NOTHING ELSE, and that is
+#: `_PROTAGONIST["exception"]`'s measured correction applied before it is paid for a second
+#: time.** The first forge under the protagonist rule returned three worlds, every one of which
+#: put a real declared id in `exception` and an em-dash gloss after it, and all three were
+#: refused. These two fields are the same shape of ask — "name the criterion by its id" — so
+#: they get the same answer without waiting for the same bill.
 _STANDING = {
     "type": "object",
     "additionalProperties": False,
     "required": ["criterion", "rung"],
-    "properties": {"criterion": _SAID, "rung": _SAID},
+    "properties": {
+        "criterion": {
+            **_SAID,
+            "pattern": "^[a-z0-9_]+$",
+            "description": (
+                "AN ID AND NOTHING ELSE — the snake_case id of a criterion declared in this "
+                "world, whose comparator is `ordinal` and whose `ranks` are a chain of at "
+                "least three. Write `crit_priority`, never `crit_priority - the order in "
+                "which gates are shut`. What the criterion judges is already written where "
+                "the criterion is declared."
+            ),
+        },
+        "rung": {
+            **_SAID,
+            "pattern": "^[a-z0-9_]+$",
+            "description": (
+                "AN ID AND NOTHING ELSE — the snake_case id of one of that criterion's own "
+                "`ranks`, and NOT the top one. Write `morning_right`, never `morning_right - "
+                "two seasons of proving use`. What the rung looks like and what it costs are "
+                "already written on the rank itself."
+            ),
+        },
+    },
 }
 
 _PROTAGONIST = {
@@ -277,11 +307,39 @@ _PROTAGONIST = {
     "additionalProperties": False,
     "required": ["id", "exception", "edge", "wants", "price", "standing"],
     "properties": {
-        "id": _SAID,
-        "exception": _SAID,
-        "edge": _SAID,
-        "wants": _SAID,
-        "price": _SAID,
+        "id": {**_SAID, "description": "The declared id of a member of this world's cast."},
+        # **A bare id, and the `pattern` is a measured correction rather than a precaution.**
+        # The first live forge under this schema returned three worlds, every one of which put
+        # a real declared id here and then an em-dash gloss after it — `one_cooling_history —
+        # the shape that gives a body one cooling history and one fringe order does not hold
+        # for him. He carries two…`. All three were refused by the gate for naming something
+        # that is neither a declared rule nor a declared shape, which is what a whole sentence
+        # normalises to. The field was asked for as "the id of the rule that does not hold for
+        # them", and the model supplied the id *and* the clause describing it; the description
+        # and the pattern now say which of the two this field is.
+        "exception": {
+            **_SAID,
+            "pattern": "^[a-z0-9_]+$",
+            "description": (
+                "AN ID AND NOTHING ELSE — one snake_case id, declared elsewhere in this world, "
+                "of the rule or cardinality shape that does not hold for this person. Write "
+                "`rule_seed_never_true`, never `rule_seed_never_true - the rule that ...`. No "
+                "dash, no gloss, no sentence: what the rule says is already written where the "
+                "rule is declared, and what the exception lets them do belongs in `edge`."
+            ),
+        },
+        "edge": {
+            **_SAID,
+            "description": (
+                "What that exception lets them do that nobody else can, written the way "
+                "`manifests_as` is written: how it shows on the page, never an explanation."
+            ),
+        },
+        "wants": {**_SAID, "description": "What this person is after."},
+        "price": {
+            **_SAID,
+            "description": "What the exception costs them, payable on the page.",
+        },
         "standing": _STANDING,
     },
 }
@@ -459,14 +517,17 @@ _RULES: tuple[str, ...] = (
     # the reader should like them, or that they win: an exception declared is a fact about the
     # world, and who wins is the book's. `tests/test_architect.py` checks the rule text for the
     # verbs an outcome instruction would have to use.
-    "Name one member of the cast as this world's `protagonist`: their declared id; the ONE "
-    "rule or cardinality shape of this world — by its id — that does not hold for them or "
-    "holds differently; the `edge` that exception gives them, written the way `manifests_as` "
-    "is written — how it shows on the page, never an explanation; what they want; and "
-    "the price the exception charges them, payable on the page. If the exception is a "
-    "cardinality shape, that shape lists their id in its `except`. Write the `premise` as that "
-    "person's situation — who they are, what is singular about them, what is in the way — "
-    "rather than as a description of the world, and name them in it.",
+    "Name one member of the cast as this world's `protagonist`. Choose the one rule or "
+    "cardinality shape this world declares that does not hold for them, or holds differently, "
+    "and put **its id alone** in `exception` — one snake_case word such as "
+    "`rule_seed_never_true`, with no dash and no clause after it. What that rule says is "
+    "already written where the rule is declared, and a sentence there is not an id. Then give "
+    "the `edge` that exception grants them, written the way `manifests_as` is written — how it "
+    "shows on the page, never an explanation; what they want; and the price the exception "
+    "charges them, payable on the page. If the exception is a cardinality shape, that shape "
+    "lists their id in its `except`. Write the `premise` as that person's situation — who they "
+    "are, what is singular about them, what is in the way — rather than as a description of "
+    "the world, and name them in it.",
     "Mysteries: each carries its ANSWER written down and the scene number where the reader "
     "learns it. A secret with no recorded answer is a debt the book can never pay. This world "
     "is an open-ended serial, so most answers land far out — but **at least one must be "
@@ -820,6 +881,18 @@ def _protagonist_complaints(candidate: Candidate) -> tuple[str, ...]:
             f"the protagonist's exception names {exception or '(nothing)'!r}, which is neither "
             "a declared rule nor a declared cardinality shape; an exception to nothing in "
             "particular is a description"
+        )
+    stated = {
+        _identifier(entry): _text(entry, "wants")
+        for entry in _items(candidate, "cast")
+        if _text(entry, "wants")
+    }
+    wants = _text(protagonist, "wants")
+    if subject in stated and wants and _fold(stated[subject]) != _fold(wants):
+        complaints.append(
+            f"{subject} wants {stated[subject]!r} as a cast member and {wants!r} as the "
+            "protagonist; one person wants one thing at a time, and the cast entry is the one "
+            "that reaches canon"
         )
     if subject and not premise_names_protagonist(candidate):
         complaints.append(
@@ -1488,11 +1561,31 @@ def records_for(
                     subject, worlds_mod.ENTITY_ROLE_PREDICATE, value="protagonist"
                 )
             )
+            # **`wants` is the cast entry's, and the protagonist's copy is a restatement.**
+            # `_ENTITY` already carries `wants` and the cast loop above has already written it,
+            # so emitting the protagonist's too puts two values in a single slot — which
+            # `state.contradiction.v1` reports as MAJOR and blocking, correctly, because a
+            # person wanting two different things at one position is a defect and not a set.
+            #
+            # Measured on the first book drafted on a world that declares one: the model wrote
+            # *"Fourth-grade material before Orin's throat-mark lapses in nine days."* on the
+            # protagonist and *"Fourth-grade material, in nine days, by any route."* on the cast
+            # entry — the same want in two wordings — and the book poisoned a scene over it.
+            # The cast entry wins because it is where the schema puts a want for everybody;
+            # `gate_candidate` complains when the two are both declared and differ, so the
+            # divergence is seen at forge time rather than at scene four.
+            declares_want = {
+                _identifier(entry)
+                for entry in _items(candidate, "cast")
+                if _text(entry, "wants")
+            }
             for key, predicate in (
                 ("edge", worlds_mod.EDGE_PREDICATE),
                 ("wants", "wants"),
                 ("price", worlds_mod.PRICE_PREDICATE),
             ):
+                if key == "wants" and subject in declares_want:
+                    continue
                 if _text(protagonist, key):
                     add(
                         worlds_mod.world_record(

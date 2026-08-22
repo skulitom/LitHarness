@@ -21,7 +21,6 @@ import pytest
 from litharness.adapters.sqlite_store import SqliteStore
 from litharness.application.outline import (
     BOOK_OUTLINE,
-    CAST_RULES,
     OUTLINE_PRIORITY,
     PROTAGONIST_RULES,
     OutlineOutputError,
@@ -185,16 +184,6 @@ def _eight_beats():  # type: ignore[no-untyped-def]
     return beats_for(new_book(BOOK_ID, BRANCH_ID, title="Book", scenes=8), arc_template(8))
 
 
-CAST = (
-    worlds.CastMember("marta", "the bursar, and his landlord", "", ()),
-    worlds.CastMember(
-        "silas",
-        "a junior clerk",
-        "to be read once by someone who matters",
-        ("silas owes nine months of rent (marta)",),
-    ),
-)
-
 PROTAGONIST = worlds.Protagonist(
     "silas",
     "provenance",
@@ -217,28 +206,20 @@ def test_a_book_whose_canon_declares_nobody_renders_the_bytes_it_always_did() ->
     beats = _eight_beats()
     absent = render_outline_request(PREMISE, beats, base=_bare_base())
     empty = render_outline_request(
-        PREMISE, beats, base=_bare_base(), cast=(), protagonist=None
+        PREMISE, beats, base=_bare_base(), world=None, protagonist=None
     )
     assert empty == absent
-    assert "cast" not in json.loads(absent.prompt)
     assert "protagonist" not in json.loads(absent.prompt)
 
 
-def test_the_declared_people_reach_the_request_as_the_packet_phrases_them() -> None:
-    """Sentences rather than ids (§107.3), and the ties between people with them.
-
-    A cast whose ties live only in the world JSON is a cast the planner cannot use: it can put
-    two people in a room and has no reason to.
-    """
+def test_the_protagonist_reaches_the_request_as_canon_declared_them() -> None:
+    """**The one thing the world brief cannot say.** `world_brief.brief_for` renders every
+    declared person under `cast`, in the packet's own phrasing (§107.3); what a flat list of
+    people cannot carry is which of them the book is about."""
     request = render_outline_request(
-        PREMISE, _eight_beats(), base=_bare_base(), cast=CAST, protagonist=PROTAGONIST
+        PREMISE, _eight_beats(), base=_bare_base(), protagonist=PROTAGONIST
     )
     body = json.loads(request.prompt)
-    assert [entry["id"] for entry in body["cast"]] == ["marta", "silas"]
-    assert body["cast"][1]["wants"] == "to be read once by someone who matters"
-    assert body["cast"][1]["relationships"] == ["silas owes nine months of rent (marta)"]
-    # A member with no want and no ties carries neither key rather than two empty ones.
-    assert body["cast"][0] == {"id": "marta", "is_a": "the bursar, and his landlord"}
     assert body["protagonist"] == {
         "id": "silas",
         "exception": "provenance",
@@ -249,21 +230,18 @@ def test_the_declared_people_reach_the_request_as_the_packet_phrases_them() -> N
 
 
 def test_the_rules_arrive_only_with_the_thing_they_are_about() -> None:
-    """A rule about a cast in a request with no cast is an instruction to obey nothing."""
+    """A rule about a protagonist in a request with none is an instruction to obey nothing."""
     beats = _eight_beats()
-    cast_only = json.loads(
-        render_outline_request(PREMISE, beats, base=_bare_base(), cast=CAST).prompt
-    )
-    assert any("listed in cast" in rule for rule in cast_only["rules"])
-    assert not any("protagonist is" in rule for rule in cast_only["rules"])
+    bare = json.loads(render_outline_request(PREMISE, beats, base=_bare_base()).prompt)
+    assert not any("protagonist is" in rule for rule in bare["rules"])
 
-    both = json.loads(
+    named = json.loads(
         render_outline_request(
-            PREMISE, beats, base=_bare_base(), cast=CAST, protagonist=PROTAGONIST
+            PREMISE, beats, base=_bare_base(), protagonist=PROTAGONIST
         ).prompt
     )
-    assert any("The protagonist is silas." in rule for rule in both["rules"])
-    assert any("what silas does in that scene" in rule for rule in both["rules"])
+    assert any("The protagonist is silas." in rule for rule in named["rules"])
+    assert any("what silas does in that scene" in rule for rule in named["rules"])
 
 
 def test_the_protagonist_rules_name_a_person_and_never_an_outcome() -> None:
@@ -278,7 +256,7 @@ def test_the_protagonist_rules_name_a_person_and_never_an_outcome() -> None:
     `test_the_chapter_cue_carries_no_verb_and_no_adjective`.
     """
     rendered = " ".join(
-        [*CAST_RULES, *(rule.format(subject="silas") for rule in PROTAGONIST_RULES)]
+        rule.format(subject="silas") for rule in PROTAGONIST_RULES
     ).lower()
     for forbidden in (
         "win", "hero", "likeable", "likable", "sympathetic", "root for", "faster",
@@ -288,12 +266,12 @@ def test_the_protagonist_rules_name_a_person_and_never_an_outcome() -> None:
         assert forbidden not in rendered, forbidden
 
 
-def test_the_handler_reads_the_people_off_the_canon_it_already_read(
+def test_the_handler_reads_the_protagonist_off_the_canon_it_already_read(
     store: SqliteStore,
 ) -> None:
     """One query, not two. The drafting side's habit of calling `state_records` three times in
     one render is the pattern this deliberately does not copy — and a second read is a second
-    answer to one question."""
+    answer to one question. The same `canon` feeds `world_brief.brief_for`."""
     a_book(store, scenes=12)
     store.record_state_records(
         BOOK_ID,
@@ -321,7 +299,8 @@ def test_the_handler_reads_the_people_off_the_canon_it_already_read(
     [request] = planner.requests
     body = json.loads(request.prompt)
     assert body["protagonist"]["id"] == "silas"
-    assert body["cast"] == [{"id": "silas", "is_a": "a junior clerk"}]
+    # And the same canon reached the world brief, which is where the people are now rendered.
+    assert "silas" in json.dumps(body["world"], ensure_ascii=False)
 
 
 def test_a_tick_over_an_already_outlined_book_mints_no_second_job(

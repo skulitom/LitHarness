@@ -17,15 +17,10 @@ only behaviour that sits on either side of them is.
 
 from __future__ import annotations
 
-import sys
 from collections import Counter
-from pathlib import Path
 from typing import Any
 
 import pytest
-
-RESEARCH = Path(__file__).resolve().parents[1] / "research" / "quality-measurement"
-sys.path.insert(0, str(RESEARCH))
 
 promise_kinds = pytest.importorskip(
     "promise_kinds",

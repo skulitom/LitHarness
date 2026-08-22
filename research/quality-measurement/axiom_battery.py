@@ -91,7 +91,7 @@ from collections import Counter
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
@@ -422,7 +422,7 @@ def cycles_in(tournament: dict[tuple[int, int], int | None], nodes: int) -> tupl
         determined += 1
         # Edges are (a<b), (a<c), (b<c) with +1 meaning "the higher-indexed rung wins".
         ab, ac, bc = edges
-        wins = Counter()
+        wins: Counter[int] = Counter()
         wins[triple[1] if ab == 1 else triple[0]] += 1
         wins[triple[2] if ac == 1 else triple[0]] += 1
         wins[triple[2] if bc == 1 else triple[1]] += 1
@@ -607,50 +607,50 @@ def _oracles() -> dict[str, Callable[[Pair, str, int, int], str]]:
     def rng_for(pair: Pair, persona: str, sample: int, orientation: int) -> random.Random:
         return random.Random(int(digest([pair.pair_id, persona, sample, orientation])[:8], 16))
 
-    def perfect(pair, persona, sample, orientation):
+    def perfect(pair: Pair, persona: str, sample: int, orientation: int) -> str:
         if pair.left_dose == pair.right_dose:
             return "neither"
         return _side(pair, orientation, pair.right_dose < pair.left_dose)
 
-    def coin(pair, persona, sample, orientation):
+    def coin(pair: Pair, persona: str, sample: int, orientation: int) -> str:
         return rng_for(pair, persona, sample, orientation).choice(("A", "B", "neither"))
 
-    def position(pair, persona, sample, orientation):
+    def position(pair: Pair, persona: str, sample: int, orientation: int) -> str:
         return "A"
 
-    def always_tie(pair, persona, sample, orientation):
+    def always_tie(pair: Pair, persona: str, sample: int, orientation: int) -> str:
         return "neither"
 
-    def damage_seeker(pair, persona, sample, orientation):
+    def damage_seeker(pair: Pair, persona: str, sample: int, orientation: int) -> str:
         if pair.left_dose == pair.right_dose:
             return "neither"
         return _side(pair, orientation, pair.right_dose > pair.left_dose)
 
-    def verbose(pair, persona, sample, orientation):
+    def verbose(pair: Pair, persona: str, sample: int, orientation: int) -> str:
         if len(pair.left) == len(pair.right):
             return perfect(pair, persona, sample, orientation)
         return _side(pair, orientation, len(pair.right) > len(pair.left))
 
-    def cyclic(pair, persona, sample, orientation):
+    def cyclic(pair: Pair, persona: str, sample: int, orientation: int) -> str:
         if pair.left_dose == pair.right_dose:
             return "neither"
         rungs = list(LADDER_DOSES)
         low, high = rungs.index(pair.left_dose), rungs.index(pair.right_dose)
         return _side(pair, orientation, (high - low) % len(rungs) == 1)
 
-    def wording(pair, persona, sample, orientation):
+    def wording(pair: Pair, persona: str, sample: int, orientation: int) -> str:
         answer = perfect(pair, persona, sample, orientation)
         if pair.question == PARAPHRASE_QUESTION and answer in ("A", "B"):
             return "B" if answer == "A" else "A"
         return answer
 
-    def noisy(pair, persona, sample, orientation):
+    def noisy(pair: Pair, persona: str, sample: int, orientation: int) -> str:
         draw = rng_for(pair, persona, sample, orientation)
         if draw.random() < 0.2:
             return perfect(pair, persona, sample, orientation)
         return draw.choice(("A", "B", "neither"))
 
-    def unseparable_forced(pair, persona, sample, orientation):
+    def unseparable_forced(pair: Pair, persona: str, sample: int, orientation: int) -> str:
         """Correct wherever a difference exists, and manufactures a choice where none does.
 
         This is not a strawman: it is §83's measured failure, where near-twin pairs drove the
@@ -686,7 +686,7 @@ class Battery:
         comparisons = self.by_arm(arm)
         scored = _scored(comparisons)
         ties = tie_rate(comparisons)
-        bias = positional_bias(comparisons)
+        bias: dict[str, Any] = positional_bias(comparisons)
         chose_a = bias.get("chose_A_rate", float("nan"))
         decided = bias.get("decided", 0)
         band_ok = decided == 0 or BIAS_BAND[0] <= float(chose_a) <= BIAS_BAND[1]
@@ -794,8 +794,8 @@ class Battery:
                     comparison)
             for group in cells.values():
                 if len(group) >= 2:
-                    modal = Counter(c.choice for c in group).most_common(1)[0][1]
-                    within.append(modal / len(group))
+                    modal: object = Counter(c.choice for c in group).most_common(1)[0][1]
+                    within.append(cast(int, modal) / len(group))  # most_common's count is int
             for comparison in _scored(alt):
                 twin = [c for c in _scored(base)
                         if c.persona_id == comparison.persona_id
@@ -858,9 +858,9 @@ class Battery:
 
     # -- A6 ----------------------------------------------------------------
     def position(self) -> dict[str, Any]:
-        arms = {}
+        arms: dict[str, dict[str, Any]] = {}
         for arm in sorted({pair.arm for pair in self.pairs}):
-            bias = positional_bias(self.by_arm(arm))
+            bias: dict[str, Any] = positional_bias(self.by_arm(arm))
             chose_a = bias.get("chose_A_rate", float("nan"))
             in_band = bool(bias.get("decided", 0)) and (
                 BIAS_BAND[0] <= float(chose_a) <= BIAS_BAND[1])
@@ -1000,8 +1000,8 @@ def operating_characteristic(pairs: list[Pair], *, draws: int = 120) -> dict[str
     rows: dict[str, Any] = {}
     for label, params in OC_SCENARIOS:
         rng = random.Random(int(digest(["oc", label])[:8], 16))
-        counts = {"as_registered": Counter(), "corrected": Counter()}
-        per_axiom: Counter = Counter()
+        counts: dict[str, Counter[str]] = {"as_registered": Counter(), "corrected": Counter()}
+        per_axiom: Counter[str] = Counter()
         for _ in range(draws):
             verdict = _good_judge_run(pairs, rng, **params).verdict()
             for reading in counts:

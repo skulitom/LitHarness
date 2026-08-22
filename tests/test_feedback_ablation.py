@@ -9,14 +9,7 @@ arms are still four.
 
 from __future__ import annotations
 
-import sys
-from pathlib import Path
-
-RESEARCH = Path(__file__).parents[1] / "research" / "quality-measurement"
-if str(RESEARCH) not in sys.path:
-    sys.path.insert(0, str(RESEARCH))
-
-import feedback_ablation as ablation  # noqa: E402
+import feedback_ablation as ablation
 
 
 def test_the_ablation_selftest_passes() -> None:

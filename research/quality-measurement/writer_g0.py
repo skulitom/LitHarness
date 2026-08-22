@@ -24,7 +24,7 @@ import argparse
 import json
 import sys
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
@@ -80,13 +80,15 @@ def _beat() -> Beat:
 
 
 def _render(writer: writers.Writer | None) -> tuple[str, str]:
-    return render_prompt(
+    # mypy cannot follow the editable install's path hook for `litharness`; the real signature
+    # in `application/planner.py` already guarantees this return type.
+    return cast("tuple[str, str]", render_prompt(
         _beat(),
         book_title="Test Book",
         packet=_packet(),
         target_words=900,
         writer=writer,
-    )
+    ))
 
 
 def run() -> dict[str, Any]:
@@ -106,7 +108,7 @@ def run() -> dict[str, Any]:
 
     # 2. Different writers differ; the same writer repeats. The byte-identity floor §89.1 earned.
     systems = {name: system for name, (system, _) in rendered.items()}
-    distinct_pairs = len({s for s in systems.values()}) == len(systems)
+    distinct_pairs = len(set(systems.values())) == len(systems)
     repeats = all(_render(w)[0] == systems[name] for name, w in roster.items())
 
     # 3. The dossier is nowhere in the prompt, which is where the packet lives. §3.2's boundary

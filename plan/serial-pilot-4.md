@@ -1,9 +1,11 @@
 # Serial Pilot 4 — the same two chapters, on a world that says whose book it is
 
-**Status: PRE-REGISTERED, 2026-08-22. NOT RUN.** Companion to
+**Status: PRE-REGISTERED 2026-08-22; three forges run ($4.57), three gate-clear worlds on disk,
+nothing picked, no book drafted.** Companion to
 [`plan/serial-pilot-2.md`](serial-pilot-2.md) and [`plan/serial-pilot-3`'s record](reader-read-3.md);
 the design record is [`plan/world-architect.md`](world-architect.md) and the decision record is
-stage-0 §111. §4 was written **before any paid call**; §5 and §6 are empty until the run happens.
+stage-0 §112. §4 was written **before any paid call**; §5 records what has been bought so far and
+§6 is empty until a book is drafted.
 
 ## 0. What this pilot is for, and the one thing it may not be read as
 
@@ -64,7 +66,7 @@ book renders today's outline request and today's drafting prompt byte-for-byte.
 | Architect | `protagonist` as a second `entity_role`; `edge`, `wants`, `exception_to` (edge), `price` as records | `test_the_protagonist_reaches_canon_as_records_and_not_as_a_field` |
 | worlds | `CardinalityShape.except_subjects`, `in_scope` returns `False` for an excepted subject | `test_the_excepted_subject_is_the_one_the_maximum_does_not_bind` |
 | integrity | the declared exception reaches the wired detector | `test_the_declared_exception_reaches_the_live_detector_and_binds_nobody_else` |
-| outline | `cast` and `protagonist` inputs; two rules, added only when the inputs are present | `test_a_book_whose_canon_declares_nobody_renders_the_bytes_it_always_did` |
+| outline | a `protagonist` input beside §111's `world` brief; one rule, added only when it is present | `test_a_book_whose_canon_declares_nobody_renders_the_bytes_it_always_did` |
 | planner | `pov_character_id` threaded to the one production `packet_for`; `Point of view: {id}.` in the beat line | `test_the_prompt_is_byte_identical_when_canon_names_no_protagonist` |
 
 ## 3. Standing it up
@@ -154,8 +156,241 @@ done here and no part of this package depends on it.
 
 ## 5. The run
 
-**NOT RUN.** Nothing has been forged, picked, stood up or drafted for this pilot. No `pilot4/`
-directory and no `serial4.db` exist.
+### 5.1 Forge 1 — P1 answered (ii): the rule text, not the model
+
+`dec-f80cd6fdf39aa99335f23213`, `arch-d425316522615ff9fa369e68`, 2026-08-22.
+`litharness --database pilot4/forge.db forge "progression fantasy" --k 3 --shape direct
+--out pilot4/direct1 --scenes 8`. **96,533 tokens, $1.45, `claude_code` / `claude-opus-5`.**
+
+| | [0] *Cut Once* | [1] *The Ghost Bitting* | [2] *The Bearing Year* |
+|---|---|---|---|
+| real domain | glassworking — annealing and residual stress | locksmithing — master-keyed pin systems | pomology — grafting and rootstock |
+| geometry | threshold | graph | cycle |
+| records / edges | 287 / 87 | 311 / 96 | 317 / 99 |
+| rules, min consequence domains | 5 at 3 | 5 at 3 | 6 at 3 |
+| manifestation coverage | 1.00 | 1.00 | 1.00 |
+| answered claims | 25 | 26 | 27 |
+| cardinality shapes | 2 | 3 | 3 |
+| `protagonist_declared` | ✔ | ✔ | ✔ |
+| `exception_declared` | ✔ | ✔ | ✔ |
+| `premise_names_protagonist` | ✔ | ✔ | ✔ |
+| protagonist id is a declared cast id | ✔ | ✔ | ✔ |
+| gate complaints | **1** | **1** | **1** |
+
+**within-forge spread 0.9158**, against pilot 2's 0.93 and pilot 3's 0.8959. **The stop condition
+does not fire**: the new rule did not collapse the forge, and on this one measurement it sat
+between the two prior forges rather than below either.
+
+**Clear of every gate: 0 of 3, and all three failed the same way.** Each candidate put a real
+declared id in `exception` and then glossed it in the same field:
+
+| protagonist | `exception` as returned | leading token | is it declared? |
+|---|---|---|---|
+| `wick_haldrey` | `one_cooling_history — the shape that gives a body one cooling history and one fringe order does not hold for him. He carries two…` | `one_cooling_history` | yes, a declared cardinality shape |
+| `corrin_vane` | `one_key_per_name — the shape that gives one person one key does not hold for her. She carries an issued blank and a ghost bitting…` | `one_key_per_name` | yes, a declared cardinality shape |
+| `sabel_quist` | `rule_family_or_black — the rule that a cutting takes only between kin-families, and blackens and casts off otherwise, does not hold for her…` | `rule_family_or_black` | yes, a declared rule |
+
+`worlds.normalise_id` turns each of those sentences into one long snake_case token that names
+nothing, so `gate_candidate` reported *"an exception to nothing in particular is a description"*
+three times out of three. **This is P1's outcome (ii) exactly as registered — a failure of the
+rule text and not of the model** — and the registered response is to rewrite the ask before
+anything is picked.
+
+**Why the ask was wrong.** It read *"the ONE rule or cardinality shape of this world — by its id —
+that does not hold for them or holds differently"*. That is a sentence describing **which** thing
+to select, and the model wrote the description into the field along with the id. Nothing told it
+that `exception` holds an id and not an account of one. The fix separates the two: the selection
+criterion stays in the rule, the field gets `pattern: ^[a-z0-9_]+$` and a description that says
+*AN ID AND NOTHING ELSE*, with the failing form spelled out as the counter-example.
+
+**Nothing was picked and nothing was renamed.** The forge stands on the record as it ran;
+`pilot4/direct1/forge.json` is its artefact, and this table is the pre-fix number kept beside the
+post-fix one, which is the discipline §107.9.1 records for a counter and applies here to a prompt.
+
+### 5.2 Forge 2 — the protagonist half passes 3 of 3, and something else stubs out
+
+`arch-d425316522615ff9fa369e68`, 2026-08-22, same command with `--out pilot4/direct2`, run against
+the corrected ask at `ac2ccde`. **93,783 tokens, $1.38.**
+
+**The correction worked, and this is the measurement of it.** Every candidate put a bare declared
+id in `exception`, with no gloss and no dash, and no candidate drew the complaint all three drew
+in forge 1:
+
+| protagonist | `exception` | what it names |
+|---|---|---|
+| `vess_almadry` | `rule_every_gain_is_debited` | a declared rule |
+| `oree_valland` | `rule_one_ancestor_per_word` | a declared rule |
+| `nias_orrel` | `card_one_bond_per_person` | a declared **cardinality shape** — the case that exercises the `excepts` derivation |
+
+**within-forge spread 0.9182**, the highest of the three forges taken under this brief (pilot 3:
+0.8959; forge 1: 0.9158). Real domains: municipal water engineering, historical linguistics,
+quantitative genetics — none of them forged in pilots 2 or 3.
+
+**And still 0 of 3 clear of every gate, for an unrelated reason.** Each world emitted, inside one
+system's `rules` array, a **consequence object where a rule belongs**, filled with the literal
+word `placeholder`:
+
+```json
+"rules": [
+  { "id": "rule_bright_dies_by_the_hour", "rule": "…", "manifests_as": "…" },
+  { "domain": "placeholder", "consequence": "placeholder" }
+]
+```
+
+`_RULE` declares `additionalProperties: false` and requires all four fields, so that entry
+violates the schema; `providers/base.parse_schema_payload` is shallow by design and never descends
+into `worlds[].systems[].rules[]`, so it survived parsing. The damage is contained and the gate is
+what contained it: `records_for` skips a rule with no id, so nothing entered the records, and the
+gate reported the rule that lost its consequences *and* the orphan entry — two complaints, one
+defect. Each world still declared four to six complete rules at four consequences apiece across
+four distinct domains, manifestation coverage 1.00, and 26 to 30 answered claims.
+
+Nothing was picked: the recorded rule is *the first candidate clear of **every** gate*, and none
+is. Changing that rule now, with the candidates in view, is what the pre-registration exists to
+prevent.
+
+**Two things this forge is evidence about, and one it is not.** It is evidence that the corrected
+ask produces bare ids (3 of 3, against 0 of 3 before) and that the new rule does not collapse the
+forge (0.9182). It is **not** evidence about how often a world stubs a rule out: two forges is two
+draws, the defect appeared in one of them, and the honest reading is that this is the first time
+this project has seen it.
+
+**Noted, not fixed.** The gate prints `rule ?` for an entry with no id, which is accurate and
+undiagnosable — the reader cannot tell from it that a consequence was emitted one level too high.
+A message that named the shape would have made this five minutes rather than twenty. Out of scope
+here; it is the gate working, not the gate failing.
+
+**A hypothesis, recorded before the next forge so it cannot be fitted afterwards.** The corrected
+ask made the schema *longer* — five field descriptions and a pattern, ~600 characters of new
+instruction text, which `providers/cli.py` serialises into the prompt. Forge 1 ran under the short
+schema and stubbed nothing; forge 2 ran under the long one and stubbed one rule in every world.
+That is one draw against one draw and it is **not** evidence; it is written down now so that a
+third forge is a test of it rather than a rationalisation after the fact. If forge 3 stubs under
+the same schema, shortening the descriptions is the first thing to try; if it does not, the
+hypothesis is dead and forge 2 was variance.
+
+### 5.3 Forge 3 — 3 of 3 clear, and the hypothesis §5.2 registered is dead
+
+`dec-25c58304a408437ec81d74a3`, 2026-08-22, `--out pilot4/direct3`, same corrected ask.
+**$1.75.** **3 of 3 clear of every gate**, within-forge spread **0.9169**.
+
+| | (`--pick 1`) *The Ninth Order* | (`--pick 2`) *Calling the River* | (`--pick 3`) *A Good Take* |
+|---|---|---|---|
+| real domain | land surveying and geodesy | water law and hydrology, arid basin | immunology — graded inoculation |
+| geometry | graph | chain | cycle |
+| records / edges | 296 / 91 | 305 / 91 | 293 / 88 |
+| rules at min domains | 5 at 3 | 5 at 3 | 5 at 3 |
+| manifestation | 1.00 | 1.00 | 1.00 |
+| answered claims | 25 | 29 | 26 |
+| protagonist | `sabel_ruck` | `cass_odom` | `nella_scur` |
+| `exception` names | `rule_every_loop_must_be_adjusted` (a declared **rule**) | `card_one_holder_per_date` (a declared **shape**) | `card_one_ladder_per_person` (a declared **shape**) |
+| gate complaints | **0** | **0** | **0** |
+
+**The §5.2 hypothesis is refuted, and it was written down before this draw.** Forge 3 ran under
+the identical long schema and stubbed nothing in any of three worlds. So the `placeholder` rule
+entries in forge 2 were variance, not pressure from the added descriptions, and the descriptions
+stay. One draw does not make the rate small — it makes the mechanism *not* the schema.
+
+**Two of three exceptions name a cardinality shape**, which is the case that exercises the
+`excepts` derivation `records_for` performs: declaring the protagonist the exception to a shape is
+what puts them out of `in_scope` and keeps the maximum binding on everybody else.
+
+### 5.4 The pick is blocked on a reading of the pick rule, not on a gate
+
+**The recorded rule:** *the first candidate clear of every gate whose real domain was not forged in
+pilots 2 or 3 — that is, not water law, not transplant immunology, not land surveying, not
+horticultural grafting.* Checked against what is on disk rather than from memory:
+
+| forged before | where |
+|---|---|
+| Western water law and hydrology | pilot 2, picked (*First In Time*) |
+| prior-appropriation water law and irrigation hydrology | pilot 3 candidate 1 (*Senior Water*) |
+| horticultural grafting and rootstock science | pilot 3, picked (*What Takes*) |
+| land surveying and geodesy | pilot 3 candidate 3 (*The Closing Error*) |
+
+So *The Ninth Order* (land surveying and geodesy — the same words as *The Closing Error*) and
+*Calling the River* (water law in an arid basin — pilot 2's domain) are both excluded outright.
+**The rule turns on one word for the third.** It excluded *transplant* immunology; *A Good Take*
+literalises **graded inoculation** — dose-response, the interval between too little and too much,
+waning tolerance, asymptomatic carriage. Graft rejection and dose-response tolerance are different
+mechanisms inside one field. Under the rule read literally, *A Good Take* qualifies and is the
+pick; under the rule read as *a field this project has not already forged in*, nothing qualifies.
+
+**That was not resolved here, and it was not resolved by this session.** `forge --pick` is
+`VerdictSource.HUMAN` and [`plan/world-architect.md`](world-architect.md) §2 says the forge stops
+and a person chooses; a rule reinterpreted with the candidates already in view is the thing the
+pre-registration exists to prevent. The three worlds were put to the operator with the ambiguity
+named, and **the operator picked *A Good Take*** — `dec-7f3ea41cdb149f2bb0b4bb80`,
+`--pick 3`, 2026-08-22. That resolves *transplant immunology* to the literal reading: graft
+rejection and dose-response tolerance are different mechanisms and only the first was forged
+before. The rule stands as written; a person applied it where it needed a person.
+
+### 5.5 The world as canon, and the two defects the first book found
+
+`A Good Take`, immunology and graded inoculation, cycle geometry. **293 records, validator
+clean**, six cast, five forged directives, six seeded promises. The hook is the operator's own
+template, forged rather than authored:
+
+| | |
+|---|---|
+| protagonist | `nella_scur`, roles `('cast', 'protagonist')` |
+| exception | `card_one_ladder_per_person`, a declared **cardinality shape** |
+| the shape, as canon holds it | `at most 1 graded_on_ladder per subject, scope=cast, except=('nella_scur',)` |
+| edge | a shoulder that reads as three ladders at once; every matcher who puts a glass on it sets the glass face-down before asking anything |
+| price | no schedule — she learns she is due by bleeding onto her hand in a doorway, and has to decide in that scene whether to spend a dose she may not need and cannot replace |
+
+The `excepts` derivation fired end to end: the world declared her the exception to a shape, and
+`records_for` wrote the edge from the shape's end, so the maximum binds on the other five cast
+members and not on her.
+
+**Setup and phase 1.** `serial-pilot-2-setup.ps1 -Forge pilot4/direct3 -Scenes 8 -Database
+serial4.db -Craft plan/serial-pilot-4-craft.json` — 11 directives accepted (5 forged + 6 craft),
+no prose, no provider call. Then 26 ticks of direction. **8 calls, 470,972 tokens, $3.15**;
+20 jobs succeeded, `context_omitted = 0`, the outline covered 8 of 8 scenes, 24 plan items with
+15 locked.
+
+**And the early gate refused the book, on two findings that are the same defect and both of them
+this branch's.** A protagonist is a *second* `entity_role` on a cast member, and
+`state.contradiction.v1` reads a subject holding two values for one predicate at one position as
+MAJOR and blocking:
+
+```
+nella_scur entity_role holds 2 different values at (unplaced): "cast", "protagonist"
+nella_scur wants holds 2 different values: "Fourth-grade material before Orin's
+    throat-mark lapses in nine days.", "Fourth-grade material, in nine days, by any route."
+```
+
+One scene parked, one poisoned, two of eight blocked — **before a word of prose was judged**.
+
+**The first is older than this branch and this branch is what tripped it.**
+`worlds.entity_roles` returns roles *plural* and says why in its own docstring — the System is an
+`agency` and a `system`, a guild is an `institution` and, when it acts, `cast`. No world had ever
+happened to give one subject two roles, so nothing exercised it. `integrity.MULTI_VALUED` now
+names `entity_role` as a set rather than a slot, and it is deliberately a named set of one: a
+heuristic that guessed which disagreements are allowed would be the frozen arity table
+`detect_cardinality_violations` refuses.
+
+**The second is a genuine single slot and the fix is the other way.** `_ENTITY` carries `wants`
+for everybody and `_PROTAGONIST` restates it, so a world can say it twice — and this one said it
+twice in two wordings. Canon now takes the cast entry's and drops the protagonist's copy, and
+`gate_candidate` complains when both are declared and differ, so the divergence is seen at forge
+time rather than at scene four.
+
+**What let this reach a paid run.** No test ran a detector over a world that declares a
+protagonist. The suite had `run_detectors` over a planted cardinality violation and
+`protagonist_brief` over a peopled world, and never the two together. Two tests now do, and both
+fail on the code that shipped this morning:
+`tests/test_integrity.py::test_a_subject_that_is_two_things_at_once_is_not_contradicting_itself`
+and `tests/test_architect.py::test_a_declared_protagonist_does_not_poison_its_own_book`, the
+second of which runs the whole wired ladder over `records_for`'s output and asserts silence.
+
+**A finding the pick question exposed, worth more than the pick.** Of nine candidates forged from
+`"progression fantasy"` across pilots 3 and 4, **water law appears three times, land surveying
+twice, and the graft/immunology family twice.** The brief is the same string every time and the
+forge keeps landing in the same few real domains. `plan/handoff-protagonist.md` names cross-forge
+collapse as out of scope here and it is left alone — but the collapse gate is *within*-forge only,
+so nothing in the machinery would ever have said this out loud, and it is said here so that the
+next person to read a `spread` of 0.92 knows what that number does not cover.
 
 ## 6. The run record
 

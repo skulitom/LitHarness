@@ -1652,13 +1652,12 @@ class SqliteStore:
         return True
 
     def audit_counts(self) -> dict[str, int]:
-        counts = {
+        return {
             row["verdict"] or "pending": int(row["n"])
             for row in self._connection.execute(
                 "SELECT verdict, COUNT(*) AS n FROM audit_samples GROUP BY verdict"
             )
         }
-        return counts
 
     # -- the pairwise preference engine (§61) --------------------------------
 

@@ -1020,26 +1020,6 @@ def _cardinality_parts(records: Sequence[lc.StateRecord]) -> dict[str, set[str]]
 
 
 @dataclass(frozen=True, slots=True)
-class CastMember:
-    """One declared person, in the words the packet would use for them."""
-
-    subject: str
-    is_a: str
-    wants: str
-    #: This subject's outgoing ties, each phrased the way `context._state_item` phrases a
-    #: record: the projection first, `state.describe` as the fallback.
-    relationships: tuple[str, ...]
-
-    def to_jsonable(self) -> dict[str, object]:
-        return {
-            "id": self.subject,
-            **({"is_a": self.is_a} if self.is_a else {}),
-            **({"wants": self.wants} if self.wants else {}),
-            **({"relationships": list(self.relationships)} if self.relationships else {}),
-        }
-
-
-@dataclass(frozen=True, slots=True)
 class Protagonist:
     """The one member of the cast this book is about, as canon declares them."""
 
@@ -1057,72 +1037,6 @@ class Protagonist:
             **({"wants": self.wants} if self.wants else {}),
             **({"price": self.price} if self.price else {}),
         }
-
-
-#: **A tie is an edge to somebody the world declared, and nothing else.** A cast member's edges
-#: also point at *claims* — `believes` at a false belief, `keeps_secret` at a secret — and those
-#: are the iceberg's bookkeeping rather than the cast's ties. Filtering by "does the target carry
-#: an entity role" rather than by a list of allowed predicates keeps the filter honest in both
-#: directions: a world coins its own relation names, so an allow-list of predicates would be the
-#: arity table `detect_cardinality_violations` refuses, and a claim id can never satisfy it.
-#:
-#: It is also the leak-safe direction. A secret's *content* is never in one of these lines —
-#: `state.describe` renders the id — but a planner handed "keeps_secret (x_secret)" for every
-#: person is being handed the shape of what it is not allowed to plan against.
-_CAST_TIE_TARGET_ROLES = frozenset(ENTITY_ROLES)
-
-
-def cast_brief(records: Sequence[lc.StateRecord]) -> tuple[CastMember, ...]:
-    """The declared cast, for a planner that would otherwise invent one. Empty when none exists.
-
-    **The people, which is the half of a world that never reached the plan.** The world reaches
-    the *writer*: on Serial Pilot 3 the drafting packet carried 328 established facts with
-    `context_omitted = 0`. The scene plan the writer was told to execute was written by a model
-    that had been handed the premise and the beat sheet, so it invented a protagonist and every
-    other named person, and none of the five forged cast members appeared in either chapter
-    (`plan/reader-read-3.md` note 1).
-
-    **Phrased the way the packet phrases it, and by the same two steps**, so a planner and a
-    writer never see one fact in two wordings: `project` first, `state.describe` as the fallback
-    (§107.3, `context._state_item`). `is_a` and `wants` carry their values plainly, because the
-    field name already says what the flat rendering would repeat.
-
-    Canon only, and ordered by subject id so the same world always renders the same bytes.
-    """
-    canon = _canon(records)
-    subjects = entities_with_role(canon, "cast")
-    if not subjects:
-        return ()
-    projection = project(canon)
-    roles = entity_roles(canon)
-    wanted = set(subjects)
-    by_subject: dict[str, list[lc.StateRecord]] = {}
-    for record in canon:
-        if record.subject in wanted:
-            by_subject.setdefault(record.subject, []).append(record)
-    out: list[CastMember] = []
-    for subject in subjects:
-        rows = by_subject.get(subject, [])
-        attribute = {
-            record.predicate: str(record.value or "").strip()
-            for record in rows
-            if record.object_ref is None
-        }
-        ties = tuple(
-            projection.get(record.record_id) or state_mod.describe(record)
-            for record in rows
-            if record.object_ref
-            and set(roles.get(record.object_ref, ())) & _CAST_TIE_TARGET_ROLES
-        )
-        out.append(
-            CastMember(
-                subject,
-                attribute.get("is_a", ""),
-                attribute.get("wants", ""),
-                tuple(sorted({tie for tie in ties if tie})),
-            )
-        )
-    return tuple(out)
 
 
 def protagonist_brief(records: Sequence[lc.StateRecord]) -> Protagonist | None:
@@ -1603,13 +1517,11 @@ __all__ = [
     "VIEW_WITHHOLDS",
     "WORLD_RULE_PREDICATE",
     "CardinalityShape",
-    "CastMember",
     "Coverage",
     "IllegalWorld",
     "Protagonist",
     "architect_id_for",
     "cardinality_shapes",
-    "cast_brief",
     "claims",
     "consequence_domains",
     "criteria",

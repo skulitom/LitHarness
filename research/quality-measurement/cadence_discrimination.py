@@ -190,6 +190,13 @@ def place(span: str, fractions: tuple[float, ...]) -> str:
     blocks = ablate.paragraphs(span)
     if not blocks:
         return span
+    wanted = len(fractions[:INSERTS])
+    if len(blocks) + 1 < wanted:
+        raise ValueError(
+            f"{wanted} inserts need {wanted} distinct paragraph boundaries, but this "
+            f"span has only {len(blocks)} paragraphs ({len(blocks) + 1} boundaries); "
+            "sharing a boundary would make the variant differ from its own declaration"
+        )
     taken: set[int] = set()
     positions: list[int] = []
     for fraction in fractions[:INSERTS]:
@@ -252,12 +259,16 @@ def certify(spans_: list[str]) -> list[str]:
     """
     faults: list[str] = []
     for index, span in enumerate(spans_):
-        variants = {name: place(span, fractions) for name, fractions in CADENCES.items()}
+        try:
+            variants = {name: place(span, fractions) for name, fractions in CADENCES.items()}
+        except ValueError as error:
+            faults.append(f"span {index}: {error}")
+            continue
         words = {name: sorted(text.split()) for name, text in variants.items()}
         first = next(iter(words.values()))
         if any(other != first for other in words.values()):
             faults.append(f"span {index}: the variants do not carry identical words")
-        if len({text for text in variants.values()}) != len(variants):
+        if len(set(variants.values())) != len(variants):
             faults.append(f"span {index}: two cadence variants are byte-identical")
         for name, text in variants.items():
             if sum(text.count(payoff) for payoff in PAYOFFS) != INSERTS:

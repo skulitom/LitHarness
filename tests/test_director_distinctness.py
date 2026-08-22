@@ -8,14 +8,7 @@ meet it.
 
 from __future__ import annotations
 
-import sys
-from pathlib import Path
-
-RESEARCH = Path(__file__).parents[1] / "research" / "quality-measurement"
-if str(RESEARCH) not in sys.path:
-    sys.path.insert(0, str(RESEARCH))
-
-import director_distinctness as harness  # noqa: E402
+import director_distinctness as harness
 
 
 def test_the_distinctness_selftest_passes() -> None:

@@ -11113,9 +11113,11 @@ not been made**.
 **It is §112 and not §111, and the gap is deliberate.** The check in `CLAUDE.md` was re-run at
 commit across `main` and all thirty `.claude/worktrees/*/plan/stage-0-decisions.md`, matching
 `^#{2,3} [0-9]+` so a sub-section could not hide a claimed parent.
-`claude/handoff-worldbuilding-plan-ae1861` has §111 **committed** on its branch and not yet merged
-to `main`; the committed entry owns the number, so this one moves after it and §111 stays free for
-that merge. That branch also adds a keyword argument to `render_outline_request` — see §112.7.
+`claude/handoff-worldbuilding-plan-ae1861` had §111 **committed** on its branch when this was
+written and reached `origin/main` before this entry did; the committed entry owns the number, so
+this one sits after it. That branch also adds a keyword argument to `render_outline_request`, and
+the duplicate the two changes would otherwise have created was collapsed at the merge rather than
+left — see §112.7.
 
 **What licenses it is a count, and it was taken before a line was written.** The operator read the
 first two chapters of *What Takes* — Serial Pilot 3, the first book drafted on a world forged from
@@ -11141,9 +11143,17 @@ want, and the `price`. Required of the forge and refused there field-by-field on
 2026-08-22 forge returned a world whose premise was the empty string under a schema that asked for
 a string, conformed, and failed the shape check — $1.48); tolerated as absent by `records_for`, so
 `plan/serial-pilot-2-world.json` regenerates to the same 329 records, gates clean, and emits not
-one record of the new vocabulary. The declaration reaches the outline as `cast` + `protagonist`
-(the request grows 1,785 → 4,856 characters on *What Takes*' own canon) and the writer as a
-labelled facts block and one beat-line fragment.
+one record of the new vocabulary. The declaration reaches the outline as a `protagonist` field
+beside §111's world brief, and the writer as a labelled facts block and one beat-line fragment.
+
+~~The declaration reaches the outline as `cast` + `protagonist` (the request grows 1,785 → 4,856
+characters on *What Takes*' own canon).~~ **Corrected at the merge, and the measurement was taken
+before it.** That figure is this branch's own `cast` rendering, which §112.7 said the second merge
+owed a collapse. §111 landed on `origin/main` first, its world brief already renders every declared
+person from the same projection, and this branch's `cast` input, `worlds.cast_brief` and
+`worlds.CastMember` were therefore **removed** rather than merged — the outline now receives
+`world` (people included) and `protagonist`. The 1,785 → 4,856 figure stands as what it measured
+and is no longer a figure about the shipped call.
 
 **What was refused.** No verdict channel: no model is asked whether a hook is good, which premise
 hooks more, or which of K worlds to pick. No bar. And no instruction anywhere about how to *handle*
@@ -11278,14 +11288,58 @@ numbers were about.
 `plan/handoff-promise-ledger.md` landed at `f947247` (§110) and touched `summarize.py` only; this
 branch builds on it and does not touch it.
 
-`claude/handoff-worldbuilding-plan-ae1861` is **not on `main`** and adds its own keyword to
-`render_outline_request` — a `world` brief whose contents include the cast, plus
-`domain/world_brief.py` and a `StateRepository` on `NarrativePlanningStore`. Its §111 is committed
-on that branch. The two changes are additive and independently correct, and both use the same
-absent-rather-than-null idiom so each keeps its own byte-identical control. **Whoever merges second
-owes one collapse**: a request that carries the same people twice is a request spending its budget
-saying one thing. Neither branch should silently drop the other's — the protagonist is not in the
-world brief, and the world brief's rules and claims are not here.
+§111 reached `origin/main` first and this branch merged second, so **the collapse it owed was
+paid here rather than deferred.** §111 adds its own keyword to `render_outline_request` — a `world`
+brief whose contents include the cast, plus `domain/world_brief.py` and a `StateRepository` on
+`NarrativePlanningStore`. Both changes use the same absent-rather-than-null idiom, so each keeps
+its own byte-identical control and the merge did not weaken either.
+
+**What was collapsed, and what survived.** `world_brief.brief_for` already renders every declared
+person under a `cast` group, from `worlds.project` with `state.describe` as the fallback — the same
+two calls this branch's own rendering made. A request carrying the same people twice is a request
+spending its budget saying one thing, so this branch's `cast` parameter, its `CAST_RULES`, and
+`worlds.cast_brief` / `worlds.CastMember` were **deleted**. `protagonist` survives because the
+brief has no way to express it: the brief groups facts by kind, and *which of these people the book
+is about* is not a fact about a kind. The protagonist's own records — `edge`, `price`,
+`exception_to` — do reach the brief's cast group as projected sentences, so the `protagonist` field
+is the pointer rather than the content, and it is five short fields.
+
+### 112.7a The protagonist's second role poisoned the first book that declared one
+
+**Found by Serial Pilot 4's early gate, 2026-08-22, and fixed the same day.** §112 above says a
+protagonist is *"a second role on a cast member, never a role of its own"*, and cites
+`entity_roles` returning roles plural as the reason nothing has to choose. That is right, and
+`state.contradiction.v1` did not know it: it groups on `(subject, predicate, object_ref,
+order_key)` and reports a group holding two values as MAJOR and blocking. So
+`nella_scur entity_role holds 2 different values … "cast", "protagonist"` refused two of eight
+scenes — one parked, one poisoned — **before a word of prose was judged**.
+
+**The defect is older than this entry and this entry is what tripped it.** `entity_roles`'
+docstring already named the case in as many words — the System is an `agency` and a `system`, a
+guild is an `institution` and, when it acts, `cast` — so any world declaring a subject with two
+roles would have done the same. None ever had. `integrity.MULTI_VALUED` now names `entity_role`
+as a set rather than a slot, and it is a **named set of one** on purpose: nothing in a record
+carries "this predicate is multi-valued", so the alternative is a heuristic, and a heuristic that
+guesses which disagreements are allowed is the frozen arity table
+`detect_cardinality_violations` refuses. A world wanting a second multi-valued predicate declares
+a cardinality shape, which is checkable.
+
+**A second finding on the same book, and it is the opposite fix.** `_ENTITY` carries `wants` for
+everybody and `_PROTAGONIST` restates it, so a world may declare it twice — and this one declared
+*"Fourth-grade material before Orin's throat-mark lapses in nine days."* on the protagonist and
+*"Fourth-grade material, in nine days, by any route."* on the cast entry. Two wants for one
+person at one position is a real contradiction, so the detector is right and `records_for` was
+wrong: canon now takes the cast entry's and drops the protagonist's copy, and `gate_candidate`
+complains when both are declared and differ.
+
+**What let it reach a paid run, stated because it is the part worth keeping.** No test ran a
+detector over a world that declares a protagonist. The suite had `run_detectors` over a planted
+cardinality violation, and `protagonist_brief` over a peopled world, and never the two together —
+so every piece was tested and the composition was not.
+`tests/test_architect.py::test_a_declared_protagonist_does_not_poison_its_own_book` now runs the
+whole wired ladder over `records_for`'s output and asserts silence, and
+`tests/test_integrity.py::test_a_subject_that_is_two_things_at_once_is_not_contradicting_itself`
+pins the detector half with its negative control beside it. Both fail on the code §112 shipped.
 
 ### 112.8 Found, not fixed
 
@@ -11470,6 +11524,16 @@ candidates already in view is what a pre-registration exists to prevent.
 Pilot 1's hand-typed seed and of the only assembled book in this repository. `forge --pick` is
 `VerdictSource.HUMAN` and §112's own pilot-4 record (§5.4) is the precedent for putting exactly
 this ambiguity to the operator rather than resolving it from inside the session that found it.
+
+### 113.3b One correction taken from §112's bill rather than paying it twice
+
+§112's own forge returned three worlds that each put a real declared id in `protagonist.exception`
+and then glossed it in the same field, and all three were refused by the gate; the fix was a
+`pattern` and a description saying **AN ID AND NOTHING ELSE**. `standing.criterion` and
+`standing.rung` are the same shape of ask — *name the thing by its id* — and at the merge they
+were given the same `pattern` and the same description, with the failing form spelled out as the
+counter-example. This forge's three worlds cleared without it, so the correction is a precaution
+carried across rather than a measured one, and it is recorded as that.
 
 ### 113.4 What was refused
 
