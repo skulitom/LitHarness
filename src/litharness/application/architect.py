@@ -266,11 +266,39 @@ _PROTAGONIST = {
     "additionalProperties": False,
     "required": ["id", "exception", "edge", "wants", "price"],
     "properties": {
-        "id": _SAID,
-        "exception": _SAID,
-        "edge": _SAID,
-        "wants": _SAID,
-        "price": _SAID,
+        "id": {**_SAID, "description": "The declared id of a member of this world's cast."},
+        # **A bare id, and the `pattern` is a measured correction rather than a precaution.**
+        # The first live forge under this schema returned three worlds, every one of which put
+        # a real declared id here and then an em-dash gloss after it — `one_cooling_history —
+        # the shape that gives a body one cooling history and one fringe order does not hold
+        # for him. He carries two…`. All three were refused by the gate for naming something
+        # that is neither a declared rule nor a declared shape, which is what a whole sentence
+        # normalises to. The field was asked for as "the id of the rule that does not hold for
+        # them", and the model supplied the id *and* the clause describing it; the description
+        # and the pattern now say which of the two this field is.
+        "exception": {
+            **_SAID,
+            "pattern": "^[a-z0-9_]+$",
+            "description": (
+                "AN ID AND NOTHING ELSE — one snake_case id, declared elsewhere in this world, "
+                "of the rule or cardinality shape that does not hold for this person. Write "
+                "`rule_seed_never_true`, never `rule_seed_never_true - the rule that ...`. No "
+                "dash, no gloss, no sentence: what the rule says is already written where the "
+                "rule is declared, and what the exception lets them do belongs in `edge`."
+            ),
+        },
+        "edge": {
+            **_SAID,
+            "description": (
+                "What that exception lets them do that nobody else can, written the way "
+                "`manifests_as` is written: how it shows on the page, never an explanation."
+            ),
+        },
+        "wants": {**_SAID, "description": "What this person is after."},
+        "price": {
+            **_SAID,
+            "description": "What the exception costs them, payable on the page.",
+        },
     },
 }
 
@@ -413,14 +441,17 @@ _RULES: tuple[str, ...] = (
     # the reader should like them, or that they win: an exception declared is a fact about the
     # world, and who wins is the book's. `tests/test_architect.py` checks the rule text for the
     # verbs an outcome instruction would have to use.
-    "Name one member of the cast as this world's `protagonist`: their declared id; the ONE "
-    "rule or cardinality shape of this world — by its id — that does not hold for them or "
-    "holds differently; the `edge` that exception gives them, written the way `manifests_as` "
-    "is written — how it shows on the page, never an explanation; what they want; and "
-    "the price the exception charges them, payable on the page. If the exception is a "
-    "cardinality shape, that shape lists their id in its `except`. Write the `premise` as that "
-    "person's situation — who they are, what is singular about them, what is in the way — "
-    "rather than as a description of the world, and name them in it.",
+    "Name one member of the cast as this world's `protagonist`. Choose the one rule or "
+    "cardinality shape this world declares that does not hold for them, or holds differently, "
+    "and put **its id alone** in `exception` — one snake_case word such as "
+    "`rule_seed_never_true`, with no dash and no clause after it. What that rule says is "
+    "already written where the rule is declared, and a sentence there is not an id. Then give "
+    "the `edge` that exception grants them, written the way `manifests_as` is written — how it "
+    "shows on the page, never an explanation; what they want; and the price the exception "
+    "charges them, payable on the page. If the exception is a cardinality shape, that shape "
+    "lists their id in its `except`. Write the `premise` as that person's situation — who they "
+    "are, what is singular about them, what is in the way — rather than as a description of "
+    "the world, and name them in it.",
     "Mysteries: each carries its ANSWER written down and the scene number where the reader "
     "learns it. A secret with no recorded answer is a debt the book can never pay. This world "
     "is an open-ended serial, so most answers land far out — but **at least one must be "

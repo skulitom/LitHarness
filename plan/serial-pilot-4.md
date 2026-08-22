@@ -1,9 +1,10 @@
 # Serial Pilot 4 — the same two chapters, on a world that says whose book it is
 
-**Status: PRE-REGISTERED, 2026-08-22. NOT RUN.** Companion to
+**Status: PRE-REGISTERED 2026-08-22; forge 1 run, nothing picked, no book drafted.** Companion to
 [`plan/serial-pilot-2.md`](serial-pilot-2.md) and [`plan/serial-pilot-3`'s record](reader-read-3.md);
 the design record is [`plan/world-architect.md`](world-architect.md) and the decision record is
-stage-0 §112. §4 was written **before any paid call**; §5 and §6 are empty until the run happens.
+stage-0 §112. §4 was written **before any paid call**; §5 records what has been bought so far and
+§6 is empty until a book is drafted.
 
 ## 0. What this pilot is for, and the one thing it may not be read as
 
@@ -154,8 +155,60 @@ done here and no part of this package depends on it.
 
 ## 5. The run
 
-**NOT RUN.** Nothing has been forged, picked, stood up or drafted for this pilot. No `pilot4/`
-directory and no `serial4.db` exist.
+### 5.1 Forge 1 — P1 answered (ii): the rule text, not the model
+
+`dec-f80cd6fdf39aa99335f23213`, `arch-d425316522615ff9fa369e68`, 2026-08-22.
+`litharness --database pilot4/forge.db forge "progression fantasy" --k 3 --shape direct
+--out pilot4/direct1 --scenes 8`. **96,533 tokens, $1.45, `claude_code` / `claude-opus-5`.**
+
+| | [0] *Cut Once* | [1] *The Ghost Bitting* | [2] *The Bearing Year* |
+|---|---|---|---|
+| real domain | glassworking — annealing and residual stress | locksmithing — master-keyed pin systems | pomology — grafting and rootstock |
+| geometry | threshold | graph | cycle |
+| records / edges | 287 / 87 | 311 / 96 | 317 / 99 |
+| rules, min consequence domains | 5 at 3 | 5 at 3 | 6 at 3 |
+| manifestation coverage | 1.00 | 1.00 | 1.00 |
+| answered claims | 25 | 26 | 27 |
+| cardinality shapes | 2 | 3 | 3 |
+| `protagonist_declared` | ✔ | ✔ | ✔ |
+| `exception_declared` | ✔ | ✔ | ✔ |
+| `premise_names_protagonist` | ✔ | ✔ | ✔ |
+| protagonist id is a declared cast id | ✔ | ✔ | ✔ |
+| gate complaints | **1** | **1** | **1** |
+
+**within-forge spread 0.9158**, against pilot 2's 0.93 and pilot 3's 0.8959. **The stop condition
+does not fire**: the new rule did not collapse the forge, and on this one measurement it sat
+between the two prior forges rather than below either.
+
+**Clear of every gate: 0 of 3, and all three failed the same way.** Each candidate put a real
+declared id in `exception` and then glossed it in the same field:
+
+| protagonist | `exception` as returned | leading token | is it declared? |
+|---|---|---|---|
+| `wick_haldrey` | `one_cooling_history — the shape that gives a body one cooling history and one fringe order does not hold for him. He carries two…` | `one_cooling_history` | yes, a declared cardinality shape |
+| `corrin_vane` | `one_key_per_name — the shape that gives one person one key does not hold for her. She carries an issued blank and a ghost bitting…` | `one_key_per_name` | yes, a declared cardinality shape |
+| `sabel_quist` | `rule_family_or_black — the rule that a cutting takes only between kin-families, and blackens and casts off otherwise, does not hold for her…` | `rule_family_or_black` | yes, a declared rule |
+
+`worlds.normalise_id` turns each of those sentences into one long snake_case token that names
+nothing, so `gate_candidate` reported *"an exception to nothing in particular is a description"*
+three times out of three. **This is P1's outcome (ii) exactly as registered — a failure of the
+rule text and not of the model** — and the registered response is to rewrite the ask before
+anything is picked.
+
+**Why the ask was wrong.** It read *"the ONE rule or cardinality shape of this world — by its id —
+that does not hold for them or holds differently"*. That is a sentence describing **which** thing
+to select, and the model wrote the description into the field along with the id. Nothing told it
+that `exception` holds an id and not an account of one. The fix separates the two: the selection
+criterion stays in the rule, the field gets `pattern: ^[a-z0-9_]+$` and a description that says
+*AN ID AND NOTHING ELSE*, with the failing form spelled out as the counter-example.
+
+**Nothing was picked and nothing was renamed.** The forge stands on the record as it ran;
+`pilot4/direct1/forge.json` is its artefact, and this table is the pre-fix number kept beside the
+post-fix one, which is the discipline §107.9.1 records for a counter and applies here to a prompt.
+
+### 5.2 Forge 2
+
+**NOT RUN.** The corrected ask ships first.
 
 ## 6. The run record
 

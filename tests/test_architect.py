@@ -539,13 +539,20 @@ def test_the_protagonist_rule_asks_for_a_declaration_and_never_an_outcome() -> N
     """
     [rule] = [item for item in architect._RULES if "protagonist" in item]
     lowered = rule.lower()
+    # **Measured, not stylistic.** The first live forge under this rule returned three worlds,
+    # every one of which named a real declared id in `exception` and then glossed it in the
+    # same field, and all three were refused by the gate for it. The ask now says which of the
+    # two the field is, and this is where that stays said.
+    assert "its id alone" in lowered
+    assert "not an id" in lowered
+    assert architect._PROTAGONIST["properties"]["exception"]["pattern"] == "^[a-z0-9_]+$"
     for forbidden in (
         "win", "winning", "hero", "likeable", "likable", "sympathetic", "root for",
         "faster", "fastest", "strongest", "best", "succeed", "success", "triumph",
         "interesting", "compelling",
     ):
         assert forbidden not in lowered, forbidden
-    assert "declared id" in lowered and "does not hold for them" in lowered
+    assert "member of the cast" in lowered and "does not hold for them" in lowered
 
 
 # --- the world as records ---------------------------------------------------------------------
