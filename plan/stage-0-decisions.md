@@ -10207,6 +10207,13 @@ and neither is entitled to an opinion about quality.
 not told which debts are due — and nothing here has changed it or measured whether telling it
 would help.
 
+> **Answered by §110, 2026-08-22, and the mechanism was one step earlier than this named it.** The
+> summary call was not told the debts *exist*: `store.promises(...)` appeared nowhere in its
+> prompt path, so paying required a one-scene, no-memory call to reproduce a `sha256` input coined
+> scenes earlier — measured at one in forty-one, and in the wrong channel. Shown the open rows on
+> the same forged world, run C settled **8 of 40**, with 8 of 8 returned names matching an open
+> row exactly. `plan/serial-pilot-2.md` §6.3.
+
 **The between-Architect comparison.** The distinctness control is built for K candidates from one
 brief. Two briefs producing two worlds rather than one world in hats is unmeasured, and N
 architects divide §61's alpha by N exactly as N directors do.
@@ -10458,3 +10465,376 @@ is recorded rather than acted on: `plan/serial-pilot-2-directives.json` holds si
 not one of them contains an ending clause, and if the operator wants one there the safe form is a
 verbatim-lane `constraint`, which locks by construction and passes through no model. No human
 reader, label or feedback entered anything here (§95).
+
+## 109. The generation provider read the working directory's CLAUDE.md into every call, and the documented way to stop it logs you out
+
+**Built 2026-08-22.** Code: `providers/cli.py` — two flags on every `claude -p` call,
+`--setting-sources user` and `--settings` with `CLAUDE_MD_EXCLUDES`; tests in
+`tests/test_providers.py` — `test_claude_argv_carries_every_mandatory_flag` pins both and pins
+`--bare` *out*, `test_the_claude_md_exclusion_is_well_formed_and_names_the_files_it_must` parses
+the JSON, and the opt-in `test_live_claude_does_not_read_a_claude_md_from_the_working_directory`
+checks the outcome against the installed CLI. And a root `CLAUDE.md`, the first this repository
+has had, written for sessions and proven not to reach the writer.
+
+**Nothing above this entry was renumbered.** §108 was the last section on `main` and the highest
+in any worktree when this began; the check was re-run (`^#{2,3} [0-9]+` across `main` and every
+`.claude/worktrees/*/plan/stage-0-decisions.md`) before this was written.
+
+**What licenses it is a measurement, and it was taken before the file existed.** The operator
+asked why the repository had no `CLAUDE.md`. `git log --all` showed none had ever been added or
+removed, so there was no recorded reason — and one real one: `tools/run-loop.ps1` runs the loop
+from the repository root (`Push-Location $repo`), the adapter passes no `cwd`, and the headless
+documentation says a `-p` call loads the same context an interactive session would, with
+`--append-system-prompt` — the adapter's only system-prompt mechanism — appended *after*
+CLAUDE.md. So a root `CLAUDE.md` would have ridden into every drafting, summary, outline and
+forge call, and the frozen prompt (§103) would no longer have been the whole of what the model
+saw. That the repository had been safe was an accident of the file not existing. Eight probes on
+`claude-haiku-4-5`, `claude` 2.1.236, one-word answers, about $0.22 in total:
+
+| working directory | flag | answer | cache-read | cache-write |
+|---|---|---|--:|--:|
+| scratch dir holding `MARKER-LEAKED` in `CLAUDE.md` | none | **LEAKED** | 0 (cold) | 26,832 |
+| the same | `--bare` | *Not logged in* | — | — |
+| the same | `--system-prompt` instead of `--append-system-prompt` | **LEAKED** | 0 (cold) | 24,769 |
+| the same | `--setting-sources user` | NONE | 21,352 | 5,326 |
+| the same | `--setting-sources ""` | NONE | 21,352 | 5,188 |
+| the same | `--settings '{"claudeMdExcludes":[…]}'` | NONE | 21,352 | 5,329 |
+| repository root (no `CLAUDE.md` yet) | none | NONE | 21,352 | 7,113 |
+| the same | `--bare` | *Not logged in* | — | — |
+
+Then the live test, with the adapter's own argv carrying **both** flags, against a marker file in a
+temporary directory: NONE. The cold-cache zeros in the first rows are the first call of a prefix,
+not an effect of the marker, and are not read as one.
+
+### 109.1 What was refused, and why each refusal is on the record
+
+**`--bare`**, the documented full suppression — it also skips keychain reads, which is where the
+subscription login this adapter runs on lives (`ClaudeCodeProvider`'s docstring: no credential of
+its own). Not a fix that can be had here; it would be the fix under API-key auth. **`--system-
+prompt`** — documented to ignore CLAUDE.md and measured *not* to on this version; recorded so no
+later session trusts the sentence. **Relocating `cwd`** off the repository — would have worked
+and been invisible and machine-dependent; a flag in `_argv` is pinned by a test and a cwd is not.
+
+**Two mechanisms rather than one, because each covers the other's gap.** `claudeMdExcludes` is
+the control the documentation names for CLAUDE.md, and it was verified only against a
+working-directory file; `--setting-sources user` is docs-silent on CLAUDE.md but measured to work,
+and it also drops project and local `settings.json` — hooks, permissions, env — which this adapter
+never wanted and which the repository does not currently carry (`.claude/` holds a skill, the
+worktrees and a lock; no settings file), so nothing any call has received to date changes.
+The live test checks the outcome, not the mechanism, which is the only honest pin when one of the
+two rests on observed rather than documented behaviour.
+
+### 109.2 The overhead half of provider-adapters.md's experiment, now run
+
+That document's open item asked whether "settings that suppress CLAUDE.md/skill/plugin
+discovery" could cut the ~5k non-cacheable per-call overhead. The halves come apart: CLAUDE.md
+suppression costs nothing and saves nothing (the overhead is identical with and without it), and
+the skill/plugin tax is reachable only through `--bare`. Measured on 2.1.236: **21,352
+cache-read + 5.2–7.1k written per call**, against the ~19k + ~5k recorded when the adapter was
+built. Struck in place in `plan/provider-adapters.md` with these numbers; the module docstring's
+~24k carries the ~27k beside it.
+
+### 109.3 The file itself
+
+`CLAUDE.md` is the session-conduct layer that had no home: the parallel-session rules, the
+ledger-number procedure with its command, the citation checker, counts-point-to-homes,
+corrections-in-place, the standing axioms as one-liners with pointers, the box rules (`claude -p`
+fails under box load; kill by PID; two interpreters). It points at `CONTRIBUTING.md`, `README.md`,
+`BRIEF.md`, `RUNBOOK.md` and the handoffs rather than restating them, and it carries **no counts,
+no status and no test totals** — the PLAN.md header's own lesson, that the number the project
+reports about itself is the number to distrust first. Five `plan/handoff-*.md` files had each
+re-stated the same coordination rules, which is the defect the file closes.
+
+### 109.4 Anti-scope
+
+No prompt, packet, template or beat function changed; no call any book has received to date
+contained a CLAUDE.md, so no stored prompt is re-read differently. No overhead reduction is
+claimed — the number went up, and is recorded going up. No quality claim of any kind. No human
+judgment entered anything (§95). The `debug-book` skill, the handoffs and the planning documents
+are untouched; `CLAUDE.md` is additive and the only change to what a session is told is that it
+is now told once, in one place.
+
+### 109.5 Found after the entry was written: four instruments shell out to `claude -p` themselves
+
+**The provider was not the only caller, and `--system-prompt` is not a shield.** The operator
+asked whether the file would cause issues, and the grep that should have been run before §109.4
+was run after it: `research/quality-measurement/elicit.py` (`CLI_HARDENING`, imported by
+`comic_beats.py` and `writer_states.py`) and `force_remote.py` (its own copy of the tuple) build
+their own `claude -p` argv, run from the repository root, and use `--system-prompt` — which the
+table above already showed does **not** keep CLAUDE.md out. So with the file at the root and the
+flags only on the provider, every E6 elicitation, force-programme continuation, comic-beat census
+and writer-state call would have carried `CLAUDE.md` in the judge's context, and the replay cache
+— keyed on (system, messages, model, transport) — would not have noticed. A contamination of the
+*measurement* side rather than the generation side, and invisible from the cache.
+
+**Closed the same day, with the same two flags on both tuples**, copied rather than imported
+(research code must not depend on `src/`, and `comic_beats` runs under an interpreter that cannot
+import the package). Measured through the edited `elicit.CLI_HARDENING` — `--system-prompt` plus
+the two flags, marker file in the working directory — the answer is NONE (cache-read 21,092,
+write 3,525). `comic_beats --selftest` passes on the same registration digest, because
+`registration_digest()` never covered `CLI_HARDENING`; the four test files that import the
+modules pass. **No paid research call ran between the file's creation and this fix** — the
+process list was read at every step — so no cached answer carries it.
+
+**The rule this leaves, written into `CLAUDE.md` and the RUNBOOK:** every `claude -p` call site in
+this repository carries the two flags, the live test is the guard, and it is re-run after any
+`claude` upgrade — the suppression rests on one documented setting and one measured flag, and
+a CLI release could move either. The worktrees were also probed: a marker appended to the root
+`CLAUDE.md` did **not** reach a call made from `.claude/worktrees/<name>/` (answer NONE), while a
+plain child directory and a child that is its own git root both leaked a parent's file — so the
+worktree boundary is respected by this version and that, too, is observed rather than
+documented. Commit the flags and the file **together**, so no checkout ever has one without the
+other.
+
+## 110. The one call that can settle a debt was the one call never shown the ledger
+
+**Built 2026-08-22, from [`plan/handoff-promise-ledger.md`](handoff-promise-ledger.md).** Code:
+`application/summarize.py` — `render_summary_prompt` gains `open_promises`, the handler loads the
+open rows and records which returned names matched — and `tools/rematerialise_forge_bundle.py`.
+Measurements and the design note:
+[`research/quality-measurement/promise-ledger-settlement.md`](../research/quality-measurement/promise-ledger-settlement.md).
+The run is [`plan/serial-pilot-2.md`](serial-pilot-2.md) §4.1 (pre-registration) and §6.3.
+
+**Nothing above this entry was renumbered, and it is §110 rather than §109 because the check at
+commit time caught a collision the check at start time could not have.** §108 was the last section
+when this began and the handoff said "§109 or later"; while this branch was measuring, `3fbfaf8`
+landed §109 on `main` — the provider reading the working directory's `CLAUDE.md` into every call —
+and seven `ox-*-7f3a21` worktrees carrying it appeared beside this one. The check was re-run across
+`main`, every local branch, and all twenty-four `.claude/worktrees/*/plan/stage-0-decisions.md`,
+matching `^#{2,3} [0-9]+` so a sub-section could not hide a claimed parent. That is the §86.6
+lesson working: the number is claimed at commit, not at start.
+
+**That §109 does not reach this run.** The provider defect it fixes reads a `CLAUDE.md` out of the
+working directory, and this worktree has none — it branched from `83de11c`, which predates the file
+— so run C's twelve invocations carried no such text, exactly as runs A and B did not. `main` was
+merged in afterwards, so the fix is in the branch and was not in the run.
+
+**What licenses it is a count, and it was taken before a line was written.** Measured against
+`serial.db` — the live eight-scene serial, all eight `scene_draft` jobs `succeeded` — on
+2026-08-22:
+
+| | count |
+|---|--:|
+| rows in `promises` | 40 |
+| of those `paid` | **0** |
+| `promises_opened` items across the eight summaries | 41 |
+| summaries returning a non-empty `promises_paid` | 1 of 8 |
+| `promises_paid` strings returned in total | 2 |
+| of those, naming a row that existed at that moment | **0** |
+| of those, naming a row that ever existed | **0** |
+| subjects the summariser re-coined exactly, unprompted | **1 of 41** |
+| `store.promises(...)` calls anywhere in the summary prompt path | **0** |
+| calls that DO see the ledger (writer's packet, outline) | 2 |
+
+And after, on the same forged world with one block added to one prompt: **40 opened, 8 paid**.
+Eight of the eight names the model returned matched an open row on the list it was shown; before,
+two of two matched nothing that had ever existed.
+
+### 110.1 It was never a model failing, and the arithmetic says so
+
+`promises_paid` is a list of strings. Each goes through `normalise_subject` (NFC, casefold,
+whitespace to underscore) into `promise_id_for(book_id, subject)` = `sha256(book_id + subject)`,
+and `pay_promise` runs `UPDATE … WHERE status='open'`. **Paying a subject the ledger never opened
+is a no-op by design** — a payoff with no recorded promise is not a debt the ledger can attest was
+owed — so a payment lands only when a one-scene, no-memory call reproduces a subject string coined
+scenes earlier.
+
+The measured rate at which that happens unprompted is **one in forty-one**, and the one time it
+happened it landed in `promises_opened`, where `INSERT OR IGNORE` collapses it and nothing
+changes. The two strings the model did return as paid — *"The tarnished blank at Kessel's stall"*
+and *"Turrow's ring appraisal"* — are fluent prose names for debts the book plausibly owed, and
+neither was ever a key.
+
+**Four books, and the seeding experiment had already ruled out the other hypothesis.** 32/0, then
+40/0, then Serial Pilot 2's 41/0 and 47/0 on a world whose six debts were seeded *with their
+answers already in canon* and two of them disclosed to the writer at their scheduled scenes.
+§107.9.2 and `plan/serial-pilot-2.md` §6.2 both named the next question as "the summary call is not
+told which debts are due". Measured against the code it is sharper and it is structural: **the
+call was not told the debts exist.** The writer's packet has carried the open rows since §61 Add 2
+and the outline call has seen their subjects since W2. The one call that can mark a debt paid was
+the one call not shown them.
+
+### 110.2 The repair is one block in one prompt, and its control is byte-identical
+
+`render_summary_prompt` takes `open_promises`; the handler loads
+`store.promises(book_id, branch_id, open_only=True)` and passes the rows through in the store's
+order — due-soonest first, NULL due last — **uncapped**. Each row renders as its `subject`
+verbatim followed by `describe_owed(promise)`, the ledger's own line, in a block that states its
+register and is kept **separate from the THREAD block**: open threads are canon-backed state
+records and promises are model-reported or forge-seeded debts, and one list under one heading
+would launder the second into the register of the first. `PROMISES_PAID` now asks for names copied
+exactly from that list, and is conditional so a prompt never names a list it does not carry.
+
+**With an empty ledger the prompt is byte-for-byte the old prompt**, both halves. That is the
+control, and it keeps every golden fixture, every research caller of `render_summary_prompt` and
+every scene before the first promise opens asking exactly the question they asked before.
+
+**Cost**, measured on `serial.db`'s 40 real rows against a real 900-word scene: ~32 tokens per row
+net of a 44-token header, 1,611 → 2,995 at 41 rows. No cap, because the rows are one line each,
+the largest ledger measured is 47, and a cap would drop exactly the debts a long book most needs
+settled while reporting nothing. The named risk was at the other end — a model shown 32 names
+returning an answer too long for the 512-token budget, costing the scene its summary. **It did not
+happen: 0 of 46 jobs ran a second attempt.**
+
+**The summary row now records what matched.** `promises_json` gains `paid_matched` /
+`paid_unmatched` beside `paid`, exact set membership against the subjects rendered into that
+call's prompt, so "did showing the ledger change anything" is answerable from the store rather
+than re-derived from prose. **Deliberately not looser**: a ledger that pays on near-matches is
+worse than one that pays nothing, because W4 grades payoff landing against the ledger's own
+wording.
+
+### 110.3 S5′ settles, and the answer is not one of the three outcomes that were named
+
+Pre-registered as `plan/serial-pilot-2.md` §4.1 before the run and before any paid call, and
+recorded as §6.3. Same world, same directives, same commands, same budgets; the bundle was
+re-materialised rather than re-forged.
+
+**65 ticks, 46 jobs all succeeded, 21 decisions all ACCEPT, 12 invocations, 743,800 tokens,
+$5.60.** Eight of eight scenes, 7,743 words, 9 revisions rebuilding cleanly, 0 parked, 0 poisoned,
+0 unattributed, `context_omitted = 0`, 5 findings all `promise.overdue.v0` MINOR — run A's and run
+B's number exactly. **The gate exits 0.**
+
+**The control holds.** The hidden-count trace reproduces byte for byte: `20, 20, 20, 19, 19, 19,
+18, 18`, the same drops at scenes 4 and 7. S3's machinery was untouched and did not move.
+
+**40 rows, 32 open, 8 paid.** Payments at scenes 4 (one), 7 (two) and 8 (five). Packet threads run
+6 → 32 against run B's 6 → 41.
+
+**The three named outcomes did not partition the space, and that is a defect in the
+pre-registration rather than something to reinterpret afterwards.** They were written as if
+"seeded" were one population; the six split into two — two debts the world scheduled *inside* this
+book, four arc debts at scenes 26/41/63/92 that it did not. Outcome (i) named the two in-book ones
+and **neither was paid**. Outcome (ii) said 0 of 6 seeded and **1 was**. Outcome (iii) said
+model-opened paid and seeded not, and a seeded one was paid.
+
+**What the run does answer is the question S5′ asked**: *does anything settle with the ledger
+shown?* **Yes — 8 of 40, from 0 of 41 and 0 of 47 on the same world.** Not being shown the ledger
+was the block.
+
+**What it opens is sharper than the null it replaces.** The two seeded debts whose answers the
+book *actually disclosed to the writer at their scheduled scenes* — `m_holts_date` at s4,
+`m_orrin_last_call` at s7 — are the two that stayed open. The one seeded debt the ledger marks
+paid is `m_the_wrong_table`, an arc debt scheduled for scene 63 whose answer stayed hidden for the
+whole run. **The summariser marked paid a debt this book was never told the answer to**, and the
+ledger cannot check itself — which is the self-grading defect `payoff_landing.py` opens on, and
+the next question rather than this one's.
+
+### 110.4 W4 built its scene keys two characters wide and its ledger's are one
+
+Found while reporting what the new ledger could give
+`research/quality-measurement/payoff_landing.py`, and it is §108's shape again — an instrument
+reporting an empty world because of a small mistake nobody had cause to look at. `read_scenes`
+padded to `max(len(str(len(units))), 2)`; `beats_for` pads to `len(str(len(scenes)))` with no
+minimum. On an eight-scene book the ledger holds `s1…s8` and the instrument built `s01…s08`, so
+every membership test failed and the census reported **four arms of zero** — which reads as "the
+ledger supplied no substrate" and was a key-width bug. `toll.db` is ten scenes, where both rules
+agree on 2, which is why nothing had noticed.
+
+Fixed to `beats_for`'s rule exactly; nothing changes for any book of ten scenes or more. On
+`serial.db` the arms go 0/0/0/0 → `unpaid` 35, `placebo` 10, `constructed_positive` 40, with
+`paid` and `mismatched` still 0 because that ledger records no payment. On `serial2c.db`:
+**`paid` 8, `mismatched` 8, `unpaid` 27, `placebo` 8**, and `census.unrunnable` is `[]` for the
+first time — the middle arm the module calls "the whole study" has substrate.
+
+**The module's verdict is untouched and is not about the ledger.** `SCORER_UNUSABLE` stands on its
+own pre-existing grounds — `check_open_threads` was built to ask whether a summary of the same
+prose mentions a recorded thread, and W4 asks it whether a one-sentence paraphrase names the same
+debt — so **W4 needs a different scorer before it can be run at all**, whether or not anything
+settles. The verdict stays NOT VALIDATED; the owner-read set is out of scope here, and the model
+legs touch the 4090 and carry the duty-cycle and temperature governor, so running them is an
+operator call.
+
+### 110.5 The bundle was re-materialised and the operator's pick was not re-made
+
+`pilot2/` is gitignored and was gone from this machine, and `serial-pilot-2-setup.ps1` refuses
+without `seed.json` / `directives.json` / `promises.json`. Re-forging costs $1.53, yields a
+different world and needs a person to choose again, so `tools/rematerialise_forge_bundle.py`
+rebuilds the bundle from the committed source instead. It touches no database, records no decision
+and calls no model: the pick was taken on 2026-08-22 and is already a policy decision with
+`VerdictSource.HUMAN`, and a second `HUMAN`-sourced row minted by a script would be a machine
+wearing a person's authority — the thing `forge`'s two-command split exists to prevent. It refuses
+a package with no `picked`, a directory that already holds a bundle, and a scene count the
+committed directives were not written for.
+
+Everything in a bundle is derivable: the three uuids are `uuid5` over
+`litharness://forge/{architect_id}/{index}/{part}`, so they reproduce exactly, and the committed
+`directives.json` / `promises.json` are byte-equal to `architect.directives_for` /
+`architect.promises_for` over the world — which the tool asserts rather than assumes. **329
+records, `worlds.validate` clean**, the same count run B ran on. The one field the package cannot
+recover is `meta.created_at`; it is minted, printed, and named in the run record, and no record
+depends on it.
+
+Two pre-existing conditions were carried and not fixed, as the handoff required: the world's graph
+line is unusable, so the second extractor family is inert on this world (0 records read off the
+book's own prose, 329 of 329 seeded — defect 8), and the four arc debts carry no due key (defect
+9's fix, already in code).
+
+### 110.6 What was refused
+
+**No bar was declared.** S5′ is a question with named outcomes. n is six seeded debts plus
+whatever the summariser opens, §108.5's "any subgroup of two is empty" applies to every split of
+it, and a pre-registered null is a result (§61) — as is a pre-registration whose outcomes miss,
+which is recorded rather than rewritten.
+
+**Advisory stayed advisory.** `promises_paid` is still a model claim; `promise.overdue.v0` is
+unchanged, still MINOR and `heuristic`; no finding severity moved; nothing built on the ledger
+blocks, parks, ranks or selects anything.
+
+**No fuzzy matcher, and the refusal is the point.** Exact match on purpose: a ledger that pays on
+loose or majority-word matches is worse than one that pays nothing, because the report-channel
+question grades against the ledger's own wording. Nothing in `src/` matches a subject any way but
+exactly — and it did not need to, because 8 of 8 returned names were exact.
+
+**No instruction about what to pay or when**, asserted rather than trusted: a test slices the
+block header and the added ask out of a rendered prompt and checks both against the vocabulary an
+instruction would need. **The writer's packet and the drafting prompt were not touched at all** —
+exactly one file under `src/` changed, and run C's scene-1 packet reproduces run B's 229 facts /
+20 hidden / 6 threads / 0 omitted.
+
+**No migration for an authored-versus-model column.** `model = ''` is still the sentinel doing a
+column's job (§107.8's stated limit). It is *named* as what a persisted ledger policy would need
+and it is not built.
+
+**No verdict channel.** No model was asked whether a payoff is good, whether a scene pays a debt
+well, or which of two payoffs it prefers. E6 stays byte-frozen and no new verbal frame was
+written.
+
+**No policy, no retriever, no pruning.** §5 of the measurement note is one page of design and no
+code: what "still worth carrying at scene N" would have to decide, what it must not do (drop a
+debt for being old — §12's defect, which §108.3 recorded biting a deliberate change), and where a
+writer-side "due now" cue would sit if the operator ever wanted one. **Whether settlement alone
+relieves the packet is now measured and the answer is no**: run C settled eight and still carried
+32 threads at scene 8 against run B's 41, and 34 of its 40 rows were opened by the summariser
+itself. The policy is still needed; what changed is that it would now have a `paid` population to
+be calibrated against instead of a column of zeros.
+
+### 110.7 Corrections in place
+
+**`plan/handoff-promise-ledger.md`'s `CONTRIBUTING.md` citation is stale and the repo won.** The
+handoff cites `CONTRIBUTING.md` for "`claude -p` fails silently under load"; no such sentence is
+in that file or anywhere else in the repository. The substance was honoured anyway — a
+`litharness forge` arm was running on this box when the run was due, and the run waited for it to
+exit before starting — and the rule is worth writing down somewhere it can be cited from.
+
+**A gap in the record this change makes newly load-bearing, recorded rather than fixed.** The
+*drafting* prompt is frozen into the job payload at enqueue (invariant I5); the **summary** prompt
+is not — it is rendered at handle time and the payload carries only ids. So "which debts was the
+summariser shown at scene 5" is reconstructable from the ledger and the summary rows, and is not
+stored. That was harmless while the prompt depended only on the scene's own text. It now depends
+on mutable ledger state, and freezing it is a payload change with its own compatibility question,
+so it is named here rather than taken.
+
+### 110.8 Anti-scope
+
+No change to the drafting prompt, the packet, or `planner.render_prompt`. No "pay now" / "due now"
+instruction anywhere; no model chooses which debt to pay; no ranking of debts or kinds —
+`PROMISE_KINDS` carries no valence and none was added. No retriever, no pruning policy, no
+migration. No re-forge, no different world, no edit to the committed world, directives, promises or
+craft JSON, and no redraft of any accepted scene; `serial.db` was read read-only throughout and
+every measurement on it was a query rather than a write. No `lock-constraints` on `serial.db`, no
+`[STATUS]` line change, no ending clause in pilot 2's directives — all still operator decisions.
+**No acceptance read was spent**: the gate exits 0 and the read is the operator's, not this
+session's. No claim about prose quality and no comparison of prose between runs. No reader, judge,
+persona, BCR, axis or pool change, and no pre-registration beyond S5′. No human reader, label or
+solicited judgment entered anything here (§95). RS1 holds: nothing under `src/litharness/`
+references a corpus, a digest or a RoyalRoad text.

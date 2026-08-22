@@ -362,8 +362,17 @@ Rules:
   a test run may touch a provider, so it belongs to the adapter's identity), and
   `reasoning_output_tokens` is counted into the budget total after the probe showed codex
   reports it separately at a default reasoning effort of `high`.
-- Decide whether `claude -p`'s ~5k non-cacheable per-call overhead can be reduced
+- ~~Decide whether `claude -p`'s ~5k non-cacheable per-call overhead can be reduced
   (settings that suppress CLAUDE.md/skill/plugin discovery) — worth one
-  experiment, since it is the difference between a $0.013 and a ~$0.003 floor.
+  experiment, since it is the difference between a $0.013 and a ~$0.003 floor.~~ —
+  **Run 2026-08-22 on `claude` 2.1.236 (stage-0 §109), and the two halves came apart.** The
+  CLAUDE.md half is closed: `--setting-sources user` plus a `claudeMdExcludes` setting keep a
+  working-directory CLAUDE.md out of the call (measured with a marker file: `LEAKED` without
+  either flag, `NONE` with either), and the adapter now passes both. The skill/plugin half is
+  not reducible under subscription auth: the only flag that drops it, `--bare`, also skips
+  keychain reads and the call returns *Not logged in*. The per-call overhead therefore stays
+  where it is — **21,352 cache-read + ~5.2–7.1k written per call** on 2.1.236, against the
+  ~19k + ~5k recorded above — and the floor is unchanged. `--system-prompt`, documented to
+  ignore CLAUDE.md, was measured not to (the marker leaked), so nothing here relies on it.
 - Measure the same numbers for an Opus-tier model before Book Zero, since §15's
   budget depends on the tier actually used for generation.

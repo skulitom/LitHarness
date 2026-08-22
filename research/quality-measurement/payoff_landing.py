@@ -153,11 +153,20 @@ def read_scenes(database: str | Path) -> dict[str, str]:
 
     Keys are `beats_for`'s, so they line up with the ledger's `opened_at_key` without this
     module minting or parsing one — the padding rule `domain/promises.py` insists on.
+
+    **`width` is `beats_for`'s exactly, and the floor of 2 it used to carry emptied every arm
+    on any book shorter than ten scenes.** `beats_for` pads to `len(str(len(scenes)))` with no
+    minimum, so an eight-scene book's ledger holds `s1…s8` while this minted `s01…s08`; every
+    membership test against `scenes` then failed and the census reported four arms of zero as
+    if the ledger had supplied nothing. It read as a substrate problem and was a key-width
+    problem. Found on `serial.db` (40 promises, 8 scenes, every arm 0) while reporting what
+    the ledger could build; `toll.db` is ten scenes, where both rules agree on 2, which is
+    why nothing noticed.
     """
     from corpus_io import generated_scenes
 
     units = generated_scenes(database, min_words=1)
-    width = max(len(str(len(units))), 2)
+    width = len(str(len(units)))
     return {f"s{index:0{width}d}": unit.text for index, unit in enumerate(units, start=1)}
 
 

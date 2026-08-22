@@ -721,3 +721,126 @@ def test_picking_before_forging_says_which_file_is_missing(tmp_path: Path) -> No
         main(["--database", str(database), "forge", "--out", str(tmp_path / "nope"), "--pick", "1"])
         == 2
     )
+
+
+# -- re-materialising the pilot bundle -------------------------------------------------------
+#
+# `pilot2/` was gitignored and is gone; the committed world package is the source. Re-forging
+# costs $1.53, yields a different world and needs a person to choose again, so a rerun on the
+# same world re-materialises the bundle instead. `tools/rematerialise_forge_bundle.py`.
+
+
+def _rematerialise():  # type: ignore[no-untyped-def]
+    import importlib.util
+
+    path = Path(__file__).resolve().parents[1] / "tools" / "rematerialise_forge_bundle.py"
+    spec = importlib.util.spec_from_file_location("rematerialise_forge_bundle", path)
+    assert spec is not None and spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def test_the_rematerialised_bundle_is_the_snapshot_the_pilot_ran_on(tmp_path: Path) -> None:
+    """The seed the tool writes holds exactly `records_for`'s records, and they validate.
+
+    This is the pin the whole rerun rests on: `serial-pilot-2-setup.ps1` refuses without a
+    `seed.json`, and a seed that differed from the committed answer would put Serial Pilot 2's
+    question to a different world while every command in the package still read the same.
+    """
+    tool = _rematerialise()
+    out = tmp_path / "bundle"
+    assert tool.main(["--out", str(out), "--created-at", "2026-08-22T00:00:00Z"]) == 0
+
+    package = json.loads(
+        (Path(__file__).resolve().parents[1] / "plan" / "serial-pilot-2-world.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    expected = architect.records_for(
+        architect.Candidate(package["picked"] - 1, package["world"]),
+        authority=lc.StateAuthority.ACCEPTED_CANON,
+        scenes=8,
+    )
+    snapshot = lc.parse_artifact(
+        lc.StateSnapshot,
+        json.loads((out / "seed.json").read_text(encoding="utf-8")),
+    )
+    assert [record.record_id for record in snapshot.records] == [
+        record.record_id for record in expected
+    ]
+    assert [lc.to_jsonable(record) for record in snapshot.records] == [
+        lc.to_jsonable(record) for record in expected
+    ]
+    assert worlds.validate(snapshot.records) == ()
+    assert {record.authority for record in snapshot.records} == {lc.StateAuthority.ACCEPTED_CANON}
+
+    # The other two files are the ones `--pick` wrote, carried rather than rebuilt, and the
+    # tool refuses unless they are the set this world produces.
+    directives = json.loads((out / "directives.json").read_text(encoding="utf-8"))
+    promises = json.loads((out / "promises.json").read_text(encoding="utf-8"))
+    assert directives["title"] == package["world"]["title"]
+    assert len(promises) == 6
+    assert {row["subject"] for row in promises} >= {"m_holts_date", "m_orrin_last_call"}
+
+
+def test_the_bundle_carries_the_ids_the_forge_minted_and_no_fresh_ones(tmp_path: Path) -> None:
+    """Reproduced, not re-minted: `cmd_forge` derives all three uuids with `uuid5` over the
+    architect id and the candidate's index, so a bundle materialised a day later carries the
+    same ids the original did. `created_at` is the one field the package cannot recover, and
+    nothing in the record depends on it — the records are identical either way, which is what
+    the two runs below assert."""
+    tool = _rematerialise()
+    first, second = tmp_path / "a", tmp_path / "b"
+    assert tool.main(["--out", str(first), "--created-at", "2026-08-22T00:00:00Z"]) == 0
+    assert tool.main(["--out", str(second), "--created-at", "2030-01-01T00:00:00Z"]) == 0
+
+    one = json.loads((first / "seed.json").read_text(encoding="utf-8"))
+    two = json.loads((second / "seed.json").read_text(encoding="utf-8"))
+    assert one["records"] == two["records"], "no record depends on the stamp"
+    assert (one["book_id"], one["branch_id"], one["revision_id"]) == (
+        two["book_id"],
+        two["branch_id"],
+        two["revision_id"],
+    )
+    assert one["meta"]["created_at"] != two["meta"]["created_at"]
+    assert one["meta"]["artifact_id"] == "arch-e3b0c44298fc1c149afbf4c8-0"
+
+
+def test_it_refuses_a_package_nobody_picked_and_a_bundle_that_already_exists(
+    tmp_path: Path,
+) -> None:
+    """Two refusals, and neither is fussiness.
+
+    A package with no `picked` is a forge whose operator act never happened, and a script that
+    supplied one would be a machine wearing `VerdictSource.HUMAN` — the split `forge` exists
+    to enforce. An existing bundle is `serial-pilot-2-setup.ps1`'s own refusal one step
+    earlier: a directory silently rewritten under a run already using it is a book whose canon
+    nobody can name afterwards.
+    """
+    tool = _rematerialise()
+    package = json.loads(
+        (Path(__file__).resolve().parents[1] / "plan" / "serial-pilot-2-world.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    unpicked = tmp_path / "unpicked.json"
+    unpicked.write_text(
+        json.dumps({**package, "picked": None}, ensure_ascii=False), encoding="utf-8"
+    )
+    assert tool.main(["--out", str(tmp_path / "x"), "--world", str(unpicked)]) == 2
+    assert not (tmp_path / "x").exists()
+
+    out = tmp_path / "twice"
+    assert tool.main(["--out", str(out), "--created-at", "2026-08-22T00:00:00Z"]) == 0
+    assert tool.main(["--out", str(out), "--created-at", "2026-08-22T00:00:00Z"]) == 2
+
+
+def test_a_scene_count_the_directives_were_not_written_for_is_refused(tmp_path: Path) -> None:
+    """Story keys minted at one book length are not comparable to beat keys minted at another
+    — run A's whole defect, one layer up (`"s1" > "s04"`, stage-0 §107.9.1 defect 10). The
+    committed directives record the length they were written for, so the mismatch is a refusal
+    rather than a book whose reveal schedule silently misses."""
+    tool = _rematerialise()
+    assert tool.main(["--out", str(tmp_path / "y"), "--scenes", "12"]) == 2
+    assert not (tmp_path / "y").exists()

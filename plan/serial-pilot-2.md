@@ -182,6 +182,51 @@ the block is a **note and never a check**: a coined name on the page is not the 
 and deciding from prose that a hint has gone too far is exactly the judgment this project has no
 instrument for.
 
+### 4.1 S5′ — pre-registered 2026-08-22, before the third run and before any paid call
+
+**One thing changed since run B and it is one line of one prompt.** The summary call — the only
+call in this system that can mark a debt paid — is now shown the book's open ledger, in its own
+block, subjects verbatim beside `describe_owed`'s line, and its `PROMISES_PAID` ask says to copy a
+name exactly from that list. Nothing else moved: the world, the directives, the promises, the
+craft constraints, the commands, the budgets and the drafting prompt are all run B's. S5 asked
+whether seeding the answer was the binding constraint and answered no; S5′ asks whether *not
+being shown the ledger* was.
+
+**Why S5 could not have answered it, measured rather than argued** (`plan/handoff-promise-
+ledger.md` Task 0, on `serial.db`): payment goes through `promise_id_for(book_id,
+normalise_subject(name))` against a row whose status is still `open`, so it lands only when a
+one-scene, no-memory call reproduces a subject coined scenes earlier. Across eight summaries that
+book's summariser opened 41 subjects and re-produced one of its own — **once**, and in the
+`promises_opened` channel, never the paid one. The two strings it did return as paid, both at
+scene 6, matched no row that existed then and no row that ever existed. That is an impossibility
+by construction, not a model failing.
+
+| # | question | how it is answered | outcomes named in advance |
+|---|---|---|---|
+| **S5′** | with the open ledger shown to the call that settles it, does anything settle | per promise from the store: `subject`, `kind`, `opened_at_key`, `due_key`, `status`, `paid_at_key`, `paid_by_revision`, and seeded (`model = ""`) or model-opened; plus each summary row's `promises` JSON, now carrying `paid` beside `paid_matched` / `paid_unmatched`. **Counts, never a rate** | (i) **≥1 seeded debt paid at or after its scheduled scene** (`m_holts_date` s4, `m_orrin_last_call` s7) → not being shown the ledger was the block, and the ledger can settle; (ii) **0 of 6 seeded paid with the list shown** → S3 already showed the reveal reaching the writer mechanically, so "disclosed to the writer" ≠ "paid on the page", and that is the next question rather than this one's; (iii) **model-opened debts paid but seeded ones not** → a subject-vocabulary mismatch: check the render and the normalisation before reading anything else into it |
+
+**No bar is declared and none may be read in.** n is six seeded debts plus whatever the summariser
+opens, §108.5's "any subgroup of two is empty" applies to every split of it, and a pre-registered
+null is a result (§61). Nothing here asks any model whether a payoff was *good* — that is a
+verdict channel and this run has none.
+
+**Also pre-registered: the packet trace, in §6.2's own columns** — facts / hidden / threads /
+prose / summaries / prompt tokens, per scene, from the stored `scene_draft` payloads. Paid rows
+leave the packet (`promises(..., open_only=True)` on both the packet and now the summary prompt),
+so any debt that settles is the first measurement a ledger policy over packet pressure has ever
+had. Run B's threads column ran **6 → 41** against a world flat at 229–231 facts; that is the
+comparison.
+
+**And the control that says nothing else moved: the hidden-count trace must reproduce**
+`20, 20, 20, 19, 19, 19, 18, 18`. S3's machinery is untouched by this work, so if it moves,
+something was changed that should not have been.
+
+**What is deliberately not claimed by any outcome above.** Whether a scene that names a debt
+actually pays it on the page — that is `research/quality-measurement/payoff_landing.py`'s
+report-channel question, graded by its own controls on the research side, and this run supplies
+its substrate rather than its answer. And whether the prose is any good, which no run of this
+pilot is entitled to say.
+
 ---
 
 ## 5. Anti-scope
@@ -276,8 +321,127 @@ comes out of a per-scene summary call that is not told which debts are due, and 
 does not reach it. That is a concrete next question and it is not one this pilot's scope may
 answer.
 
+> **Answered in §6.3, 2026-08-22 — and "not told which debts are due" was one step short.** The
+> call was not told the debts *exist*: the ledger appeared nowhere in its prompt. Shown the open
+> rows, run C settled **8 of 40** on this same world, all eight by names copied exactly off the
+> list. Stage-0 §110.
+
 **What is deliberately not claimed.** Whether the scene at s4 *actually answers* its question, and
 whether the prose is any good, are reads this pilot does not spend. The gate exits 0, which is the
 only thing it was ever entitled to say.
 
 ---
+
+### 6.3 Run C, 2026-08-22 — the same world, with the settling call shown the ledger
+
+Stage-0 §110; the measurements are
+[`research/quality-measurement/promise-ledger-settlement.md`](../research/quality-measurement/promise-ledger-settlement.md).
+
+`serial2c.db` (gitignored, kept; `sha256:a097add58152acee78dd426cee0429daf0e9141b5a83bfa4b31957931af93b05`,
+1,888,256 bytes). Bundle re-materialised into `pilot2/direct2c` by
+`tools/rematerialise_forge_bundle.py` — **the operator's pick was not re-made**: it was recorded on
+2026-08-22 as an `architect.pick.v0` decision with `VerdictSource.HUMAN`, and the tool reads
+`picked` from the world package, records no decision and calls no model. 329 records,
+`worlds.validate` clean, the same count run B ran on; `meta.created_at` is the one field the
+package cannot recover and was minted at `2026-08-22T14:39:15Z`, which no record depends on.
+
+**One thing differs from run B and it is one block in one prompt.** The per-scene summary call —
+the only call that can mark a debt paid — is now shown the book's open ledger. The world, the
+directives, the promises, the craft constraints, the commands, the budgets and **the drafting
+prompt** are run B's; exactly one file under `src/` changed.
+
+**65 ticks, 46 jobs, all succeeded; 21 decisions, every one ACCEPT; 12 invocations, 743,800
+tokens, $5.60.** Eight of eight scenes, **7,743 words**, 9 revisions rebuilding cleanly, 0 parked,
+0 poisoned, 0 unattributed, 0 exceptions, **0 jobs on a second attempt**. 5 findings, all
+`promise.overdue.v0` MINOR — run A's and run B's number exactly. **The gate exits 0.**
+
+#### The packet trace, and the control that says nothing else moved
+
+| scene | facts | hidden | threads | prose | summaries | prompt tokens |
+|--:|--:|--:|--:|--:|--:|--:|
+| 1 | 229 | **20** | 6 | 0 | 0 | 8,573 |
+| 2 | 229 | 20 | 9 | 1 | 0 | 9,828 |
+| 3 | 229 | 20 | 14 | 2 | 0 | 11,213 |
+| 4 | 230 | **19** | 19 | 3 | 0 | 12,607 |
+| 5 | 230 | 19 | 22 | 3 | 1 | 12,911 |
+| 6 | 230 | 19 | 25 | 3 | 2 | 13,248 |
+| 7 | 231 | **18** | 30 | 3 | 3 | 13,601 |
+| 8 | 231 | 18 | 32 | 3 | 4 | 14,024 |
+
+**The hidden trace reproduces exactly: `20, 20, 20, 19, 19, 19, 18, 18`.** Same drops at scene 4
+and scene 7, same fact count rising by one each time, `context_omitted = 0` across the whole book.
+S3's machinery was untouched and it did not move. Threads run **6 → 32** against run B's 6 → 41,
+and the two causes are not separable here: eight debts left the packet by being settled, and the
+summariser opened 34 of its own against run B's 41.
+
+The token column is lower than run B's throughout (8,573 vs 9,052 at scene 1) and **that is
+plan-side variance, not this change**: `narrative_planner` minted 17 constraints this run against
+run A's 14, and the per-scene statements are shorter. The drafting prompt is byte-identical code;
+nothing in this handoff touches the packet.
+
+#### S5′ — the ledger settles, and the answer is not one of the three outcomes named
+
+**40 rows, 32 open, 8 paid.** The prior across four books was 32/0, 40/0, 41/0, 47/0.
+
+| | run A | run B | **run C** |
+|---|--:|--:|--:|
+| opened | 41 | 47 | **40** |
+| paid | **0** | **0** | **8** |
+| `promises_paid` strings returned | — | — | 8 |
+| of those, matching an open row on the list shown | — | — | **8** |
+| of those, matching nothing | — | — | **0** |
+
+**Eight of eight names the model returned were copied exactly off the list.** On `serial.db`,
+with no list, two of two missed. The mechanism was the block, and showing the rows unblocked it.
+
+| scene | opened | paid | matched |
+|--:|--:|--:|---|
+| 1 | 3 | 0 | |
+| 2 | 5 | 0 | |
+| 3 | 5 | 0 | |
+| 4 | 4 | 1 | `lam_friday_page` |
+| 5 | 3 | 0 | |
+| 6 | 5 | 0 | |
+| 7 | 4 | 2 | `m_the_wrong_table`, `seven_to_eleven_years` |
+| 8 | 5 | 5 | `sowle_unstamped_paper`, `august_speaker`, `sowle_ninety_six`, `wren_friday_entry`, `wren_takes_table` |
+
+**Five of the eight land in the final scene**, which is the cadence defect
+`domain/promises.schedule_fault` exists to name in a *schedule* — recorded here as an observation
+about a run, not as a finding, because nothing scheduled anything (0 payoff windows on all 40
+rows, so `describe_owed`'s `pay within` clause appeared in no prompt).
+
+**The three pre-registered outcomes did not partition the space, and the honest answer is that
+none of them is what happened.** §4.1 named: (i) a seeded debt paid at or after its scheduled
+scene; (ii) 0 of 6 seeded paid; (iii) model-opened paid and seeded not. What happened:
+
+| the six seeded debts | scheduled | disclosed to the writer | status |
+|---|---|---|---|
+| `m_holts_date` | **s4, in book** | **yes, at s4** | **open** |
+| `m_orrin_last_call` | **s7, in book** | **yes, at s7** | **open** |
+| `m_the_wrong_table` | scene 63, outside | no — hidden all run | **paid at s7** |
+| `m_first_water` | scene 41, outside | no | open |
+| `m_pells_lateral` | scene 26, outside | no | open |
+| `m_where_the_dryness_goes` | scene 92, outside | no | open |
+
+So (i) is **not** met as written — neither of the two debts it named was paid. (ii) is not met — 1
+of 6 seeded was paid. (iii) is not met either — a seeded debt was paid. **A pre-registration whose
+outcomes do not cover the result is a defect in the pre-registration**, and it is recorded rather
+than reinterpreted: the outcomes were written as if "seeded" were one population, and the six
+split into two — two debts the world scheduled *inside* this book and four arc debts it did not.
+
+**What the run does answer, and it is the question S5′ asked.** *Does anything settle with the
+ledger shown?* **Yes: 8 of 40, up from 0 of 41 and 0 of 47 on the same world.** The summariser not
+being shown the ledger was the block, and it is gone.
+
+**What it opens, and this is sharper than the null it replaces.** The two debts whose answers the
+book *actually disclosed to the writer at their scheduled scenes* are the two that stayed open,
+and the one seeded debt that was settled is an arc debt whose answer stayed hidden for the whole
+run — `m_the_wrong_table`, scheduled for scene 63. So the summariser marked paid a debt this book
+was never told the answer to. Whether scene 7 settles anything a reader would recognise as that
+question is **exactly** `research/quality-measurement/payoff_landing.py`'s report-channel question,
+it is not answerable from the ledger, and W4's scorer does not currently work. That is the next
+question and this pilot's scope may not answer it.
+
+**What is deliberately not claimed.** Whether any of the eight payoffs is good; whether any of
+them lands on the page at all; whether the prose is any good; and any comparison of run C's prose
+against run A's or run B's. The gate exits 0, which is the only thing it was ever entitled to say.

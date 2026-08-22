@@ -143,12 +143,22 @@ CLI_TIMEOUT_SECONDS = 300.0
 #: reader persona appended to "You are Claude Code, an interactive CLI tool" is not a reader — it
 #: is an agent wearing a reader's answers, which is the caricature failure arriving through the
 #: transport instead of through the prompt.
+#:
+#: **The last two flags keep the repository's CLAUDE.md out of the judge's context** (stage-0
+#: §109). A `-p` call loads CLAUDE.md from the working directory and its ancestors even under
+#: `--system-prompt` — measured on `claude` 2.1.236 with a marker file: the marker leaked through
+#: `--system-prompt` and did not through either of these — and the replay cache keys on
+#: (system, messages, model, transport), so a CLAUDE.md riding in would change the instrument's
+#: context without changing a single cache key. `--bare` would also drop the skills and plugins
+#: tax, and also skips keychain reads, which logs a subscription out; not usable here.
 CLI_HARDENING = (
     "--exclude-dynamic-system-prompt-sections",
     "--allowed-tools", "",
     "--strict-mcp-config", "--mcp-config", '{"mcpServers":{}}',
     "--no-session-persistence",
     "--permission-mode", "manual",
+    "--setting-sources", "user",
+    "--settings", '{"claudeMdExcludes":["**/CLAUDE.md","**/CLAUDE.local.md"]}',
 )
 
 
