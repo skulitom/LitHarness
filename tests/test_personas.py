@@ -14,8 +14,6 @@ precisely what offline arithmetic cannot measure.
 from __future__ import annotations
 
 import dataclasses
-import sys
-from pathlib import Path
 
 import pytest
 

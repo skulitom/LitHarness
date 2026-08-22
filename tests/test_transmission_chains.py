@@ -17,8 +17,6 @@ its own coverage. Nothing here pins the value or ordering of a module-level cons
 from __future__ import annotations
 
 import math
-import sys
-from pathlib import Path
 
 import pytest
 

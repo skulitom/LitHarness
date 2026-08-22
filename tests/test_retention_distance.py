@@ -17,9 +17,7 @@ the direct assertions beside it.
 from __future__ import annotations
 
 import math
-import sys
 from collections import Counter
-from pathlib import Path
 
 import pytest
 

@@ -13,7 +13,6 @@ these loaders exist to read are present, current, or valid.
 
 from __future__ import annotations
 
-import sys
 from pathlib import Path
 
 import pytest

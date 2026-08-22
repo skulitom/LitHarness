@@ -15,8 +15,6 @@ and is deliberately untouched; ``score_pairs`` and the CLI need a model and are 
 from __future__ import annotations
 
 import math
-import sys
-from pathlib import Path
 
 import pytest
 
