@@ -34,6 +34,17 @@ records are extracted from accepted prose, so the only records that exist are ab
 already written. It arises for an imported book, whose records describe scenes not yet
 drafted — which is exactly when a guess would be invisible and wrong.
 
+**The live loop's half of that paragraph stopped being the whole story, in two ways.** It is
+true of records *extracted* from accepted prose and false of **seeded** ones: a want or a fear
+that changes across a book is future-dated by construction, so with no cutoff scene one is told
+what the character will want in chapter two. And it is not quite true of extracted records
+either, because §4.1 skips a blocked beat rather than waiting on it — a beat that parks leaves
+a hole, `replan` plans the hole afresh, and canon by then holds what the *later* scenes
+established. `application/planner.py::packet_for` now supplies a cutoff — the beat's own
+`story_order_key`, passed through `extraction.stated_position`, so it abstains for exactly the
+books extraction abstains for and an imported book's packet is unchanged. This module still
+refuses to derive the key; it is handed one or it is not.
+
 **That paragraph described something that did not exist until `domain/extraction.py`, and
 what it now describes is narrower than it reads.** Extraction does not *mint* an order key
 either: it reads back the one the book's own imported evidence already attests for a scene,

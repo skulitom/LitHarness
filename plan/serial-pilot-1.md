@@ -41,9 +41,11 @@ the premise doing the genre's work instead of the prose having to.
 
 ## 2. The seed sheet (`plan/serial-pilot-seed.json`)
 
-**Revised — see §8.** Fifteen canon records, **none with a story position**: the initial
-condition, true before the book begins, exactly as §17 Stage 3 prescribes. Verified against the
-pinned contracts package and against this repository's own extraction.
+**Revised twice — see §8.** Nineteen canon records. Fifteen have **no story position**: the
+initial condition, true before the book begins, exactly as §17 Stage 3 prescribes. Four are
+dated interiority — what Silas wants and fears, at `s1`, `s2`, `s5` and `s7` — added after the
+context packet learned to slice on story time. Verified against the pinned contracts package
+and against this repository's own extraction.
 
 Three things, in the order they matter.
 
@@ -333,3 +335,21 @@ the rewrite intact — which is the property this log exists to make checkable.
 order cannot express a comparison across two cycles of the same morning. Scene 8's hook — an
 appraisal returning a different value than it did in loop one — will be in the prose and cannot
 be held as a fact by canon or checked by any detector. See `plan/state-model-abilities.md` §7.
+
+**2026-08-22, round 3 — the seed gains four dated interiority records.** `silas wants` at `s1`
+and `s5`, `silas fears` at `s2` and `s7`: the arc of desire `plan/interiority-model.md` §1 asks
+for, held as canon rather than asked for in a directive. Nothing in §4 changed, no directive was
+added, and no claim is made here about the prose — see `plan/interiority-packet-results.md` for
+what the packet carried before and after, and for the three findings the change turned up.
+
+Three things about the seed that were true before and are now conditional:
+
+- **"Fifteen canon records, none with a story position"** (§2) is now nineteen, four of them
+  dated. The fifteen are unchanged.
+- **"No two canon records share a `(subject, predicate)` pair"** no longer holds literally —
+  there are two `silas wants` and two `silas fears`. It holds in the form the contradiction
+  detector actually enforces, `(subject, predicate, order_key)`, because the four sit at four
+  distinct positions. Measured: zero findings over the whole seed.
+- **The keys are `beats_for`'s own, at this book's eight-scene padding.** A re-plan at ten
+  scenes or more pads to `s01` and `s1` stops sorting first, which would mis-slice every one of
+  them. Each record carries that warning in its `note`.
