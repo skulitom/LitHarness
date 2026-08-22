@@ -280,6 +280,28 @@ while the text says nothing it had not already said.
 is the payoff of a progression promise — an advance with no promise behind it is unearned, and
 an unpaid promise is a hurdle the book walked around.
 
+**4.1 The ordinal row is now built, and only that row (2026-08-22, stage-0 §113).** The list above
+is a design for seven comparators and, until today, none of them had a schedule to check. The
+*ordinal* row has one: `outline._standing_milestones` validates a rung schedule the way
+`_milestones` validates a numeric one — an ordinal that exists, one milestone per scene, rungs the
+world declared and no others, no stasis, no flat stretch — and adds the direction check this
+section names for `ordinal` and only for `ordinal`: **`rung_index` is non-decreasing from the
+opening standing and at least one milestone is strictly above it.**
+
+**It is a genre contract on a directed brief, not a definition of progression, and the difference
+is load-bearing.** `research/progression-generalization.md`'s closing list refuses "monotone power
+as the definition of progression", and nothing here adopts it: the comparator registry is
+unchanged, partial orders stay partial, `ladder_of` still returns empty rather than guessing a
+total order, and a world whose rank is revocable is still expressible — *The Closing Error*, whose
+whole inversion is retroactive demotion, would forge unchanged. What is checked is the narrow
+thing this section already says an `ordinal` is checked for, over **the arc being written now**,
+because the brief that asks for progression fantasy is asking for it. A world that wants a fall
+writes it in later by directive, and a directive is the operator's.
+
+The other six rows are still unbuilt and are still the design. The *successive claims (depth)* row
+in particular stays exactly as flagged: advisory until its false-positive rate is measured, and
+nothing in §113 touched it.
+
 ## 5. Change surface
 
 | # | change | where | note |
@@ -296,6 +318,9 @@ an unpaid promise is a hurdle the book walked around.
 | 10 | Open a `progression` promise at a hurdle; pay it on the change that clears it | `application/summarize.py` — the ledger's only writer | the machinery exists |
 | 11 | Ask the generator for the graph line, and show it the criterion it is writing against | `application/planner.py::render_prompt` | |
 | 12 | The six-rule LitRPG pack speaks the stat vocabulary and lives in a sibling checkout | ContinuityEvaluation | flag; do not assume |
+| 13 | *(2026-08-22, §113)* **A standing on an ordinal chain**: `stands_at` as a flat edge with the criterion in the value slot, `ladder_of` / `rung_index` / `criterion_of_rung` / `standing_of`, and three validator complaints | `domain/worlds.py` | item 7's `ordinal` row, finally with somebody on it; the number is derived, never stored |
+| 14 | *(2026-08-22, §113)* **A rung schedule**, validated for direction as §4.1 says an `ordinal` is validated, and `standing_target` as `progression_target`'s twin | `application/outline.py`, `domain/extraction.py` | item 10's shape for a ladder rather than a sheet |
+| 15 | *(2026-08-22, §113)* Ask the generator for the **standing** and show it the line the book prints — item 11's other half, which had no producer | `application/planner.py::render_prompt` | item 9's family, now with something to read |
 
 Items 1 and 2 are the pair to do first, and 2 is the one most likely to be skipped: a model that
 is checkable and illegible to the writer trades this project's stated priority for its
