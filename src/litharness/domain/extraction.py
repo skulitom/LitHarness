@@ -580,6 +580,120 @@ def progression_target(
     return render_status_line(target.subject, target.value)
 
 
+def standing_target(
+    records: Sequence[lc.StateRecord], *, at: str | None = None
+) -> str | None:
+    """The next rung a standing schedule asks this book to reach, as one line of facts. Or None.
+
+    **`progression_target`'s twin, and every one of that function's arguments applies here.**
+    A scheduled standing is a `PROPOSED` `stands_at` edge, so `is_canon` excludes it, the
+    context packet never hands it to a scene as established fact, and `detect_contradictions`
+    never weighs it against what the prose says. It informs generation and contaminates nothing.
+
+    Returns the **nearest scheduled standing at or after** `at`, so a book aims at its next rung
+    rather than its last one, and never interpolates: which scene a rise lands at is the
+    schedule's choice and inventing one between two milestones would be this module deriving the
+    thing it is most careful not to.
+
+    The line carries the *live* rung as well as the scheduled one, and both with their number,
+    because the number is the whole point of the ladder and a target with no origin is a
+    destination with no distance. Where the live standing is unknown — a book being drafted from
+    a schedule whose opening standing is not canon — the line says only where the plan has them.
+
+    **Facts and positions, no verb about the rise.** Whether the rung is earned, felt, or
+    celebrated is not said here and is not said anywhere in this package
+    (`plan/handoff-numbers-go-up.md` boundary 1).
+    """
+    scheduled = [
+        record
+        for record in records
+        if record.predicate == worlds_mod.STANDS_AT_PREDICATE
+        and record.object_ref
+        and not state_mod.is_canon(record)
+        and state_mod.order_key_of(record) is not None
+    ]
+    ahead = [
+        record
+        for record in scheduled
+        if at is None or (state_mod.order_key_of(record) or "") >= at
+    ]
+    if not ahead:
+        return None
+    target = min(ahead, key=lambda record: state_mod.order_key_of(record) or "")
+    criterion = str(target.value or "").strip() or worlds_mod.criterion_of_rung(
+        records, target.object_ref or ""
+    )
+    if not criterion:
+        return None
+    chain = worlds_mod.ladder_of(records, criterion)
+    if not chain or target.object_ref not in chain:
+        return None
+    total = len(chain)
+    aimed = chain.index(target.object_ref or "") + 1
+    forms = {
+        record.subject: str(record.value or "").strip()
+        for record in records
+        if record.predicate == worlds_mod.MANIFESTS_PREDICATE
+    }
+    here = worlds_mod.standing_of(records, target.subject, at=at).get(criterion)
+    ahead_of = f"{target.object_ref} ({aimed} of {total})"
+    aimed_form = forms.get(target.object_ref or "")
+    if here is None or here not in chain:
+        plan = f"the book's plan has {target.subject} at {ahead_of}"
+        return f"{plan}: {aimed_form}" if aimed_form else plan
+    now = chain.index(here) + 1
+    line = (
+        f"{target.subject} stands at {here} ({now} of {total})"
+        f"{': ' + forms[here] if forms.get(here) else ''}; "
+        f"the book's plan has them at {ahead_of}"
+    )
+    return f"{line}: {aimed_form}" if aimed_form else line
+
+
+def standing_example(
+    records: Sequence[lc.StateRecord], *, at: str | None = None
+) -> str | None:
+    """One graph line, filled with this book's own words and its live rung, or `None`.
+
+    **`system_voice_example` for the second extractor family, and it exists for that
+    function's measured reason.** Shown a template with a `{subject}` slot intact, a model
+    wrote the placeholder out verbatim: the line matched the pattern, named a subject canon has
+    never heard of, and extraction yielded nothing — a scene that looks right, parses right, and
+    establishes nothing. So what a generator is shown is a *filled* line, never a form with
+    braces in it, and the fill comes from records rather than from anything this module invents.
+
+    `None` for a book that declares no graph line, whose declaration carries no phrase meaning
+    "stands at", or whose protagonist stands nowhere countable. Each is a book the chain
+    *declare → ask → print → read* never starts on, which is a legitimate state and the control
+    every fixture in this project sits in.
+    """
+    line = graph_line_for(records)
+    if line is None:
+        return None
+    phrase = next(
+        (
+            edge.phrase
+            for edge in line.edges
+            if edge.predicate == worlds_mod.STANDS_AT_PREDICATE
+        ),
+        None,
+    )
+    if phrase is None:
+        return None
+    subjects = worlds_mod.entities_with_role(_canon_of(records), "protagonist")
+    if not subjects:
+        return None
+    standing = worlds_mod.standing_of(records, subjects[0], at=at)
+    if len(standing) != 1:
+        return None
+    [(_, rung)] = standing.items()
+    return line.render(subjects[0], phrase, rung)
+
+
+def _canon_of(records: Sequence[lc.StateRecord]) -> list[lc.StateRecord]:
+    return [record for record in records if state_mod.is_canon(record)]
+
+
 def speaks_system_voice(records: Sequence[lc.StateRecord]) -> bool:
     """Whether this book states its game state on the page.
 
@@ -1094,6 +1208,8 @@ __all__ = [
     "promotions",
     "record_id_for",
     "sheet_for",
+    "standing_example",
+    "standing_target",
 ]
 
 
