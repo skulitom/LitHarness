@@ -3685,6 +3685,40 @@ def _windowed_mean(
     return series
 
 
+def _granularity_residual(
+    rows: list[dict[str, Any]], population: dict[str, list[float]]
+) -> dict[str, Any]:
+    """How much of each statistic is the writer's paragraphing rather than the writing.
+
+    **The confound this design's own grid creates.** The unit of labelling is the paragraph, so a
+    chapter written in many short paragraphs hands the model more and smaller decisions than one
+    written in a few long ones. Coverage is a share of WORDS and is partly protected by that;
+    turn rate and run length are not protected at all, since both are counted over runs of
+    paragraphs. Our own published chapters run 19 to 34 words a paragraph against a RoyalRoad
+    draw that runs wider, so this is measured rather than assumed away before any placement is
+    read.
+
+    Reported for every statistic, with no bar and no correction applied: a correlation here does
+    not invalidate a placement, it says which part of a placement a length-matched comparison has
+    to control for.
+    """
+    lengths = [
+        float(row["words"]) / max(int(row["paragraphs"]), 1) for row in rows
+    ]
+    return {
+        "mean_words_per_paragraph": describe(lengths) if lengths else {"n": 0},
+        "spearman_vs_statistic": {
+            name: spearman(lengths, population[name])
+            for name in SCALAR_STATISTICS
+            if len(population[name]) == len(rows)
+        },
+        "note": ("the paragraph is the unit of labelling, so a chapter written in short "
+                 "paragraphs hands the model more and smaller decisions. Coverage is a share of "
+                 "words and is partly protected; turn rate and run length are counted over runs "
+                 "of paragraphs and are not. No correction is applied and none is implied"),
+    }
+
+
 def run_report(args: argparse.Namespace) -> dict[str, Any]:
     """Merge the arms into the numbers `affect-trajectory-results.md` quotes. Spends nothing."""
     dry = bool(args.dry_run)
@@ -3714,11 +3748,15 @@ def run_report(args: argparse.Namespace) -> dict[str, Any]:
         "end_state": _end_state_mix(rr_rows),
         "words": describe([float(row["words"]) for row in rr_rows]),
         "paragraphs": describe([float(row["paragraphs"]) for row in rr_rows]),
+        "words_per_paragraph": describe([
+            float(row["words"]) / max(int(row["paragraphs"]), 1) for row in rr_rows
+        ]),
         "length_residual": {
             name: spearman([float(row["words"]) for row in rr_rows], population[name])
             for name in SCALAR_STATISTICS
             if len(population[name]) == len(rr_rows)
         },
+        "granularity_residual": _granularity_residual(rr_rows, population),
         "hygiene": rr["hygiene"],
         "familiarity_confound": (
             "RoyalRoad text may be memorised by the locator (BRIEF S2 Pass 6). This baseline "
@@ -3831,6 +3869,9 @@ def _placement(
         "unit_id": unit_id,
         "words": draws[0]["words"],
         "paragraphs": draws[0]["paragraphs"],
+        "words_per_paragraph": round(
+            draws[0]["words"] / max(int(draws[0]["paragraphs"]), 1), 2
+        ),
         "draws": len(draws),
         "length_band_words": [round(low), round(high)],
         "length_matched_n": len(matched),
