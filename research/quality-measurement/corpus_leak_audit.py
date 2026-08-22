@@ -117,7 +117,16 @@ BINARY_DERIVATIVE_SUFFIXES = (".npz", ".npy", ".pt", ".safetensors")
 #: So the limits stay (an unbounded walk over every blob in history is a real cost) and hitting
 #: one is now **a finding that exits 1 and names the blob**. Raise the constant and re-run, or
 #: split the product; do not let a truncated walk report clean.
-LIST_WALK_LIMIT = 400
+#:
+#: **Raised 400 -> 5000 on 2026-08-22, which is the instruction above being followed rather than
+#: an exception to it.** The refusal fired for the first time on `opening-counters-royalroad.json`
+#: (`e860d96c`): the names counter commits two 2,000-element distributions, so `.overall.values`
+#: and `.litrpg.values` walked 400 of 2,000 and the audit correctly refused to report on the rest.
+#: The skipped tail is integers — a proper-noun count per opening, one number per chapter — and
+#: raising the cap is what turns "cannot say" into CLEAN across all 231 commits, measured at five
+#: seconds. Raising rather than splitting because the product is right: a distribution belongs in
+#: one file, and the cost of walking it is five seconds once.
+LIST_WALK_LIMIT = 5000
 JSONL_LINE_LIMIT = 5000
 
 #: A `.csv`/`.txt` blob has no JSON structure to walk, so the whole file is scored as one run of

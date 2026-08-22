@@ -1,0 +1,7142 @@
+{
+  "api_calls": 1,
+  "arm": "strip",
+  "dry_run": false,
+  "failure_reasons": {},
+  "generation_calls": 0,
+  "generation_replayed": 48,
+  "hygiene": {
+    "anchors_returned": 857,
+    "bad_kind": 0,
+    "confabulated": 34,
+    "confabulated_per_unit": 0.7083,
+    "confabulation_rate": 0.0397,
+    "duplicate": 0,
+    "over_length": 11,
+    "refused_units": 0,
+    "relaxed_only": 30,
+    "units": 48,
+    "unparseable_units": 1
+  },
+  "model": null,
+  "pairs": [
+    {
+      "certificates": {
+        "strip": {
+          "certified": true,
+          "protected_kept": 0,
+          "protected_spans": 0,
+          "reasons": [],
+          "similarity": 0.9349,
+          "word_growth_pct": 1.3
+        },
+        "strip_placebo": {
+          "certified": true,
+          "protected_kept": 0,
+          "protected_spans": 0,
+          "reasons": [],
+          "similarity": 0.9912,
+          "word_growth_pct": -0.08
+        }
+      },
+      "cohort": "undeclared_2025",
+      "drop_placebo": 0,
+      "drop_strip": -7,
+      "original_counted": 17,
+      "placebo_counted": 17,
+      "prose_original": 17,
+      "prose_placebo": 17,
+      "prose_strip": 21,
+      "protected_spans": 0,
+      "repeat_spread": 4.0,
+      "strip_counted": 24,
+      "system_voice_original": 0,
+      "system_voice_strip": 3,
+      "unit_id": "rr:2093799.0",
+      "words": 1305
+    },
+    {
+      "certificates": {
+        "strip": {
+          "certified": true,
+          "protected_kept": 0,
+          "protected_spans": 0,
+          "reasons": [],
+          "similarity": 0.906,
+          "word_growth_pct": 0.14
+        },
+        "strip_placebo": {
+          "certified": true,
+          "protected_kept": 0,
+          "protected_spans": 0,
+          "reasons": [],
+          "similarity": 0.9947,
+          "word_growth_pct": -0.21
+        }
+      },
+      "cohort": "undeclared_2025",
+      "drop_placebo": 3,
+      "drop_strip": 3,
+      "original_counted": 26,
+      "placebo_counted": 23,
+      "prose_original": 25,
+      "prose_placebo": 23,
+      "prose_strip": 23,
+      "protected_spans": 0,
+      "repeat_spread": 2.0,
+      "strip_counted": 23,
+      "system_voice_original": 1,
+      "system_voice_strip": 0,
+      "unit_id": "rr:2095155.0",
+      "words": 1404
+    },
+    {
+      "certificates": {
+        "strip": {
+          "certified": true,
+          "protected_kept": 0,
+          "protected_spans": 0,
+          "reasons": [],
+          "similarity": 0.9002,
+          "word_growth_pct": -0.09
+        },
+        "strip_placebo": {
+          "certified": true,
+          "protected_kept": 0,
+          "protected_spans": 0,
+          "reasons": [],
+          "similarity": 0.992,
+          "word_growth_pct": -0.28
+        }
+      },
+      "cohort": "declared_ai_2025",
+      "drop_placebo": 3,
+      "drop_strip": 11,
+      "original_counted": 16,
+      "placebo_counted": 13,
+      "prose_original": 16,
+      "prose_placebo": 13,
+      "prose_strip": 5,
+      "protected_spans": 0,
+      "repeat_spread": 4.0,
+      "strip_counted": 5,
+      "system_voice_original": 0,
+      "system_voice_strip": 0,
+      "unit_id": "rr:2095485.0",
+      "words": 1068
+    },
+    {
+      "certificates": {
+        "strip": {
+          "certified": true,
+          "protected_kept": 0,
+          "protected_spans": 0,
+          "reasons": [],
+          "similarity": 0.903,
+          "word_growth_pct": -1.36
+        },
+        "strip_placebo": {
+          "certified": true,
+          "protected_kept": 0,
+          "protected_spans": 0,
+          "reasons": [],
+          "similarity": 0.9982,
+          "word_growth_pct": 0.0
+        }
+      },
+      "cohort": "undeclared_2025",
+      "drop_placebo": 1,
+      "drop_strip": 3,
+      "original_counted": 22,
+      "placebo_counted": 21,
+      "prose_original": 20,
+      "prose_placebo": 19,
+      "prose_strip": 17,
+      "protected_spans": 0,
+      "repeat_spread": 1.0,
+      "strip_counted": 19,
+      "system_voice_original": 2,
+      "system_voice_strip": 2,
+      "unit_id": "rr:2100675.0",
+      "words": 1687
+    },
+    {
+      "certificates": {
+        "strip": {
+          "certified": true,
+          "protected_kept": 0,
+          "protected_spans": 0,
+          "reasons": [],
+          "similarity": 0.9185,
+          "word_growth_pct": 1.79
+        },
+        "strip_placebo": {
+          "certified": true,
+          "protected_kept": 0,
+          "protected_spans": 0,
+          "reasons": [],
+          "similarity": 0.996,
+          "word_growth_pct": 0.0
+        }
+      },
+      "cohort": "undeclared_2025",
+      "drop_placebo": 8,
+      "drop_strip": 0,
+      "original_counted": 24,
+      "placebo_counted": 16,
+      "prose_original": 22,
+      "prose_placebo": 13,
+      "prose_strip": 22,
+      "protected_spans": 0,
+      "repeat_spread": 1.0,
+      "strip_counted": 24,
+      "system_voice_original": 2,
+      "system_voice_strip": 2,
+      "unit_id": "rr:2107310.0",
+      "words": 1733
+    },
+    {
+      "certificates": {
+        "strip": {
+          "certified": true,
+          "protected_kept": 0,
+          "protected_spans": 0,
+          "reasons": [],
+          "similarity": 0.8228,
+          "word_growth_pct": -2.43
+        },
+        "strip_placebo": {
+          "certified": true,
+          "protected_kept": 0,
+          "protected_spans": 0,
+          "reasons": [],
+          "similarity": 1.0,
+          "word_growth_pct": 0.0
+        }
+      },
+      "cohort": "declared_ai_2025",
+      "drop_placebo": 8,
+      "drop_strip": -12,
+      "original_counted": 27,
+      "placebo_counted": 19,
+      "prose_original": 25,
+      "prose_placebo": 16,
+      "prose_strip": 39,
+      "protected_spans": 0,
+      "repeat_spread": 10.0,
+      "strip_counted": 39,
+      "system_voice_original": 2,
+      "system_voice_strip": 0,
+      "unit_id": "rr:2122467.0",
+      "words": 1234
+    },
+    {
+      "certificates": {
+        "strip": {
+          "certified": true,
+          "protected_kept": 0,
+          "protected_spans": 0,
+          "reasons": [],
+          "similarity": 0.9477,
+          "word_growth_pct": 0.97
+        },
+        "strip_placebo": {
+          "certified": true,
+          "protected_kept": 0,
+          "protected_spans": 0,
+          "reasons": [],
+          "similarity": 0.9934,
+          "word_growth_pct": 0.0
+        }
+      },
+      "cohort": "declared_ai_2025",
+      "drop_placebo": -12,
+      "drop_strip": 18,
+      "original_counted": 20,
+      "placebo_counted": 32,
+      "prose_original": 20,
+      "prose_placebo": 31,
+      "prose_strip": 2,
+      "protected_spans": 0,
+      "repeat_spread": 10.0,
+      "strip_counted": 2,
+      "system_voice_original": 0,
+      "system_voice_strip": 0,
+      "unit_id": "rr:2125202.0",
+      "words": 1655
+    },
+    {
+      "certificates": {
+        "strip": {
+          "certified": true,
+          "protected_kept": 0,
+          "protected_spans": 0,
+          "reasons": [],
+          "similarity": 0.8291,
+          "word_growth_pct": 0.24
+        },
+        "strip_placebo": {
+          "certified": true,
+          "protected_kept": 0,
+          "protected_spans": 0,
+          "reasons": [],
+          "similarity": 0.9937,
+          "word_growth_pct": 0.0
+        }
+      },
+      "cohort": "declared_ai_2025",
+      "drop_placebo": 5,
+      "drop_strip": 7,
+      "original_counted": 19,
+      "placebo_counted": 14,
+      "prose_original": 18,
+      "prose_placebo": 14,
+      "prose_strip": 12,
+      "protected_spans": 0,
+      "repeat_spread": 6.0,
+      "strip_counted": 12,
+      "system_voice_original": 1,
+      "system_voice_strip": 0,
+      "unit_id": "rr:2144891.0",
+      "words": 1265
+    },
+    {
+      "certificates": {
+        "strip": {
+          "certified": true,
+          "protected_kept": 0,
+          "protected_spans": 0,
+          "reasons": [],
+          "similarity": 0.9181,
+          "word_growth_pct": 0.36
+        },
+        "strip_placebo": {
+          "certified": true,
+          "protected_kept": 0,
+          "protected_spans": 0,
+          "reasons": [],
+          "similarity": 0.9429,
+          "word_growth_pct": 0.0
+        }
+      },
+      "cohort": "declared_ai_2025",
+      "drop_placebo": 7,
+      "drop_strip": 11,
+      "original_counted": 17,
+      "placebo_counted": 10,
+      "prose_original": 17,
+      "prose_placebo": 10,
+      "prose_strip": 5,
+      "protected_spans": 0,
+      "repeat_spread": 7.0,
+      "strip_counted": 6,
+      "system_voice_original": 0,
+      "system_voice_strip": 1,
+      "unit_id": "rr:2230328.0",
+      "words": 823
+    },
+    {
+      "certificates": {
+        "strip": {
+          "certified": true,
+          "protected_kept": 0,
+          "protected_spans": 0,
+          "reasons": [],
+          "similarity": 0.9429,
+          "word_growth_pct": -0.59
+        },
+        "strip_placebo": {
+          "certified": true,
+          "protected_kept": 0,
+          "protected_spans": 0,
+          "reasons": [],
+          "similarity": 0.999,
+          "word_growth_pct": 0.1
+        }
+      },
+      "cohort": "human_pre_llm",
+      "drop_placebo": 15,
+      "drop_strip": 19,
+      "original_counted": 30,
+      "placebo_counted": 15,
+      "prose_original": 30,
+      "prose_placebo": 15,
+      "prose_strip": 11,
+      "protected_spans": 0,
+      "repeat_spread": 17.0,
+      "strip_counted": 11,
+      "system_voice_original": 0,
+      "system_voice_strip": 0,
+      "unit_id": "rr:767061.0",
+      "words": 2021
+    },
+    {
+      "certificates": {
+        "strip": {
+          "certified": true,
+          "protected_kept": 0,
+          "protected_spans": 0,
+          "reasons": [],
+          "similarity": 0.8619,
+          "word_growth_pct": 1.61
+        },
+        "strip_placebo": {
+          "certified": true,
+          "protected_kept": 0,
+          "protected_spans": 0,
+          "reasons": [],
+          "similarity": 0.997,
+          "word_growth_pct": 0.0
+        }
+      },
+      "cohort": "human_pre_llm",
+      "drop_placebo": -8,
+      "drop_strip": 3,
+      "original_counted": 18,
+      "placebo_counted": 26,
+      "prose_original": 16,
+      "prose_placebo": 24,
+      "prose_strip": 11,
+      "protected_spans": 0,
+      "repeat_spread": 6.0,
+      "strip_counted": 15,
+      "system_voice_original": 2,
+      "system_voice_strip": 4,
+      "unit_id": "rr:768220.0",
+      "words": 991
+    },
+    {
+      "certificates": {
+        "strip": {
+          "certified": true,
+          "protected_kept": 4,
+          "protected_spans": 4,
+          "reasons": [],
+          "similarity": 0.9443,
+          "word_growth_pct": -0.67
+        },
+        "strip_placebo": {
+          "certified": true,
+          "protected_kept": 4,
+          "protected_spans": 4,
+          "reasons": [],
+          "similarity": 0.9916,
+          "word_growth_pct": -0.13
+        }
+      },
+      "cohort": "human_pre_llm",
+      "drop_placebo": -3,
+      "drop_strip": 16,
+      "original_counted": 37,
+      "placebo_counted": 40,
+      "prose_original": 37,
+      "prose_placebo": 39,
+      "prose_strip": 21,
+      "protected_spans": 4,
+      "repeat_spread": 4.0,
+      "strip_counted": 21,
+      "system_voice_original": 0,
+      "system_voice_strip": 0,
+      "unit_id": "rr:770636.0",
+      "words": 2990
+    },
+    {
+      "certificates": {
+        "strip": {
+          "certified": true,
+          "protected_kept": 0,
+          "protected_spans": 0,
+          "reasons": [],
+          "similarity": 0.9286,
+          "word_growth_pct": 0.49
+        },
+        "strip_placebo": {
+          "certified": true,
+          "protected_kept": 0,
+          "protected_spans": 0,
+          "reasons": [],
+          "similarity": 0.9973,
+          "word_growth_pct": -0.11
+        }
+      },
+      "cohort": "human_pre_llm",
+      "drop_placebo": 1,
+      "drop_strip": -4,
+      "original_counted": 24,
+      "placebo_counted": 23,
+      "prose_original": 24,
+      "prose_placebo": 23,
+      "prose_strip": 28,
+      "protected_spans": 0,
+      "repeat_spread": 23.0,
+      "strip_counted": 28,
+      "system_voice_original": 0,
+      "system_voice_strip": 0,
+      "unit_id": "rr:777510.0",
+      "words": 1823
+    },
+    {
+      "certificates": {
+        "strip": {
+          "certified": true,
+          "protected_kept": 0,
+          "protected_spans": 0,
+          "reasons": [],
+          "similarity": 0.9444,
+          "word_growth_pct": -1.49
+        },
+        "strip_placebo": {
+          "certified": true,
+          "protected_kept": 0,
+          "protected_spans": 0,
+          "reasons": [],
+          "similarity": 0.9978,
+          "word_growth_pct": 0.05
+        }
+      },
+      "cohort": "human_pre_llm",
+      "drop_placebo": 26,
+      "drop_strip": 25,
+      "original_counted": 41,
+      "placebo_counted": 15,
+      "prose_original": 41,
+      "prose_placebo": 15,
+      "prose_strip": 15,
+      "protected_spans": 0,
+      "repeat_spread": 7.0,
+      "strip_counted": 16,
+      "system_voice_original": 0,
+      "system_voice_strip": 1,
+      "unit_id": "rr:779348.0",
+      "words": 2011
+    },
+    {
+      "certificates": {
+        "strip": {
+          "certified": true,
+          "protected_kept": 0,
+          "protected_spans": 0,
+          "reasons": [],
+          "similarity": 0.9592,
+          "word_growth_pct": -1.16
+        },
+        "strip_placebo": {
+          "certified": true,
+          "protected_kept": 0,
+          "protected_spans": 0,
+          "reasons": [],
+          "similarity": 0.9979,
+          "word_growth_pct": -0.08
+        }
+      },
+      "cohort": "human_pre_llm",
+      "drop_placebo": 8,
+      "drop_strip": 4,
+      "original_counted": 20,
+      "placebo_counted": 12,
+      "prose_original": 20,
+      "prose_placebo": 12,
+      "prose_strip": 16,
+      "protected_spans": 0,
+      "repeat_spread": 1.0,
+      "strip_counted": 16,
+      "system_voice_original": 0,
+      "system_voice_strip": 0,
+      "unit_id": "rr:779491.0",
+      "words": 1209
+    },
+    {
+      "certificates": {
+        "strip": {
+          "certified": true,
+          "protected_kept": 0,
+          "protected_spans": 0,
+          "reasons": [],
+          "similarity": 0.9083,
+          "word_growth_pct": 0.5
+        },
+        "strip_placebo": {
+          "certified": true,
+          "protected_kept": 0,
+          "protected_spans": 0,
+          "reasons": [],
+          "similarity": 0.9894,
+          "word_growth_pct": 0.12
+        }
+      },
+      "cohort": "human_pre_llm",
+      "drop_placebo": -3,
+      "drop_strip": 2,
+      "original_counted": 10,
+      "placebo_counted": 13,
+      "prose_original": 10,
+      "prose_placebo": 12,
+      "prose_strip": 8,
+      "protected_spans": 0,
+      "repeat_spread": 1.0,
+      "strip_counted": 8,
+      "system_voice_original": 0,
+      "system_voice_strip": 0,
+      "unit_id": "rr:789476.0",
+      "words": 805
+    },
+    {
+      "certificates": {
+        "strip": {
+          "certified": true,
+          "protected_kept": 0,
+          "protected_spans": 0,
+          "reasons": [],
+          "similarity": 0.9361,
+          "word_growth_pct": -1.03
+        },
+        "strip_placebo": {
+          "certified": true,
+          "protected_kept": 0,
+          "protected_spans": 0,
+          "reasons": [],
+          "similarity": 0.9911,
+          "word_growth_pct": 0.15
+        }
+      },
+      "cohort": "human_pre_llm",
+      "drop_placebo": 5,
+      "drop_strip": 3,
+      "original_counted": 31,
+      "placebo_counted": 26,
+      "prose_original": 31,
+      "prose_placebo": 26,
+      "prose_strip": 28,
+      "protected_spans": 0,
+      "repeat_spread": 10.0,
+      "strip_counted": 28,
+      "system_voice_original": 0,
+      "system_voice_strip": 0,
+      "unit_id": "rr:792408.0",
+      "words": 1353
+    },
+    {
+      "certificates": {
+        "strip": {
+          "certified": true,
+          "protected_kept": 0,
+          "protected_spans": 0,
+          "reasons": [],
+          "similarity": 0.9016,
+          "word_growth_pct": 0.67
+        },
+        "strip_placebo": {
+          "certified": true,
+          "protected_kept": 0,
+          "protected_spans": 0,
+          "reasons": [],
+          "similarity": 0.9966,
+          "word_growth_pct": -0.22
+        }
+      },
+      "cohort": "human_pre_llm",
+      "drop_placebo": 7,
+      "drop_strip": 10,
+      "original_counted": 15,
+      "placebo_counted": 8,
+      "prose_original": 14,
+      "prose_placebo": 7,
+      "prose_strip": 4,
+      "protected_spans": 0,
+      "repeat_spread": 6.0,
+      "strip_counted": 5,
+      "system_voice_original": 1,
+      "system_voice_strip": 1,
+      "unit_id": "rr:795285.0",
+      "words": 891
+    },
+    {
+      "certificates": {
+        "strip": {
+          "certified": true,
+          "protected_kept": 0,
+          "protected_spans": 0,
+          "reasons": [],
+          "similarity": 0.8727,
+          "word_growth_pct": -3.21
+        },
+        "strip_placebo": {
+          "certified": true,
+          "protected_kept": 0,
+          "protected_spans": 0,
+          "reasons": [],
+          "similarity": 0.9953,
+          "word_growth_pct": -0.08
+        }
+      },
+      "cohort": "human_pre_llm",
+      "drop_placebo": -9,
+      "drop_strip": -1,
+      "original_counted": 18,
+      "placebo_counted": 27,
+      "prose_original": 18,
+      "prose_placebo": 26,
+      "prose_strip": 19,
+      "protected_spans": 0,
+      "repeat_spread": 3.0,
+      "strip_counted": 19,
+      "system_voice_original": 0,
+      "system_voice_strip": 0,
+      "unit_id": "rr:802261.0",
+      "words": 1182
+    },
+    {
+      "certificates": {
+        "strip": {
+          "certified": true,
+          "protected_kept": 9,
+          "protected_spans": 9,
+          "reasons": [],
+          "similarity": 0.9268,
+          "word_growth_pct": 0.99
+        },
+        "strip_placebo": {
+          "certified": true,
+          "protected_kept": 9,
+          "protected_spans": 9,
+          "reasons": [],
+          "similarity": 0.9922,
+          "word_growth_pct": -0.21
+        }
+      },
+      "cohort": "human_pre_llm",
+      "drop_placebo": 13,
+      "drop_strip": 15,
+      "original_counted": 26,
+      "placebo_counted": 13,
+      "prose_original": 26,
+      "prose_placebo": 13,
+      "prose_strip": 11,
+      "protected_spans": 9,
+      "repeat_spread": 16.0,
+      "strip_counted": 11,
+      "system_voice_original": 0,
+      "system_voice_strip": 0,
+      "unit_id": "rr:803088.0",
+      "words": 1923
+    },
+    {
+      "certificates": {
+        "strip": {
+          "certified": true,
+          "protected_kept": 0,
+          "protected_spans": 0,
+          "reasons": [],
+          "similarity": 0.9531,
+          "word_growth_pct": 1.7
+        },
+        "strip_placebo": {
+          "certified": true,
+          "protected_kept": 0,
+          "protected_spans": 0,
+          "reasons": [],
+          "similarity": 0.9949,
+          "word_growth_pct": -0.07
+        }
+      },
+      "cohort": "human_pre_llm",
+      "drop_placebo": 13,
+      "drop_strip": 15,
+      "original_counted": 24,
+      "placebo_counted": 11,
+      "prose_original": 23,
+      "prose_placebo": 11,
+      "prose_strip": 9,
+      "protected_spans": 0,
+      "repeat_spread": 8.0,
+      "strip_counted": 9,
+      "system_voice_original": 1,
+      "system_voice_strip": 0,
+      "unit_id": "rr:804763.0",
+      "words": 1470
+    },
+    {
+      "certificates": {
+        "strip": {
+          "certified": true,
+          "protected_kept": 0,
+          "protected_spans": 0,
+          "reasons": [],
+          "similarity": 0.9226,
+          "word_growth_pct": -1.0
+        },
+        "strip_placebo": {
+          "certified": true,
+          "protected_kept": 0,
+          "protected_spans": 0,
+          "reasons": [],
+          "similarity": 0.982,
+          "word_growth_pct": -0.25
+        }
+      },
+      "cohort": "human_pre_llm",
+      "drop_placebo": 1,
+      "drop_strip": 6,
+      "original_counted": 17,
+      "placebo_counted": 16,
+      "prose_original": 15,
+      "prose_placebo": 16,
+      "prose_strip": 11,
+      "protected_spans": 0,
+      "repeat_spread": null,
+      "strip_counted": 11,
+      "system_voice_original": 2,
+      "system_voice_strip": 0,
+      "unit_id": "rr:926002.0",
+      "words": 1195
+    },
+    {
+      "certificates": {
+        "strip": {
+          "certified": true,
+          "protected_kept": 0,
+          "protected_spans": 0,
+          "reasons": [],
+          "similarity": 0.9346,
+          "word_growth_pct": 0.51
+        },
+        "strip_placebo": {
+          "certified": true,
+          "protected_kept": 0,
+          "protected_spans": 0,
+          "reasons": [],
+          "similarity": 0.9749,
+          "word_growth_pct": 0.09
+        }
+      },
+      "cohort": "human_pre_llm",
+      "drop_placebo": 4,
+      "drop_strip": 8,
+      "original_counted": 21,
+      "placebo_counted": 17,
+      "prose_original": 18,
+      "prose_placebo": 13,
+      "prose_strip": 11,
+      "protected_spans": 0,
+      "repeat_spread": 2.0,
+      "strip_counted": 13,
+      "system_voice_original": 3,
+      "system_voice_strip": 2,
+      "unit_id": "rr:930722.0",
+      "words": 1174
+    }
+  ],
+  "pre_registration": {
+    "arms": {
+      "census": "the chapter as published. Q1 and Q2 are read from this arm alone",
+      "repeat": "the same chapter, the same request, a distinct sample index \u2014 `n` byte-identical requests, so the variation is the model's own sampling and not a perturbed prompt (`elicit.py`'s rule). Reports the per-chapter spread of counts and the anchor overlap between the two lists. This is the noise floor every other arm is read against",
+      "sham": "`ablate.rewhitespace` at full strength. Not one character of any word changes. The count must not move beyond the `repeat` spread; if it does, the locator is responding to layout and the entry says so (\u00a778)",
+      "strip": "a certified minimal revision that rewrites every reach for levity plainly, with `strip_placebo` \u2014 the same revision contract with an inert task \u2014 beside it as the floor. One dose; no ladder, no inject arm"
+    },
+    "attainability": "Declared at the n actually available, before the first call, per \u00a787/\u00a789's rulebook. Every statistic here is an exact one-sided sign test whose smallest attainable p at G pairs is 1/2**G, so alpha 0.05 is unreachable below G=5 and every G below that reports INSUFFICIENT_N rather than FAILS. The sham subset is G=40+ RoyalRoad chapters and G=12 own units, both attainable. The strip subset is the census top decile, G=24 at n=249, plus own units with >= 3 beats; if fewer than 5 pairs certify, the arm reports INSUFFICIENT_N and no drop is read. None of these is a bar for admission: no bar for admission is declared anywhere in this module.",
+    "counting_rule": "A beat is counted only if its anchor is findable in the text THAT CALL WAS SHOWN, by normalised substring match (NFKC, curly quotes and dashes folded to ASCII, whitespace collapsed, casefolded), and only if its kind is one of the seven frozen kinds. Repeated anchors within one answer collapse to one beat. Unfindable anchors are confabulations: excluded from every count and reported as a rate on every arm.",
+    "declared_quantities": {
+      "anchor_overlap": "|A n B| / |A u B| over the two samples' normalised anchor sets, unitless, range [0, 1], higher is more stable. No bar: it is reported so a count that is stable while its locations are not cannot pass unnoticed",
+      "confabulation_rate": "unfindable anchors / anchors returned, unitless, range [0, 1], direction lower. Printed on every arm. REFUSAL STATE: if the mean confabulated beats per chapter on the strip subset is at least half the median strip drop in beats, the strip reading is VOID rather than weak \u2014 an effect the instrument's own noise could manufacture is not an effect",
+      "repeat_spread": "|count(sample 0) - count(sample 1)| per chapter, in beats; range [0, inf), no direction and no bar \u2014 it is the ruler. Reported as median, p90 and max, in beats and in beats/1k, on both substrates separately. Attainable at any n >= 1; the subset is 40 RoyalRoad chapters plus the strip subset plus every own unit",
+      "sham_delta": "|count(census) - count(sham)| per chapter, in beats, read against `repeat_spread` on the SAME chapters by a one-sided exact sign test that the sham delta exceeds the repeat delta. Outcomes: LAYOUT_SENSITIVE if p <= 0.05; INSIDE_NOISE only with the equivalence bound printed beside it, never as a pass by silence (\u00a7101.1); INSUFFICIENT_N below the attainable floor. The bound is the distribution-free 90% confidence interval on the median of (sham delta - repeat delta), in beats, so the reading states what magnitude of layout sensitivity it could not exclude",
+      "strip_drop": "count(original) - count(stripped), in beats, paired by chapter. Direction: positive. Read twice, and both readings print: against the placebo's own drift by a one-sided exact sign test on (strip drop > placebo drop), and against the noise floor by the share of pairs whose strip drop exceeds that chapter's repeat spread, sign-tested. Outcomes SEES / DOES_NOT_SEE / INSUFFICIENT_N / VOID"
+    },
+    "no_bar_for_admission": "None is declared, and that is the point. Nothing here enters `AXES` or `COUNTERS`, reaches a prompt, a directive, a Director brief, a persona reason code or a writer dossier. Admission is an operator act over the measured distribution, exactly as for `opening_proper_nouns`.",
+    "no_inherited_figures": "\u00a779.1's rule. Every spread, rate and cost reported here is measured on these chapters by this instrument in these runs. \u00a785's per-comparison price is not used to project this one, because a whole-chapter input is several times a \u00a785 pair.",
+    "no_landing_measurement": "Whether a beat lands is not asked, not schema'd and not derivable from anything here. The nearest shape is W4 (`payoff_landing.py`), which is NOT VALIDATED for want of substrate, and it stays that way.",
+    "no_post_hoc_leniency": "The strict normalisation above is the counting rule. A second, deliberately looser match \u2014 all non-alphanumeric characters dropped \u2014 is computed and reported as `relaxed_findable` so the size of what strictness costs is visible, and it never enters a count. Loosening the rule after reading the answers would be a rubric fitted to them.",
+    "question": "Do this project's published chapters attempt humor at the density the genre's readers select for, and can a located instrument see the difference at all? Q1 is the RoyalRoad LitRPG baseline by cohort, Q2 is where our own chapters sit in it, Q3 is whether the locator is an instrument. Reported separately and in that order.",
+    "sampling": "100 chapters per era cohort, ONE CHAPTER PER STORY, chosen deterministically by digest so the draw is a rule and not a draw. The substrate caps `declared_ai_2025` at 49 distinct stories inside the window, so the census is 100/100/49 = 249 and the cap is reported rather than filled by taking a second chapter from a story already in the pool.",
+    "strip_internal_control": "Protected spans (**bold** lines and [STATUS] lines) are copied byte-for-byte by the revision contract, so a `system_voice` beat cannot be stripped. Pre-registered: prose kinds fall and `system_voice` does not. If `system_voice` falls with them the locator is reading the fact of a rewrite. Four outcomes, none of them a pass by silence: CONTROL_HOLDS when no pair lost a system-voice beat, CONTROL_FAILS when the sign test says they fell, CONTROL_UNDECIDED with its interval printed in between, and EMPTY where the subset carries no protected span at all \u2014 which is most of RoyalRoad, whose system voice is not written in this project's typography.",
+    "substrates_are_never_pooled": "RoyalRoad text may be memorised by the locator (BRIEF \u00a72 Pass 6), so it is the baseline arm with the confound named; own-generated chapters are the clean arm; the `strip` differential on one chapter partially cancels the term; and no statistic in this module averages the two.",
+    "transport_exclusion": "A unit whose rendered `claude -p` command line reaches 32000 characters cannot be sent by this transport (Windows refuses at 32,767) and is excluded before the call, counted, and printed. It is not sent and allowed to fail: a transport error is indistinguishable from a broken install. Measured over the draw, this is 4 of 249 chapters, and because it is length-correlated it is reported beside the length residual.",
+    "unit_of_analysis": "The chapter, as published \u2014 the unit a reader receives. Own-generated scenes from The Toll Road are reported as secondary colour and never pooled with chapters.",
+    "what_is_measured": "The density of located ATTEMPTS at levity, in beats per 1,000 words. It is not a quality, a craft claim or a success rate: a chapter with more attempts is not better, and no arrangement of these numbers says whether a beat lands. Landing is valence, valence is behavioural or it is nothing (\u00a797.4), and W4 is NOT VALIDATED for want of substrate.",
+    "why_there_is_a_strip_placebo": "The handoff did not ask for one and `repair_generation.PRE_REGISTRATION`'s first line makes it mandatory: no repair arm is read except against its placebo. Without it a drop in located beats is equally well explained by the fact of a rewrite, and there is no way to tell the two apart afterwards. It is one more arm, not a dose ladder.",
+    "window": "[800, 6000] words, one whole chapter per call. Chunking changes counts, so a chapter outside the window is excluded and the exclusion is counted and printed. Measured on the substrate before it was chosen: the window keeps 92.9% of the 14,363 LitRPG chapters in the two cached shards.",
+    "written": "2026-08-21, before the first paid call of any arm in this module, and byte-frozen with the system block, the question, the schema and the kinds under FROZEN_DIGEST"
+  },
+  "readings": {
+    "against_noise_floor": {
+      "aligned": 14,
+      "alpha": 0.05,
+      "attainable_floor": 2.4e-07,
+      "equivalence_bound": {
+        "confidence": 0.9,
+        "hi": 4.0,
+        "lo": -1.0,
+        "median": 1.5,
+        "n": 22,
+        "note": "exact under the sign test; assumes nothing about the shape of the differences"
+      },
+      "k_required": 16,
+      "p_one_sided": 0.14313936,
+      "pairs_decided": 22,
+      "pairs_total": 22,
+      "pairs_undecided": 0,
+      "statistic": "strip drop exceeds this chapter's own repeat spread, in beats",
+      "verdict": "DOES_NOT_SEE"
+    },
+    "against_placebo": {
+      "aligned": 15,
+      "alpha": 0.05,
+      "attainable_floor": 2.4e-07,
+      "equivalence_bound": {
+        "confidence": 0.9,
+        "hi": 4.0,
+        "lo": 2.0,
+        "median": 2.0,
+        "n": 23,
+        "note": "exact under the sign test; assumes nothing about the shape of the differences"
+      },
+      "k_required": 16,
+      "p_one_sided": 0.06690025,
+      "pairs_decided": 22,
+      "pairs_total": 23,
+      "pairs_undecided": 1,
+      "statistic": "strip drop exceeds its placebo's drop, in beats",
+      "verdict": "DOES_NOT_SEE"
+    },
+    "confabulated_per_unit": 0.7083,
+    "internal_control_system_voice": {
+      "equivalence_bound": {
+        "confidence": 0.9,
+        "hi": 0.0,
+        "lo": 0.0,
+        "median": 0.0,
+        "n": 2,
+        "note": "exact under the sign test; assumes nothing about the shape of the differences"
+      },
+      "fell": 0,
+      "pairs": 2,
+      "rose": 0,
+      "sign_test": {
+        "aligned": 0,
+        "alpha": 0.05,
+        "attainable_floor": 1.0,
+        "equivalence_bound": {
+          "confidence": 0.9,
+          "hi": 0.0,
+          "lo": 0.0,
+          "median": 0.0,
+          "n": 2,
+          "note": "exact under the sign test; assumes nothing about the shape of the differences"
+        },
+        "k_required": null,
+        "p_one_sided": 1.0,
+        "pairs_decided": 0,
+        "pairs_total": 2,
+        "pairs_undecided": 2,
+        "statistic": "system_voice beats fall too, which the contract forbids",
+        "verdict": "INSUFFICIENT_N"
+      },
+      "unchanged": 2,
+      "verdict": "CONTROL_HOLDS"
+    },
+    "median_drop_beats": 6.0,
+    "pairs_certified": 23,
+    "prose_kinds_only": {
+      "aligned": 15,
+      "alpha": 0.05,
+      "attainable_floor": 4.8e-07,
+      "equivalence_bound": {
+        "confidence": 0.9,
+        "hi": 4.0,
+        "lo": 2.0,
+        "median": 2.0,
+        "n": 23,
+        "note": "exact under the sign test; assumes nothing about the shape of the differences"
+      },
+      "k_required": 15,
+      "p_one_sided": 0.03917694,
+      "pairs_decided": 21,
+      "pairs_total": 23,
+      "pairs_undecided": 2,
+      "statistic": "prose-kind drop exceeds the placebo's, in beats",
+      "verdict": "SEES"
+    },
+    "refusal_state": {
+      "rule": "VOID if confabulated beats per unit >= half the median strip drop: an effect the instrument's own noise could manufacture is not an effect",
+      "verdict": "READABLE"
+    }
+  },
+  "registration_digest": "d3200ddad172e4854b70",
+  "replayed": 47,
+  "rows": [
+    {
+      "bad_kind": 0,
+      "beats": [
+        {
+          "hash": "0fdb2d581e8e066c",
+          "kind": "quip",
+          "offset": 282,
+          "words": 9
+        },
+        {
+          "hash": "cde36e3a799d978c",
+          "kind": "deadpan",
+          "offset": 513,
+          "words": 8
+        },
+        {
+          "hash": "837a4b39bcd69060",
+          "kind": "deadpan",
+          "offset": 1056,
+          "words": 12
+        },
+        {
+          "hash": "5578f2b8ef696ffb",
+          "kind": "banter",
+          "offset": 1149,
+          "words": 9
+        },
+        {
+          "hash": "021fff303801baa0",
+          "kind": "deadpan",
+          "offset": 1340,
+          "words": 8
+        },
+        {
+          "hash": "13de7ec0d9b041e8",
+          "kind": "quip",
+          "offset": 1394,
+          "words": 7
+        },
+        {
+          "hash": "8c6e903088cb0dcc",
+          "kind": "quip",
+          "offset": 1456,
+          "words": 8
+        },
+        {
+          "hash": "d725fd508c526e55",
+          "kind": "system_voice",
+          "offset": 3715,
+          "words": 9
+        },
+        {
+          "hash": "6409a339cf37e153",
+          "kind": "quip",
+          "offset": 3939,
+          "words": 5
+        },
+        {
+          "hash": "b0a43fc9c9bcf59a",
+          "kind": "absurd",
+          "offset": 4409,
+          "words": 10
+        },
+        {
+          "hash": "a50535eeeedd60e9",
+          "kind": "quip",
+          "offset": 2574,
+          "words": 5
+        },
+        {
+          "hash": "5d5a407291c26714",
+          "kind": "quip",
+          "offset": 2836,
+          "words": 6
+        },
+        {
+          "hash": "00ff0a1095f4dbe8",
+          "kind": "quip",
+          "offset": 2924,
+          "words": 7
+        },
+        {
+          "hash": "d90ac94d083cb1a1",
+          "kind": "undercut",
+          "offset": 5394,
+          "words": 4
+        },
+        {
+          "hash": "c6d90947622abda5",
+          "kind": "quip",
+          "offset": 6367,
+          "words": 6
+        },
+        {
+          "hash": "a245507900761ecf",
+          "kind": "undercut",
+          "offset": 6491,
+          "words": 12
+        },
+        {
+          "hash": "bcbd45b38d02e0f5",
+          "kind": "deadpan",
+          "offset": 6566,
+          "words": 8
+        },
+        {
+          "hash": "e410e2e3b5d7a0f5",
+          "kind": "quip",
+          "offset": 6644,
+          "words": 7
+        },
+        {
+          "hash": "60e2ab7f1826170f",
+          "kind": "quip",
+          "offset": 6805,
+          "words": 12
+        },
+        {
+          "hash": "aede41edd829d5f0",
+          "kind": "quip",
+          "offset": 6919,
+          "words": 9
+        },
+        {
+          "hash": "1242fb97ac516c04",
+          "kind": "quip",
+          "offset": 7345,
+          "words": 8
+        },
+        {
+          "hash": "fd0adaaf861de485",
+          "kind": "system_voice",
+          "offset": 7385,
+          "words": 7
+        },
+        {
+          "hash": "93e22b4fdc999826",
+          "kind": "system_voice",
+          "offset": 7448,
+          "words": 10
+        },
+        {
+          "hash": "1e7b402fc02b3fd0",
+          "kind": "quip",
+          "offset": 7500,
+          "words": 5
+        }
+      ],
+      "by_kind": {
+        "absurd": 1,
+        "banter": 1,
+        "deadpan": 4,
+        "quip": 13,
+        "system_voice": 3,
+        "undercut": 2
+      },
+      "cohort": "undeclared_2025",
+      "confabulated": 0,
+      "counted": 24,
+      "density_per_1k": 18.1543,
+      "duplicate": 0,
+      "over_length": 0,
+      "refused": false,
+      "relaxed_only": 0,
+      "returned": 24,
+      "unit_id": "rr:2093799.0|strip",
+      "unparseable": false,
+      "words": 1322,
+      "work_id": "106882"
+    },
+    {
+      "bad_kind": 0,
+      "beats": [
+        {
+          "hash": "115fbf2c4be6311c",
+          "kind": "quip",
+          "offset": 283,
+          "words": 18
+        },
+        {
+          "hash": "bae07d8b713703ed",
+          "kind": "quip",
+          "offset": 755,
+          "words": 11
+        },
+        {
+          "hash": "8ad6b57bf92f9a5b",
+          "kind": "deadpan",
+          "offset": 983,
+          "words": 5
+        },
+        {
+          "hash": "8b2e83a49d3a5799",
+          "kind": "quip",
+          "offset": 1095,
+          "words": 11
+        },
+        {
+          "hash": "8746bda2e475fa7a",
+          "kind": "undercut",
+          "offset": 1327,
+          "words": 8
+        },
+        {
+          "hash": "3bdacebf3898a41a",
+          "kind": "deadpan",
+          "offset": 2143,
+          "words": 9
+        },
+        {
+          "hash": "85d171b93a7ed9d3",
+          "kind": "deadpan",
+          "offset": 2510,
+          "words": 11
+        },
+        {
+          "hash": "5d5a407291c26714",
+          "kind": "deadpan",
+          "offset": 2771,
+          "words": 6
+        },
+        {
+          "hash": "00ff0a1095f4dbe8",
+          "kind": "absurd",
+          "offset": 2859,
+          "words": 7
+        },
+        {
+          "hash": "0bdb92f17baa2a53",
+          "kind": "quip",
+          "offset": 4350,
+          "words": 11
+        },
+        {
+          "hash": "34c2df3308cb31ad",
+          "kind": "quip",
+          "offset": 6133,
+          "words": 12
+        },
+        {
+          "hash": "a245507900761ecf",
+          "kind": "undercut",
+          "offset": 6458,
+          "words": 12
+        },
+        {
+          "hash": "0f5f5fa6835c7bae",
+          "kind": "deadpan",
+          "offset": 6634,
+          "words": 9
+        },
+        {
+          "hash": "91249c205e1a159a",
+          "kind": "quip",
+          "offset": 6880,
+          "words": 9
+        },
+        {
+          "hash": "f511da4af4487f58",
+          "kind": "deadpan",
+          "offset": 7305,
+          "words": 10
+        },
+        {
+          "hash": "3b78151ec5dbee60",
+          "kind": "deadpan",
+          "offset": 7466,
+          "words": 3
+        },
+        {
+          "hash": "3099160ac2c0e32d",
+          "kind": "absurd",
+          "offset": 7487,
+          "words": 1
+        }
+      ],
+      "by_kind": {
+        "absurd": 2,
+        "deadpan": 7,
+        "quip": 6,
+        "undercut": 2
+      },
+      "cohort": "undeclared_2025",
+      "confabulated": 0,
+      "counted": 17,
+      "density_per_1k": 13.0368,
+      "duplicate": 0,
+      "over_length": 1,
+      "refused": false,
+      "relaxed_only": 0,
+      "returned": 17,
+      "unit_id": "rr:2093799.0|strip_placebo",
+      "unparseable": false,
+      "words": 1304,
+      "work_id": "106882"
+    },
+    {
+      "bad_kind": 0,
+      "beats": [
+        {
+          "hash": "fd584ae23de8fdb9",
+          "kind": "deadpan",
+          "offset": 18,
+          "words": 3
+        },
+        {
+          "hash": "9d9e3a08ac963449",
+          "kind": "absurd",
+          "offset": 122,
+          "words": 10
+        },
+        {
+          "hash": "380015167e8271ac",
+          "kind": "deadpan",
+          "offset": 482,
+          "words": 9
+        },
+        {
+          "hash": "315610f56a49af7b",
+          "kind": "deadpan",
+          "offset": 530,
+          "words": 5
+        },
+        {
+          "hash": "ad63c5d1f9d9030a",
+          "kind": "quip",
+          "offset": 550,
+          "words": 7
+        },
+        {
+          "hash": "898bf870747a8371",
+          "kind": "deadpan",
+          "offset": 1242,
+          "words": 3
+        },
+        {
+          "hash": "b5fe4c8485a8799d",
+          "kind": "deadpan",
+          "offset": 1403,
+          "words": 5
+        },
+        {
+          "hash": "54007471de4f5e3b",
+          "kind": "quip",
+          "offset": 2253,
+          "words": 7
+        },
+        {
+          "hash": "091725ade0abe9ca",
+          "kind": "quip",
+          "offset": 1945,
+          "words": 5
+        },
+        {
+          "hash": "bff95b4b60cfe3e6",
+          "kind": "quip",
+          "offset": 2964,
+          "words": 5
+        },
+        {
+          "hash": "2b49171c44603799",
+          "kind": "deadpan",
+          "offset": 3099,
+          "words": 4
+        },
+        {
+          "hash": "21cd73665fdd5964",
+          "kind": "absurd",
+          "offset": 3275,
+          "words": 6
+        },
+        {
+          "hash": "13ed44e62ec6d6fc",
+          "kind": "deadpan",
+          "offset": 3361,
+          "words": 4
+        },
+        {
+          "hash": "d925da8d54867cd8",
+          "kind": "undercut",
+          "offset": 3445,
+          "words": 12
+        },
+        {
+          "hash": "b0e32d2a6a7ac1c3",
+          "kind": "deadpan",
+          "offset": 3661,
+          "words": 11
+        },
+        {
+          "hash": "5acc12eca5b86f30",
+          "kind": "quip",
+          "offset": 6785,
+          "words": 4
+        },
+        {
+          "hash": "37d723517c19f3fb",
+          "kind": "deadpan",
+          "offset": 4196,
+          "words": 7
+        },
+        {
+          "hash": "7b14d66a33967790",
+          "kind": "absurd",
+          "offset": 4465,
+          "words": 9
+        },
+        {
+          "hash": "bedd9f54cf37a250",
+          "kind": "quip",
+          "offset": 5041,
+          "words": 7
+        },
+        {
+          "hash": "a569f8dac74ad0b8",
+          "kind": "deadpan",
+          "offset": 5251,
+          "words": 10
+        },
+        {
+          "hash": "1c0e86e0ce985bfa",
+          "kind": "quip",
+          "offset": 5994,
+          "words": 6
+        },
+        {
+          "hash": "cd540c4517b551c6",
+          "kind": "deadpan",
+          "offset": 7091,
+          "words": 10
+        },
+        {
+          "hash": "57311e3f7f195634",
+          "kind": "quip",
+          "offset": 7727,
+          "words": 11
+        }
+      ],
+      "by_kind": {
+        "absurd": 3,
+        "deadpan": 11,
+        "quip": 8,
+        "undercut": 1
+      },
+      "cohort": "undeclared_2025",
+      "confabulated": 2,
+      "counted": 23,
+      "density_per_1k": 16.3585,
+      "duplicate": 0,
+      "over_length": 0,
+      "refused": false,
+      "relaxed_only": 2,
+      "returned": 25,
+      "unit_id": "rr:2095155.0|strip",
+      "unparseable": false,
+      "words": 1406,
+      "work_id": "107373"
+    },
+    {
+      "bad_kind": 0,
+      "beats": [
+        {
+          "hash": "73a55ccf35192522",
+          "kind": "absurd",
+          "offset": 140,
+          "words": 11
+        },
+        {
+          "hash": "314a0280cbb7db90",
+          "kind": "undercut",
+          "offset": 271,
+          "words": 7
+        },
+        {
+          "hash": "3ebc27bd135b936b",
+          "kind": "deadpan",
+          "offset": 534,
+          "words": 7
+        },
+        {
+          "hash": "e1a0c5081c7e97c3",
+          "kind": "quip",
+          "offset": 810,
+          "words": 9
+        },
+        {
+          "hash": "ad73e1336bc54ce7",
+          "kind": "quip",
+          "offset": 1029,
+          "words": 3
+        },
+        {
+          "hash": "1956c1b61ccabf69",
+          "kind": "absurd",
+          "offset": 1421,
+          "words": 7
+        },
+        {
+          "hash": "cbf5e357a40929ea",
+          "kind": "deadpan",
+          "offset": 1462,
+          "words": 3
+        },
+        {
+          "hash": "17947c8846a98769",
+          "kind": "quip",
+          "offset": 2005,
+          "words": 3
+        },
+        {
+          "hash": "08d0a351f1d095d7",
+          "kind": "absurd",
+          "offset": 3017,
+          "words": 5
+        },
+        {
+          "hash": "3ca039c1c0bbfd5c",
+          "kind": "deadpan",
+          "offset": 3086,
+          "words": 6
+        },
+        {
+          "hash": "21cd73665fdd5964",
+          "kind": "absurd",
+          "offset": 3337,
+          "words": 6
+        },
+        {
+          "hash": "215309b8643581b6",
+          "kind": "quip",
+          "offset": 3489,
+          "words": 3
+        },
+        {
+          "hash": "d925da8d54867cd8",
+          "kind": "absurd",
+          "offset": 3508,
+          "words": 12
+        },
+        {
+          "hash": "38f5a06dcbd772d9",
+          "kind": "deadpan",
+          "offset": 4236,
+          "words": 4
+        },
+        {
+          "hash": "64ed466b2a67bbb4",
+          "kind": "deadpan",
+          "offset": 4259,
+          "words": 7
+        },
+        {
+          "hash": "00f0e4c733e0896c",
+          "kind": "absurd",
+          "offset": 4529,
+          "words": 13
+        },
+        {
+          "hash": "8927ffb3a23b0d21",
+          "kind": "quip",
+          "offset": 5250,
+          "words": 3
+        },
+        {
+          "hash": "9fd1535bb4727bcf",
+          "kind": "quip",
+          "offset": 5383,
+          "words": 10
+        },
+        {
+          "hash": "c877318d95f19a86",
+          "kind": "quip",
+          "offset": 6065,
+          "words": 6
+        },
+        {
+          "hash": "4cd69916c955e0a3",
+          "kind": "quip",
+          "offset": 736,
+          "words": 4
+        },
+        {
+          "hash": "d60d0eb66fcf917d",
+          "kind": "quip",
+          "offset": 4332,
+          "words": 10
+        },
+        {
+          "hash": "c98effeae5b2dde2",
+          "kind": "deadpan",
+          "offset": 7365,
+          "words": 12
+        },
+        {
+          "hash": "1870abdaf8cf8488",
+          "kind": "quip",
+          "offset": 7439,
+          "words": 11
+        }
+      ],
+      "by_kind": {
+        "absurd": 6,
+        "deadpan": 6,
+        "quip": 10,
+        "undercut": 1
+      },
+      "cohort": "undeclared_2025",
+      "confabulated": 0,
+      "counted": 23,
+      "density_per_1k": 16.4168,
+      "duplicate": 0,
+      "over_length": 1,
+      "refused": false,
+      "relaxed_only": 0,
+      "returned": 23,
+      "unit_id": "rr:2095155.0|strip_placebo",
+      "unparseable": false,
+      "words": 1401,
+      "work_id": "107373"
+    },
+    {
+      "bad_kind": 0,
+      "beats": [
+        {
+          "hash": "bbb3f1990f212d02",
+          "kind": "quip",
+          "offset": 348,
+          "words": 5
+        },
+        {
+          "hash": "9cda4b00d6634a24",
+          "kind": "quip",
+          "offset": 1473,
+          "words": 9
+        },
+        {
+          "hash": "d5d8679810de375a",
+          "kind": "absurd",
+          "offset": 2320,
+          "words": 8
+        },
+        {
+          "hash": "3d7b6330d5941b85",
+          "kind": "deadpan",
+          "offset": 3255,
+          "words": 4
+        },
+        {
+          "hash": "f2e827e5ca2dc5f4",
+          "kind": "deadpan",
+          "offset": 3585,
+          "words": 11
+        }
+      ],
+      "by_kind": {
+        "absurd": 1,
+        "deadpan": 2,
+        "quip": 2
+      },
+      "cohort": "declared_ai_2025",
+      "confabulated": 3,
+      "counted": 5,
+      "density_per_1k": 4.686,
+      "duplicate": 0,
+      "over_length": 0,
+      "refused": false,
+      "relaxed_only": 3,
+      "returned": 8,
+      "unit_id": "rr:2095485.0|strip",
+      "unparseable": false,
+      "words": 1067,
+      "work_id": "107428"
+    },
+    {
+      "bad_kind": 0,
+      "beats": [
+        {
+          "hash": "36840fe8a24e0018",
+          "kind": "deadpan",
+          "offset": 268,
+          "words": 1
+        },
+        {
+          "hash": "4c9acfef67a71efc",
+          "kind": "deadpan",
+          "offset": 343,
+          "words": 6
+        },
+        {
+          "hash": "e32b7e8348e17c01",
+          "kind": "quip",
+          "offset": 982,
+          "words": 9
+        },
+        {
+          "hash": "1aa6d1a4948b8ba8",
+          "kind": "quip",
+          "offset": 1048,
+          "words": 9
+        },
+        {
+          "hash": "8958f2f9b61136b0",
+          "kind": "deadpan",
+          "offset": 1192,
+          "words": 9
+        },
+        {
+          "hash": "dacd994db7491a0e",
+          "kind": "quip",
+          "offset": 1255,
+          "words": 11
+        },
+        {
+          "hash": "eaee1fe4f04a75f1",
+          "kind": "banter",
+          "offset": 1353,
+          "words": 12
+        },
+        {
+          "hash": "9ee911c378776684",
+          "kind": "quip",
+          "offset": 1782,
+          "words": 10
+        },
+        {
+          "hash": "279c0ae4bb317987",
+          "kind": "quip",
+          "offset": 1935,
+          "words": 12
+        },
+        {
+          "hash": "aaf2ce11a7f794ce",
+          "kind": "quip",
+          "offset": 3418,
+          "words": 12
+        },
+        {
+          "hash": "64f06898546cc6b4",
+          "kind": "quip",
+          "offset": 3491,
+          "words": 11
+        },
+        {
+          "hash": "ea3962c1313450e9",
+          "kind": "deadpan",
+          "offset": 3303,
+          "words": 9
+        },
+        {
+          "hash": "f2e827e5ca2dc5f4",
+          "kind": "deadpan",
+          "offset": 3699,
+          "words": 11
+        }
+      ],
+      "by_kind": {
+        "banter": 1,
+        "deadpan": 5,
+        "quip": 7
+      },
+      "cohort": "declared_ai_2025",
+      "confabulated": 0,
+      "counted": 13,
+      "density_per_1k": 12.2066,
+      "duplicate": 0,
+      "over_length": 0,
+      "refused": false,
+      "relaxed_only": 0,
+      "returned": 13,
+      "unit_id": "rr:2095485.0|strip_placebo",
+      "unparseable": false,
+      "words": 1065,
+      "work_id": "107428"
+    },
+    {
+      "bad_kind": 0,
+      "beats": [
+        {
+          "hash": "5a03897051d28cb5",
+          "kind": "quip",
+          "offset": 506,
+          "words": 12
+        },
+        {
+          "hash": "fcd29cb6f72c93f0",
+          "kind": "quip",
+          "offset": 2320,
+          "words": 10
+        },
+        {
+          "hash": "b68987fda891cc11",
+          "kind": "deadpan",
+          "offset": 2442,
+          "words": 9
+        },
+        {
+          "hash": "e4b615fa14a2fd96",
+          "kind": "quip",
+          "offset": 3531,
+          "words": 1
+        },
+        {
+          "hash": "187c4e49f368cc24",
+          "kind": "deadpan",
+          "offset": 3617,
+          "words": 9
+        },
+        {
+          "hash": "621a5ef70684eac7",
+          "kind": "quip",
+          "offset": 3769,
+          "words": 3
+        },
+        {
+          "hash": "ec8556e5dcc41448",
+          "kind": "deadpan",
+          "offset": 4908,
+          "words": 9
+        },
+        {
+          "hash": "3b34a0f00a73e9eb",
+          "kind": "deadpan",
+          "offset": 6096,
+          "words": 9
+        },
+        {
+          "hash": "471504cfa7b29a06",
+          "kind": "quip",
+          "offset": 6191,
+          "words": 12
+        },
+        {
+          "hash": "5ee0c379d71106f6",
+          "kind": "quip",
+          "offset": 6391,
+          "words": 5
+        },
+        {
+          "hash": "4240fc98c9952e2f",
+          "kind": "system_voice",
+          "offset": 6435,
+          "words": 2
+        },
+        {
+          "hash": "e60cee67dca0544c",
+          "kind": "deadpan",
+          "offset": 6490,
+          "words": 11
+        },
+        {
+          "hash": "413f1f927edc1a44",
+          "kind": "absurd",
+          "offset": 6766,
+          "words": 12
+        },
+        {
+          "hash": "4af0e87da45363ff",
+          "kind": "deadpan",
+          "offset": 7283,
+          "words": 2
+        },
+        {
+          "hash": "46c6d5fb4fcbef2b",
+          "kind": "deadpan",
+          "offset": 8723,
+          "words": 7
+        },
+        {
+          "hash": "4e059b9bf721a3bf",
+          "kind": "quip",
+          "offset": 8335,
+          "words": 11
+        },
+        {
+          "hash": "a85b8ea36ae21cfb",
+          "kind": "deadpan",
+          "offset": 8936,
+          "words": 11
+        },
+        {
+          "hash": "f0a36f7c3f563e3b",
+          "kind": "undercut",
+          "offset": 9002,
+          "words": 12
+        },
+        {
+          "hash": "17e40edb5a9e8c89",
+          "kind": "system_voice",
+          "offset": 9073,
+          "words": 2
+        }
+      ],
+      "by_kind": {
+        "absurd": 1,
+        "deadpan": 8,
+        "quip": 7,
+        "system_voice": 2,
+        "undercut": 1
+      },
+      "cohort": "undeclared_2025",
+      "confabulated": 0,
+      "counted": 19,
+      "density_per_1k": 11.4183,
+      "duplicate": 0,
+      "over_length": 0,
+      "refused": false,
+      "relaxed_only": 0,
+      "returned": 19,
+      "unit_id": "rr:2100675.0|strip",
+      "unparseable": false,
+      "words": 1664,
+      "work_id": "107113"
+    },
+    {
+      "bad_kind": 0,
+      "beats": [
+        {
+          "hash": "07af342e10ffe8f0",
+          "kind": "deadpan",
+          "offset": 138,
+          "words": 5
+        },
+        {
+          "hash": "3aef43dff876946e",
+          "kind": "quip",
+          "offset": 537,
+          "words": 9
+        },
+        {
+          "hash": "5ec516ac18b68a84",
+          "kind": "quip",
+          "offset": 1131,
+          "words": 9
+        },
+        {
+          "hash": "939a29cf41f815c8",
+          "kind": "quip",
+          "offset": 1380,
+          "words": 10
+        },
+        {
+          "hash": "f2a352bb0ca876fd",
+          "kind": "quip",
+          "offset": 2361,
+          "words": 7
+        },
+        {
+          "hash": "1e42dc301d047476",
+          "kind": "undercut",
+          "offset": 2490,
+          "words": 4
+        },
+        {
+          "hash": "276edfdf9b2a5f00",
+          "kind": "quip",
+          "offset": 3640,
+          "words": 8
+        },
+        {
+          "hash": "a644209d98c54d6f",
+          "kind": "absurd",
+          "offset": 3731,
+          "words": 11
+        },
+        {
+          "hash": "621a5ef70684eac7",
+          "kind": "quip",
+          "offset": 3814,
+          "words": 3
+        },
+        {
+          "hash": "61f6bdf0dfe2b310",
+          "kind": "quip",
+          "offset": 4024,
+          "words": 8
+        },
+        {
+          "hash": "c5161b05b6c5c2fc",
+          "kind": "deadpan",
+          "offset": 6158,
+          "words": 3
+        },
+        {
+          "hash": "da2f51bf6294fa3f",
+          "kind": "deadpan",
+          "offset": 6489,
+          "words": 3
+        },
+        {
+          "hash": "4240fc98c9952e2f",
+          "kind": "system_voice",
+          "offset": 6529,
+          "words": 2
+        },
+        {
+          "hash": "b29082a27d58578e",
+          "kind": "quip",
+          "offset": 7356,
+          "words": 12
+        },
+        {
+          "hash": "440e683a1b83e383",
+          "kind": "quip",
+          "offset": 7192,
+          "words": 5
+        },
+        {
+          "hash": "ee65b7799a5c079f",
+          "kind": "absurd",
+          "offset": 6900,
+          "words": 10
+        },
+        {
+          "hash": "d2520ec03cc281a0",
+          "kind": "deadpan",
+          "offset": 8213,
+          "words": 9
+        },
+        {
+          "hash": "467c16b1c7847fc2",
+          "kind": "quip",
+          "offset": 8487,
+          "words": 10
+        },
+        {
+          "hash": "6e2db6b160899878",
+          "kind": "callback",
+          "offset": 8875,
+          "words": 9
+        },
+        {
+          "hash": "cce8d5b91589dfb9",
+          "kind": "deadpan",
+          "offset": 9112,
+          "words": 11
+        },
+        {
+          "hash": "17e40edb5a9e8c89",
+          "kind": "system_voice",
+          "offset": 9239,
+          "words": 2
+        }
+      ],
+      "by_kind": {
+        "absurd": 2,
+        "callback": 1,
+        "deadpan": 5,
+        "quip": 10,
+        "system_voice": 2,
+        "undercut": 1
+      },
+      "cohort": "undeclared_2025",
+      "confabulated": 0,
+      "counted": 21,
+      "density_per_1k": 12.4481,
+      "duplicate": 0,
+      "over_length": 0,
+      "refused": false,
+      "relaxed_only": 0,
+      "returned": 21,
+      "unit_id": "rr:2100675.0|strip_placebo",
+      "unparseable": false,
+      "words": 1687,
+      "work_id": "107113"
+    },
+    {
+      "bad_kind": 0,
+      "beats": [
+        {
+          "hash": "280a77fa2d1b9279",
+          "kind": "deadpan",
+          "offset": 0,
+          "words": 10
+        },
+        {
+          "hash": "ed20914d63c57f47",
+          "kind": "undercut",
+          "offset": 492,
+          "words": 9
+        },
+        {
+          "hash": "bdc0a93f19b12e1d",
+          "kind": "quip",
+          "offset": 1185,
+          "words": 11
+        },
+        {
+          "hash": "7d49581f8d731f85",
+          "kind": "deadpan",
+          "offset": 1639,
+          "words": 8
+        },
+        {
+          "hash": "41a011f0656002dd",
+          "kind": "quip",
+          "offset": 2923,
+          "words": 9
+        },
+        {
+          "hash": "4646db67a2be29e9",
+          "kind": "deadpan",
+          "offset": 3329,
+          "words": 8
+        },
+        {
+          "hash": "4ae7cac182e8383d",
+          "kind": "quip",
+          "offset": 3715,
+          "words": 9
+        },
+        {
+          "hash": "78b890ed0c38b849",
+          "kind": "deadpan",
+          "offset": 4649,
+          "words": 4
+        },
+        {
+          "hash": "f792ee0aa6c121db",
+          "kind": "deadpan",
+          "offset": 5302,
+          "words": 7
+        },
+        {
+          "hash": "89fa3b1d35062567",
+          "kind": "quip",
+          "offset": 5808,
+          "words": 13
+        },
+        {
+          "hash": "446df8075a1481f2",
+          "kind": "absurd",
+          "offset": 5916,
+          "words": 10
+        },
+        {
+          "hash": "265b6f2d592ef972",
+          "kind": "deadpan",
+          "offset": 6222,
+          "words": 8
+        },
+        {
+          "hash": "9f60910dd074a1e7",
+          "kind": "absurd",
+          "offset": 6769,
+          "words": 13
+        },
+        {
+          "hash": "7f4bfe0da54160ef",
+          "kind": "absurd",
+          "offset": 6976,
+          "words": 10
+        },
+        {
+          "hash": "6b7ad465fd5b4ee9",
+          "kind": "absurd",
+          "offset": 7462,
+          "words": 11
+        },
+        {
+          "hash": "ad5f68e908370071",
+          "kind": "quip",
+          "offset": 7837,
+          "words": 9
+        },
+        {
+          "hash": "c36d3e9d4865836c",
+          "kind": "quip",
+          "offset": 8195,
+          "words": 8
+        },
+        {
+          "hash": "1dd2675bd44fc0bc",
+          "kind": "quip",
+          "offset": 8238,
+          "words": 10
+        },
+        {
+          "hash": "c3fdb2f740b6f20f",
+          "kind": "deadpan",
+          "offset": 8114,
+          "words": 11
+        },
+        {
+          "hash": "b156c06113e47960",
+          "kind": "quip",
+          "offset": 8546,
+          "words": 8
+        },
+        {
+          "hash": "847078ead0857256",
+          "kind": "system_voice",
+          "offset": 8773,
+          "words": 10
+        },
+        {
+          "hash": "a3588b84447b8117",
+          "kind": "deadpan",
+          "offset": 9004,
+          "words": 10
+        },
+        {
+          "hash": "7b75d57c5d00251a",
+          "kind": "absurd",
+          "offset": 9195,
+          "words": 10
+        },
+        {
+          "hash": "7687c150ea19c5dc",
+          "kind": "system_voice",
+          "offset": 9245,
+          "words": 8
+        }
+      ],
+      "by_kind": {
+        "absurd": 5,
+        "deadpan": 8,
+        "quip": 8,
+        "system_voice": 2,
+        "undercut": 1
+      },
+      "cohort": "undeclared_2025",
+      "confabulated": 0,
+      "counted": 24,
+      "density_per_1k": 13.6054,
+      "duplicate": 0,
+      "over_length": 2,
+      "refused": false,
+      "relaxed_only": 0,
+      "returned": 24,
+      "unit_id": "rr:2107310.0|strip",
+      "unparseable": false,
+      "words": 1764,
+      "work_id": "107977"
+    },
+    {
+      "bad_kind": 0,
+      "beats": [
+        {
+          "hash": "4b5e573423ce3fe5",
+          "kind": "quip",
+          "offset": 1457,
+          "words": 10
+        },
+        {
+          "hash": "8a8ffb37ff488487",
+          "kind": "undercut",
+          "offset": 1597,
+          "words": 4
+        },
+        {
+          "hash": "7f941ca12d7397f4",
+          "kind": "quip",
+          "offset": 1960,
+          "words": 8
+        },
+        {
+          "hash": "e80724af43cd9124",
+          "kind": "deadpan",
+          "offset": 4593,
+          "words": 3
+        },
+        {
+          "hash": "a4f5c4bd6c21460c",
+          "kind": "undercut",
+          "offset": 6707,
+          "words": 12
+        },
+        {
+          "hash": "7f4bfe0da54160ef",
+          "kind": "deadpan",
+          "offset": 6912,
+          "words": 10
+        },
+        {
+          "hash": "9fe294a932efd61e",
+          "kind": "undercut",
+          "offset": 7721,
+          "words": 10
+        },
+        {
+          "hash": "0e999f5eefe54f96",
+          "kind": "quip",
+          "offset": 8099,
+          "words": 4
+        },
+        {
+          "hash": "eed2e4800f58cca1",
+          "kind": "quip",
+          "offset": 8426,
+          "words": 7
+        },
+        {
+          "hash": "7cf1958b7c2cbecf",
+          "kind": "quip",
+          "offset": 8575,
+          "words": 5
+        },
+        {
+          "hash": "3a6107464232d470",
+          "kind": "system_voice",
+          "offset": 8707,
+          "words": 10
+        },
+        {
+          "hash": "c4e70dfdc12b32fd",
+          "kind": "system_voice",
+          "offset": 8872,
+          "words": 7
+        },
+        {
+          "hash": "3b3f38e21b2f3fd4",
+          "kind": "deadpan",
+          "offset": 8947,
+          "words": 7
+        },
+        {
+          "hash": "7a7d6fce8ba22a1d",
+          "kind": "quip",
+          "offset": 8999,
+          "words": 12
+        },
+        {
+          "hash": "7b75d57c5d00251a",
+          "kind": "absurd",
+          "offset": 9123,
+          "words": 10
+        },
+        {
+          "hash": "7687c150ea19c5dc",
+          "kind": "system_voice",
+          "offset": 9173,
+          "words": 8
+        }
+      ],
+      "by_kind": {
+        "absurd": 1,
+        "deadpan": 3,
+        "quip": 6,
+        "system_voice": 3,
+        "undercut": 3
+      },
+      "cohort": "undeclared_2025",
+      "confabulated": 1,
+      "counted": 16,
+      "density_per_1k": 9.2325,
+      "duplicate": 0,
+      "over_length": 0,
+      "refused": false,
+      "relaxed_only": 0,
+      "returned": 17,
+      "unit_id": "rr:2107310.0|strip_placebo",
+      "unparseable": false,
+      "words": 1733,
+      "work_id": "107977"
+    },
+    {
+      "bad_kind": 0,
+      "beats": [
+        {
+          "hash": "4d77f3a126797ae9",
+          "kind": "deadpan",
+          "offset": 101,
+          "words": 4
+        },
+        {
+          "hash": "91cfcdf468e1f875",
+          "kind": "quip",
+          "offset": 908,
+          "words": 9
+        },
+        {
+          "hash": "efcfacb8e787bda0",
+          "kind": "deadpan",
+          "offset": 1064,
+          "words": 11
+        },
+        {
+          "hash": "cd8f697ee6e81fd0",
+          "kind": "undercut",
+          "offset": 1174,
+          "words": 7
+        },
+        {
+          "hash": "8ee5c961766c5ba3",
+          "kind": "absurd",
+          "offset": 634,
+          "words": 8
+        },
+        {
+          "hash": "2b202c7954660561",
+          "kind": "deadpan",
+          "offset": 1329,
+          "words": 11
+        },
+        {
+          "hash": "77eacc27d9a37107",
+          "kind": "quip",
+          "offset": 2515,
+          "words": 8
+        },
+        {
+          "hash": "13b09e27b6765c0e",
+          "kind": "deadpan",
+          "offset": 2551,
+          "words": 7
+        },
+        {
+          "hash": "997b361b9163e595",
+          "kind": "undercut",
+          "offset": 2906,
+          "words": 5
+        },
+        {
+          "hash": "26b8e69e52abf9c0",
+          "kind": "absurd",
+          "offset": 3398,
+          "words": 7
+        },
+        {
+          "hash": "2e8428f7618cc7ac",
+          "kind": "undercut",
+          "offset": 3635,
+          "words": 5
+        },
+        {
+          "hash": "1b124788d1430d85",
+          "kind": "quip",
+          "offset": 3910,
+          "words": 9
+        },
+        {
+          "hash": "ed3c86a02a387c76",
+          "kind": "banter",
+          "offset": 3990,
+          "words": 4
+        },
+        {
+          "hash": "4a5f4ce3958e6b2c",
+          "kind": "callback",
+          "offset": 4011,
+          "words": 10
+        },
+        {
+          "hash": "78ae62fbf32e6691",
+          "kind": "banter",
+          "offset": 4120,
+          "words": 7
+        },
+        {
+          "hash": "9a4709aa73bc5762",
+          "kind": "quip",
+          "offset": 4169,
+          "words": 3
+        },
+        {
+          "hash": "bf18f1a7e955a0e5",
+          "kind": "quip",
+          "offset": 4240,
+          "words": 8
+        },
+        {
+          "hash": "31eae99248a2e6f0",
+          "kind": "deadpan",
+          "offset": 4304,
+          "words": 10
+        },
+        {
+          "hash": "bc6d0df0983548f2",
+          "kind": "deadpan",
+          "offset": 4416,
+          "words": 9
+        },
+        {
+          "hash": "87060f40293e7db7",
+          "kind": "undercut",
+          "offset": 4656,
+          "words": 11
+        },
+        {
+          "hash": "fe87b621ca2ce129",
+          "kind": "deadpan",
+          "offset": 4727,
+          "words": 12
+        },
+        {
+          "hash": "b6586be3d25a361f",
+          "kind": "deadpan",
+          "offset": 5094,
+          "words": 7
+        },
+        {
+          "hash": "c7d20dfe77ef1410",
+          "kind": "absurd",
+          "offset": 5238,
+          "words": 5
+        },
+        {
+          "hash": "18c2e3d5065915d3",
+          "kind": "absurd",
+          "offset": 5314,
+          "words": 8
+        },
+        {
+          "hash": "bb33f2dfbc51c8c0",
+          "kind": "quip",
+          "offset": 5502,
+          "words": 3
+        },
+        {
+          "hash": "38f0529d315895a7",
+          "kind": "banter",
+          "offset": 5571,
+          "words": 5
+        },
+        {
+          "hash": "323e8f44b4162bc0",
+          "kind": "quip",
+          "offset": 5636,
+          "words": 7
+        },
+        {
+          "hash": "328c7b7c46ffe45b",
+          "kind": "quip",
+          "offset": 5725,
+          "words": 7
+        },
+        {
+          "hash": "98e9edde950e5283",
+          "kind": "deadpan",
+          "offset": 6104,
+          "words": 6
+        },
+        {
+          "hash": "52126a4baf50d5b5",
+          "kind": "absurd",
+          "offset": 6382,
+          "words": 2
+        },
+        {
+          "hash": "81c61aac6e9386be",
+          "kind": "banter",
+          "offset": 6497,
+          "words": 2
+        },
+        {
+          "hash": "39a22d91a3872e3e",
+          "kind": "absurd",
+          "offset": 6510,
+          "words": 12
+        },
+        {
+          "hash": "51ca54015d03531e",
+          "kind": "deadpan",
+          "offset": 6691,
+          "words": 7
+        },
+        {
+          "hash": "c884941493fa6864",
+          "kind": "quip",
+          "offset": 6842,
+          "words": 7
+        },
+        {
+          "hash": "0c5b26c85fbb6240",
+          "kind": "banter",
+          "offset": 6899,
+          "words": 3
+        },
+        {
+          "hash": "9f6c33470574bcf7",
+          "kind": "banter",
+          "offset": 6988,
+          "words": 2
+        },
+        {
+          "hash": "03176a0a47e9f133",
+          "kind": "banter",
+          "offset": 7064,
+          "words": 6
+        },
+        {
+          "hash": "b2153c8ff6b80580",
+          "kind": "absurd",
+          "offset": 7097,
+          "words": 5
+        },
+        {
+          "hash": "aaab7acc9db364ff",
+          "kind": "deadpan",
+          "offset": 7140,
+          "words": 7
+        }
+      ],
+      "by_kind": {
+        "absurd": 7,
+        "banter": 7,
+        "callback": 1,
+        "deadpan": 11,
+        "quip": 9,
+        "undercut": 4
+      },
+      "cohort": "declared_ai_2025",
+      "confabulated": 0,
+      "counted": 39,
+      "density_per_1k": 32.392,
+      "duplicate": 0,
+      "over_length": 0,
+      "refused": false,
+      "relaxed_only": 0,
+      "returned": 39,
+      "unit_id": "rr:2122467.0|strip",
+      "unparseable": false,
+      "words": 1204,
+      "work_id": "107222"
+    },
+    {
+      "bad_kind": 0,
+      "beats": [
+        {
+          "hash": "7ac1ee5eaaaaae7f",
+          "kind": "undercut",
+          "offset": 79,
+          "words": 3
+        },
+        {
+          "hash": "9259f5acd36f0ae1",
+          "kind": "deadpan",
+          "offset": 1168,
+          "words": 4
+        },
+        {
+          "hash": "039c7f82f593fc04",
+          "kind": "quip",
+          "offset": 2176,
+          "words": 11
+        },
+        {
+          "hash": "3fef3cf9a307d18c",
+          "kind": "callback",
+          "offset": 2541,
+          "words": 6
+        },
+        {
+          "hash": "2bc3f394df9c7e42",
+          "kind": "deadpan",
+          "offset": 3167,
+          "words": 12
+        },
+        {
+          "hash": "e97d9dcd3604bc51",
+          "kind": "quip",
+          "offset": 4055,
+          "words": 5
+        },
+        {
+          "hash": "3f0ae399cdf2fee7",
+          "kind": "system_voice",
+          "offset": 4090,
+          "words": 5
+        },
+        {
+          "hash": "2da45f2a2c52a866",
+          "kind": "quip",
+          "offset": 4212,
+          "words": 7
+        },
+        {
+          "hash": "7d3cdd20cd851468",
+          "kind": "quip",
+          "offset": 4270,
+          "words": 5
+        },
+        {
+          "hash": "907b0b455dd1896a",
+          "kind": "deadpan",
+          "offset": 4429,
+          "words": 9
+        },
+        {
+          "hash": "7063e3f25301b139",
+          "kind": "undercut",
+          "offset": 4834,
+          "words": 10
+        },
+        {
+          "hash": "ea78dad08b26e3e9",
+          "kind": "system_voice",
+          "offset": 5489,
+          "words": 9
+        },
+        {
+          "hash": "07d215680c7ddeab",
+          "kind": "quip",
+          "offset": 5832,
+          "words": 9
+        },
+        {
+          "hash": "cff312c1bdfbab4b",
+          "kind": "quip",
+          "offset": 5917,
+          "words": 5
+        },
+        {
+          "hash": "59d2cc00e730f6f6",
+          "kind": "quip",
+          "offset": 6004,
+          "words": 9
+        },
+        {
+          "hash": "9b1249deb5dfe368",
+          "kind": "absurd",
+          "offset": 6736,
+          "words": 11
+        },
+        {
+          "hash": "879cabfeef83092d",
+          "kind": "quip",
+          "offset": 7249,
+          "words": 2
+        },
+        {
+          "hash": "03176a0a47e9f133",
+          "kind": "quip",
+          "offset": 7379,
+          "words": 6
+        },
+        {
+          "hash": "ddda9b42a0c6d2db",
+          "kind": "system_voice",
+          "offset": 7412,
+          "words": 6
+        }
+      ],
+      "by_kind": {
+        "absurd": 1,
+        "callback": 1,
+        "deadpan": 3,
+        "quip": 9,
+        "system_voice": 3,
+        "undercut": 2
+      },
+      "cohort": "declared_ai_2025",
+      "confabulated": 0,
+      "counted": 19,
+      "density_per_1k": 15.3971,
+      "duplicate": 0,
+      "over_length": 0,
+      "refused": false,
+      "relaxed_only": 0,
+      "returned": 19,
+      "unit_id": "rr:2122467.0|strip_placebo",
+      "unparseable": false,
+      "words": 1234,
+      "work_id": "107222"
+    },
+    {
+      "bad_kind": 0,
+      "beats": [
+        {
+          "hash": "c4853d8a2ff08833",
+          "kind": "undercut",
+          "offset": 583,
+          "words": 9
+        },
+        {
+          "hash": "fb2284a33b8a038c",
+          "kind": "deadpan",
+          "offset": 5705,
+          "words": 4
+        }
+      ],
+      "by_kind": {
+        "deadpan": 1,
+        "undercut": 1
+      },
+      "cohort": "declared_ai_2025",
+      "confabulated": 9,
+      "counted": 2,
+      "density_per_1k": 1.1969,
+      "duplicate": 0,
+      "over_length": 0,
+      "refused": false,
+      "relaxed_only": 9,
+      "returned": 11,
+      "unit_id": "rr:2125202.0|strip",
+      "unparseable": false,
+      "words": 1671,
+      "work_id": "108702"
+    },
+    {
+      "bad_kind": 0,
+      "beats": [
+        {
+          "hash": "4ecf71981ab01752",
+          "kind": "absurd",
+          "offset": 297,
+          "words": 10
+        },
+        {
+          "hash": "f351bc98f84e4cc0",
+          "kind": "absurd",
+          "offset": 467,
+          "words": 7
+        },
+        {
+          "hash": "ee43fdd3c7fb1d56",
+          "kind": "undercut",
+          "offset": 583,
+          "words": 7
+        },
+        {
+          "hash": "fc81783f8d337738",
+          "kind": "deadpan",
+          "offset": 729,
+          "words": 8
+        },
+        {
+          "hash": "6122e0add5d1990b",
+          "kind": "deadpan",
+          "offset": 839,
+          "words": 5
+        },
+        {
+          "hash": "3a595200740426e6",
+          "kind": "deadpan",
+          "offset": 1040,
+          "words": 12
+        },
+        {
+          "hash": "4847a0ac3ce3af23",
+          "kind": "deadpan",
+          "offset": 1261,
+          "words": 12
+        },
+        {
+          "hash": "92a2e576c80818bf",
+          "kind": "deadpan",
+          "offset": 1889,
+          "words": 3
+        },
+        {
+          "hash": "3fcdc669956d8d2e",
+          "kind": "quip",
+          "offset": 2140,
+          "words": 8
+        },
+        {
+          "hash": "3b76afd84a5674d1",
+          "kind": "deadpan",
+          "offset": 2240,
+          "words": 1
+        },
+        {
+          "hash": "842a22455b6b60bc",
+          "kind": "deadpan",
+          "offset": 2817,
+          "words": 6
+        },
+        {
+          "hash": "383cf67b294af34f",
+          "kind": "deadpan",
+          "offset": 2853,
+          "words": 6
+        },
+        {
+          "hash": "2bc3b8ec8ceba48e",
+          "kind": "quip",
+          "offset": 2937,
+          "words": 9
+        },
+        {
+          "hash": "ac23790ddb373f03",
+          "kind": "callback",
+          "offset": 2990,
+          "words": 6
+        },
+        {
+          "hash": "b7ee2860e254abb2",
+          "kind": "quip",
+          "offset": 3264,
+          "words": 11
+        },
+        {
+          "hash": "438d449129a26c5d",
+          "kind": "deadpan",
+          "offset": 3423,
+          "words": 8
+        },
+        {
+          "hash": "63b5934309425aff",
+          "kind": "quip",
+          "offset": 4192,
+          "words": 6
+        },
+        {
+          "hash": "4cd6c232fdbf70fa",
+          "kind": "banter",
+          "offset": 4228,
+          "words": 10
+        },
+        {
+          "hash": "e2a044403208b34d",
+          "kind": "banter",
+          "offset": 4353,
+          "words": 8
+        },
+        {
+          "hash": "a0856250542d0105",
+          "kind": "quip",
+          "offset": 4663,
+          "words": 7
+        },
+        {
+          "hash": "68e512bb3a26d259",
+          "kind": "quip",
+          "offset": 4724,
+          "words": 12
+        },
+        {
+          "hash": "71fca18052224b6d",
+          "kind": "deadpan",
+          "offset": 5425,
+          "words": 4
+        },
+        {
+          "hash": "69824207352bce14",
+          "kind": "quip",
+          "offset": 5495,
+          "words": 7
+        },
+        {
+          "hash": "fb2284a33b8a038c",
+          "kind": "deadpan",
+          "offset": 5642,
+          "words": 4
+        },
+        {
+          "hash": "0975d9b2538b1c5d",
+          "kind": "system_voice",
+          "offset": 5716,
+          "words": 5
+        },
+        {
+          "hash": "77458b7626c0deeb",
+          "kind": "quip",
+          "offset": 5932,
+          "words": 11
+        },
+        {
+          "hash": "ee30de2af87b75a7",
+          "kind": "deadpan",
+          "offset": 6238,
+          "words": 3
+        },
+        {
+          "hash": "f6f744dc402cd36c",
+          "kind": "quip",
+          "offset": 6520,
+          "words": 4
+        },
+        {
+          "hash": "f1960733c163c779",
+          "kind": "quip",
+          "offset": 7237,
+          "words": 8
+        },
+        {
+          "hash": "b989abb1a167f8e5",
+          "kind": "deadpan",
+          "offset": 8246,
+          "words": 3
+        },
+        {
+          "hash": "b9408aa44ca2e571",
+          "kind": "quip",
+          "offset": 9059,
+          "words": 5
+        },
+        {
+          "hash": "5f71270465c39d75",
+          "kind": "quip",
+          "offset": 9241,
+          "words": 10
+        }
+      ],
+      "by_kind": {
+        "absurd": 2,
+        "banter": 2,
+        "callback": 1,
+        "deadpan": 13,
+        "quip": 12,
+        "system_voice": 1,
+        "undercut": 1
+      },
+      "cohort": "declared_ai_2025",
+      "confabulated": 0,
+      "counted": 32,
+      "density_per_1k": 19.3353,
+      "duplicate": 0,
+      "over_length": 0,
+      "refused": false,
+      "relaxed_only": 0,
+      "returned": 32,
+      "unit_id": "rr:2125202.0|strip_placebo",
+      "unparseable": false,
+      "words": 1655,
+      "work_id": "108702"
+    },
+    {
+      "bad_kind": 0,
+      "beats": [
+        {
+          "hash": "9ff91e221a06d320",
+          "kind": "absurd",
+          "offset": 963,
+          "words": 12
+        },
+        {
+          "hash": "2aadbbe3b02d64ba",
+          "kind": "deadpan",
+          "offset": 1416,
+          "words": 1
+        },
+        {
+          "hash": "bf2dd8691d9dfd02",
+          "kind": "deadpan",
+          "offset": 1517,
+          "words": 4
+        },
+        {
+          "hash": "42a58ca50d9e1f53",
+          "kind": "quip",
+          "offset": 2288,
+          "words": 4
+        },
+        {
+          "hash": "8459b96db0e6d495",
+          "kind": "quip",
+          "offset": 2557,
+          "words": 6
+        },
+        {
+          "hash": "ecf3505de18a6fc3",
+          "kind": "deadpan",
+          "offset": 2902,
+          "words": 3
+        },
+        {
+          "hash": "d2f18a18ea40ee65",
+          "kind": "undercut",
+          "offset": 3049,
+          "words": 5
+        },
+        {
+          "hash": "ec6d3c07637dda1c",
+          "kind": "quip",
+          "offset": 4445,
+          "words": 8
+        },
+        {
+          "hash": "91d169e118e36d00",
+          "kind": "deadpan",
+          "offset": 5602,
+          "words": 7
+        },
+        {
+          "hash": "25528f21a8eb1f87",
+          "kind": "quip",
+          "offset": 6015,
+          "words": 7
+        },
+        {
+          "hash": "0340900183460585",
+          "kind": "deadpan",
+          "offset": 7103,
+          "words": 8
+        },
+        {
+          "hash": "dd1e3cf7e42efbbc",
+          "kind": "deadpan",
+          "offset": 7367,
+          "words": 6
+        }
+      ],
+      "by_kind": {
+        "absurd": 1,
+        "deadpan": 6,
+        "quip": 4,
+        "undercut": 1
+      },
+      "cohort": "declared_ai_2025",
+      "confabulated": 6,
+      "counted": 12,
+      "density_per_1k": 9.4637,
+      "duplicate": 0,
+      "over_length": 0,
+      "refused": false,
+      "relaxed_only": 6,
+      "returned": 18,
+      "unit_id": "rr:2144891.0|strip",
+      "unparseable": false,
+      "words": 1268,
+      "work_id": "108931"
+    },
+    {
+      "bad_kind": 0,
+      "beats": [
+        {
+          "hash": "773679b35123c630",
+          "kind": "quip",
+          "offset": 584,
+          "words": 2
+        },
+        {
+          "hash": "a31aa4de221156ce",
+          "kind": "deadpan",
+          "offset": 602,
+          "words": 7
+        },
+        {
+          "hash": "2aadbbe3b02d64ba",
+          "kind": "absurd",
+          "offset": 1385,
+          "words": 1
+        },
+        {
+          "hash": "97a259303638a8e9",
+          "kind": "absurd",
+          "offset": 1903,
+          "words": 9
+        },
+        {
+          "hash": "b7a4b3da35ea1903",
+          "kind": "deadpan",
+          "offset": 1975,
+          "words": 6
+        },
+        {
+          "hash": "9c684dbdf7071239",
+          "kind": "quip",
+          "offset": 2298,
+          "words": 4
+        },
+        {
+          "hash": "9083dc39ba981c16",
+          "kind": "quip",
+          "offset": 2575,
+          "words": 6
+        },
+        {
+          "hash": "140f18591b601fa8",
+          "kind": "absurd",
+          "offset": 4178,
+          "words": 8
+        },
+        {
+          "hash": "a4d750fe1a8b119c",
+          "kind": "quip",
+          "offset": 4466,
+          "words": 7
+        },
+        {
+          "hash": "8ec40e5e761fd364",
+          "kind": "absurd",
+          "offset": 4584,
+          "words": 6
+        },
+        {
+          "hash": "a679d96d657522bc",
+          "kind": "quip",
+          "offset": 4821,
+          "words": 2
+        },
+        {
+          "hash": "5d816f12489ee892",
+          "kind": "deadpan",
+          "offset": 5604,
+          "words": 6
+        },
+        {
+          "hash": "b65c703729c7010e",
+          "kind": "deadpan",
+          "offset": 6864,
+          "words": 3
+        },
+        {
+          "hash": "9086c6a6e0da2f79",
+          "kind": "absurd",
+          "offset": 7543,
+          "words": 7
+        }
+      ],
+      "by_kind": {
+        "absurd": 5,
+        "deadpan": 4,
+        "quip": 5
+      },
+      "cohort": "declared_ai_2025",
+      "confabulated": 1,
+      "counted": 14,
+      "density_per_1k": 11.0672,
+      "duplicate": 0,
+      "over_length": 0,
+      "refused": false,
+      "relaxed_only": 1,
+      "returned": 15,
+      "unit_id": "rr:2144891.0|strip_placebo",
+      "unparseable": false,
+      "words": 1265,
+      "work_id": "108931"
+    },
+    {
+      "bad_kind": 0,
+      "beats": [
+        {
+          "hash": "d31ed8052905406c",
+          "kind": "deadpan",
+          "offset": 1270,
+          "words": 10
+        },
+        {
+          "hash": "fdc29d244711c811",
+          "kind": "absurd",
+          "offset": 1870,
+          "words": 12
+        },
+        {
+          "hash": "1a97f822252ff6c1",
+          "kind": "absurd",
+          "offset": 2362,
+          "words": 9
+        },
+        {
+          "hash": "2a9782f96b8b9b56",
+          "kind": "undercut",
+          "offset": 2474,
+          "words": 11
+        },
+        {
+          "hash": "d5d04081562c5601",
+          "kind": "system_voice",
+          "offset": 4938,
+          "words": 12
+        },
+        {
+          "hash": "8e3f58c90fbd1b99",
+          "kind": "system_voice",
+          "offset": 5603,
+          "words": 4
+        },
+        {
+          "hash": "804c6a048a77dc64",
+          "kind": "system_voice",
+          "offset": 5228,
+          "words": 12
+        },
+        {
+          "hash": "ebb92fe7ae5f58e1",
+          "kind": "absurd",
+          "offset": 5776,
+          "words": 4
+        },
+        {
+          "hash": "f53738b3efc559a9",
+          "kind": "system_voice",
+          "offset": 5903,
+          "words": 12
+        },
+        {
+          "hash": "e1bc1c6964529c0b",
+          "kind": "system_voice",
+          "offset": 6430,
+          "words": 7
+        },
+        {
+          "hash": "0178b0d69b0590c9",
+          "kind": "system_voice",
+          "offset": 6646,
+          "words": 12
+        },
+        {
+          "hash": "037488512c8e8f86",
+          "kind": "system_voice",
+          "offset": 6914,
+          "words": 8
+        },
+        {
+          "hash": "4ac453e5b67278b8",
+          "kind": "system_voice",
+          "offset": 7285,
+          "words": 6
+        },
+        {
+          "hash": "76fc94d0ce4e8300",
+          "kind": "system_voice",
+          "offset": 7175,
+          "words": 8
+        },
+        {
+          "hash": "a0ea3bc2a60947dd",
+          "kind": "system_voice",
+          "offset": 7690,
+          "words": 4
+        },
+        {
+          "hash": "29cf444fafd4b437",
+          "kind": "system_voice",
+          "offset": 9283,
+          "words": 10
+        },
+        {
+          "hash": "53ad8c10950f8bd9",
+          "kind": "system_voice",
+          "offset": 8932,
+          "words": 9
+        },
+        {
+          "hash": "4afd1f22c0dc54d1",
+          "kind": "quip",
+          "offset": 9601,
+          "words": 10
+        },
+        {
+          "hash": "ef3ca5da8bbd69b8",
+          "kind": "absurd",
+          "offset": 9745,
+          "words": 6
+        },
+        {
+          "hash": "f044a150fa4b33c9",
+          "kind": "deadpan",
+          "offset": 11176,
+          "words": 7
+        },
+        {
+          "hash": "4a80f3b6282abbca",
+          "kind": "quip",
+          "offset": 11098,
+          "words": 5
+        },
+        {
+          "hash": "aa754c478f59767b",
+          "kind": "absurd",
+          "offset": 12825,
+          "words": 11
+        },
+        {
+          "hash": "654a3540680af753",
+          "kind": "absurd",
+          "offset": 12884,
+          "words": 11
+        },
+        {
+          "hash": "4a6cd41444a3bc31",
+          "kind": "absurd",
+          "offset": 14702,
+          "words": 8
+        },
+        {
+          "hash": "4fcdd69ba0fc6fb2",
+          "kind": "undercut",
+          "offset": 12948,
+          "words": 5
+        },
+        {
+          "hash": "4c37136b1b7d9f35",
+          "kind": "absurd",
+          "offset": 13013,
+          "words": 12
+        },
+        {
+          "hash": "d5050ce53e5255e7",
+          "kind": "deadpan",
+          "offset": 19041,
+          "words": 6
+        },
+        {
+          "hash": "b940a86e78a0b945",
+          "kind": "deadpan",
+          "offset": 18805,
+          "words": 6
+        },
+        {
+          "hash": "88db7233a75388a5",
+          "kind": "quip",
+          "offset": 20094,
+          "words": 5
+        },
+        {
+          "hash": "d28a7883b685c1eb",
+          "kind": "quip",
+          "offset": 20946,
+          "words": 13
+        },
+        {
+          "hash": "b6c82b7ff5922358",
+          "kind": "undercut",
+          "offset": 20999,
+          "words": 9
+        }
+      ],
+      "by_kind": {
+        "absurd": 8,
+        "deadpan": 4,
+        "quip": 4,
+        "system_voice": 12,
+        "undercut": 3
+      },
+      "cohort": "undeclared_2025",
+      "confabulated": 0,
+      "counted": 31,
+      "density_per_1k": 8.2645,
+      "duplicate": 0,
+      "over_length": 1,
+      "refused": false,
+      "relaxed_only": 0,
+      "returned": 31,
+      "unit_id": "rr:2169135.0|strip",
+      "unparseable": false,
+      "words": 3751,
+      "work_id": "107639"
+    },
+    {
+      "bad_kind": 0,
+      "beats": [],
+      "by_kind": {},
+      "cohort": "undeclared_2025",
+      "confabulated": 0,
+      "counted": 0,
+      "density_per_1k": 0.0,
+      "duplicate": 0,
+      "over_length": 0,
+      "refused": false,
+      "relaxed_only": 0,
+      "returned": 0,
+      "unit_id": "rr:2169135.0|strip_placebo",
+      "unparseable": true,
+      "words": 3702,
+      "work_id": "107639"
+    },
+    {
+      "bad_kind": 0,
+      "beats": [
+        {
+          "hash": "e7e28b4c52721fad",
+          "kind": "system_voice",
+          "offset": 1226,
+          "words": 6
+        },
+        {
+          "hash": "e5afdd6802de6cad",
+          "kind": "deadpan",
+          "offset": 1369,
+          "words": 16
+        },
+        {
+          "hash": "bc037f2383bbdbbb",
+          "kind": "quip",
+          "offset": 2012,
+          "words": 6
+        },
+        {
+          "hash": "a41bb928a87c5a63",
+          "kind": "undercut",
+          "offset": 2719,
+          "words": 5
+        },
+        {
+          "hash": "04b4da5433e22eeb",
+          "kind": "deadpan",
+          "offset": 2847,
+          "words": 5
+        },
+        {
+          "hash": "6b3606332ec7b424",
+          "kind": "quip",
+          "offset": 3867,
+          "words": 4
+        }
+      ],
+      "by_kind": {
+        "deadpan": 2,
+        "quip": 2,
+        "system_voice": 1,
+        "undercut": 1
+      },
+      "cohort": "declared_ai_2025",
+      "confabulated": 1,
+      "counted": 6,
+      "density_per_1k": 7.2639,
+      "duplicate": 0,
+      "over_length": 1,
+      "refused": false,
+      "relaxed_only": 1,
+      "returned": 7,
+      "unit_id": "rr:2230328.0|strip",
+      "unparseable": false,
+      "words": 826,
+      "work_id": "106776"
+    },
+    {
+      "bad_kind": 0,
+      "beats": [
+        {
+          "hash": "f864e3cf774d6f47",
+          "kind": "quip",
+          "offset": 140,
+          "words": 11
+        },
+        {
+          "hash": "e734fe0a8d5a4323",
+          "kind": "absurd",
+          "offset": 667,
+          "words": 7
+        },
+        {
+          "hash": "ef9194f5c0be4b9b",
+          "kind": "quip",
+          "offset": 2054,
+          "words": 6
+        },
+        {
+          "hash": "9fdd8ffc68269a75",
+          "kind": "absurd",
+          "offset": 2749,
+          "words": 3
+        },
+        {
+          "hash": "27493227d62152a8",
+          "kind": "quip",
+          "offset": 2783,
+          "words": 9
+        },
+        {
+          "hash": "003d53e9cbcd63a3",
+          "kind": "absurd",
+          "offset": 2871,
+          "words": 6
+        },
+        {
+          "hash": "cb2890b23d6c0f6e",
+          "kind": "absurd",
+          "offset": 3603,
+          "words": 9
+        },
+        {
+          "hash": "81cedd840d6ed419",
+          "kind": "callback",
+          "offset": 3726,
+          "words": 3
+        },
+        {
+          "hash": "988687a709d28847",
+          "kind": "quip",
+          "offset": 4076,
+          "words": 11
+        },
+        {
+          "hash": "708e459775da4932",
+          "kind": "absurd",
+          "offset": 4975,
+          "words": 11
+        }
+      ],
+      "by_kind": {
+        "absurd": 5,
+        "callback": 1,
+        "quip": 4
+      },
+      "cohort": "declared_ai_2025",
+      "confabulated": 1,
+      "counted": 10,
+      "density_per_1k": 12.1507,
+      "duplicate": 0,
+      "over_length": 0,
+      "refused": false,
+      "relaxed_only": 1,
+      "returned": 11,
+      "unit_id": "rr:2230328.0|strip_placebo",
+      "unparseable": false,
+      "words": 823,
+      "work_id": "106776"
+    },
+    {
+      "bad_kind": 0,
+      "beats": [
+        {
+          "hash": "23e3dd5738733a25",
+          "kind": "absurd",
+          "offset": 4754,
+          "words": 10
+        },
+        {
+          "hash": "900dc009ac066031",
+          "kind": "quip",
+          "offset": 5487,
+          "words": 5
+        },
+        {
+          "hash": "1d65440cc5fa5be0",
+          "kind": "quip",
+          "offset": 6430,
+          "words": 6
+        },
+        {
+          "hash": "2754faae72ea0b4e",
+          "kind": "quip",
+          "offset": 6543,
+          "words": 6
+        },
+        {
+          "hash": "c97909bd545eb086",
+          "kind": "quip",
+          "offset": 7568,
+          "words": 7
+        },
+        {
+          "hash": "a07a75951d84f33c",
+          "kind": "deadpan",
+          "offset": 8352,
+          "words": 10
+        },
+        {
+          "hash": "c978ebf511d7d781",
+          "kind": "quip",
+          "offset": 8566,
+          "words": 6
+        },
+        {
+          "hash": "2f3942ef78a57900",
+          "kind": "quip",
+          "offset": 8912,
+          "words": 9
+        },
+        {
+          "hash": "6fb05cf20b74ab5a",
+          "kind": "absurd",
+          "offset": 9654,
+          "words": 4
+        },
+        {
+          "hash": "d4c0228e1895210a",
+          "kind": "quip",
+          "offset": 9899,
+          "words": 10
+        },
+        {
+          "hash": "c3487cf726aad62a",
+          "kind": "deadpan",
+          "offset": 10626,
+          "words": 10
+        }
+      ],
+      "by_kind": {
+        "absurd": 2,
+        "deadpan": 2,
+        "quip": 7
+      },
+      "cohort": "human_pre_llm",
+      "confabulated": 0,
+      "counted": 11,
+      "density_per_1k": 5.4754,
+      "duplicate": 0,
+      "over_length": 0,
+      "refused": false,
+      "relaxed_only": 0,
+      "returned": 11,
+      "unit_id": "rr:767061.0|strip",
+      "unparseable": false,
+      "words": 2009,
+      "work_id": "47060"
+    },
+    {
+      "bad_kind": 0,
+      "beats": [
+        {
+          "hash": "50d31058bab3b612",
+          "kind": "quip",
+          "offset": 2130,
+          "words": 10
+        },
+        {
+          "hash": "5b93b1c5f9e098ef",
+          "kind": "deadpan",
+          "offset": 5215,
+          "words": 8
+        },
+        {
+          "hash": "395135c4e168a563",
+          "kind": "quip",
+          "offset": 5459,
+          "words": 10
+        },
+        {
+          "hash": "83032d4d0d64b3cd",
+          "kind": "quip",
+          "offset": 6961,
+          "words": 4
+        },
+        {
+          "hash": "dcdfcb3655e03375",
+          "kind": "quip",
+          "offset": 7000,
+          "words": 10
+        },
+        {
+          "hash": "85ed8de4796b985c",
+          "kind": "quip",
+          "offset": 7116,
+          "words": 6
+        },
+        {
+          "hash": "da2588f92c8a799a",
+          "kind": "quip",
+          "offset": 7199,
+          "words": 9
+        },
+        {
+          "hash": "9041c150c68a09d7",
+          "kind": "quip",
+          "offset": 7341,
+          "words": 8
+        },
+        {
+          "hash": "fff301445d5c5f37",
+          "kind": "callback",
+          "offset": 7535,
+          "words": 8
+        },
+        {
+          "hash": "c97909bd545eb086",
+          "kind": "quip",
+          "offset": 7645,
+          "words": 7
+        },
+        {
+          "hash": "98ce4630df9a1adb",
+          "kind": "absurd",
+          "offset": 8118,
+          "words": 9
+        },
+        {
+          "hash": "a07a75951d84f33c",
+          "kind": "quip",
+          "offset": 8429,
+          "words": 10
+        },
+        {
+          "hash": "c2ea3b63b77e2557",
+          "kind": "quip",
+          "offset": 8627,
+          "words": 3
+        },
+        {
+          "hash": "6fb05cf20b74ab5a",
+          "kind": "absurd",
+          "offset": 9703,
+          "words": 4
+        },
+        {
+          "hash": "aedae7018b0e9357",
+          "kind": "quip",
+          "offset": 10018,
+          "words": 11
+        }
+      ],
+      "by_kind": {
+        "absurd": 2,
+        "callback": 1,
+        "deadpan": 1,
+        "quip": 11
+      },
+      "cohort": "human_pre_llm",
+      "confabulated": 0,
+      "counted": 15,
+      "density_per_1k": 7.4147,
+      "duplicate": 0,
+      "over_length": 0,
+      "refused": false,
+      "relaxed_only": 0,
+      "returned": 15,
+      "unit_id": "rr:767061.0|strip_placebo",
+      "unparseable": false,
+      "words": 2023,
+      "work_id": "47060"
+    },
+    {
+      "bad_kind": 0,
+      "beats": [
+        {
+          "hash": "5b9e6ae26dae6694",
+          "kind": "deadpan",
+          "offset": 1007,
+          "words": 8
+        },
+        {
+          "hash": "50133b4b19c5362e",
+          "kind": "deadpan",
+          "offset": 1313,
+          "words": 9
+        },
+        {
+          "hash": "8a0f23d3ffd957f6",
+          "kind": "deadpan",
+          "offset": 1443,
+          "words": 3
+        },
+        {
+          "hash": "3f5ce820635e6926",
+          "kind": "system_voice",
+          "offset": 1686,
+          "words": 9
+        },
+        {
+          "hash": "6c9a6be1c9a3992b",
+          "kind": "undercut",
+          "offset": 1838,
+          "words": 10
+        },
+        {
+          "hash": "854c4a097362c3ec",
+          "kind": "quip",
+          "offset": 2136,
+          "words": 10
+        },
+        {
+          "hash": "a9eab8e16d442489",
+          "kind": "quip",
+          "offset": 2456,
+          "words": 3
+        },
+        {
+          "hash": "e535c77326a9cd10",
+          "kind": "system_voice",
+          "offset": 2229,
+          "words": 8
+        },
+        {
+          "hash": "017445a3c110a6fd",
+          "kind": "system_voice",
+          "offset": 2512,
+          "words": 13
+        },
+        {
+          "hash": "726beaee6061e6e8",
+          "kind": "quip",
+          "offset": 3950,
+          "words": 9
+        },
+        {
+          "hash": "8a2a05c61c7613d8",
+          "kind": "deadpan",
+          "offset": 2895,
+          "words": 10
+        },
+        {
+          "hash": "a78be365a1b2e1d1",
+          "kind": "quip",
+          "offset": 3100,
+          "words": 12
+        },
+        {
+          "hash": "fb312fe04c2866c2",
+          "kind": "system_voice",
+          "offset": 3818,
+          "words": 9
+        },
+        {
+          "hash": "50f5c5bf2ee2d71f",
+          "kind": "deadpan",
+          "offset": 4388,
+          "words": 11
+        },
+        {
+          "hash": "8ba6867e7d2d19ad",
+          "kind": "absurd",
+          "offset": 5339,
+          "words": 8
+        }
+      ],
+      "by_kind": {
+        "absurd": 1,
+        "deadpan": 5,
+        "quip": 4,
+        "system_voice": 4,
+        "undercut": 1
+      },
+      "cohort": "human_pre_llm",
+      "confabulated": 0,
+      "counted": 15,
+      "density_per_1k": 14.8957,
+      "duplicate": 0,
+      "over_length": 1,
+      "refused": false,
+      "relaxed_only": 0,
+      "returned": 15,
+      "unit_id": "rr:768220.0|strip",
+      "unparseable": false,
+      "words": 1007,
+      "work_id": "47496"
+    },
+    {
+      "bad_kind": 0,
+      "beats": [
+        {
+          "hash": "aaf71087027362ac",
+          "kind": "deadpan",
+          "offset": 0,
+          "words": 9
+        },
+        {
+          "hash": "c59784ce619fc085",
+          "kind": "quip",
+          "offset": 151,
+          "words": 6
+        },
+        {
+          "hash": "7d708dfb569e130a",
+          "kind": "deadpan",
+          "offset": 226,
+          "words": 6
+        },
+        {
+          "hash": "35b88fdcc0703ffa",
+          "kind": "quip",
+          "offset": 353,
+          "words": 12
+        },
+        {
+          "hash": "a5c0c70c1e0a1f2c",
+          "kind": "quip",
+          "offset": 568,
+          "words": 9
+        },
+        {
+          "hash": "1062053c1a2a3cd9",
+          "kind": "quip",
+          "offset": 627,
+          "words": 10
+        },
+        {
+          "hash": "7d13cb33c8e55deb",
+          "kind": "absurd",
+          "offset": 847,
+          "words": 8
+        },
+        {
+          "hash": "08d2852461efdc35",
+          "kind": "deadpan",
+          "offset": 1006,
+          "words": 5
+        },
+        {
+          "hash": "fa418dda5062dff3",
+          "kind": "quip",
+          "offset": 1268,
+          "words": 10
+        },
+        {
+          "hash": "7acd7f82f6dc46eb",
+          "kind": "deadpan",
+          "offset": 1312,
+          "words": 11
+        },
+        {
+          "hash": "e3e480d8fa99924e",
+          "kind": "undercut",
+          "offset": 1484,
+          "words": 3
+        },
+        {
+          "hash": "70084441f497f643",
+          "kind": "system_voice",
+          "offset": 1705,
+          "words": 8
+        },
+        {
+          "hash": "95631dbea63ebd4c",
+          "kind": "quip",
+          "offset": 1870,
+          "words": 9
+        },
+        {
+          "hash": "e558afed4f257790",
+          "kind": "quip",
+          "offset": 2130,
+          "words": 7
+        },
+        {
+          "hash": "ff2ccb265586ef99",
+          "kind": "system_voice",
+          "offset": 2215,
+          "words": 8
+        },
+        {
+          "hash": "4e2e6fd0565fe6e6",
+          "kind": "undercut",
+          "offset": 2398,
+          "words": 7
+        },
+        {
+          "hash": "d0e06f983de2b204",
+          "kind": "absurd",
+          "offset": 2488,
+          "words": 9
+        },
+        {
+          "hash": "71fab70ce285e119",
+          "kind": "deadpan",
+          "offset": 2777,
+          "words": 1
+        },
+        {
+          "hash": "5822dc72883dd63e",
+          "kind": "absurd",
+          "offset": 2859,
+          "words": 9
+        },
+        {
+          "hash": "0beb1d35488ceab4",
+          "kind": "quip",
+          "offset": 2917,
+          "words": 9
+        },
+        {
+          "hash": "2515cab89fbbb4c9",
+          "kind": "deadpan",
+          "offset": 3112,
+          "words": 5
+        },
+        {
+          "hash": "5671a29e60592970",
+          "kind": "quip",
+          "offset": 3924,
+          "words": 7
+        },
+        {
+          "hash": "30d8c6e88260f1fc",
+          "kind": "absurd",
+          "offset": 4330,
+          "words": 9
+        },
+        {
+          "hash": "4fab5216990136dc",
+          "kind": "absurd",
+          "offset": 5350,
+          "words": 4
+        },
+        {
+          "hash": "0b9b3711c874d2b2",
+          "kind": "deadpan",
+          "offset": 5564,
+          "words": 9
+        },
+        {
+          "hash": "ad6d9e15abdb768e",
+          "kind": "undercut",
+          "offset": 5675,
+          "words": 3
+        }
+      ],
+      "by_kind": {
+        "absurd": 5,
+        "deadpan": 7,
+        "quip": 9,
+        "system_voice": 2,
+        "undercut": 3
+      },
+      "cohort": "human_pre_llm",
+      "confabulated": 0,
+      "counted": 26,
+      "density_per_1k": 26.2361,
+      "duplicate": 0,
+      "over_length": 0,
+      "refused": false,
+      "relaxed_only": 0,
+      "returned": 26,
+      "unit_id": "rr:768220.0|strip_placebo",
+      "unparseable": false,
+      "words": 991,
+      "work_id": "47496"
+    },
+    {
+      "bad_kind": 0,
+      "beats": [
+        {
+          "hash": "4557e5d864a3eb2f",
+          "kind": "absurd",
+          "offset": 1380,
+          "words": 9
+        },
+        {
+          "hash": "f12cb786b4df3be2",
+          "kind": "absurd",
+          "offset": 5914,
+          "words": 5
+        },
+        {
+          "hash": "3811fe355e0c2ef3",
+          "kind": "banter",
+          "offset": 3777,
+          "words": 5
+        },
+        {
+          "hash": "d140c6b1e0548c10",
+          "kind": "absurd",
+          "offset": 4806,
+          "words": 7
+        },
+        {
+          "hash": "b29f0a560a03ffb8",
+          "kind": "deadpan",
+          "offset": 5588,
+          "words": 6
+        },
+        {
+          "hash": "9b76d5ef25afcf0b",
+          "kind": "quip",
+          "offset": 7776,
+          "words": 3
+        },
+        {
+          "hash": "802283a210ee276d",
+          "kind": "banter",
+          "offset": 8935,
+          "words": 9
+        },
+        {
+          "hash": "5661b8cb5c39e20f",
+          "kind": "undercut",
+          "offset": 9418,
+          "words": 5
+        },
+        {
+          "hash": "4c9075e145e912e8",
+          "kind": "deadpan",
+          "offset": 9966,
+          "words": 11
+        },
+        {
+          "hash": "0f80400057d2391b",
+          "kind": "absurd",
+          "offset": 11407,
+          "words": 12
+        },
+        {
+          "hash": "7813bf990af95977",
+          "kind": "deadpan",
+          "offset": 12544,
+          "words": 10
+        },
+        {
+          "hash": "01721990abb68b93",
+          "kind": "absurd",
+          "offset": 12996,
+          "words": 8
+        },
+        {
+          "hash": "b834fa61f050bddd",
+          "kind": "quip",
+          "offset": 13774,
+          "words": 2
+        },
+        {
+          "hash": "ee2c99ed192f9fd3",
+          "kind": "deadpan",
+          "offset": 13807,
+          "words": 10
+        },
+        {
+          "hash": "952af7487fdffa39",
+          "kind": "absurd",
+          "offset": 14307,
+          "words": 3
+        },
+        {
+          "hash": "911e6c778b58b285",
+          "kind": "quip",
+          "offset": 14326,
+          "words": 8
+        },
+        {
+          "hash": "345dcd35f9b306e3",
+          "kind": "quip",
+          "offset": 14615,
+          "words": 6
+        },
+        {
+          "hash": "b3cfe0b21e47d924",
+          "kind": "callback",
+          "offset": 15042,
+          "words": 11
+        },
+        {
+          "hash": "c75e39b834c00638",
+          "kind": "absurd",
+          "offset": 15378,
+          "words": 6
+        },
+        {
+          "hash": "78a7d3dd7be6b295",
+          "kind": "deadpan",
+          "offset": 15616,
+          "words": 4
+        },
+        {
+          "hash": "4c6eaf4d584eaa9f",
+          "kind": "absurd",
+          "offset": 16481,
+          "words": 3
+        }
+      ],
+      "by_kind": {
+        "absurd": 8,
+        "banter": 2,
+        "callback": 1,
+        "deadpan": 5,
+        "quip": 4,
+        "undercut": 1
+      },
+      "cohort": "human_pre_llm",
+      "confabulated": 0,
+      "counted": 21,
+      "density_per_1k": 7.0707,
+      "duplicate": 0,
+      "over_length": 0,
+      "refused": false,
+      "relaxed_only": 0,
+      "returned": 21,
+      "unit_id": "rr:770636.0|strip",
+      "unparseable": false,
+      "words": 2970,
+      "work_id": "47604"
+    },
+    {
+      "bad_kind": 0,
+      "beats": [
+        {
+          "hash": "5557cea75afd2a87",
+          "kind": "quip",
+          "offset": 811,
+          "words": 7
+        },
+        {
+          "hash": "7671fe407186f69c",
+          "kind": "deadpan",
+          "offset": 2521,
+          "words": 8
+        },
+        {
+          "hash": "efed061125e4ba49",
+          "kind": "quip",
+          "offset": 3603,
+          "words": 9
+        },
+        {
+          "hash": "2bc25bd318f2911d",
+          "kind": "deadpan",
+          "offset": 3670,
+          "words": 9
+        },
+        {
+          "hash": "9b21cc29d8b5d6e2",
+          "kind": "quip",
+          "offset": 3768,
+          "words": 5
+        },
+        {
+          "hash": "901011a4fdd2f077",
+          "kind": "quip",
+          "offset": 3935,
+          "words": 5
+        },
+        {
+          "hash": "7f05969a5fb938bd",
+          "kind": "absurd",
+          "offset": 4329,
+          "words": 5
+        },
+        {
+          "hash": "71e47fe97a6ef5cf",
+          "kind": "quip",
+          "offset": 4813,
+          "words": 7
+        },
+        {
+          "hash": "1547e0505229fcb3",
+          "kind": "absurd",
+          "offset": 5930,
+          "words": 5
+        },
+        {
+          "hash": "9592540e214a9e85",
+          "kind": "deadpan",
+          "offset": 6449,
+          "words": 9
+        },
+        {
+          "hash": "c0267866ac71ba05",
+          "kind": "quip",
+          "offset": 7070,
+          "words": 7
+        },
+        {
+          "hash": "cadc7d41a9144be8",
+          "kind": "deadpan",
+          "offset": 7586,
+          "words": 11
+        },
+        {
+          "hash": "a8cd795322bd3dcc",
+          "kind": "quip",
+          "offset": 7645,
+          "words": 5
+        },
+        {
+          "hash": "f07bec41f88ba11e",
+          "kind": "deadpan",
+          "offset": 7783,
+          "words": 4
+        },
+        {
+          "hash": "0c710f942c4a8acf",
+          "kind": "absurd",
+          "offset": 8373,
+          "words": 8
+        },
+        {
+          "hash": "802283a210ee276d",
+          "kind": "quip",
+          "offset": 8936,
+          "words": 9
+        },
+        {
+          "hash": "0961a8aacf0df405",
+          "kind": "deadpan",
+          "offset": 9212,
+          "words": 8
+        },
+        {
+          "hash": "1e59a797c7ec8343",
+          "kind": "undercut",
+          "offset": 10609,
+          "words": 8
+        },
+        {
+          "hash": "4dbd523e6f9710ed",
+          "kind": "deadpan",
+          "offset": 9981,
+          "words": 13
+        },
+        {
+          "hash": "b7f739f8f7884a11",
+          "kind": "undercut",
+          "offset": 11447,
+          "words": 7
+        },
+        {
+          "hash": "23717ea432f766a2",
+          "kind": "deadpan",
+          "offset": 11632,
+          "words": 4
+        },
+        {
+          "hash": "3ebd8683541cc768",
+          "kind": "deadpan",
+          "offset": 12295,
+          "words": 11
+        },
+        {
+          "hash": "0975ac2097246b16",
+          "kind": "quip",
+          "offset": 12483,
+          "words": 9
+        },
+        {
+          "hash": "8328f9189da4d593",
+          "kind": "quip",
+          "offset": 12576,
+          "words": 5
+        },
+        {
+          "hash": "3f618bd520846451",
+          "kind": "deadpan",
+          "offset": 12606,
+          "words": 10
+        },
+        {
+          "hash": "d091de22adcd651d",
+          "kind": "quip",
+          "offset": 13059,
+          "words": 8
+        },
+        {
+          "hash": "65396e2accaa81df",
+          "kind": "quip",
+          "offset": 13464,
+          "words": 4
+        },
+        {
+          "hash": "63281700694802b4",
+          "kind": "deadpan",
+          "offset": 13942,
+          "words": 7
+        },
+        {
+          "hash": "952af7487fdffa39",
+          "kind": "callback",
+          "offset": 14382,
+          "words": 3
+        },
+        {
+          "hash": "74532a0bfc66e4d4",
+          "kind": "quip",
+          "offset": 14401,
+          "words": 9
+        },
+        {
+          "hash": "a9a51ba0a688596a",
+          "kind": "quip",
+          "offset": 14904,
+          "words": 9
+        },
+        {
+          "hash": "628de762a261283a",
+          "kind": "quip",
+          "offset": 15119,
+          "words": 12
+        },
+        {
+          "hash": "b83f3cd7d76bb8e8",
+          "kind": "system_voice",
+          "offset": 15449,
+          "words": 7
+        },
+        {
+          "hash": "42fd721643166b28",
+          "kind": "quip",
+          "offset": 15607,
+          "words": 2
+        },
+        {
+          "hash": "79227fc9374020c8",
+          "kind": "quip",
+          "offset": 15821,
+          "words": 10
+        },
+        {
+          "hash": "1d89276fc3843c44",
+          "kind": "undercut",
+          "offset": 16273,
+          "words": 9
+        },
+        {
+          "hash": "c34d75bf75b77d4f",
+          "kind": "quip",
+          "offset": 16397,
+          "words": 10
+        },
+        {
+          "hash": "ddbefa6aaaa487e5",
+          "kind": "absurd",
+          "offset": 16565,
+          "words": 1
+        },
+        {
+          "hash": "b343bc7c95af4c84",
+          "kind": "quip",
+          "offset": 16588,
+          "words": 8
+        },
+        {
+          "hash": "118bf6e68ebe0ffb",
+          "kind": "quip",
+          "offset": 16674,
+          "words": 8
+        }
+      ],
+      "by_kind": {
+        "absurd": 4,
+        "callback": 1,
+        "deadpan": 11,
+        "quip": 20,
+        "system_voice": 1,
+        "undercut": 3
+      },
+      "cohort": "human_pre_llm",
+      "confabulated": 1,
+      "counted": 40,
+      "density_per_1k": 13.3958,
+      "duplicate": 0,
+      "over_length": 1,
+      "refused": false,
+      "relaxed_only": 0,
+      "returned": 41,
+      "unit_id": "rr:770636.0|strip_placebo",
+      "unparseable": false,
+      "words": 2986,
+      "work_id": "47604"
+    },
+    {
+      "bad_kind": 0,
+      "beats": [
+        {
+          "hash": "dca74d1170f4a267",
+          "kind": "quip",
+          "offset": 196,
+          "words": 7
+        },
+        {
+          "hash": "fe94102902916b08",
+          "kind": "deadpan",
+          "offset": 1159,
+          "words": 6
+        },
+        {
+          "hash": "024e9cd550f33c3e",
+          "kind": "quip",
+          "offset": 1209,
+          "words": 9
+        },
+        {
+          "hash": "da94fde3afa1b6ac",
+          "kind": "quip",
+          "offset": 1347,
+          "words": 9
+        },
+        {
+          "hash": "5d87ed24f438fa15",
+          "kind": "quip",
+          "offset": 1504,
+          "words": 2
+        },
+        {
+          "hash": "5cbad6a2149320c1",
+          "kind": "deadpan",
+          "offset": 2614,
+          "words": 9
+        },
+        {
+          "hash": "913ea23c1a613c79",
+          "kind": "quip",
+          "offset": 2686,
+          "words": 7
+        },
+        {
+          "hash": "876c5082297ea322",
+          "kind": "deadpan",
+          "offset": 3546,
+          "words": 11
+        },
+        {
+          "hash": "afb5e327fc9cee75",
+          "kind": "deadpan",
+          "offset": 3805,
+          "words": 10
+        },
+        {
+          "hash": "8cbb3a64dc422706",
+          "kind": "quip",
+          "offset": 4138,
+          "words": 6
+        },
+        {
+          "hash": "53f83283890c824a",
+          "kind": "quip",
+          "offset": 4595,
+          "words": 5
+        },
+        {
+          "hash": "cbddf294fbd3feef",
+          "kind": "deadpan",
+          "offset": 5381,
+          "words": 7
+        },
+        {
+          "hash": "cf04119a706e2c45",
+          "kind": "deadpan",
+          "offset": 3304,
+          "words": 1
+        },
+        {
+          "hash": "9e6aa83b7b56f26a",
+          "kind": "callback",
+          "offset": 6070,
+          "words": 9
+        },
+        {
+          "hash": "92ba72ac0ab6257d",
+          "kind": "quip",
+          "offset": 6650,
+          "words": 1
+        },
+        {
+          "hash": "8cca7a978b07417c",
+          "kind": "quip",
+          "offset": 7052,
+          "words": 8
+        },
+        {
+          "hash": "b9bab35275c61baf",
+          "kind": "deadpan",
+          "offset": 7640,
+          "words": 6
+        },
+        {
+          "hash": "792733eadc7916c3",
+          "kind": "deadpan",
+          "offset": 7759,
+          "words": 7
+        },
+        {
+          "hash": "7c07344d3529a8f6",
+          "kind": "deadpan",
+          "offset": 7806,
+          "words": 2
+        },
+        {
+          "hash": "ae03859b2f21efd7",
+          "kind": "deadpan",
+          "offset": 8077,
+          "words": 11
+        },
+        {
+          "hash": "b4c49eb4bb2cf41c",
+          "kind": "absurd",
+          "offset": 8146,
+          "words": 9
+        },
+        {
+          "hash": "87294def638371e1",
+          "kind": "quip",
+          "offset": 8667,
+          "words": 10
+        },
+        {
+          "hash": "9eba55452b7ceb19",
+          "kind": "deadpan",
+          "offset": 8796,
+          "words": 7
+        },
+        {
+          "hash": "4504f2581de48510",
+          "kind": "deadpan",
+          "offset": 9286,
+          "words": 10
+        },
+        {
+          "hash": "72340c0d1d9298a8",
+          "kind": "deadpan",
+          "offset": 9748,
+          "words": 10
+        },
+        {
+          "hash": "f75c864730c4078c",
+          "kind": "deadpan",
+          "offset": 9928,
+          "words": 9
+        },
+        {
+          "hash": "3a3b8c053725b249",
+          "kind": "deadpan",
+          "offset": 10028,
+          "words": 13
+        },
+        {
+          "hash": "7e880d0b5ed8da96",
+          "kind": "quip",
+          "offset": 10154,
+          "words": 7
+        }
+      ],
+      "by_kind": {
+        "absurd": 1,
+        "callback": 1,
+        "deadpan": 15,
+        "quip": 11
+      },
+      "cohort": "human_pre_llm",
+      "confabulated": 0,
+      "counted": 28,
+      "density_per_1k": 15.2838,
+      "duplicate": 0,
+      "over_length": 1,
+      "refused": false,
+      "relaxed_only": 0,
+      "returned": 28,
+      "unit_id": "rr:777510.0|strip",
+      "unparseable": false,
+      "words": 1832,
+      "work_id": "48114"
+    },
+    {
+      "bad_kind": 0,
+      "beats": [
+        {
+          "hash": "dca74d1170f4a267",
+          "kind": "quip",
+          "offset": 197,
+          "words": 7
+        },
+        {
+          "hash": "38ee1c064f5d226e",
+          "kind": "deadpan",
+          "offset": 833,
+          "words": 11
+        },
+        {
+          "hash": "adbebd4ec33ba122",
+          "kind": "banter",
+          "offset": 913,
+          "words": 12
+        },
+        {
+          "hash": "fe94102902916b08",
+          "kind": "quip",
+          "offset": 1186,
+          "words": 6
+        },
+        {
+          "hash": "52e41177cc481239",
+          "kind": "quip",
+          "offset": 1276,
+          "words": 11
+        },
+        {
+          "hash": "c9b213638b039358",
+          "kind": "quip",
+          "offset": 1394,
+          "words": 7
+        },
+        {
+          "hash": "bfac6fbae353c3be",
+          "kind": "banter",
+          "offset": 1537,
+          "words": 3
+        },
+        {
+          "hash": "7a3021dead706ed2",
+          "kind": "undercut",
+          "offset": 3440,
+          "words": 12
+        },
+        {
+          "hash": "cbddf294fbd3feef",
+          "kind": "deadpan",
+          "offset": 5382,
+          "words": 7
+        },
+        {
+          "hash": "53f83283890c824a",
+          "kind": "quip",
+          "offset": 4596,
+          "words": 5
+        },
+        {
+          "hash": "b0318ad55b14ba27",
+          "kind": "deadpan",
+          "offset": 3863,
+          "words": 12
+        },
+        {
+          "hash": "437886a1da447a12",
+          "kind": "quip",
+          "offset": 6133,
+          "words": 11
+        },
+        {
+          "hash": "c3e7f76c1a700d9d",
+          "kind": "callback",
+          "offset": 6341,
+          "words": 3
+        },
+        {
+          "hash": "b48aab89d291661a",
+          "kind": "deadpan",
+          "offset": 6758,
+          "words": 9
+        },
+        {
+          "hash": "a4488633c6c8b3dd",
+          "kind": "undercut",
+          "offset": 7731,
+          "words": 2
+        },
+        {
+          "hash": "689002e1554da692",
+          "kind": "undercut",
+          "offset": 7865,
+          "words": 9
+        },
+        {
+          "hash": "ae03859b2f21efd7",
+          "kind": "quip",
+          "offset": 8088,
+          "words": 11
+        },
+        {
+          "hash": "8f4b7d2afc6fb705",
+          "kind": "absurd",
+          "offset": 8157,
+          "words": 10
+        },
+        {
+          "hash": "ca385f3b539a5709",
+          "kind": "quip",
+          "offset": 8376,
+          "words": 10
+        },
+        {
+          "hash": "0935c56c9de29144",
+          "kind": "deadpan",
+          "offset": 8738,
+          "words": 10
+        },
+        {
+          "hash": "969b6d808adfd993",
+          "kind": "deadpan",
+          "offset": 8845,
+          "words": 10
+        },
+        {
+          "hash": "f31b312cb363a454",
+          "kind": "deadpan",
+          "offset": 9293,
+          "words": 11
+        },
+        {
+          "hash": "2642d97d2e0cdbaf",
+          "kind": "quip",
+          "offset": 10182,
+          "words": 10
+        }
+      ],
+      "by_kind": {
+        "absurd": 1,
+        "banter": 2,
+        "callback": 1,
+        "deadpan": 7,
+        "quip": 9,
+        "undercut": 3
+      },
+      "cohort": "human_pre_llm",
+      "confabulated": 1,
+      "counted": 23,
+      "density_per_1k": 12.6304,
+      "duplicate": 0,
+      "over_length": 0,
+      "refused": false,
+      "relaxed_only": 0,
+      "returned": 24,
+      "unit_id": "rr:777510.0|strip_placebo",
+      "unparseable": false,
+      "words": 1821,
+      "work_id": "48114"
+    },
+    {
+      "bad_kind": 0,
+      "beats": [
+        {
+          "hash": "33824c2e7aecb3ed",
+          "kind": "quip",
+          "offset": 8,
+          "words": 7
+        },
+        {
+          "hash": "1071690cd17fdfdb",
+          "kind": "deadpan",
+          "offset": 461,
+          "words": 7
+        },
+        {
+          "hash": "a28ed983dc4bff7d",
+          "kind": "absurd",
+          "offset": 1049,
+          "words": 11
+        },
+        {
+          "hash": "5c3612d3fcf94580",
+          "kind": "quip",
+          "offset": 1202,
+          "words": 12
+        },
+        {
+          "hash": "7dfc93678f0a4664",
+          "kind": "undercut",
+          "offset": 2497,
+          "words": 10
+        },
+        {
+          "hash": "5d46b7c667732c98",
+          "kind": "banter",
+          "offset": 5214,
+          "words": 12
+        },
+        {
+          "hash": "72e5caa5eb6e14cb",
+          "kind": "quip",
+          "offset": 5769,
+          "words": 12
+        },
+        {
+          "hash": "e45ac8d3dbea5e2e",
+          "kind": "quip",
+          "offset": 6414,
+          "words": 9
+        },
+        {
+          "hash": "8a64c176001de9e0",
+          "kind": "deadpan",
+          "offset": 6643,
+          "words": 12
+        },
+        {
+          "hash": "4c8a17908c3cb18c",
+          "kind": "system_voice",
+          "offset": 6831,
+          "words": 11
+        },
+        {
+          "hash": "34e46622ff7e2332",
+          "kind": "quip",
+          "offset": 7361,
+          "words": 7
+        },
+        {
+          "hash": "039bf925747637ad",
+          "kind": "absurd",
+          "offset": 7546,
+          "words": 12
+        },
+        {
+          "hash": "764f0792856201d9",
+          "kind": "absurd",
+          "offset": 9824,
+          "words": 11
+        },
+        {
+          "hash": "eb030fbca47356b7",
+          "kind": "absurd",
+          "offset": 10001,
+          "words": 12
+        },
+        {
+          "hash": "a3180da2917aacac",
+          "kind": "undercut",
+          "offset": 9004,
+          "words": 12
+        },
+        {
+          "hash": "f3d4e116fa564c00",
+          "kind": "undercut",
+          "offset": 9367,
+          "words": 12
+        }
+      ],
+      "by_kind": {
+        "absurd": 4,
+        "banter": 1,
+        "deadpan": 2,
+        "quip": 5,
+        "system_voice": 1,
+        "undercut": 3
+      },
+      "cohort": "human_pre_llm",
+      "confabulated": 0,
+      "counted": 16,
+      "density_per_1k": 8.0767,
+      "duplicate": 0,
+      "over_length": 0,
+      "refused": false,
+      "relaxed_only": 0,
+      "returned": 16,
+      "unit_id": "rr:779348.0|strip",
+      "unparseable": false,
+      "words": 1981,
+      "work_id": "48086"
+    },
+    {
+      "bad_kind": 0,
+      "beats": [
+        {
+          "hash": "041db603672d320c",
+          "kind": "quip",
+          "offset": 1,
+          "words": 11
+        },
+        {
+          "hash": "a7c72988ccb4a6c1",
+          "kind": "quip",
+          "offset": 255,
+          "words": 8
+        },
+        {
+          "hash": "885ae6c64d9c86fb",
+          "kind": "quip",
+          "offset": 563,
+          "words": 6
+        },
+        {
+          "hash": "6a8d8ba91d339f6a",
+          "kind": "deadpan",
+          "offset": 900,
+          "words": 11
+        },
+        {
+          "hash": "5c3612d3fcf94580",
+          "kind": "deadpan",
+          "offset": 1264,
+          "words": 12
+        },
+        {
+          "hash": "f1f6a5e3225acc03",
+          "kind": "quip",
+          "offset": 1344,
+          "words": 12
+        },
+        {
+          "hash": "6209ac281686e833",
+          "kind": "quip",
+          "offset": 2742,
+          "words": 8
+        },
+        {
+          "hash": "37b48e53ba6ffde1",
+          "kind": "absurd",
+          "offset": 4295,
+          "words": 12
+        },
+        {
+          "hash": "c5ea30cd3bf999e9",
+          "kind": "quip",
+          "offset": 5017,
+          "words": 7
+        },
+        {
+          "hash": "9142a2dbb6bbf455",
+          "kind": "quip",
+          "offset": 5492,
+          "words": 10
+        },
+        {
+          "hash": "33e09ff1757a9690",
+          "kind": "quip",
+          "offset": 5544,
+          "words": 12
+        },
+        {
+          "hash": "66d611fd2a12af65",
+          "kind": "absurd",
+          "offset": 7724,
+          "words": 12
+        },
+        {
+          "hash": "26d99b1f6d95f375",
+          "kind": "quip",
+          "offset": 9332,
+          "words": 5
+        },
+        {
+          "hash": "bbfb9fe80a246dac",
+          "kind": "undercut",
+          "offset": 9678,
+          "words": 12
+        },
+        {
+          "hash": "dc3fda57e9090034",
+          "kind": "deadpan",
+          "offset": 10959,
+          "words": 12
+        }
+      ],
+      "by_kind": {
+        "absurd": 2,
+        "deadpan": 3,
+        "quip": 9,
+        "undercut": 1
+      },
+      "cohort": "human_pre_llm",
+      "confabulated": 1,
+      "counted": 15,
+      "density_per_1k": 7.4553,
+      "duplicate": 0,
+      "over_length": 0,
+      "refused": false,
+      "relaxed_only": 1,
+      "returned": 16,
+      "unit_id": "rr:779348.0|strip_placebo",
+      "unparseable": false,
+      "words": 2012,
+      "work_id": "48086"
+    },
+    {
+      "bad_kind": 0,
+      "beats": [
+        {
+          "hash": "56b55a65deb9a5b2",
+          "kind": "quip",
+          "offset": 169,
+          "words": 7
+        },
+        {
+          "hash": "e91cf048998b9db0",
+          "kind": "absurd",
+          "offset": 311,
+          "words": 12
+        },
+        {
+          "hash": "e4feabcd72a40c6e",
+          "kind": "deadpan",
+          "offset": 551,
+          "words": 10
+        },
+        {
+          "hash": "52a91f04807ddb40",
+          "kind": "absurd",
+          "offset": 1020,
+          "words": 11
+        },
+        {
+          "hash": "73fe280132f9db6a",
+          "kind": "deadpan",
+          "offset": 1566,
+          "words": 12
+        },
+        {
+          "hash": "046f5b0a36720099",
+          "kind": "quip",
+          "offset": 1349,
+          "words": 7
+        },
+        {
+          "hash": "339c527b8ed79ed3",
+          "kind": "quip",
+          "offset": 2175,
+          "words": 7
+        },
+        {
+          "hash": "cb94fcbcd1194739",
+          "kind": "deadpan",
+          "offset": 2344,
+          "words": 11
+        },
+        {
+          "hash": "398289124ac44604",
+          "kind": "deadpan",
+          "offset": 3105,
+          "words": 11
+        },
+        {
+          "hash": "0102f73c7b1a8565",
+          "kind": "undercut",
+          "offset": 2514,
+          "words": 12
+        },
+        {
+          "hash": "af1c21b2e4a8f0fe",
+          "kind": "deadpan",
+          "offset": 2903,
+          "words": 12
+        },
+        {
+          "hash": "2a55b0fc5400990d",
+          "kind": "undercut",
+          "offset": 4823,
+          "words": 11
+        },
+        {
+          "hash": "1968e7d7911b75d4",
+          "kind": "deadpan",
+          "offset": 5420,
+          "words": 10
+        },
+        {
+          "hash": "a7c309c665eb5eef",
+          "kind": "undercut",
+          "offset": 5527,
+          "words": 11
+        },
+        {
+          "hash": "4e298e1613016608",
+          "kind": "deadpan",
+          "offset": 5750,
+          "words": 10
+        },
+        {
+          "hash": "cb24c989cdab1f60",
+          "kind": "callback",
+          "offset": 6130,
+          "words": 9
+        }
+      ],
+      "by_kind": {
+        "absurd": 2,
+        "callback": 1,
+        "deadpan": 7,
+        "quip": 3,
+        "undercut": 3
+      },
+      "cohort": "human_pre_llm",
+      "confabulated": 0,
+      "counted": 16,
+      "density_per_1k": 13.3891,
+      "duplicate": 0,
+      "over_length": 0,
+      "refused": false,
+      "relaxed_only": 0,
+      "returned": 16,
+      "unit_id": "rr:779491.0|strip",
+      "unparseable": false,
+      "words": 1195,
+      "work_id": "47726"
+    },
+    {
+      "bad_kind": 0,
+      "beats": [
+        {
+          "hash": "a930b4fc0d20d778",
+          "kind": "deadpan",
+          "offset": 462,
+          "words": 9
+        },
+        {
+          "hash": "7d570b8c3f3bdcd0",
+          "kind": "quip",
+          "offset": 1963,
+          "words": 10
+        },
+        {
+          "hash": "581668558b33919a",
+          "kind": "quip",
+          "offset": 2192,
+          "words": 8
+        },
+        {
+          "hash": "b617d98001ced2e1",
+          "kind": "quip",
+          "offset": 2263,
+          "words": 7
+        },
+        {
+          "hash": "f2e33149e5e815ad",
+          "kind": "deadpan",
+          "offset": 2370,
+          "words": 11
+        },
+        {
+          "hash": "e7f9d9eabdbe8bd6",
+          "kind": "deadpan",
+          "offset": 3458,
+          "words": 9
+        },
+        {
+          "hash": "c5ee5effffbeaf02",
+          "kind": "deadpan",
+          "offset": 5029,
+          "words": 10
+        },
+        {
+          "hash": "dad96ff5c399eea5",
+          "kind": "quip",
+          "offset": 5241,
+          "words": 7
+        },
+        {
+          "hash": "1968e7d7911b75d4",
+          "kind": "deadpan",
+          "offset": 5459,
+          "words": 10
+        },
+        {
+          "hash": "0e678f709ce318ed",
+          "kind": "quip",
+          "offset": 5313,
+          "words": 8
+        },
+        {
+          "hash": "701d0cf4dc0500e9",
+          "kind": "absurd",
+          "offset": 5840,
+          "words": 8
+        },
+        {
+          "hash": "cb24c989cdab1f60",
+          "kind": "deadpan",
+          "offset": 6180,
+          "words": 9
+        }
+      ],
+      "by_kind": {
+        "absurd": 1,
+        "deadpan": 6,
+        "quip": 5
+      },
+      "cohort": "human_pre_llm",
+      "confabulated": 0,
+      "counted": 12,
+      "density_per_1k": 9.9338,
+      "duplicate": 0,
+      "over_length": 0,
+      "refused": false,
+      "relaxed_only": 0,
+      "returned": 12,
+      "unit_id": "rr:779491.0|strip_placebo",
+      "unparseable": false,
+      "words": 1208,
+      "work_id": "47726"
+    },
+    {
+      "bad_kind": 0,
+      "beats": [
+        {
+          "hash": "90cb5a1a25cd4d94",
+          "kind": "quip",
+          "offset": 199,
+          "words": 7
+        },
+        {
+          "hash": "e33a7f1690ddee55",
+          "kind": "quip",
+          "offset": 566,
+          "words": 6
+        },
+        {
+          "hash": "be5cdeee22b64427",
+          "kind": "absurd",
+          "offset": 979,
+          "words": 12
+        },
+        {
+          "hash": "614b56f2f74febb9",
+          "kind": "deadpan",
+          "offset": 1297,
+          "words": 10
+        },
+        {
+          "hash": "697bb6862a2a9723",
+          "kind": "quip",
+          "offset": 1677,
+          "words": 11
+        },
+        {
+          "hash": "5ffcca7ca5315d56",
+          "kind": "deadpan",
+          "offset": 2521,
+          "words": 11
+        },
+        {
+          "hash": "d2b57ffab04320fd",
+          "kind": "quip",
+          "offset": 3658,
+          "words": 10
+        },
+        {
+          "hash": "4c2b4dbf1e187711",
+          "kind": "deadpan",
+          "offset": 3710,
+          "words": 12
+        }
+      ],
+      "by_kind": {
+        "absurd": 1,
+        "deadpan": 3,
+        "quip": 4
+      },
+      "cohort": "human_pre_llm",
+      "confabulated": 1,
+      "counted": 8,
+      "density_per_1k": 9.8888,
+      "duplicate": 0,
+      "over_length": 0,
+      "refused": false,
+      "relaxed_only": 1,
+      "returned": 9,
+      "unit_id": "rr:789476.0|strip",
+      "unparseable": false,
+      "words": 809,
+      "work_id": "48655"
+    },
+    {
+      "bad_kind": 0,
+      "beats": [
+        {
+          "hash": "90cb5a1a25cd4d94",
+          "kind": "absurd",
+          "offset": 199,
+          "words": 7
+        },
+        {
+          "hash": "252251128969cc15",
+          "kind": "deadpan",
+          "offset": 586,
+          "words": 5
+        },
+        {
+          "hash": "be5cdeee22b64427",
+          "kind": "undercut",
+          "offset": 999,
+          "words": 12
+        },
+        {
+          "hash": "5ccefd5e745a0b00",
+          "kind": "deadpan",
+          "offset": 1218,
+          "words": 12
+        },
+        {
+          "hash": "4bc0968657ca7a4c",
+          "kind": "quip",
+          "offset": 1366,
+          "words": 3
+        },
+        {
+          "hash": "79ce8ae42c0781bd",
+          "kind": "absurd",
+          "offset": 1660,
+          "words": 11
+        },
+        {
+          "hash": "1659a27167df3a3e",
+          "kind": "quip",
+          "offset": 2425,
+          "words": 11
+        },
+        {
+          "hash": "134c76796eee4bd6",
+          "kind": "deadpan",
+          "offset": 2641,
+          "words": 7
+        },
+        {
+          "hash": "d6fcc0ce211f4ce6",
+          "kind": "callback",
+          "offset": 2685,
+          "words": 6
+        },
+        {
+          "hash": "50d1b7eb8916d857",
+          "kind": "deadpan",
+          "offset": 3102,
+          "words": 7
+        },
+        {
+          "hash": "e03de177cba505ff",
+          "kind": "deadpan",
+          "offset": 3167,
+          "words": 7
+        },
+        {
+          "hash": "b0987d5500674a93",
+          "kind": "deadpan",
+          "offset": 3743,
+          "words": 12
+        },
+        {
+          "hash": "079fff4376d1aff9",
+          "kind": "system_voice",
+          "offset": 4064,
+          "words": 8
+        }
+      ],
+      "by_kind": {
+        "absurd": 2,
+        "callback": 1,
+        "deadpan": 6,
+        "quip": 2,
+        "system_voice": 1,
+        "undercut": 1
+      },
+      "cohort": "human_pre_llm",
+      "confabulated": 0,
+      "counted": 13,
+      "density_per_1k": 16.129,
+      "duplicate": 0,
+      "over_length": 0,
+      "refused": false,
+      "relaxed_only": 0,
+      "returned": 13,
+      "unit_id": "rr:789476.0|strip_placebo",
+      "unparseable": false,
+      "words": 806,
+      "work_id": "48655"
+    },
+    {
+      "bad_kind": 0,
+      "beats": [
+        {
+          "hash": "fcb2da709c6cee82",
+          "kind": "absurd",
+          "offset": 0,
+          "words": 9
+        },
+        {
+          "hash": "d5b736f7e0457342",
+          "kind": "quip",
+          "offset": 739,
+          "words": 9
+        },
+        {
+          "hash": "d0a44bb272d799c0",
+          "kind": "callback",
+          "offset": 442,
+          "words": 8
+        },
+        {
+          "hash": "9047a7adf5235cf3",
+          "kind": "quip",
+          "offset": 871,
+          "words": 9
+        },
+        {
+          "hash": "8c5f3cd3ca4faa33",
+          "kind": "deadpan",
+          "offset": 1575,
+          "words": 8
+        },
+        {
+          "hash": "f660654574c76ffc",
+          "kind": "quip",
+          "offset": 1759,
+          "words": 8
+        },
+        {
+          "hash": "14ba58a0fc263480",
+          "kind": "undercut",
+          "offset": 2383,
+          "words": 9
+        },
+        {
+          "hash": "bad98b591d2e5e1f",
+          "kind": "callback",
+          "offset": 2488,
+          "words": 9
+        },
+        {
+          "hash": "995079a460e561c6",
+          "kind": "absurd",
+          "offset": 2624,
+          "words": 8
+        },
+        {
+          "hash": "c4117dbb0397f12d",
+          "kind": "absurd",
+          "offset": 3105,
+          "words": 8
+        },
+        {
+          "hash": "083eee699c2516d2",
+          "kind": "quip",
+          "offset": 3144,
+          "words": 9
+        },
+        {
+          "hash": "ce4d2b10d1aefbc6",
+          "kind": "quip",
+          "offset": 3414,
+          "words": 8
+        },
+        {
+          "hash": "04c6ae870c9d000b",
+          "kind": "deadpan",
+          "offset": 3838,
+          "words": 4
+        },
+        {
+          "hash": "394cb73880f9fc60",
+          "kind": "callback",
+          "offset": 4066,
+          "words": 8
+        },
+        {
+          "hash": "ff611b9d327f3d90",
+          "kind": "callback",
+          "offset": 4340,
+          "words": 8
+        },
+        {
+          "hash": "04d978c1540849fa",
+          "kind": "absurd",
+          "offset": 4519,
+          "words": 9
+        },
+        {
+          "hash": "15f94788b6706229",
+          "kind": "quip",
+          "offset": 4700,
+          "words": 9
+        },
+        {
+          "hash": "30c57ecf73755c27",
+          "kind": "callback",
+          "offset": 4971,
+          "words": 8
+        },
+        {
+          "hash": "a52575cf98f5cf36",
+          "kind": "quip",
+          "offset": 5091,
+          "words": 9
+        },
+        {
+          "hash": "2a269ba77e258be2",
+          "kind": "quip",
+          "offset": 5285,
+          "words": 7
+        },
+        {
+          "hash": "d6fe72defac20f27",
+          "kind": "quip",
+          "offset": 5761,
+          "words": 7
+        },
+        {
+          "hash": "73b776b89cfcadec",
+          "kind": "quip",
+          "offset": 5997,
+          "words": 8
+        },
+        {
+          "hash": "2822e665e4eca82a",
+          "kind": "quip",
+          "offset": 6235,
+          "words": 9
+        },
+        {
+          "hash": "1da8f71e46919060",
+          "kind": "callback",
+          "offset": 6310,
+          "words": 8
+        },
+        {
+          "hash": "5dbc921ec4e33f78",
+          "kind": "callback",
+          "offset": 6432,
+          "words": 8
+        },
+        {
+          "hash": "7b05697fa2797e14",
+          "kind": "quip",
+          "offset": 6548,
+          "words": 8
+        },
+        {
+          "hash": "dbf8d0bed26d6e68",
+          "kind": "deadpan",
+          "offset": 6956,
+          "words": 6
+        },
+        {
+          "hash": "5bc2c8f2ff2aca5c",
+          "kind": "quip",
+          "offset": 7282,
+          "words": 4
+        }
+      ],
+      "by_kind": {
+        "absurd": 4,
+        "callback": 7,
+        "deadpan": 3,
+        "quip": 13,
+        "undercut": 1
+      },
+      "cohort": "human_pre_llm",
+      "confabulated": 0,
+      "counted": 28,
+      "density_per_1k": 20.9111,
+      "duplicate": 0,
+      "over_length": 0,
+      "refused": false,
+      "relaxed_only": 0,
+      "returned": 28,
+      "unit_id": "rr:792408.0|strip",
+      "unparseable": false,
+      "words": 1339,
+      "work_id": "48773"
+    },
+    {
+      "bad_kind": 0,
+      "beats": [
+        {
+          "hash": "71da6bbc8685af73",
+          "kind": "absurd",
+          "offset": 289,
+          "words": 7
+        },
+        {
+          "hash": "28ea7ad8fed6715c",
+          "kind": "callback",
+          "offset": 420,
+          "words": 10
+        },
+        {
+          "hash": "fa2168064b06307c",
+          "kind": "quip",
+          "offset": 738,
+          "words": 12
+        },
+        {
+          "hash": "c80976cb9fcce4fa",
+          "kind": "absurd",
+          "offset": 911,
+          "words": 7
+        },
+        {
+          "hash": "d78c80146ad663c3",
+          "kind": "deadpan",
+          "offset": 1384,
+          "words": 9
+        },
+        {
+          "hash": "d7a48978ca0e2ec3",
+          "kind": "deadpan",
+          "offset": 1855,
+          "words": 6
+        },
+        {
+          "hash": "279331c58deddaed",
+          "kind": "undercut",
+          "offset": 2141,
+          "words": 9
+        },
+        {
+          "hash": "14ba58a0fc263480",
+          "kind": "deadpan",
+          "offset": 2380,
+          "words": 9
+        },
+        {
+          "hash": "a0e287df920371e7",
+          "kind": "deadpan",
+          "offset": 2641,
+          "words": 8
+        },
+        {
+          "hash": "936e6136a069b111",
+          "kind": "absurd",
+          "offset": 2791,
+          "words": 8
+        },
+        {
+          "hash": "c4117dbb0397f12d",
+          "kind": "absurd",
+          "offset": 3101,
+          "words": 8
+        },
+        {
+          "hash": "b39159df14bac414",
+          "kind": "quip",
+          "offset": 3184,
+          "words": 11
+        },
+        {
+          "hash": "ca15415a266a68e0",
+          "kind": "absurd",
+          "offset": 3293,
+          "words": 7
+        },
+        {
+          "hash": "611bdeb0f5cc3759",
+          "kind": "quip",
+          "offset": 3488,
+          "words": 7
+        },
+        {
+          "hash": "4f6e9b22a0f91343",
+          "kind": "undercut",
+          "offset": 4103,
+          "words": 12
+        },
+        {
+          "hash": "dd03099aac2c6c51",
+          "kind": "callback",
+          "offset": 4317,
+          "words": 7
+        },
+        {
+          "hash": "b26f378b25ea168c",
+          "kind": "deadpan",
+          "offset": 4621,
+          "words": 12
+        },
+        {
+          "hash": "fbbf11cb4bc82578",
+          "kind": "absurd",
+          "offset": 4742,
+          "words": 11
+        },
+        {
+          "hash": "620a9234490399c4",
+          "kind": "quip",
+          "offset": 5122,
+          "words": 12
+        },
+        {
+          "hash": "5e06fc58349431bc",
+          "kind": "absurd",
+          "offset": 5402,
+          "words": 12
+        },
+        {
+          "hash": "4003b34fb3557684",
+          "kind": "undercut",
+          "offset": 5559,
+          "words": 11
+        },
+        {
+          "hash": "0604408d63800c24",
+          "kind": "quip",
+          "offset": 6053,
+          "words": 9
+        },
+        {
+          "hash": "b38e68c9f970ca4b",
+          "kind": "quip",
+          "offset": 6285,
+          "words": 10
+        },
+        {
+          "hash": "a9c899436e6a84e0",
+          "kind": "quip",
+          "offset": 6641,
+          "words": 7
+        },
+        {
+          "hash": "dbf8d0bed26d6e68",
+          "kind": "quip",
+          "offset": 7047,
+          "words": 6
+        },
+        {
+          "hash": "5bc2c8f2ff2aca5c",
+          "kind": "quip",
+          "offset": 7367,
+          "words": 4
+        }
+      ],
+      "by_kind": {
+        "absurd": 7,
+        "callback": 2,
+        "deadpan": 5,
+        "quip": 9,
+        "undercut": 3
+      },
+      "cohort": "human_pre_llm",
+      "confabulated": 1,
+      "counted": 26,
+      "density_per_1k": 19.1882,
+      "duplicate": 0,
+      "over_length": 0,
+      "refused": false,
+      "relaxed_only": 0,
+      "returned": 27,
+      "unit_id": "rr:792408.0|strip_placebo",
+      "unparseable": false,
+      "words": 1355,
+      "work_id": "48773"
+    },
+    {
+      "bad_kind": 0,
+      "beats": [
+        {
+          "hash": "ab8aa52f0126ca1c",
+          "kind": "absurd",
+          "offset": 439,
+          "words": 10
+        },
+        {
+          "hash": "1adfc05abd0cb4b1",
+          "kind": "deadpan",
+          "offset": 2236,
+          "words": 9
+        },
+        {
+          "hash": "be1dff7f3c6b4b45",
+          "kind": "system_voice",
+          "offset": 3366,
+          "words": 12
+        },
+        {
+          "hash": "cd7a04141e03a538",
+          "kind": "quip",
+          "offset": 4422,
+          "words": 12
+        },
+        {
+          "hash": "459b265b908a64e4",
+          "kind": "absurd",
+          "offset": 4634,
+          "words": 12
+        }
+      ],
+      "by_kind": {
+        "absurd": 2,
+        "deadpan": 1,
+        "quip": 1,
+        "system_voice": 1
+      },
+      "cohort": "human_pre_llm",
+      "confabulated": 0,
+      "counted": 5,
+      "density_per_1k": 5.5741,
+      "duplicate": 0,
+      "over_length": 0,
+      "refused": false,
+      "relaxed_only": 0,
+      "returned": 5,
+      "unit_id": "rr:795285.0|strip",
+      "unparseable": false,
+      "words": 897,
+      "work_id": "48017"
+    },
+    {
+      "bad_kind": 0,
+      "beats": [
+        {
+          "hash": "b4e655849fd54ac1",
+          "kind": "deadpan",
+          "offset": 18,
+          "words": 11
+        },
+        {
+          "hash": "ab8aa52f0126ca1c",
+          "kind": "absurd",
+          "offset": 456,
+          "words": 10
+        },
+        {
+          "hash": "e2a6f55c3b598cc0",
+          "kind": "quip",
+          "offset": 2130,
+          "words": 12
+        },
+        {
+          "hash": "712a32d76cc63a1e",
+          "kind": "deadpan",
+          "offset": 2238,
+          "words": 11
+        },
+        {
+          "hash": "480bf8dc613aa865",
+          "kind": "absurd",
+          "offset": 3072,
+          "words": 9
+        },
+        {
+          "hash": "be1dff7f3c6b4b45",
+          "kind": "system_voice",
+          "offset": 3358,
+          "words": 12
+        },
+        {
+          "hash": "dcbf542d7a1601f8",
+          "kind": "deadpan",
+          "offset": 4415,
+          "words": 11
+        },
+        {
+          "hash": "637cdfcf9d798942",
+          "kind": "deadpan",
+          "offset": 4634,
+          "words": 12
+        }
+      ],
+      "by_kind": {
+        "absurd": 2,
+        "deadpan": 4,
+        "quip": 1,
+        "system_voice": 1
+      },
+      "cohort": "human_pre_llm",
+      "confabulated": 1,
+      "counted": 8,
+      "density_per_1k": 8.9989,
+      "duplicate": 0,
+      "over_length": 0,
+      "refused": false,
+      "relaxed_only": 1,
+      "returned": 9,
+      "unit_id": "rr:795285.0|strip_placebo",
+      "unparseable": false,
+      "words": 889,
+      "work_id": "48017"
+    },
+    {
+      "bad_kind": 0,
+      "beats": [
+        {
+          "hash": "6ee7c4f978401cbc",
+          "kind": "absurd",
+          "offset": 619,
+          "words": 11
+        },
+        {
+          "hash": "2e0008ec8da54ec2",
+          "kind": "absurd",
+          "offset": 1354,
+          "words": 3
+        },
+        {
+          "hash": "2f0d3ae289c87887",
+          "kind": "absurd",
+          "offset": 1633,
+          "words": 4
+        },
+        {
+          "hash": "ab199f18d6da3ed4",
+          "kind": "absurd",
+          "offset": 2254,
+          "words": 6
+        },
+        {
+          "hash": "3f6a1e2f9d70be90",
+          "kind": "quip",
+          "offset": 2290,
+          "words": 10
+        },
+        {
+          "hash": "5b0fad523a0714e1",
+          "kind": "undercut",
+          "offset": 2532,
+          "words": 12
+        },
+        {
+          "hash": "b42b56e5342d7e73",
+          "kind": "quip",
+          "offset": 2820,
+          "words": 7
+        },
+        {
+          "hash": "e60a8a16d680dd3a",
+          "kind": "deadpan",
+          "offset": 3083,
+          "words": 4
+        },
+        {
+          "hash": "56901c02e0889268",
+          "kind": "absurd",
+          "offset": 3729,
+          "words": 10
+        },
+        {
+          "hash": "282806c59cf6ef03",
+          "kind": "quip",
+          "offset": 3889,
+          "words": 8
+        },
+        {
+          "hash": "3bb826f03236b120",
+          "kind": "deadpan",
+          "offset": 4038,
+          "words": 7
+        },
+        {
+          "hash": "9d110599e37227c8",
+          "kind": "quip",
+          "offset": 4245,
+          "words": 12
+        },
+        {
+          "hash": "815cd62f0106bea6",
+          "kind": "deadpan",
+          "offset": 5262,
+          "words": 11
+        },
+        {
+          "hash": "e678a65ce712884f",
+          "kind": "quip",
+          "offset": 5439,
+          "words": 2
+        },
+        {
+          "hash": "0f929082607a3804",
+          "kind": "quip",
+          "offset": 5154,
+          "words": 9
+        },
+        {
+          "hash": "9ef6900503a0270e",
+          "kind": "undercut",
+          "offset": 5998,
+          "words": 5
+        },
+        {
+          "hash": "4332c62cc7f9e3be",
+          "kind": "quip",
+          "offset": 6064,
+          "words": 11
+        },
+        {
+          "hash": "390e74f6d4ada586",
+          "kind": "absurd",
+          "offset": 6230,
+          "words": 11
+        },
+        {
+          "hash": "ddd4ba8caf1e5c89",
+          "kind": "deadpan",
+          "offset": 6382,
+          "words": 12
+        }
+      ],
+      "by_kind": {
+        "absurd": 6,
+        "deadpan": 4,
+        "quip": 7,
+        "undercut": 2
+      },
+      "cohort": "human_pre_llm",
+      "confabulated": 0,
+      "counted": 19,
+      "density_per_1k": 16.6084,
+      "duplicate": 0,
+      "over_length": 0,
+      "refused": false,
+      "relaxed_only": 0,
+      "returned": 19,
+      "unit_id": "rr:802261.0|strip",
+      "unparseable": false,
+      "words": 1144,
+      "work_id": "49206"
+    },
+    {
+      "bad_kind": 0,
+      "beats": [
+        {
+          "hash": "67e3812ff63cc90b",
+          "kind": "deadpan",
+          "offset": 1393,
+          "words": 1
+        },
+        {
+          "hash": "2f0d3ae289c87887",
+          "kind": "undercut",
+          "offset": 1664,
+          "words": 4
+        },
+        {
+          "hash": "277769dfe4f9095c",
+          "kind": "absurd",
+          "offset": 2331,
+          "words": 8
+        },
+        {
+          "hash": "da73871e3f7919c7",
+          "kind": "banter",
+          "offset": 2451,
+          "words": 9
+        },
+        {
+          "hash": "ee3d6ad2fb430227",
+          "kind": "quip",
+          "offset": 2584,
+          "words": 10
+        },
+        {
+          "hash": "522a12c7fbe98ae6",
+          "kind": "deadpan",
+          "offset": 2636,
+          "words": 11
+        },
+        {
+          "hash": "8f93f04a997e8935",
+          "kind": "quip",
+          "offset": 2699,
+          "words": 4
+        },
+        {
+          "hash": "e2c7265f77178af5",
+          "kind": "quip",
+          "offset": 3139,
+          "words": 9
+        },
+        {
+          "hash": "55b8f91e43de9cdf",
+          "kind": "deadpan",
+          "offset": 3192,
+          "words": 7
+        },
+        {
+          "hash": "7425e6287a5565b3",
+          "kind": "quip",
+          "offset": 3495,
+          "words": 9
+        },
+        {
+          "hash": "4d9a9fbe99c0e67a",
+          "kind": "quip",
+          "offset": 3714,
+          "words": 6
+        },
+        {
+          "hash": "56901c02e0889268",
+          "kind": "absurd",
+          "offset": 3866,
+          "words": 10
+        },
+        {
+          "hash": "b05e302f12fa01c9",
+          "kind": "quip",
+          "offset": 3997,
+          "words": 9
+        },
+        {
+          "hash": "3b34a8f7f25ea5da",
+          "kind": "quip",
+          "offset": 4215,
+          "words": 8
+        },
+        {
+          "hash": "74deb57438b5e62f",
+          "kind": "quip",
+          "offset": 4299,
+          "words": 8
+        },
+        {
+          "hash": "427c918711fd14af",
+          "kind": "quip",
+          "offset": 4557,
+          "words": 4
+        },
+        {
+          "hash": "ff88290760885355",
+          "kind": "quip",
+          "offset": 4608,
+          "words": 4
+        },
+        {
+          "hash": "42a9c37fc0b4419f",
+          "kind": "quip",
+          "offset": 4995,
+          "words": 9
+        },
+        {
+          "hash": "cc90549a40fac531",
+          "kind": "deadpan",
+          "offset": 5278,
+          "words": 11
+        },
+        {
+          "hash": "b1a7de5d24f4a711",
+          "kind": "quip",
+          "offset": 5467,
+          "words": 8
+        },
+        {
+          "hash": "e678a65ce712884f",
+          "kind": "system_voice",
+          "offset": 5644,
+          "words": 2
+        },
+        {
+          "hash": "8ab9e8c189b6251d",
+          "kind": "quip",
+          "offset": 5797,
+          "words": 6
+        },
+        {
+          "hash": "475e1105fecc9723",
+          "kind": "undercut",
+          "offset": 6195,
+          "words": 9
+        },
+        {
+          "hash": "be58c3365bed42a6",
+          "kind": "quip",
+          "offset": 6310,
+          "words": 5
+        },
+        {
+          "hash": "0097f224ce80dafb",
+          "kind": "quip",
+          "offset": 6405,
+          "words": 8
+        },
+        {
+          "hash": "fa921aed3efebaf0",
+          "kind": "quip",
+          "offset": 6446,
+          "words": 6
+        },
+        {
+          "hash": "9ac558c4744e71dc",
+          "kind": "quip",
+          "offset": 6608,
+          "words": 8
+        }
+      ],
+      "by_kind": {
+        "absurd": 2,
+        "banter": 1,
+        "deadpan": 4,
+        "quip": 17,
+        "system_voice": 1,
+        "undercut": 2
+      },
+      "cohort": "human_pre_llm",
+      "confabulated": 0,
+      "counted": 27,
+      "density_per_1k": 22.862,
+      "duplicate": 0,
+      "over_length": 0,
+      "refused": false,
+      "relaxed_only": 0,
+      "returned": 27,
+      "unit_id": "rr:802261.0|strip_placebo",
+      "unparseable": false,
+      "words": 1181,
+      "work_id": "49206"
+    },
+    {
+      "bad_kind": 0,
+      "beats": [
+        {
+          "hash": "4e8237c246944197",
+          "kind": "deadpan",
+          "offset": 1665,
+          "words": 6
+        },
+        {
+          "hash": "d2058116a9bc69c5",
+          "kind": "deadpan",
+          "offset": 2185,
+          "words": 6
+        },
+        {
+          "hash": "413a400034c8d2a1",
+          "kind": "quip",
+          "offset": 3388,
+          "words": 11
+        },
+        {
+          "hash": "5784541295f13d54",
+          "kind": "quip",
+          "offset": 4649,
+          "words": 7
+        },
+        {
+          "hash": "a388b5b74fdc8695",
+          "kind": "quip",
+          "offset": 5043,
+          "words": 10
+        },
+        {
+          "hash": "adb8c1b67eaa643f",
+          "kind": "deadpan",
+          "offset": 6080,
+          "words": 11
+        },
+        {
+          "hash": "fa49012d279ee708",
+          "kind": "deadpan",
+          "offset": 6897,
+          "words": 9
+        },
+        {
+          "hash": "28030e29a7dc1683",
+          "kind": "quip",
+          "offset": 7698,
+          "words": 10
+        },
+        {
+          "hash": "2313db7f525836f4",
+          "kind": "deadpan",
+          "offset": 7936,
+          "words": 10
+        },
+        {
+          "hash": "5cdd41cee17a7daf",
+          "kind": "deadpan",
+          "offset": 6483,
+          "words": 5
+        },
+        {
+          "hash": "0c34a46af0725469",
+          "kind": "quip",
+          "offset": 6252,
+          "words": 10
+        }
+      ],
+      "by_kind": {
+        "deadpan": 6,
+        "quip": 5
+      },
+      "cohort": "human_pre_llm",
+      "confabulated": 0,
+      "counted": 11,
+      "density_per_1k": 5.6643,
+      "duplicate": 0,
+      "over_length": 0,
+      "refused": false,
+      "relaxed_only": 0,
+      "returned": 11,
+      "unit_id": "rr:803088.0|strip",
+      "unparseable": false,
+      "words": 1942,
+      "work_id": "49176"
+    },
+    {
+      "bad_kind": 0,
+      "beats": [
+        {
+          "hash": "08640bb99b26ca88",
+          "kind": "deadpan",
+          "offset": 154,
+          "words": 12
+        },
+        {
+          "hash": "b2a575e094d19e42",
+          "kind": "quip",
+          "offset": 858,
+          "words": 11
+        },
+        {
+          "hash": "5d085343020ace3e",
+          "kind": "absurd",
+          "offset": 2148,
+          "words": 11
+        },
+        {
+          "hash": "00718efe664674bb",
+          "kind": "quip",
+          "offset": 3357,
+          "words": 11
+        },
+        {
+          "hash": "e7cbfef63d3c90c4",
+          "kind": "deadpan",
+          "offset": 5366,
+          "words": 4
+        },
+        {
+          "hash": "746cf60abafc874d",
+          "kind": "quip",
+          "offset": 5876,
+          "words": 9
+        },
+        {
+          "hash": "9e8df55e715f5ab8",
+          "kind": "deadpan",
+          "offset": 6462,
+          "words": 7
+        },
+        {
+          "hash": "d63700379c4e3035",
+          "kind": "undercut",
+          "offset": 7046,
+          "words": 10
+        },
+        {
+          "hash": "7dabf70583576d05",
+          "kind": "quip",
+          "offset": 7648,
+          "words": 12
+        },
+        {
+          "hash": "9c1023c79f5e8fde",
+          "kind": "absurd",
+          "offset": 7716,
+          "words": 12
+        },
+        {
+          "hash": "9d45b2fb653ba4a5",
+          "kind": "absurd",
+          "offset": 7947,
+          "words": 11
+        },
+        {
+          "hash": "c1f3d0bd08deaaca",
+          "kind": "banter",
+          "offset": 8270,
+          "words": 5
+        },
+        {
+          "hash": "5b453a33d1b0e97c",
+          "kind": "absurd",
+          "offset": 9035,
+          "words": 10
+        }
+      ],
+      "by_kind": {
+        "absurd": 4,
+        "banter": 1,
+        "deadpan": 3,
+        "quip": 4,
+        "undercut": 1
+      },
+      "cohort": "human_pre_llm",
+      "confabulated": 1,
+      "counted": 13,
+      "density_per_1k": 6.7744,
+      "duplicate": 0,
+      "over_length": 0,
+      "refused": false,
+      "relaxed_only": 1,
+      "returned": 14,
+      "unit_id": "rr:803088.0|strip_placebo",
+      "unparseable": false,
+      "words": 1919,
+      "work_id": "49176"
+    },
+    {
+      "bad_kind": 0,
+      "beats": [
+        {
+          "hash": "4a26f6482a1069ad",
+          "kind": "quip",
+          "offset": 2373,
+          "words": 10
+        },
+        {
+          "hash": "9e228a173e95fd5f",
+          "kind": "quip",
+          "offset": 3117,
+          "words": 6
+        },
+        {
+          "hash": "a2c5e266c7cddd73",
+          "kind": "quip",
+          "offset": 4677,
+          "words": 5
+        },
+        {
+          "hash": "0216b6d0c79e1944",
+          "kind": "deadpan",
+          "offset": 3783,
+          "words": 11
+        },
+        {
+          "hash": "457f95a798089173",
+          "kind": "undercut",
+          "offset": 5596,
+          "words": 10
+        },
+        {
+          "hash": "19fe000feac3941a",
+          "kind": "deadpan",
+          "offset": 6631,
+          "words": 8
+        },
+        {
+          "hash": "b5ad4cd5b8f9d8b3",
+          "kind": "quip",
+          "offset": 7431,
+          "words": 11
+        },
+        {
+          "hash": "f71552f68a018c0c",
+          "kind": "absurd",
+          "offset": 7920,
+          "words": 10
+        },
+        {
+          "hash": "61bcdb8318cb3a4c",
+          "kind": "deadpan",
+          "offset": 8014,
+          "words": 11
+        }
+      ],
+      "by_kind": {
+        "absurd": 1,
+        "deadpan": 3,
+        "quip": 4,
+        "undercut": 1
+      },
+      "cohort": "human_pre_llm",
+      "confabulated": 0,
+      "counted": 9,
+      "density_per_1k": 6.0201,
+      "duplicate": 0,
+      "over_length": 0,
+      "refused": false,
+      "relaxed_only": 0,
+      "returned": 9,
+      "unit_id": "rr:804763.0|strip",
+      "unparseable": false,
+      "words": 1495,
+      "work_id": "49005"
+    },
+    {
+      "bad_kind": 0,
+      "beats": [
+        {
+          "hash": "81c0dd67bfc3c92b",
+          "kind": "quip",
+          "offset": 1202,
+          "words": 6
+        },
+        {
+          "hash": "0bb0fba912f1036e",
+          "kind": "quip",
+          "offset": 1387,
+          "words": 11
+        },
+        {
+          "hash": "3048a5e71afc3303",
+          "kind": "undercut",
+          "offset": 2129,
+          "words": 12
+        },
+        {
+          "hash": "85438a9862520dc5",
+          "kind": "quip",
+          "offset": 2319,
+          "words": 12
+        },
+        {
+          "hash": "63f7c2184211130e",
+          "kind": "deadpan",
+          "offset": 2607,
+          "words": 12
+        },
+        {
+          "hash": "77ac9cdef2601de4",
+          "kind": "deadpan",
+          "offset": 3770,
+          "words": 7
+        },
+        {
+          "hash": "c0ac95a6d4b39671",
+          "kind": "deadpan",
+          "offset": 5961,
+          "words": 8
+        },
+        {
+          "hash": "130c9ac48228c475",
+          "kind": "quip",
+          "offset": 3595,
+          "words": 8
+        },
+        {
+          "hash": "1bd446b4698c641a",
+          "kind": "quip",
+          "offset": 6560,
+          "words": 9
+        },
+        {
+          "hash": "f5b44bf8c01bdf1a",
+          "kind": "quip",
+          "offset": 7393,
+          "words": 3
+        },
+        {
+          "hash": "d0b384ff29d52929",
+          "kind": "absurd",
+          "offset": 7927,
+          "words": 9
+        }
+      ],
+      "by_kind": {
+        "absurd": 1,
+        "deadpan": 3,
+        "quip": 6,
+        "undercut": 1
+      },
+      "cohort": "human_pre_llm",
+      "confabulated": 0,
+      "counted": 11,
+      "density_per_1k": 7.4881,
+      "duplicate": 0,
+      "over_length": 0,
+      "refused": false,
+      "relaxed_only": 0,
+      "returned": 11,
+      "unit_id": "rr:804763.0|strip_placebo",
+      "unparseable": false,
+      "words": 1469,
+      "work_id": "49005"
+    },
+    {
+      "bad_kind": 0,
+      "beats": [
+        {
+          "hash": "5ade1eadee420e57",
+          "kind": "deadpan",
+          "offset": 408,
+          "words": 10
+        },
+        {
+          "hash": "a18a0755fcbfa26e",
+          "kind": "deadpan",
+          "offset": 1423,
+          "words": 11
+        },
+        {
+          "hash": "111ac805929a2581",
+          "kind": "quip",
+          "offset": 4159,
+          "words": 12
+        },
+        {
+          "hash": "4f5c03a0da8364c8",
+          "kind": "deadpan",
+          "offset": 4702,
+          "words": 10
+        },
+        {
+          "hash": "557a9bbe440ae083",
+          "kind": "deadpan",
+          "offset": 4983,
+          "words": 12
+        },
+        {
+          "hash": "437a1dfa208cd6ba",
+          "kind": "deadpan",
+          "offset": 5248,
+          "words": 10
+        },
+        {
+          "hash": "63f15b54e26d4ea6",
+          "kind": "absurd",
+          "offset": 5502,
+          "words": 12
+        },
+        {
+          "hash": "1c2b14cdbd949e3f",
+          "kind": "quip",
+          "offset": 5868,
+          "words": 10
+        },
+        {
+          "hash": "ca2c8ac913f112f1",
+          "kind": "absurd",
+          "offset": 6423,
+          "words": 10
+        },
+        {
+          "hash": "619f8ea017fe4d03",
+          "kind": "absurd",
+          "offset": 6242,
+          "words": 12
+        },
+        {
+          "hash": "38fa1f81577d06d8",
+          "kind": "absurd",
+          "offset": 5605,
+          "words": 9
+        }
+      ],
+      "by_kind": {
+        "absurd": 4,
+        "deadpan": 5,
+        "quip": 2
+      },
+      "cohort": "human_pre_llm",
+      "confabulated": 0,
+      "counted": 11,
+      "density_per_1k": 9.2984,
+      "duplicate": 0,
+      "over_length": 0,
+      "refused": false,
+      "relaxed_only": 0,
+      "returned": 11,
+      "unit_id": "rr:926002.0|strip",
+      "unparseable": false,
+      "words": 1183,
+      "work_id": "48869"
+    },
+    {
+      "bad_kind": 0,
+      "beats": [
+        {
+          "hash": "9f3c852c29b0825d",
+          "kind": "quip",
+          "offset": 524,
+          "words": 11
+        },
+        {
+          "hash": "b0d019f15722620b",
+          "kind": "absurd",
+          "offset": 284,
+          "words": 13
+        },
+        {
+          "hash": "99de35fa540b7843",
+          "kind": "deadpan",
+          "offset": 1938,
+          "words": 7
+        },
+        {
+          "hash": "19524c8849ad7608",
+          "kind": "quip",
+          "offset": 2402,
+          "words": 4
+        },
+        {
+          "hash": "c3b118989309e608",
+          "kind": "deadpan",
+          "offset": 2428,
+          "words": 9
+        },
+        {
+          "hash": "da5b4083e6c877f9",
+          "kind": "deadpan",
+          "offset": 4198,
+          "words": 9
+        },
+        {
+          "hash": "7a7062d049071156",
+          "kind": "banter",
+          "offset": 4134,
+          "words": 8
+        },
+        {
+          "hash": "647d7a58a8caf8de",
+          "kind": "absurd",
+          "offset": 4725,
+          "words": 9
+        },
+        {
+          "hash": "a9e9dcc147b75241",
+          "kind": "deadpan",
+          "offset": 5027,
+          "words": 7
+        },
+        {
+          "hash": "3f6b6a7dda480611",
+          "kind": "undercut",
+          "offset": 5361,
+          "words": 5
+        },
+        {
+          "hash": "f87821345d35a68e",
+          "kind": "quip",
+          "offset": 5490,
+          "words": 5
+        },
+        {
+          "hash": "38fa1f81577d06d8",
+          "kind": "absurd",
+          "offset": 5689,
+          "words": 9
+        },
+        {
+          "hash": "1b4feedb2613099e",
+          "kind": "quip",
+          "offset": 5988,
+          "words": 8
+        },
+        {
+          "hash": "2ccb0c239d7b8ed0",
+          "kind": "absurd",
+          "offset": 6469,
+          "words": 2
+        },
+        {
+          "hash": "7265d0a6072248c8",
+          "kind": "deadpan",
+          "offset": 6530,
+          "words": 7
+        },
+        {
+          "hash": "488cea758bbd0d46",
+          "kind": "quip",
+          "offset": 6575,
+          "words": 6
+        }
+      ],
+      "by_kind": {
+        "absurd": 4,
+        "banter": 1,
+        "deadpan": 5,
+        "quip": 5,
+        "undercut": 1
+      },
+      "cohort": "human_pre_llm",
+      "confabulated": 0,
+      "counted": 16,
+      "density_per_1k": 13.4228,
+      "duplicate": 0,
+      "over_length": 1,
+      "refused": false,
+      "relaxed_only": 0,
+      "returned": 16,
+      "unit_id": "rr:926002.0|strip_placebo",
+      "unparseable": false,
+      "words": 1192,
+      "work_id": "48869"
+    },
+    {
+      "bad_kind": 0,
+      "beats": [
+        {
+          "hash": "43cbc477d7953cea",
+          "kind": "quip",
+          "offset": 598,
+          "words": 9
+        },
+        {
+          "hash": "251a6ec81a71ebcb",
+          "kind": "quip",
+          "offset": 1161,
+          "words": 9
+        },
+        {
+          "hash": "c258c98f53ec979a",
+          "kind": "deadpan",
+          "offset": 1305,
+          "words": 9
+        },
+        {
+          "hash": "9f307f2d04ef3f9a",
+          "kind": "quip",
+          "offset": 2802,
+          "words": 11
+        },
+        {
+          "hash": "6b522dd23c51a1e2",
+          "kind": "deadpan",
+          "offset": 5073,
+          "words": 7
+        },
+        {
+          "hash": "a245ca219e18520a",
+          "kind": "callback",
+          "offset": 5796,
+          "words": 6
+        },
+        {
+          "hash": "75e459fd300b6a95",
+          "kind": "system_voice",
+          "offset": 6217,
+          "words": 5
+        },
+        {
+          "hash": "f50cb05c26874166",
+          "kind": "absurd",
+          "offset": 6273,
+          "words": 8
+        },
+        {
+          "hash": "2b735265c3885cb0",
+          "kind": "absurd",
+          "offset": 6370,
+          "words": 8
+        },
+        {
+          "hash": "cf15acbc961fcc51",
+          "kind": "system_voice",
+          "offset": 6543,
+          "words": 4
+        },
+        {
+          "hash": "a44a39202919cf40",
+          "kind": "deadpan",
+          "offset": 6698,
+          "words": 9
+        },
+        {
+          "hash": "e974f830ae075d65",
+          "kind": "absurd",
+          "offset": 6789,
+          "words": 8
+        },
+        {
+          "hash": "feeed82f24162ed4",
+          "kind": "banter",
+          "offset": 6844,
+          "words": 5
+        }
+      ],
+      "by_kind": {
+        "absurd": 3,
+        "banter": 1,
+        "callback": 1,
+        "deadpan": 3,
+        "quip": 3,
+        "system_voice": 2
+      },
+      "cohort": "human_pre_llm",
+      "confabulated": 3,
+      "counted": 13,
+      "density_per_1k": 11.0169,
+      "duplicate": 0,
+      "over_length": 0,
+      "refused": false,
+      "relaxed_only": 3,
+      "returned": 16,
+      "unit_id": "rr:930722.0|strip",
+      "unparseable": false,
+      "words": 1180,
+      "work_id": "48977"
+    },
+    {
+      "bad_kind": 0,
+      "beats": [
+        {
+          "hash": "0ca9db5bc7637f08",
+          "kind": "banter",
+          "offset": 599,
+          "words": 12
+        },
+        {
+          "hash": "618a61ae94ad5a56",
+          "kind": "undercut",
+          "offset": 1392,
+          "words": 6
+        },
+        {
+          "hash": "ba0f7cd0de9e0c51",
+          "kind": "absurd",
+          "offset": 1653,
+          "words": 3
+        },
+        {
+          "hash": "9d871bf10b828aaf",
+          "kind": "quip",
+          "offset": 1742,
+          "words": 7
+        },
+        {
+          "hash": "50d0bffe46ae7ce2",
+          "kind": "banter",
+          "offset": 3106,
+          "words": 3
+        },
+        {
+          "hash": "365699ed8dcce0f5",
+          "kind": "absurd",
+          "offset": 3558,
+          "words": 4
+        },
+        {
+          "hash": "6b522dd23c51a1e2",
+          "kind": "deadpan",
+          "offset": 5075,
+          "words": 7
+        },
+        {
+          "hash": "cbedfe531a2a7443",
+          "kind": "quip",
+          "offset": 5798,
+          "words": 7
+        },
+        {
+          "hash": "59c20428ca018c45",
+          "kind": "quip",
+          "offset": 3165,
+          "words": 6
+        },
+        {
+          "hash": "9b70f29499ca5ba7",
+          "kind": "quip",
+          "offset": 2731,
+          "words": 6
+        },
+        {
+          "hash": "6737216c243b4ad6",
+          "kind": "quip",
+          "offset": 5977,
+          "words": 15
+        },
+        {
+          "hash": "75e459fd300b6a95",
+          "kind": "system_voice",
+          "offset": 6230,
+          "words": 5
+        },
+        {
+          "hash": "b06170c475fe0198",
+          "kind": "absurd",
+          "offset": 6472,
+          "words": 5
+        },
+        {
+          "hash": "bd25f656a79f0107",
+          "kind": "system_voice",
+          "offset": 6557,
+          "words": 4
+        },
+        {
+          "hash": "5caac5d4f37a10dc",
+          "kind": "absurd",
+          "offset": 6714,
+          "words": 9
+        },
+        {
+          "hash": "feeed82f24162ed4",
+          "kind": "system_voice",
+          "offset": 6860,
+          "words": 5
+        },
+        {
+          "hash": "0cb1b24a269f385f",
+          "kind": "system_voice",
+          "offset": 6885,
+          "words": 1
+        }
+      ],
+      "by_kind": {
+        "absurd": 4,
+        "banter": 2,
+        "deadpan": 1,
+        "quip": 5,
+        "system_voice": 4,
+        "undercut": 1
+      },
+      "cohort": "human_pre_llm",
+      "confabulated": 0,
+      "counted": 17,
+      "density_per_1k": 14.4681,
+      "duplicate": 0,
+      "over_length": 1,
+      "refused": false,
+      "relaxed_only": 0,
+      "returned": 17,
+      "unit_id": "rr:930722.0|strip_placebo",
+      "unparseable": false,
+      "words": 1175,
+      "work_id": "48977"
+    }
+  ],
+  "seconds": 158.4,
+  "spend": {
+    "cache_read": 1073757,
+    "cache_write": 366157,
+    "equivalent_usd": 5.3004,
+    "input": 153126,
+    "output": 861520
+  },
+  "subset": [
+    "rr:2093799.0",
+    "rr:2095155.0",
+    "rr:2095485.0",
+    "rr:2100675.0",
+    "rr:2107310.0",
+    "rr:2122467.0",
+    "rr:2125202.0",
+    "rr:2144891.0",
+    "rr:2169135.0",
+    "rr:2230328.0",
+    "rr:767061.0",
+    "rr:768220.0",
+    "rr:770636.0",
+    "rr:777510.0",
+    "rr:779348.0",
+    "rr:779491.0",
+    "rr:789476.0",
+    "rr:792408.0",
+    "rr:795285.0",
+    "rr:802261.0",
+    "rr:803088.0",
+    "rr:804763.0",
+    "rr:926002.0",
+    "rr:930722.0"
+  ],
+  "substrate": "royalroad",
+  "transport": "cli",
+  "transport_failures": 0,
+  "uncertified": [
+    {
+      "certificates": {
+        "strip": {
+          "certified": true,
+          "protected_kept": 0,
+          "protected_spans": 0,
+          "reasons": [],
+          "similarity": 0.8904,
+          "word_growth_pct": 0.78
+        },
+        "strip_placebo": {
+          "certified": true,
+          "protected_kept": 0,
+          "protected_spans": 0,
+          "reasons": [],
+          "similarity": 0.9871,
+          "word_growth_pct": -0.54
+        }
+      },
+      "reasons": [
+        "a census call on a revision refused or did not parse"
+      ],
+      "unit_id": "rr:2169135.0"
+    }
+  ],
+  "writer_model": "claude-opus-5"
+}

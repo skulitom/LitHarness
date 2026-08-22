@@ -1,0 +1,991 @@
+{
+  "pre_registration": {
+    "arms": {
+      "census": "the chapter as published. Q1 and Q2 are read from this arm alone",
+      "repeat": "the same chapter, the same request, a distinct sample index \u2014 `n` byte-identical requests, so the variation is the model's own sampling and not a perturbed prompt (`elicit.py`'s rule). Reports the per-chapter spread of counts and the anchor overlap between the two lists. This is the noise floor every other arm is read against",
+      "sham": "`ablate.rewhitespace` at full strength. Not one character of any word changes. The count must not move beyond the `repeat` spread; if it does, the locator is responding to layout and the entry says so (\u00a778)",
+      "strip": "a certified minimal revision that rewrites every reach for levity plainly, with `strip_placebo` \u2014 the same revision contract with an inert task \u2014 beside it as the floor. One dose; no ladder, no inject arm"
+    },
+    "attainability": "Declared at the n actually available, before the first call, per \u00a787/\u00a789's rulebook. Every statistic here is an exact one-sided sign test whose smallest attainable p at G pairs is 1/2**G, so alpha 0.05 is unreachable below G=5 and every G below that reports INSUFFICIENT_N rather than FAILS. The sham subset is G=40+ RoyalRoad chapters and G=12 own units, both attainable. The strip subset is the census top decile, G=24 at n=249, plus own units with >= 3 beats; if fewer than 5 pairs certify, the arm reports INSUFFICIENT_N and no drop is read. None of these is a bar for admission: no bar for admission is declared anywhere in this module.",
+    "counting_rule": "A beat is counted only if its anchor is findable in the text THAT CALL WAS SHOWN, by normalised substring match (NFKC, curly quotes and dashes folded to ASCII, whitespace collapsed, casefolded), and only if its kind is one of the seven frozen kinds. Repeated anchors within one answer collapse to one beat. Unfindable anchors are confabulations: excluded from every count and reported as a rate on every arm.",
+    "declared_quantities": {
+      "anchor_overlap": "|A n B| / |A u B| over the two samples' normalised anchor sets, unitless, range [0, 1], higher is more stable. No bar: it is reported so a count that is stable while its locations are not cannot pass unnoticed",
+      "confabulation_rate": "unfindable anchors / anchors returned, unitless, range [0, 1], direction lower. Printed on every arm. REFUSAL STATE: if the mean confabulated beats per chapter on the strip subset is at least half the median strip drop in beats, the strip reading is VOID rather than weak \u2014 an effect the instrument's own noise could manufacture is not an effect",
+      "repeat_spread": "|count(sample 0) - count(sample 1)| per chapter, in beats; range [0, inf), no direction and no bar \u2014 it is the ruler. Reported as median, p90 and max, in beats and in beats/1k, on both substrates separately. Attainable at any n >= 1; the subset is 40 RoyalRoad chapters plus the strip subset plus every own unit",
+      "sham_delta": "|count(census) - count(sham)| per chapter, in beats, read against `repeat_spread` on the SAME chapters by a one-sided exact sign test that the sham delta exceeds the repeat delta. Outcomes: LAYOUT_SENSITIVE if p <= 0.05; INSIDE_NOISE only with the equivalence bound printed beside it, never as a pass by silence (\u00a7101.1); INSUFFICIENT_N below the attainable floor. The bound is the distribution-free 90% confidence interval on the median of (sham delta - repeat delta), in beats, so the reading states what magnitude of layout sensitivity it could not exclude",
+      "strip_drop": "count(original) - count(stripped), in beats, paired by chapter. Direction: positive. Read twice, and both readings print: against the placebo's own drift by a one-sided exact sign test on (strip drop > placebo drop), and against the noise floor by the share of pairs whose strip drop exceeds that chapter's repeat spread, sign-tested. Outcomes SEES / DOES_NOT_SEE / INSUFFICIENT_N / VOID"
+    },
+    "no_bar_for_admission": "None is declared, and that is the point. Nothing here enters `AXES` or `COUNTERS`, reaches a prompt, a directive, a Director brief, a persona reason code or a writer dossier. Admission is an operator act over the measured distribution, exactly as for `opening_proper_nouns`.",
+    "no_inherited_figures": "\u00a779.1's rule. Every spread, rate and cost reported here is measured on these chapters by this instrument in these runs. \u00a785's per-comparison price is not used to project this one, because a whole-chapter input is several times a \u00a785 pair.",
+    "no_landing_measurement": "Whether a beat lands is not asked, not schema'd and not derivable from anything here. The nearest shape is W4 (`payoff_landing.py`), which is NOT VALIDATED for want of substrate, and it stays that way.",
+    "no_post_hoc_leniency": "The strict normalisation above is the counting rule. A second, deliberately looser match \u2014 all non-alphanumeric characters dropped \u2014 is computed and reported as `relaxed_findable` so the size of what strictness costs is visible, and it never enters a count. Loosening the rule after reading the answers would be a rubric fitted to them.",
+    "question": "Do this project's published chapters attempt humor at the density the genre's readers select for, and can a located instrument see the difference at all? Q1 is the RoyalRoad LitRPG baseline by cohort, Q2 is where our own chapters sit in it, Q3 is whether the locator is an instrument. Reported separately and in that order.",
+    "sampling": "100 chapters per era cohort, ONE CHAPTER PER STORY, chosen deterministically by digest so the draw is a rule and not a draw. The substrate caps `declared_ai_2025` at 49 distinct stories inside the window, so the census is 100/100/49 = 249 and the cap is reported rather than filled by taking a second chapter from a story already in the pool.",
+    "strip_internal_control": "Protected spans (**bold** lines and [STATUS] lines) are copied byte-for-byte by the revision contract, so a `system_voice` beat cannot be stripped. Pre-registered: prose kinds fall and `system_voice` does not. If `system_voice` falls with them the locator is reading the fact of a rewrite. Four outcomes, none of them a pass by silence: CONTROL_HOLDS when no pair lost a system-voice beat, CONTROL_FAILS when the sign test says they fell, CONTROL_UNDECIDED with its interval printed in between, and EMPTY where the subset carries no protected span at all \u2014 which is most of RoyalRoad, whose system voice is not written in this project's typography.",
+    "substrates_are_never_pooled": "RoyalRoad text may be memorised by the locator (BRIEF \u00a72 Pass 6), so it is the baseline arm with the confound named; own-generated chapters are the clean arm; the `strip` differential on one chapter partially cancels the term; and no statistic in this module averages the two.",
+    "transport_exclusion": "A unit whose rendered `claude -p` command line reaches 32000 characters cannot be sent by this transport (Windows refuses at 32,767) and is excluded before the call, counted, and printed. It is not sent and allowed to fail: a transport error is indistinguishable from a broken install. Measured over the draw, this is 4 of 249 chapters, and because it is length-correlated it is reported beside the length residual.",
+    "unit_of_analysis": "The chapter, as published \u2014 the unit a reader receives. Own-generated scenes from The Toll Road are reported as secondary colour and never pooled with chapters.",
+    "what_is_measured": "The density of located ATTEMPTS at levity, in beats per 1,000 words. It is not a quality, a craft claim or a success rate: a chapter with more attempts is not better, and no arrangement of these numbers says whether a beat lands. Landing is valence, valence is behavioural or it is nothing (\u00a797.4), and W4 is NOT VALIDATED for want of substrate.",
+    "why_there_is_a_strip_placebo": "The handoff did not ask for one and `repair_generation.PRE_REGISTRATION`'s first line makes it mandatory: no repair arm is read except against its placebo. Without it a drop in located beats is equally well explained by the fact of a rewrite, and there is no way to tell the two apart afterwards. It is one more arm, not a dose ladder.",
+    "window": "[800, 6000] words, one whole chapter per call. Chunking changes counts, so a chapter outside the window is excluded and the exclusion is counted and printed. Measured on the substrate before it was chosen: the window keeps 92.9% of the 14,363 LitRPG chapters in the two cached shards.",
+    "written": "2026-08-21, before the first paid call of any arm in this module, and byte-frozen with the system block, the question, the schema and the kinds under FROZEN_DIGEST"
+  },
+  "q1_royalroad_baseline": {
+    "by_cohort": {
+      "declared_ai_2025": {
+        "max": 21.8801,
+        "mean": 6.752,
+        "min": 0.0,
+        "n": 44,
+        "quantiles": {
+          "0.05": 1.15,
+          "0.1": 2.538,
+          "0.25": 3.413,
+          "0.5": 4.983,
+          "0.75": 9.305,
+          "0.9": 12.085,
+          "0.95": 15.02
+        },
+        "sd": 4.892
+      },
+      "human_pre_llm": {
+        "max": 22.912,
+        "mean": 7.5,
+        "min": 0.7746,
+        "n": 96,
+        "quantiles": {
+          "0.05": 2.117,
+          "0.1": 2.688,
+          "0.25": 4.442,
+          "0.5": 6.436,
+          "0.75": 9.626,
+          "0.9": 14.226,
+          "0.95": 16.543
+        },
+        "sd": 4.522
+      },
+      "undeclared_2025": {
+        "max": 18.5185,
+        "mean": 5.64,
+        "min": 0.0,
+        "n": 96,
+        "quantiles": {
+          "0.05": 0.96,
+          "0.1": 1.48,
+          "0.25": 2.93,
+          "0.5": 4.886,
+          "0.75": 7.435,
+          "0.9": 11.246,
+          "0.95": 11.719
+        },
+        "sd": 3.761
+      }
+    },
+    "counts_pooled": {
+      "max": 63.0,
+      "mean": 12.72,
+      "min": 0.0,
+      "n": 236,
+      "quantiles": {
+        "0.05": 2.0,
+        "0.1": 3.0,
+        "0.25": 6.0,
+        "0.5": 11.0,
+        "0.75": 17.0,
+        "0.9": 24.0,
+        "0.95": 29.0
+      },
+      "sd": 8.866
+    },
+    "familiarity_confound": "RoyalRoad text may be memorised by the locator (BRIEF \u00a72 Pass 6). This baseline carries that term and our own chapters do not; the two are never pooled and this percentile is read with the term named.",
+    "kind_mix": {
+      "counts": {
+        "absurd": 402,
+        "banter": 89,
+        "callback": 38,
+        "deadpan": 843,
+        "quip": 1310,
+        "system_voice": 142,
+        "undercut": 178
+      },
+      "share": {
+        "absurd": 0.1339,
+        "banter": 0.0296,
+        "callback": 0.0127,
+        "deadpan": 0.2808,
+        "quip": 0.4364,
+        "system_voice": 0.0473,
+        "undercut": 0.0593
+      },
+      "total": 3002
+    },
+    "length_residual": {
+      "note": "negative means longer chapters yield fewer located beats per 1k, which would confound a placement of our own longer chapters",
+      "spearman_density_vs_words": -0.1816
+    },
+    "pooled": {
+      "max": 22.912,
+      "mean": 6.604,
+      "min": 0.0,
+      "n": 236,
+      "quantiles": {
+        "0.05": 1.403,
+        "0.1": 2.117,
+        "0.25": 3.387,
+        "0.5": 5.502,
+        "0.75": 8.869,
+        "0.9": 12.085,
+        "0.95": 15.02
+      },
+      "sd": 4.387
+    },
+    "words": {
+      "max": 5088.0,
+      "mean": 2064.712,
+      "min": 805.0,
+      "n": 236,
+      "quantiles": {
+        "0.05": 928.0,
+        "0.1": 1068.0,
+        "0.25": 1291.0,
+        "0.5": 1855.0,
+        "0.75": 2689.0,
+        "0.9": 3447.0,
+        "0.95": 3816.0
+      },
+      "sd": 932.895
+    },
+    "zero_beat_share": 0.0127
+  },
+  "q2_placement": {
+    "chapters": [
+      {
+        "by_kind": {
+          "callback": 2,
+          "deadpan": 9,
+          "quip": 15,
+          "undercut": 2
+        },
+        "counted": 28,
+        "density_per_1k": 6.7454,
+        "length_matched": {
+          "band_words": [
+            2906,
+            5396
+          ],
+          "n": 45,
+          "percentile": 75.6,
+          "summary": {
+            "max": 16.9264,
+            "mean": 5.702,
+            "min": 0.489,
+            "n": 45,
+            "quantiles": {
+              "0.05": 0.96,
+              "0.1": 2.538,
+              "0.25": 3.855,
+              "0.5": 5.359,
+              "0.75": 6.641,
+              "0.9": 9.135,
+              "0.95": 10.345
+            },
+            "sd": 3.002
+          }
+        },
+        "percentile_by_cohort": {
+          "declared_ai_2025": 59.1,
+          "human_pre_llm": 52.1,
+          "undeclared_2025": 71.9
+        },
+        "percentile_pooled": 61.4,
+        "unit_id": "reappraisal:Chapter1",
+        "words": 4151
+      },
+      {
+        "by_kind": {
+          "absurd": 3,
+          "deadpan": 9,
+          "quip": 17
+        },
+        "counted": 29,
+        "density_per_1k": 6.8203,
+        "length_matched": {
+          "band_words": [
+            2976,
+            5528
+          ],
+          "n": 44,
+          "percentile": 77.3,
+          "summary": {
+            "max": 16.9264,
+            "mean": 5.707,
+            "min": 0.489,
+            "n": 44,
+            "quantiles": {
+              "0.05": 0.96,
+              "0.1": 2.538,
+              "0.25": 3.855,
+              "0.5": 5.359,
+              "0.75": 6.641,
+              "0.9": 9.135,
+              "0.95": 10.345
+            },
+            "sd": 3.036
+          }
+        },
+        "percentile_by_cohort": {
+          "declared_ai_2025": 61.4,
+          "human_pre_llm": 52.1,
+          "undeclared_2025": 71.9
+        },
+        "percentile_pooled": 61.9,
+        "unit_id": "reappraisal:Chapter2",
+        "words": 4252
+      }
+    ],
+    "kind_mix": {
+      "counts": {
+        "absurd": 3,
+        "banter": 0,
+        "callback": 2,
+        "deadpan": 18,
+        "quip": 32,
+        "system_voice": 0,
+        "undercut": 2
+      },
+      "share": {
+        "absurd": 0.0526,
+        "banter": 0.0,
+        "callback": 0.0351,
+        "deadpan": 0.3158,
+        "quip": 0.5614,
+        "system_voice": 0.0,
+        "undercut": 0.0351
+      },
+      "total": 57
+    },
+    "toll_road_scenes": {
+      "median_percentile_pooled": 85.2,
+      "note": "secondary colour only: a scene is internal structure and the unit a reader receives is the chapter",
+      "per_scene_density": [
+        10.9649,
+        13.1846,
+        11.3169,
+        17.5781,
+        7.2165,
+        13.3971,
+        2.9674,
+        2.8763,
+        2.8037,
+        12.7953
+      ],
+      "summary": {
+        "max": 17.5781,
+        "mean": 9.51,
+        "min": 2.8037,
+        "n": 10,
+        "quantiles": {
+          "0.05": 2.804,
+          "0.1": 2.876,
+          "0.25": 2.967,
+          "0.5": 10.965,
+          "0.75": 13.185,
+          "0.9": 13.397,
+          "0.95": 17.578
+        },
+        "sd": 4.969
+      }
+    }
+  },
+  "q3_validity": {
+    "local": {
+      "reliability": {
+        "assumes": "error homoscedastic across chapters and independent between draws; neither is checked here",
+        "correlation_ceiling": 0.536,
+        "draws_to_reach": {
+          "0.8": 10,
+          "0.9": 23
+        },
+        "note": "draws_to_reach(r) below is what it would cost to fix: averaging k independent draws per chapter divides the noise variance by k",
+        "reliability": 0.2873,
+        "repeat_pairs": 12,
+        "sd_of_paired_difference": 5.5502,
+        "sd_population_implied_true": 2.4917,
+        "sd_population_observed": 4.6487,
+        "sd_single_measurement_noise": 3.9246,
+        "unit": "beats per 1,000 words"
+      },
+      "repeat": {
+        "abs_delta_beats": {
+          "max": 15.0,
+          "mean": 4.833,
+          "min": 0.0,
+          "n": 12,
+          "quantiles": {
+            "0.05": 0.0,
+            "0.1": 0.0,
+            "0.25": 1.0,
+            "0.5": 5.0,
+            "0.75": 7.0,
+            "0.9": 8.0,
+            "0.95": 8.0
+          },
+          "sd": 4.259
+        },
+        "abs_delta_per_1k": {
+          "max": 14.0187,
+          "mean": 4.602,
+          "min": 0.0,
+          "n": 12,
+          "quantiles": {
+            "0.05": 0.0,
+            "0.1": 0.0,
+            "0.25": 0.241,
+            "0.5": 4.794,
+            "0.75": 7.216,
+            "0.9": 8.23,
+            "0.95": 8.23
+          },
+          "sd": 4.203
+        },
+        "anchor_overlap": {
+          "max": 0.25,
+          "mean": 0.11,
+          "min": 0.0,
+          "n": 12,
+          "quantiles": {
+            "0.05": 0.0,
+            "0.1": 0.0,
+            "0.25": 0.04,
+            "0.5": 0.135,
+            "0.75": 0.167,
+            "0.9": 0.185,
+            "0.95": 0.185
+          },
+          "sd": 0.079
+        },
+        "arm": "repeat",
+        "pairs": 12,
+        "signed_delta_mean": 3.0
+      },
+      "same_text_control": {
+        "abs_delta_beats": {
+          "max": 19.0,
+          "mean": 7.727,
+          "min": 1.0,
+          "n": 11,
+          "quantiles": {
+            "0.05": 1.0,
+            "0.1": 2.0,
+            "0.25": 3.0,
+            "0.5": 8.0,
+            "0.75": 10.0,
+            "0.9": 12.0,
+            "0.95": 19.0
+          },
+          "sd": 4.863
+        },
+        "note": "each arm holds its own cache file, so a byte-identical text was re-issued rather than replayed and the placebo count is a second independent draw",
+        "status": "UNREGISTERED: not declared before the run; reported beside the repeat arm, never instead of it",
+        "units_byte_identical": 9,
+        "units_same_after_normalisation": 11
+      },
+      "sham": {
+        "abs_delta_beats": {
+          "max": 15.0,
+          "mean": 5.818,
+          "min": 1.0,
+          "n": 11,
+          "quantiles": {
+            "0.05": 1.0,
+            "0.1": 1.0,
+            "0.25": 1.0,
+            "0.5": 5.0,
+            "0.75": 9.0,
+            "0.9": 11.0,
+            "0.95": 15.0
+          },
+          "sd": 4.281
+        },
+        "abs_delta_per_1k": {
+          "max": 9.2784,
+          "mean": 3.995,
+          "min": 0.9346,
+          "n": 11,
+          "quantiles": {
+            "0.05": 0.935,
+            "0.1": 0.984,
+            "0.25": 1.014,
+            "0.5": 3.614,
+            "0.75": 5.935,
+            "0.9": 6.699,
+            "0.95": 9.278
+          },
+          "sd": 2.555
+        },
+        "anchor_overlap": {
+          "max": 0.3478,
+          "mean": 0.122,
+          "min": 0.0,
+          "n": 11,
+          "quantiles": {
+            "0.05": 0.0,
+            "0.1": 0.0,
+            "0.25": 0.038,
+            "0.5": 0.091,
+            "0.75": 0.227,
+            "0.9": 0.286,
+            "0.95": 0.348
+          },
+          "sd": 0.111
+        },
+        "arm": "sham",
+        "pairs": 11,
+        "signed_delta_mean": 1.6364
+      },
+      "sham_vs_repeat": {
+        "aligned": 5,
+        "alpha": 0.05,
+        "attainable_floor": 0.00097656,
+        "equivalence_bound": {
+          "confidence": 0.9,
+          "hi": 1.0,
+          "lo": -2.0,
+          "median": 0.0,
+          "n": 11,
+          "note": "exact under the sign test; assumes nothing about the shape of the differences"
+        },
+        "k_required": 9,
+        "p_one_sided": 0.62304688,
+        "pairs_decided": 10,
+        "pairs_total": 11,
+        "pairs_undecided": 1,
+        "reading_note": "INSIDE_NOISE is read only with the equivalence bound beside it (\u00a7101.1): the interval is the layout sensitivity this design could not exclude, in beats.",
+        "statistic": "the layout sham moves the count further than a re-ask does, in beats",
+        "verdict": "INSIDE_NOISE"
+      },
+      "strip": {
+        "against_noise_floor": {
+          "aligned": 1,
+          "alpha": 0.05,
+          "attainable_floor": 0.00390625,
+          "equivalence_bound": {
+            "confidence": 0.9,
+            "hi": 0.0,
+            "lo": -6.0,
+            "median": -5.0,
+            "n": 11,
+            "note": "exact under the sign test; assumes nothing about the shape of the differences"
+          },
+          "k_required": 7,
+          "p_one_sided": 0.99609375,
+          "pairs_decided": 8,
+          "pairs_total": 11,
+          "pairs_undecided": 3,
+          "statistic": "strip drop exceeds this chapter's own repeat spread, in beats",
+          "verdict": "DOES_NOT_SEE"
+        },
+        "against_placebo": {
+          "aligned": 7,
+          "alpha": 0.05,
+          "attainable_floor": 0.00048828,
+          "equivalence_bound": {
+            "confidence": 0.9,
+            "hi": 7.0,
+            "lo": -1.0,
+            "median": 5.0,
+            "n": 11,
+            "note": "exact under the sign test; assumes nothing about the shape of the differences"
+          },
+          "k_required": 9,
+          "p_one_sided": 0.27441406,
+          "pairs_decided": 11,
+          "pairs_total": 11,
+          "pairs_undecided": 0,
+          "statistic": "strip drop exceeds its placebo's drop, in beats",
+          "verdict": "DOES_NOT_SEE"
+        },
+        "certificates": {
+          "pairs": 11,
+          "placebo_similarity": {
+            "max": 1.0,
+            "mean": 1.0,
+            "min": 1.0,
+            "n": 11,
+            "quantiles": {
+              "0.05": 1.0,
+              "0.1": 1.0,
+              "0.25": 1.0,
+              "0.5": 1.0,
+              "0.75": 1.0,
+              "0.9": 1.0,
+              "0.95": 1.0
+            },
+            "sd": 0.0
+          },
+          "protected_spans_kept": 55,
+          "protected_spans_total": 55,
+          "strip_similarity": {
+            "max": 0.9811,
+            "mean": 0.952,
+            "min": 0.9211,
+            "n": 11,
+            "quantiles": {
+              "0.05": 0.921,
+              "0.1": 0.925,
+              "0.25": 0.932,
+              "0.5": 0.955,
+              "0.75": 0.97,
+              "0.9": 0.976,
+              "0.95": 0.981
+            },
+            "sd": 0.019
+          },
+          "strip_word_growth_pct": {
+            "max": 3.73,
+            "mean": 0.919,
+            "min": 0.09,
+            "n": 11,
+            "quantiles": {
+              "0.05": 0.09,
+              "0.1": 0.1,
+              "0.25": 0.3,
+              "0.5": 0.46,
+              "0.75": 1.34,
+              "0.9": 1.55,
+              "0.95": 3.73
+            },
+            "sd": 1.004
+          }
+        },
+        "confabulated_per_unit": 0.375,
+        "internal_control_system_voice": {
+          "equivalence_bound": {
+            "confidence": 0.9,
+            "hi": 0.0,
+            "lo": -1.0,
+            "median": -1.0,
+            "n": 11,
+            "note": "exact under the sign test; assumes nothing about the shape of the differences"
+          },
+          "fell": 1,
+          "pairs": 11,
+          "rose": 6,
+          "sign_test": {
+            "aligned": 1,
+            "alpha": 0.05,
+            "attainable_floor": 0.0078125,
+            "equivalence_bound": {
+              "confidence": 0.9,
+              "hi": 0.0,
+              "lo": -1.0,
+              "median": -1.0,
+              "n": 11,
+              "note": "exact under the sign test; assumes nothing about the shape of the differences"
+            },
+            "k_required": 7,
+            "p_one_sided": 0.9921875,
+            "pairs_decided": 7,
+            "pairs_total": 11,
+            "pairs_undecided": 4,
+            "statistic": "system_voice beats fall too, which the contract forbids",
+            "verdict": "CONTROL_UNDECIDED"
+          },
+          "unchanged": 4,
+          "verdict": "CONTROL_UNDECIDED"
+        },
+        "median_drop_beats": 0.0,
+        "pairs_certified": 11,
+        "prose_kinds_only": {
+          "aligned": 7,
+          "alpha": 0.05,
+          "attainable_floor": 0.00048828,
+          "equivalence_bound": {
+            "confidence": 0.9,
+            "hi": 7.0,
+            "lo": -1.0,
+            "median": 5.0,
+            "n": 11,
+            "note": "exact under the sign test; assumes nothing about the shape of the differences"
+          },
+          "k_required": 9,
+          "p_one_sided": 0.27441406,
+          "pairs_decided": 11,
+          "pairs_total": 11,
+          "pairs_undecided": 0,
+          "statistic": "prose-kind drop exceeds the placebo's, in beats",
+          "verdict": "DOES_NOT_SEE"
+        },
+        "refusal_state": {
+          "rule": "VOID if confabulated beats per unit >= half the median strip drop: an effect the instrument's own noise could manufacture is not an effect",
+          "verdict": "VOID"
+        },
+        "uncertified": 1,
+        "writer_model": "claude-opus-5"
+      }
+    },
+    "royalroad": {
+      "reliability": {
+        "assumes": "error homoscedastic across chapters and independent between draws; neither is checked here",
+        "correlation_ceiling": 0.7325,
+        "draws_to_reach": {
+          "0.8": 4,
+          "0.9": 8
+        },
+        "note": "draws_to_reach(r) below is what it would cost to fix: averaging k independent draws per chapter divides the noise variance by k",
+        "reliability": 0.5365,
+        "repeat_pairs": 58,
+        "sd_of_paired_difference": 4.2234,
+        "sd_population_implied_true": 3.2131,
+        "sd_population_observed": 4.3866,
+        "sd_single_measurement_noise": 2.9864,
+        "unit": "beats per 1,000 words"
+      },
+      "repeat": {
+        "abs_delta_beats": {
+          "max": 30.0,
+          "mean": 5.914,
+          "min": 0.0,
+          "n": 58,
+          "quantiles": {
+            "0.05": 0.0,
+            "0.1": 1.0,
+            "0.25": 2.0,
+            "0.5": 5.0,
+            "0.75": 8.0,
+            "0.9": 11.0,
+            "0.95": 17.0
+          },
+          "sd": 5.721
+        },
+        "abs_delta_per_1k": {
+          "max": 12.6166,
+          "mean": 3.215,
+          "min": 0.0,
+          "n": 58,
+          "quantiles": {
+            "0.05": 0.0,
+            "0.1": 0.361,
+            "0.25": 1.124,
+            "0.5": 2.538,
+            "0.75": 4.389,
+            "0.9": 7.391,
+            "0.95": 8.32
+          },
+          "sd": 2.754
+        },
+        "anchor_overlap": {
+          "max": 0.6,
+          "mean": 0.176,
+          "min": 0.0,
+          "n": 58,
+          "quantiles": {
+            "0.05": 0.021,
+            "0.1": 0.042,
+            "0.25": 0.091,
+            "0.5": 0.174,
+            "0.75": 0.25,
+            "0.9": 0.304,
+            "0.95": 0.343
+          },
+          "sd": 0.114
+        },
+        "arm": "repeat",
+        "pairs": 58,
+        "signed_delta_mean": -0.569
+      },
+      "same_text_control": {
+        "abs_delta_beats": {
+          "max": 8.0,
+          "mean": 6.667,
+          "min": 5.0,
+          "n": 3,
+          "quantiles": {
+            "0.05": 5.0,
+            "0.1": 5.0,
+            "0.25": 5.0,
+            "0.5": 7.0,
+            "0.75": 8.0,
+            "0.9": 8.0,
+            "0.95": 8.0
+          },
+          "sd": 1.247
+        },
+        "note": "each arm holds its own cache file, so a byte-identical text was re-issued rather than replayed and the placebo count is a second independent draw",
+        "status": "UNREGISTERED: not declared before the run; reported beside the repeat arm, never instead of it",
+        "units_byte_identical": 1,
+        "units_same_after_normalisation": 3
+      },
+      "sham": {
+        "abs_delta_beats": {
+          "max": 14.0,
+          "mean": 4.466,
+          "min": 0.0,
+          "n": 58,
+          "quantiles": {
+            "0.05": 0.0,
+            "0.1": 1.0,
+            "0.25": 2.0,
+            "0.5": 4.0,
+            "0.75": 6.0,
+            "0.9": 9.0,
+            "0.95": 10.0
+          },
+          "sd": 3.163
+        },
+        "abs_delta_per_1k": {
+          "max": 10.2996,
+          "mean": 2.638,
+          "min": 0.0,
+          "n": 58,
+          "quantiles": {
+            "0.05": 0.0,
+            "0.1": 0.411,
+            "0.25": 1.218,
+            "0.5": 2.212,
+            "0.75": 3.561,
+            "0.9": 4.909,
+            "0.95": 6.289
+          },
+          "sd": 2.155
+        },
+        "anchor_overlap": {
+          "max": 0.4615,
+          "mean": 0.161,
+          "min": 0.0,
+          "n": 58,
+          "quantiles": {
+            "0.05": 0.0,
+            "0.1": 0.023,
+            "0.25": 0.067,
+            "0.5": 0.151,
+            "0.75": 0.222,
+            "0.9": 0.333,
+            "0.95": 0.353
+          },
+          "sd": 0.116
+        },
+        "arm": "sham",
+        "pairs": 58,
+        "signed_delta_mean": -1.0172
+      },
+      "sham_vs_repeat": {
+        "aligned": 26,
+        "alpha": 0.05,
+        "attainable_floor": 0.0,
+        "equivalence_bound": {
+          "confidence": 0.9,
+          "hi": 1.0,
+          "lo": -1.0,
+          "median": 0.0,
+          "n": 56,
+          "note": "exact under the sign test; assumes nothing about the shape of the differences"
+        },
+        "k_required": 32,
+        "p_one_sided": 0.5,
+        "pairs_decided": 51,
+        "pairs_total": 56,
+        "pairs_undecided": 5,
+        "reading_note": "INSIDE_NOISE is read only with the equivalence bound beside it (\u00a7101.1): the interval is the layout sensitivity this design could not exclude, in beats.",
+        "statistic": "the layout sham moves the count further than a re-ask does, in beats",
+        "verdict": "INSIDE_NOISE"
+      },
+      "strip": {
+        "against_noise_floor": {
+          "aligned": 14,
+          "alpha": 0.05,
+          "attainable_floor": 2.4e-07,
+          "equivalence_bound": {
+            "confidence": 0.9,
+            "hi": 4.0,
+            "lo": -1.0,
+            "median": 1.5,
+            "n": 22,
+            "note": "exact under the sign test; assumes nothing about the shape of the differences"
+          },
+          "k_required": 16,
+          "p_one_sided": 0.14313936,
+          "pairs_decided": 22,
+          "pairs_total": 22,
+          "pairs_undecided": 0,
+          "statistic": "strip drop exceeds this chapter's own repeat spread, in beats",
+          "verdict": "DOES_NOT_SEE"
+        },
+        "against_placebo": {
+          "aligned": 15,
+          "alpha": 0.05,
+          "attainable_floor": 2.4e-07,
+          "equivalence_bound": {
+            "confidence": 0.9,
+            "hi": 4.0,
+            "lo": 2.0,
+            "median": 2.0,
+            "n": 23,
+            "note": "exact under the sign test; assumes nothing about the shape of the differences"
+          },
+          "k_required": 16,
+          "p_one_sided": 0.06690025,
+          "pairs_decided": 22,
+          "pairs_total": 23,
+          "pairs_undecided": 1,
+          "statistic": "strip drop exceeds its placebo's drop, in beats",
+          "verdict": "DOES_NOT_SEE"
+        },
+        "certificates": {
+          "pairs": 23,
+          "placebo_similarity": {
+            "max": 1.0,
+            "mean": 0.991,
+            "min": 0.9429,
+            "n": 23,
+            "quantiles": {
+              "0.05": 0.975,
+              "0.1": 0.982,
+              "0.25": 0.992,
+              "0.5": 0.995,
+              "0.75": 0.997,
+              "0.9": 0.998,
+              "0.95": 0.999
+            },
+            "sd": 0.012
+          },
+          "protected_spans_kept": 13,
+          "protected_spans_total": 13,
+          "strip_similarity": {
+            "max": 0.9592,
+            "mean": 0.914,
+            "min": 0.8228,
+            "n": 23,
+            "quantiles": {
+              "0.05": 0.829,
+              "0.1": 0.862,
+              "0.25": 0.903,
+              "0.5": 0.923,
+              "0.75": 0.936,
+              "0.9": 0.948,
+              "0.95": 0.953
+            },
+            "sd": 0.036
+          },
+          "strip_word_growth_pct": {
+            "max": 1.79,
+            "mean": -0.077,
+            "min": -3.21,
+            "n": 23,
+            "quantiles": {
+              "0.05": -2.43,
+              "0.1": -1.49,
+              "0.25": -1.0,
+              "0.5": 0.24,
+              "0.75": 0.67,
+              "0.9": 1.61,
+              "0.95": 1.7
+            },
+            "sd": 1.286
+          }
+        },
+        "confabulated_per_unit": 0.7083,
+        "internal_control_system_voice": {
+          "equivalence_bound": {
+            "confidence": 0.9,
+            "hi": 0.0,
+            "lo": 0.0,
+            "median": 0.0,
+            "n": 2,
+            "note": "exact under the sign test; assumes nothing about the shape of the differences"
+          },
+          "fell": 0,
+          "pairs": 2,
+          "rose": 0,
+          "sign_test": {
+            "aligned": 0,
+            "alpha": 0.05,
+            "attainable_floor": 1.0,
+            "equivalence_bound": {
+              "confidence": 0.9,
+              "hi": 0.0,
+              "lo": 0.0,
+              "median": 0.0,
+              "n": 2,
+              "note": "exact under the sign test; assumes nothing about the shape of the differences"
+            },
+            "k_required": null,
+            "p_one_sided": 1.0,
+            "pairs_decided": 0,
+            "pairs_total": 2,
+            "pairs_undecided": 2,
+            "statistic": "system_voice beats fall too, which the contract forbids",
+            "verdict": "INSUFFICIENT_N"
+          },
+          "unchanged": 2,
+          "verdict": "CONTROL_HOLDS"
+        },
+        "median_drop_beats": 6.0,
+        "pairs_certified": 23,
+        "prose_kinds_only": {
+          "aligned": 15,
+          "alpha": 0.05,
+          "attainable_floor": 4.8e-07,
+          "equivalence_bound": {
+            "confidence": 0.9,
+            "hi": 4.0,
+            "lo": 2.0,
+            "median": 2.0,
+            "n": 23,
+            "note": "exact under the sign test; assumes nothing about the shape of the differences"
+          },
+          "k_required": 15,
+          "p_one_sided": 0.03917694,
+          "pairs_decided": 21,
+          "pairs_total": 23,
+          "pairs_undecided": 2,
+          "statistic": "prose-kind drop exceeds the placebo's, in beats",
+          "verdict": "SEES"
+        },
+        "refusal_state": {
+          "rule": "VOID if confabulated beats per unit >= half the median strip drop: an effect the instrument's own noise could manufacture is not an effect",
+          "verdict": "READABLE"
+        },
+        "uncertified": 1,
+        "writer_model": "claude-opus-5"
+      }
+    }
+  },
+  "reading": {
+    "q1": "RoyalRoad LitRPG located levity runs at a median of 5.502 beats per 1,000 words over 236 chapters (mean 6.604, p95 15.02, max 22.912).",
+    "q2": [
+      "reappraisal:Chapter1: 6.7454/1k, 61.4th percentile pooled, 75.6th among chapters of comparable length (n=45).",
+      "reappraisal:Chapter2: 6.8203/1k, 61.9th percentile pooled, 77.3th among chapters of comparable length (n=44)."
+    ],
+    "q3": {
+      "local": {
+        "sham": "INSIDE_NOISE",
+        "strip_refusal": "VOID",
+        "strip_vs_placebo": "DOES_NOT_SEE"
+      },
+      "royalroad": {
+        "sham": "INSIDE_NOISE",
+        "strip_refusal": "READABLE",
+        "strip_vs_placebo": "DOES_NOT_SEE"
+      }
+    },
+    "what_this_is_not": "a quality claim. Beats per 1k words is a density of ATTEMPTS; a chapter with more of them is not better, and whether any of them lands is not measured here."
+  },
+  "registration_digest": "d3200ddad172e4854b70",
+  "spend": {
+    "local/census": 1.2284,
+    "local/repeat": 1.0353,
+    "local/sham": 1.1727,
+    "local/strip": 2.2374,
+    "local/strip_revision_calls": 24,
+    "local/strip_revisions": 6.8169,
+    "note": "equivalent price for quota already paid for on a subscription, from the transport's own envelopes; measured, never projected from another entry",
+    "royalroad/census": 23.6037,
+    "royalroad/repeat": 6.1578,
+    "royalroad/sham": 6.0424,
+    "royalroad/strip": 5.3004,
+    "royalroad/strip_revision_calls": 48,
+    "royalroad/strip_revisions": 15.3968,
+    "total_equivalent_usd": 68.9918
+  }
+}
