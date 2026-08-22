@@ -1,0 +1,890 @@
+{
+  "cells": [
+    {
+      "P1": {
+        "blind": {
+          "coined": {
+            "beyond_premise": {
+              "nameable": 28,
+              "named_in_plan": 0,
+              "share": 0.0
+            },
+            "by_kind_beyond_premise": {
+              "claim": 0.0,
+              "consequence": 0.0,
+              "criterion": null,
+              "entity": 0.0,
+              "manifestation": 0.0,
+              "rank": null,
+              "rule": 0.0
+            },
+            "raw": {
+              "nameable": 40,
+              "named_in_plan": 0,
+              "share": 0.0
+            }
+          },
+          "wide": {
+            "beyond_premise": {
+              "nameable": 93,
+              "named_in_plan": 0,
+              "share": 0.0
+            },
+            "by_kind_beyond_premise": {
+              "claim": 0.0,
+              "consequence": 0.0,
+              "criterion": 0.0,
+              "entity": 0.0,
+              "manifestation": 0.0,
+              "rank": 0.0,
+              "rule": 0.0
+            },
+            "raw": {
+              "nameable": 110,
+              "named_in_plan": 0,
+              "share": 0.0
+            }
+          }
+        },
+        "world_aware": {
+          "coined": {
+            "beyond_premise": {
+              "nameable": 28,
+              "named_in_plan": 0,
+              "share": 0.0
+            },
+            "by_kind_beyond_premise": {
+              "claim": 0.0,
+              "consequence": 0.0,
+              "criterion": null,
+              "entity": 0.0,
+              "manifestation": 0.0,
+              "rank": null,
+              "rule": 0.0
+            },
+            "raw": {
+              "nameable": 40,
+              "named_in_plan": 0,
+              "share": 0.0
+            }
+          },
+          "wide": {
+            "beyond_premise": {
+              "nameable": 93,
+              "named_in_plan": 0,
+              "share": 0.0
+            },
+            "by_kind_beyond_premise": {
+              "claim": 0.0,
+              "consequence": 0.0,
+              "criterion": 0.0,
+              "entity": 0.0,
+              "manifestation": 0.0,
+              "rank": 0.0,
+              "rule": 0.0
+            },
+            "raw": {
+              "nameable": 110,
+              "named_in_plan": 0,
+              "share": 0.0
+            }
+          }
+        }
+      },
+      "P2": {
+        "blind": {
+          "claims": [
+            {
+              "answered_in_this_book": false,
+              "claim_id": "m_first_water",
+              "distinctive_tokens": 30,
+              "hits": [],
+              "max_overlap_share_before_window": 0.0,
+              "shipped_matcher_needs_hits": 15,
+              "window_scene": null
+            },
+            {
+              "answered_in_this_book": true,
+              "claim_id": "m_holts_date",
+              "distinctive_tokens": 18,
+              "hits": [],
+              "max_overlap_share_before_window": 0.0,
+              "shipped_matcher_needs_hits": 9,
+              "window_scene": 4
+            },
+            {
+              "answered_in_this_book": true,
+              "claim_id": "m_orrin_last_call",
+              "distinctive_tokens": 26,
+              "hits": [],
+              "max_overlap_share_before_window": 0.0,
+              "shipped_matcher_needs_hits": 13,
+              "window_scene": 7
+            },
+            {
+              "answered_in_this_book": false,
+              "claim_id": "m_pells_lateral",
+              "distinctive_tokens": 26,
+              "hits": [],
+              "max_overlap_share_before_window": 0.0,
+              "shipped_matcher_needs_hits": 13,
+              "window_scene": null
+            },
+            {
+              "answered_in_this_book": false,
+              "claim_id": "m_the_wrong_table",
+              "distinctive_tokens": 25,
+              "hits": [],
+              "max_overlap_share_before_window": 0.0,
+              "shipped_matcher_needs_hits": 13,
+              "window_scene": null
+            },
+            {
+              "answered_in_this_book": false,
+              "claim_id": "m_where_the_dryness_goes",
+              "distinctive_tokens": 26,
+              "hits": [],
+              "max_overlap_share_before_window": 0.0,
+              "shipped_matcher_needs_hits": 13,
+              "window_scene": null
+            }
+          ],
+          "leaks": 0,
+          "verdict": "no leak on any leg"
+        },
+        "world_aware": {
+          "claims": [
+            {
+              "answered_in_this_book": false,
+              "claim_id": "m_first_water",
+              "distinctive_tokens": 30,
+              "hits": [],
+              "max_overlap_share_before_window": 0.0,
+              "shipped_matcher_needs_hits": 15,
+              "window_scene": null
+            },
+            {
+              "answered_in_this_book": true,
+              "claim_id": "m_holts_date",
+              "distinctive_tokens": 18,
+              "hits": [],
+              "max_overlap_share_before_window": 0.0,
+              "shipped_matcher_needs_hits": 9,
+              "window_scene": 4
+            },
+            {
+              "answered_in_this_book": true,
+              "claim_id": "m_orrin_last_call",
+              "distinctive_tokens": 26,
+              "hits": [],
+              "max_overlap_share_before_window": 0.0,
+              "shipped_matcher_needs_hits": 13,
+              "window_scene": 7
+            },
+            {
+              "answered_in_this_book": false,
+              "claim_id": "m_pells_lateral",
+              "distinctive_tokens": 26,
+              "hits": [],
+              "max_overlap_share_before_window": 0.0,
+              "shipped_matcher_needs_hits": 13,
+              "window_scene": null
+            },
+            {
+              "answered_in_this_book": false,
+              "claim_id": "m_the_wrong_table",
+              "distinctive_tokens": 25,
+              "hits": [],
+              "max_overlap_share_before_window": 0.0,
+              "shipped_matcher_needs_hits": 13,
+              "window_scene": null
+            },
+            {
+              "answered_in_this_book": false,
+              "claim_id": "m_where_the_dryness_goes",
+              "distinctive_tokens": 26,
+              "hits": [],
+              "max_overlap_share_before_window": 0.0,
+              "shipped_matcher_needs_hits": 13,
+              "window_scene": null
+            }
+          ],
+          "leaks": 0,
+          "verdict": "no leak on any leg"
+        }
+      },
+      "P2_control_floors": {
+        "m_first_water": 0.0,
+        "m_holts_date": 0.0,
+        "m_orrin_last_call": 0.0,
+        "m_pells_lateral": 0.0,
+        "m_the_wrong_table": 0.0,
+        "m_where_the_dryness_goes": 0.0
+      },
+      "P3": {
+        "blind": {
+          "landed": 0,
+          "of": 2,
+          "windows": [
+            {
+              "claim_id": "m_holts_date",
+              "named_coined": [],
+              "named_wide": [],
+              "statement_present": false,
+              "window_scene": 4
+            },
+            {
+              "claim_id": "m_orrin_last_call",
+              "named_coined": [],
+              "named_wide": [],
+              "statement_present": false,
+              "window_scene": 7
+            }
+          ]
+        },
+        "world_aware": {
+          "landed": 0,
+          "of": 2,
+          "windows": [
+            {
+              "claim_id": "m_holts_date",
+              "named_coined": [],
+              "named_wide": [],
+              "statement_present": false,
+              "window_scene": 4
+            },
+            {
+              "claim_id": "m_orrin_last_call",
+              "named_coined": [],
+              "named_wide": [],
+              "statement_present": false,
+              "window_scene": 7
+            }
+          ]
+        }
+      },
+      "calls": {
+        "blind": {
+          "input_tokens": 587,
+          "model": "fake-deterministic-v1",
+          "ok": true,
+          "output_tokens": 42,
+          "prompt_chars": 2348,
+          "provider": "fake",
+          "seconds": 0.0
+        },
+        "world_aware": {
+          "input_tokens": 9476,
+          "model": "fake-deterministic-v1",
+          "ok": true,
+          "output_tokens": 42,
+          "prompt_chars": 37907,
+          "provider": "fake",
+          "seconds": 0.0
+        }
+      },
+      "records": 329,
+      "statements": {
+        "blind": {},
+        "world_aware": {}
+      },
+      "title": "First In Time",
+      "world_index": 0
+    },
+    {
+      "P1": {
+        "blind": {
+          "coined": {
+            "beyond_premise": {
+              "nameable": 30,
+              "named_in_plan": 0,
+              "share": 0.0
+            },
+            "by_kind_beyond_premise": {
+              "claim": 0.0,
+              "consequence": 0.0,
+              "criterion": null,
+              "entity": 0.0,
+              "manifestation": 0.0,
+              "rank": null,
+              "rule": 0.0
+            },
+            "raw": {
+              "nameable": 39,
+              "named_in_plan": 0,
+              "share": 0.0
+            }
+          },
+          "wide": {
+            "beyond_premise": {
+              "nameable": 101,
+              "named_in_plan": 0,
+              "share": 0.0
+            },
+            "by_kind_beyond_premise": {
+              "claim": 0.0,
+              "consequence": 0.0,
+              "criterion": 0.0,
+              "entity": 0.0,
+              "manifestation": 0.0,
+              "rank": 0.0,
+              "rule": 0.0
+            },
+            "raw": {
+              "nameable": 120,
+              "named_in_plan": 0,
+              "share": 0.0
+            }
+          }
+        },
+        "world_aware": {
+          "coined": {
+            "beyond_premise": {
+              "nameable": 30,
+              "named_in_plan": 0,
+              "share": 0.0
+            },
+            "by_kind_beyond_premise": {
+              "claim": 0.0,
+              "consequence": 0.0,
+              "criterion": null,
+              "entity": 0.0,
+              "manifestation": 0.0,
+              "rank": null,
+              "rule": 0.0
+            },
+            "raw": {
+              "nameable": 39,
+              "named_in_plan": 0,
+              "share": 0.0
+            }
+          },
+          "wide": {
+            "beyond_premise": {
+              "nameable": 101,
+              "named_in_plan": 0,
+              "share": 0.0
+            },
+            "by_kind_beyond_premise": {
+              "claim": 0.0,
+              "consequence": 0.0,
+              "criterion": 0.0,
+              "entity": 0.0,
+              "manifestation": 0.0,
+              "rank": 0.0,
+              "rule": 0.0
+            },
+            "raw": {
+              "nameable": 120,
+              "named_in_plan": 0,
+              "share": 0.0
+            }
+          }
+        }
+      },
+      "P2": {
+        "blind": {
+          "claims": [
+            {
+              "answered_in_this_book": false,
+              "claim_id": "m_brans_card",
+              "distinctive_tokens": 18,
+              "hits": [],
+              "max_overlap_share_before_window": 0.0,
+              "shipped_matcher_needs_hits": 9,
+              "window_scene": null
+            },
+            {
+              "answered_in_this_book": false,
+              "claim_id": "m_falling_faster",
+              "distinctive_tokens": 32,
+              "hits": [],
+              "max_overlap_share_before_window": 0.0,
+              "shipped_matcher_needs_hits": 16,
+              "window_scene": null
+            },
+            {
+              "answered_in_this_book": false,
+              "claim_id": "m_pells_late_reclaim",
+              "distinctive_tokens": 20,
+              "hits": [],
+              "max_overlap_share_before_window": 0.0,
+              "shipped_matcher_needs_hits": 10,
+              "window_scene": null
+            },
+            {
+              "answered_in_this_book": false,
+              "claim_id": "m_the_first_taker",
+              "distinctive_tokens": 26,
+              "hits": [],
+              "max_overlap_share_before_window": 0.0,
+              "shipped_matcher_needs_hits": 13,
+              "window_scene": null
+            },
+            {
+              "answered_in_this_book": false,
+              "claim_id": "m_the_register",
+              "distinctive_tokens": 36,
+              "hits": [],
+              "max_overlap_share_before_window": 0.0,
+              "shipped_matcher_needs_hits": 18,
+              "window_scene": null
+            },
+            {
+              "answered_in_this_book": true,
+              "claim_id": "m_who_gave_lys",
+              "distinctive_tokens": 24,
+              "hits": [],
+              "max_overlap_share_before_window": 0.0,
+              "shipped_matcher_needs_hits": 12,
+              "window_scene": 5
+            }
+          ],
+          "leaks": 0,
+          "verdict": "no leak on any leg"
+        },
+        "world_aware": {
+          "claims": [
+            {
+              "answered_in_this_book": false,
+              "claim_id": "m_brans_card",
+              "distinctive_tokens": 18,
+              "hits": [],
+              "max_overlap_share_before_window": 0.0,
+              "shipped_matcher_needs_hits": 9,
+              "window_scene": null
+            },
+            {
+              "answered_in_this_book": false,
+              "claim_id": "m_falling_faster",
+              "distinctive_tokens": 32,
+              "hits": [],
+              "max_overlap_share_before_window": 0.0,
+              "shipped_matcher_needs_hits": 16,
+              "window_scene": null
+            },
+            {
+              "answered_in_this_book": false,
+              "claim_id": "m_pells_late_reclaim",
+              "distinctive_tokens": 20,
+              "hits": [],
+              "max_overlap_share_before_window": 0.0,
+              "shipped_matcher_needs_hits": 10,
+              "window_scene": null
+            },
+            {
+              "answered_in_this_book": false,
+              "claim_id": "m_the_first_taker",
+              "distinctive_tokens": 26,
+              "hits": [],
+              "max_overlap_share_before_window": 0.0,
+              "shipped_matcher_needs_hits": 13,
+              "window_scene": null
+            },
+            {
+              "answered_in_this_book": false,
+              "claim_id": "m_the_register",
+              "distinctive_tokens": 36,
+              "hits": [],
+              "max_overlap_share_before_window": 0.0,
+              "shipped_matcher_needs_hits": 18,
+              "window_scene": null
+            },
+            {
+              "answered_in_this_book": true,
+              "claim_id": "m_who_gave_lys",
+              "distinctive_tokens": 24,
+              "hits": [],
+              "max_overlap_share_before_window": 0.0,
+              "shipped_matcher_needs_hits": 12,
+              "window_scene": 5
+            }
+          ],
+          "leaks": 0,
+          "verdict": "no leak on any leg"
+        }
+      },
+      "P2_control_floors": {
+        "m_brans_card": 0.0,
+        "m_falling_faster": 0.0,
+        "m_pells_late_reclaim": 0.0,
+        "m_the_first_taker": 0.0,
+        "m_the_register": 0.0,
+        "m_who_gave_lys": 0.0
+      },
+      "P3": {
+        "blind": {
+          "landed": 0,
+          "of": 1,
+          "windows": [
+            {
+              "claim_id": "m_who_gave_lys",
+              "named_coined": [],
+              "named_wide": [],
+              "statement_present": false,
+              "window_scene": 5
+            }
+          ]
+        },
+        "world_aware": {
+          "landed": 0,
+          "of": 1,
+          "windows": [
+            {
+              "claim_id": "m_who_gave_lys",
+              "named_coined": [],
+              "named_wide": [],
+              "statement_present": false,
+              "window_scene": 5
+            }
+          ]
+        }
+      },
+      "calls": {
+        "blind": {
+          "input_tokens": 588,
+          "model": "fake-deterministic-v1",
+          "ok": true,
+          "output_tokens": 42,
+          "prompt_chars": 2354,
+          "provider": "fake",
+          "seconds": 0.0
+        },
+        "world_aware": {
+          "input_tokens": 9710,
+          "model": "fake-deterministic-v1",
+          "ok": true,
+          "output_tokens": 42,
+          "prompt_chars": 38843,
+          "provider": "fake",
+          "seconds": 0.0
+        }
+      },
+      "records": 346,
+      "statements": {
+        "blind": {},
+        "world_aware": {}
+      },
+      "title": "Borrowed Hands",
+      "world_index": 1
+    },
+    {
+      "P1": {
+        "blind": {
+          "coined": {
+            "beyond_premise": {
+              "nameable": 21,
+              "named_in_plan": 0,
+              "share": 0.0
+            },
+            "by_kind_beyond_premise": {
+              "claim": 0.0,
+              "consequence": null,
+              "criterion": null,
+              "entity": 0.0,
+              "manifestation": 0.0,
+              "rank": 0.0,
+              "rule": null
+            },
+            "raw": {
+              "nameable": 30,
+              "named_in_plan": 0,
+              "share": 0.0
+            }
+          },
+          "wide": {
+            "beyond_premise": {
+              "nameable": 99,
+              "named_in_plan": 0,
+              "share": 0.0
+            },
+            "by_kind_beyond_premise": {
+              "claim": 0.0,
+              "consequence": 0.0,
+              "criterion": 0.0,
+              "entity": 0.0,
+              "manifestation": 0.0,
+              "rank": 0.0,
+              "rule": 0.0
+            },
+            "raw": {
+              "nameable": 109,
+              "named_in_plan": 0,
+              "share": 0.0
+            }
+          }
+        },
+        "world_aware": {
+          "coined": {
+            "beyond_premise": {
+              "nameable": 21,
+              "named_in_plan": 0,
+              "share": 0.0
+            },
+            "by_kind_beyond_premise": {
+              "claim": 0.0,
+              "consequence": null,
+              "criterion": null,
+              "entity": 0.0,
+              "manifestation": 0.0,
+              "rank": 0.0,
+              "rule": null
+            },
+            "raw": {
+              "nameable": 30,
+              "named_in_plan": 0,
+              "share": 0.0
+            }
+          },
+          "wide": {
+            "beyond_premise": {
+              "nameable": 99,
+              "named_in_plan": 0,
+              "share": 0.0
+            },
+            "by_kind_beyond_premise": {
+              "claim": 0.0,
+              "consequence": 0.0,
+              "criterion": 0.0,
+              "entity": 0.0,
+              "manifestation": 0.0,
+              "rank": 0.0,
+              "rule": 0.0
+            },
+            "raw": {
+              "nameable": 109,
+              "named_in_plan": 0,
+              "share": 0.0
+            }
+          }
+        }
+      },
+      "P2": {
+        "blind": {
+          "claims": [
+            {
+              "answered_in_this_book": true,
+              "claim_id": "m_hadds_misclosure",
+              "distinctive_tokens": 19,
+              "hits": [],
+              "max_overlap_share_before_window": 0.0,
+              "shipped_matcher_needs_hits": 10,
+              "window_scene": 8
+            },
+            {
+              "answered_in_this_book": false,
+              "claim_id": "m_petrins_half_mile",
+              "distinctive_tokens": 33,
+              "hits": [],
+              "max_overlap_share_before_window": 0.0,
+              "shipped_matcher_needs_hits": 17,
+              "window_scene": null
+            },
+            {
+              "answered_in_this_book": true,
+              "claim_id": "m_second_lane",
+              "distinctive_tokens": 28,
+              "hits": [],
+              "max_overlap_share_before_window": 0.0,
+              "shipped_matcher_needs_hits": 14,
+              "window_scene": 3
+            },
+            {
+              "answered_in_this_book": false,
+              "claim_id": "m_selas_payment",
+              "distinctive_tokens": 23,
+              "hits": [],
+              "max_overlap_share_before_window": 0.0,
+              "shipped_matcher_needs_hits": 12,
+              "window_scene": null
+            },
+            {
+              "answered_in_this_book": false,
+              "claim_id": "m_walshs_chain",
+              "distinctive_tokens": 26,
+              "hits": [],
+              "max_overlap_share_before_window": 0.0,
+              "shipped_matcher_needs_hits": 13,
+              "window_scene": null
+            },
+            {
+              "answered_in_this_book": false,
+              "claim_id": "m_what_the_interior_answers_to",
+              "distinctive_tokens": 35,
+              "hits": [],
+              "max_overlap_share_before_window": 0.0,
+              "shipped_matcher_needs_hits": 18,
+              "window_scene": null
+            }
+          ],
+          "leaks": 0,
+          "verdict": "no leak on any leg"
+        },
+        "world_aware": {
+          "claims": [
+            {
+              "answered_in_this_book": true,
+              "claim_id": "m_hadds_misclosure",
+              "distinctive_tokens": 19,
+              "hits": [],
+              "max_overlap_share_before_window": 0.0,
+              "shipped_matcher_needs_hits": 10,
+              "window_scene": 8
+            },
+            {
+              "answered_in_this_book": false,
+              "claim_id": "m_petrins_half_mile",
+              "distinctive_tokens": 33,
+              "hits": [],
+              "max_overlap_share_before_window": 0.0,
+              "shipped_matcher_needs_hits": 17,
+              "window_scene": null
+            },
+            {
+              "answered_in_this_book": true,
+              "claim_id": "m_second_lane",
+              "distinctive_tokens": 28,
+              "hits": [],
+              "max_overlap_share_before_window": 0.0,
+              "shipped_matcher_needs_hits": 14,
+              "window_scene": 3
+            },
+            {
+              "answered_in_this_book": false,
+              "claim_id": "m_selas_payment",
+              "distinctive_tokens": 23,
+              "hits": [],
+              "max_overlap_share_before_window": 0.0,
+              "shipped_matcher_needs_hits": 12,
+              "window_scene": null
+            },
+            {
+              "answered_in_this_book": false,
+              "claim_id": "m_walshs_chain",
+              "distinctive_tokens": 26,
+              "hits": [],
+              "max_overlap_share_before_window": 0.0,
+              "shipped_matcher_needs_hits": 13,
+              "window_scene": null
+            },
+            {
+              "answered_in_this_book": false,
+              "claim_id": "m_what_the_interior_answers_to",
+              "distinctive_tokens": 35,
+              "hits": [],
+              "max_overlap_share_before_window": 0.0,
+              "shipped_matcher_needs_hits": 18,
+              "window_scene": null
+            }
+          ],
+          "leaks": 0,
+          "verdict": "no leak on any leg"
+        }
+      },
+      "P2_control_floors": {
+        "m_hadds_misclosure": 0.0,
+        "m_petrins_half_mile": 0.0,
+        "m_second_lane": 0.0,
+        "m_selas_payment": 0.0,
+        "m_walshs_chain": 0.0,
+        "m_what_the_interior_answers_to": 0.0
+      },
+      "P3": {
+        "blind": {
+          "landed": 0,
+          "of": 2,
+          "windows": [
+            {
+              "claim_id": "m_hadds_misclosure",
+              "named_coined": [],
+              "named_wide": [],
+              "statement_present": false,
+              "window_scene": 8
+            },
+            {
+              "claim_id": "m_second_lane",
+              "named_coined": [],
+              "named_wide": [],
+              "statement_present": false,
+              "window_scene": 3
+            }
+          ]
+        },
+        "world_aware": {
+          "landed": 0,
+          "of": 2,
+          "windows": [
+            {
+              "claim_id": "m_hadds_misclosure",
+              "named_coined": [],
+              "named_wide": [],
+              "statement_present": false,
+              "window_scene": 8
+            },
+            {
+              "claim_id": "m_second_lane",
+              "named_coined": [],
+              "named_wide": [],
+              "statement_present": false,
+              "window_scene": 3
+            }
+          ]
+        }
+      },
+      "calls": {
+        "blind": {
+          "input_tokens": 571,
+          "model": "fake-deterministic-v1",
+          "ok": true,
+          "output_tokens": 42,
+          "prompt_chars": 2287,
+          "provider": "fake",
+          "seconds": 0.0
+        },
+        "world_aware": {
+          "input_tokens": 9606,
+          "model": "fake-deterministic-v1",
+          "ok": true,
+          "output_tokens": 42,
+          "prompt_chars": 38427,
+          "provider": "fake",
+          "seconds": 0.0
+        }
+      },
+      "records": 326,
+      "statements": {
+        "blind": {},
+        "world_aware": {}
+      },
+      "title": "The Traverse",
+      "world_index": 2
+    }
+  ],
+  "counter_digest": "cd79c3f56e21a1354e27",
+  "failures": 0,
+  "ordinary_floor": 5,
+  "pre_registration": {
+    "P1": {
+      "null": "no separation -> the planner ignores what it is handed, which is the 89.1 class of instructed variation arriving inert. Then the lever is not a prompt field, P4 is not run, and that is what gets reported.",
+      "question": "does a world-aware outline put more of the world into its statements",
+      "read": "world_uptake's counter over the eight statements of each arm, world-beyond-premise, coined leg, share of nameable features named"
+    },
+    "P2": {
+      "attainability": "leg (a) requires ceil(n/2) of an answer's 22-32 distinctive tokens inside one statement and can only fire on near-verbatim restatement; that is measured and reported per claim rather than assumed, and it is why (b) and (c) exist.",
+      "question": "does it leak",
+      "read": "three legs, all reported: (a) check_open_threads(statement, [answer]) as shipped; (b) the same on depunctuated text; (c) distinctive-token overlap share against a floor taken from the blind arm's own maximum on the same world.",
+      "stop": "any hit on any leg is a stop under boundary 3 and the run is written up"
+    },
+    "P3": {
+      "null": "0 of 2 with P1 positive -> the planner took the world and not the schedule",
+      "question": "is the reveal planned rather than hoped for",
+      "read": "do the two window scenes' statements name their claim"
+    },
+    "design": "Three forged worlds from one forge run, two arms each, one outline call per cell. Six live calls. The worlds are pilot2/direct2/forge.json's three candidates; the picked one is on main as plan/serial-pilot-2-world.json and the other two are NOT picked -- rendering a request and calling a provider admits nothing to canon, and a pick is a person's act.",
+    "no_bar": "None declared. No model ranks anything here, no judge chooses between arms, nothing is admitted to any registry and no directive is authored. The only pass/fail outcome is P2's leak check.",
+    "written": "2026-08-22, before the first provider call of either arm, against the counter frozen in world_uptake.py at registration digest cd79c3f56e21a1354e27"
+  },
+  "protocol": "plan/handoff-worldbuilding.md P1-P3",
+  "registration_digest": "5b58386d638787ef3f1a",
+  "transport": "fake"
+}

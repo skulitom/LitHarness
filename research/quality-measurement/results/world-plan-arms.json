@@ -1,0 +1,1144 @@
+{
+  "cells": [
+    {
+      "P1": {
+        "blind": {
+          "coined": {
+            "beyond_premise": {
+              "nameable": 28,
+              "named_in_plan": 0,
+              "share": 0.0
+            },
+            "by_kind_beyond_premise": {
+              "claim": 0.0,
+              "consequence": 0.0,
+              "criterion": null,
+              "entity": 0.0,
+              "manifestation": 0.0,
+              "rank": null,
+              "rule": 0.0
+            },
+            "raw": {
+              "nameable": 40,
+              "named_in_plan": 14,
+              "share": 0.35
+            }
+          },
+          "wide": {
+            "beyond_premise": {
+              "nameable": 93,
+              "named_in_plan": 17,
+              "share": 0.1828
+            },
+            "by_kind_beyond_premise": {
+              "claim": 0.0,
+              "consequence": 0.1667,
+              "criterion": 0.0,
+              "entity": 0.15,
+              "manifestation": 0.2121,
+              "rank": 0.5,
+              "rule": 0.1429
+            },
+            "raw": {
+              "nameable": 110,
+              "named_in_plan": 41,
+              "share": 0.3727
+            }
+          }
+        },
+        "world_aware": {
+          "coined": {
+            "beyond_premise": {
+              "nameable": 28,
+              "named_in_plan": 17,
+              "share": 0.6071
+            },
+            "by_kind_beyond_premise": {
+              "claim": 0.6667,
+              "consequence": 0.5,
+              "criterion": null,
+              "entity": 0.6667,
+              "manifestation": 0.625,
+              "rank": null,
+              "rule": 0.5
+            },
+            "raw": {
+              "nameable": 40,
+              "named_in_plan": 27,
+              "share": 0.675
+            }
+          },
+          "wide": {
+            "beyond_premise": {
+              "nameable": 93,
+              "named_in_plan": 44,
+              "share": 0.4731
+            },
+            "by_kind_beyond_premise": {
+              "claim": 0.5714,
+              "consequence": 0.3333,
+              "criterion": 0.0,
+              "entity": 0.55,
+              "manifestation": 0.5152,
+              "rank": 0.6667,
+              "rule": 0.2857
+            },
+            "raw": {
+              "nameable": 110,
+              "named_in_plan": 61,
+              "share": 0.5545
+            }
+          }
+        }
+      },
+      "P2": {
+        "blind": {
+          "claims": [
+            {
+              "answer_was_handed_to_the_planner": false,
+              "answered_in_this_book": false,
+              "claim_id": "m_first_water",
+              "distinctive_tokens": 30,
+              "hits": [],
+              "max_overlap_share_before_window": 0.0667,
+              "shipped_matcher_needs_hits": 15,
+              "window_scene": null
+            },
+            {
+              "answer_was_handed_to_the_planner": true,
+              "answered_in_this_book": true,
+              "claim_id": "m_holts_date",
+              "distinctive_tokens": 18,
+              "hits": [],
+              "max_overlap_share_before_window": 0.0556,
+              "shipped_matcher_needs_hits": 9,
+              "window_scene": 4
+            },
+            {
+              "answer_was_handed_to_the_planner": true,
+              "answered_in_this_book": true,
+              "claim_id": "m_orrin_last_call",
+              "distinctive_tokens": 26,
+              "hits": [],
+              "max_overlap_share_before_window": 0.0769,
+              "shipped_matcher_needs_hits": 13,
+              "window_scene": 7
+            },
+            {
+              "answer_was_handed_to_the_planner": false,
+              "answered_in_this_book": false,
+              "claim_id": "m_pells_lateral",
+              "distinctive_tokens": 26,
+              "hits": [],
+              "max_overlap_share_before_window": 0.1538,
+              "shipped_matcher_needs_hits": 13,
+              "window_scene": null
+            },
+            {
+              "answer_was_handed_to_the_planner": false,
+              "answered_in_this_book": false,
+              "claim_id": "m_the_wrong_table",
+              "distinctive_tokens": 25,
+              "hits": [],
+              "max_overlap_share_before_window": 0.08,
+              "shipped_matcher_needs_hits": 13,
+              "window_scene": null
+            },
+            {
+              "answer_was_handed_to_the_planner": false,
+              "answered_in_this_book": false,
+              "claim_id": "m_where_the_dryness_goes",
+              "distinctive_tokens": 26,
+              "hits": [],
+              "max_overlap_share_before_window": 0.0769,
+              "shipped_matcher_needs_hits": 13,
+              "window_scene": null
+            }
+          ],
+          "hits_by_leg": {
+            "above_control_floor": 0,
+            "depunctuated_matcher": 0,
+            "shipped_matcher": 0
+          },
+          "hits_on_answers_never_shown_to_the_planner": 0,
+          "leaks": 0,
+          "share_of_hits_on_answers_never_shown": null,
+          "verdict": "no leak on any leg"
+        },
+        "world_aware": {
+          "claims": [
+            {
+              "answer_was_handed_to_the_planner": false,
+              "answered_in_this_book": false,
+              "claim_id": "m_first_water",
+              "distinctive_tokens": 30,
+              "hits": [],
+              "max_overlap_share_before_window": 0.0667,
+              "shipped_matcher_needs_hits": 15,
+              "window_scene": null
+            },
+            {
+              "answer_was_handed_to_the_planner": true,
+              "answered_in_this_book": true,
+              "claim_id": "m_holts_date",
+              "distinctive_tokens": 18,
+              "hits": [
+                {
+                  "above_control_floor": true,
+                  "control_floor": 0.0556,
+                  "depunctuated_matcher": false,
+                  "overlap_share": 0.2222,
+                  "scene": 2,
+                  "shipped_matcher": false
+                }
+              ],
+              "max_overlap_share_before_window": 0.2222,
+              "shipped_matcher_needs_hits": 9,
+              "window_scene": 4
+            },
+            {
+              "answer_was_handed_to_the_planner": true,
+              "answered_in_this_book": true,
+              "claim_id": "m_orrin_last_call",
+              "distinctive_tokens": 26,
+              "hits": [
+                {
+                  "above_control_floor": true,
+                  "control_floor": 0.0769,
+                  "depunctuated_matcher": false,
+                  "overlap_share": 0.1154,
+                  "scene": 5,
+                  "shipped_matcher": false
+                },
+                {
+                  "above_control_floor": true,
+                  "control_floor": 0.0769,
+                  "depunctuated_matcher": false,
+                  "overlap_share": 0.0769,
+                  "scene": 6,
+                  "shipped_matcher": false
+                }
+              ],
+              "max_overlap_share_before_window": 0.1154,
+              "shipped_matcher_needs_hits": 13,
+              "window_scene": 7
+            },
+            {
+              "answer_was_handed_to_the_planner": false,
+              "answered_in_this_book": false,
+              "claim_id": "m_pells_lateral",
+              "distinctive_tokens": 26,
+              "hits": [],
+              "max_overlap_share_before_window": 0.1154,
+              "shipped_matcher_needs_hits": 13,
+              "window_scene": null
+            },
+            {
+              "answer_was_handed_to_the_planner": false,
+              "answered_in_this_book": false,
+              "claim_id": "m_the_wrong_table",
+              "distinctive_tokens": 25,
+              "hits": [],
+              "max_overlap_share_before_window": 0.04,
+              "shipped_matcher_needs_hits": 13,
+              "window_scene": null
+            },
+            {
+              "answer_was_handed_to_the_planner": false,
+              "answered_in_this_book": false,
+              "claim_id": "m_where_the_dryness_goes",
+              "distinctive_tokens": 26,
+              "hits": [
+                {
+                  "above_control_floor": true,
+                  "control_floor": 0.0769,
+                  "depunctuated_matcher": false,
+                  "overlap_share": 0.0769,
+                  "scene": 7,
+                  "shipped_matcher": false
+                },
+                {
+                  "above_control_floor": true,
+                  "control_floor": 0.0769,
+                  "depunctuated_matcher": false,
+                  "overlap_share": 0.1154,
+                  "scene": 8,
+                  "shipped_matcher": false
+                }
+              ],
+              "max_overlap_share_before_window": 0.1154,
+              "shipped_matcher_needs_hits": 13,
+              "window_scene": null
+            }
+          ],
+          "hits_by_leg": {
+            "above_control_floor": 5,
+            "depunctuated_matcher": 0,
+            "shipped_matcher": 0
+          },
+          "hits_on_answers_never_shown_to_the_planner": 2,
+          "leaks": 5,
+          "share_of_hits_on_answers_never_shown": 0.4,
+          "verdict": "STOP"
+        }
+      },
+      "P2_control_floors": {
+        "m_first_water": 0.0667,
+        "m_holts_date": 0.0556,
+        "m_orrin_last_call": 0.0769,
+        "m_pells_lateral": 0.1538,
+        "m_the_wrong_table": 0.08,
+        "m_where_the_dryness_goes": 0.0769
+      },
+      "P3": {
+        "blind": {
+          "landed": 1,
+          "mean_answer_overlap_at_window": 0.0556,
+          "of": 2,
+          "windows": [
+            {
+              "answer_overlap": 0.1111,
+              "claim_id": "m_holts_date",
+              "named_coined": [],
+              "named_wide": [],
+              "statement": "A senior ditch runs dry mid-call; Wren rides up, finds no diversion, and measures the drillers' new deep wells taking the river's own water from underneath.",
+              "statement_present": true,
+              "window_scene": 4
+            },
+            {
+              "answer_overlap": 0.0,
+              "claim_id": "m_orrin_last_call",
+              "named_coined": [],
+              "named_wide": [
+                "call",
+                "last"
+              ],
+              "statement": "At the season's last call Wren refuses the restored date, opens her dried-out neighbour's headgate, and reads the corrected figures aloud to the assembled valley.",
+              "statement_present": true,
+              "window_scene": 7
+            }
+          ]
+        },
+        "world_aware": {
+          "landed": 1,
+          "mean_answer_overlap_at_window": 0.1432,
+          "of": 2,
+          "windows": [
+            {
+              "answer_overlap": 0.0556,
+              "claim_id": "m_holts_date",
+              "named_coined": [],
+              "named_wide": [
+                "date"
+              ],
+              "statement": "Two days' ride away, Wren opens a box in a back-room register and reads her father's signature selling the Holt date to Kane, for a bore that hit salt.",
+              "statement_present": true,
+              "window_scene": 4
+            },
+            {
+              "answer_overlap": 0.2308,
+              "claim_id": "m_orrin_last_call",
+              "named_coined": [],
+              "named_wide": [],
+              "statement": "In August the nephew tells Wren the words to say; instead she writes down who has been speaking Veck's date and hands it to Serrell, voiding his calls.",
+              "statement_present": true,
+              "window_scene": 7
+            }
+          ]
+        }
+      },
+      "calls": {
+        "blind": {
+          "input_tokens": 2,
+          "model": "claude-opus-5",
+          "ok": true,
+          "output_tokens": 4355,
+          "prompt_chars": 2348,
+          "provider": "claude_code",
+          "seconds": 72.63,
+          "statements_parsed": 8
+        },
+        "world_aware": {
+          "input_tokens": 2,
+          "model": "claude-opus-5",
+          "ok": true,
+          "output_tokens": 7205,
+          "prompt_chars": 37907,
+          "provider": "claude_code",
+          "seconds": 104.24,
+          "statements_parsed": 8
+        }
+      },
+      "records": 329,
+      "statements": {
+        "blind": {
+          "1": "Riding a call day for the watermaster, Wren opens one senior headgate and closes three junior ones, including her own dateless family's, while pumps run on Ninefold Flat.",
+          "2": "Sent to town to verify a driller's claim against the book, Wren finds her family's date struck out in a later hand, unsigned, undated, and unexplained.",
+          "3": "Wren presses the watermaster and the old ditch riders, gets refusals, and traces the strike-out's ink to the last drought's emergency ledger, kept by the clerk Ely.",
+          "4": "A senior ditch runs dry mid-call; Wren rides up, finds no diversion, and measures the drillers' new deep wells taking the river's own water from underneath.",
+          "5": "Ely admits which third of his table is wrong: the debt came due years ago, buried in the drought recalculation that also erased the Holt date to balance it.",
+          "6": "Wren copies Ely's correction sheets; the drillers petition to amend the book first, and the watermaster suspends her, offering the Holt date back for her silence.",
+          "7": "At the season's last call Wren refuses the restored date, opens her dried-out neighbour's headgate, and reads the corrected figures aloud to the assembled valley.",
+          "8": "The correction enters the book, the drillers' wells take the junior date they earned, and Wren rides ditch still dateless, closing her family's gate by her own choice."
+        },
+        "world_aware": {
+          "1": "Riding ditch in the shortage, Wren closes her own neighbours' gates for a senior call, watches water walk backwards out of their field, and hands Serrell the tally.",
+          "2": "Kane buys Wren a drink on the Headgate Row and offers cash for her notebook of fifth years, mentioning that her grandfather dug the Ninefold lateral.",
+          "3": "At Tebb's furrow Wren finds no moth eggs and a pressed moth-board, signs the forfeiture, and watches his cord knot cut while Kane's buyers move up.",
+          "4": "Two days' ride away, Wren opens a box in a back-room register and reads her father's signature selling the Holt date to Kane, for a bore that hit salt.",
+          "5": "Veck's nephew asks Wren to be the rider who speaks the old woman's date this August, her own name entered in the book beside it; she agrees.",
+          "6": "Kane offers to sell the Holt paper back for her August silence; checking the register, Wren finds Veck's last three calls entered with no rider's name at all.",
+          "7": "In August the nephew tells Wren the words to say; instead she writes down who has been speaking Veck's date and hands it to Serrell, voiding his calls.",
+          "8": "Serrell strikes Veck's date, reads the board eleven names longer, writes Wren a junior date on dropped ground; Wren calls it, and goes dry through the funeral."
+        }
+      },
+      "title": "First In Time",
+      "world_index": 0
+    },
+    {
+      "P1": {
+        "blind": {
+          "coined": {
+            "beyond_premise": {
+              "nameable": 30,
+              "named_in_plan": 0,
+              "share": 0.0
+            },
+            "by_kind_beyond_premise": {
+              "claim": 0.0,
+              "consequence": 0.0,
+              "criterion": null,
+              "entity": 0.0,
+              "manifestation": 0.0,
+              "rank": null,
+              "rule": 0.0
+            },
+            "raw": {
+              "nameable": 39,
+              "named_in_plan": 3,
+              "share": 0.0769
+            }
+          },
+          "wide": {
+            "beyond_premise": {
+              "nameable": 101,
+              "named_in_plan": 12,
+              "share": 0.1188
+            },
+            "by_kind_beyond_premise": {
+              "claim": 0.0,
+              "consequence": 0.1667,
+              "criterion": 0.5,
+              "entity": 0.0455,
+              "manifestation": 0.1081,
+              "rank": 0.2222,
+              "rule": 0.1667
+            },
+            "raw": {
+              "nameable": 120,
+              "named_in_plan": 29,
+              "share": 0.2417
+            }
+          }
+        },
+        "world_aware": {
+          "coined": {
+            "beyond_premise": {
+              "nameable": 30,
+              "named_in_plan": 3,
+              "share": 0.1
+            },
+            "by_kind_beyond_premise": {
+              "claim": 0.2,
+              "consequence": 0.0,
+              "criterion": null,
+              "entity": 0.1,
+              "manifestation": 0.0909,
+              "rank": null,
+              "rule": 0.0
+            },
+            "raw": {
+              "nameable": 39,
+              "named_in_plan": 11,
+              "share": 0.2821
+            }
+          },
+          "wide": {
+            "beyond_premise": {
+              "nameable": 101,
+              "named_in_plan": 33,
+              "share": 0.3267
+            },
+            "by_kind_beyond_premise": {
+              "claim": 0.4286,
+              "consequence": 0.3333,
+              "criterion": 0.0,
+              "entity": 0.3182,
+              "manifestation": 0.3243,
+              "rank": 0.3333,
+              "rule": 0.3333
+            },
+            "raw": {
+              "nameable": 120,
+              "named_in_plan": 53,
+              "share": 0.4417
+            }
+          }
+        }
+      },
+      "P2": {
+        "blind": {
+          "claims": [
+            {
+              "answer_was_handed_to_the_planner": false,
+              "answered_in_this_book": false,
+              "claim_id": "m_brans_card",
+              "distinctive_tokens": 18,
+              "hits": [],
+              "max_overlap_share_before_window": 0.0556,
+              "shipped_matcher_needs_hits": 9,
+              "window_scene": null
+            },
+            {
+              "answer_was_handed_to_the_planner": false,
+              "answered_in_this_book": false,
+              "claim_id": "m_falling_faster",
+              "distinctive_tokens": 32,
+              "hits": [],
+              "max_overlap_share_before_window": 0.0938,
+              "shipped_matcher_needs_hits": 16,
+              "window_scene": null
+            },
+            {
+              "answer_was_handed_to_the_planner": false,
+              "answered_in_this_book": false,
+              "claim_id": "m_pells_late_reclaim",
+              "distinctive_tokens": 20,
+              "hits": [],
+              "max_overlap_share_before_window": 0.1,
+              "shipped_matcher_needs_hits": 10,
+              "window_scene": null
+            },
+            {
+              "answer_was_handed_to_the_planner": false,
+              "answered_in_this_book": false,
+              "claim_id": "m_the_first_taker",
+              "distinctive_tokens": 26,
+              "hits": [],
+              "max_overlap_share_before_window": 0.0385,
+              "shipped_matcher_needs_hits": 13,
+              "window_scene": null
+            },
+            {
+              "answer_was_handed_to_the_planner": false,
+              "answered_in_this_book": false,
+              "claim_id": "m_the_register",
+              "distinctive_tokens": 36,
+              "hits": [],
+              "max_overlap_share_before_window": 0.1111,
+              "shipped_matcher_needs_hits": 18,
+              "window_scene": null
+            },
+            {
+              "answer_was_handed_to_the_planner": true,
+              "answered_in_this_book": true,
+              "claim_id": "m_who_gave_lys",
+              "distinctive_tokens": 24,
+              "hits": [],
+              "max_overlap_share_before_window": 0.0,
+              "shipped_matcher_needs_hits": 12,
+              "window_scene": 5
+            }
+          ],
+          "hits_by_leg": {
+            "above_control_floor": 0,
+            "depunctuated_matcher": 0,
+            "shipped_matcher": 0
+          },
+          "hits_on_answers_never_shown_to_the_planner": 0,
+          "leaks": 0,
+          "share_of_hits_on_answers_never_shown": null,
+          "verdict": "no leak on any leg"
+        },
+        "world_aware": {
+          "claims": [
+            {
+              "answer_was_handed_to_the_planner": false,
+              "answered_in_this_book": false,
+              "claim_id": "m_brans_card",
+              "distinctive_tokens": 18,
+              "hits": [],
+              "max_overlap_share_before_window": 0.0556,
+              "shipped_matcher_needs_hits": 9,
+              "window_scene": null
+            },
+            {
+              "answer_was_handed_to_the_planner": false,
+              "answered_in_this_book": false,
+              "claim_id": "m_falling_faster",
+              "distinctive_tokens": 32,
+              "hits": [],
+              "max_overlap_share_before_window": 0.0312,
+              "shipped_matcher_needs_hits": 16,
+              "window_scene": null
+            },
+            {
+              "answer_was_handed_to_the_planner": false,
+              "answered_in_this_book": false,
+              "claim_id": "m_pells_late_reclaim",
+              "distinctive_tokens": 20,
+              "hits": [],
+              "max_overlap_share_before_window": 0.1,
+              "shipped_matcher_needs_hits": 10,
+              "window_scene": null
+            },
+            {
+              "answer_was_handed_to_the_planner": false,
+              "answered_in_this_book": false,
+              "claim_id": "m_the_first_taker",
+              "distinctive_tokens": 26,
+              "hits": [],
+              "max_overlap_share_before_window": 0.0385,
+              "shipped_matcher_needs_hits": 13,
+              "window_scene": null
+            },
+            {
+              "answer_was_handed_to_the_planner": false,
+              "answered_in_this_book": false,
+              "claim_id": "m_the_register",
+              "distinctive_tokens": 36,
+              "hits": [],
+              "max_overlap_share_before_window": 0.0556,
+              "shipped_matcher_needs_hits": 18,
+              "window_scene": null
+            },
+            {
+              "answer_was_handed_to_the_planner": true,
+              "answered_in_this_book": true,
+              "claim_id": "m_who_gave_lys",
+              "distinctive_tokens": 24,
+              "hits": [
+                {
+                  "above_control_floor": true,
+                  "control_floor": 0.0,
+                  "depunctuated_matcher": false,
+                  "overlap_share": 0.0833,
+                  "scene": 4,
+                  "shipped_matcher": false
+                }
+              ],
+              "max_overlap_share_before_window": 0.0833,
+              "shipped_matcher_needs_hits": 12,
+              "window_scene": 5
+            }
+          ],
+          "hits_by_leg": {
+            "above_control_floor": 1,
+            "depunctuated_matcher": 0,
+            "shipped_matcher": 0
+          },
+          "hits_on_answers_never_shown_to_the_planner": 0,
+          "leaks": 1,
+          "share_of_hits_on_answers_never_shown": 0.0,
+          "verdict": "STOP"
+        }
+      },
+      "P2_control_floors": {
+        "m_brans_card": 0.0556,
+        "m_falling_faster": 0.0938,
+        "m_pells_late_reclaim": 0.1,
+        "m_the_first_taker": 0.0385,
+        "m_the_register": 0.1111,
+        "m_who_gave_lys": 0.0
+      },
+      "P3": {
+        "blind": {
+          "landed": 0,
+          "mean_answer_overlap_at_window": 0.0417,
+          "of": 1,
+          "windows": [
+            {
+              "answer_overlap": 0.0417,
+              "claim_id": "m_who_gave_lys",
+              "named_coined": [],
+              "named_wide": [],
+              "statement": "Past the door Sabel finds the wash: marked parts grafted into Lys, cut out clean, the marks carried off inside living people \u2014 and Lys admits knowing for years.",
+              "statement_present": true,
+              "window_scene": 5
+            }
+          ]
+        },
+        "world_aware": {
+          "landed": 0,
+          "mean_answer_overlap_at_window": 0.2917,
+          "of": 1,
+          "windows": [
+            {
+              "answer_overlap": 0.2917,
+              "claim_id": "m_who_gave_lys",
+              "named_coined": [],
+              "named_wide": [],
+              "statement": "Walking the leased hound down the dock row, Sabel watches it sit beside a woman who still keeps the Ondars' twenty-six-year-old receipt for her infant.",
+              "statement_present": true,
+              "window_scene": 5
+            }
+          ]
+        }
+      },
+      "calls": {
+        "blind": {
+          "input_tokens": 2,
+          "model": "claude-opus-5",
+          "ok": true,
+          "output_tokens": 5083,
+          "prompt_chars": 2354,
+          "provider": "claude_code",
+          "seconds": 80.13,
+          "statements_parsed": 8
+        },
+        "world_aware": {
+          "input_tokens": 2,
+          "model": "claude-opus-5",
+          "ok": true,
+          "output_tokens": 6276,
+          "prompt_chars": 38843,
+          "provider": "claude_code",
+          "seconds": 98.2,
+          "statements_parsed": 8
+        }
+      },
+      "records": 346,
+      "statements": {
+        "blind": {
+          "1": "Sabel brokers a dead surgeon's hands on Cold Row, checks every mark against her buyer, takes her fee, and privately notes the month's donor count short again.",
+          "2": "A cutter offers Sabel a climber's shoulders bearing marks she saw yesterday on a living man; she buys the part rather than refuse it, and starts hunting the seller.",
+          "3": "Sabel walks the sale backward through three intermediaries to a standing order from the house on the hill; by morning her Cold Row suppliers stop selling to her.",
+          "4": "Locked out of the trade, Sabel sells herself to the house as a tolerance-tested carrier, meets Lys through glass, and trades Cold Row's secrets for passage past the door.",
+          "5": "Past the door Sabel finds the wash: marked parts grafted into Lys, cut out clean, the marks carried off inside living people \u2014 and Lys admits knowing for years.",
+          "6": "Sabel copies the carriers' register to smuggle out; the house seals the hill, and Lys names a price for helping \u2014 Sabel's bare hand against their skin.",
+          "7": "Strapped down as the next carrier, Sabel takes the master's marked hands into her own body, ruining the house's clean product; Lys cuts her loose and walks out.",
+          "8": "Cold Row reads the smuggled names and the hill's trade collapses; Lys, unglassed, holds Sabel's borrowed hands on the eleventh day as they forget and begin learning her."
+        },
+        "world_aware": {
+          "1": "Sabel brokers a dead climber's shoulders onto a narrow taker before day twelve, takes her fee out of the funeral, and chalks the rare-type price lower again.",
+          "2": "Pell arrives with the writ for a named hand Sabel sold ahead of; the body has been warmed past the window, and the guild seals her book.",
+          "3": "Summoned through boiled cloth, Lys hires Sabel to buy one hour in a crowd, and sliding the card across Sabel reads the ink weight of an added mark.",
+          "4": "Sabel trades Marda her silence about that added mark for a leased hound and handler, and Marda hands the lease over with both hands, the way she hands over cards.",
+          "5": "Walking the leased hound down the dock row, Sabel watches it sit beside a woman who still keeps the Ondars' twenty-six-year-old receipt for her infant.",
+          "6": "Sabel names her retirement price to the Ondars; they pay it that evening and order a cold box for the dock woman, and Ivo tells Sabel who ordered it.",
+          "7": "At the count reading Lys walks unveiled off the steps into the crowd, touching strangers the whole way to the dock woman, while Pell stands between her and the box.",
+          "8": "Lys pays the fever in a sick-order room and lives; Sabel returns the Ondar fee unbroken, gives Ivo her book, and Marda writes the dock woman an honest card."
+        }
+      },
+      "title": "Borrowed Hands",
+      "world_index": 1
+    },
+    {
+      "P1": {
+        "blind": {
+          "coined": {
+            "beyond_premise": {
+              "nameable": 21,
+              "named_in_plan": 0,
+              "share": 0.0
+            },
+            "by_kind_beyond_premise": {
+              "claim": 0.0,
+              "consequence": null,
+              "criterion": null,
+              "entity": 0.0,
+              "manifestation": 0.0,
+              "rank": 0.0,
+              "rule": null
+            },
+            "raw": {
+              "nameable": 30,
+              "named_in_plan": 10,
+              "share": 0.3333
+            }
+          },
+          "wide": {
+            "beyond_premise": {
+              "nameable": 99,
+              "named_in_plan": 5,
+              "share": 0.0505
+            },
+            "by_kind_beyond_premise": {
+              "claim": 0.1667,
+              "consequence": 0.0,
+              "criterion": 0.0,
+              "entity": 0.0909,
+              "manifestation": 0.0556,
+              "rank": 0.0,
+              "rule": 0.0
+            },
+            "raw": {
+              "nameable": 109,
+              "named_in_plan": 33,
+              "share": 0.3028
+            }
+          }
+        },
+        "world_aware": {
+          "coined": {
+            "beyond_premise": {
+              "nameable": 21,
+              "named_in_plan": 14,
+              "share": 0.6667
+            },
+            "by_kind_beyond_premise": {
+              "claim": 0.8,
+              "consequence": null,
+              "criterion": null,
+              "entity": 0.6667,
+              "manifestation": 0.625,
+              "rank": 0.5,
+              "rule": null
+            },
+            "raw": {
+              "nameable": 30,
+              "named_in_plan": 19,
+              "share": 0.6333
+            }
+          },
+          "wide": {
+            "beyond_premise": {
+              "nameable": 99,
+              "named_in_plan": 32,
+              "share": 0.3232
+            },
+            "by_kind_beyond_premise": {
+              "claim": 0.6667,
+              "consequence": 0.1667,
+              "criterion": 0.0,
+              "entity": 0.4091,
+              "manifestation": 0.3333,
+              "rank": 0.3333,
+              "rule": 0.1667
+            },
+            "raw": {
+              "nameable": 109,
+              "named_in_plan": 43,
+              "share": 0.3945
+            }
+          }
+        }
+      },
+      "P2": {
+        "blind": {
+          "claims": [
+            {
+              "answer_was_handed_to_the_planner": true,
+              "answered_in_this_book": true,
+              "claim_id": "m_hadds_misclosure",
+              "distinctive_tokens": 19,
+              "hits": [],
+              "max_overlap_share_before_window": 0.1053,
+              "shipped_matcher_needs_hits": 10,
+              "window_scene": 8
+            },
+            {
+              "answer_was_handed_to_the_planner": false,
+              "answered_in_this_book": false,
+              "claim_id": "m_petrins_half_mile",
+              "distinctive_tokens": 33,
+              "hits": [],
+              "max_overlap_share_before_window": 0.0909,
+              "shipped_matcher_needs_hits": 17,
+              "window_scene": null
+            },
+            {
+              "answer_was_handed_to_the_planner": true,
+              "answered_in_this_book": true,
+              "claim_id": "m_second_lane",
+              "distinctive_tokens": 28,
+              "hits": [],
+              "max_overlap_share_before_window": 0.0,
+              "shipped_matcher_needs_hits": 14,
+              "window_scene": 3
+            },
+            {
+              "answer_was_handed_to_the_planner": false,
+              "answered_in_this_book": false,
+              "claim_id": "m_selas_payment",
+              "distinctive_tokens": 23,
+              "hits": [],
+              "max_overlap_share_before_window": 0.087,
+              "shipped_matcher_needs_hits": 12,
+              "window_scene": null
+            },
+            {
+              "answer_was_handed_to_the_planner": false,
+              "answered_in_this_book": false,
+              "claim_id": "m_walshs_chain",
+              "distinctive_tokens": 26,
+              "hits": [],
+              "max_overlap_share_before_window": 0.0385,
+              "shipped_matcher_needs_hits": 13,
+              "window_scene": null
+            },
+            {
+              "answer_was_handed_to_the_planner": false,
+              "answered_in_this_book": false,
+              "claim_id": "m_what_the_interior_answers_to",
+              "distinctive_tokens": 35,
+              "hits": [],
+              "max_overlap_share_before_window": 0.1143,
+              "shipped_matcher_needs_hits": 18,
+              "window_scene": null
+            }
+          ],
+          "hits_by_leg": {
+            "above_control_floor": 0,
+            "depunctuated_matcher": 0,
+            "shipped_matcher": 0
+          },
+          "hits_on_answers_never_shown_to_the_planner": 0,
+          "leaks": 0,
+          "share_of_hits_on_answers_never_shown": null,
+          "verdict": "no leak on any leg"
+        },
+        "world_aware": {
+          "claims": [
+            {
+              "answer_was_handed_to_the_planner": true,
+              "answered_in_this_book": true,
+              "claim_id": "m_hadds_misclosure",
+              "distinctive_tokens": 19,
+              "hits": [],
+              "max_overlap_share_before_window": 0.1053,
+              "shipped_matcher_needs_hits": 10,
+              "window_scene": 8
+            },
+            {
+              "answer_was_handed_to_the_planner": false,
+              "answered_in_this_book": false,
+              "claim_id": "m_petrins_half_mile",
+              "distinctive_tokens": 33,
+              "hits": [],
+              "max_overlap_share_before_window": 0.0606,
+              "shipped_matcher_needs_hits": 17,
+              "window_scene": null
+            },
+            {
+              "answer_was_handed_to_the_planner": true,
+              "answered_in_this_book": true,
+              "claim_id": "m_second_lane",
+              "distinctive_tokens": 28,
+              "hits": [],
+              "max_overlap_share_before_window": 0.0,
+              "shipped_matcher_needs_hits": 14,
+              "window_scene": 3
+            },
+            {
+              "answer_was_handed_to_the_planner": false,
+              "answered_in_this_book": false,
+              "claim_id": "m_selas_payment",
+              "distinctive_tokens": 23,
+              "hits": [],
+              "max_overlap_share_before_window": 0.0435,
+              "shipped_matcher_needs_hits": 12,
+              "window_scene": null
+            },
+            {
+              "answer_was_handed_to_the_planner": false,
+              "answered_in_this_book": false,
+              "claim_id": "m_walshs_chain",
+              "distinctive_tokens": 26,
+              "hits": [
+                {
+                  "above_control_floor": true,
+                  "control_floor": 0.0385,
+                  "depunctuated_matcher": false,
+                  "overlap_share": 0.0769,
+                  "scene": 3,
+                  "shipped_matcher": false
+                },
+                {
+                  "above_control_floor": true,
+                  "control_floor": 0.0385,
+                  "depunctuated_matcher": false,
+                  "overlap_share": 0.2308,
+                  "scene": 6,
+                  "shipped_matcher": false
+                },
+                {
+                  "above_control_floor": true,
+                  "control_floor": 0.0385,
+                  "depunctuated_matcher": false,
+                  "overlap_share": 0.0769,
+                  "scene": 8,
+                  "shipped_matcher": false
+                }
+              ],
+              "max_overlap_share_before_window": 0.2308,
+              "shipped_matcher_needs_hits": 13,
+              "window_scene": null
+            },
+            {
+              "answer_was_handed_to_the_planner": false,
+              "answered_in_this_book": false,
+              "claim_id": "m_what_the_interior_answers_to",
+              "distinctive_tokens": 35,
+              "hits": [],
+              "max_overlap_share_before_window": 0.0286,
+              "shipped_matcher_needs_hits": 18,
+              "window_scene": null
+            }
+          ],
+          "hits_by_leg": {
+            "above_control_floor": 3,
+            "depunctuated_matcher": 0,
+            "shipped_matcher": 0
+          },
+          "hits_on_answers_never_shown_to_the_planner": 3,
+          "leaks": 3,
+          "share_of_hits_on_answers_never_shown": 1.0,
+          "verdict": "STOP"
+        }
+      },
+      "P2_control_floors": {
+        "m_hadds_misclosure": 0.1053,
+        "m_petrins_half_mile": 0.0909,
+        "m_second_lane": 0.0,
+        "m_selas_payment": 0.087,
+        "m_walshs_chain": 0.0385,
+        "m_what_the_interior_answers_to": 0.1143
+      },
+      "P3": {
+        "blind": {
+          "landed": 2,
+          "mean_answer_overlap_at_window": 0.0,
+          "of": 2,
+          "windows": [
+            {
+              "answer_overlap": 0.0,
+              "claim_id": "m_hadds_misclosure",
+              "named_coined": [
+                "misclosure"
+              ],
+              "named_wide": [
+                "misclosure"
+              ],
+              "statement": "Sela spends the lost lane's name as her misclosure, speaking it into the fifth agreement; the ford holds the measured position and she cannot recall what she paid.",
+              "statement_present": true,
+              "window_scene": 8
+            },
+            {
+              "answer_overlap": 0.0,
+              "claim_id": "m_second_lane",
+              "named_coined": [],
+              "named_wide": [
+                "lane",
+                "second"
+              ],
+              "statement": "Passing through Ovel, Sela hunts the vanished second lane, finds her own old field-book naming it, and reads that name aloud to townspeople who recognise nothing.",
+              "statement_present": true,
+              "window_scene": 3
+            }
+          ]
+        },
+        "world_aware": {
+          "landed": 0,
+          "mean_answer_overlap_at_window": 0.1861,
+          "of": 2,
+          "windows": [
+            {
+              "answer_overlap": 0.1579,
+              "claim_id": "m_hadds_misclosure",
+              "named_coined": [],
+              "named_wide": [],
+              "statement": "Sela walks the nine stations behind Hadd with her own chain and closes against his fix; the gap reads nineteen seasons, and he strips the glove.",
+              "statement_present": true,
+              "window_scene": 8
+            },
+            {
+              "answer_overlap": 0.2143,
+              "claim_id": "m_second_lane",
+              "named_coined": [],
+              "named_wide": [],
+              "statement": "Hunting the ford's calls, Sela finds the page Petrin kept: four bowshot names answering no ground, under one cheap line running market wall to mill road.",
+              "statement_present": true,
+              "window_scene": 3
+            }
+          ]
+        }
+      },
+      "calls": {
+        "blind": {
+          "input_tokens": 2,
+          "model": "claude-opus-5",
+          "ok": true,
+          "output_tokens": 4389,
+          "prompt_chars": 2287,
+          "provider": "claude_code",
+          "seconds": 63.99,
+          "statements_parsed": 8
+        },
+        "world_aware": {
+          "input_tokens": 2,
+          "model": "claude-opus-5",
+          "ok": true,
+          "output_tokens": 5909,
+          "prompt_chars": 38427,
+          "provider": "claude_code",
+          "seconds": 88.82,
+          "statements_parsed": 8
+        }
+      },
+      "records": 326,
+      "statements": {
+        "blind": {
+          "1": "Sela closes a nine-day traverse for the guild, writes the angles, and pays the misclosure \u2014 one night taken out of her body \u2014 while her cord's circle shrinks.",
+          "2": "Word arrives from the ford: the Orr family and four neighbours have signed a new stone, voiding Sela's nine days, and the guild orders her crew back out.",
+          "3": "Passing through Ovel, Sela hunts the vanished second lane, finds her own old field-book naming it, and reads that name aloud to townspeople who recognise nothing.",
+          "4": "At the ford Sela sets stones and runs angles that refuse to close against the agreed stone, and the misclosure comes back far larger than the walking can explain.",
+          "5": "Sela works out that agreement itself drags ground, and that closers' paid misclosures have been settling other people's signed stones \u2014 including whichever one swallowed Ovel's second lane.",
+          "6": "Sela confronts the guild, sees in its payment ledger that it knew, is forbidden to publish, and begins quietly recruiting basin neighbours to speak the guild's position aloud.",
+          "7": "Sela's four recruited agreers gather at the ford, the Orrs bring a rival signing, and breaking the tie will cost one body a payment only Sela can still make.",
+          "8": "Sela spends the lost lane's name as her misclosure, speaking it into the fifth agreement; the ford holds the measured position and she cannot recall what she paid."
+        },
+        "world_aware": {
+          "1": "Hadd's crew closes Loop Nine back into the guild yard; he reads the gap off the book, and Sela quietly takes his share of the misclosure into the shed.",
+          "2": "At the ford the crew finds fresh notches cut round a rock; Ivane lays her hand flat, three neighbours repeat the name in order, and the clerk writes.",
+          "3": "Hunting the ford's calls, Sela finds the page Petrin kept: four bowshot names answering no ground, under one cheap line running market wall to mill road.",
+          "4": "Sela scrapes the ford stone's rim and counts one lichen ring; Nim, re-packing the base, talks only about the ground and never about who named it.",
+          "5": "Ivane makes her offer in front of the other three: say the Orr name fourth, and an Orr pointer will answer Sela's mother's calls for life.",
+          "6": "Sela brings the ring-count to the guild table; Hadd closes the book, sends the crew back onto the nine stations, and Walsh buys the hare-run eastern laterals cheap.",
+          "7": "Sela says the Orr name aloud fourth at the ford; the clerk writes, the surveyed mile moves to Nim's stone, and her mother's holding is answerable.",
+          "8": "Sela walks the nine stations behind Hadd with her own chain and closes against his fix; the gap reads nineteen seasons, and he strips the glove."
+        }
+      },
+      "title": "The Traverse",
+      "world_index": 2
+    }
+  ],
+  "counter_digest": "cd79c3f56e21a1354e27",
+  "failures": 0,
+  "ordinary_floor": 5,
+  "pre_registration": {
+    "P1": {
+      "null": "no separation -> the planner ignores what it is handed, which is the 89.1 class of instructed variation arriving inert. Then the lever is not a prompt field, P4 is not run, and that is what gets reported.",
+      "question": "does a world-aware outline put more of the world into its statements",
+      "read": "world_uptake's counter over the eight statements of each arm, world-beyond-premise, coined leg, share of nameable features named"
+    },
+    "P2": {
+      "attainability": "leg (a) requires ceil(n/2) of an answer's 22-32 distinctive tokens inside one statement and can only fire on near-verbatim restatement; that is measured and reported per claim rather than assumed, and it is why (b) and (c) exist.",
+      "question": "does it leak",
+      "read": "three legs, all reported: (a) check_open_threads(statement, [answer]) as shipped; (b) the same on depunctuated text; (c) distinctive-token overlap share against a floor taken from the blind arm's own maximum on the same world.",
+      "stop": "any hit on any leg is a stop under boundary 3 and the run is written up"
+    },
+    "P3": {
+      "null": "0 of 2 with P1 positive -> the planner took the world and not the schedule",
+      "question": "is the reveal planned rather than hoped for",
+      "read": "do the two window scenes' statements name their claim"
+    },
+    "design": "Three forged worlds from one forge run, two arms each, one outline call per cell. Six live calls. The worlds are pilot2/direct2/forge.json's three candidates; the picked one is on main as plan/serial-pilot-2-world.json and the other two are NOT picked -- rendering a request and calling a provider admits nothing to canon, and a pick is a person's act.",
+    "no_bar": "None declared. No model ranks anything here, no judge chooses between arms, nothing is admitted to any registry and no directive is authored. The only pass/fail outcome is P2's leak check.",
+    "written": "2026-08-22, before the first provider call of either arm, against the counter frozen in world_uptake.py at registration digest cd79c3f56e21a1354e27"
+  },
+  "protocol": "plan/handoff-worldbuilding.md P1-P3",
+  "reanalysed": true,
+  "registration_digest": "5b58386d638787ef3f1a",
+  "transport": "live"
+}
