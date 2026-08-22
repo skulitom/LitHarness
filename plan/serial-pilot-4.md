@@ -3,7 +3,7 @@
 **Status: PRE-REGISTERED, 2026-08-22. NOT RUN.** Companion to
 [`plan/serial-pilot-2.md`](serial-pilot-2.md) and [`plan/serial-pilot-3`'s record](reader-read-3.md);
 the design record is [`plan/world-architect.md`](world-architect.md) and the decision record is
-stage-0 §111. §4 was written **before any paid call**; §5 and §6 are empty until the run happens.
+stage-0 §112. §4 was written **before any paid call**; §5 and §6 are empty until the run happens.
 
 ## 0. What this pilot is for, and the one thing it may not be read as
 
@@ -64,7 +64,7 @@ book renders today's outline request and today's drafting prompt byte-for-byte.
 | Architect | `protagonist` as a second `entity_role`; `edge`, `wants`, `exception_to` (edge), `price` as records | `test_the_protagonist_reaches_canon_as_records_and_not_as_a_field` |
 | worlds | `CardinalityShape.except_subjects`, `in_scope` returns `False` for an excepted subject | `test_the_excepted_subject_is_the_one_the_maximum_does_not_bind` |
 | integrity | the declared exception reaches the wired detector | `test_the_declared_exception_reaches_the_live_detector_and_binds_nobody_else` |
-| outline | `cast` and `protagonist` inputs; two rules, added only when the inputs are present | `test_a_book_whose_canon_declares_nobody_renders_the_bytes_it_always_did` |
+| outline | a `protagonist` input beside §111's `world` brief; one rule, added only when it is present | `test_a_book_whose_canon_declares_nobody_renders_the_bytes_it_always_did` |
 | planner | `pov_character_id` threaded to the one production `packet_for`; `Point of view: {id}.` in the beat line | `test_the_prompt_is_byte_identical_when_canon_names_no_protagonist` |
 
 ## 3. Standing it up

@@ -10838,6 +10838,263 @@ session's. No claim about prose quality and no comparison of prose between runs.
 persona, BCR, axis or pool change, and no pre-registration beyond S5′. No human reader, label or
 solicited judgment entered anything here (§95). RS1 holds: nothing under `src/litharness/`
 references a corpus, a digest or a RoyalRoad text.
+
+---
+
+## 111. The world reached the writer and reached neither planner, and the plan named none of what the page names
+
+**Built 2026-08-22.** Code: `domain/world_brief.py` (new), an optional `world` on
+`application/outline.py::render_outline_request` and
+`application/narrative_planner.py::render_request` threaded from canon at both call sites,
+`NarrativePlanningStore` widened with `StateRepository`. Measurement:
+`research/quality-measurement/world_uptake.py` and `world_plan_arms.py` (new), the note at
+`research/quality-measurement/world-uptake.md`, results under `results/world-uptake-run{A,B,p4}.json`
+and `results/world-plan-arms{,-fake}.json`. Tests: `tests/test_world_brief.py` and
+`tests/test_world_uptake.py`.
+
+**Nothing above this entry was renumbered.** The check (`^#{2,3} [0-9]+` across `main` and every
+`.claude/worktrees/*/plan/stage-0-decisions.md`) was run when this work began — §108 was then the
+highest — and run again at commit time, by which point `main` had reached §110 and this moved to
+its number. §86.6 and §108 both record why the check is run twice.
+
+### 111.1 The blindness, measured before it was repaired
+
+§107 built a world and measured that it reaches the *writer*: a flat 229-231 established facts per
+drafting prompt out of 329 records, `context_omitted` 0 for the whole book, the hidden section
+dropping 20 → 19 → 18 at exactly the two scenes the world scheduled. Nothing measured what the
+**plan** was written against, and the plan is the sentence the writer is told to execute.
+
+Both authors of that sentence were world-blind, and it is now a passing test rather than a claim.
+`test_neither_scene_plan_author_is_told_the_world_the_writer_is_handed`, on `main` at `83de11c`:
+of 7 rules, 21 consequences, 28 claims and 42 manifestations, **zero values reach either planner
+payload**, and the coined nouns that do are the premise's own. `render_outline_request` was handed
+the premise, the beat sheet, the starting sheet and the open promises; `render_request` was handed
+the plan and a directive body. The outline handler read `store.state_records` and kept only the
+`status_snapshot`; the narrative-plan handler read no state at all, and `NarrativePlanningStore`
+did not compose `StateRepository`, so it structurally could not have.
+
+**It knew the schedule and not the answers.** `promises_for` seeds one promise per reveal with the
+mystery's *question* as the description and its ordinal as the due date, and open promises reach
+the outline call as owed. So the defect was never ignorance of the mysteries; it was ignorance of
+the world.
+
+### 111.2 The counter, its two legs, and the control that kills one of them
+
+`world_uptake.py` counts, per declared feature — 135 for the pilot world — whether a member of its
+name set appears in a text as a whole word. Two legs, **both registered before the first count**
+rather than one and then a repair: `wide` is `key_nouns`' rule per subject, and `coined` is `wide`
+minus every token the RoyalRoad shelf owns at ≥ 5 of **608 distinct LitRPG fictions**. The
+reference corpus is deliberately not the sham corpus; a narrowing defined by the control it has to
+survive is a control that cannot fire.
+
+**The sham kills the wide leg outright.** Twenty-one books that never saw this world name a median
+**29.5%** of it — because *First In Time* coined `call`, `date`, `year`, `time`, `first`, `gate`,
+`table`, `river`, `flat` and a column headed `NEVER`. On the coined leg **19 of 21 control books
+name nothing at all**, median 0.0000, max 0.1020, and the two collisions are the given names
+*Teodor* and *Orrin*, which the same model family reused in unrelated books. Floor sensitivity at
+1 / 5 / 25 / 100 fictions: 0.3214 / 0.1837 / 0.2075 / 0.2778 pooled — the declared floor is not the
+flattering one.
+
+### 111.3 A correction inside the frozen block, and the digest that moved once
+
+The pre-registration declared the sham quantity twice in two units: `SHAM_CEILING`'s prose named a
+per-book share, `declared_quantities` named the pooled union across twenty-one books, and the first
+implementation compared the union to the ceiling. **The union is not scale-free** — it rises with
+the number of control books and reaches 1.0 for any non-zero per-book rate given enough of them, so
+a ceiling on it is a ceiling on the size of the corpus. That is the range-and-unit failure this
+project has recorded seven times, arriving in a registration written *by* the rule.
+
+Fixed by reporting median, maximum and pooled with a verdict each; `SHAM_CEILING` unchanged at
+0.05; the correction stored as `PRE_REGISTRATION["corrections"]` inside the block it addresses; the
+digest moved `69ffc6a2b0917f1bec68` → `cd79c3f56e21a1354e27`; **no figure computed under the old
+digest is withdrawn**.
+
+### 111.4 The census: eight names, four cast members, and no rule at all
+
+Run B, coined leg, world-beyond-premise — the reading that means "the 329 records reached the
+page", because the planner and the writer both read the premise:
+
+| | run B | run A |
+|---|--:|--:|
+| nameable features | 28 | 28 |
+| ever named in the prose | 12 (0.4286) | 9 (0.3214) |
+| **ever named in any of the eight plan statements** | **0** | **0** |
+| writer-improvised, of the prose-named | **12 of 12** | 9 of 9 |
+
+Run B's eight statements are 861 words and carry exactly two of the world's coined nouns — `wren`
+and `headgate` — and the premise carried both. Every world name that reached the page was placed
+by a writer executing a sentence written against none of it.
+
+**The census's real resolution is eight tokens, not twenty-eight features**, and that is the
+finding about the instrument. What a 329-record world put on the page beyond its premise, in
+vocabulary the genre does not own, is **four of its six cast members**: Serrell (s1), Teodor (s2),
+Marius Tebb (s3), Ferris Kane (s6). Orrin Veck never. `i_watermasters_office` never — its only
+coined token is the plural `watermasters` and the prose says *the watermaster's*, which the
+registered no-stemming rule cannot match. The two rules with coined names, `r_forfeiture` and
+`r_subsidence`, and all six of their consequences: never, across 7,812 words. The other five rules
+have no coined token at all and the counter cannot see them.
+
+Of the 229 fact lines the writer read at scene one, 132 carry no name the counter can follow, and
+**28.9% of the 97 that do are never echoed**. Hidden claims are reported in their own row and never
+pooled: five of the nine with a coined name reach the page, and every one of those five is a
+`*_secret` whose only token is a cast surname — a character appearing in a scene, not a secret
+being told.
+
+### 111.5 The brief, and the leak rail on the input side
+
+`domain/world_brief.py` hands both planner calls what the packet already knows how to say —
+`worlds.project` first and `state.describe` as the fallback, the same two calls
+`context._state_item` makes in the same order, under the same filters minus the story-time cutoff
+and with no POV. For the pilot world that is **229 facts, the same 229 the writer's prompt
+carries**, grouped rules-first, plus both criterion ladders and all six mysteries.
+
+**The rail is on the input, where it can be proved rather than hoped for.**
+`hidden_record_ids(records, at=None)` is the maximal hidden set — with no coordinate every
+scheduled claim reads as *not yet told* — and every one of those records is dropped from the facts.
+An answer re-enters in exactly one place, the entry for the scene the world scheduled it at, and an
+answer this book has no scene for never re-enters. Of the **20 claims hidden at scene one**, the
+only two whose content appears anywhere in the payload are the two the frozen prompts show the
+hidden count dropping at. Twenty of the 28 claims are hidden and only six are declared mysteries: a
+brief built from `questions()` alone would have leaked fourteen cast and place secrets.
+
+Absence stays free and it is bytes: the field is *spread* into the payload rather than assigned,
+because `json.dumps` writes `null` for a value that is not there and both existing optional keys
+are always-present nulls — copying the module's own style would have changed every payload in the
+repository.
+
+Four rules reach the planner and none asks for a name; a test enforces that on the prompt, because
+a prompt that asked for names would make 111.2's counter its own target in the one place nobody
+would look afterwards.
+
+**One provenance gap, named and not closed.** Neither `_policy_digest` hashes the prompt, so a
+world-aware outline decision and a blind one record the same `policy_config_digest` — and the
+outline digest's docstring says it exists so a change to it reads as a change. Bumping it changes
+the digest of every existing decision in every store, which is a repository-wide decision and not
+this entry's to take.
+
+### 111.6 P1-P4, and the stop that was raised by the leg this harness added
+
+Six live outline calls, three forged worlds, two arms. `transport=live`, `failures=0`, 8 of 8
+statements parsed in every cell; the fake-provider rehearsal parses zero and records
+`statements_parsed` so a vacuous zero can never be read as a null.
+
+**P1 — yes, and the blind side is a floor.** World-beyond-premise, coined leg, share of nameable
+features named in the eight statements: *First In Time* 0/28 → **17/28**, *Borrowed Hands* 0/30 →
+**3/30**, *The Traverse* 0/21 → **14/21**. Three of three worlds, and the blind arm is exactly zero
+in all three — the same zero the stored run-B plan gives, reproduced live on two worlds no book has
+been written on. Not the §89.1 class of instructed variation arriving inert.
+
+**P2 — the registered instrument fired zero times.** `check_open_threads`, which the direction
+names, across 3 worlds × 8 statements × 6 claims: **0**. Its depunctuated twin: **0**. Its silence
+has to be read against its own arithmetic, which is reported per claim: the majority rule needs 9
+to 16 of an answer's 18-32 distinctive tokens inside one ~25-word statement and can only fire on
+near-verbatim restatement. That is the "0 paid is structural" shape, which is why a third leg
+exists — a control-calibrated overlap check whose floor is the **blind** arm's own maximum on the
+same world.
+
+The third leg fired nine times and its verdict is `STOP` as registered. **Five of the nine land on
+answers the planner was never shown**, because `brief_for` hands an answer over only at its window
+and an arc claim's answer is never handed over at all — so the check is reading the world's
+vocabulary rather than its secrets, which is a confound P1's own positive result guarantees. The
+nine flagged statements share two or three ordinary words apiece with their answers and not one
+states an answer; all nine are quoted in the result file, and the closest call is named as the
+closest rather than lumped in. The rail's own named check passes; the leg that fires is this
+harness's addition and its failure mode is measured rather than argued.
+
+**P3 — the registered instrument is the wrong one and says so.** By the claim's name set: 1 of 5
+windows wide, 0 of 5 coined, and the *blind* arm scores 3 of 5 on ordinary-word collisions. A claim
+id is `m_holts_date`; the statement that lands its reveal says *her father's signature selling the
+Holt date to Kane*, whose tokens are a plural the no-stemming rule cannot match and a word the
+premise carries. Reported beside it, on the answer's own words: mean overlap at the window scene
+0.0556 → 0.1432, 0.0417 → 0.2917, 0.0000 → 0.1861. Three of three worlds, four of five windows,
+and the one exception is a paraphrase the overlap statistic under-reads.
+
+**P4 — more world in the plan put more world on the page, and the improvisation share went from
+everything to nothing.** One eight-scene draft of *First In Time* on a fresh store, same forge
+bundle, same `--target-words 900 --context-budget 16000 --chapter-scenes 4`; gate exit 0; 7,496
+words against run B's 7,812, 46 jobs against 46, 12 invocations against 12, **$6.01 against
+$5.89**, 0 parked, 0 poisoned, 0 unattributed, `context_omitted` 0. Two recorded deviations:
+`--library book-library-p4`, because `library.slugify` names a shelf from the title alone; and the
+daily cost ceiling raised 10 → 25, a guard against a mid-run PARK that changes nothing the model
+sees.
+
+Coined leg, world-beyond-premise, 28 nameable features: **ever named in the prose 12 → 17**,
+**ever named in a plan statement 0 → 20**, **plan-first of the prose-named 0 of 12 → 17 of 17**,
+**writer-improvised 12 of 12 → 0 of 17**. The gain is entirely in the two kinds run B never named
+at all, which are the two the world rule asks a statement to put to work: **rules 0 of 2 → 1 of 2**
+and **consequences 0 of 6 → 3 of 6**; entities and claims are unchanged. Feature by feature the
+whole difference is three names: `forfeiture` — one rule, three consequences, one manifestation —
+goes from never across 7,812 words to scene 4, planned at scene 4; `orrin`/`veck` from never to
+scene 6, planned at scene 6; and `teodor` the other way, planned at scene 2 and **not on the page**,
+which is what keeps "the plan named it" and "the page names it" from being one sentence. The
+registered null — plans name more and prose does not move, which would have pointed at §5.1's
+per-scene selection — **did not occur**.
+
+**The leak rail on the plan the book was actually drafted against**, and this is the finding rather
+than the number. `check_open_threads` and its depunctuated twin: **0 hits**. The control leg: 32
+hits, **24 of them (75%) on answers the planner was never shown**, at 2.5× the statement length P1
+measured. Of the eight that are not that, two are worth reading: the scene-3 statement ends *"He has
+been friendly to her for three years. She does not ask why, and he does not tell her"* against an
+answer whose last clause is *"Kane has been friendly to her for three years because he is waiting to
+see whether she works out…"*; and the scene-6 statement has Wren *"write down what she has been
+asked"*, which is the mechanism of the scene-7 answer. **Neither statement contains its answer** — a
+reader of scene 3 does not learn the date was sold, a reader of scene 6 does not learn the nephew
+has been speaking it — but both stage the answer's supporting clauses one scene early, one of them
+nearly verbatim while explicitly withholding the reason.
+
+**That is a tension between two rails and neither was written knowing it.** The handoff's boundary 3
+says no statement before a window may contain that claim's answer. The world rule this build hands
+the planner says the window scene is where the answer lands, *planned as an event and not as an
+explanation*. An event needs its causes arranged before it, and the causes of a reveal are exactly
+what a recorded answer is made of, so a planner obeying the second will always put some of the
+answer's words on an earlier page and a word-overlap check will always call it a leak. Which rail
+gives is an operator decision; if it goes the other way the fix is in what the brief hands over —
+question and window only, no answer — and P4 should be discarded with it. Both statements are quoted
+in full in the note.
+
+**What P4 may not be read as.** Not quality, not reader effect, not "the iceberg is felt". One book
+against one book, no variance estimate, no second draw, and a plan whose statements are 2.5 times
+longer than run B's — a difference that is itself a plausible cause of some of the movement and is
+not separable here. And the two fact-level rows move in opposite directions: more of the packet's
+229 facts are named beyond the premise (0.443 → 0.516) and slightly more are never named at all
+(0.289 → 0.309).
+
+### 111.7 Corrections in place
+
+1. The handoff's Task 0 assertion — "the payload's coined-noun set is exactly the premise's" —
+   holds for the outline arm and needed a computed template control on the narrative-plan arm,
+   because `r_lag` manifests as a column headed `NEVER` and the request template's eighth rule
+   begins "Never update or delete a locked item". The test carries the correction.
+2. 111.3's registration correction, with both digests and no figure withdrawn.
+3. `pilot2/direct2/forge.json` has no top-level `world`, `worlds`, `candidate_reports` or `picked`;
+   its three worlds are `candidates[i]["world"]`, and `plan/serial-pilot-2-world.json`'s `picked` is
+   **one-based** while the Candidate index is zero-based.
+4. The committed `candidate_reports` are stale by design and the repo already says so: live
+   `records_for` at `scenes=8` gives 329/346/326 records against 327/345/324 reported, and
+   `reveals_scheduled` 2/1/2 against 6/6/6, because `REVEAL_SCENE` landed after the forge ran.
+5. Neither this worktree nor the architect worktree held a `CLAUDE.md` while any of this ran, so
+   §109's contamination touches no figure here — every call in this entry was made at `83de11c`,
+   before §109's root `CLAUDE.md` existed to be read, and the merge that brings it in is *after*
+   the run rather than before it, so the provider's argv did not change between P4's two phases.
+6. `book-library/` was ignored and `book-library-p4/` was not. `--library` takes any root and has
+   to be used whenever two runs share a title, so the run that exists because of the title
+   collision left a generated library untracked, one `git add -A` from being committed. The glob
+   is `book-library*/` now.
+
+### 111.8 Anti-scope
+
+Whether a brief moves the world (directed forges against an empty-brief control, the cross-forge
+collapse rate, the between-Architect comparison) is the next direction and none of it is built
+here. S5 is a parallel worktree's and §110 is its entry. World growth needs a re-forge for defect
+8. Retrieval and per-scene selection for the writer stay `plan/world-architect.md` §5.1's design
+note. Domain truth — whether a world can be wrong about the domain it literalised — is sketched in
+the results note as a sign-flip control and deliberately not built: it needs a stated
+domain-expert source for ground truth and this repository has none. No axis admitted, no counter
+promoted, no directive authored, no bar declared, and no claim anywhere that a book with its world
+on the page is a better book.
+
+---
+
 ## 112. The world says whose book it is, and the exception it grants one person survives the gate
 
 **Built 2026-08-22, from [`plan/handoff-protagonist.md`](handoff-protagonist.md).** Code:
@@ -10856,9 +11113,11 @@ not been made**.
 **It is §112 and not §111, and the gap is deliberate.** The check in `CLAUDE.md` was re-run at
 commit across `main` and all thirty `.claude/worktrees/*/plan/stage-0-decisions.md`, matching
 `^#{2,3} [0-9]+` so a sub-section could not hide a claimed parent.
-`claude/handoff-worldbuilding-plan-ae1861` has §111 **committed** on its branch and not yet merged
-to `main`; the committed entry owns the number, so this one moves after it and §111 stays free for
-that merge. That branch also adds a keyword argument to `render_outline_request` — see §112.7.
+`claude/handoff-worldbuilding-plan-ae1861` had §111 **committed** on its branch when this was
+written and reached `origin/main` before this entry did; the committed entry owns the number, so
+this one sits after it. That branch also adds a keyword argument to `render_outline_request`, and
+the duplicate the two changes would otherwise have created was collapsed at the merge rather than
+left — see §112.7.
 
 **What licenses it is a count, and it was taken before a line was written.** The operator read the
 first two chapters of *What Takes* — Serial Pilot 3, the first book drafted on a world forged from
@@ -10884,9 +11143,17 @@ want, and the `price`. Required of the forge and refused there field-by-field on
 2026-08-22 forge returned a world whose premise was the empty string under a schema that asked for
 a string, conformed, and failed the shape check — $1.48); tolerated as absent by `records_for`, so
 `plan/serial-pilot-2-world.json` regenerates to the same 329 records, gates clean, and emits not
-one record of the new vocabulary. The declaration reaches the outline as `cast` + `protagonist`
-(the request grows 1,785 → 4,856 characters on *What Takes*' own canon) and the writer as a
-labelled facts block and one beat-line fragment.
+one record of the new vocabulary. The declaration reaches the outline as a `protagonist` field
+beside §111's world brief, and the writer as a labelled facts block and one beat-line fragment.
+
+~~The declaration reaches the outline as `cast` + `protagonist` (the request grows 1,785 → 4,856
+characters on *What Takes*' own canon).~~ **Corrected at the merge, and the measurement was taken
+before it.** That figure is this branch's own `cast` rendering, which §112.7 said the second merge
+owed a collapse. §111 landed on `origin/main` first, its world brief already renders every declared
+person from the same projection, and this branch's `cast` input, `worlds.cast_brief` and
+`worlds.CastMember` were therefore **removed** rather than merged — the outline now receives
+`world` (people included) and `protagonist`. The 1,785 → 4,856 figure stands as what it measured
+and is no longer a figure about the shipped call.
 
 **What was refused.** No verdict channel: no model is asked whether a hook is good, which premise
 hooks more, or which of K worlds to pick. No bar. And no instruction anywhere about how to *handle*
@@ -11021,14 +11288,21 @@ numbers were about.
 `plan/handoff-promise-ledger.md` landed at `f947247` (§110) and touched `summarize.py` only; this
 branch builds on it and does not touch it.
 
-`claude/handoff-worldbuilding-plan-ae1861` is **not on `main`** and adds its own keyword to
-`render_outline_request` — a `world` brief whose contents include the cast, plus
-`domain/world_brief.py` and a `StateRepository` on `NarrativePlanningStore`. Its §111 is committed
-on that branch. The two changes are additive and independently correct, and both use the same
-absent-rather-than-null idiom so each keeps its own byte-identical control. **Whoever merges second
-owes one collapse**: a request that carries the same people twice is a request spending its budget
-saying one thing. Neither branch should silently drop the other's — the protagonist is not in the
-world brief, and the world brief's rules and claims are not here.
+§111 reached `origin/main` first and this branch merged second, so **the collapse it owed was
+paid here rather than deferred.** §111 adds its own keyword to `render_outline_request` — a `world`
+brief whose contents include the cast, plus `domain/world_brief.py` and a `StateRepository` on
+`NarrativePlanningStore`. Both changes use the same absent-rather-than-null idiom, so each keeps
+its own byte-identical control and the merge did not weaken either.
+
+**What was collapsed, and what survived.** `world_brief.brief_for` already renders every declared
+person under a `cast` group, from `worlds.project` with `state.describe` as the fallback — the same
+two calls this branch's own rendering made. A request carrying the same people twice is a request
+spending its budget saying one thing, so this branch's `cast` parameter, its `CAST_RULES`, and
+`worlds.cast_brief` / `worlds.CastMember` were **deleted**. `protagonist` survives because the
+brief has no way to express it: the brief groups facts by kind, and *which of these people the book
+is about* is not a fact about a kind. The protagonist's own records — `edge`, `price`,
+`exception_to` — do reach the brief's cast group as projected sentences, so the `protagonist` field
+is the pointer rather than the content, and it is five short fields.
 
 ### 112.8 Found, not fixed
 

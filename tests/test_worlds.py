@@ -464,36 +464,6 @@ def peopled_world() -> list[lc.StateRecord]:
     ]
 
 
-def test_the_cast_brief_carries_the_people_and_their_ties_to_each_other() -> None:
-    """One entry per declared cast id, ordered by id so one world always renders one payload."""
-    marta, silas = worlds.cast_brief(peopled_world())
-    assert (marta.subject, silas.subject) == ("marta", "silas")
-    assert silas.is_a == "a junior clerk"
-    assert silas.wants == "to be read once by someone"
-    assert silas.relationships == ("silas owes nine months of rent (marta)",)
-    assert marta.relationships == ()
-    assert silas.to_jsonable() == {
-        "id": "silas",
-        "is_a": "a junior clerk",
-        "wants": "to be read once by someone",
-        "relationships": ["silas owes nine months of rent (marta)"],
-    }
-
-
-def test_a_tie_is_an_edge_to_somebody_and_never_to_a_claim() -> None:
-    """**The leak-safe direction, and the reason the filter is on the target's role.**
-
-    A cast member's edges also point at claims — `believes` at a false belief, `keeps_secret` at
-    a secret — and those are the iceberg's bookkeeping rather than the cast's ties. A secret's
-    *content* would never appear in one of these lines, because `state.describe` renders the id;
-    but a planner handed `keeps_secret (silas_secret)` for every person is being handed the shape
-    of what it is not allowed to plan against.
-    """
-    [silas] = [entry for entry in worlds.cast_brief(peopled_world()) if entry.subject == "silas"]
-    assert not [tie for tie in silas.relationships if "secret" in tie]
-    assert not [tie for tie in silas.relationships if "shorting" in tie]
-
-
 def test_the_protagonist_brief_is_what_canon_declared_and_nothing_more() -> None:
     protagonist = worlds.protagonist_brief(peopled_world())
     assert protagonist is not None
@@ -504,28 +474,25 @@ def test_the_protagonist_brief_is_what_canon_declared_and_nothing_more() -> None
     assert protagonist.price.startswith("every reading he signs")
 
 
-def test_a_book_that_declares_no_world_has_no_cast_and_no_protagonist() -> None:
+def test_a_book_that_declares_no_protagonist_has_no_brief() -> None:
     """The control, and it is what makes the outline request byte-identical for such a book.
 
     `None` rather than an empty object: a key that is always present carrying `null` is a
     payload that always changed, and `jobs.input_digest_for` covers the prompt and seeds the
     decoder.
     """
-    assert worlds.cast_brief([]) == ()
     assert worlds.protagonist_brief([]) is None
     just_a_rule = [canon(worlds.world_record("r", worlds.WORLD_RULE_PREDICATE, value="a rule"))]
-    assert worlds.cast_brief(just_a_rule) == ()
     assert worlds.protagonist_brief(just_a_rule) is None
 
 
-def test_a_proposed_world_reaches_neither_brief() -> None:
-    """Rail one, at the two new seams. A forged world is a proposal until `--pick`, and a
-    proposal must not reach a planner any more than it reaches a packet."""
+def test_a_proposed_world_reaches_no_brief() -> None:
+    """Rail one, at the new seam. A forged world is a proposal until `--pick`, and a proposal
+    must not reach a planner any more than it reaches a packet."""
     proposed = [
         worlds.world_record("silas", worlds.ENTITY_ROLE_PREDICATE, value="cast"),
         worlds.world_record("silas", worlds.ENTITY_ROLE_PREDICATE, value="protagonist"),
     ]
-    assert worlds.cast_brief(proposed) == ()
     assert worlds.protagonist_brief(proposed) is None
 
 
