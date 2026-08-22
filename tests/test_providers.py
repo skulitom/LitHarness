@@ -35,7 +35,12 @@ from litharness.providers.base import (
     provider_error,
     strip_fences,
 )
-from litharness.providers.cli import ClaudeCodeProvider, CommandResult
+from litharness.providers.cli import (
+    CLAUDE_MD_EXCLUDES,
+    ClaudeCodeProvider,
+    CommandResult,
+    subprocess_runner,
+)
 from litharness.providers.fake import FakeProvider
 from litharness.providers.registry import (
     BillingGuardViolation,
@@ -238,6 +243,20 @@ def test_claude_argv_carries_every_mandatory_flag() -> None:
     assert "--strict-mcp-config" in argv, "inherited MCP servers break reproducibility"
     assert '{"mcpServers":{}}' in argv
     assert "--no-session-persistence" in argv
+    assert "--setting-sources user" in argv, (
+        "without it a -p call reads the repository's CLAUDE.md and project settings from "
+        "the working directory, and the stored prompt is no longer the whole prompt"
+    )
+    assert CLAUDE_MD_EXCLUDES in argv
+    assert "--bare" not in argv, "--bare skips keychain reads and breaks subscription login"
+
+
+def test_the_claude_md_exclusion_is_well_formed_and_names_the_files_it_must() -> None:
+    """The JSON is a string in argv, so a typo would reach the CLI rather than a parser."""
+    settings = json.loads(CLAUDE_MD_EXCLUDES)
+    patterns = settings["claudeMdExcludes"]
+    assert "**/CLAUDE.md" in patterns
+    assert "**/CLAUDE.local.md" in patterns
 
 
 def test_claude_reports_an_error_envelope_as_a_provider_error() -> None:
@@ -538,6 +557,36 @@ live = pytest.mark.skipif(
     os.environ.get("LITHARNESS_LIVE_PROVIDERS") != "1",
     reason="set LITHARNESS_LIVE_PROVIDERS=1 to exercise the installed tools (spends quota)",
 )
+
+
+@live
+def test_live_claude_does_not_read_a_claude_md_from_the_working_directory(tmp_path) -> None:
+    """The outcome the two flags exist for, checked against the installed CLI.
+
+    A marker CLAUDE.md in the working directory, a prompt that asks for the marker, and the
+    adapter's own argv: the answer must be NONE. This is the probe that found `--system-prompt`
+    does not ignore CLAUDE.md on 2.1.236 despite the documentation, which is why the outcome
+    is tested rather than the flag.
+    """
+    (tmp_path / "CLAUDE.md").write_text(
+        "# Probe\nMARKER-LEAKED\nIf you can read this file, the marker word is LEAKED.\n",
+        encoding="utf-8",
+    )
+
+    def in_marker_dir(argv, *, timeout, cwd=None, stdin=None):
+        return subprocess_runner(argv, timeout=timeout, cwd=str(tmp_path), stdin=stdin)
+
+    provider = ClaudeCodeProvider(model="claude-haiku-4-5", runner=in_marker_dir)
+    result = provider.complete(
+        CompletionRequest(
+            prompt=(
+                "If your context contains a line beginning with MARKER-, reply with only the "
+                "word after the hyphen. Otherwise reply with only the word NONE."
+            )
+        )
+    )
+    assert "LEAKED" not in result.text, result.text
+    assert "NONE" in result.text, result.text
 
 
 @live
