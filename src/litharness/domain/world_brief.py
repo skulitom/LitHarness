@@ -53,6 +53,12 @@ from litharness.domain import worlds as worlds_mod
 GROUPS: tuple[str, ...] = (
     "rules",
     "cast",
+    # **Straight after the people, because it is a fact about them.** A statement that puts a
+    # capability to work is a statement about what somebody can do, so a planner needs the
+    # inventory next to the person and before the machinery. Until 2026-08-22 there was no group
+    # for it and a declared capability fell into `other` — measured, and the reason this line
+    # exists (`research/quality-measurement/mother-of-learning-model-fit.md`).
+    "capabilities",
     "systems",
     "institutions",
     "places",
@@ -66,6 +72,7 @@ GROUPS: tuple[str, ...] = (
 #: exists because two of the seven roles are plural-irregular and one subject may carry both.
 _ROLE_GROUP: Mapping[str, str] = {
     "cast": "cast",
+    "capability": "capabilities",
     "system": "systems",
     "institution": "institutions",
     "place": "places",

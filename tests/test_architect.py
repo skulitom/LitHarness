@@ -601,9 +601,14 @@ def test_the_protagonist_rule_asks_for_a_declaration_and_never_an_outcome() -> N
     the amendment fencing it off from the inversion — and both are about a person the genre's own
     craft advice talks about in exactly the forbidden verbs. A test that checked only the first
     rule would let the second and third in.
+
+    **The count is a tripwire and it has already fired once.** A fourth rule arrived the same day
+    with `plan/handoff-ability-inventory.md` — the inventory of things a person can do — and this
+    assertion is what made somebody run the forbidden list over it rather than assume. Raise it
+    when you add a rule about this person, and only after reading the list below.
     """
     rules = [item for item in architect._RULES if "protagonist" in item]
-    assert len(rules) == 3
+    assert len(rules) == 4
     for rule in rules:
         lowered = rule.lower()
         for forbidden in (
@@ -629,6 +634,159 @@ def test_the_protagonist_rule_asks_for_a_declaration_and_never_an_outcome() -> N
     assert standing["rung"]["pattern"] == "^[a-z0-9_]+$"
     assert "AN ID AND NOTHING ELSE" in standing["criterion"]["description"]
     assert "AN ID AND NOTHING ELSE" in standing["rung"]["description"]
+
+
+# --- what a person can do -------------------------------------------------------------------
+#
+# `plan/reader-read-4.md` §1a and `plan/handoff-ability-inventory.md`. The operator read the first
+# book forged with a declared protagonist and called its progression "boring accounting instead of
+# nine unique abilities". Measured over the 24 worlds forged to that date: 135 of 156 criterion
+# rungs are an insignia, permission beats capability 104 to 46, and `_RANK` — three properties,
+# `additionalProperties: false` — has no slot for what a rung lets you do.
+#
+# *Nine* is the operator's word for an inventory and not a threshold. Nothing here counts up to
+# it, gates on it, or lets `report` imply one.
+
+
+def able(**kwargs: Any) -> dict[str, Any]:
+    """The fixture world, plus three capabilities and a protagonist who starts with two."""
+    built = world(**kwargs)
+    built["capabilities"] = [
+        {
+            "id": "cap_read_a_seam",
+            "is_a": "he can see where two things were joined, and when",
+            "manifests_as": "He turns a thing to the light, once, and says a year out loud.",
+            "costs": "His eyes go for an hour after, and he works blind through it.",
+        },
+        {
+            "id": "cap_price_unseen",
+            "is_a": "he can price a thing the assay has never seen",
+            "manifests_as": "He names a figure before the book is open, and it holds.",
+            "costs": "Every figure he names is checked twice, and the second check is not his.",
+            "requires": ["cap_read_a_seam"],
+            "taught_by": "marta",
+        },
+        {
+            "id": "cap_sign_for_another",
+            "is_a": "he can sign a reading in somebody else's name",
+            "manifests_as": "Two hands on one page and only one of them shaking.",
+            "costs": "The other name carries the fault if it is ever found.",
+            # A capability may need a RUNG, which is where the ladder and the inventory meet.
+            "requires": ["cap_price_unseen", "second_seal"],
+        },
+    ]
+    built["protagonist"] = {
+        **built["protagonist"],
+        "capabilities": ["cap_read_a_seam", "cap_price_unseen"],
+    }
+    return built
+
+
+def test_a_world_may_declare_an_inventory_and_the_gate_is_quiet_about_it() -> None:
+    assert gate(able()) == ()
+    records = architect.records_for(architect.Candidate(0, able()), scenes=SCENES)
+    assert worlds.validate(records) == ()
+    assert worlds.capabilities(records) == (
+        "cap_price_unseen",
+        "cap_read_a_seam",
+        "cap_sign_for_another",
+    )
+    assert worlds.entity_roles(records)["cap_read_a_seam"] == ("capability",)
+
+
+def test_a_capability_reaches_canon_as_records_and_not_as_a_field() -> None:
+    records = architect.records_for(architect.Candidate(0, able()), scenes=SCENES)
+    by = {
+        (r.subject, r.predicate): r
+        for r in records
+        if r.subject.startswith("cap_") or r.predicate == worlds.CAN_DO
+    }
+    assert by[("cap_read_a_seam", "is_a")].value.startswith("he can see where")
+    assert by[("cap_read_a_seam", worlds.MANIFESTS_PREDICATE)].value.startswith("He turns")
+    assert by[("cap_read_a_seam", worlds.COSTS)].value.startswith("His eyes go")
+    assert by[("cap_price_unseen", worlds.TAUGHT_BY)].object_ref == "marta"
+    assert by[("cap_price_unseen", worlds.REQUIRES)].object_ref == "cap_read_a_seam"
+    # The protagonist's own inventory, and only what the world declared.
+    assert worlds.capabilities_of(records, "silas") == ("cap_price_unseen", "cap_read_a_seam")
+
+
+def test_the_inventory_is_a_set_and_the_ladder_is_a_position() -> None:
+    """**Boundary 6: a rung and a capability are different objects.** §113 built the ladder — a
+    position in a recognised order, one per criterion. This is a set. They meet at exactly one
+    edge, `requires`, where a capability may need a rung first; nothing collapses them, and a
+    world may declare either, both or neither."""
+    records = architect.records_for(architect.Candidate(0, able()), scenes=SCENES)
+    [to_a_rung] = [
+        r
+        for r in records
+        if r.predicate == worlds.REQUIRES and r.object_ref == "second_seal"
+    ]
+    assert to_a_rung.subject == "cap_sign_for_another"
+    assert "second_seal" in worlds.rank_order(records, criterion="assay_grade")[0]
+    assert worlds.capabilities(records) and "second_seal" not in worlds.capabilities(records)
+
+
+@pytest.mark.parametrize(
+    "mutate,complaint",
+    [
+        (
+            lambda w: w["capabilities"][0].__setitem__("requires", ["cap_nothing"]),
+            "which this world never declares",
+        ),
+        (
+            lambda w: w["capabilities"][0].__setitem__("taught_by", "nobody_at_all"),
+            "whom this world never declares",
+        ),
+        (
+            lambda w: w["protagonist"].__setitem__("capabilities", ["cap_undeclared"]),
+            "not one of the declared capabilities",
+        ),
+    ],
+)
+def test_the_gate_complains_when_the_inventory_refers_to_nothing(
+    mutate: Any, complaint: str
+) -> None:
+    """Membership, never taste. The gate never asks whether an ability is interesting, whether
+    there are enough of them, or whether this is a good set — that question has no instrument
+    here and inventing one would be the verdict channel `plan/world-architect.md` §2 keeps shut.
+    """
+    broken = able()
+    mutate(broken)
+    assert any(complaint in item for item in gate(broken))
+
+
+def test_the_report_counts_the_inventory_and_declares_no_bar() -> None:
+    note = architect.report(architect.Candidate(0, able()), scenes=SCENES)
+    assert note["capabilities_declared"] == 3
+    assert note["protagonist_capabilities"] == 2
+    assert note["requirement_depth"] == 2
+    # A world that declares none reports zero, and zero is a fact about the world.
+    plain = architect.report(candidate(), scenes=SCENES)
+    assert plain["capabilities_declared"] == 0
+    assert plain["protagonist_capabilities"] == 0
+    assert plain["requirement_depth"] == 0
+    # **No floor anywhere.** Nothing in the gate or the report mentions a minimum, and the
+    # operator's "nine" is a word for an inventory rather than a threshold.
+    assert not [item for item in gate(able()) if "at least" in item or "fewer" in item]
+
+
+def test_the_capability_rule_asks_for_a_declaration_and_never_a_performance() -> None:
+    """**Boundary 1, asserted rather than trusted**, in the shape of the protagonist rule's test.
+
+    The system may say a person can do a thing. It may not say how a scene should handle that:
+    show it off, make it impressive, let them win with it. That direction is the operator's, and
+    the genre's own craft advice about abilities is written in exactly these verbs.
+    """
+    [rule] = [item for item in architect._RULES if "`capabilities`" in item]
+    lowered = rule.lower()
+    for forbidden in (
+        "show off", "impressive", "impress", "powerful", "awesome", "cool", "satisfying",
+        "win", "winning", "triumph", "spectacular", "reader should", "make the reader",
+        "exciting", "thrilling", "payoff",
+    ):
+        assert forbidden not in lowered, forbidden
+    assert "distinct, nameable things" in lowered
+    assert "a rank is where somebody stands" in lowered
 
 
 # --- the world as records ---------------------------------------------------------------------
@@ -962,6 +1120,13 @@ def test_the_pilot_package_regenerates_the_world_it_was_run_on() -> None:
     assert note["protagonist_declared"] is False
     assert note["exception_declared"] is False
     assert note["premise_names_protagonist"] is False
+    # And the same for the inventory, added 2026-08-22: a world forged before capabilities
+    # existed declares none, holds none, and has no prerequisite structure — and none of those
+    # three zeros is a complaint.
+    assert note["capabilities_declared"] == 0
+    assert note["protagonist_capabilities"] == 0
+    assert note["requirement_depth"] == 0
+    assert not worlds.capabilities(records)
 
 
 def test_a_debt_the_serial_settles_later_is_opened_without_a_due_date(tmp_path: Path) -> None:

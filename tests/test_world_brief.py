@@ -725,3 +725,48 @@ def test_the_golden_books_produce_no_brief_at_all() -> None:
         assert snapshot.records, f"the {fixture_id} fixture has no state to test with"
         assert worlds.project(snapshot.records) == {}
         assert world_brief.brief_for(snapshot.records) is None, fixture_id
+
+
+def test_a_declared_capability_gets_its_own_group_and_not_the_other_bucket() -> None:
+    """**The third of the three fixes the inventory needed**, and the smallest.
+
+    A capability is an ordinary subject with an `entity_role`, so before `_ROLE_GROUP` had an
+    entry for it `_group_of` fell through to `other` — the bucket the module's own docstring says
+    is "never empty by design" and holds a world's history, bonds and cardinality shapes. A
+    planner reading a brief would meet what somebody can do filed with the leftovers.
+
+    It sits straight after `cast` because it is a fact about those people: a statement that puts a
+    capability to work is a statement about what somebody can do.
+    """
+    records = [
+        lc.StateRecord(
+            record_id=f"rec-{i}",
+            kind=lc.StateRecordKind.ASSERTION,
+            subject=subject,
+            predicate=predicate,
+            value=value,
+            object_ref=object_ref,
+            authority=lc.StateAuthority.ACCEPTED_CANON,
+            predicate_registry_version=worlds.REGISTRY_VERSION,
+        )
+        for i, (subject, predicate, value, object_ref) in enumerate(
+            [
+                ("cap_read_a_seam", worlds.ENTITY_ROLE_PREDICATE, "capability", None),
+                ("cap_read_a_seam", "is_a", "he can see where two things were joined", None),
+                ("silas", worlds.ENTITY_ROLE_PREDICATE, "cast", None),
+                ("silas", worlds.CAN_DO, None, "cap_read_a_seam"),
+            ]
+        )
+    ]
+    brief = world_brief.brief_for(records)
+    assert brief is not None
+    grouped = dict(brief.groups)
+    assert "capabilities" in grouped, list(grouped)
+    assert any("cap_read_a_seam" in line for line in grouped["capabilities"])
+    assert "other" not in grouped or not any(
+        "cap_read_a_seam" in line for line in grouped.get("other", ())
+    )
+    # The person's own line says it in English rather than in notation.
+    assert any("silas can do cap_read_a_seam" in line for line in grouped["cast"])
+    assert "capabilities" in world_brief.GROUPS
+    assert world_brief.GROUPS.index("capabilities") == world_brief.GROUPS.index("cast") + 1

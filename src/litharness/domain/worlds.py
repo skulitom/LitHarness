@@ -106,6 +106,14 @@ ENTITY_ROLES: tuple[str, ...] = (
     # additionally the one this book is about. A separate role list would make "protagonist"
     # and "cast" alternatives, and a world would have to choose.
     "protagonist",
+    # **A thing a person can do, as a subject in its own right.** Until 2026-08-22 the nearest
+    # role was `carrier`, which means an *object* whose possession changes a precondition — so a
+    # ring and the sense the ring grants were the same kind of thing and neither counter could
+    # tell them apart. Measured over the 24 worlds forged to that date: 135 of 156 criterion
+    # rungs are an insignia and every capability-shaped field in the forge schema is a single
+    # string, so a world could name one thing a person can do and never a set of them
+    # (`research/quality-measurement/mother-of-learning-model-fit.md`).
+    "capability",
 )
 
 # --- the one member of the cast this book is about -------------------------------------------
@@ -123,6 +131,35 @@ PRICE_PREDICATE = "price"
 #: the second extractor family reads edges and because an exception that names its rule in prose
 #: is an exception nothing can check.
 EXCEPTION_PREDICATE = "exception_to"
+
+# --- what a person can do ---------------------------------------------------------------------
+
+#: A person holds a capability. An edge, so `state.cardinality.v0` can count how many one subject
+#: has — which is what makes "everyone has one, this person has three" a checkable declaration
+#: rather than a sentence. `EXCEPTS_PREDICATE`'s docstring names that example as its own reason
+#: for existing, and this is the predicate it was waiting for.
+CAN_DO = "can_do"
+
+#: A capability needs another capability, or a rung, first. An edge, and deliberately **not** a
+#: `precondition` role: `precondition` belongs to a reified `change` — one occurrence with many
+#: roles — and a prerequisite is a standing fact about the capability rather than about any
+#: occasion of acquiring it. The two coexist: a world may declare that walking between rooms
+#: `requires` seeing the seam, and separately record the morning somebody learned it.
+REQUIRES = "requires"
+
+#: Who allows or teaches a capability. Separate from `RECOGNIZED_BY`, which is about a rank: an
+#: institution recognises where you *stand*, a person teaches what you can *do*, and collapsing
+#: them is how a ladder of permissions eats an inventory of abilities.
+TAUGHT_BY = "taught_by"
+
+#: What a capability costs its holder, as prose. **The same predicate a rank's price already
+#: uses**, deliberately: it is the same fact about a different subject, and a legible twin would
+#: be two names for one thing. It has no projection sentence for the reason the branch beside
+#: `CAN_DO` gives — every world forged so far emits `costs` for its ranks, so adding one would
+#: change their packets.
+COSTS = "costs"
+
+
 
 # --- rules and their consequences ----------------------------------------------------------
 
@@ -446,6 +483,69 @@ def entities_with_role(records: Sequence[lc.StateRecord], role: str) -> tuple[st
             subject for subject, roles in entity_roles(records).items() if role in roles
         )
     )
+
+
+def capabilities(records: Sequence[lc.StateRecord]) -> tuple[str, ...]:
+    """Every subject this world declares as a thing a person can do. Sorted.
+
+    **Canon is not filtered here, and that is deliberate rather than an oversight.**
+    `entities_with_role` does not filter either, and `architect.report` counts a *candidate* —
+    every record of which is `PROPOSED`, because a forged world is a proposal until `--pick`. A
+    reader that filtered would report 0 capabilities for every world the forge has ever produced,
+    which is what the first version of this function did. Callers that need canon filter first,
+    as `world_brief.brief_for` and `context.assemble` already do.
+    """
+    return entities_with_role(records, "capability")
+
+
+def capabilities_of(records: Sequence[lc.StateRecord], subject: str) -> tuple[str, ...]:
+    """What this subject can do, sorted. Empty for a subject that holds none.
+
+    **The inventory, and it is a set rather than a rung.** A ladder answers *where does this
+    person stand*; this answers *what can they do*, and the two are different questions about
+    different objects — `research/progression-generalization.md` §5.1 reduces an ability to "a
+    named affordance **or set of reachable actions**" and this is that set, read back.
+    """
+    return tuple(
+        sorted(
+            {
+                record.object_ref
+                for record in records
+                if record.predicate == CAN_DO and record.object_ref
+                and record.subject == subject
+            }
+        )
+    )
+
+
+def requirement_depth(records: Sequence[lc.StateRecord]) -> int:
+    """How many prerequisites deep this world's inventory runs: edges in the longest chain.
+
+    A counter and never a bar. It says how deep the world's own prerequisite structure runs,
+    which is the thing that distinguishes an inventory somebody built from a list somebody
+    typed — and `plan/handoff-ability-inventory.md` boundary 3 forbids gating on it.
+
+    A cycle is not an error here and is not resolved here: the walk simply refuses to revisit a
+    subject, so a cyclic declaration reports the longest acyclic path through it and
+    `validate` is where a world that declared one would be complained about if that is ever
+    wanted. Guessing which edge of a cycle to cut would be this module inventing a fact.
+    """
+    edges: dict[str, list[str]] = {}
+    for record in records:
+        if record.predicate == REQUIRES and record.object_ref:
+            edges.setdefault(record.subject, []).append(record.object_ref)
+    if not edges:
+        return 0
+
+    def depth(node: str, seen: frozenset[str]) -> int:
+        if node in seen:
+            return 0
+        onward = edges.get(node, ())
+        if not onward:
+            return 0
+        return 1 + max(depth(nxt, seen | {node}) for nxt in onward)
+
+    return max(depth(node, frozenset()) for node in edges)
 
 
 def nodes_of_type(records: Sequence[lc.StateRecord], node_type: str) -> tuple[str, ...]:
@@ -1414,6 +1514,24 @@ def _record_sentence(
         return f"{record.subject} is the one the rule {record.object_ref} does not hold for"
     if record.predicate == EDGE_PREDICATE and value:
         return f"{record.subject} alone can: {value}"
+    # **The inventory, in English.** Until these four branches existed a person's abilities
+    # reached the writer as `state.describe`'s flat fallback — `sera can_do (cap_walk_between)` —
+    # and landed in the world brief's `other` bucket, which is the failure `worlds.py`'s own
+    # docstring calls the gate on the model being usable at all. Facts, in the register the
+    # branches above use: what is so, never an instruction to show it off.
+    # **Exactly the three predicates no world has ever emitted**, and that is the constraint
+    # rather than an accident. `costs`, `permits` and `member` are also illegible today and also
+    # wanted a sentence — and every one of them is already written by `records_for` for ranks and
+    # bonds, so giving them one would change the packet of all thirteen worlds forged before this
+    # and break the byte-identity rail. They keep `state.describe`'s flat form until somebody
+    # pays for that change deliberately; `costs` reads acceptably flat, which is why a
+    # capability's price reuses it rather than inventing a legible twin.
+    if record.predicate == CAN_DO and record.object_ref:
+        return f"{record.subject} can do {record.object_ref}"
+    if record.predicate == REQUIRES and record.object_ref:
+        return f"{record.subject} needs {record.object_ref} first"
+    if record.predicate == TAUGHT_BY and record.object_ref:
+        return f"{record.subject} is taught by {record.object_ref}"
     if record.predicate == PRICE_PREDICATE and value:
         return f"It costs {record.subject}: {value}"
     if record.predicate == ENTITY_ROLE_PREDICATE:
@@ -1471,6 +1589,7 @@ __all__ = [
     "ARCHITECT_ID_PREFIX",
     "BELIEVES",
     "BUNDLE_MEMBER",
+    "CAN_DO",
     "CARDINALITY_CONSTRAINT",
     "CHANGE",
     "CHANGE_ROLES",
@@ -1481,6 +1600,7 @@ __all__ = [
     "CONSEQUENCE_DOMAINS",
     "CONSEQUENCE_PREDICATE",
     "CONSTRAINT",
+    "COSTS",
     "CRITERION",
     "DISCLOSED_TO",
     "EDGE_PREDICATE",
@@ -1507,9 +1627,11 @@ __all__ = [
     "READER",
     "RECOGNIZED_BY",
     "REGISTRY_VERSION",
+    "REQUIRES",
     "REVEAL_SCENE",
     "SCOPE_PREDICATE",
     "STANDS_AT_PREDICATE",
+    "TAUGHT_BY",
     "TYPE_PREDICATE",
     "VIEW",
     "VIEW_MAPPING",
@@ -1521,6 +1643,8 @@ __all__ = [
     "IllegalWorld",
     "Protagonist",
     "architect_id_for",
+    "capabilities",
+    "capabilities_of",
     "cardinality_shapes",
     "claims",
     "consequence_domains",
@@ -1547,6 +1671,7 @@ __all__ = [
     "questions",
     "rank_order",
     "record_id_for",
+    "requirement_depth",
     "reveal_scenes",
     "rules",
     "rung_index",

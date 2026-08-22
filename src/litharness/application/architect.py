@@ -101,6 +101,19 @@ _TEXT = {"type": "string"}
 #: world was forged under; the fields added since carry the floor.
 _SAID = {"type": "string", "minLength": 1}
 
+#: The shape of a declared id, and the sentence that says so. **Both are measured corrections.**
+#: The first live forge under the protagonist rule returned three worlds out of three that named a
+#: real declared id in an id field and then glossed it in the same field — `one_cooling_history —
+#: the shape that gives a body one cooling history…` — because the ask described *which* thing to
+#: select and the model wrote the description into the slot (stage-0 §112.5). Every id field added
+#: since carries both.
+_ID_PATTERN = "^[a-z0-9_]+$"
+_ID_ONLY = (
+    "AN ID AND NOTHING ELSE — one snake_case id declared in this world. Write `cap_read_a_seam`, "
+    "never `cap_read_a_seam - the knack of seeing where two things were joined`. No dash, no "
+    "gloss, no sentence: what the thing is belongs in its own fields."
+)
+
 _CONSEQUENCE = {
     "type": "object",
     "additionalProperties": False,
@@ -128,6 +141,57 @@ _RANK = {
     "additionalProperties": False,
     "required": ["id", "visible_form", "cost_to_reach"],
     "properties": {"id": _ID, "visible_form": _TEXT, "cost_to_reach": _TEXT},
+}
+
+_CAPABILITY = {
+    "type": "object",
+    "additionalProperties": False,
+    "required": ["id", "is_a", "manifests_as", "costs"],
+    "properties": {
+        "id": {**_SAID, "pattern": _ID_PATTERN, "description": _ID_ONLY},
+        "is_a": {
+            **_SAID,
+            "description": (
+                "What this lets a person DO, in one line, as a capability rather than a "
+                "permission: what they can do that somebody without it cannot. Never 'is "
+                "allowed to' and never 'has the rank of' — a rank is where somebody stands and "
+                "this is what they can do."
+            ),
+        },
+        "manifests_as": {
+            **_SAID,
+            "description": (
+                "How it shows on the page when it is used: what is seen, heard or paid. Never "
+                "an explanation and never a lecture, exactly as every other `manifests_as`."
+            ),
+        },
+        "requires": {
+            "type": "array",
+            "description": (
+                "Ids of other capabilities, or of a rank, that a person must already have "
+                "before this one is reachable. Ids only, no sentences. Omit for a capability "
+                "that needs nothing first; most worlds will have a few of those and they are "
+                "where an inventory starts."
+            ),
+            "items": {**_SAID, "pattern": _ID_PATTERN},
+        },
+        "costs": {
+            **_SAID,
+            "description": (
+                "What having it costs, payable on the page — time, a body, a debt, a foreclosed "
+                "option. Every gain in this world carries a price and this is that rule applied "
+                "to a thing a person can do."
+            ),
+        },
+        "taught_by": {
+            **_SAID,
+            "pattern": _ID_PATTERN,
+            "description": (
+                "The declared id of whoever teaches or allows this, when somebody does. Omit it "
+                "when nothing gates the capability but the work."
+            ),
+        },
+    },
 }
 
 _CRITERION = {
@@ -340,6 +404,16 @@ _PROTAGONIST = {
             **_SAID,
             "description": "What the exception costs them, payable on the page.",
         },
+        "capabilities": {
+            "type": "array",
+            "description": (
+                "Ids of the declared capabilities this person already has, drawn from the "
+                "world's own `capabilities` list. Ids only. This is the inventory a reader "
+                "watches grow, so give them what they START the book with rather than "
+                "everything the world has."
+            ),
+            "items": {**_SAID, "pattern": _ID_PATTERN},
+        },
         "standing": _STANDING,
     },
 }
@@ -421,6 +495,12 @@ _WORLD = {
         "carriers": {"type": "array", "items": _ENTITY},
         "bonds": {"type": "array", "items": _BOND},
         "cast": {"type": "array", "items": _ENTITY},
+        # **Optional, and the word is load-bearing.** A world with no capabilities is a
+        # world about standing, or about a place, or about a debt — most of what this
+        # forge has produced — and a required inventory would make every one of them
+        # invent one. Absent means absent: `records_for` emits nothing, the gate says
+        # nothing, and the packet is the packet it always was.
+        "capabilities": {"type": "array", "items": _CAPABILITY},
         "creatures": {"type": "array", "items": _CREATURE},
         "places": {"type": "array", "items": _ENTITY},
         "institutions": {"type": "array", "items": _ENTITY},
@@ -505,6 +585,25 @@ _RULES: tuple[str, ...] = (
     "Remove or invert exactly one default of the genre — any EXCEPT this one, which is not "
     "invertible here: the protagonist's standing on a declared ordinal ladder can rise, and the "
     "reader can count it. Say what fills the hole.",
+    # **An inventory, beside the ladder rather than instead of it.** Measured over the 24 worlds
+    # forged before 2026-08-22: 135 of 156 criterion rungs are an insignia — a mark other people
+    # read — and permission outnumbers capability 104 to 46, because `_RANK` has a slot for what a
+    # rung LOOKS like and one for what it COSTS and none for what it lets you do. The operator
+    # read the book that came out of that and called its progression "boring accounting instead of
+    # nine unique abilities" (`plan/reader-read-4.md` §1a).
+    #
+    # The rule asks for a set and says nothing about its size: *nine* is the operator's word for
+    # an inventory, not a threshold, and `plan/handoff-ability-inventory.md` boundary 3 forbids a
+    # floor. Nothing here says the protagonist should be good at them, should win with them, or
+    # should have more of them than anybody else — an inventory declared is a fact about the
+    # world, and who wins is the book's.
+    "If people in this world can DO things — distinct, nameable things somebody either can or "
+    "cannot do — list them in `capabilities`, and give the protagonist the ones they START "
+    "with. A capability is what somebody can do; a rank is where somebody stands; they are "
+    "different, and a world may declare either, both, or neither. Each capability carries what "
+    "it lets a person do, how it shows on the page when it is used, what having it costs, "
+    "whatever it needs first by id, and whoever teaches it if anyone does. A world about "
+    "standing, or a place, or a debt may leave this out entirely, and many should.",
     # **The rule above inverts a default for everyone; this one declares an exception for one.**
     # `plan/reader-read-3.md` note 1: the operator read two chapters of a book forged on this
     # schema and named the premise as the defect — "readers desire … something that doesn't
@@ -536,8 +635,16 @@ _RULES: tuple[str, ...] = (
     # The last clause is the operator's direction and not a softening of the rest of the rule:
     # the ladder's rungs ARE the numbers this world counts, so a world that wanted a stat block
     # to satisfy "numbers go up" has already been answered by the ladder rule above.
+    # **`what a person can do` is added to this list, and the addition is measured.** The four
+    # words this rule offered were crafting, standing, understanding and access — and *standing*
+    # and *access* are permission systems, which are administered, which is what a register, a
+    # board and a ward are for. Two of the three worlds picked for a pilot took exactly those two
+    # words: pilot 2's `progression_means` opens with the single word "Standing.", pilot 4's is
+    # tolerance and "what door it may stand in". The forge took the rule at its word and the
+    # operator read the result as accounting (`plan/reader-read-4.md` §1a).
     "A world may have one system, several, or none; progression may be crafting, standing, "
-    "understanding, access, or something else. Do not assume combat. Do not use levels, hit "
+    "understanding, access, what a person can do, or something else. Do not assume combat. Do "
+    "not use levels, hit "
     "points, mana, experience points, currency, or any single number that means power, unless "
     "this particular world genuinely needs one and you say why in the system's logic. The "
     "ladder's rungs are the numbers this world counts; hit points, mana, experience and "
@@ -847,6 +954,77 @@ def premise_names_protagonist(candidate: Candidate) -> bool:
     return any(re.search(rf"\b{re.escape(part)}\b", premise) for part in tokens)
 
 
+def _declared_subjects(candidate: Candidate) -> frozenset[str]:
+    """Every id this world declares as a thing: people, places, capabilities, rungs and the rest.
+
+    What a prerequisite or a teacher is allowed to point at. Built from the answer rather than
+    from a list of array names kept in step by hand — a new array added later and forgotten here
+    would silently make every reference into it a complaint.
+    """
+    found: set[str] = set()
+    for value in candidate.raw.values():
+        if not isinstance(value, list):
+            continue
+        for entry in value:
+            if isinstance(entry, Mapping) and _identifier(entry):
+                found.add(_identifier(entry))
+    for system in _items(candidate, "systems"):
+        criterion = system.get("criterion")
+        if not isinstance(criterion, Mapping):
+            continue
+        ranks = criterion.get("ranks")
+        for rank in ranks if isinstance(ranks, list) else ():
+            if isinstance(rank, Mapping) and _identifier(rank):
+                found.add(_identifier(rank))
+    return frozenset(found - {""})
+
+
+def _capability_complaints(candidate: Candidate) -> tuple[str, ...]:
+    """Whether a declared inventory *refers*. Empty for a world that declares none.
+
+    **Three membership checks and no count.** Whether nine is the right number of abilities,
+    whether these are interesting ones, and whether the protagonist has enough of them are not
+    asked here and have no instrument in this project: `plan/handoff-ability-inventory.md`
+    boundary 3 forbids a floor, and `report()` carries the counters instead so that a
+    distribution can exist before anybody declares a bar over it (§81, §85, §87, §89).
+
+    What is checkable is that a prerequisite names something this world built, that a teacher
+    exists, and that the protagonist's starting inventory is drawn from the world's own list.
+    """
+    declared = {_identifier(entry) for entry in _items(candidate, "capabilities")} - {""}
+    if not declared:
+        return ()
+    complaints: list[str] = []
+    subjects = _declared_subjects(candidate)
+
+    for entry in _items(candidate, "capabilities"):
+        subject = _identifier(entry)
+        needs = entry.get("requires")
+        for target in needs if isinstance(needs, list) else ():
+            wanted = worlds_mod.normalise_id(str(target))
+            if wanted and wanted not in subjects:
+                complaints.append(
+                    f"capability {subject} requires {wanted!r}, which this world never "
+                    "declares; a prerequisite naming nothing is a sentence about difficulty"
+                )
+        teacher = worlds_mod.normalise_id(_text(entry, "taught_by"))
+        if teacher and teacher not in subjects:
+            complaints.append(
+                f"capability {subject} is taught by {teacher!r}, whom this world never declares"
+            )
+
+    protagonist = candidate.protagonist or {}
+    held = protagonist.get("capabilities")
+    for target in held if isinstance(held, list) else ():
+        wanted = worlds_mod.normalise_id(str(target))
+        if wanted and wanted not in declared:
+            complaints.append(
+                f"the protagonist starts with {wanted!r}, which is not one of the declared "
+                f"capabilities ({', '.join(sorted(declared))})"
+            )
+    return tuple(complaints)
+
+
 def _protagonist_complaints(candidate: Candidate) -> tuple[str, ...]:
     """Deterministic complaints about a world's declared protagonist. Empty when it declares none.
 
@@ -1124,6 +1302,7 @@ def gate_candidate(
         )
 
     complaints.extend(_protagonist_complaints(candidate))
+    complaints.extend(_capability_complaints(candidate))
     complaints.extend(_ladder_complaints(candidate))
 
     borrowed = sorted(set(_BORROWED.findall(candidate.rendered())))
@@ -1646,6 +1825,59 @@ def records_for(
                         )
                     )
 
+    # **The inventory: a countable set of things a person can do.** An ordinary subject with a
+    # role, not a reified node — a `change` is *one occurrence with many roles* and renders
+    # "X happened", which is the right aspect for the morning somebody learned a thing and the
+    # wrong one for the thing itself. The two coexist: this declares the capability, and a world
+    # that wants to schedule an acquisition still has `change` for it.
+    #
+    # Nothing is emitted for a world that declares none, which is every world forged before
+    # 2026-08-22 and most of the ones after.
+    for capability in _items(candidate, "capabilities"):
+        subject = _identifier(capability)
+        if not subject:
+            continue
+        add(
+            worlds_mod.world_record(
+                subject, worlds_mod.ENTITY_ROLE_PREDICATE, value="capability"
+            )
+        )
+        for key, predicate in (
+            ("is_a", "is_a"),
+            ("manifests_as", worlds_mod.MANIFESTS_PREDICATE),
+            ("costs", worlds_mod.COSTS),
+        ):
+            if _text(capability, key):
+                add(
+                    worlds_mod.world_record(
+                        subject, predicate, value=_text(capability, key)
+                    )
+                )
+        teacher = worlds_mod.normalise_id(_text(capability, "taught_by"))
+        if teacher:
+            add(worlds_mod.world_record(subject, worlds_mod.TAUGHT_BY, object_ref=teacher))
+        needs = capability.get("requires")
+        for entry in needs if isinstance(needs, list) else ():
+            target = worlds_mod.normalise_id(str(entry))
+            if target:
+                add(worlds_mod.world_record(subject, worlds_mod.REQUIRES, object_ref=target))
+
+    # **Who holds what, and the protagonist is the only subject the forge says it of.** A world
+    # declares its people and its capabilities separately; the one edge between them written here
+    # is the protagonist's, because `plan/handoff-ability-inventory.md` boundary 6 keeps this from
+    # becoming a second standing and because the protagonist's id is the one subject the whole
+    # pipeline already threads (§112). Only ids the world actually declared: an inventory that
+    # names something the world never built is the `exception_to` defect one field over.
+    declares = candidate.protagonist
+    held = declares.get("capabilities") if declares is not None else None
+    if declares is not None and held:
+        holder = _identifier(declares)
+        declared = {_identifier(entry) for entry in _items(candidate, "capabilities")} - {""}
+        for entry in held if isinstance(held, list) else ():
+            target = worlds_mod.normalise_id(str(entry))
+            if holder and target in declared:
+                add(worlds_mod.world_record(holder, worlds_mod.CAN_DO, object_ref=target))
+
     graph_line = candidate.raw.get("graph_line")
     if isinstance(graph_line, Mapping) and graph_line.get("label"):
         add(
@@ -1857,6 +2089,19 @@ def report(candidate: Candidate, *, scenes: int = DEFAULT_SCENES) -> dict[str, A
             record.predicate == worlds_mod.EXCEPTION_PREDICATE for record in records
         ),
         "premise_names_protagonist": premise_names_protagonist(candidate),
+        # **Three counts and no verdict.** How many distinct things this world says a person can
+        # do, how many the protagonist starts with, and how deep its own prerequisite structure
+        # runs. Nothing orders one world above another and **none of the three is a floor** — the
+        # operator's "nine unique abilities" is a word for an inventory, not a threshold, and
+        # §81, §85, §87 and §89 are four separate records of what happens when a count is read as
+        # a bar. A distribution has to exist before anyone declares one over it.
+        "capabilities_declared": len(worlds_mod.capabilities(records)),
+        "protagonist_capabilities": len(
+            worlds_mod.capabilities_of(records, _identifier(candidate.protagonist))
+            if candidate.protagonist is not None
+            else ()
+        ),
+        "requirement_depth": worlds_mod.requirement_depth(records),
         "claims_with_answers": len(worlds_mod.claims(records)),
         "reveals_scheduled": len(worlds_mod.disclosures(records)),
         "hidden_at_start": len(
