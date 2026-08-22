@@ -141,6 +141,45 @@ def kill(pids: list[int], reason: str) -> None:
             print(f"  pid {pid}: {type(error).__name__}", flush=True)
 
 
+class TripJudge:
+    """The kill decision, pure: streak counters in, trip reason or None out.
+
+    This is the logic that used to be inlined in ``main``'s loop, lifted out so it can be
+    tested without a GPU, a subprocess, or a clock. ``observe`` feeds one sampled row
+    (as ``sample`` returns it — string values, possibly missing or unparseable) and returns
+    the trip reason if a hard limit is crossed, else ``None``. Precedence is fixed: an
+    overheated core kills immediately, then a sustained low tlimit margin, then sustained
+    throttling.
+    """
+
+    def __init__(self) -> None:
+        self.throttled_streak = 0
+        self.margin_streak = 0
+
+    def observe(self, row: dict[str, str], hard_core: float, hard_margin: float) -> str | None:
+        core = as_float(row.get("temperature.gpu"))
+        margin = as_float(row.get("temperature.gpu.tlimit"))
+        throttling = any(
+            (row.get(f) or "").lower() in ("active", "true")
+            for f in FIELDS
+            if "slowdown" in f
+        )
+        self.throttled_streak = self.throttled_streak + 1 if throttling else 0
+        low_margin = margin is not None and margin <= hard_margin
+        self.margin_streak = self.margin_streak + 1 if low_margin else 0
+
+        if core is not None and core >= hard_core:
+            return f"core {core}C >= {hard_core}C"
+        if self.margin_streak >= HARD_MARGIN_SAMPLES:
+            return (
+                f"tlimit margin <= {hard_margin}C for {self.margin_streak} "
+                "consecutive samples"
+            )
+        if self.throttled_streak >= HARD_THROTTLE_SAMPLES:
+            return f"card throttling for {self.throttled_streak} consecutive samples"
+        return None
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--interval", type=float, default=10.0)
@@ -158,8 +197,7 @@ def main(argv: list[str] | None = None) -> int:
     log_path = Path(args.log)
     log_path.parent.mkdir(parents=True, exist_ok=True)
     started = time.time()
-    throttled_streak = 0
-    margin_streak = 0
+    judge = TripJudge()
     peak_core = 0.0
     peak_power = 0.0
     min_margin = 999.0
@@ -177,31 +215,14 @@ def main(argv: list[str] | None = None) -> int:
                 core = as_float(row.get("temperature.gpu"))
                 power = as_float(row.get("power.draw"))
                 margin = as_float(row.get("temperature.gpu.tlimit"))
-                throttling = any(
-                    (row.get(f) or "").lower() in ("active", "true")
-                    for f in FIELDS
-                    if "slowdown" in f
-                )
                 if core is not None:
                     peak_core = max(peak_core, core)
                 if power is not None:
                     peak_power = max(peak_power, power)
                 if margin is not None:
                     min_margin = min(min_margin, margin)
-                throttled_streak = throttled_streak + 1 if throttling else 0
-                low_margin = margin is not None and margin <= args.hard_margin
-                margin_streak = margin_streak + 1 if low_margin else 0
 
-                trip = None
-                if core is not None and core >= args.hard_core:
-                    trip = f"core {core}C >= {args.hard_core}C"
-                elif margin_streak >= HARD_MARGIN_SAMPLES:
-                    trip = (
-                        f"tlimit margin <= {args.hard_margin}C for {margin_streak} "
-                        "consecutive samples"
-                    )
-                elif throttled_streak >= HARD_THROTTLE_SAMPLES:
-                    trip = f"card throttling for {throttled_streak} consecutive samples"
+                trip = judge.observe(row, args.hard_core, args.hard_margin)
                 if trip and not args.no_kill:
                     pids = gpu_python_pids(args.only)
                     if pids:
