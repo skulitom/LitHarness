@@ -10051,9 +10051,9 @@ the ledger has no column that distinguishes an authored debt from a model-assert
 `heuristic` and may not block. A seeded row rides an instrument that documents itself as
 model-sourced, and that mismatch is real.
 
-### 107.9 What ran, what it measured, and the ten defects running it found
+### 107.9 What ran, what it measured, and the eleven defects running it found
 
-The suite goes **1,247 → 1,322** collected, all passing, with `ruff check .` and `mypy --strict`
+The suite goes **1,247 → 1,338** collected (the upper figure after merging main, which brought its own tests), all passing, with `ruff check .` and `mypy --strict`
 clean.
 
 **Three live forges on the pinned provider, `claude-opus-5`, one structured call each.**
@@ -10164,10 +10164,10 @@ seeding the ledger does not reach it. §61's rule is that a pre-registered null 
 one names the next question exactly. Package, pre-registration and both run records:
 [`plan/serial-pilot-2.md`](serial-pilot-2.md).
 
-### 107.9.1 Ten defects, every one found by running the thing rather than by reading it
+### 107.9.1 Eleven defects, every one found by running the thing rather than by reading it
 
 Listed because the ratio is the interesting part: **six were found by the live provider, the
-pilot or a measurement, four by the test suite**, and none by review.
+pilot or a measurement, four by the test suite, one by the merge**, and none by review.
 
 | # | found by | what it was |
 |---|---|---|
@@ -10183,6 +10183,8 @@ pilot or a measurement, four by the test suite**, and none by review.
 | 9 | the pilot | An arc reveal scheduled at scene 41 was **clamped to the last beat** of an eight-scene opening, so `promise.overdue.v0` would have annotated four debts as late in a book that was never going to reach them. `Promise.due_key` is `str | None` and `overdue_promises` skips a row with none, so the honest encoding already existed: the debt is on the ledger and reaches the packet as owed, and nothing calls it late. |
 
 | 10 | the pilot | **The reveal schedule was in a different key vocabulary from the book's own, so the iceberg leaked in exactly the wrong direction.** `beats_for` mints `s1…s8` for an eight-scene book — width **one** — while the Architect minted `s04`, `s41`, `s92`. Order keys compare lexicographically, so `"s1" > "s04"`. Measured on the run: **both answers the opening existed to keep were handed to the writer as established fact from scene one**, and by scene eight five of six were, an arc answer six chapters out drifting into the facts at scene five. Nothing raised; the strings compared fine. Fixed by minting positions in the book's own width and by minting **none at all** for a scene the book does not have — the ordinal lives under `worlds.REVEAL_SCENE`, so a serial's later answers are recorded and permanently hidden here rather than clamped. |
+
+| 11 | the merge | **Neither side of this one was wrong alone.** A parallel session landed `OWN_POSITION_VERSIONS` — registry versions whose order keys this system's own planning placed, and which therefore are not evidence that a book has an author's story vocabulary — after measuring that one undeclared dated record flips `has_story_vocabulary` and makes §12 step 5 **extract nothing from any scene**. This branch added two more producers of dated records: the second extractor family, and an Architect's reveal positions. Both are minted in `beats_for`'s own width from the book's own scene count, so both belong in the set; left out, every forged world would have looked like somebody else's numbering and silently lost all extraction. Fixed on the merge, with `test_a_forged_world_does_not_look_like_an_authors_vocabulary` pinning it. |
 
 **Defect 8 is unfixed in Serial Pilot 2 and that is deliberate.** The pilot runs on the world that
 produced it, so its graph line is unusable and **the second extractor family is inert for this

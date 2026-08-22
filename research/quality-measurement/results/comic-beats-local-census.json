@@ -1,0 +1,1433 @@
+{
+  "api_calls": 10,
+  "arm": "census",
+  "dry_run": false,
+  "exclusions": {
+    "by_reason": {
+      "below_min": 2
+    },
+    "excluded": [
+      {
+        "reason": "below_min",
+        "unit_id": "toll-road:scene-11",
+        "words": 3
+      },
+      {
+        "reason": "below_min",
+        "unit_id": "toll-road:scene-12",
+        "words": 3
+      }
+    ],
+    "kept": 12,
+    "seen": 14
+  },
+  "failure_reasons": {},
+  "hygiene": {
+    "anchors_returned": 161,
+    "bad_kind": 0,
+    "confabulated": 9,
+    "confabulated_per_unit": 0.75,
+    "confabulation_rate": 0.0559,
+    "duplicate": 0,
+    "over_length": 10,
+    "refused_units": 0,
+    "relaxed_only": 9,
+    "units": 12,
+    "unparseable_units": 0
+  },
+  "model": null,
+  "pre_registration": {
+    "arms": {
+      "census": "the chapter as published. Q1 and Q2 are read from this arm alone",
+      "repeat": "the same chapter, the same request, a distinct sample index \u2014 `n` byte-identical requests, so the variation is the model's own sampling and not a perturbed prompt (`elicit.py`'s rule). Reports the per-chapter spread of counts and the anchor overlap between the two lists. This is the noise floor every other arm is read against",
+      "sham": "`ablate.rewhitespace` at full strength. Not one character of any word changes. The count must not move beyond the `repeat` spread; if it does, the locator is responding to layout and the entry says so (\u00a778)",
+      "strip": "a certified minimal revision that rewrites every reach for levity plainly, with `strip_placebo` \u2014 the same revision contract with an inert task \u2014 beside it as the floor. One dose; no ladder, no inject arm"
+    },
+    "attainability": "Declared at the n actually available, before the first call, per \u00a787/\u00a789's rulebook. Every statistic here is an exact one-sided sign test whose smallest attainable p at G pairs is 1/2**G, so alpha 0.05 is unreachable below G=5 and every G below that reports INSUFFICIENT_N rather than FAILS. The sham subset is G=40+ RoyalRoad chapters and G=12 own units, both attainable. The strip subset is the census top decile, G=24 at n=249, plus own units with >= 3 beats; if fewer than 5 pairs certify, the arm reports INSUFFICIENT_N and no drop is read. None of these is a bar for admission: no bar for admission is declared anywhere in this module.",
+    "counting_rule": "A beat is counted only if its anchor is findable in the text THAT CALL WAS SHOWN, by normalised substring match (NFKC, curly quotes and dashes folded to ASCII, whitespace collapsed, casefolded), and only if its kind is one of the seven frozen kinds. Repeated anchors within one answer collapse to one beat. Unfindable anchors are confabulations: excluded from every count and reported as a rate on every arm.",
+    "declared_quantities": {
+      "anchor_overlap": "|A n B| / |A u B| over the two samples' normalised anchor sets, unitless, range [0, 1], higher is more stable. No bar: it is reported so a count that is stable while its locations are not cannot pass unnoticed",
+      "confabulation_rate": "unfindable anchors / anchors returned, unitless, range [0, 1], direction lower. Printed on every arm. REFUSAL STATE: if the mean confabulated beats per chapter on the strip subset is at least half the median strip drop in beats, the strip reading is VOID rather than weak \u2014 an effect the instrument's own noise could manufacture is not an effect",
+      "repeat_spread": "|count(sample 0) - count(sample 1)| per chapter, in beats; range [0, inf), no direction and no bar \u2014 it is the ruler. Reported as median, p90 and max, in beats and in beats/1k, on both substrates separately. Attainable at any n >= 1; the subset is 40 RoyalRoad chapters plus the strip subset plus every own unit",
+      "sham_delta": "|count(census) - count(sham)| per chapter, in beats, read against `repeat_spread` on the SAME chapters by a one-sided exact sign test that the sham delta exceeds the repeat delta. Outcomes: LAYOUT_SENSITIVE if p <= 0.05; INSIDE_NOISE only with the equivalence bound printed beside it, never as a pass by silence (\u00a7101.1); INSUFFICIENT_N below the attainable floor. The bound is the distribution-free 90% confidence interval on the median of (sham delta - repeat delta), in beats, so the reading states what magnitude of layout sensitivity it could not exclude",
+      "strip_drop": "count(original) - count(stripped), in beats, paired by chapter. Direction: positive. Read twice, and both readings print: against the placebo's own drift by a one-sided exact sign test on (strip drop > placebo drop), and against the noise floor by the share of pairs whose strip drop exceeds that chapter's repeat spread, sign-tested. Outcomes SEES / DOES_NOT_SEE / INSUFFICIENT_N / VOID"
+    },
+    "no_bar_for_admission": "None is declared, and that is the point. Nothing here enters `AXES` or `COUNTERS`, reaches a prompt, a directive, a Director brief, a persona reason code or a writer dossier. Admission is an operator act over the measured distribution, exactly as for `opening_proper_nouns`.",
+    "no_inherited_figures": "\u00a779.1's rule. Every spread, rate and cost reported here is measured on these chapters by this instrument in these runs. \u00a785's per-comparison price is not used to project this one, because a whole-chapter input is several times a \u00a785 pair.",
+    "no_landing_measurement": "Whether a beat lands is not asked, not schema'd and not derivable from anything here. The nearest shape is W4 (`payoff_landing.py`), which is NOT VALIDATED for want of substrate, and it stays that way.",
+    "no_post_hoc_leniency": "The strict normalisation above is the counting rule. A second, deliberately looser match \u2014 all non-alphanumeric characters dropped \u2014 is computed and reported as `relaxed_findable` so the size of what strictness costs is visible, and it never enters a count. Loosening the rule after reading the answers would be a rubric fitted to them.",
+    "question": "Do this project's published chapters attempt humor at the density the genre's readers select for, and can a located instrument see the difference at all? Q1 is the RoyalRoad LitRPG baseline by cohort, Q2 is where our own chapters sit in it, Q3 is whether the locator is an instrument. Reported separately and in that order.",
+    "sampling": "100 chapters per era cohort, ONE CHAPTER PER STORY, chosen deterministically by digest so the draw is a rule and not a draw. The substrate caps `declared_ai_2025` at 49 distinct stories inside the window, so the census is 100/100/49 = 249 and the cap is reported rather than filled by taking a second chapter from a story already in the pool.",
+    "strip_internal_control": "Protected spans (**bold** lines and [STATUS] lines) are copied byte-for-byte by the revision contract, so a `system_voice` beat cannot be stripped. Pre-registered: prose kinds fall and `system_voice` does not. If `system_voice` falls with them the locator is reading the fact of a rewrite. Four outcomes, none of them a pass by silence: CONTROL_HOLDS when no pair lost a system-voice beat, CONTROL_FAILS when the sign test says they fell, CONTROL_UNDECIDED with its interval printed in between, and EMPTY where the subset carries no protected span at all \u2014 which is most of RoyalRoad, whose system voice is not written in this project's typography.",
+    "substrates_are_never_pooled": "RoyalRoad text may be memorised by the locator (BRIEF \u00a72 Pass 6), so it is the baseline arm with the confound named; own-generated chapters are the clean arm; the `strip` differential on one chapter partially cancels the term; and no statistic in this module averages the two.",
+    "transport_exclusion": "A unit whose rendered `claude -p` command line reaches 32000 characters cannot be sent by this transport (Windows refuses at 32,767) and is excluded before the call, counted, and printed. It is not sent and allowed to fail: a transport error is indistinguishable from a broken install. Measured over the draw, this is 4 of 249 chapters, and because it is length-correlated it is reported beside the length residual.",
+    "unit_of_analysis": "The chapter, as published \u2014 the unit a reader receives. Own-generated scenes from The Toll Road are reported as secondary colour and never pooled with chapters.",
+    "what_is_measured": "The density of located ATTEMPTS at levity, in beats per 1,000 words. It is not a quality, a craft claim or a success rate: a chapter with more attempts is not better, and no arrangement of these numbers says whether a beat lands. Landing is valence, valence is behavioural or it is nothing (\u00a797.4), and W4 is NOT VALIDATED for want of substrate.",
+    "why_there_is_a_strip_placebo": "The handoff did not ask for one and `repair_generation.PRE_REGISTRATION`'s first line makes it mandatory: no repair arm is read except against its placebo. Without it a drop in located beats is equally well explained by the fact of a rewrite, and there is no way to tell the two apart afterwards. It is one more arm, not a dose ladder.",
+    "window": "[800, 6000] words, one whole chapter per call. Chunking changes counts, so a chapter outside the window is excluded and the exclusion is counted and printed. Measured on the substrate before it was chosen: the window keeps 92.9% of the 14,363 LitRPG chapters in the two cached shards.",
+    "written": "2026-08-21, before the first paid call of any arm in this module, and byte-frozen with the system block, the question, the schema and the kinds under FROZEN_DIGEST"
+  },
+  "registration_digest": "d3200ddad172e4854b70",
+  "replayed": 2,
+  "rows": [
+    {
+      "bad_kind": 0,
+      "beats": [
+        {
+          "anchor": "a joke at somebody's expense",
+          "hash": "9a26949083515bb6",
+          "kind": "quip",
+          "offset": 257,
+          "words": 5
+        },
+        {
+          "anchor": "arguing the way men argue when they have agreed on everything",
+          "hash": "42ef155f874f8de4",
+          "kind": "deadpan",
+          "offset": 399,
+          "words": 11
+        },
+        {
+          "anchor": "Then close it before somebody gives you something shiny.",
+          "hash": "c29e1b98148dfcc2",
+          "kind": "quip",
+          "offset": 972,
+          "words": 9
+        },
+        {
+          "anchor": "He came to the counter out of turn and nobody stopped him",
+          "hash": "27d73ec3e5cca1f9",
+          "kind": "quip",
+          "offset": 1108,
+          "words": 12
+        },
+        {
+          "anchor": "That's one of the things I'll be finding out.",
+          "hash": "8794395b57b3aa2b",
+          "kind": "quip",
+          "offset": 1677,
+          "words": 9
+        },
+        {
+          "anchor": "set out three needles in a row like a man laying cutlery",
+          "hash": "2a15cfaf7fd3d6cc",
+          "kind": "deadpan",
+          "offset": 2794,
+          "words": 12
+        },
+        {
+          "anchor": "That's the trade.",
+          "hash": "c9c5807986a8df38",
+          "kind": "quip",
+          "offset": 4679,
+          "words": 3
+        },
+        {
+          "anchor": "in the tone men use for weather that has ruined a day",
+          "hash": "6f8c6d00ecc6de97",
+          "kind": "quip",
+          "offset": 5233,
+          "words": 12
+        },
+        {
+          "anchor": "The pen went on making its stroke for half an inch past",
+          "hash": "cee3e1d26c6d23a7",
+          "kind": "deadpan",
+          "offset": 5547,
+          "words": 12
+        },
+        {
+          "anchor": "the man you keep behind the scales",
+          "hash": "10971ed8c875e970",
+          "kind": "quip",
+          "offset": 8659,
+          "words": 7
+        },
+        {
+          "anchor": "somebody's got to count it after",
+          "hash": "8666900489ade27f",
+          "kind": "quip",
+          "offset": 8917,
+          "words": 6
+        },
+        {
+          "anchor": "That was worse than the other thing would have been.",
+          "hash": "6ab7a364e85095f7",
+          "kind": "quip",
+          "offset": 9019,
+          "words": 10
+        },
+        {
+          "anchor": "the sort of blank a stall keeper throws in loose",
+          "hash": "cbedf7399d0bce84",
+          "kind": "deadpan",
+          "offset": 9180,
+          "words": 10
+        },
+        {
+          "anchor": "Vague price for a vague ask.",
+          "hash": "3fb313bd99aab602",
+          "kind": "quip",
+          "offset": 9408,
+          "words": 6
+        },
+        {
+          "anchor": "which was the only mercy in it",
+          "hash": "f250c1fbafe6217c",
+          "kind": "quip",
+          "offset": 11197,
+          "words": 7
+        },
+        {
+          "anchor": "because she counted things.",
+          "hash": "141b0981f69f6a57",
+          "kind": "quip",
+          "offset": 15973,
+          "words": 4
+        },
+        {
+          "anchor": "somebody with authority and no arithmetic",
+          "hash": "1fb560767c9d667d",
+          "kind": "quip",
+          "offset": 16562,
+          "words": 6
+        },
+        {
+          "anchor": "They were pushing the gate. That was the trouble.",
+          "hash": "1c106232d74181cb",
+          "kind": "deadpan",
+          "offset": 16974,
+          "words": 9
+        },
+        {
+          "anchor": "Silas said, and nobody heard him, and he had not expected them",
+          "hash": "b0dbd3d4b2376fa4",
+          "kind": "undercut",
+          "offset": 17304,
+          "words": 12
+        },
+        {
+          "anchor": "That was the thing he would remember, that some of them did",
+          "hash": "4e7529cc66402355",
+          "kind": "quip",
+          "offset": 18906,
+          "words": 12
+        },
+        {
+          "anchor": "He was not wrong about the fact.",
+          "hash": "f1dd0ad6718bf79d",
+          "kind": "deadpan",
+          "offset": 19237,
+          "words": 7
+        },
+        {
+          "anchor": "and he had time to think, precisely and without heat, that the",
+          "hash": "8cc318bfd0dd8598",
+          "kind": "deadpan",
+          "offset": 19571,
+          "words": 12
+        },
+        {
+          "anchor": "The cold went off. The pressure went off.",
+          "hash": "841126e0117a5d5c",
+          "kind": "deadpan",
+          "offset": 19785,
+          "words": 8
+        },
+        {
+          "anchor": "Weigh Street took its light late",
+          "hash": "ba67bd97bdc11334",
+          "kind": "callback",
+          "offset": 0,
+          "words": 6
+        },
+        {
+          "anchor": "He was dry.",
+          "hash": "3f862d4e2c67319b",
+          "kind": "deadpan",
+          "offset": 20172,
+          "words": 3
+        },
+        {
+          "anchor": "he did not need to count it, and he counted it anyway",
+          "hash": "eec728343daaf23c",
+          "kind": "undercut",
+          "offset": 20406,
+          "words": 12
+        },
+        {
+          "anchor": "set a ring on the felt like a sleeping bird",
+          "hash": "b8c1906fe2785ce5",
+          "kind": "callback",
+          "offset": 20905,
+          "words": 10
+        },
+        {
+          "anchor": "the way a man looks at a scale that has moved before",
+          "hash": "afc3f88c2f40e1fb",
+          "kind": "quip",
+          "offset": 21162,
+          "words": 12
+        }
+      ],
+      "by_kind": {
+        "callback": 2,
+        "deadpan": 9,
+        "quip": 15,
+        "undercut": 2
+      },
+      "cohort": "own_chapter",
+      "confabulated": 2,
+      "counted": 28,
+      "density_per_1k": 6.7454,
+      "duplicate": 0,
+      "over_length": 0,
+      "refused": false,
+      "relaxed_only": 2,
+      "returned": 30,
+      "unit_id": "reappraisal:Chapter1",
+      "unparseable": false,
+      "words": 4151,
+      "work_id": null
+    },
+    {
+      "bad_kind": 0,
+      "beats": [
+        {
+          "anchor": "It was not there, because it had never been written.",
+          "hash": "df6286473350c521",
+          "kind": "deadpan",
+          "offset": 2212,
+          "words": 10
+        },
+        {
+          "anchor": "the shin he had opened on the boundary wall was a shin",
+          "hash": "9f072fec5094f034",
+          "kind": "deadpan",
+          "offset": 2466,
+          "words": 12
+        },
+        {
+          "anchor": "Are you buying or praying?",
+          "hash": "7446c7b6fb7c6d8c",
+          "kind": "quip",
+          "offset": 4384,
+          "words": 5
+        },
+        {
+          "anchor": "You're on time, which is new",
+          "hash": "bd31f64107611baf",
+          "kind": "quip",
+          "offset": 5094,
+          "words": 6
+        },
+        {
+          "anchor": "a bill presented to somebody who had never signed for it",
+          "hash": "c67378906b9293ec",
+          "kind": "quip",
+          "offset": 5373,
+          "words": 11
+        },
+        {
+          "anchor": "which she could do",
+          "hash": "b50a263e076a4ffb",
+          "kind": "quip",
+          "offset": 6084,
+          "words": 4
+        },
+        {
+          "anchor": "which from Marta was a whole sentence",
+          "hash": "d6a95351f491a541",
+          "kind": "quip",
+          "offset": 6258,
+          "words": 7
+        },
+        {
+          "anchor": "in a coat worth more than the queue's patience",
+          "hash": "14e5a70c56a9752c",
+          "kind": "quip",
+          "offset": 6369,
+          "words": 9
+        },
+        {
+          "anchor": "went the colour of weak tea and then went nowhere",
+          "hash": "afdd5f47b5bc97f5",
+          "kind": "quip",
+          "offset": 7440,
+          "words": 10
+        },
+        {
+          "anchor": "you are not lending against a ring, you are swearing to a year",
+          "hash": "4bf12773378ca717",
+          "kind": "quip",
+          "offset": 7897,
+          "words": 13
+        },
+        {
+          "anchor": "became a merchant",
+          "hash": "1a29b8559666610b",
+          "kind": "quip",
+          "offset": 10072,
+          "words": 3
+        },
+        {
+          "anchor": "that was the honest whole of his pricing",
+          "hash": "0eb0ebbc56f00bea",
+          "kind": "quip",
+          "offset": 10211,
+          "words": 8
+        },
+        {
+          "anchor": "Kessel bit it, and made a face, and kept it",
+          "hash": "138fbcc3f75914f9",
+          "kind": "deadpan",
+          "offset": 10415,
+          "words": 10
+        },
+        {
+          "anchor": "like a queue that has been told something",
+          "hash": "ad03bd831cf248b2",
+          "kind": "absurd",
+          "offset": 11172,
+          "words": 8
+        },
+        {
+          "anchor": "between them a landing where the air was still air",
+          "hash": "35e613b7490b454b",
+          "kind": "deadpan",
+          "offset": 11327,
+          "words": 10
+        },
+        {
+          "anchor": "Not the roar men put in stories",
+          "hash": "4762da0fe8680c21",
+          "kind": "quip",
+          "offset": 11518,
+          "words": 7
+        },
+        {
+          "anchor": "into a room that had gone on without him",
+          "hash": "018e77447d60e1fd",
+          "kind": "absurd",
+          "offset": 13584,
+          "words": 9
+        },
+        {
+          "anchor": "the landing has whatever the landing has",
+          "hash": "a0ac790ed6d163a6",
+          "kind": "deadpan",
+          "offset": 14598,
+          "words": 7
+        },
+        {
+          "anchor": "That is the price",
+          "hash": "9c5fa5abe67a1dd0",
+          "kind": "deadpan",
+          "offset": 14806,
+          "words": 4
+        },
+        {
+          "anchor": "you are the price of it",
+          "hash": "957945fa60aed65a",
+          "kind": "deadpan",
+          "offset": 15733,
+          "words": 6
+        },
+        {
+          "anchor": "like a man carrying a roof",
+          "hash": "bd34060e4691fa80",
+          "kind": "absurd",
+          "offset": 16531,
+          "words": 6
+        },
+        {
+          "anchor": "water came out of it into his lap in a slow grey rope",
+          "hash": "4427f636057d4bf1",
+          "kind": "quip",
+          "offset": 16743,
+          "words": 13
+        },
+        {
+          "anchor": "had gone the colour of tea",
+          "hash": "c83f34d46d798ffd",
+          "kind": "quip",
+          "offset": 16866,
+          "words": 6
+        },
+        {
+          "anchor": "worth eleven pence as a book and nothing as anything else",
+          "hash": "9a7429655960559c",
+          "kind": "deadpan",
+          "offset": 17251,
+          "words": 11
+        },
+        {
+          "anchor": "so he said it to the parapet",
+          "hash": "ac72711e9812c8b8",
+          "kind": "quip",
+          "offset": 17836,
+          "words": 7
+        },
+        {
+          "anchor": "out to nobody, still standing",
+          "hash": "8d97f1fe46d29ead",
+          "kind": "quip",
+          "offset": 18066,
+          "words": 5
+        },
+        {
+          "anchor": "a small tarnished nothing",
+          "hash": "92aeced3d123375b",
+          "kind": "quip",
+          "offset": 19247,
+          "words": 4
+        },
+        {
+          "anchor": "the sound had not been large",
+          "hash": "9aeabd15c13c1b73",
+          "kind": "deadpan",
+          "offset": 19694,
+          "words": 6
+        },
+        {
+          "anchor": "He turned it over the way he would turn a coin",
+          "hash": "784e0f186e8fe491",
+          "kind": "quip",
+          "offset": 20037,
+          "words": 11
+        }
+      ],
+      "by_kind": {
+        "absurd": 3,
+        "deadpan": 9,
+        "quip": 17
+      },
+      "cohort": "own_chapter",
+      "confabulated": 0,
+      "counted": 29,
+      "density_per_1k": 6.8203,
+      "duplicate": 0,
+      "over_length": 2,
+      "refused": false,
+      "relaxed_only": 0,
+      "returned": 29,
+      "unit_id": "reappraisal:Chapter2",
+      "unparseable": false,
+      "words": 4252,
+      "work_id": null
+    },
+    {
+      "bad_kind": 0,
+      "beats": [
+        {
+          "anchor": "told you where it was. A good one only got heavier.",
+          "hash": "8f2692fd6a8a51a0",
+          "kind": "deadpan",
+          "offset": 166,
+          "words": 11
+        },
+        {
+          "anchor": "The Road counted that as a debt too, and priced it worse.",
+          "hash": "2e05a1e2249a6333",
+          "kind": "absurd",
+          "offset": 472,
+          "words": 12
+        },
+        {
+          "anchor": "The book doesn't.",
+          "hash": "0798e03ff54b9c0f",
+          "kind": "banter",
+          "offset": 1379,
+          "words": 3
+        },
+        {
+          "anchor": "like a word from someone else's language",
+          "hash": "58c5f470a608cdaf",
+          "kind": "quip",
+          "offset": 1474,
+          "words": 7
+        },
+        {
+          "anchor": "The board says *sealed cargo: subject to inspection.* This is the inspection.",
+          "hash": "bb502016e60b88db",
+          "kind": "banter",
+          "offset": 2571,
+          "words": 12
+        },
+        {
+          "anchor": "and it came out the same as it always came out: no.",
+          "hash": "4c4502d9d769b8b4",
+          "kind": "deadpan",
+          "offset": 2781,
+          "words": 12
+        },
+        {
+          "anchor": "spent here, standing on cold stone, arguing about wax",
+          "hash": "b3503c9f53b9bce0",
+          "kind": "undercut",
+          "offset": 2939,
+          "words": 9
+        },
+        {
+          "anchor": "once it was not pain and the man had not believed him",
+          "hash": "73da177cd1fa72f3",
+          "kind": "quip",
+          "offset": 3196,
+          "words": 12
+        },
+        {
+          "anchor": "\"Something,\" Haro said. \"No.\" Wren blew on the ink. \"Nothing.\"",
+          "hash": "732091e22992b301",
+          "kind": "banter",
+          "offset": 4557,
+          "words": 10
+        },
+        {
+          "anchor": "[STATUS] wren \u2014 Level 2 | HP 19/22 | MP ?/? | Gold ?",
+          "hash": "349553cefd7d7fe4",
+          "kind": "system_voice",
+          "offset": 4770,
+          "words": 14
+        }
+      ],
+      "by_kind": {
+        "absurd": 1,
+        "banter": 3,
+        "deadpan": 2,
+        "quip": 2,
+        "system_voice": 1,
+        "undercut": 1
+      },
+      "cohort": "own_scene",
+      "confabulated": 0,
+      "counted": 10,
+      "density_per_1k": 10.9649,
+      "duplicate": 0,
+      "over_length": 1,
+      "refused": false,
+      "relaxed_only": 0,
+      "returned": 10,
+      "unit_id": "toll-road:scene-1",
+      "unparseable": false,
+      "words": 912,
+      "work_id": null
+    },
+    {
+      "bad_kind": 0,
+      "beats": [
+        {
+          "anchor": "Downhill made the crate want to walk ahead of him",
+          "hash": "ebf0449db416c1c9",
+          "kind": "absurd",
+          "offset": 83,
+          "words": 10
+        },
+        {
+          "anchor": "a box that weighed nothing it hadn't weighed yesterday",
+          "hash": "7faf992df84a0631",
+          "kind": "deadpan",
+          "offset": 179,
+          "words": 9
+        },
+        {
+          "anchor": "the only sign anyone had been proud of the place",
+          "hash": "5143700f50d34d61",
+          "kind": "deadpan",
+          "offset": 405,
+          "words": 10
+        },
+        {
+          "anchor": "looked at the crate the way a farrier looks at a hoof",
+          "hash": "5e4699db6e03698f",
+          "kind": "deadpan",
+          "offset": 1158,
+          "words": 12
+        },
+        {
+          "anchor": "Then she saw the wax and stopped looking casual about it.",
+          "hash": "664db96210bdd772",
+          "kind": "deadpan",
+          "offset": 1262,
+          "words": 11
+        },
+        {
+          "anchor": "It's the one I've got.",
+          "hash": "34dff0a7f2da6b2e",
+          "kind": "quip",
+          "offset": 1555,
+          "words": 5
+        },
+        {
+          "anchor": "The seal isn't mine to price.",
+          "hash": "620a66a25cda05e9",
+          "kind": "deadpan",
+          "offset": 1853,
+          "words": 6
+        },
+        {
+          "anchor": "Then he took two for it.",
+          "hash": "1eec8097bd0c74c4",
+          "kind": "quip",
+          "offset": 2115,
+          "words": 6
+        },
+        {
+          "anchor": "an evening he had never seen went out like a lamp",
+          "hash": "2303261d45d05a74",
+          "kind": "deadpan",
+          "offset": 2622,
+          "words": 11
+        },
+        {
+          "anchor": "it was not a hard sum.",
+          "hash": "3f062aefaec8478c",
+          "kind": "deadpan",
+          "offset": 3527,
+          "words": 6
+        },
+        {
+          "anchor": "It was eight the wrong way.",
+          "hash": "43205435b10d99c8",
+          "kind": "deadpan",
+          "offset": 3833,
+          "words": 6
+        },
+        {
+          "anchor": "eight days of some spring he had not been introduced to",
+          "hash": "4f33b05a16ee7027",
+          "kind": "absurd",
+          "offset": 3868,
+          "words": 11
+        },
+        {
+          "anchor": "Then he underlined it, which he had never done before.",
+          "hash": "86638517124dfc08",
+          "kind": "deadpan",
+          "offset": 4825,
+          "words": 10
+        }
+      ],
+      "by_kind": {
+        "absurd": 2,
+        "deadpan": 9,
+        "quip": 2
+      },
+      "cohort": "own_scene",
+      "confabulated": 0,
+      "counted": 13,
+      "density_per_1k": 13.1846,
+      "duplicate": 0,
+      "over_length": 0,
+      "refused": false,
+      "relaxed_only": 0,
+      "returned": 13,
+      "unit_id": "toll-road:scene-2",
+      "unparseable": false,
+      "words": 986,
+      "work_id": null
+    },
+    {
+      "bad_kind": 0,
+      "beats": [
+        {
+          "anchor": "Nobody had said anything about the bottom.",
+          "hash": "b376d4fa7fcda4dc",
+          "kind": "deadpan",
+          "offset": 145,
+          "words": 7
+        },
+        {
+          "anchor": "a boy really, with a coat he'd grow into",
+          "hash": "c9304cafa6c7bd89",
+          "kind": "quip",
+          "offset": 1113,
+          "words": 9
+        },
+        {
+          "anchor": "told himself both times that he was checking the weather",
+          "hash": "1d57a64182a9824f",
+          "kind": "quip",
+          "offset": 1247,
+          "words": 10
+        },
+        {
+          "anchor": "The boy did not look at the wax at all.",
+          "hash": "5bca1c2e9366f186",
+          "kind": "deadpan",
+          "offset": 1342,
+          "words": 10
+        },
+        {
+          "anchor": "the boy had done nothing but write",
+          "hash": "1e0968d9d6cd6fcf",
+          "kind": "deadpan",
+          "offset": 2257,
+          "words": 7
+        },
+        {
+          "anchor": "took it off again before anyone could call it leaning",
+          "hash": "2c12a0baea6dc334",
+          "kind": "quip",
+          "offset": 2903,
+          "words": 10
+        },
+        {
+          "anchor": "in a way that had nothing to do with the load",
+          "hash": "cadd51d3788c1edd",
+          "kind": "deadpan",
+          "offset": 3458,
+          "words": 11
+        },
+        {
+          "anchor": "pulled the liner sheet out with his good hand",
+          "hash": "262364498caa94c8",
+          "kind": "deadpan",
+          "offset": 4246,
+          "words": 9
+        },
+        {
+          "anchor": "wrote the entry anyway with blood in the crease of the paper",
+          "hash": "15b0aa49594c4b5a",
+          "kind": "deadpan",
+          "offset": 3803,
+          "words": 12
+        },
+        {
+          "anchor": "and he got up and walked, because that was the arrangement",
+          "hash": "dcd9b2af45604372",
+          "kind": "deadpan",
+          "offset": 4002,
+          "words": 11
+        },
+        {
+          "anchor": "and cost five, and the book was flawless",
+          "hash": "03240adf882d595a",
+          "kind": "deadpan",
+          "offset": 4145,
+          "words": 8
+        }
+      ],
+      "by_kind": {
+        "deadpan": 8,
+        "quip": 3
+      },
+      "cohort": "own_scene",
+      "confabulated": 1,
+      "counted": 11,
+      "density_per_1k": 11.3169,
+      "duplicate": 0,
+      "over_length": 0,
+      "refused": false,
+      "relaxed_only": 1,
+      "returned": 12,
+      "unit_id": "toll-road:scene-3",
+      "unparseable": false,
+      "words": 972,
+      "work_id": null
+    },
+    {
+      "bad_kind": 0,
+      "beats": [
+        {
+          "anchor": "Not paid, not spent \u2014 back.",
+          "hash": "464df75f8383d815",
+          "kind": "deadpan",
+          "offset": 302,
+          "words": 6
+        },
+        {
+          "anchor": "the Road had offered him a number that went the right way",
+          "hash": "a2e575b9ba3e4450",
+          "kind": "deadpan",
+          "offset": 461,
+          "words": 12
+        },
+        {
+          "anchor": "the knee looked like a thing that had been argued with and won",
+          "hash": "3b92c5574ba374e4",
+          "kind": "absurd",
+          "offset": 633,
+          "words": 13
+        },
+        {
+          "anchor": "Second dusk. So, none.",
+          "hash": "18c36486d9623260",
+          "kind": "quip",
+          "offset": 857,
+          "words": 4
+        },
+        {
+          "anchor": "That's not a carry, that's a wager.",
+          "hash": "d2451f83c9a60c8d",
+          "kind": "quip",
+          "offset": 1043,
+          "words": 7
+        },
+        {
+          "anchor": "Everyone's got a cousin who did it the once.",
+          "hash": "638602d19f40da38",
+          "kind": "quip",
+          "offset": 1267,
+          "words": 9
+        },
+        {
+          "anchor": "She shrugged with the shoulder that still worked.",
+          "hash": "8d632d95e5d92044",
+          "kind": "deadpan",
+          "offset": 1338,
+          "words": 8
+        },
+        {
+          "anchor": "The bonus did not send you fast. It sent you alone.",
+          "hash": "a76dc02a958d74a1",
+          "kind": "undercut",
+          "offset": 2099,
+          "words": 11
+        },
+        {
+          "anchor": "He walked anyway.",
+          "hash": "e04c7c2f460ab12d",
+          "kind": "deadpan",
+          "offset": 2151,
+          "words": 3
+        },
+        {
+          "anchor": "on a page he'd stopped believing",
+          "hash": "7561b3d90a3b95e7",
+          "kind": "deadpan",
+          "offset": 2715,
+          "words": 6
+        },
+        {
+          "anchor": "at about the pace of a funeral",
+          "hash": "c52d26cdd0c24111",
+          "kind": "deadpan",
+          "offset": 2770,
+          "words": 7
+        },
+        {
+          "anchor": "some week he'd never be introduced to, folded away",
+          "hash": "dc759917f57fe950",
+          "kind": "deadpan",
+          "offset": 3168,
+          "words": 9
+        },
+        {
+          "anchor": "Four the wrong way.",
+          "hash": "7bd3cd26a04f7e18",
+          "kind": "deadpan",
+          "offset": 3551,
+          "words": 4
+        },
+        {
+          "anchor": "like a favour",
+          "hash": "6316135ac9617b80",
+          "kind": "deadpan",
+          "offset": 4217,
+          "words": 3
+        },
+        {
+          "anchor": "The book said four thousand and three.",
+          "hash": "eee15fe0eb2ed71a",
+          "kind": "deadpan",
+          "offset": 4666,
+          "words": 7
+        },
+        {
+          "anchor": "almost kindly",
+          "hash": "1c643447d0042b4f",
+          "kind": "deadpan",
+          "offset": 4366,
+          "words": 2
+        },
+        {
+          "anchor": "laughed once, which hurt his chest, and then stopped",
+          "hash": "a193cf234832a802",
+          "kind": "deadpan",
+          "offset": 5280,
+          "words": 9
+        },
+        {
+          "anchor": "[STATUS] wren \u2014 Level 2 | HP 13/22",
+          "hash": "fd8aa84685ca52f2",
+          "kind": "system_voice",
+          "offset": 5358,
+          "words": 8
+        }
+      ],
+      "by_kind": {
+        "absurd": 1,
+        "deadpan": 12,
+        "quip": 3,
+        "system_voice": 1,
+        "undercut": 1
+      },
+      "cohort": "own_scene",
+      "confabulated": 0,
+      "counted": 18,
+      "density_per_1k": 17.5781,
+      "duplicate": 0,
+      "over_length": 1,
+      "refused": false,
+      "relaxed_only": 0,
+      "returned": 18,
+      "unit_id": "toll-road:scene-4",
+      "unparseable": false,
+      "words": 1024,
+      "work_id": null
+    },
+    {
+      "bad_kind": 0,
+      "beats": [
+        {
+          "anchor": "which is a thing no porter does unless standing up again is the part he's saving strength for",
+          "hash": "a599500973957497",
+          "kind": "deadpan",
+          "offset": 240,
+          "words": 18
+        },
+        {
+          "anchor": "where there's a driver on the road, and call that being clever.",
+          "hash": "8fbf0ea5ad598fd5",
+          "kind": "deadpan",
+          "offset": 2454,
+          "words": 12
+        },
+        {
+          "anchor": "Wren was looking straight at him when the System took them.",
+          "hash": "23e3c45bf895a22e",
+          "kind": "undercut",
+          "offset": 3266,
+          "words": 11
+        },
+        {
+          "anchor": "the thing a face does when a man remembers something pleasant from",
+          "hash": "4d3e360be078039e",
+          "kind": "absurd",
+          "offset": 3382,
+          "words": 12
+        },
+        {
+          "anchor": "the frame came down first because the frame always comes down first",
+          "hash": "2112a860908c2041",
+          "kind": "callback",
+          "offset": 3488,
+          "words": 12
+        },
+        {
+          "anchor": "\"He had three,\" she said. \"Three what.\" \"Three days. Remaining.\" She turned",
+          "hash": "bfc20b401284b9df",
+          "kind": "banter",
+          "offset": 3853,
+          "words": 12
+        },
+        {
+          "anchor": "The route did not stop. That was the part he understood last.",
+          "hash": "2e50655004e36f3d",
+          "kind": "deadpan",
+          "offset": 4339,
+          "words": 12
+        }
+      ],
+      "by_kind": {
+        "absurd": 1,
+        "banter": 1,
+        "callback": 1,
+        "deadpan": 3,
+        "undercut": 1
+      },
+      "cohort": "own_scene",
+      "confabulated": 1,
+      "counted": 7,
+      "density_per_1k": 7.2165,
+      "duplicate": 0,
+      "over_length": 2,
+      "refused": false,
+      "relaxed_only": 1,
+      "returned": 8,
+      "unit_id": "toll-road:scene-5",
+      "unparseable": false,
+      "words": 970,
+      "work_id": null
+    },
+    {
+      "bad_kind": 0,
+      "beats": [
+        {
+          "anchor": "which told Wren more about the road than the pause did.",
+          "hash": "29c7c51e013d8101",
+          "kind": "quip",
+          "offset": 749,
+          "words": 11
+        },
+        {
+          "anchor": "Mekk's is Mekk's.",
+          "hash": "5b3d6698f296ff49",
+          "kind": "quip",
+          "offset": 560,
+          "words": 3
+        },
+        {
+          "anchor": "There's a mouse in there I've named.",
+          "hash": "a3ffffca7add8739",
+          "kind": "quip",
+          "offset": 1416,
+          "words": 7
+        },
+        {
+          "anchor": "Which is the same thing said slower.",
+          "hash": "30b9662cfc64a968",
+          "kind": "quip",
+          "offset": 1623,
+          "words": 7
+        },
+        {
+          "anchor": "I'm a man with a stamp.",
+          "hash": "4e52480a44423b57",
+          "kind": "quip",
+          "offset": 1806,
+          "words": 6
+        },
+        {
+          "anchor": "You've got one arm.",
+          "hash": "f4c21c6a12f3a272",
+          "kind": "deadpan",
+          "offset": 2141,
+          "words": 4
+        },
+        {
+          "anchor": "which meant carrying them the way a man carries a body",
+          "hash": "1510a5d9b0393390",
+          "kind": "deadpan",
+          "offset": 2398,
+          "words": 11
+        },
+        {
+          "anchor": "stopped counting after that",
+          "hash": "7a67797c198ddf30",
+          "kind": "deadpan",
+          "offset": 2625,
+          "words": 4
+        },
+        {
+          "anchor": "which was its own kind of decency.",
+          "hash": "0a8e895ce1d8f6b0",
+          "kind": "quip",
+          "offset": 2872,
+          "words": 7
+        },
+        {
+          "anchor": "At some hour with no name in it",
+          "hash": "9f78b3d9a3b3ee53",
+          "kind": "deadpan",
+          "offset": 2907,
+          "words": 8
+        },
+        {
+          "anchor": "It agreed.",
+          "hash": "d13fa18036cebe76",
+          "kind": "deadpan",
+          "offset": 3777,
+          "words": 2
+        },
+        {
+          "anchor": "He turned pages with his thumb bleeding into the corner of them.",
+          "hash": "829b3494c1574571",
+          "kind": "deadpan",
+          "offset": 4361,
+          "words": 12
+        },
+        {
+          "anchor": "Wren put the books back where they had stood, all of them, exactly.",
+          "hash": "a0fabbb759f3a439",
+          "kind": "deadpan",
+          "offset": 5101,
+          "words": 13
+        },
+        {
+          "anchor": "the newer books had quietly stopped printing",
+          "hash": "679b48aeb7c6be55",
+          "kind": "deadpan",
+          "offset": 5334,
+          "words": 7
+        }
+      ],
+      "by_kind": {
+        "deadpan": 8,
+        "quip": 6
+      },
+      "cohort": "own_scene",
+      "confabulated": 0,
+      "counted": 14,
+      "density_per_1k": 13.3971,
+      "duplicate": 0,
+      "over_length": 1,
+      "refused": false,
+      "relaxed_only": 0,
+      "returned": 14,
+      "unit_id": "toll-road:scene-6",
+      "unparseable": false,
+      "words": 1045,
+      "work_id": null
+    },
+    {
+      "bad_kind": 0,
+      "beats": [
+        {
+          "anchor": "I had an hour with a mouse",
+          "hash": "6f6f8a6c35d7a864",
+          "kind": "quip",
+          "offset": 648,
+          "words": 7
+        },
+        {
+          "anchor": "which he'll find restful",
+          "hash": "53b2afc81f89f853",
+          "kind": "deadpan",
+          "offset": 767,
+          "words": 4
+        },
+        {
+          "anchor": "because I'm the window and he's a man with a stamp",
+          "hash": "4b78425ce7ee603d",
+          "kind": "quip",
+          "offset": 939,
+          "words": 11
+        }
+      ],
+      "by_kind": {
+        "deadpan": 1,
+        "quip": 2
+      },
+      "cohort": "own_scene",
+      "confabulated": 1,
+      "counted": 3,
+      "density_per_1k": 2.9674,
+      "duplicate": 0,
+      "over_length": 0,
+      "refused": false,
+      "relaxed_only": 1,
+      "returned": 4,
+      "unit_id": "toll-road:scene-7",
+      "unparseable": false,
+      "words": 1011,
+      "work_id": null
+    },
+    {
+      "bad_kind": 0,
+      "beats": [
+        {
+          "anchor": "That's not a joke, the chair was under the window.",
+          "hash": "98faccfe164d686a",
+          "kind": "deadpan",
+          "offset": 997,
+          "words": 10
+        },
+        {
+          "anchor": "Then it's just a hole.",
+          "hash": "e36bc55a97e80359",
+          "kind": "deadpan",
+          "offset": 2725,
+          "words": 5
+        },
+        {
+          "anchor": "[STATUS] wren \u2014 Level 2 | HP 17/22 | MP ?/? | Gold ?",
+          "hash": "43fcd8b57c376a53",
+          "kind": "system_voice",
+          "offset": 5341,
+          "words": 14
+        }
+      ],
+      "by_kind": {
+        "deadpan": 2,
+        "system_voice": 1
+      },
+      "cohort": "own_scene",
+      "confabulated": 0,
+      "counted": 3,
+      "density_per_1k": 2.8763,
+      "duplicate": 0,
+      "over_length": 1,
+      "refused": false,
+      "relaxed_only": 0,
+      "returned": 3,
+      "unit_id": "toll-road:scene-8",
+      "unparseable": false,
+      "words": 1043,
+      "work_id": null
+    },
+    {
+      "bad_kind": 0,
+      "beats": [
+        {
+          "anchor": "Wren was glad of the boy and didn't say anything either",
+          "hash": "d2166cde7653dd03",
+          "kind": "deadpan",
+          "offset": 5113,
+          "words": 11
+        },
+        {
+          "anchor": "he let himself go grey and stand still",
+          "hash": "15ca5fdc7d8ce308",
+          "kind": "deadpan",
+          "offset": 5502,
+          "words": 8
+        },
+        {
+          "anchor": "[STATUS] wren \u2014 Level 2 | HP 15/22 | MP ?/? | Gold ?",
+          "hash": "d04752054721b5f6",
+          "kind": "absurd",
+          "offset": 5596,
+          "words": 14
+        }
+      ],
+      "by_kind": {
+        "absurd": 1,
+        "deadpan": 2
+      },
+      "cohort": "own_scene",
+      "confabulated": 4,
+      "counted": 3,
+      "density_per_1k": 2.8037,
+      "duplicate": 0,
+      "over_length": 1,
+      "refused": false,
+      "relaxed_only": 4,
+      "returned": 7,
+      "unit_id": "toll-road:scene-9",
+      "unparseable": false,
+      "words": 1070,
+      "work_id": null
+    },
+    {
+      "bad_kind": 0,
+      "beats": [
+        {
+          "anchor": "Now you sit unpriced,",
+          "hash": "9888b46aea999974",
+          "kind": "quip",
+          "offset": 767,
+          "words": 4
+        },
+        {
+          "anchor": "still hadn't learned to stop hoping against",
+          "hash": "8aec062aec06b33b",
+          "kind": "quip",
+          "offset": 934,
+          "words": 7
+        },
+        {
+          "anchor": "the way you hear of a flood in another county",
+          "hash": "6fad80fd45768f74",
+          "kind": "quip",
+          "offset": 1145,
+          "words": 10
+        },
+        {
+          "anchor": "whatever the window feels like",
+          "hash": "601698c05d0b15b8",
+          "kind": "deadpan",
+          "offset": 1516,
+          "words": 5
+        },
+        {
+          "anchor": "had days the way nineteen-year-olds have days",
+          "hash": "11515c1fb836b97d",
+          "kind": "absurd",
+          "offset": 1727,
+          "words": 7
+        },
+        {
+          "anchor": "didn't know yet that this was the only wealth he'd ever hold",
+          "hash": "85f777e877a6d7d5",
+          "kind": "undercut",
+          "offset": 1778,
+          "words": 12
+        },
+        {
+          "anchor": "for less time than it deserved",
+          "hash": "78804d23d67e7143",
+          "kind": "quip",
+          "offset": 2340,
+          "words": 6
+        },
+        {
+          "anchor": "so there were ears on it",
+          "hash": "ee26b1f87db31ab1",
+          "kind": "quip",
+          "offset": 3024,
+          "words": 6
+        },
+        {
+          "anchor": "Not rain \u2014 rain would have been a kindness",
+          "hash": "b442ba2b07a42f57",
+          "kind": "deadpan",
+          "offset": 3437,
+          "words": 9
+        },
+        {
+          "anchor": "the left shoulder gave up any pretence",
+          "hash": "72af0e1ad6ac6f25",
+          "kind": "quip",
+          "offset": 4015,
+          "words": 7
+        },
+        {
+          "anchor": "not how a man carries and not how a man survives carrying",
+          "hash": "fb74baf37d8244cf",
+          "kind": "absurd",
+          "offset": 4222,
+          "words": 12
+        },
+        {
+          "anchor": "where they don't say what happened to the ones who did it once",
+          "hash": "f880cfc2176092d0",
+          "kind": "deadpan",
+          "offset": 4720,
+          "words": 13
+        },
+        {
+          "anchor": "at a speed that was not walking",
+          "hash": "07b4c3dd99010268",
+          "kind": "deadpan",
+          "offset": 5146,
+          "words": 7
+        }
+      ],
+      "by_kind": {
+        "absurd": 2,
+        "deadpan": 4,
+        "quip": 6,
+        "undercut": 1
+      },
+      "cohort": "own_scene",
+      "confabulated": 0,
+      "counted": 13,
+      "density_per_1k": 12.7953,
+      "duplicate": 0,
+      "over_length": 1,
+      "refused": false,
+      "relaxed_only": 0,
+      "returned": 13,
+      "unit_id": "toll-road:scene-10",
+      "unparseable": false,
+      "words": 1016,
+      "work_id": null
+    }
+  ],
+  "seconds": 508.4,
+  "spend": {
+    "cache_read": 216000,
+    "cache_write": 129355,
+    "equivalent_usd": 1.2284,
+    "input": 36499,
+    "output": 182316
+  },
+  "substrate": "local",
+  "transport": "cli",
+  "transport_failures": 0,
+  "window": [
+    800,
+    6000
+  ]
+}

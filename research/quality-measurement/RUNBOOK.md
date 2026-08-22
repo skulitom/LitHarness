@@ -725,3 +725,90 @@ through `writer_states.Generator` and computes regex counters, exactly like
 `repair_generation.py`, so it wants the repo's own environment. The D1P *sessions* that consume
 its variants are a different matter: they run on the local reader under the duty-cycle governor
 and belong with `bcr.py`'s commands above.
+
+
+## The comic-beat census — located levity, and what it costs to be sure of it
+
+`comic-beats-results.md` carries every number and is authoritative; this section is the commands
+and the cost as measured. **No bar is declared anywhere in this programme, nothing it produces
+reaches a prompt, a directive or the axis registry, and nothing under `src/` moved.**
+
+**The selftest gates everything and it is free.** Schema shape, the closed kind set, anchor
+findability on synthetic text, the sign-test arithmetic, the strip arm's readings, the revision
+certificates, and last the byte-freeze: `registration_digest()` must still equal `FROZEN_DIGEST`
+(`d3200ddad172e4854b70`). A result file whose digest differs came from a different instrument and
+every arm refuses to read one.
+
+```bash
+uv run python research/quality-measurement/comic_beats.py --selftest
+```
+
+**The draw crosses interpreters as a gitignored file.** The parquet shards are MirrorBench's and
+the transport is the repo's, so `--dump` runs there and writes
+`derived/comic-beats-royalroad.jsonl` — ids, cohort, covariates and text, local-only, under the
+root `corpus_leak_audit.py` already guards. One chapter per story, chosen by digest, so re-running
+reproduces the same 249 chapters from the same pinned snapshot.
+
+```bash
+C:/DEV/MirrorBench/.venv/Scripts/python.exe research/quality-measurement/comic_beats.py --dump
+```
+
+**Price before you run.** `--price N` runs N calls spread across the chapter-length range, writes
+a price file rather than a census, and projects the rest of the substrate from a least-squares fit
+of measured price against chapter length. The calls land in the census arm's own cache, so the
+census replays them for nothing. Eight calls projected the RoyalRoad census at $25.71; it came in
+at $23.60.
+
+```bash
+uv run python research/quality-measurement/comic_beats.py --substrate royalroad --arm census --price 8 --yes
+```
+
+**The arms are read in order and each refuses to run out of it.** `repeat`, `sham` and `strip`
+read the census's result file for their subsets — the strip subset is the census's own top decile
+and the noise floor has to cover it. `--dry-run` needs no `--yes`, writes to its own `-dry` files,
+and cannot touch a paid arm's results.
+
+```bash
+uv run python research/quality-measurement/comic_beats.py --substrate local --arm census --yes --workers 3
+```
+
+Then `--arm repeat`, `--arm sham`, `--arm strip`, and the same four on `--substrate royalroad`.
+`--substrate report` merges them and spends nothing, so it is safe to re-run after any analysis
+change. In a linked worktree pass `--library` and `--toll`: `book-library/` and `exports/` are
+gitignored build products that live in the primary checkout, and a loader that silently found
+nothing would report a census of zero chapters as a measurement.
+
+**Cost as measured: $68.99 equivalent for 551 dispatched calls over about eight hours** at three
+workers, one arm at a time. RoyalRoad $56.50 (census $23.60, repeat $6.16, sham $6.04, strip
+locator $5.30, strip revisions $15.40); own prose $12.49. The locator fits
+`$0.0732 + $0.01525 per 1k words`, which is about eleven cents for a RoyalRoad chapter; a strip and
+placebo pair on the writer tier is $1.28 for a 4,151-word chapter.
+
+**Deliberation depth is the transport's and it is the dominant cost.** `claude -p` runs with
+thinking on, so most of each answer's output tokens are thinking tokens — which is why a locator
+call on a 2,264-word chapter costs eleven cents rather than one. It is constant across every arm,
+so no comparison is confounded by it, and no number is comparable to a run made with a different
+local install.
+
+**Four chapters of 249 cannot be sent at all, and four more timed out.** A rendered `claude -p`
+command line reaching 32,767 characters is refused by Windows with WinError 206;
+`CLI_COMMAND_BUDGET` measures the rendered length with `subprocess.list2cmdline` and excludes those
+chapters **before** the call, counted and printed, rather than sending them and reading a transport
+error indistinguishable from a broken install. The 300-second `CLI_TIMEOUT_SECONDS` is the other
+censor and it is **beat-count correlated** — a chapter with more located beats generates more
+thinking — so it bites the top of the distribution. Reappraisal chapter 2 timed out twice at three
+workers and returned at one; **drop to `--workers 1` for a unit that keeps timing out** rather than
+retrying at the same concurrency.
+
+**Recover transport failures, but never by re-running a census.** A transport failure is
+deliberately not cached, so re-running an arm replays everything that answered and re-issues only
+what did not. That is safe for `repeat`, `sham` and `strip`. It is **not** safe for `census`:
+recovering a chapter changes `scoreable`, which changes the top decile, which changes
+`strip_subset`, and would strand a strip arm already paid for. Four lost census chapters were
+reported as lost for exactly that reason.
+
+**One arm at a time, three workers.** §89.5 recorded 390 transport failures from two `claude -p`
+jobs beside each other; this programme ran at three workers beside a `litharness forge` job and
+took 11 transport failures in 551 calls, which is what that costs. A dedicated cache per arm —
+`Elicitor`'s write lock is per process — and a PID lock beside the results so a second launch
+refuses. Never wrap a run in `timeout`. Stdout is buffered, so the cache JSONL is the progress bar.

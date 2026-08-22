@@ -733,6 +733,58 @@ def test_repetition_does_not_promote_and_later_causal_reuse_does() -> None:
     assert "promoted at s02" in (promoted.note or "")
 
 
+def test_a_forged_world_does_not_look_like_an_authors_vocabulary() -> None:
+    """A merge-interaction defect: neither side of it is wrong alone.
+
+    `has_story_vocabulary` asks whether the book already carries order keys **somebody else**
+    chose, and abstains from placing anything if so. An Architect's reveal positions are dated —
+    but `architect.story_key` mints them in `beats_for`'s own width from the book's own scene
+    count, which is what stage-0 §107.9.1 defect 10 was fixed to guarantee. Left out of
+    `OWN_POSITION_VERSIONS` they would read as a foreign numbering, `stated_position` would
+    abstain for the whole book, and §12 step 5 would extract nothing from any scene — the
+    silence measured for the seeded-interiority case, arriving by a fourth door.
+    """
+    dated = lc.StateRecord(
+        record_id="rec-reveal",
+        kind=lc.StateRecordKind.RELATIONSHIP,
+        subject="m_the_tide_reveal",
+        predicate=worlds.DISCLOSED_TO,
+        value=worlds.READER,
+        object_ref="m_the_tide",
+        story_position=lc.StoryPosition(order_key="s4"),
+        authority=lc.StateAuthority.ACCEPTED_CANON,
+        predicate_registry_version=worlds.REGISTRY_VERSION,
+    )
+    assert not extraction.has_story_vocabulary([dated])
+    assert extraction.stated_position([dated], "s1") == "s1"
+
+    # The second family's own readings are the same case.
+    graph = lc.StateRecord(
+        record_id="rec-edge",
+        kind=lc.StateRecordKind.RELATIONSHIP,
+        subject="silas",
+        predicate="bonded_with",
+        object_ref="ember_fox",
+        story_position=lc.StoryPosition(order_key="s2"),
+        authority=lc.StateAuthority.ACCEPTED_CANON,
+        predicate_registry_version=extraction.GRAPH_REGISTRY_VERSION,
+    )
+    assert not extraction.has_story_vocabulary([graph])
+
+    # And a dated record that declares nothing still counts as somebody else's, unchanged.
+    authored = lc.StateRecord(
+        record_id="rec-authored",
+        kind=lc.StateRecordKind.ASSERTION,
+        subject="silas",
+        predicate="is_at",
+        value="the assay house",
+        story_position=lc.StoryPosition(order_key="s1"),
+        authority=lc.StateAuthority.ACCEPTED_CANON,
+    )
+    assert extraction.has_story_vocabulary([authored])
+    assert extraction.stated_position([authored], "s1") is None
+
+
 def test_extract_state_runs_both_families_from_one_call_site() -> None:
     """A graph reader wired into three of four call sites would work depending on the arm."""
     known = declared_book()

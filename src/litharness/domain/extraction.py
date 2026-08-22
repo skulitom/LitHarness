@@ -600,6 +600,41 @@ def speaks_system_voice(records: Sequence[lc.StateRecord]) -> bool:
 #: and borrowing the fixture's version would make them indistinguishable from authored ones.
 REGISTRY_VERSION = "litharness.systemvoice.v0"
 
+#: Declared on an **authored** record whose `story_position` is written in the planner's own
+#: key namespace — the `s{n}` keys `beats_for` mints for this book — rather than in one
+#: somebody else chose. It is a claim about where the key came from and nothing else: the
+#: record is still given rather than read, and `cmd_state` still prints it as `given`.
+#:
+#: The namespace is not new and this is not the first thing to write in it. `Promise` already
+#: stores `opened_at_key` "in `beats_for`'s padding", and the only reason that does not read
+#: as a foreign vocabulary is that promises live in their own table — `PromiseRepository`
+#: says so, naming `has_story_vocabulary`'s registry check as one of the three things folding
+#: them into `StateRecord` would break. A seeded record dated at a beat is the same key with
+#: nowhere to say so.
+PLANNED_POSITION_VERSION = "litharness.planned-position.v0"
+
+#: Registry versions whose order keys **this system's own planning** placed, and which are
+#: therefore not evidence that the book has a story vocabulary of its own. See
+#: `has_story_vocabulary`.
+#:
+#: **Two more members landed with the Architect, and both are the same case a third and fourth
+#: time.** `GRAPH_REGISTRY_VERSION` is this module's own second family, positioned at the key it
+#: was handed. `worlds.REGISTRY_VERSION` is an Architect's proposal, and its only dated records
+#: are the reveal positions `architect.story_key` mints **in `beats_for`'s own width, from the
+#: book's own scene count** — that is what stage-0 §107.9.1 defect 10 was fixed to guarantee, and
+#: it is exactly what makes them not somebody else's numbering. Left out, a forged world would
+#: flip `has_story_vocabulary` to True on its own seed and §12 step 5 would extract nothing from
+#: any scene, which is the silence measured for the seeded-interiority case arriving by a fourth
+#: door. `test_a_forged_world_does_not_look_like_an_authors_vocabulary` pins it.
+OWN_POSITION_VERSIONS = frozenset(
+    {
+        REGISTRY_VERSION,
+        PLANNED_POSITION_VERSION,
+        GRAPH_REGISTRY_VERSION,
+        worlds_mod.REGISTRY_VERSION,
+    }
+)
+
 
 def normalise_subject(name: str) -> str:
     """A subject id from a prose name. NFC, casefolded, whitespace collapsed to underscores."""
@@ -648,11 +683,27 @@ def has_story_vocabulary(known: Sequence[lc.StateRecord]) -> bool:
     is what tells the two apart, and it exists for precisely this: the module docstring
     records that it is deliberately not the fixtures' `fixture.v1`, so a record this extractor
     wrote is distinguishable from an authored one.
+
+    **The exclusion is a set rather than that one version, and the second member was found the
+    same way.** A seeded record dated at a beat — the interiority `plan/interiority-model.md`
+    §1 asks for, `silas wants …` at `s1` — carries an order key in `beats_for`'s own
+    namespace, which is not somebody else's numbering either. Measured on the Serial Pilot
+    seed: adding one such record with no declaration flips this to True, `stated_position`
+    then abstains for the whole book, and §12 step 5 extracts **nothing from any scene** —
+    the same silence Book Zero produced, arriving by a different door. On the same seed and
+    the same `Loop | Day` status line, `extract_state` returned 0 records with the declaration
+    absent and 1 with it present.
+
+    **The default direction is unchanged and is the safe one.** A dated canon record that
+    declares nothing still counts as a foreign vocabulary, so forgetting the declaration
+    loses coverage and can never mint a false order — the direction `BeatTemplate.chronological`
+    defaults in, and for the same reason.
     """
     return any(
         state_mod.order_key_of(record)
         for record in known
-        if state_mod.is_canon(record) and record.predicate_registry_version != REGISTRY_VERSION
+        if state_mod.is_canon(record)
+        and record.predicate_registry_version not in OWN_POSITION_VERSIONS
     )
 
 
@@ -1018,7 +1069,9 @@ __all__ = [
     "GRAPH_REGISTRY_VERSION",
     "LABEL_CHARS",
     "LABEL_WORDS",
+    "OWN_POSITION_VERSIONS",
     "PHRASE_WORDS",
+    "PLANNED_POSITION_VERSION",
     "REGISTRY_VERSION",
     "SHEET_PREDICATE",
     "STATUS_PATTERN",

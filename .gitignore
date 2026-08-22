@@ -74,3 +74,10 @@ research/quality-measurement/derived/
 # not two, so there is nothing to notice has drifted.
 pilot2/
 forge/
+
+# Single-run PID locks. `force_remote.SingleRun` writes one beside the results while an arm holds
+# the box and removes it on exit, so this only matters after a crash - and a stale lock is
+# operational state rather than a result. Two copies of one arm race the same cache and buy the
+# same work twice (stage-0 §95.10: 108 duplicate seed-runs, about $9 of paid work bought
+# twice), so the lock is load-bearing; it is just not evidence.
+research/quality-measurement/results/.*.pid

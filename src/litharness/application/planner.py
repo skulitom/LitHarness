@@ -98,7 +98,11 @@ from litharness.domain.context import (
 from litharness.domain.directives import Directive, DirectiveStatus
 from litharness.domain.draft import DraftPolicy, is_draftable
 from litharness.domain.events import payload_digest
-from litharness.domain.extraction import progression_target, system_voice_example
+from litharness.domain.extraction import (
+    progression_target,
+    stated_position,
+    system_voice_example,
+)
 from litharness.domain.feedback import FeedbackSet
 from litharness.domain.jobs import Job, input_digest_for
 from litharness.domain.plans import premise_of, scene_plan_for, scene_plan_line
@@ -476,12 +480,29 @@ def packet_for(
     honest — a test that had to build a store to ask "is the motive in the packet" would be
     testing the store.
 
-    **No story-time cutoff is passed, and that is a decision rather than an omission.**
-    `domain/state.py` records why: nothing defines a mapping from a manuscript scene to an
-    `order_key`, and inventing `f"s{beat.ordinal}"` would fit both fixtures and silently
-    mis-slice every other book. In the live loop the question does not arise — records are
-    extracted from accepted prose, so the only records that exist describe scenes already
-    written. It arises only for a book imported with its state intact, which is inspection.
+    **The story-time cutoff is the beat's own key, and only where the planner is entitled to
+    state one.** This paragraph used to say no cutoff was passed at all, on the ground that
+    nothing defines a mapping from a manuscript scene to an `order_key` and that in the live
+    loop the question does not arise, because records are extracted from accepted prose and
+    so only ever describe scenes already written.
+
+    That reasoning is sound for extracted records and does not reach **seeded** ones. A want
+    or a fear that changes across a book is future-dated by construction, so a packet with no
+    cutoff hands scene one what the character will want in chapter two — the story's engine
+    given away before it starts. Measured on an eight-scene book seeded with two wants at
+    `s1` and `s5`: both arrived in the Established facts block while drafting scene 1.
+
+    **The claim is still not this module's**, and it is not minted here either. It is
+    `stated_position`, unchanged and called one layer over: a `BeatTemplate` that declares
+    itself chronological is a statement about the sheet the planner laid out, and
+    `beats_for` turns it into `story_order_key`. So this abstains in exactly the cases
+    `extraction` abstains in, for exactly its reasons — a book with a story vocabulary
+    somebody else chose gets no cutoff, and its packet is byte-identical to what it was
+    before this existed. Both golden fixtures are that book.
+
+    A record with no `story_position` survives any cutoff (`state.records_before`), which is
+    what keeps a world rule, a standing relationship or the fifteen-record ability-graph seed
+    — all of them true of the book rather than of a moment in it — in every packet.
     """
     # **Only a summary of the prose that is actually there.** `scene_summaries` returns every
     # summary ever written for a scene, keyed by the content hash it was written from, and the
@@ -502,22 +523,31 @@ def packet_for(
         if current is not None:
             summaries[logical_id] = current
 
+    records = store.state_records(revision.book_id, revision.branch_id)
+
     return assemble(
         revision,
         beat.logical_id,
         plan_items=store.plan_items(revision.book_id, revision.branch_id),
-        state_records=store.state_records(revision.book_id, revision.branch_id),
+        state_records=records,
         query_id=f"beat:{beat.logical_id}",
         pov_character_id=pov_character_id,
         token_budget=token_budget,
+        # See the docstring. `stated_position` is the entitlement check, not a new one: it
+        # returns the beat's key only for a book whose story positions nobody else chose.
+        story_time_cutoff=stated_position(records, beat.story_order_key),
         summaries=summaries,
-        # **Where the book stands, for the reveal schedule only.** `story_time_cutoff` is
-        # still deliberately absent — nothing maps a manuscript scene onto an author's order
-        # key, and `domain/state.py` refuses to guess. This is the other question: has the
-        # reader been told this yet. The positions it compares against were minted by the
-        # Architect from this book's own beat sheet, so they are the same vocabulary; a
-        # non-chronological template mints none and `beat.story_order_key` is then `None`,
-        # which reads as "not yet" and keeps every scheduled answer hidden.
+        # **Where the book stands, and it is a different question from the cutoff above.**
+        # The cutoff decides which records *exist yet* and is gated by `stated_position`, so it
+        # is `None` for any book whose story positions somebody else chose. This asks whether
+        # the reader has been *told* a thing, against positions the Architect minted from this
+        # book's own beat sheet — so it is entitled to the beat's key unconditionally, and a
+        # forged world's schedule keeps working on an imported book where the cutoff abstains.
+        #
+        # The two lines were written by different sessions within a day of each other and the
+        # merge is where they met. They agree: a non-chronological template mints no key, both
+        # go `None`, the cutoff returns everything and every scheduled answer stays hidden —
+        # which is the safe direction for each of them separately.
         disclosure_at=beat.story_order_key,
         # The promise ledger's open rows (§61 Add 2), surfaced in the THREADS section so
         # generation gets to SEE what the book owes and by when. Read-only, and `assemble`

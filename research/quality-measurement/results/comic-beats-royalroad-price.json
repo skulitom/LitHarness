@@ -1,0 +1,171 @@
+{
+  "api_calls": 8,
+  "arm": "price",
+  "dry_run": false,
+  "exclusions": {
+    "by_reason": {
+      "over_cli_command_budget": 4
+    },
+    "excluded": [
+      {
+        "command_chars": 33237,
+        "reason": "over_cli_command_budget",
+        "unit_id": "rr:2116522.0",
+        "words": 5370
+      },
+      {
+        "command_chars": 36852,
+        "reason": "over_cli_command_budget",
+        "unit_id": "rr:2121854.0",
+        "words": 5535
+      },
+      {
+        "command_chars": 32954,
+        "reason": "over_cli_command_budget",
+        "unit_id": "rr:770970.0",
+        "words": 5763
+      },
+      {
+        "command_chars": 32273,
+        "reason": "over_cli_command_budget",
+        "unit_id": "rr:2206731.0",
+        "words": 5431
+      }
+    ],
+    "kept": 245,
+    "seen": 249
+  },
+  "failure_reasons": {},
+  "fit": {
+    "intercept_usd": 0.073238,
+    "mean_usd": 0.10713,
+    "n": 8,
+    "note": "the intercept is the transport's own per-call overhead, since the CLI sends its base prompt on every call, and the slope is what the chapter itself costs",
+    "residual_sd_usd": 0.024622,
+    "slope_usd_per_1k_words": 0.015245
+  },
+  "hygiene": {
+    "anchors_returned": 99,
+    "bad_kind": 0,
+    "confabulated": 1,
+    "confabulated_per_unit": 0.125,
+    "confabulation_rate": 0.0101,
+    "duplicate": 0,
+    "over_length": 4,
+    "refused_units": 0,
+    "relaxed_only": 0,
+    "units": 8,
+    "unparseable_units": 0
+  },
+  "model": "claude-haiku-4-5",
+  "note": "Deliberation depth is whatever the local `claude` install applies. It is not a parameter of this instrument, it is constant across every arm, and it is the dominant term in this price: the transport reports most of each answer's output tokens as thinking.",
+  "pre_registration": {
+    "arms": {
+      "census": "the chapter as published. Q1 and Q2 are read from this arm alone",
+      "repeat": "the same chapter, the same request, a distinct sample index \u2014 `n` byte-identical requests, so the variation is the model's own sampling and not a perturbed prompt (`elicit.py`'s rule). Reports the per-chapter spread of counts and the anchor overlap between the two lists. This is the noise floor every other arm is read against",
+      "sham": "`ablate.rewhitespace` at full strength. Not one character of any word changes. The count must not move beyond the `repeat` spread; if it does, the locator is responding to layout and the entry says so (\u00a778)",
+      "strip": "a certified minimal revision that rewrites every reach for levity plainly, with `strip_placebo` \u2014 the same revision contract with an inert task \u2014 beside it as the floor. One dose; no ladder, no inject arm"
+    },
+    "attainability": "Declared at the n actually available, before the first call, per \u00a787/\u00a789's rulebook. Every statistic here is an exact one-sided sign test whose smallest attainable p at G pairs is 1/2**G, so alpha 0.05 is unreachable below G=5 and every G below that reports INSUFFICIENT_N rather than FAILS. The sham subset is G=40+ RoyalRoad chapters and G=12 own units, both attainable. The strip subset is the census top decile, G=24 at n=249, plus own units with >= 3 beats; if fewer than 5 pairs certify, the arm reports INSUFFICIENT_N and no drop is read. None of these is a bar for admission: no bar for admission is declared anywhere in this module.",
+    "counting_rule": "A beat is counted only if its anchor is findable in the text THAT CALL WAS SHOWN, by normalised substring match (NFKC, curly quotes and dashes folded to ASCII, whitespace collapsed, casefolded), and only if its kind is one of the seven frozen kinds. Repeated anchors within one answer collapse to one beat. Unfindable anchors are confabulations: excluded from every count and reported as a rate on every arm.",
+    "declared_quantities": {
+      "anchor_overlap": "|A n B| / |A u B| over the two samples' normalised anchor sets, unitless, range [0, 1], higher is more stable. No bar: it is reported so a count that is stable while its locations are not cannot pass unnoticed",
+      "confabulation_rate": "unfindable anchors / anchors returned, unitless, range [0, 1], direction lower. Printed on every arm. REFUSAL STATE: if the mean confabulated beats per chapter on the strip subset is at least half the median strip drop in beats, the strip reading is VOID rather than weak \u2014 an effect the instrument's own noise could manufacture is not an effect",
+      "repeat_spread": "|count(sample 0) - count(sample 1)| per chapter, in beats; range [0, inf), no direction and no bar \u2014 it is the ruler. Reported as median, p90 and max, in beats and in beats/1k, on both substrates separately. Attainable at any n >= 1; the subset is 40 RoyalRoad chapters plus the strip subset plus every own unit",
+      "sham_delta": "|count(census) - count(sham)| per chapter, in beats, read against `repeat_spread` on the SAME chapters by a one-sided exact sign test that the sham delta exceeds the repeat delta. Outcomes: LAYOUT_SENSITIVE if p <= 0.05; INSIDE_NOISE only with the equivalence bound printed beside it, never as a pass by silence (\u00a7101.1); INSUFFICIENT_N below the attainable floor. The bound is the distribution-free 90% confidence interval on the median of (sham delta - repeat delta), in beats, so the reading states what magnitude of layout sensitivity it could not exclude",
+      "strip_drop": "count(original) - count(stripped), in beats, paired by chapter. Direction: positive. Read twice, and both readings print: against the placebo's own drift by a one-sided exact sign test on (strip drop > placebo drop), and against the noise floor by the share of pairs whose strip drop exceeds that chapter's repeat spread, sign-tested. Outcomes SEES / DOES_NOT_SEE / INSUFFICIENT_N / VOID"
+    },
+    "no_bar_for_admission": "None is declared, and that is the point. Nothing here enters `AXES` or `COUNTERS`, reaches a prompt, a directive, a Director brief, a persona reason code or a writer dossier. Admission is an operator act over the measured distribution, exactly as for `opening_proper_nouns`.",
+    "no_inherited_figures": "\u00a779.1's rule. Every spread, rate and cost reported here is measured on these chapters by this instrument in these runs. \u00a785's per-comparison price is not used to project this one, because a whole-chapter input is several times a \u00a785 pair.",
+    "no_landing_measurement": "Whether a beat lands is not asked, not schema'd and not derivable from anything here. The nearest shape is W4 (`payoff_landing.py`), which is NOT VALIDATED for want of substrate, and it stays that way.",
+    "no_post_hoc_leniency": "The strict normalisation above is the counting rule. A second, deliberately looser match \u2014 all non-alphanumeric characters dropped \u2014 is computed and reported as `relaxed_findable` so the size of what strictness costs is visible, and it never enters a count. Loosening the rule after reading the answers would be a rubric fitted to them.",
+    "question": "Do this project's published chapters attempt humor at the density the genre's readers select for, and can a located instrument see the difference at all? Q1 is the RoyalRoad LitRPG baseline by cohort, Q2 is where our own chapters sit in it, Q3 is whether the locator is an instrument. Reported separately and in that order.",
+    "sampling": "100 chapters per era cohort, ONE CHAPTER PER STORY, chosen deterministically by digest so the draw is a rule and not a draw. The substrate caps `declared_ai_2025` at 49 distinct stories inside the window, so the census is 100/100/49 = 249 and the cap is reported rather than filled by taking a second chapter from a story already in the pool.",
+    "strip_internal_control": "Protected spans (**bold** lines and [STATUS] lines) are copied byte-for-byte by the revision contract, so a `system_voice` beat cannot be stripped. Pre-registered: prose kinds fall and `system_voice` does not. If `system_voice` falls with them the locator is reading the fact of a rewrite. Four outcomes, none of them a pass by silence: CONTROL_HOLDS when no pair lost a system-voice beat, CONTROL_FAILS when the sign test says they fell, CONTROL_UNDECIDED with its interval printed in between, and EMPTY where the subset carries no protected span at all \u2014 which is most of RoyalRoad, whose system voice is not written in this project's typography.",
+    "substrates_are_never_pooled": "RoyalRoad text may be memorised by the locator (BRIEF \u00a72 Pass 6), so it is the baseline arm with the confound named; own-generated chapters are the clean arm; the `strip` differential on one chapter partially cancels the term; and no statistic in this module averages the two.",
+    "transport_exclusion": "A unit whose rendered `claude -p` command line reaches 32000 characters cannot be sent by this transport (Windows refuses at 32,767) and is excluded before the call, counted, and printed. It is not sent and allowed to fail: a transport error is indistinguishable from a broken install. Measured over the draw, this is 4 of 249 chapters, and because it is length-correlated it is reported beside the length residual.",
+    "unit_of_analysis": "The chapter, as published \u2014 the unit a reader receives. Own-generated scenes from The Toll Road are reported as secondary colour and never pooled with chapters.",
+    "what_is_measured": "The density of located ATTEMPTS at levity, in beats per 1,000 words. It is not a quality, a craft claim or a success rate: a chapter with more attempts is not better, and no arrangement of these numbers says whether a beat lands. Landing is valence, valence is behavioural or it is nothing (\u00a797.4), and W4 is NOT VALIDATED for want of substrate.",
+    "why_there_is_a_strip_placebo": "The handoff did not ask for one and `repair_generation.PRE_REGISTRATION`'s first line makes it mandatory: no repair arm is read except against its placebo. Without it a drop in located beats is equally well explained by the fact of a rewrite, and there is no way to tell the two apart afterwards. It is one more arm, not a dose ladder.",
+    "window": "[800, 6000] words, one whole chapter per call. Chunking changes counts, so a chapter outside the window is excluded and the exclusion is counted and printed. Measured on the substrate before it was chosen: the window keeps 92.9% of the 14,363 LitRPG chapters in the two cached shards.",
+    "written": "2026-08-21, before the first paid call of any arm in this module, and byte-frozen with the system block, the question, the schema and the kinds under FROZEN_DIGEST"
+  },
+  "projection": {
+    "census": {
+      "calls": 245,
+      "usd": 25.71
+    },
+    "note": "the census has not run, so the repeat, sham and strip subsets do not exist yet and only the census leg is projected",
+    "total_projected_usd": 25.71
+  },
+  "registration_digest": "d3200ddad172e4854b70",
+  "replayed": 0,
+  "sampled": [
+    {
+      "counted": 10,
+      "output_tokens": 20097,
+      "unit_id": "rr:789476.0",
+      "usd": 0.117032,
+      "words": 805
+    },
+    {
+      "counted": 0,
+      "output_tokens": 3638,
+      "unit_id": "rr:2116779.0",
+      "usd": 0.036084,
+      "words": 1102
+    },
+    {
+      "counted": 12,
+      "output_tokens": 18289,
+      "unit_id": "rr:2128237.0",
+      "usd": 0.11023,
+      "words": 1357
+    },
+    {
+      "counted": 10,
+      "output_tokens": 13167,
+      "unit_id": "rr:2120152.0",
+      "usd": 0.087404,
+      "words": 1719
+    },
+    {
+      "counted": 11,
+      "output_tokens": 17883,
+      "unit_id": "rr:2138495.0",
+      "usd": 0.111872,
+      "words": 2011
+    },
+    {
+      "counted": 13,
+      "output_tokens": 17493,
+      "unit_id": "rr:846486.0",
+      "usd": 0.110714,
+      "words": 2534
+    },
+    {
+      "counted": 21,
+      "output_tokens": 22931,
+      "unit_id": "rr:782446.0",
+      "usd": 0.141459,
+      "words": 3169
+    },
+    {
+      "counted": 21,
+      "output_tokens": 21617,
+      "unit_id": "rr:770619.0",
+      "usd": 0.142248,
+      "words": 5088
+    }
+  ],
+  "spend": {
+    "cache_read": 172800,
+    "cache_write": 65764,
+    "equivalent_usd": 0.857,
+    "input": 32660,
+    "output": 135115
+  },
+  "substrate": "royalroad",
+  "transport": "cli",
+  "transport_failures": 0
+}
