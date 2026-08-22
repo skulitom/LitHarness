@@ -11249,15 +11249,47 @@ because `tools/serial-pilot-2-setup.ps1` issues every entry of `directives` verb
 directive reading "at most N people". Moving an entry into `directives` is the operator's act and
 is what issues it. C10 is direction, it is the operator's, and **no form of it is in code**.
 
-### 112.5 Pre-registered and not run
+### 112.5 Pre-registered, then run: three forges, one book, $13.73
 
-[`plan/serial-pilot-4.md`](serial-pilot-4.md) §4 registers P1–P5 with outcomes named in advance,
-written before any paid call, and the run is **NOT RUN**: no forge, no pick, no book, no `pilot4/`,
-no `serial4.db`. §4's P1 carries the handoff's stop condition as a named outcome — if the new rule
-collapses the forge (`spread` well below pilot 3's measured **0.8959** on the same brief), the
-change is unsafe and that is written up instead of the book being run. The pick rule is recorded
-before the candidates exist: the first candidate clear of every gate whose real domain was not
-forged in pilots 2 or 3.
+[`plan/serial-pilot-4.md`](serial-pilot-4.md) §4 registered P1–P5 with outcomes named in advance,
+before any paid call and unedited since. §5 and §6 carry what happened.
+
+**P1 needed two asks.** The first forge returned three worlds that each named a real declared id
+in `exception` and then glossed it in the same field — `one_cooling_history — the shape that gives
+a body one cooling history…` — so `normalise_id` produced one long token naming nothing and the
+gate refused all three. That is P1's registered outcome (ii), *a failure of the rule text and not
+of the model*, and the registered response is to rewrite the ask before anything is picked. The
+ask now carries `pattern: ^[a-z0-9_]+$` and a description saying AN ID AND NOTHING ELSE with the
+failing form as its counter-example; the second forge returned **3 of 3 bare declared ids**, two
+of them cardinality shapes. **The stop condition never fired**: spread held at 0.9158 and 0.9169
+against pilot 3's 0.8959.
+
+**The pick was a person's.** All three of forge 3's candidates cleared every gate, and the
+recorded rule — *first candidate clear of every gate whose real domain was not forged in pilots 2
+or 3* — excluded two outright and turned on one word for the third (it excluded *transplant*
+immunology; the candidate literalised *graded inoculation*). The ambiguity was put to the operator
+with the candidates named, and the operator chose *A Good Take*
+(`dec-7f3ea41cdb149f2bb0b4bb80`). `forge --pick` is `VerdictSource.HUMAN` and this is what that
+means in practice.
+
+**P2–P5, as counts.** 8 of 8 drafting prompts carry `Point of view: nella_scur.` and every packet
+is headed `Established facts known to nella_scur:`; 8 of 8 scene statements name her as the actor;
+**6 of 6 forged cast members reach the page**, against 1 of 5 on *What Takes*; the exception drew
+**0** cardinality findings across the run while the same violation planted on a non-excepted cast
+member drew 1; and the reader meets her at **word 0** of the book, against word 17 behind another
+person's name. The gate is green on both specs, 45 jobs, 0 parked, 0 poisoned,
+`context_omitted = 0`, and the hidden section drops at exactly the two scenes the world scheduled.
+
+**One book against one book, and it says only what it says.** The two differ in world, domain,
+forge and a corrected `--pick`; the numbers above are structural — the declaration reached the
+page — and no reading of them is a claim that either book is better. **C10 was not issued**: the
+constraint that would have asked for exactly what P5 measured sits unissued in the craft file's
+`proposed` array, and the book opened on her from the declaration alone. That is one book, not
+evidence that direction is unnecessary.
+
+**Spend: $13.73 against ~$6.50 estimated**, itemised in §6.3. $2.83 went on two forges — one
+refused by a rule text this entry's session wrote wrong, one stubbed by the model — and $3.15 on a
+book poisoned by §112.7a's two defects and by a `--scenes` flag the operator omitted (§5.6).
 
 ### 112.6 Corrections in place
 
@@ -11359,10 +11391,13 @@ forged world.
 
 ### 112.9 Anti-scope
 
-No paid call of any kind was made. No forge, no pick, no draft, no re-pick, no redraft of any
-accepted scene. `serial3.db`, `pilot3/`, `serial.db` and every `plan/serial-pilot-2-*` file were
-read read-only and never written; the two measurements needing a mutable database ran on copies in
-a scratch directory. No hook beat function, no change to `SIX_BEAT` or the arc template, no
+No redraft of any accepted scene, and no re-pick of any prior pilot's world. `serial3.db`,
+`pilot3/`, `serial.db` and every `plan/serial-pilot-2-*` file were read read-only and never
+written; every measurement needing a mutable database ran on a copy. Serial Pilot 4's own forges,
+pick and draft were paid for and are recorded in §112.5 and
+[`plan/serial-pilot-4.md`](serial-pilot-4.md); its poisoned first database is kept as
+`pilot4/serial4-run1-poisoned.db` because it is the evidence for §112.7a rather than something to
+tidy away. No hook beat function, no change to `SIX_BEAT` or the arc template, no
 instruction to any model about how to write, open, end or pace a protagonist's scene. No judge,
 reader, persona, BCR, axis admission, pool change or pre-registration beyond P1–P5; `AXES` and
 `COUNTERS` are untouched and `named_persons.py` is registered nowhere. No model ranks, scores or

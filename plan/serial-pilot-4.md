@@ -1,7 +1,7 @@
 # Serial Pilot 4 — the same two chapters, on a world that says whose book it is
 
-**Status: PRE-REGISTERED 2026-08-22; three forges run ($4.57), three gate-clear worlds on disk,
-nothing picked, no book drafted.** Companion to
+**Status: RUN, 2026-08-22.** Three forges, one pick by the operator, eight scenes drafted, gate
+green, P1-P5 answered in §6.2. Total spend $13.73. Companion to
 [`plan/serial-pilot-2.md`](serial-pilot-2.md) and [`plan/serial-pilot-3`'s record](reader-read-3.md);
 the design record is [`plan/world-architect.md`](world-architect.md) and the decision record is
 stage-0 §112. §4 was written **before any paid call**; §5 records what has been bought so far and
@@ -422,6 +422,86 @@ next person to read a `spread` of 0.92 knows what that number does not cover.
 
 ## 6. The run record
 
-**NOT RUN.** To be recorded in [`plan/serial-pilot-2.md`](serial-pilot-2.md) §6.2's form — ticks /
-jobs / decisions / invocations / tokens / cost / scenes / words / parked / findings / gate, the
-per-scene packet table, and P1–P5 as counts.
+### 6.1 The run, in §6.2's form
+
+*A Good Take*, `serial4.db`, rebuilt on the correctly re-picked bundle after §5.5 and §5.6.
+Two phases, 26 + 48 ticks.
+
+| | |
+|---|--:|
+| ticks | 74 |
+| jobs | **45, all succeeded** — 0 parked, 0 poisoned, 0 failed |
+| decisions | 22 — 21 accept, 1 retry |
+| invocations | 13 |
+| tokens | 822,505 |
+| cost | **$6.00** |
+| scenes | 8 of 8 drafted |
+| words | 7,865 |
+| parked | **0** |
+| exceptions raised | **0** |
+| findings | 11, all `promise.overdue.v0` at **minor** — annotating, never blocking |
+| promise ledger | 49 rows, 40 open, **9 paid** |
+| gate | **green**, both specs, full run |
+
+**The per-scene packet**, at `--context-budget 16000`:
+
+| scene | facts | hidden | threads | prior prose | summaries | tokens | omitted | `Point of view:` |
+|---|--:|--:|--:|--:|--:|--:|--:|:--:|
+| 1 | 204 | 19 | 6 | — | — | 7,363 | 0 | ✔ |
+| 2 | 204 | 19 | 11 | — | — | 8,702 | 0 | ✔ |
+| 3 | 204 | 19 | 14 | — | — | 10,048 | 0 | ✔ |
+| 4 | 205 | **18** | 18 | — | — | 11,581 | 0 | ✔ |
+| 5 | 205 | 18 | 22 | — | — | 12,992 | 0 | ✔ |
+| 6 | 205 | 18 | 27 | — | — | 12,632 | 0 | ✔ |
+| 7 | 205 | 18 | 35 | — | — | 12,990 | 0 | ✔ |
+| 8 | 206 | **17** | 36 | 3 | 4 | 13,240 | 0 | ✔ |
+
+`context_omitted = 0` for the whole book. **The hidden section drops at exactly the two scenes
+the world scheduled** — 19 → 18 at scene 4 and 18 → 17 at scene 8 — which is the iceberg working,
+and the scene-8 drop is the one the six-scene bundle of §5.6 would have lost entirely.
+
+### 6.2 P1–P5, answered as counts
+
+| # | registered question | answer |
+|---|---|---|
+| **P1** | does the forge declare a protagonist and an exception | **3 of 3**, on the second ask. Under the original rule text 0 of 3 (all three glossed the id — §5.1); under the corrected ask 3 of 3 bare declared ids, 2 of them cardinality shapes. Spread 0.9158 / 0.9169 against pilot 3's 0.8959 — **the stop condition never fired** |
+| **P2** | does the protagonist reach the outline and the packet | **8 of 8** drafting prompts carry `Point of view: nella_scur.`; every packet's facts block is headed `Established facts known to nella_scur:`. The seam had 27 call sites and had never been passed anything |
+| **P3** | who acts | **8 of 8** scene statements name her as the actor. **6 of 6 forged cast members reach the page** — `nella_scur` 41 whole-word hits, `dog_pell` 34, `cadge_reeve` 23, `orin_scur` 13, `hesta_polt` 9, `sef_ombry` 8. Named-thing introductions: **11 and 10** per chapter (3,972 and 3,911 words) |
+| **P4** | does the exception survive the gate | **0** findings across the run's canon, as registered. Positive control on a copy: planted on the excepted subject → **0**; the same violation on `cadge_reeve`, same kind, not excepted → **1**, `card_one_ladder_per_person admits at most 1 graded_on_ladder per subject; cadge_reeve has 2` |
+| **P5** | where does the reader meet her | **word 0.** *"Nella had the case on her hip and eighty people between her and the lane she wanted."* 16 mentions in chapter 1; in the first 300 words she is named 2 times, level with Reeve (2) and Orin (2) |
+
+**The comparison P3 and P5 were registered against**, and it is a description and not a verdict:
+
+| | *What Takes* (pilot 3) | *A Good Take* (pilot 4) |
+|---|---|---|
+| forged cast reaching the page | **1 of 5** | **6 of 6** |
+| scene statements naming the protagonist | the protagonist was invented by the outline and occurs 0 times in the forged world | **8 of 8** |
+| protagonist's first appearance | word 17, behind another person's name | **word 0** |
+| where their role is first stated | word 804, inside reported speech | the first sentence puts her at work with the case on her hip |
+| names introduced per chapter | 8 and 18 | 11 and 10 |
+
+**What this table may not be read as.** It is one book against one book, and the two differ in
+more than the protagonist: different world, different domain, different forge, and a corrected
+`--pick`. It says the declaration reached the page, which is P2 and P3's structural question. It
+says nothing about whether *A Good Take* is a better book, and no instrument here could.
+
+**C10 was not issued.** The constraint that would have asked for exactly what P5 measured — *the
+first sentence of the book belongs to the protagonist* — sits unissued in
+`plan/serial-pilot-4-craft.json`'s `proposed` array. The book opened on her anyway, from the
+declaration alone. One book is not evidence that direction is unnecessary; it is evidence that
+this one did not need it.
+
+### 6.3 Total spend
+
+| | |
+|---|--:|
+| forge 1 (refused ask) | $1.45 |
+| forge 2 (stubbed rules) | $1.38 |
+| forge 3 (3 of 3 clear) | $1.75 |
+| phase 1, poisoned run | $3.15 |
+| phases 1 + 2, the book | $6.00 |
+| **total** | **$13.73** |
+
+Against the ~$6.50 estimated. $2.83 of the overrun is two forges spent on a rule text this session
+wrote wrong and a model stub; $3.15 is a book poisoned by two defects this session shipped and one
+`--scenes` flag it forgot. All three are recorded above with what they cost.

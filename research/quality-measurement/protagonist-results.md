@@ -9,6 +9,13 @@ scripts named. Nothing here is a claim that any book got better.
 **Reading order.** §1 is the measurement that licensed the build; §2–§5 are what shipped, each
 with the before/after bytes; §6 is what was refused; §7 is what was found and not fixed.
 
+**The pilot ran.** [`plan/serial-pilot-4.md`](../../plan/serial-pilot-4.md) §5 and §6 carry it:
+three forges, one pick by the operator, eight scenes drafted on *A Good Take*, gate green, P1–P5
+answered as counts, $13.73. Two defects this branch shipped were found by that run's early gate
+and are fixed with regression tests — stage-0 §112.7a. The headline the run adds to everything
+below: **6 of 6 forged cast members reached the page and 8 of 8 scene statements name the
+protagonist as the actor**, against 1 of 5 and an invented protagonist on *What Takes*.
+
 ---
 
 ## 1. Task 0 — measured before anything was built
@@ -320,8 +327,10 @@ nominated it. `plan/serial-pilot-4-craft.json` therefore carries C9 with its num
   not in the beat line, not in the packet. Three tests check the three strings for the vocabulary
   such an instruction would need. C10, which *is* such direction, is written into a `proposed`
   array and not issued.
-- **No paid call.** Task 4 is pre-registered and **not run**: no forge, no pick, no book, no
-  `pilot4/`, no `serial4.db`. §4 was written first so it cannot be written after.
+- **No verdict on the book.** Task 4 ran and §6.2 reports P1–P5 as counts. It is one book against
+  one book and the two differ in more than the protagonist; nothing here says *A Good Take* is
+  better than *What Takes*, and no instrument in this project could. The pre-registration was
+  written before the first paid call and is unedited.
 - **Nothing read-only was written.** `serial3.db`, `pilot3/`, `serial.db` and the pilot-2 files are
   untouched; every measurement that needed a mutable database ran on a copy in a scratch directory.
 
