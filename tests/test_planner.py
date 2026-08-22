@@ -61,6 +61,7 @@ from litharness.domain.revision import (
     import_manuscript,
     new_book,
 )
+from litharness.domain.serials import SerialShape, chapter_positions
 from litharness.domain.state import import_state
 from litharness.providers.fake import FakeProvider
 from litharness.providers.registry import ProviderRegistry
@@ -556,6 +557,184 @@ def test_the_planner_puts_the_system_voice_instruction_on_the_queued_job(
         if unit.job_kind == SCENE_DRAFT
     ]
     assert "[STATUS] rook — Level 3" in str(job.payload["system"])
+
+
+# --- where the scene sits in its chapter -----------------------------------------------
+
+
+def test_the_prompt_is_byte_identical_when_a_chapter_is_one_scene(
+    store: SqliteStore,
+) -> None:
+    """The control, and the reason it is a byte comparison rather than a substring one.
+
+    `--chapter-scenes 1` is the default and it asserts nothing: production books hold no
+    chapter nodes and no assembly scheme is decided. A cue rendered under it would put a
+    scheme nobody chose into every prompt this system has ever produced — and, because
+    `input_digest_for` covers the prompt and that digest is the sampler seed, it would also
+    silently move the decoding of every newly minted job. So the falsy case must produce
+    exactly the bytes that omitting the parameter produces.
+    """
+    book_id, branch_id = _fixture(store, "mystery")
+    head = store.head(book_id, branch_id)
+    assert head is not None
+    beat = beats_for(head, SIX_BEAT)[3]
+    packet = packet_for(store, head, beat)
+
+    absent = render_prompt(beat, book_title="The Vane House", packet=packet)
+    one_scene = render_prompt(
+        beat,
+        book_title="The Vane House",
+        packet=packet,
+        chapter=chapter_positions(head, SerialShape(scenes_per_chapter=1)).get(
+            beat.logical_id
+        ),
+    )
+
+    assert one_scene == absent
+
+
+def test_the_prompt_says_which_chapter_the_scene_is_in_and_where(store: SqliteStore) -> None:
+    """Position, in the beat line, in the form the operator's shape implies.
+
+    Scene 4 of the six-scene fixture at four scenes a chapter is the last scene of chapter 1;
+    scene 5 opens chapter 2, whose complement is the two scenes that exist rather than the
+    four the shape would eventually hold.
+    """
+    book_id, branch_id = _fixture(store, "mystery")
+    head = store.head(book_id, branch_id)
+    assert head is not None
+    positions = chapter_positions(head, SerialShape(scenes_per_chapter=4))
+    beats = beats_for(head, SIX_BEAT)
+
+    rendered = {
+        beat.logical_id: render_prompt(
+            beat,
+            book_title=None,
+            packet=packet_for(store, head, beat),
+            chapter=positions.get(beat.logical_id),
+        )[1]
+        for beat in beats
+    }
+
+    assert "scene 4 of 6. Chapter 1, scene 4 of 4. Dramatic function:" in rendered["scene-4"]
+    assert "scene 5 of 6. Chapter 2, scene 1 of 2. Dramatic function:" in rendered["scene-5"]
+    assert "scene 1 of 6. Chapter 1, scene 1 of 4. Dramatic function:" in rendered["scene-1"]
+
+
+def test_the_chapter_cue_carries_no_verb_and_no_adjective(store: SqliteStore) -> None:
+    """**The boundary, asserted rather than trusted.**
+
+    The system may tell a writer where a scene sits; it may not tell it how to end a chapter.
+    That is the director's to say, and a default in this line would be this system's own taste
+    arriving in every prompt it renders. The words below are the ones a hook instruction would
+    have to use, and the cue is checked for all of them.
+    """
+    book_id, branch_id = _fixture(store, "mystery")
+    head = store.head(book_id, branch_id)
+    assert head is not None
+    beat = beats_for(head, SIX_BEAT)[3]
+    packet = packet_for(store, head, beat)
+    position = chapter_positions(head, SerialShape(scenes_per_chapter=4))[beat.logical_id]
+
+    _, prompt = render_prompt(beat, book_title=None, packet=packet, chapter=position)
+
+    cue = prompt.rsplit("scene 4 of 6.", 1)[1].split("Dramatic function:")[0]
+    assert cue == " Chapter 1, scene 4 of 4. "
+    for forbidden in ("hook", "cliff", "closing", "final", "last", "end", "stakes", "question"):
+        assert forbidden not in cue.lower()
+
+
+def test_the_chapter_cue_goes_before_the_beat_and_never_after_the_statement(
+    store: SqliteStore,
+) -> None:
+    """`plans.scene_plan_line` is rendered last, always, and §61's comparison depends on it.
+
+    `plan_search` mints K candidate drafts that differ only in that final fragment; a cue
+    appended after it would make the K prompts differ in two places and the tournament would
+    stop being a controlled comparison. The statement therefore stays the last thing in the
+    prompt with the cue present.
+    """
+    book_id, branch_id = _fixture(store, "mystery")
+    head = store.head(book_id, branch_id)
+    assert head is not None
+    beat = beats_for(head, SIX_BEAT)[-1]
+    packet = packet_for(store, head, beat)
+    position = chapter_positions(head, SerialShape(scenes_per_chapter=4))[beat.logical_id]
+
+    _, bare = render_prompt(beat, book_title=None, packet=packet, chapter=position)
+    _, planned = render_prompt(
+        beat,
+        book_title=None,
+        packet=packet,
+        chapter=position,
+        scene_plan="The letter is read aloud.",
+    )
+
+    assert bare.rstrip().endswith("Dramatic function: resolution.")
+    assert planned.rstrip().endswith("This scene: The letter is read aloud.")
+    assert planned.index("Chapter 2,") < planned.index("Dramatic function:")
+
+
+def test_the_planner_puts_the_chapter_position_on_the_queued_job(
+    store: SqliteStore,
+) -> None:
+    """End to end through the selector, because a parameter no production caller passes is a
+    parameter that does nothing — the defect shape
+    `test_the_target_length_reaches_the_prompt_at_all` records, arriving one layer up."""
+    _fixture(store, "mystery")
+
+    make_plan_selector(project_id=PROJECT_ID, scenes_per_chapter=4)(
+        store, "worker-a", START, 300.0
+    )
+
+    [job] = [
+        unit
+        for unit in store.jobs_by_status(JobStatus.QUEUED)
+        if unit.job_kind == SCENE_DRAFT
+    ]
+    assert "Chapter 1, scene 1 of 4." in str(job.payload["prompt"])
+
+
+def test_the_default_selector_queues_the_prompt_it_always_queued(store: SqliteStore) -> None:
+    """The other half of the control: the production path at its default renders no cue."""
+    _fixture(store, "mystery")
+
+    make_plan_selector(project_id=PROJECT_ID)(store, "worker-a", START, 300.0)
+
+    [job] = [
+        unit
+        for unit in store.jobs_by_status(JobStatus.QUEUED)
+        if unit.job_kind == SCENE_DRAFT
+    ]
+    assert "Chapter" not in str(job.payload["prompt"])
+
+
+def test_a_tick_over_a_book_planned_before_the_cue_remints_nothing(
+    store: SqliteStore,
+) -> None:
+    """Replay: job identity is content-derived and deliberately excludes the prompt.
+
+    `beat_job_id` keys on book, branch, scene, template and plan epoch, so a book whose beats
+    were planned before this parameter existed converges rather than growing a second job per
+    beat when the shape changes. The prompt of the job already stored is the prompt it was
+    planned with, which is what makes a replayed attempt the same experiment.
+    """
+    _fixture(store, "mystery")
+    make_plan_selector(project_id=PROJECT_ID)(store, "worker-a", START, 300.0)
+    before = {
+        unit.job_id: (unit.input_digest, str(unit.payload["prompt"]))
+        for unit in store.jobs_by_status(JobStatus.QUEUED)
+    }
+
+    make_plan_selector(project_id=PROJECT_ID, scenes_per_chapter=4)(
+        store, "worker-a", START + TICK, 300.0
+    )
+
+    after = {
+        unit.job_id: (unit.input_digest, str(unit.payload["prompt"]))
+        for unit in store.jobs_by_status(JobStatus.QUEUED)
+    }
+    assert after == before
 
 
 def _writing(store: SqliteStore, prose: str) -> Conductor:

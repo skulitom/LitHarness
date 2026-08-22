@@ -37,7 +37,7 @@ import litharness_contracts as lc
 from litharness.adapters import contracts_fixtures, evaluation_artifact
 from litharness.adapters.continuity_cli import ContinuityCliRunner
 from litharness.adapters.sqlite_store import MigrationsMissing, SqliteStore, StoredEvent
-from litharness.application import architect
+from litharness.application import architect, constraint_locks
 from litharness.application import export as export_module
 from litharness.application import library as library_module
 from litharness.application import status as status_module
@@ -264,6 +264,10 @@ def _conductor(store: SqliteStore, args: argparse.Namespace) -> Conductor:
             outline=not args.no_outline,
             plan_search=args.plan_search,
             director_id=_director_id(store, args),
+            # The same shape the library publishes at, so a book is grouped for a reader and
+            # drafted against that grouping instead of against two that can disagree. At the
+            # default of one it asserts nothing and the prompt is unchanged.
+            scenes_per_chapter=args.chapter_scenes,
             **(
                 {"token_budget": args.context_budget}
                 if args.context_budget is not None
@@ -3926,6 +3930,99 @@ def cmd_revert_plan(args: argparse.Namespace) -> int:
     return EXIT_OK
 
 
+def cmd_lock_constraints(args: argparse.Namespace) -> int:
+    """Lock the plan constraints a person's directive produced, which reach no packet unlocked.
+
+    **The defect is one boolean and its blast radius is the whole book.**
+    `plans.constraints_of` selects on `locked`, so an unlocked constraint sits in the plan, is
+    counted by `litharness plans`, and is shown to no writer ever. Serial Pilot 1's tone note
+    became five such constraints — close third person, dry and exact, concrete specifics,
+    dramatize rather than summarize, and *scenes end on movement or cost* — and all eight
+    scenes of that book were drafted without one word of them.
+
+    `acf0e05` fixed the minting rule, and a minting rule cannot reach a plan already minted,
+    which is what this is for. It changes `locked` and never a word of text, it refuses any
+    constraint it cannot trace back to a directive a *person* wrote, and it proposes nothing on
+    a second run — so it is safe to leave in an operator's hands, which is where it stays
+    rather than running on every tick.
+
+    Like every accepted plan proposal this advances the plan epoch and cancels queued scene
+    jobs, so the next tick replans the still-draftable beats against the locked plan. Scenes
+    already accepted are untouched: revisions are immutable, and re-drafting one is `revise`.
+    """
+    stamp = _stamp(_now())
+    store = _store(args)
+    try:
+        book_id, branch_id = export_module.resolve_branch(store, args.book, args.branch)
+        head = store.plan_revision(book_id, branch_id)
+        if head is None:
+            print("litharness: this branch has no plan", file=sys.stderr)
+            return EXIT_FAULT
+        if args.dry_run:
+            # The same two functions the live path runs, with the write left out, so what is
+            # reported is what would happen rather than a second implementation of it.
+            outcome = constraint_locks.LockOutcome(
+                constraint_locks.lock_candidates(
+                    head,
+                    produced=constraint_locks.produced_by(
+                        store.plan_proposals(book_id, branch_id)
+                    ),
+                    directives=_cited_directives(store, book_id, branch_id),
+                ),
+                None,
+            )
+        else:
+            outcome = constraint_locks.lock_directed_constraints(
+                store,
+                book_id=book_id,
+                branch_id=branch_id,
+                project_id=args.project,
+                created_at=stamp,
+                actor=args.holder,
+            )
+    finally:
+        store.close()
+
+    if not outcome.candidates:
+        print("every constraint in this plan is already locked; nothing to do")
+        return EXIT_OK
+    for logical_id in outcome.locked:
+        print(f"{'would lock' if args.dry_run else 'locked'} {logical_id}")
+    if outcome.application is not None:
+        print(
+            f"  new plan revision {outcome.application.after.plan_revision_id[:12]}; "
+            "the plan epoch advanced and the next tick replans still-draftable beats"
+        )
+        print("  scenes already accepted keep the prompts they were drafted from")
+    elif outcome.locked:
+        print("  --dry-run: nothing was written")
+    else:
+        print("no unlocked constraint here carries a person's authority; nothing to lock")
+    for candidate in outcome.refused:
+        print(f"  refused {candidate.logical_id}: {candidate.refused}")
+    if outcome.refused:
+        print(
+            "    a lock is a person's authority, so an item this cannot attribute to a "
+            "person keeps the standing it already has"
+        )
+        return EXIT_ATTENTION
+    return EXIT_OK
+
+
+def _cited_directives(
+    store: SqliteStore, book_id: str, branch_id: str
+) -> dict[str, Directive]:
+    """The directives this branch's applied proposals cite, for the read-only preview."""
+    produced = constraint_locks.produced_by(store.plan_proposals(book_id, branch_id))
+    found: dict[str, Directive] = {}
+    for directive_id in set(produced.values()):
+        try:
+            found[directive_id] = store.load_directive(directive_id)
+        except KeyError:
+            continue
+    return found
+
+
 def cmd_revert(args: argparse.Namespace) -> int:
     """Restore an earlier revision's content as a new head (§19 reversibility).
 
@@ -4334,9 +4431,12 @@ def build_parser() -> argparse.ArgumentParser:
         "--chapter-scenes",
         type=int,
         default=library_module.DEFAULT_SCENES_PER_CHAPTER,
-        help="how many scenes make one pastable chapter. One by default, which asserts "
-        "nothing: production books hold no chapter nodes and no assembly scheme is decided, "
-        "so grouping is an operator act rather than a guess the tool makes",
+        help="how many scenes make one pastable chapter, and the position each scene is told "
+        "it holds when it is drafted. One by default, which asserts nothing: production books "
+        "hold no chapter nodes and no assembly scheme is decided, so grouping is an operator "
+        "act rather than a guess the tool makes. Above one, the drafting prompt carries "
+        "`Chapter c, scene k of n` and nothing else about it - where the scene sits, never "
+        "what to do there",
     )
     parser.add_argument(
         "--director",
@@ -4998,6 +5098,20 @@ def build_parser() -> argparse.ArgumentParser:
     revert_plan.add_argument("--book")
     revert_plan.add_argument("--branch")
     revert_plan.set_defaults(func=cmd_revert_plan)
+
+    lock_constraints = sub.add_parser(
+        "lock-constraints",
+        help="lock the plan constraints a person's directive produced; unlocked, they are in "
+        "the plan and in no prompt",
+    )
+    lock_constraints.add_argument("--book")
+    lock_constraints.add_argument("--branch")
+    lock_constraints.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="report what would be locked and what would be refused, and write nothing",
+    )
+    lock_constraints.set_defaults(func=cmd_lock_constraints)
 
     replan = sub.add_parser(
         "replan", help="reissue still-draftable beats under a fresh plan epoch"

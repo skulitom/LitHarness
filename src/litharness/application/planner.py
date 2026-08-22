@@ -107,6 +107,7 @@ from litharness.domain.feedback import FeedbackSet
 from litharness.domain.jobs import Job, input_digest_for
 from litharness.domain.plans import premise_of, scene_plan_for, scene_plan_line
 from litharness.domain.revision import Revision
+from litharness.domain.serials import Position, SerialShape, chapter_positions
 from litharness.domain.text import content_hash
 from litharness.domain.writers import Writer
 
@@ -308,6 +309,7 @@ def render_prompt(
     feedback: FeedbackSet | None = None,
     writer: Writer | None = None,
     criteria: str | None = None,
+    chapter: Position | None = None,
 ) -> tuple[str, str]:
     """(system, prompt) for one beat, grounded in an assembled context packet.
 
@@ -374,6 +376,22 @@ def render_prompt(
     drafting behaviour that could only be produced by editing code is an arm nobody can
     reproduce — and because the prior in `plan/writer-roster.md` §2 says a roster is more likely
     decorative than not until `writer_distinctness` says otherwise.
+
+    **`chapter` is a position and it is deliberately not an instruction.** Until now the draft
+    path had no notion of a chapter at all: grouping existed only at publish time as
+    `--chapter-scenes`, `domain/serials.py` had no caller in `src/`, and a writer told "scene 4
+    of 8" could not know that scene 4 was the last one a reader receives in one sitting. The
+    fragment says where the scene sits and then stops — `Chapter 2, scene 1 of 4.` — with no verb
+    and no adjective, because *how* to end a chapter is the director's to say and a default here
+    would be this system's own taste arriving in every prompt it ever renders (stage-0 §95's
+    scope axiom, §97.1). `None` renders nothing and is the control, and
+    `serials.chapter_positions` returns nothing at all under the shape that asserts nothing, so
+    the default path is byte-identical to what it was before this existed.
+
+    It goes in the **beat line**, after the ordinal and before the dramatic function, and not
+    after the statement. `plans.scene_plan_line` is rendered last always, and `plan_search`'s
+    controlled comparison is only controlled while the K candidates differ in that final
+    fragment and nowhere else.
     """
     system = (
         "You are drafting one scene of a novel. Write only the scene's prose: no headings, "
@@ -457,10 +475,18 @@ def render_prompt(
     # a model acts on, and between "rising" and "Kestrel is refused entry at the archive",
     # this is the one to act on.
     plan_line = scene_plan_line(scene_plan) if scene_plan else ""
+    chapter_line = (
+        ""
+        if chapter is None
+        else (
+            f" Chapter {chapter.chapter_index}, scene {chapter.index_in_chapter} of "
+            f"{chapter.scenes_in_chapter}."
+        )
+    )
     prompt = (
         f"{packet.render()}\n\n"
         f"Now write {title}{beat.title or beat.logical_id} — scene {beat.ordinal} of "
-        f"{beat.of_total}. Dramatic function: {beat.function}.{plan_line}"
+        f"{beat.of_total}.{chapter_line} Dramatic function: {beat.function}.{plan_line}"
     )
     return system, prompt
 
@@ -624,6 +650,7 @@ def make_plan_selector(
     outline: bool = True,
     plan_search: bool = False,
     director_id: str = "",
+    scenes_per_chapter: int = 1,
 ) -> WorkSelector:
     """Build a `WorkSelector` that materialises the next unblocked beat.
 
@@ -652,6 +679,16 @@ def make_plan_selector(
     reproduce without editing code, and the no-search arm is exactly the behaviour that
     shipped before this existed. A beat whose scene-plan item is director-locked drafts the
     ordinary way even under the flag — alternatives touch only unlocked SCENE_PLAN items.
+
+    **`scenes_per_chapter` is the operator's shape, and the only thing it does is tell the
+    writer where the scene sits.** It is the number `--chapter-scenes` already hands
+    `library.publish`, threaded to the one other place in the system where a chapter means
+    anything — so a book is grouped for a reader and drafted against the same grouping rather
+    than against two that can disagree. One is the default and it asserts nothing, which is
+    `library.py`'s refusal and now this path's: under it `serials.chapter_positions` yields no
+    positions and every rendered prompt is byte-for-byte what it was before this parameter
+    existed. Nothing here tells a scene what to *do* about being last in its chapter; that is
+    the director's to say (stage-0 §95).
     """
 
     def select(
@@ -719,6 +756,14 @@ def make_plan_selector(
                 continue
             epoch = store.plan_epoch(progress.book_id, progress.branch_id)
             beats = beats_for(head, template_for(head, template))
+            # Where each scene sits in its chapter, grouped once per book rather than once
+            # per beat. Empty under the default shape, which asserts nothing, and empty is
+            # what makes the ordinary prompt byte-identical to what it was.
+            positions = (
+                chapter_positions(head, SerialShape(scenes_per_chapter=scenes_per_chapter))
+                if scenes_per_chapter > 1
+                else {}
+            )
 
             # **The book is outlined when its own sheet cannot tell its scenes apart.**
             # `arc_template(30)` yields 25 `rising` beats, and the beat's function word is
@@ -883,6 +928,7 @@ def make_plan_selector(
                     criteria=worlds.criterion_brief(
                         store.state_records(progress.book_id, progress.branch_id)
                     ),
+                    chapter=positions.get(beat.logical_id),
                 )
                 payload: dict[str, object] = {
                     "revision_id": head.revision_id,

@@ -45,7 +45,11 @@ from litharness.domain.generation import (
     Resolution,
 )
 from litharness.domain.jobs import Job
-from litharness.domain.plan_refinement import PlanApplication, PlanRevision
+from litharness.domain.plan_refinement import (
+    PlanApplication,
+    PlanRevision,
+    StoredPlanProposal,
+)
 from litharness.domain.policy import PolicyDecision
 from litharness.domain.pools import PoolRegistration
 from litharness.domain.preference import (
@@ -724,6 +728,33 @@ class NarrativePlanningStore(
 
 class PlanRefinementStore(PlanReader, PlanWriter, Protocol):
     pass
+
+
+class PlanProposalReader(Protocol):
+    """The proposals recorded against a branch — what a plan revision does not carry.
+
+    A revision is content, so it says what the plan *is* and nothing about where it came from.
+    The lineage — which directive produced which item — lives only here, and
+    `application/constraint_locks.py` needs it because the field that was supposed to carry the
+    same fact, `directives.produced_constraint_ids`, is empty for every interpretive directive
+    in the live store.
+    """
+
+    def plan_proposals(
+        self, book_id: str, branch_id: str
+    ) -> list[StoredPlanProposal]: ...
+
+
+class ConstraintLockStore(
+    PlanReader, PlanWriter, PlanProposalReader, DirectiveInbox, Protocol
+):
+    """What restoring a lost lock reads: the plan, its lineage, and who wrote the direction.
+
+    The inbox is here for one field. `constraint_locks` never transitions a directive and never
+    writes one; it loads them to ask `author`, because the lock it is restoring is a person's
+    authority and a protocol that could not reach the author could not tell a person's
+    constraint from a Director's.
+    """
 
 
 class DirectorStore(

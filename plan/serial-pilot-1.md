@@ -165,8 +165,13 @@ uv run litharness --database serial.db directive "Every gain — a Skill, an ite
 ### 4.5 Craft constraints — added after the first read, locked lane
 
 **These three are an arm, and run 2 is its control.** The operator read chapter 1 and named five
-prose defects (`plan/reader-read-2.md`). None was disobedience: the tone note reached the plan,
-became locked constraints and sat in every packet. What the eight directives did not contain was
+prose defects (`plan/reader-read-2.md`). None was disobedience: ~~the tone note reached the plan,
+became locked constraints and sat in every packet~~ — **corrected 2026-08-22 (stage-0 §108): the
+tone note reached the plan and became five constraints, and every one of them was minted
+`locked=False`. `plans.constraints_of` selects on `locked`, so not one word of them reached any
+packet, and all eight scenes were drafted without them.** The conclusion is unchanged and its
+ground is stronger: the tone note could not have been disobeyed, because no scene was ever shown
+it. What the eight directives did not contain was
 any direction about *beginnings*, any bound on how much is introduced before something happens,
 and any rule at the level of the phrase. These add exactly those three and nothing else, so the
 comparison between the two runs is about direction rather than about luck.

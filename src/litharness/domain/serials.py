@@ -133,6 +133,58 @@ def chapters_of(revision: Revision, shape: SerialShape) -> tuple[Chapter, ...]:
     return tuple(out)
 
 
+@dataclass(frozen=True, slots=True)
+class Position:
+    """Where one scene sits inside its chapter. **Position, and nothing about what to do there.**
+
+    The distinction is the whole reason this type is three integers and not four. A scene's
+    place in a chapter is the same class of information as "scene 3 of 8", which the drafting
+    prompt has always carried: it is a fact about the sheet the operator laid out. *How* a
+    scene in that place should end is a taste, it belongs to whoever is directing the book,
+    and a field here called `closing` or `final` would smuggle one into every prompt under the
+    cover of arithmetic (stage-0 §95's scope axiom, §97.1).
+
+    `scenes_in_chapter` is the chapter's **real** complement rather than the shape's, so the
+    trailing partial chapter — the one being written — reports the scenes it actually has.
+    `Chapter 3, scene 1 of 1` on a nine-scene serial at four per chapter is true; `scene 1 of 4`
+    would be the tool telling the writer about three scenes nobody has decided to write.
+    """
+
+    chapter_index: int
+    index_in_chapter: int
+    scenes_in_chapter: int
+
+
+def chapter_positions(
+    revision: Revision, shape: SerialShape
+) -> dict[str, Position]:
+    """Every live scene's place in its chapter, keyed by logical id. **Empty at one scene.**
+
+    Grouped by :func:`chapters_of` rather than by arithmetic of its own, which is this
+    module's own rule about not producing a second answer to "which chapter is fourth"
+    applied to itself. Both this and `beats.beats_for` read `scene_nodes`, so the ordinal a
+    beat carries and the position this returns are cut from one list in one order.
+
+    **One scene per chapter returns nothing, and that is the same refusal
+    `library.DEFAULT_SCENES_PER_CHAPTER` makes.** The default asserts nothing: production books
+    hold no chapter nodes and no assembly scheme is decided. Rendering `Chapter 4, scene 1 of 1`
+    under that default would turn a refusal into a scheme, and every scene in every book would
+    silently start being told which chapter it closes — so the gate lives here, once, beside
+    the shape it is about, rather than at each caller that might forget it.
+    """
+    if shape.scenes_per_chapter <= 1:
+        return {}
+    return {
+        logical_id: Position(
+            chapter_index=chapter.index,
+            index_in_chapter=index + 1,
+            scenes_in_chapter=len(chapter.scene_ids),
+        )
+        for chapter in chapters_of(revision, shape)
+        for index, logical_id in enumerate(chapter.scene_ids)
+    }
+
+
 def arcs_of(revision: Revision, shape: SerialShape) -> tuple[Arc, ...]:
     """Group chapters into arcs. The last arc is open unless its chapters are all present."""
     chapters = chapters_of(revision, shape)
@@ -263,10 +315,12 @@ __all__ = [
     "Arc",
     "Chapter",
     "Extension",
+    "Position",
     "SerialShape",
     "SerialShapeError",
     "arcs_of",
     "beats_for_arc",
+    "chapter_positions",
     "chapters_of",
     "next_chapter",
     "window_for",
