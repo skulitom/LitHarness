@@ -1,0 +1,311 @@
+{
+  "alignment_vs_length": {
+    "misalignment_rate": {
+      "max": 1.0,
+      "mean": 0.51,
+      "min": 0.0732,
+      "n": 10,
+      "quantiles": {
+        "0.05": 0.073,
+        "0.1": 0.263,
+        "0.25": 0.281,
+        "0.5": 0.286,
+        "0.75": 0.955,
+        "0.9": 1.0,
+        "0.95": 1.0
+      },
+      "sd": 0.335
+    },
+    "note": "a positive rank correlation means the locator drifts on longer chapters, which would make every census statistic length-censored; it is measured here rather than discovered after the census",
+    "spearman_misalignment_vs_paragraphs": 0.5015,
+    "unparseable_calls": 2
+  },
+  "api_calls": 12,
+  "arm": "price",
+  "dry_run": false,
+  "exclusions": {
+    "by_reason": {
+      "over_cli_command_budget": 4
+    },
+    "excluded": [
+      {
+        "command_chars": 33994,
+        "reason": "over_cli_command_budget",
+        "unit_id": "rr:2116522.0",
+        "words": 5370
+      },
+      {
+        "command_chars": 37609,
+        "reason": "over_cli_command_budget",
+        "unit_id": "rr:2121854.0",
+        "words": 5535
+      },
+      {
+        "command_chars": 33711,
+        "reason": "over_cli_command_budget",
+        "unit_id": "rr:770970.0",
+        "words": 5763
+      },
+      {
+        "command_chars": 33029,
+        "reason": "over_cli_command_budget",
+        "unit_id": "rr:2206731.0",
+        "words": 5431
+      }
+    ],
+    "kept": 245,
+    "seen": 249
+  },
+  "failure_reasons": {
+    "transport_error:TimeoutExpired": 2
+  },
+  "fit": {
+    "intercept_usd": 0.14713,
+    "mean_usd": 0.092409,
+    "n": 12,
+    "note": "the intercept is the transport's own per-call overhead, since the CLI sends its base prompt on every call, and the slope is what the chapter itself costs",
+    "residual_sd_usd": 0.031829,
+    "slope_usd_per_1k_words": -0.02522
+  },
+  "hygiene": {
+    "bad_kind": 0,
+    "calls": 12,
+    "echo_exactly_four": 217,
+    "entries_compared": 589,
+    "extra_entries": 89,
+    "median_aligned_word_share": 0.4285,
+    "misaligned": 359,
+    "misalignment_rate": 0.6095,
+    "missing_entries": 220,
+    "refused_calls": 2,
+    "unparseable_calls": 2
+  },
+  "model": "claude-haiku-4-5",
+  "note": "Deliberation depth is whatever the local `claude` install applies. It is not a parameter of this instrument, it is constant across every arm, and it is the dominant term in this price: the transport reports most of each answer's output tokens as thinking.",
+  "pre_registration": {
+    "anti_scope": "No arc archetypes and no clustering of the series into shapes -- that is selection among candidates with no containment (S61(5), S105.1) and would be read as a bar the moment it printed. No intensity or arousal rating from the model. No emotional-EFFECT measurement and no reader-sim self-report. No conversion arm: `results/conversion.json` records SEPARATION IS PROSE-BLIND, so no statistic here is correlated with that label. No chapter-hook-shape classification from the end state. No book-level arc on own prose. No inject arm, no dose ladder, no second model family at census grain, no RoyalRoad fetching. Nothing under `src/` moves and no ledger number is claimed.",
+    "arms": {
+      "census": "RoyalRoad, one chapter per story, ONE draw. Q1 is read from this arm alone.",
+      "era_table": "every statistic by cohort, always. The control that killed `tricolon_rate` (BRIEF S2): if `human_pre_llm` and `declared_ai_2025` separate on a statistic more than `undeclared_2025` does from either, the statistic is reading the year.",
+      "flatten": "a certified minimal revision that rewrites every reach for these registers into plain statement of the same events -- order, point of view, typography, protected system spans, paragraph grid and length preserved -- with `flatten_placebo`, the same revision contract carrying an inert task, beside it. One dose; no ladder and no inject arm. Run on text that HAS coverage: the top decile of the census by coverage plus every own chapter.",
+      "lexicon": "free, computed in the same pass on the same grid. Within-chapter Spearman between the model's windowed coverage series and the word list's arousal series, agreement on every trajectory statistic, and whether the word list sees the `flatten` drop as well as the model does.",
+      "own": "the published chapters at K=4 independent draws (distinct sample index, byte-identical request) so each placement carries its own interval, and `generated_scenes` units at K=2 as secondary colour. Q2 is read here and no per-chapter claim is made from a single draw anywhere.",
+      "repeat": "RoyalRoad, a digest-chosen subset of 40 chapters plus the flatten subset, a second byte-identical request at a distinct sample index. Reports Cohen's kappa per paragraph pair, the ICC of every trajectory statistic across draws, and the variance decomposition. This is the noise floor every other arm is read against. On `local` it does not run: the `own` arm already carries K=4 draws per unit and its within-unit spread IS the noise floor there.",
+      "sham": "`ablate.rewhitespace` at full strength. Not one character of any word changes. The selftest asserts the paragraph count and every echo survive it, and a unit whose grid does not survive on the real text is excluded and counted. The statistics must not move beyond the `repeat` spread; if they do, the model is reading layout and the entry says so (S78)."
+    },
+    "attainability": "Declared at the n actually available, before the first call, per S87/S89's rulebook -- range, direction, independent unit and a non-empty subgroup for every quantity above. Every declared reading is an exact one-sided sign test whose smallest attainable p at G pairs is 1/2**G, so alpha 0.05 is unreachable below G=5 and every G below that reports INSUFFICIENT_N rather than FAILS. The independent unit is the CHAPTER everywhere; the paragraph is a grid inside a chapter and is never treated as an independent draw. Non-emptiness: the `own` arm has 4 chapters at K=4, which is 4 independent units and NOT 16 -- every own-substrate reading below G=5 is INSUFFICIENT_N by construction and is declared so here rather than discovered later. The RoyalRoad flatten subset is the census top decile, which at a 245-chapter draw is about 24 units and is attainable.",
+    "counting_rule": "An entry counts only if its `echo` identifies the paragraph at the position the entry occupies in the returned list -- the paragraph's alphanumeric tokens, normalised (NFKC, punctuation folded then dropped, whitespace collapsed, casefolded), BEGIN with the echo's tokens, and the echo carries at least three of them or the whole of a paragraph shorter than three -- and only if its kind is one of the ten frozen kinds. Anything else is a MISALIGNMENT: the label is dropped from the series, its paragraph's words leave every denominator, and the rate is reported on every arm. An echo that identifies some OTHER paragraph is a misalignment and is never searched for or re-seated: the model having read a different grid is the failure this check exists to catch. Entries beyond the paragraph count and paragraphs short of an entry are counted separately and the series is NEVER padded.",
+    "declared_quantities": {
+      "flatten_drop": "statistic(original) - statistic(flattened), paired by unit. Direction: positive for coverage and for turn rate. Read against the placebo's own drift by a one-sided exact sign test and against the noise floor by the share of pairs whose flatten drop exceeds that unit's repeat spread. Outcomes SEES / DOES_NOT_SEE / INSUFFICIENT_N / VOID.",
+      "lexicon_redundancy": "median within-chapter Spearman between the model's windowed coverage series and the word list's arousal series, unitless, range [-1, 1]. Above 0.6 AND with the word list seeing the flatten drop, the outcome is REDUNDANT_WITH_LEXICON and the word list ships instead of the model. Below it the outcome is NOT_REDUNDANT, which is the weakest result this arm can produce because the list is in-module rather than published (see LEXICON_PROVENANCE) and a weak list biases the reading that way.",
+      "misalignment_rate": "misaligned entries / entries compared, unitless, range [0, 1], direction lower. Printed on every arm. REFUSAL STATE: if the median misalignment rate over the `flatten` subset is at least half the median coverage drop -- both unitless shares, so the comparison is in one unit -- the flatten reading is VOID rather than weak. An effect the instrument's own noise could manufacture is not an effect.",
+      "repeat_kappa": "Cohen's kappa over the ten kinds between two draws on the same chapter's paragraphs, unitless, range [-1, 1], higher is more stable. No bar: it is the ruler. Attainable at any chapter with at least two aligned paragraphs in both draws; reported per unit and pooled over the subset.",
+      "sham_delta": "|statistic(census) - statistic(sham)| per chapter, read against the same chapter's `repeat` spread by a one-sided exact sign test that the sham delta exceeds the repeat delta. Outcomes: LAYOUT_SENSITIVE at p <= alpha; INSIDE_NOISE only with the distribution-free 90% interval on the median difference printed beside it, never as a pass by silence (S101.1); INSUFFICIENT_N below the attainable floor.",
+      "statistic_icc": "one-way random-effects ICC(1,1) of each trajectory statistic across draws, unitless, range [0, 1] after truncation at zero, higher is more reliable. Printed on every arm that has repeated draws, with the Spearman-Brown draws-to-0.8 beside it. A statistic whose ICC would need more than four draws for 0.8 has that stated as the cost of any per-chapter claim made from it."
+    },
+    "grid": "`ablate.paragraphs` over the text THAT CALL WAS SHOWN. The model decides the kind; the text decides the positions. One whole chapter per call: chunking changes the series, so a chapter outside the window is excluded and the exclusion is counted and printed.",
+    "no_bar_for_admission": "None is declared, and that is the point. Nothing here enters `AXES` or `COUNTERS`, reaches a prompt, a directive, a Director brief, a persona reason code or a writer dossier. Admission is an operator act over the measured distribution.",
+    "no_inherited_figures": "S79.1's rule. Every spread, rate and cost reported here is measured on these chapters by this instrument in these runs. The comic census's $68.99 is used only as an order of magnitude for what a refusal-worthy projection would exceed, never as a projection: the answer here is a label per paragraph, which is a longer output than a list of beats.",
+    "no_intensity_slot": "The model is never asked how much of a register a paragraph carries. A 1-5 rating is the narrated-judgment channel S94.5 measured drifting between byte-identical texts. Amplitude here is emergent and deterministic: words under a non-`none` label, run length, and how soon a release follows a set-up. If that proves too coarse the honest next step is a second closed label with its own validation, not a number the model makes up.",
+    "no_post_hoc_leniency": "The rule above is the counting rule and it was fixed BEFORE the census, on the six pricing calls, for the three measured defects recorded in ECHO_DEFECTS_FOUND_AT_PRICING -- not after reading a result. A deliberately STRICTER one -- the echo is exactly the paragraph's first four tokens -- is computed and reported as `echo_exactly_four` so the model's instruction-following is visible beside its placement, and it never enters a count. Loosening the rule after reading the answers would be a rubric fitted to them; the reported strict variant is what makes the difference between the two auditable rather than argued about.",
+    "primary_reading_and_multiplicity": "PRIMARY: the `coverage` drop on `flatten` against `flatten_placebo`, paired by unit, one-sided exact sign test. SECONDARY: the `turn_rate_windowed_per_1k` drop, the same way. Holm across exactly two readings, primary then secondary, at alpha 0.05. Everything else in Q3 is descriptive and says so. Both are read against the `repeat` spread. NAMED HERE BEFORE THE FIRST CALL, because the comic census named neither and had to record that as a declared defect.",
+    "question": "Where does a chapter reach for tension, relief, excitement and the rest; how often does that register turn; does a pressure the text sets up get released within the chapter -- in the genre's published chapters and in ours -- and can a located instrument see any of it at a reliability that makes the answer worth having? Q1 is the RoyalRoad LitRPG baseline by era cohort, Q2 is where our own chapters sit in it at K=4 draws each, Q3 is whether the locator is an instrument. Reported separately and in that order, and all three even if Q3 kills the instrument.",
+    "sampling": "100 chapters per era cohort, ONE CHAPTER PER STORY, chosen deterministically by digest -- the same rule, the same digest and therefore the same chapters as the comic-beat census, which `--dump` asserts against that census's committed id set and refuses on a mismatch. The substrate caps `declared_ai_2025` below the target and the cap is reported rather than filled by taking a second chapter from a story already in the pool.",
+    "statistics": {
+      "coverage": "share of ALIGNED words carrying a non-`none` label. Unitless, range [0, 1], no direction and no bar. Per-kind coverage beside it.",
+      "end_state": "the kind holding the most of the last 150 aligned words. Reported by cohort with no bar. Naming a hook SHAPE from it is S104.4's gated mining property and is out of scope.",
+      "label_entropy": "Shannon entropy in bits of the word-weighted kind distribution over aligned words. Range [0, log2(10)], no direction and no bar.",
+      "pairing": "a run of `relief` or `triumph` is PAIRED if a run of `tension`, `unease` or `anticipation` ended within 400 words before it began. `pairing_rate` = paired releases / releases; `unreleased_setup_share` = set-up runs with no release beginning within that window after them. Both unitless in [0, 1], both undefined and reported as null when the chapter has no release or no set-up. The null is computed in the same pass: 1000 within-chapter permutations of the paragraph labels with the multiset preserved, and the reading is OBSERVED MINUS NULL. This is the wave reading and it is a property of the sequence that a shuffled chapter does not have.",
+      "position_profile": "kind share by chapter decile of word position (10 bins). Averaged per cohort it is the population's mean wave. Unitless shares, no direction, no bar.",
+      "run_length": "median aligned words per run of one kind, reported over all kinds and over non-`none` kinds. Words, range [1, inf), no direction and no bar.",
+      "system_voice": "paragraphs carrying `axes._SYSTEM_LINE` or a bold announcement are flagged deterministically and EVERY statistic is reported with and without them. A [STATUS] block can itself be a `triumph` paragraph and the model is shown it, so the flag is a covariate and not an exclusion.",
+      "turn_rate": "kind changes per 1,000 aligned words, computed twice: on the raw paragraph sequence, and on a 200-word windowed series whose window was declared before the run and not tuned. A `none` to `none` pair is not a turn. Range [0, inf), no direction and no bar."
+    },
+    "substrates_are_never_pooled": "RoyalRoad text may be memorised by the locator (BRIEF S2 Pass 6), so it is the baseline arm with the confound named; own-generated prose is the clean arm; the `flatten` differential on one unit partially cancels the term; and no statistic in this module averages the two.",
+    "transport_exclusion": "A unit whose rendered `claude -p` command line reaches 32000 characters cannot be sent by this transport (Windows refuses at 32,767) and is excluded before the call, counted and printed. It is not sent and allowed to fail: a transport error is indistinguishable from a broken install. The exclusion is length-correlated by construction and is reported beside the length residual.",
+    "unit_of_analysis": "The chapter, as published -- the unit a reader receives. The paragraph is the grid inside it, never a unit of its own. `generated_scenes` units are scene grain, reported as secondary colour and NEVER pooled with chapters.",
+    "what_is_measured": "The register a paragraph REACHES FOR, on a grid the text defines, and deterministic properties of the resulting sequence. It is not a quality, a craft claim, an effect or a success rate: a chapter that turns more often is not better, a chapter that is 80% `none` is not worse, and whether any of it moves anybody is not asked, not schema'd and not derivable from anything here. Whether a passage moves a reader is valence, valence is behavioural or it is nothing (S97.4), and this instrument has no valence channel.",
+    "why_there_is_a_flatten_placebo": "`repair_generation.PRE_REGISTRATION`'s first line makes it mandatory: no repair or damage arm is read except against its placebo. Without it a drop in coverage is equally well explained by the fact of a rewrite, and there is no way to tell the two apart afterwards. It is one more arm, not a dose ladder.",
+    "window": "[800, 6000] words, one whole chapter per call. Reused from `comic_beats.py` rather than chosen here, so the two censuses share a population; it keeps 92.9% of the 14,363 LitRPG chapters in the two cached shards.",
+    "written": "2026-08-22, before the first paid call of any arm in this module, and byte-frozen with the system block, the question, the schema, the kinds, the word list and the trajectory statistics under FROZEN_DIGEST"
+  },
+  "projection": {
+    "census": {
+      "calls": 245,
+      "usd": 23.21
+    },
+    "excludes": "the flatten arm's revisions on the writer tier, which carry no number here by design",
+    "note": "the base arm has not run, so the repeat, sham and flatten subsets do not exist yet and only the base leg is projected",
+    "total_projected_usd": 23.21
+  },
+  "registration_digest": "9d418bafc26cb3d71ffa",
+  "replayed": 0,
+  "sampled": [
+    {
+      "aligned": 25,
+      "coverage": 0.7871,
+      "echo_exactly_four": 25,
+      "misaligned": 13,
+      "misalignment_rate": 0.3421,
+      "output_tokens": 19350,
+      "paragraphs": 38,
+      "unit_id": "rr:789476.0",
+      "unparseable": false,
+      "usd": 0.116029,
+      "words": 805
+    },
+    {
+      "aligned": 38,
+      "coverage": 0.9025,
+      "echo_exactly_four": 34,
+      "misaligned": 3,
+      "misalignment_rate": 0.0732,
+      "output_tokens": 17718,
+      "paragraphs": 41,
+      "unit_id": "rr:2099066.0",
+      "unparseable": false,
+      "usd": 0.108862,
+      "words": 1038
+    },
+    {
+      "aligned": 59,
+      "coverage": 0.9612,
+      "echo_exactly_four": 57,
+      "misaligned": 23,
+      "misalignment_rate": 0.2805,
+      "output_tokens": 20325,
+      "paragraphs": 86,
+      "unit_id": "rr:2126295.0",
+      "unparseable": false,
+      "usd": 0.123085,
+      "words": 1164
+    },
+    {
+      "aligned": 28,
+      "coverage": 0.6374,
+      "echo_exactly_four": 28,
+      "misaligned": 10,
+      "misalignment_rate": 0.2632,
+      "output_tokens": 12429,
+      "paragraphs": 38,
+      "unit_id": "rr:779722.0",
+      "unparseable": false,
+      "usd": 0.082437,
+      "words": 1353
+    },
+    {
+      "aligned": 27,
+      "coverage": 0.6652,
+      "echo_exactly_four": 23,
+      "misaligned": 44,
+      "misalignment_rate": 0.6197,
+      "output_tokens": 22166,
+      "paragraphs": 73,
+      "unit_id": "rr:781174.0",
+      "unparseable": false,
+      "usd": 0.132004,
+      "words": 1553
+    },
+    {
+      "aligned": 3,
+      "coverage": 1.0,
+      "echo_exactly_four": 2,
+      "misaligned": 63,
+      "misalignment_rate": 0.9545,
+      "output_tokens": 16063,
+      "paragraphs": 66,
+      "unit_id": "rr:856191.0",
+      "unparseable": false,
+      "usd": 0.102716,
+      "words": 1780
+    },
+    {
+      "aligned": 15,
+      "coverage": 0.6486,
+      "echo_exactly_four": 13,
+      "misaligned": 6,
+      "misalignment_rate": 0.2857,
+      "output_tokens": 14900,
+      "paragraphs": 21,
+      "unit_id": "rr:2139080.0",
+      "unparseable": false,
+      "usd": 0.097171,
+      "words": 1934
+    },
+    {
+      "aligned": 35,
+      "coverage": 0.6074,
+      "echo_exactly_four": 35,
+      "misaligned": 14,
+      "misalignment_rate": 0.2857,
+      "output_tokens": 21844,
+      "paragraphs": 49,
+      "unit_id": "rr:800913.0",
+      "unparseable": false,
+      "usd": 0.132587,
+      "words": 2237
+    },
+    {
+      "aligned": 0,
+      "coverage": null,
+      "echo_exactly_four": 0,
+      "misaligned": 69,
+      "misalignment_rate": 1.0,
+      "output_tokens": 15530,
+      "paragraphs": 70,
+      "unit_id": "rr:760718.0",
+      "unparseable": false,
+      "usd": 0.103105,
+      "words": 2559
+    },
+    {
+      "aligned": 0,
+      "coverage": null,
+      "echo_exactly_four": 0,
+      "misaligned": 0,
+      "misalignment_rate": null,
+      "output_tokens": 0,
+      "paragraphs": 45,
+      "unit_id": "rr:2222032.0",
+      "unparseable": true,
+      "usd": 0.0,
+      "words": 3010
+    },
+    {
+      "aligned": 0,
+      "coverage": null,
+      "echo_exactly_four": 0,
+      "misaligned": 114,
+      "misalignment_rate": 1.0,
+      "output_tokens": 16285,
+      "paragraphs": 114,
+      "unit_id": "rr:2108175.0",
+      "unparseable": false,
+      "usd": 0.110915,
+      "words": 3516
+    },
+    {
+      "aligned": 0,
+      "coverage": null,
+      "echo_exactly_four": 0,
+      "misaligned": 0,
+      "misalignment_rate": null,
+      "output_tokens": 0,
+      "paragraphs": 168,
+      "unit_id": "rr:770619.0",
+      "unparseable": true,
+      "usd": 0.0,
+      "words": 5088
+    }
+  ],
+  "spend": {
+    "cache_read": 215392,
+    "cache_write": 84977,
+    "equivalent_usd": 1.1089,
+    "input": 34369,
+    "output": 176610
+  },
+  "substrate": "royalroad",
+  "transport": "cli",
+  "transport_failures": 2
+}

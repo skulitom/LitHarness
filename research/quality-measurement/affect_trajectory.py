@@ -197,6 +197,40 @@ ECHO_MIN_TOKENS = 3
 #: misalignment, still dropped from the series, and still reported as a rate on every arm. On the
 #: same six answers 24 entries stay misaligned and 23 of them are one chapter where the model
 #: read a different paragraph grid -- which is the failure the echo exists to catch, caught.
+#: The second pricing batch, twelve calls under the fixed echo contract, found the defect that
+#: the echo contract could not fix and that this instrument was designed around: **the model does
+#: not hold a one-to-one correspondence with an unnumbered paragraph grid.** Measured over those
+#: twelve chapters, the per-chapter misalignment rate ran the whole range from 0.00 to 1.00, and
+#: the shapes were not one failure but three: entries that SKIP a paragraph and then run two
+#: ahead of it for the rest of the chapter; entries whose echo is of no paragraph in the chapter
+#: at all; and a 114-paragraph chapter answered with 144 entries. The count instruction was
+#: followed and the correspondence was not, which is exactly the failure the echo was put there
+#: to expose -- without it the census would have printed a hundred confident labels per chapter
+#: and nobody would have known which paragraph any of them was about.
+#:
+#: The fix is to stop asking the model to keep count. The chapter is rendered with each paragraph
+#: numbered, the model returns that number beside the kind, and the echo is then a CHECK on the
+#: number rather than the only thing carrying the correspondence. The grid is still the text's,
+#: the model still decides only the kind, and a label whose echo does not match the paragraph its
+#: own number names is still a misalignment, dropped and counted.
+#:
+#: What this costs, stated rather than buried: the model now reads a marked-up document rather
+#: than a chapter, and the `sham` arm's reflow of the paragraph SEPARATOR is normalised away by
+#: the numbering render (the separator convention of the shown text is preserved, but the blocks
+#: are rejoined). What survives the render is every intra-paragraph whitespace change, which is
+#: the larger part of `rewhitespace`'s footprint, and `sham_grid_survives` still refuses any unit
+#: whose grid moved.
+NUMBERED_GRID_FOUND_AT_PRICING = (
+    "2026-08-22, on twelve pricing calls under the fixed echo contract and before the census: "
+    "asked to return one entry per paragraph of an unnumbered chapter, the model returned the "
+    "right COUNT and the wrong correspondence -- per-chapter misalignment ran 0.00 to 1.00, with "
+    "entries skipping a paragraph and running two ahead of it, echoes of no paragraph in the "
+    "chapter, and 144 entries for 114 paragraphs. The chapter is now rendered with numbered "
+    "paragraphs and the model returns the number beside the kind; the echo checks the number "
+    "instead of carrying the correspondence alone. Cost of the change: the model reads a "
+    "marked-up document, and the sham's separator reflow is normalised away by the render."
+)
+
 ECHO_DEFECTS_FOUND_AT_PRICING = (
     "2026-08-22, on six pricing calls and before the census: an unescaped quote in a "
     "character-for-character echo made 1 of 6 answers unparseable; an exact-four-words rule "
@@ -208,19 +242,23 @@ ECHO_DEFECTS_FOUND_AT_PRICING = (
 
 SYSTEM = (
     "You are marking up one chapter of a web serial.\n\n"
-    "The chapter is written in paragraphs separated by blank lines. For EVERY paragraph, in "
-    "order, from the first to the last, record two things:\n\n"
+    "The chapter below is written as numbered paragraphs: each one begins with its own "
+    "number in square brackets, like [7]. For EVERY numbered paragraph, in order, from "
+    "the first to the last, record three things:\n\n"
+    "  n      that paragraph's number, exactly as it is printed\n"
     "  kind   whichever one of these ten fits the register that paragraph reaches for\n"
-    f"  echo   that paragraph's first {ECHO_WORDS} words, letters and numbers only \u2014 "
-    "leave out every quotation mark, dash, asterisk, bracket and other punctuation. A "
-    f"paragraph shorter than {ECHO_WORDS} words gives all of it.\n\n"
+    f"  echo   that paragraph's first {ECHO_WORDS} words after the number, letters "
+    "and numbers only: leave out every quotation mark, dash, asterisk, bracket and other "
+    f"punctuation. A paragraph shorter than {ECHO_WORDS} words gives all of it.\n\n"
     + "\n".join(f"    {name:14s}{KIND_DEFINITIONS[name]}" for name in KINDS)
     + "\n\nRules:\n"
-    "  - Return exactly one entry per paragraph, in paragraph order, including the paragraphs "
-    "you would otherwise pass over. The number of entries must equal the number of paragraphs.\n"
-    "  - The echo is how each entry is matched to its paragraph, so it has to be that "
-    "paragraph's own opening words in their own order. Do not paraphrase them, do not "
-    "start part-way in, and do not skip a paragraph.\n"
+    "  - Return exactly one entry per numbered paragraph, in order, including the ones you "
+    "would otherwise pass over. The number of entries must equal the number of paragraphs.\n"
+    "  - `n` is the number printed at the start of the paragraph. Do not renumber, do not "
+    "skip a number, and do not use a number twice.\n"
+    "  - The echo is checked against the paragraph `n` names, so it has to be that "
+    "paragraph's own opening words in their own order. Do not paraphrase them and do "
+    "not start part-way in.\n"
     "  - A paragraph that reaches for none of the ten is `none`. Most chapters carry many of "
     "them and a long run of `none` is an ordinary answer.\n"
     "  - Decide the kind from what is on the page, not from what anybody would undergo reading "
@@ -235,8 +273,8 @@ SYSTEM = (
 #: list that is short by nine is a different failure from one that is misaligned by nine \u2014
 #: both are counted separately and neither is padded.
 QUESTION_TEMPLATE = (
-    "The chapter is above. It has {count} paragraphs. Return one entry for each of them, in "
-    "order, from the first paragraph to the last."
+    "The chapter is above, in {count} numbered paragraphs, [1] to [{count}]. Return one entry "
+    "for each of them, in order, from [1] to [{count}]."
 )
 
 SCHEMA: dict[str, Any] = {
@@ -247,10 +285,11 @@ SCHEMA: dict[str, Any] = {
             "items": {
                 "type": "object",
                 "properties": {
+                    "n": {"type": "integer"},
                     "kind": {"type": "string", "enum": list(KINDS)},
                     "echo": {"type": "string"},
                 },
-                "required": ["kind", "echo"],
+                "required": ["n", "kind", "echo"],
                 "additionalProperties": False,
             },
         }
@@ -530,22 +569,30 @@ PRE_REGISTRATION: dict[str, Any] = {
         "as secondary colour and NEVER pooled with chapters."
     ),
     "grid": (
-        "`ablate.paragraphs` over the text THAT CALL WAS SHOWN. The model decides the kind; the "
-        "text decides the positions. One whole chapter per call: chunking changes the series, so "
-        "a chapter outside the window is excluded and the exclusion is counted and printed."
+        "`ablate.paragraphs` over the text THAT CALL WAS SHOWN, rendered back with each paragraph "
+        "behind its own number and the shown text's own separator convention preserved. The model "
+        "decides the kind; the text decides the positions and the numbering makes them sayable. "
+        "One whole chapter per call: chunking changes the series, so a chapter outside the window "
+        "is excluded and the exclusion is counted and printed. The numbering was added at the "
+        "pricing stage and why is recorded in NUMBERED_GRID_FOUND_AT_PRICING; its cost is that "
+        "the model reads a marked-up document rather than a chapter."
     ),
     "counting_rule": (
-        "An entry counts only if its `echo` identifies the paragraph at the position the entry "
-        "occupies in the returned list -- the paragraph's alphanumeric tokens, normalised (NFKC, "
+        "An entry is seated at the paragraph its own `n` names, and it counts only if its `echo` "
+        "identifies THAT paragraph -- the paragraph's alphanumeric tokens, normalised (NFKC, "
         "punctuation folded then dropped, whitespace collapsed, casefolded), BEGIN with the "
         "echo's tokens, and the echo carries at least three of them or the whole of a paragraph "
-        "shorter than three -- and only if its kind is one of the ten frozen kinds. Anything "
-        "else is a MISALIGNMENT: the label is dropped from the series, its paragraph's words "
-        "leave every denominator, and the rate is reported on every arm. An echo that identifies "
-        "some OTHER paragraph is a misalignment and is never searched for or re-seated: the "
-        "model having read a different grid is the failure this check exists to catch. Entries "
-        "beyond the paragraph count and paragraphs short of an entry are counted separately and "
-        "the series is NEVER padded."
+        "shorter than three -- and only if its kind is one of the ten frozen kinds and no earlier "
+        "entry has already taken that paragraph. Anything else is a MISALIGNMENT: the label is "
+        "dropped from the series, its paragraph's words leave every denominator, and the rate is "
+        "reported on every arm, split into `bad_index`, `duplicate_index`, `bad_kind` and the "
+        "echo mismatches that are the rest. The number is the model's claim and the echo is the "
+        "check on it: an entry whose echo is of some OTHER paragraph is a misalignment and is "
+        "never searched for or re-seated, because the model having lost the correspondence is "
+        "the failure this check exists to catch. `out_of_order` counts entries whose position in "
+        "the returned list is not their own number, and is descriptive: a list returned out of "
+        "order still seats every label correctly. Paragraphs no entry claimed are counted as "
+        "`missing` and the series is NEVER padded."
     ),
     "no_post_hoc_leniency": (
         "The rule above is the counting rule and it was fixed BEFORE the census, on the six "
@@ -1291,6 +1338,7 @@ def digest(payload: object) -> str:
 #: instrument or it is a different one.
 FROZEN_FUNCTIONS = (
     "normalise", "echo_tokens", "echo_matches", "echo_is_exactly_four", "align",
+    "numbered", "render_turn",
     "_aligned_spans", "_runs", "_turns", "windowed_series", "_pairing", "_permutation_null",
     "_position_profile", "_end_state", "_entropy", "trajectory", "scalars",
     "lexicon_value", "lexicon_kind", "lexicon_series",
@@ -1340,6 +1388,7 @@ def registration_digest() -> str:
             "echo_words": ECHO_WORDS,
             "echo_min_tokens": ECHO_MIN_TOKENS,
             "echo_defects_found_at_pricing": ECHO_DEFECTS_FOUND_AT_PRICING,
+            "numbered_grid_found_at_pricing": NUMBERED_GRID_FOUND_AT_PRICING,
             "forbidden": list(FORBIDDEN_IN_ASKING),
             "statistics": [
                 TURN_WINDOW_WORDS, PAIRING_WINDOW_WORDS, END_STATE_WORDS, PERMUTATIONS,
@@ -1369,7 +1418,7 @@ def registration_digest() -> str:
 #: which is the whole mechanism: a reworded prompt or a re-defined statistic is a different
 #: instrument, and every number in `affect-trajectory-results.md` is attributable to this exact
 #: content or it is attributable to nothing.
-FROZEN_DIGEST = "9d418bafc26cb3d71ffa"
+FROZEN_DIGEST = "bfb6b728b5b75cf47f45"
 
 
 # ------------------------------------------------------------------------- the echo alignment
@@ -1481,7 +1530,8 @@ def align(grid: list[str], payload: object) -> dict[str, Any]:
         "unparseable": True,
         "labels": [None] * len(grid),
         "returned": 0, "compared": 0, "aligned": 0, "misaligned": 0,
-        "extra": 0, "missing": len(grid), "bad_kind": 0, "echo_exactly_four": 0,
+        "extra": 0, "missing": len(grid), "bad_kind": 0, "bad_index": 0,
+        "duplicate_index": 0, "out_of_order": 0, "echo_exactly_four": 0,
         "misalignment_rate": None,
         "echo_hashes": [None] * len(grid),
         "echoes": [None] * len(grid),
@@ -1491,16 +1541,23 @@ def align(grid: list[str], payload: object) -> dict[str, Any]:
     labels: list[str | None] = [None] * len(grid)
     echoes: list[str | None] = [None] * len(grid)
     hashes: list[str | None] = [None] * len(grid)
-    compared = min(len(entries), len(grid))
-    aligned = misaligned = bad_kind = exactly_four = 0
-    for index in range(compared):
-        entry = entries[index]
+    compared = len(entries)
+    aligned = misaligned = bad_kind = bad_index = duplicate = exactly_four = out_of_order = 0
+    for position, entry in enumerate(entries):
         if not isinstance(entry, dict):
             bad_kind += 1
             misaligned += 1
             continue
         kind = str(entry.get("kind") or "")
         echo = str(entry.get("echo") or "")
+        raw = entry.get("n")
+        index = int(raw) - 1 if isinstance(raw, int) and not isinstance(raw, bool) else -1
+        if index != position:
+            out_of_order += 1
+        if not 0 <= index < len(grid):
+            bad_index += 1
+            misaligned += 1
+            continue
         matched = echo_matches(grid[index], echo)
         if matched and echo_is_exactly_four(grid[index], echo):
             exactly_four += 1
@@ -1509,6 +1566,10 @@ def align(grid: list[str], payload: object) -> dict[str, Any]:
             misaligned += 1
             continue
         if not matched:
+            misaligned += 1
+            continue
+        if labels[index] is not None:
+            duplicate += 1
             misaligned += 1
             continue
         labels[index] = kind
@@ -1525,8 +1586,11 @@ def align(grid: list[str], payload: object) -> dict[str, Any]:
         "aligned": aligned,
         "misaligned": misaligned,
         "extra": max(0, len(entries) - len(grid)),
-        "missing": max(0, len(grid) - len(entries)),
+        "missing": sum(1 for label in labels if label is None),
         "bad_kind": bad_kind,
+        "bad_index": bad_index,
+        "duplicate_index": duplicate,
+        "out_of_order": out_of_order,
         "echo_exactly_four": exactly_four,
         "misalignment_rate": round(misaligned / compared, 4) if compared else None,
         "echo_hashes": hashes,
@@ -2065,10 +2129,25 @@ def cli_command_chars(system: str, prompt: str, model: str) -> int:
     return len(subprocess.list2cmdline(argv))
 
 
+def numbered(text: str) -> str:
+    """The chapter as the model is shown it: every paragraph of the grid behind its own number.
+
+    The numbers are what let the model stop keeping count, which is the defect the second
+    pricing batch measured (`NUMBERED_GRID_FOUND_AT_PRICING`). The grid is unchanged -- the
+    blocks are `grid_of`'s blocks, in order -- and the separator convention of the text THIS
+    CALL WAS SHOWN is preserved, so `rewhitespace`'s choice of separator survives the render
+    instead of being normalised away with it.
+    """
+    separator = "\n\n" if re.search(r"\n\s*\n", text) else "\n"
+    return separator.join(
+        f"[{index + 1}] {block}" for index, block in enumerate(grid_of(text))
+    )
+
+
 def render_turn(text: str) -> str:
-    """The one user turn: the chapter, then the frozen question carrying its paragraph count."""
+    """The one user turn: the numbered chapter, then the question carrying its count."""
     count = len(grid_of(text))
-    return f"{text}\n\n---\n\n{QUESTION_TEMPLATE.format(count=count)}"
+    return f"{numbered(text)}\n\n---\n\n{QUESTION_TEMPLATE.format(count=count)}"
 
 
 def apply_window(
@@ -2173,7 +2252,7 @@ def _synthetic_answer(key: str, grid: list[str]) -> str:
             echo = f"(dry run) not paragraph {index}"
         else:
             echo = " ".join(paragraph.split()[:ECHO_WORDS])
-        entries.append({"kind": kind, "echo": echo})
+        entries.append({"n": index + 1, "kind": kind, "echo": echo})
     return json.dumps({"paragraphs": entries})
 
 
@@ -2275,6 +2354,9 @@ def _row(
         "extra": scored["extra"],
         "missing": scored["missing"],
         "bad_kind": scored["bad_kind"],
+        "bad_index": scored["bad_index"],
+        "duplicate_index": scored["duplicate_index"],
+        "out_of_order": scored["out_of_order"],
         "echo_exactly_four": scored["echo_exactly_four"],
         "misalignment_rate": scored["misalignment_rate"],
         "unparseable": scored["unparseable"],
@@ -2302,6 +2384,9 @@ def hygiene(rows: list[dict[str, Any]]) -> dict[str, Any]:
         "extra_entries": sum(row["extra"] for row in rows),
         "missing_entries": sum(row["missing"] for row in rows),
         "bad_kind": sum(row["bad_kind"] for row in rows),
+        "bad_index": sum(row["bad_index"] for row in rows),
+        "duplicate_index": sum(row["duplicate_index"] for row in rows),
+        "out_of_order": sum(row["out_of_order"] for row in rows),
         "echo_exactly_four": sum(row["echo_exactly_four"] for row in rows),
         "unparseable_calls": sum(1 for row in rows if row["unparseable"]),
         "refused_calls": sum(1 for row in rows if row["refused"]),
@@ -3974,8 +4059,9 @@ _FIXTURE_LABELS = [
 def _fixture_answer(labels: list[str], grid: list[str]) -> dict[str, Any]:
     return {
         "paragraphs": [
-            {"kind": kind, "echo": " ".join(paragraph.split()[:ECHO_WORDS])}
-            for kind, paragraph in zip(labels, grid, strict=True)
+            {"n": index + 1, "kind": kind,
+             "echo": " ".join(paragraph.split()[:ECHO_WORDS])}
+            for index, (kind, paragraph) in enumerate(zip(labels, grid, strict=True))
         ]
     }
 
@@ -4008,8 +4094,10 @@ def selftest() -> int:
     check("the schema is closed at both levels",
           SCHEMA["additionalProperties"] is False
           and SCHEMA["properties"]["paragraphs"]["items"]["additionalProperties"] is False)
-    check("both fields are required",
-          SCHEMA["properties"]["paragraphs"]["items"]["required"] == ["kind", "echo"])
+    check("all three fields are required",
+          SCHEMA["properties"]["paragraphs"]["items"]["required"] == ["n", "kind", "echo"])
+    check("the number is an integer, so a renumbering cannot arrive as prose",
+          SCHEMA["properties"]["paragraphs"]["items"]["properties"]["n"]["type"] == "integer")
     check("the schema has no intensity, score or rating field",
           not {"intensity", "score", "rating", "strength", "degree"}
           & set(SCHEMA["properties"]["paragraphs"]["items"]["properties"]))
@@ -4033,6 +4121,33 @@ def selftest() -> int:
           [str(label) for label in scored["labels"]] == _FIXTURE_LABELS)
     check("the misalignment rate of a clean answer is zero", scored["misalignment_rate"] == 0.0)
 
+    numbering = numbered(_FIXTURE)
+    check("the render numbers every paragraph of the grid and no more",
+          len(grid_of(numbering)) == len(grid)
+          and numbering.startswith("[1] ") and "[8] " in numbering)
+    check("and it keeps the separator convention the shown text used",
+          numbered("a b c\nd e f").count("\n") == 1)
+
+    misnumbered = _fixture_answer(_FIXTURE_LABELS, grid)
+    misnumbered["paragraphs"][3]["n"] = 99
+    off = align(grid, misnumbered)
+    check("an entry naming a paragraph that does not exist is a misalignment",
+          off["bad_index"] == 1 and off["misaligned"] == 1 and off["labels"][3] is None)
+    twice = _fixture_answer(_FIXTURE_LABELS, grid)
+    twice["paragraphs"][4] = dict(twice["paragraphs"][3])
+    repeated = align(grid, twice)
+    check("a number used twice keeps the first entry and drops the second",
+          repeated["duplicate_index"] == 1 and repeated["labels"][3] == "tension"
+          and repeated["labels"][4] is None)
+    scrambled = _fixture_answer(_FIXTURE_LABELS, grid)
+    scrambled["paragraphs"].reverse()
+    reversed_answer = align(grid, scrambled)
+    check("a list returned out of order still seats every label by its own number",
+          reversed_answer["aligned"] == 8
+          and [str(label) for label in reversed_answer["labels"]] == _FIXTURE_LABELS)
+    check("and the disorder is reported rather than forgiven",
+          reversed_answer["out_of_order"] == 8)
+
     shifted = _fixture_answer(_FIXTURE_LABELS, grid)
     shifted["paragraphs"][3]["echo"] = "a wholly invented opening"
     drift = align(grid, shifted)
@@ -4049,13 +4164,17 @@ def selftest() -> int:
     short = _fixture_answer(_FIXTURE_LABELS, grid)
     short["paragraphs"] = short["paragraphs"][:5]
     trimmed = align(grid, short)
-    check("a short list is missing entries rather than misaligned",
+    check("a short list leaves paragraphs unlabelled rather than misaligned",
           trimmed["missing"] == 3 and trimmed["misaligned"] == 0)
     check("and the series is not padded",
           all(label is None for label in trimmed["labels"][5:]))
     long_answer = _fixture_answer(_FIXTURE_LABELS, grid)
-    long_answer["paragraphs"] = long_answer["paragraphs"] + [{"kind": "none", "echo": "extra"}]
+    long_answer["paragraphs"] = long_answer["paragraphs"] + [
+        {"n": 9, "kind": "none", "echo": "extra entry here"}
+    ]
     check("a long list reports its extras", align(grid, long_answer)["extra"] == 1)
+    check("and the extra entry is a bad index, not a label anywhere",
+          align(grid, long_answer)["bad_index"] == 1)
     bad = _fixture_answer(_FIXTURE_LABELS, grid)
     bad["paragraphs"][0]["kind"] = "not_a_kind"
     check("a kind outside the closed set is dropped and counted",
