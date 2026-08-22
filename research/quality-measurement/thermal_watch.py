@@ -27,6 +27,7 @@ import signal
 import subprocess
 import sys
 import time
+from dataclasses import dataclass
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
@@ -89,6 +90,46 @@ def as_float(value: str | None) -> float | None:
     try:
         return float(value)  # type: ignore[arg-type]
     except (TypeError, ValueError):
+        return None
+
+
+@dataclass
+class TripState:
+    """The trip decision, kept apart from the sampling loop so it can be tested without a card.
+
+    `observe` takes one row as `sample()` returns it and answers with the trip reason, or `None`.
+    The two streaks persist between calls and reset on any sample that does not extend them; the
+    core limit needs no streak. When more than one condition holds the precedence is the core
+    limit, then the margin streak, then the throttle streak. Nothing here reads a sensor, sleeps
+    or signals: `main()` owns all of that and only asks whether the row it just logged is the one
+    to kill on.
+    """
+
+    hard_core: float = HARD_CORE_C
+    hard_margin: float = HARD_TLIMIT_MARGIN_C
+    throttled_streak: int = 0
+    margin_streak: int = 0
+
+    def observe(self, row: dict[str, str]) -> str | None:
+        core = as_float(row.get("temperature.gpu"))
+        margin = as_float(row.get("temperature.gpu.tlimit"))
+        throttling = any(
+            (row.get(f) or "").lower() in ("active", "true")
+            for f in FIELDS
+            if "slowdown" in f
+        )
+        self.throttled_streak = self.throttled_streak + 1 if throttling else 0
+        low_margin = margin is not None and margin <= self.hard_margin
+        self.margin_streak = self.margin_streak + 1 if low_margin else 0
+        if core is not None and core >= self.hard_core:
+            return f"core {core}C >= {self.hard_core}C"
+        if self.margin_streak >= HARD_MARGIN_SAMPLES:
+            return (
+                f"tlimit margin <= {self.hard_margin}C for {self.margin_streak} "
+                "consecutive samples"
+            )
+        if self.throttled_streak >= HARD_THROTTLE_SAMPLES:
+            return f"card throttling for {self.throttled_streak} consecutive samples"
         return None
 
 
@@ -158,8 +199,7 @@ def main(argv: list[str] | None = None) -> int:
     log_path = Path(args.log)
     log_path.parent.mkdir(parents=True, exist_ok=True)
     started = time.time()
-    throttled_streak = 0
-    margin_streak = 0
+    state = TripState(hard_core=args.hard_core, hard_margin=args.hard_margin)
     peak_core = 0.0
     peak_power = 0.0
     min_margin = 999.0
@@ -177,31 +217,14 @@ def main(argv: list[str] | None = None) -> int:
                 core = as_float(row.get("temperature.gpu"))
                 power = as_float(row.get("power.draw"))
                 margin = as_float(row.get("temperature.gpu.tlimit"))
-                throttling = any(
-                    (row.get(f) or "").lower() in ("active", "true")
-                    for f in FIELDS
-                    if "slowdown" in f
-                )
                 if core is not None:
                     peak_core = max(peak_core, core)
                 if power is not None:
                     peak_power = max(peak_power, power)
                 if margin is not None:
                     min_margin = min(min_margin, margin)
-                throttled_streak = throttled_streak + 1 if throttling else 0
-                low_margin = margin is not None and margin <= args.hard_margin
-                margin_streak = margin_streak + 1 if low_margin else 0
 
-                trip = None
-                if core is not None and core >= args.hard_core:
-                    trip = f"core {core}C >= {args.hard_core}C"
-                elif margin_streak >= HARD_MARGIN_SAMPLES:
-                    trip = (
-                        f"tlimit margin <= {args.hard_margin}C for {margin_streak} "
-                        "consecutive samples"
-                    )
-                elif throttled_streak >= HARD_THROTTLE_SAMPLES:
-                    trip = f"card throttling for {throttled_streak} consecutive samples"
+                trip = state.observe(row)
                 if trip and not args.no_kill:
                     pids = gpu_python_pids(args.only)
                     if pids:
