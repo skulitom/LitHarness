@@ -178,6 +178,22 @@ PRECEDES_PREDICATE = "precedes"
 #: Which criterion judges which kind of subject.
 EVALUATES_PREDICATE = "evaluates"
 
+#: Where one subject stands on one declared ladder: `(kell, stands_at, → two_wood)` with the
+#: criterion in the value slot, exactly as `precedes` carries it.
+#:
+#: **A flat edge, and the flatness is the whole argument** (`plan/handoff-numbers-go-up.md`
+#: boundary 9). The page can only print a flat edge — `[ASSIZE] Kell now stands at two wood` is
+#: what a scene writes and what `parse_graph_line` reads back — so the forge's copy of the same
+#: fact has to be readable by the same function. The reified `EVALUATION_*` triple stays for the
+#: case it was built for, a world that reifies an evaluation with an authority that performed it
+#: (`research/progression-generalization.md` §8.3); a standing is not that case and writing both
+#: would be two answers to "which rung is this person on".
+#:
+#: **The number is derived and never stored.** `rung_index` counts the rung's place in
+#: `ladder_of`'s chain when asked. An integer stored beside the chain would be a second answer
+#: to "which rung is third", and `domain/beats.py`'s rule is that the two eventually disagree.
+STANDS_AT_PREDICATE = "stands_at"
+
 #: The three-record evaluation shape of §8.3, plus the institutional role that makes rank and
 #: capability separable.
 EVALUATION_SUBJECT = "evaluation.subject"
@@ -892,6 +908,46 @@ def validate(records: Sequence[lc.StateRecord]) -> tuple[str, ...]:
         if subject not in criteria(records):
             complaints.append(f"criterion {subject} declares no comparator from the registry")
 
+    # **Three checks on a standing, all membership.** A rung this world never declared, a rung
+    # that two chains both claim, and a standing on a criterion that is not ordinal. Nothing here
+    # asks whether the rung is the right one for this person — that is a judgment, and
+    # `plan/world-architect.md` §2 keeps the channel that would answer it shut.
+    declared_comparators = criteria(records)
+    declared_ranks = {
+        rung
+        for criterion in declared_comparators
+        for rung in ladder_of(records, criterion)
+    }
+    for record in records:
+        if record.predicate != STANDS_AT_PREDICATE or not record.object_ref:
+            continue
+        rung = record.object_ref
+        if rung not in declared_ranks:
+            complaints.append(
+                f"{record.subject} stands at {rung}, which is not a declared rank of any "
+                "chain in this world; a standing on a rung nobody declared is a number with "
+                "nothing to count it against"
+            )
+            continue
+        owners = [
+            criterion
+            for criterion in sorted(declared_comparators)
+            if rung in ladder_of(records, criterion)
+        ]
+        if len(owners) > 1:
+            complaints.append(
+                f"rung {rung} sits in {len(owners)} chains ({', '.join(owners)}); which ladder "
+                "a standing counts on has to be one answer, and `criterion_of_rung` abstains "
+                "rather than choosing"
+            )
+        criterion = str(record.value or "").strip() or (owners[0] if owners else "")
+        if criterion and declared_comparators.get(criterion) != "ordinal":
+            complaints.append(
+                f"{record.subject} stands on {criterion}, whose comparator is "
+                f"{declared_comparators.get(criterion)!r} rather than 'ordinal'; a standing is a "
+                "position in an order and a comparator that declares no order has no positions"
+            )
+
     known = (
         set(roles)
         | set(rules(records))
@@ -1120,7 +1176,7 @@ def criterion_brief(records: Sequence[lc.StateRecord]) -> str | None:
     lines: list[str] = []
     for subject in sorted(declared):
         comparator = declared[subject].replace("_", " ")
-        ladder = _ladder_for(subject, canon)
+        ladder = ladder_of(canon, subject)
         if ladder:
             lines.append(f"- {subject}: {comparator} — {' then '.join(ladder)}")
         else:
@@ -1128,12 +1184,17 @@ def criterion_brief(records: Sequence[lc.StateRecord]) -> str | None:
     return "\n".join(lines)
 
 
-def _ladder_for(criterion: str, records: Sequence[lc.StateRecord]) -> tuple[str, ...]:
+def ladder_of(records: Sequence[lc.StateRecord], criterion: str) -> tuple[str, ...]:
     """This criterion's results in `precedes` order, or empty when they do not form a chain.
 
     **Empty rather than a guess.** A criterion whose results branch has no ladder to print, and
     printing one anyway would be the total order this model refuses to assume. Two edges out of
     one result, a cycle, or more than one starting point all return empty.
+
+    Public since 2026-08-22 under the name the callers outside this module wanted, and it is one
+    function rather than two: `criterion_brief` and `_node_sentence` call this, and so do
+    `rung_index`, `standing_of`'s validator and the outline's schedule. A public wrapper around a
+    private chain-walker would be a second place for the chain rule to live.
     """
     edges = rank_order(records, criterion=criterion)
     if not edges:
@@ -1153,6 +1214,86 @@ def _ladder_for(criterion: str, records: Sequence[lc.StateRecord]) -> tuple[str,
         chain.append(following)
         seen.add(following)
     return tuple(chain)
+
+
+def rung_index(
+    records: Sequence[lc.StateRecord], criterion: str, rung: str
+) -> int | None:
+    """This rung's 1-based place in its criterion's chain, counting from the bottom.
+
+    **This is the number.** The operator's direction is that a rank ladder *is* the number a
+    genre reader counts — "bronze to gold rank advance is the same as the number going up; say
+    bronze is 1 and gold is 3" — so the quantity is the rung's position in the declared chain and
+    nothing else. It is computed here rather than stored, for the reason
+    `STANDS_AT_PREDICATE` gives: a stored integer beside the chain is a second answer to the same
+    question and the two would drift.
+
+    `None` when the criterion's results do not form a chain, or when the rung is not on it —
+    empty rather than a guess, the rule `ladder_of` already follows. A caller that gets `None`
+    has a world that declared a partial order and a subject standing somewhere in it, which is a
+    legitimate world; what it does not have is a number, and inventing one would be the total
+    order this model refuses to assume.
+    """
+    chain = ladder_of(records, criterion)
+    if rung not in chain:
+        return None
+    return chain.index(rung) + 1
+
+
+def criterion_of_rung(records: Sequence[lc.StateRecord], rung: str) -> str | None:
+    """Which declared chain this rung sits in, or `None` when that is not one answer.
+
+    The criterion a standing belongs to is **derived** rather than declared twice: a
+    `stands_at` edge carries the criterion in its value slot exactly as `precedes` does, and this
+    is how a reader of the *page* — where the criterion is not printed — recovers it.
+
+    `None` both when no chain holds the rung and when two do. A rung in two chains is a
+    `validate` complaint rather than a tie broken here (`plan/handoff-numbers-go-up.md`
+    boundary 9): picking one would be this function inventing which ladder a world meant.
+    """
+    owners = [
+        criterion
+        for criterion in sorted(criteria(records))
+        if rung in ladder_of(records, criterion)
+    ]
+    return owners[0] if len(owners) == 1 else None
+
+
+def standing_of(
+    records: Sequence[lc.StateRecord], subject: str, *, at: str | None = None
+) -> dict[str, str]:
+    """Where this subject stands on each ladder, as of `at`. Empty for a subject on none.
+
+    Canon only, and the latest standing at or before `at` per criterion — a standing is a fact
+    that *changes*, so the packet's rule for a fact with a story position applies: the one in
+    force is the last one the book has reached. `at=None` means "wherever the book is now", which
+    reads every canon standing including the unplaced.
+
+    **A dict per criterion rather than one rung, because a subject may be on two ladders.**
+    Magic and body cultivation side by side is the world `PRECEDES_PREDICATE` puts the criterion
+    on the edge for, and collapsing the two here would splice an order nobody declared. The
+    criterion is read from the edge's value slot, falling back to `criterion_of_rung` for a
+    standing whose value slot is empty — the page prints a rung and not a criterion, so the edge
+    an extractor reads back off prose has to be resolvable without one.
+    """
+    latest: dict[str, tuple[str, str]] = {}
+    for record in _canon(records):
+        if record.predicate != STANDS_AT_PREDICATE or not record.object_ref:
+            continue
+        if record.subject != subject:
+            continue
+        key = state_mod.order_key_of(record) or ""
+        if at is not None and key > at:
+            continue
+        criterion = str(record.value or "").strip() or criterion_of_rung(
+            records, record.object_ref
+        )
+        if not criterion:
+            continue
+        held = latest.get(criterion)
+        if held is None or key >= held[0]:
+            latest[criterion] = (key, record.object_ref)
+    return {criterion: rung for criterion, (_, rung) in sorted(latest.items())}
 
 
 #: Records that belong to a reified node and say nothing on their own. Folded into the node's
@@ -1248,7 +1389,7 @@ def project(records: Sequence[lc.StateRecord]) -> dict[str, str]:
     for record in records:
         if record.record_id in projected:
             continue
-        plain = _record_sentence(record, held, wrong, believed)
+        plain = _record_sentence(record, held, wrong, believed, records)
         if plain is not None:
             projected[record.record_id] = plain
     return projected
@@ -1271,7 +1412,7 @@ def _node_sentence(
     if node_type == CRITERION:
         comparator = one(COMPARATOR_PREDICATE)
         judged = one(EVALUATES_PREDICATE)
-        ladder = _ladder_for(subject, records)
+        ladder = ladder_of(records, subject)
         whom = judged.object_ref if judged is not None and judged.object_ref else "a subject"
         text = f"{subject} is how {whom} is judged"
         if comparator is not None:
@@ -1339,6 +1480,7 @@ def _record_sentence(
     held: Mapping[str, str],
     wrong: frozenset[str],
     believed: set[str],
+    records: Sequence[lc.StateRecord] = (),
 ) -> str | None:
     """English for one record, or `None` to leave it to `state.describe`."""
     value = record.value if isinstance(record.value, str) else None
@@ -1364,6 +1506,19 @@ def _record_sentence(
         return ""
     if record.predicate == PRECEDES_PREDICATE and record.object_ref:
         return f"{record.subject} ranks below {record.object_ref}"
+    # **The standing reads as a fact and carries its number**, because the packet is where the
+    # writer meets it and "kell stands_at two_wood" is notation. The count is
+    # `rung_index`'s and is rendered only when the chain gives one — a partial order reaches the
+    # writer as a position with no number, which is what it is. No verb about rising and no
+    # adjective: where somebody stands is the same class of fact as what a rule costs.
+    if record.predicate == STANDS_AT_PREDICATE and record.object_ref:
+        criterion = str(record.value or "").strip() or criterion_of_rung(
+            records, record.object_ref
+        )
+        chain = ladder_of(records, criterion) if criterion else ()
+        index = chain.index(record.object_ref) + 1 if record.object_ref in chain else None
+        where = f" ({index} of {len(chain)})" if index is not None else ""
+        return f"{record.subject} stands at {record.object_ref}{where}"
     if record.predicate == CLAIM_CONTENT and value:
         # **A false claim's content is folded and a true one's is not**, and the asymmetry is
         # the point. A world's error belongs to whoever holds it, so the `believes` edge below
@@ -1440,6 +1595,7 @@ __all__ = [
     "REGISTRY_VERSION",
     "REVEAL_SCENE",
     "SCOPE_PREDICATE",
+    "STANDS_AT_PREDICATE",
     "TYPE_PREDICATE",
     "VIEW",
     "VIEW_MAPPING",
@@ -1458,6 +1614,7 @@ __all__ = [
     "consequence_domains",
     "criteria",
     "criterion_brief",
+    "criterion_of_rung",
     "disclosures",
     "entities_with_role",
     "entity_roles",
@@ -1468,6 +1625,7 @@ __all__ = [
     "in_scope",
     "is_machine_author",
     "key_nouns",
+    "ladder_of",
     "machine_author",
     "manifestation_coverage",
     "nodes_of_type",
@@ -1479,6 +1637,8 @@ __all__ = [
     "record_id_for",
     "reveal_scenes",
     "rules",
+    "rung_index",
+    "standing_of",
     "undisclosed_claims",
     "validate",
     "world_record",
