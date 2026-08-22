@@ -404,7 +404,9 @@ changes nothing the model sees. **One book against one book, and it can say noth
 variance.**
 
 Phase 1 gate: exit 0. 12 directives applied, 0 parked, 0 poisoned, outline covers 8 of 8,
-`context_omitted` 0.
+`context_omitted` 0. The reading copy is `pilot2/runs/first-in-time-p4.md` beside run A's and run
+B's, and the shelf is `book-library-p4/`; both are gitignored, and `serial2p4.db` regenerates
+either.
 
 #### P4a — the plan side, before a word was drafted
 
