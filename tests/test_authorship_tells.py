@@ -29,7 +29,7 @@ SEED = 7
 
 def feature_row(**overrides: float) -> dict[str, float]:
     """A feature table whose every entry is 0.0 unless named, so one column carries signal."""
-    base = {name: 0.0 for name in authorship_tells.FEATURE_NAMES}
+    base = dict.fromkeys(authorship_tells.FEATURE_NAMES, 0.0)
     base.update(overrides)
     return base
 
@@ -124,7 +124,7 @@ def test_features_gives_zero_length_variance_with_a_single_sentence():
 
 
 def test_matrix_changes_exactly_one_entry_when_one_feature_value_changes():
-    rows = [{name: 7.0 for name in authorship_tells.FEATURE_NAMES} for _ in range(3)]
+    rows = [dict.fromkeys(authorship_tells.FEATURE_NAMES, 7.0) for _ in range(3)]
     before = authorship_tells._matrix(rows)
     assert before.shape == (3, len(authorship_tells.ACTIVE))
     changed = [dict(row) for row in rows]

@@ -85,7 +85,7 @@ from collections.abc import Callable
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
@@ -1001,7 +1001,7 @@ class Elicitor:
         That is the accepted trade for the cheapest tier, and it is written down here so a later
         reader does not mistake the marker for a saving that was measured.
         """
-        first = [{
+        first: list[dict[str, Any]] = [{
             "role": "user",
             "content": [{
                 "type": "text",
@@ -1151,9 +1151,12 @@ class Elicitor:
             for sample in range(n):
                 for orientation in (0, 1):
                     jobs.append(
-                        lambda p=persona, s=sample, o=orientation: self._compare(
-                            p, pair_id, original, variant, orientation=o, sample=s,
-                            model=self.model, effort=self.effort,
+                        cast(
+                            "Callable[[], Comparison]",
+                            lambda p=persona, s=sample, o=orientation: self._compare(
+                                p, pair_id, original, variant, orientation=o, sample=s,
+                                model=self.model, effort=self.effort,
+                            ),
                         )
                     )
         with ThreadPoolExecutor(max_workers=self.max_workers) as pool:
@@ -1210,14 +1213,20 @@ class Elicitor:
         for persona in personas:
             for sample in range(n):
                 jobs.append(
-                    lambda p=persona, s=sample: self._cell(
-                        p, passage_id, passage, s, self.model, self.effort
+                    cast(
+                        "Callable[[], Sample]",
+                        lambda p=persona, s=sample: self._cell(
+                            p, passage_id, passage, s, self.model, self.effort
+                        ),
                     )
                 )
             if self._is_spot(passage_id, persona.persona_id) and self.spot_model:
                 jobs.append(
-                    lambda p=persona: self._cell(
-                        p, passage_id, passage, 0, self.spot_model, self.spot_effort
+                    cast(
+                        "Callable[[], Sample]",
+                        lambda p=persona: self._cell(
+                            p, passage_id, passage, 0, self.spot_model, self.spot_effort
+                        ),
                     )
                 )
         with ThreadPoolExecutor(max_workers=self.max_workers) as pool:
@@ -1271,10 +1280,10 @@ class Elicitor:
             answers = []
         return anchor_agreement(persona, answers)
 
-    def spend(self) -> dict[str, int]:
+    def spend(self) -> dict[str, int | float]:
         """Token totals over every record in the cache, replayed and fresh alike."""
-        totals = {"input": 0, "output": 0, "cache_read": 0, "cache_write": 0,
-                  "equivalent_usd": 0.0}
+        totals: dict[str, int | float] = {"input": 0, "output": 0, "cache_read": 0,
+                                          "cache_write": 0, "equivalent_usd": 0.0}
         for record in self._cache.values():
             usage = record.get("usage", {})
             for key in totals:

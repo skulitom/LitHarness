@@ -74,7 +74,7 @@ import time
 import unicodedata
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 HERE = Path(__file__).resolve().parent
 if str(HERE) not in sys.path:
@@ -651,7 +651,8 @@ def one_sided_sign_p(k: int, n: int) -> float:
     if n <= 0:
         return 1.0
     k = max(0, min(k, n))
-    return min(1.0, sum(math.comb(n, i) for i in range(k, n + 1)) / (2 ** n))
+    denominator: int = 2 ** n
+    return min(1.0, sum(math.comb(n, i) for i in range(k, n + 1)) / denominator)
 
 
 def attainable_p(n: int) -> float:
@@ -1167,7 +1168,7 @@ def load_result(substrate: str, arm: str, dry: bool = False) -> dict[str, Any]:
             "repeat, then sham, then strip: the strip subset is the census's own top decile and "
             "the noise floor has to cover it."
         )
-    payload = json.loads(path.read_text(encoding="utf-8"))
+    payload: dict[str, Any] = json.loads(path.read_text(encoding="utf-8"))
     if payload.get("registration_digest") != registration_digest():
         raise SystemExit(
             f"{path} carries registration digest {payload.get('registration_digest')} and this "
@@ -1394,7 +1395,9 @@ def prose_beats(row: dict[str, Any]) -> int:
     The strip arm's target and its internal control are the two halves of one count, so the
     split is a named function rather than an expression repeated six times inside the pairing.
     """
-    return row["counted"] - row["by_kind"].get("system_voice", 0)
+    counted: int = row["counted"]
+    system_voice: int = row["by_kind"].get("system_voice", 0)
+    return counted - system_voice
 
 
 def certify(original: str, variant: str) -> dict[str, Any]:
@@ -1492,7 +1495,7 @@ def run_strip(args: argparse.Namespace) -> dict[str, Any]:
     with elicitor:
         rows, usages = _sweep(elicitor, jobs2, arm="strip", dry_run=args.dry_run,
                               workers=elicitor.max_workers, quote=quote)
-    scored = {label: row for label, row in zip(labels, rows, strict=True)}
+    scored = dict(zip(labels, rows, strict=True))
 
     base = {row["unit_id"]: row for row in census["rows"]}
     spread = {}
@@ -1766,14 +1769,18 @@ def _project(
     from this fit and say so instead of carrying a number: they run on a different model at a
     different tier, and their output is a whole chapter rather than a list of anchors.
     """
-    intercept = fit.get("intercept_usd")
-    slope = fit.get("slope_usd_per_1k_words")
+    intercept: float | None = fit.get("intercept_usd")
+    slope: float | None = fit.get("slope_usd_per_1k_words")
     if intercept is None or slope is None:
         return {"projected": None, "because": "fewer than two priced calls"}
 
     def cost(rows: list[dict[str, Any]]) -> float:
         return round(
-            sum(max(intercept + slope * unit["words"] / 1000.0, 0.0) for unit in rows), 2
+            sum(
+                max(intercept + slope * cast(float, unit["words"]) / 1000.0, 0.0)
+                for unit in rows
+            ),
+            2,
         )
 
     census_path = result_path(args.substrate, "census", bool(args.dry_run))
@@ -1922,7 +1929,7 @@ def run_report(args: argparse.Namespace) -> dict[str, Any]:
 
     q3 = {substrate: _q3(substrate, dry) for substrate in ("royalroad", "local")}
 
-    spend = {}
+    spend: dict[str, Any] = {}
     total = 0.0
     for substrate in ("royalroad", "local"):
         for arm in ("census", "repeat", "sham", "strip"):

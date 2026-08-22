@@ -28,13 +28,13 @@ ACTIVE = register_halflife.ACTIVE
 
 def _row(**overrides: float) -> dict[str, float]:
     """A full feature row over ACTIVE with every value at 1.0 unless overridden."""
-    base = {name: 1.0 for name in ACTIVE}
+    base = dict.fromkeys(ACTIVE, 1.0)
     base.update(overrides)
     return base
 
 
 def _unit_scale() -> dict[str, float]:
-    return {name: 1.0 for name in ACTIVE}
+    return dict.fromkeys(ACTIVE, 1.0)
 
 
 # --------------------------------------------------------------------------------- windows
@@ -139,7 +139,7 @@ def test_z_distance_skips_features_the_scale_reports_as_zero_spread():
     first = ACTIVE[0]
     row = _row(**{first: 101.0})
     anchor = _row(**{first: 1.0})
-    scale = {name: 0.0 for name in ACTIVE}
+    scale = dict.fromkeys(ACTIVE, 0.0)
     assert register_halflife.z_distance(row, anchor, scale) == 0.0
 
 
@@ -175,7 +175,7 @@ def test_rows_carry_every_active_feature():
 def test_trajectory_returns_one_distance_pair_per_window():
     continuation = " ".join(f"w{i}" for i in range(150))
     anchor = _row()
-    median = {name: 2.0 for name in ACTIVE}
+    median = dict.fromkeys(ACTIVE, 2.0)
     to_seed, to_median = register_halflife.trajectory(continuation, anchor, median, _unit_scale())
     assert len(to_seed) == len(to_median) == len(register_halflife.windows(continuation)) == 3
 
@@ -356,7 +356,7 @@ def test_inverted_u_reads_a_line_with_symmetric_even_noise_as_not_significant():
 
 def test_inverted_u_counts_only_keys_present_in_both_inputs():
     covariate = _grid_covariate(0, 11)
-    values = {f"k{x}": float(-(x * x)) for x in range(0, 14)}  # two keys with no covariate
+    values = {f"k{x}": float(-(x * x)) for x in range(14)}  # two keys with no covariate
     result = register_halflife.inverted_u(covariate, values)
     assert result["status"] == "READ"
     assert result["n"] == 12

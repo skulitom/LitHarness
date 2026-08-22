@@ -45,11 +45,14 @@ HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 
 import force_gpu  # noqa: E402
+
+# `rewhitespace` is defined and fully typed in `ablate.py`; `force_harness` re-exports it only
+# implicitly, and --strict's no-implicit-reexport forbids reading an implicit re-export.
+from ablate import rewhitespace  # noqa: E402
 from force_harness import (  # noqa: E402
     RESULTS,
     digest,
     provenance,
-    rewhitespace,
 )
 
 DERIVED = HERE / "derived"

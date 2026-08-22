@@ -469,9 +469,9 @@ def selftest() -> int:
               for i in range(6)]
     check(not saturated(moving), "a steadily moving curve must not read as saturated")
 
-    scale = {name: 1.0 for name in ACTIVE}
-    origin = {name: 0.0 for name in ACTIVE}
-    median = {name: 10.0 for name in ACTIVE}
+    scale = dict.fromkeys(ACTIVE, 1.0)
+    origin = dict.fromkeys(ACTIVE, 0.0)
+    median = dict.fromkeys(ACTIVE, 10.0)
     near = style_retention(original, origin, median, scale)
     check(0.0 <= near <= 1.0, f"style retention must be a share, got {near}")
 

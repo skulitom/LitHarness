@@ -164,7 +164,7 @@ class Sheet:
     def __post_init__(self) -> None:
         if not self.fields:
             raise MalformedSheet("a sheet needs at least one field")
-        seen = [key for key in self.value_keys]
+        seen = list(self.value_keys)
         if len(set(seen)) != len(seen):
             raise MalformedSheet(f"a sheet may not repeat a value key: {sorted(seen)}")
 
