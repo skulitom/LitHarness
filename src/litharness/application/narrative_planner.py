@@ -25,6 +25,7 @@ from litharness.application.conductor import JobHandler
 from litharness.application.plan_refinement import accept_plan_proposal
 from litharness.application.policy_events import policy_decision_event
 from litharness.application.ports import NarrativePlanningStore, TextGenerator
+from litharness.domain import world_brief
 from litharness.domain.beats import scene_nodes
 from litharness.domain.budget import BudgetPolicy
 from litharness.domain.budget import check as budget_check
@@ -56,6 +57,7 @@ from litharness.domain.policy import (
     decide,
     decision_id_for,
 )
+from litharness.domain.world_brief import WorldBrief
 
 NARRATIVE_PLAN = "narrative_plan"
 PROFILE = "planner.directive.v0"
@@ -142,7 +144,11 @@ def is_interpretive_actionable(directive: Directive) -> bool:
 
 
 def render_request(
-    base: PlanRevision, directive: Directive, scene_ids: Sequence[str] = ()
+    base: PlanRevision,
+    directive: Directive,
+    scene_ids: Sequence[str] = (),
+    *,
+    world: WorldBrief | None = None,
 ) -> CompletionRequest:
     """Freeze the plan, the book's scenes, and the original direction into one request.
 
@@ -150,11 +156,19 @@ def render_request(
     to a scene, and a model cannot scope to an id it was never shown — so before the book's
     scenes were named here, a chapter note could produce eight perfect scene plans that no
     scene could ever find.
+
+    **The world is keyword-only, and the position matters.** `scene_ids` is
+    positional-or-keyword and its one call site passes it positionally; adding a second
+    positional slot to a function whose third argument is already an optional sequence is how a
+    later caller silently passes a brief as a list of scenes. It is absent from the payload for
+    a book with no world, so a book that declares none renders the bytes it always did.
     """
     plan_payload = [lc.to_jsonable(item) for item in base.items]
     prompt = json.dumps(
         {
             "base_plan_revision_id": base.plan_revision_id,
+            # See the docstring: spread rather than assigned, so no key exists without a world.
+            **({"world": world.to_jsonable()} if world is not None else {}),
             "scenes_in_reading_order": list(scene_ids),
             "directive": {
                 "directive_id": directive.directive_id,
@@ -180,7 +194,8 @@ def render_request(
                 "A constraint must be locked to reach a scene at all: unlocked constraints are "
                 "filtered out of every context packet. Set locked true on any constraint you "
                 "want the prose to obey.",
-            ],
+            ]
+            + (list(world_brief.WORLD_RULES) if world is not None else []),
         },
         ensure_ascii=False,
         sort_keys=True,
@@ -486,7 +501,16 @@ def make_narrative_plan_handler(
         head = store.head(book_id, branch_id)
         scene_ids = tuple(scene_nodes(head)) if head is not None else ()
 
-        request = render_request(base, directive, scene_ids)
+        # **The world, read here rather than threaded from the caller.** Unlike the outline
+        # handler this one holds no canon of its own, so the brief costs one query — and it is
+        # the same query, on the same store, that `make_outline_handler` already makes. A book
+        # with no world gets `None` and the request renders the bytes it always did.
+        request = render_request(
+            base,
+            directive,
+            scene_ids,
+            world=world_brief.brief_for(store.state_records(book_id, branch_id)),
+        )
         stamp = _stamp(now)
         day = stamp[:10]
         provider, _ = registry.resolve(request.call_class)

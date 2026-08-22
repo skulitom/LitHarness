@@ -59,6 +59,7 @@ from litharness.application.plan_refinement import accept_plan_proposal
 from litharness.application.policy_events import policy_decision_event
 from litharness.application.ports import OutlineStore, TextGenerator
 from litharness.domain import state as state_mod
+from litharness.domain import world_brief
 from litharness.domain.beats import Beat, beats_for, template_for
 from litharness.domain.budget import BudgetPolicy
 from litharness.domain.budget import check as budget_check
@@ -87,6 +88,7 @@ from litharness.domain.policy import (
     decision_id_for,
 )
 from litharness.domain.promises import Promise, schedule_fault, window_fault
+from litharness.domain.world_brief import WorldBrief
 
 #: Job kind this handler answers to.
 BOOK_OUTLINE = "book_outline"
@@ -212,11 +214,19 @@ def render_outline_request(
     base: PlanRevision,
     seed: Mapping[str, Any] | None = None,
     promises: Sequence[Promise] = (),
+    world: WorldBrief | None = None,
 ) -> CompletionRequest:
     """Freeze the premise and the whole beat sheet into one structured-output request.
 
     The *entire* sheet goes in, not a window: the model is being asked to make thirty scenes
     differ from one another, and it cannot do that against a sheet it can only see part of.
+
+    **The world goes in when the book has one, and the field is absent when it does not.**
+    Absent rather than null: `json.dumps` writes `null` for a value that is not there, so a
+    key that is always present is a payload that always changed. `test_world_brief.py` asserts
+    the no-world payload byte-for-byte against what it was before this parameter existed.
+    `domain/world_brief.py` owns what a planner may be told and what it may not — the answers
+    reach a statement only where the world scheduled them.
 
     **Open promises go in as debts, and the register is `describe_owed`'s** (W2). They are
     shown so the schedule can be about the book's actual debts rather than about debts the
@@ -242,6 +252,9 @@ def render_outline_request(
         {
             "premise": premise,
             "base_plan_revision_id": base.plan_revision_id,
+            # The world this book runs on, when it has one. Spread rather than assigned so
+            # that a book without one has no key at all — see the docstring.
+            **({"world": world.to_jsonable()} if world is not None else {}),
             # The debts this book has already opened, for the payoff schedule. Absent for a
             # book that owes nothing — which is every book at its first outline, since
             # promises are written by the summary handler after a scene is accepted.
@@ -299,7 +312,8 @@ def render_outline_request(
                 ]
                 if owed
                 else []
-            ),
+            )
+            + (list(world_brief.WORLD_RULES) if world is not None else []),
         },
         ensure_ascii=False,
         sort_keys=True,
@@ -836,8 +850,18 @@ def make_outline_handler(
         # promises are written by the summary handler after a scene is accepted — so the
         # payoff ask is silent there and this feature costs an un-replanned book nothing.
         open_promises = store.promises(book_id, branch_id, open_only=True)
+        # **The world, off the `canon` already read two statements above.** A second query
+        # would be a second answer to the same question, and the drafting side's habit of
+        # calling `state_records` three times is the pattern this deliberately does not copy.
+        # `brief_for` returns None for a book whose records this vocabulary does not
+        # recognise, and the request then carries no world field at all.
         request = render_outline_request(
-            premise, beats, base=base, seed=seed or None, promises=open_promises
+            premise,
+            beats,
+            base=base,
+            seed=seed or None,
+            promises=open_promises,
+            world=world_brief.brief_for(canon),
         )
         day = stamp[:10]
         provider, _ = registry.resolve(request.call_class)
