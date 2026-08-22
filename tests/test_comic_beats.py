@@ -24,9 +24,6 @@ from pathlib import Path
 
 import pytest
 
-RESEARCH = Path(__file__).resolve().parents[1] / "research" / "quality-measurement"
-sys.path.insert(0, str(RESEARCH))
-
 comic_beats = pytest.importorskip(
     "comic_beats",
     reason="research module; needs the quality-measurement directory on the path",

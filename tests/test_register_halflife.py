@@ -20,9 +20,6 @@ from pathlib import Path
 
 import pytest
 
-RESEARCH = Path(__file__).resolve().parents[1] / "research" / "quality-measurement"
-sys.path.insert(0, str(RESEARCH))
-
 register_halflife = pytest.importorskip(
     "register_halflife",
     reason="research module; needs the quality-measurement directory on the path",
