@@ -17,15 +17,10 @@ file, CLI path, sleep and subprocess in the module.
 
 from __future__ import annotations
 
-import sys
 from dataclasses import FrozenInstanceError
-from pathlib import Path
 from typing import Any
 
 import pytest
-
-RESEARCH = Path(__file__).resolve().parents[1] / "research" / "quality-measurement"
-sys.path.insert(0, str(RESEARCH))
 
 SKIP = "research module; needs the quality-measurement directory on the path"
 compression_progress = pytest.importorskip("compression_progress", reason=SKIP)
