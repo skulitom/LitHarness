@@ -353,7 +353,7 @@ def resolve(family: str, head: str = "base") -> tuple[str, str]:
     return spec[head], spec[f"{head}_revision"]
 
 
-def load(family: str, head: str = "base"):
+def load(family: str, head: str = "base") -> tuple[Any, Any]:
     """Tokenizer and model at the pinned revision, on CUDA, in bfloat16.
 
     Refuses a CPU run loudly. A CPU fallback here would produce numbers — slowly — that are not
@@ -370,7 +370,7 @@ def load(family: str, head: str = "base"):
             "C:/DEV/MirrorBench/.venv/Scripts/python.exe"
         )
     model_id, revision = resolve(family, head)
-    cached = _LOADED.get((model_id, revision))
+    cached: tuple[Any, Any] | None = _LOADED.get((model_id, revision))
     if cached is not None:
         return cached
     tokenizer = AutoTokenizer.from_pretrained(model_id, revision=revision)
@@ -383,7 +383,7 @@ def load(family: str, head: str = "base"):
 _TOKENIZERS: dict[tuple[str, str], Any] = {}
 
 
-def load_tokenizer(family: str, head: str = "base"):
+def load_tokenizer(family: str, head: str = "base") -> Any:
     """The tokenizer alone, without putting a model on the card.
 
     **This is what makes an interrupted GPU arm scoreable.** Every arm's scoring pass needs token
@@ -420,7 +420,12 @@ def pad_id(tokenizer: Any) -> int:
     every gemma call. Harmless at batch size one and a corruption the day anything batches,
     which FX does.
     """
-    return tokenizer.pad_token_id if tokenizer.pad_token_id is not None else tokenizer.eos_token_id
+    chosen: int = (
+        tokenizer.pad_token_id
+        if tokenizer.pad_token_id is not None
+        else tokenizer.eos_token_id
+    )
+    return chosen
 
 
 def symmetric_seeds(
@@ -492,7 +497,7 @@ ATTENTION_SHAPE = {
 }
 
 
-def family_provenance(family: str, head: str) -> dict[str, str]:
+def family_provenance(family: str, head: str) -> dict[str, object]:
     model_id, revision = resolve(family, head)
     return {
         "family": family,
@@ -641,11 +646,12 @@ def chat_prompt(family: str, instruction: str, body: str, *, head: str = "chat")
     hand-written approximation of one of them would be a silent difference between the families.
     """
     tokenizer, _ = load(family, head)
-    return tokenizer.apply_chat_template(
+    rendered: str = tokenizer.apply_chat_template(
         [{"role": "user", "content": f"{instruction}\n\n{body}"}],
         tokenize=False,
         add_generation_prompt=True,
     )
+    return rendered
 
 
 def token_logprobs(
@@ -729,7 +735,8 @@ def truncate_to_tokens(family: str, text: str, tokens: int, *, head: str = "base
     """Exact token-length matching. A 'length-matched' control matched in *words* is not one."""
     tokenizer = load_tokenizer(family, head)
     ids = tokenizer(text, add_special_tokens=False, return_tensors="pt")["input_ids"][0]
-    return tokenizer.decode(ids[:tokens], skip_special_tokens=True)
+    decoded: str = tokenizer.decode(ids[:tokens], skip_special_tokens=True)
+    return decoded
 
 
 def repeat_to_tokens(family: str, text: str, tokens: int, *, head: str = "base") -> str:
@@ -748,7 +755,8 @@ def repeat_to_tokens(family: str, text: str, tokens: int, *, head: str = "base")
     import torch
 
     stacked = torch.cat([ids] * reps)[:tokens]
-    return tokenizer.decode(stacked, skip_special_tokens=True)
+    decoded: str = tokenizer.decode(stacked, skip_special_tokens=True)
+    return decoded
 
 
 def selftest() -> int:
