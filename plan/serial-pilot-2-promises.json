@@ -1,0 +1,38 @@
+[
+  {
+    "subject": "m_holts_date",
+    "description": "Why does the Holt family, who dug the Ninefold lateral, hold no date?",
+    "kind": "character",
+    "due_scene": 4
+  },
+  {
+    "subject": "m_orrin_last_call",
+    "description": "Who has been speaking Orrin Veck's date for her, and what happens in August when she cannot be carried?",
+    "kind": "plot",
+    "due_scene": 7
+  },
+  {
+    "subject": "m_pells_lateral",
+    "description": "What is Ferris Kane actually assembling out of the fifth years he keeps buying?",
+    "kind": "progression",
+    "due_scene": 26
+  },
+  {
+    "subject": "m_the_wrong_table",
+    "description": "How wrong is the lag table, and who made it wrong?",
+    "kind": "mystery",
+    "due_scene": 63
+  },
+  {
+    "subject": "m_first_water",
+    "description": "Whose is the oldest date in the register, and why has nobody in living memory seen it called?",
+    "kind": "mystery",
+    "due_scene": 41
+  },
+  {
+    "subject": "m_where_the_dryness_goes",
+    "description": "Where does the water go that a caller's body loses?",
+    "kind": "mystery",
+    "due_scene": 92
+  }
+]

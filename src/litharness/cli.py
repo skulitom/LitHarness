@@ -37,6 +37,7 @@ import litharness_contracts as lc
 from litharness.adapters import contracts_fixtures, evaluation_artifact
 from litharness.adapters.continuity_cli import ContinuityCliRunner
 from litharness.adapters.sqlite_store import MigrationsMissing, SqliteStore, StoredEvent
+from litharness.application import architect
 from litharness.application import export as export_module
 from litharness.application import library as library_module
 from litharness.application import status as status_module
@@ -98,8 +99,10 @@ from litharness.domain import directors as directors_domain
 from litharness.domain import feedback as feedback_domain
 from litharness.domain import pools as pools_domain
 from litharness.domain import state as state_mod
-from litharness.domain.beats import SIX_BEAT, arc_template
+from litharness.domain import worlds as worlds_domain
+from litharness.domain.beats import SIX_BEAT, arc_template, beats_for
 from litharness.domain.budget import BudgetPolicy
+from litharness.domain.budget import check as budget_check
 from litharness.domain.directives import Directive, DirectiveKind, DirectiveStatus, directive_id_for
 from litharness.domain.draft import DraftPolicy
 from litharness.domain.events import Event, EventType
@@ -114,7 +117,15 @@ from litharness.domain.plan_refinement import (
     rollback_proposal,
 )
 from litharness.domain.plans import import_plan, premise_of, scene_plan_for
-from litharness.domain.policy import GateOutcome, Outcome, PolicyDecision, decision_id_for
+from litharness.domain.policy import (
+    GateKind,
+    GateOutcome,
+    Outcome,
+    PolicyDecision,
+    VerdictSource,
+    decision_id_for,
+)
+from litharness.domain.promises import Promise, normalise_kind, promise_id_for
 from litharness.domain.revision import Revision, import_manuscript, new_book
 from litharness.domain.state import import_state
 from litharness.providers import build_default_registry
@@ -3140,6 +3151,278 @@ def cmd_state(args: argparse.Namespace) -> int:
     return EXIT_OK
 
 
+def _forge_paths(out: Path) -> tuple[Path, Path, Path, Path]:
+    return (out / "forge.json", out / "seed.json", out / "directives.json", out / "promises.json")
+
+
+def cmd_forge(args: argparse.Namespace) -> int:
+    """A world, forged: brief → K candidates → deterministic gates → a seed `new` consumes.
+
+    Two invocations, deliberately, and the split is the second rail of
+    `plan/world-architect.md` §2. The first generates and gates and then **stops** — no model
+    orders the candidates, none is marked best, and the command exits with the report. The
+    second, `--pick N`, is a person choosing, makes no provider call, and records its own
+    decision. §61(5)'s alpha division counts the candidates, which is why the count is on
+    both rows.
+
+    The bundles are written before the decision is recorded, because a forge whose files landed
+    and whose decision did not is recoverable by re-running `--pick`, and one whose decision
+    landed with no files is a row pointing at nothing.
+    """
+    out = Path(args.out)
+    forge_path, seed_path, directives_path, promises_path = _forge_paths(out)
+    stamp = _stamp(_now())
+
+    if args.pick is not None:
+        if not forge_path.exists():
+            print(f"litharness: {forge_path} does not exist; run forge first", file=sys.stderr)
+            return EXIT_FAULT
+        forged = json.loads(forge_path.read_text(encoding="utf-8"))
+        bundles = forged["candidates"]
+        if not 1 <= args.pick <= len(bundles):
+            print(
+                f"litharness: --pick {args.pick} is outside 1..{len(bundles)}",
+                file=sys.stderr,
+            )
+            return EXIT_FAULT
+        chosen = bundles[args.pick - 1]
+        # **The one place a forged world becomes canon, and the reason it is here.** The bundles
+        # on disk hold the world as it was *proposed*; `context.assemble` filters proposals out
+        # by `is_canon` before anything else happens, so a serial seeded from them would draft
+        # against a premise and nothing else while looking, at every layer, exactly like the
+        # book this role exists to stop producing. Admitting them at the *pick* is what makes
+        # the operator's choice the decision that carries them, which is the rail
+        # `plan/world-architect.md` §2 states and `cmd_import`'s own comment already applies to
+        # a snapshot somebody typed: accepted on the director's authority.
+        admitted = architect.snapshot_for(
+            architect.Candidate(int(chosen["index"]), chosen["world"]),
+            book_id=str(chosen["seed"]["book_id"]),
+            branch_id=str(chosen["seed"]["branch_id"]),
+            revision_id=str(chosen["seed"]["revision_id"]),
+            architect_id=str(forged["architect_id"]),
+            created_at=str(chosen["seed"]["meta"]["created_at"]),
+            authority=lc.StateAuthority.ACCEPTED_CANON,
+            # The book's own key width, so a reveal position is comparable to a beat key.
+            # `story_key` records what went wrong when it was not.
+            scenes=args.scenes,
+        )
+        seed_path.write_text(
+            json.dumps(lc.to_jsonable(admitted), ensure_ascii=False, indent=2), encoding="utf-8"
+        )
+        directives_path.write_text(
+            json.dumps(
+                {
+                    "source": str(forge_path),
+                    "title": chosen["title"],
+                    "premise": chosen["premise"],
+                    "scenes": args.scenes,
+                    "directives": chosen["directives"],
+                },
+                ensure_ascii=False,
+                indent=2,
+            ),
+            encoding="utf-8",
+        )
+        promises_path.write_text(
+            json.dumps(chosen["promises"], ensure_ascii=False, indent=2), encoding="utf-8"
+        )
+        # The operator's act, recorded as one. `VerdictSource.HUMAN` because it is: a person
+        # read K worlds and chose. Non-blocking, because nothing here refuses anything.
+        gate = GateOutcome(
+            gate=GateKind.SHAPE,
+            rule_or_critic_id="architect.pick.v0",
+            passed=True,
+            verdict_source=VerdictSource.HUMAN,
+            blocking=False,
+            detail=f"candidate {args.pick} of {len(bundles)}",
+        )
+        decision = PolicyDecision(
+            decision_id=decision_id_for(
+                f"forge-pick:{forged['architect_id']}:{args.pick}", 0, (gate,)
+            ),
+            outcome=Outcome.ACCEPT,
+            gates=(gate,),
+            profile=architect.PROFILE,
+            reason=(
+                f"the operator chose world {args.pick} of {len(bundles)}; §61(5) divides the "
+                f"confidence level by {len(bundles)}"
+            ),
+        )
+        store = _store(args)
+        try:
+            store.record_decision(decision, decided_at=stamp)
+        finally:
+            store.close()
+        print(f"{decision.decision_id}")
+        note = chosen["report"]
+        print(f"  {chosen['title']}  ({note['domain']}, {note['geometry']})")
+        print(f"  seed        {seed_path}")
+        print(f"  directives  {directives_path}")
+        print(f"  promises    {promises_path}")
+        print("")
+        print("Next:")
+        print(
+            f"  litharness --database {args.database} new {chosen['title']!r} "
+            f"--premise <the premise in {directives_path.name}> --scenes {args.scenes} "
+            f"--state {seed_path} --promises {promises_path}"
+        )
+        return EXIT_OK
+
+    brief = args.brief or ""
+    architect_id = worlds_domain.architect_id_for(brief)
+    try:
+        request = architect.render_world_request(
+            brief, k=args.k, shape=args.shape, scenes=args.scenes
+        )
+    except architect.ArchitectInputError as error:
+        print(f"litharness: {error}", file=sys.stderr)
+        return EXIT_FAULT
+
+    registry = build_default_registry()
+    store = _store(args)
+    try:
+        provider, _ = registry.resolve(request.call_class)
+        verdict = budget_check(
+            _budget(args),
+            store.spend_on(stamp[:10]),
+            provider=provider.name,
+            prompt_chars=len(request.prompt),
+            max_output_tokens=request.max_output_tokens,
+        )
+        if not verdict.allowed:
+            print(f"litharness: {verdict.reason}", file=sys.stderr)
+            return EXIT_ATTENTION
+        result, resolution = registry.complete(request)
+        if not result.conforms or result.parsed is None:
+            print(
+                "litharness: the forge returned an answer that does not conform to the schema",
+                file=sys.stderr,
+            )
+            return EXIT_ATTENTION
+        try:
+            candidates = architect.worlds_from(result.parsed, args.k)
+        except architect.ArchitectOutputError as error:
+            gate = GateOutcome(
+                gate=GateKind.SHAPE,
+                rule_or_critic_id="shape.forge.v0",
+                passed=False,
+                detail=str(error),
+            )
+            refusal = PolicyDecision(
+                decision_id=decision_id_for(f"forge:{architect_id}:{args.shape}", 0, (gate,)),
+                outcome=Outcome.ESCALATE,
+                gates=(gate,),
+                profile=architect.PROFILE,
+                provider=result.provider,
+                model=result.model,
+                fell_back_from=tuple(resolution.fell_back_from),
+                invocations=result.invocations,
+                total_tokens=result.usage.total,
+                cost_usd=result.cost_usd,
+                reason=str(error),
+            )
+            store.record_decision(refusal, decided_at=stamp)
+            print(f"litharness: {error}", file=sys.stderr)
+            return EXIT_ATTENTION
+
+        bundles = [
+            architect.bundle_for(
+                candidate,
+                book_id=str(uuid.uuid5(uuid.NAMESPACE_URL, f"litharness://forge/{architect_id}/{candidate.index}/book")),
+                branch_id=str(uuid.uuid5(uuid.NAMESPACE_URL, f"litharness://forge/{architect_id}/{candidate.index}/branch")),
+                revision_id=str(uuid.uuid5(uuid.NAMESPACE_URL, f"litharness://forge/{architect_id}/{candidate.index}/revision")),
+                architect_id=architect_id,
+                created_at=stamp,
+                brief=brief,
+                shape=args.shape,
+                scenes=args.scenes,
+            )
+            for candidate in candidates
+        ]
+        # Per candidate, and **non-blocking every one of them**: a world that fails a gate is
+        # information for the person choosing, not a refusal of the forge. `plan_search`'s
+        # `_refusal_gate` is the same shape for the same reason — a loser's defect made
+        # standing would park work that has nothing to do with it.
+        gates = tuple(
+            GateOutcome(
+                gate=GateKind.SHAPE,
+                rule_or_critic_id="architect.world.v0",
+                passed=not bundle["report"]["gate_complaints"],
+                blocking=False,
+                detail=(
+                    f"world {bundle['index'] + 1}: "
+                    + (
+                        "; ".join(bundle["report"]["gate_complaints"])
+                        if bundle["report"]["gate_complaints"]
+                        else "clear"
+                    )
+                ),
+            )
+            for bundle in bundles
+        )
+        usable = sum(1 for bundle in bundles if not bundle["report"]["gate_complaints"])
+        forged = {
+            "architect_id": architect_id,
+            "brief": brief,
+            "prompt_shape": args.shape,
+            "k": args.k,
+            "created_at": stamp,
+            "provider": result.provider,
+            "model": result.model,
+            "profile": architect.PROFILE,
+            "usage_total_tokens": result.usage.total,
+            "cost_usd": result.cost_usd,
+            "spread": architect.spread(candidates),
+            "usable": usable,
+            "candidates": bundles,
+        }
+        out.mkdir(parents=True, exist_ok=True)
+        forge_path.write_text(
+            json.dumps(forged, ensure_ascii=False, indent=2), encoding="utf-8"
+        )
+        decision = PolicyDecision(
+            decision_id=decision_id_for(f"forge:{architect_id}:{args.shape}", 0, gates),
+            outcome=Outcome.ACCEPT,
+            gates=gates,
+            profile=architect.PROFILE,
+            provider=result.provider,
+            model=result.model,
+            fell_back_from=tuple(resolution.fell_back_from),
+            invocations=result.invocations,
+            total_tokens=result.usage.total,
+            cost_usd=result.cost_usd,
+            reason=(
+                f"{args.k} world(s) forged under prompt shape {args.shape!r}, {usable} clear of "
+                "every gate; no model ordered them and none is marked best"
+            ),
+        )
+        store.record_decision(decision, decided_at=stamp)
+    finally:
+        store.close()
+
+    print(decision.decision_id)
+    print(f"  {args.k} world(s), {usable} clear of every gate; shape {args.shape}")
+    spread_value = forged["spread"]
+    print(f"  within-forge spread {spread_value:.4f}" if spread_value is not None else "")
+    for bundle in bundles:
+        note = bundle["report"]
+        print(
+            f"  [{bundle['index'] + 1}] {bundle['title']} — {note['domain']}, "
+            f"{note['geometry']}: {note['records']} records ({note['edges']} edges), "
+            f"{note['rules']} rule(s) at min {note['min_consequence_domains']} domain(s), "
+            f"manifestation {note['manifestation_coverage']:.2f}, "
+            f"{note['claims_with_answers']} answered claim(s)"
+        )
+        for complaint in note["gate_complaints"]:
+            print(f"        gate: {complaint}")
+        for complaint in note["validator_complaints"][:5]:
+            print(f"        world: {complaint}")
+    print(f"  {forge_path}")
+    print("")
+    print(f"Choose one — a person, not a model:  litharness forge --out {out} --pick <n>")
+    return EXIT_OK
+
+
 def cmd_new(args: argparse.Namespace) -> int:
     """Create an empty book of N scenes from a premise — Stage 3's entry point.
 
@@ -3181,7 +3464,65 @@ def cmd_new(args: argparse.Namespace) -> int:
         authority=lc.PlanAuthority.INTENDED,
         locked=True,
     )
+    # **A debt with a settlement date, seeded before the first scene exists.** The measured
+    # defect is the project's oldest: 40 promises opened and 0 paid on the live serial, 32 and 0
+    # before it — every one of them opened by the summary handler out of a scene that had just
+    # been written, with nothing anywhere holding the answer. A forged reveal arrives with its
+    # answer in canon and its scene here, so the ledger has something to pay with. It also makes
+    # `open_promises` non-empty at the book's *first* outline, which is the guard that made
+    # `_payoff_windows` unreachable on pass one.
+    #
+    # Keys come from `beats_for`, never from a format string: `Beat.story_order_key` derives its
+    # width from the scene count and a hand-padded key would sort wrong against the book's own.
+    # A non-chronological template mints none, and then this abstains rather than guessing.
+    promise_rows: list[Promise] = []
+    if args.promises:
+        entries = json.loads(Path(args.promises).read_text(encoding="utf-8"))
+        keys = [beat.story_order_key for beat in beats_for(revision, template)]
+        if keys and all(key is not None for key in keys):
+            opened_key = str(keys[0])
+            final_key = str(keys[-1])
+            for entry in entries if isinstance(entries, list) else ():
+                subject = extraction.normalise_subject(str(entry.get("subject") or ""))
+                description = str(entry.get("description") or "").strip()
+                if not subject or not description:
+                    continue
+                # **A debt the serial settles later has no due date in *this* book, and
+                # pretending otherwise makes it overdue on the last page.** Measured on Serial
+                # Pilot 2: the forged world scheduled reveals at scenes 4, 7, 26, 41, 63 and 92,
+                # and clamping the last four to the final beat would have `promise.overdue.v0`
+                # annotate four arc debts as late in a two-chapter opening that was never going
+                # to reach them. `Promise.due_key` is `str | None` and `overdue_promises` skips
+                # a row with none, so the honest encoding already exists: the debt is on the
+                # ledger, it reaches the packet as something owed, and nothing calls it late.
+                due = entry.get("due_scene")
+                inside = (
+                    isinstance(due, int)
+                    and not isinstance(due, bool)
+                    and 1 <= due <= len(keys)
+                )
+                due_key = str(keys[due - 1]) if inside else None
+                if due is None:
+                    due_key = final_key
+                promise_rows.append(
+                    Promise(
+                        promise_id=promise_id_for(book_id, subject),
+                        subject=subject,
+                        description=description,
+                        opened_at_key=opened_key,
+                        due_key=due_key,
+                        opened_by_revision=revision.revision_id,
+                        # No model wrote this row and the ledger has no column that says so.
+                        # `model` is empty rather than filled with a lie, and the limit is
+                        # stated here rather than discovered later: `promise.overdue.v0` reads
+                        # every row as model-sourced because most are.
+                        model="",
+                        kind=normalise_kind(entry.get("kind")),
+                    )
+                )
+
     records: list[lc.StateRecord] = []
+    graph_fault: str | None = None
     if args.state:
         snapshot = lc.parse_artifact(
             lc.StateSnapshot, json.loads(Path(args.state).read_text(encoding="utf-8"))
@@ -3196,6 +3537,13 @@ def cmd_new(args: argparse.Namespace) -> int:
             extraction.sheet_for(records)
         except extraction.MalformedSheet as error:
             raise SystemExit(f"litharness: {args.state}: {error}") from error
+        # **Reported rather than refused, and the asymmetry with the sheet is deliberate.** A
+        # malformed sheet is dangerous because a default waits behind it, so the book would be
+        # read in a form its own canon does not use. A graph line has no default: the fallback
+        # is "this book has no graph line", which most books are in and which costs nothing.
+        # So this is a lost capability, not a corrupted one — and the operator hears about it
+        # here, at the one moment when doing something about it is free.
+        graph_fault = extraction.graph_line_fault(records)
 
     store = _store(args)
     try:
@@ -3243,6 +3591,8 @@ def cmd_new(args: argparse.Namespace) -> int:
             store.record_state_records(
                 book_id, branch_id, records, created_at=stamp
             )
+        for promise in promise_rows:
+            store.record_promise(book_id, branch_id, promise)
     finally:
         store.close()
 
@@ -3250,6 +3600,10 @@ def cmd_new(args: argparse.Namespace) -> int:
     print(f"  book={book_id} branch={branch_id}")
     print(f"  {args.scenes} empty scene(s); template {template.template_id}")
     print(f"  {len(records)} seed state record(s)")
+    if promise_rows:
+        print(f"  {len(promise_rows)} seeded promise(s), each with an answer already in canon")
+    if graph_fault:
+        print(f"  graph line declared and UNUSABLE, so this book has none: {graph_fault}")
     if not records:
         print("  no state seeded — a LitRPG book needs a starting sheet to speak system voice")
     return EXIT_OK
@@ -4551,9 +4905,59 @@ def build_parser() -> argparse.ArgumentParser:
     new.add_argument("--scenes", type=int, default=len(SIX_BEAT),
                      help="how many scenes to create, all empty and draftable")
     new.add_argument("--state", type=Path, help="a StateSnapshot to seed canon with")
+    new.add_argument(
+        "--promises",
+        type=Path,
+        help="debts to open before scene one, each with a due scene; the answers live in the "
+        "seed snapshot. Without it the ledger only ever holds what a scene invented",
+    )
     new.add_argument("--book", help="book id; a fresh uuid by default")
     new.add_argument("--branch", help="branch id; a fresh uuid by default")
     new.set_defaults(func=cmd_new)
+
+    forge = sub.add_parser(
+        "forge",
+        help="build K worlds from a brief, gate them, and stop — the Architect "
+        "(plan/world-architect.md)",
+    )
+    forge.add_argument(
+        "brief",
+        nargs="?",
+        default="",
+        help="a genre, a real domain, a mood, or nothing. Nothing is legitimate and is the "
+        "control a directed forge is read against",
+    )
+    forge.add_argument(
+        "--k",
+        type=int,
+        default=architect.DEFAULT_K,
+        help="how many worlds to forge in one call; the collapse gate refuses a K-way collapse",
+    )
+    forge.add_argument(
+        "--shape",
+        choices=list(architect.PROMPT_SHAPES),
+        default=architect.DIRECT,
+        help="which prompt shape to use; which one measures better is a question, not a setting",
+    )
+    forge.add_argument(
+        "--out",
+        type=Path,
+        default=Path("forge"),
+        help="where the candidates and the chosen seed are written",
+    )
+    forge.add_argument(
+        "--pick",
+        type=int,
+        help="choose one of the forged worlds. A person's act: it makes no provider call, no "
+        "model ranks anything, and the choice is recorded as its own decision",
+    )
+    forge.add_argument(
+        "--scenes",
+        type=int,
+        default=len(SIX_BEAT),
+        help="scene count written into the chosen bundle's directive file, for `new --scenes`",
+    )
+    forge.set_defaults(func=cmd_forge)
 
     state = sub.add_parser(
         "state", help="what this book holds as true, in story order"

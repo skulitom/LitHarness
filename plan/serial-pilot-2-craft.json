@@ -1,0 +1,43 @@
+{
+  "source": "plan/serial-pilot-1.md §4, via plan/serial-pilot-directives.json",
+  "source_sha256": "9f30542dc997b3bea7f57c1713009deb42c20a58e365aa21da0a8aad318f53ed",
+  "note": "The craft constraints that belong to the project rather than to any one world. Four are verbatim from Serial Pilot 1; two carry a recorded edit, because their wording named Reappraisal's own nouns and a directive is read into every prompt.",
+  "directives": [
+    {
+      "label": "C3 originality / RS1",
+      "kind": "constraint",
+      "text": "Never name, quote, or imitate any real-world person, brand, or published fictional work, character, or game system. Every name, place, and mechanic in this book is original to it.",
+      "carried": "verbatim"
+    },
+    {
+      "label": "C5 openings",
+      "kind": "constraint",
+      "text": "Openings: the first sentence of a scene puts a person in a situation, never a place in a condition. Do not open on weather, light, the time of day, or how a street looks. Open where someone wants something and something is in the way, or where a fact has just landed that changes what matters. The first line has one job: to make the second line necessary.",
+      "carried": "verbatim"
+    },
+    {
+      "label": "C6 introduction budget",
+      "kind": "constraint",
+      "text": "Introductions are rationed. In the first three hundred words of a scene, name at most three things a reader is expected to remember — people, places, businesses, or objects with proper names. Everything else stays unnamed until the scene has given a reason to care about it. A detail earns its name by mattering to what is happening, not by being in the room.",
+      "carried": "verbatim"
+    },
+    {
+      "label": "C7 the phrase",
+      "kind": "constraint",
+      "text": "Plain words, and every phrase must survive being read twice. Use the ordinary word unless the exact one means something different. No stacks of three or more nouns where a preposition would do: the door of the warehouse, not the warehouse door. A comparison must explain the less familiar by the more familiar, so if a reader has to stop and picture the thing being compared to, it is the wrong comparison. Never write a phrase that cancels itself, and never write one that a later clause in the same sentence then states properly — cut to the clause that states it properly.",
+      "carried": "edited: the illustrative noun stack was Reappraisal's own assay house, which is another world's vocabulary reaching a new world's every prompt. The rule is unchanged; only the example moved."
+    },
+    {
+      "label": "C8 register",
+      "kind": "constraint",
+      "text": "Register: this is popcorn reading, meant to be read fast. Sentences run short and land: most under twenty words, and one past thirty should be rare — roughly one sentence in twenty. When a sentence grows, cut it into two rather than joining clauses with commas and subordinators. Keep paragraphs short and let dialogue carry what it can. Never write a sentence a reader has to go back and re-read to parse; if a clause needs unpacking, it is the wrong clause.",
+      "carried": "verbatim"
+    },
+    {
+      "label": "C4 price on the page",
+      "kind": "constraint",
+      "text": "Every gain — a capability, an object, an acquaintance, a fact learned — carries a price paid on the page in the same scene or earlier: time, money, pain, exposure, or a foreclosed option. Nothing in this world is given away.",
+      "carried": "rewritten: pilot 1's C4 named that world's Skills, its Appraisal and its System. The rule is the same rule; the nouns are gone."
+    }
+  ]
+}

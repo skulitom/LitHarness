@@ -31,17 +31,26 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import sys
-from collections.abc import Mapping
+from collections.abc import Mapping, Sequence
 from datetime import UTC, datetime
 from pathlib import Path
 
 from litharness.adapters.sqlite_store import SqliteStore
 from litharness.application import export as export_module
-from litharness.domain.beats import scene_nodes
+from litharness.application import library as library_module
+from litharness.domain import worlds
+from litharness.domain.beats import beats_for, scene_nodes, template_for
 from litharness.domain.directives import DirectiveStatus
-from litharness.domain.extraction import STATUS_PREDICATE, sheet_for
+from litharness.domain.extraction import (
+    STATUS_PREDICATE,
+    graph_line_for,
+    sheet_for,
+    speaks_system_voice,
+)
 from litharness.domain.jobs import JobStatus
+from litharness.domain.nodes import NodeKind
 from litharness.domain.plans import scene_plan_for
 
 #: What the pilot declared. Read from the extracted spec rather than hardcoded, so adding a
@@ -49,15 +58,25 @@ from litharness.domain.plans import scene_plan_for
 SPEC = Path(__file__).resolve().parent.parent / "plan" / "serial-pilot-directives.json"
 
 
-def _declared() -> tuple[int, int]:
-    try:
-        spec = json.loads(SPEC.read_text(encoding="utf-8"))
-        return int(spec["scenes"]), len(spec["directives"])
-    except (OSError, ValueError, KeyError):
-        return 8, 8
+def declared(specs: Sequence[Path]) -> tuple[int, int]:
+    """Scene count and directive count, summed across every spec the run was set up from.
 
-
-EXPECTED_SCENES, EXPECTED_DIRECTIVES = _declared()
+    **Summed, because Serial Pilot 2 has two.** Its world directives come out of `litharness
+    forge` and its craft constraints out of `plan/serial-pilot-2-craft.json`, and a gate that
+    read only one of them would report the inbox short by the size of the other — which is
+    exactly the false alarm this file exists to prevent the operator from learning to ignore.
+    The scene count is the largest any spec declares; a spec that omits it contributes none.
+    """
+    scenes = 0
+    directives = 0
+    for path in specs:
+        try:
+            spec = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            continue
+        scenes = max(scenes, int(spec.get("scenes") or 0))
+        directives += len(spec.get("directives") or ())
+    return (scenes or 8, directives or 8)
 
 OK = "  ok   "
 BAD = " FAIL  "
@@ -104,13 +123,15 @@ def _one_branch(store: SqliteStore, report: Report) -> tuple[str, str] | None:
     return book_id, branch_id
 
 
-def _directives(store: SqliteStore, report: Report) -> None:
+def _directives(
+    store: SqliteStore, report: Report, expected_directives: int, specs: Sequence[Path]
+) -> None:
     counts = {status.value: len(store.directives_by_status(status)) for status in DirectiveStatus}
     total = sum(counts.values())
     report.check(
-        total == EXPECTED_DIRECTIVES,
-        f"{total} directive(s) in the inbox, expected {EXPECTED_DIRECTIVES}",
-        f"as extracted from {SPEC.name}",
+        total == expected_directives,
+        f"{total} directive(s) in the inbox, expected {expected_directives}",
+        "as extracted from " + ", ".join(path.name for path in specs),
     )
     received = store.directives_by_status(DirectiveStatus.RECEIVED)
     report.check(
@@ -169,7 +190,9 @@ def _outline(store: SqliteStore, report: Report, book_id: str, branch_id: str) -
     report.note(f"plan holds {len(plan.items)} item(s), {locked} locked")
 
 
-def _prose(store: SqliteStore, report: Report, book_id: str, branch_id: str) -> None:
+def _prose(
+    store: SqliteStore, report: Report, book_id: str, branch_id: str, expected_scenes: int
+) -> None:
     document = export_module.collect(
         store,
         book_id=book_id,
@@ -177,8 +200,8 @@ def _prose(store: SqliteStore, report: Report, book_id: str, branch_id: str) -> 
         generated_at=datetime.now(tz=UTC).isoformat(),
     )
     report.check(
-        document.total == EXPECTED_SCENES,
-        f"the book holds {document.total} scene(s), expected {EXPECTED_SCENES}",
+        document.total == expected_scenes,
+        f"the book holds {document.total} scene(s), expected {expected_scenes}",
     )
     report.check(
         document.drafted == document.total,
@@ -202,12 +225,28 @@ def _state(store: SqliteStore, report: Report, book_id: str, branch_id: str) -> 
     records = store.state_records(book_id, branch_id)
     read_back = [r for r in records if r.evidence]
     seeded = len(records) - len(read_back)
-    report.check(
-        bool(read_back),
+    # **A book that speaks neither line form has nothing to read back, and refusing it would be
+    # this gate asserting that every world is a LitRPG one.** Pilot 1 declared a status sheet, so
+    # zero read-back meant its C2 had not taken. A forged world may declare no sheet and no graph
+    # line at all — absence is free — and then zero is the correct number rather than a failure.
+    # Reported either way; checked only where there was something to read.
+    speaks = speaks_system_voice(records) or graph_line_for(records) is not None
+    headline = (
         f"{len(read_back)} state record(s) read off the book's own prose "
-        f"({len(records)} total, {seeded} seeded)",
-        "zero means no `[STATUS]` line the parser accepted — C2 did not take",
+        f"({len(records)} total, {seeded} seeded)"
     )
+    if not speaks:
+        report.note(
+            headline,
+            "this book declares neither a status sheet nor a usable graph line, so there is no "
+            "in-story form to read back and zero is what that looks like",
+        )
+    else:
+        report.check(
+            bool(read_back),
+            headline,
+            "zero means no in-story line the parser accepted — the world's own form did not take",
+        )
     subjects = sorted({r.subject for r in records})
     report.note("state subjects", ", ".join(subjects) or "none")
 
@@ -222,7 +261,23 @@ def _sheet(store: SqliteStore, report: Report, book_id: str, branch_id: str) -> 
     """
     records = store.state_records(book_id, branch_id)
     sheet = sheet_for(records)
+    # **A world that declares no sheet is not a world with the default one.** `sheet_for`
+    # returns `DEFAULT_SHEET` when nothing is declared, which is right for the parser and wrong
+    # for this line: printing `Level | HP | MP | Gold` under a book that declares no numbers at
+    # all reads as a finding about the book rather than about the fallback. `speaks_system_voice`
+    # is the question that actually matters — a book whose canon holds no snapshot is never asked
+    # for a status line, so there is nothing here to check and saying so is the honest report.
+    if not speaks_system_voice(records):
+        report.note(
+            "status sheet: none declared, and this book never speaks system voice",
+            "absence is free — no line is asked for and none is read back; the graph line, if "
+            "the world declared one, is the other family",
+        )
+        return
     report.note("status sheet", " | ".join(field.label for field in sheet.fields))
+    line = graph_line_for(records)
+    if line is not None:
+        report.note(f"graph line: {line.template}", "the second extractor family's in-story form")
     for snapshot in records:
         if snapshot.predicate != STATUS_PREDICATE or not isinstance(snapshot.value, Mapping):
             continue
@@ -235,6 +290,90 @@ def _sheet(store: SqliteStore, report: Report, book_id: str, branch_id: str) -> 
         )
 
 
+
+
+def _disclosure(store: SqliteStore, report: Report, book_id: str, branch_id: str) -> None:
+    """The iceberg, reported and never gated — Serial Pilot 2's S2 and S3.
+
+    **Nothing here is a check, and the reason is that neither question has a deterministic
+    form.** S2 asks whether the writer stated a secret it was told to honour and not state; S3
+    asks whether a scheduled reveal landed. Deciding from prose that a hint has gone too far, or
+    that an answer has genuinely been given rather than gestured at, is exactly the judgment
+    this project has no instrument for — so this prints numbers an operator reads beside the
+    prose and refuses nothing.
+
+    **The counter is the world's own coined vocabulary, not content words.** The first version
+    of this probe compared the answer's content words against the prose and reported shares of
+    0.20 to 0.59 — every one of them driven by `because`, `being`, `every`, `water` and `basin`.
+    A number that high on a book that leaked nothing is a shallow metric wearing a finding, and
+    `plan/reader-read-2.md`'s `opening_proper_nouns` is the case this repository already owns.
+    What can give a secret away is the world's *invented* nouns, so that is what is counted, and
+    even then a name on the page is not the secret being told.
+    """
+    records = store.state_records(book_id, branch_id)
+    answers = worlds.claims(records)
+    schedule = worlds.disclosures(records)
+    if not answers:
+        return
+    coined = set(worlds.key_nouns(records))
+    head = store.head(book_id, branch_id)
+    if head is None:
+        return
+    scenes = [
+        (node.logical_id, node.content)
+        for node in head.in_reading_order()
+        if node.kind is NodeKind.SCENE and node.content
+    ]
+    keys = {
+        beat.logical_id: beat.story_order_key
+        for beat in beats_for(head, template_for(head))
+    }
+    drafted = {logical_id for logical_id, _ in scenes}
+    last_key = max(
+        (keys[logical_id] for logical_id in drafted if keys.get(logical_id)), default=None
+    )
+    hidden = {record.subject for record in worlds.undisclosed_claims(records, at=last_key)}
+
+    report.note(
+        f"{len(answers)} recorded answer(s), {len(schedule)} scheduled, "
+        f"{len(hidden)} still hidden at {last_key or 'the end of what is drafted'}",
+        "reported, never gated — no deterministic reading decides whether a secret was told",
+    )
+    # **Over the declared ordinals, not the positions.** A reveal past the end of this book has
+    # an ordinal and deliberately no `order_key`, so a loop over the positions would silently
+    # omit exactly the debts a serial carries forward — the ones an operator most wants counted.
+    ordinals = worlds.reveal_scenes(records)
+    for claim_id in sorted(set(ordinals) | set(schedule)):
+        when = schedule[claim_id][0] if claim_id in schedule else None
+        ordinal = ordinals.get(claim_id)
+        answer = answers.get(claim_id, "")
+        words = {
+            word
+            for word in re.findall(r"[a-z][a-z'-]{3,}", answer.casefold())
+            if word in coined
+        }
+        reached = "not in this book"
+        if when is not None:
+            at_or_after = [
+                text for logical_id, text in scenes if (keys.get(logical_id) or "") >= when
+            ]
+            reached = "yes" if at_or_after else "not yet drafted"
+        seen_before = sorted(
+            word
+            for word in words
+            if any(
+                word in (text or "").casefold()
+                for logical_id, text in scenes
+                if when is None or (keys.get(logical_id) or "") < when
+            )
+        )
+        state = "hidden" if claim_id in hidden else "disclosed"
+        report.note(
+            f"  {state:<9} {claim_id:<26} scene {ordinal or '?'} "
+            f"({when or 'outside this book'}) · scenes at or past it: {reached}",
+            f"coined nouns in the answer seen earlier: {', '.join(seen_before) or 'none'}"
+            + (f" (of {len(words)})" if words else " (the answer coins none)"),
+        )
 
 
 def _promises(store: SqliteStore, report: Report, book_id: str, branch_id: str) -> None:
@@ -285,6 +424,14 @@ def main(argv: list[str] | None = None) -> int:
     )
     parser.add_argument("--database", type=Path, default=Path("serial.db"))
     parser.add_argument(
+        "--spec",
+        type=Path,
+        action="append",
+        help="a package spec whose scene and directive counts this gate checks against. "
+        "Repeatable, and Serial Pilot 2 needs two: the forge's directives.json and "
+        "plan/serial-pilot-2-craft.json. Defaults to Serial Pilot 1's single spec",
+    )
+    parser.add_argument(
         "--phase",
         choices=("directives", "full"),
         default="full",
@@ -296,20 +443,36 @@ def main(argv: list[str] | None = None) -> int:
         print(f"serial_pilot_check: {args.database} does not exist", file=sys.stderr)
         return 2
 
+    specs = list(args.spec or [SPEC])
+    expected_scenes, expected_directives = declared(specs)
+
     report = Report()
+    shelf = ""
     store = SqliteStore.open(args.database)
     try:
         scope = _one_branch(store, report)
-        _directives(store, report)
+        _directives(store, report, expected_directives, specs)
         _jobs(store, report)
         if scope is not None:
             book_id, branch_id = scope
+            head = store.head(book_id, branch_id)
+            if head is not None:
+                shelf = library_module.slugify(
+                    export_module.collect(
+                        store,
+                        book_id=book_id,
+                        branch_id=branch_id,
+                        generated_at=datetime.now(tz=UTC).isoformat(),
+                    ).title,
+                    book_id,
+                )
             _outline(store, report, book_id, branch_id)
             _sheet(store, report, book_id, branch_id)
             if args.phase == "full":
-                _prose(store, report, book_id, branch_id)
+                _prose(store, report, book_id, branch_id, expected_scenes)
                 _state(store, report, book_id, branch_id)
                 _promises(store, report, book_id, branch_id)
+                _disclosure(store, report, book_id, branch_id)
         _spend(store, report)
         if args.phase == "full":
             rebuilt = store.verify_integrity()
@@ -320,7 +483,11 @@ def main(argv: list[str] | None = None) -> int:
         store.close()
 
     verdict = "READ IT" if not report.failures else "DO NOT READ IT YET"
-    print(f"=== serial pilot 1 · {args.phase} gate · {verdict} ===")
+    # **Which pilot, from the specs it was pointed at.** The header said "serial pilot 1"
+    # unconditionally, which on Serial Pilot 2 is a label reporting the wrong book — the
+    # exact class of quiet wrongness the rest of this file exists to catch.
+    label = "serial pilot 2" if any("pilot-2" in path.name for path in specs) else "serial pilot 1"
+    print(f"=== {label} · {args.phase} gate · {verdict} ===")
     for line in report.lines:
         print(line)
     if report.failures:
@@ -333,7 +500,11 @@ def main(argv: list[str] | None = None) -> int:
         print("book in this state is not worth the bit. Fix, re-tick, re-run this.")
         return 1
     print()
-    print("Read `book-library/reappraisal/` beside the database. Write the grab criterion")
+    # **The shelf, by name.** This line named `reappraisal/` unconditionally, which on any
+    # second pilot points an operator at the previous book — and the one thing this gate exists
+    # to protect is the single acceptance read, so sending it to the wrong shelf is the most
+    # expensive small wrongness in the file.
+    print(f"Read `book-library/{shelf or '<slug>'}/` beside the database. Write the grab criterion")
     print("BEFORE reading a word (§6 step 1), then one bit at book grain and no riders.")
     return 0
 

@@ -53,6 +53,7 @@ from typing import Any
 import litharness_contracts as lc
 
 from litharness.domain import state as state_mod
+from litharness.domain import worlds as worlds_mod
 from litharness.domain.craft import longest_repeated_span
 from litharness.domain.findings import (
     UNRESOLVED_STATUSES,
@@ -68,7 +69,17 @@ from litharness.domain.policy import GateKind, GateOutcome, VerdictSource
 from litharness.domain.promises import overdue_promises
 
 #: This module's own rule id, in the vocabulary the fixtures use for theirs.
-CONTRADICTION_RULE = "state.contradiction.v0"
+#:
+#: **`v1` from 2026-08-21, because the grouping key is the arithmetic.** `DUPLICATE_RULE` states
+#: the convention — "the threshold below is part of its arithmetic and a changed threshold is a
+#: changed rule" — and adding `object_ref` to the key changes which inputs produce a finding, so
+#: it is a changed rule by exactly that test. A finding recorded before today and one recorded
+#: after are now distinguishable, which is the whole point of the version.
+#:
+#: Prose elsewhere in this repository that names `state.contradiction.v0` — `migrations/
+#: 016_state_retraction.sql`, PLAN.md, README.md — is describing what happened under v0 and
+#: stays as written; those are history, not a reference to the live rule.
+CONTRADICTION_RULE = "state.contradiction.v1"
 
 #: The gate's id in a recorded policy decision, alongside `shape.draft.v0`. Judges the
 #: candidate, so its refusal is *about the work* and costs an attempt.
@@ -101,22 +112,46 @@ def _value_key(value: Any) -> str:
 def detect_contradictions(subject: DetectorInput) -> list[Finding]:
     """Canon records that disagree with each other at the same story position.
 
-    Grouped on `(subject, predicate, order_key)` — the position is part of the key on purpose.
-    A stat that moves between scenes is a story; the same stat holding two values *at one
-    moment* is a defect. Dropping the position from the key would report every ordinary change
-    in the book, which on the litrpg fixture is every status snapshot after the first.
+    Grouped on `(subject, predicate, object_ref, order_key)` — the position is part of the key
+    on purpose. A stat that moves between scenes is a story; the same stat holding two values
+    *at one moment* is a defect. Dropping the position from the key would report every ordinary
+    change in the book, which on the litrpg fixture is every status snapshot after the first.
+
+    **`object_ref` entered the key on 2026-08-21, and what it fixes is a detector that was
+    reading the annotation.** Measured before the change, on the four spellings in
+    `test_the_edge_cases_the_design_note_measured`: `card_of_ashes held_by → silas` beside
+    `→ marta` produced **0** findings; the same pair with a different note on each edge produced
+    **1, MAJOR, blocking**; `ash trait → keen_scent` beside `→ night_sight` — an ordinary
+    creature with two traits — produced 0 as edges and 1 as values. So the thing that decided
+    whether an impossibility was reported was whether the prose happened to annotate the two
+    edges differently, and a perfectly ordinary two-valued relation was refused whenever it did.
+
+    With the edge in the key, two edges are two facts and never contradict each other here.
+    Exclusivity is not lost; it moves to where it can be *declared* —
+    `detect_cardinality_violations` reads the world's own "at most one holder" shape. This is
+    `plan/state-model-abilities.md` §5 item 1 and it is deliberately the pair of changes rather
+    than either alone: adding the edge to the key without the cardinality detector would make
+    one object in two hands permanently invisible.
+
+    **Both golden fixtures hold zero records with `object_ref` set**, so their grouping is
+    unchanged and their silence is untouched by construction rather than by a re-check.
 
     Only canon takes part. A `PROPOSED` record is a candidate no decision has accepted, and
     two proposals disagreeing is what proposals are for.
     """
     canon = [record for record in subject.records if state_mod.is_canon(record)]
-    groups: dict[tuple[str, str, str], list[lc.StateRecord]] = {}
+    groups: dict[tuple[str, str, str, str], list[lc.StateRecord]] = {}
     for record in canon:
-        key = (record.subject, record.predicate, state_mod.order_key_of(record) or "")
+        key = (
+            record.subject,
+            record.predicate,
+            record.object_ref or "",
+            state_mod.order_key_of(record) or "",
+        )
         groups.setdefault(key, []).append(record)
 
     findings: list[Finding] = []
-    for (subject_id, predicate, order_key), members in sorted(groups.items()):
+    for (subject_id, predicate, object_ref, order_key), members in sorted(groups.items()):
         distinct = {_value_key(record.value): record for record in members}
         if len(distinct) < 2:
             continue
@@ -124,6 +159,7 @@ def detect_contradictions(subject: DetectorInput) -> list[Finding]:
         claim = {
             "subject": subject_id,
             "predicate": predicate,
+            "object_ref": object_ref,
             "order_key": order_key,
             "values": sorted(distinct),
             "records": sorted(record.record_id for record in conflicting),
@@ -146,6 +182,87 @@ def detect_contradictions(subject: DetectorInput) -> list[Finding]:
                 source={"claim": claim},
             )
         )
+    return findings
+
+
+#: Rule id for the scoped-cardinality check. Versioned like every other; the grouping is the
+#: rule, and a changed grouping is a changed rule.
+CARDINALITY_RULE = "state.cardinality.v0"
+
+
+def detect_cardinality_violations(subject: DetectorInput) -> list[Finding]:
+    """More of a relation than the world said there could be, at one story position.
+
+    **The half of `plan/state-model-abilities.md` §5 item 1 that makes the other half safe.**
+    `detect_contradictions` now keys on `object_ref`, so two edges never contradict each other
+    there. Exclusivity has to be *declared* instead, and this is what reads the declaration: a
+    world says "at most one `possessed_by` per carrier at a time" as five ordinary records
+    (`research/progression-generalization.md` §8.2's encoding, unchanged) and this counts.
+
+    **A frozen arity table was the rejected alternative and the rejection is the design.**
+    `held_by → functional` welds one world's physics into the engine: a workshop is jointly
+    owned, shares are fractionally owned, a bond is unique in one world and plural in another.
+    So an undeclared predicate stays untyped and non-blocking, and the cost of that is stated
+    rather than hidden — a world that declares no shape is checked for nothing, which is the
+    price of free-form predicates being free.
+
+    **Maxima only.** Under open-world reading a missing value is unknown rather than false, so a
+    minimum count is unsafe until a scope is explicitly closed and none can be. `domain/worlds.py`
+    refuses to build a shape from a minimum, so there is nothing here to read one from.
+
+    Blocking, MAJOR and `deterministic`, on the same licence `state.contradiction.v0` has: it
+    reads records and nothing else, no phrasing satisfies or defeats it, and it emits **zero
+    findings on both golden fixtures** — which hold no shapes at all, so the check is vacuous
+    there by construction rather than by luck.
+    """
+    canon = [record for record in subject.records if state_mod.is_canon(record)]
+    shapes = worlds_mod.cardinality_shapes(canon)
+    if not shapes:
+        return []
+    roles = worlds_mod.entity_roles(canon)
+
+    findings: list[Finding] = []
+    for shape in sorted(shapes, key=lambda item: item.constraint_id):
+        buckets: dict[str, list[lc.StateRecord]] = {}
+        for record in canon:
+            if record.predicate != shape.predicate or not record.object_ref:
+                continue
+            if not worlds_mod.in_scope(record, shape, roles):
+                continue
+            buckets.setdefault(worlds_mod.group_of(record, shape.group_key), []).append(record)
+        for bucket in sorted(buckets):
+            members = buckets[bucket]
+            targets = sorted({record.object_ref or "" for record in members})
+            if len(targets) <= shape.maximum:
+                continue
+            claim = {
+                "constraint": shape.constraint_id,
+                "predicate": shape.predicate,
+                "group_key": shape.group_key,
+                "group": bucket,
+                "maximum": shape.maximum,
+                "found": targets,
+                "records": sorted(record.record_id for record in members),
+            }
+            findings.append(
+                Finding(
+                    finding_id=finding_id_for(CARDINALITY_RULE, shape.constraint_id, claim),
+                    category=lc.FindingCategory.WORLD_RULE.value,
+                    severity=Severity.MAJOR,
+                    status=Status.OPEN,
+                    subtype="cardinality_exceeded",
+                    rule_or_critic_id=CARDINALITY_RULE,
+                    logical_id=subject.logical_id,
+                    confidence_basis=lc.ConfidenceBasis.DETERMINISTIC.value,
+                    message=(
+                        f"{shape.constraint_id} admits at most {shape.maximum} "
+                        f"{shape.predicate} per {shape.group_key}; "
+                        f"{bucket.replace(chr(0), ' at ')} has {len(targets)}: "
+                        + ", ".join(targets)
+                    ),
+                    source={"claim": claim},
+                )
+            )
     return findings
 
 
@@ -311,6 +428,7 @@ def detect_overdue_promises(subject: DetectorInput) -> list[Finding]:
 #: rest of the book this system wrote, one needs the promise ledger only this store keeps.
 IN_PROCESS: tuple[Any, ...] = (
     detect_contradictions,
+    detect_cardinality_violations,
     detect_duplicate_scene,
     detect_overdue_promises,
 )
@@ -434,6 +552,7 @@ def summarise(findings: Sequence[Finding]) -> str:
 
 
 __all__ = [
+    "CARDINALITY_RULE",
     "CONTRADICTION_RULE",
     "DUPLICATE_RULE",
     "DUPLICATE_SPAN_WORDS",
@@ -441,6 +560,7 @@ __all__ = [
     "IN_PROCESS",
     "OVERDUE_RULE",
     "STANDING_GATE",
+    "detect_cardinality_violations",
     "detect_contradictions",
     "detect_duplicate_scene",
     "detect_overdue_promises",

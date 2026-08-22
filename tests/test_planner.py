@@ -33,6 +33,7 @@ from litharness.application.planner import (
     render_prompt,
     template_for,
 )
+from litharness.domain import integrity
 from litharness.domain.beats import (
     SIX_BEAT,
     BeatTemplate,
@@ -607,7 +608,7 @@ def test_a_generated_scene_that_contradicts_canon_is_now_refused(store: SqliteSt
     [finding] = [
         item for item in store.findings(*_fixture_ids(store)) if item.blocks
     ]
-    assert finding.rule_or_critic_id == "state.contradiction.v0"
+    assert finding.rule_or_critic_id == integrity.CONTRADICTION_RULE
 
 
 def test_a_generated_scene_that_carries_canon_forward_is_accepted(store: SqliteStore) -> None:
@@ -1217,7 +1218,9 @@ def test_a_scene_contradicting_established_canon_is_refused_and_writes_nothing(
     findings = store.findings(book_id, branch_id)
     assert findings, "the contradiction is on record"
     assert any("position s1" in finding.message for finding in findings)
-    assert any(finding.rule_or_critic_id == "state.contradiction.v0" for finding in findings)
+    assert any(
+        finding.rule_or_critic_id == integrity.CONTRADICTION_RULE for finding in findings
+    )
 
 
 # --- Stage 3: a book longer than six scenes ------------------------------------------

@@ -1,0 +1,715 @@
+{
+  "note": "Serial Pilot 2's world, as the Architect returned it. The StateSnapshot the pilot seeds from is `architect.records_for(Candidate(0, world), authority=ACCEPTED_CANON)` over this object, so this file is the reproducible source and the 140KB seed is derived output rather than a second copy of it.",
+  "architect_id": "arch-e3b0c44298fc1c149afbf4c8",
+  "brief": "",
+  "prompt_shape": "direct",
+  "k": 3,
+  "provider": "claude_code",
+  "model": "claude-opus-5",
+  "usage_total_tokens": 98332,
+  "cost_usd": 1.5322445000000002,
+  "spread": 0.9302393229037761,
+  "picked": 1,
+  "pick_rule": "the first candidate, in the order the model returned them, that clears every gate. Arbitrary on purpose: it orders nothing and prefers nothing, and it stands in for an operator act that has not happened.",
+  "candidate_reports": [
+    {
+      "index": 0,
+      "title": "First In Time",
+      "domain": "Western water law and hydrology — prior appropriation, beneficial use, forfeiture, curtailment, and the conjunctive management of groundwater that is physically connected to a river the law pretends it is separate from.",
+      "geometry": "chain",
+      "records": 327,
+      "edges": 76,
+      "rules": 7,
+      "consequence_domains_per_rule": {
+        "r_beneficial_use": 3,
+        "r_first_in_time": 3,
+        "r_forfeiture": 3,
+        "r_lag": 3,
+        "r_salt_layer": 3,
+        "r_subsidence": 3,
+        "r_the_dryness": 3
+      },
+      "min_consequence_domains": 3,
+      "features": 23,
+      "manifestation_coverage": 1.0,
+      "manifestation_missing": [],
+      "criteria": {
+        "cr_priority": "ordinal",
+        "cr_depth": "numeric"
+      },
+      "cardinality_shapes": 3,
+      "claims_with_answers": 28,
+      "reveals_scheduled": 6,
+      "hidden_at_start": 20,
+      "validator_complaints": [],
+      "gate_complaints": []
+    },
+    {
+      "index": 1,
+      "title": "Borrowed Hands",
+      "domain": "Transplant immunology and surgical grafting — tissue typing, the crossmatch, hyperacute rejection, immunosuppression and its infection cost, cold ischemia windows, motor-skill learning, and the law of donated remains.",
+      "geometry": "graph",
+      "records": 345,
+      "edges": 79,
+      "rules": 7,
+      "consequence_domains_per_rule": {
+        "r_crossmatch": 3,
+        "r_hours_in_the_head": 3,
+        "r_nothing_new": 3,
+        "r_price_of_width": 3,
+        "r_the_eleven_days": 3,
+        "r_the_relearn": 3,
+        "r_writ_of_hands": 3
+      },
+      "min_consequence_domains": 3,
+      "features": 24,
+      "manifestation_coverage": 1.0,
+      "manifestation_missing": [],
+      "criteria": {
+        "cr_tolerance": "set_inclusion",
+        "cr_practiced_hours": "ordinal"
+      },
+      "cardinality_shapes": 3,
+      "claims_with_answers": 31,
+      "reveals_scheduled": 6,
+      "hidden_at_start": 22,
+      "validator_complaints": [],
+      "gate_complaints": []
+    },
+    {
+      "index": 2,
+      "title": "The Traverse",
+      "domain": "Land surveying and geodesy — traverse and closure, misclosure adjustment, error propagation by the root of the number of stations, monuments controlling over courses and distances, metes-and-bounds description, and the office of the witness who can still point at the mark.",
+      "geometry": "estimate",
+      "records": 324,
+      "edges": 72,
+      "rules": 6,
+      "consequence_domains_per_rule": {
+        "r_calls_in_order": 3,
+        "r_closure": 3,
+        "r_drift": 3,
+        "r_monument_controls": 3,
+        "r_propagation": 3,
+        "r_witness": 3
+      },
+      "min_consequence_domains": 3,
+      "features": 23,
+      "manifestation_coverage": 1.0,
+      "manifestation_missing": [],
+      "criteria": {
+        "cr_radius": "threshold",
+        "cr_call_answered": "equality"
+      },
+      "cardinality_shapes": 3,
+      "claims_with_answers": 27,
+      "reveals_scheduled": 6,
+      "hidden_at_start": 20,
+      "validator_complaints": [],
+      "gate_complaints": []
+    }
+  ],
+  "world": {
+    "title": "First In Time",
+    "domain": "Western water law and hydrology — prior appropriation, beneficial use, forfeiture, curtailment, and the conjunctive management of groundwater that is physically connected to a river the law pretends it is separate from.",
+    "geometry": "chain",
+    "progression_means": "Standing. Nobody gets stronger; people get earlier. Every claim on the river sits in one strict queue ordered by the date written beside it, and advancement is movement up that queue — by purchase, by marriage, by inheritance, by proving a use older than the paper says, or by documenting the forfeiture of somebody above you. A junior with a hundred hands and a mile of canal gets nothing in a dry year. A dying woman with 1461 gets everything.",
+    "inversion": "Removed: effort. No amount of work, courage, training or cleverness moves anyone up the chain — the ditch does not care how hard you dug. What fills the hole is forfeiture-hunting: the only power a person without a date can build is attention, because a right unused for five running years drops out of the chain and everyone below it steps up one place. The training montage in this book is a girl sitting on a hill for a week with a notebook, watching a headgate nobody has opened since spring.",
+    "premise": "In the Kettle Basin the river answers a date. Stand at your own headgate, say the year on your paper, and the water leaves every field junior to you and comes to yours — comes whether they are dry, whether their children are watching, whether it is fair. The whole valley is a line and the line is written down in one book in one town. Wren Holt rides ditch for the watermaster: she opens gates for other people's calls and closes them on her own neighbours, and she has no date at all, because her family used to and now does not, and nobody will tell her why. Meanwhile the drillers out on Ninefold Flat are pulling water up from underneath, and the table on the office wall says that water is a debt against the river coming due in seven to eleven years, and the clerk who keeps that table has known since the last drought that a third of it is wrong.",
+    "systems": [
+      {
+        "id": "s_the_call",
+        "name": "The Call",
+        "logic": "A single strict chain, ordered by date, oldest first. Water is not shared and not divided in a shortage: it is served in order until it runs out, and the last man in the order gets nothing rather than a little. The one number in this system is a year, and it is not power — it is a place in a queue. A 1461 cannot lift a stone, cannot fight, cannot heal; it can only be earlier than you.",
+        "manifests_as": "A woman puts her hand on a wet iron wheel, says a year out loud, and four miles downstream the water in somebody else's furrow turns and walks backwards out of the field.",
+        "interface": "The spoken date at an open headgate, in earshot of a witness the register will accept.",
+        "hidden_personality": "The chain is not neutral. It rewards the ones who were there first, forever, and it was built by people who arrived first with horses.",
+        "view_withholds": "The register prints the order. It does not print how many of the oldest dates are held by the same four families through wives and cousins, and the index that would show it was rebound in a different order.",
+        "collides_with": "s_the_draw",
+        "criterion": {
+          "id": "cr_priority",
+          "comparator": "ordinal",
+          "evaluates": "The date recorded beside your name in the register, read oldest to newest. Nothing else about you is evaluated by this system at all.",
+          "ranks": [
+            {
+              "id": "k_no_date",
+              "visible_form": "Bare thumb, and a cord at the belt with the knot cut out of it. Shopkeepers serve you last and do it without malice, the way you would let a wall go by.",
+              "cost_to_reach": "Free, and the free thing is the point: everyone starts here and most stay, and the ones who stay learn to be useful to callers as the only trade left."
+            },
+            {
+              "id": "k_junior_date",
+              "visible_form": "A cord with one knot, worn outside the coat. In a good year you eat; in a dry year the knot is a joke people make in front of you.",
+              "cost_to_reach": "Bought with everything a family has, or granted new by the register for breaking new ground — and the new ground has to be watered and shown wet within one season or the date dies where it was written."
+            },
+            {
+              "id": "k_working_date",
+              "visible_form": "A brass sleeve on the cord, green at the edges. People finish sentences differently when it comes into a room — they stop and start again shorter.",
+              "cost_to_reach": "Paid for in use: the holder must call and spend water every year in a way the register will write down, which means growing thirsty worthless crops in years nobody needs a crop, in public, while neighbours go short watching."
+            },
+            {
+              "id": "k_senior_date",
+              "visible_form": "A thin black iron ring on the thumb, the stamped numbers worn to a smoothness. A caller with the ring does not queue anywhere in town, not at the mill, not at the doctor.",
+              "cost_to_reach": "Only by inheritance, by marriage, or by standing beside a death — the ring passes on the day its use stops, and the new holder must open a gate and call the same day, in front of the watermaster, or the date drops and the whole basin moves up."
+            },
+            {
+              "id": "k_first_water",
+              "visible_form": "No ring, no cord, nothing. The oldest dates in the basin are held by people who wear nothing at all, and the way you know is that the watermaster stands up.",
+              "cost_to_reach": "Nobody now alive has reached it. It is reached only by proving a use older than the register itself, which means producing a witness to a ditch dug before the book was opened, and the last person who tried was found to have paid for the witness."
+            }
+          ]
+        },
+        "rules": [
+          {
+            "id": "r_first_in_time",
+            "rule": "In a shortage the river is served in date order, oldest first, until it is gone. There is no dividing, no averaging, and no mercy written anywhere in the procedure.",
+            "manifests_as": "The watermaster reads eleven names off a board and stops reading. The twelfth family is standing right there and hears the reading stop.",
+            "consequences": [
+              {
+                "domain": "economy",
+                "consequence": "Two identical fields a fence apart sell at ten times the difference, and the difference is a year written on a paper neither buyer will ever be able to change. Land agents do not walk the ground; they read the book and never leave town."
+              },
+              {
+                "domain": "law",
+                "consequence": "A trial is a genealogy. Nobody argues about need, harm, or use — they argue about which sheet of paper is older, and the whole profession is paleography with a bailiff."
+              },
+              {
+                "domain": "daily_life",
+                "consequence": "Children are introduced by date before name. A betrothal is announced as a merger of two dates and the year is said louder than either family."
+              }
+            ]
+          },
+          {
+            "id": "r_beneficial_use",
+            "rule": "A right exists only while it is being used for something the register will consent to write down. Water called and not spent is water you have just proved you do not need.",
+            "manifests_as": "A man floods four acres of a crop no market wants, in front of witnesses, on a day the town is short, and everyone understands and hates him and would do the same.",
+            "consequences": [
+              {
+                "domain": "crime",
+                "consequence": "The commonest offence in the basin is waste for show — and the second commonest is its inverse, hiring somebody to swear they saw a field dry when it was wet."
+              },
+              {
+                "domain": "craft",
+                "consequence": "An entire trade of use-makers: contractors who grow thirsty, worthless, deliberately spectacular crops on other people's land purely to keep a date breathing, paid by the acre-foot and never invited to dinner."
+              },
+              {
+                "domain": "religion",
+                "consequence": "A sect that holds spending is the only sacrament and thrift is the only sin — their rite is opening a gate onto stones and letting it run all night, and their houses smell of wet rock."
+              }
+            ]
+          },
+          {
+            "id": "r_forfeiture",
+            "rule": "Five running years without a recorded use and the right falls out of the chain. Everyone below it moves up one place, automatically, without a hearing, on the day the fifth year closes.",
+            "manifests_as": "A clerk draws one line through one row and the room behind him gets louder, and out at Ninefold somebody who has never called in her life will get water this August.",
+            "consequences": [
+              {
+                "domain": "politics",
+                "consequence": "A dry decade is a redistribution. The basin is governed less by who can call than by who can survive not calling, and every council is a truce between people counting each other's fifth years."
+              },
+              {
+                "domain": "crime",
+                "consequence": "Sabotage aimed at capacity rather than water — burn the crop, lame the horse, break the arm that opens the wheel. Nobody attacks a ditch. They attack the ability to use one."
+              },
+              {
+                "domain": "daily_life",
+                "consequence": "The sick and the very old are watched with an attention that looks like devotion. An invalid who cannot walk out to a headgate is a vacancy, and the neighbours who bring soup are also counting."
+              }
+            ]
+          },
+          {
+            "id": "r_the_dryness",
+            "rule": "The call is spoken and it takes payment out of the speaker. For the season after a call, the caller's own body runs dry — no sweat, no tears, no milk, no spit worth the name.",
+            "manifests_as": "A widow stands at her husband's grave with a cracked mouth and dry eyes while the whole town watches, and the town knows exactly what she chose in July.",
+            "consequences": [
+              {
+                "domain": "daily_life",
+                "consequence": "Callers are known on sight by split lips and the salt tin they carry, and there is a whole etiquette of not offering them anything to eat that needs chewing."
+              },
+              {
+                "domain": "religion",
+                "consequence": "Grief has to be performed some other way, so the basin's funerals are loud — hired weepers, a drum, and the dry-mouthed family standing still in the middle of the noise."
+              },
+              {
+                "domain": "war",
+                "consequence": "An army cannot call and march. Callers travel wrapped in wet cloth in wagons at the back, useless for anything but the one thing, and every campaign in the basin is planned around keeping four people from cracking."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "s_the_draw",
+        "name": "The Draw",
+        "logic": "A commons with no queue at all. Anyone with pipe and a winch can take from underneath, as much as pressure allows, in any order, and nobody can see anybody else taking. The system is numeric because the ground is: feet of pipe, hours of pumping, and a lag measured in years between the taking and the river noticing.",
+        "manifests_as": "A stack of pipe in a yard, taller this month than last, and the well-house running all night so the neighbours can hear that the pump is not stopping.",
+        "interface": "A bore, a winch, and a driller willing to sign the depth he actually reached rather than the depth he was licensed for.",
+        "hidden_personality": "The aquifer is slow and it keeps accounts. Everything taken is recorded somewhere in pressure, and it settles up long after the taker is dead.",
+        "view_withholds": "The lag table on the office wall is public. The map of which bores are actually connected to the channel is not, and the clerk who redrew it in the last drought has never shown anyone the old one.",
+        "collides_with": "s_the_call",
+        "criterion": {
+          "id": "cr_depth",
+          "comparator": "numeric",
+          "evaluates": "Feet of pipe in the ground and hours the winch runs, which together set how much you take and how long before the river misses it.",
+          "ranks": [
+            {
+              "id": "k_shallow_bore",
+              "visible_form": "A hand pump in a yard, and water in the bucket that tastes of iron and nothing worse. The children drink it.",
+              "cost_to_reach": "A season of digging and one licence, and the licence is written junior to every surface date in the basin — which is to say, worthless in law and perfectly adequate in fact."
+            },
+            {
+              "id": "k_deep_bore",
+              "visible_form": "Pipe stacked shoulder-high along the fence like a wall, a winch house with a roof, and a wet ring on the ground that never dries. The house doors have all been rehung to swing again.",
+              "cost_to_reach": "Paid before the water arrives: the ground under the bore drops a hand's width a year, so the buyer signs away the level of his own floor, and the mason comes back every spring."
+            },
+            {
+              "id": "k_salt_bore",
+              "visible_form": "White crust up the casing and a field beyond it the colour of ash, fenced off, with a rag tied to the wire. Strangers cross the road to avoid the fence.",
+              "cost_to_reach": "Reached by going past the sweet layer into the old sea, usually on purpose, usually as a threat — and the field it kills is dead for good, including whatever the driller's own children were going to farm."
+            }
+          ]
+        },
+        "rules": [
+          {
+            "id": "r_lag",
+            "rule": "What a bore takes today, the river misses years from now, and the number of years is set by distance to the channel — three years at a mile, eleven at five, and beyond fifteen miles the table says never and the register taxes it as a gift.",
+            "manifests_as": "A driller pays a tax on a column headed NEVER, and the clerk stamps it without looking up, and neither of them mentions that the table was drawn by a man who has been dead since the last dry.",
+            "consequences": [
+              {
+                "domain": "economy",
+                "consequence": "Contracts sold on delivery seven years out, and a whole trade of lag brokers matching a man who needs water now against a river that will be short in a decade."
+              },
+              {
+                "domain": "law",
+                "consequence": "Torts nobody can try. A court must decide whether a bore sunk in 1461 harmed a river in 1468, with no witness alive to the middle, and the standard answer is a fine paid to a fund."
+              },
+              {
+                "domain": "politics",
+                "consequence": "Every council meeting is an argument about a harm no living person caused, chaired by people who will not be there when it lands, and the seats are held by whoever can talk longest about seven years from now."
+              }
+            ]
+          },
+          {
+            "id": "r_subsidence",
+            "rule": "Ground that has given up its water does not come back up. Over a heavy bore the valley floor drops a hand's width a year and keeps dropping after the bore is capped.",
+            "manifests_as": "A door that closed last autumn does not close now, and the man planing the bottom of it has planed it three times and says nothing about why.",
+            "consequences": [
+              {
+                "domain": "craft",
+                "consequence": "Nothing rigid gets built. Masons work in jointed courses, doors hang loose in oversized frames, and a straight wall is either brand new or the mark of somebody with no bore and no money."
+              },
+              {
+                "domain": "daily_life",
+                "consequence": "People measure their houses against a neighbour's wall every spring, and the marks are cut into the stone in a stack going down, which is how you read a family's last twenty years in a doorway."
+              },
+              {
+                "domain": "economy",
+                "consequence": "The oldest surveys in the register describe a valley that no longer exists at the heights it names, so every old deed is quietly worth less and nobody will say so at auction."
+              }
+            ]
+          },
+          {
+            "id": "r_salt_layer",
+            "rule": "Below the sweet water is the old sea. Draw into it and what comes up looks like water and kills the field in three seasons, and the field stays dead.",
+            "manifests_as": "A bucket set on a table, clear, and the driller does not drink it and does not explain, and everyone at the table understands the bore is finished.",
+            "consequences": [
+              {
+                "domain": "war",
+                "consequence": "Basins are poisoned rather than burned. You drill deep on a boundary and walk away, and it works, and it cannot be undone by any peace signed afterwards."
+              },
+              {
+                "domain": "religion",
+                "consequence": "A rite for abandoning ground, said at the fence, with the rag tied on at the end of it — and the priests who say it are paid double and never go back."
+              },
+              {
+                "domain": "crime",
+                "consequence": "Salt-selling: scraping and trading the crust off a dead field, legal, profitable, and done by people the rest of the basin will not sit near in a public house."
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "cast": [
+      {
+        "id": "c_wren_holt",
+        "is_a": "Ditch rider for the watermaster, nineteen, no date of her own, best notebook in the basin",
+        "wants": "A date — any date, the newest and worst one, so long as it is hers and written down",
+        "secret": "She has been keeping a private column for two years: every headgate in the basin and the last day it moved. She is four months from a fifth year on three of them.",
+        "false_belief": "That the register is honest bookkeeping done badly, rather than bookkeeping done exactly as intended",
+        "grants": "Access. She can open any gate in the basin lawfully and nobody looks at her twice while she does it.",
+        "reach": "The whole ditch system on horseback, twice a week, and the office door",
+        "recognises": "Use, and the absence of it — she can tell a gate opened for show from a gate opened for a crop at forty paces",
+        "prices_the_present": "Every vacancy she finds is somebody's ruin, and she has to hand it in signed",
+        "voice_tag": "Counts out loud. Says numbers before she says opinions.",
+        "manifests_as": "Mud to the knee, a wet notebook in oilcloth, and a habit of standing on the wrong side of a gate so she can see the hinge."
+      },
+      {
+        "id": "c_ada_serrell",
+        "is_a": "Watermaster of the Kettle Basin, twenty-two years in the office, holds no date at all by law",
+        "wants": "To get through one more dry without a curtailment order she cannot enforce",
+        "secret": "Refused a senior date twelve years ago, offered as a bribe, and has regretted it every August since",
+        "false_belief": "That the office's neutrality is what keeps the basin from killing itself, when in fact it is the drillers' lag doing it",
+        "grants": "The reading of the board — the order in which names are said, which is the only law anyone here obeys on the day",
+        "reach": "Every gate, every ledger, and the ear of four families who could end the office in a week",
+        "recognises": "A forged use, instantly, and never says so in public",
+        "prices_the_present": "Signs orders that starve people who are standing in the room",
+        "voice_tag": "Short declaratives. Never explains a decision twice.",
+        "manifests_as": "Reads names off a board and stops reading, and does not look up at the stopping."
+      },
+      {
+        "id": "c_marius_tebb",
+        "is_a": "Driller, third generation, sixty feet deeper every year than his licence allows",
+        "wants": "To get his family off the bottom of a chain they will never climb, by leaving the chain entirely",
+        "secret": "His deepest bore on Ninefold is nine hundred feet from the channel, not the four miles the papers say, and he moved the survey mark himself",
+        "false_belief": "That the lag is long enough to be somebody else's problem",
+        "grants": "Water today for people the board will never reach, at a price and with no queue",
+        "reach": "Ninefold Flat and every yard that has ever wanted a pump",
+        "recognises": "Ground — he can call the sweet layer within ten feet by the smell of the cuttings",
+        "prices_the_present": "Everything he sells now is taken out of a river that will be short in the year his daughter turns twenty",
+        "voice_tag": "Talks in depths and hours. Turns every moral question into a measurement.",
+        "manifests_as": "Wet boots in a dry season, and a yard where the pipe wall gets taller between one visit and the next."
+      },
+      {
+        "id": "c_orrin_veck",
+        "is_a": "Holder of the third-oldest date in the basin, eighty-one, cannot walk to a headgate unassisted",
+        "wants": "To die after the August call and not before it",
+        "secret": "Has not been able to speak the date aloud for two seasons — the dryness took the voice — and has been having it spoken for her by somebody the register would not accept",
+        "false_belief": "That her nephews are counting the days out of grief",
+        "grants": "The oldest working call anyone in the basin can actually witness",
+        "reach": "One gate, four hundred yards, and the whole valley's arithmetic",
+        "recognises": "The exact sound of somebody counting her years",
+        "prices_the_present": "Every August she spends keeps eleven families junior and she has known all of them since they were born",
+        "voice_tag": "Whispers, and makes people come close, and uses the closeness.",
+        "manifests_as": "Carried to a wheel in a chair by two men who hate each other, and the whole road stops to watch the chair go by."
+      },
+      {
+        "id": "c_ferris_kane",
+        "is_a": "Vacancy man — buys and sells the knowledge of which rights are about to die",
+        "wants": "To assemble the fifth years of an entire lateral in one season and take the whole run at once",
+        "secret": "Bought Wren's father's date. The paper is in a box in a town two days away and has been for eleven years.",
+        "false_belief": "That what he does is clean because it is exactly what the statute describes",
+        "grants": "Money now, for a notebook",
+        "reach": "Four basins, on a good horse, and the back rooms of three registers",
+        "recognises": "Despair, and the precise week a family stops trying",
+        "prices_the_present": "He is never present at the ruin, which is the service he sells himself",
+        "voice_tag": "Friendly, fast, uses first names immediately.",
+        "manifests_as": "Buys the first drink, asks about the weather, writes nothing down while you talk and everything down after."
+      },
+      {
+        "id": "c_teodor_lam",
+        "is_a": "Office clerk, keeper of the lag table, thirty-one years at the same desk",
+        "wants": "For nobody to ask him to redraw the table again",
+        "secret": "He redrew it during the last dry on Serrell's spoken instruction and burned the old sheet, and both of them have decided separately never to mention it",
+        "false_belief": "That a wrong table that keeps the peace is better than a right one that ends it",
+        "grants": "The numbers everyone argues from",
+        "reach": "One wall, and through it, every contract in the basin",
+        "recognises": "A bore that is nearer the channel than its paper claims, because he did the arithmetic once and could not unsee it",
+        "prices_the_present": "Every gift-taxed NEVER he stamps is a debt he personally invented",
+        "voice_tag": "Apologises before disagreeing. Disagrees anyway.",
+        "manifests_as": "Stamps a form, blots it, and squares the edge of the paper with two fingers before letting go of it."
+      }
+    ],
+    "creatures": [
+      {
+        "id": "x_gate_moth",
+        "is_a": "Pale moth of the wetted furrow",
+        "rank": "common, and priced anyway",
+        "mechanism": "Lays only in soil wetted within nine days and never in soil merely rained on, because it needs the ditch silt the river carries. The eggs are visible, countable, and dated by size.",
+        "ecology": "Follows the laterals; abundant in a wet year on a called field, entirely absent from a field watered by a bore, which is how the difference between river water and pumped water shows without an instrument.",
+        "human_use": "Evidence. A register inspector counts eggs on a stalk to certify use, and there is a black trade in moth-boards — frames of eggs raised elsewhere and pressed into a dry furrow the night before an inspection.",
+        "behaviour": "Comes at dusk in a low sheet, thick enough to walk through, and settles on anything damp including a person.",
+        "manifests_as": "A man stands in his own field at dusk being crawled on and does not brush them off, because the inspector is watching from the road."
+      },
+      {
+        "id": "x_bore_worm",
+        "is_a": "Blind white worm of the deep layer",
+        "rank": "rare, and always bad news",
+        "mechanism": "Lives only at the boundary between the sweet water and the old sea, feeding on the mineral edge where they meet. It cannot survive in either alone.",
+        "ecology": "Never seen at the surface except by accident. Its presence in a bucket means the bore has reached exactly the last good foot.",
+        "human_use": "A warning that arrives too late to be useful and just in time to be used against you — buyers pay drillers to show them the bucket, and drillers pay boys to fish the worms out before the buyer arrives.",
+        "behaviour": "Dies within a minute in air, curling, and the curl is the shape everyone in the basin recognises.",
+        "manifests_as": "Somebody tips a bucket onto a board, and every driller in the yard walks over without being called, and nobody says anything."
+      },
+      {
+        "id": "x_salt_hare",
+        "is_a": "Ash-coloured hare of the dead fields",
+        "rank": "uncommon",
+        "mechanism": "Tolerates the salt crust that kills every crop, licking it for the mineral and taking water only from the fog. Nothing else eats out there and nothing eats it.",
+        "ecology": "Appears within two seasons of a field going salt and never before, so its arrival is the boundary marker of a killed field.",
+        "human_use": "Eaten by the poor, and the eating is a public admission of what your ground has become — the meat is fine and the shame is total.",
+        "behaviour": "Does not run from people. It has never had reason to learn.",
+        "manifests_as": "A hare sitting still in white ground twenty feet from a man, and the man throwing nothing at it, and walking on."
+      }
+    ],
+    "places": [
+      {
+        "id": "p_kettle_basin",
+        "is_a": "The basin — one river, four hundred gates, one book",
+        "manifests_as": "Every road in it runs beside a ditch and every conversation on those roads pauses at a headgate.",
+        "secret": "The river carried a third more water in the years the oldest dates were written, and the register has never adjusted for it, which means the senior dates were sized to a river that no longer exists."
+      },
+      {
+        "id": "p_the_headgate_row",
+        "is_a": "The town street where the main laterals split, and where calls are witnessed",
+        "manifests_as": "Iron wheels in a row, wet stone, and men standing about in the middle of a working day for no reason they will admit.",
+        "recognises": "Everyone. Nobody comes to the row unnoticed."
+      },
+      {
+        "id": "p_ninefold_flat",
+        "is_a": "The dry ground east of the channel where the bores are",
+        "manifests_as": "Pipe stacked along fences, winch houses running at night, and a road that used to be level.",
+        "prices_the_present": "It is going down a hand's width a year and everyone living on it has agreed not to say so out loud."
+      },
+      {
+        "id": "p_the_salt_quarter",
+        "is_a": "Fenced ground west of Ninefold, killed and consecrated",
+        "manifests_as": "Rags on the wire, white crust, and hares.",
+        "wants": "Nothing. That is the whole horror of it and the reason the priests will not go back."
+      }
+    ],
+    "institutions": [
+      {
+        "id": "i_register_of_dates",
+        "is_a": "The book, and the office around it",
+        "grants": "Existence. A right that is not in the book did not happen.",
+        "secret": "The index was rebound eleven years ago in a different order and the old binding is gone.",
+        "manifests_as": "A clerk squares a page with two fingers and a family stops existing."
+      },
+      {
+        "id": "i_watermasters_office",
+        "is_a": "The enforcement arm — one master, four riders, no date",
+        "reach": "Every gate in the basin, lawfully, at any hour",
+        "false_belief": "That neutrality is a position rather than a truce underwritten by people who can end it",
+        "manifests_as": "A board with names on it, read aloud, and the reading stopping."
+      },
+      {
+        "id": "i_drillers_compact",
+        "is_a": "A trade association that is legally nothing and practically the second government of the basin",
+        "wants": "To keep the lag table exactly as wrong as it currently is",
+        "manifests_as": "Four men agree in a yard, and a survey mark is in a different place by morning."
+      },
+      {
+        "id": "i_church_of_spending",
+        "is_a": "The sect that holds waste is the sacrament",
+        "grants": "Certified use, ritually witnessed, which the register accepts",
+        "manifests_as": "A gate opened at midnight onto bare stones, and the sound of it running all night while a room full of people sit and listen."
+      }
+    ],
+    "carriers": [
+      {
+        "id": "y_the_ring",
+        "is_a": "The thin black iron thumb ring of a senior date",
+        "grants": "Recognition without speech — the ring is read faster than a paper",
+        "prices_the_present": "It passes on the day its use stops, which means it is always worn by someone being watched for signs of stopping",
+        "manifests_as": "A ring comes into a room and the room reorders itself around it before anyone has spoken."
+      },
+      {
+        "id": "y_the_lag_table",
+        "is_a": "A painted board on the office wall giving years-to-river by distance-to-channel",
+        "grants": "The arithmetic every contract, tax and lawsuit in the basin runs on",
+        "secret": "A third of its distances were redrawn in one night eleven years ago and the original was burned",
+        "manifests_as": "Everybody in the room glances up at the same board at the same moment in an argument, and goes on arguing from it."
+      },
+      {
+        "id": "y_the_tally_cord",
+        "is_a": "The belt cord, knotted once per generation of use",
+        "grants": "A person's standing, worn where a stranger reads it first",
+        "manifests_as": "A cut knot swinging loose at a man's hip while he talks about something else entirely."
+      }
+    ],
+    "agencies": [
+      {
+        "id": "a_the_river",
+        "is_a": "The river itself, which obeys the order and nothing else",
+        "reach": "The whole basin and the mountains behind it",
+        "wants": "Nothing anyone has been able to demonstrate",
+        "recognises": "A date, spoken at an open gate, by the person the register names — and nothing else, not need, not thirst, not a child",
+        "prices_the_present": "It serves the order exactly, including on the days that means a family gets none",
+        "manifests_as": "Water in a furrow turns and walks backwards out of a field while the people standing in it watch.",
+        "secret": "It has been serving a chain sized to its old volume for sixty years, and the shortfall has always been absorbed at the junior end, which is why no one senior has ever noticed the river changed."
+      },
+      {
+        "id": "a_the_old_sea",
+        "is_a": "The salt water under the sweet, patient, enormous",
+        "reach": "Everything below eight hundred feet, everywhere in the basin",
+        "wants": "Nothing, and rises anyway as the sweet layer is drawn off",
+        "prices_the_present": "Every foot of fresh water taken out brings it a foot closer to fields nobody has drilled",
+        "manifests_as": "A white line on a casing that is higher this year than last, and a driller measuring it with his hand and saying nothing.",
+        "secret": "The rise is now general across the basin rather than local to heavy bores, and two people have noticed independently and neither has told the other."
+      }
+    ],
+    "history": [
+      {
+        "id": "h_the_first_dry",
+        "is_a": "The founding shortage that made the order necessary and the book possible",
+        "manifests_as": "Every senior date in the register was written within four years of it, in the same three hands.",
+        "secret": "The order was not adjudicated. It was agreed at a table by the people who had arrived first, and written down afterwards as though it had been found."
+      },
+      {
+        "id": "h_the_compact_year",
+        "is_a": "The year the drillers were licensed and written junior to everything",
+        "manifests_as": "Every bore licence in the basin carries the same year and the same clause, and no clause has ever been enforced.",
+        "false_belief": "The basin believes this was a settlement. It was a deferral, and everyone who negotiated it knew the enforcement would arrive after their deaths."
+      },
+      {
+        "id": "h_the_drowning_of_ninefold",
+        "is_a": "The last wet decade, when Ninefold flooded twice and half its rights lapsed from disuse because there was nothing to prove",
+        "manifests_as": "An entire lateral of dates all bearing the same forfeiture year, which is why the drillers are all in one place.",
+        "prices_the_present": "The people who got rich on bores are exactly the people who lost their place in the chain to too much water."
+      }
+    ],
+    "bonds": [
+      {
+        "id": "b_the_witnessed_call",
+        "members": [
+          "c_wren_holt",
+          "c_orrin_veck"
+        ],
+        "joint_ability": "A caller who has lost the voice can be carried to the wheel and have the date spoken for them by a rider of the watermaster's office, and the register will accept it — once per season, entered in the rider's hand, and the rider's name goes in the book beside the date.",
+        "trait_link": "One has the standing and no body; the other has the body and no standing. Neither can call alone and both know exactly what the other is worth."
+      },
+      {
+        "id": "b_the_table_and_the_office",
+        "members": [
+          "c_teodor_lam",
+          "c_ada_serrell"
+        ],
+        "joint_ability": "Together they can make a number true — the clerk's arithmetic plus the master's signature turns an estimate into the figure every court in the basin will use — and neither can do it without the other.",
+        "trait_link": "A shared decision eleven years old that they have never once discussed, and a mutual, permanent, unspoken hostage-taking."
+      }
+    ],
+    "cardinality": [
+      {
+        "id": "cd_one_holder_per_date",
+        "predicate": "holds_date",
+        "group_key": "object",
+        "maximum": 1,
+        "scope": "cast"
+      },
+      {
+        "id": "cd_one_call_per_season",
+        "predicate": "calls_river",
+        "group_key": "subject,order_key",
+        "maximum": 1,
+        "scope": "cast"
+      },
+      {
+        "id": "cd_one_watermaster",
+        "predicate": "serves_as_watermaster",
+        "group_key": "object",
+        "maximum": 1,
+        "scope": "institution"
+      }
+    ],
+    "mysteries": [
+      {
+        "id": "m_holts_date",
+        "kind": "character",
+        "question": "Why does the Holt family, who dug the Ninefold lateral, hold no date?",
+        "answer": "Wren's father sold it — not lost it, not forfeited it — to Ferris Kane, eleven years ago, for money that went on a bore that hit salt in its second year. The paper is in a box in a town two days away. Kane has been friendly to her for three years because he is waiting to see whether she works out that the ditch she rides was dug by her grandfather.",
+        "believed_instead_by": "Wren, the town, and Kane, who all believe it lapsed in the drowning of Ninefold like everything else on that lateral",
+        "disclosed_at_scene": 4
+      },
+      {
+        "id": "m_orrin_last_call",
+        "kind": "plot",
+        "question": "Who has been speaking Orrin Veck's date for her, and what happens in August when she cannot be carried?",
+        "answer": "Her nephew has been speaking it, and the register would void every call he has made if it knew, which would drop the third-oldest date in the basin and move eleven families up a place — including two who are paying him. In August the office learns of it because Wren, having been asked to speak it herself, writes down what she has been asked and hands it in.",
+        "believed_instead_by": "The basin, who believe the old woman still calls in her own voice and that the chair is only for her legs",
+        "disclosed_at_scene": 7
+      },
+      {
+        "id": "m_pells_lateral",
+        "kind": "progression",
+        "question": "What is Ferris Kane actually assembling out of the fifth years he keeps buying?",
+        "answer": "Not rights. Vacancies in a single unbroken run of one lateral, which under the statute lets a claimant petition to re-found the whole lateral under one new date — the newest and worst date in the basin, attached to more water than any senior date can call, because the lateral's total was sized in a wetter century.",
+        "disclosed_at_scene": 26
+      },
+      {
+        "id": "m_the_wrong_table",
+        "kind": "mystery",
+        "question": "How wrong is the lag table, and who made it wrong?",
+        "answer": "Serrell instructed Lam to redraw fourteen distances in the last dry, to keep the drillers inside the compact and out of the courts. Nine of the fourteen are wrong by more than a mile toward the channel, which means nine bores are already overdue and the shortfall everyone has been blaming on the mountains is being pumped out from under them.",
+        "believed_instead_by": "The whole basin, which reads the board as a survey rather than a truce",
+        "disclosed_at_scene": 63
+      },
+      {
+        "id": "m_first_water",
+        "kind": "mystery",
+        "question": "Whose is the oldest date in the register, and why has nobody in living memory seen it called?",
+        "answer": "It belongs to the register itself — an entry made by the founding clerks in their own institution's name, called once every fourth year at night by the office to keep it from forfeiting. It is senior to every family in the basin, and the office has never used it for anything, because the day it does, the office stops being neutral and becomes the largest landholder in the valley.",
+        "believed_instead_by": "Everyone, who assume the first three entries are illegible ancestors of the four families",
+        "disclosed_at_scene": 41
+      },
+      {
+        "id": "m_where_the_dryness_goes",
+        "kind": "mystery",
+        "question": "Where does the water go that a caller's body loses?",
+        "answer": "Into the river, exactly, and it is the only water in the system that arrives without being taken from someone junior. The oldest rites of the spending church are a garbled memory of a period when calls were made by many people at once for this reason, and the practice ended when the four families worked out that a call made by one person is a call that one person can own.",
+        "disclosed_at_scene": 92
+      }
+    ],
+    "directives": [
+      {
+        "kind": "constraint",
+        "text": "Nobody in this book ever explains the doctrine. Prior appropriation is shown only as a price somebody pays in front of somebody else: a name not read off a board, a dry mouth at a funeral, a gate that turns water out of a field with children standing in it."
+      },
+      {
+        "kind": "constraint",
+        "text": "No fight settles anything. Every reversal in this world is administrative — a line drawn through a row, a date spoken, a paper produced from a box — and the violence, when it comes, is aimed at capacity rather than at people: a burned crop, a broken arm, a moved survey mark."
+      },
+      {
+        "kind": "tone_note",
+        "text": "Fast, plain, popcorn. Short sentences, concrete nouns, water and iron and mud. The pleasure on offer is the click of a rule landing on somebody, not the beauty of the sentence."
+      },
+      {
+        "kind": "tone_note",
+        "text": "Every scene should let the reader do one piece of arithmetic before a character does. The reader should see the fifth year coming."
+      },
+      {
+        "kind": "arc_note",
+        "text": "Wren's rise is entirely made of other people's ruin and she never stops noticing. The book's engine is that the only ladder available to her is built out of vacancies."
+      },
+      {
+        "kind": "chapter_note",
+        "text": "Open on a call being made and enforced against somebody sympathetic, from the side of the person opening the gate. Do not open on Wren wanting anything."
+      }
+    ],
+    "graph_line": {
+      "label": "one dry season in the Kettle Basin",
+      "edges": [
+        {
+          "phrase": "the register writes a year beside a name",
+          "predicate": "records"
+        },
+        {
+          "phrase": "the year stands earlier than every other year on the lateral",
+          "predicate": "outranks"
+        },
+        {
+          "phrase": "a hand on a wet wheel and the year said out loud",
+          "predicate": "calls"
+        },
+        {
+          "phrase": "the water leaves the fields below and the caller stops sweating",
+          "predicate": "prices"
+        },
+        {
+          "phrase": "the family below cannot show use for a fifth running year",
+          "predicate": "forfeits"
+        },
+        {
+          "phrase": "the rider who watched the gate hands in the notebook",
+          "predicate": "witnesses"
+        },
+        {
+          "phrase": "everyone under the cut line moves up one place",
+          "predicate": "promotes"
+        },
+        {
+          "phrase": "and under all of it the bores keep taking a river that will be short in eleven years",
+          "predicate": "undermines"
+        }
+      ]
+    }
+  }
+}

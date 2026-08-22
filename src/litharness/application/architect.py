@@ -1,0 +1,1332 @@
+"""The Architect: K worlds in one structured call, gated deterministically, chosen by nobody here.
+
+Design: [`plan/world-architect.md`](../../../plan/world-architect.md). Ontology:
+[`plan/state-model-abilities.md`](../../../plan/state-model-abilities.md) and
+[`research/progression-generalization.md`](../../../research/progression-generalization.md).
+
+**What this is upstream of.** The Director says what a book is about, the Writer drafts it, the
+Reader/Judge reads it. None of them says what the world *is*, and measured against the live
+serial (`plan/world-architect.md` §0) the consequence is exact: 23 canon records for a nine-scene
+book — 15 typed by the operator, 8 readings of one status line — while the prose carries a
+system, a cast, an institution and a bestiary that canon has never heard of.
+
+**Three rails, and the middle one is the whole design.**
+
+1. *Proposal, with exactly one exit.* Every record this module builds is `PROPOSED` and stamped
+   `architect:<id>`, and `domain/worlds.world_record` defaults to `PROPOSED` so the rail is the
+   default rather than something each call site remembers. The one exit is `forge --pick`, where a
+   person has chosen among K and the choice is recorded as its own policy decision; only there is
+   `records_for(..., authority=ACCEPTED_CANON)` called, and that is the same authority
+   `cmd_import` writes an operator's snapshot under.
+2. *No model picks the world.* K candidates are generated, gated, and **stopped**. There is no
+   ranking, no score, no judge, and no import of one — `plan_search`'s tournament is not reused
+   and is not reachable from here. If a world is chosen among K, a person chose it and `--pick`
+   records that as its own decision. §61(5) then divides the confidence level by the candidate
+   count, which is why the count is on the decision row.
+3. *A palette, never a checklist.* Nothing below requires a world to declare a system, a
+   criterion, a rank, a number or a creature. The counters report coverage **of what was
+   declared**; `Coverage.share` returns 1.0 for a world that declared nothing, because "declared
+   nothing" and "declared everything and showed none of it" must not be the same number.
+
+**Distinctness is checked on axes that survive a lie.** The repository's prior is that instructed
+distinctness is not distinctness — §89.1 measured one byte-identical answer vector across four
+personas, §77 measured persona-to-passage ratios of 0.0028, 0.0071 and 0.0342. So the collapse
+gate does not ask whether the K worlds *feel* different: it requires the declared real domain and
+the declared geometry to be pairwise distinct, which is checkable, and reports
+`directors.distinctness` over the rendered candidates beside it, which is comparable to every
+other distinctness number in this project.
+
+**Two prompt shapes, because one would be a preference.** `DIRECT` asks for the world.
+`DOMAIN_FIRST` asks for the real domain and its real constraints and derives the system from them
+inside the same call. Which one measures better is reported with its numbers rather than assumed;
+if neither separates, that is the finding and it is recorded as one.
+"""
+
+from __future__ import annotations
+
+import itertools
+import json
+import re
+from collections.abc import Mapping, Sequence
+from dataclasses import dataclass, replace
+from typing import Any
+
+import litharness_contracts as lc
+
+from litharness.domain import directors
+from litharness.domain import worlds as worlds_mod
+from litharness.domain.directives import DirectiveKind
+from litharness.domain.generation import CompletionRequest
+
+#: Frozen generation profile, recorded in provenance like every other model call here.
+PROFILE = "architect.world.v0"
+
+#: Mechanical rather than prose: this call returns a structured world, and conformance is the
+#: point. The pinned provider drops samplers entirely, so this is a provenance record — which is
+#: exactly what `plan_search.tournament_sampler`'s docstring says about its own.
+CALL_CLASS = "generation"
+
+#: Three, for `PlanSearchPolicy`'s reason: a search over one alternative is not a search. Kept
+#: low because the whole world is returned per candidate and the output is the binding cost.
+DEFAULT_K = 3
+
+#: How many scenes are being written now, when nobody says. `SIX_BEAT`'s count, restated rather
+#: than imported so `domain.beats` does not become a dependency of the world vocabulary; the CLI
+#: passes the real number and this is only the shape of the default.
+DEFAULT_SCENES = 6
+
+#: The axes a candidate must differ from its siblings on. Declared rather than inferred, and
+#: checkable after the fact — which is the difference between a distinctness rail and an
+#: instruction to be different.
+GEOMETRIES: tuple[str, ...] = ("chain", "graph", "cycle", "threshold", "estimate", "set")
+
+
+class ArchitectInputError(Exception):
+    """A forge request that cannot be built."""
+
+
+class ArchitectOutputError(Exception):
+    """A world set the gates refuse. Refused before a single scene is paid for."""
+
+
+# --- the schema ------------------------------------------------------------------------------
+
+_ID = {"type": "string"}
+_TEXT = {"type": "string"}
+
+_CONSEQUENCE = {
+    "type": "object",
+    "additionalProperties": False,
+    "required": ["domain", "consequence"],
+    "properties": {
+        "domain": {"type": "string", "enum": list(worlds_mod.CONSEQUENCE_DOMAINS)},
+        "consequence": _TEXT,
+    },
+}
+
+_RULE = {
+    "type": "object",
+    "additionalProperties": False,
+    "required": ["id", "rule", "consequences", "manifests_as"],
+    "properties": {
+        "id": _ID,
+        "rule": _TEXT,
+        "consequences": {"type": "array", "items": _CONSEQUENCE},
+        "manifests_as": _TEXT,
+    },
+}
+
+_RANK = {
+    "type": "object",
+    "additionalProperties": False,
+    "required": ["id", "visible_form", "cost_to_reach"],
+    "properties": {"id": _ID, "visible_form": _TEXT, "cost_to_reach": _TEXT},
+}
+
+_CRITERION = {
+    "type": "object",
+    "additionalProperties": False,
+    "required": ["id", "comparator", "evaluates"],
+    "properties": {
+        "id": _ID,
+        "comparator": {"type": "string", "enum": list(worlds_mod.COMPARATORS)},
+        "evaluates": _TEXT,
+        "ranks": {"type": "array", "items": _RANK},
+    },
+}
+
+_SYSTEM = {
+    "type": "object",
+    "additionalProperties": False,
+    "required": ["id", "name", "logic", "rules", "manifests_as"],
+    "properties": {
+        "id": _ID,
+        "name": _TEXT,
+        "logic": _TEXT,
+        "rules": {"type": "array", "items": _RULE},
+        "criterion": _CRITERION,
+        "manifests_as": _TEXT,
+        "collides_with": _TEXT,
+        "interface": _TEXT,
+        "hidden_personality": _TEXT,
+        "view_withholds": _TEXT,
+    },
+}
+
+_ENTITY = {
+    "type": "object",
+    "additionalProperties": False,
+    "required": ["id", "is_a"],
+    "properties": {
+        "id": _ID,
+        "is_a": _TEXT,
+        "wants": _TEXT,
+        "reach": _TEXT,
+        "false_belief": _TEXT,
+        "secret": _TEXT,
+        "voice_tag": _TEXT,
+        "manifests_as": _TEXT,
+        "recognises": _TEXT,
+        "grants": _TEXT,
+        "prices_the_present": _TEXT,
+        "relationships": {
+            "type": "array",
+            "description": (
+                "Who this subject stands in what relation to. `predicate` is a snake_case "
+                "relation (owes, employs, married_to, blames, outranks), `target` is another "
+                "declared id, and `note` is the one thing about it a scene could use."
+            ),
+            "items": {
+                "type": "object",
+                "additionalProperties": False,
+                "required": ["predicate", "target"],
+                "properties": {"predicate": _TEXT, "target": _TEXT, "note": _TEXT},
+            },
+        },
+    },
+}
+
+_CREATURE = {
+    "type": "object",
+    "additionalProperties": False,
+    "required": ["id", "is_a", "mechanism", "ecology", "human_use", "behaviour", "manifests_as"],
+    "properties": {
+        "id": _ID,
+        "is_a": _TEXT,
+        "mechanism": _TEXT,
+        "ecology": _TEXT,
+        "rank": _TEXT,
+        "human_use": _TEXT,
+        "behaviour": _TEXT,
+        "bond_potential": _TEXT,
+        "manifests_as": _TEXT,
+    },
+}
+
+_BOND = {
+    "type": "object",
+    "additionalProperties": False,
+    "required": ["id", "members", "joint_ability"],
+    "properties": {
+        "id": _ID,
+        "members": {"type": "array", "items": _ID},
+        "joint_ability": _TEXT,
+        "trait_link": _TEXT,
+    },
+}
+
+_MYSTERY = {
+    "type": "object",
+    "additionalProperties": False,
+    "required": ["id", "question", "answer", "disclosed_at_scene"],
+    "properties": {
+        "id": _ID,
+        "question": _TEXT,
+        "answer": _TEXT,
+        "disclosed_at_scene": {"type": "integer"},
+        "kind": {"type": "string", "enum": ["mystery", "plot", "progression", "character"]},
+        "believed_instead_by": _TEXT,
+    },
+}
+
+_CARDINALITY = {
+    "type": "object",
+    "additionalProperties": False,
+    "required": ["id", "predicate", "group_key", "maximum"],
+    "properties": {
+        "id": _ID,
+        "predicate": _TEXT,
+        "scope": {"type": "string", "enum": [*worlds_mod.ENTITY_ROLES, worlds_mod.ANY_SCOPE]},
+        "group_key": {"type": "string", "enum": list(worlds_mod.GROUP_KEYS)},
+        "maximum": {"type": "integer"},
+    },
+}
+
+_GRAPH_LINE = {
+    "type": "object",
+    "additionalProperties": False,
+    "required": ["label", "edges"],
+    "properties": {
+        "label": {
+            "type": "string",
+            "description": (
+                "A short bracket tag printed at the head of the line, like SYSTEM or REGISTER. "
+                "One or two words, never a sentence."
+            ),
+        },
+        "edges": {
+            "type": "array",
+            "description": (
+                "Printed forms this world announces a change in. The line reads "
+                "[LABEL] <who> <phrase> <what>, so a phrase is a short verb phrase of at most "
+                "six words that joins a name to a thing, and the predicate is the snake_case "
+                "relation it means. Omit the whole graph_line if this world does not announce "
+                "itself in print; most do not, and absence costs nothing."
+            ),
+            "items": {
+                "type": "object",
+                "additionalProperties": False,
+                "required": ["phrase", "predicate"],
+                "properties": {"phrase": _TEXT, "predicate": _TEXT},
+            },
+        },
+    },
+}
+
+_DIRECTIVE = {
+    "type": "object",
+    "additionalProperties": False,
+    "required": ["kind", "text"],
+    "properties": {
+        "kind": {
+            "type": "string",
+            "enum": ["constraint", "tone_note", "arc_note", "chapter_note"],
+        },
+        "text": _TEXT,
+    },
+}
+
+_WORLD = {
+    "type": "object",
+    "additionalProperties": False,
+    "required": [
+        "title",
+        "domain",
+        "geometry",
+        "progression_means",
+        "inversion",
+        "premise",
+        "systems",
+        "cast",
+        "creatures",
+        "mysteries",
+    ],
+    "properties": {
+        "title": _TEXT,
+        "domain": _TEXT,
+        "geometry": {"type": "string", "enum": list(GEOMETRIES)},
+        "progression_means": _TEXT,
+        "inversion": _TEXT,
+        "premise": _TEXT,
+        "systems": {"type": "array", "items": _SYSTEM},
+        "agencies": {"type": "array", "items": _ENTITY},
+        "carriers": {"type": "array", "items": _ENTITY},
+        "bonds": {"type": "array", "items": _BOND},
+        "cast": {"type": "array", "items": _ENTITY},
+        "creatures": {"type": "array", "items": _CREATURE},
+        "places": {"type": "array", "items": _ENTITY},
+        "institutions": {"type": "array", "items": _ENTITY},
+        "history": {"type": "array", "items": _ENTITY},
+        "mysteries": {"type": "array", "items": _MYSTERY},
+        "cardinality": {"type": "array", "items": _CARDINALITY},
+        "graph_line": _GRAPH_LINE,
+        "directives": {"type": "array", "items": _DIRECTIVE},
+    },
+}
+
+WORLDS_SCHEMA: dict[str, Any] = {
+    "type": "object",
+    "additionalProperties": False,
+    "required": ["worlds"],
+    "properties": {"worlds": {"type": "array", "items": _WORLD}},
+}
+
+# --- the prompt --------------------------------------------------------------------------------
+
+DIRECT = "direct"
+DOMAIN_FIRST = "domain_first"
+PROMPT_SHAPES: tuple[str, ...] = (DIRECT, DOMAIN_FIRST)
+
+_SYSTEM_MESSAGE = (
+    "You are the Architect for an open-ended serial. You say what a world IS: its systems, its "
+    "rules, the prices those rules charge, who lives under them, and what is true but not yet "
+    "known. You never say what the book is about scene by scene, you never write prose, and you "
+    "never judge anything. Return only the requested JSON."
+)
+
+#: The rules every candidate is written under. Ordered so the two that decide whether a world is
+#: *usable* — consequences and manifestations — come before the ones that decide whether it is
+#: interesting, because the gates refuse on the first two and only report on the rest.
+_RULES: tuple[str, ...] = (
+    "Every rule names at least three second-order consequences, each in a DIFFERENT domain of "
+    "life from the allowed list. A rule whose consequences all land in one domain is one "
+    "consequence with three faces. The consequences are where a world stops being a name.",
+    "Every system, every rule, every rank and every creature carries `manifests_as`: one line "
+    "of how it shows on the page — a printed line, a price paid, a mark worn, a sound, a change "
+    "in how a stranger treats you. Never an explanation and never a lecture.",
+    "Every rank has a form a reader can SEE, and every gain has a cost payable on the page in "
+    "the same scene or earlier.",
+    "Literalise one real domain of human work or knowledge and take the system's logic and its "
+    "costs from that domain's real constraints. Name the domain. The book should run on real "
+    "ideas rather than invented ones.",
+    "Give the world two systems whose logics are incompatible, and say what happens at the "
+    "interface between them: the exchange rate, who can cheat whom, what the law says. The "
+    "interface is the content.",
+    "Remove or invert exactly one default of the genre, and say what fills the hole.",
+    "Mysteries: each carries its ANSWER written down and the scene number where the reader "
+    "learns it. A secret with no recorded answer is a debt the book can never pay. This world "
+    "is an open-ended serial, so most answers land far out — but **at least one must be "
+    "answered inside the {scenes} scenes being written now**, because an opening that asks "
+    "four things and settles none teaches a reader that nothing here gets settled.",
+    "A world may have one system, several, or none; progression may be crafting, standing, "
+    "understanding, access, or something else. Do not assume combat. Do not use levels, hit "
+    "points, mana, experience points, currency, or any single number that means power, unless "
+    "this particular world genuinely needs one and you say why in the system's logic.",
+    "Every name, place, creature and mechanic is original to this world. Never name, quote, "
+    "imitate, or compare to any real person, brand, game, or published work.",
+    "The prose this world will be written in is fast, plain, popcorn reading. The world shows "
+    "on the page as interactions, prices paid and visible ranks. It is never explained.",
+    "Ids are lowercase snake_case and unique within the world. Every id referenced anywhere "
+    "must be declared somewhere.",
+    "Cast, agencies and institutions carry `relationships`: who owes whom, who employs whom, "
+    "who blames whom, who outranks whom. Each is a snake_case predicate, another declared id, "
+    "and the one thing about the tie a scene could use. A cast with no ties between its "
+    "members is a list of people rather than a place.",
+    "`graph_line` is a PARSER, not a summary. Give it only if this world prints a line when "
+    "something changes: a bracket tag of one or two words, and short verb phrases of at most "
+    "six words, so that `[TAG] Sella now holds the second seal` reads as a line a scene would "
+    "actually print. If this world announces nothing in print, leave `graph_line` out — most "
+    "worlds should, and absence costs nothing.",
+)
+
+_DISTINCTNESS_RULE = (
+    "The {k} worlds must be structurally different, not one world re-dressed. Each must "
+    "literalise a DIFFERENT real domain, use a DIFFERENT geometry from the allowed list, and "
+    "mean something DIFFERENT by the word progression. Two worlds that differ only in their "
+    "names are one world and will be refused."
+)
+
+_DOMAIN_FIRST_RULE = (
+    "Work in this order inside your answer, and let the order show: first fix the real domain "
+    "and write down the constraints that are actually true of it — what it costs, what it "
+    "cannot do, what goes wrong, who pays, who arbitrates. Then derive the system from those "
+    "constraints so that every rule is a real constraint of the domain wearing the world's "
+    "clothes. Do not invent a system and then decorate it with a domain's vocabulary."
+)
+
+
+def render_world_request(
+    brief: str, *, k: int = DEFAULT_K, shape: str = DIRECT, scenes: int = DEFAULT_SCENES
+) -> CompletionRequest:
+    """One structured request for K worlds.
+
+    `brief` is an operator directive or a Director brief — a genre, a real domain, a mood, or
+    nothing. Empty is legitimate and is the interesting case: a world built from no direction at
+    all is the control against which a directed one is read.
+
+    **`scenes` is here because the first live forge did not have it and the omission showed.**
+    Asked for reveal positions with no idea how long the book was, the model scheduled all four
+    of a world's answers at scenes 17, 25, 33 and 41 — perfectly reasonable for an open-ended
+    serial and useless for the two chapters actually being written, which would have opened four
+    debts and settled none. That is the "40 opened, 0 paid" defect reproduced by a fix for it.
+    """
+    if k < 2:
+        raise ArchitectInputError(
+            f"a forge over {k} candidate(s) is not a search; K must be at least 2"
+        )
+    if scenes < 1:
+        raise ArchitectInputError(f"a book of {scenes} scene(s) has nowhere to put a reveal")
+    if shape not in PROMPT_SHAPES:
+        raise ArchitectInputError(
+            f"unknown prompt shape {shape!r}; the shapes are {', '.join(PROMPT_SHAPES)}"
+        )
+    rules = [
+        _DISTINCTNESS_RULE.format(k=k),
+        *(rule.format(scenes=scenes) if "{scenes}" in rule else rule for rule in _RULES),
+    ]
+    if shape == DOMAIN_FIRST:
+        rules.insert(1, _DOMAIN_FIRST_RULE)
+    prompt = json.dumps(
+        {
+            "brief": brief.strip() or "(none: build whatever world you would most want to read)",
+            "return": f"exactly {k} worlds",
+            "scenes_being_written_now": scenes,
+            "allowed_geometries": list(GEOMETRIES),
+            "allowed_consequence_domains": list(worlds_mod.CONSEQUENCE_DOMAINS),
+            "allowed_comparators": list(worlds_mod.COMPARATORS),
+            "rules": rules,
+        },
+        ensure_ascii=False,
+        sort_keys=True,
+        indent=2,
+    )
+    return CompletionRequest(
+        prompt=prompt,
+        system=_SYSTEM_MESSAGE,
+        schema=WORLDS_SCHEMA,
+        max_output_tokens=32000,
+        profile=PROFILE,
+        call_class=CALL_CLASS,
+        # **Measured, not chosen.** The first live forge — K=3, this schema, the pinned provider
+        # — hit `CompletionRequest`'s 300-second default and raised `RetryableProviderError`
+        # before a single world came back. Three complete worlds is the largest structured
+        # answer anything in this repository asks for, and the default was set for a scene.
+        timeout_seconds=1800.0,
+    )
+
+
+# --- the gates ----------------------------------------------------------------------------------
+
+#: Comparison-to-an-external-work syntax. **A structural guard that names nothing**, which is
+#: deliberate: a deny-list of titles inside a generation-side module would put named works into
+#: the generation path, which is the boundary §97.3 draws and the one this project has already
+#: walked to the edge of once. It catches the shapes a model reaches for when it borrows; it does
+#: not catch a borrowed idea in original words, and no pattern would. **A vocabulary guard is not
+#: comprehension** — the prompt carries the rule as well, and the two together are the whole of
+#: what is claimed.
+#:
+#: **Narrowed 2026-08-21 after a measured false positive, which is this repository's third
+#: instance of one failure.** The first version carried a bare `\bfranchise\b`. On the first live
+#: `domain_first` forge it refused **two of three** worlds — a port whose *franchise* is the right
+#: to vote, a ward surrendering its *franchise* — that is, ordinary legal English, in worlds
+#: literalising salvage law and civic charter. `directors._CRAFT_INSTRUCTION` records the same
+#: shape (a recall-tuned list run as a refusal gate has inverted error economics) and
+#: `writer-roster.md` R1's em-dash refusal records it again. A media reference is a *named* thing,
+#: so the surviving alternative requires capitals; `franchise`, `series` and `saga` are only
+#: borrowed when a title precedes them.
+_BORROWED = re.compile(
+    r"(?i:\b(?:inspired by|reminiscent of|similar to|like in|as seen in|as in the"
+    r"|based on the|in the style of|homage to|riff on|a la|fan[- ]?fic)\b)|[®™]"
+    # Case-sensitive on purpose: a media reference is a *named* thing, so the title-shaped
+    # alternative requires capitals. `(?i:…)` scopes the phrase list's insensitivity above.
+    r"|\bthe [A-Z][\w'-]*(?: [A-Z][\w'-]*){0,3} (?:series|franchise|saga)\b"
+)
+
+#: How many second-order consequences, in distinct domains, a declared rule owes. Three, and it
+#: is the operator's figure taken as given rather than a measured threshold — recorded as chosen
+#: so nobody later quotes it as measured. What makes it safe is that it gates a *candidate*, so
+#: the cost of it being wrong is one of K rather than a serial.
+CONSEQUENCE_FLOOR = 3
+
+
+@dataclass(frozen=True, slots=True)
+class Candidate:
+    """One world as the model returned it, plus where it sat in the answer."""
+
+    index: int
+    raw: Mapping[str, Any]
+
+    @property
+    def title(self) -> str:
+        return str(self.raw.get("title") or "").strip()
+
+    @property
+    def domain(self) -> str:
+        return str(self.raw.get("domain") or "").strip()
+
+    @property
+    def geometry(self) -> str:
+        return str(self.raw.get("geometry") or "").strip()
+
+    def rendered(self) -> str:
+        """The candidate as one canonical string, for a distance measure to run over."""
+        return json.dumps(self.raw, ensure_ascii=False, sort_keys=True, indent=1)
+
+
+def _fold(text: str) -> str:
+    return " ".join(text.lower().split())
+
+
+def worlds_from(payload: Mapping[str, Any], k: int) -> tuple[Candidate, ...]:
+    """The model's K worlds, or a refusal naming what was wrong.
+
+    **The collapse gate is here rather than hoped for**, and it is stricter than
+    `plan_search._alternatives`' — which is exact string equality after casefolding and therefore
+    cannot catch a re-worded collapse, a limitation that module's own docstring claims to prevent
+    and does not. Here the axes are *declared*, so the check is on the declaration: two worlds
+    that name the same real domain, or the same geometry, are one world in two hats, and they are
+    refused before a single scene is paid for.
+
+    It is still not a semantic check and does not claim to be. A model that writes "coopering"
+    and "barrel-making" defeats it.
+    """
+    raw = payload.get("worlds")
+    if not isinstance(raw, list):
+        raise ArchitectOutputError("the answer must carry a list of worlds")
+    if len(raw) != k:
+        raise ArchitectOutputError(
+            f"{len(raw)} world(s) returned; the forge asked for exactly {k}"
+        )
+    candidates: list[Candidate] = []
+    for index, entry in enumerate(raw):
+        if not isinstance(entry, Mapping):
+            raise ArchitectOutputError(f"world {index} is not an object")
+        candidate = Candidate(index, entry)
+        for field_name, value in (
+            ("title", candidate.title),
+            ("domain", candidate.domain),
+            ("geometry", candidate.geometry),
+            ("premise", str(entry.get("premise") or "").strip()),
+        ):
+            if not value:
+                raise ArchitectOutputError(f"world {index} has no {field_name}")
+        if candidate.geometry not in GEOMETRIES:
+            raise ArchitectOutputError(
+                f"world {index} declares the geometry {candidate.geometry!r}; the allowed "
+                f"geometries are {', '.join(GEOMETRIES)}"
+            )
+        candidates.append(candidate)
+
+    for axis, values in (
+        ("domain", [_fold(c.domain) for c in candidates]),
+        ("geometry", [_fold(c.geometry) for c in candidates]),
+        ("premise", [_fold(str(c.raw.get("premise") or "")) for c in candidates]),
+    ):
+        repeated = sorted({value for value in values if values.count(value) > 1})
+        if repeated:
+            raise ArchitectOutputError(
+                f"{len(repeated)} {axis} value(s) appear more than once across the {k} worlds "
+                f"({', '.join(repeated)}); a collapsed forge is one world drafted K times, and "
+                "the distinctness gate refuses it before any scene is paid for"
+            )
+    return tuple(candidates)
+
+
+def _items(candidate: Candidate, key: str) -> tuple[Mapping[str, Any], ...]:
+    raw = candidate.raw.get(key)
+    if not isinstance(raw, list):
+        return ()
+    return tuple(entry for entry in raw if isinstance(entry, Mapping))
+
+
+def gate_candidate(
+    candidate: Candidate, *, scenes: int = DEFAULT_SCENES
+) -> tuple[str, ...]:
+    """Deterministic complaints about one world. Empty means it passed.
+
+    Five checks, each arithmetic or membership over the structured answer and none of them an
+    opinion about whether the world is any good:
+
+    1. every declared rule reaches `CONSEQUENCE_FLOOR` distinct domains of life;
+    2. every declared feature says how it shows on the page;
+    3. every mystery records an answer and a disclosure scene;
+    4. **at least one answer lands inside the scenes being written now**;
+    5. nothing in the answer compares itself to something outside it (RS1 / C3).
+    """
+    complaints: list[str] = []
+
+    for system in _items(candidate, "systems"):
+        system_id = str(system.get("id") or "?")
+        if not str(system.get("manifests_as") or "").strip():
+            complaints.append(f"system {system_id} never says how it shows on the page")
+        rules = system.get("rules")
+        for rule in rules if isinstance(rules, list) else ():
+            if not isinstance(rule, Mapping):
+                continue
+            rule_id = str(rule.get("id") or "?")
+            consequences = rule.get("consequences")
+            domains = {
+                str(item.get("domain") or "")
+                for item in (consequences if isinstance(consequences, list) else ())
+                if isinstance(item, Mapping)
+            } & set(worlds_mod.CONSEQUENCE_DOMAINS)
+            if len(domains) < CONSEQUENCE_FLOOR:
+                complaints.append(
+                    f"rule {rule_id} reaches {len(domains)} domain(s) of life "
+                    f"({', '.join(sorted(domains)) or 'none'}); the floor is "
+                    f"{CONSEQUENCE_FLOOR} and a rule that reaches fewer is a name rather than "
+                    "a world"
+                )
+            if not str(rule.get("manifests_as") or "").strip():
+                complaints.append(f"rule {rule_id} never says how it shows on the page")
+        criterion = system.get("criterion")
+        if isinstance(criterion, Mapping):
+            ranks = criterion.get("ranks")
+            for rank in ranks if isinstance(ranks, list) else ():
+                if not isinstance(rank, Mapping):
+                    continue
+                if not str(rank.get("visible_form") or "").strip():
+                    complaints.append(
+                        f"rank {rank.get('id')!r} has no form a reader can see; a rank you are "
+                        "told rather than shown is a number with a costume"
+                    )
+                if not str(rank.get("cost_to_reach") or "").strip():
+                    complaints.append(
+                        f"rank {rank.get('id')!r} costs nothing to reach"
+                    )
+
+    for creature in _items(candidate, "creatures"):
+        creature_id = str(creature.get("id") or "?")
+        for field_name in ("mechanism", "ecology", "human_use", "behaviour", "manifests_as"):
+            if not str(creature.get(field_name) or "").strip():
+                complaints.append(f"creature {creature_id} declares no {field_name}")
+
+    mysteries = _items(candidate, "mysteries")
+    if not mysteries:
+        complaints.append(
+            "no mystery with a recorded answer; the promise ledger would have nothing to pay "
+            "with, which is the defect measured at 40 opened and 0 paid on the live serial"
+        )
+    landed: list[int] = []
+    for mystery in mysteries:
+        mystery_id = str(mystery.get("id") or "?")
+        if not str(mystery.get("answer") or "").strip():
+            complaints.append(f"mystery {mystery_id} records no answer")
+        scene = mystery.get("disclosed_at_scene")
+        if not isinstance(scene, int) or isinstance(scene, bool) or scene < 1:
+            complaints.append(
+                f"mystery {mystery_id} names no scene at which the reader learns it"
+            )
+        else:
+            landed.append(scene)
+    if mysteries and not [scene for scene in landed if scene <= scenes]:
+        # **Measured on the first live forge.** With no scene count in the prompt, one world
+        # scheduled its four answers at scenes 17, 25, 33 and 41 — sensible for an open-ended
+        # serial and useless for the eight scenes actually being written, which would have
+        # opened four debts and paid none. That is the 40-opened-0-paid defect reproduced by
+        # the machinery built to fix it.
+        complaints.append(
+            f"every answer lands after scene {scenes}, the last one being written "
+            f"(earliest is {min(landed)}); an opening that asks and never settles teaches a "
+            "reader that nothing here gets settled"
+        )
+
+    borrowed = sorted(set(_BORROWED.findall(candidate.rendered())))
+    if borrowed:
+        complaints.append(
+            f"the answer compares itself to something outside it ({', '.join(borrowed)}); RS1 "
+            "and C3 forbid naming, quoting or imitating any real work, author, brand or system"
+        )
+    return tuple(complaints)
+
+
+# --- the world as records --------------------------------------------------------------------
+
+
+def _text(entry: Mapping[str, Any], key: str) -> str:
+    return str(entry.get(key) or "").strip()
+
+
+def _identifier(entry: Mapping[str, Any], key: str = "id") -> str:
+    return worlds_mod.normalise_id(_text(entry, key))
+
+
+def records_for(
+    candidate: Candidate,
+    *,
+    authority: lc.StateAuthority = lc.StateAuthority.PROPOSED,
+    scenes: int = DEFAULT_SCENES,
+) -> tuple[lc.StateRecord, ...]:
+    """One world as record patterns over `lc.StateRecord`. No migration, no new record kind.
+
+    Everything here is `domain/worlds.py`'s vocabulary, which is
+    `research/progression-generalization.md` §6.2 and §8 spelled as they spell it.
+
+    **`authority` is the rail, and it is a parameter because the rail has exactly one exit.** The
+    default is `PROPOSED`: a forged world is a candidate, it reaches no context packet, and
+    `context.assemble` filters it out by `is_canon` before anything else happens. `ACCEPTED_CANON`
+    is passed at exactly one call site — `cmd_forge --pick`, where a person has chosen among K and
+    the choice is recorded as its own policy decision. That is the same authority `cmd_import`
+    writes an operator's snapshot under, and its comment is the precedent: *accepted on the
+    director's authority, not extracted from prose this system generated*.
+
+    **Without this the whole role would be inert**, and quietly: every record would stay a
+    proposal, `assemble` would drop the lot, and a serial forged with a system, a cast and a
+    bestiary would draft against a premise and nothing else — looking, at every layer, exactly
+    like the book this role exists to stop producing.
+    """
+    out: list[lc.StateRecord] = []
+    seen: set[str] = set()
+
+    def add(record: lc.StateRecord) -> None:
+        if record.record_id in seen:
+            return
+        seen.add(record.record_id)
+        out.append(
+            record
+            if authority is lc.StateAuthority.PROPOSED
+            else replace(record, authority=authority)
+        )
+
+    def entity(entry: Mapping[str, Any], role: str) -> str:
+        subject = _identifier(entry)
+        if not subject:
+            return ""
+        add(worlds_mod.world_record(subject, worlds_mod.ENTITY_ROLE_PREDICATE, value=role))
+        if _text(entry, "is_a"):
+            add(worlds_mod.world_record(subject, "is_a", value=_text(entry, "is_a")))
+        for key, predicate in (
+            ("wants", "wants"),
+            ("reach", "can_reach"),
+            ("voice_tag", "voice_tag"),
+            ("recognises", "recognises"),
+            ("grants", "grants"),
+            ("prices_the_present", "prices_the_present"),
+        ):
+            if _text(entry, key):
+                add(worlds_mod.world_record(subject, predicate, value=_text(entry, key)))
+        if _text(entry, "manifests_as"):
+            add(
+                worlds_mod.world_record(
+                    subject, worlds_mod.MANIFESTS_PREDICATE, value=_text(entry, "manifests_as")
+                )
+            )
+        # **Relationships are edges, which is the capability nothing in this repository used to
+        # write.** `object_ref` has been on every record since the contract shipped and no code
+        # constructed one; a cast whose ties live in prose is a cast the store cannot check, and
+        # `state.cardinality.v0` has nothing to count.
+        relationships = entry.get("relationships")
+        for tie in relationships if isinstance(relationships, list) else ():
+            if not isinstance(tie, Mapping):
+                continue
+            predicate = worlds_mod.normalise_id(_text(tie, "predicate"))
+            target = worlds_mod.normalise_id(_text(tie, "target"))
+            if not predicate or not target:
+                continue
+            add(
+                worlds_mod.world_record(
+                    subject, predicate, object_ref=target, value=_text(tie, "note") or None
+                )
+            )
+        return subject
+
+    for system in _items(candidate, "systems"):
+        system_id = _identifier(system)
+        if not system_id:
+            continue
+        add(
+            worlds_mod.world_record(
+                system_id, worlds_mod.ENTITY_ROLE_PREDICATE, value="system"
+            )
+        )
+        add(worlds_mod.world_record(system_id, "is_a", value=_text(system, "logic")))
+        add(
+            worlds_mod.world_record(
+                system_id, worlds_mod.MANIFESTS_PREDICATE, value=_text(system, "manifests_as")
+            )
+        )
+        # The interface between two incompatible logics is the content, so it is a fact about
+        # the world rather than a note about the system.
+        if _text(system, "collides_with") and _text(system, "interface"):
+            add(
+                worlds_mod.world_record(
+                    system_id,
+                    "collides_with",
+                    object_ref=worlds_mod.normalise_id(_text(system, "collides_with")),
+                    value=_text(system, "interface"),
+                )
+            )
+        # A hidden personality is a claim about the system that has not been disclosed — §3.5's
+        # reduction, and the reason it is a claim rather than a field.
+        if _text(system, "hidden_personality"):
+            claim_id = f"{system_id}_nature"
+            add(
+                worlds_mod.world_record(
+                    claim_id,
+                    worlds_mod.CLAIM_CONTENT,
+                    value=_text(system, "hidden_personality"),
+                )
+            )
+        if _text(system, "view_withholds"):
+            view_id = f"{system_id}_view"
+            add(worlds_mod.world_record(view_id, worlds_mod.TYPE_PREDICATE, value=worlds_mod.VIEW))
+            add(
+                worlds_mod.world_record(
+                    view_id, worlds_mod.VIEW_SUBSTRATE, object_ref=system_id
+                )
+            )
+            add(
+                worlds_mod.world_record(
+                    view_id, worlds_mod.VIEW_MAPPING, value=_text(system, "manifests_as")
+                )
+            )
+            add(
+                worlds_mod.world_record(
+                    view_id, worlds_mod.VIEW_WITHHOLDS, value=_text(system, "view_withholds")
+                )
+            )
+
+        rules = system.get("rules")
+        for rule in rules if isinstance(rules, list) else ():
+            if not isinstance(rule, Mapping):
+                continue
+            rule_id = _identifier(rule)
+            if not rule_id:
+                continue
+            add(
+                worlds_mod.world_record(
+                    rule_id, worlds_mod.WORLD_RULE_PREDICATE, value=_text(rule, "rule")
+                )
+            )
+            add(
+                worlds_mod.world_record(
+                    rule_id, worlds_mod.MANIFESTS_PREDICATE, value=_text(rule, "manifests_as")
+                )
+            )
+            add(
+                worlds_mod.world_record(
+                    rule_id, worlds_mod.BUNDLE_MEMBER, object_ref=system_id
+                )
+            )
+            consequences = rule.get("consequences")
+            for item in consequences if isinstance(consequences, list) else ():
+                if not isinstance(item, Mapping):
+                    continue
+                domain = _text(item, "domain")
+                if domain in worlds_mod.CONSEQUENCE_DOMAINS:
+                    add(
+                        worlds_mod.world_record(
+                            rule_id,
+                            worlds_mod.CONSEQUENCE_PREDICATE,
+                            object_ref=domain,
+                            value=_text(item, "consequence"),
+                        )
+                    )
+
+        criterion = system.get("criterion")
+        if isinstance(criterion, Mapping):
+            criterion_id = _identifier(criterion)
+            if criterion_id:
+                add(
+                    worlds_mod.world_record(
+                        criterion_id, worlds_mod.TYPE_PREDICATE, value=worlds_mod.CRITERION
+                    )
+                )
+                add(
+                    worlds_mod.world_record(
+                        criterion_id,
+                        worlds_mod.COMPARATOR_PREDICATE,
+                        value=_text(criterion, "comparator"),
+                    )
+                )
+                add(
+                    worlds_mod.world_record(
+                        criterion_id,
+                        worlds_mod.EVALUATES_PREDICATE,
+                        object_ref=worlds_mod.normalise_id(_text(criterion, "evaluates")),
+                    )
+                )
+                ranks = criterion.get("ranks")
+                rank_ids: list[str] = []
+                for rank in ranks if isinstance(ranks, list) else ():
+                    if not isinstance(rank, Mapping):
+                        continue
+                    rank_id = _identifier(rank)
+                    if not rank_id:
+                        continue
+                    rank_ids.append(rank_id)
+                    add(
+                        worlds_mod.world_record(
+                            rank_id,
+                            worlds_mod.MANIFESTS_PREDICATE,
+                            value=_text(rank, "visible_form"),
+                        )
+                    )
+                    add(
+                        worlds_mod.world_record(
+                            rank_id, "costs", value=_text(rank, "cost_to_reach")
+                        )
+                    )
+                # The ordinal domain as edges, with the criterion on the edge so a world running
+                # two ladders at once cannot have them spliced into one order nobody declared.
+                for lower, higher in itertools.pairwise(rank_ids):
+                    add(
+                        worlds_mod.world_record(
+                            lower,
+                            worlds_mod.PRECEDES_PREDICATE,
+                            object_ref=higher,
+                            value=criterion_id,
+                        )
+                    )
+
+    for key, role in (
+        ("agencies", "agency"),
+        ("carriers", "carrier"),
+        ("cast", "cast"),
+        ("places", "place"),
+        ("institutions", "institution"),
+        ("history", "institution"),
+    ):
+        for entry in _items(candidate, key):
+            subject = entity(entry, role)
+            if not subject:
+                continue
+            # A cast member's false belief and secret are claims, never fields: the gap between
+            # what is true, what a character holds and what the reader has been told is what
+            # §3.4 makes expressible, and a field would collapse all three.
+            if _text(entry, "false_belief"):
+                claim_id = f"{subject}_belief"
+                add(
+                    worlds_mod.world_record(
+                        claim_id, worlds_mod.CLAIM_CONTENT, value=_text(entry, "false_belief")
+                    )
+                )
+                # Marked wrong, and the marker is what keeps it out of the packet's hidden
+                # section — which says *true*. Without it a character's error would be handed
+                # to the writer as something to honour.
+                add(worlds_mod.world_record(claim_id, worlds_mod.CLAIM_FALSE, value=True))
+                add(
+                    worlds_mod.world_record(
+                        subject, worlds_mod.BELIEVES, object_ref=claim_id
+                    )
+                )
+            if _text(entry, "secret"):
+                claim_id = f"{subject}_secret"
+                add(
+                    worlds_mod.world_record(
+                        claim_id, worlds_mod.CLAIM_CONTENT, value=_text(entry, "secret")
+                    )
+                )
+                add(
+                    worlds_mod.world_record(
+                        subject, "keeps_secret", object_ref=claim_id
+                    )
+                )
+
+    for creature in _items(candidate, "creatures"):
+        subject = _identifier(creature)
+        if not subject:
+            continue
+        add(worlds_mod.world_record(subject, worlds_mod.ENTITY_ROLE_PREDICATE, value="creature"))
+        add(worlds_mod.world_record(subject, "is_a", value=_text(creature, "is_a")))
+        add(
+            worlds_mod.world_record(
+                subject, worlds_mod.MANIFESTS_PREDICATE, value=_text(creature, "manifests_as")
+            )
+        )
+        for key, predicate in (
+            ("mechanism", "works_by"),
+            ("ecology", "lives_by"),
+            ("rank", "ranks_at"),
+            ("human_use", "used_by_people_for"),
+            ("behaviour", "does"),
+            ("bond_potential", "bonds_by"),
+        ):
+            if _text(creature, key):
+                add(worlds_mod.world_record(subject, predicate, value=_text(creature, key)))
+
+    for bond in _items(candidate, "bonds"):
+        bond_id = _identifier(bond)
+        if not bond_id:
+            continue
+        members = bond.get("members")
+        for member in members if isinstance(members, list) else ():
+            member_id = worlds_mod.normalise_id(str(member))
+            if member_id:
+                add(
+                    worlds_mod.world_record(
+                        bond_id, worlds_mod.MEMBER, object_ref=member_id
+                    )
+                )
+        if _text(bond, "joint_ability"):
+            add(
+                worlds_mod.world_record(
+                    bond_id,
+                    worlds_mod.PERMITS,
+                    object_ref=f"{bond_id}_joint",
+                    value=_text(bond, "joint_ability"),
+                )
+            )
+        if _text(bond, "trait_link"):
+            add(worlds_mod.world_record(bond_id, "trait_link", value=_text(bond, "trait_link")))
+
+    for mystery in _items(candidate, "mysteries"):
+        claim_id = _identifier(mystery)
+        if not claim_id:
+            continue
+        add(
+            worlds_mod.world_record(
+                claim_id, worlds_mod.CLAIM_CONTENT, value=_text(mystery, "answer")
+            )
+        )
+        add(
+            worlds_mod.world_record(
+                claim_id, worlds_mod.QUESTION_PREDICATE, value=_text(mystery, "question")
+            )
+        )
+        scene = mystery.get("disclosed_at_scene")
+        if isinstance(scene, int) and not isinstance(scene, bool) and scene >= 1:
+            # The ordinal always; a *position* only for a scene this book has. See `story_key`.
+            add(worlds_mod.world_record(claim_id, worlds_mod.REVEAL_SCENE, value=scene))
+            position = story_key(scene, scenes=scenes)
+            if position is not None:
+                add(
+                    worlds_mod.world_record(
+                        f"{claim_id}_reveal",
+                        worlds_mod.DISCLOSED_TO,
+                        value=worlds_mod.READER,
+                        object_ref=claim_id,
+                        order_key=position,
+                    )
+                )
+        if _text(mystery, "believed_instead_by"):
+            add(
+                worlds_mod.world_record(
+                    worlds_mod.normalise_id(_text(mystery, "believed_instead_by")),
+                    worlds_mod.BELIEVES,
+                    object_ref=f"{claim_id}_belief",
+                )
+            )
+
+    for shape in _items(candidate, "cardinality"):
+        shape_id = _identifier(shape)
+        maximum = shape.get("maximum")
+        group_key = _text(shape, "group_key")
+        predicate = _text(shape, "predicate")
+        if not shape_id or not predicate or group_key not in worlds_mod.GROUP_KEYS:
+            continue
+        if not isinstance(maximum, int) or isinstance(maximum, bool) or maximum < 1:
+            continue
+        add(
+            worlds_mod.world_record(
+                shape_id, worlds_mod.TYPE_PREDICATE, value=worlds_mod.CARDINALITY_CONSTRAINT
+            )
+        )
+        add(
+            worlds_mod.world_record(
+                shape_id, worlds_mod.PREDICATE_PREDICATE, value=predicate
+            )
+        )
+        add(
+            worlds_mod.world_record(
+                shape_id,
+                worlds_mod.SCOPE_PREDICATE,
+                value=_text(shape, "scope") or worlds_mod.ANY_SCOPE,
+            )
+        )
+        add(worlds_mod.world_record(shape_id, worlds_mod.GROUP_KEY_PREDICATE, value=group_key))
+        add(worlds_mod.world_record(shape_id, worlds_mod.MAXIMUM_PREDICATE, value=maximum))
+
+    graph_line = candidate.raw.get("graph_line")
+    if isinstance(graph_line, Mapping) and graph_line.get("label"):
+        add(
+            worlds_mod.world_record(
+                "book", worlds_mod.GRAPH_LINE_PREDICATE, value=dict(graph_line)
+            )
+        )
+    return tuple(out)
+
+
+def story_key(scene: int, *, scenes: int) -> str | None:
+    """A story-order key in `beats_for`'s own vocabulary, or `None` for a scene this book lacks.
+
+    **The width is the book's, and getting that wrong was a measured leak.** `domain/beats.py`
+    mints `f"s{index:0{width}d}"` with `width = len(str(len(scenes)))`, so an eight-scene book's
+    keys are `s1…s8` — width one. A fixed two-digit form put `s04` and `s41` into the same
+    namespace, and `order_key` comparison is lexicographic: `"s1" > "s04"`, so on Serial Pilot 2
+    **the two answers the opening existed to keep were the two the packet handed the writer as
+    established fact**, while an arc answer six chapters out drifted between sections scene by
+    scene. Nothing raised; the strings compared fine.
+
+    **A reveal outside this book gets no position at all**, which is the honest encoding rather
+    than a clamp: the reader is not told inside these scenes, so the claim has no disclosure here
+    and `undisclosed_claims` keeps it hidden throughout. The world's intent is not lost — the
+    ordinal is stored under `worlds.REVEAL_SCENE` either way.
+    """
+    if scene < 1 or scene > scenes:
+        return None
+    return f"s{scene:0{len(str(scenes))}d}"
+
+
+def directives_for(candidate: Candidate) -> tuple[dict[str, str], ...]:
+    """The directive set a forged world needs the loop to carry.
+
+    Kinds are restricted to what a role may write: the four interpretive kinds plus `constraint`.
+    A `veto` is a refusal and refusal is the operator's; `control` is pause/resume/kill and is
+    not narrative at all. This is `directors.DIRECTOR_KINDS`' argument with `constraint` added,
+    because a *world fact* stated as a standing rule is exactly what the verbatim lane is for —
+    and unlike a prose-craft rule, it is not doctrine about how to write.
+    """
+    allowed = {
+        DirectiveKind.CONSTRAINT.value,
+        DirectiveKind.TONE_NOTE.value,
+        DirectiveKind.ARC_NOTE.value,
+        DirectiveKind.CHAPTER_NOTE.value,
+    }
+    out: list[dict[str, str]] = []
+    for entry in _items(candidate, "directives"):
+        kind = _text(entry, "kind")
+        text = _text(entry, "text")
+        if kind in allowed and text:
+            out.append({"kind": kind, "text": text, "label": f"forged {kind}"})
+    return tuple(out)
+
+
+def promises_for(candidate: Candidate) -> tuple[dict[str, Any], ...]:
+    """One promise per recorded reveal, so the ledger has something to pay with.
+
+    The measured defect this answers is the oldest in the project: **40 promises opened and 0
+    paid** on the live serial, 32 and 0 before it. Every one of those was opened by the summary
+    handler out of a scene that had just been written, and nothing anywhere held the answer. A
+    reveal forged with its answer and its scene is a debt with a settlement date attached.
+
+    `subject` is deliberately the mystery's own id: `pay_promise` is reachable only through
+    `promise_id_for(book_id, normalise_subject(<what the summariser wrote>))`, so a seeded debt
+    whose subject the summariser would never echo can never be settled by the loop.
+    """
+    out: list[dict[str, Any]] = []
+    for mystery in _items(candidate, "mysteries"):
+        subject = _identifier(mystery)
+        scene = mystery.get("disclosed_at_scene")
+        if not subject or not isinstance(scene, int) or isinstance(scene, bool) or scene < 1:
+            continue
+        kind = _text(mystery, "kind") or "mystery"
+        out.append(
+            {
+                "subject": subject,
+                "description": _text(mystery, "question"),
+                "kind": kind,
+                "due_scene": scene,
+            }
+        )
+    return tuple(out)
+
+
+# --- the counters a report is made of -----------------------------------------------------------
+
+
+def spread(candidates: Sequence[Candidate]) -> float | None:
+    """Mean pairwise distance among the K worlds of one forge. `None` below two candidates.
+
+    **Named a spread rather than a distinctness, because it is not one.**
+    `directors.distinctness` compares two *sources* by asking whether the gap between them
+    clears each one's own noise floor. K worlds from one call share a source, so there is no
+    floor to clear and the number here can only say how far apart this call's answers landed.
+    The comparison that *is* a distinctness reading is between the two prompt shapes, and it
+    lives on the measurement side where the second forge can be paid for
+    (`plan/world-architect.md` §6, M1).
+    """
+    texts = [candidate.rendered() for candidate in candidates]
+    pairs = [
+        directors.distance(texts[i], texts[j])
+        for i in range(len(texts))
+        for j in range(i + 1, len(texts))
+    ]
+    return sum(pairs) / len(pairs) if pairs else None
+
+
+def report(candidate: Candidate, *, scenes: int = DEFAULT_SCENES) -> dict[str, Any]:
+    """Every deterministic number this candidate has, computed over its own records.
+
+    Counters, never a verdict. Nothing here orders one world above another and nothing may be
+    read as doing so; `plan/world-architect.md` §6 records which of these have bars (M3, M4) and
+    which are reported distributions with no bar (M2, M5, M6) and why.
+    """
+    records = records_for(candidate, scenes=scenes)
+    coverage = worlds_mod.manifestation_coverage(records)
+    domains = worlds_mod.consequence_domains(records)
+    return {
+        "index": candidate.index,
+        "title": candidate.title,
+        "domain": candidate.domain,
+        "geometry": candidate.geometry,
+        "records": len(records),
+        "edges": sum(1 for record in records if record.object_ref),
+        "rules": len(domains),
+        "consequence_domains_per_rule": {
+            rule: len(found) for rule, found in sorted(domains.items())
+        },
+        "min_consequence_domains": min((len(v) for v in domains.values()), default=0),
+        "features": len(coverage.features),
+        "manifestation_coverage": round(coverage.share, 4),
+        "manifestation_missing": list(coverage.missing),
+        "criteria": worlds_mod.criteria(records),
+        "cardinality_shapes": len(worlds_mod.cardinality_shapes(records)),
+        "claims_with_answers": len(worlds_mod.claims(records)),
+        "reveals_scheduled": len(worlds_mod.disclosures(records)),
+        "hidden_at_start": len(
+            worlds_mod.undisclosed_claims(records, at=story_key(1, scenes=scenes))
+        ),
+        "key_nouns": list(worlds_mod.key_nouns(records)),
+        "validator_complaints": list(worlds_mod.validate(records)),
+        "gate_complaints": list(gate_candidate(candidate, scenes=scenes)),
+    }
+
+
+def snapshot_for(
+    candidate: Candidate,
+    *,
+    book_id: str,
+    branch_id: str,
+    revision_id: str,
+    architect_id: str,
+    created_at: str,
+    authority: lc.StateAuthority = lc.StateAuthority.PROPOSED,
+    scenes: int = DEFAULT_SCENES,
+) -> lc.StateSnapshot:
+    """The world as a `StateSnapshot` that `litharness new --state` consumes unchanged.
+
+    `actor` carries the machine authorship, which is the provenance rail made durable: a snapshot
+    an Architect proposed is distinguishable from one an operator typed, in the artifact itself
+    and not only in a decision row.
+    """
+    return lc.StateSnapshot(
+        meta=lc.ArtifactMeta(
+            schema_version="1.2.0",
+            artifact_id=f"{architect_id}-{candidate.index}",
+            artifact_kind="state_snapshot",
+            created_at=created_at,
+            actor=worlds_mod.machine_author(architect_id),
+            tool=lc.ToolIdentity(name="litharness-architect", version="0.1.0"),
+        ),
+        book_id=book_id,
+        branch_id=branch_id,
+        revision_id=revision_id,
+        records=list(records_for(candidate, authority=authority, scenes=scenes)),
+    )
+
+
+def bundle_for(
+    candidate: Candidate,
+    *,
+    book_id: str,
+    branch_id: str,
+    revision_id: str,
+    architect_id: str,
+    created_at: str,
+    brief: str,
+    shape: str,
+    scenes: int = DEFAULT_SCENES,
+) -> dict[str, Any]:
+    """Everything `new --state … --premise …` and the directive lane need, in one object."""
+    return {
+        "architect_id": architect_id,
+        "brief": brief,
+        "prompt_shape": shape,
+        "index": candidate.index,
+        "title": candidate.title,
+        "premise": str(candidate.raw.get("premise") or "").strip(),
+        "seed": lc.to_jsonable(
+            snapshot_for(
+                candidate,
+                book_id=book_id,
+                branch_id=branch_id,
+                revision_id=revision_id,
+                architect_id=architect_id,
+                created_at=created_at,
+                scenes=scenes,
+            )
+        ),
+        "directives": list(directives_for(candidate)),
+        "promises": list(promises_for(candidate)),
+        "report": report(candidate, scenes=scenes),
+        "world": dict(candidate.raw),
+    }
+
+
+__all__ = [
+    "CALL_CLASS",
+    "CONSEQUENCE_FLOOR",
+    "DEFAULT_K",
+    "DEFAULT_SCENES",
+    "DIRECT",
+    "DOMAIN_FIRST",
+    "GEOMETRIES",
+    "PROFILE",
+    "PROMPT_SHAPES",
+    "WORLDS_SCHEMA",
+    "ArchitectInputError",
+    "ArchitectOutputError",
+    "Candidate",
+    "bundle_for",
+    "directives_for",
+    "gate_candidate",
+    "promises_for",
+    "records_for",
+    "render_world_request",
+    "report",
+    "snapshot_for",
+    "spread",
+    "story_key",
+    "worlds_from",
+]

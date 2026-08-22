@@ -9834,3 +9834,402 @@ any loop. **§106.3's gate is not closed by this entry and may not be treated as
 citing it.** No licence moves: FORECAST stays at STORY grain, absent from `veto_for`, and a
 calibrated sim earns exactly what an uncalibrated one earned until an entry says otherwise. §97.8's
 anti-scope stands whole and is extended by none of this.
+
+---
+
+## 107. The serial gets a world that exists behind it, and the detector that was supposed to check it was reading the annotation
+
+**Built 2026-08-21, from [`plan/world-architect.md`](world-architect.md), which was written before
+any code in this design and before any world was generated.** A fourth role, **the Architect**,
+upstream of the Director: it says what the world *is*, never what the book is about, never drafts,
+never judges. Code: `domain/worlds.py`, `application/architect.py`, `litharness forge`, plus the
+projection and the `hidden` packet section in `domain/context.py`, the cardinality detector in
+`domain/integrity.py`, and the second extractor family in `domain/extraction.py`. Ontology:
+[`plan/state-model-abilities.md`](state-model-abilities.md) and
+[`research/progression-generalization.md`](../research/progression-generalization.md), built *to*
+rather than replaced.
+
+**Nothing above this entry was renumbered.** §106 was the last section when this began and the
+check was run again across every branch, every remote ref and every working tree on this machine
+before this was written; no §107 existed in any of them.
+
+**What licenses it is a count, not an ambition.** Measured against `serial.db`, the live nine-scene
+serial, on 2026-08-21:
+
+| | count |
+|---|--:|
+| canon state records, the whole world model of the book | **23** |
+| — typed by the operator into `plan/serial-pilot-seed.json` | 15 |
+| — written by the loop itself (`status_snapshot`, `litharness.systemvoice.v0`) | 8 |
+| records carrying an edge (`object_ref`), every one of them operator-typed | 7 |
+| promises open / paid | **40 / 0** |
+
+The Advent, the tiers, the Tide, Marta, Vance, the assay house, the crown-and-hook mark: every one
+of them is in the prose of a book whose canon has never heard of it. **That is the entry's spine.**
+The eight records the loop wrote are eight readings of one line form, and `src/` contained no code
+that constructed an edge at all.
+
+### 107.1 The detector was not backwards on edges; it was blind to them, and it keyed on the annotation
+
+`plan/state-model-abilities.md` §2 records `detect_contradictions` ignoring `object_ref` and gives
+three cases. Re-run against this repository — the probe is now
+`tests/test_worlds.py::test_the_edge_cases_the_design_note_measured` — **one of its rows is wrong**,
+and the correction is written into that document in place rather than folded away:
+
+| what the book says | how it is spelled | findings, before |
+|---|---|--:|
+| `card_of_ashes held_by → silas` and `→ marta` | edge, no value | **0** |
+| the same, each edge annotated differently | edge, different values | **1, MAJOR, blocking** |
+| `ash trait → keen_scent` and `→ night_sight` | edge, no value | **0** |
+| `ash trait = keen_scent` and `= night_sight` | value, no edge | **1, MAJOR, blocking** |
+| `card_of_ashes held_by = silas` and `= marta` | value, no edge | **1, MAJOR, blocking** |
+| `silas status_snapshot {loop 1, day 1}` / `{…day 2}` at `s1` | value | 1, MAJOR, blocking |
+
+The design note gives row 3 as **1, MAJOR, blocking**; it is **0**. It did not record which
+spelling it measured and the two are not the same case. The generalisation gets stronger rather
+than weaker: what decided whether an impossibility was reported was **whether the prose happened to
+annotate the two edges differently**, and a perfectly ordinary two-valued relation was refused
+whenever it did.
+
+**The fix is a pair and would be wrong as either half.** `object_ref` enters the grouping key, so
+two edges are two facts and never contradict each other there; and `state.cardinality.v0` reads a
+world's own declared shape — `research/progression-generalization.md` §8.2's five-record encoding,
+unchanged — so exclusivity becomes a thing a world *says*. The key alone would make one object in
+two hands permanently invisible. **Undeclared means unchecked**, and the price of that safe
+direction is stated rather than hidden: a world that declares no shape is checked for nothing.
+Maxima only; under open-world reading a missing value is unknown rather than false, so a minimum is
+unsafe until a scope is closed and none can be. Both golden fixtures hold **zero** records with
+`object_ref` set, so their silence is untouched by construction —
+`test_both_golden_fixtures_stay_silent_under_the_new_key` asserts the data rather than assuming it.
+
+### 107.2 Record patterns, not schema classes — and no migration
+
+Everything the Architect writes is `(subject, predicate, value, object_ref, story_position,
+authority, pov_visibility)`: the shape the contract already has, which `record_json` already carries
+whole. No new `StateRecordKind`, no migration, no contracts bump. The vocabulary is the research's,
+spelled as it spells it — `evaluation.subject`, `claim.content`, `disclosed_to`, `precedes`,
+`group_key` — and the three predicates this repository adds (`entity_role`, `consequence`,
+`manifests_as`) each exist because a counter has to find the thing.
+
+**Absence is free and it is enforced rather than intended.** Nothing requires a world to declare a
+system, a criterion, a rank, a number or a creature. `Coverage.share` returns **1.0** for a world
+that declared nothing, because "declared nothing" and "declared everything and showed none of it"
+must not be the same number.
+
+### 107.3 The projection, which is the item most likely to have been skipped
+
+`state.describe` renders `subject predicate value (object_ref)`. That is right for a flat fact and
+is machine notation for a reified one, and this project's quality runs entirely through what the
+generator is handed — so adopting the ontology without a projection would have made canon checkable
+and the prompt worse. `worlds.project` returns one English sentence per record it recognises, folds
+a reified node's satellites into the node's single sentence, and returns **nothing at all** for a
+record it does not know, so `state.describe` remains the fallback and a book that declares no world
+packs byte-identically. A node with any restricted satellite is never folded: collapsing a fact
+about who knows what into a sentence written for everybody would leak it.
+
+### 107.4 The iceberg is a claim with a disclosure, and it is not `pov_visibility`
+
+A new packet section, `hidden`, between `facts` and `summaries`: *true, and the reader has not been
+told — write as if it is true and never put it on the page*. A claim with recorded content and no
+`disclosed_to` at or before the current position is hidden; a reveal moves it, and a reveal changes
+disclosure rather than past truth.
+
+**`pov_visibility` could not have carried this and the test says why rather than the document.** It
+is packet *access control*: a secret written into it reaches no packet at all when no POV is named,
+so the one thing the writer most needs to honour would be the one thing it is never told
+(`test_pov_visibility_is_not_how_a_secret_is_carried`). §0.1 row 2 forbade the overload; this is
+what the alternative had to be.
+
+**A modelling error the test suite found rather than the design.** The first version of this
+vocabulary had a character's false belief and a mystery's answer sharing one predicate, and
+`validate` caught it by demanding a scheduled reveal for a belief that must never have one. Two
+consequences, both kept: `claim.false` marks a claim the world denies, so a character's error is
+never carried under a heading that says *true*; and only a claim that **asks** something owes a
+disclosure position, so a secret somebody keeps is not turned into a reveal the book must schedule.
+
+### 107.5 The forge: K worlds in one call, gated, and then stopped
+
+`litharness forge "<brief>" --k 3 --shape direct|domain_first --out <dir>` makes one structured
+call, refuses a collapse deterministically, writes every candidate with its counters, records a
+decision carrying the candidate count, and **stops**. `forge --out <dir> --pick <n>` is a separate
+invocation that makes no provider call, records its own decision with `VerdictSource.HUMAN`, and
+writes the seed, directives and promises `new --state … --promises …` consumes unchanged.
+
+**No model orders the candidates**, enforced by import ban rather than by intent —
+`test_the_architect_ranks_nothing_and_cannot_learn_to` refuses the module an import of
+`select_winner`, the pairwise engine, the judge panel or `plan_search`, and refuses the strings
+`select_winner`, `win_rate`, `PairVerdict` and `Calibration` anywhere in it. §105.1's device applied
+to the role that would be most tempting to give a taste. §61(5) then divides the confidence level by
+the candidate count, which is why the count is on both decision rows.
+
+**The collapse gate is stricter than the one it is modelled on, and says so.**
+`plan_search._alternatives` compares whole statements for exact equality after casefolding, which
+cannot catch a re-worded collapse — a limitation its own docstring claims to prevent and does not.
+Here the axes are *declared*: two worlds naming the same real domain, or the same geometry, are
+refused before a scene is paid for. It is still not semantic, and a model writing "coopering" beside
+"barrel-making" defeats it.
+
+**Per-candidate gates, all four arithmetic or membership over the structured answer.** A declared
+rule must reach **three distinct domains of life** (`CONSEQUENCE_FLOOR`, and it is the operator's
+figure taken as given rather than measured — recorded as chosen so nobody later quotes it as
+measured; what makes it safe is that it gates one of K rather than a serial). Every declared feature
+must say how it shows on the page. Every mystery must record an answer and a scene. And nothing in
+the answer may compare itself to something outside it — a **structural** RS1 guard that names no
+work, because a deny-list of titles inside a generation-side module would put named works into the
+generation path, which is the boundary §97.3 draws and the one this project has walked to the edge
+of once. A vocabulary guard is not comprehension; the prompt carries the rule as well.
+
+### 107.6 Measurement, pre-registered before the pilot
+
+| # | quantity | range | direction | unit |
+|---|---|---|---|---|
+| M1a | within-forge spread over K | [0, 1] | reported, **no bar** | normalised compression distance |
+| M1b | between-shape distinctness, `directors.distinctness` | reading | between > within | the same distance |
+| M2 | genre-lexicon overlap of a world's key nouns | [0, 1] | reported, **no bar** | share of key nouns |
+| M3 | consequence domains per declared rule | [0, 8] | ≥ 3 to pass the gate | distinct domains |
+| M4 | manifestation coverage over declared features | [0, 1] | 1.0 to pass the gate | share of features |
+| M5 | integrity findings per accepted scene | [0, ∞) | reported | findings |
+| M6 | disclosure-schedule adherence | [0, 1] | reported | reveals inside their window |
+
+**M1 is two readings and only one of them is a distinctness.** K worlds from one call share a
+source, so there is no within-source floor to clear and the number can only say how far apart this
+call's answers landed. The reading that *is* a distinctness is between the two prompt shapes, with
+the shape playing the role the director plays in §89's control. `DISTINCT_NO_FLOOR` is a real
+outcome here and must not be reported as `DISTINCT`: the pinned provider is greedy, and a control
+which cannot fail is not a control (§50).
+
+**M2 has no bar, and the reason is a case this repository already owns.** `opening_proper_nouns`
+was nominated for a named reader defect and then placed the complained-about chapter at the
+**68.5th percentile** of published LitRPG openings — it did not discriminate the defect it was
+built for. So the K candidates' overlap distribution is reported first and no ceiling is declared.
+The lexicon is built by `research/quality-measurement/world_lexicon.py` from the `description` and
+`tags` columns of the twelve cached RoyalRoad shards: **22,397 fictions**, blurb vocabulary
+**79,379** words, lexicon **17,541** at a document floor of 5, tag vocabulary **82**. The floor's
+effect is reported beside the headline (1 → 79,379; 2 → 33,086; 5 → 17,541; 10 → 11,455; 25 →
+6,510; 100 → 2,421) because a floor is a way of quietly deciding the answer. **The measured
+distribution is in §107.9, and the counter's own bug is reported beside it.** **No code in this
+repository had ever read the `description` column**; `corpus_io.royalroad_chapters` requests twelve
+columns and that is not one of them. It enters a counter and never a prompt.
+
+**M5 and M6 are fidelity, not quality.** Nothing here claims a forged world produces a better book.
+Reader effect reaches this programme only through §97's readership sim and the operator's `NOTES.md`
+harvest; anything else is a hypothesis and is labelled one.
+
+### 107.7 The world grows, and the promotion rule is deliberately the narrow one
+
+A second extractor family. The book declares its own graph line the way it already declares its
+sheet — a label plus a phrase → predicate map, so the printed line is the book's own words and the
+parse is exact — and **a book that declares none extracts no graph facts at all**. That is
+`research/progression-generalization.md` §14.3 honoured rather than dodged: a rigid *hidden*
+extraction format is useful and a rigid in-story status line is not the general abstraction, so the
+in-story form is a per-world declaration instead of a constant.
+
+Identity minting and factual promotion are separate. The page may **name** a new subject; the claim
+arrives `PROPOSED`, reaches no packet and takes no part in the contradiction detector. Repetition
+promotes nothing, explicitly — §6 item 1 rejects it as evidence. An edge is promoted when a
+**later** scene names one of its endpoints under a **different** predicate: the book came back to
+the thing and did something else with it. Promotion mints a new canon record at the later position
+rather than editing one, because `record_state_records` is `INSERT OR IGNORE` and there is no
+update path — and because the new row is the truer statement. It cannot tell causal reuse from
+coincidental co-occurrence and does not claim to; what it buys is that a fact the page invented and
+never touched again stays out of canon.
+
+### 107.8 The ledger finally has something to pay with
+
+**40 promises opened and 0 paid** on the live serial; 32 and 0 before it. Every one was opened by
+the summary handler out of a scene that had just been written, and nothing anywhere held the answer.
+A forged reveal arrives with its answer already in canon and its scene attached, and
+`new --promises` opens it before scene one — keys taken from `beats_for` rather than from a format
+string, abstaining entirely when the template is not chronological. It also makes `open_promises`
+non-empty at the book's *first* outline, which is the guard that made `_payoff_windows` unreachable
+on pass one. Whether the loop then *pays* any of them is the pilot's question and is not claimed
+here.
+
+**One limit, stated rather than discovered later.** `promises.model` is empty on a seeded row and
+the ledger has no column that distinguishes an authored debt from a model-asserted one, so
+`promise.overdue.v0` keeps reading every row as model-sourced — which is why it is MINOR and
+`heuristic` and may not block. A seeded row rides an instrument that documents itself as
+model-sourced, and that mismatch is real.
+
+### 107.9 What ran, what it measured, and the ten defects running it found
+
+The suite goes **1,247 → 1,322** collected, all passing, with `ruff check .` and `mypy --strict`
+clean.
+
+**Three live forges on the pinned provider, `claude-opus-5`, one structured call each.**
+
+| run | shape | scene count in the prompt | tokens | cost | clear of every gate | within-forge spread |
+|---|---|---|--:|--:|:-:|--:|
+| 1 | `direct` | absent | 91,561 | $1.37 | 2 of 3 | 0.9189 |
+| 2 | `domain_first` | absent | 96,447 | $1.48 | 3 of 3 | 0.9053 |
+| 3 | `direct` | 8 | 98,332 | $1.53 | 3 of 3 | 0.9302 |
+
+**$4.38 for nine worlds.** Every one of the nine conformed to the schema on the first call; the
+collapse gate refused none, because all nine declared pairwise-distinct real domains and
+geometries within their run. What came back is the shape the design asked for and had no way to
+guarantee: field epidemiology as contagion-of-capability, celestial navigation where a position is
+a guess that grows, clonal grafting where a talent is a cutting taken from someone still bearing,
+saturation diving against salvage law, musical temperament where the comma has to be *put*
+somewhere, transplant immunology, and prior-appropriation water law where the river answers a date.
+
+**Per world, run 3 — the one Serial Pilot 2 runs on:** 327 / 345 / 324 records, 76 / 79 / 72
+edges, 7 / 7 / 6 rules every one of them reaching **≥ 3 distinct domains of life**, manifestation
+coverage **1.00** on all three, 28 / 31 / 27 claims with recorded answers, six mysteries each and
+one or two of them landing inside the eight scenes (4 and 7; 5; 3 and 8).
+
+**Nothing in `src/` had ever constructed an edge.** A single forge now writes 72 to 79 of them —
+and that count predates the `relationships` field, added afterwards so a cast's ties (who owes
+whom, who employs whom, who blames whom) land as edges rather than as prose. The pilot's world
+was forged before it and therefore does not carry them.
+
+**M1a, within-forge spread:** 0.9189, 0.9053, 0.9302. Reported, no bar.
+
+**M1b, between-shape:** `DISTINCT`, within **0.9121**, between **0.9205**, draws 3, comparable.
+**Read it as a null.** The margin is 0.0084 against a within-shape floor of 0.91, and both numbers
+sit where normalised compression distance saturates over 300-record JSON — the instrument may
+simply lack the resolution to see a prompt-shape effect at this granularity. That is the
+repository's standing prior about instructed variation arriving on schedule rather than a
+surprise, and neither shape is kept over the other. `direct` is used for the pilot on a
+**usability** ground and it is not a quality claim: `domain_first` returns a paragraph of real
+constraints in the `domain` field, which is what it was asked for and which makes the operator's
+K-world report unreadable.
+
+**M2, genre-lexicon overlap** — measured on **run 1's** three worlds, against 22,397 RoyalRoad
+fictions (12 cached shards, blurb vocabulary 79,379 words, lexicon 17,541 at a document floor of
+5, tag vocabulary 82):
+
+| | Everyone You Have Touched | The Bare Wrist | Nothing Comes True From Seed | median |
+|---|--:|--:|--:|--:|
+| as registered | 0.597 | 0.725 | 0.662 | 0.662 |
+| after the counter bug | 0.658 | 0.756 | 0.654 | 0.658 |
+
+Both rows are on the record because fixing a counter after seeing its answer is the failure
+`platform_priors.py` freezes its matchers to avoid. **No bar, as registered.** What the coined
+side actually holds after the fix reads like invention — *beodh, faske, dunnel, marnhal, ashwell,
+dorrow* — and before it held `not`, `from`, `one` and `read`.
+
+**The packet, which is the number a longer serial will be planned against.** The pilot's
+329-record world assembles into a scene-one packet at **6,731 tokens of a 16,000-token budget
+with zero omissions**, and **13,031** at scene eight with all seven prior 900-word scenes present.
+The world is a flat ~46% of what the packet can hold and does not grow with the book; prose does.
+At the **6,000 default it does not fit**: 139 of 231 facts, **no prior prose at all**, 99
+omissions — and all 18 hidden claims surviving, because the iceberg packs above the facts.
+`--context-budget 16000` is a precondition for a forged serial rather than a tuning knob.
+
+**And the live packets say the world is not what fills the budget.** Across Serial Pilot 2's eight
+drafting prompts the world holds flat at 229–231 facts while the **threads section grows from 6 to
+41** — one row per promise the summariser opens — and the prompt runs 9,052 → 14,443 tokens with
+prose stopping at three prior scenes from scene four onward. **`context_omitted` is 0 for the whole
+book on both runs**: what would not fit as prose arrived as summary. So §101.2's question has a
+number and it is not the expected one — the packet runs out somewhere around **scene ten**, and the
+thing filling it is a ledger nobody prunes. `plan/world-architect.md` §5.1 carries that as the
+retrieval design note, and it now recommends a ledger policy before a world retriever.
+
+**Serial Pilot 2 ran twice, eight scenes each, and the first run's defect is why there are two.**
+*First In Time* — a valley where the river answers a date, a right dies after five years without a
+recorded use, and the only ladder available to the protagonist is built out of other people's
+vacancies. 327 records seeded as canon on the pick (329 after defect 10's fix), 6 promises opened
+before scene one with their answers already in the store, 12 directives — 6 forged and 6 standing
+craft constraints carried from pilot 1, two with a recorded edit because their wording named
+Reappraisal's own nouns.
+
+| | run A | run B |
+|---|---|---|
+| ticks / jobs | 72 / 46, all succeeded | 53 / 46, all succeeded |
+| decisions | 21, **every one ACCEPT** | 21, **every one ACCEPT** |
+| invocations / tokens / cost | 12 / 743,603 / **$5.67** | 12 / 753,551 / **$5.89** |
+| scenes, words | 8 of 8, 7,579 | 8 of 8, 7,812 |
+| parked, poisoned, unattributed | 0, 0, 0 | 0, 0, 0 |
+| `context_omitted`, whole book | **0** | **0** |
+| findings | 5, all `promise.overdue.v0` MINOR | 5, all `promise.overdue.v0` MINOR |
+| promises | 41 opened, **0 paid** | 47 opened, **0 paid** |
+| the gate | fails on a pilot-1-shaped read-back check | **exits 0** |
+
+**Four of the five pre-registered questions answered.** The world reaches the writer — scene one's
+frozen prompt carries 229 facts, 20 hidden claims, 6 owed threads and 14 locked constraints at
+9,052 tokens, with both criteria and their ladders in the system message. The integrity gate stays
+quiet on a forged world: **zero `state.contradiction.v1`, zero `state.cardinality.v0` against three
+declared shapes**, and the only five findings on either book are defect 9's clamped arc debts.
+And the disclosure schedule holds *mechanically*, which the payloads show scene by scene: run B's
+hidden count is 20, 20, 20, **19**, 19, 19, **18**, 18 — dropping exactly at scenes 4 and 7, the
+two the world scheduled, and at no other. Run A's is 18 → 15 and was already two short at scene
+one.
+
+**The fifth is a null and it is the most useful thing in the pilot. 41 opened and 0 paid; then 47
+opened and 0 paid.** Six debts existed before scene one with their answers already in canon, and
+two were disclosed to the writer at the scenes they were scheduled for. The summariser still paid
+none and opened 41 more of its own. **So the missing answer was never the binding constraint:**
+`promises_paid` comes out of a per-scene summary call that is not told which debts are due, and
+seeding the ledger does not reach it. §61's rule is that a pre-registered null is a result; this
+one names the next question exactly. Package, pre-registration and both run records:
+[`plan/serial-pilot-2.md`](serial-pilot-2.md).
+
+### 107.9.1 Ten defects, every one found by running the thing rather than by reading it
+
+Listed because the ratio is the interesting part: **six were found by the live provider, the
+pilot or a measurement, four by the test suite**, and none by review.
+
+| # | found by | what it was |
+|---|---|---|
+| 1 | the suite | A cast member's false belief and a mystery's answer shared one predicate, so `validate` demanded a scheduled reveal for a belief that must never have one. Fixed by `claim.false` and by owing a disclosure only to a claim that **asks**. |
+| 2 | the suite | Forged records stay `PROPOSED`, and `assemble` filters proposals out — so a seeded world would have reached no packet at all and the role would have been **inert and quiet about it**. `forge --pick` is now the one exit to canon. |
+| 3 | the suite | Every scheduled answer sat in the *facts* rather than the hidden section, because the live drafting path passes no story-time cutoff and `at=None` read as "already disclosed". Fixed by `disclosure_at`, a coordinate for the reveal schedule that is deliberately **not** the record-slicing cutoff. |
+| 4 | measurement | The hidden section packed *after* the facts, so at the 6,000 default a forged world put 183 facts in the packet and left **every recorded answer entirely out of it** — each omission dutifully recorded and none of them the one that mattered. The iceberg now packs above the facts and renders below them: at the same budget the same world keeps all 18 hidden claims and drops 92 facts instead. |
+| 5 | the provider | The RS1 guard's bare `\bfranchise\b` refused **2 of 3** `domain_first` worlds on ordinary legal English — a port whose franchise is the vote, a ward surrendering its franchise. `directors._CRAFT_INSTRUCTION`'s recorded failure in a third costume; narrowed to require a capitalised title. |
+| 6 | the provider | `key_nouns` counted sentence-initial words as coined names. Both figures reported above. |
+| 7 | the provider | The forge was never told how long the book is, so one world scheduled all four answers at scenes **17, 25, 33 and 41** — right for an open-ended serial and useless for the two chapters being written, which would have opened four debts and paid none. **The 40-opened-0-paid defect reproduced by the machinery built to fix it.** The count is in the prompt and a gate checks it. |
+| 8 | the provider | Asked for a printed line form, one world returned `graph_line.label` = "one dry season in the Kettle Basin" and eight "phrases" that were clauses of a story. Well-formed JSON, accepted by every type check, and **a parser that could never match anything a scene would print** — `MalformedSheet`'s silent failure one family over. Shape bounds now refuse it, and because a graph line has no default behind it, a bad declaration degrades to absence and `cmd_new` says so rather than raising into the draft path. |
+
+| 9 | the pilot | An arc reveal scheduled at scene 41 was **clamped to the last beat** of an eight-scene opening, so `promise.overdue.v0` would have annotated four debts as late in a book that was never going to reach them. `Promise.due_key` is `str | None` and `overdue_promises` skips a row with none, so the honest encoding already existed: the debt is on the ledger and reaches the packet as owed, and nothing calls it late. |
+
+| 10 | the pilot | **The reveal schedule was in a different key vocabulary from the book's own, so the iceberg leaked in exactly the wrong direction.** `beats_for` mints `s1…s8` for an eight-scene book — width **one** — while the Architect minted `s04`, `s41`, `s92`. Order keys compare lexicographically, so `"s1" > "s04"`. Measured on the run: **both answers the opening existed to keep were handed to the writer as established fact from scene one**, and by scene eight five of six were, an arc answer six chapters out drifting into the facts at scene five. Nothing raised; the strings compared fine. Fixed by minting positions in the book's own width and by minting **none at all** for a scene the book does not have — the ordinal lives under `worlds.REVEAL_SCENE`, so a serial's later answers are recorded and permanently hidden here rather than clamped. |
+
+**Defect 8 is unfixed in Serial Pilot 2 and that is deliberate.** The pilot runs on the world that
+produced it, so its graph line is unusable and **the second extractor family is inert for this
+run**: the world grows through nothing. Re-forging for a clean pilot would have cost another $1.53
+and buried the finding. What the pilot tests — whether a forged world reaches the writer and is
+honoured — does not depend on the graph line.
+
+**Defect 9 is likewise unfixed in the run**, which was seeded before it was found: pilot 2's four
+arc debts carry a due key of `s8` rather than none, so `promise.overdue.v0` will annotate them at
+the last scene. MINOR and `heuristic`, so it cannot block or park; recorded here so the run
+record's overdue count is read as this rather than as the book failing to pay.
+
+### 107.9.2 What has not been run
+
+**Whether the prose is any good.** No reader has seen a word of either book, the §97 sim has not
+run on them, and the operator's acceptance read has not been spent. M5 and M6 are fidelity numbers
+and neither is entitled to an opinion about quality.
+
+**Why the ledger pays nothing.** S5's null names the mechanism to look at — the summary call is
+not told which debts are due — and nothing here has changed it or measured whether telling it
+would help.
+
+**The between-Architect comparison.** The distinctness control is built for K candidates from one
+brief. Two briefs producing two worlds rather than one world in hats is unmeasured, and N
+architects divide §61's alpha by N exactly as N directors do.
+
+**Anything about quality.** No reader has seen a word of this, the §97 sim has not run on it, and
+no counter here is entitled to an opinion. Nine worlds that clear four deterministic gates is nine
+worlds that clear four deterministic gates.
+
+**The cross-forge collapse question.** The collapse gate is *within*-forge. Run 2 produced a
+land-survey-and-geodesy world and run 3 produced another; nothing compares a forge against the
+ones before it, and the operator reading K worlds is the only control that currently catches it.
+
+### 107.10 Anti-scope
+
+No new judges and no new quality metric. No human raters, panels, or solicited judgment of any kind
+— §95's scope axiom is unchanged and nothing built here asks anyone anything. No selection among
+worlds by any model, score, ranking or preference signal, enforced by an import ban. No stat-sheet
+default, no hardcoded genre vocabulary, no combat assumption, and no requirement that a world have
+a system at all. No schema class where a record pattern will do; no new `StateRecordKind`, no
+migration, no contracts bump. No claim about book quality from a counter. The Director, Writer and
+Reader/Judge roles are untouched and no Director kind was added. Retrieval when a serial outgrows
+the packet is a design note and is not started. There is **no amendment surface**: a world is forged
+once, before scene one, and whether the growth path or the operator authors a mid-serial change is
+an open decision rather than a built feature. The between-Architect comparison is not run — N
+architects divide §61's alpha by N exactly as N directors do, and nothing has measured that two
+briefs produce two worlds rather than one world in hats. And the first quality question in this
+project with an answer outside the text is now live and unanswered: a world that literalises a real
+domain can be **wrong** about it, and nothing checks that.
