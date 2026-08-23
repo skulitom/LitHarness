@@ -1009,6 +1009,12 @@ def test_a_forged_bundle_seeds_a_book_with_no_provider_call(tmp_path: Path) -> N
     file the forge writes is parseable as a `StateSnapshot` by the same `parse_artifact` call
     `cmd_new` makes, and that the promises land as open rows with a due key from the book's own
     beat sheet rather than from a format string.
+
+    **The pick is run without `--scenes` on purpose.** Serial Pilot 4 forged at eight and
+    picked at the default six, and the reveal scheduled for the last scene came out with an
+    ordinal and no disclosure position — `plan/serial-pilot-4.md` §5.6. The forge records the
+    width now, so the operator carrying the number between two commands is no longer the only
+    thing standing between an eight-scene book and a reveal that can never land.
     """
     out = tmp_path / "forge"
     out.mkdir()
@@ -1022,12 +1028,14 @@ def test_a_forged_bundle_seeds_a_book_with_no_provider_call(tmp_path: Path) -> N
         created_at="2026-08-21T00:00:00Z",
         brief="a test brief",
         shape=architect.DIRECT,
+        scenes=8,
     )
     (out / "forge.json").write_text(
         json.dumps(
             {
                 "architect_id": bundle["architect_id"],
                 "k": 1,
+                "scenes": 8,
                 "candidates": [bundle],
             },
             ensure_ascii=False,
@@ -1037,28 +1045,26 @@ def test_a_forged_bundle_seeds_a_book_with_no_provider_call(tmp_path: Path) -> N
 
     database = tmp_path / "pilot.db"
     assert main(["--database", str(database), "init"]) == 0
-    assert (
-        main(
-            [
-                "--database",
-                str(database),
-                "forge",
-                "--out",
-                str(out),
-                "--pick",
-                "1",
-                "--scenes",
-                "8",
-            ]
-        )
-        == 0
-    )
+    assert main(["--database", str(database), "forge", "--out", str(out), "--pick", "1"]) == 0
     seed = out / "seed.json"
     snapshot = lc.parse_artifact(
         lc.StateSnapshot, json.loads(seed.read_text(encoding="utf-8"))
     )
     assert snapshot.meta.actor.startswith(worlds.ARCHITECT_AUTHOR_PREFIX)
     assert snapshot.records
+
+    # **Every reveal the book is long enough to reach has a position.** The ordinal is stored
+    # either way; the position is what `undisclosed_claims` reads, and a claim without one
+    # stays hidden for the whole book.
+    scheduled = worlds.reveal_scenes(snapshot.records)
+    assert scheduled == {"the_tide": 7}
+    disclosed = worlds.disclosures(snapshot.records)
+    assert {
+        claim: scene for claim, scene in scheduled.items() if scene <= 8
+    }.keys() <= disclosed.keys()
+    assert disclosed["the_tide"] == ("s7",)
+    # And the file `new --scenes` is read off downstream carries the same width.
+    assert json.loads((out / "directives.json").read_text(encoding="utf-8"))["scenes"] == 8
 
     assert (
         main(
@@ -1274,6 +1280,203 @@ def test_picking_before_forging_says_which_file_is_missing(tmp_path: Path) -> No
     )
 
 
+# -- the width the two forge commands have to agree on ---------------------------------------
+#
+# `plan/serial-pilot-4.md` §5.6: the forge ran at eight scenes, the pick a day later took
+# `DEFAULT_SCENES`, and the reveal the eight scenes existed to settle came out with an ordinal
+# and no disclosure position — hidden for the whole book, silently. The number is recorded now.
+
+
+def _forge_file(
+    out: Path, *, scenes: int | None, mysteries: list[dict[str, Any]]
+) -> dict[str, Any]:
+    """A `forge.json` on disk, with or without the width the forge ran at.
+
+    `scenes=None` writes the shape every file already on disk has: no key at all. That absence
+    has to keep behaving exactly as it did, which is the second half of this fix.
+    """
+    built = world()
+    built["mysteries"] = mysteries
+    bundle = architect.bundle_for(
+        architect.Candidate(0, built),
+        book_id="00000000-0000-5000-8000-00000000cc01",
+        branch_id="00000000-0000-5000-8000-00000000cc02",
+        revision_id="00000000-0000-5000-8000-00000000cc03",
+        architect_id=worlds.architect_id_for("width"),
+        created_at="2026-08-23T00:00:00Z",
+        brief="width",
+        shape=architect.DIRECT,
+        scenes=scenes if scenes is not None else architect.DEFAULT_SCENES,
+    )
+    forged: dict[str, Any] = {
+        "architect_id": bundle["architect_id"],
+        "k": 1,
+        "candidates": [bundle],
+    }
+    if scenes is not None:
+        forged["scenes"] = scenes
+    out.mkdir(parents=True, exist_ok=True)
+    (out / "forge.json").write_text(json.dumps(forged, ensure_ascii=False), encoding="utf-8")
+    return bundle
+
+
+def _positions(seed: Path) -> dict[str, tuple[str | None, ...]]:
+    snapshot = lc.parse_artifact(lc.StateSnapshot, json.loads(seed.read_text(encoding="utf-8")))
+    return worlds.disclosures(snapshot.records)
+
+
+#: One reveal inside a six-scene book and one only an eight-scene book reaches — the shape of
+#: the pilot 4 world, where `myst_why_reeves_takes_fail` landed at s4 and
+#: `myst_where_the_fourth_grade_went` at s8 or nowhere at all.
+LATE_REVEAL = [
+    {
+        "id": "near",
+        "question": "what is the tide aimed at",
+        "answer": "the assay house",
+        "disclosed_at_scene": 3,
+        "kind": "mystery",
+    },
+    {
+        "id": "late",
+        "question": "where the fourth grade went",
+        "answer": "it was never assayed",
+        "disclosed_at_scene": 8,
+        "kind": "mystery",
+    },
+]
+
+
+def test_a_pick_with_no_scenes_takes_the_width_the_forge_recorded(tmp_path: Path) -> None:
+    """The measured defect, at the grain it was measured: one reveal at 3, one at 8.
+
+    At `DEFAULT_SCENES` the late one keeps its ordinal and gets no position, which
+    `undisclosed_claims` reads as hidden throughout — so the reveal the eight scenes exist to
+    settle can never land. The recorded width is what the pick reads now.
+    """
+    out = tmp_path / "forge"
+    _forge_file(out, scenes=8, mysteries=LATE_REVEAL)
+    database = tmp_path / "pilot.db"
+    assert main(["--database", str(database), "init"]) == 0
+    assert main(["--database", str(database), "forge", "--out", str(out), "--pick", "1"]) == 0
+    assert _positions(out / "seed.json") == {"near": ("s3",), "late": ("s8",)}
+
+
+def test_a_scenes_flag_that_disagrees_with_the_forged_width_is_refused_naming_both(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    """Either number could be the wrong one, and only the operator knows which.
+
+    Obeying the flag would silently drop the late reveal's position; obeying the record would
+    silently overrule a person who typed a number. So it refuses, names both, and writes
+    nothing — the bundle files are what a book gets seeded from.
+    """
+    out = tmp_path / "forge"
+    _forge_file(out, scenes=8, mysteries=LATE_REVEAL)
+    database = tmp_path / "pilot.db"
+    assert main(["--database", str(database), "init"]) == 0
+    assert (
+        main(
+            ["--database", str(database), "forge", "--out", str(out), "--pick", "1",
+             "--scenes", "6"]
+        )
+        == 2
+    )
+    err = capsys.readouterr().err
+    assert "--scenes 6" in err and "8 scene(s)" in err
+    assert not (out / "seed.json").exists()
+
+    # The same flag, agreeing, is an ordinary pick.
+    assert (
+        main(
+            ["--database", str(database), "forge", "--out", str(out), "--pick", "1",
+             "--scenes", "8"]
+        )
+        == 0
+    )
+    assert _positions(out / "seed.json") == {"near": ("s3",), "late": ("s8",)}
+
+
+def test_a_forge_file_written_before_the_width_was_recorded_picks_as_it_always_did(
+    tmp_path: Path,
+) -> None:
+    """No `scenes` key is every bundle already on disk, and none of them may start refusing.
+
+    Absence means "nothing is recorded", not "recorded as six": the flag still decides, and
+    with no flag the pick still falls back to `DEFAULT_SCENES` — which is the old behaviour,
+    defect included. Parking those bundles over a fault none of them can be shown to have
+    would be the cure doing more damage than the disease.
+    """
+    out = tmp_path / "forge"
+    _forge_file(out, scenes=None, mysteries=LATE_REVEAL)
+    database = tmp_path / "pilot.db"
+    assert main(["--database", str(database), "init"]) == 0
+
+    assert main(["--database", str(database), "forge", "--out", str(out), "--pick", "1"]) == 0
+    assert _positions(out / "seed.json") == {"near": ("s3",)}
+
+    assert (
+        main(
+            ["--database", str(database), "forge", "--out", str(out), "--pick", "1",
+             "--scenes", "8"]
+        )
+        == 0
+    )
+    assert _positions(out / "seed.json") == {"near": ("s3",), "late": ("s8",)}
+
+
+def test_the_forge_records_the_width_it_forged_at(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """The half that makes the pick's default possible, and the only test that runs the forge.
+
+    A stub registry, so the generation branch runs with no provider anywhere. What is asserted
+    is that `forge.json` carries the number every candidate's disclosure positions were minted
+    at — a file that does not carry it is a file `--pick` has to guess about.
+    """
+    import litharness.cli as cli_module
+    from litharness.providers.fake import FakeProvider
+    from litharness.providers.registry import ProviderRegistry
+
+    provider = FakeProvider()
+
+    def two_worlds() -> str:
+        # Two, and distinct in domain and geometry: `worlds_from` refuses K=1 as "not a search"
+        # and refuses a K-way collapse.
+        return json.dumps(
+            {
+                "worlds": [
+                    world(),
+                    world(title="Slack Water", domain="river ferry rights", geometry="cycle"),
+                ]
+            }
+        )
+
+    provider.set_responses([two_worlds()])
+    monkeypatch.setattr(
+        cli_module, "build_default_registry", lambda *a, **k: ProviderRegistry(provider)
+    )
+
+    out = tmp_path / "forge"
+    database = tmp_path / "pilot.db"
+    assert main(["--database", str(database), "init"]) == 0
+    assert (
+        main(["--database", str(database), "forge", "a brief", "--k", "2", "--out", str(out),
+              "--scenes", "8"])
+        == 0
+    )
+    assert json.loads((out / "forge.json").read_text(encoding="utf-8"))["scenes"] == 8
+
+    # And with no flag it records the default rather than nothing, so the pick never guesses.
+    other = tmp_path / "forge-default"
+    provider.set_responses([two_worlds()])
+    assert (
+        main(["--database", str(database), "forge", "a brief", "--k", "2", "--out", str(other)])
+        == 0
+    )
+    recorded = json.loads((other / "forge.json").read_text(encoding="utf-8"))["scenes"]
+    assert recorded == architect.DEFAULT_SCENES
+
+
 # -- re-materialising the pilot bundle -------------------------------------------------------
 #
 # `pilot2/` was gitignored and is gone; the committed world package is the source. Re-forging
@@ -1391,10 +1594,70 @@ def test_a_scene_count_the_directives_were_not_written_for_is_refused(tmp_path: 
     """Story keys minted at one book length are not comparable to beat keys minted at another
     — run A's whole defect, one layer up (`"s1" > "s04"`, stage-0 §107.9.1 defect 10). The
     committed directives record the length they were written for, so the mismatch is a refusal
-    rather than a book whose reveal schedule silently misses."""
+    rather than a book whose reveal schedule silently misses.
+
+    And **omitting the flag reads the recorded length rather than a default**: the hand-carried
+    scene count is the defect `plan/serial-pilot-4.md` §5.6 measured on `forge --pick`, and a
+    tool that rebuilds the same bundle should not keep a hard-coded 8 for one pilot's world.
+    """
     tool = _rematerialise()
     assert tool.main(["--out", str(tmp_path / "y"), "--scenes", "12"]) == 2
     assert not (tmp_path / "y").exists()
+
+    plain = tmp_path / "recorded"
+    given = tmp_path / "by-hand"
+    assert tool.main(["--out", str(plain), "--created-at", "2026-08-23T00:00:00Z"]) == 0
+    assert tool.main(["--out", str(given), "--scenes", "8", "--created-at",
+                      "2026-08-23T00:00:00Z"]) == 0
+    for name in ("seed.json", "directives.json", "promises.json"):
+        assert (plain / name).read_text(encoding="utf-8") == (
+            given / name
+        ).read_text(encoding="utf-8")
+
+    # A bundle recorded at some *other* width, so "reads the record" is distinguishable from
+    # "happens to match the pilot the defaults were written for".
+    narrow = world()
+    narrow["mysteries"] = [dict(narrow["mysteries"][0], disclosed_at_scene=3)]
+    candidate = architect.Candidate(0, narrow)
+    package = tmp_path / "narrow-world.json"
+    package.write_text(
+        json.dumps(
+            {"architect_id": "arch-narrow", "k": 2, "picked": 1, "world": narrow},
+            ensure_ascii=False,
+        ),
+        encoding="utf-8",
+    )
+    directives = tmp_path / "narrow-directives.json"
+    directives.write_text(
+        json.dumps(
+            {
+                "source": str(package),
+                "title": narrow["title"],
+                "premise": narrow["premise"],
+                "scenes": 6,
+                "directives": [dict(item) for item in architect.directives_for(candidate)],
+            },
+            ensure_ascii=False,
+        ),
+        encoding="utf-8",
+    )
+    promises = tmp_path / "narrow-promises.json"
+    promises.write_text(
+        json.dumps([dict(item) for item in architect.promises_for(candidate)], ensure_ascii=False),
+        encoding="utf-8",
+    )
+    narrow_out = tmp_path / "narrow"
+    assert (
+        tool.main(
+            ["--out", str(narrow_out), "--world", str(package), "--directives", str(directives),
+             "--promises", str(promises), "--created-at", "2026-08-23T00:00:00Z"]
+        )
+        == 0
+    )
+    seed = lc.parse_artifact(
+        lc.StateSnapshot, json.loads((narrow_out / "seed.json").read_text(encoding="utf-8"))
+    )
+    assert worlds.disclosures(seed.records) == {"the_tide": ("s3",)}
 
 
 # --- the ladder the reader counts (plan/handoff-numbers-go-up.md Task 1) -----------------------

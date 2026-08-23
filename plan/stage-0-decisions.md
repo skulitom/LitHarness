@@ -11784,3 +11784,105 @@ prompt, rule or example. `serial.db`, `serial3.db`, `serial4.db`, `pilot3/` and 
 **read-only** and never written; nothing was re-picked and no accepted scene redrafted. **And no
 claim anywhere that a world with an inventory produces a better book** — the measurement says the
 model could not previously *express* one, which is a fact about the model and nothing more.
+
+
+## 115. The forge knew how wide the book was, the pick had to be told again, and on Serial Pilot 4 it was not
+
+`forge` and `forge --pick` are two commands a day apart, both carry `--scenes`, and the number
+lived nowhere but in the operator's head between them. `--pick` mints every reveal's disclosure
+position at `args.scenes`, which defaulted to `architect.DEFAULT_SCENES`; `story_key` mints **no**
+position for a scene the book does not have, and `worlds.undisclosed_claims` keeps a claim with no
+position hidden throughout. So a pick run at the default over a bundle forged wider does not fail,
+does not warn, and produces a seed whose late reveal can never land.
+
+### 115.1 What was measured, and it was measured twice
+
+`plan/serial-pilot-4.md` §5.6 measured it first, on the world *A Good Take*: the forge ran at eight
+scenes, the pick was run without `--scenes`, and one of the two in-book reveals came out with an
+ordinal and no position. That section owns the record counts and they are not restated here.
+
+This session re-ran the same pick four ways against the same `pilot4/direct3/forge.json`, read-only
+into scratch, no provider call and a throwaway database. §5.6's two record counts reproduce
+exactly, and the positions are the load-bearing half:
+
+| run | `forge.json` records a width | `--scenes` | positions minted |
+|---|---|---|---|
+| A — as it was run on 2026-08-22 | no | — | `myst_why_reeves_takes_fail` → `s4` |
+| B — the correction | no | `8` | `…reeves_takes_fail` → `s4`, `myst_where_the_fourth_grade_went` → **`s8`** |
+| C — what shipped here | `8` | — | identical to B: same `seed.json` and `promises.json` byte for byte |
+| D — the flag disagreeing | `8` | `6` | refused, exit 2, nothing written |
+
+That world schedules six reveals and only two of them fall inside eight scenes, so the missing
+position was **half of everything the opening could settle** — the 40-opened-0-paid defect (§110)
+reproduced by the machinery built to stop producing it, and reproduced silently.
+
+### 115.2 What shipped
+
+**The forge records the width it forged at.** `cmd_forge` writes `"scenes"` at the top level of
+`forge.json` beside `k` and `prompt_shape`, resolved once and used for `render_world_request` and
+every `bundle_for` in the same run, so the file states the width its candidates' positions were
+actually minted at rather than one asserted next to them.
+
+**`--pick` reads it instead of defaulting.** `cli._picked_scene_count` takes the recorded width
+when `--scenes` is absent, and the width flows to the promoted snapshot, the directive file that
+`new --scenes` is read off downstream, and the next-command line printed for the operator.
+
+**An explicit `--scenes` that disagrees is refused, naming both numbers.** Either number can be
+the wrong one and only the operator knows which: obeying the flag silently drops a position,
+obeying the record silently overrules a person who typed a number. Exit 2, no bundle written —
+`tools/rematerialise_forge_bundle.py` already made this refusal against the directive file it is
+handed, and this is the same refusal one step upstream.
+
+**The re-materialise tool stops carrying a hard-coded 8.** It did not have the defect — its
+cross-check against `directives["scenes"]` fails closed — but its `--scenes` defaulted to one
+pilot's number. It now reads the recorded width when the flag is omitted and keeps the refusal
+when it is given and disagrees. Byte-identical output for Serial Pilot 2 either way.
+
+Six tests, five of which fail on the code that shipped before this entry:
+`tests/test_architect.py::test_a_pick_with_no_scenes_takes_the_width_the_forge_recorded`,
+`test_a_scenes_flag_that_disagrees_with_the_forged_width_is_refused_naming_both`,
+`test_the_forge_records_the_width_it_forged_at`, the widened
+`test_a_forged_bundle_seeds_a_book_with_no_provider_call` (which now picks *without* `--scenes`,
+as an operator does), and the widened
+`test_a_scene_count_the_directives_were_not_written_for_is_refused`. The sixth is below.
+
+### 115.3 The absent key keeps the old behaviour, and that is a decision rather than an oversight
+
+Every `forge.json` already on disk was written before the width was recorded. Absence means
+*nothing is recorded*, not *recorded as six*: the flag still decides, and with no flag the pick
+still falls back to `DEFAULT_SCENES` — the old behaviour, defect included. Refusing those bundles
+would park every one of them over a fault none of them can be shown to have, and re-forging one
+costs a paid run and a fresh operator choice.
+`test_a_forge_file_written_before_the_width_was_recorded_picks_as_it_always_did` pins both halves
+and is the one test here that passes on the old code as well as the new, which is the property it
+exists to state.
+
+### 115.4 What was refused
+
+**No bar and no attainability question, because nothing here is a measurement of quality.** This
+is a wiring defect in two CLI commands; the four checks (§81, §85, §87, §89) have nothing to
+range over and no bar is declared.
+
+**No model call was added anywhere.** `--pick` remains a person's act with no provider in it, the
+recorded width is a number copied between two files, and no role gained a judgment.
+
+**Nothing was re-picked and no book was reseeded.** §5.6 already records that `serial4.db` is
+unusable and that the bundle was re-picked correctly on 2026-08-22
+(`dec-7f3ea41cdb149f2bb0b4bb80`). This entry changes the machinery, not that record; the four runs
+in §115.1 wrote into scratch and `pilot4/direct3/` was read and never written.
+
+**No clamp.** A reveal scheduled past the last scene still gets an ordinal and no position, which
+is `story_key`'s honest encoding and what `test_a_debt_the_serial_settles_later_is_opened_without_a_due_date`
+has asserted since §110 — four of *A Good Take*'s six reveals are legitimately outside the opening
+and none of them was given a position it did not earn.
+
+### 115.5 Anti-scope
+
+No change to `SIX_BEAT`, `arc_template`, `beats_for`, `story_key` or any key-minting rule — the
+width was always the book's, and the only defect was which number reached it. No change to what
+the forge asks a model for, to the gates, to the collapse refusal or to `DEFAULT_SCENES` itself.
+No judge, reader, persona, axis, pool or pre-registration was touched. No human judgment entered
+anything here (§95). RS1 holds: nothing under `src/litharness/` gained a corpus reference and no
+corpus text or digest crossed into a prompt. And no claim that a book seeded at the right width is
+a better book — the claim is only that a reveal the world scheduled inside the book can now arrive
+there, which is a fact about a story key.

@@ -3159,6 +3159,50 @@ def _forge_paths(out: Path) -> tuple[Path, Path, Path, Path]:
     return (out / "forge.json", out / "seed.json", out / "directives.json", out / "promises.json")
 
 
+def _picked_scene_count(
+    forged: dict[str, Any], requested: int | None, *, source: Path
+) -> tuple[int | None, str]:
+    """The width `--pick` mints story keys at, or `None` and the refusal that says why not.
+
+    **The forge and the pick are two commands, and the number lived only in the operator's
+    head between them.** Measured on Serial Pilot 4 (`plan/serial-pilot-4.md` §5.6): the forge
+    ran at eight scenes, the pick was run a day later without `--scenes`, and `story_key` mints
+    no position for a scene the book does not have — so the eight-scene reveal kept its ordinal
+    and got no disclosure, and `undisclosed_claims` keeps a claim with no position hidden
+    throughout. The reveal those eight scenes existed to settle could never land: 40-opened-0-
+    paid, reproduced by the machinery built to stop producing it, and silently.
+
+    So the forge records the width it forged at, and the pick reads it rather than guessing
+    `DEFAULT_SCENES`. An explicit `--scenes` that *disagrees* is *refused rather than obeyed*,
+    because either number could be the wrong one and only the operator knows which — the same
+    refusal `tools/rematerialise_forge_bundle.py` already makes against the directive file it
+    is handed, and for the same reason: a story key minted at one width does not compare to a
+    beat key minted at another (`story_key`, and §110's measured leak).
+
+    **A `forge.json` written before the width was recorded has no key, and that absence keeps
+    the old behaviour exactly** — `--scenes` if given, `DEFAULT_SCENES` if not. Refusing those
+    would park every bundle already on disk over a fault none of them can be shown to have.
+    """
+    recorded = forged.get("scenes")
+    if recorded is not None and (
+        not isinstance(recorded, int) or isinstance(recorded, bool) or recorded < 1
+    ):
+        return None, (
+            f"litharness: {source} records a scene count of {recorded!r}, which is not a number "
+            "of scenes; picking from it would mint story keys at a width nobody chose"
+        )
+    if recorded is None:
+        return (architect.DEFAULT_SCENES if requested is None else requested), ""
+    if requested is None or requested == recorded:
+        return recorded, ""
+    return None, (
+        f"litharness: --scenes {requested} disagrees with {source}, which was forged at "
+        f"{recorded} scene(s). A story key minted at one width is not comparable to a beat key "
+        f"minted at another, and only you know which number is the wrong one. Re-run the pick "
+        f"with --scenes {recorded}, or forge again at {requested}."
+    )
+
+
 def cmd_forge(args: argparse.Namespace) -> int:
     """A world, forged: brief → K candidates → deterministic gates → a seed `new` consumes.
 
@@ -3190,6 +3234,10 @@ def cmd_forge(args: argparse.Namespace) -> int:
             )
             return EXIT_FAULT
         chosen = bundles[args.pick - 1]
+        scenes, fault = _picked_scene_count(forged, args.scenes, source=forge_path)
+        if scenes is None:
+            print(fault, file=sys.stderr)
+            return EXIT_FAULT
         # **The one place a forged world becomes canon, and the reason it is here.** The bundles
         # on disk hold the world as it was *proposed*; `context.assemble` filters proposals out
         # by `is_canon` before anything else happens, so a serial seeded from them would draft
@@ -3207,8 +3255,9 @@ def cmd_forge(args: argparse.Namespace) -> int:
             created_at=str(chosen["seed"]["meta"]["created_at"]),
             authority=lc.StateAuthority.ACCEPTED_CANON,
             # The book's own key width, so a reveal position is comparable to a beat key.
-            # `story_key` records what went wrong when it was not.
-            scenes=args.scenes,
+            # `story_key` records what went wrong when it was not, and `_picked_scene_count`
+            # records what went wrong when the operator had to carry the number by hand.
+            scenes=scenes,
         )
         seed_path.write_text(
             json.dumps(lc.to_jsonable(admitted), ensure_ascii=False, indent=2), encoding="utf-8"
@@ -3219,7 +3268,7 @@ def cmd_forge(args: argparse.Namespace) -> int:
                     "source": str(forge_path),
                     "title": chosen["title"],
                     "premise": chosen["premise"],
-                    "scenes": args.scenes,
+                    "scenes": scenes,
                     "directives": chosen["directives"],
                 },
                 ensure_ascii=False,
@@ -3267,16 +3316,19 @@ def cmd_forge(args: argparse.Namespace) -> int:
         print("Next:")
         print(
             f"  litharness --database {args.database} new {chosen['title']!r} "
-            f"--premise <the premise in {directives_path.name}> --scenes {args.scenes} "
+            f"--premise <the premise in {directives_path.name}> --scenes {scenes} "
             f"--state {seed_path} --promises {promises_path}"
         )
         return EXIT_OK
 
     brief = args.brief or ""
     architect_id = worlds_domain.architect_id_for(brief)
+    # The width every candidate is forged at, resolved once so the file can record it. What
+    # `--pick` does with that record is `_picked_scene_count`.
+    scenes = architect.DEFAULT_SCENES if args.scenes is None else args.scenes
     try:
         request = architect.render_world_request(
-            brief, k=args.k, shape=args.shape, scenes=args.scenes
+            brief, k=args.k, shape=args.shape, scenes=scenes
         )
     except architect.ArchitectInputError as error:
         print(f"litharness: {error}", file=sys.stderr)
@@ -3339,7 +3391,7 @@ def cmd_forge(args: argparse.Namespace) -> int:
                 created_at=stamp,
                 brief=brief,
                 shape=args.shape,
-                scenes=args.scenes,
+                scenes=scenes,
             )
             for candidate in candidates
         ]
@@ -3370,6 +3422,10 @@ def cmd_forge(args: argparse.Namespace) -> int:
             "brief": brief,
             "prompt_shape": args.shape,
             "k": args.k,
+            # **The number the operator used to have to carry between two commands.** Every
+            # disclosure position in every candidate was minted at this width; `--pick` reads
+            # it from here rather than defaulting, and refuses a `--scenes` that disagrees.
+            "scenes": scenes,
             "created_at": stamp,
             "provider": result.provider,
             "model": result.model,
@@ -5054,8 +5110,11 @@ def build_parser() -> argparse.ArgumentParser:
     forge.add_argument(
         "--scenes",
         type=int,
-        default=len(SIX_BEAT),
-        help="scene count written into the chosen bundle's directive file, for `new --scenes`",
+        default=None,
+        help="how many scenes the book being forged for has. Story keys are minted at this "
+        f"width (default {architect.DEFAULT_SCENES}), and the forge records it — so `--pick` "
+        "takes the forged width when this is omitted, and refuses when it is given and "
+        "disagrees",
     )
     forge.set_defaults(func=cmd_forge)
 

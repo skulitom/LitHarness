@@ -78,7 +78,7 @@ def bundle_files(
     world_path: Path,
     directives_path: Path,
     promises_path: Path,
-    scenes: int,
+    scenes: int | None,
     created_at: str,
 ) -> dict[str, str]:
     """`{filename: text}` for the three files `forge --pick` writes. Pure; writes nothing.
@@ -87,6 +87,12 @@ def bundle_files(
     the run: the directives and promises files must be the ones **this** world produces, or
     the bundle would stand a book up on one world's canon and another world's debts, and
     nothing downstream would notice — `new --state` imports whatever snapshot it is handed.
+
+    `scenes` is the width the story keys are minted at, and `None` means *take the one the
+    bundle records*. A number given here is checked against that record rather than trusted
+    over it: the operator carrying a scene count by hand between two commands is the defect
+    `plan/serial-pilot-4.md` §5.6 measured, and `cli._picked_scene_count` is the same refusal
+    one step upstream.
     """
     package = json.loads(world_path.read_text(encoding="utf-8"))
     picked = package.get("picked")
@@ -98,6 +104,23 @@ def bundle_files(
     architect_id = str(package["architect_id"])
     candidate = architect.Candidate(picked - 1, package["world"])
 
+    directives = json.loads(directives_path.read_text(encoding="utf-8"))
+    promises = json.loads(promises_path.read_text(encoding="utf-8"))
+    recorded = directives.get("scenes")
+    if not isinstance(recorded, int) or isinstance(recorded, bool) or recorded < 1:
+        raise BundleFault(
+            f"{directives_path} records no scene count ({recorded!r}); the width its story "
+            "keys were minted at cannot be recovered and this tool will not guess one"
+        )
+    if scenes is None:
+        scenes = recorded
+    elif scenes != recorded:
+        raise BundleFault(
+            f"--scenes {scenes} disagrees with {directives_path}, which was written for "
+            f"{recorded} scene(s); a story key minted at one length is not comparable to a "
+            "beat key minted at another, and only you know which number is the wrong one"
+        )
+
     complaints = architect.gate_candidate(candidate, scenes=scenes)
     if complaints:
         raise BundleFault(
@@ -105,17 +128,10 @@ def bundle_files(
             + "; ".join(complaints)
         )
 
-    directives = json.loads(directives_path.read_text(encoding="utf-8"))
-    promises = json.loads(promises_path.read_text(encoding="utf-8"))
     if [dict(item) for item in architect.directives_for(candidate)] != directives["directives"]:
         raise BundleFault(f"{directives_path} is not the directive set this world produces")
     if [dict(item) for item in architect.promises_for(candidate)] != promises:
         raise BundleFault(f"{promises_path} is not the promise set this world produces")
-    if directives.get("scenes") != scenes:
-        raise BundleFault(
-            f"{directives_path} was written for {directives.get('scenes')} scenes, not {scenes}; "
-            "a story key minted at one length is not comparable to a beat key minted at another"
-        )
 
     snapshot = architect.snapshot_for(
         candidate,
@@ -147,7 +163,13 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--world", type=Path, default=DEFAULT_WORLD)
     parser.add_argument("--directives", type=Path, default=DEFAULT_DIRECTIVES)
     parser.add_argument("--promises", type=Path, default=DEFAULT_PROMISES)
-    parser.add_argument("--scenes", type=int, default=8)
+    parser.add_argument(
+        "--scenes",
+        type=int,
+        default=None,
+        help="the width to mint story keys at. Omitted, it is read off the directive file the "
+        "pick wrote; given, it must agree with that file or the run is refused",
+    )
     parser.add_argument(
         "--created-at",
         default=None,

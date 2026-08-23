@@ -407,6 +407,13 @@ between two commands. The `--scenes` flag is on both; only one of them was given
 a defect of the pick path, not fixed here** — `plan/handoff-protagonist.md` does not reach the
 forge CLI, and a change to what `--pick` defaults to is its own piece of work with its own test.
 
+**Fixed on 2026-08-23 as stage-0 §115.** The forge now records the width it forged at, `--pick`
+reads it when `--scenes` is absent, and a `--scenes` that disagrees with the record is refused
+naming both numbers. The four runs in §115.1 re-ran this pick against this bundle read-only and
+reproduce the two record counts above exactly; a `forge.json` written before the width was
+recorded — which is every one on this machine, including `pilot4/direct3/` — still picks exactly
+as it did, so the table above stays reproducible.
+
 **Consequence for this pilot: `serial4.db` is unusable and cannot be patched.** The `wants`
 duplicate is one record; the missing disclosure position is a different world. The bundle has been
 re-picked correctly (`dec-7f3ea41cdb149f2bb0b4bb80`, 292 records, two positions minted, wired
