@@ -29,6 +29,10 @@ arm = pytest.importorskip(
 
 FIXTURE = Path(__file__).resolve().parent / "fixtures" / "lrc-synthetic-20-chapter.json"
 
+#: The handoff's Task 0.2 freezes exactly these horizons; the module's SECTION_56_4
+#: table also carries the ledger's 20-scene row, which stays reference data here.
+HANDOFF_HORIZONS = (30, 57, 82, 120)
+
 #: Where the sibling repository's long-serial workloads land when its generator has run.
 RLM_DIR = Path(r"C:\DEV\LongRangeContext\benchmarks\corpora\rlm")
 
@@ -240,7 +244,7 @@ def _reference_table() -> list[dict[str, int]]:
             "facts": expected[2],
             "dark": expected[3],
         }
-        for scenes, expected in sorted(arm.SECTION_56_4.items())
+        for scenes, expected in sorted((s, e) for s, e in arm.SECTION_56_4.items() if s in HANDOFF_HORIZONS)
     ]
 
 
@@ -248,7 +252,7 @@ def _reference_table() -> list[dict[str, int]]:
 def test_census_over_rlm_serial_lands_on_section_56_4():
     rows: list[dict[str, int]] = []
     failures: list[str] = []
-    for scenes, expected in sorted(arm.SECTION_56_4.items()):
+    for scenes, expected in sorted((s, e) for s, e in arm.SECTION_56_4.items() if s in HANDOFF_HORIZONS):
         path = RLM_DIR / f"rlm-serial-{scenes}.json"
         if not path.exists():
             pytest.fail(
