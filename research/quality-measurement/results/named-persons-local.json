@@ -1,0 +1,693 @@
+{
+  "substrate": "own books, book-library/*/chapters/*.txt",
+  "library_root": "C:\\DEV\\LitHarness\\book-library",
+  "books": {
+    "reappraisal": {
+      "chapters": [
+        {
+          "unit_id": "reappraisal/Chapter1",
+          "words": 4151,
+          "raw": 32,
+          "net": 30,
+          "per_1k": 7.227,
+          "contractions": [
+            "I'll",
+            "I'm"
+          ],
+          "introductions": [
+            {
+              "name": "Weigh Street",
+              "offset": 0
+            },
+            {
+              "name": "Silas",
+              "offset": 46
+            },
+            {
+              "name": "Marta",
+              "offset": 110
+            },
+            {
+              "name": "Vance",
+              "offset": 164
+            },
+            {
+              "name": "Kelling",
+              "offset": 172
+            },
+            {
+              "name": "Hesk Turrow",
+              "offset": 230
+            },
+            {
+              "name": "Bellow and Sons",
+              "offset": 235
+            },
+            {
+              "name": "Vessil",
+              "offset": 259
+            },
+            {
+              "name": "I'll",
+              "offset": 308
+            },
+            {
+              "name": "I'm",
+              "offset": 660
+            },
+            {
+              "name": "Master Ottil Vance",
+              "offset": 742
+            },
+            {
+              "name": "Sound",
+              "offset": 770
+            },
+            {
+              "name": "Master Vance",
+              "offset": 866
+            },
+            {
+              "name": "Coop Hill",
+              "offset": 1012
+            },
+            {
+              "name": "You're",
+              "offset": 1578
+            },
+            {
+              "name": "Denn",
+              "offset": 1620
+            },
+            {
+              "name": "Remaining",
+              "offset": 1970
+            },
+            {
+              "name": "System",
+              "offset": 1974
+            },
+            {
+              "name": "Kindler",
+              "offset": 2025
+            },
+            {
+              "name": "Chainhand",
+              "offset": 2028
+            },
+            {
+              "name": "Tide",
+              "offset": 2085
+            },
+            {
+              "name": "Fen Row",
+              "offset": 2088
+            },
+            {
+              "name": "Cutter",
+              "offset": 2115
+            },
+            {
+              "name": "Sallow",
+              "offset": 2120
+            },
+            {
+              "name": "Sallow Lane",
+              "offset": 2156
+            },
+            {
+              "name": "Sallow Street",
+              "offset": 2172
+            },
+            {
+              "name": "Thursday",
+              "offset": 2179
+            },
+            {
+              "name": "Silas Marrow",
+              "offset": 2391
+            },
+            {
+              "name": "Ambry",
+              "offset": 2560
+            },
+            {
+              "name": "Craice and Nephew",
+              "offset": 2642
+            },
+            {
+              "name": "Lowgate",
+              "offset": 3129
+            },
+            {
+              "name": "Tuesday",
+              "offset": 3973
+            }
+          ]
+        },
+        {
+          "unit_id": "reappraisal/Chapter2",
+          "words": 4252,
+          "raw": 31,
+          "net": 29,
+          "per_1k": 6.82,
+          "contractions": [
+            "I'll",
+            "I'm"
+          ],
+          "introductions": [
+            {
+              "name": "Turrow",
+              "offset": 2
+            },
+            {
+              "name": "Master Vance",
+              "offset": 75
+            },
+            {
+              "name": "Silas",
+              "offset": 98
+            },
+            {
+              "name": "Skill",
+              "offset": 249
+            },
+            {
+              "name": "Tuesday",
+              "offset": 286
+            },
+            {
+              "name": "Fen Row",
+              "offset": 327
+            },
+            {
+              "name": "Cutter",
+              "offset": 352
+            },
+            {
+              "name": "Tide",
+              "offset": 416
+            },
+            {
+              "name": "Sallow Lane",
+              "offset": 561
+            },
+            {
+              "name": "Weigh Street",
+              "offset": 598
+            },
+            {
+              "name": "Kessel",
+              "offset": 618
+            },
+            {
+              "name": "Marta",
+              "offset": 836
+            },
+            {
+              "name": "Kelling",
+              "offset": 1002
+            },
+            {
+              "name": "Vessil",
+              "offset": 1146
+            },
+            {
+              "name": "Bellow and Sons",
+              "offset": 1284
+            },
+            {
+              "name": "I'll",
+              "offset": 1288
+            },
+            {
+              "name": "Somebody",
+              "offset": 1331
+            },
+            {
+              "name": "Master Ottil Vance",
+              "offset": 1555
+            },
+            {
+              "name": "How",
+              "offset": 1694
+            },
+            {
+              "name": "Fen Row and Cutter",
+              "offset": 1822
+            },
+            {
+              "name": "Renn",
+              "offset": 2630
+            },
+            {
+              "name": "I'm",
+              "offset": 2633
+            },
+            {
+              "name": "Marrow",
+              "offset": 2855
+            },
+            {
+              "name": "Silas Marrow",
+              "offset": 2856
+            },
+            {
+              "name": "Corvessa",
+              "offset": 2860
+            },
+            {
+              "name": "Coop Hill",
+              "offset": 3419
+            },
+            {
+              "name": "Ilma Ferris of Cutter",
+              "offset": 3465
+            },
+            {
+              "name": "Ambry",
+              "offset": 3483
+            },
+            {
+              "name": "Selvane",
+              "offset": 3488
+            },
+            {
+              "name": "Weigh Street.* He",
+              "offset": 3556
+            },
+            {
+              "name": "Nephew",
+              "offset": 4097
+            }
+          ]
+        }
+      ],
+      "net_summary": {
+        "n": 2,
+        "mean": 29.5,
+        "sd": 0.5,
+        "min": 29.0,
+        "max": 30.0,
+        "median": 29.5,
+        "quantiles": {
+          "0.05": 29.0,
+          "0.1": 29.0,
+          "0.25": 29.0,
+          "0.5": 29.0,
+          "0.75": 30.0,
+          "0.9": 30.0,
+          "0.95": 30.0
+        }
+      },
+      "per_1k_summary": {
+        "n": 2,
+        "mean": 7.024,
+        "sd": 0.204,
+        "min": 6.82,
+        "max": 7.227,
+        "median": 7.024,
+        "quantiles": {
+          "0.05": 6.82,
+          "0.1": 6.82,
+          "0.25": 6.82,
+          "0.5": 6.82,
+          "0.75": 7.227,
+          "0.9": 7.227,
+          "0.95": 7.227
+        }
+      }
+    },
+    "what-takes": {
+      "chapters": [
+        {
+          "unit_id": "what-takes/Chapter1",
+          "words": 3805,
+          "raw": 9,
+          "net": 8,
+          "per_1k": 2.102,
+          "contractions": [
+            "I'll"
+          ],
+          "introductions": [
+            {
+              "name": "Lady Ossary",
+              "offset": 0
+            },
+            {
+              "name": "Kell",
+              "offset": 17
+            },
+            {
+              "name": "I'll",
+              "offset": 236
+            },
+            {
+              "name": "Assize",
+              "offset": 804
+            },
+            {
+              "name": "Ivor Ossary",
+              "offset": 1234
+            },
+            {
+              "name": "Sull",
+              "offset": 2936
+            },
+            {
+              "name": "Del",
+              "offset": 3123
+            },
+            {
+              "name": "Hask Orley",
+              "offset": 3201
+            },
+            {
+              "name": "Vane",
+              "offset": 3565
+            }
+          ]
+        },
+        {
+          "unit_id": "what-takes/Chapter2",
+          "words": 3917,
+          "raw": 21,
+          "net": 18,
+          "per_1k": 4.595,
+          "contractions": [
+            "I'd",
+            "I've",
+            "I'll"
+          ],
+          "introductions": [
+            {
+              "name": "Kell",
+              "offset": 2
+            },
+            {
+              "name": "I'd",
+              "offset": 29
+            },
+            {
+              "name": "Orne Marrow",
+              "offset": 70
+            },
+            {
+              "name": "I've",
+              "offset": 176
+            },
+            {
+              "name": "Doss",
+              "offset": 198
+            },
+            {
+              "name": "I'll",
+              "offset": 237
+            },
+            {
+              "name": "Amble",
+              "offset": 418
+            },
+            {
+              "name": "Rell Marrow",
+              "offset": 467
+            },
+            {
+              "name": "February",
+              "offset": 757
+            },
+            {
+              "name": "Doss Orley",
+              "offset": 924
+            },
+            {
+              "name": "Bramm",
+              "offset": 986
+            },
+            {
+              "name": "Thrace",
+              "offset": 1043
+            },
+            {
+              "name": "Vail",
+              "offset": 1967
+            },
+            {
+              "name": "Vail Corr",
+              "offset": 2368
+            },
+            {
+              "name": "Cutler",
+              "offset": 2681
+            },
+            {
+              "name": "Sull Ferrin",
+              "offset": 2705
+            },
+            {
+              "name": "Rester Amble",
+              "offset": 3098
+            },
+            {
+              "name": "Lady Ossary",
+              "offset": 3310
+            },
+            {
+              "name": "Vane",
+              "offset": 3514
+            },
+            {
+              "name": "Marker",
+              "offset": 3516
+            },
+            {
+              "name": "Del Ferrin",
+              "offset": 3521
+            }
+          ]
+        }
+      ],
+      "net_summary": {
+        "n": 2,
+        "mean": 13.0,
+        "sd": 5.0,
+        "min": 8.0,
+        "max": 18.0,
+        "median": 13.0,
+        "quantiles": {
+          "0.05": 8.0,
+          "0.1": 8.0,
+          "0.25": 8.0,
+          "0.5": 8.0,
+          "0.75": 18.0,
+          "0.9": 18.0,
+          "0.95": 18.0
+        }
+      },
+      "per_1k_summary": {
+        "n": 2,
+        "mean": 3.348,
+        "sd": 1.246,
+        "min": 2.102,
+        "max": 4.595,
+        "median": 3.348,
+        "quantiles": {
+          "0.05": 2.102,
+          "0.1": 2.102,
+          "0.25": 2.102,
+          "0.5": 2.102,
+          "0.75": 4.595,
+          "0.9": 4.595,
+          "0.95": 4.595
+        }
+      }
+    }
+  },
+  "all_own_chapters": {
+    "net_summary": {
+      "n": 4,
+      "mean": 21.25,
+      "sd": 8.983,
+      "min": 8.0,
+      "max": 30.0,
+      "median": 23.5,
+      "quantiles": {
+        "0.05": 8.0,
+        "0.1": 8.0,
+        "0.25": 18.0,
+        "0.5": 29.0,
+        "0.75": 29.0,
+        "0.9": 30.0,
+        "0.95": 30.0
+      }
+    },
+    "per_1k_summary": {
+      "n": 4,
+      "mean": 5.186,
+      "sd": 2.043,
+      "min": 2.102,
+      "max": 7.227,
+      "median": 5.707,
+      "quantiles": {
+        "0.05": 2.102,
+        "0.1": 2.102,
+        "0.25": 4.595,
+        "0.5": 6.82,
+        "0.75": 6.82,
+        "0.9": 7.227,
+        "0.95": 7.227
+      }
+    }
+  },
+  "from_database": {
+    "database": "C:/DEV/LitHarness/serial3.db",
+    "chapters": [
+      {
+        "unit_id": "a5079432/Chapter1",
+        "words": 3796,
+        "raw": 9,
+        "net": 8,
+        "per_1k": 2.107,
+        "contractions": [
+          "I'll"
+        ],
+        "introductions": [
+          {
+            "name": "Lady Ossary",
+            "offset": 0
+          },
+          {
+            "name": "Kell",
+            "offset": 17
+          },
+          {
+            "name": "I'll",
+            "offset": 236
+          },
+          {
+            "name": "Assize",
+            "offset": 804
+          },
+          {
+            "name": "Ivor Ossary",
+            "offset": 1234
+          },
+          {
+            "name": "Sull",
+            "offset": 2936
+          },
+          {
+            "name": "Del",
+            "offset": 3123
+          },
+          {
+            "name": "Hask Orley",
+            "offset": 3201
+          },
+          {
+            "name": "Vane",
+            "offset": 3565
+          }
+        ]
+      },
+      {
+        "unit_id": "a5079432/Chapter2",
+        "words": 3908,
+        "raw": 21,
+        "net": 18,
+        "per_1k": 4.606,
+        "contractions": [
+          "I'd",
+          "I've",
+          "I'll"
+        ],
+        "introductions": [
+          {
+            "name": "Kell",
+            "offset": 2
+          },
+          {
+            "name": "I'd",
+            "offset": 29
+          },
+          {
+            "name": "Orne Marrow",
+            "offset": 70
+          },
+          {
+            "name": "I've",
+            "offset": 176
+          },
+          {
+            "name": "Doss",
+            "offset": 198
+          },
+          {
+            "name": "I'll",
+            "offset": 237
+          },
+          {
+            "name": "Amble",
+            "offset": 418
+          },
+          {
+            "name": "Rell Marrow",
+            "offset": 467
+          },
+          {
+            "name": "February",
+            "offset": 757
+          },
+          {
+            "name": "Doss Orley",
+            "offset": 924
+          },
+          {
+            "name": "Bramm",
+            "offset": 986
+          },
+          {
+            "name": "Thrace",
+            "offset": 1043
+          },
+          {
+            "name": "Vail",
+            "offset": 1967
+          },
+          {
+            "name": "Vail Corr",
+            "offset": 2368
+          },
+          {
+            "name": "Cutler",
+            "offset": 2681
+          },
+          {
+            "name": "Sull Ferrin",
+            "offset": 2705
+          },
+          {
+            "name": "Rester Amble",
+            "offset": 3098
+          },
+          {
+            "name": "Lady Ossary",
+            "offset": 3310
+          },
+          {
+            "name": "Vane",
+            "offset": 3514
+          },
+          {
+            "name": "Marker",
+            "offset": 3516
+          },
+          {
+            "name": "Del Ferrin",
+            "offset": 3521
+          }
+        ]
+      }
+    ]
+  }
+}

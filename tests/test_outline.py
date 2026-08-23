@@ -12,6 +12,9 @@ the commit that recorded §51.1.
 
 from __future__ import annotations
 
+import json
+from dataclasses import replace
+
 import litharness_contracts as lc
 import pytest
 
@@ -19,15 +22,20 @@ from litharness.adapters.sqlite_store import SqliteStore
 from litharness.application.outline import (
     BOOK_OUTLINE,
     OUTLINE_PRIORITY,
+    PROTAGONIST_RULES,
     OutlineOutputError,
     _milestones,
+    _standing_milestones,
     make_outline_handler,
     milestone_records,
     outline_job_id,
     outline_proposal,
     render_outline_request,
+    standing_milestone_records,
 )
+from litharness.domain import world_brief, worlds
 from litharness.domain.beats import arc_template, beats_for
+from litharness.domain.extraction import standing_target
 from litharness.domain.generation import CompletionResult, Resolution, Usage
 from litharness.domain.jobs import Job, input_digest_for
 from litharness.domain.plan_refinement import PlanProposalError
@@ -152,6 +160,173 @@ def test_the_whole_sheet_goes_into_one_request() -> None:
         assert f'"ordinal": {ordinal}' in request.prompt
     assert request.schema is not None, "structured output, not a parsed paragraph"
     assert "different from every other" in request.prompt
+
+
+# -- the world's people, and whose book it is ---------------------------------------------
+#
+# `plan/reader-read-3.md` notes 1 and 3. Until 2026-08-22 this call was handed the premise, the
+# beat sheet, the status seed and the open promises, and **not one record of canon** — so on
+# Serial Pilot 3 it invented a protagonist who occurs nowhere in the forged world (0 hits for
+# "Kell" in `pilot3/direct1/forge.json`), and none of that world's five declared cast members
+# appears in either chapter. The writer had them all along: 328 established facts,
+# `context_omitted = 0`.
+
+
+def _bare_base():  # type: ignore[no-untyped-def]
+    class _Base:
+        plan_revision_id = "planrev-1"
+        items: tuple = ()
+
+    return _Base()
+
+
+def _eight_beats():  # type: ignore[no-untyped-def]
+    return beats_for(new_book(BOOK_ID, BRANCH_ID, title="Book", scenes=8), arc_template(8))
+
+
+PROTAGONIST = worlds.Protagonist(
+    "silas",
+    "provenance",
+    "he prices a thing the assay has not seen",
+    "to be read once by someone who matters",
+    "every reading he signs is checked twice",
+)
+
+
+def test_a_book_whose_canon_declares_nobody_renders_the_bytes_it_always_did() -> None:
+    """**The control, and it is a byte comparison rather than a substring one.**
+
+    Every book written before a world could declare a protagonist passes nothing here, and
+    `json.dumps` writes `null` for a key whose value is `None` — so a key that is always
+    present is a payload that always changed. `jobs.input_digest_for` covers the prompt and
+    that digest is the sampler seed, so a silent payload change silently re-decodes every job
+    a book mints. The empty case must produce exactly the bytes that omitting the parameters
+    produces.
+    """
+    beats = _eight_beats()
+    absent = render_outline_request(PREMISE, beats, base=_bare_base())
+    empty = render_outline_request(
+        PREMISE, beats, base=_bare_base(), world=None, protagonist=None
+    )
+    assert empty == absent
+    assert "protagonist" not in json.loads(absent.prompt)
+
+
+def test_the_protagonist_reaches_the_request_as_canon_declared_them() -> None:
+    """**The one thing the world brief cannot say.** `world_brief.brief_for` renders every
+    declared person under `cast`, in the packet's own phrasing (§107.3); what a flat list of
+    people cannot carry is which of them the book is about."""
+    request = render_outline_request(
+        PREMISE, _eight_beats(), base=_bare_base(), protagonist=PROTAGONIST
+    )
+    body = json.loads(request.prompt)
+    assert body["protagonist"] == {
+        "id": "silas",
+        "exception": "provenance",
+        "edge": "he prices a thing the assay has not seen",
+        "wants": "to be read once by someone who matters",
+        "price": "every reading he signs is checked twice",
+    }
+
+
+def test_the_rules_arrive_only_with_the_thing_they_are_about() -> None:
+    """A rule about a protagonist in a request with none is an instruction to obey nothing."""
+    beats = _eight_beats()
+    bare = json.loads(render_outline_request(PREMISE, beats, base=_bare_base()).prompt)
+    assert not any("protagonist is" in rule for rule in bare["rules"])
+
+    named = json.loads(
+        render_outline_request(
+            PREMISE, beats, base=_bare_base(), protagonist=PROTAGONIST
+        ).prompt
+    )
+    assert any("The protagonist is silas." in rule for rule in named["rules"])
+    assert any("what silas does in that scene" in rule for rule in named["rules"])
+
+
+def test_the_protagonist_rules_name_a_person_and_never_an_outcome() -> None:
+    """**Boundary 1 of `plan/handoff-protagonist.md`, asserted rather than trusted.**
+
+    A protagonist is a declared fact of the world and a position — the same class as "scene 3
+    of 8" and the chapter cue. No default instruction about how to *handle* one may enter any
+    prompt this system renders: open on the hero, make them likeable, show them winning,
+    have them progress faster than anyone. That direction is the operator's, and the operator's
+    own words for the hook use exactly those verbs — which is why the rules that came out of
+    them must not. Written in the shape of
+    `test_the_chapter_cue_carries_no_verb_and_no_adjective`.
+    """
+    rendered = " ".join(
+        rule.format(subject="silas") for rule in PROTAGONIST_RULES
+    ).lower()
+    for forbidden in (
+        "win", "hero", "likeable", "likable", "sympathetic", "root for", "faster",
+        "fastest", "strongest", "best", "succeed", "success", "triumph", "interesting",
+        "compelling", "unique", "special", "open on", "first",
+    ):
+        assert forbidden not in rendered, forbidden
+
+
+def test_the_handler_reads_the_protagonist_off_the_canon_it_already_read(
+    store: SqliteStore,
+) -> None:
+    """One query, not two. The drafting side's habit of calling `state_records` three times in
+    one render is the pattern this deliberately does not copy — and a second read is a second
+    answer to one question. The same `canon` feeds `world_brief.brief_for`."""
+    a_book(store, scenes=12)
+    store.record_state_records(
+        BOOK_ID,
+        BRANCH_ID,
+        [
+            replace(built, authority=lc.StateAuthority.ACCEPTED_CANON)
+            for built in (
+                worlds.world_record("silas", worlds.ENTITY_ROLE_PREDICATE, value="cast"),
+                worlds.world_record(
+                    "silas", worlds.ENTITY_ROLE_PREDICATE, value="protagonist"
+                ),
+                worlds.world_record("silas", "is_a", value="a junior clerk"),
+                worlds.world_record(
+                    "silas", worlds.EDGE_PREDICATE, value="he prices what the assay has not"
+                ),
+                worlds.world_record("silas", worlds.EXCEPTION_PREDICATE,
+                                    object_ref="provenance"),
+            )
+        ],
+        created_at="2026-08-16T00:00:00Z",
+    )
+    planner = StubPlanner(payload_for(12))
+    make_outline_handler(planner, store, PROJECT_ID)(_job(store), START)
+
+    [request] = planner.requests
+    body = json.loads(request.prompt)
+    assert body["protagonist"]["id"] == "silas"
+    # And the same canon reached the world brief, which is where the people are now rendered.
+    assert "silas" in json.dumps(body["world"], ensure_ascii=False)
+
+
+def test_a_tick_over_an_already_outlined_book_mints_no_second_job(
+    store: SqliteStore,
+) -> None:
+    """`outline_job_id` is epoch-keyed and excludes the prompt, so telling the planner about
+    the world does not burn a new id for work already done.
+
+    The exclusion is deliberate and `planner.py`'s module docstring states it: editing a
+    template must not mint a second job for a book that has already been outlined.
+    """
+    a_book(store, scenes=12)
+    before = outline_job_id(BOOK_ID, BRANCH_ID, store.plan_epoch(BOOK_ID, BRANCH_ID))
+    store.record_state_records(
+        BOOK_ID,
+        BRANCH_ID,
+        [
+            replace(
+                worlds.world_record("silas", worlds.ENTITY_ROLE_PREDICATE, value="cast"),
+                authority=lc.StateAuthority.ACCEPTED_CANON,
+            )
+        ],
+        created_at="2026-08-16T00:00:00Z",
+    )
+    after = outline_job_id(BOOK_ID, BRANCH_ID, store.plan_epoch(BOOK_ID, BRANCH_ID))
+    assert after == before
 
 
 # -- the validation that is about the defect ----------------------------------------------
@@ -864,3 +1039,246 @@ def test_volunteered_payoff_windows_are_ignored_when_the_book_owes_nothing(
 
     [decision] = store.decisions_for_job("outline-job")
     assert decision.outcome is Outcome.ACCEPT, decision.reason
+
+
+# -- the rung schedule (plan/handoff-numbers-go-up.md Task 2) -------------------------------
+
+LADDER = world_brief.Ladder(
+    protagonist="silas",
+    criterion="assay_grade",
+    rungs=(
+        ("third_seal", "a lead seal that greens in a week", "a year of unpaid readings"),
+        ("second_seal", "a brass seal worn at the throat", "a ruined reputation elsewhere"),
+        ("first_seal", "a silver seal nobody hands back", "the name of whoever held it"),
+    ),
+    opening_rung="third_seal",
+)
+
+
+def _rising(*pairs: tuple[int, str]) -> dict:
+    payload = payload_for(12)
+    payload["standing_milestones"] = [
+        {"ordinal": ordinal, "rung": rung} for ordinal, rung in pairs
+    ]
+    return payload
+
+
+def _twelve_beats():  # type: ignore[no-untyped-def]
+    return beats_for(new_book(BOOK_ID, BRANCH_ID, title="Book", scenes=12), arc_template(12))
+
+
+def test_a_book_with_no_ladder_is_asked_nothing_about_one() -> None:
+    """The control: a world brief without a ladder renders the request it rendered before.
+
+    Both golden fixtures and every world forged before 2026-08-22 are in this state, and the
+    request has to be byte-identical for `input_digest_for`'s reason.
+    """
+    beats = _eight_beats()
+    world = world_brief.WorldBrief(
+        groups=(("rules", ("Rule — history fixes price",)),), criteria=None, reveals=()
+    )
+    withoutled = render_outline_request(PREMISE, beats, base=_bare_base(), world=world)
+    body = json.loads(withoutled.prompt)
+    assert "ladder" not in body["world"]
+    assert not any("standing_milestones" in rule for rule in body["rules"])
+
+    withled = render_outline_request(
+        PREMISE, beats, base=_bare_base(), world=replace(world, ladder=LADDER)
+    )
+    ladder_body = json.loads(withled.prompt)
+    assert ladder_body["world"]["ladder"]["opening_rung"] == "third_seal"
+    assert [entry["id"] for entry in ladder_body["world"]["ladder"]["rungs"]] == [
+        "third_seal",
+        "second_seal",
+        "first_seal",
+    ]
+    assert ladder_body["world"]["ladder"]["rungs"][0]["cost_to_reach"]
+    assert any("standing_milestones" in rule for rule in ladder_body["rules"])
+    assert any("silas" in rule for rule in ladder_body["rules"])
+
+
+def test_the_ladder_rules_ask_for_a_schedule_and_never_for_a_feeling() -> None:
+    """**Boundary 1 of `plan/handoff-numbers-go-up.md`, asserted rather than trusted.**
+
+    A rung and its price are declared facts of the world, the same class as the numbers the
+    milestone rules beside these already schedule. How a scene handles reaching one is the
+    writer's and the operator's, and a rule here that reached for a verb about it would be this
+    system's own taste arriving in every outline it renders.
+    """
+    for rule in world_brief.LADDER_RULES:
+        lowered = rule.lower()
+        for forbidden in (
+            "earn", "deserve", "triumph", "victory", "feel", "felt", "emotion",
+            "satisfying", "reward", "celebrate", "climax", "payoff", "pay it off",
+            "exciting", "epic", "hard-won", "struggle", "hero",
+        ):
+            assert forbidden not in lowered, (forbidden, rule)
+    joined = " ".join(world_brief.LADDER_RULES).lower()
+    assert "must actually move" in joined
+    assert "never moves down" in joined
+
+
+def test_a_schedule_that_never_rises_is_refused() -> None:
+    """Stasis, a flat stretch, a fall, and a rung the world never declared — four refusals.
+
+    The first is the defect this whole slice exists for, arriving as a schedule: two chapters
+    of a forged serial in which the protagonist's standing was never declared, never scheduled
+    and never moved.
+    """
+    beats = _twelve_beats()
+
+    with pytest.raises(OutlineOutputError, match="repeats the opening rung"):
+        _standing_milestones(_rising((3, "third_seal"), (7, "third_seal")), beats, LADDER)
+
+    with pytest.raises(OutlineOutputError, match="flat stretch"):
+        _standing_milestones(
+            _rising((3, "second_seal"), (7, "second_seal"), (11, "first_seal")),
+            beats,
+            LADDER,
+        )
+
+    with pytest.raises(OutlineOutputError, match="goes down"):
+        _standing_milestones(
+            _rising((3, "second_seal"), (7, "third_seal"), (11, "first_seal")),
+            beats,
+            LADDER,
+        )
+
+    with pytest.raises(OutlineOutputError, match="the ladder holds"):
+        _standing_milestones(_rising((3, "platinum_seal")), beats, LADDER)
+
+    with pytest.raises(OutlineOutputError, match="which does not exist"):
+        _standing_milestones(_rising((99, "second_seal")), beats, LADDER)
+
+    with pytest.raises(OutlineOutputError, match="more than one standing milestone"):
+        _standing_milestones(
+            _rising((3, "second_seal"), (3, "first_seal")), beats, LADDER
+        )
+
+
+def test_a_rising_schedule_becomes_proposed_edges_the_page_never_sees_as_fact() -> None:
+    """`milestone_records`' argument exactly: PROPOSED informs generation and contaminates
+    nothing, and the criterion rides on the edge so two ladders cannot be spliced."""
+    beats = _twelve_beats()
+    schedule = _standing_milestones(
+        _rising((3, "second_seal"), (7, "first_seal")), beats, LADDER
+    )
+    assert [beat.ordinal for beat, _ in schedule] == [3, 7]
+
+    records = standing_milestone_records(
+        schedule, subject=LADDER.protagonist, criterion=LADDER.criterion
+    )
+    assert [record.record_id for record in records] == ["standing-s03", "standing-s07"]
+    assert {record.authority for record in records} == {lc.StateAuthority.PROPOSED}
+    assert [record.object_ref for record in records] == ["second_seal", "first_seal"]
+    assert {record.value for record in records} == {"assay_grade"}
+    assert {record.predicate for record in records} == {worlds.STANDS_AT_PREDICATE}
+    # Derived from the position, so a replayed outline converges rather than accumulating a
+    # second schedule beside the first.
+    again = standing_milestone_records(
+        schedule, subject=LADDER.protagonist, criterion=LADDER.criterion
+    )
+    assert [r.record_id for r in again] == [r.record_id for r in records]
+
+
+def test_the_handler_writes_the_rung_schedule_only_for_a_book_that_has_a_ladder(
+    store: SqliteStore,
+) -> None:
+    """End to end, both directions: a book with a chain gets PROPOSED standings on the record,
+    and a book without one is asked nothing and gets none — the same guard the milestone
+    schedule runs under."""
+    a_book(store, scenes=12)
+    store.record_state_records(
+        BOOK_ID, BRANCH_ID, _canon_ladder(), created_at="2026-08-22T00:00:00Z"
+    )
+    planner = StubPlanner(_rising((3, "second_seal"), (7, "first_seal")))
+    make_outline_handler(planner, store, PROJECT_ID)(_job(store), START)
+
+    written = [
+        record
+        for record in store.state_records(BOOK_ID, BRANCH_ID)
+        if record.record_id.startswith("standing-")
+    ]
+    assert [record.object_ref for record in written] == ["second_seal", "first_seal"]
+    assert {record.authority for record in written} == {lc.StateAuthority.PROPOSED}
+    body = json.loads(str(planner.requests[0].prompt))  # type: ignore[attr-defined]
+    assert body["world"]["ladder"]["protagonist"] == "silas"
+
+    # The schedule aims at the next rung from where the book is, which is the whole point of
+    # placing the opening standing rather than leaving it unplaced.
+    records = store.state_records(BOOK_ID, BRANCH_ID)
+    assert "second_seal (2 of 3)" in (standing_target(records, at="s01") or "")
+
+
+def test_a_book_with_no_ladder_gets_no_standing_schedule(store: SqliteStore) -> None:
+    """A book whose canon declares no chain is asked no standing question, so a volunteered
+    answer refuses nothing — the failure `_payoff_windows` records for its own first outline."""
+    a_book(store, scenes=12)
+    planner = StubPlanner(_rising((3, "second_seal")))
+    make_outline_handler(planner, store, PROJECT_ID)(_job(store), START)
+
+    records = store.state_records(BOOK_ID, BRANCH_ID)
+    assert [r for r in records if r.record_id.startswith("standing-")] == []
+    body = json.loads(str(planner.requests[0].prompt))  # type: ignore[attr-defined]
+    assert not any("standing_milestones" in rule for rule in body["rules"])
+    # And the outline still landed: an unasked question's answer refuses nothing.
+    plan = store.plan_revision(BOOK_ID, BRANCH_ID)
+    assert plan is not None
+    assert scene_plan_for(plan.items, "scene-1") is not None
+
+
+def _canon_ladder() -> list[lc.StateRecord]:
+    """A three-rung ordinal chain with silas standing on its bottom rung, as canon."""
+    out = [
+        worlds.world_record(
+            "assay_grade",
+            worlds.TYPE_PREDICATE,
+            value=worlds.CRITERION,
+            authority=lc.StateAuthority.ACCEPTED_CANON,
+        ),
+        worlds.world_record(
+            "assay_grade",
+            worlds.COMPARATOR_PREDICATE,
+            value="ordinal",
+            authority=lc.StateAuthority.ACCEPTED_CANON,
+        ),
+        worlds.world_record(
+            "silas",
+            worlds.ENTITY_ROLE_PREDICATE,
+            value="protagonist",
+            authority=lc.StateAuthority.ACCEPTED_CANON,
+        ),
+        worlds.world_record(
+            "silas",
+            worlds.STANDS_AT_PREDICATE,
+            object_ref="third_seal",
+            value="assay_grade",
+            order_key="s01",
+            authority=lc.StateAuthority.ACCEPTED_CANON,
+        ),
+    ]
+    for rung, form, cost in LADDER.rungs:
+        out.append(
+            worlds.world_record(
+                rung,
+                worlds.MANIFESTS_PREDICATE,
+                value=form,
+                authority=lc.StateAuthority.ACCEPTED_CANON,
+            )
+        )
+        out.append(
+            worlds.world_record(
+                rung, "costs", value=cost, authority=lc.StateAuthority.ACCEPTED_CANON
+            )
+        )
+    for lower, higher in (("third_seal", "second_seal"), ("second_seal", "first_seal")):
+        out.append(
+            worlds.world_record(
+                lower,
+                worlds.PRECEDES_PREDICATE,
+                object_ref=higher,
+                value="assay_grade",
+                authority=lc.StateAuthority.ACCEPTED_CANON,
+            )
+        )
+    return out

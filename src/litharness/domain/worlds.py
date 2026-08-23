@@ -100,7 +100,66 @@ ENTITY_ROLES: tuple[str, ...] = (
     "carrier",
     "agency",
     "system",
+    # **A second role on a cast member, never a role of its own.** `entity_roles` returns the
+    # roles a subject carries because a subject may be two things at once, and the protagonist
+    # is the case that argument was written for: they are a member of the cast and they are
+    # additionally the one this book is about. A separate role list would make "protagonist"
+    # and "cast" alternatives, and a world would have to choose.
+    "protagonist",
+    # **A thing a person can do, as a subject in its own right.** Until 2026-08-22 the nearest
+    # role was `carrier`, which means an *object* whose possession changes a precondition — so a
+    # ring and the sense the ring grants were the same kind of thing and neither counter could
+    # tell them apart. Measured over the 24 worlds forged to that date: 135 of 156 criterion
+    # rungs are an insignia and every capability-shaped field in the forge schema is a single
+    # string, so a world could name one thing a person can do and never a set of them
+    # (`research/quality-measurement/mother-of-learning-model-fit.md`).
+    "capability",
 )
+
+# --- the one member of the cast this book is about -------------------------------------------
+
+#: What the exception lets them do that nobody else can, in the `manifests_as` register: how it
+#: shows on the page. A fact about the world, exactly as a rule is — never an instruction about
+#: how to write them. `plan/reader-read-3.md` note 1 is why the field exists at all.
+EDGE_PREDICATE = "edge"
+
+#: What the exception costs them, payable on the page. The counterpart of `cost_to_reach` on a
+#: rank: a gain declared with no price is the thing `_RULES` already refuses everywhere else.
+PRICE_PREDICATE = "price"
+
+#: The rule or cardinality shape this subject is the exception to, **by id**. An edge, because
+#: the second extractor family reads edges and because an exception that names its rule in prose
+#: is an exception nothing can check.
+EXCEPTION_PREDICATE = "exception_to"
+
+# --- what a person can do ---------------------------------------------------------------------
+
+#: A person holds a capability. An edge, so `state.cardinality.v0` can count how many one subject
+#: has — which is what makes "everyone has one, this person has three" a checkable declaration
+#: rather than a sentence. `EXCEPTS_PREDICATE`'s docstring names that example as its own reason
+#: for existing, and this is the predicate it was waiting for.
+CAN_DO = "can_do"
+
+#: A capability needs another capability, or a rung, first. An edge, and deliberately **not** a
+#: `precondition` role: `precondition` belongs to a reified `change` — one occurrence with many
+#: roles — and a prerequisite is a standing fact about the capability rather than about any
+#: occasion of acquiring it. The two coexist: a world may declare that walking between rooms
+#: `requires` seeing the seam, and separately record the morning somebody learned it.
+REQUIRES = "requires"
+
+#: Who allows or teaches a capability. Separate from `RECOGNIZED_BY`, which is about a rank: an
+#: institution recognises where you *stand*, a person teaches what you can *do*, and collapsing
+#: them is how a ladder of permissions eats an inventory of abilities.
+TAUGHT_BY = "taught_by"
+
+#: What a capability costs its holder, as prose. **The same predicate a rank's price already
+#: uses**, deliberately: it is the same fact about a different subject, and a legible twin would
+#: be two names for one thing. It has no projection sentence for the reason the branch beside
+#: `CAN_DO` gives — every world forged so far emits `costs` for its ranks, so adding one would
+#: change their packets.
+COSTS = "costs"
+
+
 
 # --- rules and their consequences ----------------------------------------------------------
 
@@ -155,6 +214,22 @@ PRECEDES_PREDICATE = "precedes"
 
 #: Which criterion judges which kind of subject.
 EVALUATES_PREDICATE = "evaluates"
+
+#: Where one subject stands on one declared ladder: `(kell, stands_at, → two_wood)` with the
+#: criterion in the value slot, exactly as `precedes` carries it.
+#:
+#: **A flat edge, and the flatness is the whole argument** (`plan/handoff-numbers-go-up.md`
+#: boundary 9). The page can only print a flat edge — `[ASSIZE] Kell now stands at two wood` is
+#: what a scene writes and what `parse_graph_line` reads back — so the forge's copy of the same
+#: fact has to be readable by the same function. The reified `EVALUATION_*` triple stays for the
+#: case it was built for, a world that reifies an evaluation with an authority that performed it
+#: (`research/progression-generalization.md` §8.3); a standing is not that case and writing both
+#: would be two answers to "which rung is this person on".
+#:
+#: **The number is derived and never stored.** `rung_index` counts the rung's place in
+#: `ladder_of`'s chain when asked. An integer stored beside the chain would be a second answer
+#: to "which rung is third", and `domain/beats.py`'s rule is that the two eventually disagree.
+STANDS_AT_PREDICATE = "stands_at"
 
 #: The three-record evaluation shape of §8.3, plus the institutional role that makes rank and
 #: capability separable.
@@ -211,6 +286,18 @@ PREDICATE_PREDICATE = "predicate"
 #: The scope value that means "every subject", for a predicate whose exclusivity is a property
 #: of the predicate rather than of a kind of thing.
 ANY_SCOPE = "*"
+
+#: One subject this shape does not govern, as an edge from the shape to the subject.
+#:
+#: **Scope stays a role and this is why it can.** `in_scope`'s docstring records the reason a
+#: scope is an `entity_role` and not a subject id: a shape is a rule about a *kind* of thing, and
+#: a shape that named one carrier would be a fact about that carrier wearing a rule's clothes.
+#: An exception is the other object — a declared fact about *one* subject, which is what the word
+#: means — so it is declared as one and read beside the shape rather than inside it. Without it
+#: the hook `plan/reader-read-3.md` note 1 asks for is undeclarable: the operator's own example
+#: is "everyone in the world has one cuff, the main character broke the system and can have as
+#: many as they like", which is exactly a cardinality maximum that does not hold for one person.
+EXCEPTS_PREDICATE = "excepts"
 
 #: Group keys a shape may declare. Deliberately three, and deliberately not an expression
 #: language: `research/progression-generalization.md` §15.7 refuses a comparator DSL for the
@@ -396,6 +483,69 @@ def entities_with_role(records: Sequence[lc.StateRecord], role: str) -> tuple[st
             subject for subject, roles in entity_roles(records).items() if role in roles
         )
     )
+
+
+def capabilities(records: Sequence[lc.StateRecord]) -> tuple[str, ...]:
+    """Every subject this world declares as a thing a person can do. Sorted.
+
+    **Canon is not filtered here, and that is deliberate rather than an oversight.**
+    `entities_with_role` does not filter either, and `architect.report` counts a *candidate* —
+    every record of which is `PROPOSED`, because a forged world is a proposal until `--pick`. A
+    reader that filtered would report 0 capabilities for every world the forge has ever produced,
+    which is what the first version of this function did. Callers that need canon filter first,
+    as `world_brief.brief_for` and `context.assemble` already do.
+    """
+    return entities_with_role(records, "capability")
+
+
+def capabilities_of(records: Sequence[lc.StateRecord], subject: str) -> tuple[str, ...]:
+    """What this subject can do, sorted. Empty for a subject that holds none.
+
+    **The inventory, and it is a set rather than a rung.** A ladder answers *where does this
+    person stand*; this answers *what can they do*, and the two are different questions about
+    different objects — `research/progression-generalization.md` §5.1 reduces an ability to "a
+    named affordance **or set of reachable actions**" and this is that set, read back.
+    """
+    return tuple(
+        sorted(
+            {
+                record.object_ref
+                for record in records
+                if record.predicate == CAN_DO and record.object_ref
+                and record.subject == subject
+            }
+        )
+    )
+
+
+def requirement_depth(records: Sequence[lc.StateRecord]) -> int:
+    """How many prerequisites deep this world's inventory runs: edges in the longest chain.
+
+    A counter and never a bar. It says how deep the world's own prerequisite structure runs,
+    which is the thing that distinguishes an inventory somebody built from a list somebody
+    typed — and `plan/handoff-ability-inventory.md` boundary 3 forbids gating on it.
+
+    A cycle is not an error here and is not resolved here: the walk simply refuses to revisit a
+    subject, so a cyclic declaration reports the longest acyclic path through it and
+    `validate` is where a world that declared one would be complained about if that is ever
+    wanted. Guessing which edge of a cycle to cut would be this module inventing a fact.
+    """
+    edges: dict[str, list[str]] = {}
+    for record in records:
+        if record.predicate == REQUIRES and record.object_ref:
+            edges.setdefault(record.subject, []).append(record.object_ref)
+    if not edges:
+        return 0
+
+    def depth(node: str, seen: frozenset[str]) -> int:
+        if node in seen:
+            return 0
+        onward = edges.get(node, ())
+        if not onward:
+            return 0
+        return 1 + max(depth(nxt, seen | {node}) for nxt in onward)
+
+    return max(depth(node, frozenset()) for node in edges)
 
 
 def nodes_of_type(records: Sequence[lc.StateRecord], node_type: str) -> tuple[str, ...]:
@@ -666,6 +816,9 @@ class CardinalityShape:
     scope: str
     group_key: str
     maximum: int
+    #: Subjects this shape does not govern. Empty for every shape declared before
+    #: `EXCEPTS_PREDICATE` existed, and a shape with an empty tuple behaves exactly as it did.
+    except_subjects: tuple[str, ...] = ()
 
 
 def cardinality_shapes(
@@ -679,8 +832,14 @@ def cardinality_shapes(
     cost of the complaint is a candidate rather than a serial.
     """
     parts: dict[str, dict[str, lc.StateRecord]] = {}
+    #: Collected in its own pass because `parts` keeps one record per predicate and a shape may
+    #: except more than one subject. Keying the last one would silently drop the rest, which is
+    #: the failure `record_id_for`'s docstring records for edges generally.
+    excepted: dict[str, set[str]] = {}
     for record in records:
         parts.setdefault(record.subject, {})[record.predicate] = record
+        if record.predicate == EXCEPTS_PREDICATE and record.object_ref:
+            excepted.setdefault(record.subject, set()).add(record.object_ref)
     shapes: list[CardinalityShape] = []
     for subject in sorted(parts):
         rows = parts[subject]
@@ -707,7 +866,14 @@ def cardinality_shapes(
         if maximum.value < 1:
             continue
         shapes.append(
-            CardinalityShape(subject, predicate_name, scope_name, group, maximum.value)
+            CardinalityShape(
+                subject,
+                predicate_name,
+                scope_name,
+                group,
+                maximum.value,
+                tuple(sorted(excepted.get(subject, ()))),
+            )
         )
     return tuple(shapes)
 
@@ -730,7 +896,15 @@ def in_scope(
 
     Scope is an `entity_role`, or `*`. Not a subject id: a shape that named one carrier would be
     a fact about that carrier, and the thing being declared is a rule about a *kind* of thing.
+
+    **An exception is the other object, and it is checked first.** A subject the shape declares
+    it does not govern (`EXCEPTS_PREDICATE`) is out of scope whatever its roles are — which is
+    what makes the hook of `plan/reader-read-3.md` note 1 declarable without putting a hole in
+    the shape: the maximum still binds on every other subject of the same kind, and
+    `tests/test_integrity.py` pins all three of those cases against each other.
     """
+    if record.subject in shape.except_subjects:
+        return False
     if shape.scope == ANY_SCOPE:
         return True
     return shape.scope in roles.get(record.subject, ())
@@ -834,6 +1008,46 @@ def validate(records: Sequence[lc.StateRecord]) -> tuple[str, ...]:
         if subject not in criteria(records):
             complaints.append(f"criterion {subject} declares no comparator from the registry")
 
+    # **Three checks on a standing, all membership.** A rung this world never declared, a rung
+    # that two chains both claim, and a standing on a criterion that is not ordinal. Nothing here
+    # asks whether the rung is the right one for this person — that is a judgment, and
+    # `plan/world-architect.md` §2 keeps the channel that would answer it shut.
+    declared_comparators = criteria(records)
+    declared_ranks = {
+        rung
+        for criterion in declared_comparators
+        for rung in ladder_of(records, criterion)
+    }
+    for record in records:
+        if record.predicate != STANDS_AT_PREDICATE or not record.object_ref:
+            continue
+        rung = record.object_ref
+        if rung not in declared_ranks:
+            complaints.append(
+                f"{record.subject} stands at {rung}, which is not a declared rank of any "
+                "chain in this world; a standing on a rung nobody declared is a number with "
+                "nothing to count it against"
+            )
+            continue
+        owners = [
+            criterion
+            for criterion in sorted(declared_comparators)
+            if rung in ladder_of(records, criterion)
+        ]
+        if len(owners) > 1:
+            complaints.append(
+                f"rung {rung} sits in {len(owners)} chains ({', '.join(owners)}); which ladder "
+                "a standing counts on has to be one answer, and `criterion_of_rung` abstains "
+                "rather than choosing"
+            )
+        criterion = str(record.value or "").strip() or (owners[0] if owners else "")
+        if criterion and declared_comparators.get(criterion) != "ordinal":
+            complaints.append(
+                f"{record.subject} stands on {criterion}, whose comparator is "
+                f"{declared_comparators.get(criterion)!r} rather than 'ordinal'; a standing is a "
+                "position in an order and a comparator that declares no order has no positions"
+            )
+
     known = (
         set(roles)
         | set(rules(records))
@@ -905,6 +1119,62 @@ def _cardinality_parts(records: Sequence[lc.StateRecord]) -> dict[str, set[str]]
 # --- the projection ----------------------------------------------------------------------------
 
 
+@dataclass(frozen=True, slots=True)
+class Protagonist:
+    """The one member of the cast this book is about, as canon declares them."""
+
+    subject: str
+    exception: str
+    edge: str
+    wants: str
+    price: str
+
+    def to_jsonable(self) -> dict[str, object]:
+        return {
+            "id": self.subject,
+            **({"exception": self.exception} if self.exception else {}),
+            **({"edge": self.edge} if self.edge else {}),
+            **({"wants": self.wants} if self.wants else {}),
+            **({"price": self.price} if self.price else {}),
+        }
+
+
+def protagonist_brief(records: Sequence[lc.StateRecord]) -> Protagonist | None:
+    """The declared protagonist, or `None` for a book whose canon names none.
+
+    **`None` is every book written before 2026-08-22 and it is the control.** A caller that gets
+    `None` must render exactly the bytes it rendered before this function existed; a key that is
+    always present carrying `null` is a payload that always changed, and `input_digest_for`
+    covers the prompt and seeds the sampler.
+
+    More than one declared protagonist is not an error here and is not resolved here either: the
+    first by subject id is returned, deterministically, and `validate` is where a world that
+    declares two would be complained about if the operator ever wants that complaint. Nothing in
+    this project ranks people.
+    """
+    canon = _canon(records)
+    subjects = entities_with_role(canon, "protagonist")
+    if not subjects:
+        return None
+    subject = subjects[0]
+    values: dict[str, str] = {}
+    exception = ""
+    for record in canon:
+        if record.subject != subject:
+            continue
+        if record.predicate == EXCEPTION_PREDICATE and record.object_ref:
+            exception = record.object_ref
+        elif record.object_ref is None:
+            values[record.predicate] = str(record.value or "").strip()
+    return Protagonist(
+        subject,
+        exception,
+        values.get(EDGE_PREDICATE, ""),
+        values.get("wants", ""),
+        values.get(PRICE_PREDICATE, ""),
+    )
+
+
 def criterion_brief(records: Sequence[lc.StateRecord]) -> str | None:
     """One line per criterion, for the drafting system message. `None` when a world declares none.
 
@@ -920,7 +1190,7 @@ def criterion_brief(records: Sequence[lc.StateRecord]) -> str | None:
     lines: list[str] = []
     for subject in sorted(declared):
         comparator = declared[subject].replace("_", " ")
-        ladder = _ladder_for(subject, canon)
+        ladder = ladder_of(canon, subject)
         if ladder:
             lines.append(f"- {subject}: {comparator} — {' then '.join(ladder)}")
         else:
@@ -928,12 +1198,17 @@ def criterion_brief(records: Sequence[lc.StateRecord]) -> str | None:
     return "\n".join(lines)
 
 
-def _ladder_for(criterion: str, records: Sequence[lc.StateRecord]) -> tuple[str, ...]:
+def ladder_of(records: Sequence[lc.StateRecord], criterion: str) -> tuple[str, ...]:
     """This criterion's results in `precedes` order, or empty when they do not form a chain.
 
     **Empty rather than a guess.** A criterion whose results branch has no ladder to print, and
     printing one anyway would be the total order this model refuses to assume. Two edges out of
     one result, a cycle, or more than one starting point all return empty.
+
+    Public since 2026-08-22 under the name the callers outside this module wanted, and it is one
+    function rather than two: `criterion_brief` and `_node_sentence` call this, and so do
+    `rung_index`, `standing_of`'s validator and the outline's schedule. A public wrapper around a
+    private chain-walker would be a second place for the chain rule to live.
     """
     edges = rank_order(records, criterion=criterion)
     if not edges:
@@ -955,6 +1230,86 @@ def _ladder_for(criterion: str, records: Sequence[lc.StateRecord]) -> tuple[str,
     return tuple(chain)
 
 
+def rung_index(
+    records: Sequence[lc.StateRecord], criterion: str, rung: str
+) -> int | None:
+    """This rung's 1-based place in its criterion's chain, counting from the bottom.
+
+    **This is the number.** The operator's direction is that a rank ladder *is* the number a
+    genre reader counts — "bronze to gold rank advance is the same as the number going up; say
+    bronze is 1 and gold is 3" — so the quantity is the rung's position in the declared chain and
+    nothing else. It is computed here rather than stored, for the reason
+    `STANDS_AT_PREDICATE` gives: a stored integer beside the chain is a second answer to the same
+    question and the two would drift.
+
+    `None` when the criterion's results do not form a chain, or when the rung is not on it —
+    empty rather than a guess, the rule `ladder_of` already follows. A caller that gets `None`
+    has a world that declared a partial order and a subject standing somewhere in it, which is a
+    legitimate world; what it does not have is a number, and inventing one would be the total
+    order this model refuses to assume.
+    """
+    chain = ladder_of(records, criterion)
+    if rung not in chain:
+        return None
+    return chain.index(rung) + 1
+
+
+def criterion_of_rung(records: Sequence[lc.StateRecord], rung: str) -> str | None:
+    """Which declared chain this rung sits in, or `None` when that is not one answer.
+
+    The criterion a standing belongs to is **derived** rather than declared twice: a
+    `stands_at` edge carries the criterion in its value slot exactly as `precedes` does, and this
+    is how a reader of the *page* — where the criterion is not printed — recovers it.
+
+    `None` both when no chain holds the rung and when two do. A rung in two chains is a
+    `validate` complaint rather than a tie broken here (`plan/handoff-numbers-go-up.md`
+    boundary 9): picking one would be this function inventing which ladder a world meant.
+    """
+    owners = [
+        criterion
+        for criterion in sorted(criteria(records))
+        if rung in ladder_of(records, criterion)
+    ]
+    return owners[0] if len(owners) == 1 else None
+
+
+def standing_of(
+    records: Sequence[lc.StateRecord], subject: str, *, at: str | None = None
+) -> dict[str, str]:
+    """Where this subject stands on each ladder, as of `at`. Empty for a subject on none.
+
+    Canon only, and the latest standing at or before `at` per criterion — a standing is a fact
+    that *changes*, so the packet's rule for a fact with a story position applies: the one in
+    force is the last one the book has reached. `at=None` means "wherever the book is now", which
+    reads every canon standing including the unplaced.
+
+    **A dict per criterion rather than one rung, because a subject may be on two ladders.**
+    Magic and body cultivation side by side is the world `PRECEDES_PREDICATE` puts the criterion
+    on the edge for, and collapsing the two here would splice an order nobody declared. The
+    criterion is read from the edge's value slot, falling back to `criterion_of_rung` for a
+    standing whose value slot is empty — the page prints a rung and not a criterion, so the edge
+    an extractor reads back off prose has to be resolvable without one.
+    """
+    latest: dict[str, tuple[str, str]] = {}
+    for record in _canon(records):
+        if record.predicate != STANDS_AT_PREDICATE or not record.object_ref:
+            continue
+        if record.subject != subject:
+            continue
+        key = state_mod.order_key_of(record) or ""
+        if at is not None and key > at:
+            continue
+        criterion = str(record.value or "").strip() or criterion_of_rung(
+            records, record.object_ref
+        )
+        if not criterion:
+            continue
+        held = latest.get(criterion)
+        if held is None or key >= held[0]:
+            latest[criterion] = (key, record.object_ref)
+    return {criterion: rung for criterion, (_, rung) in sorted(latest.items())}
+
+
 #: Records that belong to a reified node and say nothing on their own. Folded into the node's
 #: one sentence by `project`, and dropped from the packet — the same information under a
 #: different id, which is why it is not an omission any more than a `status_sheet` is.
@@ -973,6 +1328,7 @@ _SATELLITE = frozenset(
         GROUP_KEY_PREDICATE,
         MAXIMUM_PREDICATE,
         PREDICATE_PREDICATE,
+        EXCEPTS_PREDICATE,
         MEMBER,
         PERMITS,
     }
@@ -1047,7 +1403,7 @@ def project(records: Sequence[lc.StateRecord]) -> dict[str, str]:
     for record in records:
         if record.record_id in projected:
             continue
-        plain = _record_sentence(record, held, wrong, believed)
+        plain = _record_sentence(record, held, wrong, believed, records)
         if plain is not None:
             projected[record.record_id] = plain
     return projected
@@ -1070,7 +1426,7 @@ def _node_sentence(
     if node_type == CRITERION:
         comparator = one(COMPARATOR_PREDICATE)
         judged = one(EVALUATES_PREDICATE)
-        ladder = _ladder_for(subject, records)
+        ladder = ladder_of(records, subject)
         whom = judged.object_ref if judged is not None and judged.object_ref else "a subject"
         text = f"{subject} is how {whom} is judged"
         if comparator is not None:
@@ -1090,7 +1446,20 @@ def _node_sentence(
             if scope is not None and (scope.object_ref or scope.value) not in (None, ANY_SCOPE)
             else ""
         )
-        return f"at most {limit} {name.replace('_', ' ')}{where} at one time"
+        # **The exception is rendered with the rule or it is not a fact the writer has.** A
+        # packet that carried "at most one owner per trait" and, separately, "kell is the
+        # exception to c_one_owner_per_trait" would hand the writer a rule and an id, and the
+        # scene that has to show the difference would be written against the rule. Absent for
+        # every shape that excepts nobody, which is every shape forged before this existed.
+        excepted = sorted(
+            {
+                row.object_ref
+                for row in parts.get(EXCEPTS_PREDICATE, ())
+                if row.object_ref
+            }
+        )
+        unless = f", except for {', '.join(excepted)}" if excepted else ""
+        return f"at most {limit} {name.replace('_', ' ')}{where} at one time{unless}"
 
     if node_type == VIEW:
         substrate = one(VIEW_SUBSTRATE)
@@ -1125,6 +1494,7 @@ def _record_sentence(
     held: Mapping[str, str],
     wrong: frozenset[str],
     believed: set[str],
+    records: Sequence[lc.StateRecord] = (),
 ) -> str | None:
     """English for one record, or `None` to leave it to `state.describe`."""
     value = record.value if isinstance(record.value, str) else None
@@ -1135,10 +1505,52 @@ def _record_sentence(
         return f"Because of {record.subject}, in {domain}: {value}"
     if record.predicate == MANIFESTS_PREDICATE and value:
         return f"{record.subject} shows on the page as: {value}"
+    # **The exception, its edge and its price, as three facts and no instruction.** The register
+    # is the one the rules and manifestations already use: what is so, never what to do about it.
+    # A sentence here that said "open on them" or "make the reader like them" would be this
+    # system's own taste arriving in every packet, which is the boundary stage-0 §95 draws and
+    # `plan/handoff-protagonist.md` boundary 1 restates for this field in particular.
+    if record.predicate == EXCEPTION_PREDICATE and record.object_ref:
+        return f"{record.subject} is the one the rule {record.object_ref} does not hold for"
+    if record.predicate == EDGE_PREDICATE and value:
+        return f"{record.subject} alone can: {value}"
+    # **The inventory, in English.** Until these four branches existed a person's abilities
+    # reached the writer as `state.describe`'s flat fallback — `sera can_do (cap_walk_between)` —
+    # and landed in the world brief's `other` bucket, which is the failure `worlds.py`'s own
+    # docstring calls the gate on the model being usable at all. Facts, in the register the
+    # branches above use: what is so, never an instruction to show it off.
+    # **Exactly the three predicates no world has ever emitted**, and that is the constraint
+    # rather than an accident. `costs`, `permits` and `member` are also illegible today and also
+    # wanted a sentence — and every one of them is already written by `records_for` for ranks and
+    # bonds, so giving them one would change the packet of all thirteen worlds forged before this
+    # and break the byte-identity rail. They keep `state.describe`'s flat form until somebody
+    # pays for that change deliberately; `costs` reads acceptably flat, which is why a
+    # capability's price reuses it rather than inventing a legible twin.
+    if record.predicate == CAN_DO and record.object_ref:
+        return f"{record.subject} can do {record.object_ref}"
+    if record.predicate == REQUIRES and record.object_ref:
+        return f"{record.subject} needs {record.object_ref} first"
+    if record.predicate == TAUGHT_BY and record.object_ref:
+        return f"{record.subject} is taught by {record.object_ref}"
+    if record.predicate == PRICE_PREDICATE and value:
+        return f"It costs {record.subject}: {value}"
     if record.predicate == ENTITY_ROLE_PREDICATE:
         return ""
     if record.predicate == PRECEDES_PREDICATE and record.object_ref:
         return f"{record.subject} ranks below {record.object_ref}"
+    # **The standing reads as a fact and carries its number**, because the packet is where the
+    # writer meets it and "kell stands_at two_wood" is notation. The count is
+    # `rung_index`'s and is rendered only when the chain gives one — a partial order reaches the
+    # writer as a position with no number, which is what it is. No verb about rising and no
+    # adjective: where somebody stands is the same class of fact as what a rule costs.
+    if record.predicate == STANDS_AT_PREDICATE and record.object_ref:
+        criterion = str(record.value or "").strip() or criterion_of_rung(
+            records, record.object_ref
+        )
+        chain = ladder_of(records, criterion) if criterion else ()
+        index = chain.index(record.object_ref) + 1 if record.object_ref in chain else None
+        where = f" ({index} of {len(chain)})" if index is not None else ""
+        return f"{record.subject} stands at {record.object_ref}{where}"
     if record.predicate == CLAIM_CONTENT and value:
         # **A false claim's content is folded and a true one's is not**, and the asymmetry is
         # the point. A world's error belongs to whoever holds it, so the `believes` edge below
@@ -1177,6 +1589,7 @@ __all__ = [
     "ARCHITECT_ID_PREFIX",
     "BELIEVES",
     "BUNDLE_MEMBER",
+    "CAN_DO",
     "CARDINALITY_CONSTRAINT",
     "CHANGE",
     "CHANGE_ROLES",
@@ -1187,14 +1600,18 @@ __all__ = [
     "CONSEQUENCE_DOMAINS",
     "CONSEQUENCE_PREDICATE",
     "CONSTRAINT",
+    "COSTS",
     "CRITERION",
     "DISCLOSED_TO",
+    "EDGE_PREDICATE",
     "ENTITY_ROLES",
     "ENTITY_ROLE_PREDICATE",
     "EVALUATES_PREDICATE",
     "EVALUATION_CRITERION",
     "EVALUATION_RESULT",
     "EVALUATION_SUBJECT",
+    "EXCEPTION_PREDICATE",
+    "EXCEPTS_PREDICATE",
     "GRAPH_LINE_PREDICATE",
     "GROUP_KEYS",
     "GROUP_KEY_PREDICATE",
@@ -1205,12 +1622,16 @@ __all__ = [
     "PERMITS",
     "PRECEDES_PREDICATE",
     "PREDICATE_PREDICATE",
+    "PRICE_PREDICATE",
     "QUESTION_PREDICATE",
     "READER",
     "RECOGNIZED_BY",
     "REGISTRY_VERSION",
+    "REQUIRES",
     "REVEAL_SCENE",
     "SCOPE_PREDICATE",
+    "STANDS_AT_PREDICATE",
+    "TAUGHT_BY",
     "TYPE_PREDICATE",
     "VIEW",
     "VIEW_MAPPING",
@@ -1220,12 +1641,16 @@ __all__ = [
     "CardinalityShape",
     "Coverage",
     "IllegalWorld",
+    "Protagonist",
     "architect_id_for",
+    "capabilities",
+    "capabilities_of",
     "cardinality_shapes",
     "claims",
     "consequence_domains",
     "criteria",
     "criterion_brief",
+    "criterion_of_rung",
     "disclosures",
     "entities_with_role",
     "entity_roles",
@@ -1236,16 +1661,21 @@ __all__ = [
     "in_scope",
     "is_machine_author",
     "key_nouns",
+    "ladder_of",
     "machine_author",
     "manifestation_coverage",
     "nodes_of_type",
     "normalise_id",
     "project",
+    "protagonist_brief",
     "questions",
     "rank_order",
     "record_id_for",
+    "requirement_depth",
     "reveal_scenes",
     "rules",
+    "rung_index",
+    "standing_of",
     "undisclosed_claims",
     "validate",
     "world_record",

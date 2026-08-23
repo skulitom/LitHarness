@@ -20,14 +20,9 @@ from __future__ import annotations
 
 import argparse
 import math
-import sys
-from pathlib import Path
 from typing import Any
 
 import pytest
-
-RESEARCH = Path(__file__).resolve().parents[1] / "research" / "quality-measurement"
-sys.path.insert(0, str(RESEARCH))
 
 taste_benchmark = pytest.importorskip(
     "taste_benchmark",
@@ -121,8 +116,8 @@ def test_bucket_calls_an_aligned_pair_with_equal_views_aligned_minus():
 # One compliant pair, reused across tests: s_hi carries four times s_lo's conversion, near-
 # identical length, and (unless a test says otherwise) more followers and views, so it is
 # admissible for `aligned` and inadmissible for `crossed`.
-S_HI = dict(conversion=0.02, views=20_000, followers=400, words=2_000)
-S_LO = dict(conversion=0.005, views=21_000, followers=380, words=1_950)
+S_HI = {"conversion": 0.02, "views": 20_000, "followers": 400, "words": 2_000}
+S_LO = {"conversion": 0.005, "views": 21_000, "followers": 380, "words": 1_950}
 
 
 def test_candidates_names_the_higher_conversion_side_high_regardless_of_input_order():

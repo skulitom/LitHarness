@@ -305,7 +305,7 @@ def schedule_fault(
             f"all {len(windows)} payoff windows close inside the final act; a schedule that "
             "resolves everything at the end is the cadence defect it was asked to plan around"
         )
-    if len({window for window in windows}) == 1:
+    if len(set(windows)) == 1:
         start, end = windows[0]
         return (
             f"all {len(windows)} payoff windows are the same range {start}-{end}; one window "

@@ -19,6 +19,7 @@ from hypothesis import assume, given
 from hypothesis import strategies as st
 
 from litharness.adapters.contracts_fixtures import fixture_manuscript, fixture_state
+from litharness.domain import worlds
 from litharness.domain.extraction import (
     DEFAULT_SHEET,
     MAX_SUFFIX,
@@ -31,13 +32,16 @@ from litharness.domain.extraction import (
     Sheet,
     SheetField,
     attested_position,
+    extract_graph_facts,
     extract_state,
+    graph_line_for,
     normalise_subject,
     parse_sheet,
     record_id_for,
     render_status_line,
     sheet_for,
     speaks_system_voice,
+    standing_target,
     stated_position,
 )
 from litharness.domain.findings import DetectorInput, Severity
@@ -565,3 +569,188 @@ def test_a_malformed_sheet_declaration_is_refused_rather_than_defaulted(value) -
     with pytest.raises(MalformedSheet):
         parse_sheet(value)
 
+
+
+# --- the number comes off the page (plan/handoff-numbers-go-up.md Task 3) ---------------------
+
+
+def _canon(subject: str, predicate: str, **kwargs) -> lc.StateRecord:  # type: ignore[no-untyped-def]
+    return worlds.world_record(
+        subject, predicate, authority=lc.StateAuthority.ACCEPTED_CANON, **kwargs
+    )
+
+
+def _ladder_world() -> list[lc.StateRecord]:
+    """A three-rung ordinal chain, a graph line that prints a change on it, and a standing."""
+    return [
+        _canon("assay_grade", worlds.TYPE_PREDICATE, value=worlds.CRITERION),
+        _canon("assay_grade", worlds.COMPARATOR_PREDICATE, value="ordinal"),
+        *[
+            _canon(rung, worlds.MANIFESTS_PREDICATE, value=form)
+            for rung, form in (
+                ("third_seal", "a lead seal that greens in a week"),
+                ("second_seal", "a brass seal worn at the throat"),
+                ("first_seal", "a silver seal nobody hands back"),
+            )
+        ],
+        *[
+            _canon(
+                lower,
+                worlds.PRECEDES_PREDICATE,
+                object_ref=higher,
+                value="assay_grade",
+            )
+            for lower, higher in (
+                ("third_seal", "second_seal"),
+                ("second_seal", "first_seal"),
+            )
+        ],
+        _canon("silas", worlds.ENTITY_ROLE_PREDICATE, value="protagonist"),
+        _canon(
+            "silas",
+            worlds.STANDS_AT_PREDICATE,
+            object_ref="third_seal",
+            value="assay_grade",
+            order_key="s1",
+        ),
+        _canon(
+            "book",
+            worlds.GRAPH_LINE_PREDICATE,
+            value={
+                "label": "ASSAY",
+                "edges": [
+                    {"phrase": "now stands at", "predicate": worlds.STANDS_AT_PREDICATE},
+                    {"phrase": "is bonded to", "predicate": "bonded_to"},
+                ],
+            },
+        ),
+    ]
+
+
+def _read(text: str, known, order_key: str = "s3"):  # type: ignore[no-untyped-def]
+    return extract_graph_facts(
+        text,
+        known=known,
+        project_id="p",
+        book_id="b",
+        branch_id="br",
+        logical_id="scene-3",
+        version_id="v1",
+        order_key=order_key,
+    )
+
+
+def test_a_printed_rung_on_a_declared_ladder_is_canon_at_that_position() -> None:
+    """**The book's own statement, the same class as a `[STATUS]` line.**
+
+    Nothing is minted: the subject is one canon already uses, the rung is a declared rank of a
+    declared chain, and the criterion is derived from which chain holds it. No model returned
+    it — a recorded policy decision accepted the prose and this is a mechanical restatement.
+    """
+    known = _ladder_world()
+    [read] = _read("[ASSAY] silas now stands at second_seal", known)
+
+    assert read.authority is lc.StateAuthority.ACCEPTED_CANON
+    assert read.predicate == worlds.STANDS_AT_PREDICATE
+    assert read.object_ref == "second_seal"
+    # The criterion rides on the edge, so two ladders in one world cannot be spliced — and the
+    # page never printed it, because a reader knows which ladder a rung is on.
+    assert read.value == "assay_grade"
+    assert read.evidence, "canon read off prose carries the span it was read from"
+
+    after = [*known, read]
+    assert worlds.standing_of(after, "silas") == {"assay_grade": "second_seal"}
+    assert worlds.rung_index(after, "assay_grade", "second_seal") == 2
+    # And it reads as a sentence with its number when the packet renders it.
+    assert worlds.project(after)[read.record_id] == "silas stands at second_seal (2 of 3)"
+
+
+def test_a_rung_the_page_minted_stays_a_proposal() -> None:
+    """The general case, unchanged: identity minting and factual promotion stay separate."""
+    known = _ladder_world()
+    [minted] = _read("[ASSAY] silas now stands at platinum_seal", known)
+    assert minted.authority is lc.StateAuthority.PROPOSED
+    assert minted.value is None
+    assert "a proposal until the book uses it again" in (minted.note or "")
+
+    # A subject canon has never heard of, on a declared rung, is also a proposal: the exception
+    # needs both halves.
+    [stranger] = _read("[ASSAY] kell now stands at second_seal", known)
+    assert stranger.authority is lc.StateAuthority.PROPOSED
+
+    # And a declared rung under some other predicate is untouched by any of this.
+    [other] = _read("[ASSAY] silas is bonded to second_seal", known)
+    assert other.authority is lc.StateAuthority.PROPOSED
+
+
+def test_a_scheduled_standing_does_not_suppress_the_printed_one() -> None:
+    """The plan and the page are different claims, and only the page makes the rise true.
+
+    `seen` counts proposals as well as canon because repetition adds nothing — but the
+    outline's rung schedule is a `PROPOSED` `stands_at` edge at a future position, so counting
+    it would mean the one scene that printed the rise read nothing.
+    """
+    scheduled = lc.StateRecord(
+        record_id="standing-s3",
+        kind=lc.StateRecordKind.RELATIONSHIP,
+        subject="silas",
+        predicate=worlds.STANDS_AT_PREDICATE,
+        value="assay_grade",
+        object_ref="second_seal",
+        authority=lc.StateAuthority.PROPOSED,
+        story_position=lc.StoryPosition(order_key="s3"),
+    )
+    known = [*_ladder_world(), scheduled]
+    [read] = _read("[ASSAY] silas now stands at second_seal", known)
+    assert read.authority is lc.StateAuthority.ACCEPTED_CANON
+
+    # Once it *is* canon, printing it again adds nothing — the rule the `seen` set exists for.
+    assert _read("[ASSAY] silas now stands at second_seal", [*known, read], "s4") == ()
+
+
+def test_the_standing_target_aims_from_where_the_book_actually_is() -> None:
+    """Canon read off the page moves the origin, which is why the schedule is aimed rather than
+    replayed: a book that reached second_seal at s3 is aimed at first_seal, not at second."""
+    schedule = [
+        lc.StateRecord(
+            record_id=f"standing-{key}",
+            kind=lc.StateRecordKind.RELATIONSHIP,
+            subject="silas",
+            predicate=worlds.STANDS_AT_PREDICATE,
+            value="assay_grade",
+            object_ref=rung,
+            authority=lc.StateAuthority.PROPOSED,
+            story_position=lc.StoryPosition(order_key=key),
+        )
+        for key, rung in (("s3", "second_seal"), ("s5", "first_seal"))
+    ]
+    known = [*_ladder_world(), *schedule]
+    assert "second_seal (2 of 3)" in (standing_target(known, at="s2") or "")
+
+    [read] = _read("[ASSAY] silas now stands at second_seal", known)
+    after = [*known, read]
+    aimed = standing_target(after, at="s4") or ""
+    assert "silas stands at second_seal (2 of 3)" in aimed
+    assert "the book's plan has them at first_seal (3 of 3)" in aimed
+
+
+def test_the_golden_fixtures_extract_exactly_what_they_extracted_before() -> None:
+    """Absence is free, and it is asserted rather than intended. Neither fixture declares a
+    graph line, so neither reads one — before this change or after it."""
+    for fixture_id in ("litrpg", "mystery"):
+        known = list(state_of(fixture_id).records)
+        assert graph_line_for(known) is None
+        for logical_id, text in scenes_of(fixture_id).items():
+            assert (
+                extract_graph_facts(
+                    text,
+                    known=known,
+                    project_id="p",
+                    book_id="b",
+                    branch_id="br",
+                    logical_id=logical_id,
+                    version_id="v1",
+                    order_key="s01",
+                )
+                == ()
+            )

@@ -78,7 +78,7 @@ def test_a_scenes_position_agrees_with_the_chapters_it_is_grouped_into():
     eventually disagree with the first. `chapter_positions` is a caller of `chapters_of` rather
     than a `divmod` beside it, and this is the assertion that would catch it becoming one.
     """
-    for scenes in range(0, 30):
+    for scenes in range(30):
         revision = _serial(scenes)
         positions = chapter_positions(revision, SHAPE)
         expected = {

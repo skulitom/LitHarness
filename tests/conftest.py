@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import os
+import sys
+from pathlib import Path
 
 import litharness_contracts as lc
 import pytest
@@ -10,6 +12,14 @@ import pytest
 # the tests that remember to opt in is not a guard. Setting it here makes it structural:
 # every test in this package runs with billing providers filtered out of resolution.
 os.environ.setdefault("LITHARNESS_ENV", "test")
+
+# This conftest loads before any test module, so this one insert lets every test importorskip
+# a research module without repeating the path arithmetic; the importorskip calls stay in the
+# test files on purpose, because they name the reason a module might be absent.
+if str(
+    _research_dir := Path(__file__).resolve().parent.parent / "research" / "quality-measurement"
+) not in sys.path:  # inserted once, even if conftest is re-imported
+    sys.path.insert(0, str(_research_dir))
 
 from litharness.domain.nodes import Node, NodeKind
 from litharness.domain.position import initial_keys

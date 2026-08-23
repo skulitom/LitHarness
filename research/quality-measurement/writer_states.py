@@ -212,9 +212,7 @@ class Generator:
                 # model refusal (stop_reason "refusal") IS a datum — a writer declining a
                 # state is a finding — so only transport-shaped failures are dropped.
                 stop = str(record.get("stop_reason", ""))
-                if record.get("refused") and (
-                    stop.startswith("transport_error") or stop.startswith("cli_")
-                ):
+                if record.get("refused") and stop.startswith(("transport_error", "cli_")):
                     dropped += 1
                     continue
                 if isinstance(record.get("key"), str):

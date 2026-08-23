@@ -14,16 +14,9 @@ percentile of published openings. These tests pin what the number *is*, never wh
 
 from __future__ import annotations
 
-import sys
-from pathlib import Path
+import world_lexicon
 
-RESEARCH = Path(__file__).resolve().parents[1] / "research" / "quality-measurement"
-if str(RESEARCH) not in sys.path:  # pragma: no cover - import plumbing
-    sys.path.insert(0, str(RESEARCH))
-
-import world_lexicon  # noqa: E402
-
-from litharness.domain import worlds  # noqa: E402
+from litharness.domain import worlds
 
 
 def test_the_selftest_passes() -> None:

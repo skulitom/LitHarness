@@ -1,0 +1,82 @@
+{
+  "source": "plan/serial-pilot-2-craft.json, with one edit and two additions from plan/reader-read-3.md",
+  "source_sha256": "5832adc7cc7858970102184118925d4d6cae6eeeb36dafb43f785547e5c3054c",
+  "note": "The craft constraints that belong to the project rather than to any one world. Five are verbatim from Serial Pilot 2; C7 carries one recorded edit, because the 2026-08-22 read named a failure class C7's own list did not enumerate. Two more — C9 and C10 — are PROPOSED and sit outside `directives` so that no script issues them: C9 has no number yet and C10 is direction the operator has not given. Moving an entry from `proposed` into `directives` is the operator's act and is what issues it.",
+  "directives": [
+    {
+      "label": "C3 originality / RS1",
+      "kind": "constraint",
+      "text": "Never name, quote, or imitate any real-world person, brand, or published fictional work, character, or game system. Every name, place, and mechanic in this book is original to it.",
+      "carried": "verbatim"
+    },
+    {
+      "label": "C5 openings",
+      "kind": "constraint",
+      "text": "Openings: the first sentence of a scene puts a person in a situation, never a place in a condition. Do not open on weather, light, the time of day, or how a street looks. Open where someone wants something and something is in the way, or where a fact has just landed that changes what matters. The first line has one job: to make the second line necessary.",
+      "carried": "verbatim"
+    },
+    {
+      "label": "C6 introduction budget",
+      "kind": "constraint",
+      "text": "Introductions are rationed. In the first three hundred words of a scene, name at most three things a reader is expected to remember — people, places, businesses, or objects with proper names. Everything else stays unnamed until the scene has given a reason to care about it. A detail earns its name by mattering to what is happening, not by being in the room.",
+      "carried": "verbatim"
+    },
+    {
+      "label": "C7 the phrase",
+      "kind": "constraint",
+      "text": "Plain words, and every phrase must survive being read twice. Use the ordinary word unless the exact one means something different. No stacks of three or more nouns where a preposition would do: the door of the warehouse, not the warehouse door. A comparison must explain the less familiar by the more familiar, so if a reader has to stop and picture the thing being compared to, it is the wrong comparison. Never write a phrase that cancels itself, and never write one that a later clause in the same sentence then states properly — cut to the clause that states it properly. A verb belongs to a thing that can perform it: rings do not stand on a wrist, a room does not wait, light does not decide. If the subject could not do the action, the verb is reaching for an effect and the ordinary verb is the right one.",
+      "carried": "edited: the lent-verb clause is added. The 2026-08-22 read named \"Two rings of bark stood on her wrist\" as a defect, and C7 was in that scene's packet and locked — of the four defects that read named it is the one nearest to disobedience. But C7's enumerated failures are noun stacks, backwards comparisons, self-cancelling phrases and restated clauses; a verb lent to an object that cannot perform it is not among them, and a model reading the rule as its list would not classify \"stood\" as non-plain. The rule is the same rule; one failure class it always meant is now named. Pilot 2's own edit note stays in force too — the illustrative noun stack is still not Reappraisal's assay house."
+    },
+    {
+      "label": "C8 register",
+      "kind": "constraint",
+      "text": "Register: this is popcorn reading, meant to be read fast. Sentences run short and land: most under twenty words, and one past thirty should be rare — roughly one sentence in twenty. When a sentence grows, cut it into two rather than joining clauses with commas and subordinators. Keep paragraphs short and let dialogue carry what it can. Never write a sentence a reader has to go back and re-read to parse; if a clause needs unpacking, it is the wrong clause.",
+      "carried": "verbatim"
+    },
+    {
+      "label": "C4 price on the page",
+      "kind": "constraint",
+      "text": "Every gain — a capability, an object, an acquaintance, a fact learned — carries a price paid on the page in the same scene or earlier: time, money, pain, exposure, or a foreclosed option. Nothing in this world is given away.",
+      "carried": "rewritten: pilot 1's C4 named that world's Skills, its Appraisal and its System. The rule is the same rule; the nouns are gone."
+    }
+  ],
+  "proposed": [
+    {
+      "label": "C9 introductions at chapter grain",
+      "kind": "constraint",
+      "status": "NOT ISSUED — the number is the operator's to set",
+      "text": "Introductions are rationed at the chapter as well as at the scene. Across a whole chapter, name at most N people a reader is expected to remember. Everything else stays unnamed until the chapter has given a reason to care about it: an unnamed role — the bailiff, the girl at the gate, the clerk on the far desk — costs a reader nothing and a name costs them something every time it returns.",
+      "source": "plan/reader-read-3.md",
+      "why": "C6 rations the first three hundred words of a SCENE, and it was honoured in every scene of What Takes — the eight openings score 2, 3, 1, 2, 3, 1, 2, 2 real names. A chapter is four scenes, so the budget resets four times before a reader reaches the end of one sitting. Nothing bounds the chapter, which is the unit the read judged.",
+      "the_number": "N IS NOT SET AND MUST NOT BE GUESSED. Fill it from the distribution in research/quality-measurement/named-persons-results.md, then move this entry into `directives`. Stage-0 §81, §85, §87 and §89 each record a bar declared over a quantity that could not do what it said.",
+      "measured_beside_it": {
+        "counter": "research/quality-measurement/named_persons.py — distinct proper names introduced per chapter, contraction artefact removed; run 2026-08-22",
+        "caveat": "The counter cannot separate a person from a place, an institution or a month; these are NAME counts and C9 is written about PEOPLE. The operator's own person-only hand count of What Takes chapter 1 is nine named people and three unnamed roles.",
+        "own_books_median": 23.5,
+        "own_books_per_chapter": {
+          "reappraisal/Chapter1": 30,
+          "reappraisal/Chapter2": 29,
+          "what-takes/Chapter1": 8,
+          "what-takes/Chapter2": 18
+        },
+        "royalroad_median": 17,
+        "royalroad_litrpg_median": 24,
+        "royalroad_litrpg_quartiles": {
+          "0.25": 14,
+          "0.5": 24,
+          "0.75": 39
+        },
+        "the_null_the_operator_must_see_first": "THE COUNTER DOES NOT REPRODUCE THE COMPLAINT. The two chapters the operator named as having too many names sit at the 11.8th and 37.6th percentiles of 2,000 cached LitRPG chapters (8 and 18 names against a cohort median of 24), and per 1,000 words at 2.1 and 4.6 against a cohort median of 10.9. Reappraisal, which this read did not complain about, sits at the 63.5th and 61.6th. A budget set from this distribution would license MORE names than the complained-about book has. Whatever the operator was reading is not what this counter counts — which is the `opening_proper_nouns` result again, where the complained-about chapter landed at the 68.5th percentile of published openings. Setting N here is an operator act taken against a counter that has already failed to order the one case it was nominated for."
+      }
+    },
+    {
+      "label": "C10 the first person named",
+      "kind": "constraint",
+      "status": "NOT ISSUED — direction, and the operator's to give",
+      "text": "The first sentence of the book, and the first sentence of every chapter, belongs to the protagonist. They are the first person named in it, and the sentence says what they want or what has just happened to them.",
+      "source": "plan/reader-read-3.md",
+      "why": "Note 3: \"Its too confusing who the main character is.\" The first two words of What Takes are another person's name; the protagonist enters at word 17 with no role and no want, and his trade is first stated at word 802, inside a line he reads aloud. C5 — the first sentence of a scene puts a person in a situation — was in the packet and was obeyed. WHICH person was unsaid.",
+      "boundary": "This is a craft rule like C5 and it is the operator's to issue. No form of it is in code: the pipeline now carries the protagonist as a declared fact and a position (`Point of view: <id>.`), and says nothing about how to handle them. A default here would be this system's own taste in every prompt it renders (stage-0 §95, §97.1)."
+    }
+  ]
+}

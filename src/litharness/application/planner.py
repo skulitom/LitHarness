@@ -99,7 +99,10 @@ from litharness.domain.directives import Directive, DirectiveStatus
 from litharness.domain.draft import DraftPolicy, is_draftable
 from litharness.domain.events import payload_digest
 from litharness.domain.extraction import (
+    graph_line_for,
     progression_target,
+    standing_example,
+    standing_target,
     stated_position,
     system_voice_example,
 )
@@ -309,7 +312,10 @@ def render_prompt(
     feedback: FeedbackSet | None = None,
     writer: Writer | None = None,
     criteria: str | None = None,
+    standing: str | None = None,
+    standing_line: str | None = None,
     chapter: Position | None = None,
+    point_of_view: str | None = None,
 ) -> tuple[str, str]:
     """(system, prompt) for one beat, grounded in an assembled context packet.
 
@@ -392,6 +398,18 @@ def render_prompt(
     after the statement. `plans.scene_plan_line` is rendered last always, and `plan_search`'s
     controlled comparison is only controlled while the K candidates differ in that final
     fragment and nowhere else.
+
+    **`point_of_view` is the same class of thing as `chapter`, and it is held to the same
+    boundary.** It says whose scene this is — one declared cast id, the one this book's canon
+    names as its protagonist — and then stops. `Point of view: kell.` has no verb and no
+    adjective, because *how* to handle a protagonist is the director's to say and a default here
+    would be this system's own taste arriving in every prompt it ever renders (stage-0 §95's
+    scope axiom, §97.1). Nothing here says open on them, make them likeable, or show them
+    winning; `test_the_point_of_view_fragment_carries_no_verb_and_no_adjective` checks it.
+
+    `None` renders nothing and is the control: every book written before a world could declare a
+    protagonist passes `None`, and its prompt is byte-identical to what it was. It sits beside
+    the chapter cue and before the dramatic function, for the chapter cue's reason.
     """
     system = (
         "You are drafting one scene of a novel. Write only the scene's prose: no headings, "
@@ -435,6 +453,37 @@ def render_prompt(
                 f"{progression}\n"
                 "Move it toward that in this scene where the events warrant it; do not jump "
                 "to it, and do not move it for no reason on the page."
+            )
+    if standing:
+        # **The numeric block's wording, reused deliberately** (`plan/handoff-numbers-go-up.md`
+        # Task 2). A standing is a position on a declared ladder and a status snapshot is a set
+        # of declared numbers; they are the same class of fact, and saying the second one's
+        # sentence in a second register would be this module deciding one of them matters more.
+        # "Toward" rather than "to", and "where the events warrant it", for exactly the reasons
+        # the block above gives.
+        #
+        # It sits outside the `status_example` branch because the two are independent: a world
+        # can declare a rank ladder and no stat sheet, which is every world this project's
+        # Architect has forged, and nesting it would make the ladder unreachable for all of them.
+        system += (
+            "\nThe book's plan has the standing reaching this later on:\n"
+            f"{standing}\n"
+            "Move it toward that in this scene where the events warrant it; do not jump to it, "
+            "and do not move it for no reason on the page."
+        )
+        if standing_line:
+            # **A filled example, never a template with braces**, and that is a measurement
+            # rather than a preference — `system_voice_example`'s. Shown `STATUS_TEMPLATE` with
+            # its `{subject}` slot intact, a model wrote the placeholder out verbatim; the line
+            # matched the pattern, named a subject canon has never heard of, and extraction
+            # yielded nothing. `extraction.standing_example` renders this one with the book's own
+            # label, the book's own phrase for a change of standing and the rung the standing
+            # currently names, so the model is shown a line `parse_graph_line` has already agreed
+            # reads. A book that declares no graph line passes `None` and is asked to print
+            # nothing — the declare -> ask -> print -> read chain simply does not start.
+            system += (
+                "\nWhen the standing changes, print the line in this form, as the book "
+                f"prints it:\n{standing_line}"
             )
     if target_words:
         # **Length is asked for by giving the scene somewhere to spend it**, which is the
@@ -483,10 +532,12 @@ def render_prompt(
             f"{chapter.scenes_in_chapter}."
         )
     )
+    pov_line = "" if not point_of_view else f" Point of view: {point_of_view}."
     prompt = (
         f"{packet.render()}\n\n"
         f"Now write {title}{beat.title or beat.logical_id} — scene {beat.ordinal} of "
-        f"{beat.of_total}.{chapter_line} Dramatic function: {beat.function}.{plan_line}"
+        f"{beat.of_total}.{chapter_line}{pov_line} Dramatic function: {beat.function}."
+        f"{plan_line}"
     )
     return system, prompt
 
@@ -839,6 +890,25 @@ def make_plan_selector(
             if store.any_unfinished(ids):
                 continue
 
+            # **Whose book this is, read once per book rather than once per beat.** It is a
+            # position in the same sense `positions` is one: canon names one member of
+            # the cast as this book's protagonist, and the packet and the beat line are told
+            # which. Until this line existed `packet_for`'s `pov_character_id` seam had never
+            # been passed anything by any production caller — every packet this system has ever
+            # built was built for no one — while the outline invented whoever acted in the book
+            # (`plan/reader-read-3.md` notes 1 and 3).
+            #
+            # `None` for every book whose canon declares no protagonist, and then the packet
+            # filters nothing, the facts block keeps its old heading and the beat line renders
+            # no fragment — byte-identical to what it was, which `input_digest_for` makes
+            # load-bearing because that digest is also the sampler seed.
+            # Read here rather than beside `positions`, which is pure: this is a query, and
+            # a book whose work is already in flight has just `continue`d above without one.
+            pov = worlds.protagonist_brief(
+                store.state_records(progress.book_id, progress.branch_id)
+            )
+            pov_id = pov.subject if pov is not None else None
+
             for beat in beats:
                 # 4. The selector's precondition IS the gate's — one function, no drift.
                 if not is_draftable(head, beat.logical_id, policy=policy):
@@ -868,7 +938,11 @@ def make_plan_selector(
                     # Already planned under this epoch: in flight, or burned by a poison.
                     continue
                 try:
-                    packet = packet_for(store, head, beat, token_budget=token_budget)
+                    packet = packet_for(
+                        store, head, beat,
+                        token_budget=token_budget,
+                        pov_character_id=pov_id,
+                    )
                 except ContextBudgetTooSmall:
                     # A ceiling too small to hold the premise refuses the *book*, not this
                     # beat: every beat of it would refuse identically, and enqueueing six
@@ -902,14 +976,19 @@ def make_plan_selector(
                 materialised = resolve(
                     store, book_id=progress.book_id, branch_id=progress.branch_id, head=head
                 )
+                # **One read, where there were four.** Every input below is a different
+                # question put to the same rows, and this render used to ask the store for them
+                # once per question — the habit `application/outline.py` names in its own canon
+                # read as "the pattern this deliberately does not copy". Adding the standing and
+                # its printed form would have made it six.
+                records = store.state_records(progress.book_id, progress.branch_id)
                 system, prompt = render_prompt(
                     beat,
                     book_title=_book_title(head),
                     packet=packet,
                     feedback=materialised.feedback,
                     status_example=system_voice_example(
-                        store.state_records(progress.book_id, progress.branch_id),
-                        at=beat.story_order_key,
+                        records, at=beat.story_order_key
                     ),
                     target_words=(policy or DraftPolicy()).target_words,
                     # Under search the statement line is deliberately ABSENT: the handler
@@ -922,13 +1001,24 @@ def make_plan_selector(
                         else (plan_item.text if plan_item is not None else None)
                     ),
                     progression=progression_target(
-                        store.state_records(progress.book_id, progress.branch_id),
-                        at=beat.story_order_key,
+                        records, at=beat.story_order_key
                     ),
-                    criteria=worlds.criterion_brief(
-                        store.state_records(progress.book_id, progress.branch_id)
+                    criteria=worlds.criterion_brief(records),
+                    # The ladder's two, and both are `None` for every book whose canon declares
+                    # no standing — which is every book written before 2026-08-22, and the
+                    # byte-identical control this whole slice is measured against. The printed
+                    # form is asked for only where the book declared one and it names the
+                    # standing predicate; `graph_line_for` is what refuses a malformed
+                    # declaration, so a world whose label was a sentence prints nothing rather
+                    # than a line no parser can read.
+                    standing=standing_target(records, at=beat.story_order_key),
+                    standing_line=(
+                        standing_example(records, at=beat.story_order_key)
+                        if graph_line_for(records) is not None
+                        else None
                     ),
                     chapter=positions.get(beat.logical_id),
+                    point_of_view=pov_id,
                 )
                 payload: dict[str, object] = {
                     "revision_id": head.revision_id,

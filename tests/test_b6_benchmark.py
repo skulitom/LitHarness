@@ -16,13 +16,7 @@ table, and a counter that stops ordering its family still returns a number:
 
 from __future__ import annotations
 
-import sys
-from pathlib import Path
-
 import pytest
-
-RESEARCH = Path(__file__).parents[1] / "research" / "quality-measurement"
-sys.path.insert(0, str(RESEARCH))
 
 b6 = pytest.importorskip(
     "b6_benchmark",

@@ -60,6 +60,7 @@ from litharness.application.policy_events import policy_decision_event
 from litharness.application.ports import OutlineStore, TextGenerator
 from litharness.domain import state as state_mod
 from litharness.domain import world_brief
+from litharness.domain import worlds as worlds_mod
 from litharness.domain.beats import Beat, beats_for, template_for
 from litharness.domain.budget import BudgetPolicy
 from litharness.domain.budget import check as budget_check
@@ -105,6 +106,17 @@ OUTLINE_PRIORITY = 300
 #: Words per statement, asked for rather than enforced. A statement is an instruction to the
 #: generator, not prose, and one that runs long starts writing the scene instead of placing it.
 TARGET_WORDS = 25
+
+#: Added to the request only when canon declares a protagonist. **Position and fact, and the
+#: boundary is asserted rather than trusted**: whether the reader should like them, whether they
+#: win, and whether they progress faster than anyone are the operator's to say and are said
+#: through a directive, never from here (stage-0 §95, §97.1). The strings below are checked for
+#: the vocabulary such an instruction would have to use by
+#: `test_the_protagonist_rules_name_a_person_and_never_an_outcome`.
+PROTAGONIST_RULES: tuple[str, ...] = (
+    "The protagonist is {subject}. This is {subject}'s book, so each statement says what "
+    "{subject} does in that scene, or what is done to {subject}.",
+)
 
 
 class OutlineOutputError(Exception):
@@ -176,6 +188,28 @@ OUTLINE_SCHEMA: dict[str, Any] = {
                 },
             },
         },
+        # The rung schedule (`plan/handoff-numbers-go-up.md` Task 2), asked for in the same call
+        # for the same §15 reason the other two are: the model is already holding the premise
+        # and the whole beat sheet, and a schedule of standings has to be consistent with both.
+        #
+        # **Optional rather than required, unlike `milestones` and `payoff_windows`.** Those two
+        # arrived when every book in the store was a book the schema could describe; this one
+        # arrives against `plan/serial-pilot-2-world.json` and `serial3.db`, which declare no
+        # ladder and would have to answer `[]` to a question nobody put to them. Required here
+        # would make the answer to "does this book have a ladder" a thing the *model* says, and
+        # it is a thing canon says.
+        "standing_milestones": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "additionalProperties": False,
+                "required": ["ordinal", "rung"],
+                "properties": {
+                    "ordinal": {"type": "integer"},
+                    "rung": {"type": "string"},
+                },
+            },
+        },
     },
 }
 
@@ -215,6 +249,7 @@ def render_outline_request(
     seed: Mapping[str, Any] | None = None,
     promises: Sequence[Promise] = (),
     world: WorldBrief | None = None,
+    protagonist: worlds_mod.Protagonist | None = None,
 ) -> CompletionRequest:
     """Freeze the premise and the whole beat sheet into one structured-output request.
 
@@ -227,6 +262,22 @@ def render_outline_request(
     the no-world payload byte-for-byte against what it was before this parameter existed.
     `domain/world_brief.py` owns what a planner may be told and what it may not — the answers
     reach a statement only where the world scheduled them.
+
+    **`protagonist` says whose book it is, which is the one thing the world brief cannot say**
+    (`plan/reader-read-3.md` notes 1 and 3). The brief carries every declared person under
+    `cast`, in the packet's own phrasing; what a flat list of people cannot carry is *which of
+    them this book is about*. Until 2026-08-22 nothing did, and on Serial Pilot 3 this call
+    invented a protagonist who occurs nowhere in the forged world — while four of that world's
+    five declared cast members never reached either chapter. The writer had them all along:
+    328 established facts, `context_omitted = 0`.
+
+    **Two branches met here and one input was collapsed rather than kept.** This call briefly
+    took a `cast` argument of its own beside `world`; the world brief already renders every
+    declared person from the same projection, and a request carrying the same people twice is a
+    request spending its budget saying one thing. Stage-0 §112.7 named that debt at the merge
+    and this is it being paid. `protagonist` survives because the brief has no way to express
+    it: it groups facts by kind, and "which of these people is the one the book is about" is
+    not a fact about a kind.
 
     **Open promises go in as debts, and the register is `describe_owed`'s** (W2). They are
     shown so the schedule can be about the book's actual debts rather than about debts the
@@ -252,9 +303,15 @@ def render_outline_request(
         {
             "premise": premise,
             "base_plan_revision_id": base.plan_revision_id,
-            # The world this book runs on, when it has one. Spread rather than assigned so
-            # that a book without one has no key at all — see the docstring.
+            # The world this book runs on, and the one member of its cast this book is
+            # about, when it has them. Spread rather than assigned so that a book without one
+            # has no key at all — see the docstring.
             **({"world": world.to_jsonable()} if world is not None else {}),
+            **(
+                {"protagonist": protagonist.to_jsonable()}
+                if protagonist is not None
+                else {}
+            ),
             # The debts this book has already opened, for the payoff schedule. Absent for a
             # book that owes nothing — which is every book at its first outline, since
             # promises are written by the summary handler after a scene is accepted.
@@ -313,7 +370,23 @@ def render_outline_request(
                 if owed
                 else []
             )
-            + (list(world_brief.WORLD_RULES) if world is not None else []),
+            + (list(world_brief.WORLD_RULES) if world is not None else [])
+            # The rung schedule, asked for only where canon declares a chain to schedule on —
+            # the same guard the milestone ask runs under, and for the same reason: an empty ask
+            # produces an empty answer to validate, which is worse than not asking.
+            + (
+                [
+                    rule.format(protagonist=world.ladder.protagonist)
+                    for rule in world_brief.LADDER_RULES
+                ]
+                if world is not None and world.ladder is not None
+                else []
+            )
+            + (
+                [rule.format(subject=protagonist.subject) for rule in PROTAGONIST_RULES]
+                if protagonist is not None
+                else []
+            ),
         },
         ensure_ascii=False,
         sort_keys=True,
@@ -498,6 +571,141 @@ def _milestones(
                 f"({offending}); a ceiling is not a target"
             )
     return out
+
+
+def _standing_milestones(
+    payload: Mapping[str, Any], beats: Sequence[Beat], ladder: world_brief.Ladder
+) -> list[tuple[Beat, str]]:
+    """The rung schedule as (beat, rung) pairs, or a refusal naming what was wrong.
+
+    **`_milestones` for the ladder, with one check `_milestones` does not make: direction.**
+    A numeric schedule may legitimately go down — spending is progression in a debt story, and
+    that rule is written into the milestone ask beside it. A standing on this brief may not,
+    and the reason is a genre contract the *directed brief* declares rather than a property of
+    the ontology: `research/progression-generalization.md`'s closing list refuses "monotone
+    power as the definition of progression", and nothing here adopts it — comparators, partial
+    orders and revocable rank all stay exactly as they were. What is checked is the narrower
+    thing `plan/state-model-abilities.md` §4 says an *ordinal* comparator is checked for:
+    "the result moved up the order", over the arc being written now. A world that wants a fall
+    writes it in later by directive, and a directive is the operator's.
+
+    The four refusals are `_milestones`' own, transposed:
+
+    1. an ordinal that does not exist, or two milestones at one scene;
+    2. a rung the world never declared — the ladder's ids and no others, exactly as the
+       numeric schedule may use only the seed's keys;
+    3. **stasis**: every milestone repeating the opening rung plans a book in which nothing
+       rises, which is the defect this whole slice exists for, arriving as a schedule;
+    4. **a flat stretch**: two consecutive milestones on the same rung tell those scenes to
+       change nothing.
+
+    And then direction, which is two statements over the positions: the sequence never
+    decreases and never opens below the opening rung, and at least one milestone is strictly
+    above it.
+
+    Refused with the whole outline rather than dropped, for §55's reason: a schedule that fails
+    validation refuses the outline too, rather than landing beside a good one.
+    """
+    raw = payload.get("standing_milestones")
+    if not isinstance(raw, list) or not raw:
+        raise OutlineOutputError("outline carries no standing schedule")
+    by_ordinal = {beat.ordinal: beat for beat in beats}
+    chain = [rung for rung, _, _ in ladder.rungs]
+    opening = chain.index(ladder.opening_rung) + 1
+
+    out: list[tuple[Beat, str]] = []
+    seen: set[int] = set()
+    for entry in raw:
+        if not isinstance(entry, Mapping):
+            raise OutlineOutputError("each standing milestone must be an object")
+        ordinal = entry.get("ordinal")
+        rung = entry.get("rung")
+        if not isinstance(ordinal, int) or isinstance(ordinal, bool):
+            raise OutlineOutputError(
+                f"standing milestone ordinal {ordinal!r} is not an integer"
+            )
+        if ordinal not in by_ordinal:
+            raise OutlineOutputError(
+                f"standing milestone names scene {ordinal}, which does not exist"
+            )
+        if ordinal in seen:
+            raise OutlineOutputError(
+                f"scene {ordinal} carries more than one standing milestone"
+            )
+        if not isinstance(rung, str) or rung not in chain:
+            raise OutlineOutputError(
+                f"standing milestone at scene {ordinal} names {rung!r}; the ladder holds "
+                f"{chain} and a schedule may not add to it"
+            )
+        beat = by_ordinal[ordinal]
+        if beat.story_order_key is None:
+            raise OutlineOutputError(
+                f"scene {ordinal} has no story position, so a standing milestone cannot be "
+                "placed there; the beat sheet does not claim to run forwards"
+            )
+        seen.add(ordinal)
+        out.append((beat, rung))
+
+    out.sort(key=lambda pair: pair[0].ordinal)
+    indices = [chain.index(rung) + 1 for _, rung in out]
+    if all(index == opening for index in indices):
+        raise OutlineOutputError(
+            f"every standing milestone repeats the opening rung {ladder.opening_rung!r}; a "
+            "schedule where nothing rises plans the book this schedule exists to end"
+        )
+    for (earlier_beat, earlier), (later_beat, later) in pairwise(out):
+        if earlier == later:
+            raise OutlineOutputError(
+                f"scenes {earlier_beat.ordinal} and {later_beat.ordinal} both stand at "
+                f"{earlier!r}; a schedule with a flat stretch tells those scenes to change "
+                "nothing"
+            )
+    for lower, higher in pairwise([opening, *indices]):
+        if higher < lower:
+            raise OutlineOutputError(
+                f"the standing schedule goes down ({indices} from an opening rung of "
+                f"{opening} of {len(chain)}); on this brief {ladder.protagonist}'s standing "
+                "does not fall inside the arc being written, and a world that wants a fall "
+                "writes it in later by directive"
+            )
+    if max(indices) <= opening:
+        raise OutlineOutputError(
+            f"no standing milestone is above the opening rung ({indices} against {opening}); a "
+            "schedule that never rises is the defect rather than a plan for it"
+        )
+    return out
+
+
+def standing_milestone_records(
+    schedule: Sequence[tuple[Beat, str]], *, subject: str, criterion: str
+) -> list[lc.StateRecord]:
+    """The rung schedule as `PROPOSED` `stands_at` edges — `milestone_records`' argument exactly.
+
+    `PROPOSED` is what makes this safe and is why no new storage was needed: `state.is_canon`
+    excludes it, so the context packet never hands a scheduled standing to a scene as
+    established fact and `detect_contradictions` never weighs one against what the prose says.
+    It informs generation and contaminates nothing.
+
+    The criterion rides in the value slot, exactly as the forge's own copy of the same fact
+    does, so `worlds.standing_of` reads a scheduled edge and a declared one the same way and
+    two ladders cannot be spliced.
+
+    Record ids are derived from the story position, so a re-run converges instead of
+    accumulating a second schedule beside the first.
+    """
+    return [
+        lc.StateRecord(
+            record_id=f"standing-{beat.story_order_key}",
+            kind=lc.StateRecordKind.RELATIONSHIP,
+            subject=subject,
+            predicate=worlds_mod.STANDS_AT_PREDICATE,
+            value=criterion,
+            object_ref=rung,
+            authority=lc.StateAuthority.PROPOSED,
+            story_position=lc.StoryPosition(order_key=str(beat.story_order_key)),
+        )
+        for beat, rung in schedule
+    ]
 
 
 def _payoff_windows(
@@ -850,18 +1058,26 @@ def make_outline_handler(
         # promises are written by the summary handler after a scene is accepted — so the
         # payoff ask is silent there and this feature costs an un-replanned book nothing.
         open_promises = store.promises(book_id, branch_id, open_only=True)
-        # **The world, off the `canon` already read two statements above.** A second query
-        # would be a second answer to the same question, and the drafting side's habit of
-        # calling `state_records` three times is the pattern this deliberately does not copy.
-        # `brief_for` returns None for a book whose records this vocabulary does not
-        # recognise, and the request then carries no world field at all.
+        # The ladder this book's protagonist stands on, read off the same `canon` and carried
+        # inside the world brief rather than beside it. `None` for every book whose canon
+        # declares no chain, and then no standing schedule is asked for — exactly as a book
+        # with no status sheet is asked for no milestones.
+        world = world_brief.brief_for(canon)
+        ladder = world.ladder if world is not None else None
+        # **The world and its protagonist, off the `canon` already read two statements
+        # above.** A second query would be a second answer to the same question, and the
+        # drafting side's habit of calling `state_records` three times is the pattern this
+        # deliberately does not copy. `brief_for` returns None for a book whose records this
+        # vocabulary does not recognise and `protagonist_brief` returns None for one that names
+        # nobody, and the request then carries neither field at all.
         request = render_outline_request(
             premise,
             beats,
             base=base,
             seed=seed or None,
             promises=open_promises,
-            world=world_brief.brief_for(canon),
+            world=world,
+            protagonist=worlds_mod.protagonist_brief(canon),
         )
         day = stamp[:10]
         provider, _ = registry.resolve(request.call_class)
@@ -940,6 +1156,16 @@ def make_outline_handler(
             windows = (
                 _payoff_windows(result.parsed, beats, open_promises) if open_promises else []
             )
+            # Guarded by canon rather than by the answer, exactly as the other two are: the
+            # ask went out only for a book whose world declares a chain, so only such a book
+            # has its answer validated. A book with no ladder that volunteered one is a field
+            # this book could never use, and refusing a good outline over it is the failure
+            # `windows` records above.
+            rising = (
+                _standing_milestones(result.parsed, beats, ladder)
+                if ladder is not None
+                else []
+            )
             preview = apply_plan_proposal(base, proposal)
         except (OutlineOutputError, PlanProposalError, TypeError, ValueError) as error:
             # RETRY rather than escalate: the request is unchanged and a second draw of a
@@ -1006,6 +1232,17 @@ def make_outline_handler(
                 ),
                 created_at=stamp,
             )
+        # The rung schedule lands under the same rule and for the same reason, and its record
+        # ids are derived from the story position so a replay converges.
+        if rising and ladder is not None:
+            store.record_state_records(
+                book_id,
+                branch_id,
+                standing_milestone_records(
+                    rising, subject=ladder.protagonist, criterion=ladder.criterion
+                ),
+                created_at=stamp,
+            )
         # The payoff schedule lands under the same rule and for the same reason: after the
         # plan, never before, so a refused outline leaves no windows behind. The write is an
         # UPDATE restricted to open rows and idempotent in its values, so a replayed job
@@ -1036,4 +1273,5 @@ __all__ = [
     "outline_job_id",
     "outline_proposal",
     "render_outline_request",
+    "standing_milestone_records",
 ]

@@ -72,8 +72,7 @@ _SHAPE_TOKENS = 2
 
 
 def sentences(text: str) -> list[str]:
-    parts = [part.strip() for part in _SENTENCE_END.split(text) if part.strip()]
-    return parts
+    return [part.strip() for part in _SENTENCE_END.split(text) if part.strip()]
 
 
 def words(text: str) -> list[str]:

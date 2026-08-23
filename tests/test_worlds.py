@@ -200,6 +200,102 @@ def test_an_undeclared_predicate_is_unchecked_and_that_is_the_price() -> None:
     assert detect_contradictions(detector(records)) == []
 
 
+# --- the exception that belongs to one person -------------------------------------------------
+#
+# `plan/reader-read-3.md` note 1. The operator's own example of a hook is a cardinality maximum
+# that does not hold for one person — "everyone in the world has one cuff, the main character
+# broke the system and can now have as many as they like" — and until 2026-08-22 that was
+# undeclarable: `in_scope`'s scope is an `entity_role` or `*`, never a subject id, and the
+# docstring's reason for that stands. An exception is the other object, so it is declared as one.
+
+
+def _seal_world(excepts: str | None = None) -> list[lc.StateRecord]:
+    """One shape, two clerks under it, and optionally one of them excepted."""
+    records = [
+        canon(worlds.world_record("silas", worlds.ENTITY_ROLE_PREDICATE, value="cast")),
+        canon(worlds.world_record("marta", worlds.ENTITY_ROLE_PREDICATE, value="cast")),
+        canon(worlds.world_record("one_seal", worlds.TYPE_PREDICATE,
+                                  value=worlds.CARDINALITY_CONSTRAINT)),
+        canon(worlds.world_record("one_seal", worlds.PREDICATE_PREDICATE, value="wears")),
+        canon(worlds.world_record("one_seal", worlds.SCOPE_PREDICATE, value="cast")),
+        canon(worlds.world_record("one_seal", worlds.GROUP_KEY_PREDICATE,
+                                  value="subject,order_key")),
+        canon(worlds.world_record("one_seal", worlds.MAXIMUM_PREDICATE, value=1)),
+    ]
+    if excepts is not None:
+        records.append(
+            canon(
+                worlds.world_record(
+                    "one_seal", worlds.EXCEPTS_PREDICATE, object_ref=excepts
+                )
+            )
+        )
+    return records
+
+
+def _two_seals(subject: str) -> list[lc.StateRecord]:
+    """The planted violation: two of a thing the world admits one of, at one position."""
+    return [edge(subject, "wears", "lead_seal"), edge(subject, "wears", "brass_seal")]
+
+
+def test_a_shape_that_excepts_nobody_is_the_shape_it_always_was() -> None:
+    """The control. A world forged before `excepts` existed must check exactly what it checked.
+
+    This is Task 0.5's positive control, kept as the negative control for the change: the
+    planted violation fires, and it fires with an empty `except_subjects`.
+    """
+    [shape] = worlds.cardinality_shapes(_seal_world())
+    assert shape.except_subjects == ()
+    [violation] = detect_cardinality_violations(detector([*_seal_world(), *_two_seals("silas")]))
+    assert violation.severity is Severity.MAJOR
+    assert violation.blocks
+    assert "lead_seal" in violation.message and "brass_seal" in violation.message
+
+
+def test_the_excepted_subject_is_the_one_the_maximum_does_not_bind() -> None:
+    """**The exception is one person, not a hole in the shape**, and that is the whole test.
+
+    Three readings of one planted violation: it fires with no exception declared, it is silent
+    on the subject the shape excepts, and it still fires on a different subject of the same kind.
+    A change that made the detector blind to the *shape* would pass the middle assertion and fail
+    the last one, which is why the last one is here.
+    """
+    excepted = _seal_world(excepts="silas")
+    [shape] = worlds.cardinality_shapes(excepted)
+    assert shape.except_subjects == ("silas",)
+
+    assert detect_cardinality_violations(detector([*excepted, *_two_seals("silas")])) == []
+    [still] = detect_cardinality_violations(detector([*excepted, *_two_seals("marta")]))
+    assert "marta" in still.message
+
+    # And `in_scope` is where it is decided, so nothing else has to know about exceptions.
+    roles = worlds.entity_roles(excepted)
+    assert not worlds.in_scope(edge("silas", "wears", "lead_seal"), shape, roles)
+    assert worlds.in_scope(edge("marta", "wears", "lead_seal"), shape, roles)
+
+
+def test_the_writer_is_handed_the_exception_beside_the_rule_it_excepts() -> None:
+    """A packet that carried the maximum and not its exception would be a packet the scene that
+    has to show the difference is written against."""
+    excepted = _seal_world(excepts="silas")
+    projected = worlds.project(excepted)
+    anchor = next(
+        record.record_id
+        for record in excepted
+        if record.subject == "one_seal" and record.predicate == worlds.TYPE_PREDICATE
+    )
+    assert projected[anchor] == (
+        "at most 1 wears for anything that is a cast at one time, except for silas"
+    )
+    # The exception's own record is folded into that sentence rather than packed twice.
+    edge_id = next(
+        record.record_id
+        for record in excepted
+        if record.predicate == worlds.EXCEPTS_PREDICATE
+    )
+    assert projected[edge_id] == ""
+
+
 def test_a_cardinality_shape_missing_a_part_checks_nothing_and_says_so() -> None:
     """Half a shape is not a shape, and the complaint is at forge time rather than at draft time."""
     partial = [
@@ -333,6 +429,207 @@ def test_a_node_with_a_restricted_satellite_is_never_folded() -> None:
     ]
     projected = worlds.project(records)
     assert "" not in projected.values()
+
+
+# --- the inventory: a countable set of things a person can do -----------------------------------
+#
+# `plan/reader-read-4.md` §1a. Measured over the 24 worlds forged before 2026-08-22: 135 of 156
+# criterion rungs are an insignia and permission outnumbers capability 104 to 46, because `_RANK`
+# has a slot for what a rung LOOKS like and one for what it COSTS and none for what it lets you
+# do. A rung is where somebody stands; a capability is what they can do; the vocabulary now has
+# both and they are different objects.
+
+
+def able_world(excepted: str | None = None) -> list[lc.StateRecord]:
+    """Two clerks, three capabilities, a prerequisite chain, and a world limit of two."""
+    records = [
+        canon(worlds.world_record("silas", worlds.ENTITY_ROLE_PREDICATE, value="cast")),
+        canon(worlds.world_record("marta", worlds.ENTITY_ROLE_PREDICATE, value="cast")),
+        canon(worlds.world_record("cap_read", worlds.ENTITY_ROLE_PREDICATE, value="capability")),
+        canon(worlds.world_record("cap_price", worlds.ENTITY_ROLE_PREDICATE, value="capability")),
+        canon(worlds.world_record("cap_sign", worlds.ENTITY_ROLE_PREDICATE, value="capability")),
+        canon(worlds.world_record("cap_price", worlds.REQUIRES, object_ref="cap_read")),
+        canon(worlds.world_record("cap_sign", worlds.REQUIRES, object_ref="cap_price")),
+        canon(worlds.world_record("cap_price", worlds.TAUGHT_BY, object_ref="marta")),
+        canon(worlds.world_record("cap_read", worlds.COSTS, value="an hour of blindness")),
+        canon(worlds.world_record("one_art", worlds.TYPE_PREDICATE,
+                                  value=worlds.CARDINALITY_CONSTRAINT)),
+        canon(worlds.world_record("one_art", worlds.PREDICATE_PREDICATE, value=worlds.CAN_DO)),
+        canon(worlds.world_record("one_art", worlds.SCOPE_PREDICATE, value="cast")),
+        canon(worlds.world_record("one_art", worlds.GROUP_KEY_PREDICATE, value="subject")),
+        canon(worlds.world_record("one_art", worlds.MAXIMUM_PREDICATE, value=2)),
+    ]
+    if excepted is not None:
+        records.append(
+            canon(worlds.world_record("one_art", worlds.EXCEPTS_PREDICATE, object_ref=excepted))
+        )
+    return records
+
+
+def holds(subject: str, *capabilities: str) -> list[lc.StateRecord]:
+    return [
+        canon(worlds.world_record(subject, worlds.CAN_DO, object_ref=capability))
+        for capability in capabilities
+    ]
+
+
+def test_the_inventory_is_a_set_and_the_readers_say_whose() -> None:
+    """A ladder answers *where does this person stand*; this answers *what can they do*.
+
+    `research/progression-generalization.md` §5.1 reduces an ability to "a named affordance **or
+    set of reachable actions**" and §3.5 of `plan/state-model-abilities.md` says "a named
+    affordance, **or a bundle of them**". Both reductions say *set*, and until 2026-08-22 neither
+    had a schema field or a reader.
+    """
+    records = able_world() + holds("silas", "cap_read", "cap_price") + holds("marta", "cap_read")
+    assert worlds.capabilities(records) == ("cap_price", "cap_read", "cap_sign")
+    assert worlds.capabilities_of(records, "silas") == ("cap_price", "cap_read")
+    assert worlds.capabilities_of(records, "marta") == ("cap_read",)
+    assert worlds.capabilities_of(records, "nobody") == ()
+    assert worlds.requirement_depth(records) == 2
+
+
+def test_the_readers_do_not_filter_canon_because_a_forged_world_is_a_proposal() -> None:
+    """**The bug this test exists for was live for twenty minutes.** `architect.report` counts a
+    *candidate*, every record of which is `PROPOSED` until `--pick`. A reader that filtered to
+    canon reported 0 capabilities for every world the forge has ever produced. `entities_with_role`
+    does not filter either, and callers that need canon — `world_brief.brief_for`,
+    `context.assemble` — filter before they call."""
+    proposed = [
+        worlds.world_record("cap_read", worlds.ENTITY_ROLE_PREDICATE, value="capability"),
+        worlds.world_record("silas", worlds.CAN_DO, object_ref="cap_read"),
+        worlds.world_record("cap_price", worlds.REQUIRES, object_ref="cap_read"),
+    ]
+    assert {r.authority for r in proposed} == {lc.StateAuthority.PROPOSED}
+    assert worlds.capabilities(proposed) == ("cap_read",)
+    assert worlds.capabilities_of(proposed, "silas") == ("cap_read",)
+    assert worlds.requirement_depth(proposed) == 1
+
+
+def test_a_requirement_cycle_reports_a_depth_rather_than_hanging() -> None:
+    """A world may declare a cycle and this must not be the thing that discovers it. The walk
+    refuses to revisit a subject and reports the longest acyclic path through it; choosing which
+    edge of a cycle to cut would be this module inventing a fact."""
+    cyclic = [
+        canon(worlds.world_record("cap_a", worlds.REQUIRES, object_ref="cap_b")),
+        canon(worlds.world_record("cap_b", worlds.REQUIRES, object_ref="cap_a")),
+    ]
+    assert worlds.requirement_depth(cyclic) == 2
+    assert worlds.requirement_depth([]) == 0
+
+
+def test_the_operators_own_hook_is_a_cardinality_shape_over_the_inventory() -> None:
+    """**"Everyone in the world has one cuff, the main character broke the system and can now
+    have as many as they like."**
+
+    That is the operator's own definition of a hook, quoted in `EXCEPTS_PREDICATE`'s docstring as
+    the reason that predicate exists — and `can_do` is the predicate it was waiting for. A
+    maximum over the inventory, with the protagonist excepted, is the whole sentence: expressible,
+    countable and **blocking** for everybody else.
+    """
+    world = able_world(excepted="silas")
+    three = ("cap_read", "cap_price", "cap_sign")
+    assert detect_cardinality_violations(detector(world + holds("silas", *three))) == []
+    [violation] = detect_cardinality_violations(detector(world + holds("marta", *three)))
+    assert violation.severity is Severity.MAJOR
+    assert violation.blocks
+    assert "marta" in violation.message
+    # And without the exception the protagonist is bound like anybody else, which is what makes
+    # the exception a fact about one person rather than a hole in the shape.
+    [bound] = detect_cardinality_violations(detector(able_world() + holds("silas", *three)))
+    assert "silas" in bound.message
+
+
+def test_the_inventory_reaches_the_writer_in_english() -> None:
+    """The gate `worlds.py`'s own docstring calls "the gate on the model being usable at all".
+
+    Before these three sentences existed a person's abilities arrived as `state.describe`'s flat
+    fallback — `silas can_do (cap_read)` — and landed in the world brief's `other` bucket.
+    """
+    records = able_world() + holds("silas", "cap_read")
+    projected = worlds.project(records)
+    said = {projected[r.record_id] for r in records if projected.get(r.record_id)}
+    assert "silas can do cap_read" in said
+    assert "cap_price needs cap_read first" in said
+    assert "cap_price is taught by marta" in said
+
+
+def test_the_three_new_sentences_are_the_three_no_world_has_ever_emitted() -> None:
+    """**Byte-identity, and the reason the obvious extra sentences were not written.**
+
+    `costs`, `permits` and `member` are illegible in exactly the same way and all three are
+    already written by `records_for` for ranks and bonds — so giving them a sentence would change
+    the packet of every world forged before today. They keep the flat form until somebody pays
+    for that change deliberately.
+    """
+    for predicate in ("costs", worlds.PERMITS, worlds.MEMBER):
+        record = canon(worlds.world_record("thing", predicate, object_ref="other", value="x"))
+        assert worlds.project([record]).get(record.record_id) is None, predicate
+
+
+# --- the briefs a planner is handed ------------------------------------------------------------
+#
+# `worlds.project` is what a *writer* is handed; these are what the two calls that write the
+# scene plan are handed. Until 2026-08-22 they were handed neither: `render_outline_request`
+# received the premise, the beat sheet, the status seed and the open promises, so on Serial
+# Pilot 3 it invented a protagonist who occurs nowhere in the forged world and every other named
+# person in the book, while the drafting packet carried 328 established facts out of that world
+# with `context_omitted = 0` (`plan/reader-read-3.md` notes 1 and 3).
+
+
+def peopled_world() -> list[lc.StateRecord]:
+    """Two clerks, one tie between them, one belief, one secret, one of them the protagonist."""
+    return [
+        canon(worlds.world_record("silas", worlds.ENTITY_ROLE_PREDICATE, value="cast")),
+        canon(worlds.world_record("silas", worlds.ENTITY_ROLE_PREDICATE, value="protagonist")),
+        canon(worlds.world_record("silas", "is_a", value="a junior clerk")),
+        canon(worlds.world_record("silas", "wants", value="to be read once by someone")),
+        canon(worlds.world_record("silas", worlds.EDGE_PREDICATE,
+                                  value="he prices a thing the assay has not seen")),
+        canon(worlds.world_record("silas", worlds.PRICE_PREDICATE,
+                                  value="every reading he signs is checked twice")),
+        canon(worlds.world_record("silas", worlds.EXCEPTION_PREDICATE,
+                                  object_ref="provenance")),
+        canon(worlds.world_record("silas", "owes", object_ref="marta",
+                                  value="nine months of rent")),
+        canon(worlds.world_record("silas_secret", worlds.CLAIM_CONTENT,
+                                  value="he has been shorting his own readings")),
+        canon(worlds.world_record("silas", "keeps_secret", object_ref="silas_secret")),
+        canon(worlds.world_record("marta", worlds.ENTITY_ROLE_PREDICATE, value="cast")),
+        canon(worlds.world_record("marta", "is_a", value="the bursar, and his landlord")),
+    ]
+
+
+def test_the_protagonist_brief_is_what_canon_declared_and_nothing_more() -> None:
+    protagonist = worlds.protagonist_brief(peopled_world())
+    assert protagonist is not None
+    assert protagonist.subject == "silas"
+    assert protagonist.exception == "provenance"
+    assert protagonist.edge.startswith("he prices a thing")
+    assert protagonist.wants == "to be read once by someone"
+    assert protagonist.price.startswith("every reading he signs")
+
+
+def test_a_book_that_declares_no_protagonist_has_no_brief() -> None:
+    """The control, and it is what makes the outline request byte-identical for such a book.
+
+    `None` rather than an empty object: a key that is always present carrying `null` is a
+    payload that always changed, and `jobs.input_digest_for` covers the prompt and seeds the
+    decoder.
+    """
+    assert worlds.protagonist_brief([]) is None
+    just_a_rule = [canon(worlds.world_record("r", worlds.WORLD_RULE_PREDICATE, value="a rule"))]
+    assert worlds.protagonist_brief(just_a_rule) is None
+
+
+def test_a_proposed_world_reaches_no_brief() -> None:
+    """Rail one, at the new seam. A forged world is a proposal until `--pick`, and a proposal
+    must not reach a planner any more than it reaches a packet."""
+    proposed = [
+        worlds.world_record("silas", worlds.ENTITY_ROLE_PREDICATE, value="cast"),
+        worlds.world_record("silas", worlds.ENTITY_ROLE_PREDICATE, value="protagonist"),
+    ]
+    assert worlds.protagonist_brief(proposed) is None
 
 
 # --- the iceberg -------------------------------------------------------------------------------

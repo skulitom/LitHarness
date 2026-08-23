@@ -19,6 +19,7 @@ from litharness.domain.axes import (
     OPENING_WINDOW_WORDS,
     opening_proper_noun_names,
     opening_proper_nouns,
+    proper_noun_introductions,
 )
 
 #: The opening of Serial Pilot 1 chapter 1 as published, trimmed to the counted window. Held
@@ -146,3 +147,38 @@ def test_the_counter_is_total_and_deterministic() -> None:
         first = opening_proper_nouns(text)
         assert first == opening_proper_nouns(text)
         assert isinstance(first, float)
+
+
+def test_the_named_offsets_are_the_opening_names_with_positions() -> None:
+    """**The refactor's pin.** `opening_proper_noun_names` is now
+    `proper_noun_introductions` with the offsets dropped, and the names it returns must be the
+    ones it returned before — this counter's numbers are quoted in
+    `opening-counters-results.md` and in stage-0 §87, and a silently drifted counter would
+    redefine what those numbers were about.
+
+    Two walks over the same tokens with the same joining rules would be two counters that
+    agree until they do not, which is why the offset was extracted rather than written beside
+    it (`research/quality-measurement/named_persons.py` is what needed the offsets).
+    """
+    for text in ("", "   ", ANCHOR, "He met Hesk Turrow. Turrow paid Bellow and Sons."):
+        introductions = proper_noun_introductions(text)
+        assert tuple(name for name, _ in introductions) == opening_proper_noun_names(text)
+        # Offsets are non-decreasing, because the walk emits in reading order and never
+        # revisits a token it has passed.
+        offsets = [offset for _, offset in introductions]
+        assert offsets == sorted(offsets)
+
+
+def test_an_offset_indexes_the_tokeniser_and_not_a_naive_split() -> None:
+    """The distinction a caller has to hold, asserted so it cannot be forgotten.
+
+    `_tokens` drops a pure emphasis or break marker — a scene break written `* * *` is three
+    tokens `str.split` counts and none that this does. A chapter carrying scene breaks
+    therefore has two different word offsets for one name, and
+    `research/quality-measurement/named_persons.py` reports both rather than choosing.
+    """
+    text = "He waited. * * * Marta counted the float. He did not disturb Marta."
+    [(name, offset)] = proper_noun_introductions(text)
+    assert name == "Marta"
+    assert offset == 2
+    assert text.split().index("Marta") == 5

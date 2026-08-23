@@ -24,14 +24,9 @@ imported here.
 from __future__ import annotations
 
 import random
-import sys
 from itertools import product
-from pathlib import Path
 
 import pytest
-
-RESEARCH = Path(__file__).parents[1] / "research" / "quality-measurement"
-sys.path.insert(0, str(RESEARCH))
 
 latent_fixtures = pytest.importorskip(
     "latent_fixtures",

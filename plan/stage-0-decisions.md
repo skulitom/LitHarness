@@ -11092,3 +11092,695 @@ the results note as a sign-flip control and deliberately not built: it needs a s
 domain-expert source for ground truth and this repository has none. No axis admitted, no counter
 promoted, no directive authored, no bar declared, and no claim anywhere that a book with its world
 on the page is a better book.
+
+---
+
+## 112. The world says whose book it is, and the exception it grants one person survives the gate
+
+**Built 2026-08-22, from [`plan/handoff-protagonist.md`](handoff-protagonist.md).** Code:
+`application/architect.py` (schema, one rule, records, gate complaints, three `report()` counters),
+`domain/worlds.py` (`protagonist` as a second entity role; `edge`, `price`, `exception_to`,
+`excepts`; `CardinalityShape.except_subjects`; `in_scope`; `cast_brief`; `protagonist_brief`),
+`application/outline.py` (`cast` and `protagonist` inputs, two rules), `application/planner.py`
+(`pov_character_id` threaded to the one production `packet_for`, `Point of view: <id>.` in the beat
+line), `domain/axes.py` (a behaviour-preserving extraction, `proper_noun_introductions`), and
+`research/quality-measurement/named_persons.py`. Measurements:
+[`research/quality-measurement/protagonist-results.md`](../research/quality-measurement/protagonist-results.md)
+and [`named-persons-results.md`](../research/quality-measurement/named-persons-results.md). The
+pre-registration is [`plan/serial-pilot-4.md`](serial-pilot-4.md) §4 and **the run it registers has
+not been made**.
+
+**It is §112 and not §111, and the gap is deliberate.** The check in `CLAUDE.md` was re-run at
+commit across `main` and all thirty `.claude/worktrees/*/plan/stage-0-decisions.md`, matching
+`^#{2,3} [0-9]+` so a sub-section could not hide a claimed parent.
+`claude/handoff-worldbuilding-plan-ae1861` had §111 **committed** on its branch when this was
+written and reached `origin/main` before this entry did; the committed entry owns the number, so
+this one sits after it. That branch also adds a keyword argument to `render_outline_request`, and
+the duplicate the two changes would otherwise have created was collapsed at the merge rather than
+left — see §112.7.
+
+**What licenses it is a count, and it was taken before a line was written.** The operator read the
+first two chapters of *What Takes* — Serial Pilot 3, the first book drafted on a world forged from
+a directed brief — and named four defects ([`plan/reader-read-3.md`](reader-read-3.md)). Measured
+against the machinery on `f947247`:
+
+| | count |
+|---|--:|
+| occurrences of *protagonist*, *main character* or *hero* in `application/architect.py` | **0** |
+| `StateRecord`s reaching `render_outline_request` | **0** |
+| references to `domain/worlds` in `application/outline.py` | **0** |
+| canon records loaded at the outline call site, and dropped | 328 of 328 |
+| `packet_for` call sites in the repository | 27 |
+| of those, passing `pov_character_id` | **0** |
+| `PlanKind.PREMISE` constructions in `src/` | 1, `locked=True` |
+| occurrences of "Kell" — the book's protagonist — in the forged world, its seed, its directives, its promises and its 328 canon records | **0** |
+| forged cast members reaching the prose, of five | **1** |
+| named persons the read counted across the two chapters | 17 |
+
+**What shipped.** A world may now declare a `protagonist`: a cast id, the one declared rule or
+cardinality shape that does not hold for them **by id**, the `edge` that gives them, what they
+want, and the `price`. Required of the forge and refused there field-by-field on *emptiness* (the
+2026-08-22 forge returned a world whose premise was the empty string under a schema that asked for
+a string, conformed, and failed the shape check — $1.48); tolerated as absent by `records_for`, so
+`plan/serial-pilot-2-world.json` regenerates to the same 329 records, gates clean, and emits not
+one record of the new vocabulary. The declaration reaches the outline as a `protagonist` field
+beside §111's world brief, and the writer as a labelled facts block and one beat-line fragment.
+
+~~The declaration reaches the outline as `cast` + `protagonist` (the request grows 1,785 → 4,856
+characters on *What Takes*' own canon).~~ **Corrected at the merge, and the measurement was taken
+before it.** That figure is this branch's own `cast` rendering, which §112.7 said the second merge
+owed a collapse. §111 landed on `origin/main` first, its world brief already renders every declared
+person from the same projection, and this branch's `cast` input, `worlds.cast_brief` and
+`worlds.CastMember` were therefore **removed** rather than merged — the outline now receives
+`world` (people included) and `protagonist`. The 1,785 → 4,856 figure stands as what it measured
+and is no longer a figure about the shipped call.
+
+**What was refused.** No verdict channel: no model is asked whether a hook is good, which premise
+hooks more, or which of K worlds to pick. No bar. And no instruction anywhere about how to *handle*
+a protagonist — the three added strings (the forge rule, the two outline rules, the beat-line
+fragment) are each checked by a test for the vocabulary such an instruction would need.
+
+### 112.1 The exception is the other object, and that is why scope could stay a role
+
+`in_scope`'s docstring gives the reason a shape's scope is an `entity_role` and never a subject id:
+a shape is a rule about a *kind* of thing, and one that named a carrier would be a fact about that
+carrier wearing a rule's clothes. That argument is correct and is untouched. An exception is the
+opposite object — a declared fact about **one** subject, which is what the word means — so it is
+declared as one, as an `excepts` edge from the shape, and `in_scope` consults it before it looks at
+roles.
+
+Traced on `f947247`, a subject id put where a role belongs is **silently ignored**, which is worse
+than refused: the schema enum excludes it, but that enum is prompt text — the CLI transport
+serialises the schema into the prompt and `providers/base.parse_schema_payload` is shallow by
+design and never descends into `worlds[].cardinality[].scope` — so the value survives parsing,
+`records_for` emits it, `cardinality_shapes` builds a well-formed shape from it, and `in_scope`
+matches it against a role table a subject id can never appear in. The shape then governs nobody and
+looks exactly like a shape that governs everybody.
+
+Three assertions are pinned together and **the third is the one that matters**: a shape that
+excepts nobody fires on the planted violation exactly as before; the same violation on the excepted
+subject yields zero findings; the same violation on a *different* subject of the same kind still
+fires. A change that made the detector blind to the shape would pass the second and fail the third.
+`tests/test_worlds.py::test_the_excepted_subject_is_the_one_the_maximum_does_not_bind` and
+`tests/test_integrity.py::test_the_declared_exception_reaches_the_live_detector_and_binds_nobody_else`.
+
+**One derivation, and it is a definition rather than an inference.** When a protagonist's
+`exception` names a declared cardinality shape, `records_for` also emits `<shape> excepts
+<protagonist>`. "X is the exception to S" and "S does not govern X" are one fact from two ends of
+one edge and only the second is what the detector reads; a world that declared the first and forgot
+the second would hand the writer an exception the gate still refuses, which is decoration.
+
+### 112.2 Every packet this system had ever built was built for no one
+
+`packet_for` has taken a `pov_character_id` since it was written and no production caller passed
+one. The seam is not neutral while unused: `state.visible_to` is a whitelist in which an absent POV
+**fails** a restriction, so any record carrying a `pov_visibility` would have been dropped from
+every packet in the book and logged `not visible to POV (none named)`. Measured, that has cost
+nothing so far — 0 of 328 records on a forged world carry one, because the iceberg is a claim with
+a disclosure and not packet access control (§107.4).
+
+So the observable effect of threading it is exactly the labelled heading, and that is what was
+measured rather than assumed. Scene 1 of *What Takes* at `--context-budget 16000`, with and
+without: items 305 → 305, established facts 224 → 224, hidden 23 → 23, tokens 7,493 → 7,493,
+omitted 0 → 0, and a two-line diff — `Established facts:` becomes `Established facts known to
+clerk_amble:`. The prompt diff is one line, and it sits before `Dramatic function:` and never after
+`plans.scene_plan_line`, which stays last so `plan_search`'s K candidates keep differing in exactly
+one place.
+
+### 112.3 The counter nominated by the read does not reproduce the read
+
+`research/quality-measurement/named_persons.py` counts distinct proper names a **chapter**
+introduces, with first-appearance offsets — C6's budget is a scene-opening budget and it resets
+four times before a reader reaches the end of one chapter. Run over 2,000 cached RoyalRoad chapters
+per cohort and our own four:
+
+| | median names per chapter | median per 1k words |
+|---|--:|--:|
+| RoyalRoad, all genres (n=2,000) | 17 | 10.15 |
+| RoyalRoad, LitRPG tag (n=2,000) | **24** | **10.90** |
+| *What Takes* ch. 1 / ch. 2 | **8** / **18** | 2.10 / 4.60 |
+| *Reappraisal* ch. 1 / ch. 2 | 30 / 29 | 7.23 / 6.82 |
+
+The two chapters the operator named as having too many names sit at the **11.8th** and **37.6th**
+percentiles of the LitRPG cohort; the book this read did not complain about sits at the 63.5th and
+61.6th. **A budget set from this distribution would license more names than the complained-about
+book has.** This is the second time a counter nominated by a human read has failed to order the
+case that nominated it — `opening_proper_nouns` placed the complained-about chapter at the 68.5th
+percentile of published openings (§87 / `opening-counters-results.md`). Reported as a result (§61):
+no bar is declared, and `plan/serial-pilot-4-craft.json` carries the chapter-grain constraint with
+its number **unset** and outside the array any script reads, so it cannot be issued by accident.
+
+What the null cannot rule out is stated with it: the read judged chapters whose named people were,
+four of five, not the world's — arriving without declared ties, wants or roles — and "eight names"
+and "eight names each of whom the reader has a reason to hold" are different experiences this
+counter cannot separate. Nor can it separate a person from a place: it returns `February` and
+`Marker` beside `Orne Marrow`, so every figure is a **name** count and the operator's person-only
+hand count is reported beside it, never in place of it.
+
+### 112.4 The craft file proposes two constraints and issues neither
+
+`plan/serial-pilot-4-craft.json` carries C3, C4, C5, C6 and C8 verbatim from pilot 2, C7 with one
+recorded edit — the lent-verb clause, from the read's fourth defect (*"Two rings of bark stood on
+her wrist"*), which C7's own enumerated failures did not cover — and **two proposals in a
+`proposed` array outside `directives`**: C9 (a chapter-grain introduction budget, `N` unset) and
+C10 (the first sentence of the book and of each chapter belongs to the protagonist). Outside,
+because `tools/serial-pilot-2-setup.ps1` issues every entry of `directives` verbatim and
+`serial_pilot_check.py` counts them: an entry with a literal `N` in it would have been issued as a
+directive reading "at most N people". Moving an entry into `directives` is the operator's act and
+is what issues it. C10 is direction, it is the operator's, and **no form of it is in code**.
+
+### 112.5 Pre-registered, then run: three forges, one book, $13.73
+
+[`plan/serial-pilot-4.md`](serial-pilot-4.md) §4 registered P1–P5 with outcomes named in advance,
+before any paid call and unedited since. §5 and §6 carry what happened.
+
+**P1 needed two asks.** The first forge returned three worlds that each named a real declared id
+in `exception` and then glossed it in the same field — `one_cooling_history — the shape that gives
+a body one cooling history…` — so `normalise_id` produced one long token naming nothing and the
+gate refused all three. That is P1's registered outcome (ii), *a failure of the rule text and not
+of the model*, and the registered response is to rewrite the ask before anything is picked. The
+ask now carries `pattern: ^[a-z0-9_]+$` and a description saying AN ID AND NOTHING ELSE with the
+failing form as its counter-example; the second forge returned **3 of 3 bare declared ids**, two
+of them cardinality shapes. **The stop condition never fired**: spread held at 0.9158 and 0.9169
+against pilot 3's 0.8959.
+
+**The pick was a person's.** All three of forge 3's candidates cleared every gate, and the
+recorded rule — *first candidate clear of every gate whose real domain was not forged in pilots 2
+or 3* — excluded two outright and turned on one word for the third (it excluded *transplant*
+immunology; the candidate literalised *graded inoculation*). The ambiguity was put to the operator
+with the candidates named, and the operator chose *A Good Take*
+(`dec-7f3ea41cdb149f2bb0b4bb80`). `forge --pick` is `VerdictSource.HUMAN` and this is what that
+means in practice.
+
+**P2–P5, as counts.** 8 of 8 drafting prompts carry `Point of view: nella_scur.` and every packet
+is headed `Established facts known to nella_scur:`; 8 of 8 scene statements name her as the actor;
+**6 of 6 forged cast members reach the page**, against 1 of 5 on *What Takes*; the exception drew
+**0** cardinality findings across the run while the same violation planted on a non-excepted cast
+member drew 1; and the reader meets her at **word 0** of the book, against word 17 behind another
+person's name. The gate is green on both specs, 45 jobs, 0 parked, 0 poisoned,
+`context_omitted = 0`, and the hidden section drops at exactly the two scenes the world scheduled.
+
+**One book against one book, and it says only what it says.** The two differ in world, domain,
+forge and a corrected `--pick`; the numbers above are structural — the declaration reached the
+page — and no reading of them is a claim that either book is better. **C10 was not issued**: the
+constraint that would have asked for exactly what P5 measured sits unissued in the craft file's
+`proposed` array, and the book opened on her from the declaration alone. That is one book, not
+evidence that direction is unnecessary.
+
+**Spend: $13.73 against ~$6.50 estimated**, itemised in §6.3. $2.83 went on two forges — one
+refused by a rule text this entry's session wrote wrong, one stubbed by the model — and $3.15 on a
+book poisoned by §112.7a's two defects and by a `--scenes` flag the operator omitted (§5.6).
+
+### 112.6 Corrections in place
+
+Three, all to [`plan/reader-read-3.md`](reader-read-3.md), which was written from the same texts:
+
+1. *"the counter also flags `I'll` / `I'd` / `I've` as names — **four** false positives"* →
+   there are **five**, across four scenes; scene 8 carries two. The real-name row
+   (2, 3, 1, 2, 3, 1, 2, 2) is unaffected and C6 was honoured in every scene.
+2. *"**None** of the forged cast reaches the page"* and *"'Amble' … appear only as a place-name and
+   a surname the outline reused"* → the name-level intersection is **1 of 5**: `Amble` occurs six
+   times, three as a vocative to a clerk. Whether that clerk *is* `clerk_amble` is a judgment with
+   no instrument here. The direction of the finding is unchanged: four of five never reached the
+   page and all seventeen named persons were written by a call that had never seen the cast.
+3. *"his trade is first stated at word **804**"* → not wrong, and the apparent conflict with an
+   independent re-derivation's 802 is a convention. A plain `str.split` puts `clerk` at 802 and
+   `Assize` at 805; `domain/axes`' tokeniser puts `Assize` at **804**. The document's number is the
+   tokeniser's. Every offset in the new counter is a tokeniser offset and says so.
+
+`domain/axes.opening_proper_noun_names` was **not** changed. It is now
+`proper_noun_introductions` with the offsets dropped, and
+`tests/test_opening_counters.py::test_the_named_offsets_are_the_opening_names_with_positions` pins
+that the names it returns are the ones it returned before — this counter's figures are quoted in
+§87 and in `opening-counters-results.md`, and a silently drifted counter would redefine what those
+numbers were about.
+
+### 112.7 Two neighbours, and what the second merge owes
+
+`plan/handoff-promise-ledger.md` landed at `f947247` (§110) and touched `summarize.py` only; this
+branch builds on it and does not touch it.
+
+§111 reached `origin/main` first and this branch merged second, so **the collapse it owed was
+paid here rather than deferred.** §111 adds its own keyword to `render_outline_request` — a `world`
+brief whose contents include the cast, plus `domain/world_brief.py` and a `StateRepository` on
+`NarrativePlanningStore`. Both changes use the same absent-rather-than-null idiom, so each keeps
+its own byte-identical control and the merge did not weaken either.
+
+**What was collapsed, and what survived.** `world_brief.brief_for` already renders every declared
+person under a `cast` group, from `worlds.project` with `state.describe` as the fallback — the same
+two calls this branch's own rendering made. A request carrying the same people twice is a request
+spending its budget saying one thing, so this branch's `cast` parameter, its `CAST_RULES`, and
+`worlds.cast_brief` / `worlds.CastMember` were **deleted**. `protagonist` survives because the
+brief has no way to express it: the brief groups facts by kind, and *which of these people the book
+is about* is not a fact about a kind. The protagonist's own records — `edge`, `price`,
+`exception_to` — do reach the brief's cast group as projected sentences, so the `protagonist` field
+is the pointer rather than the content, and it is five short fields.
+
+### 112.7a The protagonist's second role poisoned the first book that declared one
+
+**Found by Serial Pilot 4's early gate, 2026-08-22, and fixed the same day.** §112 above says a
+protagonist is *"a second role on a cast member, never a role of its own"*, and cites
+`entity_roles` returning roles plural as the reason nothing has to choose. That is right, and
+`state.contradiction.v1` did not know it: it groups on `(subject, predicate, object_ref,
+order_key)` and reports a group holding two values as MAJOR and blocking. So
+`nella_scur entity_role holds 2 different values … "cast", "protagonist"` refused two of eight
+scenes — one parked, one poisoned — **before a word of prose was judged**.
+
+**The defect is older than this entry and this entry is what tripped it.** `entity_roles`'
+docstring already named the case in as many words — the System is an `agency` and a `system`, a
+guild is an `institution` and, when it acts, `cast` — so any world declaring a subject with two
+roles would have done the same. None ever had. `integrity.MULTI_VALUED` now names `entity_role`
+as a set rather than a slot, and it is a **named set of one** on purpose: nothing in a record
+carries "this predicate is multi-valued", so the alternative is a heuristic, and a heuristic that
+guesses which disagreements are allowed is the frozen arity table
+`detect_cardinality_violations` refuses. A world wanting a second multi-valued predicate declares
+a cardinality shape, which is checkable.
+
+**A second finding on the same book, and it is the opposite fix.** `_ENTITY` carries `wants` for
+everybody and `_PROTAGONIST` restates it, so a world may declare it twice — and this one declared
+*"Fourth-grade material before Orin's throat-mark lapses in nine days."* on the protagonist and
+*"Fourth-grade material, in nine days, by any route."* on the cast entry. Two wants for one
+person at one position is a real contradiction, so the detector is right and `records_for` was
+wrong: canon now takes the cast entry's and drops the protagonist's copy, and `gate_candidate`
+complains when both are declared and differ.
+
+**What let it reach a paid run, stated because it is the part worth keeping.** No test ran a
+detector over a world that declares a protagonist. The suite had `run_detectors` over a planted
+cardinality violation, and `protagonist_brief` over a peopled world, and never the two together —
+so every piece was tested and the composition was not.
+`tests/test_architect.py::test_a_declared_protagonist_does_not_poison_its_own_book` now runs the
+whole wired ladder over `records_for`'s output and asserts silence, and
+`tests/test_integrity.py::test_a_subject_that_is_two_things_at_once_is_not_contradicting_itself`
+pins the detector half with its negative control beside it. Both fail on the code §112 shipped.
+
+### 112.8 Found, not fixed
+
+**Any cardinality shape with `group_key: "object"` can never fire.** `group_of(record, "object")`
+returns the `object_ref`, and `detect_cardinality_violations` then counts *distinct object_refs
+inside that bucket* — identically 1. So an object-keyed maximum is vacuous however it is declared,
+and `c_one_owner_per_trait`, one of pilot 3's four shapes, is dead. Verified structurally and
+empirically (2, 3 and more edges into one object all yield 0 findings). It is reported rather than
+fixed because a fix changes detector semantics for every world already forged and could newly
+refuse scenes in books already accepted — that is its own piece of work with its own control.
+
+A relationship still reaches both the packet and the new cast brief in `state.describe`'s flat
+form (`clerk_amble employed_by and is the only person who can find anything in it (the_assize)`).
+It reads badly and it reads *identically* badly in both, which is why it was not improved here: the
+sentence belongs in `worlds.project`, and changing it would change the packet of every book with a
+forged world.
+
+### 112.9 Anti-scope
+
+No redraft of any accepted scene, and no re-pick of any prior pilot's world. `serial3.db`,
+`pilot3/`, `serial.db` and every `plan/serial-pilot-2-*` file were read read-only and never
+written; every measurement needing a mutable database ran on a copy. Serial Pilot 4's own forges,
+pick and draft were paid for and are recorded in §112.5 and
+[`plan/serial-pilot-4.md`](serial-pilot-4.md); its poisoned first database is kept as
+`pilot4/serial4-run1-poisoned.db` because it is the evidence for §112.7a rather than something to
+tidy away. No hook beat function, no change to `SIX_BEAT` or the arc template, no
+instruction to any model about how to write, open, end or pace a protagonist's scene. No judge,
+reader, persona, BCR, axis admission, pool change or pre-registration beyond P1–P5; `AXES` and
+`COUNTERS` are untouched and `named_persons.py` is registered nowhere. No model ranks, scores or
+selects anything; `domain/discrimination.py` is byte-frozen. No human reader, label or solicited
+judgment entered anything here (§95) — the operator's read is a defect harvest and not data, and
+no acceptance read was spent. No bar declared. The outline inventing answers to forged mysteries,
+the `lock-constraints` on `serial.db`, the chapter-ending clause and the `[STATUS]` line all remain
+where they were. RS1 holds: nothing under `src/litharness/` references a corpus, a digest or a
+RoyalRoad text, and no anchor or corpus prose crossed into any prompt, example or rule.
+
+---
+
+## 113. The genre's one unbreakable rule became a declared fact the system forges, schedules, tells, prints and counts
+
+**Built 2026-08-22, from [`plan/handoff-numbers-go-up.md`](handoff-numbers-go-up.md).** Code:
+`domain/worlds.py` (`STANDS_AT_PREDICATE`, `ladder_of`, `rung_index`, `criterion_of_rung`,
+`standing_of`, three validator complaints, one projection sentence), `application/architect.py`
+(one optional `standing` on the protagonist, one new rule, three rule amendments, one placed
+record, five gate complaints, five `report()` counters), `domain/world_brief.py` (`Ladder`,
+`ladder_for`, `LADDER_RULES`), `application/outline.py` (an optional `standing_milestones` in
+`OUTLINE_SCHEMA`, `_standing_milestones`, `standing_milestone_records`),
+`domain/extraction.py` (`standing_target`, `standing_example`, one canon-writable shape in
+`extract_graph_facts`), `application/planner.py` (two `render_prompt` inputs, threaded from the
+production call). Measurement: `research/quality-measurement/standing.py` and `system_lines.py`,
+with `numbers-go-up-results.md` and two committed result files. Pre-registration:
+`plan/serial-pilot-5.md` §4 and `plan/serial-pilot-5-craft.json`. **The paid run has not
+happened**, so §5 and §6 of that pilot are empty and nothing here is a claim about prose.
+
+### 113.1 What was measured first, on four forged worlds and two live books
+
+The operator's frame is the genre's four working rules, and rule 1 is *the numbers go up, and the
+power is personal to the main character*. Audited before anything was built
+([`research/quality-measurement/numbers-go-up-results.md`](../research/quality-measurement/numbers-go-up-results.md) §1):
+
+- **Two of four worlds declared an ordinal chain of at least three ranks; not one cast member of
+  any of the four stood anywhere on any chain.** `ranks_at` is emitted for *creatures* only — 2,
+  3, 2 and 3 abundance notes. A ladder with nobody on it is a costume with nobody in it.
+- **The one ordinal chain pilot 3 produced runs the wrong way.** *Senior Water* lists
+  `first_water` — the most senior right — first, so its `precedes` chain reads
+  `first_water → morning_right → tail_right → wash_right` and a reader counting *up* it counts a
+  person getting weaker. Nothing in the rule text said which end came first.
+- **3 of 3 worlds on the brief `"progression fantasy"` inverted a piece of rule 1**, in their own
+  words: "portable personal power", "that a gain can be created", "monotonic growth". The
+  inversion rule had no floor and deleted the genre's one non-negotiable default three times out
+  of three.
+- **The numeric apparatus is off on the forged book.** `serial3.db` holds no `status_snapshot`,
+  so `speaks_system_voice` is False, `system_voice_example` is `None`, no milestone was ever
+  scheduled, and `progression_target` answers `None` at every position of both live books (0 of 8
+  and 0 of 1).
+- **The chain *declare → ask → print → read* was broken at *ask*.** `grep -c graph_line
+  application/planner.py` → 0. All four worlds *declared* a `graph_line`; none of the twenty
+  declared phrases meant "stands at"; *What Takes* declared `ASSIZE` and **printed zero lines
+  across 7,704 words in 8 scenes**.
+
+**Two of the handoff's own premises did not survive the measurement**, and both are corrected in
+the results note rather than quietly fixed: `scene_summaries.delta_json` is **non-null on all 16
+scenes** (`DELTA_FIELDS` landed 2026-08-17, before both pilots) rather than null, and *What
+Takes* **did** declare a graph line rather than none. The second makes the defect narrower and
+the fix smaller than the handoff supposed.
+
+### 113.2 What shipped, and the one shape it is
+
+**A rank ladder *is* the number, and the number is derived.** The operator's direction — "bronze
+to gold rank advance is the same as the number going up; say bronze is 1 and gold is 3" — makes
+the quantity a rung's 1-based place in a declared chain, computed by `rung_index` when asked and
+never stored: an integer beside the chain is a second answer to "which rung is third".
+
+The standing is **one flat edge**, `subject stands_at → rung` with the criterion in the value slot
+exactly as `precedes` carries it. Flat because the page can only print a flat edge and the forge's
+copy of the same fact must be readable by the same function; the reified `EVALUATION_*` triple is
+left for the case §8.3 built it for. No new ontology type, no new comparator, no new `GROUP_KEYS`
+member.
+
+- **Forge.** One optional `standing` on the protagonist, required in the forge request (refused by
+  `worlds_from` as a missing premise is) and tolerated as absent by `records_for`, so every world
+  forged before today regenerates byte-for-byte. One new rule (an `ordinal` criterion with a chain
+  of at least three, **lowest first**, each rung with a `visible_form` and a `cost_to_reach`; the
+  standing below the top). Three amendments: the inversion rule may remove any default **except**
+  that one; a world with a ladder declares a `graph_line` carrying a `stands_at` phrase; the
+  no-levels rule gains one clause saying the rungs are this world's numbers. Five membership
+  complaints in `gate_candidate`; five counters in `report()` including `inversion_text` verbatim,
+  so the run record can be read beside §113.1's four worlds without a classifier.
+- **Schedule.** The ladder rides *inside* §111's world brief. `_standing_milestones` mirrors
+  `_milestones` and adds the check it does not make — direction: `rung_index` non-decreasing from
+  the opening and at least one milestone strictly above it. Refuses the whole outline on failure,
+  for §55's reason. `standing_milestone_records` writes `PROPOSED` `stands_at` edges, ids derived
+  from position so a replay converges.
+- **Writer.** `standing_target` is `progression_target`'s twin and carries both rungs with their
+  numbers; `standing_example` fills the book's own graph line with the live rung.
+  `render_prompt` renders them in the numeric block's **own wording** and one filled example.
+- **Read-back.** `extract_graph_facts` writes one shape as `ACCEPTED_CANON` at the position: a
+  `stands_at` edge whose subject canon already uses and whose object is a declared rung of a
+  declared chain. Nothing is minted, no model returned it, a recorded decision accepted the prose,
+  and this is a mechanical restatement — the module docstring's own argument for the `[STATUS]`
+  line. A page-minted rung stays `PROPOSED` and is promoted only by later causal reuse.
+
+**One defect the wiring exposed and fixed.** `extract_graph_facts`' `seen` dedupe counted the
+outline's own `PROPOSED` rung schedule, so the one scene that printed a scheduled rise would have
+read nothing. The plan and the page are different claims; only the page makes the rise true.
+
+### 113.3 The counters, and no bar over any of them
+
+`research/quality-measurement/standing.py` on the two live books — **0 rungs, 0 standings, 0
+rises, 0.0 graph lines per 1k words on both**, and `other_subjects` empty, which is P4's prior for
+everyone rather than only for a protagonist neither book declares.
+
+`research/quality-measurement/system_lines.py`, reusing `domain/axes._SYSTEM_LINE`,
+`strip_system` and `system_digit_count` rather than a second regex. **Every leg ran; nothing is
+NOT RUN.**
+
+| | n | % with ≥1 system line | lines / 1k (median) | units with ≥2 | % of those whose digits differ |
+|---|--:|--:|--:|--:|--:|
+| published chapters | 4 | 50.0 | 0.4855 | 2 | 100.0 |
+| own drafted scenes (24 databases) | 152 | 11.84 | 0.0 | 1 | 0.0 |
+| RoyalRoad LitRPG (shards 3 + 30) | 14,156 | 2.32 | 0.0 | 144 | 43.75 |
+
+The two *What Takes* chapters carry **zero** system lines across 7,722 words; the two
+*Reappraisal* chapters carry 4 and 5. Within story at five chapters minimum: 394 stories, mean of
+story means 2.59%, 65 of them with at least one such chapter. The era split is printed unasked
+because `tricolon_rate` died to exactly that control — `declared_ai_2025` 8.29%,
+`undeclared_2025` 2.66%, `human_pre_llm` 1.16% — and **nothing is concluded from it**; the
+seven-fold gap is the shape `tricolon_rate` had before its own control landed.
+
+**No bar is declared over any of these and none may be read in.** How often a standing should move
+is the operator's to set over this distribution. `_SYSTEM_LINE` reads a bracketed all-caps tag and
+nothing else — the 21-book fitness corpus renders its system voice unbracketed and contributes
+zero — so **every percentage above is a floor, not an estimate**; and `digits differ` compares
+consecutive system lines and cannot tell a rise from a fall. The schedule validator enforces
+*shape* (declared rungs, non-decreasing, at least one rise), which is the class of check
+`_milestones` already makes, and not a rate. §81, §85, §87 and §89 are each a bar declared over a
+quantity that could not do what it said.
+
+### 113.3a The forge ran, and P1 is answered
+
+**`dec-25c58304a408437ec81d74a3`, 2026-08-22, $1.4955, 98,521 tokens, one invocation, no
+fallback.** Same brief, shape, K and scene count as pilots 3 and 4, so the rule set is the only
+change. Recorded in full in [`plan/serial-pilot-5.md`](serial-pilot-5.md) §5; §3 did **not** run
+and **nothing was picked**, so P2–P5 stay open and no claim about prose exists.
+
+**3 of 3 candidates clear every gate and every validator.** Each declares exactly one ordinal
+ladder of **five rungs, lowest first**, with the protagonist standing on rung **3 of 5** — below
+the top in all three — every rung carrying a `visible_form` and a `cost_to_reach`, and a
+`graph_line` carrying a `stands_at` phrase. **Within-forge spread 0.9163** against 0.9302
+(pilot 2), 0.8959 (pilot 3) and 0.9158 (pilot 4): **the stop condition does not fire.**
+
+**3 of 3 inversions leave the ladder alone**, against 3 of 3 removing a rule-1 ingredient on the
+same brief before the amendment. Each removes something adjacent — "the private grind", "the solo
+climb", "choosing when to advance" — and each keeps the rung, the rise and the count.
+
+**Two convergences are recorded rather than smoothed over.** All three chose five rungs and the
+exact middle rung, against a rule naming a floor of three and "not the top"; and all three
+rendered the `stands_at` edge as the English `"now stands at"`, because naming the predicate by
+its constant is what fixes the phrase — their other four graph-line phrases are entirely their
+own. Neither is a gate failure and neither is amended here: a rule reinterpreted with three
+candidates already in view is what a pre-registration exists to prevent.
+
+**The pick was not made, and the reason is the rail.** The recorded rule turns on whether
+*assaying and hallmarking* counts as already-used — never *forged*, but the subject of Serial
+Pilot 1's hand-typed seed and of the only assembled book in this repository. `forge --pick` is
+`VerdictSource.HUMAN` and §112's own pilot-4 record (§5.4) is the precedent for putting exactly
+this ambiguity to the operator rather than resolving it from inside the session that found it.
+
+### 113.3b One correction taken from §112's bill rather than paying it twice
+
+§112's own forge returned three worlds that each put a real declared id in `protagonist.exception`
+and then glossed it in the same field, and all three were refused by the gate; the fix was a
+`pattern` and a description saying **AN ID AND NOTHING ELSE**. `standing.criterion` and
+`standing.rung` are the same shape of ask — *name the thing by its id* — and at the merge they
+were given the same `pattern` and the same description, with the failing form spelled out as the
+counter-example. This forge's three worlds cleared without it, so the correction is a precaution
+carried across rather than a measured one, and it is recorded as that.
+
+### 113.4 What was refused
+
+**No taste in code.** No adjective and no verb about how a rise should read enters any prompt,
+template, beat function or system message. The standing block reuses the numeric block's own
+sentence — *the book's plan has this reaching that later on; move it toward that where the events
+warrant it* — because a standing and a status snapshot are the same class of fact and a second
+register would be this system deciding one of them matters more.
+`test_the_standing_block_carries_no_verb_and_no_adjective` and
+`test_the_ladder_rules_ask_for_a_schedule_and_never_for_a_feeling` check the text against nineteen
+words such an instruction would need, and
+`test_the_protagonist_rule_asks_for_a_declaration_and_never_an_outcome` was widened from one rule
+to all three that now mention the protagonist. The craft rule that *would* ask for the rung's
+visible form on the page is drafted as **C11** in `plan/serial-pilot-5-craft.json` `proposed`,
+**not issued** — it is the operator's, like C5.
+
+**No verdict channel.** No model is asked whether a ladder is good, which rung is right, which of
+K worlds to pick, or whether a rise lands. The forge stops and a person chooses; the pick rule for
+pilot 5 is written down before the candidates exist and is arithmetic (first gate-clear candidate
+whose declared domain was not forged in pilots 2–4). E6 is untouched; `domain/discrimination.py`
+is byte-frozen.
+
+**No monotone ontology.** `research/progression-generalization.md`'s refusal of "monotone power as
+the definition of progression" stands and nothing here touches it. Comparators, partial orders and
+revocable rank are exactly as they were. What was added is a **genre contract the directed brief
+declares**: on this brief, the protagonist's standing on one declared ordinal ladder rises within
+the arc being written, checked per comparator as `plan/state-model-abilities.md` §4 says an
+`ordinal` is checked. A world that wants a fall writes it in later by directive.
+
+**No cardinality gate.** "One standing per ladder at a position" is not declarable with today's
+`GROUP_KEYS`, and a subject legitimately on two ladders holds two `stands_at` edges at one
+position. No group key was added; the case is counted in `standing.py` and the open decision is
+named in `plan/world-architect.md` §8.
+
+**Backwards compatibility is asserted, not hoped.** A world that declares no standing makes
+byte-identical records and reports `ladders: 0`
+(`test_the_pilot_package_regenerates_the_world_it_was_run_on` stays green); a book whose canon
+declares no chain renders today's outline request and today's drafting prompt byte-for-byte
+(`test_a_book_with_no_ladder_is_asked_nothing_about_one`,
+`test_a_book_with_no_ladder_renders_the_prompt_it_rendered_before`); both golden fixtures extract
+exactly what they extracted before
+(`test_the_golden_fixtures_extract_exactly_what_they_extracted_before`).
+
+**Anti-scope.** No instruction about how to write, feel, pace or celebrate a rise; no "level-up"
+beat function; no change to `SIX_BEAT`, the arc template or any chapter-ending default. No HP / MP
+/ Gold / XP sheet for a forged world and no change to `DEFAULT_SHEET`. No judge, reader, persona,
+BCR, axis admission, pool change or pre-registration beyond P1–P5. No human reader, label or
+solicited judgment entered anything here (§95) — no acceptance read was spent and no operator read
+is treated as data. RS1 holds: nothing under `src/litharness/` references a corpus, a digest or a
+RoyalRoad text, and no anchor or corpus prose crossed into any prompt, example or rule; the one
+real-world fact in a rule text is cited in a code comment pointing at this file, never named in
+the prompt. `serial.db`, `serial3.db` and `pilot3/` were read and not written — every measurement
+ran against a copy or read-only, and no accepted scene was redrafted and nothing re-picked. No
+claim anywhere that a book whose number goes up is a better book.
+
+## 114. The schema could say what a rung looks like and what it costs, and had no slot for what it lets you do
+
+**Built 2026-08-23, from [`plan/handoff-ability-inventory.md`](handoff-ability-inventory.md).**
+Code: `domain/worlds.py` (`capability` in `ENTITY_ROLES`; `CAN_DO`, `REQUIRES`, `TAUGHT_BY`,
+`COSTS`; `capabilities`, `capabilities_of`, `requirement_depth`; three projection sentences),
+`application/architect.py` (an **optional** `capabilities` array on `_WORLD`, an optional
+`capabilities` list on the protagonist, one rule, three gate complaints, three `report()`
+counters), `domain/world_brief.py` (a `capabilities` group straight after `cast`). Measurement:
+`research/quality-measurement/ability_inventory.py`, with
+[`ability-inventory-results.md`](../research/quality-measurement/ability-inventory-results.md)
+and one committed result file. **No paid run happened here**; nothing in this entry is a claim
+about prose.
+
+### 114.1 What was measured first, and it is a fact about a schema rather than about a model
+
+The operator read *A Good Take* — the first book on a world whose protagonist the system chose
+(§112) — and said its progression is *"boring accounting instead of nine unique abilities or level
+9 neural speed system"* ([`plan/reader-read-4.md`](reader-read-4.md) §1a). Audited before anything
+was built:
+
+- **`_RANK` is `additionalProperties: false` with exactly `id`, `visible_form`, `cost_to_reach`,
+  all strings.** A rung can say what it **looks like** and what it **costs** and has **no slot for
+  what it lets you do.** The handoff's consequent count, quoted rather than re-run: 135 of 156
+  criterion rungs (86.5%) are a mark other people read, and permission beats capability 104 to 46.
+  That is not a prompt failure; it is the schema being followed correctly.
+- **The forge was never asked.** `_WORLD` had twelve array fields and none held abilities. The
+  words *ability*, *abilities*, *skill*, *magnitude* and *capab-* occurred **zero times** in the
+  5,657-character forge prompt.
+- **850 records with no reader in `src/`.** Over the 24 distinct worlds this project has forged
+  (9 contributing artefact files of 23 scanned, deduplicated by content hash, all 24 rebuilding
+  through `records_for` without error): `grants` 271, `prices_the_present` 245, `can_reach` 207,
+  `recognises` 127. Every capability-shaped field in the schema was a single string with no plural.
+- **`can_do`, `requires` and `taught_by` are emitted 0 times by all 24.** That is what licensed
+  giving exactly those three a projection sentence and nothing else.
+- **The vocabulary already held the thing, established adversarially.** Six agents were each given
+  one claimed gap and told to default to *refuted* unless they could show what breaks; **all six
+  refuted, none standing.** The operator's own definition of a hook — *everyone has one cuff, the
+  main character may have as many as they like* — was expressible **and blocking** before this
+  handoff started: the excepted subject holding three produced **0 findings**, a non-excepted
+  subject holding three produced **1 blocking MAJOR**. What was missing was a predicate worth
+  constraining.
+
+**Two figures disagree with the handoff's and both are printed rather than reconciled**: today's
+`rank_order` count over the corpus is **42 criteria carrying 119 rungs**, against the handoff's
+156 from a content-hash dedup over its own file set. Different denominators, and the 86.5% share
+does not depend on which.
+
+### 114.2 What shipped, and the one shape it is
+
+**A capability is an ordinary subject with a role, not a node type and not a field.** It reaches
+canon as records — `entity_role = capability`, `is_a`, `manifests_as`, `costs`, and the two edges
+`requires` and `taught_by` — and a person holds one on a free-form `can_do` edge. Three sentences
+say it to the writer in English: *"silas can do cap_read_a_seam"*, *"cap_price_unseen needs
+cap_read_a_seam first"*, *"cap_price_unseen is taught by marta"*.
+
+**Optional is the load-bearing word.** `capabilities` is not in `_WORLD["required"]`. A world about
+standing, or a place, or a debt declares none, and most should; a world that declares none
+regenerates byte-identically and reports three zeros.
+
+**A rung and a capability are different objects and meet at exactly one edge.** §113 built the
+ladder — a position in a recognised order, one per criterion. This is a set. `requires` is the one
+place they touch, where a capability may need a **rung** first. A world may declare either, both or
+neither. `test_the_inventory_is_a_set_and_the_ladder_is_a_position` pins it.
+
+**No number was added.** The forge schema still has **exactly two integer fields**
+(`mysteries[].disclosed_at_scene`, `cardinality[].maximum`), re-counted after the change.
+
+### 114.3 Two deviations from the handoff, both found in implementation
+
+1. **A capability is not a `change` node.** The handoff's adversarial pass showed it *could* be —
+   `change`'s eleven `CHANGE_ROLES` are all rendered by `_ROLE_PHRASE` — and that remains true.
+   It is still the wrong shape: `change` models one occurrence with many roles and renders
+   *"X happened"*, right for the morning somebody learned a thing and wrong for the thing itself.
+   The two coexist; `change` is still there for the acquisition.
+2. **Only three predicates got sentences.** `costs`, `permits` and `member` are illegible in
+   exactly the same way, and every one is already emitted by prior worlds. Giving them a sentence
+   would change the packet of all 24 worlds forged before today and break the byte-identity rail.
+
+### 114.4 The limitation this produced, named rather than fixed
+
+`is_a` (**550 records**) and `costs` (**156**) — *what the capability is* and *what it charges* —
+have no projection sentence and reach the writer through the `state.describe` fallback, as
+`cap_read_a_seam is_a he can see where two things were joined, and when`. That is notation with a
+sentence inside it, and `project()`'s own docstring calls itself *"the gate on the model being
+usable at all"*. Fixing it changes 24 worlds' packets, so it is a separate change with its own
+regeneration decision. Recorded here so it is not rediscovered as a surprise.
+
+### 114.5 Three defects in this session's own output, fixed before commit
+
+1. **The readers filtered canon**, so `report()` counted 0 capabilities for every forged world — a
+   candidate is `PROPOSED` until `forge --pick`. The same trap then caught the forge-side
+   enforcement test, which passed its first assertion **vacuously** (no shapes in canon → no
+   findings) until both halves were forged at `ACCEPTED_CANON`.
+2. **`requirement_depth` counted nodes where it documented edges.**
+3. **The new sentences un-snake-cased ids** while the rest of the packet does not. Removed.
+
+### 114.6 The magnitude is refused, and the refusal is the operator's to overturn
+
+The operator's phrase had two halves and only the first was built. **A number attached to a named
+capacity** — *Magnitude 12*, *level 9 neural speed* — collides with two standing positions: the
+forge's rule *"do not use levels, hit points, mana, experience points, currency, or any single
+number that means power"*, and **§113's resolution that a rank ladder *is* the number**
+(bronze is 1, gold is 3). A magnitude is a second numbering of one idea.
+
+What is genuinely missing is not the integer: `numeric` and `threshold` are members of `COMPARATORS`
+that **no code computes with**. A magnitude with no arithmetic behind it is a decoration, and a
+decoration is what *A Good Take* was already criticised for.
+
+Three things would have to be true, and they are set out in
+[`ability-inventory-results.md`](../research/quality-measurement/ability-inventory-results.md) §6:
+the number attaches to a **capacity** and never to a person (the operator's own reframing —
+*"the number is attached to the wrong thing"*); something computes with it; and §113 is reconciled
+in this ledger rather than worked around. **The operator decides. If they say yes it is its own
+handoff**, and that handoff opens by naming which of the three it is buying.
+
+### 114.7 The counter, no bar
+
+`research/quality-measurement/ability_inventory.py`, deterministic, no model anywhere in it,
+**not registered in `axes.COUNTERS`**. Per book, over the book's own canon (read-only) and its
+drafted prose via `corpus_io.generated_scenes`: capabilities declared, capabilities the
+protagonist holds, capabilities named on the page, and the scene each is first named in.
+
+| book | scenes | declared | held | named |
+|---|--:|--:|---|--:|
+| `serial.db` (pilot 2) | 8 | 0 | *no protagonist* | 0 |
+| `serial3.db` (pilot 3) | 8 | 0 | *no protagonist* | 0 |
+| `serial4.db` (pilot 4) | 8 | 0 | 0 (`nella_scur`) | 0 |
+
+**Every number is zero and every zero is correct** — each book was drafted before a world could
+declare a capability. Pilots 2 and 3 predate §112 and report `null` rather than `0` for the held
+column, because *"nobody is the protagonist"* and *"the protagonist can do nothing"* are different
+facts. A counter whose only evidence is a zero has not been run, so the naming half is exercised by
+`--selftest` over a synthetic world: eleven claims, all holding. The naming rule is
+`worlds.key_nouns`' rule narrowed to one subject, importing that module's own constants so the two
+cannot drift, and it is **crude and named as crude** — `cap_read_a_seam` matches the common word
+*seam* wherever it falls, reported as measured rather than repaired after the answer was known.
+
+### 114.8 What was refused, and the anti-scope
+
+**No bar, no pole, no axis, no floor.** Nothing in the gate or the report mentions a minimum; the
+operator's *"nine"* is a word for an inventory and not a threshold, and
+`test_the_report_counts_the_inventory_and_declares_no_bar` asserts the absence. No distribution was
+turned into a line.
+
+**No instruction about how to write a capability.** The system may say a person can do a thing; it
+may not say a scene should show it off, make it impressive, pace it, or let them win with it.
+`test_the_capability_rule_asks_for_a_declaration_and_never_a_performance` asserts this by verb list
+rather than by intent, in the shape §112's protagonist-rule test established.
+
+**Anti-scope.** Nothing touched the ladder, `rung_index`, `stands_at` or the rise on the page —
+§113 owns those. No beat function, no change to `SIX_BEAT`, the arc template or any chapter-ending
+default. No status sheet, `[STATUS]` line or graph line, and the forge's own rule about them is
+unchanged. No judge, reader, persona, BCR, axis admission, pool change or pre-registration. No
+human reader, label or solicited judgment entered anything here (§95) — the operator's read of
+*A Good Take* is a defect harvest that nominated the work and is not treated as data. RS1 holds:
+nothing under `src/litharness/` references a corpus, and no corpus text or digest crossed into any
+prompt, rule or example. `serial.db`, `serial3.db`, `serial4.db`, `pilot3/` and `pilot4/` were read
+**read-only** and never written; nothing was re-picked and no accepted scene redrafted. **And no
+claim anywhere that a world with an inventory produces a better book** — the measurement says the
+model could not previously *express* one, which is a fact about the model and nothing more.

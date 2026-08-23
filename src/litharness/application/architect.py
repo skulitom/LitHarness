@@ -94,6 +94,26 @@ class ArchitectOutputError(Exception):
 _ID = {"type": "string"}
 _TEXT = {"type": "string"}
 
+#: A string the answer is not allowed to leave empty. **Measured, not defensive.** The
+#: 2026-08-22 forge returned a world with an empty `premise` that conformed to this schema and
+#: then failed `worlds_from`'s shape check — $1.48 for three worlds, one of them unusable. The
+#: older fields keep `_TEXT` because tightening them would change the schema every existing
+#: world was forged under; the fields added since carry the floor.
+_SAID = {"type": "string", "minLength": 1}
+
+#: The shape of a declared id, and the sentence that says so. **Both are measured corrections.**
+#: The first live forge under the protagonist rule returned three worlds out of three that named a
+#: real declared id in an id field and then glossed it in the same field — `one_cooling_history —
+#: the shape that gives a body one cooling history…` — because the ask described *which* thing to
+#: select and the model wrote the description into the slot (stage-0 §112.5). Every id field added
+#: since carries both.
+_ID_PATTERN = "^[a-z0-9_]+$"
+_ID_ONLY = (
+    "AN ID AND NOTHING ELSE — one snake_case id declared in this world. Write `cap_read_a_seam`, "
+    "never `cap_read_a_seam - the knack of seeing where two things were joined`. No dash, no "
+    "gloss, no sentence: what the thing is belongs in its own fields."
+)
+
 _CONSEQUENCE = {
     "type": "object",
     "additionalProperties": False,
@@ -121,6 +141,57 @@ _RANK = {
     "additionalProperties": False,
     "required": ["id", "visible_form", "cost_to_reach"],
     "properties": {"id": _ID, "visible_form": _TEXT, "cost_to_reach": _TEXT},
+}
+
+_CAPABILITY = {
+    "type": "object",
+    "additionalProperties": False,
+    "required": ["id", "is_a", "manifests_as", "costs"],
+    "properties": {
+        "id": {**_SAID, "pattern": _ID_PATTERN, "description": _ID_ONLY},
+        "is_a": {
+            **_SAID,
+            "description": (
+                "What this lets a person DO, in one line, as a capability rather than a "
+                "permission: what they can do that somebody without it cannot. Never 'is "
+                "allowed to' and never 'has the rank of' — a rank is where somebody stands and "
+                "this is what they can do."
+            ),
+        },
+        "manifests_as": {
+            **_SAID,
+            "description": (
+                "How it shows on the page when it is used: what is seen, heard or paid. Never "
+                "an explanation and never a lecture, exactly as every other `manifests_as`."
+            ),
+        },
+        "requires": {
+            "type": "array",
+            "description": (
+                "Ids of other capabilities, or of a rank, that a person must already have "
+                "before this one is reachable. Ids only, no sentences. Omit for a capability "
+                "that needs nothing first; most worlds will have a few of those and they are "
+                "where an inventory starts."
+            ),
+            "items": {**_SAID, "pattern": _ID_PATTERN},
+        },
+        "costs": {
+            **_SAID,
+            "description": (
+                "What having it costs, payable on the page — time, a body, a debt, a foreclosed "
+                "option. Every gain in this world carries a price and this is that rule applied "
+                "to a thing a person can do."
+            ),
+        },
+        "taught_by": {
+            **_SAID,
+            "pattern": _ID_PATTERN,
+            "description": (
+                "The declared id of whoever teaches or allows this, when somebody does. Omit it "
+                "when nothing gates the capability but the work."
+            ),
+        },
+    },
 }
 
 _CRITERION = {
@@ -239,6 +310,111 @@ _CARDINALITY = {
         "scope": {"type": "string", "enum": [*worlds_mod.ENTITY_ROLES, worlds_mod.ANY_SCOPE]},
         "group_key": {"type": "string", "enum": list(worlds_mod.GROUP_KEYS)},
         "maximum": {"type": "integer"},
+        # **The declared exceptions, and the reason they are not a `scope`.** `worlds.in_scope`
+        # keeps a scope an `entity_role` because a shape is a rule about a *kind* of thing; an
+        # exception is a declared fact about *one* subject. Omitted by almost every world, and a
+        # shape that omits it is byte-identical to one forged before this key existed.
+        "except": {
+            "type": "array",
+            "description": (
+                "Declared ids this maximum does not govern. Almost always empty. A world that "
+                "names a protagonist whose exception IS this shape lists them here."
+            ),
+            "items": _ID,
+        },
+    },
+}
+
+#: Where the protagonist starts on one declared ordinal ladder: the criterion's id and the
+#: rung's id, both declared elsewhere in the same world. **Two ids and nothing else** — the
+#: rung's visible form and its price already live on the rank, and repeating either here would
+#: be a second copy of a fact the world states once (`plan/handoff-numbers-go-up.md`
+#: boundary 10).
+#:
+#: **Both carry `pattern` and a description saying AN ID AND NOTHING ELSE, and that is
+#: `_PROTAGONIST["exception"]`'s measured correction applied before it is paid for a second
+#: time.** The first forge under the protagonist rule returned three worlds, every one of which
+#: put a real declared id in `exception` and an em-dash gloss after it, and all three were
+#: refused. These two fields are the same shape of ask — "name the criterion by its id" — so
+#: they get the same answer without waiting for the same bill.
+_STANDING = {
+    "type": "object",
+    "additionalProperties": False,
+    "required": ["criterion", "rung"],
+    "properties": {
+        "criterion": {
+            **_SAID,
+            "pattern": "^[a-z0-9_]+$",
+            "description": (
+                "AN ID AND NOTHING ELSE — the snake_case id of a criterion declared in this "
+                "world, whose comparator is `ordinal` and whose `ranks` are a chain of at "
+                "least three. Write `crit_priority`, never `crit_priority - the order in "
+                "which gates are shut`. What the criterion judges is already written where "
+                "the criterion is declared."
+            ),
+        },
+        "rung": {
+            **_SAID,
+            "pattern": "^[a-z0-9_]+$",
+            "description": (
+                "AN ID AND NOTHING ELSE — the snake_case id of one of that criterion's own "
+                "`ranks`, and NOT the top one. Write `morning_right`, never `morning_right - "
+                "two seasons of proving use`. What the rung looks like and what it costs are "
+                "already written on the rank itself."
+            ),
+        },
+    },
+}
+
+_PROTAGONIST = {
+    "type": "object",
+    "additionalProperties": False,
+    "required": ["id", "exception", "edge", "wants", "price", "standing"],
+    "properties": {
+        "id": {**_SAID, "description": "The declared id of a member of this world's cast."},
+        # **A bare id, and the `pattern` is a measured correction rather than a precaution.**
+        # The first live forge under this schema returned three worlds, every one of which put
+        # a real declared id here and then an em-dash gloss after it — `one_cooling_history —
+        # the shape that gives a body one cooling history and one fringe order does not hold
+        # for him. He carries two…`. All three were refused by the gate for naming something
+        # that is neither a declared rule nor a declared shape, which is what a whole sentence
+        # normalises to. The field was asked for as "the id of the rule that does not hold for
+        # them", and the model supplied the id *and* the clause describing it; the description
+        # and the pattern now say which of the two this field is.
+        "exception": {
+            **_SAID,
+            "pattern": "^[a-z0-9_]+$",
+            "description": (
+                "AN ID AND NOTHING ELSE — one snake_case id, declared elsewhere in this world, "
+                "of the rule or cardinality shape that does not hold for this person. Write "
+                "`rule_seed_never_true`, never `rule_seed_never_true - the rule that ...`. No "
+                "dash, no gloss, no sentence: what the rule says is already written where the "
+                "rule is declared, and what the exception lets them do belongs in `edge`."
+            ),
+        },
+        "edge": {
+            **_SAID,
+            "description": (
+                "What that exception lets them do that nobody else can, written the way "
+                "`manifests_as` is written: how it shows on the page, never an explanation."
+            ),
+        },
+        "wants": {**_SAID, "description": "What this person is after."},
+        "price": {
+            **_SAID,
+            "description": "What the exception costs them, payable on the page.",
+        },
+        "capabilities": {
+            "type": "array",
+            "description": (
+                "Ids of the declared capabilities this person already has, drawn from the "
+                "world's own `capabilities` list. Ids only. This is the inventory a reader "
+                "watches grow, so give them what they START the book with rather than "
+                "everything the world has."
+            ),
+            "items": {**_SAID, "pattern": _ID_PATTERN},
+        },
+        "standing": _STANDING,
     },
 }
 
@@ -296,6 +472,7 @@ _WORLD = {
         "progression_means",
         "inversion",
         "premise",
+        "protagonist",
         "systems",
         "cast",
         "creatures",
@@ -308,11 +485,22 @@ _WORLD = {
         "progression_means": _TEXT,
         "inversion": _TEXT,
         "premise": _TEXT,
+        # **Required of the forge, tolerated as absent everywhere downstream.** A world the
+        # Architect proposes must say whose book it is; a book whose canon predates the field —
+        # every world forged before 2026-08-22, `plan/serial-pilot-2-world.json` among them —
+        # goes through `records_for` unchanged and renders the same packet it always did.
+        "protagonist": _PROTAGONIST,
         "systems": {"type": "array", "items": _SYSTEM},
         "agencies": {"type": "array", "items": _ENTITY},
         "carriers": {"type": "array", "items": _ENTITY},
         "bonds": {"type": "array", "items": _BOND},
         "cast": {"type": "array", "items": _ENTITY},
+        # **Optional, and the word is load-bearing.** A world with no capabilities is a
+        # world about standing, or about a place, or about a debt — most of what this
+        # forge has produced — and a required inventory would make every one of them
+        # invent one. Absent means absent: `records_for` emits nothing, the gate says
+        # nothing, and the packet is the packet it always was.
+        "capabilities": {"type": "array", "items": _CAPABILITY},
         "creatures": {"type": "array", "items": _CREATURE},
         "places": {"type": "array", "items": _ENTITY},
         "institutions": {"type": "array", "items": _ENTITY},
@@ -356,22 +544,111 @@ _RULES: tuple[str, ...] = (
     "in how a stranger treats you. Never an explanation and never a lecture.",
     "Every rank has a form a reader can SEE, and every gain has a cost payable on the page in "
     "the same scene or earlier.",
+    # **The ladder the reader counts, and it is one rule about what a world declares.**
+    # `plan/handoff-numbers-go-up.md`: the operator's direction is that a rank ladder *is* the
+    # genre's number — "bronze to gold rank advance is the same as the number going up; say
+    # bronze is 1 and gold is 3" — so the quantity is the rung's place in the chain, counted
+    # from the bottom, and the chain has to run in that direction to be counted.
+    #
+    # **Measured, and the ordering clause is the measurement's.** Of the four worlds forged
+    # before this rule existed (pilots 2 and 3), two declared an ordinal criterion with a chain
+    # of three or more and two did not; of those two, *Senior Water* declared its chain
+    # highest-first (`first_water` at the bottom, `wash_right` at the top), so a reader counting
+    # up that ladder counts a person getting weaker. And **no cast member of any of the four
+    # stands anywhere on any chain**: a ladder with nobody on it is a costume with nobody in it.
+    #
+    # Nothing here says who rises, how fast, or how a rise should read. The opening standing is
+    # a fact about where a book starts, in the register of every declared shape beside it; the
+    # book is what happens next. `tests/test_architect.py` checks the rule text for the verbs an
+    # outcome instruction would have to use.
+    "At least one criterion has the comparator `ordinal` and carries `ranks`: a chain of AT "
+    "LEAST THREE, listed LOWEST FIRST, each with a `visible_form` a reader can see and a "
+    "`cost_to_reach` payable on the page. The protagonist's `standing` names that criterion by "
+    "id and one of its rungs by id, and the rung is NOT the top one. The number a reader counts "
+    "in this world is the rung's position from the bottom of that chain.",
     "Literalise one real domain of human work or knowledge and take the system's logic and its "
     "costs from that domain's real constraints. Name the domain. The book should run on real "
     "ideas rather than invented ones.",
     "Give the world two systems whose logics are incompatible, and say what happens at the "
     "interface between them: the exchange rate, who can cheat whom, what the law says. The "
     "interface is the content.",
-    "Remove or invert exactly one default of the genre, and say what fills the hole.",
+    # **The one default that is not on the table, and the amendment is measured.**
+    # `plan/handoff-numbers-go-up.md` Task 0.3: on the brief "progression fantasy", all three
+    # forged worlds inverted a piece of this exact rule — *Senior Water* removed "portable
+    # personal power", *What Takes* removed "a gain can be created", *The Closing Error* removed
+    # "monotonic growth" — and the picked one then wrote two chapters in which nothing anybody
+    # carried ever went up. An inversion rule with no floor deletes the genre's one
+    # non-negotiable default three times out of three.
+    #
+    # It fences the *declaration* and nothing else: a world may still price a rise brutally, make
+    # it revocable later by directive, or hand it to somebody who does not want it.
+    "Remove or invert exactly one default of the genre — any EXCEPT this one, which is not "
+    "invertible here: the protagonist's standing on a declared ordinal ladder can rise, and the "
+    "reader can count it. Say what fills the hole.",
+    # **An inventory, beside the ladder rather than instead of it.** Measured over the 24 worlds
+    # forged before 2026-08-22: 135 of 156 criterion rungs are an insignia — a mark other people
+    # read — and permission outnumbers capability 104 to 46, because `_RANK` has a slot for what a
+    # rung LOOKS like and one for what it COSTS and none for what it lets you do. The operator
+    # read the book that came out of that and called its progression "boring accounting instead of
+    # nine unique abilities" (`plan/reader-read-4.md` §1a).
+    #
+    # The rule asks for a set and says nothing about its size: *nine* is the operator's word for
+    # an inventory, not a threshold, and `plan/handoff-ability-inventory.md` boundary 3 forbids a
+    # floor. Nothing here says the protagonist should be good at them, should win with them, or
+    # should have more of them than anybody else — an inventory declared is a fact about the
+    # world, and who wins is the book's.
+    "If people in this world can DO things — distinct, nameable things somebody either can or "
+    "cannot do — list them in `capabilities`, and give the protagonist the ones they START "
+    "with. A capability is what somebody can do; a rank is where somebody stands; they are "
+    "different, and a world may declare either, both, or neither. Each capability carries what "
+    "it lets a person do, how it shows on the page when it is used, what having it costs, "
+    "whatever it needs first by id, and whoever teaches it if anyone does. A world about "
+    "standing, or a place, or a debt may leave this out entirely, and many should.",
+    # **The rule above inverts a default for everyone; this one declares an exception for one.**
+    # `plan/reader-read-3.md` note 1: the operator read two chapters of a book forged on this
+    # schema and named the premise as the defect — "readers desire … something that doesn't
+    # happen to anyone else" — and measured against the module the gap was exact. The words
+    # protagonist, main character and hero did not occur here, the outline invented whoever
+    # acted, and none of the five forged cast members reached the page.
+    #
+    # It is written as a rule about what a world DECLARES, in the register of the declared-shape
+    # rules beside it, and it stops there. Nothing in it says how to write the person, whether
+    # the reader should like them, or that they win: an exception declared is a fact about the
+    # world, and who wins is the book's. `tests/test_architect.py` checks the rule text for the
+    # verbs an outcome instruction would have to use.
+    "Name one member of the cast as this world's `protagonist`. Choose the one rule or "
+    "cardinality shape this world declares that does not hold for them, or holds differently, "
+    "and put **its id alone** in `exception` — one snake_case word such as "
+    "`rule_seed_never_true`, with no dash and no clause after it. What that rule says is "
+    "already written where the rule is declared, and a sentence there is not an id. Then give "
+    "the `edge` that exception grants them, written the way `manifests_as` is written — how it "
+    "shows on the page, never an explanation; what they want; and the price the exception "
+    "charges them, payable on the page. If the exception is a cardinality shape, that shape "
+    "lists their id in its `except`. Write the `premise` as that person's situation — who they "
+    "are, what is singular about them, what is in the way — rather than as a description of "
+    "the world, and name them in it.",
     "Mysteries: each carries its ANSWER written down and the scene number where the reader "
     "learns it. A secret with no recorded answer is a debt the book can never pay. This world "
     "is an open-ended serial, so most answers land far out — but **at least one must be "
     "answered inside the {scenes} scenes being written now**, because an opening that asks "
     "four things and settles none teaches a reader that nothing here gets settled.",
+    # The last clause is the operator's direction and not a softening of the rest of the rule:
+    # the ladder's rungs ARE the numbers this world counts, so a world that wanted a stat block
+    # to satisfy "numbers go up" has already been answered by the ladder rule above.
+    # **`what a person can do` is added to this list, and the addition is measured.** The four
+    # words this rule offered were crafting, standing, understanding and access — and *standing*
+    # and *access* are permission systems, which are administered, which is what a register, a
+    # board and a ward are for. Two of the three worlds picked for a pilot took exactly those two
+    # words: pilot 2's `progression_means` opens with the single word "Standing.", pilot 4's is
+    # tolerance and "what door it may stand in". The forge took the rule at its word and the
+    # operator read the result as accounting (`plan/reader-read-4.md` §1a).
     "A world may have one system, several, or none; progression may be crafting, standing, "
-    "understanding, access, or something else. Do not assume combat. Do not use levels, hit "
+    "understanding, access, what a person can do, or something else. Do not assume combat. Do "
+    "not use levels, hit "
     "points, mana, experience points, currency, or any single number that means power, unless "
-    "this particular world genuinely needs one and you say why in the system's logic.",
+    "this particular world genuinely needs one and you say why in the system's logic. The "
+    "ladder's rungs are the numbers this world counts; hit points, mana, experience and "
+    "currency are still not assumed.",
     "Every name, place, creature and mechanic is original to this world. Never name, quote, "
     "imitate, or compare to any real person, brand, game, or published work.",
     "The prose this world will be written in is fast, plain, popcorn reading. The world shows "
@@ -382,11 +659,23 @@ _RULES: tuple[str, ...] = (
     "who blames whom, who outranks whom. Each is a snake_case predicate, another declared id, "
     "and the one thing about the tie a scene could use. A cast with no ties between its "
     "members is a list of people rather than a place.",
-    "`graph_line` is a PARSER, not a summary. Give it only if this world prints a line when "
-    "something changes: a bracket tag of one or two words, and short verb phrases of at most "
-    "six words, so that `[TAG] Sella now holds the second seal` reads as a line a scene would "
-    "actually print. If this world announces nothing in print, leave `graph_line` out — most "
-    "worlds should, and absence costs nothing.",
+    # **A world with a ladder declares the line the ladder is read off, and the predicate is
+    # named from `domain/worlds.py` rather than typed here.** The chain this handoff exists to
+    # close is *declare → ask → print → read*, and it was broken at the first link in a way no
+    # count showed: all four worlds forged before this rule declared a `graph_line`, none of
+    # their phrases meant "stands at", so `extract_graph_facts` had nothing to read a standing
+    # out of even where it ran on every accepted scene.
+    #
+    # "Most worlds should leave it out" becomes "a world with no ladder may": the shape bounds
+    # (`LABEL_WORDS`, `PHRASE_WORDS`) already refuse a paragraph, and a world that announces
+    # nothing still owes nothing.
+    "`graph_line` is a PARSER, not a summary: a bracket tag of one or two words, and short verb "
+    "phrases of at most six words, so that `[TAG] Sella now holds the second seal` reads as a "
+    "line a scene would actually print. A world that declares a ladder DECLARES a `graph_line`, "
+    "and at least one of its phrases carries the predicate "
+    f"`{worlds_mod.STANDS_AT_PREDICATE}` — the printed form this world says a change of "
+    "standing in, so that a scene prints the line and it can be read back. Only a world with no "
+    "ladder may leave `graph_line` out.",
 )
 
 _DISTINCTNESS_RULE = (
@@ -518,6 +807,17 @@ class Candidate:
     def geometry(self) -> str:
         return str(self.raw.get("geometry") or "").strip()
 
+    @property
+    def protagonist(self) -> Mapping[str, Any] | None:
+        """The world's declared protagonist, or `None` for a world that declares none.
+
+        `None` rather than an empty mapping: "this world says nothing about whose book it is"
+        and "this world says its protagonist is nobody" are different, and every world forged
+        before 2026-08-22 is the first.
+        """
+        raw = self.raw.get("protagonist")
+        return raw if isinstance(raw, Mapping) else None
+
     def rendered(self) -> str:
         """The candidate as one canonical string, for a distance measure to run over."""
         return json.dumps(self.raw, ensure_ascii=False, sort_keys=True, indent=1)
@@ -565,6 +865,41 @@ def worlds_from(payload: Mapping[str, Any], k: int) -> tuple[Candidate, ...]:
                 f"world {index} declares the geometry {candidate.geometry!r}; the allowed "
                 f"geometries are {', '.join(GEOMETRIES)}"
             )
+        # **Refused here and nowhere downstream.** The forge must say whose book this is;
+        # `records_for` must not, because `plan/serial-pilot-2-world.json` predates the field and
+        # regenerating it byte-for-byte is what "reproducible" means here
+        # (`test_the_pilot_package_regenerates_the_world_it_was_run_on`).
+        #
+        # Each field is checked for emptiness rather than for presence, because the schema's
+        # `minLength` is a request and not a guarantee: the 2026-08-22 forge returned a world
+        # whose `premise` was the empty string under a schema that asked for a string.
+        protagonist = candidate.protagonist
+        if protagonist is None:
+            raise ArchitectOutputError(
+                f"world {index} names no protagonist; a world says whose book it is, and the "
+                "one it does not is a world an outline will invent a person for"
+            )
+        for field_name in ("id", "exception", "edge", "wants", "price"):
+            if not str(protagonist.get(field_name) or "").strip():
+                raise ArchitectOutputError(
+                    f"world {index}'s protagonist has no {field_name}"
+                )
+        # **The standing is refused here for the same reason and on the same rail.** A forged
+        # world says where its protagonist starts on the ladder it declared; `records_for` still
+        # tolerates absence, so every world forged before 2026-08-22 regenerates unchanged.
+        # Checked for emptiness rather than presence — `minLength` is a request, and the
+        # 2026-08-22 forge returned an empty conforming `premise` for $1.48.
+        standing = protagonist.get("standing")
+        if not isinstance(standing, Mapping):
+            raise ArchitectOutputError(
+                f"world {index}'s protagonist names no standing; a world whose protagonist "
+                "stands nowhere on its own ladder has declared a ladder with nobody on it"
+            )
+        for field_name in ("criterion", "rung"):
+            if not str(standing.get(field_name) or "").strip():
+                raise ArchitectOutputError(
+                    f"world {index}'s protagonist standing has no {field_name}"
+                )
         candidates.append(candidate)
 
     for axis, values in (
@@ -589,19 +924,304 @@ def _items(candidate: Candidate, key: str) -> tuple[Mapping[str, Any], ...]:
     return tuple(entry for entry in raw if isinstance(entry, Mapping))
 
 
+def _declared_rule_ids(candidate: Candidate) -> frozenset[str]:
+    """Every rule id declared inside a system of this world."""
+    found: set[str] = set()
+    for system in _items(candidate, "systems"):
+        rules = system.get("rules")
+        for rule in rules if isinstance(rules, list) else ():
+            if isinstance(rule, Mapping) and _identifier(rule):
+                found.add(_identifier(rule))
+    return frozenset(found)
+
+
+def premise_names_protagonist(candidate: Candidate) -> bool:
+    """Whether this world's premise says its protagonist's name. `False` when it declares none.
+
+    Word-boundary rather than bare substring, so a two- or three-letter id part cannot be
+    satisfied by the middle of an unrelated word — the failure class `worlds.key_nouns` records
+    for its own first live run, where `mour` and `ise` arrived out of the middle of longer ids.
+
+    **It checks the name and nothing else.** Whether the premise is *written as* that person's
+    situation is a judgment and there is no instrument for it in this project; whether it says
+    their name is arithmetic, and the arithmetic is what gets reported.
+    """
+    protagonist = candidate.protagonist
+    if protagonist is None:
+        return False
+    premise = str(candidate.raw.get("premise") or "").casefold()
+    tokens = [part for part in _identifier(protagonist).split("_") if part]
+    return any(re.search(rf"\b{re.escape(part)}\b", premise) for part in tokens)
+
+
+def _declared_subjects(candidate: Candidate) -> frozenset[str]:
+    """Every id this world declares as a thing: people, places, capabilities, rungs and the rest.
+
+    What a prerequisite or a teacher is allowed to point at. Built from the answer rather than
+    from a list of array names kept in step by hand — a new array added later and forgotten here
+    would silently make every reference into it a complaint.
+    """
+    found: set[str] = set()
+    for value in candidate.raw.values():
+        if not isinstance(value, list):
+            continue
+        for entry in value:
+            if isinstance(entry, Mapping) and _identifier(entry):
+                found.add(_identifier(entry))
+    for system in _items(candidate, "systems"):
+        criterion = system.get("criterion")
+        if not isinstance(criterion, Mapping):
+            continue
+        ranks = criterion.get("ranks")
+        for rank in ranks if isinstance(ranks, list) else ():
+            if isinstance(rank, Mapping) and _identifier(rank):
+                found.add(_identifier(rank))
+    return frozenset(found - {""})
+
+
+def _capability_complaints(candidate: Candidate) -> tuple[str, ...]:
+    """Whether a declared inventory *refers*. Empty for a world that declares none.
+
+    **Three membership checks and no count.** Whether nine is the right number of abilities,
+    whether these are interesting ones, and whether the protagonist has enough of them are not
+    asked here and have no instrument in this project: `plan/handoff-ability-inventory.md`
+    boundary 3 forbids a floor, and `report()` carries the counters instead so that a
+    distribution can exist before anybody declares a bar over it (§81, §85, §87, §89).
+
+    What is checkable is that a prerequisite names something this world built, that a teacher
+    exists, and that the protagonist's starting inventory is drawn from the world's own list.
+    """
+    declared = {_identifier(entry) for entry in _items(candidate, "capabilities")} - {""}
+    if not declared:
+        return ()
+    complaints: list[str] = []
+    subjects = _declared_subjects(candidate)
+
+    for entry in _items(candidate, "capabilities"):
+        subject = _identifier(entry)
+        needs = entry.get("requires")
+        for target in needs if isinstance(needs, list) else ():
+            wanted = worlds_mod.normalise_id(str(target))
+            if wanted and wanted not in subjects:
+                complaints.append(
+                    f"capability {subject} requires {wanted!r}, which this world never "
+                    "declares; a prerequisite naming nothing is a sentence about difficulty"
+                )
+        teacher = worlds_mod.normalise_id(_text(entry, "taught_by"))
+        if teacher and teacher not in subjects:
+            complaints.append(
+                f"capability {subject} is taught by {teacher!r}, whom this world never declares"
+            )
+
+    protagonist = candidate.protagonist or {}
+    held = protagonist.get("capabilities")
+    for target in held if isinstance(held, list) else ():
+        wanted = worlds_mod.normalise_id(str(target))
+        if wanted and wanted not in declared:
+            complaints.append(
+                f"the protagonist starts with {wanted!r}, which is not one of the declared "
+                f"capabilities ({', '.join(sorted(declared))})"
+            )
+    return tuple(complaints)
+
+
+def _protagonist_complaints(candidate: Candidate) -> tuple[str, ...]:
+    """Deterministic complaints about a world's declared protagonist. Empty when it declares none.
+
+    **Three membership checks and a substring, and deliberately nothing else.** No model is
+    asked whether the hook is good, whether the edge is interesting, or whether this person is
+    the right one to write about — that question has no instrument in this project and inventing
+    one here would be the verdict channel `plan/world-architect.md` §2 keeps shut. What is
+    checkable is whether the declaration *refers*: whether the person is somebody this world
+    declared, whether the exception names a rule or shape this world declared, and whether the
+    premise is about them.
+
+    Silent for a world with no protagonist, which is every world forged before 2026-08-22 and
+    the reason `test_the_pilot_package_regenerates_the_world_it_was_run_on` still gates clean.
+    """
+    protagonist = candidate.protagonist
+    if protagonist is None:
+        return ()
+    complaints: list[str] = []
+    subject = _identifier(protagonist)
+    cast_ids = {_identifier(entry) for entry in _items(candidate, "cast")} - {""}
+    if subject not in cast_ids:
+        complaints.append(
+            f"the protagonist is {subject or '(unnamed)'!r}, which is not one of the declared "
+            f"cast ({', '.join(sorted(cast_ids)) or 'none'}); a book is about somebody this "
+            "world has heard of"
+        )
+    exception = worlds_mod.normalise_id(_text(protagonist, "exception"))
+    shape_ids = {_identifier(entry) for entry in _items(candidate, "cardinality")} - {""}
+    declarable = _declared_rule_ids(candidate) | shape_ids
+    if exception not in declarable:
+        complaints.append(
+            f"the protagonist's exception names {exception or '(nothing)'!r}, which is neither "
+            "a declared rule nor a declared cardinality shape; an exception to nothing in "
+            "particular is a description"
+        )
+    stated = {
+        _identifier(entry): _text(entry, "wants")
+        for entry in _items(candidate, "cast")
+        if _text(entry, "wants")
+    }
+    wants = _text(protagonist, "wants")
+    if subject in stated and wants and _fold(stated[subject]) != _fold(wants):
+        complaints.append(
+            f"{subject} wants {stated[subject]!r} as a cast member and {wants!r} as the "
+            "protagonist; one person wants one thing at a time, and the cast entry is the one "
+            "that reaches canon"
+        )
+    if subject and not premise_names_protagonist(candidate):
+        complaints.append(
+            f"the premise never names {subject!r}; a premise that describes the world rather "
+            "than this person's situation is the shape `plan/reader-read-3.md` note 1 named"
+        )
+    return tuple(complaints)
+
+
+#: The shortest chain a rung's position can be a number on. Two rungs is a switch — you are
+#: either the one thing or the other — and a reader counting 1 then 2 has counted a state change
+#: rather than a ladder. Three is the floor the operator's own example sets: bronze is 1 and gold
+#: is 3. Stated here so nobody later quotes it as measured; it is a choice, like
+#: `CONSEQUENCE_FLOOR`, and it gates a candidate rather than a serial.
+LADDER_FLOOR = 3
+
+
+def _ladders_of(candidate: Candidate) -> dict[str, tuple[str, ...]]:
+    """Each declared criterion's id → its rank ids in declaration order, off the raw answer.
+
+    Read from the answer rather than from `records_for` because the gate runs on the answer and
+    a rank whose id normalises to nothing never becomes a record — which would make it invisible
+    to a check whose whole job is to notice that the chain is too short.
+    """
+    found: dict[str, tuple[str, ...]] = {}
+    for system in _items(candidate, "systems"):
+        criterion = system.get("criterion")
+        if not isinstance(criterion, Mapping):
+            continue
+        criterion_id = _identifier(criterion)
+        if not criterion_id:
+            continue
+        ranks = criterion.get("ranks")
+        found[criterion_id] = tuple(
+            _identifier(rank)
+            for rank in (ranks if isinstance(ranks, list) else ())
+            if isinstance(rank, Mapping) and _identifier(rank)
+        )
+    return found
+
+
+def _ladder_complaints(candidate: Candidate) -> tuple[str, ...]:
+    """Deterministic complaints about the ladder and the standing on it. Membership and counting.
+
+    Five checks, none of them an opinion: is there an ordinal chain long enough to count on, does
+    the protagonist's standing refer to a declared criterion and a declared rung of *that*
+    criterion, is the rung below the top, and does a world with a ladder declare the printed form
+    a change of standing is announced in.
+
+    **Silent for a world that declares no standing**, which is every world forged before
+    2026-08-22 — the same rail `_protagonist_complaints` runs on, and the reason
+    `test_the_pilot_package_regenerates_the_world_it_was_run_on` still gates clean.
+
+    Nothing here asks whether the ladder is a good ladder or the rung the right rung. Those are
+    judgments and `plan/world-architect.md` §2 keeps the channel that would answer them shut.
+    """
+    protagonist = candidate.protagonist
+    standing = protagonist.get("standing") if protagonist is not None else None
+    if not isinstance(standing, Mapping):
+        return ()
+
+    complaints: list[str] = []
+    comparators = {
+        _identifier(criterion): _text(criterion, "comparator")
+        for system in _items(candidate, "systems")
+        for criterion in (system.get("criterion"),)
+        if isinstance(criterion, Mapping) and _identifier(criterion)
+    }
+    ladders = _ladders_of(candidate)
+    countable = {
+        criterion
+        for criterion, ranks in ladders.items()
+        if comparators.get(criterion) == "ordinal" and len(ranks) >= LADDER_FLOOR
+    }
+    if not countable:
+        complaints.append(
+            f"no criterion has the comparator 'ordinal' and a chain of at least {LADDER_FLOOR} "
+            "ranks; the number a reader of this genre counts is a rung's place in such a chain, "
+            "and a world with none has nothing to count"
+        )
+
+    criterion = worlds_mod.normalise_id(_text(standing, "criterion"))
+    rung = worlds_mod.normalise_id(_text(standing, "rung"))
+    if criterion not in ladders:
+        complaints.append(
+            f"the protagonist stands on {criterion or '(nothing)'!r}, which is not a criterion "
+            f"this world declares ({', '.join(sorted(ladders)) or 'none'})"
+        )
+    elif criterion not in countable:
+        complaints.append(
+            f"the protagonist stands on {criterion}, whose comparator is "
+            f"{comparators.get(criterion) or '(none)'!r} over {len(ladders[criterion])} rank(s); "
+            f"a standing counts only on an 'ordinal' chain of at least {LADDER_FLOOR}"
+        )
+    chain = ladders.get(criterion, ())
+    if criterion in ladders and rung not in chain:
+        complaints.append(
+            f"the protagonist stands at {rung or '(nothing)'!r}, which is not a rank of "
+            f"{criterion} ({', '.join(chain) or 'none'})"
+        )
+    elif chain and rung == chain[-1]:
+        complaints.append(
+            f"the protagonist starts at {rung}, the top of {criterion}; a book that opens at the "
+            "top of the only ladder it declared has nowhere on it to go"
+        )
+
+    # The declaration, not the prose: whether this world says what a change of standing is
+    # printed as. `parse_graph_line`'s bounds are checked at `graph_line_for`; what is checked
+    # here is that the line exists and that one of its phrases means "stands at".
+    if ladders:
+        graph_line = candidate.raw.get("graph_line")
+        if not isinstance(graph_line, Mapping) or not str(graph_line.get("label") or "").strip():
+            complaints.append(
+                "this world declares a ladder and no graph_line; a standing nothing prints is a "
+                "standing no scene can announce and no parser can read back"
+            )
+        else:
+            edges = graph_line.get("edges")
+            printed = {
+                worlds_mod.normalise_id(_text(edge, "predicate"))
+                for edge in (edges if isinstance(edges, list) else ())
+                if isinstance(edge, Mapping)
+            }
+            if worlds_mod.STANDS_AT_PREDICATE not in printed:
+                complaints.append(
+                    "the graph_line carries no phrase whose predicate is "
+                    f"{worlds_mod.STANDS_AT_PREDICATE!r} "
+                    f"({', '.join(sorted(printed)) or 'no phrases at all'}); the line the ladder "
+                    "is read off is the one form this world does not announce"
+                )
+    return tuple(complaints)
+
+
 def gate_candidate(
     candidate: Candidate, *, scenes: int = DEFAULT_SCENES
 ) -> tuple[str, ...]:
     """Deterministic complaints about one world. Empty means it passed.
 
-    Five checks, each arithmetic or membership over the structured answer and none of them an
+    Six checks, each arithmetic or membership over the structured answer and none of them an
     opinion about whether the world is any good:
 
     1. every declared rule reaches `CONSEQUENCE_FLOOR` distinct domains of life;
     2. every declared feature says how it shows on the page;
     3. every mystery records an answer and a disclosure scene;
     4. **at least one answer lands inside the scenes being written now**;
-    5. nothing in the answer compares itself to something outside it (RS1 / C3).
+    5. the declared protagonist refers — to a cast member, to a rule or shape, and by name in
+       the premise (`_protagonist_complaints`; silent for a world that declares none);
+    6. the ladder is countable and the standing sits on it below the top, and a world with a
+       ladder says what a change of standing is printed as (`_ladder_complaints`; silent for a
+       world that declares no standing);
+    7. nothing in the answer compares itself to something outside it (RS1 / C3).
     """
     complaints: list[str] = []
 
@@ -680,6 +1300,10 @@ def gate_candidate(
             f"(earliest is {min(landed)}); an opening that asks and never settles teaches a "
             "reader that nothing here gets settled"
         )
+
+    complaints.extend(_protagonist_complaints(candidate))
+    complaints.extend(_capability_complaints(candidate))
+    complaints.extend(_ladder_complaints(candidate))
 
     borrowed = sorted(set(_BORROWED.findall(candidate.rendered())))
     if borrowed:
@@ -1058,6 +1682,7 @@ def records_for(
                 )
             )
 
+    shape_ids: set[str] = set()
     for shape in _items(candidate, "cardinality"):
         shape_id = _identifier(shape)
         maximum = shape.get("maximum")
@@ -1086,6 +1711,172 @@ def records_for(
         )
         add(worlds_mod.world_record(shape_id, worlds_mod.GROUP_KEY_PREDICATE, value=group_key))
         add(worlds_mod.world_record(shape_id, worlds_mod.MAXIMUM_PREDICATE, value=maximum))
+        shape_ids.add(shape_id)
+        excepted = shape.get("except")
+        for entry in excepted if isinstance(excepted, list) else ():
+            subject = worlds_mod.normalise_id(str(entry))
+            if subject:
+                add(
+                    worlds_mod.world_record(
+                        shape_id, worlds_mod.EXCEPTS_PREDICATE, object_ref=subject
+                    )
+                )
+
+    # **The protagonist, as records rather than as a field.** Everything a world declares is a
+    # record here and this is not the exception — the packet, the gate and the second extractor
+    # family all read records, and a field would be a fact only this module could see.
+    #
+    # The role is a *second* one on a cast member, so the cast loop above has already written
+    # `entity_role cast` and this adds `entity_role protagonist` beside it. Nothing is emitted
+    # at all for a world that declares no protagonist, which is what keeps
+    # `plan/serial-pilot-2-world.json` regenerating byte-for-byte.
+    protagonist = candidate.protagonist
+    if protagonist is not None:
+        subject = _identifier(protagonist)
+        exception = worlds_mod.normalise_id(_text(protagonist, "exception"))
+        if subject:
+            add(
+                worlds_mod.world_record(
+                    subject, worlds_mod.ENTITY_ROLE_PREDICATE, value="protagonist"
+                )
+            )
+            # **`wants` is the cast entry's, and the protagonist's copy is a restatement.**
+            # `_ENTITY` already carries `wants` and the cast loop above has already written it,
+            # so emitting the protagonist's too puts two values in a single slot — which
+            # `state.contradiction.v1` reports as MAJOR and blocking, correctly, because a
+            # person wanting two different things at one position is a defect and not a set.
+            #
+            # Measured on the first book drafted on a world that declares one: the model wrote
+            # *"Fourth-grade material before Orin's throat-mark lapses in nine days."* on the
+            # protagonist and *"Fourth-grade material, in nine days, by any route."* on the cast
+            # entry — the same want in two wordings — and the book poisoned a scene over it.
+            # The cast entry wins because it is where the schema puts a want for everybody;
+            # `gate_candidate` complains when the two are both declared and differ, so the
+            # divergence is seen at forge time rather than at scene four.
+            declares_want = {
+                _identifier(entry)
+                for entry in _items(candidate, "cast")
+                if _text(entry, "wants")
+            }
+            for key, predicate in (
+                ("edge", worlds_mod.EDGE_PREDICATE),
+                ("wants", "wants"),
+                ("price", worlds_mod.PRICE_PREDICATE),
+            ):
+                if key == "wants" and subject in declares_want:
+                    continue
+                if _text(protagonist, key):
+                    add(
+                        worlds_mod.world_record(
+                            subject, predicate, value=_text(protagonist, key)
+                        )
+                    )
+            if exception:
+                add(
+                    worlds_mod.world_record(
+                        subject, worlds_mod.EXCEPTION_PREDICATE, object_ref=exception
+                    )
+                )
+                # **The one derivation, and it is a definition rather than an inference.** "X is
+                # the exception to shape S" and "S does not govern X" are the same fact said from
+                # the two ends of one edge, and `worlds.in_scope` reads only the second. A world
+                # that declared the first and forgot the second would hand the writer an
+                # exception the gate still refuses — decoration, which is what
+                # `plan/handoff-protagonist.md` Task 1 exists to prevent. Only for a shape this
+                # world actually declared: an `exception` naming a *rule* has no maximum to
+                # except and gets the edge above and nothing more.
+                if exception in shape_ids:
+                    add(
+                        worlds_mod.world_record(
+                            exception, worlds_mod.EXCEPTS_PREDICATE, object_ref=subject
+                        )
+                    )
+            # **Where they start, as one flat edge with the criterion riding on it.** The shape
+            # mirrors `precedes` exactly (`value = criterion_id`) so that two ladders in one
+            # world cannot be spliced, and it is flat rather than the reified `EVALUATION_*`
+            # triple because the *page* can only print a flat edge — `[TAG] Kell now stands at
+            # two wood` — and the forge's copy of the fact has to be readable by the same
+            # function that reads the page's (`plan/handoff-numbers-go-up.md` boundary 9).
+            #
+            # **Placed at the opening rather than left unplaced, and the placement is load-
+            # bearing.** A standing is a fact that changes, so a `progression_target`-class
+            # lookup has to be able to ask "which standing is in force at this scene" and
+            # "which milestone is still ahead" — both of which compare order keys. An unplaced
+            # record asserts no position, and `records_before` keeps it in every window, so an
+            # unplaced standing could never be *before* a milestone and the schedule would aim
+            # at a target the book had already passed. Standing world rules are unplaced for
+            # exactly the opposite reason: they never change.
+            #
+            # Absent for a world that declares no standing, which is every world forged before
+            # 2026-08-22 — the condition that keeps
+            # `test_the_pilot_package_regenerates_the_world_it_was_run_on` green.
+            standing = protagonist.get("standing")
+            if isinstance(standing, Mapping):
+                criterion = worlds_mod.normalise_id(_text(standing, "criterion"))
+                rung = worlds_mod.normalise_id(_text(standing, "rung"))
+                if criterion and rung:
+                    add(
+                        worlds_mod.world_record(
+                            subject,
+                            worlds_mod.STANDS_AT_PREDICATE,
+                            object_ref=rung,
+                            value=criterion,
+                            order_key=story_key(1, scenes=scenes),
+                        )
+                    )
+
+    # **The inventory: a countable set of things a person can do.** An ordinary subject with a
+    # role, not a reified node — a `change` is *one occurrence with many roles* and renders
+    # "X happened", which is the right aspect for the morning somebody learned a thing and the
+    # wrong one for the thing itself. The two coexist: this declares the capability, and a world
+    # that wants to schedule an acquisition still has `change` for it.
+    #
+    # Nothing is emitted for a world that declares none, which is every world forged before
+    # 2026-08-22 and most of the ones after.
+    for capability in _items(candidate, "capabilities"):
+        subject = _identifier(capability)
+        if not subject:
+            continue
+        add(
+            worlds_mod.world_record(
+                subject, worlds_mod.ENTITY_ROLE_PREDICATE, value="capability"
+            )
+        )
+        for key, predicate in (
+            ("is_a", "is_a"),
+            ("manifests_as", worlds_mod.MANIFESTS_PREDICATE),
+            ("costs", worlds_mod.COSTS),
+        ):
+            if _text(capability, key):
+                add(
+                    worlds_mod.world_record(
+                        subject, predicate, value=_text(capability, key)
+                    )
+                )
+        teacher = worlds_mod.normalise_id(_text(capability, "taught_by"))
+        if teacher:
+            add(worlds_mod.world_record(subject, worlds_mod.TAUGHT_BY, object_ref=teacher))
+        needs = capability.get("requires")
+        for entry in needs if isinstance(needs, list) else ():
+            target = worlds_mod.normalise_id(str(entry))
+            if target:
+                add(worlds_mod.world_record(subject, worlds_mod.REQUIRES, object_ref=target))
+
+    # **Who holds what, and the protagonist is the only subject the forge says it of.** A world
+    # declares its people and its capabilities separately; the one edge between them written here
+    # is the protagonist's, because `plan/handoff-ability-inventory.md` boundary 6 keeps this from
+    # becoming a second standing and because the protagonist's id is the one subject the whole
+    # pipeline already threads (§112). Only ids the world actually declared: an inventory that
+    # names something the world never built is the `exception_to` defect one field over.
+    declares = candidate.protagonist
+    held = declares.get("capabilities") if declares is not None else None
+    if declares is not None and held:
+        holder = _identifier(declares)
+        declared = {_identifier(entry) for entry in _items(candidate, "capabilities")} - {""}
+        for entry in held if isinstance(held, list) else ():
+            target = worlds_mod.normalise_id(str(entry))
+            if holder and target in declared:
+                add(worlds_mod.world_record(holder, worlds_mod.CAN_DO, object_ref=target))
 
     graph_line = candidate.raw.get("graph_line")
     if isinstance(graph_line, Mapping) and graph_line.get("label"):
@@ -1195,6 +1986,57 @@ def spread(candidates: Sequence[Candidate]) -> float | None:
     return sum(pairs) / len(pairs) if pairs else None
 
 
+def _countable_ladders(
+    records: Sequence[lc.StateRecord],
+) -> dict[str, tuple[str, ...]]:
+    """Ordinal criteria whose results form a chain, as criterion id → chain. Read off records.
+
+    Off the records rather than off the raw answer, unlike `_ladders_of`, because this feeds a
+    *report* about the world the store will hold: a rank whose id normalises away is not on the
+    chain the writer or the extractor will ever see, and counting it here would report a ladder
+    nothing downstream has.
+    """
+    comparators = worlds_mod.criteria(records)
+    found = {
+        criterion: worlds_mod.ladder_of(records, criterion)
+        for criterion, comparator in comparators.items()
+        if comparator == "ordinal"
+    }
+    return {criterion: chain for criterion, chain in found.items() if chain}
+
+
+def _opening_rung_index(records: Sequence[lc.StateRecord]) -> int | None:
+    """The protagonist's 1-based rung at the opening, or `None` when there is no one number.
+
+    **Reads the edges directly rather than calling `worlds.standing_of`, and the difference is
+    the rail.** `standing_of` filters to canon, which is right for every caller downstream of a
+    pick — a proposal must not read as where the book's protagonist stands. A candidate's records
+    are `PROPOSED` by construction, so this report would be `None` for every world if it went
+    through that function, and a counter that is always empty reads as a world with no ladder.
+
+    `None` when the world declares no protagonist, no standing, or more than one standing whose
+    chain gives a number — one report field cannot answer for two ladders, and choosing between
+    them is the guess `rung_index` refuses.
+    """
+    subjects = worlds_mod.entities_with_role(records, "protagonist")
+    if not subjects:
+        return None
+    indices = [
+        found
+        for record in records
+        if record.predicate == worlds_mod.STANDS_AT_PREDICATE
+        and record.subject == subjects[0]
+        and record.object_ref
+        and (
+            found := worlds_mod.rung_index(
+                records, str(record.value or "").strip(), record.object_ref
+            )
+        )
+        is not None
+    ]
+    return indices[0] if len(indices) == 1 else None
+
+
 def report(candidate: Candidate, *, scenes: int = DEFAULT_SCENES) -> dict[str, Any]:
     """Every deterministic number this candidate has, computed over its own records.
 
@@ -1222,6 +2064,44 @@ def report(candidate: Candidate, *, scenes: int = DEFAULT_SCENES) -> dict[str, A
         "manifestation_missing": list(coverage.missing),
         "criteria": worlds_mod.criteria(records),
         "cardinality_shapes": len(worlds_mod.cardinality_shapes(records)),
+        # **Three facts about the declaration, and not one about the hook.** Whether this world
+        # says whose book it is, whether it says what rule does not hold for them, and whether
+        # its premise says their name — each computed off the records this candidate produced.
+        # Nothing here orders one world above another and nothing may be read as doing so; the
+        # forge still stops and a person picks (`plan/world-architect.md` §2).
+        # **Five counters about the ladder, and not one verdict about it.** How many ordinal
+        # criteria carry a chain, how long each chain is, where the protagonist opens on theirs,
+        # whether the printed form exists, and the inversion verbatim so the run record can be
+        # read beside `plan/handoff-numbers-go-up.md` Task 0.3's four worlds without a
+        # classifier standing between them. `opening_rung_index` is `None` for a world that
+        # declares no standing and for one whose chain is not a chain — empty rather than a
+        # guess, `rung_index`'s own rule.
+        "ladders": len(_countable_ladders(records)),
+        "rungs_per_ladder": {
+            criterion: len(chain)
+            for criterion, chain in sorted(_countable_ladders(records).items())
+        },
+        "opening_rung_index": _opening_rung_index(records),
+        "graph_line_declared": bool(candidate.raw.get("graph_line")),
+        "inversion_text": str(candidate.raw.get("inversion") or ""),
+        "protagonist_declared": bool(worlds_mod.entities_with_role(records, "protagonist")),
+        "exception_declared": any(
+            record.predicate == worlds_mod.EXCEPTION_PREDICATE for record in records
+        ),
+        "premise_names_protagonist": premise_names_protagonist(candidate),
+        # **Three counts and no verdict.** How many distinct things this world says a person can
+        # do, how many the protagonist starts with, and how deep its own prerequisite structure
+        # runs. Nothing orders one world above another and **none of the three is a floor** — the
+        # operator's "nine unique abilities" is a word for an inventory, not a threshold, and
+        # §81, §85, §87 and §89 are four separate records of what happens when a count is read as
+        # a bar. A distribution has to exist before anyone declares one over it.
+        "capabilities_declared": len(worlds_mod.capabilities(records)),
+        "protagonist_capabilities": len(
+            worlds_mod.capabilities_of(records, _identifier(candidate.protagonist))
+            if candidate.protagonist is not None
+            else ()
+        ),
+        "requirement_depth": worlds_mod.requirement_depth(records),
         "claims_with_answers": len(worlds_mod.claims(records)),
         "reveals_scheduled": len(worlds_mod.disclosures(records)),
         "hidden_at_start": len(
@@ -1321,6 +2201,7 @@ __all__ = [
     "bundle_for",
     "directives_for",
     "gate_candidate",
+    "premise_names_protagonist",
     "promises_for",
     "records_for",
     "render_world_request",

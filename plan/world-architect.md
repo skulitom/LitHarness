@@ -254,6 +254,62 @@ evaluation result, a cost an adverse effect, a carrier an entity whose possessio
 preconditions, a bond a composite subject, an agency a role, a hidden personality a claim not
 yet disclosed. The Architect writes vocabulary; the store holds four patterns.
 
+**3.8 The protagonist, added 2026-08-22.** A world may name one member of its cast as the
+`protagonist`, and the record patterns are the ones already here rather than new ones: a second
+`entity_role` on that cast member (roles are plural, so nothing has to choose between "cast" and
+"protagonist"), `edge` and `price` as assertions in the `manifests_as` register, `wants` as the
+cast pattern already carries it, and `exception_to` as an **edge** to the declared rule or
+cardinality shape that does not hold for them. The exception is the shape of a hook as the
+operator defines one — *an exception to the world's rule, belonging to one person*
+([`plan/reader-read-3.md`](reader-read-3.md) note 1) — and the inversion rule of §4 cannot express
+it, because an inversion changes a default for everyone.
+
+**The exception reaches the gate rather than decorating the schema.** `CardinalityShape` carries
+`except_subjects`, populated from an `excepts` edge on the shape, and `worlds.in_scope` returns
+`False` for an excepted subject before it consults roles. Scope stays an `entity_role` and §3's
+argument for that is untouched: a shape is a rule about a *kind* of thing. An exception is the
+other object — a declared fact about one subject — so it is declared as one and read beside the
+shape. Two declaration sites, one predicate, one reader: a shape may list its own `except`, and
+`records_for` also emits `<shape> excepts <protagonist>` when a protagonist's `exception` names a
+declared shape, because "X is the exception to S" and "S does not govern X" are one fact from two
+ends of one edge and only the second is what the detector reads.
+
+**3.9 Where the protagonist stands, added 2026-08-22 (§113).** §3.3's ordinal domain existed from
+the first day of this design and **nobody ever stood on it**: measured across the four worlds
+forged before today, two declared an ordinal chain of at least three ranks and *not one cast
+member of any of the four* carried a standing on any chain. So one predicate closes it, and it is
+`precedes`' own shape from the other side:
+
+```
+(silas, stands_at, object_ref=second_seal, value="assay_grade", order_key="s1")
+```
+
+**Flat, and the flatness is the argument.** The page can only print a flat edge — a scene writes
+`[ASSAY] Silas now stands at second seal` and `parse_graph_line` reads it back — so the forge's
+copy of the same fact has to be readable by the same function. The reified `EVALUATION_*` triple
+of §3.3 stays exactly where it is, for the world that reifies an evaluation with an authority that
+performed it (`research/progression-generalization.md` §8.3); a standing is not that case, and
+writing both would be two answers to "which rung is this person on".
+
+**The criterion rides in the value slot for `precedes`' reason**: a world may run two ladders at
+once and an unscoped standing would splice them. The criterion a standing belongs to is otherwise
+*derived* — `criterion_of_rung` finds which declared chain holds the rung and abstains when two
+do, which is a `validate` complaint rather than a guess.
+
+**The number is the rung's 1-based place in the chain and it is never stored.** The operator's
+direction is that a rank ladder *is* the genre's number ("bronze to gold rank advance is the same
+as the number going up; say bronze is 1 and gold is 3"), so `rung_index` computes it from
+`ladder_of`'s chain when asked. A stored integer beside the chain would be a second answer to
+"which rung is third". The chain is read **lowest first**, which is why the rule text says so —
+see §8 item 7 for the measurement that forced the clause.
+
+**Placed at the opening rather than left unplaced.** A standing is a fact that *changes*, so
+`standing_of` has to be able to answer "which standing is in force at this scene" and
+`standing_target` "which scheduled one is still ahead" — both comparisons of order keys. An
+unplaced record asserts no position and `records_before` keeps it in every window, so an unplaced
+standing could never be *before* a milestone. Standing world rules are unplaced for exactly the
+opposite reason: they never change.
+
 ---
 
 ## 4. How to prompt for *unique* — the part that is prompting
@@ -305,6 +361,11 @@ Ordered, and each step runnable and measured before the next. `plan/state-model-
 | 7 | second extractor family: a declared graph-line form, with promotion | `domain/extraction.py` | §5.9, §6.1 |
 | 8 | a `mystery`/`plot` promise per recorded reveal, opened from the seed | `application/architect.py` | §5.10 |
 | 9 | retrieval when the serial outgrows the packet | — | design note only, §101.2 |
+| 10 | *(2026-08-22)* a declared protagonist, and a cardinality exception belonging to one subject | `application/architect.py`, `domain/worlds.py`, `domain/integrity.py` | §112 |
+| 11 | *(2026-08-22)* the cast and the protagonist reach the outline; the viewpoint reaches the packet and the beat line | `application/outline.py`, `application/planner.py` | §112 |
+| 12 | *(2026-08-22)* a declared ordinal chain, a standing on it, and the printed form a change of standing is announced in | `application/architect.py`, `domain/worlds.py` | §113 |
+| 13 | *(2026-08-22)* the rung schedule: the ladder reaches the outline, `standing_milestones` is validated for direction, and the next rung and its line reach the drafting prompt | `domain/world_brief.py`, `application/outline.py`, `application/planner.py`, `domain/extraction.py` | §113 |
+| 14 | *(2026-08-22)* a printed rung on a declared chain is read back as canon at that position | `domain/extraction.py` | §113 |
 
 **Step 7's line form, because it is the one that could go wrong quietly.** The world declares
 its own graph line the way it already declares its sheet, and a world that declares none
@@ -373,6 +434,26 @@ answer measured here is **around scene ten at four scenes a chapter — and the 
 it is the promise ledger rather than the world**, which is the first number this project has had
 for it and not the number that was expected.
 
+### 5.2 The two planner calls — added 2026-08-22
+
+Until 2026-08-22 the Architect's world reached the
+*writer* — a flat 229–231 established facts per drafting prompt on pilot 2, `context_omitted = 0`
+— and reached neither call that writes the scene plan the writer executes. Measured on pilot 3:
+`render_outline_request` received the premise, the beat sheet, the status seed and the open
+promises, and **not one `StateRecord`**, so it invented a protagonist who occurs nowhere in the
+forged world and every other named person in the book, while four of the five forged cast members
+never reached the page. The change surface is two optional keyword inputs on that call —
+`world` (the declared world including its people, phrased by `worlds.project` first and
+`state.describe` as the fallback, which is `context._state_item`'s own two steps; stage-0 §111's
+`domain/world_brief.py`) and `protagonist`, which is the one thing a brief grouped by kind cannot
+say — plus `pov_character_id` finally passed at the one production `packet_for` call site, where
+the seam had existed unused since it was written. A book whose canon declares neither renders the
+bytes it rendered before, which is asserted rather than argued.
+
+Two branches met at this call within a day of each other and one input was collapsed rather than
+kept: a separate `cast` rendering was deleted when §111 landed first, because a request carrying
+the same people twice spends its budget saying one thing (stage-0 §112.7).
+
 ---
 
 ## 6. What is measured, and what it is not allowed to say
@@ -424,12 +505,17 @@ operator's `NOTES.md` defect harvest; anything else is a hypothesis and is label
 | | record the answer to a mystery, and the position where it is disclosed |
 | | propose directives of the interpretive kinds, and constraints that are *world facts* rather than prose doctrine |
 | | derive a premise from the world it built |
+| | *(2026-08-22)* name one member of its cast as the protagonist, the rule or shape that does not hold for them, what that lets them do, what they want and what it costs |
+| | *(2026-08-22)* declare that a cardinality shape does not govern a named subject |
+| | *(2026-08-22, §113)* declare where its protagonist **stands** on one declared ordinal chain, and the printed form a change of standing is announced in |
 | **May not** | say what the book is about beat by beat — that is the Director |
 | | write prose, or name a scene's events — that is the Writer |
 | | judge anything, rank anything, or select among its own candidates |
 | | lock a plan item, or write `ACCEPTED_CANON` without a recorded decision |
 | | name, quote or imitate a real work, author, brand, game or system |
 | | require a world to have a system, a ladder, a sheet, a number, or combat |
+| | *(2026-08-22)* say how a protagonist should be **handled** — opened on, liked, shown winning, or progressing faster than anyone. An exception declared is a fact about the world; who wins is the book's, and the direction is the operator's |
+| | *(2026-08-22, §113)* say how a **rise** should read — earned, felt, celebrated, paid off. A rung and its price are declared facts; how a scene handles reaching one is the writer's and the operator's |
 
 **And nothing here can block.** The Architect runs before a book exists; it has no gate, no
 veto, no `GateOutcome` of its own beyond the shape gate that refuses its own malformed output.
@@ -456,6 +542,21 @@ Enforced by the absence of the capability and pinned by a test, exactly as the D
 5. **Does a forged world survive its own serial?** The world is generated once, before scene
    one. Whether the growth path (step 7) or the operator is the right author of a mid-serial
    amendment is not decided, and no amendment surface is built.
+6. *(2026-08-22, §113)* **Should "one standing per ladder at a position" be declarable?** It is
+   not, with today's `GROUP_KEYS` (`subject`, `subject,order_key`, `object`) — and a subject
+   legitimately on two ladders holds two `stands_at` edges at one position, so the shape is not
+   simply a missing key. No group key was added: `plan/handoff-numbers-go-up.md` boundary 11
+   refuses a `GROUP_KEYS` member without a decision saying why, and there is no measured case yet.
+   Two rungs of *one* ladder at one position is counted as a descriptor by
+   `research/quality-measurement/standing.py` rather than gated, so the decision waits on a
+   number rather than on an argument.
+7. *(2026-08-22, §113)* **Which way does a chain run when the world does not say?** The rule now
+   says *lowest first*, because it had to: the one ordinal chain pilot 3 produced ran
+   highest-first (`first_water → morning_right → tail_right → wash_right`) and a reader counting
+   up it counts a person getting weaker. What is undecided is whether a *declared* direction
+   should exist — a `direction` field on the criterion, or an ordering the validator can check —
+   rather than a chain whose meaning depends on the rule text that produced it. Nothing is built;
+   `rung_index` counts from the bottom of `precedes` and says so.
 
 ---
 
@@ -469,3 +570,26 @@ claim about book quality from a counter. The Director, Writer and Reader/Judge r
 untouched. Retrieval (step 9) is a design note and is not started. The golden fixtures are
 untouched by construction, not by a compatibility branch: a world that declares nothing gets
 exactly what it got before this existed.
+
+**Added 2026-08-22 with the protagonist.** No model is asked whether a hook is good, which premise
+hooks more, whether a protagonist is interesting, or which of K worlds to pick — the forge still
+stops and a person chooses. No instruction about how to *handle* a protagonist enters any prompt,
+template, beat function or system message; three tests check the three added strings for the
+vocabulary such an instruction would need. No hook beat function and no change to `SIX_BEAT`. No
+bar over any count the change produces, including the chapter-grain introduction distribution,
+whose number is left unset for the operator. A world that declares no protagonist regenerates
+byte-identically and its book renders the same outline request and the same drafting prompt it
+always did — [stage-0 §112](stage-0-decisions.md).
+
+**Added 2026-08-22 with the ladder.** No model is asked whether a ladder is good, which rung is
+right, or whether a rise lands. **No adjective and no verb about how a rise should read** enters
+any prompt, template, beat function or system message: the standing block reuses the numeric
+block's own sentence, and two tests check the added strings against the vocabulary such an
+instruction would need. No "level-up" beat function and no change to `SIX_BEAT`. No HP / MP / Gold
+/ XP sheet for a forged world and no change to `DEFAULT_SHEET`. **No bar** on how often a standing
+should move — the distribution is in
+[`research/quality-measurement/numbers-go-up-results.md`](../research/quality-measurement/numbers-go-up-results.md)
+§3 and §4 and the number is the operator's. The general ontology is untouched: comparators,
+partial orders and revocable rank are exactly as §3.3 left them, and what the directed brief adds
+is a genre contract over the arc being written, not a definition of progression — [stage-0
+§113](stage-0-decisions.md).
