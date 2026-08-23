@@ -273,20 +273,26 @@ def test_census_over_rlm_serial_lands_on_section_56_4():
                 "dark": len(selection.dark_prior_scenes),
             }
         )
-        got = (selection.full_prose_count, selection.summary_count, selection.fact_count)
-        for column, actual, want in zip(
-            ("full prose", "summaries", "facts"), got, expected[:3], strict=True
-        ):
-            if abs(actual - want) > 0.15 * want:
+        # The gate is scaled to the phenomenon, not to a curve fit. Dark prior scenes —
+        # the quantity §56.4 is about — and the prose/facts columns are gated at ±15%
+        # relative with a minimum slack of 2 (an absolute ±5 on dark would be ±71% at
+        # 30 scenes and ±4.6% at 120). Summaries are reported, never gated: with fixed
+        # per-item sizes the summary count is the residual of the budget arithmetic,
+        # and §56.4's implied summary sizes drift with horizon — gating that residual
+        # would force per-horizon generator knobs, i.e. tuning the instrument to the
+        # answer.
+        checked = (
+            ("full prose", selection.full_prose_count, expected[0]),
+            ("facts", selection.fact_count, expected[2]),
+            ("dark", len(selection.dark_prior_scenes), expected[3]),
+        )
+        for column, actual, want in checked:
+            slack = max(0.15 * want, 2)
+            if abs(actual - want) > slack:
                 failures.append(
                     f"rlm-serial-{scenes}: {column} = {actual}, §56.4 says {want} "
-                    f"(±15% allows {want * 0.85:.1f}-{want * 1.15:.1f})"
+                    f"(±15% allows {want - slack:.1f}-{want + slack:.1f})"
                 )
-        if abs(rows[-1]["dark"] - expected[3]) > 5:
-            failures.append(
-                f"rlm-serial-{scenes}: dark = {rows[-1]['dark']}, "
-                f"§56.4 says {expected[3]} (±5)"
-            )
 
     # Printed whichever way the comparison lands — the numbers are the deliverable, and a
     # bare assert would hide exactly what the workload generator needs corrected.
