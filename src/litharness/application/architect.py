@@ -535,6 +535,74 @@ _SYSTEM_MESSAGE = (
 #: The rules every candidate is written under. Ordered so the two that decide whether a world is
 #: *usable* — consequences and manifestations — come before the ones that decide whether it is
 #: interesting, because the gates refuse on the first two and only report on the rest.
+    # **Four rules the operator's worked example diagnosed on 2026-08-23, after six worlds.** The
+    # example was a pitch: a biology graduate in a dead-end coffee job in a near-future with a
+    # neural implant dies, wakes as a child in a magic world with the AI merged into him, finds
+    # that magic here runs on cell biology, masters water magic with what he already knows, and
+    # joins an academy. Slow burn.
+    #
+    # Read against the six worlds this forge had just produced, it named four things at once, and
+    # each is fixed where it was caused rather than in a brief:
+    #
+    #   1. *"'wet cinder', 'because his body rings', 'with a stranger going pale' are not things
+    #      anybody says in any context"* — the premise rule asked for a person's situation and got
+    #      literary flash fiction. It now asks for a pitch, in the order things happen.
+    #   2. *"Why do each of these options mention climbs and ladders — it sounds like we are stuck
+    #      on these words for no reason"* — §113's ladder rule made the chain the world's identity.
+    #      It is furniture now, met the way bronze-to-gold is met.
+    #   3. The example keeps every genre comfort — isekai, academy, a system, slow burn — and is
+    #      fresh underneath. `_DISTINCTNESS_RULE` and the originality rule had been read as a
+    #      demand for strangeness, so a rule now says where originality belongs.
+    #   4. Every world was inverting a default (nothing heals; no move-lists; nothing is hidden),
+    #      which is what made each one alien. Inversion is optional from here.
+    #
+    # And the question under all four, which is answered honestly rather than engineered around:
+    # *"do LLMs have access to the whole context? surely they would notice the insanity"*. The
+    # forge sees the brief, the schema and these rules. It never sees its own premise as a reader
+    # meets it, and nothing anywhere in this pipeline asks whether a reader would want the world.
+    # No critic was added here — §61(5) and §105.1 are why — so the only lever is what is asked
+    # for, which is what these four rules change.
+    # **The readership, stated by the operator on 2026-08-23**: *"most readership is 20-30 male
+    # for this genre, we should keep main characters relatable"*. RoyalRoad's audience is the
+    # market this project writes for, and this is a targeting decision the operator owns.
+    #
+    # **What is written here is the declarative half only, and the split is §112 boundary 1's.**
+    # That boundary forbids this module a default instruction about how to *handle* a
+    # protagonist — open on the hero, make them likeable — and
+    # `test_the_protagonist_rule_asks_for_a_declaration_and_never_an_outcome` enforces it with a
+    # forbidden-verb list that has `likeable` on it. "Make the reader relate to them" is that
+    # class of instruction and is not written. What is written is a fact about the world's
+    # declaration: *who this person was before*. A world may still declare somebody unlikeable,
+    # old, or hard to sit with; what it may not do by default is reach for a career veteran when
+    # the reader is twenty-four.
+    #
+    # **It also has a craft reason that is not about demographics.** The competence-transfer
+    # fantasy needs knowledge the reader can imagine owning. A biology degree and an internet
+    # habit are transferable to a reader; twenty-two years of grinding lenses is somebody else's
+    # life, and the reader watches it rather than wearing it.
+    # **Three amendments from one operator read of six premises, 2026-08-23.** The six were
+    # forged under §116, §118 and §119 and drew six complaints that turned out to be three:
+    #
+    #   1. *"There just doesn't seem to be a good reason for this limitation other than to show
+    #      how our main character is special."* Said of a world where nobody can hear their own
+    #      singing voice so that one person can, and again of a school where nobody may learn
+    #      both halves of the art. **This rule caused it**: §112 asks for the one declared rule
+    #      that does not hold for the protagonist, so the forge invents a limitation for everyone
+    #      and exempts one person. The operator's own worked example runs the other way — a
+    #      biology graduate is exceptional because of what he *brought*, and that world's rules
+    #      are untouched by him.
+    #   2. *"'every wonder is alive, small and kept in a crock' — makes no sense. What is alive?
+    #      What is a crock? What counts as a wonder?"* and *"'a cracked man in a warm room who
+    #      doesn't know her name' — do you know what this means? I think nobody does."* §119's
+    #      pitch clause banned mood and invented compounds and never said *define your nouns*.
+    #   3. *"Cuttings — that is inherently a bad thing to have. Nobody wants more cuts on their
+    #      bodies, they want cool powers."* §118 put the daydream at the top of the ladder and
+    #      said nothing about the method, so a world can pair a summit worth wanting with a
+    #      mechanism a reader recoils from.
+    #
+    # Measured against them the same day: `research/quality-measurement/comprehension_battery.py`,
+    # which asks four readers to restate a premise and scores how much they agree. Complaint 2 is
+    # a comprehension failure by construction and had no instrument until then.
 _RULES: tuple[str, ...] = (
     "Every rule names at least three second-order consequences, each in a DIFFERENT domain of "
     "life from the allowed list. A rule whose consequences all land in one domain is one "
@@ -543,7 +611,9 @@ _RULES: tuple[str, ...] = (
     "of how it shows on the page — a printed line, a price paid, a mark worn, a sound, a change "
     "in how a stranger treats you. Never an explanation and never a lecture.",
     "Every rank has a form a reader can SEE, and every gain has a cost payable on the page in "
-    "the same scene or earlier.",
+    "the same scene or earlier. A cost is paid in a body, in time, in risk, in something the "
+    "person can no longer do, or in somebody who is now against them — never in money, never "
+    "in a debt, and never in a piece of paper somebody files.",
     # **The ladder the reader counts, and it is one rule about what a world declares.**
     # `plan/handoff-numbers-go-up.md`: the operator's direction is that a rank ladder *is* the
     # genre's number — "bronze to gold rank advance is the same as the number going up; say
@@ -565,13 +635,108 @@ _RULES: tuple[str, ...] = (
     "LEAST THREE, listed LOWEST FIRST, each with a `visible_form` a reader can see and a "
     "`cost_to_reach` payable on the page. The protagonist's `standing` names that criterion by "
     "id and one of its rungs by id, and the rung is NOT the top one. The number a reader counts "
-    "in this world is the rung's position from the bottom of that chain.",
+    "in this world is the rung's position from the bottom of that chain. The ladder is the "
+    "world's FURNITURE and not its concept: a reader meets it the way they meet bronze to "
+    "gold in any other book, and the premise is about the person rather than about the "
+    "chain.",
+    # **The domain rule built five worlds set inside a trade, and the operator named it.**
+    # Assaying, grafting, surveying, bell-founding, dyeing — the rule asked for a real domain of
+    # human *work*, and the forge answered with the workshop, the yard, and the trade's own
+    # vocabulary as the world's. Read on 2026-08-23: *"it just reads as too unnecessarily esoteric
+    # and the concept isn't inspirational ... the words used are adding unnecessary complexity eg
+    # mordant"*. Measured beside it: 32 worlds, 27 distinct domains, every one a trade, a science
+    # or a body of law (§118.1).
+    #
+    # The physics was never the problem and every original clause is kept: a system whose costs
+    # are a real craft's real constraints is what makes a world argue back. What is added is where
+    # that craft belongs — under the hood rather than on the page — because the register rule
+    # below already asks for "fast, plain, popcorn reading" and this rule was handing that prose a
+    # glossary to write it in.
     "Literalise one real domain of human work or knowledge and take the system's logic and its "
     "costs from that domain's real constraints. Name the domain. The book should run on real "
-    "ideas rather than invented ones.",
+    "ideas rather than invented ones. **The domain is the engine, not the setting.** The book "
+    "is not set inside that trade, the trade is not the world's institution, and the domain's "
+    "technical vocabulary never reaches the page — a reader learns none of its words and "
+    "needs none. What somebody can do is said in plain words a reader could repeat after one "
+    "read: the physics of a real craft, wearing none of its jargon.",
+    # **The rule this module did not have, and sixteen rules went out without it.** Every rule
+    # here asked what a world *declares* — consequences, manifestations, visible rungs, costs, a
+    # ladder, an inventory, a protagonist, an inversion, mysteries with answers — and exactly one
+    # contained the word *want*, where it means what one character wants. None asked whether
+    # anybody would want any of it. §113 made the rungs countable and §114 made the abilities
+    # distinct, and between them they produced a countable, distinct inventory of chores; the
+    # operator's phrase for what was missing is *"Readers want to feel cool and progress in
+    # meaningful ways"* (§118).
+    #
+    # **The examples are the operator's own, in two lists, kept in their order.** First: inventing
+    # something useful, gaining popularity, control over things or the world, immortality,
+    # becoming something greater, superhuman skills, and being unusually good at a craft more
+    # easily than anyone else. Then: healing powers, control over the body, control over
+    # mutations, creating a new sort of life, developing advanced technology, superhuman
+    # augmentation — and earning money. An example list is what a model actually steers by, so
+    # they are written into the rule rather than summarised.
+    #
+    # **Two of those items settle questions the rules beside this one would otherwise leave
+    # open.** *Being effortlessly the best at something* is why neither this rule nor the domain
+    # rule above bans crafts: the daydream is the ease and the standing, and learning what a
+    # mordant is is homework. And *earning money* is not what the administration rule forbids —
+    # a fortune somebody wins, spends and is envied for is a prize; a debt, a register and a filed
+    # piece of paper are the chore. The rule says so in its own last sentence rather than leaving
+    # two rules looking as though they disagree.
+    #
+    # It asks for a declaration and stops there, in the register of the declared-shape rules
+    # beside it: nothing here says the wish should be a good one, that a reader should like it, or
+    # that anybody achieves it. A ladder is a fact about the world; who climbs it is the book's.
+    "Say what a person would want to be able to do here, and put that at the TOP of the "
+    "ladder. The upper rungs are the daydream: moving faster than anyone can react; striking "
+    "harder than a body should; seeing what nobody else sees; healing what nobody heals, "
+    "including yourself; commanding your own body down to what it is made of, or changing "
+    "what it is made of; surviving what should not be survivable, or not dying at all; "
+    "commanding something dangerous; making a living thing that never existed; building the "
+    "machine nobody has built; inventing the thing everybody ends up using; being known by "
+    "people who have never met you; holding real control over things or over other people; "
+    "getting rich; becoming something greater than you were; or being extraordinary at "
+    "something that costs everybody else a lifetime. The lowest rungs are the beginner's "
+    "version of that same thing, so a reader sees the whole climb from the bottom rung. A "
+    "ladder whose top rung is a better version of a chore is a job. **The way it WORKS has "
+    "to be wanted too, and not only where it ends.** A rung bought with something a reader "
+    "would recoil from — another cut opened on your body, another piece of yourself handed "
+    "over — is a rung nobody wants to stand on, whatever waits at the top; and a power "
+    "whose method is unpleasant has to buy something worth having in the same breath, or a "
+    "reader declines the whole ladder. Getting rich is a PRIZE "
+    "and never an administration: a fortune somebody makes, spends and is envied for is a "
+    "daydream, while a debt, a register, a tariff and a filed piece of paper are the chore "
+    "the rule above forbids, and they are not the same thing.",
     "Give the world two systems whose logics are incompatible, and say what happens at the "
-    "interface between them: the exchange rate, who can cheat whom, what the law says. The "
-    "interface is the content.",
+    "interface between them: which one wins where they disagree, what it does to a person "
+    "caught between them, who is forced to choose, and what somebody can do under one and "
+    "never under the other. The interface is the content, and it is physical or personal — a "
+    "proving ground, a refusal to teach, a body that cannot hold both, a technique that "
+    "unmakes another technique. It is NOT an exchange rate, a market, a court, a licence or "
+    "a tariff.",
+    # **Measured before it was written, over every world this project had forged.** Thirty
+    # candidates, four briefs, both prompt shapes: every one carries administrative vocabulary,
+    # at a median of 7.21 words per 1,000 of declared text and a minimum of 2.69, and **18 of
+    # the 30 name a register, a debt, a court, a deed or a clerk in the PREMISE** — the one
+    # sentence a reader meets first. The operator read three such premises on 2026-08-23 and
+    # refused all three: *"All these sounds depressing and incredibly boring. Anything related
+    # to debt or ledgers is a no no in a story"*.
+    #
+    # **The bias was this module's own text and not the model's.** The rule above described an
+    # interface as an exchange rate and what the law says; the capability rule offered *a debt*
+    # as a legitimate subject for a world; the mystery rule called an unpaid secret *a debt the
+    # book can never pay*; and no rule anywhere said what a cost is paid IN. Four lines of
+    # instruction, thirty worlds, one genre.
+    #
+    # It fences the *subject* and nothing else. A world may still charge brutally, may still
+    # have institutions, and may still put somebody under an obligation they hate — what it may
+    # not do is make the paperwork the point.
+    "This world is a place people live in, not an administration. Its institutions are ones a "
+    "reader would want to walk into — a school, a crew, a proving ground, a border post, a "
+    "workshop, a rival house — and the pressure on people comes from rivals, teachers, "
+    "distance, weather, wounds, hunger, time and each other. Do NOT organise a world, a "
+    "system, a premise or the protagonist's problem around a debt, a ledger, a register, a "
+    "licence, a deed, a tariff, a court, a wage or a filed piece of paper.",
     # **The one default that is not on the table, and the amendment is measured.**
     # `plan/handoff-numbers-go-up.md` Task 0.3: on the brief "progression fantasy", all three
     # forged worlds inverted a piece of this exact rule — *Senior Water* removed "portable
@@ -582,9 +747,13 @@ _RULES: tuple[str, ...] = (
     #
     # It fences the *declaration* and nothing else: a world may still price a rise brutally, make
     # it revocable later by directive, or hand it to somebody who does not want it.
-    "Remove or invert exactly one default of the genre — any EXCEPT this one, which is not "
-    "invertible here: the protagonist's standing on a declared ordinal ladder can rise, and the "
-    "reader can count it. Say what fills the hole.",
+    "You MAY remove or invert ONE default of the genre — at most one, and never this one, "
+    "which is not invertible here: the protagonist's standing on a declared ordinal ladder "
+    "can rise, and the reader can count it. If you do, say what fills the hole. **A world "
+    "that keeps every default and takes its distinctness from its engine and from the "
+    "person it happens to is legitimate**, and is often the better book; `inversion` may say "
+    "exactly that, and one of two worlds saying it is a healthy answer rather than a lazy "
+    "one.",
     # **An inventory, beside the ladder rather than instead of it.** Measured over the 24 worlds
     # forged before 2026-08-22: 135 of 156 criterion rungs are an insignia — a mark other people
     # read — and permission outnumbers capability 104 to 46, because `_RANK` has a slot for what a
@@ -603,7 +772,8 @@ _RULES: tuple[str, ...] = (
     "different, and a world may declare either, both, or neither. Each capability carries what "
     "it lets a person do, how it shows on the page when it is used, what having it costs, "
     "whatever it needs first by id, and whoever teaches it if anyone does. A world about "
-    "standing, or a place, or a debt may leave this out entirely, and many should.",
+    "standing, or about one place, or about a single relationship may leave this out "
+    "entirely, and many should.",
     # **The rule above inverts a default for everyone; this one declares an exception for one.**
     # `plan/reader-read-3.md` note 1: the operator read two chapters of a book forged on this
     # schema and named the premise as the defect — "readers desire … something that doesn't
@@ -617,7 +787,20 @@ _RULES: tuple[str, ...] = (
     # world, and who wins is the book's. `tests/test_architect.py` checks the rule text for the
     # verbs an outcome instruction would have to use.
     "Name one member of the cast as this world's `protagonist`. Choose the one rule or "
-    "cardinality shape this world declares that does not hold for them, or holds differently, "
+    "cardinality shape this world declares that does not hold for them, or holds "
+    "differently. **Prefer an exception they BROUGHT over one the world was bent to give "
+    "them.** The cleanest version is that this person arrived carrying something nobody "
+    "here has — a training, a habit of mind, an object from where they came from — and the "
+    "world's rules are untouched by their presence. The version to avoid is a limitation "
+    "invented for everybody else whose only job is to leave one person outside it: if a "
+    "declared rule would not exist in this world were it not for this one character, it is "
+    "a contrivance, and a reader can feel the shape of it. Nobody here being able to hear "
+    "their own voice, so that one person can, is that shape. **If this person came from "
+    "somewhere like our own world, the life they came from is one a reader in their "
+    "twenties has lived**: an age near the reader's own, a degree they are not using, a job "
+    "that covers the rent, a thing they know far too much about for no professional reason. "
+    "What they bring is an education, a hobby or an obsession rather than thirty years at a "
+    "trade — a reader owns the first three and cannot picture the fourth. "
     "and put **its id alone** in `exception` — one snake_case word such as "
     "`rule_seed_never_true`, with no dash and no clause after it. What that rule says is "
     "already written where the rule is declared, and a sentence there is not an id. Then give "
@@ -626,10 +809,21 @@ _RULES: tuple[str, ...] = (
     "charges them, payable on the page. If the exception is a cardinality shape, that shape "
     "lists their id in its `except`. Write the `premise` as that person's situation — who they "
     "are, what is singular about them, what is in the way — rather than as a description of "
-    "the world, and name them in it.",
+    "the world, and name them in it. **Write it as a PITCH and not as prose**: plain modern "
+    "English, in the order things happen, the way one person tells a friend what a book is "
+    "about. Who they were before, what happened to them, what they can do here that nobody "
+    "else can, and what they are heading toward. No mood, no imagery, no invented compound "
+    "phrases, and no sentence that would only ever appear in a novel. Somebody who has read "
+    "nothing but the premise should be able to repeat it accurately, in their own words, "
+    "after one read. **Every noun a reader has not met before is explained in the same "
+    "breath or it is not used.** A premise saying that every wonder here is alive and small "
+    "and kept in a crock has spent three words the reader cannot cash — what is alive, what "
+    "is a crock, what counts as a wonder — and a person named as a cracked man in a warm "
+    "room is a person nobody can picture. Name the thing in words a reader already owns, or "
+    "say what it is the first time it appears.",
     "Mysteries: each carries its ANSWER written down and the scene number where the reader "
-    "learns it. A secret with no recorded answer is a debt the book can never pay. This world "
-    "is an open-ended serial, so most answers land far out — but **at least one must be "
+    "learns it. A secret with no recorded answer is a promise the book can never keep. This "
+    "world is an open-ended serial, so most answers land far out — but **at least one must be "
     "answered inside the {scenes} scenes being written now**, because an opening that asks "
     "four things and settles none teaches a reader that nothing here gets settled.",
     # The last clause is the operator's direction and not a softening of the rest of the rule:
@@ -653,6 +847,12 @@ _RULES: tuple[str, ...] = (
     "imitate, or compare to any real person, brand, game, or published work.",
     "The prose this world will be written in is fast, plain, popcorn reading. The world shows "
     "on the page as interactions, prices paid and visible ranks. It is never explained.",
+    "This is genre fiction and the genre's own furniture is WELCOME rather than avoided: an "
+    "academy, a tournament, a master worth impressing, a party who travel together, a rival "
+    "house, a first test, a system that speaks up. A reader came for those. Originality "
+    "belongs in the engine underneath and in the person it happens to, never in refusing "
+    "what the genre is for. A world nobody recognises is not a fresh world, it is a "
+    "different book than the one somebody picked up.",
     "Ids are lowercase snake_case and unique within the world. Every id referenced anywhere "
     "must be declared somewhere.",
     "Cast, agencies and institutions carry `relationships`: who owes whom, who employs whom, "
@@ -688,7 +888,8 @@ _DISTINCTNESS_RULE = (
 _DOMAIN_FIRST_RULE = (
     "Work in this order inside your answer, and let the order show: first fix the real domain "
     "and write down the constraints that are actually true of it — what it costs, what it "
-    "cannot do, what goes wrong, who pays, who arbitrates. Then derive the system from those "
+    "cannot do, what goes wrong, who gets hurt, and what it takes out of the person doing it. "
+    "Then derive the system from those "
     "constraints so that every rule is a real constraint of the domain wearing the world's "
     "clothes. Do not invent a system and then decorate it with a domain's vocabulary."
 )
@@ -774,12 +975,87 @@ def render_world_request(
 #: so the surviving alternative requires capitals; `franchise`, `series` and `saga` are only
 #: borrowed when a title precedes them.
 _BORROWED = re.compile(
-    r"(?i:\b(?:inspired by|reminiscent of|similar to|like in|as seen in|as in the"
+    r"(?i:\b(?:inspired by|reminiscent of|similar to|as seen in|as in the"
     r"|based on the|in the style of|homage to|riff on|a la|fan[- ]?fic)\b)|[®™]"
     # Case-sensitive on purpose: a media reference is a *named* thing, so the title-shaped
     # alternative requires capitals. `(?i:…)` scopes the phrase list's insensitivity above.
     r"|\bthe [A-Z][\w'-]*(?: [A-Z][\w'-]*){0,3} (?:series|franchise|saga)\b"
+    # **The same narrowing a second time, and this one is measured over every world forged.**
+    # `like in` sat in the case-insensitive list above until 2026-08-23, when it refused a
+    # world over “reciting what a field looked like in a year before the listeners were
+    # born”. Run over the 30 candidates forged before that date the whole guard fires
+    # **once**, and that once is this false positive: no other phrase in the list has ever
+    # fired on a forged world. So the phrase gets the capitals requirement the title-shaped
+    # alternative already carries — a media reference is a named thing — rather than being
+    # deleted, which would leave the guard one fewer way to catch what it exists for.
+    r"|\blike in (?:the )?[A-Z]"
 )
+
+
+#: The administrative vocabulary a world may not be *about*, and why it is a word list.
+#:
+#: **Measured over the 30 worlds forged before 2026-08-23** — four briefs, both prompt shapes,
+#: every pilot this project has run. Administrative words appear in **every one of them**, at a
+#: median of 7.21 per 1,000 words of declared text (minimum 2.69, maximum 17.92), and **18 of the
+#: 30 name one in the premise**, which is the sentence a reader meets first. The operator read
+#: three such premises on 2026-08-23 and refused all three. `_RULES` is where that bias came from
+#: and where it is fixed; this list is how the fix is checked.
+#:
+#: **`price`, `cost`, `pay` and `bond` are deliberately absent.** The schema asks every rule for a
+#: price and every cast for its bonds, so counting those would count this module's own
+#: instructions rather than the world. What is counted is the paperwork around them.
+#:
+#: **`court` came out on the first forge run under the amended rules, and the arithmetic is
+#: recorded rather than argued.** A world of bell-founders held its duels on the *Bell Court*,
+#: which is an arena, and the premise check refused it. Over the 30 worlds forged before this
+#: list existed the premise check fires on 18 with `court` in the family and on **17 without**,
+#: so the whole word buys one world in thirty and costs every yard, tennis and courtyard in the
+#: language. `courtroom` stays, and so do `bailiff`, `docket`, `writ`, `magistrate`, `tribunal`
+#: and `plaintiff`, which mean only the one thing. This module has now narrowed a word guard
+#: from a measured false positive three times — `franchise`, `like in`, and this — and the
+#: economics are the same each time: a recall-tuned list run as a refusal has them inverted.
+_ADMINISTRATION: frozenset[str] = frozenset(
+    """
+    debt debts debtor debtors creditor creditors ledger ledgers register registers registry
+    registries tariff tariffs licence licences license licenses courtroom docket dockets
+    deed deeds lien liens wage wages tax taxes taxed levy levies fee fees rent rents invoice
+    invoices contract contracts clerk clerks bailiff bailiffs arbitrate arbitrates arbitration
+    litigation lawsuit mortgage mortgages toll tolls warrant warrants statute statutes
+    magistrate magistrates notary audit audits auditor bookkeeping receipt receipts writ writs
+    tribunal plaintiff broker brokers brokerage owed owes owing forfeiture forfeit assessor
+    assessors filing filings claimant compensation indemnity arrears surety collateral
+    """.split()  # noqa: SIM905 — a word list is prose, and reads as prose
+)
+
+_WORDS = re.compile(r"[a-z]+")
+
+
+def _administration_in(text: str) -> tuple[str, ...]:
+    """The administrative words in one piece of text, first-seen order, each named once."""
+    seen: dict[str, None] = {}
+    for word in _WORDS.findall(text.lower()):
+        if word in _ADMINISTRATION:
+            seen.setdefault(word, None)
+    return tuple(seen)
+
+
+def _declared_prose(value: Any) -> str:
+    """Every string a world declares, key names excluded — what it says, not how it is filed."""
+    if isinstance(value, str):
+        return value
+    if isinstance(value, Mapping):
+        return " ".join(_declared_prose(item) for item in value.values())
+    if isinstance(value, (list, tuple)):
+        return " ".join(_declared_prose(item) for item in value)
+    return ""
+
+
+def _administration_rate(candidate: Candidate) -> float:
+    """Administrative words per 1,000 words of declared text. A distribution, never a bar."""
+    words = _WORDS.findall(_declared_prose(candidate.raw).lower())
+    if not words:
+        return 0.0
+    return round(1000 * sum(1 for word in words if word in _ADMINISTRATION) / len(words), 2)
 
 #: How many second-order consequences, in distinct domains, a declared rule owes. Three, and it
 #: is the operator's figure taken as given rather than a measured threshold — recorded as chosen
@@ -1204,8 +1480,33 @@ def _ladder_complaints(candidate: Candidate) -> tuple[str, ...]:
     return tuple(complaints)
 
 
+def _administration_complaints(candidate: Candidate) -> tuple[str, ...]:
+    """The premise, and only the premise. The rate is reported beside it and carries no bar.
+
+    **Where the line is drawn and why it is drawn there.** A world may have institutions, may
+    charge for everything, and may put somebody under an obligation they hate; what it may not
+    do is make the paperwork the thing the book is about. The premise is where that shows and
+    it is the sentence a reader meets first, so it is the one place this is a refusal.
+
+    **Attainable, checked the way §81, §85, §87 and §89 each were not.** Over the 30 worlds
+    forged before this check existed, **12 pass it and 18 fail it** — both subgroups non-empty,
+    the quantity is a membership test with no scale to mis-declare, and the unit is one world.
+    No bar is declared over `administration_per_1k`: that is a distribution nobody has ranged
+    against an outcome, and a threshold over it would be exactly the mistake those four entries
+    record.
+    """
+    named = _administration_in(str(candidate.raw.get("premise") or ""))
+    if not named:
+        return ()
+    return (
+        f"the premise is written in administration ({', '.join(named)}); it is the sentence a "
+        "reader meets first, and a world whose hook is paperwork is what the operator refused "
+        "three times out of three on 2026-08-23",
+    )
+
+
 def gate_candidate(
-    candidate: Candidate, *, scenes: int = DEFAULT_SCENES
+    candidate: Candidate, *, scenes: int = DEFAULT_SCENES, include_subject: bool = True
 ) -> tuple[str, ...]:
     """Deterministic complaints about one world. Empty means it passed.
 
@@ -1221,7 +1522,16 @@ def gate_candidate(
     6. the ladder is countable and the standing sits on it below the top, and a world with a
        ladder says what a change of standing is printed as (`_ladder_complaints`; silent for a
        world that declares no standing);
-    7. nothing in the answer compares itself to something outside it (RS1 / C3).
+    7. the premise is not written in administration (`_administration_complaints`);
+    8. nothing in the answer compares itself to something outside it (RS1 / C3).
+
+    **`include_subject=False` is for a world somebody has already chosen**, and §115.3 is
+    the precedent: a check added after the fact must not park an artefact over a fault it
+    could not have been forged clear of. Check 7 arrived on 2026-08-23, after all 30
+    worlds in this repository had been forged and two had been written, and 18 of the 30
+    fail it. `tools/rematerialise_forge_bundle.py` and the pilot-package regeneration pass
+    it False so that rebuilding a chosen world stays possible; **nothing at forge time
+    does**, which is the only place the check is meant to act.
     """
     complaints: list[str] = []
 
@@ -1304,6 +1614,8 @@ def gate_candidate(
     complaints.extend(_protagonist_complaints(candidate))
     complaints.extend(_capability_complaints(candidate))
     complaints.extend(_ladder_complaints(candidate))
+    if include_subject:
+        complaints.extend(_administration_complaints(candidate))
 
     borrowed = sorted(set(_BORROWED.findall(candidate.rendered())))
     if borrowed:
@@ -2076,6 +2388,16 @@ def report(candidate: Candidate, *, scenes: int = DEFAULT_SCENES) -> dict[str, A
         # classifier standing between them. `opening_rung_index` is `None` for a world that
         # declares no standing and for one whose chain is not a chain — empty rather than a
         # guess, `rung_index`'s own rule.
+        # **Two counters about vocabulary, one of which the gate refuses on.** The share of
+        # this world's declared text that is paperwork, and the administrative words its
+        # premise names. The rate is a distribution with no bar over it (the 30 worlds forged
+        # before 2026-08-23 ranged 2.69 to 17.92, median 7.21); the premise list is what
+        # `_administration_complaints` refuses on, and it is printed here so the operator sees
+        # the number rather than only the complaint.
+        "administration_per_1k": _administration_rate(candidate),
+        "administration_in_premise": list(
+            _administration_in(str(candidate.raw.get("premise") or ""))
+        ),
         "ladders": len(_countable_ladders(records)),
         "rungs_per_ladder": {
             criterion: len(chain)

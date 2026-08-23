@@ -51,7 +51,7 @@ def world(
         # It still varies with `domain`, so two fixtures built from different domains carry
         # different premises and the collapse gate has something to compare.
         "premise": (
-            f"Silas, a junior clerk in {domain}, is the one the provenance rule does not bind."
+            f"Silas, a junior hand in {domain}, is the one the provenance rule does not bind."
         ),
         "protagonist": {
             "id": "silas",
@@ -339,6 +339,10 @@ def test_a_creature_that_is_a_renamed_stock_monster_is_refused_field_by_field() 
         "the port's franchise is the right to stand at the rail on assize day",
         "a ward may surrender its franchise and lose a decade of goodwill",
         "the relay series of marks runs north from the datum",
+        # The second measured false positive, 2026-08-23: a bare `like in` refused a world
+        # over an old voice reciting a field, and the guard fires exactly once across the 30
+        # worlds forged before that date — that once.
+        "reciting what a field looked like in a year before the listeners were born",
     ],
 )
 def test_ordinary_legal_english_is_not_a_borrowed_reference(ordinary: str) -> None:
@@ -364,6 +368,9 @@ def test_ordinary_legal_english_is_not_a_borrowed_reference(ordinary: str) -> No
         "inspired by the great work",
         "a riff on the old ladder",
         "it works like the Tempest Crown series",
+        # The narrowed form of the phrase removed from the case-insensitive list: still
+        # caught when what follows it is a named thing.
+        "the grades work like in The Bright Ladder",
         "SEAL™",
     ],
 )
@@ -380,6 +387,207 @@ def test_an_answer_that_compares_itself_to_something_outside_it_is_refused(
     leaky["systems"][0]["logic"] = f"every made thing carries its history, {borrowed}"
     complaints = gate(leaky)
     assert any("RS1" in complaint for complaint in complaints)
+
+
+#: One fixed instant, so a recorded spend can be read back on a known day.
+FROZEN = 1787500000.0
+
+
+def test_a_forge_answer_that_does_not_conform_is_kept_on_disk_and_costed(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """The branch that lost two paid forges on 2026-08-23 by printing one line and returning.
+
+    A K=3 answer had outgrown a single message and what came back was its tail — 1,553
+    characters beginning mid-object, against 64,546 output tokens billed. The text was discarded
+    unread, and with no decision recorded the spend never reached `store.spend_on`, which is what
+    the daily ceiling reads. Diagnosing it took a wrapper around the provider and a second forge.
+    """
+    import litharness.cli as cli_module
+    from litharness.providers.fake import FakeProvider
+    from litharness.providers.registry import ProviderRegistry
+
+    provider = FakeProvider()
+    fragment = '{"text":"the tail of an answer whose head never arrived"}]}]}'
+    provider.set_responses([fragment])
+    monkeypatch.setattr(
+        cli_module, "build_default_registry", lambda *a, **k: ProviderRegistry(provider)
+    )
+    # A fixed clock, so the day the spend is read back on is the day it was recorded under.
+    monkeypatch.setattr(cli_module, "_now", lambda: FROZEN)
+
+    out = tmp_path / "forge"
+    database = tmp_path / "pilot.db"
+    assert main(["--database", str(database), "init"]) == 0
+    argv = ["--database", str(database), "forge", "a brief", "--k", "2", "--out", str(out)]
+    assert main(argv) == 1
+
+    # The answer is on disk rather than gone, and the bundle is not.
+    assert (out / "refused.txt").read_text(encoding="utf-8") == fragment
+    assert not (out / "forge.json").exists()
+
+    # And the call is on the ledger, so the ceiling that reads recorded spend sees it.
+    from litharness.adapters.sqlite_store import SqliteStore
+
+    store = SqliteStore.open(database)
+    try:
+        spend = store.spend_on(cli_module._stamp(FROZEN)[:10])
+    finally:
+        store.close()
+    assert spend.invocations == 1
+
+
+def test_the_domain_is_the_engine_and_its_jargon_never_reaches_the_page() -> None:
+    """Five worlds in a row were set inside a trade and written in its glossary.
+
+    Assaying, grafting, surveying, bell-founding, dyeing. The rule asked for a real domain of
+    human *work* and got the workshop, the yard and the vocabulary; the operator read two of
+    them and named it — *"unnecessarily esoteric ... the words used are adding unnecessary
+    complexity eg mordant"*. The physics stays, which is what makes a world argue back; where it
+    belongs is what this asserts.
+    """
+    [rule] = [item for item in architect._RULES if "Literalise one real domain" in item]
+    assert "the engine, not the setting" in rule
+    assert "never reaches the page" in rule
+    assert "not set inside that trade" in rule
+
+
+def test_a_rule_asks_what_a_person_would_want_and_puts_it_at_the_top_of_the_ladder() -> None:
+    """The question no rule in this module used to ask.
+
+    Every other rule asks what a world *declares*: consequences, manifestations, rungs, costs,
+    an inventory. None asked whether anybody would want what was declared, and the result was a
+    countable, distinct inventory of chores — *"Readers want to feel cool and progress in
+    meaningful ways"*. Like the ladder and protagonist rules beside it, this asks for a
+    declaration and says nothing about outcomes, so the forbidden-verb list applies here too.
+    """
+    [rule] = [item for item in architect._RULES if "would want to be able to do" in item]
+    assert "TOP of the ladder" in rule
+    for forbidden in ("likeable", "compelling", "interesting", "best", "win", "succeed"):
+        assert forbidden not in rule.lower(), forbidden
+    # It is about the world's ladder and not about one person, so it must not have joined the
+    # four rules `test_the_protagonist_rule_asks_for_a_declaration_and_never_an_outcome` counts.
+    assert "protagonist" not in rule
+
+
+# --- the pitch, the furniture, and the default nobody has to break -------------------------------
+#
+# **The operator's worked example, 2026-08-23, read against six forged worlds.** A biology graduate
+# in a dead-end coffee job in a near-future with a neural implant dies, wakes as a child in a magic
+# world with the AI merged into him, finds that magic here runs on cell biology, masters water
+# magic with what he already knows, and joins an academy. Slow burn. It keeps every genre comfort
+# and is fresh underneath; the six worlds kept none and were strange throughout.
+
+
+def test_the_premise_rule_asks_for_a_pitch_rather_than_prose() -> None:
+    """*"'wet cinder', 'because his body rings' ... are not things anybody says in any context"*.
+
+    The rule asked for a person's situation and got literary flash fiction six times out of six,
+    on a project whose standing register target is popcorn reading. What it asks for now is the
+    sentence somebody says out loud when a friend asks what the book is about.
+    """
+    [rule] = [item for item in architect._RULES if "PITCH and not as prose" in item]
+    assert "plain modern English" in rule
+    assert "in the order things happen" in rule
+    assert "no invented compound" in rule
+    # The test that counts rules mentioning this person owns the forbidden-verb list; the pitch
+    # clause lives inside one of them, so it is checked against the same list here.
+    for forbidden in ("likeable", "compelling", "interesting", "hero", "succeed"):
+        assert forbidden not in rule.lower(), forbidden
+
+
+def test_the_ladder_is_declared_furniture_rather_than_the_world_it_furnishes() -> None:
+    """*"Why do each of these options mention climbs and ladders ... stuck on these words"*.
+
+    §113 made the rung the number a reader counts, which was the point and remains true. What it
+    also did, unasked, was make the chain the thing every premise was about \u2014 six worlds forged
+    on it opened on a ladder rather than on a person.
+    """
+    [rule] = [item for item in architect._RULES if "FURNITURE and not its concept" in item]
+    assert "bronze to gold" in rule
+    assert "the premise is about the person rather than about the chain" in rule
+    # And the counting clause §113 shipped is still in the same rule, unweakened.
+    assert "the rung's position from the bottom of that chain" in rule
+
+
+def test_a_rule_says_the_genre_s_own_furniture_is_welcome() -> None:
+    """Originality was being read as strangeness, and the reader pays for that.
+
+    `_DISTINCTNESS_RULE` refuses two worlds that differ only in their names, and the originality
+    rule forbids naming or imitating a real work. Neither ever said that an academy, a
+    tournament or a master worth impressing are what a reader came for.
+    """
+    [rule] = [item for item in architect._RULES if "furniture is WELCOME" in item]
+    for comfort in ("academy", "tournament", "master worth impressing", "rival"):
+        assert comfort in rule
+    assert "Originality belongs in the engine underneath and in the person" in rule
+
+
+def test_inverting_a_genre_default_is_optional_and_the_ladder_is_still_fenced() -> None:
+    """Six worlds, six inversions, six worlds a reader would find alien.
+
+    Nothing heals; nobody has a move-list; nothing is ever hidden. Each is a competent answer to
+    *remove or invert exactly one default*, and together they are why the operator recognised
+    none of these as the genre they asked for. The fence §113 built around the one default that
+    is not on the table is unchanged.
+    """
+    [rule] = [item for item in architect._RULES if "remove or invert ONE default" in item]
+    assert "You MAY" in rule
+    assert "keeps every default" in rule
+    assert "never this one" in rule
+    assert "can rise, and the reader can count it" in rule
+
+
+# --- what a world is allowed to be about --------------------------------------------------------
+#
+# **Measured over the 30 worlds forged before 2026-08-23** — four briefs, both prompt shapes,
+# every pilot this project has run. Every one carries administrative vocabulary, at a median of
+# 7.21 words per 1,000 of declared text and a minimum of 2.69, and 18 of the 30 name a register,
+# a debt, a court, a deed or a clerk in the **premise**. The operator read three such premises on
+# 2026-08-23 and refused all three: *"Anything related to debt or ledgers is a no no in a story"*.
+# The rule text was where the bias came from; these check that it stays where it was put.
+
+
+def test_no_rule_offers_a_debt_as_a_subject_or_a_market_as_an_interface() -> None:
+    joined = " ".join(architect._RULES)
+    assert "or a debt may leave this out" not in joined
+    assert "a debt the book can never pay" not in joined
+    assert "the exchange rate, who can cheat whom, what the law says" not in joined
+    assert "NOT an exchange rate, a market, a court, a licence or a tariff" in joined
+    assert "not an administration" in joined
+
+
+def test_the_cost_rule_says_what_a_cost_is_paid_in() -> None:
+    """A cost with no stated currency is what produced thirty worlds about money."""
+    [rule] = [item for item in architect._RULES if "every gain has a cost" in item]
+    assert "never in money" in rule
+    assert "never in a debt" in rule
+
+
+def test_a_premise_written_in_administration_is_refused() -> None:
+    paperwork = world()
+    paperwork["premise"] = (
+        "Silas owes the ledger nine months of rent, and the register carries his name twice."
+    )
+    [complaint] = [item for item in gate(paperwork) if "administration" in item]
+    for word in ("owes", "ledger", "rent", "register"):
+        assert word in complaint
+    assert not [item for item in gate(world()) if "administration" in item]
+
+
+def test_the_administration_rate_is_reported_and_nothing_refuses_on_it() -> None:
+    """A distribution, not a bar — §81, §85, §87 and §89 are four entries about why.
+
+    The premise check is the refusal and it is a membership test; the rate is a number the
+    operator reads beside the complaint. A world may be full of clerks and still be picked, and
+    that is the operator's call rather than this gate's.
+    """
+    heavy = world()
+    heavy["systems"][0]["logic"] = "the register, the ledger, the court and the clerk decide it"
+    counters = architect.report(architect.Candidate(0, heavy), scenes=SCENES)
+    assert counters["administration_per_1k"] > 0
+    assert counters["administration_in_premise"] == []
+    assert not [item for item in gate(heavy) if "administration" in item]
 
 
 # --- whose book it is ---------------------------------------------------------------------------
@@ -618,7 +826,10 @@ def test_the_protagonist_rule_asks_for_a_declaration_and_never_an_outcome() -> N
     when you add a rule about this person, and only after reading the list below.
     """
     rules = [item for item in architect._RULES if "protagonist" in item]
-    assert len(rules) == 4
+    # Five since 2026-08-23: the subject rule names this person once, in the list of
+    # things a world may not be organised around. Read against the list below before the
+    # count was raised, as this docstring asks.
+    assert len(rules) == 5
     for rule in rules:
         lowered = rule.lower()
         for forbidden in (
@@ -1159,7 +1370,16 @@ def test_the_pilot_package_regenerates_the_world_it_was_run_on() -> None:
     assert [r.record_id for r in records] == [r.record_id for r in again]
     assert {record.authority for record in records} == {lc.StateAuthority.ACCEPTED_CANON}
     assert worlds.validate(records) == ()
-    assert architect.gate_candidate(candidate, scenes=8) == ()
+    # `include_subject=False` for the reason `gate_candidate`'s docstring records: this
+    # world was forged and picked on 2026-08-21, and the subject check landed on
+    # 2026-08-23. Its premise names a debt and a clerk, which is the finding rather than
+    # a regression, and it is checked below.
+    assert architect.gate_candidate(candidate, scenes=8, include_subject=False) == ()
+    assert [
+        item
+        for item in architect.gate_candidate(candidate, scenes=8)
+        if "administration" in item
+    ]
     # **Two more records than the forge reported, and the difference is a fix.** The committed
     # `candidate_reports` are what the forge printed on 2026-08-22; `worlds.REVEAL_SCENE` landed
     # afterwards, storing each mystery's ordinal beside its position, so a regeneration is two

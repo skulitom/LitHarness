@@ -1,0 +1,407 @@
+{
+  "generated_at": "2026-08-23T17:18:21Z",
+  "panel": [
+    "climber",
+    "stranger",
+    "regular",
+    "mechanism"
+  ],
+  "panel_model": "claude-haiku-4-5",
+  "transport": "cli",
+  "pair_question": "preference",
+  "tie_policy": "half_win",
+  "n_pitches": 6,
+  "pitches": [
+    {
+      "pitch_id": "direct6:1",
+      "title": "A Voice That Carries"
+    },
+    {
+      "pitch_id": "direct6:2",
+      "title": "The Cold Palm"
+    },
+    {
+      "pitch_id": "direct5:1",
+      "title": "The Slow Fire"
+    },
+    {
+      "pitch_id": "direct5:2",
+      "title": "Wild Stock"
+    },
+    {
+      "pitch_id": "direct3:1",
+      "title": "Deep Enough to Carry"
+    },
+    {
+      "pitch_id": "direct3:2",
+      "title": "Nothing Comes Out Lighter"
+    }
+  ],
+  "arms": {
+    "admin_frame": {
+      "n_pitches": 3,
+      "variant_win_rate": 0.3542,
+      "below_indifference": 0.1458,
+      "spread": 0.25,
+      "margin_vs_worst_sham": 0.0833
+    },
+    "jargonise": {
+      "n_pitches": 6,
+      "variant_win_rate": 0.0833,
+      "below_indifference": 0.4167,
+      "spread": 0.5,
+      "margin_vs_worst_sham": 0.3542
+    },
+    "ladder_first": {
+      "n_pitches": 6,
+      "variant_win_rate": 0.1458,
+      "below_indifference": 0.3542,
+      "spread": 0.25,
+      "margin_vs_worst_sham": 0.2917
+    },
+    "neutral_first": {
+      "n_pitches": 6,
+      "variant_win_rate": 0.1042,
+      "below_indifference": 0.3958,
+      "spread": 0.25,
+      "margin_vs_worst_sham": 0.3333
+    },
+    "rename_pitch": {
+      "n_pitches": 6,
+      "variant_win_rate": 0.5312,
+      "below_indifference": -0.0312,
+      "spread": 0.3125,
+      "margin_vs_worst_sham": -0.0313
+    },
+    "respell_pitch": {
+      "n_pitches": 5,
+      "variant_win_rate": 0.4375,
+      "below_indifference": 0.0625,
+      "spread": 0.5,
+      "margin_vs_worst_sham": 0.0
+    }
+  },
+  "reasons_by_arm": {
+    "admin_frame": {
+      "voice-landed": 12,
+      "stakes-real": 5,
+      "pulled-forward": 3,
+      "curious": 2,
+      "flat-voice": 1
+    },
+    "jargonise": {
+      "voice-landed": 15,
+      "curious": 12,
+      "stakes-real": 9,
+      "jargon-wall": 7,
+      "lost-track": 3,
+      "flat-voice": 1
+    },
+    "ladder_first": {
+      "pulled-forward": 22,
+      "voice-landed": 17,
+      "curious": 4,
+      "stakes-real": 3,
+      "padding": 1,
+      "jargon-wall": 1
+    },
+    "neutral_first": {
+      "pulled-forward": 20,
+      "voice-landed": 13,
+      "curious": 5,
+      "stakes-real": 5,
+      "padding": 4,
+      "jargon-wall": 1
+    },
+    "rename_pitch": {
+      "voice-landed": 10,
+      "stakes-real": 6,
+      "pulled-forward": 4,
+      "curious": 3,
+      "jargon-wall": 1
+    },
+    "respell_pitch": {
+      "voice-landed": 35,
+      "stakes-real": 3
+    }
+  },
+  "worst_sham_effect": 0.0625,
+  "ladder_minus_matched": 0.0416,
+  "positional_bias": {
+    "decided": 229,
+    "chose_A_rate": 0.6725,
+    "per_persona_chose_A": {
+      "climber": 0.6964,
+      "mechanism": 0.6667,
+      "regular": 0.6897,
+      "stranger": 0.6379
+    },
+    "note": "0.5 is unbiased; distance from it is the share of the answer that is layout"
+  },
+  "cells": [
+    {
+      "pitch_id": "direct6:1",
+      "arm": "admin_frame",
+      "sign": -1,
+      "variant_win_rate": 0.25,
+      "n_scored": 8,
+      "refused": 0
+    },
+    {
+      "pitch_id": "direct6:1",
+      "arm": "jargonise",
+      "sign": -1,
+      "variant_win_rate": 0.0,
+      "n_scored": 8,
+      "refused": 0
+    },
+    {
+      "pitch_id": "direct6:1",
+      "arm": "ladder_first",
+      "sign": -1,
+      "variant_win_rate": 0.125,
+      "n_scored": 8,
+      "refused": 0
+    },
+    {
+      "pitch_id": "direct6:1",
+      "arm": "neutral_first",
+      "sign": 0,
+      "variant_win_rate": 0.0,
+      "n_scored": 8,
+      "refused": 0
+    },
+    {
+      "pitch_id": "direct6:1",
+      "arm": "rename_pitch",
+      "sign": 0,
+      "variant_win_rate": 0.4375,
+      "n_scored": 8,
+      "refused": 0
+    },
+    {
+      "pitch_id": "direct6:1",
+      "arm": "respell_pitch",
+      "sign": 0,
+      "variant_win_rate": 0.25,
+      "n_scored": 8,
+      "refused": 0
+    },
+    {
+      "pitch_id": "direct6:2",
+      "arm": "admin_frame",
+      "sign": -1,
+      "variant_win_rate": 0.5,
+      "n_scored": 8,
+      "refused": 0
+    },
+    {
+      "pitch_id": "direct6:2",
+      "arm": "jargonise",
+      "sign": -1,
+      "variant_win_rate": 0.0,
+      "n_scored": 8,
+      "refused": 0
+    },
+    {
+      "pitch_id": "direct6:2",
+      "arm": "ladder_first",
+      "sign": -1,
+      "variant_win_rate": 0.25,
+      "n_scored": 8,
+      "refused": 0
+    },
+    {
+      "pitch_id": "direct6:2",
+      "arm": "neutral_first",
+      "sign": 0,
+      "variant_win_rate": 0.25,
+      "n_scored": 8,
+      "refused": 0
+    },
+    {
+      "pitch_id": "direct6:2",
+      "arm": "rename_pitch",
+      "sign": 0,
+      "variant_win_rate": 0.5,
+      "n_scored": 8,
+      "refused": 0
+    },
+    {
+      "pitch_id": "direct6:2",
+      "arm": "respell_pitch",
+      "sign": 0,
+      "variant_win_rate": 0.25,
+      "n_scored": 8,
+      "refused": 0
+    },
+    {
+      "pitch_id": "direct5:1",
+      "arm": "jargonise",
+      "sign": -1,
+      "variant_win_rate": 0.0,
+      "n_scored": 8,
+      "refused": 0
+    },
+    {
+      "pitch_id": "direct5:1",
+      "arm": "ladder_first",
+      "sign": -1,
+      "variant_win_rate": 0.0,
+      "n_scored": 8,
+      "refused": 0
+    },
+    {
+      "pitch_id": "direct5:1",
+      "arm": "neutral_first",
+      "sign": 0,
+      "variant_win_rate": 0.125,
+      "n_scored": 8,
+      "refused": 0
+    },
+    {
+      "pitch_id": "direct5:1",
+      "arm": "rename_pitch",
+      "sign": 0,
+      "variant_win_rate": 0.5625,
+      "n_scored": 8,
+      "refused": 0
+    },
+    {
+      "pitch_id": "direct5:1",
+      "arm": "respell_pitch",
+      "sign": 0,
+      "variant_win_rate": 0.625,
+      "n_scored": 8,
+      "refused": 0
+    },
+    {
+      "pitch_id": "direct5:2",
+      "arm": "jargonise",
+      "sign": -1,
+      "variant_win_rate": 0.0,
+      "n_scored": 8,
+      "refused": 0
+    },
+    {
+      "pitch_id": "direct5:2",
+      "arm": "ladder_first",
+      "sign": -1,
+      "variant_win_rate": 0.25,
+      "n_scored": 8,
+      "refused": 0
+    },
+    {
+      "pitch_id": "direct5:2",
+      "arm": "neutral_first",
+      "sign": 0,
+      "variant_win_rate": 0.0,
+      "n_scored": 8,
+      "refused": 0
+    },
+    {
+      "pitch_id": "direct5:2",
+      "arm": "rename_pitch",
+      "sign": 0,
+      "variant_win_rate": 0.75,
+      "n_scored": 8,
+      "refused": 0
+    },
+    {
+      "pitch_id": "direct5:2",
+      "arm": "respell_pitch",
+      "sign": 0,
+      "variant_win_rate": 0.3125,
+      "n_scored": 8,
+      "refused": 0
+    },
+    {
+      "pitch_id": "direct3:1",
+      "arm": "admin_frame",
+      "sign": -1,
+      "variant_win_rate": 0.3125,
+      "n_scored": 8,
+      "refused": 0
+    },
+    {
+      "pitch_id": "direct3:1",
+      "arm": "jargonise",
+      "sign": -1,
+      "variant_win_rate": 0.0,
+      "n_scored": 8,
+      "refused": 0
+    },
+    {
+      "pitch_id": "direct3:1",
+      "arm": "ladder_first",
+      "sign": -1,
+      "variant_win_rate": 0.0,
+      "n_scored": 8,
+      "refused": 0
+    },
+    {
+      "pitch_id": "direct3:1",
+      "arm": "neutral_first",
+      "sign": 0,
+      "variant_win_rate": 0.0,
+      "n_scored": 8,
+      "refused": 0
+    },
+    {
+      "pitch_id": "direct3:1",
+      "arm": "rename_pitch",
+      "sign": 0,
+      "variant_win_rate": 0.4375,
+      "n_scored": 8,
+      "refused": 0
+    },
+    {
+      "pitch_id": "direct3:1",
+      "arm": "respell_pitch",
+      "sign": 0,
+      "variant_win_rate": 0.75,
+      "n_scored": 8,
+      "refused": 0
+    },
+    {
+      "pitch_id": "direct3:2",
+      "arm": "jargonise",
+      "sign": -1,
+      "variant_win_rate": 0.5,
+      "n_scored": 8,
+      "refused": 0
+    },
+    {
+      "pitch_id": "direct3:2",
+      "arm": "ladder_first",
+      "sign": -1,
+      "variant_win_rate": 0.25,
+      "n_scored": 8,
+      "refused": 0
+    },
+    {
+      "pitch_id": "direct3:2",
+      "arm": "neutral_first",
+      "sign": 0,
+      "variant_win_rate": 0.25,
+      "n_scored": 8,
+      "refused": 0
+    },
+    {
+      "pitch_id": "direct3:2",
+      "arm": "rename_pitch",
+      "sign": 0,
+      "variant_win_rate": 0.5,
+      "n_scored": 8,
+      "refused": 0
+    }
+  ],
+  "spend": {
+    "input": 414261,
+    "output": 851380,
+    "cache_read": 5764265,
+    "cache_write": 1883504,
+    "equivalent_usd": 9.0146
+  },
+  "wall_seconds": 0.0
+}

@@ -672,6 +672,266 @@ ALL = DEGRADERS + SHAMS
 PERSONA_SET = DEGRADERS + PERSONA_DEGRADERS + SHAMS + PERSONA_SHAMS
 BY_KEY = {ablation.key: ablation for ablation in PERSONA_SET}
 
+# --- the pitch set: three named defects, mechanised ---------------------------------------------
+#
+# **These damage a premise rather than prose, and the operator named all three the same day.**
+# Stage-0 §116, §118 and §119 record them: a world written as an administration, a world written
+# in its own trade's glossary, and a premise about the ladder rather than about the person.
+# Each was diagnosed by reading forged worlds, each produced a rule change, and none of them had
+# any instrument that could say whether a reader notices.
+#
+# **They are deterministic, and that is the whole constraint they had to satisfy.** `ablate`'s
+# ground truth is manufactured by code, never by a generator — `dialogue_flatten`'s docstring
+# refused a model-produced manipulation and `persona_battery`'s header records confusion-inject
+# as still absent for exactly that reason. So the fourth defect the operator named, *"not things
+# anybody says in any context"* — premises written as mood rather than as a pitch — is **not
+# here**: rewriting a pitch into purple prose needs a writer, and admitting one would put a model
+# inside the ground truth. Any result from this set leaves that class untested and has to say so.
+#
+# **Two of the three read the world's own declared vocabulary rather than inventing one.** A
+# forged world already carries its rank ids, its capability ids and its places, so `jargonise`
+# and `ladder_first` damage a premise with terms that world actually declares — which is what the
+# real defect looked like, rather than a plausible imitation of it.
+
+#: Plain word → the administrative word §116's family would put in its place. Fixed, small, and
+#: one direction only: every value is in `architect._ADMINISTRATION`'s family or its immediate
+#: kin, so this arm reintroduces exactly the vocabulary that entry took out of the rules.
+_ADMIN_SWAP = {
+    "school": "registry", "academy": "assessment office", "teacher": "assessor",
+    "master": "registrar", "student": "claimant", "test": "filing", "trial": "hearing",
+    "duel": "hearing", "fight": "hearing", "rival": "counterclaimant", "friend": "co-signatory",
+    "prize": "fee remission", "gift": "grant", "training": "accreditation",
+    "practice": "compliance", "lesson": "assessment", "skill": "licensed competence",
+    "power": "entitlement", "magic": "entitlement", "rank": "register position",
+    "learns": "is assessed on", "learn": "be assessed on", "wins": "is certified",
+    "win": "be certified", "earns": "is credited", "earn": "be credited",
+    "wants": "has filed for", "needs": "is required to obtain",
+}
+
+
+def admin_frame(text: str, strength: float, **_: object) -> str:
+    """Put §116's vocabulary back into a premise, one substitution at a time.
+
+    Length is not preserved — the administrative phrase is longer nearly every time, which is
+    itself the finding §116 recorded — so this arm owes the word-count incumbent an answer and
+    `preserves_length=False` says so.
+    """
+    if strength <= 0:
+        return text
+    hits = [
+        (m.start(), m.group(0)) for m in _WORD.finditer(text)
+        if m.group(0).lower() in _ADMIN_SWAP
+    ]
+    if not hits:
+        return text
+    rng = _rng(text, "admin_frame")
+    order = list(range(len(hits)))
+    rng.shuffle(order)
+    chosen = {hits[i][0] for i in order[: max(1, round(len(hits) * strength))]}
+    out, cursor = [], 0
+    for start, word in hits:
+        if start not in chosen:
+            continue
+        replacement = _ADMIN_SWAP[word.lower()]
+        if word[:1].isupper():
+            replacement = replacement[:1].upper() + replacement[1:]
+        out.append(text[cursor:start])
+        out.append(replacement)
+        cursor = start + len(word)
+    out.append(text[cursor:])
+    return "".join(out)
+
+
+#: The plain words a world's own coinages get swapped in for. Ordered, so the same premise takes
+#: the same terms in the same places every run.
+#: **Measured rather than guessed, and the first list was wrong.** The obvious targets — power,
+#: ability, skill, magic, rank — occur four times across the six premises this was built against,
+#: because the rules that produced them (§118, §119) ask for concrete words. Counting what the
+#: premises actually say gives the list below: the ordinary nouns a coined term can stand in for,
+#: which is what the defect looked like when the operator named it.
+_JARGON_TARGETS = (
+    "power", "powers", "ability", "abilities", "skill", "skills", "magic", "training",
+    "rank", "ranks", "test", "lesson", "technique", "techniques",
+    "thing", "things", "work", "hand", "hands", "body", "school", "master", "house",
+    "name", "measure", "place", "room", "mark", "tool", "job",
+)
+
+
+def jargonise(text: str, strength: float, *, terms: tuple[str, ...] = (), **_: object) -> str:
+    """**WITHDRAWN 2026-08-23, the same day it was written and the same day it passed.**
+
+    It cleared the sham floor by the widest margin in `plan/pitch-reader-validity.md` §6 — panel
+    preferred the original on 0.9167 of draws, margin +0.3542, all four personas returning 0.08 —
+    and the pass does not stand, because the arm cannot separate the two things it moves. It
+    substitutes coined terms for plain nouns, which damages **sense** as well as adding
+    vocabulary: *"he wants a groundfast that holds"* is not jargon, it is a broken sentence. The
+    shams control for edited-ness and for renaming and **neither controls for coherence**, so a
+    panel rejecting the damaged copy may be rejecting nonsense rather than terminology, and
+    nothing in the design says which.
+
+    §6.4 recorded that confound as a limitation and kept the arm; the operator read it and
+    refused the compromise: *"I don't think jargonise is a smart engineering move, it does add to
+    confusion. We shouldn't have things in our project that make things worse."* Which is
+    BRIEF.md's own standard applied one step earlier than usual — every proxy in the refutation
+    ledger died to a control, and this one dies to a control it never had.
+
+    **Kept as code, removed from `PITCH_SET`, and it runs nowhere.** The ledger's habit is to keep
+    a dead thing visible with the reason attached rather than to delete it and rediscover it; a
+    later arm that substitutes equally unfamiliar words which are *not* the world's would separate
+    jargon from nonsense, and it would start here.
+
+    ---
+
+    Replace plain words with the world's own declared terms — the *mordant* defect.
+
+    `terms` comes from the forged world itself (rank ids, capability ids, system ids, humanised),
+    so this is the world's real glossary rather than an invented one. With no terms it is a
+    no-op and the caller is expected to report the coverage, because a premise this cannot reach
+    is a report of absence rather than a null.
+    """
+    if strength <= 0 or not terms:
+        return text
+    rng = _rng(text, "jargonise")
+    pool = list(terms)
+    rng.shuffle(pool)
+    out = text
+    used = 0
+    for target in _JARGON_TARGETS:
+        if used >= max(1, round(len(pool) * strength)):
+            break
+        pattern = re.compile(rf"\b{re.escape(target)}\b", re.IGNORECASE)
+        if not pattern.search(out):
+            continue
+        out = pattern.sub(pool[used % len(pool)], out, count=1)
+        used += 1
+    return out
+
+
+def _first_sentence_swap(text: str, opener: str) -> str:
+    """Drop the opening sentence and put `opener` in its place. The shape both front-matter
+    arms share, so the only difference between them is what the new opening is *about*."""
+    parts = _SENT.split(text.strip(), maxsplit=1)
+    rest = parts[1] if len(parts) > 1 else ""
+    return f"{opener} {rest}".strip()
+
+
+def ladder_first(text: str, strength: float, *, rungs: tuple[str, ...] = (), **_: object) -> str:
+    """Open the premise on the chain instead of on the person — §119's second defect.
+
+    The operator's words: *"Why do each of these options mention climbs and ladders — it sounds
+    like we are stuck on these words for no reason."* The rung names are the world's own.
+    """
+    if strength <= 0 or len(rungs) < 2:
+        return text
+    return _first_sentence_swap(text, f"The chain runs {', '.join(rungs)}.")
+
+
+def neutral_first(text: str, strength: float, *, places: tuple[str, ...] = (), **_: object) -> str:
+    """`ladder_first`'s matched control: the same surgery, a sentence about somewhere instead.
+
+    Both arms delete the same opening sentence and prepend one list-shaped sentence built from
+    the world's own declared ids, so the difference between them is the ladder and not the
+    deletion. `destake` is read against `deplete_matched` for the same reason, and this arm
+    exists so nobody reads `ladder_first` without it.
+    """
+    if strength <= 0 or len(places) < 2:
+        return text
+    return _first_sentence_swap(text, f"The province holds {', '.join(places)}.")
+
+
+#: Harmless spelling and contraction variants: every pair means the same thing to any reader of
+#: English. `respell`'s British-spelling list needs a chapter to find purchase and found nothing
+#: in a 120-word premise, which is the measurement that produced this.
+_PITCH_RESPELL = {
+    "toward": "towards", "towards": "toward", "grey": "gray", "gray": "grey",
+    "learned": "learnt", "learnt": "learned", "does not": "doesn't", "is not": "isn't",
+    "did not": "didn't", "cannot": "can not", "will not": "won't", "it is": "it's",
+    "he is": "he's", "she is": "she's", "there is": "there's", "that is": "that's",
+    "who has": "who's", "has not": "hasn't", "would not": "wouldn't", "could not": "couldn't",
+}
+
+#: Replacement names for `rename_pitch`. Short, unremarkable, and fixed, so the same premise
+#: takes the same names every run.
+_PITCH_NAMES = ("Aren", "Bex", "Cade", "Dov", "Esk", "Fen", "Gale", "Hess")
+
+
+def respell_pitch(text: str, strength: float, **_: object) -> str:
+    """`respell` at the scale of a pitch, and it exists because `respell` measured zero here.
+
+    A sham that cannot change the text controls nothing: it sits at indifference by construction
+    and every margin read against it is inflated by exactly the amount it failed to move. That is
+    the same arithmetic error BRIEF.md §2 Pass 6 records for a pooled sham, arriving by a
+    different road.
+    """
+    if strength <= 0:
+        return text
+    out = text
+    rng = _rng(text, "respell_pitch")
+    pairs = sorted(_PITCH_RESPELL.items())
+    rng.shuffle(pairs)
+    swapped = 0
+    budget = max(1, round(len(pairs) * strength))
+    for source, target in pairs:
+        if swapped >= budget:
+            break
+        pattern = re.compile(rf"\b{re.escape(source)}\b", re.IGNORECASE)
+        if not pattern.search(out):
+            continue
+        out = pattern.sub(target, out, count=2)
+        swapped += 1
+    return out
+
+
+def rename_pitch(text: str, strength: float, *, names: tuple[str, ...] = (), **_: object) -> str:
+    """Rename the people the world declares — the memorisation and surface control.
+
+    `rename_entities` is the standing form and it left all six premises byte-identical, because
+    its heuristic wants a chapter's worth of repeated capitalised tokens. This one is handed the
+    world's own cast ids instead of guessing, so it reaches every premise the protagonist rule
+    guarantees names somebody in.
+    """
+    if strength <= 0 or not names:
+        return text
+    out = text
+    for index, name in enumerate(names):
+        if not name:
+            continue
+        pattern = re.compile(rf"\b{re.escape(name)}\b")
+        if not pattern.search(out):
+            continue
+        out = pattern.sub(_PITCH_NAMES[index % len(_PITCH_NAMES)], out)
+    return out
+
+
+#: The pitch arms, kept out of `ALL` and `PERSONA_SET` for the reason the stakes extension is:
+#: widening a set every existing caller iterates would make a re-run of a recorded battery
+#: incomparable with the summary it published.
+#: **`jargonise` is not here, and its absence is the entry.** It passed and was withdrawn the
+#: same day (see its docstring): it damages sense as well as vocabulary and no sham in this set
+#: controls for coherence, so its margin cannot be read as a reader noticing jargon. An arm whose
+#: number cannot be interpreted is worse than no arm, because the number gets quoted anyway.
+PITCH_DEGRADERS = (
+    Ablation("admin_frame", 2, -1, False, admin_frame,
+             "§116's vocabulary put back; lengthens, so it owes the word-count incumbent"),
+    Ablation("ladder_first", 1, -1, False, ladder_first,
+             "opens on the chain rather than the person; needs the world's rungs"),
+)
+PITCH_CONTROLS = (
+    Ablation("neutral_first", None, 0, False, neutral_first,
+             "ladder_first's matched control: same deletion, a sentence about places instead"),
+)
+#: **Not `SHAMS`, and the substitution is measured.** `rename_entities` and `respell` left all six
+#: premises this was built against byte-identical, and `rewhitespace` moved two characters. A sham
+#: that cannot reach the text is not a weak control, it is no control: it returns indifference by
+#: construction and inflates every margin read against it.
+PITCH_SHAMS = (
+    Ablation("rename_pitch", None, 0, True, rename_pitch,
+             "the world's own cast, renamed; reaches every premise the rules make name somebody"),
+    Ablation("respell_pitch", None, 0, True, respell_pitch,
+             "contraction and spelling variants; meaning-preserving by inspection"),
+)
+PITCH_SET = PITCH_DEGRADERS + PITCH_CONTROLS + PITCH_SHAMS
+
 #: The dose ladder. Monotonicity across these is the claim a candidate metric has to support;
 #: detection at 1.0 alone is detection of vandalism.
 DOSES = (0.0, 0.15, 0.35, 0.65, 1.0)

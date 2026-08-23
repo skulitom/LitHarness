@@ -11886,3 +11886,576 @@ anything here (§95). RS1 holds: nothing under `src/litharness/` gained a corpus
 corpus text or digest crossed into a prompt. And no claim that a book seeded at the right width is
 a better book — the claim is only that a reveal the world scheduled inside the book can now arrive
 there, which is a fact about a story key.
+
+## 116. Thirty worlds in a row were about paperwork, and the instruction that made them was ours
+
+The operator asked to read a book, was shown three forged worlds, and refused all three in one
+sentence: *"All these sounds depressing and incredibly boring. Anything related to debt or ledgers
+is a no no in a story."* The reflex is to blame the model or the brief. The measurement says
+otherwise: the brief had never been used before, and the bias is in `_RULES`.
+
+### 116.1 What was measured first, over every world this project has ever forged
+
+An administrative word family counted over the **30 candidates** on disk across `main` and every
+worktree — pilots 2, 3, 4, 5 and today's — under four different briefs and both prompt shapes.
+The family is register, debt, ledger, court, deed, clerk, tariff, warrant, wage, writ and their
+kin; `price`, `cost`, `pay` and `bond` are deliberately excluded, because the schema asks every
+world for those and counting them would count this module's own instructions.
+
+| | |
+|---|--:|
+| worlds carrying at least one administrative word | **30 of 30** |
+| median rate per 1,000 words of declared text | **7.21** |
+| range | 2.69 – 17.92 |
+| worlds naming one in the **premise** | **18 of 30** |
+
+The premise is the sentence a reader meets first and the one the operator read. Three worlds
+forged on 2026-08-23 under the brief `isekai LitRPG progression fantasy; no dungeons` — a brief
+naming no institution, no economy and no law — came back as water law, orchard deeds and a
+surveying tariff, at 17.95, 11.40 and 6.93 per 1,000.
+
+**Four lines of our own instruction account for it**, and they are quoted here because each is now
+changed:
+
+1. the interface rule: *"say what happens at the interface between them: **the exchange rate**, who
+   can cheat whom, **what the law says**. The interface is the content"* — two of its three
+   examples are economics and law, and it calls that interface *the content*;
+2. the capability rule: *"A world about standing, or a place, or **a debt** may leave this out"* —
+   a debt offered as a legitimate subject for a world;
+3. the mystery rule: *"A secret with no recorded answer is **a debt the book can never pay**"*;
+4. the cost rules — `cost_to_reach`, `costs`, *"every gain has a cost payable on the page"* — which
+   never said what a cost is paid **in**, so it was paid in money.
+
+`_DOMAIN_FIRST_RULE` adds a fifth: *"who pays, who arbitrates"*.
+
+### 116.2 What shipped
+
+**The rule text, which is the prevention.** The interface is now *"which one wins where they
+disagree, what it does to a person caught between them, who is forced to choose"*, physical or
+personal — *a proving ground, a refusal to teach, a body that cannot hold both, a technique that
+unmakes another technique* — and explicitly **not** an exchange rate, a market, a court, a licence
+or a tariff. A cost is now *"paid in a body, in time, in risk, in something the person can no
+longer do, or in somebody who is now against them — never in money, never in a debt, and never in
+a piece of paper somebody files"*. The debt is gone from the capability rule's subject list and
+from the mystery rule's metaphor, and `_DOMAIN_FIRST_RULE` asks *who gets hurt* instead of *who
+arbitrates*. One rule is new: **a world is a place people live in, not an administration** — its
+institutions are ones a reader would want to walk into, and its pressure comes from rivals,
+teachers, distance, weather, wounds, hunger, time and each other.
+
+**One gate, over the premise only.** `_administration_complaints` refuses a candidate whose
+premise names an administrative word. Run against the three worlds the operator refused, it names
+all three: `register, owes, wage, bailiff` / `deeds` / `broker`.
+
+**The rate is reported and carries no bar.** `report()` gains `administration_per_1k` and
+`administration_in_premise`, so the operator picking among K sees the number rather than only the
+complaint. No threshold is declared over the rate.
+
+Tests: `test_no_rule_offers_a_debt_as_a_subject_or_a_market_as_an_interface`,
+`test_the_cost_rule_says_what_a_cost_is_paid_in`,
+`test_a_premise_written_in_administration_is_refused`,
+`test_the_administration_rate_is_reported_and_nothing_refuses_on_it`, and the count in
+`test_the_protagonist_rule_asks_for_a_declaration_and_never_an_outcome` raised from four to five
+against its own docstring's instruction to read the forbidden-verb list first.
+
+### 116.3 The one refusal is attainable, checked the way §81, §85, §87 and §89 were not
+
+Over the 30 worlds forged before the check existed, **12 pass it and 18 fail it** — **13 and 17
+after §116.8 took `court` out of the list**, and both numbers are kept. Both subgroups
+are non-empty at the real n, the quantity is a membership test with no scale to mis-declare, the
+unit is one world, and the direction is stated (naming one is the failure). **No bar is declared
+over `administration_per_1k`**: it is a distribution nobody has ranged against any outcome, and a
+threshold over it would be exactly what those four entries record going wrong.
+
+### 116.4 A check added today may not park a world chosen yesterday
+
+18 of the 30 worlds fail check 7 (17 after §116.8), and one of them is *First In Time*, the world
+Serial Pilot 2 was written on. `gate_candidate` gained `include_subject: bool = True`; the pilot-package regeneration
+and `tools/rematerialise_forge_bundle.py` pass it `False`, because both rebuild a world **a person
+already picked** and whether it should have been picked was settled then. §115.3 is the precedent
+— *"the absent key keeps the old behaviour, and that is a decision rather than an oversight"*.
+Nothing at forge time passes `False`. `test_the_pilot_package_regenerates_the_world_it_was_run_on`
+now asserts both halves: the world rebuilds clean, **and** its premise draws the new complaint.
+
+### 116.5 The RS1 guard's second measured false positive, and its second narrowing
+
+Candidate 1 of today's forge was refused for comparing itself to something outside it. The match
+was `like in`, inside *"reciting what a field looked like in a year before the listeners were
+born"*. Run over all 30 forged worlds, `_BORROWED` fires **exactly once** — that once — and no
+other phrase in its list has ever fired on a forged world. The phrase moves out of the
+case-insensitive list and gains the capitals requirement the title-shaped alternative already
+carries (`like in The Bright Ladder` still matches), rather than being deleted. The docstring
+already recorded one narrowing from a measured false positive; this is the second, and the fixture
+lives in `test_ordinary_legal_english_is_not_a_borrowed_reference`.
+
+### 116.6 What was refused, and the limitation named rather than fixed
+
+**No model judges any of this.** The word list is a word list, the gate is membership, and no
+role gained an opinion about whether a world is interesting. The forge still stops and a person
+picks (`plan/world-architect.md` §2).
+
+**Measured on a live forge before this entry was committed, and the number is §116.8.** The
+sentence that stood here first said it had not been, and it is replaced rather than deleted
+because the order matters: the rule change and its check were written, tested and recorded while
+the *after* did not exist, and the forge that produced one ran afterwards.
+
+**No world was re-picked, re-forged or rewritten**, and no book was regenerated. *First In Time*,
+*What Takes* and *A Good Take* stand as they are.
+
+**No bar on the rate, no floor on institutions, no ban on a hard world.** A world may still charge
+brutally and may still put somebody under an obligation they hate; what it may not do is make the
+paperwork the point. A reader who wants a book about a debt can direct one — that is the
+operator's, and this changes what the forge reaches for **by default**.
+
+### 116.8 The first forge under the amended rules, and one word that had to come out of the list
+
+`dec-b09740cfc1bd1ebc5b0a5e5b`, 2026-08-23, K=2, `direct`, 8 scenes, $1.3992, 96,245 tokens.
+Same brief family as the refused three — isekai progression fantasy — written by the operator with
+an exclusion clause, so this is **the rule text and the brief changing together** and not an
+isolated measurement of either.
+
+| | administration per 1,000 words |
+|---|--:|
+| 30 worlds forged before the change | median **7.21**, min **2.69**, max 17.92 |
+| *Deep Enough to Carry* (bell-founding and acoustics) | **0.29** |
+| *Nothing Comes Out Lighter* (dyeing and mordant chemistry) | **0.28** |
+
+Both sit an order of magnitude below the **minimum** of the prior 30, and neither premise names
+an administrative word. Two worlds is two draws and no bar is declared over the rate; what the
+number says is that the instruction moved and the check did not have to.
+
+**And the check drew a false positive on its first live run, which is recorded here rather than
+smoothed away.** *Deep Enough to Carry* holds its duels on the **Bell Court** — an arena — and the
+premise check refused it for naming a court. Over the 30 prior worlds the check fires on **18**
+with `court` in the family and on **17** without it, so the whole word buys one world in thirty and
+costs every yard, tennis court and courtyard in the language. `court` and `courts` came out;
+`courtroom`, `bailiff`, `docket`, `writ`, `magistrate`, `tribunal` and `plaintiff` stay, because
+each means only the one thing. **The pre-fix number is kept beside the post-fix one** (§107.9.1's
+discipline, applied to a word list): 18 of 30 with the word, 17 of 30 without, and the attainability
+split in §116.3 is 13 pass / 17 fail after the narrowing rather than 12 / 18.
+
+This module has now narrowed a word guard from a measured false positive **three times** —
+`franchise` (§107 era), `like in` (§116.5) and `court` (here). The economics are identical each
+time and `directors._CRAFT_INSTRUCTION` recorded them first: a recall-tuned list run as a refusal
+gate has its error costs inverted.
+
+### 116.7 Anti-scope
+
+No change to the world schema, the record vocabulary, `records_for`, the collapse gate, the
+consequence floor, `story_key`, the ladder rule or the inventory rule. No change to any prompt
+outside `architect`: the outline, the drafting packet and the beat line are untouched, and every
+world already forged reaches canon exactly as it did. No judge, reader, persona, axis, pool or
+pre-registration was touched, and no human judgment entered any measurement — the operator's
+sentence is direction, which is what §95 leaves open, and not a label, a rating or a datum. RS1
+holds: no corpus text or digest crossed into a prompt, and nothing under `src/litharness/` gained
+a corpus reference.
+
+## 117. Two paid forges returned an answer nobody kept, and the branch that dropped them also hid the money
+
+Three forges were run on 2026-08-23 to get one world to write a book on. **Two of the three landed
+on `cmd_forge`'s non-conforming branch**, which printed one line and returned. The answer was not
+written anywhere, no decision was recorded, and `store.spend_on` — the view the daily ceiling is
+computed from — never saw either call. The first failure was therefore undiagnosable in principle:
+there was nothing on disk to look at.
+
+### 117.1 What it took to see it, and what it said
+
+The second failure was caught by wrapping the provider's runner so the envelope was written to
+disk before parsing — a scratch harness around the same CLI path, changing nothing about the
+request. What the kept envelope said:
+
+| | forge that conformed | forge that did not |
+|---|--:|--:|
+| K | 3 | 3 |
+| output tokens | **57,862** | **64,546** (23,630 of them thinking) |
+| `result` characters | 114,187 | **1,553** |
+| `stop_reason` | `end_turn` | `end_turn` |
+| `is_error` | false | false |
+| billed | $1.67 | **$2.50** |
+
+The failing `result` begins mid-object — `{"directives":[…}]}]}` — and is the **tail** of the
+answer rather than its head. The answer had outgrown a single message; nothing in the envelope
+says so, because `is_error` is false and `stop_reason` is `end_turn` either way. The only signal
+is the size, and `parse_schema_payload` was doing its job: a fragment is not a world.
+
+**The forge is at its ceiling and that is a fact about this instrument, not about a model.** The
+conforming answer used 57,862 output tokens for three worlds; the schema has grown twice since the
+last pilot forged cleanly (§113's ladder, §114's capabilities), and each world now carries five
+rungs and six or seven capabilities it did not carry in August. At K=3 the ask is ~20,000 output
+tokens per world plus thinking, against a single message.
+
+### 117.2 What shipped
+
+**The answer is kept.** The non-conforming branch writes `result.text` to `<out>/refused.txt`
+before returning, creating the directory if the run never got that far. No bundle is written
+beside it, so the failure is still a failure.
+
+**The spend is recorded.** The branch now records a `PolicyDecision` with `Outcome.ESCALATE`, the
+provider, the model, the invocation count, the tokens and the cost, exactly as the branch below it
+does for a malformed *world*. Two paid calls that the budget ceiling could not see is a budget
+ceiling that was not enforcing what it claims.
+
+**The message names the size and the way out.** It prints the output token count, the path the
+answer was kept at, and the direction to try: *an answer this size is usually one message short of
+whole — forge fewer worlds (`--k 2`) rather than retrying at the same width.*
+
+`test_a_forge_answer_that_does_not_conform_is_kept_on_disk_and_costed` runs the branch against a
+stub provider returning a fragment, and asserts all three halves: the text on disk, no `forge.json`
+beside it, and `spend_on` reporting the invocation.
+
+### 117.3 What was refused
+
+**No retry, no repair, no salvage.** A truncated answer is not repaired into a world, a second
+call is not made automatically, and the fragment is not parsed for whatever worlds it happens to
+contain. `--k 2` is a person's decision about what to buy next, and the message says so rather
+than acting.
+
+**`--k` was not lowered and `DEFAULT_K` did not change.** Two of three is a rate measured on one
+day at one schema size, and lowering the default on it would bake today's ceiling into the tool.
+The operator picks the width; the message tells them what the last one cost.
+
+**No change to the schema, the rule set, the gates or the parser.** `parse_schema_payload` refused
+correctly, and the fix is in what happens after it refuses.
+
+### 117.4 Anti-scope
+
+Nothing about world quality, world subject or the pick — §116 is that entry and this one is about
+a branch that lost a paid answer. No judge, reader, persona, axis, pool or pre-registration was
+touched, no model judges anything new, and no human judgment entered anything (§95). RS1 holds.
+
+## 118. Thirty-two worlds and not one power anybody would want; sixteen rules and not one that asked
+
+§116 fixed what these worlds were *about*. This is the operator's second reading of the same
+output, an hour later, on a world they had just called the better of two: *"it just reads as too
+unnecessarily esoteric and the concept isn't inspirational. Nobody goes around thinking my god
+golly wish i could wash stuff extra well ... Readers want to feel cool and progress in meaningful
+ways. Also the words used are adding unnecessary complexity eg 'mordant'."*
+
+### 118.1 What was measured first: every domain this forge has ever chosen
+
+The declared `domain` of all **32 candidates** on disk — **27 distinct**:
+
+| times | domain |
+|--:|---|
+| 6 | land survey, geodesy, boundary law |
+| 5 | water law and hydrology (western, prior-appropriation, municipal, irrigation) |
+| 5 | grafting, orchard husbandry, pomology, clonal propagation |
+| 2 | navigation and dead reckoning |
+| 2 | transplant immunology and surgical grafting |
+| 1 each | assaying and hallmarking · glassworking · locksmithing · sericulture · bell-founding and acoustics · dyeing and mordant chemistry · musical temperament · historical linguistics · quantitative genetics · field epidemiology · graded inoculation · saturation diving and salvage law |
+
+Every one is a trade, a science or a body of law. **Not one of them is a thing a person daydreams
+about being able to do**, and the two books written on them are about a water register and a
+surveyor's warrant.
+
+**The rules side is arithmetic.** Before this entry `_RULES` held **16 rules**, and exactly one
+contained the word *want* — the protagonist rule, where it means what one character wants. Sixteen
+rules asking what a world **declares**: consequences, manifestations, visible rungs, costs, a
+ladder, an inventory, a protagonist, an inversion, mysteries with answers. **None asking whether
+anybody would want any of it.** §113 made the rungs countable, §114 made the abilities distinct,
+and between them they produced a countable, distinct inventory of chores — which is the same
+sentence the operator wrote in `plan/reader-read-4.md` §1a about the book before this one
+("boring accounting instead of nine unique abilities") arriving at a different destination.
+
+### 118.2 What shipped: two rules, one of which the module never had
+
+**The domain is the engine, not the setting.** The literalise rule keeps every word it had — a
+system whose costs are a real craft's real constraints is what makes a world argue back — and
+gains where that craft belongs: *"The book is not set inside that trade, the trade is not the
+world's institution, and the domain's technical vocabulary never reaches the page — a reader
+learns none of its words and needs none. What somebody can do is said in plain words a reader
+could repeat after one read: the physics of a real craft, wearing none of its jargon."* The rule
+set already asked for *"fast, plain, popcorn reading"* and then handed the prose a glossary to
+write it in.
+
+**The wish, at the top of the ladder.** *"Say what a person would want to be able to do here, and
+put that at the TOP of the ladder. The upper rungs are the daydream — moving, striking, seeing
+what nobody else sees, surviving what should not be survivable, commanding something dangerous,
+making something nobody else can make — and the lowest rungs are the beginner's version of the
+same thing, so the reader can see the whole climb from the bottom rung. A ladder whose top rung is
+a better version of a chore is a job."*
+
+**The example list is the operator's own, in two messages, kept in their order.** First:
+*inventing something useful · gaining popularity · control over things/world · immortality ·
+becoming something greater · gaining superhuman skills · becoming unusually good at a craft
+easier than anyone else*. Then: *healing powers · control over body · control over mutations ·
+creating a new sort of life · developing advanced technology · modifying the body with superhuman
+cyber capabilities · earning money*. The first draft of the rule carried only physical daydreams
+— moving, striking, surviving — which is one corner of what people want, and an example list is
+what a model actually steers by, so both lists are written into the rule rather than summarised
+beside it.
+
+**Two items on those lists settle questions the rules around this one would otherwise leave
+open**, and both are written into the rule text so a later reader does not have to reconcile them:
+
+1. *Becoming unusually good at a craft easier than anyone else* is why neither this rule nor
+   §118.2's domain rule bans crafts. The daydream is the **ease and the standing** — being
+   effortlessly extraordinary at what costs everybody else a lifetime — and *learning what a
+   mordant is* is homework. A world may still literalise dyeing; it may not make the reader
+   study it.
+2. *Earning money* points straight at §116, which banned organising a world around a debt, a
+   ledger or a register. They are not the same want. **The fortune is a prize and the paperwork
+   is the chore**: a fortune somebody makes, spends and is envied for is a daydream, and a
+   tariff, a docket and a filed piece of paper are what §116 refused. The wish rule says so in
+   its own last sentence rather than leaving two rules looking as though they disagree.
+
+It is written in the register of the declared-shape rules beside it and stops there: nothing in it
+says the wish should be a good one, that a reader should like it, or that anybody achieves it.
+`test_a_rule_asks_what_a_person_would_want_and_puts_it_at_the_top_of_the_ladder` runs the
+protagonist rule's forbidden-verb list over it and asserts it does not name the protagonist, so it
+has not quietly joined the four rules `test_the_protagonist_rule_asks_for_a_declaration_and_never_an_outcome`
+counts. `test_the_domain_is_the_engine_and_its_jargon_never_reaches_the_page` pins the other.
+
+### 118.3 What was refused
+
+**No bar, no counter, and no instrument for "cool".** Nothing here measures aspiration, scores a
+power, or ranks two ladders. There is no `daydream_per_1k`, and inventing one would be the verdict
+channel `plan/world-architect.md` §2 keeps shut. The four attainability checks have nothing to
+range over and no bar is declared.
+
+**No model judges whether a world is inspiring.** The forge still returns K candidates, gates them
+on membership and arithmetic, and stops for a person.
+
+**Crafts are not banned and the physics is not weakened.** A world may still literalise dyeing —
+what it may not do is set the book in the dye yard and make the reader learn the word *mordant*.
+The domain rule's every original clause survives.
+
+**Not measured on prose.** Two rules changed what the forge is asked for; whether the prose that
+comes out reads as a daydream is not something this entry measures, claims, or has an instrument
+for. The next book written on a world forged under these rules is where anybody looks, and one
+book will not settle it either.
+
+### 118.4 Anti-scope
+
+No change to the schema, the record vocabulary, the gates, the collapse refusal, the ladder rule,
+the inventory rule or `DEFAULT_K`. No change to the outline, the drafting packet or the beat line
+— this is what the forge asks for and nothing downstream. `Do not assume combat` was **kept**: the
+operator's brief asks for duels and got them, and deleting a rule that prevents a lazy default on
+the strength of one brief would be fitting the module to one book. No judge, reader, persona,
+axis, pool or pre-registration was touched; no human judgment entered any measurement (§95 — the
+operator's sentence is direction, not a datum); RS1 holds.
+
+## 119. One worked example from the operator diagnosed four rules at once, and none of them was the one being blamed
+
+§116 fixed what the worlds were about and §118 fixed whether anybody would want the power. Six
+worlds later the operator still recognised none of them as the genre they had asked for, and
+rather than refuse a seventh they wrote down what they meant:
+
+> George works at a dead end job at starbucks after graduating with a degree in biology. But this
+> is the future and AI is integrated into peoples minds through neuralink like device. George dies
+> in an accident and wakes up as a child in another world with the AI somehow merged with him. In
+> the world magic exists and turns out it manifests using biological processes (different cells in
+> the body in different part of the body produce mana in specific ways). George learns to master
+> Water magic applying his biology mastery and learning more about the world. Later George joins a
+> magic academy and the story progresses (slow burn). genre (isekai, Progression fantasy,
+> Academia, Cozy fantasy, Sci Fi)
+
+**Read against the six worlds forged the same afternoon, it names four separate defects**, and
+none of them is the thing an author would reach for first. The prose is not the problem, the
+model is not the problem, and the brief is not the problem: the example keeps *every* comfort of
+the genre — isekai, a system, an academy, a slow burn — and is fresh only in its engine and its
+person. Our worlds kept none of them.
+
+### 119.1 The four, each fixed where it was caused
+
+**1. The premise was written as prose and had to be written as a pitch.** *"'wet cinder',
+'because his body rings', 'with a stranger going pale' are not things anybody says in any
+context."* The protagonist rule (§112) asked for the premise as *that person's situation*, which
+is right, and got literary flash fiction six times out of six on a project whose standing register
+target is popcorn reading. It now asks for a pitch: *"plain modern English, in the order things
+happen, the way one person tells a friend what a book is about … no mood, no imagery, no invented
+compound phrases, and no sentence that would only ever appear in a novel. Somebody who has read
+nothing but the premise should be able to repeat it accurately, in their own words, after one
+read."* The operator's own example is exactly that shape and is 90 words long.
+
+**2. The ladder had become the concept instead of the furniture.** *"Why do each of these options
+mention climbs and ladders — it sounds like we are stuck on these words for no reason."* §113 made
+the rung the number a reader counts, which was the direction and stays true; what it also did,
+unasked, is make the chain what every premise was *about*. Added: *"The ladder is the world's
+FURNITURE and not its concept: a reader meets it the way they meet bronze to gold in any other
+book, and the premise is about the person rather than about the chain."* §113's counting clause is
+unweakened and sits in the same rule.
+
+**3. Originality was being read as strangeness.** `_DISTINCTNESS_RULE` refuses two worlds that
+differ only in their names; the originality rule forbids naming or imitating a real work. Neither
+ever said that an academy, a tournament, a master worth impressing or a party are what a reader
+came for. A rule now does: *"This is genre fiction and the genre's own furniture is WELCOME rather
+than avoided … Originality belongs in the engine underneath and in the person it happens to, never
+in refusing what the genre is for. A world nobody recognises is not a fresh world, it is a
+different book than the one somebody picked up."*
+
+**4. Every world was inverting a default, and that is what made each one alien.** Nothing heals;
+nobody has a move-list; nothing is ever hidden; a gain is never permanent. Six worlds, six
+inversions, each a competent answer to *"Remove or invert exactly one default of the genre"*. It
+is now permission rather than instruction: *"You MAY remove or invert ONE default … A world that
+keeps every default and takes its distinctness from its engine and from the person it happens to
+is legitimate, and is often the better book."* §113's fence around the one default that is not on
+the table is unchanged, and `inversion` stays a required field so a world that inverts nothing has
+to say so.
+
+Tests: `test_the_premise_rule_asks_for_a_pitch_rather_than_prose`,
+`test_the_ladder_is_declared_furniture_rather_than_the_world_it_furnishes`,
+`test_a_rule_says_the_genre_s_own_furniture_is_welcome`,
+`test_inverting_a_genre_default_is_optional_and_the_ladder_is_still_fenced`.
+
+### 119.2 The question underneath, answered rather than engineered around
+
+*"do LLMs have access to the whole context? surely they would notice the insanity of how none of
+these make any sense?"*
+
+**No, and the answer is a fact about this pipeline rather than about a model.** The forge sees the
+brief, the schema and the rule list, and returns K worlds in one call. It never sees its own
+premise the way a reader meets it, it is never shown the other candidates as a reader would read
+them, and **nothing anywhere in this system asks whether a reader would want the world**. There
+are twenty-one rules about what a world declares and, until §118, none about whether anybody would
+want it. The gates are membership and arithmetic by design.
+
+**No critic was added here, and the reason is a standing rail rather than an oversight.** A model
+asked *"is this world any good"* is a verdict channel, and §61(5), §105.1 and §107.5 are three
+entries about what this project requires before one exists — containment for a role that
+generates, validity for a role that judges, and an alpha division for a role that selects among
+candidates. `plan/world-architect.md` §2 keeps the choice with a person for the same reason. So
+the only lever available is **what is asked for**, which is what these four rules change, and the
+operator remains the one who reads the K worlds and picks.
+
+### 119.3 What was refused
+
+**No premise was rewritten and no world was re-forged.** The six worlds stand as they are, and
+`forge --pick` is still where a person chooses.
+
+**No measurement, no bar, no counter.** Nothing here counts pitch-ness, furniture or inversions.
+There is no instrument for whether a premise reads like a pitch, inventing one would be the
+verdict channel §119.2 keeps shut, and the four attainability checks (§81, §85, §87, §89) have
+nothing to range over. Whether the next forge reads better is a thing the operator will say, and
+that is direction rather than data (§95).
+
+**Nothing was loosened that a measurement had tightened.** §113's countable ladder, §114's
+inventory, §116's administration rules and §118's wish rule are all untouched; three of the four
+changes here are additive sentences and the fourth turns one instruction into a permission.
+
+### 119.4 Anti-scope
+
+No change to the schema, the record vocabulary, `records_for`, the gates, the collapse refusal or
+the distinctness axes. No change downstream of the forge: the outline, the drafting packet, the
+beat line and every prompt outside `architect` are untouched, and every world already forged
+reaches canon exactly as it did. No judge, reader, persona, axis, pool or pre-registration was
+touched; no human judgment entered any measurement (§95 — the operator's example is direction, and
+it is quoted rather than scored); RS1 holds, and nothing under `src/litharness/` gained a corpus
+reference.
+
+## 120. A reader was put in front of a premise for the first time, and the arm that passed was withdrawn the same day
+
+The operator asked for the project's own purpose to be pointed at the thing blocking it: *"This is
+the reason we wanted to simulate readers, is this not what this whole project is about … 'whether a
+reader would want the result' — this is the only important metric."* They were right that it is
+the goal and right that nothing here could do it. What was built is one rung of the ladder toward
+it, at the cheapest place in the pipeline, and it returns a null.
+
+### 120.1 Why the premise, and why this is not the picker
+
+A drafted scene costs ~$0.30 and a book ~$6; a forged premise is ~120 words and exists the moment
+the forge returns. It is also where the operator's own six refusals actually happened — they never
+reached prose. And it sits on the only un-memorised source this project has (BRIEF.md §4), so
+Pass 6's transferable rule about familiarity has nothing to grip.
+
+**No model selects anything.** §61(5), §105.1 and §107.5 stand and `forge --pick` is unchanged. A
+pass would license a diagnostic printed beside the gate complaints, and the run did not produce
+one. `plan/pitch-reader-validity.md` is the pre-registration, written before the first call.
+
+### 120.2 The instrument, and three defects found in it before any number
+
+`research/quality-measurement/pitch_battery.py`, on `ablate.PITCH_SET`: manufactured damage,
+blinded position-swapped pairwise choice, four readers, margins read per sham. Built by inheriting
+`persona_battery`'s ladder rather than inventing one — its absolute form died to a positivity
+floor (195 of 196 `keep-reading`) and its pairwise form cleared gate 1, so pairwise from the start.
+
+Three instrument defects, all found before the arithmetic was believed:
+
+1. **The standing sham pair cannot reach a premise.** `rename_entities` and `respell` left all six
+   premises byte-identical and `rewhitespace` moved two characters. A sham that cannot touch the
+   text is not a weak control but no control: it returns indifference by construction and inflates
+   every margin measured against it. `rename_pitch` and `respell_pitch` replace them, reading the
+   world's own declared cast for the names.
+2. **`worst_sham_effect` came out 0.0 beside two shams that had plainly moved.** The lookup still
+   named the old pair after the arms were renamed, so the set was empty and every margin was
+   reported against zero — BRIEF.md §2 Pass 6's inflated-margin error by a different road. Now read
+   off `ablate.PITCH_SHAMS`, which is also not `sign == 0`, because the matched control shares that
+   sign and subtracting it would subtract a real effect from a real effect.
+3. **A `\\b` written into a regex arrived as a literal backspace character**, so `jargonise`
+   silently matched nothing and returned its input. Invisible in `sed`, visible in `cat -v`.
+
+### 120.3 The result: K1 and K2 pass, K4 fails, and then the passing arm is withdrawn
+
+6 premises, 32 variants, 256 calls, 53 minutes, **$9.01**. Full table in
+`plan/pitch-reader-validity.md` §6; the four readings that matter:
+
+**K1 — the panel is not constant.** Arms span **0.448** against a floor of 0.05, with shams near
+indifference and degraders far below it. That is more than the absolute form ever showed.
+
+**K2 — passed on one arm, and that arm is now withdrawn.** `jargonise` cleared the sham floor by
+**+0.3542**, all four personas returning 0.08. It substitutes the world's coined terms for plain
+nouns, which damages **sense** as well as vocabulary — *"he wants a groundfast that holds"* — and
+no sham in the set controls for coherence. §6.4 recorded that as a limitation and kept the arm;
+the operator refused the compromise: *"I don't think jargonise is a smart engineering move, it does
+add to confusion. We shouldn't have things in our project that make things worse."* Removed from
+`PITCH_SET`, kept as code with the reason attached. **With it out, no arm clears the ladder**, and
+the battery's result is a null.
+
+**K4 — the matched control fired, which is what it was built to do.** `ladder_first` sits 0.3542
+from indifference and `neutral_first` — the same deletion with a sentence about places instead of
+the chain — sits **0.3958**, further. The panel reacted to losing the sentence that introduces the
+person, not to the ladder. §119's ladder-as-concept defect is therefore **untested**, and the run
+says so rather than claiming it.
+
+**K3 — position is real and smaller than the effect.** `chose_A_rate` **0.6725** over 229 decided
+comparisons, every persona between 0.64 and 0.70. Below the largest degrader effect, so not void
+by the pre-registered condition — and large enough that any thin effect from this channel means
+nothing.
+
+### 120.4 What survives the null, and it is worth keeping
+
+1. **Range.** The panel spans 0.448 and its shams behave. Personas *disagree* on the shams (0.33
+   to 0.67) while agreeing exactly on damage (0.08, four times). Convergence on damage and scatter
+   on noise is the pattern that separates a reader from a diff-spotter; it was not pre-registered
+   and is reported as an observation.
+2. **A finding the control produced by accident.** Removing a premise's opening sentence is
+   detected at **0.396** by four independent readers, whatever replaces it — §112's
+   protagonist-first result arriving from the reader's side of the loop.
+3. **The direction half, free.** Every `Comparison` already carried a reason code. `jargon-wall` is
+   cited **7 times on the jargonised arm and once anywhere else**. This answers the operator's
+   *"we should get some sort of direction help out of readers, so even if they reject, we know what
+   to do"*, and it stays on the operator's side (§97.1, the `debug-book` rule): nothing feeds a
+   prompt.
+
+### 120.5 The panel is the operator's, and `PANEL` was not edited
+
+`personas.GENRE_PANEL`: four readers covering the eleven genres this project writes in, *"voracious
+readers, not enthusiastic"*, and *"extra critical about their tastes"*. Criticality is written as
+demonstrated taste rather than as an adjective — **every persona puts down at least one book the
+genre loves** — because gate 0's floor happened against a prompt that already told the reader it
+could stop, and `Persona`'s own docstring records what long characterisation does to a model.
+
+`personas.PANEL` is untouched, so §70's numbers remain reproducible against the readers they were
+measured on. The first run of this battery was killed at ~30 calls when the panel direction
+arrived; nothing from it is reported.
+
+### 120.6 What was refused
+
+**No bar over any rate.** No threshold was declared, and the four attainability checks were run on
+the one condition that is a membership test (K1a records what K1 is and is not scoped to, and
+names the single cell that was visible when it was written).
+
+**The operator's six refusals were not used as labels.** §95: they are direction. Validating this
+instrument against them would convert them into data, which is the one thing the scope axiom
+closes, and it is not done here.
+
+**Nothing here ranks two undamaged premises**, which is what would answer *"is this idea any
+good"*. Detecting manufactured damage and reading taste are different claims, and §87–§89 are
+three entries about the distance between them.
+
+### 120.7 Anti-scope
+
+Nothing under `src/litharness/` changed. No gate, no forge rule, no prompt and no book was touched
+by this entry; `PITCH_SET` lives in `research/` and is imported by nothing the package ships. RS1
+holds — the premises scored are this system's own output, no corpus text or digest crossed into a
+prompt, and the one human-written item used anywhere in this programme is a stimulus rather than a
+label.

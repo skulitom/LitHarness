@@ -1,0 +1,1329 @@
+{
+  "generated_at": "2026-08-23T19:08:12Z",
+  "panel": [
+    "climber",
+    "stranger",
+    "regular",
+    "mechanism"
+  ],
+  "panel_model": "claude-haiku-4-5",
+  "scorer": "mean pairwise Jaccard over content words; no model scores agreement",
+  "items": [
+    {
+      "item_id": "direct7:1",
+      "title": "Everything Here Is a Bell",
+      "source": "forged",
+      "words": 205,
+      "agreement_can_do": 0.2109,
+      "agreement_in_the_way": 0.1547,
+      "agreement_expect_next": 0.1459,
+      "readers_confused": 2,
+      "unclear_items": 6,
+      "unclear_by_reader": {
+        "climber": [
+          "the Long Yard",
+          "the high cliff",
+          "make sound stop dead"
+        ],
+        "stranger": [],
+        "regular": [],
+        "mechanism": [
+          "the Long Yard",
+          "the high cliff",
+          "the sky answered"
+        ]
+      },
+      "readers_with_open_questions": 4,
+      "open_questions_by_reader": {
+        "climber": [
+          "What happened when Aro sang at the sky, and why won't he speak now?",
+          "What's the actual difference between the two schools at Bellcross—singing at distance versus stopping sound?"
+        ],
+        "stranger": [
+          "What happened to Aro when the sky answered?",
+          "Why is he forbidden from learning both halves?",
+          "Why is he being watched — is there danger in what he can do?"
+        ],
+        "regular": [
+          "What happened to Aro when he sang at the sky?",
+          "Will Bel be forced to break the rule against learning both halves of magic?",
+          "Does anyone else know he remembers being someone else?"
+        ],
+        "mechanism": [
+          "Why did Aro go silent after the sky answered him?",
+          "What does it mean for the sky to answer?",
+          "Why is the rule against learning both paths in place, and what happens if you break it?"
+        ]
+      },
+      "answers": {
+        "climber": {
+          "can_do": "He can identify what note an object will respond to almost instantly, instead of spending all night listening to it like everyone else does. The dead earbud from his past life lets him hear frequencies in pieces rather than as a whole sound.",
+          "in_the_way": "The school won't let him learn both branches of magic—he has to pick between singing at distance or making sound stop. Also his brother did something similar (sang at the sky) and now won't speak, which feels like a warning about what this magic costs.",
+          "expect_next": "A progression fantasy where he'll learn magic at a school with hard restrictions. He's going to run into the two-path rule and either break it or find a workaround, and the story will eventually explain what happened to Aro and why it silenced him.",
+          "undefined_words": [
+            "the Long Yard",
+            "the high cliff",
+            "make sound stop dead"
+          ],
+          "open_questions": [
+            "What happened when Aro sang at the sky, and why won't he speak now?",
+            "What's the actual difference between the two schools at Bellcross—singing at distance versus stopping sound?"
+          ]
+        },
+        "stranger": {
+          "can_do": "He hears a sound and knows its note straight off, the way someone else might read a frequency dial. Everyone else sits with a stone all night waiting for it to sing back, but he gets it in one breath.",
+          "in_the_way": "The school teaches two halves of magic and won't teach him both. And his older brother went to sing at the sky and came back silent, which means there's something dangerous in what this magic can do.",
+          "expect_next": "A progression fantasy where he learns a music-based magic system faster than anyone around him. He'll discover what happened to his brother, probably figure out why the two halves can't be learned together, and find out what the sky actually does when you sing at it.",
+          "undefined_words": [],
+          "open_questions": [
+            "What happened to Aro when the sky answered?",
+            "Why is he forbidden from learning both halves?",
+            "Why is he being watched — is there danger in what he can do?"
+          ]
+        },
+        "regular": {
+          "can_do": "He listens the way a recording engineer works a mixing board—he hears a sound already decomposed into its pieces instead of training for years like everyone else.",
+          "expect_next": "A magical school story where Bel's advantage helps him progress faster than intended, he probably breaks the rule against learning both halves of magic, and uncovers what his brother's silence means.",
+          "in_the_way": "The school forbids learning both types of magic, and he's being watched. His brother went somewhere and came back unable to speak—maybe a real warning about what happens if you push too far.",
+          "undefined_words": [],
+          "open_questions": [
+            "What happened to Aro when he sang at the sky?",
+            "Will Bel be forced to break the rule against learning both halves of magic?",
+            "Does anyone else know he remembers being someone else?"
+          ]
+        },
+        "mechanism": {
+          "can_do": "He hears sound decomposed into discrete pieces the instant it hits him, like isolating tracks at a mixing board. Everyone else has to sit against a stone all night waiting for it to sing back; he names its note in one breath.",
+          "in_the_way": "There's a hard split in what you're allowed to learn at the school—you pick singing at distance or making sound stop, never both. His brother picked wrong, or picked too well: got an answer from the sky and hasn't spoken since.",
+          "expect_next": "A progression fantasy with a hard magic system, probably set at the school. He's got an ability that lets him see into things other people can't, and a rule written in blood because somebody asked the wrong question. The book will explain what his brother broke.",
+          "undefined_words": [
+            "the Long Yard",
+            "the high cliff",
+            "the sky answered"
+          ],
+          "open_questions": [
+            "Why did Aro go silent after the sky answered him?",
+            "What does it mean for the sky to answer?",
+            "Why is the rule against learning both paths in place, and what happens if you break it?"
+          ]
+        }
+      }
+    },
+    {
+      "item_id": "reference:operator-damaged",
+      "title": "reference-pitch-damaged",
+      "source": "human-written reference",
+      "words": 171,
+      "agreement_can_do": 0.1759,
+      "agreement_in_the_way": 0.1296,
+      "agreement_expect_next": 0.1184,
+      "readers_confused": 3,
+      "unclear_items": 6,
+      "unclear_by_reader": {
+        "climber": [
+          "kell-lattice",
+          "mana"
+        ],
+        "stranger": [],
+        "regular": [
+          "kell-lattice"
+        ],
+        "mechanism": [
+          "kell-lattice",
+          "mana",
+          "merged with him"
+        ]
+      },
+      "readers_with_open_questions": 4,
+      "open_questions_by_reader": {
+        "climber": [
+          "What does 'merged with him' actually mean — is the AI still a separate voice or has it become part of his thinking?",
+          "Does water magic have specific cellular costs, and what happens if George pushes too hard?",
+          "Why water first, and does the progression follow an elemental or biological logic?"
+        ],
+        "stranger": [
+          "Does his biology degree actually work, or is magic's version of 'cells produce mana' completely different from what he thinks it should be?",
+          "Why did only the AI come through—is that explained, or is it just the weird accident he got?",
+          "Is the AI still talking to him like a separate thing, or are they actually merged enough that he can't tell where one ends and the other starts?"
+        ],
+        "regular": [
+          "Why did the AI come across and nothing else?",
+          "Does learning magic his way make him faster than natives, or does it lock him into a narrow path?",
+          "How does a kid's body change things—is that just flavor or a real constraint?"
+        ],
+        "mechanism": [
+          "the only person from home he has left",
+          "Later he joins a magic academy and the story goes on from there",
+          "can he learn anything besides water magic?"
+        ]
+      },
+      "answers": {
+        "climber": {
+          "can_do": "He can reverse-engineer magic through cellular biology and direct his own body's mana production with precision that nobody else in this world can match, because he has both academic knowledge and an AI that can read his tissue state in real time.",
+          "in_the_way": "He's a child in a foreign world with no status or resources, trying to learn a system he has to rebuild from biological first principles instead of just following academy lessons like everyone else. The slow burn suggests that even though he has the advantage, it takes work.",
+          "expect_next": "A progression fantasy where a fish-out-of-water protagonist uses systematic biological knowledge to solve magical problems in ways that confuse or impress the locals at an academy. The AI companion is both his link to home and his toolkit for understanding magic as applied physiology rather than mysticism.",
+          "undefined_words": [
+            "kell-lattice",
+            "mana"
+          ],
+          "open_questions": [
+            "What does 'merged with him' actually mean — is the AI still a separate voice or has it become part of his thinking?",
+            "Does water magic have specific cellular costs, and what happens if George pushes too hard?",
+            "Why water first, and does the progression follow an elemental or biological logic?"
+          ]
+        },
+        "stranger": {
+          "can_do": "He knows how to read biology and he's got direct feedback on his own body's processes, which is his only tool for understanding a magic system that actually runs on biology.",
+          "in_the_way": "He's a child in a world that doesn't speak his language, with only the AI he came with—everything else from home is gone. He has to invent the rules as he goes.",
+          "expect_next": "A progression story where he's slowly figuring out magic through biology while everyone around him has been doing it the traditional way their whole lives. Probably friction with people who think he's crazy or wrong. Academy means structure and peers, which usually means both allies and people who resent the outsider. Slow burn means I'm signing up for chapters where he's gently getting better at understanding his own cells and what they can do.",
+          "undefined_words": [],
+          "open_questions": [
+            "Does his biology degree actually work, or is magic's version of 'cells produce mana' completely different from what he thinks it should be?",
+            "Why did only the AI come through—is that explained, or is it just the weird accident he got?",
+            "Is the AI still talking to him like a separate thing, or are they actually merged enough that he can't tell where one ends and the other starts?"
+          ]
+        },
+        "regular": {
+          "can_do": "He approaches magic like a problem set instead of an art—he can reverse-engineer spells by reading his own body's chemistry, which is something nobody else there seems to do.",
+          "in_the_way": "He's a child in a world full of adults and magic users. The only person who knows him is the AI, and they're still figuring out how to exist together after being merged. Everyone else has years of learning magic already done by the time he shows up.",
+          "expect_next": "A progression fantasy that leans technical—academy years where he slowly gets better by understanding *why* the magic works instead of just memorizing gestures or incantations. The AI gives him an unfair advantage in the form of real-time biofeedback. Probably some fish-out-of-water comedy and eventually tests where his biology-based approach surprises people.",
+          "undefined_words": [
+            "kell-lattice"
+          ],
+          "open_questions": [
+            "Why did the AI come across and nothing else?",
+            "Does learning magic his way make him faster than natives, or does it lock him into a narrow path?",
+            "How does a kid's body change things—is that just flavor or a real constraint?"
+          ]
+        },
+        "mechanism": {
+          "can_do": "He has a biology degree and an AI that can read his own tissue, so he can reverse-engineer magic by understanding the cellular mechanism instead of just memorizing spells like everyone else does.",
+          "in_the_way": "He's a child alone in a strange world with only an AI companion, which means everything he learns has to come from experimentation. Magic doesn't work if you don't understand it, and understanding takes time.",
+          "expect_next": "Progression fantasy with a slow academy arc. He shows up with a completely wrong framework for how magic works, probably clashes with whatever the conventional method is, and over a long book gradually discovers that his biological approach either works better or reveals things nobody else noticed. The AI probably turns out to matter in ways the established system didn't expect.",
+          "undefined_words": [
+            "kell-lattice",
+            "mana",
+            "merged with him"
+          ],
+          "open_questions": [
+            "the only person from home he has left",
+            "Later he joins a magic academy and the story goes on from there",
+            "can he learn anything besides water magic?"
+          ]
+        }
+      }
+    },
+    {
+      "item_id": "direct6:2",
+      "title": "The Cold Palm",
+      "source": "forged",
+      "words": 318,
+      "agreement_can_do": 0.1623,
+      "agreement_in_the_way": 0.2533,
+      "agreement_expect_next": 0.1283,
+      "readers_confused": 3,
+      "unclear_items": 10,
+      "unclear_by_reader": {
+        "climber": [
+          "red thread, second rung of six",
+          "crock",
+          "scald house",
+          "wonder"
+        ],
+        "stranger": [],
+        "regular": [
+          "the red thread",
+          "second rung of six",
+          "scald house",
+          "hundred-year mothers"
+        ],
+        "mechanism": [
+          "the red thread, second rung of six",
+          "the scald house"
+        ]
+      },
+      "readers_with_open_questions": 4,
+      "open_questions_by_reader": {
+        "climber": [
+          "What is her palm made of and how did it get that way?",
+          "How did she end up in this world as a four-year-old when she was an adult in a lab?",
+          "What are the crocks actually full of and why does nobody know?",
+          "What happens when the cold patch reaches her shoulder?"
+        ],
+        "stranger": [
+          "She has maybe fifteen years, because the cold patch is spreading up her arm about a finger's width a year.",
+          "if either side finds that out they will want her hand, and one of them will want it stopped",
+          "She wants to make a living thing that never existed and get it into kitchens in countries she will never visit."
+        ],
+        "regular": [
+          "She has maybe fifteen years—does she actually make it?",
+          "What happens when the factions find out?",
+          "Will she have to choose a side despite not having to?",
+          "What is the cold patch and can anything stop it?"
+        ],
+        "mechanism": [
+          "What happens when the cold patch reaches her shoulder?",
+          "What is the 'single thing that never existed' she's trying to grow?",
+          "What are these wonders actually—what's alive in the crocks?",
+          "How does she keep the ability hidden when she starts attending school?"
+        ]
+      },
+      "answers": {
+        "climber": {
+          "can_do": "She can isolate individual organisms from the mixed cultures everyone else keeps sealed in crocks—something that's never been done because her hand kills everything except one survivor, which she can then grow alone.",
+          "in_the_way": "A non-living patch spreading up her arm about a finger's width per year, giving her maybe fifteen years before it consumes her. Also: both the school factions will hunt for her hand if they learn what she can do, and one of them will want it stopped.",
+          "expect_next": "Progression fantasy with a hard-science core—she's a student at a ranked school hiding an ability while trying to accomplish something specific and concrete before her body betrays her. I expect the mystery of what she and the crocks actually are will drive the plot.",
+          "undefined_words": [
+            "red thread, second rung of six",
+            "crock",
+            "scald house",
+            "wonder"
+          ],
+          "open_questions": [
+            "What is her palm made of and how did it get that way?",
+            "How did she end up in this world as a four-year-old when she was an adult in a lab?",
+            "What are the crocks actually full of and why does nobody know?",
+            "What happens when the cold patch reaches her shoulder?"
+          ]
+        },
+        "stranger": {
+          "can_do": "She can isolate pure organisms from mixed cultures and create entirely new species. She's the only one in her world who understands what's actually living in the crocks instead of treating them as inexplicable gifts.",
+          "in_the_way": "A ticking clock: she has roughly 15 years before the non-living patch spreads up her arm far enough to stop her from working. And she has to hide what she can do from both factions at school, because either one would want her ability stopped or claimed.",
+          "expect_next": "A progression fantasy—girl navigates a school that forces permanent faction loyalty, tries to accomplish her goal of creating and distributing new organisms globally, while a spreading physical deadline and enemies on both sides close in.",
+          "undefined_words": [],
+          "open_questions": [
+            "She has maybe fifteen years, because the cold patch is spreading up her arm about a finger's width a year.",
+            "if either side finds that out they will want her hand, and one of them will want it stopped",
+            "She wants to make a living thing that never existed and get it into kitchens in countries she will never visit."
+          ]
+        },
+        "regular": {
+          "can_do": "She can isolate single magical effects from the combinations everyone else keeps sealed together, and grow them alone. It's the one thing this world has never managed.",
+          "in_the_way": "The cold patch creeping up her arm—she has maybe fifteen years before it consumes her. And the two factions at school who will want her hand for themselves if they find out, or want it stopped entirely.",
+          "expect_next": "Progression fantasy. She gets to school, learns to master what she can do while hiding it, the factional conflict closes in around her, and there's a race against her own body as she tries to create and release this new thing before she runs out of time.",
+          "undefined_words": [
+            "the red thread",
+            "second rung of six",
+            "scald house",
+            "hundred-year mothers"
+          ],
+          "open_questions": [
+            "She has maybe fifteen years—does she actually make it?",
+            "What happens when the factions find out?",
+            "Will she have to choose a side despite not having to?",
+            "What is the cold patch and can anything stop it?"
+          ]
+        },
+        "mechanism": {
+          "can_do": "She can kill living things with her hand, which lets her isolate a single organism from a mixed culture—the one thing nobody in this world has ever managed because all their useful organisms come packaged together in crocks.",
+          "in_the_way": "The ability is spreading up her arm and will kill her in about fifteen years. Also, she's at a school split between two factions, either of which would seize or suppress her hand if they found out, and she can't pick a side without revealing it.",
+          "expect_next": "A progression fantasy where she navigates the school while learning what she can actually make with this ability. The factions will matter, the clock will matter, and something will go wrong with the secret.",
+          "undefined_words": [
+            "the red thread, second rung of six",
+            "the scald house"
+          ],
+          "open_questions": [
+            "What happens when the cold patch reaches her shoulder?",
+            "What is the 'single thing that never existed' she's trying to grow?",
+            "What are these wonders actually—what's alive in the crocks?",
+            "How does she keep the ability hidden when she starts attending school?"
+          ]
+        }
+      }
+    },
+    {
+      "item_id": "direct3:1",
+      "title": "Deep Enough to Carry",
+      "source": "forged",
+      "words": 186,
+      "agreement_can_do": 0.1507,
+      "agreement_in_the_way": 0.0654,
+      "agreement_expect_next": 0.0929,
+      "readers_confused": 4,
+      "unclear_items": 20,
+      "unclear_by_reader": {
+        "climber": [
+          "home pitch",
+          "shave",
+          "a technique...with a shave",
+          "the carry",
+          "answer at the wall"
+        ],
+        "stranger": [
+          "home pitch",
+          "shave",
+          "carry",
+          "Bell Court"
+        ],
+        "regular": [
+          "the fourth ringing",
+          "shave",
+          "the carry",
+          "home pitch",
+          "Bell Court",
+          "one hand in the valley"
+        ],
+        "mechanism": [
+          "carry",
+          "shave",
+          "belfry stair",
+          "the wall",
+          "home pitch"
+        ]
+      },
+      "readers_with_open_questions": 4,
+      "open_questions_by_reader": {
+        "climber": [
+          "Why won't Master Hollis Veck touch her throat or explain?",
+          "What exactly does holding two tones let her do in a fight?",
+          "What are shaves and why does Pell resent that Nell's existence made his shaves unnecessary?",
+          "Why does she have no home pitch, and is that a permanent problem?"
+        ],
+        "stranger": [
+          "she woke on the belfry stair at the fourth ringing with no home pitch in her",
+          "Master Hollis Veck, the one hand in the valley good enough to tune her deeper, will not touch her throat and will not say why",
+          "She holds two tones at once, which is not a thing that happens",
+          "he would rather she be sour than right"
+        ],
+        "regular": [
+          "will not touch her throat and will not say why",
+          "woke on the belfry stair at the fourth ringing with no home pitch in her",
+          "holds two tones at once, which is not a thing that happens",
+          "he would rather she be sour than right"
+        ],
+        "mechanism": [
+          "Why will Master Hollis Veck not touch her throat and will not say why",
+          "what a shave actually costs when it lands",
+          "how she came to hold two tones when that's not a thing that happens"
+        ]
+      },
+      "answers": {
+        "climber": {
+          "can_do": "Nell can hold two distinct tones at once in her body, which lets her parry a technique with a counter-technique instead of whatever a 'shave' is. Everyone else gets one tone, fixed in metal, which is apparently all they can answer with.",
+          "in_the_way": "The person who could help her won't, and the person who competes against her resents that her unusual nature makes his expensive preparation seem unnecessary. She also woke up without a 'home pitch,' which sounds like she's missing something foundational.",
+          "expect_next": "A system-fantasy where the mechanics matter. The author is dropping me into a world where 'bell,' 'shave,' 'tone,' and 'technique' are load-bearing terms that have specific costs and consequences. I expect conflict to start between Nell and Pell, or for her to be forced to demonstrate what two tones actually does in a fight. Probably some revelation about why Hollis won't help her.",
+          "undefined_words": [
+            "home pitch",
+            "shave",
+            "a technique...with a shave",
+            "the carry",
+            "answer at the wall"
+          ],
+          "open_questions": [
+            "Why won't Master Hollis Veck touch her throat or explain?",
+            "What exactly does holding two tones let her do in a fight?",
+            "What are shaves and why does Pell resent that Nell's existence made his shaves unnecessary?",
+            "Why does she have no home pitch, and is that a permanent problem?"
+          ]
+        },
+        "stranger": {
+          "can_do": "She can respond to what others do with skill instead of just paying a price. Nobody else can do that.",
+          "in_the_way": "She woke up missing something essential from her own body, and nobody will explain what it means. People hate her because she has an advantage that cost them everything.",
+          "expect_next": "Fantasy or progression fantasy where someone with an impossible ability has to figure out the world around her while people resent and refuse to help her. Conflict between her advantage and the people who paid dearly for less.",
+          "undefined_words": [
+            "home pitch",
+            "shave",
+            "carry",
+            "Bell Court"
+          ],
+          "open_questions": [
+            "she woke on the belfry stair at the fourth ringing with no home pitch in her",
+            "Master Hollis Veck, the one hand in the valley good enough to tune her deeper, will not touch her throat and will not say why",
+            "She holds two tones at once, which is not a thing that happens",
+            "he would rather she be sour than right"
+          ]
+        },
+        "regular": {
+          "can_do": "She can respond in kind to combat technique, where everyone else gets hit and has to pay a cost. She's built differently than everyone else, in a way that lets her adapt instead of absorb damage.",
+          "in_the_way": "She's isolated by her own power. Master Hollis won't help her, Pell Dray resents her, and no one in her world notices her. Her strength makes her alone, not elevated.",
+          "expect_next": "This is a character-driven fantasy about a woman learning what her unusual power means. I expect training, conflict with Pell, and a reckoning with Master Hollis about his refusal to help her. The prose suggests this will be a slow, careful book about Nell figuring out who she is when everyone around her would prefer she be broken.",
+          "undefined_words": [
+            "the fourth ringing",
+            "shave",
+            "the carry",
+            "home pitch",
+            "Bell Court",
+            "one hand in the valley"
+          ],
+          "open_questions": [
+            "will not touch her throat and will not say why",
+            "woke on the belfry stair at the fourth ringing with no home pitch in her",
+            "holds two tones at once, which is not a thing that happens",
+            "he would rather she be sour than right"
+          ]
+        },
+        "mechanism": {
+          "can_do": "She can produce two distinct tones at once, which lets her deflect an opponent's attack with a counter-technique instead of taking damage like everyone else does.",
+          "in_the_way": "The master skilled enough to train her refuses both to touch her and to explain why, and a rival resents her because her natural advantage proves all the pain he paid to get where he is was avoidable.",
+          "expect_next": "A fantasy about someone who doesn't fit the rules of her world—where everyone else is a fixed bell and she isn't. I'd expect to see her either train herself against the odds or finally force Hollis to break his silence, with Pell's resentment doing something worse than just sitting.",
+          "undefined_words": [
+            "carry",
+            "shave",
+            "belfry stair",
+            "the wall",
+            "home pitch"
+          ],
+          "open_questions": [
+            "Why will Master Hollis Veck not touch her throat and will not say why",
+            "what a shave actually costs when it lands",
+            "how she came to hold two tones when that's not a thing that happens"
+          ]
+        }
+      }
+    },
+    {
+      "item_id": "direct8:1",
+      "title": "The Farhouse at Fennow",
+      "source": "forged",
+      "words": 281,
+      "agreement_can_do": 0.1427,
+      "agreement_in_the_way": 0.1422,
+      "agreement_expect_next": 0.1215,
+      "readers_confused": 2,
+      "unclear_items": 2,
+      "unclear_by_reader": {
+        "climber": [
+          "the ring of light across the sky that everyone here treats as a god"
+        ],
+        "stranger": [],
+        "regular": [],
+        "mechanism": [
+          "the ring of light across the sky"
+        ]
+      },
+      "readers_with_open_questions": 4,
+      "open_questions_by_reader": {
+        "climber": [
+          "What is that ring of light and why does treating it as a god matter to the story?",
+          "Does the chip in the glasses actually prevent her from doing what she wants, or is it just a ticking clock?",
+          "What specifically does Perrin plan to do with the information about the glasses?"
+        ],
+        "stranger": [
+          "What is the ring of light across the sky that everyone treats as a god?",
+          "Why is Perrin asking questions about the glasses — does she suspect, want to replicate them, or want to break them?",
+          "What happens if the glasses chip further or break entirely?",
+          "What exactly is the 'big thing' June is planning to build?"
+        ],
+        "regular": [
+          "What is the ring of light across the sky that everyone treats as a god?",
+          "What is she trying to build with lenses?",
+          "Will the chip in her glasses become the crisis point?",
+          "What does Perrin actually want from learning about the glasses?"
+        ],
+        "mechanism": [
+          "What is the sky-ring and what would 'looking properly' at it actually do?",
+          "Does the school let you reach authority through knowledge rather than native talent?",
+          "What does Perrin want to know about the glasses?"
+        ]
+      },
+      "answers": {
+        "climber": {
+          "can_do": "June has spent decades mastering optics in a world where nobody has ever figured out how lenses work — she can make light stay lit even when she looks away from it, which nobody else on this planet can do.",
+          "in_the_way": "She's starting at the bottom of a ranked school system and being measured on things the school cares about rather than the large optical project she actually wants to build. Her glasses are the only pair on the planet, visible, and deteriorating. There's someone better than her at the school's official tests who's already started paying attention to them.",
+          "expect_next": "A progression fantasy where she either has to navigate the school's rank system to gain standing and resources, or find a way around it using optical knowledge the school doesn't have. Probably Perrin becomes a real problem — either rival or antagonist. I expect the glasses to fail at a load-bearing moment.",
+          "undefined_words": [
+            "the ring of light across the sky that everyone here treats as a god"
+          ],
+          "open_questions": [
+            "What is that ring of light and why does treating it as a god matter to the story?",
+            "Does the chip in the glasses actually prevent her from doing what she wants, or is it just a ticking clock?",
+            "What specifically does Perrin plan to do with the information about the glasses?"
+          ]
+        },
+        "stranger": {
+          "can_do": "She understands how light bends through glass in ways that seem impossible to everyone else on this world — she can make light stay put when they can only hold it by staring at it.",
+          "in_the_way": "She's starting at the bottom of a school's hierarchy where the measures don't favor what she knows. Her only tools are the glasses she arrived with, and they're already chipping. There's a rival who's better at what the school actually teaches and is asking pointed questions about where she's getting her edge.",
+          "expect_next": "This is a book about someone who arrived in a world and is going to use what she brought with her to work up standing and build something the place has never seen. It'll probably follow her grinding through the school's actual system while learning what it measures, dealing with Perrin, and working toward whatever that sky-ring actually is. Progression-flavored, grounded in one place, probably focusing on the practical problem of making optics work when your only optical instrument is wearing out.",
+          "undefined_words": [],
+          "open_questions": [
+            "What is the ring of light across the sky that everyone treats as a god?",
+            "Why is Perrin asking questions about the glasses — does she suspect, want to replicate them, or want to break them?",
+            "What happens if the glasses chip further or break entirely?",
+            "What exactly is the 'big thing' June is planning to build?"
+          ]
+        },
+        "regular": {
+          "can_do": "June has discovered how to make light persist outside a person's will and attention—something impossible here. She's brought a branch of technology to a world that's never needed optics because they generate their own light.",
+          "in_the_way": "She's at the bottom of a hierarchy at a school that measures things she hasn't been trained in. Perrin is genuinely better at what they actually measure, is now watching her closely, and the only tool that makes her special is already degrading. Getting standing or resources looks like it might require outperforming people who've trained their whole lives.",
+          "expect_next": "A progression fantasy where an institution becomes a character. June will navigate school politics and probably learn the system while trying not to become a threat that gets neutralized, Perrin will become either a rival or a catalyst for something, and she's working toward something specific—some kind of optical device. The ring in the sky is going to matter.",
+          "undefined_words": [],
+          "open_questions": [
+            "What is the ring of light across the sky that everyone treats as a god?",
+            "What is she trying to build with lenses?",
+            "Will the chip in her glasses become the crisis point?",
+            "What does Perrin actually want from learning about the glasses?"
+          ]
+        },
+        "mechanism": {
+          "can_do": "She understands how curved glass bends light, which lets her trap and preserve light even when she's not looking at it—something nobody on this world has figured out how to do.",
+          "in_the_way": "A more naturally gifted student who outperforms her in every test the school actually runs, and the glasses she arrived with are the only pair on the planet and already cracking, so they won't last forever.",
+          "expect_next": "A progression fantasy about using transferred knowledge to build standing in a world with its own hard rules. The magic system seems fixed (light behaves particular ways) rather than arbitrary, so I'd expect the book to be about mastering those rules specifically, not just discovering she has latent power.",
+          "undefined_words": [
+            "the ring of light across the sky"
+          ],
+          "open_questions": [
+            "What is the sky-ring and what would 'looking properly' at it actually do?",
+            "Does the school let you reach authority through knowledge rather than native talent?",
+            "What does Perrin want to know about the glasses?"
+          ]
+        }
+      }
+    },
+    {
+      "item_id": "direct3:2",
+      "title": "Nothing Comes Out Lighter",
+      "source": "forged",
+      "words": 190,
+      "agreement_can_do": 0.129,
+      "agreement_in_the_way": 0.05,
+      "agreement_expect_next": 0.1042,
+      "readers_confused": 2,
+      "unclear_items": 8,
+      "unclear_by_reader": {
+        "climber": [],
+        "stranger": [],
+        "regular": [
+          "rinse river",
+          "washfast",
+          "ironed at eleven",
+          "blank in the vat house"
+        ],
+        "mechanism": [
+          "washfast",
+          "ironed at eleven",
+          "the sun wall",
+          "what the colored abilities from the vats actually do"
+        ]
+      },
+      "readers_with_open_questions": 2,
+      "open_questions_by_reader": {
+        "climber": [],
+        "stranger": [],
+        "regular": [
+          "What happened to Marek in the rinse river three months ago?",
+          "Why did Dame Orrin erase the test result before anyone saw it?",
+          "What does Ashun Kell know or suspect, and what will he do?",
+          "Why is Tovie Wren leaving Marek alone with the vat — testing him or teaching him?"
+        ],
+        "mechanism": [
+          "Why did Dame Orrin write 'washfast' and then erase it?",
+          "What is Tovie testing when she leaves him alone with the indigo vat?",
+          "What happens to Ashun Kell when his two years are up?"
+        ]
+      },
+      "answers": {
+        "climber": {},
+        "stranger": {},
+        "regular": {
+          "can_do": "Marek has abilities that hide completely until he uses them, then vanish by the next day — he appears blank on purpose or by accident, which is the opposite of everyone else in his world.",
+          "in_the_way": "Being invisible to the system that runs the yard means nobody trusts him, and someone (Ashun Kell) is already watching to catch him out as a fraud or cheat — and that accusation seems like it could get him hurt.",
+          "expect_next": "A progression fantasy grounded in real work (laundry, indigo vat, craft knowledge) where Marek learns to use what he has from Tovie Wren while Ashun Kell creates conflict around whether he belongs, all inside a world where your abilities are supposed to be legible and his fundamentally aren't.",
+          "undefined_words": [
+            "rinse river",
+            "washfast",
+            "ironed at eleven",
+            "blank in the vat house"
+          ],
+          "open_questions": [
+            "What happened to Marek in the rinse river three months ago?",
+            "Why did Dame Orrin erase the test result before anyone saw it?",
+            "What does Ashun Kell know or suspect, and what will he do?",
+            "Why is Tovie Wren leaving Marek alone with the vat — testing him or teaching him?"
+          ]
+        },
+        "mechanism": {
+          "can_do": "He has abilities that show up in his skin while he's using them, then vanish by the next morning — he's loaded but invisible, unreadable in a world where powers prove themselves by staying marked.",
+          "in_the_way": "The entire vat house runs on forearm markings to show who can do what. Marek has no proof, so he reads as blank. Worse: someone actively thinks he's lying, and at least one person *with* real power is visibly dying from it.",
+          "expect_next": "A progression fantasy grounded in practical chemistry and dye vats. The system is going to bite him because he can't show his work, and I expect the book to follow what he does when people won't believe in abilities they can't see marked on skin.",
+          "undefined_words": [
+            "washfast",
+            "ironed at eleven",
+            "the sun wall",
+            "what the colored abilities from the vats actually do"
+          ],
+          "open_questions": [
+            "Why did Dame Orrin write 'washfast' and then erase it?",
+            "What is Tovie testing when she leaves him alone with the indigo vat?",
+            "What happens to Ashun Kell when his two years are up?"
+          ]
+        }
+      }
+    },
+    {
+      "item_id": "direct6:1",
+      "title": "A Voice That Carries",
+      "source": "forged",
+      "words": 268,
+      "agreement_can_do": 0.1258,
+      "agreement_in_the_way": 0.1143,
+      "agreement_expect_next": 0.0787,
+      "readers_confused": 4,
+      "unclear_items": 16,
+      "unclear_by_reader": {
+        "climber": [
+          "green cord",
+          "white cord",
+          "carry / carry-master",
+          "calling"
+        ],
+        "stranger": [
+          "green cord, second of six",
+          "white cord",
+          "carry-master",
+          "heard by people who have never met him"
+        ],
+        "regular": [
+          "green cord",
+          "white cord",
+          "carry",
+          "the note a thing answers to",
+          "the room does most of the work"
+        ],
+        "mechanism": [
+          "green cord",
+          "white cord",
+          "carry"
+        ]
+      },
+      "readers_with_open_questions": 4,
+      "open_questions_by_reader": {
+        "climber": [
+          "What is the tone in his ear and how did he get it?",
+          "Why has it started to say words, and what words?",
+          "What does the silence he makes actually do—is it a weapon?",
+          "What is the rival girl hiding?"
+        ],
+        "stranger": [
+          "And the tone in his ear has started, once or twice, to say words",
+          "The rival house has a girl who can already carry across a courtyard without breathing hard and who is hiding why",
+          "The carry-master is going deaf at forty and lying about the reason"
+        ],
+        "regular": [
+          "The tone in Rell's ear has started, once or twice, to say words.",
+          "The rival house has a girl who can already carry across a courtyard without breathing hard and who is hiding why.",
+          "The carry-master is going deaf at forty and lying about the reason.",
+          "He wants the white cord — heard by people who have never met him — and he wants it before whatever is transmitting into his head finishes arriving."
+        ],
+        "mechanism": [
+          "What is transmitting into his head through the ringing?",
+          "Why can the rival girl already do things that normally take six years to learn?",
+          "Did Rell actually die or is something else going on with his memory of being a sound engineer?"
+        ]
+      },
+      "answers": {
+        "climber": {
+          "can_do": "Rell can hear his own pitch perfectly while singing because a ringing tone never stops in his ear—everyone else in this world is acoustically blind while calling, which means he doesn't need a coach standing beside him to stay in tune.",
+          "in_the_way": "He's at the bottom of the cord ranks and wants to reach white before something in his head finishes arriving. His coach is going deaf and hiding it. There's a rival with raw talent. And the tone that gives him his advantage has started speaking words to him, which he doesn't understand.",
+          "expect_next": "A progression fantasy with real mechanical depth. He'll climb the cord ladder through school competition, his advantage will get tested against other singers' tricks and limitations, the mystery of what's talking to him will escalate, and the silence he can make by singing back at himself will become consequential in ways the book hasn't yet explained.",
+          "undefined_words": [
+            "green cord",
+            "white cord",
+            "carry / carry-master",
+            "calling"
+          ],
+          "open_questions": [
+            "What is the tone in his ear and how did he get it?",
+            "Why has it started to say words, and what words?",
+            "What does the silence he makes actually do—is it a weapon?",
+            "What is the rival girl hiding?"
+          ]
+        },
+        "stranger": {
+          "can_do": "He has a ringing tone in his head that lets him hear his own pitch perfectly while singing, and he knows things about room placement and resonance that this world's singers haven't figured out in a thousand years.",
+          "in_the_way": "The tone has started saying words at him and he doesn't know what it is or what it wants. He's nine and wants to advance fast through a competitive school system, but he's still a kid working against people who've trained longer.",
+          "expect_next": "A progression story where he trains in this singing-magic system trying to reach white cord, discovers what the tone is and what it's asking of him, and navigates secrets his schoolmates and teachers are keeping. Probably conflict with the rival girl and some revelation about why the carry-master is really lying.",
+          "undefined_words": [
+            "green cord, second of six",
+            "white cord",
+            "carry-master",
+            "heard by people who have never met him"
+          ],
+          "open_questions": [
+            "And the tone in his ear has started, once or twice, to say words",
+            "The rival house has a girl who can already carry across a courtyard without breathing hard and who is hiding why",
+            "The carry-master is going deaf at forty and lying about the reason"
+          ]
+        },
+        "regular": {
+          "can_do": "He has perfect pitch locked in permanently, so he knows exactly what note he's hearing at all times and doesn't need a spotter like every other singer in this world. He's also figured out two things that have taken this world a thousand years: that positioning matters more than practice, and that you can create silence by singing something back at itself at just the wrong moment.",
+          "in_the_way": "He's starting behind the curve (second rank when most people take until they're fifteen to get there), and he needs to move fast because something is trying to use his ear as a transmission line and has started forming words. The rival girl is already better than she should be. And his teacher is going deaf while lying about it, which reads like a warning.",
+          "expect_next": "This is progression fantasy with mechanical magic rules—singers make things happen by hitting specific notes, and there's a ranking system they climb. I'd expect him entering the school and training through advancement gates while also figuring out what that tone is and why it's trying to talk to him.",
+          "undefined_words": [
+            "green cord",
+            "white cord",
+            "carry",
+            "the note a thing answers to",
+            "the room does most of the work"
+          ],
+          "open_questions": [
+            "The tone in Rell's ear has started, once or twice, to say words.",
+            "The rival house has a girl who can already carry across a courtyard without breathing hard and who is hiding why.",
+            "The carry-master is going deaf at forty and lying about the reason.",
+            "He wants the white cord — heard by people who have never met him — and he wants it before whatever is transmitting into his head finishes arriving."
+          ]
+        },
+        "mechanism": {
+          "can_do": "Rell hears his own pitch perfectly at all times and knows the acoustic tricks that everyone else has missed—where you stand matters more than training, and silence can be a weapon.",
+          "in_the_way": "He's competing against someone who's already ahead, his own teacher is lying about going deaf, and whatever is starting to use his head as a broadcast channel may not be friendly about it.",
+          "expect_next": "A school-based progression fantasy where the magic system has real physics underneath it. Rell is going to learn to weaponize interference patterns against rivals, and the thing in his ear is going to become a problem before it becomes an asset.",
+          "undefined_words": [
+            "green cord",
+            "white cord",
+            "carry"
+          ],
+          "open_questions": [
+            "What is transmitting into his head through the ringing?",
+            "Why can the rival girl already do things that normally take six years to learn?",
+            "Did Rell actually die or is something else going on with his memory of being a sound engineer?"
+          ]
+        }
+      }
+    },
+    {
+      "item_id": "direct5:2",
+      "title": "Wild Stock",
+      "source": "forged",
+      "words": 140,
+      "agreement_can_do": 0.1247,
+      "agreement_in_the_way": 0.2599,
+      "agreement_expect_next": 0.0836,
+      "readers_confused": 4,
+      "unclear_items": 14,
+      "unclear_by_reader": {
+        "climber": [
+          "lineage — used as a measurable property she lacks entirely",
+          "root — the infrastructure that feeds grafts, tied to bloodline somehow",
+          "rung — the ladder system she's on the second rung of five"
+        ],
+        "stranger": [
+          "lineage",
+          "root",
+          "whip, second rung of five"
+        ],
+        "regular": [
+          "lineage",
+          "root",
+          "whip",
+          "grafts",
+          "cuttings"
+        ],
+        "mechanism": [
+          "whip (second rung of five)",
+          "lineage anybody can read",
+          "root anybody can measure"
+        ]
+      },
+      "readers_with_open_questions": 4,
+      "open_questions_by_reader": {
+        "climber": [
+          "Why can she take cuttings from strangers and the dead when only close kin can graft normally?",
+          "What do her four grafts actually let her do?",
+          "Why is she physically unable to refuse a cutting pressed to an open cut?",
+          "Why did she come through a stairwell with no lineage three months ago?"
+        ],
+        "stranger": [
+          "Why did she cross from one world to another, and did the crossing do this to her?",
+          "Can the compulsion be broken, and what happens if she refuses?"
+        ],
+        "regular": [
+          "every new thing she joins kills something she already loves, awake, in front of whoever gave it to her",
+          "Vetch Orrin turned her away at his gate without a word",
+          "June cannot refuse a cutting pressed to an open cut on her"
+        ],
+        "mechanism": [
+          "what happened at the stairwell and hedge that brought her here?",
+          "what makes her able to take grafts from anyone when it doesn't work that way for other people?",
+          "when something dies to make room for a new graft, is that permanent or does she get it back?"
+        ]
+      },
+      "answers": {
+        "climber": {
+          "can_do": "She can graft abilities or traits from anyone regardless of blood relation, which is impossible for anyone else in her world. The grafts actually take on her, even from strangers or the dead.",
+          "in_the_way": "Every graft she takes kills an existing one she already has. She's carrying four on a system built for two, which means she's mechanically overloaded. Worse, she physically cannot refuse a cutting if it's pressed to an open cut, and people are learning this about her.",
+          "expect_next": "A hard-magic progression fantasy where the arithmetic is load-bearing. She's trapped at capacity and people are going to start exploiting her inability to refuse. I expect the book to watch her navigate a world that wants to use her, and I'm reading to find out what her grafts actually do and why someone without a lineage can graft anything at all. The gate is clear: she can't keep taking without losing what she loves.",
+          "undefined_words": [
+            "lineage — used as a measurable property she lacks entirely",
+            "root — the infrastructure that feeds grafts, tied to bloodline somehow",
+            "rung — the ladder system she's on the second rung of five"
+          ],
+          "open_questions": [
+            "Why can she take cuttings from strangers and the dead when only close kin can graft normally?",
+            "What do her four grafts actually let her do?",
+            "Why is she physically unable to refuse a cutting pressed to an open cut?",
+            "Why did she come through a stairwell with no lineage three months ago?"
+          ]
+        },
+        "stranger": {
+          "can_do": "She can make grafts take where they shouldn't—drawing from sources that have no genetic claim to her, but at a price that gets steeper with each one she carries.",
+          "in_the_way": "She's loaded beyond her capacity, so every new graft burns something she already has. And she can't say no when someone cuts themselves open and presses the wound to hers—which people are learning to exploit.",
+          "expect_next": "A dark fantasy about someone carrying an ability that's slowly destroying her from the inside, set in a world with a caste system (that rank of five matters), and I expect to see her hit a limit that forces a choice: let go of something, or break entirely. The question of why she arrived this way and whether anyone else shares what she does will probably drive the engine.",
+          "undefined_words": [
+            "lineage",
+            "root",
+            "whip, second rung of five"
+          ],
+          "open_questions": [
+            "Why did she cross from one world to another, and did the crossing do this to her?",
+            "Can the compulsion be broken, and what happens if she refuses?"
+          ]
+        },
+        "regular": {
+          "can_do": "She can accept grafts from anyone—strangers, the dead, anything—where normal people can only graft with close kin. She's compatible in a way that shouldn't be possible.",
+          "in_the_way": "Her root can only sustain so much, and she's already carrying four grafts on what was meant to hold two. Every new graft kills something she already loves. And now people are learning she physically can't refuse if they press a cutting to an open wound on her.",
+          "expect_next": "Dark fantasy built on a grafting system where power/ability is literally rooted. The book will probably track what happens when a uniquely gifted person has a uniquely exploitable weakness, and what people do when they figure out how to use it.",
+          "undefined_words": [
+            "lineage",
+            "root",
+            "whip",
+            "grafts",
+            "cuttings"
+          ],
+          "open_questions": [
+            "every new thing she joins kills something she already loves, awake, in front of whoever gave it to her",
+            "Vetch Orrin turned her away at his gate without a word",
+            "June cannot refuse a cutting pressed to an open cut on her"
+          ]
+        },
+        "mechanism": {
+          "can_do": "She can attach grafts from anyone to herself—strangers, the dead, even insects—but nobody else in this world can do that. The catch is her root was built to feed two grafts and she's carrying four, so every new one she takes kills something she already loves.",
+          "in_the_way": "She can't refuse a graft if someone presses it to an open cut on her skin. Every graft she accepts requires a death—something she already loves stops. People are already working out that they can use this against her.",
+          "expect_next": "A progression fantasy where the hard mechanic drives the plot forward. She'll end up in situations where she has to choose what dies, and people will weaponize her inability to say no. The book probably investigates what she sacrifices and who knows enough about her to exploit it.",
+          "undefined_words": [
+            "whip (second rung of five)",
+            "lineage anybody can read",
+            "root anybody can measure"
+          ],
+          "open_questions": [
+            "what happened at the stairwell and hedge that brought her here?",
+            "what makes her able to take grafts from anyone when it doesn't work that way for other people?",
+            "when something dies to make room for a new graft, is that permanent or does she get it back?"
+          ]
+        }
+      }
+    },
+    {
+      "item_id": "direct8:2",
+      "title": "The Dog With No Line",
+      "source": "forged",
+      "words": 249,
+      "agreement_can_do": 0.1149,
+      "agreement_in_the_way": 0.0688,
+      "agreement_expect_next": 0.0713,
+      "readers_confused": 3,
+      "unclear_items": 8,
+      "unclear_by_reader": {
+        "climber": [
+          "imprinting or bonding mechanics (what does it mean for an animal to 'answer to' someone?)",
+          "what the animals are actually used for",
+          "what Hark Yard trains students to become"
+        ],
+        "stranger": [
+          "hatchling",
+          "egg room",
+          "the great houses"
+        ],
+        "regular": [
+          "the egg room",
+          "the great houses"
+        ],
+        "mechanism": []
+      },
+      "readers_with_open_questions": 4,
+      "open_questions_by_reader": {
+        "climber": [
+          "How did she and Rook end up here, and why do they remember their old life?",
+          "How does she hide her knowledge without revealing she's not actually from this world?",
+          "Does the oldest house's resistance come from pride, or do they know something dangerous about mixed breeding that she doesn't?"
+        ],
+        "stranger": [
+          "They both woke up somewhere else — why did Bea die and wake up as a child?",
+          "How does the bonding imprint work for someone who already bonded before she got here?",
+          "What specifically is killing the high-bred animals?"
+        ],
+        "regular": [
+          "Why did Bea die and wake up as a seven-year-old with Rook exactly as she was before?",
+          "What does the oldest house actually know about why their animals die, and why do they want to keep it that way?",
+          "How long does Wren have before Rook is too old to matter?"
+        ],
+        "mechanism": [
+          "How does Rook bond with Wren a second time if the rule is strictly one per lifetime?",
+          "What's actually killing all the inbred animals?",
+          "Can Wren convince the great houses to accept her help before Rook is too old?"
+        ]
+      },
+      "answers": {
+        "climber": {
+          "can_do": "She has two animals when everyone only gets one, and one of them carries genetics uncontaminated by centuries of deliberate inbreeding. In a world where animal bloodlines are dying from the exact thing she can diagnose, that's leverage.",
+          "in_the_way": "She's at the absolute bottom of a rigid school hierarchy, her dog is aging on an unknown timeline, and the houses with the most to lose from her knowing what she knows will actively work against her getting near their birds. She also has to hide where she actually comes from—a veterinary nurse from somewhere else entirely, now trapped in an eleven-year-old's body.",
+          "expect_next": "A progression fantasy where she starts at the bottom of a breeding school and has to climb by proving her theory while keeping both her animals alive and managing open hostility from the established powers. Probably early chapters of her settling in, the other students and teachers clocking that she's strange, and Rook's mortality becoming a real pressure point.",
+          "undefined_words": [
+            "imprinting or bonding mechanics (what does it mean for an animal to 'answer to' someone?)",
+            "what the animals are actually used for",
+            "what Hark Yard trains students to become"
+          ],
+          "open_questions": [
+            "How did she and Rook end up here, and why do they remember their old life?",
+            "How does she hide her knowledge without revealing she's not actually from this world?",
+            "Does the oldest house's resistance come from pride, or do they know something dangerous about mixed breeding that she doesn't?"
+          ]
+        },
+        "stranger": {
+          "can_do": "She understands animal genetics and husbandry from her old world—knowledge completely useless here until she realizes the great houses have been catastrophically inbreeding their bloodlines and killing themselves off by doing exactly what everyone respects.",
+          "in_the_way": "She has broken the one-animal-per-lifetime rule and that makes her visible and dangerous. The oldest house wants her gone. The animal she actually brought with her is getting old, and she doesn't understand yet why she's here or why he came with her.",
+          "expect_next": "A progression fantasy with a training-school hierarchy and a conspiracy mystery underneath. She'll hide what she is while proving her value, slowly work out why the noble animals are all dying young, and eventually have to choose between protecting herself or using what she knows to fix it.",
+          "undefined_words": [
+            "hatchling",
+            "egg room",
+            "the great houses"
+          ],
+          "open_questions": [
+            "They both woke up somewhere else — why did Bea die and wake up as a child?",
+            "How does the bonding imprint work for someone who already bonded before she got here?",
+            "What specifically is killing the high-bred animals?"
+          ]
+        },
+        "regular": {
+          "can_do": "She remembers being someone else, and she knows how to keep animals healthy in ways this world has forgotten. The catch is she has proof of both things in one impossible form: two bonded animals instead of one.",
+          "in_the_way": "The people with the most power have a stake in things staying broken. And Rook won't live forever.",
+          "expect_next": "A school story with mystery underneath — she arrives at the bottom, learns the systems and the politics, and gradually proves she knows something nobody else wants to face. Probably progression-flavored: she gets better at something specific, either with the animals themselves or at navigating what the great houses will allow.",
+          "undefined_words": [
+            "the egg room",
+            "the great houses"
+          ],
+          "open_questions": [
+            "Why did Bea die and wake up as a seven-year-old with Rook exactly as she was before?",
+            "What does the oldest house actually know about why their animals die, and why do they want to keep it that way?",
+            "How long does Wren have before Rook is too old to matter?"
+          ]
+        },
+        "mechanism": {
+          "can_do": "She has two bonded animals when everyone else gets one, and she's got access to genetics that could solve the inbreeding crisis the great houses are facing.",
+          "in_the_way": "The oldest house would rather watch their birds die than accept her help, and Rook won't live forever.",
+          "expect_next": "A literary progression fantasy where Wren starts at the bottom of Hark Yard and has to prove that genetic diversity matters more than tradition.",
+          "undefined_words": [],
+          "open_questions": [
+            "How does Rook bond with Wren a second time if the rule is strictly one per lifetime?",
+            "What's actually killing all the inbred animals?",
+            "Can Wren convince the great houses to accept her help before Rook is too old?"
+          ]
+        }
+      }
+    },
+    {
+      "item_id": "direct7:2",
+      "title": "The Girl Who Worked in Daylight",
+      "source": "forged",
+      "words": 238,
+      "agreement_can_do": 0.1014,
+      "agreement_in_the_way": 0.1788,
+      "agreement_expect_next": 0.1121,
+      "readers_confused": 4,
+      "unclear_items": 10,
+      "unclear_by_reader": {
+        "climber": [
+          "rungs",
+          "the dark",
+          "the stone",
+          "Ashvane"
+        ],
+        "stranger": [
+          "the fourth thing",
+          "the stone"
+        ],
+        "regular": [
+          "the fourth thing",
+          "the stone"
+        ],
+        "mechanism": [
+          "the fourth thing",
+          "cracked"
+        ]
+      },
+      "readers_with_open_questions": 4,
+      "open_questions_by_reader": {
+        "climber": [
+          "Where did she get the stone?",
+          "What does each rung actually let someone do?",
+          "Will anyone figure out she isn't who she's supposed to be?",
+          "Can she reach four rungs, and what will she have to give up to get there?"
+        ],
+        "stranger": [
+          "What is the fourth thing and why is that her goal?",
+          "What stone is she carrying and why does that family care where it came from?"
+        ],
+        "regular": [
+          "What is the stone and why does the family want it?",
+          "What does it mean to become the fourth thing?",
+          "Will she actually make it to four rungs, or is that goal too far away?"
+        ],
+        "mechanism": [
+          "What are the other three things, and why is becoming the fourth one special?",
+          "What is the stone and why do the tool-makers want it so badly?",
+          "How does a nine-year-old already have two rungs?"
+        ]
+      },
+      "answers": {
+        "climber": {
+          "can_do": "She knows a shortcut to heat-judgment that works the first time—something everyone else needs twenty years to learn through trial in darkness. She also dies and comes back as a nine-year-old in a world where nobody would guess that about her.",
+          "in_the_way": "She's two rungs up a progression ladder and can't move her father without being four. Everything she learns requires her body to change in permanent ways. The tool-making family knows she has something (the stone) and wants to know where it came from.",
+          "expect_next": "A progression fantasy where she goes to school and uses her technical advantage to climb faster than expected, and where the stone and the family's interest in it become a friction point. Probably exploring whether she can actually reach the rung she needs and what her body will look like when she does.",
+          "undefined_words": [
+            "rungs",
+            "the dark",
+            "the stone",
+            "Ashvane"
+          ],
+          "open_questions": [
+            "Where did she get the stone?",
+            "What does each rung actually let someone do?",
+            "Will anyone figure out she isn't who she's supposed to be?",
+            "Can she reach four rungs, and what will she have to give up to get there?"
+          ]
+        },
+        "stranger": {
+          "can_do": "She sees something about heat and metal that took everyone else twenty years in the dark to learn—she can do it in daylight because she brought knowledge from a different world.",
+          "in_the_way": "She only has one trick, not a craft. Her father is locked in a state only someone much more powerful than her can unlock. And someone already wants to know where she came from, which means her advantage is already suspect.",
+          "expect_next": "A progression fantasy. She goes to school to get stronger, learns what the system actually is, figures out what the stone is and why it matters, probably becomes powerful enough to help her father, and discovers what the fourth thing means and why she's here.",
+          "undefined_words": [
+            "the fourth thing",
+            "the stone"
+          ],
+          "open_questions": [
+            "What is the fourth thing and why is that her goal?",
+            "What stone is she carrying and why does that family care where it came from?"
+          ]
+        },
+        "regular": {
+          "can_do": "She carries precision knowledge from her past life in industrial metalwork—she understands how materials behave under heat in ways that nobody here, working by feel in darkness, has ever had to know.",
+          "in_the_way": "She's only two rungs up and needs four to save her father. The family that makes all the tools wants her stone and knows she's different. The craft takes your body piece by piece, and twenty years of learning in darkness waits ahead.",
+          "expect_next": "A progression fantasy rooted in a real craft system. She'll head to Ashvane, figure out what she's becoming, try to climb the ranks before the family catches up, and find out if her edge is big enough to matter.",
+          "undefined_words": [
+            "the fourth thing",
+            "the stone"
+          ],
+          "open_questions": [
+            "What is the stone and why does the family want it?",
+            "What does it mean to become the fourth thing?",
+            "Will she actually make it to four rungs, or is that goal too far away?"
+          ]
+        },
+        "mechanism": {
+          "can_do": "She knows heat and magnets from her old world, so she can judge steel temperature by its color alone—a trick that gives her first-try success where experienced smiths need years of trial in the dark.",
+          "expect_next": "A progression fantasy where she climbs the smithing hierarchy through technical knowledge rather than raw talent; the school at Ashvane probably forces her to compete against people who've trained in the dark their whole lives.",
+          "in_the_way": "Her father needs someone four rungs above him willing to hold him through screaming for six hours. She's two rungs. Everything she gains has a bodily cost, and someone wants to know where she got her stone.",
+          "undefined_words": [
+            "the fourth thing",
+            "cracked"
+          ],
+          "open_questions": [
+            "What are the other three things, and why is becoming the fourth one special?",
+            "What is the stone and why do the tool-makers want it so badly?",
+            "How does a nine-year-old already have two rungs?"
+          ]
+        }
+      }
+    },
+    {
+      "item_id": "reference:operator",
+      "title": "reference-pitch",
+      "source": "human-written reference",
+      "words": 172,
+      "agreement_can_do": 0.0918,
+      "agreement_in_the_way": 0.1318,
+      "agreement_expect_next": 0.1175,
+      "readers_confused": 1,
+      "unclear_items": 1,
+      "unclear_by_reader": {
+        "climber": [],
+        "stranger": [
+          "merged"
+        ],
+        "regular": [],
+        "mechanism": []
+      },
+      "readers_with_open_questions": 4,
+      "open_questions_by_reader": {
+        "climber": [
+          "Does applying biology to magic actually *work* as a framework, or is it just how George thinks about it?",
+          "Why did the AI come across but nothing else?",
+          "What's the larger world threat that a slow-burn academy story would eventually collide with?"
+        ],
+        "stranger": [
+          "What does 'merged' actually mean—can he ever be alone, or is the AI always there in his head?",
+          "Will understanding the cellular mechanics of magic make him overpowered or will it slow him down compared to intuitive casters?"
+        ],
+        "regular": [
+          "Why does he wake up as a child?",
+          "How does the AI 'merge' with him and what does that mean for how they interact?",
+          "Will his biology knowledge actually transfer to this world's magic, or is he going to have to learn a completely new system anyway?"
+        ],
+        "mechanism": [
+          "How does the merger with the AI work mechanically and why does only his AI come through?",
+          "What specifically are the cellular mechanisms that generate mana, and how much direct control does George have over them?",
+          "Is his background in modern biology unique in this world, or would any native scholar eventually figure out the same patterns?"
+        ]
+      },
+      "answers": {
+        "climber": {
+          "can_do": "He can apply systematic biological knowledge to manipulate a magic system that most practitioners treat as intuition, and he's got a companion AI that can read his own body back to him as diagnostic feedback.",
+          "in_the_way": "He's lost everything and everyone from his old world except the AI. He's trapped in a child's body learning a magic system from first principles while other practitioners treat it as second nature. The biology degree only works as an advantage if the world's magic actually respects that translation.",
+          "expect_next": "A slow-burn progression story where the appeal is watching him systematically unlock magic through biology instead of talent or innate sensitivity. Academy arc incoming, probably with some friction between his methodical approach and how wizards normally learn. The larger plot lives somewhere downstream of that.",
+          "undefined_words": [],
+          "open_questions": [
+            "Does applying biology to magic actually *work* as a framework, or is it just how George thinks about it?",
+            "Why did the AI come across but nothing else?",
+            "What's the larger world threat that a slow-burn academy story would eventually collide with?"
+          ]
+        },
+        "stranger": {
+          "can_do": "He has a biology degree and an AI that can read his own cells back to him, giving him the ability to understand magic as cellular biology instead of just learning spells by rote—nobody else in this world can do this.",
+          "in_the_way": "He wakes up as a child in a place he doesn't understand. He's the only survivor from his world, so he's alone except for an AI that's somehow merged with him in ways that aren't explained. The magic system is complex and learning it is slow.",
+          "expect_next": "School-based progression fantasy. He'll figure out how biology and magic connect, the merged AI will either become his greatest tool or his biggest problem, and it'll be character-focused rather than action-heavy. The back-cover tells me most of the first act, so the interest is in how it actually plays out, not what happens.",
+          "undefined_words": [
+            "merged"
+          ],
+          "open_questions": [
+            "What does 'merged' actually mean—can he ever be alone, or is the AI always there in his head?",
+            "Will understanding the cellular mechanics of magic make him overpowered or will it slow him down compared to intuitive casters?"
+          ]
+        },
+        "regular": {
+          "can_do": "He can learn magic by treating it as a biology problem, running real-time diagnostics on his own cells while casting. That's a specific enough angle that it actually gives him an edge, rather than just making him smart in a generic way.",
+          "in_the_way": "He's starting over as a child with no context, no home language probably, no social standing. Everything is new except the AI voice in his head and his memory of how living things work. The AI is all he has left but also the thing that makes him alien to this world.",
+          "expect_next": "A progression fantasy academy story where he slowly figures out the rules of magic by treating it like cellular biology. The premise promises system-building rather than just hand-waving, which means I'm expecting to actually *learn* something alongside him, the way Mother of Learning does it. Whether it delivers on that or just uses the biology framing as window dressing is the test.",
+          "undefined_words": [],
+          "open_questions": [
+            "Why does he wake up as a child?",
+            "How does the AI 'merge' with him and what does that mean for how they interact?",
+            "Will his biology knowledge actually transfer to this world's magic, or is he going to have to learn a completely new system anyway?"
+          ]
+        },
+        "mechanism": {
+          "can_do": "George can learn and manipulate magic by understanding it as biology—he has both the scientific knowledge to recognize patterns in how cells generate mana, and real-time sensor feedback from the AI reading his own body's processes as he experiments.",
+          "in_the_way": "He's a child learning in an alien world, starting from zero practical knowledge of how his own body's magic production actually works, dependent on an AI companion as his only anchor to who he was.",
+          "expect_next": "A slow-burn progression fantasy where George moves through a magic academy discovering whether the biology-as-foundation premise actually delivers specific, testable rules—or whether 'biological magic' is just flavor text for a system that works like any other.",
+          "undefined_words": [],
+          "open_questions": [
+            "How does the merger with the AI work mechanically and why does only his AI come through?",
+            "What specifically are the cellular mechanisms that generate mana, and how much direct control does George have over them?",
+            "Is his background in modern biology unique in this world, or would any native scholar eventually figure out the same patterns?"
+          ]
+        }
+      }
+    },
+    {
+      "item_id": "direct5:1",
+      "title": "The Slow Fire",
+      "source": "forged",
+      "words": 111,
+      "agreement_can_do": 0.0721,
+      "agreement_in_the_way": 0.0815,
+      "agreement_expect_next": 0.1796,
+      "readers_confused": 3,
+      "unclear_items": 13,
+      "unclear_by_reader": {
+        "climber": [],
+        "stranger": [
+          "Cooling Yard",
+          "the fire will not take back to green",
+          "treatments",
+          "House Bell",
+          "yard-smith"
+        ],
+        "regular": [
+          "Cooling Yard",
+          "fire will not take back to green",
+          "yard-smith",
+          "House Bell"
+        ],
+        "mechanism": [
+          "Cooling Yard",
+          "taken back to green",
+          "House Bell",
+          "every crack he buys"
+        ]
+      },
+      "readers_with_open_questions": 3,
+      "open_questions_by_reader": {
+        "climber": [],
+        "stranger": [
+          "How did he actually achieve this hybrid state that shouldn't be possible?",
+          "What happens when you reach the top of the ladder of five?",
+          "Can any of this be reversed, or is he truly locked in?",
+          "Why is House Bell interested—is this dangerous attention or recruitment?"
+        ],
+        "regular": [
+          "How did Theo actually do it—what did he do differently in the treatments?",
+          "What happens when he reaches treatment five?",
+          "What is he becoming, physically?"
+        ],
+        "mechanism": [
+          "What are the five treatments and what do the remaining two do?",
+          "What does it mean to be 'taken back to green'?",
+          "How did he get stuck at three when apparently you're supposed to either complete the ladder or not start?"
+        ]
+      },
+      "answers": {
+        "climber": {},
+        "stranger": {
+          "can_do": "His body has acquired a hybrid state that defies the normal rules—solid enough to ring like metal but flexible enough to bend, when everyone else's stays locked into one state or the other. He's achieved something in this system that's supposed to be impossible.",
+          "in_the_way": "Permanence. Every treatment he accepts is irreversible, and he's already three-fifths of the way up a path he can't back out of or reset. He's locked into a trajectory with consequences that will compound forever.",
+          "expect_next": "A progression fantasy or LitRPG where the protagonist has to learn the rules of a system by already being trapped inside it. The world has scaffolding (treatments, a ladder, House Bell as some kind of authority), and he's going to discover what each piece does the hard way—by living with his choices.",
+          "undefined_words": [
+            "Cooling Yard",
+            "the fire will not take back to green",
+            "treatments",
+            "House Bell",
+            "yard-smith"
+          ],
+          "open_questions": [
+            "How did he actually achieve this hybrid state that shouldn't be possible?",
+            "What happens when you reach the top of the ladder of five?",
+            "Can any of this be reversed, or is he truly locked in?",
+            "Why is House Bell interested—is this dangerous attention or recruitment?"
+          ]
+        },
+        "regular": {
+          "can_do": "Theo survived something that should have either killed him or transformed him like everyone else survives it, and now he's stuck carrying the damage of it permanently.",
+          "in_the_way": "He can't reverse or escape what happened to him. Whatever this process is—three stages into five—it accumulates visible wear that won't fade, and he's locked into seeing how far it goes.",
+          "expect_next": "A progression fantasy with a hard magic system. The Cooling Yard is going to be a place where people undergo some kind of structured transformation, and Theo's anomaly is either going to make him valuable or dangerous to the people running it. I expect the book to slowly explain what the treatments do and whether Theo is becoming something broken or something new.",
+          "undefined_words": [
+            "Cooling Yard",
+            "fire will not take back to green",
+            "yard-smith",
+            "House Bell"
+          ],
+          "open_questions": [
+            "How did Theo actually do it—what did he do differently in the treatments?",
+            "What happens when he reaches treatment five?",
+            "What is he becoming, physically?"
+          ]
+        },
+        "mechanism": {
+          "can_do": "His body is hardened like struck metal but bends without breaking, and once modified this way, he can never reverse it or start over. Whatever this takes, it's permanent.",
+          "in_the_way": "Three treatments down, two to go on a ladder of five—and he can't backtrack. The fact that House Bell's already asking about him suggests this shouldn't have been possible, or at least shouldn't have been possible to survive.",
+          "expect_next": "A progression fantasy with a hard magic system rooted in some kind of body-modification trade or ritual. The Cooling Yard and the concept of being 'taken back to green' suggest a foundry or furnace metaphor applied literally to flesh. I expect to learn what the treatments are and what the full ladder does, and to watch Theo figure out whether he's gained something remarkable or locked himself into a trap.",
+          "undefined_words": [
+            "Cooling Yard",
+            "taken back to green",
+            "House Bell",
+            "every crack he buys"
+          ],
+          "open_questions": [
+            "What are the five treatments and what do the remaining two do?",
+            "What does it mean to be 'taken back to green'?",
+            "How did he get stuck at three when apparently you're supposed to either complete the ladder or not start?"
+          ]
+        }
+      }
+    }
+  ],
+  "spend": {
+    "input": 99896,
+    "output": 192980,
+    "cache_read": 1821018,
+    "cache_write": 533276,
+    "equivalent_usd": 2.3134
+  },
+  "wall_seconds": 1496.8
+}

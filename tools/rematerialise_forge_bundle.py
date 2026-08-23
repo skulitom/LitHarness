@@ -121,7 +121,11 @@ def bundle_files(
             "beat key minted at another, and only you know which number is the wrong one"
         )
 
-    complaints = architect.gate_candidate(candidate, scenes=scenes)
+    # **The subject check is deliberately not run here** (`architect.gate_candidate`'s
+    # docstring, §115.3's precedent). This tool rebuilds a bundle for a world a person
+    # already picked; whether that world should have been picked was settled then, and a
+    # gate added afterwards must not make a shipped pilot unrebuildable.
+    complaints = architect.gate_candidate(candidate, scenes=scenes, include_subject=False)
     if complaints:
         raise BundleFault(
             f"the picked world no longer clears its own gates at {scenes} scenes: "

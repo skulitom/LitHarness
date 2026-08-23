@@ -3350,8 +3350,49 @@ def cmd_forge(args: argparse.Namespace) -> int:
             return EXIT_ATTENTION
         result, resolution = registry.complete(request)
         if not result.conforms or result.parsed is None:
+            # **The answer is kept and the spend is recorded, because neither was true and it
+            # cost two forges to find out.** On 2026-08-23 two of three K=3 forges landed here
+            # and this branch printed one line and returned: the paid answer was discarded
+            # unread, and because no decision was recorded, `store.spend_on` — which the budget
+            # ceiling reads — never saw the money. Diagnosing it needed a wrapper around the
+            # provider to catch the envelope a second time.
+            #
+            # What the kept answer said, once it could be read: 64,546 output tokens including
+            # 23,630 of thinking, and a `result` holding 1,553 characters that begin mid-object.
+            # The answer had outgrown a single message and what came back was its tail. The
+            # conforming forge beside it ran to 57,862 output tokens, so the size is the
+            # diagnosis and the output token count is printed here for the next person.
+            out.mkdir(parents=True, exist_ok=True)
+            refused_path = out / "refused.txt"
+            refused_path.write_text(result.text, encoding="utf-8")
+            gate = GateOutcome(
+                gate=GateKind.SHAPE,
+                rule_or_critic_id="shape.forge.conforms.v0",
+                passed=False,
+                detail=(
+                    f"the answer does not conform to the world schema "
+                    f"({result.usage.output_tokens} output token(s)); kept at {refused_path}"
+                ),
+            )
+            refusal = PolicyDecision(
+                decision_id=decision_id_for(f"forge:{architect_id}:{args.shape}", 0, (gate,)),
+                outcome=Outcome.ESCALATE,
+                gates=(gate,),
+                profile=architect.PROFILE,
+                provider=result.provider,
+                model=result.model,
+                fell_back_from=tuple(resolution.fell_back_from),
+                invocations=result.invocations,
+                total_tokens=result.usage.total,
+                cost_usd=result.cost_usd,
+                reason=gate.detail,
+            )
+            store.record_decision(refusal, decided_at=stamp)
             print(
-                "litharness: the forge returned an answer that does not conform to the schema",
+                "litharness: the forge returned an answer that does not conform to the "
+                f"schema; {result.usage.output_tokens} output token(s), kept at "
+                f"{refused_path}. An answer this size is usually one message short of "
+                "whole — forge fewer worlds (--k 2) rather than retrying at the same width",
                 file=sys.stderr,
             )
             return EXIT_ATTENTION
