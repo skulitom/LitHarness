@@ -33,6 +33,10 @@ FIXTURE = Path(__file__).resolve().parent / "fixtures" / "lrc-synthetic-20-chapt
 #: table also carries the ledger's 20-scene row, which stays reference data here.
 HANDOFF_HORIZONS = (30, 57, 82, 120)
 
+
+def _handoff_rows() -> list[tuple[int, tuple[int, int, int, int]]]:
+    return [(s, e) for s, e in sorted(arm.SECTION_56_4.items()) if s in HANDOFF_HORIZONS]
+
 #: Where the sibling repository's long-serial workloads land when its generator has run.
 RLM_DIR = Path(r"C:\DEV\LongRangeContext\benchmarks\corpora\rlm")
 
@@ -244,7 +248,7 @@ def _reference_table() -> list[dict[str, int]]:
             "facts": expected[2],
             "dark": expected[3],
         }
-        for scenes, expected in sorted((s, e) for s, e in arm.SECTION_56_4.items() if s in HANDOFF_HORIZONS)
+        for scenes, expected in _handoff_rows()
     ]
 
 
@@ -252,7 +256,7 @@ def _reference_table() -> list[dict[str, int]]:
 def test_census_over_rlm_serial_lands_on_section_56_4():
     rows: list[dict[str, int]] = []
     failures: list[str] = []
-    for scenes, expected in sorted((s, e) for s, e in arm.SECTION_56_4.items() if s in HANDOFF_HORIZONS):
+    for scenes, expected in _handoff_rows():
         path = RLM_DIR / f"rlm-serial-{scenes}.json"
         if not path.exists():
             pytest.fail(
