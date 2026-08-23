@@ -245,3 +245,62 @@ def test_the_registry_still_satisfies_the_port_the_application_asks_for() -> Non
 
     for method in ("resolve", "complete", "reset_health"):
         assert callable(getattr(generator, method)), f"the port names {method}"
+
+
+def test_every_role_that_writes_for_a_reader_carries_the_house_rules() -> None:
+    """One role learning something is not the pipeline learning it, and that is a measured claim.
+
+    On 2026-08-23 five rule changes made a forged premise clear and made its ladder a chain of
+    abilities somebody keeps. Measured on premises they worked. Then the first book written on
+    that world opened on 1,067 words of a call-centre shift rendered step by step, and the
+    operator read chapter one as though none of it had happened \u2014 because none of it had. Every
+    change had edited `application/architect._RULES`, and the Writer's whole system prompt was
+    three sentences about not writing headings.
+
+    `domain/house` is the single home, and this is the test that a new role cannot quietly skip
+    it, which is exactly how the Writer came to be skipped.
+
+    **The roles deliberately absent, so their absence reads as a decision.** `judge_panel` and the
+    audit paths judge rather than write; `narrative_planner` proposes plan *edits* as JSON;
+    `summarize` writes summaries the packet reads and no reader ever sees. A role that starts
+    producing reader-facing prose belongs on this list and its own test failure will say so.
+    """
+    from litharness.application import architect, outline, planner
+    from litharness.domain import house
+
+    assert house.CLARITY in house.HOUSE_RULES
+    assert house.READER in house.HOUSE_RULES
+
+    # The forge: the world and the premise a reader meets first.
+    assert house.HOUSE_RULES in architect._SYSTEM_MESSAGE
+
+    # The writer and the outline are checked at the source rather than by calling them, and the
+    # weakness is stated rather than hidden: `planner.render_prompt` needs a beat and a built
+    # context packet, and `outline.render_outline_request` needs a premise and a beat sheet, so
+    # constructing either here would put a fixture in an architecture test. What is asserted is
+    # that each routes its system string through the one function, which is the property that
+    # would have failed before today and the one a new role can forget.
+    for module in (planner, outline):
+        source = Path(module.__file__).read_text(encoding="utf-8")
+        assert "house.with_house_rules(" in source, module.__name__
+
+
+def test_the_house_rules_are_not_a_judgment_about_a_story() -> None:
+    """`planner.point_of_view`'s boundary, applied to the block that now rides in every prompt.
+
+    That docstring refuses an adjective because *how* to handle a protagonist is the director's
+    to say and a default here would be "this system's own taste arriving in every prompt it ever
+    renders" (\u00a795, \u00a797.1). The two rules pass because neither is about a story: one says a
+    reader must be able to follow the words, the other says the words should be spent on what the
+    book is selling. Checked against the same forbidden list the protagonist rule is checked
+    against, whole words rather than substrings.
+    """
+    from litharness.domain import house
+
+    lowered = house.HOUSE_RULES.lower()
+    for forbidden in (
+        "win", "winning", "hero", "likeable", "likable", "sympathetic", "root for",
+        "faster", "fastest", "strongest", "best", "succeed", "success", "triumph",
+        "interesting", "compelling", "exciting", "gripping",
+    ):
+        assert not re.search(rf"\b{forbidden}\b", lowered), forbidden

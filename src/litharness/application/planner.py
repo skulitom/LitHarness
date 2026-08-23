@@ -74,7 +74,7 @@ from litharness.application.plan_search import (
     span_select_job_id,
 )
 from litharness.application.ports import ApplicationStore, PlanningStore
-from litharness.domain import worlds
+from litharness.domain import house, worlds
 from litharness.domain.beats import (
     SIX_BEAT,
     Beat,
@@ -411,7 +411,14 @@ def render_prompt(
     protagonist passes `None`, and its prompt is byte-identical to what it was. It sits beside
     the chapter cue and before the dramatic function, for the chapter cue's reason.
     """
-    system = (
+    # **The house rules reach the writer, and until 2026-08-23 nothing like them did.** Five
+    # rule changes that afternoon made a forged premise clear and made its ladder a chain of
+    # abilities; every one of them edited the Architect. The first book written on that world
+    # opened on a call-centre shift rendered step by step, and the operator's reading was that
+    # the clarity work had not been applied at all. It had not: this prompt was the three
+    # sentences below and nothing else. `domain/house` carries the two rules once, with the
+    # boundary `point_of_view` states — neither of them is a judgment about a story.
+    system = house.with_house_rules(
         "You are drafting one scene of a novel. Write only the scene's prose: no headings, "
         "no commentary, no summary of what you wrote. The context below is established and "
         "may be relied on; do not contradict it."

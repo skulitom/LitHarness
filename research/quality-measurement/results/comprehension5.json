@@ -1,0 +1,421 @@
+{
+  "generated_at": "2026-08-23T20:56:56Z",
+  "panel": [
+    "climber",
+    "stranger",
+    "regular",
+    "mechanism"
+  ],
+  "panel_model": "claude-haiku-4-5",
+  "scorer": "mean pairwise Jaccard over content words; no model scores agreement",
+  "items": [
+    {
+      "item_id": "reference:operator-damaged",
+      "title": "reference-pitch-damaged",
+      "source": "human-written reference",
+      "words": 171,
+      "agreement_can_do": 0.1759,
+      "agreement_in_the_way": 0.1296,
+      "agreement_expect_next": 0.1184,
+      "readers_confused": 3,
+      "unclear_items": 6,
+      "unclear_by_reader": {
+        "climber": [
+          "kell-lattice",
+          "mana"
+        ],
+        "stranger": [],
+        "regular": [
+          "kell-lattice"
+        ],
+        "mechanism": [
+          "kell-lattice",
+          "mana",
+          "merged with him"
+        ]
+      },
+      "readers_with_open_questions": 4,
+      "open_questions_by_reader": {
+        "climber": [
+          "What does 'merged with him' actually mean — is the AI still a separate voice or has it become part of his thinking?",
+          "Does water magic have specific cellular costs, and what happens if George pushes too hard?",
+          "Why water first, and does the progression follow an elemental or biological logic?"
+        ],
+        "stranger": [
+          "Does his biology degree actually work, or is magic's version of 'cells produce mana' completely different from what he thinks it should be?",
+          "Why did only the AI come through—is that explained, or is it just the weird accident he got?",
+          "Is the AI still talking to him like a separate thing, or are they actually merged enough that he can't tell where one ends and the other starts?"
+        ],
+        "regular": [
+          "Why did the AI come across and nothing else?",
+          "Does learning magic his way make him faster than natives, or does it lock him into a narrow path?",
+          "How does a kid's body change things—is that just flavor or a real constraint?"
+        ],
+        "mechanism": [
+          "the only person from home he has left",
+          "Later he joins a magic academy and the story goes on from there",
+          "can he learn anything besides water magic?"
+        ]
+      },
+      "answers": {
+        "climber": {
+          "can_do": "He can reverse-engineer magic through cellular biology and direct his own body's mana production with precision that nobody else in this world can match, because he has both academic knowledge and an AI that can read his tissue state in real time.",
+          "in_the_way": "He's a child in a foreign world with no status or resources, trying to learn a system he has to rebuild from biological first principles instead of just following academy lessons like everyone else. The slow burn suggests that even though he has the advantage, it takes work.",
+          "expect_next": "A progression fantasy where a fish-out-of-water protagonist uses systematic biological knowledge to solve magical problems in ways that confuse or impress the locals at an academy. The AI companion is both his link to home and his toolkit for understanding magic as applied physiology rather than mysticism.",
+          "undefined_words": [
+            "kell-lattice",
+            "mana"
+          ],
+          "open_questions": [
+            "What does 'merged with him' actually mean — is the AI still a separate voice or has it become part of his thinking?",
+            "Does water magic have specific cellular costs, and what happens if George pushes too hard?",
+            "Why water first, and does the progression follow an elemental or biological logic?"
+          ]
+        },
+        "stranger": {
+          "can_do": "He knows how to read biology and he's got direct feedback on his own body's processes, which is his only tool for understanding a magic system that actually runs on biology.",
+          "in_the_way": "He's a child in a world that doesn't speak his language, with only the AI he came with—everything else from home is gone. He has to invent the rules as he goes.",
+          "expect_next": "A progression story where he's slowly figuring out magic through biology while everyone around him has been doing it the traditional way their whole lives. Probably friction with people who think he's crazy or wrong. Academy means structure and peers, which usually means both allies and people who resent the outsider. Slow burn means I'm signing up for chapters where he's gently getting better at understanding his own cells and what they can do.",
+          "undefined_words": [],
+          "open_questions": [
+            "Does his biology degree actually work, or is magic's version of 'cells produce mana' completely different from what he thinks it should be?",
+            "Why did only the AI come through—is that explained, or is it just the weird accident he got?",
+            "Is the AI still talking to him like a separate thing, or are they actually merged enough that he can't tell where one ends and the other starts?"
+          ]
+        },
+        "regular": {
+          "can_do": "He approaches magic like a problem set instead of an art—he can reverse-engineer spells by reading his own body's chemistry, which is something nobody else there seems to do.",
+          "in_the_way": "He's a child in a world full of adults and magic users. The only person who knows him is the AI, and they're still figuring out how to exist together after being merged. Everyone else has years of learning magic already done by the time he shows up.",
+          "expect_next": "A progression fantasy that leans technical—academy years where he slowly gets better by understanding *why* the magic works instead of just memorizing gestures or incantations. The AI gives him an unfair advantage in the form of real-time biofeedback. Probably some fish-out-of-water comedy and eventually tests where his biology-based approach surprises people.",
+          "undefined_words": [
+            "kell-lattice"
+          ],
+          "open_questions": [
+            "Why did the AI come across and nothing else?",
+            "Does learning magic his way make him faster than natives, or does it lock him into a narrow path?",
+            "How does a kid's body change things—is that just flavor or a real constraint?"
+          ]
+        },
+        "mechanism": {
+          "can_do": "He has a biology degree and an AI that can read his own tissue, so he can reverse-engineer magic by understanding the cellular mechanism instead of just memorizing spells like everyone else does.",
+          "in_the_way": "He's a child alone in a strange world with only an AI companion, which means everything he learns has to come from experimentation. Magic doesn't work if you don't understand it, and understanding takes time.",
+          "expect_next": "Progression fantasy with a slow academy arc. He shows up with a completely wrong framework for how magic works, probably clashes with whatever the conventional method is, and over a long book gradually discovers that his biological approach either works better or reveals things nobody else noticed. The AI probably turns out to matter in ways the established system didn't expect.",
+          "undefined_words": [
+            "kell-lattice",
+            "mana",
+            "merged with him"
+          ],
+          "open_questions": [
+            "the only person from home he has left",
+            "Later he joins a magic academy and the story goes on from there",
+            "can he learn anything besides water magic?"
+          ]
+        }
+      }
+    },
+    {
+      "item_id": "direct12:2",
+      "title": "The Old Work Under Vess",
+      "source": "forged",
+      "words": 337,
+      "agreement_can_do": 0.1065,
+      "agreement_in_the_way": 0.0659,
+      "agreement_expect_next": 0.1086,
+      "readers_confused": 2,
+      "unclear_items": 5,
+      "unclear_by_reader": {
+        "climber": [
+          "the runner",
+          "the great lines",
+          "the old work"
+        ],
+        "stranger": [],
+        "regular": [],
+        "mechanism": [
+          "the old work",
+          "the masters"
+        ]
+      },
+      "readers_with_open_questions": 4,
+      "open_questions_by_reader": {
+        "climber": [
+          "What is his mental age — is he a 27-year-old mind in an 8-year-old body, and what does that mean for how he relates to the other students and masters?",
+          "Why can't anyone alive change the enormous ancient line if the whole magic system is just following physical cuts?"
+        ],
+        "stranger": [
+          "Is the old work actually made of pieces?",
+          "Can Tomas survive or succeed within an institution that has no slot for how he thinks?"
+        ],
+        "regular": [
+          "Is the ancient line actually made of pieces?",
+          "Why did Tomas fall into this world the way he did?",
+          "If you can understand something by breaking it into parts, can you rebuild something as enormous as the old work?"
+        ],
+        "mechanism": [
+          "which has started running slow",
+          "Tomas thinks it might be made of pieces",
+          "Nobody alive can change it, because nobody can hold it"
+        ]
+      },
+      "answers": {
+        "climber": {
+          "can_do": "Build things by snapping together small pieces he can hold in his head instead of memorizing vast integrated systems, which lets him construct solutions other cutters cannot because they can't read his work and don't think that way.",
+          "in_the_way": "The entire social and educational apparatus of his world measures mastery by memorization and exact replication of ancient great lines, which he fundamentally rejects. He's also physically a child trying to learn a craft that requires precision and respect.",
+          "expect_next": "A progression fantasy where Tomas gradually develops credibility and skill through his modular approach, probably earning the right to attempt repair of the broken ancient line that nobody else can touch, and discovering that it actually is decomposable as he suspected.",
+          "undefined_words": [
+            "the runner",
+            "the great lines",
+            "the old work"
+          ],
+          "open_questions": [
+            "What is his mental age — is he a 27-year-old mind in an 8-year-old body, and what does that mean for how he relates to the other students and masters?",
+            "Why can't anyone alive change the enormous ancient line if the whole magic system is just following physical cuts?"
+          ]
+        },
+        "stranger": {
+          "can_do": "He can see systems as made of parts instead of monolithic wholes — breaking them down, cutting each piece right, and reassembling them into something that works and nobody else could have built.",
+          "in_the_way": "An entire culture that measures worth by memorizing long, perfect lines whole. He's bad at that. And the thing that probably needs fixing — the foundational spell beneath the city — is so large that the standard approach has already failed.",
+          "expect_next": "A systems-thinking fantasy where someone who doesn't fit the institution's way of learning discovers that his decomposition method is exactly what the unfixable problem requires. Progression through mastery of an unconventional approach.",
+          "undefined_words": [],
+          "open_questions": [
+            "Is the old work actually made of pieces?",
+            "Can Tomas survive or succeed within an institution that has no slot for how he thinks?"
+          ]
+        },
+        "regular": {
+          "can_do": "He breaks problems into pieces he can hold in his head separately, then chains the pieces together to build something whole. Most cutters in his world memorize and reproduce perfect monolithic lines; he modularizes.",
+          "expect_next": "A problem-solving fantasy with a concrete, rule-based magic system. Tomas gets older, learns more about why the ancient line is failing, and discovers that his chunk-based thinking—the thing that makes him invisible by conventional ranking—is the only way to fix something nobody else can understand anymore.",
+          "in_the_way": "He's already failing the world's measure of success (recitation, ranking). The thing he needs to fix is ancient and built in a way that predates anyone's ability to hold it whole. And he's eight years old in a world that measures mastery by what you can memorize.",
+          "undefined_words": [],
+          "open_questions": [
+            "Is the ancient line actually made of pieces?",
+            "Why did Tomas fall into this world the way he did?",
+            "If you can understand something by breaking it into parts, can you rebuild something as enormous as the old work?"
+          ]
+        },
+        "mechanism": {
+          "can_do": "He's found a way to build long sequences using modular pieces instead of memorizing massive monolithic lines like everyone else.",
+          "in_the_way": "His work is opaque to anyone else—unreadable—and he keeps failing the school's basic ranking test.",
+          "expect_next": "Progression fantasy with a hard magic system. I expect the setup where Tomas seems to be failing by the school's standards while actually developing the only approach that could work on the world's foundation-problem. Classic 'everyone thought he was wrong' structure.",
+          "undefined_words": [
+            "the old work",
+            "the masters"
+          ],
+          "open_questions": [
+            "which has started running slow",
+            "Tomas thinks it might be made of pieces",
+            "Nobody alive can change it, because nobody can hold it"
+          ]
+        }
+      }
+    },
+    {
+      "item_id": "reference:operator",
+      "title": "reference-pitch",
+      "source": "human-written reference",
+      "words": 172,
+      "agreement_can_do": 0.0918,
+      "agreement_in_the_way": 0.1318,
+      "agreement_expect_next": 0.1175,
+      "readers_confused": 1,
+      "unclear_items": 1,
+      "unclear_by_reader": {
+        "climber": [],
+        "stranger": [
+          "merged"
+        ],
+        "regular": [],
+        "mechanism": []
+      },
+      "readers_with_open_questions": 4,
+      "open_questions_by_reader": {
+        "climber": [
+          "Does applying biology to magic actually *work* as a framework, or is it just how George thinks about it?",
+          "Why did the AI come across but nothing else?",
+          "What's the larger world threat that a slow-burn academy story would eventually collide with?"
+        ],
+        "stranger": [
+          "What does 'merged' actually mean—can he ever be alone, or is the AI always there in his head?",
+          "Will understanding the cellular mechanics of magic make him overpowered or will it slow him down compared to intuitive casters?"
+        ],
+        "regular": [
+          "Why does he wake up as a child?",
+          "How does the AI 'merge' with him and what does that mean for how they interact?",
+          "Will his biology knowledge actually transfer to this world's magic, or is he going to have to learn a completely new system anyway?"
+        ],
+        "mechanism": [
+          "How does the merger with the AI work mechanically and why does only his AI come through?",
+          "What specifically are the cellular mechanisms that generate mana, and how much direct control does George have over them?",
+          "Is his background in modern biology unique in this world, or would any native scholar eventually figure out the same patterns?"
+        ]
+      },
+      "answers": {
+        "climber": {
+          "can_do": "He can apply systematic biological knowledge to manipulate a magic system that most practitioners treat as intuition, and he's got a companion AI that can read his own body back to him as diagnostic feedback.",
+          "in_the_way": "He's lost everything and everyone from his old world except the AI. He's trapped in a child's body learning a magic system from first principles while other practitioners treat it as second nature. The biology degree only works as an advantage if the world's magic actually respects that translation.",
+          "expect_next": "A slow-burn progression story where the appeal is watching him systematically unlock magic through biology instead of talent or innate sensitivity. Academy arc incoming, probably with some friction between his methodical approach and how wizards normally learn. The larger plot lives somewhere downstream of that.",
+          "undefined_words": [],
+          "open_questions": [
+            "Does applying biology to magic actually *work* as a framework, or is it just how George thinks about it?",
+            "Why did the AI come across but nothing else?",
+            "What's the larger world threat that a slow-burn academy story would eventually collide with?"
+          ]
+        },
+        "stranger": {
+          "can_do": "He has a biology degree and an AI that can read his own cells back to him, giving him the ability to understand magic as cellular biology instead of just learning spells by rote—nobody else in this world can do this.",
+          "in_the_way": "He wakes up as a child in a place he doesn't understand. He's the only survivor from his world, so he's alone except for an AI that's somehow merged with him in ways that aren't explained. The magic system is complex and learning it is slow.",
+          "expect_next": "School-based progression fantasy. He'll figure out how biology and magic connect, the merged AI will either become his greatest tool or his biggest problem, and it'll be character-focused rather than action-heavy. The back-cover tells me most of the first act, so the interest is in how it actually plays out, not what happens.",
+          "undefined_words": [
+            "merged"
+          ],
+          "open_questions": [
+            "What does 'merged' actually mean—can he ever be alone, or is the AI always there in his head?",
+            "Will understanding the cellular mechanics of magic make him overpowered or will it slow him down compared to intuitive casters?"
+          ]
+        },
+        "regular": {
+          "can_do": "He can learn magic by treating it as a biology problem, running real-time diagnostics on his own cells while casting. That's a specific enough angle that it actually gives him an edge, rather than just making him smart in a generic way.",
+          "in_the_way": "He's starting over as a child with no context, no home language probably, no social standing. Everything is new except the AI voice in his head and his memory of how living things work. The AI is all he has left but also the thing that makes him alien to this world.",
+          "expect_next": "A progression fantasy academy story where he slowly figures out the rules of magic by treating it like cellular biology. The premise promises system-building rather than just hand-waving, which means I'm expecting to actually *learn* something alongside him, the way Mother of Learning does it. Whether it delivers on that or just uses the biology framing as window dressing is the test.",
+          "undefined_words": [],
+          "open_questions": [
+            "Why does he wake up as a child?",
+            "How does the AI 'merge' with him and what does that mean for how they interact?",
+            "Will his biology knowledge actually transfer to this world's magic, or is he going to have to learn a completely new system anyway?"
+          ]
+        },
+        "mechanism": {
+          "can_do": "George can learn and manipulate magic by understanding it as biology—he has both the scientific knowledge to recognize patterns in how cells generate mana, and real-time sensor feedback from the AI reading his own body's processes as he experiments.",
+          "in_the_way": "He's a child learning in an alien world, starting from zero practical knowledge of how his own body's magic production actually works, dependent on an AI companion as his only anchor to who he was.",
+          "expect_next": "A slow-burn progression fantasy where George moves through a magic academy discovering whether the biology-as-foundation premise actually delivers specific, testable rules—or whether 'biological magic' is just flavor text for a system that works like any other.",
+          "undefined_words": [],
+          "open_questions": [
+            "How does the merger with the AI work mechanically and why does only his AI come through?",
+            "What specifically are the cellular mechanisms that generate mana, and how much direct control does George have over them?",
+            "Is his background in modern biology unique in this world, or would any native scholar eventually figure out the same patterns?"
+          ]
+        }
+      }
+    },
+    {
+      "item_id": "direct12:1",
+      "title": "Wake the Jar",
+      "source": "forged",
+      "words": 407,
+      "agreement_can_do": 0.0762,
+      "agreement_in_the_way": 0.1951,
+      "agreement_expect_next": 0.0967,
+      "readers_confused": 3,
+      "unclear_items": 8,
+      "unclear_by_reader": {
+        "climber": [
+          "standing",
+          "stillers",
+          "the fever that comes off the river"
+        ],
+        "stranger": [
+          "standing"
+        ],
+        "regular": [],
+        "mechanism": [
+          "holding the live warm with their own hands",
+          "her standing",
+          "the fever that comes off the river",
+          "whose hands strip the live off a keeper's skin"
+        ]
+      },
+      "readers_with_open_questions": 4,
+      "open_questions_by_reader": {
+        "climber": [
+          "What is her jar and why can't she name it?",
+          "Why did she die in her world and wake as a child here?",
+          "What exactly do the stillers do and why do they oppose keepers?",
+          "What does the old families' active opposition actually look like when it matters?"
+        ],
+        "stranger": [
+          "What is her caught jar and why is it running hot?",
+          "Does she make the room in time to stop the fever?",
+          "Why did she wake up exactly six years old?"
+        ],
+        "regular": [
+          "What is the jar she caught that no keeper can name?",
+          "Why is her unknown jar making her run so hot?",
+          "How did she die at twenty-four and wake up at six in another world?"
+        ],
+        "mechanism": [
+          "Can the live actually be started from nothing, like Wren knows, and will she prove it?",
+          "Why did she keep her knowledge from her previous life when she reincarnated at age six?",
+          "What is the jar she caught out of the air, and why is it behaving differently?",
+          "Will the book's time pressure actually cost her brother, or is that the setup for the fight?"
+        ]
+      },
+      "answers": {
+        "climber": {
+          "can_do": "Wren can resurrect dead jars and start the live from nothing—two things everyone believes only the old families can do. She's also burning hotter than children at her rank are supposed to handle.",
+          "in_the_way": "The old families are actively working against her. The school teaches her things she's already figured out instead of the room-holding technique she actually needs. The stillers can strip the live off her skin and keep her from using what she has. And she's carrying a jar she caught herself that she doesn't understand and can't give a name to.",
+          "expect_next": "Progression fantasy where a kid discovers her magic system isn't actually magic, just fermentation she understood before she got here. I expect ranked advancement gates—each rank harder to reach, each one letting her do something she couldn't before—and real friction from people who want the monopoly to stay broken. Her brother is the personal stake.",
+          "undefined_words": [
+            "standing",
+            "stillers",
+            "the fever that comes off the river"
+          ],
+          "open_questions": [
+            "What is her jar and why can't she name it?",
+            "Why did she die in her world and wake as a child here?",
+            "What exactly do the stillers do and why do they oppose keepers?",
+            "What does the old families' active opposition actually look like when it matters?"
+          ]
+        },
+        "stranger": {
+          "can_do": "She understands the actual living mechanism behind something her new world has mystified and locked behind ancient family control, because she made starters in her other life.",
+          "in_the_way": "She's six years old and inexperienced in this world's system, the families who hold the jars want to keep their monopoly, the school won't teach her what she actually needs, and there's a fever coming that will kill her brother in a few years when she might still be too weak to stop it.",
+          "expect_next": "A progression fantasy about a girl learning to do the one thing in a system designed to prevent her from doing it. She'll have to navigate a school that treats hierarchy as trainable, figure out what her mysterious jar actually is, and run a race against the seasonal fever.",
+          "undefined_words": [
+            "standing"
+          ],
+          "open_questions": [
+            "What is her caught jar and why is it running hot?",
+            "Does she make the room in time to stop the fever?",
+            "Why did she wake up exactly six years old?"
+          ]
+        },
+        "regular": {
+          "can_do": "She knows fermentation is a living organism, not a mystical substance, and can create the live from scratch when every keeper in her world believes you can only pass it hand to hand. She holds more of it than her age and training should allow.",
+          "in_the_way": "The old families who run the live and want to keep her from being able to do what she does. A school that spends two years teaching her the one thing she already figured out. And a jar she caught herself that's running hotter through her hands than anything should.",
+          "expect_next": "A progression fantasy where Wren goes to the academy at Hollam to learn how to hold more of the live so she can stop a fever that kills children. She'll teach them what she knows while they teach her what she doesn't, and she'll clash with the families who want her gone and the institution that doesn't want her to break the rules about what the live is and how it works.",
+          "undefined_words": [],
+          "open_questions": [
+            "What is the jar she caught that no keeper can name?",
+            "Why is her unknown jar making her run so hot?",
+            "How did she die at twenty-four and wake up at six in another world?"
+          ]
+        },
+        "mechanism": {
+          "can_do": "She understands that the live is a living organism that needs warmth and air, not magic — which lets her revive dead jars and supposedly start new ones from flour and water, something everyone insists is impossible.",
+          "in_the_way": "The old families see her as a threat and are actively blocking her. The school wastes two years teaching the one thing she already knows while refusing to teach what she needs. The stillers can strip the live off her skin and neutralize her. And whatever jar she caught is running her hands dangerously hot, which suggests it's costing her.",
+          "expect_next": "This is a progression fantasy where the protagonist has figured out the underlying mechanism of a magical system that everyone else treats as gatekept tradition. I expect a school arc, a conflict with the established families, and a race against time before the fever season kills her brother — with the core question being whether she can either propagate the live independently or build her heat capacity fast enough to save him herself.",
+          "undefined_words": [
+            "holding the live warm with their own hands",
+            "her standing",
+            "the fever that comes off the river",
+            "whose hands strip the live off a keeper's skin"
+          ],
+          "open_questions": [
+            "Can the live actually be started from nothing, like Wren knows, and will she prove it?",
+            "Why did she keep her knowledge from her previous life when she reincarnated at age six?",
+            "What is the jar she caught out of the air, and why is it behaving differently?",
+            "Will the book's time pressure actually cost her brother, or is that the setup for the fight?"
+          ]
+        }
+      }
+    }
+  ],
+  "spend": {
+    "input": 131416,
+    "output": 243773,
+    "cache_read": 2319589,
+    "cache_write": 712293,
+    "equivalent_usd": 3.0068
+  },
+  "wall_seconds": 223.7
+}

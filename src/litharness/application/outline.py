@@ -58,8 +58,8 @@ from litharness.application.conductor import JobHandler
 from litharness.application.plan_refinement import accept_plan_proposal
 from litharness.application.policy_events import policy_decision_event
 from litharness.application.ports import OutlineStore, TextGenerator
+from litharness.domain import house, world_brief
 from litharness.domain import state as state_mod
-from litharness.domain import world_brief
 from litharness.domain import worlds as worlds_mod
 from litharness.domain.beats import Beat, beats_for, template_for
 from litharness.domain.budget import BudgetPolicy
@@ -394,7 +394,9 @@ def render_outline_request(
     )
     return CompletionRequest(
         prompt=prompt,
-        system=(
+        # The scene statements are what the writer is told a scene is *for*, so a statement
+        # that spends a scene on procedure buys the whole scene before a word is drafted.
+        system=house.with_house_rules(
             "You are the Narrative Planner for a novel. Given a premise and a beat sheet, "
             "say in one sentence what happens in each scene, so that a writer drafting any "
             "one scene knows what that scene is for and what the others are for. Return "
