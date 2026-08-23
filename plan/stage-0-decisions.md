@@ -12459,3 +12459,62 @@ by this entry; `PITCH_SET` lives in `research/` and is imported by nothing the p
 holds — the premises scored are this system's own output, no corpus text or digest crossed into a
 prompt, and the one human-written item used anywhere in this programme is a stimulus rather than a
 label.
+
+## 121. The packet's dark-context regime reproduces outside the repository, and two of six metrics cannot carry a direction-checked bar
+
+**Measured first.** §56.4's degradation reproduces end-to-end from synthetic serials
+through the real `context.assemble` at the shipped default budget: dark prior scenes
+8/29/62/97 at 30/57/82/120 scenes against the ledger's 7/32/67/108, with full prose exact
+and facts within 8% — inside a ±15% relative band at every horizon
+(`tests/test_context_l0_arm.py` gates it; the artifacts and per-query selected IDs live in
+LongRangeContext's `benchmarks/`). Calibration took two passes (status records settled at
+~21 tokens, summaries at ~61); per-horizon generator knobs were refused as tuning the
+instrument to the answer, and the summary column is reported unmatched because it is the
+residual of the budget arithmetic. Attainability over twelve books (the independent unit;
+three query families, none empty): a planted improvement and a planted damage move
+`mandatory_fact_recall`, `forbidden_context_rate` and `pov_leak_rate` the right ways;
+`stale_context_rate` and `token_efficiency_per_1k` **cannot** carry a direction-checked
+bar under this damage construction — both are ratios whose denominators a many-small-items
+packet inflates until the damaged arm's *rate* undercuts a five-item prose packet's. That
+is a property of the metric definitions, recorded rather than engineered around
+(LongRangeContext `docs/rlm-context-baseline-notes.md`).
+
+**What shipped.** In LongRangeContext (merged to its `main` as 6134063): an immutable
+`ContextSnapshot` with ordered eligibility and an audit of every exclusion; a read-only
+typed environment whose only model seam is a batched `SemanticWorker` protocol, with
+adversarial-item tests pinning that instruction-shaped prose is only ever data; a
+reference-only `ContextPlan` with named refusals and a deterministic packer whose pins the
+root cannot displace; a content-addressed request cache that never reads a clock; R0/R1
+strategies as a bounded root loop with schema-validated actions, replayable trajectories,
+ceilings, and no fallback path in the module at all; twelve calibrated workloads with
+construction-derived labels and the deterministic ledger policy; the attainability harness;
+and the Task-0 baseline report over L0/L1/L2 with its pre-registration section as explicit
+placeholders. In LitHarness (this merge): the L0 arm that
+runs the real packer over a workload file and maps every selection and omission back to
+workload item IDs — `research/quality-measurement/context_l0_arm.py` and its tests. No
+LitHarness production path changed; `assemble` and the scene-draft path are untouched.
+
+**What was refused, and why.** No model call anywhere in Task 0 or the strategy tests (the
+root and worker are protocols, exercised by fakes). No baseline fallback inside the R
+strategies — a failed episode returns no packet and its whole trajectory. No depth above
+one. No pre-registered threshold: the report's pre-registration is empty until an operator
+reads the tables, and the two ratio metrics above are flagged as unable to carry one as
+defined. Re-enforcing the L0 packet's budget under LongRangeContext's own token counter was
+found truncating the arm and removed — an external packet is the other packer's budgeted
+answer. A damage arm that could out-recall a real baseline by accidentally carrying the
+mandatory items was sharpened to exclude the answer; the two direction failures that
+survived that correction are the finding, not a defect to iterate away.
+
+**Corrections in place.** Four defects the unit gates could not see were found only by
+running the assembled report and fixed at source: one shared `book_id` across all twelve
+workloads silently collapsed per-book keying while the table claimed twelve books; the
+external arm truncated under a mismatched counter; `dark` let a status record light a
+scene, contradicting §56.4's own words; the damage arm carried the answer. The first
+census gate was also mis-scaled (absolute ±5 dark is ±71% at 30 scenes and ±4.6% at 120)
+and was rescaled to relative bands with the reasoning in the test.
+
+**Anti-scope.** Nothing here claims R0 or R1 helps: no recursive arm has run against a
+model. Nothing here is a quality, preference, or prose claim, and correct retrieval remains
+insufficient for any of those. Task 4's `context_plan` job does not exist and must not be
+built until LongRangeContext's promotion package exists. The promise-ledger pressure keeps
+its own deterministic policy; recursive planning does not excuse an unbounded ledger.
