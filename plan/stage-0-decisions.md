@@ -13244,3 +13244,71 @@ progression is an observation about declarations, not evidence about what a read
 
 **Anti-scope.** This orders three tiers. It does not say what reader direction will contain,
 how it is measured, or that any of it works yet.
+
+## 130. The real-domain mandate is subtracted after failing three times against the same complaint, and the genre's tropes become the product rather than permitted furniture
+
+The first subtraction §127 named, made on operator direction:
+
+> "We don't have to derive mechanics from real domain constraints, please update and remove
+> anything that contradicts this. It's just interesting to apply this sometimes, it doesn't have
+> to go into every idea and book. We can pull ideas out of pop culture, mythology, other scifi
+> and fantasy as well." … "We should use tropes from the genre we are working on as well. People
+> come for a particular type of product when they read isekai, litrpg, progression fantasy."
+
+**Measured first: three readings of the same rule, across three days.**
+
+| reading | what the operator read | what was done |
+|---|---|---|
+| 2026-08-23 | *"unnecessarily esoteric … the words used are adding unnecessary complexity eg mordant"* | §118.1 amended the rule: "the domain is the engine, not the setting" |
+| 2026-08-24 | *"we are again talking about minutia and not what the reader came for"* | §127 named the rule as a cause and made no change, pending a measurement |
+| 2026-08-24 | *say what a thing is made of from its split light* → *"too much of a specific situation, it looks pulled out of arse"* | this entry |
+
+Beside them, the census §118.1 already recorded and this entry does not restate: every one of
+the domains the forge has produced is a trade, a science or a body of law. The amendment moved
+where the craft belonged and not what it was.
+
+**The mechanism, which is why a fourth amendment would have failed too.** The rule said *take
+the system's logic and its costs from that domain's real constraints*. A capability derived from
+real optics can only be a contraption of real optics; there is no derivation from anything real
+that ends at *can walk through a wall* or *can hear what somebody is about to say*, and those are
+the powers a reader already wants. The rule was not being disobeyed at any point in the three
+readings. It was being obeyed, and obeying it is the defect.
+
+**What shipped, and all of it is subtraction except one rail.** `architect._RULES`' domain rule
+no longer mandates a real domain: it asks what the world's system is about, states that where
+the engine comes from is **open** — invented magic, a myth, genre furniture, or a real domain,
+with a real one *"one option among several rather than the default"* — and keeps three things
+that were never the problem: internal consistency of rules and prices, plain words a reader
+could repeat after one read, and the register the operator supplied as examples rather than as
+a vocabulary to police. The genre rule's *"the genre's own furniture is WELCOME rather than
+avoided"* becomes *"what the reader came for"*, names the three subgenres the operator named,
+and opens the sources. `_DISTINCTNESS_RULE`, the module docstring and `worlds_from`'s refusal
+text drop "real" from the domain axis. `DOMAIN_FIRST` survives **as a prompt shape a forge may
+be run under** rather than as what every world is, which is the operator's *"interesting to
+apply this sometimes"* in the one place the codebase can hold it.
+
+**One clause deleted that no complaint had named, and it is the load-bearing half.** The genre
+rule also said *"Originality belongs in the engine underneath and in the person it happens to"*.
+Paired with the real-domain mandate that is an instruction to invent a novel mechanism out of
+real physics — which is the recipe for the split-light contraption, written across two rules so
+that neither reads wrong on its own. Originality now belongs to the person and to what it costs
+them. Two rules were producing one defect and only one of them had ever been read as the cause.
+
+**The rail is tightened rather than loosened, in the same sentence that opens the sources.**
+Opening a world's ideas to myth, genre and pop culture is exactly when naming a real work
+becomes tempting, so both rules now carry RS1/C3 inline — *take the shape of a thing readers
+already want, never the thing itself* — and `_BORROWED` is unchanged at the gate. Nothing here
+weakens §97.3.
+
+**What was refused.** No trope list beyond the comforts the rule already carried, because a list
+written to force an outcome is what supplies the vocabulary that leaks (§127, and W1's `standing`
+on the page of *Wake the Jar*). No claim that this fixes what the operator is objecting to: three
+amendments to this rule have now been made and the first two did not take, so the honest status
+is that a cause has been removed and nothing has been measured. And no second subtraction — the
+`_PROTAGONIST` rule's *"prefer an exception they BROUGHT … the world's rules are untouched by
+their presence"*, which §129 located as the reason a protagonist's edge is complete in paragraph
+one and never grows, is still in the prompt and is still the operator's to direct.
+
+**Anti-scope.** This removes a mandate. It does not say what a world should be about instead,
+does not promote any source over another, and measures nothing — the instrument that would tell
+us whether it worked is §128's, and it does not exist.

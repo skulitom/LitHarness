@@ -38,14 +38,16 @@ system, a cast, an institution and a bestiary that canon has never heard of.
 **Distinctness is checked on axes that survive a lie.** The repository's prior is that instructed
 distinctness is not distinctness — §89.1 measured one byte-identical answer vector across four
 personas, §77 measured persona-to-passage ratios of 0.0028, 0.0071 and 0.0342. So the collapse
-gate does not ask whether the K worlds *feel* different: it requires the declared real domain and
+gate does not ask whether the K worlds *feel* different: it requires the declared domain and
 the declared geometry to be pairwise distinct, which is checkable, and reports
 `directors.distinctness` over the rendered candidates beside it, which is comparable to every
 other distinctness number in this project.
 
 **Two prompt shapes, because one would be a preference.** `DIRECT` asks for the world.
-`DOMAIN_FIRST` asks for the real domain and its real constraints and derives the system from them
-inside the same call. Which one measures better is reported with its numbers rather than assumed;
+`DOMAIN_FIRST` asks for a real domain and its real constraints and derives the system from them
+inside the same call — which since §130 is **one shape a forge may be run under rather than what
+every world is**, the operator's *"interesting to apply this sometimes"*.
+Which one measures better is reported with its numbers rather than assumed;
 if neither separates, that is the finding and it is recorded as one.
 """
 
@@ -748,12 +750,31 @@ _RULES: tuple[str, ...] = (
     # that craft belongs — under the hood rather than on the page — because the register rule
     # below already asks for "fast, plain, popcorn reading" and this rule was handing that prose a
     # glossary to write it in.
-    "Literalise one real domain of human work or knowledge and take the system's logic and its "
-    "costs from that domain's real constraints. Name the domain. The book should run on real "
-    "ideas rather than invented ones. **The domain is the engine, not the setting.** The book "
-    "is not set inside that trade, and the trade is not the world's institution. "
-    "What somebody can do is said in plain words a reader could repeat after one "
-    "read: the physics of a real craft, wearing none of its jargon.",
+    #
+    # **Subtracted 2026-08-24 on operator direction (§130), after the amendment above failed
+    # against the same complaint twice more.** *"We don't have to derive mechanics from real
+    # domain constraints … It's just interesting to apply this sometimes, it doesn't have to go
+    # into every idea and book. We can pull ideas out of pop culture, mythology, other scifi and
+    # fantasy as well."* The mandate is what produced `say what a thing is made of from its split
+    # light` — the operator's third reading, *"too much of a specific situation, it looks pulled
+    # out of arse"* — because a capability derived from real optics can only ever be an optics
+    # contraption, and the powers a reader already wants (walk through a wall, hear what somebody
+    # is about to say) are derivable from nothing real. A real domain is now one source among
+    # several. What is kept: internal consistency, plain words, and the RS1/C3 rail, which is
+    # tightened rather than loosened here because opening the sources is exactly when naming a
+    # real work becomes tempting.
+    "Name what this world's system is about in `domain` — one phrase, and it is the world's "
+    "engine rather than its setting. **Where that engine comes from is open.** Invented magic, "
+    "a myth, a piece of genre furniture a reader already knows, a real domain of human work or "
+    "knowledge — any of them, and a real one is one option among several rather than the "
+    "default. Whatever it is, the system's rules and its prices stay consistent with each "
+    "other, because a world that argues back is what makes a cost mean anything. What somebody "
+    "can do is said in plain words a reader could repeat after one read, wearing no jargon of "
+    "any kind: **`can walk through a wall` and `can hear what somebody is about to say` are the "
+    "register.** A power that needs this world's own apparatus explained before it can be "
+    "understood is a power written for the wrong reader. Never name, quote or imitate any real "
+    "work, author, brand or system: take the shape of a thing readers already want, never the "
+    "thing itself.",
     # **The rule this module did not have, and sixteen rules went out without it.** Every rule
     # here asked what a world *declares* — consequences, manifestations, visible rungs, costs, a
     # ladder, an inventory, a protagonist, an inversion, mysteries with answers — and exactly one
@@ -929,12 +950,16 @@ _RULES: tuple[str, ...] = (
     "imitate, or compare to any real person, brand, game, or published work.",
     "The prose this world will be written in is fast, plain, popcorn reading. The world shows "
     "on the page as interactions, prices paid and visible ranks.",
-    "This is genre fiction and the genre's own furniture is WELCOME rather than avoided: an "
+    "This is genre fiction and **the genre's own furniture is what the reader came for** — an "
     "academy, a tournament, a master worth impressing, a party who travel together, a rival "
-    "house, a first test, a system that speaks up. A reader came for those. Originality "
-    "belongs in the engine underneath and in the person it happens to, never in refusing "
-    "what the genre is for. A world nobody recognises is not a fresh world, it is a "
-    "different book than the one somebody picked up.",
+    "house, a first test, a system that speaks up. Somebody who picks up an isekai, a LitRPG or "
+    "a progression fantasy is buying that particular thing, and a world that withholds it has "
+    "sold them a different book than the one they chose. Take the genre's tropes, and take "
+    "ideas from myth, from other fantasy and science fiction, from anywhere a reader's appetite "
+    "already points — never a named work, an author or a brand, and never a borrowed name. "
+    "Originality belongs in the person it happens to and in what it costs them, and a world "
+    "nobody recognises is not a fresh world: it is a different book than the one somebody "
+    "picked up.",
     "Ids are lowercase snake_case and unique within the world. Every id referenced anywhere "
     "must be declared somewhere.",
     "Cast, agencies and institutions carry `relationships`: who owes whom, who employs whom, "
@@ -962,7 +987,7 @@ _RULES: tuple[str, ...] = (
 
 _DISTINCTNESS_RULE = (
     "The {k} worlds must be structurally different, not one world re-dressed. Each must "
-    "literalise a DIFFERENT real domain, use a DIFFERENT geometry from the allowed list, and "
+    "be about a DIFFERENT domain, use a DIFFERENT geometry from the allowed list, and "
     "mean something DIFFERENT by the word progression. Two worlds that differ only in their "
     "names are one world and will be refused."
 )
@@ -1200,7 +1225,7 @@ def worlds_from(payload: Mapping[str, Any], k: int) -> tuple[Candidate, ...]:
     `plan_search._alternatives`' — which is exact string equality after casefolding and therefore
     cannot catch a re-worded collapse, a limitation that module's own docstring claims to prevent
     and does not. Here the axes are *declared*, so the check is on the declaration: two worlds
-    that name the same real domain, or the same geometry, are one world in two hats, and they are
+    that name the same domain, or the same geometry, are one world in two hats, and they are
     refused before a single scene is paid for.
 
     It is still not a semantic check and does not claim to be. A model that writes "coopering"

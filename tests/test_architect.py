@@ -559,14 +559,50 @@ def test_the_domain_is_the_engine_and_its_jargon_never_reaches_the_page() -> Non
     **Amended 2026-08-24 (`plan/clarity-audit-2026-08-24.md` W3), name kept because the ledger
     cites it.** The rule's "never reaches the page" ban clause was contradiction-class — an
     instruction to withhold — and is deleted; the positive form in the same rule ("plain words
-    a reader could repeat after one read") carries it, and unexplained trade jargon is the
-    comprehension screen's to quote. This now pins the positive form and the ban's absence.
+    a reader could repeat after one read") carries it.
+
+    **Amended again the same day (§130), name kept for the same reason, and the amendment above
+    is what it corrects.** Requiring a real domain twice failed against the same complaint: the
+    operator read the result as *"minutia and not what the reader came for"*, then read a
+    capability derived from real optics — *say what a thing is made of from its split light* —
+    as *"too much of a specific situation, it looks pulled out of arse"*. A power derived from
+    real physics can only be a contraption of that physics, and the powers a reader already
+    wants are derivable from nothing real. The mandate is gone; a real domain is one source
+    among several. What this pins now is the absence of the mandate, the register the powers are
+    to be written in, and the RS1/C3 rail, which had to survive opening the sources.
     """
-    [rule] = [item for item in architect._RULES if "Literalise one real domain" in item]
-    assert "the engine, not the setting" in rule
+    [rule] = [item for item in architect._RULES if "what this world's system is about" in item]
+    assert "engine rather than its setting" in rule
+    assert "Where that engine comes from is open" in rule
+    assert "one option among several rather than the" in rule
     assert "never reaches the page" not in rule
     assert "plain words a reader could repeat after one read" in rule
-    assert "not set inside that trade" in rule
+    # The register the operator gave, as examples rather than as a vocabulary to police.
+    assert "can walk through a wall" in rule
+    # Opening the sources is exactly when naming a real work becomes tempting, so the rail is
+    # in the same sentence that opens them.
+    assert "Never name, quote or imitate any real work" in rule
+    # And the mandate itself is gone from every rule, not merely from this one.
+    assert not [item for item in architect._RULES if "Literalise one real domain" in item]
+
+
+def test_the_genre_s_tropes_are_the_product_rather_than_permitted_furniture() -> None:
+    """*"People come for a particular type of product when they read isekai, litrpg,
+    progression fantasy"* (2026-08-24, §130).
+
+    The rule already said the furniture was welcome. What it also said was that originality
+    belongs *in the engine underneath* — which paired with the since-deleted real-domain
+    mandate to produce exactly the engines the operator rejected. Originality now belongs to
+    the person and the price, the tropes are what was bought, and the sources are open with the
+    borrowed-work rail stated in the same breath.
+    """
+    [rule] = [item for item in architect._RULES if "genre's own furniture" in item]
+    assert "what the reader came for" in rule
+    assert "isekai" in rule and "LitRPG" in rule and "progression fantasy" in rule
+    assert "from myth, from other fantasy and science fiction" in rule
+    assert "never a named work, an author or a brand" in rule
+    # The clause that sent originality into the engine is gone.
+    assert "Originality belongs in the engine underneath" not in rule
 
 
 def test_a_rule_asks_what_a_person_would_want_and_puts_it_at_the_top_of_the_ladder() -> None:
@@ -758,11 +794,17 @@ def test_a_rule_says_the_genre_s_own_furniture_is_welcome() -> None:
     `_DISTINCTNESS_RULE` refuses two worlds that differ only in their names, and the originality
     rule forbids naming or imitating a real work. Neither ever said that an academy, a
     tournament or a master worth impressing are what a reader came for.
+
+    **Amended 2026-08-24 (§130), name kept because it pins the comforts and they are unchanged.**
+    "WELCOME rather than avoided" became "what the reader came for", and the clause sending
+    originality into the engine is deleted — it paired with the real-domain mandate to produce
+    the engines the operator rejected three times.
+    `test_the_genre_s_tropes_are_the_product_rather_than_permitted_furniture` pins the new half.
     """
-    [rule] = [item for item in architect._RULES if "furniture is WELCOME" in item]
+    [rule] = [item for item in architect._RULES if "genre's own furniture" in item]
     for comfort in ("academy", "tournament", "master worth impressing", "rival"):
         assert comfort in rule
-    assert "Originality belongs in the engine underneath and in the person" in rule
+    assert "Originality belongs in the person it happens to" in rule
 
 
 def test_inverting_a_genre_default_is_optional_and_the_ladder_is_still_fenced() -> None:
