@@ -775,61 +775,20 @@ _RULES: tuple[str, ...] = (
     "understood is a power written for the wrong reader. Never name, quote or imitate any real "
     "work, author, brand or system: take the shape of a thing readers already want, never the "
     "thing itself.",
-    # **The rule this module did not have, and sixteen rules went out without it.** Every rule
-    # here asked what a world *declares* — consequences, manifestations, visible rungs, costs, a
-    # ladder, an inventory, a protagonist, an inversion, mysteries with answers — and exactly one
-    # contained the word *want*, where it means what one character wants. None asked whether
-    # anybody would want any of it. §113 made the rungs countable and §114 made the abilities
-    # distinct, and between them they produced a countable, distinct inventory of chores; the
-    # operator's phrase for what was missing is *"Readers want to feel cool and progress in
-    # meaningful ways"* (§118).
+    # **§118's daydream rule stood here and is deleted (§131).** It asked the forge to put what a
+    # person would want to be able to do at the top of the ladder, and carried the operator's own
+    # two example lists because "an example list is what a model actually steers by". It steered
+    # nothing: §129 records `house.READER` asking for the same thing in every prompt since §120,
+    # and six premises later the ladders were still chains of technique. The operator's rule for
+    # this class of instruction is the reason it went — *"a professional writer we simulate should
+    # be able to understand this on their own"* — and the record of what it asked for is §118,
+    # where it belongs.
     #
-    # **The examples are the operator's own, in two lists, kept in their order.** First: inventing
-    # something useful, gaining popularity, control over things or the world, immortality,
-    # becoming something greater, superhuman skills, and being unusually good at a craft more
-    # easily than anyone else. Then: healing powers, control over the body, control over
-    # mutations, creating a new sort of life, developing advanced technology, superhuman
-    # augmentation — and earning money. An example list is what a model actually steers by, so
-    # they are written into the rule rather than summarised.
-    #
-    # **Two of those items settle questions the rules beside this one would otherwise leave
-    # open.** *Being effortlessly the best at something* is why neither this rule nor the domain
-    # rule above bans crafts: the daydream is the ease and the standing, and learning what a
-    # mordant is is homework. And *earning money* is not what the administration rule forbids —
-    # a fortune somebody wins, spends and is envied for is a prize; a debt, a register and a filed
-    # piece of paper are the chore. The rule says so in its own last sentence rather than leaving
-    # two rules looking as though they disagree.
-    #
-    # It asks for a declaration and stops there, in the register of the declared-shape rules
-    # beside it: nothing here says the wish should be a good one, that a reader should like it, or
-    # that anybody achieves it. A ladder is a fact about the world; who climbs it is the book's.
-    "Say what a person would want to be able to do here, and put that at the TOP of the "
-    "ladder. The upper rungs are the daydream: moving faster than anyone can react; striking "
-    "harder than a body should; seeing what nobody else sees; healing what nobody heals, "
-    "including yourself; commanding your own body down to what it is made of, or changing "
-    "what it is made of; surviving what should not be survivable, or not dying at all; "
-    "commanding something dangerous; making a living thing that never existed; building the "
-    "machine nobody has built; inventing the thing everybody ends up using; being known by "
-    "people who have never met you; holding real control over things or over other people; "
-    "getting rich; becoming something greater than you were; or being extraordinary at "
-    "something that costs everybody else a lifetime. The lowest rungs are the beginner's "
-    "version of that same thing, so a reader sees the whole climb from the bottom rung. A "
-    "ladder whose top rung is a better version of a chore is a job. **The way it WORKS has "
-    "to be wanted too, and not only where it ends.** A rung bought with something a reader "
-    "would recoil from — another cut opened on your body, another piece of yourself handed "
-    "over — is a rung nobody wants to stand on, whatever waits at the top; and a power "
-    "whose method is unpleasant has to buy something worth having in the same breath, or a "
-    "reader declines the whole ladder. Getting rich is a PRIZE "
-    "and never an administration: a fortune somebody makes, spends and is envied for is a "
-    "daydream, while a debt, a register, a tariff and a filed piece of paper are the chore "
-    "the rule above forbids, and they are not the same thing.",
-    "Give the world two systems whose logics are incompatible, and say what happens at the "
-    "interface between them: which one wins where they disagree, what it does to a person "
-    "caught between them, who is forced to choose, and what somebody can do under one and "
-    "never under the other. The interface is the content, and it is physical or personal — a "
-    "proving ground, a refusal to teach, a body that cannot hold both, a technique that "
-    "unmakes another technique. It is NOT an exchange rate, a market, a court, a licence or "
-    "a tariff.",
+    # **§106's two-incompatible-systems rule stood here too and is deleted with it**, for a second
+    # reason as well as that one: it mandated two systems while the rule below states that a world
+    # "may have one system, several, or none". Two rules in one prompt disagreeing about the same
+    # declaration is the contradiction class boundary 2 exists to make impossible, and it survived
+    # a construction test that only reads for withholding.
     # **Measured before it was written, over every world this project had forged.** Thirty
     # candidates, four briefs, both prompt shapes: every one carries administrative vocabulary,
     # at a median of 7.21 words per 1,000 of declared text and a minimum of 2.69, and **18 of
@@ -904,14 +863,7 @@ _RULES: tuple[str, ...] = (
     # verbs an outcome instruction would have to use.
     "Name one member of the cast as this world's `protagonist`. Choose the one rule or "
     "cardinality shape this world declares that does not hold for them, or holds "
-    "differently. **Prefer an exception they BROUGHT over one the world was bent to give "
-    "them.** The cleanest version is that this person arrived carrying something nobody "
-    "here has — a training, a habit of mind, an object from where they came from — and the "
-    "world's rules are untouched by their presence. The version to avoid is a limitation "
-    "invented for everybody else whose only job is to leave one person outside it: if a "
-    "declared rule would not exist in this world were it not for this one character, it is "
-    "a contrivance, and a reader can feel the shape of it. Nobody here being able to hear "
-    "their own voice, so that one person can, is that shape. **If this person came from "
+    "differently. **If this person came from "
     "somewhere like our own world, the life they came from is one a reader in their "
     "twenties has lived**: an age near the reader's own, a degree they are not using, a job "
     "that covers the rent, a thing they know far too much about for no professional reason. "

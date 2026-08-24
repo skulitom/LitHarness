@@ -13312,3 +13312,116 @@ one and never grows, is still in the prompt and is still the operator's to direc
 **Anti-scope.** This removes a mandate. It does not say what a world should be about instead,
 does not promote any source over another, and measures nothing — the instrument that would tell
 us whether it worked is §128's, and it does not exist.
+
+## 131. Two rules deleted because a professional knows them, and one of the two contradicted another rule in the same prompt
+
+The operator's rule for the whole class, 2026-08-24:
+
+> "We shouldn't be hardcoding rules like 'prefer an exception they BROUGHT… the world's rules are
+> untouched by their presence.' this is a very common thing in Litrpg, a professional writer we
+> simulate should be able to understand this on their own."
+
+**What went, and the second one was not on anybody's list.**
+
+**§118's daydream rule (1,643 characters, the largest single rule in the prompt).** It asked the
+forge to put what a person would want to be able to do at the top of the ladder and carried the
+operator's own two lists of daydreams, on the reasoning recorded in its own comment that *"an
+example list is what a model actually steers by"*. It steered nothing measurable. §129 records
+`house.READER` asking every generation prompt for the same thing — *"something a person could
+come to be able to do"* — since §120, and six premises later the ladders were still chains of
+technique. Deleted; §118 remains the record of what it asked for, and `report()`'s ladder and
+capability counters are untouched and still carry no bar.
+
+**The two-incompatible-systems rule**, which mandated *"Give the world two systems whose logics
+are incompatible"* — while another rule in the same prompt says a world *"may have one system,
+several, or none"*. **Two rules disagreeing about the same declaration**, shipped in every world
+call, and the construction test built to make contradiction impossible (`handoff-clarity-first`
+boundary 2, `tests/test_clarity_constitution.py`) did not see it: that test reads for the
+*withholding* family only. A contradiction class defined by one vocabulary catches one
+vocabulary.
+
+**The protagonist rule's craft essay**, which is where the operator's sentence landed: *"prefer
+an exception they BROUGHT over one the world was bent to give them"*, the contrivance warning,
+and the worked counter-example. §129 had already located this as the reason a protagonist's edge
+is complete in paragraph one and never grows — a brought exception is a possession, and a
+possession does not grow. What survives in that rule is its schema half (name a cast member, put
+the exception's id alone in `exception`, give `edge`, `wants` and `price`) and the operator's own
+readership direction about the life this person came from.
+
+**Measured, in the only unit available:** 19 rules and 10,947 characters before, 17 rules and
+8,781 after, with a further clean already directed and not in this entry. No gate lost its rule
+— the deletions were craft instruction, and every deterministic check still has a rule asking
+for the thing it checks.
+
+**Three ledger-cited test names survive on their replacements**, each with the change in its
+docstring: `test_a_rule_asks_what_a_person_would_want_and_puts_it_at_the_top_of_the_ladder` now
+pins the deletion rather than the rule, and
+`test_no_rule_offers_a_debt_as_a_subject_or_a_market_as_an_interface` lost the half of its
+assertion that belonged to the deleted rule.
+
+**What was refused.** No replacement rules. This is the first entry in the sequence §127
+described that only subtracts, and the point of it is that the pile was the problem: three
+interventions against one complaint, each obeyed and none effective. And no claim that the
+worlds will now be better — nothing here is measured, and the instrument that would measure it
+is §128's, which does not exist.
+
+**Anti-scope.** Two rules and one essay. The remaining ban lists — the cost rule's *"never in
+money, never in a debt"*, §116's nine administrative nouns, the progression rule's triple naming
+of levels, hit points, mana and experience — are the operator's pink-elephant objection and
+belong to the clean that follows, not here.
+
+## 132. The writer was given 6,000 tokens of its own book and the number was copied from a test fixture
+
+The operator, 2026-08-24:
+
+> "Writers need to understand the world they build. Dungeon crawler carl author says he keeps
+> 200page excel sheet for some individual characters in his world … but the fact remains, we
+> can't expect our writers to write in the dark."
+>
+> "6000 token budget for the writer is way too low. Opus 5 has a 1m context window. Professional
+> writers hold a lot of context in their head when they write."
+
+**Measured, and every number here was already written down in the repository.**
+
+- `context.DEFAULT_TOKEN_BUDGET` was **6,000**, and its own comment said where it came from:
+  *"Matches the golden suite's `draft_scene` case. Not a measured figure."* It was set to agree
+  with a test fixture and never revisited.
+- The consequence was recorded beside it and left standing: at 900-word scenes 6,000 tokens
+  **binds at about scene five**, so from scene six the packet evicts. `cli.py`'s own `--help`
+  said the same thing to any operator who typed it.
+- It evicts **blind**. `domain/context.py`'s docstring: it packs by a fixed priority order,
+  not by relevance, and *"under a budget too small to hold the book it will drop things a scorer
+  would have kept, and it has no way to know that."*
+- The knowledge it was dropping exists. Serial Pilot 4 — one eight-scene book, 7,865 words —
+  holds **292 state records**.
+- And the unit of production is an **open-ended serial** (§101). A serial drafted at 6,000
+  tokens is a writer that forgets the opening of its own book by chapter six.
+
+**What shipped.** `DEFAULT_TOKEN_BUDGET` is **200,000**, recorded as a placed number rather than
+a measured one: a fifth of the pinned model's window, and far above anything this project has
+produced, so for a book of pilot size the budget **does not bind at all and nothing is evicted**.
+The eviction machinery below it is kept and still tested — it is for a long serial, which is the
+only case it should ever run in — and every test of that path now names its own binding budget
+instead of relying on the default, which is how three of them silently became tests of nothing
+the moment the default changed. `DEFAULT_RESERVED_OUTPUT` stays at 1,500: it is subtracted from
+the packet's budget, so raising it would have taken room from the context rather than given room
+to the generator, and raising it is what broke four tests before that was noticed.
+
+**What this does not do, stated here because the operator's point was larger than the number.**
+A budget that never binds is not a writer that understands its world. The packet still has no
+relevance scoring; it still hands over a rendered blob rather than something a writer can
+interrogate; and 200,000 only postpones the same failure to a longer book. The Dinniman
+comparison the operator drew is exact and inverts the design: a professional does not *hold* the
+two hundred pages, they **consult** them. What this repository has is 292 structured records per
+book and a renderer that flattens them. **The writer's ability to query its own world is the
+open piece of the core loop**, and it is named here rather than pretended away by a larger
+constant.
+
+**What was refused.** No relevance scorer invented to go with the bigger budget — that is
+`LongRangeContext`'s question and §12 step 2 says so. No claim that a larger packet writes a
+better book: the only thing measured here is that the old number came from a fixture and bound
+at scene five. And no change to the daily spend ceilings, which are what actually govern cost;
+a larger packet is more input tokens per call and the budget governor is where that is felt.
+
+**Anti-scope.** One constant and the tests that had quietly come to depend on it. Nothing about
+what goes *into* the packet, in what order, or how a writer would ask it a question.

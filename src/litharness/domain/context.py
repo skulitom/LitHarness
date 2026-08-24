@@ -112,14 +112,38 @@ SECTION_ORDER = (PREMISE, CONSTRAINTS, THREADS, FACTS, HIDDEN, SUMMARIES, PRIOR_
 #: small enough that the three or four most recent scenes still arrive whole.
 SUMMARY_SHARE = 0.25
 
-#: Matches the golden suite's `draft_scene` case. Not a measured figure: nothing in this
-#: project has yet measured what a scene needs, and §15's cost model is explicitly a
-#: hypothesis awaiting Book Zero.
-DEFAULT_TOKEN_BUDGET = 6000
+#: **Raised from 6,000 to 200,000 on operator direction, 2026-08-24 (stage-0 §132).** *"6000
+#: token budget for the writer is way too low. Opus 5 has a 1m context window. Professional
+#: writers hold a lot of context in their head when they write."*
+#:
+#: The old value was never chosen for a writer. Its own comment said so — *"Matches the golden
+#: suite's `draft_scene` case. Not a measured figure"* — and the consequence was written down
+#: beside it and left standing: at 900-word scenes 6,000 tokens binds at about **scene five**,
+#: so from scene six the packet evicts. It evicts blind, too: this module packs by a fixed
+#: priority order and states plainly that under a tight budget it "will drop things a scorer
+#: would have kept, and it has no way to know that". A unit of production that is an
+#: **open-ended serial** cannot be drafted by a writer that forgets its own opening at chapter
+#: six.
+#:
+#: 200,000 is a placed number and is recorded as one. It is a fifth of the pinned model's
+#: window, which leaves room for the generation and for the window to be shared; and it is far
+#: above anything this project has produced — Serial Pilot 4's whole eight-scene book is 292
+#: state records and about 7,900 words — so for a book of that size the budget **does not bind
+#: at all** and nothing is evicted. It binds only for a genuinely long serial, which is the
+#: case the eviction machinery below was built for and the only case it should ever run in.
+#:
+#: What this does not do is make the packet *good*: it still has no relevance scoring, and a
+#: budget that never binds is not a substitute for a writer that can query its world. That is
+#: the open piece of the core loop and it is named in §132 rather than pretended away here.
+DEFAULT_TOKEN_BUDGET = 200_000
 
 #: Held back from the packet for the generation itself. A budget spent entirely on input
 #: leaves no room for the scene, and discovering that at the provider is discovering it after
-#: paying for it.
+#: paying for it. **Left at 1,500 when the budget above was raised to 200,000 (§132)**, and the
+#: reason is worth a line: it is subtracted from the packet's budget, so raising it does not buy
+#: the generator room — it only takes room from the context. With the budget two orders of
+#: magnitude larger, this constant no longer does anything a caller would notice, and it is kept
+#: rather than deleted because a deliberately small `--context-budget` still needs the floor.
 DEFAULT_RESERVED_OUTPUT = 1500
 
 

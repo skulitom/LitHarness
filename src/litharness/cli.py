@@ -5035,9 +5035,9 @@ def build_parser() -> argparse.ArgumentParser:
         "--context-budget",
         type=int,
         default=None,
-        help="tokens of context a scene is drafted against. Raise it with --target-words: "
-        "measured, a 900-word scene binds the default 6000 at scene 5 and leaves the packet "
-        "holding three prior scenes",
+        help="tokens of context a scene is drafted against. The default is 200,000 (§132) and "
+        "does not bind for any book this project has produced; it exists for a long serial. "
+        "Lower it to make the packet evict on purpose",
     )
     parser.add_argument(
         "--target-words",

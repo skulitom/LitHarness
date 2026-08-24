@@ -527,6 +527,11 @@ def _premise() -> lc.PlanItem:
     )
 
 
+#: A budget small enough to make the packet evict. The default is 200,000 since §132 and does
+#: not bind on a book this size, so every test of the eviction path names its own.
+BINDING_BUDGET = 6000
+
+
 def _long_book(scenes: int, words: int) -> Revision:
     """A book whose scenes are the length a capable generator actually writes."""
     nodes = [Node(logical_id="book", kind=NodeKind.BOOK, position_key="010")]
@@ -564,12 +569,18 @@ def test_an_evicted_scene_arrives_as_its_summary_instead_of_as_an_omission() -> 
     revision = _long_book(scenes=12, words=400)
     premise = [_premise()]
 
-    bare = assemble(revision, "target", plan_items=premise)
+    # **Explicit since §132**: the default is 200,000 and never binds on a book this size,
+    # which is the point of raising it. The eviction path it leaves behind is for a long
+    # serial and is still tested, at a budget chosen to bind.
+    bare = assemble(revision, "target", plan_items=premise, token_budget=BINDING_BUDGET)
     evicted = {omission.source_logical_id for omission in bare.omitted}
     assert evicted, "the budget must actually bind, or this test proves nothing"
 
     summaries = {logical_id: f"{logical_id} happened." for logical_id in evicted}
-    packed = assemble(revision, "target", plan_items=premise, summaries=summaries)
+    packed = assemble(
+        revision, "target", plan_items=premise, summaries=summaries,
+        token_budget=BINDING_BUDGET,
+    )
 
     covered = {item.source_logical_id for item in packed.sections[context_mod.SUMMARIES]}
     assert covered, "the section exists to be filled and must actually fill"
@@ -587,7 +598,10 @@ def test_a_summary_never_appears_beside_the_prose_it_summarises() -> None:
     revision = _long_book(scenes=12, words=400)
     premise = [_premise()]
     everything = {f"s{index}": f"s{index} happened." for index in range(1, 13)}
-    packed = assemble(revision, "target", plan_items=premise, summaries=everything)
+    packed = assemble(
+        revision, "target", plan_items=premise, summaries=everything,
+        token_budget=BINDING_BUDGET,
+    )
 
     whole = {item.source_logical_id for item in packed.sections[context_mod.PRIOR_PROSE]}
     summarised = {item.source_logical_id for item in packed.sections[context_mod.SUMMARIES]}
@@ -604,8 +618,14 @@ def test_a_book_with_no_summaries_packs_exactly_as_it_did_before() -> None:
     """
     revision = _long_book(scenes=12, words=400)
     premise = [_premise()]
-    bare = assemble(revision, "target", plan_items=premise)
-    empty = assemble(revision, "target", plan_items=premise, summaries={})
+    # **Explicit since §132**: the default is 200,000 and never binds on a book this size,
+    # which is the point of raising it. The eviction path it leaves behind is for a long
+    # serial and is still tested, at a budget chosen to bind.
+    bare = assemble(revision, "target", plan_items=premise, token_budget=BINDING_BUDGET)
+    empty = assemble(
+        revision, "target", plan_items=premise, summaries={},
+        token_budget=BINDING_BUDGET,
+    )
     assert [item.source_logical_id for item in bare.items] == [
         item.source_logical_id for item in empty.items
     ]
@@ -624,6 +644,7 @@ def test_the_summary_block_tells_the_generator_not_to_copy_its_register() -> Non
         "target",
         plan_items=premise,
         summaries={f"s{index}": f"s{index} happened." for index in range(1, 13)},
+        token_budget=BINDING_BUDGET,
     )
     rendered = packed.render()
     assert "in summary" in rendered
@@ -643,6 +664,7 @@ def test_a_summary_is_derived_and_never_accepted_canon() -> None:
         "target",
         plan_items=premise,
         summaries={f"s{index}": f"s{index} happened." for index in range(1, 13)},
+        token_budget=BINDING_BUDGET,
     )
     for item in packed.sections[context_mod.SUMMARIES]:
         assert item.authority is lc.StateAuthority.DERIVED

@@ -445,7 +445,10 @@ def test_the_summary_reaches_the_packet_that_could_not_hold_the_prose(store) -> 
     )
 
     beat = beats_for(revision, template_for(revision))[-1]
-    packet = packet_for(store, revision, beat)
+    # **Explicit since §132**: the default context budget is 200,000 and does not bind on a
+    # twelve-scene book, so the summary section it feeds would never fill. The eviction path
+    # is for a long serial; this names a budget that makes it run.
+    packet = packet_for(store, revision, beat, token_budget=6000)
     packed = {item.source_logical_id: item.text for item in packet.sections[SUMMARIES]}
     assert packed, "the far scenes must arrive in summary"
     assert "repaired away" not in " ".join(packed.values())

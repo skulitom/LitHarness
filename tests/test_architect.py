@@ -606,22 +606,28 @@ def test_the_genre_s_tropes_are_the_product_rather_than_permitted_furniture() ->
 
 
 def test_a_rule_asks_what_a_person_would_want_and_puts_it_at_the_top_of_the_ladder() -> None:
-    """The question no rule in this module used to ask.
+    """**Inverted 2026-08-24 (§131). The rule is deleted; the name survives because the ledger
+    cites it, and what it now pins is the deletion.**
 
-    Every other rule asks what a world *declares*: consequences, manifestations, rungs, costs,
-    an inventory. None asked whether anybody would want what was declared, and the result was a
-    countable, distinct inventory of chores — *"Readers want to feel cool and progress in
-    meaningful ways"*. Like the ladder and protagonist rules beside it, this asks for a
-    declaration and says nothing about outcomes, so the forbidden-verb list applies here too.
+    §118 added it after §113 and §114 between them produced "a countable, distinct inventory of
+    chores", and it carried the operator's own two lists of daydreams because *"an example list
+    is what a model actually steers by"*. It steered nothing measurable: `house.READER` has asked
+    every prompt for the same thing since §120 (§129), and six premises later the ladders were
+    still chains of technique. It went on the operator's rule for the whole class — *"a
+    professional writer we simulate should be able to understand this on their own"* — and
+    §118 remains the record of what it asked for.
+
+    The counters it was written to move are untouched and still reported without a bar:
+    `report()` carries `rungs_per_ladder` and `opening_rung_index`, and §129's capability
+    headroom census is computed from `capabilities_declared` and `protagonist_capabilities`.
     """
-    [rule] = [item for item in architect._RULES if "would want to be able to do" in item]
-    assert "TOP of the ladder" in rule
-    for forbidden in ("likeable", "compelling", "interesting", "best", "win", "succeed"):
-        assert forbidden not in rule.lower(), forbidden
-    # It is about the world's ladder and not about one person, so it must not have joined the
-    # four rules `test_the_protagonist_rule_asks_for_a_declaration_and_never_an_outcome` counts.
-    assert "protagonist" not in rule
-
+    assert not [item for item in architect._RULES if "the daydream" in item]
+    assert not [item for item in architect._RULES if "put that at the TOP of the ladder" in item]
+    # The ladder rules that gate rather than exhort are untouched: a chain of at least three,
+    # lowest first, each rung granting a power that is kept.
+    [ladder] = [item for item in architect._RULES if "chain of AT LEAST THREE" in item]
+    assert "LOWEST FIRST" in ladder
+    assert "grants" in ladder
 
 def test_a_rung_declares_what_it_lets_a_person_do_and_it_reaches_canon() -> None:
     """§114 measured the gap and built beside it; the operator named it again and it is closed.
@@ -837,8 +843,13 @@ def test_no_rule_offers_a_debt_as_a_subject_or_a_market_as_an_interface() -> Non
     assert "or a debt may leave this out" not in joined
     assert "a debt the book can never pay" not in joined
     assert "the exchange rate, who can cheat whom, what the law says" not in joined
-    assert "NOT an exchange rate, a market, a court, a licence or a tariff" in joined
+    # **Amended 2026-08-24 (§131).** The "NOT an exchange rate, a market, a court, a licence or
+    # a tariff" clause belonged to the two-incompatible-systems rule, which is deleted — it
+    # mandated two systems while another rule says a world may have "one system, several, or
+    # none", and two rules disagreeing about one declaration is the contradiction class
+    # boundary 2 exists to prevent. §116's own rule is untouched and carries the finding.
     assert "not an administration" in joined
+    assert "a debt, a ledger, a register" in joined
 
 
 def test_the_cost_rule_says_what_a_cost_is_paid_in() -> None:
