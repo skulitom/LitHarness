@@ -78,8 +78,13 @@ while looking valid, and this is the likeliest way the whole result dies.
   continuation matches the true next text verbatim. **Any hit on any probe on either the panel
   or the spot model excludes the book** into a labelled `recognised` stratum.
 - The confirmatory set is recognition-clean AND, where the platform's dates allow,
-  **cutoff-clean**: first release after the panel model's training cutoff
-  ([SLOT: panel model + documented cutoff date]). The rest is exploratory.
+  **cutoff-clean**: first release on or after **2025-08-01** — the panel model
+  (`claude-haiku-4-5`) carries a documented training-data cutoff of July 2025 (platform model
+  overview, fetched 2026-08-24). The rest is exploratory. **No frontier spot model touches an
+  excerpt anywhere in this programme**: every current frontier model's cutoff (May 2026 for
+  `claude-opus-5`) postdates the entire 2025 dump, so a spot model would empty the
+  cutoff-clean set by existing. The panel model's memory is the only model memory in the loop,
+  and it is the one the probe screens.
 - The `recognised` stratum may be run and reported separately; it certifies nothing.
 - If the screens leave the confirmatory set below the power target, the registered verdict is
   **INSUFFICIENT_N**, reported as such — not a smaller floor.
@@ -129,7 +134,7 @@ pass.
 
 ## 7. Controls, each with its registered pass condition
 
-- **C1 — sham pairs** (n = [SLOT]): two different excerpt windows of the *same* book presented
+- **C1 — sham pairs** (n = 12): two different excerpt windows of the *same* book presented
   as a pair. Not byte-identical (a sham that cannot move is no control — §120.2), same
   outcome by construction. Floor: the largest per-sham |continue-share − 0.5|, read per sham
   and never pooled. The primary effect must clear the largest sham deviation by **+0.05** in
@@ -169,9 +174,9 @@ ledger, replay caches keyed by request digest:
   fired and the cost ledger matches the estimate within 2x.
 - **(c) full run** — one confirmatory look. Everything after it is exploratory and labelled.
 
-Panel model [SLOT: id + cutoff], spot checks at the standing spot fraction on the standing
-spot model. Cost ceiling for the whole programme: [SLOT: computed from final counts]; the
-ceiling is a refusal, not a note.
+Panel model `claude-haiku-4-5`, no spot model (§3's cutoff reasoning — a 2026-cutoff frontier
+model reading excerpts would void cutoff-cleanness by construction). Cost ceiling for the
+whole programme: [SLOT: computed from final counts]; the ceiling is a refusal, not a note.
 
 ## 9. Primary metric and the decision rule
 
