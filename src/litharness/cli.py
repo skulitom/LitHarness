@@ -43,6 +43,7 @@ from litharness.application import architect, comprehension
 from litharness.application import export as export_module
 from litharness.application import readers as readers_mod
 from litharness.application import status as status_module
+from litharness.application import world as world_mod
 from litharness.application.conductor import Conductor, TickOutcome
 from litharness.application.directive_planner import DIRECTIVE_PLAN, make_directive_plan_handler
 from litharness.application.director import DIRECT, make_director_handler
@@ -1411,6 +1412,86 @@ def cmd_characters(args: argparse.Namespace) -> int:
         return EXIT_OK
 
     print(characters_mod.render(people))
+    return EXIT_OK
+
+def cmd_world(args: argparse.Namespace) -> int:
+    """The Architect's tools: ask this world a question, or declare something new in it.
+
+    **The interface is the CLI because that is what an agent already speaks.** The operator,
+    2026-08-24: *"all our agents should interact with each other through cli tools, as it is
+    native interface for them"*, and *"in what world would a one-shot structured call be a
+    good idea for writing a book... The world would obviously evolve and grow with every
+    chapter"*. A world assembled once, before scene one, in a single structured call is the
+    shape this replaces.
+
+    Every view prints JSON under `--json` and a person's version otherwise, because both an
+    agent and an operator read these. `application/world.py` holds the views and no logic:
+    each is a wrapper over something `domain/worlds.py` already computed.
+
+    **`declare` writes a proposal, never canon.** `worlds.world_record` mints at PROPOSED and
+    that is the rail (§5, `plan/world-architect.md` §2) — an agent with this tool cannot put a
+    fact into a book, only offer one.
+    """
+    store = _store(args)
+    stamp = _stamp(_now())
+    try:
+        book_id, branch_id = export_module.resolve_branch(store, args.book, args.branch)
+        records = store.state_records(book_id, branch_id)
+
+        if args.view == "declare":
+            record = worlds_domain.world_record(
+                worlds_domain.normalise_id(args.subject),
+                args.predicate,
+                value=args.value,
+                object_ref=(worlds_domain.normalise_id(args.object) if args.object else None),
+                order_key=args.order_key,
+                note=args.note,
+            )
+            complaints = worlds_domain.validate([*records, record])
+            fresh = worlds_domain.validate(records)
+            new_complaints = [c for c in complaints if c not in fresh]
+            if new_complaints:
+                for complaint in new_complaints:
+                    print(f"litharness: {complaint}", file=sys.stderr)
+                return EXIT_FAULT
+            written = store.record_state_records(
+                book_id, branch_id, [record], created_at=stamp
+            )
+            payload: Any = {
+                "record_id": record.record_id,
+                "authority": record.authority.value,
+                "new": bool(written),
+                "says": state_mod.describe(record),
+            }
+            if args.json:
+                print(json.dumps(payload, ensure_ascii=False, indent=2))
+            else:
+                verb = "declared" if written else "already on record"
+                print(f"{verb}: {payload['says']}  [{record.authority.value}]")
+            return EXIT_OK
+    finally:
+        store.close()
+
+    if args.view == "show":
+        payload = world_mod.declarations(records, subject=args.subject)
+    elif args.view == "rules":
+        payload = world_mod.rules(records)
+    elif args.view == "ladders":
+        payload = world_mod.ladders(records)
+    elif args.view == "abilities":
+        payload = world_mod.abilities(records, holder=args.holder)
+    elif args.view == "cast":
+        payload = world_mod.cast(records)
+    elif args.view == "threads":
+        payload = world_mod.threads(records, at=args.at)
+    elif args.view == "check":
+        payload = world_mod.check(records)
+    else:
+        payload = world_mod.summary(records)
+
+    print(json.dumps(payload, ensure_ascii=False, indent=2))
+    if args.view == "check" and not payload["ok"]:
+        return EXIT_FAULT
     return EXIT_OK
 
 def cmd_state(args: argparse.Namespace) -> int:
@@ -3549,6 +3630,49 @@ def build_parser() -> argparse.ArgumentParser:
     characters.add_argument("--book")
     characters.add_argument("--branch")
     characters.set_defaults(func=cmd_characters)
+
+    # The Architect's tool suite. One parser per view rather than a single `--view` flag,
+    # because an agent reads `--help` to find out what it can do and a flag with seven
+    # values documents itself as one thing.
+    world = sub.add_parser(
+        "world", help="ask this world a question, or declare something new in it"
+    )
+    world_sub = world.add_subparsers(dest="view", required=True)
+    for name, helptext in (
+        ("summary", "how big this world is and where the holes are"),
+        ("show", "every declaration, in story order, with provenance"),
+        ("rules", "the declared rules and the domains their consequences reach"),
+        ("ladders", "ordinal criteria, their rungs lowest-first, and who stands where"),
+        ("abilities", "what a person can do here, and who holds what"),
+        ("cast", "who is in this world, by role, and who the protagonist is"),
+        ("threads", "open questions, where each is answered, what is still untold"),
+        ("check", "what is wrong by arithmetic; exits 1 when anything is"),
+    ):
+        view = world_sub.add_parser(name, help=helptext)
+        view.add_argument("--book")
+        view.add_argument("--branch")
+        view.add_argument("--json", action="store_true", help="ignored; output is JSON")
+        if name == "show":
+            view.add_argument("--subject", help="one subject id")
+        if name == "abilities":
+            view.add_argument("--holder", help="one subject id")
+        if name == "threads":
+            view.add_argument("--at", help="a story position; what is open as of there")
+        view.set_defaults(func=cmd_world)
+
+    declare = world_sub.add_parser(
+        "declare", help="offer this world a new record (PROPOSED, never canon)"
+    )
+    declare.add_argument("subject")
+    declare.add_argument("predicate")
+    declare.add_argument("--value")
+    declare.add_argument("--object", help="another subject id, for a relationship")
+    declare.add_argument("--order-key", dest="order_key", help="where in story time")
+    declare.add_argument("--note")
+    declare.add_argument("--json", action="store_true")
+    declare.add_argument("--book")
+    declare.add_argument("--branch")
+    declare.set_defaults(func=cmd_world)
 
     read = sub.add_parser(
         "readers", help="put the simulated readership on a drafted scene"
