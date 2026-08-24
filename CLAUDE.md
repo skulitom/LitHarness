@@ -90,6 +90,13 @@ Several sessions edit this repo at once, on `main` and in `.claude/worktrees/*`.
   not run the full suite, mypy, or a GPU job while a paid arm, a pilot loop, or a `forge` is
   running; check the process list first. One CLI arm at a time; read `transport_failures`
   before reading any verdict.
+- **The box hard-shut-down again on 2026-08-24, with the GPU governor holding**: an ollama
+  arm was running under the 72/66 governor while two sustained CPU jobs (a parquet survey
+  and a bootstrap simulation) ran beside it. The governor watches core temperature only;
+  combined CPU+GPU load is what kills this machine. **One sustained job at a time — CPU
+  jobs count.** Run every GPU arm beside the `thermal_watch.py` sidecar (it samples
+  independently of the job and kills before the card's own limit), and check the process
+  list before launching any background compute, paid or free.
 - `pkill -f` matches nothing here and exits 0. Kill by PID from PowerShell and verify the count
   is zero; long paid arms hold a PID lock (`force_remote.SingleRun` is the reference).
 - Two interpreters, split by what the run reads: anything touching the RoyalRoad parquet shards
