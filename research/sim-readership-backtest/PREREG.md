@@ -74,8 +74,9 @@ while looking valid, and this is the likeliest way the whole result dies.
   the main arm would show: (a) name the title; (b) name the author; (c) continue the excerpt's
   final sentence for ~50 words. Scoring is code: (a)/(b) hit on normalised containment of the
   true title/author (stopword-stripped, case-folded); (c) hit when any 8-gram of the
-  continuation matches the true next text verbatim. **Any hit on any probe on either the panel
-  or the spot model excludes the book** into a labelled `recognised` stratum.
+  continuation matches the true next text verbatim. **Any hit on any probe on the panel model
+  excludes the book** into a labelled `recognised` stratum (there is no spot model in
+  this programme — the sentence below is why).
 - The confirmatory set is recognition-clean AND, where the platform's dates allow,
   **cutoff-clean**: first release on or after **2025-08-01** — the panel model
   (`claude-haiku-4-5`) carries a documented training-data cutoff of July 2025 (platform model
