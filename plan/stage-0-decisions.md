@@ -13442,14 +13442,25 @@ been a peek at the answer. Ten paid calls, $2.70.
 
 | arm | direction | carried on |
 | --- | --- | --- |
-| scene 8 as it stands on the branch | none | **1 of 4** |
+| ~~scene 8 as it stands on the branch~~ | ~~none~~ | ~~**1 of 4**~~ |
 | blind redraft | none | **3 of 4** |
 | steered redraft | 4 readers, 19 hopes, 19 dreads | **2 of 4** |
 
-The first two rows are the same condition. **One prompt, drafted twice, spans 1 of 4 to 3 of 4** —
-the whole range the treatment could have moved. Nothing about direction is established here,
-in either direction, and no bar is declared: the four attainability checks fail at the first,
-because the range at the real n swallows the effect.
+~~The first two rows are the same condition. **One prompt, drafted twice, spans 1 of 4 to 3 of 4**
+— the whole range the treatment could have moved.~~
+
+**Correction (§134): the first two rows are not the same condition, and the struck sentence is
+wrong.** Every revision in `serial4.db` was written 2026-08-22T18:57; the `_RULES` cut and
+`DEFAULT_TOKEN_BUDGET` 6,000 → 200,000 (§131, §132) landed 2026-08-24 in `322f907`. The scene on
+the branch therefore came from a different prompt *and* from a packet that — at 6,000 tokens,
+which §132 measured as binding at about scene five — had evicted most of the book before scene
+eight was drafted. It is the old pipeline, not a blind replicate.
+
+**The conclusion survives on honest data.** Five drafts now exist from the *current* blind
+prompt — this entry's one and §134's four — and they read **3, 4, 1, 4, 4** of 4. The spread
+within the untreated arm alone still runs the full range, so nothing about direction is
+established here, in either direction, and no bar is declared: the four attainability checks
+fail at the first, because the range at the real n swallows the effect.
 
 **The design fault, named so it is not repeated.** The unit of variance is the **draft**, not the
 reader. Adding reader draws to one draft buys almost nothing; this design has one draft per arm
@@ -13458,7 +13469,9 @@ at the observed prices (≈$0.68 a draft, ≈$0.17 a reader call) four drafts pe
 four measurement readers is about $11, which is the honest cost of a first real number.
 
 **What *is* measured, on the one pair, is that the direction reached the page and changed the
-writing in a way two readers then objected to.** Blind → steered:
+writing in a way two readers then objected to.** Blind → steered — **and §134 replicated this at
+four drafts a side: two of the three measures below reverse sign and none separate. The
+register story in this paragraph is a story read off n=1 per arm, and it did not hold:**
 
 - dialogue share of paragraphs **0.59 → 0.40**
 - past-perfect `had` **11 → 21**
@@ -13493,3 +13506,80 @@ the power to see any shape at all — costs money and is the operator's.
 **Anti-scope.** One beat of one book. Nothing about whether the loop helps a *serial* over many
 chapters, which is the case it exists for, and nothing about the steering/measurement split, which
 held: no reader was in both pools, and what steered scene 8 never measured it.
+
+## 134. Four drafts a side says the direction does nothing measurable, the register story read off one pair reverses, and the continuation instrument is at its ceiling
+
+§133 named its own fault — one draft per arm while the draft is the unit of variance — and this
+bought the fix. Same beat, same packet, same direction, same two system prompts; four draws per
+arm, interleaved blind/steered so provider drift over the run loads on neither. Forty calls,
+**$10.66**. Two guards ran and neither fired: an abort if two draws from the identical blind
+prompt came back byte-identical (they did not — the provider resamples), and a $14 ceiling.
+
+**Measured: continuation.**
+
+| arm | per draft, of 4 readers | pooled |
+| --- | --- | --- |
+| blind | 4, 1, 4, 4 | 13 of 16 |
+| steered | 4, 3, 4, 4 | 15 of 16 |
+
+Mann-Whitney U = 7.5, exact two-sided **p = 1.000**. The nominal sign is the *opposite* of §133's
+single pair and is indistinguishable from nothing in both runs. **No effect of reader direction on
+continuation is established, in either direction, and no bar is declared.**
+
+**Six of the eight drafts scored 4 of 4.** That is the load-bearing observation, and it is not
+about direction at all. §94's saturation is back in a new place: the attention budget stopped a
+reader continuing out of politeness across a 196-cell battery, and it does not stop four readers
+all liking four fresh drafts of one beat. The operational consequence — **continuation cannot rank
+candidates drawn from the same prompt.** Any best-of-n scheme needs a selector that discriminates
+between siblings, and this instrument, on this material, does not. Nothing here says the budget was
+wrong; it says the ceiling binds where the candidates are close, which is exactly where selection
+lives.
+
+**Measured: §133's register story does not replicate.** Per-draft, four a side, exact two-sided
+Mann-Whitney:
+
+| measure | §133, n=1 a side | blind, n=4 | steered, n=4 | p | separated? |
+| --- | --- | --- | --- | --- | --- |
+| dialogue share | 0.59 → 0.40 | 0.52 | 0.61 | 0.200 | no — **sign reversed** |
+| past-perfect /1k | 11 → 21 | 10.87 | 8.37 | 0.343 | no — **sign reversed** |
+| numbers /1k | 24 → 36 | 21.05 | 27.04 | 0.114 | no |
+| words | 1033 → 1110 | 1007 | 1070 | 0.229 | no |
+
+Two of the three reverse. Only number density keeps its sign, and it does not separate. §133's
+paragraph about the direction pushing prose "from dramatised scene toward reported summary" was a
+story read off one draft a side, and it is corrected in place there. **The lesson is §133's own
+lesson applied to §133's own secondary measures**: the draft is the unit of variance for the
+register numbers too, and a continuous measure is not exempt from needing more than one draw.
+
+**A correction to §133 that changes what it proved.** Its table's first row — the scene as it
+stands on the branch, 1 of 4 — was called a replicate of the blind condition. It is not. Every
+revision in `serial4.db` dates to 2026-08-22T18:57, and §131's `_RULES` cut and §132's token budget
+landed 2026-08-24. That draft is the **old pipeline**, written under nineteen rules and a 6,000-token
+packet that §132 measured as binding at about scene five. The struck row is now the only
+before-and-after the cut has, and it is uncontrolled in every variable at once: old pipeline
+**1 of 4**; five drafts from the current blind prompt **16 of 20**. Recorded because it is the only
+such contrast in existence, and claimed as nothing, because everything changed together.
+
+**What shipped: nothing.** No code changed in either §133 or this. Both scripts are scratch.
+
+**What was refused.** No claim that direction helps and none that it harms — p = 1.000 is not a
+finding in either direction, and saying "steered was nominally higher" as though it were would be
+the same error §133 made in the other direction one run earlier. No pooling of the sixteen reader
+decisions per arm into a proportion with sixteen degrees of freedom; they are clustered by draft
+and the draft is the unit. No length-matched placebo arm bought, so the 2.9× prompt-length
+difference remains unseparated from the direction's content — it just no longer matters much,
+because neither is doing anything visible.
+
+**What this constrains, for the design on the table.** A selection loop that drafts n candidates
+and ships the best needs an instrument that discriminates among siblings. Continuation, measured
+here, does not. That is an argument for a different selector, not an argument for the one currently
+proposed: `anticipation.v0` (§124) **has never made a single call**, its four registered kill
+conditions are unevaluated, and its own anti-scope says a pass licenses a located diagnostic and
+nothing more. Selecting among candidates on an unvalidated scorer is §61(5) and §105.1 exactly. The
+cheap next purchase is the probe run over the eight drafts already bought, scored against the
+continuation readings they already carry — the probe's first call, and the first evidence about
+whether it tracks anything a reader does.
+
+**Anti-scope.** One beat of one book, one direction payload, one provider. Nothing about serials
+over many chapters, nothing about whether the steering/measurement split needs revisiting — it held
+again: no reader was in both pools, and what steered these drafts never read them.
