@@ -121,18 +121,36 @@ def bundle_files(
             "beat key minted at another, and only you know which number is the wrong one"
         )
 
-    # **The subject check is deliberately not run here** (`architect.gate_candidate`'s
-    # docstring, §115.3's precedent). This tool rebuilds a bundle for a world a person
-    # already picked; whether that world should have been picked was settled then, and a
-    # gate added afterwards must not make a shipped pilot unrebuildable.
-    complaints = architect.gate_candidate(candidate, scenes=scenes, include_subject=False)
+    complaints = architect.gate_candidate(candidate, scenes=scenes)
     if complaints:
         raise BundleFault(
             f"the picked world no longer clears its own gates at {scenes} scenes: "
             + "; ".join(complaints)
         )
 
-    if [dict(item) for item in architect.directives_for(candidate)] != directives["directives"]:
+    # **Consistency with this world, not equality with today's lane.** The committed file is
+    # what `--pick` wrote when the pick was made; the directive lane has narrowed since
+    # (`plan/clarity-audit-2026-08-24.md` C2 closed `tone_note` and put every forge directive
+    # through `directors.legal_brief`), and a re-materialised bundle reproduces the recorded
+    # choice rather than re-making it under today's rules. What is still checked, both ways:
+    # every stored entry is one this world's own answer declares — so a bundle cannot stand a
+    # book up on another world's directives — and everything today's lane carries is in the
+    # stored file, so a directive the world declares cannot have gone missing from the record.
+    declared = {
+        (str(entry.get("kind") or "").strip(), str(entry.get("text") or "").strip())
+        for entry in package["world"].get("directives") or ()
+        if isinstance(entry, dict)
+    }
+    stored = directives["directives"]
+    consistent = isinstance(stored, list) and all(
+        isinstance(entry, dict)
+        and (entry.get("kind"), entry.get("text")) in declared
+        and entry.get("label") == f"forged {entry.get('kind')}"
+        for entry in stored
+    )
+    if not consistent or any(
+        dict(item) not in stored for item in architect.directives_for(candidate)
+    ):
         raise BundleFault(f"{directives_path} is not the directive set this world produces")
     if [dict(item) for item in architect.promises_for(candidate)] != promises:
         raise BundleFault(f"{promises_path} is not the promise set this world produces")

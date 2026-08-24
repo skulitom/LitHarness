@@ -192,8 +192,8 @@ _CAPABILITY = {
         "manifests_as": {
             **_SAID,
             "description": (
-                "How it shows on the page when it is used: what is seen, heard or paid. Never "
-                "an explanation and never a lecture, exactly as every other `manifests_as`."
+                "How it shows on the page when it is used: what is seen, heard or paid, "
+                "exactly as every other `manifests_as`."
             ),
         },
         "requires": {
@@ -427,7 +427,7 @@ _PROTAGONIST = {
             **_SAID,
             "description": (
                 "What that exception lets them do that nobody else can, written the way "
-                "`manifests_as` is written: how it shows on the page, never an explanation."
+                "`manifests_as` is written: how it shows on the page."
             ),
         },
         "wants": {**_SAID, "description": "What this person is after."},
@@ -487,7 +487,7 @@ _DIRECTIVE = {
     "properties": {
         "kind": {
             "type": "string",
-            "enum": ["constraint", "tone_note", "arc_note", "chapter_note"],
+            "enum": ["constraint", "arc_note", "chapter_note"],
         },
         "text": _TEXT,
     },
@@ -666,7 +666,7 @@ _RULES: tuple[str, ...] = (
     "consequence with three faces. The consequences are where a world stops being a name.",
     "Every system, every rule, every rank and every creature carries `manifests_as`: one line "
     "of how it shows on the page — a printed line, a price paid, a mark worn, a sound, a change "
-    "in how a stranger treats you. Never an explanation and never a lecture.",
+    "in how a stranger treats you.",
     "Every rank has a form a reader can SEE, and every gain has a cost payable on the page in "
     "the same scene or earlier. A cost is paid in a body, in time, in risk, in something the "
     "person can no longer do, or in somebody who is now against them — never in money, never "
@@ -703,12 +703,7 @@ _RULES: tuple[str, ...] = (
     "chain. The surface form is the world's own and there is no house style for it — belts, "
     "grades, years, seals, colours, degrees, titles, thresholds and metals are all the same "
     "structure wearing different clothes, and a world that reaches for the nearest familiar "
-    "set has skipped the part that was its own. **The words `ladder` and `rung` are this "
-    "schema's and never the book's** — and so is `standing`, and so is any other word this "
-    "schema uses for the machinery. None of them appear in the premise, in a rank's name, "
-    "or anywhere a reader would see. A premise that says somebody wants to get high enough "
-    "up the ladder has printed the scaffolding instead of the building, and one that says a "
-    "girl runs hotter than her standing should allow has done it again in a different word. "
+    "set has skipped the part that was its own. "
     "Name the rung this world names, in this world's own language.",
     # **The domain rule built five worlds set inside a trade, and the operator named it.**
     # Assaying, grafting, surveying, bell-founding, dyeing — the rule asked for a real domain of
@@ -726,9 +721,8 @@ _RULES: tuple[str, ...] = (
     "Literalise one real domain of human work or knowledge and take the system's logic and its "
     "costs from that domain's real constraints. Name the domain. The book should run on real "
     "ideas rather than invented ones. **The domain is the engine, not the setting.** The book "
-    "is not set inside that trade, the trade is not the world's institution, and the domain's "
-    "technical vocabulary never reaches the page — a reader learns none of its words and "
-    "needs none. What somebody can do is said in plain words a reader could repeat after one "
+    "is not set inside that trade, and the trade is not the world's institution. "
+    "What somebody can do is said in plain words a reader could repeat after one "
     "read: the physics of a real craft, wearing none of its jargon.",
     # **The rule this module did not have, and sixteen rules went out without it.** Every rule
     # here asked what a world *declares* — consequences, manifestations, visible rungs, costs, a
@@ -876,7 +870,7 @@ _RULES: tuple[str, ...] = (
     "`rule_seed_never_true`, with no dash and no clause after it. What that rule says is "
     "already written where the rule is declared, and a sentence there is not an id. Then give "
     "the `edge` that exception grants them, written the way `manifests_as` is written — how it "
-    "shows on the page, never an explanation; what they want; and the price the exception "
+    "shows on the page; what they want; and the price the exception "
     "charges them, payable on the page. If the exception is a cardinality shape, that shape "
     "lists their id in its `except`. Write the `premise` as that person's situation — who they "
     "are, what is singular about them, what is in the way — rather than as a description of "
@@ -928,7 +922,7 @@ _RULES: tuple[str, ...] = (
     "Every name, place, creature and mechanic is original to this world. Never name, quote, "
     "imitate, or compare to any real person, brand, game, or published work.",
     "The prose this world will be written in is fast, plain, popcorn reading. The world shows "
-    "on the page as interactions, prices paid and visible ranks. It is never explained.",
+    "on the page as interactions, prices paid and visible ranks.",
     "This is genre fiction and the genre's own furniture is WELCOME rather than avoided: an "
     "academy, a tournament, a master worth impressing, a party who travel together, a rival "
     "house, a first test, a system that speaks up. A reader came for those. Originality "
@@ -1073,71 +1067,6 @@ _BORROWED = re.compile(
     r"|\blike in (?:the )?[A-Z]"
 )
 
-
-#: The administrative vocabulary a world may not be *about*, and why it is a word list.
-#:
-#: **Measured over the 30 worlds forged before 2026-08-23** — four briefs, both prompt shapes,
-#: every pilot this project has run. Administrative words appear in **every one of them**, at a
-#: median of 7.21 per 1,000 words of declared text (minimum 2.69, maximum 17.92), and **18 of the
-#: 30 name one in the premise**, which is the sentence a reader meets first. The operator read
-#: three such premises on 2026-08-23 and refused all three. `_RULES` is where that bias came from
-#: and where it is fixed; this list is how the fix is checked.
-#:
-#: **`price`, `cost`, `pay` and `bond` are deliberately absent.** The schema asks every rule for a
-#: price and every cast for its bonds, so counting those would count this module's own
-#: instructions rather than the world. What is counted is the paperwork around them.
-#:
-#: **`court` came out on the first forge run under the amended rules, and the arithmetic is
-#: recorded rather than argued.** A world of bell-founders held its duels on the *Bell Court*,
-#: which is an arena, and the premise check refused it. Over the 30 worlds forged before this
-#: list existed the premise check fires on 18 with `court` in the family and on **17 without**,
-#: so the whole word buys one world in thirty and costs every yard, tennis and courtyard in the
-#: language. `courtroom` stays, and so do `bailiff`, `docket`, `writ`, `magistrate`, `tribunal`
-#: and `plaintiff`, which mean only the one thing. This module has now narrowed a word guard
-#: from a measured false positive three times — `franchise`, `like in`, and this — and the
-#: economics are the same each time: a recall-tuned list run as a refusal has them inverted.
-_ADMINISTRATION: frozenset[str] = frozenset(
-    """
-    debt debts debtor debtors creditor creditors ledger ledgers register registers registry
-    registries tariff tariffs licence licences license licenses courtroom docket dockets
-    deed deeds lien liens wage wages tax taxes taxed levy levies fee fees rent rents invoice
-    invoices contract contracts clerk clerks bailiff bailiffs arbitrate arbitrates arbitration
-    litigation lawsuit mortgage mortgages toll tolls warrant warrants statute statutes
-    magistrate magistrates notary audit audits auditor bookkeeping receipt receipts writ writs
-    tribunal plaintiff broker brokers brokerage owed owes owing forfeiture forfeit assessor
-    assessors filing filings claimant compensation indemnity arrears surety collateral
-    """.split()  # noqa: SIM905 — a word list is prose, and reads as prose
-)
-
-_WORDS = re.compile(r"[a-z]+")
-
-
-def _administration_in(text: str) -> tuple[str, ...]:
-    """The administrative words in one piece of text, first-seen order, each named once."""
-    seen: dict[str, None] = {}
-    for word in _WORDS.findall(text.lower()):
-        if word in _ADMINISTRATION:
-            seen.setdefault(word, None)
-    return tuple(seen)
-
-
-def _declared_prose(value: Any) -> str:
-    """Every string a world declares, key names excluded — what it says, not how it is filed."""
-    if isinstance(value, str):
-        return value
-    if isinstance(value, Mapping):
-        return " ".join(_declared_prose(item) for item in value.values())
-    if isinstance(value, (list, tuple)):
-        return " ".join(_declared_prose(item) for item in value)
-    return ""
-
-
-def _administration_rate(candidate: Candidate) -> float:
-    """Administrative words per 1,000 words of declared text. A distribution, never a bar."""
-    words = _WORDS.findall(_declared_prose(candidate.raw).lower())
-    if not words:
-        return 0.0
-    return round(1000 * sum(1 for word in words if word in _ADMINISTRATION) / len(words), 2)
 
 #: How many second-order consequences, in distinct domains, a declared rule owes. Three, and it
 #: is the operator's figure taken as given rather than a measured threshold — recorded as chosen
@@ -1562,37 +1491,12 @@ def _ladder_complaints(candidate: Candidate) -> tuple[str, ...]:
     return tuple(complaints)
 
 
-def _administration_complaints(candidate: Candidate) -> tuple[str, ...]:
-    """The premise, and only the premise. The rate is reported beside it and carries no bar.
-
-    **Where the line is drawn and why it is drawn there.** A world may have institutions, may
-    charge for everything, and may put somebody under an obligation they hate; what it may not
-    do is make the paperwork the thing the book is about. The premise is where that shows and
-    it is the sentence a reader meets first, so it is the one place this is a refusal.
-
-    **Attainable, checked the way §81, §85, §87 and §89 each were not.** Over the 30 worlds
-    forged before this check existed, **12 pass it and 18 fail it** — both subgroups non-empty,
-    the quantity is a membership test with no scale to mis-declare, and the unit is one world.
-    No bar is declared over `administration_per_1k`: that is a distribution nobody has ranged
-    against an outcome, and a threshold over it would be exactly the mistake those four entries
-    record.
-    """
-    named = _administration_in(str(candidate.raw.get("premise") or ""))
-    if not named:
-        return ()
-    return (
-        f"the premise is written in administration ({', '.join(named)}); it is the sentence a "
-        "reader meets first, and a world whose hook is paperwork is what the operator refused "
-        "three times out of three on 2026-08-23",
-    )
-
-
 def gate_candidate(
-    candidate: Candidate, *, scenes: int = DEFAULT_SCENES, include_subject: bool = True
+    candidate: Candidate, *, scenes: int = DEFAULT_SCENES
 ) -> tuple[str, ...]:
     """Deterministic complaints about one world. Empty means it passed.
 
-    Six checks, each arithmetic or membership over the structured answer and none of them an
+    Seven checks, each arithmetic or membership over the structured answer and none of them an
     opinion about whether the world is any good:
 
     1. every declared rule reaches `CONSEQUENCE_FLOOR` distinct domains of life;
@@ -1604,16 +1508,14 @@ def gate_candidate(
     6. the ladder is countable and the standing sits on it below the top, and a world with a
        ladder says what a change of standing is printed as (`_ladder_complaints`; silent for a
        world that declares no standing);
-    7. the premise is not written in administration (`_administration_complaints`);
-    8. nothing in the answer compares itself to something outside it (RS1 / C3).
+    7. nothing in the answer compares itself to something outside it (RS1 / C3).
 
-    **`include_subject=False` is for a world somebody has already chosen**, and §115.3 is
-    the precedent: a check added after the fact must not park an artefact over a fault it
-    could not have been forged clear of. Check 7 arrived on 2026-08-23, after all 30
-    worlds in this repository had been forged and two had been written, and 18 of the 30
-    fail it. `tools/rematerialise_forge_bundle.py` and the pilot-package regeneration pass
-    it False so that rebuilding a chosen world stays possible; **nothing at forge time
-    does**, which is the only place the check is meant to act.
+    An administration word scan sat here as check 7 from 2026-08-23 to 2026-08-24, with an
+    `include_subject` switch so already-picked worlds could be rebuilt past it. It was a mask
+    over a bias `_RULES` itself had caused and §116 fixed at the cause, narrowed for measured
+    false positives three times, and it is deleted with its cause
+    (`plan/clarity-audit-2026-08-24.md` W2). The one word scan that survives is `_BORROWED`,
+    which is a containment rail rather than a craft rule.
     """
     complaints: list[str] = []
 
@@ -1696,8 +1598,6 @@ def gate_candidate(
     complaints.extend(_protagonist_complaints(candidate))
     complaints.extend(_capability_complaints(candidate))
     complaints.extend(_ladder_complaints(candidate))
-    if include_subject:
-        complaints.extend(_administration_complaints(candidate))
 
     borrowed = sorted(set(_BORROWED.findall(candidate.rendered())))
     if borrowed:
@@ -2314,28 +2214,53 @@ def story_key(scene: int, *, scenes: int) -> str | None:
     return f"s{scene:0{len(str(scenes))}d}"
 
 
-def directives_for(candidate: Candidate) -> tuple[dict[str, str], ...]:
-    """The directive set a forged world needs the loop to carry.
+def _directive_lane(
+    candidate: Candidate,
+) -> tuple[tuple[dict[str, str], ...], tuple[str, ...]]:
+    """The forge's directives split into what the lane carries and what it refused, by name.
 
-    Kinds are restricted to what a role may write: the four interpretive kinds plus `constraint`.
-    A `veto` is a refusal and refusal is the operator's; `control` is pause/resume/kill and is
-    not narrative at all. This is `directors.DIRECTOR_KINDS`' argument with `constraint` added,
-    because a *world fact* stated as a standing rule is exactly what the verbatim lane is for —
-    and unlike a prose-craft rule, it is not doctrine about how to write.
+    One computation shared by `directives_for` and `report`, so the refusals the report shows
+    are the lane's own rather than a second reading of the same entries.
     """
     allowed = {
         DirectiveKind.CONSTRAINT.value,
-        DirectiveKind.TONE_NOTE.value,
         DirectiveKind.ARC_NOTE.value,
         DirectiveKind.CHAPTER_NOTE.value,
     }
-    out: list[dict[str, str]] = []
+    kept: list[dict[str, str]] = []
+    refused: list[str] = []
     for entry in _items(candidate, "directives"):
         kind = _text(entry, "kind")
         text = _text(entry, "text")
-        if kind in allowed and text:
-            out.append({"kind": kind, "text": text, "label": f"forged {kind}"})
-    return tuple(out)
+        if kind not in allowed or not text:
+            continue
+        try:
+            directors.legal_brief(text)
+        except directors.IllegalBrief as fault:
+            refused.append(f"{kind}: {fault}")
+            continue
+        kept.append({"kind": kind, "text": text, "label": f"forged {kind}"})
+    return tuple(kept), tuple(refused)
+
+
+def directives_for(candidate: Candidate) -> tuple[dict[str, str], ...]:
+    """The directive set a forged world needs the loop to carry.
+
+    Kinds are restricted to what a role may write: `arc_note` and `chapter_note` from the
+    interpretive kinds, plus `constraint`. A `veto` is a refusal and refusal is the operator's;
+    `control` is pause/resume/kill and is not narrative at all; and a *world fact* stated as a
+    standing rule is exactly what the verbatim `constraint` lane is for.
+
+    **`tone_note` is gone, and with it the forge's licence to write craft doctrine**
+    (`plan/clarity-audit-2026-08-24.md` C2). The 2026-08-24 forges emitted "Never explain how
+    any of it works" through that kind — an open channel minting contradictions of the house
+    CLARITY rule at run time. Tone comes from the house rules or not at all, and every
+    surviving entry's text now passes `directors.legal_brief`, so a forge-authored directive
+    faces the same legality rail a Director-authored one does. An entry the rail refuses is
+    dropped here and named in `report()`'s `directives_refused`, never carried silently.
+    """
+    kept, _ = _directive_lane(candidate)
+    return kept
 
 
 def promises_for(candidate: Candidate) -> tuple[dict[str, Any], ...]:
@@ -2481,16 +2406,6 @@ def report(candidate: Candidate, *, scenes: int = DEFAULT_SCENES) -> dict[str, A
         # classifier standing between them. `opening_rung_index` is `None` for a world that
         # declares no standing and for one whose chain is not a chain — empty rather than a
         # guess, `rung_index`'s own rule.
-        # **Two counters about vocabulary, one of which the gate refuses on.** The share of
-        # this world's declared text that is paperwork, and the administrative words its
-        # premise names. The rate is a distribution with no bar over it (the 30 worlds forged
-        # before 2026-08-23 ranged 2.69 to 17.92, median 7.21); the premise list is what
-        # `_administration_complaints` refuses on, and it is printed here so the operator sees
-        # the number rather than only the complaint.
-        "administration_per_1k": _administration_rate(candidate),
-        "administration_in_premise": list(
-            _administration_in(str(candidate.raw.get("premise") or ""))
-        ),
         "ladders": len(_countable_ladders(records)),
         "rungs_per_ladder": {
             criterion: len(chain)
@@ -2525,6 +2440,10 @@ def report(candidate: Candidate, *, scenes: int = DEFAULT_SCENES) -> dict[str, A
         "key_nouns": list(worlds_mod.key_nouns(records)),
         "validator_complaints": list(worlds_mod.validate(records)),
         "gate_complaints": list(gate_candidate(candidate, scenes=scenes)),
+        # Every directive the lane dropped, as `kind: reason` — a forge that had a directive
+        # refused shows it here rather than losing it silently (`directives_for`'s docstring
+        # says why the rail exists).
+        "directives_refused": list(_directive_lane(candidate)[1]),
     }
 
 

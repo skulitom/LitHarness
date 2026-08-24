@@ -522,7 +522,11 @@ def test_the_rules_handed_to_a_planner_never_ask_for_a_name() -> None:
     # What it does ask for: consequences put to work, and a reveal planned as an event.
     assert "consequences" in joined
     assert "event" in joined
-    assert "do not explain the world" in joined
+    # "Do not explain the world" was contradiction-class and is deleted
+    # (`plan/clarity-audit-2026-08-24.md` C5); what the rule protected — a scene must contain
+    # an event rather than only exposition — survives in the positive form pinned here.
+    assert "do not explain" not in joined
+    assert "events, priced and shown" in joined
 
 
 def test_the_brief_says_the_same_facts_the_writer_is_handed() -> None:

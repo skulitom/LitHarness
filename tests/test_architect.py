@@ -446,10 +446,17 @@ def test_the_domain_is_the_engine_and_its_jargon_never_reaches_the_page() -> Non
     them and named it — *"unnecessarily esoteric ... the words used are adding unnecessary
     complexity eg mordant"*. The physics stays, which is what makes a world argue back; where it
     belongs is what this asserts.
+
+    **Amended 2026-08-24 (`plan/clarity-audit-2026-08-24.md` W3), name kept because the ledger
+    cites it.** The rule's "never reaches the page" ban clause was contradiction-class — an
+    instruction to withhold — and is deleted; the positive form in the same rule ("plain words
+    a reader could repeat after one read") carries it, and unexplained trade jargon is the
+    comprehension screen's to quote. This now pins the positive form and the ban's absence.
     """
     [rule] = [item for item in architect._RULES if "Literalise one real domain" in item]
     assert "the engine, not the setting" in rule
-    assert "never reaches the page" in rule
+    assert "never reaches the page" not in rule
+    assert "plain words a reader could repeat after one read" in rule
     assert "not set inside that trade" in rule
 
 
@@ -497,22 +504,25 @@ def test_a_rung_declares_what_it_lets_a_person_do_and_it_reaches_canon() -> None
     assert "reads a seam through a wall" in grants
 
 
-def test_the_ladder_rule_asks_for_abilities_and_keeps_its_own_vocabulary_off_the_page() -> None:
-    """Two clauses from one operator read: what a rung is, and what a premise may call it.
+def test_the_ladder_rule_asks_for_abilities_and_names_the_rung_in_the_worlds_own_words() -> None:
+    """What a rung is, and the positive naming ask that outlived the schema-word ban.
 
-    *"Ladders mentioned again where ladders hold no place."* Said of a premise that reached the
-    page with the sentence *"get high enough up the Low Hall's ladder"* \u2014 `ladder` and `rung`
-    are this schema's words for a thing a reader meets as bronze and gold.
+    Renamed 2026-08-24 from
+    `test_the_ladder_rule_asks_for_abilities_and_keeps_its_own_vocabulary_off_the_page`
+    (cited nowhere in the ledger) when `plan/clarity-audit-2026-08-24.md` W1 deleted the
+    in-prompt lexical ban on `ladder`, `rung` and `standing`: the ban's cause was the premise
+    being written inside the schema call, that cause is being removed rather than masked, and
+    a word list is not a general system. The abilities half of the rule and the positive ask \u2014
+    name the rung this world names, in this world's own language \u2014 are unchanged, and this
+    pins both, plus the ban's absence.
     """
     [rule] = [item for item in architect._RULES if "chain of abilities and not of" in item]
     assert "they keep it" in rule
     assert "is not a rung" in rule
     [furniture] = [item for item in architect._RULES if "FURNITURE and not its concept" in item]
-    assert "never the book's" in furniture
-    # `standing` joined `ladder` and `rung` after being measured on the page: three of eight
-    # unfollowable terms in one premise were that single word.
-    assert "and so is `standing`" in furniture
-    assert "None of them appear in the premise" in furniture
+    assert "Name the rung this world names, in this world's own language" in furniture
+    assert "never the book's" not in furniture
+    assert "None of them appear in the premise" not in furniture
 
 
 # --- the pitch, the furniture, and the default nobody has to break -------------------------------
@@ -617,28 +627,38 @@ def test_the_cost_rule_says_what_a_cost_is_paid_in() -> None:
 
 
 def test_a_premise_written_in_administration_is_refused() -> None:
+    """Inverted 2026-08-24: the administration word scan is deleted, and this pins the removal.
+
+    The name survives because the stage-0 ledger cites it; the behaviour it pinned is gone.
+    `plan/clarity-audit-2026-08-24.md` W2: the scan was a mask over a bias `_RULES` itself had
+    caused (§116 fixed the rule text at the cause), narrowed for measured false positives three
+    times, and it is deleted with its cause rather than converted into another scan. The
+    fixture that used to be refused now clears the gate: the "not an administration" RULE still
+    reaches the forge (`test_no_rule_offers_a_debt_as_a_subject_or_a_market_as_an_interface`),
+    and a debt-framed premise reaches the operator's own read rather than a word list.
+    """
     paperwork = world()
     paperwork["premise"] = (
         "Silas owes the ledger nine months of rent, and the register carries his name twice."
     )
-    [complaint] = [item for item in gate(paperwork) if "administration" in item]
-    for word in ("owes", "ledger", "rent", "register"):
-        assert word in complaint
+    assert not [item for item in gate(paperwork) if "administration" in item]
     assert not [item for item in gate(world()) if "administration" in item]
 
 
 def test_the_administration_rate_is_reported_and_nothing_refuses_on_it() -> None:
-    """A distribution, not a bar — §81, §85, §87 and §89 are four entries about why.
+    """Inverted 2026-08-24: the rate counters are deleted with the scan, and this pins that.
 
-    The premise check is the refusal and it is a membership test; the rate is a number the
-    operator reads beside the complaint. A world may be full of clerks and still be picked, and
-    that is the operator's call rather than this gate's.
+    The name survives because the stage-0 ledger cites it; the behaviour it pinned is gone.
+    `plan/clarity-audit-2026-08-24.md` W2 deleted `_ADMINISTRATION` and its helpers whole —
+    `administration_per_1k` and `administration_in_premise` included — so the report carries
+    no administration key at all, and nothing anywhere refuses on one.
     """
     heavy = world()
     heavy["systems"][0]["logic"] = "the register, the ledger, the court and the clerk decide it"
     counters = architect.report(architect.Candidate(0, heavy), scenes=SCENES)
-    assert counters["administration_per_1k"] > 0
-    assert counters["administration_in_premise"] == []
+    assert "administration_per_1k" not in counters
+    assert "administration_in_premise" not in counters
+    assert not [key for key in counters if "administration" in key]
     assert not [item for item in gate(heavy) if "administration" in item]
 
 
@@ -1429,16 +1449,10 @@ def test_the_pilot_package_regenerates_the_world_it_was_run_on() -> None:
     assert [r.record_id for r in records] == [r.record_id for r in again]
     assert {record.authority for record in records} == {lc.StateAuthority.ACCEPTED_CANON}
     assert worlds.validate(records) == ()
-    # `include_subject=False` for the reason `gate_candidate`'s docstring records: this
-    # world was forged and picked on 2026-08-21, and the subject check landed on
-    # 2026-08-23. Its premise names a debt and a clerk, which is the finding rather than
-    # a regression, and it is checked below.
-    assert architect.gate_candidate(candidate, scenes=8, include_subject=False) == ()
-    assert [
-        item
-        for item in architect.gate_candidate(candidate, scenes=8)
-        if "administration" in item
-    ]
+    # The administration scan (and its `include_subject` rebuild switch) is deleted —
+    # `plan/clarity-audit-2026-08-24.md` W2 — so this world clears the gate whole, with no
+    # parameter to hold the door for it.
+    assert architect.gate_candidate(candidate, scenes=8) == ()
     # **Two more records than the forge reported, and the difference is a fix.** The committed
     # `candidate_reports` are what the forge printed on 2026-08-22; `worlds.REVEAL_SCENE` landed
     # afterwards, storing each mystery's ordinal beside its position, so a regeneration is two

@@ -341,8 +341,9 @@ WORLD_RULES: tuple[str, ...] = (
     "Put the world's rules and their consequences to work. What happens in a scene should be "
     "something only this world could make happen: a rule biting somebody, a consequence "
     "landing, a price being paid in the currency this world actually charges in.",
-    "Do not explain the world. A statement says what happens, and a scene where somebody "
-    "explains how the world works is a scene where nothing happens.",
+    "A statement says what happens. A scene whose only content is an explanation of how the "
+    "world works has nothing happening in it; the world's workings reach the reader through "
+    "events, priced and shown.",
     "For a mystery answered in this book, the scene named as its window is where that answer "
     "lands, and it lands as an event somebody does or discovers rather than as an explanation.",
     "A statement for any scene before that window may carry the question and may never carry "

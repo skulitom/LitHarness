@@ -350,8 +350,8 @@ def render_outline_request(
                     "repeats the starting values plans a book in which nothing changes.",
                     "Place four to eight milestones, spread across the book, at scenes where "
                     "the statement you wrote would plausibly change them.",
-                    "Costs as well as gains: this is a debt story, so spending and losing "
-                    "are progression too.",
+                    "Costs as well as gains: spending and losing are progression "
+                    "too.",
                 ]
                 if seed
                 else []
