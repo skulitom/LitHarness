@@ -36,13 +36,23 @@ need to know."*
    and asserts none contains an instruction from the contradiction class (never-explain,
    stay-vague, "do not define"). A contradiction that can be written again will be.
 
-3. **General systems over hardcoded rules.** Replace rule-essays with two layers: a small
-   set of short principles (house.py), and **measured outcome gates** (the comprehension
-   screen) that check the result instead of micromanaging the text. Where a current rule
-   polices words (the schema-vocabulary bans that force circumlocution), convert it to a
-   deterministic **post-generation check** — scan the output, refuse and regenerate on a hit —
-   and remove the in-prompt prohibition. A model writing under a lexical ban warps its prose
-   around the ban; a model whose output is checked writes normally and gets caught normally.
+3. **General systems over hardcoded rules — and a word list is not a general system.**
+   (Amended 2026-08-24 on the operator's correction: *"forbidden-words list sounds like a hack
+   solution to an underlying problem... we should fix the core of the issue instead of masking
+   the consequences."* The first version of this boundary converted in-prompt word bans into
+   post-generation word scans; that keeps the mask and moves it.) Replace rule-essays with two
+   layers: a small set of short principles (house.py), and **measured outcome gates** (the
+   comprehension screen) that check the result instead of micromanaging the text. Every
+   word-policing rule and every craft word list is **deleted together with its cause**: the
+   schema-vocabulary bans exist because the premise is written inside the schema call — after
+   boundary 4 the premise call never sees the schema, and there is nothing to ban; the
+   administration word scan exists because the old rule text itself steered worlds toward
+   debt and paperwork (fixed in the rules, stage-0 §116) — the scan is the scar, it has been
+   narrowed for false positives three times, and it goes. Unexplained vocabulary of every
+   kind is caught by the comprehension screen, which is blind to which list a word would
+   have been on. The only deterministic scans that survive are **containment rails, never
+   craft**: the borrowed-work guard stays because RS1/C3 forbid naming real works, and that
+   is a leak boundary rather than a style rule.
 
 4. **Prose is written as prose.** Any paragraph a reader will read — the premise above all —
    gets its own dedicated call: world mechanics are forged as data first; then the premise is
@@ -90,9 +100,10 @@ need to know."*
   was wiped and why.
 
 - **T2 — the purge.** Delete every contradiction-class instruction per boundary 1. Collapse
-  what remains of the rule-essays into short principles; move every word-policing rule to a
-  post-generation check per boundary 3. The forge stops emitting tone directives that can
-  contradict house rules — tone comes from the house or not at all.
+  what remains of the rule-essays into short principles; delete every word-policing rule and
+  every craft word list together with its cause per boundary 3 — nothing is converted into a
+  post-generation word scan. The forge stops emitting tone directives that can contradict
+  house rules — tone comes from the house or not at all.
 
 - **T3 — the premise-as-prose split.** Two-call forge: the world-data call (schema, no
   reader-facing prose), then the premise call (flagship model, house rules, world as
