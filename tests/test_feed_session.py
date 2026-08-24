@@ -185,13 +185,15 @@ def test_a_read_serves_the_full_section_and_a_skim_only_the_deterministic_extrac
 def test_two_skims_of_one_slot_preview_the_same_section_twice_and_are_counted() -> None:
     """Skims never advance the position: the second preview repeats the first, and the record
     reports the repetition through `repeat_skims` rather than hiding it."""
-    # Fill the remaining 25 units with alternating skim/read of D, so every later skim of D
-    # follows a read and the only repeated preview in the session is the one under test.
+    # Fill the remaining 22 units with alternating skim/read of D, then one skim each of B
+    # and C — no slot is skimmed twice in a row there, so the only repeated preview in the
+    # session is the one under test, and the total is exactly the 24-unit budget.
     records = [_action("skim", "A"), _action("skim", "A")]
-    for _ in range(6):
+    for _ in range(5):
         records.append(_action("skim", "D"))
         records.append(_action("read", "D"))
-    records.append(_action("skim", "D"))
+    records.append(_action("skim", "B"))
+    records.append(_action("skim", "C"))
     session, fake = _run(records)
     assert session.spent_units == feed_core.BUDGET_UNITS
     # Each turn is reveal + "\n\n" + the budget turn; strip the tail, which differs by the
