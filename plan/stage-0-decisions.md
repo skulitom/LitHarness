@@ -13425,3 +13425,71 @@ a larger packet is more input tokens per call and the budget governor is where t
 
 **Anti-scope.** One constant and the tests that had quietly come to depend on it. Nothing about
 what goes *into* the packet, in what order, or how a writer would ask it a question.
+
+## 133. The first A/B the reader loop could run says the direction did not help, and the same prompt drafted twice says the instrument cannot tell
+
+§128 opened the channel and §129 ranked it above every craft rule. This is the first time the
+loop produced a number, and the number is a null with a design fault visible underneath it.
+
+**The run.** `serial4.db`, scene 8 of an eight-scene book. One beat, one packet (scenes 1–7,
+asserted not to contain scene 8's own prose), one provider, one 900-word target. Two system
+prompts differing in exactly one thing: `render_prompt(direction=...)`, built from the four
+steering readers' answers to scene **7** — what they wanted *next* at the moment scene 8 begins.
+The scene-8 steering read was excluded on purpose: those are wishes about scene 9 and would have
+been a peek at the answer. Ten paid calls, $2.70.
+
+**Measured.**
+
+| arm | direction | carried on |
+| --- | --- | --- |
+| scene 8 as it stands on the branch | none | **1 of 4** |
+| blind redraft | none | **3 of 4** |
+| steered redraft | 4 readers, 19 hopes, 19 dreads | **2 of 4** |
+
+The first two rows are the same condition. **One prompt, drafted twice, spans 1 of 4 to 3 of 4** —
+the whole range the treatment could have moved. Nothing about direction is established here,
+in either direction, and no bar is declared: the four attainability checks fail at the first,
+because the range at the real n swallows the effect.
+
+**The design fault, named so it is not repeated.** The unit of variance is the **draft**, not the
+reader. Adding reader draws to one draft buys almost nothing; this design has one draft per arm
+and therefore has no power at all. A comparison worth paying for needs several drafts per arm —
+at the observed prices (≈$0.68 a draft, ≈$0.17 a reader call) four drafts per arm read by the
+four measurement readers is about $11, which is the honest cost of a first real number.
+
+**What *is* measured, on the one pair, is that the direction reached the page and changed the
+writing in a way two readers then objected to.** Blind → steered:
+
+- dialogue share of paragraphs **0.59 → 0.40**
+- past-perfect `had` **11 → 21**
+- number tokens **24 → 36**
+- distinctive terms from the hope list appearing in the draft **76 → 84** of 310
+
+That is a chapter moving from dramatised scene toward reported summary with more counting in it,
+and the readers described the same shift unprompted: *"I don't feel her getting stronger, I feel
+her getting more informed"*; *"told to care about a countable ladder without ever being told what
+the counting is for."* The steered draft opens on the readers' single most-repeated ask — the
+nine days counted on the page — and pays it off as *no change*, which satisfies the letter of the
+wish and defeats it.
+
+**The suspect, stated as a suspect.** `readers.Anticipation.of` takes the **union** of what all
+four steering readers said, deduplicated by `dict.fromkeys`, with no agreement filter and no cap.
+Four readers produced **38 items**, and `render()` turned them into 5,476 characters against a
+2,920-character system prompt: **65% of everything the writer was told was a wish list**, and the
+writer serviced it. Whether that shape is the problem, or reader direction itself is, this run
+cannot separate — and it does not separate reader direction from *more instruction text* either,
+because the arms differ in length by 2.9×. A length-matched placebo arm is the control that
+question needs.
+
+**What shipped: nothing.** No code changed. The script is scratch, not repo — one experiment, not
+a feature.
+
+**What was refused.** No effect claimed from a 3-versus-2 split at n=4. No edit to
+`Anticipation.of` on the strength of one pair of drafts, however plausible the checklist story is;
+the agreement filter and the cap are a hypothesis this run generated, not a finding it supports.
+No second paid arm chosen unilaterally, because the fork — fix the direction's shape, or first buy
+the power to see any shape at all — costs money and is the operator's.
+
+**Anti-scope.** One beat of one book. Nothing about whether the loop helps a *serial* over many
+chapters, which is the case it exists for, and nothing about the steering/measurement split, which
+held: no reader was in both pools, and what steered scene 8 never measured it.
