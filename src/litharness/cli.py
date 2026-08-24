@@ -39,7 +39,7 @@ import litharness_contracts as lc
 from litharness.adapters import contracts_fixtures, evaluation_artifact
 from litharness.adapters.continuity_cli import ContinuityCliRunner
 from litharness.adapters.sqlite_store import MigrationsMissing, SqliteStore, StoredEvent
-from litharness.application import architect, comprehension
+from litharness.application import architect, comprehension, world_agent
 from litharness.application import export as export_module
 from litharness.application import readers as readers_mod
 from litharness.application import status as status_module
@@ -75,6 +75,7 @@ from litharness.domain import directors as directors_domain
 from litharness.domain import extraction, propagation
 from litharness.domain import state as state_mod
 from litharness.domain import worlds as worlds_domain
+from litharness.domain import writers as writers_domain
 from litharness.domain.beats import SIX_BEAT, arc_template, beats_for
 from litharness.domain.budget import BudgetPolicy, Spend
 from litharness.domain.budget import check as budget_check
@@ -114,6 +115,13 @@ EXIT_ATTENTION = 1
 EXIT_FAULT = 2
 
 DEFAULT_DB = "litharness.db"
+
+#: Where `--database` looks when nobody passed one. **This exists so an agent's command line
+#: can be exactly `litharness world <view>`**: a tool allowance is only a containment if it
+#: can be written narrowly, and `Bash(litharness world:*)` stops being narrow the moment a
+#: `--database` flag has to sit between the binary and the subcommand. The flag still wins
+#: where it is given, so every existing invocation is unchanged.
+DATABASE_ENV = "LITHARNESS_DATABASE"
 
 
 def _now() -> float:
@@ -1414,6 +1422,132 @@ def cmd_characters(args: argparse.Namespace) -> int:
     print(characters_mod.render(people))
     return EXIT_OK
 
+def _read_text(source: str) -> str:
+    """A file's text, or stdin for `-`. The listing is prose and prose lives in files."""
+    if source == "-":
+        return sys.stdin.read()
+    return Path(source).read_text(encoding="utf-8")
+
+
+def cmd_architect(args: argparse.Namespace) -> int:
+    """Put the Architect on this book's world, holding the world suite and nothing else.
+
+    **An agent, because a world is not a thing you fill in once.** The operator, 2026-08-24:
+    *"in what world would a one-shot structured call be a good idea for writing a book... The
+    world would obviously evolve and grow with every chapter"*. `seed` builds enough world to
+    stand the first chapters under a listing readers have already been shown; `grow` runs after
+    a chapter and keeps the world holding — what the chapter established, what now contradicts,
+    and what was declared and has still never been said.
+
+    **What it can do is the allowance and not a promise.** `world_agent.ALLOWED_TOOLS` is
+    `Bash(litharness world:*)`: this agent runs the world suite and has no other tool. Every
+    record it writes is PROPOSED, so it proposes a world and cannot install one — `world accept`
+    is the separate act that carries a decision row.
+
+    The database reaches the child through `LITHARNESS_DATABASE`, which is why that variable
+    exists: a `--database` flag between the binary and the subcommand would force the allowance
+    to widen to every command this CLI has.
+    """
+    database = str(Path(args.database).resolve())
+    os.environ[DATABASE_ENV] = database
+
+    writer = writers_domain.CAST.get(args.writer) if args.writer else None
+    if args.writer and writer is None:
+        print(
+            f"litharness: no writer named {args.writer!r}; the cast is "
+            f"{', '.join(writers_domain.CAST)}",
+            file=sys.stderr,
+        )
+        return EXIT_FAULT
+
+    store = _store(args)
+    stamp = _stamp(_now())
+    try:
+        book_id, branch_id = export_module.resolve_branch(store, args.book, args.branch)
+        before = len(store.state_records(book_id, branch_id))
+        if args.job == "seed":
+            overview = _read_text(args.overview)
+            if not overview.strip():
+                print("litharness: an empty listing is nothing to build on", file=sys.stderr)
+                return EXIT_FAULT
+            request = world_agent.render_seed_request(overview, writer)
+        else:
+            head = store.head(book_id, branch_id)
+            if head is None:
+                print("litharness: this branch has no revision", file=sys.stderr)
+                return EXIT_FAULT
+            node = head.node(args.scene) if args.scene else None
+            if node is None:
+                drafted = [
+                    item
+                    for item in head.nodes
+                    if item.kind is NodeKind.SCENE and (item.content or "").strip()
+                ]
+                if not drafted:
+                    print("no drafted scene for the Architect to read")
+                    return EXIT_OK
+                node = drafted[-1]
+            request = world_agent.render_grow_request(
+                node.content or "", logical_id=node.logical_id, writer=writer
+            )
+
+        registry = build_default_registry()
+        spend = _StageSpend()
+        calls = _ForgeCalls(
+            registry=registry, store=store, args=args, stamp=stamp,
+            run=spend, premise=spend, screen=spend,
+        )
+        result, refusal = _forge_call(request, calls=calls, spend=spend)
+        if result is None:
+            print(f"litharness: {refusal}", file=sys.stderr)
+            return EXIT_FAULT
+
+        after = store.state_records(book_id, branch_id)
+        proposed = sum(
+            1 for record in after if record.authority is lc.StateAuthority.PROPOSED
+        )
+        complaints = worlds_domain.validate(after)
+        gate = GateOutcome(
+            gate=GateKind.SHAPE,
+            rule_or_critic_id=request.profile,
+            passed=not complaints,
+            blocking=False,
+            detail=(
+                f"{len(after) - before} record(s) added; {proposed} proposed; "
+                f"{len(complaints)} complaint(s)"
+            ),
+        )
+        store.record_decision(
+            PolicyDecision(
+                decision_id=decision_id_for(
+                    f"architect:{args.job}:{book_id}:{branch_id}:{stamp}", 0, (gate,)
+                ),
+                outcome=Outcome.ACCEPT,
+                gates=(gate,),
+                profile=request.profile,
+                provider=spend.provider,
+                model=spend.model,
+                invocations=spend.invocations,
+                total_tokens=spend.total_tokens,
+                cost_usd=spend.cost_usd,
+                reason=(
+                    "the Architect worked the world through its own commands; every record "
+                    "it wrote is a proposal"
+                ),
+            ),
+            decided_at=stamp,
+        )
+    finally:
+        store.close()
+
+    print(result.text.strip())
+    print()
+    print(f"  {len(after) - before} record(s) added, {proposed} awaiting `world accept`")
+    for complaint in complaints:
+        print(f"  ! {complaint}")
+    return EXIT_OK
+
+
 def cmd_world(args: argparse.Namespace) -> int:
     """The Architect's tools: ask this world a question, or declare something new in it.
 
@@ -1438,6 +1572,74 @@ def cmd_world(args: argparse.Namespace) -> int:
         book_id, branch_id = export_module.resolve_branch(store, args.book, args.branch)
         records = store.state_records(book_id, branch_id)
 
+        if args.view == "accept":
+            proposals = [
+                record
+                for record in records
+                if record.authority is lc.StateAuthority.PROPOSED
+            ]
+            if not proposals:
+                print("nothing proposed; canon is unchanged")
+                return EXIT_OK
+            complaints = worlds_domain.validate(records)
+            if complaints and not args.force:
+                for complaint in complaints:
+                    print(f"litharness: {complaint}", file=sys.stderr)
+                print(
+                    f"litharness: {len(proposals)} proposal(s) not accepted; this world "
+                    "contradicts itself. Fix it with `world declare`, or --force to accept "
+                    "anyway and leave the contradiction on the record.",
+                    file=sys.stderr,
+                )
+                return EXIT_FAULT
+            moved = store.promote_state_records(
+                book_id,
+                branch_id,
+                [record.record_id for record in proposals],
+                authority=lc.StateAuthority.ACCEPTED_CANON,
+                created_at=stamp,
+            )
+            gate = GateOutcome(
+                gate=GateKind.SHAPE,
+                rule_or_critic_id="world.accept.v0",
+                passed=not complaints,
+                blocking=False,
+                detail=f"{moved} proposal(s) accepted; {len(complaints)} complaint(s)",
+            )
+            store.record_decision(
+                PolicyDecision(
+                    decision_id=decision_id_for(
+                        f"world-accept:{book_id}:{branch_id}:{stamp}", 0, (gate,)
+                    ),
+                    outcome=Outcome.ACCEPT,
+                    gates=(gate,),
+                    reason=(
+                        "the Architect's proposals were accepted into canon; nothing here "
+                        "ranked or chose between them"
+                    ),
+                ),
+                decided_at=stamp,
+            )
+            print(f"accepted {moved} of {len(proposals)} proposal(s) into canon")
+            return EXIT_OK
+
+        if args.view == "presence":
+            head = store.head(book_id, branch_id)
+            scenes = (
+                {
+                    node.logical_id: (node.content or "")
+                    for node in head.nodes
+                    if node.kind is NodeKind.SCENE
+                }
+                if head is not None
+                else {}
+            )
+            print(
+                json.dumps(
+                    world_mod.presence(records, scenes), ensure_ascii=False, indent=2
+                )
+            )
+            return EXIT_OK
         if args.view == "declare":
             record = worlds_domain.world_record(
                 worlds_domain.normalise_id(args.subject),
@@ -1484,6 +1686,8 @@ def cmd_world(args: argparse.Namespace) -> int:
         payload = world_mod.cast(records)
     elif args.view == "threads":
         payload = world_mod.threads(records, at=args.at)
+    elif args.view == "vocabulary":
+        payload = world_mod.vocabulary()
     elif args.view == "check":
         payload = world_mod.check(records)
     else:
@@ -3289,8 +3493,11 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--database",
         type=Path,
-        default=Path(DEFAULT_DB),
-        help=f"SQLite database path (default: {DEFAULT_DB})",
+        default=Path(os.environ.get(DATABASE_ENV, DEFAULT_DB)),
+        help=(
+            "SQLite database path "
+            f"(default: ${DATABASE_ENV}, else {DEFAULT_DB})"
+        ),
     )
     parser.add_argument(
         "--holder",
@@ -3646,6 +3853,8 @@ def build_parser() -> argparse.ArgumentParser:
         ("abilities", "what a person can do here, and who holds what"),
         ("cast", "who is in this world, by role, and who the protagonist is"),
         ("threads", "open questions, where each is answered, what is still untold"),
+        ("vocabulary", "every predicate and role this world's language admits"),
+        ("presence", "which coined names have reached the page and which have not"),
         ("check", "what is wrong by arithmetic; exits 1 when anything is"),
     ):
         view = world_sub.add_parser(name, help=helptext)
@@ -3673,6 +3882,46 @@ def build_parser() -> argparse.ArgumentParser:
     declare.add_argument("--book")
     declare.add_argument("--branch")
     declare.set_defaults(func=cmd_world)
+
+    accept = world_sub.add_parser(
+        "accept",
+        help="accept every proposal on this branch into canon, as one decision",
+    )
+    accept.add_argument(
+        "--force",
+        action="store_true",
+        help="accept even where the world contradicts itself",
+    )
+    accept.add_argument("--json", action="store_true")
+    accept.add_argument("--book")
+    accept.add_argument("--branch")
+    accept.set_defaults(func=cmd_world)
+
+    # `arch`, not `architect`: the module of that name is imported at the top of this file
+    # and a local would shadow it inside this function.
+    arch = sub.add_parser(
+        "architect",
+        help="put the Architect on this world, holding the world suite and nothing else",
+    )
+    architect_sub = arch.add_subparsers(dest="job", required=True)
+
+    seed = architect_sub.add_parser(
+        "seed", help="build enough world to stand the first chapters, under a listing"
+    )
+    seed.add_argument("--overview", required=True, help="a file, or - for stdin")
+    seed.add_argument("--writer", help=f"one of: {', '.join(writers_domain.CAST)}")
+    seed.add_argument("--book")
+    seed.add_argument("--branch")
+    seed.set_defaults(func=cmd_architect)
+
+    grow = architect_sub.add_parser(
+        "grow", help="after a chapter: keep the world coherent and spend what it declared"
+    )
+    grow.add_argument("--scene", help="a scene logical id; the latest drafted one by default")
+    grow.add_argument("--writer", help=f"one of: {', '.join(writers_domain.CAST)}")
+    grow.add_argument("--book")
+    grow.add_argument("--branch")
+    grow.set_defaults(func=cmd_architect)
 
     read = sub.add_parser(
         "readers", help="put the simulated readership on a drafted scene"

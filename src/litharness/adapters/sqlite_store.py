@@ -942,6 +942,56 @@ class SqliteStore:
                 self._insert_event(connection, event)
         return inserted
 
+    def promote_state_records(
+        self,
+        book_id: str,
+        branch_id: str,
+        record_ids: Sequence[str],
+        *,
+        authority: lc.StateAuthority,
+        created_at: str,
+    ) -> int:
+        """Raise these records' authority. Returns how many rows moved.
+
+        **This is not canon being rewritten, and the distinction is the whole rail.**
+        `record_state_records` states §11's prohibition: a fact that changed is a new record
+        with new evidence, not the old one edited. That prohibition is about *canon*. These
+        rows were never canon — `worlds.world_record` mints at PROPOSED precisely so that an
+        Architect's output is a proposal, and `plan/world-architect.md` §2 says it reaches
+        canon only through a recorded policy decision. This method is that decision's effect.
+
+        An in-place update rather than a second row because `record_id_for` derives the id
+        from subject, predicate, object and value and not from authority, so an accepted copy
+        would collide with the proposal it accepts. The alternative — putting authority in the
+        id — would make the same fact proposed and accepted two different facts, and the
+        packet would then hold both.
+
+        **Only ever upward, and only from a proposal.** The `WHERE` clause names the authority
+        it will move, so a second acceptance is a no-op and nothing here can quietly demote a
+        record that a person locked or a revision established.
+        """
+        moved = 0
+        with self.transaction() as connection:
+            for record_id in record_ids:
+                cursor = connection.execute(
+                    "UPDATE state_records SET authority = ?, "
+                    "record_json = json_set(record_json, '$.authority', ?), "
+                    "created_at = ? "
+                    "WHERE book_id = ? AND branch_id = ? AND record_id = ? "
+                    "AND authority = ? AND retracted_by_revision_id IS NULL",
+                    (
+                        authority.value,
+                        authority.value,
+                        created_at,
+                        book_id,
+                        branch_id,
+                        record_id,
+                        lc.StateAuthority.PROPOSED.value,
+                    ),
+                )
+                moved += int(cursor.rowcount)
+        return moved
+
     @staticmethod
     def _insert_state_record(
         connection: sqlite3.Connection,

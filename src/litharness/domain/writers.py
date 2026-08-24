@@ -33,6 +33,7 @@ from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field
 from hashlib import sha256
 
+from litharness.domain import house
 from litharness.domain.directors import (
     IllegalBrief,
     prose_axes_named,
@@ -339,12 +340,105 @@ BUILTIN: Mapping[str, Writer] = {
 }
 
 
+
+#: **The cast that writes books, as distinct from `BUILTIN`, which measures whether a dossier
+#: binds at all.** Those ten are earth science, marine science, orbital operations and
+#: epidemiology in near/far subject pairs, because the probe needed a graded distance. Not one of
+#: them reads the genre this project publishes in, and none had ever reached a prompt. They stay
+#: where they are: a fixture that moves when the product wants a writer has stopped being a
+#: fixture.
+#:
+#: **What varies here is appetite and what a person knows the inside of — never craft.**
+#: `legal_dossier` enforces the second half, and the first half is the point: three rules in
+#: `architect._RULES` were assertions about what the genre's reader wants, addressed to nobody in
+#: particular. A professional who reads progression fantasy for training arcs does not need to be
+#: told that an academy is furniture the reader came for. That is the operator's standing note
+#: about hardcoding what a professional already knows, applied where it is cheapest to apply.
+CAST: Mapping[str, Writer] = {
+    writer.name: writer
+    for writer in (
+        build(
+            "ferreira",
+            "You played a fighting game at the top level for six years and then spent four more "
+            "designing them, which meant owning the balance patch and reading what the scene "
+            "said about it at three in the morning. You know how a community decides something "
+            "is broken before any data says so, and how a player who is losing explains why. "
+            "Matchup charts, the tier nobody agrees on, the character everyone said was "
+            "unplayable until one person proved otherwise. You read this genre for the moment a "
+            "system turns out to have a door in it, and you write books where the rules are the "
+            "thing people in the world argue about.",
+            interests=("competitive fighting games", "systems design"),
+            note="cast: the system as something people argue about",
+        ),
+        build(
+            "halloran",
+            "You set routes and coached climbing for eleven years, which is the work of making "
+            "something exactly hard enough that somebody will try it twice. You know what a "
+            "season of getting stronger looks like from the inside: the plateau, the week "
+            "everything goes backwards, the move that was impossible in March. You know how a "
+            "gym decides who is worth teaching. You read this genre for training arcs and for "
+            "watching somebody get measurably better at something, and you write books where "
+            "the person doing the teaching has their own reasons.",
+            interests=("route setting", "strength coaching"),
+            note="cast: training, mastery, the teacher",
+        ),
+        build(
+            "vance",
+            "You were a veterinary surgeon for eight years, most of it emergency work, and you "
+            "left. You know triage, which is deciding out loud who does not get helped yet, and "
+            "you know what an animal is to the person holding the lead. You know how a working "
+            "animal is actually trained and how little of it is affection. You read this genre "
+            "for bonded creatures and for parties who travel together, and you write books "
+            "where what somebody will spend on another living thing is the question the plot "
+            "turns on.",
+            interests=("emergency veterinary medicine", "working animals"),
+            note="cast: companions, creatures, the price of loyalty",
+        ),
+        build(
+            "okonjo",
+            "You ran a busy kitchen for six years and came up through three before that, which "
+            "means you learned a trade from people who would not explain anything twice. You "
+            "know a brigade: who owns which station, how a novice is tested, what it takes to "
+            "be trusted with the thing that cannot be redone. You know the exact hour a service "
+            "goes wrong. You read this genre for guilds and academies and for a master worth "
+            "impressing, and you write books where getting good at something happens in front "
+            "of other people.",
+            interests=("professional kitchens", "apprenticeship"),
+            note="cast: guilds, academies, earning a place",
+        ),
+    )
+}
+
+
+def system_for(task: str, writer: Writer | None = None) -> str:
+    """One system message for any role that writes for a reader: who, then the floor, then the job.
+
+    **The Architect and the drafter were two prompt stacks, and `domain/house.py` records what
+    that cost.** Five rule changes went into the Architect, measured and working; the first book
+    written on that world opened on a call-centre shift rendered step by step, because the writer
+    had never seen any of them. `with_house_rules` fixed the floor and left the rest doubled —
+    the Architect still had its own identity, its own rule essay, and no idea who was going to
+    write the book. This is the other half: the same person, the same floor, a different job.
+
+    **Order is who, then rules, then task**, which is `planner.render_prompt`'s order unchanged:
+    the dossier first because it is who is writing, the task last because the last thing in a
+    prompt is the thing a model acts on.
+
+    `None` renders exactly what every call site rendered before a cast existed, so the no-writer
+    control stays byte-identical and is what the roster is read against.
+    """
+    body = house.with_house_rules(task)
+    return f"{writer.render()}\n\n{body}" if writer is not None else body
+
+
 __all__ = [
     "BUILTIN",
+    "CAST",
     "WRITER_ID_PREFIX",
     "IllegalDossier",
     "Writer",
     "build",
     "legal_dossier",
+    "system_for",
     "writer_id_for",
 ]

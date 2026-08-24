@@ -137,6 +137,19 @@ class CompletionRequest:
     #: has no opinion should do — including every existing one, so this field is additive.
     sampler: Sampler | None = None
 
+    #: Tools this call may use, in the transport's own permission vocabulary. **Empty is the
+    #: default and empty means a single-shot completion**, which is what every call in this
+    #: system was and what `providers/cli.py` spells `--allowed-tools ''` for a stated
+    #: reason: without it the transport is an agent that can read and write files outside
+    #: the revision store (§5).
+    #:
+    #: **A non-empty allowance is that rule kept rather than dropped.** §5 says no subsystem
+    #: mutates canon *directly*; a named command that goes through the store, validates, and
+    #: mints at PROPOSED is the sanctioned path rather than an exception to it. So the
+    #: allowance is per-request and written narrowly — a drafting call still passes nothing,
+    #: and only a role that manages the world asks for the world's own commands.
+    allowed_tools: tuple[str, ...] = ()
+
 
 @dataclass(frozen=True, slots=True)
 class CompletionResult:

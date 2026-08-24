@@ -120,8 +120,13 @@ class ClaudeCodeProvider:
 
     Five flags are not optional, each for a reason that cost something to learn:
 
-    * `--allowed-tools ''` — without it this is an agent that can read and write files
-      outside the revision store, violating "no subsystem mutates canon directly" (§5).
+    * `--allowed-tools` — **empty unless the request names tools**, and empty is what
+      every drafting and reader call sends. Without the flag this is an agent that can
+      read and write files outside the revision store, violating "no subsystem mutates
+      canon directly" (§5). `CompletionRequest.allowed_tools` is how a role that
+      *manages* the world asks for the world's own commands and nothing else; the rule
+      it keeps is that canon is reached through a recorded decision, not that a model
+      may never run a command.
     * `--strict-mcp-config --mcp-config '{"mcpServers":{}}'` — otherwise the call inherits
       whatever MCP servers the machine has configured: slow, and not reproducible, which
       §11 requires.
@@ -170,7 +175,10 @@ class ClaudeCodeProvider:
             "--model",
             self.model,
             "--allowed-tools",
-            "",
+            # Empty for every call that asks for nothing, which is every drafting call and
+            # every reader call — byte-identical to what this always sent. A role that
+            # manages the world names the commands it needs and gets those only.
+            ",".join(request.allowed_tools),
             "--strict-mcp-config",
             "--mcp-config",
             '{"mcpServers":{}}',

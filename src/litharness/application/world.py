@@ -23,7 +23,7 @@ directly", preserved *through* the tool surface rather than by denying one.
 
 from __future__ import annotations
 
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 from typing import Any
 
 import litharness_contracts as lc
@@ -39,8 +39,64 @@ VIEWS: tuple[str, ...] = (
     "abilities",
     "cast",
     "threads",
+    "presence",
     "check",
+    "vocabulary",
 )
+
+
+def vocabulary() -> dict[str, Any]:
+    """Every word this world's language admits, so an agent can find out rather than guess.
+
+    **Written because the first agent to hold these tools got it wrong in a way the tools could
+    not have taught it.** Declaring a capability needs `entity_role capability`, not `type
+    capability` — `type` is for the five reified node kinds and `worlds.capabilities` reads the
+    role — and nothing in `--help` said so. A CLI is an agent's native interface only if the
+    interface is discoverable; a vocabulary a caller has to already know is a Python API with a
+    shell in front of it.
+
+    Values come from `domain/worlds.py`'s own constants, so this cannot drift from what
+    `validate` will accept.
+    """
+    return {
+        "entity_roles": list(worlds.ENTITY_ROLES),
+        "node_types": sorted(worlds.NODE_TYPES),
+        "comparators": list(worlds.COMPARATORS),
+        "consequence_domains": list(worlds.CONSEQUENCE_DOMAINS),
+        "group_keys": list(worlds.GROUP_KEYS),
+        "predicates": {
+            "entity_role": "what kind of thing this is; --value one of entity_roles",
+            "type": "reifies a node; --value one of node_types, and only those",
+            "world_rule": "a rule this world runs on; --value the rule in plain words",
+            "consequence": "a second-order effect of a rule; --object the rule",
+            "manifests_as": "how it shows on the page; --value one line",
+            "can_do": "a person holds a capability; --object the capability's id",
+            "requires": "a prerequisite; --object what must come first",
+            "costs": "what it takes; --value or --object",
+            "taught_by": "who teaches it; --object the teacher",
+            "stands_at": "where somebody stands; --object the rung",
+            "precedes": "rung ordering, lowest first; --object the rung above",
+            "evaluates": "a criterion measures a subject; --object the criterion",
+            "asks": "an open question; --value the question in plain words",
+            "reveal_scene": "which scene answers it; --value the scene number",
+            "claim.content": "something believed; --value the claim",
+            "claim.false": "marks a claim untrue",
+            "believes": "who holds a claim; --object the claim",
+            "disclosed_to": "who has been told; --object the claim",
+            "edge": "an ordinary relationship; --object the other subject",
+            "price": "what a thing charges; --value in plain words",
+            "exception_to": "the rule that does not hold here; --object the rule",
+        },
+        "how": [
+            "Everything `declare` writes is PROPOSED. `world accept` is what makes it canon.",
+            "`world check` refuses nothing; it reports. `world accept` refuses on a "
+            "contradiction unless you pass --force.",
+            "A capability is `entity_role capability`, then `manifests_as`, then somebody "
+            "`can_do` it by --object.",
+            "A ladder is a criterion, its rungs joined lowest-first by `precedes`, and "
+            "somebody at `stands_at` one of them.",
+        ],
+    }
 
 
 def _canon_only(records: Sequence[lc.StateRecord]) -> tuple[lc.StateRecord, ...]:
@@ -192,6 +248,55 @@ def threads(records: Sequence[lc.StateRecord], *, at: str | None = None) -> dict
     }
 
 
+def presence(
+    records: Sequence[lc.StateRecord], scenes: Mapping[str, str]
+) -> dict[str, Any]:
+    """Which of this world's coined names have reached the page, and which have not.
+
+    `scenes` is `{logical_id: prose}` for the scenes that have been drafted; an empty mapping
+    describes a book that has not started, where everything is absent and that is not a fault.
+
+    **Absence is reported, never refused.** A world declares far more than any one chapter can
+    show and a serial spends its names slowly on purpose, so a count here is a thing for the
+    Architect to look at rather than a gate. `worlds.key_nouns` says the same of itself: it
+    feeds a distribution report and not a bar, because `opening_proper_nouns` is the case where
+    a counter nominated for a named defect put the complained-about chapter at the 68.5th
+    percentile of published openings.
+    """
+    # **Filtered here rather than in `key_nouns`, and the split is deliberate.** That counter
+    # builds names by splitting subject ids on `_`, so a world whose ids are `agency_the_drift`
+    # and `creature_saltmilk_doe` contributes `agency` and `creature` — this schema's own type
+    # vocabulary, which no reading of the counter ever wanted as one of the world's coined
+    # names. That is the same class of implementation error its docstring already licenses
+    # fixing (`not`, `mour`), but `key_nouns` feeds §107.6's reported figures and editing it
+    # would move numbers that are on the record for a different question. So the vocabulary is
+    # dropped in the view that cares, and the counter is left alone.
+    _SCHEMA_WORDS = frozenset(
+        word
+        for term in (*worlds.ENTITY_ROLES, *worlds.NODE_TYPES)
+        for word in term.casefold().split("_")
+    )
+    names = tuple(
+        name for name in worlds.key_nouns(records) if name not in _SCHEMA_WORDS
+    )
+    drafted = {
+        logical_id: text.casefold() for logical_id, text in scenes.items() if text.strip()
+    }
+    seen: dict[str, list[str]] = {}
+    for name in names:
+        where = [logical_id for logical_id, text in drafted.items() if name in text]
+        if where:
+            seen[name] = sorted(where)
+    absent = [name for name in names if name not in seen]
+    return {
+        "declared_names": len(names),
+        "drafted_scenes": len(drafted),
+        "on_the_page": dict(sorted(seen.items())),
+        "never_said": absent,
+        "share_present": round(len(seen) / len(names), 4) if names else None,
+    }
+
+
 def check(records: Sequence[lc.StateRecord]) -> dict[str, Any]:
     """What is wrong with this world by arithmetic, never by taste.
 
@@ -233,7 +338,9 @@ __all__ = [
     "check",
     "declarations",
     "ladders",
+    "presence",
     "rules",
     "summary",
     "threads",
+    "vocabulary",
 ]

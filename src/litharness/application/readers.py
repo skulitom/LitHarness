@@ -31,6 +31,10 @@ from litharness.domain.generation import CompletionRequest
 #: Frozen profiles, one per lane, so the two spends are separable on the decision rows.
 CONTINUE_PROFILE = "reader.continue.v0"
 ANTICIPATE_PROFILE = "reader.anticipate.v0"
+#: The blurb stage's two, kept separate from the chapter stage's so the spends are
+#: separable on the decision rows and so a mixed run cannot be read as one number.
+START_PROFILE = "reader.start.v0"
+APPETITE_PROFILE = "reader.appetite.v0"
 
 CALL_CLASS = "generation"
 
@@ -190,6 +194,96 @@ def render_anticipation_request(reader: Reader, chapter: str) -> CompletionReque
     )
 
 
+#: **The browsing behaviours, and they are not the reading ones.** §97.4 gives a sim a
+#: behavioural vocabulary and no verdict slot; `CHOICE_SCHEMA`'s three words are what somebody
+#: part-way through a book does. Somebody looking at an overview has not started, so
+#: "carry on" is not available to them and offering it would be asking about an act they
+#: cannot perform. These three are the platform's own: open it now, scroll past, or shelve it.
+START_SCHEMA: dict[str, Any] = {
+    "type": "object",
+    "required": ["next", "because"],
+    "properties": {
+        "next": {
+            "type": "string",
+            "enum": ["start_reading", "pass_on_it", "save_for_later"],
+            "description": "What you actually do with this listing.",
+        },
+        "because": {
+            "type": "string",
+            "description": "One sentence, in your own words. Not a review.",
+        },
+    },
+}
+
+#: What a browsing reader hopes a book will turn out to be. Same E6 shape as
+#: `ANTICIPATION_SCHEMA` and deliberately a different schema: `expect_next` is a question about
+#: a story in progress, and a reader who has read a blurb has no next.
+APPETITE_SCHEMA: dict[str, Any] = {
+    "type": "object",
+    "required": ["hoping_for", "dreading"],
+    "properties": {
+        "hoping_for": {
+            "type": "array",
+            "items": {"type": "string"},
+            "description": "What you are hoping this book turns out to be. Say what you want.",
+        },
+        "dreading": {
+            "type": "array",
+            "items": {"type": "string"},
+            "description": "What would make you drop it by chapter three. Empty if none.",
+        },
+    },
+}
+
+#: **The browsing cost, and it is the one §94 said was missing.** Continuation saturated at
+#: 195 of 196 because continuing was free; a blurb has the same problem worse, since nodding at
+#: a listing costs nothing at all. What is scarce on this platform is not attention in the
+#: abstract but the slot: a reader following several serials starts very few new ones, and the
+#: competition is the rest of the page rather than nothing.
+_SLOT = (
+    "You are scrolling a list of new serials. You are already following several and you have "
+    "room for maybe one more this month, so most of what you look at you scroll past. The "
+    "rest of the page is full of other people's books."
+)
+
+
+def render_start_request(reader: Reader, overview: str) -> CompletionRequest:
+    """A measurement reader, one overview, one behavioural choice against the rest of the page."""
+    if reader.pool != MEASUREMENT:
+        raise ValueError(f"{reader.reader_id} is a {reader.pool} reader and may not measure")
+    return CompletionRequest(
+        prompt=f"{overview}\n\n---\n\n{_SLOT} What do you do?",
+        system=reader.system(),
+        schema=START_SCHEMA,
+        max_output_tokens=600,
+        profile=START_PROFILE,
+        call_class=CALL_CLASS,
+    )
+
+
+def render_appetite_request(reader: Reader, overview: str) -> CompletionRequest:
+    """A steering reader, one overview, what they are hoping it turns out to be.
+
+    No slot clause and no choice, for `render_anticipation_request`'s reason: a reader deciding
+    something and a reader wanting something are two calls, because put together each colours
+    the other.
+    """
+    if reader.pool != STEERING:
+        raise ValueError(f"{reader.reader_id} is a {reader.pool} reader and may not steer")
+    return CompletionRequest(
+        prompt=(
+            f"{overview}\n\n---\n\nThis is the listing for a serial that has not been "
+            "written yet. What are you hoping it turns out to be, and what would make you "
+            "drop it by chapter three?"
+        ),
+        system=reader.system(),
+        schema=APPETITE_SCHEMA,
+        max_output_tokens=800,
+        profile=APPETITE_PROFILE,
+        call_class=CALL_CLASS,
+    )
+
+
 def _strings(value: Any) -> tuple[str, ...]:
     if not isinstance(value, Sequence) or isinstance(value, str | bytes):
         return ()
@@ -308,20 +402,81 @@ class Anticipation:
         return "\n\n".join(blocks)
 
 
+
+@dataclass(frozen=True, slots=True)
+class Browsing:
+    """What the measurement pool did with one overview. `Reading`'s shape, browsing's verbs."""
+
+    started: int
+    passed: int
+    saved: int
+    asked: int
+    #: (reader_id, choice, because)
+    said: tuple[tuple[str, str, str], ...]
+
+    @property
+    def answered(self) -> int:
+        return self.started + self.passed + self.saved
+
+    @property
+    def start_rate(self) -> float | None:
+        """Share who would open chapter one. `None` when nobody answered."""
+        return self.started / self.answered if self.answered else None
+
+    def to_jsonable(self) -> dict[str, Any]:
+        return {
+            "asked": self.asked,
+            "answered": self.answered,
+            "started": self.started,
+            "passed": self.passed,
+            "saved_for_later": self.saved,
+            "start_rate": self.start_rate,
+            "said": [{"reader": r, "next": c, "because": b} for r, c, b in self.said],
+        }
+
+    @classmethod
+    def of(cls, answers: Mapping[str, Mapping[str, Any] | None]) -> Browsing:
+        counts = {"start_reading": 0, "pass_on_it": 0, "save_for_later": 0}
+        said: list[tuple[str, str, str]] = []
+        for reader in pool(MEASUREMENT):
+            answer = answers.get(reader.reader_id)
+            if not isinstance(answer, Mapping):
+                continue
+            choice = str(answer.get("next") or "")
+            if choice not in counts:
+                continue
+            counts[choice] += 1
+            said.append((reader.reader_id, choice, str(answer.get("because") or "").strip()))
+        return cls(
+            started=counts["start_reading"],
+            passed=counts["pass_on_it"],
+            saved=counts["save_for_later"],
+            asked=len(pool(MEASUREMENT)),
+            said=tuple(said),
+        )
+
+
 __all__ = [
     "ANTICIPATE_PROFILE",
     "ANTICIPATION_SCHEMA",
+    "APPETITE_PROFILE",
+    "APPETITE_SCHEMA",
     "BUDGET_CHAPTERS",
     "CALL_CLASS",
     "CHOICE_SCHEMA",
     "CONTINUE_PROFILE",
     "MEASUREMENT",
     "READERS",
+    "START_PROFILE",
+    "START_SCHEMA",
     "STEERING",
     "Anticipation",
+    "Browsing",
     "Reader",
     "Reading",
     "pool",
     "render_anticipation_request",
+    "render_appetite_request",
     "render_choice_request",
+    "render_start_request",
 ]
