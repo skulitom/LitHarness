@@ -12654,3 +12654,68 @@ UNREADABLE-by-abstinence, and whether *any* reader uses the skim channel is now 
 the remaining screens answer before the channel's control can mean anything. No bar, no
 seat, and no claim about any book: one screen, one candidate still standing, one control
 corrected before it could certify the wrong thing.
+
+## 123. A simulated readership is pointed at the market's own record, and everything free was measured before the first call
+
+The operator's research prompt (2026-08-24): can a simulated readership, reading blind,
+post-dict which of two real Royal Road books the real readership stayed with? A pass at the
+pre-registered margin makes the sim a candidate reward model and the launch its out-of-sample
+test; a fail is learned at API cost instead of months of publishing. The programme is
+`research/sim-readership-backtest/`; its PREREG.md reached REGISTRATION with every slot
+filled from free runs, and **no paid call has been made** — the driver's paid stages refuse
+until a commit cites the operator's go, which is the prompt's own one-bit gate in code.
+
+**Measured first, all free.** The twelve local shards hold 22,397 fictions; the registered
+eligibility stack leaves 11,878 matchable books, and the deterministic pairing yields **2,014
+divergent pairs** at the >= 3x conversion floor (963 in `undeclared_2025`), against a power
+target of 200 decided pairs — computed exactly, conditional on the frozen persona split, at
+0.826 power to distinguish 0.60 from chance with type-I at nominal. Two sizing designs died
+first and are recorded in the PREREG as findings: the persona-grain two-way clustered bound
+has **zero power at every candidate size** under the population's registered heterogeneity,
+and an unconditional null that redraws personas converts draw variance into false clears
+(type-I 0.21-0.34, rising with n) — which is why the primary is registered conditional on the
+frozen reward split. And one absence was measured rather than assumed: **the cutoff-clean
+pair set is empty** — no pair has both members first released after the panel model's
+documented July 2025 training cutoff, because the crawl predates the horizon — so the
+recognition probe carries the entire memorisation defense, named in the PREREG with the
+number seen (zero) before any call.
+
+**What shipped.** The registration (`PREREG.md`: outcome = the platform's own
+`followers / total_views` at a >= 3x within-cell gap, work- and author-disjoint pairs,
+describe-then-behave framing with behavioural vocabulary only, four controls with registered
+pass conditions, a $180 ceiling that refuses); seven modules with hermetic tests —
+`corpus.py` (ordered refusal slugs, matching cells, deterministic divergent pairing),
+`blinding.py` (identity out through normalised forms, craft untouched, sha256 of the blinded
+output as the content address), `recognition.py` (frozen probes, blunt-toward-exclusion
+scoring), `population.py` (ten frozen parameterised personas; reward/holdout split by salted
+hash, non-re-rollable), `arms.py` (byte-frozen turns, order applied in exactly one place,
+shams that refuse to be byte-identical), `analysis.py` (content-derived bootstrap seeds,
+floors that never pool, the decision rule assembled once), `backtest.py` (probe-before-arm
+structurally, PID lock, cost ledger, the member-space remap) — plus the committed pair
+artifact (`pairs-v0.json`), `RUNBOOK.md`, and `FINDINGS.md` with every arm listed NOT_RUN.
+Four of seven modules were built by the delegated coding agent against briefs carrying the
+design, each independently gated before commit; the registration, population, and driver
+were not delegated.
+
+**Two defects caught before they could cost anything.** The corpus brief's Chapter shape had
+no text field and named a `words` column the dump does not carry — every real chapter would
+have counted zero words with nothing to excerpt; found by reading the delivered module
+against the dump's schema, fixed with the real-dump row shape pinned in a test
+(`tests/test_bt_corpus.py`). And the analysis aggregate reads votes in slot space while the
+registered aggregate is over pair members — an aggregate that would score a 4-0 member
+consensus as a 2-2 positional tie; the driver's `to_member_space` is the one remap, and
+`tests/test_bt_backtest.py` pins the exact case.
+
+**What was refused.** No paid call, even with `--yes` — the refusal names the operator. No
+verdict vocabulary anywhere a persona can reach: the stage-2 schema is closed over
+behavioural actions and reason codes that say why a reader moved, never how good a text is.
+No frontier spot model near any excerpt (its May 2026 cutoff would empty cutoff-cleanness by
+existing). No bar beyond the registered decision rule, and the `recognised` stratum certifies
+nothing wherever it is run.
+
+**Anti-scope.** Nothing under `src/litharness/` changed; RS1 holds — corpus text reaches
+only the measurement side and no prompt, gate, or book was touched. No model ranked or
+selected anything: no session has run. A pass, when the paid stages run, makes the reward
+split a **candidate** reward model only — the launch as its out-of-sample test — with the
+holdout split never a reward model and §97's containment unmoved. The scope axiom stays
+closed: no human judgment is solicited anywhere in this programme.
