@@ -5,15 +5,32 @@
 <p align="center"><em>The lines are what the gate can prove; the dragon is what the reader sees.<br>
 Six scenes along its spine; one candidate refused, sealed in its vault, joined to nothing.</em></p>
 
-An autonomous fiction-production system with one goal: **superhuman literary quality**, with
-**no human in the production loop**.
+An autonomous fiction-production system with one product objective: **fiction a defined
+audience voluntarily continues and recommends**, with **no human in the production loop**.
+What is aimed at is the story — retention and fascination — rather than text quality;
+line-level craft is a floor under that and never the thing itself.
+
+**Superhuman literary quality is the long-term goal, not the daily one.** It stays written
+down and stays falsifiable — [PLAN.md](PLAN.md) §1a.5's superiority bar, blinded and
+position-swapped against matched published prose — and it is not what a day's work is measured
+against, because it needs a comparator frame and a validated instrument and cannot be run per
+book.
 
 The unit of production is an **open-ended serial** — arc, chapter, scene — published
-chapter-wise at cadence. Quality is measured from **unsolicited reader behaviour**: a
-simulated readership as the reward model, the real population through the library as the
-settlement layer, and the operator as a **one-bit acceptance gate** that trains, calibrates
-and selects nothing. No judgment is ever solicited from anyone — the **scope axiom**
+chapter-wise at cadence. **The audience inside the loop is simulated, and only simulated.**
+Quality is
+measured from the behaviour of a simulated readership under declared budgets, in a vocabulary
+that is behavioural rather than evaluative — *continue, abandon, return* — with the operator
+as a **one-bit acceptance gate** that trains, calibrates and selects nothing. No judgment is
+ever solicited from anyone — the **scope axiom**
 ([stage-0 §95](plan/stage-0-decisions.md)): *not hired, not operator, not one blinded pair*.
+
+**There will eventually be real readers, and they cannot be part of the product loop.** The
+books are written to be published and read; what a real reader does with one is the point of
+doing this at all. What it may not do is come back in: no real reader's behaviour feeds
+generation, planning, selection, calibration, or the signal a book is measured by. The loop
+closes on the simulated readership, and it closes there whether or not a real audience exists
+yet — which is what makes the claim testable now rather than after a launch.
 
 "Endless" is not a testable claim, and the project does not make it. The testable form is
 **no degradation trend over measured length, claimed only at lengths actually reached**.
@@ -402,13 +419,17 @@ pandoc book.md -o book.pdf
 ([stage-0 §95](plan/stage-0-decisions.md)) closed that on 2026-08-19. The audit queue and
 `judge` command are for *locating* defects a counter can be built for, never for scoring. The
 operator's one judgment is a **single accept/reject bit** at book grain: no diagnostic, at most
-once per candidate and once per week, feeding no fit. Valence comes from a simulated readership
-validated against what a real population *did* (§97); see
-[plan/force-program.md](plan/force-program.md) for the instruments, §95–§102 of the ledger
-for what each returned, and
-[plan/sim-readership-calibration.md](plan/sim-readership-calibration.md) for the return leg —
-whether that population's own aggregates may ever *correct* the readership rather than only
-grade it, which is registered and deliberately undecided (§106).
+once per candidate and once per week, feeding no fit. **Valence comes from a simulated
+readership and from nothing else** — see [plan/force-program.md](plan/force-program.md) for
+the instruments and §95–§102 of the ledger for what each returned.
+
+Real-population work exists here and is not a second source of valence. It asks whether a sim
+behaves the way readers did, which is a question about the **instrument** and not about any
+book: the backtest (§123), and the return leg in
+[plan/sim-readership-calibration.md](plan/sim-readership-calibration.md) — whether a
+population's own aggregates may ever *correct* the readership rather than only grade it,
+registered and deliberately undecided (§106). Real readers are expected in time and stay
+outside the loop either way; nothing they do reaches a prompt, a plan, a selection or a gate.
 
 The one input this system cannot generate. §10.5 routes a share of accepted scenes to a
 queue as they are drafted, so evidence accumulates as a by-product of operation rather than
