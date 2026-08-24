@@ -34,6 +34,7 @@ one director in hats, reporting the seed.
 from __future__ import annotations
 
 import enum
+import gzip
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from hashlib import sha256
@@ -285,13 +286,24 @@ def _distance(left: str, right: str) -> float:
     to be suspicious of a new one, and because what is being asked here is deliberately crude:
     *are these the same bytes or not*, with a graded answer for the near-identical case.
     """
-    from litharness.domain.craft import _compressed
-
     if left == right:
         return 0.0
     a, b = _compressed(left), _compressed(right)
     both = _compressed(left + "\n" + right)
     return (both - min(a, b)) / max(max(a, b), 1)
+
+
+#: Encoded length with the container's first-order overhead removed. **Inlined here when
+#: `domain/craft.py` was deleted (§133)** — the distance below is the only surviving caller.
+#: The correction is a length confound rather than a rounding detail: on two unrelated
+#: 22-word scenes a 20-byte container is 19% of the payload and the uncorrected distance
+#: reads 0.6095 against a corrected 0.7529.
+_GZIP_LEVEL = 9
+_GZIP_HEADER = len(gzip.compress(b"", _GZIP_LEVEL))
+
+
+def _compressed(text: str) -> int:
+    return len(gzip.compress(text.encode("utf-8"), _GZIP_LEVEL)) - _GZIP_HEADER
 
 
 def distance(left: str, right: str) -> float:

@@ -40,21 +40,11 @@ from hashlib import sha256
 import litharness_contracts as lc
 
 from litharness.application.conductor import JobHandler
-from litharness.application.feedback_loop import record_provenance
 from litharness.application.policy_events import policy_decision_event
 from litharness.application.ports import DraftStore, TextGenerator
 from litharness.application.repair import evaluation_job_for, summary_job_for
-from litharness.domain.audit import DEFAULT_RATE, draw
 from litharness.domain.budget import BudgetPolicy, BudgetVerdict
 from litharness.domain.budget import check as budget_check
-from litharness.domain.calibration import (
-    EvidenceClass,
-    Grain,
-    NotPromotable,
-    promoted_gate,
-    verdicts_digest_for,
-)
-from litharness.domain.craft import CraftMetric, craft_gates, measure, profile_digest
 from litharness.domain.draft import DraftPolicy, gate_draft
 from litharness.domain.events import Event, EventType
 from litharness.domain.extraction import extract_state
@@ -75,7 +65,6 @@ from litharness.domain.policy import (
     gates_for_draft,
     policy_digest,
 )
-from litharness.domain.preference import analysable_judgments, pair_verdicts_digest_for
 from litharness.domain.revision import Revision, node_version_id
 from litharness.domain.text import content_hash
 
@@ -159,119 +148,6 @@ def budget_gate(verdict: BudgetVerdict) -> GateOutcome:
     )
 
 
-def _craft_ladder(
-    store: DraftStore,
-    metrics: tuple[CraftMetric, ...],
-    *,
-    today: str,
-    words: int | None = None,
-) -> tuple[GateOutcome, ...]:
-    """§10.2's craft ladder, complete: one gate per metric, blocking where it was earned.
-
-    `craft_gates` annotates unconditionally and has no branch that could block.
-    `calibration.promoted_gate` is the only door to one that can, and this is the only
-    caller — so a threshold cannot reach the ladder except by having been recorded as
-    measured evidence first.
-
-    **It returns pure annotation until someone records a calibration, and that is the normal
-    state.** The early return is not an optimisation; it is what makes wiring this safe to do
-    before any evidence exists. With an empty table this costs one query and cannot construct
-    a blocking gate, which is why turning it on does not turn anything on.
-
-    **One gate per metric, because two is a contradiction on the record.** An earlier version
-    appended the promoted gate *beside* the advisory one, so a refused scene's decision
-    carried `craft.dialogue_ratio.v0` twice — once `passed=True, blocking=False` and once
-    `passed=False, blocking=True` — and `decision_id_for` hashed both. An audit asking "what
-    did the craft ladder say" got two contradictory answers about one measurement.
-
-    **A calibration that cannot promote degrades to annotation, but never silently.**
-    `NotPromotable` is caught per metric rather than raised: expired or stale evidence is
-    exactly §10.5's re-opened calibration, and raising would turn "the evidence about prose
-    quality went stale" into "this scene cannot be drafted". But a gate that quietly stops
-    blocking is the failure `promoted_gate`'s own docstring refuses — "worse than one that
-    visibly cannot be built" — so the reason is written into the annotation's `detail`,
-    where the policy decision record carries it. That matters more than it looks: the digest
-    covers *every* answered audit sample, so one new `judge` verdict re-opens every
-    calibration at once. That is correct under §10.5 and it must be legible when it happens.
-    """
-    annotations = {
-        gate.rule_or_critic_id: gate for gate in craft_gates(metrics, words=words)
-    }
-    calibrations = store.calibrations()
-    if not calibrations:
-        return tuple(annotations.values())
-    # Read once, not per metric: this is the whole audit queue, and the digest is what makes
-    # a calibration stale when the verdicts move under it.
-    #
-    # **Three digests, and which one a calibration is checked against is chosen by its own
-    # evidence class.** One digest for all of them was the hole: `litharness calibrate`
-    # defaulted a missing `--verdicts-digest` to the store's answered-audit digest, this
-    # function recomputed that identical digest at every draft, the staleness clause could
-    # therefore never fire, and a threshold measured over 13,000 strangers' chapters promoted
-    # by omission. A population calibration is now compared against the *profile* digest,
-    # which a verdict digest can never equal — so even a hand-written row claiming
-    # `population` while carrying the audit digest is stale on arrival. A preference
-    # calibration (§61) is compared against the answered *pair*-verdict digest for the same
-    # reason in the other direction: `digests.get` returns None for an unmapped class and
-    # `why_not_promotable` reads a None digest as "no staleness check requested", so a class
-    # without an entry here has its staleness clause silently disabled — the hole the map
-    # of this area names, closed by never adding a class without adding its digest.
-    answered = [
-        sample for sample in store.audit_samples() if sample.verdict is not None
-    ]
-    pair_answered = [
-        sample for sample in store.pair_samples() if sample.verdict is not None
-    ]
-    digests = {
-        EvidenceClass.JUDGMENT: verdicts_digest_for(
-            (sample.sample_id, sample.verdict.value)
-            for sample in answered
-            if sample.verdict is not None
-        ),
-        EvidenceClass.POPULATION: profile_digest(),
-        EvidenceClass.PREFERENCE: pair_verdicts_digest_for(pair_answered),
-    }
-    # The answered count is per class for the same reason the digest is: `holdout_size` is
-    # compared against the population the holdout was drawn from, and a preference row's
-    # holdout is pair verdicts. Checking it against the audit queue would let a claimed
-    # pair holdout clear the count on the strength of the wrong table — the `answered`
-    # parameter is just an int, so the domain cannot catch a wrong one here. The
-    # preference count is `analysable_judgments`, not every answered row: recognised
-    # judgments and abstentions are excluded from analysis, so a holdout claim must not be
-    # licensed by rows the analysis will skip. The digest still covers every answered row
-    # — over-invalidation is the safe direction for staleness.
-    answered_counts = {
-        EvidenceClass.JUDGMENT: len(answered),
-        EvidenceClass.PREFERENCE: len(analysable_judgments(pair_answered)),
-    }
-    measured = {metric.metric_id: metric for metric in metrics}
-    seen: set[str] = set()
-    for calibration in calibrations:
-        # `calibrations()` is newest-first, so the first row for a metric is its current
-        # evidence. A superseded measurement is history, not a second gate.
-        metric = measured.get(calibration.metric_id)
-        if metric is None or calibration.metric_id in seen:
-            continue
-        seen.add(calibration.metric_id)
-        try:
-            annotations[calibration.metric_id] = promoted_gate(
-                calibration,
-                metric.value,
-                today=today,
-                verdicts_digest=digests.get(calibration.evidence_class),
-                # A craft gate refuses a scene, so evidence coarser than a scene refuses
-                # nothing here — the clause that keeps a story-level label out.
-                decision_grain=Grain.UNIT,
-                answered=answered_counts.get(calibration.evidence_class),
-            )
-        except NotPromotable as exc:
-            advisory = annotations[calibration.metric_id]
-            annotations[calibration.metric_id] = replace(
-                advisory, detail=f"{advisory.detail} [not blocking: {exc}]"
-            )
-    return tuple(annotations.values())
-
-
 #: Ceiling for the derived seed. Ollama takes a 32-bit signed seed; a Python `int` from a
 #: sha256 does not fit and is not rejected — it is silently reinterpreted, which would make
 #: "the same job replays to the same prose" false in a way nothing would report.
@@ -319,7 +195,6 @@ def make_scene_draft_handler(
     policy: DraftPolicy | None = None,
     budget: BudgetPolicy | None = None,
     call_class: str = "generation",
-    audit_rate: float = DEFAULT_RATE,
     schedule_evaluation: bool = False,
     schedule_summary: bool = False,
 ) -> JobHandler:
@@ -504,14 +379,10 @@ def make_scene_draft_handler(
         # integrity over text the shape gate refused would be a second opinion on a draft
         # that is already going back, and it would cost a store read per refusal.
         findings: list[DomainFinding] = []
-        # Empty when the job carries no book scope — a hand `enqueue` against a bare revision.
-        # Bound here rather than inside the branch because the acceptance path below reads it
-        # unconditionally, and an unbound name there fails the *job*, turning a missing
-        # measurement into a failed draft.
-        craft_metrics: tuple[CraftMetric, ...] = ()
-        # §12 step 5's output, bound here for the same reason `craft_metrics` is: the
-        # acceptance path reads it unconditionally, and an unbound name there would turn a
-        # scene with no system voice into a failed job.
+        # §12 step 5's output. Empty when the job carries no book scope — a hand `enqueue`
+        # against a bare revision. Bound here rather than inside the branch because the
+        # acceptance path below reads it unconditionally, and an unbound name there would
+        # turn a scene with no system voice into a failed job.
         extracted: tuple[lc.StateRecord, ...] = ()
         if outcome.accepted and book_id and branch_id:
             stored_records = tuple(store.state_records(str(book_id), str(branch_id)))
@@ -584,36 +455,6 @@ def make_scene_draft_handler(
             # its refusal costs an attempt where the pre-flight one does not.
             integrity, findings = gate_integrity(subject)
             gates = (*gates, standing_gate, integrity)
-
-            # §10.2 ladder step 7, and it can only annotate. Every gate `craft_gates` builds
-            # is `blocking=False` with no `calibration_id`, so it cannot affect `accepted`
-            # below and `PolicyDecision` would raise if it tried. Measured here rather than in
-            # a later pass because §10.2 wants proxies "logged per scene" — a metric whose
-            # history starts on the day it is promoted has no held-out data to be promoted on.
-            # The book's other accepted scenes, so `scene_echo` can ask whether this one is
-            # a copy of any of them — the failure a Book Zero run passed every gate with.
-            craft_metrics = measure(
-                result.text,
-                [
-                    node.content
-                    for node in revision.in_reading_order()
-                    if node.kind is NodeKind.SCENE
-                    and node.content
-                    and node.logical_id != logical_id
-                ],
-            )
-            # The scene's own length, so the craft ladder can place each measurement against
-            # published chapters of comparable size rather than against the pooled corpus,
-            # whose median chapter is more than twice a scene target.
-            gates = (
-                *gates,
-                *_craft_ladder(
-                    store,
-                    craft_metrics,
-                    today=_timestamp(now)[:10],
-                    words=len(result.text.split()),
-                ),
-            )
 
         # **`accepted` is the whole ladder's verdict, not the shape gate's.** Kept as its own
         # name rather than by rewriting `outcome`, because `outcome.vetoes` is what the
@@ -802,50 +643,6 @@ def make_scene_draft_handler(
             state_records=extracted,
             jobs=follow_up_jobs,
             decision=decision,
-        )
-
-        # §10.2's log, keyed on the *resulting* revision — the address the prose actually has.
-        # Written after the commit rather than with it: a metric about a revision that failed
-        # to commit is a measurement of text nobody has, and unlike the decision record there
-        # is no attribution clause requiring it to survive the crash.
-        store.record_craft_metrics(
-            outcome.revision.revision_id,
-            logical_id,
-            craft_metrics,
-            measured_at=_timestamp(now),
-        )
-
-        # §10.5's standing audit. The only place this system asks a human about the prose, and
-        # the reason it is on the acceptance path rather than in a report: judgment is the
-        # scarce input (RevisionJudge holds 104 pairs and two verdicts), and a queue that
-        # fills as a by-product of drafting is the difference between evidence accumulating
-        # and evidence being a project somebody has to schedule.
-        sample = draw(
-            book_id=revision.book_id,
-            branch_id=revision.branch_id,
-            revision_id=outcome.revision.revision_id,
-            logical_id=logical_id,
-            sampled_at=_timestamp(now),
-            rate=audit_rate,
-        )
-        if sample is not None:
-            store.record_audit_sample(sample)
-
-        # **Provenance, including the negative case (invariant I4).** What shaped this scene,
-        # projected from the frozen payload onto the address the prose actually has. The
-        # payload is the primary, crash-safe record — it was written in the enqueue
-        # transaction and the prompt is frozen there — so this is a queryable projection and
-        # not the evidence itself, which is why it sits beside `record_craft_metrics` rather
-        # than inside `commit_revision`. A scene drafted with no feedback gets a row carrying
-        # an empty item list and the empty set's digest, because an absent row cannot say
-        # whether nothing shaped the scene or nobody recorded what did.
-        record_provenance(
-            store,
-            revision_id=outcome.revision.revision_id,
-            logical_id=logical_id,
-            job_id=job.job_id,
-            payload=payload,
-            recorded_at=_timestamp(now),
         )
 
         # `acceptance` is deliberately **not** returned: `commit_revision` already persisted it

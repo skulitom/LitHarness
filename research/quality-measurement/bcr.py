@@ -542,9 +542,10 @@ def run_session(
 #: same arithmetic. `preference.BOOTSTRAP_RESAMPLES`' own docstring records why the count is not
 #: a parameter: a caller-supplied count makes one verdict set produce two bounds.
 def _resamples() -> int:
-    from litharness.domain.preference import BOOTSTRAP_RESAMPLES
-
-    return int(BOOTSTRAP_RESAMPLES)
+    # Was imported from `domain.preference`, which was deleted with the pairwise engine
+    # (§133). The VALUE is unchanged — every interval this module has already published
+    # was computed at 2000, and changing it would silently restate them.
+    return 2000
 
 
 @dataclass(frozen=True, slots=True)

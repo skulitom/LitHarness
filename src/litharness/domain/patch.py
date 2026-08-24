@@ -65,18 +65,16 @@ class Veto(enum.StrEnum):
     #: *claims*, and the two are independent — replacing a whole scene with text of identical
     #: length moves no length at all.
     CITED_SCOPE_EXCEEDED = "cited_scope_exceeded"
-    #: Raised by `domain.calibration.promoted_gate` only: a craft metric carrying measured
-    #: held-out precision measured this candidate on the failing side of its threshold. One
-    #: veto for every metric, for `CONTINUITY_BREACH`'s reason — the ladder acts on the veto,
-    #: and the action is the same whichever proxy fired.
+    #: A craft metric carrying measured held-out precision measured this candidate on the
+    #: failing side of its threshold. One veto for every metric, for `CONTINUITY_BREACH`'s
+    #: reason — the ladder acts on the veto, and the action is the same whichever proxy fired.
     CRAFT_BELOW_BAR = "craft_below_bar"
-    #: Raised by `domain.calibration.promoted_gate` only, and **only** for a calibration whose
-    #: evidence is a published-corpus distribution rather than human judgment. It is a
-    #: separate veto from `CRAFT_BELOW_BAR` because it licenses a strictly weaker claim: a
-    #: percentile over 13,000 strangers' chapters can say "this value is outside the range
-    #: published LitRPG of this length occupies" and cannot say "this scene is not good
-    #: enough". One veto per claim, so a refusal cannot be read as the claim it was not
-    #: measured for — see `domain/calibration.py::EvidenceClass`.
+    #: Raised **only** for a calibration whose evidence is a published-corpus distribution
+    #: rather than human judgment. It is a separate veto from `CRAFT_BELOW_BAR` because it
+    #: licenses a strictly weaker claim: a percentile over 13,000 strangers' chapters can
+    #: say "this value is outside the range published LitRPG of this length occupies" and
+    #: cannot say "this scene is not good enough". One veto per claim, so a refusal cannot
+    #: be read as the claim it was not measured for.
     CRAFT_OUT_OF_DISTRIBUTION = "craft_out_of_distribution"
 
 

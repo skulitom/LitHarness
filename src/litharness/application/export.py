@@ -121,9 +121,8 @@ class BookExport:
     ) -> list[tuple[str, tuple[SceneProgress, ...]]]:
         """The book as a reader receives it: numbered chapters holding scenes.
 
-        One scene is one chapter by default, which asserts nothing — the same refusal
-        `library.DEFAULT_SCENES_PER_CHAPTER` makes. What it buys is that no output has to name
-        a scene in order to say where something sits.
+        One scene is one chapter by default, which asserts nothing. What it buys is that no
+        output has to name a scene in order to say where something sits.
         """
         size = max(scenes_per_chapter, 1)
         groups: list[tuple[str, tuple[SceneProgress, ...]]] = []
@@ -135,8 +134,8 @@ class BookExport:
         """The completeness line for the document itself, counted in chapters.
 
         `summary` stays counted in scenes because its readers are operator surfaces — the tick
-        log, the library index — where the unit of work is the right unit. The document is not
-        one of those: it is the thing being read, so it says how many chapters are whole.
+        log — where the unit of work is the right unit. The document is not one of those: it
+        is the thing being read, so it says how many chapters are whole.
         """
         groups = self.chapter_groups(scenes_per_chapter)
         whole = sum(1 for _, group in groups if all(scene.drafted for scene in group))
@@ -174,9 +173,8 @@ class BookExport:
     def _progress_table(self, scenes_per_chapter: int = 1) -> list[str]:
         """Gap visibility at the grain the reader is handed, which is the chapter.
 
-        A per-scene table was the last place the word "scene" reached a reader, and a partly
-        drafted chapter is exactly what `library.chapters_for` withholds — so "2 of 4 drafted"
-        reports the same gap without teaching the vocabulary."""
+        A per-scene table was the last place the word "scene" reached a reader, so "2 of 4
+        drafted" reports the same gap without teaching the vocabulary."""
         rows = ["| Chapter | Words | State |", "| --- | --: | --- |"]
         for title, group in self.chapter_groups(scenes_per_chapter):
             drafted = sum(1 for scene in group if scene.drafted)

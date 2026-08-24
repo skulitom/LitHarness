@@ -510,143 +510,22 @@ def _answered(db, n: int = 50) -> None:
         store.close()
 
 
-def test_a_calibration_can_be_recorded_from_the_command_line(db, capsys) -> None:
-    """`record_calibration` shipped with migration 014 and had no caller outside the tests,
-    so the only route to a blocking craft gate ran through writing Python against the store —
-    the promotion path was unreachable by the operator who authorises it."""
-    run(db, "init")
-    _answered(db)
-    assert _calibrate(db) == EXIT_OK
-    out = capsys.readouterr().out
-    assert "BLOCKING-ELIGIBLE" in out
-    assert "evidence: judgment at unit grain" in out
-
-    assert run(db, "calibrations") == EXIT_OK
-    assert "BLOCKING-ELIGIBLE" in capsys.readouterr().out
 
 
-def test_recording_the_same_measurement_twice_does_not_duplicate_it(db, capsys) -> None:
-    run(db, "init")
-    _answered(db)
-    _calibrate(db)
-    capsys.readouterr()
-    assert _calibrate(db) == EXIT_OK
-    assert "already on record" in capsys.readouterr().out
 
 
-def test_a_calibration_that_cannot_promote_is_still_recorded_and_says_why(db, capsys) -> None:
-    """Recording evidence that cannot yet promote is a legitimate act — it is how evidence
-    accumulates toward evidence that can. What it must not do is look like promotion."""
-    run(db, "init")
-    assert _calibrate(db, **{"--flagged": "1", "--correct": "1", "--clusters": "1"}) == EXIT_OK
-    out = capsys.readouterr().out
-    assert "not promotable" in out
-    assert "BLOCKING-ELIGIBLE" not in out
 
 
-def test_incoherent_numbers_are_refused_before_they_are_stored(db, capsys) -> None:
-    run(db, "init")
-    assert _calibrate(db, **{"--flagged": "51", "--holdout": "50"}) == EXIT_FAULT
-    assert "more flags than judgments" in capsys.readouterr().err
-    assert _calibrate(db, **{"--flagged": "17", "--correct": "18"}) == EXIT_FAULT
-    assert "not a count pair" in capsys.readouterr().err
 
 
-def test_a_corrected_measurement_is_reported_as_it_was_stored(db, capsys) -> None:
-    """The defect an end-to-end run found and the unit tests did not: `calibrate` printed
-    the promotability of the record it *built*, while `INSERT OR IGNORE` kept an older row
-    with different numbers. The operator was told BLOCKING-ELIGIBLE about a gate that did
-    not exist."""
-    run(db, "init")
-    _answered(db)
-    _calibrate(db, **{"--flagged": "1", "--correct": "1", "--clusters": "1"})
-    capsys.readouterr()
-    assert _calibrate(db, **{"--flagged": "21", "--correct": "21"}) == EXIT_OK
-    out = capsys.readouterr().out
-    assert "recorded" in out
-    assert "21/21 flags" in out
-    assert "BLOCKING-ELIGIBLE" in out
-
-    assert run(db, "calibrations") == EXIT_OK
-    listed = capsys.readouterr().out
-    assert "BLOCKING-ELIGIBLE" in listed, "the correction is the one that gates"
-    assert listed.count("craft.tricolon_rate.v0") == 2, "and the superseded row is kept"
 
 
-def test_a_claimed_holdout_larger_than_the_store_holds_cannot_promote(db, capsys) -> None:
-    """The hole `--verdicts-digest` left open, closed by counting instead of by hashing.
-
-    `calibrate` defaulted a missing digest to the store's own answered verdicts, so numbers
-    measured against thirteen thousand strangers' chapters were stamped with the digest of
-    whatever this store held, matched the digest `_craft_ladder` recomputes at every draft,
-    and promoted. The staleness clause could not catch it because both sides were the same
-    value. The flag is deleted and the class now derives the digest — but the sharper defect
-    was never about digests at all: **nothing anywhere compared `holdout_size` against the
-    number of answered samples the store actually has**, and a digest cannot, because the
-    digest of two verdicts matches the digest of two verdicts however large the number
-    written beside it. Fifty claimed against an empty store cleared every floor.
-    """
-    run(db, "init")
-    assert _calibrate(db) == EXIT_OK
-    out = capsys.readouterr().out
-    assert "BLOCKING-ELIGIBLE" not in out
-    assert "claims 50 held-out judgment(s) against a store holding 0" in out
-
-    # And the same numbers promote once the judgments they claim exist.
-    _answered(db)
-    assert _calibrate(db) == EXIT_OK
-    assert "BLOCKING-ELIGIBLE" in capsys.readouterr().out
 
 
-def test_corpus_evidence_must_name_its_class_and_gets_a_different_veto(db, capsys) -> None:
-    """A population calibration reads its threshold rather than being told one, and says
-    what it is: a statement about range, never about quality."""
-    run(db, "init")
-    # No cohort, band, quantile or control named: refused before anything is stored.
-    assert _calibrate(db, **{"--evidence-class": "population"}) == EXIT_FAULT
-    assert "number with no referent" in capsys.readouterr().err
-
-    # A cohort compared against itself is a control that cannot fail — §50's rule.
-    assert _calibrate(db, **{
-        "--evidence-class": "population", "--cohort": "human_pre_llm",
-        "--control-cohort": "human_pre_llm", "--band": "700-1100", "--quantile": "p99",
-    }) == EXIT_FAULT
-    assert "control that cannot fail" in capsys.readouterr().err
 
 
-def test_the_tricolon_threshold_is_refused_by_its_own_control(db, capsys) -> None:
-    """The design's first act is to refuse this project's most promising metric.
-
-    Against `plan/craft-profile.json` as committed: at the 700-1100 word band — the one
-    bracketing `DraftPolicy.target_words` — the pre-LLM p99 tricolon line is 4.3478, and
-    *undeclared 2025 human* chapters put p95 at 5.0633 in the same band. More than 5% of
-    prose nobody suspects crosses a line the reference cohort crosses 1% of the time. That
-    is BRIEF §2's 0.629-against-a-0.606-control lesson arriving as arithmetic in
-    `why_not_promotable` instead of as a paragraph someone has to have read.
-    """
-    run(db, "init")
-    _answered(db)
-    assert _calibrate(db, **{
-        "--evidence-class": "population", "--cohort": "human_pre_llm",
-        "--control-cohort": "undeclared_2025", "--band": "700-1100", "--quantile": "p99",
-    }) == EXIT_OK
-    out = capsys.readouterr().out
-    assert "evidence: population at unit grain" in out
-    assert "BLOCKING-ELIGIBLE" not in out
-    assert "as often as the reference cohort" in out
 
 
-def test_story_grain_evidence_can_never_refuse_a_scene(db, capsys) -> None:
-    """`followers / total_views` is the label PLAN.md §20 action 10 calls the critical path,
-    and it is attached to a whole story while a craft gate refuses one scene.
-    `plan/craft-corpus.md` §4.1 already conceded the ecological-fallacy risk in prose; this
-    is the concession as a clause that runs."""
-    run(db, "init")
-    _answered(db)
-    assert _calibrate(db, **{"--evidence-class": "behaviour", "--grain": "story"}) == EXIT_OK
-    out = capsys.readouterr().out
-    assert "BLOCKING-ELIGIBLE" not in out
-    assert "cannot license the refusal of one scene" in out
 
 
 def test_ingesting_a_failed_evaluation_exits_non_zero(db, tmp_path, capsys) -> None:

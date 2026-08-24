@@ -195,11 +195,8 @@ class SqliteJobRepository:
     #: Job kinds carrying plan-derived frozen state, cancelled when the plan moves. The
     #: filter is a list precisely because it was once the literal 'scene_draft' alone —
     #: the hidden coupling the planning-drafting map names: any NEW plan-derived job kind
-    #: left off this list runs against a dead plan with no error. `plan_search` freezes a
-    #: base revision and a prompt at epoch N; `span_select` selects among candidates
-    #: drafted under epoch N; both are stale the moment the plan changes, exactly as a
-    #: frozen scene prompt is.
-    PLAN_DERIVED_JOB_KINDS: tuple[str, ...] = ("scene_draft", "plan_search", "span_select")
+    #: left off this list runs against a dead plan with no error.
+    PLAN_DERIVED_JOB_KINDS: tuple[str, ...] = ("scene_draft",)
 
     @classmethod
     def cancel_queued_scene_jobs(

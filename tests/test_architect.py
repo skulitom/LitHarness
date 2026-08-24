@@ -262,6 +262,8 @@ def test_a_forge_over_one_candidate_is_not_a_search() -> None:
         ({"domain": "coopering"}, "geometry"),
     ],
 )
+
+
 def test_a_collapsed_forge_is_refused_before_a_scene_is_paid_for(
     second: dict[str, Any], axis: str
 ) -> None:
@@ -390,6 +392,8 @@ def test_a_creature_that_is_a_renamed_stock_monster_is_refused_field_by_field() 
         "reciting what a field looked like in a year before the listeners were born",
     ],
 )
+
+
 def test_ordinary_legal_english_is_not_a_borrowed_reference(ordinary: str) -> None:
     """The measured false positive, kept runnable.
 
@@ -419,6 +423,8 @@ def test_ordinary_legal_english_is_not_a_borrowed_reference(ordinary: str) -> No
         "SEAL™",
     ],
 )
+
+
 def test_an_answer_that_compares_itself_to_something_outside_it_is_refused(
     borrowed: str,
 ) -> None:
@@ -548,61 +554,13 @@ def test_two_forges_of_one_brief_both_reach_the_spend_ledger(
 
 
 def test_the_domain_is_the_engine_and_its_jargon_never_reaches_the_page() -> None:
-    """Five worlds in a row were set inside a trade and written in its glossary.
-
-    Assaying, grafting, surveying, bell-founding, dyeing. The rule asked for a real domain of
-    human *work* and got the workshop, the yard and the vocabulary; the operator read two of
-    them and named it — *"unnecessarily esoteric ... the words used are adding unnecessary
-    complexity eg mordant"*. The physics stays, which is what makes a world argue back; where it
-    belongs is what this asserts.
-
-    **Amended 2026-08-24 (`plan/clarity-audit-2026-08-24.md` W3), name kept because the ledger
-    cites it.** The rule's "never reaches the page" ban clause was contradiction-class — an
-    instruction to withhold — and is deleted; the positive form in the same rule ("plain words
-    a reader could repeat after one read") carries it.
-
-    **Amended again the same day (§130), name kept for the same reason, and the amendment above
-    is what it corrects.** Requiring a real domain twice failed against the same complaint: the
-    operator read the result as *"minutia and not what the reader came for"*, then read a
-    capability derived from real optics — *say what a thing is made of from its split light* —
-    as *"too much of a specific situation, it looks pulled out of arse"*. A power derived from
-    real physics can only be a contraption of that physics, and the powers a reader already
-    wants are derivable from nothing real. The mandate is gone; a real domain is one source
-    among several. What this pins now is the absence of the mandate, the register the powers are
-    to be written in, and the RS1/C3 rail, which had to survive opening the sources.
+    """The name is the ledger's (§130); after the 2026-08-24 rule cut what it pins is the
+    contract — the rule names the two schema fields the gate reads, and the RS1/C3 rail is the
+    one ban list the cut kept.
     """
     [rule] = [item for item in architect._RULES if "what this world's system is about" in item]
-    assert "engine rather than its setting" in rule
-    assert "Where that engine comes from is open" in rule
-    assert "one option among several rather than the" in rule
-    assert "never reaches the page" not in rule
-    assert "plain words a reader could repeat after one read" in rule
-    # The register the operator gave, as examples rather than as a vocabulary to police.
-    assert "can walk through a wall" in rule
-    # Opening the sources is exactly when naming a real work becomes tempting, so the rail is
-    # in the same sentence that opens them.
-    assert "Never name, quote or imitate any real work" in rule
-    # And the mandate itself is gone from every rule, not merely from this one.
-    assert not [item for item in architect._RULES if "Literalise one real domain" in item]
-
-
-def test_the_genre_s_tropes_are_the_product_rather_than_permitted_furniture() -> None:
-    """*"People come for a particular type of product when they read isekai, litrpg,
-    progression fantasy"* (2026-08-24, §130).
-
-    The rule already said the furniture was welcome. What it also said was that originality
-    belongs *in the engine underneath* — which paired with the since-deleted real-domain
-    mandate to produce exactly the engines the operator rejected. Originality now belongs to
-    the person and the price, the tropes are what was bought, and the sources are open with the
-    borrowed-work rail stated in the same breath.
-    """
-    [rule] = [item for item in architect._RULES if "genre's own furniture" in item]
-    assert "what the reader came for" in rule
-    assert "isekai" in rule and "LitRPG" in rule and "progression fantasy" in rule
-    assert "from myth, from other fantasy and science fiction" in rule
-    assert "never a named work, an author or a brand" in rule
-    # The clause that sent originality into the engine is gone.
-    assert "Originality belongs in the engine underneath" not in rule
+    assert "`domain`" in rule and "`progression_means`" in rule
+    assert [item for item in architect._RULES if "Never name, quote, imitate" in item]
 
 
 def test_a_rule_asks_what_a_person_would_want_and_puts_it_at_the_top_of_the_ladder() -> None:
@@ -653,36 +611,6 @@ def test_a_rung_declares_what_it_lets_a_person_do_and_it_reaches_canon() -> None
     # On `is_a`, which is what a capability writes, so the packet sees one kind of fact.
     grants = {r.value for r in records if r.predicate == "is_a"}
     assert "reads a seam through a wall" in grants
-
-
-def test_the_ladder_rule_asks_for_abilities_and_names_the_rung_in_the_worlds_own_words() -> None:
-    """What a rung is, and the positive naming ask that outlived the schema-word ban.
-
-    Renamed 2026-08-24 from
-    `test_the_ladder_rule_asks_for_abilities_and_keeps_its_own_vocabulary_off_the_page`
-    (cited nowhere in the ledger) when `plan/clarity-audit-2026-08-24.md` W1 deleted the
-    in-prompt lexical ban on `ladder`, `rung` and `standing`: the ban's cause was the premise
-    being written inside the schema call, that cause is being removed rather than masked, and
-    a word list is not a general system. The abilities half of the rule and the positive ask \u2014
-    name the rung this world names, in this world's own language \u2014 are unchanged, and this
-    pins both, plus the ban's absence.
-    """
-    [rule] = [item for item in architect._RULES if "chain of abilities and not of" in item]
-    assert "they keep it" in rule
-    assert "is not a rung" in rule
-    [furniture] = [item for item in architect._RULES if "FURNITURE and not its concept" in item]
-    assert "Name the rung this world names, in this world's own language" in furniture
-    assert "never the book's" not in furniture
-    assert "None of them appear in the premise" not in furniture
-
-
-# --- the pitch, the furniture, and the default nobody has to break -------------------------------
-#
-# **The operator's worked example, 2026-08-23, read against six forged worlds.** A biology graduate
-# in a dead-end coffee job in a near-future with a neural implant dies, wakes as a child in a magic
-# world with the AI merged into him, finds that magic here runs on cell biology, masters water
-# magic with what he already knows, and joins an academy. Slow burn. It keeps every genre comfort
-# and is fresh underneath; the six worlds kept none and were strange throughout.
 
 
 def test_the_premise_rule_asks_for_a_pitch_rather_than_prose() -> None:
@@ -768,30 +696,13 @@ def test_the_world_schema_no_longer_asks_for_reader_facing_prose() -> None:
 
 
 def test_the_ladder_is_declared_furniture_rather_than_the_world_it_furnishes() -> None:
-    """*"Why do each of these options mention climbs and ladders ... stuck on these words"*.
-
-    §113 made the rung the number a reader counts, which was the point and remains true. What it
-    also did, unasked, was make the chain the thing every premise was about \u2014 six worlds forged
-    on it opened on a ladder rather than on a person.
+    """§113's counting contract, read by the gate and by the standing parser: a chain declared
+    lowest-first with a `grants` per rung, and a `standing` naming a criterion and a rung by id
+    that is not the top one.
     """
-    [rule] = [item for item in architect._RULES if "FURNITURE and not its concept" in item]
-    # **Structure, not instance, and this assertion used to demand the instance.** It asserted
-    # the literal words `bronze to gold`, which is the failure the operator named on the same
-    # day: *"not every book has to have bronze and gold ... I was hoping you would generalize the
-    # concept structure. Like Animal object in C++ if I mentioned cats and bunnies."* A test that
-    # requires one world's vocabulary is a test that forbids every other world's.
-    assert "whatever THIS world calls" in rule
-    assert "no house style" in rule
-    assert "bronze" not in rule.lower().split("metals")[0]
-    # **Reworded 2026-08-24 and the clause is the same clause.** It read "the premise is about
-    # the person rather than about the chain" while the world call wrote a `premise` field;
-    # with that field gone from the schema (`plan/clarity-audit-2026-08-24.md` P1) the sentence
-    # named a cell the answer may no longer contain, and `additionalProperties: false` refuses
-    # a whole forge over one unexpected key. Same instruction, said about the book.
-    assert "what the book is about is the person rather than the chain" in rule
-    assert "the premise" not in rule
-    # And the counting clause §113 shipped is still in the same rule, unweakened.
-    assert "the rung's position from the bottom of that chain" in rule
+    [rule] = [item for item in architect._RULES if "chain of AT LEAST THREE" in item]
+    assert "LOWEST FIRST" in rule and "`grants`" in rule
+    assert "`standing`" in rule and "NOT the top one" in rule
 
 
 def test_a_rule_says_the_genre_s_own_furniture_is_welcome() -> None:
@@ -805,7 +716,6 @@ def test_a_rule_says_the_genre_s_own_furniture_is_welcome() -> None:
     "WELCOME rather than avoided" became "what the reader came for", and the clause sending
     originality into the engine is deleted — it paired with the real-domain mandate to produce
     the engines the operator rejected three times.
-    `test_the_genre_s_tropes_are_the_product_rather_than_permitted_furniture` pins the new half.
     """
     [rule] = [item for item in architect._RULES if "genre's own furniture" in item]
     for comfort in ("academy", "tournament", "master worth impressing", "rival"):
@@ -839,24 +749,20 @@ def test_inverting_a_genre_default_is_optional_and_the_ladder_is_still_fenced() 
 
 
 def test_no_rule_offers_a_debt_as_a_subject_or_a_market_as_an_interface() -> None:
+    """§116: the bias was the rule text's own, so no rule hands the refused subject back."""
     joined = " ".join(architect._RULES)
     assert "or a debt may leave this out" not in joined
     assert "a debt the book can never pay" not in joined
     assert "the exchange rate, who can cheat whom, what the law says" not in joined
-    # **Amended 2026-08-24 (§131).** The "NOT an exchange rate, a market, a court, a licence or
-    # a tariff" clause belonged to the two-incompatible-systems rule, which is deleted — it
-    # mandated two systems while another rule says a world may have "one system, several, or
-    # none", and two rules disagreeing about one declaration is the contradiction class
-    # boundary 2 exists to prevent. §116's own rule is untouched and carries the finding.
-    assert "not an administration" in joined
-    assert "a debt, a ledger, a register" in joined
 
 
 def test_the_cost_rule_says_what_a_cost_is_paid_in() -> None:
-    """A cost with no stated currency is what produced thirty worlds about money."""
+    """The rule asks for a cost on the page; the gate refuses a rank that declares none."""
     [rule] = [item for item in architect._RULES if "every gain has a cost" in item]
-    assert "never in money" in rule
-    assert "never in a debt" in rule
+    assert "payable on the page" in rule
+    ranks = architect.WORLDS_SCHEMA["properties"]["worlds"]["items"]["properties"]["systems"]
+    ranks = ranks["items"]["properties"]["criterion"]["properties"]["ranks"]["items"]
+    assert "cost_to_reach" in ranks["required"]
 
 
 def test_a_premise_written_in_administration_is_refused() -> None:
@@ -922,6 +828,8 @@ def test_a_world_that_names_no_protagonist_is_refused_at_the_forge() -> None:
 
 
 @pytest.mark.parametrize("field_name", ["id", "exception", "edge", "wants", "price"])
+
+
 def test_an_empty_protagonist_field_is_refused_by_name(field_name: str) -> None:
     """Emptiness, not absence, because `minLength` is a request and not a guarantee.
 
@@ -1058,6 +966,8 @@ def test_a_shape_may_declare_its_own_exceptions_without_a_protagonist() -> None:
         ({"exception": "no_such_rule"}, "neither a declared rule nor a declared cardinality"),
     ],
 )
+
+
 def test_the_gate_complains_when_the_declaration_refers_to_nothing(
     change: dict[str, str], complaint: str
 ) -> None:
@@ -1134,43 +1044,12 @@ def test_the_report_counts_the_declaration_and_orders_nothing() -> None:
 
 
 def test_the_protagonist_rule_asks_for_a_declaration_and_never_an_outcome() -> None:
-    """**Boundary 1 of `plan/handoff-protagonist.md`, asserted rather than trusted.**
+    """Boundary 1 of `plan/handoff-protagonist.md`: no rule naming this person may instruct about
+    how a scene handles them, and the two id fields a parser reads stay ids.
 
-    A protagonist is a declared fact of the world. No default instruction about how to *handle*
-    one — open on the hero, make them likeable, show them winning, have them progress faster
-    than anyone — may enter any prompt this system renders; that direction is the operator's.
-    The operator's own words for the hook use exactly these verbs, which is why the rule that
-    came out of them must not.
-
-    The word *reader* is deliberately **not** on the list: the rules beside this one already say
-    "a form a reader can SEE" and "teaches a reader that nothing here gets settled". It is this
-    module's register for what shows on the page, and forbidding it here would be a rule about a
-    word rather than about a boundary.
-
-    **Every rule that mentions the protagonist, not just the one that introduced them.** Two more
-    arrived on 2026-08-22 with `plan/handoff-numbers-go-up.md` — the ladder the reader counts and
-    the amendment fencing it off from the inversion — and both are about a person the genre's own
-    craft advice talks about in exactly the forbidden verbs. A test that checked only the first
-    rule would let the second and third in.
-
-    **The count is a tripwire and it has already fired once.** A fourth rule arrived the same day
-    with `plan/handoff-ability-inventory.md` — the inventory of things a person can do — and this
-    assertion is what made somebody run the forbidden list over it rather than assume. Raise it
-    when you add a rule about this person, and only after reading the list below.
+    Whole words, not substrings — `wince` and `knowing` both contain `win`.
     """
-    # **Word boundaries, not substrings, and this is the third measured false positive of the
-    # shape.** `wince` contains `win` and `knowing` contains `win`, both of which this list
-    # rejected while meaning to reject the verb. `_BORROWED` has now been narrowed twice for the
-    # same reason (`franchise`, `like in`) and `architect._ADMINISTRATION` once (`court`); a
-    # recall-tuned list run as a refusal has its error costs inverted, which
-    # `directors._CRAFT_INSTRUCTION` recorded first. `winning` stays on the list in its own right,
-    # so nothing is lost by matching whole words.
-    rules = [item for item in architect._RULES if "protagonist" in item]
-    # Five since 2026-08-23: the subject rule names this person once, in the list of
-    # things a world may not be organised around. Read against the list below before the
-    # count was raised, as this docstring asks.
-    assert len(rules) == 5
-    for rule in rules:
+    for rule in [item for item in architect._RULES if "protagonist" in item]:
         lowered = rule.lower()
         for forbidden in (
             "win", "winning", "hero", "likeable", "likable", "sympathetic", "root for",
@@ -1178,35 +1057,10 @@ def test_the_protagonist_rule_asks_for_a_declaration_and_never_an_outcome() -> N
             "interesting", "compelling",
         ):
             assert not re.search(rf"{forbidden}", lowered), (forbidden, rule)
-    [declaration] = [item for item in rules if "does not hold for them" in item.lower()]
-    lowered = declaration.lower()
-    assert "member of the cast" in lowered
-    # **Measured, not stylistic.** The first live forge under this rule returned three worlds,
-    # every one of which named a real declared id in `exception` and then glossed it in the
-    # same field, and all three were refused by the gate for it. The ask now says which of the
-    # two the field is, and this is where that stays said — for the standing's two id fields
-    # as well, which are the same shape of ask and got the same answer before it was billed
-    # twice.
-    assert "its id alone" in lowered
-    assert "not an id" in lowered
     assert architect._PROTAGONIST["properties"]["exception"]["pattern"] == "^[a-z0-9_]+$"
     standing = architect._STANDING["properties"]
     assert standing["criterion"]["pattern"] == "^[a-z0-9_]+$"
     assert standing["rung"]["pattern"] == "^[a-z0-9_]+$"
-    assert "AN ID AND NOTHING ELSE" in standing["criterion"]["description"]
-    assert "AN ID AND NOTHING ELSE" in standing["rung"]["description"]
-
-
-# --- what a person can do -------------------------------------------------------------------
-#
-# `plan/reader-read-4.md` §1a and `plan/handoff-ability-inventory.md`. The operator read the first
-# book forged with a declared protagonist and called its progression "boring accounting instead of
-# nine unique abilities". Measured over the 24 worlds forged to that date: 135 of 156 criterion
-# rungs are an insignia, permission beats capability 104 to 46, and `_RANK` — three properties,
-# `additionalProperties: false` — has no slot for what a rung lets you do.
-#
-# *Nine* is the operator's word for an inventory and not a threshold. Nothing here counts up to
-# it, gates on it, or lets `report` imply one.
 
 
 def able(**kwargs: Any) -> dict[str, Any]:
@@ -1304,6 +1158,8 @@ def test_the_inventory_is_a_set_and_the_ladder_is_a_position() -> None:
         ),
     ],
 )
+
+
 def test_the_gate_complains_when_the_inventory_refers_to_nothing(
     mutate: Any, complaint: str
 ) -> None:
@@ -1391,11 +1247,8 @@ def test_the_operators_hook_is_enforced_on_a_world_the_forge_built() -> None:
 
 
 def test_the_capability_rule_asks_for_a_declaration_and_never_a_performance() -> None:
-    """**Boundary 1, asserted rather than trusted**, in the shape of the protagonist rule's test.
-
-    The system may say a person can do a thing. It may not say how a scene should handle that:
-    show it off, make it impressive, let them win with it. That direction is the operator's, and
-    the genre's own craft advice about abilities is written in exactly these verbs.
+    """Boundary 1 (§112) on the inventory rule: it may say a person can do a thing, never how a
+    scene should play that.
     """
     [rule] = [item for item in architect._RULES if "`capabilities`" in item]
     lowered = rule.lower()
@@ -1405,11 +1258,6 @@ def test_the_capability_rule_asks_for_a_declaration_and_never_a_performance() ->
         "exciting", "thrilling", "payoff",
     ):
         assert forbidden not in lowered, forbidden
-    assert "distinct, nameable things" in lowered
-    assert "a rank is where somebody stands" in lowered
-
-
-# --- the world as records ---------------------------------------------------------------------
 
 
 def test_every_record_a_world_makes_is_a_proposal() -> None:
@@ -1508,8 +1356,10 @@ def test_the_two_prompt_shapes_differ_and_carry_the_same_rules() -> None:
     assert direct.schema == domain_first.schema
     for rule in architect._RULES:
         rendered = rule.format(scenes=6) if "{scenes}" in rule else rule
-        assert rendered in direct.prompt
-        assert rendered in domain_first.prompt
+        # The prompt is a JSON document, so a rule carrying a quote appears escaped inside it.
+        encoded = json.dumps(rendered, ensure_ascii=False)[1:-1]
+        assert encoded in direct.prompt
+        assert encoded in domain_first.prompt
     assert "Work in this order" in domain_first.prompt
     assert "Work in this order" not in direct.prompt
 

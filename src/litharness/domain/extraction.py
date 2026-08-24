@@ -1194,11 +1194,11 @@ def extract_state(
                 ),
             )
         )
-    # **The second family runs here rather than at four call sites.** `extract_state` is called
-    # from the draft handler, the tournament's pure gate, the repair path and the variation
-    # session, and a graph reader wired into three of them would be a capability that works
-    # depending on which arm produced the scene. A book that declares no graph line gets an
-    # empty tuple from both calls below, which is every book written before this existed.
+    # **The second family runs here rather than at both call sites.** `extract_state` is called
+    # from the draft handler and the repair path, and a graph reader wired into one of them
+    # would be a capability that works depending on which arm produced the scene. A book that
+    # declares no graph line gets an empty tuple from both calls below, which is every book
+    # written before this existed.
     graph = extract_graph_facts(
         text,
         known=known,

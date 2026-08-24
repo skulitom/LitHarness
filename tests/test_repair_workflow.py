@@ -149,7 +149,6 @@ def test_accepted_draft_is_evaluated_repaired_and_verified(store: SqliteStore) -
                 registry,
                 store,
                 PROJECT_ID,
-                audit_rate=0,
                 schedule_evaluation=True,
             ),
             EVALUATE_REVISION: make_evaluation_handler(

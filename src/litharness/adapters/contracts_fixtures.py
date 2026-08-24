@@ -139,8 +139,7 @@ def fixture_impact_gold(fixture_id: str) -> Path:
     there was a propagation prediction to score. `plan/stage-0-decisions.md` records that
     pattern as the strongest form of consumer-first sequencing — the shape was not guessed.
 
-    Ground truth, not input. Read it with `domain/impact.py`, which also records what it does
-    and does not measure: node granularity, no character offsets, and in-sample by
+    Ground truth, not input. Node granularity, no character offsets, and in-sample by
     construction.
     """
     return _fixture_file(fixture_id, "impact_gold.json")

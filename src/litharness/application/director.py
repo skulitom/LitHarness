@@ -171,9 +171,8 @@ def directive_from(
 
     Three checks, and each refuses rather than repairs. The kind must be one a Director may
     emit — `CONSTRAINT` and `VETO` are the human director's authority and `CONTROL` is operator
-    state. The body must be legal direction under `legal_brief`, which is the rail keeping a
-    Director from pre-empting an axis the Reader/Judge loop is actively measuring. And the answer
-    must have conformed at all: a malformed reply is a failed call, never an empty directive.
+    state. The body must be legal direction under `legal_brief`. And the answer must have
+    conformed at all: a malformed reply is a failed call, never an empty directive.
     """
     if result.parsed is None:
         raise DirectorOutputError("the director's answer did not satisfy the schema")

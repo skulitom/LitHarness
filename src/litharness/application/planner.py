@@ -54,7 +54,6 @@ from litharness.application.director import (
     director_job,
     scene_block,
 )
-from litharness.application.feedback_loop import payload_fields, resolve
 from litharness.application.handlers import SCENE_DRAFT
 from litharness.application.narrative_planner import (
     NARRATIVE_PLAN,
@@ -66,13 +65,6 @@ from litharness.application.outline import (
     OUTLINE_PRIORITY,
     outline_job_id,
 )
-from litharness.application.plan_search import (
-    PLAN_SEARCH,
-    PLAN_SEARCH_PRIORITY,
-    plan_search_job_id,
-    span_select_job,
-    span_select_job_id,
-)
 from litharness.application.ports import ApplicationStore, PlanningStore
 from litharness.domain import house, worlds
 from litharness.domain.beats import (
@@ -82,11 +74,6 @@ from litharness.domain.beats import (
     TemplateMismatch,
     beats_for,
     template_for,
-)
-from litharness.domain.candidates import (
-    CandidateStatus,
-    SpanCandidate,
-    evidence_complete,
 )
 from litharness.domain.context import (
     COUNTER_ID,
@@ -106,7 +93,6 @@ from litharness.domain.extraction import (
     stated_position,
     system_voice_example,
 )
-from litharness.domain.feedback import FeedbackSet
 from litharness.domain.jobs import Job, input_digest_for
 from litharness.domain.plans import premise_of, scene_plan_for, scene_plan_line
 from litharness.domain.revision import Revision
@@ -226,59 +212,6 @@ def _enqueue_direction(store: ApplicationStore, director_id: str) -> bool:
     return enqueued
 
 
-def _enqueue_ready_selections(store: ApplicationStore) -> bool:
-    """Materialise `span_select` work for every parked tournament whose evidence is ready.
-
-    The human path (§61 Add 3): a `plan_search` job parks its span awaiting reader
-    verdicts, and nothing about a parked unit can wake itself — so the selector, which
-    already materialises directives and outlines, is the seam that notices the evidence
-    arriving. Readiness is derived, not stored: the required sample ids are content
-    addresses over the candidate texts, `evidence_complete` demands an answered verdict on
-    BOTH orientations of every sibling pair, and the whole scan opens with one indexed
-    query that is empty in the normal state.
-
-    A group whose plan epoch has moved is discarded here rather than judged: the epoch
-    machinery already cancelled its queued selection job, and its candidates are evidence
-    about a dead plan. Discarding keeps the pending scan self-cleaning instead of
-    re-checking a dead tournament every tick forever. A group whose *head* moved is still
-    enqueued — the selection handler owns that refusal, because a stale tournament must
-    discard with a recorded decision, and the selector records nothing.
-    """
-    pending = store.pending_span_candidates()
-    if not pending:
-        return False
-    groups: dict[tuple[str, str, str, str], list[SpanCandidate]] = {}
-    for candidate in pending:
-        key = (
-            candidate.book_id,
-            candidate.branch_id,
-            candidate.logical_id,
-            candidate.job_id,
-        )
-        groups.setdefault(key, []).append(candidate)
-    samples = store.pair_samples()
-    enqueued = False
-    for (book_id, branch_id, logical_id, search_job_id), group in sorted(groups.items()):
-        epoch = group[0].plan_epoch
-        if store.plan_epoch(book_id, branch_id) != epoch:
-            for candidate in group:
-                store.set_span_candidate_status(
-                    candidate.candidate_id, CandidateStatus.DISCARDED
-                )
-            continue
-        if store.has_job(span_select_job_id(book_id, branch_id, logical_id, epoch)):
-            continue
-        if not evidence_complete(group, samples):
-            continue
-        if store.enqueue(
-            span_select_job(
-                book_id, branch_id, logical_id, epoch, search_job_id=search_job_id
-            )
-        ):
-            enqueued = True
-    return enqueued
-
-
 def beat_job_id(
     book_id: str, branch_id: str, logical_id: str, template_id: str, epoch: int
 ) -> str:
@@ -309,7 +242,6 @@ def render_prompt(
     target_words: int = 0,
     progression: str | None = None,
     scene_plan: str | None = None,
-    feedback: FeedbackSet | None = None,
     writer: Writer | None = None,
     criteria: str | None = None,
     standing: str | None = None,
@@ -356,23 +288,13 @@ def render_prompt(
     `llama3.2` 279 -> 384 and `phi4` 324 -> 612 words. The instruction the record called
     ignored by a 3B model moves it 38%, because it had never been sent.
 
-    **`feedback` is the seam the reader → writer loop attaches to, and it goes in the system
-    message rather than in the packet.** The packet's own contract is "established and may be
-    relied on; do not contradict it" — a craft instruction is neither established nor a fact
-    about the story, and putting the two under one heading is how an instruction becomes canon.
-    It sits beside `target_words` and the status-line instruction because those are the two
-    existing inputs of the same kind: things about *how* to write, not about *what* is true.
-    Empty by default and empty is the common case: with no pool registration, no established
-    direction or no located difference, `feedback_loop.resolve` returns an empty set and this
-    renders nothing (`plan/reader-judge-loop.md` §5.1).
-
     **`criteria` is the standard the scene is being judged against inside its own world**
     (`plan/state-model-abilities.md` §5 item 11: *show the generator the criterion it is writing
-    against*). It goes in the system message for the boundary `feedback` and `writer` already
-    observe: a criterion is a rule about how this world judges, which is closer to how to write
-    the book than to what happened in it, and under the packet's "established and may be relied
-    on" heading it would invite a scene to *state* the ladder rather than show somebody moving
-    up it. `None` for every book that declares no criterion, which is every book written before
+    against*). It goes in the system message for the boundary `writer` already observes: a
+    criterion is a rule about how this world judges, which is closer to how to write the book
+    than to what happened in it, and under the packet's "established and may be relied on"
+    heading it would invite a scene to *state* the ladder rather than show somebody moving up
+    it. `None` for every book that declares no criterion, which is every book written before
     `domain/worlds.py` existed.
 
     **`writer` is the drafter's identity, and `None` is the control.** Until 2026-08-20 the
@@ -395,9 +317,7 @@ def render_prompt(
     the default path is byte-identical to what it was before this existed.
 
     It goes in the **beat line**, after the ordinal and before the dramatic function, and not
-    after the statement. `plans.scene_plan_line` is rendered last always, and `plan_search`'s
-    controlled comparison is only controlled while the K candidates differ in that final
-    fragment and nowhere else.
+    after the statement. `plans.scene_plan_line` is rendered last always.
 
     **`point_of_view` is the same class of thing as `chapter`, and it is held to the same
     boundary.** It says whose scene this is — one declared cast id, the one this book's canon
@@ -428,7 +348,6 @@ def render_prompt(
         # The packet's contract is "established and may be relied on; do not contradict it",
         # and a novelist's career is not a fact about the story — putting one under that
         # heading is how a writer's biography becomes canon in the book they are writing.
-        # This is the boundary `feedback` already observes, for the same stated reason.
         #
         # It goes *first* because it is who is writing, and the mechanics that follow are
         # what to do; the packet and the beat still come last in `prompt`, where a model
@@ -509,9 +428,9 @@ def render_prompt(
     if criteria:
         # **The criterion the scene is writing against** (`plan/state-model-abilities.md` §5
         # item 11). It goes in the system message rather than in the packet for the boundary
-        # `feedback` and the writer dossier already observe: a criterion is a rule about how
-        # this world *judges*, which is closer to how to write the book than to what happened
-        # in it. Putting it under "established and may be relied on" would invite the scene to
+        # the writer dossier already observes: a criterion is a rule about how this world
+        # *judges*, which is closer to how to write the book than to what happened in it.
+        # Putting it under "established and may be relied on" would invite the scene to
         # state the ladder rather than to show somebody moving up it.
         system += (
             "\nThis world judges people by the following, and a scene that changes where "
@@ -519,8 +438,6 @@ def render_prompt(
             "something a reader sees, never something a narrator reports:\n"
             f"{criteria}"
         )
-    if feedback is not None and not feedback.empty:
-        system += f"\n{feedback.render()}"
     title = f"{book_title}: " if book_title else ""
     # **What this scene is for, which until now was one word shared with twenty-four others.**
     # `arc_template(30)` yields 25 `rising` beats, and the line below was the whole of the
@@ -706,7 +623,6 @@ def make_plan_selector(
     project_id: str = "",
     token_budget: int = DEFAULT_TOKEN_BUDGET,
     outline: bool = True,
-    plan_search: bool = False,
     director_id: str = "",
     scenes_per_chapter: int = 1,
 ) -> WorkSelector:
@@ -729,24 +645,14 @@ def make_plan_selector(
     `BudgetPolicy`'s ceilings, which bound the spend. They fail differently and on purpose: a
     context budget drops the oldest scene from the packet, a spend ceiling refuses the call.
 
-    **`plan_search=True` is the §61 Add 3 arm: a span is drafted by tournament.** Instead
-    of one `scene_draft` per beat, the selector mints one `plan_search` job — K alternative
-    beat-plans, K candidate drafts, pairwise selection — and the winner arrives through the
-    selection job's commit. Off by default for the same reason `outline` is a flag: the
-    acceptance experiment (search book vs no-search book) needs two arms an operator can
-    reproduce without editing code, and the no-search arm is exactly the behaviour that
-    shipped before this existed. A beat whose scene-plan item is director-locked drafts the
-    ordinary way even under the flag — alternatives touch only unlocked SCENE_PLAN items.
-
     **`scenes_per_chapter` is the operator's shape, and the only thing it does is tell the
-    writer where the scene sits.** It is the number `--chapter-scenes` already hands
-    `library.publish`, threaded to the one other place in the system where a chapter means
+    writer where the scene sits.** It is the number `--chapter-scenes` already hands the
+    export path, threaded to the one other place in the system where a chapter means
     anything — so a book is grouped for a reader and drafted against the same grouping rather
-    than against two that can disagree. One is the default and it asserts nothing, which is
-    `library.py`'s refusal and now this path's: under it `serials.chapter_positions` yields no
-    positions and every rendered prompt is byte-for-byte what it was before this parameter
-    existed. Nothing here tells a scene what to *do* about being last in its chapter; that is
-    the director's to say (stage-0 §95).
+    than against two that can disagree. One is the default and it asserts nothing: under it
+    `serials.chapter_positions` yields no positions and every rendered prompt is byte-for-byte
+    what it was before this parameter existed. Nothing here tells a scene what to *do* about
+    being last in its chapter; that is the director's to say (stage-0 §95).
     """
 
     def select(
@@ -765,12 +671,6 @@ def make_plan_selector(
         if director_id:
             _enqueue_direction(store, director_id)
 
-        # 1b. Wake any parked tournament whose evidence arrived since the last tick.
-        #     Unconditional rather than gated on `plan_search`: verdicts answer whenever
-        #     readers answer, and a tournament minted under the flag must still complete
-        #     after the flag is turned off — evidence paid for is evidence consumed.
-        _enqueue_ready_selections(store)
-
         # 2. Drain. Retries, revived units and hand-enqueued work retain their ordering,
         #    except for explicit direction; one draft at a time keeps lineage linear.
         claimed = store.claim_next(holder, now=now, duration=duration)
@@ -785,24 +685,8 @@ def make_plan_selector(
             plan_progress(store, book_id, branch_id, template=template, policy=policy)
             for book_id, branch_id, _ in store.branches()
         ]
-        # A tournament awaiting selection IS this book's one draft in flight (§21), even
-        # though its job row is parked: the candidates were drafted against the current
-        # head and the selection will commit one of them. Minting more draft work for the
-        # same book would guarantee that whichever commits first invalidates the other —
-        # paid drafts systematically discarded as stale. So the *book's drafting* waits on
-        # the evidence while the Conductor works elsewhere: other books, and every queued
-        # non-draft unit, which the drain above claims before this loop is reached. A
-        # stale group (epoch moved) was already discarded by the readiness scan.
-        awaiting = {
-            (candidate.book_id, candidate.branch_id)
-            for candidate in store.pending_span_candidates()
-            if candidate.plan_epoch
-            == store.plan_epoch(candidate.book_id, candidate.branch_id)
-        }
         for progress in sorted(books, key=lambda item: (item.drafted, item.book_id)):
             if progress.blocked_reason is not None:
-                continue
-            if (progress.book_id, progress.branch_id) in awaiting:
                 continue
             head = store.head(progress.book_id, progress.branch_id)
             if head is None:  # pragma: no cover - plan_progress already excluded this
@@ -873,24 +757,6 @@ def make_plan_selector(
                 )
                 for beat in beats
             ]
-            # A tournament or its selection is this book's one draft in flight too: K
-            # candidates ride one frozen base inside the search job, and the selection
-            # commits against that same base — a scene_draft planned beside either would
-            # fork the branch exactly as two scene_drafts would. PARKED is deliberately
-            # not "unfinished" here (§4.2: a parked unit never stalls the queue), which is
-            # what lets the book draft elsewhere while a span awaits verdicts.
-            ids += [
-                plan_search_job_id(
-                    progress.book_id, progress.branch_id, beat.logical_id, epoch
-                )
-                for beat in beats
-            ]
-            ids += [
-                span_select_job_id(
-                    progress.book_id, progress.branch_id, beat.logical_id, epoch
-                )
-                for beat in beats
-            ]
             # One draft in flight per book. Drain-first usually achieves this, but not when
             # the queued job is leased by another holder — and a second beat planned against
             # the same base is exactly how the branch forks.
@@ -924,22 +790,9 @@ def make_plan_selector(
                     store.plan_items(progress.book_id, progress.branch_id),
                     beat.logical_id,
                 )
-                # Alternatives touch only unlocked SCENE_PLAN items: a director-locked
-                # statement is direction, and searching over direction would put the
-                # tournament's winner where the director's word was. That beat drafts
-                # the ordinary way, statement intact.
-                searching = plan_search and not (
-                    plan_item is not None and plan_item.locked
-                )
-                job_id = (
-                    plan_search_job_id(
-                        progress.book_id, progress.branch_id, beat.logical_id, epoch
-                    )
-                    if searching
-                    else beat_job_id(
-                        progress.book_id, progress.branch_id, beat.logical_id,
-                        template_for(head, template).template_id, epoch,
-                    )
+                job_id = beat_job_id(
+                    progress.book_id, progress.branch_id, beat.logical_id,
+                    template_for(head, template).template_id, epoch,
                 )
                 if store.has_job(job_id):
                     # Already planned under this epoch: in flight, or burned by a poison.
@@ -971,18 +824,6 @@ def make_plan_selector(
                         "context_omitted",
                         len(packet.omitted),
                     )
-                # **The reader → writer loop is materialised HERE, at enqueue, and never at
-                # render time (invariant I5).** The payload is the record of what was
-                # actually asked and per-attempt replay fidelity depends on it: a handler
-                # that rebuilt the prompt from live tables would make every replay a
-                # different experiment, and the retry ladder — which deliberately re-reads
-                # the same frozen prompt and varies only the sampler seed — would stop
-                # varying only the seed. Empty is the common case and costs two indexed
-                # queries; with no registration or no established direction, `resolve`
-                # returns an empty set and the book drafts exactly as it did before.
-                materialised = resolve(
-                    store, book_id=progress.book_id, branch_id=progress.branch_id, head=head
-                )
                 # **One read, where there were four.** Every input below is a different
                 # question put to the same rows, and this render used to ask the store for them
                 # once per question — the habit `application/outline.py` names in its own canon
@@ -993,20 +834,11 @@ def make_plan_selector(
                     beat,
                     book_title=_book_title(head),
                     packet=packet,
-                    feedback=materialised.feedback,
                     status_example=system_voice_example(
                         records, at=beat.story_order_key
                     ),
                     target_words=(policy or DraftPolicy()).target_words,
-                    # Under search the statement line is deliberately ABSENT: the handler
-                    # appends one alternative per candidate draft, in the same last-line
-                    # position (`scene_plan_line`, one function, two callers), so the K
-                    # drafts differ exactly where the generator is most sensitive.
-                    scene_plan=(
-                        None
-                        if searching
-                        else (plan_item.text if plan_item is not None else None)
-                    ),
+                    scene_plan=(plan_item.text if plan_item is not None else None),
                     progression=progression_target(
                         records, at=beat.story_order_key
                     ),
@@ -1074,49 +906,21 @@ def make_plan_selector(
                         {"source": item.source_logical_id, "reason": item.reason}
                         for item in packet.omitted
                     ],
-                    # What shaped the prose, beside what grounded it. **Always present and
-                    # `[]` when there was none** — invariant I4's negative case: "this scene
-                    # had no feedback" and "nobody recorded whether this scene had feedback"
-                    # are different facts, and an absent key cannot tell them apart. The
-                    # digest of the empty list is a real digest, never null, which is what
-                    # makes the two distinguishable after the fact.
-                    **payload_fields(materialised.feedback),
                 }
-                if searching:
-                    # The tournament reads the epoch at the top of the payload (the
-                    # handler's stale pre-flight and the candidates' provenance both key
-                    # on it), and outranks scene work for the same reason the outline
-                    # does: it IS this span's drafting, one lane up.
-                    payload["plan_epoch"] = epoch
                 inserted = store.enqueue(
                     Job(
                         job_id=job_id,
-                        job_kind=PLAN_SEARCH if searching else SCENE_DRAFT,
+                        job_kind=SCENE_DRAFT,
                         payload=payload,
                         input_digest=input_digest_for(payload),
-                        priority=PLAN_SEARCH_PRIORITY if searching else 0,
+                        priority=0,
                     )
                 )
                 if not inserted:
                     # A row exists that `has_job` did not see. Counting it as planned would
                     # be reporting a write that did nothing.
                     continue
-                # **One-shot, and spent only after the job that carries it exists.** A
-                # located difference materialised into a payload that failed to enqueue
-                # would be spent on nothing, which is the one way this loop could silently
-                # lose feedback. Spending after the insert makes the failure mode "the same
-                # item is offered again", which is recoverable.
-                for difference_id in materialised.spend:
-                    store.spend_located_difference(difference_id)
-                if materialised.feedback.dropped:
-                    # The cap is reported, never silent: a bound coverage reads as "covered
-                    # everything" when it did not (§89's rail, four modules deep).
-                    store.bump_digest(
-                        day, "feedback_dropped", materialised.feedback.dropped
-                    )
-                store.bump_digest(
-                    day, "tournaments_enqueued" if searching else "beats_enqueued"
-                )
+                store.bump_digest(day, "beats_enqueued")
                 return store.claim_next(holder, now=now, duration=duration)
 
         # 5. Nothing draftable anywhere. NO_WORK, which `status` distinguishes from

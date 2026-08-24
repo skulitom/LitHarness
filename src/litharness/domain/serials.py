@@ -22,11 +22,10 @@ serial arrives afterwards. §101's *"arcs open and close; the serial does not"* 
 in code.
 
 **What this module deliberately does not do.** It does not decide how many scenes make a chapter
-or how many chapters make an arc — those are :class:`SerialShape`, supplied by the caller, the
-same refusal `library.py` makes about assembly. It does not touch canon, retrieval, or the
-context packet: §101 §3's *"state outlives context"* is a separate piece of work, and the one
-property this module is responsible for there is that **nothing here is O(serial)** at the point
-a scene is drafted (see :func:`window_for`).
+or how many chapters make an arc — those are :class:`SerialShape`, supplied by the caller. It
+does not touch canon, retrieval, or the context packet: §101 §3's *"state outlives context"*
+is a separate piece of work, and the one property this module is responsible for there is
+that **nothing here is O(serial)** at the point a scene is drafted (see :func:`window_for`).
 """
 
 from __future__ import annotations
@@ -51,9 +50,8 @@ class SerialShapeError(ValueError):
 class SerialShape:
     """How many scenes make a chapter, and how many chapters make an arc.
 
-    **Operator-supplied, never inferred.** `library.py` refuses to decide how many scenes make
-    a chapter and this refuses for the same reason: the tool does not know, and guessing puts a
-    scheme into production that nobody declared.
+    **Operator-supplied, never inferred.** The tool does not know how many scenes make a
+    chapter, and guessing puts a scheme into production that nobody declared.
 
     The defaults are the measured ones rather than round numbers. Four scenes per chapter is
     §101.2's finding: against the fitness shelf's 658 words per scene and the 8,192-token
@@ -90,8 +88,7 @@ class Chapter:
         """Whether this chapter holds its shape's full complement of scenes.
 
         A trailing partial chapter is normal on a serial mid-production and is **not** an error:
-        it is the chapter currently being written. It is not publishable, which is
-        `library.py`'s rule and not this module's.
+        it is the chapter currently being written.
         """
         return bool(self.scene_ids)
 
@@ -165,9 +162,9 @@ def chapter_positions(
     applied to itself. Both this and `beats.beats_for` read `scene_nodes`, so the ordinal a
     beat carries and the position this returns are cut from one list in one order.
 
-    **One scene per chapter returns nothing, and that is the same refusal
-    `library.DEFAULT_SCENES_PER_CHAPTER` makes.** The default asserts nothing: production books
-    hold no chapter nodes and no assembly scheme is decided. Rendering `Chapter 4, scene 1 of 1`
+    **One scene per chapter returns nothing, and that is a refusal rather than an omission.**
+    A default of one asserts nothing: production books hold no chapter nodes and no assembly
+    scheme is decided. Rendering `Chapter 4, scene 1 of 1`
     under that default would turn a refusal into a scheme, and every scene in every book would
     silently start being told which chapter it closes — so the gate lives here, once, beside
     the shape it is about, rather than at each caller that might forget it.

@@ -21,17 +21,6 @@ from litharness.application.handlers import (
     HandlerInputError,
     make_scene_draft_handler,
 )
-from litharness.domain.audit import AuditSample, Verdict, sample_id_for
-from litharness.domain.calibration import (
-    MIN_HOLDOUT,
-    Calibration,
-    Direction,
-    EvidenceClass,
-    Grain,
-    calibration_id_for,
-    verdicts_digest_for,
-)
-from litharness.domain.craft import measure
 from litharness.domain.draft import DraftPolicy, gate_draft
 from litharness.domain.events import EventType, payload_digest
 from litharness.domain.findings import Status as FindingStatus
@@ -55,7 +44,7 @@ from litharness.domain.revision import Revision, build_revision
 from litharness.providers.base import CompletionRequest, CompletionResult, Usage
 from litharness.providers.fake import FakeProvider
 from litharness.providers.registry import ProviderRegistry
-from tests.conftest import BOOK_ID, BRANCH_ID, PROJECT_ID, PROMOTABLE_FLAGS
+from tests.conftest import BOOK_ID, BRANCH_ID, PROJECT_ID
 
 START = 1_760_000_000.0
 PROSE = (
@@ -495,38 +484,6 @@ def test_replaying_the_job_converges_instead_of_duplicating(store: SqliteStore) 
     assert len(store.read_log()) == 1
 
 
-def test_an_accepted_scene_is_drawn_for_audit_through_the_handler(
-    store: SqliteStore,
-) -> None:
-    """The §10.5 draw, driven end to end through the handler for the first time.
-
-    Every prior pin exercised `draw` and the store directly; the on-acceptance wiring —
-    draw after commit, recorded idempotently, addressed by the committed revision — ran
-    only in production. §61 demoted the queue to a smoke check and made its
-    deterministic draw the sampler feeding the pairwise engine, which is exactly why
-    the seam gets its own pin now: the demoted instrument's remaining job is this
-    wiring, and an untested feed is not a feed.
-    """
-    registry, _ = registry_with(PROSE)
-    seeded(store, {"book_id": BOOK_ID, "branch_id": BRANCH_ID})
-    handler = make_scene_draft_handler(registry, store, PROJECT_ID, audit_rate=1.0)
-    job = store.claim_next("worker-a", now=START, duration=600.0)
-    assert job is not None
-
-    handler(job, START)
-
-    committed = store.head(BOOK_ID, BRANCH_ID)
-    assert committed is not None
-    [sample] = store.audit_samples()
-    assert sample.revision_id == committed.revision_id
-    assert sample.logical_id == "scene-1"
-    assert sample.sample_id == sample_id_for(committed.revision_id, "scene-1")
-    assert sample.pending
-
-    handler(job, START)  # replay converges on the same sample, not a second one
-    assert len(store.audit_samples()) == 1
-
-
 def test_a_malformed_payload_fails_the_job_rather_than_committing_anything(
     store: SqliteStore,
 ) -> None:
@@ -644,10 +601,14 @@ def shape_gate(passed: bool, *vetoes: Veto) -> GateOutcome:
 
 
 def craft_gate(passed: bool, *vetoes: Veto) -> GateOutcome:
-    """A promoted craft gate, which `calibration.promoted_gate` is the only real producer of.
+    """A blocking craft gate, built by hand.
 
-    Built by hand here because `decide` is pure and total over gate results: what is under
-    test is the ladder's response to the veto, not the evidence that earned it.
+    `decide` is pure and total over gate results, and what is under test below is the
+    ladder's response to a parkable veto, not the evidence that earned it. Nothing in
+    `src/` produces such a gate today — the calibration programme that promoted critics is
+    deleted — so the hand-built outcome is the only way to reach `PARKABLE`, and reaching
+    it is the point: `Veto.CRAFT_BELOW_BAR` still classifies as park-not-retry, and that
+    classification is policy the retry ladder owns.
     """
     return GateOutcome(
         gate=GateKind.CRAFT,
@@ -736,9 +697,8 @@ def test_a_craft_refusal_parks_on_the_first_attempt() -> None:
 
 def test_a_craft_refusal_beside_a_retryable_veto_still_parks() -> None:
     """The precedence in `decide`, and the safe direction to be wrong in. The mixed case is
-    unreachable today because craft is measured only on a draft shape already accepted — but
-    if it becomes reachable, the retry must not become the door the rejection-sampling
-    channel opens through."""
+    unreachable today because nothing measures craft — but if a craft gate returns, the
+    retry must not become the door the rejection-sampling channel opens through."""
     outcome, _ = decide(
         (craft_gate(False, Veto.CRAFT_BELOW_BAR), shape_gate(False, Veto.LENGTH_MOVEMENT)),
         job_id="j",
@@ -1013,7 +973,7 @@ def test_a_poisoned_unit_is_not_revivable(store: SqliteStore) -> None:
         store.revive("draft-1")
 
 
-# --- a craft refusal, through the whole ladder (§26) ----------------------------------
+# -- the duplicate-scene refusal, through the loop ----------------------------------------
 
 
 def registry_with_sequence(*texts: str) -> tuple[ProviderRegistry, FakeProvider]:
@@ -1029,164 +989,6 @@ def registry_with_sequence(*texts: str) -> tuple[ProviderRegistry, FakeProvider]
 
     provider.complete = complete  # type: ignore[method-assign]
     return ProviderRegistry(provider), provider
-
-
-def with_a_failing_craft_gate(store: SqliteStore) -> None:
-    """Record a calibration `PROSE` is certain to fail, and that clears every promotion bar.
-
-    The threshold is derived from the measurement rather than written down, so the test
-    cannot silently stop exercising the gate if the metric's definition moves.
-
-    Keyed to `craft.scene_echo.v1` (originally `craft.dialogue_ratio.v0`) since the four
-    refuted proxies were archived: the ladder only consults a calibration for a metric this
-    draft measured, and `measure` no longer reports the archived ids. The derived
-    threshold (`value + 1.0`, direction BELOW) fails for any measured value, so the re-key
-    changes which id carries the gate and nothing about the park behaviour under test.
-    """
-    value = {metric.metric_id: metric.value for metric in measure(PROSE)}
-    metric_id = "craft.scene_echo.v1"
-    # **The holdout has to actually be in the store now.** `why_not_promotable` compares
-    # `holdout_size` against the number of answered audit samples, because nothing ever did:
-    # a row claiming fifty held-out judgments promoted against a store holding none, and the
-    # digest clause could not catch it, since the digest of the empty set matches itself.
-    for index in range(MIN_HOLDOUT):
-        sample = AuditSample(
-            sample_id=f"craft-holdout-{index}",
-            book_id=BOOK_ID,
-            branch_id=BRANCH_ID,
-            revision_id=f"rev-{index}",
-            logical_id=f"scene-{index}",
-            sampled_at="2026-08-01",
-            rate=1.0,
-            bucket=index,
-        )
-        store.record_audit_sample(sample)
-        store.record_verdict(
-            sample.sample_id, Verdict.KEEP_READING, at="2026-08-01", by="reader"
-        )
-    digest = verdicts_digest_for(
-        (item.sample_id, item.verdict.value)
-        for item in store.audit_samples()
-        if item.verdict is not None
-    )
-    store.record_calibration(
-        Calibration(
-            calibration_id=calibration_id_for(
-                metric_id,
-                value[metric_id] + 1.0,
-                digest,
-                direction=Direction.BELOW,
-                correct=PROMOTABLE_FLAGS,
-                holdout_size=MIN_HOLDOUT,
-                flagged=PROMOTABLE_FLAGS,
-                selection_family_size=1,
-                clusters=2,
-                evidence_class=EvidenceClass.JUDGMENT,
-                grain=Grain.UNIT,
-            ),
-            metric_id=metric_id,
-            holdout_size=MIN_HOLDOUT,
-            flagged=PROMOTABLE_FLAGS,
-            correct=PROMOTABLE_FLAGS,
-            selection_family_size=1,
-            clusters=2,
-            evidence_class=EvidenceClass.JUDGMENT,
-            grain=Grain.UNIT,
-            threshold=value[metric_id] + 1.0,
-            direction=Direction.BELOW,
-            verdicts_digest=digest,
-            measured_at="2026-08-01T00:00:00Z",
-        )
-    )
-
-
-def book_scoped(store: SqliteStore) -> None:
-    seeded(store, {"book_id": BOOK_ID, "branch_id": BRANCH_ID})
-
-
-def test_a_craft_refusal_parks_the_unit_rather_than_accepting_it(store: SqliteStore) -> None:
-    registry, _ = registry_with(PROSE)
-    book_scoped(store)
-    with_a_failing_craft_gate(store)
-
-    result = conductor_for(store, registry).tick(START)
-
-    assert result.outcome is TickOutcome.JOB_PARKED
-    assert store.load_job("draft-1").status is JobStatus.PARKED
-    [decision] = store.decisions_for_job("draft-1")
-    assert decision.outcome is Outcome.PARK
-    assert Veto.CRAFT_BELOW_BAR in decision.failed_vetoes
-
-
-def test_a_craft_refusal_at_the_attempt_ceiling_is_still_revivable(store: SqliteStore) -> None:
-    """The regression the review reproduced, and the third time this premise has broken.
-
-    `_settle` derived POISONED from `attempts >= max_attempts` alone. A craft gate refuses
-    at *any* attempt number — deliberately, since the check sits ahead of the budget — so a
-    refusal landing on the last attempt was indistinguishable there from a spent budget. The
-    unit poisoned: unrevivable, absent from `jobs --status parked`, its derived job id burnt,
-    and its exception labelled "attempt budget spent" about a budget that was not what
-    stopped it. Three claims this change added were false in exactly that case.
-
-    Driven through real ticks rather than hand-seeded attempts: two genuinely short drafts
-    burn attempts 1 and 2 on `LENGTH_MOVEMENT`, and the third clears shape and meets the
-    craft gate.
-    """
-    registry, _ = registry_with_sequence("Too short.", "Too short.", PROSE)
-    book_scoped(store)
-    with_a_failing_craft_gate(store)
-    conductor = conductor_for(store, registry)
-
-    outcomes = [conductor.tick(START + index * 300.0).outcome for index in range(3)]
-
-    assert outcomes == [
-        TickOutcome.JOB_FAILED,
-        TickOutcome.JOB_FAILED,
-        TickOutcome.JOB_PARKED,
-    ]
-    job = store.load_job("draft-1")
-    assert job.attempts == 3, "the ceiling really was reached"
-    assert job.status is JobStatus.PARKED, "not POISONED — the budget is not what stopped it"
-    assert [j.job_id for j in store.jobs_by_status(JobStatus.PARKED)] == ["draft-1"]
-    store.revive("draft-1")
-    assert store.load_job("draft-1").status is JobStatus.QUEUED
-
-
-def test_a_retryable_veto_at_the_ceiling_still_poisons(store: SqliteStore) -> None:
-    """The other direction of the same fix. Making a craft park revivable must not make an
-    exhausted attempt budget revivable, which is what `POISONED` is for."""
-    registry, _ = registry_with("Too short.")
-    book_scoped(store)
-    with_a_failing_craft_gate(store)
-    conductor = conductor_for(store, registry)
-
-    for index in range(3):
-        conductor.tick(START + index * 300.0)
-
-    assert store.load_job("draft-1").status is JobStatus.POISONED
-
-
-def test_a_craft_refusal_files_no_exception(store: SqliteStore) -> None:
-    """§4.2 reserves escalation for what policy could not resolve, and a craft refusal is
-    policy *resolving*. Filing one anyway would put every refusal in the queue a human is
-    asked to clear — the director interruption `PARKABLE` was chosen over `ESCALATE` to
-    avoid, arriving one layer below the choice."""
-    registry, _ = registry_with(PROSE)
-    book_scoped(store)
-    with_a_failing_craft_gate(store)
-    conductor_for(store, registry).tick(START)
-
-    assert [
-        entry.event
-        for entry in store.read_log()
-        if entry.event.event_type is EventType.EXCEPTION_RAISED
-    ] == []
-    day = store.read_log()[0].event.created_at[:10]
-    assert store.digest(day).get("exceptions_raised", 0) == 0
-    assert store.digest(day)["jobs_parked"] == 1
-
-
-# -- the duplicate-scene refusal, through the loop ----------------------------------------
 
 
 def _written(seed: str, words: int = 300) -> str:

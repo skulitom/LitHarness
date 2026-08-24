@@ -47,14 +47,15 @@ quiet.
 from __future__ import annotations
 
 import json
-from collections.abc import Sequence
+import re
+from collections.abc import Mapping, Sequence
+from dataclasses import dataclass
 from typing import Any
 
 import litharness_contracts as lc
 
 from litharness.domain import state as state_mod
 from litharness.domain import worlds as worlds_mod
-from litharness.domain.craft import longest_repeated_span
 from litharness.domain.findings import (
     UNRESOLVED_STATUSES,
     DetectorInput,
@@ -97,6 +98,108 @@ INTEGRITY_GATE = "integrity.findings.v0"
 #: correct action — dismiss the negative control — arrive three ticks too late to matter.
 STANDING_GATE = "integrity.standing.v0"
 
+
+# --- the duplicate-scene detector ------------------------------------------------------------
+#
+# **Moved here from `domain/craft.py` when that module was deleted (stage-0 §133).** It was
+# always the odd one out there: `craft.py` measured properties of prose and this finds a scene
+# the generator wrote twice, which is a story defect and a blocking one. Its own comment below
+# said so — the metric beside it could not name *which* scene a run came from, and a gate has to
+# name what it refuses. The metric is gone with its module; this is the half that gates.
+#
+# `craft.repeated_span.v0` and its calibration are not rehomed and are not coming back: §10.4
+# refused an uncalibrated craft gate, nothing ever calibrated one, and §129 put every prose
+# property below reader direction.
+
+#: Edge punctuation folded off a word before comparison. Spelled with escapes because the
+#: dashes and curly quotes are confusable with ASCII on sight.
+_SPAN_TRIM = ".,;:!?\"'()[]\u2014\u2013\u2026\u201c\u201d\u2018\u2019"
+
+_SYSTEM_BLOCK = re.compile(r"^\[(?:STATUS|INVENTORY|SKILLS|QUESTS)\].*$", re.MULTILINE)
+
+#: didn't know what to say", "for the first time in his life" — and a metric that fires on
+#: those is reporting English. Measured: published serials carry a *median* longest
+#: cross-chapter span of 10-12 words, so eight sits just under the observed noise floor.
+_MIN_SPAN = 8
+
+#: Stop looking once a span is this long. The difference between "180 words repeated" and
+#: "240 words repeated" changes no decision anyone would make, and the cap is what keeps a
+#: wholly duplicated scene from costing quadratic time in the drafting loop.
+_SPAN_CAP = 200
+
+
+def _span_tokens(text: str) -> tuple[list[str], list[str]]:
+    """Words as written and words folded for comparison, positionally aligned.
+
+    Folding is case and edge punctuation only. Comparison is on whole words rather than
+    characters so that a match cannot begin mid-word — the same reason `_identifier_words`
+    exists in `domain/propagation.py`, arrived at there by the same bug.
+    """
+    original = _SYSTEM_BLOCK.sub("", text).split()
+    folded = [word.lower().strip(_SPAN_TRIM) for word in original]
+    return original, folded
+
+
+@dataclass(frozen=True, slots=True)
+class RepeatedSpan:
+    """The longest verbatim run one unit shares with a *named* other, and where it sits."""
+
+    words: int
+    #: Word offset of the run within the candidate.
+    at: int
+    quote: str
+    #: Which other unit the run also appears in. The half `repeated_span` cannot report.
+    source_id: str
+
+
+def longest_repeated_span(text: str, others: Mapping[str, str]) -> RepeatedSpan | None:
+    """The longest run of words `text` repeats from any of `others`, and which one.
+
+    **A second implementation beside `repeated_span`, and the duplication is deliberate.**
+    Two things differ, and both matter to a caller that refuses prose rather than annotating
+    it. It reports *which* unit the run came from, which a gate has to name in its refusal
+    and the metric's `Sequence[str]` cannot express. And it does not stop early: the metric
+    breaks at `_SPAN_CAP` because an annotation only needs to know the number is large, while
+    a gate comparing against a threshold must not report a capped value as the true one.
+
+    Folding `repeated_span` into this would have changed the shipped metric's arithmetic, and
+    this project's own rule is that changed arithmetic is a new metric id — `scene_echo`
+    moved to `.v1` for exactly that, because `promoted_gate` looks a calibration up by
+    `metric_id` and evidence recorded against old values applied to new arithmetic is a
+    silent inversion. `craft.repeated_span.v0` is left byte-identical.
+
+    Returns None when nothing reaches `_MIN_SPAN`, which is "no run that long" and not "no
+    repetition".
+    """
+    _, folded = _span_tokens(text)
+    original = _SYSTEM_BLOCK.sub("", text).split()
+    best = 0
+    best_at = 0
+    best_source = ""
+    for source_id, other in others.items():
+        _, other_folded = _span_tokens(other)
+        index: dict[tuple[str, ...], list[int]] = {}
+        for start in range(len(other_folded) - _MIN_SPAN + 1):
+            index.setdefault(tuple(other_folded[start : start + _MIN_SPAN]), []).append(start)
+        for position in range(len(folded) - _MIN_SPAN + 1):
+            for start in index.get(tuple(folded[position : position + _MIN_SPAN]), ()):
+                length = _MIN_SPAN
+                while (
+                    position + length < len(folded)
+                    and start + length < len(other_folded)
+                    and folded[position + length] == other_folded[start + length]
+                ):
+                    length += 1
+                if length > best:
+                    best, best_at, best_source = length, position, source_id
+    if not best:
+        return None
+    return RepeatedSpan(
+        words=best,
+        at=best_at,
+        quote=" ".join(original[best_at : best_at + best]),
+        source_id=best_source,
+    )
 
 def _value_key(value: Any) -> str:
     """A stable comparison key for a record value, which the contract types as `Any`.

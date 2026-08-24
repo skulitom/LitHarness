@@ -11,8 +11,8 @@ Design: [`plan/world-architect.md`](../../../plan/world-architect.md). Ontology:
 [`plan/state-model-abilities.md`](../../../plan/state-model-abilities.md) and
 [`research/progression-generalization.md`](../../../research/progression-generalization.md).
 
-**What this is upstream of.** The Director says what a book is about, the Writer drafts it, the
-Reader/Judge reads it. None of them says what the world *is*, and measured against the live
+**What this is upstream of.** The Director says what a book is about and the Writer drafts it.
+Neither of them says what the world *is*, and measured against the live
 serial (`plan/world-architect.md` §0) the consequence is exact: 23 canon records for a nine-scene
 book — 15 typed by the operator, 8 readings of one status line — while the prose carries a
 system, a cast, an institution and a bestiary that canon has never heard of.
@@ -26,10 +26,9 @@ system, a cast, an institution and a bestiary that canon has never heard of.
    `records_for(..., authority=ACCEPTED_CANON)` called, and that is the same authority
    `cmd_import` writes an operator's snapshot under.
 2. *No model picks the world.* K candidates are generated, gated, and **stopped**. There is no
-   ranking, no score, no judge, and no import of one — `plan_search`'s tournament is not reused
-   and is not reachable from here. If a world is chosen among K, a person chose it and `--pick`
-   records that as its own decision. §61(5) then divides the confidence level by the candidate
-   count, which is why the count is on the decision row.
+   ranking, no score, no judge, and no import of one. If a world is chosen among K, a person
+   chose it and `--pick` records that as its own decision. §61(5) then divides the confidence
+   level by the candidate count, which is why the count is on the decision row.
 3. *A palette, never a checklist.* Nothing below requires a world to declare a system, a
    criterion, a rank, a number or a creature. The counters report coverage **of what was
    declared**; `Coverage.share` returns 1.0 for a world that declared nothing, because "declared
@@ -71,11 +70,10 @@ from litharness.domain.generation import CompletionRequest
 PROFILE = "architect.world.v0"
 
 #: Mechanical rather than prose: this call returns a structured world, and conformance is the
-#: point. The pinned provider drops samplers entirely, so this is a provenance record — which is
-#: exactly what `plan_search.tournament_sampler`'s docstring says about its own.
+#: point. The pinned provider drops samplers entirely, so this is a provenance record.
 CALL_CLASS = "generation"
 
-#: Three, for `PlanSearchPolicy`'s reason: a search over one alternative is not a search. Kept
+#: Three, because a search over one alternative is not a search. Kept
 #: low because the whole world is returned per candidate and the output is the binding cost.
 DEFAULT_K = 3
 
@@ -694,247 +692,59 @@ _SYSTEM_MESSAGE = house.with_house_rules(
     # a comprehension failure by construction and had no instrument until then.
 _RULES: tuple[str, ...] = (
     "Every rule names at least three second-order consequences, each in a DIFFERENT domain of "
-    "life from the allowed list. A rule whose consequences all land in one domain is one "
-    "consequence with three faces. The consequences are where a world stops being a name.",
-    "Every system, every rule, every rank and every creature carries `manifests_as`: one line "
-    "of how it shows on the page — a printed line, a price paid, a mark worn, a sound, a change "
-    "in how a stranger treats you.",
-    "Every rank has a form a reader can SEE, and every gain has a cost payable on the page in "
-    "the same scene or earlier. A cost is paid in a body, in time, in risk, in something the "
-    "person can no longer do, or in somebody who is now against them — never in money, never "
-    "in a debt, and never in a piece of paper somebody files.",
-    # **The ladder the reader counts, and it is one rule about what a world declares.**
-    # `plan/handoff-numbers-go-up.md`: the operator's direction is that a rank ladder *is* the
-    # genre's number — "bronze to gold rank advance is the same as the number going up; say
-    # bronze is 1 and gold is 3" — so the quantity is the rung's place in the chain, counted
-    # from the bottom, and the chain has to run in that direction to be counted.
-    #
-    # **Measured, and the ordering clause is the measurement's.** Of the four worlds forged
-    # before this rule existed (pilots 2 and 3), two declared an ordinal criterion with a chain
-    # of three or more and two did not; of those two, *Senior Water* declared its chain
-    # highest-first (`first_water` at the bottom, `wash_right` at the top), so a reader counting
-    # up that ladder counts a person getting weaker. And **no cast member of any of the four
-    # stands anywhere on any chain**: a ladder with nobody on it is a costume with nobody in it.
-    #
-    # Nothing here says who rises, how fast, or how a rise should read. The opening standing is
-    # a fact about where a book starts, in the register of every declared shape beside it; the
-    # book is what happens next. `tests/test_architect.py` checks the rule text for the verbs an
-    # outcome instruction would have to use.
-    "At least one criterion has the comparator `ordinal` and carries `ranks`: a chain of AT "
-    "LEAST THREE, listed LOWEST FIRST, each with a `visible_form` a reader can see, a "
-    "`cost_to_reach` payable on the page, and a `grants` naming what that rung lets a person "
-    "DO that the one below could not. **The chain is a chain of abilities and not of "
-    "badges**: each rung is a bigger version of a tangible thing the person can do, they keep "
-    "it, and nothing takes it back by default. Knowing more, being trusted more, or being "
-    "allowed into a better room is not a rung. The protagonist's `standing` names that "
-    "criterion by "
-    "id and one of its rungs by id, and the rung is NOT the top one. The number a reader counts "
-    "in this world is the rung's position from the bottom of that chain. The ladder is the "
-    "world's FURNITURE and not its concept: a reader meets it as whatever THIS world calls "
-    "its ordered standings, and what the book is about is the person rather than the "
-    "chain. The surface form is the world's own and there is no house style for it — belts, "
-    "grades, years, seals, colours, degrees, titles, thresholds and metals are all the same "
-    "structure wearing different clothes, and a world that reaches for the nearest familiar "
-    "set has skipped the part that was its own. "
-    "Name the rung this world names, in this world's own language.",
-    # **The domain rule built five worlds set inside a trade, and the operator named it.**
-    # Assaying, grafting, surveying, bell-founding, dyeing — the rule asked for a real domain of
-    # human *work*, and the forge answered with the workshop, the yard, and the trade's own
-    # vocabulary as the world's. Read on 2026-08-23: *"it just reads as too unnecessarily esoteric
-    # and the concept isn't inspirational ... the words used are adding unnecessary complexity eg
-    # mordant"*. Measured beside it: 32 worlds, 27 distinct domains, every one a trade, a science
-    # or a body of law (§118.1).
-    #
-    # The physics was never the problem and every original clause is kept: a system whose costs
-    # are a real craft's real constraints is what makes a world argue back. What is added is where
-    # that craft belongs — under the hood rather than on the page — because the register rule
-    # below already asks for "fast, plain, popcorn reading" and this rule was handing that prose a
-    # glossary to write it in.
-    #
-    # **Subtracted 2026-08-24 on operator direction (§130), after the amendment above failed
-    # against the same complaint twice more.** *"We don't have to derive mechanics from real
-    # domain constraints … It's just interesting to apply this sometimes, it doesn't have to go
-    # into every idea and book. We can pull ideas out of pop culture, mythology, other scifi and
-    # fantasy as well."* The mandate is what produced `say what a thing is made of from its split
-    # light` — the operator's third reading, *"too much of a specific situation, it looks pulled
-    # out of arse"* — because a capability derived from real optics can only ever be an optics
-    # contraption, and the powers a reader already wants (walk through a wall, hear what somebody
-    # is about to say) are derivable from nothing real. A real domain is now one source among
-    # several. What is kept: internal consistency, plain words, and the RS1/C3 rail, which is
-    # tightened rather than loosened here because opening the sources is exactly when naming a
-    # real work becomes tempting.
+    "life from the allowed list.",
+    "Every system, every rule and every creature carries `manifests_as`: one line of how it "
+    "shows on the page — a printed line, a price paid, a mark worn, a sound, a change in how "
+    "a stranger treats you. Cast, agencies and institutions carry `relationships`.",
+    "Every rank has a form a reader can SEE, and every gain has a cost payable on the page. A "
+    "cost is paid in a body, in time, in risk, in something the person can no longer do, or "
+    "in somebody who is now against them. At least one criterion has the comparator `ordinal` "
+    "and carries `ranks`: a chain of AT LEAST THREE, listed LOWEST FIRST, each with a "
+    "`grants` naming what that rung lets a person DO that the one below could not. The "
+    "protagonist's `standing` names that criterion by id and one of its rungs by id, and the "
+    "rung is NOT the top one. The number a reader counts in this world is the rung's position "
+    "from the bottom of that chain.",
+    "A world that declares a ladder DECLARES a `graph_line`, and at least one of its phrases "
+    "carries the predicate `stands_at` — the printed form this world says a change of "
+    "standing in, so that a scene prints the line and it can be read back.   [SOURCE FORM: "
+    "this rule MUST stay an f-string — f\"...carries the predicate "
+    f"`{worlds_mod.STANDS_AT_PREDICATE}` — the printed form...\". Do not type the literal.]",
     "Name what this world's system is about in `domain` — one phrase, and it is the world's "
-    "engine rather than its setting. **Where that engine comes from is open.** Invented magic, "
-    "a myth, a piece of genre furniture a reader already knows, a real domain of human work or "
-    "knowledge — any of them, and a real one is one option among several rather than the "
-    "default. Whatever it is, the system's rules and its prices stay consistent with each "
-    "other, because a world that argues back is what makes a cost mean anything. What somebody "
-    "can do is said in plain words a reader could repeat after one read, wearing no jargon of "
-    "any kind: **`can walk through a wall` and `can hear what somebody is about to say` are the "
-    "register.** A power that needs this world's own apparatus explained before it can be "
-    "understood is a power written for the wrong reader. Never name, quote or imitate any real "
-    "work, author, brand or system: take the shape of a thing readers already want, never the "
-    "thing itself.",
-    # **§118's daydream rule stood here and is deleted (§131).** It asked the forge to put what a
-    # person would want to be able to do at the top of the ladder, and carried the operator's own
-    # two example lists because "an example list is what a model actually steers by". It steered
-    # nothing: §129 records `house.READER` asking for the same thing in every prompt since §120,
-    # and six premises later the ladders were still chains of technique. The operator's rule for
-    # this class of instruction is the reason it went — *"a professional writer we simulate should
-    # be able to understand this on their own"* — and the record of what it asked for is §118,
-    # where it belongs.
-    #
-    # **§106's two-incompatible-systems rule stood here too and is deleted with it**, for a second
-    # reason as well as that one: it mandated two systems while the rule below states that a world
-    # "may have one system, several, or none". Two rules in one prompt disagreeing about the same
-    # declaration is the contradiction class boundary 2 exists to make impossible, and it survived
-    # a construction test that only reads for withholding.
-    # **Measured before it was written, over every world this project had forged.** Thirty
-    # candidates, four briefs, both prompt shapes: every one carries administrative vocabulary,
-    # at a median of 7.21 words per 1,000 of declared text and a minimum of 2.69, and **18 of
-    # the 30 name a register, a debt, a court, a deed or a clerk in the PREMISE** — the one
-    # sentence a reader meets first. The operator read three such premises on 2026-08-23 and
-    # refused all three: *"All these sounds depressing and incredibly boring. Anything related
-    # to debt or ledgers is a no no in a story"*.
-    #
-    # **The bias was this module's own text and not the model's.** The rule above described an
-    # interface as an exchange rate and what the law says; the capability rule offered *a debt*
-    # as a legitimate subject for a world; the mystery rule called an unpaid secret *a debt the
-    # book can never pay*; and no rule anywhere said what a cost is paid IN. Four lines of
-    # instruction, thirty worlds, one genre.
-    #
-    # It fences the *subject* and nothing else. A world may still charge brutally, may still
-    # have institutions, and may still put somebody under an obligation they hate — what it may
-    # not do is make the paperwork the point.
-    "This world is a place people live in, not an administration. Its institutions are ones a "
-    "reader would want to walk into — a school, a crew, a proving ground, a border post, a "
-    "workshop, a rival house — and the pressure on people comes from rivals, teachers, "
-    "distance, weather, wounds, hunger, time and each other. Do NOT organise a world, a "
-    "system, a premise or the protagonist's problem around a debt, a ledger, a register, a "
-    "licence, a deed, a tariff, a court, a wage or a filed piece of paper.",
-    # **The one default that is not on the table, and the amendment is measured.**
-    # `plan/handoff-numbers-go-up.md` Task 0.3: on the brief "progression fantasy", all three
-    # forged worlds inverted a piece of this exact rule — *Senior Water* removed "portable
-    # personal power", *What Takes* removed "a gain can be created", *The Closing Error* removed
-    # "monotonic growth" — and the picked one then wrote two chapters in which nothing anybody
-    # carried ever went up. An inversion rule with no floor deletes the genre's one
-    # non-negotiable default three times out of three.
-    #
-    # It fences the *declaration* and nothing else: a world may still price a rise brutally, make
-    # it revocable later by directive, or hand it to somebody who does not want it.
+    "engine rather than its setting. `progression_means` says what getting better means here "
+    "— crafting, understanding, what a person can do, or something else. A world may run more "
+    "than one system, with different logic side by side, and combat is optional. If people in "
+    "this world can DO things — distinct, nameable things somebody either can or cannot do — "
+    "list them in `capabilities` and give the protagonist the ones they START with, in plain "
+    "words a reader could repeat after one read: **`can walk through a wall` and `can hear "
+    "what somebody is about to say` are the register.**",
     "You MAY remove or invert ONE default of the genre — at most one, and never this one, "
     "which is not invertible here: the protagonist's standing on a declared ordinal ladder "
     "can rise, and the reader can count it. If you do, say what fills the hole. **A world "
-    "that keeps every default and takes its distinctness from its engine and from the "
-    "person it happens to is legitimate**, and is often the better book; `inversion` may say "
-    "exactly that, and one of two worlds saying it is a healthy answer rather than a lazy "
-    "one.",
-    # **An inventory, beside the ladder rather than instead of it.** Measured over the 24 worlds
-    # forged before 2026-08-22: 135 of 156 criterion rungs are an insignia — a mark other people
-    # read — and permission outnumbers capability 104 to 46, because `_RANK` has a slot for what a
-    # rung LOOKS like and one for what it COSTS and none for what it lets you do. The operator
-    # read the book that came out of that and called its progression "boring accounting instead of
-    # nine unique abilities" (`plan/reader-read-4.md` §1a).
-    #
-    # The rule asks for a set and says nothing about its size: *nine* is the operator's word for
-    # an inventory, not a threshold, and `plan/handoff-ability-inventory.md` boundary 3 forbids a
-    # floor. Nothing here says the protagonist should be good at them, should win with them, or
-    # should have more of them than anybody else — an inventory declared is a fact about the
-    # world, and who wins is the book's.
-    "If people in this world can DO things — distinct, nameable things somebody either can or "
-    "cannot do — list them in `capabilities`, and give the protagonist the ones they START "
-    "with. A capability is what somebody can do; a rank is where somebody stands; they are "
-    "different, and a world may declare either, both, or neither. Each capability carries what "
-    "it lets a person do, how it shows on the page when it is used, what having it costs, "
-    "whatever it needs first by id, and whoever teaches it if anyone does. A world about "
-    "standing, or about one place, or about a single relationship may leave this out "
-    "entirely, and many should.",
-    # **The rule above inverts a default for everyone; this one declares an exception for one.**
-    # `plan/reader-read-3.md` note 1: the operator read two chapters of a book forged on this
-    # schema and named the premise as the defect — "readers desire … something that doesn't
-    # happen to anyone else" — and measured against the module the gap was exact. The words
-    # protagonist, main character and hero did not occur here, the outline invented whoever
-    # acted, and none of the five forged cast members reached the page.
-    #
-    # It is written as a rule about what a world DECLARES, in the register of the declared-shape
-    # rules beside it, and it stops there. Nothing in it says how to write the person, whether
-    # the reader should like them, or that they win: an exception declared is a fact about the
-    # world, and who wins is the book's. `tests/test_architect.py` checks the rule text for the
-    # verbs an outcome instruction would have to use.
-    "Name one member of the cast as this world's `protagonist`. Choose the one rule or "
-    "cardinality shape this world declares that does not hold for them, or holds "
-    "differently. **If this person came from "
-    "somewhere like our own world, the life they came from is one a reader in their "
-    "twenties has lived**: an age near the reader's own, a degree they are not using, a job "
-    "that covers the rent, a thing they know far too much about for no professional reason. "
-    "What they bring is an education, a hobby or an obsession rather than thirty years at a "
-    "trade — a reader owns the first three and cannot picture the fourth. "
-    "Put **its id alone** in `exception` — one snake_case word such as "
-    "`rule_seed_never_true`, with no dash and no clause after it. What that rule says is "
-    "already written where the rule is declared, and a sentence there is not an id. Then give "
-    "the `edge` that exception grants them, written the way `manifests_as` is written — how it "
-    "shows on the page; what they want; and the price the exception "
-    "charges them, payable on the page. If the exception is a cardinality shape, that shape "
-    "lists their id in its `except`.",
+    "that keeps every default and takes its distinctness from its engine and from the person "
+    "it happens to is legitimate**, and `inversion` may say exactly that.",
+    "Name one member of the cast as this world's `protagonist`, and name in `exception` the "
+    "one rule or cardinality shape this world declares that does not hold for them, or holds "
+    "differently. **If this person came from somewhere like our own world, the life they came "
+    "from is one a reader in their twenties has lived**: an age near the reader's own, a "
+    "degree they are not using, a job that covers the rent, a thing they know far too much "
+    "about for no professional reason.",
     "Mysteries: each carries its ANSWER written down and the scene number where the reader "
-    "learns it. A secret with no recorded answer is a promise the book can never keep. This "
-    "world is an open-ended serial, so most answers land far out — but **at least one must be "
-    "answered inside the {scenes} scenes being written now**, because an opening that asks "
-    "four things and settles none teaches a reader that nothing here gets settled.",
-    # The last clause is the operator's direction and not a softening of the rest of the rule:
-    # the ladder's rungs ARE the numbers this world counts, so a world that wanted a stat block
-    # to satisfy "numbers go up" has already been answered by the ladder rule above.
-    # **`what a person can do` is added to this list, and the addition is measured.** The four
-    # words this rule offered were crafting, standing, understanding and access — and *standing*
-    # and *access* are permission systems, which are administered, which is what a register, a
-    # board and a ward are for. Two of the three worlds picked for a pilot took exactly those two
-    # words: pilot 2's `progression_means` opens with the single word "Standing.", pilot 4's is
-    # tolerance and "what door it may stand in". The forge took the rule at its word and the
-    # operator read the result as accounting (`plan/reader-read-4.md` §1a).
-    "A world may have one system, several, or none; progression may be crafting, standing, "
-    "understanding, access, what a person can do, or something else. Do not assume combat. Do "
-    "not use levels, hit "
-    "points, mana, experience points, currency, or any single number that means power, unless "
-    "this particular world genuinely needs one and you say why in the system's logic. The "
-    "ladder's rungs are the numbers this world counts; hit points, mana, experience and "
-    "currency are still not assumed.",
-    "Every name, place, creature and mechanic is original to this world. Never name, quote, "
-    "imitate, or compare to any real person, brand, game, or published work.",
-    "The prose this world will be written in is fast, plain, popcorn reading. The world shows "
-    "on the page as interactions, prices paid and visible ranks.",
-    "This is genre fiction and **the genre's own furniture is what the reader came for** — an "
-    "academy, a tournament, a master worth impressing, a party who travel together, a rival "
-    "house, a first test, a system that speaks up. Somebody who picks up an isekai, a LitRPG or "
-    "a progression fantasy is buying that particular thing, and a world that withholds it has "
-    "sold them a different book than the one they chose. Take the genre's tropes, and take "
-    "ideas from myth, from other fantasy and science fiction, from anywhere a reader's appetite "
-    "already points — never a named work, an author or a brand, and never a borrowed name. "
-    "Originality belongs in the person it happens to and in what it costs them, and a world "
-    "nobody recognises is not a fresh world: it is a different book than the one somebody "
-    "picked up.",
+    "learns it. This world is an open-ended serial, so most answers land far out — but **at "
+    "least one must be answered inside the {scenes} scenes being written now**.",
     "Ids are lowercase snake_case and unique within the world. Every id referenced anywhere "
     "must be declared somewhere.",
-    "Cast, agencies and institutions carry `relationships`: who owes whom, who employs whom, "
-    "who blames whom, who outranks whom. Each is a snake_case predicate, another declared id, "
-    "and the one thing about the tie a scene could use. A cast with no ties between its "
-    "members is a list of people rather than a place.",
-    # **A world with a ladder declares the line the ladder is read off, and the predicate is
-    # named from `domain/worlds.py` rather than typed here.** The chain this handoff exists to
-    # close is *declare → ask → print → read*, and it was broken at the first link in a way no
-    # count showed: all four worlds forged before this rule declared a `graph_line`, none of
-    # their phrases meant "stands at", so `extract_graph_facts` had nothing to read a standing
-    # out of even where it ran on every accepted scene.
-    #
-    # "Most worlds should leave it out" becomes "a world with no ladder may": the shape bounds
-    # (`LABEL_WORDS`, `PHRASE_WORDS`) already refuse a paragraph, and a world that announces
-    # nothing still owes nothing.
-    "`graph_line` is a PARSER, not a summary: a bracket tag of one or two words, and short verb "
-    "phrases of at most six words, so that `[TAG] Sella now holds the second seal` reads as a "
-    "line a scene would actually print. A world that declares a ladder DECLARES a `graph_line`, "
-    "and at least one of its phrases carries the predicate "
-    f"`{worlds_mod.STANDS_AT_PREDICATE}` — the printed form this world says a change of "
-    "standing in, so that a scene prints the line and it can be read back. Only a world with no "
-    "ladder may leave `graph_line` out.",
+    "Every name, place, creature and mechanic is original to this world. Never name, quote, "
+    "imitate, or compare to any real person, brand, game, or published work.",
+    "The prose this world will be written in is fast, plain, popcorn reading.",
+    "This is genre fiction — isekai, LitRPG, progression fantasy — and **the genre's own "
+    "furniture is what the reader came for**: an academy, a tournament, a master worth "
+    "impressing, a party who travel together, a rival house, a first test, a system that "
+    "speaks up. Take the genre's tropes, and take ideas from myth, from other fantasy and "
+    "science fiction, from anywhere a reader's appetite already points. This world is a place "
+    "people live in: its institutions are ones a reader would want to walk into, and the "
+    "pressure on people comes from rivals, teachers, distance, weather, wounds, hunger, time "
+    "and each other. Originality belongs in the person it happens to and in what it costs "
+    "them.",
 )
 
 _DISTINCTNESS_RULE = (
@@ -1173,12 +983,9 @@ def _fold(text: str) -> str:
 def worlds_from(payload: Mapping[str, Any], k: int) -> tuple[Candidate, ...]:
     """The model's K worlds, or a refusal naming what was wrong.
 
-    **The collapse gate is here rather than hoped for**, and it is stricter than
-    `plan_search._alternatives`' — which is exact string equality after casefolding and therefore
-    cannot catch a re-worded collapse, a limitation that module's own docstring claims to prevent
-    and does not. Here the axes are *declared*, so the check is on the declaration: two worlds
-    that name the same domain, or the same geometry, are one world in two hats, and they are
-    refused before a single scene is paid for.
+    **The collapse gate is here rather than hoped for.** The axes are *declared*, so the check
+    is on the declaration: two worlds that name the same domain, or the same geometry, are one
+    world in two hats, and they are refused before a single scene is paid for.
 
     It is still not a semantic check and does not claim to be. A model that writes "coopering"
     and "barrel-making" defeats it.

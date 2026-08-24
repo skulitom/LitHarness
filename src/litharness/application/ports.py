@@ -20,23 +20,11 @@ from typing import Any, Protocol
 
 import litharness_contracts as lc
 
-from litharness.domain.audit import AuditSample
 from litharness.domain.budget import Spend
-from litharness.domain.calibration import Calibration
-from litharness.domain.candidates import CandidateStatus, SpanCandidate
-from litharness.domain.craft import CraftMetric
-from litharness.domain.directions import AxisDirection
 from litharness.domain.directives import Directive, DirectiveStatus
 from litharness.domain.directors import Director
 from litharness.domain.events import Event
 from litharness.domain.exceptions import ExceptionRecord
-from litharness.domain.feedback import (
-    DifferenceStatus,
-    DiscardReason,
-    JudgeDiscard,
-    LocatedDifference,
-    SceneFeedback,
-)
 from litharness.domain.findings import Finding
 from litharness.domain.findings import Status as FindingStatus
 from litharness.domain.generation import (
@@ -45,27 +33,10 @@ from litharness.domain.generation import (
     Resolution,
 )
 from litharness.domain.jobs import Job
-from litharness.domain.plan_refinement import (
-    PlanApplication,
-    PlanRevision,
-    StoredPlanProposal,
-)
+from litharness.domain.plan_refinement import PlanApplication, PlanRevision
 from litharness.domain.policy import PolicyDecision
-from litharness.domain.pools import PoolRegistration
-from litharness.domain.preference import (
-    ComparisonExcerpt,
-    PairSample,
-    PairVerdict,
-    PreferenceProtocol,
-)
 from litharness.domain.promises import Promise
 from litharness.domain.revision import Revision
-from litharness.domain.variation import (
-    KnowledgeItem,
-    VariationAttempt,
-    VariationObjective,
-    VariationSession,
-)
 
 
 class BranchReader(Protocol):
@@ -154,10 +125,9 @@ class JobQueue(Protocol):
 class JobReader(Protocol):
     """Read one queued unit by id.
 
-    Separate from `JobQueue`, which is the *claiming* contract: selection needs to read the
-    payload of the tournament job that produced its candidates — the record of what was
-    actually asked, frozen at enqueue — and giving every claiming caller a load method would
-    invite exactly the rebuild-at-render-time this design forbids (invariant I5).
+    Separate from `JobQueue`, which is the *claiming* contract: giving every claiming caller
+    a load method would invite exactly the rebuild-at-render-time this design forbids
+    (invariant I5).
     """
 
     def load_job(self, job_id: str) -> Job: ...
@@ -234,160 +204,6 @@ class StateWriter(Protocol):
         events: Sequence[Event] = ...,
     ) -> int: ...
 
-class AuditRepository(Protocol):
-    def audit_samples(self, *, pending_only: bool = ...) -> list[AuditSample]: ...
-
-    def record_audit_sample(
-        self, sample: AuditSample, *, events: Sequence[Event] = ...
-    ) -> bool: ...
-
-    def calibrations(self, *, metric_id: str | None = ...) -> list[Calibration]: ...
-
-    def record_craft_metrics(
-        self,
-        revision_id: str,
-        logical_id: str,
-        metrics: Sequence[CraftMetric],
-        *,
-        measured_at: str,
-    ) -> int: ...
-
-
-class PreferenceRepository(Protocol):
-    """The pairwise preference engine's persistence (§61 Add 1).
-
-    A sibling of `AuditRepository` rather than an extension of it, so that contract stays
-    exactly what its existing implementors satisfy — a pair sample is a different thing
-    with a different identity, not a second meaning for an audit method to grow.
-    """
-
-    def excerpts(self) -> list[ComparisonExcerpt]: ...
-
-    def record_excerpt(
-        self, excerpt: ComparisonExcerpt, *, events: Sequence[Event] = ...
-    ) -> bool: ...
-
-    def protocols(self) -> list[PreferenceProtocol]: ...
-
-    def record_protocol(
-        self, protocol: PreferenceProtocol, *, events: Sequence[Event] = ...
-    ) -> bool: ...
-
-    def pair_samples(self, *, pending_only: bool = ...) -> list[PairSample]: ...
-
-    def record_pair_sample(
-        self, sample: PairSample, *, events: Sequence[Event] = ...
-    ) -> bool: ...
-
-    def record_pair_verdict(
-        self,
-        sample_id: str,
-        verdict: PairVerdict,
-        *,
-        at: str,
-        by: str,
-        recognized: bool,
-        note: str | None = ...,
-        events: Sequence[Event] = ...,
-    ) -> bool: ...
-
-
-class SpanCandidateRepository(Protocol):
-    """The tournament's persistence (§61 Add 3): candidate drafts awaiting selection.
-
-    A sibling of `PreferenceRepository` rather than an extension of it, for the reason
-    every repository here is a sibling: a candidate is not a pair sample and not a
-    revision — it is a draft that must never reach `commit_revision`, parked in its own
-    table with its own content-derived identity. `commit_tournament` is the module's one
-    commit seam, mirroring `commit_revision`: everything a tournament produces — corpus
-    rows, candidates, sibling samples, the follow-up job and the settlement decision —
-    lands in one transaction, so a crashed handler replays into convergence instead of
-    into half a tournament.
-    """
-
-    def span_candidates(
-        self,
-        book_id: str,
-        branch_id: str,
-        *,
-        logical_id: str | None = ...,
-        job_id: str | None = ...,
-        status: CandidateStatus | None = ...,
-    ) -> list[SpanCandidate]: ...
-
-    def pending_span_candidates(self) -> list[SpanCandidate]: ...
-
-    def set_span_candidate_status(
-        self, candidate_id: str, status: CandidateStatus
-    ) -> bool: ...
-
-    def commit_tournament(
-        self,
-        *,
-        protocol: PreferenceProtocol,
-        excerpts: Sequence[ComparisonExcerpt],
-        candidates: Sequence[SpanCandidate],
-        samples: Sequence[PairSample],
-        decision: PolicyDecision,
-        decided_at: str,
-        events: Sequence[Event] = ...,
-        jobs: Sequence[Job] = ...,
-    ) -> None: ...
-
-
-class FeedbackRepository(Protocol):
-    """The reader -> writer loop's persistence (`plan/reader-judge-loop.md`).
-
-    A sibling of `PreferenceRepository` for the reason every repository here is a sibling,
-    and here the separation is load-bearing rather than tidy: a **located difference is not
-    a pair verdict**. §86.1 records that the human-only property of `EvidenceClass.PREFERENCE`
-    was prose in an enum docstring while the judge path wrote through the same pair table, so
-    the half of this design that runs at *volume* writes no PREFERENCE-shaped row at all. It
-    has no laundering surface by construction rather than by filter.
-    """
-
-    def pool_registration(self) -> PoolRegistration | None: ...
-
-    def record_pool_registration(
-        self, registration: PoolRegistration, *, events: Sequence[Event] = ...
-    ) -> bool: ...
-
-    def axis_directions(self, *, axis_id: str | None = ...) -> list[AxisDirection]: ...
-
-    def record_axis_direction(
-        self, direction: AxisDirection, *, events: Sequence[Event] = ...
-    ) -> bool: ...
-
-    def located_differences(
-        self,
-        *,
-        book_id: str | None = ...,
-        branch_id: str | None = ...,
-        status: DifferenceStatus | None = ...,
-    ) -> list[LocatedDifference]: ...
-
-    def record_located_differences(
-        self, differences: Sequence[LocatedDifference], *, events: Sequence[Event] = ...
-    ) -> int: ...
-
-    def record_judge_discards(
-        self, discards: Sequence[JudgeDiscard], *, events: Sequence[Event] = ...
-    ) -> int: ...
-
-    def judge_discards(
-        self,
-        *,
-        book_id: str | None = ...,
-        reason: DiscardReason | None = ...,
-        limit: int | None = ...,
-    ) -> list[JudgeDiscard]: ...
-
-    def spend_located_difference(self, difference_id: str) -> bool: ...
-
-    def record_scene_feedback(self, record: SceneFeedback) -> bool: ...
-
-    def scene_feedback(self, *, revision_id: str | None = ...) -> list[SceneFeedback]: ...
-
 
 class DirectorRepository(Protocol):
     """The Director role's persistence (`plan/director-role.md`).
@@ -412,58 +228,6 @@ class DirectorRepository(Protocol):
     ) -> list[Directive]: ...
 
     def submit_directive(self, directive: Directive, *, received_at: str) -> bool: ...
-
-
-class VariationRepository(Protocol):
-    """The bounded variation loop's persistence (`plan/variation-session.md`).
-
-    A sibling of `SpanCandidateRepository` for the reason every repository here is a sibling,
-    and here the separation carries a boundary rather than a preference: a **variation attempt
-    is not a span candidate**. A candidate is a whole drafted scene awaiting *selection between
-    alternatives*, and selection is exactly what this loop may never do — there is no
-    instrument entitled to order prose, so the session commits the first mechanically valid
-    patch and stops. Folding attempts into the candidate table would put rows that must never
-    be ranked into the one table whose whole purpose is ranking, one refactor from a
-    `select_winner` call that nobody decided to make.
-
-    `commit_variation_step` is the module's one write seam, mirroring `commit_tournament`:
-    everything one mediated action produces — the session row, the attempt, the patch artifact,
-    derived knowledge, the follow-up step job, the events and the settling decision, and on the
-    accepting step the revision itself — lands in one transaction, so a crashed session replays
-    into convergence instead of into half a step.
-    """
-
-    def variation_session(self, session_id: str) -> VariationSession | None: ...
-
-    def open_variation_sessions(self) -> list[VariationSession]: ...
-
-    def variation_attempts(self, session_id: str) -> list[VariationAttempt]: ...
-
-    def variation_patch(self, patch_digest: str) -> dict[str, Any] | None: ...
-
-    def knowledge_items(
-        self,
-        *,
-        objective: VariationObjective = ...,
-        target_key: str | None = ...,
-    ) -> list[KnowledgeItem]: ...
-
-    def commit_variation_step(
-        self,
-        session: VariationSession,
-        *,
-        at: str,
-        attempts: Sequence[VariationAttempt] = ...,
-        patches: Sequence[tuple[str, str]] = ...,
-        knowledge: Sequence[KnowledgeItem] = ...,
-        consulted: Sequence[str] = ...,
-        decision: PolicyDecision | None = ...,
-        events: Sequence[Event] = ...,
-        jobs: Sequence[Job] = ...,
-        revision: Revision | None = ...,
-        state_records: Sequence[lc.StateRecord] = ...,
-        retract_state_for_nodes: Collection[str] = ...,
-    ) -> None: ...
 
 
 class EventRepository(Protocol):
@@ -625,16 +389,6 @@ class PlanningStore(
     # generation gets to see the ledger. Nothing on the planning path writes here.
     PromiseRepository,
     OperationsRepository,
-    # The reader -> writer loop attaches at *enqueue*, which is why it is on the planning
-    # store and not the draft store: the feedback set is materialised into the frozen
-    # payload here, and a handler that rebuilt it at render time from live tables would
-    # make every replay a different experiment (invariant I5). Read-only except
-    # `spend_located_difference`, which is what makes a located item one-shot.
-    FeedbackRepository,
-    # Steering verdicts live in the pair table, and a direction's staleness is read off
-    # them. Read-only from the planning path.
-    PreferenceRepository,
-    SpanCandidateRepository,
     Protocol,
 ):
     pass
@@ -647,70 +401,13 @@ class DraftStore(
     DecisionRepository,
     FindingRepository,
     StateRepository,
-    AuditRepository,
-    # The craft ladder's per-class staleness dispatch reads answered pair verdicts for
-    # `EvidenceClass.PREFERENCE` rows, the same way it reads answered audit samples for
-    # judgment rows. Read-only from the draft path; nothing on a tick writes here.
-    PreferenceRepository,
     # Read-only: the detector-input assembly hands `promise.overdue.v0` the open ledger
     # rows, the way it hands `detect_duplicate_scene` the prior prose. The draft path
     # never writes a promise — only the summary handler does.
     PromiseRepository,
-    # Write-only, and only `record_scene_feedback`: what shaped this scene is recorded
-    # against the address the prose actually has, including the empty set for a scene
-    # drafted with no feedback (invariant I4). The draft path never *reads* feedback —
-    # it reads the frozen payload, which is the record of what was actually asked.
-    FeedbackRepository,
     Protocol,
 ):
     pass
-
-
-class PlanSearchStore(
-    ManuscriptReader,
-    PlanReader,
-    DecisionRepository,
-    FindingRepository,
-    StateRepository,
-    # Read-only, for the same DetectorInput assembly the draft handler uses: the ledger's
-    # open rows feed `promise.overdue.v0` during candidate gating.
-    PromiseRepository,
-    # `calibrations` and `pair_samples`, read-only: the judge-license check is Add 1's
-    # staleness wiring applied to the selection task's own calibration.
-    AuditRepository,
-    PreferenceRepository,
-    SpanCandidateRepository,
-    Protocol,
-):
-    """What one tournament reads and the one seam it writes through: the frozen base and
-    plan it drafts against, the standing findings and spend it pre-flights on, and
-    `commit_tournament` for everything it produces."""
-
-
-class SpanSelectStore(
-    ManuscriptReader,
-    ManuscriptWriter,
-    PlanReader,
-    PlanWriter,
-    DecisionRepository,
-    FindingRepository,
-    StateRepository,
-    PromiseRepository,
-    AuditRepository,
-    PreferenceRepository,
-    SpanCandidateRepository,
-    # The search job's frozen payload is where the winner's feedback provenance lives.
-    JobReader,
-    # Write-only, and only `record_scene_feedback`: a tournament's winner is committed
-    # here rather than by the draft handler, so this is where the winning scene's
-    # provenance is recorded. Without it, exactly the scenes drafted under search — the
-    # ones the loop actually steers — would be the scenes with no provenance row.
-    FeedbackRepository,
-    Protocol,
-):
-    """What selection reads and writes: the winner's commit through the normal accept
-    path (`ManuscriptWriter`), the ONE plan acceptance (`PlanWriter`), the judge's
-    verdicts through the same pair machinery, and the candidate statuses."""
 
 
 class NarrativePlanningStore(
@@ -736,33 +433,6 @@ class PlanRefinementStore(PlanReader, PlanWriter, Protocol):
     pass
 
 
-class PlanProposalReader(Protocol):
-    """The proposals recorded against a branch — what a plan revision does not carry.
-
-    A revision is content, so it says what the plan *is* and nothing about where it came from.
-    The lineage — which directive produced which item — lives only here, and
-    `application/constraint_locks.py` needs it because the field that was supposed to carry the
-    same fact, `directives.produced_constraint_ids`, is empty for every interpretive directive
-    in the live store.
-    """
-
-    def plan_proposals(
-        self, book_id: str, branch_id: str
-    ) -> list[StoredPlanProposal]: ...
-
-
-class ConstraintLockStore(
-    PlanReader, PlanWriter, PlanProposalReader, DirectiveInbox, Protocol
-):
-    """What restoring a lost lock reads: the plan, its lineage, and who wrote the direction.
-
-    The inbox is here for one field. `constraint_locks` never transitions a directive and never
-    writes one; it loads them to ask `author`, because the lock it is restoring is a person's
-    authority and a protocol that could not reach the author could not tell a person's
-    constraint from a Director's.
-    """
-
-
 class DirectorStore(
     ManuscriptReader,
     PlanReader,
@@ -781,23 +451,12 @@ class DirectorStore(
     """
 
 
-class FeedbackLoopStore(FeedbackRepository, PreferenceRepository, Protocol):
-    """What `application/feedback_loop.py` reads: the loop's own rows and the verdicts under
-    them. Both halves are needed together and neither is enough alone — a direction is a
-    *reading of pair verdicts*, so a store that had the directions and not the verdicts could
-    not tell a live one from a stale one."""
-
-
 class EvaluationStore(
     ManuscriptReader,
     PlanReader,
     FindingRepository,
     StateRepository,
     JobQueue,
-    # Read-only: the repair-license extension (§61 Add 3, item 5) asks whether a finding
-    # cites a *current* calibration before minting a repair for it, and `calibrations` is
-    # the only read that answer needs.
-    AuditRepository,
     Protocol,
 ):
     pass
@@ -809,36 +468,9 @@ class RepairStore(
     FindingRepository,
     StateRepository,
     DecisionRepository,
-    # Read-only, and the second enforcement of the same license the evaluation handler
-    # checked at mint time: a calibration that lapsed between mint and claim must refuse
-    # the repair at run time too, or the license outlives its evidence.
-    AuditRepository,
     Protocol,
 ):
     pass
-
-
-class VariationStore(
-    ManuscriptReader,
-    FindingRepository,
-    StateRepository,
-    DecisionRepository,
-    # Read-only, and the same licence the fixed repair path re-checks at claim time: a
-    # calibration that lapsed while a session was running must refuse the next step too, or a
-    # multi-tick session outlives the evidence that licensed it in a way a single-tick one
-    # could not.
-    AuditRepository,
-    VariationRepository,
-    Protocol,
-):
-    """What one bounded session reads and the one seam it writes through.
-
-    There is no `ManuscriptWriter` here and the absence is deliberate: a session never calls
-    `commit_revision`. Its accepted candidate reaches the manuscript through
-    `commit_variation_step`, which lands the revision in the same transaction as the session
-    row that accepted it — so a book cannot move while the session that moved it still reads
-    open, and there is no second path by which a session could write prose.
-    """
 
 
 class ExportStore(ManuscriptReader, PlanReader, Protocol):
@@ -874,21 +506,11 @@ class ApplicationStore(
     DecisionRepository,
     FindingRepository,
     StateRepository,
-    AuditRepository,
-    PreferenceRepository,
-    SpanCandidateRepository,
     SummaryRepository,
     PromiseRepository,
-    # The variation loop's rows, because a step job's follow-up is minted through the
-    # same seam that records the step, and the aggregate is what the composition root
-    # binds for every handler at once.
-    VariationRepository,
     EventRepository,
     OperationsRepository,
     ExceptionRepository,
-    # The reader -> writer loop's rows, because work selection is where feedback is
-    # materialised into the frozen payload (invariant I5) and where a located item is spent.
-    FeedbackRepository,
     JobReader,
     # Work selection mints the Director's unit and enforces its bound, so it needs to see both
     # the admitted personalities and what this book's Director has already said.
@@ -958,15 +580,9 @@ __all__ = [
     "NarrativePlanningStore",
     "PayoffScheduler",
     "PlanRefinementStore",
-    "PlanSearchStore",
     "PlanningStore",
-    "PreferenceRepository",
     "PromiseRepository",
     "RepairStore",
-    "SpanCandidateRepository",
-    "SpanSelectStore",
     "StatusStore",
     "TextGenerator",
-    "VariationRepository",
-    "VariationStore",
 ]

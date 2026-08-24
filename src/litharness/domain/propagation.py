@@ -1,11 +1,6 @@
 """The propagation engine: given a change, which other nodes does it reach?
 
-§17 Stage 2's remaining work, and the half of it that had a measuring instrument and no
-subject. `domain/impact.py` scores a blast-radius prediction against the gold suites and
-ships three baselines for it to beat — `predict_nothing`, `predict_everything` (precision
-**0.481**, the base rate), and `predict_downstream_scenes` (0.333, refuted before anything was
-built). Nothing produced a prediction for it to score. The clause was executable and had
-nothing to execute on.
+§17 Stage 2's remaining work.
 
 **What the gold actually grades, restated because it shapes every rule below.**
 `GoldImpactExpectation` carries no character offsets, so this is blast radius at *node*
@@ -16,7 +11,7 @@ book holds — `scene-3` and `rec-s3-status` are both answers.
 Four rules, one per semantic change kind the contract names and this engine can honestly
 read. Each is grounded in a different kind of evidence, which is the point: the heuristic
 anyone reaches for first — everything positioned after the edit — scores *worse* than guessing
-everything, and `tests/test_impact.py` refutes it by measurement rather than by argument.
+everything, and it was refuted by measurement rather than by argument.
 
 * **`surface_only` reaches nothing.** A curly apostrophe changes a content hash and no
   referent. This is `e3-typography-only`, the case §17 names: eight `safe_preserve` targets,
@@ -54,10 +49,9 @@ scenes. So node rules compare `position_key` against the *edited nodes*, record 
 `attested_position`. Where it abstains the record filter widens rather than emptying, and the
 widening is written on the target's reason instead of being left for a reader to infer.
 
-**What this is not.** Four cases and 37 expectations, in-sample, against this project's own
-`MIN_HOLDOUT = 50` — so every number from here is a dev-set number and `ImpactScore.caveat`
-says so at every call site. `tests/test_propagation.py` exists because a rule tested only
-against the material it was written from is a rule fitted to it.
+**What this is not.** Four cases and 37 expectations, in-sample — so every number from here
+is a dev-set number. `tests/test_propagation.py` exists because a rule tested only against
+the material it was written from is a rule fitted to it.
 """
 
 from __future__ import annotations

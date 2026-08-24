@@ -5480,12 +5480,12 @@ the same shape recognition already has (§61 pre-registration 3): a row analysis
 still a fact about the verdict set.
 
 **Pinned in both directions**, because either half silently reverting restores a live defect:
-`test_a_machine_written_row_can_never_denominate_a_preference_holdout` (20 machine verdicts
+test_a_machine_written_row_can_never_denominate_a_preference_holdout (20 machine verdicts
 must not inflate a 50-row human holdout, and the calibration arithmetic that consumes the
 count refuses on size rather than promoting quietly),
-`test_machine_rows_still_stale_the_licence_that_bought_them` (the digest moves, the count does
+test_machine_rows_still_stale_the_licence_that_bought_them (the digest moves, the count does
 not), and the end-to-end pin inside
-`test_a_licensed_judge_selects_through_the_same_pair_machinery` — after a real licensed
+test_a_licensed_judge_selects_through_the_same_pair_machinery — after a real licensed
 tournament, `analysable_judgments` is empty and `judge_license` has gone stale. Verified by
 mutation: dropping the filter fails all three; adding the same filter to the digest fails two.
 
@@ -6655,7 +6655,7 @@ human read a defined product: a read is a *defect harvest*.
 §86.1's laundering path — `analysable_judgments` never inspecting `reader_id` while `plan_search`
 wrote a licensed judge's verdicts through the same pair table — was closed as §86.6 before this
 work began (`MACHINE_READER_PREFIX`, excluded from the denominator, kept in the staleness digest,
-guarded by `test_a_machine_written_row_can_never_denominate_a_preference_holdout`). Verified in
+guarded by test_a_machine_written_row_can_never_denominate_a_preference_holdout). Verified in
 source rather than assumed.
 
 **Separating the roles makes the residuals worse rather than better**, because the entire point
@@ -9163,8 +9163,8 @@ feedback records an explicit `[]` whose digest is a real digest of the empty lis
 drafted before the loop existed has no row at all. `payload_fields` documents that a nullable
 column cannot tell those apart, and neither can a reader that prints both as a blank line — so
 the dossier and `blame --json` both keep `null` for "nobody recorded" and `[]` for "recorded,
-and it was empty" (`test_an_empty_feedback_set_is_not_the_same_as_no_feedback_row`,
-`test_blame_json_keeps_an_empty_set_apart_from_no_row`).
+and it was empty" (test_an_empty_feedback_set_is_not_the_same_as_no_feedback_row,
+test_blame_json_keeps_an_empty_set_apart_from_no_row).
 
 ### 103.3 The log reads in write order, with a cursor
 
@@ -9459,7 +9459,7 @@ gate vector is stored per attempt, passing gates included, so nothing is traded 
 ordering** — the first mechanically valid candidate commits and the session closes.
 
 The fourth tier is enforced rather than declared:
-`test_the_variation_loop_imports_no_selection_machinery` refuses either variation module an import
+test_the_variation_loop_imports_no_selection_machinery refuses either variation module an import
 of the tournament's `select_winner` or of the pairwise preference engine. There is no score column
 in migration 030 and nowhere to put one. Cheaper to forbid the import than to review every future
 edit for the call it would enable.
@@ -9477,7 +9477,7 @@ exactly as `plan_search` mints `span_select`.
 
 **Restart safety is then a property rather than a feature.** The whole of a session's state is
 rows; the prompt is re-rendered from them every step.
-`test_a_session_resumes_across_a_restart_because_its_state_is_rows` drives a session with one
+test_a_session_resumes_across_a_restart_because_its_state_is_rows drives a session with one
 Conductor and finishes it with another. A reclaimed lease meets the recorded ACCEPT guard and
 returns without re-spending the call.
 
@@ -9509,7 +9509,7 @@ even if the objection applied.
 **Every provider call still reaches `policy_decisions`, because nothing else is visible to the
 budget gate.** A loop making a dozen calls per finding whose calls never reached that table would
 spend them while the day's governor reported the day untouched.
-`test_the_session_spend_reaches_the_budget_governor` pins it.
+test_the_session_spend_reaches_the_budget_governor pins it.
 
 **Every attempt is recorded, including the failures — and that is a departure from §72 too.** §72
 records that a tournament's losers reach no rows and land as non-blocking gates on the settlement
@@ -9524,7 +9524,7 @@ numbers is the only part of a run that can ever answer why.
 A **tripped ceiling** builds a PARK decision directly with a failing blocking BUDGET gate, so
 `refused_before_work` refunds the attempt and the Conductor parks the step rather than poisoning
 it; the exception queue names which ceiling stopped it
-(`test_a_tripped_ceiling_parks_the_session_and_names_which_one`). A **stall** and an agent **stop**
+(test_a_tripped_ceiling_parks_the_session_and_names_which_one). A **stall** and an agent **stop**
 park with a passing summary gate and PARK set directly, copying the parked tournament exactly. A
 **lapsed licence** settles ACCEPT and closes the session: the finding was dismissed, the work is
 moot, and the fixed path already treats that as quietly completing.
@@ -9580,7 +9580,7 @@ structural to this benchmark.** The only mechanical veto a replacement *string* 
 a small cited span is the length one, so every failure carries one signature — and
 `REPEATED_FAILURE_LIMIT` is 3 for the same reason `Job.max_attempts` is 3. The session can reach no
 rung the fixed path could not.
-`test_the_stall_detector_stops_the_session_where_the_fixed_path_poisons` pins it, so moving either
+test_the_stall_detector_stops_the_session_where_the_fixed_path_poisons pins it, so moving either
 constant fails a test and gets argued.
 
 **The higher gate-pass rate is an artefact and must not be read as a win.** A committing session
@@ -10305,7 +10305,7 @@ lineage survives only in `plan_proposals`, and `constraint_locks.produced_by` re
 there — walking `base_plan_revision_id -> resulting_plan_revision_id` rather than the rows' order,
 because `plan_proposals` sorts on `(created_at, proposal_id)` and proposals accepted inside one ISO
 second therefore sort on a content hash. That was found by
-`test_a_rollback_clears_the_lineage_because_it_reads_no_directive` failing, not by reading the
+test_a_rollback_clears_the_lineage_because_it_reads_no_directive failing, not by reading the
 code.
 
 ### 108.2 The repair locks a boolean, refuses three things, and its one weakness is named rather than buried

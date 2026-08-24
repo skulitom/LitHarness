@@ -2,19 +2,19 @@
 
 The write side has been complete since Stage 1. The rendered prompt and system string are
 frozen on the job payload at enqueue, every attempt gets a policy decision whether it
-accepted or refused, losing tournament drafts stay in the candidate table, and the event log
-is written in the same transaction as the state change it describes. None of it was printed
-by any command — `read_log`, `decision_for_revision` and `lineage` were called only by this
-suite — so the only way to look at any of it was to open the SQLite file. That is the entry
-§31 closed for plans and §39 closed for state.
+accepted or refused, and the event log is written in the same transaction as the state
+change it describes. None of it was printed by any command — `read_log`,
+`decision_for_revision` and `lineage` were called only by this suite — so the only way to
+look at any of it was to open the SQLite file. That is the entry §31 closed for plans and
+§39 closed for state.
 
 These drive `main(argv)` rather than the functions underneath, for the reason
 `tests/test_cli.py` states: the interface being asserted *is* the command line, including
 its exit codes.
 
 The seeding here runs the real drafting loop against the deterministic provider rather than
-hand-writing rows, because the thing under test is a join across seven tables and a hand-set
-row would agree with the reader by construction.
+hand-writing rows, because the thing under test is a join across several tables and a
+hand-set row would agree with the reader by construction.
 """
 
 from __future__ import annotations
@@ -34,16 +34,12 @@ from litharness.application.conductor import Conductor
 from litharness.application.handlers import SCENE_DRAFT, make_scene_draft_handler
 from litharness.application.planner import make_plan_selector
 from litharness.cli import EXIT_ATTENTION, EXIT_OK, main
-from litharness.domain.candidates import CandidateStatus, SpanCandidate, candidate_id_for
 from litharness.domain.generation import CompletionRequest, CompletionResult, Usage
 from litharness.domain.nodes import Node, NodeKind
 from litharness.domain.plans import import_plan, scene_plan_id_for
-from litharness.domain.policy import Outcome, PolicyDecision
 from litharness.domain.position import initial_keys
-from litharness.domain.preference import INTERNAL_PROTOCOL
 from litharness.domain.revision import build_revision, import_manuscript
 from litharness.domain.state import import_state
-from litharness.domain.text import canonicalize
 from litharness.providers.fake import FakeProvider
 from litharness.providers.registry import ProviderRegistry
 from tests.conftest import BOOK_ID, BRANCH_ID, PROJECT_ID
@@ -240,56 +236,6 @@ def unattributed_scene(db, logical_id: str = "scene-1") -> str:
         store.close()
 
 
-def seed_tournament(db, logical_id: str = "scene-2") -> None:
-    """Three candidate drafts for one span: one selected, two that lost to it."""
-    store = SqliteStore.open(db)
-    try:
-        book_id, branch_id, _ = store.branches()[0]
-        candidates = []
-        for index in range(3):
-            statement = f"Alternative {index}: what this scene is for."
-            text = canonicalize(f"Candidate {index} prose. " * 12)
-            candidates.append(
-                SpanCandidate(
-                    candidate_id=candidate_id_for(
-                        text=text,
-                        statement=statement,
-                        alternative_index=index,
-                        base_revision_id="rev-base",
-                        job_id="plansearch-seeded",
-                    ),
-                    job_id="plansearch-seeded",
-                    book_id=book_id,
-                    branch_id=branch_id,
-                    logical_id=logical_id,
-                    alternative_index=index,
-                    statement=statement,
-                    text=text,
-                    base_revision_id="rev-base",
-                    plan_epoch=0,
-                    created_at=STAMP,
-                )
-            )
-        store.commit_tournament(
-            protocol=INTERNAL_PROTOCOL,
-            excerpts=(),
-            candidates=candidates,
-            samples=(),
-            decision=PolicyDecision(
-                decision_id="dec-seeded-tournament",
-                outcome=Outcome.ACCEPT,
-                logical_id=logical_id,
-                reason="seeded tournament",
-            ),
-            decided_at=STAMP,
-        )
-        store.set_span_candidate_status(candidates[0].candidate_id, CandidateStatus.SELECTED)
-        for candidate in candidates[1:]:
-            store.set_span_candidate_status(candidate.candidate_id, CandidateStatus.DISCARDED)
-    finally:
-        store.close()
-
-
 # --- the dossier ---------------------------------------------------------------------
 
 
@@ -350,31 +296,7 @@ def test_a_scene_no_decision_explains_says_so_and_exits_non_zero(db, capsys) -> 
     assert run(db, "verify") == EXIT_ATTENTION
 
 
-def test_an_empty_feedback_set_is_not_the_same_as_no_feedback_row(db, capsys) -> None:
-    """Invariant I4's negative case, which is the whole reason the row is written at all.
-
-    A scene drafted with nothing to say records an explicit empty set whose digest is a real
-    digest of the empty list; a scene drafted before the loop existed has no row. "This scene
-    had no feedback" and "nobody recorded whether this scene had feedback" are different
-    facts, and a dossier that rendered both as a blank line would destroy the distinction the
-    write side went to trouble to preserve.
-    """
-    drafted(db, capsys)
-    unattributed_scene(db, "scene-1")
-    capsys.readouterr()
-
-    assert run(db, "why", "--scene", "3") == EXIT_OK
-    recorded = capsys.readouterr().out
-    assert "an explicit empty set" in recorded
-    assert "0 item(s)" in recorded
-    assert "ABSENT - no scene feedback row" not in recorded
-
-    run(db, "why", "--scene", "1")
-    missing = capsys.readouterr().out
-    assert "ABSENT - no scene feedback row" in missing
-
-
-def test_the_dossier_json_keeps_absence_and_emptiness_apart(db, capsys) -> None:
+def test_the_dossier_json_names_every_absence_in_a_list(db, capsys) -> None:
     """The shape an agent chains on, following the `status --json` precedent: one object,
     stable keys, and every absence named in a list rather than implied by a missing key."""
     drafted(db, capsys)
@@ -396,48 +318,21 @@ def test_the_dossier_json_keeps_absence_and_emptiness_apart(db, capsys) -> None:
         "selected_by",
         "context",
         "context_omitted",
-        "payload_feedback",
-        "scene_feedback",
         "plan_item",
-        "craft_metrics",
         "findings",
-        "span_candidates",
         "absent",
     }
     assert dossier["prompt"]["prompt"].startswith("Premise:")
     assert dossier["decision"]["outcome"] == "accept"
     assert dossier["decision"]["gates"], "the ladder rides in the object, not just the text"
-    # Recorded and empty, on both sides of the write path.
-    assert dossier["scene_feedback"]["items"] == []
-    assert dossier["scene_feedback"]["digest"]
-    assert dossier["payload_feedback"]["items"] == []
     # The mystery fixture carries no per-scene statement, and saying so is the point.
     assert dossier["plan_item"] is None
     assert dossier["absent"] == ["plan_item"]
 
     run(db, "why", "--scene", "1", "--json")
     unattributed = json.loads(capsys.readouterr().out)
-    assert unattributed["decision"] is None
-    assert unattributed["scene_feedback"] is None, "no row is null, never an empty object"
+    assert unattributed["decision"] is None, "no row is null, never an empty object"
     assert "decision" in unattributed["absent"]
-
-
-def test_the_losing_drafts_are_in_the_dossier_because_the_store_kept_them(db, capsys) -> None:
-    """A selection is auditable only while the candidates it refused are readable. They have
-    always been kept; nothing printed them."""
-    drafted(db, capsys)
-    seed_tournament(db, "scene-2")
-    capsys.readouterr()
-
-    assert run(db, "why", "--scene", "2", "--json") == EXIT_OK
-    candidates = json.loads(capsys.readouterr().out)["span_candidates"]
-
-    assert len(candidates) == 3
-    assert [item["status"] for item in candidates] == ["selected", "discarded", "discarded"]
-    assert all(item["statement"] for item in candidates), "the statement is what was selected"
-
-    run(db, "why", "--scene", "2")
-    assert "3 recorded, 2 that did not win" in capsys.readouterr().out
 
 
 def test_a_scene_can_be_named_by_reading_order_as_well_as_by_id(db, capsys) -> None:
@@ -547,7 +442,6 @@ def test_an_undrafted_scene_is_not_reported_as_an_attribution_gap(db, capsys) ->
     out = capsys.readouterr().out
     assert "no accepted revision carries this scene yet" in out
     assert "no policy decision explains this revision" not in out
-    assert "no scene feedback row" not in out
 
     run(db, "why", "--scene", "2", "--json")
     dossier = json.loads(capsys.readouterr().out)
@@ -678,36 +572,6 @@ def test_plans_json_distinguishes_the_imported_root_from_a_proposed_step(db, cap
     assert report["revisions"][0]["items"] == 5
 
 
-def test_blame_json_keeps_an_empty_set_apart_from_no_row(db, capsys) -> None:
-    """The same distinction the dossier keeps, in the verb that reads it across a whole book:
-    `null` is "nobody recorded" and `[]` is "recorded, and it was empty"."""
-    book_id, branch_id = drafted(db, capsys)
-    capsys.readouterr()
-
-    assert run(db, "blame", "--book", book_id, "--branch", branch_id,
-               "--axis", "em_dash", "--json") == EXIT_OK
-
-    scenes = json.loads(capsys.readouterr().out)["scenes"]
-    assert len(scenes) == 6
-    assert all(scene["items"] == [] for scene in scenes)
-    assert all(scene["digest"] for scene in scenes)
-
-
-def test_feedback_json_says_why_nothing_would_reach_the_prompt(db, capsys) -> None:
-    """An empty feedback set is a fact with a reason. An agent that read an absent key would
-    have to guess between "the loop is off" and "the loop is on and had nothing to say"."""
-    book_id, branch_id = drafted(db, capsys)
-    capsys.readouterr()
-
-    assert run(db, "feedback", "--book", book_id, "--branch", branch_id, "--json") == EXIT_OK
-
-    report = json.loads(capsys.readouterr().out)
-    assert report["empty"] is True
-    assert report["reason"] == "no pool registration"
-    assert report["items"] == []
-    assert report["digest"], "the digest of the empty list is a real digest, never null"
-
-
 # --- the rail ------------------------------------------------------------------------
 
 
@@ -717,8 +581,7 @@ def test_no_forensic_verb_writes_a_row(db, capsys) -> None:
     (§97.1). These verbs answer questions and must never become a channel that answers back,
     and the cheapest guarantee of that is that reading changes nothing at all.
     """
-    book_id, branch_id = drafted(db, capsys)
-    seed_tournament(db, "scene-2")
+    drafted(db, capsys)
     capsys.readouterr()
 
     def snapshot() -> dict[str, int]:
@@ -748,8 +611,6 @@ def test_no_forensic_verb_writes_a_row(db, capsys) -> None:
         ("events", "--json"),
         ("findings", "--json"),
         ("plans", "--json"),
-        ("blame", "--book", book_id, "--branch", branch_id, "--axis", "em_dash", "--json"),
-        ("feedback", "--book", book_id, "--branch", branch_id, "--json"),
     ):
         run(db, *argv)
     capsys.readouterr()
