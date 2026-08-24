@@ -53,7 +53,7 @@ from typing import Any
 
 import litharness_contracts as lc
 
-from litharness.domain import directors
+from litharness.domain import directors, house
 from litharness.domain import worlds as worlds_mod
 from litharness.domain.directives import DirectiveKind
 from litharness.domain.generation import CompletionRequest
@@ -136,11 +136,42 @@ _RULE = {
     },
 }
 
+#: **`grants` is the slot §114 measured as missing and did not add.** That entry counted 135 of
+#: 156 rungs across 24 worlds as an *insignia* — a mark other people read — and permission
+#: outnumbering capability 104 to 46, "because `_RANK` has a slot for what a rung LOOKS like
+#: and one for what it COSTS and none for what it lets you do". Its answer was to build the
+#: capability inventory *beside* the ladder, which left the ladder itself a chain of standings.
+#:
+#: The operator read a premise forged on that ladder and named the gap directly: *"readers want
+#: something the character gets (numbers go up) and gets to keep forever — for example healing
+#: touch ability gained, strong healing touch, revival. Readers want constant growth in
+#: tangible abilities. Readers are rarely interested in more conceptual growth, at least in
+#: this genre."* A chain of insignia is conceptual growth wearing a badge; a chain of
+#: healing-touch-then-revival is the genre.
 _RANK = {
     "type": "object",
     "additionalProperties": False,
-    "required": ["id", "visible_form", "cost_to_reach"],
-    "properties": {"id": _ID, "visible_form": _TEXT, "cost_to_reach": _TEXT},
+    "required": ["id", "visible_form", "cost_to_reach", "grants"],
+    "properties": {
+        "id": _ID,
+        "visible_form": _TEXT,
+        "cost_to_reach": _TEXT,
+        "grants": {
+            **_SAID,
+            "description": (
+                "What reaching this rung lets a person DO that the rung below could not — a "
+                "power, in plain words, that they keep. Not a permission, not a title, not a "
+                "room they may now enter. The SHAPE is that each rung does more of one "
+                "tangible thing than the rung under it, and the thing is this world's own: "
+                "one chain might run from mending a cut by touch, to closing a wound that "
+                "would have killed, to bringing somebody back the same hour — and another "
+                "from being heard across a room, to across a valley, to by somebody who has "
+                "never met you. Those are two instances of the structure and neither is a "
+                "template to copy. If the honest answer is that this rung grants nothing a "
+                "body can do, the chain is a set of badges."
+            ),
+        },
+    },
 }
 
 _CAPABILITY = {
@@ -525,7 +556,7 @@ DIRECT = "direct"
 DOMAIN_FIRST = "domain_first"
 PROMPT_SHAPES: tuple[str, ...] = (DIRECT, DOMAIN_FIRST)
 
-_SYSTEM_MESSAGE = (
+_SYSTEM_MESSAGE = house.with_house_rules(
     "You are the Architect for an open-ended serial. You say what a world IS: its systems, its "
     "rules, the prices those rules charge, who lives under them, and what is true but not yet "
     "known. You never say what the book is about scene by scene, you never write prose, and you "
@@ -562,6 +593,32 @@ _SYSTEM_MESSAGE = (
     # meets it, and nothing anywhere in this pipeline asks whether a reader would want the world.
     # No critic was added here — §61(5) and §105.1 are why — so the only lever is what is asked
     # for, which is what these four rules change.
+    # **`standing` was the third schema word to reach the page, and it was measured there.**
+    # `comprehension_battery` on *Wake the Jar*: three of eight unfollowable terms were the word
+    # `standing` — *"hotter than a girl at her standing should be able to manage"* — after the
+    # clause above had already taken `ladder` and `rung` off the page. The family is this
+    # module's own vocabulary for its machinery and a reader has never been told any of it.
+    # **The fourth amendment, and the first one a measurement rather than a read produced.**
+    # `comprehension_battery` asked four readers of the target genres to quote anything in a
+    # premise they could not follow. Over the two premises forged under the amendment above —
+    # which was supposed to have fixed exactly this — nine and ten terms came back, and **every
+    # one of them first appears in the last third of its premise** (65%, 69%, 73%, 74%, 70%, and
+    # `frost rooms` at 96%, in the second-to-last clause). The openings were clean.
+    #
+    # So the rule was not being ignored; it was being obeyed while the premise established itself
+    # and dropped once it accelerated. The clause names where it fails rather than repeating the
+    # instruction louder, which is what the first version of it already tried.
+    # **A standing correction about how the operator's examples are meant to be read**, made on
+    # 2026-08-23 after this module had twice taken one for a specification: *"not every book has
+    # to have bronze and gold. When I mentioned those ranks I was giving examples and was hoping
+    # you would generalize the concept structure. Like Animal object in C++ if I mentioned cats
+    # and bunnies."*
+    #
+    # `handoff-numbers-go-up` quoted *"say bronze is 1 and gold is 3"* and the rules that came out
+    # of it printed bronze and gold; the operator's worked isekai example produced six worlds
+    # fitted to its surface. The instance is never the interface. Where a rule below carries an
+    # example it says so and gives two, because one example reads as the answer and two read as a
+    # range.
     # **The readership, stated by the operator on 2026-08-23**: *"most readership is 20-30 male
     # for this genre, we should keep main characters relatable"*. RoyalRoad's audience is the
     # market this project writes for, and this is a targeting decision the operator owns.
@@ -632,13 +689,27 @@ _RULES: tuple[str, ...] = (
     # book is what happens next. `tests/test_architect.py` checks the rule text for the verbs an
     # outcome instruction would have to use.
     "At least one criterion has the comparator `ordinal` and carries `ranks`: a chain of AT "
-    "LEAST THREE, listed LOWEST FIRST, each with a `visible_form` a reader can see and a "
-    "`cost_to_reach` payable on the page. The protagonist's `standing` names that criterion by "
+    "LEAST THREE, listed LOWEST FIRST, each with a `visible_form` a reader can see, a "
+    "`cost_to_reach` payable on the page, and a `grants` naming what that rung lets a person "
+    "DO that the one below could not. **The chain is a chain of abilities and not of "
+    "badges**: each rung is a bigger version of a tangible thing the person can do, they keep "
+    "it, and nothing takes it back by default. Knowing more, being trusted more, or being "
+    "allowed into a better room is not a rung. The protagonist's `standing` names that "
+    "criterion by "
     "id and one of its rungs by id, and the rung is NOT the top one. The number a reader counts "
     "in this world is the rung's position from the bottom of that chain. The ladder is the "
-    "world's FURNITURE and not its concept: a reader meets it the way they meet bronze to "
-    "gold in any other book, and the premise is about the person rather than about the "
-    "chain.",
+    "world's FURNITURE and not its concept: a reader meets it as whatever THIS world calls "
+    "its ordered standings, and the premise is about the person rather than about the "
+    "chain. The surface form is the world's own and there is no house style for it — belts, "
+    "grades, years, seals, colours, degrees, titles, thresholds and metals are all the same "
+    "structure wearing different clothes, and a world that reaches for the nearest familiar "
+    "set has skipped the part that was its own. **The words `ladder` and `rung` are this "
+    "schema's and never the book's** — and so is `standing`, and so is any other word this "
+    "schema uses for the machinery. None of them appear in the premise, in a rank's name, "
+    "or anywhere a reader would see. A premise that says somebody wants to get high enough "
+    "up the ladder has printed the scaffolding instead of the building, and one that says a "
+    "girl runs hotter than her standing should allow has done it again in a different word. "
+    "Name the rung this world names, in this world's own language.",
     # **The domain rule built five worlds set inside a trade, and the operator named it.**
     # Assaying, grafting, surveying, bell-founding, dyeing — the rule asked for a real domain of
     # human *work*, and the forge answered with the workshop, the yard, and the trade's own
@@ -820,7 +891,18 @@ _RULES: tuple[str, ...] = (
     "and kept in a crock has spent three words the reader cannot cash — what is alive, what "
     "is a crock, what counts as a wonder — and a person named as a cracked man in a warm "
     "room is a person nobody can picture. Name the thing in words a reader already owns, or "
-    "say what it is the first time it appears.",
+    "say what it is the first time it appears. **This holds hardest in the last third**, "
+    "which is where it is always dropped: the school, the rival, the complication and the "
+    "clock all arrive together at the end and each one drags in a name. Measured over the "
+    "premises forged before this clause, EVERY term readers could not follow first appeared "
+    "between 65% and 96% of the way through — `the cold hill`, `nine deep`, `frost rooms`, "
+    "`keeper`, `the lists`. A noun in the last sentence owes the same half-clause as a noun "
+    "in the first: not `measured against the frost rooms`, but `measured against the frost "
+    "rooms, where they test how cold a pair of hands runs`. **Around 200 words, and 300 is "
+    "too many.** Measured over the premises forged today: at 172 words a reader could not "
+    "follow one thing, at 337 five, at 407 eight. Past that length a premise has stopped "
+    "pitching a person and started explaining a world, and every extra sentence brings in "
+    "another name that owes a gloss.",
     "Mysteries: each carries its ANSWER written down and the scene number where the reader "
     "learns it. A secret with no recorded answer is a promise the book can never keep. This "
     "world is an open-ended serial, so most answers land far out — but **at least one must be "
@@ -1853,6 +1935,17 @@ def records_for(
                             rank_id, "costs", value=_text(rank, "cost_to_reach")
                         )
                     )
+                    # **`grants` reaches canon on the same predicate a capability uses.** §114's
+                    # chain is declare -> ask -> print -> read, and a slot that stops at the forge
+                    # is declared and nothing else. `is_a` is what `_CAPABILITY` writes for "what
+                    # this lets a person do", so a rung's grant is legible to the packet as the
+                    # same kind of fact rather than as a fifth vocabulary.
+                    if _text(rank, "grants"):
+                        add(
+                            worlds_mod.world_record(
+                                rank_id, "is_a", value=_text(rank, "grants")
+                            )
+                        )
                 # The ordinal domain as edges, with the criterion on the edge so a world running
                 # two ladders at once cannot have them spliced into one order nobody declared.
                 for lower, higher in itertools.pairwise(rank_ids):

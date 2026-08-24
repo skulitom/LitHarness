@@ -1,0 +1,195 @@
+{
+  "generated_at": "2026-08-23T22:31:11Z",
+  "panel": [
+    "climber",
+    "stranger",
+    "regular",
+    "mechanism"
+  ],
+  "panel_model": "claude-haiku-4-5",
+  "scorer": "mean pairwise Jaccard over content words; no model scores agreement",
+  "items": [
+    {
+      "item_id": "reference:chapter1-scene1",
+      "title": "chapter1-scene1",
+      "source": "human-written reference",
+      "words": 1067,
+      "agreement_can_do": 0.1062,
+      "agreement_in_the_way": 0.0858,
+      "agreement_expect_next": 0.029,
+      "readers_confused": 0,
+      "unclear_items": 0,
+      "unclear_by_reader": {
+        "climber": [],
+        "stranger": [],
+        "regular": [],
+        "mechanism": []
+      },
+      "readers_with_open_questions": 4,
+      "open_questions_by_reader": {
+        "climber": [
+          "What does 'sorted the times of things' actually do, and why is it worth building in secret?",
+          "Does connecting nine and ten cause the crash, or activate something?",
+          "What happens to Tomas in the crash?"
+        ],
+        "stranger": [
+          "What is he actually building in the notebook—is 'sorts the times of things' literal or metaphorical?",
+          "What are 'the two days a year that go wrong'?",
+          "What just happened to the carriage?"
+        ],
+        "regular": [
+          "What happens when the window comes around to meet him?",
+          "Why does his satisfaction \"not bother him as much as it should\"—is he depressed, or is he wrong about how he's living?",
+          "What is the thing he's building, really? Why does \"sorted the times of things\" feel like it should mean more than a hobby?"
+        ],
+        "mechanism": [
+          "What happened to the train—what was that tilt?",
+          "What is the time-sorting system actually for, and why does it matter?",
+          "Does step six actually exist, or was the caller the last chance to deliver it?"
+        ]
+      },
+      "answers": {
+        "climber": {
+          "can_do": "Tomas can break systems into discrete, provable pieces and connect them correctly, seeing how to fit parts together that weren't meant to meet until they do.",
+          "in_the_way": "He's trapped in a small, flat life—dead-end tech support, night projects on cheap buses—and the moment he proves his system works, his train crashes.",
+          "expect_next": "A progression novel about systems and consequences. Something about time or calendars is broken in this world, and Tomas just accidentally proved how to fix it, which may be why the crash happens right after.",
+          "undefined_words": [],
+          "open_questions": [
+            "What does 'sorted the times of things' actually do, and why is it worth building in secret?",
+            "Does connecting nine and ten cause the crash, or activate something?",
+            "What happens to Tomas in the crash?"
+          ]
+        },
+        "stranger": {
+          "can_do": "He breaks complex systems into small, self-contained pieces and checks each one obsessively before moving on. He walks other people through problems the same way he teaches himself at night.",
+          "in_the_way": "Everything costs him extreme care and precision. He doesn't know what he's building will be useful. And now the ground under him has stopped following the rules.",
+          "expect_next": "Portal fantasy. He's about to land in a place where the systems work differently, and he's going to have to figure them out the way he figures out tech support calls—step by step, line by line, without skipping the middle even when he's sure he knows it.",
+          "undefined_words": [],
+          "open_questions": [
+            "What is he actually building in the notebook—is 'sorts the times of things' literal or metaphorical?",
+            "What are 'the two days a year that go wrong'?",
+            "What just happened to the carriage?"
+          ]
+        },
+        "regular": {
+          "can_do": "He breaks hard problems into small verified pieces that build on each other. He works alone, checks obsessively, and trusts only what he's proved.",
+          "in_the_way": "He's trapped in a quiet job that doesn't use him. His best moment today is something nobody asked for and nobody will ever see. And something just happened that doesn't respect small careful steps.",
+          "expect_next": "An opening that feels like precise literary fiction suddenly cracking into something else—either an accident that matters, or a system intruding on reality. I'm not sure which, but either way I'm waiting to see what he was building and whether he survives the next sentence.",
+          "undefined_words": [],
+          "open_questions": [
+            "What happens when the window comes around to meet him?",
+            "Why does his satisfaction \"not bother him as much as it should\"—is he depressed, or is he wrong about how he's living?",
+            "What is the thing he's building, really? Why does \"sorted the times of things\" feel like it should mean more than a hobby?"
+          ]
+        },
+        "mechanism": {
+          "can_do": "He builds reliable complex systems by breaking them into uncheckable pieces and connecting them carefully, moving methodically without rushing even when people pressure him.",
+          "in_the_way": "He works nights on something nobody asked for, in a low-status job where callers treat him as ridiculous. The best thing in his day is getting two small pieces of his system to work together, and that bothers him less than it should. And then something just happened to the train.",
+          "expect_next": "This is quiet, methodical prose that establishes a pattern of introspection and small victories, then breaks it with something physically wrong. The tilt in that last paragraph was too specific to be scenery. I expect a book about what happens when a system-builder's careful methods meet something that breaks the rules he's been following—or when the rules themselves have changed.",
+          "undefined_words": [],
+          "open_questions": [
+            "What happened to the train—what was that tilt?",
+            "What is the time-sorting system actually for, and why does it matter?",
+            "Does step six actually exist, or was the caller the last chance to deliver it?"
+          ]
+        }
+      }
+    },
+    {
+      "item_id": "reference:operator",
+      "title": "reference-pitch",
+      "source": "human-written reference",
+      "words": 172,
+      "agreement_can_do": 0.0918,
+      "agreement_in_the_way": 0.1318,
+      "agreement_expect_next": 0.1175,
+      "readers_confused": 1,
+      "unclear_items": 1,
+      "unclear_by_reader": {
+        "climber": [],
+        "stranger": [
+          "merged"
+        ],
+        "regular": [],
+        "mechanism": []
+      },
+      "readers_with_open_questions": 4,
+      "open_questions_by_reader": {
+        "climber": [
+          "Does applying biology to magic actually *work* as a framework, or is it just how George thinks about it?",
+          "Why did the AI come across but nothing else?",
+          "What's the larger world threat that a slow-burn academy story would eventually collide with?"
+        ],
+        "stranger": [
+          "What does 'merged' actually mean—can he ever be alone, or is the AI always there in his head?",
+          "Will understanding the cellular mechanics of magic make him overpowered or will it slow him down compared to intuitive casters?"
+        ],
+        "regular": [
+          "Why does he wake up as a child?",
+          "How does the AI 'merge' with him and what does that mean for how they interact?",
+          "Will his biology knowledge actually transfer to this world's magic, or is he going to have to learn a completely new system anyway?"
+        ],
+        "mechanism": [
+          "How does the merger with the AI work mechanically and why does only his AI come through?",
+          "What specifically are the cellular mechanisms that generate mana, and how much direct control does George have over them?",
+          "Is his background in modern biology unique in this world, or would any native scholar eventually figure out the same patterns?"
+        ]
+      },
+      "answers": {
+        "climber": {
+          "can_do": "He can apply systematic biological knowledge to manipulate a magic system that most practitioners treat as intuition, and he's got a companion AI that can read his own body back to him as diagnostic feedback.",
+          "in_the_way": "He's lost everything and everyone from his old world except the AI. He's trapped in a child's body learning a magic system from first principles while other practitioners treat it as second nature. The biology degree only works as an advantage if the world's magic actually respects that translation.",
+          "expect_next": "A slow-burn progression story where the appeal is watching him systematically unlock magic through biology instead of talent or innate sensitivity. Academy arc incoming, probably with some friction between his methodical approach and how wizards normally learn. The larger plot lives somewhere downstream of that.",
+          "undefined_words": [],
+          "open_questions": [
+            "Does applying biology to magic actually *work* as a framework, or is it just how George thinks about it?",
+            "Why did the AI come across but nothing else?",
+            "What's the larger world threat that a slow-burn academy story would eventually collide with?"
+          ]
+        },
+        "stranger": {
+          "can_do": "He has a biology degree and an AI that can read his own cells back to him, giving him the ability to understand magic as cellular biology instead of just learning spells by rote—nobody else in this world can do this.",
+          "in_the_way": "He wakes up as a child in a place he doesn't understand. He's the only survivor from his world, so he's alone except for an AI that's somehow merged with him in ways that aren't explained. The magic system is complex and learning it is slow.",
+          "expect_next": "School-based progression fantasy. He'll figure out how biology and magic connect, the merged AI will either become his greatest tool or his biggest problem, and it'll be character-focused rather than action-heavy. The back-cover tells me most of the first act, so the interest is in how it actually plays out, not what happens.",
+          "undefined_words": [
+            "merged"
+          ],
+          "open_questions": [
+            "What does 'merged' actually mean—can he ever be alone, or is the AI always there in his head?",
+            "Will understanding the cellular mechanics of magic make him overpowered or will it slow him down compared to intuitive casters?"
+          ]
+        },
+        "regular": {
+          "can_do": "He can learn magic by treating it as a biology problem, running real-time diagnostics on his own cells while casting. That's a specific enough angle that it actually gives him an edge, rather than just making him smart in a generic way.",
+          "in_the_way": "He's starting over as a child with no context, no home language probably, no social standing. Everything is new except the AI voice in his head and his memory of how living things work. The AI is all he has left but also the thing that makes him alien to this world.",
+          "expect_next": "A progression fantasy academy story where he slowly figures out the rules of magic by treating it like cellular biology. The premise promises system-building rather than just hand-waving, which means I'm expecting to actually *learn* something alongside him, the way Mother of Learning does it. Whether it delivers on that or just uses the biology framing as window dressing is the test.",
+          "undefined_words": [],
+          "open_questions": [
+            "Why does he wake up as a child?",
+            "How does the AI 'merge' with him and what does that mean for how they interact?",
+            "Will his biology knowledge actually transfer to this world's magic, or is he going to have to learn a completely new system anyway?"
+          ]
+        },
+        "mechanism": {
+          "can_do": "George can learn and manipulate magic by understanding it as biology—he has both the scientific knowledge to recognize patterns in how cells generate mana, and real-time sensor feedback from the AI reading his own body's processes as he experiments.",
+          "in_the_way": "He's a child learning in an alien world, starting from zero practical knowledge of how his own body's magic production actually works, dependent on an AI companion as his only anchor to who he was.",
+          "expect_next": "A slow-burn progression fantasy where George moves through a magic academy discovering whether the biology-as-foundation premise actually delivers specific, testable rules—or whether 'biological magic' is just flavor text for a system that works like any other.",
+          "undefined_words": [],
+          "open_questions": [
+            "How does the merger with the AI work mechanically and why does only his AI come through?",
+            "What specifically are the cellular mechanisms that generate mana, and how much direct control does George have over them?",
+            "Is his background in modern biology unique in this world, or would any native scholar eventually figure out the same patterns?"
+          ]
+        }
+      }
+    }
+  ],
+  "spend": {
+    "input": 140396,
+    "output": 250191,
+    "cache_read": 2382850,
+    "cache_write": 765690,
+    "equivalent_usd": 3.161
+  },
+  "wall_seconds": 98.2
+}

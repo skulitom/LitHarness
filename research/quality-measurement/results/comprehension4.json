@@ -1,0 +1,617 @@
+{
+  "generated_at": "2026-08-23T19:53:22Z",
+  "panel": [
+    "climber",
+    "stranger",
+    "regular",
+    "mechanism"
+  ],
+  "panel_model": "claude-haiku-4-5",
+  "scorer": "mean pairwise Jaccard over content words; no model scores agreement",
+  "items": [
+    {
+      "item_id": "reference:operator-damaged",
+      "title": "reference-pitch-damaged",
+      "source": "human-written reference",
+      "words": 171,
+      "agreement_can_do": 0.1759,
+      "agreement_in_the_way": 0.1296,
+      "agreement_expect_next": 0.1184,
+      "readers_confused": 3,
+      "unclear_items": 6,
+      "unclear_by_reader": {
+        "climber": [
+          "kell-lattice",
+          "mana"
+        ],
+        "stranger": [],
+        "regular": [
+          "kell-lattice"
+        ],
+        "mechanism": [
+          "kell-lattice",
+          "mana",
+          "merged with him"
+        ]
+      },
+      "readers_with_open_questions": 4,
+      "open_questions_by_reader": {
+        "climber": [
+          "What does 'merged with him' actually mean — is the AI still a separate voice or has it become part of his thinking?",
+          "Does water magic have specific cellular costs, and what happens if George pushes too hard?",
+          "Why water first, and does the progression follow an elemental or biological logic?"
+        ],
+        "stranger": [
+          "Does his biology degree actually work, or is magic's version of 'cells produce mana' completely different from what he thinks it should be?",
+          "Why did only the AI come through—is that explained, or is it just the weird accident he got?",
+          "Is the AI still talking to him like a separate thing, or are they actually merged enough that he can't tell where one ends and the other starts?"
+        ],
+        "regular": [
+          "Why did the AI come across and nothing else?",
+          "Does learning magic his way make him faster than natives, or does it lock him into a narrow path?",
+          "How does a kid's body change things—is that just flavor or a real constraint?"
+        ],
+        "mechanism": [
+          "the only person from home he has left",
+          "Later he joins a magic academy and the story goes on from there",
+          "can he learn anything besides water magic?"
+        ]
+      },
+      "answers": {
+        "climber": {
+          "can_do": "He can reverse-engineer magic through cellular biology and direct his own body's mana production with precision that nobody else in this world can match, because he has both academic knowledge and an AI that can read his tissue state in real time.",
+          "in_the_way": "He's a child in a foreign world with no status or resources, trying to learn a system he has to rebuild from biological first principles instead of just following academy lessons like everyone else. The slow burn suggests that even though he has the advantage, it takes work.",
+          "expect_next": "A progression fantasy where a fish-out-of-water protagonist uses systematic biological knowledge to solve magical problems in ways that confuse or impress the locals at an academy. The AI companion is both his link to home and his toolkit for understanding magic as applied physiology rather than mysticism.",
+          "undefined_words": [
+            "kell-lattice",
+            "mana"
+          ],
+          "open_questions": [
+            "What does 'merged with him' actually mean — is the AI still a separate voice or has it become part of his thinking?",
+            "Does water magic have specific cellular costs, and what happens if George pushes too hard?",
+            "Why water first, and does the progression follow an elemental or biological logic?"
+          ]
+        },
+        "stranger": {
+          "can_do": "He knows how to read biology and he's got direct feedback on his own body's processes, which is his only tool for understanding a magic system that actually runs on biology.",
+          "in_the_way": "He's a child in a world that doesn't speak his language, with only the AI he came with—everything else from home is gone. He has to invent the rules as he goes.",
+          "expect_next": "A progression story where he's slowly figuring out magic through biology while everyone around him has been doing it the traditional way their whole lives. Probably friction with people who think he's crazy or wrong. Academy means structure and peers, which usually means both allies and people who resent the outsider. Slow burn means I'm signing up for chapters where he's gently getting better at understanding his own cells and what they can do.",
+          "undefined_words": [],
+          "open_questions": [
+            "Does his biology degree actually work, or is magic's version of 'cells produce mana' completely different from what he thinks it should be?",
+            "Why did only the AI come through—is that explained, or is it just the weird accident he got?",
+            "Is the AI still talking to him like a separate thing, or are they actually merged enough that he can't tell where one ends and the other starts?"
+          ]
+        },
+        "regular": {
+          "can_do": "He approaches magic like a problem set instead of an art—he can reverse-engineer spells by reading his own body's chemistry, which is something nobody else there seems to do.",
+          "in_the_way": "He's a child in a world full of adults and magic users. The only person who knows him is the AI, and they're still figuring out how to exist together after being merged. Everyone else has years of learning magic already done by the time he shows up.",
+          "expect_next": "A progression fantasy that leans technical—academy years where he slowly gets better by understanding *why* the magic works instead of just memorizing gestures or incantations. The AI gives him an unfair advantage in the form of real-time biofeedback. Probably some fish-out-of-water comedy and eventually tests where his biology-based approach surprises people.",
+          "undefined_words": [
+            "kell-lattice"
+          ],
+          "open_questions": [
+            "Why did the AI come across and nothing else?",
+            "Does learning magic his way make him faster than natives, or does it lock him into a narrow path?",
+            "How does a kid's body change things—is that just flavor or a real constraint?"
+          ]
+        },
+        "mechanism": {
+          "can_do": "He has a biology degree and an AI that can read his own tissue, so he can reverse-engineer magic by understanding the cellular mechanism instead of just memorizing spells like everyone else does.",
+          "in_the_way": "He's a child alone in a strange world with only an AI companion, which means everything he learns has to come from experimentation. Magic doesn't work if you don't understand it, and understanding takes time.",
+          "expect_next": "Progression fantasy with a slow academy arc. He shows up with a completely wrong framework for how magic works, probably clashes with whatever the conventional method is, and over a long book gradually discovers that his biological approach either works better or reveals things nobody else noticed. The AI probably turns out to matter in ways the established system didn't expect.",
+          "undefined_words": [
+            "kell-lattice",
+            "mana",
+            "merged with him"
+          ],
+          "open_questions": [
+            "the only person from home he has left",
+            "Later he joins a magic academy and the story goes on from there",
+            "can he learn anything besides water magic?"
+          ]
+        }
+      }
+    },
+    {
+      "item_id": "direct8:1",
+      "title": "The Farhouse at Fennow",
+      "source": "forged",
+      "words": 281,
+      "agreement_can_do": 0.1427,
+      "agreement_in_the_way": 0.1422,
+      "agreement_expect_next": 0.1215,
+      "readers_confused": 2,
+      "unclear_items": 2,
+      "unclear_by_reader": {
+        "climber": [
+          "the ring of light across the sky that everyone here treats as a god"
+        ],
+        "stranger": [],
+        "regular": [],
+        "mechanism": [
+          "the ring of light across the sky"
+        ]
+      },
+      "readers_with_open_questions": 4,
+      "open_questions_by_reader": {
+        "climber": [
+          "What is that ring of light and why does treating it as a god matter to the story?",
+          "Does the chip in the glasses actually prevent her from doing what she wants, or is it just a ticking clock?",
+          "What specifically does Perrin plan to do with the information about the glasses?"
+        ],
+        "stranger": [
+          "What is the ring of light across the sky that everyone treats as a god?",
+          "Why is Perrin asking questions about the glasses — does she suspect, want to replicate them, or want to break them?",
+          "What happens if the glasses chip further or break entirely?",
+          "What exactly is the 'big thing' June is planning to build?"
+        ],
+        "regular": [
+          "What is the ring of light across the sky that everyone treats as a god?",
+          "What is she trying to build with lenses?",
+          "Will the chip in her glasses become the crisis point?",
+          "What does Perrin actually want from learning about the glasses?"
+        ],
+        "mechanism": [
+          "What is the sky-ring and what would 'looking properly' at it actually do?",
+          "Does the school let you reach authority through knowledge rather than native talent?",
+          "What does Perrin want to know about the glasses?"
+        ]
+      },
+      "answers": {
+        "climber": {
+          "can_do": "June has spent decades mastering optics in a world where nobody has ever figured out how lenses work — she can make light stay lit even when she looks away from it, which nobody else on this planet can do.",
+          "in_the_way": "She's starting at the bottom of a ranked school system and being measured on things the school cares about rather than the large optical project she actually wants to build. Her glasses are the only pair on the planet, visible, and deteriorating. There's someone better than her at the school's official tests who's already started paying attention to them.",
+          "expect_next": "A progression fantasy where she either has to navigate the school's rank system to gain standing and resources, or find a way around it using optical knowledge the school doesn't have. Probably Perrin becomes a real problem — either rival or antagonist. I expect the glasses to fail at a load-bearing moment.",
+          "undefined_words": [
+            "the ring of light across the sky that everyone here treats as a god"
+          ],
+          "open_questions": [
+            "What is that ring of light and why does treating it as a god matter to the story?",
+            "Does the chip in the glasses actually prevent her from doing what she wants, or is it just a ticking clock?",
+            "What specifically does Perrin plan to do with the information about the glasses?"
+          ]
+        },
+        "stranger": {
+          "can_do": "She understands how light bends through glass in ways that seem impossible to everyone else on this world — she can make light stay put when they can only hold it by staring at it.",
+          "in_the_way": "She's starting at the bottom of a school's hierarchy where the measures don't favor what she knows. Her only tools are the glasses she arrived with, and they're already chipping. There's a rival who's better at what the school actually teaches and is asking pointed questions about where she's getting her edge.",
+          "expect_next": "This is a book about someone who arrived in a world and is going to use what she brought with her to work up standing and build something the place has never seen. It'll probably follow her grinding through the school's actual system while learning what it measures, dealing with Perrin, and working toward whatever that sky-ring actually is. Progression-flavored, grounded in one place, probably focusing on the practical problem of making optics work when your only optical instrument is wearing out.",
+          "undefined_words": [],
+          "open_questions": [
+            "What is the ring of light across the sky that everyone treats as a god?",
+            "Why is Perrin asking questions about the glasses — does she suspect, want to replicate them, or want to break them?",
+            "What happens if the glasses chip further or break entirely?",
+            "What exactly is the 'big thing' June is planning to build?"
+          ]
+        },
+        "regular": {
+          "can_do": "June has discovered how to make light persist outside a person's will and attention—something impossible here. She's brought a branch of technology to a world that's never needed optics because they generate their own light.",
+          "in_the_way": "She's at the bottom of a hierarchy at a school that measures things she hasn't been trained in. Perrin is genuinely better at what they actually measure, is now watching her closely, and the only tool that makes her special is already degrading. Getting standing or resources looks like it might require outperforming people who've trained their whole lives.",
+          "expect_next": "A progression fantasy where an institution becomes a character. June will navigate school politics and probably learn the system while trying not to become a threat that gets neutralized, Perrin will become either a rival or a catalyst for something, and she's working toward something specific—some kind of optical device. The ring in the sky is going to matter.",
+          "undefined_words": [],
+          "open_questions": [
+            "What is the ring of light across the sky that everyone treats as a god?",
+            "What is she trying to build with lenses?",
+            "Will the chip in her glasses become the crisis point?",
+            "What does Perrin actually want from learning about the glasses?"
+          ]
+        },
+        "mechanism": {
+          "can_do": "She understands how curved glass bends light, which lets her trap and preserve light even when she's not looking at it—something nobody on this world has figured out how to do.",
+          "in_the_way": "A more naturally gifted student who outperforms her in every test the school actually runs, and the glasses she arrived with are the only pair on the planet and already cracking, so they won't last forever.",
+          "expect_next": "A progression fantasy about using transferred knowledge to build standing in a world with its own hard rules. The magic system seems fixed (light behaves particular ways) rather than arbitrary, so I'd expect the book to be about mastering those rules specifically, not just discovering she has latent power.",
+          "undefined_words": [
+            "the ring of light across the sky"
+          ],
+          "open_questions": [
+            "What is the sky-ring and what would 'looking properly' at it actually do?",
+            "Does the school let you reach authority through knowledge rather than native talent?",
+            "What does Perrin want to know about the glasses?"
+          ]
+        }
+      }
+    },
+    {
+      "item_id": "direct10:2",
+      "title": "The Right Amount",
+      "source": "forged",
+      "words": 306,
+      "agreement_can_do": 0.1279,
+      "agreement_in_the_way": 0.1504,
+      "agreement_expect_next": 0.1263,
+      "readers_confused": 1,
+      "unclear_items": 3,
+      "unclear_by_reader": {
+        "climber": [
+          "Low Hall",
+          "Cold Order",
+          "blue water"
+        ],
+        "stranger": [],
+        "regular": [],
+        "mechanism": []
+      },
+      "readers_with_open_questions": 4,
+      "open_questions_by_reader": {
+        "climber": [
+          "Why does drinking the blue water bar you from the Cold Order?",
+          "What does 'high enough up the ladder' actually look like—is it a rank, a qualification, mastery of something?",
+          "Can he actually fix the problem of who gets the cup, or is that the whole trajectory of the book?"
+        ],
+        "stranger": [
+          "How much of Simon's knowledge and memory did he actually retain, and how will the book reveal that?",
+          "Why does the Cold Order work the opposite way and what will it cost Wick that he can never study with them?",
+          "Will he actually be able to change the system, or will he run into a wall he can't break through?"
+        ],
+        "regular": [
+          "Why does the Cold Order refuse to teach anyone who's drunk the water?",
+          "Can he actually change how the Low Hall does healing or does he hit a wall?",
+          "What's the actual relationship between the two halls?"
+        ],
+        "mechanism": [
+          "Why does prior exposure to the blue water bar someone from being taught by the Cold Order?",
+          "What's the healing mechanism the Cold Order actually uses—what does 'so a wound has time' mean?",
+          "The closing line about nobody having to 'choose which of two people gets the cup'—is the problem scarcity, or just bad dosing?"
+        ]
+      },
+      "answers": {
+        "climber": {
+          "can_do": "Wick understands that healing depends on exact amounts—how much a body can handle, how it clears over time, what happens when you mix doses—the way a med student would, and no one else in his world has worked that out.",
+          "in_the_way": "Sister Dunnock and thirty years of doing it one way for everyone; being eight; the fact that his own teachers at the Cold Order won't take him because he's already drunk the water.",
+          "expect_next": "A progression fantasy where Wick climbs through a formal hierarchy of healers by proving that his way works better. Probably hits resistance, probably has to demonstrate it publicly, probably eventually faces a situation where the triage choice matters and his knowledge is the difference.",
+          "undefined_words": [
+            "Low Hall",
+            "Cold Order",
+            "blue water"
+          ],
+          "open_questions": [
+            "Why does drinking the blue water bar you from the Cold Order?",
+            "What does 'high enough up the ladder' actually look like—is it a rank, a qualification, mastery of something?",
+            "Can he actually fix the problem of who gets the cup, or is that the whole trajectory of the book?"
+          ]
+        },
+        "stranger": {
+          "can_do": "He can see the healing water as a precise medical problem rather than a mystery to be lived with, and he knows how to manipulate it correctly rather than hoping for the best.",
+          "expect_next": "A progression fantasy where an eight-year-old with modern medical knowledge works his way up through a healing school, learning to navigate institutional resistance and rigid practice. The core tension is that what he knows is real and could save lives, but nobody wants to hear it from a child, and the system actively resists change.",
+          "in_the_way": "He's an eight-year-old child challenging decades of practice, and a hard institutional rule bars him from studying with the Cold Order — potentially cutting him off from the one path that could matter most.",
+          "undefined_words": [],
+          "open_questions": [
+            "How much of Simon's knowledge and memory did he actually retain, and how will the book reveal that?",
+            "Why does the Cold Order work the opposite way and what will it cost Wick that he can never study with them?",
+            "Will he actually be able to change the system, or will he run into a wall he can't break through?"
+          ]
+        },
+        "regular": {
+          "can_do": "He understands the healing water as a dosage problem—he sees amount, timing, and body size where everyone else sees mystery or blessing.",
+          "in_the_way": "He's eight years old with medical knowledge that contradicts people who've had thirty years of authority, in a system that's built wrong, and there's a rule preventing him from learning the other way.",
+          "expect_next": "A school story, probably progression fantasy. I'd expect scenes of him actually learning and pushing back, friction with the entrenched people, figuring out why things work the way they do, and eventually proving that understanding the mechanism matters.",
+          "undefined_words": [],
+          "open_questions": [
+            "Why does the Cold Order refuse to teach anyone who's drunk the water?",
+            "Can he actually change how the Low Hall does healing or does he hit a wall?",
+            "What's the actual relationship between the two halls?"
+          ]
+        },
+        "mechanism": {
+          "can_do": "He understands that the healing water works by dose and metabolism—too little does nothing, too much kills, and it matters how big the body is and how recently they drank. Where everyone else sees a magic potion, he sees pharmacology.",
+          "in_the_way": "He's eight years old trying to correct thirty years of institutional practice, and the alternative path (the Cold Order) is explicitly closed to him because of his prior exposure to the water.",
+          "expect_next": "Progression fantasy where a protagonist with a knowledge edge climbs through an institution that doesn't want him there. I'd expect him to prove his methods through practice, reach a collision with authority, and probably discover the rules run deeper than anyone realized.",
+          "undefined_words": [],
+          "open_questions": [
+            "Why does prior exposure to the blue water bar someone from being taught by the Cold Order?",
+            "What's the healing mechanism the Cold Order actually uses—what does 'so a wound has time' mean?",
+            "The closing line about nobody having to 'choose which of two people gets the cup'—is the problem scarcity, or just bad dosing?"
+          ]
+        }
+      }
+    },
+    {
+      "item_id": "direct10:1",
+      "title": "Everything Wants the Ground",
+      "source": "forged",
+      "words": 237,
+      "agreement_can_do": 0.1238,
+      "agreement_in_the_way": 0.2039,
+      "agreement_expect_next": 0.1155,
+      "readers_confused": 3,
+      "unclear_items": 6,
+      "unclear_by_reader": {
+        "climber": [
+          "What does 'the sky comes down on the salt flats' actually mean? Is that literal or poetic?"
+        ],
+        "stranger": [],
+        "regular": [
+          "Ashfall School"
+        ],
+        "mechanism": [
+          "charge (what is it materially, or is it pure abstraction)",
+          "drain (the mechanism—does it hurt, does it require proximity)",
+          "the ground (literal earth or part of the circuit metaphor)",
+          "storm season (\"sky comes down\"—is that literal or flavor)"
+        ]
+      },
+      "readers_with_open_questions": 4,
+      "open_questions_by_reader": {
+        "climber": [
+          "Can a physicist's background actually help him explain this to people, or does he only win through practical demonstration?",
+          "What happens during the storm if he's wrong—does he die, or just get publicly humiliated?",
+          "How exactly do drains block what he does, and can they override his understanding of the paths?"
+        ],
+        "stranger": [
+          "Will anyone actually believe him before it matters, or does he have to show them by doing something nobody else can do?",
+          "What specifically are the Tarrows doing that's designed to block him?",
+          "What happens during the storm season itself—is that where the proof comes?"
+        ],
+        "regular": [
+          "\"What nobody has worked out\"—will Kel's discovery become known?",
+          "\"Nobody believes a nine-year-old\"—will he convince them?",
+          "How do the Tarrow family drains challenge Kel's method?"
+        ],
+        "mechanism": [
+          "Did Kel figure out the circuit-path thing himself in the past nine years, or does he remember it from his life as a physics guy—the text leaves it ambiguous",
+          "What happens if you hold a charge too long (the breath metaphor implies a limit)",
+          "Will the Tarrow family be fixed antagonists or will he find a way to work with them"
+        ]
+      },
+      "answers": {
+        "climber": {
+          "can_do": "Kel understands that charge only moves through a return path to ground and can choose which path it takes; everyone else is just releasing it blindly without that knowledge.",
+          "in_the_way": "He's nine years old. That's it. He knows something true and powerful and nobody will listen to a kid.",
+          "expect_next": "Progression fantasy. Reborn protagonist figures out the magic system before anyone else, gets rejected for it, then proves himself right when the storm season actually arrives and tests everything.",
+          "undefined_words": [
+            "What does 'the sky comes down on the salt flats' actually mean? Is that literal or poetic?"
+          ],
+          "open_questions": [
+            "Can a physicist's background actually help him explain this to people, or does he only win through practical demonstration?",
+            "What happens during the storm if he's wrong—does he die, or just get publicly humiliated?",
+            "How exactly do drains block what he does, and can they override his understanding of the paths?"
+          ]
+        },
+        "stranger": {
+          "can_do": "He understands the actual physics of how the charge system works, because his previous life trained him to think about conductivity and grounding in a way the locals never figured out.",
+          "in_the_way": "He's nine years old. That's the entire problem. He knows something true that adults around him won't hear from a child.",
+          "expect_next": "A progression fantasy where a clever kid has to prove an advantage that looks invisible because it comes from understanding instead of raw ability. The Tarrows are set up as the first real obstacle, and the storm season is coming as the test that will either vindicate him or bury him.",
+          "undefined_words": [],
+          "open_questions": [
+            "Will anyone actually believe him before it matters, or does he have to show them by doing something nobody else can do?",
+            "What specifically are the Tarrows doing that's designed to block him?",
+            "What happens during the storm season itself—is that where the proof comes?"
+          ]
+        },
+        "regular": {
+          "can_do": "He can direct charge into a specific path to the ground before releasing it—control no one else has developed.",
+          "in_the_way": "He's nine years old telling teenagers and adults they're fundamentally wrong about their own power.",
+          "expect_next": "A progression fantasy set in a magical academy. Kel will probably spend the book trying to convince people his method works, with the storm season looming as proof.",
+          "undefined_words": [
+            "Ashfall School"
+          ],
+          "open_questions": [
+            "\"What nobody has worked out\"—will Kel's discovery become known?",
+            "\"Nobody believes a nine-year-old\"—will he convince them?",
+            "How do the Tarrow family drains challenge Kel's method?"
+          ]
+        },
+        "mechanism": {
+          "can_do": "He understands that electrical charge needs a complete circuit to move, so he can pick where it goes instead of just releasing it in all directions like everyone else. His physics degree from another life is the only instruction manual in the room.",
+          "in_the_way": "He's nine and nobody will believe him about how any of it works. The Tarrow family train as drains and can pull charge out of him specifically—so if they realize what he knows, his edge evaporates.",
+          "expect_next": "A progression fantasy where a reincarnated person exploits a misunderstood magic system. I'm expecting to read him demonstrate the mechanism, encounter serious friction from everyone assuming a child is wrong, and then probably confront the Tarrow family during the storm season, which sounds like the actual crucible.",
+          "undefined_words": [
+            "charge (what is it materially, or is it pure abstraction)",
+            "drain (the mechanism—does it hurt, does it require proximity)",
+            "the ground (literal earth or part of the circuit metaphor)",
+            "storm season (\"sky comes down\"—is that literal or flavor)"
+          ],
+          "open_questions": [
+            "Did Kel figure out the circuit-path thing himself in the past nine years, or does he remember it from his life as a physics guy—the text leaves it ambiguous",
+            "What happens if you hold a charge too long (the breath metaphor implies a limit)",
+            "Will the Tarrow family be fixed antagonists or will he find a way to work with them"
+          ]
+        }
+      }
+    },
+    {
+      "item_id": "direct8:2",
+      "title": "The Dog With No Line",
+      "source": "forged",
+      "words": 249,
+      "agreement_can_do": 0.1149,
+      "agreement_in_the_way": 0.0688,
+      "agreement_expect_next": 0.0713,
+      "readers_confused": 3,
+      "unclear_items": 8,
+      "unclear_by_reader": {
+        "climber": [
+          "imprinting or bonding mechanics (what does it mean for an animal to 'answer to' someone?)",
+          "what the animals are actually used for",
+          "what Hark Yard trains students to become"
+        ],
+        "stranger": [
+          "hatchling",
+          "egg room",
+          "the great houses"
+        ],
+        "regular": [
+          "the egg room",
+          "the great houses"
+        ],
+        "mechanism": []
+      },
+      "readers_with_open_questions": 4,
+      "open_questions_by_reader": {
+        "climber": [
+          "How did she and Rook end up here, and why do they remember their old life?",
+          "How does she hide her knowledge without revealing she's not actually from this world?",
+          "Does the oldest house's resistance come from pride, or do they know something dangerous about mixed breeding that she doesn't?"
+        ],
+        "stranger": [
+          "They both woke up somewhere else — why did Bea die and wake up as a child?",
+          "How does the bonding imprint work for someone who already bonded before she got here?",
+          "What specifically is killing the high-bred animals?"
+        ],
+        "regular": [
+          "Why did Bea die and wake up as a seven-year-old with Rook exactly as she was before?",
+          "What does the oldest house actually know about why their animals die, and why do they want to keep it that way?",
+          "How long does Wren have before Rook is too old to matter?"
+        ],
+        "mechanism": [
+          "How does Rook bond with Wren a second time if the rule is strictly one per lifetime?",
+          "What's actually killing all the inbred animals?",
+          "Can Wren convince the great houses to accept her help before Rook is too old?"
+        ]
+      },
+      "answers": {
+        "climber": {
+          "can_do": "She has two animals when everyone only gets one, and one of them carries genetics uncontaminated by centuries of deliberate inbreeding. In a world where animal bloodlines are dying from the exact thing she can diagnose, that's leverage.",
+          "in_the_way": "She's at the absolute bottom of a rigid school hierarchy, her dog is aging on an unknown timeline, and the houses with the most to lose from her knowing what she knows will actively work against her getting near their birds. She also has to hide where she actually comes from—a veterinary nurse from somewhere else entirely, now trapped in an eleven-year-old's body.",
+          "expect_next": "A progression fantasy where she starts at the bottom of a breeding school and has to climb by proving her theory while keeping both her animals alive and managing open hostility from the established powers. Probably early chapters of her settling in, the other students and teachers clocking that she's strange, and Rook's mortality becoming a real pressure point.",
+          "undefined_words": [
+            "imprinting or bonding mechanics (what does it mean for an animal to 'answer to' someone?)",
+            "what the animals are actually used for",
+            "what Hark Yard trains students to become"
+          ],
+          "open_questions": [
+            "How did she and Rook end up here, and why do they remember their old life?",
+            "How does she hide her knowledge without revealing she's not actually from this world?",
+            "Does the oldest house's resistance come from pride, or do they know something dangerous about mixed breeding that she doesn't?"
+          ]
+        },
+        "stranger": {
+          "can_do": "She understands animal genetics and husbandry from her old world—knowledge completely useless here until she realizes the great houses have been catastrophically inbreeding their bloodlines and killing themselves off by doing exactly what everyone respects.",
+          "in_the_way": "She has broken the one-animal-per-lifetime rule and that makes her visible and dangerous. The oldest house wants her gone. The animal she actually brought with her is getting old, and she doesn't understand yet why she's here or why he came with her.",
+          "expect_next": "A progression fantasy with a training-school hierarchy and a conspiracy mystery underneath. She'll hide what she is while proving her value, slowly work out why the noble animals are all dying young, and eventually have to choose between protecting herself or using what she knows to fix it.",
+          "undefined_words": [
+            "hatchling",
+            "egg room",
+            "the great houses"
+          ],
+          "open_questions": [
+            "They both woke up somewhere else — why did Bea die and wake up as a child?",
+            "How does the bonding imprint work for someone who already bonded before she got here?",
+            "What specifically is killing the high-bred animals?"
+          ]
+        },
+        "regular": {
+          "can_do": "She remembers being someone else, and she knows how to keep animals healthy in ways this world has forgotten. The catch is she has proof of both things in one impossible form: two bonded animals instead of one.",
+          "in_the_way": "The people with the most power have a stake in things staying broken. And Rook won't live forever.",
+          "expect_next": "A school story with mystery underneath — she arrives at the bottom, learns the systems and the politics, and gradually proves she knows something nobody else wants to face. Probably progression-flavored: she gets better at something specific, either with the animals themselves or at navigating what the great houses will allow.",
+          "undefined_words": [
+            "the egg room",
+            "the great houses"
+          ],
+          "open_questions": [
+            "Why did Bea die and wake up as a seven-year-old with Rook exactly as she was before?",
+            "What does the oldest house actually know about why their animals die, and why do they want to keep it that way?",
+            "How long does Wren have before Rook is too old to matter?"
+          ]
+        },
+        "mechanism": {
+          "can_do": "She has two bonded animals when everyone else gets one, and she's got access to genetics that could solve the inbreeding crisis the great houses are facing.",
+          "in_the_way": "The oldest house would rather watch their birds die than accept her help, and Rook won't live forever.",
+          "expect_next": "A literary progression fantasy where Wren starts at the bottom of Hark Yard and has to prove that genetic diversity matters more than tradition.",
+          "undefined_words": [],
+          "open_questions": [
+            "How does Rook bond with Wren a second time if the rule is strictly one per lifetime?",
+            "What's actually killing all the inbred animals?",
+            "Can Wren convince the great houses to accept her help before Rook is too old?"
+          ]
+        }
+      }
+    },
+    {
+      "item_id": "reference:operator",
+      "title": "reference-pitch",
+      "source": "human-written reference",
+      "words": 172,
+      "agreement_can_do": 0.0918,
+      "agreement_in_the_way": 0.1318,
+      "agreement_expect_next": 0.1175,
+      "readers_confused": 1,
+      "unclear_items": 1,
+      "unclear_by_reader": {
+        "climber": [],
+        "stranger": [
+          "merged"
+        ],
+        "regular": [],
+        "mechanism": []
+      },
+      "readers_with_open_questions": 4,
+      "open_questions_by_reader": {
+        "climber": [
+          "Does applying biology to magic actually *work* as a framework, or is it just how George thinks about it?",
+          "Why did the AI come across but nothing else?",
+          "What's the larger world threat that a slow-burn academy story would eventually collide with?"
+        ],
+        "stranger": [
+          "What does 'merged' actually mean—can he ever be alone, or is the AI always there in his head?",
+          "Will understanding the cellular mechanics of magic make him overpowered or will it slow him down compared to intuitive casters?"
+        ],
+        "regular": [
+          "Why does he wake up as a child?",
+          "How does the AI 'merge' with him and what does that mean for how they interact?",
+          "Will his biology knowledge actually transfer to this world's magic, or is he going to have to learn a completely new system anyway?"
+        ],
+        "mechanism": [
+          "How does the merger with the AI work mechanically and why does only his AI come through?",
+          "What specifically are the cellular mechanisms that generate mana, and how much direct control does George have over them?",
+          "Is his background in modern biology unique in this world, or would any native scholar eventually figure out the same patterns?"
+        ]
+      },
+      "answers": {
+        "climber": {
+          "can_do": "He can apply systematic biological knowledge to manipulate a magic system that most practitioners treat as intuition, and he's got a companion AI that can read his own body back to him as diagnostic feedback.",
+          "in_the_way": "He's lost everything and everyone from his old world except the AI. He's trapped in a child's body learning a magic system from first principles while other practitioners treat it as second nature. The biology degree only works as an advantage if the world's magic actually respects that translation.",
+          "expect_next": "A slow-burn progression story where the appeal is watching him systematically unlock magic through biology instead of talent or innate sensitivity. Academy arc incoming, probably with some friction between his methodical approach and how wizards normally learn. The larger plot lives somewhere downstream of that.",
+          "undefined_words": [],
+          "open_questions": [
+            "Does applying biology to magic actually *work* as a framework, or is it just how George thinks about it?",
+            "Why did the AI come across but nothing else?",
+            "What's the larger world threat that a slow-burn academy story would eventually collide with?"
+          ]
+        },
+        "stranger": {
+          "can_do": "He has a biology degree and an AI that can read his own cells back to him, giving him the ability to understand magic as cellular biology instead of just learning spells by rote—nobody else in this world can do this.",
+          "in_the_way": "He wakes up as a child in a place he doesn't understand. He's the only survivor from his world, so he's alone except for an AI that's somehow merged with him in ways that aren't explained. The magic system is complex and learning it is slow.",
+          "expect_next": "School-based progression fantasy. He'll figure out how biology and magic connect, the merged AI will either become his greatest tool or his biggest problem, and it'll be character-focused rather than action-heavy. The back-cover tells me most of the first act, so the interest is in how it actually plays out, not what happens.",
+          "undefined_words": [
+            "merged"
+          ],
+          "open_questions": [
+            "What does 'merged' actually mean—can he ever be alone, or is the AI always there in his head?",
+            "Will understanding the cellular mechanics of magic make him overpowered or will it slow him down compared to intuitive casters?"
+          ]
+        },
+        "regular": {
+          "can_do": "He can learn magic by treating it as a biology problem, running real-time diagnostics on his own cells while casting. That's a specific enough angle that it actually gives him an edge, rather than just making him smart in a generic way.",
+          "in_the_way": "He's starting over as a child with no context, no home language probably, no social standing. Everything is new except the AI voice in his head and his memory of how living things work. The AI is all he has left but also the thing that makes him alien to this world.",
+          "expect_next": "A progression fantasy academy story where he slowly figures out the rules of magic by treating it like cellular biology. The premise promises system-building rather than just hand-waving, which means I'm expecting to actually *learn* something alongside him, the way Mother of Learning does it. Whether it delivers on that or just uses the biology framing as window dressing is the test.",
+          "undefined_words": [],
+          "open_questions": [
+            "Why does he wake up as a child?",
+            "How does the AI 'merge' with him and what does that mean for how they interact?",
+            "Will his biology knowledge actually transfer to this world's magic, or is he going to have to learn a completely new system anyway?"
+          ]
+        },
+        "mechanism": {
+          "can_do": "George can learn and manipulate magic by understanding it as biology—he has both the scientific knowledge to recognize patterns in how cells generate mana, and real-time sensor feedback from the AI reading his own body's processes as he experiments.",
+          "in_the_way": "He's a child learning in an alien world, starting from zero practical knowledge of how his own body's magic production actually works, dependent on an AI companion as his only anchor to who he was.",
+          "expect_next": "A slow-burn progression fantasy where George moves through a magic academy discovering whether the biology-as-foundation premise actually delivers specific, testable rules—or whether 'biological magic' is just flavor text for a system that works like any other.",
+          "undefined_words": [],
+          "open_questions": [
+            "How does the merger with the AI work mechanically and why does only his AI come through?",
+            "What specifically are the cellular mechanisms that generate mana, and how much direct control does George have over them?",
+            "Is his background in modern biology unique in this world, or would any native scholar eventually figure out the same patterns?"
+          ]
+        }
+      }
+    }
+  ],
+  "spend": {
+    "input": 120368,
+    "output": 227854,
+    "cache_read": 2169266,
+    "cache_write": 636212,
+    "equivalent_usd": 2.749
+  },
+  "wall_seconds": 290.1
+}
