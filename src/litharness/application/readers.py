@@ -63,48 +63,64 @@ class Reader:
         )
 
 
-#: Eight readers, four a side. The two halves are written to be the same kind of person so that
-#: a difference between the lanes is not a difference in who was asked.
+#: Eight readers, four a side, and the two halves are the same four people so that a
+#: difference between the lanes is never a difference in who was asked.
+#:
+#: **Written in a reader's words and not in this repository's.** The first roster read for
+#: "a climb with rules — what the next rung costs", which is `domain/worlds.py` vocabulary
+#: put in a reader's mouth; it then reported back the same words as praise, and every number
+#: measured with it leaned toward books that talked like the schema. Nothing below is a term
+#: this system uses for its own machinery.
 READERS: tuple[Reader, ...] = (
     Reader(
-        "climber_s", STEERING,
-        "a climb with rules — what the next rung costs and what it lets somebody do",
-        "figures that move without changing what anyone can do",
-    ),
-    Reader(
-        "stranger_s", STEERING,
-        "somebody dropped into a world whose rules they work out with what they already knew",
-        "terms and ranks used as if I already knew them",
-    ),
-    Reader(
         "power_s", STEERING,
-        "watching somebody go from nobody to dangerous, and feeling each step of it",
-        "a protagonist who is already finished on page one",
+        "watching somebody go from nothing to genuinely dangerous, and getting to feel every "
+        "jump on the way",
+        "a main character who is already the strongest thing in the room on page one",
     ),
     Reader(
-        "regular_s", STEERING,
-        "a place worth coming back to and people who get better slowly enough that I see it",
-        "grimness for its own sake, or a story that skips the years it told me mattered",
+        "elsewhere_s", STEERING,
+        "getting dropped somewhere impossible and working out how it runs at the same time the "
+        "character does",
+        "names and titles thrown around like I am supposed to already know them",
     ),
     Reader(
-        "climber_m", MEASUREMENT,
-        "a climb with rules — what the next rung costs and what it lets somebody do",
-        "figures that move without changing what anyone can do",
+        "magic_s", STEERING,
+        "the magic itself — what it actually does, how strange it gets, and somebody working "
+        "out a use for it that nobody else had",
+        "a world where the magic turns out to be a job with forms to fill in",
     ),
     Reader(
-        "stranger_m", MEASUREMENT,
-        "somebody dropped into a world whose rules they work out with what they already knew",
-        "terms and ranks used as if I already knew them",
+        "binge_s", STEERING,
+        "somewhere I want to keep coming back to, people I like being around, and the next good "
+        "thing always close enough to reach",
+        "misery with nothing to look forward to, or a book that skips the part it told me to "
+        "care about",
     ),
     Reader(
         "power_m", MEASUREMENT,
-        "watching somebody go from nobody to dangerous, and feeling each step of it",
-        "a protagonist who is already finished on page one",
+        "watching somebody go from nothing to genuinely dangerous, and getting to feel every "
+        "jump on the way",
+        "a main character who is already the strongest thing in the room on page one",
     ),
     Reader(
-        "regular_m", MEASUREMENT,
-        "a place worth coming back to and people who get better slowly enough that I see it",
-        "grimness for its own sake, or a story that skips the years it told me mattered",
+        "elsewhere_m", MEASUREMENT,
+        "getting dropped somewhere impossible and working out how it runs at the same time the "
+        "character does",
+        "names and titles thrown around like I am supposed to already know them",
+    ),
+    Reader(
+        "magic_m", MEASUREMENT,
+        "the magic itself — what it actually does, how strange it gets, and somebody working "
+        "out a use for it that nobody else had",
+        "a world where the magic turns out to be a job with forms to fill in",
+    ),
+    Reader(
+        "binge_m", MEASUREMENT,
+        "somewhere I want to keep coming back to, people I like being around, and the next good "
+        "thing always close enough to reach",
+        "misery with nothing to look forward to, or a book that skips the part it told me to "
+        "care about",
     ),
 )
 

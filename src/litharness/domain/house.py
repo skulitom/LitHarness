@@ -69,6 +69,16 @@ CLARITY = (
 #: brother died. Sentence-level craft rules cannot see that, which is why the clause below is
 #: about the paragraph.
 #:
+#: **The clause was cut back on 2026-08-25, and the half that went was the half that
+#: named what numbers are *for*.** It used to read "Ranks, tallies a record would hold,
+#: quantities the world's own system keeps — those are counted, and a reader learns to
+#: watch them", which is a true thing about a drafted scene and an instruction to
+#: enumerate when what is being written is a listing. Four writers given the same brief
+#: returned nine bands, six cords, four collar grades and nineteen licensed halls, and the
+#: operator's reading was *"why the extra specific numbers"*. The prohibition below does
+#: the work this clause was added for; the affirmative list was doing other work nobody
+#: asked for.
+#:
 #: **The numbers clause is a correction of what this project meant by "numbers go up".**
 #: §113 built a countable ladder and §114 an inventory; neither said where precision may
 #: be spent, so the prose spent it on a box and a fortnight. The operator's words: *"I mean
@@ -89,9 +99,8 @@ READER = (
     "The opening shows what this book is offering: something a person could come to be able to "
     "do, and somewhere the reader has not been. A reader who reaches the end of the opening "
     "scene without seeing either has been given no reason to start another.\n"
-    "An exact number belongs to what this world counts and to nothing else. Ranks, tallies a "
-    "record would hold, quantities the world's own system keeps — those are counted, and a "
-    "reader learns to watch them. A puzzle box does not have thirty-one moves, a habit does "
+    "An exact number belongs to what this world counts and to nothing else. A puzzle box "
+    "does not have thirty-one moves, a habit does "
     "not have eleven repetitions, and a wait is not four days: exactness spent on props and "
     "durations teaches a reader that the numbers here mean nothing, which costs the numbers "
     "that do."

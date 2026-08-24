@@ -89,8 +89,14 @@ def vocabulary() -> dict[str, Any]:
         },
         "how": [
             "Everything `declare` writes is PROPOSED. `world accept` is what makes it canon.",
-            "`world check` refuses nothing; it reports. `world accept` refuses on a "
-            "contradiction unless you pass --force.",
+            "`declare` and `check` refuse nothing; they report. Building a world one record at "
+            "a time is transiently incoherent by nature, so `world accept` is the only gate, "
+            "and it refuses on a contradiction unless you pass --force.",
+            "A `--value` that is a bare number is stored as a number: `--value 34`, not "
+            "`--value \"34\"`. `reveal_scene` is only read when it is a genuine integer.",
+            "A question is two records and the pair is what makes it legal: `claim.content` "
+            "with the answer, `asks` with the question, and `reveal_scene` with the scene the "
+            "reader learns it. Declaring `asks` alone is reported until its answer lands.",
             "A capability is `entity_role capability`, then `manifests_as`, then somebody "
             "`can_do` it by --object.",
             "A ladder is a criterion, its rungs joined lowest-first by `precedes`, and "

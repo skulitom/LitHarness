@@ -1422,6 +1422,27 @@ def cmd_characters(args: argparse.Namespace) -> int:
     print(characters_mod.render(people))
     return EXIT_OK
 
+def _scalar(text: str | None) -> object:
+    """A `--value` as the type it plainly is: 34 is a number, everything else is prose.
+
+    **Written because a 317-record world had every one of its reveal scenes stored as
+    `"34"`.** argparse hands over text, the store JSON-encodes what it is given, and
+    `worlds.reveal_scenes` keeps only genuine ints — so fifteen scheduled disclosures were
+    invisible and nothing complained, because a reveal that does not parse looks exactly
+    like a reveal nobody scheduled.
+
+    Only scalars are coerced, so no sentence is at risk: `json.loads` on prose raises and
+    the text is kept. A value that really is meant to be the string `34` is written
+    `--value '\"34\"'`, which is the only case this changes and the rarer one by far.
+    """
+    if text is None:
+        return None
+    try:
+        parsed = json.loads(text)
+    except ValueError:
+        return text
+    return parsed if isinstance(parsed, int | float | bool) else text
+
 def _read_text(source: str) -> str:
     """A file's text, or stdin for `-`. The listing is prose and prose lives in files."""
     if source == "-":
@@ -1644,18 +1665,22 @@ def cmd_world(args: argparse.Namespace) -> int:
             record = worlds_domain.world_record(
                 worlds_domain.normalise_id(args.subject),
                 args.predicate,
-                value=args.value,
+                value=_scalar(args.value),
                 object_ref=(worlds_domain.normalise_id(args.object) if args.object else None),
                 order_key=args.order_key,
                 note=args.note,
             )
+            # **Warned, never refused, and that is the whole point of a staging area.**
+            # A question owes an answer, a rung owes a chain, an edge owes both ends — so
+            # an Architect building a world one record at a time is in a transiently
+            # incoherent state almost continuously. The first agent to hold these tools hit
+            # exactly that: `asks` refused because its `claim.content` had not landed yet,
+            # and it worked around the tool rather than saying what it meant, leaving a
+            # 317-record world with zero questions in it. `world accept` is the gate, and
+            # it is the gate because that is where a proposal becomes canon.
             complaints = worlds_domain.validate([*records, record])
             fresh = worlds_domain.validate(records)
             new_complaints = [c for c in complaints if c not in fresh]
-            if new_complaints:
-                for complaint in new_complaints:
-                    print(f"litharness: {complaint}", file=sys.stderr)
-                return EXIT_FAULT
             written = store.record_state_records(
                 book_id, branch_id, [record], created_at=stamp
             )
@@ -1664,12 +1689,15 @@ def cmd_world(args: argparse.Namespace) -> int:
                 "authority": record.authority.value,
                 "new": bool(written),
                 "says": state_mod.describe(record),
+                "not_yet_coherent": new_complaints,
             }
             if args.json:
                 print(json.dumps(payload, ensure_ascii=False, indent=2))
             else:
                 verb = "declared" if written else "already on record"
                 print(f"{verb}: {payload['says']}  [{record.authority.value}]")
+                for complaint in new_complaints:
+                    print(f"  ! not yet coherent: {complaint}", file=sys.stderr)
             return EXIT_OK
     finally:
         store.close()

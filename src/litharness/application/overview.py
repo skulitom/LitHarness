@@ -16,6 +16,13 @@ measurement pool, which never steers, says whether it would open chapter one.
 what this genre's reader wants, written into a prompt addressed to nobody. A cast writer who
 reads the genre knows what a hook is, and `domain/house.py` already carries the floor. Adding a
 paragraph here about what makes an overview good would rebuild the rule essay one level up.
+
+**It got shorter on 2026-08-25, and the length was the defect.** The first version asked for
+"around two hundred words" and never used the word hook. Four listings came back at 207 to 257
+words, every one of them opening on a world's administration and arriving at a person late; the
+operator's reading was that none of them had a hook in it and that none read as this genre at
+all. The listings this market actually runs are sixty to a hundred and forty words and *are*
+hooks, so asking for twice that was buying room for the throat-clearing.
 """
 
 from __future__ import annotations
@@ -30,10 +37,13 @@ REVISION_PROFILE = "writer.overview.revise.v0"
 MAX_OUTPUT_TOKENS = 4000
 
 _TASK = (
-    "You are writing the listing for a new serial: the overview a reader meets before they open "
-    "chapter one, and the only thing that decides whether they do. Write it as prose a reader "
-    "reads, not as a pitch to an editor and not as a summary of a plot. No title, no headings, "
-    "no tags, no word about the author. Around two hundred words."
+    "You are writing the listing for a new serial: the few lines a reader meets on the front "
+    "page of a serial-fiction site, and the only thing that decides whether they open chapter "
+    "one.\n"
+    "Lead with the hook. No title, no headings, no tags, no word about the author, and no "
+    "summary of the plot.\n"
+    "Sixty to a hundred and forty words. The listings that work on this market are short, and a "
+    "reader who has to be argued into a book does not open it."
 )
 
 
