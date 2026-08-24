@@ -44,9 +44,11 @@ never the target share, because the orientation rotation moves the target betwee
 rigidly positional reader scores maximal target-share variance (§94.6's second formulation
 defect).
 
-**Substrate.** The twenty fitness books (§95.9, 3,918-4,059 words each) clear `MIN_CHUNKS_FEED`
-by construction: the budget's worst case — every read spent on one slot — consumes exactly the
-13 chunks a fitness book holds at the registered chunk size. Published prose enters only behind
+**Substrate.** The twenty fitness books (§95.9, 3,918-4,059 words each) hold 11-12 chunks under
+the shared chunker — measured by the substrate report, against a first sizing whose naive
+words-over-target arithmetic predicted 13 and fit none of them — so the session is sized to the
+measured floor: entry at section 3 plus eight worst-case reads is exactly the 11 chunks the
+shortest delivered book holds. Published prose enters only behind
 the driver's `--published` stamp with the §A6 rename rails; the licensed substrate is this
 system's own un-memorised prose.
 """
@@ -93,10 +95,13 @@ SKIM_COST = 1
 
 #: Total budget, and it must be spent — spending is forced and only allocation is chosen, so
 #: stopping cannot be performed as free diligence (the 195/196 lesson, inherited from the BCR).
-#: 27 = nine full reads; chosen with `MIDSTREAM_CHUNK` so the worst case — every read on one
-#: slot — needs exactly the 13 chunks a delivered fitness book holds. A budget that could
-#: exhaust a slot would record the corpus rather than the reader.
-BUDGET_UNITS = 27
+#: 24 = eight full reads; sized with `MIDSTREAM_CHUNK` to the **measured** shelf, not the naive
+#: word arithmetic. The delivered fitness books hold 11-12 chunks under the shared chunker
+#: (the substrate report over all twenty; paragraph grouping closes a chunk past the word
+#: target, so ~3,950 words is 11-12 chunks, not 13), and the first sizing — 27 units entering
+#: at section 4 — needed 13 and could run on none of them. A budget that could exhaust a slot
+#: would record the corpus rather than the reader.
+BUDGET_UNITS = 24
 
 #: Upper bound on actions per session: every unit spent on skims.
 MAX_STEPS = BUDGET_UNITS // SKIM_COST
@@ -108,8 +113,9 @@ CHUNK_WORDS = bcr.CHUNK_WORDS
 
 #: The section (1-based) at which every slot enters the session. All four books are mid-stream
 #: and all four enter at the same depth — an asymmetric entry would confound slot with position
-#: in the book. Chunks before it are compressed into the opening recap.
-MIDSTREAM_CHUNK = 4
+#: in the book. Chunks before it are compressed into the opening recap. Three, not four: the
+#: entry depth shares the measured 11-chunk floor with the budget above.
+MIDSTREAM_CHUNK = 3
 
 #: Chunks a text must hold to sit in a feed: the mid-stream entry point plus a budget that
 #: could, in principle, be spent entirely on it in full reads. Skims never consume a section,

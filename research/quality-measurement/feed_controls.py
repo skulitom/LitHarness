@@ -52,7 +52,7 @@ import feed_core  # noqa: E402
 #: than restating it.
 CENTRE = 1.0 / feed_core.FEED_SIZE
 
-#: Full reads one session's budget buys at the registered prices: 27 units at 3 a read.
+#: Full reads one session's budget buys at the registered prices: 24 units at 3 a read.
 READS_PER_SESSION = feed_core.BUDGET_UNITS // feed_core.READ_COST
 
 # ---------------------------------------------------------------------------- the patterned readers
@@ -137,10 +137,9 @@ def simulate_share(
 ) -> float:
     """One session's **target** read share under `pattern`, deterministic in its inputs.
 
-    The registered session runs `BUDGET_UNITS // READ_COST` = 9 full reads; `reads` exists so
-    a caller can pose the question at another count (the tests pin round-robin at 8, where the
-    cycle divides evenly), and 0 or fewer answers the neutral 1/FEED_SIZE rather than dividing
-    by zero.
+    The registered session runs `BUDGET_UNITS // READ_COST` = 8 full reads; `reads` exists so
+    a caller can pose the question at another count, and 0 or fewer answers the neutral
+    1/FEED_SIZE rather than dividing by zero.
 
     How each pattern applies `bias` (0.0 = unbiased):
 

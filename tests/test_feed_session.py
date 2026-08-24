@@ -7,9 +7,9 @@ the loop asked instead of charged, an unaffordable answer retried into a cheaper
 file runs whole sessions against a scripted elicitor whose correct transcript is stated before
 anything executes, and pins what came back:
 
-1. **The budget is spent exactly and the reveals are the right sections in order.** Nine full
-   reads at registered prices consume `BUDGET_UNITS` and serve sections 5 through 13 — section
-   4 was the opening's entry reveal, so 5 is where reads begin.
+1. **The budget is spent exactly and the reveals are the right sections in order.** Eight full
+   reads at registered prices consume `BUDGET_UNITS` and serve sections 4 through 11 — section
+   3 was the opening's entry reveal, so 4 is where reads begin.
 2. **A skim previews; only a read consumes.** The same display index appears in both, the skim
    text is the deterministic extract, and a second skim buys the same preview again.
 3. **Every failure mode exits under its own name** — `invalid_action`, `unaffordable_action`,
@@ -147,21 +147,21 @@ def _run(
 # ------------------------------------------------------------------- budget and reveal sequence
 
 
-def test_nine_reads_spend_the_whole_budget_and_reveal_sections_five_through_thirteen() -> None:
-    """At registered prices nine reads cost BUDGET_UNITS exactly: the loop must stop on
-    remaining == 0 after nine actions, neither asking a tenth time nor stopping early."""
+def test_eight_reads_spend_the_whole_budget_and_reveal_sections_four_through_eleven() -> None:
+    """At registered prices eight reads cost BUDGET_UNITS exactly: the loop must stop on
+    remaining == 0 after eight actions, neither asking a ninth time nor stopping early."""
     records = [_action("read", "A")] * (feed_core.BUDGET_UNITS // feed_core.READ_COST)
     session, fake = _run(records)
-    assert session.actions == (("read", "A"),) * 9
+    assert session.actions == (("read", "A"),) * 8
     assert session.spent_units == feed_core.BUDGET_UNITS
-    assert len(fake.requests) == 9, "the loop stopped before the budget was spent"
+    assert len(fake.requests) == 8, "the loop stopped before the budget was spent"
     assert session.unanswered == 0
     assert session.exit_note == ""
     assert session.scorable
     # Request s carries as its last turn the reveal produced by action s-1. The opening showed
-    # section MIDSTREAM_CHUNK in full, so the first read serves section 5 and the ninth serves
-    # 13 — whose own reveal is never sent, because by then the budget is gone.
-    for request_number in range(1, 9):
+    # section MIDSTREAM_CHUNK in full, so the first read serves section 4 and the eighth serves
+    # 11 — whose own reveal is never sent, because by then the budget is gone.
+    for request_number in range(1, 8):
         content = fake.requests[request_number]["turns"][-1]["content"]
         assert f"Book A, section {feed_core.MIDSTREAM_CHUNK + request_number}:" in content
 
@@ -206,17 +206,17 @@ def test_two_skims_of_one_slot_preview_the_same_section_twice_and_are_counted() 
 
 
 def test_a_read_below_the_read_price_is_refused_as_unaffordable_with_one_unanswered() -> None:
-    """Eight reads and two skims leave remaining == 1 at registered prices: a scripted read
+    """Seven reads and two skims leave remaining == 1 at registered prices: a scripted read
     there ends the session as `unaffordable_action`, unanswered and not scorable. The boundary
-    itself — remaining == READ_COST admitting a read — is what the nine-read session pins."""
-    prefix = [("read", "A")] * 8 + [("skim", "A"), ("skim", "A")]
+    itself — remaining == READ_COST admitting a read — is what the eight-read session pins."""
+    prefix = [("read", "A")] * 7 + [("skim", "A"), ("skim", "A")]
     records = [_action(action, book) for action, book in prefix]
     records.append(_action("read", "A"))
     session, fake = _run(records)
     assert session.exit_note == "unaffordable_action"
     assert session.unanswered == 1
     assert not session.scorable
-    assert len(session.actions) == 10
+    assert len(session.actions) == 9
     # The ask that drew the refusal showed the true remainder: one minute left, three needed.
     final_turn = fake.requests[-1]["turns"][-1]["content"]
     assert final_turn.endswith(feed_core.TURN.format(left=1))
@@ -231,7 +231,7 @@ def test_rotation_two_puts_the_targets_entry_in_slot_c_and_reads_it_there() -> N
     session, fake = _run(_full_script([("read", "C")]), rotation=2)
     assert session.target_slot == "C"
     opening = fake.requests[0]["turns"][0]["content"][0]["text"]
-    assert "Book C, section 4:" in opening
+    assert "Book C, section 3:" in opening
     texts = _texts()
     target_entry = bcr.chunks(texts[0])[feed_core.MIDSTREAM_CHUNK - 1]
     assert target_entry in opening
@@ -323,7 +323,7 @@ def test_a_feed_with_a_fault_raises_before_any_request_is_made() -> None:
 
 
 def test_at_the_fp6_skim_price_each_skim_charges_a_full_reads_worth_of_budget() -> None:
-    """fp6 runs sessions at skim_cost == read_cost == 3: nine skims, not twenty-seven, consume
+    """fp6 runs sessions at skim_cost == read_cost == 3: eight skims, not twenty-four, consume
     BUDGET_UNITS — visible as the action count, the per-skim charge on the clock, and the
     zero-left tail. The session record carries the prices it ran at, so `spent_units`
     reports the full charge. The refit check must also stay silent here: equal
@@ -339,7 +339,7 @@ def test_at_the_fp6_skim_price_each_skim_charges_a_full_reads_worth_of_budget() 
         read_cost=feed_core.READ_COST,
         skim_cost=feed_core.READ_COST,
     )
-    assert len(session.actions) == 9
+    assert len(session.actions) == 8
     assert session.spent_units == feed_core.BUDGET_UNITS
     # After the first skim, three minutes are gone from the reader's clock.
     after_first_skim = fake.requests[1]["turns"][-1]["content"]
@@ -354,7 +354,10 @@ def test_non_default_prices_refuse_a_member_too_short_for_the_new_worst_case() -
     member; members legal at registered prices fail that refit and the session refuses before
     any call, because a slot the new budget could exhaust would record the corpus."""
     fake = ScriptedElicitor([])
-    with pytest.raises(ValueError, match=f"needs {feed_core.MIDSTREAM_CHUNK + 27} chunks"):
+    with pytest.raises(
+        ValueError,
+        match=f"needs {feed_core.MIDSTREAM_CHUNK + feed_core.BUDGET_UNITS} chunks",
+    ):
         feed_session.run_feed_session(
             fake, _feed(), model="m", rotation=0, replicate=0, read_cost=1, skim_cost=1
         )

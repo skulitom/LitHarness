@@ -8,7 +8,7 @@ file shapes and error paths — all on synthetic text, with `corpus_io.generated
 Every expected chunk count is derived by hand before anything runs: a paragraph of exactly
 `feed_core.CHUNK_WORDS` words is one `bcr.chunks` chunk (the chunker never splits a paragraph),
 so N such paragraphs are N chunks, and `MIN_CHUNKS_FEED` = MIDSTREAM_CHUNK + BUDGET_UNITS //
-READ_COST = 4 + 9 = 13 of them is the floor a full-length member sits on.
+READ_COST = 3 + 8 = 11 of them is the floor a full-length member sits on.
 
 What this file does not establish: anything about any reader, and nothing about
 `feed_core` itself — its arithmetic is pinned in `tests/test_feed_core.py`, not here.
@@ -47,8 +47,8 @@ def _book(paragraphs: int, marker: str = "w") -> str:
 
 
 def test_intact_feed_takes_the_first_three_competitors_in_the_order_given() -> None:
-    target = ("t0", _book(13, "t"))
-    competitors = [(f"c{i}", _book(13, f"c{i}")) for i in range(1, 6)]
+    target = ("t0", _book(11, "t"))
+    competitors = [(f"c{i}", _book(11, f"c{i}")) for i in range(1, 6)]
     spec = feed_substrate.intact_feed("f1", target, competitors)
     assert spec.arm == "intact"
     assert spec.target == target[1]
@@ -58,10 +58,10 @@ def test_intact_feed_takes_the_first_three_competitors_in_the_order_given() -> N
 
 
 def test_intact_feed_with_too_few_competitors_raises_naming_both_counts() -> None:
-    target = ("t0", _book(13, "t"))
+    target = ("t0", _book(11, "t"))
     with pytest.raises(ValueError, match=r"2 competitor\(s\).*needs 3"):
         feed_substrate.intact_feed(
-            "f1", target, [("c1", _book(13, "c1")), ("c2", _book(13, "c2"))]
+            "f1", target, [("c1", _book(11, "c1")), ("c2", _book(11, "c2"))]
         )
 
 
@@ -76,11 +76,11 @@ def test_intact_feed_refuses_an_empty_competitor_and_target() -> None:
     target = ("t0", "")
     with pytest.raises(ValueError, match="target text is empty"):
         feed_substrate.intact_feed(
-            "f1", target, [("c1", _book(13)), ("c2", _book(13)), ("c3", _book(13))]
+            "f1", target, [("c1", _book(11)), ("c2", _book(11)), ("c3", _book(11))]
         )
     with pytest.raises(ValueError, match="competitor c2 is empty"):
         feed_substrate.intact_feed(
-            "f1", ("t0", _book(13)), [("c1", _book(13)), ("c2", ""), ("c3", _book(13))]
+            "f1", ("t0", _book(11)), [("c1", _book(11)), ("c2", ""), ("c3", _book(11))]
         )
 
 
@@ -144,11 +144,11 @@ def test_short_texts_build_without_raising_because_fault_is_the_callers_check() 
 
 
 def test_the_report_counts_a_mixed_corpus_and_lists_its_short_members() -> None:
-    # 13 paragraphs clear exactly; 14 clear with room; 2 do not. Chunk counts derived by hand:
+    # 11 paragraphs clear exactly; 12 clear with room; 2 do not. Chunk counts derived by hand:
     # one CHUNK_WORDS-word paragraph per chunk.
     texts = {
-        "long-a": _book(13, "a"),
-        "long-b": _book(14, "b"),
+        "long-a": _book(11, "a"),
+        "long-b": _book(12, "b"),
         "short-one": _book(2, "s"),
     }
     report = feed_substrate.substrate_report(texts)
@@ -160,7 +160,7 @@ def test_the_report_counts_a_mixed_corpus_and_lists_its_short_members() -> None:
         "chunks": feed_substrate.feed_core.MIN_CHUNKS_FEED,
         "clears": True,
     }
-    assert report["per_member"]["long-b"] == {"chunks": 14, "clears": True}
+    assert report["per_member"]["long-b"] == {"chunks": 12, "clears": True}
     assert report["per_member"]["short-one"] == {"chunks": 2, "clears": False}
 
 

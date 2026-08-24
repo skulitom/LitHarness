@@ -286,22 +286,24 @@ def test_all_in_patterns_give_exactly_one_or_zero_by_target_slot() -> None:
     assert feed_controls.simulate_share("all_in_3", 2, 9, target_slot=0) == 0.0
 
 
-def test_round_robin_gives_exactly_a_quarter_at_eight_reads_and_one_third_at_nine() -> None:
-    """Pinned at the read count stated: 8 divides by the feed evenly, the registered 9 does not.
+def test_round_robin_gives_a_quarter_at_the_registered_count_and_a_third_at_nine() -> None:
+    """The registered 8 reads divide the feed evenly; an uneven 9 is pinned beside it.
 
-    At the registered session length (`BUDGET_UNITS // READ_COST` = 9 reads) slot 0 takes the
-    first, fifth and ninth read of the cycle, so its share is exactly 3/9 — the unevenness a
-    real session carries and why the attainability table simulates at 9, not at 8.
+    Renamed from test_round_robin_gives_exactly_a_quarter_at_eight_reads_and_one_third_at_nine
+    when the session was resized to the measured shelf: the registered count
+    (`BUDGET_UNITS // READ_COST` = 8) now divides FEED_SIZE exactly, so a strict rotator's
+    slot share is 0.25 from any phase; at 9 reads slot 0 takes the first, fifth and ninth of
+    the cycle — exactly 3/9 — pinning that the arithmetic tracks the count, not the constant.
     """
     eight = [
-        feed_controls.simulate_share("round_robin", index, 7, target_slot=slot, reads=8)
+        feed_controls.simulate_share(
+            "round_robin", index, 7, target_slot=slot, reads=feed_controls.READS_PER_SESSION
+        )
         for index in range(4)
         for slot in range(4)
     ]
     assert set(eight) == {0.25}
-    nine = feed_controls.simulate_share(
-        "round_robin", 0, 7, target_slot=0, reads=feed_controls.READS_PER_SESSION
-    )
+    nine = feed_controls.simulate_share("round_robin", 0, 7, target_slot=0, reads=9)
     assert nine == pytest.approx(1 / 3)
 
 

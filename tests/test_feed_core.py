@@ -154,13 +154,13 @@ def test_the_opening_block_recaps_then_reveals_the_entry_section() -> None:
     assert block.startswith("Book B, the story so far, skimmed:")
     assert f"Book B, section {feed_core.MIDSTREAM_CHUNK}:" in block
     # The recap covers the pre-entry chunks only; the entry section appears in full.
-    assert "Chunk 4 happened here. More of chunk 4 follows." in block
+    assert "Chunk 3 happened here. More of chunk 3 follows." in block
     assert "More of chunk 1 follows." not in block
 
 
 def test_a_slot_too_short_to_enter_midstream_is_refused() -> None:
     with pytest.raises(ValueError, match="mid-stream"):
-        feed_core.opening_for_slot("A", ["only", "three", "chunks"])
+        feed_core.opening_for_slot("A", ["one", "two"])
 
 
 # ---------------------------------------------------------------------------- session record
