@@ -1289,9 +1289,11 @@ def cmd_readers(args: argparse.Namespace) -> int:
 
         registry = build_default_registry()
         spend = _StageSpend()
+        # `_forge_call` adds to the stage tally AND to `run`, so they must be different
+        # objects or every call is counted twice — which it was, on the first live run.
         calls = _ForgeCalls(
             registry=registry, store=store, args=args, stamp=stamp,
-            run=spend, premise=spend, screen=spend,
+            run=_StageSpend(), premise=spend, screen=spend,
         )
 
         choices: dict[str, Any] = {}
