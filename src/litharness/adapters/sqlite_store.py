@@ -1248,6 +1248,72 @@ class SqliteStore:
 
     # -- scene summaries --------------------------------------------------------
 
+    # -- the simulated readership -------------------------------------------------------
+
+    def record_reader_read(
+        self,
+        book_id: str,
+        branch_id: str,
+        revision_id: str,
+        logical_id: str,
+        *,
+        reader_id: str,
+        pool: str,
+        created_at: str,
+        choice: str | None = None,
+        because: str | None = None,
+        hoping_for: Sequence[str] | None = None,
+        dreading: Sequence[str] | None = None,
+    ) -> bool:
+        """One reader, one version of one scene, once. False when the row already exists."""
+        with self.transaction() as connection:
+            cursor = connection.execute(
+                "INSERT OR IGNORE INTO reader_reads (book_id, branch_id, revision_id, "
+                "logical_id, reader_id, pool, choice, because, hoping_for, dreading, "
+                "created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                (
+                    book_id,
+                    branch_id,
+                    revision_id,
+                    logical_id,
+                    reader_id,
+                    pool,
+                    choice,
+                    because,
+                    json.dumps(list(hoping_for)) if hoping_for is not None else None,
+                    json.dumps(list(dreading)) if dreading is not None else None,
+                    created_at,
+                ),
+            )
+            return cursor.rowcount > 0
+
+    def reader_reads(
+        self,
+        book_id: str,
+        branch_id: str,
+        *,
+        logical_id: str | None = None,
+        pool: str | None = None,
+    ) -> list[dict[str, Any]]:
+        """Every recorded read on this branch, newest first."""
+        sql = ("SELECT * FROM reader_reads WHERE book_id = ? AND branch_id = ?")
+        params: list[Any] = [book_id, branch_id]
+        if logical_id is not None:
+            sql += " AND logical_id = ?"
+            params.append(logical_id)
+        if pool is not None:
+            sql += " AND pool = ?"
+            params.append(pool)
+        sql += " ORDER BY created_at DESC, reader_id"
+        out: list[dict[str, Any]] = []
+        for row in self._connection.execute(sql, params):
+            item = dict(row)
+            for key in ("hoping_for", "dreading"):
+                if item.get(key):
+                    item[key] = json.loads(item[key])
+            out.append(item)
+        return out
+
     def record_scene_summary(
         self,
         book_id: str,

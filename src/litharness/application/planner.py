@@ -43,6 +43,7 @@ from dataclasses import dataclass
 from datetime import UTC, datetime
 from hashlib import sha256
 
+from litharness.application import readers as readers_mod
 from litharness.application.conductor import WorkSelector
 from litharness.application.directive_planner import (
     DIRECTIVE_PLAN,
@@ -233,6 +234,28 @@ def beat_job_id(
     return f"beat-{sha256(material.encode()).hexdigest()[:24]}"
 
 
+def direction_for(store: PlanningStore, book_id: str, branch_id: str) -> str:
+    """What this book's steering readers are hoping for, as the writer reads it.
+
+    Empty for a book nobody has read, which renders nothing — the control every book
+    written before the loop existed is measured against.
+    """
+    reads = getattr(store, "reader_reads", None)
+    if reads is None:
+        return ""
+    rows = reads(book_id, branch_id, pool=readers_mod.STEERING)
+    if not rows:
+        return ""
+    answers = {
+        str(row["reader_id"]): {
+            "hoping_for": row.get("hoping_for") or [],
+            "dreading": row.get("dreading") or [],
+            "expect_next": "",
+        }
+        for row in rows
+    }
+    return readers_mod.Anticipation.of(answers).render()
+
 def render_prompt(
     beat: Beat,
     *,
@@ -248,6 +271,7 @@ def render_prompt(
     standing_line: str | None = None,
     chapter: Position | None = None,
     point_of_view: str | None = None,
+    direction: str = "",
 ) -> tuple[str, str]:
     """(system, prompt) for one beat, grounded in an assembled context packet.
 
@@ -438,6 +462,13 @@ def render_prompt(
             "something a reader sees, never something a narrator reports:\n"
             f"{criteria}"
         )
+    # **Reader direction, and it goes last on purpose (§129's ordering).** `house.CLARITY`
+    # is the floor and is already at the top of this message; everything between is a craft
+    # rule this project wrote and never validated against a reader. What the readership
+    # actually wants outranks all of it, so it is the last thing the model reads before the
+    # ask. Empty for a book nobody has read yet, which renders nothing and is the control.
+    if direction:
+        system += f"\n\n{direction}"
     title = f"{book_title}: " if book_title else ""
     # **What this scene is for, which until now was one word shared with twenty-four others.**
     # `arc_template(30)` yields 25 `rising` beats, and the line below was the whole of the
@@ -858,6 +889,9 @@ def make_plan_selector(
                     ),
                     chapter=positions.get(beat.logical_id),
                     point_of_view=pov_id,
+                    direction=direction_for(
+                        store, progress.book_id, progress.branch_id
+                    ),
                 )
                 payload: dict[str, object] = {
                     "revision_id": head.revision_id,

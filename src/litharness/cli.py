@@ -41,6 +41,7 @@ from litharness.adapters.continuity_cli import ContinuityCliRunner
 from litharness.adapters.sqlite_store import MigrationsMissing, SqliteStore, StoredEvent
 from litharness.application import architect, comprehension
 from litharness.application import export as export_module
+from litharness.application import readers as readers_mod
 from litharness.application import status as status_module
 from litharness.application.conductor import Conductor, TickOutcome
 from litharness.application.directive_planner import DIRECTIVE_PLAN, make_directive_plan_handler
@@ -1250,6 +1251,127 @@ def cmd_replan(args: argparse.Namespace) -> int:
         return EXIT_ATTENTION
     return EXIT_OK
 
+
+def cmd_readers(args: argparse.Namespace) -> int:
+    """Put the simulated readership on a drafted scene, and record what it did.
+
+    Two lanes over one chapter. The measurement pool spends a reading budget and either
+    carries on, puts it down, or comes back later; the steering pool says what it is hoping
+    happens next. Nobody is in both, so what steers the next chapter is never what measured
+    this one.
+
+    The hopes reach the writer by themselves: `planner.direction_for` reads them off this
+    store on the next draft. Nothing here writes a prompt.
+    """
+    store = _store(args)
+    stamp = _stamp(_now())
+    try:
+        book_id, branch_id = export_module.resolve_branch(store, args.book, args.branch)
+        head = store.head(book_id, branch_id)
+        if head is None:
+            print("litharness: this branch has no revision", file=sys.stderr)
+            return EXIT_FAULT
+        node = head.node(args.scene) if args.scene else None
+        if node is None:
+            drafted = [
+                item
+                for item in head.nodes
+                if item.kind is NodeKind.SCENE and (item.content or '').strip()
+            ]
+            if not drafted:
+                print("no drafted scene to read")
+                return EXIT_OK
+            node = drafted[-1]
+        chapter = (node.content or '').strip()
+        if not chapter:
+            print(f"litharness: {node.logical_id} has no prose", file=sys.stderr)
+            return EXIT_FAULT
+
+        registry = build_default_registry()
+        spend = _StageSpend()
+        calls = _ForgeCalls(
+            registry=registry, store=store, args=args, stamp=stamp,
+            run=spend, premise=spend, screen=spend,
+        )
+
+        choices: dict[str, Any] = {}
+        wishes: dict[str, Any] = {}
+        for reader in readers_mod.READERS:
+            if reader.pool == readers_mod.MEASUREMENT:
+                request = readers_mod.render_choice_request(reader, chapter)
+            else:
+                request = readers_mod.render_anticipation_request(reader, chapter)
+            result, refusal = _forge_call(request, calls=calls, spend=spend)
+            parsed = result.parsed if result is not None else None
+            if not isinstance(parsed, Mapping):
+                if refusal:
+                    print(f"  {reader.reader_id}: {refusal}", file=sys.stderr)
+                continue
+            if reader.pool == readers_mod.MEASUREMENT:
+                choices[reader.reader_id] = parsed
+                store.record_reader_read(
+                    book_id, branch_id, head.revision_id, node.logical_id,
+                    reader_id=reader.reader_id, pool=reader.pool, created_at=stamp,
+                    choice=str(parsed.get("next") or ""),
+                    because=str(parsed.get("because") or ""),
+                )
+            else:
+                wishes[reader.reader_id] = parsed
+                store.record_reader_read(
+                    book_id, branch_id, head.revision_id, node.logical_id,
+                    reader_id=reader.reader_id, pool=reader.pool, created_at=stamp,
+                    hoping_for=[str(x) for x in (parsed.get("hoping_for") or [])],
+                    dreading=[str(x) for x in (parsed.get("dreading") or [])],
+                )
+
+        reading = readers_mod.Reading.of(choices)
+        wanting = readers_mod.Anticipation.of(wishes)
+        gates = (
+            GateOutcome(
+                gate=GateKind.SHAPE,
+                rule_or_critic_id=readers_mod.CONTINUE_PROFILE,
+                passed=True,
+                blocking=False,
+                detail=(
+                    f"{node.logical_id}: {reading.carried_on} of "
+                    f"{reading.answered} carried on"
+                ),
+            ),
+        )
+        store.record_decision(
+            PolicyDecision(
+                decision_id=decision_id_for(f"read:{head.revision_id}:{node.logical_id}", 0, gates),
+                outcome=Outcome.ACCEPT,
+                gates=gates,
+                profile=readers_mod.CONTINUE_PROFILE,
+                provider=spend.provider,
+                model=spend.model,
+                invocations=spend.invocations,
+                total_tokens=spend.total_tokens,
+                cost_usd=spend.cost_usd,
+                reason="the simulated readership read one chapter; nothing here ranks or refuses",
+            ),
+            decided_at=stamp,
+        )
+    finally:
+        store.close()
+
+    print(f"{node.logical_id}")
+    print(
+        f"  carried on {reading.carried_on}/{reading.answered}"
+        f"  put down {reading.put_down}  later {reading.come_back}"
+    )
+    for reader_id, choice, because in reading.said:
+        print(f"    {reader_id}: {choice} - {because}")
+    if wanting.hoping_for:
+        print("  hoping for:")
+        for item in wanting.hoping_for:
+            print(f"    - {item}")
+    if wanting.dreading:
+        print("  would be disappointed by:")
+        for item in wanting.dreading:
+            print(f"    - {item}")
+    return EXIT_OK
 
 def cmd_characters(args: argparse.Namespace) -> int:
     """Everything canon holds about each person, one sheet each.
@@ -3425,6 +3547,14 @@ def build_parser() -> argparse.ArgumentParser:
     characters.add_argument("--book")
     characters.add_argument("--branch")
     characters.set_defaults(func=cmd_characters)
+
+    read = sub.add_parser(
+        "readers", help="put the simulated readership on a drafted scene"
+    )
+    read.add_argument("--scene", help="a scene logical id; the latest drafted one by default")
+    read.add_argument("--book")
+    read.add_argument("--branch")
+    read.set_defaults(func=cmd_readers)
 
     propagate = sub.add_parser(
         "propagate", help="what a change reaches beyond what it edits, from a ChangeSet"
