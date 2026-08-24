@@ -213,14 +213,28 @@ def render_reader_request(reader: Reader, premise: str) -> CompletionRequest:
     )
 
 
-def _quotes(value: Any) -> tuple[str, ...]:
-    """The non-empty quoted strings of one answer's list field, or empty for anything else.
+def _is_quote_list(value: Any) -> bool:
+    """Whether one answer's list field is a list of quoted strings and nothing else.
 
-    An answer that returns a bare string, a number, or `null` where a list belongs has not
-    answered the question; an empty string inside the list is not a quoted word. Neither is
-    counted as a confusion, and neither crashes the screen.
+    **Every item is checked, and the reason is that nothing upstream checks them.**
+    `providers.base.parse_schema_payload` validates required keys and top-level types, so
+    `undefined_words: [1, null]` arrives as a conforming answer. Coercing those with `str()`
+    would invent the quoted words `1` and `None`, fail the premise on them, and store them as
+    the evidence of what a reader could not follow. Refusing the answer instead fails the
+    attempt, which is the direction this instrument always fails in.
     """
     if not isinstance(value, Sequence) or isinstance(value, str | bytes):
+        return False
+    return all(isinstance(item, str) for item in value)
+
+
+def _quotes(value: Any) -> tuple[str, ...]:
+    """The non-empty quoted strings of one answer's list field. Only called on a checked list.
+
+    An empty string is not a quoted word and neither is whitespace, so neither is counted as a
+    confusion.
+    """
+    if not _is_quote_list(value):
         return ()
     return tuple(text for item in value if (text := str(item).strip()))
 
@@ -236,8 +250,7 @@ def _conforms(answer: Any) -> TypeGuard[Mapping[str, Any]]:
     if not isinstance(answer, Mapping):
         return False
     return all(
-        isinstance(answer.get(key), Sequence) and not isinstance(answer.get(key), str | bytes)
-        for key in ("undefined_words", "open_questions")
+        _is_quote_list(answer.get(key)) for key in ("undefined_words", "open_questions")
     )
 
 
@@ -245,7 +258,10 @@ def _conforms(answer: Any) -> TypeGuard[Mapping[str, Any]]:
 class ScreenResult:
     """What four readers made of one premise. A count and its evidence, never a verdict."""
 
-    #: Each reader's answer as it parsed, `None` for a reader whose answer did not conform.
+    #: Each reader's answer exactly as it parsed, in `READERS` order — `None` only where no
+    #: answer arrived at all. **An answer that is present and unreadable is kept**, because it
+    #: is the evidence of what went wrong; which readers were readable is `undefined_by_reader`,
+    #: whose keys are exactly the conforming set.
     answers: tuple[tuple[str, Mapping[str, Any] | None], ...]
     undefined_by_reader: tuple[tuple[str, tuple[str, ...]], ...]
     open_questions_by_reader: tuple[tuple[str, tuple[str, ...]], ...]

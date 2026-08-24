@@ -28,7 +28,7 @@ import uuid
 from collections import Counter
 from collections.abc import Mapping, Sequence
 from contextlib import suppress
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
@@ -3221,10 +3221,16 @@ def _screen_line(screen: Mapping[str, Any]) -> str:
         # The open questions are printed beside the pass and never against it: a pitch that
         # leaves questions it plans to answer is working.
         return f"passed (0 undefined, {questions} open question(s))"
-    silent = sorted(
+    # The readers whose answers could be read are exactly the keys of `undefined_by_reader`;
+    # everyone else either was never asked, was stopped, or answered in a shape the screen
+    # could not read. `unanswered` names the ones a ceiling or a provider stopped, which is a
+    # different fact from a garbled answer and is reported as one.
+    readable = set(screen.get("undefined_by_reader") or {})
+    stopped = dict(screen.get("unanswered") or {})
+    unreadable = sorted(
         reader_id
-        for reader_id, answer in (screen.get("answers") or {}).items()
-        if answer is None
+        for reader_id in (screen.get("readers") or [])
+        if reader_id not in readable and reader_id not in stopped
     )
     faults: list[str] = []
     if screen.get("undefined_total"):
@@ -3232,8 +3238,14 @@ def _screen_line(screen: Mapping[str, Any]) -> str:
             f"{screen['undefined_total']} undefined across "
             f"{screen['readers_confused']} reader(s)"
         )
-    if silent:
-        faults.append(f"{len(silent)} reader(s) did not answer ({', '.join(silent)})")
+    if stopped:
+        faults.append(
+            f"{len(stopped)} reader(s) were stopped ({', '.join(sorted(stopped))})"
+        )
+    if unreadable:
+        faults.append(
+            f"{len(unreadable)} reader(s) answered unreadably ({', '.join(unreadable)})"
+        )
     return "FAILED — " + ("; ".join(faults) or "the screen did not complete")
 
 
@@ -3308,6 +3320,14 @@ def _forge_call(
     comment records: two forges lost on 2026-08-23 because a failure printed a line and
     returned. A budget ceiling or a provider failure here costs one candidate its premise and
     nothing else — the forge still writes its files and still records every call it made.
+
+    The reason it returns is an **operational** one — the environment refused, nothing about
+    the work was wrong — and every caller keeps it apart from what a gate found. That is
+    `domain/failures.py`'s distinction, and the forge needs it for a different reason than the
+    Conductor does: a candidate marked "the premise never names Silas" is a fact about a
+    paragraph a model wrote, and a candidate marked "the daily budget refused the call" is a
+    fact about the day. Reading the second as the first is how a ceiling comes to look like a
+    bad forge.
     """
     provider, _ = calls.registry.resolve(request.call_class)
     verdict = budget_check(
@@ -3328,9 +3348,52 @@ def _forge_call(
     return result, ""
 
 
-def _one_premise(
-    candidate: architect.Candidate, *, calls: _ForgeCalls
-) -> tuple[str, tuple[str, ...]]:
+@dataclass(frozen=True, slots=True)
+class _PremiseAttempt:
+    """One try at a premise: the paragraph, what was wrong with it, and its screen.
+
+    Three ways to fail and they are kept apart. `refusal` is operational — no paragraph was
+    written because the environment said no. `complaints` are deterministic faults in a
+    paragraph that *was* written. `screen` is what four readers made of a paragraph that had
+    no faults. An attempt carries at most one of the three, and the bundle says which.
+    """
+
+    premise: str
+    complaints: tuple[str, ...]
+    refusal: str
+    #: The screen block, or `None` when no reader was asked.
+    screen: dict[str, Any] | None
+
+    @property
+    def usable(self) -> bool:
+        return bool(self.screen and self.screen.get("passed"))
+
+    @property
+    def read(self) -> bool:
+        """Whether four readers actually answered about this paragraph.
+
+        A block exists for an attempt whose screen never ran — it carries the reason instead
+        — so the presence of a block is not evidence that anybody read the premise.
+        `undefined_total` is written only by `ScreenResult.to_jsonable`, so it is.
+        """
+        return self.screen is not None and "undefined_total" in self.screen
+
+    @property
+    def written(self) -> bool:
+        """Whether a paragraph came back at all, faults or not."""
+        return bool(self.premise.strip())
+
+    def block(self) -> dict[str, Any]:
+        """What lands in the bundle's `screen` key for this attempt."""
+        if self.screen is not None:
+            return self.screen
+        return {
+            "passed": False,
+            "reason": self.refusal or "; ".join(self.complaints) or "no screen run",
+        }
+
+
+def _one_premise(candidate: architect.Candidate, *, calls: _ForgeCalls) -> _PremiseAttempt:
     """One premise call, and what is deterministically wrong with what came back.
 
     **The request is a pure function of the candidate and is rendered fresh every time.**
@@ -3343,57 +3406,84 @@ def _one_premise(
         architect.render_premise_request(candidate), calls=calls, spend=calls.premise
     )
     if result is None:
-        return "", (refusal,)
+        return _PremiseAttempt(premise="", complaints=(), refusal=refusal, screen=None)
     premise = result.text.strip()
-    return premise, architect.premise_complaints(premise, candidate)
+    return _PremiseAttempt(
+        premise=premise,
+        complaints=architect.premise_complaints(premise, candidate),
+        refusal="",
+        screen=None,
+    )
 
 
-def _written_premise(
-    candidate: architect.Candidate, *, calls: _ForgeCalls
-) -> tuple[str, tuple[str, ...]]:
+def _written_premise(candidate: architect.Candidate, *, calls: _ForgeCalls) -> _PremiseAttempt:
     """The premise stage for one candidate: one call, and one fresh retry if it complains."""
-    premise, complaints = _one_premise(candidate, calls=calls)
-    if not complaints:
-        return premise, complaints
+    attempt = _one_premise(candidate, calls=calls)
+    if not attempt.complaints:
+        return attempt
     return _one_premise(candidate, calls=calls)
 
 
 def _screen_of(
     premise: str, *, calls: _ForgeCalls
-) -> tuple[comprehension.ScreenResult | None, str]:
-    """Four readers on one premise, or `None` and the reason no reader was asked.
+) -> tuple[comprehension.ScreenResult | None, str, dict[str, str]]:
+    """Four readers on one premise: the result, the reason no reader was asked, the refusals.
 
-    One budget check for the batch, sized at all four calls, because four calls are what a
-    screen is: a ceiling that landed between readers would produce a part-screen, and a
-    part-screen reads like a whole one to everything downstream of it. The per-call check
-    inside `_forge_call` still runs, which is what keeps the projection honest.
+    **The four calls are priced one after another before any of them is made, and summing
+    them into one check does not do that.** `budget.projected_tokens` charges the
+    per-invocation harness tax **once**, and `budget.check` tests `invocations + 1`, not
+    `+ 4` — so a batch handed the summed prompt chars and the summed output allowance is
+    under-projected on both counters. Measured over a 1,200-character premise: the summed
+    check projects 31,343 tokens against the 103,340 the four calls actually project, and
+    against `max_invocations_per_day`'s 500 default it reserves one invocation for four.
+
+    That is not a rounding difference, because of what a part-screen costs. A ceiling landing
+    between readers leaves the attempt non-conforming — the readers who never answered did not
+    say there were no undefined words — so a premise **no reader objected to** is marked
+    screen-failed, excluded from `usable`, and refused by `--pick`, after a world call, a
+    premise call and three reader calls have been paid for. So the check walks the requests
+    against a running `Spend`, which is the only shape that can refuse *before* the first
+    reader rather than in the middle.
+
+    A provider failure can still stop a screen part-way, and that is a different fact: the
+    refusals are returned so the record can say a reader was stopped rather than that a reader
+    garbled an answer.
     """
     requests = [
         (reader, comprehension.render_reader_request(reader, premise))
         for reader in comprehension.READERS
     ]
-    provider, _ = calls.registry.resolve(comprehension.CALL_CLASS)
-    verdict = budget_check(
-        _budget(calls.args),
-        calls.spent_today(),
-        provider=provider.name,
-        prompt_chars=sum(len(request.prompt) for _, request in requests),
-        max_output_tokens=sum(request.max_output_tokens for _, request in requests),
-    )
-    if not verdict.allowed:
-        return None, f"the daily budget refused the screen: {verdict.reason}"
+    policy = _budget(calls.args)
+    spent = calls.spent_today()
+    for _, request in requests:
+        provider, _ = calls.registry.resolve(request.call_class)
+        verdict = budget_check(
+            policy,
+            spent,
+            provider=provider.name,
+            prompt_chars=len(request.prompt),
+            max_output_tokens=request.max_output_tokens,
+        )
+        if not verdict.allowed:
+            return None, f"the daily budget refused the screen: {verdict.reason}", {}
+        # The projection is deliberately an over-estimate (`projected_tokens`' own docstring),
+        # so advancing by it cannot let the ceiling be crossed by a call this loop cleared.
+        spent = spent.plus(invocations=1, tokens=verdict.projected_tokens)
     answers: dict[str, Mapping[str, Any] | None] = {}
+    refusals: dict[str, str] = {}
     for reader, request in requests:
-        result, _refusal = _forge_call(request, calls=calls, spend=calls.screen)
+        result, refusal = _forge_call(request, calls=calls, spend=calls.screen)
+        if refusal:
+            refusals[reader.reader_id] = refusal
         parsed = result.parsed if result is not None else None
         answers[reader.reader_id] = parsed if isinstance(parsed, Mapping) else None
-    return comprehension.ScreenResult.of(answers), ""
+    return comprehension.ScreenResult.of(answers), "", refusals
 
 
 def _screened_premise(
     candidate: architect.Candidate, *, calls: _ForgeCalls
-) -> tuple[str, tuple[str, ...], dict[str, Any]]:
-    """One candidate's premise, its complaints, and the screen block that goes in its bundle.
+) -> _PremiseAttempt:
+    """One candidate's premise, what was wrong with it, and the screen block for its bundle.
 
     **The whole of `plan/handoff-clarity-first.md` boundary 5 in one function.** The premise is
     written, checked deterministically, and shown to four readers; a premise that leaves any of
@@ -3406,49 +3496,66 @@ def _screened_premise(
     screen's regeneration is for a paragraph that was fine by arithmetic and unreadable to a
     reader. A candidate can therefore cost at most three premise calls and eight reader calls.
 
-    **What is carried is one paragraph and the screen of that same paragraph.** A block
-    describing a premise the bundle does not hold would be worse than no block at all, so the
-    attempts are kept together and the chosen one is the one that passed; failing that, the
-    last attempt a screen actually read; failing that, the last paragraph written.
+    **What is carried is one paragraph and the screen of that same paragraph**, and the rule is
+    written down because the obvious version of it loses work. A block describing a premise the
+    bundle does not hold is worse than no block, so attempts are kept whole; and "the last
+    attempt" would discard a paid, fault-free paragraph the moment a regeneration came back
+    empty because a ceiling landed on it. So: the attempt that passed; failing that, the last
+    attempt a screen actually read; failing that, the last attempt that produced a paragraph at
+    all. **Every attempt is recorded** in the block's `attempts`, so a regeneration that was
+    refused is visible even when the paragraph carried is the earlier one.
     """
-    #: (premise, complaints, screen block, whether four readers were actually asked)
-    attempts: list[tuple[str, tuple[str, ...], dict[str, Any], bool]] = []
-    for attempt in range(2):
+    attempts: list[_PremiseAttempt] = []
+    for attempt_index in range(2):
         # Attempt 2 is the screen's ONE fresh regeneration, and it gets no complaint retry of
         # its own: the premise stage already spent that budget on attempt 1.
-        premise, complaints = (
+        attempt = (
             _written_premise(candidate, calls=calls)
-            if attempt == 0
+            if attempt_index == 0
             else _one_premise(candidate, calls=calls)
         )
-        if complaints:
+        if attempt.complaints or attempt.refusal:
             # A paragraph that is empty, unnamed or borrowed is not worth four reader calls,
             # and the premise stage has already retried it once.
-            attempts.append(
-                (premise, complaints, {"passed": False, "reason": "; ".join(complaints)}, False)
-            )
+            attempts.append(attempt)
             break
-        screen, refusal = _screen_of(premise, calls=calls)
-        attempts.append(
-            (
-                premise,
-                (),
-                screen.to_jsonable()
-                if screen is not None
-                else {"passed": False, "reason": refusal or "no screen run"},
-                screen is not None,
-            )
+        screen, refusal, refusals = _screen_of(attempt.premise, calls=calls)
+        block = (
+            screen.to_jsonable()
+            if screen is not None
+            else {"passed": False, "reason": refusal or "no screen run"}
         )
+        if refusals:
+            # Which readers were stopped rather than unreadable. `_screen_line` reads it, and
+            # without it a ceiling and a garbled answer look identical in the record.
+            block["unanswered"] = dict(refusals)
+        attempts.append(replace(attempt, screen=block))
         if screen is not None and screen.passed:
             break
 
-    ranked = (
-        [item for item in attempts if item[2].get("passed")]
-        or [item for item in attempts if item[3]]
-        or attempts
+    chosen = next(
+        (item for item in reversed(attempts) if item.usable),
+        next(
+            (item for item in reversed(attempts) if item.read),
+            next((item for item in reversed(attempts) if item.written), attempts[-1]),
+        ),
     )
-    premise, complaints, block, _screened = ranked[-1]
-    return premise, complaints, block
+    block = chosen.block()
+    if len(attempts) > 1:
+        block = {
+            **block,
+            "attempts": [
+                {
+                    "words": len(item.premise.split()),
+                    "complaints": list(item.complaints),
+                    "refusal": item.refusal,
+                    "passed": item.usable,
+                    "carried": item is chosen,
+                }
+                for item in attempts
+            ],
+        }
+    return replace(chosen, screen=block)
 
 
 def cmd_forge(args: argparse.Namespace) -> int:
@@ -3730,9 +3837,7 @@ def cmd_forge(args: argparse.Namespace) -> int:
             premise=premise_spend,
             screen=screen_spend,
         )
-        written: list[tuple[str, tuple[str, ...], dict[str, Any]]] = [
-            _screened_premise(candidate, calls=calls) for candidate in candidates
-        ]
+        written = [_screened_premise(candidate, calls=calls) for candidate in candidates]
 
         bundles = [
             {
@@ -3745,17 +3850,23 @@ def cmd_forge(args: argparse.Namespace) -> int:
                     created_at=stamp,
                     brief=brief,
                     shape=args.shape,
-                    premise=premise,
+                    premise=attempt.premise,
                     scenes=scenes,
                 ),
                 # Beside the premise it screened, in the bundle `--pick` reads. A bundle with
                 # no `screen` key was forged before the gate existed and picks as it always
                 # did; absence keeps old behaviour, which is this repository's standing pattern
                 # for a field added to an artefact already on disk.
-                "screen": screen,
-                "premise_complaints": list(complaints),
+                "screen": attempt.block(),
+                # **Two keys because there are two kinds of fault.** A complaint is a fact
+                # about a paragraph a model wrote; a refusal is a fact about the day — a
+                # ceiling or a provider. `domain/failures.py` keeps that line for the
+                # Conductor's retry budget, and the forge keeps it so a budget ceiling never
+                # reads back as a bad premise.
+                "premise_complaints": list(attempt.complaints),
+                "premise_refusal": attempt.refusal,
             }
-            for candidate, (premise, complaints, screen) in zip(candidates, written, strict=True)
+            for candidate, attempt in zip(candidates, written, strict=True)
         ]
         # Per candidate, and **non-blocking every one of them**: a world that fails a gate is
         # information for the person choosing, not a refusal of the forge. `plan_search`'s
@@ -3861,11 +3972,17 @@ def cmd_forge(args: argparse.Namespace) -> int:
             GateOutcome(
                 gate=GateKind.SHAPE,
                 rule_or_critic_id=architect.PREMISE_PROFILE,
-                passed=not bundle["premise_complaints"],
+                passed=not bundle["premise_complaints"] and not bundle["premise_refusal"],
                 blocking=False,
+                # An operational refusal is labelled as one on the row, so a day the ceiling
+                # stopped does not read back as a day the model wrote bad premises.
                 detail=(
                     f"world {bundle['index'] + 1}: "
-                    + ("; ".join(bundle["premise_complaints"]) or "clear")
+                    + (
+                        f"not written ({bundle['premise_refusal']})"
+                        if bundle["premise_refusal"]
+                        else "; ".join(bundle["premise_complaints"]) or "clear"
+                    )
                 ),
             )
             for bundle in bundles
@@ -3947,6 +4064,8 @@ def cmd_forge(args: argparse.Namespace) -> int:
             print(f"        gate: {complaint}")
         for complaint in bundle["premise_complaints"]:
             print(f"        premise: {complaint}")
+        if bundle["premise_refusal"]:
+            print(f"        premise: NOT WRITTEN — {bundle['premise_refusal']}")
         print(f"        screen: {_screen_line(bundle['screen'])}")
         for reader_id, quoted in sorted(
             (bundle["screen"].get("undefined_by_reader") or {}).items()
@@ -3968,7 +4087,13 @@ def cmd_forge(args: argparse.Namespace) -> int:
         + (f"    ({', '.join(pickable)} passed the screen)" if pickable else "")
     )
     if not pickable:
+        # **`EXIT_ATTENTION`, and the alternative was an inconsistency worth naming.** The same
+        # daily ceiling reached one call earlier — at the world call — prints and returns
+        # `EXIT_ATTENTION`; reached during the premise or screen stages it would have exited 0
+        # with a file nobody can pick from. A forge with nothing pickable is exactly what code
+        # 1 is for: a fact a human should eventually see, and not an emergency.
         print("  No premise passed the screen. Forge again; a failed premise is not edited.")
+        return EXIT_ATTENTION
     return EXIT_OK
 
 

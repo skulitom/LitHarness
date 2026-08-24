@@ -122,6 +122,16 @@ level by the candidate count, and the count is on the record so the division is 
 `plan_search`'s judge path is not reused and is not reachable from here: there is no quality
 ordering over worlds, and inventing one would be the frame this project has buried three times.
 
+***Amended 2026-08-24: a forge is three stages of calls, and the rail is unchanged.***
+`plan/handoff-clarity-first.md` boundaries 4 and 5 split the premise out of the structured call
+— the world is data, and the paragraph a reader is pitched is written as prose by its own call —
+and put a comprehension screen between the premise and the operator: four genre readers restate
+it and quote every word they were never given, and it passes at zero. **None of that orders
+anything.** The screen refuses on a deterministic count, exactly as the world gates do; what
+survives is presented in the order it was forged; and `--pick` remains the only selection. Each
+stage records its own decision row, so §61(5)'s division still counts candidates rather than
+calls. `application/comprehension.py` and stage-0 §125.
+
 **Rail three: a palette, never a checklist.** A world may declare one system, several with
 incompatible logic, crafting-only progression, or none. The generator is told this in as many
 words, the validators never require a system to exist, and the counters report *coverage of what

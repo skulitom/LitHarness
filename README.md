@@ -662,7 +662,13 @@ Stated plainly, because a system that runs is easy to mistake for a system that 
   have a visible form, cast, creatures, places, and mysteries **with their answers recorded** —
   gates them deterministically (three second-order consequences per rule, a manifestation for
   every feature, an answer and a scene for every mystery), and then stops. No model orders them;
-  a person picks, and the pick is its own decision row. The world lands as record patterns over
+  a person picks, and the pick is its own decision row. **The premise is a second call and the
+  screen is a third.** The world call carries no reader-facing prose at all; the paragraph a
+  reader is pitched is written as prose, on its own, with the house rules and the finished world
+  as its only context; and four genre readers then restate it and quote every word they were
+  never given. A premise passes at zero such words across all four, open questions are reported
+  and never gated, a failed premise is re-forged rather than edited, and `--pick` refuses a
+  candidate that did not pass. There is no flag that skips it. The world lands as record patterns over
   the existing `StateRecord` — no migration, no new record kind — and reaches the writer as
   English rather than notation. What does not exist is any amendment surface: a world is forged
   once, before scene one. See [plan/world-architect.md](plan/world-architect.md).

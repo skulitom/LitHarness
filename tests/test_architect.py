@@ -25,7 +25,7 @@ import pytest
 
 from litharness.application import architect, comprehension
 from litharness.cli import main
-from litharness.domain import worlds
+from litharness.domain import house, worlds
 from litharness.domain.findings import DetectorInput
 from litharness.domain.integrity import detect_cardinality_violations
 from litharness.domain.promises import PROMISE_OPEN
@@ -668,6 +668,55 @@ def test_the_premise_rule_asks_for_a_pitch_rather_than_prose() -> None:
     # is about one person, so it is checked against the same list here.
     for forbidden in ("likeable", "compelling", "interesting", "hero", "succeed"):
         assert forbidden not in ask.lower(), forbidden
+
+
+def test_the_premise_call_carries_the_house_rules_the_world_and_no_schema() -> None:
+    """Every load-bearing property of the one call that writes what a reader reads.
+
+    The house rules, because `domain/house` is the single home and the paragraph a reader
+    meets first is the last place a role may skip them. The world as JSON, because the premise
+    is *about* that world and has no other context. **No schema**, because a schema here would
+    put the paragraph back inside a JSON cell, which is the thing
+    `plan/handoff-clarity-first.md` boundary 4 exists to undo. And the profile, because the
+    premise stage's spend is a separate row and a row is found by its profile.
+    """
+    request = architect.render_premise_request(candidate())
+
+    assert house.HOUSE_RULES in (request.system or "")
+    assert "You are pitching one novel" in (request.system or "")
+    assert request.schema is None
+    assert request.profile == architect.PREMISE_PROFILE
+    assert request.profile != architect.PROFILE
+    assert request.call_class == architect.CALL_CLASS
+    assert request.max_output_tokens == architect.PREMISE_MAX_OUTPUT_TOKENS
+
+    # The world, as its own record declares it: the whole answer, not a summary of it.
+    header, _, body = request.prompt.partition("\n")
+    assert header == "THE WORLD, as its own record declares it:"
+    carried = json.loads(body.rsplit("\n\n", 1)[0])
+    assert carried == world()
+    assert "premise" not in carried
+
+
+def test_the_world_schema_no_longer_asks_for_reader_facing_prose() -> None:
+    """`plan/clarity-audit-2026-08-24.md` P1, asserted where it can be checked.
+
+    The premise is the only reader-facing prose the world call ever carried, and its absence
+    from both halves of the schema is what makes every word-policing rule this module used to
+    hold unnecessary rather than merely deleted: the machinery vocabulary is no longer ambient
+    where the paragraph is written, because the paragraph is not written here.
+    """
+    assert "premise" not in architect._WORLD["required"]
+    assert "premise" not in architect._WORLD["properties"]
+    # And `worlds_from` has no opinion about it either: a world without one is not refused,
+    # and two worlds cannot collapse on an axis this answer no longer has.
+    payload = {
+        "worlds": [
+            world(),
+            world(title="Slack Water", domain="river ferry rights", geometry="cycle"),
+        ]
+    }
+    assert len(architect.worlds_from(payload, 2)) == 2
 
 
 def test_the_ladder_is_declared_furniture_rather_than_the_world_it_furnishes() -> None:

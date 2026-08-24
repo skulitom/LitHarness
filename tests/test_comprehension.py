@@ -336,14 +336,15 @@ def test_a_forge_screens_every_premise_and_says_so_in_the_file(
     assert forged["premise_spend"]["profile"] == architect.PREMISE_PROFILE
 
 
-def test_a_premise_the_readers_could_not_follow_is_re_forged_once_and_then_marked(
+def test_a_premise_the_readers_could_not_follow_is_re_forged_once(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    """One fresh regeneration, one re-screen, and no third attempt.
+    """One fresh regeneration, one re-screen, and the candidate is usable again.
 
     The regeneration is the identical ask asked again: nothing a reader quoted enters the
     prompt (§97.1), so what makes the second attempt different is the model and not the brief.
-    Here the second attempt is scripted clean, which is what a regeneration is for.
+    Here the second attempt is scripted clean, which is what a regeneration is for. What
+    happens when it is not — the candidate marked, and no third attempt — is the test below.
     """
     from litharness.providers.fake import FakeProvider
 
@@ -469,14 +470,104 @@ def test_a_premise_call_that_never_names_the_person_is_refused_before_any_reader
     assert forged["usable"] == 1
 
 
+def test_a_ceiling_that_would_land_between_readers_refuses_the_whole_screen(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """The part-screen, and what it costs when it is allowed to happen.
+
+    A screen that stops between readers leaves the attempt non-conforming — the readers who
+    never answered did not say there were no undefined words — so a premise **nobody objected
+    to** comes out marked screen-failed, uncounted in `usable`, and refused by `--pick`, after
+    a world call, a premise call and three reader calls have been paid for.
+
+    It was reachable, and by arithmetic rather than by bad luck: one `budget_check` handed the
+    four requests' summed prompt chars and summed output allowance is charged the
+    per-invocation harness tax **once** and tested against `invocations + 1`, not `+ 4`.
+    Measured over a 1,200-character premise, that batch projects 31,343 tokens where the four
+    calls actually project 103,340. The check now walks the requests against a running `Spend`,
+    so the screen refuses before the first reader or runs whole.
+
+    Here the invocation ceiling is set so that a summed check would clear and the fourth reader
+    would not: what is asserted is that **no reader was called at all**.
+    """
+    from litharness.providers.fake import FakeProvider
+
+    provider = FakeProvider()
+    # The world and four premise calls — two for the first candidate, one for the second, and
+    # one spare. No reader answer is scripted at all, so a screen that ran would raise.
+    provider.set_responses([two_worlds()] + [PREMISE] * 4)
+    registry_of(provider, monkeypatch)
+
+    out = tmp_path / "forge"
+    database = tmp_path / "screen.db"
+    assert main(["--database", str(database), "init"]) == 0
+    # One world call and one premise call fit; four readers never can.
+    assert main(
+        [
+            "--database", str(database), "--max-invocations-per-day", "4",
+            "forge", "a brief", "--k", "2", "--out", str(out), "--scenes", "8",
+        ]
+    ) == 1
+
+    forged = forged_at(out)
+    assert forged["usable"] == 0
+    assert forged["screen_spend"]["invocations"] == 0, "no reader was asked"
+    for bundle in forged["candidates"]:
+        screen = bundle["screen"]
+        assert screen["passed"] is False
+        # A refusal, named as one, and not a count of things readers could not follow.
+        assert "undefined_total" not in screen
+        assert "budget" in screen["reason"]
+    # And the premise the operator can read is still the one that was actually written: a
+    # candidate whose regeneration was refused keeps the paragraph it paid for.
+    assert forged["candidates"][0]["premise"] == PREMISE
+    assert forged["candidates"][0]["premise_complaints"] == []
+
+
+def test_a_premise_the_budget_refused_is_not_recorded_as_a_premise_the_model_got_wrong(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """`domain/failures.py`'s distinction, kept where the forge writes its record.
+
+    A candidate marked "the premise never names Silas" is a fact about a paragraph a model
+    wrote. A candidate marked "the daily budget refused the call" is a fact about the day.
+    Folding the second into the first is how a ceiling comes to read back as a bad forge —
+    on the decision row that the daily ceiling itself is computed from.
+    """
+    from litharness.providers.fake import FakeProvider
+
+    provider = FakeProvider()
+    provider.set_responses(forge_script(two_worlds(), premises=(PREMISE, PREMISE)))
+    registry_of(provider, monkeypatch)
+
+    out = tmp_path / "forge"
+    database = tmp_path / "screen.db"
+    assert main(["--database", str(database), "init"]) == 0
+    # Only the world call fits, so no premise is ever written.
+    assert main(
+        [
+            "--database", str(database), "--max-invocations-per-day", "1",
+            "forge", "a brief", "--k", "2", "--out", str(out), "--scenes", "8",
+        ]
+    ) == 1
+
+    forged = forged_at(out)
+    for bundle in forged["candidates"]:
+        assert bundle["premise"] == ""
+        # The two channels: nothing is wrong with a paragraph nobody was allowed to write.
+        assert bundle["premise_complaints"] == []
+        assert "budget" in bundle["premise_refusal"]
+    assert forged["premise_spend"]["invocations"] == 0
+
 def test_a_bundle_forged_before_the_gate_existed_picks_exactly_as_it_did(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     """Absence keeps old behaviour, which is this repository's standing pattern.
 
-    Six `forge.json` files sit in the tree with no screen key and every one of them was picked
-    from before the gate existed. A bare subscript in the pick branch would park all of them
-    over a fault none of them can be shown to have.
+    Every `forge.json` written before 2026-08-24 has no screen key — the committed baseline
+    pair among them — and a bare subscript in the pick branch would park all of them over a
+    fault none of them can be shown to have. `_picked_scene_count` states the same rule about
+    the scene width it added to the file, for the same reason.
     """
     from litharness.providers.fake import FakeProvider
 

@@ -2424,6 +2424,18 @@ def spread(candidates: Sequence[Candidate]) -> float | None:
     The comparison that *is* a distinctness reading is between the two prompt shapes, and it
     lives on the measurement side where the second forge can be paid for
     (`plan/world-architect.md` §6, M1).
+
+    **The basis changed on 2026-08-24 and a number read across that date is two numbers.**
+    This distance runs over `Candidate.rendered()`, which is the world as JSON — and the
+    premise left that JSON when it became its own call (`render_premise_request`). Every world
+    forged before that date carried ~200 words of prose into the string this measures; every
+    world forged after does not. So a spread from a new forge is **not comparable** to the
+    values already recorded for pilots 2 and 3 (`plan/serial-pilot-4.md` §5) or to M1a's
+    pre-registration in stage-0 §107, and the direction of the shift is not predictable: prose
+    is where two worlds differ most obviously and also where they share the most ordinary
+    English. Nothing is corrected here, because there is nothing to correct — the counter still
+    measures what it says it measures. What changed is the text, and a reader comparing across
+    the boundary needs to know that, which is why it is written down rather than inferred.
     """
     texts = [candidate.rendered() for candidate in candidates]
     pairs = [
@@ -2521,10 +2533,13 @@ def report(
         "criteria": worlds_mod.criteria(records),
         "cardinality_shapes": len(worlds_mod.cardinality_shapes(records)),
         # **Three facts about the declaration, and not one about the hook.** Whether this world
-        # says whose book it is, whether it says what rule does not hold for them, and whether
-        # its premise says their name — each computed off the records this candidate produced.
-        # Nothing here orders one world above another and nothing may be read as doing so; the
-        # forge still stops and a person picks (`plan/world-architect.md` §2).
+        # says whose book it is and whether it says what rule does not hold for them, both
+        # computed off the records this candidate produced — and whether the paragraph a reader
+        # will be pitched names that person, which is computed off the `premise` argument,
+        # because since 2026-08-24 the paragraph is written by a later call and is not part of
+        # this candidate at all. Nothing here orders one world above another and nothing may be
+        # read as doing so; the forge still stops and a person picks
+        # (`plan/world-architect.md` §2).
         # **Five counters about the ladder, and not one verdict about it.** How many ordinal
         # criteria carry a chain, how long each chain is, where the protagonist opens on theirs,
         # whether the printed form exists, and the inversion verbatim so the run record can be

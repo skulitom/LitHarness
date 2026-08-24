@@ -271,8 +271,16 @@ def test_every_role_that_writes_for_a_reader_carries_the_house_rules() -> None:
     assert house.CLARITY in house.HOUSE_RULES
     assert house.READER in house.HOUSE_RULES
 
-    # The forge: the world and the premise a reader meets first.
+    # **The forge writes for a reader twice, and this used to say so while it was one call.**
+    # The comment below the assertion read "the world and the premise a reader meets first"
+    # and was true while the premise was a cell of the world schema. Since T3 the premise is
+    # its own call under its own system message (`render_premise_request`), and the paragraph
+    # a reader actually meets is written under `_PREMISE_SYSTEM` — which nothing asserted:
+    # rebinding it to the same text without `with_house_rules` left the whole suite green.
+    # A source-substring scan cannot cover this one, because `architect.py` calls
+    # `house.with_house_rules(` twice and losing either leaves the substring behind.
     assert house.HOUSE_RULES in architect._SYSTEM_MESSAGE
+    assert house.HOUSE_RULES in architect._PREMISE_SYSTEM
 
     # The writer and the outline are checked at the source rather than by calling them, and the
     # weakness is stated rather than hidden: `planner.render_prompt` needs a beat and a built
