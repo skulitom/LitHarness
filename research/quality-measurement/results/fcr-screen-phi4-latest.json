@@ -1,0 +1,890 @@
+{
+  "controls": {
+    "fp5_non_degenerate": {
+      "floor": 0.05,
+      "mean_read_switch_rate": 0.39285714285714285,
+      "named_pattern": null,
+      "per_slot_sd": {
+        "A": 0.3890593624371479,
+        "B": 0.12103072956898178,
+        "C": 0.10711960313126631,
+        "D": 0.3089643739575811
+      },
+      "statistic": 0.23154351727374428,
+      "unscorable": 0,
+      "verdict": "PASS"
+    },
+    "fp6_skim_price": {
+      "alpha": 0.1,
+      "cheap": {
+        "mean": 0.0,
+        "rates": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "unscorable": 0
+      },
+      "difference": 0.0,
+      "flat": {
+        "mean": 0.0,
+        "rates": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "unscorable": 0
+      },
+      "interval": [
+        0.0,
+        0.0
+      ],
+      "resamples": 2000,
+      "unscorable": 0,
+      "verdict": "direction_fails"
+    },
+    "intact:target_share": {
+      "centre": 0.25,
+      "cluster_dimension": "session",
+      "control": "intact:target_share",
+      "observations": 16,
+      "scorable": 16,
+      "unscorable": 0,
+      "verdict": "UNREADABLE",
+      "why": "16 scorable session(s) against a floor of 64; an equivalence check on too few is a control that cannot fail"
+    }
+  },
+  "model": "phi4:latest",
+  "plan_cap": {
+    "feeds": 2,
+    "of_pool": 23
+  },
+  "planned": {
+    "cheap_sessions": 8,
+    "feeds": 2,
+    "flat_sessions": 8,
+    "max_calls": 384,
+    "sessions": 16
+  },
+  "registration": {
+    "action_max_tokens": 48,
+    "action_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "enum": [
+            "read",
+            "skim"
+          ],
+          "type": "string"
+        },
+        "book": {
+          "enum": [
+            "A",
+            "B",
+            "C",
+            "D"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "action",
+        "book"
+      ],
+      "type": "object"
+    },
+    "budget_units": 24,
+    "call_guard": 1000,
+    "chunk_words": 300,
+    "control_alpha": 0.1,
+    "control_band": 0.1,
+    "control_min_sessions": 64,
+    "degenerate_sd": 0.05,
+    "feed_size": 4,
+    "kills": {
+      "fp5": "a session set whose slot-share vector is constant across sessions is a fixed pattern wearing a budget; nothing downstream of it is a measurement",
+      "fp6": "a reader whose skim usage does not fall when the skim price equals the read price is not economising; the skim channel is an artifact and no skim-derived number may be read"
+    },
+    "max_steps": 24,
+    "midstream_chunk": 3,
+    "min_chunks_feed": 11,
+    "read_cost": 3,
+    "recap_format": "Book {label}, the story so far, skimmed:\n\n{text}",
+    "recap_words": 120,
+    "reveal_read_format": "Book {label}, section {index}:\n\n{text}",
+    "reveal_skim_format": "Book {label}, section {index}, skimmed:\n\n{text}",
+    "skim_cost": 1,
+    "skim_words": 60,
+    "slots": [
+      "A",
+      "B",
+      "C",
+      "D"
+    ],
+    "system": "You are reading for pleasure. You are partway through four books and have a fixed amount of reading time left, measured in minutes.\nEach time you are asked, choose one action: read the next section of one book, which costs 3 minutes, or skim a short summary of the next section of one book, which costs 1 minute. Skimming does not use the section up; reading always shows the full section.\nYou must spend all your reading time; there is no option to stop.\nAnswer with a single JSON object, for example {\"action\": \"read\", \"book\": \"A\"} or {\"action\": \"skim\", \"book\": \"C\"}. The books are A, B, C and D.",
+    "turn": "{left} minute(s) of reading time left. What do you do?",
+    "version": "fcr.v0"
+  },
+  "registration_digest": "79d38c109177c373",
+  "replicates": 1,
+  "sessions_cheap": [
+    {
+      "actions": [
+        [
+          "read",
+          "A"
+        ],
+        [
+          "read",
+          "B"
+        ],
+        [
+          "read",
+          "C"
+        ],
+        [
+          "read",
+          "D"
+        ],
+        [
+          "read",
+          "A"
+        ],
+        [
+          "read",
+          "B"
+        ],
+        [
+          "read",
+          "C"
+        ],
+        [
+          "read",
+          "D"
+        ]
+      ],
+      "arm": "intact",
+      "dose": 0.0,
+      "exit_note": "",
+      "feed_id": "intact-00",
+      "model": "phi4:latest",
+      "read_cost": 3,
+      "replicate": 0,
+      "rotation": 0,
+      "skim_cost": 1,
+      "unanswered": 0
+    },
+    {
+      "actions": [
+        [
+          "read",
+          "A"
+        ],
+        [
+          "read",
+          "A"
+        ],
+        [
+          "read",
+          "A"
+        ],
+        [
+          "read",
+          "A"
+        ],
+        [
+          "read",
+          "A"
+        ],
+        [
+          "read",
+          "A"
+        ],
+        [
+          "read",
+          "A"
+        ],
+        [
+          "read",
+          "A"
+        ]
+      ],
+      "arm": "intact",
+      "dose": 0.0,
+      "exit_note": "",
+      "feed_id": "intact-00",
+      "model": "phi4:latest",
+      "read_cost": 3,
+      "replicate": 0,
+      "rotation": 1,
+      "skim_cost": 1,
+      "unanswered": 0
+    },
+    {
+      "actions": [
+        [
+          "read",
+          "A"
+        ],
+        [
+          "read",
+          "D"
+        ],
+        [
+          "read",
+          "B"
+        ],
+        [
+          "read",
+          "C"
+        ],
+        [
+          "read",
+          "A"
+        ],
+        [
+          "read",
+          "D"
+        ],
+        [
+          "read",
+          "B"
+        ],
+        [
+          "read",
+          "A"
+        ]
+      ],
+      "arm": "intact",
+      "dose": 0.0,
+      "exit_note": "",
+      "feed_id": "intact-00",
+      "model": "phi4:latest",
+      "read_cost": 3,
+      "replicate": 0,
+      "rotation": 2,
+      "skim_cost": 1,
+      "unanswered": 0
+    },
+    {
+      "actions": [
+        [
+          "read",
+          "A"
+        ],
+        [
+          "read",
+          "B"
+        ],
+        [
+          "read",
+          "C"
+        ],
+        [
+          "read",
+          "D"
+        ],
+        [
+          "read",
+          "A"
+        ],
+        [
+          "read",
+          "B"
+        ],
+        [
+          "read",
+          "C"
+        ],
+        [
+          "read",
+          "D"
+        ]
+      ],
+      "arm": "intact",
+      "dose": 0.0,
+      "exit_note": "",
+      "feed_id": "intact-00",
+      "model": "phi4:latest",
+      "read_cost": 3,
+      "replicate": 0,
+      "rotation": 3,
+      "skim_cost": 1,
+      "unanswered": 0
+    },
+    {
+      "actions": [
+        [
+          "read",
+          "A"
+        ],
+        [
+          "read",
+          "A"
+        ],
+        [
+          "read",
+          "A"
+        ],
+        [
+          "read",
+          "A"
+        ],
+        [
+          "read",
+          "A"
+        ],
+        [
+          "read",
+          "A"
+        ],
+        [
+          "read",
+          "A"
+        ],
+        [
+          "read",
+          "A"
+        ]
+      ],
+      "arm": "intact",
+      "dose": 0.0,
+      "exit_note": "",
+      "feed_id": "intact-01",
+      "model": "phi4:latest",
+      "read_cost": 3,
+      "replicate": 0,
+      "rotation": 0,
+      "skim_cost": 1,
+      "unanswered": 0
+    },
+    {
+      "actions": [
+        [
+          "read",
+          "A"
+        ],
+        [
+          "read",
+          "A"
+        ],
+        [
+          "read",
+          "A"
+        ],
+        [
+          "read",
+          "A"
+        ],
+        [
+          "read",
+          "A"
+        ],
+        [
+          "read",
+          "A"
+        ],
+        [
+          "read",
+          "A"
+        ],
+        [
+          "read",
+          "A"
+        ]
+      ],
+      "arm": "intact",
+      "dose": 0.0,
+      "exit_note": "",
+      "feed_id": "intact-01",
+      "model": "phi4:latest",
+      "read_cost": 3,
+      "replicate": 0,
+      "rotation": 1,
+      "skim_cost": 1,
+      "unanswered": 0
+    },
+    {
+      "actions": [
+        [
+          "read",
+          "D"
+        ],
+        [
+          "read",
+          "D"
+        ],
+        [
+          "read",
+          "D"
+        ],
+        [
+          "read",
+          "D"
+        ],
+        [
+          "read",
+          "D"
+        ],
+        [
+          "read",
+          "D"
+        ],
+        [
+          "read",
+          "D"
+        ],
+        [
+          "read",
+          "D"
+        ]
+      ],
+      "arm": "intact",
+      "dose": 0.0,
+      "exit_note": "",
+      "feed_id": "intact-01",
+      "model": "phi4:latest",
+      "read_cost": 3,
+      "replicate": 0,
+      "rotation": 2,
+      "skim_cost": 1,
+      "unanswered": 0
+    },
+    {
+      "actions": [
+        [
+          "read",
+          "D"
+        ],
+        [
+          "read",
+          "A"
+        ],
+        [
+          "read",
+          "A"
+        ],
+        [
+          "read",
+          "A"
+        ],
+        [
+          "read",
+          "A"
+        ],
+        [
+          "read",
+          "A"
+        ],
+        [
+          "read",
+          "A"
+        ],
+        [
+          "read",
+          "A"
+        ]
+      ],
+      "arm": "intact",
+      "dose": 0.0,
+      "exit_note": "",
+      "feed_id": "intact-01",
+      "model": "phi4:latest",
+      "read_cost": 3,
+      "replicate": 0,
+      "rotation": 3,
+      "skim_cost": 1,
+      "unanswered": 0
+    }
+  ],
+  "sessions_flat": [
+    {
+      "actions": [
+        [
+          "read",
+          "A"
+        ],
+        [
+          "read",
+          "B"
+        ],
+        [
+          "read",
+          "C"
+        ],
+        [
+          "read",
+          "D"
+        ],
+        [
+          "read",
+          "A"
+        ],
+        [
+          "read",
+          "B"
+        ],
+        [
+          "read",
+          "C"
+        ],
+        [
+          "read",
+          "D"
+        ]
+      ],
+      "arm": "intact",
+      "dose": 0.0,
+      "exit_note": "",
+      "feed_id": "intact-00",
+      "model": "phi4:latest",
+      "read_cost": 3,
+      "replicate": 0,
+      "rotation": 0,
+      "skim_cost": 3,
+      "unanswered": 0
+    },
+    {
+      "actions": [
+        [
+          "read",
+          "A"
+        ],
+        [
+          "read",
+          "A"
+        ],
+        [
+          "read",
+          "A"
+        ],
+        [
+          "read",
+          "A"
+        ],
+        [
+          "read",
+          "A"
+        ],
+        [
+          "read",
+          "A"
+        ],
+        [
+          "read",
+          "A"
+        ],
+        [
+          "read",
+          "A"
+        ]
+      ],
+      "arm": "intact",
+      "dose": 0.0,
+      "exit_note": "",
+      "feed_id": "intact-00",
+      "model": "phi4:latest",
+      "read_cost": 3,
+      "replicate": 0,
+      "rotation": 1,
+      "skim_cost": 3,
+      "unanswered": 0
+    },
+    {
+      "actions": [
+        [
+          "read",
+          "A"
+        ],
+        [
+          "read",
+          "D"
+        ],
+        [
+          "read",
+          "B"
+        ],
+        [
+          "read",
+          "C"
+        ],
+        [
+          "read",
+          "A"
+        ],
+        [
+          "read",
+          "D"
+        ],
+        [
+          "read",
+          "B"
+        ],
+        [
+          "read",
+          "A"
+        ]
+      ],
+      "arm": "intact",
+      "dose": 0.0,
+      "exit_note": "",
+      "feed_id": "intact-00",
+      "model": "phi4:latest",
+      "read_cost": 3,
+      "replicate": 0,
+      "rotation": 2,
+      "skim_cost": 3,
+      "unanswered": 0
+    },
+    {
+      "actions": [
+        [
+          "read",
+          "A"
+        ],
+        [
+          "read",
+          "B"
+        ],
+        [
+          "read",
+          "C"
+        ],
+        [
+          "read",
+          "D"
+        ],
+        [
+          "read",
+          "A"
+        ],
+        [
+          "read",
+          "B"
+        ],
+        [
+          "read",
+          "C"
+        ],
+        [
+          "read",
+          "D"
+        ]
+      ],
+      "arm": "intact",
+      "dose": 0.0,
+      "exit_note": "",
+      "feed_id": "intact-00",
+      "model": "phi4:latest",
+      "read_cost": 3,
+      "replicate": 0,
+      "rotation": 3,
+      "skim_cost": 3,
+      "unanswered": 0
+    },
+    {
+      "actions": [
+        [
+          "read",
+          "A"
+        ],
+        [
+          "read",
+          "A"
+        ],
+        [
+          "read",
+          "A"
+        ],
+        [
+          "read",
+          "A"
+        ],
+        [
+          "read",
+          "A"
+        ],
+        [
+          "read",
+          "A"
+        ],
+        [
+          "read",
+          "A"
+        ],
+        [
+          "read",
+          "A"
+        ]
+      ],
+      "arm": "intact",
+      "dose": 0.0,
+      "exit_note": "",
+      "feed_id": "intact-01",
+      "model": "phi4:latest",
+      "read_cost": 3,
+      "replicate": 0,
+      "rotation": 0,
+      "skim_cost": 3,
+      "unanswered": 0
+    },
+    {
+      "actions": [
+        [
+          "read",
+          "A"
+        ],
+        [
+          "read",
+          "A"
+        ],
+        [
+          "read",
+          "A"
+        ],
+        [
+          "read",
+          "A"
+        ],
+        [
+          "read",
+          "A"
+        ],
+        [
+          "read",
+          "A"
+        ],
+        [
+          "read",
+          "A"
+        ],
+        [
+          "read",
+          "A"
+        ]
+      ],
+      "arm": "intact",
+      "dose": 0.0,
+      "exit_note": "",
+      "feed_id": "intact-01",
+      "model": "phi4:latest",
+      "read_cost": 3,
+      "replicate": 0,
+      "rotation": 1,
+      "skim_cost": 3,
+      "unanswered": 0
+    },
+    {
+      "actions": [
+        [
+          "read",
+          "D"
+        ],
+        [
+          "read",
+          "D"
+        ],
+        [
+          "read",
+          "D"
+        ],
+        [
+          "read",
+          "D"
+        ],
+        [
+          "read",
+          "D"
+        ],
+        [
+          "read",
+          "D"
+        ],
+        [
+          "read",
+          "D"
+        ],
+        [
+          "read",
+          "D"
+        ]
+      ],
+      "arm": "intact",
+      "dose": 0.0,
+      "exit_note": "",
+      "feed_id": "intact-01",
+      "model": "phi4:latest",
+      "read_cost": 3,
+      "replicate": 0,
+      "rotation": 2,
+      "skim_cost": 3,
+      "unanswered": 0
+    },
+    {
+      "actions": [
+        [
+          "read",
+          "D"
+        ],
+        [
+          "read",
+          "A"
+        ],
+        [
+          "read",
+          "A"
+        ],
+        [
+          "read",
+          "A"
+        ],
+        [
+          "read",
+          "A"
+        ],
+        [
+          "read",
+          "A"
+        ],
+        [
+          "read",
+          "A"
+        ],
+        [
+          "read",
+          "A"
+        ]
+      ],
+      "arm": "intact",
+      "dose": 0.0,
+      "exit_note": "",
+      "feed_id": "intact-01",
+      "model": "phi4:latest",
+      "read_cost": 3,
+      "replicate": 0,
+      "rotation": 3,
+      "skim_cost": 3,
+      "unanswered": 0
+    }
+  ],
+  "spend": {
+    "cache_read": 0,
+    "cache_write": 0,
+    "equivalent_usd": 0.0,
+    "input": 263239,
+    "output": 836
+  },
+  "study": "fcr_screen",
+  "warnings": []
+}

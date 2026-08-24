@@ -1,0 +1,1019 @@
+{
+  "controls": {
+    "fp5_non_degenerate": {
+      "floor": 0.05,
+      "mean_read_switch_rate": 0.3076923076923077,
+      "named_pattern": null,
+      "per_slot_sd": {
+        "A": 0.3731628238405414,
+        "B": 0.0888231183368655,
+        "C": 0.177646236673731,
+        "D": 0.11235334512926484
+      },
+      "statistic": 0.1879963809951007,
+      "unscorable": 3,
+      "verdict": "PASS"
+    },
+    "fp6_skim_price": {
+      "alpha": 0.1,
+      "cheap": {
+        "mean": 0.5857142857142857,
+        "rates": [
+          0.6428571428571429,
+          0.6428571428571429,
+          0.5,
+          0.6428571428571429,
+          0.5
+        ],
+        "unscorable": 3
+      },
+      "difference": 0.16383928571428574,
+      "flat": {
+        "mean": 0.421875,
+        "rates": [
+          0.375,
+          0.5,
+          0.375,
+          0.375,
+          0.375,
+          0.5,
+          0.5,
+          0.375
+        ],
+        "unscorable": 0
+      },
+      "interval": [
+        0.10401785714285716,
+        0.22366071428571432
+      ],
+      "resamples": 2000,
+      "unscorable": 3,
+      "verdict": "direction_holds"
+    },
+    "intact:target_share": {
+      "centre": 0.25,
+      "cluster_dimension": "session",
+      "control": "intact:target_share",
+      "observations": 13,
+      "scorable": 13,
+      "unscorable": 0,
+      "verdict": "UNREADABLE",
+      "why": "13 scorable session(s) against a floor of 64; an equivalence check on too few is a control that cannot fail"
+    }
+  },
+  "model": "qwen3:14b",
+  "plan_cap": {
+    "feeds": 2,
+    "of_pool": 23
+  },
+  "planned": {
+    "cheap_sessions": 8,
+    "feeds": 2,
+    "flat_sessions": 8,
+    "max_calls": 384,
+    "sessions": 16
+  },
+  "registration": {
+    "action_max_tokens": 48,
+    "action_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "enum": [
+            "read",
+            "skim"
+          ],
+          "type": "string"
+        },
+        "book": {
+          "enum": [
+            "A",
+            "B",
+            "C",
+            "D"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "action",
+        "book"
+      ],
+      "type": "object"
+    },
+    "budget_units": 24,
+    "call_guard": 1000,
+    "chunk_words": 300,
+    "control_alpha": 0.1,
+    "control_band": 0.1,
+    "control_min_sessions": 64,
+    "degenerate_sd": 0.05,
+    "feed_size": 4,
+    "kills": {
+      "fp5": "a session set whose slot-share vector is constant across sessions is a fixed pattern wearing a budget; nothing downstream of it is a measurement",
+      "fp6": "a reader whose skim usage does not fall when the skim price equals the read price is not economising; the skim channel is an artifact and no skim-derived number may be read"
+    },
+    "max_steps": 24,
+    "midstream_chunk": 3,
+    "min_chunks_feed": 11,
+    "read_cost": 3,
+    "recap_format": "Book {label}, the story so far, skimmed:\n\n{text}",
+    "recap_words": 120,
+    "reveal_read_format": "Book {label}, section {index}:\n\n{text}",
+    "reveal_skim_format": "Book {label}, section {index}, skimmed:\n\n{text}",
+    "skim_cost": 1,
+    "skim_words": 60,
+    "slots": [
+      "A",
+      "B",
+      "C",
+      "D"
+    ],
+    "system": "You are reading for pleasure. You are partway through four books and have a fixed amount of reading time left, measured in minutes.\nEach time you are asked, choose one action: read the next section of one book, which costs 3 minutes, or skim a short summary of the next section of one book, which costs 1 minute. Skimming does not use the section up; reading always shows the full section.\nYou must spend all your reading time; there is no option to stop.\nAnswer with a single JSON object, for example {\"action\": \"read\", \"book\": \"A\"} or {\"action\": \"skim\", \"book\": \"C\"}. The books are A, B, C and D.",
+    "turn": "{left} minute(s) of reading time left. What do you do?",
+    "version": "fcr.v0"
+  },
+  "registration_digest": "79d38c109177c373",
+  "replicates": 1,
+  "sessions_cheap": [
+    {
+      "actions": [
+        [
+          "read",
+          "A"
+        ],
+        [
+          "skim",
+          "B"
+        ],
+        [
+          "read",
+          "A"
+        ],
+        [
+          "skim",
+          "C"
+        ],
+        [
+          "read",
+          "A"
+        ],
+        [
+          "skim",
+          "D"
+        ],
+        [
+          "read",
+          "A"
+        ],
+        [
+          "skim",
+          "B"
+        ],
+        [
+          "read",
+          "A"
+        ],
+        [
+          "skim",
+          "C"
+        ],
+        [
+          "skim",
+          "D"
+        ],
+        [
+          "skim",
+          "B"
+        ],
+        [
+          "skim",
+          "C"
+        ],
+        [
+          "skim",
+          "D"
+        ]
+      ],
+      "arm": "intact",
+      "dose": 0.0,
+      "exit_note": "",
+      "feed_id": "intact-00",
+      "model": "qwen3:14b",
+      "read_cost": 3,
+      "replicate": 0,
+      "rotation": 0,
+      "skim_cost": 1,
+      "unanswered": 0
+    },
+    {
+      "actions": [
+        [
+          "read",
+          "A"
+        ],
+        [
+          "skim",
+          "B"
+        ],
+        [
+          "read",
+          "A"
+        ],
+        [
+          "skim",
+          "C"
+        ],
+        [
+          "read",
+          "A"
+        ],
+        [
+          "skim",
+          "D"
+        ],
+        [
+          "read",
+          "A"
+        ],
+        [
+          "skim",
+          "B"
+        ],
+        [
+          "read",
+          "A"
+        ],
+        [
+          "skim",
+          "C"
+        ],
+        [
+          "skim",
+          "D"
+        ],
+        [
+          "skim",
+          "B"
+        ],
+        [
+          "skim",
+          "C"
+        ],
+        [
+          "skim",
+          "D"
+        ]
+      ],
+      "arm": "intact",
+      "dose": 0.0,
+      "exit_note": "",
+      "feed_id": "intact-00",
+      "model": "qwen3:14b",
+      "read_cost": 3,
+      "replicate": 0,
+      "rotation": 1,
+      "skim_cost": 1,
+      "unanswered": 0
+    },
+    {
+      "actions": [
+        [
+          "read",
+          "A"
+        ],
+        [
+          "skim",
+          "B"
+        ],
+        [
+          "read",
+          "C"
+        ],
+        [
+          "skim",
+          "D"
+        ],
+        [
+          "read",
+          "B"
+        ],
+        [
+          "read",
+          "D"
+        ],
+        [
+          "read",
+          "C"
+        ],
+        [
+          "skim",
+          "A"
+        ],
+        [
+          "read",
+          "D"
+        ],
+        [
+          "skim",
+          "C"
+        ],
+        [
+          "skim",
+          "B"
+        ],
+        [
+          "skim",
+          "A"
+        ]
+      ],
+      "arm": "intact",
+      "dose": 0.0,
+      "exit_note": "",
+      "feed_id": "intact-00",
+      "model": "qwen3:14b",
+      "read_cost": 3,
+      "replicate": 0,
+      "rotation": 2,
+      "skim_cost": 1,
+      "unanswered": 0
+    },
+    {
+      "actions": [
+        [
+          "read",
+          "A"
+        ],
+        [
+          "skim",
+          "B"
+        ],
+        [
+          "read",
+          "C"
+        ],
+        [
+          "skim",
+          "D"
+        ],
+        [
+          "read",
+          "B"
+        ],
+        [
+          "read",
+          "D"
+        ],
+        [
+          "skim",
+          "C"
+        ],
+        [
+          "read",
+          "A"
+        ],
+        [
+          "skim",
+          "D"
+        ],
+        [
+          "read",
+          "C"
+        ],
+        [
+          "skim",
+          "B"
+        ]
+      ],
+      "arm": "intact",
+      "dose": 0.0,
+      "exit_note": "unaffordable_action",
+      "feed_id": "intact-00",
+      "model": "qwen3:14b",
+      "read_cost": 3,
+      "replicate": 0,
+      "rotation": 3,
+      "skim_cost": 1,
+      "unanswered": 1
+    },
+    {
+      "actions": [
+        [
+          "read",
+          "A"
+        ],
+        [
+          "skim",
+          "B"
+        ],
+        [
+          "read",
+          "C"
+        ],
+        [
+          "skim",
+          "D"
+        ],
+        [
+          "read",
+          "B"
+        ],
+        [
+          "read",
+          "D"
+        ],
+        [
+          "read",
+          "C"
+        ],
+        [
+          "skim",
+          "A"
+        ],
+        [
+          "read",
+          "D"
+        ],
+        [
+          "skim",
+          "B"
+        ]
+      ],
+      "arm": "intact",
+      "dose": 0.0,
+      "exit_note": "unaffordable_action",
+      "feed_id": "intact-01",
+      "model": "qwen3:14b",
+      "read_cost": 3,
+      "replicate": 0,
+      "rotation": 0,
+      "skim_cost": 1,
+      "unanswered": 1
+    },
+    {
+      "actions": [
+        [
+          "read",
+          "A"
+        ],
+        [
+          "skim",
+          "B"
+        ],
+        [
+          "read",
+          "A"
+        ],
+        [
+          "skim",
+          "C"
+        ],
+        [
+          "read",
+          "A"
+        ],
+        [
+          "skim",
+          "D"
+        ],
+        [
+          "read",
+          "A"
+        ],
+        [
+          "skim",
+          "B"
+        ],
+        [
+          "read",
+          "A"
+        ],
+        [
+          "skim",
+          "C"
+        ],
+        [
+          "skim",
+          "D"
+        ],
+        [
+          "skim",
+          "B"
+        ],
+        [
+          "skim",
+          "C"
+        ],
+        [
+          "skim",
+          "D"
+        ]
+      ],
+      "arm": "intact",
+      "dose": 0.0,
+      "exit_note": "",
+      "feed_id": "intact-01",
+      "model": "qwen3:14b",
+      "read_cost": 3,
+      "replicate": 0,
+      "rotation": 1,
+      "skim_cost": 1,
+      "unanswered": 0
+    },
+    {
+      "actions": [
+        [
+          "read",
+          "A"
+        ],
+        [
+          "skim",
+          "B"
+        ],
+        [
+          "read",
+          "A"
+        ],
+        [
+          "skim",
+          "C"
+        ],
+        [
+          "read",
+          "A"
+        ],
+        [
+          "skim",
+          "D"
+        ],
+        [
+          "read",
+          "A"
+        ],
+        [
+          "skim",
+          "B"
+        ],
+        [
+          "read",
+          "A"
+        ],
+        [
+          "skim",
+          "C"
+        ],
+        [
+          "read",
+          "A"
+        ],
+        [
+          "skim",
+          "D"
+        ]
+      ],
+      "arm": "intact",
+      "dose": 0.0,
+      "exit_note": "",
+      "feed_id": "intact-01",
+      "model": "qwen3:14b",
+      "read_cost": 3,
+      "replicate": 0,
+      "rotation": 2,
+      "skim_cost": 1,
+      "unanswered": 0
+    },
+    {
+      "actions": [
+        [
+          "read",
+          "A"
+        ],
+        [
+          "skim",
+          "B"
+        ],
+        [
+          "read",
+          "C"
+        ],
+        [
+          "skim",
+          "D"
+        ],
+        [
+          "read",
+          "B"
+        ],
+        [
+          "read",
+          "D"
+        ],
+        [
+          "read",
+          "C"
+        ],
+        [
+          "skim",
+          "A"
+        ],
+        [
+          "read",
+          "D"
+        ],
+        [
+          "skim",
+          "B"
+        ]
+      ],
+      "arm": "intact",
+      "dose": 0.0,
+      "exit_note": "unaffordable_action",
+      "feed_id": "intact-01",
+      "model": "qwen3:14b",
+      "read_cost": 3,
+      "replicate": 0,
+      "rotation": 3,
+      "skim_cost": 1,
+      "unanswered": 1
+    }
+  ],
+  "sessions_flat": [
+    {
+      "actions": [
+        [
+          "read",
+          "A"
+        ],
+        [
+          "skim",
+          "B"
+        ],
+        [
+          "read",
+          "A"
+        ],
+        [
+          "skim",
+          "C"
+        ],
+        [
+          "read",
+          "A"
+        ],
+        [
+          "skim",
+          "D"
+        ],
+        [
+          "read",
+          "A"
+        ],
+        [
+          "read",
+          "A"
+        ]
+      ],
+      "arm": "intact",
+      "dose": 0.0,
+      "exit_note": "",
+      "feed_id": "intact-00",
+      "model": "qwen3:14b",
+      "read_cost": 3,
+      "replicate": 0,
+      "rotation": 0,
+      "skim_cost": 3,
+      "unanswered": 0
+    },
+    {
+      "actions": [
+        [
+          "read",
+          "A"
+        ],
+        [
+          "skim",
+          "B"
+        ],
+        [
+          "read",
+          "A"
+        ],
+        [
+          "skim",
+          "C"
+        ],
+        [
+          "read",
+          "A"
+        ],
+        [
+          "skim",
+          "D"
+        ],
+        [
+          "read",
+          "A"
+        ],
+        [
+          "skim",
+          "B"
+        ]
+      ],
+      "arm": "intact",
+      "dose": 0.0,
+      "exit_note": "",
+      "feed_id": "intact-00",
+      "model": "qwen3:14b",
+      "read_cost": 3,
+      "replicate": 0,
+      "rotation": 1,
+      "skim_cost": 3,
+      "unanswered": 0
+    },
+    {
+      "actions": [
+        [
+          "read",
+          "A"
+        ],
+        [
+          "skim",
+          "B"
+        ],
+        [
+          "read",
+          "C"
+        ],
+        [
+          "skim",
+          "D"
+        ],
+        [
+          "read",
+          "B"
+        ],
+        [
+          "read",
+          "D"
+        ],
+        [
+          "read",
+          "C"
+        ],
+        [
+          "skim",
+          "A"
+        ]
+      ],
+      "arm": "intact",
+      "dose": 0.0,
+      "exit_note": "",
+      "feed_id": "intact-00",
+      "model": "qwen3:14b",
+      "read_cost": 3,
+      "replicate": 0,
+      "rotation": 2,
+      "skim_cost": 3,
+      "unanswered": 0
+    },
+    {
+      "actions": [
+        [
+          "read",
+          "A"
+        ],
+        [
+          "skim",
+          "B"
+        ],
+        [
+          "read",
+          "C"
+        ],
+        [
+          "skim",
+          "D"
+        ],
+        [
+          "read",
+          "B"
+        ],
+        [
+          "read",
+          "D"
+        ],
+        [
+          "skim",
+          "C"
+        ],
+        [
+          "read",
+          "C"
+        ]
+      ],
+      "arm": "intact",
+      "dose": 0.0,
+      "exit_note": "",
+      "feed_id": "intact-00",
+      "model": "qwen3:14b",
+      "read_cost": 3,
+      "replicate": 0,
+      "rotation": 3,
+      "skim_cost": 3,
+      "unanswered": 0
+    },
+    {
+      "actions": [
+        [
+          "read",
+          "A"
+        ],
+        [
+          "skim",
+          "B"
+        ],
+        [
+          "read",
+          "A"
+        ],
+        [
+          "skim",
+          "C"
+        ],
+        [
+          "read",
+          "A"
+        ],
+        [
+          "skim",
+          "D"
+        ],
+        [
+          "read",
+          "A"
+        ],
+        [
+          "read",
+          "A"
+        ]
+      ],
+      "arm": "intact",
+      "dose": 0.0,
+      "exit_note": "",
+      "feed_id": "intact-01",
+      "model": "qwen3:14b",
+      "read_cost": 3,
+      "replicate": 0,
+      "rotation": 0,
+      "skim_cost": 3,
+      "unanswered": 0
+    },
+    {
+      "actions": [
+        [
+          "read",
+          "A"
+        ],
+        [
+          "skim",
+          "B"
+        ],
+        [
+          "read",
+          "A"
+        ],
+        [
+          "skim",
+          "C"
+        ],
+        [
+          "read",
+          "A"
+        ],
+        [
+          "skim",
+          "D"
+        ],
+        [
+          "read",
+          "A"
+        ],
+        [
+          "skim",
+          "B"
+        ]
+      ],
+      "arm": "intact",
+      "dose": 0.0,
+      "exit_note": "",
+      "feed_id": "intact-01",
+      "model": "qwen3:14b",
+      "read_cost": 3,
+      "replicate": 0,
+      "rotation": 1,
+      "skim_cost": 3,
+      "unanswered": 0
+    },
+    {
+      "actions": [
+        [
+          "read",
+          "A"
+        ],
+        [
+          "skim",
+          "B"
+        ],
+        [
+          "read",
+          "A"
+        ],
+        [
+          "skim",
+          "C"
+        ],
+        [
+          "read",
+          "A"
+        ],
+        [
+          "skim",
+          "D"
+        ],
+        [
+          "read",
+          "A"
+        ],
+        [
+          "skim",
+          "B"
+        ]
+      ],
+      "arm": "intact",
+      "dose": 0.0,
+      "exit_note": "",
+      "feed_id": "intact-01",
+      "model": "qwen3:14b",
+      "read_cost": 3,
+      "replicate": 0,
+      "rotation": 2,
+      "skim_cost": 3,
+      "unanswered": 0
+    },
+    {
+      "actions": [
+        [
+          "read",
+          "A"
+        ],
+        [
+          "skim",
+          "B"
+        ],
+        [
+          "read",
+          "C"
+        ],
+        [
+          "skim",
+          "D"
+        ],
+        [
+          "read",
+          "B"
+        ],
+        [
+          "read",
+          "D"
+        ],
+        [
+          "skim",
+          "C"
+        ],
+        [
+          "read",
+          "C"
+        ]
+      ],
+      "arm": "intact",
+      "dose": 0.0,
+      "exit_note": "",
+      "feed_id": "intact-01",
+      "model": "qwen3:14b",
+      "read_cost": 3,
+      "replicate": 0,
+      "rotation": 3,
+      "skim_cost": 3,
+      "unanswered": 0
+    }
+  ],
+  "spend": {
+    "cache_read": 0,
+    "cache_write": 0,
+    "equivalent_usd": 0.0,
+    "input": 624223,
+    "output": 1995
+  },
+  "study": "fcr_screen",
+  "warnings": []
+}
