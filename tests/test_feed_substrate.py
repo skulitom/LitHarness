@@ -259,3 +259,42 @@ def test_fitness_texts_over_a_directory_with_no_databases_returns_an_empty_list(
     monkeypatch.setattr(feed_substrate.corpus_io, "generated_scenes", lambda db, **_: [])
     assert feed_substrate.fitness_texts(empty) == []
 
+
+def test_fitness_texts_takes_the_largest_book_from_a_store_holding_two(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """A failed driver attempt can leave a second book in a database; the export layer then
+    refuses without --book (measured on the delivered shelf; fitness_books.word_count's
+    docstring records it). A shelf member is one book: the largest single one is the member."""
+    directory = tmp_path / "fitness"
+    directory.mkdir()
+    (directory / "fitness-07.db").write_text("stub", encoding="utf-8")
+    big = "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"
+    big_branch = "bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"
+    small = "cccccccc-cccc-cccc-cccc-cccccccccccc"
+    small_branch = "dddddddd-dddd-dddd-dddd-dddddddddddd"
+
+    def fake_generated_scenes(
+        database: Path, *, book: str | None = None, branch: str | None = None, **_: object
+    ) -> list[corpus_io.Unit]:
+        if book is None:
+            lines = [
+                "2 branches match; name one with --book and --branch:",
+                f"  --book {big} --branch {big_branch}",
+                f"  --book {small} --branch {small_branch}",
+            ]
+            raise ValueError(chr(10).join(lines))
+        words = "many words here indeed truly" if book == big else "few"
+        return [
+            corpus_io.Unit(
+                unit_id=f"gen:{book}:s1",
+                source="generated",
+                text=words,
+                position=1,
+                work_id=book,
+            )
+        ]
+
+    monkeypatch.setattr(feed_substrate.corpus_io, "generated_scenes", fake_generated_scenes)
+    texts = feed_substrate.fitness_texts(directory)
+    assert texts == [("fitness-07", "many words here indeed truly")]

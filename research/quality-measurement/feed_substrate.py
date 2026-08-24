@@ -28,6 +28,7 @@ is the composition root; nothing here decides what runs.
 from __future__ import annotations
 
 import json
+import re
 import sys
 from collections.abc import Mapping, Sequence
 from pathlib import Path
@@ -69,6 +70,32 @@ def load_scene_texts(path: Path) -> dict[str, str]:
     return {str(scene["unit_id"]): str(scene["text"]) for scene in payload["scenes"]}
 
 
+_BOOK_BRANCH = re.compile(r"--book ([0-9a-f-]{36}) --branch ([0-9a-f-]{36})")
+
+
+def _member_units(path: Path) -> list[corpus_io.Unit]:
+    """One book's scenes from a database that may hold more than one book.
+
+    Measured on the delivered shelf (`fitness_books.word_count`'s docstring records it first):
+    a failed driver attempt can leave a second book behind in a store, and the export layer
+    then refuses without `--book`, naming the candidates. A shelf member is one book, so the
+    member is the **largest single one** — the same rule the delivery driver used to count
+    words, applied here to the prose itself. Deterministic for a fixed store; the bare-call
+    fast path stays exactly `generated_scenes(path)` for the nineteen single-book stores.
+    """
+    try:
+        return corpus_io.generated_scenes(path)
+    except ValueError as error:
+        pairs = _BOOK_BRANCH.findall(str(error))
+        if not pairs:
+            raise
+        candidates = [
+            corpus_io.generated_scenes(path, book=book, branch=branch)
+            for book, branch in pairs
+        ]
+        return max(candidates, key=lambda units: sum(len(unit.text.split()) for unit in units))
+
+
 def fitness_texts(directory: Path) -> list[tuple[str, str]]:
     """One `(name, text)` per `fitness-*.db`, sorted by filename; text is the joined draft.
 
@@ -81,7 +108,7 @@ def fitness_texts(directory: Path) -> list[tuple[str, str]]:
         raise FileNotFoundError(f"no fitness database directory at {directory}")
     out: list[tuple[str, str]] = []
     for path in sorted(directory.glob("fitness-*.db")):
-        units = corpus_io.generated_scenes(path)
+        units = _member_units(path)
         out.append((path.stem, "\n\n".join(unit.text for unit in units)))
     return out
 
