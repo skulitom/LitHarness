@@ -18,7 +18,7 @@ from __future__ import annotations
 import json
 from typing import Any
 
-from litharness.application import architect, outline
+from litharness.application import architect, comprehension, outline
 from litharness.domain import house, world_brief
 from litharness.domain.beats import arc_template, beats_for
 from litharness.domain.promises import Promise
@@ -102,13 +102,25 @@ def test_no_generation_instruction_tells_a_model_to_withhold_explanation() -> No
     the outline call's rendered rule list (all lanes) and its protagonist rule, and the house
     rules themselves. A string that tells a model to withhold — never explain, stay
     mysterious, keep vocabulary off the page — contradicts CLARITY and may not exist here.
+
+    **The premise call and the comprehension screen joined the collection on 2026-08-24**, with
+    the two stages they added to a forge (`plan/handoff-clarity-remaining.md` T3, T4). The
+    premise ask is the one prompt in this system that writes what a reader will actually read,
+    so a withhold instruction there would be the worst-placed one in the repository; the
+    readers' systems and their answer schema are model-facing strings in the generation path
+    and are collected for the same reason everything else here is.
     """
     strings: list[str] = [
         *architect._RULES,
         architect._DISTINCTNESS_RULE,
         architect._DOMAIN_FIRST_RULE,
         architect._SYSTEM_MESSAGE,
+        architect._PREMISE_SYSTEM,
+        architect._PREMISE_ASK,
         *_descriptions(architect.WORLDS_SCHEMA),
+        *(reader.system() for reader in comprehension.READERS),
+        comprehension._ASK,
+        *_descriptions(comprehension.ANSWER_SCHEMA),
         *world_brief.WORLD_RULES,
         *world_brief.LADDER_RULES,
         *outline.PROTAGONIST_RULES,

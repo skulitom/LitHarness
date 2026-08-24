@@ -26,8 +26,9 @@ import sys
 import time
 import uuid
 from collections import Counter
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 from contextlib import suppress
+from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
@@ -37,7 +38,7 @@ import litharness_contracts as lc
 from litharness.adapters import contracts_fixtures, evaluation_artifact
 from litharness.adapters.continuity_cli import ContinuityCliRunner
 from litharness.adapters.sqlite_store import MigrationsMissing, SqliteStore, StoredEvent
-from litharness.application import architect, constraint_locks
+from litharness.application import architect, comprehension, constraint_locks
 from litharness.application import export as export_module
 from litharness.application import library as library_module
 from litharness.application import status as status_module
@@ -101,14 +102,16 @@ from litharness.domain import pools as pools_domain
 from litharness.domain import state as state_mod
 from litharness.domain import worlds as worlds_domain
 from litharness.domain.beats import SIX_BEAT, arc_template, beats_for
-from litharness.domain.budget import BudgetPolicy
+from litharness.domain.budget import BudgetPolicy, Spend
 from litharness.domain.budget import check as budget_check
 from litharness.domain.directives import Directive, DirectiveKind, DirectiveStatus, directive_id_for
 from litharness.domain.draft import DraftPolicy
 from litharness.domain.events import Event, EventType
 from litharness.domain.exceptions import ExceptionStatus
+from litharness.domain.failures import OperationalFailure
 from litharness.domain.findings import Finding
 from litharness.domain.findings import Status as finding_status
+from litharness.domain.generation import CompletionRequest, CompletionResult
 from litharness.domain.jobs import Job, JobStatus, input_digest_for
 from litharness.domain.nodes import Node, NodeKind
 from litharness.domain.plan_refinement import (
@@ -128,7 +131,7 @@ from litharness.domain.policy import (
 from litharness.domain.promises import Promise, normalise_kind, promise_id_for
 from litharness.domain.revision import Revision, import_manuscript, new_book
 from litharness.domain.state import import_state
-from litharness.providers import build_default_registry
+from litharness.providers import ProviderRegistry, build_default_registry
 
 #: Exit codes, which are how whatever drives `tick` reads the outcome. See the module
 #: docstring.
@@ -3203,15 +3206,267 @@ def _picked_scene_count(
     )
 
 
+def _screen_line(screen: Mapping[str, Any]) -> str:
+    """One line about a candidate's comprehension screen, for stdout and for the gate detail.
+
+    Reads the stored block rather than a `ScreenResult`, so the same sentence renders for a
+    screen that ran, a screen the premise stage never reached, and a bundle read back off disk.
+    """
+    if "undefined_total" not in screen:
+        return f"FAILED — {screen.get('reason') or 'no screen run'}"
+    questions = sum(
+        len(quoted) for quoted in (screen.get("open_questions_by_reader") or {}).values()
+    )
+    if screen.get("passed"):
+        # The open questions are printed beside the pass and never against it: a pitch that
+        # leaves questions it plans to answer is working.
+        return f"passed (0 undefined, {questions} open question(s))"
+    silent = sorted(
+        reader_id
+        for reader_id, answer in (screen.get("answers") or {}).items()
+        if answer is None
+    )
+    faults: list[str] = []
+    if screen.get("undefined_total"):
+        faults.append(
+            f"{screen['undefined_total']} undefined across "
+            f"{screen['readers_confused']} reader(s)"
+        )
+    if silent:
+        faults.append(f"{len(silent)} reader(s) did not answer ({', '.join(silent)})")
+    return "FAILED — " + ("; ".join(faults) or "the screen did not complete")
+
+
+@dataclass
+class _StageSpend:
+    """What one stage of a forge cost, summed across its calls, for one decision row.
+
+    A forge is three stages now — the world, the premises, the screen — and each spends
+    separately. One row per stage rather than one row for the lot, because a stage whose cost
+    is folded into another stage's total is a cost nobody can read back: `store.spend_on` is
+    what the daily ceiling reads, and `plan/handoff-clarity-remaining.md` asks for the premise
+    and screen spend to be separable from the world's.
+    """
+
+    invocations: int = 0
+    total_tokens: int = 0
+    #: `None` until a provider reports dollars, which is `_SpendTally`'s rule and the reason
+    #: for it: `PolicyDecision.cost_usd` is `None` for a subscription CLI or local hardware,
+    #: and a stage written down as `0.0` reads as free rather than as unpriced.
+    cost_usd: float | None = None
+    provider: str | None = None
+    model: str | None = None
+    fell_back_from: tuple[str, ...] = ()
+
+    def add(self, result: CompletionResult, resolution: Any) -> None:
+        self.invocations += result.invocations
+        self.total_tokens += result.usage.total
+        if result.cost_usd is not None:
+            self.cost_usd = (self.cost_usd or 0.0) + result.cost_usd
+        self.provider = result.provider
+        self.model = result.model
+        self.fell_back_from = tuple(resolution.fell_back_from)
+
+
+@dataclass
+class _ForgeCalls:
+    """Everything the premise and screen stages need to make a call and account for it.
+
+    **The running total is why this is an object.** `store.spend_on` reads the decision
+    ledger, and a forge records its decisions at the end — so a per-call ceiling that read
+    only the ledger would be blind to the world call above it and to every premise and reader
+    call before it in the same run, which is exactly the run the `--max-cost-usd-per-day`
+    guard exists for. `run` carries what this invocation has already committed, and every
+    check is made against the ledger plus that.
+    """
+
+    registry: ProviderRegistry
+    store: SqliteStore
+    args: argparse.Namespace
+    stamp: str
+    #: Everything this forge has spent so far, the world call included.
+    run: _StageSpend
+    #: The two stage tallies, each the body of one decision row.
+    premise: _StageSpend
+    screen: _StageSpend
+
+    def spent_today(self) -> Spend:
+        return self.store.spend_on(self.stamp[:10]).plus(
+            invocations=self.run.invocations,
+            tokens=self.run.total_tokens,
+            cost_usd=self.run.cost_usd or 0.0,
+        )
+
+
+def _forge_call(
+    request: CompletionRequest, *, calls: _ForgeCalls, spend: _StageSpend
+) -> tuple[CompletionResult | None, str]:
+    """One model call inside a forge, budget-checked, or `None` and the reason there is none.
+
+    **Neither refusal raises.** A forge has already paid for its world by the time this runs,
+    and the branch that discarded a paid answer unread is the one `cmd_forge`'s conformance
+    comment records: two forges lost on 2026-08-23 because a failure printed a line and
+    returned. A budget ceiling or a provider failure here costs one candidate its premise and
+    nothing else — the forge still writes its files and still records every call it made.
+    """
+    provider, _ = calls.registry.resolve(request.call_class)
+    verdict = budget_check(
+        _budget(calls.args),
+        calls.spent_today(),
+        provider=provider.name,
+        prompt_chars=len(request.prompt),
+        max_output_tokens=request.max_output_tokens,
+    )
+    if not verdict.allowed:
+        return None, f"the daily budget refused the call: {verdict.reason}"
+    try:
+        result, resolution = calls.registry.complete(request)
+    except OperationalFailure as error:
+        return None, f"the provider failed: {error}"
+    spend.add(result, resolution)
+    calls.run.add(result, resolution)
+    return result, ""
+
+
+def _one_premise(
+    candidate: architect.Candidate, *, calls: _ForgeCalls
+) -> tuple[str, tuple[str, ...]]:
+    """One premise call, and what is deterministically wrong with what came back.
+
+    **The request is a pure function of the candidate and is rendered fresh every time.**
+    Nothing a gate found, nothing a reader quoted, and nothing about a previous attempt may
+    enter it — §97.1, and `plan/handoff-clarity-first.md` boundary 5 states the same rail from
+    the other side: a failed premise is re-forged, never rewritten from the findings against
+    it. A retry here is the identical ask asked again.
+    """
+    result, refusal = _forge_call(
+        architect.render_premise_request(candidate), calls=calls, spend=calls.premise
+    )
+    if result is None:
+        return "", (refusal,)
+    premise = result.text.strip()
+    return premise, architect.premise_complaints(premise, candidate)
+
+
+def _written_premise(
+    candidate: architect.Candidate, *, calls: _ForgeCalls
+) -> tuple[str, tuple[str, ...]]:
+    """The premise stage for one candidate: one call, and one fresh retry if it complains."""
+    premise, complaints = _one_premise(candidate, calls=calls)
+    if not complaints:
+        return premise, complaints
+    return _one_premise(candidate, calls=calls)
+
+
+def _screen_of(
+    premise: str, *, calls: _ForgeCalls
+) -> tuple[comprehension.ScreenResult | None, str]:
+    """Four readers on one premise, or `None` and the reason no reader was asked.
+
+    One budget check for the batch, sized at all four calls, because four calls are what a
+    screen is: a ceiling that landed between readers would produce a part-screen, and a
+    part-screen reads like a whole one to everything downstream of it. The per-call check
+    inside `_forge_call` still runs, which is what keeps the projection honest.
+    """
+    requests = [
+        (reader, comprehension.render_reader_request(reader, premise))
+        for reader in comprehension.READERS
+    ]
+    provider, _ = calls.registry.resolve(comprehension.CALL_CLASS)
+    verdict = budget_check(
+        _budget(calls.args),
+        calls.spent_today(),
+        provider=provider.name,
+        prompt_chars=sum(len(request.prompt) for _, request in requests),
+        max_output_tokens=sum(request.max_output_tokens for _, request in requests),
+    )
+    if not verdict.allowed:
+        return None, f"the daily budget refused the screen: {verdict.reason}"
+    answers: dict[str, Mapping[str, Any] | None] = {}
+    for reader, request in requests:
+        result, _refusal = _forge_call(request, calls=calls, spend=calls.screen)
+        parsed = result.parsed if result is not None else None
+        answers[reader.reader_id] = parsed if isinstance(parsed, Mapping) else None
+    return comprehension.ScreenResult.of(answers), ""
+
+
+def _screened_premise(
+    candidate: architect.Candidate, *, calls: _ForgeCalls
+) -> tuple[str, tuple[str, ...], dict[str, Any]]:
+    """One candidate's premise, its complaints, and the screen block that goes in its bundle.
+
+    **The whole of `plan/handoff-clarity-first.md` boundary 5 in one function.** The premise is
+    written, checked deterministically, and shown to four readers; a premise that leaves any of
+    them quoting a word they were never given is refused and **re-forged** — one fresh
+    regeneration, one re-screen, and then the candidate is marked. There is no third attempt
+    and no flag that skips the screen: no premise reaches the operator unscreened.
+
+    The two retry budgets are separate on purpose and the handoff draws them that way: the
+    premise stage's retry is for a paragraph that came back empty, unnamed or borrowed, and the
+    screen's regeneration is for a paragraph that was fine by arithmetic and unreadable to a
+    reader. A candidate can therefore cost at most three premise calls and eight reader calls.
+
+    **What is carried is one paragraph and the screen of that same paragraph.** A block
+    describing a premise the bundle does not hold would be worse than no block at all, so the
+    attempts are kept together and the chosen one is the one that passed; failing that, the
+    last attempt a screen actually read; failing that, the last paragraph written.
+    """
+    #: (premise, complaints, screen block, whether four readers were actually asked)
+    attempts: list[tuple[str, tuple[str, ...], dict[str, Any], bool]] = []
+    for attempt in range(2):
+        # Attempt 2 is the screen's ONE fresh regeneration, and it gets no complaint retry of
+        # its own: the premise stage already spent that budget on attempt 1.
+        premise, complaints = (
+            _written_premise(candidate, calls=calls)
+            if attempt == 0
+            else _one_premise(candidate, calls=calls)
+        )
+        if complaints:
+            # A paragraph that is empty, unnamed or borrowed is not worth four reader calls,
+            # and the premise stage has already retried it once.
+            attempts.append(
+                (premise, complaints, {"passed": False, "reason": "; ".join(complaints)}, False)
+            )
+            break
+        screen, refusal = _screen_of(premise, calls=calls)
+        attempts.append(
+            (
+                premise,
+                (),
+                screen.to_jsonable()
+                if screen is not None
+                else {"passed": False, "reason": refusal or "no screen run"},
+                screen is not None,
+            )
+        )
+        if screen is not None and screen.passed:
+            break
+
+    ranked = (
+        [item for item in attempts if item[2].get("passed")]
+        or [item for item in attempts if item[3]]
+        or attempts
+    )
+    premise, complaints, block, _screened = ranked[-1]
+    return premise, complaints, block
+
+
 def cmd_forge(args: argparse.Namespace) -> int:
-    """A world, forged: brief → K candidates → deterministic gates → a seed `new` consumes.
+    """A world, forged: brief → K candidates → premise → screen → a seed `new` consumes.
+
+    **Three model stages and one decision row each.** The world is a structured call and
+    carries no reader-facing prose; the premise is its own prose call per candidate; the
+    comprehension screen is four genre readers per premise, and a premise passes only at zero
+    words quoted as undefined by all four (`application/comprehension.py`). None of the three
+    ranks anything: the screen refuses on a count, and what survives is presented in the order
+    it was forged.
 
     Two invocations, deliberately, and the split is the second rail of
     `plan/world-architect.md` §2. The first generates and gates and then **stops** — no model
     orders the candidates, none is marked best, and the command exits with the report. The
-    second, `--pick N`, is a person choosing, makes no provider call, and records its own
-    decision. §61(5)'s alpha division counts the candidates, which is why the count is on
-    both rows.
+    second, `--pick N`, is a person choosing, makes no provider call, records its own
+    decision, and refuses a candidate whose premise the screen failed. §61(5)'s alpha division
+    counts the candidates, which is why the count is on both rows.
 
     The bundles are written before the decision is recorded, because a forge whose files landed
     and whose decision did not is recoverable by re-running `--pick`, and one whose decision
@@ -3234,6 +3489,24 @@ def cmd_forge(args: argparse.Namespace) -> int:
             )
             return EXIT_FAULT
         chosen = bundles[args.pick - 1]
+        # **A premise four readers could not follow is not picked, and there is no flag that
+        # says otherwise.** `plan/handoff-clarity-first.md` boundary 5: a failed premise is
+        # refused and re-forged, never hand-patched — rewriting it from what the readers quoted
+        # is the contamination §97.1 exists to stop, and it would arrive here as an operator
+        # editing `directives.json` by hand. A bundle with no `screen` key was forged before
+        # the gate existed and picks exactly as it always did.
+        screen = chosen.get("screen")
+        if isinstance(screen, Mapping) and not screen.get("passed"):
+            print(
+                f"litharness: candidate {args.pick} did not pass the comprehension screen "
+                f"({_screen_line(screen)}). The screen is four genre readers restating the "
+                "premise, and it passes at zero words quoted as undefined. A premise that "
+                "fails is re-forged rather than edited — rewriting it from what the readers "
+                "quoted would feed a finding back into a prompt. Forge again and pick from "
+                "what passes.",
+                file=sys.stderr,
+            )
+            return EXIT_FAULT
         scenes, fault = _picked_scene_count(forged, args.scenes, source=forge_path)
         if scenes is None:
             print(fault, file=sys.stderr)
@@ -3323,6 +3596,19 @@ def cmd_forge(args: argparse.Namespace) -> int:
 
     brief = args.brief or ""
     architect_id = worlds_domain.architect_id_for(brief)
+    # **The lane key carries the instant, and the reason is money already lost.**
+    # `decision_id_for` derives an id from the key, the attempt and the gates' (kind, rule id,
+    # passed) — deliberately, so a *replayed job* collapses onto one row instead of
+    # accumulating duplicates of one judgment. A forge is not a replayed job: every invocation
+    # is a fresh paid call, and two forges of the same brief and shape whose worlds fail the
+    # same gates produce the same signature. Measured on `reader-book.db`: two K=2 forges of
+    # "progression fantasy" ran on 2026-08-24 for $1.55 and $1.62, both with two failing world
+    # gates, and the ledger holds **one** row — `record_decision` returns False on the second
+    # and every call site ignores it, so $1.62 never reached `store.spend_on`, which is the
+    # figure the daily ceiling reads. The stamp is data rather than a nonce, so the id is still
+    # derived rather than random; `forge-pick` keeps the old key on purpose, because re-running
+    # the same pick makes no call and *should* collapse.
+    lane = f"{architect_id}:{args.shape}:{stamp}"
     # The width every candidate is forged at, resolved once so the file can record it. What
     # `--pick` does with that record is `_picked_scene_count`.
     scenes = architect.DEFAULT_SCENES if args.scenes is None else args.scenes
@@ -3375,7 +3661,7 @@ def cmd_forge(args: argparse.Namespace) -> int:
                 ),
             )
             refusal = PolicyDecision(
-                decision_id=decision_id_for(f"forge:{architect_id}:{args.shape}", 0, (gate,)),
+                decision_id=decision_id_for(f"forge:{lane}", 0, (gate,)),
                 outcome=Outcome.ESCALATE,
                 gates=(gate,),
                 profile=architect.PROFILE,
@@ -3406,7 +3692,7 @@ def cmd_forge(args: argparse.Namespace) -> int:
                 detail=str(error),
             )
             refusal = PolicyDecision(
-                decision_id=decision_id_for(f"forge:{architect_id}:{args.shape}", 0, (gate,)),
+                decision_id=decision_id_for(f"forge:{lane}", 0, (gate,)),
                 outcome=Outcome.ESCALATE,
                 gates=(gate,),
                 profile=architect.PROFILE,
@@ -3422,19 +3708,54 @@ def cmd_forge(args: argparse.Namespace) -> int:
             print(f"litharness: {error}", file=sys.stderr)
             return EXIT_ATTENTION
 
+        # **The premise, written as prose, and then screened before anybody reads it.**
+        # `plan/handoff-clarity-first.md` boundaries 4 and 5: the world above is data and the
+        # paragraph a reader will actually read is its own call, and no premise reaches the
+        # operator unscreened. Both stages run per candidate, and neither can refuse the
+        # forge — a candidate that fails is carried with its faults and marked unusable, which
+        # is the same rail the world gates already run on: information for the person choosing,
+        # not a refusal of work the world call has already been paid for.
+        premise_spend = _StageSpend()
+        screen_spend = _StageSpend()
+        # Seeded with the world call, so the first premise call's ceiling check sees the money
+        # this run has already spent rather than only what the ledger has been told about.
+        run_spend = _StageSpend()
+        run_spend.add(result, resolution)
+        calls = _ForgeCalls(
+            registry=registry,
+            store=store,
+            args=args,
+            stamp=stamp,
+            run=run_spend,
+            premise=premise_spend,
+            screen=screen_spend,
+        )
+        written: list[tuple[str, tuple[str, ...], dict[str, Any]]] = [
+            _screened_premise(candidate, calls=calls) for candidate in candidates
+        ]
+
         bundles = [
-            architect.bundle_for(
-                candidate,
-                book_id=str(uuid.uuid5(uuid.NAMESPACE_URL, f"litharness://forge/{architect_id}/{candidate.index}/book")),
-                branch_id=str(uuid.uuid5(uuid.NAMESPACE_URL, f"litharness://forge/{architect_id}/{candidate.index}/branch")),
-                revision_id=str(uuid.uuid5(uuid.NAMESPACE_URL, f"litharness://forge/{architect_id}/{candidate.index}/revision")),
-                architect_id=architect_id,
-                created_at=stamp,
-                brief=brief,
-                shape=args.shape,
-                scenes=scenes,
-            )
-            for candidate in candidates
+            {
+                **architect.bundle_for(
+                    candidate,
+                    book_id=str(uuid.uuid5(uuid.NAMESPACE_URL, f"litharness://forge/{architect_id}/{candidate.index}/book")),
+                    branch_id=str(uuid.uuid5(uuid.NAMESPACE_URL, f"litharness://forge/{architect_id}/{candidate.index}/branch")),
+                    revision_id=str(uuid.uuid5(uuid.NAMESPACE_URL, f"litharness://forge/{architect_id}/{candidate.index}/revision")),
+                    architect_id=architect_id,
+                    created_at=stamp,
+                    brief=brief,
+                    shape=args.shape,
+                    premise=premise,
+                    scenes=scenes,
+                ),
+                # Beside the premise it screened, in the bundle `--pick` reads. A bundle with
+                # no `screen` key was forged before the gate existed and picks as it always
+                # did; absence keeps old behaviour, which is this repository's standing pattern
+                # for a field added to an artefact already on disk.
+                "screen": screen,
+                "premise_complaints": list(complaints),
+            }
+            for candidate, (premise, complaints, screen) in zip(candidates, written, strict=True)
         ]
         # Per candidate, and **non-blocking every one of them**: a world that fails a gate is
         # information for the person choosing, not a refusal of the forge. `plan_search`'s
@@ -3457,7 +3778,16 @@ def cmd_forge(args: argparse.Namespace) -> int:
             )
             for bundle in bundles
         )
-        usable = sum(1 for bundle in bundles if not bundle["report"]["gate_complaints"])
+        # **`usable` now means clear of the gates AND readable**, which is the whole point of
+        # the screen: a world nobody can be pitched is not a candidate, however well it
+        # declares itself. The two halves stay separable in the file — `gate_complaints` on the
+        # report, `screen` beside it — so a forge that produced good worlds and bad pitches
+        # reads as that rather than as a bad forge.
+        usable = sum(
+            1
+            for bundle in bundles
+            if not bundle["report"]["gate_complaints"] and bundle["screen"].get("passed")
+        )
         forged = {
             "architect_id": architect_id,
             "brief": brief,
@@ -3473,6 +3803,24 @@ def cmd_forge(args: argparse.Namespace) -> int:
             "profile": architect.PROFILE,
             "usage_total_tokens": result.usage.total,
             "cost_usd": result.cost_usd,
+            # The pair above is the world call's, which is what this file has always recorded.
+            # The premise and the screen are separate calls for separate money, and their rows
+            # in the decision ledger are the authority (`store.spend_on` reads those, and the
+            # daily ceiling reads `spend_on`); these two are here so that an operator deciding
+            # whether to forge again can see what a forge costs without opening the database.
+            "premise_spend": {
+                "profile": architect.PREMISE_PROFILE,
+                "invocations": premise_spend.invocations,
+                "usage_total_tokens": premise_spend.total_tokens,
+                "cost_usd": premise_spend.cost_usd,
+            },
+            "screen_spend": {
+                "profile": comprehension.SCREEN_PROFILE,
+                "readers": [reader.reader_id for reader in comprehension.READERS],
+                "invocations": screen_spend.invocations,
+                "usage_total_tokens": screen_spend.total_tokens,
+                "cost_usd": screen_spend.cost_usd,
+            },
             "spread": architect.spread(candidates),
             "usable": usable,
             "candidates": bundles,
@@ -3482,7 +3830,7 @@ def cmd_forge(args: argparse.Namespace) -> int:
             json.dumps(forged, ensure_ascii=False, indent=2), encoding="utf-8"
         )
         decision = PolicyDecision(
-            decision_id=decision_id_for(f"forge:{architect_id}:{args.shape}", 0, gates),
+            decision_id=decision_id_for(f"forge:{lane}", 0, gates),
             outcome=Outcome.ACCEPT,
             gates=gates,
             profile=architect.PROFILE,
@@ -3494,15 +3842,96 @@ def cmd_forge(args: argparse.Namespace) -> int:
             cost_usd=result.cost_usd,
             reason=(
                 f"{args.k} world(s) forged under prompt shape {args.shape!r}, {usable} clear of "
-                "every gate; no model ordered them and none is marked best"
+                "every gate and of the comprehension screen; no model ordered them and none is "
+                "marked best"
             ),
         )
         store.record_decision(decision, decided_at=stamp)
+
+        # **One row per stage, because a forge spends three times now.** Non-blocking per
+        # candidate for the same reason the world gates are: neither stage refuses the forge,
+        # and a candidate that failed one is information for the person choosing.
+        #
+        # Each lane derives its decision id from its own key. `decision_id_for` hashes the key,
+        # the attempt and the gates' (kind, rule id, passed) — not the spend — so two lanes
+        # sharing a key and a gate signature would collide, `record_decision`'s INSERT OR
+        # IGNORE would drop the second, and its money would never reach `spend_on`, which is
+        # what the daily ceiling reads. `--pick` already keeps its lane apart the same way.
+        premise_gates = tuple(
+            GateOutcome(
+                gate=GateKind.SHAPE,
+                rule_or_critic_id=architect.PREMISE_PROFILE,
+                passed=not bundle["premise_complaints"],
+                blocking=False,
+                detail=(
+                    f"world {bundle['index'] + 1}: "
+                    + ("; ".join(bundle["premise_complaints"]) or "clear")
+                ),
+            )
+            for bundle in bundles
+        )
+        premise_decision = PolicyDecision(
+            decision_id=decision_id_for(
+                f"forge-premise:{lane}", 0, premise_gates
+            ),
+            outcome=Outcome.ACCEPT,
+            gates=premise_gates,
+            profile=architect.PREMISE_PROFILE,
+            provider=premise_spend.provider,
+            model=premise_spend.model,
+            fell_back_from=premise_spend.fell_back_from,
+            invocations=premise_spend.invocations,
+            total_tokens=premise_spend.total_tokens,
+            cost_usd=premise_spend.cost_usd,
+            reason=(
+                f"{premise_spend.invocations} premise call(s) over {args.k} candidate(s); the "
+                "premise is written as prose by its own call and never as a cell of the world "
+                "schema"
+            ),
+        )
+        store.record_decision(premise_decision, decided_at=stamp)
+
+        screened = sum(1 for bundle in bundles if bundle["screen"].get("passed"))
+        screen_gates = tuple(
+            GateOutcome(
+                gate=GateKind.SHAPE,
+                rule_or_critic_id=comprehension.SCREEN_PROFILE,
+                passed=bool(bundle["screen"].get("passed")),
+                blocking=False,
+                detail=f"world {bundle['index'] + 1}: {_screen_line(bundle['screen'])}",
+            )
+            for bundle in bundles
+        )
+        screen_decision = PolicyDecision(
+            decision_id=decision_id_for(
+                f"forge-screen:{lane}", 0, screen_gates
+            ),
+            outcome=Outcome.ACCEPT,
+            gates=screen_gates,
+            profile=comprehension.SCREEN_PROFILE,
+            provider=screen_spend.provider,
+            model=screen_spend.model,
+            fell_back_from=screen_spend.fell_back_from,
+            invocations=screen_spend.invocations,
+            total_tokens=screen_spend.total_tokens,
+            cost_usd=screen_spend.cost_usd,
+            reason=(
+                f"{screened} of {args.k} premise(s) read by all four readers with nothing "
+                "quoted as undefined; the screen refuses on a count and orders nothing"
+            ),
+        )
+        store.record_decision(screen_decision, decided_at=stamp)
     finally:
         store.close()
 
+    # All three, because a forge spends three times and an operator looking for what the
+    # premises or the screen cost needs the row id to look them up by.
     print(decision.decision_id)
-    print(f"  {args.k} world(s), {usable} clear of every gate; shape {args.shape}")
+    print(f"  premise  {premise_decision.decision_id}")
+    print(f"  screen   {screen_decision.decision_id}")
+    print(
+        f"  {args.k} world(s), {usable} clear of every gate and screened; shape {args.shape}"
+    )
     spread_value = forged["spread"]
     print(f"  within-forge spread {spread_value:.4f}" if spread_value is not None else "")
     for bundle in bundles:
@@ -3516,11 +3945,30 @@ def cmd_forge(args: argparse.Namespace) -> int:
         )
         for complaint in note["gate_complaints"]:
             print(f"        gate: {complaint}")
+        for complaint in bundle["premise_complaints"]:
+            print(f"        premise: {complaint}")
+        print(f"        screen: {_screen_line(bundle['screen'])}")
+        for reader_id, quoted in sorted(
+            (bundle["screen"].get("undefined_by_reader") or {}).items()
+        ):
+            if quoted:
+                print(f"          {reader_id}: {', '.join(quoted)}")
         for complaint in note["validator_complaints"][:5]:
             print(f"        world: {complaint}")
     print(f"  {forge_path}")
     print("")
-    print(f"Choose one — a person, not a model:  litharness forge --out {out} --pick <n>")
+    # The candidates a person may choose among, listed rather than ordered: a screen-failed
+    # premise is refused by `--pick`, so saying which ones are pickable is the difference
+    # between a refusal the operator can act on and one they run into.
+    pickable = [
+        str(bundle["index"] + 1) for bundle in bundles if bundle["screen"].get("passed")
+    ]
+    print(
+        f"Choose one — a person, not a model:  litharness forge --out {out} --pick <n>"
+        + (f"    ({', '.join(pickable)} passed the screen)" if pickable else "")
+    )
+    if not pickable:
+        print("  No premise passed the screen. Forge again; a failed premise is not edited.")
     return EXIT_OK
 
 

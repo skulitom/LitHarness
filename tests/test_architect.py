@@ -16,13 +16,14 @@ from __future__ import annotations
 import ast
 import json
 import re
+from collections.abc import Sequence
 from pathlib import Path
 from typing import Any
 
 import litharness_contracts as lc
 import pytest
 
-from litharness.application import architect
+from litharness.application import architect, comprehension
 from litharness.cli import main
 from litharness.domain import worlds
 from litharness.domain.findings import DetectorInput
@@ -47,13 +48,11 @@ def world(
         "geometry": geometry,
         "progression_means": "your read of a thing gets longer, never stronger",
         "inversion": "no combat class exists; the removed slot is filled by standing",
-        # **Written as the protagonist's situation and naming him**, which is what the rule
-        # added on 2026-08-22 asks a world for and what `gate_candidate` checks arithmetically.
-        # It still varies with `domain`, so two fixtures built from different domains carry
-        # different premises and the collapse gate has something to compare.
-        "premise": (
-            f"Silas, a junior hand in {domain}, is the one the provenance rule does not bind."
-        ),
+        # **No premise here, and the absence is the fixture keeping step with the schema.**
+        # `plan/clarity-audit-2026-08-24.md` P1: the world call stopped carrying reader-facing
+        # prose on 2026-08-24, so a world dict that still had one would be testing a shape the
+        # forge can no longer return. The paragraph is `PREMISE` below, handed to the functions
+        # that take one.
         "protagonist": {
             "id": "silas",
             "exception": "provenance",
@@ -179,9 +178,54 @@ def payload(*worlds_: dict[str, Any]) -> dict[str, Any]:
 #: satisfied by construction rather than by luck.
 SCENES = 8
 
+#: The premise `world()`'s protagonist would be pitched with, written the way the premise call
+#: now writes one: prose, naming the person, arriving as an argument rather than as a field of
+#: the world. Every function that used to read `candidate.raw["premise"]` takes this instead.
+PREMISE = (
+    "Silas is a junior hand in an assay house, which is the place that says what a made thing "
+    "is worth by reading the history of how it was made. The provenance rule does not bind "
+    "him: he can price a thing the assay has never seen, and the price holds."
+)
+
 
 def candidate(**kwargs: Any) -> architect.Candidate:
     return architect.Candidate(0, world(**kwargs))
+
+
+def reader_answer(
+    *, undefined: Sequence[str] = (), questions: Sequence[str] = ()
+) -> str:
+    """One genre reader's answer, as `comprehension.ANSWER_SCHEMA` asks for it."""
+    return json.dumps(
+        {
+            "can_do": "He can put a price on something nobody has assayed.",
+            "in_the_way": "Every price he signs gets checked by somebody else.",
+            "expect_next": "A progression story about getting read by someone who matters.",
+            "undefined_words": list(undefined),
+            "open_questions": list(questions),
+        }
+    )
+
+
+def forge_script(
+    worlds_payload: str,
+    *,
+    premises: Sequence[str],
+    undefined: Sequence[Sequence[str]] = (),
+) -> list[str]:
+    """The whole call sequence one `forge` invocation now makes, in order.
+
+    A forge is three stages of model calls — one world call, then one premise call and four
+    reader calls per candidate — so a scripted `FakeProvider` needs `1 + 5K` answers rather
+    than one. `undefined[i]` is what every reader of candidate `i` quotes as unfollowable;
+    empty means the candidate's screen passes.
+    """
+    script = [worlds_payload]
+    for index, premise in enumerate(premises):
+        quoted = undefined[index] if index < len(undefined) else ()
+        script.append(premise)
+        script.extend(reader_answer(undefined=quoted) for _ in comprehension.READERS)
+    return script
 
 
 def detector(records: list[lc.StateRecord]) -> DetectorInput:
@@ -438,6 +482,71 @@ def test_a_forge_answer_that_does_not_conform_is_kept_on_disk_and_costed(
     assert spend.invocations == 1
 
 
+def test_two_forges_of_one_brief_both_reach_the_spend_ledger(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Measured on `reader-book.db`, and the money was already gone when this was written.
+
+    Two K=2 forges of "progression fantasy" ran on 2026-08-24 for $1.55 and $1.62, both
+    returning two worlds that failed the same gate. `decision_id_for` hashes the lane key, the
+    attempt and each gate's (kind, rule id, passed) — not the detail and not the spend — so the
+    two runs derived the **same** decision id, `record_decision` returned False on the second,
+    every call site ignores that bool, and $1.62 never reached `store.spend_on`. The ledger for
+    that day holds two rows for three paid forges.
+
+    That is the same failure the conformance branch above was fixed for in a different costume:
+    money spent and not recorded is money the daily ceiling cannot see. The lane key now
+    carries the invocation's stamp, so two forges are two rows. `forge-pick` deliberately keeps
+    the old key: a re-run pick makes no call and should collapse onto one row.
+    """
+    import litharness.cli as cli_module
+    from litharness.providers.fake import FakeProvider
+    from litharness.providers.registry import ProviderRegistry
+
+    provider = FakeProvider()
+
+    def two_worlds() -> str:
+        return json.dumps(
+            {
+                "worlds": [
+                    world(),
+                    world(title="Slack Water", domain="river ferry rights", geometry="cycle"),
+                ]
+            }
+        )
+
+    monkeypatch.setattr(
+        cli_module, "build_default_registry", lambda *a, **k: ProviderRegistry(provider)
+    )
+    database = tmp_path / "twice.db"
+    assert main(["--database", str(database), "init"]) == 0
+    for run in ("first", "second"):
+        provider.set_responses(forge_script(two_worlds(), premises=(PREMISE, PREMISE)))
+        assert (
+            main(
+                ["--database", str(database), "forge", "progression fantasy", "--k", "2",
+                 "--out", str(tmp_path / run), "--scenes", "8"]
+            )
+            == 0
+        )
+
+    from litharness.adapters.sqlite_store import SqliteStore
+
+    store = SqliteStore.open(database)
+    try:
+        spend = store.spend_on(cli_module._stamp(cli_module._now())[:10])
+        rows = store._connection.execute(
+            "SELECT COUNT(*) FROM policy_decisions"
+        ).fetchone()[0]
+    finally:
+        store.close()
+    # Three lanes per forge — world, premise, screen — and two forges, so six rows and every
+    # call the fake answered counted once. Before the lane key carried the stamp, the second
+    # forge's three rows collided with the first's and the day read as half of what it cost.
+    assert rows == 6
+    assert spend.invocations == 2 * (1 + 2 + 4 * 2)
+
+
 def test_the_domain_is_the_engine_and_its_jargon_never_reaches_the_page() -> None:
     """Five worlds in a row were set inside a trade and written in its glossary.
 
@@ -538,17 +647,27 @@ def test_the_premise_rule_asks_for_a_pitch_rather_than_prose() -> None:
     """*"'wet cinder', 'because his body rings' ... are not things anybody says in any context"*.
 
     The rule asked for a person's situation and got literary flash fiction six times out of six,
-    on a project whose standing register target is popcorn reading. What it asks for now is the
+    on a project whose standing register target is popcorn reading. What it asks for is the
     sentence somebody says out loud when a friend asks what the book is about.
+
+    **Moved 2026-08-24, and the name survives on the replacement because the ledger cites it**
+    (§119.1). `plan/handoff-clarity-first.md` boundary 4: the ask is no longer a clause inside
+    the world schema's rule-essay, because the premise is no longer a cell of the world call.
+    It is `render_premise_request`'s whole prompt. What this pins is both halves — the essay is
+    gone from `_RULES`, and the ask it carried is in the call that writes the paragraph.
     """
-    [rule] = [item for item in architect._RULES if "PITCH and not as prose" in item]
-    assert "plain modern English" in rule
-    assert "in the order things happen" in rule
-    assert "no invented compound" in rule
-    # The test that counts rules mentioning this person owns the forbidden-verb list; the pitch
-    # clause lives inside one of them, so it is checked against the same list here.
+    assert not [item for item in architect._RULES if "PITCH and not as prose" in item]
+    assert not [item for item in architect._RULES if "Write the `premise`" in item]
+
+    ask = architect._PREMISE_ASK
+    assert "plain modern English" in ask
+    assert "in the order things happen" in ask
+    assert "the way one person tells a friend what a book is about" in ask
+    assert ask in architect.render_premise_request(candidate()).prompt
+    # The test that counts rules mentioning this person owns the forbidden-verb list; the ask
+    # is about one person, so it is checked against the same list here.
     for forbidden in ("likeable", "compelling", "interesting", "hero", "succeed"):
-        assert forbidden not in rule.lower(), forbidden
+        assert forbidden not in ask.lower(), forbidden
 
 
 def test_the_ladder_is_declared_furniture_rather_than_the_world_it_furnishes() -> None:
@@ -567,7 +686,13 @@ def test_the_ladder_is_declared_furniture_rather_than_the_world_it_furnishes() -
     assert "whatever THIS world calls" in rule
     assert "no house style" in rule
     assert "bronze" not in rule.lower().split("metals")[0]
-    assert "the premise is about the person rather than about the chain" in rule
+    # **Reworded 2026-08-24 and the clause is the same clause.** It read "the premise is about
+    # the person rather than about the chain" while the world call wrote a `premise` field;
+    # with that field gone from the schema (`plan/clarity-audit-2026-08-24.md` P1) the sentence
+    # named a cell the answer may no longer contain, and `additionalProperties: false` refuses
+    # a whole forge over one unexpected key. Same instruction, said about the book.
+    assert "what the book is about is the person rather than the chain" in rule
+    assert "the premise" not in rule
     # And the counting clause §113 shipped is still in the same rule, unweakened.
     assert "the rung's position from the bottom of that chain" in rule
 
@@ -844,12 +969,38 @@ def test_the_gate_complains_when_the_premise_never_names_the_protagonist() -> No
 
     Checked for the name and for nothing else: whether it is *written as* their situation is a
     judgment with no instrument, and whether it says their name is arithmetic.
+
+    **Moved 2026-08-24 from `gate_candidate` to `premise_complaints`, name kept.** The check
+    reads prose, and the world call stopped writing prose (`plan/clarity-audit-2026-08-24.md`
+    P1) — so it runs one call later, against the paragraph the premise call returned. The world
+    gate is silent about the premise now, which this pins as well.
     """
-    worldly = world()
-    worldly["premise"] = "A city discovers what its ledger has really been counting."
-    assert any("never names" in item for item in gate(worldly))
-    assert not architect.premise_names_protagonist(architect.Candidate(0, worldly))
-    assert architect.premise_names_protagonist(candidate())
+    worldly = "A city discovers what its ledger has really been counting."
+    assert any("never names" in item for item in architect.premise_complaints(worldly, candidate()))
+    assert not architect.premise_names_protagonist(candidate(), worldly)
+    assert architect.premise_names_protagonist(candidate(), PREMISE)
+    assert not architect.premise_complaints(PREMISE, candidate())
+    # The world gate no longer has an opinion about a premise it never saw.
+    assert not [item for item in gate(candidate()) if "premise" in item]
+
+
+def test_a_premise_the_screen_never_reaches_is_refused_before_it_costs_four_readers() -> None:
+    """The other two `premise_complaints` branches: nothing came back, and RS1 / C3.
+
+    The borrowed-work guard is the one deterministic scan `plan/handoff-clarity-first.md`
+    boundary 3 keeps, and keeping it here is not optional: `gate_candidate` used to catch a
+    comparison in the premise for free, because the premise was part of the JSON blob
+    `candidate.rendered()` scanned. With the premise written separately, this is the only place
+    that coverage exists.
+    """
+    assert architect.premise_complaints("   ", candidate())[0].startswith(
+        "the premise call returned nothing"
+    )
+    borrowed = f"{PREMISE} It is reminiscent of every apprentice story you have read."
+    assert any("RS1" in item for item in architect.premise_complaints(borrowed, candidate()))
+    # No length refusal and no word list: boundary 3 as amended, and the screen is what reads
+    # the paragraph. A premise of four hundred words naming its person is not refused here.
+    assert not architect.premise_complaints(PREMISE + (" And more besides." * 200), candidate())
 
 
 def test_a_word_that_merely_contains_the_id_does_not_count_as_naming() -> None:
@@ -858,16 +1009,18 @@ def test_a_word_that_merely_contains_the_id_does_not_count_as_naming() -> None:
     `worlds.key_nouns` records the same failure class from its own first live run, where `mour`
     and `ise` arrived out of the middle of longer ids.
     """
-    inside = world()
-    inside["premise"] = "The assay's silasine ledger counts what nobody reads."
-    assert not architect.premise_names_protagonist(architect.Candidate(0, inside))
+    inside = "The assay's silasine ledger counts what nobody reads."
+    assert not architect.premise_names_protagonist(candidate(), inside)
 
 
 def test_the_report_counts_the_declaration_and_orders_nothing() -> None:
-    note = architect.report(candidate(), scenes=SCENES)
+    note = architect.report(candidate(), scenes=SCENES, premise=PREMISE)
     assert note["protagonist_declared"] is True
     assert note["exception_declared"] is True
     assert note["premise_names_protagonist"] is True
+    # And with no premise to read — a candidate whose premise call failed, or a report about
+    # the world alone — the counter is `False` rather than a guess.
+    assert architect.report(candidate(), scenes=SCENES)["premise_names_protagonist"] is False
     # No score, no rank, no preference — the three counters are facts about one candidate.
     assert not {key for key in note if "score" in key or "rank" in key.split("_")}
 
@@ -1318,6 +1471,7 @@ def test_a_forged_bundle_seeds_a_book_with_no_provider_call(tmp_path: Path) -> N
         created_at="2026-08-21T00:00:00Z",
         brief="a test brief",
         shape=architect.DIRECT,
+        premise=PREMISE,
         scenes=8,
     )
     (out / "forge.json").write_text(
@@ -1523,6 +1677,7 @@ def test_a_debt_the_serial_settles_later_is_opened_without_a_due_date(tmp_path: 
         created_at="2026-08-22T00:00:00Z",
         brief="arc debts",
         shape=architect.DIRECT,
+        premise=PREMISE,
         scenes=8,
     )
     (out / "forge.json").write_text(
@@ -1599,6 +1754,7 @@ def _forge_file(
         created_at="2026-08-23T00:00:00Z",
         brief="width",
         shape=architect.DIRECT,
+        premise=PREMISE,
         scenes=scenes if scenes is not None else architect.DEFAULT_SCENES,
     )
     forged: dict[str, Any] = {
@@ -1744,7 +1900,7 @@ def test_the_forge_records_the_width_it_forged_at(
             }
         )
 
-    provider.set_responses([two_worlds()])
+    provider.set_responses(forge_script(two_worlds(), premises=(PREMISE, PREMISE)))
     monkeypatch.setattr(
         cli_module, "build_default_registry", lambda *a, **k: ProviderRegistry(provider)
     )
@@ -1761,7 +1917,7 @@ def test_the_forge_records_the_width_it_forged_at(
 
     # And with no flag it records the default rather than nothing, so the pick never guesses.
     other = tmp_path / "forge-default"
-    provider.set_responses([two_worlds()])
+    provider.set_responses(forge_script(two_worlds(), premises=(PREMISE, PREMISE)))
     assert (
         main(["--database", str(database), "forge", "a brief", "--k", "2", "--out", str(other)])
         == 0
@@ -1926,7 +2082,7 @@ def test_a_scene_count_the_directives_were_not_written_for_is_refused(tmp_path: 
             {
                 "source": str(package),
                 "title": narrow["title"],
-                "premise": narrow["premise"],
+                "premise": PREMISE,
                 "scenes": 6,
                 "directives": [dict(item) for item in architect.directives_for(candidate)],
             },

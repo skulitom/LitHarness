@@ -1,4 +1,11 @@
-"""The Architect: K worlds in one structured call, gated deterministically, chosen by nobody here.
+"""The Architect: K worlds forged as data, pitched as prose, gated, and chosen by nobody here.
+
+**Two calls per candidate, and the split is `plan/handoff-clarity-first.md` boundary 4.** The
+world is one structured call — systems, rules, prices, cast, mysteries, and no reader-facing
+prose anywhere in it. The premise, which is the only part of a forge a reader ever reads, is
+`render_premise_request`: its own call, plain prose, no schema, the house rules in the system
+message and the finished world as its context. It used to be one cell of the schema call, and
+the 2026-08-24 forges are the record of what that produced.
 
 Design: [`plan/world-architect.md`](../../../plan/world-architect.md). Ontology:
 [`plan/state-model-abilities.md`](../../../plan/state-model-abilities.md) and
@@ -502,7 +509,6 @@ _WORLD = {
         "geometry",
         "progression_means",
         "inversion",
-        "premise",
         "protagonist",
         "systems",
         "cast",
@@ -515,7 +521,15 @@ _WORLD = {
         "geometry": {"type": "string", "enum": list(GEOMETRIES)},
         "progression_means": _TEXT,
         "inversion": _TEXT,
-        "premise": _TEXT,
+        # **The premise is not here, and its absence is the design.**
+        # `plan/handoff-clarity-first.md` boundary 4: no JSON cell carries reader-facing prose
+        # as a side effect of a schema call. The world is forged as data; the paragraph a
+        # reader will actually read is written afterwards by `render_premise_request`, with the
+        # house rules in the system message and this record as its context. Every
+        # word-policing rule this module used to carry (`ladder`, `rung`, `standing`, the
+        # administrative scan) existed because the premise was written *inside* this schema,
+        # where the machinery vocabulary is ambient; with the premise out, there is nothing to
+        # ban (`plan/clarity-audit-2026-08-24.md` W1, W2, P1).
         # **Required of the forge, tolerated as absent everywhere downstream.** A world the
         # Architect proposes must say whose book it is; a book whose canon predates the field —
         # every world forged before 2026-08-22, `plan/serial-pilot-2-world.json` among them —
@@ -577,7 +591,10 @@ _SYSTEM_MESSAGE = house.with_house_rules(
     #
     #   1. *"'wet cinder', 'because his body rings', 'with a stranger going pale' are not things
     #      anybody says in any context"* — the premise rule asked for a person's situation and got
-    #      literary flash fiction. It now asks for a pitch, in the order things happen.
+    #      literary flash fiction. The ask for a pitch **is no longer here at all**: the premise
+    #      left this schema call on 2026-08-24 and is written as prose by
+    #      `render_premise_request`, which is where that clause now lives
+    #      (`plan/handoff-clarity-first.md` boundary 4).
     #   2. *"Why do each of these options mention climbs and ladders — it sounds like we are stuck
     #      on these words for no reason"* — §113's ladder rule made the chain the world's identity.
     #      It is furniture now, met the way bronze-to-gold is met.
@@ -595,9 +612,13 @@ _SYSTEM_MESSAGE = house.with_house_rules(
     # for, which is what these four rules change.
     # **`standing` was the third schema word to reach the page, and it was measured there.**
     # `comprehension_battery` on *Wake the Jar*: three of eight unfollowable terms were the word
-    # `standing` — *"hotter than a girl at her standing should be able to manage"* — after the
-    # clause above had already taken `ladder` and `rung` off the page. The family is this
+    # `standing` — *"hotter than a girl at her standing should be able to manage"* — after a
+    # since-deleted clause had already taken `ladder` and `rung` off the page. The family is this
     # module's own vocabulary for its machinery and a reader has never been told any of it.
+    # **Both bans are gone with their cause** (`plan/clarity-audit-2026-08-24.md` W1): the
+    # premise no longer sees this schema, so the machinery vocabulary is no longer ambient where
+    # the paragraph is written, and schema echo — if it ever recurs — arrives at the
+    # comprehension screen as an unexplained word and is quoted there.
     # **The fourth amendment, and the first one a measurement rather than a read produced.**
     # `comprehension_battery` asked four readers of the target genres to quote anything in a
     # premise they could not follow. Over the two premises forged under the amendment above —
@@ -606,8 +627,11 @@ _SYSTEM_MESSAGE = house.with_house_rules(
     # `frost rooms` at 96%, in the second-to-last clause). The openings were clean.
     #
     # So the rule was not being ignored; it was being obeyed while the premise established itself
-    # and dropped once it accelerated. The clause names where it fails rather than repeating the
-    # instruction louder, which is what the first version of it already tried.
+    # and dropped once it accelerated. **The clause that named where it fails is deleted with the
+    # rest of the premise essay** (2026-08-24): an instruction repeated louder is what the first
+    # version already tried, and the second version's own measurement is the argument for a gate
+    # instead of a clause. `application/comprehension.py` is that gate, and it reads the finished
+    # paragraph rather than instructing the model about the last third of it.
     # **A standing correction about how the operator's examples are meant to be read**, made on
     # 2026-08-23 after this module had twice taken one for a specification: *"not every book has
     # to have bronze and gold. When I mentioned those ranks I was giving examples and was hoping
@@ -699,7 +723,7 @@ _RULES: tuple[str, ...] = (
     "id and one of its rungs by id, and the rung is NOT the top one. The number a reader counts "
     "in this world is the rung's position from the bottom of that chain. The ladder is the "
     "world's FURNITURE and not its concept: a reader meets it as whatever THIS world calls "
-    "its ordered standings, and the premise is about the person rather than about the "
+    "its ordered standings, and what the book is about is the person rather than the "
     "chain. The surface form is the world's own and there is no house style for it — belts, "
     "grades, years, seals, colours, degrees, titles, thresholds and metals are all the same "
     "structure wearing different clothes, and a world that reaches for the nearest familiar "
@@ -866,37 +890,13 @@ _RULES: tuple[str, ...] = (
     "that covers the rent, a thing they know far too much about for no professional reason. "
     "What they bring is an education, a hobby or an obsession rather than thirty years at a "
     "trade — a reader owns the first three and cannot picture the fourth. "
-    "and put **its id alone** in `exception` — one snake_case word such as "
+    "Put **its id alone** in `exception` — one snake_case word such as "
     "`rule_seed_never_true`, with no dash and no clause after it. What that rule says is "
     "already written where the rule is declared, and a sentence there is not an id. Then give "
     "the `edge` that exception grants them, written the way `manifests_as` is written — how it "
     "shows on the page; what they want; and the price the exception "
     "charges them, payable on the page. If the exception is a cardinality shape, that shape "
-    "lists their id in its `except`. Write the `premise` as that person's situation — who they "
-    "are, what is singular about them, what is in the way — rather than as a description of "
-    "the world, and name them in it. **Write it as a PITCH and not as prose**: plain modern "
-    "English, in the order things happen, the way one person tells a friend what a book is "
-    "about. Who they were before, what happened to them, what they can do here that nobody "
-    "else can, and what they are heading toward. No mood, no imagery, no invented compound "
-    "phrases, and no sentence that would only ever appear in a novel. Somebody who has read "
-    "nothing but the premise should be able to repeat it accurately, in their own words, "
-    "after one read. **Every noun a reader has not met before is explained in the same "
-    "breath or it is not used.** A premise saying that every wonder here is alive and small "
-    "and kept in a crock has spent three words the reader cannot cash — what is alive, what "
-    "is a crock, what counts as a wonder — and a person named as a cracked man in a warm "
-    "room is a person nobody can picture. Name the thing in words a reader already owns, or "
-    "say what it is the first time it appears. **This holds hardest in the last third**, "
-    "which is where it is always dropped: the school, the rival, the complication and the "
-    "clock all arrive together at the end and each one drags in a name. Measured over the "
-    "premises forged before this clause, EVERY term readers could not follow first appeared "
-    "between 65% and 96% of the way through — `the cold hill`, `nine deep`, `frost rooms`, "
-    "`keeper`, `the lists`. A noun in the last sentence owes the same half-clause as a noun "
-    "in the first: not `measured against the frost rooms`, but `measured against the frost "
-    "rooms, where they test how cold a pair of hands runs`. **Around 200 words, and 300 is "
-    "too many.** Measured over the premises forged today: at 172 words a reader could not "
-    "follow one thing, at 337 five, at 407 eight. Past that length a premise has stopped "
-    "pitching a person and started explaining a world, and every extra sentence brings in "
-    "another name that owes a gloss.",
+    "lists their id in its `except`.",
     "Mysteries: each carries its ANSWER written down and the scene number where the reader "
     "learns it. A secret with no recorded answer is a promise the book can never keep. This "
     "world is an open-ended serial, so most answers land far out — but **at least one must be "
@@ -1031,6 +1031,66 @@ def render_world_request(
     )
 
 
+#: Frozen generation profile for the premise call, recorded in provenance and carried on the
+#: premise stage's own decision row. Separate from `PROFILE` because it is a separate call for
+#: separate money, and a forge that spent twice should show two rows.
+PREMISE_PROFILE = "architect.premise.v0"
+
+#: **The pinned production provider counts thinking against the output budget**, and one
+#: paragraph of about 200 words is a few hundred tokens of it. The headroom is for the thinking
+#: rather than for the paragraph; the world call's 32,000 records the same arithmetic at the
+#: other end of the scale.
+PREMISE_MAX_OUTPUT_TOKENS = 8000
+
+_PREMISE_SYSTEM = house.with_house_rules(
+    "You are pitching one novel to a reader deciding what to read next. You write one "
+    "paragraph of plain prose and nothing else: no headings, no lists, no JSON."
+)
+
+#: The whole of the ask. **What is not in it is the design**: no word list, no banned
+#: vocabulary, no length refusal, no clause about the last third, and no instruction to withhold
+#: anything — `plan/handoff-clarity-first.md` boundary 3 as amended, and the explanation clause
+#: below is the house's CLARITY rule reaching the one call that writes what a reader reads
+#: (the system message carries the rules themselves; this says what the paragraph is *for*).
+_PREMISE_ASK = (
+    "Write the pitch for this book: one paragraph of plain modern English, about 200 words, in "
+    "the order things happen, the way one person tells a friend what a book is about. Who this "
+    "person was before, what happened to them, what they can do here that nobody else can, what "
+    "it costs, and what they are heading toward. Name them. Every word the paragraph uses that "
+    "a stranger has not met is explained in the paragraph itself. Nothing but the paragraph."
+)
+
+
+def render_premise_request(candidate: Candidate) -> CompletionRequest:
+    """The paragraph a reader will actually read, asked for as a paragraph.
+
+    **The second half of `plan/handoff-clarity-first.md` boundary 4, and the whole reason the
+    schema above lost a field.** The premise used to be one cell of a ~38KB structured world
+    call, written under rule-essays about ids, cardinality shapes and consequence domains, in a
+    context where `ladder`, `rung` and `standing` are the ambient vocabulary — and the
+    2026-08-24 forges produced exactly what that asks for: manufactured nonsense a reader could
+    not cash (*"cancelling is packing done with sound"*). The diagnosis located the cause in the
+    pipeline rather than in the model, so the fix is a pipeline change: the world is forged as
+    data, and then this call writes prose with the house rules in its system message and the
+    world as its context.
+
+    No `schema`, on purpose. A schema here would put the paragraph back inside a JSON cell,
+    which is the thing being undone.
+    """
+    return CompletionRequest(
+        prompt=(
+            "THE WORLD, as its own record declares it:\n"
+            + json.dumps(dict(candidate.raw), ensure_ascii=False, sort_keys=True, indent=1)
+            + "\n\n"
+            + _PREMISE_ASK
+        ),
+        system=_PREMISE_SYSTEM,
+        max_output_tokens=PREMISE_MAX_OUTPUT_TOKENS,
+        profile=PREMISE_PROFILE,
+        call_class=CALL_CLASS,
+    )
+
+
 # --- the gates ----------------------------------------------------------------------------------
 
 #: Comparison-to-an-external-work syntax. **A structural guard that names nothing**, which is
@@ -1143,7 +1203,6 @@ def worlds_from(payload: Mapping[str, Any], k: int) -> tuple[Candidate, ...]:
             ("title", candidate.title),
             ("domain", candidate.domain),
             ("geometry", candidate.geometry),
-            ("premise", str(entry.get("premise") or "").strip()),
         ):
             if not value:
                 raise ArchitectOutputError(f"world {index} has no {field_name}")
@@ -1159,7 +1218,10 @@ def worlds_from(payload: Mapping[str, Any], k: int) -> tuple[Candidate, ...]:
         #
         # Each field is checked for emptiness rather than for presence, because the schema's
         # `minLength` is a request and not a guarantee: the 2026-08-22 forge returned a world
-        # whose `premise` was the empty string under a schema that asked for a string.
+        # whose `premise` was the empty string under a schema that asked for a string. That
+        # field is gone from this schema (the premise is prose now, written by its own call and
+        # checked by `premise_complaints`), and the lesson it taught is why every check here is
+        # on the value rather than on the key.
         protagonist = candidate.protagonist
         if protagonist is None:
             raise ArchitectOutputError(
@@ -1189,10 +1251,14 @@ def worlds_from(payload: Mapping[str, Any], k: int) -> tuple[Candidate, ...]:
                 )
         candidates.append(candidate)
 
+    # **Two axes, and the third left with the premise.** A premise was an axis here while it
+    # was a field of this answer; it is written by a later call now, one candidate at a time,
+    # and a distinctness check that ran after that call would refuse a world the forge had
+    # already paid twice for. The declared domain and the declared geometry are the axes that
+    # survive a lie, which is what this gate was built on (see the docstring above).
     for axis, values in (
         ("domain", [_fold(c.domain) for c in candidates]),
         ("geometry", [_fold(c.geometry) for c in candidates]),
-        ("premise", [_fold(str(c.raw.get("premise") or "")) for c in candidates]),
     ):
         repeated = sorted({value for value in values if values.count(value) > 1})
         if repeated:
@@ -1222,8 +1288,8 @@ def _declared_rule_ids(candidate: Candidate) -> frozenset[str]:
     return frozenset(found)
 
 
-def premise_names_protagonist(candidate: Candidate) -> bool:
-    """Whether this world's premise says its protagonist's name. `False` when it declares none.
+def premise_names_protagonist(candidate: Candidate, premise: str) -> bool:
+    """Whether `premise` says this world's protagonist's name. `False` when it declares none.
 
     Word-boundary rather than bare substring, so a two- or three-letter id part cannot be
     satisfied by the middle of an unrelated word — the failure class `worlds.key_nouns` records
@@ -1232,13 +1298,64 @@ def premise_names_protagonist(candidate: Candidate) -> bool:
     **It checks the name and nothing else.** Whether the premise is *written as* that person's
     situation is a judgment and there is no instrument for it in this project; whether it says
     their name is arithmetic, and the arithmetic is what gets reported.
+
+    **The paragraph arrives as an argument, and that is the whole of the split here.** It used
+    to be read off `candidate.raw["premise"]`, back when the world call wrote the premise as one
+    cell of its own schema. The premise is written by `render_premise_request` now, one call
+    after the world it is about, so the only place this can read it from is the caller's hand.
+    The name is kept because `plan/clarity-audit-2026-08-24.md` P1 and `plan/world-architect.md`
+    cite it; the signature is what changed.
     """
     protagonist = candidate.protagonist
     if protagonist is None:
         return False
-    premise = str(candidate.raw.get("premise") or "").casefold()
+    folded = premise.casefold()
     tokens = [part for part in _identifier(protagonist).split("_") if part]
-    return any(re.search(rf"\b{re.escape(part)}\b", premise) for part in tokens)
+    return any(re.search(rf"\b{re.escape(part)}\b", folded) for part in tokens)
+
+
+def premise_complaints(premise: str, candidate: Candidate) -> tuple[str, ...]:
+    """Deterministic complaints about one written premise. Empty means it goes to the screen.
+
+    **Three checks, and the list is short because the fourth kind is a gate rather than a
+    rule.** There is text; it names the person it is about; it does not compare this book to a
+    real one. Nothing here counts words, scans for a vocabulary, or has an opinion about the
+    prose: `plan/handoff-clarity-first.md` boundary 3 as amended by the operator — *"forbidden-
+    words list sounds like a hack solution to an underlying problem"* — and the reason a length
+    refusal is absent even though this project once measured unfollowable terms rising with
+    premise length. Whether a reader can follow the words is measured by
+    `application/comprehension.py`, which reads the paragraph instead of legislating it, and is
+    blind to which list a word would have been on.
+
+    `_BORROWED` survives here for the one reason the amended boundary allows a scan to survive:
+    it is a **containment rail** and not a craft rule. RS1 and C3 forbid naming, quoting or
+    imitating a real work, and a premise is the one piece of forge output written as free prose
+    with no schema to constrain it — which is exactly where a comparison would land.
+
+    Silent about the name for a world that declares no protagonist, which is the same rail
+    `_protagonist_complaints` holds: every world forged before 2026-08-22 declares none.
+    """
+    text = premise.strip()
+    if not text:
+        return (
+            "the premise call returned nothing; a candidate with no paragraph has nothing for a "
+            "reader to read and nothing for the screen to read either",
+        )
+    complaints: list[str] = []
+    subject = _identifier(candidate.protagonist or {})
+    if subject and not premise_names_protagonist(candidate, text):
+        complaints.append(
+            f"the premise never names {subject!r}; a premise that describes the world rather "
+            "than this person's situation is the shape `plan/reader-read-3.md` note 1 named"
+        )
+    borrowed = sorted(set(_BORROWED.findall(text)))
+    if borrowed:
+        complaints.append(
+            f"the premise compares this book to something outside it ({', '.join(borrowed)}); "
+            "RS1 and C3 forbid naming, quoting or imitating any real work, author, brand or "
+            "system"
+        )
+    return tuple(complaints)
 
 
 def _declared_subjects(candidate: Candidate) -> frozenset[str]:
@@ -1315,13 +1432,18 @@ def _capability_complaints(candidate: Candidate) -> tuple[str, ...]:
 def _protagonist_complaints(candidate: Candidate) -> tuple[str, ...]:
     """Deterministic complaints about a world's declared protagonist. Empty when it declares none.
 
-    **Three membership checks and a substring, and deliberately nothing else.** No model is
-    asked whether the hook is good, whether the edge is interesting, or whether this person is
-    the right one to write about — that question has no instrument in this project and inventing
-    one here would be the verdict channel `plan/world-architect.md` §2 keeps shut. What is
-    checkable is whether the declaration *refers*: whether the person is somebody this world
-    declared, whether the exception names a rule or shape this world declared, and whether the
-    premise is about them.
+    **Three membership checks and deliberately nothing else.** No model is asked whether the
+    hook is good, whether the edge is interesting, or whether this person is the right one to
+    write about — that question has no instrument in this project and inventing one here would
+    be the verdict channel `plan/world-architect.md` §2 keeps shut. What is checkable is whether
+    the declaration *refers*: whether the person is somebody this world declared, whether the
+    exception names a rule or shape this world declared, and whether the two places this answer
+    states what they want agree.
+
+    **The fourth check moved rather than went.** Whether the premise names this person was
+    checked here while the premise was a field of this same answer; it is a check on prose the
+    world call no longer writes, so it is `premise_complaints`' — run against the paragraph, one
+    call later, where the paragraph exists.
 
     Silent for a world with no protagonist, which is every world forged before 2026-08-22 and
     the reason `test_the_pilot_package_regenerates_the_world_it_was_run_on` still gates clean.
@@ -1358,11 +1480,6 @@ def _protagonist_complaints(candidate: Candidate) -> tuple[str, ...]:
             f"{subject} wants {stated[subject]!r} as a cast member and {wants!r} as the "
             "protagonist; one person wants one thing at a time, and the cast entry is the one "
             "that reaches canon"
-        )
-    if subject and not premise_names_protagonist(candidate):
-        complaints.append(
-            f"the premise never names {subject!r}; a premise that describes the world rather "
-            "than this person's situation is the shape `plan/reader-read-3.md` note 1 named"
         )
     return tuple(complaints)
 
@@ -1503,8 +1620,9 @@ def gate_candidate(
     2. every declared feature says how it shows on the page;
     3. every mystery records an answer and a disclosure scene;
     4. **at least one answer lands inside the scenes being written now**;
-    5. the declared protagonist refers — to a cast member, to a rule or shape, and by name in
-       the premise (`_protagonist_complaints`; silent for a world that declares none);
+    5. the declared protagonist refers — to a cast member and to a rule or shape, and wants one
+       thing (`_protagonist_complaints`; silent for a world that declares none). Whether the
+       premise names them is `premise_complaints`', because the premise is a later call;
     6. the ladder is countable and the standing sits on it below the top, and a world with a
        ladder says what a change of standing is printed as (`_ladder_complaints`; silent for a
        world that declares no standing);
@@ -2367,12 +2485,20 @@ def _opening_rung_index(records: Sequence[lc.StateRecord]) -> int | None:
     return indices[0] if len(indices) == 1 else None
 
 
-def report(candidate: Candidate, *, scenes: int = DEFAULT_SCENES) -> dict[str, Any]:
+def report(
+    candidate: Candidate, *, scenes: int = DEFAULT_SCENES, premise: str = ""
+) -> dict[str, Any]:
     """Every deterministic number this candidate has, computed over its own records.
 
     Counters, never a verdict. Nothing here orders one world above another and nothing may be
     read as doing so; `plan/world-architect.md` §6 records which of these have bars (M3, M4) and
     which are reported distributions with no bar (M2, M5, M6) and why.
+
+    **`premise` is a parameter because the premise is no longer part of the candidate.** It is
+    written by `render_premise_request` one call later, so a report built without it is a report
+    about the world alone — and `premise_names_protagonist` below is then `False`, which is the
+    honest answer for a candidate whose paragraph was never written or never arrived. The
+    default keeps every caller that reports on a world by itself working unchanged.
     """
     records = records_for(candidate, scenes=scenes)
     coverage = worlds_mod.manifestation_coverage(records)
@@ -2418,7 +2544,7 @@ def report(candidate: Candidate, *, scenes: int = DEFAULT_SCENES) -> dict[str, A
         "exception_declared": any(
             record.predicate == worlds_mod.EXCEPTION_PREDICATE for record in records
         ),
-        "premise_names_protagonist": premise_names_protagonist(candidate),
+        "premise_names_protagonist": premise_names_protagonist(candidate, premise),
         # **Three counts and no verdict.** How many distinct things this world says a person can
         # do, how many the protagonist starts with, and how deep its own prerequisite structure
         # runs. Nothing orders one world above another and **none of the three is a floor** — the
@@ -2490,16 +2616,24 @@ def bundle_for(
     created_at: str,
     brief: str,
     shape: str,
+    premise: str,
     scenes: int = DEFAULT_SCENES,
 ) -> dict[str, Any]:
-    """Everything `new --state … --premise …` and the directive lane need, in one object."""
+    """Everything `new --state … --premise …` and the directive lane need, in one object.
+
+    **`premise` is handed in rather than read off the world, and the bundle's shape is
+    unchanged.** The paragraph comes from `render_premise_request`'s answer now; the key it
+    lands under is the one it always had, so `--pick`, `directives.json`,
+    `tools/rematerialise_forge_bundle.py` and the research battery's `--forge` reader all read
+    exactly what they read before.
+    """
     return {
         "architect_id": architect_id,
         "brief": brief,
         "prompt_shape": shape,
         "index": candidate.index,
         "title": candidate.title,
-        "premise": str(candidate.raw.get("premise") or "").strip(),
+        "premise": premise.strip(),
         "seed": lc.to_jsonable(
             snapshot_for(
                 candidate,
@@ -2513,7 +2647,7 @@ def bundle_for(
         ),
         "directives": list(directives_for(candidate)),
         "promises": list(promises_for(candidate)),
-        "report": report(candidate, scenes=scenes),
+        "report": report(candidate, scenes=scenes, premise=premise),
         "world": dict(candidate.raw),
     }
 
@@ -2526,6 +2660,8 @@ __all__ = [
     "DIRECT",
     "DOMAIN_FIRST",
     "GEOMETRIES",
+    "PREMISE_MAX_OUTPUT_TOKENS",
+    "PREMISE_PROFILE",
     "PROFILE",
     "PROMPT_SHAPES",
     "WORLDS_SCHEMA",
@@ -2535,9 +2671,11 @@ __all__ = [
     "bundle_for",
     "directives_for",
     "gate_candidate",
+    "premise_complaints",
     "premise_names_protagonist",
     "promises_for",
     "records_for",
+    "render_premise_request",
     "render_world_request",
     "report",
     "snapshot_for",

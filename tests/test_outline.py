@@ -890,9 +890,16 @@ def test_a_milestone_may_raise_a_ceiling_it_also_fills() -> None:
 
 
 def test_costs_count_as_progression() -> None:
-    """A debt story progresses by spending as well as by gaining, so a milestone that only
-    lowers a number is a real milestone. Asserted because a check written as "the numbers go
-    up" would refuse the book this system is being built for."""
+    """A number that falls is still a milestone: a price paid is progression on the page.
+
+    **Reworded 2026-08-24; the assertion is unchanged.** It read "a debt story progresses by
+    spending as well as by gaining ... the book this system is being built for", which is the
+    genre frame the operator refused three times out of three (stage-0 §116) stated as this
+    project's own purpose. What the check is actually protecting is general and survives the
+    frame: a milestone written as "the numbers go up" cannot see a scene whose whole content is
+    what something cost, and `plan/clarity-audit-2026-08-24.md` C6 deleted the debt-story
+    assertion from the milestone rule for the same reason.
+    """
     revision = new_book(BOOK_ID, BRANCH_ID, title="Book", scenes=12)
     beats = beats_for(revision, arc_template(12))
     spending = [

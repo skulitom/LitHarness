@@ -137,9 +137,18 @@ FROZEN_DIGEST = "5b58386d638787ef3f1a"
 
 
 def render(
-    candidate: architect.Candidate, records: Sequence[lc.StateRecord], *, arm: str
+    candidate: architect.Candidate,
+    records: Sequence[lc.StateRecord],
+    premise: str,
+    *,
+    arm: str,
 ) -> Any:
-    """The outline request for one arm. `blind` is the call as `main` made it."""
+    """The outline request for one arm. `blind` is the call as `main` made it.
+
+    `premise` is passed in rather than read off the candidate: from 2026-08-24 a forged world
+    carries no premise of its own, and `uptake.world_from_forge` is what knows where to find
+    it for a bundle from either side of that split.
+    """
     revision = new_book("book", "branch", title=candidate.title or "Book", scenes=SCENES)
     beats = beats_for(revision, arc_template(SCENES))
 
@@ -148,9 +157,7 @@ def render(
         items: tuple = ()
 
     brief = world_brief.brief_for(records) if arm == "world_aware" else None
-    return outline.render_outline_request(
-        str(candidate.raw["premise"]), beats, base=_Base(), world=brief
-    )
+    return outline.render_outline_request(premise, beats, base=_Base(), world=brief)
 
 
 def statements_of(payload: Mapping[str, Any]) -> dict[int, str]:
@@ -477,8 +484,8 @@ def selftest() -> int:
         failures.append("the committed pilot world is missing")
     else:
         candidate, records, premise = uptake.world_from_package(package)
-        blind = render(candidate, records, arm="blind")
-        aware = render(candidate, records, arm="world_aware")
+        blind = render(candidate, records, premise, arm="blind")
+        aware = render(candidate, records, premise, arm="world_aware")
         check("the blind arm carries no world", '"world"' not in blind.prompt)
         check("the world-aware arm carries one", '"world"' in aware.prompt)
         check("the two arms differ", blind.prompt != aware.prompt)
@@ -623,7 +630,7 @@ def main(argv: list[str] | None = None) -> int:
         answers: dict[str, Mapping[int, str]] = {}
         bought: dict[str, dict[str, Any]] = {}
         for arm in ARMS:
-            request = render(candidate, records, arm=arm)
+            request = render(candidate, records, premise, arm=arm)
             print(f"  {candidate.title} / {arm}: {len(request.prompt)} chars", file=sys.stderr)
             call = buy(registry, request)
             bought[arm] = {key: call[key] for key in call if key not in {"parsed", "text"}}

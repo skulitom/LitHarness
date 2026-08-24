@@ -486,12 +486,21 @@ def world_from_package(path: Path) -> tuple[architect.Candidate, tuple[lc.StateR
 def world_from_forge(
     path: Path, index: int
 ) -> tuple[architect.Candidate, tuple[lc.StateRecord, ...], str]:
-    """One candidate out of a forge bundle. `forge.json` keys its worlds under `candidates`."""
+    """One candidate out of a forge bundle. `forge.json` keys its worlds under `candidates`.
+
+    **The premise is read off the bundle first and the world second, and the order is a
+    boundary.** From 2026-08-24 the premise is written by its own call and the world dict
+    carries none (`application/architect.render_premise_request`); every forge before that
+    date has it in both places with the same text, because `bundle_for` copied it out of the
+    world. Bundle-first therefore reads new and old files identically, and a file from either
+    side of the split runs this arm unchanged.
+    """
     require_worlds()
     forge = json.loads(path.read_text(encoding="utf-8"))
     entry = forge["candidates"][index]
     candidate = architect.Candidate(entry["index"], entry["world"])
-    return candidate, records_of(candidate), str(candidate.raw["premise"])
+    premise = str(entry.get("premise") or candidate.raw.get("premise") or "")
+    return candidate, records_of(candidate), premise
 
 
 def records_of(candidate: architect.Candidate, *, scenes: int = 8) -> tuple[lc.StateRecord, ...]:
