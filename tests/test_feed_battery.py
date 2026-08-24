@@ -181,8 +181,11 @@ def test_seating_plan_refuses_a_pool_smaller_than_the_registered_feed() -> None:
 def test_seat_refuses_while_control_min_sessions_is_unset_with_the_named_message(
     monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
 ) -> None:
-    """The refusal precedes everything: even the substrate is not read while unsized."""
-    assert feed_core.CONTROL_MIN_SESSIONS is None  # the registered state this pins
+    """The refusal precedes everything: even the substrate is not read while unsized.
+
+    The registered constant is table-set now; the unset state it guards against is
+    restored here so the structural refusal stays pinned."""
+    monkeypatch.setattr(feed_core, "CONTROL_MIN_SESSIONS", None)
 
     def _unread(directory: object) -> list[tuple[str, str]]:
         raise AssertionError("fitness_texts read before the sizing gate refused the run")

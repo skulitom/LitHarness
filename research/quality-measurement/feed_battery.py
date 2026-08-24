@@ -12,9 +12,10 @@ an operator and a wasted batch:
     uv run python research/quality-measurement/feed_battery.py --dry-run --yes
 
 Two refusals are structural, and each is a lesson from stage-0 encoded rather than remembered.
-While `feed_core.CONTROL_MIN_SESSIONS` is None — its registered state — `--seat` refuses
-immediately: the number must be read off `--attainability`'s simulated table and set in a commit
-that cites it, and a driver happy to bill before that reading is how §94.7 happened. And any
+While `feed_core.CONTROL_MIN_SESSIONS` is None — its state until the sizing table has been
+read — `--seat` refuses immediately: the number must be read off the attainability table and
+set in a commit that cites it (done: `results/fcr-attainability.json`), and a driver happy to
+bill before that reading is how §94.7 happened. And any
 plan above `feed_core.CALL_GUARD` refuses without `--yes`, naming both numbers, because a pilot
 that quietly became a battery is a spend nobody approved.
 
@@ -56,8 +57,10 @@ FITNESS_DIR = HERE / "corpora" / "fitness"
 
 #: Fixed seed and trial count of the attainability table. A sizing table someone could re-seed
 #: until it named the batch they wanted is not a sizing table, so both are constants like fp6's
-#: bootstrap seed; the leg prints the trial count it ran beside the table.
-_ATTAINABILITY_SEED = 94_607
+#: bootstrap seed; the leg prints the trial count it ran beside the table. The seed is the
+#: one the committed sizing table ran (`results/fcr-attainability.json`, 200 trials), so
+#: this leg reprints a cheaper cut of the same seeded world.
+_ATTAINABILITY_SEED = 20_260_824
 _ATTAINABILITY_TRIALS = 40
 
 
@@ -212,7 +215,7 @@ def attainability_leg() -> int:
     print(
         "\nfeed_core.CONTROL_MIN_SESSIONS must be read off this table — from the first row "
         "whose uniform column is high while its biased-reader columns stay low, per reader "
-        "model — and set in a commit that cites the table. It is deliberately None, and this "
+        "model — and set in a commit that cites the table. It starts as None, and this "
         "driver refuses every paid run (--seat) while it is None."
     )
     return 0
