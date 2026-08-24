@@ -1,0 +1,211 @@
+{
+  "generated_at": "2026-08-24T16:09:26Z",
+  "panel": [
+    "climber",
+    "stranger",
+    "regular",
+    "mechanism"
+  ],
+  "panel_model": "claude-haiku-4-5",
+  "scorer": "mean pairwise Jaccard over content words; no model scores agreement",
+  "items": [
+    {
+      "item_id": "reader-book-forge-c:2",
+      "title": "Every Note She Can Reach",
+      "source": "forged",
+      "words": 230,
+      "agreement_can_do": 0.178,
+      "agreement_in_the_way": 0.1839,
+      "agreement_expect_next": 0.0976,
+      "readers_confused": 2,
+      "unclear_items": 5,
+      "unclear_by_reader": {
+        "climber": [
+          "singers' yard",
+          "every solid thing has a note it already wants to shake at",
+          "hold that exact note"
+        ],
+        "stranger": [],
+        "regular": [
+          "singers' yard",
+          "note it already wants to shake at"
+        ],
+        "mechanism": []
+      },
+      "readers_with_open_questions": 4,
+      "open_questions_by_reader": {
+        "climber": [
+          "Will reaching for the whole town's ear force her to choose?",
+          "Is there any way for her to not lose her voice?",
+          "Why are the trained singers actually restricted to narrow ranges?"
+        ],
+        "stranger": [
+          "What does reaching for 'a whole town at once' actually accomplish, and why is that the thing she wants?",
+          "Does she leave the house, and if so, what happens when she does?",
+          "What else can voices do in this world, and what are the trained singers really for?"
+        ],
+        "regular": [
+          "in a house where everything is done by voice, what actually happens to her when she cannot speak?",
+          "does she reach for the town anyway, knowing it will put her outside?"
+        ],
+        "mechanism": [
+          "What is she being used for when she opens locks and takes down shutters, and by whom?",
+          "Will she actually reach for what she wants, and what happens when she does?",
+          "What does being heard by a whole town at once actually mean and require?"
+        ]
+      },
+      "answers": {
+        "climber": {
+          "can_do": "She can sing any object into resonance and break it apart, picking frequencies across the whole spectrum instead of staying in one narrow range like the trained singers do.",
+          "in_the_way": "It wrecks her voice—bleeding throat, days unable to speak in a place where everything needs voice to work. Reaching for the audience she wants means losing her place in the only community that would keep her.",
+          "expect_next": "A progression fantasy about someone whose gift is incompatible with the world that taught her. The story will probably turn on whether she tries to have both things, whether the cost drops with practice, or whether the restrictions on the trained singers exist for a real reason she'll find out too late.",
+          "undefined_words": [
+            "singers' yard",
+            "every solid thing has a note it already wants to shake at",
+            "hold that exact note"
+          ],
+          "open_questions": [
+            "Will reaching for the whole town's ear force her to choose?",
+            "Is there any way for her to not lose her voice?",
+            "Why are the trained singers actually restricted to narrow ranges?"
+          ]
+        },
+        "stranger": {
+          "can_do": "She locates the resonant frequency of any solid object by listening to it and can shatter it by holding that exact note—she does what trained specialists with limited ranges cannot.",
+          "in_the_way": "Her throat bleeds and shreds; she goes mute for days at a time in a place where speech does everything. Using her gift fully would burn her bridges to the only community that will keep her.",
+          "expect_next": "A progression fantasy or coming-of-age story where she's caught between a raw gift that hurts her and an ambition that would cost her shelter. I expect conflict between her desire to reach a whole town and the price of trying.",
+          "undefined_words": [],
+          "open_questions": [
+            "What does reaching for 'a whole town at once' actually accomplish, and why is that the thing she wants?",
+            "Does she leave the house, and if so, what happens when she does?",
+            "What else can voices do in this world, and what are the trained singers really for?"
+          ]
+        },
+        "regular": {
+          "can_do": "She can break anything by finding its natural frequency and hitting that note, while the formally trained singers are locked into predetermined ranges and lists. Her gift adapts to the object instead of forcing it into a system.",
+          "in_the_way": "Her voice. Every time she uses the gift it tears her throat, leaves her bleeding or voiceless for days — and in a world where everything runs on voice, losing yours is catastrophic. Also her precarious place: she's only tolerated because she can do what trained singers cannot, so pushing past that puts her outside the only system that would keep her.",
+          "expect_next": "A progression story about a misfit learning to master an unconventional gift. I expect her to leave the singers' yard, probably by choice or by being cast out, and the book to track what it takes to reach that audience she wants — both in terms of her physical voice holding up and in navigating whatever system or gatekeeping exists in the wider world. There's going to be real cost.",
+          "undefined_words": [
+            "singers' yard",
+            "note it already wants to shake at"
+          ],
+          "open_questions": [
+            "in a house where everything is done by voice, what actually happens to her when she cannot speak?",
+            "does she reach for the town anyway, knowing it will put her outside?"
+          ]
+        },
+        "mechanism": {
+          "can_do": "She can find and sustain the exact resonant frequency of any solid object and break it apart, using intuitive ear instead of the trained lists that constrain other singers.",
+          "in_the_way": "Using the gift tears and bleeds her voice and sometimes silences her in a world where everything is done by voice. She belongs to a house that keeps her only because she breaks their rules, making belonging and rule-breaking the same thing. What she wants requires leaving the only place that would have her.",
+          "expect_next": "This is dark fantasy with hard resonance-based magic. The book will probably establish what she's currently used for, follow her desire building toward her reach, and then show what happens when she takes it — and what it costs beyond just leaving the house.",
+          "undefined_words": [],
+          "open_questions": [
+            "What is she being used for when she opens locks and takes down shutters, and by whom?",
+            "Will she actually reach for what she wants, and what happens when she does?",
+            "What does being heard by a whole town at once actually mean and require?"
+          ]
+        }
+      }
+    },
+    {
+      "item_id": "reader-book-forge-c:1",
+      "title": "The Wick and the Weather",
+      "source": "forged",
+      "words": 227,
+      "agreement_can_do": 0.1497,
+      "agreement_in_the_way": 0.146,
+      "agreement_expect_next": 0.0781,
+      "readers_confused": 1,
+      "unclear_items": 2,
+      "unclear_by_reader": {
+        "climber": [],
+        "stranger": [],
+        "regular": [],
+        "mechanism": [
+          "the Reach",
+          "launch line"
+        ]
+      },
+      "readers_with_open_questions": 4,
+      "open_questions_by_reader": {
+        "climber": [
+          "she wants to cross the entire Reach in one day",
+          "Why won't Ferrin raise her mark officially when he thinks she's the best flier he's trained?",
+          "Why is she the only one willing to do this—is everyone else physically afraid, or is it something else?"
+        ],
+        "stranger": [
+          "Why won't Ferrin raise her mark when he thinks she's the best flier he's ever trained?",
+          "Can she actually cross the Reach in one day? Is it even physically possible?",
+          "What's driving this particular goal—why does she want to cross the whole region?"
+        ],
+        "regular": [
+          "Why won't Ferrin raise her mark?",
+          "What's the real cost of pushing into the cold?",
+          "Is crossing the Reach in a day about proving something to someone, or just to herself?"
+        ],
+        "mechanism": [
+          "Why won't Ferrin raise her mark if he thinks she's the best?",
+          "What happens to you if you fly above your mark?",
+          "Why is gliding across dead air something almost nobody does?"
+        ]
+      },
+      "answers": {
+        "climber": {
+          "can_do": "She can exit a thermal column early while others circle, glide across air that's holding up nothing, and arrive at the next column still high enough to keep climbing. It's a technique everyone else avoids.",
+          "in_the_way": "Her official altitude record is kept deliberately low, and exceeding it gets her grounded. She's also weak in the cold thin air up high—the exact place where the technique fails her hardest. Whether the thing she wants to do is even possible is an open question.",
+          "expect_next": "A tight, goal-driven story about someone working inside and against a specific system. The writing is clear and functional, the physics matter, the stakes are concrete. Not sprawling. I'd expect either a focused arc about the crossing attempt itself, or a series tracking her progression against the system.",
+          "undefined_words": [],
+          "open_questions": [
+            "she wants to cross the entire Reach in one day",
+            "Why won't Ferrin raise her mark officially when he thinks she's the best flier he's trained?",
+            "Why is she the only one willing to do this—is everyone else physically afraid, or is it something else?"
+          ]
+        },
+        "stranger": {
+          "can_do": "She's learned to glide alone through open air between thermals, covering long distances while others circle and climb. Most fliers won't attempt it—the dead air she crosses through is where nothing holds you up.",
+          "in_the_way": "She's weak in cold, thin air, the same air where thermals live—and the cold is dangerous enough to have cost her teacher his fingers. Also, the system itself has her marked low, which means flying high gets her grounded for a season.",
+          "expect_next": "A goal-pursuit story. She wants to fly across an entire region in one day, which the book's setup implies is either impossible or at least radical. I expect her learning to work within and around a system designed to limit her, and a climactic flight that either succeeds or teaches her something about what she actually wanted.",
+          "undefined_words": [],
+          "open_questions": [
+            "Why won't Ferrin raise her mark when he thinks she's the best flier he's ever trained?",
+            "Can she actually cross the Reach in one day? Is it even physically possible?",
+            "What's driving this particular goal—why does she want to cross the whole region?"
+          ]
+        },
+        "regular": {
+          "can_do": "She can navigate through dead air between thermals by gliding flat and low, arriving at the next column with enough altitude left to use it. No one else will do this.",
+          "in_the_way": "Her teacher won't certify her higher even though he knows she can fly it, she's physically vulnerable to the cold at altitude where she needs to work, and the Reach is wide.",
+          "expect_next": "A quiet, skill-focused book about someone testing a specific ability against a real goal. I expect her to work toward the crossing, probably discover why her teacher is holding her back, and learn something hard about what she's willing to pay.",
+          "undefined_words": [],
+          "open_questions": [
+            "Why won't Ferrin raise her mark?",
+            "What's the real cost of pushing into the cold?",
+            "Is crossing the Reach in a day about proving something to someone, or just to herself?"
+          ]
+        },
+        "mechanism": {
+          "can_do": "She can glide long distances through air that has no lift, jumping between thermals while staying high enough to use the next one—a trick that lets her cover ground while everyone else stays put.",
+          "in_the_way": "Cold at altitude makes her weak, and the system caps her officially. She's restricted to a low mark despite being exceptional at what she does, and crossing the Reach in a day means going somewhere she's not allowed.",
+          "expect_next": "A progression or lifted-ability story about flight and thermals with a real aeronautics spine. I expect to learn why Ferrin won't raise her mark—probably because attempting what she wants to do is dangerous or forbidden—and then to watch her go after it anyway.",
+          "undefined_words": [
+            "the Reach",
+            "launch line"
+          ],
+          "open_questions": [
+            "Why won't Ferrin raise her mark if he thinks she's the best?",
+            "What happens to you if you fly above your mark?",
+            "Why is gliding across dead air something almost nobody does?"
+          ]
+        }
+      }
+    }
+  ],
+  "spend": {
+    "input": 9712,
+    "output": 14689,
+    "cache_read": 150323,
+    "cache_write": 77593,
+    "equivalent_usd": 0.2534
+  },
+  "wall_seconds": 211.1
+}

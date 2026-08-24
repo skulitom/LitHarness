@@ -12764,3 +12764,162 @@ vocabulary appears in the other.
 so §120's numbers stay reproducible; nothing here feeds a prompt (§97.1 — a pass licenses a
 located diagnostic on the operator's side and nothing else); and the distance between
 detecting manufactured flatness and reading taste remains §87–§89's three entries long.
+
+## 125. The premise was written inside a schema call and nobody read it back; both halves are fixed, and the gate refused both premises of its first paid run
+
+`plan/handoff-clarity-first.md` boundaries 4 and 5, executed as T3 and T4 of
+`plan/handoff-clarity-remaining.md`. The operator's directive of 2026-08-24, after reading four
+forged premises and finding manufactured nonsense in them (*"cancelling is packing done with
+sound"*): *"We need the comprehension to be wired. We need Opus 5 to produce and understand the
+premises."* The diagnosis put the cause in the pipeline rather than the model — the premise was
+one cell of a ~38KB structured world call, written under rule-essays that contradicted each
+other, beside banned-word lists that made coinage the way out, with no read-back before a person
+saw it.
+
+**Measured, on the frozen instrument, and it is the only before/after here that compares.**
+`research/quality-measurement/comprehension_battery.py` on its own panel and its own model
+(`claude-haiku-4-5`), unchanged on both sides:
+
+| | readers confused | undefined terms | words |
+|---|---|---|---|
+| **before** (4 premises, written inside the schema call, b20a229) | 0/4, 1/4, 2/4, 4/4 | 0, 2, 6, 12 | 224, 295, 252, 277 |
+| **after** (2 premises, written as prose, `reader-book-forge-c`) | 1/4, 2/4 | 2, 5 | 227, 230 |
+
+**Two premises are not a result and the entry says so first.** The after sits inside the
+before's range on both counters; what did not recur is the tail (4/4 confused, 12 terms), and
+n=2 cannot carry that claim. The distribution is reported and **no bar is declared over it** —
+the four attainability checks were run and two of them fail for a bar: the unit is the premise,
+so the real n is 4 and 2, and readers within one premise are not independent of each other's
+text. What *is* attainable is the pass condition itself, and that is the operator's directive
+rather than a threshold this project derived: one of the four baseline premises (*The
+Post-Caller*) already scored zero undefined terms on the research panel, so zero is a number
+this pipeline has reached.
+
+**And the production screen is a different instrument, which its first run demonstrated rather
+than assumed.** Four genre readers on the pinned production model — the operator's requirement
+that the model producing the premises is shown to understand them — screened both candidates
+twice. Neither passed: *The Wick and the Weather* left 6 terms unfollowed by 3 of 4 readers,
+*Every Note She Can Reach* 2 terms by 2 of 4. Read against the research panel's numbers for the
+same two paragraphs (2 and 5), **the two instruments disagree in direction about which premise
+is worse**. Neither is wrong; they are different readers of different sizes, and no number here
+is transferable between them. Both are reported wherever both are run, labelled.
+
+The words the production readers quoted are the same species on both instruments and they are
+not coinage: `the cliff yard`, `the launch line`, `the masters`, `the singers' yard`, `the
+Reach` — places and roles named without a gloss. That is CLARITY's own rule failing at the one
+place the deleted essay used to name (*"this holds hardest in the last third"*), and the screen
+found it without being told what to look for or which list a word would have been on.
+
+**The hooks half worked, which is the other thing this run shows.** Every reader on both
+instruments left 3 to 5 `open_questions` on both premises, and none of them counted against
+anything. A premise that leaves questions it plans to answer is working; the two-list split the
+research module measured its way to is what makes that separable from a word nobody can cash.
+
+**What shipped.** `_WORLD` carries no `premise` property and requires none — the audit's P1 —
+so the world call carries no reader-facing prose at all; the ~25-line premise essay is deleted
+from the protagonist rule. `architect.render_premise_request` is the paragraph's own call: the
+house rules in the system message, the finished world as its only context, no schema, because a
+schema would put the prose back in a JSON cell. `architect.premise_complaints` checks three
+things and nothing else — there is text, it names the declared protagonist, it compares this
+book to no real work — and `_BORROWED` survives there not as craft but as the containment rail
+RS1/C3 require, because `gate_candidate` used to cover the premise for free by scanning the
+whole world blob and no longer can. New `application/comprehension.py` is the gate: four
+**title-free** derivations of the research panel's roles (§97.3 — a generation-side module may
+carry no named published work, and the panel's anchors are named works), `ANSWER_SCHEMA` copied
+verbatim rather than imported so the measuring stick and the screen can drift only on purpose,
+pass at zero undefined across all four, and a non-conforming answer fails the attempt because
+silence is not a pass. `cmd_forge` runs premise → screen per candidate with one fresh retry on
+complaints and one fresh regeneration on a screen failure; nothing a gate found or a reader
+quoted enters any prompt (§97.1). `--pick` refuses a screen-failed candidate and says why; a
+bundle with no `screen` key picks exactly as it did. **There is no flag that skips the screen**
+and a test asserts the parser refuses one.
+
+**What the run cost, because the shape of it is a decision for later.** One world call at 65,311
+tokens and $0.86; four premise calls at $1.02; **sixteen reader calls at $2.76**. The screen is
+3.2x the world call it screens, and at K=2 with one regeneration each that is the floor rather
+than a bad case. Nothing is proposed about it here.
+
+**What was refused.** No craft word list anywhere, in prompt or after — boundary 3 as amended by
+the operator (*"forbidden-words list sounds like a hack solution to an underlying problem"*), and
+no length refusal either, though this project has measured unfollowable terms rising with premise
+length; the screen reads the finished paragraph instead. No model ranks, scores or orders
+anything: the screen refuses on a deterministic count and what survives is presented in the order
+it was forged (§61(5), §105.1). No reader finding is ever fed back — a failed premise is
+re-forged, never rewritten from what the readers quoted. And the research battery is untouched;
+its panel and model stay frozen, which is the only reason the table above means anything.
+
+**Three defects found in the doing, each fixed with its regression test.**
+
+1. **Money already lost.** `decision_id_for` derives an id from the lane key, the attempt and
+   each gate's `(kind, rule id, passed)` — not the spend — so two forges of one brief and shape
+   whose worlds fail the same gates derive the **same** id, `record_decision` returns `False`,
+   and every call site ignores that bool. Measured on `reader-book.db`: three paid forges on
+   2026-08-24, **two rows**, and forge-b's $1.62 never reached `spend_on`, which is the figure
+   the daily ceiling reads. Each forge invocation now carries its stamp in its lane key;
+   `forge-pick` keeps the old key, because a re-run pick makes no call and should collapse.
+2. **A ceiling could land between readers.** The screen priced its four calls with one
+   `budget_check` handed the summed prompt chars and summed output allowance, but
+   `projected_tokens` charges the per-invocation harness tax once and `check` tests
+   `invocations + 1`, not `+ 4`. Over a 1,200-character premise the summed check projects 31,343
+   tokens against the 103,340 the four calls actually project. Past the ceiling, readers one to
+   three ran and reader four did not, the attempt came back non-conforming, and a premise no
+   reader objected to was marked screen-failed and refused by `--pick` — after four paid calls.
+   The requests are priced one after another against a running `Spend` now: the screen refuses
+   before the first reader or runs whole.
+3. **Nothing asserted that the premise call carries the house rules.**
+   `test_every_role_that_writes_for_a_reader_carries_the_house_rules` exists precisely to stop a
+   new reader-facing role skipping `domain/house`, and T3 created one; the guard still named only
+   the world call, and its comment still said that call wrote "the premise a reader meets first",
+   which stopped being true. Rebinding `_PREMISE_SYSTEM` without `with_house_rules` left the whole
+   suite green. Asserted now — and a source-substring scan could not have covered it, because
+   `architect.py` calls `with_house_rules` twice.
+
+Found by five adversarial review lenses over the finished diff, each finding then put to a
+skeptic instructed to refute it: 33 raised, 7 survived, and the three above are the ones that were
+wrong behaviour rather than stale prose. The 26 refuted included every claim that the change had
+broken a boundary.
+
+**Corrections in place.**
+
+- **`spread` changed basis and no number crosses the boundary.** It measures
+  `Candidate.rendered()`, which is the world as JSON, and the premise left that JSON. Every world
+  forged before 2026-08-24 carried ~200 words of prose into the string; none forged after does.
+  `forge-c` reports 0.8373 and it is **not comparable** to the pilot values in
+  `plan/serial-pilot-4.md` §5 or to M1a's pre-registration in §107. Nothing is corrected in the
+  counter, which still measures what it says; the text changed, and the docstring now says so.
+- **`usable` changed meaning.** It counted candidates clear of the world gates; it now counts
+  candidates clear of the gates **and** past the screen. The six `forge.json` files already on
+  disk record the old sense — `reader-book-forge-a` and `-b` both report `usable: 0` under it —
+  so the field does not form one series across 2026-08-24.
+- **The audit table missed a fourth member of the never-explain family**, and the construction
+  test caught it rather than a reader: `_CAPABILITY.manifests_as`'s description carried "never an
+  explanation and never a lecture", the same clause C3 and C4 name at two other sites. Deleted
+  with them; `plan/clarity-audit-2026-08-24.md`'s table is short by that row and this entry is
+  where it is recorded.
+- **The Director's em-dash rail is now shared, and its breadth comes with it.**
+  `directors._CRAFT_INSTRUCTION["em_dash"]` matches a literal `—` anywhere, so a forge
+  `constraint` containing one is dropped whole. Verified: *"Every reading costs the minutes it
+  takes — and the minutes are counted."* is refused and named in `report()["directives_refused"]`.
+  Acceptable because the refusal is visible rather than silent, and recorded here because a model
+  writes em dashes freely and a later reader will otherwise find directives missing with no cause.
+- **Two consumers the handoff did not list read the premise off the world**, and would have
+  raised `KeyError` on every new `forge.json`: `world_uptake.world_from_forge` and
+  `world_plan_arms.render`. Both read the bundle's premise first now, so files from either side
+  of the split load identically. The audit's P1 claimed downstream shape was unchanged; that was
+  true of `--pick`, `directives.json` and the research battery, and wrong about these two.
+- **The K=6 overrun of 2026-08-24 stands as the reason K stays at 2.** An untracked
+  `reader-book-forge/refused.txt` holds a non-conforming answer that cost $3.30 at 84,381 output
+  tokens: three complete worlds is the largest structured answer this repository asks for, and
+  the answer outgrew one message. Forging fewer, not retrying at the same width, is the response.
+
+**Anti-scope.** Nothing here decides what a good story is. The screen measures whether a reader
+can follow the words, which is the floor under every other question this project asks and is not
+one of them: a premise four readers restate perfectly can still be a premise nobody wants. No
+preference, taste or excitement instrument is touched, no registered pool changes, and the
+production screen makes no validity claim about its four readers — it reports what they said they
+could not follow and refuses on the count, which is §89's E6 shape and not a verdict.
+
+**What is left.** Both candidates of the first paid run are screen-failed, so the operator has
+nothing to pick from `reader-book-forge-c` and the pick flow has not been walked end to end under
+the gate. Whether the screen at zero is reachable on the production panel at all is an open
+question with n=2 behind it, and the next forge is the cheapest way to add to that distribution.
