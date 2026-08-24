@@ -1,0 +1,413 @@
+{
+  "generated_at": "2026-08-24T13:43:04Z",
+  "panel": [
+    "climber",
+    "stranger",
+    "regular",
+    "mechanism"
+  ],
+  "panel_model": "claude-haiku-4-5",
+  "scorer": "mean pairwise Jaccard over content words; no model scores agreement",
+  "items": [
+    {
+      "item_id": "reader-book-forge-a:2",
+      "title": "The Cold Hour",
+      "source": "forged",
+      "words": 252,
+      "agreement_can_do": 0.2172,
+      "agreement_in_the_way": 0.1424,
+      "agreement_expect_next": 0.0925,
+      "readers_confused": 2,
+      "unclear_items": 6,
+      "unclear_by_reader": {
+        "climber": [],
+        "stranger": [],
+        "regular": [
+          "the overturn",
+          "kept weather"
+        ],
+        "mechanism": [
+          "the climb",
+          "the overturn",
+          "kept weather",
+          "the cold hour before dawn"
+        ]
+      },
+      "readers_with_open_questions": 4,
+      "open_questions_by_reader": {
+        "climber": [
+          "\"the farmers in the green valley below did it without meaning to\" — what did they do, and how?",
+          "What breaks between the coast and the plain that makes his ability possible only there?"
+        ],
+        "stranger": [
+          "Why does Ilen think the farmers in the valley below caused the drought?",
+          "What happens when his ability—working weather at night where it's supposed to be impossible—becomes known?"
+        ],
+        "regular": [
+          "Did the farmers actually cause the drought, and if so how?",
+          "What does it cost Ilen to use his drawing?",
+          "Will his fog-pulling surprise anyone?"
+        ],
+        "mechanism": [
+          "Why does the coast let him do at night what the plain's drawers stopped doing after sundown?",
+          "Did the farmers really cause the drought, and is there a way to fix it?",
+          "What happens when his ability meets the plain's rules head-on?"
+        ]
+      },
+      "answers": {
+        "climber": {
+          "can_do": "Ilen can pull fog from air at night on wet ground, violating the basic rule that weather-drawers can only work during daylight when the ground is heating the air.",
+          "in_the_way": "He's stuck at the second rank out of four, which is the weakest in his cohort. The land around him has been bone-dry for three years. Whatever he can do at night, it's not enough to fix that, and probably won't be until he ranks higher—if ranking is even possible with an ability the system doesn't account for.",
+          "expect_next": "Progression fantasy with a hard magic system. The coast/plain split feels deliberately engineered as a rule-break waiting to explode—he was raised in a place where the foundational assumption about how drawers work doesn't hold. I expect the book to spend time on (1) him discovering other people can't do what he does, (2) figuring out why he can, and (3) the social/political consequences of being an anomaly when there's a three-year drought and people are probably desperate.",
+          "undefined_words": [],
+          "open_questions": [
+            "\"the farmers in the green valley below did it without meaning to\" — what did they do, and how?",
+            "What breaks between the coast and the plain that makes his ability possible only there?"
+          ]
+        },
+        "stranger": {
+          "can_do": "He can pull weather at night from wet ground, which works on a coast but shouldn't work inland—he operates under different physical rules than the system he's been placed into.",
+          "in_the_way": "He's actually weak at his level on the inland plain despite his impossible ability. The region is three years into drought, and he's stuck suspecting something he can't prove.",
+          "expect_next": "A magic-system fantasy about learning or fighting a system that doesn't match reality. The mystery about why the plain dried out will pull the plot, and his coastal gift will either become crucial or mark him as dangerous.",
+          "undefined_words": [],
+          "open_questions": [
+            "Why does Ilen think the farmers in the valley below caused the drought?",
+            "What happens when his ability—working weather at night where it's supposed to be impossible—becomes known?"
+          ]
+        },
+        "regular": {
+          "can_do": "He can pull fog from the night air on wet ground, which apparently doesn't work on the dry plain where drawers train — he has a skill the inland people haven't learned to use.",
+          "in_the_way": "He's only at second-tier ability, the worst in his year. The plain has been dry for three years, and he suspects farmers caused it somehow, which suggests the drawing system has consequences he's thinking about but doesn't fully understand yet.",
+          "expect_next": "A progression fantasy. He'll probably train up his ability, discover that his coastal upbringing gives him an edge, and get pulled into figuring out what actually happened to the weather — whether he can fix it and whether that's his responsibility.",
+          "undefined_words": [
+            "the overturn",
+            "kept weather"
+          ],
+          "open_questions": [
+            "Did the farmers actually cause the drought, and if so how?",
+            "What does it cost Ilen to use his drawing?",
+            "Will his fog-pulling surprise anyone?"
+          ]
+        },
+        "mechanism": {
+          "can_do": "He can pull fog at night, when no one else on the plain is supposed to be able to move weather at all—his coastal background taught him the rules work differently where the air stays wet after dark.",
+          "in_the_way": "He's the worst drawer in his year even at his tier, so he's still learning. The plain itself is a problem: three years of drought, and he suspects the farmers already down in the valley made it happen somehow and might not be fixable. Whatever he can do, he can only move weather around, not create heat from nothing.",
+          "expect_next": "A progression fantasy where the system is hard and the rules matter. He's going to hit the valley or the plain, probably going to find out what actually caused the drought, and he's going to discover how far his out-of-pattern ability really reaches. The real story is going to be about fighting inside the constraints, not wishing them away.",
+          "undefined_words": [
+            "the climb",
+            "the overturn",
+            "kept weather",
+            "the cold hour before dawn"
+          ],
+          "open_questions": [
+            "Why does the coast let him do at night what the plain's drawers stopped doing after sundown?",
+            "Did the farmers really cause the drought, and is there a way to fix it?",
+            "What happens when his ability meets the plain's rules head-on?"
+          ]
+        }
+      }
+    },
+    {
+      "item_id": "reader-book-forge-b:2",
+      "title": "The Root Decides",
+      "source": "forged",
+      "words": 277,
+      "agreement_can_do": 0.164,
+      "agreement_in_the_way": 0.1513,
+      "agreement_expect_next": 0.1096,
+      "readers_confused": 4,
+      "unclear_items": 12,
+      "unclear_by_reader": {
+        "climber": [
+          "like flesh",
+          "far flesh",
+          "breeders",
+          "fresh join",
+          "crossed"
+        ],
+        "stranger": [
+          "like flesh, then far flesh, and above those a handful of people alive who can join two things with no kinship at all"
+        ],
+        "regular": [
+          "like flesh",
+          "far flesh",
+          "a fresh join"
+        ],
+        "mechanism": [
+          "like flesh",
+          "delta",
+          "join"
+        ]
+      },
+      "readers_with_open_questions": 4,
+      "open_questions_by_reader": {
+        "climber": [
+          "Why can Sela's crosses have young when nothing else she makes can?",
+          "What exactly happens when Halder Vone investigates?",
+          "Why does this threaten Halder's family specifically if she's telling the truth?"
+        ],
+        "stranger": [
+          "Why can she breed true when no grafter ever has?",
+          "What will Halder actually do if she turns out to be telling the truth?",
+          "Why did she spend four years isolated on a rooftop, and does anyone know what she was doing there?"
+        ],
+        "regular": [
+          "Why can her crosses have young?",
+          "How does watching pigeons pass on their traits teach you anything about grafting?"
+        ],
+        "mechanism": [
+          "She does not know why yet",
+          "what exactly Vone does when he finds out she's not lying"
+        ]
+      },
+      "answers": {
+        "climber": {
+          "can_do": "Sela's grafted creatures can breed, which nothing else made by a grafter should be able to do. Everyone else's work dies when they die, but hers might not.",
+          "in_the_way": "She's slower than people her age, she's being actively hunted down by someone powerful who needs her to be a liar, and if she isn't lying, she's broken a rule that the entire social order depends on holding.",
+          "expect_next": "Dark fantasy with a specific magic system that has costs. I expect Halder's investigation will confirm the impossible thing is real, and then the book becomes about what breaks or changes because of it.",
+          "undefined_words": [
+            "like flesh",
+            "far flesh",
+            "breeders",
+            "fresh join",
+            "crossed"
+          ],
+          "open_questions": [
+            "Why can Sela's crosses have young when nothing else she makes can?",
+            "What exactly happens when Halder Vone investigates?",
+            "Why does this threaten Halder's family specifically if she's telling the truth?"
+          ]
+        },
+        "stranger": {
+          "can_do": "She produces fertile offspring from grafted creatures, which shouldn't be possible—grafters are barren by definition, and breeders reject grafted flesh outright. She's somehow both.",
+          "in_the_way": "She's slower at grafting than peers her age, but the real cost is political: her ability threatens the entire order that keeps breeders and grafters separate. Halder Vone brought her in to prove she's lying, but if she isn't, his family loses their standing.",
+          "expect_next": "This is a hard-magic story about a protagonist who just entered a world with rules she's about to break, possibly without meaning to. I'd expect it to follow the central mystery—why she can do this—and the escalating pressure from people who need her not to.",
+          "undefined_words": [
+            "like flesh, then far flesh, and above those a handful of people alive who can join two things with no kinship at all"
+          ],
+          "open_questions": [
+            "Why can she breed true when no grafter ever has?",
+            "What will Halder actually do if she turns out to be telling the truth?",
+            "Why did she spend four years isolated on a rooftop, and does anyone know what she was doing there?"
+          ]
+        },
+        "regular": {
+          "can_do": "She makes fertile offspring from grafted creatures, which breaks a foundational rule of her world — nothing a grafter touches should ever breed.",
+          "in_the_way": "She's slower at grafting than people her age, and she's about to have the most powerful person in her new community investigating her with every incentive to destroy her if she's telling the truth.",
+          "expect_next": "A character-driven fantasy where Sela has to survive the discovery of her ability. The back cover spends real time explaining the magic system's rules before breaking them, so I expect the book will show me how she got here and what the fallout actually costs her.",
+          "undefined_words": [
+            "like flesh",
+            "far flesh",
+            "a fresh join"
+          ],
+          "open_questions": [
+            "Why can her crosses have young?",
+            "How does watching pigeons pass on their traits teach you anything about grafting?"
+          ]
+        },
+        "mechanism": {
+          "can_do": "She can join pieces of different animals together to make living hybrids—a skill most grafters have—but her grafted creatures can have offspring, which nothing a grafter makes is supposed to do.",
+          "in_the_way": "A powerful breeder has brought her into his pens to either prove she's lying or, if she isn't, to destroy her. She threatens the whole system he represents.",
+          "expect_next": "A hard-rule fantasy where the system matters—I expect the book to actually explain how grafting works and what it costs, not just treat it as plot furniture. Probably conflict as her ability becomes known, and hunting for why she's different.",
+          "undefined_words": [
+            "like flesh",
+            "delta",
+            "join"
+          ],
+          "open_questions": [
+            "She does not know why yet",
+            "what exactly Vone does when he finds out she's not lying"
+          ]
+        }
+      }
+    },
+    {
+      "item_id": "reader-book-forge-b:1",
+      "title": "The Second Heat",
+      "source": "forged",
+      "words": 295,
+      "agreement_can_do": 0.1299,
+      "agreement_in_the_way": 0.0954,
+      "agreement_expect_next": 0.0816,
+      "readers_confused": 1,
+      "unclear_items": 2,
+      "unclear_by_reader": {
+        "climber": [],
+        "stranger": [],
+        "regular": [],
+        "mechanism": [
+          "the vent",
+          "bending, never breaking"
+        ]
+      },
+      "readers_with_open_questions": 4,
+      "open_questions_by_reader": {
+        "climber": [
+          "How many cycles does he have left before he's too degraded to matter?",
+          "What does the house want from him specifically, and why does it matter that he's immune to the benders?",
+          "Can anyone else do what he does, or is he the only one who can cycle?"
+        ],
+        "stranger": [
+          "Why did he arrive grown and unset when everyone else gets locked at seven?",
+          "What is the house and what happens inside it?",
+          "How far does the degradation go—is there an endpoint where he can't cycle anymore?",
+          "What do the bending people want with him, and why does their power do nothing to him?"
+        ],
+        "regular": [
+          "the house up the coast that collects the best men and does not send them back",
+          "They have noticed it does nothing to Theo",
+          "Every cycle kills the feeling in another patch of skin, and his body is slower to change each time"
+        ],
+        "mechanism": [
+          "Why doesn't the bending people's touch drain him like it drains everyone else?",
+          "What does the house actually do with the men it collects?",
+          "How many cycles can he actually get before he runs out of skin to kill?"
+        ]
+      },
+      "answers": {
+        "climber": {
+          "can_do": "He can cycle his body between hard and soft states multiple times, where everyone else locked into one at childhood. This matters because hardness without the ability to recover soft means you shatter eventually.",
+          "in_the_way": "Every cycle burns out a patch of feeling in his skin and makes his body slower to change. He's got a countdown on how many times he can actually do this before he's too numb or too sluggish to survive it.",
+          "expect_next": "A progression fantasy where an outsider with a real advantage gets pulled into the conflict between factions, and learns that his advantage has a hard cost that will force him to choose what he's willing to burn.",
+          "undefined_words": [],
+          "open_questions": [
+            "How many cycles does he have left before he's too degraded to matter?",
+            "What does the house want from him specifically, and why does it matter that he's immune to the benders?",
+            "Can anyone else do what he does, or is he the only one who can cycle?"
+          ]
+        },
+        "stranger": {
+          "can_do": "He arrived in an adult body without a permanent form, so he can cycle between hard and soft—something everyone else was locked into doing or not doing at age seven. He knows how to temper metal, and the world literally runs on tempering.",
+          "in_the_way": "Every cycle he does costs him feeling in his skin and slows him down for the next one. He's degrading. And now there's a house full of elite hardened men that has noticed he does something nobody else can do, and they collect people.",
+          "expect_next": "A portal fantasy where he has to navigate a combat/social hierarchy built on bodily transformation. The house is probably coming for him, or he's going to have to go there. I expect him to learn more about how this place works, whether there are others like him, what happens to him as he keeps burning out his sensitivity, and whether any of this is survivable.",
+          "undefined_words": [],
+          "open_questions": [
+            "Why did he arrive grown and unset when everyone else gets locked at seven?",
+            "What is the house and what happens inside it?",
+            "How far does the degradation go—is there an endpoint where he can't cycle anymore?",
+            "What do the bending people want with him, and why does their power do nothing to him?"
+          ]
+        },
+        "regular": {
+          "can_do": "He can toggle his own hardness on and off across multiple cycles—something no one else can do because they don't understand the principle of tempering.",
+          "in_the_way": "Each cycle wears on him, killing sensation and slowing his changes. But there's also a whole world of politics: a house up the coast taking men and not returning them, and bending-type people whose abilities usually work but apparently don't on him.",
+          "expect_next": "Progression fantasy in the LitRPG register. I expect Theo to leverage his advantage to survive Sarrow's structure and eventually confront the house up the coast. Whether I stay reading depends on execution—does the book make Sarrow feel real with actual people, or is it just mechanics?",
+          "undefined_words": [],
+          "open_questions": [
+            "the house up the coast that collects the best men and does not send them back",
+            "They have noticed it does nothing to Theo",
+            "Every cycle kills the feeling in another patch of skin, and his body is slower to change each time"
+          ]
+        },
+        "mechanism": {
+          "can_do": "He can heat-treat his own body the way a metallurgist would steel—harden and soften it at will—while everyone else on this coast got locked into one state at childhood.",
+          "in_the_way": "Each time he does it, a patch of his skin dies. And his body gets slower at changing every time, so it's a battery that runs down no matter what.",
+          "expect_next": "A hard magic-system story where the mechanics are the plot. He'll have to learn what he's worth in a place where his trick works on people, figure out why he woke up here different from everyone else, and probably run into whoever or whatever decided to collect all the best hard men.",
+          "undefined_words": [
+            "the vent",
+            "bending, never breaking"
+          ],
+          "open_questions": [
+            "Why doesn't the bending people's touch drain him like it drains everyone else?",
+            "What does the house actually do with the men it collects?",
+            "How many cycles can he actually get before he runs out of skin to kill?"
+          ]
+        }
+      }
+    },
+    {
+      "item_id": "reader-book-forge-a:1",
+      "title": "The Post-Caller",
+      "source": "forged",
+      "words": 224,
+      "agreement_can_do": 0.069,
+      "agreement_in_the_way": 0.1938,
+      "agreement_expect_next": 0.1578,
+      "readers_confused": 0,
+      "unclear_items": 0,
+      "unclear_by_reader": {
+        "climber": [],
+        "stranger": [],
+        "regular": [],
+        "mechanism": []
+      },
+      "readers_with_open_questions": 4,
+      "open_questions_by_reader": {
+        "climber": [
+          "Can he take the bridge that no caller has ever taken?",
+          "Why is the rule against holding both crafts in place if he already breaks it?",
+          "Will the one-day deafness cost eventually become a limiting factor, or is that the entire arc—learning to work within it?"
+        ],
+        "stranger": [
+          "What makes the old bridge different from any structure a caller has ever faced?",
+          "Is he actually both, or is he wrong about what he's doing—using a principle he doesn't have the right name for?",
+          "Why do callers train someone who's half-packer?"
+        ],
+        "regular": [
+          "What does the deaf day actually do to him—is it just sensory loss or something that changes how he moves through the world?",
+          "Why has no caller ever been able to touch the bridge?",
+          "Do both schools already know what he is, or does that come as a shock?"
+        ],
+        "mechanism": [
+          "What makes the old bridge unkillable to every caller who's tried?",
+          "If he uses the cancellation twice in quick succession, does the deafness compound or just reset?",
+          "Why do both schools tolerate him if holding both crafts is supposed to be impossible?"
+        ]
+      },
+      "answers": {
+        "climber": {
+          "can_do": "He can kill any resonance by feeding in a sound to cancel it out, which makes him the only person able to destroy things that even the strongest callers cannot touch.",
+          "in_the_way": "After using the ability once, he goes completely deaf for a full day and becomes ordinary. Both schools know he has this window of vulnerability.",
+          "expect_next": "A progression fantasy with a ranked power system, a protagonist whose edge is something nobody else has, and a concrete gauntlet set up—the bridge. It will follow him pushing against the limits of what his hybrid ability can do, probably discovering it goes deeper than just sound cancellation, and building toward whether he can actually take what nobody has ever taken.",
+          "undefined_words": [],
+          "open_questions": [
+            "Can he take the bridge that no caller has ever taken?",
+            "Why is the rule against holding both crafts in place if he already breaks it?",
+            "Will the one-day deafness cost eventually become a limiting factor, or is that the entire arc—learning to work within it?"
+          ]
+        },
+        "stranger": {
+          "can_do": "He can bring down a building by humming—using sound to find and cancel what makes it stand. This uses packer logic but through a caller's tool, which breaks the rule that you're one or the other.",
+          "in_the_way": "He goes deaf and helpless for a full day after each use. Deeper problem: he's living proof that the fundamental rule of his world can be broken, and both schools are watching him because they have to.",
+          "expect_next": "A progression fantasy where a hybrid taking on an impossible task—the bridge nobody's ever felled. I expect training, discovery of what the power actually costs beyond deafness, and the attempt on this thing that shouldn't be breakable. Probably political tension between the two schools over what he should do or whether he should exist.",
+          "undefined_words": [],
+          "open_questions": [
+            "What makes the old bridge different from any structure a caller has ever faced?",
+            "Is he actually both, or is he wrong about what he's doing—using a principle he doesn't have the right name for?",
+            "Why do callers train someone who's half-packer?"
+          ]
+        },
+        "regular": {
+          "can_do": "He can destroy buildings using sound the way callers do, but he doesn't work through resonance—he works through interference and cancellation, which makes him a packer operating in a caller's register. Nobody else walks both roads.",
+          "in_the_way": "Every use costs him a full day deaf to the world's heartbeat. He becomes just a person, able to be touched, vulnerable, ordinary. And what he does shouldn't be possible—both schools have rules that exclude people like him.",
+          "expect_next": "A progression fantasy with tight mechanical rules. I expect to see the cost actually matter—him burning through deaf days, learning to manage when he uses this, and building toward whether he can actually take the bridge or whether the schools stop him first.",
+          "undefined_words": [],
+          "open_questions": [
+            "What does the deaf day actually do to him—is it just sensory loss or something that changes how he moves through the world?",
+            "Why has no caller ever been able to touch the bridge?",
+            "Do both schools already know what he is, or does that come as a shock?"
+          ]
+        },
+        "mechanism": {
+          "can_do": "He hears the one frequency a solid thing resonates at and generates a matching sound that cancels it, breaking the thing apart. He can also do what packers do—muffle those resonances by sheer layered construction. He's simultaneously both and neither.",
+          "in_the_way": "After he uses the cancellation, he's deaf for a full day—completely ordinary, unable to hear the beat of anything. And the two schools of builders call this impossible; he shouldn't exist. Both know it anyway.",
+          "expect_next": "A hard-magic progression book where the mechanism comes first. The training yard will send him after the bridge because he's the only one built to take it, but the cost will matter. I expect the book to trace whether his hybrid nature solves the bridge or whether using it costs him in ways that stack.",
+          "undefined_words": [],
+          "open_questions": [
+            "What makes the old bridge unkillable to every caller who's tried?",
+            "If he uses the cancellation twice in quick succession, does the deafness compound or just reset?",
+            "Why do both schools tolerate him if holding both crafts is supposed to be impossible?"
+          ]
+        }
+      }
+    }
+  ],
+  "spend": {
+    "input": 20220,
+    "output": 31248,
+    "cache_read": 324447,
+    "cache_write": 130949,
+    "equivalent_usd": 0.4708
+  },
+  "wall_seconds": 449.4
+}
