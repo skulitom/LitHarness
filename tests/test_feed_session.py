@@ -325,9 +325,8 @@ def test_a_feed_with_a_fault_raises_before_any_request_is_made() -> None:
 def test_at_the_fp6_skim_price_each_skim_charges_a_full_reads_worth_of_budget() -> None:
     """fp6 runs sessions at skim_cost == read_cost == 3: nine skims, not twenty-seven, consume
     BUDGET_UNITS — visible as the action count, the per-skim charge on the clock, and the
-    zero-left tail. `spent_units` prices the record at the frozen core's registered constants,
-    so it reports these skims at SKIM_COST; the charging itself is pinned by the counts and
-    the tail turns, not by that property. The refit check must also stay silent here: equal
+    zero-left tail. The session record carries the prices it ran at, so `spent_units`
+    reports the full charge. The refit check must also stay silent here: equal
     prices do not change the worst case."""
     records = [_action("skim", "A")] * (feed_core.BUDGET_UNITS // 3)
     fake = ScriptedElicitor(records)
@@ -341,7 +340,7 @@ def test_at_the_fp6_skim_price_each_skim_charges_a_full_reads_worth_of_budget() 
         skim_cost=feed_core.READ_COST,
     )
     assert len(session.actions) == 9
-    assert session.spent_units == 9 * feed_core.SKIM_COST
+    assert session.spent_units == feed_core.BUDGET_UNITS
     # After the first skim, three minutes are gone from the reader's clock.
     after_first_skim = fake.requests[1]["turns"][-1]["content"]
     assert after_first_skim.endswith(

@@ -360,10 +360,18 @@ class FeedSession:
     actions: tuple[tuple[str, str], ...]
     unanswered: int = 0
     exit_note: str = ""
+    #: The prices this session actually ran at. Registered defaults; the fp6 skim-price
+    #: control overrides them, and a record that repriced its own history at the registered
+    #: constants would misreport the charge — found by the session task's tests.
+    read_cost: int = READ_COST
+    skim_cost: int = SKIM_COST
 
     @property
     def spent_units(self) -> int:
-        return sum(READ_COST if action == "read" else SKIM_COST for action, _ in self.actions)
+        return sum(
+            self.read_cost if action == "read" else self.skim_cost
+            for action, _ in self.actions
+        )
 
     @property
     def target_slot(self) -> str:

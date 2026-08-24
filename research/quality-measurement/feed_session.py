@@ -254,4 +254,6 @@ def run_feed_session(
         actions=tuple(actions),
         unanswered=unanswered,
         exit_note=exit_note,
+        read_cost=read_cost,
+        skim_cost=skim_cost,
     )

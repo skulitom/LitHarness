@@ -243,3 +243,22 @@ def test_an_unanswered_session_is_not_scorable() -> None:
     )
     assert not broken.scorable
     assert _session((("read", "A"),)).scorable
+
+
+def test_a_session_records_the_prices_it_ran_at_and_charges_them() -> None:
+    """The fp6 override runs skims at the read price; the record must say so itself."""
+    flat = feed_core.FeedSession(
+        feed_id="f1",
+        arm="fp6",
+        model="fake",
+        rotation=0,
+        replicate=0,
+        dose=0.0,
+        actions=(("skim", "A"), ("skim", "B")),
+        skim_cost=feed_core.READ_COST,
+    )
+    assert flat.spent_units == 2 * feed_core.READ_COST
+    registered = _session((("skim", "A"), ("skim", "B")))
+    assert registered.read_cost == feed_core.READ_COST
+    assert registered.skim_cost == feed_core.SKIM_COST
+    assert registered.spent_units == 2 * feed_core.SKIM_COST
