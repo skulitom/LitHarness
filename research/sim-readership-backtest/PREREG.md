@@ -1,10 +1,9 @@
 # Pre-registration — can a simulated readership post-dict the real Royal Road market?
 
-**Status: DRAFT — not yet registered.** This header changes to REGISTRATION with a commit hash
-when every `[SLOT: …]` below is filled from the free sizing runs and the arithmetic is checked.
-Nothing measured before that commit may be reported; nothing below it may be edited after the
-first paid call, and an edit forced by an error must name the number it had seen (the
-pitch-reader K1a precedent).
+**Status: REGISTRATION, 2026-08-24** — every slot filled from free sizing runs before any
+paid call; the registering commit is this file's own history. Nothing measured before this
+commit may be reported; nothing below may be edited after the first paid call, and an edit
+forced by an error must name the number it had seen (the pitch-reader K1a precedent).
 
 The question: does a simulated readership, reading blind, predict which of two real Royal Road
 books the real readership stayed with — better than chance, on held-out pairs, with certified
@@ -160,10 +159,26 @@ pass.
 
 ## 8. Power and staging
 
-[SLOT: power table from bound.py's twin at sigma_reader = 0.8 (simulate.py's calibrated
-point), 10 readers, both orders, undecided rate 0.15 — pairs needed for >= 0.80 power to
-distinguish 0.60 from 0.50 at alpha 0.05, and the type-I column beside it. The chosen
-n_decided_pairs, and whether the matchable corpus reaches it.]
+Sizing was measured three times, and the first two attempts are findings rather than waste:
+(1) the persona-grain two-way clustered bound (`bound.py`'s twin, 10 readers,
+sigma_reader = 0.8 — the heterogeneity the population carries *by design*) has **zero power
+at every candidate size**, so no per-persona claim is registered anywhere in this document;
+(2) an unconditional null that redraws personas each simulated world converts persona-draw
+variance into false clears (type-I 0.21-0.34, rising with n) — which is why the primary is
+registered **conditional on the frozen reward split**, the only claim the frozen-population
+design makes anyway. The conditional arithmetic, exact binomial at the pair-bootstrap's
+rejection rule (z = 1.96 on the normal-approximate lower bound):
+
+    n_decided | power@0.60 | type-I@0.50 | power@0.65
+          120 |      0.612 |      0.0274 |      0.923
+          160 |      0.715 |      0.0239 |      0.970
+          200 |      0.826 |      0.0280 |      0.992
+          240 |      0.868 |      0.0226 |      0.997
+
+**Target: 200 decided confirmatory pairs** (>= 0.80 power to distinguish 0.60 from chance).
+The surveyed divergent-pair capacity (~989) covers the target with room for the screens'
+attrition; if the recognition and cutoff screens leave fewer than 200 decided pairs, the
+registered verdict is INSUFFICIENT_N.
 
 Staging, each stage with its own PID lock (the `force_remote.SingleRun` pattern) and cost
 ledger, replay caches keyed by request digest:
@@ -176,15 +191,23 @@ ledger, replay caches keyed by request digest:
 
 Panel model `claude-haiku-4-5`, no spot model (§3's cutoff reasoning — a 2026-cutoff frontier
 model reading excerpts would void cutoff-cleanness by construction). Cost ceiling for the
-whole programme: [SLOT: computed from final counts]; the ceiling is a refusal, not a note.
+whole programme: **$180** on the haiku panel — dominated by the C-arm's ~4,000 two-turn
+sessions over up-to-6,000-word excerpt pairs; the P-arm, the probes and the control arms are
+small beside it. The ceiling is a refusal, not a note, and stage (b)'s ledger check (pilot
+cost x 10 within 2x of estimate) is what keeps it one.
 
 ## 9. Primary metric and the decision rule
 
 **Primary: pairwise accuracy of the reward split's aggregate prediction on the confirmatory
-(recognition-clean, cutoff-clean where possible) C-arm pair set**, with the shipped
-estimator's interval: `bound.py`'s bit-exact twin of `win_rate_lower_bound`, cells =
-(persona, pair) with both orders inside one cell, alpha = 0.05, tie policy HALF_WIN, one
-candidate (no alpha division — nothing here selects among candidates).
+(recognition-clean, cutoff-clean where possible) C-arm pair set — a claim conditional on the
+frozen reward split**, with a pair-resampled percentile bootstrap interval (2,000 resamples,
+seed content-derived from the outcome vector), alpha = 0.05, one candidate (no alpha division
+— nothing here selects among candidates). Conditional on the frozen personas the pair
+bootstrap is calibrated (§8's measured type-I, 0.022-0.028 at every candidate n); the two
+rejected designs are §8's record. The persona-grain two-way clustered number (`bound.py`,
+cells = (persona, pair), both orders one cell, HALF_WIN) is reported as a **descriptive
+secondary only** — §8's simulation showed it cannot power at this population's registered
+heterogeneity, and a number that cannot fire may not carry the qualification.
 
 **The sim qualifies as a candidate reward model iff** the interval's lower bound clears 0.5
 AND no VOID condition fired AND the damage arm passed AND the sham floor held. Anything else
@@ -199,8 +222,8 @@ accuracy and abandon-both rates, reason-code distributions, the holdout split's 
 `research/sim-readership-backtest/`: `corpus.py` (pairing + matching + content-addressed
 cache), `blinding.py`, `recognition.py`, `population.py` (frozen personas + split),
 `arms.py` (session construction, describe-then-behave, both orders), `analysis.py` (accuracy,
-intervals via `research/preference-power/bound.py`, VOID evaluation, label-shuffle,
-health signature), `backtest.py` (staged driver). Transport is `elicit.Elicitor` with its
+the pair-bootstrap primary interval, the descriptive `research/preference-power/bound.py`
+secondary, VOID evaluation, label-shuffle, health signature), `backtest.py` (staged driver). Transport is `elicit.Elicitor` with its
 digest-keyed cache; every number in FINDINGS.md reproduces from the cached JSONLs via
 RUNBOOK.md with no live call.
 
