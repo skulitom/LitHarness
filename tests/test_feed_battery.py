@@ -287,3 +287,76 @@ def test_nothing_scorable_reads_unreadable_across_every_verdict_field() -> None:
     for block in (feed_battery.controls_block(dead, dead), feed_battery.controls_block([], [])):
         for name, entry in block.items():
             assert entry["verdict"] == "UNREADABLE", f"{name} did not read UNREADABLE"
+# ------------------------------------------------------------------------------ the screen cap
+
+
+def test_a_feeds_cap_turns_the_run_into_a_screen_and_stamps_the_cap(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Any
+) -> None:
+    """§89's no-silent-caps rail: a capped plan names its cap in the result and in the study
+    field, so a screen can never read as a covered pool. Counts derived by hand: 2 feeds x 4
+    rotations x 1 replicate x 2 price blocks = 16 sessions."""
+    monkeypatch.setattr(feed_core, "CONTROL_MIN_SESSIONS", 48)
+    monkeypatch.setattr(feed_battery.feed_substrate, "fitness_texts", lambda directory: _pool())
+    monkeypatch.setattr(feed_battery, "Elicitor", _RefusingElicitor)
+    out = tmp_path / "screen.json"
+    code = feed_battery.main(
+        [
+            "--seat",
+            "--yes",
+            "--feeds",
+            "2",
+            "--replicates",
+            "1",
+            "--cache",
+            str(tmp_path / "raw.jsonl"),
+            "--out",
+            str(out),
+        ]
+    )
+    assert code == 0
+    stored = json.loads(out.read_text(encoding="utf-8"))
+    assert stored["study"] == "fcr_screen"
+    assert stored["plan_cap"] == {"feeds": 2, "of_pool": feed_core.FEED_SIZE + 3}
+    assert len(stored["sessions_cheap"]) + len(stored["sessions_flat"]) == 16
+
+
+def test_an_uncapped_seat_stamps_no_cap_and_stays_a_seat(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Any
+) -> None:
+    """Without --feeds the study is the seat and plan_cap is None — the stamp never lies in
+    either direction."""
+    monkeypatch.setattr(feed_core, "CONTROL_MIN_SESSIONS", 48)
+    monkeypatch.setattr(feed_battery.feed_substrate, "fitness_texts", lambda directory: _pool())
+    monkeypatch.setattr(feed_battery, "Elicitor", _RefusingElicitor)
+    out = tmp_path / "seat.json"
+    code = feed_battery.main(
+        [
+            "--seat",
+            "--yes",
+            "--replicates",
+            "1",
+            "--cache",
+            str(tmp_path / "raw.jsonl"),
+            "--out",
+            str(out),
+        ]
+    )
+    assert code == 0
+    stored = json.loads(out.read_text(encoding="utf-8"))
+    assert stored["study"] == "fcr_seat"
+    assert stored["plan_cap"] is None
+
+
+def test_a_zero_feed_cap_is_a_usage_error_before_the_substrate_is_read(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """--feeds 0 is not an empty screen: argparse's own exit, before any corpus read."""
+
+    def _unread(directory: object) -> list[tuple[str, str]]:
+        raise AssertionError("fitness_texts read before the zero-cap refusal")
+
+    monkeypatch.setattr(feed_battery.feed_substrate, "fitness_texts", _unread)
+    with pytest.raises(SystemExit) as excinfo:
+        feed_battery.main(["--seat", "--yes", "--feeds", "0", "--replicates", "1"])
+    assert excinfo.value.code != 0

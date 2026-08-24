@@ -376,6 +376,12 @@ def main(argv: list[str] | None = None) -> int:
     )
     parser.add_argument("--dry-run", action="store_true", help="build the seating; no call")
     parser.add_argument("--seat", action="store_true", help="paid: the screen, all four rotations")
+    parser.add_argument(
+        "--feeds",
+        type=int,
+        default=None,
+        help="screen: limit the plan to its first N feeds; the result is stamped a screen",
+    )
     parser.add_argument("--model", default="qwen3:14b")
     parser.add_argument("--replicates", type=int, default=3)
     parser.add_argument("--cache", default="fcr-raw.jsonl", help="replay cache file for --seat")
@@ -407,7 +413,18 @@ def main(argv: list[str] | None = None) -> int:
         )
         return 1
 
+    if args.feeds is not None and args.feeds < 1:
+        parser.error("--feeds must be at least 1")
+
     plan = seating_plan(feed_substrate.fitness_texts(FITNESS_DIR))
+    pool_feeds = len(plan)
+    if args.feeds is not None:
+        # A capped plan is a screen, never a seat — §89's no-silent-caps rail: the cap
+        # is printed here and stamped into the result, so a limited run can never read
+        # as a covered pool. §94.6 is why the knob exists at all: a six-session screen
+        # killed two of four BCR readers before a seating budget was spent on them.
+        plan = plan[: args.feeds]
+        print(f"screen: first {len(plan)} of {pool_feeds} planned feed(s)")
     counts = planned_counts(len(plan), args.replicates)
     # The plan report is the dry-run leg's product, so it goes to stdout; refusals go to
     # stderr below.
@@ -465,7 +482,10 @@ def main(argv: list[str] | None = None) -> int:
         spend = elicitor.spend()
 
     result: dict[str, Any] = {
-        "study": "fcr_seat",
+        "study": "fcr_screen" if args.feeds is not None else "fcr_seat",
+        "plan_cap": (
+            None if args.feeds is None else {"feeds": len(plan), "of_pool": pool_feeds}
+        ),
         "registration": feed_core.PRE_REGISTRATION,
         "registration_digest": feed_core.registration_digest(),
         "model": args.model,
@@ -477,7 +497,12 @@ def main(argv: list[str] | None = None) -> int:
         "sessions_flat": [asdict(session) for session in flat],
         "controls": controls_block(cheap, flat),
     }
-    out = Path(args.out) if args.out else RESULTS / f"fcr-seat-{args.model.replace(':', '-')}.json"
+    kind = "screen" if args.feeds is not None else "seat"
+    out = (
+        Path(args.out)
+        if args.out
+        else RESULTS / f"fcr-{kind}-{args.model.replace(':', '-')}.json"
+    )
     write_result(result, out)
     print(f"wrote {out}", file=sys.stderr)
     return 0
