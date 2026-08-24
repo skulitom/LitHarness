@@ -85,6 +85,14 @@ while looking valid, and this is the likeliest way the whole result dies.
   `claude-opus-5`) postdates the entire 2025 dump, so a spot model would empty the
   cutoff-clean set by existing. The panel model's memory is the only model memory in the loop,
   and it is the one the probe screens.
+- **Measured before any paid call** (the deterministic pair build over the twelve shards,
+  committed as `pairs-v0.json`: 2,014 pairs at the registered floor, 963 in
+  `undeclared_2025`): the cutoff-clean pair set is **empty** — no pair has both members
+  first released on or after 2025-08-01, because the crawl predates that horizon. The
+  confirmatory set is therefore the recognition-clean `undeclared_2025` pairs, and the
+  probe carries the entire memorisation defense; the corpus's own obscurity (median one
+  follower) is contextual mitigation, stated rather than weighed. The number seen when
+  this clause was added: zero, from that pair build, before any call.
 - The `recognised` stratum may be run and reported separately; it certifies nothing.
 - If the screens leave the confirmatory set below the power target, the registered verdict is
   **INSUFFICIENT_N**, reported as such — not a smaller floor.
