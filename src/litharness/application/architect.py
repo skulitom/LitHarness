@@ -1054,16 +1054,29 @@ _PREMISE_SYSTEM = house.with_house_rules(
 )
 
 #: The whole of the ask. **What is not in it is the design**: no word list, no banned
-#: vocabulary, no length refusal, no clause about the last third, and no instruction to withhold
-#: anything — `plan/handoff-clarity-first.md` boundary 3 as amended, and the explanation clause
+#: vocabulary, no length refusal, and no instruction to withhold anything —
+#: `plan/handoff-clarity-first.md` boundary 3 as amended, and the explanation clause
 #: below is the house's CLARITY rule reaching the one call that writes what a reader reads
 #: (the system message carries the rules themselves; this says what the paragraph is *for*).
+#:
+#: **The closing clause is an operator-directed amendment, 2026-08-24 (stage-0 §127), and where
+#: it came from matters.** The screen refused four premises out of four across two forges, and
+#: the terms readers could not follow were in the last sentences of every one of them: a whole
+#: ranking system, a place, an authority, each arriving named and unglossed after a clean
+#: opening. That is the failure §119.2 measured before the premise essay was deleted — every
+#: unfollowable term first appearing between 65% and 96% of the way through — reproducing once
+#: the clause naming it went. **The operator directed this change**; it was not derived from the
+#: readers' findings by this system, because that channel is what §97.1 closes. It names a
+#: position rather than a vocabulary, so nothing here is a word list.
 _PREMISE_ASK = (
     "Write the pitch for this book: one paragraph of plain modern English, about 200 words, in "
     "the order things happen, the way one person tells a friend what a book is about. Who this "
     "person was before, what happened to them, what they can do here that nobody else can, what "
     "it costs, and what they are heading toward. Name them. Every word the paragraph uses that "
-    "a stranger has not met is explained in the paragraph itself. Nothing but the paragraph."
+    "a stranger has not met is explained in the paragraph itself. That holds hardest in the "
+    "closing sentences, where a pitch accelerates and starts naming things it never introduced: "
+    "a name in the last sentence owes the same half-clause as a name in the first. Nothing but "
+    "the paragraph."
 )
 
 

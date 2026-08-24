@@ -13032,3 +13032,143 @@ measuring whether a simulated reader carries on from one chapter to the next com
 project to no publication schedule, and §16/§62's retirement of serial publication as a goal is
 untouched. And it makes no claim that the objective is currently met — §19.1's row says the
 opposite, and now says it about the right bar.
+
+## 127. A fourth rule against the same complaint, and six premises out of six say a fourth rule is not the answer
+
+The comprehension screen (§125) refused every premise it has ever read: **six of six**, across
+three forges on 2026-08-24, at a cost of about $16. This entry records the one generation-side
+change made between them, why it was directed, and what its failure licenses.
+
+**What was directed and by whom.** The screen's refusals had a shape. In all four premises of
+`reader-book-forge-c` and `-d` the terms readers could not follow arrived in the **closing
+sentences** — a whole ranking system, a place, an authority, each named and unglossed after a
+clean opening. That is §119.2's measurement reproducing: every unfollowable term first appearing
+between 65% and 96% of the way through, measured before the premise essay carrying the clause
+that named it was deleted with the rest of the essay (§125). **The operator directed the
+clause's restoration**, and the direction mattered rather than being a formality: the diagnosis
+came from what the screen's readers quoted, and a system that rewrote its own prompt from reader
+findings would be running the channel §97.1 closes. Reported to the operator, directed by the
+operator, applied by the system — that is the order, and it is the whole of why this was allowed.
+
+**What shipped.** One sentence appended to `architect._PREMISE_ASK`: *"That holds hardest in the
+closing sentences, where a pitch accelerates and starts naming things it never introduced: a
+name in the last sentence owes the same half-clause as a name in the first."* It names a
+**position** and never a vocabulary, so boundary 3's ban on word lists is untouched.
+
+**What it measured.** `reader-book-forge-e`, forged under it: *Every Storm Lays a Layer* — five
+terms unfollowed by three of four readers (`layerworkers`, `the buried weak layer`, `start a
+crack running or hold it shut`); *Nobody Sees Their Own Light* — seven terms by all four
+(`Saltwatch`, `bender`, `the masters`). **The clause did not take.** Naming the position did not
+stop the model naming things in that position.
+
+**The finding, which is about the method rather than about the clause.** Three interventions
+have now been aimed at this same complaint, each recorded, each obeyed in letter:
+
+| what was added | for what complaint | what it produced |
+|---|---|---|
+| §118.1's amendment: "the domain is the engine, not the setting" | *"unnecessarily esoteric … eg mordant"* (2026-08-23) | 32 worlds, 27 distinct domains, **every one a trade, a science or a body of law** |
+| §118's daydream rule, with the operator's own two example lists in it | *"Readers want to feel cool and progress in meaningful ways"* | grafting yards, ash-beds, snow slopes, a lens grinder |
+| §127's positional clause | six premises refused on late unglossed names | six of six still refused; snow science and optics |
+
+The operator's reading of the result is the entry's conclusion: *"we shouldn't really hardcode
+them in"*, and — of the vocabulary a fourth rule would have to use — *"you are also for some
+reason using this weird language again which leaks and breaks our output eg 'ladder the reader
+can count', nobody counts ladders."* That is W1's leak measured from a new direction: the words
+this project legislates with are the words that reach the page, which is how `standing` became
+three of eight unfollowable terms on *Wake the Jar* while a rule was busy banning `ladder` and
+`rung`. A rule written to force an outcome supplies its own vocabulary instead of the outcome.
+
+**So the next move is subtraction, not a fourth essay**, and the two subtractions are named
+here rather than made: the premise ask instructs a chronological *summary* ("in the order things
+happen, the way one person tells a friend what a book is about") where a blurb makes a
+*promise*; and the domain rule instructs a real craft as the engine, which four forges running
+have answered with the craft as the setting. Neither is removed in this entry, because removing
+a rule that encodes a measured correction is a decision that should be made against a
+measurement rather than against a mood — and the measurement does not exist yet (§128).
+
+**What was refused.** No fourth rule. No word list, in prompt or after. No relaxation of the
+screen: the bar is the operator's and refusing six of six is the instrument reporting rather
+than failing. And no prompt edit derived by this system from what the readers quoted — the
+clause above exists because the operator directed it, and the entry says so twice for the
+session that reads this one and wonders why the same evidence may not be used the same way
+again.
+
+**Anti-scope.** This says nothing about whether the premises are any *good*. The screen measures
+whether a reader can follow the words, which is the floor; the operator's judgment of the same
+six — *"more clear but both still extremely bad … we are again talking about minutia and not
+what the reader came for"* — is a different question with no instrument behind it, and §128 is
+where that gets one.
+
+## 128. The writer may take direction from simulated readers, and the loop that would carry it is axis-bound to three things nobody cares about
+
+The operator's direction, 2026-08-24, after six premises the screen passed as followable and
+they read as *"extremely bad … minutia and not what the reader came for"*: **the system should
+understand the anticipation of the simulated readers, to predict and provide what the reader
+secretly or not so secretly desires.** Put to them that this crosses §97.1, the answer was
+*"no no we exactly want to inject signals into generation"*, and then the shape: *"it won't be
+the same reader, it will be different — it will be the writer taking direction from simulated
+readers."*
+
+**The channel is open, and `domain/pools.py` is the condition rather than a caveat.** §97.1 was
+never a rule that reader signal may not reach a prompt; it was a rule against the *same*
+readers steering and judging, because a claim about prose shaped by the readers who later judge
+it is circular. `pools` is that firewall in code: a write-once, content-derived split, a reader
+in exactly one pool for life. So the loop is licensed on one condition — steering readers and
+measurement readers are disjoint — and one cost, which the module's own docstring states and
+this entry repeats so nobody discovers it late: *"if the loop works at all, every scene of a
+steered book is shaped by steering feedback and no passage-level split undoes that."* **A
+steered book is steering-side material and leaves §61's measurement set permanently.** That
+costs the product objective nothing (§126 measures continuation on the disjoint pool) and it
+costs the long-term goal a book at a time.
+
+CLAUDE.md's standing axiom is edited to say all of this, because as written — *"Nothing
+diagnosed from a book's record feeds a prompt"* — it forbids the work outright, and the next
+session would revert it correctly, quoting the rule.
+
+**What is already built, which is more than expected.** `application/feedback_loop.resolve`
+turns reader verdicts plus judge locations into a `FeedbackSet`; `application/planner.py:523`
+does `system += f"\n{feedback.render()}"`, putting it in **the writer's system message**. The
+loop the operator described is wired end to end and has been for some time. It renders nothing
+because no axis has a direction, and `domain/directions.py` prices one: `MIN_CELLS = 30` decided
+(reader, pair) cells, `MIN_PAIR_CLUSTERS = 8`, and a reader-cluster floor. Nobody has run enough
+readers to establish one, so `resolve` returns empty and every book drafts exactly as it would
+have.
+
+**And here is the finding that matters, because it means running more readers would not have
+helped.** The loop is **axis-bound**, and `domain/axes.py` admits exactly three axes —
+`stat_flatten`, `interiority`, `em_dash` — by a three-part rule it states in its own docstring:
+a human read named it as a defect, **a deterministic counter orders it with no model in the
+loop**, and E6 has been measured able to name it. All three, or it is not an axis.
+
+The property the operator is asking about — whether a reader wants what this is offering —
+**cannot meet the middle condition.** There is no deterministic counter for desire, "would a
+reader keep going" is a behaviour rather than a text property, and a counter invented to close
+the gap is BRIEF.md §2's twenty-second dead proxy in the shape all twenty shared: static,
+absolute, correlational. So the loop as built is a **craft-axis** loop. It can tell a writer
+that readers preferred one pole of a counted property. It cannot tell a forge that readers want
+a power fantasy and not a grafting simulator, and no quantity of reader calls changes that.
+
+**Two lanes are therefore open and this entry chooses neither**, because choosing one before
+either has a measurement is the mistake the table in §127 records three times:
+
+1. **Admit a fourth axis.** Requires a deterministic counter for something goal-shaped. The
+   admission rule is the whole defence against proxy twenty-two, and it should not be softened
+   to let this through — an axis that enters by exception is an axis with no evidence.
+2. **A desire lane that is not an axis at all.** §124's anticipation probe already elicits what
+   a reader finds themselves hoping for and dreading at a stop point, which is E6-shaped —
+   *name what is there*, the one frame that survived §87–§89 — and makes no claim about a text
+   property, so it needs no counter. Its output is direction in the operator's sense: what the
+   reader wants to happen next. It would need its own seam; the writer's is `planner`'s
+   `feedback` parameter, and **the Architect has none**, which is where the premises the
+   operator is objecting to are actually written.
+
+**What was refused.** No axis admitted by exception. No counter invented for desire. No claim
+that the loop now works — it is licensed, its blocker is located, and it carries nothing yet.
+And no reader-derived signal reaching a prompt before a pool split is registered on the store
+it runs against; `pools --register` precedes the first verdict, which is the preference
+runbook's existing order and now the loop's.
+
+**Anti-scope.** This licenses a channel and names what is missing. It builds no instrument,
+promotes none, registers no pool, admits no axis, and measures nothing — and it leaves the
+generation-side subtractions of §127 unmade, for §127's stated reason: the measurement that
+would justify removing a rule encoding a measured correction does not exist yet.

@@ -663,6 +663,12 @@ def test_the_premise_rule_asks_for_a_pitch_rather_than_prose() -> None:
     assert "plain modern English" in ask
     assert "in the order things happen" in ask
     assert "the way one person tells a friend what a book is about" in ask
+    # **The positional clause, operator-directed 2026-08-24 (§127).** Four premises out of four
+    # were refused by the screen on terms that all arrived in their closing sentences, which is
+    # §119.2's measurement reproducing after the clause naming it was deleted with the essay.
+    # It names a position and never a vocabulary, so it is not the word list boundary 3 forbids.
+    assert "closing sentences" in ask
+    assert "owes the same half-clause as a name in the first" in ask
     assert ask in architect.render_premise_request(candidate()).prompt
     # The test that counts rules mentioning this person owns the forbidden-verb list; the ask
     # is about one person, so it is checked against the same list here.
