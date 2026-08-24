@@ -68,12 +68,17 @@ BLURB_MIN_WORDS = 30
 
 @dataclass(frozen=True, slots=True)
 class Chapter:
-    """One chapter row, with the ordinal parsed from its title or None."""
+    """One chapter row: the ordinal parsed from its title (or None), and the prose.
+
+    `text` is what the arms excerpt. The real dump carries no `words` column, so
+    `words` derives from `text` unless a synthetic row supplies one directly.
+    """
 
     chapter_id: str
     released_at: str  # ISO date-time string as the dump carries it
     ordinal: int | None
     words: int
+    text: str = ""
 
 
 @dataclass(frozen=True, slots=True)
@@ -123,13 +128,26 @@ def _ordinal_of(title: Any) -> int | None:
     return int(match.group(1)) if match else None
 
 
+def _chapter_from_row(row: Mapping[str, Any]) -> Chapter:
+    text = str(row.get("text") or "")
+    raw_words = row.get("words")
+    return Chapter(
+        chapter_id=str(row.get("chapter_id")),
+        released_at=str(row.get("release_datetime") or ""),
+        ordinal=_ordinal_of(row.get("chapter_title")),
+        words=int(raw_words) if raw_words is not None else len(text.split()),
+        text=text,
+    )
+
+
 def fiction_from_rows(rows: Sequence[Mapping[str, Any]]) -> Fiction:
     """Assemble one `Fiction` from the dump rows of a single `fiction_id`.
 
     Rows are the shards' denormalised chapter rows: every row carries the fiction-level
     columns (`fiction_id`, `title`, `author`, `tags`, `warnings`, `description`, `status`,
     `followers`, `total_views`, `average_views`) plus its own chapter columns (`chapter_id`,
-    `chapter_title`, `release_datetime`, `words`).
+    `chapter_title`, `release_datetime`, `text`; a synthetic `words` column is honoured
+    when present — the real dump has none).
 
     Raises ValueError on an empty sequence or rows spanning more than one fiction_id —
     both are loader bugs upstream, not data conditions to absorb silently.
@@ -141,15 +159,7 @@ def fiction_from_rows(rows: Sequence[Mapping[str, Any]]) -> Fiction:
         raise ValueError(f"fiction_from_rows: mixed fiction_ids {sorted(fiction_ids)}")
     head = rows[0]
     chapters = sorted(
-        (
-            Chapter(
-                chapter_id=str(row.get("chapter_id")),
-                released_at=str(row.get("release_datetime") or ""),
-                ordinal=_ordinal_of(row.get("chapter_title")),
-                words=int(row.get("words") or 0),
-            )
-            for row in rows
-        ),
+        (_chapter_from_row(row) for row in rows),
         key=lambda chapter: (
             chapter.released_at,
             chapter.ordinal if chapter.ordinal is not None else _UNORDERED,

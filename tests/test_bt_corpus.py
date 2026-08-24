@@ -517,3 +517,24 @@ def test_load_fiction_rows_exists_names_its_pyarrow_venv_and_is_never_imported_h
     assert "MirrorBench" in doc  # the venv that carries pyarrow, named per house convention
     # The lazy-import rule, pinned structurally: importing this module must not pull pyarrow.
     assert "pyarrow" not in sys.modules
+
+
+def test_chapter_text_is_carried_and_words_derive_from_it_without_a_words_column() -> None:
+    """The real dump carries `text` and no `words`; the arms excerpt `Chapter.text`.
+
+    Added with the integration amendment: the module brief's original Chapter shape had no
+    text field and named a words column the dump does not carry.
+    """
+    fiction = module.fiction_from_rows(
+        [
+            {
+                "fiction_id": "t1",
+                "chapter_id": "t1-c0",
+                "chapter_title": "Chapter 1",
+                "release_datetime": DEFAULT_DATES[0],
+                "text": "Dawn came late over the harbour.",
+            }
+        ]
+    )
+    assert fiction.chapters[0].text == "Dawn came late over the harbour."
+    assert fiction.chapters[0].words == 6
