@@ -452,6 +452,10 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
         "planned_retells": planned_gen,
         "planned_comparisons": planned_panel,
         "protocol": "pre-registered in this module's PRE_REGISTRATION before first elicitation",
+        # Boundary 6 (plan/handoff-clarity-first.md): every panel comparison shows one scene's
+        # retell against the sober retell with no history — both sides share the gap. Recorded
+        # so the result says so; see context-audit-2026-08-24.md. PRE_REGISTRATION is unchanged.
+        "context": "cold_read",
     }
 
     # ---- generation: every state for every scene, sober included, concurrently.

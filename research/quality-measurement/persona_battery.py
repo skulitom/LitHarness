@@ -841,6 +841,10 @@ def main() -> None:
         "metric": "persona_panel.would_stop.v0",
         "protocol": "plan/persona-reader-validity.md",
         "entry": "plan/stage-0-decisions.md §70",
+        # Boundary 6 (plan/handoff-clarity-first.md): every cell is one passage with no history
+        # — `elicit.py`'s deliberate frame, which isolates within-passage edits. Recorded here so
+        # the result says so; see context-audit-2026-08-24.md.
+        "context": "cold_read",
         "transport": args.transport,
         "panel_model": args.model,
         "spot_model": None if args.no_spot else args.spot_model,

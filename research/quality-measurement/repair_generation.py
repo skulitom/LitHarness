@@ -329,6 +329,10 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
         "planned_generations": planned_gen,
         "planned_comparisons": planned_panel,
         "protocol": "pre-registered in this module's PRE_REGISTRATION before first elicitation",
+        # Boundary 6 (plan/handoff-clarity-first.md): every panel comparison shows one scene's
+        # repair against its anchor with no history — both sides share the gap. Recorded so the
+        # result says so; see context-audit-2026-08-24.md. PRE_REGISTRATION is unchanged.
+        "context": "cold_read",
     }
 
     # ---- generation: three revisions of each original, one exemplar retell.

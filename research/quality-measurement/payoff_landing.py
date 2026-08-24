@@ -357,6 +357,10 @@ def ask(elicitor: Elicitor, pair: LandingPair, *, model: str) -> dict[str, Any]:
     return {
         "pair": pair.pair_id,
         "arm": pair.arm,
+        # Boundary 6 (plan/handoff-clarity-first.md): the two excerpts are shown with none of
+        # the book between them. Deliberate and now recorded; context-audit-2026-08-24.md plans
+        # what an accumulated-context version would carry.
+        "context": "cold_read",
         "promise": pair.promise.subject,
         "ledger_says": pair.promise.description,
         "said": said,
@@ -633,6 +637,9 @@ def main(argv: list[str] | None = None) -> int:
 
     report = {
         "study": "payoff_landing",
+        # Boundary 6 label: the elicitation shows two isolated excerpts, no history between
+        # them. See context-audit-2026-08-24.md.
+        "context": "cold_read",
         "pre_registration": {
             "channel": "report; the question names a debt and never rates or chooses",
             "question": LANDING_QUESTION,
