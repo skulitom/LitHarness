@@ -1,7 +1,10 @@
 """Resolution for the one pinned provider: health verdicts and the test-mode guard.
 
-One provider serves every call class. §1a.5 requires a frontier generator, and a silent
-mid-book fallback to a weaker model is a quality defect, not resilience — so the fallback
+One provider serves every call class. §1a requires a frontier generator — the objective is a
+reader who carries on, and a reader who stops is what a weaker model costs — and a silent
+mid-book fallback is a quality defect, not resilience. *(The rule was derived from §1a.5's
+superiority bar until §126 made that the long-term goal; it survives the demotion because the
+objective it now rests on is the stricter of the two about any single chapter.)* So the fallback
 chain, the call-class routing, and the operator's preference levers are gone, and an
 unhealthy provider parks the unit rather than degrading the book. What survives of
 `plan/provider-adapters.md` §5, adjusted to the pinned world:

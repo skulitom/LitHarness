@@ -1,8 +1,9 @@
 # Handoff: the character's felt state as canon, and the leak that has to be closed first
 
-You are working in `C:\DEV\LitHarness`, an autonomous fiction-production system whose goal is
-superhuman popcorn-genre books (LitRPG, progression fantasy, isekai) with no human in the
-production loop. Your task is one bounded piece: make **what the protagonist wants and fears**
+You are working in `C:\DEV\LitHarness`, an autonomous fiction-production system whose objective is
+popcorn-genre fiction (LitRPG, progression fantasy, isekai) a defined audience voluntarily
+continues and recommends, with no human in the production loop. Superhuman literary
+quality is the long-term goal (stage-0 §126). Your task is one bounded piece: make **what the protagonist wants and fears**
 something the system tracks and shows to the scene being drafted, at the right point in story
 time.
 

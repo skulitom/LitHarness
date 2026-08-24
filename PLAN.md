@@ -4,14 +4,17 @@
 **Status:** Master plan; **Stages 0, 1 and 2 met against their exit clauses — with Stage 0's endurance clause *evidenced rather than met* and Stage 2's propagation number a *dev-set* one that does not generalise; both caveats are in §17 beside the claims they qualify. 787 passing tests + 8 opt-in live; operable via `litharness tick`; a book goes in (`import`), drafts itself against a context packet, is refused when a planted defect stands against it, repairs a located finding within a serial cap (`evaluate_revision`/`repair_finding`), notifies out of the outbox to a configured sink (`--notify-file`), can have its plan history read and rolled back (`plans`/`revert-plan`), re-checks the scenes a repair's change reaches instead of only the scene it repaired (`propagate`, dev-set precision 1.000 against a 0.481 base rate), and comes out readable (`export`); Stage 3 (Book Zero) is now startable rather than blocked — a book with no imported snapshot drafts, states its game state on the page, and reads it back; two of §19's seven clauses met outright — scorecard in §19.1**
 
 *(Corrected here, because this line was the instance: it read "four of §19's seven clauses met" while §19.1's table said two. §19.1 contains a paragraph recording that exact drift happening once before, four lines above the table that contradicted it, and the header carrying the same wrong number went unnoticed through three revisions. The readiness number this project reports about itself is the number to distrust first.)*
-**Role:** An autonomous system that plans, drafts, evaluates, repairs, and versions LitRPG books to a measured quality bar — directed by a human, never blocked on one. *("24/7" struck by [stage-0 §61](plan/stage-0-decisions.md): always-on operation served a cadence goal the project no longer holds; the loop still runs without human input, as a foreground session.)*
+**Role:** An autonomous system that plans, drafts, evaluates, repairs, and versions LitRPG books to a measured objective — fiction a defined audience keeps reading (§1a) — directed by a human, never blocked on one. *("24/7" struck by [stage-0 §61](plan/stage-0-decisions.md): always-on operation served a cadence goal the project no longer holds; the loop still runs without human input, as a foreground session.)*
 **Inspection baseline:** Local projects inspected 2026-08-12; v2 rewrite same day; §7/§8/§13/§15/§17/§20 re-verified later the same day (v2.1); **§7/§8.4/§13/§17/§20 re-verified against all nine repositories that evening (v2.2)**
 
 **What v2.1 adds.** A core philosophy section (§1a): **the text is the product.**
 v2 was strong on integrity, autonomy and mechanically-checkable correctness, and
 had almost nothing to say about whether the prose is any good — its stated Stage 4
-target was "readable", a bar that cannot fail. §1a makes text quality the goal that
-the rest of the document serves, names the six things quality actually means here,
+target was "readable", a bar that cannot fail. ~~§1a makes text quality the goal that
+the rest of the document serves~~ *(corrected by v2.4: §1a states the objective the rest of
+the document serves, and it is a reader's behaviour rather than the text's quality — the six
+items below survive as hypotheses about what makes that reader continue)*, names the six
+things quality actually means here,
 and identifies the structural hazard: this plan's incentive gradient points at
 whatever is gateable, and none of the deterministic gates measure quality at all.
 Threaded into §2, §3, §10, §17 and §19.
@@ -32,13 +35,29 @@ buildable** — the real obstacle was a missing column no document named. The
 standing instruction that follows: **an unstruck action in §20 is a claim to
 re-verify, not a task to start.** Every row in §7 now carries what was checked.
 
-**What v2.3 refounds (2026-08-17, [stage-0 §61](plan/stage-0-decisions.md)): the goal
-is superiority, and it is allowed to fail.** The goal is now superhuman literary
-quality, allowed to fail. The bar is behavioural: an instrument validated against what a
-real readership **did**, never against judgment solicited from anyone (the **scope axiom**,
-[stage-0 §95](plan/stage-0-decisions.md)). The unit of production is an **open-ended
-serial** published chapter-wise at cadence (§101); the six-scene books this document
-describes throughout are measurement substrate. Throughput and uptime are not goals.
+**What v2.4 settles (2026-08-24, [stage-0 §126](plan/stage-0-decisions.md)): superhuman
+quality is the long-term goal, and the product objective is a defined audience that keeps
+reading.** The operator's direction: *"It's not that text quality is the goal, but story
+quality and reader retention and fascination is the goal"*, and the objective is **fiction a
+defined audience voluntarily continues and recommends, without requiring a human production
+loop**. §1a states it; nothing else in this document restates it. What changed is which of
+two things a day's work is measured against — the superiority bar of §1a.5 survives intact as
+the **long-term** goal, still falsifiable, still pre-registered, and no longer the thing an
+ordinary improvement has to answer to. **The audience inside the loop is simulated, and only
+simulated** ([stage-0 §97](plan/stage-0-decisions.md)); there will eventually be real readers
+and they may never enter the loop, which is what keeps the objective testable before there is
+an audience rather than after.
+
+**What v2.3 refounded (2026-08-17, [stage-0 §61](plan/stage-0-decisions.md)): the goal
+is superiority, and it is allowed to fail.** ~~The goal is now superhuman literary
+quality, allowed to fail.~~ *(Demoted by §126 to the long-term goal — see v2.4 above. The
+operationalisation §61 supplied is exactly what makes the demotion safe: a goal with a
+declared falsification criterion can be held at arm's length without becoming an aspiration,
+which is what it would have been in v2.2.)* The bar is behavioural: an instrument validated
+against what a real readership **did**, never against judgment solicited from anyone (the
+**scope axiom**, [stage-0 §95](plan/stage-0-decisions.md)). The unit of production is an
+**open-ended serial** published chapter-wise at cadence (§101); the six-scene books this
+document describes throughout are measurement substrate. Throughput and uptime are not goals.
 
 The refoundation is licensed by
 the measurement record, not by ambition: every other evidence channel is measured dead
@@ -121,14 +140,51 @@ two span-exact golden fixtures (a six-scene mystery and a six-scene LitRPG book 
 planted, mechanically checkable defects) that ship inside the package; all subsystems
 consume it rather than importing each other.
 
-## 1a. Core philosophy: the text is the product
+## 1a. The product objective: a defined audience that keeps reading
 
-**The purpose of this system is books a genre reader chooses to keep reading, and
-recommends to someone else.** Everything else in this document — the Conductor, the
-gate ladder, the provenance chain, the immutable revision store, the Game-System
-Engine, the 24/7 operation — is scaffolding in service of that. Autonomy is *how*
-the books get made. It is not what makes them good, and no amount of it substitutes
-for the text being good.
+***Retitled 2026-08-24 ([stage-0 §126](plan/stage-0-decisions.md)). It read "Core
+philosophy: the text is the product", which is the frame the operator moved off:*** *"It's not
+that text quality is the goal, but story quality and reader retention and fascination is the
+goal."* *The section's five consequences all survive; what changed is what they are
+consequences of.*
+
+**The product objective is fiction a defined audience voluntarily continues and recommends,
+without requiring a human production loop.** That sentence is this document's one statement of
+what the system is for, and nothing else in it restates the objective — every other section
+points here. Everything else — the Conductor, the gate ladder, the provenance chain, the
+immutable revision store, the Game-System Engine — is scaffolding in service of it. Autonomy
+is *how* the books get made; it is not what makes anybody keep reading, and no amount of it
+substitutes for a story somebody wants to finish.
+
+**The thing aimed at is the story, not the text.** Retention and fascination are the target:
+whether a reader carries on, and whether they are pulled rather than merely unobstructed.
+Line-level craft is a floor under that and never the thing itself — a chapter can be clean,
+clear, correct and abandoned, and §1a.3's list is ordered on exactly that principle.
+
+**The audience is defined, and inside the loop it is simulated — only simulated.** The
+readership this project writes for is stated in `application/architect.py`'s protagonist rule,
+in the operator's words: readers in their twenties, for whom the life a protagonist came from
+is one they could have lived. What that audience *does* with a chapter — continue, abandon,
+return — is measured on a **simulated** readership ([stage-0 §97](plan/stage-0-decisions.md)),
+under declared budgets, in behavioural vocabulary and never a verdict
+([§89](plan/stage-0-decisions.md)).
+
+**There will eventually be real readers, and they may never enter the product loop.** The books
+are written to be published and read; what a real reader does with one is the point of doing
+this at all. What that behaviour may not do is come back in: it feeds no prompt, no plan, no
+selection, no calibration and no gate. Real-population work in this repository asks a different
+question — whether a *sim* behaves the way readers did — which grades the instrument and never
+a book ([§123](plan/stage-0-decisions.md), and §106's return leg, registered and undecided).
+The loop closing on sims is what makes the objective testable **before** there is an audience
+rather than after one, which is the whole reason the constraint is worth its cost.
+
+**Superhuman literary quality is the long-term goal.** It is not deleted and not softened:
+§1a.5's superiority bar keeps its operationalisation, its five pre-registrations and its
+licence to fail. What it stops being is the thing an ordinary day's work is measured against,
+because it needs a comparator frame, matched published prose and a validated instrument, and
+cannot be run per book. A goal with a declared falsification criterion can be held at a
+distance without becoming an aspiration; that is what §61 bought and what makes this demotion
+safe rather than a retreat to v2.2.
 
 This section is load-bearing, not preamble. Five consequences follow, and each one
 cuts against something the rest of this plan would otherwise drift toward.
@@ -170,10 +226,16 @@ sharper located complaints — never in loosening the revision discipline. Uncha
 text stays structurally ineligible for revision unless a located complaint licenses
 it.
 
-### 1a.3 What "quality" means here, in priority order
+### 1a.3 What makes a reader keep going, in priority order
+
+***Retitled 2026-08-24 (§126). It read "What 'quality' means here, in priority order", and
+under the objective above these six are not a definition of quality — they are **hypotheses
+about what makes a defined audience continue**, ordered by how much each is believed to move
+one. The ordering is a belief and not a measurement: §10.6's craft reference corpus is what
+would test it, and it does not exist. The list has not changed; what it claims has.***
 
 Vague ambition is unactionable, so this is the concrete list, ordered by how much
-each one moves a reader:
+each one is thought to move a reader:
 
 1. **Dramatic function.** Every scene changes something: a want pursued, a cost
    paid, a relationship or state altered. Scenes that only *convey information* are
@@ -195,6 +257,11 @@ each one moves a reader:
 
 The floor gates in §4.2 cover none of items 1–6. That asymmetry is the central
 engineering problem of this project, and naming it is the point of this section.
+
+Note what the ordering says under the objective: items 5 and 6 are the ones a "text quality"
+frame would have put first, and they are last here because a clean sentence is not a reason to
+read a seventh chapter. That was already true when this list was written; §126 only made the
+document say it.
 
 ### 1a.4 Human judgment is the only ground truth for items 1–6
 
@@ -259,14 +326,41 @@ a hypothesis until validated against reader behaviour** — unsolicited, reveale
 population did, never asked for. The validation target moved from a verdict to a behaviour; the
 demand for validation did not move at all.
 
+***Amended 2026-08-24 (§126), and this section's title is now wrong in one word.*** *Human
+judgment is not the ground truth the product loop runs on, because no human is in the product
+loop: the behaviour the objective is measured by is a **simulated** readership's (§1a, §97), and
+real-population behaviour grades the sim rather than the book (§123). What survives untouched
+is the sentence above it — a craft proxy is a hypothesis until validated against reader
+behaviour — which is the strongest rule in this section and is exactly what a continuation
+objective needs. The heading stays as written, because the path from "solicited judgment" to
+"revealed behaviour" to "simulated behaviour" is the record, and each step was bought by a
+measurement rather than chosen.*
+
 ### 1a.5 Set a bar that can fail, and refuse volume as a proxy
 
 "A genre reader rates it readable" (§17 Stage 4, as written) is not a quality
-target — it is a floor restated. The first bar below can be failed, and it is the
+target — it is a floor restated. ~~The first bar below can be failed, and it is the
 project's definition of its own goal (§61): "superhuman" means exactly this and
-nothing more.
+nothing more.~~
 
-- **The superiority bar.** In blinded, position-swapped pairwise comparison against
+***Corrected 2026-08-24 (§126).*** *The first bar below can be failed, and it is the
+project's definition of its **long-term** goal (§61): "superhuman" means exactly this and
+nothing more, and it is not what a day's work is measured against. The **product objective**
+is §1a's — fiction a defined audience voluntarily continues and recommends — and the second
+bullet below, which this section had demoted to "subsidiary evidence", is the one that answers
+to it. The demotion of one and the promotion of the other are the same edit: a bar that needs
+a comparator frame, matched published prose and a validated instrument cannot be run per book,
+and a project whose stated goal cannot be run per book has no way to tell whether a week
+helped.*
+
+*Two things this correction deliberately does **not** do. It declares **no numeric daily bar**
+over continuation or recommendation: the four attainability checks (range at the real n,
+direction, independent unit, non-empty subgroup) have not been run on either, and §81, §85,
+§87 and §89 are four separate records of what happens when a count is declared a bar before its
+distribution exists. And it does not turn "recommends" into something asked of anybody — the
+scope axiom forbids soliciting it, so it is behaviour observed or simulated or it is nothing.*
+
+- **The superiority bar** *(the long-term goal, §126)*. In blinded, position-swapped pairwise comparison against
   matched published-human prose (same genre, comparable premise and length), the lower
   bound of a 95% confidence interval on the win rate exceeds 0.5 — **judged by a
   behavioural instrument validated against unsolicited reader behaviour**, never by
@@ -286,12 +380,23 @@ nothing more.
   best are different claims and **the frame is the claim**; and if more than one
   book could have been reported, the confidence level is divided by the number of
   candidates (BRIEF §6.4 applies to the headline claim too).
-- A majority of sampled chapters earn "I would keep reading" from readers who were
-  not told what produced them — subsidiary evidence, collected by the same
-  pipeline, never a substitute for the bar above.
+- **The continuation bar** *(promoted 2026-08-24, §126: this is what the product objective
+  is measured by, and it used to read "subsidiary evidence ... never a substitute for the bar
+  above")*. A majority of sampled chapters earn "I would keep reading" from readers who were
+  not told what produced them — where "readers" are the **simulated** readership of §97, whose
+  vocabulary is behavioural (continue, abandon, return) and never a verdict, and where the
+  majority is a **reported distribution and not yet a declared bar** for the reason given
+  above. Real readers are outside this measurement by construction (§1a), which is also what
+  keeps it runnable before a book is published.
 - ~~Blinded genre readers cannot reliably distinguish accepted chapters from
   published human LitRPG at the same tier.~~ *(Struck by §61: parity was the
-  ceiling this plan dared to name, and the goal is now above it. Note what the
+  ceiling this plan dared to name, and the goal is now above it. **§126 leaves the strike
+  standing and re-states its reason**, because the original one no longer holds on its own:
+  superiority is the long-term goal rather than the daily one, so "the goal is now above it"
+  is no longer an argument about today. Parity stays struck for the other reason in the
+  parenthesis below — indistinguishability is orthogonal to the objective. A reader who can
+  tell and keeps reading has done what the product needs; a reader who cannot tell and stops
+  has not. Note what the
   strike does to [plan/craft-corpus.md](plan/craft-corpus.md) §4.2, which called
   this "the bar the plan already wrote": a discriminator separating system prose
   from human no longer proves the bar failed, because distinguishable-and-preferred
@@ -300,7 +405,14 @@ nothing more.
 - ~~Once serialized, retention across consecutive chapters is measured and does not
   decay faster than a comparable human-written serial.~~ *(Struck by §61: cadence
   is no longer a goal, so there is no serial to measure retention on. The pairwise
-  bar replaces it as the falsifiable target.)*
+  bar replaces it as the falsifiable target.)* **Restored in a different form by §126, and
+  the difference is the whole of why it can come back.** The objective is retention, so
+  retention has to be measurable — but not "once serialized" and not against a human serial:
+  it is measured chapter over chapter on the **simulated** readership, on chapters the system
+  has written, with no publication and no real audience required. That is `feed_continuation`
+  (§122) and the instruments beside it. The strike's own reason — no serial to measure on —
+  is what the sim removes; §16's retirement of cadence-as-a-goal is untouched, because
+  measuring whether a reader continues is not a commitment to publish on a schedule.
 
 And one explicit anti-goal: **word count is not a success metric.** A 50k-word book
 that reads is worth more than a 120k-word book that does not. This needs saying
@@ -316,10 +428,12 @@ violate this section.
 
 ## 2. Product goals
 
-- **Produce LitRPG books worth reading** — planned, drafted, evaluated, repaired,
-  and versioned — with no human action required for forward progress. Text quality
-  is the goal (§1a); completeness and autonomy are how it gets delivered, and
-  neither counts as success on its own.
+- **Produce LitRPG books a defined audience keeps reading** — planned, drafted, evaluated,
+  repaired, and versioned — with no human action required for forward progress. ~~Text quality
+  is the goal (§1a)~~ *(§126: the objective is §1a's — a defined audience voluntarily
+  continues and recommends, measured on a simulated readership; text quality is a floor under
+  that, and superhuman text quality is the long-term goal)*; completeness and autonomy are how
+  it gets delivered, and neither counts as success on its own.
 - Accept human direction asynchronously at every altitude: premise, world rules,
   arc structure, chapter notes, line vetoes. Direction is durable and versioned;
   the system honors it without waiting for it.
@@ -335,7 +449,7 @@ violate this section.
   from crashes without losing or corrupting accepted work.
 - ~~Publish serially (chapter cadence with hooks and recaps) and export whole books.~~
   Export whole books (`litharness export`); publication is a manual act taken when the
-  book clears the quality bar, not a pipeline (§62).
+  book clears the bar of §1a.5, not a pipeline (§62). *(§126: that bar is now the **continuation** one, measured on a simulated readership — which is what stops this from being circular. Gating publication on a bar that needed real readers would have required publishing to find out whether to publish.)*
 - ~~Work with local models or API providers behind adapters. Four: a deterministic
   fake, the local Claude Code session (default), the local Codex CLI (fallback),
   and Ollama (iterative testing and all mechanical calls).~~ One pinned frontier
@@ -357,14 +471,26 @@ violate this section.
   *Superseded by §61, and the struck sentence names its own error: "better than
   human" was unfalsifiable only for lack of an operationalisation. §1a.5's
   superiority bar supplies one, so the claim is now measurable, now pre-registered,
-  and now the goal. What stays a non-goal is any superiority assertion **outside**
+  and now the ~~goal~~ **long-term goal (§126)**. What stays a non-goal is any superiority
+  assertion **outside**
   that measurement — "superhuman" spoken without a comparator frame, a clustered
   interval and a declared candidate family is still marketing, and this plan still
-  refuses it.*
+  refuses it — and §126 sharpens rather than softens that: a claim held as a long-term goal
+  is spoken about even less often than one being actively measured.*
 - Publication cadence, uptime, and throughput as success measures (§61). The system
-  still runs without human input; nothing about the quality goal restores an inline
-  human gate — human judgment enters asynchronously as calibration evidence, gating
-  promotions, never ticks.
+  still runs without human input; nothing about the objective restores an inline
+  human gate. ~~human judgment enters asynchronously as calibration evidence, gating
+  promotions, never ticks.~~ *(Struck by the scope axiom, §95: no judgment is solicited from
+  anyone, so none enters as calibration evidence either. The operator's one accept/reject bit
+  at book grain trains and calibrates nothing, §97.1.)* **And §126 does not restore cadence
+  by naming retention**: measuring whether a reader continues from one chapter to the next is
+  done on a simulated readership over chapters already written, and commits this project to no
+  publication schedule whatever.
+- **Real readers inside the product loop** (§126). There will be real readers; their behaviour
+  may not feed generation, planning, selection, calibration or any gate. Real-population data
+  has exactly one admissible role — asking whether a *simulated* reader behaves the way readers
+  did, which grades the instrument and never a manuscript (§123, and §106's undecided return
+  leg).
 - One universal style/structure/pacing formula; craft targets are per-book profiles.
 - A general-purpose authoring editor for human writers. (v1's §14 UI is cut.)
 - Autonomous publication to external platforms without an explicit human-set
@@ -1725,9 +1851,15 @@ metrics against human judgment; promote the first calibrated thresholds under §
 bound; the reference corpus is the preference engine's comparison corpus, selected
 under a declared comparator frame rather than authored (§10.6's demand, §61's form);
 regenerate or repair the worst chapters under the new gates → **Book One**.
-Target per §1a.5 as refounded by §61: the superiority bar (the CI lower bound on
+~~Target per §1a.5 as refounded by §61: the superiority bar (the CI lower bound on
 blinded pairwise win rate against matched published-human prose exceeds 0.5), with
-"I would keep reading" as subsidiary evidence and flawless system math throughout.
+"I would keep reading" as subsidiary evidence and flawless system math throughout.~~
+*(Inverted by §126, and only the order of the two changed.)* **Target: the continuation
+bar of §1a.5** — chapters a simulated readership carries on with rather than abandons,
+reported as a distribution before anything is declared over it — with flawless system math
+throughout. The superiority bar is the long-term goal and is measured when it can be, not as
+this stage's gate: it needs a comparator frame and matched published prose, and a stage that
+cannot exit without them is a stage that cannot exit.
 **Exit:** a promotable calibration row exists under §59's bound and a selection
 mechanism consumes preference evidence (§61 Add 3); Book One produced under them.
 
@@ -1745,7 +1877,8 @@ frontier-measured candidate — the context packet stops representing the book a
 about forty scenes — and overdue-payoff detection ships with Add 2 rather than
 waiting here.)*
 **Exit:** the dominant *frontier-arm* failure class — as ranked by prediction of
-blinded pairwise losses — measurably reduced in a later draft at equal budget.
+~~blinded pairwise losses~~ **reader abandonment (§126: the ranking follows the objective,
+and the objective is continuation)** — measurably reduced in a later draft at equal budget.
 
 ### Stage 6 — ~~Serial operation~~ *(retired, §62)*
 ~~Publication pipeline (§16), chapter cadence, recaps, publication policies;
@@ -1793,9 +1926,17 @@ The system is operator-grade when:
   runs and disagreements feed back.
 - **Genre:** accepted prose contains zero game-system violations by replay;
   progression follows the planned schedule within tolerance.
-- **Quality (§1a):** the blinded-reader bar of §1a.5 is measured, currently
-  passing, and re-measured as output changes; the craft reference corpus exists and
-  promoted craft gates carry held-out evidence that they predict human judgment.
+- **Objective (§1a)** *(was "Quality (§1a)"; re-anchored 2026-08-24, §126)***:** ~~the
+  blinded-reader bar of §1a.5 is measured, currently passing, and re-measured as output
+  changes; the craft reference corpus exists and promoted craft gates carry held-out evidence
+  that they predict human judgment.~~ The **continuation** bar of §1a.5 is measured on the
+  simulated readership, currently passing, and re-measured as output changes; promoted craft
+  gates carry held-out evidence that they predict that behaviour. *The superiority bar is the
+  long-term goal and is not a clause of operator-grade — left as written, this definition
+  could not be satisfied until a comparator corpus and a validated pairwise instrument both
+  existed, which made "operator-grade" unreachable for reasons that had nothing to do with
+  whether the system works. "Predict human judgment" goes with it: the scope axiom (§95) means
+  there is no human judgment to predict.*
   A system that satisfies every other clause here and fails this one is not
   operator-grade — it is a well-engineered machine for producing books nobody wants,
   and that is the specific failure this definition exists to prevent.
@@ -1816,7 +1957,7 @@ because four of the seven are structurally blocked in ways worth naming precisel
 | **Autonomy** | **attemptable; needs 30 days** | Was *not startable*: no entrypoint existed, so §17's week-unattended criterion could be simulated but never run. `litharness tick` closes that. Three spins found and fixed — the outbox retried its head 2,016 times a week while starving entries 51+; an escalated unit was marked SUCCEEDED and discarded; and a provider outage longer than fifteen minutes permanently poisoned every unit it touched, because `ProviderUnavailable` was charged against the attempt budget despite being raised before any work was attempted. The exception queue exists. **"Parked units are visible and revivable" was false on the refusal an operator with real ceilings meets first, and the same lesson had to be learned twice:** a budget refusal settled to POISONED — terminal, unrevivable, idempotency key burned — because `_settle` read the terminal state off the word `PARK` under a comment asserting "`decide` returns this only on attempt exhaustion", a premise the budget gate falsifies on attempt 1. A ceiling that resets at midnight destroyed the unit it refused. `_settle` now derives POISONED from the attempt budget itself, and a refusal reached *in front of* the work gives back the attempt it was charged, exactly as an outage already did. **And the lesson had to be learned a third time in slice 9**: a finding already standing against a node was charged against the unit it refused, so a blocked beat poisoned after twelve model calls and the operator's own remedy — dismiss the finding — arrived to find nothing revivable. The gate now runs a pre-flight pass in front of the spend. `replan` shipped in the same fix, because the recovery path it completes was named by `handlers._stale_base` and by migration 011 and did not exist. **And the outbox delivered nothing to anyone for nine slices** — send-then-mark, derived idempotency keys, backoff, a FAILED terminal state and the spin fix above, all draining into a null dispatcher that no caller ever replaced, because no caller ever passed `dispatch=` at all. So `tick`'s printed `dispatched=` count was *structurally* zero, and the fix for the 2,016-attempt spin was a fix to a loop that could not deliver. A JSON Lines sink (`--notify-file`, one `EventEnvelope` per line, fsynced before delivery is claimed) is now selectable, the null dispatcher stays the default when none is configured, and a write that fails refuses rather than raising — because the drain runs *before* work selection, so a mistyped path would otherwise stop the book being written at all. **What remains is elapsed time, which nothing but time supplies.** |
 | **Trust** | **no longer vacuous; partly met** | Was: "the deterministic ladder is one gate, `shape.draft.v0`; zero false-accepts over a suite that does not exist is trivially true". The ladder is now shape *then* integrity, and the clause has a suite to be measured against — both fixtures' planted defects, injected from their own `findings.json`. Measured: every planted defect that reaches the gate is refused, the beat's node stays empty, and both fixture books still reach six accepted scenes with the gate live, so there are no false *rejects* either. Two invariants are enforced rather than asserted — a finding's status overrides its severity, so a negative control cannot block forever; and an uncalibrated critic cannot block at all (§10.4). The six-rule pack can now run from each durable evaluation through an explicit live subprocess contract, with transport/schema failures reported as incomplete instead of clean. **What keeps this short of met, re-stated because one of the two reasons went away:** the pack is still optional, but "real-book sensitivity depends on live state/facts the narrow extractor cannot yet produce" is no longer true of the extractor — it produces state for books this system wrote, and the deterministic ladder now runs against that state rather than only against imported snapshots. What replaces it as the honest limit is *coverage*: the in-process detector reads system voice and checks one position, so the violations it cannot see are the ones that need the optional pack. The second half of the clause — "blocking critics carry current calibration evidence" — is untouched and correctly so: there are no critics, only rules. |
 | **Genre** | **started; the score is unchanged and both of its stated gaps are not** | The six game-system rules run in LitHarness when the ContinuityEvaluation executable is configured. This row named two remaining gaps — *forward game-state production* and *validation on model-written chapters* — and both closed, without the clause moving. Forward production: `render_prompt` asks for the status line, `extract_state` reads it back, and a chronological template places it, so a book with no imported snapshot now drafts six scenes and reads back all six balances. Validation on model-written prose: before the prompt change a generated litrpg scene carried no game state, so `state.contradiction.v0` had nothing to read and **every generated scene passed the integrity gate vacuously**; a scene now claiming forty gold where canon says forty-five is refused, measured through the loop. **What keeps the clause at *started* is the word §19 uses: "zero game-system violations by replay".** Replay is the CE pack's ledger arithmetic, the pack is optional, and this system's own detector checks disagreement at one position rather than arithmetic across them — so an unconfigured installation routes re-checks to detectors that cannot see the violation. Progression-within-tolerance has no schedule to be within. Two named gaps closing is not the clause being met, and recording them as closed is how the next reader knows which ones are left. |
-| **Quality (§1a)** | **not met; the machinery is built and the evidence is not** | Still blocked on §10.6's craft reference corpus, which is human authoring work — and the refutation ledger in [research/quality-measurement/BRIEF.md](research/quality-measurement/BRIEF.md) §2, canonical for the count, now stands at twenty dead, four of them measured against 13,000 chapters of published LitRPG and seven against compression. What changed is that the *path* exists where before there was none. §10.5's standing audit routes a content-derived sample of accepted scenes to a queue and `litharness audit --next` prints the prose blind; a verdict is recorded once and never overwritten; §10.4's promotion bar is a function (`promoted_gate`) that refuses without held-out precision, a minimum holdout, unexpired evidence and a matching verdicts digest, and it is the only way to construct a blocking craft gate. Craft metrics are logged per accepted scene from now on, so a future calibration has held-out history to be measured against rather than starting from zero on promotion day. **The missing input is human judgment and nothing here substitutes for it**: RevisionJudge holds 104 exported pairs and two collected verdicts. The clause is met when readers have answered, not when the schema exists. |
+| **Objective (§1a)** | **not met; the machinery is built and the evidence is not** | Still blocked on §10.6's craft reference corpus, which is human authoring work — and the refutation ledger in [research/quality-measurement/BRIEF.md](research/quality-measurement/BRIEF.md) §2, canonical for the count, now stands at twenty dead, four of them measured against 13,000 chapters of published LitRPG and seven against compression. What changed is that the *path* exists where before there was none. §10.5's standing audit routes a content-derived sample of accepted scenes to a queue and `litharness audit --next` prints the prose blind; a verdict is recorded once and never overwritten; §10.4's promotion bar is a function (`promoted_gate`) that refuses without held-out precision, a minimum holdout, unexpired evidence and a matching verdicts digest, and it is the only way to construct a blocking craft gate. Craft metrics are logged per accepted scene from now on, so a future calibration has held-out history to be measured against rather than starting from zero on promotion day. ~~**The missing input is human judgment and nothing here substitutes for it**: RevisionJudge holds 104 exported pairs and two collected verdicts. The clause is met when readers have answered, not when the schema exists.~~ *(Struck 2026-08-24, §126, and it was already struck in substance by the scope axiom: no reader will ever answer, because none is asked. The clause is met when a simulated readership's continuation behaviour is measured on accepted chapters and re-measured as output changes — which is machinery this repository now has (§122, §124) and evidence it does not yet have at book grain.)* |
 | **Economics** | **met for enforcement; per-book still per-day** | Ceilings on tokens *and* invocations, checked **before** the provider call rather than after — a check that runs afterwards records an overrun, it does not prevent one. Invocations are a ceiling in their own right because §15's per-call harness tax (~24k tokens for `claude -p`) is invisible to token accounting. Dollars are never the sole ceiling, since `claude -p` on a subscription reports none. `cost_usd` was parsed and then dropped; migration 008 stores it. `status` prints spend against plan. **Enforcement that destroys the unit it refuses is not what this clause describes, and that is what it did** — see Autonomy above; a refusal now parks revivably and costs the day rather than the work. **Honest gap: ceilings are per-day and per-operation, not per-book** — that needs a book-scoped job, which arrives with the planner. |
 | **Recovery** | **met** | Mid-write crash loses at most the in-flight unit (WAL, `synchronous=FULL`, `BEGIN IMMEDIATE`, lease reclaim). Backups existed nowhere and now use SQLite's online API — a file copy is invalid under WAL and would silently omit everything since the last checkpoint. The drill asserts prose, the accepting decision, and the undelivered outbox all survive. |
 
@@ -2247,7 +2388,7 @@ every unstruck action below as a claim to re-verify rather than a task to start.
       have shipped as this project's first working AI-tell detector.
 
     **The two highest-value additions are data acquisition, not modelling.** Per-chapter view
-    counts give §1a.5's retention bar directly and move the label from story-level to
+    counts give §1a.5's retention bar directly — restored by §126 after §61 struck it, and this line was left pointing at it throughout — and move the label from story-level to
     chapter-level, which is the main validity weakness of everything above. Reader reviews are
     voluntary written judgments with scores — solicited judgment already collected at scale.
     Both are visible on RoyalRoad and neither is in this dataset.

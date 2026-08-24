@@ -18,9 +18,8 @@ book.
 
 The unit of production is an **open-ended serial** — arc, chapter, scene — published
 chapter-wise at cadence. **The audience inside the loop is simulated, and only simulated.**
-Quality is
-measured from the behaviour of a simulated readership under declared budgets, in a vocabulary
-that is behavioural rather than evaluative — *continue, abandon, return* — with the operator
+Whether the objective is met is measured from the behaviour of that simulated readership under
+declared budgets, in a vocabulary that is behavioural rather than evaluative — *continue, abandon, return* — with the operator
 as a **one-bit acceptance gate** that trains, calibrates and selects nothing. No judgment is
 ever solicited from anyone — the **scope axiom**
 ([stage-0 §95](plan/stage-0-decisions.md)): *not hired, not operator, not one blinded pair*.
@@ -59,10 +58,10 @@ It writes a book whose scenes know about each other, refuses one that contradict
 — since it now asks its generator to state game state on the page and reads that back — can
 do both on a book with no imported snapshot.
 
-**Nothing in it yet measures whether a book is any *good*.** The pairwise preference engine is
-still in the tree and its verdict store is still empty; it is not the plan, because it required
-soliciting judgment and the scope axiom closed that permanently. The honest status of the
-quality question as of 2026-08-21:
+**Nothing in it yet measures whether a reader would carry on.** The pairwise preference engine
+is still in the tree and its verdict store is still empty; it is not the plan, because it
+required soliciting judgment and the scope axiom closed that permanently. The honest status of
+the objective's measurement as of 2026-08-21:
 
 - **Four candidate measurements have been attempted and none has produced a valid reading of
   taste.** F1 refuses in every stratum with both controls vacuous; F2's numbers are withdrawn
@@ -620,7 +619,7 @@ Stated plainly, because a system that runs is easy to mistake for a system that 
   — the per-chapter export, as a file format — and none of the other six: no chapter-release
   unit, no recap generation, no publication policy object, no posting scheduler, no
   publication table. §62 also settled what publishing means here — the export, run when the
-  book clears §1a.5's bar — and **no book has cleared it**, which the library's own index says
+  book clears §1a.5's bar (the continuation one, §126) — and **no book has cleared it**, which the library's own index says
   where somebody about to paste will read it. Each shelf also carries a `NOTES.md` that is
   written once and never overwritten, because a human read is not only a progress check: a
   named defect is one of only two doors an axis can enter the registry by, and all three the

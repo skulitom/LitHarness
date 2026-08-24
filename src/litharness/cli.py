@@ -2084,7 +2084,8 @@ def cmd_library(args: argparse.Namespace) -> int:
     """Republish the library: reading copies, pastable chapters, and the index.
 
     Not called `publish`, and the name is doing work. §62 settled what publication means here
-    — the export, run when the book clears §1a.5's bar — and no book has cleared it. A verb
+    — the export, run when the book clears §1a.5's bar (the continuation one, §126) — and no book
+    has cleared it. A verb
     called `publish` would make a claim the tool is in no position to make; this one writes
     files and says so.
     """
@@ -2513,7 +2514,7 @@ def cmd_calibrate(args: argparse.Namespace) -> int:
 
 
 def cmd_corpus_add(args: argparse.Namespace) -> int:
-    """Add one matched published-human excerpt: the other side of the superiority claim.
+    """Add one matched published-human excerpt: the other side of the external comparison.
 
     Source, genre and era are required because they are the matching covariates — §56.3
     measured revealed labels selecting story size and era rather than prose, so an excerpt
@@ -5596,7 +5597,7 @@ def build_parser() -> argparse.ArgumentParser:
         "--siblings",
         action="store_true",
         help="draw system-vs-system pairs under the built-in internal-v0 frame "
-        "(selection evidence, not the superiority claim)",
+        "(selection evidence, not the external published-human comparison)",
     )
     pair_draw.add_argument(
         "--rate",

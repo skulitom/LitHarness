@@ -3101,7 +3101,14 @@ this repository's, and bundling them would have hidden which of the two this sui
 
 ## 61. "Better than human" became measurable, so it became the goal
 
-The goal is now **superhuman literary quality**, and this entry is what keeps that sentence
+***Corrected in place 2026-08-24 by [§126](#126-superhuman-quality-is-the-long-term-goal-and-the-product-objective-is-a-defined-audience-that-keeps-reading):
+superhuman literary quality is the **long-term** goal, not the daily one, and the product
+objective is a defined audience that voluntarily continues and recommends.*** *Nothing in this
+entry is withdrawn — the operationalisation below is what makes the demotion possible rather
+than what it overturns, since a goal with a declared falsification criterion can be held at a
+distance without becoming an aspiration. Read every "the goal" below as "the long-term goal".*
+
+~~The goal is now **superhuman literary quality**~~, and this entry is what keeps that sentence
 from being marketing: "superhuman" means the lower bound of a 95% confidence interval on
 blinded, position-swapped pairwise win rate against matched published-human prose exceeds
 0.5, judged by paid genre readers. Throughput, uptime and publication cadence stop being
@@ -12923,3 +12930,105 @@ could not follow and refuses on the count, which is §89's E6 shape and not a ve
 nothing to pick from `reader-book-forge-c` and the pick flow has not been walked end to end under
 the gate. Whether the screen at zero is reachable on the production panel at all is an open
 question with n=2 behind it, and the next forge is the cheapest way to add to that distribution.
+
+## 126. Superhuman quality is the long-term goal, and the product objective is a defined audience that keeps reading
+
+The operator's direction, 2026-08-24, in four messages: demote *"superhuman literary quality"*
+from the daily product objective to a long-term goal; the product objective becomes **"produce
+fiction that a defined audience voluntarily continues and recommends, without requiring a human
+production loop"**; *"not real readership, only simulated readership"*; and *"it's not that text
+quality is the goal, but story quality and reader retention and fascination is the goal"*. Then:
+*"we will eventually have real readers, but they cannot be part of the product loop."*
+
+**Nothing is measured here.** This entry records a decision about what the project is for and
+where each existing bar sits under it. It declares no bar, retires no instrument, and changes
+no number.
+
+**What the demotion is, and why §61 is what makes it safe rather than what it reverses.** §61
+turned "better than human" from marketing into a falsifiable claim, and PLAN §1a.5 carries the
+operationalisation: blinded, position-swapped pairwise against matched published-human prose,
+95% CI lower bound on the win rate above 0.5, five pre-registrations attached. That survives
+untouched. What it stops being is the thing a day's work answers to, and the reason is
+mechanical rather than philosophical: the bar needs a comparator frame, matched published
+prose and a validated instrument, so it cannot be run per book — and a project whose stated
+goal cannot be run per book has no way to tell whether a week helped. A goal with a declared
+falsification criterion can be held at a distance without decaying into an aspiration. That is
+precisely what §61 bought, and it is why the demotion returns nothing to the v2.2 state §61 was
+written against.
+
+**What the objective is measured on, and the constraint that makes it runnable.** The audience
+inside the loop is **simulated, and only simulated** (§97's readership-as-reward-model). Its
+vocabulary is behavioural — continue, abandon, return — because §89 measured the verdict channel
+running 4,676x position over text and E1/E2 are recorded VOID; what a sim is allowed to be is
+§97.4. Real readers are expected in time and **may never enter the product loop**: no real
+reader's behaviour feeds generation, planning, selection, calibration or any gate. Real-
+population data keeps exactly one admissible role, the one it already had — asking whether a
+*sim* behaves the way readers did, which grades the instrument and never a manuscript (§123's
+backtest, and §106's return leg, registered and still undecided). **Neither is retired by this
+entry**, and retiring either would need its own.
+
+The constraint is not a cost, it is what makes the objective testable **before** there is an
+audience rather than after one. A product objective that required a real readership could not
+be evaluated until the thing was published, which is the circularity PLAN §2 and
+`application/library.py` both carried without noticing: publication was gated on clearing the
+quality bar, and the quality bar would have needed readers who could only arrive by publishing.
+On a simulated readership that gate is well-founded, and this entry is where the circularity is
+recorded as closed.
+
+**What "story, not text" changes, and it is less than it sounds.** PLAN §1a.3's six-item list —
+dramatic function, progression as drama, escalation and payoff, voice, line-level craft,
+absence of AI tells — was already ordered by how much each was believed to move a reader, with
+line craft fifth and tells sixth. The list does not change. What changes is what it claims to
+be: **hypotheses about what makes a defined audience continue**, not a definition of quality.
+The ordering was never measured — §10.6's craft reference corpus is what would test it and does
+not exist — and §1a.3 now says so where the list is.
+
+*Fascination* is named in the objective and **has no instrument**. Retention has several
+(§122's feed continuation, §124's anticipation probe, the BCR's budgeted allocation);
+fascination has none, and this entry declines to invent one by renaming an existing counter.
+It is recorded as an aspiration with a name, which is exactly the status "superhuman" held
+between v2.2 and §61 — and the lesson of that interval is that the name is worth keeping
+visible so that somebody eventually operationalises it rather than quietly dropping it.
+
+**What shipped, all of it prose.** PLAN.md: a v2.4 header paragraph with v2.3's declaration
+struck in place; §1a retitled from "Core philosophy: the text is the product" to "The product
+objective: a defined audience that keeps reading" and rewritten to state the objective, the
+audience, the simulated-only rule and the real-reader exclusion; §1a.3 retitled and re-scoped
+to hypotheses; §1a.4 amended (its heading, "Human judgment is the only ground truth", is left
+standing because the path from solicited judgment to revealed behaviour to simulated behaviour
+is the record and each step was bought by a measurement); §1a.5's lead corrected in place, the
+superiority bar relabelled long-term, the continuation bullet promoted out of "subsidiary
+evidence", the struck retention bullet **restored in sim form**, and the struck parity bullet
+left struck with a new reason — indistinguishability is orthogonal to the objective, because a
+reader who can tell and keeps reading has done what the product needs. §2 and §3 corrected,
+with a new non-goal naming real readers in the product loop. §17 Stage 4's target inverted and
+Stage 5's failure-class ranking re-anchored from predicted pairwise losses to predicted
+abandonment. §19's operator-grade clause renamed **Objective** and re-anchored, because as
+written it made operator-grade unreachable until a comparator corpus existed, for reasons
+having nothing to do with whether the system works; §19.1's row follows it, and its "the
+missing input is human judgment" is struck as the scope axiom struck it in substance already.
+README's opening and its "Judging it" section. And the citations in `src/` that derived a rule
+from §1a.5: the frontier-only provider rule is re-derived from the objective (a reader who
+stops is what a weaker model costs), `domain/preference.py` says what its instrument is now
+evidence *for*, `domain/craft.py`'s comparator cohort is labelled long-term with its constant
+deliberately unmoved, and `application/architect.py`'s readership comment is marked as the
+project's definition of its audience — which §126 makes load-bearing, because "a defined
+audience" is only meaningful if something defines it.
+
+**What was refused.** No numeric bar over continuation or recommendation: the four
+attainability checks have not been run on either, and §81, §85, §87 and §89 are four records of
+what a count declared a bar before its distribution existed does to a project. No solicited
+"recommends": the scope axiom (§95) forbids asking, so recommendation is behaviour observed or
+simulated or it is nothing, and no instrument for it exists today. No renaming of stored values
+— `Verdict`'s `keep_reading` / `would_stop` / `not_sure` and `INTERNAL_FRAME`'s text are
+id-deriving or stored and stay byte-identical, because a vocabulary change that mints new
+protocol ids would break replay convergence to make a document read better. No edit to
+`plan/*.md` handoffs that open by restating the old goal: they are records of finished work,
+several belong to other sessions, and the ledger is where a superseded frame is corrected.
+
+**Anti-scope.** This decides what the project is for and nothing about how to reach it. It
+picks no instrument, promotes none, and licenses no experiment. It does not reopen cadence:
+measuring whether a simulated reader carries on from one chapter to the next commits this
+project to no publication schedule, and §16/§62's retirement of serial publication as a goal is
+untouched. And it makes no claim that the objective is currently met — §19.1's row says the
+opposite, and now says it about the right bar.

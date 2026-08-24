@@ -1,8 +1,9 @@
 # Handoff: the comic-beat census — is humor attempted at genre density, measured by location and never by verdict
 
-You are working in `C:\DEV\LitHarness`, an autonomous fiction-production system whose goal is
-superhuman popcorn-genre books (LitRPG, progression fantasy, isekai) with no human in the
-production loop. Your task is one bounded measurement: a **located census of attempted humor**
+You are working in `C:\DEV\LitHarness`, an autonomous fiction-production system whose objective is
+popcorn-genre fiction (LitRPG, progression fantasy, isekai) a defined audience voluntarily
+continues and recommends, with no human in the production loop. Superhuman literary
+quality is the long-term goal (stage-0 §126). Your task is one bounded measurement: a **located census of attempted humor**
 in this project's chapters against the RoyalRoad LitRPG population, built in the mould of the
 names counter (`research/quality-measurement/opening_counters.py`, 2026-08-21). It admits
 nothing, directs nothing, and scores nothing. It produces a distribution and stops.

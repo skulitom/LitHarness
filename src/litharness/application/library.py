@@ -40,7 +40,10 @@ was measured to lack was "no chapter-release unit, no hook placement, no recap g
 per-chapter export, no publication policy object, no posting scheduler, no publication table".
 This adds exactly one of those seven — the per-chapter export, as a file format — and none of
 the other six. §62 also settled what publishing *is* here: "publication is that export, run when
-the book clears §1a.5's bar." No book has cleared it. These files are for reading, and pasting
+the book clears §1a.5's bar." No book has cleared it. *(§126: that bar is the continuation
+one, measured on a simulated readership — which is what keeps the gate from being circular,
+since a bar needing real readers would have required publishing to learn whether to.)*
+These files are for reading, and pasting
 one anywhere is an operator decision that condition already governs.
 """
 
@@ -354,7 +357,7 @@ Each book has a shelf:
 is in the table below.
 
 **These files are not a publication.** §62 settled what publishing is here — the export, run
-when the book clears the quality bar — and no book has cleared it. Pasting one anywhere is a
+when the book clears the bar of PLAN §1a.5 — and no book has cleared it. Pasting one anywhere is a
 decision that condition governs, and nothing in this folder asserts otherwise.
 
 **One caveat if you read here and then direct.** Reading your own book and dropping a directive

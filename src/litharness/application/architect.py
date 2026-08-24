@@ -647,6 +647,12 @@ _SYSTEM_MESSAGE = house.with_house_rules(
     # for this genre, we should keep main characters relatable"*. RoyalRoad's audience is the
     # market this project writes for, and this is a targeting decision the operator owns.
     #
+    # **This comment is the project's definition of its audience, and §126 made that
+    # load-bearing.** The product objective is fiction *a defined audience* voluntarily
+    # continues and recommends (PLAN §1a); the audience it names is this one, and inside the
+    # loop it is simulated (§97). Moving or narrowing it changes what the objective means, so
+    # it moves by operator direction and by nothing else.
+    #
     # **What is written here is the declarative half only, and the split is §112 boundary 1's.**
     # That boundary forbids this module a default instruction about how to *handle* a
     # protagonist — open on the hero, make them likeable — and

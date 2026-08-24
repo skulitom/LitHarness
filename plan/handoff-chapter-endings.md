@@ -1,8 +1,9 @@
 # Handoff: chapter endings — the rule that never arrived, the position the writer is never told, and the shape nobody has measured
 
-You are working in `C:\DEV\LitHarness`, an autonomous fiction-production system whose goal is
-superhuman popcorn-genre books (LitRPG, progression fantasy, isekai) with no human in the
-production loop. Your task is one bounded piece: make **how a scene ends — and in particular how a
+You are working in `C:\DEV\LitHarness`, an autonomous fiction-production system whose objective is
+popcorn-genre fiction (LitRPG, progression fantasy, isekai) a defined audience voluntarily
+continues and recommends, with no human in the production loop. Superhuman literary
+quality is the long-term goal (stage-0 §126). Your task is one bounded piece: make **how a scene ends — and in particular how a
 chapter ends** — something the system can (1) carry from an operator's direction to the scene being
 drafted, (2) tell the writer the *position* of, and (3) locate and count. Nothing here asks you to
 make the system write cliffhangers. Read the boundaries before you read the tasks.

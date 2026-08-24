@@ -1,8 +1,9 @@
 # Handoff: the promise ledger — the call that settles debts is never shown them, and the rows it cannot settle are what fills the packet
 
-You are working in `C:\DEV\LitHarness`, an autonomous fiction-production system whose goal is
-superhuman popcorn-genre books (LitRPG, progression fantasy, isekai) with no human in the
-production loop. Your task is one bounded piece: make the promise ledger **able to settle** — show
+You are working in `C:\DEV\LitHarness`, an autonomous fiction-production system whose objective is
+popcorn-genre fiction (LitRPG, progression fantasy, isekai) a defined audience voluntarily
+continues and recommends, with no human in the production loop. Superhuman literary
+quality is the long-term goal (stage-0 §126). Your task is one bounded piece: make the promise ledger **able to settle** — show
 the one call that records payments the debts it is being asked about — prove it structurally, then
 re-run Serial Pilot 2 once on the same forged world as a pre-registered question (**S5′**), and
 record what happened. Nothing here teaches the system *what* to pay or *when*; nothing here asks

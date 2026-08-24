@@ -393,7 +393,9 @@ PROFILE_PATH = Path(__file__).resolve().parents[3] / "plan" / "craft-profile.jso
 
 #: The cohort a generated scene is compared against. Pre-LLM published LitRPG — the closest
 #: thing available to §1a.5's "published human LitRPG", and chosen over the larger 2025 cohort
-#: precisely because the 2025 one is of unknown provenance.
+#: precisely because the 2025 one is of unknown provenance. The comparator belongs to the
+#: **long-term** goal since §126; the constant does not move, because a cohort that changed
+#: would make every number measured against it incomparable to the ones already recorded.
 REFERENCE_COHORT = "human_pre_llm"
 
 

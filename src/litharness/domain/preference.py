@@ -1,5 +1,13 @@
 """§61's pairwise preference engine: the evidence source that makes superiority falsifiable.
 
+**What this is evidence *for* changed on 2026-08-24 (stage-0 §126) and the instrument did not.**
+Superhuman literary quality is the project's **long-term** goal rather than its product
+objective; the objective is §1a's — fiction a defined audience voluntarily continues and
+recommends, measured on a simulated readership. So this module is the spine of the long-term
+goal's falsification criterion, not of the bar a day's work answers to. Nothing below is
+weakened by that: a goal is only holdable at a distance because it has an operationalisation,
+and this is the operationalisation.
+
 "Superhuman" means the lower bound of a 95% confidence interval on blinded, position-swapped
 pairwise win rate against matched published-human prose exceeds 0.5, judged by paid genre
 readers (§61, PLAN §1a.5). Four evidence channels were tried and measured dead — unpaid

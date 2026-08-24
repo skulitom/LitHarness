@@ -1,8 +1,9 @@
 # Handoff: nine unique abilities — the inventory the vocabulary can already hold, the forge is never asked for, and the writer meets as notation
 
-You are working in `C:\DEV\LitHarness`, an autonomous fiction-production system whose goal is
-superhuman popcorn-genre books (LitRPG, progression fantasy, isekai) with no human in the
-production loop. Your task is one bounded piece: make **a countable set of distinct named things
+You are working in `C:\DEV\LitHarness`, an autonomous fiction-production system whose objective is
+popcorn-genre fiction (LitRPG, progression fantasy, isekai) a defined audience voluntarily
+continues and recommends, with no human in the production loop. Superhuman literary
+quality is the long-term goal (stage-0 §126). Your task is one bounded piece: make **a countable set of distinct named things
 the protagonist can do** — each with what it took to get it, what it cost, and who allowed it —
 something the forge is asked for, the packet says in English, and a counter can read. Nothing here
 asks you to invent an ontology; the measurement says the vocabulary already holds this and nobody

@@ -1,9 +1,11 @@
 """Provider adapters, pinned: local Claude Code for production, a deterministic fake for
 the model-free suite and for explicitly requested model-free runs.
 
-§1a.5 requires a frontier generator, so there is no fallback chain and no sub-frontier
-tier: an unhealthy provider surfaces as `ProviderUnavailable` and the unit parks or
-requeues — the book waits, it never degrades. The retired plurality design and its
+§1a requires a frontier generator — the objective is a reader who carries on — so there is
+no fallback chain and no sub-frontier tier: an unhealthy provider surfaces as
+`ProviderUnavailable` and the unit parks or requeues — the book waits, it never degrades.
+(Derived from §1a.5 until §126 made that the long-term goal; `registry.py` carries why the
+rule survives the demotion.) The retired plurality design and its
 measurements stay recorded in `plan/provider-adapters.md`.
 """
 

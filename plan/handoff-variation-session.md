@@ -1,7 +1,8 @@
 # Handoff: a bounded VariationSession for deterministic candidate repair
 
-You are working in `C:\DEV\LitHarness`, an autonomous fiction-production system whose goal is
-superhuman literary quality with no human in the production loop. Your task is one component:
+You are working in `C:\DEV\LitHarness`, an autonomous fiction-production system whose objective is
+fiction a defined audience voluntarily continues and recommends, with no human in the
+production loop; superhuman literary quality is the long-term goal (stage-0 §126). Your task is one component:
 a durable, mediated **agentic variation loop** — called a `VariationSession` — applied first
 and only to **candidate-local repair**. It is not a prose hill-climber, it does not replace
 the Conductor, and it must not introduce any literary-quality ordering.

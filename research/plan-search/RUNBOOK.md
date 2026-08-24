@@ -25,7 +25,8 @@ search, at equal generator and equal budget per accepted scene.
 From `plan/stage-0-decisions.md` §61, the bar every quality claim in this project now
 reduces to:
 
-> "superhuman" means the lower bound of a 95% confidence interval on blinded,
+> "superhuman" (the **long-term** goal since stage-0 §126) means the lower bound of a 95%
+> confidence interval on blinded,
 > position-swapped pairwise win rate against matched published-human prose exceeds 0.5,
 > judged by paid genre readers.
 
