@@ -42,6 +42,11 @@ to distrust first (PLAN.md header, the same lesson recorded three times).
   not do what it said). Distributions before bars. A pre-registered null is a result (§61).
 - **No model ranks or selects** among candidates unless the log's containment for it exists
   (§61(5), §105.1, §107.5). Roles that generate need containment; roles that judge need validity.
+- **Three tiers, in this order** (§129): `house.CLARITY` is the floor; **reader direction
+  outranks every other craft instruction** and is meant to reach the prompt always; every
+  rule-essay (`architect._RULES`, and `house.READER` too) ranks below both and is provisional.
+  Tier 2 is currently empty, so tier 3 is still all the steering there is — subtract from it
+  when the replacement carries something, not before.
 - **Simulated-reader direction may reach a prompt. Nothing else may.** Opened 2026-08-24 on
   operator direction (§128) — the writer, and in time the Architect, take direction from
   simulated readers, which is the loop `application/feedback_loop.py` was built for and has

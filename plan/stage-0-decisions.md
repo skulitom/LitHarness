@@ -13172,3 +13172,75 @@ runbook's existing order and now the loop's.
 promotes none, registers no pool, admits no axis, and measures nothing — and it leaves the
 generation-side subtractions of §127 unmade, for §127's stated reason: the measurement that
 would justify removing a rule encoding a measured correction does not exist yet.
+
+## 129. Reader direction outranks every craft instruction, clarity is the floor under it, and the rule-essays rank below both
+
+The operator's ruling, 2026-08-24, settling the precedence the loop of §128 will run under:
+
+> "reader direction ranks above everything — CLARITY stays the floor (you said you care about
+> the text being clear and nothing else about it), reader direction ranks above every other
+> craft instruction, and the rule-essays currently in `_RULES` rank below both."
+
+Three tiers, and the ordering is the decision:
+
+1. **`house.CLARITY` — the floor.** Constitutional and unchanged (`plan/handoff-clarity-first.md`
+   boundary 1). A reader who cannot follow the words has not read them, so nothing above this
+   tier can be measured without it. It is also, per §126, the *only* property of the text this
+   project holds an opinion about in its own right.
+2. **Reader direction — the steer.** *"It should reach the prompt when nothing else can, it
+   should reach the prompt all the time. It should be the main way we steer the writers in
+   writing what the readers actually want."* This is the §128 channel, and it is currently
+   **empty** — no axis has a direction and the lane that could carry a non-axis signal is not
+   built.
+3. **`architect._RULES` and every other craft instruction — below both.** They are provisional:
+   assertions about what makes a story work, written by this project, none of them validated
+   against reader behaviour.
+
+**What licensed the ordering, measured over the six premises the screen refused (§127).** The
+worlds are not the craft simulators they read as. Five of the six declare progression as a
+personal capability in their own `progression_means` — *"the span of notes a singer can hold
+true"*, *"how far under the surface a person can drive a change"*, *"what a person can make
+light do"* — and the protagonist holds three or four declared capabilities in each. **The
+capability is declared and never sold.** What the premise offers as the hook is instead a
+process improvement: *the holding can be handed to a second pair of hands*, a second and gentler
+heat.
+
+The cause is locatable in a rule rather than in the model. §112's protagonist rule asks the
+forge to *"choose the one rule or cardinality shape this world declares that does not hold for
+them"* — and an exception to a rule is a **loophole**. Ask for a loophole and the answer is a
+clever workaround to a process, which is precisely what the operator has now rejected across
+three forges. The rule written to produce *the protagonist has what nobody has* is producing
+*the protagonist has found a trick*.
+
+**And `house.READER` already says the right thing, which is the point.** Its second clause asks
+that the opening show *"something a person could come to be able to do"* — a capability, in the
+operator's own words, shipped into every generation prompt via `with_house_rules` since §120.
+Six premises later it has not taken. That is now the fourth recorded instance of the pattern in
+§127's table: the instruction exists, is obeyed in letter, and does not produce the outcome.
+**Under this ordering `READER` is provisional too** — a hardcoded assertion of what readers want,
+standing in for a measurement, and the thing tier 2 exists to replace rather than to sit beside.
+
+**What this licenses, and what it does not.** It licenses the subtraction §127 named, *once tier
+2 carries something*: rules that rank below a channel with nothing in it are still the only
+steering the forge has, and removing them before the replacement exists leaves less steering
+rather than better steering. The exception is a rule with a **diagnosed mechanical defect** — the
+loophole framing above is a candidate — where the argument for removal is that the rule causes
+the failure rather than that it ranks low.
+
+**Where precedence is implemented, and where it is deliberately not.** In prompt assembly:
+`application/planner.py` composes the writer's system message and is where tier 2 has to land
+above tier 3; the Architect has no such seam yet (§128). It is **not** written into
+`domain/house.py`'s model-facing text, because a sentence telling a model that reader direction
+outranks these rules, in a build where no reader direction exists, is an instruction about
+nothing — and this project has three entries about instructions that describe an intention
+rather than a state.
+
+**What was refused.** No subtraction made here. No rule rewritten from the loophole diagnosis —
+that diagnosis came from reading the screen's output, and §128's channel is licensed for
+*simulated reader direction*, not for this system rewriting its own prompts from its own
+findings; a change to the protagonist rule is the operator's to direct, as §127's was. And no
+claim that the capability hypothesis is true: five of six worlds declaring capability-shaped
+progression is an observation about declarations, not evidence about what a reader wants.
+
+**Anti-scope.** This orders three tiers. It does not say what reader direction will contain,
+how it is measured, or that any of it works yet.
