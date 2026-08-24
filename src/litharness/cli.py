@@ -19,6 +19,7 @@ it up — not to wait, and certainly not to force it.
 from __future__ import annotations
 
 import argparse
+import csv
 import json
 import os
 import sqlite3
@@ -67,6 +68,7 @@ from litharness.application.repair import (
     make_repair_handler,
 )
 from litharness.application.summarize import make_summary_handler
+from litharness.domain import characters as characters_mod
 from litharness.domain import directors as directors_domain
 from litharness.domain import extraction, propagation
 from litharness.domain import state as state_mod
@@ -1248,6 +1250,44 @@ def cmd_replan(args: argparse.Namespace) -> int:
         return EXIT_ATTENTION
     return EXIT_OK
 
+
+def cmd_characters(args: argparse.Namespace) -> int:
+    """Everything canon holds about each person, one sheet each.
+
+    The writer's own view, printed. `state` shows the rows; this shows the people they add
+    up to — what somebody is, wants, sounds like, can do, where they stand, and who does
+    what about them. `--csv` writes the same thing as a table to open in a spreadsheet.
+    """
+    store = _store(args)
+    try:
+        book_id, branch_id = export_module.resolve_branch(store, args.book, args.branch)
+        records = store.state_records(book_id, branch_id)
+    finally:
+        store.close()
+
+    people = characters_mod.cast(records)
+    if args.subject:
+        people = tuple(c for c in people if c.subject == args.subject)
+    if not people:
+        print("no cast on record for this branch")
+        print("  a world reaches canon through `forge --pick`, then `new --state`")
+        return EXIT_OK
+
+    if args.csv:
+        rows = characters_mod.rows(people)
+        with args.csv.open('w', encoding='utf-8', newline='') as handle:
+            writer = csv.DictWriter(handle, fieldnames=list(rows[0]))
+            writer.writeheader()
+            writer.writerows(rows)
+        print(f"{len(rows)} character(s) -> {args.csv}")
+        return EXIT_OK
+
+    if args.json:
+        print(json.dumps([c.to_jsonable() for c in people], ensure_ascii=False, indent=2))
+        return EXIT_OK
+
+    print(characters_mod.render(people))
+    return EXIT_OK
 
 def cmd_state(args: argparse.Namespace) -> int:
     """What this book holds as true, in story order (§11's objective story state).
@@ -3375,6 +3415,16 @@ def build_parser() -> argparse.ArgumentParser:
     state.add_argument("--book")
     state.add_argument("--branch")
     state.set_defaults(func=cmd_state)
+
+    characters = sub.add_parser(
+        "characters", help="everything canon holds about each person, one sheet each"
+    )
+    characters.add_argument("--subject", help="one character id")
+    characters.add_argument("--csv", type=Path, help="write the cast as a table")
+    characters.add_argument("--json", action="store_true")
+    characters.add_argument("--book")
+    characters.add_argument("--branch")
+    characters.set_defaults(func=cmd_characters)
 
     propagate = sub.add_parser(
         "propagate", help="what a change reaches beyond what it edits, from a ChangeSet"

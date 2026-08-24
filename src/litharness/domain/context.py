@@ -66,6 +66,7 @@ from types import MappingProxyType
 
 import litharness_contracts as lc
 
+from litharness.domain import characters as characters_mod
 from litharness.domain import extraction as extraction_mod
 from litharness.domain import promises as promises_mod
 from litharness.domain import state as state_mod
@@ -84,6 +85,10 @@ _TOKEN_PATTERN = re.compile(r"\w+|[^\w\s]", re.UNICODE)
 PREMISE = "premise"
 CONSTRAINTS = "constraints"
 THREADS = "threads"
+
+#: Who is in this story, as one sheet each. Packed high because a writer that does not
+#: know who these people are cannot use a fact about them.
+CAST = "cast"
 FACTS = "facts"
 #: True, and not yet disclosed to the reader. The one thing an iceberg is made of, and until
 #: `domain/worlds.py` existed it could not be said at all: `pov_visibility` is packet *access*
@@ -99,7 +104,7 @@ HIDDEN = "hidden"
 #: pressure the compressed form is what survives and the raw text is what goes.
 SUMMARIES = "summaries"
 PRIOR_PROSE = "prior_prose"
-SECTION_ORDER = (PREMISE, CONSTRAINTS, THREADS, FACTS, HIDDEN, SUMMARIES, PRIOR_PROSE)
+SECTION_ORDER = (PREMISE, CONSTRAINTS, CAST, THREADS, FACTS, HIDDEN, SUMMARIES, PRIOR_PROSE)
 
 #: The largest share of the packet summaries may claim, so that they can be placed at all.
 #:
@@ -324,6 +329,10 @@ class ContextPacket:
         if threads:
             lines = "\n".join(f"- {item.text}" for item in threads)
             blocks.append(f"Open threads the book still owes:\n{lines}")
+        people = self.sections.get(CAST, ())
+        if people:
+            lines = "\n\n".join(item.text for item in people)
+            blocks.append(f"Who is in this story:\n{lines}")
         facts = self.sections.get(FACTS, ())
         if facts:
             lines = "\n".join(f"- {item.text}" for item in facts)
@@ -522,6 +531,30 @@ def assemble(
                 Omission(promise.promise_id, promise.promise_id, "budget: promise")
             )
     sections[THREADS] = tuple(threads)
+
+    # **Who these people are, one sheet each.** The facts below name characters by id and
+    # say nothing about them; a writer handed `merrit_vane refuses cabe_dross` and nothing
+    # else is writing in the dark. Packed above the facts for that reason and dropped only
+    # when the budget cannot hold a whole sheet.
+    people = []
+    for character in characters_mod.cast(state_records):
+        item = PackedItem(
+            item_id=f"cast:{character.subject}",
+            kind=lc.ContextItemKind.FACT,
+            source_logical_id=character.subject,
+            source_kind=lc.ResourceKind.ENTITY,
+            text=character.render(),
+            tokens=count_tokens(character.render()),
+            authority=lc.StateAuthority.ACCEPTED_CANON,
+        )
+        if fits(item):
+            people.append(item)
+            used += item.tokens
+        else:
+            omitted.append(
+                Omission(character.subject, character.subject, "budget: cast")
+            )
+    sections[CAST] = tuple(people)
 
     thread_ids = {item.item_id for item in threads}
     in_order = [
