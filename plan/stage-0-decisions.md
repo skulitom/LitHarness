@@ -12620,3 +12620,37 @@ the instrument elicits allocations, and no allocation has been elicited. Nothing
 quality, preference, or prose claim: `fcr.v0` has measured nothing about any book or any
 reader yet. It is an instrument with controls, sized to a corpus it has verified it fits,
 waiting for a seating decision.
+
+### 122.1 The first live screen, and the price the reader was never told
+
+The instrument's first sessions against a model ran the day the entry above landed: the
+§94.6-style pre-seat screen on `phi4:latest` — two intact feeds, all four rotations, both
+price blocks, 16 sessions, every one scorable, zero transport failures, $0
+(`results/fcr-screen-phi4-latest.json`; raw in `results/fcr-screen-phi4-raw.jsonl`).
+
+**What the reader did.** phi4 is not a fixed pattern: fp5 reads 0.2315 against the 0.05
+floor, switch rate 0.393, no named pattern — allocation varies across feeds and rotations,
+with a visible slot-A lean the positional control will have to price at the real batch. And
+it **never skimmed once** in sixteen sessions at either price. The screen's licence is
+narrow — it buys phi4 a seat *attempt*, nothing else — and the equivalence controls
+correctly read UNREADABLE at eight sessions against the table-set floor of 64.
+
+**The defect the screen found, and it could not have been found any other way.** The flat-
+price block came back **byte-identical to the registered block, session for session** — and
+it had to: the one frozen SYSTEM told the reader a skim costs 1 minute while the flat loop
+charged 3, so fp6 was manipulating a *hidden* charge. A never-skimming reader is shown no
+price difference at all, and even a skimming one would learn it only from the countdown. A
+control that raises a price the reader is never told about cannot test economising. Fixed at
+source: `SYSTEM_FLAT` is the registered prompt with only the skim price moved, the frozen
+prompt is selected by the registered price pair, and any unregistered pair now refuses by
+name (`tests/test_feed_core.py`, `tests/test_feed_session.py` pin all three properties).
+The screen predates the fix and its result file carries the old registration digest, which
+is what makes that legible.
+
+**What stands unresolved, recorded rather than argued away.** fp6 remains vacuous on a
+reader that never skims — a zero-use channel cannot carry a price-direction check under any
+prompt, the same shape as §121's two ratio metrics — so a seat for phi4 would read fp6 as
+UNREADABLE-by-abstinence, and whether *any* reader uses the skim channel is now a question
+the remaining screens answer before the channel's control can mean anything. No bar, no
+seat, and no claim about any book: one screen, one candidate still standing, one control
+corrected before it could certify the wrong thing.
