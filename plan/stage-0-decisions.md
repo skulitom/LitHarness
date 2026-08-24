@@ -12719,3 +12719,48 @@ selected anything: no session has run. A pass, when the paid stages run, makes t
 split a **candidate** reward model only — the launch as its out-of-sample test — with the
 holdout split never a reward model and §97's containment unmoved. The scope axiom stays
 closed: no human judgment is solicited anywhere in this programme.
+
+## 124. The reader is stopped mid-chapter and asked what could happen next, and every measurable is code
+
+The operator's directive (2026-08-24): anticipation probes — stop the reader mid-chapter and
+have it **describe, never rate**, what could happen next and which outcomes it finds itself
+hoping for or dreading. Flat text should yield vague, low-specificity hypotheses with no
+preference over outcomes; gripping text sharp, concrete predictions with a hope/dread gap.
+Built as `anticipation.v0`: `research/quality-measurement/anticipation.py`,
+`plan/anticipation-probe-validity.md` the registration, written before any call. **No call
+has been made**; the free legs (`--selftest`, `--dry-run`) are the deliverable here and the
+paid run (~800 calls on the standing panel, under the guard) is a later session's.
+
+**Why this can live where verdicts died.** The probe is report-channel (§89's E6, the one
+surviving frame): the persona describes futures and marks its own pull in behavioural words
+— hope, dread, neither — through a closed schema no verdict vocabulary can enter. The
+ledger's reserved preference vocabulary appears nowhere in the module, and a test enforces
+that (`tests/test_anticipation.py`) — which promptly caught the module naming the reserved
+word in the very sentence banning it, the second time this session a rail's first catch was
+its own author.
+
+**What shipped.** The stop point (paragraph boundary nearest 60% of words — never the whole
+text, never mid-thought); four draws per cell (the comic-beat census measured a one-draw
+locator at 0.54, so K=4 is that lesson applied); three registered measurables, all
+deterministic code and no lexicon anywhere: **specificity** as passage grounding (frozen
+stopword set, minimum token length 2 after a possessive's stray letter broke the first
+hand-derivation), **distinctness** as mean pairwise Jaccard distance, and **stance spread**
+(engagement = 1 − neither-share, plus bipolarity). Arms are `ablate` at strength 1.0 and
+nothing invented: `destake` — the operator's named damage arm — read against
+`deplete_matched` **or not at all** (the persona-battery rule; the difference between the
+two rows is the entire claim), plus the standing sham pair. Four kill conditions assembled
+in one table: K1 constancy (arm span under 0.05 kills the instrument), K2 the per-sham
+floor at +0.05, never pooled, K3 the matched control, K4 draw reliability reported in the
+gate-0 shape.
+
+**What was refused.** No bar over any rate; a null on every kill is a result. No sentiment
+lexicon — the machine-taste programme's lexicon-redundancy gauntlet is dodged structurally
+rather than survived. No overlap with the affect-trajectory handoff's territory: that census
+labels the register a passage *reaches for*, retrospectively and per paragraph; this probe
+elicits the reader's *prospective* futures at one stop point, and neither instrument's
+vocabulary appears in the other.
+
+**Anti-scope.** Nothing under `src/litharness/` changed; `personas.GENRE_PANEL` is untouched
+so §120's numbers stay reproducible; nothing here feeds a prompt (§97.1 — a pass licenses a
+located diagnostic on the operator's side and nothing else); and the distance between
+detecting manufactured flatness and reading taste remains §87–§89's three entries long.
