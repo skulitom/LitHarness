@@ -177,12 +177,17 @@ CONTROL_BAND = 0.10
 #: a point check: insufficient evidence fails a control rather than passing it.
 CONTROL_ALPHA = 0.10
 
-#: **Deliberately None, and the driver must refuse any paid run while it is.** §94.7: the BCR
-#: sized its controls from an assumed independent-coin reader, real sessions were internally
-#: correlated fixed patterns, and the declared batch could not have met the band at any size
-#: this programme had budgeted. The number is read off `feed_controls`' patterned-reader
-#: attainability table and set in a commit that cites that table, not before.
-CONTROL_MIN_SESSIONS: int | None = None
+#: **64, read off the attainability table this constant's first form demanded.** It began as
+#: None — §94.7: the BCR sized its controls from an assumed independent-coin reader and the
+#: declared batch could never have met the band — and was set from
+#: `feed_controls.sessions_needed(seed=20260824, trials=200)`
+#: (`results/fcr-attainability.json`): the content-driven (dirichlet) reader passes an
+#: unbiased equivalence 93.5% of the time at 64 sessions and 99% at 96, while readers biased
+#: to a 0.35 / 0.45 target share pass at most 8.5% / 0%. The raw pattern mixture clears only
+#: 76% even at 96 sessions — recorded, not sized around: fixed-pattern readers are fp5's
+#: kill, screened before any equivalence verdict is read, and §94.7's recourse stands — once
+#: a real seated reader's session variance is observed, re-size empirically from it.
+CONTROL_MIN_SESSIONS: int | None = 64
 
 #: Floor for `fp5`, the non-degeneracy check: the mean over slots of the across-session
 #: standard deviation of each slot's read share. On the **slot** share, never the target share

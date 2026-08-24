@@ -138,7 +138,14 @@ def test_fp5_is_unreadable_below_two_scorable_sessions() -> None:
 
 
 def test_equivalence_control_is_unsized_while_min_sessions_is_unset() -> None:
-    result = feed_controls.equivalence_control("placebo", [0.25] * 12, centre=0.25)
+    # The registered constant is now table-set; the structural refusal is pinned by
+    # restoring the unset state it guards against.
+    patch = pytest.MonkeyPatch()
+    patch.setattr(feed_core, "CONTROL_MIN_SESSIONS", None)
+    try:
+        result = feed_controls.equivalence_control("placebo", [0.25] * 12, centre=0.25)
+    finally:
+        patch.undo()
     assert result["verdict"] == "UNSIZED"
     assert result["verdict"] not in ("PASS", "FAIL")
     assert "attainability" in result["why"]
@@ -215,7 +222,12 @@ def test_positional_control_stays_unsized_without_a_registered_floor() -> None:
     biased = [
         _session([("read", "B")] * 3 + [("read", "A")], rotation=index) for index in range(4)
     ]
-    result = feed_controls.positional_control(biased)
+    patch = pytest.MonkeyPatch()
+    patch.setattr(feed_core, "CONTROL_MIN_SESSIONS", None)
+    try:
+        result = feed_controls.positional_control(biased)
+    finally:
+        patch.undo()
     assert result["verdict"] == "UNSIZED"
     assert result["worst_slot"] is None  # no interval was computed, so none is named
 

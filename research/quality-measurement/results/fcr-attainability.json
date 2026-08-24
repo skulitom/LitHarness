@@ -1,0 +1,116 @@
+{
+  "alpha": 0.1,
+  "band": 0.1,
+  "candidates": [
+    16,
+    24,
+    32,
+    48,
+    64,
+    96
+  ],
+  "centre": 0.25,
+  "models": {
+    "dirichlet": {
+      "bias_used": {
+        "near_0.35": 0.13,
+        "near_0.45": 0.27,
+        "uniform": 0.0
+      },
+      "by_sessions": {
+        "16": {
+          "pass_at_uniform": 0.075,
+          "pass_near_0.35": 0.065,
+          "pass_near_0.45": 0.0
+        },
+        "24": {
+          "pass_at_uniform": 0.31,
+          "pass_near_0.35": 0.065,
+          "pass_near_0.45": 0.0
+        },
+        "32": {
+          "pass_at_uniform": 0.565,
+          "pass_near_0.35": 0.04,
+          "pass_near_0.45": 0.0
+        },
+        "48": {
+          "pass_at_uniform": 0.8,
+          "pass_near_0.35": 0.045,
+          "pass_near_0.45": 0.0
+        },
+        "64": {
+          "pass_at_uniform": 0.935,
+          "pass_near_0.35": 0.085,
+          "pass_near_0.45": 0.0
+        },
+        "96": {
+          "pass_at_uniform": 0.99,
+          "pass_near_0.35": 0.085,
+          "pass_near_0.45": 0.0
+        },
+        "observed_mean_share": {
+          "near_0.35": 0.3450781249999999,
+          "near_0.45": 0.4510416666666663,
+          "uniform": 0.24917317708333328
+        }
+      }
+    },
+    "mixture": {
+      "bias_used": {
+        "near_0.35": 0.53,
+        "near_0.45": 1.0,
+        "uniform": 0.0
+      },
+      "by_sessions": {
+        "16": {
+          "pass_at_uniform": 0.0,
+          "pass_near_0.35": 0.0,
+          "pass_near_0.45": 0.0
+        },
+        "24": {
+          "pass_at_uniform": 0.0,
+          "pass_near_0.35": 0.01,
+          "pass_near_0.45": 0.0
+        },
+        "32": {
+          "pass_at_uniform": 0.035,
+          "pass_near_0.35": 0.01,
+          "pass_near_0.45": 0.0
+        },
+        "48": {
+          "pass_at_uniform": 0.275,
+          "pass_near_0.35": 0.06,
+          "pass_near_0.45": 0.0
+        },
+        "64": {
+          "pass_at_uniform": 0.53,
+          "pass_near_0.35": 0.055,
+          "pass_near_0.45": 0.0
+        },
+        "96": {
+          "pass_at_uniform": 0.76,
+          "pass_near_0.35": 0.05,
+          "pass_near_0.45": 0.0
+        },
+        "observed_mean_share": {
+          "near_0.35": 0.35039713541666656,
+          "near_0.45": 0.4385156250000003,
+          "uniform": 0.25016276041666674
+        }
+      }
+    }
+  },
+  "patterns": [
+    "all_in_0",
+    "all_in_1",
+    "all_in_2",
+    "all_in_3",
+    "round_robin",
+    "hold_then_switch",
+    "sticky",
+    "dirichlet"
+  ],
+  "reading": "set feed_core.CONTROL_MIN_SESSIONS from the first row whose pass_at_uniform is high and whose pass_near_0.45 stays low, per reader model; a control sized before this table is read certifies nothing",
+  "reads_per_session": 8,
+  "trials": 200
+}
