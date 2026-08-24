@@ -41,9 +41,39 @@ CLARITY = (
     "Clarity is the floor. Every word a reader has not met before is explained where it is "
     "used, in plain language, or it is not used: a name, a rank, a place, a piece of the "
     "world's own vocabulary. Nothing needs reading twice to be followed, and nothing is left "
-    "for the reader to work out later. A thing the reader cannot follow is a thing that did "
-    "not happen."
+    "for the reader to work out later.\n"
+    "A sentence a reader can take two ways has failed, and the writer is the last person who "
+    "can see it: `a sheet of directions in his brother's small hand` is handwriting to whoever "
+    "wrote it and a hand inside the box to whoever reads it. Prefer the reading nobody can "
+    "trip on.\n"
+    "Objects do not act, speak, want, refuse or know. A box does not tell anybody anything; "
+    "somebody works it out, or does not.\n"
+    "A paragraph holds together or it is not a paragraph. Inside one, a pronoun points at one "
+    "person only — where two are in play, use their names, however plain that reads. A reader "
+    "who has to reread a paragraph to find out whose brother died has been thrown out of the "
+    "book, and the sentences were all fine.\n"
+    "A thing the reader cannot follow is a thing that did not happen."
 )
+
+#: **The second read, 2026-08-24, and every clause below is one line the operator quoted back.**
+#: The redraft opened on a puzzle box rather than a call centre, which was the fix working, and
+#: the paragraph under it failed in four ways at once: *"why is his brother inside the small
+#: puzzle box?? what is going on here"* (an idiom that misparses), *"boxes don't communicate"*,
+#: *"'dropped flush' isn't a phrase I heard anyone ever say"*, and *"these feel like sloppy code
+#: magic numbers that are not tied to anything"*.
+#:
+#: **And the diagnosis that ties them together is the operator's too**: *"it's not just prose, I
+#: feel like we are really lacking paragraph wide coherence."* Read against the passage that is
+#: exact. `Vidor from the floor below had handed it over ... His brother had made it. His brother
+#: was dead.` Every sentence is plain, C7 passes each one, and the paragraph does not say whose
+#: brother died. Sentence-level craft rules cannot see that, which is why the clause below is
+#: about the paragraph.
+#:
+#: **The numbers clause is a correction of what this project meant by "numbers go up".**
+#: §113 built a countable ladder and §114 an inventory; neither said where precision may
+#: be spent, so the prose spent it on a box and a fortnight. The operator's words: *"I mean
+#: numbers and stats that are relevant to the world system, like character sheets. We don't
+#: need random objects and events to always have some unusually specific numbers tied."*
 
 #: **What the reader came for.** The measured failure this answers is one scene of eight spent
 #: rendering a support call step by step — technically an opening in which somebody wants
@@ -55,7 +85,16 @@ READER = (
     "who somebody is — the steps of a job, the numbers on a card, the order of a routine — is "
     "worth a line rather than a scene, and if the events would be equally true with those "
     "specifics removed, remove them. Every scene moves the thing the book is about closer or "
-    "further away."
+    "further away.\n"
+    "The opening shows what this book is offering: something a person could come to be able to "
+    "do, and somewhere the reader has not been. A reader who reaches the end of the opening "
+    "scene without seeing either has been given no reason to start another.\n"
+    "An exact number belongs to what this world counts and to nothing else. Ranks, tallies a "
+    "record would hold, quantities the world's own system keeps — those are counted, and a "
+    "reader learns to watch them. A puzzle box does not have thirty-one moves, a habit does "
+    "not have eleven repetitions, and a wait is not four days: exactness spent on props and "
+    "durations teaches a reader that the numbers here mean nothing, which costs the numbers "
+    "that do."
 )
 
 #: The block as it reaches a prompt. One blank line between the two, so a role can append it to
