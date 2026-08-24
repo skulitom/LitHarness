@@ -245,6 +245,21 @@ def test_an_unanswered_session_is_not_scorable() -> None:
     assert _session((("read", "A"),)).scorable
 
 
+def test_the_flat_price_prompt_differs_only_in_the_skim_price() -> None:
+    """fp6's prompt tells the reader the flat price; every other byte is identical."""
+    assert feed_core.SYSTEM.replace(
+        "costs 1 minute. Skimming", "costs 3 minutes. Skimming"
+    ) == feed_core.SYSTEM_FLAT
+    assert feed_core.SYSTEM_FLAT != feed_core.SYSTEM
+    assert "costs 1 minute" not in feed_core.SYSTEM_FLAT
+    registered = feed_core.system_for_prices(feed_core.READ_COST, feed_core.SKIM_COST)
+    assert registered is feed_core.SYSTEM
+    flat = feed_core.system_for_prices(feed_core.READ_COST, feed_core.READ_COST)
+    assert flat is feed_core.SYSTEM_FLAT
+    with pytest.raises(ValueError, match="unregistered price pair"):
+        feed_core.system_for_prices(2, 1)
+
+
 def test_a_session_records_the_prices_it_ran_at_and_charges_them() -> None:
     """The fp6 override runs skims at the read price; the record must say so itself."""
     flat = feed_core.FeedSession(

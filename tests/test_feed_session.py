@@ -349,19 +349,31 @@ def test_at_the_fp6_skim_price_each_skim_charges_a_full_reads_worth_of_budget() 
         feed_core.TURN.format(left=feed_core.BUDGET_UNITS - feed_core.READ_COST)
     )
     assert session.scorable
+    assert fake.requests[0]["system"] == feed_core.SYSTEM_FLAT, (
+        "the flat block must tell the reader the flat price"
+    )
 
 
-def test_non_default_prices_refuse_a_member_too_short_for_the_new_worst_case() -> None:
-    """At read_cost == 1 the worst case needs MIDSTREAM_CHUNK + budget_units // 1 chunks per
-    member; members legal at registered prices fail that refit and the session refuses before
-    any call, because a slot the new budget could exhaust would record the corpus."""
+def test_an_unregistered_price_pair_refuses_before_any_call() -> None:
+    """Only the registered pair and fp6's flat pair carry frozen prompts; anything else
+    is an unregistered variant of the instrument and refuses by name. Replaces
+    test_non_default_prices_refuse_a_member_too_short_for_the_new_worst_case, whose
+    arbitrary-price path no longer exists."""
     fake = ScriptedElicitor([])
-    with pytest.raises(
-        ValueError,
-        match=f"needs {feed_core.MIDSTREAM_CHUNK + feed_core.BUDGET_UNITS} chunks",
-    ):
+    with pytest.raises(ValueError, match="unregistered price pair"):
         feed_session.run_feed_session(
             fake, _feed(), model="m", rotation=0, replicate=0, read_cost=1, skim_cost=1
+        )
+    assert fake.requests == []
+
+
+def test_a_larger_budget_refuses_members_the_registered_floor_no_longer_covers() -> None:
+    """budget_units above the registered 24 raise the worst case past the delivered floor;
+    a member legal at the registered budget refuses before any call."""
+    fake = ScriptedElicitor([])
+    with pytest.raises(ValueError, match="needs 15 chunks"):
+        feed_session.run_feed_session(
+            fake, _feed(), model="m", rotation=0, replicate=0, budget_units=36
         )
     assert fake.requests == []
 

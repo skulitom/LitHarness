@@ -121,14 +121,14 @@ def run_feed_session(
     fault = feed.fault()
     if fault is not None:
         raise ValueError(fault)
-    if (budget_units, read_cost, skim_cost) != (
-        feed_core.BUDGET_UNITS,
-        feed_core.READ_COST,
-        feed_core.SKIM_COST,
-    ):
-        # Non-default economics change the worst case. At the registered prices the frozen
-        # core's own fault check already guarantees MIDSTREAM_CHUNK + BUDGET_UNITS // READ_COST;
-        # at other prices it does not, so the guarantee is re-derived here or refused.
+    # The reader is told the prices it pays: the frozen prompt is selected by the
+    # registered price pair (fp6's flat pair gets SYSTEM_FLAT) and any other pair refuses
+    # inside system_for_prices — the first live screen found the flat block byte-identical
+    # to the registered block because the one SYSTEM still named the cheap price.
+    system = feed_core.system_for_prices(read_cost, skim_cost)
+    if budget_units != feed_core.BUDGET_UNITS:
+        # A non-default budget changes the worst case the core's fault check guaranteed,
+        # so the guarantee is re-derived here or refused.
         needed = feed_core.MIDSTREAM_CHUNK + budget_units // read_cost
         for index, text in enumerate(feed.texts()):
             held = len(bcr.chunks(text))
@@ -173,7 +173,7 @@ def run_feed_session(
     step = 0
     while remaining >= min(read_cost, skim_cost):
         record = elicitor.ask_raw(
-            feed_core.SYSTEM,
+            system,
             turns,
             schema=feed_core.ACTION_SCHEMA,
             max_tokens=feed_core.ACTION_MAX_TOKENS,

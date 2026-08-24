@@ -145,6 +145,34 @@ SYSTEM = (
     '{"action": "skim", "book": "C"}. The books are A, B, C and D.'
 )
 
+#: **fp6's own frozen bytes, and the first live screen is why they exist.** The flat-price
+#: block ran with this module's one SYSTEM — which told the reader a skim costs 1 minute
+#: while the loop charged 3 — and phi4's screen came back with the flat block byte-identical
+#: to the registered block, session for session: a never-skimming reader is shown no price
+#: difference at all, and even a skimming one would learn it only from the countdown. A
+#: control that raises a price the reader is never told about cannot test economising, so
+#: the flat block gets its own frozen prompt: the same bytes with only the skim price moved.
+SYSTEM_FLAT = SYSTEM.replace("costs 1 minute. Skimming", "costs 3 minutes. Skimming")
+
+
+def system_for_prices(read_cost: int, skim_cost: int) -> str:
+    """The frozen prompt for a registered price pair; any other pair refuses by name.
+
+    Two pairs exist: the registered economics and fp6's flat price. An arbitrary pair
+    would be an unregistered variant of the instrument wearing its prompts, so it is
+    refused here rather than run.
+    """
+    if (read_cost, skim_cost) == (READ_COST, SKIM_COST):
+        return SYSTEM
+    if (read_cost, skim_cost) == (READ_COST, READ_COST):
+        return SYSTEM_FLAT
+    raise ValueError(
+        f"unregistered price pair (read={read_cost}, skim={skim_cost}); the "
+        f"registered pairs are ({READ_COST}, {SKIM_COST}) and fp6's flat "
+        f"({READ_COST}, {READ_COST})"
+    )
+
+
 #: The turn that asks for one action. Byte-frozen with the system block; `{left}` is the
 #: remaining budget, which is the whole of the scarcity the instrument creates.
 TURN = "{left} minute(s) of reading time left. What do you do?"
@@ -223,6 +251,7 @@ PRE_REGISTRATION: dict[str, Any] = {
     "skim_words": SKIM_WORDS,
     "recap_words": RECAP_WORDS,
     "system": SYSTEM,
+    "system_flat": SYSTEM_FLAT,
     "turn": TURN,
     "recap_format": RECAP,
     "reveal_read_format": REVEAL_READ,
