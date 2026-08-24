@@ -7694,7 +7694,10 @@ instrumented from the first optimization step — stands between it and any seat
 - **FX's pilot**, ~4 GPU-hours, module built and selftested. At n=8 the interval demands 8 of 8,
   so it was never going to clear a bar; it is a kill screen, and it has not been run.
 - **The fitness books, funded at §7.1 and DELIVERED.** Twenty own-generated books, **20 of 20
-  clearing the 3,600-word shelf shape**, 3,918 to 4,059 words each, for **$26.69 of the $81
+  clearing the 3,600-word shelf shape**, 3,918 to 4,059 words each (**correction, §122:**
+  cleared in *words*; under the shared chunker the delivered books hold 11-12 chunks, below
+  both instruments' first 13-chunk session shapes — the feed instrument was resized to the
+  measured floor, and a two-text BCR session cannot run on this shelf as delivered), for **$26.69 of the $81
   authorised** — a third of the estimate, because §94.3 priced from a per-scene figure that
   included a book's planning overhead twice. This closes the substrate absence §94.3 called the
   load-bearing result of its entry: *"until roughly $81 of frontier drafting buys the fitness
@@ -12518,3 +12521,102 @@ model. Nothing here is a quality, preference, or prose claim, and correct retrie
 insufficient for any of those. Task 4's `context_plan` job does not exist and must not be
 built until LongRangeContext's promotion package exists. The promise-ledger pressure keeps
 its own deterministic policy; recursive planning does not excuse an unbounded ledger.
+
+## 122. Continuation gets a price and a feed, and every number the instrument was sized from had to be replaced by a measured one
+
+The operator's directive (2026-08-24): §70's 195/196 saturated because continuing was free —
+give the reader a finite attention budget and a feed, other books mid-stream, a cheaper skim,
+and abandonment becomes a revealed preference instead of politeness; nobody abandons a book in
+a vacuum, they abandon it for the next thing in their feed. That is the BCR's own deferred
+successor ("a larger naturalistic shelf is a later replication"), so what was built is
+`fcr.v0`, a sibling instrument beside `bcr.v0` — which keeps its bytes untouched, §120.5's
+rule, so §94's numbers stay reproducible.
+
+**Measured first.** Three of the instrument's own numbers failed contact with reality before
+any call was bought, and each replacement is a measurement:
+
+1. **The delivered fitness shelf holds 11-12 chunks per book under the shared chunker, not
+   the 13 the sizing arithmetic predicted.** The first registration (27 units entering at
+   section 4, worst case 13 chunks) was justified by "3,900 words over a 300-word chunk
+   target"; the first run of `feed_substrate.substrate_report` over all twenty books returned
+   **0 of 20 clearing** — `bcr.chunks` closes a chunk only *past* the word target, so real
+   chunks average ~350 words. The session was resized to the measured floor (24 units, entry
+   at section 3, worst case 11 = the shortest delivered book), after which **20 of 20 clear**.
+   No session had ever run, so no number was invalidated — but the same measurement corrects
+   §95.9: the books cleared the shelf shape *in words*, and at the shared chunker they cannot
+   carry `bcr.v0`'s 13-chunk two-text session as delivered either.
+2. **A fitness store can hold two books.** `fitness-00.db` carries a second book left behind
+   by failed driver attempts, and the export layer refuses ambiguity — found by running the
+   loader against the real corpus, invisible to every hermetic test. The rule applied is the
+   delivery driver's own, recorded in `fitness_books.word_count`: a shelf member is one book,
+   the largest single one.
+3. **The session record repriced its own history.** `FeedSession.spent_units` charged the
+   registered constants to sessions run under the fp6 price override — eight flat-price skims
+   reported as eight cheap ones. Found by the session module's own tests; the record now
+   carries the prices it ran at.
+
+4. **The sizing table itself** (`feed_controls.sessions_needed`, seed 20260824, 200 trials;
+   the JSON is committed as `results/fcr-attainability.json`): a content-driven reader passes
+   an unbiased equivalence at the registered band 93.5% of the time at 64 sessions and 99% at
+   96, while readers biased to a 0.35 / 0.45 target share slip through at most 8.5% / 0% — so
+   `CONTROL_MIN_SESSIONS` is **64**, set in the commit that carries the table. The raw pattern
+   mixture — §94.7's correlated world with the fixed patterns left in — clears only 76% even
+   at 96 sessions, and that is recorded rather than sized around: a fixed-pattern reader is
+   exactly what fp5 kills before any equivalence verdict is read, and §94.7's recourse stands
+   (once a real seated reader's session variance is observed, re-size empirically from it).
+
+**What shipped.** `research/quality-measurement/feed_core.py` — the frozen registration:
+four books entered mid-stream (skimmed story-so-far plus one full current section each, all at
+the same depth), a 24-minute budget with reads at 3 and skims at 1, forced spending, the
+byte-frozen behavioural prompt (no quality vocabulary, no evaluation framing), a deterministic
+skim extract (mechanical first-sentences, never model prose), and the session record whose
+datum is behavioural: per-slot read shares, the target's read share, skim rate, and the
+**abandonment step** — the last full read of the target, after which every remaining unit went
+to competitors. `feed_substrate.py` — the intact arm, the fp1 placebo (four byte-identical
+copies), fp3/fp4 riding `ablate`'s standing placebo pair, the loaders, and the report that
+lists short members rather than dropping them. `feed_session.py` — the sequential replayable
+loop, `bcr.run_session`'s discipline kept whole (fault check before any call, the one
+ephemeral cache breakpoint on the shared opening, replicate-folding sample indices, named
+exits, no retry, no fallback). `feed_controls.py` — fp5 degeneracy on the **slot**-share
+vector (§94.6's second-formulation lesson, encoded), equivalence controls that answer
+**UNSIZED** while `CONTROL_MIN_SESSIONS` is None (§94.7 encoded structurally: a control sized
+by guesswork certifies nothing), a directional-only skim-price kill with a module-constant
+bootstrap seed, and an attainability simulation over *patterned session-level readers* — the
+correlated world §94.7 found, never independent coins. `feed_battery.py` — the thin driver:
+`--selftest` and `--attainability` run without an elicitor existing (a sentinel class makes
+constructing one the failure), `--seat` refuses while the sizing constant is unset before even
+reading the corpus, the call guard names the plan and the guard, every result carries the
+registration verbatim with its digest, and the `--published` stamp has no code path that
+removes it. Tests:
+`tests/test_feed_core.py`, `tests/test_feed_substrate.py`, `tests/test_feed_session.py`,
+`tests/test_feed_controls.py` — hermetic, hand-derived expectations, scripted elicitors, no
+call anywhere. Three of the four modules were written by a delegated coding agent (Ox Alpha
+via cline) against briefs carrying the full design; every one was independently gated — scope,
+tests, ruff, line endings, and a full read — before its commit, and the registration core was
+not delegated.
+
+**What was refused, and why.** No bar anywhere: every verdict field is PASS/FAIL against a
+registered control shape, UNSIZED, UNREADABLE, or a named direction — distributions before
+bars, and the four attainability checks have not been run for any effect quantity because no
+effect has been measured. **No session has ever run against a model**: the instrument ships
+unseated, and seating is a paid decision the driver refuses while `CONTROL_MIN_SESSIONS` is
+unset. The skim channel is mechanical extraction because a model-written summary would be a
+second authority inside the instrument. Published prose enters a feed only behind the driver's
+`--published` stamp with §A6's rename rails — the licensed substrate is the twenty
+own-generated fitness books, BRIEF §2 Pass 6's rule standing. And the feed's competitors are
+this system's own books, never a corpus text: RS1 does not even come into reach.
+
+**Corrections in place.** The sizing correction is recorded inside this entry (measured
+first, item 1) and at §95.9, where "20 of 20 clearing the 3,600-word shelf shape" now needs
+the pointer: *cleared in words; at the shared chunker the delivered books hold 11-12 chunks
+and were resized around in §122*. The fp6 repricing defect and the two-book store are
+corrected at source with their tests. One gating defect of the build process itself is
+recorded: a pytest failure was masked by a pipeline's exit code and a commit landed red for
+one commit's duration — the follow-up commit names it, and the gate runs under pipefail since.
+
+**Anti-scope.** Nothing under `src/litharness/` changed; no gate, no forge rule, no prompt
+and no book was touched. `bcr.py` is byte-identical. No model ranks or selects anything —
+the instrument elicits allocations, and no allocation has been elicited. Nothing here is a
+quality, preference, or prose claim: `fcr.v0` has measured nothing about any book or any
+reader yet. It is an instrument with controls, sized to a corpus it has verified it fits,
+waiting for a seating decision.
