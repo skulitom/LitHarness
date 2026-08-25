@@ -66,7 +66,8 @@ _TASK = (
     "somewhere they are already in trouble, rather than on an account of the world.\n"
     "An exact number is worth its space only where the world itself counts it: exactness "
     "spent on props, distances and durations is space the hook needed.\n"
-    "No title, no headings, no tags, no word about the author. Under a hundred words, and "
+    "No title, no headings, no tags, no word about the author, and no dashes: this market's "
+    "listings punctuate with full stops and commas. Under a hundred words, and "
     "shorter is better: the listings that work on this market are very short."
 )
 

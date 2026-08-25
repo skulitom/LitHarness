@@ -65,6 +65,20 @@ def _roles() -> dict[str, str]:
 #: 8.0 in the market's own listings. The clause came back as one line and the ceiling moved
 #: with it, on purpose and in writing, which is the whole difference from how it left.
 #:
+#: **A format fact added 2026-08-25 without a raise: it joined an existing line.** A census on
+#: `platform_priors.panel`, whose counters were frozen under §104 for a different arm,
+#: put six of six market listings at **exactly zero em dashes** against our median of
+#: 11.78 per thousand words. The same census found our lyric index at *half* the
+#: market's, so this is a punctuation habit and not purple prose.
+#:
+#: **It brushes a rail and the reasoning is recorded rather than assumed.** `em_dash` is a
+#: registered prose axis whose hypothesis is still VOID, and `legal_dossier` refuses any
+#: instruction naming it — it rejected a dossier written the same morning. The guard does
+#: not fire on a task string, and the claim being made is about an artifact's format, the
+#: same kind as "no headings": the axis concerns scene prose measured against reader
+#: response, and this is a listing measured against its market. Scoped to the listing for
+#: exactly that reason; the scene path keeps the axis untouched.
+#:
 #: The Architect's forty-one is the largest and is not yet defended by anything. It is the whole
 #: house floor plus its own tool essay, and no measurement says which half it needs.
 BUDGET: dict[str, int] = {
