@@ -27,6 +27,7 @@ hooks, so asking for twice that was buying room for the throat-clearing.
 
 from __future__ import annotations
 
+from litharness.domain import house
 from litharness.domain.generation import CompletionRequest
 from litharness.domain.writers import Writer
 
@@ -73,8 +74,15 @@ _TASK = (
 
 
 def _system(writer: Writer | None) -> str:
-    """Who is writing, then the job. No scene floor: see `_TASK`."""
-    return f"{writer.render()}\n\n{_TASK}" if writer is not None else _TASK
+    """Who is writing, then the job. No scene floor: see `_TASK`.
+
+    `house.ACCUMULATION` is referenced rather than restated. It is the one clause of the
+    floor a listing genuinely needs — a mechanic that spends its own capability is the
+    thing this genre's reader is least here for — and one object with two callers is what
+    keeps it from becoming two rules that drift.
+    """
+    body = f"{_TASK}\n{house.ACCUMULATION}"
+    return f"{writer.render()}\n\n{body}" if writer is not None else body
 
 
 def render_overview_request(brief: str, writer: Writer | None = None) -> CompletionRequest:

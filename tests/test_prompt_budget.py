@@ -79,13 +79,20 @@ def _roles() -> dict[str, str]:
 #: response, and this is a listing measured against its market. Scoped to the listing for
 #: exactly that reason; the scene path keeps the axis untouched.
 #:
-#: The Architect's forty-one is the largest and is not yet defended by anything. It is the whole
+#: **Every role went up by one on 2026-08-25, for one clause in `house`.** The operator:
+#: *"think of progression fantasy/litrpg readers as dragons hoarding gold ... they like to
+#: hoard perma abilities and passive effects. Losing words goes against this."*
+#: `house.ACCUMULATION` is that, and it is deliberately one sentence: written as three it
+#: moved the scene writer from 27 demands to 30 and the Architect from 41 to 44 for a
+#: single idea. This table is the only reason anybody saw that before it shipped.
+#:
+#: The Architect's forty-two is the largest and is not yet defended by anything. It is the whole
 #: house floor plus its own tool essay, and no measurement says which half it needs.
 BUDGET: dict[str, int] = {
-    "listing writer": 10,
-    "architect seed": 41,
-    "architect grow": 41,
-    "scene writer floor": 27,
+    "listing writer": 11,
+    "architect seed": 42,
+    "architect grow": 42,
+    "scene writer floor": 28,
     "measurement reader": 4,
     "steering reader": 4,
     "screen reader": 5,
@@ -93,7 +100,7 @@ BUDGET: dict[str, int] = {
 
 #: The floor everything else inherits. Broken out because a clause added here is added to every
 #: role at once, which is exactly how the scene writer reached twenty-seven without a decision.
-HOUSE_BUDGET = 24
+HOUSE_BUDGET = 25
 
 
 @pytest.mark.parametrize("role", sorted(BUDGET))

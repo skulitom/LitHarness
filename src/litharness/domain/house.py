@@ -154,9 +154,27 @@ READER = (
     "that do."
 )
 
+#: **What the reader is accumulating, and it is the genre's own economics.** The operator,
+#: 2026-08-25, on a listing whose magic was a word spoken once and used up: *"think of
+#: progression fantasy/litrpg readers as dragons hoarding gold, instead of hoarding gold they
+#: like to hoard perma abilities and passive effects. Losing words goes against this."*
+#:
+#: `READER` above asks for an offer that combines and whose ceiling nobody has seen. Neither
+#: is *keeping*, and a power that is spent combines with nothing and reaches no ceiling. This
+#: is written as what fails rather than as what to do, which is the correction this module
+#: has already taken twice in one day, and as ONE sentence because it lands in every role
+#: that stands on the floor: at three sentences it moved the scene writer from 27 demands to
+#: 30 and the Architect from 41 to 44 for a single idea.
+ACCUMULATION = (
+    "A power that is spent, used up or traded away costs the reader the thing they came "
+    "for: what this genre's reader collects is what the person KEEPS, and a price is paid "
+    "in a body, in time, in risk or in somebody now against them, never in the capability "
+    "itself."
+)
+
 #: The block as it reaches a prompt. One blank line between the two, so a role can append it to
 #: its own instructions without reflowing them.
-HOUSE_RULES = f"{CLARITY}\n\n{READER}"
+HOUSE_RULES = f"{CLARITY}\n\n{READER}\n\n{ACCUMULATION}"
 
 
 #: The vocabulary this system uses for its own machinery. **Text that shapes prose a reader

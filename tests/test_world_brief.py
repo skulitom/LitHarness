@@ -188,6 +188,10 @@ def test_neither_scene_plan_author_is_told_the_world_the_writer_is_handed() -> N
     # already was, and the counter's own docstring says it is deliberately crude and feeds a
     # distribution rather than a bar. Subtracting is the honest form of the same assertion;
     # the allowlist keeps it an assertion rather than a hole, because a template that started
+    # `never` joined them on 2026-08-25 with `house.ACCUMULATION` ("never in the
+    # capability itself"), and it is the collision this test's own docstring already
+    # records for the narrative arm: `r_lag` manifests as "a tax on a column headed
+    # NEVER", so `never` is one of this world's 49 coined names.
     # naming a real part of this world would still fail.
     template = payload_of(
         outline.render_outline_request(
@@ -195,7 +199,7 @@ def test_neither_scene_plan_author_is_told_the_world_the_writer_is_handed() -> N
         )
     )
     fixed = named_in(template, nouns)
-    assert fixed <= {"first", "time"}, (
+    assert fixed <= {"first", "never", "time"}, (
         f"the beat sheet, the rules or the house floor named {sorted(fixed)}; only common "
         "English colliding with an id fragment is allowed here"
     )
