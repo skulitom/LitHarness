@@ -60,11 +60,29 @@ def _system(writer: Writer | None) -> str:
     """Who is writing, then the job. No scene floor: see `_TASK`."""
     return f"{writer.render()}\n\n{_TASK}" if writer is not None else _TASK
 
+
 def render_overview_request(brief: str, writer: Writer | None = None) -> CompletionRequest:
     """One overview, from a brief that may be empty.
 
     An empty brief is legitimate and is the control the old forge kept for the same reason: a
     book built from no direction at all is what a directed one is read against.
+
+    **A genre label is the worst thing this field has held, and it outweighed every rule in the
+    prompt.** Measured 2026-08-25, four writers, both arms: with the brief `progression fantasy`
+    the four listings used thirteen rank words between them and three of the four reached for
+    this system's own `ladder` and `rung`; with no brief at all, one rank word and none. One
+    genre-brief listing came back at 59 words with twenty-two terms four readers could not cash,
+    every one of them furniture — bronze, iron, rung, rank trial, bell-keeper, proctors.
+
+    The cause is the framing plus the redundancy. This renders the brief under *"What this book
+    is to be about"*, so two genre words arrive as the book's subject matter and the model
+    writes the genre's furniture instead of a story. And the genre is already in the cast:
+    every dossier in `writers.CAST` names what that writer reads and writes. Saying it again
+    here is not direction, it is the subject line telling the writer their book is about a
+    category.
+
+    So: a brief is a story, a situation, a constraint somebody cares about — or nothing. It is
+    not a shelf label.
     """
     ask = brief.strip() or "Anything you would most want to read."
     return CompletionRequest(

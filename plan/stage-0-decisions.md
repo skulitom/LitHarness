@@ -13662,3 +13662,52 @@ protects. A gate that rewards the register it exists to catch is worth more than
 **Anti-scope.** Counting and refusing, never editing: nothing here decides what a rule should say.
 No budget is claimed to be the right size — they are the sizes that were there on the day somebody
 first looked.
+
+## 136. Two words of brief outweighed every rule in the prompt
+
+A day of subtractions took the listing prompt from sixteen demands to nine and from 4,111
+characters to 971 (§135). The input beside it was never examined: the field holding the words
+`progression fantasy`, rendered under the heading *"What this book is to be about"*.
+
+**Measured 2026-08-25.** Four writers, two arms, twenty-four calls, $4.46. Arm A briefed
+`progression fantasy` and screened by four readers; arm B briefed with nothing, which
+`render_overview_request` already renders as *"anything you would most want to read"* and which
+the forge kept as its control for the same reason.
+
+| | rank vocabulary, four listings | this system's own words on the page |
+| --- | --- | --- |
+| brief `progression fantasy` | **13** | `rung`, `ladder`, `rung` in three of four |
+| no brief | **1** | none |
+
+The worst listing of the day came out of arm A: 59 words carrying **twenty-two terms four
+readers could not cash**, and all four quoted the same furniture — *bronze, iron, rung, rank
+trial, bell-keeper, proctors*. Arm B's four opened on a stack trace nobody else in the warehouse
+can read, a lantern that burns only while its holder tells the truth, a beast that would die for
+somebody, and a man who can see the flaw in anything performed in front of him.
+
+**Why two words did that, and both halves are needed.** The brief renders under *"What this book
+is to be about"*, so a shelf label arrives as the book's **subject matter** and what comes back
+is the genre's furniture rather than a story. And the genre was already being said: every dossier
+in `writers.CAST` names what that writer reads and writes, so the brief was repeating it in the
+one place where repeating it changes what the book is about.
+
+**This also explains a defect three earlier entries chased.** §133 through §135 traced the rank
+ladders to `house.READER`'s numbers clause, to `architect._RULES`, to the length budget and to
+the scene rules; each of those was a real cause of something and none of them was this one. The
+`ladder` and `rung` that reached four listings survived every rail written against them —
+including the machinery-vocabulary rail of §135, which covers prompts and not output — and
+vanished when the brief did.
+
+**What shipped.** The measurement, written where the brief is read
+(`overview.render_overview_request`), and the operating rule that follows from it: **a brief is a
+story, a situation or a constraint somebody cares about, or nothing. It is not a shelf label.**
+
+**What was refused.** No code change to the brief field: it is an input and the finding is about
+what callers put in it. No ban on genre words — §127 is the entry recording that a fourth rule
+against the same complaint did not work, and this is the same complaint with a cause outside the
+rules. And no claim that the no-brief arm is better *writing*: what is measured here is rank
+vocabulary and uncashed terms, which are two things about a listing and not the whole of one.
+
+**Anti-scope.** One field on one call. Nothing about what a brief should say when it is doing its
+job, and nothing about the scene path, where the same question — what does the input cost
+relative to the rules — has not been asked.
