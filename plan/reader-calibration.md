@@ -59,6 +59,19 @@ Let **W** = share of answered pairs choosing ours, over the 4 measurement reader
 
 K4 is checked **first**. A void arm is not re-read.
 
+**K4 is pooled across listings and is unattainable per listing, which was caught before the
+run rather than after.** With 4 measurement readers a single listing's `ours_first_share` can
+only be 0, 0.25, 0.5, 0.75 or 1 — three of those five values fail a 0.40–0.60 band by
+construction, so applied per listing the check would void most arms for having four readers
+rather than for measuring order. Observed immediately on a model-free smoke run: 0.75 on one
+listing, which means nothing. At N = 8 the pooled denominator is 32 pairs and the band is
+reachable.
+
+This is the fourth instance of the failure `plan/stage-0-decisions.md` §81, §85, §87 and §89
+each record — a declared quantity that could not do what it said — and the only reason it is
+recorded here as a design note instead of there as an entry is that the arithmetic was done
+before the calls were bought.
+
 ## 3. The two ways this becomes circular, and the rules against them
 
 **Tuning to the answer.** *"Tune the readers so they can spot quality"* is the request, and
