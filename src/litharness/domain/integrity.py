@@ -233,6 +233,69 @@ def _value_key(value: Any) -> str:
 MULTI_VALUED: frozenset[str] = frozenset({worlds_mod.ENTITY_ROLE_PREDICATE})
 
 
+def disagreement_key(record: lc.StateRecord) -> tuple[str, str, str, str]:
+    """The slot a record fills: subject, predicate, edge, and story position.
+
+    **One grouping with two callers, and they must never drift.** `detect_contradictions`
+    reports two values in one slot as a defect; `superseded` decides, before anything is
+    accepted, that a second declaration of one slot replaced the first. If those two disagreed
+    about what a slot is, acceptance would leave behind exactly the pairs the detector fires
+    on — which is the failure that made this function exist (§139).
+    """
+    return (
+        record.subject,
+        record.predicate,
+        record.object_ref or "",
+        state_mod.order_key_of(record) or "",
+    )
+
+
+def superseded(
+    records: Sequence[lc.StateRecord], *, declared_at: Mapping[str, str]
+) -> tuple[str, ...]:
+    """Of these records, the ones a later declaration of the same slot replaced.
+
+    **What this is for, and it is a blocker rather than a tidy-up.** `world declare` appends
+    and has no retraction path, so an Architect that improves its own declaration writes a
+    second record into the same slot. Accepting both makes them canon, `detect_contradictions`
+    reads two values at one story position, and the finding is MAJOR and **blocking** — so
+    every scene of the book is refused, three times each, and the unit poisons. Measured on
+    Serial Pilot 7: four such pairs, three of them the agent's own scratch probes and one a
+    criterion it rewrote, and not one word of the book could be drafted. `dismiss` does not
+    help, because the pre-flight gate reads stored findings and the *integrity* gate re-derives
+    them from canon on every attempt.
+
+    **The rail this keeps is `promote_state_records`' "only ever upward".** Nothing here
+    demotes anything: the replaced records simply are not carried, and stay the proposals they
+    already were. So canon is never rewritten, the record of what was proposed is intact, and
+    `world summary` still counts them.
+
+    `declared_at` is when each record was written, keyed by record id — the store has it and
+    `lc.StateRecord` does not, because declaration order is a fact about the writing and not
+    about the world. Ties break on record id so the answer is deterministic.
+
+    **Multi-valued predicates are skipped**, on `MULTI_VALUED`'s licence and for its reason: a
+    subject carrying both `cast` and `protagonist` is two facts, and treating the second as
+    replacing the first would silently delete the protagonist a world just declared.
+    """
+    groups: dict[tuple[str, str, str, str], list[lc.StateRecord]] = {}
+    for record in records:
+        if record.predicate in MULTI_VALUED:
+            continue
+        groups.setdefault(disagreement_key(record), []).append(record)
+
+    replaced: list[str] = []
+    for members in groups.values():
+        if len({_value_key(record.value) for record in members}) < 2:
+            continue
+        ordered = sorted(
+            members,
+            key=lambda record: (declared_at.get(record.record_id, ""), record.record_id),
+        )
+        replaced.extend(record.record_id for record in ordered[:-1])
+    return tuple(sorted(replaced))
+
+
 def detect_contradictions(subject: DetectorInput) -> list[Finding]:
     """Canon records that disagree with each other at the same story position.
 
@@ -271,13 +334,7 @@ def detect_contradictions(subject: DetectorInput) -> list[Finding]:
     canon = [record for record in subject.records if state_mod.is_canon(record)]
     groups: dict[tuple[str, str, str, str], list[lc.StateRecord]] = {}
     for record in canon:
-        key = (
-            record.subject,
-            record.predicate,
-            record.object_ref or "",
-            state_mod.order_key_of(record) or "",
-        )
-        groups.setdefault(key, []).append(record)
+        groups.setdefault(disagreement_key(record), []).append(record)
 
     findings: list[Finding] = []
     for (subject_id, predicate, object_ref, order_key), members in sorted(groups.items()):
@@ -696,8 +753,10 @@ __all__ = [
     "detect_contradictions",
     "detect_duplicate_scene",
     "detect_overdue_promises",
+    "disagreement_key",
     "gate_integrity",
     "gate_standing",
     "run_detectors",
     "summarise",
+    "superseded",
 ]

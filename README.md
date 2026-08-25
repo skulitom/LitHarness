@@ -130,7 +130,31 @@ from. It is optional where `--plans` is not — a book with no state records dra
 its plan and its prose, which is thinner but not blocked, and a regenerating book starts
 with none by definition. `--fixture` supplies all three.
 
-A book that does not exist yet starts with `new` instead, which is Stage 3's entry point:
+A book that nobody has written a word of — or a listing for — starts with `listing`, which
+is the loop the simulated readership sits inside:
+
+```bash
+uv run litharness --database book.db listing --writer halloran --scenes 6 --out shelf/
+```
+
+One writer from the cast drafts the few lines a reader meets on the front page of a
+serial-fiction site; the **steering** readers say what they hope the book turns out to be;
+the same writer writes it again having heard them; then titles it. The title is looked up on
+the web — a title already carried by a published book is refused and the writer is asked for
+another — and the **measurement** readers, who never steer, say whether they would open
+chapter one against the rest of the page. Nothing ranks anything: there is one listing,
+revised once, and a low start rate is reported rather than a gate.
+
+`--scenes` then creates the book under the title the loop just wrote, with the listing as its
+premise. `--brief` gives the writer something to be about, and **it is a story, a situation or
+a constraint somebody cares about, or nothing** — the two words `progression fantasy` in that
+field once outweighed every rule in the prompt. Empty is legitimate and is the control.
+
+`--no-title-check` skips the lookup (which costs a call with web search behind it), and
+`--no-title-to-readers` screens the listing without its title, which is what every round
+before titles existed measured.
+
+A book that already has a premise starts with `new` instead, which is Stage 3's entry point:
 
 ```bash
 uv run litharness --database book.db new "The Toll Road" \
@@ -268,6 +292,14 @@ weaker model is a quality defect, not resilience — so there is no fallback cha
 provider-selection flag. When the provider is unhealthy the unit parks or requeues and the
 book waits; it never degrades. The retired plurality design and its measurements stay
 recorded in `plan/provider-adapters.md`.
+
+**Who the writer is** is a separate question from which model serves the call, and `--writer`
+(or `LITHARNESS_WRITER`) answers it: one named professional from `domain/writers.py`'s cast,
+whose dossier says what they read the genre for and never a word about what good prose is. It
+reaches the listing, the Architect and every scene. Off by default, because **no writer is
+the control** — and until 2026-08-25 there was no way to pass one at all, so every scene this
+system had ever drafted was written by nobody. An unregistered name is refused rather than
+quietly giving you the control arm.
 
 The one alternative is the deterministic fake, and it has to be *asked for*:
 `LITHARNESS_FAKE_PAD_CHARS` (e.g. `400`) runs the whole loop model-free, with the fake's

@@ -74,7 +74,7 @@ from litharness.application.repair import (
 from litharness.application.summarize import make_summary_handler
 from litharness.domain import characters as characters_mod
 from litharness.domain import directors as directors_domain
-from litharness.domain import extraction, house, propagation
+from litharness.domain import extraction, house, integrity, propagation
 from litharness.domain import state as state_mod
 from litharness.domain import worlds as worlds_domain
 from litharness.domain import writers as writers_domain
@@ -1980,7 +1980,24 @@ def cmd_world(args: argparse.Namespace) -> int:
             if not proposals:
                 print("nothing proposed; canon is unchanged")
                 return EXIT_OK
-            complaints = worlds_domain.validate(records)
+            # **A declaration a later one replaced is not carried, and this is what makes the
+            # Architect usable at all.** `world declare` appends and has no retraction, so an
+            # agent that improves its own record writes a second one into the same slot;
+            # accepting both makes `state.contradiction.v1` fire MAJOR and blocking on every
+            # scene, three attempts each, until the unit poisons. Measured on Serial Pilot 7:
+            # four such pairs and not one word of the book could be drafted. Nothing is
+            # demoted — `promote_state_records` is only ever upward — the replaced records
+            # simply stay the proposals they already were, and `world summary` still counts
+            # them. See `integrity.superseded`.
+            replaced = integrity.superseded(
+                proposals, declared_at=store.state_record_times(book_id, branch_id)
+            )
+            carried = [
+                record for record in proposals if record.record_id not in set(replaced)
+            ]
+            complaints = worlds_domain.validate(
+                [record for record in records if record.record_id not in set(replaced)]
+            )
             if complaints and not args.force:
                 for complaint in complaints:
                     print(f"litharness: {complaint}", file=sys.stderr)
@@ -1994,7 +2011,7 @@ def cmd_world(args: argparse.Namespace) -> int:
             moved = store.promote_state_records(
                 book_id,
                 branch_id,
-                [record.record_id for record in proposals],
+                [record.record_id for record in carried],
                 authority=lc.StateAuthority.ACCEPTED_CANON,
                 created_at=stamp,
             )
@@ -2003,7 +2020,10 @@ def cmd_world(args: argparse.Namespace) -> int:
                 rule_or_critic_id="world.accept.v0",
                 passed=not complaints,
                 blocking=False,
-                detail=f"{moved} proposal(s) accepted; {len(complaints)} complaint(s)",
+                detail=(
+                    f"{moved} proposal(s) accepted; {len(replaced)} replaced by a later "
+                    f"declaration; {len(complaints)} complaint(s)"
+                ),
             )
             store.record_decision(
                 PolicyDecision(
@@ -2014,12 +2034,18 @@ def cmd_world(args: argparse.Namespace) -> int:
                     gates=(gate,),
                     reason=(
                         "the Architect's proposals were accepted into canon; nothing here "
-                        "ranked or chose between them"
+                        "ranked or chose between them, and a declaration a later one "
+                        "replaced was left as the proposal it already was"
                     ),
                 ),
                 decided_at=stamp,
             )
             print(f"accepted {moved} of {len(proposals)} proposal(s) into canon")
+            if replaced:
+                print(
+                    f"  {len(replaced)} left proposed: a later declaration filled the same "
+                    "slot, and accepting both is a blocking contradiction on every scene"
+                )
             return EXIT_OK
 
         if args.view == "presence":

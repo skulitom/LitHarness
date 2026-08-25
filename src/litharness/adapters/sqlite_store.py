@@ -942,6 +942,27 @@ class SqliteStore:
                 self._insert_event(connection, event)
         return inserted
 
+    def state_record_times(self, book_id: str, branch_id: str) -> dict[str, str]:
+        """When each record was written, by record id. Declaration order, which the record has not.
+
+        `state_records` returns story order — `(order_key IS NULL, order_key, record_id)` — and
+        `record_id_for` derives an id from subject, predicate, object and value, so neither the
+        sequence nor the id says which of two declarations came second. `lc.StateRecord` carries
+        no timestamp either, and should not: when a fact was typed is a property of the writing
+        and not of the world.
+
+        The one caller is `integrity.superseded`, which needs to know which declaration replaced
+        which. Retracted rows are excluded here as everywhere else.
+        """
+        return {
+            row["record_id"]: row["created_at"]
+            for row in self._connection.execute(
+                "SELECT record_id, created_at FROM state_records "
+                "WHERE book_id = ? AND branch_id = ? AND retracted_by_revision_id IS NULL",
+                (book_id, branch_id),
+            )
+        }
+
     def promote_state_records(
         self,
         book_id: str,
