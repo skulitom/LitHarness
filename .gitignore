@@ -80,9 +80,12 @@ research/quality-measurement/derived/
 # the chosen candidate, from which `architect.records_for` regenerates the 140KB seed
 # byte-identically (`test_the_pilot_package_regenerates_the_world_it_was_run_on`). One artefact,
 # not two, so there is nothing to notice has drifted.
-pilot2/
-pilot3/
-pilot4/
+# **Third near-miss, and this time the glob is written for the next one.** The rule named
+# `pilot2/`, `pilot3/` and `pilot4/` one directory at a time, so Serial Pilot 7's `--out
+# pilot7` landed untracked and visible in `git status`, one `git add -A` from committing a
+# generated listing. The library rule and the forge rule above each record the same
+# discovery; this is the third, so the pattern goes in instead of the fourth name.
+pilot*/
 forge/
 
 # **And the same near-miss the library rule already records, in the same file, twice.**

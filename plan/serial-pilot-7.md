@@ -33,9 +33,26 @@ measurement set for good*. Nothing here may later be used as a measurement-set b
 uv run litharness --database serial7.db init
 uv run litharness --database serial7.db listing --writer halloran --scenes 6 --out pilot7
 uv run litharness --database serial7.db --writer halloran architect seed
-uv run litharness --database serial7.db world accept --all
-uv run litharness --database serial7.db --writer halloran --target-words 1500 tick   # x N
+uv run litharness --database serial7.db world accept --force        # <- and here it stopped
 ```
+
+**`serial7.db` is the record of the failure and holds no prose.** §3.1.1 is why: the world it
+seeded blocked every scene, the fix went into `world accept`, and the world was seeded again on
+`serial8.db` under the same listing and title, which the loop had already written to `pilot7/`.
+
+```bash
+uv run litharness --database serial8.db init
+uv run litharness --database serial8.db new "$(cat pilot7/title.txt)" \
+    --premise "$(cat pilot7/listing.txt)" --scenes 6
+uv run litharness --database serial8.db --writer halloran architect seed
+uv run litharness --database serial8.db world accept
+uv run litharness --database serial8.db --writer halloran --chapter-scenes 2 tick   # x N
+```
+
+**Six scenes at the 900-word default, two to a chapter**, rather than three chapters asked for
+at 1,500 words each. `DraftPolicy.max_chars` is 8,000 and `_draft_policy` deliberately exposes
+only the target, so a compliant 1,500-word scene would be refused as a runaway by the shape
+gate. The market's chapter is ~1,500 words; the way to reach it today is grouping, not asking.
 
 **No brief**, which `overview.render_overview_request` renders as *"Anything you would most want
 to read"* and which is the control the forge kept for the same reason. §136 measured a
@@ -142,6 +159,20 @@ Two directions, neither taken here: a `world retract` writing a superseding tomb
 `validate` reads, or a probing mode whose declarations never land. The agent is already told to
 run `world vocabulary` first and did; the vocabulary tells it the predicates and not the shapes.
 
+**It reproduced.** The second seed, on `serial8.db`, opened by writing `probe_crit`, `probe_a`
+and `probe_b` into the world before it wrote a word of Cauldwell — the same behaviour, from the
+same prompt, with a different world coming out of it. So this is not one agent's bad hour: **an
+agent handed a write-only interface learns it by writing**, and every world this Architect seeds
+will carry the lesson. Supersession (§139.3) handles the *redeclarations* the probing produces;
+it does nothing about the probe subjects themselves, which reach canon as entities with no part
+in the book.
+
+**The fix that removes the reason to probe is a tool fix and not a rule.** `world vocabulary`
+lists the predicates and roles a world's language admits and says nothing about the *shape* each
+one expects — whether it takes `--value` or `--object`, what a criterion needs before it is a
+criterion. Adding the shapes there is what the agent was looking for; a clause telling it not to
+probe is the fourth-rule move §127 and §138 both refuse.
+
 ### 3.1.1 And the real cost is not the check. It is that no scene can be drafted.
 
 The first tick failed, the second parked the beat, and the exception named four **blocking**
@@ -167,17 +198,66 @@ a single word can be drafted. Here that was four dismissals, one `resolve` and o
 all recorded, none of them a judgment about the story, and every one of them a human in the
 production loop.
 
-**The fix that fits what is already here**, for whoever takes it: accept only the *latest*
-proposal per `(subject, predicate, object_ref, order_key)` into canon and mark the ones it
-replaces superseded. That is the retraction path the Architect said it needed, it costs no new
-verb, it matches what the agent already believes it is doing when it redeclares, and it leaves
-`detect_contradictions` untouched — the detector keeps its licence and stops being fed
-supersessions. It is a change to what `accept` means, so it belongs in the decision log before
-the code.
+**And `dismiss` does not clear it**, which is the part that makes this a blocker rather than a
+chore. The pre-flight gate (`gate_standing`) reads *stored* findings and honours dismissal; the
+integrity gate re-derives them from canon on every attempt and never looks at their status. Four
+dismissals, one `resolve` and one `revive` bought exactly one more refused draft each, and the
+run went from one poisoned unit to two.
 
-**Not done in this run.** The four findings were dismissed as `accepted_intentional` rather
-than `false_positive`, because the detector was not wrong: the records genuinely disagree, and
-marking a correct detector false is the trade `cmd_dismiss`'s own docstring refuses.
+**What shipped, stage-0 §139.3.** `world accept` carries only the last declaration into each
+slot; the ones it replaces stay the proposals they already were, so `promote_state_records`
+keeps its *"only ever upward"* rail and canon is never rewritten.
+`integrity.superseded` sits beside `detect_contradictions` and both call the new
+`disagreement_key`, because two callers with two ideas of what a slot is would leave behind
+exactly the pairs the detector fires on.
+
+The four findings on `serial7.db` were dismissed as `accepted_intentional` rather than
+`false_positive`, because the detector was not wrong: the records genuinely disagree, and
+marking a correct detector false is the trade `cmd_dismiss`'s own docstring refuses. It did not
+help, and the world was seeded again on a store where `accept` had the fix.
+
+### 3.1.2 The agent's report was lost to an arrow
+
+The second seed ran sixteen minutes, declared 278 records, and then exited on
+`UnicodeEncodeError: '→'`. The store had already committed; what died was
+`print(result.text.strip())` — the agent's closing account of what it built and what it left
+open, which is the only human-readable thing a seed produces.
+
+`_write_document`'s docstring has recorded this exact defect for the export path since the
+first CLI provider ran: `print` goes through the console's own codec, cp1252 on this host, and
+a book is made of characters cp1252 cannot represent. The operator surface never got the same
+treatment. `_say` is that, and every place the CLI prints text a model wrote now goes through
+it — the agent's report, the listing, the title, the readers' reasons.
+
+### 3.1.3 Two seeds from one prompt produced very different worlds
+
+| | first seed (`serial7.db`) | second seed (`serial8.db`, pass 1) |
+| --- | --- | --- |
+| records | 208 | 278 |
+| rules | 6 | 10 |
+| declared chains | **1, of eleven rungs** | **none** |
+| `world check` complaints | 1 | 15 |
+| features manifested | 20 of 20 | 25 of 36 |
+
+Both ran the same request against the same listing with the same writer. The first built the
+ladder the genre turns on; the second declared standings on rungs no chain contained, which is
+`world check`'s loudest complaint and exactly the arithmetic §113 exists to make impossible to
+fake. **A seed is one draw**, and nothing in this pipeline reads `world check` and decides to
+keep going — the operator does, which is why a second `seed` pass was run here by hand.
+
+**The second pass repaired it, and diagnosed the cause in one sentence**: *"the criterion has to
+ride in `--value`, not `--order-key`, so every standing in the store had been counting against
+nothing"*. Two ordinal chains now stand — the Register's five classes and the Hall's six
+licences, Dan at the second class and no licence — and the check is down to the one malformed
+legacy record the first pass left, which cannot be retracted. **377 proposals, 376 accepted, and
+exactly one left proposed**: `probe_crit type`, the redeclaration that would have blocked every
+scene of the book. That is §139.3's fix meeting the case it was written for, on the real thing
+rather than in a test.
+
+It is also the third instance of one cause. The agent probes because the interface is
+write-only; the standings counted against nothing because `world declare`'s *shapes* are not
+discoverable; and it says so itself. `world vocabulary` naming the shape each predicate expects
+is the fix for all three.
 
 ### 3.2 The day's token ceiling cannot express an agent run
 
@@ -189,19 +269,117 @@ ceiling, which is the axis that means something when an agent is in the loop. `m
 is `None` by default and the module already says it is *"never the sole ceiling"*; what this run
 found is that it is the only one of the two an agent respects.
 
-### 3.3 The world declared no protagonist
+### 3.3 One seed declared a protagonist and the other did not
 
-`world cast` reports `protagonist: null`, so `planner.render_prompt` receives
-`point_of_view=None` and every scene is drafted with no point-of-view line — the control arm,
-by accident. The seed task asks for *"who is in it, what they can do, what getting better means
-here and what it costs"* and never asks whose book it is. Recorded, not fixed: adding a clause
-is what §127 and §138 are both about, and the cheaper reading is that the listing already names
-Dan and the Architect declared him without the label.
+`serial7.db`'s `world cast` reports `protagonist: null`; `serial8.db`'s names `dan_ferris`. So
+on the first world every scene would have drafted with no point-of-view line — the control arm,
+by accident — and on the second `planner.render_prompt` carries `Point of view: dan_ferris.`
+
+The seed task asks for *"who is in it, what they can do, what getting better means here and what
+it costs"* and never asks whose book it is, so whether the drafting prompt knows its protagonist
+is left to the draw. Recorded rather than fixed: adding a clause is what §127 and §138 are both
+about, and the honest reading is that this is the same variance as the ladder, in a second place.
 
 ## 4. The chapters
 
-Filled in when they exist.
+Six scenes, two to a chapter, drafted by `halloran` — **the first prose this system has produced
+that was written by somebody**. Every scene before 2026-08-25 was drafted by a prompt with no
+identity in it, because `make_plan_selector` had no way to pass one (§139.1).
+
+The counters below are the handoff's task 1: *"the cramming arithmetic that broke the listing has
+never been run on a scene. Draft one, count its longest sentence, and read it."* The listing's
+tell was one 79-word sentence holding four clauses, produced by sixteen demands over a hundred
+words. The scene prompt's floor is **28 demands**, or 32 with a dossier, over nine hundred.
+
+**Twenty ticks, six drafts, six evaluations, six summaries, no park, no poison, no repair.**
+6,054 words in three chapters of 1,977, 2,072 and 2,014 — the market's publication format
+(~1,500 words a chapter) reached by grouping rather than by asking, because
+`DraftPolicy.max_chars` refuses a 1,500-word scene as a runaway.
+
+| | s1 | s2 | s3 | s4 | s5 | s6 | book |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| words | 993 | 981 | 1026 | 1043 | 1014 | 997 | 6054 |
+| longest sentence | 51 | 63 | 60 | **68** | 49 | 44 | 68 |
+| mean sentence | 12.7 | 12.9 | 14.5 | **20.1** | 17.5 | 15.6 | 15.2 |
+| sentences over 40 words | 7 | 9 | 6 | 9 | 6 | 3 | 40 |
+| number tokens / 1k | 18.1 | 26.5 | 22.4 | 12.5 | 14.8 | 17.1 | 18.5 |
+| em dashes / 1k | 3.0 | 2.0 | 3.9 | 1.0 | 3.0 | 1.0 | 2.3 |
+| dialogue ratio | 0.29 | 0.14 | 0.14 | **0.01** | 0.03 | 0.31 | |
+| lyric index | 12.1 | 10.2 | 6.8 | 5.8 | 9.9 | 1.0 | |
+
+### 4.1 The cramming arithmetic says the scene path is not cramming
+
+**The listing was one demand per six words. The scene is one per thirty-one.** Sixteen demands
+over a hundred words broke the listing and the tell was a 79-word sentence with four clauses
+compressed into it. Twenty-eight demands (32 with the dossier) over a thousand words is five
+times the room, and the longest sentence in the book is **68 words** — but it is not the same
+object:
+
+> His own hands went out of the world at the wrist and the standing lamp went out of the world
+> and the sound of his boot did not, and two feet from his knee the thing folded itself down
+> over Mirren Kadd and took what it had come for, and Dan Ferris stayed where he was and
+> watched it done with his eyes open and his teeth shut.
+
+Every one of the six longest sentences is one action stretched by `and`, at the moment of the
+scene's worst thing. The listing's 79-word sentence was four separate demands satisfied at once.
+**Length is the same and the cause is not**, which is the whole reason the handoff asked for the
+sentence to be counted *and read* rather than counted.
+
+**What the counters do flag is scene 4**, and they agree with each other: the longest sentences
+(mean 20.1 against the book's 15.2), nine of them over forty words, and a dialogue ratio of
+**0.01** against 0.29 and 0.31 either side of it. A thousand words with one line of speech in it
+is the shape of a scene narrated rather than played out — §1a.3 item 6's *"summarising instead
+of dramatising"* — and it is the crisis beat, which is where a book can least afford it. Nothing
+here says the scene is bad; what the panel says is where to look, which is what a panel is for.
+
+**No comparator, and this is the gap the numbers sit in.** `platform_priors.panel` was frozen
+under §104 against RoyalRoad *listings*, and no census of this market's *chapters* exists. So
+18.5 number tokens per thousand and 2.3 em dashes per thousand are descriptions of one book
+with nothing to be high or low against. The one prior figure in the repository — our own
+chapters' median em-dash rate of **11.78 per 1k** — puts this book at a fifth of it, and every
+input changed at once, so that is two books and not a treatment.
 
 ## 5. What this found about the machinery
 
-Filled in at the end.
+Six things, in the order they cost time:
+
+1. **The listing loop had no caller.** Eleven measured rounds ran from scratch scripts; the
+   artifact could not be produced by the system. §139.1.
+2. **The drafter had no writer.** `make_plan_selector` could not pass a dossier, so every scene
+   this project has ever produced was written by nobody. This book is the first that was not.
+3. **An Architect that corrects itself blocked every scene** (§3.1.1), and `dismiss` could not
+   clear it. Fixed at `world accept`; validated here on the real thing — 377 proposals, 376
+   accepted, exactly one left proposed, and it was the redeclaration.
+4. **The agent probes a write-only interface, and both seeds did it.** The fix is
+   `world vocabulary` carrying each predicate's shape, not a rule telling it not to.
+5. **A seed is one draw.** Two runs of one prompt gave one world with an eleven-rung chain and
+   one with none, and one with a declared protagonist and one without. Nothing reads
+   `world check` and decides to run again; a person did.
+6. **`print` is cp1252 on this host**, and it killed a sixteen-minute agent run at the last
+   line. `_say` is the operator surface's half of `_write_document`'s rule.
+
+### 5.1 The readership on chapter one
+
+`litharness readers --scene scene-1`: **4 of 4 carried on**, and the caveat is §134's and is not
+optional — continuation has returned 13/16, 15/16, 15/16, 16/16 and 16/16 across four earlier
+rounds, so a full house is where the ceiling already was and is reported as a distribution
+landing there rather than as a result.
+
+What the four *said* is the part with information in it, because it is specific enough to be
+wrong. All four named the same thing as the reason — the hand's tradeoff being on the page
+already (*"can't hold a match or lift a patient"*) — and one named the withholding as the
+opposite of the failure §136 measured: *"the one thing it withholds is withheld from me the same
+way it's withheld from the queue, not because I'm expected to already know it."* That is
+`house.CLARITY`'s corrected clause read back by a reader who had not seen it.
+
+The steering pool's hopes are now on the store, so `planner.direction_for` carries them into the
+**next** chapter drafted on this branch. Twice over, four readers asked for the same two things:
+that the hand's list of things it cannot do keeps deciding outcomes, and that literacy — Dan
+being the only man who can read the arch — is the progression axis rather than the hand.
+
+### 5.2 What is still owed
+
+The handoff's task 2 — the same listings screened without their titles — is **not answered**, and
+cannot be with the eight it names, which are gone. The arm is now a flag
+(`--no-title-to-readers`) so both sides run from one code path; it needs a fresh set of listings
+a side, which is one `listing` loop per listing and the reason it was not run here.

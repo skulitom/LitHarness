@@ -13839,3 +13839,153 @@ something the character reads rather than something the narrator knows.
 signedness holds for a rule that is not about a countable feature, and nothing about the scene
 path or the Architect, both of which carry the same `house` floor and neither of which has had
 any clause tested this way.
+
+## 139. The listing loop had no caller, the drafter had no writer, and an Architect that corrected itself blocked every scene of the book
+
+`plan/handoff-listing-loop.md` names three tasks over two artifacts. Running the first one — draft
+a chapter and look at it — found that **the machinery to get to a chapter did not exist**, in
+three separate places, and each of them had been invisible for the same reason: a capability with
+no caller looks exactly like a capability.
+
+### 139.1 What was found before anything was measured
+
+**The listing loop had no caller anywhere in the package.** `overview.render_overview_request`,
+`render_revision_request`, `render_title_request`, `readers.render_appetite_request`,
+`render_start_request` and the whole `Browsing` class were reachable from `tests/` and from
+nothing else. Eleven measured rounds of listing work (§136, §138) were driven from scratch
+scripts that were never committed, so **the artifact a whole day improved could not be produced
+by this system at all** — and the eight listings the handoff's task 2 asks to re-screen without
+their titles no longer exist on disk, which is the same fact with the cost attached.
+
+**`make_plan_selector` had no `writer` parameter.** `planner.render_prompt` has accepted a
+dossier since 2026-08-20 and its only caller in `src/` could not supply one, so **every scene
+this system has ever drafted was written by nobody**. That is `target_words`' defect — a
+parameter accepted and never passed — in a second place, and worse, because the listing loop
+casts a writer for the blurb and the Architect takes `--writer` for the world: the book was
+being sold and built by a named professional and drafted by an anonymous prompt.
+
+**Nothing carried a generated title into a book.** `new` takes it positionally, so the loop
+produced titles a person retyped — a human in the production loop (§126) at the one step the
+loop existed to remove.
+
+### 139.2 What shipped
+
+`litharness listing`: one cast writer drafts, the **steering** pool says what it hopes the book
+turns out to be, the same writer revises, titles it, a lookup says whether the title is somebody
+else's, and the **measurement** pool says whether it would open chapter one. `--scenes` creates
+the book under its own title with the listing as its premise. Nothing ranks anything — there is
+one listing, revised once, and a low start rate prints rather than refuses (§61(5)).
+
+`application/titles.py`, which is the operator's *"for titles especially we need some sort of
+search agent to make sure the title is permissable to be used"*, shaped like `world_agent`: a
+`CompletionRequest` with a narrow allowance, here `WebSearch` and nothing else. **The containment
+is that the verdict is arithmetic**: the schema has no slot for an opinion — no `available`, no
+score, no suggested alternative — and `titles.read` derives free/taken/unknown in code from exact
+normalised title matches. Near misses are reported and counted by nothing, because deciding that
+one title is too close to another is a judgment and this module holds none.
+
+**`FREE` is licensed only where a search provably happened.** The failure that would make the
+check theatre is a model answering "nothing found" without looking, which is indistinguishable
+from a free title on the text alone. `searches_reported` walks the transport's own envelope for
+its web-search count; zero is `UNKNOWN`, never `FREE`. That is the environment being read rather
+than the model being trusted, and it is the only reason this is a lookup rather than a fifth
+proxy.
+
+Global `--writer`, off by default and control unchanged, reaching the listing, the Architect and
+every scene. `architect seed --overview` now defaults to the book's own premise, which is a
+correctness fix: that prompt opens *"The listing this book was sold on"* and the only way to seed
+a world against a listing readers never saw was to pass the wrong file.
+
+Two roles joined `tests/test_prompt_budget.py` because they were already being sent with no
+ceiling — the title writer at 10 demands and its lookup at 6 — plus the scene writer's **32 with
+a dossier against the floor's 28**.
+
+### 139.3 The blocker, which is this entry's real finding
+
+Serial Pilot 7 ran the whole path and produced **no prose at all**. The Architect seeded 208
+records and, in its own closing report, named the defect before anybody looked: *"I probed the
+CLI's record shapes before I understood that declares append with no retraction path, so three
+scratch records are permanently on this branch."*
+
+The cost is not the scratch records and is not `world check` exiting 1. It is this:
+
+| | |
+| --- | --- |
+| slots holding two values after `world accept` | **4** |
+| of those, the agent's own scratch probes | 3 |
+| of those, a criterion it rewrote with better text | 1 |
+| findings, all `state.contradiction.v1`, MAJOR, **blocking** | 4 |
+| scenes drafted | **0** |
+| drafts generated, judged, and thrown away | 4 |
+| units poisoned | 2 |
+
+`detect_contradictions` is right and is not the thing to change: two values in one slot at one
+story position is exactly the defect it exists to catch. **The wrong half is upstream** —
+`world accept` carried both the declaration and the one written to replace it.
+
+**And `dismiss` cannot clear it, which is what makes this a blocker rather than a chore.** The
+pre-flight gate reads *stored* findings and honours dismissal; the integrity gate re-derives
+findings from canon on every attempt and never looks at their status. So four dismissals, one
+`resolve` and one `revive` bought exactly one more refused draft each. No operator verb could
+fix it, because fixing it means changing canon and the only way to change canon is to append —
+which adds a third value.
+
+**What shipped for it.** `world accept` carries only the last declaration into each slot.
+Nothing is demoted: `promote_state_records` keeps its *"only ever upward"* rail and the replaced
+records stay the proposals they already were, so canon is never rewritten and `world summary`
+still counts them. `integrity.superseded` sits beside `detect_contradictions` and **both call
+`disagreement_key`**, because two callers with two ideas of what a slot is would leave behind
+precisely the pairs the detector fires on. `tests/test_world_supersession.py` pins the three
+cases where a wrong key is tempting: two edges are two facts, a value that changes between
+scenes is a story, and a protagonist does not replace being cast.
+
+### 139.4 Measured on the run itself
+
+| | |
+| --- | --- |
+| listing | **106 words**, against the market's 40-146, median 100 |
+| em dashes, floor or rank positions, second person | 0, 0, 0 |
+| title | *Copy Costs A Hand*, **free** after nine web searches, nothing abandoned |
+| measurement pool | 4 of 4 would open chapter one |
+| world | 208 records, 6 rules, 10 capabilities, one chain of 11 rungs, 6 people |
+| `architect seed`, one call | **7.86M tokens, $10.69** |
+
+**The day's token ceiling cannot express an agent run.** `BudgetPolicy.max_tokens_per_day` is
+5M; one seed spent 7.86M, almost all of it cache reads at roughly a tenth of the price, so the
+token axis reads a 200-turn agent as four days of drafting while the dollar axis reads it as ten
+dollars. `max_cost_usd_per_day` is `None` by default and the module says it is *"never the sole
+ceiling"*; what this run found is that it is the only one of the two an agent respects.
+
+**The steering pool's direction is legible in the revision, clause by clause**, and that is a
+first for this project — every prior reader-in-the-loop reading was a rate. Two clauses were
+added, each answering a sentence four readers had written (*"copying has to be earned by nearly
+dying under the thing that owns the power"*, *"I want scar accounting, not a montage"*), and one
+was **deleted**: the second want, which two readers had asked to be paid later. Nothing told the
+writer to cut anything. The material reached it as what people said rather than as instructions
+(`Anticipation.render`'s rule) and the listing came back 101 words to 106 — the arrangement
+§133's measurement argued for, holding under 25 hopes and 25 dreads.
+
+### 139.5 What was refused
+
+**No model was asked whether a title is good**, and the schema is where that is enforced rather
+than the prompt. **No ranking among titles**: a replaced title is unavailable, never worse, and
+the retry carries the taken name as a prohibition — §138's signedness, applied the one way it
+licenses. **No near-match judgment.** **No claim from 4 of 4**: §134 wrote the browsing pool off
+as saturated at 15/16, 16/16 and 16/16, and a full house here is reported as a distribution
+landing where the ceiling already was. **No chapter-length change**: `DraftPolicy.max_chars` is
+8,000 and this market's chapter is ~1,500 words, so asking for one would have every compliant
+draft refused as a runaway — recorded, not routed around, and the book is drafted at the 900-word
+default and grouped two scenes to a chapter instead. And **no writer comparison**, which §137
+leaves without a key.
+
+### 139.6 Anti-scope
+
+One loop, one book, one world. Nothing here says whether the listing, the title or the chapters
+are any good — the operator's read of them is a defect harvest (§95), and the book is **steered**
+and therefore out of §61's measurement set for good (§128). The handoff's task 2 is **not**
+answered: the arm is now a flag on one code path (`--no-title-to-readers`) so both sides are
+reproducible, and the eight listings it names are gone, so running it needs a fresh set and is
+still owed. Nothing about `world retract`, which is the verb the Architect asked for and which
+supersession makes unnecessary at accept time and no less necessary afterwards. And nothing
+about whether an agent should be able to probe an interface without writing to it, which is the
+cause underneath all of this.

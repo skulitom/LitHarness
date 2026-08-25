@@ -11,6 +11,8 @@ codes, which are how a scheduler learns what happened.
 
 from __future__ import annotations
 
+import contextlib
+import io
 import json
 
 import litharness_contracts as lc
@@ -1006,3 +1008,37 @@ def test_the_environment_default_is_off_unless_it_says_a_true_thing(db, monkeypa
     assert build_parser().parse_args(["tick"]).no_outline is False
     monkeypatch.setenv("LITHARNESS_NO_OUTLINE", "true")
     assert build_parser().parse_args(["tick"]).no_outline is True
+
+
+def test_model_written_text_reaches_a_redirected_stdout_in_utf8() -> None:
+    """The operator surface's half of `_write_document`'s encoding rule, and it cost a run.
+
+    `print` goes through the console's own codec, which is cp1252 on this host. Measured
+    2026-08-25: `architect seed` ran for sixteen minutes, declared 278 records, and then died
+    on `UnicodeEncodeError` printing the agent's closing report — the one artifact that says
+    what it built and what it left open — because the report contained an arrow. The store had
+    already committed; what was lost was the only human-readable account of it.
+    """
+    from litharness.cli import _say
+
+    class Buffered:
+        def __init__(self) -> None:
+            self.buffer = io.BytesIO()
+
+        def flush(self) -> None:
+            pass
+
+    stream = Buffered()
+    with contextlib.redirect_stdout(stream):  # type: ignore[arg-type]
+        _say("a → b — c")
+    assert stream.buffer.getvalue() == "a → b — c\n".encode()
+
+
+def test_saying_something_still_works_where_stdout_has_no_buffer() -> None:
+    """pytest's capsys is exactly that stdout, so the fallback is not hypothetical."""
+    from litharness.cli import _say
+
+    captured = io.StringIO()
+    with contextlib.redirect_stdout(captured):
+        _say("plain")
+    assert captured.getvalue() == "plain\n"

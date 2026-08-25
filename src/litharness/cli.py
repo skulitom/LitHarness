@@ -221,6 +221,27 @@ def _director_id(store: SqliteStore, args: argparse.Namespace) -> str:
     )
 
 
+def _say(text: str) -> None:
+    """Print model-written text, in UTF-8, whether stdout is a console or a file.
+
+    **`print` goes through the console's own codec, which on this host is cp1252**, and every
+    piece of prose a model returns is full of things cp1252 cannot represent. `_write_document`
+    records the same defect for exports; this is the operator surface's half of it, and it was
+    found the expensive way: `architect seed` ran for sixteen minutes, declared 278 records, and
+    then died on `UnicodeEncodeError: '\\u2192'` while printing the agent's closing report —
+    the one artifact that says what it built and what it left open, lost to an arrow.
+
+    `sys.stdout.flush()` first, so text already buffered above this stays in order.
+    """
+    stream = getattr(sys.stdout, "buffer", None)
+    if stream is None:  # a capturing or text-only stdout, e.g. under pytest's capsys
+        print(text)
+        return
+    sys.stdout.flush()
+    stream.write(text.encode("utf-8") + b"\n")
+    stream.flush()
+
+
 def _selected_writer(args: argparse.Namespace) -> writers_domain.Writer | None:
     """Resolve `--writer` to a cast member, or `None` for the anonymous control.
 
@@ -1421,15 +1442,15 @@ def cmd_readers(args: argparse.Namespace) -> int:
         f"  put down {reading.put_down}  later {reading.come_back}"
     )
     for reader_id, choice, because in reading.said:
-        print(f"    {reader_id}: {choice} - {because}")
+        _say(f"    {reader_id}: {choice} - {because}")
     if wanting.hoping_for:
         print("  hoping for:")
         for item in wanting.hoping_for:
-            print(f"    - {item}")
+            _say(f"    - {item}")
     if wanting.dreading:
         print("  would be disappointed by:")
         for item in wanting.dreading:
-            print(f"    - {item}")
+            _say(f"    - {item}")
     return EXIT_OK
 
 
@@ -1647,15 +1668,15 @@ def cmd_listing(args: argparse.Namespace) -> int:
     # the readable one, which is the shape of defect §125 recorded: an artifact written by a
     # branch nobody read back.
     if args.json:
-        print(json.dumps(bundle, ensure_ascii=False, indent=2))
+        _say(json.dumps(bundle, ensure_ascii=False, indent=2))
     else:
-        print(title or "(no title)")
+        _say(title or "(no title)")
         print()
-        print(listing)
+        _say(listing)
         print()
         print(f"  {len(listing.split())} words, writer {writer.name if writer else '(none)'}")
         if availability is not None:
-            print(f"  {availability.render()}")
+            _say(f"  {availability.render()}")
         for name in abandoned:
             print(f"  abandoned {name!r}: already somebody's")
         print(
@@ -1663,7 +1684,7 @@ def cmd_listing(args: argparse.Namespace) -> int:
             f"  passed {browsing.passed}  saved {browsing.saved}"
         )
         for reader_id, choice, because in browsing.said:
-            print(f"    {reader_id}: {choice} - {because}")
+            _say(f"    {reader_id}: {choice} - {because}")
         if args.out:
             print(f"  {args.out}/listing.txt, title.txt, listing.json")
 
@@ -1869,7 +1890,7 @@ def cmd_architect(args: argparse.Namespace) -> int:
     finally:
         store.close()
 
-    print(result.text.strip())
+    _say(result.text.strip())
     print()
     print(f"  {len(after) - before} record(s) added, {proposed} awaiting `world accept`")
     for complaint in complaints:
@@ -2023,6 +2044,16 @@ def cmd_world(args: argparse.Namespace) -> int:
                 detail=(
                     f"{moved} proposal(s) accepted; {len(replaced)} replaced by a later "
                     f"declaration; {len(complaints)} complaint(s)"
+                    + (
+                        "; replaced: "
+                        + ", ".join(
+                            f"{record.subject} {record.predicate}"
+                            for record in proposals
+                            if record.record_id in set(replaced)
+                        )
+                        if replaced
+                        else ""
+                    )
                 ),
             )
             store.record_decision(
@@ -2042,10 +2073,19 @@ def cmd_world(args: argparse.Namespace) -> int:
             )
             print(f"accepted {moved} of {len(proposals)} proposal(s) into canon")
             if replaced:
+                # **Named, not just counted.** Without the fix a redeclaration was a loud
+                # blocking finding on every scene; with it, it is a record quietly not
+                # carried. That is the right outcome and the wrong volume, so the slots go
+                # on the page and into the decision's detail — a drop nobody can see is the
+                # shape of defect this repository keeps finding.
                 print(
                     f"  {len(replaced)} left proposed: a later declaration filled the same "
                     "slot, and accepting both is a blocking contradiction on every scene"
                 )
+                by_id = {record.record_id: record for record in proposals}
+                for record_id in replaced:
+                    record = by_id[record_id]
+                    print(f"    {record.subject} {record.predicate}")
             return EXIT_OK
 
         if args.view == "presence":
