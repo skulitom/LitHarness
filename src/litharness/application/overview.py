@@ -28,7 +28,7 @@ hooks, so asking for twice that was buying room for the throat-clearing.
 from __future__ import annotations
 
 from litharness.domain.generation import CompletionRequest
-from litharness.domain.writers import Writer, system_for
+from litharness.domain.writers import Writer
 
 #: Frozen profiles, one per stage, so a draft and a revision are separable on the decision rows.
 OVERVIEW_PROFILE = "writer.overview.v0"
@@ -36,18 +36,29 @@ REVISION_PROFILE = "writer.overview.revise.v0"
 
 MAX_OUTPUT_TOKENS = 4000
 
+#: **Five instructions, and the count is the point.** With the house rules appended this
+#: call made sixteen demands of a hundred-word artifact, eleven of them rules written for
+#: scene prose: paragraph-level pronoun reference, puzzle-box move counts, what a scene must
+#: move. Measured over nine calls, three writers, three arms, the longest sentence a listing
+#: contained fell from 79 words to 33 when the scene rules came off, and the mean length fell
+#: from 135 words to 83 when the budget came down with them.
+#:
+#: So this call does not go through `writers.system_for`: the house floor governs the book's
+#: prose, and a listing is not the book's prose.
 _TASK = (
     "You are writing the listing for a new serial: the few lines a reader meets on the front "
     "page of a serial-fiction site, and the only thing that decides whether they open chapter "
     "one.\n"
     "This is their first taste of the book and not an account of the world it happens in. Put "
-    "them somewhere, with somebody, already in trouble. Lead with the hook, and what you leave "
-    "unexplained is what makes them open chapter one.\n"
-    "No title, no headings, no tags, no word about the author, and no summary of the plot. "
-    "Sixty to a hundred and forty words: the listings that work on this market are short, and a "
-    "reader who has to be argued into a book does not open it."
+    "them somewhere, with somebody, already in trouble.\n"
+    "No title, no headings, no tags, no word about the author. Under a hundred words, and "
+    "shorter is better: the listings that work on this market are very short."
 )
 
+
+def _system(writer: Writer | None) -> str:
+    """Who is writing, then the job. No scene floor: see `_TASK`."""
+    return f"{writer.render()}\n\n{_TASK}" if writer is not None else _TASK
 
 def render_overview_request(brief: str, writer: Writer | None = None) -> CompletionRequest:
     """One overview, from a brief that may be empty.
@@ -58,7 +69,7 @@ def render_overview_request(brief: str, writer: Writer | None = None) -> Complet
     ask = brief.strip() or "Anything you would most want to read."
     return CompletionRequest(
         prompt=f"What this book is to be about:\n{ask}",
-        system=system_for(_TASK, writer),
+        system=_system(writer),
         max_output_tokens=MAX_OUTPUT_TOKENS,
         profile=OVERVIEW_PROFILE,
         call_class="generation",
@@ -85,7 +96,7 @@ def render_revision_request(
             f"{direction}\n\n"
             "Write the listing again."
         ),
-        system=system_for(_TASK, writer),
+        system=_system(writer),
         max_output_tokens=MAX_OUTPUT_TOKENS,
         profile=REVISION_PROFILE,
         call_class="generation",

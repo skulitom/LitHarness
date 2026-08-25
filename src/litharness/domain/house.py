@@ -46,6 +46,14 @@ from __future__ import annotations
 #: every listing an account of a rank system because an account is what the rule asked for.
 #: The measured half is kept below and the generalisation is gone.
 #:
+#: **Corrected again the same day, in the same direction and for the same reason.** The
+#: rewrite replaced a ban with an invitation, "a name the reader has not met is welcome, and
+#: is how a world gets big", and the operator's next reading was *"we shouldn't be inserting
+#: undefined words for no reason"*. That is the affirmative-half failure this module had
+#: already been corrected for once the same day, in `READER`'s numbers clause: a rule that
+#: names what a thing is *for* reads as an instruction to go and do it. What a rule here may
+#: say is what fails.
+#:
 #: **Clarity, as measured rather than as an adjective.** `comprehension_battery` asked four
 #: readers of the target genres to quote anything in a premise they could not follow, and the
 #: terms they quoted were always the same shape: a word used as if the reader already knew it —
@@ -54,11 +62,11 @@ from __future__ import annotations
 CLARITY = (
     "Clarity is the floor, and it is about following rather than about explaining. Every "
     "sentence can be followed the first time it is read.\n"
-    "A name the reader has not met is welcome, and is how a world gets big: what it needs "
-    "is not a definition but a consequence, so that the sentence carrying it says what it "
-    "does to somebody. What fails is a term the reader is handed and asked to keep holding "
-    "while it buys them nothing, and the test is whether they could say what it changes for "
-    "the person it happens to.\n"
+    "A term the reader has not met needs a reason to be there before it needs anything "
+    "else, and then a consequence rather than a definition: the sentence carrying it says "
+    "what it does to somebody. What fails is a name invented because the world wanted one "
+    "and handed over to be carried while it buys the reader nothing, and the test is "
+    "whether they could say what it changes for the person it happens to.\n"
     "A sentence a reader can take two ways has failed, and the writer is the last person who "
     "can see it: `a sheet of directions in his brother's small hand` is handwriting to whoever "
     "wrote it and a hand inside the box to whoever reads it. Prefer the reading nobody can "
