@@ -39,7 +39,7 @@ import litharness_contracts as lc
 from litharness.adapters import contracts_fixtures, evaluation_artifact
 from litharness.adapters.continuity_cli import ContinuityCliRunner
 from litharness.adapters.sqlite_store import MigrationsMissing, SqliteStore, StoredEvent
-from litharness.application import architect, comprehension, world_agent
+from litharness.application import architect, comprehension, titles, world_agent
 from litharness.application import export as export_module
 from litharness.application import library as library_module
 from litharness.application import overview as overview_mod
@@ -78,7 +78,7 @@ from litharness.domain import extraction, house, propagation
 from litharness.domain import state as state_mod
 from litharness.domain import worlds as worlds_domain
 from litharness.domain import writers as writers_domain
-from litharness.domain.beats import SIX_BEAT, arc_template, beats_for
+from litharness.domain.beats import SIX_BEAT, TemplateMismatch, arc_template, beats_for
 from litharness.domain.budget import BudgetPolicy, Spend
 from litharness.domain.budget import check as budget_check
 from litharness.domain.directives import Directive, DirectiveKind, DirectiveStatus, directive_id_for
@@ -221,6 +221,28 @@ def _director_id(store: SqliteStore, args: argparse.Namespace) -> str:
     )
 
 
+def _selected_writer(args: argparse.Namespace) -> writers_domain.Writer | None:
+    """Resolve `--writer` to a cast member, or `None` for the anonymous control.
+
+    `_director_id`'s rule, for `_director_id`'s reason: **an unregistered name is refused
+    loudly rather than defaulted to nobody**, because a typo that silently produced the
+    control arm is the worst failure available to a run whose whole question is whether the
+    arms differ. The subcommands that had their own `--writer` before this was global keep it
+    and win where both are given — `argparse.SUPPRESS` is what lets an unset one fall through
+    to the global rather than overwriting it with `None`.
+    """
+    wanted = (getattr(args, "writer", "") or "").strip()
+    if not wanted:
+        return None
+    writer = writers_domain.CAST.get(wanted)
+    if writer is None:
+        raise SystemExit(
+            f"litharness: no writer named {wanted!r}; the cast is "
+            f"{', '.join(writers_domain.CAST)}"
+        )
+    return writer
+
+
 def _conductor(store: SqliteStore, args: argparse.Namespace) -> Conductor:
     # The pinned provider, or the padded fake when LITHARNESS_FAKE_PAD_CHARS asks for a
     # model-free run. No selection flags survive provider plurality: an unhealthy
@@ -253,6 +275,9 @@ def _conductor(store: SqliteStore, args: argparse.Namespace) -> Conductor:
             # The shape the operator asked for. At the default of one it asserts
             # nothing and the prompt is unchanged.
             scenes_per_chapter=args.chapter_scenes,
+            # Who is drafting. `None` without `--writer`, which is what every book written
+            # before 2026-08-25 got and what this is read against.
+            writer=_selected_writer(args),
             **(
                 {"token_budget": args.context_budget}
                 if args.context_budget is not None
@@ -1407,6 +1432,251 @@ def cmd_readers(args: argparse.Namespace) -> int:
             print(f"    - {item}")
     return EXIT_OK
 
+
+def _listing_title(
+    listing: str,
+    *,
+    writer: writers_domain.Writer | None,
+    attempts: int,
+    check: bool,
+    calls: _ForgeCalls,
+    spend: _StageSpend,
+) -> tuple[str, titles.Availability | None, tuple[str, ...]]:
+    """A title for this listing that a lookup did not find already in use.
+
+    **The retry is the loop's, and what it retries on is a fact rather than a verdict.** A
+    title comes back, `titles.read` decides in code whether an exact match was reported, and a
+    match sends the taken name back to the same writer as a prohibition. Nothing ranks the
+    titles against each other and nothing keeps a scoreboard — the previous title is not
+    "worse", it is unavailable, which is the only thing this system is allowed to know about a
+    title (§61(5), §105.1).
+
+    Returns the title, its availability (or `None` when the lookup was not run) and every
+    title the loop had to abandon. **An `UNKNOWN` verdict stops the retry**: a lookup that did
+    not happen is not evidence of a collision, and burning three title calls on an outage
+    would spend the writer's attempts on the environment's problem (§19.1).
+    """
+    abandoned: list[str] = []
+    title = ""
+    availability: titles.Availability | None = None
+    for _ in range(max(1, attempts)):
+        request = overview_mod.render_title_request(listing, writer, tuple(abandoned))
+        result, refusal = _forge_call(request, calls=calls, spend=spend)
+        if result is None:
+            print(f"  title: {refusal}", file=sys.stderr)
+            break
+        title = overview_mod.clean_title(result.text)
+        if not title or not check:
+            break
+        lookup = titles.render_check_request(title)
+        found, refusal = _forge_call(lookup, calls=calls, spend=spend)
+        availability = titles.read(
+            title,
+            found.parsed if found is not None else None,
+            searches=titles.searches_reported(found.raw) if found is not None else 0,
+            refusal=refusal,
+        )
+        if availability.verdict != titles.TAKEN:
+            break
+        abandoned.append(title)
+    return title, availability, tuple(abandoned)
+
+
+def cmd_listing(args: argparse.Namespace) -> int:
+    """The listing loop: a writer, a readership, a listing, a title, and then a book.
+
+    **This is the loop `application/overview.py` was written for and nothing ran.** Its four
+    render functions and `readers`' two browsing calls had no caller anywhere in the package as
+    of 2026-08-25 — eleven measured rounds of listing work were driven from scratch scripts, so
+    the artifact the whole day improved could not be produced by this system at all. What is
+    here is those rounds' sequence, written down once:
+
+    1. one writer from `writers.CAST` drafts a listing under a brief that may be empty;
+    2. the **steering** pool says what it hopes the book turns out to be;
+    3. the same writer writes the listing again, having heard them;
+    4. the writer titles it, and a lookup says whether that title is already somebody's;
+    5. the **measurement** pool, which never steers, says whether it would open chapter one.
+
+    **Nobody is in both pools and nothing here picks a winner.** There is one listing, revised
+    once; the screen is a reading of it and not a gate on it, which is why a low start rate
+    prints and does not refuse. §61(5): no model ranks or selects among candidates unless the
+    containment exists, and the containment for a book listing does not.
+
+    **`--scenes` is what closes the hand-move this loop had at the end.** The title reached a
+    person, who retyped it into `new`. A generated title that a human has to carry is a human
+    in the production loop (§126), so the loop creates the book itself — same title, same
+    listing as the premise, and `new`'s own decision row and events, because it calls it.
+    """
+    stamp = _stamp(_now())
+    writer = writers_domain.CAST.get(args.writer) if args.writer else None
+    if args.writer and writer is None:
+        print(
+            f"litharness: no writer named {args.writer!r}; the cast is "
+            f"{', '.join(writers_domain.CAST)}",
+            file=sys.stderr,
+        )
+        return EXIT_FAULT
+
+    # **The scene count is checked before the first call, not after the last one.** §19.1: a
+    # refusal reached before the work costs time, never the unit — and `arc_template` refuses a
+    # book of fewer scenes than it has named beats. Left to `cmd_new` at the end, `--scenes 4`
+    # would raise after a listing, four steering reads, a revision, a title, a lookup and four
+    # browsing reads had all been paid for.
+    if args.scenes:
+        try:
+            arc_template(args.scenes)
+        except TemplateMismatch as error:
+            print(f"litharness: {error}", file=sys.stderr)
+            return EXIT_FAULT
+
+    brief = _read_text(args.brief_file) if args.brief_file else (args.brief or "")
+    store = _store(args)
+    try:
+        registry = build_default_registry()
+        run = _StageSpend()
+        spend = _StageSpend()
+        calls = _ForgeCalls(
+            registry=registry, store=store, args=args, stamp=stamp,
+            run=run, premise=spend, screen=spend,
+        )
+
+        drafted, refusal = _forge_call(
+            overview_mod.render_overview_request(brief, writer), calls=calls, spend=spend
+        )
+        if drafted is None:
+            print(f"litharness: {refusal}", file=sys.stderr)
+            return EXIT_FAULT
+        listing = drafted.text.strip()
+
+        # The steering lane. A reader who does not answer is skipped rather than counted as
+        # wanting nothing: `Anticipation.of` reads only what came back.
+        wishes: dict[str, Any] = {}
+        for reader in readers_mod.pool(readers_mod.STEERING):
+            request = readers_mod.render_appetite_request(reader, listing)
+            result, refusal = _forge_call(request, calls=calls, spend=spend)
+            if result is not None and isinstance(result.parsed, Mapping):
+                wishes[reader.reader_id] = result.parsed
+            elif refusal:
+                print(f"  {reader.reader_id}: {refusal}", file=sys.stderr)
+        wanted = readers_mod.Anticipation.of(wishes)
+        appetite = overview_mod.render_appetite(wanted.hoping_for, wanted.dreading)
+
+        first = listing
+        if appetite:
+            revised, refusal = _forge_call(
+                overview_mod.render_revision_request(brief, listing, appetite, writer),
+                calls=calls, spend=spend,
+            )
+            if revised is None:
+                print(f"  revision: {refusal}", file=sys.stderr)
+            else:
+                listing = revised.text.strip()
+
+        title, availability, abandoned = _listing_title(
+            listing, writer=writer, attempts=args.title_attempts,
+            check=not args.no_title_check, calls=calls, spend=spend,
+        )
+
+        # The measurement lane, over the artifact a reader actually meets: the title above the
+        # blurb. `--no-title-to-readers` is the control arm and renders what every round before
+        # a title existed rendered.
+        shown = "" if args.no_title_to_readers else title
+        choices: dict[str, Any] = {}
+        for reader in readers_mod.pool(readers_mod.MEASUREMENT):
+            request = readers_mod.render_start_request(reader, listing, shown)
+            result, refusal = _forge_call(request, calls=calls, spend=spend)
+            if result is not None and isinstance(result.parsed, Mapping):
+                choices[reader.reader_id] = result.parsed
+            elif refusal:
+                print(f"  {reader.reader_id}: {refusal}", file=sys.stderr)
+        browsing = readers_mod.Browsing.of(choices)
+
+        gate = GateOutcome(
+            gate=GateKind.SHAPE,
+            rule_or_critic_id=overview_mod.OVERVIEW_PROFILE,
+            passed=True,
+            blocking=False,
+            detail=(
+                f"{len(listing.split())} words; {browsing.started} of {browsing.answered} "
+                f"would start it; title {title!r} "
+                f"{availability.verdict if availability else 'unchecked'}"
+            ),
+        )
+        store.record_decision(
+            PolicyDecision(
+                decision_id=decision_id_for(f"listing:{stamp}:{title}", 0, (gate,)),
+                outcome=Outcome.ACCEPT,
+                gates=(gate,),
+                profile=overview_mod.OVERVIEW_PROFILE,
+                provider=spend.provider,
+                model=spend.model,
+                invocations=spend.invocations,
+                total_tokens=spend.total_tokens,
+                cost_usd=spend.cost_usd,
+                reason=(
+                    "one writer wrote one listing and titled it; the readership said what it "
+                    "hoped for and whether it would start. Nothing here ranked anything"
+                ),
+            ),
+            decided_at=stamp,
+        )
+    finally:
+        store.close()
+
+    bundle = {
+        "brief": brief.strip(),
+        "writer": writer.name if writer else None,
+        "draft": first,
+        "listing": listing,
+        "title": title,
+        "titles_abandoned": list(abandoned),
+        "availability": availability.to_jsonable() if availability else None,
+        "appetite": wanted.to_jsonable(),
+        "browsing": browsing.to_jsonable(),
+        "title_shown_to_readers": bool(shown),
+    }
+    if args.out:
+        args.out.mkdir(parents=True, exist_ok=True)
+        (args.out / "listing.txt").write_text(listing + "\n", encoding="utf-8")
+        (args.out / "title.txt").write_text(title + "\n", encoding="utf-8")
+        (args.out / "listing.json").write_text(
+            json.dumps(bundle, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+        )
+    # **`--json` changes what is printed and never what is done.** A reporting flag that also
+    # skipped creating the book would make the machine-readable path a different command from
+    # the readable one, which is the shape of defect §125 recorded: an artifact written by a
+    # branch nobody read back.
+    if args.json:
+        print(json.dumps(bundle, ensure_ascii=False, indent=2))
+    else:
+        print(title or "(no title)")
+        print()
+        print(listing)
+        print()
+        print(f"  {len(listing.split())} words, writer {writer.name if writer else '(none)'}")
+        if availability is not None:
+            print(f"  {availability.render()}")
+        for name in abandoned:
+            print(f"  abandoned {name!r}: already somebody's")
+        print(
+            f"  would start it {browsing.started}/{browsing.answered}"
+            f"  passed {browsing.passed}  saved {browsing.saved}"
+        )
+        for reader_id, choice, because in browsing.said:
+            print(f"    {reader_id}: {choice} - {because}")
+        if args.out:
+            print(f"  {args.out}/listing.txt, title.txt, listing.json")
+
+    if args.scenes:
+        created = argparse.Namespace(**vars(args))
+        created.title = title or "Untitled"
+        created.premise = listing
+        created.state = None
+        created.promises = None
+        return cmd_new(created)
+    return EXIT_OK
+
+
 def cmd_characters(args: argparse.Namespace) -> int:
     """Everything canon holds about each person, one sheet each.
 
@@ -1510,10 +1780,25 @@ def cmd_architect(args: argparse.Namespace) -> int:
         book_id, branch_id = export_module.resolve_branch(store, args.book, args.branch)
         before = len(store.state_records(book_id, branch_id))
         if args.job == "seed":
-            overview = _read_text(args.overview)
+            # **The book's own premise is the default, and that is a correctness fix rather
+            # than a convenience.** This prompt opens "The listing this book was sold on", and
+            # a `--overview` file is a second copy of a listing that already exists in the
+            # store — so the one way to seed a world against a listing the readers never saw
+            # was to pass the wrong file. `listing --scenes` writes the listing in as the
+            # premise; this reads it back.
+            source = "--overview"
+            if args.overview:
+                overview = _read_text(args.overview)
+            else:
+                source = "the book's premise"
+                overview = premise_of(store.plan_items(book_id, branch_id)) or ""
             if not overview.strip():
-                print("litharness: an empty listing is nothing to build on", file=sys.stderr)
+                print(
+                    f"litharness: an empty listing is nothing to build on ({source})",
+                    file=sys.stderr,
+                )
                 return EXIT_FAULT
+            print(f"  seeding under {source}")
             request = world_agent.render_seed_request(overview, writer)
         else:
             head = store.head(book_id, branch_id)
@@ -3776,6 +4061,14 @@ def build_parser() -> argparse.ArgumentParser:
         "what to do there",
     )
     parser.add_argument(
+        "--writer",
+        default=os.environ.get("LITHARNESS_WRITER", ""),
+        help=f"who drafts this book: one of {', '.join(writers_domain.CAST)}; also read from "
+        "LITHARNESS_WRITER. Off by default and no writer is the control — until 2026-08-25 "
+        "there was no way to pass one at all and every scene was drafted by nobody. An "
+        "unregistered name is refused rather than ignored",
+    )
+    parser.add_argument(
         "--director",
         default=os.environ.get("LITHARNESS_DIRECTOR", ""),
         help="run this registered Director (name or id): a personality that says what the "
@@ -4117,15 +4410,27 @@ def build_parser() -> argparse.ArgumentParser:
         "prompts", help="what each role is actually told, and how much of it there is"
     )
     prompts.add_argument("--role", help="print one role in full")
-    prompts.add_argument("--writer", help=f"one of: {', '.join(writers_domain.CAST)}")
+    prompts.add_argument(
+        "--writer",
+        default=argparse.SUPPRESS,
+        help=f"one of: {', '.join(writers_domain.CAST)}; overrides the global --writer",
+    )
     prompts.add_argument("--json", action="store_true")
     prompts.set_defaults(func=cmd_prompts)
 
     seed = architect_sub.add_parser(
         "seed", help="build enough world to stand the first chapters, under a listing"
     )
-    seed.add_argument("--overview", required=True, help="a file, or - for stdin")
-    seed.add_argument("--writer", help=f"one of: {', '.join(writers_domain.CAST)}")
+    seed.add_argument(
+        "--overview",
+        help="a file, or - for stdin. Defaults to this book's own premise, which is the "
+        "listing it was created under",
+    )
+    seed.add_argument(
+        "--writer",
+        default=argparse.SUPPRESS,
+        help=f"one of: {', '.join(writers_domain.CAST)}; overrides the global --writer",
+    )
     seed.add_argument("--book")
     seed.add_argument("--branch")
     seed.set_defaults(func=cmd_architect)
@@ -4134,10 +4439,64 @@ def build_parser() -> argparse.ArgumentParser:
         "grow", help="after a chapter: keep the world coherent and spend what it declared"
     )
     grow.add_argument("--scene", help="a scene logical id; the latest drafted one by default")
-    grow.add_argument("--writer", help=f"one of: {', '.join(writers_domain.CAST)}")
+    grow.add_argument(
+        "--writer",
+        default=argparse.SUPPRESS,
+        help=f"one of: {', '.join(writers_domain.CAST)}; overrides the global --writer",
+    )
     grow.add_argument("--book")
     grow.add_argument("--branch")
     grow.set_defaults(func=cmd_architect)
+
+    listing = sub.add_parser(
+        "listing",
+        help="write the listing a reader meets, title it, and stand the book up under it",
+    )
+    listing.add_argument(
+        "--brief",
+        default="",
+        help="what this book is to be about: a story, a situation, a constraint somebody "
+        "cares about. NOT a shelf label — §136 measured the two words `progression fantasy` "
+        "outweighing every rule in the prompt. Empty is legitimate and is the control",
+    )
+    listing.add_argument("--brief-file", help="the brief as a file, or - for stdin")
+    listing.add_argument(
+        "--writer",
+        default=argparse.SUPPRESS,
+        help=f"one of: {', '.join(writers_domain.CAST)}; overrides the global --writer",
+    )
+    listing.add_argument(
+        "--scenes",
+        type=int,
+        default=0,
+        help="create the book too, with this many empty scenes, titled with the title the "
+        "loop just wrote. Without it the loop only reports, and moving the title into `new` "
+        "is a person's job — which is a human in the production loop (§126)",
+    )
+    listing.add_argument("--out", type=Path, help="write listing.txt, title.txt and the bundle")
+    listing.add_argument("--json", action="store_true")
+    listing.add_argument(
+        "--title-attempts",
+        type=int,
+        default=3,
+        help="how many titles to try before giving up on finding a free one",
+    )
+    listing.add_argument(
+        "--no-title-check",
+        action="store_true",
+        help="do not look up whether the title is already in use. The lookup costs a call "
+        "with web search behind it; skipping it means nobody has checked",
+    )
+    listing.add_argument(
+        "--no-title-to-readers",
+        action="store_true",
+        help="screen the listing without its title, which is what every round before a title "
+        "existed measured, and is the control arm for whether the title is what unstuck the "
+        "browsing pool",
+    )
+    listing.add_argument("--book", help="book id, when --scenes creates one")
+    listing.add_argument("--branch", help="branch id, when --scenes creates one")
+    listing.set_defaults(func=cmd_listing)
 
     read = sub.add_parser(
         "readers", help="put the simulated readership on a drafted scene"

@@ -27,7 +27,7 @@ from __future__ import annotations
 
 import pytest
 
-from litharness.application import comprehension, overview, readers, world_agent
+from litharness.application import comprehension, overview, readers, titles, world_agent
 from litharness.domain import house
 from litharness.domain import writers as writers_domain
 
@@ -39,15 +39,23 @@ def _roles() -> dict[str, str]:
     """Every assembled system prompt this system actually sends, by the role that sends it."""
     return {
         "listing writer": overview._system(WRITER),
+        "title writer": overview.title_system(WRITER),
+        "title lookup": titles.render_check_request("a title").system or "",
         "architect seed": world_agent.render_seed_request("a listing", WRITER).system or "",
         "architect grow": (
             world_agent.render_grow_request("prose", logical_id="s1", writer=WRITER).system or ""
         ),
-        "scene writer floor": house.with_house_rules(
+        "scene writer floor": (floor := house.with_house_rules(
             "You are drafting one scene of a novel. Write only the scene's prose: no headings, "
             "no commentary, no summary of what you wrote. The context below is established and "
             "may be relied on; do not contradict it."
-        ),
+        )),
+        # **The floor plus who is writing, which was unreachable until 2026-08-25.**
+        # `render_prompt` has taken a dossier since 2026-08-20 and `make_plan_selector` had no
+        # way to pass one, so the row above was the whole of what a drafter was ever sent. It
+        # is a separate row rather than a replacement because `None` is still the default and
+        # still the control, and the two totals are four demands apart.
+        "scene writer, cast": f"{WRITER.render()}\n\n{floor}",
         "measurement reader": readers.pool(readers.MEASUREMENT)[0].system(),
         "steering reader": readers.pool(readers.STEERING)[0].system(),
         "screen reader": comprehension.READERS[0].system(),
@@ -99,11 +107,21 @@ def _roles() -> dict[str, str]:
 #:
 #: The Architect's forty-two is the largest and is not yet defended by anything. It is the whole
 #: house floor plus its own tool essay, and no measurement says which half it needs.
+#:
+#: **Two roles joined the table on 2026-08-25 without changing: they were already being sent
+#: and had no ceiling.** `_roles()` is what this file measures, and a role assembled only
+#: inside its own call site is one nobody can see the size of — which is the exact failure
+#: recorded at the top of this file, one level down. `overview.title_system` was extracted for
+#: no other purpose than to be countable here. Ten is four demands of dossier plus six of job;
+#: the lookup's six carry no dossier because that role writes nothing.
 BUDGET: dict[str, int] = {
+    "title writer": 10,
+    "title lookup": 6,
     "listing writer": 14,
     "architect seed": 42,
     "architect grow": 42,
     "scene writer floor": 28,
+    "scene writer, cast": 32,
     "measurement reader": 4,
     "steering reader": 4,
     "screen reader": 5,
@@ -144,7 +162,18 @@ def test_the_house_floor_is_the_thing_that_grows_everywhere_at_once() -> None:
 #: Roles whose prompts shape prose a reader will read. The exemptions are the two kinds of call
 #: that must name the machinery to work at all: a schema-filling call has to name the fields it
 #: fills, and the Architect's tool essay has to name the commands it runs.
-READER_FACING = ("listing writer", "measurement reader", "steering reader", "screen reader")
+#:
+#: **`title lookup` is not here, and the boundary is the one `house` already states**: what the
+#: text shapes, not where it lives. That role reports what other people have published and
+#: shapes no word a reader of this book will read. `title writer` shapes the few words above
+#: the blurb, so it is.
+READER_FACING = (
+    "listing writer",
+    "title writer",
+    "measurement reader",
+    "steering reader",
+    "screen reader",
+)
 
 
 @pytest.mark.parametrize("role", READER_FACING)

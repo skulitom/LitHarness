@@ -656,6 +656,7 @@ def make_plan_selector(
     outline: bool = True,
     director_id: str = "",
     scenes_per_chapter: int = 1,
+    writer: Writer | None = None,
 ) -> WorkSelector:
     """Build a `WorkSelector` that materialises the next unblocked beat.
 
@@ -684,6 +685,19 @@ def make_plan_selector(
     `serials.chapter_positions` yields no positions and every rendered prompt is byte-for-byte
     what it was before this parameter existed. Nothing here tells a scene what to *do* about
     being last in its chapter; that is the director's to say (stage-0 §95).
+
+    **`writer` was a parameter `render_prompt` accepted and no production path ever passed**,
+    which is `target_words`' defect in a second place and worse. `render_prompt` has carried a
+    dossier since 2026-08-20 and this selector — the only caller in `src/` — had no way to
+    supply one, so every scene this system has ever drafted was written by nobody. It became
+    visible when the listing loop landed on 2026-08-25: a book whose listing and world are
+    both a named cast writer's, and whose chapters are drafted by an anonymous prompt, is
+    `domain/house.py`'s two-prompt-stack failure with the stacks swapped.
+
+    `None` stays the default and stays the control, for `render_prompt`'s stated reason: a
+    change to drafting behaviour that could only be produced by editing code is an arm nobody
+    can reproduce, and §137 leaves the gate that would license a *comparison* between writers
+    with no key. So this makes one writer reachable; it establishes nothing about which.
     """
 
     def select(
@@ -889,6 +903,7 @@ def make_plan_selector(
                     ),
                     chapter=positions.get(beat.logical_id),
                     point_of_view=pov_id,
+                    writer=writer,
                     direction=direction_for(
                         store, progress.book_id, progress.branch_id
                     ),

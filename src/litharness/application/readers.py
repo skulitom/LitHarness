@@ -263,12 +263,28 @@ _SLOT = (
 )
 
 
-def render_start_request(reader: Reader, overview: str) -> CompletionRequest:
-    """A measurement reader, one overview, one behavioural choice against the rest of the page."""
+def render_start_request(
+    reader: Reader, overview: str, title: str = ""
+) -> CompletionRequest:
+    """A measurement reader, one overview, one behavioural choice against the rest of the page.
+
+    **`title` is an arm and the empty string is its control.** A listing on this market never
+    appears without one — the title is the line above the blurb and the only part of a book
+    anybody says out loud — and the browsing pool, written off as saturated after three rounds
+    at 15/16, 16/16 and 16/16 (§134's ceiling), discriminated when eight listings were read
+    with titles: 1/4, 2/4, 3/4, 3/4, 4/4, 4/4, 4/4, 3/4. Two things changed at once there, the
+    artifact gaining a title and the listings getting better, so which unstuck it is unknown.
+
+    It is a parameter rather than a caller's f-string for exactly that reason: the two arms
+    have to be the same code path, or the comparison is between two scripts. Empty renders
+    byte-identical to every round measured before a title existed, which is what the
+    with-title reading is read against.
+    """
     if reader.pool != MEASUREMENT:
         raise ValueError(f"{reader.reader_id} is a {reader.pool} reader and may not measure")
+    page = f"{title.strip()}\n\n{overview}" if title.strip() else overview
     return CompletionRequest(
-        prompt=f"{overview}\n\n---\n\n{_SLOT} What do you do?",
+        prompt=f"{page}\n\n---\n\n{_SLOT} What do you do?",
         system=reader.system(),
         schema=START_SCHEMA,
         max_output_tokens=600,

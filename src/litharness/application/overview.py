@@ -270,19 +270,43 @@ _TITLE_TASK = (
 )
 
 
-def render_title_request(overview: str, writer: Writer | None = None) -> CompletionRequest:
+def title_system(writer: Writer | None) -> str:
+    """The title job's assembled system message, so `litharness prompts` can count it.
+
+    It had no ceiling until 2026-08-25 because it had no name: `tests/test_prompt_budget.py`
+    reads `_roles()`, and a role that is never assembled anywhere outside its own call is a
+    role nobody can see the size of. That is the exact failure the budget file exists for.
+    """
+    return f"{writer.render()}\n\n{_TITLE_TASK}" if writer is not None else _TITLE_TASK
+
+
+def render_title_request(
+    overview: str, writer: Writer | None = None, taken: tuple[str, ...] = ()
+) -> CompletionRequest:
     """One title, from the listing the same writer just wrote.
 
     The listing goes in the prompt and the job in the system message, which is
     `render_revision_request`'s arrangement and for its reason: §133 measured reader material
     rendered into a system prompt at two thirds of everything the writer was told, and what
     came back serviced it. Material belongs beside the thing it is about.
+
+    **`taken` is what a lookup found already in use, and it is a prohibition.** It names
+    instances, which `house`'s standing constraint is usually against — but that constraint is
+    about enumerating what *succeeds*, and §138 measured the two halves separately: the
+    prohibition half of all three clauses tested did its work and none of it was ever recited.
+    A title that already belongs to somebody is a fact about the world, so it goes in the
+    prompt beside the listing rather than into the job, where it would become a standing rule
+    about titles for every book this system ever writes.
     """
+    material = f"The listing:\n\n{overview.strip()}"
+    if taken:
+        material += (
+            "\n\nAlready the title of a published book, so it cannot be this one:\n"
+            + "\n".join(f"- {name}" for name in taken)
+        )
     return CompletionRequest(
-        prompt=f"The listing:\n\n{overview.strip()}",
-        system=(
-            f"{writer.render()}\n\n{_TITLE_TASK}" if writer is not None else _TITLE_TASK
-        ),
+        prompt=material,
+        system=title_system(writer),
         max_output_tokens=200,
         profile=TITLE_PROFILE,
         call_class="generation",
@@ -333,4 +357,5 @@ __all__ = [
     "render_overview_request",
     "render_revision_request",
     "render_title_request",
+    "title_system",
 ]
