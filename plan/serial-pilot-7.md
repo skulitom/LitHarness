@@ -173,6 +173,20 @@ one expects — whether it takes `--value` or `--object`, what a criterion needs
 criterion. Adding the shapes there is what the agent was looking for; a clause telling it not to
 probe is the fourth-rule move §127 and §138 both refuse.
 
+**Third seed, third time, and this one landed inside the genre's spine.** A book seeded the same
+evening (`serial9.db`, *Patch Notes For Earth*, writer `ferreira`) declared a clearance ladder of
+eleven rungs — and six of them are `rung_a`, `rung_b`, `rung_c`, `zz_one`, `zz_two`, `zz_three`,
+chained straight on above `clearance_4`. **The probe names are in the ladder**, which is the one
+structure §113 built so the genre's numbers could not be faked, and a standing target that ever
+reached `zz_two` would put this system's own scratch vocabulary on the page. It did not here,
+because the protagonist stands at rung two of eleven and two chapters do not climb six — so the
+leak is latent rather than realised, which is the worst way for a defect to sit.
+
+Supersession caught ten redeclarations in that world (`zz_crit manifests_as`, `rung_a
+manifests_as`, `one_holder group_key`, and seven more, every one of them a probe subject). Ten
+blocking findings that book never saw. It is also the measure of how much probing there is: ten
+of 256 records were an agent correcting itself while learning the interface.
+
 ### 3.1.1 And the real cost is not the check. It is that no scene can be drafted.
 
 The first tick failed, the second parked the beat, and the exception named four **blocking**
