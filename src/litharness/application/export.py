@@ -195,8 +195,10 @@ class BookExport:
             '<html lang="en">',
             "<head>",
             '<meta charset="utf-8">',
+            '<meta name="viewport" content="width=device-width, initial-scale=1">',
             f"<title>{html.escape(self.title)}</title>",
-            f"<style>{_PRINT_CSS}</style>",
+            _FONTS,
+            f"<style>{_READING_CSS}</style>",
             "</head>",
             "<body>",
             '<header class="front">',
@@ -364,38 +366,81 @@ def _paragraphs(content: str) -> str:
     return "\n".join(f"<p>{html.escape(block)}</p>" for block in blocks)
 
 
-_PRINT_CSS = """
-:root { --ink: #16130f; --faint: #6b6257; --rule: #ddd6cc; --gap: #b3402a; }
-body { max-width: 34em; margin: 3rem auto; padding: 0 1.5rem;
-  font: 12pt/1.65 "Iowan Old Style", Georgia, "Times New Roman", serif; color: var(--ink); }
-h1 { font-size: 2rem; line-height: 1.2; margin: 0 0 .5rem; }
-h2, h3, h4, h5, h6 { line-height: 1.25; margin: 2.5rem 0 .75rem; }
+_READING_CSS = """
+:root {
+  --paper:#E7E9E4; --raised:#F2F3EF; --ink:#191F1B; --ink-2:#4F5852; --ink-3:#7B847C;
+  --rule:#C7CDC6; --rule-soft:#DADFD8; --gap:#8B3830;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper:#131715; --raised:#1B211D; --ink:#E3E7E1; --ink-2:#A3ADA5; --ink-3:#7B857D;
+    --rule:#333B36; --rule-soft:#262D29; --gap:#D98078;
+  }
+}
+:root[data-theme="dark"] {
+  --paper:#131715; --raised:#1B211D; --ink:#E3E7E1; --ink-2:#A3ADA5; --ink-3:#7B857D;
+  --rule:#333B36; --rule-soft:#262D29; --gap:#D98078;
+}
+* { box-sizing: border-box; }
+body { max-width: 34em; margin: 0 auto; padding: 3.5rem 1.5rem 6rem;
+  background: var(--paper); color: var(--ink);
+  font-family: Literata, Georgia, "Times New Roman", serif; font-size: 17px; line-height: 1.62;
+  -webkit-font-smoothing: antialiased; }
+h1 { font-size: clamp(2rem, 5vw, 2.9rem); line-height: 1.1; font-weight: 600;
+  margin: 0 0 .75rem; letter-spacing: -.015em; text-wrap: balance; }
+h2, h3, h4, h5, h6 { line-height: 1.25; margin: 2.75rem 0 .9rem; font-weight: 600;
+  letter-spacing: -.01em; }
 p { margin: 0; text-indent: 1.4em; }
 p:first-of-type, .gap { text-indent: 0; }
-.front { border-bottom: 1px solid var(--rule); padding-bottom: 2rem; margin-bottom: 1rem; }
-.summary { font-weight: 600; text-indent: 0; }
-.provenance { color: var(--faint); font-size: .8rem; text-indent: 0; margin-top: .5rem; }
-.premise { border-left: 3px solid var(--rule); margin: 1.5rem 0; padding: 0 0 0 1rem;
-  color: var(--faint); font-style: italic; }
-.progress { border-collapse: collapse; width: 100%; margin-top: 1.5rem; font-size: .85rem; }
-.progress th, .progress td { text-align: left; padding: .3rem .6rem .3rem 0;
-  border-bottom: 1px solid var(--rule); }
+.front { border-bottom: 1px solid var(--rule); padding-bottom: 2rem; margin-bottom: 1.5rem; }
+.summary, .provenance, .progress { font-family: "IBM Plex Mono", ui-monospace, Menlo, monospace; }
+.summary { font-weight: 500; font-size: .82rem; letter-spacing: .02em; text-indent: 0;
+  color: var(--ink-2); }
+.provenance { color: var(--ink-3); font-size: .68rem; letter-spacing: .06em; text-indent: 0;
+  margin-top: .5rem; }
+.premise { border-left: 3px solid var(--rule); margin: 1.75rem 0; padding: 0 0 0 1.1rem;
+  color: var(--ink-2); font-style: italic; }
+.progress { border-collapse: collapse; width: 100%; margin-top: 1.75rem; font-size: .74rem;
+  font-variant-numeric: tabular-nums; }
+.progress th { text-align: left; padding: 0 1rem .5rem 0; border-bottom: 1px solid var(--rule);
+  font-size: .62rem; letter-spacing: .11em; text-transform: uppercase; color: var(--ink-3);
+  font-weight: 600; }
+.progress td { text-align: left; padding: .45rem 1rem .45rem 0;
+  border-bottom: 1px solid var(--rule-soft); }
 .progress td:first-child, .progress td:nth-child(3) { text-align: right; }
 .progress tr.pending { color: var(--gap); }
 .gap { color: var(--gap); font-style: italic; }
-aside.block { border: 1px solid var(--rule); padding: .75rem 1rem; margin: 1.5rem 0;
-  font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace; font-size: .85rem; }
+aside.block { border: 1px solid var(--rule-soft); background: var(--raised); border-radius: 2px;
+  padding: .8rem 1.1rem; margin: 1.75rem 0;
+  font-family: "IBM Plex Mono", ui-monospace, Menlo, monospace; font-size: .8rem; }
 aside.block p { text-indent: 0; }
-code { font-size: .85em; word-break: break-all; }
+code { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: .85em;
+  word-break: break-all; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 @media print {
-  body { margin: 0; max-width: none; }
+  /* Paper has one palette and it is not the screen's. */
+  :root { --paper:#fff; --ink:#16130f; --ink-2:#4f4a42; --ink-3:#6b6257;
+    --rule:#ddd6cc; --rule-soft:#eee9e1; --raised:#fff; }
+  body { margin: 0; max-width: none; padding: 0; font-size: 12pt; }
   h2 { break-before: page; }
   .front { break-after: page; border: 0; }
   h1, h2, h3, h4, h5, h6 { break-after: avoid; }
   p { orphans: 2; widows: 2; }
+  aside.block { background: none; }
 }
 @page { margin: 2cm; }
 """.strip()
+
+#: The two faces, from the one host a browser will fetch. Every rule above names a fallback
+#: stack, so a machine with no network renders the book in Georgia and a monospace and nothing
+#: about it is broken.
+_FONTS = (
+    '<link rel="preconnect" href="https://fonts.googleapis.com">'
+    '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>'
+    '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?'
+    "family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&"
+    'family=IBM+Plex+Mono:wght@400;500;600&display=swap">'
+)
 
 
 # -- collection ---------------------------------------------------------------------

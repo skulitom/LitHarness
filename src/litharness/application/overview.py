@@ -33,6 +33,7 @@ from litharness.domain.writers import Writer
 #: Frozen profiles, one per stage, so a draft and a revision are separable on the decision rows.
 OVERVIEW_PROFILE = "writer.overview.v0"
 REVISION_PROFILE = "writer.overview.revise.v0"
+TITLE_PROFILE = "writer.title.v0"
 
 MAX_OUTPUT_TOKENS = 4000
 
@@ -253,6 +254,56 @@ def render_revision_request(
     )
 
 
+#: **What a title has to survive, and it is not what a listing has to survive.** Two to five
+#: words, above the blurb, on a page of a hundred others, and read aloud when somebody
+#: recommends the book. Written as what fails, which is the standing constraint in `house`:
+#: five clauses, all prohibitions, and no list of good title shapes for a model to work
+#: through.
+_TITLE_TASK = (
+    "You are titling the serial whose listing is below. The title is the first thing on a page "
+    "of a hundred others and the only part of a book anybody has to say out loud.\n"
+    "Two to five words. No subtitle, no colon, no tagline, no series number, and no quotation "
+    "marks around it.\n"
+    "A title that could sit on any book in this genre has failed, and so has one that needs the "
+    "listing beside it to make sense.\n"
+    "Answer with the title and nothing else."
+)
+
+
+def render_title_request(overview: str, writer: Writer | None = None) -> CompletionRequest:
+    """One title, from the listing the same writer just wrote.
+
+    The listing goes in the prompt and the job in the system message, which is
+    `render_revision_request`'s arrangement and for its reason: §133 measured reader material
+    rendered into a system prompt at two thirds of everything the writer was told, and what
+    came back serviced it. Material belongs beside the thing it is about.
+    """
+    return CompletionRequest(
+        prompt=f"The listing:\n\n{overview.strip()}",
+        system=(
+            f"{writer.render()}\n\n{_TITLE_TASK}" if writer is not None else _TITLE_TASK
+        ),
+        max_output_tokens=200,
+        profile=TITLE_PROFILE,
+        call_class="generation",
+        timeout_seconds=300.0,
+    )
+
+
+def clean_title(text: str) -> str:
+    """The title as it reaches a shelf: one line, no wrapper the model added.
+
+    A model asked for a title alone still sometimes returns it quoted, or under a heading, or
+    with a full stop. `library.slugify` would carry every one of those into a folder name and a
+    chapter filename, which is where a stray quotation mark stops being cosmetic.
+    """
+    line = next((part.strip() for part in text.strip().splitlines() if part.strip()), "")
+    line = line.lstrip("#").strip()
+    for wrapper in ('"', "'", "\u201c", "\u2018", "*", "_"):
+        line = line.strip(wrapper).strip()
+    return line.rstrip(".").strip()
+
+
 def render_appetite(hoping_for: tuple[str, ...], dreading: tuple[str, ...]) -> str:
     """What the steering pool said, as the writer reads it. Empty when nobody wanted anything.
 
@@ -276,7 +327,10 @@ __all__ = [
     "MAX_OUTPUT_TOKENS",
     "OVERVIEW_PROFILE",
     "REVISION_PROFILE",
+    "TITLE_PROFILE",
+    "clean_title",
     "render_appetite",
     "render_overview_request",
     "render_revision_request",
+    "render_title_request",
 ]
