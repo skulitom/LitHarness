@@ -14,7 +14,7 @@ measurement pool, which never steers, says whether it would open chapter one.
 
 **The task text is deliberately short.** Three rules in `architect._RULES` were assertions about
 what this genre's reader wants, written into a prompt addressed to nobody. A cast writer who
-reads the genre knows what a hook is, and `domain/house.py` already carries the floor. Adding a
+reads the genre knows what a hook is, and `domain/house.py` carries the floor. Adding a
 paragraph here about what makes an overview good would rebuild the rule essay one level up.
 
 **It got shorter on 2026-08-25, and the length was the defect.** The first version asked for
@@ -40,9 +40,11 @@ _TASK = (
     "You are writing the listing for a new serial: the few lines a reader meets on the front "
     "page of a serial-fiction site, and the only thing that decides whether they open chapter "
     "one.\n"
-    "Lead with the hook. No title, no headings, no tags, no word about the author, and no "
-    "summary of the plot.\n"
-    "Sixty to a hundred and forty words. The listings that work on this market are short, and a "
+    "This is their first taste of the book and not an account of the world it happens in. Put "
+    "them somewhere, with somebody, already in trouble. Lead with the hook, and what you leave "
+    "unexplained is what makes them open chapter one.\n"
+    "No title, no headings, no tags, no word about the author, and no summary of the plot. "
+    "Sixty to a hundred and forty words: the listings that work on this market are short, and a "
     "reader who has to be argued into a book does not open it."
 )
 

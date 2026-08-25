@@ -178,16 +178,28 @@ def test_neither_scene_plan_author_is_told_the_world_the_writer_is_handed() -> N
         outline.render_outline_request(premise, beats, base=_Base())  # type: ignore[arg-type]
     )
     assert leaked_values(outline_payload, records) == []
-    # Exactly the premise's, with nothing added and nothing lost: the outline request is the
-    # premise, the sheet and seven fixed rules, and the sheet names no part of any world.
-    assert named_in(outline_payload, nouns) == named_in(premise, nouns)
 
+    # **The template's own contribution is measured and subtracted, which is what the
+    # narrative arm below has always done and what this arm needed on 2026-08-25.** The
+    # equality here used to be exact, and it broke when `house.CLARITY` was corrected to open
+    # "Every sentence can be followed the first time it is read" against a fixture holding
+    # `r_first_in_time` and `h_the_first_dry`. `key_nouns` splits subject ids on `_`, so
+    # `first` and `time` are among this world's 'coined names' in exactly the way `never`
+    # already was, and the counter's own docstring says it is deliberately crude and feeds a
+    # distribution rather than a bar. Subtracting is the honest form of the same assertion;
+    # the allowlist keeps it an assertion rather than a hole, because a template that started
+    # naming a real part of this world would still fail.
     template = payload_of(
         outline.render_outline_request(
             NEUTRAL_PREMISE, beats, base=_Base()  # type: ignore[arg-type]
         )
     )
-    assert named_in(template, nouns) == set(), "the beat sheet coins nothing of its own"
+    fixed = named_in(template, nouns)
+    assert fixed <= {"first", "time"}, (
+        f"the beat sheet, the rules or the house floor named {sorted(fixed)}; only common "
+        "English colliding with an id fragment is allowed here"
+    )
+    assert named_in(outline_payload, nouns) - fixed == named_in(premise, nouns) - fixed
 
     scene_ids = tuple(f"s{index}" for index in range(1, SCENES + 1))
     blind = named_in(

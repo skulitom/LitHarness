@@ -32,16 +32,33 @@ assumed — which is exactly what §95 leaves open.
 
 from __future__ import annotations
 
+#: **Corrected 2026-08-25, and the correction is the operator's.** This rule used to say
+#: that every unmet word is explained where it is used *or it is not used*, and that
+#: nothing is left for the reader to work out later. Read against six listings from the
+#: market this project writes for, not one would survive it: `an unfeeling System... or
+#: God`, `the Mark of the Crijik, a magical gift from a divine being`, `I've been reborn as
+#: a WHAT?!`. The operator's reading of those was *"extremely clear and clever, I have zero
+#: clarity complaints"*, which is correct and is the refutation: they are followable and
+#: they explain nothing.
+#:
+#: What was measured was four readers quoting terms they could not cash. What got written
+#: down was a ban on unexplained names, which is a larger rule and a wrong one, and it made
+#: every listing an account of a rank system because an account is what the rule asked for.
+#: The measured half is kept below and the generalisation is gone.
+#:
 #: **Clarity, as measured rather than as an adjective.** `comprehension_battery` asked four
 #: readers of the target genres to quote anything in a premise they could not follow, and the
 #: terms they quoted were always the same shape: a word used as if the reader already knew it —
 #: `frost rooms`, `keeper`, `the lists`, `nine deep`. The fix that worked on premises is the
 #: sentence below, and it is what the prose never got.
 CLARITY = (
-    "Clarity is the floor. Every word a reader has not met before is explained where it is "
-    "used, in plain language, or it is not used: a name, a rank, a place, a piece of the "
-    "world's own vocabulary. Nothing needs reading twice to be followed, and nothing is left "
-    "for the reader to work out later.\n"
+    "Clarity is the floor, and it is about following rather than about explaining. Every "
+    "sentence can be followed the first time it is read.\n"
+    "A name the reader has not met is welcome, and is how a world gets big: what it needs "
+    "is not a definition but a consequence, so that the sentence carrying it says what it "
+    "does to somebody. What fails is a term the reader is handed and asked to keep holding "
+    "while it buys them nothing, and the test is whether they could say what it changes for "
+    "the person it happens to.\n"
     "A sentence a reader can take two ways has failed, and the writer is the last person who "
     "can see it: `a sheet of directions in his brother's small hand` is handwriting to whoever "
     "wrote it and a hand inside the box to whoever reads it. Prefer the reading nobody can "
@@ -85,6 +102,20 @@ CLARITY = (
 #: numbers and stats that are relevant to the world system, like character sheets. We don't
 #: need random objects and events to always have some unusually specific numbers tied."*
 
+#: **The second clause below is the operator's product direction, 2026-08-25, and it had no
+#: home before this.** *"we also need to create a sense of awe and limitless
+#: potential/combination. the reader must be thinking omg this magic would be so cool to try
+#: i wonder what I would get and pick, how will I develop it"*. The rule already said the
+#: opening shows something a person could come to be able to do; it never said the reader is
+#: sizing themselves against it, which is the difference between a world that is described
+#: and one somebody wants to be let into.
+#:
+#: **It also carries the answer to a defect four listings kept**: every one of them named
+#: where the top was, which the operator's first complaint was that *"part of the appeal of
+#: progression fantasy is you don't know where the top is"*. That is written here as a
+#: reader effect rather than as a ban on ceilings, because a ban is the shape this project
+#: keeps measuring as a pink elephant.
+#:
 #: **What the reader came for.** The measured failure this answers is one scene of eight spent
 #: rendering a support call step by step — technically an opening in which somebody wants
 #: something, and 1,067 words that bought the reader nothing. The simulated reader panel passed
@@ -99,6 +130,15 @@ READER = (
     "The opening shows what this book is offering: something a person could come to be able to "
     "do, and somewhere the reader has not been. A reader who reaches the end of the opening "
     "scene without seeing either has been given no reason to start another.\n"
+    "The reader is measuring themselves against the offer, and that is the whole of why they "
+    "are here. They should finish wanting to try it: wondering what they would be given, "
+    "what they would pick, and what they would build out of it. A power with one use invites "
+    "nobody in. What a reader plays with is a thing that combines with other things, that "
+    "could be pushed further than anyone in the story has pushed it, and whose ceiling nobody "
+    "in the world has seen.\n"
+    "If the person this happens to came from somewhere like our own world, the life they came "
+    "from is one a reader in their twenties has lived: a degree they are not using, a job "
+    "that covers the rent, a thing they know far too much about for no professional reason.\n"
     "An exact number belongs to what this world counts and to nothing else. A puzzle box "
     "does not have thirty-one moves, a habit does "
     "not have eleven repetitions, and a wait is not four days: exactness spent on props and "
