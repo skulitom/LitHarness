@@ -81,7 +81,16 @@ research/quality-measurement/derived/
 # byte-identically (`test_the_pilot_package_regenerates_the_world_it_was_run_on`). One artefact,
 # not two, so there is nothing to notice has drifted.
 pilot2/
+pilot3/
+pilot4/
 forge/
+
+# **And the same near-miss the library rule already records, in the same file, twice.**
+# `--out` takes any directory, and the runs that actually happened were named
+# `reader-book-forge/`, `reader-book-forge-a/` and so on — which `forge/` does not cover. Two
+# of them were committed before anybody looked: 404KB each of three complete worlds, of which
+# the repository needs exactly the one that was picked.
+reader-book-forge*/
 
 # Single-run PID locks. `force_remote.SingleRun` writes one beside the results while an arm holds
 # the box and removes it on exit, so this only matters after a crash - and a stale lock is
@@ -89,4 +98,3 @@ forge/
 # same work twice (stage-0 §95.10: 108 duplicate seed-runs, about $9 of paid work bought
 # twice), so the lock is load-bearing; it is just not evidence.
 research/quality-measurement/results/.*.pid
-pilot5/

@@ -41,6 +41,7 @@ from litharness.adapters.continuity_cli import ContinuityCliRunner
 from litharness.adapters.sqlite_store import MigrationsMissing, SqliteStore, StoredEvent
 from litharness.application import architect, comprehension, world_agent
 from litharness.application import export as export_module
+from litharness.application import library as library_module
 from litharness.application import overview as overview_mod
 from litharness.application import readers as readers_mod
 from litharness.application import status as status_module
@@ -314,8 +315,18 @@ def cmd_tick(args: argparse.Namespace) -> int:
     """One bounded unit of work. This is what the session's loop invokes."""
     store = _store(args)
     loop = _conductor(store, args)
+    published: tuple[Path, tuple[library_module.PublishedBook, ...]] | None = None
     try:
         result = loop.tick(_now())
+        if not args.no_library:
+            # **After the tick and inside the same store session, but outside anything the
+            # tick commits.** The library is derived output: a filesystem failure here must
+            # not fail a unit of work that already landed, and a republish that raced the
+            # commit would show the previous revision. Suppressed rather than propagated for
+            # the same reason — a full disk is a reason to stop publishing, not to stop
+            # writing the book.
+            with suppress(OSError):
+                published = _publish_library(args, store)
     finally:
         store.close()
 
@@ -323,6 +334,17 @@ def cmd_tick(args: argparse.Namespace) -> int:
     if result.job_id:
         print(f" job={result.job_id}", end="")
     print(f" reconciled={result.reconciled} ingested={result.ingested}")
+    if published is not None:
+        root, books = published
+        moved = [book for book in books if book.rewritten]
+        if moved:
+            # Only when something was actually written. A line on every tick saying nothing
+            # changed is a line nobody reads, and the whole point of the folder is that a
+            # change is visible.
+            print(
+                f"  library: {root} · "
+                + ", ".join(f"{book.title} {book.summary}" for book in moved)
+            )
     if result.outcome in {TickOutcome.JOB_FAILED, TickOutcome.JOB_PARKED}:
         return EXIT_ATTENTION
     return EXIT_OK
@@ -3526,8 +3548,65 @@ def _write_document(destination: Path | None, text: str) -> None:
     stream.flush()
 
 
+def _library_root(args: argparse.Namespace) -> Path:
+    """Where this run's library lives: `--library` if given, else beside the database.
+
+    Beside the database rather than under the working directory, which is what makes
+    publishing safe to have on by default — nothing writes a folder into whatever directory a
+    command happened to be run from, and a test against a temporary database takes its output
+    away with it.
+    """
+    return args.library or library_module.root_for(args.database)
+
+
+def _publish_library(
+    args: argparse.Namespace, store: SqliteStore
+) -> tuple[Path, tuple[library_module.PublishedBook, ...]]:
+    """Republish, returning where and what. Shared by `library` and every tick."""
+    root = _library_root(args)
+    return root, library_module.publish(
+        store,
+        root=root,
+        generated_at=_stamp(_now()),
+        scenes_per_chapter=args.chapter_scenes,
+        force=getattr(args, "force", False),
+    )
+
+
+def cmd_library(args: argparse.Namespace) -> int:
+    """Republish the library: reading copies, pastable chapters, and the index.
+
+    Not called `publish`, and the name is doing work. §62 settled what publication means here
+    — the export, run when the book clears §1a.5's bar (the continuation one, §126) — and no book
+    has cleared it. A verb
+    called `publish` would make a claim the tool is in no position to make; this one writes
+    files and says so.
+    """
+    store = _store(args)
+    try:
+        root, published = _publish_library(args, store)
+        for book in published:
+            held = f", {book.withheld} chapter(s) withheld" if book.withheld else ""
+            state = "rewritten" if book.rewritten else "already current"
+            print(
+                f"{root / book.slug}  {book.title}  {book.summary}  "
+                f"{len(book.chapters)} pastable chapter(s){held}  [{state}]"
+            )
+        if not published:
+            print("(no book in this store yet)")
+        print(f"{root / 'README.md'}: the index")
+    finally:
+        store.close()
+    return EXIT_OK
+
+
 def cmd_export(args: argparse.Namespace) -> int:
-    """A reading copy of the book as it stands. See `application/export.py`.
+    """A reading copy of the book as it stands, and its listing beside it.
+
+    See `application/export.py`. Writing to a file also writes `overview.txt` next to it
+    when the book has a premise, which is what `new --premise` stores and what the listing
+    written by `application/overview.py` becomes. The operator asked for it as its own file;
+    it was already inside the document, where a site's description field cannot reach it.
 
     Not a PDF: the output is Markdown or print-ready HTML, and `pandoc book.md -o book.pdf`
     or a browser's "Save as PDF" is the last step. That keeps font metrics and page breaking
@@ -3556,6 +3635,15 @@ def cmd_export(args: argparse.Namespace) -> int:
         # of the book.
         print(f"{args.destination}: {document.summary}")
         print(f"  {fmt} from revision {document.revision_id[:12]}")
+        if document.premise:
+            # **The listing, on its own, beside the book.** It is already inside the
+            # document — `Document.premise` renders it as a blockquote in both formats —
+            # but the thing a reader meets first is the thing most often wanted on its own,
+            # and a hundred words buried in a blockquote at the top of a novel is not that.
+            # Plain text because a listing is what a site's description field takes.
+            overview = args.destination.with_name("overview.txt")
+            overview.write_text(document.premise.strip() + "\n", encoding="utf-8")
+            print(f"  {overview}: {len(document.premise.split())} words")
     return EXIT_OK
 
 
@@ -3629,6 +3717,27 @@ def build_parser() -> argparse.ArgumentParser:
         type=Path,
         default=os.environ.get("LITHARNESS_CONTINUITY_EVALUATOR"),
         help="ContinuityEvaluation executable; also read from LITHARNESS_CONTINUITY_EVALUATOR",
+    )
+    parser.add_argument(
+        "--library",
+        type=Path,
+        default=(
+            Path(os.environ["LITHARNESS_LIBRARY"])
+            if os.environ.get("LITHARNESS_LIBRARY")
+            else None
+        ),
+        help=f"where the library lives; also read from LITHARNESS_LIBRARY. Defaults to "
+        f"{library_module.LIBRARY_DIRNAME}/ BESIDE THE DATABASE rather than under the "
+        "working directory, because the library is derived from one store and belongs with "
+        "it",
+    )
+    parser.add_argument(
+        "--no-library",
+        action="store_true",
+        default=_env_flag("LITHARNESS_NO_LIBRARY"),
+        help="do not republish after a tick. On by default is the point: a reading copy you "
+        "have to remember to ask for is one nobody has. A book whose head has not moved is "
+        "skipped, so a quiet system rewrites nothing",
     )
     parser.add_argument(
         "--context-budget",
@@ -4037,6 +4146,18 @@ def build_parser() -> argparse.ArgumentParser:
     read.add_argument("--book")
     read.add_argument("--branch")
     read.set_defaults(func=cmd_readers)
+
+    library_cmd = sub.add_parser(
+        "library",
+        help="republish the reading copies and pastable chapters (not a publication; §62)",
+    )
+    library_cmd.add_argument(
+        "--force",
+        action="store_true",
+        help="rebuild every shelf even when its book has not moved. The way to adopt a "
+        "changed rendering: the files are derived, so the fix is to derive them again",
+    )
+    library_cmd.set_defaults(func=cmd_library)
 
     propagate = sub.add_parser(
         "propagate", help="what a change reaches beyond what it edits, from a ChangeSet"
