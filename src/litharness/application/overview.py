@@ -49,8 +49,8 @@ _TASK = (
     "You are writing the listing for a new serial: the few lines a reader meets on the front "
     "page of a serial-fiction site, and the only thing that decides whether they open chapter "
     "one.\n"
-    "This is their first taste of the book and not an account of the world it happens in. Put "
-    "them somewhere, with somebody, already in trouble.\n"
+    "A reader meeting this has not started the book. Open on the person it happens to, "
+    "somewhere they are already in trouble, rather than on an account of the world.\n"
     "No title, no headings, no tags, no word about the author. Under a hundred words, and "
     "shorter is better: the listings that work on this market are very short."
 )
