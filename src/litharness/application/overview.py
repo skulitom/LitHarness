@@ -75,6 +75,19 @@ MAX_OUTPUT_TOKENS = 4000
 #: that failure before, so the count is what says whether it worked: if the next round comes
 #: back at 3.8 by mentioning nouns rather than by being that kind of book, the clause goes.
 #:
+#: **The numbers clause lost its permission on 2026-08-25, the fourth instance of a failure
+#: `house` had been given a standing constraint against hours earlier.** It read "an exact
+#: number is worth its space only where the world itself counts it", and a dungeon floor is
+#: something a world counts, so the clause licensed *floor ninety*, *eight ranks above him
+#: on a ladder of nine*, *the ninth floor*. Measured across four rounds: floor numbers, rank
+#: positions and the words ladder/rung appear in **0 of 10** market listings and **0 of 8**
+#: of ours in round six, and returned at one to three of eight in rounds seven and eight —
+#: which is when the genre-noun clause arrived. Naming the genre invited its countable
+#: fittings, and the numbers clause was holding the door open for them.
+#:
+#: Second person joins the format line as a format fact: second-person-as-protagonist is
+#: 0 of 10 in the market and was two or three of eight in every round of ours.
+#:
 #: So this call does not go through `writers.system_for`: the house floor governs the book's
 #: prose, and a listing is not the book's prose.
 _TASK = (
@@ -86,10 +99,11 @@ _TASK = (
     "A reader scanning a list has to see what kind of book this is and what the person is "
     "after: name the magic, the system, the monsters, the dungeon in plain words rather than "
     "implying them, and say what the person is trying to get.\n"
-    "An exact number is worth its space only where the world itself counts it: exactness "
-    "spent on props, distances and durations is space the hook needed.\n"
+    "Floors, ranks, counts of things and lengths of time are space the hook needed, and so is "
+    "any other exact quantity.\n"
     "No title, no headings, no tags, no word about the author, and no dashes: this market's "
-    "listings punctuate with full stops and commas. About a hundred words."
+    "listings punctuate with full stops and commas. The person this happens to is he or she or "
+    "I, and never you. About a hundred words."
 )
 
 

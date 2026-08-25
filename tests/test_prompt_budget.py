@@ -91,10 +91,16 @@ def _roles() -> dict[str, str]:
 #: heroes) and eight of ours contained one between them. Nothing forbade them; the model was
 #: avoiding them unprompted.
 #:
+#: **12 -> 13 for second person as a format fact.** Second-person-as-protagonist is 0 of 10
+#: in the market and was two or three of eight in every round of ours. The numbers clause
+#: was reworded in the same commit and cost nothing: its affirmative permission ("only
+#: where the world itself counts it") was licensing floor ninety and eight ranks of nine,
+#: and prohibition-only is both shorter and what the standing constraint in `house` says.
+#:
 #: The Architect's forty-two is the largest and is not yet defended by anything. It is the whole
 #: house floor plus its own tool essay, and no measurement says which half it needs.
 BUDGET: dict[str, int] = {
-    "listing writer": 12,
+    "listing writer": 13,
     "architect seed": 42,
     "architect grow": 42,
     "scene writer floor": 28,
