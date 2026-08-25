@@ -13780,3 +13780,62 @@ establishes. And no goodness question asked downstream of a gate that cannot ope
 separate at book length, which is the only version of this that could still work and costs
 2 orders of magnitude more; and nothing about okonjo, whose dossier drew the identity permutation
 from the seeded shuffle and was skipped, leaving control coverage at three of four by luck.
+
+## 138. A rule's affirmative half is what gets obeyed, measured four ways on one clause
+
+§135 recorded that instruction text had never been measured. This is the first controlled thing
+done with it, and it settles a question five separate defects on 2026-08-25 had each answered
+half of: **what a rule permits is what comes back, and what it forbids is what stops.**
+
+**The clause.** One line in `application/overview._TASK` about exact numbers in a book listing,
+written four ways and drawn eight times each, four writers, two draws, everything else identical.
+The target is the market this project publishes into: ten RoyalRoad listings supplied by the
+operator.
+
+| the clause | number tokens / 1k words | listings naming a floor or rank position |
+| --- | --- | --- |
+| *the market* | **7.2** | **0 of 10** |
+| permission then prohibition — *"worth its space only where the world counts it: exactness spent on props is space the hook needed"* | 16.5 | 4 of 8 |
+| permission only — *"they earn their space where he is counting one himself and wants something from it"* | **47.2** | 6 of 8 |
+| no clause at all | 29.4 | 2 of 8 |
+| prohibition only — *"exactness spent on floors, ranks, counts and lengths of time is space the hook needed"* | **7.0** | **0 of 8** |
+
+**The permission-only form is more than six times worse than the prohibition-only form, and
+worse than saying nothing.** Silence sits between the two, which is the shape that makes this a
+finding rather than an anecdote: a rule is not weak or strong, it is signed.
+
+**It also refutes a claim made three hours earlier in this session.** After the permission form
+returned 47.2, the reading recorded was *"every version of the clause raised what it aimed at"*
+and the clause was deleted. The no-clause row then measured 29.4 — worse than the mixed form's
+16.5 — so the deletion was right about the permission and wrong about clauses. The correction is
+in place in `overview.py`.
+
+**Why the permission form was written at all, since it was written *after* the constraint.**
+`house.py` had been given a standing constraint that morning — *a rule here may say what fails, it
+may not enumerate what succeeds* — after three instances: `READER`'s *"Ranks, tallies a record
+would hold ... those are counted"* returned nine bands, six cords, four collar grades and nineteen
+licensed halls; `CLARITY`'s *"a name the reader has not met is welcome"* returned inserted
+undefined words; `ACCUMULATION`'s *"a price is paid in a body, in time, in risk"* returned *"pays
+in blood, in sleep"* in five listings of eight against zero of ten in the market. The permission
+form was defended at the time on the ground that it was a **scope** rather than a **menu** — that
+a constraint on *where* a thing may appear gives nothing to reach for, while a list of instances
+does. That distinction is now refuted: it produced the largest excess of any condition tested.
+
+**What shipped.** The prohibition-only clause, and the correction to the entry that overstated the
+deletion. The four conditions are recorded here rather than in a research module because the
+subject is this repository's own prompts, which `tests/test_prompt_budget.py` governs and no
+research arm does.
+
+**What was refused.** No general law claimed about models from one clause in one artifact: what is
+measured is one line, in one call, against one market, with n=8 a cell. No bar declared over
+number density — 7.0 against 7.2 is a coincidence at this n and is reported as a distribution
+landing in the right place, not as a threshold anything must clear. And no extension of the rule
+to the scene path, where the operator's own framing says the density is different: *"overviews
+don't usually have specific numbers ... They belong outside the overview at a different
+density"*, and in a chapter they belong inside the system's own window, where a number is
+something the character reads rather than something the narrator knows.
+
+**Anti-scope.** One clause, one artifact, four conditions. Nothing about whether the same
+signedness holds for a rule that is not about a countable feature, and nothing about the scene
+path or the Architect, both of which carry the same `house` floor and neither of which has had
+any clause tested this way.

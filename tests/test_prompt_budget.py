@@ -100,7 +100,7 @@ def _roles() -> dict[str, str]:
 #: The Architect's forty-two is the largest and is not yet defended by anything. It is the whole
 #: house floor plus its own tool essay, and no measurement says which half it needs.
 BUDGET: dict[str, int] = {
-    "listing writer": 12,
+    "listing writer": 13,
     "architect seed": 42,
     "architect grow": 42,
     "scene writer floor": 28,

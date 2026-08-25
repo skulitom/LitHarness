@@ -99,19 +99,26 @@ MAX_OUTPUT_TOKENS = 4000
 #: in time, in risk" came back as "pays in blood, in sleep" five times in eight), and a
 #: constraint on where something may appear gives nothing to reach for.
 #:
-#: **Then every version of the clause was deleted, because each one raised what it aimed**
-#: **at.** Number tokens per thousand words, against the market's 7.2:
+#: **Then the clause was tested in every form, and the pattern is the standing constraint.**
+#: Number tokens per thousand words, against the market's 7.2:
 #:
 #:     10.8  the clause with its permission, before the genre-noun clause existed
 #:     16.5  the same clause, once genre nouns arrived
 #:     47.2  the ownership clause. It half worked: four listings of eight tied a quantity
 #:           to what the person wanted, which is what was asked for, and the total tripled
 #:     42.9  a replicate of the same condition
+#:     29.4  no clause at all
 #:
 #: The claim that a *scope* would not be recited the way a *menu* is did not hold: "they
 #: earn their space where he is counting one himself" is a permission and was taken
-#: maximally. §127 is the entry recording that a fourth rule against one complaint was not
-#: the answer either, and this is the fifth. What had never been tried is saying nothing.
+#: maximally. But **the last row is what makes this a result rather than a defeat**: a
+#: clause carrying a prohibition suppressed numbers *below* the no-clause baseline (16.5
+#: against 29.4), and the pure permission raised them far above it. That is exactly what
+#: `house`'s standing constraint predicts, measured on the clause that motivated it.
+#:
+#: So the untested cell is a prohibition with no permission attached, which round eight's
+#: clause never was — it opened "an exact number is worth its space only where the world
+#: itself counts it" and only then said what fails. That is what stands here now.
 #:
 #: **The operator's own framing is why saying nothing is right rather than merely untried.**
 #: *"overviews don't usually have specific numbers ... They belong outside the overview at a
@@ -132,6 +139,7 @@ _TASK = (
     "one.\n"
     "A reader meeting this has not started the book. Open where the trouble already is: not on "
     "an account of the world, and not on an introduction to whoever it happens to.\n"
+    "Exactness spent on floors, ranks, counts and lengths of time is space the hook needed.\n"
     "A reader scanning a list has to see what kind of book this is and what the person is "
     "after: name the magic, the system, the monsters, the dungeon in plain words rather than "
     "implying them, and say what the person is trying to get.\n"
