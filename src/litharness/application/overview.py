@@ -85,6 +85,42 @@ MAX_OUTPUT_TOKENS = 4000
 #: which is when the genre-noun clause arrived. Naming the genre invited its countable
 #: fittings, and the numbers clause was holding the door open for them.
 #:
+#: **And a blanket ban was the wrong correction, made and unmade the same hour.** The first
+#: fix read "floors, ranks, counts of things and lengths of time are space the hook needed",
+#: which would delete *"I need to finish this floor, is this going to be over soon?"* along
+#: with *floor ninety*. The operator: *"we only want to mention ranks, numbers and skills if
+#: it's relevant to what the protagonist is thinking of, especially the protagonist desire
+#: ... oh i unlocked a new ability i wonder how i can grow it"*. So the clause is about
+#: **ownership**: a quantity the narrator inventories is dead weight, a quantity the person
+#: is counting and wants something from is the hook.
+#:
+#: It is written as a scope rather than as a list of instances, which is the distinction
+#: the standing constraint in `house` turns on: a menu of nouns gets recited ("in a body,
+#: in time, in risk" came back as "pays in blood, in sleep" five times in eight), and a
+#: constraint on where something may appear gives nothing to reach for.
+#:
+#: **Then every version of the clause was deleted, because each one raised what it aimed**
+#: **at.** Number tokens per thousand words, against the market's 7.2:
+#:
+#:     10.8  the clause with its permission, before the genre-noun clause existed
+#:     16.5  the same clause, once genre nouns arrived
+#:     47.2  the ownership clause. It half worked: four listings of eight tied a quantity
+#:           to what the person wanted, which is what was asked for, and the total tripled
+#:     42.9  a replicate of the same condition
+#:
+#: The claim that a *scope* would not be recited the way a *menu* is did not hold: "they
+#: earn their space where he is counting one himself" is a permission and was taken
+#: maximally. §127 is the entry recording that a fourth rule against one complaint was not
+#: the answer either, and this is the fifth. What had never been tried is saying nothing.
+#:
+#: **The operator's own framing is why saying nothing is right rather than merely untried.**
+#: *"overviews don't usually have specific numbers ... They belong outside the overview at a
+#: different density."* In the chapter they belong in the system's own window — Defiance of
+#: the Fall opens on `[Low F-grade mass, ungraded energy]` and a roll table — where a number
+#: is something the character is reading rather than something the narrator knows. So this
+#: is not one rule tuned twice. It is two artifacts with two densities, and the density that
+#: belongs to a listing is the market's: near zero.
+#:
 #: Second person joins the format line as a format fact: second-person-as-protagonist is
 #: 0 of 10 in the market and was two or three of eight in every round of ours.
 #:
@@ -99,8 +135,6 @@ _TASK = (
     "A reader scanning a list has to see what kind of book this is and what the person is "
     "after: name the magic, the system, the monsters, the dungeon in plain words rather than "
     "implying them, and say what the person is trying to get.\n"
-    "Floors, ranks, counts of things and lengths of time are space the hook needed, and so is "
-    "any other exact quantity.\n"
     "No title, no headings, no tags, no word about the author, and no dashes: this market's "
     "listings punctuate with full stops and commas. The person this happens to is he or she or "
     "I, and never you. About a hundred words."
