@@ -43,6 +43,19 @@ MAX_OUTPUT_TOKENS = 4000
 #: contained fell from 79 words to 33 when the scene rules came off, and the mean length fell
 #: from 135 words to 83 when the budget came down with them.
 #:
+#: **One clause came back on 2026-08-25, deliberately, and the budget was raised for it.**
+#: Taking the house floor off this call to stop the cramming also took off `READER`'s
+#: numbers prohibition, which was the only thing standing against exactness spent on props
+#: and durations. Measured across three rounds: with the floor, 25.9 number tokens per
+#: thousand words; without it, 43.2 and 39.1, against 8.0 in the market's own listings. The
+#: operator's reading of one of them was *"lots of specific numbers for no reason"* over
+#: *"fails the intake test in nine seconds ... the third, where she rushes it, the way she
+#: has rushed it for eleven years"*.
+#:
+#: This is what `tests/test_prompt_budget.py` is for: the clause was removed without
+#: measuring what it did, the measurement says it earned its place, and putting it back
+#: costs a ceiling raise that somebody has to write down.
+#:
 #: So this call does not go through `writers.system_for`: the house floor governs the book's
 #: prose, and a listing is not the book's prose.
 _TASK = (
@@ -51,6 +64,8 @@ _TASK = (
     "one.\n"
     "A reader meeting this has not started the book. Open on the person it happens to, "
     "somewhere they are already in trouble, rather than on an account of the world.\n"
+    "An exact number is worth its space only where the world itself counts it: exactness "
+    "spent on props, distances and durations is space the hook needed.\n"
     "No title, no headings, no tags, no word about the author. Under a hundred words, and "
     "shorter is better: the listings that work on this market are very short."
 )

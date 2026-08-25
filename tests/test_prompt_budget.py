@@ -59,10 +59,16 @@ def _roles() -> dict[str, str]:
 #: a subtraction: it was sixteen that morning, and the drop from sixteen to nine took the longest
 #: sentence in a generated listing from 79 words to 31 and the mean length from 135 to 83.
 #:
+#: **The listing went 9 -> 10 on 2026-08-25, and the raise is what this file is for.**
+#: Removing the house floor from that call to stop the cramming also removed `READER`'s
+#: numbers prohibition; number density went from 25.9 per thousand words to 43.2, against
+#: 8.0 in the market's own listings. The clause came back as one line and the ceiling moved
+#: with it, on purpose and in writing, which is the whole difference from how it left.
+#:
 #: The Architect's forty-one is the largest and is not yet defended by anything. It is the whole
 #: house floor plus its own tool essay, and no measurement says which half it needs.
 BUDGET: dict[str, int] = {
-    "listing writer": 9,
+    "listing writer": 10,
     "architect seed": 41,
     "architect grow": 41,
     "scene writer floor": 27,
