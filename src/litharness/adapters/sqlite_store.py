@@ -1335,13 +1335,25 @@ class SqliteStore:
         because: str | None = None,
         hoping_for: Sequence[str] | None = None,
         dreading: Sequence[str] | None = None,
+        felt: str | None = None,
+        expect_next: str | None = None,
+        want_next: Sequence[str] | None = None,
+        rival_id: str | None = None,
+        ours_first: bool | None = None,
     ) -> bool:
-        """One reader, one version of one scene, once. False when the row already exists."""
+        """One reader, one version of one scene, once. False when the row already exists.
+
+        `hoping_for` and `dreading` are migration 031's columns and are kept so rows written
+        before 032 still read back; nothing in the package writes them any more. What a steering
+        reader says now is `felt`, `expect_next` and `want_next`, and what a measurement reader
+        was choosing against is `rival_id` and `ours_first`.
+        """
         with self.transaction() as connection:
             cursor = connection.execute(
                 "INSERT OR IGNORE INTO reader_reads (book_id, branch_id, revision_id, "
                 "logical_id, reader_id, pool, choice, because, hoping_for, dreading, "
-                "created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                "felt, expect_next, want_next, rival_id, ours_first, "
+                "created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                 (
                     book_id,
                     branch_id,
@@ -1353,6 +1365,11 @@ class SqliteStore:
                     because,
                     json.dumps(list(hoping_for)) if hoping_for is not None else None,
                     json.dumps(list(dreading)) if dreading is not None else None,
+                    felt,
+                    expect_next,
+                    json.dumps(list(want_next)) if want_next is not None else None,
+                    rival_id,
+                    None if ours_first is None else int(ours_first),
                     created_at,
                 ),
             )
@@ -1379,7 +1396,7 @@ class SqliteStore:
         out: list[dict[str, Any]] = []
         for row in self._connection.execute(sql, params):
             item = dict(row)
-            for key in ("hoping_for", "dreading"):
+            for key in ("hoping_for", "dreading", "want_next"):
                 if item.get(key):
                     item[key] = json.loads(item[key])
             out.append(item)

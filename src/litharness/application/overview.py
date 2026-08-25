@@ -328,22 +328,35 @@ def clean_title(text: str) -> str:
     return line.rstrip(".").strip()
 
 
-def render_appetite(hoping_for: tuple[str, ...], dreading: tuple[str, ...]) -> str:
-    """What the steering pool said, as the writer reads it. Empty when nobody wanted anything.
+def _bullets(items: tuple[str, ...]) -> str:
+    """A list under a heading, one line each. One place, so two blocks cannot drift."""
+    return "\n" + "\n".join(f"- {item}" for item in items)
 
-    Reported as what readers said, never as an instruction — `readers.Anticipation.render`'s
-    rule, and the same reason: the writer decides what to do about it.
+
+def render_appetite(
+    felt: tuple[str, ...], expect_next: tuple[str, ...], want_next: tuple[str, ...]
+) -> str:
+    """Where the listing left the steering pool, as the writer reads it. Empty when nobody read.
+
+    `readers.Anticipation.render`'s block for the blurb stage, and the rewrite of 2026-08-25 is
+    that entry's: the two questions this used to render — what a reader hoped the book would be
+    and what would make them drop it — are specifications of an artifact, and a writer handed
+    fifty of them writes them down. Measured on *Patch Notes For Earth*: four readers asked for
+    version numbers, nerfs, a changelog and repro steps, and the revision put all four on the
+    page.
+
+    Reported as what readers said and never as an instruction, which was always this function's
+    rule; what changed is that the material can no longer *be* an instruction.
     """
-    if not hoping_for and not dreading:
+    if not (felt or expect_next or want_next):
         return ""
-    blocks = ["READERS WHO SAW THIS LISTING, ASKED WHAT THEY HOPED THE BOOK WOULD BE."]
-    if hoping_for:
-        blocks.append("Hoping for:\n" + "\n".join(f"- {item}" for item in hoping_for))
-    if dreading:
-        blocks.append(
-            "Would drop it by chapter three for:\n"
-            + "\n".join(f"- {item}" for item in dreading)
-        )
+    blocks = ["READERS WHO SAW ONLY THIS LISTING, ASKED WHERE IT LEFT THEM."]
+    if felt:
+        blocks.append("It left them:" + _bullets(felt))
+    if expect_next:
+        blocks.append("They think this book is:" + _bullets(expect_next))
+    if want_next:
+        blocks.append("They want to happen:" + _bullets(want_next))
     return "\n\n".join(blocks)
 
 

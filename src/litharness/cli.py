@@ -75,7 +75,9 @@ from litharness.application.summarize import make_summary_handler
 from litharness.domain import characters as characters_mod
 from litharness.domain import directors as directors_domain
 from litharness.domain import extraction, house, integrity, propagation
+from litharness.domain import rivals as rivals_mod
 from litharness.domain import state as state_mod
+from litharness.domain import text as text_mod
 from litharness.domain import worlds as worlds_domain
 from litharness.domain import writers as writers_domain
 from litharness.domain.beats import SIX_BEAT, TemplateMismatch, arc_template, beats_for
@@ -240,6 +242,29 @@ def _say(text: str) -> None:
     sys.stdout.flush()
     stream.write(text.encode("utf-8") + b"\n")
     stream.flush()
+
+
+def _rivals(args: argparse.Namespace) -> tuple[rivals_mod.Rival, ...]:
+    """The admitted competitor pool, or empty when the operator supplied none.
+
+    **The package never goes looking for these**, which is what keeps RS1 intact: nothing under
+    `src/litharness/` may reference a corpus, and a loader that knew where RoyalRoad listings
+    live would be one. An operator hands in a JSON list and `rivals.admit_all` either admits
+    every row or refuses the file naming the one that failed.
+
+    Empty is the control arm and is what every reading before 2026-08-26 measured: a reader with
+    no named competitor, choosing against a page this system only told them was full.
+    """
+    path = getattr(args, "rivals", None)
+    if not path:
+        return ()
+    rows = json.loads(Path(path).read_text(encoding="utf-8"))
+    if not isinstance(rows, list):
+        raise SystemExit(f"litharness: {path} is not a list of rivals")
+    try:
+        return rivals_mod.admit_all(rows)
+    except rivals_mod.IllegalRival as error:
+        raise SystemExit(f"litharness: {path}: {error}") from error
 
 
 def _selected_writer(args: argparse.Namespace) -> writers_domain.Writer | None:
@@ -1374,13 +1399,34 @@ def cmd_readers(args: argparse.Namespace) -> int:
             run=_StageSpend(), premise=spend, screen=spend,
         )
 
+        # **Every reader is stopped at the same place, and the passage is cut once rather
+        # than per reader.** `text.stop_point` is §124's rule; a chapter of one paragraph has
+        # no future in it and is read whole rather than refused, because the alternative is a
+        # command that fails on a short scene for a reason nobody asked about.
+        try:
+            passage = text_mod.stop_point(chapter)
+        except ValueError:
+            passage = chapter
+        pool_of_rivals = _rivals(args)
+
         choices: dict[str, Any] = {}
         wishes: dict[str, Any] = {}
         for reader in readers_mod.READERS:
+            drawn = None
+            first = True
             if reader.pool == readers_mod.MEASUREMENT:
-                request = readers_mod.render_choice_request(reader, chapter)
+                if pool_of_rivals:
+                    key = f"{head.revision_id}|{node.logical_id}|{reader.reader_id}"
+                    drawn = rivals_mod.draw(pool_of_rivals, key)
+                    first = rivals_mod.ours_first(key)
+                # **The title only.** A rival whose blurb is on the page has been read for
+                # free, which is §94's defect one object across; going to look has to cost
+                # this chapter or the currency is not currency.
+                request = readers_mod.render_choice_request(
+                    reader, passage, drawn.title if drawn else ""
+                )
             else:
-                request = readers_mod.render_anticipation_request(reader, chapter)
+                request = readers_mod.render_anticipation_request(reader, passage)
             result, refusal = _forge_call(request, calls=calls, spend=spend)
             parsed = result.parsed if result is not None else None
             if not isinstance(parsed, Mapping):
@@ -1394,14 +1440,17 @@ def cmd_readers(args: argparse.Namespace) -> int:
                     reader_id=reader.reader_id, pool=reader.pool, created_at=stamp,
                     choice=str(parsed.get("next") or ""),
                     because=str(parsed.get("because") or ""),
+                    rival_id=drawn.rival_id if drawn else None,
+                    ours_first=first if drawn else None,
                 )
             else:
                 wishes[reader.reader_id] = parsed
                 store.record_reader_read(
                     book_id, branch_id, head.revision_id, node.logical_id,
                     reader_id=reader.reader_id, pool=reader.pool, created_at=stamp,
-                    hoping_for=[str(x) for x in (parsed.get("hoping_for") or [])],
-                    dreading=[str(x) for x in (parsed.get("dreading") or [])],
+                    felt=str(parsed.get("felt") or ""),
+                    expect_next=str(parsed.get("expect_next") or ""),
+                    want_next=[str(x) for x in (parsed.get("want_next") or [])],
                 )
 
         reading = readers_mod.Reading.of(choices)
@@ -1439,18 +1488,20 @@ def cmd_readers(args: argparse.Namespace) -> int:
     print(f"{node.logical_id}")
     print(
         f"  carried on {reading.carried_on}/{reading.answered}"
+        f"  left for another book {reading.left_for_other}"
         f"  put down {reading.put_down}  later {reading.come_back}"
     )
     for reader_id, choice, because in reading.said:
         _say(f"    {reader_id}: {choice} - {because}")
-    if wanting.hoping_for:
-        print("  hoping for:")
-        for item in wanting.hoping_for:
-            _say(f"    - {item}")
-    if wanting.dreading:
-        print("  would be disappointed by:")
-        for item in wanting.dreading:
-            _say(f"    - {item}")
+    for label, items in (
+        ("it left them", wanting.felt),
+        ("they expect next", wanting.expect_next),
+        ("they want to happen", wanting.want_next),
+    ):
+        if items:
+            print(f"  {label}:")
+            for item in items:
+                _say(f"    - {item}")
     return EXIT_OK
 
 
@@ -1580,7 +1631,9 @@ def cmd_listing(args: argparse.Namespace) -> int:
             elif refusal:
                 print(f"  {reader.reader_id}: {refusal}", file=sys.stderr)
         wanted = readers_mod.Anticipation.of(wishes)
-        appetite = overview_mod.render_appetite(wanted.hoping_for, wanted.dreading)
+        appetite = overview_mod.render_appetite(
+            wanted.felt, wanted.expect_next, wanted.want_next
+        )
 
         first = listing
         if appetite:
@@ -1602,15 +1655,44 @@ def cmd_listing(args: argparse.Namespace) -> int:
         # blurb. `--no-title-to-readers` is the control arm and renders what every round before
         # a title existed rendered.
         shown = "" if args.no_title_to_readers else title
+        ours = "\n\n".join((shown, listing)) if shown else listing
+        pool_of_rivals = _rivals(args)
         choices: dict[str, Any] = {}
+        picks: list[dict[str, Any]] = []
         for reader in readers_mod.pool(readers_mod.MEASUREMENT):
-            request = readers_mod.render_start_request(reader, listing, shown)
+            if pool_of_rivals:
+                # **The pairing with an external label on it.** A different competitor per
+                # reader, so one screen measures this listing against several published books
+                # rather than against one; and a swapped, unlabelled order, because a pairwise
+                # choice with neither measures position (§89's 4,676x).
+                key = f"{title}|{reader.reader_id}"
+                rival = rivals_mod.draw(pool_of_rivals, key)
+                ours_leads = rivals_mod.ours_first(key)
+                request = readers_mod.render_pick_request(
+                    reader, ours, rival.render(), ours_leads
+                )
+            else:
+                request = readers_mod.render_start_request(reader, listing, shown)
             result, refusal = _forge_call(request, calls=calls, spend=spend)
-            if result is not None and isinstance(result.parsed, Mapping):
+            if result is None or not isinstance(result.parsed, Mapping):
+                if refusal:
+                    print(f"  {reader.reader_id}: {refusal}", file=sys.stderr)
+                continue
+            if not pool_of_rivals:
                 choices[reader.reader_id] = result.parsed
-            elif refusal:
-                print(f"  {reader.reader_id}: {refusal}", file=sys.stderr)
+                continue
+            chose = str(result.parsed.get("next") or "")
+            picks.append(
+                {
+                    "reader": reader.reader_id,
+                    "chose": readers_mod.side_of(chose, ours_leads),
+                    "rival": rival.to_jsonable(),
+                    "ours_first": ours_leads,
+                    "because": str(result.parsed.get("because") or "").strip(),
+                }
+            )
         browsing = readers_mod.Browsing.of(choices)
+        paired = readers_mod.Pairing.of(picks)
 
         gate = GateOutcome(
             gate=GateKind.SHAPE,
@@ -1618,9 +1700,14 @@ def cmd_listing(args: argparse.Namespace) -> int:
             passed=True,
             blocking=False,
             detail=(
-                f"{len(listing.split())} words; {browsing.started} of {browsing.answered} "
-                f"would start it; title {title!r} "
-                f"{availability.verdict if availability else 'unchecked'}"
+                f"{len(listing.split())} words; "
+                + (
+                    f"{paired.ours} of {paired.answered} chose it over a published book"
+                    if paired.answered
+                    else f"{browsing.started} of {browsing.answered} would start it"
+                )
+                + f"; title {title!r} "
+                + f"{availability.verdict if availability else 'unchecked'}"
             ),
         )
         store.record_decision(
@@ -1654,6 +1741,7 @@ def cmd_listing(args: argparse.Namespace) -> int:
         "availability": availability.to_jsonable() if availability else None,
         "appetite": wanted.to_jsonable(),
         "browsing": browsing.to_jsonable(),
+        "paired": paired.to_jsonable() if paired.answered else None,
         "title_shown_to_readers": bool(shown),
     }
     if args.out:
@@ -1679,12 +1767,21 @@ def cmd_listing(args: argparse.Namespace) -> int:
             _say(f"  {availability.render()}")
         for name in abandoned:
             print(f"  abandoned {name!r}: already somebody's")
-        print(
-            f"  would start it {browsing.started}/{browsing.answered}"
-            f"  passed {browsing.passed}  saved {browsing.saved}"
-        )
-        for reader_id, choice, because in browsing.said:
-            _say(f"    {reader_id}: {choice} - {because}")
+        if paired.answered:
+            print(
+                f"  against published books: ours {paired.ours}/{paired.answered}"
+                f"  theirs {paired.theirs}  neither {paired.neither}"
+                f"  (ours first in {paired.ours_first_share:.0%} of pairs)"
+            )
+            for reader_id, side, rival_title, _first, because in paired.said:
+                _say(f"    {reader_id}: {side} over {rival_title!r} - {because}")
+        else:
+            print(
+                f"  would start it {browsing.started}/{browsing.answered}"
+                f"  passed {browsing.passed}  saved {browsing.saved}"
+            )
+            for reader_id, choice, because in browsing.said:
+                _say(f"    {reader_id}: {choice} - {because}")
         if args.out:
             print(f"  {args.out}/listing.txt, title.txt, listing.json")
 
@@ -4560,6 +4657,14 @@ def build_parser() -> argparse.ArgumentParser:
         "existed measured, and is the control arm for whether the title is what unstuck the "
         "browsing pool",
     )
+    listing.add_argument(
+        "--rivals",
+        help="a JSON list of published books to spend the reading slot on instead: each with "
+        "title, listing, rating, genre and optionally ratings. Every row must clear "
+        "`domain/rivals.admit` — above four stars, in one of this readership's genres — and "
+        "one bad row refuses the file. Without it there is no named competitor, which is the "
+        "control arm and is what every round before 2026-08-26 measured",
+    )
     listing.add_argument("--book", help="book id, when --scenes creates one")
     listing.add_argument("--branch", help="branch id, when --scenes creates one")
     listing.set_defaults(func=cmd_listing)
@@ -4568,6 +4673,15 @@ def build_parser() -> argparse.ArgumentParser:
         "readers", help="put the simulated readership on a drafted scene"
     )
     read.add_argument("--scene", help="a scene logical id; the latest drafted one by default")
+    read.add_argument(
+        "--rivals",
+        help="a JSON list of published books to spend the reading slot on instead: each with "
+        "title, listing, rating, genre and optionally ratings. Every row must clear "
+        "`domain/rivals.admit` — above four stars, in one of this readership's genres — and "
+        "one bad row refuses the file. Without it there is no named competitor, which is the "
+        "control arm and is what every round before 2026-08-26 measured",
+    )
+
     read.add_argument("--book")
     read.add_argument("--branch")
     read.set_defaults(func=cmd_readers)

@@ -77,3 +77,41 @@ def slice_canonical(text: str, start: int, end: int) -> str:
             f"span {start}..{end} is outside the canonical text of length {len(canonical)}"
         )
     return canonical[start:end]
+
+
+#: Fraction of a passage's words behind the stop point. **Frozen at §124's value and it is the
+#: same number for the same reason**: `research/quality-measurement/anticipation.py` registered
+#: 0.6 before any call was made, and a reader stopped at a different place is a reader answering
+#: a different question. `tests/test_reader_futures.py` pins the two implementations against each
+#: other — the research module cannot be imported from inside the package (CONTRIBUTING's
+#: dependency direction), so one rule has two homes and a test is what keeps them one rule.
+STOP_FRACTION = 0.6
+
+
+def stop_point(text: str, fraction: float = STOP_FRACTION) -> str:
+    """The passage-so-far: the paragraph boundary nearest `fraction` of the words.
+
+    **Why a reader is stopped at all**, and it is the operator's direction of 2026-08-25:
+    *"The readers should be fed text only up until a point and then the rest left out. The
+    readers have to predict what happens next."* A reader shown a whole chapter has no future
+    to predict and nothing left to want; what it can do instead is review, which is the one
+    thing this project has no use for from a reader (`plan/reader-judge-loop.md`, and §89's
+    verdict channel).
+
+    **The boundary snaps to a paragraph so the instrument never stops anybody mid-thought.**
+    Deterministic, always at least one paragraph, and never the whole text — a probe after the
+    final paragraph asks about a future the passage no longer holds. A single-paragraph text
+    raises rather than silently returning everything, because "there was no future to ask
+    about" and "the reader saw it all" must not print the same.
+    """
+    paragraphs = [part for part in text.split("\n\n") if part.strip()]
+    if len(paragraphs) < 2:
+        raise ValueError("a passage needs at least two paragraphs to leave a future")
+    total = sum(len(part.split()) for part in paragraphs)
+    target = fraction * total
+    best_index, best_gap, seen = 1, float("inf"), 0
+    for index, paragraph in enumerate(paragraphs[:-1], start=1):
+        seen += len(paragraph.split())
+        if (gap := abs(seen - target)) < best_gap:
+            best_gap, best_index = gap, index
+    return "\n\n".join(paragraphs[:best_index])
