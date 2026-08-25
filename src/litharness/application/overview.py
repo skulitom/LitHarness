@@ -128,6 +128,23 @@ MAX_OUTPUT_TOKENS = 4000
 #: is not one rule tuned twice. It is two artifacts with two densities, and the density that
 #: belongs to a listing is the market's: near zero.
 #:
+#: **The listing lost its clarity floor when it lost the house floor, and this restores the**
+#: **half of it a listing needs.** Stripping `house` to stop the cramming took `CLARITY`
+#: with it, and `CLARITY` is exactly *"a sentence a reader can take two ways has failed"*
+#: and *"a thing the reader cannot follow is a thing that did not happen"*. Round eleven's
+#: defects were all one of those two: *"mountain, small, clawed, and somebody else's meal"*
+#: (which noun do the adjectives attach to), *"decided I was hers instead"* (one reading is
+#: "to eat later"), and *"and still reading"*, *"whoever wrote the system"*, *"if I say it
+#: out loud I get to keep what it can do"* — each asserting something nobody in the story
+#: could know yet.
+#:
+#: **It is a second statement of a rule that has a canonical home, and that is recorded
+#: rather than hidden.** The repository's rule about counts — one home, pointers elsewhere —
+#: is the same rule for instructions. The honest version extracts it from `house.CLARITY`
+#: the way `ACCUMULATION` is extracted, and that could not be done without reordering a
+#: constant whose rendered bytes `tests/test_prompt_budget.py` counts. If `CLARITY`'s two
+#: clauses are ever edited, this line is the second place to look.
+#:
 #: Second person joins the format line as a format fact: second-person-as-protagonist is
 #: 0 of 10 in the market and was two or three of eight in every round of ours.
 #:
@@ -140,6 +157,8 @@ _TASK = (
     "A reader meeting this has not started the book. Open where the trouble already is: not on "
     "an account of the world, and not on an introduction to whoever it happens to.\n"
     "Exactness spent on floors, ranks, counts and lengths of time is space the hook needed.\n"
+    "A sentence a reader can take two ways has failed, and so has one that asserts what nobody "
+    "in the story could know yet.\n"
     "A reader scanning a list has to see what kind of book this is and what the person is "
     "after: name the magic, the system, the monsters, the dungeon in plain words rather than "
     "implying them, and say what the person is trying to get.\n"
