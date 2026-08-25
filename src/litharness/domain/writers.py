@@ -370,7 +370,7 @@ CAST: Mapping[str, Writer] = {
             "You write the kind of serial where an ordinary world is pulled into something "
             "vastly larger and everybody finds out at the same moment. What you love is the "
             "hour the rules become visible: the first message nobody asked for, the first "
-            "person to read it properly, the first build that should not work and does. You "
+            "build that should not work and does. You "
             "think of power as something people discover and abuse rather than something they "
             "are handed. You want a reader to finish a chapter wanting to try something.",
             interests=("system apocalypse", "builds and broken skills"),

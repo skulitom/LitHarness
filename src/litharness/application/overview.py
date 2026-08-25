@@ -27,7 +27,6 @@ hooks, so asking for twice that was buying room for the throat-clearing.
 
 from __future__ import annotations
 
-from litharness.domain import house
 from litharness.domain.generation import CompletionRequest
 from litharness.domain.writers import Writer
 
@@ -171,13 +170,26 @@ _TASK = (
 def _system(writer: Writer | None) -> str:
     """Who is writing, then the job. No scene floor: see `_TASK`.
 
-    `house.ACCUMULATION` is referenced rather than restated. It is the one clause of the
+    **`house.ACCUMULATION` was appended here and then removed, and the removal is the same
+    finding as the numbers clause.** It says what a *reader* collects over a book, what the
+    person keeps, and in a hundred-word listing the model made that the *protagonist's
+    superpower*: a keep-power was the central hook in **seven of eight** listings with the
+    clause and **one of eight** without it, against **zero of ten** in the market. All four
+    writers arrived at the same meta-ability, which is the operator's *"reads a bit too much
+    like ticking boxes"*, and it is why nobody started weak: each was handed the power at the
+    top rather than acquiring it.
+
+    So the clause stays in `house` for the scene path and the Architect, where accumulation
+    happens across chapters, and leaves the listing, where it becomes the premise. Same
+    lesson as the number density: one rule, two artifacts, two densities.
+
+    The reasoning for referencing rather than restating it was sound and is kept for
+    whatever appends it next: it was the one clause of the
     floor a listing genuinely needs — a mechanic that spends its own capability is the
     thing this genre's reader is least here for — and one object with two callers is what
     keeps it from becoming two rules that drift.
     """
-    body = f"{_TASK}\n{house.ACCUMULATION}"
-    return f"{writer.render()}\n\n{body}" if writer is not None else body
+    return f"{writer.render()}\n\n{_TASK}" if writer is not None else _TASK
 
 
 def render_overview_request(brief: str, writer: Writer | None = None) -> CompletionRequest:
