@@ -57,19 +57,40 @@ MAX_OUTPUT_TOKENS = 4000
 #: measuring what it did, the measurement says it earned its place, and putting it back
 #: costs a ceiling raise that somebody has to write down.
 #:
+#: **Two clauses changed 2026-08-25 on ten market listings rather than six, and one of
+#: them was simply wrong.** The length ask read "under a hundred words, and shorter is
+#: better"; the market runs **40 to 146 words, median 100**, and we had pinned ourselves
+#: to 74-92 with a median of 78. And the opening clause read "open on the person it happens
+#: to", which a model satisfies by establishing who the person is: five of eight listings
+#: began on a mundane job. The operator, beside Chrysalis, which opens after the transition
+#: and names no prior life at all: *"isekai is good, we just don't have to mention their
+#: job every time"*.
+#:
+#: **The genre-noun clause is the largest measured gap of the day and it names examples,
+#: which is a risk taken deliberately.** Ten market listings average **3.8** of the genre's
+#: own nouns each — magic, monsters, system, reborn, heroes, multiverse, skills, tutorial —
+#: and eight of ours contain **one** between them. Nothing in this prompt forbade them; the
+#: model avoids the furniture unprompted, which is the same defect as writing a listing that
+#: reads as literary fiction. A named list invites a checklist and this project has measured
+#: that failure before, so the count is what says whether it worked: if the next round comes
+#: back at 3.8 by mentioning nouns rather than by being that kind of book, the clause goes.
+#:
 #: So this call does not go through `writers.system_for`: the house floor governs the book's
 #: prose, and a listing is not the book's prose.
 _TASK = (
     "You are writing the listing for a new serial: the few lines a reader meets on the front "
     "page of a serial-fiction site, and the only thing that decides whether they open chapter "
     "one.\n"
-    "A reader meeting this has not started the book. Open on the person it happens to, "
-    "somewhere they are already in trouble, rather than on an account of the world.\n"
+    "A reader meeting this has not started the book. Open where the trouble already is: not on "
+    "an account of the world, and not on an introduction to whoever it happens to.\n"
+    "A reader scanning a list has to see what kind of book this is and what the person is "
+    "after: name the magic, the system, the monsters, the dungeon in plain words rather than "
+    "implying them, and say what the person is trying to get.\n"
     "An exact number is worth its space only where the world itself counts it: exactness "
     "spent on props, distances and durations is space the hook needed.\n"
     "No title, no headings, no tags, no word about the author, and no dashes: this market's "
-    "listings punctuate with full stops and commas. Under a hundred words, and "
-    "shorter is better: the listings that work on this market are very short."
+    "listings punctuate with full stops and commas. Between forty and a hundred and fifty "
+    "words."
 )
 
 

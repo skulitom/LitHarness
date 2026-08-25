@@ -86,10 +86,15 @@ def _roles() -> dict[str, str]:
 #: moved the scene writer from 27 demands to 30 and the Architect from 41 to 44 for a
 #: single idea. This table is the only reason anybody saw that before it shipped.
 #:
+#: **11 -> 12 on 2026-08-25 for the genre's own nouns**, which is the largest gap measured
+#: that day: ten market listings average 3.8 of them each (magic, monsters, system, reborn,
+#: heroes) and eight of ours contained one between them. Nothing forbade them; the model was
+#: avoiding them unprompted.
+#:
 #: The Architect's forty-two is the largest and is not yet defended by anything. It is the whole
 #: house floor plus its own tool essay, and no measurement says which half it needs.
 BUDGET: dict[str, int] = {
-    "listing writer": 11,
+    "listing writer": 12,
     "architect seed": 42,
     "architect grow": 42,
     "scene writer floor": 28,
