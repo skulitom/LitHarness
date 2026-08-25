@@ -13711,3 +13711,72 @@ vocabulary and uncashed terms, which are two things about a listing and not the 
 **Anti-scope.** One field on one call. Nothing about what a brief should say when it is doing its
 job, and nothing about the scene path, where the same question — what does the input cost
 relative to the rules — has not been asked.
+
+## 137. G1 ran on the production model and its own statistic cannot answer it
+
+`plan/writer-roster.md` R2 asks whether a roster is ten writers or one writer in ten hats, and
+`research/quality-measurement/writer_distinctness.py` was built in 2026-08-20 to answer it and
+never run. It ran on 2026-08-25 against `writers.CAST` and the pinned production provider rather
+than the module's local model, because a local model's answer about the roster that writes the
+books is an answer about a different model. Twenty-one drafts at 400 words, $4.42.
+
+**The run's own verdict: `DISTINCT_BUT_ORDER_BLIND`.** Every pair read DISTINCT; the shuffle
+control did not clear, so the rail refuses the comparison.
+
+| comparison | within | between / twin | gap |
+| --- | --- | --- | --- |
+| ferreira vs halloran | 0.8647 | 0.8752 | +0.0105 |
+| ferreira vs vance | 0.8722 | 0.8886 | +0.0164 |
+| halloran vs vance | 0.8596 | 0.8793 | +0.0197 |
+| ferreira vs its scrambled twin | 0.8731 | 0.8768 | +0.0037 |
+| vance vs its scrambled twin | 0.8619 | 0.8715 | +0.0096 |
+| halloran vs its scrambled twin | 0.8584 | 0.8515 | **-0.0069** |
+
+**The verdict is not interpretable, and the calibration is why.** Normalised compression distance,
+measured the same day on the same drafts:
+
+| | NCD |
+| --- | --- |
+| a draft against itself | 0.000 |
+| two drafts, **same writer, same beat** | **0.868** |
+| two drafts, different writers | 0.881 |
+| a draft against a RoyalRoad blurb | 0.977 |
+| a draft against a contract clause | 0.974 |
+| **a contract clause against Python source** | **0.891** |
+
+Two 400-word drafts of one scene by one writer sit *closer together than a legal contract sits to
+source code by only 2.3 points*, and every effect in the table above is one or two points. The
+statistic has no resolution at this length, so DISTINCT and order-blind are equally empty.
+
+**This is the measure being used outside its stated design rather than the measure being wrong.**
+`directors._distance` says so in its own docstring: it is *"deliberately crude: are these the same
+bytes or not, with a graded answer for the near-identical case"*, reused rather than invented
+because this project has refuted enough hand-rolled text distances to be suspicious of a new one.
+It was built to catch §89.1's categorical failure — one model returning byte-identical answer
+vectors across four personas — and it did catch the absence of that: these four are not one writer
+in costumes. G1's rail then asks the same statistic to grade voice against a 0.86 floor, which is
+a different question.
+
+**The consequence, and it is a blocker rather than a caveat.** `writers.py` makes distinctness the
+gate that must clear before any writer comparison may be reported. That gate cannot be cleared by
+the statistic that defines it, so every downstream writer measurement is behind a door with no key.
+
+**What has range, measured on the same drafts.** Per-signal counts, three draws each, same beat:
+number density overlaps across all three writers (11.5-28.9, 7.4-21.2, 11.6-14.5) and separates
+nobody; dialogue lines overlap; **em-dash rate separates vance (0.0-2.4) from ferreira (4.8-9.2)
+with no overlap**. A census answers per signal, with a range, and says which signals carry a
+writer and which do not — which is information one saturated distance structurally cannot produce.
+
+**What shipped: nothing.** The module is unchanged, its pre-registration stands, and the run is
+recorded rather than acted on.
+
+**What was refused.** No new distance invented to replace NCD — that is the move the module's own
+docstring refuses and this project has a refutation ledger full of. No re-reading of the gaps as
+meaningful once the calibration was in. No claim that the four writers are the same, which the
+byte-identity check refutes, and none that they are different in voice, which nothing here
+establishes. And no goodness question asked downstream of a gate that cannot open.
+
+**Anti-scope.** One roster, one beat, one length, one statistic. Nothing about whether NCD would
+separate at book length, which is the only version of this that could still work and costs
+2 orders of magnitude more; and nothing about okonjo, whose dossier drew the identity permutation
+from the seeded shuffle and was skipped, leaving control coverage at three of four by luck.
