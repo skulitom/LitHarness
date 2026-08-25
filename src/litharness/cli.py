@@ -41,6 +41,7 @@ from litharness.adapters.continuity_cli import ContinuityCliRunner
 from litharness.adapters.sqlite_store import MigrationsMissing, SqliteStore, StoredEvent
 from litharness.application import architect, comprehension, world_agent
 from litharness.application import export as export_module
+from litharness.application import overview as overview_mod
 from litharness.application import readers as readers_mod
 from litharness.application import status as status_module
 from litharness.application import world as world_mod
@@ -72,7 +73,7 @@ from litharness.application.repair import (
 from litharness.application.summarize import make_summary_handler
 from litharness.domain import characters as characters_mod
 from litharness.domain import directors as directors_domain
-from litharness.domain import extraction, propagation
+from litharness.domain import extraction, house, propagation
 from litharness.domain import state as state_mod
 from litharness.domain import worlds as worlds_domain
 from litharness.domain import writers as writers_domain
@@ -1566,6 +1567,76 @@ def cmd_architect(args: argparse.Namespace) -> int:
     print(f"  {len(after) - before} record(s) added, {proposed} awaiting `world accept`")
     for complaint in complaints:
         print(f"  ! {complaint}")
+    return EXIT_OK
+
+
+def cmd_prompts(args: argparse.Namespace) -> int:
+    """Print the system prompt each role is actually sent, with the size of it.
+
+    **The assembled prompt existed nowhere until this.** Every role built its own by
+    concatenation at call time, so the only way to know what a writer was told was to run one
+    and read the transcript — and the consequence was a listing prompt that had grown to sixteen
+    demands for a hundred-word artifact without anybody deciding it should.
+
+    `tests/test_prompt_budget.py` holds the ceilings and fails when one is passed. This is the
+    same numbers to look at before you add a clause rather than after.
+    """
+    writer = writers_domain.CAST.get(args.writer or "ferreira")
+    if writer is None:
+        print(
+            f"litharness: no writer named {args.writer!r}; the cast is "
+            f"{', '.join(writers_domain.CAST)}",
+            file=sys.stderr,
+        )
+        return EXIT_FAULT
+
+    roles: dict[str, str] = {
+        "listing": overview_mod._system(writer),
+        "architect-seed": world_agent.render_seed_request("a listing", writer).system or "",
+        "architect-grow": (
+            world_agent.render_grow_request("prose", logical_id="s1", writer=writer).system or ""
+        ),
+        "scene": house.with_house_rules(
+            "You are drafting one scene of a novel. Write only the scene's prose: no headings, "
+            "no commentary, no summary of what you wrote. The context below is established and "
+            "may be relied on; do not contradict it."
+        ),
+        "house-floor": house.HOUSE_RULES,
+        "reader-measurement": readers_mod.pool(readers_mod.MEASUREMENT)[0].system(),
+        "reader-steering": readers_mod.pool(readers_mod.STEERING)[0].system(),
+        "screen-reader": comprehension.READERS[0].system(),
+    }
+
+    if args.role:
+        if args.role not in roles:
+            print(
+                f"litharness: no role {args.role!r}; the roles are {', '.join(roles)}",
+                file=sys.stderr,
+            )
+            return EXIT_FAULT
+        text = roles[args.role]
+        counted = house.demands(text)
+        if args.json:
+            print(json.dumps({"role": args.role, "chars": len(text),
+                              "demands": list(counted)}, ensure_ascii=False, indent=2))
+            return EXIT_OK
+        print(text)
+        print()
+        print(f"  {len(counted)} demand(s), {len(text)} characters")
+        return EXIT_OK
+
+    rows = {
+        role: {"chars": len(text), "demands": len(house.demands(text))}
+        for role, text in roles.items()
+    }
+    if args.json:
+        print(json.dumps(rows, ensure_ascii=False, indent=2))
+        return EXIT_OK
+    print(f"{'role':22s} {'chars':>7s} {'demands':>8s}")
+    for role, row in rows.items():
+        print(f"{role:22s} {row['chars']:7d} {row['demands']:8d}")
+    print()
+    print("  `--role <name>` prints one in full. Ceilings: tests/test_prompt_budget.py")
     return EXIT_OK
 
 
@@ -3932,6 +4003,14 @@ def build_parser() -> argparse.ArgumentParser:
         help="put the Architect on this world, holding the world suite and nothing else",
     )
     architect_sub = arch.add_subparsers(dest="job", required=True)
+
+    prompts = sub.add_parser(
+        "prompts", help="what each role is actually told, and how much of it there is"
+    )
+    prompts.add_argument("--role", help="print one role in full")
+    prompts.add_argument("--writer", help=f"one of: {', '.join(writers_domain.CAST)}")
+    prompts.add_argument("--json", action="store_true")
+    prompts.set_defaults(func=cmd_prompts)
 
     seed = architect_sub.add_parser(
         "seed", help="build enough world to stand the first chapters, under a listing"

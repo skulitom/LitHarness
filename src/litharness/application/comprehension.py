@@ -88,20 +88,32 @@ class Reader:
         )
 
 
-#: The four, in the research panel's own order. Their ids are the panel's ids so a production
-#: screen and a research battery run over the same premise can be read side by side — the same
-#: reason `ANSWER_SCHEMA` is copied verbatim rather than paraphrased.
+#: The four, in the research panel's own order, and their ids are the panel's ids.
+#:
+#: **Their words are no longer the panel's, and comparability on persona is given up on
+#: purpose (2026-08-25).** `climber` used to read for *"a climb with rules — what the next
+#: rung costs"* and drop on *"figures that move"*, which is `domain/worlds.py`'s vocabulary in
+#: a reader's mouth. That is fatal in *this* instrument specifically: the screen exists to
+#: catch a term a reader cannot cash, and a reader primed to want the schema's own words is
+#: the worst available detector of them. Measured the same day on the sibling roster in
+#: `application/readers.py`, four readers scored listings well while quoting the jargon back
+#: as praise.
+#:
+#: What is lost is reading a production screen side by side with a research battery run on
+#: persona; `ANSWER_SCHEMA` is still copied verbatim, so the *question* is still the same one.
+#: `research/quality-measurement/personas.py` is untouched and §120's numbers stay
+#: reproducible, which is what §124's anti-scope actually protects.
 READERS: tuple[Reader, ...] = (
     Reader(
         reader_id="climber",
         name="the progression and cultivation reader",
         reads_for=(
-            "a climb with rules — what the next rung costs, and what it lets somebody do that "
-            "they could not do before"
+            "watching somebody go from nothing to genuinely dangerous, and getting to feel "
+            "every jump on the way"
         ),
         drops_on=(
-            "figures that move without changing what anyone can do. I start a lot of serials "
-            "and drop most of them inside three chapters"
+            "numbers that go up without changing what anybody can do. I start a lot of "
+            "serials and drop most of them inside three chapters"
         ),
     ),
     Reader(
@@ -112,7 +124,7 @@ READERS: tuple[Reader, ...] = (
             "already knew how to do"
         ),
         drops_on=(
-            "terms and ranks used as if I already knew them, or a newcomer who arrives fluent. "
+            "words used as if I already knew them, or a newcomer who arrives fluent. "
             "Most portal stories lose me in the first chapter and I stop there"
         ),
     ),

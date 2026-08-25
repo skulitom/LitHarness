@@ -13583,3 +13583,82 @@ whether it tracks anything a reader does.
 **Anti-scope.** One beat of one book, one direction payload, one provider. Nothing about serials
 over many chapters, nothing about whether the steering/measurement split needs revisiting — it held
 again: no reader was in both pools, and what steered these drafts never read them.
+
+## 135. Instruction text is the thing nobody was measuring, and four failures in one day were all the same failure
+
+Every craft defect the operator found on 2026-08-25 traced back to a prompt, and no prompt in
+this system had a size. Each role built its own by concatenation at call time, so what a writer
+was actually told existed nowhere except inside a running process. The rules grew one
+well-argued clause at a time, every clause defensible on its own, and the total was never looked
+at by anybody.
+
+**Measured, for the first time, on 2026-08-25.** `house.demands` splits instruction text on
+sentence and line boundaries; `litharness prompts` prints the table.
+
+| role | chars | demands |
+| --- | --- | --- |
+| listing writer (after the day's subtraction) | 1,033 | 9 |
+| architect seed / grow | 4,712 / 4,862 | **41** |
+| scene writer, floor and role only | 3,148 | 27 |
+| `house.HOUSE_RULES` alone | 2,943 | **24** |
+| reader personas | 375 | 4 |
+
+The house floor is twenty-four demands and **every role that stands on it inherits all
+twenty-four**, which is how the scene writer reached twenty-seven before a single conditional
+fragment is appended and the Architect reached forty-one.
+
+**The four failures, and they are one failure.**
+
+1. **Cramming.** The listing call made sixteen demands of a hundred-word artifact, eleven of them
+   `CLARITY` and `READER` — rules written for scene prose, governing a blurb with paragraph-level
+   pronoun reference and puzzle-box move counts. Measured over nine calls, three writers, three
+   arms: with the scene rules the longest sentence in a listing was **79 words** (the prior-life
+   clause, the offer clause, the combination clause and the hook, all met in one breath); without
+   them, 33. Dropping the length budget as well took the mean from 135 words to 83. The operator's
+   quoted specimen — *"The rank lands on everyone in the depot in the same breath"* — is what
+   "everyone got one at once, bronze is the floor, one skill each" becomes with no room to say it.
+2. **The affirmative half, twice in one day.** `READER`'s numbers clause said *"Ranks, tallies a
+   record would hold ... those are counted, and a reader learns to watch them"* and four writers
+   returned nine bands, six cords, four collar grades and nineteen licensed halls. Corrected. Then
+   `CLARITY`'s correction replaced a ban with *"a name the reader has not met is welcome, and is
+   how a world gets big"*, and the operator's next read was *"we shouldn't be inserting undefined
+   words for no reason"*. **A rule that names what a thing is for reads as an instruction to go and
+   do it.** A rule here may say what fails.
+3. **Machinery vocabulary, in both directions.** §120 measured `standing` reaching a chapter. The
+   reader personas built to catch that were themselves written to read for *"a climb with rules —
+   what the next rung costs"*, so they scored the jargon as a virtue; four listings passed while
+   using it and the operator's reading was that something was seriously wrong with the readers.
+   The production comprehension screen — the gate that decides whether a premise ships — still had
+   it, and the rail below caught it on its first run.
+4. **`CLARITY` was wrong rather than mis-scoped.** It said *"nothing is left for the reader to work
+   out later"*, which is a hook inverted. Six listings from the market this project writes for were
+   read against it and not one would survive; the operator's reading of those same six was
+   *"extremely clear and clever, I have zero clarity complaints"*. What had been measured was four
+   readers quoting terms they could not cash; what got written down was a ban on unexplained names.
+
+**What shipped.** `house.demands` and `house.MACHINERY_WORDS`; `tests/test_prompt_budget.py`,
+which holds a declared ceiling per role and fails with the numbered list of demands when one is
+passed; a rail that refuses this system's own vocabulary in any reader-facing prompt, and holds
+the house floor to it too; and `litharness prompts`, so the table above can be read before a
+clause is added rather than after a book is written. The budgets are set at what was there, so
+this begins as a ratchet rather than as a cut somebody has to argue for twice.
+
+**What was refused.** No clause cut on the strength of this entry: the numbers say the Architect
+carries forty-one demands and say nothing about which of them earn it, and cutting on a reading is
+what produced two of the four failures above. **The ablation that would answer it is named and not
+run** — leave-one-out over the floor's clauses, measured on drafted scenes — because every
+behavioural instrument this project has saturated during the same session (continuation 13/16 and
+15/16, browsing 15/16 then 16/16), so there is currently nothing to measure an ablation against. A
+`cannot_restate` slot for the comprehension screen was built and reverted: it detects a defect
+whose cause this entry removes, and it broke the property that `ANSWER_SCHEMA` is a faithful copy
+of the research battery's.
+
+**A property given up on purpose.** The production screen's personas are no longer the research
+panel's words, so a screen run and a battery run can no longer be read side by side on persona.
+`ANSWER_SCHEMA` is still copied verbatim so the question is still the same one, and
+`research/quality-measurement/personas.py` is untouched, which is what §124's anti-scope actually
+protects. A gate that rewards the register it exists to catch is worth more than the comparison.
+
+**Anti-scope.** Counting and refusing, never editing: nothing here decides what a rule should say.
+No budget is claimed to be the right size — they are the sizes that were there on the day somebody
+first looked.

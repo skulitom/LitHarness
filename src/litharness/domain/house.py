@@ -159,6 +159,62 @@ READER = (
 HOUSE_RULES = f"{CLARITY}\n\n{READER}"
 
 
+#: The vocabulary this system uses for its own machinery. **Text that shapes prose a reader
+#: will read may not contain any of it**, and `tests/test_prompt_budget.py` is what enforces
+#: that. Twice measured: `standing` reached a chapter as *"hotter than a girl at her standing
+#: should be able to manage"* (§120), and the reader personas built to catch that were
+#: themselves written to read for *"what the next rung costs"*, so they rewarded the register
+#: they existed to detect.
+#:
+#: Schema-filling and tool-teaching prompts are exempt and have to be: a call that fills
+#: `manifests_as` must name it, and a command list must name its commands. The boundary is
+#: what the text shapes, not where it lives.
+MACHINERY_WORDS: frozenset[str] = frozenset(
+    {
+        "rung",
+        "rungs",
+        "ladder",
+        "standing",
+        "criterion",
+        "criteria",
+        "manifests_as",
+        "cardinality",
+        "order_key",
+        "logical_id",
+        "predicate",
+        "object_ref",
+        "story_position",
+        "reveal_scene",
+        "entity_role",
+        "graph_line",
+        "packet",
+        "canon",
+    }
+)
+
+
+def demands(text: str) -> tuple[str, ...]:
+    """Every separate thing a piece of instruction text asks for.
+
+    A sentence, and a line break also ends one, because these rules are written as stacked
+    clauses and a clause is a demand whether or not it was punctuated as a sentence.
+
+    **Crude on purpose and it does not need to be otherwise.** What it is for is a ceiling
+    nobody can raise by accident: measured 2026-08-25, the house floor alone is twenty-four
+    demands, the scene writer is twenty-seven before anything conditional is appended, and
+    the Architect is forty-one. None of those numbers existed before this function did, and
+    the operator's standing instruction about not piling rules on rules had no way to be
+    checked against anything.
+    """
+    import re
+
+    return tuple(
+        part.strip()
+        for line in text.split("\n")
+        for part in re.split(r"(?<=[.!?])\s+", line)
+        if part.strip()
+    )
+
 def with_house_rules(system: str) -> str:
     """`system` with the house rules appended, or the rules alone for an empty system.
 
