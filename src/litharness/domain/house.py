@@ -28,6 +28,16 @@ that anybody should win. One says a reader must be able to follow the words; the
 words should be spent on what the book is selling. Both are the operator's standing direction,
 recorded here with their provenance so that a later reader can see they were *given* rather than
 assumed — which is exactly what §95 leaves open.
+
+**A standing constraint on every rule in this module, learned three times on 2026-08-25.**
+*A rule here may say what fails. It may not enumerate what succeeds.* Each of the three was
+written as an affirmative list and each came back as a verbal formula in the prose:
+`READER`'s "Ranks, tallies a record would hold ... those are counted" produced nine bands,
+six cords, four collar grades and nineteen licensed halls; `CLARITY`'s "a name the reader
+has not met is welcome, and is how a world gets big" produced inserted undefined words; and
+`ACCUMULATION`'s "a price is paid in a body, in time, in risk" produced "pays in blood, in
+sleep, in years" in five listings of eight. The prohibition half of all three did its work
+and none of it was ever recited.
 """
 
 from __future__ import annotations
@@ -162,14 +172,18 @@ READER = (
 #: `READER` above asks for an offer that combines and whose ceiling nobody has seen. Neither
 #: is *keeping*, and a power that is spent combines with nothing and reaches no ceiling. This
 #: is written as what fails rather than as what to do, which is the correction this module
-#: has already taken twice in one day, and as ONE sentence because it lands in every role
-#: that stands on the floor: at three sentences it moved the scene writer from 27 demands to
-#: 30 and the Architect from 41 to 44 for a single idea.
+#: has already taken three times in one day, and as ONE sentence because it lands in every
+#: role that stands on the floor: at three sentences it moved the scene writer from 27
+#: demands to 30 and the Architect from 41 to 44 for a single idea.
+#:
+#: **Its second half was cut the day it shipped, for being recited.** It ended "and a price
+#: is paid in a body, in time, in risk or in somebody now against them", and the next eight
+#: listings contained "pays in sleep, in blood", "pays in blood, in sleep", "costs him
+#: blood, sleep, and years", "pays, in blood weight and in sleep" and "will pay in blood,
+#: in years" — five of eight, against zero of ten in the market's own listings.
 ACCUMULATION = (
     "A power that is spent, used up or traded away costs the reader the thing they came "
-    "for: what this genre's reader collects is what the person KEEPS, and a price is paid "
-    "in a body, in time, in risk or in somebody now against them, never in the capability "
-    "itself."
+    "for: what this genre's reader collects is what the person KEEPS."
 )
 
 #: The block as it reaches a prompt. One blank line between the two, so a role can append it to

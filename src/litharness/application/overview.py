@@ -89,8 +89,7 @@ _TASK = (
     "An exact number is worth its space only where the world itself counts it: exactness "
     "spent on props, distances and durations is space the hook needed.\n"
     "No title, no headings, no tags, no word about the author, and no dashes: this market's "
-    "listings punctuate with full stops and commas. Between forty and a hundred and fifty "
-    "words."
+    "listings punctuate with full stops and commas. About a hundred words."
 )
 
 
