@@ -96,7 +96,13 @@ def _percentile_of(value: float, population: list[int]) -> float:
     return 100.0 * sum(1 for item in population if item < value) / len(population)
 
 
-def build(shards: tuple[int, ...], limit: int) -> tuple[list[dict[str, Any]], list[int]]:
+def build(
+    shards: tuple[int, ...],
+    limit: int,
+    *,
+    max_followers: int = 0,
+    skip_admit: bool = False,
+) -> tuple[list[dict[str, Any]], list[int]]:
     """One row per fiction, deduplicated, every one of which clears `rivals.admit`.
 
     Deduplicated on `fiction_id` because the shards are keyed by *chapter*: a serial with 400
@@ -136,10 +142,13 @@ def build(shards: tuple[int, ...], limit: int) -> tuple[list[dict[str, Any]], li
                 "genre": genre,
                 "source": f"royalroad:{fiction}",
             }
-            try:
-                rivals_mod.admit(candidate)
-            except rivals_mod.IllegalRival:
+            if max_followers and int(row.get("followers") or 0) > max_followers:
                 continue
+            if not skip_admit:
+                try:
+                    rivals_mod.admit(candidate)
+                except rivals_mod.IllegalRival:
+                    continue
             rows.append(candidate)
             if limit and len(rows) >= limit:
                 return rows, genre_followers
@@ -151,10 +160,28 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--shards", default="3,30", help="comma-separated shard numbers")
     parser.add_argument("--limit", type=int, default=60, help="0 for every admitted fiction")
     parser.add_argument("--out", type=Path, default=DERIVED / "rivals.json")
+    parser.add_argument(
+        "--max-followers",
+        type=int,
+        default=0,
+        help="ceiling on followers, for building the LOW tier of a gradient control. Implies "
+        "--skip-admit, since `rivals.admit` refuses anything under the floor by design",
+    )
+    parser.add_argument(
+        "--skip-admit",
+        action="store_true",
+        help="emit rows that do not clear `rivals.admit`. Only ever for a control set: these "
+        "are not rivals and may not be handed to `--rivals`",
+    )
     args = parser.parse_args(argv)
 
     shards = tuple(int(part) for part in args.shards.split(",") if part.strip())
-    rows, genre_followers = build(shards, args.limit)
+    rows, genre_followers = build(
+        shards,
+        args.limit,
+        max_followers=args.max_followers,
+        skip_admit=args.skip_admit or bool(args.max_followers),
+    )
     if not rows:
         print("no fiction cleared the bar; nothing written", file=sys.stderr)
         return 1

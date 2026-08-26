@@ -14056,10 +14056,12 @@ the readership is anti-correlated with the operator's judgment. The operator's p
 *books being better*; this measured *blurbs*, and the two questions were run together by
 accident.
 
-**What that costs the programme is smaller than the first reading and still real.** W remains
-unusable as an optimisation target, because a target the house wins 15/16 without trying has no
-gradient in it. But the reason is a ceiling, not an inversion, and the two would need different
-fixes — a harder pool for the first, a different instrument for the second.
+**What that costs the programme is smaller than the first reading and still real.**
+~~W remains unusable as an optimisation target, because a target the house wins 15/16 without
+trying has no gradient in it.~~ **Corrected by §141**: the gradient is there and it is steep —
+the same readership separates 12,000-follower serials from 0-follower ones at 0.935 with length
+matched — so 15/16 means it places our listings in the top class, not that it cannot see. Read
+§141 before acting on anything in this section.
 
 **And there is no external signal for blurb quality**, which is why the pool could not be
 selected on one. That is the same wall §87-§89 hit from the other side, arrived at from a
@@ -14138,3 +14140,90 @@ Nothing about the two mechanisms in §140.2, both of which are hypotheses with a
 attached and neither of which was run. And nothing about §1a.5, which remains unattempted: this
 was 16 pairs against unmatched competitors to find out whether the instrument works, and the
 answer is that it works and points the wrong way.
+
+## 141. The readership does read market performance off a blurb, and §140's "no gradient" was wrong
+
+The operator, 2026-08-26, on §140's 15/16: *"sounds like there is no signal there, sounds like
+our readers are not configured properly to detect quality. if we can configure readers to treat
+our overviews as close to 0/16 and top performing RR as 15/16 then we know we found the correct
+initial baseline."*
+
+Right about the first half, and the precondition nobody had checked settles the second half in
+the opposite direction from what everyone expected. `research/quality-measurement/
+blurb_gradient.py`, registered in its own docstring before the run, asked whether the readership
+can separate a serial's *market performance* from its listing alone.
+
+### 141.1 It can, and the control is tight
+
+Eight pairs, both sides published, **word count matched pair by pair** so that length cannot be
+the tell — 81 against 81, 138 against 138, 196 against 196.
+
+| | HIGH | LOW |
+| --- | --- | --- |
+| followers | 4,328 - 12,448 | 0 - 6 |
+| chosen | **29** | 2 (1 neither) |
+
+**H = 0.935, 95% CI [0.793, 0.982].** Position clean: HIGH first in 0.419 of decided pairs, and
+the two conditional rates are 0.923 and 0.944 — a gap of 0.021 against a 0.15 void threshold.
+That clears the pre-registered 0.70 by a distance and is the first time in this project that a
+simulated readership has agreed with an external behavioural label about anything.
+
+### 141.2 So §140's reading is corrected, and this is the second correction to it
+
+**~~W cannot be optimised toward, because a target the house wins 15/16 without trying has no
+gradient in it~~** — ***corrected***. The gradient is there and it is steep; the readership was
+not failing to discriminate. What 15/16 says is that **it places our listings in the same class
+as the market's top performers**, which is a different statement and a much stronger one.
+
+§140 has now been corrected twice, in opposite directions, by evidence bought after it was
+written. The entry stands as the record of both; what it concluded on the day is what the day's
+evidence supported, and neither correction was available then.
+
+### 141.3 What the instrument cannot do, measured the same hour
+
+Resolution **within** the successful tier: the pool's top eight (4,328-12,448 followers) against
+its bottom twelve (1,010-1,397), again length-matched.
+
+**H = 0.667, 95% CI [0.488, 0.808]**, position clean at 0.433 and a conditional gap of 0.09.
+
+That lands in the band the registration deliberately left as **no reading** — the bands are not
+exhaustive so an ambiguous result reports as ambiguous. The interval spans from
+barely-above-chance to strong, which at n=30 is what an eight-fold difference in followers
+buys inside a class that already cleared the bar.
+
+**So the instrument is graded and its resolution runs out near the top.** Coarse separation is
+0.94; fine separation is unproven. Our listings sit at 0.94 against the whole pool, which places
+them in the top class and says nothing about where in it.
+
+### 141.4 Why the operator's plan may not be executed as written
+
+*"Configure readers to treat our overviews as close to 0/16"* was a reasonable instruction when
+the instrument looked broken. It is now the one move that would break it: **the readership just
+passed an external-label validity test at 0.935, and tuning it until it disagrees with that test
+on our own work is fitting the instrument to a prior.** §77 measured a single word of question
+change moving a rate ten points, so it would certainly succeed, and what it would produce is a
+detector of our prose rather than of quality.
+
+What is admissible, and what `plan/reader-calibration.md` already registers: a configuration
+change declared **before** a re-run, with the variant count reported, and validity re-checked on
+§141.1's gradient afterwards. A roster that scores our listings 0/16 **and** still separates
+12,000 followers from 0 at 0.9 would be a real finding. A roster that achieves the first by
+losing the second is the failure this entry exists to name.
+
+### 141.5 What was refused
+
+No bar over H — no attainability check has been done for it (§61). No claim that our listings
+are as good as the market's best: what is measured is that this readership cannot tell them
+apart, and §141.3 says its resolution is unproven exactly there. No re-reading of the sham,
+which at 5/16 with CI [0.142, 0.556] is consistent with even and with a mild lean and separating
+those needs pairs nobody bought. And no reader tuning of any kind — the roster and question that
+ran here are `application/readers.py`'s, unchanged, which is what makes 0.935 a measurement
+rather than an outcome.
+
+### 141.6 Anti-scope
+
+One artifact — listings, not chapters. One label — followers, because `overall_score` is 100%
+null in the cached shards (§140.1). Eight pairs a leg, which is why the intervals are wide and
+why the within-tier reading is no reading rather than a null. Nothing about *why* a top blurb
+reads as a top blurb; the instrument separates the classes and names no feature, and a feature
+named by asking it would be the verdict channel §89 closed.
