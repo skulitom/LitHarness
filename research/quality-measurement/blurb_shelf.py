@@ -63,7 +63,12 @@ RESULTS = HERE / "results"
 
 # ---------------------------------------------------------------- the registration, frozen
 
-BLURB_SHELF_VERSION = "blurb_shelf.v0"
+#: v0.1, and the two changes from v0 are construction findings from its first run
+#: (`results/blurb-shelf.json`, the registration's amendment section): sham shelves now
+#: re-shuffle per draw so a reader consistently naming the same LISTING no longer fixes a
+#: slot (v0's KP could not tell identity from position on a static shelf), and KD is read
+#: per leg (v0 pooled shams with measurement legs, two different tasks under one number).
+BLURB_SHELF_VERSION = "blurb_shelf.v0.1"
 
 #: Listings per shelf, numbered 1-6 in the ask.
 SHELF_SIZE = 6
@@ -412,6 +417,14 @@ def sham_floor(records: list[dict[str, Any]]) -> dict[str, Any]:
     if histogram:
         modal_slot = max(histogram, key=lambda s: (histogram[s], -int(s)))
         modal_count = histogram[modal_slot]
+    # v0.1: the modal LISTING beside the modal slot. With per-draw re-shuffling the two come
+    # apart — a reader repeatedly flagging one listing is consistency (reported, killed by
+    # nothing), and only a slot that stays modal across re-shuffles is position (KP).
+    digests = [r.get("named_digest") for r in records if r.get("named_slot")]
+    digest_counts = Counter(d for d in digests if d)
+    modal_listing_share = (
+        max(digest_counts.values()) / len(digests) if digest_counts and digests else None
+    )
     return {
         "draws": len(records),
         "named": len(named),
@@ -419,6 +432,7 @@ def sham_floor(records: list[dict[str, Any]]) -> dict[str, Any]:
         "by_slot": {slot: histogram[slot] for slot in sorted(histogram)},
         "modal_slot": modal_slot,
         "modal_share": (modal_count / len(named)) if named else None,
+        "modal_listing_share": modal_listing_share,
         "position_kill": len(named) >= 2 and (modal_count / len(named)) >= KP_MODAL_SHARE,
     }
 
@@ -486,10 +500,12 @@ def kills(sham_floors: list[dict[str, Any]], legs: dict[str, Any]) -> dict[str, 
     """The three registered kills, each verdict naming its numbers.
 
     KP — position: fires when ANY single sham's false alarms track one slot (`position_kill`
-    in its own floor). KS — surface: truncation-only shelves detected at gradient-leg rates
-    means the instrument reads length, and is dead; direction only, no bar over either rate.
-    KD — draw reliability: mean cross-draw agreement below the floor makes every leg's
-    direction unreadable. No bar over any detection rate anywhere.
+    in its own floor; meaningful because v0.1 re-shuffles a sham per draw, so only position
+    can keep a slot modal). KS — surface: truncation-only shelves detected at gradient-leg
+    rates means the instrument reads length, and is dead; direction only, no bar over either
+    rate. KD — draw reliability per leg, each against the registered floor: a measurement
+    leg below it is unreadable; a sham's number is reported for what it is (draws on a
+    re-shuffled shelf with nothing to find should scatter). No bar over any detection rate.
     """
     worst = max((floor["modal_share"] or 0.0) for floor in sham_floors) if sham_floors else None
     kp = {
@@ -511,15 +527,22 @@ def kills(sham_floors: list[dict[str, Any]], legs: dict[str, Any]) -> dict[str, 
             else ("KILL" if surface_detection >= gradient_detection else "PASS")
         ),
     }
-    mean_agreement = legs.get("kd_agreement")
+    # v0.1: per leg, each against the same registered floor. v0 pooled shams (where draws
+    # SHOULD scatter on a re-shuffled shelf with nothing to find) with measurement legs
+    # (where draws should agree on the target) — two tasks under one number.
+    by_leg: dict[str, Any] = legs.get("kd_by_leg") or {}
     kd = {
-        "mean_agreement": mean_agreement,
         "floor": KD_AGREEMENT_FLOOR,
-        "verdict": (
-            "UNREADABLE"
-            if mean_agreement is None
-            else ("NOISE" if mean_agreement < KD_AGREEMENT_FLOOR else "PASS")
-        ),
+        "by_leg": by_leg,
+        "verdict": {
+            leg: (
+                "UNREADABLE"
+                if agreement is None
+                else ("NOISE" if agreement < KD_AGREEMENT_FLOOR else "PASS")
+            )
+            for leg, agreement in by_leg.items()
+        }
+        or "UNREADABLE",
     }
     return {"KP": kp, "KS": ks, "KD": kd}
 
@@ -615,9 +638,21 @@ def selftest() -> int:
     if phrase_record("never present anywhere", listing, is_ours=False) != {"located": False}:
         failures.append("an unlocatable market phrase stores nothing but located False")
 
-    table = kills([floor_a], {"gradient": 0.8, "surface": 0.2, "kd_agreement": 0.75})
+    table = kills(
+        [floor_a],
+        {"gradient": 0.8, "surface": 0.2, "kd_by_leg": {"gradient": 0.75, "sham": 0.3}},
+    )
     if table["KS"]["verdict"] != "PASS" or table["KP"]["verdict"] != "KILL":
         failures.append("the kill table mis-reads a passing KS and a tracked KP")
+    if table["KD"]["verdict"] != {"gradient": "PASS", "sham": "NOISE"}:
+        failures.append("KD must verdict each leg against the floor, never a pooled number")
+
+    draw_orders = [
+        seeded_order(high[:SHELF_SIZE], seed_of(BLURB_SHELF_VERSION, "sham_x", "draw", d))
+        for d in range(K_DRAWS)
+    ]
+    if len({tuple(r["source"] for r in order) for order in draw_orders}) < 2:
+        failures.append("per-draw sham re-shuffles must actually vary the slot a row lands in")
     if registration_digest() != registration_digest():
         failures.append("registration digest unstable")
 
@@ -670,7 +705,14 @@ def run(
         for draw in range(K_DRAWS):
             slot = (start + draw) % SHELF_SIZE
             rows = (
-                shelf["members"]
+                # Re-shuffled per draw (v0.1): on v0's static shams, a reader consistently
+                # naming the same listing necessarily fixed a slot, so KP could not tell
+                # identity-consistency from position bias. Now the same complaint about the
+                # same listing lands on a different slot each draw, and the modal SLOT means
+                # position again; the modal LISTING is reported beside it off `named_digest`.
+                seeded_order(
+                    shelf["members"], seed_of(BLURB_SHELF_VERSION, shelf["name"], "draw", draw)
+                )
                 if target is None
                 else slot_placement(shelf["fillers"], target, slot)
             )
@@ -691,6 +733,8 @@ def run(
             parsed = result.parsed if isinstance(result.parsed, dict) else None
             answer = parse_answer(json.dumps(parsed)) if parsed is not None else None
             record["named_slot"] = answer["off_shelf"] if answer else None
+            if answer and answer["off_shelf"]:
+                record["named_digest"] = digest_of(page(rows[answer["off_shelf"] - 1]))
             records.append(record)
             if answer and answer["off_shelf"]:
                 named_row = rows[answer["off_shelf"] - 1]
@@ -769,7 +813,7 @@ def main(argv: list[str] | None = None) -> int:
     records, phrases, compositions = run(build_default_registry(), shelves)
 
     per_shelf: dict[str, Any] = {}
-    agreements: list[float] = []
+    leg_agreements: dict[str, list[float]] = {}
     for shelf in shelves:
         mine = [r for r in records if r["shelf"] == shelf["name"]]
         per_shelf[shelf["name"]] = (
@@ -777,7 +821,7 @@ def main(argv: list[str] | None = None) -> int:
         )
         agreement = draw_agreement([r["named_slot"] for r in mine])
         if agreement is not None:
-            agreements.append(agreement)
+            leg_agreements.setdefault(shelf["leg"], []).append(agreement)
 
     def leg_rate(leg: str) -> float | None:
         tally = tally_draws([r for r in records if r["leg"] == leg])
@@ -787,7 +831,12 @@ def main(argv: list[str] | None = None) -> int:
         "gradient": leg_rate("gradient"),
         "surface": leg_rate("surface"),
         "ours": leg_rate("ours"),
-        "kd_agreement": statistics.fmean(agreements) if agreements else None,
+        # v0.1: per leg — a sham's draws SHOULD scatter on a re-shuffled shelf while a
+        # measurement leg's should agree on the target; pooling them was two tasks under one
+        # number, and it is the pooled figure that read 0.476 on the first run.
+        "kd_by_leg": {
+            leg: statistics.fmean(values) for leg, values in sorted(leg_agreements.items())
+        },
     }
     report = {
         "study": BLURB_SHELF_VERSION,
@@ -808,8 +857,13 @@ def main(argv: list[str] | None = None) -> int:
         rate = summary["false_alarm"] if "false_alarm" in summary else summary["detection"]
         print(f"  {name:28} draws {summary['draws']:3}  rate {rate}")
     table = report["kills"]
-    verdicts = table["KP"]["verdict"], table["KS"]["verdict"], table["KD"]["verdict"]
-    print(f"\nKP {verdicts[0]}  KS {verdicts[1]}  KD {verdicts[2]}")
+    kd_verdict = table["KD"]["verdict"]
+    kd_text = (
+        " ".join(f"{leg}:{verdict}" for leg, verdict in kd_verdict.items())
+        if isinstance(kd_verdict, dict)
+        else kd_verdict
+    )
+    print(f"\nKP {table['KP']['verdict']}  KS {table['KS']['verdict']}  KD {kd_text}")
     print(f"-> {args.out}")
     return 0
 

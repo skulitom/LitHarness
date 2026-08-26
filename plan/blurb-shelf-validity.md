@@ -84,3 +84,37 @@ stored verbatim only when the named slot holds one of OUR listings, otherwise to
 into that listing plus a `located` flag, locvisable by digest. Free legs (`--selftest`,
 `--dry-run`) prove the arithmetic before anything spends; the paid run refuses without both
 `--yes` and the undocumented `--i-am-the-gated-run`.
+
+## 6. Amendments after the first run (v0.1, 2026-08-26)
+
+The v0 battery ran once (84 calls, `results/blurb-shelf.json`), and under its own
+registration certified nothing: KP fired at modal share 1.0 and pooled KD read 0.476 against
+the 0.5 floor. **Those kills stand as the v0 reading.** Both traced to construction rather
+than to the readership, and v0.1 changes exactly the two constructions:
+
+1. **Sham shelves re-shuffle per draw.** v0's shams kept one fixed order across all four
+   draws, so a reader consistently naming the same LISTING necessarily fixed a slot — KP
+   could not tell identity-consistency from position bias. The run's own numbers show the
+   confound: the modal slots differ across shams (3, 2, 2, 5, 3, 4), where a position-biased
+   reader would favour one slot everywhere, and on the rotating gradient shelves detection
+   followed the target across slots. v0.1 re-shuffles a sham's members under a per-draw seed
+   and records the named row's digest, so the modal slot means position again and the modal
+   listing is reported beside it (killed by nothing — flagging the same real listing four
+   times is consistency, and what it flags is information).
+2. **KD is read per leg.** v0 pooled cross-draw agreement over shams and measurement legs —
+   two different tasks: a sham's draws SHOULD scatter on a shelf with nothing to find, a
+   measurement leg's should agree on the target. Each leg now carries its own mean against
+   the same registered floor (unchanged at 0.5); the first run's per-leg picture was ours at
+   1.0 with the pool dragged under the floor by exactly the legs where scatter is the
+   correct behaviour.
+
+What v0.1 does not change: the ask, the schema, the shelf size, K, the leg sizes, the
+per-sham floor rule, KS, and every reading in §4. The v0.1 battery re-runs whole (84 calls)
+so that every number sits under one registration.
+
+One observation from the v0 run is recorded here because the next version should design for
+it rather than around it: the false-alarm rate on all-real shelves is high (20 of 24 draws
+named something) — the ask under-invites "none". Detection is slot-specific so the target
+rates stayed readable far above the ~0.14 chance of hitting a rotating slot, but a v1 that
+rebalances the ask toward "none is a common answer" would buy cleaner floors. Not changed in
+v0.1: rewording the ask is a new instrument, not an amendment.
