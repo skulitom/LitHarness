@@ -14029,6 +14029,42 @@ place: **1,000+ followers**, which is the **96.2nd percentile** of 2,105 genre-t
 objective is fiction an audience *continues*, and a follower is somebody who asked to be told
 about the next chapter.
 
+### 140.1.1 Correction, made the same session: the pool selects successful **books**, not good **blurbs**
+
+**~~The readership prefers our listings to the market's best~~** — ***corrected***. It prefers
+our listings to the **blurbs of** the market's best, and those are not the same object. Spot
+checks on three of the competitors the readers actually saw, all between 1,400 and 1,600
+followers:
+
+- *"Follow the newly christened Violet as she is born again ... Watch as she navigates this new
+  world filled with blue screens and skills. What happens when she unlocks forbidden magic?"*
+- *"This is a slow-burning Dungeon-Core fiction with a LitRPG-System. You can expect an extreme
+  amount of kingdom-building"*
+- *"Now if only he can convince everyone he's a male boat."*
+
+Those are the amateur web-fiction blurb register — second-person imperatives, a tag dump, and a
+description of the *fiction* rather than of the story. They are also blurbs attached to serials
+with a thousand-plus followers each, which is the whole point: **a RoyalRoad serial earns its
+following from rankings, cover, chapter one and cadence, and the blurb is frequently an
+afterthought.** `MIN_FOLLOWERS` selects on the book and the pairing tests the listing, and
+nothing in between guarantees the two travel together.
+
+**So K3 stands as a reading of the instrument and not as a reading of quality.** What the run
+establishes: the readership discriminates (the sham split evenly), and it prefers a made blurb
+to an unmade one. What it does **not** establish, and what §140 as first written implied: that
+the readership is anti-correlated with the operator's judgment. The operator's premise is about
+*books being better*; this measured *blurbs*, and the two questions were run together by
+accident.
+
+**What that costs the programme is smaller than the first reading and still real.** W remains
+unusable as an optimisation target, because a target the house wins 15/16 without trying has no
+gradient in it. But the reason is a ceiling, not an inversion, and the two would need different
+fixes — a harder pool for the first, a different instrument for the second.
+
+**And there is no external signal for blurb quality**, which is why the pool could not be
+selected on one. That is the same wall §87-§89 hit from the other side, arrived at from a
+direction that looked like it went around.
+
 ### 140.2 What it costs, and it is the whole optimisation
 
 **W cannot be optimised toward.** The operator's own premise is that our listings are worse than
