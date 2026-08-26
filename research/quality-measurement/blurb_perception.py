@@ -13,7 +13,7 @@ the same classes in every session: terms that mean nothing, sentences that do no
 phrases that sound specific and name nothing. None of those changes which book somebody buys off
 a shelf; all of them are what makes the prose bad.
 
-**And the one counter that existed asked the wrong question.** `comprehension.ANSWER_SCHEMA`'s
+**And the one counter that existed asked the wrong question.** The retired definition screen's
 `undefined_words` reads *"words used as if you already knew them, where you were never told what
 they mean"* — a **definition** counter. It flags `sects`, `slayers`, `class`: genre furniture
 every reader of this genre parses on sight, and the operator's own reading of that class of term
@@ -62,7 +62,8 @@ from typing import Any
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE.parent.parent / "src"))
 
-from litharness.application import comprehension  # noqa: E402
+from blurb_readers import READERS  # noqa: E402
+
 from litharness.domain.generation import CompletionRequest  # noqa: E402
 from litharness.providers import build_default_registry  # noqa: E402
 
@@ -116,7 +117,7 @@ def probe(registry: Any, text: str) -> dict[str, Any]:
     """Four readers over one blurb. Returns the per-field counts and every span quoted."""
     spans: dict[str, list[str]] = {name: [] for name in FIELDS}
     answered = 0
-    for reader in comprehension.READERS:
+    for reader in READERS:
         request = CompletionRequest(
             prompt=f"{text.strip()}\n\n---\n\n{_ASK}",
             system=reader.system(),

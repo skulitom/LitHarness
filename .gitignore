@@ -72,10 +72,10 @@ book-library*/
 # record is `results/force-*.json`, which carries ids, digests and numbers and no prose.
 research/quality-measurement/derived/
 
-# Local run workspaces belong under one root: forge candidates, pilot listings, ad-hoc cover
+# Local run workspaces belong under one root: pilot listings, ad-hoc cover
 # experiments, and similar regenerable artifacts. Keeping one ignored boundary prevents each
 # experiment name from becoming another invisible directory at repository root. Root-level
-# `pilot*`, `forge`, and `cover-sets*` are intentionally not ignored: an old command that creates
+# `pilot*` and `cover-sets*` are intentionally not ignored: an old command that creates
 # one now surfaces in `git status` instead of quietly reintroducing the clutter.
 /runs/
 

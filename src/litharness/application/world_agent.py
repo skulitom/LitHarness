@@ -5,7 +5,7 @@ for writing a book... The world would obviously evolve and grow with every chapt
 *"Architect Writers and readers should work together to make the world as interesting as
 possible"*, and *"also to make sure everything stays coherent and present in the world"*.
 
-What this replaces is `architect.render_world_request`: one 32,000-token structured call, K
+What this replaces is the retired Forge: one 32,000-token structured call, K
 worlds at a time, a person picking one, and then a world that never changed again for the rest
 of the book. What it is instead is the same cast writer, holding `litharness world`, building
 the world of the book they are about to write and coming back to it as the book grows.

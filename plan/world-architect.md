@@ -1,5 +1,12 @@
 # The Architect role: a world the writer must honour and rarely states
 
+> [!WARNING]
+> **RETIRED DESIGN — historical record only.** This document describes the deleted Forge:
+> one structured call generated K worlds and a person picked one. The active system is the
+> evolving Architect agent in `application/world_agent.py`, invoked with
+> `litharness architect seed|grow` and constrained to the `litharness world` tools.
+> Nothing should implement or restore the Forge from this document.
+
 **Written 2026-08-21, before any code in this design was written and before any world was
 generated.** Companion to [`plan/state-model-abilities.md`](state-model-abilities.md), which
 designs the ontology this builds *to*, and to

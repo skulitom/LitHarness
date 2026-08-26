@@ -1,5 +1,10 @@
 # Stage 0 decisions
 
+> [!NOTE]
+> This is an append-only historical decision ledger. A citation labelled `retired Forge test`
+> names evidence that was removed with the retired implementation; it is provenance, not a
+> claim that the named test remains in the active suite.
+
 **Status:** Stages 0-2 met against their §17 exit clauses — **787 passing tests (+8 opt-in live, 2026-08-17 — PLAN.md's header and §7 carry the same number; the suite referees any disagreement), ruff clean, mypy
 strict clean.** Slice 1 is the model-free manuscript spine; slice 2 the Conductor skeleton
 (tick, instance lease, job selection, digest, outbox dispatch, crash recovery); slice 3 the
@@ -9966,7 +9971,7 @@ invocation that makes no provider call, records its own decision with `VerdictSo
 writes the seed, directives and promises `new --state … --promises …` consumes unchanged.
 
 **No model orders the candidates**, enforced by import ban rather than by intent —
-`test_the_architect_ranks_nothing_and_cannot_learn_to` refuses the module an import of
+`retired Forge test: test_the_architect_ranks_nothing_and_cannot_learn_to` refuses the module an import of
 `select_winner`, the pairwise engine, the judge panel or `plan_search`, and refuses the strings
 `select_winner`, `win_rate`, `PairVerdict` and `Calibration` anywhere in it. §105.1's device applied
 to the role that would be most tempting to give a taste. §61(5) then divides the confidence level by
@@ -10194,7 +10199,7 @@ pilot or a measurement, four by the test suite, one by the merge**, and none by 
 
 | 10 | the pilot | **The reveal schedule was in a different key vocabulary from the book's own, so the iceberg leaked in exactly the wrong direction.** `beats_for` mints `s1…s8` for an eight-scene book — width **one** — while the Architect minted `s04`, `s41`, `s92`. Order keys compare lexicographically, so `"s1" > "s04"`. Measured on the run: **both answers the opening existed to keep were handed to the writer as established fact from scene one**, and by scene eight five of six were, an arc answer six chapters out drifting into the facts at scene five. Nothing raised; the strings compared fine. Fixed by minting positions in the book's own width and by minting **none at all** for a scene the book does not have — the ordinal lives under `worlds.REVEAL_SCENE`, so a serial's later answers are recorded and permanently hidden here rather than clamped. |
 
-| 11 | the merge | **Neither side of this one was wrong alone.** A parallel session landed `OWN_POSITION_VERSIONS` — registry versions whose order keys this system's own planning placed, and which therefore are not evidence that a book has an author's story vocabulary — after measuring that one undeclared dated record flips `has_story_vocabulary` and makes §12 step 5 **extract nothing from any scene**. This branch added two more producers of dated records: the second extractor family, and an Architect's reveal positions. Both are minted in `beats_for`'s own width from the book's own scene count, so both belong in the set; left out, every forged world would have looked like somebody else's numbering and silently lost all extraction. Fixed on the merge, with `test_a_forged_world_does_not_look_like_an_authors_vocabulary` pinning it. |
+| 11 | the merge | **Neither side of this one was wrong alone.** A parallel session landed `OWN_POSITION_VERSIONS` — registry versions whose order keys this system's own planning placed, and which therefore are not evidence that a book has an author's story vocabulary — after measuring that one undeclared dated record flips `has_story_vocabulary` and makes §12 step 5 **extract nothing from any scene**. This branch added two more producers of dated records: the second extractor family, and an Architect's reveal positions. Both are minted in `beats_for`'s own width from the book's own scene count, so both belong in the set; left out, every forged world would have looked like somebody else's numbering and silently lost all extraction. Fixed on the merge, with `test_an_architect_world_does_not_look_like_an_authors_vocabulary` pinning it. |
 
 **Defect 8 is unfixed in Serial Pilot 2 and that is deliberate.** The pilot runs on the world that
 produced it, so its graph line is unusable and **the second extractor family is inert for this
@@ -11590,7 +11595,7 @@ register would be this system deciding one of them matters more.
 `test_the_standing_block_carries_no_verb_and_no_adjective` and
 `test_the_ladder_rules_ask_for_a_schedule_and_never_for_a_feeling` check the text against nineteen
 words such an instruction would need, and
-`test_the_protagonist_rule_asks_for_a_declaration_and_never_an_outcome` was widened from one rule
+`retired Forge test: test_the_protagonist_rule_asks_for_a_declaration_and_never_an_outcome` was widened from one rule
 to all three that now mention the protagonist. The craft rule that *would* ask for the rung's
 visible form on the page is drafted as **C11** in `plan/serial-pilot-5-craft.json` `proposed`,
 **not issued** — it is the operator's, like C5.
@@ -11615,7 +11620,7 @@ named in `plan/world-architect.md` §8.
 
 **Backwards compatibility is asserted, not hoped.** A world that declares no standing makes
 byte-identical records and reports `ladders: 0`
-(`test_the_pilot_package_regenerates_the_world_it_was_run_on` stays green); a book whose canon
+(`retired Forge test: test_the_pilot_package_regenerates_the_world_it_was_run_on` stays green); a book whose canon
 declares no chain renders today's outline request and today's drafting prompt byte-for-byte
 (`test_a_book_with_no_ladder_is_asked_nothing_about_one`,
 `test_a_book_with_no_ladder_renders_the_prompt_it_rendered_before`); both golden fixtures extract
@@ -11696,7 +11701,7 @@ regenerates byte-identically and reports three zeros.
 **A rung and a capability are different objects and meet at exactly one edge.** §113 built the
 ladder — a position in a recognised order, one per criterion. This is a set. `requires` is the one
 place they touch, where a capability may need a **rung** first. A world may declare either, both or
-neither. `test_the_inventory_is_a_set_and_the_ladder_is_a_position` pins it.
+neither. `retired Forge test: test_the_inventory_is_a_set_and_the_ladder_is_a_position` pins it.
 
 **No number was added.** The forge schema still has **exactly two integer fields**
 (`mysteries[].disclosed_at_scene`, `cardinality[].maximum`), re-counted after the change.
@@ -11775,12 +11780,12 @@ cannot drift, and it is **crude and named as crude** — `cap_read_a_seam` match
 
 **No bar, no pole, no axis, no floor.** Nothing in the gate or the report mentions a minimum; the
 operator's *"nine"* is a word for an inventory and not a threshold, and
-`test_the_report_counts_the_inventory_and_declares_no_bar` asserts the absence. No distribution was
+`retired Forge test: test_the_report_counts_the_inventory_and_declares_no_bar` asserts the absence. No distribution was
 turned into a line.
 
 **No instruction about how to write a capability.** The system may say a person can do a thing; it
 may not say a scene should show it off, make it impressive, pace it, or let them win with it.
-`test_the_capability_rule_asks_for_a_declaration_and_never_a_performance` asserts this by verb list
+`retired Forge test: test_the_capability_rule_asks_for_a_declaration_and_never_a_performance` asserts this by verb list
 rather than by intent, in the shape §112's protagonist-rule test established.
 
 **Anti-scope.** Nothing touched the ladder, `rung_index`, `stands_at` or the rise on the page —
@@ -11850,11 +11855,11 @@ when it is given and disagrees. Byte-identical output for Serial Pilot 2 either 
 
 Six tests, five of which fail on the code that shipped before this entry:
 `tests/test_architect.py::test_a_pick_with_no_scenes_takes_the_width_the_forge_recorded`,
-`test_a_scenes_flag_that_disagrees_with_the_forged_width_is_refused_naming_both`,
-`test_the_forge_records_the_width_it_forged_at`, the widened
-`test_a_forged_bundle_seeds_a_book_with_no_provider_call` (which now picks *without* `--scenes`,
+`retired Forge test: test_a_scenes_flag_that_disagrees_with_the_forged_width_is_refused_naming_both`,
+`retired Forge test: test_the_forge_records_the_width_it_forged_at`, the widened
+`retired Forge test: test_a_forged_bundle_seeds_a_book_with_no_provider_call` (which now picks *without* `--scenes`,
 as an operator does), and the widened
-`test_a_scene_count_the_directives_were_not_written_for_is_refused`. The sixth is below.
+`retired Forge test: test_a_scene_count_the_directives_were_not_written_for_is_refused`. The sixth is below.
 
 ### 115.3 The absent key keeps the old behaviour, and that is a decision rather than an oversight
 
@@ -11863,7 +11868,7 @@ Every `forge.json` already on disk was written before the width was recorded. Ab
 still falls back to `DEFAULT_SCENES` — the old behaviour, defect included. Refusing those bundles
 would park every one of them over a fault none of them can be shown to have, and re-forging one
 costs a paid run and a fresh operator choice.
-`test_a_forge_file_written_before_the_width_was_recorded_picks_as_it_always_did` pins both halves
+`retired Forge test: test_a_forge_file_written_before_the_width_was_recorded_picks_as_it_always_did` pins both halves
 and is the one test here that passes on the old code as well as the new, which is the property it
 exists to state.
 
@@ -11882,7 +11887,7 @@ unusable and that the bundle was re-picked correctly on 2026-08-22
 in §115.1 wrote into scratch and `pilot4/direct3/` was read and never written.
 
 **No clamp.** A reveal scheduled past the last scene still gets an ordinal and no position, which
-is `story_key`'s honest encoding and what `test_a_debt_the_serial_settles_later_is_opened_without_a_due_date`
+is `story_key`'s honest encoding and what `retired Forge test: test_a_debt_the_serial_settles_later_is_opened_without_a_due_date`
 has asserted since §110 — four of *A Good Take*'s six reveals are legitimately outside the opening
 and none of them was given a position it did not earn.
 
@@ -11960,11 +11965,11 @@ all three: `register, owes, wage, bailiff` / `deeds` / `broker`.
 `administration_in_premise`, so the operator picking among K sees the number rather than only the
 complaint. No threshold is declared over the rate.
 
-Tests: `test_no_rule_offers_a_debt_as_a_subject_or_a_market_as_an_interface`,
-`test_the_cost_rule_says_what_a_cost_is_paid_in`,
-`test_a_premise_written_in_administration_is_refused`,
-`test_the_administration_rate_is_reported_and_nothing_refuses_on_it`, and the count in
-`test_the_protagonist_rule_asks_for_a_declaration_and_never_an_outcome` raised from four to five
+Tests: `retired Forge test: test_no_rule_offers_a_debt_as_a_subject_or_a_market_as_an_interface`,
+`retired Forge test: test_the_cost_rule_says_what_a_cost_is_paid_in`,
+`retired Forge test: test_a_premise_written_in_administration_is_refused`,
+`retired Forge test: test_the_administration_rate_is_reported_and_nothing_refuses_on_it`, and the count in
+`retired Forge test: test_the_protagonist_rule_asks_for_a_declaration_and_never_an_outcome` raised from four to five
 against its own docstring's instruction to read the forbidden-verb list first.
 
 ### 116.3 The one refusal is attainable, checked the way §81, §85, §87 and §89 were not
@@ -11983,7 +11988,7 @@ Serial Pilot 2 was written on. `gate_candidate` gained `include_subject: bool = 
 and `tools/rematerialise_forge_bundle.py` pass it `False`, because both rebuild a world **a person
 already picked** and whether it should have been picked was settled then. §115.3 is the precedent
 — *"the absent key keeps the old behaviour, and that is a decision rather than an oversight"*.
-Nothing at forge time passes `False`. `test_the_pilot_package_regenerates_the_world_it_was_run_on`
+Nothing at forge time passes `False`. `retired Forge test: test_the_pilot_package_regenerates_the_world_it_was_run_on`
 now asserts both halves: the world rebuilds clean, **and** its premise draws the new complaint.
 
 ### 116.5 The RS1 guard's second measured false positive, and its second narrowing
@@ -11995,7 +12000,7 @@ other phrase in its list has ever fired on a forged world. The phrase moves out 
 case-insensitive list and gains the capitals requirement the title-shaped alternative already
 carries (`like in The Bright Ladder` still matches), rather than being deleted. The docstring
 already recorded one narrowing from a measured false positive; this is the second, and the fixture
-lives in `test_ordinary_legal_english_is_not_a_borrowed_reference`.
+lives in `retired Forge test: test_ordinary_legal_english_is_not_a_borrowed_reference`.
 
 ### 116.6 What was refused, and the limitation named rather than fixed
 
@@ -12108,7 +12113,7 @@ ceiling that was not enforcing what it claims.
 answer was kept at, and the direction to try: *an answer this size is usually one message short of
 whole — forge fewer worlds (`--k 2`) rather than retrying at the same width.*
 
-`test_a_forge_answer_that_does_not_conform_is_kept_on_disk_and_costed` runs the branch against a
+`retired Forge test: test_a_forge_answer_that_does_not_conform_is_kept_on_disk_and_costed` runs the branch against a
 stub provider returning a fragment, and asserts all three halves: the text on disk, no `forge.json`
 beside it, and `spend_on` reporting the invocation.
 
@@ -12210,10 +12215,10 @@ open**, and both are written into the rule text so a later reader does not have 
 
 It is written in the register of the declared-shape rules beside it and stops there: nothing in it
 says the wish should be a good one, that a reader should like it, or that anybody achieves it.
-`test_a_rule_asks_what_a_person_would_want_and_puts_it_at_the_top_of_the_ladder` runs the
+`retired Forge test: test_a_rule_asks_what_a_person_would_want_and_puts_it_at_the_top_of_the_ladder` runs the
 protagonist rule's forbidden-verb list over it and asserts it does not name the protagonist, so it
-has not quietly joined the four rules `test_the_protagonist_rule_asks_for_a_declaration_and_never_an_outcome`
-counts. `test_the_domain_is_the_engine_and_its_jargon_never_reaches_the_page` pins the other.
+has not quietly joined the four rules `retired Forge test: test_the_protagonist_rule_asks_for_a_declaration_and_never_an_outcome`
+counts. `retired Forge test: test_the_domain_is_the_engine_and_its_jargon_never_reaches_the_page` pins the other.
 
 ### 118.3 What was refused
 
@@ -12302,10 +12307,10 @@ is legitimate, and is often the better book."* §113's fence around the one defa
 the table is unchanged, and `inversion` stays a required field so a world that inverts nothing has
 to say so.
 
-Tests: `test_the_premise_rule_asks_for_a_pitch_rather_than_prose`,
-`test_the_ladder_is_declared_furniture_rather_than_the_world_it_furnishes`,
-`test_a_rule_says_the_genre_s_own_furniture_is_welcome`,
-`test_inverting_a_genre_default_is_optional_and_the_ladder_is_still_fenced`.
+Tests: `retired Forge test: test_the_premise_rule_asks_for_a_pitch_rather_than_prose`,
+`retired Forge test: test_the_ladder_is_declared_furniture_rather_than_the_world_it_furnishes`,
+`retired Forge test: test_a_rule_says_the_genre_s_own_furniture_is_welcome`,
+`retired Forge test: test_inverting_a_genre_default_is_optional_and_the_ladder_is_still_fenced`.
 
 ### 119.2 The question underneath, answered rather than engineered around
 
@@ -13353,10 +13358,9 @@ readership direction about the life this person came from.
 — the deletions were craft instruction, and every deterministic check still has a rule asking
 for the thing it checks.
 
-**Three ledger-cited test names survive on their replacements**, each with the change in its
-docstring: `test_a_rule_asks_what_a_person_would_want_and_puts_it_at_the_top_of_the_ladder` now
-pins the deletion rather than the rule, and
-`test_no_rule_offers_a_debt_as_a_subject_or_a_market_as_an_interface` lost the half of its
+**Three ledger-cited tests were rewritten with the change**, each recording the replacement in
+its docstring. They were later removed with the Forge. The retired reader-wish rule test pinned
+the deletion rather than the rule, and the retired debt-and-market test lost the half of its
 assertion that belonged to the deleted rule.
 
 **What was refused.** No replacement rules. This is the first entry in the sequence §127

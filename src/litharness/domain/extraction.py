@@ -734,12 +734,12 @@ PLANNED_POSITION_VERSION = "litharness.planned-position.v0"
 #: **Two more members landed with the Architect, and both are the same case a third and fourth
 #: time.** `GRAPH_REGISTRY_VERSION` is this module's own second family, positioned at the key it
 #: was handed. `worlds.REGISTRY_VERSION` is an Architect's proposal, and its only dated records
-#: are the reveal positions `architect.story_key` mints **in `beats_for`'s own width, from the
+#: are the reveal positions the retired Forge minted **in `beats_for`'s own width, from the
 #: book's own scene count** — that is what stage-0 §107.9.1 defect 10 was fixed to guarantee, and
 #: it is exactly what makes them not somebody else's numbering. Left out, a forged world would
 #: flip `has_story_vocabulary` to True on its own seed and §12 step 5 would extract nothing from
 #: any scene, which is the silence measured for the seeded-interiority case arriving by a fourth
-#: door. `test_a_forged_world_does_not_look_like_an_authors_vocabulary` pins it.
+#: door. `test_an_architect_world_does_not_look_like_an_authors_vocabulary` pins it.
 OWN_POSITION_VERSIONS = frozenset(
     {
         REGISTRY_VERSION,
@@ -978,7 +978,7 @@ def extract_graph_facts(
                 subject=subject,
                 predicate=predicate,
                 object_ref=target,
-                # The criterion rides on the edge for the forge's own reason: two ladders in
+                # The criterion rides on the edge so two ladders in
                 # one world must not splice. Derived rather than printed — the page prints a
                 # rung and a reader knows which ladder it is on.
                 value=(

@@ -1,9 +1,8 @@
 """The world model: the record patterns, what they project into a packet, and what checks them.
 
-Grades `plan/world-architect.md` §5 items 1, 3, 4, 6 and 7 — the vocabulary, the projection, the
-hidden section, the cardinality detector, and the second extractor family. It does **not** grade
-whether a forged world is any good; there is no quality ordering over worlds in this project and
-`tests/test_architect.py` pins the absence of one.
+Grades the vocabulary, projection, hidden section, cardinality detector, and second extractor
+family. It does **not** grade whether a world is any good; there is no quality ordering over
+worlds in this project.
 
 **The first test in this file is a measurement rather than an assertion about intent.** It runs
 the four spellings `plan/state-model-abilities.md` §2 tabulates and records what the detector
@@ -297,7 +296,7 @@ def test_the_writer_is_handed_the_exception_beside_the_rule_it_excepts() -> None
 
 
 def test_a_cardinality_shape_missing_a_part_checks_nothing_and_says_so() -> None:
-    """Half a shape is not a shape, and the complaint is at forge time rather than at draft time."""
+    """Half a shape is not a shape, and the complaint arrives before world acceptance."""
     partial = [
         canon(worlds.world_record("one_holder", worlds.TYPE_PREDICATE,
                                   value=worlds.CARDINALITY_CONSTRAINT)),
@@ -489,12 +488,12 @@ def test_the_inventory_is_a_set_and_the_readers_say_whose() -> None:
     assert worlds.requirement_depth(records) == 2
 
 
-def test_the_readers_do_not_filter_canon_because_a_forged_world_is_a_proposal() -> None:
-    """**The bug this test exists for was live for twenty minutes.** `architect.report` counts a
-    *candidate*, every record of which is `PROPOSED` until `--pick`. A reader that filtered to
-    canon reported 0 capabilities for every world the forge has ever produced. `entities_with_role`
-    does not filter either, and callers that need canon — `world_brief.brief_for`,
-    `context.assemble` — filter before they call."""
+def test_world_readers_do_not_hide_proposals_from_the_architect() -> None:
+    """The Architect must inspect capabilities before `world accept`.
+
+    `entities_with_role` does not filter authority; callers that need canon —
+    `world_brief.brief_for` and `context.assemble` — filter before they call.
+    """
     proposed = [
         worlds.world_record("cap_read", worlds.ENTITY_ROLE_PREDICATE, value="capability"),
         worlds.world_record("silas", worlds.CAN_DO, object_ref="cap_read"),
@@ -623,8 +622,7 @@ def test_a_book_that_declares_no_protagonist_has_no_brief() -> None:
 
 
 def test_a_proposed_world_reaches_no_brief() -> None:
-    """Rail one, at the new seam. A forged world is a proposal until `--pick`, and a proposal
-    must not reach a planner any more than it reaches a packet."""
+    """A world is a proposal until `world accept` and must not reach a planner or packet."""
     proposed = [
         worlds.world_record("silas", worlds.ENTITY_ROLE_PREDICATE, value="cast"),
         worlds.world_record("silas", worlds.ENTITY_ROLE_PREDICATE, value="protagonist"),
@@ -1030,13 +1028,13 @@ def test_repetition_does_not_promote_and_later_causal_reuse_does() -> None:
     assert "promoted at s02" in (promoted.note or "")
 
 
-def test_a_forged_world_does_not_look_like_an_authors_vocabulary() -> None:
+def test_an_architect_world_does_not_look_like_an_authors_vocabulary() -> None:
     """A merge-interaction defect: neither side of it is wrong alone.
 
     `has_story_vocabulary` asks whether the book already carries order keys **somebody else**
     chose, and abstains from placing anything if so. An Architect's reveal positions are dated —
-    but `architect.story_key` mints them in `beats_for`'s own width from the book's own scene
-    count, which is what stage-0 §107.9.1 defect 10 was fixed to guarantee. Left out of
+    but the legacy pilot's positions were minted in `beats_for`'s own width from the book's own
+    scene count, which is what stage-0 §107.9.1 defect 10 was fixed to guarantee. Left out of
     `OWN_POSITION_VERSIONS` they would read as a foreign numbering, `stated_position` would
     abstain for the whole book, and §12 step 5 would extract nothing from any scene — the
     silence measured for the seeded-interiority case, arriving by a fourth door.
@@ -1108,16 +1106,6 @@ def test_a_world_record_is_content_addressed_on_its_edge() -> None:
     second = worlds.world_record("ash", "trait", object_ref="night_sight")
     assert first.record_id != second.record_id
     assert first.record_id == worlds.world_record("ash", "trait", object_ref="keen_scent").record_id
-
-
-def test_an_architect_id_addresses_the_brief_it_was_built_from() -> None:
-    assert worlds.architect_id_for("a world of salvage law") == worlds.architect_id_for(
-        "a world of salvage law"
-    )
-    assert worlds.architect_id_for("a") != worlds.architect_id_for("b")
-    assert worlds.is_machine_author(worlds.machine_author(worlds.architect_id_for("x")))
-    assert not worlds.is_machine_author(None)
-    assert not worlds.is_machine_author("")
 
 
 def test_a_world_record_defaults_to_a_proposal() -> None:

@@ -1,6 +1,6 @@
 """The book overview: what a reader sees before they open chapter one, and who writes it.
 
-**This is the forge's job without the forge.** A world used to be assembled by an Architect with
+**This replaced the retired Forge's pitch stage.** A world used to be assembled by an Architect with
 its own identity and its own rule essay, K at a time, and an operator picked one — which is a
 human production step, and §126's objective is fiction produced *without* a human production
 loop. The operator, 2026-08-24: *"we just don't need a forge"*, and *"we need to pass to the
@@ -12,7 +12,7 @@ the chapters. Nothing here ranks anything and nothing chooses between candidates
 candidates. The steering pool says what it hoped the book would be; the writer revises; the
 measurement pool, which never steers, says whether it would open chapter one.
 
-**The task text is deliberately short.** Three rules in `architect._RULES` were assertions about
+**The task text is deliberately short.** Three rules in the retired Forge were assertions about
 what this genre's reader wants, written into a prompt addressed to nobody. A cast writer who
 reads the genre knows what a hook is, and `domain/house.py` carries the floor. Adding a
 paragraph here about what makes an overview good would rebuild the rule essay one level up.
@@ -219,8 +219,8 @@ def _system(writer: Writer | None) -> str:
 def render_overview_request(brief: str, writer: Writer | None = None) -> CompletionRequest:
     """One overview, from a brief that may be empty.
 
-    An empty brief is legitimate and is the control the old forge kept for the same reason: a
-    book built from no direction at all is what a directed one is read against.
+    An empty brief is legitimate and is the control the retired Forge kept for the same reason:
+    a book built from no direction at all is what a directed one is read against.
 
     **A genre label is the worst thing this field has held, and it outweighed every rule in the
     prompt.** Measured 2026-08-25, four writers, both arms: with the brief `progression fantasy`

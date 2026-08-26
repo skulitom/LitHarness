@@ -1,5 +1,9 @@
 # World uptake: what reaches the page, what reached the plan, and the eight names the counter can actually see
 
+> [!NOTE]
+> Historical result from the retired Forge pipeline. The executable instruments named below
+> were removed with that pipeline; the committed result files preserve the recorded evidence.
+
 Run 2026-08-22 against `main` at `83de11c`. Instruments:
 `research/quality-measurement/world_uptake.py` (registration digest `cd79c3f56e21a1354e27`) and
 `research/quality-measurement/world_plan_arms.py` (registration digest `5b58386d638787ef3f1a`).

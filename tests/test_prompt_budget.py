@@ -27,7 +27,7 @@ from __future__ import annotations
 
 import pytest
 
-from litharness.application import comprehension, overview, readers, titles, world_agent
+from litharness.application import overview, readers, titles, world_agent
 from litharness.domain import house
 from litharness.domain import writers as writers_domain
 
@@ -58,7 +58,6 @@ def _roles() -> dict[str, str]:
         "scene writer, cast": f"{WRITER.render()}\n\n{floor}",
         "measurement reader": readers.pool(readers.MEASUREMENT)[0].system(),
         "steering reader": readers.pool(readers.STEERING)[0].system(),
-        "screen reader": comprehension.READERS[0].system(),
     }
 
 
@@ -132,7 +131,6 @@ BUDGET: dict[str, int] = {
     "scene writer, cast": 32,
     "measurement reader": 4,
     "steering reader": 4,
-    "screen reader": 5,
 }
 
 #: The floor everything else inherits. Broken out because a clause added here is added to every
@@ -180,7 +178,6 @@ READER_FACING = (
     "title writer",
     "measurement reader",
     "steering reader",
-    "screen reader",
 )
 
 

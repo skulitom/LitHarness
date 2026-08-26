@@ -44,7 +44,7 @@ to distrust first (PLAN.md header, the same lesson recorded three times).
   (§61(5), §105.1, §107.5). Roles that generate need containment; roles that judge need validity.
 - **Three tiers, in this order** (§129): `house.CLARITY` is the floor; **reader direction
   outranks every other craft instruction** and is meant to reach the prompt always; every
-  rule-essay (`architect._RULES`, and `house.READER` too) ranks below both and is provisional.
+  role-specific rule essay (including `house.READER`) ranks below both and is provisional.
   Tier 2 is currently empty, so tier 3 is still all the steering there is — subtract from it
   when the replacement carries something, not before.
 - **Simulated-reader direction may reach a prompt. Nothing else may.** Opened 2026-08-24 on
@@ -98,8 +98,8 @@ Several sessions edit this repo at once, on `main` and in `.claude/worktrees/*`.
   round trips are opt-in (`LITHARNESS_LIVE_PROVIDERS=1`) and spend quota.
 - **`claude -p` fails under box load, not under its own concurrency, and the failure is
   silent-ish**: a failing call still returns and the run completes with unanswered cells. Do
-  not run the full suite, mypy, or a GPU job while a paid arm, a pilot loop, or a `forge` is
-  running; check the process list first. One CLI arm at a time; read `transport_failures`
+  not run the full suite, mypy, or a GPU job while a paid arm, a pilot loop, or an Architect
+  run is active; check the process list first. One CLI arm at a time; read `transport_failures`
   before reading any verdict.
 - **The box hard-shut-down again on 2026-08-24, with the GPU governor holding**: an ollama
   arm was running under the 72/66 governor while two sustained CPU jobs (a parquet survey

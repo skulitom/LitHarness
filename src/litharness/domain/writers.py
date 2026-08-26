@@ -358,8 +358,9 @@ BUILTIN: Mapping[str, Writer] = {
 #: A dossier's variable is what this person reads the genre for and loves to write, which
 #: is a real writer's bio and not a setting the book can be dropped into.
 #: `legal_dossier` enforces the second half, and the first half is the point: three rules in
-#: `architect._RULES` were assertions about what the genre's reader wants, addressed to nobody in
-#: particular. A professional who reads progression fantasy for training arcs does not need to be
+#: The retired Forge's private rules were assertions about what the genre's reader wants,
+#: addressed to nobody in particular. A professional who reads progression fantasy for training
+#: arcs does not need to be
 #: told that an academy is furniture the reader came for. That is the operator's standing note
 #: about hardcoding what a professional already knows, applied where it is cheapest to apply.
 CAST: Mapping[str, Writer] = {

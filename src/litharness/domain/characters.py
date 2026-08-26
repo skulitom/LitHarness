@@ -4,7 +4,7 @@ The operator's directive, 2026-08-24: *"Writers need to understand the world the
 Dungeon crawler carl author says he keeps 200page excel sheet for some individual characters
 in his world … we can't expect our writers to write in the dark."*
 
-The facts were already there. A forged world records a character's role, what they are, what
+The facts were already there. World records carry a character's role, what they are, what
 they want, how they sound, how they show on the page, what they can do, where they stand, what
 they are the exception to, what they owe and who owes them — as `(subject, predicate, value)`
 rows. Nothing gathered them. `worlds.protagonist_brief` does it for exactly one person and

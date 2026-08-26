@@ -195,7 +195,7 @@ def abilities(
 
     `declared` minus what anybody holds is the headroom a book has left to give away, which is
     the quantity the ability-inventory work (§114) exists to make visible — measured at zero in
-    three of ten forged worlds, which is a protagonist who starts holding everything.
+    three of ten retired Forge worlds, which is a protagonist who starts holding everything.
     """
     declared = list(worlds.capabilities(records))
     if holder is not None:

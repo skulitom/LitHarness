@@ -688,8 +688,8 @@ def standing_milestone_records(
     established fact and `detect_contradictions` never weighs one against what the prose says.
     It informs generation and contaminates nothing.
 
-    The criterion rides in the value slot, exactly as the forge's own copy of the same fact
-    does, so `worlds.standing_of` reads a scheduled edge and a declared one the same way and
+    The criterion rides in the value slot, exactly as a declared world standing does, so
+    `worlds.standing_of` reads a scheduled edge and a declared one the same way and
     two ladders cannot be spliced.
 
     Record ids are derived from the story position, so a re-run converges instead of

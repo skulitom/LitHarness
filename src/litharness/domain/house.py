@@ -1,10 +1,11 @@
 """The two things every role that writes for a reader is told, recorded once.
 
 **Why this module exists, and it is an architecture finding rather than a style preference.**
-On 2026-08-23 six forged worlds were refused by the operator and five rule changes went into
-`application/architect._RULES` — a premise must be a pitch, its nouns must be explained where
-they appear, its ladder must be abilities somebody keeps, its world may not be an administration.
-Measured on premises, they worked: unexplained terms fell from twenty to two and the forge's
+On 2026-08-23 six worlds from the now-retired Forge were refused by the operator and five rule
+changes went into that subsystem's private prompt — a premise must be a pitch, its nouns must be
+explained where they appear, its ladder must be abilities somebody keeps, its world may not be an
+administration.
+Measured on premises, they worked: unexplained terms fell from twenty to two and the old prompt's
 administrative vocabulary fell 25x.
 
 Then the first book written on that world opened on 1,067 words of a call-centre shift rendered

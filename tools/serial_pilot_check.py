@@ -61,8 +61,8 @@ SPEC = Path(__file__).resolve().parent.parent / "plan" / "serial-pilot-directive
 def declared(specs: Sequence[Path]) -> tuple[int, int]:
     """Scene count and directive count, summed across every spec the run was set up from.
 
-    **Summed, because Serial Pilot 2 has two.** Its world directives come out of `litharness
-    forge` and its craft constraints out of `plan/serial-pilot-2-craft.json`, and a gate that
+    **Summed, because historical Serial Pilot 2 has two.** Its preserved world directives and
+    `plan/serial-pilot-2-craft.json` are separate specs, and a gate that
     read only one of them would report the inbox short by the size of the other — which is
     exactly the false alarm this file exists to prevent the operator from learning to ignore.
     The scene count is the largest any spec declares; a spec that omits it contributes none.
@@ -227,7 +227,7 @@ def _state(store: SqliteStore, report: Report, book_id: str, branch_id: str) -> 
     seeded = len(records) - len(read_back)
     # **A book that speaks neither line form has nothing to read back, and refusing it would be
     # this gate asserting that every world is a LitRPG one.** Pilot 1 declared a status sheet, so
-    # zero read-back meant its C2 had not taken. A forged world may declare no sheet and no graph
+    # zero read-back meant its C2 had not taken. A world may declare no sheet and no graph
     # line at all — absence is free — and then zero is the correct number rather than a failure.
     # Reported either way; checked only where there was something to read.
     speaks = speaks_system_voice(records) or graph_line_for(records) is not None
@@ -428,7 +428,7 @@ def main(argv: list[str] | None = None) -> int:
         type=Path,
         action="append",
         help="a package spec whose scene and directive counts this gate checks against. "
-        "Repeatable, and Serial Pilot 2 needs two: the forge's directives.json and "
+        "Repeatable; historical Serial Pilot 2 needs its world directives and "
         "plan/serial-pilot-2-craft.json. Defaults to Serial Pilot 1's single spec",
     )
     parser.add_argument(

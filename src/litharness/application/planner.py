@@ -413,8 +413,8 @@ def render_prompt(
         # the block above gives.
         #
         # It sits outside the `status_example` branch because the two are independent: a world
-        # can declare a rank ladder and no stat sheet, which is every world this project's
-        # Architect has forged, and nesting it would make the ladder unreachable for all of them.
+        # can declare a rank ladder and no stat sheet, which is true of the legacy generated
+        # worlds, and nesting it would make the ladder unreachable for all of them.
         system += (
             "\nThe book's plan has the standing reaching this later on:\n"
             f"{standing}\n"
@@ -574,7 +574,7 @@ def packet_for(
         # is `None` for any book whose story positions somebody else chose. This asks whether
         # the reader has been *told* a thing, against positions the Architect minted from this
         # book's own beat sheet — so it is entitled to the beat's key unconditionally, and a
-        # forged world's schedule keeps working on an imported book where the cutoff abstains.
+        # legacy world's schedule keeps working on an imported book where the cutoff abstains.
         #
         # The two lines were written by different sessions within a day of each other and the
         # merge is where they met. They agree: a non-chronological template mints no key, both

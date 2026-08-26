@@ -7,8 +7,8 @@ than a taste disagreement. Five defect classes have been named repeatedly across
 describe rather than name — and **not one of them has a counter**. So each one has to be caught
 by a person reading, every time, which is exactly the loop §126 exists to remove.
 
-**The instrument is not new and that is the point.** `application/comprehension.py` already asks
-four readers to quote every word used as if they already knew it; `plan/handoff-listing-loop.md`
+**The instrument is not new and that is the point.** The retired Forge screen asked four
+readers to quote every word used as if they already knew it; `plan/handoff-listing-loop.md`
 set it aside for blurbs — *"the comprehension screen over-flags a listing. About a third of what
 it quotes as uncashable, the same reader also files as a hook. Calibration unproven for blurbs."*
 Unproven, not refuted, and there was no way to prove it. There is now: 42 published serials above
@@ -45,7 +45,8 @@ from typing import Any
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE.parent.parent / "src"))
 
-from litharness.application import comprehension  # noqa: E402
+from blurb_readers import READERS, render_definition_request  # noqa: E402
+
 from litharness.providers import build_default_registry  # noqa: E402
 
 DERIVED = HERE / "derived"
@@ -55,8 +56,8 @@ RESULTS = HERE / "results"
 def screen(registry: Any, text: str) -> dict[str, Any]:
     """Four readers over one blurb. Returns the count and what each one could not cash."""
     answers: dict[str, Any] = {}
-    for reader in comprehension.READERS:
-        request = comprehension.render_reader_request(reader, text)
+    for reader in READERS:
+        request = render_definition_request(reader, text)
         try:
             result, _ = registry.complete(request)
         except Exception as error:  # an outage is a fact about the day, not about the blurb
@@ -64,19 +65,17 @@ def screen(registry: Any, text: str) -> dict[str, Any]:
             continue
         if isinstance(result.parsed, dict):
             answers[reader.reader_id] = result.parsed
-    outcome = comprehension.ScreenResult.of(answers)
-    block = outcome.to_jsonable()
+    words = [
+        str(word).strip()
+        for answer in answers.values()
+        if isinstance(answer.get("undefined_words"), list)
+        for word in answer["undefined_words"]
+        if isinstance(word, str) and word.strip()
+    ]
     return {
-        "undefined_total": block.get("undefined_total"),
+        "undefined_total": len(words),
         "answered": len(answers),
-        "words": sorted(
-            {
-                str(word).strip().casefold()
-                for answer in answers.values()
-                for word in (answer.get("undefined_words") or [])
-                if str(word).strip()
-            }
-        ),
+        "words": sorted({word.casefold() for word in words}),
     }
 
 

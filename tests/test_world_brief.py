@@ -1,7 +1,7 @@
 """The world reaches the writer and, until this module existed, reached neither scene planner.
 
-`plan/world-architect.md` builds a world and `tests/test_worlds.py` grades what it projects into
-a drafting packet. Nothing graded what the *plan* was written against. Serial Pilot 2 handed its
+The world model projects accepted state into a drafting packet, but nothing originally graded
+what the *plan* was written against. Serial Pilot 2 handed its
 writer a flat 229-231 established facts per scene out of a 329-record world — and the one
 sentence the writer is told to execute, `This scene: {plan}`, was written by a model that had
 seen the premise and the beat sheet and nothing else.
@@ -9,7 +9,7 @@ seen the premise and the beat sheet and nothing else.
 **Two tests here are a matched pair and the order matters.**
 `test_neither_scene_plan_author_is_told_the_world_the_writer_is_handed` passes on `main` at
 `83de11c` — it pins the blindness as a measured fact rather than as a claim in a document.
-`test_a_forged_world_reaches_the_outline_request` is its twin and fails there; it is the
+`test_a_pilot_world_reaches_the_outline_request` is its twin and fails there; it is the
 assertion the world brief exists to satisfy. A repair whose "before" was never runnable is a
 repair to something nobody measured.
 
@@ -29,7 +29,7 @@ import litharness_contracts as lc
 
 from litharness.adapters import contracts_fixtures
 from litharness.adapters.sqlite_store import SqliteStore
-from litharness.application import architect, narrative_planner, outline
+from litharness.application import narrative_planner, outline
 from litharness.domain import world_brief, worlds
 from litharness.domain.beats import arc_template, beats_for
 from litharness.domain.directives import Directive, DirectiveKind
@@ -44,7 +44,7 @@ from tests.conftest import BOOK_ID, BRANCH_ID, PROJECT_ID
 #: parameter: at 6 the scene-7 reveal loses its position and the world says something else.
 SCENES = 8
 
-#: A premise from a book with no forged world, for the control that separates what the *world*
+#: A premise from a book with no declared world, for the control that separates what the *world*
 #: put in a payload from what the request template says on its own. Taken from
 #: `tests/test_outline.py` rather than invented, so the two files describe one fixture.
 NEUTRAL_PREMISE = "A courier in a debt-ledger city must clear a guild debt before it compounds."
@@ -66,23 +66,39 @@ class _Base:
     items: tuple = ()
 
 
-def pilot_records() -> tuple[architect.Candidate, tuple[lc.StateRecord, ...], str]:
-    """The world Serial Pilot 2 ran on, rebuilt exactly as `tests/test_architect.py` rebuilds it.
+_ROOT = Path(__file__).resolve().parents[1]
 
-    `plan/serial-pilot-2-world.json` is the committed model answer and `records_for` is the
-    only thing that turns it into records, so this is the same 329 rows the pilot's writer was
-    handed rather than a fixture that resembles them.
+
+def _json(path: Path) -> object:
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def pilot_records() -> tuple[dict[str, object], tuple[lc.StateRecord, ...], str]:
+    """The exact accepted state Serial Pilot 2 used, frozen before Forge was retired.
+
+    The static snapshot keeps these world-brief regressions independent of the deleted
+    structured-world generator. Active code only needs to consume accepted state, never
+    reproduce that old generation path.
     """
-    package = json.loads(
-        (Path(__file__).resolve().parents[1] / "plan" / "serial-pilot-2-world.json").read_text(
-            encoding="utf-8"
-        )
+    pilot = _json(_ROOT / "plan" / "serial-pilot-2-directives.json")
+    assert isinstance(pilot, dict)
+    snapshot = lc.parse_artifact(
+        lc.StateSnapshot,
+        _json(_ROOT / "tests" / "fixtures" / "serial-pilot-2-state.json"),
     )
-    candidate = architect.Candidate(0, package["world"])
-    records = architect.records_for(
-        candidate, authority=lc.StateAuthority.ACCEPTED_CANON, scenes=SCENES
-    )
-    return candidate, records, str(candidate.raw["premise"])
+    return pilot, tuple(snapshot.records), str(pilot["premise"])
+
+
+def pilot_directives() -> tuple[dict[str, object], ...]:
+    pilot = _json(_ROOT / "plan" / "serial-pilot-2-directives.json")
+    assert isinstance(pilot, dict)
+    return tuple(pilot["directives"])  # type: ignore[arg-type]
+
+
+def pilot_promises() -> tuple[dict[str, object], ...]:
+    promises = _json(_ROOT / "plan" / "serial-pilot-2-promises.json")
+    assert isinstance(promises, list)
+    return tuple(promises)
 
 
 def payload_of(request: object) -> str:
@@ -169,9 +185,9 @@ def test_neither_scene_plan_author_is_told_the_world_the_writer_is_handed() -> N
     `test_the_outline_handler_hands_the_planner_the_world_the_store_holds` that makes it: the
     pair reads as a before and an after only if the after is measured on the live path.
     """
-    candidate, records, premise = pilot_records()
+    pilot, records, premise = pilot_records()
     nouns = worlds.key_nouns(records)
-    revision = new_book(BOOK_ID, BRANCH_ID, title=candidate.title, scenes=SCENES)
+    revision = new_book(BOOK_ID, BRANCH_ID, title=str(pilot["title"]), scenes=SCENES)
     beats = beats_for(revision, arc_template(SCENES))
 
     outline_payload = payload_of(
@@ -214,7 +230,7 @@ def test_neither_scene_plan_author_is_told_the_world_the_writer_is_handed() -> N
         ),
         nouns,
     )
-    for entry in architect.directives_for(candidate):
+    for entry in pilot_directives():
         payload = payload_of(
             narrative_planner.render_request(
                 a_plan(premise), a_directive(entry["text"]), scene_ids
@@ -231,14 +247,14 @@ def test_the_outline_call_knew_the_questions_and_the_windows_and_not_the_answers
 
     It was handed the premise, an eight-beat sheet, and — once the ledger had anything on it —
     the open promises as owed, each with the scene it is due by. Six of those debts were the
-    world's own mysteries, seeded by `architect.promises_for` with the question as the
-    description and the reveal ordinal as the due date. So the schedule was in the request and
-    the answers were not, which is a different defect from ignorance and wants a different
-    repair. Recorded here so a later reading of the uptake census cannot mistake one for the
-    other.
+    world's own mysteries, preserved in the pilot's committed promise fixture with the
+    question as the description and the reveal ordinal as the due date. So the schedule was in
+    the request and the answers were not, which is a different defect from ignorance and wants
+    a different repair. Recorded here so a later reading of the uptake census cannot mistake
+    one for the other.
     """
-    candidate, records, _ = pilot_records()
-    seeded = architect.promises_for(candidate)
+    _, records, _ = pilot_records()
+    seeded = pilot_promises()
     assert len(seeded) == 6
     assert {entry["subject"] for entry in seeded} == set(worlds.questions(records))
     for entry in seeded:
@@ -253,7 +269,7 @@ def test_the_outline_call_knew_the_questions_and_the_windows_and_not_the_answers
 # -- Task 2: the twin, and the rails it had to clear ---------------------------------------
 
 
-def test_a_forged_world_reaches_the_outline_request() -> None:
+def test_a_pilot_world_reaches_the_outline_request() -> None:
     """The twin of the blindness pin, and it **fails on `main` at `83de11c`** by construction:
     `test_neither_scene_plan_author_is_told_the_world_the_writer_is_handed` asserts of the same
     payload that exactly none of these values is in it, and that test passes there.
@@ -261,13 +277,13 @@ def test_a_forged_world_reaches_the_outline_request() -> None:
     What has to arrive is not "some world text" — it is the four things a statement would have
     to be written against to put the world to work. Every rule, because a scene that only this
     world could produce is a scene where a rule bites. Every consequence, because
-    `plan/world-architect.md` §4 item 5 calls each of them a plot engine. The criterion ladder,
+    the retired world design called each of them a plot engine. The criterion ladder,
     because a scene that moves somebody up it has to know what it is. And each mystery's
     question with the scene the world scheduled its answer for, because a reveal planned as an
     event is the difference between a book that pays a debt and a book that mentions one.
     """
-    candidate, records, premise = pilot_records()
-    revision = new_book(BOOK_ID, BRANCH_ID, title=candidate.title, scenes=SCENES)
+    pilot, records, premise = pilot_records()
+    revision = new_book(BOOK_ID, BRANCH_ID, title=str(pilot["title"]), scenes=SCENES)
     beats = beats_for(revision, arc_template(SCENES))
     brief = world_brief.brief_for(records)
     assert brief is not None
@@ -304,7 +320,7 @@ def test_a_forged_world_reaches_the_outline_request() -> None:
         assert rule_text in payload
 
 
-def test_a_forged_world_reaches_the_narrative_plan_request() -> None:
+def test_a_pilot_world_reaches_the_narrative_plan_request() -> None:
     """The same, for the other author of the same sentence.
 
     `narrative_planner.render_request` rewrites statements under a director's or an Architect's
@@ -312,11 +328,11 @@ def test_a_forged_world_reaches_the_narrative_plan_request() -> None:
     a blind one — which would make the repair depend on which of the two calls happened to
     write a given scene.
     """
-    candidate, records, premise = pilot_records()
+    _, records, premise = pilot_records()
     brief = world_brief.brief_for(records)
     assert brief is not None
     scene_ids = tuple(f"s{index}" for index in range(1, SCENES + 1))
-    entry = architect.directives_for(candidate)[0]
+    entry = pilot_directives()[0]
     payload = payload_of(
         narrative_planner.render_request(
             a_plan(premise), a_directive(entry["text"]), scene_ids, world=brief
@@ -384,11 +400,11 @@ def test_a_book_whose_records_this_vocabulary_does_not_know_gets_no_brief() -> N
 
 
 def test_a_proposed_world_is_not_a_world_a_planner_may_see() -> None:
-    """`forge --pick` is the one exit to canon and this is the other end of that rail.
+    """`world accept` is the exit to canon and this is the other end of that rail.
 
-    `architect.records_for` defaults to `PROPOSED`, and a candidate nobody picked is a
-    candidate: it reaches no context packet, so it may not reach a plan either. Without this
-    the brief would be the one path by which an unpicked world steers a book.
+    The active Architect writes `PROPOSED` records, and a world that has not passed
+    `world accept` reaches no context packet, so it may not reach a plan either. Without this
+    the brief would be the one path by which an unaccepted world steers a book.
     """
     _, records, _ = pilot_records()
     proposed = [
@@ -415,7 +431,7 @@ def test_no_answer_the_book_does_not_reach_appears_anywhere_in_the_brief() -> No
     """Boundary 3's second clause, and the one with no escape hatch.
 
     Four of the pilot world's six mysteries are answered at scenes 26, 41, 63 and 92 — past the
-    end of an eight-scene opening — so `architect.story_key` mints them no position and the
+    end of an eight-scene opening — so the retired generator gave them no position and the
     packet keeps them hidden for the whole run. A brief that carried those answers would put
     the serial's arc secrets into a plan item on page one, which is worse than the blindness
     this repair exists to end.
@@ -631,9 +647,9 @@ def test_the_outline_handler_hands_the_planner_the_world_the_store_holds(tmp_pat
     `make_outline_handler` against a store holding the pilot world's 329 canon records and
     reads what the provider was actually asked.
     """
-    candidate, records, premise = pilot_records()
+    pilot, records, premise = pilot_records()
     with SqliteStore.open(tmp_path / "outline.db") as store:
-        revision = new_book(BOOK_ID, BRANCH_ID, title=candidate.title, scenes=SCENES)
+        revision = new_book(BOOK_ID, BRANCH_ID, title=str(pilot["title"]), scenes=SCENES)
         store.commit_revision(revision, created_at="2026-08-22T00:00:00Z")
         store.record_plan_items(
             BOOK_ID,

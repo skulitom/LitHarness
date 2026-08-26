@@ -162,10 +162,10 @@ Line-level craft is a floor under that and never the thing itself — a chapter 
 clear, correct and abandoned, and §1a.3's list is ordered on exactly that principle.
 
 **The audience is defined, and inside the loop it is simulated — only simulated.** The
-readership this project writes for is stated in `application/architect.py`'s protagonist rule,
-in the operator's words: readers in their twenties, for whom the life a protagonist came from
-is one they could have lived. What that audience *does* with a chapter — continue, abandon,
-return — is measured on a **simulated** readership ([stage-0 §97](plan/stage-0-decisions.md)),
+readership this project writes for is stated in `domain/house.py`'s `READER` doctrine, in the
+operator's words: readers in their twenties, for whom the life a protagonist came from is one
+they could have lived. What that audience *does* with a chapter — continue, abandon, return —
+is measured on a **simulated** readership ([stage-0 §97](plan/stage-0-decisions.md)),
 under declared budgets, in behavioural vocabulary and never a verdict
 ([§89](plan/stage-0-decisions.md)).
 
@@ -2449,8 +2449,9 @@ every unstruck action below as a claim to re-verify rather than a task to start.
     writers is N×M candidate books. Fix the casting before the book is measured; do not pick the
     best of M afterwards.
 
-12. **Give the serial a world that exists behind it — the Architect** — see
-    [plan/world-architect.md](plan/world-architect.md), written 2026-08-21 before any code, and
+12. **Give the serial a world that exists behind it — the Architect** — see the live agent in
+    `application/world_agent.py`, the retired design record in
+    [plan/world-architect.md](plan/world-architect.md), and
     [stage-0 §107](plan/stage-0-decisions.md). **Built, and the measurement that motivated it is
     the thing to keep in view:** the live serial `serial.db` holds **23 canon records** for a
     nine-scene book — 15 the operator typed into `plan/serial-pilot-seed.json` and 8 readings of
@@ -2458,16 +2459,23 @@ every unstruck action below as a claim to re-verify rather than a task to start.
     house and a cast that canon has never heard of. Nothing in `src/` invented a world and
     nothing persisted what the drafter improvised.
 
-    **What landed:** `domain/worlds.py` (record patterns over `StateRecord`, no migration),
-    `application/architect.py` + `litharness forge`, a projection and a `hidden` packet section,
-    `object_ref` in the contradiction key with `state.cardinality.v0` beside it,
-    a declared graph-line extractor with a promotion rule, and `new --promises`.
+    **What remains live:** `domain/worlds.py` (record patterns over `StateRecord`, no migration),
+    `application/world_agent.py` + `litharness architect seed|grow`, the narrow
+    `litharness world` tool surface, a projection and a `hidden` packet section, `object_ref` in
+    the contradiction key with `state.cardinality.v0` beside it, a declared graph-line extractor
+    with a promotion rule, and `new --promises`. Architect declarations are proposals;
+    `world accept` is the separately recorded route into canon.
+
+    **What retired:** the first implementation generated K complete worlds in one structured
+    call and asked a person to pick one. Its `litharness forge` command and private application
+    modules were removed when the evolving Architect replaced it. Historical plans and measured
+    results retain the old terminology as provenance, and are labelled historical where they
+    might otherwise look executable.
 
     **What is not built, and each is a decision rather than an omission.** Retrieval when the
-    serial outgrows the packet is a design note only. No amendment surface exists: a world is
-    forged once, before scene one, and whether the growth path or the operator authors a
-    mid-serial change is undecided. The between-Architect comparison is not run — the
-    distinctness control is built for K candidates from one brief, and N architects would divide
-    §61's α by N exactly as N directors do. And **the first quality question in this project
+    serial outgrows the packet is a design note only. The Architect can propose mid-serial growth,
+    but accepting it remains a separate recorded act. The between-Architect comparison is not
+    run — N architects would divide §61's α by N exactly as N directors do. And **the first quality
+    question in this project
     with an answer outside the text is now live**: a world that literalises a real domain can be
     *wrong* about it, and nothing checks that.

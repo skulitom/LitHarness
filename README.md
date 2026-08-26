@@ -747,21 +747,14 @@ Stated plainly, because a system that runs is easy to mistake for a system that 
   PREFERENCE-class calibration licenses it on the selection task). What does not exist
   is structural/mechanical plan critics or replacement of the fixed six-beat arc
   template.
-- **A world that exists behind the book, forged rather than typed.** `litharness forge` builds
-  K worlds from a brief in one structured call — systems and their prices, criteria whose ranks
-  have a visible form, cast, creatures, places, and mysteries **with their answers recorded** —
-  gates them deterministically (three second-order consequences per rule, a manifestation for
-  every feature, an answer and a scene for every mystery), and then stops. No model orders them;
-  a person picks, and the pick is its own decision row. **The premise is a second call and the
-  screen is a third.** The world call carries no reader-facing prose at all; the paragraph a
-  reader is pitched is written as prose, on its own, with the house rules and the finished world
-  as its only context; and four genre readers then restate it and quote every word they were
-  never given. A premise passes at zero such words across all four, open questions are reported
-  and never gated, a failed premise is re-forged rather than edited, and `--pick` refuses a
-  candidate that did not pass. There is no flag that skips it. The world lands as record patterns over
-  the existing `StateRecord` — no migration, no new record kind — and reaches the writer as
-  English rather than notation. What does not exist is any amendment surface: a world is forged
-  once, before scene one. See [plan/world-architect.md](plan/world-architect.md).
+- **An Architect that evolves the world with the book.** After the listing loop creates a
+  book, `litharness architect seed` gives the same cast writer the narrow `litharness world`
+  tool surface. The Architect declares enough world for the opening, checks it through
+  `world check`, and leaves every record as a proposal; `world accept` is the separate
+  recorded act that admits those proposals to canon. After a chapter,
+  `litharness architect grow` reads what was drafted and develops or reconciles the world
+  through the same tools. There are no K candidates, one-shot structured world call, model
+  ranking, or human pick between generated worlds.
 - **A context packet with no relevance scoring.** It carries prior prose, locked
   constraints, open threads, POV-filtered state, and what is true but not yet disclosed to the
   reader — that last under a heading that forbids stating it — and it is graded against the

@@ -319,7 +319,7 @@ def test_the_ledger_is_its_own_block_and_never_folded_into_the_threads() -> None
     """Two different classes of claim, and the register is the whole reason.
 
     Open threads are canon-backed state records; a promise is a model-reported or
-    forge-seeded debt, which is why `domain/context.py` phrases `describe_owed` as a debt
+    legacy-seeded debt, which is why `domain/context.py` phrases `describe_owed` as a debt
     rather than as a fact. One list under one heading would launder the second into the
     register of the first — the packet's own rule, applied to the prompt that settles the
     ledger rather than to the one that draws on it.

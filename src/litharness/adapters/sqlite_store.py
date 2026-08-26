@@ -978,8 +978,8 @@ class SqliteStore:
         `record_state_records` states §11's prohibition: a fact that changed is a new record
         with new evidence, not the old one edited. That prohibition is about *canon*. These
         rows were never canon — `worlds.world_record` mints at PROPOSED precisely so that an
-        Architect's output is a proposal, and `plan/world-architect.md` §2 says it reaches
-        canon only through a recorded policy decision. This method is that decision's effect.
+        Architect output is a proposal and reaches canon only through the recorded
+        `world accept` decision. This method is that decision's effect.
 
         An in-place update rather than a second row because `record_id_for` derives the id
         from subject, predicate, object and value and not from authority, so an accepted copy

@@ -197,7 +197,7 @@ def render_summary_prompt(
 
     **Its own block, never folded into the thread block, because the two are different
     classes of claim.** Open threads are canon-backed state records; promises are
-    model-reported or forge-seeded debts, which is exactly why `domain/context.py` renders
+    model-reported or legacy-seeded debts, which is exactly why `domain/context.py` renders
     them through `describe_owed` as a debt rather than as a fact. One list under one heading
     would launder the second into the register of the first — the packet's own rule, applied
     to the prompt that settles the ledger rather than to the one that draws on it.

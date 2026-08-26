@@ -90,7 +90,7 @@ class Reveal:
     question: str
     #: The scene ordinal the world scheduled, or `None` for an answer this book has no scene
     #: for. `None` is not a missing value: it is the world saying *later than this book*, and
-    #: `application/architect.py::story_key` mints no position for one on purpose.
+    #: The legacy pilot fixture deliberately carries no position for one.
     scene: int | None
     #: The recorded answer, present **only** when `scene` is inside this book. See the module
     #: docstring: this is the whole of the leak rail's input side.

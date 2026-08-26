@@ -7,8 +7,8 @@ kind, no migration and no contracts bump. `research/progression-generalization.m
 says this in as many words and §8.5 gives the reason: "N-ary relations fit through reification;
 no new tuple field is required."
 
-**What this module is for.** `plan/world-architect.md` §0 records the measurement that motivates
-it: the live serial holds 23 canon records — 15 typed by the operator into
+**What this module is for.** The retired world-design record documents the measurement that
+motivates it: the live serial holds 23 canon records — 15 typed by the operator into
 `plan/serial-pilot-seed.json` and 8 readings of one `[STATUS]` line — for a nine-scene book whose
 prose contains an Advent, a tier system, a tide, an assay house and a cast. The world is in the
 text and not in the store. This is the vocabulary the store needs before an Architect can put one
@@ -47,17 +47,6 @@ import litharness_contracts as lc
 
 from litharness.domain import state as state_mod
 from litharness.domain.events import payload_digest
-from litharness.domain.text import canonicalize
-
-#: Prefix reserved for an author that is an Architect. Restated rather than shared with
-#: `directors.DIRECTOR_AUTHOR_PREFIX` for the reason that constant gives for not being shared:
-#: the two mark different roles in different tables, and unifying the constant invites unifying
-#: the semantics.
-ARCHITECT_AUTHOR_PREFIX = "architect:"
-
-#: Content address prefix for a world-building personality. `arch-` rather than `dtor-` or
-#: `wtr-`, same argument.
-ARCHITECT_ID_PREFIX = "arch-"
 
 #: Stamped on every record this vocabulary mints, so a record an Architect proposed is
 #: distinguishable from one an author typed and from one `extraction.REGISTRY_VERSION` read off
@@ -110,8 +99,8 @@ ENTITY_ROLES: tuple[str, ...] = (
     # role was `carrier`, which means an *object* whose possession changes a precondition — so a
     # ring and the sense the ring grants were the same kind of thing and neither counter could
     # tell them apart. Measured over the 24 worlds forged to that date: 135 of 156 criterion
-    # rungs are an insignia and every capability-shaped field in the forge schema is a single
-    # string, so a world could name one thing a person can do and never a set of them
+    # rungs are an insignia and every capability-shaped field in the retired Forge schema was a
+    # single string, so a world could name one thing a person can do and never a set of them
     # (`research/quality-measurement/mother-of-learning-model-fit.md`).
     "capability",
 )
@@ -155,8 +144,8 @@ TAUGHT_BY = "taught_by"
 #: What a capability costs its holder, as prose. **The same predicate a rank's price already
 #: uses**, deliberately: it is the same fact about a different subject, and a legible twin would
 #: be two names for one thing. It has no projection sentence for the reason the branch beside
-#: `CAN_DO` gives — every world forged so far emits `costs` for its ranks, so adding one would
-#: change their packets.
+#: `CAN_DO` gives — every legacy world fixture emits `costs` for its ranks, so adding one would
+#: change its packet.
 COSTS = "costs"
 
 
@@ -220,7 +209,7 @@ EVALUATES_PREDICATE = "evaluates"
 #:
 #: **A flat edge, and the flatness is the whole argument** (`plan/handoff-numbers-go-up.md`
 #: boundary 9). The page can only print a flat edge — `[ASSIZE] Kell now stands at two wood` is
-#: what a scene writes and what `parse_graph_line` reads back — so the forge's copy of the same
+#: what a scene writes and what `parse_graph_line` reads back — so a world declaration of the same
 #: fact has to be readable by the same function. The reified `EVALUATION_*` triple stays for the
 #: case it was built for, a world that reifies an evaluation with an authority that performed it
 #: (`research/progression-generalization.md` §8.3); a standing is not that case and writing both
@@ -250,9 +239,9 @@ DISCLOSED_TO = "disclosed_to"
 #: heading that says *true*. A character's false belief written under it would be the writer
 #: instructed to honour something the world denies.
 #:
-#: Found by `test_a_clear_world_has_nothing_to_complain_about`, which is worth recording: the
-#: first version of this vocabulary had cast beliefs and mystery answers sharing one predicate,
-#: and the validator caught it by demanding a reveal for a belief that must never have one.
+#: A retired Forge test found this defect, which is worth recording: the first version of this
+#: vocabulary had cast beliefs and mystery answers sharing one predicate, and the validator
+#: caught it by demanding a reveal for a belief that must never have one.
 CLAIM_FALSE = "claim.false"
 
 #: What a mystery asks. A claim that asks something owes a declared reveal scene; a claim that
@@ -349,34 +338,6 @@ class IllegalWorld(Exception):
     """A world record set that this vocabulary cannot mean what it says."""
 
 
-# --- identity -------------------------------------------------------------------------------
-
-
-def architect_id_for(brief: str) -> str:
-    """Content address over the brief the world was built from.
-
-    So a brief cannot drift under the worlds it forged: editing one word mints a different
-    Architect, and "which brief produced this world" stays answerable. `directors.director_id_for`
-    is the same construction for the same reason.
-    """
-    material = canonicalize(brief).encode()
-    return f"{ARCHITECT_ID_PREFIX}{sha256(material).hexdigest()[:24]}"
-
-
-def machine_author(architect_id: str) -> str:
-    """The author string a machine-proposed world record or directive is stamped with."""
-    return f"{ARCHITECT_AUTHOR_PREFIX}{architect_id}"
-
-
-def is_machine_author(author: str | None) -> bool:
-    """Whether this was proposed by an Architect rather than typed by a person.
-
-    `None` and the empty string are both false, exactly as `directors.is_machine_author` decides
-    it: "unrecorded" is not "machine".
-    """
-    return (author or "").startswith(ARCHITECT_AUTHOR_PREFIX)
-
-
 def record_id_for(
     subject: str, predicate: str, object_ref: str | None, value: object
 ) -> str:
@@ -408,8 +369,8 @@ def world_record(
 ) -> lc.StateRecord:
     """One record in this vocabulary, with its id derived rather than supplied.
 
-    **`PROPOSED` by default, and the default is the rail.** `plan/world-architect.md` §2 states
-    it: Architect output is a proposal and reaches canon only through a recorded policy decision.
+    **`PROPOSED` by default, and the default is the rail.** Architect output is a proposal and
+    reaches canon only through the recorded `world accept` decision.
     A constructor that defaulted the other way would make the rail a thing every call site has to
     remember, which is the shape of a rail that gets forgotten once.
 
@@ -489,11 +450,10 @@ def capabilities(records: Sequence[lc.StateRecord]) -> tuple[str, ...]:
     """Every subject this world declares as a thing a person can do. Sorted.
 
     **Canon is not filtered here, and that is deliberate rather than an oversight.**
-    `entities_with_role` does not filter either, and `architect.report` counts a *candidate* —
-    every record of which is `PROPOSED`, because a forged world is a proposal until `--pick`. A
-    reader that filtered would report 0 capabilities for every world the forge has ever produced,
-    which is what the first version of this function did. Callers that need canon filter first,
-    as `world_brief.brief_for` and `context.assemble` already do.
+    `entities_with_role` does not filter either. The active Architect works on proposals before
+    `world accept`; filtering here would report zero capabilities while it is building them.
+    Callers that need canon filter first, as `world_brief.brief_for` and `context.assemble`
+    already do.
     """
     return entities_with_role(records, "capability")
 
@@ -581,7 +541,7 @@ def consequence_domains(
 
     **Distinct domains rather than a count of consequences**, because three consequences all in
     the economy are one consequence with three faces, and the thing being counted is how far a
-    rule reaches into the world. The gate in `application/architect.py` reads this.
+    rule reaches into the world. The `world consequences` view reads this.
     """
     found: dict[str, set[str]] = {subject: set() for subject in rules(records)}
     for record in records:
@@ -766,10 +726,10 @@ def undisclosed_claims(
     yet*, and a disclosure with **no** position at all — a claim open from the start — reads as
     already told, which is the only case where the world has actually said so.
 
-    Found by `test_a_forged_bundle_seeds_a_book_with_no_provider_call`, and it mattered: the live
-    drafting path passes no story-time cutoff at all, so the first version of this function put
-    every scheduled answer into the *facts* and the hidden section held only the secrets nobody
-    ever reveals — which is the exact inverse of what a mystery is for.
+    Found by a retired Forge regression, and it mattered: the live drafting path passes no
+    story-time cutoff at all, so the first version of this function put every scheduled answer
+    into the *facts* and the hidden section held only the secrets nobody ever reveals — which is
+    the exact inverse of what a mystery is for.
 
     **A false claim is never hidden, because it is not true.** The heading this feeds says *true,
     and the reader has not been told*; a character's error under it would instruct the writer to
@@ -828,8 +788,8 @@ def cardinality_shapes(
 
     Silently, because a half-written shape is a world that has not finished saying something,
     and refusing the whole book over it would make declaring cardinality riskier than not
-    declaring it. `validate` is where an incomplete shape is reported, at forge time, where the
-    cost of the complaint is a candidate rather than a serial.
+    declaring it. `validate` reports an incomplete shape while the Architect is still working,
+    before `world accept` can admit it to canon.
     """
     parts: dict[str, dict[str, lc.StateRecord]] = {}
     #: Collected in its own pass because `parts` keeps one record per predicate and a shape may
@@ -1585,8 +1545,6 @@ def _record_sentence(
 
 __all__ = [
     "ANY_SCOPE",
-    "ARCHITECT_AUTHOR_PREFIX",
-    "ARCHITECT_ID_PREFIX",
     "BELIEVES",
     "BUNDLE_MEMBER",
     "CAN_DO",
@@ -1642,7 +1600,6 @@ __all__ = [
     "Coverage",
     "IllegalWorld",
     "Protagonist",
-    "architect_id_for",
     "capabilities",
     "capabilities_of",
     "cardinality_shapes",
@@ -1659,10 +1616,8 @@ __all__ = [
     "group_of",
     "hidden_record_ids",
     "in_scope",
-    "is_machine_author",
     "key_nouns",
     "ladder_of",
-    "machine_author",
     "manifestation_coverage",
     "nodes_of_type",
     "normalise_id",

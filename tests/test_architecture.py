@@ -254,7 +254,7 @@ def test_every_role_that_writes_for_a_reader_carries_the_house_rules() -> None:
     abilities somebody keeps. Measured on premises they worked. Then the first book written on
     that world opened on 1,067 words of a call-centre shift rendered step by step, and the
     operator read chapter one as though none of it had happened \u2014 because none of it had. Every
-    change had edited `application/architect._RULES`, and the Writer's whole system prompt was
+    change had edited the retired Forge's private rules, and the Writer's whole system prompt was
     three sentences about not writing headings.
 
     `domain/house` is the single home, and this is the test that a new role cannot quietly skip
@@ -265,22 +265,17 @@ def test_every_role_that_writes_for_a_reader_carries_the_house_rules() -> None:
     `summarize` writes summaries the packet reads and no reader ever sees. A role that starts
     producing reader-facing prose belongs on this list and its own test failure will say so.
     """
-    from litharness.application import architect, outline, planner
+    from litharness.application import outline, planner, world_agent
     from litharness.domain import house
+    from litharness.domain import writers as writers_domain
 
     assert house.CLARITY in house.HOUSE_RULES
     assert house.READER in house.HOUSE_RULES
 
-    # **The forge writes for a reader twice, and this used to say so while it was one call.**
-    # The comment below the assertion read "the world and the premise a reader meets first"
-    # and was true while the premise was a cell of the world schema. Since T3 the premise is
-    # its own call under its own system message (`render_premise_request`), and the paragraph
-    # a reader actually meets is written under `_PREMISE_SYSTEM` — which nothing asserted:
-    # rebinding it to the same text without `with_house_rules` left the whole suite green.
-    # A source-substring scan cannot cover this one, because `architect.py` calls
-    # `house.with_house_rules(` twice and losing either leaves the substring behind.
-    assert house.HOUSE_RULES in architect._SYSTEM_MESSAGE
-    assert house.HOUSE_RULES in architect._PREMISE_SYSTEM
+    architect = world_agent.render_seed_request(
+        "A listing readers have already seen.", writers_domain.CAST["ferreira"]
+    )
+    assert house.HOUSE_RULES in (architect.system or "")
 
     # The writer and the outline are checked at the source rather than by calling them, and the
     # weakness is stated rather than hidden: `planner.render_prompt` needs a beat and a built
