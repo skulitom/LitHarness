@@ -1,0 +1,1923 @@
+{
+  "calls": 84,
+  "kills": {
+    "KD": {
+      "floor": 0.5,
+      "mean_agreement": 0.47619047619047616,
+      "verdict": "NOISE"
+    },
+    "KP": {
+      "verdict": "KILL",
+      "worst_modal_share": 1.0
+    },
+    "KS": {
+      "gradient_detection": 0.59375,
+      "surface_detection": 0.3125,
+      "verdict": "PASS"
+    }
+  },
+  "per_shelf": {
+    "gradient_0": {
+      "answered": 4,
+      "by_slot": {
+        "2": {
+          "draws": 1,
+          "hits": 1
+        },
+        "3": {
+          "draws": 1,
+          "hits": 1
+        },
+        "4": {
+          "draws": 1,
+          "hits": 1
+        },
+        "5": {
+          "draws": 1,
+          "hits": 1
+        }
+      },
+      "detection": 1.0,
+      "draws": 4,
+      "hits": 4,
+      "refused": 0,
+      "zeros": 0
+    },
+    "gradient_1": {
+      "answered": 4,
+      "by_slot": {
+        "1": {
+          "draws": 1,
+          "hits": 0
+        },
+        "2": {
+          "draws": 1,
+          "hits": 1
+        },
+        "3": {
+          "draws": 1,
+          "hits": 1
+        },
+        "4": {
+          "draws": 1,
+          "hits": 0
+        }
+      },
+      "detection": 0.5,
+      "draws": 4,
+      "hits": 2,
+      "refused": 0,
+      "zeros": 0
+    },
+    "gradient_2": {
+      "answered": 4,
+      "by_slot": {
+        "1": {
+          "draws": 1,
+          "hits": 1
+        },
+        "2": {
+          "draws": 1,
+          "hits": 1
+        },
+        "3": {
+          "draws": 1,
+          "hits": 1
+        },
+        "6": {
+          "draws": 1,
+          "hits": 1
+        }
+      },
+      "detection": 1.0,
+      "draws": 4,
+      "hits": 4,
+      "refused": 0,
+      "zeros": 0
+    },
+    "gradient_3": {
+      "answered": 4,
+      "by_slot": {
+        "1": {
+          "draws": 1,
+          "hits": 1
+        },
+        "4": {
+          "draws": 1,
+          "hits": 1
+        },
+        "5": {
+          "draws": 1,
+          "hits": 1
+        },
+        "6": {
+          "draws": 1,
+          "hits": 1
+        }
+      },
+      "detection": 1.0,
+      "draws": 4,
+      "hits": 4,
+      "refused": 0,
+      "zeros": 0
+    },
+    "gradient_4": {
+      "answered": 4,
+      "by_slot": {
+        "1": {
+          "draws": 1,
+          "hits": 0
+        },
+        "2": {
+          "draws": 1,
+          "hits": 0
+        },
+        "5": {
+          "draws": 1,
+          "hits": 0
+        },
+        "6": {
+          "draws": 1,
+          "hits": 0
+        }
+      },
+      "detection": 0.0,
+      "draws": 4,
+      "hits": 0,
+      "refused": 0,
+      "zeros": 0
+    },
+    "gradient_5": {
+      "answered": 4,
+      "by_slot": {
+        "3": {
+          "draws": 1,
+          "hits": 0
+        },
+        "4": {
+          "draws": 1,
+          "hits": 0
+        },
+        "5": {
+          "draws": 1,
+          "hits": 0
+        },
+        "6": {
+          "draws": 1,
+          "hits": 0
+        }
+      },
+      "detection": 0.0,
+      "draws": 4,
+      "hits": 0,
+      "refused": 0,
+      "zeros": 0
+    },
+    "gradient_6": {
+      "answered": 4,
+      "by_slot": {
+        "1": {
+          "draws": 1,
+          "hits": 1
+        },
+        "4": {
+          "draws": 1,
+          "hits": 1
+        },
+        "5": {
+          "draws": 1,
+          "hits": 1
+        },
+        "6": {
+          "draws": 1,
+          "hits": 1
+        }
+      },
+      "detection": 1.0,
+      "draws": 4,
+      "hits": 4,
+      "refused": 0,
+      "zeros": 0
+    },
+    "gradient_7": {
+      "answered": 4,
+      "by_slot": {
+        "2": {
+          "draws": 1,
+          "hits": 0
+        },
+        "3": {
+          "draws": 1,
+          "hits": 1
+        },
+        "4": {
+          "draws": 1,
+          "hits": 0
+        },
+        "5": {
+          "draws": 1,
+          "hits": 0
+        }
+      },
+      "detection": 0.25,
+      "draws": 4,
+      "hits": 1,
+      "refused": 0,
+      "zeros": 1
+    },
+    "ours_0:overview": {
+      "answered": 4,
+      "by_slot": {
+        "1": {
+          "draws": 1,
+          "hits": 1
+        },
+        "2": {
+          "draws": 1,
+          "hits": 1
+        },
+        "3": {
+          "draws": 1,
+          "hits": 1
+        },
+        "4": {
+          "draws": 1,
+          "hits": 1
+        }
+      },
+      "detection": 1.0,
+      "draws": 4,
+      "hits": 4,
+      "refused": 0,
+      "zeros": 0
+    },
+    "ours_1:overview": {
+      "answered": 4,
+      "by_slot": {
+        "1": {
+          "draws": 1,
+          "hits": 1
+        },
+        "2": {
+          "draws": 1,
+          "hits": 1
+        },
+        "3": {
+          "draws": 1,
+          "hits": 1
+        },
+        "6": {
+          "draws": 1,
+          "hits": 1
+        }
+      },
+      "detection": 1.0,
+      "draws": 4,
+      "hits": 4,
+      "refused": 0,
+      "zeros": 0
+    },
+    "ours_2:overview": {
+      "answered": 4,
+      "by_slot": {
+        "1": {
+          "draws": 1,
+          "hits": 1
+        },
+        "2": {
+          "draws": 1,
+          "hits": 1
+        },
+        "5": {
+          "draws": 1,
+          "hits": 1
+        },
+        "6": {
+          "draws": 1,
+          "hits": 1
+        }
+      },
+      "detection": 1.0,
+      "draws": 4,
+      "hits": 4,
+      "refused": 0,
+      "zeros": 0
+    },
+    "sham_0": {
+      "by_slot": {
+        "3": 1,
+        "4": 1
+      },
+      "draws": 4,
+      "false_alarm": 0.5,
+      "modal_share": 0.5,
+      "modal_slot": 3,
+      "named": 2,
+      "position_kill": true
+    },
+    "sham_1": {
+      "by_slot": {
+        "2": 3,
+        "4": 1
+      },
+      "draws": 4,
+      "false_alarm": 1.0,
+      "modal_share": 0.75,
+      "modal_slot": 2,
+      "named": 4,
+      "position_kill": true
+    },
+    "sham_2": {
+      "by_slot": {
+        "2": 2,
+        "3": 2
+      },
+      "draws": 4,
+      "false_alarm": 1.0,
+      "modal_share": 0.5,
+      "modal_slot": 2,
+      "named": 4,
+      "position_kill": true
+    },
+    "sham_3": {
+      "by_slot": {
+        "3": 1,
+        "5": 3
+      },
+      "draws": 4,
+      "false_alarm": 1.0,
+      "modal_share": 0.75,
+      "modal_slot": 5,
+      "named": 4,
+      "position_kill": true
+    },
+    "sham_4": {
+      "by_slot": {
+        "3": 1,
+        "6": 1
+      },
+      "draws": 4,
+      "false_alarm": 0.5,
+      "modal_share": 0.5,
+      "modal_slot": 3,
+      "named": 2,
+      "position_kill": true
+    },
+    "sham_5": {
+      "by_slot": {
+        "4": 4
+      },
+      "draws": 4,
+      "false_alarm": 1.0,
+      "modal_share": 1.0,
+      "modal_slot": 4,
+      "named": 4,
+      "position_kill": true
+    },
+    "surface_0": {
+      "answered": 4,
+      "by_slot": {
+        "1": {
+          "draws": 1,
+          "hits": 0
+        },
+        "4": {
+          "draws": 1,
+          "hits": 0
+        },
+        "5": {
+          "draws": 1,
+          "hits": 0
+        },
+        "6": {
+          "draws": 1,
+          "hits": 0
+        }
+      },
+      "detection": 0.0,
+      "draws": 4,
+      "hits": 0,
+      "refused": 0,
+      "zeros": 0
+    },
+    "surface_1": {
+      "answered": 4,
+      "by_slot": {
+        "1": {
+          "draws": 1,
+          "hits": 1
+        },
+        "2": {
+          "draws": 1,
+          "hits": 0
+        },
+        "3": {
+          "draws": 1,
+          "hits": 1
+        },
+        "4": {
+          "draws": 1,
+          "hits": 1
+        }
+      },
+      "detection": 0.75,
+      "draws": 4,
+      "hits": 3,
+      "refused": 0,
+      "zeros": 0
+    },
+    "surface_2": {
+      "answered": 4,
+      "by_slot": {
+        "1": {
+          "draws": 1,
+          "hits": 0
+        },
+        "2": {
+          "draws": 1,
+          "hits": 0
+        },
+        "3": {
+          "draws": 1,
+          "hits": 0
+        },
+        "4": {
+          "draws": 1,
+          "hits": 1
+        }
+      },
+      "detection": 0.25,
+      "draws": 4,
+      "hits": 1,
+      "refused": 0,
+      "zeros": 0
+    },
+    "surface_3": {
+      "answered": 4,
+      "by_slot": {
+        "1": {
+          "draws": 1,
+          "hits": 0
+        },
+        "2": {
+          "draws": 1,
+          "hits": 0
+        },
+        "3": {
+          "draws": 1,
+          "hits": 1
+        },
+        "4": {
+          "draws": 1,
+          "hits": 0
+        }
+      },
+      "detection": 0.25,
+      "draws": 4,
+      "hits": 1,
+      "refused": 0,
+      "zeros": 0
+    }
+  },
+  "phrases": [
+    {
+      "draw": 0,
+      "leg": "sham",
+      "named_slot": 4,
+      "phrase": {
+        "located": true,
+        "token_offsets": [
+          65,
+          75
+        ]
+      },
+      "shelf": "sham_0",
+      "slot": 3,
+      "target_slot": null
+    },
+    {
+      "draw": 3,
+      "leg": "sham",
+      "named_slot": 3,
+      "phrase": {
+        "located": true,
+        "token_offsets": [
+          151,
+          180
+        ]
+      },
+      "shelf": "sham_0",
+      "slot": 6,
+      "target_slot": null
+    },
+    {
+      "draw": 0,
+      "leg": "sham",
+      "named_slot": 4,
+      "phrase": {
+        "located": true,
+        "token_offsets": [
+          0,
+          26
+        ]
+      },
+      "shelf": "sham_1",
+      "slot": 5,
+      "target_slot": null
+    },
+    {
+      "draw": 1,
+      "leg": "sham",
+      "named_slot": 2,
+      "phrase": {
+        "located": false
+      },
+      "shelf": "sham_1",
+      "slot": 6,
+      "target_slot": null
+    },
+    {
+      "draw": 2,
+      "leg": "sham",
+      "named_slot": 2,
+      "phrase": {
+        "located": true,
+        "token_offsets": [
+          134,
+          157
+        ]
+      },
+      "shelf": "sham_1",
+      "slot": 1,
+      "target_slot": null
+    },
+    {
+      "draw": 3,
+      "leg": "sham",
+      "named_slot": 2,
+      "phrase": {
+        "located": false
+      },
+      "shelf": "sham_1",
+      "slot": 2,
+      "target_slot": null
+    },
+    {
+      "draw": 0,
+      "leg": "sham",
+      "named_slot": 3,
+      "phrase": {
+        "located": true,
+        "token_offsets": [
+          59,
+          77
+        ]
+      },
+      "shelf": "sham_2",
+      "slot": 4,
+      "target_slot": null
+    },
+    {
+      "draw": 1,
+      "leg": "sham",
+      "named_slot": 3,
+      "phrase": {
+        "located": true,
+        "token_offsets": [
+          72,
+          77
+        ]
+      },
+      "shelf": "sham_2",
+      "slot": 5,
+      "target_slot": null
+    },
+    {
+      "draw": 2,
+      "leg": "sham",
+      "named_slot": 2,
+      "phrase": {
+        "located": false
+      },
+      "shelf": "sham_2",
+      "slot": 6,
+      "target_slot": null
+    },
+    {
+      "draw": 3,
+      "leg": "sham",
+      "named_slot": 2,
+      "phrase": {
+        "located": false
+      },
+      "shelf": "sham_2",
+      "slot": 1,
+      "target_slot": null
+    },
+    {
+      "draw": 0,
+      "leg": "sham",
+      "named_slot": 3,
+      "phrase": {
+        "located": true,
+        "token_offsets": [
+          35,
+          42
+        ]
+      },
+      "shelf": "sham_3",
+      "slot": 4,
+      "target_slot": null
+    },
+    {
+      "draw": 1,
+      "leg": "sham",
+      "named_slot": 5,
+      "phrase": {
+        "located": true,
+        "token_offsets": [
+          9,
+          36
+        ]
+      },
+      "shelf": "sham_3",
+      "slot": 5,
+      "target_slot": null
+    },
+    {
+      "draw": 2,
+      "leg": "sham",
+      "named_slot": 5,
+      "phrase": {
+        "located": true,
+        "token_offsets": [
+          65,
+          75
+        ]
+      },
+      "shelf": "sham_3",
+      "slot": 6,
+      "target_slot": null
+    },
+    {
+      "draw": 3,
+      "leg": "sham",
+      "named_slot": 5,
+      "phrase": {
+        "located": true,
+        "token_offsets": [
+          9,
+          36
+        ]
+      },
+      "shelf": "sham_3",
+      "slot": 1,
+      "target_slot": null
+    },
+    {
+      "draw": 0,
+      "leg": "sham",
+      "named_slot": 6,
+      "phrase": {
+        "located": true,
+        "token_offsets": [
+          87,
+          105
+        ]
+      },
+      "shelf": "sham_4",
+      "slot": 5,
+      "target_slot": null
+    },
+    {
+      "draw": 3,
+      "leg": "sham",
+      "named_slot": 3,
+      "phrase": {
+        "located": true,
+        "token_offsets": [
+          95,
+          111
+        ]
+      },
+      "shelf": "sham_4",
+      "slot": 2,
+      "target_slot": null
+    },
+    {
+      "draw": 0,
+      "leg": "sham",
+      "named_slot": 4,
+      "phrase": {
+        "located": true,
+        "token_offsets": [
+          72,
+          77
+        ]
+      },
+      "shelf": "sham_5",
+      "slot": 4,
+      "target_slot": null
+    },
+    {
+      "draw": 1,
+      "leg": "sham",
+      "named_slot": 4,
+      "phrase": {
+        "located": true,
+        "token_offsets": [
+          72,
+          77
+        ]
+      },
+      "shelf": "sham_5",
+      "slot": 5,
+      "target_slot": null
+    },
+    {
+      "draw": 2,
+      "leg": "sham",
+      "named_slot": 4,
+      "phrase": {
+        "located": true,
+        "token_offsets": [
+          72,
+          77
+        ]
+      },
+      "shelf": "sham_5",
+      "slot": 6,
+      "target_slot": null
+    },
+    {
+      "draw": 3,
+      "leg": "sham",
+      "named_slot": 4,
+      "phrase": {
+        "located": false
+      },
+      "shelf": "sham_5",
+      "slot": 1,
+      "target_slot": null
+    },
+    {
+      "draw": 0,
+      "leg": "gradient",
+      "named_slot": 2,
+      "phrase": {
+        "located": false,
+        "token_offsets": null,
+        "verbatim": "a growing desire for one of the warriors"
+      },
+      "shelf": "gradient_0",
+      "slot": 2,
+      "target_slot": 2
+    },
+    {
+      "draw": 1,
+      "leg": "gradient",
+      "named_slot": 3,
+      "phrase": {
+        "located": false,
+        "token_offsets": null,
+        "verbatim": "a growing desire for one of the warriors"
+      },
+      "shelf": "gradient_0",
+      "slot": 3,
+      "target_slot": 3
+    },
+    {
+      "draw": 2,
+      "leg": "gradient",
+      "named_slot": 4,
+      "phrase": {
+        "located": false,
+        "token_offsets": null,
+        "verbatim": "a growing desire for one of the warriors"
+      },
+      "shelf": "gradient_0",
+      "slot": 4,
+      "target_slot": 4
+    },
+    {
+      "draw": 3,
+      "leg": "gradient",
+      "named_slot": 5,
+      "phrase": {
+        "located": false,
+        "token_offsets": null,
+        "verbatim": "a growing desire for one of the warriors"
+      },
+      "shelf": "gradient_0",
+      "slot": 5,
+      "target_slot": 5
+    },
+    {
+      "draw": 0,
+      "leg": "gradient",
+      "named_slot": 4,
+      "phrase": {
+        "located": false
+      },
+      "shelf": "gradient_1",
+      "slot": 1,
+      "target_slot": 1
+    },
+    {
+      "draw": 1,
+      "leg": "gradient",
+      "named_slot": 2,
+      "phrase": {
+        "located": true,
+        "token_offsets": [
+          6,
+          24
+        ],
+        "verbatim": "ɪ ꜱʜᴏᴜʟᴅ ʀᴜɴ ɪɴ ᴛʜᴇ ꜰᴀᴄᴇ ᴏꜰ ᴅᴇᴀᴛʜ ꜱᴏ ɪᴍᴍɪɴᴇɴᴛ ʏᴇᴛ ᴀᴠᴏɪᴅᴀʙʟᴇ, ᴀɴᴅ ꜱᴛɪʟʟ ɪ ᴏɴʟʏ ꜱᴇᴇ ᴏᴘᴘᴏʀᴛᴜɴɪᴛʏ"
+      },
+      "shelf": "gradient_1",
+      "slot": 2,
+      "target_slot": 2
+    },
+    {
+      "draw": 2,
+      "leg": "gradient",
+      "named_slot": 3,
+      "phrase": {
+        "located": true,
+        "token_offsets": [
+          70,
+          76
+        ],
+        "verbatim": "the ghoulish beasts known as Mertem's"
+      },
+      "shelf": "gradient_1",
+      "slot": 3,
+      "target_slot": 3
+    },
+    {
+      "draw": 3,
+      "leg": "gradient",
+      "named_slot": 3,
+      "phrase": {
+        "located": true,
+        "token_offsets": [
+          134,
+          157
+        ]
+      },
+      "shelf": "gradient_1",
+      "slot": 4,
+      "target_slot": 4
+    },
+    {
+      "draw": 0,
+      "leg": "gradient",
+      "named_slot": 6,
+      "phrase": {
+        "located": false,
+        "token_offsets": null,
+        "verbatim": "the exquisite Monsieur Laurent Volet Duette Cordless Lite-Rise Handle"
+      },
+      "shelf": "gradient_2",
+      "slot": 6,
+      "target_slot": 6
+    },
+    {
+      "draw": 1,
+      "leg": "gradient",
+      "named_slot": 1,
+      "phrase": {
+        "located": false,
+        "token_offsets": null,
+        "verbatim": "the exquisite Monsieur Laurent Volet Duette Cordless Lite-Rise Handle"
+      },
+      "shelf": "gradient_2",
+      "slot": 1,
+      "target_slot": 1
+    },
+    {
+      "draw": 2,
+      "leg": "gradient",
+      "named_slot": 2,
+      "phrase": {
+        "located": false,
+        "token_offsets": null,
+        "verbatim": "the exquisite Monsieur Laurent Volet Duette Cordless Lite-Rise Handle"
+      },
+      "shelf": "gradient_2",
+      "slot": 2,
+      "target_slot": 2
+    },
+    {
+      "draw": 3,
+      "leg": "gradient",
+      "named_slot": 3,
+      "phrase": {
+        "located": false,
+        "token_offsets": null,
+        "verbatim": "the exquisite Monsieur Laurent Volet Duette Cordless Lite-Rise Handle"
+      },
+      "shelf": "gradient_2",
+      "slot": 3,
+      "target_slot": 3
+    },
+    {
+      "draw": 0,
+      "leg": "gradient",
+      "named_slot": 4,
+      "phrase": {
+        "located": true,
+        "token_offsets": [
+          104,
+          116
+        ],
+        "verbatim": "which will go down in history as the cruelest in galactic history"
+      },
+      "shelf": "gradient_3",
+      "slot": 4,
+      "target_slot": 4
+    },
+    {
+      "draw": 1,
+      "leg": "gradient",
+      "named_slot": 5,
+      "phrase": {
+        "located": true,
+        "token_offsets": [
+          104,
+          116
+        ],
+        "verbatim": "which will go down in history as the cruelest in galactic history"
+      },
+      "shelf": "gradient_3",
+      "slot": 5,
+      "target_slot": 5
+    },
+    {
+      "draw": 2,
+      "leg": "gradient",
+      "named_slot": 6,
+      "phrase": {
+        "located": true,
+        "token_offsets": [
+          94,
+          116
+        ],
+        "verbatim": "And Tanya von Degurechaff will become infamous for this campaign, which will go down in history as the cruelest in galactic history."
+      },
+      "shelf": "gradient_3",
+      "slot": 6,
+      "target_slot": 6
+    },
+    {
+      "draw": 3,
+      "leg": "gradient",
+      "named_slot": 1,
+      "phrase": {
+        "located": true,
+        "token_offsets": [
+          104,
+          116
+        ],
+        "verbatim": "which will go down in history as the cruelest in galactic history"
+      },
+      "shelf": "gradient_3",
+      "slot": 1,
+      "target_slot": 1
+    },
+    {
+      "draw": 0,
+      "leg": "gradient",
+      "named_slot": 2,
+      "phrase": {
+        "located": true,
+        "token_offsets": [
+          0,
+          9
+        ]
+      },
+      "shelf": "gradient_4",
+      "slot": 5,
+      "target_slot": 5
+    },
+    {
+      "draw": 1,
+      "leg": "gradient",
+      "named_slot": 2,
+      "phrase": {
+        "located": true,
+        "token_offsets": [
+          0,
+          9
+        ]
+      },
+      "shelf": "gradient_4",
+      "slot": 6,
+      "target_slot": 6
+    },
+    {
+      "draw": 2,
+      "leg": "gradient",
+      "named_slot": 3,
+      "phrase": {
+        "located": true,
+        "token_offsets": [
+          128,
+          137
+        ]
+      },
+      "shelf": "gradient_4",
+      "slot": 1,
+      "target_slot": 1
+    },
+    {
+      "draw": 3,
+      "leg": "gradient",
+      "named_slot": 3,
+      "phrase": {
+        "located": true,
+        "token_offsets": [
+          128,
+          137
+        ]
+      },
+      "shelf": "gradient_4",
+      "slot": 2,
+      "target_slot": 2
+    },
+    {
+      "draw": 0,
+      "leg": "gradient",
+      "named_slot": 1,
+      "phrase": {
+        "located": true,
+        "token_offsets": [
+          167,
+          179
+        ]
+      },
+      "shelf": "gradient_5",
+      "slot": 3,
+      "target_slot": 3
+    },
+    {
+      "draw": 1,
+      "leg": "gradient",
+      "named_slot": 1,
+      "phrase": {
+        "located": true,
+        "token_offsets": [
+          167,
+          179
+        ]
+      },
+      "shelf": "gradient_5",
+      "slot": 4,
+      "target_slot": 4
+    },
+    {
+      "draw": 2,
+      "leg": "gradient",
+      "named_slot": 1,
+      "phrase": {
+        "located": true,
+        "token_offsets": [
+          167,
+          179
+        ]
+      },
+      "shelf": "gradient_5",
+      "slot": 5,
+      "target_slot": 5
+    },
+    {
+      "draw": 3,
+      "leg": "gradient",
+      "named_slot": 1,
+      "phrase": {
+        "located": true,
+        "token_offsets": [
+          167,
+          179
+        ]
+      },
+      "shelf": "gradient_5",
+      "slot": 6,
+      "target_slot": 6
+    },
+    {
+      "draw": 0,
+      "leg": "gradient",
+      "named_slot": 4,
+      "phrase": {
+        "located": true,
+        "token_offsets": [
+          0,
+          8
+        ],
+        "verbatim": "Dakota never thought fatherhood would feel this fragile."
+      },
+      "shelf": "gradient_6",
+      "slot": 4,
+      "target_slot": 4
+    },
+    {
+      "draw": 1,
+      "leg": "gradient",
+      "named_slot": 5,
+      "phrase": {
+        "located": false,
+        "token_offsets": null,
+        "verbatim": "Crib Side Confessions: Never Ending Empty Cries"
+      },
+      "shelf": "gradient_6",
+      "slot": 5,
+      "target_slot": 5
+    },
+    {
+      "draw": 2,
+      "leg": "gradient",
+      "named_slot": 6,
+      "phrase": {
+        "located": true,
+        "token_offsets": [
+          0,
+          8
+        ],
+        "verbatim": "Dakota never thought fatherhood would feel this fragile."
+      },
+      "shelf": "gradient_6",
+      "slot": 6,
+      "target_slot": 6
+    },
+    {
+      "draw": 3,
+      "leg": "gradient",
+      "named_slot": 1,
+      "phrase": {
+        "located": true,
+        "token_offsets": [
+          122,
+          138
+        ],
+        "verbatim": "a mystery that unearths long-buried secrets about love, loss, and the unseen forces that connect generations"
+      },
+      "shelf": "gradient_6",
+      "slot": 1,
+      "target_slot": 1
+    },
+    {
+      "draw": 0,
+      "leg": "gradient",
+      "named_slot": 5,
+      "phrase": {
+        "located": true,
+        "token_offsets": [
+          0,
+          32
+        ]
+      },
+      "shelf": "gradient_7",
+      "slot": 2,
+      "target_slot": 2
+    },
+    {
+      "draw": 1,
+      "leg": "gradient",
+      "named_slot": 3,
+      "phrase": {
+        "located": true,
+        "token_offsets": [
+          143,
+          149
+        ],
+        "verbatim": "From forgotten rock… to living nightmare."
+      },
+      "shelf": "gradient_7",
+      "slot": 3,
+      "target_slot": 3
+    },
+    {
+      "draw": 3,
+      "leg": "gradient",
+      "named_slot": 6,
+      "phrase": {
+        "located": true,
+        "token_offsets": [
+          0,
+          13
+        ]
+      },
+      "shelf": "gradient_7",
+      "slot": 5,
+      "target_slot": 5
+    },
+    {
+      "draw": 0,
+      "leg": "ours",
+      "named_slot": 1,
+      "phrase": {
+        "located": true,
+        "token_offsets": [
+          39,
+          61
+        ],
+        "verbatim": "her tolerances wane on no schedule at all and she learns she is due by bleeding in the middle of a room"
+      },
+      "shelf": "ours_0:overview",
+      "slot": 1,
+      "target_slot": 1
+    },
+    {
+      "draw": 1,
+      "leg": "ours",
+      "named_slot": 2,
+      "phrase": {
+        "located": true,
+        "token_offsets": [
+          39,
+          61
+        ],
+        "verbatim": "her tolerances wane on no schedule at all and she learns she is due by bleeding in the middle of a room"
+      },
+      "shelf": "ours_0:overview",
+      "slot": 2,
+      "target_slot": 2
+    },
+    {
+      "draw": 2,
+      "leg": "ours",
+      "named_slot": 3,
+      "phrase": {
+        "located": true,
+        "token_offsets": [
+          39,
+          61
+        ],
+        "verbatim": "her tolerances wane on no schedule at all and she learns she is due by bleeding in the middle of a room"
+      },
+      "shelf": "ours_0:overview",
+      "slot": 3,
+      "target_slot": 3
+    },
+    {
+      "draw": 3,
+      "leg": "ours",
+      "named_slot": 4,
+      "phrase": {
+        "located": true,
+        "token_offsets": [
+          39,
+          61
+        ],
+        "verbatim": "her tolerances wane on no schedule at all and she learns she is due by bleeding in the middle of a room"
+      },
+      "shelf": "ours_0:overview",
+      "slot": 4,
+      "target_slot": 4
+    },
+    {
+      "draw": 0,
+      "leg": "ours",
+      "named_slot": 6,
+      "phrase": {
+        "located": true,
+        "token_offsets": [
+          13,
+          25
+        ],
+        "verbatim": "Yesterday he was a hospital porter, moving beds down a night ward."
+      },
+      "shelf": "ours_1:overview",
+      "slot": 6,
+      "target_slot": 6
+    },
+    {
+      "draw": 1,
+      "leg": "ours",
+      "named_slot": 1,
+      "phrase": {
+        "located": true,
+        "token_offsets": [
+          53,
+          68
+        ],
+        "verbatim": "It grew back wrong, and the wrong hand does what the old one could not."
+      },
+      "shelf": "ours_1:overview",
+      "slot": 1,
+      "target_slot": 1
+    },
+    {
+      "draw": 2,
+      "leg": "ours",
+      "named_slot": 2,
+      "phrase": {
+        "located": true,
+        "token_offsets": [
+          96,
+          106
+        ],
+        "verbatim": "He wants the surface, his ward, and one boring shift."
+      },
+      "shelf": "ours_1:overview",
+      "slot": 2,
+      "target_slot": 2
+    },
+    {
+      "draw": 3,
+      "leg": "ours",
+      "named_slot": 3,
+      "phrase": {
+        "located": true,
+        "token_offsets": [
+          53,
+          68
+        ],
+        "verbatim": "It grew back wrong, and the wrong hand does what the old one could not."
+      },
+      "shelf": "ours_1:overview",
+      "slot": 3,
+      "target_slot": 3
+    },
+    {
+      "draw": 0,
+      "leg": "ours",
+      "named_slot": 5,
+      "phrase": {
+        "located": true,
+        "token_offsets": [
+          68,
+          91
+        ],
+        "verbatim": "He goes down scared, with a crowbar and a notebook full of repro steps, because two rules in that changelog contradict each other."
+      },
+      "shelf": "ours_2:overview",
+      "slot": 5,
+      "target_slot": 5
+    },
+    {
+      "draw": 1,
+      "leg": "ours",
+      "named_slot": 6,
+      "phrase": {
+        "located": true,
+        "token_offsets": [
+          68,
+          91
+        ],
+        "verbatim": "He goes down scared, with a crowbar and a notebook full of repro steps, because two rules in that changelog contradict each other."
+      },
+      "shelf": "ours_2:overview",
+      "slot": 6,
+      "target_slot": 6
+    },
+    {
+      "draw": 2,
+      "leg": "ours",
+      "named_slot": 1,
+      "phrase": {
+        "located": true,
+        "token_offsets": [
+          82,
+          91
+        ],
+        "verbatim": "because two rules in that changelog contradict each other"
+      },
+      "shelf": "ours_2:overview",
+      "slot": 1,
+      "target_slot": 1
+    },
+    {
+      "draw": 3,
+      "leg": "ours",
+      "named_slot": 2,
+      "phrase": {
+        "located": true,
+        "token_offsets": [
+          91,
+          112
+        ],
+        "verbatim": "He wants to reach that gap first, before the guilds forming across town read the wording as carefully as he does."
+      },
+      "shelf": "ours_2:overview",
+      "slot": 2,
+      "target_slot": 2
+    },
+    {
+      "draw": 0,
+      "leg": "surface",
+      "named_slot": 3,
+      "phrase": {
+        "located": true,
+        "token_offsets": [
+          128,
+          132
+        ]
+      },
+      "shelf": "surface_0",
+      "slot": 4,
+      "target_slot": 4
+    },
+    {
+      "draw": 1,
+      "leg": "surface",
+      "named_slot": 3,
+      "phrase": {
+        "located": true,
+        "token_offsets": [
+          128,
+          132
+        ]
+      },
+      "shelf": "surface_0",
+      "slot": 5,
+      "target_slot": 5
+    },
+    {
+      "draw": 2,
+      "leg": "surface",
+      "named_slot": 1,
+      "phrase": {
+        "located": false
+      },
+      "shelf": "surface_0",
+      "slot": 6,
+      "target_slot": 6
+    },
+    {
+      "draw": 3,
+      "leg": "surface",
+      "named_slot": 4,
+      "phrase": {
+        "located": true,
+        "token_offsets": [
+          128,
+          132
+        ]
+      },
+      "shelf": "surface_0",
+      "slot": 1,
+      "target_slot": 1
+    },
+    {
+      "draw": 0,
+      "leg": "surface",
+      "named_slot": 1,
+      "phrase": {
+        "located": true,
+        "token_offsets": [
+          13,
+          19
+        ],
+        "verbatim": "Arilyn must forge his own path"
+      },
+      "shelf": "surface_1",
+      "slot": 1,
+      "target_slot": 1
+    },
+    {
+      "draw": 1,
+      "leg": "surface",
+      "named_slot": 3,
+      "phrase": {
+        "located": true,
+        "token_offsets": [
+          134,
+          157
+        ]
+      },
+      "shelf": "surface_1",
+      "slot": 2,
+      "target_slot": 2
+    },
+    {
+      "draw": 2,
+      "leg": "surface",
+      "named_slot": 3,
+      "phrase": {
+        "located": true,
+        "token_offsets": [
+          31,
+          52
+        ],
+        "verbatim": "Even in the frail body of a newborn, Arilyn is rewarded with attributes, points, and power simply for stubborn hard work."
+      },
+      "shelf": "surface_1",
+      "slot": 3,
+      "target_slot": 3
+    },
+    {
+      "draw": 3,
+      "leg": "surface",
+      "named_slot": 4,
+      "phrase": {
+        "located": true,
+        "token_offsets": [
+          0,
+          19
+        ],
+        "verbatim": "Reborn into a world shaped by ashen storms, brutal blizzards, and sword-wielding sorcerers, Arilyn must forge his own path."
+      },
+      "shelf": "surface_1",
+      "slot": 4,
+      "target_slot": 4
+    },
+    {
+      "draw": 0,
+      "leg": "surface",
+      "named_slot": 6,
+      "phrase": {
+        "located": false
+      },
+      "shelf": "surface_2",
+      "slot": 1,
+      "target_slot": 1
+    },
+    {
+      "draw": 1,
+      "leg": "surface",
+      "named_slot": 6,
+      "phrase": {
+        "located": true,
+        "token_offsets": [
+          24,
+          33
+        ]
+      },
+      "shelf": "surface_2",
+      "slot": 2,
+      "target_slot": 2
+    },
+    {
+      "draw": 2,
+      "leg": "surface",
+      "named_slot": 1,
+      "phrase": {
+        "located": true,
+        "token_offsets": [
+          44,
+          66
+        ]
+      },
+      "shelf": "surface_2",
+      "slot": 3,
+      "target_slot": 3
+    },
+    {
+      "draw": 3,
+      "leg": "surface",
+      "named_slot": 4,
+      "phrase": {
+        "located": true,
+        "token_offsets": [
+          31,
+          52
+        ],
+        "verbatim": "His mastery over Resonance allows him to hear the frequencies of the world and correct them, healing even the deepest wounds."
+      },
+      "shelf": "surface_2",
+      "slot": 4,
+      "target_slot": 4
+    },
+    {
+      "draw": 0,
+      "leg": "surface",
+      "named_slot": 4,
+      "phrase": {
+        "located": false
+      },
+      "shelf": "surface_3",
+      "slot": 1,
+      "target_slot": 1
+    },
+    {
+      "draw": 1,
+      "leg": "surface",
+      "named_slot": 5,
+      "phrase": {
+        "located": true,
+        "token_offsets": [
+          0,
+          7
+        ]
+      },
+      "shelf": "surface_3",
+      "slot": 2,
+      "target_slot": 2
+    },
+    {
+      "draw": 2,
+      "leg": "surface",
+      "named_slot": 3,
+      "phrase": {
+        "located": true,
+        "token_offsets": [
+          1,
+          5
+        ],
+        "verbatim": "\" Books contain countless wonders. \""
+      },
+      "shelf": "surface_3",
+      "slot": 3,
+      "target_slot": 3
+    },
+    {
+      "draw": 3,
+      "leg": "surface",
+      "named_slot": 5,
+      "phrase": {
+        "located": true,
+        "token_offsets": [
+          0,
+          7
+        ]
+      },
+      "shelf": "surface_3",
+      "slot": 4,
+      "target_slot": 4
+    }
+  ],
+  "registration_digest": "82e19c55fe1c76d7",
+  "shelves": {
+    "gradient_0": {
+      "leg": "gradient",
+      "members": [
+        "b0e8d94d98f6",
+        "13938192f023",
+        "d467e8f6e613",
+        "54514fb042c5",
+        "569e41455f5f",
+        "67f45c9595f0"
+      ],
+      "start_slot": 2,
+      "target": "67f45c9595f0"
+    },
+    "gradient_1": {
+      "leg": "gradient",
+      "members": [
+        "38a15c08d4f3",
+        "f6f4d053034f",
+        "cbeafd684ab7",
+        "796d2e6e6017",
+        "472a7549e8df",
+        "6e1a6a6d6325"
+      ],
+      "start_slot": 1,
+      "target": "6e1a6a6d6325"
+    },
+    "gradient_2": {
+      "leg": "gradient",
+      "members": [
+        "fbffa1e163ff",
+        "61737194abce",
+        "2beb648c28eb",
+        "c3462302d773",
+        "bbd499f9bc7a",
+        "e72a9646d5d8"
+      ],
+      "start_slot": 6,
+      "target": "e72a9646d5d8"
+    },
+    "gradient_3": {
+      "leg": "gradient",
+      "members": [
+        "62bb81c5dcbc",
+        "89c6a762ee56",
+        "e446b8361fb1",
+        "8f3ca7f1b036",
+        "469e2f7450de",
+        "bf3eab9a79fe"
+      ],
+      "start_slot": 4,
+      "target": "bf3eab9a79fe"
+    },
+    "gradient_4": {
+      "leg": "gradient",
+      "members": [
+        "569e41455f5f",
+        "54514fb042c5",
+        "578b07fda7e1",
+        "b3aab646a6fb",
+        "d467e8f6e613",
+        "7c229af9c3f8"
+      ],
+      "start_slot": 5,
+      "target": "7c229af9c3f8"
+    },
+    "gradient_5": {
+      "leg": "gradient",
+      "members": [
+        "b2d2e3407f81",
+        "6d1c26808141",
+        "a71d7d0ad6df",
+        "4b2325e26ad6",
+        "385fc202910e",
+        "184c400967dd"
+      ],
+      "start_slot": 3,
+      "target": "184c400967dd"
+    },
+    "gradient_6": {
+      "leg": "gradient",
+      "members": [
+        "e093a2b45ada",
+        "0967d50a4e96",
+        "a8179638a6b4",
+        "cbeafd684ab7",
+        "2ac7504e29d3",
+        "bd049489c7d2"
+      ],
+      "start_slot": 4,
+      "target": "bd049489c7d2"
+    },
+    "gradient_7": {
+      "leg": "gradient",
+      "members": [
+        "562d898b124a",
+        "36c2457f49d9",
+        "e3e4cb7f81fc",
+        "30c07386d731",
+        "2ac7504e29d3",
+        "2bce03f7a17e"
+      ],
+      "start_slot": 2,
+      "target": "2bce03f7a17e"
+    },
+    "ours_0:overview": {
+      "leg": "ours",
+      "members": [
+        "fb96b1d24665",
+        "82c3c80d2cf7",
+        "0fc3d3925cbb",
+        "578b07fda7e1",
+        "b3aab646a6fb",
+        "fe49f447071a"
+      ],
+      "start_slot": 1,
+      "target": "fe49f447071a"
+    },
+    "ours_1:overview": {
+      "leg": "ours",
+      "members": [
+        "9ef342934216",
+        "2d0649483eca",
+        "a98f5242ade1",
+        "cce798e97356",
+        "94cdc30133ae",
+        "2f72b6308229"
+      ],
+      "start_slot": 6,
+      "target": "2f72b6308229"
+    },
+    "ours_2:overview": {
+      "leg": "ours",
+      "members": [
+        "e446b8361fb1",
+        "62bb81c5dcbc",
+        "cce798e97356",
+        "89c6a762ee56",
+        "9ef342934216",
+        "ee15911e8444"
+      ],
+      "start_slot": 5,
+      "target": "ee15911e8444"
+    },
+    "sham_0": {
+      "leg": "sham",
+      "members": [
+        "9ef342934216",
+        "cbeafd684ab7",
+        "61737194abce",
+        "b75591d07f26",
+        "441eaf0b214b",
+        "2d0649483eca"
+      ],
+      "start_slot": 3,
+      "target": null
+    },
+    "sham_1": {
+      "leg": "sham",
+      "members": [
+        "a98f5242ade1",
+        "cbeafd684ab7",
+        "796d2e6e6017",
+        "94cdc30133ae",
+        "562d898b124a",
+        "36c2457f49d9"
+      ],
+      "start_slot": 5,
+      "target": null
+    },
+    "sham_2": {
+      "leg": "sham",
+      "members": [
+        "94cdc30133ae",
+        "cbeafd684ab7",
+        "fcbdaab8238d",
+        "f6f4d053034f",
+        "4b2325e26ad6",
+        "8f3ca7f1b036"
+      ],
+      "start_slot": 4,
+      "target": null
+    },
+    "sham_3": {
+      "leg": "sham",
+      "members": [
+        "b3aab646a6fb",
+        "b0e8d94d98f6",
+        "82c3c80d2cf7",
+        "13938192f023",
+        "b75591d07f26",
+        "7097d996be42"
+      ],
+      "start_slot": 4,
+      "target": null
+    },
+    "sham_4": {
+      "leg": "sham",
+      "members": [
+        "8221e975fe42",
+        "61737194abce",
+        "50b8649f67c4",
+        "13938192f023",
+        "8f3ca7f1b036",
+        "2d0649483eca"
+      ],
+      "start_slot": 5,
+      "target": null
+    },
+    "sham_5": {
+      "leg": "sham",
+      "members": [
+        "b75591d07f26",
+        "4b2325e26ad6",
+        "2d0649483eca",
+        "fcbdaab8238d",
+        "7097d996be42",
+        "562d898b124a"
+      ],
+      "start_slot": 4,
+      "target": null
+    },
+    "surface_0": {
+      "leg": "surface",
+      "members": [
+        "13938192f023",
+        "d467e8f6e613",
+        "54514fb042c5",
+        "569e41455f5f",
+        "578b07fda7e1",
+        "9145fdd27f66"
+      ],
+      "start_slot": 4,
+      "target": "9145fdd27f66",
+      "truncated_to_words": 106
+    },
+    "surface_1": {
+      "leg": "surface",
+      "members": [
+        "f6f4d053034f",
+        "cbeafd684ab7",
+        "796d2e6e6017",
+        "472a7549e8df",
+        "0967d50a4e96",
+        "2b83da879294"
+      ],
+      "start_slot": 1,
+      "target": "2b83da879294",
+      "truncated_to_words": 106
+    },
+    "surface_2": {
+      "leg": "surface",
+      "members": [
+        "7097d996be42",
+        "c3462302d773",
+        "bbd499f9bc7a",
+        "69b1c32768ca",
+        "50b8649f67c4",
+        "f5766f1ca09f"
+      ],
+      "start_slot": 1,
+      "target": "f5766f1ca09f",
+      "truncated_to_words": 106
+    },
+    "surface_3": {
+      "leg": "surface",
+      "members": [
+        "e446b8361fb1",
+        "89c6a762ee56",
+        "8f3ca7f1b036",
+        "469e2f7450de",
+        "8221e975fe42",
+        "8e232898cf11"
+      ],
+      "start_slot": 1,
+      "target": "8e232898cf11",
+      "truncated_to_words": 106
+    }
+  },
+  "study": "blurb_shelf.v0"
+}
