@@ -1,0 +1,257 @@
+{
+  "high": {
+    "n": 6,
+    "mean_interval": [
+      8.12,
+      13.83,
+      19.55
+    ],
+    "counts": [
+      13,
+      10,
+      4,
+      25,
+      18,
+      13
+    ],
+    "rows": [
+      {
+        "undefined_total": 13,
+        "answered": 4,
+        "words": [
+          "class",
+          "purged from his soul",
+          "slayers",
+          "the stone"
+        ],
+        "source": "royalroad:47038",
+        "followers": 12448
+      },
+      {
+        "undefined_total": 10,
+        "answered": 4,
+        "words": [
+          "a system",
+          "dungeon core",
+          "mana",
+          "other dungeons"
+        ],
+        "source": "royalroad:48893",
+        "followers": 11539
+      },
+      {
+        "undefined_total": 4,
+        "answered": 4,
+        "words": [
+          "one of her favorite rpgs",
+          "small-time villain",
+          "some severe personality issues"
+        ],
+        "source": "royalroad:47995",
+        "followers": 11160
+      },
+      {
+        "undefined_total": 25,
+        "answered": 4,
+        "words": [
+          "a power system based on actual daoism",
+          "magic ring with the ghostly grandpa in it",
+          "natural treasures",
+          "no harem",
+          "secret arts",
+          "sects",
+          "shake the heavens",
+          "talismans",
+          "young masters"
+        ],
+        "source": "royalroad:107917",
+        "followers": 10200
+      },
+      {
+        "undefined_total": 18,
+        "answered": 4,
+        "words": [
+          "a system",
+          "an ancient ritual",
+          "life archmagus",
+          "resonance",
+          "system",
+          "the empire",
+          "warmagic"
+        ],
+        "source": "royalroad:108300",
+        "followers": 7226
+      },
+      {
+        "undefined_total": 13,
+        "answered": 4,
+        "words": [
+          "infrasound berserker",
+          "keilberg",
+          "litrpg",
+          "slice of survival"
+        ],
+        "source": "royalroad:47017",
+        "followers": 6530
+      }
+    ]
+  },
+  "low": {
+    "n": 6,
+    "mean_interval": [
+      9.88,
+      12.5,
+      15.12
+    ],
+    "counts": [
+      16,
+      9,
+      15,
+      8,
+      13,
+      14
+    ],
+    "rows": [
+      {
+        "undefined_total": 16,
+        "answered": 4,
+        "words": [
+          "a gift from the gods",
+          "chosen by the wrong god",
+          "the divine wolf",
+          "the gods walk in human skin",
+          "the moon watches",
+          "the moon watches.",
+          "the war he started"
+        ],
+        "source": "royalroad:109431",
+        "followers": 3
+      },
+      {
+        "undefined_total": 9,
+        "answered": 4,
+        "words": [
+          "a dungeon",
+          "dungeon",
+          "participant of the writeathon",
+          "the kingdom spanning plot",
+          "writeathon"
+        ],
+        "source": "royalroad:109428",
+        "followers": 0
+      },
+      {
+        "undefined_total": 15,
+        "answered": 4,
+        "words": [
+          "a representative of the current world",
+          "all factions and clans",
+          "an ancient artifact",
+          "ancient artifact",
+          "different rules and laws",
+          "people living now are not the same as they used to be"
+        ],
+        "source": "royalroad:109426",
+        "followers": 0
+      },
+      {
+        "undefined_total": 8,
+        "answered": 4,
+        "words": [
+          "eschaton",
+          "his teleportation technology",
+          "one botched military operation",
+          "rogue tech",
+          "the ghost code chronicles",
+          "the moment the government stepped in"
+        ],
+        "source": "royalroad:109423",
+        "followers": 1
+      },
+      {
+        "undefined_total": 13,
+        "answered": 4,
+        "words": [
+          "atfal el-noor",
+          "eikons",
+          "shrine maiden",
+          "the realm of the gods"
+        ],
+        "source": "royalroad:109422",
+        "followers": 2
+      },
+      {
+        "undefined_total": 14,
+        "answered": 4,
+        "words": [
+          "one trial",
+          "survivors",
+          "the entity",
+          "the killers",
+          "the survivors"
+        ],
+        "source": "royalroad:109418",
+        "followers": 0
+      }
+    ]
+  },
+  "ours": {
+    "n": 4,
+    "mean_interval": [
+      3.58,
+      5.75,
+      7.92
+    ],
+    "counts": [
+      8,
+      5,
+      3,
+      7
+    ],
+    "rows": [
+      {
+        "undefined_total": 8,
+        "answered": 4,
+        "words": [
+          "a class he never picked",
+          "class",
+          "class he never picked",
+          "guilds",
+          "loot"
+        ],
+        "source": "pilot9:draft"
+      },
+      {
+        "undefined_total": 5,
+        "answered": 4,
+        "words": [
+          "drop loot that works",
+          "guilds forming across town",
+          "loot",
+          "loot that works",
+          "version number and all"
+        ],
+        "source": "pilot9:listing"
+      },
+      {
+        "undefined_total": 3,
+        "answered": 4,
+        "words": [
+          "a stat line every living person now carries",
+          "the account that pushed the change"
+        ],
+        "source": "pilot10:draft"
+      },
+      {
+        "undefined_total": 7,
+        "answered": 4,
+        "words": [
+          "a rule of his own",
+          "a stat line on every living person",
+          "the account that pushed the change"
+        ],
+        "source": "pilot10:listing"
+      }
+    ]
+  }
+}

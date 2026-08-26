@@ -73,15 +73,28 @@ class Reader:
 
     reader_id: str
     pool: str
-    reads_for: str
-    drops_on: str
+    #: What this reader is here for and what loses them, in a reader's words. **Both optional
+    #: since 2026-08-26**, and a reader with neither is the arm `BLIND` exists for — see there
+    #: for the measurement that made an empty preference worth being able to express.
+    reads_for: str = ""
+    drops_on: str = ""
 
     def system(self) -> str:
-        return (
-            f"You read a lot of LitRPG and progression fantasy — several serials at once, and "
-            f"you drop most of what you start. You read for {self.reads_for}. You stop reading "
-            f"on {self.drops_on}. You answer as yourself, in your own words, briefly."
+        """Who is reading. The preference sentences appear only where there is a preference.
+
+        A declared taste renders as two sentences; an undeclared one renders as nothing at all,
+        rather than as "You read for . You stop reading on ." — which would be a persona with a
+        blank where its opinions go, and a model asked to fill blanks fills them.
+        """
+        said = (
+            "You read a lot of LitRPG and progression fantasy — several serials at once, and "
+            "you drop most of what you start."
         )
+        if self.reads_for:
+            said += f" You read for {self.reads_for}."
+        if self.drops_on:
+            said += f" You stop reading on {self.drops_on}."
+        return f"{said} You answer as yourself, in your own words, briefly."
 
 
 #: Eight readers, four a side, and the two halves are the same four people so that a
@@ -143,6 +156,37 @@ READERS: tuple[Reader, ...] = (
         "misery with nothing to look forward to, or a book that skips the part it told me to "
         "care about",
     ),
+)
+
+
+
+#: **A measurement roster with no declared taste, and it exists because the declared one was
+#: answering with our own prompt's rules.** Measured 2026-08-26: across 15 pairs in which the
+#: readership chose our listing over a published serial, the stated reason was the same two
+#: things every time — *"starts him at zero"*, *"a real cost"*, *"the climb has teeth"*, against
+#: *"hands her lightning in the veins before the story starts"*. That is `power_m`'s own
+#: `drops_on` clause read back verbatim (*"a main character who is already the strongest thing
+#: in the room on page one"*), and it is also what `house.READER` and `house.ACCUMULATION`
+#: instruct the writer to produce. The pool was running a two-item checklist that our prompt
+#: guarantees passing.
+#:
+#: **§120 is the first instance and this is the second.** There, reader personas built to catch
+#: a machinery leak were themselves written to read for *"what the next rung costs"*, so they
+#: scored the jargon as a virtue. The shape is a persona whose stated taste is the thing under
+#: test.
+#:
+#: **So the fix is a subtraction rather than a different taste**, which is what this repository
+#: keeps finding works (§135, §138). Any preference written here is a checklist somebody chose;
+#: what is left when they go is a person with limited time deciding what to spend it on, which
+#: is §97.4's behavioural frame applied to the persona itself rather than only to its answer.
+#:
+#: **It is an arm and `READERS` is its control.** Nothing is settled by having it: a roster with
+#: no taste could equally turn out to separate nothing at all, and the check that says which is
+#: `research/quality-measurement/blurb_gradient.py` — a roster that stops preferring our
+#: listings but also stops telling 12,000 followers from 0 has not been fixed, it has been
+#: blinded.
+BLIND: tuple[Reader, ...] = tuple(
+    Reader(f"plain_{index}", MEASUREMENT) for index in range(1, 5)
 )
 
 
@@ -820,6 +864,7 @@ __all__ = [
     "ANTICIPATION_SCHEMA",
     "APPETITE_PROFILE",
     "APPETITE_SCHEMA",
+    "BLIND",
     "BUDGET_CHAPTERS",
     "CALL_CLASS",
     "CHOICE_SCHEMA",

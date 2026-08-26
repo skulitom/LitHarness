@@ -80,10 +80,16 @@ def _page(entry: dict[str, str]) -> str:
     return f"{title}\n\n{entry['listing'].strip()}" if title else entry["listing"].strip()
 
 
-def run_pair(registry: Any, ours: str, rival: rivals_mod.Rival, key: str) -> list[dict[str, Any]]:
+def run_pair(
+    registry: Any,
+    ours: str,
+    rival: rivals_mod.Rival,
+    key: str,
+    seats: tuple[readers_mod.Reader, ...],
+) -> list[dict[str, Any]]:
     """Four readers, one text, one rival apiece. Returns a row per reader that answered."""
     rows: list[dict[str, Any]] = []
-    for reader in readers_mod.pool(readers_mod.MEASUREMENT):
+    for reader in seats:
         seat = f"{key}|{reader.reader_id}"
         first = rivals_mod.ours_first(seat)
         request = readers_mod.render_pick_request(reader, ours, rival.render(), first)
@@ -135,11 +141,20 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--sham", type=int, default=4, help="rival-vs-rival pairs; 0 to skip")
     parser.add_argument("--out", type=Path, default=RESULTS / "listing-arena.json")
     parser.add_argument("--label", default="calibration")
+    parser.add_argument(
+        "--blind",
+        action="store_true",
+        help="use `readers.BLIND` — the measurement roster with no declared taste. The arm; "
+        "`READERS` is its control",
+    )
     args = parser.parse_args(argv)
 
     pool = rivals_mod.admit_all(json.loads(Path(args.rivals).read_text(encoding="utf-8")))
     texts = load_texts(args.texts)
     registry = build_default_registry()
+    seats = (
+        readers_mod.BLIND if args.blind else readers_mod.pool(readers_mod.MEASUREMENT)
+    )
     print(f"{len(texts)} text(s) against a pool of {len(pool)}; sham pairs {args.sham}")
 
     ours_rows: list[dict[str, Any]] = []
@@ -147,9 +162,10 @@ def main(argv: list[str] | None = None) -> int:
     for entry in texts:
         key = f"{args.label}|{entry['name']}"
         rows: list[dict[str, Any]] = []
-        for reader in readers_mod.pool(readers_mod.MEASUREMENT):
+        for reader in seats:
             seat = f"{key}|{reader.reader_id}"
-            rows.extend(run_pair(registry, _page(entry), rivals_mod.draw(pool, seat), seat)[:1])
+            drawn = rivals_mod.draw(pool, seat)
+            rows.extend(run_pair(registry, _page(entry), drawn, seat, seats)[:1])
         for row in rows:
             row["text"] = entry["name"]
         ours_rows.extend(rows)
@@ -167,9 +183,9 @@ def main(argv: list[str] | None = None) -> int:
         if left.rival_id == right.rival_id:
             continue
         key = f"{args.label}|sham{index}"
-        for reader in readers_mod.pool(readers_mod.MEASUREMENT):
+        for reader in seats:
             seat = f"{key}|{reader.reader_id}"
-            sham_rows.extend(run_pair(registry, left.render(), right, seat)[:1])
+            sham_rows.extend(run_pair(registry, left.render(), right, seat, seats)[:1])
     sham = tally(sham_rows) if sham_rows else None
     if sham:
         print(f"  {'SHAM published-v-published':24} ours {sham['ours']}/{sham['answered']}"

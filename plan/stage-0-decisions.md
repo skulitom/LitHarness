@@ -14227,3 +14227,108 @@ null in the cached shards (§140.1). Eight pairs a leg, which is why the interva
 why the within-tier reading is no reading rather than a null. Nothing about *why* a top blurb
 reads as a top blurb; the instrument separates the classes and names no feature, and a feature
 named by asking it would be the verdict channel §89 closed.
+
+## 142. Four instruments say our listings beat the market and the operator says they are abysmal, and the market is what is wrong
+
+The operator, 2026-08-26, having read the post-fix listings: *"they are definitely not in the
+well made category, and as i have mentioned before we clearly have a problem with the readers if
+they can't tell how abysmal they are"*, and — the sentence this entry exists for — *"I feel like
+I keep giving the same feedback back and nothing changes otherwise."*
+
+### 142.1 The configuration fix was tried as directed and failed
+
+§141 diagnosed the mechanism as the personas' own `drops_on` clauses: across 15 pairs where the
+readership chose ours, every stated reason was *"starts him at zero"* or *"a real cost"*, which
+is `power_m`'s dislike read back verbatim and is also what `house.READER` instructs the writer to
+produce. `readers.BLIND` is that hypothesis' fix — a measurement roster with **no declared taste
+at all**, which is a subtraction rather than a different checklist.
+
+**It went the wrong way. W = 1.000, 16 of 16.** Stripping the preferences made the preference for
+our text *stronger*. The two conditional rates are both 1.0, so position explains none of it —
+by the letter of K4 the arm voids on an order share of 0.31, and by the substance there is
+nothing for position to have done.
+
+So the checklist was not the mechanism, or not the whole of it. `BLIND` stays in the tree as a
+recorded negative rather than being deleted: it is the cheapest hypothesis about this failure and
+the next person should not spend on it twice.
+
+### 142.2 The counter aimed at the operator's own first complaint does not separate the market
+
+`application/comprehension.py` asks four readers to quote every term used as if the reader
+already knew it — which is *"wtf is a patch of notes"*, the complaint made most often. It was set
+aside for blurbs as uncalibrated (`plan/handoff-listing-loop.md`), and the follower gradient is
+the calibration that was missing. Six blurbs a tier, four readers each:
+
+| | uncashable terms per blurb | 95% |
+| --- | --- | --- |
+| HIGH, 6,530-12,448 followers | **13.83** | [8.12, 19.55] |
+| LOW, 0-3 followers | **12.50** | [9.88, 15.12] |
+| ours | **5.75** | [3.58, 7.92] |
+
+**The intervals overlap almost entirely**, which is the pre-registered reading for *uncalibrated
+for blurbs*: it may be reported beside a listing and may gate nothing. The handoff's caution is
+confirmed rather than refuted.
+
+### 142.3 What that table actually says, and it is the finding
+
+The market's **most-followed** blurbs carry **13.8** terms four readers could not cash. From the
+12,448-follower entry: *class*, *purged from his soul*, *slayers*, *the stone*. From the
+10,200-follower entry: *a power system based on actual daoism*, *natural treasures*, *secret
+arts*, *sects*, *no harem*. That is precisely the defect the operator has named in every session
+— names thrown around as though the reader had read the wiki — and **the market's best does it
+twice as much as we do.**
+
+So the four instruments now agree with each other and disagree with the operator:
+
+| instrument | reading |
+| --- | --- |
+| paired preference, tasted readers | ours over published, 15/16 |
+| paired preference, **no** declared taste | ours over published, 16/16 |
+| uncashable terms | ours 5.75 against the market's 12.5-13.8 |
+| market distribution counters | ours inside p10-p90 on every counter |
+
+Two of those four involve no preference judgment at all — the third is a count of quoted terms
+and the fourth is pure code over word counts and sentence lengths. A shared blind spot across all
+four is possible and is not the reading this entry takes, because a simpler one fits:
+
+**the comparator is wrong.** RoyalRoad's distribution — including its top decile — does not clear
+the operator's bar. Every counter built in §140 and §141 aims at *sitting inside the market*, and
+sitting inside a market whose best product the operator would also call abysmal is a target that
+cannot produce what is wanted. **This is the answer to "nothing changes".** The feedback keeps
+recurring because the loop has been steering toward the market and the operator is not asking for
+the market.
+
+### 142.4 What follows, and what may not
+
+**The standard has to stop being the market.** What is available instead is the operator's own
+reads, and §95 is explicit about their status: defect harvests, not data. A defect harvest
+locates a defect a counter can be built for; it may not become a training label, a preference
+pair or a persona's taste. So the admissible move is a counter **per named defect**, validated
+on something other than market similarity — and the five named classes are unexplained jargon,
+vagueness, over-specificity, sentences that do not connect, and titles that describe rather than
+name. One of the five now has an instrument that is uncalibrated; four have nothing.
+
+**What may not be done, and this is the one the request pulls toward.** Tuning readers until they
+report our listings as bad would produce agreement with the operator and would establish nothing:
+§141.1 measured this readership separating 12,448 followers from 0 at **H = 0.935** with length
+matched, and a roster adjusted until it disagrees with our own work while keeping that is a real
+finding, while one that achieves the first by losing the second is a detector of our prose. The
+registration in `plan/reader-calibration.md` stands: declare the change first, report the variant
+count, re-check the gradient after.
+
+### 142.5 What was refused
+
+No new persona was written to produce a wanted answer. No bar over the uncashable count, which
+has been through none of §61's four checks and which this entry has just shown does not separate
+the market's own tiers. No claim that our listings are good — three of these four instruments
+would have to be wrong about the same thing in the same direction for that to follow, and the
+operator's read is evidence of a kind none of them collects. And no deletion of `BLIND`, whose
+value is now entirely that it failed.
+
+### 142.6 Anti-scope
+
+Listings only. Six blurbs a tier, four readers each, so the intervals are wide enough that
+§142.2's overlap is the honest reading and a difference could hide inside it. Nothing about
+chapters, where none of these four instruments has been run. And nothing about what a counter
+for vagueness or for sentences-that-do-not-connect would look like; naming the four that do not
+exist is as far as this entry goes.

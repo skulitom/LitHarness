@@ -88,17 +88,21 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--low", default=str(DERIVED / "rivals-low.json"))
     parser.add_argument("--pairs", type=int, default=8)
     parser.add_argument("--out", type=Path, default=RESULTS / "blurb-gradient.json")
+    parser.add_argument("--blind", action="store_true", help="use `readers.BLIND`")
     args = parser.parse_args(argv)
 
     high = json.loads(Path(args.high).read_text(encoding="utf-8"))
     low = json.loads(Path(args.low).read_text(encoding="utf-8"))
     pairs = matched_pairs(high, low, args.pairs)
     registry = build_default_registry()
+    seats = (
+        readers_mod.BLIND if args.blind else readers_mod.pool(readers_mod.MEASUREMENT)
+    )
     print(f"{len(pairs)} matched pair(s), HIGH from {len(high)}, LOW from {len(low)}")
 
     rows: list[dict[str, Any]] = []
     for index, (top, bottom) in enumerate(pairs):
-        for reader in readers_mod.pool(readers_mod.MEASUREMENT):
+        for reader in seats:
             seat = f"gradient|{index}|{reader.reader_id}"
             high_first = rivals_mod.ours_first(seat)
             request = readers_mod.render_pick_request(
