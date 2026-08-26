@@ -1450,7 +1450,8 @@ def cmd_readers(args: argparse.Namespace) -> int:
                     reader_id=reader.reader_id, pool=reader.pool, created_at=stamp,
                     felt=str(parsed.get("felt") or ""),
                     expect_next=str(parsed.get("expect_next") or ""),
-                    want_next=[str(x) for x in (parsed.get("want_next") or [])],
+                    hoping_for=[str(x) for x in (parsed.get("hoping_for") or [])],
+                    dreading=[str(x) for x in (parsed.get("dreading") or [])],
                 )
 
         reading = readers_mod.Reading.of(choices)
@@ -1496,7 +1497,8 @@ def cmd_readers(args: argparse.Namespace) -> int:
     for label, items in (
         ("it left them", wanting.felt),
         ("they expect next", wanting.expect_next),
-        ("they want to happen", wanting.want_next),
+        ("they are hoping for", wanting.hoping_for),
+        ("they are dreading", wanting.dreading),
     ):
         if items:
             print(f"  {label}:")
@@ -1632,7 +1634,7 @@ def cmd_listing(args: argparse.Namespace) -> int:
                 print(f"  {reader.reader_id}: {refusal}", file=sys.stderr)
         wanted = readers_mod.Anticipation.of(wishes)
         appetite = overview_mod.render_appetite(
-            wanted.felt, wanted.expect_next, wanted.want_next
+            wanted.felt, wanted.expect_next, wanted.hoping_for, wanted.dreading
         )
 
         first = listing

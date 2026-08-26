@@ -13989,3 +13989,116 @@ still owed. Nothing about `world retract`, which is the verb the Architect asked
 supersession makes unnecessary at accept time and no less necessary afterwards. And nothing
 about whether an agent should be able to probe an interface without writing to it, which is the
 cause underneath all of this.
+
+## 140. The readership prefers our listings to the market's best, 15 pairs of 16, and the sham says it is not an artefact
+
+The operator's proposal, 2026-08-26: *"We have a lot of overviews generated, each one of them
+worse than any 4 star or more reviewed title, maybe we can tune the readers so they can spot
+quality by pitting ours (bad) and real good reviews."* Registered as `plan/reader-calibration.md`
+before any call — K1 to K4 fixed, the roster frozen against tuning-to-the-answer, and the
+familiarity leg named as the thing a pass would still owe.
+
+**It ran and it landed on K3, the reading nobody wanted.**
+
+| | |
+| --- | --- |
+| our listings chosen over a published serial | **15 of 16** |
+| W | **0.9375** |
+| sham, published against published | 5 of 16, W = 0.3125 |
+| ours-first share | 0.5625, inside the 0.40-0.60 band |
+| W given ours first / theirs first | 1.000 / 0.857 |
+
+**K4 does not void it, and only just.** The position gap is 0.143 against a 0.15 void
+threshold, so the result stands and stands narrowly; a replication should treat that as the
+first thing to check rather than the last.
+
+**The sham is what makes this a finding rather than saturation.** Two published books against
+each other split 5/16 — consistent with even at this n — so the pairing is not simply picking
+the left-hand side, the longer text or the newer one. It can produce a middling answer. It just
+does not produce one about us.
+
+### 140.1 What the competitors were, and why they are not a soft target
+
+`research/quality-measurement/rival_pool.py` builds the pool out of the cached RoyalRoad shards
+and refuses anything `domain/rivals.admit` refuses. **`overall_score` is 100% null in those
+shards** — 0 of 2,202 fictions in one shard carry a star rating, the same way `pages` is null —
+so the operator's *"rated above 4 stars"* is unavailable and a behavioural bar stands in its
+place: **1,000+ followers**, which is the **96.2nd percentile** of 2,105 genre-tagged fictions.
+42 fictions cleared it; median 2,024 followers, max 12,448. That substitution is recorded in
+`rivals.MIN_FOLLOWERS` rather than hidden, and it is arguably the closer evidence: §126's
+objective is fiction an audience *continues*, and a follower is somebody who asked to be told
+about the next chapter.
+
+### 140.2 What it costs, and it is the whole optimisation
+
+**W cannot be optimised toward.** The operator's own premise is that our listings are worse than
+any of these; the readership says the opposite at 15/16; so a loop that maximised W would
+maximise away from the market. Every start rate and continuation rate this project holds was
+produced by this pool, including §134's 13/16 to 16/16 and `plan/serial-pilot-7.md`'s two 4/4s,
+and none of them may now be read as evidence about quality.
+
+**The most likely mechanism is one this repository has already recorded once.** The reader
+personas are written with a `drops_on` clause each, and one of them is *"names and titles thrown
+around like I am supposed to already know them"* — which is what a real RoyalRoad blurb does
+constantly, and what our prompt has spent eleven rounds removing. §120's lesson was that reader
+personas built to catch a leak were themselves written to read for the register they were
+detecting; this is the same shape, one artifact over. **Not established here**, and the cheap
+test is a persona whose dislikes are not our prompt's prohibitions.
+
+Second candidate, equally unestablished and pointing the same way: the judge and the writer are
+the same model family, and BRIEF §2 Pass 6 already measured a familiarity term swinging a score
+further than real damage did. What this run adds is that the term may be **self**-familiarity.
+
+### 140.3 What was optimised instead, since a distribution was available
+
+The same 42 listings are a market distribution nobody in this project had. Measured against it,
+our four existing listings sit **inside p10-p90 on every counter but one**: words, sentences,
+longest sentence, mean sentence and number density are all in band, and only the genre's own
+nouns are out, at 4-7 against a market median of **2** and a p90 of 6.
+
+A 2x2 over the listing prompt, four writers a cell, sixteen listings:
+
+| arm | genre nouns | inside the band on every counter |
+| --- | --- | --- |
+| base | 0, 2, 3, 4 | 4/4 |
+| genre clause removed | 0, 0, 0, 1 | 3/4 |
+| removed + clarity clauses | 0, 0, 0, 0 | 4/4 |
+| kept + clarity clauses | 0, 0, 3, 6 | 2/4 |
+
+**The genre-noun clause was measured on the wrong sample, not wrong.** It was going to be
+deleted — its own docstring pre-committed to that if the count came back high — and the ten
+hand-supplied listings that set the target said 3.8. Forty-two say **2**, which puts the base
+arm's 0/2/3/4 on the median and makes removal an overshoot to zero, straight back to the defect
+the clause was added for. It stays, judged against the larger sample from now on.
+
+**What shipped is a restoration.** Two of `house.CLARITY`'s six clauses — the unmet-term clause
+and the paragraph clause — were lost when the house floor came off this call and were never put
+back, and they are word for word the operator's two structural complaints about *Patch Notes For
+Earth*. 14 -> 15 demands, written down in `tests/test_prompt_budget.py`, and it is text that
+already reaches every other role rather than §127's fourth rule against one complaint.
+
+### 140.4 What was refused
+
+**No tuning of the readers**, which is what was asked for and is the one move that would make
+this circular: §77 measured one word of question change moving a rate ten points, so a roster
+iterated until it gives the expected answer is a rubric fitted to its own answers. The roster
+and the question are frozen; a change is declared in `plan/reader-calibration.md` before a
+re-run and the re-run reports how many variants were tried.
+
+**No bar over W**, which has been through none of §61's four attainability checks. **No claim
+that the published 42 are better than ours** — that is the operator's premise and this entry
+does not test it; what is measured is that the readership disagrees with it. **No quality claim
+from the counters**: sitting inside a market's distribution is a fact about format, and §1a.1's
+warning about the metric that is easy because it is shallow applies to every row of that table.
+And **no use of the sham as a pass**: 5/16 is consistent with even and also with a mild lean,
+and separating those needs more pairs than were bought.
+
+### 140.5 Anti-scope
+
+One artifact, one pool, one draw a cell. Nothing about chapters, where the same pairing has not
+run. Nothing about whether a rated pool would behave differently from a followed one — the star
+ratings are simply not in the corpus, and finding them is a scrape this entry does not license.
+Nothing about the two mechanisms in §140.2, both of which are hypotheses with a cheap test
+attached and neither of which was run. And nothing about §1a.5, which remains unattempted: this
+was 16 pairs against unmatched competitors to find out whether the instrument works, and the
+answer is that it works and points the wrong way.

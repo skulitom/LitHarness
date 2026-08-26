@@ -1,0 +1,211 @@
+{
+  "market_band": {
+    "words": [
+      66.0,
+      128.0,
+      175.0
+    ],
+    "sentences": [
+      4.0,
+      8.0,
+      16.0
+    ],
+    "longest": [
+      21.0,
+      29.0,
+      39.0
+    ],
+    "mean_sentence": [
+      10.5,
+      14.6,
+      20.2
+    ],
+    "genre_nouns": [
+      0.0,
+      2.0,
+      6.0
+    ],
+    "genre_per_1k": [
+      0.0,
+      22.2,
+      50.0
+    ],
+    "num_per_1k": [
+      0.0,
+      6.4,
+      22.3
+    ]
+  },
+  "arms": [
+    {
+      "arm": "base",
+      "writer": "halloran",
+      "task_demands": 9,
+      "digest": "22a71b304a93",
+      "words": 109,
+      "sentences": 7,
+      "longest": 38,
+      "mean_sentence": 15.6,
+      "genre_nouns": 3,
+      "genre_per_1k": 27.5,
+      "num_per_1k": 9.2,
+      "outside": []
+    },
+    {
+      "arm": "base",
+      "writer": "vance",
+      "task_demands": 9,
+      "digest": "433fa84be6a2",
+      "words": 106,
+      "sentences": 8,
+      "longest": 22,
+      "mean_sentence": 13.2,
+      "genre_nouns": 2,
+      "genre_per_1k": 18.9,
+      "num_per_1k": 0.0,
+      "outside": []
+    },
+    {
+      "arm": "base",
+      "writer": "okonjo",
+      "task_demands": 9,
+      "digest": "3acdd3e85a76",
+      "words": 106,
+      "sentences": 7,
+      "longest": 31,
+      "mean_sentence": 15.1,
+      "genre_nouns": 0,
+      "genre_per_1k": 0.0,
+      "num_per_1k": 9.4,
+      "outside": []
+    },
+    {
+      "arm": "base",
+      "writer": "ferreira",
+      "task_demands": 9,
+      "digest": "5d394cce1d3d",
+      "words": 101,
+      "sentences": 7,
+      "longest": 21,
+      "mean_sentence": 14.4,
+      "genre_nouns": 4,
+      "genre_per_1k": 39.6,
+      "num_per_1k": 9.9,
+      "outside": []
+    },
+    {
+      "arm": "no_genre",
+      "writer": "halloran",
+      "task_demands": 9,
+      "digest": "6d9ecd8e2db8",
+      "words": 102,
+      "sentences": 7,
+      "longest": 30,
+      "mean_sentence": 14.6,
+      "genre_nouns": 1,
+      "genre_per_1k": 9.8,
+      "num_per_1k": 9.8,
+      "outside": []
+    },
+    {
+      "arm": "no_genre",
+      "writer": "vance",
+      "task_demands": 9,
+      "digest": "0742e2d17972",
+      "words": 105,
+      "sentences": 6,
+      "longest": 31,
+      "mean_sentence": 17.5,
+      "genre_nouns": 0,
+      "genre_per_1k": 0.0,
+      "num_per_1k": 19.0,
+      "outside": []
+    },
+    {
+      "arm": "no_genre",
+      "writer": "okonjo",
+      "task_demands": 9,
+      "digest": "ee518c54bf37",
+      "words": 104,
+      "sentences": 5,
+      "longest": 31,
+      "mean_sentence": 20.8,
+      "genre_nouns": 0,
+      "genre_per_1k": 0.0,
+      "num_per_1k": 0.0,
+      "outside": [
+        "mean_sentence=20.8 vs 10.5-20.2"
+      ]
+    },
+    {
+      "arm": "no_genre",
+      "writer": "ferreira",
+      "task_demands": 9,
+      "digest": "c109852b2fd6",
+      "words": 104,
+      "sentences": 7,
+      "longest": 29,
+      "mean_sentence": 14.9,
+      "genre_nouns": 0,
+      "genre_per_1k": 0.0,
+      "num_per_1k": 0.0,
+      "outside": []
+    },
+    {
+      "arm": "clarity",
+      "writer": "halloran",
+      "task_demands": 11,
+      "digest": "c0c0de803a43",
+      "words": 102,
+      "sentences": 8,
+      "longest": 24,
+      "mean_sentence": 12.8,
+      "genre_nouns": 0,
+      "genre_per_1k": 0.0,
+      "num_per_1k": 9.8,
+      "outside": []
+    },
+    {
+      "arm": "clarity",
+      "writer": "vance",
+      "task_demands": 11,
+      "digest": "118e469e5fee",
+      "words": 105,
+      "sentences": 7,
+      "longest": 27,
+      "mean_sentence": 15,
+      "genre_nouns": 0,
+      "genre_per_1k": 0.0,
+      "num_per_1k": 0.0,
+      "outside": []
+    },
+    {
+      "arm": "clarity",
+      "writer": "okonjo",
+      "task_demands": 11,
+      "digest": "0cca782a2c24",
+      "words": 100,
+      "sentences": 6,
+      "longest": 36,
+      "mean_sentence": 16.7,
+      "genre_nouns": 0,
+      "genre_per_1k": 0.0,
+      "num_per_1k": 0.0,
+      "outside": []
+    },
+    {
+      "arm": "clarity",
+      "writer": "ferreira",
+      "task_demands": 11,
+      "digest": "7c4d0ca918f1",
+      "words": 99,
+      "sentences": 7,
+      "longest": 21,
+      "mean_sentence": 14.1,
+      "genre_nouns": 0,
+      "genre_per_1k": 0.0,
+      "num_per_1k": 0.0,
+      "outside": []
+    }
+  ]
+}

@@ -150,6 +150,24 @@ MAX_OUTPUT_TOKENS = 4000
 #:
 #: So this call does not go through `writers.system_for`: the house floor governs the book's
 #: prose, and a listing is not the book's prose.
+#: **Two clauses of `house.CLARITY` came back on 2026-08-26, and they are a restoration rather
+#: than a fifth rule.** Stripping the house floor off this call to stop the cramming took all six
+#: of `CLARITY`'s clauses with it and only two were ever put back. Among the four that stayed out
+#: are exactly the two the operator's read of *Patch Notes For Earth* named: *"wtf is a patch of
+#: notes, nobody says that"* and *"sentences don't have relations to each other ... it reads more
+#: like spaghetti mess"*. Those are the unmet-term clause and the paragraph clause, near enough
+#: word for word what `house.CLARITY` already says — so this is text dropped by accident being
+#: put back, not §127's fourth rule against the same complaint.
+#:
+#: **The genre-noun clause stayed, and a measurement is why.** The plan was to delete it: its own
+#: docstring pre-committed to going if the count came back high by recitation, and two listings
+#: carried 4 and 7 of the genre's own nouns. Then 42 published serials above a thousand followers
+#: were counted (`research/quality-measurement/rival_pool.py`) and **the market's median is 2 with
+#: a p90 of 6** — so a listing at 4 sits inside its own market, and a four-writer draw under this
+#: clause came back at 0, 2, 3, 4 against that median. Removing the clause drove the same four
+#: writers to 0, 0, 0, 0, which is the defect the clause was added for in the first place. The
+#: clause was **measured on the wrong sample, not wrong**: ten hand-supplied listings said 3.8,
+#: forty-two say 2, and it is judged against the second from now on.
 _TASK = (
     "You are writing the listing for a new serial: the few lines a reader meets on the front "
     "page of a serial-fiction site, and the only thing that decides whether they open chapter "
@@ -162,6 +180,11 @@ _TASK = (
     "A reader scanning a list has to see what kind of book this is and what the person is "
     "after: name the magic, the system, the monsters, the dungeon in plain words rather than "
     "implying them, and say what the person is trying to get.\n"
+    "A term the reader has not met needs a reason to be there before it needs anything else, "
+    "and then a consequence rather than a definition: the sentence carrying it says what it "
+    "does to somebody.\n"
+    "A paragraph holds together or it is not a paragraph: a sentence that could be lifted out "
+    "and dropped anywhere in the listing has failed.\n"
     "No title, no headings, no tags, no word about the author, and no dashes: this market's "
     "listings punctuate with full stops and commas. The person this happens to is he or she or "
     "I, and never you. About a hundred words."
@@ -334,7 +357,10 @@ def _bullets(items: tuple[str, ...]) -> str:
 
 
 def render_appetite(
-    felt: tuple[str, ...], expect_next: tuple[str, ...], want_next: tuple[str, ...]
+    felt: tuple[str, ...],
+    expect_next: tuple[str, ...],
+    hoping_for: tuple[str, ...],
+    dreading: tuple[str, ...],
 ) -> str:
     """Where the listing left the steering pool, as the writer reads it. Empty when nobody read.
 
@@ -348,15 +374,17 @@ def render_appetite(
     Reported as what readers said and never as an instruction, which was always this function's
     rule; what changed is that the material can no longer *be* an instruction.
     """
-    if not (felt or expect_next or want_next):
+    if not (felt or expect_next or hoping_for or dreading):
         return ""
     blocks = ["READERS WHO SAW ONLY THIS LISTING, ASKED WHERE IT LEFT THEM."]
     if felt:
         blocks.append("It left them:" + _bullets(felt))
     if expect_next:
         blocks.append("They think this book is:" + _bullets(expect_next))
-    if want_next:
-        blocks.append("They want to happen:" + _bullets(want_next))
+    if hoping_for:
+        blocks.append("They are hoping for:" + _bullets(hoping_for))
+    if dreading:
+        blocks.append("They are dreading:" + _bullets(dreading))
     return "\n\n".join(blocks)
 
 

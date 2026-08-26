@@ -82,10 +82,14 @@ def test_the_steering_schema_has_no_slot_for_an_opinion_about_the_writing() -> N
     assert set(readers.ANTICIPATION_SCHEMA["properties"]) == {
         "felt",
         "expect_next",
-        "want_next",
+        "hoping_for",
+        "dreading",
     }
-    assert "dreading" not in readers.ANTICIPATION_SCHEMA["properties"]
-    assert "hoping_for" not in readers.ANTICIPATION_SCHEMA["properties"]
+    # Hope and dread are back (2026-08-26) and both are about **events**. What has no field is
+    # an opinion about the writing, which is what the old questions invited.
+    for field in ("hoping_for", "dreading"):
+        described = readers.ANTICIPATION_SCHEMA["properties"][field]["description"]
+        assert "never things the writing should do" in described
 
 
 def test_the_blurb_stage_asks_the_same_three_things_as_the_chapter_stage() -> None:
@@ -97,6 +101,8 @@ def test_a_steering_reader_is_asked_where_it_got_to_and_not_what_it_thinks() -> 
     reader = readers.pool(readers.STEERING)[0]
     prompt = readers.render_anticipation_request(reader, PASSAGE).prompt
     assert "That is as far as you have got" in prompt
+    assert "hoping for and dreading" in prompt
+    # The questions that invited a specification of the artifact rather than of the story.
     for banned in ("what would disappoint", "drop it by chapter", "hoping it turns out"):
         assert banned not in prompt
 
@@ -113,17 +119,22 @@ def test_the_direction_no_longer_claims_to_outrank_the_craft_rules() -> None:
     block = readers.Anticipation(
         felt=("uneasy",),
         expect_next=("he goes back down",),
-        want_next=("a real cost",),
+        hoping_for=("a real cost",),
+        dreading=("it was a dream",),
         answered=4,
     ).render()
     assert "outranks every craft rule" not in block
     assert "are not describing what you should write" in block
     assert "a real cost" in block
+    assert "it was a dream" in block
 
 
 def test_a_book_nobody_read_gets_no_direction_at_all() -> None:
-    assert readers.Anticipation(felt=(), expect_next=(), want_next=(), answered=0).render() == ""
-    assert overview.render_appetite((), (), ()) == ""
+    empty = readers.Anticipation(
+        felt=(), expect_next=(), hoping_for=(), dreading=(), answered=0
+    )
+    assert empty.render() == ""
+    assert overview.render_appetite((), (), (), ()) == ""
 
 
 def test_a_pre_migration_row_still_carries_its_direction() -> None:
@@ -131,7 +142,7 @@ def test_a_pre_migration_row_still_carries_its_direction() -> None:
     carried = readers.Anticipation.of(
         {readers.pool(readers.STEERING)[0].reader_id: {"hoping_for": ["a real cost"]}}
     )
-    assert carried.want_next == ("a real cost",)
+    assert carried.hoping_for == ("a real cost",)
     assert carried.answered == 1
 
 

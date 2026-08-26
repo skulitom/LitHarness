@@ -1,0 +1,306 @@
+{
+  "label": "calib-1",
+  "pool": 42,
+  "per_text": [
+    {
+      "text": "pilot7:draft",
+      "digest": "baa27c4911ae",
+      "answered": 4,
+      "refused": 0,
+      "ours": 4,
+      "theirs": 0,
+      "neither": 0,
+      "W": 1.0,
+      "W_ours_first": 1.0,
+      "W_theirs_first": 1.0,
+      "ours_first_share": 0.75
+    },
+    {
+      "text": "pilot7:revised",
+      "digest": "e88560db7249",
+      "answered": 4,
+      "refused": 0,
+      "ours": 4,
+      "theirs": 0,
+      "neither": 0,
+      "W": 1.0,
+      "W_ours_first": 1.0,
+      "W_theirs_first": 1.0,
+      "ours_first_share": 0.5
+    },
+    {
+      "text": "pilot9:draft",
+      "digest": "877860f3bb0a",
+      "answered": 4,
+      "refused": 0,
+      "ours": 3,
+      "theirs": 1,
+      "neither": 0,
+      "W": 0.75,
+      "W_ours_first": 1.0,
+      "W_theirs_first": 0.6666666666666666,
+      "ours_first_share": 0.25
+    },
+    {
+      "text": "pilot9:revised",
+      "digest": "86c9c1808b48",
+      "answered": 4,
+      "refused": 0,
+      "ours": 4,
+      "theirs": 0,
+      "neither": 0,
+      "W": 1.0,
+      "W_ours_first": 1.0,
+      "W_theirs_first": 1.0,
+      "ours_first_share": 0.75
+    }
+  ],
+  "pooled": {
+    "answered": 16,
+    "refused": 0,
+    "ours": 15,
+    "theirs": 1,
+    "neither": 0,
+    "W": 0.9375,
+    "W_ours_first": 1.0,
+    "W_theirs_first": 0.8571428571428571,
+    "ours_first_share": 0.5625
+  },
+  "sham": {
+    "answered": 16,
+    "refused": 0,
+    "ours": 5,
+    "theirs": 11,
+    "neither": 0,
+    "W": 0.3125,
+    "W_ours_first": 0.3,
+    "W_theirs_first": 0.3333333333333333,
+    "ours_first_share": 0.625
+  },
+  "rows": [
+    {
+      "reader": "power_m",
+      "chose": "ours",
+      "ours_first": true,
+      "rival": "royalroad:47199",
+      "text": "pilot7:draft"
+    },
+    {
+      "reader": "power_m",
+      "chose": "ours",
+      "ours_first": true,
+      "rival": "royalroad:48040",
+      "text": "pilot7:draft"
+    },
+    {
+      "reader": "power_m",
+      "chose": "ours",
+      "ours_first": true,
+      "rival": "royalroad:48274",
+      "text": "pilot7:draft"
+    },
+    {
+      "reader": "power_m",
+      "chose": "ours",
+      "ours_first": false,
+      "rival": "royalroad:48497",
+      "text": "pilot7:draft"
+    },
+    {
+      "reader": "power_m",
+      "chose": "ours",
+      "ours_first": true,
+      "rival": "royalroad:107017",
+      "text": "pilot7:revised"
+    },
+    {
+      "reader": "power_m",
+      "chose": "ours",
+      "ours_first": false,
+      "rival": "royalroad:47199",
+      "text": "pilot7:revised"
+    },
+    {
+      "reader": "power_m",
+      "chose": "ours",
+      "ours_first": true,
+      "rival": "royalroad:48497",
+      "text": "pilot7:revised"
+    },
+    {
+      "reader": "power_m",
+      "chose": "ours",
+      "ours_first": false,
+      "rival": "royalroad:48927",
+      "text": "pilot7:revised"
+    },
+    {
+      "reader": "power_m",
+      "chose": "ours",
+      "ours_first": false,
+      "rival": "royalroad:48040",
+      "text": "pilot9:draft"
+    },
+    {
+      "reader": "power_m",
+      "chose": "theirs",
+      "ours_first": false,
+      "rival": "royalroad:48040",
+      "text": "pilot9:draft"
+    },
+    {
+      "reader": "power_m",
+      "chose": "ours",
+      "ours_first": true,
+      "rival": "royalroad:107482",
+      "text": "pilot9:draft"
+    },
+    {
+      "reader": "power_m",
+      "chose": "ours",
+      "ours_first": false,
+      "rival": "royalroad:108300",
+      "text": "pilot9:draft"
+    },
+    {
+      "reader": "power_m",
+      "chose": "ours",
+      "ours_first": false,
+      "rival": "royalroad:48091",
+      "text": "pilot9:revised"
+    },
+    {
+      "reader": "power_m",
+      "chose": "ours",
+      "ours_first": true,
+      "rival": "royalroad:48948",
+      "text": "pilot9:revised"
+    },
+    {
+      "reader": "power_m",
+      "chose": "ours",
+      "ours_first": true,
+      "rival": "royalroad:47199",
+      "text": "pilot9:revised"
+    },
+    {
+      "reader": "power_m",
+      "chose": "ours",
+      "ours_first": true,
+      "rival": "royalroad:107782",
+      "text": "pilot9:revised"
+    },
+    {
+      "reader": "power_m",
+      "chose": "theirs",
+      "ours_first": true,
+      "rival": "royalroad:107946",
+      "text": "sham"
+    },
+    {
+      "reader": "power_m",
+      "chose": "ours",
+      "ours_first": false,
+      "rival": "royalroad:107946",
+      "text": "sham"
+    },
+    {
+      "reader": "power_m",
+      "chose": "theirs",
+      "ours_first": false,
+      "rival": "royalroad:107946",
+      "text": "sham"
+    },
+    {
+      "reader": "power_m",
+      "chose": "theirs",
+      "ours_first": true,
+      "rival": "royalroad:107946",
+      "text": "sham"
+    },
+    {
+      "reader": "power_m",
+      "chose": "theirs",
+      "ours_first": false,
+      "rival": "royalroad:48927",
+      "text": "sham"
+    },
+    {
+      "reader": "power_m",
+      "chose": "theirs",
+      "ours_first": true,
+      "rival": "royalroad:48927",
+      "text": "sham"
+    },
+    {
+      "reader": "power_m",
+      "chose": "theirs",
+      "ours_first": true,
+      "rival": "royalroad:48927",
+      "text": "sham"
+    },
+    {
+      "reader": "power_m",
+      "chose": "theirs",
+      "ours_first": false,
+      "rival": "royalroad:48927",
+      "text": "sham"
+    },
+    {
+      "reader": "power_m",
+      "chose": "theirs",
+      "ours_first": true,
+      "rival": "royalroad:47995",
+      "text": "sham"
+    },
+    {
+      "reader": "power_m",
+      "chose": "theirs",
+      "ours_first": false,
+      "rival": "royalroad:47995",
+      "text": "sham"
+    },
+    {
+      "reader": "power_m",
+      "chose": "theirs",
+      "ours_first": true,
+      "rival": "royalroad:47995",
+      "text": "sham"
+    },
+    {
+      "reader": "power_m",
+      "chose": "theirs",
+      "ours_first": true,
+      "rival": "royalroad:47995",
+      "text": "sham"
+    },
+    {
+      "reader": "power_m",
+      "chose": "ours",
+      "ours_first": true,
+      "rival": "royalroad:109076",
+      "text": "sham"
+    },
+    {
+      "reader": "power_m",
+      "chose": "ours",
+      "ours_first": false,
+      "rival": "royalroad:109076",
+      "text": "sham"
+    },
+    {
+      "reader": "power_m",
+      "chose": "ours",
+      "ours_first": true,
+      "rival": "royalroad:109076",
+      "text": "sham"
+    },
+    {
+      "reader": "power_m",
+      "chose": "ours",
+      "ours_first": true,
+      "rival": "royalroad:109076",
+      "text": "sham"
+    }
+  ]
+}

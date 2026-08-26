@@ -59,6 +59,24 @@ MIN_RATINGS = 20
 #: nothing about it is established and the whole point of this module is that something is.
 MIN_DECIMALS = 2
 
+#: **The other kind of evidence, and it exists because the first kind is not available.** The
+#: operator asked for a listing *"rated above 4 stars"*; the cached RoyalRoad shards carry
+#: `overall_score` as **100% null** — 0 of 2,202 fictions in one shard hold one, the same way
+#: `pages` is null and `corpus_io` already records. What the shards do carry is what people did:
+#: followers, favourites, views and a ratings count.
+#:
+#: A following is the same class of evidence as a star average and arguably the closer one to
+#: this project's objective — §126's is *fiction a defined audience voluntarily continues and
+#: recommends*, and a follower is a reader who chose to be told about the next chapter. So a
+#: rival may prove itself either way, and `admit` requires **one** of them rather than both.
+#:
+#: A thousand is a floor, not a finding. Among genre-tagged fictions in the cached shards the
+#: median has **2** followers and the 90th percentile has 92; a thousand is deep into the tail
+#: that anybody would call a successful serial. `research/quality-measurement/rival_pool.py`
+#: prints the percentile a run's floor corresponds to, so the number here is checkable against
+#: the distribution it was chosen from rather than asserted.
+MIN_FOLLOWERS = 1000
+
 #: The genres this project's readership reads, which is the same ground `writers.CAST` covers.
 #: Membership is checked rather than inferred, and a refusal names the set so an operator can see
 #: what to widen. Deliberately not a taxonomy: it is a list of the labels this market uses for
@@ -99,11 +117,15 @@ class Rival:
 
     title: str
     listing: str
-    rating: float
     genre: str
+    #: The star average, where one exists. `None` for every row out of the cached shards.
+    rating: float | None = None
     #: How many people rated it. `None` where the page did not say, which is the case
     #: `MIN_DECIMALS` exists for.
     ratings: int | None = None
+    #: How many people asked to be told when it updates. The evidence a rival carries when it
+    #: carries no rating, and the one closer to §126's objective.
+    followers: int | None = None
     source: str = ""
 
     @property
@@ -122,68 +144,96 @@ class Rival:
             "title": self.title,
             "rating": self.rating,
             "ratings": self.ratings,
+            "followers": self.followers,
             "genre": self.genre,
             "source": self.source,
         }
 
 
+def _number(value: Any) -> float | None:
+    """A float, or None for anything absent or unreadable. Never a guess."""
+    if value is None:
+        return None
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return None
+
+
+def _count(value: Any, title: str) -> int | None:
+    """A whole count, or None when absent. Unreadable is a refusal rather than a zero.
+
+    Zero and absent must not read the same: a book with no followers recorded and a book with
+    none are different claims, and only the first is a gap in the data.
+    """
+    if value is None:
+        return None
+    try:
+        return int(float(value))
+    except (TypeError, ValueError) as error:
+        raise IllegalRival(f"{title!r} carries an unreadable count: {value!r}") from error
+
+
 def admit(row: Mapping[str, Any]) -> Rival:
     """One admitted rival, or `IllegalRival` naming exactly what failed.
 
-    Every check is arithmetic or membership over a supplied record. There is no call here, no
-    judgment, and nothing that could become one: a book is admitted because a market said people
-    read it and liked it, or it is refused because the record does not say so.
+    **Two ways to prove a book, and a row needs one of them.** A star average above `MIN_RATING`
+    (with a count above `MIN_RATINGS`, or a score precise enough to imply one — see
+    `MIN_DECIMALS`), or a following above `MIN_FOLLOWERS`. The first is what the operator asked
+    for and the second is what the corpus has; both are somebody else's record of what readers
+    did, and neither is a judgment made here.
+
+    Every check is arithmetic or membership over a supplied record. There is no call in this
+    module and nothing that could become one.
     """
     title = str(row.get("title") or "").strip()
     listing = str(row.get("listing") or "").strip()
     genre = str(row.get("genre") or "").strip().casefold()
     if not title or not listing:
         raise IllegalRival("a rival needs a title and a listing; a blank page tempts nobody")
-    try:
-        rating = float(row["rating"])
-    except (KeyError, TypeError, ValueError) as error:
-        raise IllegalRival(
-            f"{title!r} carries no rating, so nothing about it is established; this check "
-            "exists because a competitor we merely believe in is one we chose"
-        ) from error
-    if rating <= MIN_RATING:
-        raise IllegalRival(f"{title!r} is rated {rating}, which is not above {MIN_RATING}")
-
-    raw_count = row.get("ratings")
-    if raw_count is None:
-        # No count on the page, so the score's own precision stands in for it. See
-        # `MIN_DECIMALS`: the string is what carries the precision, since `4.30` and `4.3`
-        # are one float and two different claims about how many people voted.
-        shown = str(row.get("rating"))
-        decimals = len(shown.partition(".")[2].rstrip())
-        if decimals < MIN_DECIMALS:
-            raise IllegalRival(
-                f"{title!r} is rated {shown} with no count given. A score that lands on "
-                f"{MIN_DECIMALS - 1} decimal or fewer is what a handful of votes averages to; "
-                "give the count, or find one rated to two places"
-            )
-        ratings: int | None = None
-    else:
-        try:
-            ratings = int(raw_count)
-        except (TypeError, ValueError) as error:
-            raise IllegalRival(f"{title!r} has an unreadable rating count") from error
-        if ratings < MIN_RATINGS:
-            raise IllegalRival(
-                f"{title!r} has {ratings} rating(s) against a floor of {MIN_RATINGS}; a mean "
-                "over a handful of votes is not a rating"
-            )
     if genre not in GENRES:
         raise IllegalRival(
             f"{title!r} is filed as {genre!r}, which is not one of {', '.join(sorted(GENRES))}. "
             "A reader who does not read that genre would pass on it for the wrong reason"
         )
+
+    rating = _number(row.get("rating"))
+    ratings = _count(row.get("ratings"), title)
+    followers = _count(row.get("followers"), title)
+
+    if rating is not None:
+        if rating <= MIN_RATING:
+            raise IllegalRival(f"{title!r} is rated {rating}, which is not above {MIN_RATING}")
+        if ratings is None:
+            # No count, so the score's own precision stands in for it: `4.30` and `4.3` are one
+            # float and two different claims about how many people voted, so the *string* is
+            # what carries the evidence.
+            shown = str(row.get("rating"))
+            if len(shown.partition(".")[2].rstrip()) < MIN_DECIMALS:
+                raise IllegalRival(
+                    f"{title!r} is rated {shown} with no count given. A score landing on "
+                    f"{MIN_DECIMALS - 1} decimal or fewer is what a handful of votes averages "
+                    "to; give the count, or find one rated to two places"
+                )
+        elif ratings < MIN_RATINGS:
+            raise IllegalRival(
+                f"{title!r} has {ratings} rating(s) against a floor of {MIN_RATINGS}; a mean "
+                "over a handful of votes is not a rating"
+            )
+    elif followers is None or followers < MIN_FOLLOWERS:
+        raise IllegalRival(
+            f"{title!r} carries neither a rating above {MIN_RATING} nor {MIN_FOLLOWERS}+ "
+            f"followers, so nothing about it is established. A competitor we merely believe "
+            "in is one we chose"
+        )
+
     return Rival(
         title=title,
         listing=listing,
-        rating=rating,
         genre=genre,
+        rating=rating,
         ratings=ratings,
+        followers=followers,
         source=str(row.get("source") or "").strip(),
     )
 
@@ -231,6 +281,7 @@ def ours_first(key: str) -> bool:
 __all__ = [
     "GENRES",
     "MIN_DECIMALS",
+    "MIN_FOLLOWERS",
     "MIN_RATING",
     "MIN_RATINGS",
     "IllegalRival",

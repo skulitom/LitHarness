@@ -114,10 +114,18 @@ def _roles() -> dict[str, str]:
 #: recorded at the top of this file, one level down. `overview.title_system` was extracted for
 #: no other purpose than to be countable here. Ten is four demands of dossier plus six of job;
 #: the lookup's six carry no dossier because that role writes nothing.
+#:
+#: **14 -> 15 on 2026-08-26, and it is a restoration rather than a growth.** Two of
+#: `house.CLARITY`'s six clauses came back to this call: the unmet-term clause and the paragraph
+#: clause. Both were lost when the house floor was stripped to stop the cramming, and both are
+#: the operator's named complaints about *Patch Notes For Earth* — *"wtf is a patch of notes"*
+#: and *"sentences don't have relations to each other"*. What makes this a raise worth making
+#: rather than §127's fourth rule is that the text already exists in `house` and reaches every
+#: other role; the listing was the one call it had been dropped from.
 BUDGET: dict[str, int] = {
     "title writer": 10,
     "title lookup": 6,
-    "listing writer": 14,
+    "listing writer": 15,
     "architect seed": 42,
     "architect grow": 42,
     "scene writer floor": 28,

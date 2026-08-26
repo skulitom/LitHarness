@@ -1,0 +1,101 @@
+{
+  "market_band": {
+    "words": [
+      66.0,
+      128.0,
+      175.0
+    ],
+    "sentences": [
+      4.0,
+      8.0,
+      16.0
+    ],
+    "longest": [
+      21.0,
+      29.0,
+      39.0
+    ],
+    "mean_sentence": [
+      10.5,
+      14.6,
+      20.2
+    ],
+    "genre_nouns": [
+      0.0,
+      2.0,
+      6.0
+    ],
+    "genre_per_1k": [
+      0.0,
+      22.2,
+      50.0
+    ],
+    "num_per_1k": [
+      0.0,
+      6.4,
+      22.3
+    ]
+  },
+  "arms": [
+    {
+      "arm": "genre_clarity",
+      "writer": "halloran",
+      "task_demands": 11,
+      "digest": "4e676b7d6fd0",
+      "words": 114,
+      "sentences": 6,
+      "longest": 37,
+      "mean_sentence": 19,
+      "genre_nouns": 0,
+      "genre_per_1k": 0.0,
+      "num_per_1k": 8.8,
+      "outside": []
+    },
+    {
+      "arm": "genre_clarity",
+      "writer": "vance",
+      "task_demands": 11,
+      "digest": "6e0ea5a7c963",
+      "words": 98,
+      "sentences": 6,
+      "longest": 33,
+      "mean_sentence": 16.3,
+      "genre_nouns": 6,
+      "genre_per_1k": 61.2,
+      "num_per_1k": 0.0,
+      "outside": [
+        "genre_per_1k=61.2 vs 0.0-50.0"
+      ]
+    },
+    {
+      "arm": "genre_clarity",
+      "writer": "okonjo",
+      "task_demands": 11,
+      "digest": "85181287b4c4",
+      "words": 105,
+      "sentences": 5,
+      "longest": 28,
+      "mean_sentence": 21,
+      "genre_nouns": 0,
+      "genre_per_1k": 0.0,
+      "num_per_1k": 0.0,
+      "outside": [
+        "mean_sentence=21 vs 10.5-20.2"
+      ]
+    },
+    {
+      "arm": "genre_clarity",
+      "writer": "ferreira",
+      "task_demands": 11,
+      "digest": "6f367d079504",
+      "words": 112,
+      "sentences": 7,
+      "longest": 31,
+      "mean_sentence": 16,
+      "genre_nouns": 3,
+      "genre_per_1k": 26.8,
+      "num_per_1k": 8.9,
+      "outside": []
+    }
+  ]
+}

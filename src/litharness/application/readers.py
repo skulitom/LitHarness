@@ -167,27 +167,35 @@ CHOICE_SCHEMA: dict[str, Any] = {
     },
 }
 
-#: **What a reader is for, rewritten 2026-08-25 on the operator's direction.** *"From the
-#: readers we want to read their emotions about what they read, and find out what they predict
-#: and want to happen next"*, and the half that is a prohibition: *"The readers shouldn't
-#: critique what is already written — that's for the writers to do."*
+#: **What a reader is for, rewritten 2026-08-25 and corrected 2026-08-26.** The operator:
+#: *"From the readers we want to read their emotions about what they read, and find out what
+#: they predict and want to happen next"*, then the prohibition — *"The readers shouldn't
+#: critique what is already written, that's for the writers to do"* — and then, once the first
+#: rewrite had dropped them, *"We still want these: hoping_for and dreading."*
 #:
-#: **The field that went is `dreading`, and it is why this rewrite happened.** Measured on
-#: *Patch Notes For Earth*: four steering readers asked for *"a real changelog with version
-#: numbers, nerfs"*, *"not 'he's good at games' but repro steps, edge cases"* and *"an
-#: interaction between two stated rules"*, and the revision put **six of the operator's seven
-#: quoted defects** into a hundred-word listing — every one of them absent from the draft the
-#: readers had seen. The channel handed the writer vocabulary and the writer transcribed it.
-#: That is §138's finding at one level up: reader material rendered as *"it outranks every
-#: craft rule you have been given"* is a maximal permission, and a permission is recited.
+#: **Both directions are satisfied at once, because the defect was never the fields.** It was
+#: the *question*. `render_appetite_request` used to ask what a reader hoped the book would
+#: *turn out to be* and what would make them *drop it by chapter three*, and both are questions
+#: about the artifact. Measured on *Patch Notes For Earth*: four steering readers answered with
+#: *"a real changelog with version numbers, nerfs"*, *"not 'he's good at games' but repro
+#: steps, edge cases"* and *"an interaction between two stated rules"*, and the revision put
+#: **six of the operator's seven quoted defects** on the page — every one absent from the draft
+#: those readers had seen. The channel handed the writer vocabulary and the writer transcribed
+#: it. That is §138 one level up: reader material framed as *"it outranks every craft rule you
+#: have been given"* is a maximal permission, and a permission is recited.
 #:
-#: A want and a prediction are about the story. A critique is about the artifact, and it is the
-#: form that carries nouns. So the schema below can hold the first two and cannot hold the
-#: third: there is no field for what should have been done differently, and no field a reader
-#: can put a craft instruction in without lying about what the field is for.
+#: So hope and dread are back and both are pinned to **what happens next in the story**. A want
+#: and a fear about events are things only the story can answer; a want about the prose is a
+#: specification, and there is still no field that can hold one.
+#:
+#: Migration 032 added a `want_next` column for the single-field version this replaces. Nothing
+#: ever wrote to it — hope and dread came back first — and it is left in place rather than
+#: edited out, because an applied migration is never edited (CONTRIBUTING) and a column that
+#: was superseded before its first write is cheaper to explain than a schema nobody can
+#: reconstruct.
 ANTICIPATION_SCHEMA: dict[str, Any] = {
     "type": "object",
-    "required": ["felt", "expect_next", "want_next"],
+    "required": ["felt", "expect_next", "hoping_for", "dreading"],
     "properties": {
         "felt": {
             "type": "string",
@@ -198,11 +206,17 @@ ANTICIPATION_SCHEMA: dict[str, Any] = {
             "type": "string",
             "description": "What you think actually happens next. Say it as a prediction.",
         },
-        "want_next": {
+        "hoping_for": {
             "type": "array",
             "items": {"type": "string"},
-            "description": "What you find yourself wanting to happen next. Things that could "
+            "description": "Things you find yourself WANTING to happen next. Things that could "
                            "happen in the story, never things the writing should do.",
+        },
+        "dreading": {
+            "type": "array",
+            "items": {"type": "string"},
+            "description": "Things you are afraid happen next. Again things that could happen "
+                           "in the story, never things the writing should do.",
         },
     },
 }
@@ -326,7 +340,7 @@ def render_anticipation_request(reader: Reader, chapter: str) -> CompletionReque
     return CompletionRequest(
         prompt=(
             f"{chapter}\n\n---\n\nThat is as far as you have got. How did that leave you, "
-            "what do you think happens next, and what do you find yourself wanting to happen?"
+            "what do you think happens next, and what are you hoping for and dreading?"
         ),
         system=reader.system(),
         schema=ANTICIPATION_SCHEMA,
@@ -484,7 +498,7 @@ def render_appetite_request(reader: Reader, overview: str) -> CompletionRequest:
         prompt=(
             f"{overview}\n\n---\n\nThat is all there is so far: the listing for a serial "
             "nobody has read yet. How did that leave you, what do you think happens in it, "
-            "and what do you find yourself wanting to happen?"
+            "and what are you hoping for and dreading?"
         ),
         system=reader.system(),
         schema=APPETITE_SCHEMA,
@@ -564,16 +578,16 @@ class Reading:
 class Anticipation:
     """Where the steering pool got to: how it felt, what it expects, what it wants. The direction.
 
-    **`hoping_for` and `dreading` are gone and `felt`, `expect_next` and `want_next` replace
-    them**, on the operator's direction of 2026-08-25 and for a measured reason (see
-    `ANTICIPATION_SCHEMA`). `of` still reads a pre-032 row so a book part-drafted across the
-    change keeps its direction: an old `hoping_for` is a want by another name, and an old
-    `dreading` has no successor and is dropped, which is the point rather than a loss.
+    **Four fields, and hope and dread are two of them again** (2026-08-26). What changed is not
+    which fields exist but what they are about: every one is pinned to what happens *next in the
+    story*, so a reader can want an event and fear an event and cannot specify a sentence. See
+    `ANTICIPATION_SCHEMA` for the measurement that forced it.
     """
 
     felt: tuple[str, ...]
     expect_next: tuple[str, ...]
-    want_next: tuple[str, ...]
+    hoping_for: tuple[str, ...]
+    dreading: tuple[str, ...]
     answered: int
 
     def to_jsonable(self) -> dict[str, Any]:
@@ -581,14 +595,16 @@ class Anticipation:
             "answered": self.answered,
             "felt": list(self.felt),
             "expect_next": list(self.expect_next),
-            "want_next": list(self.want_next),
+            "hoping_for": list(self.hoping_for),
+            "dreading": list(self.dreading),
         }
 
     @classmethod
     def of(cls, answers: Mapping[str, Mapping[str, Any] | None]) -> Anticipation:
         felt: list[str] = []
         expect: list[str] = []
-        want: list[str] = []
+        hoping: list[str] = []
+        dreading: list[str] = []
         answered = 0
         for reader in pool(STEERING):
             answer = answers.get(reader.reader_id)
@@ -597,13 +613,14 @@ class Anticipation:
             answered += 1
             felt.extend(_strings([answer.get("felt")]))
             expect.extend(_strings([answer.get("expect_next")]))
-            want.extend(_strings(answer.get("want_next")))
-            # Migration 031's column, read so a book part-drafted across 032 keeps its direction.
-            want.extend(_strings(answer.get("hoping_for")))
+            hoping.extend(_strings(answer.get("hoping_for")))
+            hoping.extend(_strings(answer.get("want_next")))
+            dreading.extend(_strings(answer.get("dreading")))
         return cls(
             felt=tuple(dict.fromkeys(felt)),
             expect_next=tuple(dict.fromkeys(expect)),
-            want_next=tuple(dict.fromkeys(want)),
+            hoping_for=tuple(dict.fromkeys(hoping)),
+            dreading=tuple(dict.fromkeys(dreading)),
             answered=answered,
         )
 
@@ -622,7 +639,7 @@ class Anticipation:
         says what they are: a state somebody was left in, a guess, and a wish. None of those is
         a specification, and the sentence that used to say they were is gone.
         """
-        if not (self.felt or self.expect_next or self.want_next):
+        if not (self.felt or self.expect_next or self.hoping_for or self.dreading):
             return ""
         blocks = [
             "READERS WHO STOPPED PART-WAY THROUGH THIS, ASKED WHERE IT LEFT THEM.",
@@ -638,9 +655,13 @@ class Anticipation:
             blocks.append(
                 "They expect next:\n" + "\n".join(f"- {item}" for item in self.expect_next)
             )
-        if self.want_next:
+        if self.hoping_for:
             blocks.append(
-                "They want to happen:\n" + "\n".join(f"- {item}" for item in self.want_next)
+                "They are hoping for:\n" + "\n".join(f"- {item}" for item in self.hoping_for)
+            )
+        if self.dreading:
+            blocks.append(
+                "They are dreading:\n" + "\n".join(f"- {item}" for item in self.dreading)
             )
         return "\n\n".join(blocks)
 
