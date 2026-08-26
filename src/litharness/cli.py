@@ -4566,7 +4566,7 @@ def build_parser() -> argparse.ArgumentParser:
     forge.add_argument(
         "--out",
         type=Path,
-        default=Path("forge"),
+        default=Path("runs/forge"),
         help="where the candidates and the chosen seed are written",
     )
     forge.add_argument(

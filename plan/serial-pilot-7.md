@@ -31,19 +31,20 @@ measurement set for good*. Nothing here may later be used as a measurement-set b
 
 ```bash
 uv run litharness --database serial7.db init
-uv run litharness --database serial7.db listing --writer halloran --scenes 6 --out pilot7
+uv run litharness --database serial7.db listing --writer halloran --scenes 6 --out runs/pilots/pilot7
 uv run litharness --database serial7.db --writer halloran architect seed
 uv run litharness --database serial7.db world accept --force        # <- and here it stopped
 ```
 
 **`serial7.db` is the record of the failure and holds no prose.** §3.1.1 is why: the world it
 seeded blocked every scene, the fix went into `world accept`, and the world was seeded again on
-`serial8.db` under the same listing and title, which the loop had already written to `pilot7/`.
+`serial8.db` under the same listing and title, which the loop had already written to
+`runs/pilots/pilot7/`.
 
 ```bash
 uv run litharness --database serial8.db init
-uv run litharness --database serial8.db new "$(cat pilot7/title.txt)" \
-    --premise "$(cat pilot7/listing.txt)" --scenes 6
+uv run litharness --database serial8.db new "$(cat runs/pilots/pilot7/title.txt)" \
+    --premise "$(cat runs/pilots/pilot7/listing.txt)" --scenes 6
 uv run litharness --database serial8.db --writer halloran architect seed
 uv run litharness --database serial8.db world accept
 uv run litharness --database serial8.db --writer halloran --chapter-scenes 2 tick   # x N
@@ -86,7 +87,8 @@ near miss. Nothing was abandoned, so the retry path is untested against a real c
 
 ### 2.1 The steering pool's direction is legible in the revision, clause by clause
 
-The draft the four steering readers saw, before any of them spoke (`pilot7/listing.json`):
+The draft the four steering readers saw, before any of them spoke
+(`runs/pilots/pilot7/listing.json`):
 
 > The thing on the stairs eats light, and Dan is the only warm thing left in the dark. He is a
 > hospital porter who fell asleep on a night shift and woke under a city that runs on a

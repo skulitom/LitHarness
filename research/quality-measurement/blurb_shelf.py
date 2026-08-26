@@ -36,7 +36,8 @@ Free legs first; the paid run is refused without both `--yes` and the undocument
 
     uv run python research/quality-measurement/blurb_shelf.py --selftest
     uv run python research/quality-measurement/blurb_shelf.py --dry-run \
-        --pool derived/rivals.json --low derived/rivals-low.json --texts pilot7/listing.json
+        --pool derived/rivals.json --low derived/rivals-low.json \
+        --texts runs/pilots/pilot7/listing.json
 
 The package interpreter, because this reads no corpus: the pools arrive as files that
 `rival_pool.py` wrote, ours as `listing_arena.load_texts` bundles.

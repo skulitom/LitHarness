@@ -37,7 +37,8 @@ shards costs gigabytes; the n-grams under test number a few thousand, so one pas
 those and holds nothing else. That is also what makes the result cheap to re-run per listing.
 
     C:/DEV/MirrorBench/.venv/Scripts/python.exe research/quality-measurement/idiom_fit.py \\
-        --summits derived/summit-set.json --ours pilot9/listing.json pilot10/listing.json
+        --summits derived/summit-set.json \
+        --ours runs/pilots/pilot9/listing.json runs/pilots/pilot10/listing.json
 
 The MirrorBench interpreter, because it reads the parquet shards (CLAUDE.md).
 

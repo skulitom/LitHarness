@@ -14,7 +14,8 @@ rather than anything about the writing, and our own W means nothing. It runs by 
 cost is four calls a pair.
 
     uv run python research/quality-measurement/listing_arena.py \\
-        --rivals derived/rivals.json --texts pilot7/listing.json pilot9/listing.json
+        --rivals derived/rivals.json \
+        --texts runs/pilots/pilot7/listing.json runs/pilots/pilot9/listing.json
 
 The package interpreter, because this reads no corpus: the pool arrives as a file that
 `rival_pool.py` wrote.

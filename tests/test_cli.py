@@ -1010,6 +1010,11 @@ def test_the_environment_default_is_off_unless_it_says_a_true_thing(db, monkeypa
     assert build_parser().parse_args(["tick"]).no_outline is True
 
 
+def test_forge_defaults_to_the_ignored_run_workspace() -> None:
+    """A bare forge must not recreate an invisible working directory at repository root."""
+    assert build_parser().parse_args(["forge"]).out.as_posix() == "runs/forge"
+
+
 def test_model_written_text_reaches_a_redirected_stdout_in_utf8() -> None:
     """The operator surface's half of `_write_document`'s encoding rule, and it cost a run.
 

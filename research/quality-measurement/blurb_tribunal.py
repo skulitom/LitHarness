@@ -34,7 +34,8 @@ Free legs first; the paid run refuses without both `--yes` and the undocumented
 
     uv run python research/quality-measurement/blurb_tribunal.py --selftest
     uv run python research/quality-measurement/blurb_tribunal.py --dry-run \
-        --pool derived/rivals.json derived/rivals-low.json --texts pilot7/listing.json
+        --pool derived/rivals.json derived/rivals-low.json \
+        --texts runs/pilots/pilot7/listing.json
 """
 
 from __future__ import annotations

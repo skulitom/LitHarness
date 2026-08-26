@@ -72,33 +72,12 @@ book-library*/
 # record is `results/force-*.json`, which carries ids, digests and numbers and no prose.
 research/quality-measurement/derived/
 
-# Forge working directories: the K worlds a `litharness forge` returned, plus the seed,
-# directive and promise files `--pick` derives from the chosen one. A scratch tree like
-# book-library/, and ignored for the same reason plus one of its own — a single run's
-# forge.json is ~600KB of three complete worlds, of which the repository needs exactly the one
-# that was picked. What is committed is `plan/serial-pilot-2-world.json`: the model's answer for
-# the chosen candidate, from which `architect.records_for` regenerates the 140KB seed
-# byte-identically (`test_the_pilot_package_regenerates_the_world_it_was_run_on`). One artefact,
-# not two, so there is nothing to notice has drifted.
-# **Third near-miss, and this time the glob is written for the next one.** The rule named
-# `pilot2/`, `pilot3/` and `pilot4/` one directory at a time, so Serial Pilot 7's `--out
-# pilot7` landed untracked and visible in `git status`, one `git add -A` from committing a
-# generated listing. The library rule and the forge rule above each record the same
-# discovery; this is the third, so the pattern goes in instead of the fourth name.
-pilot*/
-forge/
-
-# **And the same near-miss the library rule already records, in the same file, twice.**
-# `--out` takes any directory, and the runs that actually happened were named
-# `reader-book-forge/`, `reader-book-forge-a/` and so on — which `forge/` does not cover. Two
-# of them were committed before anybody looked: 404KB each of three complete worlds, of which
-# the repository needs exactly the one that was picked.
-reader-book-forge*/
-
-# Generated publication experiments outside the book library: high-resolution source art,
-# 400x600 finished covers, and their run manifests. The exact root can be named per book
-# (`cover-sets-pilot8/`); final covers may be admitted deliberately with `git add -f`.
-cover-sets*/
+# Local run workspaces belong under one root: forge candidates, pilot listings, ad-hoc cover
+# experiments, and similar regenerable artifacts. Keeping one ignored boundary prevents each
+# experiment name from becoming another invisible directory at repository root. Root-level
+# `pilot*`, `forge`, and `cover-sets*` are intentionally not ignored: an old command that creates
+# one now surfaces in `git status` instead of quietly reintroducing the clutter.
+/runs/
 
 # Single-run PID locks. `force_remote.SingleRun` writes one beside the results while an arm holds
 # the box and removes it on exit, so this only matters after a crash - and a stale lock is

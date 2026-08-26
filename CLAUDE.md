@@ -64,8 +64,8 @@ Several sessions edit this repo at once, on `main` and in `.claude/worktrees/*`.
 
 - `git status` and `git diff` on any shared document immediately before you edit it, and
   re-read a file before editing — mid-edit states have been observed on disk.
-- Commit only your own files. Leave other sessions' untracked files (`pilot*/`, `forge/`,
-  handoffs you did not write) alone.
+- Commit only your own files. Leave other sessions' untracked files (`runs/`, handoffs you did
+  not write) alone.
 - Before claiming a stage-0 number, find the highest in use across `main` **and every
   worktree**, including sub-section headings (a `§86.6` addendum once landed before its parent
   and hid the number); re-run this at commit time:

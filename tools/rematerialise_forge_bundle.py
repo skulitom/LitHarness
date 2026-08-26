@@ -23,11 +23,12 @@ wall-clock stamp. It is minted fresh, printed, and named in the run record; no r
 on it (`records_for` does not take it), so the seed's 329 records are byte-identical either
 way, and `litharness new --state` re-keys the snapshot onto the book it creates in any case.
 
-    uv run python tools/rematerialise_forge_bundle.py --out pilot2/direct2c
+    uv run python tools/rematerialise_forge_bundle.py --out runs/pilots/pilot2/direct2c
 
 Then the ordinary path, unchanged:
 
-    .\\tools\\serial-pilot-2-setup.ps1 -Forge pilot2\\direct2c -Scenes 8 -Database serial2c.db
+    $forge = "runs\\pilots\\pilot2\\direct2c"
+    .\\tools\\serial-pilot-2-setup.ps1 -Forge $forge -Scenes 8 -Database serial2c.db
 """
 
 from __future__ import annotations
