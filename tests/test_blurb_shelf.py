@@ -120,7 +120,7 @@ def test_a_sham_floor_is_read_from_one_shams_rows_and_no_pooling_function_exists
     # v0.2: two of four naming one slot is a coin flip under uniform naming, not a kill; the
     # registered trigger is a modal count of three (KP_MODAL_COUNT — the amendment's arithmetic).
     assert floor["position_kill"] is False
-    hard = tracked[:2] + [_record(None, 4), _record(None, 0)]
+    hard = [*tracked[:2], _record(None, 4), _record(None, 0)]
     assert blurb_shelf.sham_floor(hard)["position_kill"] is True, (
         "three of four naming one slot is the kill"
     )
