@@ -161,6 +161,34 @@ field once outweighed every rule in the prompt. Empty is legitimate and is the c
 `--no-title-to-readers` screens the listing without its title, which is what every round
 before titles existed measured.
 
+The listing bundle also hands off to a cover set without anybody retyping its title or blurb:
+
+```bash
+uv sync --extra cover
+uv run litharness cover --bundle shelf/listing.json --author "A. Writer" \
+  --out cover-sets/cinder-road --variants 4
+```
+
+Each variant is a fresh non-interactive Codex session using the built-in image-generation
+skill. It makes **text-free** 2:3 art with a title-safe upper area; LitHarness then draws the
+exact title and author locally and exports `cover-01.png`, `cover-02.png`, and so on at exactly
+400×600 pixels. This follows the [Codex image-generation guidance](https://learn.chatgpt.com/docs/image-generation):
+image models can attempt short text, but publication-critical typography is a deterministic
+finishing job. The sessions use the signed-in Codex CLI rather than Claude or an API key and
+count against the account's ordinary Codex usage limits.
+
+`--reference layout-reference.png` attaches a visual reference to every generation, under an
+explicit instruction to use only broad hierarchy and never reproduce its words, characters,
+or composition. `--art candidate.png` skips Codex and finishes existing art instead; repeat
+the flag to make a comparable set without spending another generation. `--font` pins a local
+font file, and `--art-direction` carries a palette, motif, or exclusion across the whole set.
+
+Every run writes `cover-manifest.json` beside the covers, including the exact prompts,
+commands, source and finished hashes, references, font, and dimensions. It deliberately does
+not rank or critique the options. That keeps generation bounded and leaves a clean artifact
+set for a later critique instrument—or for testing what resonates with real readers—without
+wiring audience behaviour back into the book-production loop.
+
 A book that already has a premise starts with `new` instead, which is Stage 3's entry point:
 
 ```bash

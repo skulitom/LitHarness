@@ -20,9 +20,16 @@ dev = [
   "hypothesis>=6.130",
   "mypy>=1.15",
   "numpy>=2.2",
+  "pillow>=11.0",
   "pytest>=8.3",
   "pytest-cov>=6.0",
   "ruff>=0.9",
+]
+# Cover generation is a Codex CLI session followed by local, deterministic typography. Pillow
+# belongs to that finishing step, not to the manuscript engine, so ordinary installations keep
+# the runtime's one dependency and publication operators opt in explicitly.
+cover = [
+  "pillow>=11.0",
 ]
 # Building a craft reference profile from a published-prose corpus (§10.6). Deliberately its
 # own extra rather than a dev dependency: `datasets` pulls pyarrow and a network stack into a

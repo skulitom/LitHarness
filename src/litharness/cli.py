@@ -39,7 +39,7 @@ import litharness_contracts as lc
 from litharness.adapters import contracts_fixtures, evaluation_artifact
 from litharness.adapters.continuity_cli import ContinuityCliRunner
 from litharness.adapters.sqlite_store import MigrationsMissing, SqliteStore, StoredEvent
-from litharness.application import architect, comprehension, titles, world_agent
+from litharness.application import architect, comprehension, covers, titles, world_agent
 from litharness.application import export as export_module
 from litharness.application import library as library_module
 from litharness.application import overview as overview_mod
@@ -111,6 +111,7 @@ from litharness.domain.promises import Promise, normalise_kind, promise_id_for
 from litharness.domain.revision import Revision, import_manuscript, new_book
 from litharness.domain.state import import_state
 from litharness.providers import ProviderRegistry, build_default_registry
+from litharness.providers.cli import subprocess_runner
 
 #: Exit codes, which are how whatever drives `tick` reads the outcome. See the module
 #: docstring.
@@ -1794,6 +1795,63 @@ def cmd_listing(args: argparse.Namespace) -> int:
         created.state = None
         created.promises = None
         return cmd_new(created)
+    return EXIT_OK
+
+
+def cmd_cover(args: argparse.Namespace) -> int:
+    """Generate several cover-art routes and finish each as an exact publication asset.
+
+    The listing bundle is the normal handoff. Explicit title and description flags remain so
+    an imported or not-yet-listed book can use the same pipeline, but neither requires a human
+    to retype model output: explicit values override bundle fields only when deliberately set.
+
+    Cover *art* is sampled; publication text is not. Codex is asked for text-free 2:3 art and
+    `application.covers` draws the title and author itself, identically for every candidate.
+    This is also why a run makes a set instead of asking an image model for a contact sheet:
+    every variant is an independent route and every final cover has the same measurable shape.
+    """
+    bundle: Mapping[str, Any] = {}
+    if args.bundle:
+        loaded = json.loads(args.bundle.read_text(encoding="utf-8"))
+        if not isinstance(loaded, Mapping):
+            raise ValueError(f"cover bundle must be a JSON object: {args.bundle}")
+        bundle = loaded
+
+    title = (args.title or str(bundle.get("title") or "")).strip()
+    if args.description_file:
+        description = _read_text(args.description_file)
+    else:
+        description = args.description or str(bundle.get("listing") or bundle.get("brief") or "")
+    spec = covers.CoverSpec(
+        title=title,
+        description=description,
+        author=args.author,
+        art_direction=args.art_direction,
+    )
+    supplied = tuple(args.art or ())
+    count = (
+        len(supplied)
+        if supplied
+        else (
+            args.variants if args.variants is not None else covers.DEFAULT_VARIANTS
+        )
+    )
+    result = covers.create_cover_set(
+        args.out,
+        spec,
+        variants=count,
+        supplied_art=supplied,
+        references=tuple(args.reference or ()),
+        font_path=args.font,
+        timeout=args.timeout,
+        force=args.force,
+        workspace=Path.cwd(),
+        generated_at=_stamp(_now()),
+        runner=subprocess_runner,
+    )
+    for cover_path in result.covers:
+        print(cover_path)
+    print(f"manifest: {result.manifest}")
     return EXIT_OK
 
 
@@ -4670,6 +4728,73 @@ def build_parser() -> argparse.ArgumentParser:
     listing.add_argument("--book", help="book id, when --scenes creates one")
     listing.add_argument("--branch", help="branch id, when --scenes creates one")
     listing.set_defaults(func=cmd_listing)
+
+    cover = sub.add_parser(
+        "cover",
+        help="generate several cover options and finish each at Royal Road's 400x600 size",
+    )
+    cover.add_argument(
+        "--out",
+        type=Path,
+        required=True,
+        help="directory for cover-01.png, its source art, further variants, and the manifest",
+    )
+    cover.add_argument(
+        "--bundle",
+        type=Path,
+        help="listing.json from `litharness listing`; supplies title and story description",
+    )
+    cover.add_argument("--title", help="publication title; overrides the bundle title")
+    cover.add_argument("--author", default="", help="optional publication name at the bottom")
+    description = cover.add_mutually_exclusive_group()
+    description.add_argument(
+        "--description",
+        help="story context for the art; overrides the listing in --bundle",
+    )
+    description.add_argument(
+        "--description-file",
+        help="story context as UTF-8 text, or - for stdin; overrides --bundle",
+    )
+    cover.add_argument(
+        "--art-direction",
+        default="",
+        help="optional visual constraint shared by every variant (palette, motif, exclusions)",
+    )
+    cover.add_argument(
+        "--variants",
+        type=int,
+        help=f"independent Codex generations (default {covers.DEFAULT_VARIANTS}, max "
+        f"{covers.MAX_VARIANTS}); ignored when --art supplies the set",
+    )
+    cover.add_argument(
+        "--art",
+        action="append",
+        type=Path,
+        help="finish existing art instead of calling Codex; repeat for several options",
+    )
+    cover.add_argument(
+        "--reference",
+        action="append",
+        type=Path,
+        help="visual reference attached to every Codex generation; repeat as needed",
+    )
+    cover.add_argument(
+        "--font",
+        type=Path,
+        help="TrueType/OpenType font for reproducible publication typography",
+    )
+    cover.add_argument(
+        "--timeout",
+        type=float,
+        default=900.0,
+        help="seconds allowed for each Codex image-generation session (default: 900)",
+    )
+    cover.add_argument(
+        "--force",
+        action="store_true",
+        help="replace only the named cover artifacts when they already exist",
+    )
+    cover.set_defaults(func=cmd_cover)
 
     read = sub.add_parser(
         "readers", help="put the simulated readership on a drafted scene"
