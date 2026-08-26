@@ -14437,3 +14437,33 @@ Listings only. Bigrams only — trigrams over 40,000 chapters put every text abo
 including the operator's favourites, which is a sample-size failure and is why the run reports
 its chapter count. Ten of our listings, fourteen summits, so every interval here is wide. And
 nothing about chapters, where none of the seven instruments has been run.
+
+## 144. The search is for a reader architecture, and a prompt is one interface to it
+
+The operator's direction (2026-08-26), after the shelf instrument produced the first
+non-inverted separation: *"I'm not trying to discover new reader prompts, I'm trying to
+discover a way for the readers to perceive quality correctly. Whether this is achieved
+through prompts, multi-agent analysis, [logit] lens, or something else. Just as long as it
+is done through LLMs."* And the sentence the operator asked to be recorded explicitly:
+**LitHarness is not searching for a quality metric. It is searching for an LLM-based
+cognitive system that perceives literary quality well enough to behave as a readership.**
+
+**What shipped.** `plan/reader-architecture-program.md` — the mechanism-family map
+(generative tests, comparative reading with a reference shelf, adversarial span tribunal,
+cross-family readers, representation-level, persistent reader simulation), each family's
+in-repo state, and the order of belief restated once — plus the README's objective block
+now carrying the distinction verbatim. The handoff's boundary 5 generalises: the unit of
+search is the mechanism, never the question wording, and a seventh phrasing of "which is
+better" is not a mechanism.
+
+**What was refused.** Multi-agent reconciliation by *agreement* — a panel that votes is the
+verdict channel with extra steps; the tribunal family is admitted only because its third
+seat is deterministic code checking whether claimed evidence exists. And the
+representation-level family is deliberately parked behind a mandatory read of BRIEF.md's
+F-track deaths, not started in parallel enthusiasm.
+
+**Anti-scope.** The validation discipline moves nowhere: §141's gradient before any reading
+on our own text, the operator's acceptance test with the inverted result withdrawing the
+instrument, registrations before paid calls, distributions before bars (§61), §95, §97.1
+and RS1 untouched. This entry records a redirection of the search space and nothing about
+any instrument's verdict.

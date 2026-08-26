@@ -16,6 +16,13 @@ position-swapped against matched published prose — and it is not what a day's 
 against, because it needs a comparator frame and a validated instrument and cannot be run per
 book.
 
+On the measurement side the search is architectural, and the operator's framing of it is
+recorded verbatim: **LitHarness is not searching for a quality metric. It is searching for
+an LLM-based cognitive system that perceives literary quality well enough to behave as a
+readership.** A prompt is one interface to that capacity among several —
+[plan/reader-architecture-program.md](plan/reader-architecture-program.md) maps the
+mechanism families and where each stands.
+
 The unit of production is an **open-ended serial** — arc, chapter, scene — published
 chapter-wise at cadence. **The audience inside the loop is simulated, and only simulated.**
 Whether the objective is met is measured from the behaviour of that simulated readership under
