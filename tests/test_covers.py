@@ -30,6 +30,7 @@ def spec(**changes: str) -> covers.CoverSpec:
 
 
 def test_a_cover_needs_publication_words_and_story_context() -> None:
+    assert covers.CoverSpec(title="A Title", description="A story.").author == "Skulitom"
     with pytest.raises(ValueError, match="needs a title"):
         spec(title=" ")
     with pytest.raises(ValueError, match="story context"):
@@ -55,8 +56,13 @@ def test_the_codex_command_is_ephemeral_sandboxed_and_accepts_references(tmp_pat
     workspace = tmp_path / "checkout"
     target = tmp_path / "publication" / "art.png"
     reference = tmp_path / "reference.png"
-    argv = covers.codex_argv(workspace=workspace, target=target, references=(reference,))
-    assert argv[:2] == ("codex", "exec")
+    argv = covers.codex_argv(
+        workspace=workspace,
+        target=target,
+        references=(reference,),
+        executable="codex.cmd",
+    )
+    assert argv[:2] == ("codex.cmd", "exec")
     assert "--ephemeral" in argv
     assert argv[3:5] == ("--sandbox", "workspace-write")
     assert "--add-dir" in argv
@@ -166,7 +172,7 @@ def test_a_supplied_art_set_is_self_contained_versioned_and_collision_safe(
     output = tmp_path / "covers"
     result = covers.create_cover_set(
         output,
-        spec(),
+        spec(book_id="book-1", branch_id="branch-1", revision_id="revision-1"),
         supplied_art=(source_a, source_b),
         generated_at="2026-08-26T12:00:00Z",
     )
@@ -175,6 +181,11 @@ def test_a_supplied_art_set_is_self_contained_versioned_and_collision_safe(
     assert manifest["schema"] == covers.MANIFEST_SCHEMA
     assert manifest["dimensions"] == {"width": 400, "height": 600}
     assert manifest["generated_at"] == "2026-08-26T12:00:00Z"
+    assert manifest["book"] == {
+        "book_id": "book-1",
+        "branch_id": "branch-1",
+        "revision_id": "revision-1",
+    }
     assert [row["source"] for row in manifest["variants"]] == ["supplied", "supplied"]
     assert all(re.fullmatch(r"[0-9a-f]{64}", row["cover_sha256"]) for row in manifest["variants"])
     with pytest.raises(FileExistsError, match="--force"):
@@ -284,6 +295,42 @@ def test_the_cli_reads_the_listing_bundle_without_retyping_and_never_calls_codex
     assert manifest["title"] == "Memory Toll"
     assert manifest["description"] == "A road takes memories as payment."
     assert all(row["command"] is None for row in manifest["variants"])
+
+
+def test_an_existing_book_defaults_to_its_library_shelf(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    database = tmp_path / "book.db"
+    assert main(["--database", str(database), "init"]) == EXIT_OK
+    assert (
+        main(
+            [
+                "--database",
+                str(database),
+                "new",
+                "Memory Toll",
+                "--premise",
+                "A road takes one memory at every gate.",
+                "--scenes",
+                "6",
+            ]
+        )
+        == EXIT_OK
+    )
+    capsys.readouterr()
+    source = art(tmp_path / "art.png")
+    assert (
+        main(["--database", str(database), "cover", "--art", str(source)])
+        == EXIT_OK
+    )
+    shelf = tmp_path / "book-library" / "memory-toll" / "covers"
+    manifest = json.loads((shelf / "cover-manifest.json").read_text(encoding="utf-8"))
+    assert (shelf / "cover-01.png").is_file()
+    assert manifest["title"] == "Memory Toll"
+    assert manifest["description"] == "A road takes one memory at every gate."
+    assert manifest["author"] == "Skulitom"
+    assert manifest["book"]["book_id"]
+    assert manifest["book"]["revision_id"]
 
 
 def test_the_cli_reports_a_non_object_bundle_as_an_operational_fault(

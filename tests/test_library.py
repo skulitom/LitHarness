@@ -300,6 +300,7 @@ def test_the_index_says_the_library_is_not_a_publication() -> None:
         "reading your own book and directing makes you a steering reader; the caveat belongs "
         "where the reading happens"
     )
+    assert "covers/cover-NN.png" in index
 
 
 def test_slugify_falls_back_rather_than_producing_an_empty_name() -> None:

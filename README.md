@@ -165,14 +165,16 @@ The listing bundle also hands off to a cover set without anybody retyping its ti
 
 ```bash
 uv sync --extra cover
-uv run litharness cover --bundle shelf/listing.json --author "A. Writer" \
-  --out cover-sets/cinder-road --variants 4
+uv run litharness --database book.db cover --variants 4
 ```
 
 Each variant is a fresh non-interactive Codex session using the built-in image-generation
 skill. It makes **text-free** 2:3 art with a title-safe upper area; LitHarness then draws the
 exact title and author locally and exports `cover-01.png`, `cover-02.png`, and so on at exactly
-400×600 pixels. This follows the [Codex image-generation guidance](https://learn.chatgpt.com/docs/image-generation):
+400×600 pixels under that book's `book-library/<book>/covers/` shelf. `--out` overrides that
+destination; `--bundle shelf/listing.json` remains available before a book has entered the
+database. The publication author defaults to `Skulitom`; `--author` overrides it. This follows
+the [Codex image-generation guidance](https://learn.chatgpt.com/docs/image-generation):
 image models can attempt short text, but publication-critical typography is a deterministic
 finishing job. The sessions use the signed-in Codex CLI rather than Claude or an API key and
 count against the account's ordinary Codex usage limits.

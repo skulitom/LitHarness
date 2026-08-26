@@ -363,6 +363,8 @@ Each book has a shelf:
   published twice). Open one in a browser, select all, copy.
 - `chapters/NN-title.txt` — the same chapter as plain text, for any editor the HTML route
   does not survive.
+- `covers/cover-NN.png` — Royal Road-ready 400x600 options, with their text-free source art
+  and generation manifest. The library publisher preserves this folder when the book moves.
 - `NOTES.md` — what you noticed. Worth writing: a named defect from a human read is one of
   only two ways a new axis enters the registry, and all three the system measures today came
   from one read of one book.

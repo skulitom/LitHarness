@@ -22,6 +22,7 @@ import argparse
 import csv
 import json
 import os
+import shutil
 import sqlite3
 import sys
 import time
@@ -1801,9 +1802,9 @@ def cmd_listing(args: argparse.Namespace) -> int:
 def cmd_cover(args: argparse.Namespace) -> int:
     """Generate several cover-art routes and finish each as an exact publication asset.
 
-    The listing bundle is the normal handoff. Explicit title and description flags remain so
-    an imported or not-yet-listed book can use the same pipeline, but neither requires a human
-    to retype model output: explicit values override bundle fields only when deliberately set.
+    The database is the normal handoff; its title, premise and revision locate the cover in the
+    same derived shelf as the reading copy. The listing bundle remains the pre-database route.
+    Explicit values override either source only when deliberately set.
 
     Cover *art* is sampled; publication text is not. Codex is asked for text-free 2:3 art and
     `application.covers` draws the title and author itself, identically for every candidate.
@@ -1822,11 +1823,32 @@ def cmd_cover(args: argparse.Namespace) -> int:
         description = _read_text(args.description_file)
     else:
         description = args.description or str(bundle.get("listing") or bundle.get("brief") or "")
+    book_id = ""
+    branch_id = ""
+    revision_id = ""
+    if args.book or args.branch or not title or not description.strip():
+        store = _store(args)
+        try:
+            book_id, branch_id = export_module.resolve_branch(store, args.book, args.branch)
+            document = export_module.collect(
+                store,
+                book_id=book_id,
+                branch_id=branch_id,
+                generated_at=_stamp(_now()),
+            )
+        finally:
+            store.close()
+        title = title or document.title
+        description = description if description.strip() else document.premise or ""
+        revision_id = document.revision_id
     spec = covers.CoverSpec(
         title=title,
         description=description,
         author=args.author,
         art_direction=args.art_direction,
+        book_id=book_id,
+        branch_id=branch_id,
+        revision_id=revision_id,
     )
     supplied = tuple(args.art or ())
     count = (
@@ -1836,8 +1858,13 @@ def cmd_cover(args: argparse.Namespace) -> int:
             args.variants if args.variants is not None else covers.DEFAULT_VARIANTS
         )
     )
+    output = args.out or (
+        _library_root(args)
+        / library_module.slugify(spec.title, spec.book_id or "cover")
+        / "covers"
+    )
     result = covers.create_cover_set(
-        args.out,
+        output,
         spec,
         variants=count,
         supplied_art=supplied,
@@ -1848,11 +1875,27 @@ def cmd_cover(args: argparse.Namespace) -> int:
         workspace=Path.cwd(),
         generated_at=_stamp(_now()),
         runner=subprocess_runner,
+        codex_executable=_codex_executable(),
     )
     for cover_path in result.covers:
         print(cover_path)
     print(f"manifest: {result.manifest}")
     return EXIT_OK
+
+
+def _codex_executable() -> str:
+    """Resolve the installed Codex launcher to something `CreateProcess` can execute.
+
+    npm puts an extensionless POSIX shim before `codex.cmd` on Windows. PowerShell skips that
+    shim, but Python's `subprocess` finds it and `CreateProcess` returns WinError 5. Resolve the
+    Windows launcher explicitly; elsewhere the ordinary executable is the right one.
+    """
+    names = ("codex.cmd", "codex.exe") if os.name == "nt" else ("codex",)
+    for name in names:
+        resolved = shutil.which(name)
+        if resolved:
+            return resolved
+    return names[0]
 
 
 def cmd_characters(args: argparse.Namespace) -> int:
@@ -4736,8 +4779,7 @@ def build_parser() -> argparse.ArgumentParser:
     cover.add_argument(
         "--out",
         type=Path,
-        required=True,
-        help="directory for cover-01.png, its source art, further variants, and the manifest",
+        help="override the default book-library/<book>/covers output directory",
     )
     cover.add_argument(
         "--bundle",
@@ -4745,7 +4787,11 @@ def build_parser() -> argparse.ArgumentParser:
         help="listing.json from `litharness listing`; supplies title and story description",
     )
     cover.add_argument("--title", help="publication title; overrides the bundle title")
-    cover.add_argument("--author", default="", help="optional publication name at the bottom")
+    cover.add_argument(
+        "--author",
+        default="Skulitom",
+        help="publication name at the bottom (default: Skulitom)",
+    )
     description = cover.add_mutually_exclusive_group()
     description.add_argument(
         "--description",
@@ -4794,6 +4840,8 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="replace only the named cover artifacts when they already exist",
     )
+    cover.add_argument("--book", help="book id; defaults to the only branch in the database")
+    cover.add_argument("--branch", help="branch id; defaults to the only matching branch")
     cover.set_defaults(func=cmd_cover)
 
     read = sub.add_parser(

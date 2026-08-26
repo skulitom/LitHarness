@@ -95,9 +95,9 @@ forge/
 # the repository needs exactly the one that was picked.
 reader-book-forge*/
 
-# Generated publication experiments: high-resolution source art, 400x600 finished covers, and
-# their run manifests. The exact root can be named per book (`cover-sets-pilot8/`) just as the
-# book-library and forge roots can; final covers may be admitted deliberately with `git add -f`.
+# Generated publication experiments outside the book library: high-resolution source art,
+# 400x600 finished covers, and their run manifests. The exact root can be named per book
+# (`cover-sets-pilot8/`); final covers may be admitted deliberately with `git add -f`.
 cover-sets*/
 
 # Single-run PID locks. `force_remote.SingleRun` writes one beside the results while an arm holds

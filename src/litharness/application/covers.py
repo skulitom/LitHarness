@@ -45,8 +45,11 @@ class CoverSpec:
 
     title: str
     description: str
-    author: str = ""
+    author: str = "Skulitom"
     art_direction: str = ""
+    book_id: str = ""
+    branch_id: str = ""
+    revision_id: str = ""
 
     def __post_init__(self) -> None:
         if not self.title.strip():
@@ -157,12 +160,18 @@ Do not edit any other project file. Finish only after that exact PNG exists.
 """
 
 
-def codex_argv(*, workspace: Path, target: Path, references: Sequence[Path]) -> tuple[str, ...]:
+def codex_argv(
+    *,
+    workspace: Path,
+    target: Path,
+    references: Sequence[Path],
+    executable: str = "codex",
+) -> tuple[str, ...]:
     """The non-interactive Codex command, exposed separately so the boundary is testable."""
     resolved_workspace = workspace.resolve()
     resolved_target = target.resolve()
     argv = [
-        "codex",
+        executable,
         "exec",
         "--ephemeral",
         "--sandbox",
@@ -191,6 +200,7 @@ def generate_art(
     workspace: Path | None = None,
     timeout: float = 900.0,
     runner: Runner | None = None,
+    codex_executable: str = "codex",
 ) -> tuple[str, tuple[str, ...]]:
     """Ask a fresh Codex CLI session for one image and verify its promised artifact exists."""
     if timeout <= 0:
@@ -201,7 +211,12 @@ def generate_art(
     target.parent.mkdir(parents=True, exist_ok=True)
     prompt = art_prompt(spec, variant=variant, target=target, has_references=bool(references))
     working = (workspace or Path.cwd()).resolve()
-    argv = codex_argv(workspace=working, target=target, references=references)
+    argv = codex_argv(
+        workspace=working,
+        target=target,
+        references=references,
+        executable=codex_executable,
+    )
     if runner is None:
         raise ValueError("Codex generation requires an injected command runner")
     result = runner(argv, timeout=timeout, cwd=str(working), stdin=prompt)
@@ -393,6 +408,7 @@ def create_cover_set(
     workspace: Path | None = None,
     generated_at: str = "",
     runner: Runner | None = None,
+    codex_executable: str = "codex",
 ) -> CoverSet:
     """Generate or import several art routes, finish them alike, and write one manifest."""
     count = len(supplied_art) if supplied_art else variants
@@ -443,6 +459,7 @@ def create_cover_set(
                 workspace=workspace,
                 timeout=timeout,
                 runner=runner,
+                codex_executable=codex_executable,
             )
             source_kind = "codex-cli-imagegen"
         resolved_font = compose_cover(art_target, cover_target, spec, font_path=font_path)
@@ -465,6 +482,15 @@ def create_cover_set(
     manifest = {
         "schema": MANIFEST_SCHEMA,
         "generated_at": generated_at or None,
+        "book": (
+            {
+                "book_id": spec.book_id,
+                "branch_id": spec.branch_id,
+                "revision_id": spec.revision_id,
+            }
+            if spec.book_id
+            else None
+        ),
         "title": spec.title.strip(),
         "author": spec.author.strip() or None,
         "description": spec.description.strip(),
