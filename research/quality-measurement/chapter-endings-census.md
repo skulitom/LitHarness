@@ -2,7 +2,7 @@
 
 **Status: MEASUREMENT AND TWO REPAIRS, 2026-08-22. No bar is declared here, nothing is admitted
 to the axis registry, no directive was authored, and no model was asked whether an ending is
-good.** Every number below is descriptive. From `plan/handoff-chapter-endings.md`; code in
+good.** Every number below is descriptive. Code in
 `src/litharness/application/constraint_locks.py`, `src/litharness/domain/serials.py`,
 `src/litharness/application/planner.py` and `research/quality-measurement/chapter_endings.py`.
 Decision log: stage-0 §108.

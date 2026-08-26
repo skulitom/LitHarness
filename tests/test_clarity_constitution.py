@@ -1,6 +1,6 @@
 """The clarity constitution, enforced by construction rather than by review.
 
-`plan/handoff-clarity-first.md` boundary 1: `domain/house.py`'s CLARITY rule outranks every
+`plan/stage-0-decisions.md` §125/§129: `domain/house.py`'s CLARITY rule outranks every
 other writing instruction, and anything in the generation path that tells a model to withhold
 explanation is deleted entirely. Boundary 2: non-contradiction is not a review finding, it is
 a property this file pins — every active instruction string that reaches a model in the
@@ -22,8 +22,8 @@ from tests.conftest import BOOK_ID, BRANCH_ID
 #: The contradiction class's vocabulary, matched case-insensitively over every instruction
 #: string the generation path renders. Additions are welcome — a new way of telling a model
 #: to withhold belongs here the day somebody notices it. Removals need the ledger: taking a
-#: pattern off this list re-opens a channel `plan/handoff-clarity-first.md` boundary 1
-#: closed, and only a stage-0 entry may record that.
+#: pattern off this list re-opens a channel `plan/stage-0-decisions.md` §125 closed,
+#: and only a stage-0 entry may record that.
 WITHHOLD_PATTERNS: tuple[str, ...] = (
     "never explain",
     "is never explained",

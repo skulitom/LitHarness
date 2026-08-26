@@ -73,17 +73,9 @@ test and its explanation together.
 ## Before proposing a quality or craft metric
 
 Read [research/quality-measurement/BRIEF.md](research/quality-measurement/BRIEF.md) first.
-It is the refutation ledger: every proxy this project has tried to measure prose quality
-with, and how each one died. **Twenty are dead and every one of them died to a control, not
-to a bug** — so the cost of skipping it is not lost time, it is re-running a refuted
-experiment and believing the headline.
-
-Two things there that are easy to rediscover expensively. `tricolon_rate` separated
-declared-AI from pre-2023 chapters at 0.629, which reads as the project's first working
-AI-tell detector until the control beside it: *undeclared* 2025 chapters separate from the
-same baseline at 0.606, so the metric detects the year. And the structural diagnosis — every
-refuted proxy was **static, absolute, and correlational** — is the fastest way to tell whether
-a new idea is a fresh one or the fourteenth of the same shape.
+It is the canonical refutation ledger: every proxy this project has tried, how its controls
+killed it, and the structural pattern behind the failures. Do not copy its count or findings
+here; they change faster than contributor guidance and the brief owns them.
 
 That directory is also where prose-measurement experiments belong. It sits outside `src/`
 on purpose: nothing there is imported by the package, nothing is gated on, and it depends on
@@ -92,13 +84,9 @@ it already supplies the fixtures, Mother of Learning, the cached RoyalRoad shard
 labels, and `generated_scenes`, which reads drafted scenes out of any book database through the
 export path; `by_story` groups chapters into books. Commit numbers, never prose.
 
-**Which source you pick is a validity decision, not a convenience one.** BRIEF.md §2 Pass 6
-measured a scoring model's familiarity with published text swinging a score further than real
-damage did, so anything model-based validated on Mother of Learning or RoyalRoad either runs on
-text the model provably has not memorised or measures its familiarity term explicitly.
-`generated_scenes` is the only un-memorised source here, and also the only one carrying no reader
-label at all. Neither property is a defect to route around — pick against the question, and record
-in the summary which source ran.
+**Which source you pick is a validity decision, not a convenience one.** Model-based work on
+published text must address memorisation explicitly. `generated_scenes` avoids that problem but
+carries no reader label. Choose against the question and record the source and limitation.
 
 ## Scope discipline
 

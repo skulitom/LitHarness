@@ -192,7 +192,7 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
         "tie_policy": args.tie_policy,
         "planned_calls": planned,
         "protocol": "plan/stage-0-decisions.md §74",
-        # Boundary 6 (plan/handoff-clarity-first.md): each pair is one mid-book scene shown with
+        # Stage-0 §125's isolation boundary: each pair is one mid-book scene shown with
         # no history — both sides share the gap, which is the contrast design. Recorded so the
         # result says so; see context-audit-2026-08-24.md.
         "context": "cold_read",

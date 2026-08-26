@@ -1,6 +1,6 @@
 """Where the protagonist stands, scene by scene, read off a book's own record. No model.
 
-**Counters only, and no bar.** `plan/handoff-numbers-go-up.md` boundary 4: how often a standing
+**Counters only, and no bar.** Stage-0 §113: how often a standing
 should move is the operator's to set over a measured distribution, and this file is one leg of
 that distribution. Every number here is descriptive, nothing is admitted to the axis registry,
 nothing gates anything, and no direction is declared for any quantity — not one of them has a

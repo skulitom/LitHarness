@@ -46,6 +46,10 @@ OURS = (
     "CONTRIBUTING.md",
 )
 
+#: Exact whole-file exemptions for project-authored prose outside the stable directory classes
+#: above. Kept separate so a similarly named path cannot inherit the exemption by substring.
+OURS_EXACT_PATHS = frozenset({"reader-book-forge/refused.txt"})
+
 #: Fields that hold what a model *said*, never what it read. Every long string in this history
 #: is one of these — 1,243 of them, all in `.text` — because `elicit` records the answer beside a
 #: passage *id* and keys the prompt by digest, so the passage itself is never serialised. They are
@@ -80,17 +84,24 @@ OURS_FIELDS = ("pre_registration",)
 #: also contain world-state data, and the rewrite result also contains measurements over
 #: third-party blurbs. Exempting either whole file would stop the audit looking at those fields.
 #:
-#: The two forge files were the architect's own rejected premises and generated world records,
-#: committed as a clarity baseline and later deleted; the history-wide audit still sees their
-#: blobs. `blurb-rewrite` declares `texts` as the project's three `kind: "ours"` listings in its
-#: pre-registration.
+#: The five forge files were the Architect's own rejected premises and generated world records,
+#: committed as clarity baselines and later deleted; the history-wide audit still sees their
+#: blobs. The refused text file is entirely project-authored and is handled by
+#: :data:`OURS_EXACT_PATHS`. `blurb-rewrite` declares `texts` as the project's three
+#: `kind: "ours"` listings in its pre-registration.
 _FORGE_AUTHORED_FIELD = re.compile(
-    r"\.candidates\[\d+\](?:\.premise|\.world\..+|\.seed\.records\[\d+\]\.value)"
+    r"\.candidates\[\d+\](?:"
+    r"\.premise|\.world\..+|\.seed\.records\[\d+\]\.value|"
+    r"\.screen\.answers\.[^.]+\.expect_next"
+    r")"
 )
 
 OURS_PATH_FIELDS: tuple[tuple[str, re.Pattern[str]], ...] = (
     ("reader-book-forge-a/forge.json", _FORGE_AUTHORED_FIELD),
     ("reader-book-forge-b/forge.json", _FORGE_AUTHORED_FIELD),
+    ("reader-book-forge-c/forge.json", _FORGE_AUTHORED_FIELD),
+    ("reader-book-forge-d/forge.json", _FORGE_AUTHORED_FIELD),
+    ("reader-book-forge-e/forge.json", _FORGE_AUTHORED_FIELD),
     (
         "research/quality-measurement/results/blurb-rewrite.json",
         re.compile(r"\.texts\[\d+\]\.listing"),
@@ -296,7 +307,11 @@ def history_blobs() -> list[tuple[str, str]]:
         if len(parts) != 2:
             continue
         sha, path = parts
-        if path.endswith(DATA_SUFFIXES) and not any(marker in path for marker in OURS):
+        if (
+            path.endswith(DATA_SUFFIXES)
+            and not any(marker in path for marker in OURS)
+            and path not in OURS_EXACT_PATHS
+        ):
             seen.setdefault(sha, path)
     return sorted(seen.items(), key=lambda pair: pair[1])
 

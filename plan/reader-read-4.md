@@ -118,20 +118,16 @@ sentence for them.
 So the rungs are insignia **because the schema has nowhere else for them to be**. That is not a
 prompt failure and not a drafting failure; it is the schema being followed correctly.
 
-**Where this is being worked, and by whom.** The *ladder* half — the protagonist's rung on a
-declared ordinal chain, rising within the arc and printed on the page — is
-[`plan/handoff-numbers-go-up.md`](handoff-numbers-go-up.md), in flight in its own worktree, which
-already carries the operator's resolution verbatim: *"bronze to gold rank advance is the same as
-the number going up. Say bronze is 1 and gold is 3."* Nothing here duplicates it. The *inventory*
-half — a countable set of distinct named capabilities that grows, which is what "nine unique
-abilities" asks for — is a different axis and nobody owns it; the falsification test the operator
-called for is
+**What followed.** The *ladder* half — the protagonist's rung on a declared ordinal chain, rising
+within the arc and printed on the page — was built and measured in
+[`research/quality-measurement/numbers-go-up-results.md`](../research/quality-measurement/numbers-go-up-results.md).
+The *inventory* half — a countable set of distinct named capabilities that grows, which is what
+"nine unique abilities" asks for — was a different axis. Its falsification test is
 [`research/quality-measurement/mother-of-learning-model-fit.md`](../research/quality-measurement/mother-of-learning-model-fit.md),
 whose answer after adversarial review is that the model **can** hold an inventory today and is
 never asked to — six refutations, none standing.
 
-**Built 2026-08-23 as stage-0 §114**, from
-[`plan/handoff-ability-inventory.md`](handoff-ability-inventory.md): the forge is now asked for a
+**Built 2026-08-23 as stage-0 §114**: the Forge was then asked for a
 countable `capabilities` inventory, a world says who holds what on a `can_do` edge, and three
 projection sentences put it to the writer in English. Results and every re-derived figure are in
 [`research/quality-measurement/ability-inventory-results.md`](../research/quality-measurement/ability-inventory-results.md).

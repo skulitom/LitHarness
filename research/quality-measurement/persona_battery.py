@@ -369,7 +369,7 @@ def two_way_ci(
     support a narrow bound. Conservative is the direction this project already chose for the same
     reason §69 chose over-invalidation.
 
-    The resampling shape is the bilinear form `research/preference-power/bound.py` verifies for
+    The resampling shape is the bilinear form `research/preference-power/FINDINGS.md` §1 records for
     the shipped estimator: with `na` the passage multiplicities and `nb` the persona
     multiplicities, `total = na' C nb` and `won = na' S nb`. Aggregating a cell before weighting
     it is algebra, not approximation.
@@ -841,7 +841,7 @@ def main() -> None:
         "metric": "persona_panel.would_stop.v0",
         "protocol": "plan/persona-reader-validity.md",
         "entry": "plan/stage-0-decisions.md §70",
-        # Boundary 6 (plan/handoff-clarity-first.md): every cell is one passage with no history
+        # Stage-0 §125's isolation boundary: every cell is one passage with no history
         # — `elicit.py`'s deliberate frame, which isolates within-passage edits. Recorded here so
         # the result says so; see context-audit-2026-08-24.md.
         "context": "cold_read",

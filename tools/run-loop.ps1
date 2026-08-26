@@ -18,7 +18,8 @@
     its recorded decision, and accepted work was committed atomically with its events.
 
 .PARAMETER Database
-    The store to work. Defaults to bz3.db beside this repository.
+    The store to work. Defaults to runs/litharness.db so an ordinary run does not create
+    database files at the repository root.
 
 .PARAMETER DelaySeconds
     Wait between ticks. A pause rather than a rate limit: it keeps an idle loop from spinning
@@ -50,7 +51,11 @@ $ErrorActionPreference = 'Stop'
 # body instead, with the invocation path as the fallback that always works.
 $here = if ($PSScriptRoot) { $PSScriptRoot } else { Split-Path -Parent $MyInvocation.MyCommand.Path }
 $repo = (Resolve-Path (Join-Path $here '..')).Path
-if (-not $Database) { $Database = Join-Path $repo 'bz3.db' }
+if (-not $Database) {
+    $runRoot = Join-Path $repo 'runs'
+    New-Item -ItemType Directory -Path $runRoot -Force | Out-Null
+    $Database = Join-Path $runRoot 'litharness.db'
+}
 $store = $Database
 
 Write-Host "loop: $store"

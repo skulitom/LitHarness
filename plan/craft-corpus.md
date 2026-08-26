@@ -1,5 +1,10 @@
 # The craft corpus, and calibrating without a human in the loop
 
+> **HISTORICAL DESIGN.** The craft-calibration and solicited-preference paths described here
+> were retired under the scope axiom. Current quality-perception work starts at
+> `plan/reader-architecture-program.md`; this file remains as the evidence behind rejected
+> approaches, not as an implementation plan.
+
 Companion to PLAN.md §1a, §10 and §17 Stage 4. Records what the RoyalRoad corpus is, what
 was measured against it, and — the reason this document exists — **how the craft programme
 can be calibrated without requiring anyone to sit down and judge prose.**
@@ -67,7 +72,8 @@ author's existing audience at least as much as it tracks prose.
 
 ## 2. What has been measured so far
 
-`tools/build_craft_profile.py` → `plan/craft-profile.json`, over ~13,000 LitRPG chapters.
+The retired profile builder produced `plan/craft-profile.json` over ~13,000 LitRPG chapters.
+Its source was removed with the craft-calibration path; the result and decision record remain.
 
 **All four instrumented craft metrics are refuted as AI-tell detectors.** Holding the era
 fixed — declared-AI 2025 against undeclared 2025 — every rank AUC lands within 0.06 of chance:

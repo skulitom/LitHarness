@@ -1764,7 +1764,7 @@ def test_a_packet_that_fits_says_nothing(store: SqliteStore) -> None:
     assert store.digest(day).get("context_omitted", 0) == 0
 
 
-# --- the ladder reaches the writer (plan/handoff-numbers-go-up.md Task 2) ---------------------
+# --- the ladder reaches the writer (plan/stage-0-decisions.md §113) ---------------------------
 
 
 def _ladder_records(subject: str = "rook") -> list[lc.StateRecord]:
@@ -1904,7 +1904,7 @@ def test_the_writer_is_handed_the_next_rung_and_the_line_the_book_prints(
 
 
 def test_the_standing_block_carries_no_verb_and_no_adjective(store: SqliteStore) -> None:
-    """**Boundary 1 of `plan/handoff-numbers-go-up.md`, asserted rather than trusted.**
+    """**The §113 standing boundary, asserted rather than trusted.**
 
     Code carries facts, positions and schedules — never taste. The system may tell a writer
     that the plan has a standing reaching a rung later on, in exactly the register it already

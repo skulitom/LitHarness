@@ -9,9 +9,10 @@ Nothing here solicits or reports a quality judgement: the only vocabulary is beh
 
 Seed policy, registered: the pair bootstrap seeds `Random` from sha256 over the joined outcome
 bits, so a re-run over the same outcomes reproduces the same bound bit for bit and nothing
-except the outcome vector re-rolls it — the bound is a fact about the evidence, the discipline
-`research/preference-power/bound.py` inherits from `win_rate_lower_bound`'s payload digest and
-this module keeps for its own primary. The label-shuffle null derives each draw's seed from the
+except the outcome vector re-rolls it. The retired clustered estimator documented in
+`research/preference-power/FINDINGS.md` §1 inherited the same discipline from
+`win_rate_lower_bound`'s payload digest; this module keeps it for its own primary. The
+label-shuffle null derives each draw's seed from the
 caller's seed material plus the draw index, so a shuffle run replays exactly too.
 
 Boundaries, refused by name rather than papered over: fewer than ten outcomes raises instead of
@@ -151,7 +152,7 @@ def _seed_from_bits(outcomes: Sequence[int]) -> int:
     """The integer seed content-derived from the outcome vector itself.
 
     sha256 over the joined bits, first 16 hex characters as a 64-bit seed — the same shape
-    `bound.py::seed_for` uses for its payload digest. The seed depends on the sequence of
+    the retired clustered estimator used for its payload digest. The seed depends on the sequence of
     outcomes and on nothing else: no clock, no counter, no caller identity. A re-run of the
     same outcomes is the same bound; anything else re-rolls it deliberately.
     """

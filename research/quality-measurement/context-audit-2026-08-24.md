@@ -1,6 +1,6 @@
 # Context audit, 2026-08-24: what each simulated reader is shown, against what its result claims
 
-The rule audited against is `plan/handoff-clarity-first.md` boundary 6: every simulated-reader
+The rule audited against is stage-0 §125's isolation boundary: every simulated-reader
 elicitation carries exactly what a real reader would have at that point and nothing else —
 premise-only for premise instruments; chapters 1..k−1 (as the book's own export shows them) for
 a chapter-k read; the passage-so-far for a mid-chapter probe. An instrument that deliberately
@@ -76,7 +76,7 @@ below move it into the results where boundary 6 requires it.
 
 `ablate.py` (deterministic transforms; its model-generated variants are built elsewhere),
 `authorship_tells.py` (deterministic classifier over features), `b6_benchmark.py` (fixture
-admission artifact), `baseline.py` (counters), `build_craft_profile.py`, `cdg_battery.py` /
+admission artifact), `baseline.py` (counters), the retired craft-profile builder, `cdg_battery.py` /
 `surprisal.py` / `surprisal_field.py` (mechanical scoring), `compression_progress.py`,
 `context_l0_arm.py` (context-assembler census, no model), `corpus_io.py`, `corpus_leak_audit.py`,
 `determinism_probe.py`, `director_distinctness.py` (directive-generation distinctness, no reader),

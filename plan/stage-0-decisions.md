@@ -9436,7 +9436,7 @@ label §104.3 excludes.
 
 ## 105. A repair gets many attempts instead of one, and the loop that grants them is forbidden to rank anything
 
-**Built 2026-08-21, from `plan/handoff-variation-session.md`.** A **variation session** is a
+**Built 2026-08-21; design and measurements are in `plan/variation-session.md`.** A **variation session** is a
 durable, mediated, multi-attempt loop placed in front of the existing commit path, applied first
 and only to candidate-local repair. Design and measurements: `plan/variation-session.md`. Code:
 `domain/variation.py`, `application/variation.py`, `adapters/sqlite_variation.py`, migration 030.
@@ -10260,7 +10260,8 @@ domain can be **wrong** about it, and nothing checks that.
 
 ## 108. The only sentence anybody wrote about endings reached no prompt, and the writer was never told which chapter it was in
 
-**Built 2026-08-22, from [`plan/handoff-chapter-endings.md`](handoff-chapter-endings.md).** Three
+**Built 2026-08-22; measurements are in
+[`research/quality-measurement/chapter-endings-census.md`](../research/quality-measurement/chapter-endings-census.md).** Three
 bounded pieces, none of which teaches this system how to end anything. Code:
 `application/constraint_locks.py` and `litharness lock-constraints`; `serials.Position` /
 `serials.chapter_positions` and a `chapter` parameter on `planner.render_prompt`;
@@ -10455,7 +10456,7 @@ minted unlocked and reached no packet at all. The conclusion is unchanged and it
 stronger — the tone note could not have been disobeyed, because no scene was ever shown it. Struck
 through and corrected in place, pointing here.
 
-**`plan/handoff-chapter-endings.md`'s two coordination notes were stale by the time the work
+**The retired chapter-endings task brief's two coordination notes were stale by the time the work
 started, and the repo won.** §107 is merged on `main`, so §106 is not the last entry and this is
 §108 for a different reason than the one given; and worktree
 `.claude/worktrees/litharness-architect-stage-5ee368` is clean, its `planner.py` edits merged as
@@ -10603,7 +10604,8 @@ other.
 
 ## 110. The one call that can settle a debt was the one call never shown the ledger
 
-**Built 2026-08-22, from [`plan/handoff-promise-ledger.md`](handoff-promise-ledger.md).** Code:
+**Built 2026-08-22; measurements are in
+[`research/quality-measurement/promise-ledger-settlement.md`](../research/quality-measurement/promise-ledger-settlement.md).** Code:
 `application/summarize.py` — `render_summary_prompt` gains `open_promises`, the handler loads the
 open rows and records which returned names matched — and `tools/rematerialise_forge_bundle.py`.
 Measurements and the design note:
@@ -10825,7 +10827,7 @@ be calibrated against instead of a column of zeros.
 
 ### 110.7 Corrections in place
 
-**`plan/handoff-promise-ledger.md`'s `CONTRIBUTING.md` citation is stale and the repo won.** The
+**The retired promise-ledger task brief's `CONTRIBUTING.md` citation was stale and the repo won.** The
 handoff cites `CONTRIBUTING.md` for "`claude -p` fails silently under load"; no such sentence is
 in that file or anywhere else in the repository. The substance was honoured anyway — a
 `litharness forge` arm was running on this box when the run was due, and the run waited for it to
@@ -11112,7 +11114,8 @@ on the page is a better book.
 
 ## 112. The world says whose book it is, and the exception it grants one person survives the gate
 
-**Built 2026-08-22, from [`plan/handoff-protagonist.md`](handoff-protagonist.md).** Code:
+**Built 2026-08-22; measurements are in
+[`research/quality-measurement/protagonist-results.md`](../research/quality-measurement/protagonist-results.md).** Code:
 `application/architect.py` (schema, one rule, records, gate complaints, three `report()` counters),
 `domain/worlds.py` (`protagonist` as a second entity role; `edge`, `price`, `exception_to`,
 `excepts`; `CardinalityShape.except_subjects`; `in_scope`; `cast_brief`; `protagonist_brief`),
@@ -11332,7 +11335,7 @@ numbers were about.
 
 ### 112.7 Two neighbours, and what the second merge owes
 
-`plan/handoff-promise-ledger.md` landed at `f947247` (§110) and touched `summarize.py` only; this
+The promise-ledger task landed at `f947247` (§110) and touched `summarize.py` only; this
 branch builds on it and does not touch it.
 
 §111 reached `origin/main` first and this branch merged second, so **the collapse it owed was
@@ -11427,7 +11430,8 @@ RoyalRoad text, and no anchor or corpus prose crossed into any prompt, example o
 
 ## 113. The genre's one unbreakable rule became a declared fact the system forges, schedules, tells, prints and counts
 
-**Built 2026-08-22, from [`plan/handoff-numbers-go-up.md`](handoff-numbers-go-up.md).** Code:
+**Built 2026-08-22; measurements are in
+[`research/quality-measurement/numbers-go-up-results.md`](../research/quality-measurement/numbers-go-up-results.md).** Code:
 `domain/worlds.py` (`STANDS_AT_PREDICATE`, `ladder_of`, `rung_index`, `criterion_of_rung`,
 `standing_of`, three validator complaints, one projection sentence), `application/architect.py`
 (one optional `standing` on the protagonist, one new rule, three rule amendments, one placed
@@ -11641,7 +11645,8 @@ claim anywhere that a book whose number goes up is a better book.
 
 ## 114. The schema could say what a rung looks like and what it costs, and had no slot for what it lets you do
 
-**Built 2026-08-23, from [`plan/handoff-ability-inventory.md`](handoff-ability-inventory.md).**
+**Built 2026-08-23; measurements are in
+[`research/quality-measurement/ability-inventory-results.md`](../research/quality-measurement/ability-inventory-results.md).**
 Code: `domain/worlds.py` (`capability` in `ENTITY_ROLES`; `CAN_DO`, `REQUIRES`, `TAUGHT_BY`,
 `COSTS`; `capabilities`, `capabilities_of`, `requirement_depth`; three projection sentences),
 `application/architect.py` (an **optional** `capabilities` array on `_WORLD`, an optional
@@ -12779,8 +12784,8 @@ detecting manufactured flatness and reading taste remains §87–§89's three en
 
 ## 125. The premise was written inside a schema call and nobody read it back; both halves are fixed, and the gate refused both premises of its first paid run
 
-`plan/handoff-clarity-first.md` boundaries 4 and 5, executed as T3 and T4 of
-`plan/handoff-clarity-remaining.md`. The operator's directive of 2026-08-24, after reading four
+The boundaries recorded in `plan/clarity-audit-2026-08-24.md`, executed as T3 and T4. The
+operator's directive of 2026-08-24, after reading four
 forged premises and finding manufactured nonsense in them (*"cancelling is packing done with
 sound"*): *"We need the comprehension to be wired. We need Opus 5 to produce and understand the
 premises."* The diagnosis put the cause in the pipeline rather than the model — the premise was
@@ -13188,8 +13193,8 @@ The operator's ruling, 2026-08-24, settling the precedence the loop of §128 wil
 
 Three tiers, and the ordering is the decision:
 
-1. **`house.CLARITY` — the floor.** Constitutional and unchanged (`plan/handoff-clarity-first.md`
-   boundary 1). A reader who cannot follow the words has not read them, so nothing above this
+1. **`house.CLARITY` — the floor.** Constitutional and unchanged (stage-0 §125). A reader who
+   cannot follow the words has not read them, so nothing above this
    tier can be measured without it. It is also, per §126, the *only* property of the text this
    project holds an opinion about in its own right.
 2. **Reader direction — the steer.** *"It should reach the prompt when nothing else can, it

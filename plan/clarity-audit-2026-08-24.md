@@ -1,6 +1,6 @@
 # The clarity audit: every model-facing instruction in the generation path, read against CLARITY
 
-This is `plan/handoff-clarity-first.md` T1 — the table produced before anything changes, and
+This is stage-0 §125's T1 audit table — produced before anything changed, and
 the record of what is wiped and why. Read the handoff's boundaries first; boundary 3 was
 amended on the operator's correction that a forbidden-words list is a mask, not a fix:
 *"we should fix the core of the issue instead of masking the consequences."*

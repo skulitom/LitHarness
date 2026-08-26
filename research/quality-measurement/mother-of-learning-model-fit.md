@@ -95,7 +95,7 @@ Each row re-verified directly against the code rather than taken from an agent.
 
 | layer | our model | measured |
 |---|---|---|
-| **A. certification ladder** | **yes** | `_CRITERION` + `_RANK` + `precedes` chain + `stands_at`. The rising half is being built next door — [`plan/handoff-numbers-go-up.md`](../../plan/handoff-numbers-go-up.md) |
+| **A. certification ladder** | **yes** | `_CRITERION` + `_RANK` + `precedes` chain + `stands_at`. The rising half was subsequently measured in [`numbers-go-up-results.md`](numbers-go-up-results.md). |
 | **B. expertise per discipline** | **ontology yes, schema no** | `worlds.standing_of` already returns **a dict keyed by criterion** — its own docstring: *"A dict per criterion rather than one rung, because a subject may be on two ladders."* But `_PROTAGONIST.standing` is a **single object**, and `_SYSTEM.criterion` is a single object and not an array — so a forge can declare one ladder per system and one standing per person |
 | **C. personal numeric capacity** | **no** | The **only two integer fields in the entire schema** are `mysteries[].disclosed_at_scene` (a scene ordinal) and `cardinality[].maximum` (an edge count). Nothing anywhere attaches a magnitude to a person or to a named capacity. `numeric` and `threshold` are members of `COMPARATORS` that no code computes with |
 | **D. inventory of capabilities** | **no** | `_WORLD` has twelve array fields — systems, agencies, carriers, bonds, cast, creatures, places, institutions, history, mysteries, cardinality, directives — and **none holds abilities**. Every capability-shaped field is a single string with no plural: `reach`, `grants`, `recognises`, `joint_ability`, `edge` |
@@ -238,7 +238,7 @@ Three, all to claims this session made earlier today, and two of them were caugh
 ## 6. What is owned, and what is not
 
 The **ladder** half — the protagonist's rung on one declared ordinal chain, rising within the arc
-and printed on the page — is [`plan/handoff-numbers-go-up.md`](../../plan/handoff-numbers-go-up.md),
+and printed on the page — is recorded in [`numbers-go-up-results.md`](numbers-go-up-results.md),
 in flight in its own worktree, carrying the operator's resolution verbatim: *"bronze to gold rank
 advance is the same as the number going up. Say bronze is 1 and gold is 3."* Nothing here
 duplicates it and nothing here should be built into `architect.py` without coordinating with it.

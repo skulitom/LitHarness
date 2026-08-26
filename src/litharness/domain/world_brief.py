@@ -119,7 +119,7 @@ class Ladder:
     """The one ordinal chain this book's protagonist stands on, and where they start on it.
 
     **The rungs carry their visible form and their price, and that is the whole of what a
-    planner needs to place one.** `plan/handoff-numbers-go-up.md` Task 2: a milestone at a scene
+    planner needs to place one.** `plan/stage-0-decisions.md` §113: a milestone at a scene
     has to be a scene whose statement would plausibly change a standing, and a planner that was
     handed four bare ids could only guess which. The forms are the world's own `manifests_as`
     and `costs` values, unchanged — `criterion_brief` already hands the *writer* the chain as
@@ -356,7 +356,7 @@ WORLD_RULES: tuple[str, ...] = (
 #: milestone rules beside them already use — shape and fact, what to return and what a returned
 #: schedule may not be — and deliberately **not one word about how a rise should read**.
 #:
-#: `plan/handoff-numbers-go-up.md` boundary 1: no "earn it", no "make the reader feel it", no
+#: `plan/stage-0-decisions.md` §113: no "earn it", no "make the reader feel it", no
 #: "triumphant", no "pay it off". A rung and its price are declared facts of the world, the same
 #: class as the numbers the milestone rules already schedule; how a scene handles reaching one
 #: is the writer's and the operator's, and a rule here that reached for a verb about it would be

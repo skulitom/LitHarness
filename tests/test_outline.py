@@ -245,7 +245,7 @@ def test_the_rules_arrive_only_with_the_thing_they_are_about() -> None:
 
 
 def test_the_protagonist_rules_name_a_person_and_never_an_outcome() -> None:
-    """**Boundary 1 of `plan/handoff-protagonist.md`, asserted rather than trusted.**
+    """**The §112 protagonist boundary, asserted rather than trusted.**
 
     A protagonist is a declared fact of the world and a position — the same class as "scene 3
     of 8" and the chapter cue. No default instruction about how to *handle* one may enter any
@@ -1048,7 +1048,7 @@ def test_volunteered_payoff_windows_are_ignored_when_the_book_owes_nothing(
     assert decision.outcome is Outcome.ACCEPT, decision.reason
 
 
-# -- the rung schedule (plan/handoff-numbers-go-up.md Task 2) -------------------------------
+# -- the rung schedule (plan/stage-0-decisions.md §113) -------------------------------------
 
 LADDER = world_brief.Ladder(
     protagonist="silas",
@@ -1105,7 +1105,7 @@ def test_a_book_with_no_ladder_is_asked_nothing_about_one() -> None:
 
 
 def test_the_ladder_rules_ask_for_a_schedule_and_never_for_a_feeling() -> None:
-    """**Boundary 1 of `plan/handoff-numbers-go-up.md`, asserted rather than trusted.**
+    """**The §113 standing boundary, asserted rather than trusted.**
 
     A rung and its price are declared facts of the world, the same class as the numbers the
     milestone rules beside these already schedule. How a scene handles reaching one is the

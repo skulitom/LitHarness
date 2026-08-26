@@ -405,8 +405,8 @@ def render_prompt(
                 "to it, and do not move it for no reason on the page."
             )
     if standing:
-        # **The numeric block's wording, reused deliberately** (`plan/handoff-numbers-go-up.md`
-        # Task 2). A standing is a position on a declared ladder and a status snapshot is a set
+        # **The numeric block's wording, reused deliberately** (`plan/stage-0-decisions.md`
+        # §113). A standing is a position on a declared ladder and a status snapshot is a set
         # of declared numbers; they are the same class of fact, and saying the second one's
         # sentence in a second register would be this module deciding one of them matters more.
         # "Toward" rather than "to", and "where the events warrant it", for exactly the reasons

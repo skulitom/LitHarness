@@ -6,9 +6,9 @@ already been tried and why each attempt died. **Every single failure below died 
 
 ## 1. The problem, stated exactly
 
-LitHarness is an autonomous book-production system (LitRPG genre). Its gate ladder blocks on
-*shape* (a draft exists, right size, did not overwrite) and *integrity* (no contradictions).
-**Nothing blocks on whether the prose is any good.** PLAN.md §1a.3 orders what "quality" means:
+LitHarness is an autonomous book-production system for serial fiction. Its production gate
+blocks on deterministic shape and integrity failures. **No mechanism has earned the right to
+block on whether the prose is any good.** PLAN.md §1a.3 orders what "quality" means:
 
 1. **Dramatic function** — every scene changes something; scenes that only *convey
    information* are the most common failure of generated prose.
@@ -20,13 +20,13 @@ LitHarness is an autonomous book-production system (LitRPG genre). Its gate ladd
 6. **Absence of AI tells** — register drift, summarising instead of dramatising, tidy
    emotional resolution, the tricolon habit, the same three sentence shapes.
 
-Items 1–4 are the ones that move a reader, and **nothing in the project has ever touched
-them.** All instrumented metrics are items 5–6, and all four are refuted (§3 below).
-
-The gate that could refuse a scene is wired end to end (`domain/calibration.py::promoted_gate`)
-and **cannot be constructed**, because it demands held-out precision ≥0.80 on ≥50 judgments
-with ≥17 flags, and no calibration exists. `litharness calibrations` prints nothing. That
-emptiness is the honest measure of the gap.
+The project now has listing and scene reader simulations, persistent-reader experiments, and an
+explicit reader-architecture programme. That is plumbing and candidate mechanism work, not
+validation. None has shown that it perceives the quality dimensions above well enough to certify
+our prose. The old human-calibrated craft-gate and pairwise-preference paths were removed after
+the scope axiom closed solicited human judgment (stage-0 §95). The honest gap is therefore
+architectural: build an LLM-based cognitive system that can perceive these properties, then make
+it survive independent controls before any output can steer or gate production.
 
 ## 2. The refutation ledger — 21 proxies dead
 
@@ -198,12 +198,11 @@ predictive distribution over the text. Zero.
 > no published-reader label reaches generated prose, which is what gates 2 and 3 exist to buy and
 > neither has been attempted.
 
-## 4. What is available to experiment with, verified present on this machine
+## 4. Available experimental substrates
 
-- **RTX 4090, 24GB.** `C:/DEV/MirrorBench/.venv/Scripts/python.exe` has torch 2.13+cu130
-  (CUDA available), transformers 5.15, numpy, scipy, sklearn. `google/gemma-3-4b-it` and
-  `gemma-3-4b-pt` are in the HF cache. Ollama has qwen3:4b, gemma3:4b, gpt-oss:20b, phi4,
-  llama3.2.
+- **Local GPU inference.** This machine has a 24GB RTX 4090; GPU research uses the MirrorBench
+  environment named in `CLAUDE.md`. Model caches and Ollama installs are volatile machine state,
+  so inspect them immediately before a run instead of treating this brief as an inventory.
 - **This system's own generated prose, on demand and un-memorised by construction.**
   `corpus_io.generated_scenes(database)` returns drafted scenes from any book database, read
   through `application/export.collect` so it sees exactly what `litharness export` would show a
@@ -255,7 +254,7 @@ predictive distribution over the text. Zero.
   is the *longest* scene and the dramatic peak is the *shortest*, nearly monotonically. So the
   anchor ordering is confounded with both length and position, and **any statistic that is
   noisier or larger on short text ranks the anchors "correctly" for free**. Measured on the
-  incumbents (`research/quality-measurement/baseline.py`):
+  historical incumbents (the baseline tool was removed with the refuted metric family):
 
   | incumbent | order high→low | scene 6 | scene 1 | "separates anchors" |
   |---|---|---|---|---|
@@ -269,9 +268,11 @@ predictive distribution over the text. Zero.
   *failing* it is informative. Treat the fixture as a smoke test that can refute and cannot
   confirm, and never report "it ranked the fixture right way up" as evidence. At n=6 scenes
   and ~800 words total there is no version of this that becomes decisive.
-- LitHarness source: `src/litharness/domain/craft.py` (the four metrics),
-  `domain/calibration.py` (the promotion bar), `tools/build_craft_profile.py` (the corpus
-  harness, including a working rank-AUC implementation and the cohort logic).
+- **Current LitHarness surfaces.** `src/litharness/application/readers.py` contains the simulated
+  reader roles and behavioural request shapes; `domain/integrity.py` contains the deterministic
+  blocking checks. Corpus and quality experiments remain outside the package under this directory,
+  with `corpus_io.py` as the shared loader. The retired craft-calibration path is not an available
+  integration point.
 - **The shipped summariser, callable without the system around it.**
   `litharness.application.summarize.render_summary_prompt` is a pure function and
   `SUMMARY_SCHEMA` is a constant, so §71's per-scene structured summary — `setting`,

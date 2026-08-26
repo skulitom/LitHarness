@@ -2,7 +2,7 @@
 
 **Status: MEASUREMENT, 2026-08-22. No bar is declared here**, nothing is admitted to the axis
 registry, no counter in this note gates anything, and no direction is declared for any quantity.
-Built from [`plan/handoff-numbers-go-up.md`](../../plan/handoff-numbers-go-up.md); the decision
+Built as stage-0 §113; the decision
 record is stage-0 §113; the pre-registration for the paid run is
 [`plan/serial-pilot-5.md`](../../plan/serial-pilot-5.md) §4 and **it has not run**.
 

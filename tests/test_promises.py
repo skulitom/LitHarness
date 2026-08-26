@@ -336,7 +336,7 @@ def test_replaying_the_summary_job_converges_on_one_ledger_row(store: SqliteStor
 
 # -- the settling call is shown the ledger --------------------------------------------------
 #
-# `plan/handoff-promise-ledger.md`. The writer's packet has carried the open rows since §61
+# `plan/stage-0-decisions.md` §110. The writer's packet has carried the open rows since §61
 # Add 2 and the outline call has seen their subjects since W2; this call — the only one that
 # can mark a debt paid — was the only one never shown them, and four books settled nothing.
 

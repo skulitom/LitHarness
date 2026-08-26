@@ -3,7 +3,8 @@
 **Status: FORGED, 2026-08-22. §3 NOT RUN; nothing picked.** Companion to
 [`plan/serial-pilot-2.md`](serial-pilot-2.md) and [`plan/serial-pilot-4.md`](serial-pilot-4.md);
 the design record is [`plan/world-architect.md`](world-architect.md), the build record is
-stage-0 §113, and the handoff is [`plan/handoff-numbers-go-up.md`](handoff-numbers-go-up.md).
+stage-0 §113, with measurements in
+[`research/quality-measurement/numbers-go-up-results.md`](../research/quality-measurement/numbers-go-up-results.md).
 **§4 was written before any paid call**; §5 records the forge; §6 is empty until §3 runs.
 
 ## 0. What this pilot is for, and the one thing it may not be read as

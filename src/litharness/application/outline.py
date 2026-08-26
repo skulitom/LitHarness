@@ -188,7 +188,7 @@ OUTLINE_SCHEMA: dict[str, Any] = {
                 },
             },
         },
-        # The rung schedule (`plan/handoff-numbers-go-up.md` Task 2), asked for in the same call
+        # The rung schedule (`plan/stage-0-decisions.md` §113), asked for in the same call
         # for the same §15 reason the other two are: the model is already holding the premise
         # and the whole beat sheet, and a schedule of standings has to be consistent with both.
         #

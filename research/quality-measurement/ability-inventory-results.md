@@ -1,6 +1,6 @@
 # The ability inventory: what the schema could not say, what it says now, and what was refused
 
-Results for [`plan/handoff-ability-inventory.md`](../../plan/handoff-ability-inventory.md), which
+Results for the stage-0 §114 ability-inventory task, which
 was written after the operator read *A Good Take* and said its progression is *"boring accounting
 instead of nine unique abilities or level 9 neural speed system"*
 ([`plan/reader-read-4.md`](../../plan/reader-read-4.md) §1a). Registered as stage-0 §114.

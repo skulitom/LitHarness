@@ -207,8 +207,8 @@ EVALUATES_PREDICATE = "evaluates"
 #: Where one subject stands on one declared ladder: `(kell, stands_at, → two_wood)` with the
 #: criterion in the value slot, exactly as `precedes` carries it.
 #:
-#: **A flat edge, and the flatness is the whole argument** (`plan/handoff-numbers-go-up.md`
-#: boundary 9). The page can only print a flat edge — `[ASSIZE] Kell now stands at two wood` is
+#: **A flat edge, and the flatness is the whole argument** (`plan/stage-0-decisions.md`
+#: §113). The page can only print a flat edge — `[ASSIZE] Kell now stands at two wood` is
 #: what a scene writes and what `parse_graph_line` reads back — so a world declaration of the same
 #: fact has to be readable by the same function. The reified `EVALUATION_*` triple stays for the
 #: case it was built for, a world that reifies an evaluation with an authority that performed it
@@ -483,7 +483,7 @@ def requirement_depth(records: Sequence[lc.StateRecord]) -> int:
 
     A counter and never a bar. It says how deep the world's own prerequisite structure runs,
     which is the thing that distinguishes an inventory somebody built from a list somebody
-    typed — and `plan/handoff-ability-inventory.md` boundary 3 forbids gating on it.
+    typed — and `plan/stage-0-decisions.md` §114 forbids gating on it.
 
     A cycle is not an error here and is not resolved here: the walk simply refuses to revisit a
     subject, so a cyclic declaration reports the longest acyclic path through it and
@@ -1222,8 +1222,8 @@ def criterion_of_rung(records: Sequence[lc.StateRecord], rung: str) -> str | Non
     is how a reader of the *page* — where the criterion is not printed — recovers it.
 
     `None` both when no chain holds the rung and when two do. A rung in two chains is a
-    `validate` complaint rather than a tie broken here (`plan/handoff-numbers-go-up.md`
-    boundary 9): picking one would be this function inventing which ladder a world meant.
+    `validate` complaint rather than a tie broken here (`plan/stage-0-decisions.md`
+    §113): picking one would be this function inventing which ladder a world meant.
     """
     owners = [
         criterion
@@ -1469,7 +1469,7 @@ def _record_sentence(
     # is the one the rules and manifestations already use: what is so, never what to do about it.
     # A sentence here that said "open on them" or "make the reader like them" would be this
     # system's own taste arriving in every packet, which is the boundary stage-0 §95 draws and
-    # `plan/handoff-protagonist.md` boundary 1 restates for this field in particular.
+    # `plan/stage-0-decisions.md` §112 restates for this field in particular.
     if record.predicate == EXCEPTION_PREDICATE and record.object_ref:
         return f"{record.subject} is the one the rule {record.object_ref} does not hold for"
     if record.predicate == EDGE_PREDICATE and value:

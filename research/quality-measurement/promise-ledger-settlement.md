@@ -1,7 +1,7 @@
 # The promise ledger: the call that settles debts was never shown them
 
 **2026-08-22.** Measurements and design note for
-[`plan/handoff-promise-ledger.md`](../../plan/handoff-promise-ledger.md); the decision record is
+the stage-0 §110 promise-ledger task; the decision record is
 [stage-0 §110](../../plan/stage-0-decisions.md), the run record is
 [`plan/serial-pilot-2.md`](../../plan/serial-pilot-2.md) §4.1 and §6.3.
 

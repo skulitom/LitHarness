@@ -571,7 +571,7 @@ def test_a_malformed_sheet_declaration_is_refused_rather_than_defaulted(value) -
 
 
 
-# --- the number comes off the page (plan/handoff-numbers-go-up.md Task 3) ---------------------
+# --- the number comes off the page (plan/stage-0-decisions.md §113) ---------------------------
 
 
 def _canon(subject: str, predicate: str, **kwargs) -> lc.StateRecord:  # type: ignore[no-untyped-def]

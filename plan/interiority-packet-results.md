@@ -1,8 +1,8 @@
 # The packet's story-time cutoff, and the pilot's seeded interiority — what changed, measured
 
 **Status: RESULTS, 2026-08-22.** Built and landed. Everything below was run against this
-repository at commit `19cb6cd`; nothing here is a projection. Scope is
-`plan/handoff-interiority.md` Tasks 1 and 2 and nothing else: no directive was authored, no
+repository at commit `19cb6cd`; nothing here is a projection. Scope was the story-time cutoff
+and seeded-interiority tasks and nothing else: no directive was authored, no
 axis was admitted, and `research/quality-measurement/personas.py` and the panel were not
 touched.
 

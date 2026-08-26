@@ -130,7 +130,7 @@ level by the candidate count, and the count is on the record so the division is 
 ordering over worlds, and inventing one would be the frame this project has buried three times.
 
 ***Amended 2026-08-24: a forge is three stages of calls, and the rail is unchanged.***
-`plan/handoff-clarity-first.md` boundaries 4 and 5 split the premise out of the structured call
+Stage-0 §125 split the premise out of the structured call
 — the world is data, and the paragraph a reader is pitched is written as prose by its own call —
 and put a comprehension screen between the premise and the operator: four genre readers restate
 it and quote every word they were never given, and it passes at zero. **None of that orders
@@ -562,7 +562,7 @@ Enforced by the absence of the capability and pinned by a test, exactly as the D
 6. *(2026-08-22, §113)* **Should "one standing per ladder at a position" be declarable?** It is
    not, with today's `GROUP_KEYS` (`subject`, `subject,order_key`, `object`) — and a subject
    legitimately on two ladders holds two `stands_at` edges at one position, so the shape is not
-   simply a missing key. No group key was added: `plan/handoff-numbers-go-up.md` boundary 11
+   simply a missing key. No group key was added: stage-0 §113
    refuses a `GROUP_KEYS` member without a decision saying why, and there is no measured case yet.
    Two rungs of *one* ladder at one position is counted as a descriptor by
    `research/quality-measurement/standing.py` rather than gated, so the decision waits on a

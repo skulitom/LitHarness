@@ -31,12 +31,10 @@ dev = [
 cover = [
   "pillow>=11.0",
 ]
-# Building a craft reference profile from a published-prose corpus (§10.6). Deliberately its
-# own extra rather than a dev dependency: `datasets` pulls pyarrow and a network stack into a
-# repo whose only runtime dependency is its own contracts package, and CI must not need 12.5GB
-# of anybody's fiction to run the suite. The *profile* is a small committed artifact; the
-# corpus is never vendored, and `research/quality-measurement/build_craft_profile.py` is the
-# only thing that reads it.
+# Reading the external published-prose corpus. Deliberately its own extra rather than a dev
+# dependency: `datasets` pulls pyarrow and a network stack into a repo whose only runtime
+# dependency is its own contracts package, and CI must not need 12.5GB of anybody's fiction.
+# `research/quality-measurement/corpus_io.py` is the shared boundary; prose is never vendored.
 corpus = [
   "datasets>=3.0",
 ]

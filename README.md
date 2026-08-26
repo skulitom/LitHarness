@@ -1,95 +1,36 @@
 <p align="center">
-  <img src="docs/banner.png" width="100%" alt="LitHarness — a constellation dragon rising from an open book in a workshop of one-eyed archive creatures, six green stars joined along its body, one refused star sealed alone in a vault at the lower right">
+  <img src="docs/banner.png" width="100%" alt="LitHarness — a constellation dragon rising from an open book in a workshop of one-eyed archive creatures">
 </p>
 
-<p align="center"><em>The lines are what the gate can prove; the dragon is what the reader sees.<br>
-Six scenes along its spine; one candidate refused, sealed in its vault, joined to nothing.</em></p>
+# LitHarness
 
-An autonomous fiction-production system with one product objective: **fiction a defined
-audience voluntarily continues and recommends**, with **no human in the production loop**.
-What is aimed at is the story — retention and fascination — rather than text quality;
-line-level craft is a floor under that and never the thing itself.
+LitHarness is an autonomous fiction-production system for open-ended serials. Its product
+objective is fiction a defined audience voluntarily continues and recommends, with no human in
+the production loop. The operator may direct a book and accept or reject it at book grain, but
+does not write, rank candidates, label passages, or train the system.
 
-**Superhuman literary quality is the long-term goal, not the daily one.** It stays written
-down and stays falsifiable — [PLAN.md](PLAN.md) §1a.5's superiority bar, blinded and
-position-swapped against matched published prose — and it is not what a day's work is measured
-against, because it needs a comparator frame and a validated instrument and cannot be run per
-book.
+The hard unsolved problem is perception, not prose plumbing: LitHarness needs an **LLM-based
+cognitive system that perceives literary quality well enough to behave as a readership**. A
+reader prompt is only one possible interface to that capacity. The current mechanism families
+and their evidence live in
+[the reader-architecture programme](plan/reader-architecture-program.md); failed approaches and
+their controls live in the
+[quality-measurement brief](research/quality-measurement/BRIEF.md).
 
-On the measurement side the search is architectural, and the operator's framing of it is
-recorded verbatim: **LitHarness is not searching for a quality metric. It is searching for
-an LLM-based cognitive system that perceives literary quality well enough to behave as a
-readership.** A prompt is one interface to that capacity among several —
-[plan/reader-architecture-program.md](plan/reader-architecture-program.md) maps the
-mechanism families and where each stands.
+The production loop is real: it can create a listing and title, build and evolve a world through
+the Architect, plan and draft scenes against recorded context, reject integrity failures, repair
+located defects, preserve immutable revisions, and export a book and cover set. **No simulated
+reader mechanism has yet earned the right to certify literary quality.** That distinction is the
+project's most important status line.
 
-The unit of production is an **open-ended serial** — arc, chapter, scene — published
-chapter-wise at cadence. **The audience inside the loop is simulated, and only simulated.**
-Whether the objective is met is measured from the behaviour of that simulated readership under
-declared budgets, in a vocabulary that is behavioural rather than evaluative — *continue, abandon, return* — with the operator
-as a **one-bit acceptance gate** that trains, calibrates and selects nothing. No judgment is
-ever solicited from anyone — the **scope axiom**
-([stage-0 §95](plan/stage-0-decisions.md)): *not hired, not operator, not one blinded pair*.
+For the full objective and roadmap, see [PLAN.md](PLAN.md) §1a and §17. Historical decisions and
+reversals are preserved in [plan/stage-0-decisions.md](plan/stage-0-decisions.md); they are not an
+operator manual.
 
-**There will eventually be real readers, and they cannot be part of the product loop.** The
-books are written to be published and read; what a real reader does with one is the point of
-doing this at all. What it may not do is come back in: no real reader's behaviour feeds
-generation, planning, selection, calibration, or the signal a book is measured by. The loop
-closes on the simulated readership, and it closes there whether or not a real audience exists
-yet — which is what makes the claim testable now rather than after a launch.
+## Install
 
-"Endless" is not a testable claim, and the project does not make it. The testable form is
-**no degradation trend over measured length, claimed only at lengths actually reached**.
-
-See [PLAN.md](PLAN.md) for the master plan and [plan/](plan/) for companion design documents
-— in particular [plan/stage-0-decisions.md](plan/stage-0-decisions.md), which records the
-load-bearing decisions and why each went the way it did, including the ones since reversed.
-
-**Status: Stages 0, 1 and 2 met against their exit clauses** — with two caveats that travel
-with the claim: Stage 0's endurance clause is *evidenced rather than met* (2,016 simulated
-ticks, not a week of real scheduling), and Stage 2's propagation number is a **dev-set** one
-measured on four in-sample cases, which rules out an engine that is obviously wrong and rules
-in nothing. Both are recorded in [PLAN.md](PLAN.md) §17 beside the claims they qualify.
-
-The manuscript spine, the Conductor loop, the pinned frontier provider plus a
-deterministic fake, recorded acceptance
-decisions, a direction inbox whose explicit instructions and model-interpreted notes reach an
-immutable plan revision before prose, a way to get a book in, a reading copy to get it out, a
-template planner that takes a six-scene fixture book from premise to six accepted scenes with
-no human in the loop, an objective-story-state layer and the context packet each scene is
-drafted against, a blocking integrity gate that refuses a candidate a planted defect stands
-against, and a detect-repair-propagate chain in which a repair that changes a fact re-checks
-the scenes that state it.
-
-It writes a book whose scenes know about each other, refuses one that contradicts itself, and
-— since it now asks its generator to state game state on the page and reads that back — can
-do both on a book with no imported snapshot.
-
-**Nothing in it yet measures whether a reader would carry on.** The pairwise preference engine
-is still in the tree and its verdict store is still empty; it is not the plan, because it
-required soliciting judgment and the scope axiom closed that permanently. The honest status of
-the objective's measurement as of 2026-08-21:
-
-- **Four candidate measurements have been attempted and none has produced a valid reading of
-  taste.** F1 refuses in every stratum with both controls vacuous; F2's numbers are withdrawn
-  because it scored the token *after* the one it matched, on 6,744 of 6,744 sites; FX has not
-  run; the market's one apparent demonstration turned out to be an identity.
-- **F3 is the exception and it split in two** (§98). Its controls are the first in the
-  programme to certify anything, and its mechanism is real: a book's own earlier chapters make
-  a later chapter more predictable, more so **in the real chapter order than reversed**, on
-  88 of 94 and 89 of 94 sides across two model lineages, *p* < 0.0001. And it predicts
-  **nothing** about which books readers stayed with — that reading is `INSUFFICIENT_N` at the
-  corpus's 47 cross-book pairs, which is a statement about power rather than about structure.
-- What the programme has instead is **23 instrument defects found before any force had a
-  number**, and arithmetic that now refuses where it used to certify.
-
-That is the gap, stated as it stands. See [What is not built](#what-is-not-built).
-
-## Setup
-
-One clone, and nothing has to sit beside it. `litharness-contracts` is a git dependency
-pinned to a commit in `uv.lock`, and the golden fixture books ship inside that package, so
-`uv sync` fetches everything the suite reads.
+Python 3.11+ and [uv](https://docs.astral.sh/uv/) are required. The contracts package and golden
+fixtures are pinned through `uv.lock`, so one checkout is enough.
 
 ```bash
 git clone https://github.com/skulitom/LitHarness
@@ -98,759 +39,216 @@ uv sync --extra dev
 uv run pytest
 ```
 
-The six-rule LitRPG pack is an optional subprocess integration rather than a runtime
-dependency. To enable it, install the sibling `../ContinuityEvaluation` checkout and point
-LitHarness at its console script:
+Production generation uses the signed-in local Claude Code CLI, pinned to the frontier model in
+`src/litharness/providers/cli.py`. There is no automatic weaker fallback: if the provider is
+unavailable, work waits rather than silently degrading. Tests cannot reach a billing provider;
+for an explicit model-free local run, set `LITHARNESS_FAKE_PAD_CHARS=400`.
 
-```powershell
-cd ..\ContinuityEvaluation
-uv sync --extra dev
-$env:LITHARNESS_CONTINUITY_EVALUATOR = "$PWD\.venv\Scripts\continuity-evaluate.exe"
-cd ..\LitHarness
-```
-
-The equivalent one-shot option is
-`--continuity-evaluator-command ..\ContinuityEvaluation\.venv\Scripts\continuity-evaluate.exe`.
-Without either setting, LitHarness keeps its existing in-process contradiction check.
-
-## Running it
-
-```bash
-uv run litharness --database book.db init
-```
-
-Then get a book in. Nothing else works without this — every other command acts on a
-revision, and `import` is the only one that creates one. The golden fixtures come from the
-sibling contracts checkout:
-
-```bash
-uv run litharness --database book.db import --fixture mystery
-```
-
-It prints the revision id. Scene prose is **cleared** so each scene can be drafted;
-`--keep-content` keeps it and tells you that nothing is draftable, because a draft may only
-fill an empty node. Use `--path` for a manuscript of your own — and pass `--plans` with it,
-because the premise in the plan snapshot is what beat prompts are rendered from and a book
-without one is reported as blocked rather than drafted. `--state` imports objective story
-state alongside: open threads and POV-visible knowledge, which the context packet is built
-from. It is optional where `--plans` is not — a book with no state records drafts against
-its plan and its prose, which is thinner but not blocked, and a regenerating book starts
-with none by definition. `--fixture` supplies all three.
-
-A book that nobody has written a word of — or a listing for — starts with `listing`, which
-is the loop the simulated readership sits inside:
-
-```bash
-uv run litharness --database book.db listing --writer halloran --scenes 6 \
-    --out runs/listings/shelf/
-```
-
-One writer from the cast drafts the few lines a reader meets on the front page of a
-serial-fiction site; the **steering** readers say what they hope the book turns out to be;
-the same writer writes it again having heard them; then titles it. The title is looked up on
-the web — a title already carried by a published book is refused and the writer is asked for
-another — and the **measurement** readers, who never steer, say whether they would open
-chapter one against the rest of the page. Nothing ranks anything: there is one listing,
-revised once, and a low start rate is reported rather than a gate.
-
-`--scenes` then creates the book under the title the loop just wrote, with the listing as its
-premise. `--brief` gives the writer something to be about, and **it is a story, a situation or
-a constraint somebody cares about, or nothing** — the two words `progression fantasy` in that
-field once outweighed every rule in the prompt. Empty is legitimate and is the control.
-
-`--no-title-check` skips the lookup (which costs a call with web search behind it), and
-`--no-title-to-readers` screens the listing without its title, which is what every round
-before titles existed measured.
-
-The listing bundle also hands off to a cover set without anybody retyping its title or blurb:
+Cover generation is separate. It uses signed-in Codex image-generation sessions, followed by
+deterministic local typography, and needs the `cover` extra:
 
 ```bash
 uv sync --extra cover
-uv run litharness --database book.db cover --variants 4
 ```
 
-Each variant is a fresh non-interactive Codex session using the built-in image-generation
-skill. It makes **text-free** 2:3 art with a title-safe upper area; LitHarness then draws the
-exact title and author locally and exports `cover-01.png`, `cover-02.png`, and so on at exactly
-400×600 pixels under that book's `book-library/<book>/covers/` shelf. `--out` overrides that
-destination; `--bundle runs/listings/shelf/listing.json` remains available before a book has
-entered the database. The publication author defaults to `Skulitom`; `--author` overrides it. This follows
-the [Codex image-generation guidance](https://learn.chatgpt.com/docs/image-generation):
-image models can attempt short text, but publication-critical typography is a deterministic
-finishing job. The sessions use the signed-in Codex CLI rather than Claude or an API key and
-count against the account's ordinary Codex usage limits.
+## Start a serial
 
-`--reference layout-reference.png` attaches a visual reference to every generation, under an
-explicit instruction to use only broad hierarchy and never reproduce its words, characters,
-or composition. `--art candidate.png` skips Codex and finishes existing art instead; repeat
-the flag to make a comparable set without spending another generation. `--font` pins a local
-font file, and `--art-direction` carries a palette, motif, or exclusion across the whole set.
+The listing loop is the normal entry point. It writes the listing a reader sees, revises it from
+steering-reader expectations, checks the title for collisions, and creates the empty scenes:
 
-Every run writes `cover-manifest.json` beside the covers, including the exact prompts,
-commands, source and finished hashes, references, font, and dimensions. It deliberately does
-not rank or critique the options. That keeps generation bounded and leaves a clean artifact
-set for a later critique instrument—or for testing what resonates with real readers—without
-wiring audience behaviour back into the book-production loop.
+```bash
+uv run litharness --database book.db listing \
+  --writer halloran \
+  --brief "A debt collector discovers every debt is also a spell." \
+  --scenes 24 \
+  --out runs/listings/debt-book
+```
 
-A book that already has a premise starts with `new` instead, which is Stage 3's entry point:
+An empty brief is a valid control. Use `new` when title and premise already exist, or `import` for
+a contracts fixture or manuscript:
 
 ```bash
 uv run litharness --database book.db new "The Toll Road" \
   --premise "A debtor works off an impossible debt along a System-governed road." \
-  --scenes 24 --state seed.json
+  --scenes 24
+
+uv run litharness --database fixture.db import --fixture litrpg
 ```
 
-`import` needs a manuscript file, so before this a book could only exist if someone had
-already written one. `new` creates N **empty** scenes — empty is what draftable means here,
-since a draft may only fill an empty node — plus the premise the planner requires. The beat
-sheet is chosen to fit: six scenes keep `SIX_BEAT`, any other length gets an arc of its own
-length with the singular beats kept singular (one inciting incident, one crisis, one
-resolution, and everything between them rising). `--state` seeds canon, and for a LitRPG book
-it is not optional in practice: a book whose canon holds no status snapshot is never asked for
-system voice, writes none, and so has nothing for §12 step 5 to read back.
+Before drafting a new book, let the Architect establish enough world for its opening, inspect the
+deterministic checks, then accept the proposals into canon:
 
-Then tick — one bounded unit of work, which is what a scheduler invokes:
+```bash
+uv run litharness --database book.db --writer halloran architect seed
+uv run litharness --database book.db world check
+uv run litharness --database book.db world accept
+```
+
+`world accept` is a recorded state transition, not a ranking step. After a chapter, `architect
+grow` reconciles and extends the same world through the same constrained tool surface.
+
+## Run the production loop
+
+One `tick` performs one bounded, restart-safe unit of work. The ordinary operating model is one
+foreground process running ticks until interrupted:
+
+```powershell
+.\tools\run-loop.ps1 -Database book.db -DelaySeconds 15
+```
+
+Or run one unit directly:
 
 ```bash
 uv run litharness --database book.db tick
 ```
 
-Each tick first materialises plan work for any unambiguously scoped direction, then drains
-the queue; when nothing is claimable it plans the next undrafted beat. The beat becomes a
-job, is drafted, gated and accepted. With the automatic evaluation pass, a clean six-scene
-book takes twelve uninterrupted ticks from premise to a full evaluated draft when no
-direction intervenes; each accepted repair adds its own repair and verification ticks.
-`enqueue` still exists for drafting one named node by hand with your own prompt, which is now
-the exception rather than the way in.
+Accepted scene revisions, policy decisions, state extraction, follow-up evaluation, events, and
+library publication are committed through the SQLite store. A killed process leaves a reclaimable
+lease; replay converges rather than duplicating accepted work.
 
-Each beat is drafted against an assembled **context packet** (§12 step 2): the premise, the
-director's locked constraints and promises, the book's open threads, the established facts
-visible to the scene's POV, and the prose of every scene before it. It is packed by a fixed
-priority order under a token ceiling — constraints and threads first, prose dropped
-oldest-first — and **everything dropped is recorded** on the job payload with its reason,
-because a baseline that packs by priority rather than relevance will drop things a scorer
-would have kept and has no way to know it. Relevance scoring is LongRangeContext's, per §12.
-
-One book runs as one foreground session: a single process drives `tick` in a loop until
-the book is done. Ctrl+C is the pause — ticks are idempotent, so restarting the session is
-safe at any moment, and a job lease left behind by a killed process expires and is
-reclaimed on the next tick. **Exit codes are `tick`'s contract with whatever drives it**:
-`0` the tick did its job, including finding nothing to do; `1` a unit failed or parked and
-a human should eventually look; `2` an operational fault — locked or corrupt database,
-missing migrations, full disk, a bad argument — which the driving loop should retry next
-iteration rather than escalate.
-
-## Operating it
+`tick` exits `0` after successful work or ordinary idleness, `1` when a unit failed or parked, and
+`2` for an operational fault. Budget ceilings are global options and are checked before provider
+calls:
 
 ```bash
-uv run litharness --database book.db status
+uv run litharness --database book.db \
+  --max-invocations-per-day 40 \
+  --max-tokens-per-day 500000 \
+  tick
 ```
 
-Reports queue depth by status, how many units need attention, unread direction, and the
-day's digest and spend. `--json` for machine consumption. Always exits `0`: it is a report
-for the operator driving the session, not an external monitor.
+Useful operating views:
 
-Everything else the director does:
+| Command | Purpose |
+| --- | --- |
+| `status [--json]` | queue depth, attention, daily usage, and spend |
+| `jobs [--status parked]` | queued or blocked work |
+| `why --scene N` | the prompt, decision, and evidence behind one scene |
+| `events` | append-only state-change history |
+| `plans` | immutable plan lineage and its proposals |
+| `state`, `characters`, `world summary` | current canon and world state |
+| `prompts [--role ROLE]` | the assembled instructions each role actually receives |
+| `verify` | rebuild revisions and verify hashes and policy coverage |
+| `backup PATH` | online SQLite backup, safe while ticking |
+
+Run `uv run litharness COMMAND --help` for the authoritative option list.
+
+## Direct and recover
+
+Direction enters an inbox and becomes a new immutable plan revision before it can affect prose:
 
 ```bash
-uv run litharness --database book.db directive "More dungeon crawling." --kind arc_note
-uv run litharness --database book.db directive "No combat in the midpoint." \
-  --kind constraint --book <book-id> --branch <branch-id>
+uv run litharness --database book.db directive \
+  "No combat in the midpoint." --kind constraint
+uv run litharness --database book.db directives
+uv run litharness --database book.db plans
 ```
 
-- `directives` — what has been captured. Explicit `constraint` and `veto` direction is
-  converted deterministically into a locked plan item on the next tick, before queued scene
-  work. Constraint text stays exact; veto text keeps its original words under an explicit
-  veto label. Arc, tone, chapter, and premise notes take a bounded structured-output model
-  pass that proposes at most 12 edits; locks, explicit targets, the single-premise invariant,
-  and the current plan head are enforced outside the model. Scope may be supplied with
-  `--book` / `--branch`; an unscoped directive is applied only when the store has exactly one
-  matching branch. Rejected output leaves the original directive in `received`.
-- `jobs [--status parked]` — queue depth, or the units in one state.
-- `revive <job_id>` — return a parked unit to the queue once you have cleared what parked
-  it. Refuses a poisoned unit, whose attempt budget really was spent. A unit stopped by a
-  budget ceiling or by a standing finding is parked, not poisoned: the blocker is external
-  and the work is still there.
-- `state [--subject] [--predicate]` — what this book holds as true, in story order. The layer
-  that gates every draft: the integrity gate refuses a candidate contradicting it, the context
-  packet hands it to the generator, and propagation reads its changes out of it. Every line
-  says whether the record was **given** (imported canon) or **read** (this system's reading of
-  prose it generated), and carries any note about how its story position was decided. It is
-  also the view that makes a ledger checkable by eye — `state.contradiction.v0` compares
-  values at a single story position and cannot see a balance that stops adding up across them,
-  so without the ContinuityEvaluation pack configured, a human reading this column is the one
-  who notices.
-- `propagate <change-set.json> [--enqueue]` — what a change reaches beyond what it edits.
-  **An accepted repair does this by itself**: the facts it changed are read out of the
-  extraction the acceptance already runs, and the scenes stating them are queued for
-  re-evaluation in the same transaction, bounded by the repair-depth ladder and recorded as an
-  `ImpactAnalyzed` event. This command is for the changes that have no in-repo producer —
-  renames and moved events — and for asking before acting.
-  Reads a `ChangeSet` of the shared schema (as `ingest` reads an `EvaluationArtifact`) and
-  reports every scene and state record the change touches, with the rule that reached it and
-  why. Four rules: a rename reaches wherever the old name is spelled, forwards and back; a
-  changed fact reaches forward to what states it after the change; a moved event reaches the
-  window between where it was and where it goes; a surface-only edit reaches nothing.
-  Anything else **abstains and exits non-zero** — "no rule read this" must not print the same
-  as "this reaches nothing". `--enqueue` queues an evaluation for each reached scene; without
-  it the command only reports. Scored against the contracts gold impact suites at precision
-  1.000 / recall 1.000 versus the base rate of 0.481 — **a dev-set number over four in-sample
-  cases**, which is what the command prints under every result.
-- `plans` — the plan's lineage, newest first, with the proposal that produced each revision:
-  which directive it came from, what it summarised itself as, and whether it was itself a
-  rollback. A revision no proposal produced is the plan the book was imported with.
-- `revert-plan <plan-revision>` — restore an earlier plan revision as the new plan head.
-  Forward, like `revert`: the restored plan is a new revision, so the change and its undoing
-  both stay in the lineage and rolling back a rollback composes. It is the one proposal
-  permitted to move a **locked** item, which is what lets it undo a director's constraint —
-  so it reports how many it moved, and names any applied directive left citing a plan item
-  the restored plan does not have. It touches no prose: the plan epoch advances and queued
-  scene jobs are cancelled in the same transaction, so the next tick replans the
-  still-draftable beats, and scenes already accepted stay accepted.
-- `replan` — reissue every still-draftable beat under a fresh plan epoch. The verb for the
-  two states `revive` cannot reach: a poisoned unit burned its derived job id forever, and a
-  parked unit whose head has since moved would be revived onto a stale base. It does not
-  overrule the gate — a beat blocked by a finding blocks again unless the finding is
-  dismissed first.
-- `exceptions` / `resolve` — what policy could not resolve. Resolving closes your side; it
-  deliberately does not requeue the unit, because an escalation may have been *right*.
-- `revert <revision> --book --branch` — restore an earlier revision as the new head. Goes
-  forward: the mistake and the correction both stay in the record.
-- `backup <path>` — online backup, safe while ticking. Uses SQLite's backup API because
-  this store runs in WAL mode and a file copy would silently omit everything since the
-  last checkpoint.
+Explicit constraints and vetoes are preserved verbatim and locked. Interpretive notes receive one
+bounded proposal whose scope, locks, and base revision are validated outside the model.
 
-Every state change writes its event into the store's `events` table in the same
-transaction, so the audit trail is always in the database itself — there is no separate
-delivery channel to configure or monitor.
+Recovery is explicit:
 
-**Who writes it.** One pinned frontier provider: the local Claude Code session
-(`claude_code`). §1a.5 requires a frontier generator, and a silent mid-book fallback to a
-weaker model is a quality defect, not resilience — so there is no fallback chain and no
-provider-selection flag. When the provider is unhealthy the unit parks or requeues and the
-book waits; it never degrades. The retired plurality design and its measurements stay
-recorded in `plan/provider-adapters.md`.
+- `revive JOB_ID` returns a parked unit to the queue after its blocker is cleared.
+- `replan` issues still-draftable beats under a fresh plan epoch.
+- `revert-plan REVISION` restores an earlier plan as a new head; history is never rewritten.
+- `revert REVISION --book ... --branch ...` does the same for manuscript revisions.
+- `exceptions` and `resolve` record cases policy could not settle; resolving does not requeue.
 
-**Who the writer is** is a separate question from which model serves the call, and `--writer`
-(or `LITHARNESS_WRITER`) answers it: one named professional from `domain/writers.py`'s cast,
-whose dossier says what they read the genre for and never a word about what good prose is. It
-reaches the listing, the Architect and every scene. Off by default, because **no writer is
-the control** — and until 2026-08-25 there was no way to pass one at all, so every scene this
-system had ever drafted was written by nobody. An unregistered name is refused rather than
-quietly giving you the control arm.
+## Integrity and continuity
 
-The one alternative is the deterministic fake, and it has to be *asked for*:
-`LITHARNESS_FAKE_PAD_CHARS` (e.g. `400`) runs the whole loop model-free, with the fake's
-output padded past the shape gate's floor. Setting it is the statement "I am deliberately
-running on the fake" — the fake is never a silent generation backstop, because a backstop
-that cannot clear the gate it feeds once poisoned six units during an outage.
+Every candidate passes deterministic shape and integrity checks. Existing blocking findings park
+work before generation; candidate-local findings can trigger bounded, span-limited repair and
+independent re-detection. Findings below the blocking threshold annotate rather than spend another
+generation.
 
-`LITHARNESS_ENV=test` keeps its one job: a test run provably cannot reach a paid
-provider. The registry now enforces it by refusal — resolving a billing provider in test
-mode raises rather than quietly substituting.
+The in-process contradiction check runs automatically. The optional six-rule LitRPG pack can be
+connected through the ContinuityEvaluation executable:
 
-`--context-budget` sets how much context a scene is drafted against, and **it moves with
-`--target-words`**: measured, a 900-word scene binds the 6,000-token default at scene 5 and
-leaves the packet holding three prior scenes, against scene 24 at 160-word scenes. When the
-packet drops prose it bumps a `context_omitted` counter in the daily digest, so a book being
-written blind shows up in `status` rather than only on a job payload.
-
-`--target-words` asks the generator for a scene of a given length. A target, never a gate:
-nothing refuses a scene for missing it, and it is recorded in every decision's policy digest
-because it shapes every scene in the book. Measured, it moves a capable model about halfway
-and a small one not at all — so pick a scene count from what your model actually writes.
-
-Budget ceilings apply to every generating call and are checked **before** it is made:
-`--max-tokens-per-day`, `--max-invocations-per-day` (the one tokens cannot express — see
-§15's per-call harness tax), `--max-tokens-per-operation`, `--max-cost-usd-per-day`. Pass
-`-1` for unbounded on any of them, which has to be asked for rather than being what you get
-by forgetting a flag. `status` prints spend against plan.
-- `verify` — rebuild every revision from canonical records, check the content hashes, and
-  report any revision no policy decision explains. Exits non-zero if it finds one.
-
-## Gating it
-
-The ladder runs shape, then integrity, and integrity runs in two places for one reason.
-
-A finding **already on record** against a node is checked *before* the provider call. It
-cannot be caused or cleared by the candidate, so all three attempts would meet the identical
-refusal — generating to discover it costs three model calls and then poisons the unit,
-leaving nothing to resume when you do the right thing and dismiss the finding. So it parks
-revivably, costs no attempt and no tokens, and names the findings that stopped it in
-`jobs --status parked`.
-
-A finding about **this candidate** is checked after generation, carries a `continuity_breach`
-veto, earns a bounded retry, and after the attempt budget parks the unit and files an
-exception. That refusal is about the work, so it is charged like one.
-
-Either way a defect on scene 3 does not stop scene 6: findings are scoped to the node they
-land on, because blocking the branch would turn one defect into a dead book.
-
-The detectors themselves live in **ContinuityEvaluation** (PLAN.md §8.4 owns that decision),
-and siblings depend on contracts rather than on each other (§13) — so findings arrive as an
-`EvaluationArtifact`, a file of a shared schema:
-
-```bash
-uv run litharness --database book.db ingest ../litharness-contracts/src/litharness_contracts/fixtures/golden/litrpg/findings.json
+```powershell
+$env:LITHARNESS_CONTINUITY_EVALUATOR = \
+  "C:\DEV\ContinuityEvaluation\.venv\Scripts\continuity-evaluate.exe"
 ```
 
-That path is the file in a contracts *checkout*; the same artifact ships inside the installed
-package, so with no checkout at all `python -c "from litharness_contracts.fixtures import
-golden_path; print(golden_path('litrpg', 'findings.json'))"` prints the one `uv sync` already
-fetched.
+External evaluators enter through a shared `EvaluationArtifact`:
 
 ```bash
+uv run litharness --database book.db ingest findings.json
 uv run litharness --database book.db findings
+uv run litharness --database book.db dismiss FINDING_ID
 ```
 
-When `LITHARNESS_CONTINUITY_EVALUATOR` (or the matching CLI option) is configured, every
-durable evaluation streams the current manuscript, state and plan snapshots to that executable
-as a UTF-8 live bundle. Its six deterministic rules run alongside the in-process contradiction
-check; both result sets enter the same repair and re-detection workflow. The executable is
-optional so installing and operating LitHarness does not silently depend on a sibling checkout.
+`dismiss` records that an intentional device or false positive should no longer block; it does
+not delete the finding.
 
-`ingest` exits **1** when the artifact records detector errors, and says which stage failed.
-An evaluation that did not finish is not a passing one, and until this the two were
-indistinguishable: an artifact whose every detector failed reported "0 finding(s), 0 new, 0
-blocking" and exited 0 over a book carrying six planted defects. The findings that *did*
-arrive are still ingested — dropping them would trade one silent gap for another. This matters
-for §17 Stage 2: "repairs verified by re-detection" means re-running an
-evaluator over prose a repair just changed, and a repair invalidates the `version_id` every
-downstream evidence span cites, so an errored run is the *expected* post-repair state.
+## Simulated readers
 
-Accepted drafts now enqueue a durable evaluation job. A complete run persists its findings
-and, when it supplies a deterministic blocking finding with a `primary_span`, schedules one
-located repair. The repair call can replace only that cited span; mechanical patch policy
-checks the version, hash, scope, length and byte-for-byte preservation outside it. The finding
-stays open until a separate evaluation explicitly re-runs its rule and no matching complaint
-remains. Detector errors and omitted required rules fail the verification instead of turning
-an empty result into a false pass. Repairs are serial and capped at three in one automatic
-chain, so changing content cannot manufacture an unbounded stream of fresh job ids.
-
-Re-ingesting the same artifact writes nothing: finding ids are content-derived and a re-run
-converges rather than growing the queue, and a status a human already set is not overwritten.
+The simulated readership can read the latest drafted scene, or one named scene:
 
 ```bash
-uv run litharness --database book.db dismiss f-control-motif-rain
+uv run litharness --database book.db readers
+uv run litharness --database book.db readers --scene 4
 ```
 
-`dismiss` is the way past a **negative control** — both golden fixtures ship deliberate
-devices a *correct* detector flags, like the mystery's repeated rain-on-glass motif and
-Julian's intentional lie. Without it the only route past one would be to weaken the detector,
-trading a true positive for a quiet queue. `--false-positive` says the detector was wrong
-rather than the device deliberate; the distinction is what a later calibration pass reads.
+Reader output is behavioural—continuation, anticipation, abandonment—not a literary score. Reader
+roles are split between steering and measurement pools so a book shaped by a reader cannot later
+be certified by that reader. The architecture is wired, but its ability to perceive quality is
+still under validation; see the
+[reader-architecture programme](plan/reader-architecture-program.md) for current work rather than
+inferring validity from the existence of the command.
 
-Two things the gate will not do. A finding below `major` **annotates rather than blocks** — a
-refusal costs a generation, so a finding not worth a second model call is not worth blocking
-on. And an **uncalibrated critic cannot block at all** (§10.4): a finding whose
-`confidence_basis` is not `deterministic` is recorded, and the gate says it ran, but it never
-refuses. Promotion needs held-out calibration evidence, which is Stage 4.
+Real readers are the reason to publish the books, but their behaviour never feeds generation,
+planning, selection, calibration, or gating.
 
-## Reading it
+## Covers, library, and export
 
-The prose lives in the database as content-addressed node versions; `backup` produces
-another database and `verify` never prints a word. `export` is how you read the book:
+Generate several independent cover options after the book exists:
 
 ```bash
+uv run litharness --database book.db cover --variants 4
+```
+
+Codex produces text-free 2:3 art; LitHarness adds the exact title and publication author locally
+and writes 400×600 PNGs plus a manifest under the book's library shelf. The default author is
+`Skulitom`. Use `--art` to finish existing art without another generation, `--reference` for a
+layout reference, and `--art-direction` for shared visual constraints. Covers are generated, not
+ranked or critiqued.
+
+The derived library is refreshed after each tick and skipped when the book head has not moved:
+
+```bash
+uv run litharness --database book.db library
 uv run litharness --database book.db export book.md
+uv run litharness --database book.db export book.html
 ```
 
-The suffix picks the format — `.md` or `.html`, overridable with `--format`, stdout if you
-name no file. Both open with front matter the document derives from itself: revision id,
-timestamp, word count, and a table of which scenes are drafted and which are still empty.
-**Undrafted scenes are rendered as titled placeholders, never skipped** — the gap is the
-most useful thing on the page, and a document that omitted it would read as a finished
-short book rather than an unfinished long one. Export twice a day apart and the difference
-is the progress.
+The library contains reading copies and paste-ready chapter fragments. Incomplete chapters are
+withheld rather than emitted with holes; reading-copy exports show undrafted scenes explicitly.
+The library is a file handoff, not a posting scheduler or publication platform.
 
-`--book` / `--branch` are needed only when the store holds more than one; more than one is
-ambiguous rather than defaultable, so it lists what it found and asks. `--revision` exports
-an older revision instead of the head, which is how two points in time get compared —
-revisions are immutable, so an export of revision N is reproducible forever apart from its
-timestamp.
+## Repository map
 
-There is no PDF writer here, deliberately: owning font metrics and page breaking is not
-worth it in a repo whose only runtime dependency is its own contracts package. The HTML
-carries print CSS — `@page` margins, chapter page breaks, orphan and widow control — so a
-browser's *Save as PDF* gives a readable book, and pandoc is the other one-liner:
-
-```bash
-uv run litharness --database book.db export book.html --format html
-```
-
-```bash
-pandoc book.md -o book.pdf
-```
-
-## Judging it
-
-**Nothing here may train, calibrate or select any instrument** — the scope axiom
-([stage-0 §95](plan/stage-0-decisions.md)) closed that on 2026-08-19. The audit queue and
-`judge` command are for *locating* defects a counter can be built for, never for scoring. The
-operator's one judgment is a **single accept/reject bit** at book grain: no diagnostic, at most
-once per candidate and once per week, feeding no fit. **Valence comes from a simulated
-readership and from nothing else** — see [plan/force-program.md](plan/force-program.md) for
-the instruments and §95–§102 of the ledger for what each returned.
-
-Real-population work exists here and is not a second source of valence. It asks whether a sim
-behaves the way readers did, which is a question about the **instrument** and not about any
-book: the backtest (§123), and the return leg in
-[plan/sim-readership-calibration.md](plan/sim-readership-calibration.md) — whether a
-population's own aggregates may ever *correct* the readership rather than only grade it,
-registered and deliberately undecided (§106). Real readers are expected in time and stay
-outside the loop either way; nothing they do reaches a prompt, a plan, a selection or a gate.
-
-The one input this system cannot generate. §10.5 routes a share of accepted scenes to a
-queue as they are drafted, so evidence accumulates as a by-product of operation rather than
-requiring a session someone has to schedule:
-
-```bash
-uv run litharness --database book.db audit --next
-```
-
-It prints the prose, not a reference to it, and with no provenance attached — §10.3 wants
-blinded judgments, and RevisionBench measured 43–65% positional artifacts in unblinded
-judges. The draw is derived from `(revision, node)` rather than randomly, so a replayed tick
-picks the same scene and nobody can re-roll for a kinder sample.
-
-```bash
-uv run litharness --database book.db judge aud-… --would-stop --note "nothing changes; all setup"
-```
-
-`--keep-reading` / `--would-stop` / `--not-sure`, matching §1a.5's bar rather than a rubric.
-Abstention is a real answer and is counted (§10.4). A verdict is recorded once and never
-overwritten, because the first reading is the blind one.
-
-```bash
-uv run litharness --database book.db craft
-uv run litharness --database book.db calibrations
-```
-
-`craft` shows the advisory numbers and what they do not measure; `calibrations` shows what
-evidence exists that any of them predicts human judgment, and prints nothing today. That
-emptiness is the honest state of §19's Quality clause.
-
-```bash
-uv run litharness --database book.db calibrate --metric craft.tricolon_rate.v0 --threshold 4.0 --direction above --holdout 50 --flagged 21 --correct 18 --selection-family 1 --clusters 3
-```
-
-`calibrate` is the write verb, and the only route to a gate that can refuse a scene. It
-records; it does not promote. Whether the evidence may block is recomputed at every draft
-against the verdict set *as it stands then*, so it is printed here as information rather
-than enforced here as a precondition — recording a measurement that cannot yet promote is
-how evidence accumulates toward one that can, and the command says which you have.
-
-`--flagged` is the number the metric actually fired on, and it is required because
-precision is computed over the flagged set: a metric that flags one scene in fifty and
-happens to be right scores 1.00 on a holdout of 50 while having shown nothing. The floor is
-17 — the smallest flagged set whose 95% Clopper-Pearson lower bound on a *perfect* score
-clears the 0.80 precision floor.
-
-**A scene a promoted craft gate refuses is parked, not escalated and not redrafted.** The
-book continues, because findings are node-scoped and a weak scene 3 must not stop scene 6;
-`revive` is the way past one, exactly as it is for a standing finding. Retrying instead
-would make the accepted candidate the one that beat the metric — best-of-three optimisation
-against a craft proxy, which is the coupling [plan/craft-corpus.md](plan/craft-corpus.md)
-§4.2 calls non-negotiable to prevent. A craft refusal also files **no exception**: §4.2
-reserves those for what policy could not resolve, and a refusal is policy resolving.
-
-What a parked unit is *not*, yet, is an unjudged sample. Craft metrics are recorded and the
-§10.5 audit sample is drawn on the acceptance path, after the revision commits; a refused
-candidate commits nothing, so its text is discarded and no sample is drawn. The gate does
-not fill the audit queue by refusing, which would have been the best argument for parking —
-and it is a gap rather than an oversight, because an audit sample is addressed by
-`(revision_id, logical_id)` and a refused candidate has no revision id.
-
-**The audit queue is a confirmation sample, not the plan for measuring quality.** A system
-whose quality evidence depends on someone deciding to sit down will not produce any — the
-measured throughput of that design is two verdicts against 104 exported pairs. The primary
-calibration target remains *revealed* judgment: readers who followed, favourited or
-abandoned published LitRPG at scale, already collected, with none of the demand
-characteristics or positional artifacts that solicited judging has to be blinded against.
-What it currently lacks is a surviving label: the measured candidate
-(`followers / total_views`) failed its own control at the decile grain a calibration would
-use — the deciles are recoverable from follower count alone at AUC 0.814
-(`plan/stage-0-decisions.md` §56.3). [plan/craft-corpus.md](plan/craft-corpus.md) has the
-refutation, the covariate control any successor label must state before it runs, and what
-each remaining research direction is and is not valid for.
-
-To rebuild the published-LitRPG reference profile (optional, needs the `corpus` extra and
-downloads shards of a 12.5GB dataset — no prose is stored, only percentiles):
-
-```bash
-uv run --extra corpus python research/quality-measurement/build_craft_profile.py --out plan/craft-profile.json
-```
+- `src/litharness/domain/` — rules and value objects; imports only inward.
+- `src/litharness/application/` — workflows over structural ports.
+- `src/litharness/adapters/` — SQLite persistence and artifact translation.
+- `src/litharness/providers/` — pinned model transport and deterministic fake.
+- `migrations/` — append-only, checksummed SQLite migrations.
+- `tests/` — behavior, architecture, replay, and safety contracts.
+- `research/quality-measurement/` — isolated experiments and committed text-free results.
+- `plan/` — active designs, experiment registrations, and historical decisions.
+- `runs/`, `book-library*/`, `exports/`, and `*.db` — ignored local artifacts.
 
 ## Development
 
+Read [CONTRIBUTING.md](CONTRIBUTING.md) before changing code. The required handoff checks are:
+
 ```bash
 uv run pytest
+uv run ruff check .
+uv run mypy
+git diff --check
 ```
 
-```bash
-uv run ruff check . && uv run mypy
-```
-
-The package has executable architecture boundaries in `tests/test_architecture.py`:
-`domain` imports only inward, providers and adapters do not import each other, application
-code depends on structural capabilities in `application/ports.py` rather than SQLite, and
-internal import cycles are rejected. Change that allow-list only as an explicit architecture
-decision, not to make a convenient import pass. CI runs the suite on Python 3.11 and 3.13 on
-both Linux and Windows, then builds the wheel once — from one checkout, since the contracts
-rev in `uv.lock` is the whole of what it needs.
-
-**Co-developing against a local contracts checkout.** `uv pip install -e ../litharness-contracts`
-puts your checkout in front of the pinned rev for as long as the venv lasts; the next
-`uv sync` reverts it, which is the property that keeps the experiment from becoming the
-configuration. For fixture edits that are not yet committed anywhere, `LITHARNESS_CONTRACTS_ROOT`
-points at a contracts checkout root and its golden books win over the installed ones. When the
-contracts change is ready, advance the pin: bump `rev` in `pyproject.toml`, run `uv lock`, and
-land that with the code that needs it in **one commit** — the pin is part of the behaviour,
-not part of the infrastructure.
-
-SQLite is composed behind the stable `SqliteStore` facade: durable jobs, controls, and plan
-epochs live in `adapters/sqlite_jobs.py`, while immutable plan revisions and proposals live
-in `adapters/sqlite_plans.py`. This keeps transaction boundaries explicit without making
-application workflows depend on a monolithic concrete store.
-
-The suite is model-free by default. `tests/conftest.py` sets `LITHARNESS_ENV=test` at
-import, which makes the provider registry refuse to resolve any billing provider — so a
-test run provably cannot reach a paid CLI. The live round-trip tests are skipped unless
-`LITHARNESS_LIVE_PROVIDERS=1`.
-
-## What is not built
-
-Stated plainly, because a system that runs is easy to mistake for a system that works:
-
-- **The reader → writer loop is wired and it has no evidence in it.** Until now nothing a
-  reader said about prose reached the thing that writes the next prose, by any path. There is
-  one now, and it is built as **two roles split by what each is licensed to answer** rather
-  than by human-versus-machine: a **reader** owns valence (would I keep reading, which of
-  these two would I rather continue) and a **judge** owns location and axis and never valence.
-  The split is measured rather than chosen — three independent attempts to get a *verdict*
-  about prose out of a machine died (a positional bias of 0.8151 over 568 decided comparisons;
-  a VOID precondition at 0.6408 over 142; "keep reading" on 195 of 196 passages), and exactly
-  one frame survived: asked to *name the difference* between two passages, the same model on
-  the same pairs cleared three of three families.
-  What exists: three axes with deterministic counters (`litharness axes`), a measurement
-  firewall splitting readers and passages before any verdict is routed (`pools`), a path from
-  steering-pool reader verdicts to a **direction** on an axis (`directions`), a judge channel
-  that names *which axis and where* over a contrast pair and never which is better
-  (`contrast`), composition into a draft prompt with provenance on the resulting scene
-  (`feedback`, `blame`), and an ablation harness
-  (`research/quality-measurement/feedback_ablation.py`).
-  **What does not exist is a single reader verdict, and as of 2026-08-19 none ever will.**
-  The scope axiom closed the channel: `audit_samples` is at 0 rows and no reader will be paid,
-  which is now a decision rather than a gap. The loop's shape survives it — a reader owning
-  valence and a judge owning location is exactly the split a *simulated* readership needs
-  (§97), and the sim's output vocabulary is behavioural (continue, abandon, return) precisely
-  because the verdict channel died. What changed is where the valence comes from. Meanwhile no
-  axis has a direction, and with no direction the judge half refuses before
-  it spends anything — so the whole loop resolves to an empty feedback set and every book
-  drafts exactly as it did before. The ablation's machine side reads `INERT_GENERATOR` on the
-  fake provider and its reader side reads `UNDECIDABLE`, which is the honest state of both.
-  Neither source can block: nothing on this path can construct a gate, and a reader-derived
-  gate would still be a gate (§10.4).
-  Designed and deliberately not built, each with its condition:
-  a **certified single-axis transform** as a second source of direction pairs, if sibling
-  yield or confounding makes siblings unusable; a **paraphrase sham** (same content, different
-  surface) to catch a judge or counter firing on surface features carrying no reader-visible
-  difference — a register entry rather than a task because certifying "same content" honestly
-  is the hard part; and the **promise/payoff ledger** as a candidate counter family, which is
-  the right shape (deterministic, span-locating, judge-free) and is strictly a *hypothesis*
-  axis: it earns nothing until a human read names it or the discard corpus nominates it, and
-  nothing at all until readers give it a direction.
-  [plan/reader-judge-loop.md](plan/reader-judge-loop.md) is the design and its
-  pre-registration.
-- **A library folder, and it is a copy button rather than the publication pillar.**
-  `book-library/`, republished after **every tick without being asked** and resolved beside the
-  database it is derived from, so nothing writes into whatever directory a command was run from
-  and a run against a scratch store takes its output away with it. `--no-library` opts out;
-  `litharness library` rebuilds on demand. A book whose head has not moved is skipped, because
-  revisions are content-addressed and "the head is what this shelf was built from" is exact —
-  so a quiet system rewrites nothing, and the index carries **when it was last checked** beside
-  **when each book last changed**, which are different questions and would lie if collapsed.
-  It supersedes `exports/`. Two shapes, because they have opposite requirements. The
-  **reading copy** is `export`'s document — the whole book, a progress table, and undrafted
-  scenes as visible gaps, so two copies a day apart differ in a way you can read at a glance.
-  The **pastable copy** is one file per chapter carrying none of that: no progress table, no
-  revision id, and no title heading, because a serial platform takes the title in its own
-  field and a heading in the body is published twice. Minimal HTML — only `<p>`,
-  `<blockquote>` and `<hr>`, no classes or styles — as a fragment rather than a document, so
-  "open it and copy" and "paste into an HTML source view" are the same file; a `.txt` sits
-  beside each one because **this repository cannot verify how any particular platform's
-  editor treats a paste**, and a fallback is the honest response to that rather than a claim.
-  **A chapter holding an undrafted scene is withheld and counted, never emitted with a hole
-  in it.** One scene is one chapter by default, which asserts nothing: production books hold
-  no chapter nodes and no assembly scheme is decided, so `--chapter-scenes N` makes grouping
-  an operator act rather than a guess.
-  **What this is not is the serial-publication pillar**, which §62 cut after measuring it at
-  two inert enum values. Of the seven things that entry found missing, this adds exactly one
-  — the per-chapter export, as a file format — and none of the other six: no chapter-release
-  unit, no recap generation, no publication policy object, no posting scheduler, no
-  publication table. §62 also settled what publishing means here — the export, run when the
-  book clears §1a.5's bar (the continuation one, §126) — and **no book has cleared it**, which the library's own index says
-  where somebody about to paste will read it. Each shelf also carries a `NOTES.md` that is
-  written once and never overwritten, because a human read is not only a progress check: a
-  named defect is one of only two doors an axis can enter the registry by, and all three the
-  system measures came from one read of one book.
-  **On "publish it every few hours": the loop already beats that.** §63 cut the cron deployment
-  (−1,103 lines, three tables) and named what replaced it — one process running `tick` in a
-  loop, which `tools/run-loop.ps1` now writes down. With publishing on every tick the folder is
-  as fresh as the book at all times, which no wall-clock schedule can improve on; when the loop
-  is off there is nothing new to publish. `tools/schedule-library.ps1` exists for the case the
-  loop does not cover and registers a task that runs `library` and **never `tick`**: §63 also
-  removed the instance lease that made overlapping invocations safe, so a scheduled tick beside
-  a running loop is exactly the case that no longer has a guard — while `library` is read-only
-  against the store and safe to fire whenever. It does nothing without `-Install`.
-- **A Director role: a personality that says what a book is, and never whether it is good.**
-  The third role, and it is safe for a different reason from the other two rather than the same
-  one. Every frame this project has buried was *evaluative and downstream* — handed prose that
-  existed and asked how good it is. A Director is *generative and upstream*: it says what the
-  book should be, before any of it exists, so it makes no measurement and cannot make an invalid
-  one. `--director <name>` runs one; off by default, because a director is an arm and no
-  director is its control.
-  What exists: a content-addressed personality with a brief (`litharness directors`), one
-  bounded directive per six accepted scenes, written into the same inbox a person writes into
-  and **marked with its author** — and a distinctness control
-  (`research/quality-measurement/director_distinctness.py`) that has to pass before two
-  directors may be compared at all.
-  **Four things it cannot do**, each closing a path that was open: it emits only the
-  interpretive directive kinds, so it cannot issue a veto or a constraint — refusal is the human
-  director's authority; it cannot produce a **locked** plan item by either lane, so its words
-  cannot sit in every context packet wearing a person's standing; its brief may name what the
-  book is about and not what good prose is, so it cannot pre-empt an axis the Reader/Judge loop
-  is actively measuring; and **it is never shown the prose**, only the plan and the scene
-  summaries, which makes "a Director may not evaluate prose" a property of what it was handed
-  rather than an instruction it might drift from.
-  **What is not established is whether any director is any good.** That is a reader question
-  and it waits with every other reader question — and it is not free: §61 pre-registration (5)
-  divides the superiority claim's confidence level by the candidate-book count, so **running N
-  directors divides §61's alpha by N**. At three directors the headline is made at α/3. The
-  distinctness harness prints that price rather than leaving it to be discovered.
-  Also not built: directors that read their own books' reception, which would be a second
-  steering loop with none of the measurement firewall's discipline.
-  [plan/director-role.md](plan/director-role.md) is the design.
-- **A template planner plus a bounded directive planner, not a full narrative
-  generator.** `tick` does decide what to write next: a
-  fixed six-beat sheet (`domain/beats.py`) is zipped against the book's live scenes and the
-  next undrafted one is enqueued, least-progressed book first. Separately, immutable plan
-  proposals are validated and accepted against a baseline, interpret directives atomically,
-  detect concurrent changes, preserve rationale/model provenance, and roll back through a
-  new forward revision. A model now produces one bounded proposal for each premise, arc,
-  tone, or chapter note. The book-level outline writes one statement per scene plus a
-  progression schedule; the promise/payoff ledger tracks what each scene opens, pays,
-  and still owes — typed by kind, with due positions and planner-scheduled payoff
-  windows surfacing into the drafting context as debts rather than as facts; and under
-  `--plan-search`, K alternative beat-plans per span are drafted and selected by
-  pairwise judgment (human verdicts first; a judge only when a current
-  PREFERENCE-class calibration licenses it on the selection task). What does not exist
-  is structural/mechanical plan critics or replacement of the fixed six-beat arc
-  template.
-- **An Architect that evolves the world with the book.** After the listing loop creates a
-  book, `litharness architect seed` gives the same cast writer the narrow `litharness world`
-  tool surface. The Architect declares enough world for the opening, checks it through
-  `world check`, and leaves every record as a proposal; `world accept` is the separate
-  recorded act that admits those proposals to canon. After a chapter,
-  `litharness architect grow` reads what was drafted and develops or reconciles the world
-  through the same tools. There are no K candidates, one-shot structured world call, model
-  ranking, or human pick between generated worlds.
-- **A context packet with no relevance scoring.** It carries prior prose, locked
-  constraints, open threads, POV-filtered state, and what is true but not yet disclosed to the
-  reader — that last under a heading that forbids stating it — and it is graded against the
-  contracts `GoldContextSuite` — mandatory items present, forbidden POV leak absent. What it does not
-  do is *choose*: under a budget that binds, it drops the oldest prose rather than the least
-  relevant, because nothing here measures relevance. On six-scene fixtures the budget never
-  binds, so that limit is currently invisible and will not stay that way at Book Zero
-  length. Only the `draft_scene` operation is served; the suite's `evaluate` and `repair`
-  cases have no implementation to grade and the suite says so rather than skipping them.
-- **No craft gate, and the reason is measured — but the path to one is now wired end to
-  end.** The blocking ladder is shape then integrity: a draft exists, is the right size, did
-  not overwrite anything, and nothing unresolved stands against its node. Nothing *blocks* on
-  whether the prose is any good (PLAN.md §1a). Two duplicate-detection craft metrics
-  (`craft.scene_echo.v1`, `craft.repeated_span.v0`) are logged per accepted
-  scene and can only annotate — `craft_gates` has no branch that could set `blocking`, and
-  `PolicyDecision` raises on a blocking craft gate with no calibration.
-  What changed is that the *other* door is now reachable and has a decided behaviour behind
-  it: `calibrate` records evidence, `handlers` consults it on every draft, `promoted_gate`
-  builds a blocking gate or refuses to, and a refusal parks the unit under
-  `Veto.CRAFT_BELOW_BAR`. **Nothing about the book changes until a calibration exists**, and
-  none does — with an empty table the wired path costs one indexed query and cannot construct
-  a gate, which is what made it safe to build before the evidence. It is plumbing waiting on
-  judgment, and the emptiness of `calibrations` is still the measure of the gap.
-  The four line-level proxies this list used to lead with were measured against 13,000
-  chapters of published LitRPG and
-  **all four failed to separate declared-AI prose from human prose at the same date**; the one
-  that looked promising turned out to be detecting the year. They are archived off the accept
-  path in `research/quality-measurement/refuted_metrics.py`, with `plan/craft-profile.json`
-  kept as the measured record. For how many candidate proxies
-  stand refuted, [research/quality-measurement/BRIEF.md](research/quality-measurement/BRIEF.md)
-  §2 is canonical — this sentence used to restate a count and the restatement was stale
-  within days, which is exactly why the ledger owns the number. The blocker is human
-  judgment, not effort — and the instrument for collecting it at scale is now built:
-  the **pairwise preference engine** (`corpus-add`, `protocol`, `pools`, `pair-draw`,
-  `pairs`, `pair-judge`, `win-rate`) runs blinded,
-  position-swapped comparisons against matched published-human prose under a
-  pre-registered protocol, with a reader-by-pair clustered lower bound on the win
-  rate; the preference runbook (deleted 2026-08-21) was the operating
-  procedure. **`pools` is new and now comes first**: readers and passages are split
-  into a steering pool and a measurement pool before the first verdict is routed,
-  because the superiority claim dies if the prose was shaped by the readers who later
-  judge it — and once reader verdicts reach a draft prompt that stops being
-  hypothetical. Nothing draws or judges until the split is declared.
-  `litharness audit` remains as the smoke-check queue whose deterministic
-  draw the engine inherited; its verdict verb is now `read` rather than `judge`, since
-  under the Reader/Judge split what it records is a reader's verdict (`judge` still
-  works and warns). Structural instrumentation aimed at what moves readers —
-  overdue promises and zero-delta scenes — is recorded per accepted scene, advisory
-  until calibrated. A second channel is being *tested* rather than operated: asking a
-  system-prompted model, in character as a reader, what a passage did to it — untested
-  rather than refuted, since every refutation on the books bounds an expert-frame or
-  distributional instrument instead. It reaches no gate, mints no row and has no CLI
-  surface. Its first form is already dead: asked for an absolute verdict it answered
-  "keep reading" to 195 of 196 passages across two model tiers, a constant function that
-  no manipulation could move, and the pre-registered positivity floor fired. The successor
-  asks the panel to *choose* between a passage and a manipulated copy of it, blinded and
-  position-swapped — the shape the pairwise engine above already uses, and the only
-  standing this channel could ever earn. It has now run, and **it discriminates without yet
-  being a reader.** It clears the detection rung against its sham (0.906 vs 0.783, margin
-  0.122), but the sham itself sits at 0.78, so much of what it separates is *edited-ness*;
-  positional bias measures 0.587 (z = +4.73), so a real share of the rest is layout; and the
-  one pre-registered arm that would have made it reader-specific ran **backwards** — removing
-  sentences chosen for stakes hurt less than deleting the same word count at random. The
-  battery says why: the panel catches every local manipulation and is near-blind to
-  `transplant`, a length-matched graft from a different story, so it reads at
-  clause-to-paragraph scale and may not be asked whether a scene belongs in its book. A 4B
-  local model fails the positional-bias precondition outright, putting the capability floor
-  above it. Nothing here mints a row and the ceiling is unchanged
-  ([plan/persona-reader-validity.md](plan/persona-reader-validity.md) §5a,
-  `plan/stage-0-decisions.md` §70).
-- **The full deterministic pack is opt-in, and its live inputs are still thin.** Every
-  accepted draft is automatically evaluated by `state.contradiction.v0`. When the
-  ContinuityEvaluation executable is configured, the same durable job also runs all six
-  game-system detectors over a live shared-contract bundle and feeds located findings into
-  bounded repair and re-detection. Without that explicit configuration, operation remains
-  in-process-only. Even with it, detector effectiveness is limited by the state and facts the
-  producer can justify: current evidence is re-anchored, stale imported future-state evidence
-  is omitted, and the extractor still understands only system voice. The process boundary is
-  complete; richer live state production is not.
-- **State extraction reads system voice only.** §12 step 5 now exists
-  (`domain/extraction.py`): every accepted scene is read for the facts it establishes, the
-  records are written in the revision's own transaction, and a candidate contradicting
-  established canon is refused before it commits. That is what gives
-  `state.contradiction.v0` an in-process producer — until it had one, the detector could not
-  fire at all and Stage 2 had no trigger to build on.
-  What it reads is the `[STATUS]` line the genre puts on the page, and nothing else. Nothing
-  here touches prose-semantic facts like "Brandt knows about the letter", which need a model
-  call that is deliberately not built. And it **mints nothing**: the story position is read
-  back out of the book's own evidence and abstains where the book is silent. ~~Until
-  `render_prompt` asks generators to emit system voice, extraction yields records only for
-  prose that already carries it.~~ That change has landed — it is what the opening of this
-  file means by "asks its generator to state game state on the page and reads that back",
-  and this bullet contradicted the opening for a while by still calling it future. What
-  remains true: a book whose scenes carry no `[STATUS]` line extracts nothing, which for a
-  book outside the genre is abstention working as designed, not a gap.
-- **Operator controls are not narrative plan edits.** A directive whose kind is `control`
-  remains visible in the inbox; process control is the session itself — Ctrl+C stops the
-  loop, and restarting is safe because ticks are idempotent. The planner does not
-  reinterpret words like “stop” as story constraints.
+The architecture suite enforces dependency direction and import-cycle freedom. Tests set
+`LITHARNESS_ENV=test`, which makes resolving a billing provider an error; live provider tests are
+opt-in through `LITHARNESS_LIVE_PROVIDERS=1`.

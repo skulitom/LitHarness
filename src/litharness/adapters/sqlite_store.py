@@ -320,7 +320,7 @@ class SqliteStore:
     def __enter__(self) -> SqliteStore:
         return self
 
-    def __exit__(self, exc_type: object, exc: object, tb: object) -> None:
+    def __exit__(self, exc_type: object, _exc: object, _tb: object) -> None:
         self.close()
 
     class _Transaction:
@@ -331,7 +331,7 @@ class SqliteStore:
             self._connection.execute("BEGIN IMMEDIATE")
             return self._connection
 
-        def __exit__(self, exc_type: object, exc: object, tb: object) -> None:
+        def __exit__(self, exc_type: object, _exc: object, _tb: object) -> None:
             if exc_type is None:
                 self._connection.execute("COMMIT")
                 return
@@ -834,33 +834,6 @@ class SqliteStore:
         self, book_id: str, branch_id: str, *, kind: lc.PlanKind | None = None
     ) -> list[lc.PlanItem]:
         return self._plans.plan_items(book_id, branch_id, kind=kind)
-
-    @staticmethod
-    def _legacy_plan_revision(
-        connection: sqlite3.Connection, book_id: str, branch_id: str
-    ) -> PlanRevision | None:
-        return SqlitePlanRepository.legacy_plan_revision(connection, book_id, branch_id)
-
-    @staticmethod
-    def _plan_head(
-        connection: sqlite3.Connection, book_id: str, branch_id: str
-    ) -> PlanRevision | None:
-        return SqlitePlanRepository.plan_head(connection, book_id, branch_id)
-
-    @staticmethod
-    def _insert_plan_revision(
-        connection: sqlite3.Connection,
-        revision: PlanRevision,
-        *,
-        created_at: str,
-        proposal_id: str | None = None,
-    ) -> None:
-        SqlitePlanRepository.insert_plan_revision(
-            connection,
-            revision,
-            created_at=created_at,
-            proposal_id=proposal_id,
-        )
 
     def plan_revision(self, book_id: str, branch_id: str) -> PlanRevision | None:
         """Current immutable plan snapshot, bootstrapped from a legacy import if needed."""

@@ -602,7 +602,7 @@ def standing_target(
 
     **Facts and positions, no verb about the rise.** Whether the rung is earned, felt, or
     celebrated is not said here and is not said anywhere in this package
-    (`plan/handoff-numbers-go-up.md` boundary 1).
+    (`plan/stage-0-decisions.md` §113).
     """
     scheduled = [
         record

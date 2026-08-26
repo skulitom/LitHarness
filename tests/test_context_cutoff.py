@@ -456,7 +456,7 @@ def test_the_pilot_seed_carries_dated_interiority_at_all() -> None:
 def test_every_seeded_want_and_fear_lands_at_its_own_scene_and_not_before(
     store: SqliteStore,
 ) -> None:
-    """The two claims of `plan/handoff-interiority.md` Task 2, over the real seed.
+    """The two seeded-interiority claims in the results note, over the real seed.
 
     Asserted here and printed by `tools/interiority_packet_proof.py`, which reports the same
     grid as output rather than as a pass.
@@ -502,7 +502,7 @@ def test_the_seeded_interiority_costs_the_packet_almost_nothing(store: SqliteSto
 
 
 def test_several_dated_wants_for_one_subject_are_not_a_blocking_contradiction() -> None:
-    """The decision `plan/handoff-interiority.md` Task 2 asks to be made deliberately.
+    """The cutoff decision in `plan/interiority-packet-results.md`, made deliberately.
 
     The seed's standing property is that no two canon records share a `(subject, predicate)`
     pair, because until scoped cardinality lands (`plan/state-model-abilities.md` §2) a

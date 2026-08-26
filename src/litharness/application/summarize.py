@@ -363,7 +363,7 @@ def make_summary_handler(
     commit allows.
 
     **The promise ledger (§61 Add 2) is maintained here and only here — and, since
-    `plan/handoff-promise-ledger.md`, it is also *read* here and put in front of the call
+    `plan/stage-0-decisions.md` §110, it is also *read* here and put in front of the call
     that maintains it.** The writer's packet has always carried the open rows
     (`planner.packet_for` → the THREADS section) and the outline call has always seen their
     subjects; this call, the only one that can mark a debt paid, was the only one not shown

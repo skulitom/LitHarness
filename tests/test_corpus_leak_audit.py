@@ -93,3 +93,22 @@ def test_the_whole_file_prose_threshold_still_bites():
     found, unwalked = audit.scan_blob("results/notes.txt", long_prose)
     assert found and found[0][0] == "<whole file>"
     assert not unwalked
+
+
+def test_project_authored_forge_exemptions_are_exact_paths_and_fields():
+    for suffix in "abcde":
+        path = f"reader-book-forge-{suffix}/forge.json"
+        assert audit.is_ours_path_field(path, ".candidates[0].premise")
+        assert audit.is_ours_path_field(path, ".candidates[1].world.rule")
+        assert audit.is_ours_path_field(path, ".candidates[2].seed.records[3].value")
+        assert audit.is_ours_path_field(
+            path, ".candidates[1].screen.answers.regular.expect_next"
+        )
+        assert not audit.is_ours_path_field(path, ".source_excerpt")
+        assert not audit.is_ours_path_field(
+            path, ".candidates[1].screen.answers.regular.source_excerpt"
+        )
+    assert not audit.is_ours_path_field(
+        "reader-book-forge-f/forge.json", ".candidates[0].premise"
+    )
+    assert frozenset({"reader-book-forge/refused.txt"}) == audit.OURS_EXACT_PATHS

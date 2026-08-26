@@ -1,9 +1,12 @@
 # LitHarness: Autonomous Book-Production System Plan
 
-**Version:** 2.2 (supersedes the v1 authoring-tool plan, deleted 2026-08-25)
-**Status:** Master plan; **Stages 0, 1 and 2 met against their exit clauses — with Stage 0's endurance clause *evidenced rather than met* and Stage 2's propagation number a *dev-set* one that does not generalise; both caveats are in §17 beside the claims they qualify. 787 passing tests + 8 opt-in live; operable via `litharness tick`; a book goes in (`import`), drafts itself against a context packet, is refused when a planted defect stands against it, repairs a located finding within a serial cap (`evaluate_revision`/`repair_finding`), notifies out of the outbox to a configured sink (`--notify-file`), can have its plan history read and rolled back (`plans`/`revert-plan`), re-checks the scenes a repair's change reaches instead of only the scene it repaired (`propagate`, dev-set precision 1.000 against a 0.481 base rate), and comes out readable (`export`); Stage 3 (Book Zero) is now startable rather than blocked — a book with no imported snapshot drafts, states its game state on the page, and reads it back; two of §19's seven clauses met outright — scorecard in §19.1**
-
-*(Corrected here, because this line was the instance: it read "four of §19's seven clauses met" while §19.1's table said two. §19.1 contains a paragraph recording that exact drift happening once before, four lines above the table that contradicted it, and the header carrying the same wrong number went unnoticed through three revisions. The readiness number this project reports about itself is the number to distrust first.)*
+**Version:** 2.4 (supersedes the v1 authoring-tool plan, deleted 2026-08-25)
+**Status:** Master plan. Stages 0–2 and their caveats are recorded in §17; §19 owns the
+operator-grade scorecard. [README.md](README.md) and `litharness --help` own the current operating
+surface. The active critical path is the LLM reader-perception architecture, recorded in
+[plan/reader-architecture-program.md](plan/reader-architecture-program.md), not another prose
+proxy or prompt rewrite. Historical sections retain the names of removed components as evidence;
+a path there is not an implementation target unless §17 or a current handoff names it.
 **Role:** An autonomous system that plans, drafts, evaluates, repairs, and versions LitRPG books to a measured objective — fiction a defined audience keeps reading (§1a) — directed by a human, never blocked on one. *("24/7" struck by [stage-0 §61](plan/stage-0-decisions.md): always-on operation served a cadence goal the project no longer holds; the loop still runs without human input, as a foreground session.)*
 **Inspection baseline:** Local projects inspected 2026-08-12; v2 rewrite same day; §7/§8/§13/§15/§17/§20 re-verified later the same day (v2.1); **§7/§8.4/§13/§17/§20 re-verified against all nine repositories that evening (v2.2)**
 
@@ -61,7 +64,7 @@ document describes throughout are measurement substrate. Throughput and uptime a
 
 The refoundation is licensed by
 the measurement record, not by ambition: every other evidence channel is measured dead
-(BRIEF §2's 21 proxies; unpaid solicited judgment at 2 verdicts per 104 pairs;
+(BRIEF §2's canonical refutation ledger; unpaid solicited judgment at 2 verdicts per 104 pairs;
 revealed-preference labels refuted at §56.3 and craft-corpus §4.4; raw model judges at
 BRIEF §2 Pass 4), §57 voided the roadmap ordering Stage 5 was built on, and §59 built
 the exact bound/family/cluster machinery the bar's statistics need. §3's "better than
@@ -657,7 +660,7 @@ row as carrying its 2026-08-12 date.
 | BookWorldState | Committed, Apache-2.0, tagged `v0.1.0`, pushed to GitHub; **13 commits, working tree clean**; 100 tests passing. Ships an authenticated versioned WSGI API, transactional outbox with capped-exponential-retry worker, signed webhook publication, migration checksums, online backup/restore + destructive-corruption drill — **Milestone 4/5 infrastructure, not "~Milestone 2"**. What is *not* done is M3's evaluation corpus | State substrate. Its closed predicate registry is **not** injectable yet (§20.5) — but §8.4 routes around this deliberately, so it is not a blocker for §8. *(Struck: "working tree is not clean", "4 commits", "~Milestone 2 complete", "the real blocker for §8" — all four false.)* |
 | RevisionBench | Mature (**411** tests). A2d complaint-gated repair, the LitRPG stratum, **and A3d** have landed — A3d shipped *under the name A2d*, and best-of-N repair ranked by minimal intervention closed the last element in `22a228d` | Source of repair policy, mechanical vetoes, LitRPG stratum evidence. **Its M5 decomposition is done and has already answered the question §20.7 was scheduled to ask** — see the redirect there. *(Struck: "405 tests", "A3d is next".)* |
 | RevisionJudge | Built; 104 pairs exported, exactly 2 verdicts collected; one uncommitted file (`data/verdicts.jsonl`) | **Demoted from the calibration instrument to a confirmation sample** (§10.3 as amended). Two verdicts against 104 pairs is the measured throughput of a design that needs a human to decide to sit down, and it is why revealed preference is now primary. Still the right tool for spot-confirming a calibration derived elsewhere; `litharness audit` is the same shape and collects as a by-product of drafting. The verdict *consumer* remains unbuilt |
-| **RoyalRoad-1.61M corpus** *(external data, not a repo)* | `OmniAICreator/RoyalRoad-1.61M` on HuggingFace; 1,613,875 chapters, 12.5 GB, MIT-licensed compilation; ~19% `LitRPG`. **Verified against the data, not the card: all five score columns are 100% null**; engagement (followers/favourites/views/rating counts) is populated | The calibration target for §10 and the reference distribution for §1a.5's first bar. Read by `tools/build_craft_profile.py` behind the optional `corpus` extra; only derived statistics are committed (`plan/craft-profile.json`), never prose, since the underlying fiction is its authors' copyright. Design, measured labels and validity limits in [plan/craft-corpus.md](plan/craft-corpus.md) |
+| **RoyalRoad-1.61M corpus** *(external data, not a repo)* | `OmniAICreator/RoyalRoad-1.61M` on HuggingFace; 1,613,875 chapters, 12.5 GB, MIT-licensed compilation; ~19% `LitRPG`. **Verified against the data, not the card: all five score columns are 100% null**; engagement (followers/favourites/views/rating counts) is populated | External measurement substrate, read through `research/quality-measurement/corpus_io.py` behind the optional `corpus` extra. Only derived statistics are committed, never prose. Historical design and validity limits in [plan/craft-corpus.md](plan/craft-corpus.md) |
 | MirrorBench | M0–M4 done, M5.0 landed (1,317 tests). One **unpushed** commit; its own README still says "M5 not started", contradicting its plan.md | Methodological invariants only; **verified zero coupling in both directions** — no import, no shared schema, no fixture exchange |
 | LongRangeContext | M0 complete, gated, reported (17 tests). **Now a git repo, Apache-2.0 LICENSE added, contracts pin relaxed to `>=0.1.0`** | Promote further milestones when Book Zero shows distant-context failures (it will); simple baseline until then. **"Byte-reproducible" was this plan's one *over*statement, and is now true rather than claimed**: three distinct machine-specific leaks fixed (an absolute checkout root in both reports, absolute artifact paths built by its own contracts loader, and CRLF from text-mode writes), each pinned by a mutation-tested guard. The test that carried "reproducible" in its name never compared bytes; one now does |
 | ContinuityEvaluation | LitRPG rules pack (six deterministic detectors, span-exact, mutation-tested) **plus the first advisory craft detector, a structural advisory/blocking partition, and a UTF-8 live-book process boundary — 60 tests.** Frozen plans and live shared-contract bundles reach the same runner; Apache-2.0 LICENSE | Owner of the LitRPG rule and predicate vocabulary (§8.4), and now of the bar that stops an uncalibrated proxy becoming a gate. **Further craft detectors are blocked on §10.6's corpus, not on effort** — see §10.6, and `research/quality-measurement/BRIEF.md` §2 for the refutation ledger. *(Struck: "five working deterministic detectors, 20 tests… hard-gated to the mystery fixture only".)* |
@@ -1023,15 +1026,15 @@ order-consistent survivors preferred human originals ~80% of the time. So:
    **Four more proxies refuted, this time against 13,000 chapters of published LitRPG.**
    The running count lives in
    [research/quality-measurement/BRIEF.md](research/quality-measurement/BRIEF.md) §2, which is
-   canonical for it — twenty dead as of the compression pass — and is not restated here,
-   because it was carried in two places and drifted within a single session. **That brief is
+   canonical for it and is not restated here, because it was carried in two places and drifted
+   within a single session. **That brief is
    required reading before proposing a craft metric**, and its structural diagnosis (every
    refuted proxy was static, absolute and correlational) is the fastest way to tell a fresh
-   idea from the twenty-first of the same shape.
-   `plan/craft-profile.json`, built by `tools/build_craft_profile.py` from the RoyalRoad
-   1.61M-chapter corpus, measures rank AUC for each of the four metrics
-   `domain/craft.py` instruments — all four named by §10.2 or §1a.3 item 6, none previously
-   tested. Holding the era fixed (2025 chapters whose author declared `AI-Assisted Content`
+   idea from another of the same shape.
+   The historical `plan/craft-profile.json` measured rank AUC for four now-retired craft
+   metrics over the RoyalRoad corpus. The generator and production metric module were removed
+   after their controls refuted the family; the artifact remains the evidence. Holding the era
+   fixed (2025 chapters whose author declared `AI-Assisted Content`
    against 2025 chapters that did not), every one lands within 0.06 of chance:
 
    | proxy | declared-AI vs undeclared, 2025 | vs pre-2023 | control: undeclared vs pre-2023 |

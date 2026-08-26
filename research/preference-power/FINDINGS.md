@@ -1,5 +1,10 @@
 # What §61's bar costs, and the one place it stops being honest
 
+> **Historical result from the retired human-preference engine.** The estimator and its
+> simulator were removed when the scope axiom closed solicited human judgment. This document is
+> retained because active reader experiments still depend on its clustered-sampling findings;
+> it is evidence, not an operating procedure.
+
 The preference engine shipped with an empty verdict store. The README of the time called it the
 instrument that could measure quality, "built and waiting on funded judgment", and treated that
 emptiness as the honest measure of the gap. (Both that sentence and the channel behind it are
@@ -32,10 +37,10 @@ weakest and what would refute it.
 
 ---
 
-## 1. The instrument is the shipped estimator, proven rather than assumed
+## 1. The instrument was the shipped estimator, proven rather than assumed
 
-`win_rate_lower_bound` walks every observation inside each of its 2,000 resamples. A Monte Carlo
-sweep needs the bound a few million times, so [`bound.py`](bound.py) computes it by walking
+`win_rate_lower_bound` walked every observation inside each of its 2,000 resamples. A Monte Carlo
+sweep needed the bound a few million times, so the retired `bound.py` computed it by walking
 **cells** — one entry per (reader, pair) — instead. The resampled rate is a ratio of two bilinear
 forms (`nr' S np` over `nr' C np`), so aggregating a cell before weighting it is algebra.
 
@@ -274,12 +279,6 @@ Two of its probes already corrected this study (§4, §5).
 
 ---
 
-**Reproduce:**
-
-```bash
-uv run python research/preference-power/bound.py
-uv run python research/preference-power/simulate.py --mode calibration --out cal.json
-uv run python research/preference-power/simulate.py --mode power --out pow.json
-uv run python research/preference-power/simulate.py --mode readers --out rdr.json
-uv run python research/preference-power/simulate.py --mode pairs --out prs.json
-```
+**Archive provenance:** commit `0b22add` contains the exact `bound.py`, `simulate.py`, and report
+that produced these results. They remain recoverable from Git history without leaving broken,
+apparently runnable legacy code in the working tree.

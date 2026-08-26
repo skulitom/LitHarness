@@ -1,7 +1,7 @@
 # The protagonist the pipeline never decided: what was measured, what shipped, and what did not
 
 **Status: MEASUREMENT AND BUILD, 2026-08-22.** Answers
-[`plan/handoff-protagonist.md`](../../plan/handoff-protagonist.md); the read that nominated the
+the stage-0 §112 protagonist task; the read that nominated the
 work is [`plan/reader-read-3.md`](../../plan/reader-read-3.md); the decision record is stage-0
 §112. Every number below was computed in this session against `main` at `f947247`, with the
 scripts named. Nothing here is a claim that any book got better.
@@ -350,7 +350,7 @@ nominated it. `plan/serial-pilot-4-craft.json` therefore carries C9 with its num
    belongs in `worlds.project`, and that would change the packet of every book with a forged world.
 3. **The outline invents answers to forged mysteries.** Named in the handoff as a separate piece of
    work and left alone.
-4. ~~**`plan/handoff-worldbuilding.md`'s branch also adds a keyword to `render_outline_request`**
+4. ~~**The retired worldbuilding branch also adds a keyword to `render_outline_request`**
    … whoever merges second should collapse the two cast renderings into one.~~ **Done at the
    merge, not deferred.** §111 reached `origin/main` first; this branch merged second and deleted
    its own `cast` parameter, `CAST_RULES`, `worlds.cast_brief` and `worlds.CastMember`. What ships

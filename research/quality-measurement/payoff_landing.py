@@ -357,7 +357,7 @@ def ask(elicitor: Elicitor, pair: LandingPair, *, model: str) -> dict[str, Any]:
     return {
         "pair": pair.pair_id,
         "arm": pair.arm,
-        # Boundary 6 (plan/handoff-clarity-first.md): the two excerpts are shown with none of
+        # Stage-0 §125's isolation boundary: the two excerpts are shown with none of
         # the book between them. Deliberate and now recorded; context-audit-2026-08-24.md plans
         # what an accumulated-context version would carry.
         "context": "cold_read",

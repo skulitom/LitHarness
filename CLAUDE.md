@@ -24,8 +24,9 @@ to distrust first (PLAN.md header, the same lesson recorded three times).
 3. Before proposing **any** quality or craft metric: `research/quality-measurement/BRIEF.md`
    (the refutation ledger) and `CONTRIBUTING.md` "Before proposing a quality or craft metric".
    Before running any research arm: `research/quality-measurement/RUNBOOK.md`.
-4. A bounded task usually arrives as `plan/handoff-*.md`. It names its boundaries first; read
-   them before its tasks. When the repo and a handoff disagree, the repo wins — re-anchor.
+4. Read a `plan/handoff-*.md` only when the current task names it. A handoff file is a scoped
+   brief, not a backlog; completed briefs are deleted once their results and decisions have a
+   canonical home. When the repo and a handoff disagree, the repo wins — re-anchor.
 5. To ask why a book or scene came out as it did, use the `debug-book` skill
    (`.claude/skills/debug-book/`) before reading source or opening a database. Its one rule:
    nothing a dossier tells you may become a prompt, directive, finding or plan item.
@@ -49,12 +50,11 @@ to distrust first (PLAN.md header, the same lesson recorded three times).
   when the replacement carries something, not before.
 - **Simulated-reader direction may reach a prompt. Nothing else may.** Opened 2026-08-24 on
   operator direction (§128) — the writer, and in time the Architect, take direction from
-  simulated readers, which is the loop `application/feedback_loop.py` was built for and has
-  never carried. `domain/pools.py` is what keeps it from being circular and is not optional: a
-  reader steers or measures, never both, the split is write-once and content-derived, and a
-  **steered book leaves §61's measurement set for good**. Still closed, and closed for their
-  own reasons: the operator's own diagnostics (§97.1; the `debug-book` rule), and real-reader
-  behaviour in any role inside the loop (§126).
+  simulated readers. The live path is `application/readers.py` plus
+  `application/planner.py::direction_for`: a reader steers or measures, never both, and the
+  request builders enforce the split. Still closed, and closed for their own reasons: the
+  operator's own diagnostics (§97.1; the `debug-book` rule), and real-reader behaviour in any
+  role inside the loop (§126).
 - **Counts are never restated, only pointed to.** BRIEF.md §2 owns the refutation count; the
   suite owns the test count; stage-0 owns decisions. Do not copy a number into a second home.
 

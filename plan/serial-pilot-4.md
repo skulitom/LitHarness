@@ -124,7 +124,7 @@ none is about whether the prose is good. **Pre-registered 2026-08-22, before any
 
 | # | question | how it is answered | outcomes named in advance |
 |---|---|---|---|
-| **P1** | does the forge declare a protagonist and an exception | `report()` per candidate: `protagonist_declared`, `exception_declared`, `premise_names_protagonist`; `gate_complaints`; `spread` for the set | (i) all three candidates declare a cast id and three different exceptions → the rule text works; (ii) **no candidate names a declared cast id**, or **every candidate's exception is the same rule**, → a failure of the rule text, not of the model, and it is rewritten before anything is picked; (iii) `spread` well below **0.90** on the same brief → the new rule collapsed the forge and the change is **unsafe** (`plan/handoff-protagonist.md`'s stop condition): stop and write that up instead of running the book |
+| **P1** | does the forge declare a protagonist and an exception | `report()` per candidate: `protagonist_declared`, `exception_declared`, `premise_names_protagonist`; `gate_complaints`; `spread` for the set | (i) all three candidates declare a cast id and three different exceptions → the rule text works; (ii) **no candidate names a declared cast id**, or **every candidate's exception is the same rule**, → a failure of the rule text, not of the model, and it is rewritten before anything is picked; (iii) `spread` well below **0.90** on the same brief → the new rule collapsed the forge and the change is **unsafe** (stage-0 §112's stop condition): stop and write that up instead of running the book |
 | **P2** | does the protagonist reach the outline and the packet | the stored outline request carries a `protagonist` block and a `cast` block; every scene's stored drafting prompt carries `Point of view: <id>.`; the packet's facts heading reads `Established facts known to <id>:` | anything missing is a **threading defect**, reported as one and never as a prose finding. Measured before the run on *What Takes*: the packet diff is exactly two lines and the prompt diff exactly one |
 | **P3** | who acts | per scene, from the stored scene-plan statement: does it name the protagonist as an actor (count of 8)? Named persons introduced per chapter with first-appearance offsets (`named_persons.py`); forged-cast ids on the page (count of 5) | *What Takes*: **8 and 18** distinct names by counter, **9** persons by the operator's hand count in chapter 1, and **1 of 5** forged cast ids on the page. Report the new numbers beside them. **No bar** — `named-persons-results.md` records that this counter puts the complained-about chapters *below* the genre median, so a movement in either direction is a description and not a verdict |
 | **P4** | does the exception survive the gate | `state.cardinality.v0` findings on the protagonist's excepted shape across the whole run (expect **0**), beside a planted positive control on a **copy** of the run's canon (expect **≥1**) | a finding on the excepted subject means Task 1's scope change did not reach the live detector. **The positive control is not optional**: zero findings with no control is indistinguishable from a detector that never ran |
@@ -404,7 +404,7 @@ which is the 40-opened-0-paid defect reproduced by the machinery built to fix it
 Nothing in the tooling could have caught it: `forge.json` does not record the scene count it was
 forged for, so `--pick` cannot default to it and an operator has to carry the number by hand
 between two commands. The `--scenes` flag is on both; only one of them was given it. **Recorded as
-a defect of the pick path, not fixed here** — `plan/handoff-protagonist.md` does not reach the
+a defect of the pick path, not fixed here** — stage-0 §112 does not reach the
 forge CLI, and a change to what `--pick` defaults to is its own piece of work with its own test.
 
 **Fixed on 2026-08-23 as stage-0 §115.** The forge now records the width it forged at, `--pick`
@@ -422,7 +422,7 @@ ladder silent), and a book drafted on it has to start from a fresh database.
 **A finding the pick question exposed, worth more than the pick.** Of nine candidates forged from
 `"progression fantasy"` across pilots 3 and 4, **water law appears three times, land surveying
 twice, and the graft/immunology family twice.** The brief is the same string every time and the
-forge keeps landing in the same few real domains. `plan/handoff-protagonist.md` names cross-forge
+forge keeps landing in the same few real domains. Stage-0 §112 names cross-forge
 collapse as out of scope here and it is left alone — but the collapse gate is *within*-forge only,
 so nothing in the machinery would ever have said this out loud, and it is said here so that the
 next person to read a `spread` of 0.92 knows what that number does not cover.

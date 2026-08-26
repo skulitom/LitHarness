@@ -169,7 +169,8 @@ pass.
 ## 8. Power and staging
 
 Sizing was measured three times, and the first two attempts are findings rather than waste:
-(1) the persona-grain two-way clustered bound (`bound.py`'s twin, 10 readers,
+(1) the persona-grain two-way clustered bound (documented in
+`research/preference-power/FINDINGS.md` §1; 10 readers,
 sigma_reader = 0.8 — the heterogeneity the population carries *by design*) has **zero power
 at every candidate size**, so no per-persona claim is registered anywhere in this document;
 (2) an unconditional null that redraws personas each simulated world converts persona-draw
@@ -213,7 +214,7 @@ frozen reward split**, with a pair-resampled percentile bootstrap interval (2,00
 seed content-derived from the outcome vector), alpha = 0.05, one candidate (no alpha division
 — nothing here selects among candidates). Conditional on the frozen personas the pair
 bootstrap is calibrated (§8's measured type-I, 0.022-0.028 at every candidate n); the two
-rejected designs are §8's record. The persona-grain two-way clustered number (`bound.py`,
+rejected designs are §8's record. The persona-grain two-way clustered number (the retired bound,
 cells = (persona, pair), both orders one cell, HALF_WIN) is reported as a **descriptive
 secondary only** — §8's simulation showed it cannot power at this population's registered
 heterogeneity, and a number that cannot fire may not carry the qualification.
@@ -231,7 +232,7 @@ accuracy and abandon-both rates, reason-code distributions, the holdout split's 
 `research/sim-readership-backtest/`: `corpus.py` (pairing + matching + content-addressed
 cache), `blinding.py`, `recognition.py`, `population.py` (frozen personas + split),
 `arms.py` (session construction, describe-then-behave, both orders), `analysis.py` (accuracy,
-the pair-bootstrap primary interval, the descriptive `research/preference-power/bound.py`
+the pair-bootstrap primary interval, the descriptive clustered-bound
 secondary, VOID evaluation, label-shuffle, health signature), `backtest.py` (staged driver). Transport is `elicit.Elicitor` with its
 digest-keyed cache; every number in FINDINGS.md reproduces from the cached JSONLs via
 RUNBOOK.md with no live call.
