@@ -56,7 +56,10 @@ from pathlib import Path
 from typing import Any
 
 HERE = Path(__file__).resolve().parent
+sys.path.insert(0, str(HERE))
 sys.path.insert(0, str(HERE.parent.parent / "src"))
+
+import reader_transport  # noqa: E402
 
 DERIVED = HERE / "derived"
 RESULTS = HERE / "results"
@@ -665,12 +668,17 @@ def selftest() -> int:
 # ------------------------------------------------------------------------------------ the run
 
 
-def _complete(registry: Any, rows: list[dict[str, Any]]) -> Any:
-    """One shelf, one request, the measurement conventions (`blurb_perception.probe`)."""
+def build_request(prompt: str) -> Any:
+    """One shelf, one request — the registered request shape, unchanged from v0.1.
+
+    Handed to `reader_transport.completer` as the registry reader's request constructor, so
+    the seam cannot rebuild (and so drift from) these bytes: `--reader registry` sends
+    exactly this and nothing else.
+    """
     from litharness.domain.generation import CompletionRequest
 
-    request = CompletionRequest(
-        prompt=render_shelf(rows),
+    return CompletionRequest(
+        prompt=prompt,
         system=SYSTEM,
         schema=ANSWER_SCHEMA,
         max_output_tokens=MAX_OUTPUT_TOKENS,
@@ -678,14 +686,12 @@ def _complete(registry: Any, rows: list[dict[str, Any]]) -> Any:
         call_class="generation",
         timeout_seconds=300.0,
     )
-    result, _ = registry.complete(request)
-    return result
 
 
 def run(
-    registry: Any, shelves: list[dict[str, Any]]
+    complete: Any, shelves: list[dict[str, Any]]
 ) -> tuple[list[dict[str, Any]], list[dict[str, Any]], dict[str, Any]]:
-    """K draws per shelf, the target's slot rotating; records, phrase rows, compositions."""
+    """K draws per shelf through the reader seam; records, phrase rows, compositions."""
     records: list[dict[str, Any]] = []
     phrases: list[dict[str, Any]] = []
     compositions: dict[str, Any] = {}
@@ -725,12 +731,18 @@ def run(
                 "named_slot": None,
             }
             try:
-                result = _complete(registry, rows)
+                answer_json, failure = complete(
+                    render_shelf(rows), SYSTEM, ANSWER_SCHEMA, MAX_OUTPUT_TOKENS, sample=draw
+                )
             except Exception as error:  # an outage is a fact about the day, not about the text
                 record["refusal"] = str(error)[:160]
                 records.append(record)
                 continue
-            parsed = result.parsed if isinstance(result.parsed, dict) else None
+            if failure is not None:
+                record["refusal"] = failure
+                records.append(record)
+                continue
+            parsed = answer_json if isinstance(answer_json, dict) else None
             answer = parse_answer(json.dumps(parsed)) if parsed is not None else None
             record["named_slot"] = answer["off_shelf"] if answer else None
             if answer and answer["off_shelf"]:
@@ -760,6 +772,13 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--pairs", type=int, default=GRADIENT_PAIRS)
     parser.add_argument("--surface", type=int, default=SURFACE_SHELVES)
     parser.add_argument("--out", type=Path, default=RESULTS / "blurb-shelf.json")
+    parser.add_argument(
+        "--reader",
+        default="registry",
+        help="'registry' (default) or 'ollama:<model>' for a cross-family reader; its run "
+        "writes its own suffixed results file, labelled and never pooled with another "
+        "reader's numbers",
+    )
     parser.add_argument("--selftest", action="store_true")
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--run", action="store_true")
@@ -769,6 +788,14 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.selftest:
         return selftest()
+    try:
+        reader_spec = reader_transport.parse_reader_spec(args.reader)
+    except ValueError as error:
+        parser.error(str(error))
+        raise
+    # A cross-family run never lands on the default file: one file per reader is why two
+    # readers' numbers cannot be pooled by accident.
+    args.out = reader_transport.out_with_reader(args.out, reader_spec)
     if not args.run and not args.dry_run:
         parser.error("pass one of --selftest, --dry-run, --run")
     if args.run and not args.i_am_the_gated_run:
@@ -792,6 +819,8 @@ def main(argv: list[str] | None = None) -> int:
             f"{calls} calls exactly: K={K_DRAWS} x ({args.shams} shams "
             f"+ {args.pairs} gradient + {args.surface} surface + {len(texts)} ours)"
         )
+        if reader_spec.transport != "registry":
+            print(f"reader {reader_transport.describe(reader_spec)}")
         print("dry run: no registry constructed, nothing spent", file=sys.stderr)
         return 0
 
@@ -810,7 +839,17 @@ def main(argv: list[str] | None = None) -> int:
         f"{args.pairs} gradient, {len(texts)} ours, {args.surface} surface"
     )
 
-    records, phrases, compositions = run(build_default_registry(), shelves)
+    complete = reader_transport.completer(
+        reader_spec,
+        build_request=build_request,
+        registry=build_default_registry() if reader_spec.transport == "registry" else None,
+        cache_path=(
+            args.out.with_name(f"{args.out.stem}.raw.jsonl")
+            if reader_spec.transport == "ollama"
+            else None
+        ),
+    )
+    records, phrases, compositions = run(complete, shelves)
 
     per_shelf: dict[str, Any] = {}
     leg_agreements: dict[str, list[float]] = {}
@@ -840,6 +879,10 @@ def main(argv: list[str] | None = None) -> int:
     }
     report = {
         "study": BLURB_SHELF_VERSION,
+        # Written once, at the top: every number under it belongs to this reader, and a run
+        # writes one file — the labelling that makes pooling two readers impossible by
+        # construction rather than by care.
+        "reader": reader_transport.reader_block(reader_spec),
         "registration_digest": registration_digest(),
         "calls": calls,
         "shelves": compositions,
@@ -864,6 +907,8 @@ def main(argv: list[str] | None = None) -> int:
         else kd_verdict
     )
     print(f"\nKP {table['KP']['verdict']}  KS {table['KS']['verdict']}  KD {kd_text}")
+    if reader_spec.transport != "registry":
+        print(f"reader {reader_transport.describe(reader_spec)}")
     print(f"-> {args.out}")
     return 0
 

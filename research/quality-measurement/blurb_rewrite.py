@@ -49,6 +49,7 @@ sys.path.insert(0, str(HERE.parent.parent / "src"))
 
 import blurb_gradient  # noqa: E402
 import listing_arena  # noqa: E402
+import reader_transport  # noqa: E402
 
 from litharness.domain.generation import CompletionRequest  # noqa: E402
 from litharness.providers import build_default_registry  # noqa: E402
@@ -120,7 +121,12 @@ def render_ask(title: str, listing: str, k: int, sentence: str) -> str:
 
 
 def build_request(prompt: str) -> CompletionRequest:
-    """One measurement call: no schema — the reply is a sentence, not a record."""
+    """One measurement call: no schema — the reply is a sentence, not a record.
+
+    Handed to `reader_transport.completer` as the registry reader's request constructor, so
+    the seam cannot rebuild (and so drift from) these bytes: `--reader registry` sends
+    exactly this and nothing else.
+    """
     return CompletionRequest(
         prompt=prompt,
         system=SYSTEM,
@@ -541,16 +547,16 @@ def call_plan(entries: list[dict[str, Any]]) -> dict[str, Any]:
     }
 
 
-def _ask_once(registry: Any, prompt: str) -> tuple[str | None, str | None]:
-    try:
-        result, _ = registry.complete(build_request(prompt))
-    except Exception as error:  # an outage is a fact about the day, not about the text
-        return None, str(error)[:160]
-    return normalise(result.text), None
+def _ask_once(complete: Any, prompt: str, sample: int = 0) -> tuple[str | None, str | None]:
+    """One rewrite through the reader seam; (reply, failure), the reply normalised."""
+    result, failure = complete(prompt, SYSTEM, None, MAX_OUTPUT_TOKENS, sample=sample)
+    if failure is not None:
+        return None, failure
+    return normalise(str(result)), None
 
 
 def run_listing(
-    registry: Any, entry: dict[str, Any], *, allow_prose: bool
+    complete: Any, entry: dict[str, Any], *, allow_prose: bool
 ) -> tuple[dict[str, Any], list[tuple[float, float]]]:
     """Round 1 (K draws per sentence) and KF round 2 (draw 1 fed back into its own context).
 
@@ -562,8 +568,12 @@ def run_listing(
     replies_by_sentence: list[list[str | None]] = []
     for k, sent in enumerate(bodies, start=1):
         replies: list[str | None] = []
-        for _ in range(K_DRAWS):
-            reply, _error = _ask_once(registry, render_ask(entry["title"], body, k, sent))
+        for draw in range(K_DRAWS):
+            # The draw index rides to the transport: K byte-identical asks are K draws of a
+            # distribution, and a replay cache must never collapse them into one answer.
+            reply, _error = _ask_once(
+                complete, render_ask(entry["title"], body, k, sent), sample=draw
+            )
             replies.append(reply)  # None on failure: excluded from scoring, counted instead
         replies_by_sentence.append(replies)
     report = listing_report(
@@ -588,7 +598,7 @@ def run_listing(
         updated = bodies.copy()
         updated[k - 1] = answered[0]
         reply2, _error = _ask_once(
-            registry, render_ask(entry["title"], " ".join(updated), k, answered[0])
+            complete, render_ask(entry["title"], " ".join(updated), k, answered[0])
         )
         round2 = span_diff(answered[0], reply2)[0] if reply2 else float("nan")
         kf_pairs.append((report["sentences"][k - 1]["mean_change_rate"], round2))
@@ -610,6 +620,13 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--texts", nargs="*", default=[], help="our listings, as load_texts reads")
     parser.add_argument("--pairs", type=int, default=8)
     parser.add_argument("--out", type=Path, default=RESULTS / "blurb-rewrite.json")
+    parser.add_argument(
+        "--reader",
+        default="registry",
+        help="'registry' (default) or 'ollama:<model>' for a cross-family reader; its run "
+        "writes its own suffixed results file, labelled and never pooled with another "
+        "reader's numbers",
+    )
     parser.add_argument("--yes", action="store_true")
     # Undocumented on purpose: the parent session runs the gated run. An operator typing this
     # flag by accident is not the failure mode being guarded; unattended quota spend is.
@@ -618,6 +635,16 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.selftest:
         return selftest()
+
+    try:
+        reader_spec = reader_transport.parse_reader_spec(args.reader)
+    except ValueError as error:
+        parser.error(str(error))
+        raise
+    # A cross-family run never lands on the default file: one file per reader is why two
+    # readers' numbers cannot be pooled by accident. The derived/-side text dump follows the
+    # same suffixed stem, so it stays beside its own results file.
+    args.out = reader_transport.out_with_reader(args.out, reader_spec)
 
     high: list[dict[str, Any]] = []
     low: list[dict[str, Any]] = []
@@ -658,7 +685,16 @@ def main(argv: list[str] | None = None) -> int:
         )
         return 1
 
-    registry = build_default_registry()
+    complete = reader_transport.completer(
+        reader_spec,
+        build_request=build_request,
+        registry=build_default_registry() if reader_spec.transport == "registry" else None,
+        cache_path=(
+            args.out.with_name(f"{args.out.stem}.raw.jsonl")
+            if reader_spec.transport == "ollama"
+            else None
+        ),
+    )
     pool_reports: list[dict[str, Any]] = []
     text_reports: list[dict[str, Any]] = []
     kf: list[tuple[float, float]] = []
@@ -668,7 +704,7 @@ def main(argv: list[str] | None = None) -> int:
 
     for entry in entries:
         allow_prose = entry["kind"] == "ours"  # pool rows carry offsets and counts only
-        report, kf_pairs = run_listing(registry, entry, allow_prose=allow_prose)
+        report, kf_pairs = run_listing(complete, entry, allow_prose=allow_prose)
         for first, second in kf_pairs:
             if second == second:
                 kf.append((first, second))
@@ -720,6 +756,10 @@ def main(argv: list[str] | None = None) -> int:
     result = {
         "study": BLURB_REWRITE_VERSION,
         "registration": "plan/blurb-rewrite-validity.md",
+        # Written once, at the top: every number under it belongs to this reader, and a run
+        # writes one file — the labelling that makes pooling two readers impossible by
+        # construction rather than by care.
+        "reader": reader_transport.reader_block(reader_spec),
         "registration_digest": registration_digest(),
         # Read before any verdict, the standing rule: a failed draw was excluded from every
         # rate, and a run with many of them is a fact about the day rather than the text.
@@ -756,6 +796,8 @@ def main(argv: list[str] | None = None) -> int:
         f"transport failures: {failed_draws} draw(s), {kf_failures} fixed-point call(s) — "
         "read before any verdict"
     )
+    if reader_spec.transport != "registry":
+        print(f"reader {reader_transport.describe(reader_spec)}")
     print(f"-> {args.out}")
     return 0
 

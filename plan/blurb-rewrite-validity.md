@@ -126,3 +126,24 @@ date has inverted (handoff boundary 3), which is why it is written here before a
 - **No verdict vocabulary anywhere a model can reach.** The frozen ask contains none; the
   replies are prose consumed by code; nothing rates anything.
 - **The instrument's verdict on our own listings is unreadable until KG separates** (§4).
+
+## 7. Amendment: execution-side reader selection (cross-family leg, 2026-08-26)
+
+Nothing above moves. The frozen ask, the request conventions, K, the scorers, the four kills
+and every reading are unchanged; what is new is an execution-side parameter, `--reader`:
+`registry` (the default — the run described above, byte for byte) or `ollama:<model>` (e.g.
+`ollama:qwen3:14b`), carried by `research/quality-measurement/reader_transport.py`. The
+motivation, in one line: a claude-written listing read by a model with no stake in claude's
+habits attacks self-familiarity directly (`plan/reader-architecture-program.md`,
+cross-family row).
+
+The discipline does not move either. A cross-family leg validates on §141's follower gradient
+before its reading of our listings is believed — and its numbers are **never pooled with
+another reader's**: enforced by construction rather than care, since every run writes one
+file, that file carries a single `reader` block (`{"transport", "model"}`) written once at
+the top, and a non-default reader suffixes the default `--out` filename (e.g.
+`blurb-rewrite-qwen3-14b.json`, with the derived/-side text dump following the same stem) so
+a cross-family run cannot overwrite a registry run. The local transport keeps elicit.py's
+replay-cache discipline — requests keyed on the text digest of system+prompt+model plus the
+draw index, JSONL beside the results file — so the K draws per sentence stay K draws of one
+distribution under any reader.

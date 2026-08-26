@@ -118,3 +118,23 @@ named something) — the ask under-invites "none". Detection is slot-specific so
 rates stayed readable far above the ~0.14 chance of hitting a rotating slot, but a v1 that
 rebalances the ask toward "none is a common answer" would buy cleaner floors. Not changed in
 v0.1: rewording the ask is a new instrument, not an amendment.
+
+## 7. Amendment: execution-side reader selection (cross-family leg, 2026-08-26)
+
+Nothing above moves. The ask, the schema, K, the legs and the kills are unchanged; what is
+new is an execution-side parameter, `--reader`: `registry` (the default — the run described
+above, byte for byte) or `ollama:<model>` (e.g. `ollama:qwen3:14b`), carried by
+`research/quality-measurement/reader_transport.py`. The motivation, in one line: a
+claude-written listing read by a model with no stake in claude's habits attacks
+self-familiarity directly (`plan/reader-architecture-program.md`, cross-family row).
+
+The discipline does not move either. A cross-family leg validates on §141's follower gradient
+before its reading of our listings is believed — the same bar this readership already cleared
+once, now read by a different model family. And its numbers are **never pooled with another
+reader's**: enforced by construction rather than care, since every run writes one file, that
+file carries a single `reader` block (`{"transport", "model"}`) written once at the top, and
+a non-default reader suffixes the default `--out` filename (e.g.
+`blurb-shelf-qwen3-14b.json`) so a cross-family run cannot overwrite a registry run. The
+local transport keeps elicit.py's replay-cache discipline — requests keyed on the text
+digest of system+prompt+model plus the draw index, JSONL beside the results file — so the K
+draws per shelf stay K draws of one distribution under any reader.
