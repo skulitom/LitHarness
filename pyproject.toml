@@ -19,6 +19,7 @@ litharness = "litharness.cli:main"
 dev = [
   "hypothesis>=6.130",
   "mypy>=1.15",
+  "numpy>=2.2",
   "pytest>=8.3",
   "pytest-cov>=6.0",
   "ruff>=0.9",

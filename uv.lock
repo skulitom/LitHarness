@@ -1128,6 +1128,8 @@ corpus = [
 dev = [
     { name = "hypothesis" },
     { name = "mypy" },
+    { name = "numpy", version = "2.4.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.12'" },
+    { name = "numpy", version = "2.5.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.12'" },
     { name = "pytest" },
     { name = "pytest-cov" },
     { name = "ruff" },
@@ -1143,6 +1145,7 @@ requires-dist = [
     { name = "hypothesis", marker = "extra == 'dev'", specifier = ">=6.130" },
     { name = "litharness-contracts", git = "https://github.com/skulitom/litharness-contracts?rev=8f264369009d7a1eaa28caa648976a48f690a949" },
     { name = "mypy", marker = "extra == 'dev'", specifier = ">=1.15" },
+    { name = "numpy", marker = "extra == 'dev'", specifier = ">=2.2" },
     { name = "pytest", marker = "extra == 'dev'", specifier = ">=8.3" },
     { name = "pytest-cov", marker = "extra == 'dev'", specifier = ">=6.0" },
     { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.9" },
