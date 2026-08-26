@@ -117,7 +117,13 @@ def test_a_sham_floor_is_read_from_one_shams_rows_and_no_pooling_function_exists
     floor = blurb_shelf.sham_floor(tracked)
     assert floor["named"] == 2 and floor["false_alarm"] == pytest.approx(0.5)
     assert floor["modal_slot"] == 4 and floor["by_slot"] == {4: 2}
-    assert floor["position_kill"] is True, "false alarms tracking one slot is the kill"
+    # v0.2: two of four naming one slot is a coin flip under uniform naming, not a kill; the
+    # registered trigger is a modal count of three (KP_MODAL_COUNT — the amendment's arithmetic).
+    assert floor["position_kill"] is False
+    hard = tracked[:2] + [_record(None, 4), _record(None, 0)]
+    assert blurb_shelf.sham_floor(hard)["position_kill"] is True, (
+        "three of four naming one slot is the kill"
+    )
     other = blurb_shelf.sham_floor(quiet)
     assert other["modal_share"] == pytest.approx(1 / 3)
     assert other["position_kill"] is False

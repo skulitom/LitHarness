@@ -138,3 +138,32 @@ a non-default reader suffixes the default `--out` filename (e.g.
 local transport keeps elicit.py's replay-cache discipline — requests keyed on the text
 digest of system+prompt+model plus the draw index, JSONL beside the results file — so the K
 draws per shelf stay K draws of one distribution under any reader.
+
+## 7. Amendments after the second run (v0.2, 2026-08-26)
+
+The v0.1 battery ran (84 calls, `results/blurb-shelf-v01.json`) and replicated the core
+separation exactly — ours tracked through every rotation, 24 of 24 across the two runs, KS
+passing both times. Its own file exposed two READOUT miscalibrations, both amended in v0.2;
+the asks, schemas, legs and floors are untouched, so the detection rates of both runs remain
+readable under this registration:
+
+1. **KD's coordinate.** Agreement was computed over raw slot numbers, so a reader correctly
+   FOLLOWING a rotating target scored 0.25 agreement while hitting 12 of 12 — the readout
+   punished exactly the behaviour the leg exists to measure. v0.2 agrees over outcomes
+   (hit / other / none) on target legs and over the named LISTING's digest on re-shuffled
+   shams, where a slot cannot stay modal except by chance and what stays stable is which
+   listing draws the flag.
+2. **KP's trigger.** At the observed worst case — every draw naming something — a modal
+   count of two among six slots arises near a coin flip under uniform naming (P ≈ 0.72 that
+   some slot repeats in four draws), and the half-share trigger fired on it in both runs.
+   The registered trigger is now a modal COUNT of three (`KP_MODAL_COUNT`), ~0.10 per sham
+   under the same null. The real position evidence remains detection-by-slot on target
+   legs, which tracked perfectly in both runs.
+
+Recorded beside them, from the same file: the sham flags follow listings, not slots (modal
+listing share meets or beats modal slot share on all six re-shuffled shams), which is the
+reader consistently perceiving particular rivals as odd — information, not error — and the
+graded rival-side score therefore reads off per-listing flag rates across appearances
+(ours 1.00 on all three; 34 of 65 listings never flagged), not off a per-shelf "belongs"
+bit. The ask's under-delivery of "none" stands as §6 left it: a v1 question, not an
+amendment.

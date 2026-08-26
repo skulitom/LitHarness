@@ -66,12 +66,16 @@ RESULTS = HERE / "results"
 
 # ---------------------------------------------------------------- the registration, frozen
 
-#: v0.1, and the two changes from v0 are construction findings from its first run
-#: (`results/blurb-shelf.json`, the registration's amendment section): sham shelves now
-#: re-shuffle per draw so a reader consistently naming the same LISTING no longer fixes a
-#: slot (v0's KP could not tell identity from position on a static shelf), and KD is read
-#: per leg (v0 pooled shams with measurement legs, two different tasks under one number).
-BLURB_SHELF_VERSION = "blurb_shelf.v0.1"
+#: v0.2. From v0's run: sham shelves re-shuffle per draw (identity and position decoupled)
+#: and KD reads per leg. From v0.1's run (`results/blurb-shelf-v01.json`), two readout
+#: miscalibrations its own file exposed: KD computed draw agreement on raw slot numbers, so
+#: a reader correctly FOLLOWING a rotating target scored 0.25 agreement at 12/12 hits — it
+#: now agrees over outcomes (hit / other / none) on target legs and over the named LISTING
+#: on shams; and KP's 0.5-modal trigger at four named draws over six slots fired near a
+#: coin flip once the naming rate hit 1.0 — it now requires a modal count of three
+#: (`KP_MODAL_COUNT`; under uniform naming that is ~0.10 per sham rather than ~0.5). The
+#: asks, schemas, legs and floors are unchanged throughout.
+BLURB_SHELF_VERSION = "blurb_shelf.v0.2"
 
 #: Listings per shelf, numbered 1-6 in the ask.
 SHELF_SIZE = 6
@@ -120,9 +124,13 @@ ANSWER_SCHEMA: dict[str, Any] = {
     },
 }
 
-#: KP's definition, registered: a shelf's false alarms track one slot when at least half of
-#: its non-zero answers name that same slot (and there are at least two to speak of).
-KP_MODAL_SHARE = 0.5
+#: KP's definition, registered (amended in v0.2, and the arithmetic is the amendment): a
+#: shelf's false alarms track one slot when at least this many of its non-zero answers name
+#: that same slot. Three, because at the observed worst case — all four draws naming
+#: something — a modal count of two among six slots happens near a coin flip under uniform
+#: naming (P ≈ 0.72 that SOME slot repeats), while a modal count of three is ~0.10 per
+#: sham. v0/v0.1's half-share trigger fired on that coin flip twice.
+KP_MODAL_COUNT = 3
 
 #: KD's floor, registered: below this mean cross-draw agreement the draws disagree with each
 #: other more than they agree, and no direction is readable from any leg (gate-0 discipline).
@@ -139,7 +147,7 @@ PRE_REGISTRATION: dict[str, Any] = {
     "gradient_pairs": GRADIENT_PAIRS,
     "surface_shelves": SURFACE_SHELVES,
     "call_guard": CALL_GUARD,
-    "kp_modal_share": KP_MODAL_SHARE,
+    "kp_modal_count": KP_MODAL_COUNT,
     "kd_agreement_floor": KD_AGREEMENT_FLOOR,
 }
 
@@ -436,15 +444,19 @@ def sham_floor(records: list[dict[str, Any]]) -> dict[str, Any]:
         "modal_slot": modal_slot,
         "modal_share": (modal_count / len(named)) if named else None,
         "modal_listing_share": modal_listing_share,
-        "position_kill": len(named) >= 2 and (modal_count / len(named)) >= KP_MODAL_SHARE,
+        "position_kill": modal_count >= KP_MODAL_COUNT,
     }
 
 
-def draw_agreement(answers: list[int | None]) -> float | None:
+def draw_agreement(answers: list[Any]) -> float | None:
     """Cross-draw agreement within one shelf: the share of answered draws naming the mode.
 
     KD reads this, gate-0 shape — draws that disagree with each other as much as they agree
-    make every rate above noise wearing a number.
+    make every rate above noise wearing a number. The COORDINATE is the caller's, and it is
+    v0.2's amendment: on a rotating-target leg the values are outcomes (hit / other / none),
+    because raw slot numbers punish a reader that correctly follows the target — v0.1 scored
+    12/12 tracking as 0.25 agreement; on a re-shuffled sham they are the named LISTING's
+    digest, because a slot cannot stay modal there except by chance.
     """
     answered = [a for a in answers if a is not None]
     if not answered:
@@ -625,6 +637,12 @@ def selftest() -> int:
         failures.append("a floor must come from its own shelf's rows alone")
     if floor_b["modal_share"] != 0.5 or floor_a["modal_share"] != 1.0:
         failures.append("two shams' floors must stay two floors")
+    # v0.2: a modal count of two is a coin flip at full naming, not a position kill; three is.
+    if floor_a["position_kill"]:
+        failures.append("a modal count of two must not fire KP (the v0.1 coin-flip trigger)")
+    tracked = sham_floor([{"named_slot": 4}] * 3 + [{"named_slot": 0}])
+    if not tracked["position_kill"]:
+        failures.append("a modal count of three must fire KP")
 
     long_text = " ".join(f"sentence number {i} keeps going." for i in range(12))
     cut = truncate_to_word_count(long_text, 10)
@@ -642,7 +660,7 @@ def selftest() -> int:
         failures.append("an unlocatable market phrase stores nothing but located False")
 
     table = kills(
-        [floor_a],
+        [tracked],
         {"gradient": 0.8, "surface": 0.2, "kd_by_leg": {"gradient": 0.75, "sham": 0.3}},
     )
     if table["KS"]["verdict"] != "PASS" or table["KP"]["verdict"] != "KILL":
@@ -858,7 +876,27 @@ def main(argv: list[str] | None = None) -> int:
         per_shelf[shelf["name"]] = (
             sham_floor(mine) if shelf["leg"] == "sham" else tally_draws(mine)
         )
-        agreement = draw_agreement([r["named_slot"] for r in mine])
+        if shelf["leg"] == "sham":
+            # Identity coordinates: what stays stable on a re-shuffled sham is which LISTING
+            # gets named, and "zero" (naming nothing) is itself an answer that can agree.
+            values: list[Any] = [
+                ("zero" if r["named_slot"] == 0 else r.get("named_digest"))
+                if r.get("named_slot") is not None
+                else None
+                for r in mine
+            ]
+        else:
+            values = [
+                None
+                if r.get("named_slot") is None
+                else (
+                    "hit"
+                    if r["named_slot"] == r.get("target_slot")
+                    else ("zero" if r["named_slot"] == 0 else "other")
+                )
+                for r in mine
+            ]
+        agreement = draw_agreement(values)
         if agreement is not None:
             leg_agreements.setdefault(shelf["leg"], []).append(agreement)
 
