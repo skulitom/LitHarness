@@ -42,6 +42,12 @@ from typing import Any
 os.environ.setdefault("LITHARNESS_ENV", "test")
 
 import litharness_contracts as lc
+from litharness.application.variation import (
+    VARIATION_STEP,
+    make_variation_repair_handler,
+    make_variation_step_handler,
+)
+from litharness.domain.variation import VariationObjective, session_id_for
 
 from litharness.adapters.contracts_fixtures import fixture_manuscript
 from litharness.adapters.sqlite_store import SqliteStore
@@ -50,11 +56,6 @@ from litharness.application.repair import (
     REPAIR_FINDING,
     make_repair_handler,
     repair_job_for,
-)
-from litharness.application.variation import (
-    VARIATION_STEP,
-    make_variation_repair_handler,
-    make_variation_step_handler,
 )
 from litharness.domain.budget import BudgetPolicy
 from litharness.domain.findings import Finding, Severity
@@ -70,7 +71,6 @@ from litharness.domain.revision import (
     node_version_id,
 )
 from litharness.domain.text import content_hash
-from litharness.domain.variation import VariationObjective, session_id_for
 from litharness.providers.base import parse_schema_payload
 from litharness.providers.registry import ProviderRegistry
 
