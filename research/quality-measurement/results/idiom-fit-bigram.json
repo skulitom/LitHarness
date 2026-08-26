@@ -1,0 +1,262 @@
+{
+  "chapters": 200000,
+  "sizes": [
+    2
+  ],
+  "tiers": {
+    "ours": {
+      "n": 4,
+      "interval": [
+        0.202,
+        0.2757,
+        0.3495
+      ],
+      "shares": [
+        0.1852,
+        0.25,
+        0.3077,
+        0.36
+      ]
+    },
+    "summits": {
+      "n": 8,
+      "interval": [
+        0.1742,
+        0.2268,
+        0.2795
+      ],
+      "shares": [
+        0.2333,
+        0.2647,
+        0.3684,
+        0.1333,
+        0.2727,
+        0.1765,
+        0.1538,
+        0.2121
+      ]
+    }
+  },
+  "named_check": {
+    "wrong": {
+      "a patch of notes": 0,
+      "one line nerfed": 0,
+      "loot that works": 0,
+      "dropped flush": 0,
+      "keys don't take": 1,
+      "repro steps": 0
+    },
+    "right": {
+      "carve a path to greatness": 0,
+      "gifted with a system": 0,
+      "cast any spells": 48,
+      "magical gift": 21,
+      "the supernatural is real": 0,
+      "master magic": 76
+    }
+  },
+  "rows": [
+    {
+      "tier": "summits",
+      "id": "royalroad:50243",
+      "grams": 30,
+      "unseen": 7,
+      "unseen_share": 0.2333,
+      "unseen_per_1k": 43.8,
+      "examples": [
+        "altar nothing",
+        "andross silver",
+        "bestows great",
+        "building reborn",
+        "crijik book",
+        "crijik mark",
+        "five andross"
+      ]
+    },
+    {
+      "tier": "summits",
+      "id": "royalroad:49879",
+      "grams": 34,
+      "unseen": 9,
+      "unseen_share": 0.2647,
+      "unseen_per_1k": 50.3,
+      "examples": [
+        "amazon callum",
+        "enforcement callum",
+        "mage buy",
+        "paranoid mage",
+        "requirements duties",
+        "secret enforcement",
+        "thirty callum",
+        "two renegade",
+        "volumes selector"
+      ]
+    },
+    {
+      "tier": "summits",
+      "id": "royalroad:44132",
+      "grams": 19,
+      "unseen": 7,
+      "unseen_share": 0.3684,
+      "unseen_per_1k": 86.4,
+      "examples": [
+        "alex gilbert",
+        "arrives blessed",
+        "bob stubbed",
+        "calamitous bob",
+        "kindle select",
+        "sociopathic gods",
+        "temporary note"
+      ]
+    },
+    {
+      "tier": "summits",
+      "id": "royalroad:41656",
+      "grams": 30,
+      "unseen": 4,
+      "unseen_share": 0.1333,
+      "unseen_per_1k": 35.1,
+      "examples": [
+        "chaotic craftsman",
+        "craftsman worships",
+        "cube summoned",
+        "fortune promised"
+      ]
+    },
+    {
+      "tier": "summits",
+      "id": "royalroad:47038",
+      "grams": 11,
+      "unseen": 3,
+      "unseen_share": 0.2727,
+      "unseen_per_1k": 35.3,
+      "examples": [
+        "powerful slayers",
+        "stone tyron",
+        "tyron receives"
+      ]
+    },
+    {
+      "tier": "summits",
+      "id": "royalroad:48893",
+      "grams": 34,
+      "unseen": 6,
+      "unseen_share": 0.1765,
+      "unseen_per_1k": 42.0,
+      "examples": [
+        "character wakes",
+        "com max",
+        "core finds",
+        "dungeons disclaimer",
+        "mana defends",
+        "unnamed main"
+      ]
+    },
+    {
+      "tier": "summits",
+      "id": "royalroad:47995",
+      "grams": 26,
+      "unseen": 4,
+      "unseen_share": 0.1538,
+      "unseen_per_1k": 41.7,
+      "examples": [
+        "issues updates",
+        "severe personality",
+        "time villainess",
+        "updates thursdays"
+      ]
+    },
+    {
+      "tier": "summits",
+      "id": "royalroad:107917",
+      "grams": 66,
+      "unseen": 14,
+      "unseen_share": 0.2121,
+      "unseen_per_1k": 99.3,
+      "examples": [
+        "actual daoism",
+        "chapter aprox",
+        "clan exterminated",
+        "daoism sects",
+        "diseases tossed",
+        "exterminated body",
+        "f volume",
+        "hands mutilated",
+        "harem earned",
+        "innumerable diseases",
+        "mutilated inflicted",
+        "pride parents"
+      ]
+    },
+    {
+      "tier": "ours",
+      "id": "pilot9:draft",
+      "grams": 27,
+      "unseen": 5,
+      "unseen_share": 0.1852,
+      "unseen_per_1k": 49.0,
+      "examples": [
+        "forming decide",
+        "loot works",
+        "nobody installed",
+        "owen tested",
+        "tested games"
+      ]
+    },
+    {
+      "tier": "ours",
+      "id": "pilot9:listing",
+      "grams": 32,
+      "unseen": 8,
+      "unseen_share": 0.25,
+      "unseen_per_1k": 69.0,
+      "examples": [
+        "changelog contradict",
+        "line nerfed",
+        "nerfed whatever",
+        "nobody installed",
+        "owen tests",
+        "owen's apartment",
+        "repro steps",
+        "tests games"
+      ]
+    },
+    {
+      "tier": "ours",
+      "id": "pilot10:draft",
+      "grams": 26,
+      "unseen": 8,
+      "unseen_share": 0.3077,
+      "unseen_per_1k": 73.4,
+      "examples": [
+        "changelog hunting",
+        "changes plainly",
+        "monsters seeded",
+        "person edit",
+        "plainly monsters",
+        "stairwells trying",
+        "survive vic",
+        "vic reads"
+      ]
+    },
+    {
+      "tier": "ours",
+      "id": "pilot10:listing",
+      "grams": 25,
+      "unseen": 9,
+      "unseen_share": 0.36,
+      "unseen_per_1k": 76.9,
+      "examples": [
+        "changes plainly",
+        "edit costs",
+        "monsters seeded",
+        "phrased exactly",
+        "plainly monsters",
+        "read changelogs",
+        "sentence edits",
+        "survive vic",
+        "vic reads"
+      ]
+    }
+  ]
+}

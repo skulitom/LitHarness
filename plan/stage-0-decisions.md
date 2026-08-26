@@ -14228,7 +14228,7 @@ why the within-tier reading is no reading rather than a null. Nothing about *why
 reads as a top blurb; the instrument separates the classes and names no feature, and a feature
 named by asking it would be the verdict channel §89 closed.
 
-## 142. Four instruments say our listings beat the market and the operator says they are abysmal, and the market is what is wrong
+## 142. ~~Four instruments say our listings beat the market and the operator says they are abysmal, and the market is what is wrong~~ WITHDRAWN by §143
 
 The operator, 2026-08-26, having read the post-fix listings: *"they are definitely not in the
 well made category, and as i have mentioned before we clearly have a problem with the readers if
@@ -14332,3 +14332,108 @@ Listings only. Six blurbs a tier, four readers each, so the intervals are wide e
 chapters, where none of these four instruments has been run. And nothing about what a counter
 for vagueness or for sentences-that-do-not-connect would look like; naming the four that do not
 exist is as far as this entry goes.
+
+## 143. Six model-based instruments are blind to the defect and a corpus n-gram counter is not
+
+The operator, 2026-08-26, having read the post-fix listings and rejected §142's conclusion:
+*"I've read the RR overviews and they do clear my bar. your measurements must be wrong... we must
+find a way for readers to rank the overviews we generated so far much lower than top rated
+titles overview."*
+
+**§142 is withdrawn.** Its claim — that the market does not clear the operator's bar — rested on
+the uncashable-term counter putting the market's best at 13.8 terms a blurb. The operator's
+reading of those terms (*class*, *slayers*, *sects*, *purged from his soul*) is that they parse
+instantly, which is correct, and which means the counter was measuring **definition** where
+`house.CLARITY` specifies **consequence**. A bad counter, not a bad market.
+
+### 143.1 The pool was never the problem, and the last pool proves it
+
+The comparator was rebuilt properly: all twelve cached shards rather than two (229 admitted
+fictions rather than 42), plus the operator's own named works out of `plan/anchor-set.md` —
+Paranoid Mage at 17,850 followers and Mark of the Crijik — as a 14-work summit set.
+
+**Ours won 24 of 24.** Position balanced at 0.417, both conditional rates 1.0. A question that
+returns 1.0 against the operator's own favourites cannot be repaired by a better pool.
+
+### 143.2 Six blind instruments, and what their failures have in common
+
+| instrument | reading |
+| --- | --- |
+| paired pick, tasted readers | ours 15/16 |
+| paired pick, **no declared taste** (`readers.BLIND`) | ours 16/16 |
+| paired pick vs the operator's summits | **ours 24/24** |
+| uncashable terms | ours 5.75 against 12.5-13.8 |
+| three quote-a-span probes: unfollowable / reread / empty | blind, blind, **summits worse** |
+| corpus n-grams, first cut | blind |
+
+Every one is a language model reading text and every one prefers ours. That is not six
+coincidences.
+
+**The span probe did locate the difference before it failed.** It quoted, in ours: *"One line
+nerfed whatever used to keep monsters out of buildings"*, *"drop loot that works"*, *"two rules
+in that changelog contradict each other"*. And in the operator's favourites: *"gifted with a
+system"*, *"carve a path to greatness"*, *"the Guild of Arcane Regulation"*. Good recall, no
+precision — and the difference between the lists is not clarity. **The second list is phrasing
+this genre uses and the first is not.**
+
+That is what the operator has said in every session and it was never a comprehension complaint:
+*"wtf is a patch of notes, nobody says that"*, *"lines are not things that get nerfed"*, *"keys
+don't take, they open things"*, *"'dropped flush' isn't a phrase I heard anyone ever say"*.
+**Wrong in the way somebody fluent in the genre hears instantly, and a model that produced it
+does not.** A model asked whether its own collocation is idiomatic is the wrong instrument on
+principle, which is why all six were blind.
+
+### 143.3 The counter with no model in it
+
+`research/quality-measurement/idiom_fit.py`: content bigrams from a listing, counted against
+**200,000 RoyalRoad chapters**, reporting the share that appear **zero** times. Proper nouns and
+publishing furniture are excluded, and that exclusion is the whole difference between blind and
+not — the first cut tied the tiers because the summits' unseen spans were `alex gilbert`, `bob
+stubbed` and `com max` while ours were `loot works` and `line nerfed`.
+
+| | unseen bigram share | 95% |
+| --- | --- | --- |
+| **ours — the two listings the operator rated** | **0.302** | [0.254, 0.350] |
+| the summit set | **0.101** | [0.041, 0.161] |
+
+**Disjoint, three times the rate, and the flagged spans are the operator's own complaints**:
+`loot works`, `line nerfed`, `nerfed whatever`, `changelog contradict`, `changelog hunting`,
+`monsters seeded`, `edit costs`. The summits' are few and benign: `bestows great`, `sociopathic
+gods`, `severe personality`.
+
+**This is the first instrument in this project that ranks our work below the operator's, and it
+contains no model.**
+
+### 143.4 The confound check, which narrows the claim sharply
+
+Both rated listings share a software-apocalypse subject, so rarity could be the *topic* rather
+than the phrasing. Re-run on eight listings from the arm sweep, none of them software-themed:
+
+**ours 0.139 [0.103, 0.176] against summits 0.101 [0.041, 0.161] — overlap, blind.**
+
+So the counter separates the two listings the operator explicitly rated and does **not** separate
+the eight newer ones, which the operator also rates below the bar (*"definitely not in the well
+made category"*). Two readings and this entry does not choose between them: the subject drives
+part of the effect, and the newer listings may genuinely phrase better without being good. The
+flagged spans support a mix — `line nerfed` is an error, `mall kiosk` and `veterinary student`
+are merely specific.
+
+**What it is: a partial instrument with face validity and one confirmed hit.** What it is not: a
+counter that tracks the operator's judgment, which it demonstrably does not on eight of ten
+cases.
+
+### 143.5 What was refused
+
+No reader tuned until it agreed. `readers.BLIND` is a subtraction with a registered validity
+check, and it *failed* — kept in the tree because a hypothesis that costs 16 calls to refute is
+worth not testing twice. No bar over the unseen share, which has had none of §61's four checks
+and which §143.4 shows does not generalise. No claim that the counter measures phrasing rather
+than topic; separating those needs listings matched on subject, which is a cheap next run and
+was not made here. And no re-reading of §142, which is withdrawn rather than reinterpreted.
+
+### 143.6 Anti-scope
+
+Listings only. Bigrams only — trigrams over 40,000 chapters put every text above 0.45 unseen,
+including the operator's favourites, which is a sample-size failure and is why the run reports
+its chapter count. Ten of our listings, fourteen summits, so every interval here is wide. And
+nothing about chapters, where none of the seven instruments has been run.

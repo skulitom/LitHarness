@@ -1,0 +1,321 @@
+{
+  "chapters": 40000,
+  "tiers": {
+    "ours": {
+      "n": 4,
+      "interval": [
+        0.543,
+        0.6029,
+        0.6628
+      ],
+      "shares": [
+        0.5192,
+        0.6562,
+        0.5968,
+        0.6393
+      ]
+    },
+    "summits": {
+      "n": 8,
+      "interval": [
+        0.4865,
+        0.5628,
+        0.6392
+      ],
+      "shares": [
+        0.4677,
+        0.68,
+        0.7619,
+        0.4853,
+        0.5172,
+        0.5059,
+        0.4706,
+        0.6142
+      ]
+    }
+  },
+  "named_check": {
+    "wrong": {
+      "a patch of notes": 0,
+      "one line nerfed": 0,
+      "loot that works": 0,
+      "dropped flush": 0,
+      "keys don't take": 0,
+      "repro steps": 0
+    },
+    "right": {
+      "carve a path to greatness": 0,
+      "gifted with a system": 0,
+      "cast any spells": 9,
+      "magical gift": 4,
+      "the supernatural is real": 0,
+      "master magic": 6
+    }
+  },
+  "rows": [
+    {
+      "tier": "summits",
+      "id": "royalroad:50243",
+      "grams": 62,
+      "unseen": 29,
+      "unseen_share": 0.4677,
+      "unseen_per_1k": 181.2,
+      "examples": [
+        "also kills",
+        "altar nothing",
+        "andross must master",
+        "andross silver",
+        "armed with determination",
+        "arms a stone",
+        "audible too andross",
+        "bestows great",
+        "bestows great powers",
+        "building reborn",
+        "countdown of death",
+        "crijik a magical"
+      ]
+    },
+    {
+      "tier": "summits",
+      "id": "royalroad:49879",
+      "grams": 75,
+      "unseen": 51,
+      "unseen_share": 0.68,
+      "unseen_per_1k": 284.9,
+      "examples": [
+        "admit such things",
+        "amazon after escaping",
+        "amazon callum",
+        "arcane regulation",
+        "beasts living among",
+        "book five check",
+        "book one paranoid",
+        "book two renegade",
+        "bureau of secret",
+        "buy on amazon",
+        "callum had seen",
+        "callum has lost"
+      ]
+    },
+    {
+      "tier": "summits",
+      "id": "royalroad:44132",
+      "grams": 42,
+      "unseen": 32,
+      "unseen_share": 0.7619,
+      "unseen_per_1k": 395.1,
+      "examples": [
+        "alex gilbert",
+        "arrives blessed",
+        "become a calamity",
+        "bob stubbed",
+        "calamitous bob",
+        "calamitous bob stubbed",
+        "fickle thing temporary",
+        "kindle select",
+        "mildly sociopathic",
+        "mildly sociopathic gods",
+        "monsters its knights",
+        "name alex gilbert"
+      ]
+    },
+    {
+      "tier": "summits",
+      "id": "royalroad:41656",
+      "grams": 68,
+      "unseen": 33,
+      "unseen_share": 0.4853,
+      "unseen_per_1k": 289.5,
+      "examples": [
+        "accident in hopes",
+        "alone ben",
+        "alone ben tries",
+        "also aren't seen",
+        "bad deal there's",
+        "ben wasn't blessed",
+        "chaotic craftsman",
+        "chaotic craftsman worships",
+        "classmates are gifted",
+        "colourful characters",
+        "colourful characters along",
+        "coming threat ben"
+      ]
+    },
+    {
+      "tier": "summits",
+      "id": "royalroad:47038",
+      "grams": 29,
+      "unseen": 15,
+      "unseen_share": 0.5172,
+      "unseen_per_1k": 176.5,
+      "examples": [
+        "allow his class",
+        "amazon and audible",
+        "audible and can't",
+        "instant his bright",
+        "knows and rise",
+        "power note book",
+        "powerful slayers",
+        "receives his class",
+        "released on amazon",
+        "scion of two",
+        "slayers is torn",
+        "stone tyron"
+      ]
+    },
+    {
+      "tier": "summits",
+      "id": "royalroad:48893",
+      "grams": 85,
+      "unseen": 43,
+      "unseen_share": 0.5059,
+      "unseen_per_1k": 300.7,
+      "examples": [
+        "cave this newly",
+        "character wakes",
+        "com max",
+        "com max new",
+        "confuses the hell",
+        "core finds",
+        "core finds himself",
+        "dungeon core finds",
+        "dungeon core instead",
+        "dungeons disclaimer",
+        "explores the uses",
+        "fiction the dungeon"
+      ]
+    },
+    {
+      "tier": "summits",
+      "id": "royalroad:47995",
+      "grams": 51,
+      "unseen": 24,
+      "unseen_share": 0.4706,
+      "unseen_per_1k": 250.0,
+      "examples": [
+        "certainly doesn't think",
+        "favorite rpgs",
+        "finds herself waking",
+        "free time finds",
+        "getting whisked away",
+        "issues updates",
+        "issues updates thursdays",
+        "local small time",
+        "others rejoice",
+        "part where others",
+        "personality issues updates",
+        "rejoice over getting"
+      ]
+    },
+    {
+      "tier": "summits",
+      "id": "royalroad:107917",
+      "grams": 127,
+      "unseen": 78,
+      "unseen_share": 0.6142,
+      "unseen_per_1k": 553.2,
+      "examples": [
+        "actual daoism",
+        "actual daoism sects",
+        "already complete k",
+        "aprox some run",
+        "body burned hands",
+        "burned hands mutilated",
+        "chapter aprox",
+        "chapter no harem",
+        "clan exterminated",
+        "clan exterminated body",
+        "complete k",
+        "complete k words"
+      ]
+    },
+    {
+      "tier": "ours",
+      "id": "pilot9:draft",
+      "grams": 52,
+      "unseen": 27,
+      "unseen_share": 0.5192,
+      "unseen_per_1k": 264.7,
+      "examples": [
+        "building that goes",
+        "close a class",
+        "dungeon monsters come",
+        "earth every phone",
+        "forming decide",
+        "forming decide who",
+        "game nobody",
+        "game nobody installed",
+        "guilds now forming",
+        "installed now owen",
+        "knows a broken",
+        "like patch notes"
+      ]
+    },
+    {
+      "tier": "ours",
+      "id": "pilot9:listing",
+      "grams": 64,
+      "unseen": 42,
+      "unseen_share": 0.6562,
+      "unseen_per_1k": 362.1,
+      "examples": [
+        "apartment block going",
+        "because two rules",
+        "block going",
+        "changelog contradict",
+        "dungeon a status",
+        "earth every phone",
+        "forming across town",
+        "full of repro",
+        "game nobody",
+        "game nobody installed",
+        "gap first",
+        "goes down scared"
+      ]
+    },
+    {
+      "tier": "ours",
+      "id": "pilot10:draft",
+      "grams": 62,
+      "unseen": 37,
+      "unseen_share": 0.5968,
+      "unseen_per_1k": 339.4,
+      "examples": [
+        "account that pushed",
+        "cannot survive vic",
+        "changelog hunting",
+        "changes plainly",
+        "changes plainly monsters",
+        "dying in stairwells",
+        "edit the rules",
+        "lets a person",
+        "line every living",
+        "line the author",
+        "list anyone",
+        "listed the changes"
+      ]
+    },
+    {
+      "tier": "ours",
+      "id": "pilot10:listing",
+      "grams": 61,
+      "unseen": 39,
+      "unseen_share": 0.6393,
+      "unseen_per_1k": 333.3,
+      "examples": [
+        "account that pushed",
+        "cannot survive vic",
+        "changelogs at work",
+        "changes plainly",
+        "changes plainly monsters",
+        "costs the writer",
+        "dying in stairwells",
+        "edit costs",
+        "edits a rule",
+        "finds it phrased",
+        "line on every",
+        "line the author"
+      ]
+    }
+  ]
+}

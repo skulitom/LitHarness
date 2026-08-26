@@ -1,0 +1,266 @@
+{
+  "label": "summits-1",
+  "pool": 14,
+  "per_text": [
+    {
+      "text": "pilot7:draft",
+      "digest": "baa27c4911ae",
+      "answered": 4,
+      "refused": 0,
+      "ours": 4,
+      "theirs": 0,
+      "neither": 0,
+      "W": 1.0,
+      "W_ours_first": 1.0,
+      "W_theirs_first": 1.0,
+      "ours_first_share": 0.75
+    },
+    {
+      "text": "pilot7:revised",
+      "digest": "e88560db7249",
+      "answered": 4,
+      "refused": 0,
+      "ours": 4,
+      "theirs": 0,
+      "neither": 0,
+      "W": 1.0,
+      "W_ours_first": null,
+      "W_theirs_first": 1.0,
+      "ours_first_share": 0.0
+    },
+    {
+      "text": "pilot9:draft",
+      "digest": "877860f3bb0a",
+      "answered": 4,
+      "refused": 0,
+      "ours": 4,
+      "theirs": 0,
+      "neither": 0,
+      "W": 1.0,
+      "W_ours_first": 1.0,
+      "W_theirs_first": 1.0,
+      "ours_first_share": 0.5
+    },
+    {
+      "text": "pilot9:revised",
+      "digest": "86c9c1808b48",
+      "answered": 4,
+      "refused": 0,
+      "ours": 4,
+      "theirs": 0,
+      "neither": 0,
+      "W": 1.0,
+      "W_ours_first": 1.0,
+      "W_theirs_first": 1.0,
+      "ours_first_share": 0.75
+    },
+    {
+      "text": "pilot10:draft",
+      "digest": "76a9a9576b82",
+      "answered": 4,
+      "refused": 0,
+      "ours": 4,
+      "theirs": 0,
+      "neither": 0,
+      "W": 1.0,
+      "W_ours_first": null,
+      "W_theirs_first": 1.0,
+      "ours_first_share": 0.0
+    },
+    {
+      "text": "pilot10:revised",
+      "digest": "3c23af8ed270",
+      "answered": 4,
+      "refused": 0,
+      "ours": 4,
+      "theirs": 0,
+      "neither": 0,
+      "W": 1.0,
+      "W_ours_first": 1.0,
+      "W_theirs_first": 1.0,
+      "ours_first_share": 0.5
+    }
+  ],
+  "pooled": {
+    "answered": 24,
+    "refused": 0,
+    "ours": 24,
+    "theirs": 0,
+    "neither": 0,
+    "W": 1.0,
+    "W_ours_first": 1.0,
+    "W_theirs_first": 1.0,
+    "ours_first_share": 0.4166666666666667
+  },
+  "sham": null,
+  "rows": [
+    {
+      "reader": "power_m",
+      "chose": "ours",
+      "ours_first": true,
+      "rival": "royalroad:46550",
+      "text": "pilot7:draft"
+    },
+    {
+      "reader": "power_m",
+      "chose": "ours",
+      "ours_first": false,
+      "rival": "royalroad:47038",
+      "text": "pilot7:draft"
+    },
+    {
+      "reader": "power_m",
+      "chose": "ours",
+      "ours_first": true,
+      "rival": "royalroad:46550",
+      "text": "pilot7:draft"
+    },
+    {
+      "reader": "power_m",
+      "chose": "ours",
+      "ours_first": true,
+      "rival": "royalroad:100432",
+      "text": "pilot7:draft"
+    },
+    {
+      "reader": "power_m",
+      "chose": "ours",
+      "ours_first": false,
+      "rival": "royalroad:47995",
+      "text": "pilot7:revised"
+    },
+    {
+      "reader": "power_m",
+      "chose": "ours",
+      "ours_first": false,
+      "rival": "royalroad:40373",
+      "text": "pilot7:revised"
+    },
+    {
+      "reader": "power_m",
+      "chose": "ours",
+      "ours_first": false,
+      "rival": "royalroad:47038",
+      "text": "pilot7:revised"
+    },
+    {
+      "reader": "power_m",
+      "chose": "ours",
+      "ours_first": false,
+      "rival": "royalroad:100432",
+      "text": "pilot7:revised"
+    },
+    {
+      "reader": "power_m",
+      "chose": "ours",
+      "ours_first": true,
+      "rival": "royalroad:51664",
+      "text": "pilot9:draft"
+    },
+    {
+      "reader": "power_m",
+      "chose": "ours",
+      "ours_first": false,
+      "rival": "royalroad:46550",
+      "text": "pilot9:draft"
+    },
+    {
+      "reader": "power_m",
+      "chose": "ours",
+      "ours_first": false,
+      "rival": "royalroad:47038",
+      "text": "pilot9:draft"
+    },
+    {
+      "reader": "power_m",
+      "chose": "ours",
+      "ours_first": true,
+      "rival": "royalroad:99829",
+      "text": "pilot9:draft"
+    },
+    {
+      "reader": "power_m",
+      "chose": "ours",
+      "ours_first": true,
+      "rival": "royalroad:47995",
+      "text": "pilot9:revised"
+    },
+    {
+      "reader": "power_m",
+      "chose": "ours",
+      "ours_first": true,
+      "rival": "royalroad:50243",
+      "text": "pilot9:revised"
+    },
+    {
+      "reader": "power_m",
+      "chose": "ours",
+      "ours_first": true,
+      "rival": "royalroad:44132",
+      "text": "pilot9:revised"
+    },
+    {
+      "reader": "power_m",
+      "chose": "ours",
+      "ours_first": false,
+      "rival": "royalroad:100432",
+      "text": "pilot9:revised"
+    },
+    {
+      "reader": "power_m",
+      "chose": "ours",
+      "ours_first": false,
+      "rival": "royalroad:46550",
+      "text": "pilot10:draft"
+    },
+    {
+      "reader": "power_m",
+      "chose": "ours",
+      "ours_first": false,
+      "rival": "royalroad:47995",
+      "text": "pilot10:draft"
+    },
+    {
+      "reader": "power_m",
+      "chose": "ours",
+      "ours_first": false,
+      "rival": "royalroad:47995",
+      "text": "pilot10:draft"
+    },
+    {
+      "reader": "power_m",
+      "chose": "ours",
+      "ours_first": false,
+      "rival": "royalroad:47038",
+      "text": "pilot10:draft"
+    },
+    {
+      "reader": "power_m",
+      "chose": "ours",
+      "ours_first": true,
+      "rival": "royalroad:100432",
+      "text": "pilot10:revised"
+    },
+    {
+      "reader": "power_m",
+      "chose": "ours",
+      "ours_first": false,
+      "rival": "royalroad:99829",
+      "text": "pilot10:revised"
+    },
+    {
+      "reader": "power_m",
+      "chose": "ours",
+      "ours_first": true,
+      "rival": "royalroad:50243",
+      "text": "pilot10:revised"
+    },
+    {
+      "reader": "power_m",
+      "chose": "ours",
+      "ours_first": false,
+      "rival": "royalroad:47038",
+      "text": "pilot10:revised"
+    }
+  ]
+}

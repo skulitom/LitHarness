@@ -1,0 +1,217 @@
+{
+  "chapters": 200000,
+  "sizes": [
+    2
+  ],
+  "tiers": {
+    "ours": {
+      "n": 4,
+      "interval": [
+        0.2544,
+        0.3022,
+        0.35
+      ],
+      "shares": [
+        0.25,
+        0.2727,
+        0.3333,
+        0.3529
+      ]
+    },
+    "summits": {
+      "n": 8,
+      "interval": [
+        0.0411,
+        0.1009,
+        0.1608
+      ],
+      "shares": [
+        0.0455,
+        0.0714,
+        0.25,
+        0.0476,
+        0.0,
+        0.1875,
+        0.05,
+        0.1556
+      ]
+    }
+  },
+  "named_check": {
+    "wrong": {
+      "a patch of notes": 0,
+      "one line nerfed": 0,
+      "loot that works": 0,
+      "dropped flush": 0,
+      "keys don't take": 1,
+      "repro steps": 0
+    },
+    "right": {
+      "carve a path to greatness": 0,
+      "gifted with a system": 0,
+      "cast any spells": 48,
+      "magical gift": 21,
+      "the supernatural is real": 0,
+      "master magic": 76
+    }
+  },
+  "rows": [
+    {
+      "tier": "summits",
+      "id": "royalroad:50243",
+      "grams": 22,
+      "unseen": 1,
+      "unseen_share": 0.0455,
+      "unseen_per_1k": 6.2,
+      "examples": [
+        "bestows great"
+      ]
+    },
+    {
+      "tier": "summits",
+      "id": "royalroad:49879",
+      "grams": 14,
+      "unseen": 1,
+      "unseen_share": 0.0714,
+      "unseen_per_1k": 5.6,
+      "examples": [
+        "requirements duties"
+      ]
+    },
+    {
+      "tier": "summits",
+      "id": "royalroad:44132",
+      "grams": 8,
+      "unseen": 2,
+      "unseen_share": 0.25,
+      "unseen_per_1k": 24.7,
+      "examples": [
+        "arrives blessed",
+        "sociopathic gods"
+      ]
+    },
+    {
+      "tier": "summits",
+      "id": "royalroad:41656",
+      "grams": 21,
+      "unseen": 1,
+      "unseen_share": 0.0476,
+      "unseen_per_1k": 8.8,
+      "examples": [
+        "fortune promised"
+      ]
+    },
+    {
+      "tier": "summits",
+      "id": "royalroad:47038",
+      "grams": 6,
+      "unseen": 0,
+      "unseen_share": 0.0,
+      "unseen_per_1k": 0.0,
+      "examples": []
+    },
+    {
+      "tier": "summits",
+      "id": "royalroad:48893",
+      "grams": 16,
+      "unseen": 3,
+      "unseen_share": 0.1875,
+      "unseen_per_1k": 21.0,
+      "examples": [
+        "character wakes",
+        "mana defends",
+        "unnamed main"
+      ]
+    },
+    {
+      "tier": "summits",
+      "id": "royalroad:47995",
+      "grams": 20,
+      "unseen": 1,
+      "unseen_share": 0.05,
+      "unseen_per_1k": 10.4,
+      "examples": [
+        "severe personality"
+      ]
+    },
+    {
+      "tier": "summits",
+      "id": "royalroad:107917",
+      "grams": 45,
+      "unseen": 7,
+      "unseen_share": 0.1556,
+      "unseen_per_1k": 49.6,
+      "examples": [
+        "clan exterminated",
+        "diseases tossed",
+        "exterminated body",
+        "hands mutilated",
+        "innumerable diseases",
+        "mutilated inflicted",
+        "talismans secret"
+      ]
+    },
+    {
+      "tier": "ours",
+      "id": "pilot9:draft",
+      "grams": 16,
+      "unseen": 4,
+      "unseen_share": 0.25,
+      "unseen_per_1k": 39.2,
+      "examples": [
+        "forming decide",
+        "loot works",
+        "nobody installed",
+        "tested games"
+      ]
+    },
+    {
+      "tier": "ours",
+      "id": "pilot9:listing",
+      "grams": 22,
+      "unseen": 6,
+      "unseen_share": 0.2727,
+      "unseen_per_1k": 51.7,
+      "examples": [
+        "changelog contradict",
+        "line nerfed",
+        "nerfed whatever",
+        "nobody installed",
+        "repro steps",
+        "tests games"
+      ]
+    },
+    {
+      "tier": "ours",
+      "id": "pilot10:draft",
+      "grams": 18,
+      "unseen": 6,
+      "unseen_share": 0.3333,
+      "unseen_per_1k": 55.0,
+      "examples": [
+        "changelog hunting",
+        "changes plainly",
+        "monsters seeded",
+        "person edit",
+        "plainly monsters",
+        "stairwells trying"
+      ]
+    },
+    {
+      "tier": "ours",
+      "id": "pilot10:listing",
+      "grams": 17,
+      "unseen": 6,
+      "unseen_share": 0.3529,
+      "unseen_per_1k": 51.3,
+      "examples": [
+        "changes plainly",
+        "edit costs",
+        "monsters seeded",
+        "plainly monsters",
+        "read changelogs",
+        "sentence edits"
+      ]
+    }
+  ]
+}
