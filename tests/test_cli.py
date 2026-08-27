@@ -1053,6 +1053,24 @@ def test_the_retired_forge_command_is_not_registered() -> None:
         build_parser().parse_args(["forge"])
 
 
+def test_reader_checkpoints_are_explicit_and_history_is_read_only_surface(monkeypatch) -> None:
+    monkeypatch.delenv("LITHARNESS_READER_CHECKPOINTS", raising=False)
+    assert build_parser().parse_args(["tick"]).reader_checkpoints is False
+    assert build_parser().parse_args(["--reader-checkpoints", "tick"]).reader_checkpoints is True
+    assert build_parser().parse_args(["readers", "--history"]).history is True
+
+
+def test_reader_history_inspects_without_registering_or_calling_a_model(db, capsys) -> None:
+    _imported_mystery(db, capsys)
+    capsys.readouterr()
+
+    assert run(db, "readers", "--history") == EXIT_OK
+
+    shown = capsys.readouterr().out
+    assert "reader.anticipation.v0: unregistered" in shown
+    assert "0 versioned observation(s), 0 editorial intervention(s)" in shown
+
+
 def test_model_written_text_reaches_a_redirected_stdout_in_utf8() -> None:
     """The operator surface's half of `_write_document`'s encoding rule, and it cost a run.
 

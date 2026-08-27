@@ -156,8 +156,11 @@ uv run litharness --database book.db plans
 
 Explicit constraints and vetoes are preserved verbatim and locked. Interpretive notes receive one
 bounded proposal whose scope, locks, and base revision are validated outside the model. Locked
-author decisions travel at system authority after lower-authority writing aids; reader reactions
-remain audience evidence in user material and cannot override them.
+author decisions travel at system authority after lower-authority writing aids. Raw chapter-reader
+reactions never enter scene drafting or story planning. A qualified reader mechanism may instead produce an
+immutable editorial intervention, and only `satisfy` or `subvert` interventions enter this same
+machine-authored directive and plan-revision path; conflicts with locks are surfaced rather than
+silently overridden.
 
 Recovery is explicit:
 
@@ -216,6 +219,7 @@ The simulated readership can stop part-way through the latest drafted scene, or 
 ```bash
 uv run litharness --database book.db readers
 uv run litharness --database book.db readers --scene 4
+uv run litharness --database book.db readers --history
 ```
 
 The request is no longer a cold scene: it includes earlier scenes in the current chapter, two
@@ -227,6 +231,25 @@ measurement pools so a book shaped by a reader cannot later be certified by that
 architecture is wired, but its ability to perceive quality is still under validation; see the
 [reader-architecture programme](plan/reader-architecture-program.md) for current work rather than
 inferring validity from the existence of the command.
+
+Automatic chapter checkpoints are opt-in:
+
+```bash
+uv run litharness --database book.db --reader-checkpoints tick
+```
+
+The four steering requests are frozen as durable jobs when the final scene of a chapter is
+accepted. Their observations record the exact mechanism version, source revision and content
+hash, persona/prompt/system/schema/context digests, provider, model, and response. The bundled
+`reader.anticipation.v0` mechanism is registered as `experimental`, so these records are inert:
+they cannot enqueue editorial interpretation or affect planning. A later mechanism version may
+be registered as `qualified` only with an evidence digest. Complete qualified panels are reduced
+to one decision—`satisfy`, `defer`, `subvert`, `refuse`, or `challenge_lock`—before any direction
+can reach the plan. A deterministic fingerprint check refuses directive bodies that repeat a
+reader's six-word phrase (or an eight-word span from a longer answer), preventing the old
+reader-vocabulary transcription failure from returning through the controller. Experimental and
+qualified observations remain separate records even when they read the same scene. Registering a
+new `withdrawn` version closes both future panels and already-queued controller work before spend.
 
 Real readers are the reason to publish the books, but their behaviour never feeds generation,
 planning, selection, calibration, or gating.

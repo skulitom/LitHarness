@@ -162,6 +162,14 @@ def is_interpretive_actionable(directive: Directive) -> bool:
     return directive.status is DirectiveStatus.RECEIVED and directive.kind in INTERPRETIVE_KINDS
 
 
+def _target_scene_ids(directive: Directive) -> tuple[str, ...]:
+    """Scene scope carried by an editorial intervention, separate from plan-item targets."""
+    raw = directive.metadata.get("target_scene_ids")
+    if not isinstance(raw, (list, tuple)) or not all(isinstance(item, str) for item in raw):
+        return ()
+    return tuple(dict.fromkeys(item for item in raw if item))
+
+
 def render_request(
     base: PlanRevision,
     directive: Directive,
@@ -221,6 +229,11 @@ def render_request(
                 "body": directive.body,
                 "precedence": directive.precedence,
                 "target_logical_ids": list(directive.target_logical_ids),
+                **(
+                    {"target_scene_ids": list(_target_scene_ids(directive))}
+                    if _target_scene_ids(directive)
+                    else {}
+                ),
             },
             "current_plan_items": plan_payload,
             "rules": [
@@ -231,6 +244,8 @@ def render_request(
                 "For delete, set kind and authority to none, text to empty, and locked false.",
                 "Preserve an existing logical_id when updating it.",
                 "If target_logical_ids is non-empty, update or delete only those items.",
+                "If target_scene_ids is non-empty, every edit must remain scoped to one of "
+                "those future scenes.",
                 "Interpret the director's words; do not overwrite or paraphrase the input.",
                 "Set scope to the scene's id from scenes_in_reading_order for any item that "
                 "is about one scene, and above all for every scene_plan: an unscoped scene "
@@ -321,6 +336,7 @@ def proposal_from_model(
         )
 
     current = {item.logical_id: item for item in base.items}
+    target_scene_ids = frozenset(_target_scene_ids(directive))
     edits: list[PlanEdit] = []
     for index, raw in enumerate(raw_edits):
         if not isinstance(raw, Mapping):
@@ -346,6 +362,11 @@ def proposal_from_model(
 
         if action is PlanEditAction.DELETE:
             existing = current.get(logical_id)
+            existing_scope = existing.scope.logical_id if existing and existing.scope else None
+            if target_scene_ids and existing_scope not in target_scene_ids:
+                raise NarrativePlanOutputError(
+                    f"edit {index} is outside the editorial intervention's scene targets"
+                )
             accepted_target = _accepted_scene_target(existing, accepted_scene_ids)
             if accepted_target is not None:
                 raise NarrativePlanOutputError(
@@ -382,6 +403,10 @@ def proposal_from_model(
             base=base,
             project_id=project_id,
         )
+        if target_scene_ids and (scope is None or scope.logical_id not in target_scene_ids):
+            raise NarrativePlanOutputError(
+                f"edit {index} is outside the editorial intervention's scene targets"
+            )
         existing = current.get(logical_id)
         if locked and is_machine_author(directive.author):
             # **A machine-authored directive may not mint a locked plan item, whatever the

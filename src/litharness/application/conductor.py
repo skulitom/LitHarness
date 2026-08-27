@@ -77,11 +77,12 @@ class TickResult:
 
 
 class JobHandler(Protocol):
-    """Executes one unit of work and returns the events it wants committed.
+    """Execute one unit and return events not already committed with its artifact.
 
-    A handler must not write to the store itself. It returns events, and the Conductor
-    commits them with the job's status change in one transaction — which is the only way
-    "no accepted artifact without its event" survives a crash mid-handler.
+    Artifact-producing handlers use repository transactions to commit the artifact, its
+    acceptance event, and its policy decision together. The Conductor owns the later job-status
+    transition and appends only the returned events. That residual boundary is intentionally
+    closed by content-derived ids and replay checks; handlers must therefore be idempotent.
     """
 
     def __call__(self, job: Job, now: float) -> Sequence[Event]: ...

@@ -7,16 +7,11 @@ real handler is a Stage 1 concern: a scene draft needs a plan and a context pack
 Half true. A *planned* scene draft does need those. Wiring did not: what it needed was
 for a job to carry its input, which migration 003 added.
 
-**What a handler may and may not do.** `JobHandler` returns events; it must not write to
-the store. The Conductor commits the events with the job's status change, and that is the
-only ordering under which "no accepted artifact without the event recording it" survives
-a crash mid-handler (`plan/stage-0-decisions.md` §6). The one thing this handler *does*
-write directly is the revision, via `commit_revision`, which takes its events in the same
-transaction — so the revision and its `ManuscriptRevisionAccepted` event are atomic with
-each other even though the job row is not atomic with them. That residual gap is real and
-is handled by making the work idempotent rather than by pretending otherwise: revisions
-are content-addressed and committed with `INSERT OR IGNORE`, and event idempotency keys
-are derived from content, so a replayed job converges instead of duplicating.
+**Who commits what.** This handler writes the revision through `commit_revision`, which puts
+the artifact, its acceptance event, and its policy decision in one transaction. The
+Conductor commits the later job-status transition and any events returned here. That residual
+gap is real and is handled by replay checks plus content-derived ids: a crash after the
+artifact commit converges instead of duplicating or falsely refusing completed work.
 
 **Every candidate produces a decision, accepted or not.** A candidate that fails its gate
 emits `MANUSCRIPT_CANDIDATE_CREATED` with the veto list; one that passes emits
@@ -40,12 +35,14 @@ from hashlib import sha256
 import litharness_contracts as lc
 
 from litharness.application.conductor import JobHandler
+from litharness.application.editorial import reader_jobs_for_checkpoint
 from litharness.application.policy_events import policy_decision_event
 from litharness.application.ports import DraftStore, TextGenerator
 from litharness.application.repair import evaluation_job_for, summary_job_for
 from litharness.domain.budget import BudgetPolicy, BudgetVerdict
 from litharness.domain.budget import check as budget_check
 from litharness.domain.draft import DraftPolicy, gate_draft
+from litharness.domain.editorial import ReaderMechanism
 from litharness.domain.events import Event, EventType
 from litharness.domain.extraction import extract_state
 from litharness.domain.findings import DetectorInput
@@ -66,6 +63,7 @@ from litharness.domain.policy import (
     policy_digest,
 )
 from litharness.domain.revision import Revision, node_version_id
+from litharness.domain.serials import SerialShape
 from litharness.domain.text import content_hash
 
 #: Job kind this handler answers to.
@@ -197,6 +195,8 @@ def make_scene_draft_handler(
     call_class: str = "generation",
     schedule_evaluation: bool = False,
     schedule_summary: bool = False,
+    reader_mechanism: ReaderMechanism | None = None,
+    reader_shape: SerialShape | None = None,
 ) -> JobHandler:
     """Build a `JobHandler` that drafts one node's prose and gates the result.
 
@@ -628,6 +628,28 @@ def make_scene_draft_handler(
                     content_hash=content_hash(result.text),
                 ),
             )
+        if (
+            reader_mechanism is not None
+            and reader_shape is not None
+            and outcome.revision is not None
+            and selected.get("chapter_end") is True
+        ):
+            chapter_index = selected.get("chapter_index")
+            if isinstance(chapter_index, int) and not isinstance(chapter_index, bool):
+                follow_up_jobs = (
+                    *follow_up_jobs,
+                    *reader_jobs_for_checkpoint(
+                        outcome.revision,
+                        logical_id,
+                        chapter_index=chapter_index,
+                        summaries=store.scene_summaries(revision.book_id, revision.branch_id),
+                        prior_observations=store.reader_observations(
+                            revision.book_id, revision.branch_id
+                        ),
+                        mechanism=reader_mechanism,
+                        shape=reader_shape,
+                    ),
+                )
         store.commit_revision(
             outcome.revision,
             created_at=_timestamp(now),

@@ -388,8 +388,11 @@ opposite of the failure §136 measured: *"the one thing it withholds is withheld
 way it's withheld from the queue, not because I'm expected to already know it."* That is
 `house.CLARITY`'s corrected clause read back by a reader who had not seen it.
 
-The steering pool's hopes are now on the store, so `planner.direction_for` carries them into the
-**next** chapter drafted on this branch. Twice over, four readers asked for the same two things:
+At the time of this pilot, the steering pool's hopes went onto the store and the now-retired
+`planner.direction_for` path carried them into the **next** chapter drafted on this branch. The
+rows remain evidence from the historical run, but current planning does not read them directly;
+see `reader-architecture-program.md` for the qualified intervention boundary. Twice over, four
+readers asked for the same two things:
 that the hand's list of things it cannot do keeps deciding outcomes, and that literacy — Dan
 being the only man who can read the arch — is the progression axis rather than the hand.
 

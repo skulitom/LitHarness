@@ -56,6 +56,13 @@ from litharness.application.director import (
 from litharness.application.director import (
     render_request as render_director_request,
 )
+from litharness.application.editorial import (
+    EDITORIAL_INTERPRET,
+    READER_OBSERVE,
+    experimental_mechanism,
+    make_editorial_interpret_handler,
+    make_reader_observation_handler,
+)
 from litharness.application.evaluation import (
     CompositeEvaluator,
     ContinuityEvaluator,
@@ -352,6 +359,19 @@ def _conductor(store: SqliteStore, args: argparse.Namespace) -> Conductor:
             )
         )
     evaluator: Evaluator = evaluators[0] if len(evaluators) == 1 else CompositeEvaluator(evaluators)
+    reader_mechanism = None
+    if args.reader_checkpoints:
+        baseline = experimental_mechanism(registered_at=_stamp(_now()))
+        store.register_reader_mechanism(baseline)
+        reader_mechanism = store.current_reader_mechanism(baseline.mechanism_id)
+        if (
+            reader_mechanism is not None
+            and reader_mechanism.spec_digest != baseline.spec_digest
+        ):
+            raise SystemExit(
+                "litharness: the current reader mechanism uses a specification this "
+                "installation does not implement"
+            )
     return Conductor(
         store=store,
         holder=args.holder,
@@ -405,6 +425,14 @@ def _conductor(store: SqliteStore, args: argparse.Namespace) -> Conductor:
                 budget=_budget(args),
                 schedule_evaluation=True,
                 schedule_summary=True,
+                reader_mechanism=reader_mechanism,
+                reader_shape=SerialShape(args.chapter_scenes, args.arc_chapters),
+            ),
+            READER_OBSERVE: make_reader_observation_handler(
+                registry, store, args.project, budget=_budget(args)
+            ),
+            EDITORIAL_INTERPRET: make_editorial_interpret_handler(
+                registry, store, args.project, budget=_budget(args)
             ),
             # The producer for the context packet's evicted-scene slot. A mechanical call
             # class, so it routes to a local model even in production (§15), and the lowest
@@ -1388,13 +1416,57 @@ def cmd_readers(args: argparse.Namespace) -> int:
     happens next. Nobody is in both, so what steers the next chapter is never what measured
     this one.
 
-    The hopes reach the writer by themselves: `planner.direction_for` reads them off this
-    store on the next draft. Nothing here writes a prompt.
+    This command is an explicit experimental probe. Its legacy rows are reports only: raw
+    answers do not reach a scene prompt or a plan. The automatic, versioned checkpoint path is
+    enabled separately with `--reader-checkpoints`, and remains inert until its mechanism has
+    qualifying evidence.
     """
     store = _store(args)
     stamp = _stamp(_now())
     try:
         book_id, branch_id = export_module.resolve_branch(store, args.book, args.branch)
+        if args.history:
+            mechanism = store.current_reader_mechanism("reader.anticipation.v0")
+            if mechanism is None:
+                print("reader.anticipation.v0: unregistered")
+            else:
+                evidence = (
+                    f" evidence={mechanism.evidence_digest}"
+                    if mechanism.evidence_digest
+                    else ""
+                )
+                print(
+                    f"{mechanism.mechanism_id}: {mechanism.status.value} "
+                    f"{mechanism.version_id}{evidence}"
+                )
+            observations = store.reader_observations(book_id, branch_id)
+            interventions = store.editorial_interventions(book_id, branch_id)
+            print(
+                f"{book_id}/{branch_id}: {len(observations)} versioned observation(s), "
+                f"{len(interventions)} editorial intervention(s)"
+            )
+            for observation in observations:
+                print(
+                    f"  observation {observation.observation_id} "
+                    f"checkpoint={observation.checkpoint_id} "
+                    f"reader={observation.reader_id} "
+                    f"mechanism={observation.mechanism_version_id} "
+                    f"source={observation.logical_id}@"
+                    f"{observation.source_content_hash[:12]} "
+                    f"model={observation.provider}/{observation.model}"
+                )
+            for intervention in interventions:
+                routed = (
+                    f" directive={intervention.directive_id}"
+                    if intervention.directive_id
+                    else ""
+                )
+                print(
+                    f"  intervention {intervention.intervention_id} "
+                    f"{intervention.decision.value} "
+                    f"checkpoint={intervention.checkpoint_id}{routed}"
+                )
+            return EXIT_OK
         head = store.head(book_id, branch_id)
         if head is None:
             print("litharness: this branch has no revision", file=sys.stderr)
@@ -3990,6 +4062,15 @@ def build_parser() -> argparse.ArgumentParser:
         "and no director is its control (plan/director-role.md §6). An unregistered name is "
         "refused rather than ignored",
     )
+    parser.add_argument(
+        "--reader-checkpoints",
+        action="store_true",
+        default=_env_flag("LITHARNESS_READER_CHECKPOINTS"),
+        help="schedule versioned steering-reader observations at completed chapter boundaries; "
+        "also read from LITHARNESS_READER_CHECKPOINTS. The bundled mechanism is experimental, "
+        "so its observations are recorded but cannot steer until a qualified mechanism version "
+        "with an evidence digest is registered",
+    )
     sub = parser.add_subparsers(dest="command", required=True)
 
     tick = sub.add_parser("tick", help="run one bounded unit of work")
@@ -4479,6 +4560,12 @@ def build_parser() -> argparse.ArgumentParser:
 
     read = sub.add_parser("readers", help="put the simulated readership on a drafted scene")
     read.add_argument("--scene", help="a scene logical id; the latest drafted one by default")
+    read.add_argument(
+        "--history",
+        action="store_true",
+        help="inspect versioned checkpoint observations and editorial interventions without "
+        "making a model call",
+    )
     read.add_argument(
         "--rivals",
         help="a JSON list of published books to spend the reading slot on instead: each with "

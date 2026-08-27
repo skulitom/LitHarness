@@ -33,6 +33,7 @@ from typing import Any
 
 import litharness_contracts as lc
 
+from litharness.adapters.sqlite_audience import SqliteAudienceRepository
 from litharness.adapters.sqlite_errors import (
     IntegrityFailure as IntegrityFailure,
 )
@@ -45,6 +46,11 @@ from litharness.domain.budget import Spend
 from litharness.domain.directives import Directive, DirectiveKind, DirectiveStatus
 from litharness.domain.directors import DIRECTOR_AUTHOR_PREFIX
 from litharness.domain.directors import Director as DomainDirector
+from litharness.domain.editorial import (
+    EditorialIntervention,
+    ReaderMechanism,
+    ReaderObservation,
+)
 from litharness.domain.events import Event, EventType
 from litharness.domain.exceptions import ExceptionKind, ExceptionRecord, ExceptionStatus
 from litharness.domain.findings import UNRESOLVED_STATUSES
@@ -212,6 +218,11 @@ class SqliteStore:
         self._finalizer = weakref.finalize(self, connection.close)
         transaction = partial(SqliteStore._Transaction, connection)
         self._jobs = SqliteJobRepository(connection, transaction)
+        self._audience = SqliteAudienceRepository(
+            connection,
+            transaction,
+            insert_decision=SqliteStore._insert_decision,
+        )
         self._plans = SqlitePlanRepository(
             connection,
             transaction,
@@ -1294,6 +1305,70 @@ class SqliteStore:
 
     # -- the simulated readership -------------------------------------------------------
 
+    def register_reader_mechanism(self, mechanism: ReaderMechanism) -> bool:
+        return self._audience.register_reader_mechanism(mechanism)
+
+    def reader_mechanism(self, version_id: str) -> ReaderMechanism:
+        return self._audience.reader_mechanism(version_id)
+
+    def current_reader_mechanism(self, mechanism_id: str) -> ReaderMechanism | None:
+        return self._audience.current_reader_mechanism(mechanism_id)
+
+    def reader_observation_for_job(self, source_job_id: str) -> ReaderObservation | None:
+        return self._audience.reader_observation_for_job(source_job_id)
+
+    def record_reader_observation(
+        self,
+        observation: ReaderObservation,
+        *,
+        decision: PolicyDecision,
+        decided_at: str,
+    ) -> bool:
+        return self._audience.record_reader_observation(
+            observation, decision=decision, decided_at=decided_at
+        )
+
+    def reader_observations(
+        self,
+        book_id: str,
+        branch_id: str,
+        *,
+        checkpoint_id: str | None = None,
+        mechanism_version_id: str | None = None,
+    ) -> list[ReaderObservation]:
+        return self._audience.reader_observations(
+            book_id,
+            branch_id,
+            checkpoint_id=checkpoint_id,
+            mechanism_version_id=mechanism_version_id,
+        )
+
+    def ready_reader_panels(self) -> list[dict[str, str]]:
+        return self._audience.ready_reader_panels()
+
+    def record_editorial_intervention(
+        self,
+        intervention: EditorialIntervention,
+        *,
+        directive: Directive | None,
+        decision: PolicyDecision,
+        decided_at: str,
+    ) -> bool:
+        return self._audience.record_editorial_intervention(
+            intervention,
+            directive=directive,
+            decision=decision,
+            decided_at=decided_at,
+        )
+
+    def editorial_interventions(self, book_id: str, branch_id: str) -> list[EditorialIntervention]:
+        return self._audience.editorial_interventions(book_id, branch_id)
+
+    def editorial_intervention_for_job(
+        self, controller_job_id: str
+    ) -> EditorialIntervention | None:
+        return self._audience.editorial_intervention_for_job(controller_job_id)
+
     def record_reader_read(
         self,
         book_id: str,
@@ -1316,10 +1391,10 @@ class SqliteStore:
     ) -> bool:
         """One reader, one version of one scene, once. False when the row already exists.
 
-        `hoping_for` and `dreading` are migration 031's columns and are kept so rows written
-        before 032 still read back; nothing in the package writes them any more. What a steering
-        reader says now is `felt`, `expect_next` and `want_next`, and what a measurement reader
-        was choosing against is `rival_id` and `ours_first`.
+        This is the legacy report written by the explicit `readers` experiment. Automatic
+        chapter checkpoints use `reader_observations`, whose key includes the mechanism and
+        frozen request provenance; nothing on the planning path reads this table. The old and
+        new answer columns remain readable because migrations and historical runs are immutable.
         """
         with self.transaction() as connection:
             cursor = connection.execute(

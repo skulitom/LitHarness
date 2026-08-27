@@ -43,7 +43,6 @@ from dataclasses import dataclass
 from datetime import UTC, datetime
 from hashlib import sha256
 
-from litharness.application import readers as readers_mod
 from litharness.application.conductor import WorkSelector
 from litharness.application.directive_planner import (
     DIRECTIVE_PLAN,
@@ -55,6 +54,7 @@ from litharness.application.director import (
     director_job,
     scene_block,
 )
+from litharness.application.editorial import enqueue_ready_editorial_panel
 from litharness.application.handlers import SCENE_DRAFT
 from litharness.application.narrative_planner import (
     NARRATIVE_PLAN,
@@ -239,32 +239,6 @@ def beat_job_id(book_id: str, branch_id: str, logical_id: str, template_id: str,
     return f"beat-{sha256(material.encode()).hexdigest()[:24]}"
 
 
-def direction_for(store: PlanningStore, book_id: str, branch_id: str) -> str:
-    """What this book's steering readers are hoping for, as the writer reads it.
-
-    Empty for a book nobody has read, which renders nothing — the control every book
-    written before the loop existed is measured against.
-    """
-    reads = getattr(store, "reader_reads", None)
-    if reads is None:
-        return ""
-    rows = reads(book_id, branch_id, pool=readers_mod.STEERING)
-    if not rows:
-        return ""
-    answers: dict[str, dict[str, object]] = {}
-    for row in rows:  # the store promises newest first
-        reader_id = str(row["reader_id"])
-        if reader_id in answers:
-            continue
-        answers[reader_id] = {
-            "felt": row.get("felt") or "",
-            "expect_next": row.get("expect_next") or "",
-            "hoping_for": row.get("hoping_for") or row.get("want_next") or [],
-            "dreading": row.get("dreading") or [],
-        }
-    return readers_mod.Anticipation.of(answers).render()
-
-
 def render_prompt(
     beat: Beat,
     *,
@@ -280,7 +254,6 @@ def render_prompt(
     standing_line: str | None = None,
     chapter: Position | None = None,
     point_of_view: str | None = None,
-    direction: str = "",
 ) -> tuple[str, str]:
     """(system, prompt) for one beat, grounded in an assembled context packet.
 
@@ -506,13 +479,8 @@ def render_prompt(
                 f"{chapter.scenes_in_chapter}"
             )
     pov_line = "" if not point_of_view else f" Point of view: {point_of_view}."
-    # Reader reactions are evidence about an audience, not author instructions. They remain
-    # verbatim and immediately before the task, but travel as observed context rather than as
-    # a system-level command that could overrule an author lock.
-    reader_context = f"{direction}\n\n" if direction else ""
     prompt = (
         f"{packet.render(include_constraints=False)}\n\n"
-        f"{reader_context}"
         f"Now write {title}{beat.title or beat.logical_id} — {scene_position}."
         f"{pov_line} Dramatic function: {beat.function}."
         f"{plan_line}"
@@ -768,6 +736,10 @@ def make_plan_selector(
         _enqueue_verbatim_direction(store)
         _enqueue_interpretive_direction(store)
 
+        # Reader answers are never prose context. A complete panel becomes eligible for
+        # editorial interpretation only when its exact mechanism version is qualified.
+        enqueue_ready_editorial_panel(store)
+
         # 1a. The Director speaks, if one is selected and this book's block is unspoken for.
         #     **After both human lanes and before the drain**, which is the whole ordering
         #     argument: a person's direction is materialised first and can never be buried by
@@ -999,6 +971,7 @@ def make_plan_selector(
                 # read as "the pattern this deliberately does not copy". Adding the standing and
                 # its printed form would have made it six.
                 records = store.state_records(progress.book_id, progress.branch_id)
+                position = positions.get(beat.logical_id)
                 system, prompt = render_prompt(
                     beat,
                     book_title=_book_title(head),
@@ -1025,10 +998,9 @@ def make_plan_selector(
                         if graph_line_for(records) is not None
                         else None
                     ),
-                    chapter=positions.get(beat.logical_id),
+                    chapter=position,
                     point_of_view=pov_id,
                     writer=writer,
-                    direction=direction_for(store, progress.book_id, progress.branch_id),
                 )
                 payload: dict[str, object] = {
                     "revision_id": head.revision_id,
@@ -1057,6 +1029,20 @@ def make_plan_selector(
                         # under is the one the plan held when the work was selected — a later
                         # template edit cannot retroactively move a scene already written.
                         "story_order_key": beat.story_order_key,
+                        **(
+                            {
+                                "chapter_index": position.chapter_index,
+                                "chapter_scene_index": position.index_in_chapter,
+                                "chapter_scenes": position.scenes_in_chapter,
+                                "chapter_end": (
+                                    position.index_in_chapter == position.scenes_in_chapter
+                                ),
+                                "volume_index": position.volume_index,
+                                "chapter_in_volume": position.chapter_in_volume,
+                            }
+                            if position is not None
+                            else {}
+                        ),
                     },
                     # What the scene was told, and what it was not. `context_omitted` is the
                     # honest half: a baseline that packs by priority rather than relevance

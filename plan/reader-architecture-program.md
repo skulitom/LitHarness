@@ -36,6 +36,34 @@ Nothing about the validation discipline moves. Every mechanism, whatever its arc
   bars (§61); and stays inside §95 (LLM-only), §97.1 (nothing feeds a prompt), RS1 (market
   text on the measurement side only).
 
+## Production control boundary, implemented 2026-08-27
+
+The production architecture no longer reads raw steering rows into a drafting prompt. At an
+opted-in chapter boundary it freezes one durable job per steering reader and records a versioned
+observation with source, context, prompt, schema, persona, provider, and model provenance.
+Mechanism versions are append-only and explicitly `experimental`, `qualified`, or `withdrawn`.
+Only a complete panel produced by the current, exact qualified version is eligible for the next
+stage; making a withdrawn version current also refuses already-frozen controller work before it
+can spend or dispatch direction.
+
+That stage records an immutable editorial intervention with one of five decisions: `satisfy`,
+`defer`, `subvert`, `refuse`, or `challenge_lock`. The controller sees the reader evidence, the
+current plan, eligible future scenes, and author locks, but not a prose-editing instruction.
+Only `satisfy` and `subvert` may dispatch direction; they submit a machine-authored chapter note
+to the existing Narrative Planner. `challenge_lock` makes a conflict visible and has no override
+path. Before dispatch, a deterministic fingerprint check refuses a directive that repeats a
+reader's six-word phrase or an eight-word span from a longer response; the controller has to
+abstract the underlying need rather than laundering reader vocabulary. The Narrative Planner
+still validates scope, refuses edits to accepted scenes, downgrades machine attempts to mint
+locks, and commits a new immutable plan revision. Thus simulated readers are an objective signal
+within author feasibility constraints, not lower-authority decoration and not higher-authority
+raw prompt text.
+
+The bundled `reader.anticipation.v0` version remains **experimental** because the transfer result
+has not licensed it. `--reader-checkpoints` may collect evidence, but cannot make it steer. The
+control plane is ready for a mechanism that earns qualification; it does not manufacture that
+qualification from its own existence.
+
 ## The mechanism families, and where each stands
 
 | family | what it extracts | state in this repository |

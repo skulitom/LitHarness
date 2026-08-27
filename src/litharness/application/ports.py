@@ -23,6 +23,11 @@ import litharness_contracts as lc
 from litharness.domain.budget import Spend
 from litharness.domain.directives import Directive, DirectiveStatus
 from litharness.domain.directors import Director
+from litharness.domain.editorial import (
+    EditorialIntervention,
+    ReaderMechanism,
+    ReaderObservation,
+)
 from litharness.domain.events import Event
 from litharness.domain.exceptions import ExceptionRecord
 from litharness.domain.findings import Finding
@@ -228,6 +233,60 @@ class DirectorRepository(Protocol):
     def submit_directive(self, directive: Directive, *, received_at: str) -> bool: ...
 
 
+class AudienceRepository(Protocol):
+    """Versioned reader evidence and the decisions licensed to act on it."""
+
+    def register_reader_mechanism(self, mechanism: ReaderMechanism) -> bool: ...
+
+    def reader_mechanism(self, version_id: str) -> ReaderMechanism: ...
+
+    def current_reader_mechanism(self, mechanism_id: str) -> ReaderMechanism | None: ...
+
+    def reader_observation_for_job(self, source_job_id: str) -> ReaderObservation | None: ...
+
+    def record_reader_observation(
+        self,
+        observation: ReaderObservation,
+        *,
+        decision: PolicyDecision,
+        decided_at: str,
+    ) -> bool: ...
+
+    def reader_observations(
+        self,
+        book_id: str,
+        branch_id: str,
+        *,
+        checkpoint_id: str | None = ...,
+        mechanism_version_id: str | None = ...,
+    ) -> list[ReaderObservation]: ...
+
+    def ready_reader_panels(self) -> list[dict[str, str]]: ...
+
+    def record_editorial_intervention(
+        self,
+        intervention: EditorialIntervention,
+        *,
+        directive: Directive | None,
+        decision: PolicyDecision,
+        decided_at: str,
+    ) -> bool: ...
+
+    def editorial_interventions(
+        self, book_id: str, branch_id: str
+    ) -> list[EditorialIntervention]: ...
+
+    def editorial_intervention_for_job(
+        self, controller_job_id: str
+    ) -> EditorialIntervention | None: ...
+
+
+class ReaderControlStore(
+    AudienceRepository, DecisionRepository, ManuscriptReader, PlanReader, Protocol
+):
+    """The reader and editorial handlers' evidence plus spend ledger."""
+
+
 class EventRepository(Protocol):
     def append_events(self, events: Iterable[Event]) -> None: ...
 
@@ -384,6 +443,7 @@ class PlanningStore(
     # generation gets to see the ledger. Nothing on the planning path writes here.
     PromiseRepository,
     OperationsRepository,
+    AudienceRepository,
     Protocol,
 ):
     pass
@@ -400,6 +460,8 @@ class DraftStore(
     # rows, the way it hands `detect_duplicate_scene` the prior prose. The draft path
     # never writes a promise — only the summary handler does.
     PromiseRepository,
+    SummaryRepository,
+    AudienceRepository,
     Protocol,
 ):
     pass
@@ -513,6 +575,7 @@ class ApplicationStore(
     # Work selection mints the Director's unit and enforces its bound, so it needs to see both
     # the admitted personalities and what this book's Director has already said.
     DirectorRepository,
+    AudienceRepository,
     Protocol,
 ):
     """Aggregate accepted by the composition root and pluggable work selectors."""
@@ -569,6 +632,7 @@ class TextGenerator(Protocol):
 
 __all__ = [
     "ApplicationStore",
+    "AudienceRepository",
     "ConductorStore",
     "DraftStore",
     "EvaluationStore",
@@ -580,6 +644,7 @@ __all__ = [
     "PlanRefinementStore",
     "PlanningStore",
     "PromiseRepository",
+    "ReaderControlStore",
     "RepairStore",
     "StatusStore",
     "TextGenerator",

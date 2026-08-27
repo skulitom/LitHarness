@@ -43,18 +43,18 @@ to distrust first (PLAN.md header, the same lesson recorded three times).
   not do what it said). Distributions before bars. A pre-registered null is a result (§61).
 - **No model ranks or selects** among candidates unless the log's containment for it exists
   (§61(5), §105.1, §107.5). Roles that generate need containment; roles that judge need validity.
-- **Three tiers, in this order** (§129): `house.CLARITY` is the floor; **reader direction
-  outranks every other craft instruction** and is meant to reach the prompt always; every
+- **Three tiers, in this order** (§129): `house.CLARITY` is the floor; a qualified reader
+  mechanism may supply an objective signal through an editorial intervention; every
   role-specific rule essay (including `house.READER`) ranks below both and is provisional.
-  Tier 2 is currently empty, so tier 3 is still all the steering there is — subtract from it
-  when the replacement carries something, not before.
-- **Simulated-reader direction may reach a prompt. Nothing else may.** Opened 2026-08-24 on
-  operator direction (§128) — the writer, and in time the Architect, take direction from
-  simulated readers. The live path is `application/readers.py` plus
-  `application/planner.py::direction_for`: a reader steers or measures, never both, and the
-  request builders enforce the split. Still closed, and closed for their own reasons: the
-  operator's own diagnostics (§97.1; the `debug-book` rule), and real-reader behaviour in any
-  role inside the loop (§126).
+  Author locks are feasibility constraints on the intervention, not a competing quality score.
+- **Raw chapter-reader answers never reach scene drafting or story planning.** The retired
+  `application/planner.py::direction_for` path was removed on 2026-08-27. The live path is
+  `application/editorial.py`: exact, versioned observations stay inert unless their mechanism
+  is qualified, then one controller records `satisfy`, `defer`, `subvert`, `refuse`, or
+  `challenge_lock`; only the first and third may submit a scoped machine directive. The
+  separate listing experiment remains experiment-local. Still closed, and closed for their
+  own reasons: the operator's diagnostics (§97.1; the `debug-book` rule), and real-reader
+  behaviour in any role inside the generation loop (§126).
 - **Counts are never restated, only pointed to.** BRIEF.md §2 owns the refutation count; the
   suite owns the test count; stage-0 owns decisions. Do not copy a number into a second home.
 

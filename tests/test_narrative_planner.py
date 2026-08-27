@@ -333,6 +333,34 @@ def test_a_scope_naming_no_scene_of_this_book_is_refused(store: SqliteStore) -> 
         )
 
 
+def test_editorial_scene_targets_bound_every_plan_edit(store: SqliteStore) -> None:
+    note = Directive(
+        directive_id="dir-reader-target",
+        kind=DirectiveKind.CHAPTER_NOTE,
+        body="Let scene one answer the readers' need for a visible choice.",
+        book_id=BOOK_ID,
+        branch_id=BRANCH_ID,
+        author="director:reader-controller:rmech-test",
+        metadata={"target_scene_ids": ["scene-1"]},
+    )
+    base = store.plan_revision(BOOK_ID, BRANCH_ID)
+    assert base is not None
+    request = render_request(base, note, ("scene-1", "scene-2"))
+    assert json.loads(request.prompt)["directive"]["target_scene_ids"] == ["scene-1"]
+    payload = json.loads(response())
+    payload["edits"] = [_scene_plan_edit("scene-2")]
+
+    with pytest.raises(NarrativePlanOutputError, match="scene targets"):
+        proposal_from_model(
+            payload,
+            base=base,
+            directive=note,
+            result=CompletionResult(text="", provider="fake", model="fake-v1"),
+            scene_ids=("scene-1", "scene-2"),
+            project_id=PROJECT_ID,
+        )
+
+
 def test_the_planner_sees_scene_statuses_summaries_and_current_state(
     store: SqliteStore,
 ) -> None:
