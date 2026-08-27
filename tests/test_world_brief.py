@@ -690,9 +690,7 @@ def test_the_outline_handler_hands_the_planner_the_world_the_store_holds(tmp_pat
 def test_the_outline_handler_of_a_book_with_no_world_asks_what_it_always_asked(
     tmp_path: Path,
 ) -> None:
-    """The other half of boundary 4, on the live path. A book whose store holds no world — every
-    book written before `domain/worlds.py`, and both golden fixtures — must reach the provider
-    with the request it always reached it with."""
+    """A no-world book still gains only the explicit temporal anchor on the live path."""
     with SqliteStore.open(tmp_path / "outline.db") as store:
         revision = new_book(BOOK_ID, BRANCH_ID, title="Book", scenes=SCENES)
         store.commit_revision(revision, created_at="2026-08-22T00:00:00Z")
@@ -723,7 +721,13 @@ def test_the_outline_handler_of_a_book_with_no_world_asks_what_it_always_asked(
         beats,
         base=_ByRevision(str(planner.requests[0].prompt)),  # type: ignore[attr-defined,arg-type]
     )
-    assert prompt == expected.prompt
+    actual_body = json.loads(prompt)
+    expected_body = json.loads(expected.prompt)
+    entry = actual_body.pop("story_state_at_arc_entry")
+    assert actual_body == expected_body
+    assert entry["boundary"]["scene"] == "scene-1"
+    assert entry["boundary"]["moment"] == "entering"
+    assert entry["established_facts"] == []
 
 
 class _ByRevision:

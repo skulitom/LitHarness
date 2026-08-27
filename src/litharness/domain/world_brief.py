@@ -188,11 +188,13 @@ def brief_for(records: Sequence[lc.StateRecord]) -> WorldBrief | None:
     request is still a key, and `json.dumps` writes `null` for a value that is not there. The
     caller omits the field entirely when this returns `None`.
 
-    The filters are `context.assemble`'s, minus the story-time cutoff and with no POV. There is
-    no cutoff because a plan is written for a whole book before any of it exists, so slicing at
-    a scene would hand the planner a world that has not finished arriving; there is no POV
-    because a planner is not a character, and `state.visible_to(record, None)` therefore drops
-    every record restricted to one. Both are the conservative direction.
+    The filters are `context.assemble`'s, with no POV. This function does not invent a
+    story-time boundary: an opening outline may pass the opening view, while a mid-serial
+    planner passes active canon at the latest accepted boundary plus explicit reveal-design
+    records (`application.model_context.planning_records`). That keeps later mutable state out
+    of a field labelled world without hiding the future mysteries a planner must schedule.
+    There is no POV because a planner is not a character, and
+    `state.visible_to(record, None)` therefore drops every record restricted to one.
     """
     canon = [
         record
@@ -247,10 +249,10 @@ def ladder_for(records: Sequence[lc.StateRecord]) -> Ladder | None:
     ladder the world meant. Such a book gets today's outline request, which is the control this
     whole slice is measured against.
 
-    Reads the standing off canon at no coordinate, so it is the *opening* rung for a book being
-    outlined before any of it exists and the *live* rung for one being replanned mid-book —
-    which is the behaviour a re-outline wants: the schedule is written from where the book
-    actually is. `worlds.standing_of` owns that rule.
+    Reads the standing off the canon view supplied by the caller. Opening outlines pass the
+    arc-entry projection; mid-book planners pass the latest accepted projection. The schedule
+    therefore starts where that explicit view says the book actually is rather than choosing a
+    coordinate here. `worlds.standing_of` owns the graph reading.
     """
     subjects = worlds_mod.entities_with_role(records, "protagonist")
     if not subjects:

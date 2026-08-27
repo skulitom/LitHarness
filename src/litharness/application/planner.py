@@ -471,13 +471,15 @@ def render_prompt(
             "something a reader sees, never something a narrator reports:\n"
             f"{criteria}"
         )
-    # **Reader direction, and it goes last on purpose (§129's ordering).** `house.CLARITY`
-    # is the floor and is already at the top of this message; everything between is a craft
-    # rule this project wrote and never validated against a reader. What the readership
-    # actually wants outranks all of it, so it is the last thing the model reads before the
-    # ask. Empty for a book nobody has read yet, which renders nothing and is the control.
-    if direction:
-        system += f"\n\n{direction}"
+    # **Transport authority now agrees with author authority.** Constraints used to sit in
+    # the user prompt while house rules, a writer dossier and reader reactions sat in the
+    # system message.  That made the provider hierarchy the inverse of the plan hierarchy:
+    # a model resolving a conflict correctly would disobey the author-locked item.  Keep the
+    # packet items and accounting intact, but put their locked block last in the system
+    # message, after every lower-authority writing aid.
+    locked = packet.render_constraints()
+    if locked:
+        system += f"\n\nAUTHOR-LOCKED STORY DECISIONS — these outrank all other guidance:\n{locked}"
     title = f"{book_title}: " if book_title else ""
     # **What this scene is for, which until now was one word shared with twenty-four others.**
     # `arc_template(30)` yields 25 `rising` beats, and the line below was the whole of the
@@ -504,8 +506,13 @@ def render_prompt(
                 f"{chapter.scenes_in_chapter}"
             )
     pov_line = "" if not point_of_view else f" Point of view: {point_of_view}."
+    # Reader reactions are evidence about an audience, not author instructions. They remain
+    # verbatim and immediately before the task, but travel as observed context rather than as
+    # a system-level command that could overrule an author lock.
+    reader_context = f"{direction}\n\n" if direction else ""
     prompt = (
-        f"{packet.render()}\n\n"
+        f"{packet.render(include_constraints=False)}\n\n"
+        f"{reader_context}"
         f"Now write {title}{beat.title or beat.logical_id} — {scene_position}."
         f"{pov_line} Dramatic function: {beat.function}."
         f"{plan_line}"

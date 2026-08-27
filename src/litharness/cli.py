@@ -103,7 +103,18 @@ from litharness.domain import writers as writers_domain
 from litharness.domain.beats import Beat, BeatTemplate, TemplateMismatch, arc_template, beats_for
 from litharness.domain.budget import BudgetPolicy, Spend
 from litharness.domain.budget import check as budget_check
-from litharness.domain.context import ContextPacket
+from litharness.domain.context import (
+    CAST,
+    CONSTRAINTS,
+    FACTS,
+    PREMISE,
+    PRIOR_PROSE,
+    SUMMARIES,
+    THREADS,
+    ContextPacket,
+    PackedItem,
+    count_tokens,
+)
 from litharness.domain.directives import Directive, DirectiveKind, DirectiveStatus, directive_id_for
 from litharness.domain.draft import DraftPolicy
 from litharness.domain.events import Event, EventType
@@ -2167,8 +2178,180 @@ def cmd_architect(args: argparse.Namespace) -> int:
     return EXIT_OK
 
 
+def _prompt_pressure(
+    request: CompletionRequest,
+    *,
+    context: Mapping[str, Any] | None = None,
+    omitted: Sequence[Mapping[str, Any]] = (),
+) -> dict[str, Any]:
+    """Deterministic signs that material is crowding or repeating inside one request."""
+    material_lines = [
+        line.strip()[1:].strip()
+        for line in request.prompt.splitlines()
+        if line.strip().startswith("-")
+    ]
+    normalised = [
+        " ".join(
+            "".join(character if character.isalnum() else " " for character in line.lower()).split()
+        )
+        for line in material_lines
+    ]
+    repeated = [
+        {"text": line, "occurrences": count}
+        for line, count in Counter(normalised).items()
+        if line and count > 1
+    ]
+    sections = dict(context.get("sections") or {}) if context else {}
+    section_total = sum(
+        count
+        for count in sections.values()
+        if isinstance(count, int) and not isinstance(count, bool)
+    )
+    dominant = [
+        {"section": name, "items": count, "share": count / section_total}
+        for name, count in sections.items()
+        if section_total and isinstance(count, int) and count >= 8 and count / section_total >= 0.5
+    ]
+    return {
+        "context_items": context.get("items") if context else None,
+        "context_tokens": context.get("tokens") if context else None,
+        "context_budget": context.get("budget") if context else None,
+        "section_items": sections,
+        "dominant_sections": dominant,
+        "omitted_items": len(omitted),
+        "repeated_material_lines": repeated,
+    }
+
+
+def _prompt_row(
+    role: str,
+    request: CompletionRequest,
+    *,
+    source: str,
+    context: Mapping[str, Any] | None = None,
+    omitted: Sequence[Mapping[str, Any]] = (),
+    provenance: Mapping[str, Any] | None = None,
+) -> dict[str, Any]:
+    counted = house.demands(request.system or "")
+    return {
+        "role": role,
+        "source": source,
+        **({"provenance": dict(provenance)} if provenance else {}),
+        "prompt_chars": len(request.prompt),
+        "system_chars": len(request.system or ""),
+        "schema_chars": len(request.schema_instruction),
+        "tool_chars": len(",".join(request.allowed_tools)),
+        "input_chars": request.input_chars,
+        "demands": list(counted),
+        "allowed_tools": list(request.allowed_tools),
+        "pressure": _prompt_pressure(request, context=context, omitted=omitted),
+        "system": request.system or "",
+        "prompt": request.prompt,
+        "schema_instruction": request.schema_instruction,
+    }
+
+
+def _print_prompt_row(row: Mapping[str, Any]) -> None:
+    print(f"SOURCE: {row['source']}")
+    provenance = row.get("provenance")
+    if provenance:
+        print(f"PROVENANCE: {json.dumps(provenance, sort_keys=True, ensure_ascii=False)}")
+    print("\nSYSTEM (ROLE):")
+    print(row["system"] or "[none]")
+    print("\nPROMPT (MATERIAL AND TASK):")
+    print(row["prompt"] or "[none]")
+    if row["schema_instruction"]:
+        print("\nSYSTEM (TRANSPORT-ADDED SCHEMA):")
+        print(row["schema_instruction"])
+    print("\nALLOWED TOOLS:")
+    print(", ".join(row["allowed_tools"]) or "[none]")
+    pressure = row["pressure"]
+    print("\nCONTEXT PRESSURE:")
+    if pressure["context_items"] is None:
+        print("  not recorded (this is a representative request)")
+    else:
+        print(
+            f"  {pressure['context_items']} item(s), {pressure['context_tokens']}/"
+            f"{pressure['context_budget']} token(s), {pressure['omitted_items']} omitted"
+        )
+        sections = pressure["section_items"]
+        if sections:
+            print("  " + "  ".join(f"{name} {count}" for name, count in sections.items()))
+    if pressure["repeated_material_lines"]:
+        print(
+            "  repeated material: "
+            + "; ".join(
+                f"{item['occurrences']}x {item['text']}"
+                for item in pressure["repeated_material_lines"]
+            )
+        )
+    if pressure["dominant_sections"]:
+        print(
+            "  dominant section: "
+            + "; ".join(
+                f"{item['section']} {item['items']} ({item['share']:.0%})"
+                for item in pressure["dominant_sections"]
+            )
+        )
+    print()
+    print(
+        f"  {len(row['demands'])} explicit system demand(s), {row['input_chars']} "
+        "effective input characters"
+    )
+
+
+def _stored_scene_prompt(args: argparse.Namespace) -> int:
+    if args.role not in (None, "scene"):
+        print("litharness: --scene can inspect only the scene role", file=sys.stderr)
+        return EXIT_FAULT
+    store = _store(args)
+    try:
+        book_id, branch_id = export_module.resolve_branch(store, args.book, args.branch)
+        head = store.head(book_id, branch_id)
+        if head is None:
+            print(f"litharness: no head for {book_id}/{branch_id}", file=sys.stderr)
+            return EXIT_ATTENTION
+        node = _scene_node(head, args.scene)
+        if node is None:
+            print(f"litharness: no scene {args.scene} in this book", file=sys.stderr)
+            return EXIT_ATTENTION
+        dossier = _scene_dossier(store, book_id, branch_id, node, head)
+    finally:
+        store.close()
+    frozen = dossier["prompt"]
+    if not isinstance(frozen, Mapping):
+        print(
+            f"litharness: no stored prompt explains {node.logical_id}; try `why --scene "
+            f"{node.logical_id}`",
+            file=sys.stderr,
+        )
+        return EXIT_ATTENTION
+    context = dossier["context"] if isinstance(dossier["context"], Mapping) else None
+    omitted = dossier["context_omitted"] if isinstance(dossier["context_omitted"], list) else []
+    job = dossier["job"] if isinstance(dossier["job"], Mapping) else {}
+    row = _prompt_row(
+        "scene",
+        CompletionRequest(prompt=frozen["prompt"], system=frozen.get("system")),
+        source="stored_request",
+        context=context,
+        omitted=omitted,
+        provenance={
+            "book_id": book_id,
+            "branch_id": branch_id,
+            "logical_id": node.logical_id,
+            "job_id": job.get("job_id"),
+            "input_digest": job.get("input_digest"),
+        },
+    )
+    if args.json:
+        print(json.dumps(row, ensure_ascii=False, indent=2))
+    else:
+        _print_prompt_row(row)
+    return EXIT_OK
+
+
 def cmd_prompts(args: argparse.Namespace) -> int:
-    """Print a representative complete request for every model-facing role.
+    """Print representative requests, or one exact frozen scene request with ``--scene``.
 
     **The assembled prompt existed nowhere until this.** Every role built its own by
     concatenation at call time, so the only way to know what a writer was told was to run one
@@ -2178,6 +2361,9 @@ def cmd_prompts(args: argparse.Namespace) -> int:
     `tests/test_prompt_budget.py` holds the ceilings and fails when one is passed. This is the
     same numbers to look at before you add a clause rather than after.
     """
+    if args.scene:
+        return _stored_scene_prompt(args)
+
     writer = writers_domain.CAST.get(args.writer or "ferreira")
     if writer is None:
         print(
@@ -2193,12 +2379,100 @@ def cmd_prompts(args: argparse.Namespace) -> int:
         "brother's face.\n\nOn the far side, somebody who knew his name was waiting."
     )
     beat = Beat("scene-1", 1, 24, None, "setup", "arc.24", "s000001")
+
+    def specimen_item(
+        item_id: str,
+        kind: lc.ContextItemKind,
+        source_logical_id: str,
+        source_kind: lc.ResourceKind,
+        text: str,
+        authority: lc.StateAuthority = lc.StateAuthority.DERIVED,
+    ) -> PackedItem:
+        return PackedItem(
+            item_id=item_id,
+            kind=kind,
+            source_logical_id=source_logical_id,
+            source_kind=source_kind,
+            text=text,
+            tokens=count_tokens(text),
+            authority=authority,
+        )
+
     packet = ContextPacket(
         query_id="prompt-inspector",
         target_logical_id="scene-1",
         book_id="specimen-book",
         branch_id="main",
         base_revision_id="specimen-revision",
+        sections={
+            PREMISE: (
+                specimen_item(
+                    "plan-premise",
+                    lc.ContextItemKind.PLAN,
+                    "plan-premise",
+                    lc.ResourceKind.PLAN,
+                    premise,
+                ),
+            ),
+            CONSTRAINTS: (
+                specimen_item(
+                    "constraint-cost",
+                    lc.ContextItemKind.AUTHOR_RULE,
+                    "constraint-cost",
+                    lc.ResourceKind.PLAN,
+                    "Every crossing takes a specific memory; no cost may be reversed.",
+                    lc.StateAuthority.AUTHOR_LOCKED,
+                ),
+            ),
+            THREADS: (
+                specimen_item(
+                    "promise-waiting",
+                    lc.ContextItemKind.THREAD,
+                    "promise-waiting",
+                    lc.ResourceKind.THREAD,
+                    "owes: identify who knew Rook would cross and why they were waiting",
+                ),
+            ),
+            CAST: (
+                specimen_item(
+                    "cast:rook",
+                    lc.ContextItemKind.FACT,
+                    "rook",
+                    lc.ResourceKind.ENTITY,
+                    "rook (the protagonist)\n  is: an indebted courier\n  wants: to return home",
+                    lc.StateAuthority.ACCEPTED_CANON,
+                ),
+            ),
+            FACTS: (
+                specimen_item(
+                    "rook-location",
+                    lc.ContextItemKind.FACT,
+                    "rook-location",
+                    lc.ResourceKind.ASSERTION,
+                    "rook location below_city",
+                    lc.StateAuthority.ACCEPTED_CANON,
+                ),
+            ),
+            SUMMARIES: (
+                specimen_item(
+                    "summary:scene-0",
+                    lc.ContextItemKind.SUMMARY,
+                    "scene-0",
+                    lc.ResourceKind.MANUSCRIPT_SCENE,
+                    "Rook learns that the city toll accepts memories as payment.",
+                ),
+            ),
+            PRIOR_PROSE: (
+                specimen_item(
+                    "prose:scene-0",
+                    lc.ContextItemKind.EXACT_PROSE,
+                    "scene-0",
+                    lc.ResourceKind.MANUSCRIPT_SCENE,
+                    scene_text,
+                    lc.StateAuthority.ACCEPTED_CANON,
+                ),
+            ),
+        },
     )
     scene_system, scene_prompt = render_scene_prompt(
         beat,
@@ -2290,37 +2564,11 @@ def cmd_prompts(args: argparse.Namespace) -> int:
             )
             return EXIT_FAULT
         request = roles[args.role]
-        counted = house.demands(request.system or "")
-        row = {
-            "role": args.role,
-            "prompt_chars": len(request.prompt),
-            "system_chars": len(request.system or ""),
-            "schema_chars": len(request.schema_instruction),
-            "tool_chars": len(",".join(request.allowed_tools)),
-            "input_chars": request.input_chars,
-            "demands": list(counted),
-            "allowed_tools": list(request.allowed_tools),
-            "system": request.system or "",
-            "prompt": request.prompt,
-            "schema_instruction": request.schema_instruction,
-        }
+        row = _prompt_row(args.role, request, source="representative_specimen")
         if args.json:
             print(json.dumps(row, ensure_ascii=False, indent=2))
             return EXIT_OK
-        print("SYSTEM (ROLE):")
-        print(request.system or "[none]")
-        print("\nPROMPT (MATERIAL AND TASK):")
-        print(request.prompt or "[none]")
-        if request.schema_instruction:
-            print("\nSYSTEM (TRANSPORT-ADDED SCHEMA):")
-            print(request.schema_instruction)
-        print("\nALLOWED TOOLS:")
-        print(", ".join(request.allowed_tools) or "[none]")
-        print()
-        print(
-            f"  {len(counted)} explicit system demand(s), {request.input_chars} effective "
-            "input characters"
-        )
+        _print_prompt_row(row)
         return EXIT_OK
 
     rows = {
@@ -4051,6 +4299,9 @@ def build_parser() -> argparse.ArgumentParser:
         "prompts", help="what each role is actually told, and how much of it there is"
     )
     prompts.add_argument("--role", help="print one role in full")
+    prompts.add_argument("--scene", help="inspect the exact stored request for this scene")
+    prompts.add_argument("--book")
+    prompts.add_argument("--branch")
     prompts.add_argument(
         "--writer",
         default=argparse.SUPPRESS,

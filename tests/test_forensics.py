@@ -256,6 +256,23 @@ def test_the_dossier_prints_the_prompt_that_was_actually_sent(db, capsys) -> Non
     assert "Established facts" in out
 
 
+def test_prompt_inspection_can_show_the_exact_stored_scene_request(db, capsys) -> None:
+    drafted(db, capsys)
+
+    assert run(db, "prompts", "--role", "scene", "--scene", "3", "--json") == EXIT_OK
+    inspected = json.loads(capsys.readouterr().out)
+    assert run(db, "why", "--scene", "3", "--json") == EXIT_OK
+    dossier = json.loads(capsys.readouterr().out)
+
+    assert inspected["source"] == "stored_request"
+    assert inspected["prompt"] == dossier["prompt"]["prompt"]
+    assert inspected["system"] == dossier["prompt"]["system"]
+    assert inspected["provenance"]["job_id"] == dossier["job"]["job_id"]
+    assert inspected["pressure"]["context_items"] == dossier["context"]["items"]
+    assert inspected["pressure"]["section_items"] == dossier["context"]["sections"]
+    assert inspected["pressure"]["omitted_items"] == len(dossier["context_omitted"])
+
+
 def test_the_dossier_joins_the_decision_the_job_and_the_gate_ladder(db, capsys) -> None:
     """Every piece lives in a different table and the operator's question spans all of them:
     which model, on which attempt, past which gates, at what cost."""

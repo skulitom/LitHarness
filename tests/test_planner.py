@@ -566,14 +566,39 @@ def test_the_prompt_carries_the_context_packet_and_ends_with_the_instruction(
     assert head is not None
     beat = beats_for(head, SIX_BEAT)[-1]
     packet = packet_for(store, head, beat)
-    _, prompt = render_prompt(beat, book_title="The Vane House", packet=packet)
+    system, prompt = render_prompt(beat, book_title="The Vane House", packet=packet)
 
     # The two locked plan items that bear on scene 6, which the pre-packet prompt omitted.
-    assert "rain-on-glass motif repeats deliberately in scenes 1, 3, and 6" in prompt
-    assert "sealed letter must be read aloud at the will reading" in prompt
+    assert "rain-on-glass motif repeats deliberately in scenes 1, 3, and 6" in system
+    assert "sealed letter must be read aloud at the will reading" in system
+    assert "AUTHOR-LOCKED STORY DECISIONS" in system
+    assert "rain-on-glass motif repeats deliberately in scenes 1, 3, and 6" not in prompt
     # The open thread the resolution owes a payoff.
     assert "sealed_letter_reading" in prompt
     assert prompt.rstrip().endswith("Dramatic function: resolution.")
+
+
+def test_reader_reactions_are_context_and_cannot_outrank_author_locks(
+    store: SqliteStore,
+) -> None:
+    book_id, branch_id = _fixture(store, "mystery")
+    head = store.head(book_id, branch_id)
+    assert head is not None
+    beat = beats_for(head, SIX_BEAT)[-1]
+    packet = packet_for(store, head, beat)
+    reaction = "Readers hope the sealed letter stays closed."
+
+    system, prompt = render_prompt(
+        beat,
+        book_title="The Vane House",
+        packet=packet,
+        direction=reaction,
+    )
+
+    assert reaction not in system
+    assert reaction in prompt and prompt.index(reaction) < prompt.index("Now write")
+    assert "sealed letter must be read aloud at the will reading" in system
+    assert system.rstrip().endswith(packet.render_constraints())
 
 
 def test_the_target_length_reaches_the_prompt_at_all(store: SqliteStore) -> None:
@@ -2040,7 +2065,10 @@ def test_the_standing_block_carries_no_verb_and_no_adjective(store: SqliteStore)
         standing=standing_target(records, at=beat.story_order_key),
         standing_line=standing_example(records, at=beat.story_order_key),
     )
-    block = withled[len(bare) :].lower()
+    authority_marker = "\n\nAUTHOR-LOCKED STORY DECISIONS"
+    bare_guidance = bare.split(authority_marker, 1)[0]
+    withled_guidance = withled.split(authority_marker, 1)[0]
+    block = withled_guidance[len(bare_guidance) :].lower()
     assert block, "the standing block is what is being checked"
     for forbidden in (
         "earn",

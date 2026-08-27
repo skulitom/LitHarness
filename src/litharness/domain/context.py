@@ -315,7 +315,24 @@ class ContextPacket:
             ],
         )
 
-    def render(self) -> str:
+    def render_constraints(self) -> str:
+        """Render author-locked material separately from ordinary story context.
+
+        A context packet keeps constraints as first-class, budgeted items regardless of
+        transport.  Scene generation places this block in the system message so the
+        provider's authority hierarchy agrees with the packet's own authority metadata;
+        other consumers can continue to render the complete packet in one document.
+        """
+        constraints = self.sections.get(CONSTRAINTS, ())
+        if not constraints:
+            return ""
+        lines = "\n".join(f"- {item.text}" for item in constraints)
+        return (
+            "Locked constraints and promises — these are the director's and may not "
+            f"be contradicted:\n{lines}"
+        )
+
+    def render(self, *, include_constraints: bool = True) -> str:
         """The packet as the text a generator is handed.
 
         Sections are labelled and separated, because an undifferentiated wall gives the model
@@ -324,13 +341,9 @@ class ContextPacket:
         blocks: list[str] = []
         for premise in self.sections.get(PREMISE, ()):
             blocks.append(f"Premise: {premise.text}")
-        constraints = self.sections.get(CONSTRAINTS, ())
-        if constraints:
-            lines = "\n".join(f"- {item.text}" for item in constraints)
-            blocks.append(
-                "Locked constraints and promises — these are the director's and may not "
-                f"be contradicted:\n{lines}"
-            )
+        constraints = self.render_constraints()
+        if include_constraints and constraints:
+            blocks.append(constraints)
         threads = self.sections.get(THREADS, ())
         if threads:
             lines = "\n".join(f"- {item.text}" for item in threads)

@@ -417,6 +417,7 @@ class NarrativePlanningStore(
     # facts out of a forged world. `OutlineStore` already composes this; the two roles write
     # the same kind of sentence and had different sight of the book.
     StateRepository,
+    SummaryRepository,
     Protocol,
 ):
     """Reads the manuscript as well as the plan, because a plan item that is *about* a scene

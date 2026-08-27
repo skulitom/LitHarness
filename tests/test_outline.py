@@ -19,6 +19,7 @@ import litharness_contracts as lc
 import pytest
 
 from litharness.adapters.sqlite_store import SqliteStore
+from litharness.application.model_context import at_scene
 from litharness.application.outline import (
     BOOK_OUTLINE,
     OUTLINE_PRIORITY,
@@ -33,6 +34,7 @@ from litharness.application.outline import (
     render_outline_request,
     standing_milestone_records,
 )
+from litharness.domain import state as state_mod
 from litharness.domain import world_brief, worlds
 from litharness.domain.beats import arc_template, beats_for
 from litharness.domain.extraction import standing_target
@@ -160,6 +162,41 @@ def test_the_whole_sheet_goes_into_one_request() -> None:
         assert f'"ordinal": {ordinal}' in request.prompt
     assert request.schema is not None, "structured output, not a parsed paragraph"
     assert "different from every other" in request.prompt
+
+
+def test_the_outline_sees_state_at_the_arc_entry_not_later_state() -> None:
+    revision = new_book(BOOK_ID, BRANCH_ID, title="Book", scenes=8)
+    beats = beats_for(revision, arc_template(8))
+    records = tuple(
+        lc.StateRecord(
+            record_id=f"want-{ordinal}",
+            kind=lc.StateRecordKind.ASSERTION,
+            subject="silas",
+            predicate="wants",
+            value=value,
+            story_position=lc.StoryPosition(order_key=f"s{ordinal}"),
+            authority=lc.StateAuthority.ACCEPTED_CANON,
+        )
+        for ordinal, value in ((1, "recognition"), (8, "retirement"))
+    )
+    entry = at_scene(
+        revision,
+        records,
+        beats[0].logical_id,
+        moment=state_mod.StateMoment.ENTERING,
+    )
+
+    body = json.loads(
+        render_outline_request(
+            PREMISE,
+            beats,
+            base=_bare_base(),
+            arc_entry_state=entry,
+        ).prompt
+    )
+
+    assert body["story_state_at_arc_entry"]["established_facts"] == ["silas wants recognition"]
+    assert "retirement" not in json.dumps(body["story_state_at_arc_entry"])
 
 
 # -- the world's people, and whose book it is ---------------------------------------------

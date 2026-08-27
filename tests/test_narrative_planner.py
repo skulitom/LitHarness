@@ -9,11 +9,13 @@ import pytest
 
 from litharness.adapters.sqlite_store import SqliteStore
 from litharness.application.conductor import Conductor, TickOutcome
+from litharness.application.model_context import current as current_state_view
 from litharness.application.narrative_planner import (
     NARRATIVE_PLAN,
     NarrativePlanOutputError,
     make_narrative_plan_handler,
     proposal_from_model,
+    render_request,
 )
 from litharness.application.planner import make_plan_selector
 from litharness.domain.budget import BudgetPolicy
@@ -327,6 +329,79 @@ def test_a_scope_naming_no_scene_of_this_book_is_refused(store: SqliteStore) -> 
             directive=note,
             result=result,
             scene_ids=["scene-1"],
+            project_id=PROJECT_ID,
+        )
+
+
+def test_the_planner_sees_scene_statuses_summaries_and_current_state(
+    store: SqliteStore,
+) -> None:
+    note = directive(store, directive_id="dir-context")
+    base = store.plan_revision(BOOK_ID, BRANCH_ID)
+    head = store.head(BOOK_ID, BRANCH_ID)
+    assert base is not None and head is not None
+    records = (
+        lc.StateRecord(
+            record_id="rook-wants",
+            kind=lc.StateRecordKind.ASSERTION,
+            subject="rook",
+            predicate="wants",
+            value="freedom",
+            authority=lc.StateAuthority.ACCEPTED_CANON,
+        ),
+    )
+
+    request = render_request(
+        base,
+        note,
+        ("scene-1", "scene-2"),
+        current_state=current_state_view(head, records),
+        accepted_summaries=(("scene-1", "Rook counts the debt."),),
+        accepted_scene_ids=("scene-1",),
+    )
+    manuscript = json.loads(request.prompt)["manuscript_context"]
+
+    assert manuscript["scenes"] == [
+        {
+            "scene": "scene-1",
+            "status": "accepted",
+            "accepted_summary": "Rook counts the debt.",
+        },
+        {"scene": "scene-2", "status": "draftable"},
+    ]
+    assert manuscript["current_story_state"]["established_facts"] == ["rook wants freedom"]
+
+
+def test_the_planning_lane_cannot_replan_an_accepted_scene(store: SqliteStore) -> None:
+    note = directive(store, directive_id="dir-past")
+    base = store.plan_revision(BOOK_ID, BRANCH_ID)
+    assert base is not None
+    payload = json.loads(response())
+    payload["edits"] = [_scene_plan_edit("scene-1")]
+
+    with pytest.raises(NarrativePlanOutputError, match="cannot revise accepted manuscript"):
+        proposal_from_model(
+            payload,
+            base=base,
+            directive=note,
+            result=CompletionResult(text="", provider="fake", model="fake-v1"),
+            scene_ids=("scene-1", "scene-2"),
+            accepted_scene_ids=("scene-1",),
+            project_id=PROJECT_ID,
+        )
+
+    payload = json.loads(response())
+    derived = _scene_plan_edit("none")
+    derived["logical_id"] = "scene-1-plan"
+    payload["edits"] = [derived]
+    with pytest.raises(NarrativePlanOutputError, match="cannot revise accepted manuscript"):
+        proposal_from_model(
+            payload,
+            base=base,
+            directive=note,
+            result=CompletionResult(text="", provider="fake", model="fake-v1"),
+            scene_ids=("scene-1", "scene-2"),
+            accepted_scene_ids=("scene-1",),
             project_id=PROJECT_ID,
         )
 

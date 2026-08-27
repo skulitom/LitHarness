@@ -55,6 +55,7 @@ from typing import Any
 import litharness_contracts as lc
 
 from litharness.application.conductor import JobHandler
+from litharness.application.model_context import StoryStateView, at_scene, planning_records
 from litharness.application.plan_refinement import accept_plan_proposal
 from litharness.application.policy_events import policy_decision_event
 from litharness.application.ports import OutlineStore, TextGenerator
@@ -258,6 +259,7 @@ def render_outline_request(
     protagonist: worlds_mod.Protagonist | None = None,
     serial_arc_index: int | None = None,
     prior_summaries: Sequence[tuple[str, str]] = (),
+    arc_entry_state: StoryStateView | None = None,
 ) -> CompletionRequest:
     """Freeze the premise and the whole beat sheet into one structured-output request.
 
@@ -295,6 +297,11 @@ def render_outline_request(
     no open promises is asked for no windows at all, exactly as a book with no starting sheet
     is asked for no milestones: an empty ask produces an empty answer to validate, which is
     worse than not asking.
+
+    **`arc_entry_state` is the temporal anchor.** The world field carries design and scheduled
+    reveals; it is not allowed to answer which mutable facts are current. The separate view is
+    active canon entering the first beat, with its scene coordinate and any slicing abstention
+    explicit. Omitted only for direct/legacy callers that have no manuscript view to supply.
     """
     ordinals = _ordinal_of(beats)
     owed = [
@@ -333,6 +340,11 @@ def render_outline_request(
                     ]
                 }
                 if prior_summaries
+                else {}
+            ),
+            **(
+                {"story_state_at_arc_entry": arc_entry_state.to_jsonable()}
+                if arc_entry_state is not None
                 else {}
             ),
             # The world this book runs on, and the one member of its cast this book is
@@ -1072,13 +1084,18 @@ def make_outline_handler(
         # question `render_prompt` asks before requesting a status line, and asking it the
         # same way here is what keeps a mystery from being given a level curve.
         canon = list(store.state_records(book_id, branch_id))
+        entry_state = at_scene(
+            head,
+            canon,
+            beats[0].logical_id,
+            moment=state_mod.StateMoment.ENTERING,
+            story_order_key=beats[0].story_order_key,
+        )
         seed_record = next(
             (
                 record
-                for record in canon
-                if record.predicate == "status_snapshot"
-                and state_mod.is_canon(record)
-                and isinstance(record.value, Mapping)
+                for record in reversed(entry_state.active_records)
+                if record.predicate == "status_snapshot" and isinstance(record.value, Mapping)
             ),
             None,
         )
@@ -1091,7 +1108,8 @@ def make_outline_handler(
         # inside the world brief rather than beside it. `None` for every book whose canon
         # declares no chain, and then no standing schedule is asked for — exactly as a book
         # with no status sheet is asked for no milestones.
-        world = world_brief.brief_for(canon)
+        planning_canon = planning_records(canon, entry_state)
+        world = world_brief.brief_for(planning_canon)
         ladder = world.ladder if world is not None else None
         # **The world and its protagonist, off the `canon` already read two statements
         # above.** A second query would be a second answer to the same question, and the
@@ -1103,8 +1121,17 @@ def make_outline_handler(
         if arc_index is not None:
             current_ids = {beat.logical_id for beat in beats}
             stored_summaries = store.scene_summaries(book_id, branch_id)
+            reached_current_arc = False
             for node in head.in_reading_order():
-                if node.kind is not NodeKind.SCENE or node.logical_id in current_ids:
+                if node.kind is not NodeKind.SCENE:
+                    continue
+                if node.logical_id in current_ids:
+                    reached_current_arc = True
+                    continue
+                if reached_current_arc:
+                    # The field is named earlier_accepted_scenes. A skipped hole can leave
+                    # accepted prose later in the manuscript, but showing that future as
+                    # history would make the outline repeat or anticipate its own future.
                     continue
                 if not node.content:
                     continue
@@ -1118,9 +1145,10 @@ def make_outline_handler(
             seed=seed or None,
             promises=open_promises,
             world=world,
-            protagonist=worlds_mod.protagonist_brief(canon),
+            protagonist=worlds_mod.protagonist_brief(planning_canon),
             serial_arc_index=arc_index if isinstance(arc_index, int) else None,
             prior_summaries=prior_summaries,
+            arc_entry_state=entry_state,
         )
         day = stamp[:10]
         provider, _ = registry.resolve(request.call_class)

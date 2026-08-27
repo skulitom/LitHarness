@@ -22,6 +22,8 @@ from typing import Any
 import litharness_contracts as lc
 
 from litharness.application.conductor import JobHandler
+from litharness.application.model_context import StoryStateView, planning_records
+from litharness.application.model_context import current as current_state_view
 from litharness.application.plan_refinement import accept_plan_proposal
 from litharness.application.policy_events import policy_decision_event
 from litharness.application.ports import NarrativePlanningStore, TextGenerator
@@ -49,6 +51,7 @@ from litharness.domain.plan_refinement import (
     PlanRevision,
     apply_plan_proposal,
 )
+from litharness.domain.plans import scene_plan_for
 from litharness.domain.policy import (
     GateKind,
     GateOutcome,
@@ -57,6 +60,7 @@ from litharness.domain.policy import (
     decide,
     decision_id_for,
 )
+from litharness.domain.text import content_hash
 from litharness.domain.world_brief import WorldBrief
 
 NARRATIVE_PLAN = "narrative_plan"
@@ -133,6 +137,21 @@ class NarrativePlanOutputError(PlanProposalError):
     """A provider answer is JSON but not a safe, applicable plan proposal."""
 
 
+def _accepted_scene_target(
+    item: lc.PlanItem | None, accepted_scene_ids: Sequence[str]
+) -> str | None:
+    if item is None:
+        return None
+    return next(
+        (
+            logical_id
+            for logical_id in accepted_scene_ids
+            if scene_plan_for((item,), logical_id) is item
+        ),
+        None,
+    )
+
+
 def narrative_job_id(directive_id: str, epoch: int) -> str:
     """Stable within one recovery epoch; ``replan`` deliberately creates a fresh unit."""
     material = payload_digest({"directive_id": directive_id, "epoch": epoch, "lane": PROFILE})
@@ -149,6 +168,9 @@ def render_request(
     scene_ids: Sequence[str] = (),
     *,
     world: WorldBrief | None = None,
+    current_state: StoryStateView | None = None,
+    accepted_summaries: Sequence[tuple[str, str]] = (),
+    accepted_scene_ids: Sequence[str] = (),
 ) -> CompletionRequest:
     """Freeze the plan, the book's scenes, and the original direction into one request.
 
@@ -162,14 +184,37 @@ def render_request(
     positional slot to a function whose third argument is already an optional sequence is how a
     later caller silently passes a brief as a list of scenes. It is absent from the payload for
     a book with no world, so a book that declares none renders the bytes it always did.
+
+    Accepted summaries, per-scene status and current state are one structural manuscript
+    context, separate from the editable plan. They contain no prose. Their absence preserves
+    the old request for direct callers, while the production handler always supplies them when
+    a manuscript head exists.
     """
     plan_payload = [lc.to_jsonable(item) for item in base.items]
+    accepted = frozenset(accepted_scene_ids)
+    summaries = dict(accepted_summaries)
+    manuscript_context = {
+        "scenes": [
+            {
+                "scene": logical_id,
+                "status": "accepted" if logical_id in accepted else "draftable",
+                **({"accepted_summary": summaries[logical_id]} if logical_id in summaries else {}),
+            }
+            for logical_id in scene_ids
+        ],
+        **(
+            {"current_story_state": current_state.to_jsonable()}
+            if current_state is not None
+            else {}
+        ),
+    }
     prompt = json.dumps(
         {
             "base_plan_revision_id": base.plan_revision_id,
             # See the docstring: spread rather than assigned, so no key exists without a world.
             **({"world": world.to_jsonable()} if world is not None else {}),
             "scenes_in_reading_order": list(scene_ids),
+            **({"manuscript_context": manuscript_context} if scene_ids else {}),
             "directive": {
                 "directive_id": directive.directive_id,
                 "kind": directive.kind.value,
@@ -265,6 +310,7 @@ def proposal_from_model(
     directive: Directive,
     result: CompletionResult,
     scene_ids: Sequence[str] = (),
+    accepted_scene_ids: Sequence[str] = (),
     project_id: str = "",
 ) -> PlanProposal:
     """Parse the shallow provider payload into strict domain objects."""
@@ -299,6 +345,13 @@ def proposal_from_model(
             )
 
         if action is PlanEditAction.DELETE:
+            existing = current.get(logical_id)
+            accepted_target = _accepted_scene_target(existing, accepted_scene_ids)
+            if accepted_target is not None:
+                raise NarrativePlanOutputError(
+                    f"edit {index} targets accepted scene {accepted_target!r}; "
+                    "the narrative-planning lane cannot revise accepted manuscript"
+                )
             edits.append(PlanEdit(action, logical_id, reason=reason))
             continue
 
@@ -364,6 +417,12 @@ def proposal_from_model(
             scope=scope,
             links=list(existing.links) if existing is not None else [],
         )
+        accepted_target = _accepted_scene_target(item, accepted_scene_ids)
+        if accepted_target is not None:
+            raise NarrativePlanOutputError(
+                f"edit {index} targets accepted scene {accepted_target!r}; "
+                "the narrative-planning lane cannot revise accepted manuscript"
+            )
         edits.append(PlanEdit(action, logical_id, item, reason))
 
     produced = tuple(
@@ -499,17 +558,45 @@ def make_narrative_plan_handler(
         # book with no head has no scenes to scope to, and an unscoped proposal is what it
         # got before this existed, so the empty tuple is the honest fallback.
         head = store.head(book_id, branch_id)
-        scene_ids = tuple(scene_nodes(head)) if head is not None else ()
+        if head is None:
+            scene_ids: tuple[str, ...] = ()
+            accepted_scene_ids: tuple[str, ...] = ()
+            accepted_summaries: tuple[tuple[str, str], ...] = ()
+        else:
+            scene_ids = tuple(scene_nodes(head))
+            accepted_scene_ids = tuple(
+                logical_id for logical_id in scene_ids if head.node(logical_id).content
+            )
+            stored_summaries = store.scene_summaries(book_id, branch_id)
+            summary_rows = (
+                (
+                    logical_id,
+                    stored_summaries.get(logical_id, {}).get(
+                        content_hash(head.node(logical_id).content or ""), ""
+                    ),
+                )
+                for logical_id in accepted_scene_ids
+            )
+            accepted_summaries = tuple(
+                (logical_id, summary) for logical_id, summary in summary_rows if summary
+            )
+        canon = tuple(store.state_records(book_id, branch_id))
 
         # **The world, read here rather than threaded from the caller.** Unlike the outline
         # handler this one holds no canon of its own, so the brief costs one query — and it is
         # the same query, on the same store, that `make_outline_handler` already makes. A book
         # with no world gets `None` and the request renders the bytes it always did.
+        state_view = current_state_view(head, canon) if head is not None else None
         request = render_request(
             base,
             directive,
             scene_ids,
-            world=world_brief.brief_for(store.state_records(book_id, branch_id)),
+            world=world_brief.brief_for(
+                planning_records(canon, state_view) if state_view is not None else canon
+            ),
+            current_state=state_view,
+            accepted_summaries=accepted_summaries,
+            accepted_scene_ids=accepted_scene_ids,
         )
         stamp = _stamp(now)
         day = stamp[:10]
@@ -572,6 +659,7 @@ def make_narrative_plan_handler(
                 directive=directive,
                 result=result,
                 scene_ids=scene_ids,
+                accepted_scene_ids=accepted_scene_ids,
                 project_id=project_id,
             )
             preview = apply_plan_proposal(base, proposal)

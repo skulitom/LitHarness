@@ -30,7 +30,7 @@ import json
 import pytest
 
 from litharness.application import overview, readers, titles, world_agent
-from litharness.cli import EXIT_OK, main
+from litharness.cli import EXIT_OK, _prompt_pressure, main
 from litharness.domain import house
 from litharness.domain import writers as writers_domain
 from litharness.domain.generation import CompletionRequest
@@ -252,3 +252,31 @@ def test_prompt_inspector_covers_every_production_communication_role(
     } <= set(rows)
     assert all(row["input_chars"] >= row["prompt_chars"] for row in rows.values())
     assert rows["summarizer"]["schema_chars"] > 0
+
+
+def test_representative_prompt_inspection_labels_itself_and_carries_material(
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    assert main(["prompts", "--role", "scene", "--json"]) == EXIT_OK
+    row = json.loads(capsys.readouterr().out)
+
+    assert row["source"] == "representative_specimen"
+    assert "AUTHOR-LOCKED STORY DECISIONS" in row["system"]
+    assert "Who is in this story" in row["prompt"]
+    assert len(row["prompt"]) > 500
+
+
+def test_prompt_pressure_names_section_dominance_and_exact_repetition() -> None:
+    request = CompletionRequest(prompt="- Same debt!\n- same debt\n- another fact")
+    pressure = _prompt_pressure(
+        request,
+        context={
+            "items": 40,
+            "tokens": 1000,
+            "budget": 2000,
+            "sections": {"threads": 34, "facts": 6},
+        },
+    )
+
+    assert pressure["dominant_sections"] == [{"section": "threads", "items": 34, "share": 0.85}]
+    assert pressure["repeated_material_lines"] == [{"text": "same debt", "occurrences": 2}]

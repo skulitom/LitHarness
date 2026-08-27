@@ -30,9 +30,8 @@ from typing import Any
 import litharness_contracts as lc
 
 from litharness.application.conductor import JobHandler
+from litharness.application.model_context import current as current_state_view
 from litharness.application.ports import DirectorStore, TextGenerator
-from litharness.domain import state as state_mod
-from litharness.domain import worlds as worlds_mod
 from litharness.domain.directives import (
     Directive,
     DirectiveKind,
@@ -189,36 +188,7 @@ def current_story_state(revision: Revision, records: Sequence[lc.StateRecord]) -
     the boundary; the state ledger supplies the coordinate vocabulary and may still abstain when
     it cannot translate that boundary honestly.
     """
-    scenes = [
-        node
-        for node in revision.in_reading_order()
-        if node.kind is NodeKind.SCENE and not node.tombstoned
-    ]
-    latest_drafted_ordinal = max(
-        (index for index, node in enumerate(scenes, start=1) if node.content),
-        default=0,
-    )
-    entering = latest_drafted_ordinal == 0 and bool(scenes)
-    boundary_ordinal = latest_drafted_ordinal or (1 if scenes else 0)
-    cutoff = state_mod.scene_cutoff(records, boundary_ordinal)
-    eligible = state_mod.eligible_records(
-        records,
-        cutoff=cutoff,
-        pov_character_id=None,
-        moment=(state_mod.StateMoment.ENTERING if entering else state_mod.StateMoment.THROUGH),
-        logical_id=scenes[0].logical_id if entering and cutoff is not None else None,
-    )
-    active, _history = state_mod.active_projection(
-        eligible,
-        changing_edge_predicates=(worlds_mod.STANDS_AT_PREDICATE,),
-        multi_valued_predicates=(worlds_mod.ENTITY_ROLE_PREDICATE,),
-    )
-    projected = worlds_mod.project(active)
-    return tuple(
-        projected.get(record.record_id) or state_mod.describe(record)
-        for record in active
-        if projected.get(record.record_id, None) != ""
-    )
+    return current_state_view(revision, tuple(records)).lines
 
 
 def directive_from(

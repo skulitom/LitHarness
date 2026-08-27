@@ -136,7 +136,8 @@ Useful operating views:
 | `events` | append-only state-change history |
 | `plans` | immutable plan lineage and its proposals |
 | `state`, `characters`, `world summary` | current canon and world state |
-| `prompts [--role ROLE]` | complete representative requests: role, material, schema, tools, and effective size |
+| `prompts [--role ROLE]` | labelled representative requests: role, material, schema, tools, and effective size |
+| `prompts --role scene --scene N` | the exact frozen scene request, provenance, section pressure, omissions, and repeated material |
 | `verify` | rebuild revisions and verify hashes and policy coverage |
 | `backup PATH` | online SQLite backup, safe while ticking |
 
@@ -154,7 +155,9 @@ uv run litharness --database book.db plans
 ```
 
 Explicit constraints and vetoes are preserved verbatim and locked. Interpretive notes receive one
-bounded proposal whose scope, locks, and base revision are validated outside the model.
+bounded proposal whose scope, locks, and base revision are validated outside the model. Locked
+author decisions travel at system authority after lower-authority writing aids; reader reactions
+remain audience evidence in user material and cannot override them.
 
 Recovery is explicit:
 
@@ -172,6 +175,9 @@ prior boundary; a caller stopped within a scene sees only facts whose evidence h
 ended; a Director may see the latest accepted boundary; POV-restricted knowledge reaches only
 the named character. Superseded wants, standings, and other changing assertions are labelled as
 history instead of being presented beside their replacements as simultaneously current.
+The outline sees this projection at the arc's entry. Interpretive planning sees it through the
+furthest accepted scene together with accepted/draftable scene status and current-hash summaries;
+that lane cannot revise an accepted scene.
 
 Chapter, arc, and fifty-chapter volume state are therefore derived snapshots, not separate
 editable sheets. SQLite revisions and events are authoritative. Git is appropriate for reviewed
