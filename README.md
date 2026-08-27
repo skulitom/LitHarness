@@ -4,10 +4,18 @@
 
 # LitHarness
 
-LitHarness is an autonomous fiction-production system for open-ended serials. Its product
-objective is fiction a defined audience voluntarily continues and recommends, with no human in
-the production loop. The operator may direct a book and accept or reject it at book grain, but
-does not write, rank candidates, label passages, or train the system.
+[![CI](https://github.com/skulitom/LitHarness/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/skulitom/LitHarness/actions/workflows/ci.yml)
+[![Python 3.11+](https://img.shields.io/badge/Python-3.11%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
+[![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+
+LitHarness is an open-source Python system for autonomous, open-ended serial fiction. It
+coordinates specialised LLM agents across listing, world design, planning, scene drafting,
+continuity, repair, covers, and release packaging while preserving content-addressed manuscript
+history and scene-grounded narrative state.
+
+Its product objective is fiction a defined audience voluntarily continues and recommends, with
+no human in the production loop. The operator may direct a book and accept or reject it at book
+grain, but does not write, rank candidates, label passages, or train the system.
 
 The hard unsolved problem is perception, not prose plumbing: LitHarness needs an **LLM-based
 cognitive system that perceives literary quality well enough to behave as a readership**. A

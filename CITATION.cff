@@ -1,0 +1,24 @@
+cff-version: 1.2.0
+message: "If you use LitHarness in research, please cite the software using this metadata."
+type: software
+title: "LitHarness"
+abstract: >-
+  LitHarness is an open-source Python system for autonomous long-form serial fiction. It
+  coordinates auditable LLM agents, maintains persistent scene-grounded narrative state and
+  immutable manuscript revisions, and isolates research into LLM-based literary-quality
+  perception from production authority until the mechanism is qualified.
+authors:
+  - name: "Skulitom"
+repository-code: "https://github.com/skulitom/LitHarness"
+url: "https://github.com/skulitom/LitHarness"
+license: MIT
+version: 0.1.0
+keywords:
+  - "agentic AI"
+  - "AI fiction"
+  - "creative writing"
+  - "large language models"
+  - "LLM agents"
+  - "LLM evaluation"
+  - "narrative generation"
+  - "serial fiction"

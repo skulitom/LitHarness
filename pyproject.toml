@@ -5,12 +5,40 @@ build-backend = "hatchling.build"
 [project]
 name = "litharness"
 version = "0.1.0"
-description = "An autonomous book-production system: manuscript IR, immutable revisions, and a policy-gated production loop."
+description = "Autonomous long-form fiction with auditable LLM agents, persistent narrative state, and reader-mechanism research."
 readme = "README.md"
 license = "MIT"
 requires-python = ">=3.11"
 authors = [{ name = "LitHarness contributors" }]
+keywords = [
+  "agentic-ai",
+  "ai-fiction",
+  "creative-writing",
+  "large-language-models",
+  "llm-agents",
+  "llm-evaluation",
+  "narrative-generation",
+  "serial-fiction",
+]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Developers",
+  "Intended Audience :: Science/Research",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Artistic Software",
+  "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
 dependencies = ["litharness-contracts"]
+
+[project.urls]
+Homepage = "https://github.com/skulitom/LitHarness"
+Repository = "https://github.com/skulitom/LitHarness"
+Issues = "https://github.com/skulitom/LitHarness/issues"
 
 [project.scripts]
 litharness = "litharness.cli:main"
