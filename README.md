@@ -206,13 +206,16 @@ Generate several independent cover options after the book exists:
 
 ```bash
 uv run litharness --database book.db cover --variants 4
+uv run litharness --database book.db cover --volume 2 --variants 4
 ```
 
 Codex produces text-free 2:3 art; LitHarness adds the exact title and publication author locally
-and writes 400×600 PNGs plus a manifest under the book's library shelf. The default author is
-`Skulitom`. Use `--art` to finish existing art without another generation, `--reference` for a
-layout reference, and `--art-direction` for shared visual constraints. Covers are generated, not
-ranked or critiqued.
+and writes 400×600 PNGs plus a manifest under the book's library shelf. A volume run writes its
+own set under `volumes/VolumeN/covers/`, marks that release in the prompt and manifest, and keeps
+the same canonical book and revision identity. The default author is `Skulitom`. Use `--art` to
+finish existing art without another generation, `--reference` for a layout reference, and
+`--art-direction` or `--description-file` for volume-specific visual context. Covers are
+generated, not ranked or critiqued.
 
 The derived library is refreshed after each tick and skipped when the book head has not moved:
 
@@ -222,9 +225,12 @@ uv run litharness --database book.db export book.md
 uv run litharness --database book.db export book.html
 ```
 
-The library contains reading copies and paste-ready chapter fragments. Incomplete chapters are
-withheld rather than emitted with holes; reading-copy exports show undrafted scenes explicitly.
-The library is a file handoff, not a posting scheduler or publication platform.
+The library contains a whole-serial reading copy, paste-ready chapter fragments, and derived
+release volumes in globally numbered fifty-chapter windows. Change only the packaging with
+`--volume-chapters`; state, promises, characters, revision identity, and chapter numbering remain
+continuous across every boundary. An incomplete final volume means work in progress, not an
+ending. Incomplete chapters are withheld from paste-ready output while reading copies show their
+gaps explicitly. The library is a file handoff, not a posting scheduler or publication platform.
 
 ## Repository map
 

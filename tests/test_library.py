@@ -9,11 +9,13 @@ every one of those would be published as if it were prose.
 
 from __future__ import annotations
 
+import json
 import re
 
 from litharness.adapters.sqlite_store import SqliteStore
 from litharness.application.export import collect
 from litharness.application.library import (
+    DEFAULT_CHAPTERS_PER_VOLUME,
     DEFAULT_SCENES_PER_CHAPTER,
     LIBRARY_DIRNAME,
     NOTES_FILENAME,
@@ -26,6 +28,7 @@ from litharness.application.library import (
     publish,
     root_for,
     slugify,
+    volumes_for,
 )
 from litharness.domain.nodes import Node, NodeKind
 from litharness.domain.position import initial_keys
@@ -208,6 +211,66 @@ def test_grouping_names_the_chapter_and_never_the_scenes(tmp_path) -> None:
     assert [chapter.stem for chapter in chapters] == ["Chapter1", "Chapter2"]
     assert "<hr>" in chapters[0].fragment, "a scene break inside a grouped chapter"
     assert "* * *" in chapters[0].plain
+
+
+def test_release_volumes_package_one_endless_serial_without_resetting_it(tmp_path) -> None:
+    """The volume is a release window, never another book or an inferred ending."""
+    assert DEFAULT_CHAPTERS_PER_VOLUME == 50
+    store = SqliteStore.open(tmp_path / "l.db")
+    root = tmp_path / "library"
+    try:
+        document = a_document(store, drafted=102, total=112)
+        chapters, _ = chapters_for(document)
+        volumes = volumes_for(chapters, total_chapters=112)
+        assert [(v.first_chapter, v.last_chapter) for v in volumes] == [
+            (1, 50),
+            (51, 100),
+            (101, 112),
+        ]
+        [book] = publish(store, root=root, generated_at=STAMP)
+    finally:
+        store.close()
+
+    assert [volume.withheld for volume in book.volumes] == [0, 0, 10]
+    shelf = root / book.slug
+    assert (shelf / f"{book.slug}.md").is_file(), "the whole-serial reading copy remains"
+    volume_two = shelf / "volumes" / "Volume2"
+    assert (volume_two / "chapters" / "Chapter51.txt").is_file()
+    assert (volume_two / "chapters" / "Chapter100.txt").is_file()
+    assert not (volume_two / "chapters" / "Chapter1.txt").exists()
+
+    manifest = json.loads((volume_two / "manifest.json").read_text(encoding="utf-8"))
+    assert manifest["book_id"] == book.book_id
+    assert manifest["revision_id"] == book.revision_id
+    assert manifest["open_ended_serial"] is True
+    assert manifest["continuity_scope"] == {
+        "kind": "serial_prefix",
+        "through_global_chapter": 100,
+        "verified": False,
+    }
+    third = (shelf / "volumes" / "Volume3" / "Volume3.md").read_text(encoding="utf-8")
+    assert "## Chapter 112" in third and "[not yet drafted]" in third
+
+
+def test_changing_release_window_repackages_an_unchanged_serial_and_removes_stale_volumes(
+    tmp_path,
+) -> None:
+    store = SqliteStore.open(tmp_path / "l.db")
+    root = tmp_path / "library"
+    try:
+        a_document(store, drafted=112, total=112)
+        [first] = publish(store, root=root, generated_at=STAMP)
+        assert len(first.volumes) == 3
+        [second] = publish(
+            store,
+            root=root,
+            generated_at=STAMP,
+            chapters_per_volume=100,
+        )
+    finally:
+        store.close()
+    assert second.rewritten and len(second.volumes) == 2
+    assert not (root / second.slug / "volumes" / "Volume3").exists()
 
 
 def test_the_plain_text_fallback_is_blank_line_separated() -> None:

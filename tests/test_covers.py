@@ -35,6 +35,8 @@ def test_a_cover_needs_publication_words_and_story_context() -> None:
         spec(title=" ")
     with pytest.raises(ValueError, match="story context"):
         spec(description=" ")
+    with pytest.raises(ValueError, match="positive global release number"):
+        covers.CoverSpec(title="A Title", description="A story.", volume=0)
 
 
 def test_the_image_prompt_reserves_typography_space_but_forbids_generated_words(
@@ -48,6 +50,13 @@ def test_the_image_prompt_reserves_typography_space_but_forbids_generated_words(
     assert "NO words" in prompt
     assert covers.VARIANT_DIRECTIONS[1] in prompt
     assert "references for broad cover hierarchy" in prompt
+    volume_prompt = covers.art_prompt(
+        covers.CoverSpec(title="A Title", description="A story.", volume=3),
+        variant=1,
+        target=tmp_path / "volume-art.png",
+        has_references=False,
+    )
+    assert "volume 3 of an open-ended serial" in volume_prompt
     with pytest.raises(ValueError, match="variant"):
         covers.art_prompt(spec(), variant=0, target=tmp_path / "art.png", has_references=False)
 
@@ -186,6 +195,7 @@ def test_a_supplied_art_set_is_self_contained_versioned_and_collision_safe(
         "branch_id": "branch-1",
         "revision_id": "revision-1",
     }
+    assert manifest["release"] == {"kind": "serial"}
     assert [row["source"] for row in manifest["variants"]] == ["supplied", "supplied"]
     assert all(re.fullmatch(r"[0-9a-f]{64}", row["cover_sha256"]) for row in manifest["variants"])
     with pytest.raises(FileExistsError, match="--force"):
@@ -331,6 +341,32 @@ def test_an_existing_book_defaults_to_its_library_shelf(
     assert manifest["author"] == "Skulitom"
     assert manifest["book"]["book_id"]
     assert manifest["book"]["revision_id"]
+
+    assert (
+        main(
+            [
+                "--database",
+                str(database),
+                "cover",
+                "--volume",
+                "1",
+                "--art",
+                str(source),
+            ]
+        )
+        == EXIT_OK
+    )
+    volume_shelf = (
+        tmp_path / "book-library" / "memory-toll" / "volumes" / "Volume1" / "covers"
+    )
+    volume_manifest = json.loads(
+        (volume_shelf / "cover-manifest.json").read_text(encoding="utf-8")
+    )
+    assert (volume_shelf / "cover-01.png").is_file()
+    assert volume_manifest["release"] == {"kind": "volume", "number": 1}
+    assert volume_manifest["book"] == manifest["book"], (
+        "release packaging must not mint another book or revision identity"
+    )
 
 
 def test_the_cli_reports_a_non_object_bundle_as_an_operational_fault(

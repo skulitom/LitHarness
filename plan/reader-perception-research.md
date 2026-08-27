@@ -118,9 +118,12 @@ outside prose, and the report explicitly carries no promotion bar. Run the free 
 uv run python research/quality-measurement/causal_salience.py --selftest
 ```
 
-This substrate does not establish ecological validity. Before a model arm, replace or extend the
-toy fixtures with unmemorised LitHarness scenes whose answer keys are certified by existing state,
-event, or promise relations; do not loosen admission to accept model-authored damage at face value.
+This substrate does not establish ecological validity. The
+[scene-intervention audit](causal-salience-interventions.md) maps its requested families onto the
+records LitHarness actually has, specifies long-context and shortcut controls, and distinguishes
+what can be admitted now from what first needs better evidence. In particular, current promise
+rows do not carry evidence spans and cannot yet certify payoff displacement by themselves. Do not
+loosen admission to accept model-authored damage at face value.
 
 ## The first arm, when a model path is available
 

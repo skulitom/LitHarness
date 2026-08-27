@@ -15,6 +15,10 @@ cadence and a place. This module is that — a folder republished as the books m
   `[not yet drafted]` to readers. So a chapter holding an undrafted scene is **withheld and
   counted**, never emitted with a hole in it, and the front matter is absent rather than
   suppressed.
+- A **release volume** groups those global chapters into stable fifty-chapter windows. It is
+  derived packaging for Royal Road and eventual book release, never a new book, branch, canon
+  ledger, or ending. The whole-serial reading copy remains beside it because continuity does
+  not reset when a cover changes.
 
 **One scene is one chapter by default, and that is a refusal rather than a choice.** Production
 books hold no chapter nodes and no assembly scheme is decided — `pair-draw` already refuses
@@ -94,6 +98,15 @@ def root_for(database: Path | str) -> Path:
 #: is the only grouping that asserts nothing.
 DEFAULT_SCENES_PER_CHAPTER = 1
 
+#: A release-package boundary, not a story beat. Fifty is the operator's default for the
+#: intended 40-60 chapter book shape; changing it re-renders the derived library and changes
+#: no manuscript identity or plan.
+DEFAULT_CHAPTERS_PER_VOLUME = 50
+
+#: Stored in the derived-state cache so a rendering change republishes shelves whose manuscript
+#: head did not move. This version introduces release-volume folders and manifests.
+LIBRARY_FORMAT_VERSION = "2"
+
 #: A system-voice line: the bracketed all-caps tag the genre puts its state on. Restated from
 #: `domain/axes.py`'s `_SYSTEM_LINE` rather than imported, because that one is a *counter's*
 #: definition and this one is a *rendering* choice — they agree today and should be free to
@@ -101,6 +114,7 @@ DEFAULT_SCENES_PER_CHAPTER = 1
 _SYSTEM_LINE = re.compile(r"\[[A-Z][A-Z ]+\]")
 
 _SLUG_STRIP = re.compile(r"[^a-z0-9]+")
+_VOLUME_MARKDOWN_STRUCTURE = re.compile(r"^(?:#{1,6}(?:\s|$)|-{3,}\s*$|={3,}\s*$)")
 
 #: The listing a reader meets before chapter one, written into every shelf. What
 #: `application/overview.py` produces and what `new --premise` stores are the same string,
@@ -175,6 +189,21 @@ class Chapter:
 
 
 @dataclass(frozen=True, slots=True)
+class Volume:
+    """One derived release window over globally numbered serial chapters."""
+
+    number: int
+    first_chapter: int
+    last_chapter: int
+    chapters: tuple[Chapter, ...]
+    withheld: int
+
+    @property
+    def stem(self) -> str:
+        return f"Volume{self.number}"
+
+
+@dataclass(frozen=True, slots=True)
 class PublishedBook:
     """One book's place in the library, and what was held back from it."""
 
@@ -187,6 +216,7 @@ class PublishedBook:
     total: int
     words: int
     chapters: tuple[Chapter, ...]
+    volumes: tuple[Volume, ...]
     #: Chapters not emitted because they hold a scene with no prose yet. Counted rather than
     #: dropped: a pastable set that silently skipped its gaps would read as a finished serial.
     withheld: int
@@ -283,9 +313,179 @@ def chapters_for(
     return tuple(chapters), withheld
 
 
+def volumes_for(
+    chapters: Sequence[Chapter],
+    *,
+    total_chapters: int,
+    chapters_per_volume: int = DEFAULT_CHAPTERS_PER_VOLUME,
+) -> tuple[Volume, ...]:
+    """Group global chapter numbers into derived release windows.
+
+    Missing chapters remain counted inside their window, so an unfinished chapter cannot shift
+    every later volume boundary. The final short window is an in-progress release package, not
+    an inferred ending.
+    """
+    size = max(chapters_per_volume, 1)
+    available = {chapter.number: chapter for chapter in chapters}
+    volumes: list[Volume] = []
+    for first in range(1, total_chapters + 1, size):
+        last = min(first + size - 1, total_chapters)
+        included = tuple(
+            available[number] for number in range(first, last + 1) if number in available
+        )
+        volumes.append(
+            Volume(
+                number=len(volumes) + 1,
+                first_chapter=first,
+                last_chapter=last,
+                chapters=included,
+                withheld=(last - first + 1) - len(included),
+            )
+        )
+    return tuple(volumes)
+
+
+def _volume_markdown(document: BookExport, volume: Volume) -> str:
+    by_number = {chapter.number: chapter for chapter in volume.chapters}
+    lines = [
+        f"# {document.title} — Volume {volume.number}",
+        "",
+        f"*Serial chapters {volume.first_chapter}-{volume.last_chapter} · "
+        f"revision `{document.revision_id}`*",
+        "",
+    ]
+    if document.premise:
+        lines += [f"> **Premise.** {' '.join(document.premise.split())}", ""]
+    for number in range(volume.first_chapter, volume.last_chapter + 1):
+        lines += [f"## Chapter {number}", ""]
+        chapter = by_number.get(number)
+        prose = chapter.plain.rstrip() if chapter else NOT_DRAFTED
+        safe = "\n".join(
+            "\\" + line if _VOLUME_MARKDOWN_STRUCTURE.match(line) else line
+            for line in prose.split("\n")
+        )
+        lines += [safe, ""]
+    return "\n".join(lines).rstrip() + "\n"
+
+
+def _volume_html(document: BookExport, volume: Volume) -> str:
+    by_number = {chapter.number: chapter for chapter in volume.chapters}
+    parts = [
+        "<!DOCTYPE html>",
+        '<html lang="en">',
+        '<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, '
+        'initial-scale=1">',
+        f"<title>{html.escape(document.title)} — Volume {volume.number}</title></head>",
+        "<body>",
+        f"<h1>{html.escape(document.title)} — Volume {volume.number}</h1>",
+        f"<p><em>Serial chapters {volume.first_chapter}-{volume.last_chapter} · revision "
+        f"<code>{html.escape(document.revision_id)}</code></em></p>",
+    ]
+    if document.premise:
+        parts.append(f"<blockquote>{html.escape(document.premise.strip())}</blockquote>")
+    for number in range(volume.first_chapter, volume.last_chapter + 1):
+        parts.append(f"<h2>Chapter {number}</h2>")
+        chapter = by_number.get(number)
+        parts.append(chapter.fragment.rstrip() if chapter else f"<p>{NOT_DRAFTED}</p>")
+    parts += ["</body>", "</html>"]
+    return "\n".join(parts) + "\n"
+
+
+def _volume_manifest(document: BookExport, volume: Volume) -> dict[str, object]:
+    """Packaging provenance. It asserts no consistency result or narrative closure."""
+    emitted = {chapter.number for chapter in volume.chapters}
+    return {
+        "schema_version": 1,
+        "derived_release_package": True,
+        "open_ended_serial": True,
+        "book_id": document.book_id,
+        "branch_id": document.branch_id,
+        "revision_id": document.revision_id,
+        "volume": volume.number,
+        "first_global_chapter": volume.first_chapter,
+        "last_global_chapter": volume.last_chapter,
+        "emitted_chapters": sorted(emitted),
+        "withheld_chapters": [
+            number
+            for number in range(volume.first_chapter, volume.last_chapter + 1)
+            if number not in emitted
+        ],
+        "continuity_scope": {
+            "kind": "serial_prefix",
+            "through_global_chapter": volume.last_chapter,
+            "verified": False,
+        },
+    }
+
+
 def _write(path: Path, text: str) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(text, encoding="utf-8", newline="\n")
+
+
+_CHAPTER_FILE = re.compile(r"Chapter\d+\.(?:html|txt)")
+_VOLUME_DIR = re.compile(r"Volume\d+")
+
+
+def _remove_generated_files(folder: Path, keep: set[str], pattern: re.Pattern[str]) -> None:
+    if not folder.is_dir():
+        return
+    for path in folder.iterdir():
+        if path.is_file() and pattern.fullmatch(path.name) and path.name not in keep:
+            path.unlink()
+
+
+def _publish_volumes(document: BookExport, shelf: Path, volumes: Sequence[Volume]) -> None:
+    root = shelf / "volumes"
+    expected = {volume.stem for volume in volumes}
+    if root.is_dir():
+        for directory in root.iterdir():
+            if not directory.is_dir() or _VOLUME_DIR.fullmatch(directory.name) is None:
+                continue
+            if directory.name not in expected:
+                chapter_folder = directory / "chapters"
+                _remove_generated_files(chapter_folder, set(), _CHAPTER_FILE)
+                if chapter_folder.is_dir() and not any(chapter_folder.iterdir()):
+                    chapter_folder.rmdir()
+                for name in (f"{directory.name}.md", f"{directory.name}.html", "manifest.json"):
+                    path = directory / name
+                    if path.is_file():
+                        path.unlink()
+                if not any(directory.iterdir()):
+                    directory.rmdir()
+
+    index = [
+        "# Release volumes",
+        "",
+        "Derived packaging over one open-ended serial. Global chapter numbering and the "
+        "book's canon continue across every boundary.",
+        "",
+    ]
+    for volume in volumes:
+        folder = root / volume.stem
+        _write(folder / f"{volume.stem}.md", _volume_markdown(document, volume))
+        _write(folder / f"{volume.stem}.html", _volume_html(document, volume))
+        _write(
+            folder / "manifest.json",
+            json.dumps(_volume_manifest(document, volume), indent=2, sort_keys=True) + "\n",
+        )
+        chapter_folder = folder / "chapters"
+        keep = {
+            filename
+            for chapter in volume.chapters
+            for filename in (f"{chapter.stem}.html", f"{chapter.stem}.txt")
+        }
+        _remove_generated_files(chapter_folder, keep, _CHAPTER_FILE)
+        for chapter in volume.chapters:
+            _write(chapter_folder / f"{chapter.stem}.html", chapter.fragment)
+            _write(chapter_folder / f"{chapter.stem}.txt", chapter.plain)
+        held = f"; {volume.withheld} withheld" if volume.withheld else ""
+        index.append(
+            f"- [{volume.stem}]({volume.stem}/{volume.stem}.md): chapters "
+            f"{volume.first_chapter}-{volume.last_chapter}{held}"
+        )
+    index.append("")
+    _write(root / "README.md", "\n".join(index))
 
 
 def publish_book(
@@ -293,6 +493,7 @@ def publish_book(
     *,
     root: Path,
     scenes_per_chapter: int = DEFAULT_SCENES_PER_CHAPTER,
+    chapters_per_volume: int = DEFAULT_CHAPTERS_PER_VOLUME,
 ) -> PublishedBook:
     """Write one book's shelf: the reading copies, the pastable chapters, and the notes file."""
     slug = slugify(document.title, document.book_id)
@@ -327,6 +528,13 @@ def publish_book(
         _write(folder / f"{chapter.stem}.html", chapter.fragment)
         _write(folder / f"{chapter.stem}.txt", chapter.plain)
 
+    volumes = volumes_for(
+        chapters,
+        total_chapters=len(document.chapter_groups(scenes_per_chapter)),
+        chapters_per_volume=chapters_per_volume,
+    )
+    _publish_volumes(document, shelf, volumes)
+
     notes = shelf / NOTES_FILENAME
     if not notes.exists():
         # Written once. Overwriting somebody's reading notes with a template on the next tick
@@ -343,6 +551,7 @@ def publish_book(
         total=document.total,
         words=document.words,
         chapters=chapters,
+        volumes=volumes,
         withheld=withheld,
     )
 
@@ -363,8 +572,13 @@ Each book has a shelf:
   published twice). Open one in a browser, select all, copy.
 - `chapters/NN-title.txt` — the same chapter as plain text, for any editor the HTML route
   does not survive.
-- `covers/cover-NN.png` — Royal Road-ready 400x600 options, with their text-free source art
-  and generation manifest. The library publisher preserves this folder when the book moves.
+- `volumes/VolumeN/` — release packaging in roughly fifty global chapters, including a reading
+  copy, pastable chapter files, and a manifest that keeps the canonical book/revision identity.
+  A volume boundary does not reset canon and does not assert that the serial ends there.
+- `covers/cover-NN.png` — serial-level Royal Road-ready 400x600 options, with text-free source
+  art and a generation manifest.
+- `volumes/VolumeN/covers/cover-NN.png` — an independent set for that release volume, retaining
+  the canonical book and revision identity. The library publisher preserves cover folders.
 - `NOTES.md` — what you noticed. Worth writing: a named defect from a human read is one of
   only two ways a new axis enters the registry, and all three the system measures today came
   from one read of one book.
@@ -399,13 +613,13 @@ def index_markdown(books: Sequence[PublishedBook], *, checked_at: str) -> str:
         lines += ["No book in this store yet. `litharness new` or `litharness import`.", ""]
         return "\n".join(lines)
     lines += [
-        "| Book | Drafted | Words | Chapters | Withheld | Changed |",
-        "| --- | --: | --: | --: | --: | --- |",
+        "| Book | Drafted | Words | Chapters | Volumes | Withheld | Changed |",
+        "| --- | --: | --: | --: | --: | --: | --- |",
     ]
     for book in books:
         lines.append(
             f"| [{book.title}]({book.slug}/{book.slug}.md) | {book.drafted}/{book.total} "
-            f"| {book.words:,} | {len(book.chapters)} | {book.withheld} "
+            f"| {book.words:,} | {len(book.chapters)} | {len(book.volumes)} | {book.withheld} "
             f"| {book.published_at or '-'} |"
         )
     lines.append("")
@@ -435,6 +649,7 @@ def publish(
     root: Path = DEFAULT_ROOT,
     generated_at: str,
     scenes_per_chapter: int = DEFAULT_SCENES_PER_CHAPTER,
+    chapters_per_volume: int = DEFAULT_CHAPTERS_PER_VOLUME,
     force: bool = False,
 ) -> tuple[PublishedBook, ...]:
     """Republish every book in the store. Pure output: reads the store, writes files.
@@ -454,9 +669,13 @@ def publish(
     published: list[PublishedBook] = []
     for book_id, branch_id, head_id in store.branches():
         known = state.get(book_id, {})
-        if known.get("revision_id") == head_id and known.get("scenes_per_chapter") == str(
-            scenes_per_chapter
-        ):
+        current = (
+            known.get("revision_id") == head_id
+            and known.get("scenes_per_chapter") == str(scenes_per_chapter)
+            and known.get("chapters_per_volume") == str(chapters_per_volume)
+            and known.get("library_format") == LIBRARY_FORMAT_VERSION
+        )
+        if current:
             # Already current. The recorded `published_at` is kept rather than restamped: it
             # says when this book last *changed*, and overwriting it with now would turn the
             # index's most useful column into a synonym for "the publisher ran".
@@ -464,6 +683,11 @@ def publish(
                 store, book_id=book_id, branch_id=branch_id, generated_at=generated_at
             )
             chapters, withheld = chapters_for(document, scenes_per_chapter=scenes_per_chapter)
+            volumes = volumes_for(
+                chapters,
+                total_chapters=len(document.chapter_groups(scenes_per_chapter)),
+                chapters_per_volume=chapters_per_volume,
+            )
             published.append(
                 PublishedBook(
                     book_id=book_id,
@@ -475,6 +699,7 @@ def publish(
                     total=document.total,
                     words=document.words,
                     chapters=chapters,
+                    volumes=volumes,
                     withheld=withheld,
                     revision_id=head_id,
                     published_at=known.get("published_at", generated_at),
@@ -483,7 +708,12 @@ def publish(
             )
             continue
         document = collect(store, book_id=book_id, branch_id=branch_id, generated_at=generated_at)
-        book = publish_book(document, root=root, scenes_per_chapter=scenes_per_chapter)
+        book = publish_book(
+            document,
+            root=root,
+            scenes_per_chapter=scenes_per_chapter,
+            chapters_per_volume=chapters_per_volume,
+        )
         published.append(
             replace(
                 book,
@@ -501,6 +731,8 @@ def publish(
                     "revision_id": book.revision_id,
                     "published_at": book.published_at,
                     "scenes_per_chapter": str(scenes_per_chapter),
+                    "chapters_per_volume": str(chapters_per_volume),
+                    "library_format": LIBRARY_FORMAT_VERSION,
                 }
                 for book in published
             },
@@ -513,16 +745,19 @@ def publish(
 
 
 __all__ = [
+    "DEFAULT_CHAPTERS_PER_VOLUME",
     "DEFAULT_ROOT",
     "DEFAULT_SCENES_PER_CHAPTER",
     "INDEX_PREAMBLE",
     "LIBRARY_DIRNAME",
+    "LIBRARY_FORMAT_VERSION",
     "NOTES_FILENAME",
     "NOTES_TEMPLATE",
     "NOT_DRAFTED",
     "STATE_FILENAME",
     "Chapter",
     "PublishedBook",
+    "Volume",
     "chapters_for",
     "index_markdown",
     "paste_fragment",
@@ -531,4 +766,5 @@ __all__ = [
     "publish_book",
     "root_for",
     "slugify",
+    "volumes_for",
 ]

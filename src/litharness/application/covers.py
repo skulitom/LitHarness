@@ -4,7 +4,8 @@ The image model makes artwork; this module makes the *cover*.  Keeping those job
 load-bearing: title spelling, line breaks, dimensions, and the placement of every published
 word must not change because an image model sampled a different picture.  The same source art
 can therefore be re-titled without buying another generation, and several art directions can
-be compared under exactly the same typography.
+be compared under exactly the same typography. Serial-level and release-volume sets occupy
+different library shelves while retaining the same canonical book and revision identity.
 """
 
 from __future__ import annotations
@@ -22,7 +23,7 @@ COVER_WIDTH = 400
 COVER_HEIGHT = 600
 DEFAULT_VARIANTS = 4
 MAX_VARIANTS = 8
-MANIFEST_SCHEMA = "litharness.cover-set.v1"
+MANIFEST_SCHEMA = "litharness.cover-set.v2"
 
 # These are composition routes, not genres or styles.  Every one still has to be justified by
 # the book description.  Their purpose is to keep a four-cover run from returning four close
@@ -50,6 +51,8 @@ class CoverSpec:
     book_id: str = ""
     branch_id: str = ""
     revision_id: str = ""
+    #: A derived release package inside this open-ended serial. None is the serial-level cover.
+    volume: int | None = None
 
     def __post_init__(self) -> None:
         if not self.title.strip():
@@ -59,6 +62,8 @@ class CoverSpec:
                 "Codex needs story context for cover art; pass --description, "
                 "--description-file, or a listing.json bundle"
             )
+        if self.volume is not None and self.volume < 1:
+            raise ValueError("a cover volume must be a positive global release number")
 
 
 @dataclass(frozen=True, slots=True)
@@ -128,12 +133,18 @@ def art_prompt(spec: CoverSpec, *, variant: int, target: Path, has_references: b
         else "There are no visual references; derive an original image from the story context."
     )
     extra = spec.art_direction.strip() or "No additional art direction was supplied."
+    release = (
+        f"volume {spec.volume} of an open-ended serial"
+        if spec.volume is not None
+        else "the serial as a whole"
+    )
     return f"""Use the $imagegen skill to create ONE original book-cover ART image.
 
 This is variant {variant}. Its distinct composition route is:
 {VARIANT_DIRECTIONS[variant - 1]}
 
 Book title (context only; DO NOT render it): {spec.title.strip()}
+Release package: {release}
 Story context:
 {spec.description.strip()}
 
@@ -490,6 +501,11 @@ def create_cover_set(
             }
             if spec.book_id
             else None
+        ),
+        "release": (
+            {"kind": "volume", "number": spec.volume}
+            if spec.volume is not None
+            else {"kind": "serial"}
         ),
         "title": spec.title.strip(),
         "author": spec.author.strip() or None,

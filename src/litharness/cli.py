@@ -1848,6 +1848,7 @@ def cmd_cover(args: argparse.Namespace) -> int:
         book_id=book_id,
         branch_id=branch_id,
         revision_id=revision_id,
+        volume=args.volume,
     )
     supplied = tuple(args.art or ())
     count = (
@@ -1857,11 +1858,13 @@ def cmd_cover(args: argparse.Namespace) -> int:
             args.variants if args.variants is not None else covers.DEFAULT_VARIANTS
         )
     )
-    output = args.out or (
-        _library_root(args)
-        / library_module.slugify(spec.title, spec.book_id or "cover")
-        / "covers"
+    shelf = _library_root(args) / library_module.slugify(spec.title, spec.book_id or "cover")
+    default_output = (
+        shelf / "volumes" / f"Volume{spec.volume}" / "covers"
+        if spec.volume is not None
+        else shelf / "covers"
     )
+    output = args.out or default_output
     result = covers.create_cover_set(
         output,
         spec,
@@ -3252,6 +3255,7 @@ def _publish_library(
         root=root,
         generated_at=_stamp(_now()),
         scenes_per_chapter=args.chapter_scenes,
+        chapters_per_volume=args.volume_chapters,
         force=getattr(args, "force", False),
     )
 
@@ -3273,7 +3277,8 @@ def cmd_library(args: argparse.Namespace) -> int:
             state = "rewritten" if book.rewritten else "already current"
             print(
                 f"{root / book.slug}  {book.title}  {book.summary}  "
-                f"{len(book.chapters)} pastable chapter(s){held}  [{state}]"
+                f"{len(book.chapters)} pastable chapter(s), "
+                f"{len(book.volumes)} release volume(s){held}  [{state}]"
             )
         if not published:
             print("(no book in this store yet)")
@@ -3457,6 +3462,14 @@ def build_parser() -> argparse.ArgumentParser:
         "act rather than a guess the tool makes. Above one, the drafting prompt carries "
         "`Chapter c, scene k of n` and nothing else about it - where the scene sits, never "
         "what to do there",
+    )
+    parser.add_argument(
+        "--volume-chapters",
+        type=int,
+        default=library_module.DEFAULT_CHAPTERS_PER_VOLUME,
+        help="chapters per derived release volume in the book library; 50 by default. This "
+        "changes packaging only: the canonical book remains one open-ended serial and its "
+        "state, promises, characters, and chapter numbering continue across boundaries",
     )
     parser.add_argument(
         "--writer",
@@ -3864,7 +3877,8 @@ def build_parser() -> argparse.ArgumentParser:
     cover.add_argument(
         "--out",
         type=Path,
-        help="override the default book-library/<book>/covers output directory",
+        help="override the default book-library/<book>/covers output directory (or "
+        "book-library/<book>/volumes/VolumeN/covers with --volume)",
     )
     cover.add_argument(
         "--bundle",
@@ -3927,6 +3941,12 @@ def build_parser() -> argparse.ArgumentParser:
     )
     cover.add_argument("--book", help="book id; defaults to the only branch in the database")
     cover.add_argument("--branch", help="branch id; defaults to the only matching branch")
+    cover.add_argument(
+        "--volume",
+        type=int,
+        help="target this release volume. It keeps the same canonical book and writes under "
+        "volumes/VolumeN/covers; omit for a serial-level cover",
+    )
     cover.set_defaults(func=cmd_cover)
 
     read = sub.add_parser(
