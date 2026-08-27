@@ -15,7 +15,7 @@ all, so this file is the only description of a generator the layer has.
 
 from __future__ import annotations
 
-from collections.abc import Collection, Iterable, Sequence
+from collections.abc import Collection, Iterable, Mapping, Sequence
 from typing import Any, Protocol
 
 import litharness_contracts as lc
@@ -25,6 +25,7 @@ from litharness.domain.directives import Directive, DirectiveStatus
 from litharness.domain.directors import Director
 from litharness.domain.editorial import (
     EditorialIntervention,
+    InterventionRealization,
     ReaderMechanism,
     ReaderObservation,
 )
@@ -65,6 +66,7 @@ class ManuscriptWriter(Protocol):
         retract_state_from: Collection[str] = ...,
         retract_state_for_nodes: Collection[str] = ...,
         jobs: Sequence[Job] = ...,
+        intervention_realizations: Sequence[InterventionRealization] = ...,
         decision: PolicyDecision | None = ...,
     ) -> None: ...
 
@@ -236,7 +238,14 @@ class DirectorRepository(Protocol):
 class AudienceRepository(Protocol):
     """Versioned reader evidence and the decisions licensed to act on it."""
 
-    def register_reader_mechanism(self, mechanism: ReaderMechanism) -> bool: ...
+    def register_reader_mechanism(
+        self,
+        mechanism: ReaderMechanism,
+        *,
+        evidence: Mapping[str, object] | None = ...,
+    ) -> bool: ...
+
+    def reader_mechanism_evidence(self, version_id: str) -> dict[str, object] | None: ...
 
     def reader_mechanism(self, version_id: str) -> ReaderMechanism: ...
 
@@ -279,6 +288,18 @@ class AudienceRepository(Protocol):
     def editorial_intervention_for_job(
         self, controller_job_id: str
     ) -> EditorialIntervention | None: ...
+
+    def editorial_interventions_targeting(
+        self,
+        book_id: str,
+        branch_id: str,
+        logical_id: str,
+        plan_revision_id: str,
+    ) -> list[EditorialIntervention]: ...
+
+    def intervention_realizations(
+        self, book_id: str, branch_id: str
+    ) -> list[InterventionRealization]: ...
 
 
 class ReaderControlStore(
@@ -358,6 +379,10 @@ class PromiseRepository(Protocol):
         *,
         paid_at_key: str,
         paid_by_revision: str,
+        paid_logical_id: str | None = ...,
+        paid_start: int | None = ...,
+        paid_end: int | None = ...,
+        paid_content_hash: str | None = ...,
     ) -> bool: ...
 
 

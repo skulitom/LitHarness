@@ -42,7 +42,11 @@ from litharness.application.repair import evaluation_job_for, summary_job_for
 from litharness.domain.budget import BudgetPolicy, BudgetVerdict
 from litharness.domain.budget import check as budget_check
 from litharness.domain.draft import DraftPolicy, gate_draft
-from litharness.domain.editorial import ReaderMechanism
+from litharness.domain.editorial import (
+    InterventionRealization,
+    ReaderMechanism,
+    realization_id_for,
+)
 from litharness.domain.events import Event, EventType
 from litharness.domain.extraction import extract_state
 from litharness.domain.findings import DetectorInput
@@ -650,12 +654,44 @@ def make_scene_draft_handler(
                         shape=reader_shape,
                     ),
                 )
+        realizations: tuple[InterventionRealization, ...] = ()
+        plan_revision_id = job.payload.get("plan_revision_id")
+        if isinstance(plan_revision_id, str) and plan_revision_id:
+            realized: list[InterventionRealization] = []
+            for intervention in store.editorial_interventions_targeting(
+                revision.book_id,
+                revision.branch_id,
+                logical_id,
+                plan_revision_id,
+            ):
+                if intervention.directive_id is None:
+                    continue
+                realized.append(
+                    InterventionRealization(
+                        realization_id=realization_id_for(
+                            intervention.intervention_id,
+                            outcome.revision.revision_id,
+                            logical_id,
+                        ),
+                        intervention_id=intervention.intervention_id,
+                        directive_id=intervention.directive_id,
+                        plan_revision_id=plan_revision_id,
+                        book_id=revision.book_id,
+                        branch_id=revision.branch_id,
+                        logical_id=logical_id,
+                        revision_id=outcome.revision.revision_id,
+                        content_hash=content_hash(result.text),
+                        recorded_at=_timestamp(now),
+                    )
+                )
+            realizations = tuple(realized)
         store.commit_revision(
             outcome.revision,
             created_at=_timestamp(now),
             events=commit_events,
             state_records=extracted,
             jobs=follow_up_jobs,
+            intervention_realizations=realizations,
             decision=decision,
         )
 

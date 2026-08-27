@@ -24,7 +24,7 @@ from __future__ import annotations
 import json
 import sqlite3
 import weakref
-from collections.abc import Collection, Iterable, Sequence
+from collections.abc import Collection, Iterable, Mapping, Sequence
 from contextlib import suppress
 from dataclasses import dataclass
 from functools import partial
@@ -48,6 +48,7 @@ from litharness.domain.directors import DIRECTOR_AUTHOR_PREFIX
 from litharness.domain.directors import Director as DomainDirector
 from litharness.domain.editorial import (
     EditorialIntervention,
+    InterventionRealization,
     ReaderMechanism,
     ReaderObservation,
 )
@@ -369,6 +370,7 @@ class SqliteStore:
         retract_state_from: Collection[str] = (),
         retract_state_for_nodes: Collection[str] = (),
         jobs: Sequence[Job] = (),
+        intervention_realizations: Sequence[InterventionRealization] = (),
         decision: PolicyDecision | None = None,
     ) -> None:
         """Persist a revision, its events and the state read out of it, atomically.
@@ -403,6 +405,7 @@ class SqliteStore:
                 retract_state_from=retract_state_from,
                 retract_state_for_nodes=retract_state_for_nodes,
                 jobs=jobs,
+                intervention_realizations=intervention_realizations,
                 decision=decision,
             )
 
@@ -417,6 +420,7 @@ class SqliteStore:
         retract_state_from: Collection[str] = (),
         retract_state_for_nodes: Collection[str] = (),
         jobs: Sequence[Job] = (),
+        intervention_realizations: Sequence[InterventionRealization] = (),
         decision: PolicyDecision | None = None,
     ) -> None:
         """Everything `commit_revision` writes, on a transaction the caller already owns."""
@@ -510,6 +514,8 @@ class SqliteStore:
             self._insert_decision(connection, decision, decided_at=created_at)
         for job in jobs:
             self._jobs.insert_job(connection, job)
+        for realization in intervention_realizations:
+            self._audience.insert_intervention_realization(connection, realization)
         # The head moves in the same transaction as the revision it points at, so a
         # crash cannot leave a revision that exists but is not the head, or a head
         # pointing at nothing. `revert` relies on this: it commits a revision whose
@@ -1305,8 +1311,16 @@ class SqliteStore:
 
     # -- the simulated readership -------------------------------------------------------
 
-    def register_reader_mechanism(self, mechanism: ReaderMechanism) -> bool:
-        return self._audience.register_reader_mechanism(mechanism)
+    def register_reader_mechanism(
+        self,
+        mechanism: ReaderMechanism,
+        *,
+        evidence: Mapping[str, object] | None = None,
+    ) -> bool:
+        return self._audience.register_reader_mechanism(mechanism, evidence=evidence)
+
+    def reader_mechanism_evidence(self, version_id: str) -> dict[str, object] | None:
+        return self._audience.reader_mechanism_evidence(version_id)
 
     def reader_mechanism(self, version_id: str) -> ReaderMechanism:
         return self._audience.reader_mechanism(version_id)
@@ -1368,6 +1382,22 @@ class SqliteStore:
         self, controller_job_id: str
     ) -> EditorialIntervention | None:
         return self._audience.editorial_intervention_for_job(controller_job_id)
+
+    def editorial_interventions_targeting(
+        self,
+        book_id: str,
+        branch_id: str,
+        logical_id: str,
+        plan_revision_id: str,
+    ) -> list[EditorialIntervention]:
+        return self._audience.editorial_interventions_targeting(
+            book_id, branch_id, logical_id, plan_revision_id
+        )
+
+    def intervention_realizations(
+        self, book_id: str, branch_id: str
+    ) -> list[InterventionRealization]:
+        return self._audience.intervention_realizations(book_id, branch_id)
 
     def record_reader_read(
         self,
@@ -1542,8 +1572,10 @@ class SqliteStore:
             cursor = connection.execute(
                 "INSERT OR IGNORE INTO promises (promise_id, book_id, branch_id, subject, "
                 "description, opened_at_key, due_key, opened_by_revision, paid_at_key, "
-                "paid_by_revision, status, model, kind) "
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                "paid_by_revision, status, model, kind, opened_logical_id, opened_start, "
+                "opened_end, opened_content_hash, paid_logical_id, paid_start, paid_end, "
+                "paid_content_hash) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, "
+                "?, ?, ?, ?, ?, ?)",
                 (
                     promise.promise_id,
                     book_id,
@@ -1558,6 +1590,14 @@ class SqliteStore:
                     promise.status,
                     promise.model,
                     promise.kind,
+                    promise.opened_logical_id,
+                    promise.opened_start,
+                    promise.opened_end,
+                    promise.opened_content_hash,
+                    promise.paid_logical_id,
+                    promise.paid_start,
+                    promise.paid_end,
+                    promise.paid_content_hash,
                 ),
             )
             return cursor.rowcount > 0
@@ -1608,6 +1648,10 @@ class SqliteStore:
         *,
         paid_at_key: str,
         paid_by_revision: str,
+        paid_logical_id: str | None = None,
+        paid_start: int | None = None,
+        paid_end: int | None = None,
+        paid_content_hash: str | None = None,
     ) -> bool:
         """The single open→paid transition. False when nothing was open to pay.
 
@@ -1619,12 +1663,17 @@ class SqliteStore:
         """
         with self.transaction() as connection:
             cursor = connection.execute(
-                "UPDATE promises SET status = ?, paid_at_key = ?, paid_by_revision = ? "
+                "UPDATE promises SET status = ?, paid_at_key = ?, paid_by_revision = ?, "
+                "paid_logical_id = ?, paid_start = ?, paid_end = ?, paid_content_hash = ? "
                 "WHERE promise_id = ? AND book_id = ? AND branch_id = ? AND status = ?",
                 (
                     PROMISE_PAID,
                     paid_at_key,
                     paid_by_revision,
+                    paid_logical_id,
+                    paid_start,
+                    paid_end,
+                    paid_content_hash,
                     promise_id,
                     book_id,
                     branch_id,
@@ -1667,6 +1716,14 @@ class SqliteStore:
                 window_start_key=row["window_start_key"],
                 window_end_key=row["window_end_key"],
                 scheduled_by_plan_revision=row["scheduled_by_plan_revision"],
+                opened_logical_id=row["opened_logical_id"],
+                opened_start=row["opened_start"],
+                opened_end=row["opened_end"],
+                opened_content_hash=row["opened_content_hash"],
+                paid_logical_id=row["paid_logical_id"],
+                paid_start=row["paid_start"],
+                paid_end=row["paid_end"],
+                paid_content_hash=row["paid_content_hash"],
             )
             for row in self._connection.execute(sql, params)
         ]

@@ -1,5 +1,11 @@
 # Handoff: the readers cannot see the defect, and six ways of asking did not help
 
+**Historical handoff — superseded 2026-08-27.** Its experiment results remain evidence, but its
+description of a listing writer consuming appetite answers is no longer the live architecture.
+The current boundary is [`reader-architecture-program.md`](reader-architecture-program.md): raw
+answers remain observations, and only a separately qualified mechanism may reach an editorial
+intervention and immutable plan revision.
+
 Written 2026-08-26 at the end of a long session that did not achieve its objective. Read the
 boundaries before the tasks; two of them exist because this session spent quota learning them.
 

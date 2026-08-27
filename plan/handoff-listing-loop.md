@@ -1,5 +1,10 @@
 # Handoff: the listing loop, and the two artifacts nobody has measured
 
+**Historical handoff — superseded 2026-08-27 where it describes reader appetite revising a
+listing.** The measurements remain part of the record. The live listing command stores appetite
+as experimental evidence only and has no renderer or revision call; see
+[`reader-architecture-program.md`](reader-architecture-program.md).
+
 Written 2026-08-25 at the end of a long session. Read the boundaries before the tasks.
 
 ## Boundaries

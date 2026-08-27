@@ -233,6 +233,8 @@ def test_the_loop_writes_a_listing_a_title_and_a_bundle(fake, tmp_path, capsys) 
     bundle = json.loads(capsys.readouterr().out)
     assert bundle["writer"] == "ferreira"
     assert bundle["listing"]
+    assert bundle["draft"] == bundle["listing"]
+    assert bundle["appetite_status"] == "experimental_observation_only"
     assert bundle["title"]
     assert (out / "listing.txt").read_text(encoding="utf-8").strip() == bundle["listing"]
     assert (out / "title.txt").read_text(encoding="utf-8").strip() == bundle["title"]

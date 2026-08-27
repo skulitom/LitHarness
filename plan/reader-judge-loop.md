@@ -1,5 +1,10 @@
 # The reader → writer loop, with Readers and Judges as separate roles
 
+**Historical design — superseded 2026-08-27.** This loop was never licensed into production.
+Raw reader answers and judge verdicts have no drafting or planning path. The current evidence-gated
+control plane and its qualification boundary are documented in
+[`reader-architecture-program.md`](reader-architecture-program.md).
+
 **Written 2026-08-19, before any code in this design was written and before any verdict was
 routed through it.** §1 is the pre-registration the measurement firewall (I1) requires; it is
 committed in the same commit as the tables that enforce it and before the first row exists.

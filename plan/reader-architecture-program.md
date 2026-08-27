@@ -64,14 +64,22 @@ has not licensed it. `--reader-checkpoints` may collect evidence, but cannot mak
 control plane is ready for a mechanism that earns qualification; it does not manufacture that
 qualification from its own existence.
 
+Qualification is now an operational, closed artifact rather than an arbitrary digest. It requires
+held-out books and transformation implementations, edit-fingerprint and memorisation controls,
+full-volume/cross-volume/growing-prefix results, transfer, and the operator's fixed acceptance test.
+`reader-mechanism qualify` refuses a missing or failed field; `withdraw` closes already-queued work.
+Accepted targeted scenes record durable realizations, proving delivery without claiming efficacy.
+The listing command now retains appetite as experimental evidence only and has no raw-feedback
+renderer or revision call.
+
 ## The mechanism families, and where each stands
 
 | family | what it extracts | state in this repository |
 | --- | --- | --- |
-| **Generative tests** — rewrite, continue, compress, recall; quality inferred from what the model does | generative fluency, which stayed reliable where critical judgment went blind | `blurb_rewrite.v0` built and mid-validation (`plan/blurb-rewrite-validity.md`); if its gradient separates, continuation/compression/recall probes are the natural siblings |
-| **Comparative reading with a reference shelf** — the register held in context, not recalled | perception of deviation against visible evidence | `blurb_shelf.v0.1` built; first run found the first non-inverted separation (ours flagged 12/12 across rotations), re-run queued under the amended construction |
-| **Adversarial span tribunal** — one agent flags, another must defend the span with evidence code can verify | disagreement resolved by checkable evidence instead of a third opinion | `blurb_tribunal.v0` — being built now; the resolver is deterministic (a claimed parallel either exists in the reference text or does not), which is what keeps the third seat from becoming a judge |
-| **Cross-family readers** — the evaluator unrelated to the generating model | self-familiarity attacked directly; a claude-written listing read by a model with no stake in claude's habits | ollama legs for the two shipped instruments — being built now; local models under the thermal governor (`latent_crossfamily.py` is the precedent for cross-family eligibility screens) |
+| **Generative tests** — rewrite, continue, compress, recall; quality inferred from what the model does | generative fluency, which stayed reliable where critical judgment went blind | `blurb_rewrite.v0` and its frozen registration are built; no new run is required for the architecture work |
+| **Comparative reading with a reference shelf** — the register held in context, not recalled | perception of deviation against visible evidence | `blurb_shelf.v0.2` is built with amended controls; its empirical result remains separate from production qualification |
+| **Adversarial span tribunal** — one agent flags, another must defend the span with evidence code can verify | disagreement resolved by checkable evidence instead of a third opinion | `blurb_tribunal.v0` is built; the resolver is deterministic (a claimed parallel either exists in the reference text or it does not) |
+| **Cross-family readers** — the evaluator unrelated to the generating model | self-familiarity attacked directly | adapter seams exist, but local-model execution is parked and is not a dependency of production or this programme's engineering |
 | **Representation-level** — per-token surprisal, logit/activation lens | quality sensitivity that exists internally but dies in verbal self-report | handoff task 2 plus the operator's lens direction. GPU-only (no logprobs in the Messages API) and **parked deliberately**: F1, F2 and FX died in ways that will look like this from the inside, and `research/quality-measurement/BRIEF.md` is mandatory reading before the first line is designed |
 | **Persistent reader simulation** — attention, expectation, confusion and voluntary stopping over a trajectory | reading as behaviour rather than as one isolated verdict | already exists as `bcr.v0` and `fcr.v0` (budgeted continuation; the costed feed with skim and abandonment) — built for chapters, not yet pointed at this defect class; connecting them runs through the same gradient validation as everything else |
 
@@ -87,7 +95,9 @@ bottleneck: models can produce plausible criticism while missing the largest def
 systematically overweight style relative to event and character. The next common substrate is a
 causal salience battery with hidden, code-checkable damage keys; prompts, multi-agent mechanisms,
 and activation probes compete on that same battery rather than defining their own targets. The
-evidence, construction, kills, and scope boundary are in
+call-free census, first ecological state generator, fingerprint matching, evidence manifests, and
+serial-distance rungs are now implemented. The evidence, construction, kills, and scope boundary
+are in
 [`reader-perception-research.md`](reader-perception-research.md).
 
 ## The order of belief, restated once

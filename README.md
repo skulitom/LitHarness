@@ -186,6 +186,11 @@ Chapter, arc, and fifty-chapter volume state are therefore derived snapshots, no
 editable sheets. SQLite revisions and events are authoritative. Git is appropriate for reviewed
 checkpoint exports and disaster recovery, but not as a second mutable canon database.
 
+Character sheets expose only explicit reified `actor/performed_by → caused_by → effect` links;
+a free-text want is never inferred to have caused an action. Promise rows can carry optional exact
+opening and payoff spans when the summary answer supplies uniquely locatable quotes. Historical
+or unlocated rows remain usable debts, but cannot become hidden answer keys in a reader battery.
+
 ## Integrity and continuity
 
 Every candidate passes deterministic shape and integrity checks. Existing blocking findings park
@@ -250,6 +255,31 @@ reader's six-word phrase (or an eight-word span from a longer answer), preventin
 reader-vocabulary transcription failure from returning through the controller. Experimental and
 qualified observations remain separate records even when they read the same scene. Registering a
 new `withdrawn` version closes both future panels and already-queued controller work before spend.
+Accepted target scenes record a durable realization linking intervention, directive, plan
+revision, manuscript revision, and content hash; this proves the intervention reached prose, not
+that it improved prose.
+
+The remaining research boundary is executable without a model:
+
+```bash
+uv run litharness --database book.db reader-evidence-audit --out generated/reader-audit
+uv run litharness --database book.db reader-mechanism status
+uv run litharness --database book.db reader-mechanism qualify --evidence qualification.json
+uv run litharness --database book.db reader-mechanism withdraw --reason "transfer regressed"
+```
+
+The audit validates current-revision evidence spans, counts state, event, progression, character,
+and promise candidates independently, classifies their anchor distance from adjacent chapter
+through growing serial, and emits a prose-free registration manifest, unlabeled
+`battery.public.json` packets, and a physically separate `battery.private.json` scoring key.
+Damage and sham siblings must have identical shallow edit fingerprints. Qualification
+accepts one closed evidence-artifact shape and requires held-out books and transformations,
+memorisation and fingerprint controls, full-volume/cross-volume/growing-prefix results, transfer,
+and the fixed operator acceptance test all to have passed. It never runs or trusts a model by
+itself. The bundled mechanism remains experimental until such an artifact exists.
+
+Listing appetite answers are likewise experimental evidence only. They remain in `listing.json`
+but no longer have a renderer or revision path back into the listing writer.
 
 Real readers are the reason to publish the books, but their behaviour never feeds generation,
 planning, selection, calibration, or gating.

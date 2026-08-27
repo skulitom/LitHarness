@@ -116,8 +116,9 @@ rule), and the writer cut it.
 **What it did not do is make the listing longer.** 101 words to 106, where the reader material
 was 25 hopes and 25 dreads. §133 measured a wish list rendered into a *system* prompt at two
 thirds of everything the writer was told, and the draft that came back serviced it;
-`render_revision_request` puts it in the prompt beside the listing for exactly that reason, and
-this is the first evidence the arrangement holds under a large one.
+the now-retired `render_revision_request` put it in the prompt beside the listing for exactly
+that reason. The run remains historical evidence; production no longer sends raw appetite text
+back to a writer, as `reader-architecture-program.md` records.
 
 ## 3. The world, and the two things the seed found out about its own tools
 

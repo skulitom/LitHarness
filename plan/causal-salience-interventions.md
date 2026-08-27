@@ -1,8 +1,11 @@
 # Scene interventions and serial-length controls
 
-**Status: repository audit and research design, 2026-08-27. No model was called and no arm was
-registered.** This note refines the causal-salience battery in
+**Status: model-independent engineering implemented, 2026-08-27. No model was called and no arm
+was registered.** This note refines the causal-salience battery in
 `reader-perception-research.md`; it does not license a production reader or a consistency claim.
+`litharness reader-evidence-audit` now executes the census, validates current-revision spans,
+classifies distance rungs, and writes a prose-free manifest, unlabeled public packets, and the
+private scoring key separately.
 
 ## Decision
 
@@ -11,24 +14,25 @@ release package. The default package is 50 globally numbered chapters, adjustabl
 40-60 chapter break. It does not mint another book, reset state, imply an ending, or reduce the
 consistency obligation to one prompt window. Each volume may have its own cover set.
 
-The first ecological battery should not synthesize all five proposed defect families merely
-because the domain vocabulary can describe them. It should admit only transformations whose
-semantic relation and edited prose spans are independently present in structured, accepted
-records. That audit leaves one strong first family, two conditional families, and two schema gaps.
+The first ecological battery does not synthesize all five proposed defect families merely
+because the domain vocabulary can describe them. It admits only transformations whose semantic
+relation and edited prose spans are independently present in structured, accepted records. The
+state family currently has a deterministic sibling generator; the other four have strict
+admission contracts and remain unavailable to a model until their transformations are frozen.
 
 ## What the stored records can certify
 
 | Requested family | Existing substrate | Admission now |
 | --- | --- | --- |
-| Causal contradiction | Accepted or author-locked `StateRecord`s, ordered objective facts, evidence spans, and declared finite/opposite predicate domains | **Yes, narrowly.** Change one later value only when the predicate registry proves mutual exclusion and both readings have unique, digest-valid spans. Never infer antonyms from arbitrary strings. |
-| Event consequence deletion | Reified `CHANGE` records with `actor`, `precondition`, `caused_by`, `effect`, `consumes`, and `produces` roles plus evidence | **Conditional.** Admit only a change with a unique effect span and at least one span-backed causal role. Remove or neutralize that effect without changing the cause. Reject records that name a relation but cannot locate its prose. |
-| Progression deflation | Declared standing ladders/comparators and reified changes carrying `consumes`, `produces`, `precondition`, or `effect` | **Conditional.** A gain/cost deletion is admissible only when both sides belong to the same accepted change and both have exact spans. A later standing contradiction is admissible only in a declared mutually exclusive ladder. There is no general progression schedule to corrupt. |
-| Character-cause substitution | Accepted character wants, ties, standing, capabilities, and reified causal roles | **Deferred in the general case.** A free-text `wants` field does not prove why a scene action occurred. Admit only the rarer case where `caused_by` points to a declared, span-backed goal/claim and the downstream change is also span-backed. Extend the character ledger before treating motive substitution as a family. |
-| Promise displacement | Scheduled promise windows with opened/due/paid positions | **Deferred.** Promise rows are model-sourced advisory records and currently have no evidence spans. Join them to a span-backed thread/evidence record or extend the ledger with opening and payoff evidence before moving a payoff can have a code-certified key. |
+| Causal contradiction | Accepted or author-locked `StateRecord`s, ordered objective facts, evidence spans, and declared finite/opposite predicate domains | **Implemented narrowly.** The census admits repeated allowlisted states with two unique, digest-valid spans; the generator substitutes the later value and creates a matched case-only sham. It never infers antonyms. |
+| Event consequence deletion | Reified `CHANGE` records with `actor`, `precondition`, `caused_by`, `effect`, `consumes`, and `produces` roles plus evidence | **Admission implemented; transformation still family-specific.** The census accepts only a unique effect plus a span-backed causal role and reports every missing role/span. |
+| Progression deflation | Declared standing ladders/comparators and reified changes carrying `consumes`, `produces`, `precondition`, or `effect` | **Admission implemented for explicit gain/cost changes.** Both `consumes` and `produces` must have current exact spans. There is still no invented general progression schedule. |
+| Character-cause substitution | Accepted character wants, ties, standing, capabilities, and reified causal roles | **Explicit causes implemented.** Character sheets expose reified actor/performed-by, caused-by, and effect links with evidence completeness. A free-text `wants` field is never inferred to be a cause. |
+| Promise displacement | Scheduled promise windows with opened/due/paid positions | **Evidence path implemented.** Promise opening and payment can carry optional exact scene spans. Historical/unlocated rows stay usable but the census refuses them as hidden keys. |
 
 This is deliberately stricter than semantic plausibility. The state and character builders only
-consume accepted canon, but accepted vocabulary is not the same as a located intervention. Before
-building any family, a call-free census should count records satisfying all five conditions:
+consume accepted canon, but accepted vocabulary is not the same as a located intervention. The
+call-free census counts records satisfying all five conditions:
 
 1. accepted or author-locked authority;
 2. a declared relation whose values make the damage mechanically decidable;
@@ -36,9 +40,9 @@ building any family, a call-free census should count records satisfying all five
 4. the target text occurs uniquely and the edit changes only the intended span;
 5. clean, damaged, and surface-control siblings can be made at a matched edit dose.
 
-If any count is zero, the family is unavailable; a model must not fill the missing key. Start with
-finite-domain state contradictions, then span-complete event consequences, then progression
-costs. Improve character and promise evidence before claiming coverage of those mechanisms.
+If any count is zero, the family is unavailable; a model must not fill the missing key. Character
+and promise schemas can now retain the required evidence, but coverage exists only where a
+particular book actually contains complete current spans.
 
 ## Scene-level intervention contract
 
@@ -134,17 +138,18 @@ grounding across factual, temporal, spatial, and narrative consistency categorie
 novel-oriented [TLDM benchmark](https://aclanthology.org/2026.latechclfl-1.28/) explicitly separates
 plot, storyworld, and time. These are useful task shapes, not substitutes for fresh LitHarness data.
 
-Production consistency should use the durable ledger as memory, not repeatedly stuff the whole
+Production consistency uses the durable ledger as memory, not repeatedly stuffing the whole
 serial into one prompt. Before accepting a new chapter, assemble:
 
 - the recent raw-text window;
 - retrieved, span-backed state/event/character/progression records from the entire serial;
-- open cross-volume promises only after their evidence gap is fixed;
+- only open cross-volume promises carrying current exact evidence spans;
 - a small fixed set of cross-volume sentinels chosen before drafting the target chapter.
 
-The check scope grows with the serial even when the prompt does not. A volume release can later
-carry a `serial_prefix through chapter N` consistency certificate, but only after these checks have
-been implemented and validated. Current manifests correctly record `verified: false`.
+The check scope grows with the serial even when the prompt does not. The audit now reports the six
+distance rungs independently, and qualification evidence must attest full-volume, cross-volume,
+and growing-prefix controls. A release manifest still records `verified: false` until an actual
+qualified mechanism runs on that serial; engineering coverage is not an empirical certificate.
 
 ## Derived release-volume and cover pipeline
 
@@ -160,9 +165,13 @@ preserves those assets. This work prepares the path only; no cover was generated
 one volume and that volumes organise the fiction page and covers without reordering the fiction,
 which is why LitHarness keeps global numbering and does not create volume-local canon.
 
-## Next executable step under current constraints
+## Model-independent work is complete
 
-Run the evidence-completeness census without any LLM. If it yields enough unique span-backed state
-contradictions, build that ecological generator plus deterministic sham/fingerprint gates. Only then
-register a model arm. In parallel, add evidence references to promises and explicit span-backed
-character causes; those schema changes unlock the deferred families without weakening the battery.
+Run `litharness reader-evidence-audit --out generated/reader-audit` on any existing book. It makes
+no model call, registers no arm, and does not qualify a mechanism. It emits the aggregate census
+and prose-free manifest in `evidence-audit.json`, blinded prose in `battery.public.json`, and
+labels, source evidence, and scoring keys only in `battery.private.json`. The remaining step is
+empirical: combine whole-book groups into frozen
+development and holdout sets, register attainable bars, run a candidate reader through the public
+packets, and produce the closed qualification artifact. Under the current constraint, that run is
+deliberately not attempted and no local model or Claude CLI is required by the repository.

@@ -9,8 +9,9 @@ will love (with a hook). But the core loop of feedback should be the same (simul
 
 So: one writer from `writers.CAST`, one overview, and the same two-pool readership that reads
 the chapters. Nothing here ranks anything and nothing chooses between candidates — there are no
-candidates. The steering pool says what it hoped the book would be; the writer revises; the
-measurement pool, which never steers, says whether it would open chapter one.
+candidates. Appetite answers are experimental observations only; the production command no
+longer sends their raw wording back to the writer. The measurement pool, which never steers,
+says whether it would open chapter one.
 
 **The task text is deliberately short.** Three rules in the retired Forge were assertions about
 what this genre's reader wants, written into a prompt addressed to nobody. A cast writer who
@@ -32,7 +33,6 @@ from litharness.domain.writers import Writer
 
 #: Frozen profiles, one per stage, so a draft and a revision are separable on the decision rows.
 OVERVIEW_PROFILE = "writer.overview.v0"
-REVISION_PROFILE = "writer.overview.revise.v0"
 TITLE_PROFILE = "writer.title.v0"
 
 MAX_OUTPUT_TOKENS = 4000
@@ -250,33 +250,6 @@ def render_overview_request(brief: str, writer: Writer | None = None) -> Complet
     )
 
 
-def render_revision_request(
-    brief: str, overview: str, direction: str, writer: Writer | None = None
-) -> CompletionRequest:
-    """The same writer, the same job, having heard what readers hoped it would be.
-
-    **The direction goes in the prompt rather than the system message**, and that is the one
-    thing this does differently from `planner.render_prompt`. §133 measured a wish list rendered
-    into a system prompt at 5,476 characters against 2,920 — two thirds of everything the writer
-    was told — and the draft that came back serviced it. Here the reader material sits beside
-    the thing it is about, where it reads as what people said rather than as the instructions.
-    """
-    ask = brief.strip() or "Anything you would most want to read."
-    return CompletionRequest(
-        prompt=(
-            f"What this book is to be about:\n{ask}\n\n"
-            f"The listing you wrote:\n{overview.strip()}\n\n"
-            f"{direction}\n\n"
-            "Write the listing again."
-        ),
-        system=_system(writer),
-        max_output_tokens=MAX_OUTPUT_TOKENS,
-        profile=REVISION_PROFILE,
-        call_class="generation",
-        timeout_seconds=600.0,
-    )
-
-
 #: **What a title has to survive, and it is not what a listing has to survive.** Two to five
 #: words, above the blurb, on a page of a hundred others, and read aloud when somebody
 #: recommends the book. Written as what fails, which is the standing constraint in `house`:
@@ -308,10 +281,9 @@ def render_title_request(
 ) -> CompletionRequest:
     """One title, from the listing the same writer just wrote.
 
-    The listing goes in the prompt and the job in the system message, which is
-    `render_revision_request`'s arrangement and for its reason: §133 measured reader material
-    rendered into a system prompt at two thirds of everything the writer was told, and what
-    came back serviced it. Material belongs beside the thing it is about.
+    The listing goes in the prompt and the job in the system message. Material belongs beside
+    the thing it is about; a standing system instruction would give this one listing authority
+    over every title the writer produces.
 
     **`taken` is what a lookup found already in use, and it is a prohibition.** It names
     instances, which `house`'s standing constraint is usually against — but that constraint is
@@ -351,52 +323,12 @@ def clean_title(text: str) -> str:
     return line.rstrip(".").strip()
 
 
-def _bullets(items: tuple[str, ...]) -> str:
-    """A list under a heading, one line each. One place, so two blocks cannot drift."""
-    return "\n" + "\n".join(f"- {item}" for item in items)
-
-
-def render_appetite(
-    felt: tuple[str, ...],
-    expect_next: tuple[str, ...],
-    hoping_for: tuple[str, ...],
-    dreading: tuple[str, ...],
-) -> str:
-    """Where the listing left the steering pool, as the writer reads it. Empty when nobody read.
-
-    `readers.Anticipation.render`'s block for the blurb stage, and the rewrite of 2026-08-25 is
-    that entry's: the two questions this used to render — what a reader hoped the book would be
-    and what would make them drop it — are specifications of an artifact, and a writer handed
-    fifty of them writes them down. Measured on *Patch Notes For Earth*: four readers asked for
-    version numbers, nerfs, a changelog and repro steps, and the revision put all four on the
-    page.
-
-    Reported as what readers said and never as an instruction, which was always this function's
-    rule; what changed is that the material can no longer *be* an instruction.
-    """
-    if not (felt or expect_next or hoping_for or dreading):
-        return ""
-    blocks = ["READERS WHO SAW ONLY THIS LISTING, ASKED WHERE IT LEFT THEM."]
-    if felt:
-        blocks.append("It left them:" + _bullets(felt))
-    if expect_next:
-        blocks.append("They think this book is:" + _bullets(expect_next))
-    if hoping_for:
-        blocks.append("They are hoping for:" + _bullets(hoping_for))
-    if dreading:
-        blocks.append("They are dreading:" + _bullets(dreading))
-    return "\n\n".join(blocks)
-
-
 __all__ = [
     "MAX_OUTPUT_TOKENS",
     "OVERVIEW_PROFILE",
-    "REVISION_PROFILE",
     "TITLE_PROFILE",
     "clean_title",
-    "render_appetite",
     "render_overview_request",
-    "render_revision_request",
     "render_title_request",
     "title_system",
 ]

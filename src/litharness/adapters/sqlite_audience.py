@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import sqlite3
+from collections.abc import Mapping
 from typing import Protocol
 
 from litharness.adapters.sqlite_jobs import TransactionFactory
@@ -11,10 +12,13 @@ from litharness.domain.directives import Directive
 from litharness.domain.editorial import (
     EditorialDecision,
     EditorialIntervention,
+    InterventionRealization,
+    QualificationEvidence,
     ReaderMechanism,
     ReaderMechanismStatus,
     ReaderObservation,
 )
+from litharness.domain.events import payload_digest
 from litharness.domain.policy import PolicyDecision
 
 
@@ -100,8 +104,58 @@ class SqliteAudienceRepository:
         self._transaction = transaction
         self._insert_decision = insert_decision
 
-    def register_reader_mechanism(self, mechanism: ReaderMechanism) -> bool:
+    def register_reader_mechanism(
+        self,
+        mechanism: ReaderMechanism,
+        *,
+        evidence: Mapping[str, object] | None = None,
+    ) -> bool:
+        evidence_json: str | None = None
+        qualification: QualificationEvidence | None = None
+        if mechanism.status is ReaderMechanismStatus.QUALIFIED:
+            if evidence is None:
+                raise ValueError("a qualified mechanism needs its evidence artifact")
+            qualification = QualificationEvidence.from_payload(evidence)
+            qualification.validate_for(mechanism.mechanism_id, mechanism.spec_digest)
+            if qualification.candidate_version_id == mechanism.version_id:
+                raise ValueError("qualification evidence must address the evaluated version")
+            if qualification.evidence_digest != mechanism.evidence_digest:
+                raise ValueError("mechanism evidence digest does not match its artifact")
+            evidence_json = json.dumps(evidence, sort_keys=True, ensure_ascii=False)
+        elif evidence is not None:
+            evidence_digest = payload_digest(dict(evidence))
+            if mechanism.evidence_digest != evidence_digest:
+                raise ValueError("mechanism evidence digest does not match its artifact")
+            evidence_json = json.dumps(evidence, sort_keys=True, ensure_ascii=False)
         with self._transaction() as connection:
+            if connection.execute(
+                "SELECT 1 FROM reader_mechanism_versions WHERE version_id = ?",
+                (mechanism.version_id,),
+            ).fetchone() is not None:
+                return False
+            if qualification is not None:
+                candidate = connection.execute(
+                    "SELECT mechanism_id, status, spec_digest "
+                    "FROM reader_mechanism_versions WHERE version_id = ?",
+                    (qualification.candidate_version_id,),
+                ).fetchone()
+                if candidate is None:
+                    raise ValueError("qualification evidence candidate is not registered")
+                if (
+                    candidate["mechanism_id"] != mechanism.mechanism_id
+                    or candidate["status"] != ReaderMechanismStatus.EXPERIMENTAL.value
+                    or candidate["spec_digest"] != mechanism.spec_digest
+                ):
+                    raise ValueError(
+                        "qualification evidence candidate is not this experimental mechanism"
+                    )
+                current = connection.execute(
+                    "SELECT version_id FROM reader_mechanism_versions "
+                    "WHERE mechanism_id = ? ORDER BY registered_at DESC, rowid DESC LIMIT 1",
+                    (mechanism.mechanism_id,),
+                ).fetchone()
+                if current is None or current["version_id"] != qualification.candidate_version_id:
+                    raise ValueError("qualification evidence does not address the current version")
             cursor = connection.execute(
                 "INSERT OR IGNORE INTO reader_mechanism_versions "
                 "(version_id, mechanism_id, status, spec_digest, evidence_digest, registered_at) "
@@ -115,7 +169,23 @@ class SqliteAudienceRepository:
                     mechanism.registered_at,
                 ),
             )
+            if evidence_json is not None:
+                connection.execute(
+                    "INSERT OR IGNORE INTO reader_mechanism_evidence "
+                    "(version_id, evidence_json, recorded_at) VALUES (?, ?, ?)",
+                    (mechanism.version_id, evidence_json, mechanism.registered_at),
+                )
             return cursor.rowcount > 0
+
+    def reader_mechanism_evidence(self, version_id: str) -> dict[str, object] | None:
+        row = self._connection.execute(
+            "SELECT evidence_json FROM reader_mechanism_evidence WHERE version_id = ?",
+            (version_id,),
+        ).fetchone()
+        if row is None:
+            return None
+        value = json.loads(row["evidence_json"])
+        return dict(value) if isinstance(value, dict) else None
 
     def reader_mechanism(self, version_id: str) -> ReaderMechanism:
         row = self._connection.execute(
@@ -210,6 +280,7 @@ class SqliteAudienceRepository:
             "o.revision_id, o.logical_id "
             "FROM reader_observations o "
             "JOIN reader_mechanism_versions m ON m.version_id = o.mechanism_version_id "
+            "JOIN reader_mechanism_evidence me ON me.version_id = m.version_id "
             "LEFT JOIN editorial_interventions i "
             "ON i.checkpoint_id = o.checkpoint_id "
             "AND i.mechanism_version_id = o.mechanism_version_id "
@@ -313,6 +384,83 @@ class SqliteAudienceRepository:
             for row in self._connection.execute(
                 "SELECT * FROM editorial_interventions WHERE book_id = ? AND branch_id = ? "
                 "ORDER BY created_at, rowid",
+                (book_id, branch_id),
+            )
+        ]
+
+    def editorial_interventions_targeting(
+        self,
+        book_id: str,
+        branch_id: str,
+        logical_id: str,
+        plan_revision_id: str,
+    ) -> list[EditorialIntervention]:
+        """Interventions whose directive produced this exact applied plan revision.
+
+        Targeting alone is insufficient evidence of realization: another plan may have been
+        active when the scene was drafted. The proposal reading is the durable join between the
+        controller's directive and the immutable plan snapshot supplied to that draft.
+        """
+        return [
+            _intervention_from_row(row)
+            for row in self._connection.execute(
+                "SELECT i.* FROM editorial_interventions i "
+                "JOIN json_each(i.target_logical_ids) target "
+                "JOIN plan_revisions pr ON pr.plan_revision_id = ? "
+                "JOIN plan_proposals pp ON pp.proposal_id = pr.proposal_id "
+                "JOIN json_each(pp.proposal_json, '$.readings') reading "
+                "WHERE i.book_id = ? AND i.branch_id = ? AND target.value = ? "
+                "AND pp.status = 'applied' "
+                "AND pp.resulting_plan_revision_id = pr.plan_revision_id "
+                "AND json_extract(reading.value, '$.directive_id') = i.directive_id "
+                "ORDER BY i.created_at, i.rowid",
+                (plan_revision_id, book_id, branch_id, logical_id),
+            )
+        ]
+
+    @staticmethod
+    def insert_intervention_realization(
+        connection: sqlite3.Connection, realization: InterventionRealization
+    ) -> bool:
+        cursor = connection.execute(
+            "INSERT OR IGNORE INTO editorial_intervention_realizations "
+            "(realization_id, intervention_id, directive_id, plan_revision_id, book_id, "
+            "branch_id, logical_id, revision_id, content_hash, recorded_at) "
+            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            (
+                realization.realization_id,
+                realization.intervention_id,
+                realization.directive_id,
+                realization.plan_revision_id,
+                realization.book_id,
+                realization.branch_id,
+                realization.logical_id,
+                realization.revision_id,
+                realization.content_hash,
+                realization.recorded_at,
+            ),
+        )
+        return cursor.rowcount > 0
+
+    def intervention_realizations(
+        self, book_id: str, branch_id: str
+    ) -> list[InterventionRealization]:
+        return [
+            InterventionRealization(
+                realization_id=row["realization_id"],
+                intervention_id=row["intervention_id"],
+                directive_id=row["directive_id"],
+                plan_revision_id=row["plan_revision_id"],
+                book_id=row["book_id"],
+                branch_id=row["branch_id"],
+                logical_id=row["logical_id"],
+                revision_id=row["revision_id"],
+                content_hash=row["content_hash"],
+                recorded_at=row["recorded_at"],
+            )
+            for row in self._connection.execute(
+                "SELECT * FROM editorial_intervention_realizations "
+                "WHERE book_id = ? AND branch_id = ? ORDER BY recorded_at, rowid",
                 (book_id, branch_id),
             )
         ]

@@ -130,6 +130,48 @@ class Promise:
     #: Which plan revision's outline answer proposed the window. Provenance for a PROPOSED-grade
     #: claim, and what makes "why is this promise due there" answerable after the plan moves.
     scheduled_by_plan_revision: str | None = None
+    #: Optional exact manuscript anchors. They are present only when the summary answer supplied
+    #: a quote that code located uniquely in the accepted source scene. A partial anchor is
+    #: invalid; an absent one leaves the historical/advisory row usable but not battery-eligible.
+    opened_logical_id: str | None = None
+    opened_start: int | None = None
+    opened_end: int | None = None
+    opened_content_hash: str | None = None
+    paid_logical_id: str | None = None
+    paid_start: int | None = None
+    paid_end: int | None = None
+    paid_content_hash: str | None = None
+
+    def __post_init__(self) -> None:
+        for label, values in (
+            (
+                "opening",
+                (
+                    self.opened_logical_id,
+                    self.opened_start,
+                    self.opened_end,
+                    self.opened_content_hash,
+                ),
+            ),
+            (
+                "payment",
+                (
+                    self.paid_logical_id,
+                    self.paid_start,
+                    self.paid_end,
+                    self.paid_content_hash,
+                ),
+            ),
+        ):
+            present = tuple(value is not None for value in values)
+            if any(present) and not all(present):
+                raise ValueError(f"promise {label} evidence must be complete or absent")
+            if all(present):
+                start = values[1]
+                end = values[2]
+                assert isinstance(start, int) and isinstance(end, int)
+                if start < 0 or end <= start:
+                    raise ValueError(f"promise {label} evidence span is invalid")
 
     @property
     def scheduled(self) -> bool:
@@ -139,6 +181,14 @@ class Promise:
         refuses to mint one, so this reads one key and means both.
         """
         return self.window_start_key is not None and self.window_end_key is not None
+
+    @property
+    def opening_evidenced(self) -> bool:
+        return self.opened_logical_id is not None
+
+    @property
+    def payment_evidenced(self) -> bool:
+        return self.paid_logical_id is not None
 
 
 def promise_id_for(book_id: str, subject: str) -> str:

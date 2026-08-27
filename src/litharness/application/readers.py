@@ -755,7 +755,7 @@ class Reading:
 
 @dataclass(frozen=True, slots=True)
 class Anticipation:
-    """Where the steering pool got to: how it felt, what it expects, what it wants. The direction.
+    """Where the observation pool got to: how it felt, what it expects, what it wants.
 
     **Four fields, and hope and dread are two of them again** (2026-08-26). What changed is not
     which fields exist but what they are about: every one is pinned to what happens *next in the
@@ -802,44 +802,6 @@ class Anticipation:
             dreading=tuple(dict.fromkeys(dreading)),
             answered=answered,
         )
-
-    def render(self) -> str:
-        """The direction, as the writer reads it. Empty when nobody read anything.
-
-        **What changed on 2026-08-25 is the framing, and the framing is what broke.** This used
-        to open *"This is what your readers are actually hoping for. It outranks every craft
-        rule you have been given"* — a maximal permission over a list of up to fifty items, and
-        §138 measured permission-only text being recited maximally. It was: the revision of one
-        listing put four of the readers' own nouns on the page verbatim, including *repro
-        steps*.
-        §129's ordering is unchanged and is not what is being edited here — reader direction
-        still outranks every craft rule this project wrote. What is edited is the claim that
-        the *words* outrank them. So the block below reports three things a reader said and
-        says what they are: a state somebody was left in, a guess, and a wish. None of those is
-        a specification, and the sentence that used to say they were is gone.
-        """
-        if not (self.felt or self.expect_next or self.hoping_for or self.dreading):
-            return ""
-        blocks = [
-            "READERS WHO STOPPED PART-WAY THROUGH THIS, ASKED WHERE IT LEFT THEM.",
-            "They have not seen the rest and are not describing what you should write. What "
-            "they expect is what is already obvious; what they want is what they would stay "
-            "for.",
-        ]
-        if self.felt:
-            blocks.append("It left them:\n" + "\n".join(f"- {item}" for item in self.felt))
-        if self.expect_next:
-            blocks.append(
-                "They expect next:\n" + "\n".join(f"- {item}" for item in self.expect_next)
-            )
-        if self.hoping_for:
-            blocks.append(
-                "They are hoping for:\n" + "\n".join(f"- {item}" for item in self.hoping_for)
-            )
-        if self.dreading:
-            blocks.append("They are dreading:\n" + "\n".join(f"- {item}" for item in self.dreading))
-        return "\n\n".join(blocks)
-
 
 @dataclass(frozen=True, slots=True)
 class Browsing:

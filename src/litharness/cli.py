@@ -58,10 +58,12 @@ from litharness.application.director import (
 )
 from litharness.application.editorial import (
     EDITORIAL_INTERPRET,
+    MECHANISM_ID,
     READER_OBSERVE,
     experimental_mechanism,
     make_editorial_interpret_handler,
     make_reader_observation_handler,
+    mechanism_spec_digest,
 )
 from litharness.application.evaluation import (
     CompositeEvaluator,
@@ -124,7 +126,13 @@ from litharness.domain.context import (
 )
 from litharness.domain.directives import Directive, DirectiveKind, DirectiveStatus, directive_id_for
 from litharness.domain.draft import DraftPolicy
-from litharness.domain.events import Event, EventType
+from litharness.domain.editorial import (
+    QualificationEvidence,
+    ReaderMechanism,
+    ReaderMechanismStatus,
+    mechanism_version_id_for,
+)
+from litharness.domain.events import Event, EventType, payload_digest
 from litharness.domain.exceptions import ExceptionStatus
 from litharness.domain.failures import OperationalFailure
 from litharness.domain.findings import Finding, Severity
@@ -148,6 +156,13 @@ from litharness.domain.policy import (
 )
 from litharness.domain.promises import Promise, normalise_kind, promise_id_for
 from litharness.domain.revision import Revision, append_scenes, import_manuscript, new_book
+from litharness.domain.salience import (
+    build_state_continuity_items,
+    ecological_manifest,
+    evidence_census,
+    private_battery,
+    public_battery,
+)
 from litharness.domain.serials import SerialShape, arcs_of, beats_for_serial
 from litharness.domain.state import import_state
 from litharness.providers import ProviderRegistry, build_default_registry
@@ -1408,6 +1423,151 @@ def cmd_replan(args: argparse.Namespace) -> int:
     return EXIT_OK
 
 
+def _mechanism_payload(store: SqliteStore, mechanism: ReaderMechanism) -> dict[str, object]:
+    return {
+        "mechanism_id": mechanism.mechanism_id,
+        "version_id": mechanism.version_id,
+        "status": mechanism.status.value,
+        "spec_digest": mechanism.spec_digest,
+        "evidence_digest": mechanism.evidence_digest,
+        "registered_at": mechanism.registered_at,
+        "evidence": store.reader_mechanism_evidence(mechanism.version_id),
+    }
+
+
+def cmd_reader_mechanism(args: argparse.Namespace) -> int:
+    """Inspect, qualify, or withdraw the chapter-reader mechanism without a model call."""
+    store = _store(args)
+    stamp = _stamp(_now())
+    try:
+        current = store.current_reader_mechanism(MECHANISM_ID)
+        if args.mechanism_action == "status":
+            payload = None if current is None else _mechanism_payload(store, current)
+            if args.json:
+                _say(json.dumps(payload, ensure_ascii=False, indent=2))
+            elif payload is None:
+                print(f"{MECHANISM_ID}: unregistered")
+            else:
+                print(f"{MECHANISM_ID}: {payload['status']} {payload['version_id']}")
+            return EXIT_OK
+
+        if current is None:
+            baseline = experimental_mechanism(registered_at=stamp)
+            store.register_reader_mechanism(baseline)
+            current = baseline
+
+        if args.mechanism_action == "qualify":
+            if current.status is not ReaderMechanismStatus.EXPERIMENTAL:
+                raise ValueError("only the current experimental version may be qualified")
+            raw = json.loads(args.evidence.read_text(encoding="utf-8"))
+            if not isinstance(raw, dict):
+                raise ValueError("qualification evidence must be one JSON object")
+            evidence = QualificationEvidence.from_payload(raw)
+            evidence.validate_for(MECHANISM_ID, mechanism_spec_digest())
+            if evidence.candidate_version_id != current.version_id:
+                raise ValueError("qualification evidence does not address the current candidate")
+            qualified = ReaderMechanism(
+                mechanism_id=MECHANISM_ID,
+                version_id=mechanism_version_id_for(
+                    MECHANISM_ID,
+                    ReaderMechanismStatus.QUALIFIED,
+                    current.spec_digest,
+                    evidence.evidence_digest,
+                ),
+                status=ReaderMechanismStatus.QUALIFIED,
+                spec_digest=current.spec_digest,
+                evidence_digest=evidence.evidence_digest,
+                registered_at=stamp,
+            )
+            store.register_reader_mechanism(qualified, evidence=raw)
+            result = qualified
+        elif args.mechanism_action == "withdraw":
+            withdrawal = {
+                "withdrawn_version_id": current.version_id,
+                "reason": args.reason.strip(),
+                "withdrawn_at": stamp,
+            }
+            if not withdrawal["reason"]:
+                raise ValueError("withdrawal requires a reason")
+            evidence_digest = payload_digest(withdrawal)
+            result = ReaderMechanism(
+                mechanism_id=MECHANISM_ID,
+                version_id=mechanism_version_id_for(
+                    MECHANISM_ID,
+                    ReaderMechanismStatus.WITHDRAWN,
+                    current.spec_digest,
+                    evidence_digest,
+                ),
+                status=ReaderMechanismStatus.WITHDRAWN,
+                spec_digest=current.spec_digest,
+                evidence_digest=evidence_digest,
+                registered_at=stamp,
+            )
+            store.register_reader_mechanism(result, evidence=withdrawal)
+        else:
+            raise ValueError(f"unknown mechanism action {args.mechanism_action}")
+
+        payload = _mechanism_payload(store, result)
+        if args.json:
+            _say(json.dumps(payload, ensure_ascii=False, indent=2))
+        else:
+            print(f"{result.mechanism_id}: {result.status.value} {result.version_id}")
+        return EXIT_OK
+    except (KeyError, OSError, ValueError, json.JSONDecodeError) as error:
+        print(f"litharness: {error}", file=sys.stderr)
+        return EXIT_FAULT
+    finally:
+        store.close()
+
+
+def cmd_reader_evidence_audit(args: argparse.Namespace) -> int:
+    """Census code-certifiable scene interventions and long-context coverage."""
+    store = _store(args)
+    try:
+        book_id, branch_id = export_module.resolve_branch(store, args.book, args.branch)
+        head = store.head(book_id, branch_id)
+        if head is None:
+            raise ValueError("this branch has no revision")
+        census = evidence_census(
+            head,
+            store.state_records(book_id, branch_id),
+            store.promises(book_id, branch_id),
+            shape=SerialShape(args.chapter_scenes, args.arc_chapters),
+        )
+        items = build_state_continuity_items(census, head)
+        manifest = ecological_manifest(census, items)
+        report = {"census": census.to_payload(), "ecological_manifest": manifest}
+        if args.out:
+            args.out.mkdir(parents=True, exist_ok=True)
+            (args.out / "evidence-audit.json").write_text(
+                json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+            )
+            (args.out / "battery.public.json").write_text(
+                json.dumps(public_battery(items), ensure_ascii=False, indent=2) + "\n",
+                encoding="utf-8",
+            )
+            (args.out / "battery.private.json").write_text(
+                json.dumps(private_battery(census, items), ensure_ascii=False, indent=2) + "\n",
+                encoding="utf-8",
+            )
+        if args.json:
+            _say(json.dumps(report, ensure_ascii=False, indent=2))
+        else:
+            counts = census.to_payload()["candidate_counts"]
+            assert isinstance(counts, dict)
+            print(f"{book_id}/{branch_id} evidence census {census.digest}")
+            for family, count in counts.items():
+                print(f"  {family}: {count}")
+            print(f"  ecological state items: {len(items)}")
+            print("  no model called; no mechanism qualified")
+        return EXIT_OK
+    except (KeyError, OSError, ValueError) as error:
+        print(f"litharness: {error}", file=sys.stderr)
+        return EXIT_FAULT
+    finally:
+        store.close()
+
+
 def cmd_readers(args: argparse.Namespace) -> int:
     """Put the simulated readership on a drafted scene, and record what it did.
 
@@ -1441,9 +1601,11 @@ def cmd_readers(args: argparse.Namespace) -> int:
                 )
             observations = store.reader_observations(book_id, branch_id)
             interventions = store.editorial_interventions(book_id, branch_id)
+            realizations = store.intervention_realizations(book_id, branch_id)
             print(
                 f"{book_id}/{branch_id}: {len(observations)} versioned observation(s), "
-                f"{len(interventions)} editorial intervention(s)"
+                f"{len(interventions)} editorial intervention(s), "
+                f"{len(realizations)} accepted realization(s)"
             )
             for observation in observations:
                 print(
@@ -1465,6 +1627,13 @@ def cmd_readers(args: argparse.Namespace) -> int:
                     f"  intervention {intervention.intervention_id} "
                     f"{intervention.decision.value} "
                     f"checkpoint={intervention.checkpoint_id}{routed}"
+                )
+            for realization in realizations:
+                print(
+                    f"  realization {realization.realization_id} "
+                    f"intervention={realization.intervention_id} "
+                    f"target={realization.logical_id}@{realization.content_hash[:12]} "
+                    f"plan={realization.plan_revision_id[:12]}"
                 )
             return EXIT_OK
         head = store.head(book_id, branch_id)
@@ -1702,22 +1871,20 @@ def _listing_title(
 def cmd_listing(args: argparse.Namespace) -> int:
     """The listing loop: a writer, a readership, a listing, a title, and then a book.
 
-    **This is the loop `application/overview.py` was written for and nothing ran.** Its four
-    render functions and `readers`' two browsing calls had no caller anywhere in the package as
-    of 2026-08-25 — eleven measured rounds of listing work were driven from scratch scripts, so
-    the artifact the whole day improved could not be produced by this system at all. What is
-    here is those rounds' sequence, written down once:
+    **This closes the earlier script-only listing workflow.** As of 2026-08-25, measured listing
+    rounds were still driven by scratch scripts, so the artifact being improved could not be
+    produced by the package. The command now owns the surviving sequence in one place:
 
     1. one writer from `writers.CAST` drafts a listing under a brief that may be empty;
-    2. the **steering** pool says what it hopes the book turns out to be;
-    3. the same writer writes the listing again, having heard them;
-    4. the writer titles it, and a lookup says whether that title is already somebody's;
-    5. the **measurement** pool, which never steers, says whether it would open chapter one.
+    2. the experimental appetite pool records what it hopes the book turns out to be;
+    3. the writer titles the original listing, and a lookup says whether that title is already
+       somebody's;
+    4. the measurement pool says whether it would open chapter one.
 
-    **Nobody is in both pools and nothing here picks a winner.** There is one listing, revised
-    once; the screen is a reading of it and not a gate on it, which is why a low start rate
-    prints and does not refuse. §61(5): no model ranks or selects among candidates unless the
-    containment exists, and the containment for a book listing does not.
+    **Nobody is in both pools and nothing here picks a winner.** There is one listing. Appetite
+    answers are retained as experimental evidence and never sent back to a writer; the screen is
+    a reading of the listing and not a gate on it, which is why a low start rate prints and does
+    not refuse. A later listing intervention mechanism must earn qualification independently.
 
     **`--scenes` is what closes the hand-move this loop had at the end.** The title reached a
     person, who retyped it into `new`. A generated title that a human has to carry is a human
@@ -1737,7 +1904,7 @@ def cmd_listing(args: argparse.Namespace) -> int:
     # **The scene count is checked before the first call, not after the last one.** §19.1: a
     # refusal reached before the work costs time, never the unit — and `arc_template` refuses a
     # book of fewer scenes than it has named beats. Left to `cmd_new` at the end, `--scenes 4`
-    # would raise after a listing, four steering reads, a revision, a title, a lookup and four
+    # would raise after a listing, four appetite reads, a title, a lookup and four
     # browsing reads had all been paid for.
     if args.scenes:
         try:
@@ -1780,21 +1947,7 @@ def cmd_listing(args: argparse.Namespace) -> int:
             elif refusal:
                 print(f"  {reader.reader_id}: {refusal}", file=sys.stderr)
         wanted = readers_mod.Anticipation.of(wishes)
-        appetite = overview_mod.render_appetite(
-            wanted.felt, wanted.expect_next, wanted.hoping_for, wanted.dreading
-        )
-
         first = listing
-        if appetite:
-            revised, refusal = _completion_call(
-                overview_mod.render_revision_request(brief, listing, appetite, writer),
-                calls=calls,
-                spend=spend,
-            )
-            if revised is None:
-                print(f"  revision: {refusal}", file=sys.stderr)
-            else:
-                listing = revised.text.strip()
 
         title, availability, abandoned = _listing_title(
             listing,
@@ -1874,8 +2027,9 @@ def cmd_listing(args: argparse.Namespace) -> int:
                 total_tokens=spend.total_tokens,
                 cost_usd=spend.cost_usd,
                 reason=(
-                    "one writer wrote one listing and titled it; the readership said what it "
-                    "hoped for and whether it would start. Nothing here ranked anything"
+                    "one writer wrote and titled one listing; experimental appetite answers "
+                    "were recorded but did not rewrite it, and measurement readers said whether "
+                    "they would start. Nothing here ranked or steered"
                 ),
             ),
             decided_at=stamp,
@@ -1892,6 +2046,7 @@ def cmd_listing(args: argparse.Namespace) -> int:
         "titles_abandoned": list(abandoned),
         "availability": availability.to_jsonable() if availability else None,
         "appetite": wanted.to_jsonable(),
+        "appetite_status": "experimental_observation_only",
         "browsing": browsing.to_jsonable(),
         "paired": paired.to_jsonable() if paired.answered else None,
         "title_shown_to_readers": bool(shown),
@@ -4557,6 +4712,41 @@ def build_parser() -> argparse.ArgumentParser:
         "volumes/VolumeN/covers; omit for a serial-level cover",
     )
     cover.set_defaults(func=cmd_cover)
+
+    mechanism = sub.add_parser(
+        "reader-mechanism",
+        help="inspect or change the evidence-gated chapter-reader mechanism",
+    )
+    mechanism_actions = mechanism.add_subparsers(
+        dest="mechanism_action", required=True
+    )
+    mechanism_status = mechanism_actions.add_parser(
+        "status", help="show the current version and its qualification evidence"
+    )
+    mechanism_status.add_argument("--json", action="store_true")
+    mechanism_status.set_defaults(func=cmd_reader_mechanism)
+    mechanism_qualify = mechanism_actions.add_parser(
+        "qualify", help="register a qualified version from a complete evidence artifact"
+    )
+    mechanism_qualify.add_argument("--evidence", type=Path, required=True)
+    mechanism_qualify.add_argument("--json", action="store_true")
+    mechanism_qualify.set_defaults(func=cmd_reader_mechanism)
+    mechanism_withdraw = mechanism_actions.add_parser(
+        "withdraw", help="make withdrawal current and close queued/future steering"
+    )
+    mechanism_withdraw.add_argument("--reason", required=True)
+    mechanism_withdraw.add_argument("--json", action="store_true")
+    mechanism_withdraw.set_defaults(func=cmd_reader_mechanism)
+
+    evidence_audit = sub.add_parser(
+        "reader-evidence-audit",
+        help="count code-certifiable scene interventions without making a model call",
+    )
+    evidence_audit.add_argument("--book")
+    evidence_audit.add_argument("--branch")
+    evidence_audit.add_argument("--out", type=Path)
+    evidence_audit.add_argument("--json", action="store_true")
+    evidence_audit.set_defaults(func=cmd_reader_evidence_audit)
 
     read = sub.add_parser("readers", help="put the simulated readership on a drafted scene")
     read.add_argument("--scene", help="a scene logical id; the latest drafted one by default")

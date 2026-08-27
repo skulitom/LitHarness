@@ -21,14 +21,22 @@ from litharness.application.editorial import (
     reader_jobs_for_checkpoint,
 )
 from litharness.application.handlers import SCENE_DRAFT, make_scene_draft_handler
+from litharness.application.plan_refinement import accept_plan_proposal
 from litharness.domain.editorial import (
     EditorialDecision,
+    QualificationEvidence,
     ReaderMechanism,
     ReaderMechanismStatus,
     mechanism_version_id_for,
 )
 from litharness.domain.jobs import Job, JobStatus, input_digest_for
 from litharness.domain.nodes import Node, NodeKind
+from litharness.domain.plan_refinement import (
+    DirectiveReading,
+    PlanEdit,
+    PlanEditAction,
+    PlanProposal,
+)
 from litharness.domain.revision import build_revision
 from litharness.domain.serials import SerialShape
 from litharness.providers.fake import FakeProvider
@@ -44,9 +52,32 @@ def store(tmp_path) -> SqliteStore:
     return SqliteStore.open(tmp_path / "editorial.db")
 
 
+def _qualification_payload() -> dict[str, object]:
+    candidate = experimental_mechanism(registered_at=STAMP)
+    return {
+        "candidate_version_id": candidate.version_id,
+        "mechanism_id": candidate.mechanism_id,
+        "mechanism_spec_digest": candidate.spec_digest,
+        "battery_registration_digest": "a" * 64,
+        "battery_manifest_digest": "b" * 64,
+        "registered_bar_digest": "c" * 64,
+        "source_artifact_digests": ["d" * 64, "e" * 64],
+        "holdout_books": 2,
+        "heldout_transformations": True,
+        "edit_fingerprint_passed": True,
+        "memorisation_controls_passed": True,
+        "full_volume_passed": True,
+        "cross_volume_passed": True,
+        "growing_serial_passed": True,
+        "transfer_passed": True,
+        "operator_acceptance_passed": True,
+        "decided_at": STAMP,
+    }
+
+
 def _qualified() -> ReaderMechanism:
     spec = mechanism_spec_digest()
-    evidence = "held-out-transfer-2026-08-27"
+    evidence = QualificationEvidence.from_payload(_qualification_payload()).evidence_digest
     status = ReaderMechanismStatus.QUALIFIED
     return ReaderMechanism(
         mechanism_id="reader.anticipation.v0",
@@ -56,6 +87,14 @@ def _qualified() -> ReaderMechanism:
         evidence_digest=evidence,
         registered_at=STAMP,
     )
+
+
+def _register_qualified(store: SqliteStore) -> ReaderMechanism:
+    candidate = experimental_mechanism(registered_at=STAMP)
+    store.register_reader_mechanism(candidate)
+    qualified = _qualified()
+    store.register_reader_mechanism(qualified, evidence=_qualification_payload())
+    return qualified
 
 
 def _record_panel(store: SqliteStore, mechanism: ReaderMechanism, *, chapter_index: int = 2):
@@ -97,6 +136,13 @@ def test_the_mechanism_version_addresses_status_spec_and_evidence() -> None:
             spec_digest=qualified.spec_digest,
             registered_at=STAMP,
         )
+
+
+def test_qualification_requires_the_registered_current_experimental_candidate(
+    store: SqliteStore,
+) -> None:
+    with pytest.raises(ValueError, match="candidate is not registered"):
+        store.register_reader_mechanism(_qualified(), evidence=_qualification_payload())
 
 
 def test_reader_wording_cannot_be_transcribed_into_live_direction() -> None:
@@ -159,8 +205,7 @@ def test_an_experimental_panel_is_durable_but_cannot_enqueue_direction(
 def test_withdrawing_a_qualified_mechanism_closes_queued_and_future_steering(
     store: SqliteStore,
 ) -> None:
-    qualified = _qualified()
-    store.register_reader_mechanism(qualified)
+    qualified = _register_qualified(store)
     revision = make_revision()
     store.commit_revision(revision, created_at=STAMP)
     store.record_plan_items(
@@ -286,8 +331,7 @@ def test_accepting_the_last_scene_of_a_chapter_atomically_schedules_the_panel(
 def test_a_qualified_panel_becomes_an_intervention_then_a_machine_directive(
     store: SqliteStore,
 ) -> None:
-    mechanism = _qualified()
-    store.register_reader_mechanism(mechanism)
+    mechanism = _register_qualified(store)
     revision = make_revision()
     store.commit_revision(revision, created_at=STAMP)
     store.record_plan_items(
@@ -338,3 +382,125 @@ def test_a_qualified_panel_becomes_an_intervention_then_a_machine_directive(
     handler(job, NOW + 20)
     assert provider.calls == 1
     assert store.pending_directives() == [directive]
+
+
+def test_an_intervention_records_when_its_target_scene_is_accepted(
+    store: SqliteStore,
+) -> None:
+    mechanism = _register_qualified(store)
+    revision, _jobs = _record_panel(store, mechanism)
+    future = Node(
+        logical_id="scene-7",
+        kind=NodeKind.SCENE,
+        position_key="090",
+        parent_logical_id="book",
+    )
+    extended = build_revision(
+        revision.book_id,
+        revision.branch_id,
+        (*revision.nodes, future),
+        parent=revision.revision_id,
+    )
+    store.commit_revision(extended, created_at=STAMP)
+    store.record_plan_items(
+        revision.book_id,
+        revision.branch_id,
+        (
+            lc.PlanItem(
+                logical_id="premise",
+                kind=lc.PlanKind.PREMISE,
+                text="Rook must clear his debt.",
+                authority=lc.PlanAuthority.INTENDED,
+            ),
+        ),
+        created_at=STAMP,
+    )
+    assert enqueue_ready_editorial_panel(store)
+    editorial_job = next(
+        item
+        for item in store.jobs_by_status(JobStatus.QUEUED)
+        if item.job_kind == EDITORIAL_INTERPRET
+    )
+    controller = FakeProvider(
+        responses=[
+            json.dumps(
+                {
+                    "decision": "satisfy",
+                    "need": "a consequential choice",
+                    "rationale": "the panel converged on agency",
+                    "directive_body": "Make the next choice visibly alter Rook's debt.",
+                    "target_logical_ids": ["scene-7"],
+                }
+            )
+        ]
+    )
+    make_editorial_interpret_handler(
+        ProviderRegistry(controller), store, PROJECT_ID
+    )(editorial_job, NOW + 10)
+    [intervention] = store.editorial_interventions(revision.book_id, revision.branch_id)
+    assert intervention.directive_id is not None
+    base_plan = store.plan_revision(revision.book_id, revision.branch_id)
+    assert base_plan is not None
+    assert store.editorial_interventions_targeting(
+        revision.book_id,
+        revision.branch_id,
+        "scene-7",
+        base_plan.plan_revision_id,
+    ) == []
+    proposal = PlanProposal(
+        base_plan_revision_id=base_plan.plan_revision_id,
+        summary="Apply the qualified reader intervention",
+        rationale="Give the targeted future scene the accepted story effect.",
+        expected_outcome="The scene visibly changes Rook's debt.",
+        edits=(
+            PlanEdit(
+                PlanEditAction.CREATE,
+                "scene-7-reader-effect",
+                lc.PlanItem(
+                    logical_id="scene-7-reader-effect",
+                    kind=lc.PlanKind.SCENE_PLAN,
+                    text="Rook's choice visibly changes his debt.",
+                    authority=lc.PlanAuthority.POSSIBLE,
+                ),
+            ),
+        ),
+        readings=(
+            DirectiveReading(
+                intervention.directive_id,
+                "Make the choice change Rook's debt in scene 7.",
+            ),
+        ),
+        provider="fake",
+        model="fake-deterministic-v1",
+        profile="narrative-planner.v0",
+    )
+    application = accept_plan_proposal(
+        store,
+        proposal,
+        project_id=PROJECT_ID,
+        created_at=STAMP,
+    )
+    plan = application.after
+    payload = {
+        "revision_id": extended.revision_id,
+        "book_id": extended.book_id,
+        "branch_id": extended.branch_id,
+        "logical_id": "scene-7",
+        "prompt": "Draft the targeted scene.",
+        "plan_revision_id": plan.plan_revision_id,
+        "selected_by": {"ordinal": 7, "of_total": 7},
+    }
+    draft_job = Job(
+        job_id="draft-realization",
+        job_kind=SCENE_DRAFT,
+        payload=payload,
+        input_digest=input_digest_for(payload),
+    )
+    make_scene_draft_handler(
+        ProviderRegistry(FakeProvider(pad_to_chars=400)), store, PROJECT_ID
+    )(draft_job, NOW + 20)
+
+    [realization] = store.intervention_realizations(revision.book_id, revision.branch_id)
+    assert realization.intervention_id == intervention.intervention_id
+    assert realization.logical_id == "scene-7"
+    assert realization.plan_revision_id == plan.plan_revision_id

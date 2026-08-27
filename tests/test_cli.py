@@ -19,8 +19,10 @@ import litharness_contracts as lc
 import pytest
 
 from litharness.adapters.sqlite_store import SqliteStore
+from litharness.application.editorial import experimental_mechanism
 from litharness.cli import EXIT_ATTENTION, EXIT_FAULT, EXIT_OK, build_parser, main
 from litharness.domain.directives import DirectiveStatus
+from litharness.domain.editorial import QualificationEvidence
 from litharness.domain.events import EventType
 from litharness.domain.jobs import Job, JobStatus
 from litharness.domain.nodes import NodeKind
@@ -1069,6 +1071,101 @@ def test_reader_history_inspects_without_registering_or_calling_a_model(db, caps
     shown = capsys.readouterr().out
     assert "reader.anticipation.v0: unregistered" in shown
     assert "0 versioned observation(s), 0 editorial intervention(s)" in shown
+
+
+def test_reader_mechanism_qualification_requires_the_complete_evidence_artifact(
+    db, tmp_path, capsys
+) -> None:
+    assert run(db, "init") == EXIT_OK
+    candidate = experimental_mechanism(registered_at="2026-08-27T12:00:00Z")
+    with SqliteStore.open(db) as store:
+        store.register_reader_mechanism(candidate)
+    evidence: dict[str, object] = {
+        "candidate_version_id": candidate.version_id,
+        "mechanism_id": candidate.mechanism_id,
+        "mechanism_spec_digest": candidate.spec_digest,
+        "battery_registration_digest": "a" * 64,
+        "battery_manifest_digest": "b" * 64,
+        "registered_bar_digest": "c" * 64,
+        "source_artifact_digests": ["d" * 64, "e" * 64],
+        "holdout_books": 2,
+        "heldout_transformations": True,
+        "edit_fingerprint_passed": True,
+        "memorisation_controls_passed": True,
+        "full_volume_passed": True,
+        "cross_volume_passed": True,
+        "growing_serial_passed": True,
+        "transfer_passed": True,
+        "operator_acceptance_passed": True,
+        "decided_at": "2026-08-27T13:00:00Z",
+    }
+    assert QualificationEvidence.from_payload(evidence).evidence_digest
+    artifact = tmp_path / "qualification.json"
+    artifact.write_text(json.dumps(evidence), encoding="utf-8")
+    capsys.readouterr()
+
+    assert run(db, "reader-mechanism", "qualify", "--evidence", str(artifact)) == EXIT_OK
+    assert "qualified" in capsys.readouterr().out
+    assert run(db, "reader-mechanism", "withdraw", "--reason", "transfer regressed") == EXIT_OK
+    assert "withdrawn" in capsys.readouterr().out
+
+
+def test_reader_mechanism_refuses_an_evidence_artifact_with_a_failed_control(
+    db, tmp_path, capsys
+) -> None:
+    assert run(db, "init") == EXIT_OK
+    candidate = experimental_mechanism(registered_at="2026-08-27T12:00:00Z")
+    with SqliteStore.open(db) as store:
+        store.register_reader_mechanism(candidate)
+    artifact = tmp_path / "failed.json"
+    artifact.write_text(
+        json.dumps(
+            {
+                "candidate_version_id": candidate.version_id,
+                "mechanism_id": candidate.mechanism_id,
+                "mechanism_spec_digest": candidate.spec_digest,
+                "battery_registration_digest": "a" * 64,
+                "battery_manifest_digest": "b" * 64,
+                "registered_bar_digest": "c" * 64,
+                "source_artifact_digests": ["d" * 64, "e" * 64],
+                "holdout_books": 2,
+                "heldout_transformations": True,
+                "edit_fingerprint_passed": False,
+                "memorisation_controls_passed": True,
+                "full_volume_passed": True,
+                "cross_volume_passed": True,
+                "growing_serial_passed": True,
+                "transfer_passed": True,
+                "operator_acceptance_passed": True,
+                "decided_at": "2026-08-27T13:00:00Z",
+            }
+        ),
+        encoding="utf-8",
+    )
+    capsys.readouterr()
+
+    assert run(db, "reader-mechanism", "qualify", "--evidence", str(artifact)) == EXIT_FAULT
+    assert "every registered qualification control" in capsys.readouterr().err
+
+
+def test_reader_evidence_audit_is_call_free_and_writes_private_keys_separately(
+    db, tmp_path, capsys
+) -> None:
+    _imported_mystery(db, capsys)
+    out = tmp_path / "audit"
+    capsys.readouterr()
+
+    assert run(db, "reader-evidence-audit", "--out", str(out), "--json") == EXIT_OK
+
+    report = json.loads(capsys.readouterr().out)
+    assert report["ecological_manifest"]["promotion_bar"] is None
+    assert "candidates" not in report["census"]
+    assert "expected_value" not in json.dumps(report)
+    assert (out / "evidence-audit.json").exists()
+    public = json.loads((out / "battery.public.json").read_text(encoding="utf-8"))
+    assert public["version"].endswith("public.v1")
+    private = json.loads((out / "battery.private.json").read_text(encoding="utf-8"))
+    assert "never pass this file to a reader" in private["warning"]
 
 
 def test_model_written_text_reaches_a_redirected_stdout_in_utf8() -> None:

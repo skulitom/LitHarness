@@ -145,10 +145,27 @@ SUMMARY_SCHEMA = {
                             {"type": "null"},
                         ]
                     },
+                    "evidence_quote": {"type": "string"},
                 },
             },
         },
-        "promises_paid": {"type": "array", "items": {"type": "string"}},
+        "promises_paid": {
+            "type": "array",
+            "items": {
+                "anyOf": [
+                    {"type": "string"},
+                    {
+                        "type": "object",
+                        "additionalProperties": False,
+                        "required": ["subject", "evidence_quote"],
+                        "properties": {
+                            "subject": {"type": "string"},
+                            "evidence_quote": {"type": "string"},
+                        },
+                    },
+                ]
+            },
+        },
     },
 }
 
@@ -232,16 +249,18 @@ def render_summary_prompt(
         "PROMISES_OPENED: new threads this scene opens that the book must later pay off. "
         "For each: a short subject name, what is now owed, which kind of debt it is "
         f"({', '.join(PROMISE_KINDS)}), and the scene number it is due by when the scene "
-        "implies one.\n"
+        "implies one. Also copy one short exact quote from this scene that opens the debt; "
+        "use an empty evidence_quote when no unique quote supports it.\n"
         # **Conditional, and that is what keeps the empty-ledger prompt byte-identical.** A
         # line naming a list the prompt does not carry would be asking a model to copy from
         # nowhere, and a control that is not byte-for-byte the old prompt is not a control.
         + (
-            "PROMISES_PAID: the subject names of previously open threads this scene pays "
-            "off."
+            "PROMISES_PAID: for each previously open thread this scene pays off, return its "
+            "subject and one short exact payoff quote from this scene."
             if not open_promises
-            else "PROMISES_PAID: the names of open debts this scene pays off, each copied "
-            "exactly as the ledger writes it. Empty if this scene pays none."
+            else "PROMISES_PAID: for each open debt this scene pays off, return its subject "
+            "copied exactly as the ledger writes it and one short exact payoff quote from "
+            "this scene. Empty if this scene pays none."
         )
     )
     owed = ""
@@ -337,6 +356,14 @@ def extract_delta(payload: object) -> dict[str, str] | None:
             return None
         delta[field] = value.strip()
     return delta
+
+
+def exact_evidence_span(text: str, quote: object) -> tuple[int, int] | None:
+    """Locate one exact non-empty quote, refusing ambiguity and reconstructed wording."""
+    if not isinstance(quote, str) or not quote.strip() or text.count(quote) != 1:
+        return None
+    start = text.index(quote)
+    return start, start + len(quote)
 
 
 def _scene_beat(beats: Sequence[Beat], logical_id: str) -> Beat | None:
@@ -458,11 +485,14 @@ def make_summary_handler(
             else []
         )
         paid_raw = result.parsed.get("promises_paid")
-        paid = (
-            [item for item in paid_raw if isinstance(item, str)]
-            if isinstance(paid_raw, list)
-            else []
-        )
+        paid_entries: list[dict[str, object]] = []
+        if isinstance(paid_raw, list):
+            for item in paid_raw:
+                if isinstance(item, str):
+                    paid_entries.append({"subject": item, "evidence_quote": ""})
+                elif isinstance(item, dict) and isinstance(item.get("subject"), str):
+                    paid_entries.append(item)
+        paid = [str(item["subject"]) for item in paid_entries]
 
         # **What the model said, and which of it named a row on the list it was shown.** The
         # match is exact by construction — `pay_promise` keys on
@@ -526,6 +556,9 @@ def make_summary_handler(
                     if hinted is not None and 1 <= hinted <= len(beats)
                     else None
                 ) or final_key
+                opening_span = exact_evidence_span(
+                    node.content, item.get("evidence_quote")
+                )
                 store.record_promise(
                     book_id,
                     branch_id,
@@ -543,18 +576,30 @@ def make_summary_handler(
                         # nominations are weighed by an operator over the derivation run's
                         # distribution, not by a synonym table in a handler.
                         kind=normalise_kind(item.get("kind")),
+                        opened_logical_id=logical_id if opening_span is not None else None,
+                        opened_start=opening_span[0] if opening_span is not None else None,
+                        opened_end=opening_span[1] if opening_span is not None else None,
+                        opened_content_hash=actual if opening_span is not None else None,
                     ),
                 )
-            for name in paid:
+            for paid_entry in paid_entries:
+                name = str(paid_entry["subject"])
                 subject = normalise_subject(name)
                 if not subject:
                     continue
+                payment_span = exact_evidence_span(
+                    node.content, paid_entry.get("evidence_quote")
+                )
                 store.pay_promise(
                     book_id,
                     branch_id,
                     promise_id_for(book_id, subject),
                     paid_at_key=opened_key,
                     paid_by_revision=revision_id,
+                    paid_logical_id=logical_id if payment_span is not None else None,
+                    paid_start=payment_span[0] if payment_span is not None else None,
+                    paid_end=payment_span[1] if payment_span is not None else None,
+                    paid_content_hash=actual if payment_span is not None else None,
                 )
 
         # Scene-delta annotation: a null delta is recorded as an INFO finding against this
@@ -600,6 +645,7 @@ __all__ = [
     "TARGET_WORDS",
     "SummaryInputError",
     "check_open_threads",
+    "exact_evidence_span",
     "extract_delta",
     "flatten",
     "make_summary_handler",

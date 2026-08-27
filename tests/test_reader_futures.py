@@ -15,7 +15,7 @@ caught it:
 1. a reader is stopped part-way, so it has a future to talk about rather than a finished text
    to assess;
 2. the schema has nowhere to put an instruction about the writing;
-3. the block the writer reads no longer claims those words outrank its craft rules.
+3. the observation type has no renderer capable of putting those words into a writer prompt.
 
 Everything here is string and dictionary handling. No database, no model call, no network.
 """
@@ -24,7 +24,7 @@ from __future__ import annotations
 
 import pytest
 
-from litharness.application import overview, readers
+from litharness.application import readers
 from litharness.domain import rivals
 from litharness.domain.revision import new_book
 from litharness.domain.serials import SerialShape
@@ -155,36 +155,33 @@ def test_a_steering_reader_is_asked_where_it_got_to_and_not_what_it_thinks() -> 
         assert banned not in prompt
 
 
-# --- what reaches the writer ------------------------------------------------------------
+# --- raw answers cannot reach the writer ------------------------------------------------
 
 
-def test_the_direction_no_longer_claims_to_outrank_the_craft_rules() -> None:
-    """§129's ordering is untouched; the claim that the *words* outrank it is what went.
-
-    That sentence sat above a list of up to fifty reader items, which is the maximal permission
-    §138 measured being recited maximally.
-    """
-    block = readers.Anticipation(
+def test_raw_anticipation_has_no_renderer_back_into_a_writer_prompt() -> None:
+    observation = readers.Anticipation(
         felt=("uneasy",),
         expect_next=("he goes back down",),
         hoping_for=("a real cost",),
         dreading=("it was a dream",),
         answered=4,
-    ).render()
-    assert "outranks every craft rule" not in block
-    assert "are not describing what you should write" in block
-    assert "a real cost" in block
-    assert "it was a dream" in block
+    )
+    assert not hasattr(observation, "render")
+    assert observation.to_jsonable()["hoping_for"] == ["a real cost"]
 
 
-def test_a_book_nobody_read_gets_no_direction_at_all() -> None:
+def test_a_book_nobody_read_records_an_empty_observation() -> None:
     empty = readers.Anticipation(felt=(), expect_next=(), hoping_for=(), dreading=(), answered=0)
-    assert empty.render() == ""
-    assert overview.render_appetite((), (), (), ()) == ""
+    assert empty.to_jsonable() == {
+        "answered": 0,
+        "felt": [],
+        "expect_next": [],
+        "hoping_for": [],
+        "dreading": [],
+    }
 
 
-def test_a_pre_migration_row_still_carries_its_direction() -> None:
-    """A book part-drafted across 032 keeps steering. An old hope is a want by another name."""
+def test_a_pre_migration_row_still_round_trips_as_observation() -> None:
     carried = readers.Anticipation.of(
         {readers.pool(readers.STEERING)[0].reader_id: {"hoping_for": ["a real cost"]}}
     )

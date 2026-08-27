@@ -52,7 +52,8 @@ to distrust first (PLAN.md header, the same lesson recorded three times).
   `application/editorial.py`: exact, versioned observations stay inert unless their mechanism
   is qualified, then one controller records `satisfy`, `defer`, `subvert`, `refuse`, or
   `challenge_lock`; only the first and third may submit a scoped machine directive. The
-  separate listing experiment remains experiment-local. Still closed, and closed for their
+  listing experiment records appetite in its bundle but has no renderer or revision path back
+  into the writer. Still closed, and closed for their
   own reasons: the operator's diagnostics (§97.1; the `debug-book` rule), and real-reader
   behaviour in any role inside the generation loop (§126).
 - **Counts are never restated, only pointed to.** BRIEF.md §2 owns the refutation count; the

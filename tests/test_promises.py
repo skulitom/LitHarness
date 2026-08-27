@@ -422,6 +422,58 @@ def test_a_name_copied_from_the_list_pays_its_row_and_the_row_records_it(
     assert stored, "the summary itself is unaffected"
 
 
+def test_unique_opening_and_payoff_quotes_become_exact_optional_evidence(
+    store: SqliteStore,
+) -> None:
+    revision = a_book()
+    store.commit_revision(revision, created_at="2026-08-17T00:00:00Z")
+    opening_quote = "Rook set the lantern down"
+    summarise_scene(
+        store,
+        revision,
+        "sc1",
+        ExtendedStub(
+            {
+                "promises_opened": [
+                    {
+                        "subject": "gate_ledger",
+                        "description": "the gate ledger must be read back",
+                        "evidence_quote": opening_quote,
+                    }
+                ]
+            }
+        ),
+    )
+
+    [opened] = store.promises(BOOK_ID, BRANCH_ID)
+    assert opened.opening_evidenced
+    assert opened.opened_logical_id == "sc1"
+    text = revision.node("sc1").content or ""
+    assert text[opened.opened_start : opened.opened_end] == opening_quote
+    assert opened.opened_content_hash == content_hash(text)
+
+    payoff_quote = "the ledger did not blink"
+    summarise_scene(
+        store,
+        revision,
+        "sc4",
+        ExtendedStub(
+            {
+                "promises_paid": [
+                    {"subject": "gate_ledger", "evidence_quote": payoff_quote}
+                ]
+            }
+        ),
+    )
+
+    [paid] = store.promises(BOOK_ID, BRANCH_ID)
+    assert paid.payment_evidenced
+    assert paid.paid_logical_id == "sc4"
+    paid_text = revision.node("sc4").content or ""
+    assert paid_text[paid.paid_start : paid.paid_end] == payoff_quote
+    assert paid.paid_content_hash == content_hash(paid_text)
+
+
 def test_a_name_not_on_the_list_pays_nothing_and_the_row_records_that_too(
     store: SqliteStore,
 ) -> None:

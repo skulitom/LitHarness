@@ -47,6 +47,17 @@ _SELF = frozenset(
 
 
 @dataclass(frozen=True, slots=True)
+class CharacterCause:
+    """One explicitly reified action and its declared causal/effect roles."""
+
+    change_id: str
+    role: str
+    motives: tuple[str, ...]
+    effects: tuple[str, ...]
+    evidence_complete: bool
+
+
+@dataclass(frozen=True, slots=True)
 class Character:
     """One person, as canon declares them. Every field is empty rather than guessed."""
 
@@ -68,6 +79,8 @@ class Character:
     named_by: tuple[tuple[str, str], ...]
     #: Anything else stated about them, as (predicate, value).
     also: tuple[tuple[str, str], ...]
+    #: Only explicit reified changes; free-text wants are never promoted into causes.
+    causes: tuple[CharacterCause, ...] = ()
 
     @property
     def is_protagonist(self) -> bool:
@@ -92,6 +105,17 @@ class Character:
             payload["named_by"] = [{"who": o, "how": p} for o, p in self.named_by]
         if self.also:
             payload["also"] = dict(self.also)
+        if self.causes:
+            payload["causes"] = [
+                {
+                    "change_id": cause.change_id,
+                    "role": cause.role,
+                    "motives": list(cause.motives),
+                    "effects": list(cause.effects),
+                    "evidence_complete": cause.evidence_complete,
+                }
+                for cause in self.causes
+            ]
         return payload
 
     def render(self) -> str:
@@ -121,6 +145,14 @@ class Character:
             lines.append(f"  {other} {predicate.replace('_', ' ')} them")
         for predicate, value in self.also:
             lines.append(f"  {predicate.replace('_', ' ')}: {value}")
+        for cause in self.causes:
+            motive = ", ".join(cause.motives) or "no explicit cause"
+            effect = ", ".join(cause.effects) or "no explicit effect"
+            evidenced = "span-backed" if cause.evidence_complete else "unlocated"
+            lines.append(
+                f"  {cause.role.replace('_', ' ')} {cause.change_id}: "
+                f"because {motive}; resulting in {effect} ({evidenced})"
+            )
         return "\n".join(lines)
 
 
@@ -158,6 +190,44 @@ def sheet(records: Sequence[lc.StateRecord], subject: str) -> Character:
     for criterion, rung in sorted(worlds_mod.standing_of(canon, subject).items()):
         standing.append((criterion, rung, worlds_mod.rung_index(canon, criterion, rung)))
 
+    causes: list[CharacterCause] = []
+    for actor in canon:
+        if actor.predicate not in {"actor", "performed_by"} or actor.object_ref != subject:
+            continue
+        members = [record for record in canon if record.subject == actor.subject]
+        motives = tuple(
+            dict.fromkeys(
+                record.object_ref or str(record.value or "").strip()
+                for record in members
+                if record.predicate == "caused_by"
+                and (record.object_ref or str(record.value or "").strip())
+            )
+        )
+        effects = tuple(
+            dict.fromkeys(
+                record.object_ref or str(record.value or "").strip()
+                for record in members
+                if record.predicate == "effect"
+                and (record.object_ref or str(record.value or "").strip())
+            )
+        )
+        causal_rows = [
+            record
+            for record in members
+            if record.predicate in {"caused_by", "effect"}
+        ]
+        causes.append(
+            CharacterCause(
+                change_id=actor.subject,
+                role=actor.predicate,
+                motives=motives,
+                effects=effects,
+                evidence_complete=bool(motives and effects)
+                and bool(actor.evidence)
+                and all(record.evidence for record in causal_rows),
+            )
+        )
+
     return Character(
         subject=subject,
         roles=tuple(dict.fromkeys(roles)),
@@ -173,6 +243,7 @@ def sheet(records: Sequence[lc.StateRecord], subject: str) -> Character:
         ties=tuple(sorted(set(ties))),
         named_by=tuple(sorted(set(named_by))),
         also=tuple(sorted(set(also))),
+        causes=tuple(sorted(causes, key=lambda cause: (cause.change_id, cause.role))),
     )
 
 
@@ -219,9 +290,14 @@ def rows(characters: Sequence[Character]) -> list[dict[str, str]]:
             "can_do": " ".join(c.capabilities),
             "ties": "; ".join(f"{p} {o}" for p, o in c.ties),
             "named_by": "; ".join(f"{o} {p}" for o, p in c.named_by),
+            "causes": "; ".join(
+                f"{cause.role} {cause.change_id}: {','.join(cause.motives)} -> "
+                f"{','.join(cause.effects)}"
+                for cause in c.causes
+            ),
         }
         for c in characters
     ]
 
 
-__all__ = ["Character", "cast", "render", "rows", "sheet"]
+__all__ = ["Character", "CharacterCause", "cast", "render", "rows", "sheet"]
