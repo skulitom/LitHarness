@@ -52,6 +52,16 @@ reconcile spans) is the tribunal's natural next size if the tribunal's evidence 
 survives its kills; it is not built first because a panel that reconciles by *agreement*
 rather than by *verifiable evidence* is the verdict channel with extra steps.
 
+## Research update, 2026-08-27
+
+Current creative-writing research and the repository's own results point to salience as the
+bottleneck: models can produce plausible criticism while missing the largest defect, and they
+systematically overweight style relative to event and character. The next common substrate is a
+causal salience battery with hidden, code-checkable damage keys; prompts, multi-agent mechanisms,
+and activation probes compete on that same battery rather than defining their own targets. The
+evidence, construction, kills, and scope boundary are in
+[`reader-perception-research.md`](reader-perception-research.md).
+
 ## The order of belief, restated once
 
 A mechanism earns attention by separating the market's own top from its own bottom, blind.
