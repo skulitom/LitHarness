@@ -78,7 +78,7 @@ below move it into the results where boundary 6 requires it.
 `authorship_tells.py` (deterministic classifier over features), `b6_benchmark.py` (fixture
 admission artifact), `baseline.py` (counters), the retired craft-profile builder, `cdg_battery.py` /
 `surprisal.py` / `surprisal_field.py` (mechanical scoring), `compression_progress.py`,
-`context_l0_arm.py` (context-assembler census, no model), `corpus_io.py`, `corpus_leak_audit.py`,
+`long_context.py` (first-party long-serial context census, no model), `corpus_io.py`, `corpus_leak_audit.py`,
 `determinism_probe.py`, `director_distinctness.py` (directive-generation distinctness, no reader),
 `elicitation_study.py`'s torch half `verdict_locus.py` and `latent_probe.py` / `latent_fixtures.py`
 / `latent_support.py` (internal-state probes, no verbal elicitation), `evaluate.py` (arithmetic),

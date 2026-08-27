@@ -6,12 +6,11 @@ database unread — one of them naming scene 6 by number, another a promise the 
 payoff — and `plans.constraints_of` was a parsed function with no caller. Scene six was
 written knowing nothing of scene five.
 
-**What this is, and what it deliberately is not.** §12 words step 2 as "simple baseline until
-LongRangeContext promotes", and that sibling owns discovery, scoring and packing; the
-contract's own `context.py` says so in its first sentence. So this packs by a fixed priority
-order, not by relevance scoring. Under a budget too small to hold the book it will drop things
-a scorer would have kept, and it has no way to know that. What it therefore owes — the whole
-of what a baseline can honestly promise — is that **every omission is recorded**, in
+**What this is, and what it deliberately is not.** This is LitHarness's first-party bounded
+context strategy. It packs by a fixed priority order rather than pretending an unvalidated
+relevance score knows which story fact matters. Under a budget too small to hold the book it
+will drop things a better strategy might have kept. What it therefore owes is that **every
+omission is recorded**, in
 `rejected_candidates`, with the reason. A packet that silently dropped the constraint naming
 this scene would be worse than the empty prompt it replaces, because the prompt was at least
 obviously empty.
@@ -23,10 +22,10 @@ premise → constraints → threads → hidden → facts → prior prose, and un
 what goes. The hidden section — true, and not yet disclosed — packs *above* the ordinary facts
 and renders below them, because a scene written against a secret it was never given cannot be
 repaired later and a scene written with fewer ordinary facts is merely thinner.
-LongRangeContext measured a recent-window baseline for exactly this shape, which is why prose
-is *selected* nearest-scene-first — scene five matters more to scene six than scene one does —
-while being *rendered* in reading order, because a generator handed the story out of sequence
-will write it that way.
+LitHarness's endurance workload measures this recent-window baseline directly, which is why
+prose is *selected* nearest-scene-first — scene five matters more to scene six than scene one
+does — while being *rendered* in reading order, because a generator handed the story out of
+sequence will write it that way.
 
 **Selection order is not render order**, and conflating them is the bug this docstring exists
 to prevent: dropping the oldest scene under a tight budget is right, and showing the
@@ -50,11 +49,9 @@ summary yet is simply an eviction with nothing to leave behind, exactly as befor
 budget that cannot hold the premise is a misconfiguration, not a tight packet, so it raises
 rather than producing a packet whose failure is invisible.
 
-**Token counts are an approximation, and named as one.** `regex-v1` is the same
-`\\w+|[^\\w\\s]` counter LongRangeContext uses for its budget matching. Matching the method
-rather than importing it is deliberate — §13 keeps siblings depending on contracts and never
-on each other — but matching it matters, because a packet whose budget accounting differs
-from the benchmark that grades packets would produce numbers nobody could compare.
+**Token counts are an approximation, and named as one.** `regex-v1` is the local
+`\\w+|[^\\w\\s]` budget counter. The identifier matters because a report must say which
+approximation produced its numbers rather than implying provider-token accuracy.
 """
 
 from __future__ import annotations
@@ -645,7 +642,7 @@ def assemble(
     sections[HIDDEN] = tuple(hidden_packed)
 
     # Nearest story-time first: under pressure the packet keeps what was established most
-    # recently, which is the recent-window baseline LongRangeContext measured.
+    # recently, which is the first-party recent-window baseline the endurance suite measures.
     selected: set[str] = set()
     for record in reversed(in_order):
         item = _state_item(record, projection)

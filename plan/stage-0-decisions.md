@@ -377,7 +377,7 @@ consumer:
   package exists to define. 90 names now exported.
 
 All consuming suites stayed green: contracts 126, ContinuityEvaluation 42,
-LongRangeContext 17, BookWorldState 100, LitHarness **240** (was misreported as 76 here
+the retired context experiment 17, BookWorldState 100, LitHarness **240** (was misreported as 76 here
 and in PLAN.md §20.4 through slice 3; corrected in the v2.2 pass).
 
 ## 17. Acceptance is a recorded decision, and refusals are recorded as fully as acceptances
@@ -492,9 +492,9 @@ recall-only fixture grading. An import is attributed, not gated.
 
 ~~**Fixture discovery is a chain, and no link is an absolute path.** The golden books live
 under `fixtures/golden/` at the contracts repository root, outside the importable package,
-so `importlib.resources` cannot reach them. `LITHARNESS_CONTRACTS_ROOT` first (the variable
-LongRangeContext already uses — a second name for one setting is how two checkouts end up
-configured differently), then the installed package's own location, then a sibling checkout.
+so `importlib.resources` cannot reach them. `LITHARNESS_CONTRACTS_ROOT` first (one name avoids
+two checkouts ending up configured differently), then the installed package's own location,
+then a sibling checkout.
 Each candidate is tested for the *manuscript*, not the directory.~~ — **The chain is retired;
 see §60.** Its premise stopped being true when contracts 0.2.0 moved the books inside the
 package, and the two heuristic links are deleted rather than left unused. The environment
@@ -1562,8 +1562,8 @@ binding point from scene 24 to scene 5, and a 40-scene book would draft its endi
 three scenes of its own history. Neither number is wrong; they were simply chosen
 independently, one of them by me one commit earlier, and nothing connected them.
 
-Two things follow, and neither is a fix for the packing itself — §12 gives relevance scoring
-to LongRangeContext and this project has no business inventing it.
+Two things follow, and neither is a fix for the packing itself — relevance work needs direct
+first-party evidence rather than an invented score.
 
 - **`--context-budget` exists.** `make_plan_selector` has always taken `token_budget`; the CLI
   never passed it, so the one number that has to move with scene length was the one an
@@ -2750,8 +2750,7 @@ and a 30-scene run could not have found it.
 
 The mitigation available today is a flag, not a packer. Whether the horizon is a *quality* boundary
 is a separate question and §52's unrun two-budget ablation is what answers it; nothing here
-licenses building a relevance scorer, and LongRangeContext is a different concern from a budget the
-ledger exhausts.
+licenses building a relevance scorer from a budget the ledger exhausts.
 
 ### 56.5 What the run demonstrated about the rules pack, without being asked to
 
@@ -12480,64 +12479,21 @@ holds — the premises scored are this system's own output, no corpus text or di
 prompt, and the one human-written item used anywhere in this programme is a stimulus rather than a
 label.
 
-## 121. The packet's dark-context regime reproduces outside the repository, and two of six metrics cannot carry a direction-checked bar
+## 121. Long-serial context endurance is a first-party LitHarness responsibility
 
-**Measured first.** §56.4's degradation reproduces end-to-end from synthetic serials
-through the real `context.assemble` at the shipped default budget: dark prior scenes
-8/29/62/97 at 30/57/82/120 scenes against the ledger's 7/32/67/108, with full prose exact
-and facts within 8% — inside a ±15% relative band at every horizon
-(`tests/test_context_l0_arm.py` gates it; the artifacts and per-query selected IDs live in
-LongRangeContext's `benchmarks/`). Calibration took two passes (status records settled at
-~21 tokens, summaries at ~61); per-horizon generator knobs were refused as tuning the
-instrument to the answer, and the summary column is reported unmatched because it is the
-residual of the budget arithmetic. Attainability over twelve books (the independent unit;
-three query families, none empty): a planted improvement and a planted damage move
-`mandatory_fact_recall`, `forbidden_context_rate` and `pov_leak_rate` the right ways;
-`stale_context_rate` and `token_efficiency_per_1k` **cannot** carry a direction-checked
-bar under this damage construction — both are ratios whose denominators a many-small-items
-packet inflates until the damaged arm's *rate* undercuts a five-item prose packet's. That
-is a property of the metric definitions, recorded rather than engineered around
-(LongRangeContext `docs/rlm-context-baseline-notes.md`).
+**Superseded 2026-08-28.** The cross-repository benchmark described by the earlier version of
+this entry was retired. Its useful invariant was rewritten here rather than retained as a
+dependency: `research/quality-measurement/long_context.py` generates deterministic serials at
+the production shape of four scenes per chapter and runs the real `context.assemble` at 6, 25,
+50, 60 and 100 chapters. Every selected identity maps back to generated input; every exclusion
+remains auditable; future state and POV-private state are explicitly checked for leakage; and a
+thread planted in volume one must survive a query in volume two.
 
-**What shipped.** In LongRangeContext (merged to its `main` as 6134063): an immutable
-`ContextSnapshot` with ordered eligibility and an audit of every exclusion; a read-only
-typed environment whose only model seam is a batched `SemanticWorker` protocol, with
-adversarial-item tests pinning that instruction-shaped prose is only ever data; a
-reference-only `ContextPlan` with named refusals and a deterministic packer whose pins the
-root cannot displace; a content-addressed request cache that never reads a clock; R0/R1
-strategies as a bounded root loop with schema-validated actions, replayable trajectories,
-ceilings, and no fallback path in the module at all; twelve calibrated workloads with
-construction-derived labels and the deterministic ledger policy; the attainability harness;
-and the Task-0 baseline report over L0/L1/L2 with its pre-registration section as explicit
-placeholders. In LitHarness (this merge): the L0 arm that
-runs the real packer over a workload file and maps every selection and omission back to
-workload item IDs — `research/quality-measurement/context_l0_arm.py` and its tests. No
-LitHarness production path changed; `assemble` and the scene-draft path are untouched.
-
-**What was refused, and why.** No model call anywhere in Task 0 or the strategy tests (the
-root and worker are protocols, exercised by fakes). No baseline fallback inside the R
-strategies — a failed episode returns no packet and its whole trajectory. No depth above
-one. No pre-registered threshold: the report's pre-registration is empty until an operator
-reads the tables, and the two ratio metrics above are flagged as unable to carry one as
-defined. Re-enforcing the L0 packet's budget under LongRangeContext's own token counter was
-found truncating the arm and removed — an external packet is the other packer's budgeted
-answer. A damage arm that could out-recall a real baseline by accidentally carrying the
-mandatory items was sharpened to exclude the answer; the two direction failures that
-survived that correction are the finding, not a defect to iterate away.
-
-**Corrections in place.** Four defects the unit gates could not see were found only by
-running the assembled report and fixed at source: one shared `book_id` across all twelve
-workloads silently collapsed per-book keying while the table claimed twelve books; the
-external arm truncated under a mismatched counter; `dark` let a status record light a
-scene, contradicting §56.4's own words; the damage arm carried the answer. The first
-census gate was also mis-scaled (absolute ±5 dark is ±71% at 30 scenes and ±4.6% at 120)
-and was rescaled to relative bands with the reasoning in the test.
-
-**Anti-scope.** Nothing here claims R0 or R1 helps: no recursive arm has run against a
-model. Nothing here is a quality, preference, or prose claim, and correct retrieval remains
-insufficient for any of those. Task 4's `context_plan` job does not exist and must not be
-built until LongRangeContext's promotion package exists. The promise-ledger pressure keeps
-its own deterministic policy; recursive planning does not excuse an unbounded ledger.
+`tests/test_long_context.py` owns those guarantees. The workload is generated locally, invokes
+no model, reads no sibling checkout, and needs no committed prose fixture. It measures bounded
+assembly, temporal visibility, identity mapping and cross-volume survival. It does not claim
+that retrieval is relevant, that prose is good, or that a recursive strategy helps. Those remain
+separate product questions and require direct evidence before production complexity is added.
 
 ## 122. Continuation gets a price and a feed, and every number the instrument was sized from had to be replaced by a measured one
 
@@ -13426,8 +13382,8 @@ book and a renderer that flattens them. **The writer's ability to query its own 
 open piece of the core loop**, and it is named here rather than pretended away by a larger
 constant.
 
-**What was refused.** No relevance scorer invented to go with the bigger budget — that is
-`LongRangeContext`'s question and §12 step 2 says so. No claim that a larger packet writes a
+**What was refused.** No relevance scorer invented to go with the bigger budget — that needs
+first-party evidence beyond §12's bounded assembly. No claim that a larger packet writes a
 better book: the only thing measured here is that the old number came from a fixture and bound
 at scene five. And no change to the daily spend ceilings, which are what actually govern cost;
 a larger packet is more input tokens per call and the budget governor is where that is felt.

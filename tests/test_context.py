@@ -13,8 +13,8 @@ what these tests are really pinning: the forbidden POV leak, the state-record re
 and the fact that omissions are recorded rather than silent. Recall under a budget that
 actually binds is measured separately, and honestly — see the budget tests below, which
 assert that the packet stays inside its ceiling and says what it dropped, not that it dropped
-the right things. Choosing *which* to drop is scoring, LongRangeContext owns scoring, and a
-test here claiming otherwise would be this project grading its own homework.
+the right things. The first-party endurance tests exercise survival and omission across long
+serials; neither suite pretends that deterministic retention is a prose-quality score.
 """
 
 from __future__ import annotations
@@ -301,8 +301,7 @@ def test_the_first_scene_of_a_book_gets_an_empty_prose_section() -> None:
 
 
 def test_the_packet_never_exceeds_its_budget() -> None:
-    """The property a priority-packer can actually promise. Which items survive is scoring,
-    and scoring is LongRangeContext's; staying inside the ceiling is this module's."""
+    """The universal property a priority-packer can promise; endurance tests cover survival."""
     for budget in (1800, 2000, 2400, 3000, 6000):
         packet = assemble(
             load_book("mystery"),
@@ -397,10 +396,7 @@ def test_output_tokens_are_reserved_out_of_the_budget() -> None:
 
 
 def test_token_counts_are_the_regex_v1_approximation() -> None:
-    """Matching LongRangeContext's counter is deliberate. §13 keeps siblings depending on
-    contracts and never on each other, so it is reimplemented rather than imported — but a
-    packet whose budget accounting differed from the benchmark that grades packets would
-    produce numbers nobody could compare."""
+    """The named local approximation keeps budget accounting deterministic and auditable."""
     assert context_mod.COUNTER_ID == "regex-v1"
     assert count_tokens("Mara laid the new will on the desk.") == 9
     assert count_tokens("") == 0
@@ -418,8 +414,7 @@ def test_the_packets_token_total_is_the_sum_of_its_items() -> None:
 
 
 def test_the_packet_projects_onto_the_contract() -> None:
-    """`ContextPacket` is the shape LongRangeContext consumes, and emitting it is what makes
-    the packet an artifact a sibling could grade rather than a private string."""
+    """The contract projection makes the packet an auditable artifact, not a private string."""
     packet = assemble(
         load_book("mystery"),
         "scene-6",

@@ -351,6 +351,7 @@ def sized_table() -> dict[str, Any]:
     return feed_controls.sessions_needed(seed=_SIZING_SEED, trials=_SIZING_TRIALS)
 
 
+@pytest.mark.intensive
 def test_sessions_needed_states_its_shape_and_repeats_exactly_under_a_seed() -> None:
     first = feed_controls.sessions_needed(seed=5_151, trials=2)
     second = feed_controls.sessions_needed(seed=5_151, trials=2)
@@ -360,6 +361,7 @@ def test_sessions_needed_states_its_shape_and_repeats_exactly_under_a_seed() -> 
     assert set(first["models"]) == {"mixture", "dirichlet"}
 
 
+@pytest.mark.intensive
 def test_sessions_needed_uniform_rates_never_fall_and_biased_045_never_leads(
     sized_table: dict[str, Any],
 ) -> None:
@@ -390,6 +392,7 @@ def test_sessions_needed_uniform_rates_never_fall_and_biased_045_never_leads(
         assert abs(means["near_0.45"] - 0.45) < 0.05, model
 
 
+@pytest.mark.intensive
 def test_sessions_needed_mixture_world_is_unattainable_at_the_bcrs_declared_batch(
     sized_table: dict[str, Any],
 ) -> None:
@@ -405,6 +408,7 @@ def test_sessions_needed_mixture_world_is_unattainable_at_the_bcrs_declared_batc
 # ------------------------------------------------------------------- fp5 operating characteristic
 
 
+@pytest.mark.intensive
 def test_fp5_operating_characteristic_pins_both_halves_as_documented() -> None:
     result = feed_controls.fp5_operating_characteristic(seed=94_607, trials=20)
     assert set(result["fixed_patterns"]) == set(feed_controls.FIXED_PATTERNS)
@@ -417,6 +421,7 @@ def test_fp5_operating_characteristic_pins_both_halves_as_documented() -> None:
     assert again == result  # deterministic under the seed, so a selftest can call it twice
 
 
+@pytest.mark.intensive
 def test_fp5_operating_characteristic_default_trial_count_is_stated() -> None:
     result = feed_controls.fp5_operating_characteristic()
     assert result["trials"] == 60

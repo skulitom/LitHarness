@@ -31,7 +31,7 @@ before the edit that called it the cheapest unblock**; §20.2's pack was done an
 decomposition had already answered the question the action existed to ask*; §20.4
 undercounted its own test suite by 46; §20.5's second wall was owned elsewhere; and
 §20.8's blocker had moved. Two things go the other way and are worth as much:
-§7's "byte-reproducible" claim about LongRangeContext is the plan's one
+§7's "byte-reproducible" claim about the retired external context experiment is the plan's one
 **over**statement, and §20.4's diagnosis that three remaining items "all need
 subsystems that do not exist yet" was **wrong about the one that was actually
 buildable** — the real obstacle was a missing column no document named. The
@@ -621,13 +621,10 @@ flowchart LR
   RB["RevisionBench<br/>revision evidence"] --> CE["ContinuityEvaluation"]
   RB --> LH
   BWS["BookWorldState"] --> GSE["Game-System Engine<br/>(new)"]
-  BWS --> LRC["LongRangeContext"]
   BWS --> CE
   GSE --> NP["Narrative Planning<br/>(new)"]
   GSE --> LH
   NP --> LH
-  LRC --> CE
-  LRC --> LH
   CE --> RP["RevisionPropagation"]
   CE --> LH
   RP --> LH
@@ -635,9 +632,9 @@ flowchart LR
 ```
 
 Priority order for the autonomous goal: Game-System Engine and Narrative Planning
-outrank RevisionPropagation. LongRangeContext, ContinuityEvaluation, and
-RevisionPropagation earn integration through Book Zero's observed failures, not
-through a priori scheduling.
+outrank RevisionPropagation. ContinuityEvaluation and RevisionPropagation earn integration
+through Book Zero's observed failures, not through a priori scheduling. Context assembly and
+its long-serial endurance checks are first-party LitHarness responsibilities.
 
 ## 7. Subsystem inventory
 
@@ -662,7 +659,6 @@ row as carrying its 2026-08-12 date.
 | RevisionJudge | Built; 104 pairs exported, exactly 2 verdicts collected; one uncommitted file (`data/verdicts.jsonl`) | **Demoted from the calibration instrument to a confirmation sample** (§10.3 as amended). Two verdicts against 104 pairs is the measured throughput of a design that needs a human to decide to sit down, and it is why revealed preference is now primary. Still the right tool for spot-confirming a calibration derived elsewhere; `litharness audit` is the same shape and collects as a by-product of drafting. The verdict *consumer* remains unbuilt |
 | **RoyalRoad-1.61M corpus** *(external data, not a repo)* | `OmniAICreator/RoyalRoad-1.61M` on HuggingFace; 1,613,875 chapters, 12.5 GB, MIT-licensed compilation; ~19% `LitRPG`. **Verified against the data, not the card: all five score columns are 100% null**; engagement (followers/favourites/views/rating counts) is populated | External measurement substrate, read through `research/quality-measurement/corpus_io.py` behind the optional `corpus` extra. Only derived statistics are committed, never prose. Historical design and validity limits in [plan/craft-corpus.md](plan/craft-corpus.md) |
 | MirrorBench | M0–M4 done, M5.0 landed (1,317 tests). One **unpushed** commit; its own README still says "M5 not started", contradicting its plan.md | Methodological invariants only; **verified zero coupling in both directions** — no import, no shared schema, no fixture exchange |
-| LongRangeContext | M0 complete, gated, reported (17 tests). **Now a git repo, Apache-2.0 LICENSE added, contracts pin relaxed to `>=0.1.0`** | Promote further milestones when Book Zero shows distant-context failures (it will); simple baseline until then. **"Byte-reproducible" was this plan's one *over*statement, and is now true rather than claimed**: three distinct machine-specific leaks fixed (an absolute checkout root in both reports, absolute artifact paths built by its own contracts loader, and CRLF from text-mode writes), each pinned by a mutation-tested guard. The test that carried "reproducible" in its name never compared bytes; one now does |
 | ContinuityEvaluation | LitRPG rules pack (six deterministic detectors, span-exact, mutation-tested) **plus the first advisory craft detector, a structural advisory/blocking partition, and a UTF-8 live-book process boundary — 60 tests.** Frozen plans and live shared-contract bundles reach the same runner; Apache-2.0 LICENSE | Owner of the LitRPG rule and predicate vocabulary (§8.4), and now of the bar that stops an uncalibrated proxy becoming a gate. **Further craft detectors are blocked on §10.6's corpus, not on effort** — see §10.6, and `research/quality-measurement/BRIEF.md` §2 for the refutation ledger. *(Struck: "five working deterministic detectors, 20 tests… hard-gated to the mystery fixture only".)* |
 | RevisionPropagation | Plan only — literally one file (the row this plan has consistently had right) | Deterministic invalidation slice only, when Book Zero's edit churn demands it. Note its M0 proposes authoring change/impact/plan/event schemas **that contracts already ships**, and its plan never mentions contracts |
 | **Narrative Planning** | **Bounded directive producer now lives in LitHarness; standalone incubator not created** | §9. One scoped directive can produce a guarded immutable plan revision; full-book generation, foreshadowing, progression, and plan-quality benchmarks remain the creative gap |
@@ -1165,7 +1161,7 @@ Per unit of work (scene draft shown; repair/replan analogous):
 1. **Select** — Conductor picks the next unblocked beat from the plan.
 2. **Assemble** — context packet from frozen revision: local prose, beat sheet,
    locked constraints, game state + legal actions, POV-visible knowledge, open
-   threads, distant callbacks (simple baseline until LongRangeContext promotes).
+   threads and distant callbacks, using LitHarness's bounded first-party context strategy.
 3. **Generate** — provider adapter, frozen profile, candidate artifact.
 4. **Gate: shape** — parse, scope, length, locks. Fail → bounded retry with
    structured feedback.
@@ -1425,13 +1421,14 @@ Three things this slice found, each of which would have been a silent wrong answ
   Defaulting the other way would make "forgot to pass the POV" mean "leak everything
   private", with nothing downstream able to tell.
 
-**What the packet honestly is, stated so it is not overclaimed.** §12 words step 2 as a
-"simple baseline until LongRangeContext promotes", and this packs by a fixed priority order
-— premise, constraints, threads, facts, prose — not by relevance. Under a budget that binds
+**What the packet honestly is, stated so it is not overclaimed.** This packs by a fixed
+priority order — premise, constraints, threads, facts, prose — not by learned relevance.
+Under a budget that binds
 it drops the oldest prose rather than the least relevant and has no way to know the
 difference. What it therefore owes, and what is tested, is that **every omission is
-recorded** with its reason, on the artifact and on the job payload. On six-scene fixtures the
-budget never binds, so this limit is currently invisible; it will not be at Book Zero length.
+recorded** with its reason, on the artifact and on the job payload. Small fixture budgets may
+not bind, while `research/quality-measurement/long_context.py` measures the real assembler at
+6, 25, 50, 60 and 100 chapters.
 Only `draft_scene` is served — the suite's four `evaluate` and `repair` cases are named as
 ungraded rather than skipped, so implementing one without grading it fails the suite.
 
@@ -1769,7 +1766,8 @@ What none of that supplies is the stage itself. 50-80k words is still an order o
 beyond what has been run, the context packet's 6,000-token budget **now has a measured binding point** — scene 24 at the
 160 words a 3B model writes, and scene 5 at the 900-word target, holding three prior scenes
 (§47). It still drops the oldest prose rather than the least relevant, which is §12's work for
-LongRangeContext; what changed is that the budget is settable (`--context-budget`) and a book
+LitHarness's first-party context strategy; what changed is that the budget is settable
+(`--context-budget`) and a book
 being written blind bumps a digest counter instead of recording it where nothing reads it, the budget governor has never met a real bill, and the failure taxonomy is the output
 rather than the input.
 
@@ -1867,8 +1865,8 @@ cannot exit without them is a stage that cannot exit.
 mechanism consumes preference evidence (§61 Add 3); Book One produced under them.
 
 ### Stage 5 — Scale the weak subsystem
-Integrate LongRangeContext / ContinuityEvaluation prose detectors /
-RevisionPropagation slices, each through its own incubator gates.
+Improve LitHarness's context strategy and integrate ContinuityEvaluation prose detectors or
+RevisionPropagation slices, each only when measured failures justify it.
 ~~**in the order Book Zero's taxonomy demands**~~ *(struck, §65: Book Zero's taxonomy
 was measured on `phi4:14b` and its first entry does not reproduce on the pinned
 generator — §57. The ordering source is now the frontier arm's own defect taxonomy,
@@ -2097,10 +2095,7 @@ every unstruck action below as a claim to re-verify rather than a task to start.
    is global on this machine and plan/stage-0-decisions.md §1 records the near-miss
    it already caused in contracts.
    **Still outstanding:** RevisionPropagation is the last untracked project, and it is
-   one file. ContinuityEvaluation (60 tests, Apache-2.0, live and frozen runner surfaces) and
-   LongRangeContext (5 commits) are both git repositories — this action claimed otherwise for
-   two revisions while §7 four hundred lines above said the opposite, which is the
-   contradiction-in-place this document keeps producing about its own progress.
+   one file. ContinuityEvaluation has 60 tests, Apache-2.0, and live and frozen runner surfaces.
    *(Struck: "commit, license and tag BookWorldState" — done. 13 commits, clean
    tree, tag `v0.1.0`, Apache-2.0 LICENSE, pushed. The v1 plan carried this
    forward for a release cycle after it stopped being true.)*
@@ -2125,7 +2120,7 @@ every unstruck action below as a claim to re-verify rather than a task to start.
    a new `conductor` module carrying `Directive`, `PolicyDecisionRecord`,
    `ExceptionRecord`, `DigestEntry` and `GateResult`. 25 → 30 schemas, 113 → 124
    tests. LitHarness's IR now projects losslessly instead of smuggling five fields
-   through `metadata`, and LongRangeContext's exact `==0.1.0` pin is relaxed.
+   through `metadata`.
 
    **The rule the whole change obeys, learned by getting it wrong first:** a 1.1
    field defaults to `None`, never to a natural default. The serializer omits `None`

@@ -54,6 +54,7 @@ def test_attainability_reproduces_the_published_table(n: int, k_point: int, k_in
     assert row["binding"] == "interval"
 
 
+@pytest.mark.intensive
 def test_min_refuting_n_is_derived_and_needs_the_attainable_guard():
     """The smallest n that is *attainable* and demands <= 0.6000. Omitting the guard gives 5."""
     derived = min(

@@ -339,10 +339,24 @@ gaps explicitly. The library is a file handoff, not a posting scheduler or publi
 
 ## Development
 
-Read [CONTRIBUTING.md](CONTRIBUTING.md) before changing code. The required handoff checks are:
+Read [CONTRIBUTING.md](CONTRIBUTING.md) before changing code. Use the parallel quick lane while
+iterating; it omits only deterministic simulations, endurance checks, and repository-wide scans:
 
 ```bash
-uv run pytest
+uv run pytest -m "not intensive" -n auto --dist loadscope
+```
+
+Run the complete suite before handoff. The intensive lane can also be isolated when changing a
+benchmark or long-context control:
+
+```bash
+uv run pytest -n auto --dist loadscope
+uv run pytest -m intensive -n auto --dist loadscope
+```
+
+The remaining handoff checks are:
+
+```bash
 uv run ruff check .
 uv run mypy
 git diff --check

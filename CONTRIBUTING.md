@@ -13,10 +13,17 @@ nothing for the workflow to pin by hand.
 
 ```bash
 uv sync --extra dev
-uv run pytest
+uv run pytest -m "not intensive" -n auto --dist loadscope
 uv run ruff check .
 uv run mypy
 ```
+
+The quick lane still exercises the product broadly; it excludes only tests marked `intensive`
+because they run large deterministic simulations, long-horizon workloads, or repository-wide
+scans. Before handoff, run the complete suite with
+`uv run pytest -n auto --dist loadscope`. Use
+`uv run pytest -m intensive -n auto --dist loadscope` when working on those controls directly.
+CI always runs the complete suite. Use `-n 0` for serial debugging.
 
 Advancing the contracts pin is still a deliberate change that lands with the code that needs
 it, not a maintenance chore — the discipline survives the mechanism. It is now bump the `rev`

@@ -18,9 +18,9 @@ deleted rather than merely unused.
 **`LITHARNESS_CONTRACTS_ROOT` survives, with a narrower job.** It is the escape hatch for
 work-in-progress fixtures: point it at a contracts checkout and the books there win over the
 installed ones, without reinstalling. It still names a checkout *root* — the path beneath it
-changed with the move, and `GOLDEN` records that — and it is still the variable
-LongRangeContext uses, because a second name for one setting is how two checkouts end up
-configured differently. It is checked against the artifact rather than the directory: a root
+changed with the move, and `GOLDEN` records that. It is the single local contract-development
+escape hatch; adding aliases would let checkouts drift. It is checked against the artifact rather
+than the directory: a root
 that does not hold the file falls through to the installed package instead of failing three
 layers down. Hard-coding an absolute path is deliberately still not in the chain; PLAN.md
 §20.2 records a machine-bound `samefile("C:/DEV/litharness-contracts/schemas")` as a defect

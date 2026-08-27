@@ -304,6 +304,7 @@ def test_label_shuffle_replays_identically_under_the_same_seed_material() -> Non
     assert first["clear_share"] == pytest.approx(first["clears"] / first["draws"])
 
 
+@pytest.mark.intensive
 def test_a_fair_coin_null_vector_clears_half_rarely_well_under_three_alpha() -> None:
     # Two hundred fair-coin outcomes (deterministic coin, seed pinned): under the null the
     # bootstrap lower bound clears 0.5 about alpha/2 of the time, so the clear-share should sit

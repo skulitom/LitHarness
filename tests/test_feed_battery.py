@@ -124,6 +124,7 @@ def test_selftest_passes_and_exits_zero() -> None:
     assert feed_battery.main(["--selftest"]) == 0
 
 
+@pytest.mark.intensive
 def test_attainability_prints_every_candidate_count_and_the_none_refusal_paragraph(
     monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
 ) -> None:

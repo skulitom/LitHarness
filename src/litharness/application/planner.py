@@ -959,7 +959,7 @@ def make_plan_selector(
                     # scene 5 and the packet holds three prior scenes, so by mid-book a scene
                     # is drafted knowing almost nothing of the book before it — and it drops
                     # the *oldest* prose rather than the least relevant, with no way to know
-                    # the difference (§12 gives relevance to LongRangeContext).
+                    # the difference (the first-party endurance suite measures this limit).
                     store.bump_digest(
                         datetime.fromtimestamp(now, tz=UTC).date().isoformat(),
                         "context_omitted",

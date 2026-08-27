@@ -51,6 +51,7 @@ dev = [
   "pillow>=11.0",
   "pytest>=8.3",
   "pytest-cov>=6.0",
+  "pytest-xdist>=3.8",
   "ruff>=0.9",
 ]
 # Cover generation is a Codex CLI session followed by local, deterministic typography. Pillow
@@ -94,6 +95,9 @@ packages = ["src/litharness"]
 addopts = "-q --strict-markers --strict-config"
 testpaths = ["tests"]
 pythonpath = ["."]
+markers = [
+  "intensive: deterministic endurance, simulation, or repository-wide checks kept out of the quick development loop",
+]
 filterwarnings = [
   "error::ResourceWarning",
   "error::pytest.PytestUnraisableExceptionWarning",

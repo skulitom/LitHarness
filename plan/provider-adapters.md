@@ -219,8 +219,7 @@ Notes:
   use the exit code and the presence of a non-empty `-o` file.
 - ~~`--skip-git-repo-check` is required today because `C:\DEV\LitHarness` is not a
   git repository.~~ **Stale: the tree is a git repository now** (and the adapter is
-  retired regardless; kept as record). `litharness-contracts`, `LongRangeContext`,
-  `ContinuityEvaluation`, and `RevisionPropagation` may still lack one.
+  retired regardless; kept as record). Repository status elsewhere is not an adapter concern.
 - `codex exec` starts configured MCP servers by default (observed:
   `node_repl`, `interface3d`, `agentui`); suppress with `-c 'mcp_servers={}'`.
 - `--oss --local-provider ollama` exists and routes codex through Ollama. Not

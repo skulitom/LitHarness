@@ -28,6 +28,7 @@ bcr = pytest.importorskip(
 )
 
 
+@pytest.mark.intensive
 def test_the_instruments_own_selftest_passes() -> None:
     """The free leg that must pass before any call is bought, run here so CI owns it too."""
     assert bcr.selftest() == 0

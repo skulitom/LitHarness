@@ -23,6 +23,7 @@ import re
 from pathlib import Path
 
 import litharness_contracts as lc
+import pytest
 
 PACKAGE_ROOT = Path(__file__).parents[1] / "src" / "litharness"
 REPO_ROOT = Path(__file__).parents[1]
@@ -134,6 +135,7 @@ def _repo_corpus() -> str:
     return "\n".join(parts)
 
 
+@pytest.mark.intensive
 def test_every_symbol_the_prose_names_still_exists() -> None:
     """A docstring naming a function that was renamed is worse than one saying nothing: it
     teaches the wrong thing to whoever reads it next, and reads as current because it is
