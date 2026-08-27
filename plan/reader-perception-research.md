@@ -100,6 +100,28 @@ Candidate architectures may implement those behaviours with one model, independe
 iterative Alpha/Beta-style refinement, or internal probes. The scorer and held-out battery do not
 change between candidates.
 
+### Implemented substrate (not an experiment)
+
+`research/quality-measurement/causal_salience.py` now freezes the hidden-key, reader-claim, and
+item-score contracts and exercises them without a model. Its fixtures are controlled-language
+mechanism tests only: allowlisted binary states are contradicted after an explicit no-change
+statement, while matched controls alter whitespace and preserve every non-whitespace codepoint.
+Development and holdout use different contradiction renderers and different surface transforms;
+source groups cannot cross the split. Quotes are bounded, must locate uniquely, and the top-one
+suspect and anchor must overlap both hidden spans before an exact causal relation earns detection.
+
+Perfect, random, criticism-flooding, and style-only fake readers establish the scorer's operating
+characteristics. The manifest and registration are digest-pinned by tests, results contain no
+outside prose, and the report explicitly carries no promotion bar. Run the free diagnostic with:
+
+```bash
+uv run python research/quality-measurement/causal_salience.py --selftest
+```
+
+This substrate does not establish ecological validity. Before a model arm, replace or extend the
+toy fixtures with unmemorised LitHarness scenes whose answer keys are certified by existing state,
+event, or promise relations; do not loosen admission to accept model-authored damage at face value.
+
 ## The first arm, when a model path is available
 
 Do not begin with training. Compare mechanisms on a small, frozen battery first:
@@ -136,9 +158,9 @@ the known-bad LitHarness target must not again look cleaner than the market.
 
 ## Scope boundary and order
 
-The narrow next implementation is the battery generator, keys, deterministic scorer, and dry-run
-fixtures. It does **not** add a production reader, train a model, run a council, or inspect
-activations. Once the substrate exists:
+The narrow substrate now exists: battery generator, hidden keys, deterministic scorer, frozen
+splits, and call-free fixtures. It does **not** add a production reader, train a model, run a
+council, or inspect activations. From here:
 
 1. compare single-pass structured generation with a tracker/locator/challenger architecture;
 2. independently test whether an activation probe recovers the same keyed distinctions when the
