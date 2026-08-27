@@ -216,10 +216,15 @@ def test_the_loop_writes_a_listing_a_title_and_a_bundle(fake, tmp_path, capsys) 
     assert (
         main(
             [
-                "--database", str(db), "listing",
-                "--brief", "a locksmith who can hear what a door remembers",
-                "--writer", "ferreira",
-                "--out", str(out),
+                "--database",
+                str(db),
+                "listing",
+                "--brief",
+                "a locksmith who can hear what a door remembers",
+                "--writer",
+                "ferreira",
+                "--out",
+                str(out),
                 "--json",
             ]
         )
@@ -243,7 +248,7 @@ def test_the_loop_carries_its_own_title_into_the_book_it_creates(fake, tmp_path,
     assert main(["--database", str(db), "init"]) == EXIT_OK
     capsys.readouterr()
     assert (
-        main(["--database", str(db), "listing", "--writer", "vance", "--scenes", "6", "--json"])
+        main(["--database", str(db), "listing", "--writer", "vance", "--scenes", "24", "--json"])
         == EXIT_OK
     )
     printed = capsys.readouterr().out
@@ -260,7 +265,7 @@ def test_the_loop_carries_its_own_title_into_the_book_it_creates(fake, tmp_path,
         assert head is not None
         assert head.children_of(None)[0].title == bundle["title"]
         assert premise_of(store.plan_items(book_id, branch_id)) == bundle["listing"]
-        assert sum(1 for node in head.nodes if node.kind.value == "scene") == 6
+        assert sum(1 for node in head.nodes if node.kind.value == "scene") == 24
 
 
 def test_the_architect_seeds_under_the_listing_the_book_was_sold_on(fake, tmp_path) -> None:
@@ -268,7 +273,7 @@ def test_the_architect_seeds_under_the_listing_the_book_was_sold_on(fake, tmp_pa
     db = tmp_path / "listing.db"
     assert main(["--database", str(db), "init"]) == EXIT_OK
     assert (
-        main(["--database", str(db), "listing", "--writer", "okonjo", "--scenes", "6"]) == EXIT_OK
+        main(["--database", str(db), "listing", "--writer", "okonjo", "--scenes", "24"]) == EXIT_OK
     )
     assert main(["--database", str(db), "architect", "seed"]) == EXIT_OK
 

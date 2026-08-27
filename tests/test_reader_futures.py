@@ -26,6 +26,8 @@ import pytest
 
 from litharness.application import overview, readers
 from litharness.domain import rivals
+from litharness.domain.revision import new_book
+from litharness.domain.serials import SerialShape
 from litharness.domain.text import STOP_FRACTION, stop_point
 
 PASSAGE = "\n\n".join(f"Paragraph {index} carrying a few words of prose." for index in range(1, 9))
@@ -50,9 +52,55 @@ def test_the_cut_falls_on_a_paragraph_and_near_the_registered_fraction() -> None
 
 
 def test_a_passage_with_no_future_raises_rather_than_returning_everything() -> None:
-    """"there was no future to ask about" and "the reader saw it all" must not print the same."""
+    """ "there was no future to ask about" and "the reader saw it all" must not print the same."""
     with pytest.raises(ValueError):
         stop_point("One paragraph and nothing after it.")
+
+
+def test_a_continuing_reader_gets_bounded_history_and_no_future_prose() -> None:
+    blank = new_book("book", "branch", title="Serial", scenes=32)
+    revision = blank.replacing(
+        node.with_content(f"PROSE-{index:02d}")
+        for index, node in enumerate(
+            (item for item in blank.in_reading_order() if item.logical_id.startswith("scene-")),
+            start=1,
+        )
+    )
+    summaries = {f"scene-{index}": f"SUMMARY-{index:02d}" for index in range(1, 33)}
+
+    context = readers.accumulated_passage(
+        revision,
+        "scene-30",
+        "PROSE-30-PARTIAL",
+        summaries=summaries,
+        shape=SerialShape(scenes_per_chapter=4, chapters_per_arc=6),
+    )
+
+    assert "earlier chapter(s) were read" in context
+    assert "SUMMARY-05" in context, "older context in the current recall window is compact"
+    assert "PROSE-21" in context, "the two preceding chapters remain verbatim"
+    assert "PROSE-29" in context, "earlier scenes in the current chapter are present"
+    assert "PROSE-30-PARTIAL" in context
+    assert "PROSE-30\n" not in context
+    assert "PROSE-31" not in context and "PROSE-32" not in context
+
+
+def test_reader_memory_is_owned_by_one_reader_and_uses_its_newest_earlier_stop() -> None:
+    rows = [
+        {"reader_id": "r", "logical_id": "scene-3", "felt": "current"},
+        {"reader_id": "r", "logical_id": "scene-4", "felt": "future"},
+        {"reader_id": "other", "logical_id": "scene-2", "felt": "not mine"},
+        {"reader_id": "r", "logical_id": "scene-2", "felt": "uneasy", "expect_next": "a toll"},
+        {"reader_id": "r", "logical_id": "scene-1", "felt": "old"},
+    ]
+    memory = readers.prior_reading_memory(
+        rows,
+        "r",
+        earlier_logical_ids=("scene-1", "scene-2"),
+    )
+    assert "uneasy" in memory and "a toll" in memory
+    assert "not mine" not in memory and "old" not in memory and "current" not in memory
+    assert "future" not in memory
 
 
 def test_the_package_and_the_registered_probe_cut_in_the_same_place() -> None:
@@ -130,9 +178,7 @@ def test_the_direction_no_longer_claims_to_outrank_the_craft_rules() -> None:
 
 
 def test_a_book_nobody_read_gets_no_direction_at_all() -> None:
-    empty = readers.Anticipation(
-        felt=(), expect_next=(), hoping_for=(), dreading=(), answered=0
-    )
+    empty = readers.Anticipation(felt=(), expect_next=(), hoping_for=(), dreading=(), answered=0)
     assert empty.render() == ""
     assert overview.render_appetite((), (), (), ()) == ""
 

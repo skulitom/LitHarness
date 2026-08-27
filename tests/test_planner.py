@@ -23,10 +23,13 @@ import litharness_contracts as lc
 import pytest
 
 from litharness.adapters.sqlite_store import SqliteStore
+from litharness.application import readers as readers_mod
 from litharness.application.conductor import Conductor, TickOutcome
 from litharness.application.handlers import SCENE_DRAFT, make_scene_draft_handler
+from litharness.application.outline import BOOK_OUTLINE
 from litharness.application.planner import (
     beat_job_id,
+    direction_for,
     make_plan_selector,
     packet_for,
     plan_progress,
@@ -114,9 +117,7 @@ def _fixture(store: SqliteStore, name: str) -> tuple[str, str]:
     state_snapshot = lc.parse_artifact(
         lc.StateSnapshot, json.loads(fixture_state(name).read_text(encoding="utf-8"))
     )
-    state = import_state(
-        state_snapshot, book_id=revision.book_id, branch_id=revision.branch_id
-    )
+    state = import_state(state_snapshot, book_id=revision.book_id, branch_id=revision.branch_id)
     store.record_state_records(
         revision.book_id,
         revision.branch_id,
@@ -125,6 +126,99 @@ def _fixture(store: SqliteStore, name: str) -> tuple[str, str]:
         source_revision_id=state.source_revision_id,
     )
     return revision.book_id, revision.branch_id
+
+
+def test_reader_direction_uses_each_reader_s_newest_read(store: SqliteStore) -> None:
+    reader_id = readers_mod.pool(readers_mod.STEERING)[0].reader_id
+    store.record_reader_read(
+        BOOK_ID,
+        BRANCH_ID,
+        "rev-old",
+        "scene-1",
+        reader_id=reader_id,
+        pool="steering",
+        created_at="2026-08-20T00:00:00Z",
+        hoping_for=["the old hope"],
+        dreading=["the old dread"],
+    )
+    store.record_reader_read(
+        BOOK_ID,
+        BRANCH_ID,
+        "rev-new",
+        "scene-2",
+        reader_id=reader_id,
+        pool="steering",
+        created_at="2026-08-21T00:00:00Z",
+        hoping_for=["the new hope"],
+        dreading=["the new dread"],
+    )
+
+    direction = direction_for(store, BOOK_ID, BRANCH_ID)
+
+    assert "the new hope" in direction and "the new dread" in direction
+    assert "the old hope" not in direction and "the old dread" not in direction
+
+
+def test_an_open_ended_serial_never_reports_the_current_arc_as_the_ending(
+    store: SqliteStore,
+) -> None:
+    book_id, branch_id = _fixture(store, "mystery")
+    head = store.head(book_id, branch_id)
+    assert head is not None
+    filled = head.replacing(
+        node.with_content("Drafted scene. " * 30)
+        for node in head.nodes
+        if node.kind is NodeKind.SCENE
+    )
+    store.commit_revision(filled, created_at="2026-08-21T00:00:00Z")
+    progress = plan_progress(
+        store,
+        book_id,
+        branch_id,
+        serial_shape=SerialShape(scenes_per_chapter=1, chapters_per_arc=6),
+    )
+    assert progress.drafted == progress.total == 6
+    assert progress.open_ended and not progress.complete
+    assert "remains open" in (progress.continuation_reason or "")
+
+
+def test_the_production_selector_scopes_outline_work_to_one_serial_arc(
+    store: SqliteStore,
+) -> None:
+    revision = new_book(
+        BOOK_ID,
+        BRANCH_ID,
+        title="Endless Road",
+        scenes=24,
+        position_capacity=100_000,
+    )
+    store.commit_revision(revision, created_at="2026-08-21T00:00:00Z")
+    store.record_plan_items(
+        BOOK_ID,
+        BRANCH_ID,
+        [
+            lc.PlanItem(
+                logical_id="plan-premise",
+                kind=lc.PlanKind.PREMISE,
+                text="Every gate takes something different.",
+                authority=lc.PlanAuthority.INTENDED,
+                locked=True,
+            )
+        ],
+        created_at="2026-08-21T00:00:00Z",
+    )
+
+    job = make_plan_selector(
+        project_id=PROJECT_ID,
+        scenes_per_chapter=4,
+        chapters_per_arc=6,
+        open_ended=True,
+    )(store, "worker-a", START, 300.0)
+
+    assert job is not None and job.job_kind == BOOK_OUTLINE
+    assert job.payload["arc_index"] == 1
+    assert job.payload["scenes_per_chapter"] == 4
+    assert job.payload["chapters_per_arc"] == 6
 
 
 def _conductor(store: SqliteStore, *, pad: int = PAD, **kwargs) -> Conductor:
@@ -283,12 +377,22 @@ def test_the_planner_never_offers_a_beat_the_gate_would_refuse(store: SqliteStor
         BRANCH_ID,
         [
             Node(logical_id="book", kind=NodeKind.BOOK, position_key="010"),
-            Node(logical_id="empty", kind=NodeKind.SCENE, position_key="010",
-                 parent_logical_id="book"),
-            Node.text_node("full", NodeKind.SCENE, "020", "Already written.",
-                           parent_logical_id="book"),
-            Node(logical_id="locked", kind=NodeKind.SCENE, position_key="030",
-                 parent_logical_id="book", lock=LockKind.PUBLISHED),
+            Node(
+                logical_id="empty",
+                kind=NodeKind.SCENE,
+                position_key="010",
+                parent_logical_id="book",
+            ),
+            Node.text_node(
+                "full", NodeKind.SCENE, "020", "Already written.", parent_logical_id="book"
+            ),
+            Node(
+                logical_id="locked",
+                kind=NodeKind.SCENE,
+                position_key="030",
+                parent_logical_id="book",
+                lock=LockKind.PUBLISHED,
+            ),
         ],
     )
     for logical_id in ("empty", "full", "locked", "missing"):
@@ -333,9 +437,14 @@ def test_a_poisoned_beat_does_not_stall_its_successors(store: SqliteStore) -> No
         book_id=head.book_id,
         branch_id=head.branch_id,
         nodes=tuple(
-            node if node.logical_id != "scene-3" else Node(
-                logical_id=node.logical_id, kind=node.kind, position_key=node.position_key,
-                parent_logical_id=node.parent_logical_id, title=locked.title,
+            node
+            if node.logical_id != "scene-3"
+            else Node(
+                logical_id=node.logical_id,
+                kind=node.kind,
+                position_key=node.position_key,
+                parent_logical_id=node.parent_logical_id,
+                title=locked.title,
                 lock=LockKind.PUBLISHED,
             )
             for node in head.nodes
@@ -386,8 +495,12 @@ def test_a_scene_count_mismatch_refuses_rather_than_interpolating() -> None:
         BRANCH_ID,
         [
             Node(logical_id="book", kind=NodeKind.BOOK, position_key="010"),
-            Node(logical_id="scene-1", kind=NodeKind.SCENE, position_key="010",
-                 parent_logical_id="book"),
+            Node(
+                logical_id="scene-1",
+                kind=NodeKind.SCENE,
+                position_key="010",
+                parent_logical_id="book",
+            ),
         ],
     )
     with pytest.raises(TemplateMismatch, match="does not fit"):
@@ -411,8 +524,13 @@ def test_the_prompt_names_the_beat_and_the_premise() -> None:
         BRANCH_ID,
         [
             Node(logical_id="book", kind=NodeKind.BOOK, position_key="010", title="A Book"),
-            Node(logical_id="s1", kind=NodeKind.SCENE, position_key="010",
-                 parent_logical_id="book", title="The Study"),
+            Node(
+                logical_id="s1",
+                kind=NodeKind.SCENE,
+                position_key="010",
+                parent_logical_id="book",
+                title="The Study",
+            ),
         ],
     )
     [beat] = beats_for(revision, template)
@@ -554,9 +672,7 @@ def test_the_planner_puts_the_system_voice_instruction_on_the_queued_job(
     make_plan_selector(project_id=PROJECT_ID)(store, "worker-a", START, 300.0)
 
     [job] = [
-        unit
-        for unit in store.jobs_by_status(JobStatus.QUEUED)
-        if unit.job_kind == SCENE_DRAFT
+        unit for unit in store.jobs_by_status(JobStatus.QUEUED) if unit.job_kind == SCENE_DRAFT
     ]
     assert "[STATUS] rook — Level 3" in str(job.payload["system"])
 
@@ -587,9 +703,7 @@ def test_the_prompt_is_byte_identical_when_a_chapter_is_one_scene(
         beat,
         book_title="The Vane House",
         packet=packet,
-        chapter=chapter_positions(head, SerialShape(scenes_per_chapter=1)).get(
-            beat.logical_id
-        ),
+        chapter=chapter_positions(head, SerialShape(scenes_per_chapter=1)).get(beat.logical_id),
     )
 
     assert one_scene == absent
@@ -674,9 +788,7 @@ def test_the_prompt_is_byte_identical_when_canon_names_no_protagonist(
     packet = packet_for(store, head, beat)
 
     absent = render_prompt(beat, book_title="The Vane House", packet=packet)
-    explicit = render_prompt(
-        beat, book_title="The Vane House", packet=packet, point_of_view=None
-    )
+    explicit = render_prompt(beat, book_title="The Vane House", packet=packet, point_of_view=None)
     assert explicit == absent
     assert "Point of view" not in absent[1]
 
@@ -694,8 +806,7 @@ def test_the_prompt_says_whose_scene_it_is(store: SqliteStore) -> None:
         beat, book_title=None, packet=packet, chapter=position, point_of_view="silas"
     )
     assert (
-        "scene 4 of 6. Chapter 1, scene 4 of 4. Point of view: silas. Dramatic function:"
-        in prompt
+        "scene 4 of 6. Chapter 1, scene 4 of 4. Point of view: silas. Dramatic function:" in prompt
     )
 
     # And without a chapter scheme it sits directly after the ordinal.
@@ -720,14 +831,22 @@ def test_the_point_of_view_fragment_carries_no_verb_and_no_adjective(
     beat = beats_for(head, SIX_BEAT)[3]
     packet = packet_for(store, head, beat)
 
-    _, prompt = render_prompt(
-        beat, book_title=None, packet=packet, point_of_view="silas"
-    )
+    _, prompt = render_prompt(beat, book_title=None, packet=packet, point_of_view="silas")
     cue = prompt.rsplit("scene 4 of 6.", 1)[1].split("Dramatic function:")[0]
     assert cue == " Point of view: silas. "
     for forbidden in (
-        "hero", "likeable", "sympathetic", "win", "open", "first", "faster", "best",
-        "should", "must", "make", "show",
+        "hero",
+        "likeable",
+        "sympathetic",
+        "win",
+        "open",
+        "first",
+        "faster",
+        "best",
+        "should",
+        "must",
+        "make",
+        "show",
     ):
         assert forbidden not in cue.lower()
 
@@ -824,14 +943,10 @@ def test_the_planner_puts_the_chapter_position_on_the_queued_job(
     `test_the_target_length_reaches_the_prompt_at_all` records, arriving one layer up."""
     _fixture(store, "mystery")
 
-    make_plan_selector(project_id=PROJECT_ID, scenes_per_chapter=4)(
-        store, "worker-a", START, 300.0
-    )
+    make_plan_selector(project_id=PROJECT_ID, scenes_per_chapter=4)(store, "worker-a", START, 300.0)
 
     [job] = [
-        unit
-        for unit in store.jobs_by_status(JobStatus.QUEUED)
-        if unit.job_kind == SCENE_DRAFT
+        unit for unit in store.jobs_by_status(JobStatus.QUEUED) if unit.job_kind == SCENE_DRAFT
     ]
     assert "Chapter 1, scene 1 of 4." in str(job.payload["prompt"])
 
@@ -843,9 +958,7 @@ def test_the_default_selector_queues_the_prompt_it_always_queued(store: SqliteSt
     make_plan_selector(project_id=PROJECT_ID)(store, "worker-a", START, 300.0)
 
     [job] = [
-        unit
-        for unit in store.jobs_by_status(JobStatus.QUEUED)
-        if unit.job_kind == SCENE_DRAFT
+        unit for unit in store.jobs_by_status(JobStatus.QUEUED) if unit.job_kind == SCENE_DRAFT
     ]
     assert "Chapter" not in str(job.payload["prompt"])
 
@@ -925,9 +1038,7 @@ def test_a_generated_scene_that_contradicts_canon_is_now_refused(store: SqliteSt
     head = store.head(*_fixture_ids(store))
     assert head is not None
     assert head.node("scene-1").content is None, "the contradicting scene must not be accepted"
-    [finding] = [
-        item for item in store.findings(*_fixture_ids(store)) if item.blocks
-    ]
+    [finding] = [item for item in store.findings(*_fixture_ids(store)) if item.blocks]
     assert finding.rule_or_critic_id == integrity.CONTRADICTION_RULE
 
 
@@ -1017,8 +1128,9 @@ def test_a_book_with_no_snapshot_could_not_extract_a_single_fact_it_wrote(
     ordinal scheme `test_the_obvious_order_key_scheme_is_wrong` refutes.
     """
     book_id, branch_id = _book_zero(store)
-    loop = _writing(store, _scene({"level": 3, "hp": 24, "hp_max": 30, "mp": 8, "mp_max": 10,
-                                   "gold": 45}))
+    loop = _writing(
+        store, _scene({"level": 3, "hp": 24, "hp_max": 30, "mp": 8, "mp_max": 10, "gold": 45})
+    )
 
     loop.tick(START)
     loop.tick(START + TICK)
@@ -1056,8 +1168,7 @@ def test_every_scene_of_a_book_zero_run_is_placed_not_just_the_first(
     registry = ProviderRegistry(
         FakeProvider(
             responses=[
-                _scene({"level": 3, "hp": 24, "hp_max": 30, "mp": 8, "mp_max": 10,
-                        "gold": gold})
+                _scene({"level": 3, "hp": 24, "hp_max": 30, "mp": 8, "mp_max": 10, "gold": gold})
                 for gold in balances
             ]
         )
@@ -1171,9 +1282,7 @@ def test_a_real_model_writes_a_line_this_extractor_can_read(store: SqliteStore) 
         version_id="v",
         stated_order_key=beat.story_order_key,
     )
-    assert extracted, (
-        f"{provider.model} wrote a scene this extractor reads nothing out of:\n{text}"
-    )
+    assert extracted, f"{provider.model} wrote a scene this extractor reads nothing out of:\n{text}"
     assert extracted[0].subject == "rook"
 
 
@@ -1281,7 +1390,7 @@ def test_a_planted_defect_is_refused_by_the_gate_not_accepted_by_luck(
 def test_the_refusal_is_recorded_as_an_integrity_gate_on_the_decision(
     store: SqliteStore,
 ) -> None:
-    """"Caught by gates, not luck" has to be legible afterwards or it is indistinguishable
+    """ "Caught by gates, not luck" has to be legible afterwards or it is indistinguishable
     from the model happening not to produce anything. The decision names the gate."""
     book_id, branch_id = _fixture(store, "litrpg")
     head = store.head(book_id, branch_id)
@@ -1529,18 +1638,16 @@ def test_a_scene_contradicting_established_canon_is_refused_and_writes_nothing(
     # that crashed — this test passed its three negative assertions once while the provider
     # was raising a NameError, which is the shape of a green test over a dead mechanism.
     assert outcomes == [
-        TickOutcome.JOB_FAILED,   # the candidate's own contradiction, charged an attempt
-        TickOutcome.JOB_PARKED,   # the finding now stands: refused pre-flight, free
-        TickOutcome.JOB_FAILED,   # and the next beat meets the same wall
+        TickOutcome.JOB_FAILED,  # the candidate's own contradiction, charged an attempt
+        TickOutcome.JOB_PARKED,  # the finding now stands: refused pre-flight, free
+        TickOutcome.JOB_FAILED,  # and the next beat meets the same wall
         TickOutcome.JOB_PARKED,
     ]
 
     findings = store.findings(book_id, branch_id)
     assert findings, "the contradiction is on record"
     assert any("position s1" in finding.message for finding in findings)
-    assert any(
-        finding.rule_or_critic_id == integrity.CONTRADICTION_RULE for finding in findings
-    )
+    assert any(finding.rule_or_critic_id == integrity.CONTRADICTION_RULE for finding in findings)
 
 
 # --- Stage 3: a book longer than six scenes ------------------------------------------
@@ -1612,9 +1719,9 @@ def test_an_empty_book_is_all_draftable_and_says_nothing(store: SqliteStore) -> 
     assert len(scenes) == 12
     assert all(node.content is None for node in scenes)
     assert all(is_draftable(revision, node.logical_id) for node in scenes)
-    assert [node.position_key for node in scenes] == sorted(
-        node.position_key for node in scenes
-    ), "reading order must follow position order"
+    assert [node.position_key for node in scenes] == sorted(node.position_key for node in scenes), (
+        "reading order must follow position order"
+    )
 
 
 def test_story_order_keys_sort_as_story_order_past_nine_scenes(store: SqliteStore) -> None:
@@ -1690,9 +1797,7 @@ def test_a_schedule_aims_at_the_next_milestone_not_the_last(store: SqliteStore) 
         )
         for key, level in (("s2", 2), ("s5", 4))
     ]
-    store.record_state_records(
-        book_id, branch_id, milestones, created_at="2026-08-15T00:00:00Z"
-    )
+    store.record_state_records(book_id, branch_id, milestones, created_at="2026-08-15T00:00:00Z")
     records = store.state_records(book_id, branch_id)
 
     assert "Level 2" in (progression_target(records, at="s1") or "")
@@ -1745,9 +1850,7 @@ def test_a_book_written_blind_says_so_in_the_digest(store: SqliteStore) -> None:
     store.commit_revision(filled, created_at="2026-08-15T00:01:00Z")
 
     # A budget too small to hold four scenes of prose: the packet drops the oldest.
-    make_plan_selector(project_id=PROJECT_ID, token_budget=2200)(
-        store, "worker-a", START, 300.0
-    )
+    make_plan_selector(project_id=PROJECT_ID, token_budget=2200)(store, "worker-a", START, 300.0)
 
     day = datetime.fromtimestamp(START, tz=UTC).date().isoformat()
     assert store.digest(day).get("context_omitted", 0) > 0
@@ -1827,9 +1930,7 @@ def _ladder_records(subject: str = "rook") -> list[lc.StateRecord]:
             worlds.GRAPH_LINE_PREDICATE,
             value={
                 "label": "ASSAY",
-                "edges": [
-                    {"phrase": "now stands at", "predicate": worlds.STANDS_AT_PREDICATE}
-                ],
+                "edges": [{"phrase": "now stands at", "predicate": worlds.STANDS_AT_PREDICATE}],
             },
             authority=lc.StateAuthority.ACCEPTED_CANON,
         ),
@@ -1880,7 +1981,9 @@ def test_the_writer_is_handed_the_next_rung_and_the_line_the_book_prints(
     """The ask, in the numeric block's own wording, and a filled example rather than a form."""
     book_id, branch_id = _book_zero(store)
     store.record_state_records(
-        book_id, branch_id, [*_ladder_records(), *_scheduled()],
+        book_id,
+        branch_id,
+        [*_ladder_records(), *_scheduled()],
         created_at="2026-08-22T00:00:00Z",
     )
     records = store.state_records(book_id, branch_id)
@@ -1918,7 +2021,9 @@ def test_the_standing_block_carries_no_verb_and_no_adjective(store: SqliteStore)
     """
     book_id, branch_id = _book_zero(store)
     store.record_state_records(
-        book_id, branch_id, [*_ladder_records(), *_scheduled()],
+        book_id,
+        branch_id,
+        [*_ladder_records(), *_scheduled()],
         created_at="2026-08-22T00:00:00Z",
     )
     records = store.state_records(book_id, branch_id)
@@ -1935,12 +2040,30 @@ def test_the_standing_block_carries_no_verb_and_no_adjective(store: SqliteStore)
         standing=standing_target(records, at=beat.story_order_key),
         standing_line=standing_example(records, at=beat.story_order_key),
     )
-    block = withled[len(bare):].lower()
+    block = withled[len(bare) :].lower()
     assert block, "the standing block is what is being checked"
     for forbidden in (
-        "earn", "earned", "deserve", "triumph", "victory", "feel", "felt", "emotion",
-        "satisfying", "satisfy", "reward", "rewarding", "celebrate", "climax", "pay it off",
-        "payoff", "exciting", "epic", "hard-won", "struggle", "moment",
+        "earn",
+        "earned",
+        "deserve",
+        "triumph",
+        "victory",
+        "feel",
+        "felt",
+        "emotion",
+        "satisfying",
+        "satisfy",
+        "reward",
+        "rewarding",
+        "celebrate",
+        "climax",
+        "pay it off",
+        "payoff",
+        "exciting",
+        "epic",
+        "hard-won",
+        "struggle",
+        "moment",
     ):
         assert forbidden not in block, forbidden
 

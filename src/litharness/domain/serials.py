@@ -150,10 +150,19 @@ class Position:
     chapter_index: int
     index_in_chapter: int
     scenes_in_chapter: int
+    arc_index: int = 0
+    chapter_in_arc: int = 0
+    volume_index: int = 0
+    chapter_in_volume: int = 0
+    open_ended: bool = False
 
 
 def chapter_positions(
-    revision: Revision, shape: SerialShape
+    revision: Revision,
+    shape: SerialShape,
+    *,
+    chapters_per_volume: int = 50,
+    open_ended: bool = False,
 ) -> dict[str, Position]:
     """Every live scene's place in its chapter, keyed by logical id. **Empty at one scene.**
 
@@ -171,11 +180,18 @@ def chapter_positions(
     """
     if shape.scenes_per_chapter <= 1:
         return {}
+    if chapters_per_volume < 1:
+        raise SerialShapeError("a release volume needs at least one chapter")
     return {
         logical_id: Position(
             chapter_index=chapter.index,
             index_in_chapter=index + 1,
             scenes_in_chapter=len(chapter.scene_ids),
+            arc_index=chapter.arc_index,
+            chapter_in_arc=chapter.index_in_arc,
+            volume_index=(chapter.index - 1) // chapters_per_volume + 1,
+            chapter_in_volume=(chapter.index - 1) % chapters_per_volume + 1,
+            open_ended=open_ended,
         )
         for chapter in chapters_of(revision, shape)
         for index, logical_id in enumerate(chapter.scene_ids)
@@ -194,8 +210,7 @@ def arcs_of(revision: Revision, shape: SerialShape) -> tuple[Arc, ...]:
                 index=len(out) + 1,
                 chapters=block,
                 closed=(
-                    len(block) == shape.chapters_per_arc
-                    and scenes_present == shape.scenes_per_arc
+                    len(block) == shape.chapters_per_arc and scenes_present == shape.scenes_per_arc
                 ),
             )
         )
@@ -228,6 +243,13 @@ def beats_for_arc(
             f"{sheet.template_id} has {len(sheet)} beats but arc {arc.index} has "
             f"{len(scenes)} scenes"
         )
+    # A serial's coordinate width may not grow with the serial.  Deriving it from current
+    # length would change s24 to s024 when a later arc was appended, making every scheduled
+    # state and promise behind the append appear to move.  Six digits gives a stable million-
+    # scene coordinate without claiming the serial ends there.
+    global_ordinals = {
+        logical_id: ordinal for ordinal, logical_id in enumerate(scene_nodes(revision), start=1)
+    }
     return tuple(
         Beat(
             logical_id=logical_id,
@@ -236,9 +258,24 @@ def beats_for_arc(
             title=None,
             function=sheet.functions[position],
             template_id=sheet.template_id,
-            story_order_key=logical_id,
+            story_order_key=f"s{global_ordinals[logical_id]:06d}",
         )
         for position, logical_id in enumerate(scenes)
+    )
+
+
+def beats_for_serial(revision: Revision, shape: SerialShape) -> tuple[Beat, ...]:
+    """Stable beats for every structurally closed arc, in serial order.
+
+    The trailing open arc is deliberately absent: giving it a sheet would reassign its prior
+    scenes when more planned nodes arrive.  A production selector can draft every closed arc
+    and report the open remainder as needing extension, while already closed arcs never move.
+    """
+    return tuple(
+        beat
+        for arc in arcs_of(revision, shape)
+        if arc.closed
+        for beat in beats_for_arc(revision, arc)
     )
 
 
@@ -290,9 +327,7 @@ def next_chapter(revision: Revision, shape: SerialShape) -> Extension:
 CONTEXT_WINDOW_CHAPTERS = 2
 
 
-def window_for(
-    revision: Revision, shape: SerialShape, chapter_index: int
-) -> tuple[str, ...]:
+def window_for(revision: Revision, shape: SerialShape, chapter_index: int) -> tuple[str, ...]:
     """The scene ids a chapter's drafting context may read directly. **Bounded, always.**
 
     The whole point is what it does *not* return: everything before the window. On a serial of
@@ -317,6 +352,7 @@ __all__ = [
     "SerialShapeError",
     "arcs_of",
     "beats_for_arc",
+    "beats_for_serial",
     "chapter_positions",
     "chapters_of",
     "next_chapter",

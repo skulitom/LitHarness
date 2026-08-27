@@ -27,8 +27,12 @@ from datetime import UTC, datetime
 from hashlib import sha256
 from typing import Any
 
+import litharness_contracts as lc
+
 from litharness.application.conductor import JobHandler
 from litharness.application.ports import DirectorStore, TextGenerator
+from litharness.domain import state as state_mod
+from litharness.domain import worlds as worlds_mod
 from litharness.domain.directives import (
     Directive,
     DirectiveKind,
@@ -48,6 +52,7 @@ from litharness.domain.jobs import Job, input_digest_for
 from litharness.domain.nodes import NodeKind
 from litharness.domain.plans import premise_of, scene_plan_for
 from litharness.domain.revision import Revision
+from litharness.domain.text import content_hash
 
 DIRECT = "direct"
 
@@ -117,10 +122,12 @@ def render_request(
     *,
     premise: str | None,
     statements: Sequence[tuple[str, str]],
-    summaries: Mapping[str, str],
+    summaries: Mapping[str, str] | Sequence[tuple[str, str]],
     drafted: int,
     of_total: int,
     open_promises: Sequence[str],
+    current_state: Sequence[str] = (),
+    open_ended: bool = False,
     call_class: str = "generation",
 ) -> CompletionRequest:
     """The Director's turn: the book's shape, its own brief, and no prose.
@@ -136,11 +143,21 @@ def render_request(
         rendered = "\n".join(f"- {logical_id}: {text}" for logical_id, text in statements)
         lines.append(f"SCENE STATEMENTS:\n{rendered}")
     if summaries:
-        rendered = "\n".join(f"- {key}: {value}" for key, value in sorted(summaries.items()))
+        ordered = summaries.items() if isinstance(summaries, Mapping) else summaries
+        rendered = "\n".join(f"- {key}: {value}" for key, value in ordered)
         lines.append(f"WHAT HAS HAPPENED SO FAR:\n{rendered}")
+    if current_state:
+        lines.append("CURRENT STORY STATE:\n" + "\n".join(f"- {item}" for item in current_state))
     if open_promises:
         lines.append("STILL OWED:\n" + "\n".join(f"- {item}" for item in open_promises))
-    lines.append(f"PROGRESS: {drafted} of {of_total} scenes drafted.")
+    if open_ended:
+        lines.append(
+            f"PROGRESS: {drafted} accepted scenes; {of_total} scene nodes are currently "
+            "planned. This is an open-ended serial: direct the next local movement, never "
+            "treat the current plan boundary as the series ending."
+        )
+    else:
+        lines.append(f"PROGRESS: {drafted} of {of_total} scenes drafted.")
     kinds = ", ".join(sorted(kind.value for kind in DIRECTOR_KINDS))
     lines.append(
         "Give this book ONE piece of direction, in your own voice, as JSON with `kind` "
@@ -161,6 +178,46 @@ def render_request(
         max_output_tokens=400,
         profile=PROFILE,
         call_class=call_class,
+    )
+
+
+def current_story_state(revision: Revision, records: Sequence[lc.StateRecord]) -> tuple[str, ...]:
+    """Project state through the furthest accepted scene, or into the opening scene.
+
+    Counting drafted scenes is not a time coordinate: an imported or repaired manuscript can
+    contain a later accepted scene while an earlier node remains empty. Reading order supplies
+    the boundary; the state ledger supplies the coordinate vocabulary and may still abstain when
+    it cannot translate that boundary honestly.
+    """
+    scenes = [
+        node
+        for node in revision.in_reading_order()
+        if node.kind is NodeKind.SCENE and not node.tombstoned
+    ]
+    latest_drafted_ordinal = max(
+        (index for index, node in enumerate(scenes, start=1) if node.content),
+        default=0,
+    )
+    entering = latest_drafted_ordinal == 0 and bool(scenes)
+    boundary_ordinal = latest_drafted_ordinal or (1 if scenes else 0)
+    cutoff = state_mod.scene_cutoff(records, boundary_ordinal)
+    eligible = state_mod.eligible_records(
+        records,
+        cutoff=cutoff,
+        pov_character_id=None,
+        moment=(state_mod.StateMoment.ENTERING if entering else state_mod.StateMoment.THROUGH),
+        logical_id=scenes[0].logical_id if entering and cutoff is not None else None,
+    )
+    active, _history = state_mod.active_projection(
+        eligible,
+        changing_edge_predicates=(worlds_mod.STANDS_AT_PREDICATE,),
+        multi_valued_predicates=(worlds_mod.ENTITY_ROLE_PREDICATE,),
+    )
+    projected = worlds_mod.project(active)
+    return tuple(
+        projected.get(record.record_id) or state_mod.describe(record)
+        for record in active
+        if projected.get(record.record_id, None) != ""
     )
 
 
@@ -272,15 +329,25 @@ def make_director_handler(
             if item is not None:
                 statements.append((node.logical_id, item.text))
         stored = store.scene_summaries(book_id, branch_id) if head is not None else {}
-        summaries: dict[str, str] = {}
-        for logical_id, by_hash in stored.items():
-            if by_hash:
-                summaries[logical_id] = next(iter(by_hash.values()))
+        summaries: list[tuple[str, str]] = []
+        for node in scenes:
+            if not node.content:
+                continue
+            summary = stored.get(node.logical_id, {}).get(content_hash(node.content))
+            if summary is not None:
+                summaries.append((node.logical_id, summary))
         drafted = sum(1 for node in scenes if node.content)
         promises = [
-            promise.description
-            for promise in store.promises(book_id, branch_id, open_only=True)
+            promise.description for promise in store.promises(book_id, branch_id, open_only=True)
         ]
+        current_state = (
+            current_story_state(
+                head,
+                store.state_records(book_id, branch_id),
+            )
+            if head is not None
+            else ()
+        )
         request = render_request(
             director,
             premise=premise_of(plan_items),
@@ -288,7 +355,9 @@ def make_director_handler(
             summaries=summaries,
             drafted=drafted,
             of_total=len(scenes),
-            open_promises=promises[:10],
+            open_promises=promises,
+            current_state=current_state,
+            open_ended=True,
             call_class=call_class,
         )
         result, _resolution = registry.complete(request)
@@ -329,6 +398,7 @@ __all__ = [
     "PROFILE",
     "DirectorInputError",
     "DirectorOutputError",
+    "current_story_state",
     "direct_job_id",
     "directive_from",
     "director_job",

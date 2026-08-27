@@ -20,6 +20,7 @@ implementer's contract, and implementers are what `providers` is for.
 
 from __future__ import annotations
 
+import json
 from dataclasses import dataclass, field
 from typing import Any
 
@@ -149,6 +150,31 @@ class CompletionRequest:
     #: allowance is per-request and written narrowly — a drafting call still passes nothing,
     #: and only a role that manages the world asks for the world's own commands.
     allowed_tools: tuple[str, ...] = ()
+
+    @property
+    def schema_instruction(self) -> str:
+        """The exact schema instruction added by the CLI transport."""
+        if self.schema is None:
+            return ""
+        return (
+            "Reply with a single JSON object conforming to this schema and nothing "
+            "else — no prose, no code fence:\n" + json.dumps(self.schema, sort_keys=True)
+        )
+
+    @property
+    def effective_system(self) -> str:
+        """Role framing plus transport-added instructions the model actually receives."""
+        return "\n\n".join(part for part in (self.system or "", self.schema_instruction) if part)
+
+    @property
+    def input_chars(self) -> int:
+        """Auditable input size used by the budget governor.
+
+        Tool names are included because enabling one changes the transport input.  Providers
+        may attach their own tool descriptions, so this is a lower bound for tool-using calls;
+        every current prose and reader request has an empty allowance.
+        """
+        return len(self.prompt) + len(self.effective_system) + len(",".join(self.allowed_tools))
 
 
 @dataclass(frozen=True, slots=True)

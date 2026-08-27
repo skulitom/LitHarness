@@ -140,9 +140,7 @@ def test_records_are_ordered_by_story_position_with_unplaced_ones_last() -> None
 
 
 def test_records_at_the_same_position_break_ties_on_id_so_packing_is_reproducible() -> None:
-    ordered = state_mod.in_story_order(
-        [record("z", order_key="s1"), record("a", order_key="s1")]
-    )
+    ordered = state_mod.in_story_order([record("z", order_key="s1"), record("a", order_key="s1")])
     assert [item.record_id for item in ordered] == ["a", "z"]
 
 
@@ -163,6 +161,114 @@ def test_a_cutoff_keeps_unplaced_records_rather_than_dropping_them() -> None:
 def test_no_cutoff_returns_everything() -> None:
     records = [record("a", order_key="s1"), record("b", order_key="s9")]
     assert state_mod.records_before(records, None) == tuple(records)
+
+
+def test_model_eligible_state_has_one_shared_time_canon_and_pov_gate() -> None:
+    records = [
+        record("seen", order_key="s1", pov_visibility=["mara"]),
+        record("future", order_key="s9", pov_visibility=["mara"]),
+        record("private", order_key="s1", pov_visibility=["brandt"]),
+        record("proposal", order_key="s1", authority=lc.StateAuthority.PROPOSED),
+        record("config", order_key=None, predicate="status_sheet"),
+    ]
+
+    eligible = state_mod.eligible_records(
+        records,
+        cutoff="s2",
+        pov_character_id="mara",
+        excluded_predicates=("status_sheet",),
+    )
+
+    assert [item.record_id for item in eligible] == ["seen"]
+
+
+def test_within_scene_state_stops_at_the_callers_exact_reading_point() -> None:
+    def evidenced(item: lc.StateRecord, start: int, end: int) -> lc.StateRecord:
+        item.evidence.append(
+            lc.EvidenceSpan(
+                source=lc.ResourceRef(
+                    project_id=PROJECT_ID,
+                    book_id=BOOK_ID,
+                    branch_id=BRANCH_ID,
+                    logical_id="scene-2",
+                    kind=lc.ResourceKind.MANUSCRIPT_SCENE,
+                    version_id="version",
+                ),
+                start=start,
+                end=end,
+                content_sha256="0" * 64,
+            )
+        )
+        return item
+
+    records = [
+        record("prior", order_key="s000001"),
+        evidenced(record("before-stop", order_key="s000002"), 5, 20),
+        evidenced(record("after-stop", order_key="s000002"), 80, 100),
+        record("future", order_key="s000003"),
+    ]
+
+    seen = state_mod.eligible_records(
+        records,
+        cutoff="s000002",
+        moment=state_mod.StateMoment.WITHIN,
+        logical_id="scene-2",
+        offset=50,
+    )
+
+    assert [item.record_id for item in seen] == ["prior", "before-stop"]
+
+
+def test_entering_and_through_views_are_opposite_sides_of_one_scene_boundary() -> None:
+    here = record("here", order_key="s000002")
+    here.evidence.append(
+        lc.EvidenceSpan(
+            source=lc.ResourceRef(
+                project_id=PROJECT_ID,
+                book_id=BOOK_ID,
+                branch_id=BRANCH_ID,
+                logical_id="scene-2",
+                kind=lc.ResourceKind.MANUSCRIPT_SCENE,
+                version_id="version",
+            ),
+            start=10,
+            end=20,
+            content_sha256="0" * 64,
+        )
+    )
+    records = [record("prior", order_key="s000001"), here]
+    entering = state_mod.eligible_records(
+        records,
+        cutoff="s000002",
+        moment=state_mod.StateMoment.ENTERING,
+        logical_id="scene-2",
+    )
+    through = state_mod.eligible_records(
+        records, cutoff="s000002", moment=state_mod.StateMoment.THROUGH
+    )
+    assert [item.record_id for item in entering] == ["prior"]
+    assert [item.record_id for item in through] == ["prior", "here"]
+
+
+def test_scene_cutoff_only_projects_a_coordinate_vocabulary_it_can_prove() -> None:
+    records = [record("one", order_key="s000001"), record("two", order_key="s000002")]
+    assert state_mod.scene_cutoff(records, 37) == "s000037"
+    assert state_mod.scene_cutoff([record("other", order_key="chapter-one")], 2) is None
+    assert state_mod.scene_cutoff([], 2) is None
+
+
+def test_active_projection_separates_old_state_without_collapsing_events() -> None:
+    records = [
+        record("want-early", subject="mara", predicate="wants", value="escape", order_key="s1"),
+        record("want-now", subject="mara", predicate="wants", value="return", order_key="s3"),
+        record("event-1", kind=lc.StateRecordKind.EVENT, predicate="arrived", order_key="s1"),
+        record("event-2", kind=lc.StateRecordKind.EVENT, predicate="arrived", order_key="s2"),
+    ]
+
+    current, history = state_mod.active_projection(records)
+
+    assert {item.record_id for item in current} == {"want-now", "event-1", "event-2"}
+    assert [item.record_id for item in history] == ["want-early"]
 
 
 def test_open_threads_finds_the_promise_the_book_owes() -> None:
@@ -206,8 +312,12 @@ def test_every_state_record_kind_has_a_resource_kind() -> None:
 
 def test_a_dict_value_renders_deterministically() -> None:
     described = state_mod.describe(
-        record("e", subject="julian", predicate="present_at",
-               value={"when": "night_of_death", "place": "vane_house"})
+        record(
+            "e",
+            subject="julian",
+            predicate="present_at",
+            value={"when": "night_of_death", "place": "vane_house"},
+        )
     )
     # Sorted by key, so two runs produce one string and the packet's token count is stable.
     assert described == "julian present_at place=vane_house, when=night_of_death"
@@ -355,9 +465,7 @@ def test_reverting_retracts_the_state_read_out_of_the_discarded_prose(
     drafted = gate_draft(base, "scene-1", "x" * 400).revision
     assert drafted is not None
     extracted = record("rec-extracted", subject="rook", predicate="status_snapshot")
-    store.commit_revision(
-        drafted, created_at="2026-08-13T00:00:01Z", state_records=[extracted]
-    )
+    store.commit_revision(drafted, created_at="2026-08-13T00:00:01Z", state_records=[extracted])
     assert [r.record_id for r in store.state_records(BOOK_ID, BRANCH_ID)] == ["rec-extracted"]
 
     store.revert(
@@ -371,8 +479,7 @@ def test_reverting_retracts_the_state_read_out_of_the_discarded_prose(
     assert store.state_records(BOOK_ID, BRANCH_ID) == [], "the orphan is gone from canon"
     # Forward-only: the row survives, marked, so the record still explains itself.
     row = store._connection.execute(
-        "SELECT retracted_by_revision_id, retracted_at FROM state_records "
-        "WHERE record_id = ?",
+        "SELECT retracted_by_revision_id, retracted_at FROM state_records WHERE record_id = ?",
         ("rec-extracted",),
     ).fetchone()
     assert row["retracted_by_revision_id"], "retracted, not deleted"

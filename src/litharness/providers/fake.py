@@ -158,15 +158,13 @@ class FakeProvider:
 
         return self._result(request, text, digest=digest)
 
-    def _result(
-        self, request: CompletionRequest, text: str, *, digest: str
-    ) -> CompletionResult:
+    def _result(self, request: CompletionRequest, text: str, *, digest: str) -> CompletionResult:
         return CompletionResult(
             text=text,
             provider=self.name,
             model=self.model,
             usage=Usage(
-                input_tokens=len(request.prompt) // 4,
+                input_tokens=request.input_chars // 4,
                 output_tokens=len(text) // 4,
             ),
             parsed=parse_schema_payload(text, request.schema),

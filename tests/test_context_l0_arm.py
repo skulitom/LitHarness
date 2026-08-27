@@ -15,6 +15,7 @@ Three layers, in rising stakes:
    exist. Skipped while `benchmarks/corpora/rlm/` is absent — another task generates them —
    and honest either way about the numbers it prints.
 """
+
 from __future__ import annotations
 
 import json
@@ -37,9 +38,9 @@ HANDOFF_HORIZONS = (30, 57, 82, 120)
 def _handoff_rows() -> list[tuple[int, tuple[int, int, int, int]]]:
     return [(s, e) for s, e in sorted(arm.SECTION_56_4.items()) if s in HANDOFF_HORIZONS]
 
+
 #: Where the sibling repository's long-serial workloads land when its generator has run.
 RLM_DIR = Path(r"C:\DEV\LongRangeContext\benchmarks\corpora\rlm")
-
 
 
 def _scene_text(index: int) -> str:
@@ -124,9 +125,8 @@ def test_the_census_columns_add_up_to_the_selection():
     workload = arm.load_workload(FIXTURE)
     for query in arm.draft_queries(workload):
         selection = arm.run_query(workload, query)
-        assert (
-            selection.full_prose_count + selection.summary_count + selection.fact_count
-            == len(selection.selected_ids)
+        assert selection.full_prose_count + selection.summary_count + selection.fact_count == len(
+            selection.selected_ids
         ), f"{query.query_id}: the columns do not account for every selected id"
 
 
@@ -259,9 +259,7 @@ def test_census_over_rlm_serial_lands_on_section_56_4():
     for scenes, expected in _handoff_rows():
         path = RLM_DIR / f"rlm-serial-{scenes}.json"
         if not path.exists():
-            pytest.fail(
-                f"{RLM_DIR} exists but {path.name} is missing; the generator is part-done"
-            )
+            pytest.fail(f"{RLM_DIR} exists but {path.name} is missing; the generator is part-done")
         workload = arm.load_workload(path)
         queries = arm.draft_queries(workload)
         if not queries:

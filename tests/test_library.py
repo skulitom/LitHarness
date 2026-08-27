@@ -475,9 +475,11 @@ def test_a_tick_publishes_without_being_asked_and_writes_beside_the_database(
         )
         == EXIT_OK
     )
-    for _ in range(4):
-        main(["--database", str(db), "tick"])
     root = tmp_path / LIBRARY_DIRNAME
+    for _ in range(16):
+        main(["--database", str(db), "tick"])
+        if list(root.glob("*/chapters/*.html")):
+            break
     assert (root / "README.md").is_file(), "no flag was passed and the library exists"
     assert list(root.glob("*/chapters/*.html")), "and it holds pastable chapters"
 

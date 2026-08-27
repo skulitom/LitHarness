@@ -40,7 +40,7 @@ from typing import Any
 import litharness_contracts as lc
 
 from litharness.domain.nodes import Node, NodeKind
-from litharness.domain.position import initial_keys, parse_key
+from litharness.domain.position import initial_keys, key_between, parse_key
 
 
 def _digest(payload: Any) -> str:
@@ -88,9 +88,7 @@ class Revision:
         for node in self.nodes:
             parent = node.parent_logical_id
             if parent is not None and parent not in known:
-                raise ValueError(
-                    f"node {node.logical_id} references unknown parent {parent}"
-                )
+                raise ValueError(f"node {node.logical_id} references unknown parent {parent}")
         if not self.revision_id:
             object.__setattr__(self, "revision_id", self._compute_id())
 
@@ -100,9 +98,7 @@ class Revision:
                 "book_id": self.book_id,
                 "branch_id": self.branch_id,
                 "parent_revision_id": self.parent_revision_id,
-                "nodes": sorted(
-                    (node.logical_id, node_version_id(node)) for node in self.nodes
-                ),
+                "nodes": sorted((node.logical_id, node_version_id(node)) for node in self.nodes),
             }
         )
 
@@ -325,7 +321,12 @@ def build_revision(
 
 
 def new_book(
-    book_id: str, branch_id: str, *, title: str, scenes: int
+    book_id: str,
+    branch_id: str,
+    *,
+    title: str,
+    scenes: int,
+    position_capacity: int | None = None,
 ) -> Revision:
     """An empty book of `scenes` draftable scenes — the entry point Stage 3 needs.
 
@@ -343,7 +344,8 @@ def new_book(
     """
     if scenes < 1:
         raise ValueError(f"a book needs at least one scene; asked for {scenes}")
-    keys = initial_keys(scenes)
+    capacity = max(scenes, position_capacity or scenes)
+    keys = initial_keys(capacity)[:scenes]
     nodes = [Node(logical_id="book", kind=NodeKind.BOOK, position_key="010", title=title)]
     nodes += [
         Node(
@@ -356,6 +358,61 @@ def new_book(
         for index in range(scenes)
     ]
     return build_revision(book_id, branch_id, nodes)
+
+
+def append_scenes(revision: Revision, count: int) -> Revision:
+    """Append empty serial scenes without moving any existing story address.
+
+    Tail growth that would rebalance position keys is refused: moving accepted nodes would
+    invalidate evidence spans and scheduled state behind the extension. Books created by the
+    production CLI reserve ample key width up front, so ordinary endless growth stays cheap.
+    """
+    if count < 1:
+        raise ValueError(f"an extension needs at least one scene; asked for {count}")
+    roots = [node for node in revision.children_of(None) if node.kind is NodeKind.BOOK]
+    if len(roots) != 1:
+        raise ValueError(f"serial extension needs one book root; found {len(roots)}")
+    parent = roots[0]
+    children = revision.children_of(parent.logical_id)
+    sibling_keys = [node.position_key for node in children]
+    before = sibling_keys[-1] if sibling_keys else None
+    existing_ids = {node.logical_id for node in revision.nodes}
+    numeric = [
+        int(node.logical_id.removeprefix("scene-"))
+        for node in revision.nodes
+        if node.logical_id.startswith("scene-") and node.logical_id.removeprefix("scene-").isdigit()
+    ]
+    scene_count = sum(1 for node in revision.nodes if node.kind is NodeKind.SCENE)
+    next_number = max(numeric, default=scene_count) + 1
+    added: list[Node] = []
+    for _ in range(count):
+        insertion = key_between(before, None, sibling_keys)
+        if insertion.is_rebalance:
+            raise ValueError(
+                "the manuscript's position-key capacity is exhausted; extending would move "
+                "existing scene addresses and invalidate evidence, so this revision is refused"
+            )
+        while f"scene-{next_number}" in existing_ids:
+            next_number += 1
+        logical_id = f"scene-{next_number}"
+        node = Node(
+            logical_id=logical_id,
+            kind=NodeKind.SCENE,
+            position_key=insertion.key,
+            parent_logical_id=parent.logical_id,
+            title=f"Scene {next_number}",
+        )
+        added.append(node)
+        existing_ids.add(logical_id)
+        sibling_keys.append(insertion.key)
+        before = insertion.key
+        next_number += 1
+    return Revision(
+        book_id=revision.book_id,
+        branch_id=revision.branch_id,
+        nodes=(*revision.nodes, *added),
+        parent_revision_id=revision.revision_id,
+    )
 
 
 def version_map(revision: Revision) -> Mapping[str, str]:

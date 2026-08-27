@@ -20,10 +20,10 @@ import pytest
 
 from litharness.adapters.sqlite_store import SqliteStore
 from litharness.cli import EXIT_ATTENTION, EXIT_FAULT, EXIT_OK, build_parser, main
-from litharness.domain.beats import TemplateMismatch
 from litharness.domain.directives import DirectiveStatus
 from litharness.domain.events import EventType
 from litharness.domain.jobs import Job, JobStatus
+from litharness.domain.nodes import NodeKind
 from litharness.domain.policy import Outcome
 
 
@@ -342,10 +342,20 @@ def test_import_opens_the_closed_loop(db, capsys) -> None:
     run(db, "init")
     revision_id = imported_id(db, capsys, "--fixture", "mystery")
 
-    assert run(
-        db, "enqueue", "draft-1", "--revision", revision_id,
-        "--node", "scene-1", "--prompt", "Draft the study scene.",
-    ) == EXIT_OK
+    assert (
+        run(
+            db,
+            "enqueue",
+            "draft-1",
+            "--revision",
+            revision_id,
+            "--node",
+            "scene-1",
+            "--prompt",
+            "Draft the study scene.",
+        )
+        == EXIT_OK
+    )
     capsys.readouterr()
 
     run(db, "jobs")
@@ -440,8 +450,10 @@ def test_a_refused_scene_count_leaves_no_trace_of_the_book(db) -> None:
     under the same ids collides with the wreckage of the refused one."""
     run(db, "init")
 
-    with pytest.raises(TemplateMismatch):
+    assert (
         run(db, "new", "Book Zero", "--premise", "a harness learns to write", "--scenes", "1")
+        == EXIT_FAULT
+    )
 
     store = SqliteStore.open(db)
     try:
@@ -449,12 +461,56 @@ def test_a_refused_scene_count_leaves_no_trace_of_the_book(db) -> None:
         assert store.read_log() == []
         counts = {
             table: store._connection.execute(f"SELECT COUNT(*) AS n FROM {table}").fetchone()["n"]
-            for table in ("revisions", "node_versions", "policy_decisions", "plan_items",
-                          "state_records", "events")
+            for table in (
+                "revisions",
+                "node_versions",
+                "policy_decisions",
+                "plan_items",
+                "state_records",
+                "events",
+            )
         }
         assert counts == dict.fromkeys(counts, 0), counts
     finally:
         store.close()
+
+
+def test_a_serial_extends_in_place_without_moving_existing_scene_addresses(db) -> None:
+    run(db, "init")
+    assert (
+        run(
+            db,
+            "new",
+            "Endless Road",
+            "--premise",
+            "Every gate takes something different.",
+            "--book",
+            "serial-book",
+            "--branch",
+            "main",
+        )
+        == EXIT_OK
+    )
+    with SqliteStore.open(db) as store:
+        before = store.head("serial-book", "main")
+        assert before is not None
+        positions = {
+            node.logical_id: node.position_key
+            for node in before.nodes
+            if node.kind is not NodeKind.BOOK
+        }
+        versions = before.version_ids
+
+    assert run(db, "extend", "--book", "serial-book", "--branch", "main") == EXIT_OK
+
+    with SqliteStore.open(db) as store:
+        after = store.head("serial-book", "main")
+        assert after is not None
+        scenes = [node for node in after.nodes if node.kind is NodeKind.SCENE]
+        assert len(scenes) == 48, "the default extension adds one complete six-chapter arc"
+        for logical_id, position in positions.items():
+            assert after.node(logical_id).position_key == position
+            assert after.version_ids[logical_id] == versions[logical_id]
 
 
 # --- the promotion path (§10.4) ------------------------------------------------------
@@ -510,24 +566,6 @@ def _answered(db, n: int = 50) -> None:
             )
     finally:
         store.close()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 def test_ingesting_a_failed_evaluation_exits_non_zero(db, tmp_path, capsys) -> None:

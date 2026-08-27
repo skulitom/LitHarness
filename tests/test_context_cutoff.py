@@ -148,9 +148,7 @@ def _seed_records() -> list[lc.StateRecord]:
     from pathlib import Path
 
     path = Path(__file__).parents[1] / "plan" / "serial-pilot-seed.json"
-    snapshot = lc.parse_artifact(
-        lc.StateSnapshot, json.loads(path.read_text(encoding="utf-8"))
-    )
+    snapshot = lc.parse_artifact(lc.StateSnapshot, json.loads(path.read_text(encoding="utf-8")))
     return list(import_state(snapshot, book_id=BOOK_ID, branch_id=BRANCH_ID).records)
 
 
@@ -255,9 +253,13 @@ def test_a_record_the_extractor_wrote_for_a_later_scene_does_not_reach_an_earlie
     early = packet_for(store, head, _beat(head, 3), token_budget=16000)
     assert not any(early.contains_ref(record.record_id) for record in later)
     assert "loop=2" not in early.render()
-    # And the scenes they were read from are still told them.
+    # Evidence-backed facts arise inside their source scene: an entering view cannot see its
+    # own future, while the next scene inherits the completed development.
     for index, record in enumerate(later, start=4):
-        assert packet_for(store, head, _beat(head, index), token_budget=16000).contains_ref(
+        assert not packet_for(store, head, _beat(head, index), token_budget=16000).contains_ref(
+            record.record_id
+        )
+        assert packet_for(store, head, _beat(head, index + 1), token_budget=16000).contains_ref(
             record.record_id
         )
 
@@ -288,6 +290,7 @@ def test_a_book_whose_story_positions_somebody_else_chose_gets_no_cutoff(
             plan_items=store.plan_items(revision.book_id, revision.branch_id),
             state_records=records,
             query_id=f"beat:{beat.logical_id}",
+            project_state_changes=True,
         )
         assert packet_for(store, revision, beat).render() == before.render()
 
@@ -306,9 +309,7 @@ def test_the_unplaced_ability_graph_survives_the_cutoff(store: SqliteStore) -> N
     packed = {item.source_logical_id for item in packet.sections[FACTS]}
     # Every unplaced record except the sheet declaration, which is excluded as configuration.
     expected = {
-        record.record_id
-        for record in _unplaced(seed)
-        if record.predicate != "status_sheet"
+        record.record_id for record in _unplaced(seed) if record.predicate != "status_sheet"
     }
     assert expected <= packed
     assert len(expected) == 14, "the ability graph is fourteen records plus its sheet"

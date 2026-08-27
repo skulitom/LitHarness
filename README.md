@@ -75,6 +75,15 @@ uv run litharness --database book.db new "The Toll Road" \
 uv run litharness --database fixture.db import --fixture litrpg
 ```
 
+The default 24 scenes are one structurally closed six-chapter arc. Grow the same canonical
+serial—without resetting character state, promises, numbering, or revision history—with:
+
+```bash
+uv run litharness --database book.db extend --arcs 1
+```
+
+Release “books” are derived packaging windows over that serial, not sequel databases.
+
 Before drafting a new book, let the Architect establish enough world for its opening, inspect the
 deterministic checks, then accept the proposals into canon:
 
@@ -127,7 +136,7 @@ Useful operating views:
 | `events` | append-only state-change history |
 | `plans` | immutable plan lineage and its proposals |
 | `state`, `characters`, `world summary` | current canon and world state |
-| `prompts [--role ROLE]` | the assembled instructions each role actually receives |
+| `prompts [--role ROLE]` | complete representative requests: role, material, schema, tools, and effective size |
 | `verify` | rebuild revisions and verify hashes and policy coverage |
 | `backup PATH` | online SQLite backup, safe while ticking |
 
@@ -154,6 +163,19 @@ Recovery is explicit:
 - `revert-plan REVISION` restores an earlier plan as a new head; history is never rewritten.
 - `revert REVISION --book ... --branch ...` does the same for manuscript revisions.
 - `exceptions` and `resolve` record cases policy could not settle; resolving does not requeue.
+
+## Story state and time
+
+State records live at stable scene coordinates and retain the evidence span that established
+them. Model-facing views are projections of that ledger: a writer entering a scene sees the
+prior boundary; a caller stopped within a scene sees only facts whose evidence has already
+ended; a Director may see the latest accepted boundary; POV-restricted knowledge reaches only
+the named character. Superseded wants, standings, and other changing assertions are labelled as
+history instead of being presented beside their replacements as simultaneously current.
+
+Chapter, arc, and fifty-chapter volume state are therefore derived snapshots, not separate
+editable sheets. SQLite revisions and events are authoritative. Git is appropriate for reviewed
+checkpoint exports and disaster recovery, but not as a second mutable canon database.
 
 ## Integrity and continuity
 
@@ -183,17 +205,20 @@ not delete the finding.
 
 ## Simulated readers
 
-The simulated readership can read the latest drafted scene, or one named scene:
+The simulated readership can stop part-way through the latest drafted scene, or one named scene:
 
 ```bash
 uv run litharness --database book.db readers
 uv run litharness --database book.db readers --scene 4
 ```
 
-Reader output is behavioural—continuation, anticipation, abandonment—not a literary score. Reader
-roles are split between steering and measurement pools so a book shaped by a reader cannot later
-be certified by that reader. The architecture is wired, but its ability to perceive quality is
-still under validation; see the
+The request is no longer a cold scene: it includes earlier scenes in the current chapter, two
+recent chapters in full, compact current-hash memories from the preceding four chapters, and that
+same reader's previous stopping-point memory. The window stays bounded as the serial grows and
+never includes prose after the stop point. Reader output is behavioural—continuation,
+anticipation, abandonment—not a literary score. Reader roles are split between steering and
+measurement pools so a book shaped by a reader cannot later be certified by that reader. The
+architecture is wired, but its ability to perceive quality is still under validation; see the
 [reader-architecture programme](plan/reader-architecture-program.md) for current work rather than
 inferring validity from the existence of the command.
 

@@ -41,9 +41,7 @@ def times(*pairs: tuple[lc.StateRecord, str]) -> dict[str, str]:
 def test_a_redeclared_fact_leaves_the_earlier_one_behind() -> None:
     first = record("crit_glasses", "manifests_as", value="how many vials a body will hold")
     second = record("crit_glasses", "manifests_as", value="one order, eleven rungs")
-    replaced = superseded(
-        [first, second], declared_at=times((first, "10:00"), (second, "10:05"))
-    )
+    replaced = superseded([first, second], declared_at=times((first, "10:00"), (second, "10:05")))
     assert replaced == (first.record_id,)
 
 
@@ -58,9 +56,9 @@ def test_declaration_order_decides_which_one_survives() -> None:
     """The record carries no timestamp, so the store's is what orders them."""
     early = record("dan", "life_status", value="alive")
     late = record("dan", "life_status", value="hurt")
-    assert superseded(
-        [early, late], declared_at=times((early, "10:05"), (late, "10:00"))
-    ) == (late.record_id,)
+    assert superseded([early, late], declared_at=times((early, "10:05"), (late, "10:00"))) == (
+        late.record_id,
+    )
 
 
 def test_two_edges_are_two_facts_and_neither_replaces_the_other() -> None:
@@ -79,9 +77,7 @@ def test_a_value_that_changes_between_scenes_is_a_story_and_not_a_replacement() 
     """The story position is in the key. Without it, every progression would be superseded."""
     before = record("dan", "life_status", value="whole", order_key="010")
     after = record("dan", "life_status", value="one-handed", order_key="020")
-    assert superseded(
-        [before, after], declared_at=times((before, "10:00"), (after, "10:05"))
-    ) == ()
+    assert superseded([before, after], declared_at=times((before, "10:00"), (after, "10:05"))) == ()
 
 
 def test_a_protagonist_does_not_replace_being_cast() -> None:
@@ -113,12 +109,23 @@ def test_accepting_a_redeclared_world_leaves_canon_with_nothing_to_contradict(
     db = tmp_path / "world.db"
     assert main(["--database", str(db), "init"]) == EXIT_OK
     assert (
-        main(["--database", str(db), "listing", "--writer", "vance", "--scenes", "6"]) == EXIT_OK
+        main(["--database", str(db), "listing", "--writer", "vance", "--scenes", "24"]) == EXIT_OK
     )
     for value in ("how many vials a body will hold", "one order, eleven rungs"):
         assert (
-            main(["--database", str(db), "world", "declare", "crit_glasses",
-                  "manifests_as", "--value", value]) == EXIT_OK
+            main(
+                [
+                    "--database",
+                    str(db),
+                    "world",
+                    "declare",
+                    "crit_glasses",
+                    "manifests_as",
+                    "--value",
+                    value,
+                ]
+            )
+            == EXIT_OK
         )
     capsys.readouterr()
     assert main(["--database", str(db), "world", "accept"]) == EXIT_OK
@@ -142,7 +149,6 @@ def test_accepting_a_redeclared_world_leaves_canon_with_nothing_to_contradict(
     canon = [
         item
         for item in records
-        if item.subject == "crit_glasses"
-        and item.authority is lc.StateAuthority.ACCEPTED_CANON
+        if item.subject == "crit_glasses" and item.authority is lc.StateAuthority.ACCEPTED_CANON
     ]
     assert [item.value for item in canon] == ["one order, eleven rungs"]

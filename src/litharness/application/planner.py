@@ -68,6 +68,7 @@ from litharness.application.outline import (
 )
 from litharness.application.ports import ApplicationStore, PlanningStore
 from litharness.domain import house, worlds
+from litharness.domain import state as state_mod
 from litharness.domain.beats import (
     SIX_BEAT,
     Beat,
@@ -97,7 +98,14 @@ from litharness.domain.extraction import (
 from litharness.domain.jobs import Job, input_digest_for
 from litharness.domain.plans import premise_of, scene_plan_for, scene_plan_line
 from litharness.domain.revision import Revision
-from litharness.domain.serials import Position, SerialShape, chapter_positions
+from litharness.domain.serials import (
+    Position,
+    SerialShape,
+    arcs_of,
+    beats_for_arc,
+    beats_for_serial,
+    chapter_positions,
+)
 from litharness.domain.text import content_hash
 from litharness.domain.writers import Writer
 
@@ -111,8 +119,7 @@ def _resolved_directive_scope(
     candidates = [
         (book_id, branch_id)
         for book_id, branch_id, _ in branches
-        if directive.book_id in {None, book_id}
-        and directive.branch_id in {None, branch_id}
+        if directive.book_id in {None, book_id} and directive.branch_id in {None, branch_id}
     ]
     return candidates[0] if len(candidates) == 1 else None
 
@@ -213,9 +220,7 @@ def _enqueue_direction(store: ApplicationStore, director_id: str) -> bool:
     return enqueued
 
 
-def beat_job_id(
-    book_id: str, branch_id: str, logical_id: str, template_id: str, epoch: int
-) -> str:
+def beat_job_id(book_id: str, branch_id: str, logical_id: str, template_id: str, epoch: int) -> str:
     """Stable identity for "draft this beat of this book under this plan epoch".
 
     Excludes the prompt and the base revision. Including the prompt would mint a second job
@@ -246,15 +251,19 @@ def direction_for(store: PlanningStore, book_id: str, branch_id: str) -> str:
     rows = reads(book_id, branch_id, pool=readers_mod.STEERING)
     if not rows:
         return ""
-    answers = {
-        str(row["reader_id"]): {
-            "hoping_for": row.get("hoping_for") or [],
+    answers: dict[str, dict[str, object]] = {}
+    for row in rows:  # the store promises newest first
+        reader_id = str(row["reader_id"])
+        if reader_id in answers:
+            continue
+        answers[reader_id] = {
+            "felt": row.get("felt") or "",
+            "expect_next": row.get("expect_next") or "",
+            "hoping_for": row.get("hoping_for") or row.get("want_next") or [],
             "dreading": row.get("dreading") or [],
-            "expect_next": "",
         }
-        for row in rows
-    }
     return readers_mod.Anticipation.of(answers).render()
+
 
 def render_prompt(
     beat: Beat,
@@ -479,19 +488,26 @@ def render_prompt(
     # a model acts on, and between "rising" and "Kestrel is refused entry at the archive",
     # this is the one to act on.
     plan_line = scene_plan_line(scene_plan) if scene_plan else ""
-    chapter_line = (
-        ""
-        if chapter is None
-        else (
-            f" Chapter {chapter.chapter_index}, scene {chapter.index_in_chapter} of "
-            f"{chapter.scenes_in_chapter}."
-        )
-    )
+    scene_position = f"scene {beat.ordinal} of {beat.of_total}"
+    if chapter is not None:
+        if chapter.open_ended:
+            scene_position = (
+                f"open-ended series; release volume {chapter.volume_index} "
+                f"(packaging only); arc {chapter.arc_index}; chapter "
+                f"{chapter.chapter_index} ({chapter.chapter_in_arc} of this arc); scene "
+                f"{chapter.index_in_chapter} of {chapter.scenes_in_chapter} "
+                f"(arc scene {beat.ordinal} of {beat.of_total})"
+            )
+        else:
+            scene_position += (
+                f". Chapter {chapter.chapter_index}, scene {chapter.index_in_chapter} of "
+                f"{chapter.scenes_in_chapter}"
+            )
     pov_line = "" if not point_of_view else f" Point of view: {point_of_view}."
     prompt = (
         f"{packet.render()}\n\n"
-        f"Now write {title}{beat.title or beat.logical_id} — scene {beat.ordinal} of "
-        f"{beat.of_total}.{chapter_line}{pov_line} Dramatic function: {beat.function}."
+        f"Now write {title}{beat.title or beat.logical_id} — {scene_position}."
+        f"{pov_line} Dramatic function: {beat.function}."
         f"{plan_line}"
     )
     return system, prompt
@@ -568,6 +584,8 @@ def packet_for(
         # See the docstring. `stated_position` is the entitlement check, not a new one: it
         # returns the beat's key only for a book whose story positions nobody else chose.
         story_time_cutoff=stated_position(records, beat.story_order_key),
+        state_moment=state_mod.StateMoment.ENTERING,
+        project_state_changes=True,
         summaries=summaries,
         # **Where the book stands, and it is a different question from the cutoff above.**
         # The cutoff decides which records *exist yet* and is gated by `stated_position`, so it
@@ -585,9 +603,7 @@ def packet_for(
         # generation gets to SEE what the book owes and by when. Read-only, and `assemble`
         # packs them as DERIVED — a model-sourced debt informs the scene without entering
         # canon, the property §46 built for milestones.
-        promises=tuple(
-            store.promises(revision.book_id, revision.branch_id, open_only=True)
-        ),
+        promises=tuple(store.promises(revision.book_id, revision.branch_id, open_only=True)),
     )
 
 
@@ -601,10 +617,19 @@ class BookProgress:
     total: int
     #: Set when the book cannot be planned at all — no premise, or a template mismatch.
     blocked_reason: str | None = None
+    #: An endless serial is never complete. This names the next structural action once every
+    #: currently closed arc is drafted, without misreporting the serial as a finished book.
+    continuation_reason: str | None = None
+    open_ended: bool = False
 
     @property
     def complete(self) -> bool:
-        return self.blocked_reason is None and self.total > 0 and self.drafted == self.total
+        return (
+            not self.open_ended
+            and self.blocked_reason is None
+            and self.total > 0
+            and self.drafted == self.total
+        )
 
 
 def _book_title(revision: Revision) -> str | None:
@@ -619,6 +644,7 @@ def plan_progress(
     *,
     template: BeatTemplate | None = None,
     policy: DraftPolicy | None = None,
+    serial_shape: SerialShape | None = None,
 ) -> BookProgress:
     """How far this book has got, and why it cannot move if it cannot.
 
@@ -629,10 +655,29 @@ def plan_progress(
     head = store.head(book_id, branch_id)
     if head is None:
         return BookProgress(book_id, branch_id, 0, 0, "no head revision")
+    serial_mode = False
+    if serial_shape is not None:
+        grouped = arcs_of(head, serial_shape)
+        serial_mode = bool(grouped and len(grouped[0].scene_ids) >= serial_shape.scenes_per_arc)
     try:
-        beats = beats_for(head, template_for(head, template))
+        beats = (
+            beats_for_serial(head, serial_shape)
+            if serial_mode and serial_shape is not None
+            else beats_for(head, template_for(head, template))
+        )
     except TemplateMismatch as mismatch:
-        return BookProgress(book_id, branch_id, 0, 0, str(mismatch))
+        return BookProgress(book_id, branch_id, 0, 0, str(mismatch), open_ended=serial_mode)
+    continuation = None
+    if serial_mode and serial_shape is not None:
+        arcs = arcs_of(head, serial_shape)
+        if arcs and not arcs[-1].closed:
+            missing = serial_shape.scenes_per_arc - len(arcs[-1].scene_ids)
+            continuation = (
+                f"arc {arcs[-1].index} needs {missing} more planned scene node(s) before "
+                "its beat sheet can be fixed"
+            )
+        elif arcs:
+            continuation = f"ready to plan arc {arcs[-1].index + 1}; the serial remains open"
     if premise_of(store.plan_items(book_id, branch_id)) is None:
         return BookProgress(
             book_id,
@@ -640,11 +685,18 @@ def plan_progress(
             sum(1 for beat in beats if not is_draftable(head, beat.logical_id, policy=policy)),
             len(beats),
             "no single premise plan item; import a plan snapshot for this book",
+            continuation,
+            serial_mode,
         )
-    drafted = sum(
-        1 for beat in beats if not is_draftable(head, beat.logical_id, policy=policy)
+    drafted = sum(1 for beat in beats if not is_draftable(head, beat.logical_id, policy=policy))
+    return BookProgress(
+        book_id,
+        branch_id,
+        drafted,
+        len(beats),
+        continuation_reason=continuation,
+        open_ended=serial_mode,
     )
-    return BookProgress(book_id, branch_id, drafted, len(beats))
 
 
 def make_plan_selector(
@@ -656,6 +708,9 @@ def make_plan_selector(
     outline: bool = True,
     director_id: str = "",
     scenes_per_chapter: int = 1,
+    chapters_per_arc: int = 6,
+    chapters_per_volume: int = 50,
+    open_ended: bool = False,
     writer: Writer | None = None,
 ) -> WorkSelector:
     """Build a `WorkSelector` that materialises the next unblocked beat.
@@ -700,9 +755,7 @@ def make_plan_selector(
     with no key. So this makes one writer reachable; it establishes nothing about which.
     """
 
-    def select(
-        store: ApplicationStore, holder: str, now: float, duration: float
-    ) -> Job | None:
+    def select(store: ApplicationStore, holder: str, now: float, duration: float) -> Job | None:
         # 1. Make safe, explicit direction claimable first. A constraint received before
         #    this tick must affect the next scene, not the scene after it.
         _enqueue_verbatim_direction(store)
@@ -726,8 +779,23 @@ def make_plan_selector(
         day = stamp[:10]
 
         # 3. Least-progressed book first: fairness derived from state, no cursor to drift.
+        serial_shape = (
+            SerialShape(
+                scenes_per_chapter=scenes_per_chapter,
+                chapters_per_arc=chapters_per_arc,
+            )
+            if open_ended
+            else None
+        )
         books = [
-            plan_progress(store, book_id, branch_id, template=template, policy=policy)
+            plan_progress(
+                store,
+                book_id,
+                branch_id,
+                template=template,
+                policy=policy,
+                serial_shape=serial_shape,
+            )
             for book_id, branch_id, _ in store.branches()
         ]
         for progress in sorted(books, key=lambda item: (item.drafted, item.book_id)):
@@ -742,12 +810,41 @@ def make_plan_selector(
             if plan_revision is None:  # pragma: no cover - premise lookup implies a plan
                 continue
             epoch = store.plan_epoch(progress.book_id, progress.branch_id)
-            beats = beats_for(head, template_for(head, template))
+            book_serial_shape = serial_shape if progress.open_ended else None
+            all_beats = (
+                beats_for_serial(head, book_serial_shape)
+                if book_serial_shape is not None
+                else beats_for(head, template_for(head, template))
+            )
+            beats = all_beats
+            arc_index = 0
+            if book_serial_shape is not None:
+                # Work one closed arc at a time. Its outline, progression schedule, promises,
+                # and dramatic functions then share one bounded scope and never call the
+                # latest planned arc the end of the series.
+                beats = ()
+                for arc in arcs_of(head, book_serial_shape):
+                    if not arc.closed:
+                        continue
+                    arc_beats = beats_for_arc(head, arc)
+                    if any(
+                        is_draftable(head, beat.logical_id, policy=policy) for beat in arc_beats
+                    ):
+                        beats = arc_beats
+                        arc_index = arc.index
+                        break
+                if not beats:
+                    continue
             # Where each scene sits in its chapter, grouped once per book rather than once
             # per beat. Empty under the default shape, which asserts nothing, and empty is
             # what makes the ordinary prompt byte-identical to what it was.
             positions = (
-                chapter_positions(head, SerialShape(scenes_per_chapter=scenes_per_chapter))
+                chapter_positions(
+                    head,
+                    book_serial_shape or SerialShape(scenes_per_chapter=scenes_per_chapter),
+                    chapters_per_volume=chapters_per_volume,
+                    open_ended=open_ended,
+                )
                 if scenes_per_chapter > 1
                 else {}
             )
@@ -769,17 +866,29 @@ def make_plan_selector(
             needs_outline = (
                 outline
                 and len(set(functions)) < len(functions)
-                and any(
-                    scene_plan_for(plan_items, beat.logical_id) is None for beat in beats
-                )
+                and any(scene_plan_for(plan_items, beat.logical_id) is None for beat in beats)
             )
             if needs_outline:
-                outline_id = outline_job_id(progress.book_id, progress.branch_id, epoch)
+                outline_id = outline_job_id(
+                    progress.book_id,
+                    progress.branch_id,
+                    epoch,
+                    scope=f"arc-{arc_index}" if arc_index else "book",
+                )
                 if not store.has_job(outline_id):
                     outline_payload = {
                         "book_id": progress.book_id,
                         "branch_id": progress.branch_id,
                         "plan_epoch": epoch,
+                        **(
+                            {
+                                "arc_index": arc_index,
+                                "scenes_per_chapter": scenes_per_chapter,
+                                "chapters_per_arc": chapters_per_arc,
+                            }
+                            if arc_index
+                            else {}
+                        ),
                     }
                     store.enqueue(
                         Job(
@@ -797,8 +906,11 @@ def make_plan_selector(
 
             ids = [
                 beat_job_id(
-                    progress.book_id, progress.branch_id, beat.logical_id,
-                    template_for(head, template).template_id, epoch,
+                    progress.book_id,
+                    progress.branch_id,
+                    beat.logical_id,
+                    beat.template_id,
+                    epoch,
                 )
                 for beat in beats
             ]
@@ -836,15 +948,20 @@ def make_plan_selector(
                     beat.logical_id,
                 )
                 job_id = beat_job_id(
-                    progress.book_id, progress.branch_id, beat.logical_id,
-                    template_for(head, template).template_id, epoch,
+                    progress.book_id,
+                    progress.branch_id,
+                    beat.logical_id,
+                    beat.template_id,
+                    epoch,
                 )
                 if store.has_job(job_id):
                     # Already planned under this epoch: in flight, or burned by a poison.
                     continue
                 try:
                     packet = packet_for(
-                        store, head, beat,
+                        store,
+                        head,
+                        beat,
                         token_budget=token_budget,
                         pov_character_id=pov_id,
                     )
@@ -879,14 +996,14 @@ def make_plan_selector(
                     beat,
                     book_title=_book_title(head),
                     packet=packet,
-                    status_example=system_voice_example(
-                        records, at=beat.story_order_key
-                    ),
+                    # A status snapshot is the value *entering* its keyed scene (the imported
+                    # s1 snapshot is the seed), unlike an extracted assertion whose evidence
+                    # establishes it during that scene.  Keep the exact snapshot here; the
+                    # ordinary character/world records still use StateMoment.ENTERING.
+                    status_example=system_voice_example(records, at=beat.story_order_key),
                     target_words=(policy or DraftPolicy()).target_words,
                     scene_plan=(plan_item.text if plan_item is not None else None),
-                    progression=progression_target(
-                        records, at=beat.story_order_key
-                    ),
+                    progression=progression_target(records, at=beat.story_order_key),
                     criteria=worlds.criterion_brief(records),
                     # The ladder's two, and both are `None` for every book whose canon declares
                     # no standing — which is every book written before 2026-08-22, and the
@@ -904,9 +1021,7 @@ def make_plan_selector(
                     chapter=positions.get(beat.logical_id),
                     point_of_view=pov_id,
                     writer=writer,
-                    direction=direction_for(
-                        store, progress.book_id, progress.branch_id
-                    ),
+                    direction=direction_for(store, progress.book_id, progress.branch_id),
                 )
                 payload: dict[str, object] = {
                     "revision_id": head.revision_id,
@@ -925,6 +1040,8 @@ def make_plan_selector(
                         "beat_function": beat.function,
                         "ordinal": beat.ordinal,
                         "of_total": beat.of_total,
+                        "open_ended_serial": book_serial_shape is not None,
+                        "arc_index": arc_index or None,
                         "plan_epoch": epoch,
                         "predicate": "draftable.v0",
                         # Where the template says this beat sits in story time, or None when
@@ -946,9 +1063,7 @@ def make_plan_selector(
                         "budget": packet.token_budget,
                         "counter": COUNTER_ID,
                         "sections": {
-                            name: len(items)
-                            for name, items in packet.sections.items()
-                            if items
+                            name: len(items) for name, items in packet.sections.items() if items
                         },
                     },
                     "context_omitted": [

@@ -24,6 +24,7 @@ from litharness.application.repair import (
     evaluation_job_for,
     make_evaluation_handler,
     make_repair_handler,
+    render_repair_request,
     repair_job_for,
 )
 from litharness.domain.events import EventType
@@ -136,6 +137,34 @@ def _state_record(record_id: str, revision, logical_id: str) -> lc.StateRecord:
     )
 
 
+def test_a_repair_sees_the_complete_scene_plan_facts_and_other_evidence() -> None:
+    finding = Finding(
+        finding_id="f",
+        category="continuity",
+        severity=Severity.MAJOR,
+        message="The price contradicts the earlier toll.",
+        rule_or_critic_id="continuity.toll.v0",
+        logical_id="scene-2",
+    )
+    text = "Before the toll. Five coins vanished. After the toll."
+    request = render_repair_request(
+        finding,
+        text,
+        17,
+        36,
+        scene_plan="Rook discovers the toll has changed.",
+        facts=("gate toll ten_coins",),
+        anchors=("scene-1 [10:20]: 'The keeper named ten coins.'",),
+    )
+    assert text in request.prompt.replace("<<<REPLACE START>>>", "").replace(
+        "<<<REPLACE END>>>", ""
+    )
+    assert "Rook discovers the toll has changed" in request.prompt
+    assert "gate toll ten_coins" in request.prompt
+    assert "The keeper named ten coins" in request.prompt
+    assert request.schema is not None and "replacement" in request.schema["properties"]
+
+
 def test_accepted_draft_is_evaluated_repaired_and_verified(store: SqliteStore) -> None:
     registry, provider = _registry()
     base = seeded(store, {"book_id": BOOK_ID, "branch_id": BRANCH_ID})
@@ -151,9 +180,7 @@ def test_accepted_draft_is_evaluated_repaired_and_verified(store: SqliteStore) -
                 PROJECT_ID,
                 schedule_evaluation=True,
             ),
-            EVALUATE_REVISION: make_evaluation_handler(
-                LocatedNameEvaluator(), store, PROJECT_ID
-            ),
+            EVALUATE_REVISION: make_evaluation_handler(LocatedNameEvaluator(), store, PROJECT_ID),
             REPAIR_FINDING: make_repair_handler(registry, store, PROJECT_ID),
         },
     )
@@ -194,9 +221,11 @@ def test_incomplete_verification_never_marks_a_finding_fixed(
 ) -> None:
     accepted = make_revision()
     store.commit_revision(accepted, created_at="2026-08-14T00:00:00Z")
-    finding = LocatedNameEvaluator().evaluate(
-        EvaluationRequest(revision=accepted, logical_id="scene-1")
-    ).findings
+    finding = (
+        LocatedNameEvaluator()
+        .evaluate(EvaluationRequest(revision=accepted, logical_id="scene-1"))
+        .findings
+    )
     assert len(finding) == 1
     store.record_findings(
         BOOK_ID,
@@ -237,9 +266,11 @@ def test_persistent_complaint_stays_open_without_spawning_an_unbounded_loop(
 ) -> None:
     revision = make_revision()
     store.commit_revision(revision, created_at="2026-08-14T00:00:00Z")
-    findings = LocatedNameEvaluator().evaluate(
-        EvaluationRequest(revision=revision, logical_id="scene-1")
-    ).findings
+    findings = (
+        LocatedNameEvaluator()
+        .evaluate(EvaluationRequest(revision=revision, logical_id="scene-1"))
+        .findings
+    )
     store.record_findings(
         BOOK_ID,
         BRANCH_ID,
@@ -261,9 +292,7 @@ def test_persistent_complaint_stays_open_without_spawning_an_unbounded_loop(
         holder="worker-a",
         project_id=PROJECT_ID,
         handlers={
-            EVALUATE_REVISION: make_evaluation_handler(
-                LocatedNameEvaluator(), store, PROJECT_ID
-            )
+            EVALUATE_REVISION: make_evaluation_handler(LocatedNameEvaluator(), store, PROJECT_ID)
         },
     )
 
@@ -520,9 +549,7 @@ def test_a_repair_that_changes_a_fact_re_evaluates_the_scenes_that_state_it(
 
     assert _repair_tick(store, revision, "Gold 25", "Gold 33").outcome is TickOutcome.RAN_JOB
 
-    queued = {
-        str(job.payload["logical_id"]): job for job in store.jobs_by_status(JobStatus.QUEUED)
-    }
+    queued = {str(job.payload["logical_id"]): job for job in store.jobs_by_status(JobStatus.QUEUED)}
     assert set(queued) == {"scene-2", "scene-3", "scene-4", "scene-5", "scene-6"}
     # scene-2 is the verification of the repair itself; the rest are what the change reached.
     assert queued["scene-2"].payload.get("verification_of_finding_id") == "f-gold-ledger"
@@ -557,17 +584,12 @@ def test_a_repair_that_changes_no_fact_propagates_nothing(store: SqliteStore) ->
     on every acceptance would multiply the cost of every repair by the length of the book."""
     revision = _litrpg(store)
 
-    assert (
-        _repair_tick(store, revision, "barrelhead", "counter").outcome
-        is TickOutcome.RAN_JOB
-    )
+    assert _repair_tick(store, revision, "barrelhead", "counter").outcome is TickOutcome.RAN_JOB
 
     queued = [str(job.payload["logical_id"]) for job in store.jobs_by_status(JobStatus.QUEUED)]
     assert queued == ["scene-2"], "only the repair's own verification"
     assert not [
-        entry
-        for entry in store.read_log()
-        if entry.event.event_type is EventType.IMPACT_ANALYZED
+        entry for entry in store.read_log() if entry.event.event_type is EventType.IMPACT_ANALYZED
     ]
 
 

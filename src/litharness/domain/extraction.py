@@ -291,9 +291,7 @@ class GraphLine:
             raise MalformedGraphLine("a graph line needs at least one edge phrase")
         phrases = [edge.phrase for edge in self.edges]
         if len(set(phrases)) != len(phrases):
-            raise MalformedGraphLine(
-                f"a graph line may not repeat a phrase: {sorted(phrases)}"
-            )
+            raise MalformedGraphLine(f"a graph line may not repeat a phrase: {sorted(phrases)}")
         # **Shape, because the first forged declaration was a paragraph.** Asked for a printed
         # line form, one world returned `label` = "one dry season in the Kettle Basin" and eight
         # "phrases" that were clauses of a story — well-formed JSON, accepted by every type
@@ -334,9 +332,7 @@ class GraphLine:
 
 
 @cache
-def _compile_graph_pattern(
-    label: str, edges: tuple[GraphEdge, ...]
-) -> re.Pattern[str]:
+def _compile_graph_pattern(label: str, edges: tuple[GraphEdge, ...]) -> re.Pattern[str]:
     """Anchored at the start of a line, like the status pattern and for the same reason.
 
     Phrases are alternated **longest first** so that a book declaring both "holds" and "no
@@ -395,8 +391,7 @@ def graph_line_fault(records: Sequence[lc.StateRecord]) -> str | None:
     declared = [
         record
         for record in records
-        if record.predicate == worlds_mod.GRAPH_LINE_PREDICATE
-        and state_mod.is_canon(record)
+        if record.predicate == worlds_mod.GRAPH_LINE_PREDICATE and state_mod.is_canon(record)
     ]
     if len(declared) != 1:
         return None
@@ -428,8 +423,7 @@ def graph_line_for(records: Sequence[lc.StateRecord]) -> GraphLine | None:
     declared = [
         record
         for record in records
-        if record.predicate == worlds_mod.GRAPH_LINE_PREDICATE
-        and state_mod.is_canon(record)
+        if record.predicate == worlds_mod.GRAPH_LINE_PREDICATE and state_mod.is_canon(record)
     ]
     if len(declared) != 1:
         return None
@@ -537,9 +531,7 @@ def render_status_line(
     )
 
 
-def progression_target(
-    records: Sequence[lc.StateRecord], *, at: str | None = None
-) -> str | None:
+def progression_target(records: Sequence[lc.StateRecord], *, at: str | None = None) -> str | None:
     """The next milestone a progression schedule asks this book to reach, or None.
 
     **The defect this addresses is that the ledger never moves.** Measured over a 24-scene
@@ -580,9 +572,7 @@ def progression_target(
     return render_status_line(target.subject, target.value)
 
 
-def standing_target(
-    records: Sequence[lc.StateRecord], *, at: str | None = None
-) -> str | None:
+def standing_target(records: Sequence[lc.StateRecord], *, at: str | None = None) -> str | None:
     """The next rung a standing schedule asks this book to reach, as one line of facts. Or None.
 
     **`progression_target`'s twin, and every one of that function's arguments applies here.**
@@ -613,9 +603,7 @@ def standing_target(
         and state_mod.order_key_of(record) is not None
     ]
     ahead = [
-        record
-        for record in scheduled
-        if at is None or (state_mod.order_key_of(record) or "") >= at
+        record for record in scheduled if at is None or (state_mod.order_key_of(record) or "") >= at
     ]
     if not ahead:
         return None
@@ -650,9 +638,7 @@ def standing_target(
     return f"{line}: {aimed_form}" if aimed_form else line
 
 
-def standing_example(
-    records: Sequence[lc.StateRecord], *, at: str | None = None
-) -> str | None:
+def standing_example(records: Sequence[lc.StateRecord], *, at: str | None = None) -> str | None:
     """One graph line, filled with this book's own words and its live rung, or `None`.
 
     **`system_voice_example` for the second extractor family, and it exists for that
@@ -671,11 +657,7 @@ def standing_example(
     if line is None:
         return None
     phrase = next(
-        (
-            edge.phrase
-            for edge in line.edges
-            if edge.predicate == worlds_mod.STANDS_AT_PREDICATE
-        ),
+        (edge.phrase for edge in line.edges if edge.predicate == worlds_mod.STANDS_AT_PREDICATE),
         None,
     )
     if phrase is None:
@@ -705,9 +687,9 @@ def speaks_system_voice(records: Sequence[lc.StateRecord]) -> bool:
     would put a LitRPG stat block in a locked-room mystery.
     """
     return any(
-        record.predicate == STATUS_PREDICATE and state_mod.is_canon(record)
-        for record in records
+        record.predicate == STATUS_PREDICATE and state_mod.is_canon(record) for record in records
     )
+
 
 #: Named so a later registry change is a visible version bump rather than a silent reread.
 #: Deliberately not the fixtures' `fixture.v1`: these records are this extractor's reading,
@@ -756,9 +738,7 @@ def normalise_subject(name: str) -> str:
     return re.sub(r"\s+", "_", folded)
 
 
-def attested_position(
-    records: Sequence[lc.StateRecord], logical_id: str
-) -> str | None:
+def attested_position(records: Sequence[lc.StateRecord], logical_id: str) -> str | None:
     """The story position this scene is attested at, or None when the book has not said.
 
     Reads the answer out of the imported snapshot instead of computing it: a canon record
@@ -841,9 +821,7 @@ def stated_position(known: Sequence[lc.StateRecord], stated: str | None) -> str 
     return stated
 
 
-def record_id_for(
-    subject: str, predicate: str, order_key: str, value: Mapping[str, object]
-) -> str:
+def record_id_for(subject: str, predicate: str, order_key: str, value: Mapping[str, object]) -> str:
     """Content-derived, and **value-sensitive on purpose**.
 
     A replayed tick must converge rather than accumulate, so the id cannot carry the revision
@@ -853,15 +831,11 @@ def record_id_for(
     the old value standing, and report success. Including the value means two disagreeing
     readings are two rows — which is exactly what the detector needs to see them.
     """
-    material = payload_digest(
-        {"s": subject, "p": predicate, "k": order_key, "v": value}
-    )
+    material = payload_digest({"s": subject, "p": predicate, "k": order_key, "v": value})
     return f"rec-x{sha256(material.encode()).hexdigest()[:24]}"
 
 
-def graph_record_id_for(
-    subject: str, predicate: str, object_ref: str, order_key: str
-) -> str:
+def graph_record_id_for(subject: str, predicate: str, object_ref: str, order_key: str) -> str:
     """Content-derived, with the position in the material.
 
     `record_id_for` puts the *value* in so that two disagreeing readings are two rows the
@@ -870,9 +844,7 @@ def graph_record_id_for(
     to the position would collapse the promoted canon row onto the proposal it promotes and
     `INSERT OR IGNORE` would keep the proposal.
     """
-    material = payload_digest(
-        {"s": subject, "p": predicate, "o": object_ref, "k": order_key}
-    )
+    material = payload_digest({"s": subject, "p": predicate, "o": object_ref, "k": order_key})
     return f"rec-g{sha256(material.encode()).hexdigest()[:24]}"
 
 
@@ -981,16 +953,10 @@ def extract_graph_facts(
                 # The criterion rides on the edge so two ladders in
                 # one world must not splice. Derived rather than printed — the page prints a
                 # rung and a reader knows which ladder it is on.
-                value=(
-                    worlds_mod.criterion_of_rung(_canon_of(known), target)
-                    if stands
-                    else None
-                ),
+                value=(worlds_mod.criterion_of_rung(_canon_of(known), target) if stands else None),
                 story_position=lc.StoryPosition(order_key=order_key),
                 authority=(
-                    lc.StateAuthority.ACCEPTED_CANON
-                    if stands
-                    else lc.StateAuthority.PROPOSED
+                    lc.StateAuthority.ACCEPTED_CANON if stands else lc.StateAuthority.PROPOSED
                 ),
                 pov_visibility=[],
                 evidence=[
@@ -1072,8 +1038,7 @@ def promotions(
         if key in already:
             continue
         reused = any(
-            record.predicate not in touched.get(endpoint, set())
-            and endpoint in touched
+            record.predicate not in touched.get(endpoint, set()) and endpoint in touched
             for endpoint in (record.subject, record.object_ref)
         )
         if not reused:
@@ -1126,9 +1091,7 @@ def extract_state(
     and a stated one is only consulted when the book is silent, so this can never override or
     interleave with an author's vocabulary.
     """
-    order_key = attested_position(known, logical_id) or stated_position(
-        known, stated_order_key
-    )
+    order_key = attested_position(known, logical_id) or stated_position(known, stated_order_key)
     if order_key is None:
         return ()
     #: Recorded on every record whose position the planner supplied, because "the book said
@@ -1229,10 +1192,7 @@ def _already_canon(
         if state_mod.is_canon(record)
         and not (
             replacing_logical_id is not None
-            and any(
-                span.source.logical_id == replacing_logical_id
-                for span in record.evidence
-            )
+            and any(span.source.logical_id == replacing_logical_id for span in record.evidence)
         )
     )
 
@@ -1274,7 +1234,7 @@ __all__ = [
 
 
 def system_voice_example(
-    records: Sequence[lc.StateRecord], *, at: str | None = None
+    records: Sequence[lc.StateRecord], *, at: str | None = None, include_at: bool = True
 ) -> str | None:
     """The book's own current status line, to show a generator what to write — or None.
 
@@ -1313,12 +1273,17 @@ def system_voice_example(
         # same answer as not speaking: an example is what makes the instruction unambiguous,
         # and there is nothing to build one out of.
         return None
-    exact = [record for record in snapshots if state_mod.order_key_of(record) == at]
+    exact = (
+        [record for record in snapshots if state_mod.order_key_of(record) == at]
+        if include_at
+        else []
+    )
     earlier = [
-        record
-        for record in snapshots
-        if at is None or (state_mod.order_key_of(record) or "") < at
+        record for record in snapshots if at is None or (state_mod.order_key_of(record) or "") < at
     ]
-    chosen = exact or earlier or snapshots
+    fallback = [record for record in snapshots if at is None] if not include_at else snapshots
+    chosen = exact or earlier or fallback
+    if not chosen:
+        return None
     latest = max(chosen, key=lambda record: state_mod.order_key_of(record) or "")
     return render_status_line(latest.subject, latest.value, sheet=sheet_for(records))

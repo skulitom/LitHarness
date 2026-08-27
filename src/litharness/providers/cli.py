@@ -218,13 +218,7 @@ class ClaudeCodeProvider:
         `claude -p` has no native structured-output mode — it returned fenced markdown when
         asked for JSON — so the instruction plus fence-stripping is the whole mechanism.
         """
-        parts = [request.system] if request.system else []
-        if request.schema is not None:
-            parts.append(
-                "Reply with a single JSON object conforming to this schema and nothing "
-                "else — no prose, no code fence:\n" + json.dumps(request.schema, sort_keys=True)
-            )
-        return "\n\n".join(parts)
+        return request.effective_system
 
     def health(self) -> bool:
         try:

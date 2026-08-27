@@ -25,6 +25,7 @@ from litharness.application.director import (
     DIRECT_PRIORITY,
     DIRECTIVE_EVERY,
     DirectorOutputError,
+    current_story_state,
     direct_job_id,
     directive_from,
     render_request,
@@ -51,6 +52,7 @@ from litharness.domain.directors import (
     machine_author,
 )
 from litharness.domain.generation import CompletionResult
+from litharness.domain.revision import new_book
 from tests.conftest import BOOK_ID, BRANCH_ID, make_revision
 
 STAMP = "2026-08-19T00:00:00Z"
@@ -59,7 +61,10 @@ DELVER = BUILTIN["delver"]
 
 def a_result(**payload: object) -> CompletionResult:
     return CompletionResult(
-        text="{}", provider="stub", model="stub-v1", parsed=dict(payload),
+        text="{}",
+        provider="stub",
+        model="stub-v1",
+        parsed=dict(payload),
         schema_requested=True,
     )
 
@@ -110,9 +115,7 @@ def test_a_director_is_addressed_by_its_own_words() -> None:
     assert one.director_id != two.director_id
     assert build("a", one.brief).director_id == one.director_id
     with pytest.raises(IllegalBrief, match="does not address"):
-        directors_mod.Director(
-            director_id="dtor-wrong", name="a", brief=one.brief
-        )
+        directors_mod.Director(director_id="dtor-wrong", name="a", brief=one.brief)
 
 
 # -- the licence: which kinds, and which authority -----------------------------------------
@@ -131,7 +134,10 @@ def test_a_director_that_issues_a_veto_is_refused() -> None:
         with pytest.raises(DirectorOutputError, match="may not emit"):
             directive_from(
                 a_result(kind=kind.value, body="no more mazes"),
-                DELVER, book_id=BOOK_ID, branch_id=BRANCH_ID, at=STAMP,
+                DELVER,
+                book_id=BOOK_ID,
+                branch_id=BRANCH_ID,
+                at=STAMP,
             )
 
 
@@ -141,7 +147,10 @@ def test_a_director_that_instructs_about_prose_is_refused_at_the_directive_too()
     with pytest.raises(DirectorOutputError, match="not legal"):
         directive_from(
             a_result(kind="tone_note", body="Trim the em dashes out of the prose."),
-            DELVER, book_id=BOOK_ID, branch_id=BRANCH_ID, at=STAMP,
+            DELVER,
+            book_id=BOOK_ID,
+            branch_id=BRANCH_ID,
+            at=STAMP,
         )
 
 
@@ -149,19 +158,28 @@ def test_a_malformed_answer_is_a_failed_call_and_never_an_empty_directive() -> N
     with pytest.raises(DirectorOutputError, match="schema"):
         directive_from(
             CompletionResult(text="", provider="s", model="s", schema_requested=True),
-            DELVER, book_id=BOOK_ID, branch_id=BRANCH_ID, at=STAMP,
+            DELVER,
+            book_id=BOOK_ID,
+            branch_id=BRANCH_ID,
+            at=STAMP,
         )
     with pytest.raises(DirectorOutputError, match="non-empty body"):
         directive_from(
             a_result(kind="arc_note", body="   "),
-            DELVER, book_id=BOOK_ID, branch_id=BRANCH_ID, at=STAMP,
+            DELVER,
+            book_id=BOOK_ID,
+            branch_id=BRANCH_ID,
+            at=STAMP,
         )
 
 
 def test_a_directive_a_director_wrote_says_so() -> None:
     directive = directive_from(
         a_result(kind="arc_note", body="Take them under the road."),
-        DELVER, book_id=BOOK_ID, branch_id=BRANCH_ID, at=STAMP,
+        DELVER,
+        book_id=BOOK_ID,
+        branch_id=BRANCH_ID,
+        at=STAMP,
     )
     assert directive.author == machine_author(DELVER.director_id)
     assert is_machine_author(directive.author)
@@ -194,9 +212,7 @@ def test_a_machine_authored_directive_is_never_verbatim_actionable() -> None:
         "branch_id": BRANCH_ID,
     }
     human = Directive(directive_id="dir-h", **words)
-    machine = Directive(
-        directive_id="dir-m", author=machine_author(DELVER.director_id), **words
-    )
+    machine = Directive(directive_id="dir-m", author=machine_author(DELVER.director_id), **words)
     assert is_verbatim_actionable(human)
     assert not is_verbatim_actionable(machine)
 
@@ -252,9 +268,7 @@ def test_a_machine_authored_directive_cannot_mint_a_locked_plan_item(
             branch_id=BRANCH_ID,
             author=machine_author(DELVER.director_id),
         )
-        proposal = proposal_from_model(
-            payload, base=base, directive=machine, result=result
-        )
+        proposal = proposal_from_model(payload, base=base, directive=machine, result=result)
         [edit] = proposal.edits
         assert edit.item is not None and edit.item.locked is False, (
             "a machine's direction may not wear the human director's authority"
@@ -270,9 +284,7 @@ def test_a_machine_authored_directive_cannot_mint_a_locked_plan_item(
             book_id=BOOK_ID,
             branch_id=BRANCH_ID,
         )
-        [human_edit] = proposal_from_model(
-            payload, base=base, directive=human, result=result
-        ).edits
+        [human_edit] = proposal_from_model(payload, base=base, directive=human, result=result).edits
         assert human_edit.item is not None and human_edit.item.locked is True, (
             "a person's directive still locks, which is what the downgrade is protecting"
         )
@@ -305,6 +317,51 @@ def test_the_director_is_handed_the_books_shape_and_never_its_prose() -> None:
     assert "do not instruct about" in request.prompt
 
 
+def test_the_director_sees_ordered_fresh_structure_and_an_open_serial_boundary() -> None:
+    request = render_request(
+        DELVER,
+        premise="A road keeps descending.",
+        statements=(),
+        summaries=(("scene-10", "The tenth event."), ("scene-2", "The second event.")),
+        drafted=10,
+        of_total=12,
+        open_promises=("first debt", "second debt"),
+        current_state=("rook location under-road", "rook wants return"),
+        open_ended=True,
+    )
+    assert request.prompt.index("scene-10") < request.prompt.index("scene-2"), (
+        "the caller's reading order must not be replaced by lexical id order"
+    )
+    assert "CURRENT STORY STATE" in request.prompt
+    assert "first debt" in request.prompt and "second debt" in request.prompt
+    assert "open-ended serial" in request.prompt
+    assert "never treat the current plan boundary as the series ending" in request.prompt
+
+
+def test_the_directors_state_uses_the_furthest_accepted_scene_not_the_draft_count() -> None:
+    blank = new_book("book", "branch", title="Serial", scenes=3)
+    revision = blank.replacing([blank.node("scene-3").with_content("The third scene exists.")])
+    records = [
+        lc.StateRecord(
+            record_id=f"want-{index}",
+            kind=lc.StateRecordKind.ASSERTION,
+            subject="mara",
+            predicate="wants",
+            value=value,
+            story_position=lc.StoryPosition(order_key=f"s{index}"),
+            authority=lc.StateAuthority.ACCEPTED_CANON,
+        )
+        for index, value in enumerate(("escape", "hide", "return"), start=1)
+    ]
+
+    assert current_story_state(blank, records) == ("mara wants escape",), (
+        "before prose, the Director sees the state effective at scene-one entry"
+    )
+    assert current_story_state(revision, records) == ("mara wants return",), (
+        "one drafted node at ordinal three is through scene three, not through scene one"
+    )
+
+
 def test_the_director_store_cannot_write_prose() -> None:
     """Structural, over the protocol rather than the call sites: `DirectorStore` has no
     `commit_revision`, so the role could not write a scene even if something asked it to."""
@@ -323,9 +380,7 @@ def test_direction_is_bounded_by_accepted_scenes_rather_than_plan_churn() -> Non
     application bumps the epoch."""
     revision = make_revision()
     assert scene_block(None) == 0
-    assert scene_block(revision) == len(
-        [n for n in revision.nodes if n.content]
-    ) // DIRECTIVE_EVERY
+    assert scene_block(revision) == len([n for n in revision.nodes if n.content]) // DIRECTIVE_EVERY
     first = direct_job_id(BOOK_ID, BRANCH_ID, 0)
     assert first == direct_job_id(BOOK_ID, BRANCH_ID, 0), "replay converges"
     assert first != direct_job_id(BOOK_ID, BRANCH_ID, 1)
@@ -446,10 +501,20 @@ def test_an_illegal_brief_is_refused_at_the_command_line(tmp_path, capsys) -> No
     db = tmp_path / "cli.db"
     main(["--database", str(db), "init"])
     capsys.readouterr()
-    assert main([
-        "--database", str(db), "directors", "--register", "sloppy",
-        "--brief", "Keep the sentences short and drop the em dashes.",
-    ]) == EXIT_FAULT
+    assert (
+        main(
+            [
+                "--database",
+                str(db),
+                "directors",
+                "--register",
+                "sloppy",
+                "--brief",
+                "Keep the sentences short and drop the em dashes.",
+            ]
+        )
+        == EXIT_FAULT
+    )
     assert "what the book is about" in capsys.readouterr().err
 
 

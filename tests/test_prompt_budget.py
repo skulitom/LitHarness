@@ -25,11 +25,15 @@ were themselves reading for *"what the next rung costs"*, so they scored the jar
 
 from __future__ import annotations
 
+import json
+
 import pytest
 
 from litharness.application import overview, readers, titles, world_agent
+from litharness.cli import EXIT_OK, main
 from litharness.domain import house
 from litharness.domain import writers as writers_domain
+from litharness.domain.generation import CompletionRequest
 
 #: One writer, fixed, so a budget is about the rules rather than about whose dossier is longest.
 WRITER = writers_domain.CAST["ferreira"]
@@ -45,11 +49,13 @@ def _roles() -> dict[str, str]:
         "architect grow": (
             world_agent.render_grow_request("prose", logical_id="s1", writer=WRITER).system or ""
         ),
-        "scene writer floor": (floor := house.with_house_rules(
-            "You are drafting one scene of a novel. Write only the scene's prose: no headings, "
-            "no commentary, no summary of what you wrote. The context below is established and "
-            "may be relied on; do not contradict it."
-        )),
+        "scene writer floor": (
+            floor := house.with_house_rules(
+                "You are drafting one scene of a novel. Write only the scene's prose: no headings, "
+                "no commentary, no summary of what you wrote. The context below is established and "
+                "may be relied on; do not contradict it."
+            )
+        ),
         # **The floor plus who is writing, which was unreachable until 2026-08-25.**
         # `render_prompt` has taken a dossier since 2026-08-20 and `make_plan_selector` had no
         # way to pass one, so the row above was the whole of what a drafter was ever sent. It
@@ -204,3 +210,45 @@ def test_the_house_floor_itself_is_reader_facing() -> None:
     """It reaches every one of them, so it is held to the same rail."""
     found = sorted(word for word in house.MACHINERY_WORDS if word in house.HOUSE_RULES.lower())
     assert not found, f"the house floor speaks this system's own vocabulary: {found}"
+
+
+def test_effective_input_counts_system_schema_and_declared_tools() -> None:
+    request = CompletionRequest(
+        prompt="material",
+        system="role",
+        schema={"type": "object"},
+        allowed_tools=("Bash(litharness world:*)",),
+    )
+    assert request.schema_instruction
+    assert request.input_chars == sum(
+        (
+            len(request.prompt),
+            len(request.effective_system),
+            len(",".join(request.allowed_tools)),
+        )
+    )
+    assert request.input_chars > len(request.prompt)
+
+
+def test_prompt_inspector_covers_every_production_communication_role(
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    assert main(["prompts", "--json"]) == EXIT_OK
+    rows = json.loads(capsys.readouterr().out)
+    assert {
+        "listing",
+        "title",
+        "title-lookup",
+        "architect-seed",
+        "architect-grow",
+        "outline",
+        "narrative-planner",
+        "scene",
+        "summarizer",
+        "director",
+        "reader-measurement",
+        "reader-steering",
+        "repair",
+    } <= set(rows)
+    assert all(row["input_chars"] >= row["prompt_chars"] for row in rows.values())
+    assert rows["summarizer"]["schema_chars"] > 0

@@ -55,6 +55,8 @@ refusing to fabricate is real and is paid there, not here.
 
 from __future__ import annotations
 
+import enum
+import re
 from collections.abc import Iterable, Sequence
 from dataclasses import dataclass
 
@@ -82,6 +84,7 @@ RESOURCE_KIND: dict[lc.StateRecordKind, lc.ResourceKind] = {
 #: A thread record whose value is this is still owed a payoff. §10.2's "overdue payoff" and
 #: §9.1's foreshadow ledger both start here.
 THREAD_OPEN = "open"
+_SCENE_KEY = re.compile(r"s(?P<number>\d+)$")
 
 
 @dataclass(frozen=True, slots=True)
@@ -95,9 +98,7 @@ class ImportedState:
     source_revision_id: str | None = None
 
 
-def import_state(
-    source: lc.StateSnapshot, *, book_id: str, branch_id: str
-) -> ImportedState:
+def import_state(source: lc.StateSnapshot, *, book_id: str, branch_id: str) -> ImportedState:
     """Adopt a foreign state snapshot against a local book and branch."""
     return ImportedState(
         book_id=book_id,
@@ -131,6 +132,28 @@ def order_key_of(record: lc.StateRecord) -> str | None:
     return record.story_position.order_key if record.story_position else None
 
 
+def scene_cutoff(records: Sequence[lc.StateRecord], scene_ordinal: int) -> str | None:
+    """Project a reading-order scene ordinal into the records' declared ``sN`` width.
+
+    This is deliberately an entitlement check, not a universal conversion.  It returns no
+    coordinate when positioned records use a different vocabulary or disagree about width.
+    New serials use the fixed six-digit form; imported legacy fixtures consistently use one.
+    """
+    if scene_ordinal < 1:
+        return None
+    positioned = [key for record in records if (key := order_key_of(record)) is not None]
+    if not positioned:
+        return None
+    matches = [_SCENE_KEY.fullmatch(key) for key in positioned]
+    if any(match is None for match in matches):
+        return None
+    widths = {len(match.group("number")) for match in matches if match is not None}
+    if len(widths) != 1:
+        return None
+    width = next(iter(widths))
+    return f"s{scene_ordinal:0{width}d}"
+
+
 def records_before(
     records: Sequence[lc.StateRecord], cutoff: str | None
 ) -> tuple[lc.StateRecord, ...]:
@@ -145,10 +168,160 @@ def records_before(
     if cutoff is None:
         return tuple(records)
     return tuple(
+        record for record in records if (key := order_key_of(record)) is None or key <= cutoff
+    )
+
+
+class StateMoment(enum.StrEnum):
+    """Which side of a story coordinate a model is asking from."""
+
+    ENTERING = "entering"
+    WITHIN = "within"
+    THROUGH = "through"
+
+
+@dataclass(frozen=True, slots=True)
+class StoryBoundary:
+    """A precise point from which story state is viewed.
+
+    A scene key is the stable persistence coordinate.  ``WITHIN`` adds the evidence boundary
+    needed when a caller is stopped part-way through that scene: only facts whose cited span
+    has ended by ``offset`` are established.  Chapter and volume state remain cheap derived
+    views of the latest scene boundary they contain; they are not competing sources of truth.
+    """
+
+    cutoff: str | None
+    moment: StateMoment = StateMoment.THROUGH
+    logical_id: str | None = None
+    offset: int | None = None
+
+    def __post_init__(self) -> None:
+        if self.moment is StateMoment.WITHIN:
+            if self.cutoff is None or not self.logical_id or self.offset is None:
+                raise ValueError("within-scene state needs a cutoff, logical id, and offset")
+            if self.offset < 0:
+                raise ValueError("within-scene state offset cannot be negative")
+        elif self.offset is not None:
+            raise ValueError("an offset is only meaningful within a scene")
+        elif self.moment is StateMoment.THROUGH and self.logical_id is not None:
+            raise ValueError("a logical id is not needed after a complete scene boundary")
+
+
+def reached_boundary(record: lc.StateRecord, boundary: StoryBoundary) -> bool:
+    """Whether ``record`` is established on the caller's side of ``boundary``."""
+    key = order_key_of(record)
+    if boundary.cutoff is None or key is None:
+        return True
+    if key < boundary.cutoff:
+        return True
+    if key > boundary.cutoff:
+        return False
+    if boundary.moment is StateMoment.ENTERING:
+        # A seed or schedule dated at this scene is effective as the scene begins.  An
+        # extracted fact cited to this very scene is different: its evidence says the prose
+        # establishes it somewhere inside, so showing it at entry would reveal its own future.
+        # When no target id was supplied, abstain on evidence-backed same-scene records.
+        if not record.evidence:
+            return True
+        if boundary.logical_id is None:
+            return False
+        return not any(span.source.logical_id == boundary.logical_id for span in record.evidence)
+    if boundary.moment is StateMoment.THROUGH:
+        return True
+    assert boundary.logical_id is not None and boundary.offset is not None
+    # A same-scene assertion without located evidence cannot honestly be placed before this
+    # stop point.  Abstention here is safer than leaking the end of the scene into its middle.
+    return any(
+        span.source.logical_id == boundary.logical_id and span.end <= boundary.offset
+        for span in record.evidence
+    )
+
+
+def eligible_records(
+    records: Sequence[lc.StateRecord],
+    *,
+    cutoff: str | None = None,
+    pov_character_id: str | None = None,
+    excluded_predicates: Sequence[str] = (),
+    moment: StateMoment = StateMoment.THROUGH,
+    logical_id: str | None = None,
+    offset: int | None = None,
+) -> tuple[lc.StateRecord, ...]:
+    """Canon a model may see at ``cutoff`` from ``pov_character_id``.
+
+    This is the shared gate for model-facing state.  A character sheet, a compact state view,
+    and an individual fact must not answer time and visibility three different ways: doing so
+    lets a fact rejected from one section reappear through another.  Configuration predicates
+    are supplied by the caller because the state vocabulary deliberately does not depend on
+    the extraction vocabulary that declares them.
+    """
+    excluded = frozenset(excluded_predicates)
+    boundary = StoryBoundary(cutoff, moment, logical_id, offset)
+    return tuple(
         record
         for record in records
-        if (key := order_key_of(record)) is None or key <= cutoff
+        if is_canon(record)
+        and record.predicate not in excluded
+        and visible_to(record, pov_character_id)
+        and reached_boundary(record, boundary)
     )
+
+
+def active_projection(
+    records: Sequence[lc.StateRecord],
+    *,
+    changing_edge_predicates: Sequence[str] = (),
+    multi_valued_predicates: Sequence[str] = (),
+) -> tuple[tuple[lc.StateRecord, ...], tuple[lc.StateRecord, ...]]:
+    """Return ``(current, superseded_history)`` without erasing genuine events.
+
+    Assertions such as a want or status snapshot can change over story time.  Presenting every
+    earlier value under *Established facts* tells a model that all values hold simultaneously.
+    For each changing slot this keeps every record at the latest reached position current and
+    returns older values separately, where a caller can label them as history.
+
+    Events, threads and world rules accumulate and are therefore never collapsed.  Ordinary
+    relationships are cumulative too because their target is part of the slot; callers name
+    the small set of relationship predicates (currently standing) whose target itself changes.
+    Conflicting records at the same latest position are all retained so the projection cannot
+    hide a contradiction from a model or a diagnostic.
+    """
+    changing_edges = frozenset(changing_edge_predicates)
+    multi_valued = frozenset(multi_valued_predicates)
+    groups: dict[tuple[str, str, str], list[lc.StateRecord]] = {}
+    passthrough: list[lc.StateRecord] = []
+    for record in records:
+        if (
+            record.kind
+            in {
+                lc.StateRecordKind.EVENT,
+                lc.StateRecordKind.THREAD,
+                lc.StateRecordKind.WORLD_RULE,
+            }
+            or record.predicate in multi_valued
+        ):
+            passthrough.append(record)
+            continue
+        if record.object_ref and record.predicate not in changing_edges:
+            edge = record.object_ref
+        else:
+            edge = str(record.value or "") if record.predicate in changing_edges else ""
+        groups.setdefault((record.subject, record.predicate, edge), []).append(record)
+
+    current = list(passthrough)
+    history: list[lc.StateRecord] = []
+    for members in groups.values():
+        positioned = [record for record in members if order_key_of(record) is not None]
+        if not positioned:
+            current.extend(members)
+            continue
+        latest_key = max(order_key_of(record) or "" for record in positioned)
+        for record in members:
+            if order_key_of(record) == latest_key:
+                current.append(record)
+            else:
+                history.append(record)
+    return in_story_order(current), in_story_order(history)
 
 
 def open_threads(records: Sequence[lc.StateRecord]) -> tuple[lc.StateRecord, ...]:
@@ -212,13 +385,19 @@ __all__ = [
     "RESOURCE_KIND",
     "THREAD_OPEN",
     "ImportedState",
+    "StateMoment",
+    "StoryBoundary",
+    "active_projection",
     "describe",
+    "eligible_records",
     "import_state",
     "in_story_order",
     "is_canon",
     "open_threads",
     "order_key_of",
+    "reached_boundary",
     "records_before",
     "resource_kind",
+    "scene_cutoff",
     "visible_to",
 ]

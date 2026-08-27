@@ -49,7 +49,13 @@ from litharness.application import status as status_module
 from litharness.application import world as world_mod
 from litharness.application.conductor import Conductor, TickOutcome
 from litharness.application.directive_planner import DIRECTIVE_PLAN, make_directive_plan_handler
-from litharness.application.director import DIRECT, make_director_handler
+from litharness.application.director import (
+    DIRECT,
+    make_director_handler,
+)
+from litharness.application.director import (
+    render_request as render_director_request,
+)
 from litharness.application.evaluation import (
     CompositeEvaluator,
     ContinuityEvaluator,
@@ -61,9 +67,17 @@ from litharness.application.narrative_planner import (
     NARRATIVE_PLAN,
     make_narrative_plan_handler,
 )
-from litharness.application.outline import BOOK_OUTLINE, make_outline_handler
+from litharness.application.narrative_planner import (
+    render_request as render_narrative_request,
+)
+from litharness.application.outline import (
+    BOOK_OUTLINE,
+    make_outline_handler,
+    render_outline_request,
+)
 from litharness.application.plan_refinement import accept_plan_proposal
 from litharness.application.planner import make_plan_selector
+from litharness.application.planner import render_prompt as render_scene_prompt
 from litharness.application.repair import (
     EVALUATE_REVISION,
     REPAIR_FINDING,
@@ -71,8 +85,13 @@ from litharness.application.repair import (
     evaluation_job_for,
     make_evaluation_handler,
     make_repair_handler,
+    render_repair_request,
 )
-from litharness.application.summarize import make_summary_handler
+from litharness.application.summarize import (
+    SUMMARY_SCHEMA,
+    make_summary_handler,
+    render_summary_prompt,
+)
 from litharness.domain import characters as characters_mod
 from litharness.domain import directors as directors_domain
 from litharness.domain import extraction, house, integrity, propagation
@@ -81,21 +100,23 @@ from litharness.domain import state as state_mod
 from litharness.domain import text as text_mod
 from litharness.domain import worlds as worlds_domain
 from litharness.domain import writers as writers_domain
-from litharness.domain.beats import SIX_BEAT, TemplateMismatch, arc_template, beats_for
+from litharness.domain.beats import Beat, BeatTemplate, TemplateMismatch, arc_template, beats_for
 from litharness.domain.budget import BudgetPolicy, Spend
 from litharness.domain.budget import check as budget_check
+from litharness.domain.context import ContextPacket
 from litharness.domain.directives import Directive, DirectiveKind, DirectiveStatus, directive_id_for
 from litharness.domain.draft import DraftPolicy
 from litharness.domain.events import Event, EventType
 from litharness.domain.exceptions import ExceptionStatus
 from litharness.domain.failures import OperationalFailure
-from litharness.domain.findings import Finding
+from litharness.domain.findings import Finding, Severity
 from litharness.domain.findings import Status as finding_status
 from litharness.domain.generation import CompletionRequest, CompletionResult
 from litharness.domain.jobs import Job, JobStatus, input_digest_for
 from litharness.domain.nodes import Node, NodeKind
 from litharness.domain.plan_refinement import (
     PlanProposalStatus,
+    PlanRevision,
     StoredPlanProposal,
     rollback_proposal,
 )
@@ -108,7 +129,8 @@ from litharness.domain.policy import (
     decision_id_for,
 )
 from litharness.domain.promises import Promise, normalise_kind, promise_id_for
-from litharness.domain.revision import Revision, import_manuscript, new_book
+from litharness.domain.revision import Revision, append_scenes, import_manuscript, new_book
+from litharness.domain.serials import SerialShape, arcs_of, beats_for_serial
 from litharness.domain.state import import_state
 from litharness.providers import ProviderRegistry, build_default_registry
 from litharness.providers.cli import subprocess_runner
@@ -120,6 +142,7 @@ EXIT_ATTENTION = 1
 EXIT_FAULT = 2
 
 DEFAULT_DB = "litharness.db"
+SERIAL_POSITION_CAPACITY = 100_000
 
 #: Where `--database` looks when nobody passed one. **This exists so an agent's command line
 #: can be exactly `litharness world <view>`**: a tool allowance is only a containment if it
@@ -127,6 +150,23 @@ DEFAULT_DB = "litharness.db"
 #: `--database` flag has to sit between the binary and the subcommand. The flag still wins
 #: where it is given, so every existing invocation is unchanged.
 DATABASE_ENV = "LITHARNESS_DATABASE"
+
+
+def _creation_template(scenes: int, shape: SerialShape) -> tuple[BeatTemplate, bool]:
+    """The sheet for a new structure and whether that structure is an endless serial.
+
+    New production defaults to complete arcs.  Explicit short books remain a supported finite
+    fixture/pilot shape; they use their whole-book sheet and are never mistaken for an open arc.
+    Once a structure reaches one full arc, partial trailing arcs are refused.
+    """
+    if scenes < shape.scenes_per_arc:
+        return arc_template(scenes), False
+    if scenes % shape.scenes_per_arc:
+        raise TemplateMismatch(
+            f"an open-ended serial is planned in complete arcs of "
+            f"{shape.scenes_per_arc} scenes; asked for {scenes}"
+        )
+    return arc_template(shape.scenes_per_arc), True
 
 
 def _now() -> float:
@@ -160,9 +200,7 @@ def _draft_policy(args: argparse.Namespace) -> DraftPolicy:
     """
     default = DraftPolicy()
     return DraftPolicy(
-        target_words=(
-            args.target_words if args.target_words is not None else default.target_words
-        )
+        target_words=(args.target_words if args.target_words is not None else default.target_words)
     )
 
 
@@ -284,8 +322,7 @@ def _selected_writer(args: argparse.Namespace) -> writers_domain.Writer | None:
     writer = writers_domain.CAST.get(wanted)
     if writer is None:
         raise SystemExit(
-            f"litharness: no writer named {wanted!r}; the cast is "
-            f"{', '.join(writers_domain.CAST)}"
+            f"litharness: no writer named {wanted!r}; the cast is {', '.join(writers_domain.CAST)}"
         )
     return writer
 
@@ -303,9 +340,7 @@ def _conductor(store: SqliteStore, args: argparse.Namespace) -> Conductor:
                 args.project,
             )
         )
-    evaluator: Evaluator = (
-        evaluators[0] if len(evaluators) == 1 else CompositeEvaluator(evaluators)
-    )
+    evaluator: Evaluator = evaluators[0] if len(evaluators) == 1 else CompositeEvaluator(evaluators)
     return Conductor(
         store=store,
         holder=args.holder,
@@ -322,14 +357,13 @@ def _conductor(store: SqliteStore, args: argparse.Namespace) -> Conductor:
             # The shape the operator asked for. At the default of one it asserts
             # nothing and the prompt is unchanged.
             scenes_per_chapter=args.chapter_scenes,
+            chapters_per_arc=args.arc_chapters,
+            chapters_per_volume=args.volume_chapters,
+            open_ended=True,
             # Who is drafting. `None` without `--writer`, which is what every book written
             # before 2026-08-25 got and what this is read against.
             writer=_selected_writer(args),
-            **(
-                {"token_budget": args.context_budget}
-                if args.context_budget is not None
-                else {}
-            ),
+            **({"token_budget": args.context_budget} if args.context_budget is not None else {}),
         ),
         handlers={
             DIRECTIVE_PLAN: make_directive_plan_handler(store, args.project, actor=args.holder),
@@ -370,9 +404,7 @@ def _conductor(store: SqliteStore, args: argparse.Namespace) -> Conductor:
             BOOK_OUTLINE: make_outline_handler(
                 registry, store, args.project, budget=_budget(args), actor=args.holder
             ),
-            EVALUATE_REVISION: make_evaluation_handler(
-                evaluator, store, args.project
-            ),
+            EVALUATE_REVISION: make_evaluation_handler(evaluator, store, args.project),
             REPAIR_FINDING: make_repair_handler(
                 registry, store, args.project, budget=_budget(args)
             ),
@@ -446,9 +478,7 @@ def cmd_init(args: argparse.Namespace) -> int:
     try:
         applied = [
             row["name"]
-            for row in store._connection.execute(
-                "SELECT name FROM schema_migrations ORDER BY name"
-            )
+            for row in store._connection.execute("SELECT name FROM schema_migrations ORDER BY name")
         ]
     finally:
         store.close()
@@ -558,10 +588,7 @@ def cmd_jobs(args: argparse.Namespace) -> int:
         if args.status:
             jobs = store.jobs_by_status(JobStatus(args.status))
             for job in jobs:
-                print(
-                    f"{job.job_id}  {job.job_kind:<14} attempts={job.attempts} "
-                    f"{job.error or ''}"
-                )
+                print(f"{job.job_id}  {job.job_kind:<14} attempts={job.attempts} {job.error or ''}")
             print(f"({len(jobs)} {args.status})")
         else:
             for name, count in store.job_counts_by_status().items():
@@ -666,9 +693,7 @@ def cmd_findings(args: argparse.Namespace) -> int:
     store = _store(args)
     try:
         book_id, branch_id = export_module.resolve_branch(store, args.book, args.branch)
-        items = store.findings(
-            book_id, branch_id, logical_id=args.node, open_only=not args.all
-        )
+        items = store.findings(book_id, branch_id, logical_id=args.node, open_only=not args.all)
     finally:
         store.close()
     blocking = sum(1 for item in items if item.blocks)
@@ -779,7 +804,8 @@ def cmd_dismiss(args: argparse.Namespace) -> int:
     for a quiet queue.
     """
     status = (
-        finding_status.FALSE_POSITIVE if args.false_positive
+        finding_status.FALSE_POSITIVE
+        if args.false_positive
         else finding_status.ACCEPTED_INTENTIONAL
     )
     stamp = _stamp(_now())
@@ -886,9 +912,7 @@ def _scene_node(head: Revision, wanted: str) -> Node | None:
     return None
 
 
-def _introduced_in(
-    store: SqliteStore, head: Revision, logical_id: str
-) -> tuple[str | None, int]:
+def _introduced_in(store: SqliteStore, head: Revision, logical_id: str) -> tuple[str | None, int]:
     """The revision that put the head's current prose into this scene, and how deep it sits.
 
     Walked oldest-first along the lineage and remembered on every *change* of the node's
@@ -1005,9 +1029,7 @@ def _scene_dossier(
         },
         "findings": [
             _finding_row(item)
-            for item in store.findings(
-                book_id, branch_id, logical_id=logical_id, open_only=False
-            )
+            for item in store.findings(book_id, branch_id, logical_id=logical_id, open_only=False)
         ],
         "absent": absent,
     }
@@ -1047,9 +1069,7 @@ def _render_dossier(dossier: dict[str, Any]) -> str:
         )
     elif decision is not None:
         cost = (
-            "cost not reported"
-            if decision["cost_usd"] is None
-            else f"${decision['cost_usd']:.4f}"
+            "cost not reported" if decision["cost_usd"] is None else f"${decision['cost_usd']:.4f}"
         )
         field(
             "decision",
@@ -1095,8 +1115,7 @@ def _render_dossier(dossier: dict[str, Any]) -> str:
     else:
         field(
             "job",
-            f"{job['job_id']}  {job['job_kind']}  {job['status']}  "
-            f"{job['attempts']} attempt(s)",
+            f"{job['job_id']}  {job['job_kind']}  {job['status']}  {job['attempts']} attempt(s)",
         )
 
     selected = dossier["selected_by"]
@@ -1122,9 +1141,7 @@ def _render_dossier(dossier: dict[str, Any]) -> str:
         )
         sections = context.get("sections")
         if isinstance(sections, dict) and sections:
-            field(
-                "", "  ".join(f"{name} {count}" for name, count in sorted(sections.items()))
-            )
+            field("", "  ".join(f"{name} {count}" for name, count in sorted(sections.items())))
 
     omitted = dossier["context_omitted"]
     if isinstance(omitted, list):
@@ -1321,14 +1338,10 @@ def cmd_replan(args: argparse.Namespace) -> int:
     store = _store(args)
     try:
         book_id, branch_id = export_module.resolve_branch(store, args.book, args.branch)
-        epoch = store.bump_plan_epoch(
-            book_id, branch_id, at=stamp, reason=args.reason or "replan"
-        )
+        epoch = store.bump_plan_epoch(book_id, branch_id, at=stamp, reason=args.reason or "replan")
         head = store.head(book_id, branch_id)
         blocking = [
-            item
-            for item in store.findings(book_id, branch_id, open_only=True)
-            if item.blocks
+            item for item in store.findings(book_id, branch_id, open_only=True) if item.blocks
         ]
         store.append_events(
             [
@@ -1380,13 +1393,13 @@ def cmd_readers(args: argparse.Namespace) -> int:
             drafted = [
                 item
                 for item in head.nodes
-                if item.kind is NodeKind.SCENE and (item.content or '').strip()
+                if item.kind is NodeKind.SCENE and (item.content or "").strip()
             ]
             if not drafted:
                 print("no drafted scene to read")
                 return EXIT_OK
             node = drafted[-1]
-        chapter = (node.content or '').strip()
+        chapter = (node.content or "").strip()
         if not chapter:
             print(f"litharness: {node.logical_id} has no prose", file=sys.stderr)
             return EXIT_FAULT
@@ -1396,7 +1409,10 @@ def cmd_readers(args: argparse.Namespace) -> int:
         # `_completion_call` adds to the stage tally AND to `run`, so they must be different
         # objects or every call is counted twice — which it was, on the first live run.
         calls = _ProviderCalls(
-            registry=registry, store=store, args=args, stamp=stamp,
+            registry=registry,
+            store=store,
+            args=args,
+            stamp=stamp,
             run=_StageSpend(),
         )
 
@@ -1408,11 +1424,40 @@ def cmd_readers(args: argparse.Namespace) -> int:
             passage = text_mod.stop_point(chapter)
         except ValueError:
             passage = chapter
+        stored_summaries = store.scene_summaries(book_id, branch_id)
+        current_summaries: dict[str, str] = {}
+        for scene in head.in_reading_order():
+            if scene.kind is not NodeKind.SCENE or not scene.content:
+                continue
+            current = stored_summaries.get(scene.logical_id, {}).get(
+                text_mod.content_hash(scene.content)
+            )
+            if current is not None:
+                current_summaries[scene.logical_id] = current
+        reading_context = readers_mod.accumulated_passage(
+            head,
+            node.logical_id,
+            passage,
+            summaries=current_summaries,
+            shape=SerialShape(args.chapter_scenes, args.arc_chapters),
+        )
+        previous_reads = store.reader_reads(book_id, branch_id)
+        reading_order = [
+            scene.logical_id
+            for scene in head.in_reading_order()
+            if scene.kind is NodeKind.SCENE and not scene.tombstoned
+        ]
+        earlier_scene_ids = reading_order[: reading_order.index(node.logical_id)]
         pool_of_rivals = _rivals(args)
 
         choices: dict[str, Any] = {}
         wishes: dict[str, Any] = {}
         for reader in readers_mod.READERS:
+            memory = readers_mod.prior_reading_memory(
+                previous_reads,
+                reader.reader_id,
+                earlier_logical_ids=earlier_scene_ids,
+            )
             drawn = None
             first = True
             if reader.pool == readers_mod.MEASUREMENT:
@@ -1424,10 +1469,15 @@ def cmd_readers(args: argparse.Namespace) -> int:
                 # free, which is §94's defect one object across; going to look has to cost
                 # this chapter or the currency is not currency.
                 request = readers_mod.render_choice_request(
-                    reader, passage, drawn.title if drawn else ""
+                    reader,
+                    reading_context,
+                    drawn.title if drawn else "",
+                    prior_memory=memory,
                 )
             else:
-                request = readers_mod.render_anticipation_request(reader, passage)
+                request = readers_mod.render_anticipation_request(
+                    reader, reading_context, prior_memory=memory
+                )
             result, refusal = _completion_call(request, calls=calls, spend=spend)
             parsed = result.parsed if result is not None else None
             if not isinstance(parsed, Mapping):
@@ -1437,8 +1487,13 @@ def cmd_readers(args: argparse.Namespace) -> int:
             if reader.pool == readers_mod.MEASUREMENT:
                 choices[reader.reader_id] = parsed
                 store.record_reader_read(
-                    book_id, branch_id, head.revision_id, node.logical_id,
-                    reader_id=reader.reader_id, pool=reader.pool, created_at=stamp,
+                    book_id,
+                    branch_id,
+                    head.revision_id,
+                    node.logical_id,
+                    reader_id=reader.reader_id,
+                    pool=reader.pool,
+                    created_at=stamp,
                     choice=str(parsed.get("next") or ""),
                     because=str(parsed.get("because") or ""),
                     rival_id=drawn.rival_id if drawn else None,
@@ -1447,8 +1502,13 @@ def cmd_readers(args: argparse.Namespace) -> int:
             else:
                 wishes[reader.reader_id] = parsed
                 store.record_reader_read(
-                    book_id, branch_id, head.revision_id, node.logical_id,
-                    reader_id=reader.reader_id, pool=reader.pool, created_at=stamp,
+                    book_id,
+                    branch_id,
+                    head.revision_id,
+                    node.logical_id,
+                    reader_id=reader.reader_id,
+                    pool=reader.pool,
+                    created_at=stamp,
                     felt=str(parsed.get("felt") or ""),
                     expect_next=str(parsed.get("expect_next") or ""),
                     hoping_for=[str(x) for x in (parsed.get("hoping_for") or [])],
@@ -1464,8 +1524,7 @@ def cmd_readers(args: argparse.Namespace) -> int:
                 passed=True,
                 blocking=False,
                 detail=(
-                    f"{node.logical_id}: {reading.carried_on} of "
-                    f"{reading.answered} carried on"
+                    f"{node.logical_id}: {reading.carried_on} of {reading.answered} carried on"
                 ),
             ),
         )
@@ -1599,8 +1658,9 @@ def cmd_listing(args: argparse.Namespace) -> int:
     # browsing reads had all been paid for.
     if args.scenes:
         try:
-            arc_template(args.scenes)
-        except TemplateMismatch as error:
+            shape = SerialShape(args.chapter_scenes, args.arc_chapters)
+            _creation_template(args.scenes, shape)
+        except (TemplateMismatch, ValueError) as error:
             print(f"litharness: {error}", file=sys.stderr)
             return EXIT_FAULT
 
@@ -1611,7 +1671,10 @@ def cmd_listing(args: argparse.Namespace) -> int:
         run = _StageSpend()
         spend = _StageSpend()
         calls = _ProviderCalls(
-            registry=registry, store=store, args=args, stamp=stamp,
+            registry=registry,
+            store=store,
+            args=args,
+            stamp=stamp,
             run=run,
         )
 
@@ -1642,7 +1705,8 @@ def cmd_listing(args: argparse.Namespace) -> int:
         if appetite:
             revised, refusal = _completion_call(
                 overview_mod.render_revision_request(brief, listing, appetite, writer),
-                calls=calls, spend=spend,
+                calls=calls,
+                spend=spend,
             )
             if revised is None:
                 print(f"  revision: {refusal}", file=sys.stderr)
@@ -1650,8 +1714,12 @@ def cmd_listing(args: argparse.Namespace) -> int:
                 listing = revised.text.strip()
 
         title, availability, abandoned = _listing_title(
-            listing, writer=writer, attempts=args.title_attempts,
-            check=not args.no_title_check, calls=calls, spend=spend,
+            listing,
+            writer=writer,
+            attempts=args.title_attempts,
+            check=not args.no_title_check,
+            calls=calls,
+            spend=spend,
         )
 
         # The measurement lane, over the artifact a reader actually meets: the title above the
@@ -1671,9 +1739,7 @@ def cmd_listing(args: argparse.Namespace) -> int:
                 key = f"{title}|{reader.reader_id}"
                 rival = rivals_mod.draw(pool_of_rivals, key)
                 ours_leads = rivals_mod.ours_first(key)
-                request = readers_mod.render_pick_request(
-                    reader, ours, rival.render(), ours_leads
-                )
+                request = readers_mod.render_pick_request(reader, ours, rival.render(), ours_leads)
             else:
                 request = readers_mod.render_start_request(reader, listing, shown)
             result, refusal = _completion_call(request, calls=calls, spend=spend)
@@ -1854,9 +1920,7 @@ def cmd_cover(args: argparse.Namespace) -> int:
     count = (
         len(supplied)
         if supplied
-        else (
-            args.variants if args.variants is not None else covers.DEFAULT_VARIANTS
-        )
+        else (args.variants if args.variants is not None else covers.DEFAULT_VARIANTS)
     )
     shelf = _library_root(args) / library_module.slugify(spec.title, spec.book_id or "cover")
     default_output = (
@@ -1924,7 +1988,7 @@ def cmd_characters(args: argparse.Namespace) -> int:
 
     if args.csv:
         rows = characters_mod.rows(people)
-        with args.csv.open('w', encoding='utf-8', newline='') as handle:
+        with args.csv.open("w", encoding="utf-8", newline="") as handle:
             writer = csv.DictWriter(handle, fieldnames=list(rows[0]))
             writer.writeheader()
             writer.writerows(rows)
@@ -1937,6 +2001,7 @@ def cmd_characters(args: argparse.Namespace) -> int:
 
     print(characters_mod.render(people))
     return EXIT_OK
+
 
 def _scalar(text: str | None) -> object:
     """A `--value` as the type it plainly is: 34 is a number, everything else is prose.
@@ -1958,6 +2023,7 @@ def _scalar(text: str | None) -> object:
     except ValueError:
         return text
     return parsed if isinstance(parsed, int | float | bool) else text
+
 
 def _read_text(source: str) -> str:
     """A file's text, or stdin for `-`. The listing is prose and prose lives in files."""
@@ -2046,7 +2112,10 @@ def cmd_architect(args: argparse.Namespace) -> int:
         registry = build_default_registry()
         spend = _StageSpend()
         calls = _ProviderCalls(
-            registry=registry, store=store, args=args, stamp=stamp,
+            registry=registry,
+            store=store,
+            args=args,
+            stamp=stamp,
             run=_StageSpend(),
         )
         result, refusal = _completion_call(request, calls=calls, spend=spend)
@@ -2055,9 +2124,7 @@ def cmd_architect(args: argparse.Namespace) -> int:
             return EXIT_FAULT
 
         after = store.state_records(book_id, branch_id)
-        proposed = sum(
-            1 for record in after if record.authority is lc.StateAuthority.PROPOSED
-        )
+        proposed = sum(1 for record in after if record.authority is lc.StateAuthority.PROPOSED)
         complaints = worlds_domain.validate(after)
         gate = GateOutcome(
             gate=GateKind.SHAPE,
@@ -2101,7 +2168,7 @@ def cmd_architect(args: argparse.Namespace) -> int:
 
 
 def cmd_prompts(args: argparse.Namespace) -> int:
-    """Print the system prompt each role is actually sent, with the size of it.
+    """Print a representative complete request for every model-facing role.
 
     **The assembled prompt existed nowhere until this.** Every role built its own by
     concatenation at call time, so the only way to know what a writer was told was to run one
@@ -2120,20 +2187,99 @@ def cmd_prompts(args: argparse.Namespace) -> int:
         )
         return EXIT_FAULT
 
-    roles: dict[str, str] = {
-        "listing": overview_mod._system(writer),
-        "architect-seed": world_agent.render_seed_request("a listing", writer).system or "",
-        "architect-grow": (
-            world_agent.render_grow_request("prose", logical_id="s1", writer=writer).system or ""
+    premise = "A debtor discovers the road beneath the city is collecting people, not coins."
+    scene_text = (
+        "Rook counted the toll twice. The gate opened only after it took the memory of his "
+        "brother's face.\n\nOn the far side, somebody who knew his name was waiting."
+    )
+    beat = Beat("scene-1", 1, 24, None, "setup", "arc.24", "s000001")
+    packet = ContextPacket(
+        query_id="prompt-inspector",
+        target_logical_id="scene-1",
+        book_id="specimen-book",
+        branch_id="main",
+        base_revision_id="specimen-revision",
+    )
+    scene_system, scene_prompt = render_scene_prompt(
+        beat,
+        book_title="The Deep Ledger",
+        packet=packet,
+        target_words=900,
+        scene_plan="Rook pays a cost that changes what returning home would mean.",
+        writer=writer,
+    )
+    base = PlanRevision(
+        "specimen-book",
+        "main",
+        (
+            lc.PlanItem(
+                logical_id="plan-premise",
+                kind=lc.PlanKind.PREMISE,
+                text=premise,
+                authority=lc.PlanAuthority.INTENDED,
+                locked=True,
+            ),
         ),
-        "scene": house.with_house_rules(
-            "You are drafting one scene of a novel. Write only the scene's prose: no headings, "
-            "no commentary, no summary of what you wrote. The context below is established and "
-            "may be relied on; do not contradict it."
+    )
+    direction = Directive(
+        directive_id="specimen-directive",
+        kind=DirectiveKind.ARC_NOTE,
+        body="Make the descent cost Rook a relationship he expected to keep.",
+        book_id="specimen-book",
+        branch_id="main",
+    )
+    summary_system, summary_prompt = render_summary_prompt(scene_text)
+    repair_finding = Finding(
+        finding_id="specimen-finding",
+        category="continuity",
+        severity=Severity.MAJOR,
+        message="The toll contradicts the established cost.",
+        rule_or_critic_id="continuity.specimen.v0",
+        logical_id="scene-1",
+    )
+    measurement = readers_mod.pool(readers_mod.MEASUREMENT)[0]
+    steering = readers_mod.pool(readers_mod.STEERING)[0]
+    roles: dict[str, CompletionRequest] = {
+        "listing": overview_mod.render_overview_request(premise, writer),
+        "title": overview_mod.render_title_request("A debtor takes the road below.", writer),
+        "title-lookup": titles.render_check_request("The Deep Ledger", writer),
+        "architect-seed": world_agent.render_seed_request("A debtor takes the road below.", writer),
+        "architect-grow": world_agent.render_grow_request(
+            scene_text, logical_id="scene-1", writer=writer
         ),
-        "house-floor": house.HOUSE_RULES,
-        "reader-measurement": readers_mod.pool(readers_mod.MEASUREMENT)[0].system(),
-        "reader-steering": readers_mod.pool(readers_mod.STEERING)[0].system(),
+        "outline": render_outline_request(premise, (beat,), base=base, serial_arc_index=1),
+        "narrative-planner": render_narrative_request(base, direction, ("scene-1",)),
+        "scene": CompletionRequest(prompt=scene_prompt, system=scene_system),
+        "summarizer": CompletionRequest(
+            prompt=summary_prompt,
+            system=summary_system,
+            schema=SUMMARY_SCHEMA,
+            profile="scene-summary.v0",
+        ),
+        "director": render_director_request(
+            directors_domain.BUILTIN["delver"],
+            premise=premise,
+            statements=(("scene-1", "Rook pays the first toll."),),
+            summaries=(("scene-1", "Rook crossed and lost a memory."),),
+            drafted=1,
+            of_total=24,
+            open_promises=("Who was waiting across the gate",),
+            current_state=("rook location below_city",),
+            open_ended=True,
+        ),
+        "reader-measurement": readers_mod.render_choice_request(
+            measurement, scene_text, "Another Serial"
+        ),
+        "reader-steering": readers_mod.render_anticipation_request(steering, scene_text),
+        "repair": render_repair_request(
+            repair_finding,
+            scene_text,
+            0,
+            25,
+            scene_plan="Rook pays the first toll.",
+            facts=("rook debt unpaid",),
+        ),
+        "house-floor": CompletionRequest(prompt="", system=house.HOUSE_RULES),
     }
 
     if args.role:
@@ -2143,27 +2289,64 @@ def cmd_prompts(args: argparse.Namespace) -> int:
                 file=sys.stderr,
             )
             return EXIT_FAULT
-        text = roles[args.role]
-        counted = house.demands(text)
+        request = roles[args.role]
+        counted = house.demands(request.system or "")
+        row = {
+            "role": args.role,
+            "prompt_chars": len(request.prompt),
+            "system_chars": len(request.system or ""),
+            "schema_chars": len(request.schema_instruction),
+            "tool_chars": len(",".join(request.allowed_tools)),
+            "input_chars": request.input_chars,
+            "demands": list(counted),
+            "allowed_tools": list(request.allowed_tools),
+            "system": request.system or "",
+            "prompt": request.prompt,
+            "schema_instruction": request.schema_instruction,
+        }
         if args.json:
-            print(json.dumps({"role": args.role, "chars": len(text),
-                              "demands": list(counted)}, ensure_ascii=False, indent=2))
+            print(json.dumps(row, ensure_ascii=False, indent=2))
             return EXIT_OK
-        print(text)
+        print("SYSTEM (ROLE):")
+        print(request.system or "[none]")
+        print("\nPROMPT (MATERIAL AND TASK):")
+        print(request.prompt or "[none]")
+        if request.schema_instruction:
+            print("\nSYSTEM (TRANSPORT-ADDED SCHEMA):")
+            print(request.schema_instruction)
+        print("\nALLOWED TOOLS:")
+        print(", ".join(request.allowed_tools) or "[none]")
         print()
-        print(f"  {len(counted)} demand(s), {len(text)} characters")
+        print(
+            f"  {len(counted)} explicit system demand(s), {request.input_chars} effective "
+            "input characters"
+        )
         return EXIT_OK
 
     rows = {
-        role: {"chars": len(text), "demands": len(house.demands(text))}
-        for role, text in roles.items()
+        role: {
+            "prompt_chars": len(request.prompt),
+            "system_chars": len(request.system or ""),
+            "schema_chars": len(request.schema_instruction),
+            "tool_chars": len(",".join(request.allowed_tools)),
+            "input_chars": request.input_chars,
+            "demands": len(house.demands(request.system or "")),
+        }
+        for role, request in roles.items()
     }
     if args.json:
         print(json.dumps(rows, ensure_ascii=False, indent=2))
         return EXIT_OK
-    print(f"{'role':22s} {'chars':>7s} {'demands':>8s}")
+    print(
+        f"{'role':22s} {'prompt':>7s} {'system':>7s} {'schema':>7s} "
+        f"{'tools':>7s} {'total':>7s} {'demands':>8s}"
+    )
     for role, row in rows.items():
-        print(f"{role:22s} {row['chars']:7d} {row['demands']:8d}")
+        print(
+            f"{role:22s} {row['prompt_chars']:7d} {row['system_chars']:7d} "
+            f"{row['schema_chars']:7d} {row['tool_chars']:7d} {row['input_chars']:7d} "
+            f"{row['demands']:8d}"
+        )
     print()
     print("  `--role <name>` prints one in full. Ceilings: tests/test_prompt_budget.py")
     return EXIT_OK
@@ -2195,9 +2378,7 @@ def cmd_world(args: argparse.Namespace) -> int:
 
         if args.view == "accept":
             proposals = [
-                record
-                for record in records
-                if record.authority is lc.StateAuthority.PROPOSED
+                record for record in records if record.authority is lc.StateAuthority.PROPOSED
             ]
             if not proposals:
                 print("nothing proposed; canon is unchanged")
@@ -2214,9 +2395,7 @@ def cmd_world(args: argparse.Namespace) -> int:
             replaced = integrity.superseded(
                 proposals, declared_at=store.state_record_times(book_id, branch_id)
             )
-            carried = [
-                record for record in proposals if record.record_id not in set(replaced)
-            ]
+            carried = [record for record in proposals if record.record_id not in set(replaced)]
             complaints = worlds_domain.validate(
                 [record for record in records if record.record_id not in set(replaced)]
             )
@@ -2300,11 +2479,7 @@ def cmd_world(args: argparse.Namespace) -> int:
                 if head is not None
                 else {}
             )
-            print(
-                json.dumps(
-                    world_mod.presence(records, scenes), ensure_ascii=False, indent=2
-                )
-            )
+            print(json.dumps(world_mod.presence(records, scenes), ensure_ascii=False, indent=2))
             return EXIT_OK
         if args.view == "declare":
             record = worlds_domain.world_record(
@@ -2326,9 +2501,7 @@ def cmd_world(args: argparse.Namespace) -> int:
             complaints = worlds_domain.validate([*records, record])
             fresh = worlds_domain.validate(records)
             new_complaints = [c for c in complaints if c not in fresh]
-            written = store.record_state_records(
-                book_id, branch_id, [record], created_at=stamp
-            )
+            written = store.record_state_records(book_id, branch_id, [record], created_at=stamp)
             payload: Any = {
                 "record_id": record.record_id,
                 "authority": record.authority.value,
@@ -2370,6 +2543,7 @@ def cmd_world(args: argparse.Namespace) -> int:
     if args.view == "check" and not payload["ok"]:
         return EXIT_FAULT
     return EXIT_OK
+
 
 def cmd_state(args: argparse.Namespace) -> int:
     """What this book holds as true, in story order (§11's objective story state).
@@ -2489,7 +2663,7 @@ def _completion_call(
         _budget(calls.args),
         calls.spent_today(),
         provider=provider.name,
-        prompt_chars=len(request.prompt),
+        prompt_chars=request.input_chars,
         max_output_tokens=request.max_output_tokens,
     )
     if not verdict.allowed:
@@ -2523,11 +2697,22 @@ def cmd_new(args: argparse.Namespace) -> int:
     stamp = _stamp(_now())
     book_id = args.book or str(uuid.uuid4())
     branch_id = args.branch or str(uuid.uuid4())
-    revision = new_book(book_id, branch_id, title=args.title, scenes=args.scenes)
+    shape = SerialShape(args.chapter_scenes, args.arc_chapters)
+    try:
+        template, serial_mode = _creation_template(args.scenes, shape)
+    except TemplateMismatch as error:
+        print(f"litharness: {error}", file=sys.stderr)
+        return EXIT_FAULT
+    revision = new_book(
+        book_id,
+        branch_id,
+        title=args.title,
+        scenes=args.scenes,
+        position_capacity=SERIAL_POSITION_CAPACITY,
+    )
     # `arc_template` refuses fewer scenes than named beats, and it must refuse *before* the
     # store opens: a raise after `commit_revision` would leave the book, decision, premise
     # and seed state durably committed behind a command that reported failure.
-    template = arc_template(args.scenes)
 
     # Attributed like every other mutation (§19). An author's act, so no gate results: the
     # only check that runs is the scene count, and it raises before a decision exists.
@@ -2558,7 +2743,10 @@ def cmd_new(args: argparse.Namespace) -> int:
     promise_rows: list[Promise] = []
     if args.promises:
         entries = json.loads(Path(args.promises).read_text(encoding="utf-8"))
-        keys = [beat.story_order_key for beat in beats_for(revision, template)]
+        planned_beats = (
+            beats_for_serial(revision, shape) if serial_mode else beats_for(revision, template)
+        )
+        keys = [beat.story_order_key for beat in planned_beats]
         if keys and all(key is not None for key in keys):
             opened_key = str(keys[0])
             final_key = str(keys[-1])
@@ -2577,9 +2765,7 @@ def cmd_new(args: argparse.Namespace) -> int:
                 # ledger, it reaches the packet as something owed, and nothing calls it late.
                 due = entry.get("due_scene")
                 inside = (
-                    isinstance(due, int)
-                    and not isinstance(due, bool)
-                    and 1 <= due <= len(keys)
+                    isinstance(due, int) and not isinstance(due, bool) and 1 <= due <= len(keys)
                 )
                 due_key = str(keys[due - 1]) if inside else None
                 if due is None:
@@ -2668,9 +2854,7 @@ def cmd_new(args: argparse.Namespace) -> int:
             ],
         )
         if records:
-            store.record_state_records(
-                book_id, branch_id, records, created_at=stamp
-            )
+            store.record_state_records(book_id, branch_id, records, created_at=stamp)
         for promise in promise_rows:
             store.record_promise(book_id, branch_id, promise)
     finally:
@@ -2686,6 +2870,75 @@ def cmd_new(args: argparse.Namespace) -> int:
         print(f"  graph line declared and UNUSABLE, so this book has none: {graph_fault}")
     if not records:
         print("  no state seeded — a LitRPG book needs a starting sheet to speak system voice")
+    return EXIT_OK
+
+
+def cmd_extend(args: argparse.Namespace) -> int:
+    """Append complete planned arcs to the same canonical serial.
+
+    This is structural growth, not a sequel and not a new volume. Character/state/promise
+    ledgers remain on the same book and release volumes continue to be derived windows over
+    its chapter numbers.
+    """
+    if args.arcs < 1:
+        print("litharness: --arcs must be at least 1", file=sys.stderr)
+        return EXIT_FAULT
+    store = _store(args)
+    stamp = _stamp(_now())
+    try:
+        book_id, branch_id = export_module.resolve_branch(store, args.book, args.branch)
+        head = store.head(book_id, branch_id)
+        if head is None:
+            print("litharness: this branch has no revision", file=sys.stderr)
+            return EXIT_FAULT
+        shape = SerialShape(args.chapter_scenes, args.arc_chapters)
+        arcs = arcs_of(head, shape)
+        partial = (
+            shape.scenes_per_arc - len(arcs[-1].scene_ids) if arcs and not arcs[-1].closed else 0
+        )
+        count = partial + (args.arcs - (1 if partial else 0)) * shape.scenes_per_arc
+        if count <= 0:
+            count = shape.scenes_per_arc
+        extended = append_scenes(head, count)
+        decision = PolicyDecision(
+            decision_id=decision_id_for(f"extend:{extended.revision_id}", 0, ()),
+            outcome=Outcome.ACCEPT,
+            base_revision_id=head.revision_id,
+            resulting_revision_id=extended.revision_id,
+            reason=(f"extended the open serial by {count} scene(s) to a complete planned arc"),
+        )
+        store.commit_revision(
+            extended,
+            created_at=stamp,
+            decision=decision,
+            events=[
+                Event(
+                    event_type=EventType.MANUSCRIPT_REVISION_ACCEPTED,
+                    project_id=args.project,
+                    created_at=stamp,
+                    actor=args.holder,
+                    book_id=book_id,
+                    branch_id=branch_id,
+                    revision_id=extended.revision_id,
+                    payload={
+                        "decision_id": decision.decision_id,
+                        "extended": True,
+                        "scenes_added": count,
+                        "open_ended_serial": True,
+                    },
+                )
+            ],
+        )
+    except ValueError as error:
+        print(f"litharness: {error}", file=sys.stderr)
+        return EXIT_FAULT
+    finally:
+        store.close()
+    total = sum(1 for node in extended.nodes if node.kind is NodeKind.SCENE and not node.tombstoned)
+    print(
+        f"extended {book_id}/{branch_id} by {count} scene(s); {total} planned scene(s) now, "
+        "same open-ended serial"
+    )
     return EXIT_OK
 
 
@@ -2708,9 +2961,7 @@ def cmd_propagate(args: argparse.Namespace) -> int:
     reached nothing. This is `ingest`'s incomplete-evaluation rule applied to the same class
     of silence.
     """
-    change_set = lc.parse_artifact(
-        lc.ChangeSet, json.loads(args.path.read_text(encoding="utf-8"))
-    )
+    change_set = lc.parse_artifact(lc.ChangeSet, json.loads(args.path.read_text(encoding="utf-8")))
     stamp = _stamp(_now())
     store = _store(args)
     try:
@@ -2917,8 +3168,7 @@ def cmd_revert_plan(args: argparse.Namespace) -> int:
             # Letting the KeyError escape would exit 1 — "a unit needs a human" — which is
             # the defect the locked-database handler was added for.
             print(
-                f"litharness: no plan revision {args.plan_revision}; "
-                "`litharness plans` lists them",
+                f"litharness: no plan revision {args.plan_revision}; `litharness plans` lists them",
                 file=sys.stderr,
             )
             return EXIT_FAULT
@@ -2941,9 +3191,7 @@ def cmd_revert_plan(args: argparse.Namespace) -> int:
                 file=sys.stderr,
             )
             return EXIT_FAULT
-        proposal = rollback_proposal(
-            current, target, rollback_of=undoing.proposal.proposal_id
-        )
+        proposal = rollback_proposal(current, target, rollback_of=undoing.proposal.proposal_id)
         application = accept_plan_proposal(
             store,
             proposal,
@@ -3082,9 +3330,7 @@ def cmd_import(args: argparse.Namespace) -> int:
         snapshot = lc.parse_artifact(
             lc.PlanSnapshot, json.loads(Path(plans_path).read_text(encoding="utf-8"))
         )
-        plan = import_plan(
-            snapshot, book_id=revision.book_id, branch_id=revision.branch_id
-        )
+        plan = import_plan(snapshot, book_id=revision.book_id, branch_id=revision.branch_id)
         plan_items, plan_source = list(plan.items), plan.source_revision_id
 
     # Objective story state travels with the manuscript for the same reason the plan does,
@@ -3369,10 +3615,7 @@ def build_parser() -> argparse.ArgumentParser:
         "--database",
         type=Path,
         default=Path(os.environ.get(DATABASE_ENV, DEFAULT_DB)),
-        help=(
-            "SQLite database path "
-            f"(default: ${DATABASE_ENV}, else {DEFAULT_DB})"
-        ),
+        help=(f"SQLite database path (default: ${DATABASE_ENV}, else {DEFAULT_DB})"),
     )
     parser.add_argument(
         "--holder",
@@ -3380,19 +3623,27 @@ def build_parser() -> argparse.ArgumentParser:
         help="identity recorded on tick ids and job leases (default: session)",
     )
     parser.add_argument(
-        "--max-tokens-per-operation", type=int, default=None,
+        "--max-tokens-per-operation",
+        type=int,
+        default=None,
         help="refuse one call projected above this; -1 for unbounded",
     )
     parser.add_argument(
-        "--max-tokens-per-day", type=int, default=None,
+        "--max-tokens-per-day",
+        type=int,
+        default=None,
         help="daily token ceiling; -1 for unbounded",
     )
     parser.add_argument(
-        "--max-invocations-per-day", type=int, default=None,
+        "--max-invocations-per-day",
+        type=int,
+        default=None,
         help="daily call ceiling — the one tokens cannot express (§15); -1 for unbounded",
     )
     parser.add_argument(
-        "--max-cost-usd-per-day", type=float, default=None,
+        "--max-cost-usd-per-day",
+        type=float,
+        default=None,
         help="daily dollar ceiling; applies only where the provider reports cost",
     )
     parser.add_argument(
@@ -3410,9 +3661,7 @@ def build_parser() -> argparse.ArgumentParser:
         "--library",
         type=Path,
         default=(
-            Path(os.environ["LITHARNESS_LIBRARY"])
-            if os.environ.get("LITHARNESS_LIBRARY")
-            else None
+            Path(os.environ["LITHARNESS_LIBRARY"]) if os.environ.get("LITHARNESS_LIBRARY") else None
         ),
         help=f"where the library lives; also read from LITHARNESS_LIBRARY. Defaults to "
         f"{library_module.LIBRARY_DIRNAME}/ BESIDE THE DATABASE rather than under the "
@@ -3455,13 +3704,18 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--chapter-scenes",
         type=int,
-        default=1,
+        default=4,
         help="how many scenes make one chapter, and the position each scene is told "
-        "it holds when it is drafted. One by default, which asserts nothing: production books "
-        "hold no chapter nodes and no assembly scheme is decided, so grouping is an operator "
-        "act rather than a guess the tool makes. Above one, the drafting prompt carries "
-        "`Chapter c, scene k of n` and nothing else about it - where the scene sits, never "
-        "what to do there",
+        "it holds when it is drafted (default: 4). This same shape drives planning, reader "
+        "context, and release packaging, so those roles do not silently mean different "
+        "chapters",
+    )
+    parser.add_argument(
+        "--arc-chapters",
+        type=int,
+        default=6,
+        help="chapters in one closed dramatic arc (default: 6). The serial has no ending; "
+        "arcs close locally and keep stable beat assignments when later arcs are appended",
     )
     parser.add_argument(
         "--volume-chapters",
@@ -3555,7 +3809,8 @@ def build_parser() -> argparse.ArgumentParser:
     resolve.add_argument("exception_id")
     resolve.add_argument("resolution", help="what you did about it")
     resolve.add_argument(
-        "--dismiss", action="store_true",
+        "--dismiss",
+        action="store_true",
         help="close without action: the escalation was right and the unit stays stopped",
     )
     resolve.set_defaults(func=cmd_resolve)
@@ -3669,10 +3924,19 @@ def build_parser() -> argparse.ArgumentParser:
         "new", help="create an empty book of N scenes from a premise (Stage 3's entry point)"
     )
     new.add_argument("title")
-    new.add_argument("--premise", required=True, help="what the book is about; the planner "
-                     "reports a book without one as blocked rather than drafting it")
-    new.add_argument("--scenes", type=int, default=len(SIX_BEAT),
-                     help="how many scenes to create, all empty and draftable")
+    new.add_argument(
+        "--premise",
+        required=True,
+        help="what the book is about; the planner "
+        "reports a book without one as blocked rather than drafting it",
+    )
+    new.add_argument(
+        "--scenes",
+        type=int,
+        default=SerialShape().scenes_per_arc,
+        help="how many planned scene nodes to create (default: one complete 24-scene arc). "
+        "Production plans only structurally complete arcs; extend the same serial for more",
+    )
     new.add_argument("--state", type=Path, help="a StateSnapshot to seed canon with")
     new.add_argument(
         "--promises",
@@ -3684,9 +3948,22 @@ def build_parser() -> argparse.ArgumentParser:
     new.add_argument("--branch", help="branch id; a fresh uuid by default")
     new.set_defaults(func=cmd_new)
 
-    state = sub.add_parser(
-        "state", help="what this book holds as true, in story order"
+    extend = sub.add_parser(
+        "extend",
+        help="append complete planned arcs to the same open-ended serial",
     )
+    extend.add_argument(
+        "--arcs",
+        type=int,
+        default=1,
+        help="complete this many additional arcs (default: 1); a partial planned arc is "
+        "completed first",
+    )
+    extend.add_argument("--book", help="book id; defaults to the only branch")
+    extend.add_argument("--branch", help="branch id; defaults to the only matching branch")
+    extend.set_defaults(func=cmd_extend)
+
+    state = sub.add_parser("state", help="what this book holds as true, in story order")
     state.add_argument("--subject", help="one subject's records, e.g. a character id")
     state.add_argument("--predicate", help="one predicate, e.g. status_snapshot")
     state.add_argument("--book")
@@ -3949,9 +4226,7 @@ def build_parser() -> argparse.ArgumentParser:
     )
     cover.set_defaults(func=cmd_cover)
 
-    read = sub.add_parser(
-        "readers", help="put the simulated readership on a drafted scene"
-    )
+    read = sub.add_parser("readers", help="put the simulated readership on a drafted scene")
     read.add_argument("--scene", help="a scene logical id; the latest drafted one by default")
     read.add_argument(
         "--rivals",
@@ -4009,9 +4284,7 @@ def build_parser() -> argparse.ArgumentParser:
     revert_plan.add_argument("--branch")
     revert_plan.set_defaults(func=cmd_revert_plan)
 
-    replan = sub.add_parser(
-        "replan", help="reissue still-draftable beats under a fresh plan epoch"
-    )
+    replan = sub.add_parser("replan", help="reissue still-draftable beats under a fresh plan epoch")
     replan.add_argument("--book")
     replan.add_argument("--branch")
     replan.add_argument("--reason", help="recorded on the PlanChanged event")
@@ -4021,9 +4294,7 @@ def build_parser() -> argparse.ArgumentParser:
     backup.add_argument("destination", type=Path)
     backup.set_defaults(func=cmd_backup)
 
-    export = sub.add_parser(
-        "export", help="a reading copy of the book as it stands, gaps and all"
-    )
+    export = sub.add_parser("export", help="a reading copy of the book as it stands, gaps and all")
     export.add_argument(
         "destination",
         type=Path,

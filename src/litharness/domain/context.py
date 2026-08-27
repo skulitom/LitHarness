@@ -99,12 +99,23 @@ FACTS = "facts"
 #: with a recorded answer — and above `SUMMARIES` and `PRIOR_PROSE` because a scene written
 #: against the wrong secret is wrong in a way no later scene can repair.
 HIDDEN = "hidden"
+HISTORY = "history"
 #: What the scenes the budget could not hold actually contained. Above `PRIOR_PROSE` in the
 #: order for the same reason `FACTS` is: a summary is a compressed form of prose, so under
 #: pressure the compressed form is what survives and the raw text is what goes.
 SUMMARIES = "summaries"
 PRIOR_PROSE = "prior_prose"
-SECTION_ORDER = (PREMISE, CONSTRAINTS, CAST, THREADS, FACTS, HIDDEN, SUMMARIES, PRIOR_PROSE)
+SECTION_ORDER = (
+    PREMISE,
+    CONSTRAINTS,
+    THREADS,
+    CAST,
+    FACTS,
+    HIDDEN,
+    HISTORY,
+    SUMMARIES,
+    PRIOR_PROSE,
+)
 
 #: The largest share of the packet summaries may claim, so that they can be placed at all.
 #:
@@ -228,9 +239,7 @@ class ContextPacket:
 
     @property
     def items(self) -> tuple[PackedItem, ...]:
-        return tuple(
-            item for name in SECTION_ORDER for item in self.sections.get(name, ())
-        )
+        return tuple(item for name in SECTION_ORDER for item in self.sections.get(name, ()))
 
     @property
     def used_tokens(self) -> int:
@@ -251,8 +260,7 @@ class ContextPacket:
 
     def contains_span(self, logical_id: str, start: int, end: int) -> bool:
         return any(
-            item.source_logical_id == logical_id and item.covers(start, end)
-            for item in self.items
+            item.source_logical_id == logical_id and item.covers(start, end) for item in self.items
         )
 
     def to_contract(
@@ -296,9 +304,7 @@ class ContextPacket:
                 used=self.used_tokens,
                 reserved_output=self.reserved_output,
             ),
-            consumed_sources=[
-                ref(item.source_logical_id, item.source_kind) for item in self.items
-            ],
+            consumed_sources=[ref(item.source_logical_id, item.source_kind) for item in self.items],
             rejected_candidates=[
                 lc.RejectedCandidate(
                     reason=omission.reason,
@@ -353,6 +359,13 @@ class ContextPacket:
                 "or spoken by a character who does not know it; the scene must simply stay "
                 f"consistent with it:\n{lines}"
             )
+        history = self.sections.get(HISTORY, ())
+        if history:
+            lines = "\n".join(f"- {item.text}" for item in history)
+            blocks.append(
+                "Earlier states — these were true then and have since been replaced; use "
+                f"them only as history, never as the current state:\n{lines}"
+            )
         summaries = self.sections.get(SUMMARIES, ())
         if summaries:
             lines = "\n".join(
@@ -394,6 +407,10 @@ def assemble(
     disclosure_at: str | None = None,
     summaries: Mapping[str, str] = MappingProxyType({}),
     promises: Sequence[promises_mod.Promise] = (),
+    state_moment: state_mod.StateMoment = state_mod.StateMoment.THROUGH,
+    state_logical_id: str | None = None,
+    state_offset: int | None = None,
+    project_state_changes: bool = False,
 ) -> ContextPacket:
     """Build the packet for drafting ``target_logical_id``.
 
@@ -404,6 +421,8 @@ def assemble(
     docstring for why that is a refusal rather than an omission.
     """
     available = token_budget - reserved_output
+    if state_moment is state_mod.StateMoment.ENTERING and state_logical_id is None:
+        state_logical_id = target_logical_id
     sections: dict[str, tuple[PackedItem, ...]] = {}
     omitted: list[Omission] = []
     used = 0
@@ -459,17 +478,35 @@ def assemble(
     #    The order of these three filters does not matter to the result and does to the
     #    reason: a record dropped for POV is a different fact about the system than one
     #    dropped for being a proposal, and both are recorded as such.
-    visible: list[lc.StateRecord] = []
-    for record in state_mod.records_before(state_records, story_time_cutoff):
-        if not state_mod.is_canon(record):
-            continue  # A proposal is not an omission; it was never a candidate.
-        if record.predicate in extraction_mod.CONFIGURATION_PREDICATES:
-            # What configures the telling is not part of the told, and like a proposal it was
-            # never a candidate — so it is not an omission either. Counting it as one inflates
-            # the `context_omitted` digest, which an operator reads as "this scene was written
-            # without part of its book".
+    eligible = state_mod.eligible_records(
+        state_records,
+        cutoff=story_time_cutoff,
+        pov_character_id=pov_character_id,
+        excluded_predicates=tuple(extraction_mod.CONFIGURATION_PREDICATES),
+        moment=state_moment,
+        logical_id=state_logical_id,
+        offset=state_offset,
+    )
+    eligible_ids = {record.record_id for record in eligible}
+    boundary = state_mod.StoryBoundary(
+        story_time_cutoff, state_moment, state_logical_id, state_offset
+    )
+    for record in state_records:
+        if (
+            not state_mod.is_canon(record)
+            or record.predicate in extraction_mod.CONFIGURATION_PREDICATES
+            or record.record_id in eligible_ids
+        ):
             continue
-        if not state_mod.visible_to(record, pov_character_id):
+        if not state_mod.reached_boundary(record, boundary):
+            omitted.append(
+                Omission(
+                    record.record_id,
+                    record.record_id,
+                    f"not yet established at {state_moment.value} boundary",
+                )
+            )
+        elif not state_mod.visible_to(record, pov_character_id):
             omitted.append(
                 Omission(
                     record.record_id,
@@ -477,8 +514,14 @@ def assemble(
                     f"not visible to POV {pov_character_id or '(none named)'}",
                 )
             )
-            continue
-        visible.append(record)
+    if project_state_changes:
+        visible, superseded = state_mod.active_projection(
+            eligible,
+            changing_edge_predicates=(worlds_mod.STANDS_AT_PREDICATE,),
+            multi_valued_predicates=(worlds_mod.ENTITY_ROLE_PREDICATE,),
+        )
+    else:
+        visible, superseded = eligible, ()
 
     # **The projection, and it is the gate on the model being usable rather than merely
     # checkable.** `state.describe` renders `subject predicate value (object_ref)`, which is
@@ -527,9 +570,7 @@ def assemble(
             threads.append(item)
             used += item.tokens
         else:
-            omitted.append(
-                Omission(promise.promise_id, promise.promise_id, "budget: promise")
-            )
+            omitted.append(Omission(promise.promise_id, promise.promise_id, "budget: promise"))
     sections[THREADS] = tuple(threads)
 
     # **Who these people are, one sheet each.** The facts below name characters by id and
@@ -537,7 +578,7 @@ def assemble(
     # else is writing in the dark. Packed above the facts for that reason and dropped only
     # when the budget cannot hold a whole sheet.
     people = []
-    for character in characters_mod.cast(state_records):
+    for character in characters_mod.cast(visible):
         item = PackedItem(
             item_id=f"cast:{character.subject}",
             kind=lc.ContextItemKind.FACT,
@@ -551,14 +592,13 @@ def assemble(
             people.append(item)
             used += item.tokens
         else:
-            omitted.append(
-                Omission(character.subject, character.subject, "budget: cast")
-            )
+            omitted.append(Omission(character.subject, character.subject, "budget: cast"))
     sections[CAST] = tuple(people)
 
     thread_ids = {item.item_id for item in threads}
     in_order = [
-        record for record in state_mod.in_story_order(visible)
+        record
+        for record in state_mod.in_story_order(visible)
         if record.record_id not in thread_ids
         and record.record_id not in hidden_ids
         # A record the projection folded into its node's sentence is the same information
@@ -691,10 +731,41 @@ def assemble(
             packed_summaries.append(item)
             used += item.tokens
         else:
-            omitted.append(
-                Omission(node.logical_id, item.item_id, "budget exhausted: summary")
-            )
+            omitted.append(Omission(node.logical_id, item.item_id, "budget exhausted: summary"))
     sections[SUMMARIES] = tuple(packed_summaries)
+
+    # 6. Superseded state, after current facts and both forms of narrative memory. Older
+    # values are useful history and dangerous current facts, but they may not evict the recent
+    # prose or compact summaries that explain how the state changed. Under a tight budget an
+    # explicit history omission is safer than paying twice for the same slot and going dark on
+    # an entire scene.
+    history: list[PackedItem] = []
+    superseded_projection = worlds_mod.project(superseded)
+    for record in reversed(superseded):  # newest replaced value survives pressure first
+        base = _state_item(record, superseded_projection)
+        at = state_mod.order_key_of(record) or "before the recorded story"
+        text = f"At {at}: {base.text}"
+        item = PackedItem(
+            item_id=base.item_id,
+            kind=base.kind,
+            source_logical_id=base.source_logical_id,
+            source_kind=base.source_kind,
+            text=text,
+            tokens=count_tokens(text),
+            authority=base.authority,
+            pov_visibility=base.pov_visibility,
+        )
+        if fits(item):
+            history.append(item)
+            used += item.tokens
+        else:
+            omitted.append(Omission(record.record_id, record.record_id, "budget: history"))
+    selected_history = {item.item_id for item in history}
+    sections[HISTORY] = tuple(
+        next(item for item in history if item.item_id == record.record_id)
+        for record in superseded
+        if record.record_id in selected_history
+    )
 
     return ContextPacket(
         query_id=query_id,
@@ -746,6 +817,7 @@ __all__ = [
     "DEFAULT_TOKEN_BUDGET",
     "FACTS",
     "HIDDEN",
+    "HISTORY",
     "PREMISE",
     "PRIOR_PROSE",
     "SECTION_ORDER",

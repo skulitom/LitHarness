@@ -82,7 +82,15 @@ def test_a_scenes_position_agrees_with_the_chapters_it_is_grouped_into():
         revision = _serial(scenes)
         positions = chapter_positions(revision, SHAPE)
         expected = {
-            logical_id: Position(chapter.index, index + 1, len(chapter.scene_ids))
+            logical_id: Position(
+                chapter.index,
+                index + 1,
+                len(chapter.scene_ids),
+                arc_index=chapter.arc_index,
+                chapter_in_arc=chapter.index_in_arc,
+                volume_index=(chapter.index - 1) // 50 + 1,
+                chapter_in_volume=(chapter.index - 1) % 50 + 1,
+            )
             for chapter in chapters_of(revision, SHAPE)
             for index, logical_id in enumerate(chapter.scene_ids)
         }
@@ -106,8 +114,35 @@ def test_a_trailing_partial_chapter_reports_the_scenes_it_actually_has():
     the writer about three scenes nobody has decided to write yet.
     """
     positions = chapter_positions(_serial(9), SHAPE)
-    assert positions["s0009"] == Position(chapter_index=3, index_in_chapter=1, scenes_in_chapter=1)
-    assert positions["s0008"] == Position(chapter_index=2, index_in_chapter=4, scenes_in_chapter=4)
+    assert positions["s0009"] == Position(
+        chapter_index=3,
+        index_in_chapter=1,
+        scenes_in_chapter=1,
+        arc_index=1,
+        chapter_in_arc=3,
+        volume_index=1,
+        chapter_in_volume=3,
+    )
+    assert positions["s0008"] == Position(
+        chapter_index=2,
+        index_in_chapter=4,
+        scenes_in_chapter=4,
+        arc_index=1,
+        chapter_in_arc=2,
+        volume_index=1,
+        chapter_in_volume=2,
+    )
+
+
+def test_release_volumes_are_derived_windows_not_new_story_state() -> None:
+    revision = _serial(SHAPE.scenes_per_chapter * 51)
+    positions = chapter_positions(revision, SHAPE, chapters_per_volume=50, open_ended=True)
+    assert positions["s0200"].volume_index == 1
+    assert positions["s0200"].chapter_in_volume == 50
+    assert positions["s0201"].volume_index == 2
+    assert positions["s0201"].chapter_in_volume == 1
+    assert positions["s0201"].chapter_index == 51
+    assert positions["s0201"].open_ended
 
 
 def test_positions_are_keyed_by_the_same_scene_ids_the_beats_are():
@@ -140,9 +175,10 @@ def test_a_closed_arcs_beats_do_not_move_when_the_serial_grows():
     assert first_short == first_long
 
     # And the whole-book alternative really does move, which is what makes this worth pinning.
-    assert arc_template(SHAPE.scenes_per_arc).template_id != arc_template(
-        SHAPE.scenes_per_arc * 7 + 3
-    ).template_id
+    assert (
+        arc_template(SHAPE.scenes_per_arc).template_id
+        != arc_template(SHAPE.scenes_per_arc * 7 + 3).template_id
+    )
 
 
 def test_an_open_arc_refuses_a_sheet_rather_than_fitting_one():
@@ -198,7 +234,7 @@ def test_a_shape_that_cannot_describe_a_serial_is_refused():
 
 
 def test_a_serial_always_has_a_next_chapter_at_any_length():
-    """"Endless" as a capability rather than a claim: extension never refuses."""
+    """ "Endless" as a capability rather than a claim: extension never refuses."""
     for scenes in (0, 1, 7, 24, 25, 1000, 4001):
         extension = next_chapter(_serial(scenes), SHAPE)
         assert extension.scenes_to_add >= 1

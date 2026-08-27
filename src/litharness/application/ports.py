@@ -136,9 +136,7 @@ class JobReader(Protocol):
 class DecisionRepository(Protocol):
     def latest_decision_for(self, job_id: str) -> PolicyDecision | None: ...
 
-    def record_decision(
-        self, decision: PolicyDecision, *, decided_at: str
-    ) -> bool: ...
+    def record_decision(self, decision: PolicyDecision, *, decided_at: str) -> bool: ...
 
     def spend_on(self, day: str) -> Spend: ...
 
@@ -289,13 +287,9 @@ class PromiseRepository(Protocol):
     A separate table with its own reader sidesteps all three.
     """
 
-    def promises(
-        self, book_id: str, branch_id: str, *, open_only: bool = ...
-    ) -> list[Promise]: ...
+    def promises(self, book_id: str, branch_id: str, *, open_only: bool = ...) -> list[Promise]: ...
 
-    def record_promise(
-        self, book_id: str, branch_id: str, promise: Promise
-    ) -> bool: ...
+    def record_promise(self, book_id: str, branch_id: str, promise: Promise) -> bool: ...
 
     def pay_promise(
         self,
@@ -353,6 +347,7 @@ class OutlineStore(
     DecisionRepository,
     StateRepository,
     StateWriter,
+    SummaryRepository,
     # W2: open promises go into the outline request and the windows it answers with come back
     # here. The one store that composes `PayoffScheduler`, because the one call that has the
     # whole beat sheet in view is the only one entitled to say where a debt should be paid.
@@ -438,6 +433,7 @@ class DirectorStore(
     PlanReader,
     SummaryRepository,
     PromiseRepository,
+    StateRepository,
     DirectorRepository,
     Protocol,
 ):
@@ -467,6 +463,7 @@ class RepairStore(
     ManuscriptWriter,
     FindingRepository,
     StateRepository,
+    PlanReader,
     DecisionRepository,
     Protocol,
 ):

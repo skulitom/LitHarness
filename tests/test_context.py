@@ -34,6 +34,7 @@ from litharness.domain import context as context_mod
 from litharness.domain.context import (
     CONSTRAINTS,
     FACTS,
+    HISTORY,
     PREMISE,
     PRIOR_PROSE,
     THREADS,
@@ -139,14 +140,10 @@ def test_the_operations_this_assembler_cannot_serve_are_named_rather_than_ignore
     graded_cases(),
     ids=[f"{fixture_id}:{case.query.query_id}" for fixture_id, case in graded_cases()],
 )
-def test_the_packet_carries_every_mandatory_item(
-    fixture_id: str, case: lc.GoldContextCase
-) -> None:
+def test_the_packet_carries_every_mandatory_item(fixture_id: str, case: lc.GoldContextCase) -> None:
     packet = packet_for_case(fixture_id, case)
     missing = [
-        target.reason
-        for target in case.mandatory
-        if not _satisfies(packet, target, fixture_id)
+        target.reason for target in case.mandatory if not _satisfies(packet, target, fixture_id)
     ]
     assert missing == []
 
@@ -156,13 +153,9 @@ def test_the_packet_carries_every_mandatory_item(
     graded_cases(),
     ids=[f"{fixture_id}:{case.query.query_id}" for fixture_id, case in graded_cases()],
 )
-def test_the_packet_carries_no_forbidden_item(
-    fixture_id: str, case: lc.GoldContextCase
-) -> None:
+def test_the_packet_carries_no_forbidden_item(fixture_id: str, case: lc.GoldContextCase) -> None:
     packet = packet_for_case(fixture_id, case)
-    leaked = [
-        target.reason for target in case.forbidden if _satisfies(packet, target, fixture_id)
-    ]
+    leaked = [target.reason for target in case.forbidden if _satisfies(packet, target, fixture_id)]
     assert leaked == []
 
 
@@ -240,9 +233,7 @@ def test_the_constraint_that_names_this_scene_reaches_the_prompt() -> None:
 
 
 def test_the_premise_is_still_there() -> None:
-    packet = assemble(
-        load_book("mystery"), "scene-6", plan_items=load_plan_items("mystery")
-    )
+    packet = assemble(load_book("mystery"), "scene-6", plan_items=load_plan_items("mystery"))
     assert len(packet.sections[PREMISE]) == 1
     assert "locked-room mystery" in packet.render()
 
@@ -285,7 +276,9 @@ def test_an_undrafted_scene_contributes_nothing() -> None:
         book_id=revision.book_id,
         branch_id=revision.branch_id,
         nodes=tuple(
-            node if node.logical_id in {"book", "scene-1"} else Node(
+            node
+            if node.logical_id in {"book", "scene-1"}
+            else Node(
                 logical_id=node.logical_id,
                 kind=node.kind,
                 position_key=node.position_key,
@@ -442,13 +435,16 @@ def test_the_packet_projects_onto_the_contract() -> None:
     assert projected.budget.used == packet.used_tokens
     assert projected.budget.reserved_output == packet.reserved_output
     assert [section.name for section in projected.sections] == [
-        PREMISE, CONSTRAINTS, THREADS, FACTS, PRIOR_PROSE
+        PREMISE,
+        CONSTRAINTS,
+        THREADS,
+        FACTS,
+        PRIOR_PROSE,
     ]
     # The rejected candidates are on the artifact, not only in the log — an omission a
     # consumer cannot see is an omission that did not happen, as far as the consumer knows.
     assert any(
-        rejected.item_id == "rec-brandt-knows-letter"
-        for rejected in projected.rejected_candidates
+        rejected.item_id == "rec-brandt-knows-letter" for rejected in projected.rejected_candidates
     )
     # And it survives a round trip through the wire, which is what "artifact" means.
     assert lc.from_jsonable(lc.ContextPacket, lc.to_jsonable(projected)).packet_id == "packet-1"
@@ -578,7 +574,10 @@ def test_an_evicted_scene_arrives_as_its_summary_instead_of_as_an_omission() -> 
 
     summaries = {logical_id: f"{logical_id} happened." for logical_id in evicted}
     packed = assemble(
-        revision, "target", plan_items=premise, summaries=summaries,
+        revision,
+        "target",
+        plan_items=premise,
+        summaries=summaries,
         token_budget=BINDING_BUDGET,
     )
 
@@ -599,7 +598,10 @@ def test_a_summary_never_appears_beside_the_prose_it_summarises() -> None:
     premise = [_premise()]
     everything = {f"s{index}": f"s{index} happened." for index in range(1, 13)}
     packed = assemble(
-        revision, "target", plan_items=premise, summaries=everything,
+        revision,
+        "target",
+        plan_items=premise,
+        summaries=everything,
         token_budget=BINDING_BUDGET,
     )
 
@@ -623,7 +625,10 @@ def test_a_book_with_no_summaries_packs_exactly_as_it_did_before() -> None:
     # serial and is still tested, at a budget chosen to bind.
     bare = assemble(revision, "target", plan_items=premise, token_budget=BINDING_BUDGET)
     empty = assemble(
-        revision, "target", plan_items=premise, summaries={},
+        revision,
+        "target",
+        plan_items=premise,
+        summaries={},
         token_budget=BINDING_BUDGET,
     )
     assert [item.source_logical_id for item in bare.items] == [
@@ -693,12 +698,114 @@ def test_a_sheet_declaration_never_reaches_a_packet() -> None:
     )
     records = [*load_state("litrpg").records, declaration]
 
-    packet = assemble(
-        load_book("litrpg"), "scene-6", state_records=records, token_budget=8000
-    )
+    packet = assemble(load_book("litrpg"), "scene-6", state_records=records, token_budget=8000)
 
     assert SHEET_PREDICATE not in packet.render()
     assert packet.sections.get(FACTS), "ordinary world facts must still arrive"
     # And it is not an omission: `context_omitted` is the counter that says a scene was
     # written without part of its book, and a configuration record was never part of it.
     assert not [item for item in packet.omitted if item.source_logical_id == "rec-sheet"]
+
+
+def test_character_sheets_cannot_reintroduce_future_or_private_state() -> None:
+    """The cast is another rendering of state, not a route around its visibility gate."""
+    role = lc.StateRecord(
+        record_id="role-mara",
+        kind=lc.StateRecordKind.ASSERTION,
+        subject="mara",
+        predicate="entity_role",
+        value="protagonist",
+        authority=lc.StateAuthority.ACCEPTED_CANON,
+    )
+    visible_want = lc.StateRecord(
+        record_id="want-now",
+        kind=lc.StateRecordKind.ASSERTION,
+        subject="mara",
+        predicate="wants",
+        value="find the key",
+        story_position=lc.StoryPosition(order_key="s1"),
+        authority=lc.StateAuthority.ACCEPTED_CANON,
+    )
+    future_want = lc.StateRecord(
+        record_id="want-later",
+        kind=lc.StateRecordKind.ASSERTION,
+        subject="mara",
+        predicate="wants",
+        value="burn the house",
+        story_position=lc.StoryPosition(order_key="s9"),
+        authority=lc.StateAuthority.ACCEPTED_CANON,
+    )
+    private_tie = lc.StateRecord(
+        record_id="private-tie",
+        kind=lc.StateRecordKind.RELATIONSHIP,
+        subject="mara",
+        predicate="betrayed",
+        object_ref="brandt",
+        story_position=lc.StoryPosition(order_key="s1"),
+        authority=lc.StateAuthority.ACCEPTED_CANON,
+        pov_visibility=["brandt"],
+    )
+
+    packet = assemble(
+        make_revision(),
+        "scene-1",
+        state_records=[role, visible_want, future_want, private_tie],
+        story_time_cutoff="s2",
+        pov_character_id="mara",
+        token_budget=8000,
+    )
+    rendered = packet.render()
+
+    assert "find the key" in rendered
+    assert "burn the house" not in rendered
+    assert "betrayed" not in rendered
+    assert not packet.contains_ref("want-later")
+    omissions = {item.source_logical_id: item.reason for item in packet.omitted}
+    assert set(omissions) == {"private-tie", "want-later"}
+    assert "POV" in omissions["private-tie"]
+    assert "not yet established" in omissions["want-later"]
+
+
+def test_replaced_character_state_is_labelled_as_history_not_as_current_fact() -> None:
+    records = [
+        lc.StateRecord(
+            record_id="role-mara",
+            kind=lc.StateRecordKind.ASSERTION,
+            subject="mara",
+            predicate="entity_role",
+            value="protagonist",
+            authority=lc.StateAuthority.ACCEPTED_CANON,
+        ),
+        lc.StateRecord(
+            record_id="want-early",
+            kind=lc.StateRecordKind.ASSERTION,
+            subject="mara",
+            predicate="wants",
+            value="escape",
+            story_position=lc.StoryPosition(order_key="s1"),
+            authority=lc.StateAuthority.ACCEPTED_CANON,
+        ),
+        lc.StateRecord(
+            record_id="want-now",
+            kind=lc.StateRecordKind.ASSERTION,
+            subject="mara",
+            predicate="wants",
+            value="return",
+            story_position=lc.StoryPosition(order_key="s3"),
+            authority=lc.StateAuthority.ACCEPTED_CANON,
+        ),
+    ]
+
+    packet = assemble(
+        make_revision(),
+        "scene-1",
+        state_records=records,
+        story_time_cutoff="s3",
+        project_state_changes=True,
+        token_budget=8000,
+    )
+
+    assert "wants: return" in packet.render()
+    assert "At s1: mara wants escape" in packet.render()
+    assert "want-early" not in {item.item_id for item in packet.sections[FACTS]}
+    assert "want-early" in {item.item_id for item in packet.sections[HISTORY]}

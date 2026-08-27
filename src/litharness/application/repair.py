@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Sequence
+from contextlib import suppress
 from datetime import UTC, datetime
 
 import litharness_contracts as lc
@@ -16,6 +17,8 @@ from litharness.application.evaluation import (
 from litharness.application.policy_events import policy_decision_event
 from litharness.application.ports import EvaluationStore, RepairStore, TextGenerator
 from litharness.domain import propagation
+from litharness.domain import state as state_mod
+from litharness.domain import worlds as worlds_mod
 from litharness.domain.budget import BudgetPolicy
 from litharness.domain.budget import check as budget_check
 from litharness.domain.events import Event, EventType
@@ -23,7 +26,9 @@ from litharness.domain.extraction import extract_state
 from litharness.domain.findings import UNRESOLVED_STATUSES, Finding, primary_span_of
 from litharness.domain.generation import CompletionRequest
 from litharness.domain.jobs import Job, input_digest_for
+from litharness.domain.nodes import NodeKind
 from litharness.domain.patch import PatchPolicy, apply_patch
+from litharness.domain.plans import scene_plan_for
 from litharness.domain.policy import (
     GateKind,
     GateOutcome,
@@ -235,9 +240,7 @@ def propagated_evaluations(
     drafted = {node.logical_id for node in revision.nodes}
     reached = tuple(
         sorted(
-            target
-            for target in result.logical_ids
-            if target != logical_id and target in drafted
+            target for target in result.logical_ids if target != logical_id and target in drafted
         )
     )
     return (
@@ -407,16 +410,92 @@ def make_evaluation_handler(
     return handle
 
 
-def _repair_prompt(finding: Finding, text: str, start: int, end: int) -> str:
+def _repair_prompt(
+    finding: Finding,
+    text: str,
+    start: int,
+    end: int,
+    *,
+    scene_plan: str = "",
+    facts: Sequence[str] = (),
+    anchors: Sequence[str] = (),
+) -> str:
+    marked = (
+        text[:start] + "<<<REPLACE START>>>" + text[start:end] + "<<<REPLACE END>>>" + text[end:]
+    )
     return (
         "Repair only the exact passage identified below. Return JSON with one string field "
         "named replacement. Do not include commentary and do not rewrite surrounding text.\n\n"
         f"Finding: {finding.message}\n"
         f"Rule: {finding.rule_or_critic_id or finding.category}\n"
-        f"Exact passage: {text[start:end]!r}\n"
-        f"Before: {text[max(0, start - 300):start]!r}\n"
-        f"After: {text[end:end + 300]!r}"
+        + (f"Scene plan: {scene_plan}\n" if scene_plan else "")
+        + (
+            "Relevant established facts:\n" + "\n".join(f"- {item}" for item in facts) + "\n"
+            if facts
+            else ""
+        )
+        + (
+            "Other evidence anchors:\n" + "\n".join(f"- {item}" for item in anchors) + "\n"
+            if anchors
+            else ""
+        )
+        + f"Exact passage: {text[start:end]!r}\n\n"
+        + "Complete target scene (the markers are instructions, not prose):\n"
+        + marked
     )
+
+
+def render_repair_request(
+    finding: Finding,
+    text: str,
+    start: int,
+    end: int,
+    *,
+    scene_plan: str = "",
+    facts: Sequence[str] = (),
+    anchors: Sequence[str] = (),
+    call_class: str = "generation",
+) -> CompletionRequest:
+    """The complete effective repair request, shared by production and prompt inspection."""
+    return CompletionRequest(
+        prompt=_repair_prompt(
+            finding,
+            text,
+            start,
+            end,
+            scene_plan=scene_plan,
+            facts=facts,
+            anchors=anchors,
+        ),
+        system=(
+            "You perform a located manuscript repair. Preserve the complete scene's "
+            "events, voice, continuity, and all text outside the marked span."
+        ),
+        schema=_REPAIR_SCHEMA,
+        profile="repair",
+        max_output_tokens=1024,
+        call_class=call_class,
+    )
+
+
+def _source_spans(value: object) -> tuple[lc.EvidenceSpan, ...]:
+    """Recover every evidence span retained in a finding's contract payload."""
+    found: list[lc.EvidenceSpan] = []
+
+    def visit(item: object) -> None:
+        if isinstance(item, dict):
+            if {"source", "start", "end"}.issubset(item):
+                with suppress(KeyError, TypeError, ValueError):
+                    found.append(lc.from_jsonable(lc.EvidenceSpan, item))
+            for child in item.values():
+                visit(child)
+        elif isinstance(item, list):
+            for child in item:
+                visit(child)
+
+    visit(value)
+    unique = {(span.source.logical_id, span.start, span.end): span for span in found}
+    return tuple(unique[key] for key in sorted(unique))
 
 
 def make_repair_handler(
@@ -476,11 +555,71 @@ def make_repair_handler(
             raise RepairInputError(f"repair target {logical_id} carries no text")
         start, end = int(span.start), int(span.end)
 
-        request = CompletionRequest(
-            prompt=_repair_prompt(finding, text, start, end),
-            schema=_REPAIR_SCHEMA,
-            profile="repair",
-            max_output_tokens=1024,
+        plan_item = scene_plan_for(store.plan_items(book_id, branch_id), logical_id)
+        all_records = store.state_records(book_id, branch_id)
+        scene_ids = [
+            item.logical_id
+            for item in revision.in_reading_order()
+            if item.kind is NodeKind.SCENE and not item.tombstoned
+        ]
+        scene_ordinal = scene_ids.index(logical_id) + 1
+        cutoff = state_mod.scene_cutoff(all_records, scene_ordinal)
+        records = state_mod.eligible_records(
+            all_records,
+            cutoff=cutoff,
+            moment=(
+                state_mod.StateMoment.WITHIN
+                if cutoff is not None
+                else state_mod.StateMoment.THROUGH
+            ),
+            logical_id=logical_id if cutoff is not None else None,
+            offset=start if cutoff is not None else None,
+        )
+        active, _history = state_mod.active_projection(
+            records,
+            changing_edge_predicates=(worlds_mod.STANDS_AT_PREDICATE,),
+            multi_valued_predicates=(worlds_mod.ENTITY_ROLE_PREDICATE,),
+        )
+        message_words = {
+            word.casefold().strip(".,:;!?()[]{}\"'")
+            for word in finding.message.split()
+            if len(word) >= 4
+        }
+        relevant_facts: list[str] = []
+        for record in active:
+            evidence_here = any(item.source.logical_id == logical_id for item in record.evidence)
+            names_finding = (
+                record.subject.casefold() in message_words
+                or record.predicate.casefold() in message_words
+            )
+            if evidence_here or names_finding:
+                relevant_facts.append(state_mod.describe(record))
+
+        anchors: list[str] = []
+        for evidence in _source_spans(finding.source):
+            if evidence.source.logical_id == logical_id:
+                continue
+            try:
+                source_node = revision.node(evidence.source.logical_id)
+            except KeyError:
+                continue
+            if source_node.content is None:
+                continue
+            anchor_start = max(0, int(evidence.start) - 200)
+            anchor_end = min(len(source_node.content), int(evidence.end) + 200)
+            anchors.append(
+                f"{source_node.logical_id} [{evidence.start}:{evidence.end}]: "
+                f"{source_node.content[anchor_start:anchor_end]!r}"
+            )
+
+        request = render_repair_request(
+            finding,
+            text,
+            start,
+            end,
+            scene_plan=plan_item.text if plan_item is not None else "",
+            facts=relevant_facts,
+            anchors=anchors,
             call_class=call_class,
         )
         provider, _ = registry.resolve(call_class)
@@ -489,7 +628,7 @@ def make_repair_handler(
             budget_policy,
             store.spend_on(day),
             provider=provider.name,
-            prompt_chars=len(request.prompt),
+            prompt_chars=request.input_chars,
             max_output_tokens=request.max_output_tokens,
         )
         if not budget_verdict.allowed:
@@ -732,6 +871,7 @@ __all__ = [
     "make_evaluation_handler",
     "make_repair_handler",
     "propagated_evaluations",
+    "render_repair_request",
     "repair_job_for",
     "summary_job_for",
 ]

@@ -47,7 +47,16 @@ from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from typing import Any
 
+from litharness.domain import serials as serials_mod
 from litharness.domain.generation import CompletionRequest
+from litharness.domain.nodes import NodeKind
+from litharness.domain.revision import Revision
+
+# A reader gets the current chapter exactly as read, the two preceding chapters in full, and
+# compact scene memories for the rest of the current arc.  Both bounds are structural: the
+# request does not grow with a ten-volume serial, while it is no longer a cold read of one scene.
+RECENT_FULL_CHAPTERS = 2
+RECALLED_SUMMARY_CHAPTERS = 4
 
 #: Frozen profiles, one per lane, so the two spends are separable on the decision rows.
 CONTINUE_PROFILE = "reader.continue.v0"
@@ -107,57 +116,64 @@ class Reader:
 #: this system uses for its own machinery.
 READERS: tuple[Reader, ...] = (
     Reader(
-        "power_s", STEERING,
+        "power_s",
+        STEERING,
         "watching somebody go from nothing to genuinely dangerous, and getting to feel every "
         "jump on the way",
         "a main character who is already the strongest thing in the room on page one",
     ),
     Reader(
-        "elsewhere_s", STEERING,
+        "elsewhere_s",
+        STEERING,
         "getting dropped somewhere impossible and working out how it runs at the same time the "
         "character does",
         "names and titles thrown around like I am supposed to already know them",
     ),
     Reader(
-        "magic_s", STEERING,
+        "magic_s",
+        STEERING,
         "the magic itself — what it actually does, how strange it gets, and somebody working "
         "out a use for it that nobody else had",
         "a world where the magic turns out to be a job with forms to fill in",
     ),
     Reader(
-        "binge_s", STEERING,
+        "binge_s",
+        STEERING,
         "somewhere I want to keep coming back to, people I like being around, and the next good "
         "thing always close enough to reach",
         "misery with nothing to look forward to, or a book that skips the part it told me to "
         "care about",
     ),
     Reader(
-        "power_m", MEASUREMENT,
+        "power_m",
+        MEASUREMENT,
         "watching somebody go from nothing to genuinely dangerous, and getting to feel every "
         "jump on the way",
         "a main character who is already the strongest thing in the room on page one",
     ),
     Reader(
-        "elsewhere_m", MEASUREMENT,
+        "elsewhere_m",
+        MEASUREMENT,
         "getting dropped somewhere impossible and working out how it runs at the same time the "
         "character does",
         "names and titles thrown around like I am supposed to already know them",
     ),
     Reader(
-        "magic_m", MEASUREMENT,
+        "magic_m",
+        MEASUREMENT,
         "the magic itself — what it actually does, how strange it gets, and somebody working "
         "out a use for it that nobody else had",
         "a world where the magic turns out to be a job with forms to fill in",
     ),
     Reader(
-        "binge_m", MEASUREMENT,
+        "binge_m",
+        MEASUREMENT,
         "somewhere I want to keep coming back to, people I like being around, and the next good "
         "thing always close enough to reach",
         "misery with nothing to look forward to, or a book that skips the part it told me to "
         "care about",
     ),
 )
-
 
 
 #: **A measurement roster with no declared taste, and it exists because the declared one was
@@ -185,9 +201,7 @@ READERS: tuple[Reader, ...] = (
 #: `research/quality-measurement/blurb_gradient.py` — a roster that stops preferring our
 #: listings but also stops telling 12,000 followers from 0 has not been fixed, it has been
 #: blinded.
-BLIND: tuple[Reader, ...] = tuple(
-    Reader(f"plain_{index}", MEASUREMENT) for index in range(1, 5)
-)
+BLIND: tuple[Reader, ...] = tuple(Reader(f"plain_{index}", MEASUREMENT) for index in range(1, 5))
 
 
 def pool(name: str) -> tuple[Reader, ...]:
@@ -244,7 +258,7 @@ ANTICIPATION_SCHEMA: dict[str, Any] = {
         "felt": {
             "type": "string",
             "description": "What reading this did to you, in your own words. How it left you "
-                           "feeling, not what you think of it and not how it could be better.",
+            "feeling, not what you think of it and not how it could be better.",
         },
         "expect_next": {
             "type": "string",
@@ -254,13 +268,13 @@ ANTICIPATION_SCHEMA: dict[str, Any] = {
             "type": "array",
             "items": {"type": "string"},
             "description": "Things you find yourself WANTING to happen next. Things that could "
-                           "happen in the story, never things the writing should do.",
+            "happen in the story, never things the writing should do.",
         },
         "dreading": {
             "type": "array",
             "items": {"type": "string"},
             "description": "Things you are afraid happen next. Again things that could happen "
-                           "in the story, never things the writing should do.",
+            "in the story, never things the writing should do.",
         },
     },
 }
@@ -316,7 +330,7 @@ LEAVE_SCHEMA: dict[str, Any] = {
 
 
 def render_choice_request(
-    reader: Reader, chapter: str, rival_title: str = ""
+    reader: Reader, chapter: str, rival_title: str = "", *, prior_memory: str = ""
 ) -> CompletionRequest:
     """A measurement reader, stopped part-way, deciding whether to stay.
 
@@ -337,10 +351,15 @@ def render_choice_request(
     """
     if reader.pool != MEASUREMENT:
         raise ValueError(f"{reader.reader_id} is a {reader.pool} reader and may not measure")
+    memory = (
+        f"YOUR MEMORY FROM THE PREVIOUS READING STOP:\n{prior_memory.strip()}\n\n"
+        if prior_memory.strip()
+        else ""
+    )
     if not rival_title.strip():
         return CompletionRequest(
             prompt=(
-                f"{chapter}\n\n---\n\n"
+                f"{memory}{chapter}\n\n---\n\n"
                 f"You have time for about {BUDGET_CHAPTERS} more chapters today, across "
                 "everything you are part-way through. This is one of them. What do you do?"
             ),
@@ -352,7 +371,8 @@ def render_choice_request(
         )
     return CompletionRequest(
         prompt=(
-            f"You are part-way into this and it stops here:\n\n{chapter}\n\n---\n\n"
+            f"{memory}You are part-way into this and it stops here:\n\n"
+            f"{chapter}\n\n---\n\n"
             f"{_CURRENCY} You can spend it finishing this chapter. Or you can spend it on a "
             f"serial you have not opened called {rival_title.strip()}, which somebody put in "
             "front of you today: read what it is about, and start it if it takes you. You "
@@ -367,7 +387,9 @@ def render_choice_request(
     )
 
 
-def render_anticipation_request(reader: Reader, chapter: str) -> CompletionRequest:
+def render_anticipation_request(
+    reader: Reader, chapter: str, *, prior_memory: str = ""
+) -> CompletionRequest:
     """A steering reader, stopped part-way, saying what it felt and what it thinks comes next.
 
     **No budget, no competitor and no choice**, for the reason the two lanes were split at all:
@@ -381,9 +403,14 @@ def render_anticipation_request(reader: Reader, chapter: str) -> CompletionReque
     """
     if reader.pool != STEERING:
         raise ValueError(f"{reader.reader_id} is a {reader.pool} reader and may not steer")
+    memory = (
+        f"YOUR MEMORY FROM THE PREVIOUS READING STOP:\n{prior_memory.strip()}\n\n"
+        if prior_memory.strip()
+        else ""
+    )
     return CompletionRequest(
         prompt=(
-            f"{chapter}\n\n---\n\nThat is as far as you have got. How did that leave you, "
+            f"{memory}{chapter}\n\n---\n\nThat is as far as you have got. How did that leave you, "
             "what do you think happens next, and what are you hoping for and dreading?"
         ),
         system=reader.system(),
@@ -392,6 +419,118 @@ def render_anticipation_request(reader: Reader, chapter: str) -> CompletionReque
         profile=ANTICIPATE_PROFILE,
         call_class=CALL_CLASS,
     )
+
+
+def accumulated_passage(
+    revision: Revision,
+    target_logical_id: str,
+    stopped_passage: str,
+    *,
+    summaries: Mapping[str, str] | None = None,
+    shape: serials_mod.SerialShape | None = None,
+) -> str:
+    """What a continuing reader has read up to one exact stop, with bounded recall.
+
+    The current chapter contains full earlier scenes and only the stopped prefix of the target
+    scene.  Recent chapters remain verbatim.  Older chapters in the recall window use summaries
+    whose content hashes the caller has already checked; a missing summary is named rather than
+    silently replaced with stale text.  Nothing after the target can enter the request.
+    """
+    summaries = summaries or {}
+    shape = shape or serials_mod.SerialShape()
+    scenes = [
+        node
+        for node in revision.in_reading_order()
+        if node.kind is NodeKind.SCENE and not node.tombstoned
+    ]
+    ids = [node.logical_id for node in scenes]
+    if target_logical_id not in ids:
+        raise ValueError(f"{target_logical_id} is not a live scene")
+    target_position = ids.index(target_logical_id)
+    scene_by_id = {node.logical_id: node for node in scenes}
+    chapters = serials_mod.chapters_of(revision, shape)
+    target_chapter_at = next(
+        index for index, chapter in enumerate(chapters) if target_logical_id in chapter.scene_ids
+    )
+    full_from = max(0, target_chapter_at - RECENT_FULL_CHAPTERS)
+    recall_from = max(0, full_from - RECALLED_SUMMARY_CHAPTERS)
+    blocks: list[str] = []
+
+    if recall_from:
+        blocks.append(
+            f"[EARLIER READING]\n{recall_from} earlier chapter(s) were read before the "
+            "bounded recall shown here."
+        )
+    recalled: list[str] = []
+    for chapter in chapters[recall_from:full_from]:
+        for logical_id in chapter.scene_ids:
+            if ids.index(logical_id) >= target_position:
+                break
+            summary = summaries.get(logical_id)
+            recalled.append(
+                f"- {logical_id}: {summary}"
+                if summary
+                else f"- {logical_id}: [current summary unavailable]"
+            )
+    if recalled:
+        blocks.append("[RECALLED EVENTS — COMPACT]\n" + "\n".join(recalled))
+
+    for chapter in chapters[full_from:target_chapter_at]:
+        prose = [
+            scene_by_id[logical_id].content or ""
+            for logical_id in chapter.scene_ids
+            if ids.index(logical_id) < target_position
+        ]
+        if prose:
+            blocks.append(f"[RECENT CHAPTER {chapter.index} — READ IN FULL]\n" + "\n\n".join(prose))
+
+    current = chapters[target_chapter_at]
+    current_parts: list[str] = []
+    for logical_id in current.scene_ids:
+        position = ids.index(logical_id)
+        if position > target_position:
+            break
+        if logical_id == target_logical_id:
+            current_parts.append(stopped_passage)
+            break
+        current_parts.append(scene_by_id[logical_id].content or "")
+    blocks.append(
+        f"[CURRENT CHAPTER {current.index} — STOPS MID-SCENE]\n" + "\n\n".join(current_parts)
+    )
+    return "\n\n".join(blocks)
+
+
+def prior_reading_memory(
+    rows: Sequence[Mapping[str, Any]],
+    reader_id: str,
+    *,
+    earlier_logical_ids: Sequence[str],
+) -> str:
+    """The newest earlier answer from this same simulated reader, never another reader's."""
+    earlier = frozenset(earlier_logical_ids)
+    row = next(
+        (
+            item
+            for item in rows
+            if item.get("reader_id") == reader_id and item.get("logical_id") in earlier
+        ),
+        None,
+    )
+    if row is None:
+        return ""
+    parts: list[str] = []
+    for key, label in (
+        ("felt", "You felt"),
+        ("expect_next", "You expected"),
+        ("because", "Your last decision was because"),
+    ):
+        if row.get(key):
+            parts.append(f"{label}: {row[key]}")
+    for key, label in (("hoping_for", "You hoped for"), ("dreading", "You dreaded")):
+        values = row.get(key)
+        if isinstance(values, list) and values:
+            parts.append(f"{label}: " + "; ".join(str(value) for value in values))
+    return "\n".join(parts)
 
 
 #: **The browsing behaviours, and they are not the reading ones.** §97.4 gives a sim a
@@ -492,9 +631,7 @@ def render_pick_request(
     )
 
 
-def render_start_request(
-    reader: Reader, overview: str, title: str = ""
-) -> CompletionRequest:
+def render_start_request(reader: Reader, overview: str, title: str = "") -> CompletionRequest:
     """A measurement reader, one overview, one behavioural choice against the rest of the page.
 
     **`title` is an arm and the empty string is its control.** A listing on this market never
@@ -590,9 +727,7 @@ class Reading:
             "come_back_later": self.come_back,
             "left_for_other": self.left_for_other,
             "continuation": self.continuation,
-            "said": [
-                {"reader": r, "next": c, "because": b} for r, c, b in self.said
-            ],
+            "said": [{"reader": r, "next": c, "because": b} for r, c, b in self.said],
         }
 
     @classmethod
@@ -692,9 +827,7 @@ class Anticipation:
             "for.",
         ]
         if self.felt:
-            blocks.append(
-                "It left them:\n" + "\n".join(f"- {item}" for item in self.felt)
-            )
+            blocks.append("It left them:\n" + "\n".join(f"- {item}" for item in self.felt))
         if self.expect_next:
             blocks.append(
                 "They expect next:\n" + "\n".join(f"- {item}" for item in self.expect_next)
@@ -704,11 +837,8 @@ class Anticipation:
                 "They are hoping for:\n" + "\n".join(f"- {item}" for item in self.hoping_for)
             )
         if self.dreading:
-            blocks.append(
-                "They are dreading:\n" + "\n".join(f"- {item}" for item in self.dreading)
-            )
+            blocks.append("They are dreading:\n" + "\n".join(f"- {item}" for item in self.dreading))
         return "\n\n".join(blocks)
-
 
 
 @dataclass(frozen=True, slots=True)
@@ -762,7 +892,6 @@ class Browsing:
             asked=len(pool(MEASUREMENT)),
             said=tuple(said),
         )
-
 
 
 def side_of(choice: str, ours_first: bool) -> str:
@@ -859,6 +988,7 @@ class Pairing:
             said=tuple(said),
         )
 
+
 __all__ = [
     "ANTICIPATE_PROFILE",
     "ANTICIPATION_SCHEMA",
@@ -881,7 +1011,9 @@ __all__ = [
     "Pairing",
     "Reader",
     "Reading",
+    "accumulated_passage",
     "pool",
+    "prior_reading_memory",
     "render_anticipation_request",
     "render_appetite_request",
     "render_choice_request",

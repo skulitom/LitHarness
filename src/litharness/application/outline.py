@@ -59,15 +59,17 @@ from litharness.application.plan_refinement import accept_plan_proposal
 from litharness.application.policy_events import policy_decision_event
 from litharness.application.ports import OutlineStore, TextGenerator
 from litharness.domain import house, world_brief
+from litharness.domain import serials as serials_mod
 from litharness.domain import state as state_mod
 from litharness.domain import worlds as worlds_mod
-from litharness.domain.beats import Beat, beats_for, template_for
+from litharness.domain.beats import Beat, TemplateMismatch, beats_for, template_for
 from litharness.domain.budget import BudgetPolicy
 from litharness.domain.budget import check as budget_check
 from litharness.domain.events import Event, EventType, payload_digest
 from litharness.domain.extraction import MAX_SUFFIX, impossible_fields
 from litharness.domain.generation import CompletionRequest, CompletionResult, Resolution
 from litharness.domain.jobs import Job
+from litharness.domain.nodes import NodeKind
 from litharness.domain.patch import Veto
 from litharness.domain.plan_refinement import (
     PlanConflict,
@@ -89,6 +91,7 @@ from litharness.domain.policy import (
     decision_id_for,
 )
 from litharness.domain.promises import Promise, schedule_fault, window_fault
+from litharness.domain.text import content_hash
 from litharness.domain.world_brief import WorldBrief
 
 #: Job kind this handler answers to.
@@ -214,14 +217,19 @@ OUTLINE_SCHEMA: dict[str, Any] = {
 }
 
 
-def outline_job_id(book_id: str, branch_id: str, epoch: int) -> str:
+def outline_job_id(book_id: str, branch_id: str, epoch: int, *, scope: str = "book") -> str:
     """Derived, and epoch-versioned for `beat_job_id`'s reason.
 
     `idempotency_key` is UNIQUE, so a poisoned outline would burn its id forever and "plan
     this book again" would be inexpressible. `replan` bumps the epoch and this follows it.
     """
     material = payload_digest(
-        {"book_id": book_id, "branch_id": branch_id, "plan_epoch": epoch}
+        {
+            "book_id": book_id,
+            "branch_id": branch_id,
+            "plan_epoch": epoch,
+            "scope": scope,
+        }
     )
     return f"outline-{material[:24]}"
 
@@ -235,9 +243,7 @@ def _ordinal_of(beats: Sequence[Beat]) -> dict[str, int]:
     the thing the padding exists to make unnecessary.
     """
     return {
-        beat.story_order_key: beat.ordinal
-        for beat in beats
-        if beat.story_order_key is not None
+        beat.story_order_key: beat.ordinal for beat in beats if beat.story_order_key is not None
     }
 
 
@@ -250,6 +256,8 @@ def render_outline_request(
     promises: Sequence[Promise] = (),
     world: WorldBrief | None = None,
     protagonist: worlds_mod.Protagonist | None = None,
+    serial_arc_index: int | None = None,
+    prior_summaries: Sequence[tuple[str, str]] = (),
 ) -> CompletionRequest:
     """Freeze the premise and the whole beat sheet into one structured-output request.
 
@@ -293,25 +301,45 @@ def render_outline_request(
         {
             "subject": promise.subject,
             "owed": promise.description,
-            "opened_at_scene": ordinals.get(promise.opened_at_key),
-            "due_by_scene": ordinals.get(promise.due_key or ""),
+            "opened_at_scene": ordinals.get(promise.opened_at_key, promise.opened_at_key),
+            "due_by_scene": (
+                ordinals.get(promise.due_key, promise.due_key)
+                if promise.due_key is not None
+                else None
+            ),
         }
         for promise in promises
-        if promise.opened_at_key in ordinals
     ]
     prompt = json.dumps(
         {
             "premise": premise,
             "base_plan_revision_id": base.plan_revision_id,
+            **(
+                {
+                    "serial_scope": {
+                        "series": "open-ended",
+                        "arc": serial_arc_index,
+                        "meaning": ("close this local arc without ending or resolving the series"),
+                    }
+                }
+                if serial_arc_index is not None
+                else {}
+            ),
+            **(
+                {
+                    "earlier_accepted_scenes": [
+                        {"scene": logical_id, "summary": summary}
+                        for logical_id, summary in prior_summaries
+                    ]
+                }
+                if prior_summaries
+                else {}
+            ),
             # The world this book runs on, and the one member of its cast this book is
             # about, when it has them. Spread rather than assigned so that a book without one
             # has no key at all — see the docstring.
             **({"world": world.to_jsonable()} if world is not None else {}),
-            **(
-                {"protagonist": protagonist.to_jsonable()}
-                if protagonist is not None
-                else {}
-            ),
+            **({"protagonist": protagonist.to_jsonable()} if protagonist is not None else {}),
             # The debts this book has already opened, for the payoff schedule. Absent for a
             # book that owes nothing — which is every book at its first outline, since
             # promises are written by the summary handler after a scene is accepted.
@@ -343,6 +371,16 @@ def render_outline_request(
             ]
             + (
                 [
+                    "Resolve this arc's local movement, not the serial. Do not write a series "
+                    "ending, final victory, permanent retirement, or universal resolution.",
+                    "Build on earlier_accepted_scenes. They are established history and may "
+                    "not be repeated as new events.",
+                ]
+                if serial_arc_index is not None
+                else []
+            )
+            + (
+                [
                     "Also return milestones: what starting_state should have become by the "
                     "end of certain scenes.",
                     "Use only the keys starting_state already has. Do not invent statistics.",
@@ -350,8 +388,7 @@ def render_outline_request(
                     "repeats the starting values plans a book in which nothing changes.",
                     "Place four to eight milestones, spread across the book, at scenes where "
                     "the statement you wrote would plausibly change them.",
-                    "Costs as well as gains: spending and losing are progression "
-                    "too.",
+                    "Costs as well as gains: spending and losing are progression too.",
                 ]
                 if seed
                 else []
@@ -422,9 +459,7 @@ def _statements(payload: Mapping[str, Any], expected: int) -> list[str]:
     if not isinstance(raw, list):
         raise OutlineOutputError("outline must carry a list of scenes")
     if len(raw) != expected:
-        raise OutlineOutputError(
-            f"outline covers {len(raw)} scene(s); the book has {expected}"
-        )
+        raise OutlineOutputError(f"outline covers {len(raw)} scene(s); the book has {expected}")
 
     by_ordinal: dict[int, str] = {}
     for entry in raw:
@@ -435,9 +470,7 @@ def _statements(payload: Mapping[str, Any], expected: int) -> list[str]:
         if not isinstance(ordinal, int) or isinstance(ordinal, bool):
             raise OutlineOutputError(f"scene ordinal {ordinal!r} is not an integer")
         if not 1 <= ordinal <= expected:
-            raise OutlineOutputError(
-                f"scene ordinal {ordinal} is outside 1..{expected}"
-            )
+            raise OutlineOutputError(f"scene ordinal {ordinal} is outside 1..{expected}")
         if ordinal in by_ordinal:
             raise OutlineOutputError(f"scene {ordinal} is described more than once")
         if not isinstance(statement, str) or not statement.strip():
@@ -485,13 +518,9 @@ def _milestones(
     if not isinstance(raw, list) or not raw:
         raise OutlineOutputError("outline carries no progression schedule")
     by_ordinal = {beat.ordinal: beat for beat in beats}
-    numeric_seed = {
-        key: value for key, value in seed.items() if isinstance(value, int | float)
-    }
+    numeric_seed = {key: value for key, value in seed.items() if isinstance(value, int | float)}
     if not numeric_seed:
-        raise OutlineOutputError(
-            "the starting sheet holds no numeric state to schedule"
-        )
+        raise OutlineOutputError("the starting sheet holds no numeric state to schedule")
 
     out: list[tuple[Beat, dict[str, float]]] = []
     seen: set[int] = set()
@@ -503,9 +532,7 @@ def _milestones(
         if not isinstance(ordinal, int) or isinstance(ordinal, bool):
             raise OutlineOutputError(f"milestone ordinal {ordinal!r} is not an integer")
         if ordinal not in by_ordinal:
-            raise OutlineOutputError(
-                f"milestone names scene {ordinal}, which does not exist"
-            )
+            raise OutlineOutputError(f"milestone names scene {ordinal}, which does not exist")
         if ordinal in seen:
             raise OutlineOutputError(f"scene {ordinal} carries more than one milestone")
         if not isinstance(state, Mapping) or not state:
@@ -520,8 +547,7 @@ def _milestones(
         for key, value in state.items():
             if isinstance(value, bool) or not isinstance(value, int | float):
                 raise OutlineOutputError(
-                    f"milestone at scene {ordinal} sets {key} to {value!r}, "
-                    "which is not a number"
+                    f"milestone at scene {ordinal} sets {key} to {value!r}, which is not a number"
                 )
             # **The number's own type is kept.** Coercing to float put `Gold 4.0` into the
             # rendered status line, and the line is what the generator is asked to write and
@@ -623,17 +649,13 @@ def _standing_milestones(
         ordinal = entry.get("ordinal")
         rung = entry.get("rung")
         if not isinstance(ordinal, int) or isinstance(ordinal, bool):
-            raise OutlineOutputError(
-                f"standing milestone ordinal {ordinal!r} is not an integer"
-            )
+            raise OutlineOutputError(f"standing milestone ordinal {ordinal!r} is not an integer")
         if ordinal not in by_ordinal:
             raise OutlineOutputError(
                 f"standing milestone names scene {ordinal}, which does not exist"
             )
         if ordinal in seen:
-            raise OutlineOutputError(
-                f"scene {ordinal} carries more than one standing milestone"
-            )
+            raise OutlineOutputError(f"scene {ordinal} carries more than one standing milestone")
         if not isinstance(rung, str) or rung not in chain:
             raise OutlineOutputError(
                 f"standing milestone at scene {ordinal} names {rung!r}; the ladder holds "
@@ -739,9 +761,7 @@ def _payoff_windows(
     if not isinstance(raw, list):
         raise OutlineOutputError("payoff_windows must be a list")
     by_ordinal = {
-        beat.ordinal: beat.story_order_key
-        for beat in beats
-        if beat.story_order_key is not None
+        beat.ordinal: beat.story_order_key for beat in beats if beat.story_order_key is not None
     }
     by_subject = {promise.subject: promise for promise in promises}
     keys = [key for _, key in sorted(by_ordinal.items())]
@@ -805,9 +825,7 @@ def milestone_records(
     Record ids are derived from the story position, so a re-run converges instead of
     accumulating a second schedule beside the first.
     """
-    numeric_seed = {
-        key: value for key, value in seed.items() if isinstance(value, int | float)
-    }
+    numeric_seed = {key: value for key, value in seed.items() if isinstance(value, int | float)}
     return [
         lc.StateRecord(
             record_id=f"milestone-{beat.story_order_key}",
@@ -820,6 +838,7 @@ def milestone_records(
         )
         for beat, values in schedule
     ]
+
 
 def outline_proposal(
     payload: Mapping[str, Any],
@@ -853,11 +872,7 @@ def outline_proposal(
     # present), and `apply_plan_proposal` raised `plan item 'scene-1-plan' already exists`
     # after the whole-book call had already been paid for, three times per plan epoch, with
     # nothing in the exception queue to show for it.
-    present = {
-        item.logical_id
-        for item in base.items
-        if item.kind is lc.PlanKind.SCENE_PLAN
-    }
+    present = {item.logical_id for item in base.items if item.kind is lc.PlanKind.SCENE_PLAN}
     edits = tuple(
         PlanEdit(
             action=(
@@ -888,9 +903,7 @@ def outline_proposal(
         base_plan_revision_id=base.plan_revision_id,
         summary=str(payload.get("summary") or f"outline for {len(beats)} scenes"),
         rationale=str(payload.get("rationale") or "every scene needs its own errand"),
-        expected_outcome=str(
-            payload.get("expected_outcome") or "each scene is planned distinctly"
-        ),
+        expected_outcome=str(payload.get("expected_outcome") or "each scene is planned distinctly"),
         edits=edits,
         provider=result.provider,
         model=result.model,
@@ -1007,7 +1020,23 @@ def make_outline_handler(
         head = store.head(book_id, branch_id)
         if head is None:
             raise OutlineOutputError(f"book {book_id} has no manuscript to outline")
-        beats = beats_for(head, template_for(head))
+        arc_index = job.payload.get("arc_index")
+        if arc_index is None:
+            beats = beats_for(head, template_for(head))
+        else:
+            if not isinstance(arc_index, int) or isinstance(arc_index, bool) or arc_index < 1:
+                raise OutlineOutputError(f"job {job.job_id} has invalid arc_index {arc_index!r}")
+            try:
+                shape = serials_mod.SerialShape(
+                    scenes_per_chapter=int(job.payload["scenes_per_chapter"]),
+                    chapters_per_arc=int(job.payload["chapters_per_arc"]),
+                )
+                arc = serials_mod.arcs_of(head, shape)[arc_index - 1]
+                beats = serials_mod.beats_for_arc(head, arc)
+            except (IndexError, KeyError, TypeError, ValueError, TemplateMismatch) as error:
+                raise OutlineOutputError(
+                    f"job {job.job_id} cannot resolve serial arc {arc_index}: {error}"
+                ) from error
 
         # Already outlined: every beat has a statement. A no-op rather than a second call,
         # because a replayed job must converge and an outline is a whole-book generation.
@@ -1018,9 +1047,7 @@ def make_outline_handler(
         # statement scoped to a scene under a foreign id read *present* to one and *absent*
         # to the other — which spends a call and writes a second statement for a scene that
         # already had one.
-        if all(
-            scene_plan_for(base.items, beat.logical_id) is not None for beat in beats
-        ):
+        if all(scene_plan_for(base.items, beat.logical_id) is not None for beat in beats):
             # Recorded rather than silent. A handler that returns no events *and* no decision
             # leaves the Conductor settling this attempt against whatever decision the job
             # last produced — which after a refused attempt is that refusal, so a job that
@@ -1072,6 +1099,18 @@ def make_outline_handler(
         # deliberately does not copy. `brief_for` returns None for a book whose records this
         # vocabulary does not recognise and `protagonist_brief` returns None for one that names
         # nobody, and the request then carries neither field at all.
+        prior_summaries: list[tuple[str, str]] = []
+        if arc_index is not None:
+            current_ids = {beat.logical_id for beat in beats}
+            stored_summaries = store.scene_summaries(book_id, branch_id)
+            for node in head.in_reading_order():
+                if node.kind is not NodeKind.SCENE or node.logical_id in current_ids:
+                    continue
+                if not node.content:
+                    continue
+                summary = stored_summaries.get(node.logical_id, {}).get(content_hash(node.content))
+                if summary:
+                    prior_summaries.append((node.logical_id, summary))
         request = render_outline_request(
             premise,
             beats,
@@ -1080,6 +1119,8 @@ def make_outline_handler(
             promises=open_promises,
             world=world,
             protagonist=worlds_mod.protagonist_brief(canon),
+            serial_arc_index=arc_index if isinstance(arc_index, int) else None,
+            prior_summaries=prior_summaries,
         )
         day = stamp[:10]
         provider, _ = registry.resolve(request.call_class)
@@ -1087,7 +1128,7 @@ def make_outline_handler(
             budget_policy,
             store.spend_on(day),
             provider=provider.name,
-            prompt_chars=len(request.prompt),
+            prompt_chars=request.input_chars,
             max_output_tokens=request.max_output_tokens,
         )
         if not verdict.allowed:
@@ -1129,9 +1170,7 @@ def make_outline_handler(
         result, resolution = registry.complete(request)
         try:
             if not result.conforms or result.parsed is None:
-                raise OutlineOutputError(
-                    "provider response did not conform to the outline schema"
-                )
+                raise OutlineOutputError("provider response did not conform to the outline schema")
             proposal = outline_proposal(
                 result.parsed,
                 base=base,
@@ -1143,9 +1182,7 @@ def make_outline_handler(
             )
             # Validated with the outline, so a schedule that plans stasis refuses the whole
             # answer rather than landing beside a good outline. One call, one verdict.
-            schedule = (
-                _milestones(result.parsed, beats, seed) if seed else []
-            )
+            schedule = _milestones(result.parsed, beats, seed) if seed else []
             # **Guarded exactly as the milestone schedule is, and for the same reason.** The
             # prompt asks for payoff windows only when the ledger has open rows, so a book that
             # owes nothing was asked for none — and validating an answer to a question that was
@@ -1155,26 +1192,26 @@ def make_outline_handler(
             # summary handler after a scene is accepted, so this refused a good outline twice
             # before landing. §19.1: a refusal reached before the work costs time, never the
             # unit.
-            windows = (
-                _payoff_windows(result.parsed, beats, open_promises) if open_promises else []
-            )
+            windows = _payoff_windows(result.parsed, beats, open_promises) if open_promises else []
             # Guarded by canon rather than by the answer, exactly as the other two are: the
             # ask went out only for a book whose world declares a chain, so only such a book
             # has its answer validated. A book with no ladder that volunteered one is a field
             # this book could never use, and refusing a good outline over it is the failure
             # `windows` records above.
             rising = (
-                _standing_milestones(result.parsed, beats, ladder)
-                if ladder is not None
-                else []
+                _standing_milestones(result.parsed, beats, ladder) if ladder is not None else []
             )
             preview = apply_plan_proposal(base, proposal)
         except (OutlineOutputError, PlanProposalError, TypeError, ValueError) as error:
             # RETRY rather than escalate: the request is unchanged and a second draw of a
             # structured answer is a fair second try, exactly as a malformed scene draft is.
             refusal = _decision(
-                job, base, result, resolution,
-                passed=False, detail=f"{type(error).__name__}: {error}",
+                job,
+                base,
+                result,
+                resolution,
+                passed=False,
+                detail=f"{type(error).__name__}: {error}",
             )
             store.record_decision(refusal, decided_at=stamp)
             return (
@@ -1190,8 +1227,12 @@ def make_outline_handler(
             )
 
         decision = _decision(
-            job, base, result, resolution,
-            passed=True, detail=None,
+            job,
+            base,
+            result,
+            resolution,
+            passed=True,
+            detail=None,
             resulting_revision_id=preview.after.plan_revision_id,
         )
         try:
@@ -1204,9 +1245,7 @@ def make_outline_handler(
                 decision=decision,
             )
         except PlanConflict as error:
-            stale = _decision(
-                job, base, result, resolution, passed=False, detail=str(error)
-            )
+            stale = _decision(job, base, result, resolution, passed=False, detail=str(error))
             store.record_decision(stale, decided_at=stamp)
             return (
                 policy_decision_event(
@@ -1229,9 +1268,7 @@ def make_outline_handler(
             store.record_state_records(
                 book_id,
                 branch_id,
-                milestone_records(
-                    schedule, subject=seed_record.subject, seed=seed
-                ),
+                milestone_records(schedule, subject=seed_record.subject, seed=seed),
                 created_at=stamp,
             )
         # The rung schedule lands under the same rule and for the same reason, and its record

@@ -518,7 +518,7 @@ def make_narrative_plan_handler(
             budget_policy,
             store.spend_on(day),
             provider=provider.name,
-            prompt_chars=len(request.prompt),
+            prompt_chars=request.input_chars,
             max_output_tokens=request.max_output_tokens,
         )
         if not verdict.allowed:

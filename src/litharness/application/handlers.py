@@ -294,9 +294,7 @@ def make_scene_draft_handler(
                     book_id=revision.book_id,
                     branch_id=revision.branch_id,
                     revision_id=revision_id,
-                    details={
-                        "findings": [item.finding_id for item in standing if item.blocks]
-                    },
+                    details={"findings": [item.finding_id for item in standing if item.blocks]},
                 )
             ]
 
@@ -318,7 +316,7 @@ def make_scene_draft_handler(
             budget_policy,
             store.spend_on(day),
             provider=provider_name.name,
-            prompt_chars=len(prompt),
+            prompt_chars=request.input_chars,
             max_output_tokens=request.max_output_tokens,
         )
         if not budget_verdict.allowed:
@@ -438,16 +436,12 @@ def make_scene_draft_handler(
                 # The promise ledger's open rows, for `promise.overdue.v0` — supplied the
                 # way `prior_prose` is, so the detector stays a pure function of its input.
                 # Model-sourced rows; the detector can only annotate (MINOR, heuristic).
-                open_promises=tuple(
-                    store.promises(str(book_id), str(branch_id), open_only=True)
-                ),
+                open_promises=tuple(store.promises(str(book_id), str(branch_id), open_only=True)),
                 # The template's coordinate for this beat, same payload slot extraction
                 # reads as `stated_order_key`. None when the sheet is not chronological,
                 # and None makes the overdue check abstain exactly as milestones do.
                 story_order_key=(
-                    str(selected["story_order_key"])
-                    if selected.get("story_order_key")
-                    else None
+                    str(selected["story_order_key"]) if selected.get("story_order_key") else None
                 ),
             )
             # `standing` was read and cleared before the generation, so this pass judges
@@ -462,9 +456,7 @@ def make_scene_draft_handler(
         # no reason attached — the shape gate passed, so it has none to give. The integrity
         # gate's veto lives on its own `GateOutcome`, which `decide` and the decision record
         # already read.
-        accepted = outcome.accepted and all(
-            gate.passed for gate in gates if gate.blocking
-        )
+        accepted = outcome.accepted and all(gate.passed for gate in gates if gate.blocking)
 
         if findings:
             # Recorded whether or not they block. A minor finding dropped because it was not
