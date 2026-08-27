@@ -88,6 +88,12 @@ export path; `by_story` groups chapters into books. Commit numbers, never prose.
 published text must address memorisation explicitly. `generated_scenes` avoids that problem but
 carries no reader label. Choose against the question and record the source and limitation.
 
+Research claims use the states and evidence boundary in
+[EPISTEMIC_GOVERNANCE.md](research/quality-measurement/EPISTEMIC_GOVERNANCE.md). In particular,
+agent plans, summaries, and apparent consensus are not evidence. A claim that will allocate
+substantial research work, become another experiment's premise, or justify qualification gets a
+content-addressed claim record; ordinary implementation facts do not.
+
 ## Scope discipline
 
 Keep patches narrow and preserve unrelated work in a dirty tree. Add a focused regression

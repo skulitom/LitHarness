@@ -53,8 +53,9 @@ uv sync --extra cover
 
 ## Start a serial
 
-The listing loop is the normal entry point. It writes the listing a reader sees, revises it from
-steering-reader expectations, checks the title for collisions, and creates the empty scenes:
+The listing loop is the normal entry point. It writes the listing a reader sees, records
+experimental appetite observations without feeding them back into revision, checks the title
+for collisions, and creates the empty scenes:
 
 ```bash
 uv run litharness --database book.db listing \

@@ -22,7 +22,8 @@ to distrust first (PLAN.md header, the same lesson recorded three times).
    the way it did, including the ones since reversed. The ledger is long; read the entries you
    are about to build on, not the whole thing.
 3. Before proposing **any** quality or craft metric: `research/quality-measurement/BRIEF.md`
-   (the refutation ledger) and `CONTRIBUTING.md` "Before proposing a quality or craft metric".
+   (the refutation ledger), `research/quality-measurement/EPISTEMIC_GOVERNANCE.md` (what may
+   become evidence), and `CONTRIBUTING.md` "Before proposing a quality or craft metric".
    Before running any research arm: `research/quality-measurement/RUNBOOK.md`.
 4. Read a `plan/handoff-*.md` only when the current task names it. A handoff file is a scoped
    brief, not a backlog; completed briefs are deleted once their results and decisions have a
@@ -58,6 +59,10 @@ to distrust first (PLAN.md header, the same lesson recorded three times).
   behaviour in any role inside the generation loop (§126).
 - **Counts are never restated, only pointed to.** BRIEF.md §2 owns the refutation count; the
   suite owns the test count; stage-0 owns decisions. Do not copy a number into a second home.
+- **Agent prose is not evidence.** Proposals, summaries, handoffs, and repeated agreement may
+  cite an artifact but cannot promote a research claim. Use the `CONJECTURE` → `REGISTERED` →
+  `OBSERVED` → `SUPPORTED` / `REFUTED` → `QUALIFIED` meanings and content-addressed records in
+  `research/quality-measurement/EPISTEMIC_GOVERNANCE.md`.
 
 ## Parallel sessions are real
 
