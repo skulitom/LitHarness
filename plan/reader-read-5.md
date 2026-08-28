@@ -148,6 +148,67 @@ statistic is arithmetic. That makes it a candidate for the counter-and-gate rout
 for the demand-count arithmetic instead — rhythm is a plausible thing to collapse when demands
 cram. Nothing is built here and no bar is declared.
 
+
+#### 4.1.1 Corrected the same evening, against sixteen draws already paid for
+
+Two claims above were wrong and one hypothesis died. The correction is made here rather than by
+editing the paragraphs, so what was claimed stays visible. The data is `derived/listing-arms*.json`
+— pilot 10's sixteen arm draws, whose prose and whose per-arm **demand counts** were both already
+on disk, so none of this cost a call.
+
+**Correction 1.** ~~*"and is the highest of our own four"*~~ — true only of the four *books*.
+Across all **21 listings this project has on disk**, pilot 11 is **third**: `no_genre/ferreira`
+reaches **7.69** and `clarity/vance` **6.67**, both above pilot 11's 6.48.
+
+**Correction 2.** ~~*"So this is one sentence's construction, not a house style."*~~ — the
+opposite. **3 of our 21 listings exceed the market's maximum** and **7 of 21 exceed its p90**
+(4.32). The operator pointed at pilot 11 because pilot 11 is what he was shown; the property is
+standing, and about a third of every listing this project draws sits above the market's ninetieth
+percentile on it.
+
+**And the hypothesis that would have licensed the obvious fix is refuted.** The a-priori
+favourite was §138's cramming mechanism — sixteen demands for a hundred-word artifact, met by
+compressing four clauses into one 79-word sentence — which would have made **subtraction** the
+fix, as it was there. Pilot 10's arms vary demand count (9 in `base` and `no_genre`, 11 in
+`clarity` and `genre_clarity`), so the prediction is testable on paid data:
+
+| arm | demands | mean C per 100 words |
+| --- | --: | --: |
+| `base` | 9 | 3.78 |
+| `no_genre` | 9 | 4.33 |
+| `clarity` | 11 | 3.91 |
+| **`genre_clarity` — the shipped arm** | 11 | **3.06** |
+
+**Correlation between demand count and coordinator density over the sixteen draws: r = −0.18.**
+Slightly *negative*, on a narrow 9-versus-11 range, and **the shipped arm is the best of the four
+on this counter.** Cramming does not explain the parataxis, and **subtraction is not licensed by
+this evidence.** A negative result on the favourite is the useful part of running it.
+
+**So the counter-and-gate route is the one left standing, and its bar is attainable.** The four
+checks §81, §85, §87 and §89 each bought, run at the real n before any bar is declared, with the
+threshold at **the market's own maximum, 5.88 per 100 words**:
+
+| check | result |
+| --- | --- |
+| range at the real n | market 0.00–5.88 over 60; ours 1.79–7.69 over 21 — both sides populated |
+| direction | pre-specified: lower is less list-like |
+| independent unit | one listing per draw; no listing appears twice |
+| non-empty subgroup | **3 of our 21 would be refused; 0 of the market's 60 would be** |
+
+A threshold at the market **maximum** rather than at p90 is the deliberate choice: at p90 the
+gate would refuse a tenth of the listings this market actually rewards, and §116's lesson is that
+a recall-tuned list run as a refusal gate has inverted error costs. At the maximum it refuses only
+what nothing in the market does. 18 of our 21 draws already pass it, so a refused draw has a high
+prior of landing under the bar on the redraw.
+
+**What still stands between that and a shipped fix, named rather than assumed.** The listing
+loop's existing gate is `passed=True, blocking=False` — it *reports* and has never refused
+anything, so a refusing gate is a new behaviour with a redraw cost, not a threshold swap. And
+**RS1 is the real constraint**: the bar above is derived from the market pool, and nothing under
+`src/litharness/` may reference a corpus. Whether a frozen scalar counts as a reference is a
+question for whoever builds it, and it is a question rather than an obstacle — §104's platform
+priors are the precedent to check first. Nothing is built here.
+
 ### 4.2 *"isn't that basically every litrpg"* — the hook and the voice
 
 > *"'message said that killing the things now coming through would make a person stronger' -
@@ -203,6 +264,12 @@ every time.
 | `halloran` | *"people who wake up somewhere impossible and have to survive the afternoon"*, *"the first monster, the first spell that goes wrong"* | a thing in a dark stairwell, and the light going | 5 of 5 |
 | `vance` | *"somebody who died badly and woke up as something else"*, *"a beast that should have killed the main character and is theirs instead"* | a thing out of the dark that should have killed the narrator and did not | 4 of 4 |
 | `okonjo` | *"sects, masters worth impressing, rivals"*, *"the technique somebody is not supposed to have"* | a sect entrance or duel decided by a forbidden breathing form | 4 of 4 |
+
+**What the counts count.** The right-hand column counts **distinct listings** — a writer's
+final text per draw. Counting the two `ferreira` drafts that differ from their own revisions,
+it is **9 of 9**: the beat survives the revision step as well as the draw. Neither number is
+"eight", which is worth saying because
+[`handoff-writer-recruiter.md`](handoff-writer-recruiter.md) cites eight.
 
 **`writers.py`'s own docstring already warned about the previous version of this defect.** The
 first cast named four real careers and *"each writer promptly set a book inside their own day
