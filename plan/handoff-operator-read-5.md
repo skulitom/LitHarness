@@ -1,9 +1,22 @@
 # Handoff: tie the codex-era loose ends, then put the current results in front of the operator
 
-**Status: OPEN, 2026-08-28.** Written after re-anchoring on the 2026-08-26/27 work (the reader
-evidence architecture, the editorial control plane, the release-volume and cover pipeline, the
-agent runway). The occasion: the operator asked to test the current results personally. That is
-the fifth operator read; [`plan/reader-read-4.md`](reader-read-4.md) is the form it takes.
+**Status: OPEN, 2026-08-28. In execution on `claude/handoff-operator-read-5-d827aa`.** Written
+after re-anchoring on the 2026-08-26/27 work (the reader evidence architecture, the editorial
+control plane, the release-volume and cover pipeline, the agent runway). The occasion: the
+operator asked to test the current results personally. That is the fifth operator read;
+[`plan/reader-read-4.md`](reader-read-4.md) is the form it takes.
+
+**Correction, 2026-08-28, same day, from the operator.** The two books in the table below are
+*"old generations"* the operator has *"already reviewed"*. ~~The package that exists on disk
+today is the read target.~~ **The read target is a fresh generation under the current
+architecture — task 6's second bullet, promoted from operator-gated option to the main path.**
+Tasks 1, 2 and 5 stand unchanged; tasks 3 and 4 apply to the fresh book rather than the two
+below. The pilot-10 listing surface was not named in the correction — confirm with the
+operator whether the sixteen listings are also already-seen before including or dropping them.
+The inventory table stays what it is, a record of what exists; nothing in it is the thing
+being tested. If the operator's earlier reviews of the two books surfaced defects that never
+reached a `reader-read-*.md`, harvesting those quotes is still legitimate — but it is a
+recovery of an old read, never a substitute for reading the fresh book.
 
 ## Boundaries, before the tasks
 
@@ -35,6 +48,9 @@ the fifth operator read; [`plan/reader-read-4.md`](reader-read-4.md) is the form
 | **Tribunal run results** — `blurb_tribunal.v0`'s first run, registration digest `97bed1fb14cdaf2d` | `research/quality-measurement/results/blurb-tribunal.json` | Committed as-found from the codex-era session; **no run section exists in its validity doc and no stage-0 entry records the run.** Task 1. |
 
 ## Tasks, in the order they should land
+
+*(Read the correction block above first: tasks 3–4 target the fresh generation, and task 6's
+second bullet is the main path, not an option.)*
 
 ### 1. Write the tribunal run into the record before anyone quotes it
 
