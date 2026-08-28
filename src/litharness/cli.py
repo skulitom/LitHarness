@@ -428,6 +428,19 @@ def _resolve_writer(
                 row["status"] == writers_domain.RosterStatus.ACCEPTED.value for row in rows
             ):
                 return store.accepted_writer(wanted), ""
+            # **A refused writer is excluded here exactly as a proposed one is, but it must not
+            # be told the same thing.** The acceptance sentence points at a command that cannot
+            # work on it — `roster refuse` is terminal and `roster accept` skips a refused row —
+            # so an operator following that advice gets "no proposed writer named" and no idea
+            # why. A changed mind is a new proposal, and that is what this says (stage-0 §149).
+            if all(
+                row["status"] == writers_domain.RosterStatus.REFUSED.value for row in rows
+            ):
+                return None, (
+                    f"litharness: writer {wanted!r} was refused, and a refusal is terminal. "
+                    "There is no un-refuse: declare the dossier again to propose it afresh, "
+                    "which is legal under this name because only acceptance holds one"
+                )
             return None, (
                 f"litharness: writer {wanted!r} is proposed but not accepted. Acceptance is an "
                 "operator act and carries a decision row; a machine may not cast a writer it "
@@ -3291,6 +3304,111 @@ def cmd_roster(args: argparse.Namespace) -> int:
     return EXIT_FAULT if refused and not admitted else EXIT_OK
 
 
+def cmd_roster_refuse(args: argparse.Namespace) -> int:
+    """Turn proposed writers down, as one decision with a reason on it.
+
+    **`accept`'s twin, and the three differences are all the same argument.** A bare `accept`
+    with no names takes every proposal, because admitting the pile is the ordinary end of a
+    recruit run; a bare `refuse` names nothing on purpose — `names` is required — because
+    sweeping the pile into the bin is not an ordinary act and a fat-fingered one would be
+    unrecoverable. `--reason` is required for the same weight of act: migration 036 makes a
+    refused row point at a decision, and a decision row with an empty reason is a signature on
+    a blank line. And there is no `--force`, because there is nothing here to override.
+
+    **There is no un-refuse, and the schema is why there does not need to be.** A changed mind
+    is a new proposal under the same name: `roster_accepted_name_idx` covers `accepted` alone,
+    so refusing releases the name completely. A verb that walked a row backwards would be the
+    one path by which a refusal could quietly stop having happened.
+    """
+    stamp = _stamp(_now())
+    store = _store(args)
+    try:
+        # The same in-flight guard `accept` carries. A refusal is an operator act by exactly
+        # the same argument, and a recruit run holding the pen must not be able to type it.
+        if os.environ.get(RECRUIT_SHELF_ENV, "").strip():
+            print(
+                "litharness: a recruit run is in flight; refusal is an operator act and is "
+                "refused from inside one. Let the run finish and refuse it yourself",
+                file=sys.stderr,
+            )
+            return EXIT_FAULT
+
+        reason = args.reason.strip()
+        if not reason:
+            print("litharness: --reason cannot be blank", file=sys.stderr)
+            return EXIT_FAULT
+
+        proposed = store.roster_rows(status=writers_domain.RosterStatus.PROPOSED)
+        wanted = set(args.names)
+        rows = [
+            row
+            for row in proposed
+            if row["name"] in wanted or row["writer_id"] in wanted
+        ]
+        missing = sorted(
+            wanted
+            - {row["name"] for row in proposed}
+            - {row["writer_id"] for row in proposed}
+        )
+        if missing:
+            print(
+                f"litharness: no proposed writer named {', '.join(missing)}; "
+                "`litharness roster show` lists what is declared. A writer already accepted "
+                "or already refused is not a proposal and cannot be refused",
+                file=sys.stderr,
+            )
+            return EXIT_FAULT
+        if not rows:
+            print("nothing proposed; the roster is unchanged")
+            return EXIT_OK
+
+        # **No `legal_dossier` pass here, unlike `accept`.** An illegal dossier is the row an
+        # operator most wants to turn down, and re-checking it would refuse the refusal.
+        gate = GateOutcome(
+            gate=GateKind.SHAPE,
+            rule_or_critic_id="roster.refuse.v0",
+            passed=True,
+            blocking=False,
+            detail=(
+                f"{len(rows)} writer(s) refused: "
+                + ", ".join(f"{row['name']} {row['writer_id']}" for row in rows)
+            ),
+        )
+        decision = PolicyDecision(
+            # Derived from the writers and the reason, never from the clock: replaying one
+            # refusal must converge on its row rather than mint a second. The reason is in the
+            # material because refusing the same writer for a different stated reason is a
+            # different judgment.
+            decision_id=decision_id_for(
+                "roster-refuse:"
+                + "+".join(sorted(row["writer_id"] for row in rows))
+                + ":"
+                + reason,
+                0,
+                (gate,),
+            ),
+            # **`PARK`, because `Outcome` has no rejection member and inventing one is not
+            # this change's to make.** It is contract-bound through `to_contract`, so a
+            # seventh member moves `litharness-contracts` — the same boundary 035 hit when it
+            # wanted an `EventType` for a roster admission and recorded its absence instead.
+            # `PARK` is the honest fit of the six: terminal by `is_terminal`, and already the
+            # word this system uses for work that ends here rather than going round again.
+            outcome=Outcome.PARK,
+            gates=(gate,),
+            reason=f"a person turned these writers down: {reason}",
+        )
+        moved = store.refuse_writers(
+            [row["writer_id"] for row in rows], decision=decision, refused_at=stamp
+        )
+    finally:
+        store.close()
+
+    print(f"refused {moved} of {len(rows)} proposed writer(s)")
+    for row in rows:
+        print(f"  {row['writer_id']}  {row['name']}")
+    return EXIT_OK
+
+
 def cmd_recruit(args: argparse.Namespace) -> int:
     """Put the Recruiter on one shelf, holding the roster's read views and declare.
 
@@ -5271,6 +5389,25 @@ def build_parser() -> argparse.ArgumentParser:
         "edited dossier looks like",
     )
     accept_writers.set_defaults(func=cmd_roster, view="accept")
+
+    refuse_writers = roster_sub.add_parser(
+        "refuse", help="turn declared writers down, as one decision with a reason on it"
+    )
+    refuse_writers.add_argument(
+        "names",
+        nargs="+",
+        metavar="NAME_OR_ID",
+        help="which writers, by name or by writer id. **Required, unlike `accept`**: taking "
+        "the whole pile is the ordinary end of a recruit run, and binning it is not",
+    )
+    refuse_writers.add_argument(
+        "--reason",
+        required=True,
+        help="why, in one line, recorded on the decision row. Required: a refused writer "
+        "points at a decision, and a decision with an empty reason is a signature on a blank "
+        "line. It is stored, never sent to a model",
+    )
+    refuse_writers.set_defaults(func=cmd_roster_refuse, view="refuse")
 
     # `recruit_cmd`, not `recruit`: `application/recruiter.py` is imported at the top of this
     # file and a local would shadow it, which is the lesson `arch` already records.

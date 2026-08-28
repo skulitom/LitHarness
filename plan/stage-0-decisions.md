@@ -14939,3 +14939,74 @@ hire, or survey readers refuses under §95 exactly as before.
 
 **Anti-scope.** No axis admitted, no bar declared, nothing fixed. The routed findings live in
 `reader-read-6.md` §4; the counts stay there.
+
+## 149. The operator's NO got somewhere to live, and the dashboard's buttons are the operator's signature
+
+**What was declined, and where.** Migration 035 pinned `roster_writers.status` to two words and
+said so deliberately: *"with no retired status in this migration the way through is a new name."*
+That was the right call for the case 035 could see — an edited dossier re-accepted under a name
+already taken — and `RosterStatus`' docstring drew the same line, *"the gap between the two
+members is a person."*
+
+**Why it changes.** §148's recruit run landed twelve proposals on twelve shelves in one evening,
+and an operator reading them had exactly one verb. A new name answers *this dossier was wrong*; it
+has never answered *this writer is not wanted*. With no way to say no, a rejected proposal stays
+`proposed` forever, a bare `roster accept` sweeps it up months later, and the pile only grows.
+The declining sentence is superseded through its own reasoning rather than around it: 035's guard
+was never against a third **word**, it was against a *machine's* judgment wearing an operator's
+word. A refusal is also a person — the same operator, the same recorded act — so the design's own
+sentence licenses it, and the docstring now reads "between the members".
+
+**What shipped.** Migration 036 rebuilds the table (the first rebuild in these migrations) with
+`status IN ('proposed', 'accepted', 'refused')`, a `refused_at` column, and a third CHECK arm
+making a `refused` row without a `decision_id` unrepresentable exactly as 035 did for `accepted`.
+`RosterStatus.REFUSED`, `refuse_writers` on the roster repository and the store facade, and
+`litharness roster refuse NAME_OR_ID --reason ...` — where, unlike `accept`, the names are
+required (sweeping a pile into the bin is not an ordinary act) and `--reason` is required (a
+decision row with an empty reason is a signature on a blank line). `Outcome.PARK` carries it,
+because `Outcome` is contract-bound and a seventh member moves `litharness-contracts`; 035 hit
+the same boundary wanting an `EventType` and recorded its absence too.
+
+**Terminal and quiet, which is four behaviours and not a slogan.** A refused writer is skipped by
+a bare `roster accept`; does not resolve through `--writer`, and is told why in its own sentence
+rather than being pointed at `roster accept`, which can no longer touch it; is stepped over by
+`roster check`, because the row an operator most wants to refuse is the illegal-dossier row that
+`legal_dossier` complains about, and a complaint that outlives the decision would leave deletion
+as the only way to quiet it; and is never un-refused. A changed mind is a new proposal under the
+same name, which `roster_accepted_name_idx` already permits because it covers `accepted` alone.
+`refuse_writers` deliberately builds no `Writer` and runs no legality check — the acceptance path
+does both, and doing them here would refuse the refusal.
+
+**The rebuild, and why it did not need `PRAGMA foreign_keys=OFF`.** SQLite cannot ALTER a CHECK,
+and `SqliteStore.migrate` runs each migration inside a transaction where that pragma is a no-op,
+so the 12-step procedure was not available. It was also not needed: the pragma exists to protect
+foreign keys in tables pointing **at** the one being rebuilt, and nothing in this schema
+references `roster_writers` — its only key is outgoing, to `policy_decisions`. Verified rather
+than asserted: `test_migration_036_rebuilds_the_table_without_touching_a_row` builds a store at
+035, fills it with a proposed row and an accepted one, migrates, and compares every column of
+every row, then checks all four indexes and `PRAGMA foreign_key_check`.
+
+**The dashboard, and the one thing its buttons are not.** `tools/dashboard.py` and
+`dashboard.cmd` are the operator's local surface: double-click, a stdlib server on 127.0.0.1, the
+browser opens. Accept and Reject **shell out to the real CLI** rather than touching SQLite, so a
+click mints the same decision row a typed command mints — the operator clicking *is* the operator
+signing. Every read is `mode=ro` or the CLI's own view, and
+`test_no_write_path_bypasses_the_cli` is the structural guard that a later edit cannot quietly
+open a writable connection. The POST routes carry a per-run token: any page in the operator's
+browser can post to a localhost port, and this one writes decision rows.
+
+**Dossiers are shown in the writer's own voice, and that is display only.** A deterministic
+person-flip at render time (no model call) turns the second-person dossier into the cover letter
+it effectively is, with the exact stored bytes one disclosure below it — the operator signs the
+containment text, not a paraphrase, and `writer_id` is a content address over those bytes. The
+flip's own defect is recorded because the corpus survey missed it and the rendered page caught
+it: `you are` matched across a preposition and produced *"the people around I am counting"*, and
+`speak to you` became `speak to I`. A preposition-first object rule fixed both; a `you` in object
+position after a bare verb would still be wrong, and no dossier has one.
+
+**Anti-scope.** No writer was accepted or refused by this work — the twelve stand as §147 left
+them, and the runs above were against copies. Nothing here ranks, scores, or compares dossiers,
+and no model reads, writes or judges anywhere in the dashboard. Refusal is an operator verb only:
+the in-flight guard that stops `accept` from running inside a recruit run covers `refuse` too. No
+bar declared, no axis admitted, and the person-flip is a rendering convenience that no measurement
+may ever read.

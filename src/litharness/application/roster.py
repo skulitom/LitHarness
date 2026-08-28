@@ -371,6 +371,12 @@ def show(
             "interests": list(row["interests"]),
             "proposed_at": row["proposed_at"],
             "accepted_at": row["accepted_at"],
+            # The moment, not the grounds. **The refusal's reason stays out of this payload for
+            # the same rail that keeps `note` out**, one paragraph up: a reason is where a
+            # preference gets written down — *"too grim, go lighter"* — and this is the view a
+            # generative agent holds. The timestamp is a fact; the sentence is a channel. The
+            # reason is written and read back through the store, never through here.
+            "refused_at": row["refused_at"],
         }
         if with_dossier:
             entry["dossier"] = row["dossier"]
@@ -413,6 +419,14 @@ def check(rows: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
     accepted_names: dict[str, str] = {}
     census: dict[str, dict[str, Any]] = {}
     for row in rows:
+        # **A refused writer is nobody's problem, and this exit is what makes refusal terminal
+        # rather than decorative** (stage-0 §149). An illegal dossier is the row an operator is
+        # most likely to turn down, and it is also the row `legal_dossier` complains about; if
+        # refusal did not silence the complaint, `roster check` would exit 2 forever over a
+        # decision that has already been taken, and the only way to quiet it would be deleting
+        # the row — which is the retraction this schema exists to refuse.
+        if row["status"] == writers_domain.RosterStatus.REFUSED.value:
+            continue
         writer_id = row["writer_id"]
         dossier = row["dossier"]
         try:
@@ -470,6 +484,11 @@ def check(rows: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
             if row["status"] == writers_domain.RosterStatus.PROPOSED.value
         ),
         "accepted": len(accepted_names),
+        "refused": sum(
+            1
+            for row in rows
+            if row["status"] == writers_domain.RosterStatus.REFUSED.value
+        ),
         "unstaffed": [
             slug
             for slug in SPECIALIZATIONS

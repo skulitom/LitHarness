@@ -516,7 +516,15 @@ def test_show_reports_which_of_the_twelve_shelves_have_nobody_on_them(db, capsys
 
 
 def test_the_roster_command_offers_no_view_that_orders_or_prefers(db) -> None:
-    """Rail 4 read off the command surface itself: there is no view here that could rank."""
+    """Rail 4 read off the command surface itself: there is no view here that could rank.
+
+    **`refuse` joined the surface in stage-0 §149 and does not weaken this.** The rail forbids
+    a view that *orders* or *prefers* — anything that could say one dossier is better than
+    another, or hand back a sorted candidate list. Refusal is a verdict on one writer against
+    nothing, addressed by name or id and carrying a reason a person typed; it is `accept`'s
+    twin, not a comparison. What would break this test is a view that ranked, scored, shortlisted
+    or picked, and none of the six does.
+    """
     parser = build_parser()
     (roster_action,) = [
         action
@@ -529,6 +537,7 @@ def test_the_roster_command_offers_no_view_that_orders_or_prefers(db) -> None:
         "check",
         "declare",
         "accept",
+        "refuse",
     }
 
 

@@ -55,17 +55,26 @@ _ITEM = "\x1f"
 
 
 class RosterStatus(enum.StrEnum):
-    """Where a stored writer stands, and the gap between the two members is a person.
+    """Where a stored writer stands, and the gap between the members is a person.
 
     Lowercase values because every status column in this schema stores lowercase; `PROPOSED`
     and `ACCEPTED` in `plan/handoff-writer-recruiter.md` are member names rather than column
     values. The enum lives in the domain because the *rail* does — a Recruiter proposes and
     only an operator's decision row accepts — and an adapter that invented its own strings
     would be the place that rail could quietly lose a member.
+
+    **`REFUSED` joined them in migration 036 (stage-0 §149), and it does not weaken the rail.**
+    The sentence above used to read "between the two members", and the person it named was the
+    one who says yes. A refusal is the same person saying no, carrying the same decision row —
+    so `refused`, like `accepted`, is a word no row may simply contain. It is terminal and
+    quiet: excluded from `--writer` resolution exactly as `PROPOSED` is, never accepted, and
+    never un-refused. A changed mind is a new proposal under the same name, which the partial
+    unique index permits because it covers `accepted` alone.
     """
 
     PROPOSED = "proposed"
     ACCEPTED = "accepted"
+    REFUSED = "refused"
 
 
 #: The dossier's form, as a **variable rather than a fix**. All four `CAST` dossiers are built

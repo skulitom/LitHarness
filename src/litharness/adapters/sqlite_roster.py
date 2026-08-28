@@ -44,7 +44,7 @@ RowFilter = Callable[[sqlite3.Row], bool]
 
 _COLUMNS = (
     "writer_id, name, dossier, interests_json, exemplar_digest, note, "
-    "specialization, shape, status, proposed_at, accepted_at, decision_id"
+    "specialization, shape, status, proposed_at, accepted_at, refused_at, decision_id"
 )
 
 
@@ -75,6 +75,7 @@ def _row_to_dict(row: sqlite3.Row) -> dict[str, Any]:
         "status": row["status"],
         "proposed_at": row["proposed_at"],
         "accepted_at": row["accepted_at"],
+        "refused_at": row["refused_at"],
         "decision_id": row["decision_id"],
     }
 
@@ -297,6 +298,56 @@ class SqliteRosterRepository:
                         accepted_at,
                         decision.decision_id,
                         row["writer_id"],
+                        RosterStatus.PROPOSED.value,
+                    ),
+                )
+                moved += cursor.rowcount
+            return moved
+
+    def refuse_writers(
+        self,
+        writer_ids: Sequence[str],
+        *,
+        decision: PolicyDecision,
+        refused_at: str,
+    ) -> int:
+        """Turn proposed writers down, as one decision. Returns how many moved.
+
+        `accept_writers`' shape and its foreign-key ordering — the decision is inserted before
+        the updates, because migration 036 makes a `refused` row without a `decision_id`
+        unrepresentable exactly as 035 did for `accepted`. What differs is everything the
+        acceptance path checks, and each omission is deliberate:
+
+        * **No `Writer` is built from the row, and that is the point rather than an oversight.**
+          `_writer_from_row` runs `legal_dossier`, so the acceptance path raises on a dossier a
+          later-registered prose axis made illegal. That row is precisely the one an operator
+          most needs to be able to refuse, and a refusal path that raised on it would leave it
+          stuck as `proposed` forever with no verb that could touch it.
+        * **No reserved-name check.** That guard protects the resolution namespace, and a
+          refused writer never enters it.
+        * **No collision check.** Refusing claims no name; `roster_accepted_name_idx` covers
+          `accepted` alone, so a refusal quietly releases the name for a later proposal instead
+          of competing for it.
+
+        Nothing is demoted: the UPDATE moves `proposed -> refused` and has no other direction,
+        so an accepted writer cannot be refused out of the roster by this path, and a refused
+        one cannot be refused twice into a second decision row.
+        """
+        wanted = list(writer_ids)
+        if not wanted:
+            return 0
+        with self._transaction() as connection:
+            self._insert_decision(connection, decision, decided_at=refused_at)
+            moved = 0
+            for writer_id in wanted:
+                cursor = connection.execute(
+                    "UPDATE roster_writers SET status = ?, refused_at = ?, decision_id = ? "
+                    "WHERE writer_id = ? AND status = ?",
+                    (
+                        RosterStatus.REFUSED.value,
+                        refused_at,
+                        decision.decision_id,
+                        writer_id,
                         RosterStatus.PROPOSED.value,
                     ),
                 )

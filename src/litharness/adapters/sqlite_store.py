@@ -1845,6 +1845,18 @@ class SqliteStore:
             writer_ids, decision=decision, accepted_at=accepted_at
         )
 
+    def refuse_writers(
+        self,
+        writer_ids: Sequence[str],
+        *,
+        decision: PolicyDecision,
+        refused_at: str,
+    ) -> int:
+        """Turn proposed writers down as one decision. Returns how many moved."""
+        return self._roster.refuse_writers(
+            writer_ids, decision=decision, refused_at=refused_at
+        )
+
     def machine_directives(
         self, book_id: str, branch_id: str, *, live_only: bool = False
     ) -> list[Directive]:
