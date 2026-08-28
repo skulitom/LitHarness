@@ -18,7 +18,7 @@ back, but parks the unit and raises an exception instead of spinning it through 
 budget. The operator changes configuration or input, then revives it.
 
 It lives in `domain` rather than in `providers` so the Conductor can catch it without the
-loop taking a dependency on the adapter layer — the same reason `HealthResettable` is a
+loop taking a dependency on the adapter layer — the same reason `TextGenerator` is a
 structural protocol. A future rate-limit or lease-contention error belongs here too.
 """
 

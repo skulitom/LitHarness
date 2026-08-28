@@ -3137,7 +3137,7 @@ class _StageSpend:
 
     invocations: int = 0
     total_tokens: int = 0
-    #: `None` until a provider reports dollars, which is `_SpendTally`'s rule and the reason
+    #: `None` until a provider reports dollars, which is `_StageSpend`'s rule and the reason
     #: for it: `PolicyDecision.cost_usd` is `None` for a subscription CLI or local hardware,
     #: and a stage written down as `0.0` reads as free rather than as unpriced.
     cost_usd: float | None = None

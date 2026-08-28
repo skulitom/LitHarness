@@ -177,8 +177,8 @@ class Promise:
     def scheduled(self) -> bool:
         """Whether a payoff window has been proposed for this promise.
 
-        Both keys or neither: a half-scheduled window is not a range, and `schedule_window`
-        refuses to mint one, so this reads one key and means both.
+        Both keys or neither: a half-scheduled window is not a range, and
+        `schedule_payoff_window` refuses to mint one, so this reads one key and means both.
         """
         return self.window_start_key is not None and self.window_end_key is not None
 

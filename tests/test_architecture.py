@@ -19,6 +19,7 @@ two failures that actually happened.
 from __future__ import annotations
 
 import ast
+import enum
 import re
 from pathlib import Path
 
@@ -116,11 +117,57 @@ def test_dependencies_only_point_outward_to_inward() -> None:
 
 # --- the prose ------------------------------------------------------------------------
 
-#: Backtick-quoted names in `src/` docstrings that deliberately name nothing here. Empty
-#: today, and it should stay short: this project's style is to name a refuted alternative
+#: Backtick-quoted names in `src/` docstrings that deliberately name nothing here. It should
+#: stay short: this project's style is to name a refuted alternative
 #: (`plan/stage-0-decisions.md` is full of them), so a genuinely absent name belongs here
 #: **with its reason**, not silently outside the check.
-PROSE_ALLOWED: dict[str, str] = {}
+#:
+#: Four kinds earn a place, and the reason says which: a symbol retired by a named commit and
+#: still cited for what it taught; a module that lives in `research/` or `plan/`, which the
+#: corpus does not scan; an OS or third-party name that was never ours; and an example value
+#: standing in for data, which is not a symbol at all.
+PROSE_ALLOWED: dict[str, str] = {
+    "AXIS_MATCHERS": "the Judge's frozen matchers, in "
+    "research/quality-measurement/elicitation_study.py; the corpus scans src/, tests/, "
+    "migrations/ and pyproject.toml, so nothing under research/ resolves here",
+    "Chapter3": "an example value, not a symbol: it is what `stem` returns for chapter 3, "
+    "quoted so the docstring shows the filename an operator pastes from",
+    "CreateProcess": "Win32, and the point of both docstrings is that it is not ours: it "
+    "caps a command line at 32,767 characters, which is why the prompt goes down stdin",
+    "OllamaProvider": "the retired Ollama adapter's class; domain/generation.py keeps the "
+    "sampler measurements taken on it, and the class went with the adapter",
+    "_RULES": "the forge's rule tuple, application/architect.py; retired with the legacy "
+    "Forge subsystem, and worlds.py cites it for the price rule it already enforced",
+    "agency_the_drift": "an example subject id, not a symbol: application/world.py quotes it "
+    "to show what splitting ids on `_` contributes to a name count",
+    "axes.Pole": "domain/axes.py, cut with the prose-axis channel (530f40e); promises.py "
+    "cites it for the one property that survives — a kind carries no valence",
+    "comprehension_battery": "research/quality-measurement/comprehension_battery.py, outside "
+    "the scanned corpus; house.py cites the four readers it asked and what they quoted",
+    "creature_saltmilk_doe": "an example subject id, beside `agency_the_drift`",
+    "named_axes": "domain/discrimination.py, cut with the dead cluster (530f40e); "
+    "directors.py names it to say what `prose_axes_named` deliberately is not",
+    "opening_proper_nouns": "domain/axes.opening_proper_nouns, cut with the prose-axis "
+    "channel; kept as this project's cautionary case — a counter nominated for a named "
+    "defect put the complained-about chapter at the 68.5th percentile "
+    "(research/quality-measurement/opening-counters-results.md)",
+    "overall_score": "a column in the cached RoyalRoad shards, never ours; rivals.py cites "
+    "it because it is 100% null, which is why followers and views are the evidence instead",
+    "preference.MACHINE_READER_PREFIX": "domain/preference.py, cut with the §61 pairwise "
+    "stack (530f40e); directors.py restates the prefix and cites it for the reason it gives "
+    "against sharing one constant between two tables",
+    "promoted_gate": "domain/calibration.py, cut with the calibration programme (530f40e); "
+    "integrity.py cites it for the rule that outlived it — a calibration is looked up by "
+    "`metric_id`, so changed arithmetic is a new metric",
+    "records_for": "application/architect.py, retired with the legacy Forge subsystem; "
+    "worlds.py cites it for the byte-identity rail over worlds forged before that",
+    "repeated_span": "domain/craft.py, cut with the calibration programme (530f40e); "
+    "generation.py and integrity.py both cite the metric it shipped, `craft.repeated_span.v0`",
+    "scene_echo": "domain/craft.py, cut with the same commit as `repeated_span`; integrity.py "
+    "cites its move to `.v1` as the precedent for changed arithmetic being a new metric id",
+    "stamina_max": "deliberately hypothetical: extraction.py's point is that MAX_SUFFIX "
+    "covers a sheet that grows one, without an edit",
+}
 
 #: A name worth resolving: it has an underscore, a dot, or an initial capital. A single
 #: lowercase word in backticks is ordinary emphasis far more often than it is a symbol.
@@ -128,11 +175,16 @@ _SYMBOLISH = re.compile(r"`([A-Za-z_][A-Za-z0-9_]*(?:\.[A-Za-z_][A-Za-z0-9_]*)*)
 
 
 def _repo_corpus() -> str:
+    """What a prose reference may resolve against — with every backticked mention stripped
+    out first, because a mention is a claim, not evidence. Without the stripping this check
+    could not fail: the corpus contains each scanned file, so the reference under test always
+    found itself, and a name deleted from the code would still be vouched for by the very
+    docstring citing it (or by any other docstring that ever named it)."""
     parts = [path.read_text(encoding="utf-8") for path in PACKAGE_ROOT.rglob("*.py")]
     parts += [path.read_text(encoding="utf-8") for path in (REPO_ROOT / "tests").rglob("*.py")]
     parts += [path.read_text(encoding="utf-8") for path in (REPO_ROOT / "migrations").glob("*.sql")]
     parts.append((REPO_ROOT / "pyproject.toml").read_text(encoding="utf-8"))
-    return "\n".join(parts)
+    return _SYMBOLISH.sub(" ", "\n".join(parts))
 
 
 @pytest.mark.intensive
@@ -142,10 +194,19 @@ def test_every_symbol_the_prose_names_still_exists() -> None:
     sitting beside working code.
 
     Contract names are skipped — those belong to `litharness_contracts` and are checked by
-    its own suite — and so are plain lowercase words, which are emphasis more often than
-    they are symbols.
+    its own suite — and the contract's vocabulary reaches one level below `dir`:
+    `plan_changed` names `ExtractedChangeKind.PLAN_CHANGED` as surely as the class name
+    does, so enum members and their wire values are contract names too. Plain lowercase
+    words are also skipped, being emphasis more often than they are symbols.
     """
     contract_names = set(dir(lc))
+    for attr in dir(lc):
+        obj = getattr(lc, attr)
+        if isinstance(obj, type) and issubclass(obj, enum.Enum):
+            contract_names.update(member.name for member in obj)
+            contract_names.update(
+                member.value for member in obj if isinstance(member.value, str)
+            )
     corpus = _repo_corpus()
     stale: list[str] = []
     for path in sorted(PACKAGE_ROOT.rglob("*.py")):
