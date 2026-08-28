@@ -1,9 +1,10 @@
 """Build the competitor pool the measurement readers spend their slot against.
 
 **This is the corpus side of `litharness --rivals`, and it lives here for RS1's reason.**
-Nothing under `src/litharness/` may reference a corpus (`tests/test_corpus_leak_audit.py`), so
-the package takes a JSON file and refuses any row that does not clear `domain/rivals.admit`.
-This is the only thing that knows where those rows come from.
+Nothing under `src/litharness/` may reference a corpus (`tests/test_corpus_leak_audit.py`,
+where the package-side check landed on 2026-08-28; until then the citation named a file that
+checked something else), so the package takes a JSON file and refuses any row that does not
+clear `domain/rivals.admit`. This is the only thing that knows where those rows come from.
 
 **What a rival has to be**, from the operator, 2026-08-25/26: a **real** listing, **rated above
 4 stars**, **in our genre**, and **a new one each time** so the pool samples the market rather

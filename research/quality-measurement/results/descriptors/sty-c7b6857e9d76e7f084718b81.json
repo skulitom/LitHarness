@@ -1,0 +1,11 @@
+{
+  "connective_density": 7.672720477949548,
+  "paragraph_sentences_mean": 1.866231253023706,
+  "person": "third",
+  "sentence_words_mean": 12.061094224924013,
+  "sentence_words_p10": 2.5,
+  "sentence_words_p50": 10.5,
+  "sentence_words_p90": 24.0,
+  "sentence_words_sd": 8.904604943013613,
+  "tense": "past"
+}

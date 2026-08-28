@@ -1,7 +1,13 @@
 # Dossier voice: exhibit the writer's register instead of describing it
 
-**Status: direction note, 2026-08-28. No arm, no build; a named follow-on to §146's
-registered dossier-shape arm.** The operator, verbatim:
+~~**Status: direction note, 2026-08-28. No arm, no build; a named follow-on to §146's
+registered dossier-shape arm.**~~ **BUILT and inert, 2026-08-28, as stage-0 §150.** The
+census, the exemplar path, the derived descriptor and `litharness revoice` exist and have
+drawn nothing; the paid arm is registered in §150.6 and is still behind §146's arm, read
+6's routed fixes and the dashboard, exactly where the anti-scope below puts it. Read §150
+for what shipped, for the three things this note had wrong, and for the free measurement
+that ran first because it could have killed the design without spending anything. The
+operator, verbatim:
 
 > *"I'm thinking we might need to give them instructions in that writers voice. Do you not
 > think they will use the same voice as used in their prompt?"*
@@ -53,17 +59,18 @@ the market, premise lock beside them), prediction written first, §105's null pr
 Composes with the beat/no-beat variable rather than replacing it. ~~Until that arm runs,
 "exhibited voice changes output voice" is a well-supported conjecture with three mechanism
 receipts and zero direct measurements.~~ **Corrected in place, 2026-08-28, by the executing
-session: this understated the prior art. §85's `voice_binding` measured the
+session: this understated the prior art. §85 measured the
 demonstrated-voice channel OPEN — an exemplar-conditioned retell moves the register — and
 §89's Track V measured dose and persistence on top. Exhibition-moves-register is measured,
 not conjectured. What §85 does not cover is exactly this design's shape: it showed the model
 market passages (the crossing forbidden generation-side) and moved scene prose; the open
 question, and the only thing the arm needs to buy, is whether a MODEL-DRAFTED exemplar moves
-a DOSSIER. §85's design also supplies the borrowing control this note missed: register can
-move by feature uptake or by phrase lifting, no distance measure separates them after the
-fact, so the rewrite acceptance gate refuses a six-word run shared with the shown passage —
-the same fingerprint rule the editorial control plane uses against reader-vocabulary
-laundering.**
+a DOSSIER. The borrowing control this note missed comes from `voice_binding.py`
+specifically — **§89.5**, not §85, whose own arms are centroid and z-distance with no such
+control in them (corrected again by the executing session, §150.3): register can move by
+feature uptake or by phrase lifting, no distance measure separates them after the fact, so
+the rewrite acceptance gate refuses a six-word run shared with the shown passage — the same
+fingerprint rule the editorial control plane uses against reader-vocabulary laundering.**
 
 ## The exemplar question, same day
 
@@ -88,8 +95,12 @@ text comes from, and the three sources are not alike:
    comparisons *to* it), and corpus passages inside generation prompts make our artifacts
    partial functions of the measurement corpus — after which every ours-vs-market number
    partly measures the market against itself, and the memorization controls the salience
-   battery needs are poisoned by design. `tests/test_corpus_leak_audit.py` enforces the
-   crossing mechanically. **The permitted middle path:** the measurement side may distill a
+   battery needs are poisoned by design. ~~`tests/test_corpus_leak_audit.py` enforces the
+   crossing mechanically.~~ **Corrected in place 2026-08-28 (§150.3): it did not, and this
+   note was one of four places saying it did. That file pinned one exemption inside
+   `corpus_leak_audit.py`, which never opens a `.py` file at all. The package-side check
+   now exists and the package passed it on the first run — the rail was missing, not
+   broken.** **The permitted middle path:** the measurement side may distill a
    market voice into a *derived style descriptor* — sentence-length distribution, connective
    density, person, tense, fragment rate; numbers and labels, never prose ("commit derived
    numbers and identifiers, never third-party prose") — and the descriptor may cross to
@@ -109,6 +120,10 @@ text comes from, and the three sources are not alike:
 Two gates carry over unchanged onto any rewritten text, because the output is a containment
 surface: `legal_dossier` (no named prose axes survive a rewrite) and the registered-axis
 census (an exemplar heavy in a measured marker pre-empts the instrument that measures it).
+**As built they are one call and not two** (§150.7): the census moved into `legal_dossier`
+when the naming and carrying detectors were split, so a second census in the rewrite's own
+acceptance path was unreachable from the moment it was written. A third gate the note did
+not anticipate is load-bearing beside them — the borrowing refusal above.
 And the scope caution stands: writer-bound text may be voice-rewritten; the shared rule
 floor may not.
 

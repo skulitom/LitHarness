@@ -22,6 +22,14 @@ opens a parquet shard or names a source; a `Rival` is a record an operator hands
 module either admits or refuses. `tests/test_corpus_leak_audit.py` checks that nothing under
 `src/litharness/` references a corpus, and this module is written to keep passing it.
 
+**Corrected in place 2026-08-28 (§150): the sentence above was true and its check was not
+there.** That file pinned one exemption inside `corpus_leak_audit.py`, which never opens a
+`.py` file at all, so "written to keep passing it" described passing something free. The
+check now exists — `test_nothing_under_the_package_imports_a_research_module` and
+`test_no_package_code_names_a_corpus_source` — and this module passes it, which is the same
+sentence with a mechanism behind it. Four places made the claim and every one of them was
+written by somebody who believed it.
+
 **And a rival may only ever be shown to the measurement pool.** A steering reader's words reach
 the writer (§128, `application/readers.py`), so a rival in front of one would put somebody else's
 published prose one hop from a prompt. `readers.render_start_request` and `render_choice_request`

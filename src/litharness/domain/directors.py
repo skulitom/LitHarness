@@ -39,6 +39,7 @@ from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from hashlib import sha256
 
+from litharness.domain import voice
 from litharness.domain.directives import INTERPRETIVE_KINDS, DirectiveKind
 from litharness.domain.text import canonicalize
 
@@ -95,8 +96,18 @@ def is_machine_author(author: str | None) -> bool:
 #: trade is stated rather than hidden: a director who means "avoid em dashes" in other words
 #: gets through. What the guard buys is that the axes the loop is **actively measuring** cannot
 #: be pre-empted by an instruction that says so plainly.
+#:
+#: **The bare em dash character left this pattern on 2026-08-28 and moved to
+#: `voice.EXHIBITION_MARKERS`, and the refusal it produced did not change.** It was the last
+#: alternative of the `em_dash` entry, so a brief or a dossier that merely *contained* the mark
+#: was refused by a function called `prose_axes_named` — correctly, and under a name and a
+#: docstring that both say it catches text which *instructs about* an axis. Naming an axis and
+#: demonstrating one are two acts; conflating them meant the one axis whose mark is a character
+#: was gated and the two whose marks are constructions silently were not, with nothing saying so.
+#: `legal_brief` and `writers.legal_dossier` now run both detectors, so every text refused before
+#: is refused now, and `test_the_em_dash_refusal_survived_its_own_split` is that assertion.
 _CRAFT_INSTRUCTION: Mapping[str, str] = {
-    "em_dash": r"\bem[- ]?dash|\bemdash|\bpunctuat|—",
+    "em_dash": r"\bem[- ]?dash|\bemdash|\bpunctuat",
     "interiority": (
         r"\binterior(?:ity)?\b|\bshow,? don'?t tell\b|\binner monologue\b"
         r"|\bfree indirect\b"
@@ -142,6 +153,12 @@ def legal_brief(text: str) -> None:
     **actively measuring** cannot be pre-empted by direction — which is the only part of the
     space where a wrong instruction would corrupt a measurement rather than merely produce a
     book somebody dislikes.
+
+    **Two detectors, because there are two ways to pre-empt an axis**, and the second used to be
+    hidden inside the first — see `_CRAFT_INSTRUCTION`. A brief may not *name* what good prose
+    is, and it may not *carry the mark* of an axis under measurement either: a brief written with
+    em dashes demonstrates them in every prompt it reaches, which is the same assertion made by
+    example instead of by sentence.
     """
     if not text.strip():
         raise IllegalBrief("a director with no brief is not a personality")
@@ -152,6 +169,13 @@ def legal_brief(text: str) -> None:
             "the book is about; what good prose is comes from readers through the axis "
             "admission path (plan/reader-judge-loop.md §2.1), never from direction — "
             f"{named[0]}'s own hypothesis is still under test"
+        )
+    carried = voice.axes_exhibited(text)
+    if carried:
+        raise IllegalBrief(
+            f"this carries the mark of the registered prose axis/axes {', '.join(carried)}. A "
+            "brief reaches the drafting context, so a mark in it is demonstrated rather than "
+            f"merely present — and {carried[0]}'s own hypothesis is still under test"
         )
 
 

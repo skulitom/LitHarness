@@ -1,0 +1,11 @@
+{
+  "connective_density": 8.02469259313913,
+  "paragraph_sentences_mean": 2.7751879699248123,
+  "person": "first",
+  "sentence_words_mean": 15.424258391881343,
+  "sentence_words_p10": 4.0,
+  "sentence_words_p50": 14.0,
+  "sentence_words_p90": 29.0,
+  "sentence_words_sd": 9.852503234947662,
+  "tense": "past"
+}

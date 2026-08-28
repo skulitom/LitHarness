@@ -15061,3 +15061,272 @@ and no model reads, writes or judges anywhere in the dashboard. Refusal is an op
 the in-flight guard that stops `accept` from running inside a recruit run covers `refuse` too. No
 bar declared, no axis admitted, and the person-flip is a rendering convenience that no measurement
 may ever read.
+
+## 150. A dossier can be written as its writer writes, and the market can aim it without crossing into it
+
+**What this entry is.** [`plan/dossier-voice-direction.md`](dossier-voice-direction.md) is the
+operator's two questions and the design that answers them; this is what got built, what got
+measured on the way, and the three things the note itself had wrong. Nothing here is scheduled and
+nothing here has drawn a paid call: the mechanism is complete and inert, and §150.6 registers the
+arm that would spend.
+
+### 150.1 What was measured first, and it could have killed the design for free
+
+A descriptor exists to give one writer a different aim from another's. If the market's serials are
+more like each other than each is like itself, every descriptor is approximately the same
+descriptor, every writer is aimed at one voice, and a voice-exhibited arm **homogenises** the
+roster instead of varying it — the exact inversion of its purpose. That is a between-serial
+against within-serial question over text already on disk, so it was registered before a shard was
+opened and run before anything else was built on top of it.
+
+`research/quality-measurement/voice_descriptors.py`, registration `cf11db54b6547aba` carried as a
+frozen dict and written into the artifact. Run 2026-08-28 under the MirrorBench interpreter over
+the two cached shards; no model call, no spend. 51 serials clear the LitRPG tag and
+`rivals.MIN_FOLLOWERS`; the follower-rank alternation gives 26 descriptor and 25 measurement; 76
+chapters over 26 serials, all 26 clearing two positions.
+
+Neither registered unreadable condition fired: 26 serials against a floor of 10, and the median
+serial holds every chapter it published, so position 5 is position 5 rather than the fifth
+surviving row. **The prediction holds.** ICC(1) is positive on all seven numeric fields in both
+readings, and `sentence_words_mean` clears the registered 0.5 in both. The openings reading was
+registered as description and behaved as its reason predicted: dropping position 1 raises ICC on
+five of seven fields, which is what an opening being its own register looks like. The numbers are
+in `results/voice-descriptors.json` and are not restated here.
+
+**What it does not say**, since the temptation is obvious: nothing about whether an exhibited
+voice changes a dossier, nothing about quality, nothing about our own prose, which was not read.
+It says the aim exists. Whether aiming works is §150.6.
+
+**A rule this run creates that outlives it.** The 26 fiction ids in the descriptor half are a
+quarantine list: they aimed something, so no ours-versus-market comparison may include them
+without partly measuring our own aim. The rule attaches to the ids in the manifest rather than to
+any pool definition, because this is a follower-floored LitRPG pool and is not the set the listing
+counters run against.
+
+### 150.2 What shipped
+
+**The registered-axis census the note asks for by name**, `domain/voice.py`. And the first thing
+building it found is that the note's own example was already enforced somewhere else:
+`directors._CRAFT_INSTRUCTION["em_dash"]` carried the bare mark as its last alternative, so
+`prose_axes_named` had been refusing a *carried* mark under a name and a docstring that both say
+it catches text which *instructs about* an axis. The rule was right; its home hid the general
+case, since the one axis whose mark is a character was gated and the two whose marks are
+constructions were not, with nothing saying so.
+
+The mark now lives in `voice.EXHIBITION_MARKERS` and both gates run both detectors.
+`test_the_em_dash_refusal_survived_its_own_split` asserts both directions and
+`test_no_shipped_writer_stopped_being_legal` asserts the fourteen compiled dossiers still pass.
+**The census is nearly vacuous today and the mechanism that survives that is a test**:
+`test_every_registered_axis_is_placed` fails when an axis is added to the naming vocabulary and to
+neither `EXHIBITION_MARKERS` nor `UNMARKED_AXES`, so registering an axis now forces a decision
+about whether demonstrating it is detectable, at the moment of registration rather than after a
+dossier has ridden one for a book.
+
+**Two axes have no mark and the gap is stated rather than half-closed**, which is §146.4's move
+for the day-job detector. `interiority` has no candidate: a dossier saying what still bothers this
+person is ordinary English and is the form all ten of `BUILTIN` close on. `stat_flatten`'s closest
+candidate was the bracketed system tag, refused because `CAST["ferreira"]` loves *"the first
+message nobody asked for"*, which is one bracket from a tag, and a LitRPG Comedy writer would
+write it with the bracket. A counter that refuses a shipped fixture measures the wrong thing.
+
+**The derived style descriptor, as a record whose shape is the rail.** Every field is a float or a
+closed enum, so there is nowhere for a phrase to ride; there is no corpus identifier of any kind,
+so RS1 holds by the shape of the record rather than the care of whoever fills it in; and
+`descriptor_id_for` addresses the numbers alone, so the id cannot smuggle the provenance the
+fields refuse. The address is taken over the two-decimal rendering rather than the raw floats,
+because two descriptors that render identically to a model *are* the same descriptor for every
+purpose here.
+
+**And the cost is stated with it.** The statistics a descriptor carries stop being independent
+measurements against the market for anything drafted under it: aim writers at the market's
+sentence-length distribution and comparing our sentence lengths to the market's measures our aim.
+The note's §1 asks for exactly this accounting before any raw crossing; the same accounting is
+owed for a derived one, and the field list is it.
+
+**Two calls rather than one**, `application/revoice.py`. The writer draws a passage as itself
+aimed by a descriptor; an anonymous rewriter is shown the passage and the dossier and returns the
+dossier in that register. Splitting them is what makes the descriptor's containment statable: a
+descriptor is a prose-craft statement by construction — sentence length and connective density are
+what `_PROSE_STYLE` refuses in a brief — so what makes it legal is *where it may land*. It reaches
+the draw, never the rewrite, never a dossier, and the paragraph that repeats is two steps away.
+`test_the_descriptor_reaches_the_draw_and_only_the_draw` is that claim.
+
+**Neither call carries a tool allowance at all**, which is stronger than the enumeration §146.9's
+matcher verdict would require: a call that passes nothing cannot raise the question of how a
+prefix rule matches. **Neither carries the house floor**, and it is `recruiter`'s recorded reason
+one step earlier — a passage nobody reads becomes the paragraph that rides every scene call. The
+floor is also constant across every writer, so it adds nothing to the differentiation an exhibited
+voice exists to create while adding §138's failure at the worst leverage in the system.
+
+**Four gates on the rewrite and no redraw behind any of them**: one paragraph, R1-and-the-census
+through `legal_dossier`, the borrowing control, and a refusal of a rewrite that changed nothing.
+Drawing again and keeping the one that passed is selection among candidates by preference (§61(5),
+§105.1), which §146.8 refused when a census hit could have been redrawn away.
+
+**The borrowing control is not this session's idea and that is why it exists.**
+`research/quality-measurement/voice_binding.py`, pre-registered at §89.5, is built entirely around
+it: a model shown prose moves toward it by picking up the features the register is made of or by
+lifting its phrases, and no distance measure separates those after the fact. `SHARED_RUN_LIMIT`
+refuses a six-word run shared with the shown passage — a gate, not a note.
+
+**Storage and a verb.** `migrations/037_voice_exemplars.sql` gives `exemplar_digest` something to
+point at, `adapters/sqlite_voice.py` keeps a passage by its own content address and recomputes the
+digest on write rather than trusting a caller, and `litharness revoice` is its own command rather
+than a flag on `recruit`. `--descriptor` is required with no default, which makes a design rule
+structural: an unaimed draw is our own register in a costume, and the note calls our own books
+*legal but circular* as a source, so a draw with nothing aiming it is that source at one remove.
+`descriptor_json` is `NOT NULL` for the same reason, in the schema rather than in a comment.
+
+**The parent is never edited**, which content addressing makes structural. A child mints under its
+parent's name — legal for a proposal, refused at acceptance while the parent is accepted — and the
+way through is two recorded acts, `roster refuse` then `roster accept`, which is what §149's
+migration exists to make possible. A compiled cast writer cannot be re-minted under its own name
+at all, because `refuse_reserved_name` protects the controls the roster is read against, so
+revoicing one needs `--name` and the command says so.
+
+### 150.3 Three things the direction note had wrong, and one of them was a rail
+
+**The note said "zero direct measurements" and §85 had already made one.** Corrected on the note
+in place. §85 measured the demonstrated-voice channel **open** — an exemplar-conditioned retell
+moves the register — and §89's Track V measured its dose and persistence. That does not dissolve
+the arm; it makes it smaller and cheaper. §85 showed the model **market passages**, which the note
+forbids generation-side, and moved **scene prose** rather than the containment surface. What is
+open is whether a *model-drafted* exemplar moves a *dossier*, and that is what §150.6 registers.
+
+**And the correction's own attribution is corrected here.** §85 is `repair_generation.py`, whose
+arms are centroid and z-distance with no borrowing control in them; the shown-pool against
+held-out-pool design is `voice_binding.py`'s, pre-registered at §89.5. This entry's first draft
+credited §85 in four places, one of them the sentence an operator reads when a rewrite is refused.
+
+**RS1's package-side half was a claim in prose that nothing checked.** Four places said some
+version of *"nothing under `src/litharness/` references a corpus; `tests/test_corpus_leak_audit.py`
+checks"* — CLAUDE.md, the direction note, `rival_pool.py`, and `domain/rivals.py`, which adds *"and
+this module is written to keep passing it"*. It did not: every test in that file pinned the
+telemetry exemption, and the audit it pins never opens a `.py` file at all, its scan set being
+`.json`, `.jsonl`, `.csv` and `.txt`. §146.7's shape, found the same way, and the day's second
+containment finding after the allowance matcher.
+
+Two checks now exist. `test_nothing_under_the_package_imports_a_research_module` derives its
+forbidden names from whatever is under `research/quality-measurement/` today, so it cannot rot;
+`test_no_package_code_names_a_corpus_source` is a narrow marker tuple over non-docstring string
+literals, with the usual trade stated. Docstrings are exempt because `domain/rivals.py`'s own
+docstring explains at length which corpora it does not read, and a check refusing it would refuse
+the module most careful about the rule. `mirrorbench` was in the tuple and came out: it names a
+sibling repository and an interpreter rather than a corpus. The package was clean; the rail was
+not there. `rivals.py` and `rival_pool.py` are corrected in place.
+
+**The exemplar is a minting input and not a drafting one on this build**, which the roster plan
+§3.1 did not anticipate. Its stated reason for putting the digest in the address is that *"an
+exemplar changes what the writer drafts"*; here the passage shapes the dossier once and never
+reaches a drafting prompt, `Writer.render` being untouched. So on this build the digest records
+provenance, and §3.1's sentence would only become literally true if an exemplar ever rode a
+drafting call. It does not, and that is the stronger containment story rather than the weaker one.
+
+### 150.4 What was refused
+
+- **A stat-block or interiority exhibition detector.** §150.2 names the candidate for each and the
+  entry that kills it. The gap is stated rather than gated.
+- **A fragment rate in the descriptor**, deleted by its own test before it shipped. The
+  finite-verb approximation called *"The floor gave way beneath him"* a fragment — an irregular
+  past tense is neither an auxiliary nor a regular inflection — and the only fix was a verb list,
+  which is §127's shape. A field named `fragment_rate` that is not a fragment rate is the lying
+  column `migrations/036`'s header names. `sentence_words_p10` carries what it was wanted for, and
+  `test_the_descriptor_holds_no_statistic_a_word_list_would_be_needed_for` is the receipt.
+- **A mechanical tense detector.** Its closed auxiliaries are reliable in narration and unreliable
+  inside dialogue, where present-tense speech sits in past-tense prose, and the fix is a dialogue
+  parser rather than a longer list. Person *was* derivable — a closed pronoun class English
+  stopped adding to — so `voice.person_of` exists and tense stays an argument with the gap named.
+- **The descriptor in the rewrite prompt.** The coordinating session's task shape asked for
+  descriptor *and* exemplar there. Refused: adding the descriptor back means the rewrite is
+  *instructed* about prose axes as well as shown them, one surface from the dossier, which is the
+  instruction channel R1 exists to refuse. The exemplar is the descriptor executed.
+- **A redraw behind any gate.** §61(5), §105.1, and §146.8's own refusal of exactly this move.
+- **An `--exemplar` flag.** The socket is filled by a draw and never by a paste; an operator who
+  could hand in a passage could hand in somebody else's, and the most-repeated text in the system
+  is the wrong place to discover it. `test_the_command_takes_no_exemplar_flag`.
+- **Editing any existing dossier.** The note's anti-scope, and content addressing makes it
+  structural rather than polite.
+
+### 150.5 One behavioural change, and it is not the refusal
+
+The naming/carrying split landed refusal-equivalent: every text refused before is refused after.
+What changed is a payload. `roster check --dossier` reported an em-dashed dossier as
+`axes_named: ["em_dash"]`, and that dossier had named nothing; it now reports `axes_named: []`
+beside a new `axes_carried: ["em_dash"]`, with `legal`, `refusal` and the exit code untouched. The
+recruiter reads this payload, and an agent told a dossier named an axis it never mentioned learns
+the wrong rule. Two second homes for the mark closed on the way: `roster.check` counted the
+character inline and `rehearse`'s em-dash flag tested for it inline, so a newly registered axis
+with a mark now reaches that payload without anybody editing those lines.
+
+### 150.6 The arm, registered before any draw, and not scheduled
+
+`house-voiced` against `voice-exhibited`, composing with §146's beat/no-beat variable rather than
+replacing it, on the same recruit slate. **The prediction: a voice-exhibited dossier's listings
+sit further from the house register than its house-voiced parent's, on the register counters
+already frozen for the listing work, with the premise-lock statistic read beside them.** §105's
+measured null is the prior it inherits — a mechanism that costs 2.25x the calls and moves nothing
+is the default outcome here, not an unlikely one.
+
+**Four conditions fixed now.** *Transport first*: `claude -p` fails under box load and the failure
+is silent-ish, so `transport_failures` is read before any verdict. *The pairing*: a re-mint is
+read only against **its own parent**, never across writers, because two writers differ in dossier
+content as well as register and a cross-writer contrast cannot separate them. *The borrowing
+floor*: a re-mint whose listings share long runs with its exemplar is measuring mimicry, and
+`SHARED_RUN_LIMIT` gates the dossier but not the listings, so that check is owed at read time.
+*The sham*: `premise_lock` returns nothing below two draws and its value is uninterpretable until
+`between_writer_lock` is shown to sit below within-writer lock on the same draws — §146.3's
+precondition, inherited unchanged.
+
+**No bar is declared and none is owed.** §61's four attainability checks attach to declaring a
+threshold; what is above is a direction, and a flat result refutes it rather than failing it
+(§146.5). **What a positive result would license is also fixed now**: that the channel moved a
+containment surface, and nothing about whether the moved dossier is better. Nobody reads for
+quality anywhere in this design.
+
+**Not scheduled.** The note's own anti-scope puts §146's arm, read 6's routed fixes and the
+dashboard first, and this entry does not move that order.
+
+### 150.7 What an adversarial review found after the code was written and before it was called done
+
+Four defects, run as five lenses with every finding refuted or reproduced before it counted. The
+shape is the useful part.
+
+**One was arithmetic and would have been invisible.** `_quantile` used Python's `round`, which is
+half-to-even *on the index*, and the share times one less than the count is an exact half for the
+median at every even count — so the median alternated between the lower-middle and the
+upper-middle rank with the count's parity. On alternating two-word and ten-word sentences it
+returned 10.0 at four sentences and 2.0 at six: two aims and two descriptor ids for one voice. The
+docstring had claimed the scheme could not be made differently by two implementations, at
+precisely the counts where it could. The tie rule is named now, §150.1's run was repeated under
+it, and every number moved in the third decimal or not at all.
+
+**One was a gate that two commits in one session made redundant.** `accept_rewrite` had its own
+census branch, written before the naming/carrying split put the census inside `legal_dossier`. The
+moment that landed the branch became unreachable — and the test naming it passed through the other
+gate's message, so "five gates" was four and one had a receipt for code that never ran.
+
+**One was a receipt over dead code, and it is the sharper version of the same lesson.** The RS1
+checks were written with a control proving they bite, because BRIEF §2 Pass 5 records a control
+that cannot fail as its own failure mode. An edit meant to make both live checks call the shared
+helpers failed silently, so the control exercised two functions nothing enforced with while both
+real scans kept inline copies; mutating either to a constant false left three tests passing. The
+control was right and pointed at the wrong code.
+
+**One was four wrong citations**, §150.3's attribution, including a shipped refusal message.
+
+Four coverage gaps closed alongside: the borrowing limit at its own boundary rather than somewhere
+between 2 and 12, the two-decimal addressing that three id tests could not see,
+`sentence_words_sd` and `paragraph_sentences_mean` asserted from an actual distillation, and
+person from pronouns.
+
+### 150.8 Anti-scope
+
+No paid call was made by this work. No writer was drawn, re-minted, accepted or refused; the
+twelve stand as §147 and §149 left them, and the four compiled cast writers and ten probe writers
+are unedited. No listing, outline, scene or cover was produced. No axis was admitted, no counter
+promoted, no bar declared, and no reader — real or simulated — was consulted anywhere. Nothing
+here ranks two dossiers, and no model reads a second one.
+
+RS1 holds and is now checked in the direction that was only claimed. The house floor is untouched:
+the note's scope caution is that writer-bound text may be voice-rewritten and the shared rule
+stack may not, and nothing in this change reads, rewrites or per-writer forks `domain/house.py`.
