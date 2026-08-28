@@ -10,12 +10,23 @@ worlds at a time, a person picking one, and then a world that never changed agai
 of the book. What it is instead is the same cast writer, holding `litharness world`, building
 the world of the book they are about to write and coming back to it as the book grows.
 
-**The containment is the tool surface and not a promise.** The allowance is
-`Bash(litharness world:*)` and nothing else — no file access, no other command — and everything
-`world declare` writes is `PROPOSED`, because `worlds.world_record` mints it that way. So this
-agent can propose a world and cannot install one; `world accept` is a separate act with a
-decision row behind it. That is §5's "no subsystem mutates canon directly" kept through a named
-command rather than by refusing the model a shell.
+**The containment is the tool surface and not a promise.** The allowance is the world suite
+and nothing else — no file access, no other command — and everything `world declare` writes is
+`PROPOSED`, because `worlds.world_record` mints it that way. So this agent can propose a world
+and cannot install one; `world accept` is a separate act with a decision row behind it. That is
+§5's "no subsystem mutates canon directly" kept through a named command rather than by refusing
+the model a shell.
+
+**The allowance enumerates every world command except `accept`, because the single glob did
+not hold that line.** This shipped as `Bash(litharness world:*)`, and `world accept` is itself
+a `litharness world ...` command — measured 2026-08-28 on `claude` 2.1.236 (§146.9): under the
+glob, `litharness world accept` ran, so the Architect's inability to self-accept rested on the
+prompt's last line and nothing else. The same probes measured that an enumerated allowance is
+enforced — the omitted command is refused and the refusal lands in the envelope's
+`permission_denials` — and that a bare command matches its own `:*` entry, which is why the
+enumeration below can be glob-only. The live probe is
+`test_live_the_shipped_allowances_enforce_their_own_boundaries`; re-run it after any `claude`
+upgrade, §109's rule.
 
 **Nothing here judges.** The agent reads `world check` and `world presence`, both of which are
 arithmetic over records, and it never sees a reader's verdict because there is no verdict to
@@ -32,10 +43,27 @@ from litharness.domain.writers import Writer, system_for
 SEED_PROFILE = "architect.seed.v0"
 GROW_PROFILE = "architect.grow.v0"
 
-#: The whole allowance. Narrow enough to read: this agent can run the world suite and nothing
-#: else, which is why `cli.DATABASE_ENV` exists — a `--database` flag between the binary and the
-#: subcommand would force this to widen to `Bash(litharness:*)` and hand over every command.
-ALLOWED_TOOLS: tuple[str, ...] = ("Bash(litharness world:*)",)
+#: The whole allowance: every world command except `accept`, one entry per subcommand, and the
+#: omission is the containment (§146.9 measured that the matcher enforces it; the module
+#: docstring says why the earlier `Bash(litharness world:*)` could not). Narrow enough to read:
+#: this agent can run the world suite and nothing else, which is why `cli.DATABASE_ENV` exists —
+#: a `--database` flag between the binary and the subcommand would force every entry here to
+#: widen to `Bash(litharness:*)` and hand over every command. No entry contains a comma, because
+#: the CLI transport joins the allowance with one; `tests/test_cli.py` derives this list from
+#: the real parser so a new world subcommand cannot silently arrive pre-allowed or be forgotten.
+ALLOWED_TOOLS: tuple[str, ...] = (
+    "Bash(litharness world summary:*)",
+    "Bash(litharness world show:*)",
+    "Bash(litharness world rules:*)",
+    "Bash(litharness world ladders:*)",
+    "Bash(litharness world abilities:*)",
+    "Bash(litharness world cast:*)",
+    "Bash(litharness world threads:*)",
+    "Bash(litharness world vocabulary:*)",
+    "Bash(litharness world presence:*)",
+    "Bash(litharness world check:*)",
+    "Bash(litharness world declare:*)",
+)
 
 MAX_OUTPUT_TOKENS = 16000
 

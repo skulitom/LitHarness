@@ -180,9 +180,9 @@ SERIAL_POSITION_CAPACITY = 100_000
 
 #: Where `--database` looks when nobody passed one. **This exists so an agent's command line
 #: can be exactly `litharness world <view>`**: a tool allowance is only a containment if it
-#: can be written narrowly, and `Bash(litharness world:*)` stops being narrow the moment a
-#: `--database` flag has to sit between the binary and the subcommand. The flag still wins
-#: where it is given, so every existing invocation is unchanged.
+#: can be written narrowly, and an allowance naming `litharness world` subcommands stops being
+#: narrow the moment a `--database` flag has to sit between the binary and the subcommand. The
+#: flag still wins where it is given, so every existing invocation is unchanged.
 DATABASE_ENV = "LITHARNESS_DATABASE"
 
 #: **The shelf and the form reach the Recruiter's child process through the environment, never
@@ -2424,10 +2424,12 @@ def cmd_architect(args: argparse.Namespace) -> int:
     a chapter and keeps the world holding — what the chapter established, what now contradicts,
     and what was declared and has still never been said.
 
-    **What it can do is the allowance and not a promise.** `world_agent.ALLOWED_TOOLS` is
-    `Bash(litharness world:*)`: this agent runs the world suite and has no other tool. Every
-    record it writes is PROPOSED, so it proposes a world and cannot install one — `world accept`
-    is the separate act that carries a decision row.
+    **What it can do is the allowance and not a promise.** `world_agent.ALLOWED_TOOLS`
+    enumerates every world command except `accept`: this agent runs the world suite and has no
+    other tool, and the matcher refuses it the one command that installs (§146.9 measured the
+    refusal; the earlier `Bash(litharness world:*)` glob did not refuse it). Every record it
+    writes is PROPOSED, so it proposes a world and cannot install one — `world accept` is the
+    separate act that carries a decision row.
 
     The database reaches the child through `LITHARNESS_DATABASE`, which is why that variable
     exists: a `--database` flag between the binary and the subcommand would force the allowance

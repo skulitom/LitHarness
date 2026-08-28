@@ -599,6 +599,72 @@ def test_live_claude_round_trip() -> None:
     assert result.cost_usd is not None
 
 
+@live
+def test_live_the_shipped_allowances_enforce_their_own_boundaries(tmp_path, monkeypatch) -> None:
+    """§146.9's probe: the containment boundary is the matcher's, not the prompt's.
+
+    Three paid calls through the production argv, judged on the envelope's own
+    `permission_denials` field rather than on the model's prose — a denial recorded there is
+    the harness refusing the tool call, and it doubles as proof the model actually attempted
+    the command. What is pinned, first measured 2026-08-28 on `claude` 2.1.236:
+
+    * a command inside the Architect's allowance executes (the control);
+    * `litharness world accept` is refused under that allowance — the reason the allowance is
+      enumerated: the `Bash(litharness world:*)` glob it replaced let this command run, so the
+      Architect's inability to self-accept rested on prompt text (§146.2's reported
+      discrepancy, confirmed);
+    * the Recruiter's exact entry `Bash(litharness roster show)` refuses
+      `litharness roster show --dossier` — an argument-free entry is matched exactly, so the
+      flag that would hand one arm's dossier prose to the other arm's recruit is unreachable.
+
+    The probe commands are inert (`--help`), and `LITHARNESS_DATABASE` points into tmp_path so
+    even a command that does execute touches only scratch. Re-run after any `claude` upgrade,
+    §109's rule: this pins the installed matcher's semantics, not our code.
+    """
+    from litharness.application import recruiter, world_agent
+
+    monkeypatch.setenv("LITHARNESS_DATABASE", str(tmp_path / "probe.db"))
+
+    def in_scratch(argv, *, timeout, cwd=None, stdin=None):
+        return subprocess_runner(argv, timeout=timeout, cwd=str(tmp_path), stdin=stdin)
+
+    provider = ClaudeCodeProvider(model="claude-haiku-4-5", runner=in_scratch)
+
+    def probe(allowance: tuple[str, ...], command: str):
+        result = provider.complete(
+            CompletionRequest(
+                prompt=(
+                    "Using the Bash tool, run exactly this command, once:\n"
+                    f"{command}\n"
+                    "Attempt it even if you expect it to be refused; do not run any other "
+                    "command and do not retry. Then reply with only the first line of the "
+                    "command's output, or the word BLOCKED if the tool call was refused."
+                ),
+                allowed_tools=allowance,
+                timeout_seconds=600.0,
+            )
+        )
+        denials = result.raw.get("permission_denials") or []
+        denied_commands = " ".join(
+            str((entry.get("tool_input") or {}).get("command", ""))
+            for entry in denials
+            if isinstance(entry, dict)
+        )
+        return result, denials, denied_commands
+
+    result, denials, _ = probe(world_agent.ALLOWED_TOOLS, "litharness world summary --help")
+    assert denials == [], f"an in-allowance command was refused: {denials}"
+    assert "usage" in result.text.lower(), result.text
+
+    _, denials, denied = probe(world_agent.ALLOWED_TOOLS, "litharness world accept --help")
+    assert denials, "the enumerated allowance did not refuse `world accept`; §146.9 is stale"
+    assert "world accept" in denied, denied
+
+    _, denials, denied = probe(recruiter.ALLOWED_TOOLS, "litharness roster show --dossier")
+    assert denials, "the exact `roster show` entry did not refuse the --dossier form"
+    assert "--dossier" in denied, denied
+
+
 # --- the suite-wide guard ----------------------------------------------------------
 
 

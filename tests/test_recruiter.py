@@ -41,11 +41,13 @@ def _system(shape: str) -> str:
 def test_the_recruiter_allowance_cannot_reach_roster_accept() -> None:
     """**Enumerated rather than wildcarded, and the Architect is why.**
 
-    `world_agent.ALLOWED_TOOLS` is the single glob `Bash(litharness world:*)`, and `world
-    accept` is itself a `litharness world ...` command — so on that point the Architect's
-    containment rests on the last line of its tool essay rather than on its allowance. Four
-    strings is the whole cost of not repeating that here. No entry contains a comma, which
-    matters because the CLI transport joins the allowance with one.
+    When this shipped, `world_agent.ALLOWED_TOOLS` was the single glob
+    `Bash(litharness world:*)`, and `world accept` is itself a `litharness world ...` command —
+    so on that point the Architect's containment rested on the last line of its tool essay
+    rather than on its allowance. §146.9 measured that discrepancy real (the glob ran `world
+    accept` on `claude` 2.1.236) and the Architect's allowance is enumerated now too. Four
+    strings is the whole cost of never having repeated it here. No entry contains a comma,
+    which matters because the CLI transport joins the allowance with one.
     """
     assert "accept" not in " ".join(recruiter.ALLOWED_TOOLS)
     assert not any("," in entry for entry in recruiter.ALLOWED_TOOLS)

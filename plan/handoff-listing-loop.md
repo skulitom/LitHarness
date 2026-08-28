@@ -43,8 +43,8 @@ is the only artifact with a `<head>`. Do not style them.
 `uv run litharness world` is the Architect's tool suite over the triple store — `vocabulary`,
 `summary`, `show`, `rules`, `ladders`, `abilities`, `cast`, `threads`, `presence`, `check`,
 `declare`, `accept`. `uv run litharness architect seed|grow` runs the Architect as an agent
-holding `Bash(litharness world:*)` and nothing else; everything it declares is `PROPOSED` until
-`world accept` carries it with a decision row.
+holding the world suite minus `accept` and nothing else (enumerated since §146.9); everything
+it declares is `PROPOSED` until `world accept` carries it with a decision row.
 
 `application/overview.py` writes a listing and a title. `application/readers.py` holds the two
 disjoint reader pools. A book is seeded without the forge: `new "Title" --scenes N --premise
