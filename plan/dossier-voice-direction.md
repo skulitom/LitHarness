@@ -66,11 +66,25 @@ a new writer, because an exemplar changes what the writer drafts and that is ide
 (`domain/writers.py`, roster plan §3.1). What decides everything is where voice Y's example
 text comes from, and the three sources are not alike:
 
-1. **Market text as the exemplar — forbidden.** RS1: no corpus text crosses to the
-   generation side, ever; `tests/test_corpus_leak_audit.py` scans history for exactly this
-   crossing. A voice cloned from a specific serial's pages is also derivative in precisely
-   the way the firewall exists to prevent. The examples we *hold* are the ones we may not
-   *show*.
+1. **Market text as the exemplar — forbidden by RS1, and for the right reason.** ~~A voice
+   cloned from a specific serial's pages is also derivative in precisely the way the
+   firewall exists to prevent.~~ **Corrected in place, on the operator's push-back
+   (verbatim: *"We aren't breaking any copyright we are asking to write a prompt with a
+   similar style"*): the copyright half was this note's overclaim — style is not
+   copyrightable and similar-style generation infringes nothing.** The rail's real load is
+   measurement independence: the market is the project's yardstick (the follower gradient,
+   the register counters, the coordinator ceiling's 0-of-60, §61's eventual bar are all
+   comparisons *to* it), and corpus passages inside generation prompts make our artifacts
+   partial functions of the measurement corpus — after which every ours-vs-market number
+   partly measures the market against itself, and the memorization controls the salience
+   battery needs are poisoned by design. `tests/test_corpus_leak_audit.py` enforces the
+   crossing mechanically. **The permitted middle path:** the measurement side may distill a
+   market voice into a *derived style descriptor* — sentence-length distribution, connective
+   density, person, tense, fragment rate; numbers and labels, never prose ("commit derived
+   numbers and identifiers, never third-party prose") — and the descriptor may cross to
+   generation. The corpus aims; the pretrained prior executes. If the operator ever decides
+   raw market exemplars should cross anyway, that is theirs to amend — as a recorded stage-0
+   decision naming which instruments lose their independence, never as a side effect.
 2. **Our own books as the exemplar — legal but circular.** Every book on the shelf speaks
    the leaked house register this note is about; using them as Y reproduces the homogeneity.
 3. **A fresh, model-drafted exemplar — legal, and the designed path.** The model already
