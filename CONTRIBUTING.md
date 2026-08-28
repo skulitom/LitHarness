@@ -13,17 +13,16 @@ nothing for the workflow to pin by hand.
 
 ```bash
 uv sync --extra dev
-uv run pytest -m "not intensive" -n auto --dist loadscope
-uv run ruff check .
-uv run mypy
+uv run python tools/check.py smoke
 ```
 
-The quick lane still exercises the product broadly; it excludes only tests marked `intensive`
-because they run large deterministic simulations, long-horizon workloads, or repository-wide
-scans. Before handoff, run the complete suite with
-`uv run pytest -n auto --dist loadscope`. Use
-`uv run pytest -m intensive -n auto --dist loadscope` when working on those controls directly.
-CI always runs the complete suite. Use `-n 0` for serial debugging.
+`tools/check.py` is the canonical local entry point. `smoke` runs the core architecture,
+domain, context, state, and serial checks; `changed` adds tests mapped from the current diff and
+escalates to `quick` or `full` when selection is uncertain; `quick` omits only marked simulations,
+endurance checks, and repository-wide scans; `full` runs every test without coverage. Before
+handoff, use `uv run python tools/check.py handoff` for lint, types, diff and lock validation,
+coverage, wheel build, and the corpus-history audit. Direct pytest remains useful for debugging;
+use `-n 0` when ordering or captured output matters.
 
 Advancing the contracts pin is still a deliberate change that lands with the code that needs
 it, not a maintenance chore — the discipline survives the mechanism. It is now bump the `rev`
@@ -104,5 +103,5 @@ content-addressed claim record; ordinary implementation facts do not.
 ## Scope discipline
 
 Keep patches narrow and preserve unrelated work in a dirty tree. Add a focused regression
-test for the behavior being changed, then run the full suite, Ruff, mypy, and
-`git diff --check` before handing off.
+test for the behavior being changed, then run `uv run python tools/check.py handoff` before
+handing off.

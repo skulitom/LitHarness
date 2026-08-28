@@ -1,8 +1,3 @@
-# One checkout, at the workspace root: `litharness-contracts` is resolved through
-# [tool.uv.sources] as a git rev recorded in `uv.lock`, so `uv sync --locked` fetches exactly
-# the commit this repository was tested against and there is nothing left for the workflow to
-# pin by hand. Action SHAs are still pinned rather than floated on tags, matching
-# BookWorldState's workflow.
 name: CI
 
 on:
@@ -12,39 +7,78 @@ on:
 permissions:
   contents: read
 
+# A newer push to the same branch makes the older result obsolete. This is especially useful
+# when several agents hand small commits to one operator-controlled checkout.
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  quality:
-    name: quality (${{ matrix.os }}, Python ${{ matrix.python-version }})
+  static:
+    name: static and smoke
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.13"
+      - uses: astral-sh/setup-uv@ae62891fec2bb8e7d6c99fc78c9fec3a63790f8d # v10.0.0
+        with:
+          enable-cache: true
+      - run: uv sync --locked --extra dev
+      - run: uv lock --check
+      - run: uv run ruff check .
+      - run: uv run mypy
+      - run: uv run python tools/check.py smoke
+
+  tests:
+    name: tests (${{ matrix.os }}, Python ${{ matrix.python }})
     runs-on: ${{ matrix.os }}
     timeout-minutes: 15
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest]
-        python-version: ["3.11", "3.13"]
+        include:
+          - os: ubuntu-latest
+            python: "3.11"
+            coverage: false
+            history: 1
+          - os: ubuntu-latest
+            python: "3.13"
+            coverage: true
+            history: 0
+          - os: windows-latest
+            python: "3.11"
+            coverage: false
+            history: 1
+          - os: windows-latest
+            python: "3.13"
+            coverage: false
+            history: 1
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          # Full history, for `corpus_leak_audit.py` below. On the default shallow clone the
-          # audit would see one commit, find nothing and pass — a check that cannot fail, which
-          # is the shape of every proxy this project has had to refute.
-          fetch-depth: 0
+          # Only the corpus audit needs every historical blob. Compatibility jobs stay shallow.
+          fetch-depth: ${{ matrix.history }}
       - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: ${{ matrix.python }}
       - uses: astral-sh/setup-uv@ae62891fec2bb8e7d6c99fc78c9fec3a63790f8d # v10.0.0
         with:
           enable-cache: true
       - run: uv sync --locked --extra dev
-      - run: uv run ruff check .
-      - run: uv run mypy
-      - run: uv run pytest -n auto --dist loadscope --cov=litharness
-      # This repository is public and its measurements run over corpora it does not own —
-      # Mother of Learning, ~68,000 RoyalRoad chapters. A results file that recorded a passage
-      # instead of a passage id would put someone else's novel into a public history, where
-      # deleting it afterwards does not remove it. The audit reads every blob any commit ever
-      # pointed at, so it catches a leak that was committed and then deleted.
-      - run: uv run python research/quality-measurement/corpus_leak_audit.py
-        if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.13'
-      - run: uv build --wheel
-        if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.13'
+      - name: Full suite
+        if: matrix.coverage == false
+        run: uv run python tools/check.py full
+      - name: Full suite with branch coverage
+        if: matrix.coverage == true
+        run: uv run pytest -n auto --dist loadscope --cov=litharness
+      # The public repository must never acquire excerpt-sized third-party prose. This audit
+      # reads every blob any commit ever pointed at, including subsequently deleted files.
+      - name: Audit corpus history
+        if: matrix.coverage == true
+        run: uv run python research/quality-measurement/corpus_leak_audit.py
+      - name: Build wheel
+        if: matrix.coverage == true
+        run: uv build --wheel

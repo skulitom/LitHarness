@@ -116,7 +116,7 @@ def test_verification_detects_changed_evidence_bytes(tmp_path: Path) -> None:
 
 def test_agent_guidance_points_to_the_canonical_boundary() -> None:
     root = Path(__file__).resolve().parents[1]
-    guidance = (root / "CLAUDE.md").read_text(encoding="utf-8")
+    guidance = (root / "AGENTS.md").read_text(encoding="utf-8")
     protocol = (
         root / "research" / "quality-measurement" / "EPISTEMIC_GOVERNANCE.md"
     ).read_text(encoding="utf-8")

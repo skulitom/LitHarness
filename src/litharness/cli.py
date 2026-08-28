@@ -2176,7 +2176,6 @@ def cmd_cover(args: argparse.Namespace) -> int:
         font_path=args.font,
         timeout=args.timeout,
         force=args.force,
-        workspace=Path.cwd(),
         generated_at=_stamp(_now()),
         runner=subprocess_runner,
         codex_executable=_codex_executable(),

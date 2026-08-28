@@ -207,6 +207,7 @@ def test_a_supplied_art_set_is_self_contained_versioned_and_collision_safe(
 
 def test_a_generated_set_uses_one_fresh_codex_call_per_variant(tmp_path: Path) -> None:
     prompts: list[str] = []
+    workspaces: list[str | None] = []
 
     def runner(
         _argv: Sequence[str],
@@ -217,16 +218,19 @@ def test_a_generated_set_uses_one_fresh_codex_call_per_variant(tmp_path: Path) -
     ) -> CommandResult:
         assert stdin is not None
         prompts.append(stdin)
+        workspaces.append(cwd)
         match = re.search(r"exactly this path:\n(.+)\n", stdin)
         assert match is not None
         art(Path(match.group(1)))
         return CommandResult(0, "done")
 
-    result = covers.create_cover_set(
-        tmp_path / "generated", spec(), variants=2, workspace=tmp_path, runner=runner
-    )
+    output = tmp_path / "generated"
+    result = covers.create_cover_set(output, spec(), variants=2, runner=runner)
     assert len(result.covers) == 2
     assert len(prompts) == 2
+    assert len(set(workspaces)) == 2
+    assert all(Path(value).name.startswith("litharness-cover-") for value in workspaces if value)
+    assert all(not Path(value).exists() for value in workspaces if value)
     manifest = json.loads(result.manifest.read_text(encoding="utf-8"))
     assert [row["source"] for row in manifest["variants"]] == [
         "codex-cli-imagegen",

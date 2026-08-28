@@ -17,6 +17,7 @@ import uuid
 from collections.abc import Sequence
 from dataclasses import dataclass
 from pathlib import Path
+from tempfile import TemporaryDirectory
 from typing import Any, Protocol
 
 COVER_WIDTH = 400
@@ -214,6 +215,21 @@ def generate_art(
     codex_executable: str = "codex",
 ) -> tuple[str, tuple[str, ...]]:
     """Ask a fresh Codex CLI session for one image and verify its promised artifact exists."""
+    if workspace is None:
+        # Codex discovers AGENTS.md from a repository root even when -C names a generated
+        # subdirectory. A temporary workspace outside the checkout keeps repository session
+        # guidance out of the cover call; the exact target directory is added to the sandbox.
+        with TemporaryDirectory(prefix="litharness-cover-") as temporary:
+            return generate_art(
+                spec,
+                variant=variant,
+                target=target,
+                references=references,
+                workspace=Path(temporary),
+                timeout=timeout,
+                runner=runner,
+                codex_executable=codex_executable,
+            )
     if timeout <= 0:
         raise ValueError("--timeout must be greater than zero")
     for reference in references:

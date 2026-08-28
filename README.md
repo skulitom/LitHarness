@@ -44,7 +44,7 @@ fixtures are pinned through `uv.lock`, so one checkout is enough.
 git clone https://github.com/skulitom/LitHarness
 cd LitHarness
 uv sync --extra dev
-uv run pytest
+uv run python tools/check.py smoke
 ```
 
 Production generation uses the signed-in local Claude Code CLI, pinned to the frontier model in
@@ -339,29 +339,29 @@ gaps explicitly. The library is a file handoff, not a posting scheduler or publi
 
 ## Development
 
-Read [CONTRIBUTING.md](CONTRIBUTING.md) before changing code. Use the parallel quick lane while
-iterating; it omits only deterministic simulations, endurance checks, and repository-wide scans:
+Read [AGENTS.md](AGENTS.md) and [CONTRIBUTING.md](CONTRIBUTING.md) before changing code. Use the
+four-second core loop for immediate feedback, or let the checker select a conservative slice from
+the working tree:
 
 ```bash
-uv run pytest -m "not intensive" -n auto --dist loadscope
+uv run python tools/check.py smoke
+uv run python tools/check.py changed
 ```
 
-Run the complete suite before handoff. The intensive lane can also be isolated when changing a
-benchmark or long-context control:
+The broader lanes are explicit and identical across platforms:
 
 ```bash
-uv run pytest -n auto --dist loadscope
-uv run pytest -m intensive -n auto --dist loadscope
+uv run python tools/check.py quick
+uv run python tools/check.py full
 ```
 
-The remaining handoff checks are:
+Before committing or handing off a completed change, run the comprehensive check:
 
 ```bash
-uv run ruff check .
-uv run mypy
-git diff --check
+uv run python tools/check.py handoff
 ```
 
-The architecture suite enforces dependency direction and import-cycle freedom. Tests set
-`LITHARNESS_ENV=test`, which makes resolving a billing provider an error; live provider tests are
-opt-in through `LITHARNESS_LIVE_PROVIDERS=1`.
+Direct pytest commands remain useful while debugging one failure; use `-n 0` when ordering or
+captured output matters. The architecture suite enforces dependency direction and import-cycle
+freedom. Tests set `LITHARNESS_ENV=test`, which makes resolving a billing provider an error;
+live provider tests are opt-in through `LITHARNESS_LIVE_PROVIDERS=1`.
