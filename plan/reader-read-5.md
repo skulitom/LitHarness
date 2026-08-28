@@ -265,11 +265,12 @@ every time.
 | `vance` | *"somebody who died badly and woke up as something else"*, *"a beast that should have killed the main character and is theirs instead"* | a thing out of the dark that should have killed the narrator and did not | 4 of 4 |
 | `okonjo` | *"sects, masters worth impressing, rivals"*, *"the technique somebody is not supposed to have"* | a sect entrance or duel decided by a forbidden breathing form | 4 of 4 |
 
-**What the counts count.** The right-hand column counts **distinct listings** — a writer's
-final text per draw. Counting the two `ferreira` drafts that differ from their own revisions,
-it is **9 of 9**: the beat survives the revision step as well as the draw. Neither number is
-"eight", which is worth saying because
-[`handoff-writer-recruiter.md`](handoff-writer-recruiter.md) cites eight.
+**What the counts count**, because two defensible numbers exist and only one is in the table.
+The right-hand column counts **distinct listings** — a writer's final text per draw. Counting
+the two `ferreira` drafts that differ from their own revisions it is **9 of 9**, and that is the
+more interesting number: **the beat survives the revision step as well as the draw.** Say which
+one is meant wherever it is cited; [`handoff-writer-recruiter.md`](handoff-writer-recruiter.md)
+carries the seven.
 
 **`writers.py`'s own docstring already warned about the previous version of this defect.** The
 first cast named four real careers and *"each writer promptly set a book inside their own day
