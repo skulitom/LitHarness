@@ -85,3 +85,9 @@ research/quality-measurement/derived/
 # same work twice (stage-0 §95.10: 108 duplicate seed-runs, about $9 of paid work bought
 # twice), so the lock is load-bearing; it is just not evidence.
 research/quality-measurement/results/.*.pid
+
+# The operator dashboard: a page regenerated on every double-click of `dashboard.cmd`, derived
+# from the roster database and the library beside it. Generated state like `book-library/`, and
+# ignored for the same reason — a file rewritten on every launch would leave the working copy
+# permanently dirty for every parallel session sharing this checkout.
+/dashboard.html

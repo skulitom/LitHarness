@@ -18,3 +18,9 @@
 *.db binary
 *.png binary
 *.pdf binary
+
+# `cmd.exe` is the one consumer here that a bare LF can actually break: a batch file read with
+# LF-only endings has mis-parsed labels and trailing arguments for as long as it has existed,
+# and `dashboard.cmd` exists to be double-clicked by a person who gets no traceback when it
+# does. This is a deliberate exception to the LF rule above, scoped to the one file type.
+*.cmd text eol=crlf
