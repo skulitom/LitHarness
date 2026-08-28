@@ -1,0 +1,62 @@
+# The house genre is LitRPG, mandatory, and tonight it turned out to live nowhere
+
+**Status: standing operator constraint, 2026-08-29 (just past midnight). Recorded verbatim;
+the fix's home is deliberately left open for a fresh session.** The operator, on first sight
+of pilot 13's book (*The Rainwright's Apprentice Has No Licence*, larkin, light fantasy):
+
+> *"One big problem i noticed right away with the book. It's not litrpg... we shouldn't be
+> writing any books that don't have litrpg as the genre"*
+
+## What the artifact measured
+
+Pilot 13 is the first book by a recruited writer, and it exposed where the house genre has
+actually been living: **implicitly, in individual dossiers.** Ferreira's dossier says
+*system apocalypse* and *builds*, so every ferreira book carried LitRPG furniture; larkin's
+says light fantasy and no system, so her book came out as pure light fantasy. No rule, no
+prompt surface, and no gate anywhere says "this house writes LitRPG" — the compiled cast
+happened to encode it writer-by-writer, and the first writer who didn't proved the floor was
+never there. The operator's earlier composition principle ("mystery... whilst still also
+being specialized in Litrpg and progression fantasy") was applied to the NEW shelves' labels
+the night it was said; it never became a floor under the original twelve or the pipeline.
+
+The precision worth keeping from the same artifact: the Rainwright world has full
+**progression structure** — three resolving ladders, ranks, 316 countable skies, §113's
+machinery all present — and no **LitRPG system**: no status furniture, no interface the
+character reads, no game-shaped numbers on the page. The operator's constraint names that
+distinction exactly. (Their standing register note said "LitRPG/progression/isekai"; this
+statement is stricter — *LitRPG as the genre* — and the strict reading governs until they
+say otherwise: every book carries the system furniture, whatever else its shelf flavours.)
+
+## Where the floor could live — the decision a fresh session makes, not this note
+
+By the altitude rule (`writer-learning-direction.md`): this is a HOUSE-level lesson and must
+not be filed writer-by-writer. Candidate homes, each with a recorded hazard:
+
+1. **The recruit prompt's system half** — every future dossier drawn composed with the house
+   genre. Covers new hires only; the nine accepted writers keep genre-free dossiers until
+   successor mints. Hazard: §138 (an affirmative clause returns as formula).
+2. **A pipeline-level genre floor** — the listing/architect calls carry the house genre for
+   every book regardless of writer. The strongest lever: §136 measured two words of
+   genre-as-input outweighing every rule, and mandatory is exactly where that power belongs.
+   Hazard: the same §136 measurement was recorded as a *warning* for briefs; making it the
+   floor needs the empty-brief control story rewritten deliberately, not silently.
+3. **Successor mints for the accepted nine** — dossiers recomposed with the system frame
+   (the voiced re-mint is the natural vehicle; the operator signs). Slowest, most recorded.
+
+Likely the real answer is 2 as the floor plus 1 for new hires, with 3 riding the re-mint —
+but that is a stage-0 decision with prompt-budget arithmetic behind it (`litharness
+prompts` before and after; §135's size lesson), and it is not made in a direction note.
+
+## What is bound right now, before any fix lands
+
+No book is cast from a writer whose dossier carries no system frame. Practically: the
+compiled cast (ferreira, halloran, vance, okonjo) all carry it; of the nine accepted
+recruits, none provably does — so **production casting is cast-only until the floor
+exists**, and pilot 13 stands as the recorded reason.
+
+## Anti-scope
+
+Pilot 13 finishes and ships to the shelf as evidence — it answered the capability question
+(the system can produce light fantasy) and found this gap in the same draw, which is what
+pilots are for. Nothing here retro-judges the book, reopens raw feedback into prompts, or
+picks the floor's home tonight.
