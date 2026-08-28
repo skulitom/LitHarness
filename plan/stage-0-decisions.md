@@ -15392,3 +15392,89 @@ what is true and to point here.
 Resolution order (accepted roster first, compiled cast second), `RESERVED_NAMES`, and the
 proposed/refused refusal sentences are unchanged. Nothing here ranks or selects, no model
 reads anything it could not already read, and RS1 is untouched.
+
+## 152. Four lines of the world CLI's own vocabulary named the wrong slot, and the one that cost a pilot six dead records was documented, not broken
+
+**Measured first, by reading each documented line against the function that reads that
+predicate.** `world vocabulary` is the only place the record shapes are written down —
+`application/world_agent.py`'s prompt sends the Architect there rather than carrying a copy —
+so it is the whole of what a fresh draw is told. Twenty-one predicates were documented. Four
+named a slot their reader does not read:
+
+| line | what it said | what the reader does |
+|---|---|---|
+| `consequence` | `--object the rule` | `worlds.consequence_domains` reads `object_ref` as the **domain**; the rule is the subject and the consequence is the value |
+| `edge` | `an ordinary relationship; --object the other subject` | `worlds.protagonist_brief` reads only records with **no** edge, out of the value slot |
+| `evaluates` | `--object the criterion` | the criterion is the **subject**; the edge is the kind of thing judged |
+| `precedes` | `--object the rung above` | true, and silent about `--value`, which is where `worlds.rank_order` reads a chain's criterion |
+
+`stands_at`, `disclosed_to` and `claim.false` were silent in the same way about the value slot
+their readers key on, and `comparator` — without which `worlds.criteria` finds no criterion at
+all — was not listed.
+
+**Neither defect is a bug in any function.** Every reader in `domain/worlds.py` reads the slot
+its own docstring always said it read. What was wrong was the prose, and what made the prose
+expensive is that a record cannot be taken back: there is no `world retract`, and
+`integrity.disagreement_key` makes a slot `(subject, predicate, object, order key)`, so a
+corrected declaration that changes any of those three fills a *different* slot and `world
+accept` carries both.
+
+**What it cost, on the record.** Serial Pilot 13's first seed believed the `consequence` line
+and put the rule id in the edge: six records that `consequence_domains` skips, that `world
+rules` reports as rules with no domains, and that nothing can replace. Separately, the
+`--order-key`/`--value` trap on `precedes` has now been sighted three times —
+[`serial-pilot-7.md`](serial-pilot-7.md) §3.1.3, [`serial-pilot-12.md`](serial-pilot-12.md)
+seed 1, and pilot 13 seed 1, which walked into it holding its own memory note about it. Pilot
+12's seed read the fifteen resulting complaints, every one of them a standing on a rung no
+chain declared, and wrote a diagnosis saying the records were stored correctly and the CLI was
+at fault — an argument for `--force`. The cause was nine `precedes` edges it had scoped by
+story position, which are legal, store, read back, and belong to *every* ladder at once.
+
+**Why the tool said nothing, which is the entry's real finding.** `world declare` already ran
+`validate` on each new record and printed what it found under `not_yet_coherent`. Both pilots
+were therefore told something true. `not_yet_coherent` is a promise that the rest of the world
+settles this — kept for a question awaiting its answer, kept for a rung awaiting its chain —
+and a record in the wrong slot reads identically in that list and is the opposite thing. The
+heading made a permanent mistake sound temporary.
+
+**What shipped.**
+
+- The four wrong lines are corrected and the silent ones completed; `comparator` is added. Each
+  line is now a statement about a named reader.
+- `worlds.slot_warnings`, one record in, warnings out: a `consequence` whose `--object` is not
+  a domain, and a `precedes` scoped by `--order-key` with no `--value`. Each warning names the
+  right slot and says the record cannot be replaced.
+- `world declare` reports them under `will_not_resolve`, beside `not_yet_coherent` and distinct
+  from it; `world check` carries the same list without moving `ok`, because that is the view
+  pilot 12 read and misdiagnosed.
+- Two tests, and neither alone would hold: `test_every_documented_slot_is_the_slot_its_reader_reads`
+  builds a record to each documented shape and hands it to the reader, which pins the shape but
+  is still one reading of the prose written twice; `test_the_documented_line_names_the_slots_its_own_record_fills`
+  compares each line to that verified record, so a line naming a slot its record does not fill
+  fails. Both were run against the pre-fix text and both fail on it.
+
+**What was refused: a validator clause, and a clause in the Architect's prompt.**
+
+- **Not a `validate` complaint.** `validate` gates `world accept`, and a `precedes` with no
+  criterion is *correct* in the common world with one ladder — `rank_order` says so in as many
+  words — so a clause here would refuse worlds that are right. What was missing was never
+  permission to refuse; it was that the tool never said which slot it had read. §139.3 put the
+  gate at `world accept` precisely because an Architect building a world one record at a time
+  is transiently incoherent almost continuously, and that stands.
+- **Not a sentence added to `_SEED` or `_TOOLS`.** §127 measured three interventions aimed at
+  one complaint by adding a clause, each obeyed in letter and none of which took, and §138
+  found that a rule's affirmative half is what gets obeyed. Documentation alone has now failed
+  three times on this exact trap; the corrected lines ship *because they were false*, not as
+  the mechanism, and the mechanism is the report.
+- Also refused: a `world retract`, which would make the store's append-only history a thing an
+  agent edits; and any attempt to repair the six dead records in pilot 13's first seed, which
+  would be this session authoring world facts.
+
+**No bar is declared.** Nothing here is a quantity. The three sightings and the six records are
+counts of past events, not a threshold anything is measured against, and §61's four checks have
+nothing to run on.
+
+**Anti-scope.** No reader function changed behaviour, no record's meaning changed, and every
+world already forged reads exactly as it did — the projection, the packet and the byte-identity
+rail are untouched. Nothing here ranks, selects or judges; no model was called; RS1 is
+untouched. `--force` still exists and still means what it meant.

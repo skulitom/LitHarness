@@ -3972,6 +3972,18 @@ def cmd_world(args: argparse.Namespace) -> int:
             complaints = worlds_domain.validate([*records, record])
             fresh = worlds_domain.validate(records)
             new_complaints = [c for c in complaints if c not in fresh]
+            # **The second list is the one that matters, and it is second because the first
+            # one lies about it.** `not_yet_coherent` is a promise that the rest of the world
+            # will settle this, and for a question awaiting its answer or a rung awaiting its
+            # chain that promise is kept. A record written into the wrong slot reads
+            # identically in that list and nothing will ever settle it: there is no
+            # retraction, and `integrity.disagreement_key` makes a correction that changes the
+            # subject, the edge or the story position a *different* slot, so `world accept`
+            # carries both. Serial Pilot 13's first seed read a membership complaint about six
+            # `consequence` edges, took it for transient, and left six dead records in canon;
+            # Serial Pilot 12's read eleven complaints naming standings and diagnosed the CLI.
+            # Both were told something true under a heading that made it sound temporary.
+            warnings = worlds_domain.slot_warnings(record)
             written = store.record_state_records(book_id, branch_id, [record], created_at=stamp)
             payload: Any = {
                 "record_id": record.record_id,
@@ -3979,6 +3991,7 @@ def cmd_world(args: argparse.Namespace) -> int:
                 "new": bool(written),
                 "says": state_mod.describe(record),
                 "not_yet_coherent": new_complaints,
+                "will_not_resolve": list(warnings),
             }
             if args.json:
                 print(json.dumps(payload, ensure_ascii=False, indent=2))
@@ -3987,6 +4000,8 @@ def cmd_world(args: argparse.Namespace) -> int:
                 print(f"{verb}: {payload['says']}  [{record.authority.value}]")
                 for complaint in new_complaints:
                     print(f"  ! not yet coherent: {complaint}", file=sys.stderr)
+                for warning in warnings:
+                    print(f"  !! will not resolve: {warning}", file=sys.stderr)
             return EXIT_OK
     finally:
         store.close()
