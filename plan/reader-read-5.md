@@ -343,10 +343,21 @@ checkable grounds:
   luminance over the eight finished covers on the shelf, on a 0–255 scale: *Copy Costs A Hand*
   35.2 and 26.5, *Patch Notes For Earth* 47.0 and 36.9, *The Unkillable Exploit* 50.8, 50.0,
   38.6, 53.4. **The brightest cover ever produced is 53.4 — barely a fifth of full scale — and
-  not one of the eight reaches mid-grey.** The cover pipeline takes the listing as its
-  description, so this is the skew *propagating* through a downstream layer rather than
-  originating in one. A skew consistent through dossier, listing and cover is what an upstream
-  text cause looks like; model incapacity would not have to be so tidy.
+  not one of the eight reaches mid-grey.**
+
+  **The link to the listing is architectural and is not measured, and the difference matters.**
+  ~~The cover pipeline takes the listing as its description, so this is the skew *propagating*
+  through a downstream layer rather than originating in one.~~ What is true: the pipeline
+  **does** read the listing as its description (`application/covers.py` takes `--bundle`'s
+  listing), so a path from listing to cover exists by construction. What is **not** shown is any
+  dose-response along it — all eight covers came from dark listings, so the sample has **no
+  variation on the input** and cannot say whether a lighter listing yields a lighter cover. The
+  eight are a consistent skew across three layers, which is what an upstream text cause would
+  look like; they are not evidence that fixing the upstream fixes the cover.
+
+  **So nothing done to the dossiers may be read as having fixed the covers**, and testing that
+  link is its own leg with its own cost: cover luminance needs covers *generated*, which is
+  image-model spend on top of any listing sweep. It does not ride along free.
 
 **One trap, named before anyone reaches for it.** The obvious move — pass `light fantasy` as the
 brief — is the move `--brief`'s own help text warns against in as many words: *"NOT a shelf label
