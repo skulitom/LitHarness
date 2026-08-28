@@ -54,7 +54,41 @@ Composes with the beat/no-beat variable rather than replacing it. Until that arm
 "exhibited voice changes output voice" is a well-supported conjecture with three mechanism
 receipts and zero direct measurements.
 
+## The exemplar question, same day
+
+The operator, verbatim: *"yet i'm sure we have plenty examples of text in other voices. Why
+don't we just ask a model to rewrite X instruction in Y voice example?"*
+
+Rewrite-against-exemplar is the right mechanism, and the roster design already carries its
+socket: `writer_id_for`'s `exemplar_digest` has participated in every writer id since the
+first mint, canonically empty, put there so that *"populating an exemplar later should mint
+a new writer, because an exemplar changes what the writer drafts and that is identity"*
+(`domain/writers.py`, roster plan §3.1). What decides everything is where voice Y's example
+text comes from, and the three sources are not alike:
+
+1. **Market text as the exemplar — forbidden.** RS1: no corpus text crosses to the
+   generation side, ever; `tests/test_corpus_leak_audit.py` scans history for exactly this
+   crossing. A voice cloned from a specific serial's pages is also derivative in precisely
+   the way the firewall exists to prevent. The examples we *hold* are the ones we may not
+   *show*.
+2. **Our own books as the exemplar — legal but circular.** Every book on the shelf speaks
+   the leaked house register this note is about; using them as Y reproduces the homogeneity.
+3. **A fresh, model-drafted exemplar — legal, and the designed path.** The model already
+   carries the genre's voices from pretraining; invoking that prior ("write as this writer
+   writes") is how all generation here works, and is categorically different from pasting
+   held text into a prompt. So the flow is: the writer drafts a short *original* passage as
+   itself (a generative act, no judging), the passage becomes the exemplar, its digest mints
+   the writer identity, and the dossier — or any instruction bound for that writer — can be
+   rewritten against it.
+
+Two gates carry over unchanged onto any rewritten text, because the output is a containment
+surface: `legal_dossier` (no named prose axes survive a rewrite) and the registered-axis
+census (an exemplar heavy in a measured marker pre-empts the instrument that measures it).
+And the scope caution stands: writer-bound text may be voice-rewritten; the shared rule
+floor may not.
+
 ## Anti-scope
 
 Nothing scheduled; §146's arm, read 6's routed fixes, and the dashboard come first. Nothing
-here licenses editing any existing dossier — content-addressed ids stay put.
+here licenses editing any existing dossier — content-addressed ids stay put, and populating
+an exemplar mints a **new** writer rather than mutating one.
