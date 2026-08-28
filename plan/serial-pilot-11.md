@@ -7,8 +7,9 @@ answering the chapter question yet. Its §4.1 measured this listing's coordinato
 writer to the writer's own dossier.
 
 Run for the fifth
-operator read ([`handoff-operator-read-5.md`](handoff-operator-read-5.md), as corrected the same
-day): the two books on the shelf are *"old generations"* the operator has *"already reviewed"*,
+operator read ([`reader-read-5.md`](reader-read-5.md); the brief that commissioned it is
+retired, its debts recorded here and there): the operator corrected the target the same day —
+the two books on the shelf are *"old generations"* they have *"already reviewed"*,
 so the read needs a book made under the current architecture. This is that run, stopped after
 its cheap half on the operator's instruction — *"let's generate an overview first, not overspend
 on chapters. From the overview i'll probably know if we should spend more."*

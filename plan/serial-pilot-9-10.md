@@ -69,8 +69,9 @@ each of the four cells, every draw fresh and under an empty brief:
 | genre clause removed | removed | not restored |
 
 **The shipped arm is `genre_clarity`.** Its four listings — halloran 114 words, vance 98,
-okonjo 105, ferreira 112 — are the current listing surface, and are what
-[`handoff-operator-read-5.md`](handoff-operator-read-5.md) means by it.
+okonjo 105, ferreira 112 — are the current listing surface, and are what the fifth read's
+commissioning brief (since retired) meant by it; the operator later took them out of the read
+package — *"Let's generate everything from scratch"* ([`reader-read-5.md`](reader-read-5.md)).
 
 **The seventeenth listing is a full loop run**, `ferreira` with `--rivals`, title *Read The
 Patch Notes*, availability *free*. `overviews.md` carries its draft and its revision and the
@@ -86,9 +87,9 @@ exists at all. No operator read was recorded.
 
 ## 3. *Reappraisal*'s provenance is not lost — it is Serial Pilot 1
 
-[`handoff-operator-read-5.md`](handoff-operator-read-5.md)'s inventory table says *Reappraisal*'s
-provenance is "unrecorded in `plan/`" and asks for it to be found or the book excluded. **The
-premise is wrong and the book stays.** *Reappraisal* is the Serial Pilot 1 book, documented at
+The fifth read's commissioning brief (since retired per the house rule on completed handoffs)
+inventoried *Reappraisal* as provenance "unrecorded in `plan/`" and asked for it to be found or
+the book excluded. **The premise is wrong and the book stays.** *Reappraisal* is the Serial Pilot 1 book, documented at
 length in [`plan/serial-pilot-1.md`](serial-pilot-1.md) — whose title line is literally *"Serial
 Pilot 1 — 'Reappraisal': the operator package"* — with its preflight in
 [`serial-pilot-1-preflight.md`](serial-pilot-1-preflight.md). Its store is `serial.db`, the only

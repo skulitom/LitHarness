@@ -435,8 +435,8 @@ holds the qualified-intervention boundary that replaced it.
 
 **And the operator has read it.** On 2026-08-28 the operator called *Copy Costs A Hand* and
 *Patch Notes For Earth* *"old generations"* they had *"already reviewed"*, which is why the fifth
-operator read targets a fresh book (`plan/handoff-operator-read-5.md`'s correction block, and
-`plan/serial-pilot-11.md`). That is a fact about what this book has already been used for, not a
+operator read targets a fresh book (the operator's same-day correction, recorded in
+[`reader-read-5.md`](reader-read-5.md) and [`serial-pilot-11.md`](serial-pilot-11.md)). That is a fact about what this book has already been used for, not a
 verdict on it: no read of it was ever recorded as a `reader-read-*.md`, so whatever the operator
 noticed while reading is a defect harvest that was never harvested. Recovering it later is
 legitimate; inventing what it would have said is not.
