@@ -28,6 +28,8 @@ hooks, so asking for twice that was buying room for the throat-clearing.
 
 from __future__ import annotations
 
+import re
+
 from litharness.domain.generation import CompletionRequest
 from litharness.domain.writers import Writer
 
@@ -36,6 +38,47 @@ OVERVIEW_PROFILE = "writer.overview.v0"
 TITLE_PROFILE = "writer.title.v0"
 
 MAX_OUTPUT_TOKENS = 4000
+
+#: The two words that chain one clause onto the next. Counting them is the whole mechanism:
+#: no model is asked whether a listing reads as a list, and nothing here knows what the
+#: threshold is — the caller supplies it, so this function is a property of a string.
+_COORDINATORS = re.compile(r"\b(?:and|then)\b", re.IGNORECASE)
+
+
+def coordinator_density(listing: str) -> float:
+    """Coordinator tokens per hundred words of the listing's own length.
+
+    The operator named this in the fifth operator read, reading a listing aloud as *"kind of
+    like a list with constant 'and then', 'and then'"*. It is a shape property with a right
+    answer, which is why it can be counted at all; `plan/reader-read-5.md` §4.1 is where the
+    reading and its distribution live, and stage-0 §147 is the decision to refuse above a
+    ceiling. Nothing here is a quality claim — a listing under the ceiling is not good, it is
+    merely not chained.
+    """
+    words = len(listing.split()) or 1
+    return 100 * len(_COORDINATORS.findall(listing)) / words
+
+
+def keep_least_chained(drawn: list[str]) -> str:
+    """Which of a bounded redraw loop's draws is kept: the least chained, earliest on a tie.
+
+    A total order over one frozen counter, so this is arithmetic rather than a preference
+    among candidates — §61(5) forbids a *model* ranking without containment, and no model
+    reads anything here. Keeping the earliest on a tie makes the choice reproducible.
+    """
+    if not drawn:
+        raise ValueError("a redraw loop that drew nothing has nothing to keep")
+    return min(drawn, key=coordinator_density)
+
+
+def chains_too_hard(listing: str, *, ceiling: float) -> bool:
+    """Whether this listing chains harder than the caller's ceiling allows.
+
+    The ceiling is a parameter and has no default here on purpose: its value is a policy
+    decision made at the composition root, and this module stays a pure function of the text
+    so that nothing about where the number came from can leak into generation.
+    """
+    return coordinator_density(listing) > ceiling
 
 #: **Five instructions, and the count is the point.** With the house rules appended this
 #: call made sixteen demands of a hundred-word artifact, eleven of them rules written for

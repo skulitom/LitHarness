@@ -184,6 +184,29 @@ SERIAL_POSITION_CAPACITY = 100_000
 #: where it is given, so every existing invocation is unchanged.
 DATABASE_ENV = "LITHARNESS_DATABASE"
 
+#: **The listing loop's first refusing gate, and the only market-derived number under `src/`.**
+#: A listing above this many coordinator tokens per hundred words is redrawn rather than kept.
+#:
+#: The value sits just above the maximum observed across the sixty admitted published
+#: listings the research side already holds (5.8823...), so at this ceiling nothing this
+#: market actually publishes is refused and three of the twenty-one listings this project
+#: has drawn are. The two decimals are rounded UP for exactly that reason: 5.88 reads as the
+#: maximum and refuses the listing that set it, which the durable test in
+#: `tests/test_listing_coordinator_gate.py` caught before this shipped. A p90 ceiling
+#: was measured and rejected: it refuses a tenth of the market's own listings, and the standing
+#: lesson is that a recall-tuned refusal gate has inverted error costs.
+#:
+#: It is a scalar and not a corpus: it reconstructs no prose, carries no style, and is consumed
+#: to refuse rather than to generate. `plan/stage-0-decisions.md` §147 records the derivation,
+#: the four attainability checks behind it, and why it sits outside RS1's purpose;
+#: `plan/reader-read-5.md` §4.1 is the read that found the defect. Re-derive it research-side.
+LISTING_COORDINATOR_CEILING = 5.89
+
+#: How many times the listing loop will draw before keeping what it has. Bounded so a writer
+#: locked into one construction cannot spend the loop in a redraw cycle; on exhaustion the
+#: least-chained draw is kept and the gate on the decision row records the failure.
+LISTING_DRAW_ATTEMPTS = 3
+
 
 def _creation_template(scenes: int, shape: SerialShape) -> tuple[BeatTemplate, bool]:
     """The sheet for a new structure and whether that structure is an endless serial.
@@ -1928,13 +1951,38 @@ def cmd_listing(args: argparse.Namespace) -> int:
             run=run,
         )
 
-        drafted, refusal = _completion_call(
-            overview_mod.render_overview_request(brief, writer), calls=calls, spend=spend
-        )
-        if drafted is None:
-            print(f"litharness: {refusal}", file=sys.stderr)
-            return EXIT_FAULT
-        listing = drafted.text.strip()
+        # Draw, then check the one shape property the fifth read named and the market bounds.
+        # Deterministic throughout: a counter decides, never a model, and the comparison is
+        # against a frozen scalar rather than against another candidate.
+        drawn: list[str] = []
+        for _attempt in range(LISTING_DRAW_ATTEMPTS):
+            drafted, refusal = _completion_call(
+                overview_mod.render_overview_request(brief, writer), calls=calls, spend=spend
+            )
+            if drafted is None:
+                print(f"litharness: {refusal}", file=sys.stderr)
+                return EXIT_FAULT
+            drawn.append(drafted.text.strip())
+            if not overview_mod.chains_too_hard(drawn[-1], ceiling=LISTING_COORDINATOR_CEILING):
+                break
+            print(
+                f"  redrawing: {overview_mod.coordinator_density(drawn[-1]):.2f} "
+                f"coordinators/100w over the {LISTING_COORDINATOR_CEILING} ceiling",
+                file=sys.stderr,
+            )
+        # Keep the least-chained draw. A tie keeps the earliest, so the choice is a total order
+        # over a frozen counter and not a preference among candidates (§61(5) is about a MODEL
+        # ranking; nothing here reads the prose).
+        listing = overview_mod.keep_least_chained(drawn)
+        listing_density = overview_mod.coordinator_density(listing)
+        listing_redraws = len(drawn) - 1
+        listing_chained = listing_density > LISTING_COORDINATOR_CEILING
+        if listing_chained:
+            print(
+                f"litharness: kept a listing at {listing_density:.2f} coordinators/100w after "
+                f"{len(drawn)} draw(s); the gate on the decision row records it",
+                file=sys.stderr,
+            )
 
         # The steering lane. A reader who does not answer is skipped rather than counted as
         # wanting nothing: `Anticipation.of` reads only what came back.
@@ -2002,10 +2050,14 @@ def cmd_listing(args: argparse.Namespace) -> int:
         gate = GateOutcome(
             gate=GateKind.SHAPE,
             rule_or_critic_id=overview_mod.OVERVIEW_PROFILE,
-            passed=True,
+            passed=not listing_chained,
             blocking=False,
             detail=(
                 f"{len(listing.split())} words; "
+                f"{listing_density:.2f} coordinators/100w vs the "
+                f"{LISTING_COORDINATOR_CEILING} ceiling"
+                + (f" after {listing_redraws} redraw(s)" if listing_redraws else "")
+                + "; "
                 + (
                     f"{paired.ours} of {paired.answered} chose it over a published book"
                     if paired.answered

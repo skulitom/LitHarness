@@ -14506,3 +14506,124 @@ promotes no research claim: under `EPISTEMIC_GOVERNANCE.md` the market legs' sep
 exists to be promoted or refuted, and §97.1, RS1 and §95 are untouched — a surviving flag
 remains a located diagnostic on the operator's side and reaches no drafting, revision or
 planning path.
+
+## 147. The listing loop refuses a chained listing, on the first market-derived number ever to enter `src/`
+
+The operator read pilot 11's listing and named one thing about the prose itself: *"It's not
+really engaging writing, it's kind of like a list with constant 'and then', 'and then'."*
+`plan/reader-read-5.md` §4.1 is the read; this is what shipped from it, under the operator's
+own sequencing — fix what made the overview read poorly first, then chapters.
+
+### 147.1 Measured first, and the fix it pointed at died
+
+Coordinator tokens (`and`, `then`) per hundred words, over the sixty admitted published
+listings and over every listing this project has drawn:
+
+| | |
+|---|--:|
+| market, median | 2.98 |
+| market, p90 | 4.32 |
+| **market, maximum** | **5.8823** |
+| pilot 11 | 6.48 |
+| **ours above the market's maximum** | **3 of 21** |
+| ours above the market's p90 | 7 of 21 |
+
+**The a-priori fix was subtraction and it is refuted.** §138 measured sixteen demands for a
+hundred-word artifact met by compressing four clauses into one 79-word sentence, which is this
+shape exactly, so cramming was the hypothesis and fewer demands the fix. Pilot 10's arms vary
+demand count (9 in `base` and `no_genre`, 11 in `clarity` and `genre_clarity`) and their prose
+was already on disk, so it cost nothing to test: **r = −0.18** between demand count and
+coordinator density across the sixteen draws, and **the shipped arm carries the lowest density
+of the four** (3.06 against 3.78, 4.33, 3.91). Cramming does not explain it. Subtraction is not
+licensed, and the entry that would have licensed it is the one that refuted it.
+
+**Two claims of the read were wrong and are corrected in place there**: pilot 11 is third of
+twenty-one rather than the worst, and the property is standing rather than one sentence's
+construction.
+
+### 147.2 The bar, and the four checks run before declaring it
+
+Declared at **the market's own maximum**, and the four attainability checks §81, §85, §87 and
+§89 each bought, run at the real n first:
+
+| check | result |
+|---|---|
+| range at the real n | market 0.00–5.8823 over 60; ours 1.79–7.69 over 21 — both sides populated |
+| direction | pre-specified: lower is less chained |
+| independent unit | one listing per draw; no listing counted twice |
+| non-empty subgroup | **3 of our 21 refused; 0 of the market's 60 refused** |
+
+**p90 was measured and rejected.** At 4.32 the gate refuses a tenth of the listings this market
+actually publishes, and the standing lesson — narrowed from a measured false positive three
+times now (`franchise`, `like in`, `court`) — is that a recall-tuned refusal gate has inverted
+error costs. At the maximum it refuses only what nothing in the market does.
+
+**And the ceiling shipped at 5.89 rather than 5.88 because the durable test caught the
+rounding.** The market maximum displays as 5.88 and is 5.882352941…; a ceiling of 5.88 refuses
+the very listing that set it, which is one of sixty. The test that asserts *nothing the market
+publishes is refused* failed on the first run and the constant moved. Recorded because a bar
+declared on a rounded display value is a bar that does not do what its entry says.
+
+### 147.3 What shipped
+
+- `application/overview.py` gains `coordinator_density`, `chains_too_hard` and
+  `keep_least_chained` — **pure functions of a string, with the ceiling as a parameter and no
+  default**, so nothing about where the number came from can reach the generation side.
+- `cli.py` — the composition root — carries the frozen `LISTING_COORDINATOR_CEILING = 5.89` and
+  `LISTING_DRAW_ATTEMPTS = 3`, and the listing loop draws, checks, and redraws.
+- **This is the listing gate's first blocking behaviour.** It has recorded
+  `passed=True, blocking=False` since it existed; it now records the density, the redraw count,
+  and `passed=False` when a kept listing is still over. The redraw cost was priced before it
+  shipped: 3 of 21, and 18 of our 21 draws already pass, so a refused draw has a high prior of
+  landing under the bar.
+- The loop is **bounded at three draws** so a writer locked into one construction cannot spin
+  it, and on exhaustion the least-chained draw is kept rather than a paid listing discarded.
+  That keep is `min` over one frozen counter with the earliest kept on a tie — arithmetic, not a
+  preference among candidates. §61(5) forbids a **model** ranking without containment; no model
+  reads anything in this mechanism.
+- `tests/test_listing_coordinator_gate.py`, including
+  `test_the_shipped_ceiling_refuses_nothing_this_market_publishes` — §147.2's fourth check made
+  durable. It skips where the pool is absent, because the pool is a gitignored derived artifact
+  by design; it was run by hand against the pool at 5.89 and returns 0 of 60.
+
+### 147.4 The first market-derived scalar under `src/`, and why RS1 still holds
+
+**RS1's purpose is to keep corpus prose, style and memorisation surface off the generation
+side** — no corpus text or digest crosses, and nothing under `src/litharness/` references a
+corpus. `LISTING_COORDINATOR_CEILING` is the first number in this repository derived from the
+market pool to live under `src/`, and it is recorded as a first rather than slipped in.
+
+Why it sits outside what the axiom exists to prevent: it is **one scalar**, it reconstructs no
+prose and carries no style, it cannot be inverted toward any listing that produced it, and it is
+consumed **to refuse** rather than to generate — nothing in a prompt reads it. The pure layer
+never sees it at all: `chains_too_hard` takes a ceiling and has no default, which
+`test_the_ceiling_is_a_parameter_with_no_default_in_the_pure_layer` pins. Provenance runs
+research-side and is re-derivable there: the pool is `derived/rivals.json`, the statistic is the
+one `plan/reader-read-5.md` §4.1 reports, and §104 is the platform-priors precedent for a frozen
+market-derived quantity.
+
+**The leak audit and the architecture suite pass untouched**, which was the condition on doing
+this at all. Neither was modified; had either fired, that would have been a conversation and not
+a test to loosen.
+
+### 147.5 What was refused
+
+**No clause.** Nothing was added to the listing prompt, which already carries fifteen demands
+for a hundred-word artifact — §127, §135 and §138 are three entries on what clause-adding costs,
+and §138's finding was that what worked was subtraction and a gate. Subtraction was tested and
+refuted here, so a gate is what is left, not a sixteenth rule.
+
+**No model.** Nothing asks whether a listing reads as a list. A listing under the ceiling is not
+good; it is merely not chained, and the entry says so because a shape gate standing in for a
+quality claim is §1a.1's warning.
+
+**No p90, no bar on our own distribution**, and no threshold fitted to anything we wrote.
+
+### 147.6 Anti-scope
+
+This changes what the listing loop refuses and nothing else. No drafting, planning or revision
+path reads the counter; no reader, judge or research instrument is touched; §95, §97.1 and the
+scope axiom are untouched. Nothing here says the fix improves a listing — it says three of our
+twenty-one listings did something no published listing in the pool does, and that the loop now
+draws again when it happens. Whether the redraw reads better to the operator is the next read's
+question, not this entry's claim.
