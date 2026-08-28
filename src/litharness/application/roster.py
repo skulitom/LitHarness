@@ -27,6 +27,7 @@ from collections.abc import Mapping, Sequence
 from typing import Any
 
 from litharness.domain import house
+from litharness.domain import voice as voice_domain
 from litharness.domain import writers as writers_domain
 from litharness.domain.directors import prose_axes_named
 
@@ -470,7 +471,12 @@ def check(rows: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
         census[writer_id] = {
             "appetite_markers": list(appetite_markers(dossier)),
             "machinery_words": list(machinery_words(dossier)),
-            "em_dashes": dossier.count("—"),
+            # **`voice.exhibition_census` rather than a count of the character here.** This line
+            # used to hold the mark as a literal, which made it a second home for the one thing
+            # `voice.EXHIBITION_MARKERS` is now the home of — and a home that could only ever
+            # report the axis somebody thought of in 2026-08. A newly registered axis with a mark
+            # now appears in this payload without anybody editing it.
+            "exhibited": voice_domain.exhibition_census(dossier),
             "dossier_words": len(dossier.split()),
         }
     shelves = _shelves(rows)
@@ -521,8 +527,14 @@ def rehearse(dossier: str) -> dict[str, Any]:
         "legal": refusal is None,
         "refusal": refusal,
         "axes_named": list(prose_axes_named(dossier)),
+        # **`axes_carried` is new and `axes_named` changed meaning on 2026-08-28**, and an agent
+        # reading this payload should be told the truth rather than a convenient one. Before the
+        # split, an em-dashed dossier came back as `axes_named: ["em_dash"]` — it had named
+        # nothing. `legal` and `refusal` are unchanged: the same dossiers are refused, for the
+        # same reason, said correctly.
+        "axes_carried": list(voice_domain.axes_exhibited(dossier)),
         "words": len(dossier.split()),
-        "has_em_dash": "—" in dossier,
+        "has_em_dash": "em_dash" in voice_domain.axes_exhibited(dossier),
         "has_line_break": "\n" in dossier.strip(),
         "appetite_markers": list(appetite_markers(dossier)),
         "machinery_words": list(machinery_words(dossier)),

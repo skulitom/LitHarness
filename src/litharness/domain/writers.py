@@ -34,7 +34,7 @@ from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field
 from hashlib import sha256
 
-from litharness.domain import house
+from litharness.domain import house, voice
 from litharness.domain.directors import (
     IllegalBrief,
     prose_axes_named,
@@ -126,6 +126,17 @@ def legal_dossier(text: str) -> None:
     a paraphrase gets through. No regex fixes that, and the trade is stated in `_CRAFT_INSTRUCTION`
     rather than hidden here. What it buys is that the axes the loop is **actively measuring**
     cannot be pre-empted by a dossier that says so plainly.
+
+    **A second detector, and it is not a widening of the rule but a relocation of half of it.**
+    Until 2026-08-28 the bare em dash was an alternative inside the *naming* pattern, so a dossier
+    that merely carried the mark was refused by a function documented as catching text that
+    instructs about an axis. That refusal was right — the roster vocabulary already explained it
+    in exhibition's own terms, *"a dossier written with the mark demonstrates the mark on every
+    draft"* — and its home was wrong, because it hid the general case:
+    `plan/dossier-voice-direction.md` asks for a dossier written *as the writer writes*, and such
+    a dossier names nothing and demonstrates everything. `voice.axes_exhibited` is the general
+    check; today it sees one mark and `voice.UNMARKED_AXES` records why the other two registered
+    axes have none. Every text refused before this split is refused after it.
     """
     if not text.strip():
         raise IllegalDossier("a writer with no dossier is not a writer; it is the anonymous call")
@@ -136,6 +147,14 @@ def legal_dossier(text: str) -> None:
             "says what this writer knows the inside of; what good prose is comes from readers "
             "through the axis admission path (plan/reader-judge-loop.md §2.1), never from a "
             f"drafting prompt — {named[0]}'s own hypothesis is still under test"
+        )
+    carried = voice.axes_exhibited(text)
+    if carried:
+        raise IllegalDossier(
+            f"this dossier carries the mark of the registered prose axis/axes "
+            f"{', '.join(carried)}. A dossier rides in the system message of every scene call, "
+            "so a mark in it is demonstrated on every draft rather than merely present — which "
+            f"asserts by example what {carried[0]}'s own loop exists to test"
         )
 
 

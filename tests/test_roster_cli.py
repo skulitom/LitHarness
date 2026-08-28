@@ -133,13 +133,22 @@ def test_check_rehearses_a_candidate_without_landing_a_record_or_a_nonzero_exit(
 ) -> None:
     """**The exit-zero assertion is the point.** A rehearsal that exits nonzero is a rehearsal
     an agent stops running, and an agent that stops rehearsing goes back to learning the
-    interface by writing records. The verdict is in the payload, where a machine reads it."""
+    interface by writing records. The verdict is in the payload, where a machine reads it.
+
+    **`axes_named` was `["em_dash"]` here until 2026-08-28 and is now `[]`, and the assertion
+    changed because the payload was wrong rather than because the rule did.** This dossier names
+    nothing; it carries a mark. Both facts were being reported under the heading for the first
+    one, because the bare character sat inside the *naming* pattern — which the roster vocabulary
+    contradicted in as many words, explaining the em dash as a demonstration on every draft. The
+    refusal is unchanged: same dossier, same `legal: False`, same exit code, said correctly.
+    """
     assert run(db, "init") == EXIT_OK
     capsys.readouterr()
     assert run(db, "roster", "check", "--dossier", EM_DASHED) == EXIT_OK
     read = payload(capsys)
     assert read["legal"] is False
-    assert read["axes_named"] == ["em_dash"]
+    assert read["axes_named"] == []
+    assert read["axes_carried"] == ["em_dash"]
     assert read["has_em_dash"] is True
 
     assert run(db, "roster", "show") == EXIT_OK

@@ -24,7 +24,12 @@ from dataclasses import fields as dataclass_fields
 import pytest
 
 from litharness.domain import voice, writers
-from litharness.domain.directors import _CRAFT_INSTRUCTION, prose_axes_named
+from litharness.domain.directors import (
+    _CRAFT_INSTRUCTION,
+    IllegalBrief,
+    legal_brief,
+    prose_axes_named,
+)
 
 # --------------------------------------------------------------- the registered-axis census
 
@@ -295,3 +300,51 @@ def test_the_same_statistic_has_one_implementation() -> None:
         if path.name != "voice.py" and "sentence_words_mean=" in path.read_text(encoding="utf-8")
     ]
     assert not offenders, f"a second distillation lives in {offenders}"
+
+
+# --------------------------------------------------------- the split, and what it did not change
+
+
+def test_the_em_dash_refusal_survived_its_own_split() -> None:
+    """**The refactor's whole obligation: every text refused before is refused after.**
+
+    The bare mark used to be the last alternative of `directors._CRAFT_INSTRUCTION["em_dash"]`,
+    so `legal_brief` and `legal_dossier` refused a carried mark through the *naming* pattern.
+    Moving it to `voice.EXHIBITION_MARKERS` is a relocation and not a widening, and a relocation
+    that dropped a refusal on the way would be the worst possible outcome — the guard would read
+    as intact and the four dossiers it once refused would mint.
+
+    Both gates and both directions, in one place, so a later edit to either cannot quietly take
+    the mark out of only one of them.
+    """
+    carried = "You write the hour the rules become visible — and somebody notices."
+    with pytest.raises(writers.IllegalDossier):
+        writers.legal_dossier(carried)
+    with pytest.raises(IllegalBrief):
+        legal_brief(carried)
+
+    # And the naming half is untouched: an instruction about the mark still refuses without one.
+    with pytest.raises(writers.IllegalDossier):
+        writers.legal_dossier("You write about tides. Nothing about punctuation.")
+    with pytest.raises(IllegalBrief):
+        legal_brief("A book about tides. Nothing about punctuation.")
+
+
+def test_the_mark_now_refuses_under_the_reason_that_is_true() -> None:
+    """An agent told a dossier *named* an axis it never mentioned learns the wrong rule.
+
+    That is the whole cost the split pays for, and it is small and real: the recruiter reads
+    `roster check --dossier` and the roster vocabulary already explains the em dash as a
+    demonstration rather than as a statement, so the payload disagreed with the documentation.
+    """
+    with pytest.raises(writers.IllegalDossier, match="carries the mark"):
+        writers.legal_dossier("You write tides — and what they take.")
+    with pytest.raises(writers.IllegalDossier, match="names the registered"):
+        writers.legal_dossier("You write tides. Say nothing of punctuation.")
+
+
+def test_no_shipped_writer_stopped_being_legal() -> None:
+    """The fourteen compiled dossiers pass both halves of the gate after the move."""
+    for pool in (writers.CAST, writers.BUILTIN):
+        for writer in pool.values():
+            writers.legal_dossier(writer.dossier)
