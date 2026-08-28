@@ -14850,3 +14850,63 @@ operator surface, where it cost an `architect seed` run its only human-readable 
 itself; the roster views are the third. Each was written by somebody who knew about the previous
 one, which is the argument for `_say` existing at all — and against every new surface being
 allowed to reach for `print` and find out.
+
+### 146.8 The recruitment run: twelve shelves, twelve proposals, and one census hit
+
+Run 2026-08-28 against `C:/DEV/LitHarness/runs/roster/roster.db` — **an absolute path outside
+the worktree**, because the worktree is retired at merge and a roster that died with its checkout
+would be the one unforced error available here. Twelve separate `litharness recruit` calls, one
+per shelf, sequential; no `--all` exists. Twelve decision rows, twelve invocations, 3.85M tokens,
+`claude_code`/`claude-opus-5`, **$5.22 of subscription-equivalent cost** recorded because a
+subscription call is quota already paid for rather than free. No transport failure, no empty
+declare: the per-run gate that asks whether exactly one writer was declared **passed 12 of 12**.
+
+Everything is `proposed`. `roster accept` was deliberately not run — it carries the decision row
+and that row is the operator's to sign, and the twelve dossiers are the cheap artifact they can
+read first.
+
+**The three cells came back structurally distinct, which is a wiring result and not a quality
+one.** All four `several-no-beat` dossiers open on what the writer values (*"You write fantasy
+where the world is already ruined and people go on living in it anyway"*) and name no scene; all
+four `several-with-beat` and all four `single-image` name an opening moment (*"a stranger walking
+into a market town on a bright morning"*, *"the hour when the news finally arrives"*). So the
+manipulation reached the page. **That is all it says.** Whether the cell changes what a writer's
+listings then open on is the registered arm, and no listing was drawn here.
+
+**No dossier named a day job**, which is the G3 failure the prompt quotes at itself. The closest
+thing to one is a *story* element — a turnip farmer registered as Apprentice Vermin Officer — and
+that is an image of a book rather than the writer's career.
+
+**One census hit, reported and left alone.** `novak`, progression fantasy, ends *"want the next
+rung immediately"*, and `rung` is in `house.MACHINERY_WORDS` for a measured reason: §120 caught
+`standing` reaching a chapter, and the reader personas built to catch that were themselves written
+to read for *"what the next rung costs"*, so they scored the jargon as a virtue. A dossier rides
+in the system message of every scene call, so this is the leak in the place it would do most work.
+
+**It is not a complaint and the census is still not a gate**, for the reason
+`roster.appetite_markers` and `roster.machinery_words` both give: `writers.BUILTIN["volcanology"]`
+contains *"the standing argument with people whose town it was"*, which is ordinary English, and a
+counter that refuses a shipped fixture is measuring the wrong thing. It reaches the operator as a
+line in `roster check` and stops there.
+
+**And the option that was available and was refused: re-running that shelf until the word went
+away.** Recruiting again and keeping the draw I preferred is selection among candidates by
+preference, which is the rail (§61(5), §105.1) with the executing session's taste in place of a
+model's. The dossier stands as drawn; the operator may accept it, leave it, or ask for another,
+and any of the three is a recorded act rather than a quiet redraw.
+
+**A defect in the shape clause, found by reading the output.** `several-with-beat` says *"phrase
+one of them as a moment a story opens on"*, and two of that cell's four came back containing the
+literal phrase *"a story that opens on"* — sandoval's distress signal and yuen's dawn courtyard.
+That is §138's shape one more time: a rule's affirmative half returning as a verbal formula in the
+output, the failure `house` already carries a standing constraint against. It costs nothing here —
+the phrase is in a dossier, not in a listing — but the clause should be read as *demonstrating* a
+wording and not only requesting a structure, and a later revision of it that says less should
+expect the structure to survive. Recorded now because the next reader of that clause will not have
+these twelve outputs in front of them.
+
+**What this entry does not claim.** Not that the roster is more varied in any measured sense; not
+that a recruit's listing reads differently, which is the registered arm and needs
+`premise_lock` with `between_writer_lock` beside it; not that any of the twelve is good, better,
+or castable. Twelve dossiers exist, they are legal, they sit in the cells they were registered
+into, and a person has not looked at them yet.
