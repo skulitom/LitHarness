@@ -352,7 +352,11 @@ def main(argv: list[str] | None = None) -> int:
         if entry["published"]
     ]
     payload = {
-        "registration": PRE_REGISTRATION,
+        # **The key is `pre_registration` and not `registration`**, which is a leak-audit
+        # convention rather than a naming preference: `corpus_leak_audit.OURS_FIELDS` names
+        # that block as project-authored, so a registration that grows past the 120-word
+        # excerpt threshold is recognised as ours rather than reported as an excerpt.
+        "pre_registration": PRE_REGISTRATION,
         "registration_digest": registration_digest(),
         "shards": list(shards),
         "min_followers": rivals_mod.MIN_FOLLOWERS,
