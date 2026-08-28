@@ -110,8 +110,123 @@ else.
 
 ## 4. The read
 
-*Empty. To be filled with the operator's words, quoted and not paraphrased, once the book has
-been read.*
+Arrived 2026-08-28 as one message: a verdict on the overview, the operator's own chapter
+review, and — a first in this project's history — **a review by a second person**, the
+operator's girlfriend, asked by the operator to test-read the chapter.
+
+### 4.0 The admissibility ruling, made before any item below is analysed
+
+**The second reader's review is quoted in §4.7 and is outside the harvest.** §95's scope axiom
+is written for exactly this: *no solicited human judgment, ever — not hired, not one blinded
+pair*; §126 keeps real readers out of the loop entirely. The operator's own reads are the one
+carve-out, as diagnostics. A solicited test-read by a second person is the closed channel, and
+it stays closed **when the feedback looks useful most of all** — an informal human panel of one
+is the top of the slope the axiom exists to fence. So: none of §4.7's items is analysed, none
+routes, and none may become a finding, a directive, or a prompt. **The one door back in:** any
+point the operator adopts in their own words, in a later message, becomes the operator's own
+observation and routes normally. Adoption is a recorded act; relaying is not adoption.
+
+### 4.1 The overview
+
+> *"I LIke it much more, its quite solid"*
+
+The first positive overview verdict in six reads. Recorded as a harvest observation with the
+usual guard: one reader, two artifacts, every input differing between them at once — this is
+not a measured effect of the coordinator gate or of anything else, and
+[`serial-pilot-12.md`](serial-pilot-12.md) already records that the gate never fired on this
+draw. What can be said: the defect the operator named on read 5's listing ("a list with
+constant and-then") was not named on this one.
+
+### 4.2 Narrated, not present
+
+> *"I feel like i am being narrated events instead of feeling present in the events."*
+
+§1a.3 item 6's *summarising instead of dramatising*, named by the operator at chapter level.
+The panel's counters flagged the same shape once before on different prose (pilot 7's scene 4:
+dialogue ratio 0.01, "a scene narrated rather than played out"). **Route: direction gap, with
+the §116-shape check first** — before any clause is drafted, audit whether a standing
+instruction is *teaching* summary: `house.READER`'s compression clause ("worth a line rather
+than a scene... if the events would be equally true with those specifics removed, remove
+them") was written to cut establishing detail, and a writer obeying it hard produces exactly
+narration. That is a hypothesis to check against the prompt stack, not a conclusion. Secondary
+route: **instrument question** — presence-vs-summary has no counter, and the causal-salience
+battery's event-consequence family is adjacent but keyed to *deleted* consequence, not
+narrated consequence. Recorded for the battery's families, not as a new ad-hoc metric.
+
+### 4.3 Known information re-established as new
+
+> *"I feel like a variation of this, is said way too often 'the way he took them every day of
+> his working life' we bring this up like new information, but we already showed it recently"*
+
+Chapter 1 is two scenes drafted in separate calls, each assembled its own context packet. A
+fact established in scene 1 and re-established in scene 2 with first-time weight is the
+context seam showing on the page: nothing tells the drafter what the *reader* has already been
+shown, only what the *world* holds. **Route: direction gap at the context surface**, and
+mechanically checkable before anything is changed — a `debug-book` pass on scene 2's packet
+would say whether the establishing fact arrived marked as prior prose or as fresh state. The
+repetition itself is countable across a scene boundary (the lexicon-redundancy control in the
+affect-trajectory design is the precedent), so a second **instrument question** is recorded,
+pointed at the existing families rather than a new counter.
+
+### 4.4 The Vanguard passage — device or defect, and the reader could not tell
+
+> *"('Vanguard,' Terry said, out loud, to the room. 'That's — okay, that's paid for damage
+> dealt. That's just DPS. That's the one.' He) i was unsure if this part was made to build
+> mystery or was unintentionally confusing."*
+
+The operator's uncertainty is itself the finding: the text does not signal whether the
+withholding is deliberate. `house.CLARITY`'s two-ways clause governs sentences, and the
+evaluation pass found no comprehension fault here — so if this is a defect it lives in the
+layer the floor cannot see, device legibility, the same altitude as read 2's
+paragraph-coherence finding. **Route: direction gap.** Not an enforcement defect: no standing
+rule asks a deliberate withholding to be legible as deliberate.
+
+### 4.5 Two smaller ones
+
+> *"'triage meetings' - might be too obscure to use"*
+
+Real-world workplace jargon. `CLARITY`'s unmet-term clause covers invented terms with
+consequences, not borrowed jargon. **Route: direction gap**, small, hedged by the operator
+("might").
+
+> *"'he thought of Priya on the night shift at the clinic across the block...' - this side
+> character flew out of nowhere"*
+
+The world's cast reached the prompt; nothing governs how a cast member is *introduced* on the
+page. **Route: direction gap.**
+
+### 4.6 The class menu — the offer the reader came for, skimped
+
+> *"I feel like i didn't get a vivid enough image of what i'm interested in, what the class
+> options were and their descriptions. Only a few similar ones were mentioned"*
+
+**Route: enforcement defect — the first since read 4's inversion.** A standing rule asks for
+exactly this reader effect by name: `house.READER` (the operator's own 2026-08-25 direction —
+*"the reader must be thinking omg this magic would be so cool to try i wonder what I would get
+and pick, how will I develop it"*) makes the offer-the-reader-measures-themselves-against the
+opening's job. For this premise the class menu **is** that surface — the listing's hook is a
+man reading class descriptions better than anyone — and the chapter showed a few similar
+options instead of a menu worth coveting. The rule exists, the book did not do it, and the
+routing question for whoever picks this up is *why the clause did not land* (§138's lesson
+that the affirmative half of a rule is what gets obeyed makes the clause's own wording the
+first suspect), never a second clause on top.
+
+### 4.7 The second reader's review, quoted and not analysed
+
+Recorded verbatim as it arrived inside the operator's message, under §4.0's ruling — outside
+the harvest, no analysis, no routing:
+
+> *"The punction flow reads wrong (full stops and commas in the wrong places. Not enough
+> commas and full stops). / 'Not a ring. All of them, the same flat two-tone, the sound a fire
+> door makes when somebody props it open too long.' - sentece feels like the wrong way round /
+> 'live build' - what is a live build? / Missing words like eg 'meanwhile', 'whilst' / ' "What,"
+> in the way people say it when they mean nothing.' - That is not something humans say /
+> Overall, worst of all is the gramma and punction"*
+
+### 4.8 What the protocol asked and did not receive
+
+Prompt 3 — **where you stopped** — went unanswered, so the one behaviour the form has never
+exercised remains unexercised. Recorded, not re-asked.
 
 ## 5. Anti-scope
 
