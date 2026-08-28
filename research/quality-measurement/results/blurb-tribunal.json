@@ -1,0 +1,1714 @@
+{
+  "calls_planned": {
+    "stage_one": 76,
+    "stage_two_worst": 152
+  },
+  "kills": {
+    "KA": {
+      "by_leg": {
+        "gradient": 0.05357142857142857,
+        "sham": 0.1125
+      },
+      "reading": "direction only, no bar: higher fabrication weakens every survival"
+    },
+    "KD": {
+      "by_leg": {
+        "gradient": 0.5507195632667051,
+        "sham": 0.7825
+      },
+      "floor": 0.5,
+      "verdict": {
+        "gradient": "PASS",
+        "sham": "PASS"
+      }
+    },
+    "KG": {
+      "bootstrap_interval": [
+        1.0,
+        1.0
+      ],
+      "implementation": "imported",
+      "pairs": 8,
+      "per_pair_delta": [
+        2.8776978417266186,
+        3.870967741935484,
+        0.5903408483812371,
+        2.586206896551724,
+        1.4705882352941175,
+        2.7777777777777777,
+        3.125,
+        1.183431952662722
+      ],
+      "share": 1.0,
+      "wins": 8
+    }
+  },
+  "registration": "plan/blurb-tribunal-validity.md",
+  "registration_digest": "97bed1fb14cdaf2d",
+  "study": "blurb_tribunal.v0",
+  "targets": {
+    "gradient_0:royalroad:115213": {
+      "defenses_answered": 7,
+      "defenses_missing": 1,
+      "draws": 4,
+      "dropped_over_cap": 4,
+      "fabricated_defenses": 0,
+      "flags": [
+        {
+          "flag": {
+            "located": true,
+            "token_offsets": [
+              135,
+              139
+            ]
+          },
+          "outcome": "none",
+          "parallel": {
+            "located": false
+          },
+          "parallel_from": "569e41455f5f",
+          "support": 3
+        },
+        {
+          "flag": {
+            "located": true,
+            "token_offsets": [
+              122,
+              135
+            ]
+          },
+          "outcome": "none",
+          "parallel": {
+            "located": false
+          },
+          "parallel_from": "569e41455f5f",
+          "support": 3
+        },
+        {
+          "flag": {
+            "located": true,
+            "token_offsets": [
+              103,
+              115
+            ]
+          },
+          "outcome": "none",
+          "parallel": {
+            "located": false
+          },
+          "parallel_from": "569e41455f5f",
+          "support": 3
+        },
+        {
+          "flag": {
+            "located": true,
+            "token_offsets": [
+              43,
+              47
+            ]
+          },
+          "outcome": "valid",
+          "parallel": {
+            "located": true,
+            "token_offsets": [
+              31,
+              48
+            ]
+          },
+          "parallel_from": "d467e8f6e613",
+          "support": 2
+        },
+        {
+          "flag": {
+            "located": true,
+            "token_offsets": [
+              43,
+              52
+            ]
+          },
+          "outcome": "none",
+          "parallel": {
+            "located": false
+          },
+          "parallel_from": "569e41455f5f",
+          "support": 2
+        },
+        {
+          "flag": {
+            "located": true,
+            "token_offsets": [
+              95,
+              98
+            ]
+          },
+          "outcome": "none",
+          "parallel": {
+            "located": false
+          },
+          "parallel_from": "569e41455f5f",
+          "support": 1
+        },
+        {
+          "flag": {
+            "located": true,
+            "token_offsets": [
+              5,
+              13
+            ]
+          },
+          "outcome": "valid",
+          "parallel": {
+            "located": true,
+            "token_offsets": [
+              43,
+              48
+            ]
+          },
+          "parallel_from": "d467e8f6e613",
+          "support": 1
+        },
+        {
+          "flag": {
+            "located": true,
+            "token_offsets": [
+              122,
+              139
+            ]
+          },
+          "outcome": "none",
+          "support": 1
+        }
+      ],
+      "flags_per_100_words": 5.755395683453238,
+      "ka_rate": 0.0,
+      "kd": 0.6562496299844272,
+      "leg": "gradient",
+      "pair": 0,
+      "references": [
+        "b0e8d94d98f6",
+        "13938192f023",
+        "d467e8f6e613",
+        "54514fb042c5",
+        "569e41455f5f"
+      ],
+      "surviving_flags": 6,
+      "surviving_per_100_words": 4.316546762589928,
+      "unique_flags": 8,
+      "unlocated_flags": 7,
+      "valid_defenses": 2,
+      "words": 139
+    },
+    "gradient_1:royalroad:115319": {
+      "defenses_answered": 7,
+      "defenses_missing": 0,
+      "draws": 4,
+      "dropped_over_cap": 0,
+      "fabricated_defenses": 1,
+      "flags": [
+        {
+          "flag": {
+            "located": true,
+            "token_offsets": [
+              0,
+              6
+            ]
+          },
+          "outcome": "none",
+          "parallel": {
+            "located": false
+          },
+          "parallel_from": "472a7549e8df",
+          "support": 4
+        },
+        {
+          "flag": {
+            "located": true,
+            "token_offsets": [
+              6,
+              24
+            ]
+          },
+          "outcome": "valid",
+          "parallel": {
+            "located": true,
+            "token_offsets": [
+              46,
+              56
+            ]
+          },
+          "parallel_from": "cbeafd684ab7",
+          "support": 4
+        },
+        {
+          "flag": {
+            "located": true,
+            "token_offsets": [
+              135,
+              152
+            ]
+          },
+          "outcome": "none",
+          "parallel": {
+            "located": false
+          },
+          "parallel_from": "472a7549e8df",
+          "support": 3
+        },
+        {
+          "flag": {
+            "located": true,
+            "token_offsets": [
+              111,
+              135
+            ]
+          },
+          "outcome": "none",
+          "parallel": {
+            "located": false
+          },
+          "parallel_from": "472a7549e8df",
+          "support": 2
+        },
+        {
+          "flag": {
+            "located": true,
+            "token_offsets": [
+              84,
+              95
+            ]
+          },
+          "outcome": "none",
+          "parallel": {
+            "located": false
+          },
+          "parallel_from": "472a7549e8df",
+          "support": 2
+        },
+        {
+          "flag": {
+            "located": true,
+            "token_offsets": [
+              70,
+              76
+            ]
+          },
+          "outcome": "fabricated",
+          "parallel": {
+            "located": false
+          },
+          "parallel_from": "472a7549e8df",
+          "support": 2
+        },
+        {
+          "flag": {
+            "located": true,
+            "token_offsets": [
+              84,
+              95
+            ]
+          },
+          "outcome": "none",
+          "parallel": {
+            "located": false
+          },
+          "parallel_from": "472a7549e8df",
+          "support": 1
+        }
+      ],
+      "flags_per_100_words": 4.516129032258064,
+      "ka_rate": 0.14285714285714285,
+      "kd": 0.5862545501292304,
+      "leg": "gradient",
+      "pair": 1,
+      "references": [
+        "38a15c08d4f3",
+        "f6f4d053034f",
+        "cbeafd684ab7",
+        "796d2e6e6017",
+        "472a7549e8df"
+      ],
+      "surviving_flags": 6,
+      "surviving_per_100_words": 3.870967741935484,
+      "unique_flags": 7,
+      "unlocated_flags": 0,
+      "valid_defenses": 1,
+      "words": 155
+    },
+    "gradient_2:royalroad:115382": {
+      "defenses_answered": 7,
+      "defenses_missing": 1,
+      "draws": 4,
+      "dropped_over_cap": 2,
+      "fabricated_defenses": 0,
+      "flags": [
+        {
+          "flag": {
+            "located": true,
+            "token_offsets": [
+              0,
+              8
+            ]
+          },
+          "outcome": "valid",
+          "parallel": {
+            "located": true,
+            "token_offsets": [
+              6,
+              10
+            ]
+          },
+          "parallel_from": "bbd499f9bc7a",
+          "support": 4
+        },
+        {
+          "flag": {
+            "located": true,
+            "token_offsets": [
+              175,
+              191
+            ]
+          },
+          "outcome": "valid",
+          "parallel": {
+            "located": true,
+            "token_offsets": [
+              141,
+              171
+            ]
+          },
+          "parallel_from": "bbd499f9bc7a",
+          "support": 4
+        },
+        {
+          "flag": {
+            "located": true,
+            "token_offsets": [
+              93,
+              99
+            ]
+          },
+          "outcome": "none",
+          "parallel": {
+            "located": false
+          },
+          "parallel_from": "bbd499f9bc7a",
+          "support": 4
+        },
+        {
+          "flag": {
+            "located": true,
+            "token_offsets": [
+              40,
+              44
+            ]
+          },
+          "outcome": "none",
+          "parallel": {
+            "located": false
+          },
+          "parallel_from": "bbd499f9bc7a",
+          "support": 2
+        },
+        {
+          "flag": {
+            "located": true,
+            "token_offsets": [
+              134,
+              138
+            ]
+          },
+          "outcome": "none",
+          "parallel": {
+            "located": false
+          },
+          "parallel_from": "bbd499f9bc7a",
+          "support": 2
+        },
+        {
+          "flag": {
+            "located": true,
+            "token_offsets": [
+              135,
+              138
+            ]
+          },
+          "outcome": "none",
+          "parallel": {
+            "located": false
+          },
+          "parallel_from": "bbd499f9bc7a",
+          "support": 2
+        },
+        {
+          "flag": {
+            "located": true,
+            "token_offsets": [
+              152,
+              163
+            ]
+          },
+          "outcome": "none",
+          "parallel": {
+            "located": false
+          },
+          "parallel_from": "bbd499f9bc7a",
+          "support": 2
+        },
+        {
+          "flag": {
+            "located": true,
+            "token_offsets": [
+              40,
+              43
+            ]
+          },
+          "outcome": "none",
+          "support": 1
+        }
+      ],
+      "flags_per_100_words": 4.18848167539267,
+      "ka_rate": 0.0,
+      "kd": 0.8443036128083848,
+      "leg": "gradient",
+      "pair": 2,
+      "references": [
+        "fbffa1e163ff",
+        "61737194abce",
+        "2beb648c28eb",
+        "c3462302d773",
+        "bbd499f9bc7a"
+      ],
+      "surviving_flags": 6,
+      "surviving_per_100_words": 3.1413612565445024,
+      "unique_flags": 8,
+      "unlocated_flags": 8,
+      "valid_defenses": 2,
+      "words": 191
+    },
+    "gradient_3:royalroad:115342": {
+      "defenses_answered": 8,
+      "defenses_missing": 0,
+      "draws": 4,
+      "dropped_over_cap": 1,
+      "fabricated_defenses": 0,
+      "flags": [
+        {
+          "flag": {
+            "located": true,
+            "token_offsets": [
+              95,
+              98
+            ]
+          },
+          "outcome": "none",
+          "parallel": {
+            "located": false
+          },
+          "parallel_from": "469e2f7450de",
+          "support": 4
+        },
+        {
+          "flag": {
+            "located": true,
+            "token_offsets": [
+              48,
+              49
+            ]
+          },
+          "outcome": "valid",
+          "parallel": {
+            "located": true,
+            "token_offsets": [
+              3,
+              4
+            ]
+          },
+          "parallel_from": "8f3ca7f1b036",
+          "support": 3
+        },
+        {
+          "flag": {
+            "located": true,
+            "token_offsets": [
+              5,
+              8
+            ]
+          },
+          "outcome": "valid",
+          "parallel": {
+            "located": true,
+            "token_offsets": [
+              51,
+              54
+            ]
+          },
+          "parallel_from": "8f3ca7f1b036",
+          "support": 3
+        },
+        {
+          "flag": {
+            "located": true,
+            "token_offsets": [
+              78,
+              80
+            ]
+          },
+          "outcome": "valid",
+          "parallel": {
+            "located": true,
+            "token_offsets": [
+              34,
+              36
+            ]
+          },
+          "parallel_from": "e446b8361fb1",
+          "support": 2
+        },
+        {
+          "flag": {
+            "located": true,
+            "token_offsets": [
+              46,
+              49
+            ]
+          },
+          "outcome": "none",
+          "parallel": {
+            "located": false
+          },
+          "parallel_from": "469e2f7450de",
+          "support": 1
+        },
+        {
+          "flag": {
+            "located": true,
+            "token_offsets": [
+              0,
+              2
+            ]
+          },
+          "outcome": "valid",
+          "parallel": {
+            "located": true,
+            "token_offsets": [
+              34,
+              36
+            ]
+          },
+          "parallel_from": "e446b8361fb1",
+          "support": 1
+        },
+        {
+          "flag": {
+            "located": true,
+            "token_offsets": [
+              0,
+              8
+            ]
+          },
+          "outcome": "valid",
+          "parallel": {
+            "located": true,
+            "token_offsets": [
+              51,
+              54
+            ]
+          },
+          "parallel_from": "8f3ca7f1b036",
+          "support": 1
+        },
+        {
+          "flag": {
+            "located": true,
+            "token_offsets": [
+              111,
+              116
+            ]
+          },
+          "outcome": "none",
+          "parallel": {
+            "located": false
+          },
+          "parallel_from": "469e2f7450de",
+          "support": 1
+        }
+      ],
+      "flags_per_100_words": 6.896551724137931,
+      "ka_rate": 0.0,
+      "kd": 0.5785024154589372,
+      "leg": "gradient",
+      "pair": 3,
+      "references": [
+        "62bb81c5dcbc",
+        "89c6a762ee56",
+        "e446b8361fb1",
+        "8f3ca7f1b036",
+        "469e2f7450de"
+      ],
+      "surviving_flags": 3,
+      "surviving_per_100_words": 2.586206896551724,
+      "unique_flags": 8,
+      "unlocated_flags": 4,
+      "valid_defenses": 5,
+      "words": 116
+    },
+    "gradient_4:royalroad:115373": {
+      "defenses_answered": 7,
+      "defenses_missing": 0,
+      "draws": 4,
+      "dropped_over_cap": 0,
+      "fabricated_defenses": 0,
+      "flags": [
+        {
+          "flag": {
+            "located": true,
+            "token_offsets": [
+              118,
+              122
+            ]
+          },
+          "outcome": "valid",
+          "parallel": {
+            "located": true,
+            "token_offsets": [
+              0,
+              3
+            ]
+          },
+          "parallel_from": "b3aab646a6fb",
+          "support": 4
+        },
+        {
+          "flag": {
+            "located": true,
+            "token_offsets": [
+              81,
+              98
+            ]
+          },
+          "outcome": "none",
+          "parallel": {
+            "located": false
+          },
+          "parallel_from": "d467e8f6e613",
+          "support": 2
+        },
+        {
+          "flag": {
+            "located": true,
+            "token_offsets": [
+              0,
+              11
+            ]
+          },
+          "outcome": "valid",
+          "parallel": {
+            "located": true,
+            "token_offsets": [
+              1,
+              10
+            ]
+          },
+          "parallel_from": "54514fb042c5",
+          "support": 2
+        },
+        {
+          "flag": {
+            "located": true,
+            "token_offsets": [
+              83,
+              87
+            ]
+          },
+          "outcome": "valid",
+          "parallel": {
+            "located": true,
+            "token_offsets": [
+              84,
+              91
+            ]
+          },
+          "parallel_from": "569e41455f5f",
+          "support": 1
+        },
+        {
+          "flag": {
+            "located": true,
+            "token_offsets": [
+              87,
+              90
+            ]
+          },
+          "outcome": "valid",
+          "parallel": {
+            "located": true,
+            "token_offsets": [
+              17,
+              23
+            ]
+          },
+          "parallel_from": "54514fb042c5",
+          "support": 1
+        },
+        {
+          "flag": {
+            "located": true,
+            "token_offsets": [
+              109,
+              112
+            ]
+          },
+          "outcome": "valid",
+          "parallel": {
+            "located": true,
+            "token_offsets": [
+              48,
+              54
+            ]
+          },
+          "parallel_from": "569e41455f5f",
+          "support": 1
+        },
+        {
+          "flag": {
+            "located": true,
+            "token_offsets": [
+              74,
+              81
+            ]
+          },
+          "outcome": "none",
+          "parallel": {
+            "located": false
+          },
+          "parallel_from": "d467e8f6e613",
+          "support": 1
+        }
+      ],
+      "flags_per_100_words": 5.147058823529411,
+      "ka_rate": 0.0,
+      "kd": 0.31242064168893435,
+      "leg": "gradient",
+      "pair": 4,
+      "references": [
+        "569e41455f5f",
+        "54514fb042c5",
+        "578b07fda7e1",
+        "b3aab646a6fb",
+        "d467e8f6e613"
+      ],
+      "surviving_flags": 2,
+      "surviving_per_100_words": 1.4705882352941175,
+      "unique_flags": 7,
+      "unlocated_flags": 7,
+      "valid_defenses": 5,
+      "words": 136
+    },
+    "gradient_5:royalroad:115257": {
+      "defenses_answered": 7,
+      "defenses_missing": 1,
+      "draws": 4,
+      "dropped_over_cap": 8,
+      "fabricated_defenses": 2,
+      "flags": [
+        {
+          "flag": {
+            "located": true,
+            "token_offsets": [
+              0,
+              15
+            ]
+          },
+          "outcome": "none",
+          "parallel": {
+            "located": false
+          },
+          "parallel_from": "385fc202910e",
+          "support": 4
+        },
+        {
+          "flag": {
+            "located": true,
+            "token_offsets": [
+              134,
+              143
+            ]
+          },
+          "outcome": "none",
+          "parallel": {
+            "located": false
+          },
+          "parallel_from": "385fc202910e",
+          "support": 3
+        },
+        {
+          "flag": {
+            "located": true,
+            "token_offsets": [
+              171,
+              180
+            ]
+          },
+          "outcome": "none",
+          "support": 2
+        },
+        {
+          "flag": {
+            "located": true,
+            "token_offsets": [
+              161,
+              167
+            ]
+          },
+          "outcome": "fabricated",
+          "parallel": {
+            "located": false
+          },
+          "parallel_from": "6d1c26808141",
+          "support": 2
+        },
+        {
+          "flag": {
+            "located": true,
+            "token_offsets": [
+              62,
+              67
+            ]
+          },
+          "outcome": "valid",
+          "parallel": {
+            "located": true,
+            "token_offsets": [
+              47,
+              55
+            ]
+          },
+          "parallel_from": "385fc202910e",
+          "support": 1
+        },
+        {
+          "flag": {
+            "located": true,
+            "token_offsets": [
+              163,
+              167
+            ]
+          },
+          "outcome": "fabricated",
+          "parallel": {
+            "located": false
+          },
+          "parallel_from": "6d1c26808141",
+          "support": 1
+        },
+        {
+          "flag": {
+            "located": true,
+            "token_offsets": [
+              76,
+              89
+            ]
+          },
+          "outcome": "valid",
+          "parallel": {
+            "located": true,
+            "token_offsets": [
+              37,
+              42
+            ]
+          },
+          "parallel_from": "b2d2e3407f81",
+          "support": 1
+        },
+        {
+          "flag": {
+            "located": true,
+            "token_offsets": [
+              110,
+              116
+            ]
+          },
+          "outcome": "valid",
+          "parallel": {
+            "located": true,
+            "token_offsets": [
+              133,
+              147
+            ]
+          },
+          "parallel_from": "385fc202910e",
+          "support": 1
+        }
+      ],
+      "flags_per_100_words": 4.444444444444445,
+      "ka_rate": 0.2857142857142857,
+      "kd": 0.5826843057440072,
+      "leg": "gradient",
+      "pair": 5,
+      "references": [
+        "b2d2e3407f81",
+        "6d1c26808141",
+        "a71d7d0ad6df",
+        "4b2325e26ad6",
+        "385fc202910e"
+      ],
+      "surviving_flags": 5,
+      "surviving_per_100_words": 2.7777777777777777,
+      "unique_flags": 8,
+      "unlocated_flags": 5,
+      "valid_defenses": 3,
+      "words": 180
+    },
+    "gradient_6:royalroad:115385": {
+      "defenses_answered": 8,
+      "defenses_missing": 0,
+      "draws": 4,
+      "dropped_over_cap": 0,
+      "fabricated_defenses": 0,
+      "flags": [
+        {
+          "flag": {
+            "located": true,
+            "token_offsets": [
+              0,
+              8
+            ]
+          },
+          "outcome": "valid",
+          "parallel": {
+            "located": true,
+            "token_offsets": [
+              74,
+              96
+            ]
+          },
+          "parallel_from": "e093a2b45ada",
+          "support": 4
+        },
+        {
+          "flag": {
+            "located": true,
+            "token_offsets": [
+              12,
+              25
+            ]
+          },
+          "outcome": "none",
+          "parallel": {
+            "located": false
+          },
+          "parallel_from": "2ac7504e29d3",
+          "support": 4
+        },
+        {
+          "flag": {
+            "located": true,
+            "token_offsets": [
+              35,
+              43
+            ]
+          },
+          "outcome": "valid",
+          "parallel": {
+            "located": true,
+            "token_offsets": [
+              62,
+              82
+            ]
+          },
+          "parallel_from": "cbeafd684ab7",
+          "support": 3
+        },
+        {
+          "flag": {
+            "located": true,
+            "token_offsets": [
+              122,
+              138
+            ]
+          },
+          "outcome": "none",
+          "parallel": {
+            "located": false
+          },
+          "parallel_from": "2ac7504e29d3",
+          "support": 2
+        },
+        {
+          "flag": {
+            "located": true,
+            "token_offsets": [
+              109,
+              118
+            ]
+          },
+          "outcome": "none",
+          "parallel": {
+            "located": false
+          },
+          "parallel_from": "2ac7504e29d3",
+          "support": 2
+        },
+        {
+          "flag": {
+            "located": true,
+            "token_offsets": [
+              126,
+              138
+            ]
+          },
+          "outcome": "none",
+          "parallel": {
+            "located": false
+          },
+          "parallel_from": "2ac7504e29d3",
+          "support": 2
+        },
+        {
+          "flag": {
+            "located": true,
+            "token_offsets": [
+              154,
+              160
+            ]
+          },
+          "outcome": "valid",
+          "parallel": {
+            "located": true,
+            "token_offsets": [
+              88,
+              96
+            ]
+          },
+          "parallel_from": "a8179638a6b4",
+          "support": 1
+        },
+        {
+          "flag": {
+            "located": true,
+            "token_offsets": [
+              112,
+              118
+            ]
+          },
+          "outcome": "none",
+          "parallel": {
+            "located": false
+          },
+          "parallel_from": "2ac7504e29d3",
+          "support": 1
+        }
+      ],
+      "flags_per_100_words": 5.0,
+      "ka_rate": 0.0,
+      "kd": 0.7391871390600935,
+      "leg": "gradient",
+      "pair": 6,
+      "references": [
+        "e093a2b45ada",
+        "0967d50a4e96",
+        "a8179638a6b4",
+        "cbeafd684ab7",
+        "2ac7504e29d3"
+      ],
+      "surviving_flags": 5,
+      "surviving_per_100_words": 3.125,
+      "unique_flags": 8,
+      "unlocated_flags": 3,
+      "valid_defenses": 3,
+      "words": 160
+    },
+    "gradient_7:royalroad:115244": {
+      "defenses_answered": 7,
+      "defenses_missing": 1,
+      "draws": 4,
+      "dropped_over_cap": 3,
+      "fabricated_defenses": 0,
+      "flags": [
+        {
+          "flag": {
+            "located": true,
+            "token_offsets": [
+              143,
+              149
+            ]
+          },
+          "outcome": "valid",
+          "parallel": {
+            "located": true,
+            "token_offsets": [
+              5,
+              11
+            ]
+          },
+          "parallel_from": "36c2457f49d9",
+          "support": 2
+        },
+        {
+          "flag": {
+            "located": true,
+            "token_offsets": [
+              0,
+              6
+            ]
+          },
+          "outcome": "valid",
+          "parallel": {
+            "located": true,
+            "token_offsets": [
+              91,
+              96
+            ]
+          },
+          "parallel_from": "562d898b124a",
+          "support": 2
+        },
+        {
+          "flag": {
+            "located": true,
+            "token_offsets": [
+              18,
+              24
+            ]
+          },
+          "outcome": "valid",
+          "parallel": {
+            "located": true,
+            "token_offsets": [
+              49,
+              61
+            ]
+          },
+          "parallel_from": "36c2457f49d9",
+          "support": 1
+        },
+        {
+          "flag": {
+            "located": true,
+            "token_offsets": [
+              69,
+              73
+            ]
+          },
+          "outcome": "valid",
+          "parallel": {
+            "located": true,
+            "token_offsets": [
+              60,
+              63
+            ]
+          },
+          "parallel_from": "2ac7504e29d3",
+          "support": 1
+        },
+        {
+          "flag": {
+            "located": true,
+            "token_offsets": [
+              149,
+              169
+            ]
+          },
+          "outcome": "none",
+          "parallel": {
+            "located": false
+          },
+          "parallel_from": "2ac7504e29d3",
+          "support": 1
+        },
+        {
+          "flag": {
+            "located": true,
+            "token_offsets": [
+              65,
+              78
+            ]
+          },
+          "outcome": "valid",
+          "parallel": {
+            "located": true,
+            "token_offsets": [
+              96,
+              118
+            ]
+          },
+          "parallel_from": "2ac7504e29d3",
+          "support": 1
+        },
+        {
+          "flag": {
+            "located": true,
+            "token_offsets": [
+              24,
+              29
+            ]
+          },
+          "outcome": "valid",
+          "parallel": {
+            "located": true,
+            "token_offsets": [
+              96,
+              106
+            ]
+          },
+          "parallel_from": "36c2457f49d9",
+          "support": 1
+        },
+        {
+          "flag": {
+            "located": true,
+            "token_offsets": [
+              132,
+              149
+            ]
+          },
+          "outcome": "none",
+          "support": 1
+        }
+      ],
+      "flags_per_100_words": 4.733727810650888,
+      "ka_rate": 0.0,
+      "kd": 0.10615421125962672,
+      "leg": "gradient",
+      "pair": 7,
+      "references": [
+        "562d898b124a",
+        "36c2457f49d9",
+        "e3e4cb7f81fc",
+        "30c07386d731",
+        "2ac7504e29d3"
+      ],
+      "surviving_flags": 2,
+      "surviving_per_100_words": 1.183431952662722,
+      "unique_flags": 8,
+      "unlocated_flags": 3,
+      "valid_defenses": 6,
+      "words": 169
+    },
+    "ours:overview": {
+      "defenses_answered": 0,
+      "defenses_missing": 0,
+      "draws": 0,
+      "dropped_over_cap": 0,
+      "fabricated_defenses": 0,
+      "flags": [],
+      "flags_per_100_words": 0.0,
+      "ka_rate": null,
+      "kd": null,
+      "leg": "ours",
+      "listing": "Every phone on Earth showed the same patch notes at once, version number and all, for a game nobody installed. One line nerfed whatever used to keep monsters out of buildings. Now there are stairs under Owen's apartment block going down into a dungeon, a status window he cannot close, and things that climb up at night and drop loot that works. Owen tests games for a living. He goes down scared, with a crowbar and a notebook full of repro steps, because two rules in that changelog contradict each other. He wants to reach that gap first, before the guilds forming across town read the wording as carefully as he does.\n",
+      "pair": null,
+      "references": [
+        "e446b8361fb1",
+        "62bb81c5dcbc",
+        "cce798e97356",
+        "89c6a762ee56",
+        "9ef342934216"
+      ],
+      "surviving_flags": 0,
+      "surviving_per_100_words": 0.0,
+      "title": "",
+      "unique_flags": 0,
+      "unlocated_flags": 0,
+      "valid_defenses": 0,
+      "words": 112
+    },
+    "sham_0:royalroad:107917": {
+      "defenses_answered": 4,
+      "defenses_missing": 0,
+      "draws": 4,
+      "dropped_over_cap": 0,
+      "fabricated_defenses": 1,
+      "flags": [
+        {
+          "flag": {
+            "located": true,
+            "token_offsets": [
+              129,
+              139
+            ]
+          },
+          "outcome": "valid",
+          "parallel": {
+            "located": true,
+            "token_offsets": [
+              99,
+              107
+            ]
+          },
+          "parallel_from": "569e41455f5f",
+          "support": 2
+        },
+        {
+          "flag": {
+            "located": true,
+            "token_offsets": [
+              50,
+              60
+            ]
+          },
+          "outcome": "fabricated",
+          "parallel": {
+            "located": false
+          },
+          "parallel_from": "13938192f023",
+          "support": 1
+        },
+        {
+          "flag": {
+            "located": true,
+            "token_offsets": [
+              60,
+              67
+            ]
+          },
+          "outcome": "valid",
+          "parallel": {
+            "located": true,
+            "token_offsets": [
+              117,
+              130
+            ]
+          },
+          "parallel_from": "d467e8f6e613",
+          "support": 1
+        },
+        {
+          "flag": {
+            "located": true,
+            "token_offsets": [
+              62,
+              67
+            ]
+          },
+          "outcome": "none",
+          "parallel": {
+            "located": false
+          },
+          "parallel_from": "578b07fda7e1",
+          "support": 1
+        }
+      ],
+      "flags_per_100_words": 2.877697841726619,
+      "ka_rate": 0.25,
+      "kd": 0.26,
+      "leg": "sham",
+      "pair": 0,
+      "references": [
+        "13938192f023",
+        "d467e8f6e613",
+        "54514fb042c5",
+        "569e41455f5f",
+        "578b07fda7e1"
+      ],
+      "surviving_flags": 2,
+      "surviving_per_100_words": 1.4388489208633095,
+      "unique_flags": 4,
+      "unlocated_flags": 2,
+      "valid_defenses": 2,
+      "words": 139
+    },
+    "sham_1:royalroad:104817": {
+      "defenses_answered": 0,
+      "defenses_missing": 0,
+      "draws": 4,
+      "dropped_over_cap": 0,
+      "fabricated_defenses": 0,
+      "flags": [],
+      "flags_per_100_words": 0.0,
+      "ka_rate": null,
+      "kd": 1.0,
+      "leg": "sham",
+      "pair": 1,
+      "references": [
+        "f6f4d053034f",
+        "cbeafd684ab7",
+        "796d2e6e6017",
+        "472a7549e8df",
+        "0967d50a4e96"
+      ],
+      "surviving_flags": 0,
+      "surviving_per_100_words": 0.0,
+      "unique_flags": 0,
+      "unlocated_flags": 0,
+      "valid_defenses": 0,
+      "words": 155
+    },
+    "sham_2:royalroad:108300": {
+      "defenses_answered": 5,
+      "defenses_missing": 0,
+      "draws": 4,
+      "dropped_over_cap": 0,
+      "fabricated_defenses": 1,
+      "flags": [
+        {
+          "flag": {
+            "located": true,
+            "token_offsets": [
+              127,
+              135
+            ]
+          },
+          "outcome": "fabricated",
+          "parallel": {
+            "located": false
+          },
+          "parallel_from": "7097d996be42",
+          "support": 1
+        },
+        {
+          "flag": {
+            "located": true,
+            "token_offsets": [
+              31,
+              52
+            ]
+          },
+          "outcome": "none",
+          "parallel": {
+            "located": false
+          },
+          "parallel_from": "50b8649f67c4",
+          "support": 1
+        },
+        {
+          "flag": {
+            "located": true,
+            "token_offsets": [
+              59,
+              75
+            ]
+          },
+          "outcome": "none",
+          "parallel": {
+            "located": false
+          },
+          "parallel_from": "50b8649f67c4",
+          "support": 1
+        },
+        {
+          "flag": {
+            "located": true,
+            "token_offsets": [
+              115,
+              127
+            ]
+          },
+          "outcome": "none",
+          "parallel": {
+            "located": false
+          },
+          "parallel_from": "50b8649f67c4",
+          "support": 1
+        },
+        {
+          "flag": {
+            "located": true,
+            "token_offsets": [
+              0,
+              8
+            ]
+          },
+          "outcome": "none",
+          "parallel": {
+            "located": false
+          },
+          "parallel_from": "50b8649f67c4",
+          "support": 1
+        }
+      ],
+      "flags_per_100_words": 2.5510204081632653,
+      "ka_rate": 0.2,
+      "kd": 0.5,
+      "leg": "sham",
+      "pair": 2,
+      "references": [
+        "7097d996be42",
+        "c3462302d773",
+        "bbd499f9bc7a",
+        "69b1c32768ca",
+        "50b8649f67c4"
+      ],
+      "surviving_flags": 5,
+      "surviving_per_100_words": 2.5510204081632653,
+      "unique_flags": 5,
+      "unlocated_flags": 0,
+      "valid_defenses": 0,
+      "words": 196
+    },
+    "sham_3:royalroad:104261": {
+      "defenses_answered": 1,
+      "defenses_missing": 0,
+      "draws": 4,
+      "dropped_over_cap": 0,
+      "fabricated_defenses": 0,
+      "flags": [
+        {
+          "flag": {
+            "located": true,
+            "token_offsets": [
+              1,
+              5
+            ]
+          },
+          "outcome": "valid",
+          "parallel": {
+            "located": true,
+            "token_offsets": [
+              45,
+              48
+            ]
+          },
+          "parallel_from": "469e2f7450de",
+          "support": 3
+        }
+      ],
+      "flags_per_100_words": 0.8695652173913043,
+      "ka_rate": 0.0,
+      "kd": 0.5,
+      "leg": "sham",
+      "pair": 3,
+      "references": [
+        "e446b8361fb1",
+        "89c6a762ee56",
+        "8f3ca7f1b036",
+        "469e2f7450de",
+        "8221e975fe42"
+      ],
+      "surviving_flags": 0,
+      "surviving_per_100_words": 0.0,
+      "unique_flags": 1,
+      "unlocated_flags": 3,
+      "valid_defenses": 1,
+      "words": 115
+    },
+    "sham_4:royalroad:104542": {
+      "defenses_answered": 0,
+      "defenses_missing": 0,
+      "draws": 4,
+      "dropped_over_cap": 0,
+      "fabricated_defenses": 0,
+      "flags": [],
+      "flags_per_100_words": 0.0,
+      "ka_rate": null,
+      "kd": 1.0,
+      "leg": "sham",
+      "pair": 4,
+      "references": [
+        "54514fb042c5",
+        "578b07fda7e1",
+        "b3aab646a6fb",
+        "d467e8f6e613",
+        "b0e8d94d98f6"
+      ],
+      "surviving_flags": 0,
+      "surviving_per_100_words": 0.0,
+      "unique_flags": 0,
+      "unlocated_flags": 0,
+      "valid_defenses": 0,
+      "words": 136
+    },
+    "sham_5:royalroad:106872": {
+      "defenses_answered": 0,
+      "defenses_missing": 0,
+      "draws": 4,
+      "dropped_over_cap": 0,
+      "fabricated_defenses": 0,
+      "flags": [],
+      "flags_per_100_words": 0.0,
+      "ka_rate": null,
+      "kd": 1.0,
+      "leg": "sham",
+      "pair": 5,
+      "references": [
+        "6d1c26808141",
+        "a71d7d0ad6df",
+        "4b2325e26ad6",
+        "385fc202910e",
+        "d01b11876e4e"
+      ],
+      "surviving_flags": 0,
+      "surviving_per_100_words": 0.0,
+      "unique_flags": 0,
+      "unlocated_flags": 0,
+      "valid_defenses": 0,
+      "words": 179
+    },
+    "sham_partner_6:royalroad:111253": {
+      "defenses_answered": 1,
+      "defenses_missing": 0,
+      "draws": 4,
+      "dropped_over_cap": 0,
+      "fabricated_defenses": 0,
+      "flags": [
+        {
+          "flag": {
+            "located": true,
+            "token_offsets": [
+              147,
+              150
+            ]
+          },
+          "outcome": "valid",
+          "parallel": {
+            "located": true,
+            "token_offsets": [
+              90,
+              97
+            ]
+          },
+          "parallel_from": "0967d50a4e96",
+          "support": 4
+        }
+      ],
+      "flags_per_100_words": 0.6451612903225806,
+      "ka_rate": 0.0,
+      "kd": 1.0,
+      "leg": "sham",
+      "pair": 6,
+      "references": [
+        "38a15c08d4f3",
+        "cbeafd684ab7",
+        "796d2e6e6017",
+        "472a7549e8df",
+        "0967d50a4e96"
+      ],
+      "surviving_flags": 0,
+      "surviving_per_100_words": 0.0,
+      "unique_flags": 1,
+      "unlocated_flags": 0,
+      "valid_defenses": 1,
+      "words": 155
+    },
+    "sham_partner_7:royalroad:107252": {
+      "defenses_answered": 0,
+      "defenses_missing": 0,
+      "draws": 4,
+      "dropped_over_cap": 0,
+      "fabricated_defenses": 0,
+      "flags": [],
+      "flags_per_100_words": 0.0,
+      "ka_rate": null,
+      "kd": 1.0,
+      "leg": "sham",
+      "pair": 7,
+      "references": [
+        "e3e4cb7f81fc",
+        "562d898b124a",
+        "30c07386d731",
+        "2ac7504e29d3",
+        "a8179638a6b4"
+      ],
+      "surviving_flags": 0,
+      "surviving_per_100_words": 0.0,
+      "unique_flags": 0,
+      "unlocated_flags": 0,
+      "valid_defenses": 0,
+      "words": 168
+    }
+  },
+  "transport_failures": {
+    "defend_calls": 8,
+    "flag_calls": 10
+  }
+}
