@@ -289,5 +289,64 @@ def test_dry_run_prints_exact_stage_one_and_bounded_stage_two_worst_case_first(
     assert "total: between 16 and 48 calls, worst case first" in out
 
 
+def test_build_targets_refuses_two_targets_that_would_share_one_name(tmp_path: Path) -> None:
+    """`run` keys reports and the raw sidecar by name, so a collision replaces, never merges.
+
+    The first run paid for nineteen targets and reported seventeen (stage-0 §145). Refusing
+    in `build_targets` puts the failure before the registry exists and before any spend.
+    """
+    high = [_row(i, 30 + i) for i in range(24)]
+    low = [
+        {
+            "title": f"Low {i}",
+            "listing": " ".join(f"lw{t}" for t in range(20 + i)) + ".",
+            "followers": i,
+            "source": f"low{i}",
+        }
+        for i in range(2)
+    ]
+    twins = [
+        {"name": "overview", "title": "", "listing": "one listing."},
+        {"name": "overview", "title": "", "listing": "a different listing entirely."},
+    ]
+    with pytest.raises(ValueError, match="duplicate target name"):
+        blurb_tribunal.build_targets(high, low, 1, 1, twins)
+
+
+def test_the_dry_run_carries_the_paid_runs_own_text_names_and_count(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    """Two books' `overview.txt` are two targets in the rehearsal, as they are in the run."""
+    high_path = tmp_path / "high.json"
+    low_path = tmp_path / "low.json"
+    high_path.write_text(json.dumps([_row(i, 30 + i) for i in range(24)]), encoding="utf-8")
+    low_path.write_text(
+        json.dumps(
+            [
+                {
+                    "title": "Low 0",
+                    "listing": " ".join(f"lw{t}" for t in range(20)) + ".",
+                    "followers": 0,
+                    "source": "low0",
+                }
+            ]
+        ),
+        encoding="utf-8",
+    )
+    texts = []
+    for slug in ("a-good-take", "patch-notes-for-earth"):
+        path = tmp_path / slug / "overview.txt"
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(f"the {slug} listing.", encoding="utf-8")
+        texts.append(str(path))
+
+    argv = ["--dry-run", "--pool", str(high_path), str(low_path), "--shams", "1", "--pairs", "1"]
+    assert blurb_tribunal.main([*argv, "--texts", *texts]) == 0
+    out = capsys.readouterr().out
+    # 1 sham + 1 gradient LOW + 2 ours = 4; the two overviews are counted separately.
+    assert "targets: 4 (1 gradient, 2 ours, 1 sham)" in out
+    assert "stage 1: 16 calls exactly: K=4 x 4 target(s)" in out
+
+
 def test_the_selftest_passes() -> None:
     assert blurb_tribunal.selftest() == 0

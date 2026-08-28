@@ -50,7 +50,13 @@ def load_texts(paths: list[str]) -> list[dict[str, str]]:
 
     A `listing.json` bundle contributes **two** entries — the draft and the revision — because
     the difference between them is the reader channel's own effect and the run gets it free.
-    A `.txt` file contributes one, named by its stem.
+    A `.txt` file contributes one, named by its directory and its stem.
+
+    **The name is an identifier, not a label.** Every caller keys its per-text results by it,
+    so two texts that share a name do not merge — one silently overwrites the other, after
+    both have been paid for. A bare stem collides the moment two books are measured together,
+    because every book's reading copy is `<slug>/overview.txt`; §145 is the run that lost two
+    of three targets that way.
     """
     out: list[dict[str, str]] = []
     for raw in paths:
@@ -68,8 +74,24 @@ def load_texts(paths: list[str]) -> list[dict[str, str]]:
                         }
                     )
         else:
-            out.append({"name": path.stem, "title": "", "listing": path.read_text("utf-8")})
+            out.append({"name": text_name(path), "title": "", "listing": path.read_text("utf-8")})
     return out
+
+
+def text_name(path: Path) -> str:
+    """A `.txt` entry's name: its directory and its stem, the bundle branch's own convention."""
+    return f"{path.parent.name}:{path.stem}" if path.parent.name else path.stem
+
+
+def text_names(paths: list[str]) -> list[str]:
+    """Exactly the names `load_texts` will produce for these paths, in order.
+
+    A caller that must size a run before making it — a dry run, a call guard — needs the
+    entry *count* and the entry *names* to be the ones the paid run will use, or the
+    rehearsal is not a rehearsal. A `.json` bundle is read for its keys and its prose is
+    dropped on the floor.
+    """
+    return [entry["name"] for entry in load_texts(paths)]
 
 
 def digest_of(text: str) -> str:

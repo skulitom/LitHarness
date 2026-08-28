@@ -249,8 +249,21 @@ def build_targets(
     """
     targets: list[dict[str, Any]] = []
     by_identity: dict[str, dict[str, Any]] = {}
+    named: set[str] = set()
 
     def add(row: dict[str, Any], leg: str, name: str, pair: int | None = None) -> None:
+        # `run` keys both its reports and its raw sidecar by this name, so two targets that
+        # share one do not merge — the later silently REPLACES the earlier, after every call
+        # for both has been made and paid for, while `plan_calls` still counts them all. That
+        # is what happened to the first run's ours leg (§145): three `overview.txt` files
+        # reached it under one name and two targets left no trace but the call arithmetic.
+        # Refusing here fails the free dry run, before a registry exists and before any spend.
+        if name in named:
+            raise ValueError(
+                f"duplicate target name {name!r}: every target must be distinguishable, "
+                "or its results overwrite another's"
+            )
+        named.add(name)
         target = {"leg": leg, "name": name, "row": row, "pair": pair}
         targets.append(target)
         by_identity[identity(row)] = target
@@ -822,8 +835,11 @@ def main(argv: list[str] | None = None) -> int:
 
     high = json.loads(Path(args.pool[0]).read_text(encoding="utf-8"))
     low = json.loads(Path(args.pool[1]).read_text(encoding="utf-8"))
+    # The rehearsal must carry the paid run's own names and count, or it rehearses a
+    # different run: `load_texts` gives a bundle two entries and a `.txt` its directory.
     placeholder_texts = [
-        {"name": Path(path).stem, "title": "", "listing": ""} for path in args.texts
+        {"name": name, "title": "", "listing": ""}
+        for name in listing_arena.text_names(args.texts)
     ]
     targets = build_targets(high, low, args.shams, args.pairs, placeholder_texts)
     stage_one, stage_two_worst = plan_calls(targets)

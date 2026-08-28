@@ -14432,3 +14432,77 @@ on our own text, the operator's acceptance test with the inverted result withdra
 instrument, registrations before paid calls, distributions before bars (§61), §95, §97.1
 and RS1 untouched. This entry records a redirection of the search space and nothing about
 any instrument's verdict.
+
+## 145. The tribunal's first run measured the market cleanly and never read our listings at all
+
+`blurb_tribunal.v0` ran once on 2026-08-26 (`research/quality-measurement/results/blurb-tribunal.json`,
+registration digest `97bed1fb14cdaf2d`) and was committed as-found with its verdict deliberately
+unread, because §4 of its registration says transport failures are read before any verdict and
+nobody had attributed them. Attributed now, from the run's own gitignored sidecar. The full run
+section is `plan/blurb-tribunal-validity.md` §7; this entry records what it changes.
+
+**Measured first.** The counters said 10 failed flag calls and 8 failed defend calls. Every one
+of those eighteen failures carries the same message — `429 You've hit your weekly limit -
+resets Aug 28, 5pm (Europe/London)` — and **every one of them landed on the `ours` leg**. No
+sham and no gradient target lost a single call; the four gradient `defenses_missing` are
+malformed replies, which the registration already excludes as evidence and which are not
+transport.
+
+**So the market legs are readable and the `ours` leg is void.** KG separated 8 of 8 pairs, KD
+passed both legs against the registered 0.5 floor (gradient 0.551, sham 0.783), KA stayed low
+(0.054, 0.113). §141's precondition — adopted whole into this instrument's §4, *until KG
+separates nothing it says about ours is believed* — **is met**. And there is nothing on the
+other side of it: the committed `ours:overview` row has `draws: 0`, all four of its draws being
+that 429, so its zero flags record an outage. The reading the file invites, our listing blending
+into the market, **is not a weak result; it is not a result.** Boundary 3 forbade believing it
+in that direction; the attribution shows there was never a number there.
+
+**Nineteen targets ran and seventeen were reported, which is the defect.**
+`calls_planned.stage_one` is 76, or K x 19. `--texts` was the three
+`book-library/<slug>/overview.txt` files; `listing_arena.load_texts` named a `.txt` entry by its
+bare stem, so all three arrived as `ours:overview`, and `run` keys both its reports and its raw
+sidecar by name — the third **replaced** the first two after every call for all three had been
+made and paid for. A name two targets can share is not a label; it is silent data loss with the
+call arithmetic left behind as the only receipt. The run order closes the arithmetic without the
+lost rows: texts are appended last and a weekly-limit 429 does not recover, so the first ours
+target returned 2 of 4 draws, reached the 8-flag cap, and lost all 8 of its defend calls, while
+the other two returned nothing — 2 + 4 + 4 = 10, and 8.
+
+**What shipped.** `listing_arena.load_texts` names a `.txt` entry by its directory and its stem,
+the convention its own bundle branch already used, with `text_name` and `text_names` as the
+helpers; `blurb_tribunal.build_targets` refuses a duplicate target name, so the collision now
+fails the **free** `--dry-run` before a registry exists and before anything can be spent; and
+`blurb_tribunal.main` builds its dry-run placeholders from `text_names`, so a rehearsal carries
+the paid run's own names and count. All three sit outside `PRE_REGISTRATION`, so the digest is
+unchanged at `97bed1fb14cdaf2d` and any re-run stays under one registration with this run.
+Pinned by `test_two_books_overview_files_never_share_a_name`,
+`test_text_names_are_exactly_the_names_load_texts_produces`,
+`test_build_targets_refuses_two_targets_that_would_share_one_name` and
+`test_the_dry_run_carries_the_paid_runs_own_text_names_and_count`.
+
+**No bar is declared, and one interval is recorded as unusable.** KG's bootstrap interval reads
+`[1.0, 1.0]`, and that is degenerate by construction rather than precise: at share 1.0 every
+resample of the eight pairs is also 1.0, whatever the pairs are. The readable fact is the count,
+8 of 8. This is the seventh time a declared quantity has been checked against what it can
+actually do (§81, §85, §87, three in §89), and the first where the answer was to keep the
+statistic and write down what its interval cannot say.
+
+**What was refused.** The `ours` leg was **not** re-run on 2026-08-28, with the quota reset
+available and the instrument working. It is a research arm, and it would have competed for the
+same quota as the fresh book the operator asked to read; the right `ours` target is that book's
+listing, not three listings from books the operator has since called old generations and already
+reviewed. Recorded as an explicit debt in the validity doc's §7.5 rather than carried as a
+silent gap. Also refused: reading anything about our prose out of a leg with no data, and
+amending §1-§6 of the registration — the asks, schemas, K, legs and kills were fixed before the
+first call and are untouched.
+
+**Corrected in place.** `plan/reader-architecture-program.md`'s mechanism-family table said of
+the tribunal only that it is built and its resolver deterministic. Its cell now carries the
+first run's standing: market legs read, `ours` leg void for transport, re-run owed.
+
+**Anti-scope.** This entry records a run's transport attribution and an instrument defect. It
+promotes no research claim: under `EPISTEMIC_GOVERNANCE.md` the market legs' separation is
+`OBSERVED` for this instrument and nothing here is `SUPPORTED`, no reading of our own text
+exists to be promoted or refuted, and §97.1, RS1 and §95 are untouched — a surviving flag
+remains a located diagnostic on the operator's side and reaches no drafting, revision or
+planning path.
