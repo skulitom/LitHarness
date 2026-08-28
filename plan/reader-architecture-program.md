@@ -106,3 +106,9 @@ A mechanism earns attention by separating the market's own top from its own bott
 Only then is its reading of our text meaningful, and the meaning runs one way: it may
 condemn our text, and it may be withdrawn — what it may not do is certify us against the
 operator's judgment, which is the ground truth this programme exists to reach (boundary 3).
+
+That screen licenses **one faculty**: reading the registered follower gradient. PLAN.md
+§1a.3's continuation hypotheses are other faculties. A mechanism can pass the gradient
+and still prefer polish to event — already what the listing inversion measured. The
+causal salience battery exists to test those faculties separately; a gradient pass does
+not buy dramatic function, progression-as-drama, or payoff.
