@@ -73,6 +73,11 @@ uv run litharness --database book.db listing \
   --out runs/listings/debt-book
 ```
 
+`--writer` names a compiled cast writer or any writer the roster has accepted. The roster lives
+in the open database unless `--roster-database` (or `LITHARNESS_ROSTER_DATABASE`) names the
+installation's roster store, which is what lets a writer accepted once draft on every fresh book
+database (stage-0 §151).
+
 An empty brief is a valid control. Use `new` when title and premise already exist, or `import` for
 a contracts fixture or manuscript:
 

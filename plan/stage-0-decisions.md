@@ -15330,3 +15330,65 @@ here ranks two dossiers, and no model reads a second one.
 RS1 holds and is now checked in the direction that was only claimed. The house floor is untouched:
 the note's scope caution is that writer-bound text may be voice-rewritten and the shared rule
 stack may not, and nothing in this change reads, rewrites or per-writer forks `domain/house.py`.
+
+## 151. An accepted writer could not reach a fresh book database, and the fix is one roster home rather than a copy of it
+
+**What was measured first, and it was free.** Serial pilot 13, casting an accepted roster
+writer on a fresh book database: `listing --writer larkin` exited 2 with *"no writer named
+'larkin'; the cast is ferreira, halloran, vance, okonjo"* (2026-08-28, the operator's report;
+the pilot's plan was unmerged from its own session when this entry was written). The cause is
+structural and sat in this repository's own prose before it sat in an exit code: `--writer`
+resolves through whatever `--database` is open — `cli._resolve_writer` reads `roster_rows`
+from that store — while the roster parser's comment said *"a roster belongs to the
+installation"*. A claim in prose the code did not keep is §146.7's most repeated defect shape,
+this time about the roster itself. The pilot bridged the gap by cloning the entire store
+through `litharness backup`, which works once and is wrong as a mechanism: it forks the roster
+and drags every unrelated table along. The gap is re-measured durably as
+`test_the_gap_pilot_13_hit_is_real_without_a_configured_roster`, so this entry's premise
+cannot rot into a story about one.
+
+**What shipped.** `--roster-database` and `LITHARNESS_ROSTER_DATABASE` name where the
+installation's roster lives; unset, everything falls back to the open database and no existing
+invocation changes. Resolution (`cli._installed_writer`) reads the configured roster *instead
+of* the open database's — replacement, never shadowing, because two sources consulted in order
+would let a stale book-local row answer over the installation's, including over a refusal §149
+makes terminal. The roster-native commands — the `roster` suite, `recruit`, `revoice` — target
+the configured store wholly: the rows they read, the proposals and decision rows they write,
+and the exemplar row a voiced writer's `exemplar_digest` points at all land in one file,
+beside each other. `recruit` hands its child the roster's resolved path through
+`LITHARNESS_DATABASE`, so the agent's declares land in the installation's roster whichever
+book database was open. `tests/test_roster_installation.py` holds the pilot's repro now
+passing (`test_an_accepted_writer_reaches_a_fresh_book_database_through_the_flag` — and the
+book database is not even created by the lookup), the environment half, the replacement rule,
+refusal holding across book databases, provenance staying put, and the recruit handoff.
+
+**What was refused: a `roster export`/`roster import` pair.** Four reasons, each sufficient.
+
+- `adapters/sqlite_roster.py` stakes rail 4 — *no model hires* — on `accept_writers` being the
+  only path that can write `accepted`. An import is a second one, writing rows that claim an
+  operator's judgment out of a payload, and a content address authenticates content, never
+  authorship.
+- §149 made refusal terminal, and copies un-make it quietly: a writer refused in the roster
+  store keeps drafting in every database that imported them earlier, which is a refusal that
+  stops having happened with nothing on any record saying so.
+- Provenance is not one row. A faithful import moves the writer, its decision row, and the
+  exemplar row its digest points at — three tables today and more whenever the roster grows a
+  neighbour — and a transplant that forgets one is the forbidden shape wearing whichever table
+  is newest.
+- The operating reality already chose. §146.8 put the roster at an absolute path outside any
+  worktree precisely so it outlives checkouts; one store consulted from everywhere is that
+  decision finished, and N synchronized copies is that decision undone.
+
+Also refused: consulting both rosters in order (the shadowing above); seeding or migrating a
+book-local roster into the configured one (a copy again, just once); and any change to who may
+accept — the acceptance and refusal paths, their decision rows, the in-flight guard and the
+dashboard's read-only surface are untouched, and `test_no_write_path_bypasses_the_cli` holds
+with nothing new to hold against. The roster parser's comment is corrected in place to say
+what is true and to point here.
+
+**No bar is declared.** Nothing here is a quantity; §61's four checks have nothing to run on.
+
+**Anti-scope.** No writer was accepted, refused, drawn or edited, and no paid call was made.
+Resolution order (accepted roster first, compiled cast second), `RESERVED_NAMES`, and the
+proposed/refused refusal sentences are unchanged. Nothing here ranks or selects, no model
+reads anything it could not already read, and RS1 is untouched.
