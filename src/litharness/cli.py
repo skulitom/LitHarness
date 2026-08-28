@@ -40,11 +40,12 @@ import litharness_contracts as lc
 from litharness.adapters import contracts_fixtures, evaluation_artifact
 from litharness.adapters.continuity_cli import ContinuityCliRunner
 from litharness.adapters.sqlite_store import MigrationsMissing, SqliteStore, StoredEvent
-from litharness.application import covers, titles, world_agent
+from litharness.application import covers, recruiter, titles, world_agent
 from litharness.application import export as export_module
 from litharness.application import library as library_module
 from litharness.application import overview as overview_mod
 from litharness.application import readers as readers_mod
+from litharness.application import roster as roster_mod
 from litharness.application import status as status_module
 from litharness.application import world as world_mod
 from litharness.application.conductor import Conductor, TickOutcome
@@ -183,6 +184,23 @@ SERIAL_POSITION_CAPACITY = 100_000
 #: `--database` flag has to sit between the binary and the subcommand. The flag still wins
 #: where it is given, so every existing invocation is unchanged.
 DATABASE_ENV = "LITHARNESS_DATABASE"
+
+#: **The shelf and the form reach the Recruiter's child process through the environment, never
+#: its command line**, which is `DATABASE_ENV`'s argument twice more. A flag between the binary
+#: and the subcommand widens the allowance to every command this CLI has; and a value the agent
+#: types is a value the agent chose, where the form is a registered arm that the runner stamps.
+#: The shelf variable also makes "one recruit call per specialization" mechanical, and it is
+#: what `roster accept` reads to refuse an admission from inside a run in flight.
+RECRUIT_SHELF_ENV = "LITHARNESS_RECRUIT_SHELF"
+RECRUIT_SHAPE_ENV = "LITHARNESS_RECRUIT_SHAPE"
+
+#: `--writer`'s help for the four subcommand overrides, in one place. A parser is built before
+#: `--database` is parsed, so it can name the compiled cast and cannot enumerate a roster; four
+#: copies of that sentence would drift.
+_WRITER_OVERRIDE_HELP = (
+    f"the compiled cast ({', '.join(writers_domain.CAST)}), or any writer this database's "
+    "roster has accepted, which `litharness roster show` lists; overrides the global --writer"
+)
 
 #: **The listing loop's first refusing gate, and the only market-derived number under `src/`.**
 #: A listing above this many coordinator tokens per hundred words is redrawn rather than kept.
@@ -362,24 +380,86 @@ def _rivals(args: argparse.Namespace) -> tuple[rivals_mod.Rival, ...]:
         raise SystemExit(f"litharness: {path}: {error}") from error
 
 
-def _selected_writer(args: argparse.Namespace) -> writers_domain.Writer | None:
-    """Resolve `--writer` to a cast member, or `None` for the anonymous control.
+def _resolve_writer(
+    name: str, store: SqliteStore | None = None
+) -> tuple[writers_domain.Writer | None, str]:
+    """The writer a `--writer` name means, or `None` and the reason it is nobody.
+
+    **The accepted roster first, then the compiled cast**, which is
+    `plan/handoff-writer-recruiter.md`'s word — but the order is safe only because the two
+    namespaces cannot overlap. `writers.RESERVED_NAMES` refuses a stored row named after a cast
+    writer or a probe, so for every name that can legitimately exist both orders return the same
+    writer. The order then costs nothing and buys what the brief wanted: an accepted recruit is
+    castable without editing Python, ever.
+
+    The collision check below is a second lock and is not decoration — the write-time guard
+    cannot see the case where `CAST` grows *later* to a name a stored writer already holds.
+    Where it fires **nothing resolves**, and neither writer is silently preferred.
+
+    **`BUILTIN` is reserved but not resolvable.** Those ten measure whether a dossier binds at
+    all; not one reads the genre this project publishes in and none has ever reached a prompt,
+    so making `--writer geology` draft a book would be a behaviour change nobody asked for.
+
+    **A proposed writer is not a writer yet.** `roster accept` is a person's act with a decision
+    row behind it, and a recruit that could draft merely by being named would make that act
+    optional, which is the rail the whole roster is built around.
+
+    `store` is `None` where a caller has no database open and must not create one:
+    `SqliteStore.open` creates and migrates the file, so `prompts`, which has never touched a
+    store, would otherwise leave a `litharness.db` behind for an inspection command.
+
+    Returns its reason rather than raising it, because three of the four callers print and
+    return `EXIT_FAULT`; `_selected_writer` is the raising wrapper for the conductor, where
+    `_director_id`'s `SystemExit` is the established shape.
+    """
+    wanted = name.strip()
+    if not wanted:
+        return None, ""
+    if store is not None:
+        rows = store.roster_rows(name=wanted)
+        if rows:
+            if wanted in writers_domain.RESERVED_NAMES:
+                return None, (
+                    f"litharness: {wanted!r} names both a stored writer and a compiled one. "
+                    "The compiled controls the roster is read against must not be shadowed; "
+                    "rename or discard the stored row"
+                )
+            if any(
+                row["status"] == writers_domain.RosterStatus.ACCEPTED.value for row in rows
+            ):
+                return store.accepted_writer(wanted), ""
+            return None, (
+                f"litharness: writer {wanted!r} is proposed but not accepted. Acceptance is an "
+                "operator act and carries a decision row; a machine may not cast a writer it "
+                f"drafted. `litharness roster accept {wanted}`"
+            )
+    writer = writers_domain.CAST.get(wanted)
+    if writer is None:
+        return None, (
+            f"litharness: no writer named {wanted!r}; the cast is "
+            f"{', '.join(writers_domain.CAST)}, and `litharness roster show` lists every "
+            "writer this database holds"
+        )
+    return writer, ""
+
+
+def _selected_writer(
+    args: argparse.Namespace, store: SqliteStore | None = None
+) -> writers_domain.Writer | None:
+    """Resolve `--writer` to a writer, or `None` for the anonymous control.
 
     `_director_id`'s rule, for `_director_id`'s reason: **an unregistered name is refused
     loudly rather than defaulted to nobody**, because a typo that silently produced the
     control arm is the worst failure available to a run whose whole question is whether the
-    arms differ. The subcommands that had their own `--writer` before this was global keep it
-    and win where both are given — `argparse.SUPPRESS` is what lets an unset one fall through
-    to the global rather than overwriting it with `None`.
+    arms differ. A name that is declared but not yet accepted is refused for that reason and
+    for a second one: casting a proposal would be the machine hiring itself. The subcommands
+    that had their own `--writer` before this was global keep it and win where both are given —
+    `argparse.SUPPRESS` is what lets an unset one fall through to the global rather than
+    overwriting it with `None`.
     """
-    wanted = (getattr(args, "writer", "") or "").strip()
-    if not wanted:
-        return None
-    writer = writers_domain.CAST.get(wanted)
-    if writer is None:
-        raise SystemExit(
-            f"litharness: no writer named {wanted!r}; the cast is {', '.join(writers_domain.CAST)}"
-        )
+    writer, reason = _resolve_writer(getattr(args, "writer", "") or "", store)
+    if reason:
+        raise SystemExit(reason)
     return writer
 
 
@@ -431,7 +511,7 @@ def _conductor(store: SqliteStore, args: argparse.Namespace) -> Conductor:
             open_ended=True,
             # Who is drafting. `None` without `--writer`, which is what every book written
             # before 2026-08-25 got and what this is read against.
-            writer=_selected_writer(args),
+            writer=_selected_writer(args, store),
             **({"token_budget": args.context_budget} if args.context_budget is not None else {}),
         ),
         handlers={
@@ -1915,14 +1995,6 @@ def cmd_listing(args: argparse.Namespace) -> int:
     listing as the premise, and `new`'s own decision row and events, because it calls it.
     """
     stamp = _stamp(_now())
-    writer = writers_domain.CAST.get(args.writer) if args.writer else None
-    if args.writer and writer is None:
-        print(
-            f"litharness: no writer named {args.writer!r}; the cast is "
-            f"{', '.join(writers_domain.CAST)}",
-            file=sys.stderr,
-        )
-        return EXIT_FAULT
 
     # **The scene count is checked before the first call, not after the last one.** §19.1: a
     # refusal reached before the work costs time, never the unit — and `arc_template` refuses a
@@ -1940,6 +2012,14 @@ def cmd_listing(args: argparse.Namespace) -> int:
     brief = _read_text(args.brief_file) if args.brief_file else (args.brief or "")
     store = _store(args)
     try:
+        # **Resolved inside the store's lifetime, because a writer can now be a record.** The
+        # refusal still lands before the first paid call, which is the property §19.1 asks for;
+        # what moved is only that the roster is reachable when the name is looked up.
+        writer, reason = _resolve_writer(getattr(args, "writer", "") or "", store)
+        if reason:
+            print(reason, file=sys.stderr)
+            return EXIT_FAULT
+
         registry = build_default_registry()
         run = _StageSpend()
         spend = _StageSpend()
@@ -2343,18 +2423,14 @@ def cmd_architect(args: argparse.Namespace) -> int:
     database = str(Path(args.database).resolve())
     os.environ[DATABASE_ENV] = database
 
-    writer = writers_domain.CAST.get(args.writer) if args.writer else None
-    if args.writer and writer is None:
-        print(
-            f"litharness: no writer named {args.writer!r}; the cast is "
-            f"{', '.join(writers_domain.CAST)}",
-            file=sys.stderr,
-        )
-        return EXIT_FAULT
-
     store = _store(args)
     stamp = _stamp(_now())
     try:
+        writer, reason = _resolve_writer(getattr(args, "writer", "") or "", store)
+        if reason:
+            print(reason, file=sys.stderr)
+            return EXIT_FAULT
+
         book_id, branch_id = export_module.resolve_branch(store, args.book, args.branch)
         before = len(store.state_records(book_id, branch_id))
         if args.job == "seed":
@@ -2642,13 +2718,23 @@ def cmd_prompts(args: argparse.Namespace) -> int:
     if args.scene:
         return _stored_scene_prompt(args)
 
-    writer = writers_domain.CAST.get(args.writer or "ferreira")
-    if writer is None:
-        print(
-            f"litharness: no writer named {args.writer!r}; the cast is "
-            f"{', '.join(writers_domain.CAST)}",
-            file=sys.stderr,
-        )
+    # **The store is opened only when the name needs it, and that is not an optimisation.**
+    # `SqliteStore.open` creates and migrates the file, so resolving unconditionally would make
+    # an inspection command that has never touched a database leave one behind in whatever
+    # directory it was run from.
+    wanted = (getattr(args, "writer", "") or "").strip() or "ferreira"
+    store = (
+        _store(args)
+        if wanted not in writers_domain.CAST and args.database.exists()
+        else None
+    )
+    try:
+        writer, reason = _resolve_writer(wanted, store)
+    finally:
+        if store is not None:
+            store.close()
+    if reason:
+        print(reason, file=sys.stderr)
         return EXIT_FAULT
 
     premise = "A debtor discovers the road beneath the city is collecting people, not coins."
@@ -2799,6 +2885,17 @@ def cmd_prompts(args: argparse.Namespace) -> int:
         "architect-grow": world_agent.render_grow_request(
             scene_text, logical_id="scene-1", writer=writer
         ),
+        # Three rows rather than one, because the three dossier forms are three prompts and a
+        # role assembled only inside its own call site is one nobody can see the size of.
+        "recruit-single-image": recruiter.render_recruit_request(
+            "cozy-fantasy", shape="single-image"
+        ),
+        "recruit-several-with-beat": recruiter.render_recruit_request(
+            "cozy-fantasy", shape="several-with-beat"
+        ),
+        "recruit-several-no-beat": recruiter.render_recruit_request(
+            "cozy-fantasy", shape="several-no-beat"
+        ),
         "outline": render_outline_request(premise, (beat,), base=base, serial_arc_index=1),
         "narrative-planner": render_narrative_request(base, direction, ("scene-1",)),
         "scene": CompletionRequest(prompt=scene_prompt, system=scene_system),
@@ -2875,6 +2972,451 @@ def cmd_prompts(args: argparse.Namespace) -> int:
         )
     print()
     print("  `--role <name>` prints one in full. Ceilings: tests/test_prompt_budget.py")
+    return EXIT_OK
+
+
+def cmd_roster(args: argparse.Namespace) -> int:
+    """The roster: read it, offer it a writer, or put one on it.
+
+    **`cmd_world`'s shape, and the divergences are deliberate.** Every read view prints JSON,
+    because both an agent and an operator read these, and `application/roster.py` holds the
+    views and no logic. There is no `--book` and no `--branch`: a world belongs to a book and a
+    roster belongs to the installation, and the shorter command line is part of what keeps the
+    Recruiter's allowance narrow.
+
+    **`declare` refuses where `world declare` warns, and the two are not the same case.** A
+    world is built one record at a time and is transiently incoherent by nature — a question
+    owes an answer, a rung owes a chain — so refusing there taught an agent to work around the
+    tool and left a 317-record world with zero questions in it. A dossier arrives whole in one
+    command, so no companion record can make a legal one look illegal; and
+    `Writer.__post_init__` runs `legal_dossier`, so warning would mean storing raw columns no
+    `Writer` can ever be built from, which is a poisoned row the resolution path raises on
+    forever rather than leniency. What replaces the warning is `roster check --dossier`: free,
+    writes no record, and exits zero whatever it finds. Serial Pilot 7's own conclusion is that
+    the fix which removes the reason to probe is a tool fix and not a rule, and that is the fix.
+
+    **`accept` has no `--force`, unlike `world accept`.** A world may contradict itself and an
+    operator may want the contradiction on the record; an illegal dossier is not a contradiction
+    to be recorded, it is a prose axis about to enter every scene call for a whole book, and R1
+    has no override.
+
+    **Every view writes through `_say` rather than `print`**, and that is not tidiness. This
+    host's stdout codec is cp1252: `roster vocabulary` names the em dash as the character it
+    refuses, which cp1252 mangles into a byte no UTF-8 reader can parse, and a dossier for the
+    shelf called *Chinese Cultivation (in English)* can hold characters cp1252 cannot encode at
+    all — which kills `roster show` outright, for every writer on the roster, permanently.
+    `_say` records what that class of defect already cost once: an `architect seed` run of
+    sixteen minutes died printing its own closing report.
+    """
+    stamp = _stamp(_now())
+
+    if args.view == "vocabulary":
+        _say(json.dumps(roster_mod.vocabulary(), ensure_ascii=False, indent=2))
+        return EXIT_OK
+
+    if args.view == "check" and (args.dossier or args.dossier_file):
+        # **Always EXIT_OK, including when the dossier is illegal, and that is the point.** A
+        # rehearsal that exits nonzero is a rehearsal an agent stops running, and an agent that
+        # stops rehearsing goes back to learning the interface by writing records. The verdict
+        # is in the payload where a machine reads it, not in the exit code where a tool harness
+        # reads it as an error.
+        text = _read_text(args.dossier_file) if args.dossier_file else (args.dossier or "")
+        _say(json.dumps(roster_mod.rehearse(text), ensure_ascii=False, indent=2))
+        return EXIT_OK
+
+    store = _store(args)
+    try:
+        if args.view == "show":
+            status = (
+                writers_domain.RosterStatus(args.status) if args.status else None
+            )
+            rows = store.roster_rows(name=args.name, status=status)
+            payload = roster_mod.show(
+                rows, store.roster_rows(), with_dossier=args.dossier
+            )
+            _say(json.dumps(payload, ensure_ascii=False, indent=2))
+            return EXIT_OK
+
+        if args.view == "check":
+            payload = roster_mod.check(store.roster_rows())
+            _say(json.dumps(payload, ensure_ascii=False, indent=2))
+            return EXIT_OK if payload["ok"] else EXIT_FAULT
+
+        if args.view == "declare":
+            if args.dossier and args.dossier_file:
+                print(
+                    "litharness: give --dossier or --dossier-file, not both",
+                    file=sys.stderr,
+                )
+                return EXIT_FAULT
+            dossier = (
+                _read_text(args.dossier_file) if args.dossier_file else (args.dossier or "")
+            )
+            if not dossier.strip():
+                print(
+                    "litharness: a writer with no dossier is not a writer. Pass --dossier "
+                    'with the paragraph in one quoted argument; `litharness roster check '
+                    '--dossier "..."` reads it back to you first and costs nothing',
+                    file=sys.stderr,
+                )
+                return EXIT_FAULT
+
+            # **A flag that disagrees with the run it is inside is refused rather than
+            # preferred.** This is what makes "one shelf per call" and "do not standardise on
+            # one form" mechanical instead of prose: a recruit run stamps both, and a
+            # declaration that contradicts the stamp would put a dossier in the wrong cell of a
+            # registered arm with nothing on the record saying so.
+            for flag, env, label in (
+                (args.specialization, RECRUIT_SHELF_ENV, "specialization"),
+                (args.shape, RECRUIT_SHAPE_ENV, "shape"),
+            ):
+                standing = os.environ.get(env, "").strip()
+                if flag and standing and flag != standing:
+                    print(
+                        f"litharness: --{label} {flag!r} disagrees with the run in flight, "
+                        f"which is recruiting {standing!r}. This call belongs to that run",
+                        file=sys.stderr,
+                    )
+                    return EXIT_FAULT
+            specialization = args.specialization or os.environ.get(
+                RECRUIT_SHELF_ENV, ""
+            ).strip()
+            shape = args.shape or os.environ.get(RECRUIT_SHAPE_ENV, "").strip()
+            if not specialization or not shape:
+                print(
+                    "litharness: a declaration needs --specialization and --shape; "
+                    "`litharness roster vocabulary` names both vocabularies",
+                    file=sys.stderr,
+                )
+                return EXIT_FAULT
+            # **Checked here and not only on the flag**, because a value taken from the
+            # environment has never met `argparse`'s `choices`. The shape is refused in the
+            # adapter; the shelf was not, so a mistyped variable landed a row on a shelf that
+            # does not exist, `roster check` then reported it forever, and `declare` has no
+            # retraction to undo it with. Both vocabularies are refused in one place now.
+            if specialization not in roster_mod.SPECIALIZATIONS:
+                print(
+                    f"litharness: {specialization!r} is not one of the twelve shelves; "
+                    f"they are {', '.join(roster_mod.SPECIALIZATIONS)}",
+                    file=sys.stderr,
+                )
+                return EXIT_FAULT
+
+            if reason := roster_mod.reserved_name(args.name):
+                print(reason, file=sys.stderr)
+                return EXIT_FAULT
+
+            try:
+                writer = writers_domain.build(
+                    args.name,
+                    dossier,
+                    interests=tuple(args.interests),
+                    note=args.note or "",
+                )
+                fresh = store.record_proposed_writer(
+                    writer,
+                    specialization=specialization,
+                    shape=shape,
+                    proposed_at=stamp,
+                )
+            except writers_domain.IllegalDossier as error:
+                # **Nothing is written on this path**, and the record-free half is the property
+                # that matters: a refused dossier leaves no row for a later reader to wonder at.
+                print(f"litharness: {error}", file=sys.stderr)
+                print(
+                    '  try `litharness roster check --dossier "..."` first; it costs nothing '
+                    "and writes nothing",
+                    file=sys.stderr,
+                )
+                return EXIT_FAULT
+
+            payload = {
+                "writer_id": writer.writer_id,
+                "name": writer.name,
+                "status": writers_domain.RosterStatus.PROPOSED.value,
+                "specialization": specialization,
+                "shape": shape,
+                "interests": list(writer.interests),
+                "dossier_words": len(dossier.split()),
+                "new": bool(fresh),
+                "says": (
+                    f"{writer.name} for {specialization}, {shape}, "
+                    f"{len(writer.interests)} interest(s), {len(dossier.split())} words"
+                ),
+            }
+            if args.json:
+                _say(json.dumps(payload, ensure_ascii=False, indent=2))
+            else:
+                verb = "declared" if fresh else "already on record"
+                print(f"{verb}: {payload['says']}  [proposed]")
+                print(f"  {writer.writer_id}  awaiting `roster accept`")
+            return EXIT_OK
+
+        # accept
+        #
+        # **The second lock on the no-model-hires rail, and it is a mechanism rather than a
+        # promise.** The first is `recruiter.ALLOWED_TOOLS`, which enumerates four commands and
+        # does not name this one. This is the lock that does not depend on how a
+        # `Bash(prefix:*)` rule is matched: `cmd_recruit` exports the shelf it is recruiting
+        # for, so while a run is in flight nothing in that process tree can admit a writer,
+        # however it reached this command.
+        if os.environ.get(RECRUIT_SHELF_ENV, "").strip():
+            print(
+                "litharness: a recruit run is in flight; acceptance is an operator act and is "
+                "refused from inside one. Let the run finish and accept it yourself",
+                file=sys.stderr,
+            )
+            return EXIT_FAULT
+
+        proposed = store.roster_rows(status=writers_domain.RosterStatus.PROPOSED)
+        # **A writer id is accepted here as well as a name, and that is the way out of a dead
+        # end rather than a convenience.** Two proposals may legitimately share a name — an
+        # edited dossier is a different writer — and where they do, neither can be named
+        # unambiguously. Without an id to point at, an operator holding two `stroud` proposals
+        # could accept neither of them and could not clear them either, because `declare` has
+        # no retraction.
+        wanted = set(args.names)
+        rows = [
+            row
+            for row in proposed
+            if not wanted or row["name"] in wanted or row["writer_id"] in wanted
+        ]
+        missing = sorted(
+            wanted
+            - {row["name"] for row in proposed}
+            - {row["writer_id"] for row in proposed}
+        )
+        if missing:
+            print(
+                f"litharness: no proposed writer named {', '.join(missing)}; "
+                "`litharness roster show` lists what is declared",
+                file=sys.stderr,
+            )
+            return EXIT_FAULT
+        if not rows:
+            print("nothing proposed; the roster is unchanged")
+            return EXIT_OK
+
+        # **The legality check runs again here, and it is not a formality.** The registered
+        # prose-axis vocabulary grows as the reader loop admits axes, so a dossier declared
+        # last month passed a smaller vocabulary than the one governing the prompt it is about
+        # to ride in. This is also the only place the check can be non-vacuous, which is why
+        # `roster_rows` returns raw columns: a reader that built `Writer` objects would raise
+        # on an illegal row rather than return it, so it could only ever hand this loop rows
+        # that had already passed.
+        admitted: list[tuple[str, str]] = []
+        refused: list[str] = []
+        for row in rows:
+            try:
+                writers_domain.legal_dossier(row["dossier"])
+                writers_domain.refuse_reserved_name(row["name"])
+            except writers_domain.IllegalDossier as error:
+                refused.append(f"{row['name']}: {error}")
+                continue
+            admitted.append((row["name"], row["writer_id"]))
+
+        # **A name two of them share is reported here rather than raised in the adapter**, and
+        # the rest of the batch still goes through. `roster_accepted_name_idx` guarantees one
+        # answer per name and `accept_writers` raises if this is ever wrong, but a raise makes
+        # a bare `roster accept` fail entirely, which is the wrong response to a condition the
+        # roster deliberately allows: two proposals under one name are what an edited dossier
+        # looks like. The operator picks by id, which is why `accept` takes one.
+        on_roster = {
+            row["name"]: row["writer_id"]
+            for row in store.roster_rows(status=writers_domain.RosterStatus.ACCEPTED)
+        }
+        by_name: dict[str, list[str]] = {}
+        for name, writer_id in admitted:
+            by_name.setdefault(name, []).append(writer_id)
+        contested = {
+            name
+            for name, ids in by_name.items()
+            if len(ids) > 1 or name in on_roster
+        }
+        for name in sorted(contested):
+            ids = by_name[name]
+            held = on_roster.get(name)
+            refused.append(
+                f"{name}: {'already on the roster as ' + held + '; ' if held else ''}"
+                f"{len(ids)} proposal(s) here answer to this name ({', '.join(ids)}), and "
+                f"`--writer {name}` has to have one answer. Name the one you want by its id"
+            )
+        admitted = [pair for pair in admitted if pair[0] not in contested]
+
+        gate = GateOutcome(
+            gate=GateKind.SHAPE,
+            rule_or_critic_id="roster.accept.v0",
+            passed=not refused,
+            blocking=False,
+            detail=(
+                f"{len(admitted)} writer(s) accepted onto the roster: "
+                + ", ".join(f"{name} {wid}" for name, wid in admitted)
+                + (
+                    f"; {len(refused)} refused by legal_dossier: " + "; ".join(refused)
+                    if refused
+                    else ""
+                )
+            ),
+        )
+        decision = PolicyDecision(
+            # **Derived from the writers, never from the clock.** A timestamp in the material
+            # makes a replayed acceptance mint a second decision row for one judgment, which is
+            # the opposite of what `decision_id_for` is for.
+            decision_id=decision_id_for(
+                "roster-accept:" + "+".join(sorted(wid for _, wid in admitted)), 0, (gate,)
+            ),
+            outcome=Outcome.ACCEPT,
+            gates=(gate,),
+            reason=(
+                "a person put these writers on the roster; legality was checked again at "
+                "acceptance because the registered axis vocabulary grows between a "
+                "declaration and this act, and nothing here ranked or chose between dossiers"
+            ),
+        )
+        moved = (
+            store.accept_writers(
+                [wid for _, wid in admitted], decision=decision, accepted_at=stamp
+            )
+            if admitted
+            else 0
+        )
+    finally:
+        store.close()
+
+    print(f"accepted {moved} of {len(rows)} proposed writer(s)")
+    for name, wid in admitted:
+        print(f"  {wid}  {name}")
+    for line in refused:
+        print(f"  ! left proposed: {line}", file=sys.stderr)
+    return EXIT_FAULT if refused and not admitted else EXIT_OK
+
+
+def cmd_recruit(args: argparse.Namespace) -> int:
+    """Put the Recruiter on one shelf, holding the roster's read views and declare.
+
+    **`cmd_architect`'s pattern, one shelf at a time.** The database, the shelf and the form
+    reach the child through the environment, which is why those variables exist: a flag between
+    the binary and the subcommand would force the allowance to widen to every command this CLI
+    has. Everything the agent declares is proposed, and unlike the world suite the allowance is
+    enumerated rather than wildcarded, so `roster accept` is not a string this run can type.
+
+    **It runs with no writer of its own.** The premise lock this exists to break lives in the
+    four cast dossiers, and a cast writer drafting a colleague's dossier is that lock at one
+    remove; `writer=None` is the same anonymous control every call made before a cast existed.
+
+    **One shelf per call, and `--all` is refused.** Three independent reasons, each sufficient:
+    `claude -p` fails under box load and the failure is silent-ish, so twelve agent runs in one
+    process is twelve chances at that inside a single decision row; `_completion_call` checks
+    the budget per call, so a twelve-shelf run refused partway through could not say which
+    shelves got done; and the brief says one recruit call per specialization. `roster show`'s
+    `unstaffed` list makes the operator's shell loop one line and every iteration resumable.
+    """
+    # **The slate's own assignment is the default**, so the twelve-shelf loop is one flag per
+    # call and a form nobody typed is a form nobody can mistype. An explicit `--shape` still
+    # wins and is recorded on the row and in the decision's profile.
+    shape = args.shape or recruiter.shape_for(args.specialization)
+    database = str(Path(args.database).resolve())
+    previous = {
+        DATABASE_ENV: os.environ.get(DATABASE_ENV),
+        RECRUIT_SHELF_ENV: os.environ.get(RECRUIT_SHELF_ENV),
+        RECRUIT_SHAPE_ENV: os.environ.get(RECRUIT_SHAPE_ENV),
+    }
+    os.environ[DATABASE_ENV] = database
+    os.environ[RECRUIT_SHELF_ENV] = args.specialization
+    os.environ[RECRUIT_SHAPE_ENV] = shape
+
+    stamp = _stamp(_now())
+    declared: list[dict[str, Any]] = []
+    result = None
+    # **The store is opened inside the `try`, so a failure to open it does not leave the three
+    # variables set in this process.** Outside it, an unopenable database left
+    # `LITHARNESS_RECRUIT_SHELF` behind and the next `roster accept` was refused as though a run
+    # were in flight — which matters for the in-process driver the tests use, and for anything
+    # that calls `main` twice.
+    store = None
+    try:
+        store = _store(args)
+        before = {row["writer_id"] for row in store.roster_rows()}
+        standing = [
+            row["name"] for row in store.roster_rows(specialization=args.specialization)
+        ]
+        if standing:
+            print(f"  {len(standing)} already on this shelf: {', '.join(standing)}")
+
+        request = recruiter.render_recruit_request(args.specialization, shape=shape)
+        registry = build_default_registry()
+        spend = _StageSpend()
+        calls = _ProviderCalls(
+            registry=registry,
+            store=store,
+            args=args,
+            stamp=stamp,
+            run=_StageSpend(),
+        )
+        result, refusal = _completion_call(request, calls=calls, spend=spend)
+        if result is None:
+            print(f"litharness: {refusal}", file=sys.stderr)
+            return EXIT_FAULT
+
+        declared = [
+            row for row in store.roster_rows() if row["writer_id"] not in before
+        ]
+        gate = GateOutcome(
+            gate=GateKind.SHAPE,
+            rule_or_critic_id=request.profile,
+            passed=len(declared) == 1,
+            blocking=False,
+            detail=(
+                f"{len(declared)} writer(s) declared for {args.specialization} in the "
+                f"{shape} form, all proposed"
+                + (f": {', '.join(row['name'] for row in declared)}" if declared else "")
+                + (f"; note: {args.note}" if args.note else "")
+            ),
+        )
+        store.record_decision(
+            PolicyDecision(
+                # The stamp belongs in this material and does not belong in acceptance's: two
+                # recruit runs on one shelf are two distinct paid events and must not collapse
+                # into one row, where two acceptances of one writer are one judgment replayed.
+                decision_id=decision_id_for(
+                    f"recruit:{args.specialization}:{shape}:{stamp}", 0, (gate,)
+                ),
+                outcome=Outcome.ACCEPT,
+                gates=(gate,),
+                profile=request.profile,
+                provider=spend.provider,
+                model=spend.model,
+                invocations=spend.invocations,
+                total_tokens=spend.total_tokens,
+                cost_usd=spend.cost_usd,
+                reason=(
+                    "the Recruiter drafted a dossier through its own commands; everything it "
+                    "declared is a proposal, nothing here ranked one dossier against another, "
+                    "and no writer reaches a drafting prompt until a person runs `roster "
+                    "accept`"
+                ),
+            ),
+            decided_at=stamp,
+        )
+    finally:
+        if store is not None:
+            store.close()
+        for key, value in previous.items():
+            if value is None:
+                os.environ.pop(key, None)
+            else:
+                os.environ[key] = value
+
+    _say(result.text.strip())
+    print()
+    for row in declared:
+        print(f"  {row['writer_id']}  {row['name']}  awaiting `roster accept`")
+    if not declared:
+        # **A paid call that produced no record is the silent shape this repository keeps
+        # finding, and a shell loop over the twelve has to know which shelves to run again.**
+        # `cmd_architect` returns EXIT_OK for a zero-record run; this deliberately does not.
+        print("litharness: the Recruiter declared nobody", file=sys.stderr)
+        return EXIT_ATTENTION
     return EXIT_OK
 
 
@@ -4254,10 +4796,14 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--writer",
         default=os.environ.get("LITHARNESS_WRITER", ""),
-        help=f"who drafts this book: one of {', '.join(writers_domain.CAST)}; also read from "
+        help="who drafts this book: the compiled cast "
+        f"({', '.join(writers_domain.CAST)}), or any writer this database's roster has "
+        "accepted. A parser is built before --database is read, so the four are named here "
+        "and the roster is looked up; `litharness roster show` lists it. Also read from "
         "LITHARNESS_WRITER. Off by default and no writer is the control — until 2026-08-25 "
         "there was no way to pass one at all and every scene was drafted by nobody. An "
-        "unregistered name is refused rather than ignored",
+        "unknown name, and a name declared but not yet accepted, are refused rather than "
+        "ignored",
     )
     parser.add_argument(
         "--director",
@@ -4592,7 +5138,7 @@ def build_parser() -> argparse.ArgumentParser:
     prompts.add_argument(
         "--writer",
         default=argparse.SUPPRESS,
-        help=f"one of: {', '.join(writers_domain.CAST)}; overrides the global --writer",
+        help=_WRITER_OVERRIDE_HELP,
     )
     prompts.add_argument("--json", action="store_true")
     prompts.set_defaults(func=cmd_prompts)
@@ -4608,7 +5154,7 @@ def build_parser() -> argparse.ArgumentParser:
     seed.add_argument(
         "--writer",
         default=argparse.SUPPRESS,
-        help=f"one of: {', '.join(writers_domain.CAST)}; overrides the global --writer",
+        help=_WRITER_OVERRIDE_HELP,
     )
     seed.add_argument("--book")
     seed.add_argument("--branch")
@@ -4621,11 +5167,138 @@ def build_parser() -> argparse.ArgumentParser:
     grow.add_argument(
         "--writer",
         default=argparse.SUPPRESS,
-        help=f"one of: {', '.join(writers_domain.CAST)}; overrides the global --writer",
+        help=_WRITER_OVERRIDE_HELP,
     )
     grow.add_argument("--book")
     grow.add_argument("--branch")
     grow.set_defaults(func=cmd_architect)
+
+    # The Recruiter's tool suite, and the world suite's ordering: the views first, then the
+    # agent that holds them. One parser per view rather than a `--view` flag, for `world`'s
+    # reason — an agent reads `--help` to find out what it can do. No `--book` and no
+    # `--branch` anywhere in it: a world belongs to a book and a roster belongs to the
+    # installation, and the shorter command line is part of what keeps the allowance narrow.
+    roster_cmd = sub.add_parser(
+        "roster", help="the writers this installation holds, or offer it a new one"
+    )
+    roster_sub = roster_cmd.add_subparsers(dest="view", required=True)
+
+    show_writers = roster_sub.add_parser(
+        "show", help="every writer this database holds, and which shelves have nobody"
+    )
+    show_writers.add_argument("--name", help="one writer")
+    show_writers.add_argument(
+        "--status", choices=[status.value for status in writers_domain.RosterStatus]
+    )
+    show_writers.add_argument(
+        "--dossier",
+        action="store_true",
+        help="include each dossier's prose. Off by default: four one-paragraph exemplars in "
+        "the same form are what a model asked to write a fifth will copy, and reading a "
+        "colleague's dossier should be a deliberate act",
+    )
+    show_writers.add_argument("--json", action="store_true", help="ignored; output is JSON")
+    show_writers.set_defaults(func=cmd_roster, view="show")
+
+    check_writers = roster_sub.add_parser(
+        "check", help="what is wrong by arithmetic; exits 2 when anything is"
+    )
+    check_writers.add_argument(
+        "--dossier",
+        help="rehearse this candidate instead of auditing the roster: says what would refuse "
+        "it, writes no record, costs nothing, and always exits zero",
+    )
+    check_writers.add_argument("--dossier-file", dest="dossier_file")
+    check_writers.add_argument("--json", action="store_true", help="ignored; output is JSON")
+    check_writers.set_defaults(func=cmd_roster, view="check")
+
+    vocabulary = roster_sub.add_parser(
+        "vocabulary",
+        help="every field a writer declaration takes, and the shape each one has",
+    )
+    vocabulary.add_argument("--json", action="store_true", help="ignored; output is JSON")
+    vocabulary.set_defaults(func=cmd_roster, view="vocabulary")
+
+    declare_writer = roster_sub.add_parser(
+        "declare", help="offer the roster a new writer (proposed, never on the roster)"
+    )
+    declare_writer.add_argument("name")
+    declare_writer.add_argument(
+        "--dossier",
+        help="the whole dossier as one quoted paragraph; no line breaks are needed and none "
+        "of the four shipped dossiers has one",
+    )
+    declare_writer.add_argument(
+        "--dossier-file",
+        dest="dossier_file",
+        help="the dossier as a file, or - for stdin. The operator's path: a Recruiter holds "
+        "four `litharness roster ...` commands and nothing else, so it can neither write a "
+        "file nor pipe into one",
+    )
+    declare_writer.add_argument(
+        "--interest",
+        dest="interests",
+        action="append",
+        default=[],
+        metavar="SUBJECT",
+        help="a named subject, once per subject, in order. Order is addressed material: "
+        "reordering mints a different writer",
+    )
+    declare_writer.add_argument(
+        "--specialization",
+        choices=sorted(roster_mod.SPECIALIZATIONS),
+        help="which of the twelve shelves this writer is for. Set for you inside a recruit run",
+    )
+    declare_writer.add_argument(
+        "--shape",
+        choices=sorted(roster_mod.SHAPES),
+        help="the deliberate dossier form. No default: the forms are a registered arm and a "
+        "default would standardise on one of them without anybody deciding to",
+    )
+    declare_writer.add_argument("--note")
+    declare_writer.add_argument("--json", action="store_true")
+    declare_writer.set_defaults(func=cmd_roster, view="declare")
+
+    accept_writers = roster_sub.add_parser(
+        "accept", help="put declared writers on the roster, as one decision"
+    )
+    accept_writers.add_argument(
+        "names",
+        nargs="*",
+        metavar="NAME_OR_ID",
+        help="which writers, by name or by writer id; every proposed one when you name none. "
+        "An id is how you pick between two proposals that share a name, which is what an "
+        "edited dossier looks like",
+    )
+    accept_writers.set_defaults(func=cmd_roster, view="accept")
+
+    # `recruit_cmd`, not `recruit`: `application/recruiter.py` is imported at the top of this
+    # file and a local would shadow it, which is the lesson `arch` already records.
+    recruit_cmd = sub.add_parser(
+        "recruit",
+        help="put the Recruiter on one shelf, holding the roster's read views and declare",
+    )
+    recruit_cmd.add_argument(
+        "--specialization",
+        required=True,
+        choices=sorted(roster_mod.SPECIALIZATIONS),
+        help="which of the twelve shelves to recruit for. One per call: an agent run is "
+        "unbounded in turns and this box runs one arm at a time",
+    )
+    recruit_cmd.add_argument(
+        "--shape",
+        choices=sorted(roster_mod.SHAPES),
+        help="the dossier form to ask for. Defaults to this shelf's own cell in the slate "
+        "registered before any draw (`recruiter.SLATE`, and `recruiter.shape_for` reads it), "
+        "which is the assignment stage-0 §146 pre-registered. Passing one overrides it and "
+        "the override is recorded on the row and in the decision's profile — but a form typed "
+        "by hand is a form that can be mistyped, and a mistyped one files a recruit into the "
+        "wrong cell of the arm with nothing saying so",
+    )
+    recruit_cmd.add_argument(
+        "--note", help="operator annotation for the decision row. Never sent to the model"
+    )
+    recruit_cmd.set_defaults(func=cmd_recruit)
 
     listing = sub.add_parser(
         "listing",
@@ -4642,7 +5315,7 @@ def build_parser() -> argparse.ArgumentParser:
     listing.add_argument(
         "--writer",
         default=argparse.SUPPRESS,
-        help=f"one of: {', '.join(writers_domain.CAST)}; overrides the global --writer",
+        help=_WRITER_OVERRIDE_HELP,
     )
     listing.add_argument(
         "--scenes",
@@ -4908,7 +5581,13 @@ def main(argv: Sequence[str] | None = None) -> int:
     except MigrationsMissing as error:
         print(f"litharness: {error}", file=sys.stderr)
         return EXIT_FAULT
-    except (OSError, FileExistsError, ValueError, sqlite3.Error) as error:
+    except (
+        OSError,
+        FileExistsError,
+        ValueError,
+        sqlite3.Error,
+        directors_domain.IllegalBrief,
+    ) as error:
         # Operational faults — a locked or missing database, a backup destination that
         # already exists, a bad argument. Distinguished from EXIT_ATTENTION because a
         # driver should retry these next iteration rather than surface them as the
@@ -4920,6 +5599,13 @@ def main(argv: Sequence[str] | None = None) -> int:
         # A driver built on the documented contract escalated the fault it was told to
         # absorb. An operator command contends with the ticking session on
         # `BEGIN IMMEDIATE` by design, so this is the *expected* fault, not an exotic one.
+        #
+        # **`IllegalBrief` is here for the same reason and was found the same way.** It is a
+        # bare `Exception`, so once a dossier could live in a database rather than only in
+        # source, `litharness prompts --writer <name>` on a stored dossier that a later-
+        # registered prose axis has made illegal escaped as a traceback and exit 1 — while
+        # `roster check` reported the same row as a fault and exited 2. A refusal this system
+        # writes itself must not reach an operator as a stack trace.
         print(f"litharness: {type(error).__name__}: {error}", file=sys.stderr)
         return EXIT_FAULT
 

@@ -42,6 +42,7 @@ from litharness.adapters.sqlite_errors import (
 )
 from litharness.adapters.sqlite_jobs import SqliteJobRepository
 from litharness.adapters.sqlite_plans import SqlitePlanRepository
+from litharness.adapters.sqlite_roster import SqliteRosterRepository
 from litharness.domain.budget import Spend
 from litharness.domain.directives import Directive, DirectiveKind, DirectiveStatus
 from litharness.domain.directors import DIRECTOR_AUTHOR_PREFIX
@@ -75,6 +76,8 @@ from litharness.domain.policy import (
 )
 from litharness.domain.promises import PROMISE_OPEN, PROMISE_PAID, Promise
 from litharness.domain.revision import Revision, node_version_id
+from litharness.domain.writers import RosterStatus
+from litharness.domain.writers import Writer as DomainWriter
 
 #: How long a writer waits for a contended database before reporting it locked. An
 #: operator command (`status`, `backup`) contends on `BEGIN IMMEDIATE` with the ticking
@@ -231,6 +234,11 @@ class SqliteStore:
             insert_decision=SqliteStore._insert_decision,
             decode_directive=_directive_from_row,
             jobs=self._jobs,
+        )
+        self._roster = SqliteRosterRepository(
+            connection,
+            transaction,
+            insert_decision=SqliteStore._insert_decision,
         )
 
     # -- lifecycle ------------------------------------------------------------
@@ -1788,6 +1796,54 @@ class SqliteStore:
             for event in events:
                 self._insert_event(connection, event)
         return inserted
+
+    # --- the writer roster -------------------------------------------------------------
+    #
+    # Delegates only. `sqlite_roster.py` carries the status machine and the decision-row
+    # invariant; these four sit here because a reader looking for the Director's table looks
+    # for the roster in the same place.
+
+    def record_proposed_writer(
+        self,
+        writer: DomainWriter,
+        *,
+        specialization: str,
+        shape: str,
+        proposed_at: str,
+    ) -> bool:
+        """Offer the roster one writer, always proposed. `False` when already on record."""
+        return self._roster.record_proposed_writer(
+            writer, specialization=specialization, shape=shape, proposed_at=proposed_at
+        )
+
+    def roster_rows(
+        self,
+        *,
+        writer_id: str | None = None,
+        name: str | None = None,
+        status: RosterStatus | None = None,
+        specialization: str | None = None,
+    ) -> list[dict[str, Any]]:
+        """Raw roster columns, so an illegal stored dossier can be named rather than raised on."""
+        return self._roster.roster_rows(
+            writer_id=writer_id, name=name, status=status, specialization=specialization
+        )
+
+    def accepted_writer(self, name: str) -> DomainWriter | None:
+        """The one accepted writer answering to `name`. A proposal is not castable."""
+        return self._roster.accepted_writer(name)
+
+    def accept_writers(
+        self,
+        writer_ids: Sequence[str],
+        *,
+        decision: PolicyDecision,
+        accepted_at: str,
+    ) -> int:
+        """Put proposed writers on the roster as one decision. Returns how many moved."""
+        return self._roster.accept_writers(
+            writer_ids, decision=decision, accepted_at=accepted_at
+        )
 
     def machine_directives(
         self, book_id: str, branch_id: str, *, live_only: bool = False
