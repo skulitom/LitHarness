@@ -14627,3 +14627,226 @@ scope axiom are untouched. Nothing here says the fix improves a listing — it s
 twenty-one listings did something no published listing in the pool does, and that the loop now
 draws again when it happens. Whether the redraw reads better to the operator is the next read's
 question, not this entry's claim.
+
+## 146. The roster can grow, and the thing that locked every premise is now a variable rather than a fixture
+
+**Numbered 146 rather than 148: §146 was staked for this work before §147 was committed on the
+read branch, and the two merge separately.** A gap left in an append-only log is worse than an
+out-of-order arrival, and the coordinating session allocated it. The scan in `CLAUDE.md` was
+re-run at commit time.
+
+### 146.1 What was measured first, and none of it by this entry
+
+The premise lock's cause is located in our own text, and both the reading and its counts are
+[`plan/reader-read-5.md`](reader-read-5.md) §4.3's. The shape, without the numbers, which live
+there: each of the four cast dossiers names an **inciting beat** as well as an appetite, and
+every listing that writer has drawn opens on that beat. That number already carries one
+correction — the brief said eight where the count was seven — and a figure with a correction
+history is the last one to copy into a second home.
+
+**Two halves of that audit point in opposite directions and both are load-bearing here.**
+
+- **The lexical half came back NULL and is treated as a result.** A threat/grim word family over
+  the four dossiers and the prompt surfaces returns one to three hits per dossier against one in
+  `house.CLARITY`. There is no grimdark *wording* to remove, so **no word-level clause went into
+  the Recruiter's prompt**. That would have been the fourth-rule move §127 and §138 refuse, and
+  it is recorded as a refusal rather than as an omission.
+- **The structural half is positive and is what this entry builds against.** The previous fix —
+  making the dossier's variable *appetite* rather than *profession*, after four career dossiers
+  each set a book inside their own day job — stopped the day job leaking and started the opening
+  beat leaking. **The leak reproduced one level up.** *"You want a reader to finish a chapter
+  wanting to try something"* is an appetite and locks nothing; *"the first message nobody asked
+  for"* is an image of how a story opens and locks everything.
+
+And the roster could not grow: four dossiers compiled into `domain/writers.py`, and no way to add
+one that did not involve editing Python and shipping it.
+
+### 146.2 What shipped
+
+**A store-backed roster.** `migrations/035_writer_roster.sql`, `adapters/sqlite_roster.py`, four
+delegates on the facade. `--writer` resolves the accepted roster first and the compiled cast
+second, which is safe only because `writers.RESERVED_NAMES` makes the two namespaces disjoint — a
+stored row named after a control would not fail, it would quietly answer.
+
+**A `roster` tool suite and a `recruit` agent, in the Architect's containment pattern.**
+`vocabulary`, `show`, `check`, `declare`, `accept`; `application/roster.py` holds the views and no
+logic. The allowance is **four enumerated strings rather than one glob**, and the Architect is
+why: `world_agent.ALLOWED_TOOLS` is `Bash(litharness world:*)` and `world accept` is itself a
+`litharness world ...` command, so on that point the Architect's containment rests on the last
+line of its tool essay rather than on its allowance. `roster accept` also refuses outright while a
+recruit run is in flight, which is a second lock that does not depend on how a `Bash(prefix:*)`
+rule is matched. **The Architect discrepancy is reported and is not fixed here**; whether that
+matcher is a prefix match was not tested, and acting on it needs that test first.
+
+**`roster vocabulary` names each field's shape rather than its name.** The write-only-interface
+lesson has been paid for three times, and `world.vocabulary`'s own fix — a sentence per predicate
+— still leaves that payload unable to say what repeats or what is required. Here every field is an
+object with a type, a repeat flag, constraints and an example, the whole command line is shown
+once assembled, and a test parses that example with the real parser and runs the real guard over
+its dossier so it cannot rot.
+
+**Three dossier forms, and the third exists to keep the contrast clean.** The brief asked for two
+— one vivid image, several distinct loves — to measure whether image *count* drives the premise
+lock. **The audit cannot settle that question and does not claim to**: all four cast dossiers
+carry one love *and* an opening beat, so nothing in it varies count, and what it establishes is
+only that a named beat gets drawn. What it does show is that the brief's two cells would have
+moved count and beat together, so a difference between them could not have said which one moved
+it. The two are therefore separated:
+
+| cell | what it is | what it is for |
+| --- | --- | --- |
+| `several-with-beat` | several loves at category level, one phrased as an opening image | arm |
+| `several-no-beat` | the same several loves, none phrased as a scene | arm |
+| `single-image` | one love, and it is an opening image: the shipped form | control, **two factors**, not an arm |
+
+**Registered before any draw: `several-no-beat` locks lower than `several-with-beat`.**
+`single-image` is the on-disk control and is evidence about neither factor on its own. **The
+brief's instruction not to silently standardise stands**: if one form wins, the standardisation
+gets its own recorded decision rather than riding the result.
+
+**The assignment rule, also stated before any draw.** The operator's slate contains three
+near-duplicate pairs — (Light Fantasy, Cozy Fantasy), (Cultivation, Chinese Cultivation in
+English), (Isekai, Portal Fantasy). Each is split across the two arms, alternating direction by
+pair index; LitRPG Comedy takes the control, because reproducing the shipped form on four more
+threat-forward shelves reproduces a result already on disk, and of the shelves the near pairs left
+free it is the one least likely to produce a dark opening unprompted. **That grouping is this
+session's and not the operator's**: their words are *"I like light fantasy, things that are less
+grimdark, i feel like currently it's underrepresented"*, and they named twelve shelves flat —
+nobody but this entry calls LitRPG Comedy light. So that cell asks the capability question their
+sentence raises. The remaining five fill by slate position. Four per cell.
+
+That gives **three matched pairs inside the contrast**, where shelf is approximately held while
+the form varies — a partial within-shelf design at no extra recruits. Two of the three fell out of
+plain positional cycling and the third did not. **Three of three fall out of the stated rule, and
+the difference is entirely whether it was written down first**, which is the whole of why
+pre-registration is not paperwork.
+
+**Two limitations, stated with the design rather than after it.** Shelf is held only on those
+three pairs; the other six are confounded with cell, and the residual difference inside a near
+pair is not zero. Breaking that needs a second dossier per shelf in the opposite cell, at twice
+the recruits.
+
+And **the count contrast has no matched pair at all**: every near pair sits inside the two
+`several-*` cells, so `single-image` against either of them is four shelves against four other
+shelves. The beat question is the one this slate can read; the count question the brief asked is
+not answered by it, and saying so costs less than a number nobody could interpret.
+
+### 146.3 Two readings registered in advance, because the two statistics are not equally protected
+
+- **The lock statistic is safe across cells.** It is within-writer opening agreement, the matched
+  pairs hold shelf approximately constant, and cell membership is what varies.
+- **A tone statistic is not, and is registered as within-pair only.** The cells are not tonally
+  matched: `several-no-beat` carries Dark Fantasy and `several-with-beat` carries Sci-Fi, so a
+  cross-cell tone difference
+  could be Dark Fantasy being dark — and it would push tone up in the cell whose lock prediction
+  is the favourable one. The three matched pairs give three within-pair tone contrasts where shelf
+  is approximately held. **Cross-cell tone is description and may not carry a claim**, and
+  Dark-Fantasy-in-`several-no-beat` is named here as the reason.
+
+**The named acceptance check for the arm is `research/quality-measurement/brief_capability.py`'s
+`premise_lock`, with its sham as a precondition rather than a footnote**: it returns nothing below
+two draws, and a candidate's value is uninterpretable until `between_writer_lock` is shown to sit
+below within-writer lock on the same draws. A statistic run without its sham is the failure shape
+this repository keeps burying. It is not imported here — running it needs K listings per candidate
+dossier, which is a paid sweep and is the brief's Task 4.
+
+### 146.4 What was refused
+
+- **A word-level tonal rule in the Recruiter's prompt.** §146.1's null; §127 and §138.
+- **An appetite *gate*.** All four cast dossiers open on "You write", say "you love", and close on
+  what they want a reader to do; none of the ten in `BUILTIN` — which is exactly the
+  career-dossier failure — does any of the three. That separation is real and it is still only a
+  **census**: the markers are calibrated on four dossiers that are all the `single-image` control,
+  so refusing a dossier that lacked them would push the arms toward the control's form and remove
+  the variable this build exists to create. The prompt also teaches the shape, so a passing count
+  measures compliance. Reported, never enforced.
+- **A deterministic day-job detector.** Three candidates that look like they would work are each
+  refused with the entry that killed them: an occupation word list (word lists were deleted with
+  causes and never converted, §127; a trade list would refuse okonjo's *"masters"* and miss "you
+  kept a lighthouse"); a closed interests vocabulary (turns the slate into a quota the brief says
+  it is not); and a model reading the dossier and answering "is this a day job?", which is a
+  verdict channel with one candidate (§61(5), §105.1). **The gap is stated rather than gated.**
+- **Any ranking, casting, or comparison.** No model reads two dossiers. No view orders by anything
+  but a name. No `--all` on `recruit`: one shelf per call, because `claude -p` fails under box
+  load and a twelve-shelf run refused partway through by the budget could not say which shelves
+  got done. No `--force` on `accept`, unlike `world accept`: a world may contradict itself and an
+  operator may want that on the record, but an illegal dossier is a prose axis about to enter
+  every scene call for a whole book and R1 has no override.
+- **"Least-recently-cast", and the column it would need.** Nothing anywhere records which writer
+  drafted which book, so a `last_cast_at` field would be a column nothing writes — `target_words`'
+  defect, already paid for twice.
+- **Seeding the four cast writers into the table.** They were admitted by being written into code,
+  so there is no decision row for `accepted` to point at, and minting one is exactly the move the
+  schema's CHECK exists to prevent. They stay the compiled controls the roster is read against,
+  and their ids are now pinned by a golden test.
+- **The house floor in the Recruiter's prompt**, and this is the closest call. Its output is a bio
+  nobody reads — but that bio rides in the system message of every scene call the writer it
+  describes ever makes, which is the reason the floor may not reach it rather than a reason it
+  may. §138 measured a rule's affirmative half returning as a verbal formula in the output.
+- **A populated `exemplar_digest`.** Socket only; there is no flag that could fill one.
+
+### 146.5 No bar is declared
+
+Nothing here declares a bar over anything, and §61's four attainability checks were not done
+because there is no quantity to do them on: not one recruit dossier existed when this shipped. The
+lock prediction in §146.2 is a **direction registered before a draw**, not a threshold, and a flat
+result refutes it rather than failing anything. §137's distinctness door is untouched and still
+has no key, so nothing here claims a recruit differs from anybody.
+
+### 146.6 Anti-scope
+
+Listings by recruits are Task 4 of the brief, explicitly ordered behind the listing fix, and
+nothing in this change draws, outlines, drafts or covers anything. Director casting is
+`director-role.md`'s build and needs its own containment argument; no new `DirectiveKind` exists
+and `--writer` remains an operator flag resolved per invocation. No axis was admitted, no counter
+promoted, and no reader was consulted, solicited or simulated. The four cast writers and the ten
+probe writers are unedited. RS1 holds: nothing under `src/` references a corpus.
+
+**And nothing done to the dossiers may be read as having fixed the covers.** Eight of eight covers
+sit below mid-grey and the cover pipeline reads the listing, but all eight came from dark
+listings, so that sample has no variation on its input and cannot show a dose-response. A cover
+leg also needs covers generated, which is image-model spend on top of any listing sweep.
+
+### 146.7 Twelve defects were found by an adversarial review before any of this was committed
+
+Recorded because the shape of them is the useful part, not the count. **One was blocking and it
+was in the half that looked safest.** Two proposals under one name are legal by design — an
+edited dossier is a different writer — and the partial index only forbids two *accepted* ones.
+The batch's duplicate check looked at what was already accepted and not at itself, so a bare
+`roster accept` reached the UPDATE loop and died on `UNIQUE constraint failed`, naming neither
+writer, moving nothing, and writing no decision. With no retraction anywhere in the suite, that
+made the documented operator path dead for that database permanently. Fixed twice over: the
+collision is now reported like any other refusal and the rest of the batch still lands, and
+`accept` takes a writer id as well as a name so a contested pair can be settled.
+
+Three more were the same failure wearing different clothes — **a claim in prose that the code
+did not keep**:
+
+- The recruiter's docstring said the agent is told nothing about the existing roster while its
+  own tool essay told the agent to go and read it, and the vocabulary told it to ask for the
+  dossier prose that `show` withholds on purpose. The prose was wrong and the invitation was
+  removed; the withholding stays in the view, where it is mechanical.
+- The vocabulary told the agent `--note` is *"never sent to a model"* while `show` returned it.
+  An annotation is where a preference gets written down, and a view a generative agent holds is
+  where that preference would reach another generative agent. `note` left the payload.
+- The migration header said the counts *"are not restated anywhere else"* two lines after
+  restating them, and §146.1 did the same. Both now point.
+
+And two were claims about **this entry's own reasoning**. It said the audit showed count is not
+the mechanism; the audit shows no such thing, because all four cast dossiers carry one love *and*
+a beat, so nothing in it varies count. And it credited the operator with a grouping of shelves as
+"light" that only this session made. Both are corrected above rather than left for a reader to
+catch.
+
+The rest were an exception class that escaped the CLI's handler as a traceback and exit 1, five
+views printing through a cp1252 console codec that mangles the very character the vocabulary
+warns about, a `--shape` flag with no default and no reachable pointer to the slate it should
+match, a help string promising the wrong exit code, and two leaked environment variables on an
+error path. None of them would have failed a test that existed.
+
+**The codec one is this box's third surface for one defect and is worth naming as a pattern
+rather than as a bug.** `_write_document` records it for exports and `_say` records it for the
+operator surface, where it cost an `architect seed` run its only human-readable account of
+itself; the roster views are the third. Each was written by somebody who knew about the previous
+one, which is the argument for `_say` existing at all — and against every new surface being
+allowed to reach for `print` and find out.

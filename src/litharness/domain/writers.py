@@ -29,6 +29,7 @@ never judges, and a writer that did would be a judge in a hat.
 
 from __future__ import annotations
 
+import enum
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field
 from hashlib import sha256
@@ -51,6 +52,41 @@ _FIELD = "\x00"
 #: Separator between interests inside their own field, distinct from `_FIELD` so that
 #: `("a", "b")` and `("a\x00b",)` cannot address to the same writer.
 _ITEM = "\x1f"
+
+
+class RosterStatus(enum.StrEnum):
+    """Where a stored writer stands, and the gap between the two members is a person.
+
+    Lowercase values because every status column in this schema stores lowercase; `PROPOSED`
+    and `ACCEPTED` in `plan/handoff-writer-recruiter.md` are member names rather than column
+    values. The enum lives in the domain because the *rail* does — a Recruiter proposes and
+    only an operator's decision row accepts — and an adapter that invented its own strings
+    would be the place that rail could quietly lose a member.
+    """
+
+    PROPOSED = "proposed"
+    ACCEPTED = "accepted"
+
+
+#: The dossier's form, as a **variable rather than a fix**. All four `CAST` dossiers are built
+#: the same way and each writer opens every empty-brief listing on the beat its own dossier
+#: names; the counts are `plan/reader-read-5.md` §4.3's. Whether that is caused by the dossier
+#: carrying *one* love or by its carrying an *opening beat* is the question a registered
+#: listing arm exists to separate, so recruits are drafted in three deliberate forms and
+#: nothing standardises on one by default.
+#:
+#: **The two that make the contrast are `several-with-beat` and `several-no-beat`**: the same
+#: several loves at category level, differing only in whether one of them is phrased as a scene
+#: the story opens on. `single-image` reproduces the shipped form and varies *two* factors
+#: against the other two — one love and a beat — so it is the on-disk control and is not an arm
+#: of the contrast. That labelling is the whole reason there are three rather than two: a
+#: two-cell design that moved count and beat together could not say which one moved the result.
+#:
+#: Here rather than in a SQL `CHECK` because SQLite cannot alter one without rebuilding the
+#: table, and a fourth form should cost a line of Python rather than migration 036.
+DOSSIER_SHAPES: frozenset[str] = frozenset(
+    {"single-image", "several-with-beat", "several-no-beat"}
+)
 
 
 class IllegalDossier(IllegalBrief):
@@ -357,12 +393,22 @@ BUILTIN: Mapping[str, Writer] = {
 #: book, not a book about metallurgy — and it produced four worlds with no magic in them.
 #: A dossier's variable is what this person reads the genre for and loves to write, which
 #: is a real writer's bio and not a setting the book can be dropped into.
-#: `legal_dossier` enforces the second half, and the first half is the point: three rules in
-#: The retired Forge's private rules were assertions about what the genre's reader wants,
-#: addressed to nobody in particular. A professional who reads progression fantasy for training
-#: arcs does not need to be
+#: `legal_dossier` enforces the second half, and the first half is the point: the retired
+#: Forge's private rules were assertions about what the genre's reader wants, addressed to
+#: nobody in particular. A professional who reads progression fantasy for training arcs does
+#: not need to be
 #: told that an academy is furniture the reader came for. That is the operator's standing note
 #: about hardcoding what a professional already knows, applied where it is cheapest to apply.
+#:
+#: **The leak reproduced one level up, measured 2026-08-28** (`plan/reader-read-5.md` §4.3,
+#: which owns the counts). Making the variable appetite rather than profession stopped the day
+#: job leaking and started the opening beat leaking: every one of these four names an inciting
+#: beat as well as an appetite, and each writer draws that beat in every listing it has drawn.
+#: *"You want a reader to finish a chapter
+#: wanting to try something"* is an appetite and locks nothing; *"the first message nobody asked
+#: for"* is an image of how a story opens and locks everything. These four are left exactly as
+#: they are — they are the controls the roster is read against — and `DOSSIER_SHAPES` is where
+#: the alternative gets drafted instead.
 CAST: Mapping[str, Writer] = {
     writer.name: writer
     for writer in (
@@ -415,6 +461,34 @@ CAST: Mapping[str, Writer] = {
 }
 
 
+#: Names a stored writer may not take, because a stored row resolves **before** these do.
+#: `CAST` are the four controls the roster is read against, and `BUILTIN` are the ten the
+#: distinctness probe reads. **Not every book on disk was written by one of them** — §139.1
+#: records that every scene this system drafted before 2026-08-25 was written by nobody, and
+#: the anonymous no-writer arm is still what `--writer` unset returns. That is the point: a
+#: store row wearing one of these names would not fail, it would quietly answer instead,
+#: which is the worst outcome available to a run whose whole question is whether the arms
+#: differ — `_selected_writer` already refuses an unknown name loudly for exactly that reason.
+RESERVED_NAMES: frozenset[str] = frozenset(BUILTIN) | frozenset(CAST)
+
+
+def refuse_reserved_name(name: str) -> None:
+    """Raise unless `name` is free for a stored writer to take.
+
+    `IllegalDossier` is a stretch for a name collision — it is documented as *a dossier a Writer
+    is not licensed to carry* — and it is chosen for the reason that type subclasses
+    `IllegalBrief` at all: one rule, one `except`. A caller that already refuses an illegal
+    dossier refuses an illegal admission by the same clause, and two exception types would let
+    "a writer this roster may not hold" drift into two rules.
+    """
+    if name.strip() in RESERVED_NAMES:
+        raise IllegalDossier(
+            f"{name!r} is a compiled writer's name. The four in CAST are the controls the "
+            "roster is read against and the ten in BUILTIN are the distinctness probe; a "
+            "stored row answering to one of them would shadow a control rather than fail"
+        )
+
+
 def system_for(task: str, writer: Writer | None = None) -> str:
     """One system message for any role that writes for a reader: who, then the floor, then the job.
 
@@ -439,11 +513,15 @@ def system_for(task: str, writer: Writer | None = None) -> str:
 __all__ = [
     "BUILTIN",
     "CAST",
+    "DOSSIER_SHAPES",
+    "RESERVED_NAMES",
     "WRITER_ID_PREFIX",
     "IllegalDossier",
+    "RosterStatus",
     "Writer",
     "build",
     "legal_dossier",
+    "refuse_reserved_name",
     "system_for",
     "writer_id_for",
 ]

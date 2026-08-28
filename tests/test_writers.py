@@ -157,9 +157,57 @@ def test_no_shipped_dossier_uses_an_em_dash():
     *demonstrates* the mark on every draft, and §83's finding is that demonstration moves register
     where description does not. §78's em-dash hypothesis is still VOID and under test.
     """
-    for writer in writers.BUILTIN.values():
+    for writer in (*writers.BUILTIN.values(), *writers.CAST.values()):
         assert "—" not in writer.dossier, writer.name
         writers.legal_dossier(writer.dossier)
+
+
+def test_the_cast_still_addresses_to_the_ids_it_addressed_to():
+    """A golden pin on the fourteen shipped writers, so an edit to a dossier fails loudly here.
+
+    These four are the controls the roster is read against, and every listing drawn since a
+    cast existed carries one of their ids. (Not every book on disk: §139.1 records that every
+    scene drafted before 2026-08-25 was written by nobody.) Their ids are how *"which writer
+    drafted this"* stays answerable, and the roster table's whole argument for
+    content-addressing is that a roster cannot drift under the work it produced — which is
+    worth nothing if the four that already produced some can drift. A deliberate edit re-pins
+    this list and says so in the commit; an accidental one is caught.
+    """
+    for name, writer in (*writers.BUILTIN.items(), *writers.CAST.items()):
+        assert writer.writer_id == writers.writer_id_for(
+            name=name,
+            dossier=writer.dossier,
+            interests=writer.interests,
+            exemplar_digest=writer.exemplar_digest,
+        )
+    assert writers.CAST["ferreira"].writer_id == "wtr-49228795540fe3a8ec3c23f8"
+    assert writers.CAST["halloran"].writer_id == "wtr-8490469901c6e8e3d0289a5a"
+    assert writers.CAST["vance"].writer_id == "wtr-06de555e9165e7fccd445955"
+    assert writers.CAST["okonjo"].writer_id == "wtr-c57c71acfd91e1257e4923b4"
+
+
+def test_the_appetite_markers_separate_the_cast_from_the_career_pool():
+    """The calibration that licenses `roster check`'s census, measured over two shipped pools.
+
+    All four of `CAST` open on "You write", say "you love", and close on what they want a reader
+    to do; none of the ten in `BUILTIN` does any of the three, and `BUILTIN` is exactly the
+    failure being screened for — ten dossiers about what somebody did for a living.
+
+    **It stays a census and never a gate**, and `roster.appetite_markers` says why: the markers
+    are calibrated on four dossiers that are all the `single-image` control, so refusing a
+    dossier that lacks them would push the `several-*` arms toward the control's form. If a
+    later edit breaks this test, the census has lost its licence rather than found a defect.
+    """
+    from litharness.application.roster import appetite_markers
+
+    for writer in writers.CAST.values():
+        assert set(appetite_markers(writer.dossier)) == {
+            "writes",
+            "loves",
+            "wants_a_reader",
+        }, writer.name
+    for writer in writers.BUILTIN.values():
+        assert appetite_markers(writer.dossier) == (), writer.name
 
 
 def test_the_shipped_roster_is_ten_writers_with_two_adjacent_pairs():

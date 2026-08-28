@@ -327,6 +327,21 @@ def test_every_role_that_writes_for_a_reader_carries_the_house_rules() -> None:
     audit paths judge rather than write; `narrative_planner` proposes plan *edits* as JSON;
     `summarize` writes summaries the packet reads and no reader ever sees. A role that starts
     producing reader-facing prose belongs on this list and its own test failure will say so.
+
+    **`recruiter` joined the absent list on 2026-08-28, and it is the closest call on it.** What
+    it writes is a bio nobody reads, so by the criterion above it does not belong here — but that
+    bio is rendered into the system message of every scene call the writer it describes ever
+    makes, which is the most-repeated text in the system. That is the reason the floor may not
+    reach it rather than a reason it may: `house.CLARITY` and `house.READER` are craft doctrine,
+    `writers.legal_dossier` refuses a dossier that names what good prose is, and §138 measured a
+    rule's affirmative half coming back as a verbal formula in the output. A Recruiter told how
+    prose should read is one paraphrase from writing that into a dossier, where
+    `prose_axes_named` cannot see it. The floor reaches the drafting call once, through
+    `system_for`, where the prose actually is.
+
+    An absence recorded in a docstring is not enough on its own — absence-by-forgetting and
+    absence-by-decision look identical, which is the failure this test exists to prevent — so
+    `test_the_recruiter_prompt_carries_no_craft_doctrine_of_its_own` asserts it.
     """
     from litharness.application import outline, planner, world_agent
     from litharness.domain import house

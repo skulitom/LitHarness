@@ -29,7 +29,7 @@ import json
 
 import pytest
 
-from litharness.application import overview, readers, titles, world_agent
+from litharness.application import overview, readers, recruiter, titles, world_agent
 from litharness.cli import EXIT_OK, _prompt_pressure, main
 from litharness.domain import house
 from litharness.domain import writers as writers_domain
@@ -64,6 +64,23 @@ def _roles() -> dict[str, str]:
         "scene writer, cast": f"{WRITER.render()}\n\n{floor}",
         "measurement reader": readers.pool(readers.MEASUREMENT)[0].system(),
         "steering reader": readers.pool(readers.STEERING)[0].system(),
+        # **Three rows rather than one, because the three dossier forms are three prompts.**
+        # They differ by one clause and by nothing else, so a divergence between them is a
+        # divergence in the registered arm rather than in the role, and one number could not
+        # show it.
+        "recruiter, single image": (
+            recruiter.render_recruit_request("cozy-fantasy", shape="single-image").system or ""
+        ),
+        "recruiter, several with beat": (
+            recruiter.render_recruit_request(
+                "cozy-fantasy", shape="several-with-beat"
+            ).system
+            or ""
+        ),
+        "recruiter, several no beat": (
+            recruiter.render_recruit_request("cozy-fantasy", shape="several-no-beat").system
+            or ""
+        ),
     }
 
 
@@ -127,9 +144,23 @@ def _roles() -> dict[str, str]:
 #: and *"sentences don't have relations to each other"*. What makes this a raise worth making
 #: rather than §127's fourth rule is that the text already exists in `house` and reaches every
 #: other role; the listing was the one call it had been dropped from.
+#: **The Recruiter joined at 24 on 2026-08-28, measured and set at what is there**, so it starts
+#: as a ratchet rather than as a cut somebody has to justify twice. Eight of the twenty-four are
+#: its tool essay, which is the half a role holding commands cannot do without, and the rest is
+#: the shelf, the appetite rule, the R1 refusal, the form and the one shape clause. It sits
+#: between the listing's 15 and the Architect's 42, and it carries **no house floor at all** —
+#: which is the reason it is this small and is a decision recorded in `application/recruiter.py`
+#: rather than an economy: a role whose output rides in every scene call may not be told what
+#: good prose is, because the paraphrase would ride there with it.
+#:
+#: Three rows at the same number because the three forms differ by one clause. If they ever
+#: diverge, the divergence is in the registered arm rather than in the role.
 BUDGET: dict[str, int] = {
     "title writer": 10,
     "title lookup": 6,
+    "recruiter, single image": 24,
+    "recruiter, several with beat": 24,
+    "recruiter, several no beat": 24,
     "listing writer": 15,
     "architect seed": 42,
     "architect grow": 42,
@@ -179,6 +210,12 @@ def test_the_house_floor_is_the_thing_that_grows_everywhere_at_once() -> None:
 #: text shapes, not where it lives. That role reports what other people have published and
 #: shapes no word a reader of this book will read. `title writer` shapes the few words above
 #: the blurb, so it is.
+#:
+#: **The three Recruiter rows are not here either, and the case is the Architect's**: a tool
+#: essay has to name its commands. It is the closer call of the two, because what a Recruiter
+#: writes is rendered into the system message of every scene call — so
+#: `test_the_recruiter_prompt_is_a_tool_essay_and_would_pass_the_leak_rail_anyway` measures the
+#: rail it is exempt from, and it passes. An exemption nobody checks is an exemption that grows.
 READER_FACING = (
     "listing writer",
     "title writer",
@@ -241,6 +278,9 @@ def test_prompt_inspector_covers_every_production_communication_role(
         "title-lookup",
         "architect-seed",
         "architect-grow",
+        "recruit-single-image",
+        "recruit-several-with-beat",
+        "recruit-several-no-beat",
         "outline",
         "narrative-planner",
         "scene",
