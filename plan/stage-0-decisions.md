@@ -14676,7 +14676,9 @@ why: `world_agent.ALLOWED_TOOLS` is `Bash(litharness world:*)` and `world accept
 line of its tool essay rather than on its allowance. `roster accept` also refuses outright while a
 recruit run is in flight, which is a second lock that does not depend on how a `Bash(prefix:*)`
 rule is matched. **The Architect discrepancy is reported and is not fixed here**; whether that
-matcher is a prefix match was not tested, and acting on it needs that test first.
+matcher is a prefix match was not tested, and acting on it needs that test first. **The test was
+run on 2026-08-28 and the discrepancy was real: §146.9. The Architect's allowance is enumerated
+now too.**
 
 **`roster vocabulary` names each field's shape rather than its name.** The write-only-interface
 lesson has been paid for three times, and `world.vocabulary`'s own fix — a sentence per predicate
@@ -14910,6 +14912,55 @@ that a recruit's listing reads differently, which is the registered arm and need
 `premise_lock` with `between_writer_lock` beside it; not that any of the twelve is good, better,
 or castable. Twelve dossiers exist, they are legal, they sit in the cells they were registered
 into, and a person has not looked at them yet.
+
+### 146.9 The matcher was tested and it is a real prefix match: the glob let the Architect reach `world accept`, and the allowance now enumerates
+
+**Measured first.** Five probes on 2026-08-28, `claude` 2.1.236, run through
+`ClaudeCodeProvider`'s own argv — the transport's mandatory flags, `--permission-mode manual`,
+byte-identical to production — on `claude-haiku-4-5`, ≈$0.13 subscription-equivalent for all
+five. Ground truth is the envelope's `permission_denials` field, the harness's own record of a
+refused tool call, never the model's prose; every probe command was inert (`--help`) or ran
+against a scratch `LITHARNESS_DATABASE`.
+
+| allowance | command | outcome |
+| --- | --- | --- |
+| `Bash(litharness world:*)` | `litharness world summary --help` | ran (control) |
+| `Bash(litharness world:*)` | `litharness world accept --help` | **ran** — the glob does not block `accept` |
+| `Bash(litharness world summary:*)` + `declare:*` | `litharness world accept --help` | **refused**, denial recorded |
+| `Bash(litharness roster show)` | `litharness roster show --dossier` | **refused** — a flagless entry is matched exactly |
+| `Bash(litharness world summary:*)` | `litharness world summary` | ran — a bare command matches its own `:*` entry |
+
+So §146.2's reported discrepancy is confirmed: a `Bash(prefix:*)` allowance is a real prefix
+match, `world accept` sits inside the `Bash(litharness world:*)` prefix, and the Architect's
+inability to install its own world rested on the last line of its tool essay and on nothing the
+harness enforced. The Recruiter's workaround is confirmed enforced in both of its halves: an
+enumerated allowance refuses the command it omits, and a flagless entry refuses the flagged
+form — the *"wall, if it is a wall"* hedge is corrected in place in `application/recruiter.py`,
+because the wall is a wall.
+
+**What shipped.** `world_agent.ALLOWED_TOOLS` is now enumerated — every world command except
+`accept`, glob-only entries because probe five showed a bare command matches its own `:*` —
+so the Architect's inability to self-accept is the matcher's refusal, and the tool essay's last
+line is guidance rather than the containment. Two tests pin it:
+`test_the_architects_allowance_is_every_world_command_except_accept` derives the enumeration
+from the real parser, so a new world subcommand can neither arrive pre-allowed nor be silently
+left out; `test_live_the_shipped_allowances_enforce_their_own_boundaries` (opt-in,
+`LITHARNESS_LIVE_PROVIDERS=1`) re-probes the installed CLI on the shipped allowances — run
+2026-08-28 against 2.1.236, passed — and is to be re-run after any `claude` upgrade, §109's
+rule, because it pins the installed matcher's semantics and not this repository's code.
+
+**What was refused.** A `--disallowed-tools` deny list naming `world accept`: a deny list fails
+open — the next command added to a suite arrives permitted — where the enumerated allowance
+fails closed, and the transport would grow a second permission surface for no width the
+allowance does not already close. Also refused: reading the CLI's documentation as the
+verification. The documented semantics (`:*` is prefix, flagless is exact) match what was
+measured, but §109 already caught this CLI doing something other than its documentation said,
+which is why the check is empirical and the live test outlives this entry.
+
+**No bar, and anti-scope.** Nothing here is a quantity and no bar is declared. The probes
+measure the installed `claude` binary's permission matcher, not any model's behaviour; nothing
+touches generation, measurement, or any reader. `roster accept`'s in-flight refusal (§146.2)
+is untouched and still does not depend on the matcher.
 
 ## 148. The operator drew the boundary of their own read channel, and it includes a household reader
 

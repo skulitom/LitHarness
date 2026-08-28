@@ -15,9 +15,11 @@ it is a prompt property, and growing a roster is generative work, which is the k
 pattern already contains.
 
 **The containment is the tool surface, and here it is enumerated rather than wildcarded.**
-`world_agent.ALLOWED_TOOLS` is the single glob `Bash(litharness world:*)`, and `world accept` is
-itself a `litharness world ...` command — so on that point the Architect's containment rests on
-the last line of its tool essay rather than on its allowance. `plan/director-role.md` calls a
+When this shipped, `world_agent.ALLOWED_TOOLS` was the single glob `Bash(litharness world:*)`,
+and `world accept` is itself a `litharness world ...` command — so on that point the
+Architect's containment rested on the last line of its tool essay rather than on its allowance.
+§146.9 measured that discrepancy real on 2026-08-28 (`claude` 2.1.236 ran `world accept` under
+the glob) and the Architect's allowance is enumerated now too. `plan/director-role.md` calls a
 property carried by who happens to hold the pen the laundering path. Four strings rather than
 one is the whole cost of not repeating it here, and `cmd_roster` refuses acceptance outright
 while a recruit run is in flight, which is a second lock that does not depend on how a
@@ -74,12 +76,14 @@ _SHAPE_PROFILE: Mapping[str, str] = {
 #: **`vocabulary` and `show` are named without a trailing argument pattern and the other two are
 #: not**, and the asymmetry is deliberate rather than tidy. `check` needs `--dossier` to rehearse
 #: and `declare` needs its flags; the two read views need no argument at all, and bare forms
-#: return everything they have. What that buys, *if* an argument-free entry is matched exactly
+#: return everything they have. What that buys, because an argument-free entry is matched exactly
 #: rather than as a prefix, is that `roster show --dossier` — the flag that would hand one arm's
-#: dossier prose to the other arm's recruit — is unreachable from inside a run. **We have not
-#: verified which way that matcher goes**, so the claim being made here is only the one that
-#: holds either way: a narrower string can never permit more than a wider one, and nothing in the
-#: prompt or the vocabulary invites the flag. The wall, if it is a wall, is a bonus.
+#: dossier prose to the other arm's recruit — is unreachable from inside a run. ~~We have not
+#: verified which way that matcher goes~~ **Verified 2026-08-28 on `claude` 2.1.236 (§146.9):
+#: under the allowance `Bash(litharness roster show)`, the command `litharness roster show
+#: --dossier` was refused and the refusal recorded in the envelope's `permission_denials`. The
+#: wall is a wall** — and the claim that held either way still holds: a narrower string can never
+#: permit more than a wider one, and nothing in the prompt or the vocabulary invites the flag.
 ALLOWED_TOOLS: tuple[str, ...] = (
     "Bash(litharness roster vocabulary)",
     "Bash(litharness roster show)",

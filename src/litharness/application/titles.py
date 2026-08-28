@@ -7,8 +7,8 @@ bad title — a reader searching for it finds somebody else's.
 
 **The shape is `world_agent`'s with a different tool.** That module is the pattern this project
 already has for a model that acts rather than answers: a `CompletionRequest` carrying a narrow
-`allowed_tools` allowance and nothing else. The Architect holds `Bash(litharness world:*)`; this
-holds `WebSearch`, and no file access, no shell, no other command.
+`allowed_tools` allowance and nothing else. The Architect holds the world suite (every command
+but `accept`); this holds `WebSearch`, and no file access, no shell, no other command.
 
 **What this must never become: a model asked whether a title is good.** §61(5) and §105.1 —
 no model ranks or selects among candidates unless the containment for it exists — and

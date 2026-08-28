@@ -1200,3 +1200,45 @@ def test_saying_something_still_works_where_stdout_has_no_buffer() -> None:
     with contextlib.redirect_stdout(captured):
         _say("plain")
     assert captured.getvalue() == "plain\n"
+
+
+def test_the_architects_allowance_is_every_world_command_except_accept() -> None:
+    """The omission is the containment, and the list may not rot in either direction.
+
+    §146.9 measured the two facts this shape rests on, on `claude` 2.1.236 through the
+    production argv: an enumerated allowance is enforced — the omitted command is refused, and
+    the refusal lands in the envelope's `permission_denials` — where the single glob
+    `Bash(litharness world:*)` this replaced let `litharness world accept` run, leaving the
+    Architect's inability to self-accept resting on prompt text. Deriving the set from the real
+    parser keeps both failure directions loud: a new world subcommand cannot arrive
+    pre-allowed, and one forgotten in the allowance surfaces as this assertion rather than as
+    an agent's silently refused turn. The live half is
+    `test_live_the_shipped_allowances_enforce_their_own_boundaries`.
+    """
+    import argparse
+
+    from litharness.application import world_agent
+
+    top = next(
+        action
+        for action in build_parser()._actions
+        if isinstance(action, argparse._SubParsersAction)
+    )
+    world_sub = next(
+        action
+        for action in top.choices["world"]._actions
+        if isinstance(action, argparse._SubParsersAction)
+    )
+
+    allowed = set()
+    for entry in world_agent.ALLOWED_TOOLS:
+        assert entry.startswith("Bash(litharness world ") and entry.endswith(":*)"), entry
+        assert "," not in entry, "the CLI transport joins the allowance with a comma"
+        allowed.add(entry.removeprefix("Bash(litharness world ").removesuffix(":*)"))
+
+    assert allowed == set(world_sub.choices) - {"accept"}
+    assert world_agent.render_seed_request("a listing").allowed_tools == world_agent.ALLOWED_TOOLS
+    assert (
+        world_agent.render_grow_request("prose", logical_id="s1").allowed_tools
+        == world_agent.ALLOWED_TOOLS
+    )
