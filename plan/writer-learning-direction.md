@@ -51,6 +51,41 @@ recurrence with no new machinery and no steering. A recurring observation that a
 mechanism later confirms is exactly the item a successor mint should carry. Distributions
 before bars; §105's null prior inherited by any claim that a successor writes differently.
 
+## The two follow-ups, same night
+
+The operator: *"Do our learnings spread to all future writers? otherwise again we are wasting
+a lot of compute. Also wouldn't this create a long backlog of unusable writers?"*
+
+**Spread is by altitude, and the three altitudes already exist.** A lesson files at the level
+it is true at, and each level has a different blast radius:
+
+1. **Writer-level** — a successor mint. Does not spread, *correctly*: larkin's premise groove
+   is a fact about larkin.
+2. **Roster-level** — the recruiter's surfaces: shelf labels, shape clauses, defaults. Spreads
+   to every FUTURE hire automatically. This ran twice tonight: the composition principle and
+   the sharpened detective spec are now inherited by every recruit that will ever be drawn.
+3. **House-level** — the rules, the gates, the world vocabulary. Spreads to EVERY writer,
+   compiled cast included, the moment it lands: the coordinator gate fixed every future
+   listing, not one writer's.
+
+The read-routing discipline (enforcement / gap / instrument) is the filing system that
+decides the altitude, and the recorded danger is filing too high: §127 and §138 measured
+what happens when one complaint becomes a rule for everyone. Compute is wasted only by
+filing writer-level lessons at writer level *when they were really house-level* — which is
+what the §116-shape check in every read exists to catch.
+
+**The backlog is a record, not a waste — but it exposes one missing status.** Rows are
+bytes; refused and superseded writers never resolve for `--writer`, never reach a prompt,
+and never spend anything (casting draws accepted writers only, so the expensive artifact —
+chapters — cannot be spent on an unusable writer; a refusal costs one ~$0.45 draw). The
+chain of superseded identities is the career record, kept visible for the same reason the
+ledger keeps struck-through numbers. The real gap the question exposes: succession under the
+SAME name is currently unrepresentable — the partial unique index forbids two accepted
+writers named larkin, and `refused` is the wrong word for honourable retirement. A
+`superseded` status carrying the successor's id is the missing member of `RosterStatus`,
+and it should ride whichever build next touches the roster schema (the export/import bridge
+is the standing candidate).
+
 ## Anti-scope
 
 Nothing scheduled. The §146 arm, the voice arm, and read 7 come first. Nothing here reopens
