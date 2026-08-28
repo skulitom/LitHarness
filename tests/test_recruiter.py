@@ -202,8 +202,14 @@ def test_the_recruiter_wears_no_dossier_of_its_own() -> None:
 
 def test_the_slate_is_verbatim_the_operators_twelve() -> None:
     """A normalising edit is what this refuses. The slate is a recruitment brief rather than a
-    quota, and both "varied" and "useful" are the operator's words."""
-    assert list(roster.SPECIALIZATIONS.values()) == [
+    quota, and both "varied" and "useful" are the operator's words.
+
+    **Extended 2026-08-28, in the operator's words again**: after reviewing all twelve
+    applications they said *"we are lacking some mystery, detective and historical
+    specializations"* — so the roster admits two new shelves as SUPPLEMENTARY hires while the
+    arm's slate stays exactly the original twelve. The first assertion pins the twelve
+    verbatim; the second pins that the arm never silently absorbs a supplementary shelf."""
+    operators_twelve = [
         "Light Fantasy",
         "Cozy Fantasy",
         "LitRPG Comedy",
@@ -217,7 +223,19 @@ def test_the_slate_is_verbatim_the_operators_twelve() -> None:
         "Isekai",
         "Portal Fantasy",
     ]
-    assert [slug for slug, _ in recruiter.SLATE] == list(roster.SPECIALIZATIONS)
+    assert list(roster.SPECIALIZATIONS.values())[:12] == operators_twelve
+    assert [slug for slug, _ in recruiter.SLATE] == list(roster.SPECIALIZATIONS)[:12]
+    assert list(roster.SPECIALIZATIONS.values())[12:] == ["Mystery", "Detective"]
+    assert [slug for slug, _ in recruiter.SUPPLEMENTARY] == list(roster.SPECIALIZATIONS)[12:]
+    arm_slugs = {slug for slug, _ in recruiter.SLATE}
+    assert not arm_slugs & {slug for slug, _ in recruiter.SUPPLEMENTARY}
+
+
+def test_supplementary_shelves_resolve_a_shape_and_stay_out_of_the_cells() -> None:
+    """`shape_for` answers for a supplementary shelf (the twelve-shelf error message is gone
+    for them), and the shape is the recorded production default, not a cell assignment."""
+    assert recruiter.shape_for("mystery") == "several-no-beat"
+    assert recruiter.shape_for("detective") == "several-no-beat"
 
 
 def test_the_slate_puts_four_shelves_in_each_of_the_three_cells() -> None:

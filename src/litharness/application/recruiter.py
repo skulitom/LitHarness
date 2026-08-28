@@ -216,13 +216,31 @@ NEAR_PAIRS: tuple[tuple[str, str], ...] = (
 )
 
 
+#: Supplementary hires outside the registered arm. The operator, 2026-08-28, after reviewing
+#: all twelve applications (seven signed, five refused): *"I was thinking we are lacking some
+#: mystery, detective and historical specializations."* Mystery and detective are new shelves;
+#: historical's gap is a refused recruit and takes a redraw on its existing shelf.
+#:
+#: **These are production hires, not cells.** §146's arm is the twelve above, 4/4/4, and its
+#: readings exclude everything here. The shape is `several-no-beat` for all supplementary
+#: hires, by a recorded production rule rather than a cell assignment: the structural audit
+#: (reader-read-5 §4.3) identified the named opening beat as the premise-lock mechanism, and a
+#: production hire wants the form the audit predicts locks least — a prediction §146 registers
+#: and has not yet measured, which is why this is a default and not a finding.
+SUPPLEMENTARY: tuple[tuple[str, str], ...] = (
+    ("mystery", "several-no-beat"),
+    ("detective", "several-no-beat"),
+)
+
+
 def shape_for(specialization: str) -> str:
-    """The form this shelf is drafted in, from `SLATE`. Raises for an unknown shelf."""
-    for slug, shape in SLATE:
+    """The form this shelf is drafted in, from `SLATE` then `SUPPLEMENTARY`. Raises for an
+    unknown shelf."""
+    for slug, shape in (*SLATE, *SUPPLEMENTARY):
         if slug == specialization:
             return shape
     raise ValueError(
-        f"{specialization!r} is not one of the twelve shelves; they are "
+        f"{specialization!r} is not a shelf this roster admits; the shelves are "
         f"{', '.join(roster.SPECIALIZATIONS)}"
     )
 

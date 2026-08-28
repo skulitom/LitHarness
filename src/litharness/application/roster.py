@@ -56,6 +56,14 @@ SPECIALIZATIONS: Mapping[str, str] = {
     "progression-fantasy": "Progression Fantasy",
     "isekai": "Isekai",
     "portal-fantasy": "Portal Fantasy",
+    # The operator's post-review extension, 2026-08-28, after signing seven of the twelve and
+    # refusing five: "I was thinking we are lacking some mystery, detective and historical
+    # specializations." Historical already has a shelf above (its refused recruit gets a
+    # redraw, not a new slug); these two are the genuinely new shelves. They are supplementary
+    # hires, not cells of §146's registered arm — `recruiter.SUPPLEMENTARY` is where their
+    # shapes live and says why.
+    "mystery": "Mystery",
+    "detective": "Detective",
 }
 
 #: What each of `writers.DOSSIER_SHAPES` means, for the vocabulary payload. The membership is
