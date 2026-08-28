@@ -230,6 +230,7 @@ NEAR_PAIRS: tuple[tuple[str, str], ...] = (
 SUPPLEMENTARY: tuple[tuple[str, str], ...] = (
     ("mystery", "several-no-beat"),
     ("detective", "several-no-beat"),
+    ("historical-portal-fantasy", "several-no-beat"),
 )
 
 

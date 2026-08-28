@@ -225,7 +225,12 @@ def test_the_slate_is_verbatim_the_operators_twelve() -> None:
     ]
     assert list(roster.SPECIALIZATIONS.values())[:12] == operators_twelve
     assert [slug for slug, _ in recruiter.SLATE] == list(roster.SPECIALIZATIONS)[:12]
-    assert list(roster.SPECIALIZATIONS.values())[12:] == ["Mystery", "Detective"]
+    assert list(roster.SPECIALIZATIONS.values())[12:] == [
+        "Mystery — about interesting things, while still specialized in LitRPG and "
+        "progression fantasy",
+        "Detective — the genre, not a specific profession",
+        "Historical, paired with portal fantasy",
+    ]
     assert [slug for slug, _ in recruiter.SUPPLEMENTARY] == list(roster.SPECIALIZATIONS)[12:]
     arm_slugs = {slug for slug, _ in recruiter.SLATE}
     assert not arm_slugs & {slug for slug, _ in recruiter.SUPPLEMENTARY}

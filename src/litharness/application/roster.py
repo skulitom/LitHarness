@@ -62,8 +62,18 @@ SPECIALIZATIONS: Mapping[str, str] = {
     # redraw, not a new slug); these two are the genuinely new shelves. They are supplementary
     # hires, not cells of §146's registered arm — `recruiter.SUPPLEMENTARY` is where their
     # shapes live and says why.
-    "mystery": "Mystery",
-    "detective": "Detective",
+    # Relabelled 2026-08-28, same night, from the operator's own refusal reasons after the
+    # first supplementary draws came back as standalone-genre writers: one writer writes the
+    # whole book, so a shelf composes with the house genre rather than replacing it. The label
+    # is the only thing the recruit prompt carries for a shelf (§136: a label under that
+    # heading outweighs every rule), so the operator's words go in the label.
+    "mystery": "Mystery — about interesting things, while still specialized in LitRPG and "
+    "progression fantasy",
+    "detective": "Detective — the genre, not a specific profession",
+    # The operator's own pairing example for the Historical gap ("we need Historical paired
+    # with something else, like portal fantasy"). A new blended shelf rather than a relabel:
+    # "Historical" above is one of the arm's twelve and its label is pinned verbatim.
+    "historical-portal-fantasy": "Historical, paired with portal fantasy",
 }
 
 #: What each of `writers.DOSSIER_SHAPES` means, for the vocabulary payload. The membership is
