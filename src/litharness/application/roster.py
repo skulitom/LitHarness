@@ -69,7 +69,11 @@ SPECIALIZATIONS: Mapping[str, str] = {
     # heading outweighs every rule), so the operator's words go in the label.
     "mystery": "Mystery — about interesting things, while still specialized in LitRPG and "
     "progression fantasy",
-    "detective": "Detective — the genre, not a specific profession",
+    # Sharpened again 2026-08-28 by the third refusal on this shelf ("too basic, too
+    # specifically detective. Instead of an adventurer fire mage (unintentionally solving a
+    # case) it's taken too literally as a plain detective story"):
+    "detective": "Detective — the genre-shape underneath an adventure: an adventurer (say, a "
+    "fire mage) unintentionally solving a case, never a plain detective story",
     # The operator's own pairing example for the Historical gap ("we need Historical paired
     # with something else, like portal fantasy"). A new blended shelf rather than a relabel:
     # "Historical" above is one of the arm's twelve and its label is pinned verbatim.
