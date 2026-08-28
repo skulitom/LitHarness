@@ -14910,3 +14910,32 @@ that a recruit's listing reads differently, which is the registered arm and need
 `premise_lock` with `between_writer_lock` beside it; not that any of the twelve is good, better,
 or castable. Twelve dossiers exist, they are legal, they sit in the cells they were registered
 into, and a person has not looked at them yet.
+
+## 148. The operator drew the boundary of their own read channel, and it includes a household reader
+
+**What happened.** During the sixth read (2026-08-28, `plan/reader-read-6.md`), the operator gave
+chapter 1 of *Patch Notes For The Apocalypse* to their girlfriend to test-read and relayed her
+review inside their own. The read record's first ruling held it outside the harvest under §95's
+scope axiom (*no solicited human judgment, not one blinded pair*), with an adoption door for any
+point the operator restated as their own. The operator overruled the exclusion, verbatim: *"Marias
+judgment is part of my judgment, don't dismiss it"* — and exercised the adoption door on the
+headline item in the same hour: *"I really agree with the gramma and punction being issues."*
+
+**What shipped.** The ruling corrected in place (`reader-read-6.md` §4.0), her items analysed and
+routed as part of the operator's harvest (§4.7), attributed to her. The boundary as the operator
+has now drawn it: **the operator-read diagnostic channel includes a household read the operator
+vouches for as part of their own judgment.** It enters with exactly the standing the operator's
+own reads have always had — defect harvest, never data (§95), nothing becomes a prompt or
+directive directly (§97.1).
+
+**What this does not open, stated so the next session does not re-litigate in either direction.**
+The measurement channel is unchanged and closed: no hired readers, no panels, no labels, no
+blinded pairs, no instrument qualified or validated by any human's verdict, and no human read —
+the operator's included — is ever evidence for a research claim. This entry is also not a
+precedent that accumulates readers: it records where the operator says their own judgment's
+boundary sits, not a mechanism for adding judges. A future session that receives relayed
+household feedback routes it as harvest under this entry; a future session asked to recruit,
+hire, or survey readers refuses under §95 exactly as before.
+
+**Anti-scope.** No axis admitted, no bar declared, nothing fixed. The routed findings live in
+`reader-read-6.md` §4; the counts stay there.

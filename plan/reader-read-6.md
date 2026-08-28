@@ -114,17 +114,26 @@ Arrived 2026-08-28 as one message: a verdict on the overview, the operator's own
 review, and — a first in this project's history — **a review by a second person**, the
 operator's girlfriend, asked by the operator to test-read the chapter.
 
-### 4.0 The admissibility ruling, made before any item below is analysed
+### 4.0 The admissibility ruling — made, and then corrected by the operator the same hour
 
-**The second reader's review is quoted in §4.7 and is outside the harvest.** §95's scope axiom
-is written for exactly this: *no solicited human judgment, ever — not hired, not one blinded
-pair*; §126 keeps real readers out of the loop entirely. The operator's own reads are the one
-carve-out, as diagnostics. A solicited test-read by a second person is the closed channel, and
-it stays closed **when the feedback looks useful most of all** — an informal human panel of one
-is the top of the slope the axiom exists to fence. So: none of §4.7's items is analysed, none
-routes, and none may become a finding, a directive, or a prompt. **The one door back in:** any
-point the operator adopts in their own words, in a later message, becomes the operator's own
-observation and routes normally. Adoption is a recorded act; relaying is not adoption.
+~~**The second reader's review is quoted in §4.7 and is outside the harvest.**~~ **Corrected in
+place: the operator overruled the exclusion, and the boundary is theirs to draw.** The ruling
+as first written held the second reader outside under §95's scope axiom (*no solicited human
+judgment, not one blinded pair*) with an adoption door. The operator's answer, verbatim:
+
+> *"Marias judgment is part of my judgment, don't dismiss it"*
+
+and, exercising the adoption door on the headline item in the same hour:
+
+> *"I really agree with the gramma and punction being issues"*
+
+**What this changes, recorded as stage-0 §148:** the operator-read diagnostic channel includes
+a household read the operator vouches for as part of their own judgment. §4.7's items are
+therefore analysed and routed below as part of this harvest, attributed. **What it does not
+change:** the harvest's epistemic status — the operator's own reads were never data either
+(§95), so Maria's inherit exactly that standing: defect harvest, not measurement, nothing
+becomes a prompt or directive directly (§97.1). The measurement channel stays closed — no
+panels, no hired readers, no labels, no instrument is validated by any human's verdict.
 
 ### 4.1 The overview
 
@@ -211,10 +220,9 @@ routing question for whoever picks this up is *why the clause did not land* (§1
 that the affirmative half of a rule is what gets obeyed makes the clause's own wording the
 first suspect), never a second clause on top.
 
-### 4.7 The second reader's review, quoted and not analysed
+### 4.7 The second half of the harvest — Maria's items, routed under §4.0's corrected ruling
 
-Recorded verbatim as it arrived inside the operator's message, under §4.0's ruling — outside
-the harvest, no analysis, no routing:
+Verbatim as they arrived inside the operator's message:
 
 > *"The punction flow reads wrong (full stops and commas in the wrong places. Not enough
 > commas and full stops). / 'Not a ring. All of them, the same flat two-tone, the sound a fire
@@ -222,6 +230,34 @@ the harvest, no analysis, no routing:
 > 'live build' - what is a live build? / Missing words like eg 'meanwhile', 'whilst' / ' "What,"
 > in the way people say it when they mean nothing.' - That is not something humans say /
 > Overall, worst of all is the gramma and punction"*
+
+**The headline — "worst of all is the gramma and punction" — carries the operator's explicit
+endorsement** ("I really agree") and is the read's second-largest finding after §4.6. The
+analysis that fits all four mechanics items at once: the chapter's register is built on
+clipped fragments and comma-chains — the quoted fire-door sentence is a deliberate
+verbless fragment stack — and to both readers it landed as *error*, not style. Either the
+punctuation is genuinely wrong in places, or the register itself misfires for the readership
+it is for; both readings are bad and they are different defects. **Route: direction gap**
+(`house.CLARITY` governs comprehension, not convention — nothing anywhere addresses
+punctuation register), plus an **instrument question** with a named home: fragment rate,
+connective density and comma placement are mechanical counters, but no census of the
+market's *chapters* exists to read them against — the gap `serial-pilot-12.md` inherits from
+pilot 7 §4.1, now with a second reason to close it. One descriptive irony recorded: the
+listing defect was over-chaining ("and then, and then"); the chapter's is under-connecting
+("missing 'meanwhile', 'whilst'") — the same rhythm axis, overshot from opposite sides at two
+artifact lengths.
+
+The remaining items: the fire-door sentence "the wrong way round" is effect-before-frame
+inversion, part of the same register cluster — **gap**. "live build" joins the operator's
+"triage meetings" in §4.5's borrowed-jargon route — **gap**, two sightings now. The *"'What,'
+in the way people say it when they mean nothing"* gloss — *"that is not something humans
+say"* — is a false-note narratorial aside, the marker-tell class: **gap**, with the pointer at
+the tells-battery family rather than any new counter.
+
+**One description, no claim attached:** the two halves of this harvest sit at different
+altitudes with zero overlap — the operator's items are scene- and structure-level (presence,
+repetition, the class menu), Maria's are sentence-mechanics (punctuation, connectives,
+idiom). Two readers, two defect strata, no collision.
 
 ### 4.8 What the protocol asked and did not receive
 
