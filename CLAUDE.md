@@ -66,9 +66,7 @@ to distrust first (PLAN.md header, the same lesson recorded three times).
 
 ## Parallel sessions are real
 
-Several sessions can edit this repo at once. Worktrees are operator-controlled: do not create,
-switch, move, or recommend one unless the operator explicitly asks. Existing worktrees may still
-contain live edits, so inspect them where relevant.
+Several sessions edit this repo at once, on `main` and in `.claude/worktrees/*`.
 
 - `git status` and `git diff` on any shared document immediately before you edit it, and
   re-read a file before editing — mid-edit states have been observed on disk.
