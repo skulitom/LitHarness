@@ -18,6 +18,40 @@ being tested. If the operator's earlier reviews of the two books surfaced defect
 reached a `reader-read-*.md`, harvesting those quotes is still legitimate — but it is a
 recovery of an old read, never a substitute for reading the fresh book.
 
+**Execution log, 2026-08-28 evening, on the branch named above.** What has landed, so the brief
+stops being the place to look:
+
+- **Task 1 is done and its finding is larger than the brief expected.** All eighteen transport
+  failures are one weekly-limit 429 and **every one of them landed on the `ours` leg**; the
+  committed `ours:overview` row has `draws: 0`. The run also had *nineteen* targets and reported
+  seventeen — three `overview.txt` files collided under one name and two were discarded after
+  being paid for. Market legs read, `ours` leg void, instrument defect fixed.
+  [`blurb-tribunal-validity.md`](blurb-tribunal-validity.md) §7, stage-0 §145, and §144's family
+  table corrected in place.
+- **Task 2 is done.** [`serial-pilot-7.md`](serial-pilot-7.md) settled with a §6;
+  [`serial-pilot-9-10.md`](serial-pilot-9-10.md) written.
+  ~~*Reappraisal*'s provenance is unrecorded in `plan/`.~~ **Wrong: it is Serial Pilot 1**, at
+  [`serial-pilot-1.md`](serial-pilot-1.md), store `serial.db`. It stays on the shelf; the
+  inventory row above is corrected by this line. That is the second premise in this brief to fail
+  on inspection, after task 1's "complete-looking run".
+- **Tasks 3 and 4 are re-pointed at Serial Pilot 11**, [`serial-pilot-11.md`](serial-pilot-11.md)
+  — writer `ferreira` cast by the operator, listing and title drawn, cover set generated,
+  **chapters deliberately not drafted**: the operator gated them on seeing the overview first.
+  The read protocol is [`reader-read-5.md`](reader-read-5.md), written before the read.
+- **Tasks 4 and 5 are done.** The operator read the covers and the listing the same evening and
+  named four things; all four are quoted verbatim and routed in
+  [`reader-read-5.md`](reader-read-5.md) §4 — one direction gap with a market distribution behind
+  it, one instrument question on its second sighting, one direction gap whose cause is our own
+  dossier text, and one piece of product direction that is not a defect. Chapters remain the open
+  decision. **The brief is still not deletable**: task 6's chapter half is unspent.
+- **Pilot 10's sixteen listings are out of the package.** Asked, the operator said *"Let's
+  generate everything from scratch"*; only `ferreira`'s fresh listing has been drawn, and the
+  other three writers' are owed.
+- **A production regression was found and fixed on the way**: cover generation had been dead
+  since 2026-08-28 10:12 (`5674833`), because the temporary workspace that keeps `AGENTS.md` out
+  of the cover call is not a trusted Codex directory. Nothing had generated a cover since
+  08-26, so nothing caught it.
+
 ## Boundaries, before the tasks
 
 1. **The read is a defect harvest and not data** (§95's scope axiom; reads 1–4 are the

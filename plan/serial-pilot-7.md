@@ -1,6 +1,8 @@
 # Serial Pilot 7 — the first book the listing loop produced by itself
 
-**Status: RUNNING, 2026-08-25.** Companion to [`plan/serial-pilot-6.md`](serial-pilot-6.md),
+**Status: ~~RUNNING, 2026-08-25~~ → COMPLETE, drafted 2026-08-25, settled 2026-08-28.**
+§6 records what landed after the status line was last touched, and why this book is not
+the fifth operator read's target. Companion to [`plan/serial-pilot-6.md`](serial-pilot-6.md),
 which is the last pilot asked for as a read rather than as an arm, and to
 [`plan/handoff-listing-loop.md`](handoff-listing-loop.md), whose three tasks this run is the
 occasion for. The machinery is stage-0 §139.
@@ -403,3 +405,42 @@ The handoff's task 2 — the same listings screened without their titles — is 
 cannot be with the eight it names, which are gone. The arm is now a flag
 (`--no-title-to-readers`) so both sides run from one code path; it needs a fresh set of listings
 a side, which is one `listing` loop per listing and the reason it was not run here.
+
+
+## 6. Settled, 2026-08-28: what landed after the status line stopped being true
+
+The line above said RUNNING for three days after the run finished. What it was waiting on has
+happened, and one thing has happened that the run could not have anticipated.
+
+**The book exists.** `serial8.db` holds all six scenes with prose — 4,988 to 5,122 characters
+each — drafted between 18:17 and 19:06 on 2026-08-25, with six scene summaries and 377 state
+records behind them. `book-library/copy-costs-a-hand/` carries the three chapters, the listing,
+the reading copies and two cover sets. §3.1.1's *"no scene can be drafted"* was a fact about
+`serial7.db` and about that hour, and it is not a fact about this pilot's output.
+
+**The tool fix §3.1 asked for is live.** It named the fix that removes the reason to probe:
+`world vocabulary` listing predicates without saying what shape each takes. `application/world.py`
+now gives every predicate its argument shape in the vocabulary itself — `world_rule` takes
+`--value`, `consequence` takes `--object`, `costs` takes either, and so on down the list. The
+clause telling an agent not to probe was refused, as §127 and §138 say it should have been; what
+shipped is the missing information.
+
+**`_say` landed** (`src/litharness/cli.py`), which is §5's operator-surface half.
+
+**The steering path this book was written under is retired.** §2.1's traceable clause-by-clause
+revision remains the historical evidence it always was, and the *"steered book leaves §61's
+measurement set for good"* consequence in §0 is unchanged and permanent. What changed is that no
+production path now sends raw appetite text back to a writer at all; `plan/reader-architecture-program.md`
+holds the qualified-intervention boundary that replaced it.
+
+**And the operator has read it.** On 2026-08-28 the operator called *Copy Costs A Hand* and
+*Patch Notes For Earth* *"old generations"* they had *"already reviewed"*, which is why the fifth
+operator read targets a fresh book (`plan/handoff-operator-read-5.md`'s correction block, and
+`plan/serial-pilot-11.md`). That is a fact about what this book has already been used for, not a
+verdict on it: no read of it was ever recorded as a `reader-read-*.md`, so whatever the operator
+noticed while reading is a defect harvest that was never harvested. Recovering it later is
+legitimate; inventing what it would have said is not.
+
+**What §5.2 still owes is still owed.** The title-blind screen has its flag
+(`--no-title-to-readers`) and has never been run, for the reason given there: it needs a fresh
+set of listings a side. Nothing since has drawn them.
