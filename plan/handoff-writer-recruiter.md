@@ -22,9 +22,11 @@ operator granted generous headroom for.
 
 The premise lock is visible in the dossier text itself. Each cast dossier carries one vivid
 image and its writer opens every empty-brief listing on it: ferreira's dossier says *"the first
-message nobody asked for"* and all eight ferreira listings on disk open on screens lighting at
-once; halloran's says the first monster in an impossible place and all five open on the thing in
-the stairwell. The tonal skew rides the same text — eight of eight covers ever produced sit
+message nobody asked for"* and ~~all eight~~ **all seven distinct ferreira listings** on disk
+open on screens lighting at once — **nine of nine counting the two drafts that differ from
+their own revisions, which is the stronger fact: the beat survives the revision step as well as
+the draw** (corrected in place 2026-08-28; the executing session's recount); halloran's says
+the first monster in an impossible place and all five open on the thing in the stairwell. The tonal skew rides the same text — eight of eight covers ever produced sit
 below mid-grey, and the cover pipeline reads the listing, so the darkness propagates downstream
 from prose whose upstream is the dossier and the prompts. Variety is a roster property before it
 is a prompt property, and roster growth is generative work — the kind the Architect pattern
