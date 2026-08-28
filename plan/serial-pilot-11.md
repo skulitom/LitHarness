@@ -1,6 +1,12 @@
 # Serial Pilot 11 — *The Unkillable Exploit*: the first listing no retired path ever touched
 
-**Status: LISTING DRAWN, 2026-08-28. Chapters gated on the operator.** Run for the fifth
+**Status: LISTING DRAWN and READ, 2026-08-28. Chapters still gated on the operator.**
+The read is [`reader-read-5.md`](reader-read-5.md) §4: four things named, none of them
+answering the chapter question yet. Its §4.1 measured this listing's coordinator density
+**above all 60 market listings**, and its §4.3 relocated §4 below's premise finding from the
+writer to the writer's own dossier.
+
+Run for the fifth
 operator read ([`handoff-operator-read-5.md`](handoff-operator-read-5.md), as corrected the same
 day): the two books on the shelf are *"old generations"* the operator has *"already reviewed"*,
 so the read needs a book made under the current architecture. This is that run, stopped after
@@ -115,12 +121,20 @@ read rather than after it, because "I have read this opening before" is exactly 
 reaction a read would otherwise harvest as a defect of *this book*, when the record says it is a
 property of the writer under an empty brief.
 
-Routing, per the handoff's task 5: **instrument question**, not a direction gap and not an
+~~Routing, per the handoff's task 5: **instrument question**, not a direction gap and not an
 enforcement defect. Nothing forbids a writer reusing its own premise, nothing asked it not to,
 and nothing counts it. It goes to `reader-perception-research.md`'s battery families as a
-question about whether an admitted damage family covers cross-draw premise repetition — and
-explicitly **not** to a new metric (`BRIEF.md` first) and **not** to a prompt clause (§127, §135,
-§138).
+question about whether an admitted damage family covers cross-draw premise repetition.~~
+
+**Corrected the same day by the read itself.** [`reader-read-5.md`](reader-read-5.md) §4.3 looked
+where this paragraph had not — at our own text — and found the cause: **each writer's dossier
+names an inciting beat, not only an appetite**, and each writer draws that beat every time.
+`ferreira`'s says *"everybody finds out at the same moment"* and *"the first message nobody asked
+for"*. So the correct route is a **direction gap whose cause is in our own instruction text**,
+the §116 shape, and it is a roster act belonging to the operator (`plan/writer-roster.md`) —
+**not** an instrument question, because no new measurement was needed to find it. What stays
+true from the struck text: **not** a new metric (`BRIEF.md` first) and **not** a prompt clause
+(§127, §135, §138).
 
 ## 5. What is owed and was not done here
 

@@ -125,13 +125,26 @@ premise in any cell**. Whatever a listing is about is decided somewhere the two 
 do not reach. §136 already measured the other side of this: two words of brief outweighed every
 rule in the prompt. These four columns are what the *absence* of a brief produces.
 
-**Where this goes, and where it does not.** It routes to the reader-architecture programme's
-battery families ([`reader-perception-research.md`](reader-perception-research.md)) as an
-instrument question — does an admitted damage family cover premise repetition across draws, and
-if not, is there a mechanical key that could? It does **not** route to a new ad-hoc metric
-(`BRIEF.md` before anything is proposed), and it does **not** route to a prompt clause: §127,
-§135 and §138 are the three entries on what clause-adding costs, and this is the failure mode a
-fifth rule is reliably useless against.
+**Where this goes, and where it does not.** ~~It routes to the reader-architecture programme's
+battery families as an instrument question — does an admitted damage family cover premise
+repetition across draws?~~ **Corrected 2026-08-28 by [`reader-read-5.md`](reader-read-5.md)
+§4.3, which found the cause without needing a new instrument:** each writer's dossier in
+`domain/writers.py` **names an inciting beat and not only an appetite**, and each writer draws
+that beat every time — `ferreira`'s dossier says *"everybody finds out at the same moment"* and
+*"the first message nobody asked for"*, and `halloran`'s says *"people who wake up somewhere
+impossible"*. So this is a **direction gap whose cause is our own instruction text**, the §116
+shape, and what to do about it is a roster act belonging to the operator
+(`plan/writer-roster.md`).
+
+`writers.py`'s own docstring records the *previous* version of this defect — the first cast named
+four real careers and *"each writer promptly set a book inside their own day job"*. Making the
+dossier's variable appetite rather than profession fixed that leak and reproduced it one level
+up, as a fixed opening beat.
+
+What is unchanged: it does **not** route to a new ad-hoc metric (`BRIEF.md` before anything is
+proposed), and it does **not** route to a prompt clause — §127, §135 and §138 are the three
+entries on what clause-adding costs, and this is the failure mode a fifth rule is reliably
+useless against.
 
 ## 5. Anti-scope
 

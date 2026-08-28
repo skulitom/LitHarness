@@ -37,8 +37,13 @@ stops being the place to look:
 - **Tasks 3 and 4 are re-pointed at Serial Pilot 11**, [`serial-pilot-11.md`](serial-pilot-11.md)
   — writer `ferreira` cast by the operator, listing and title drawn, cover set generated,
   **chapters deliberately not drafted**: the operator gated them on seeing the overview first.
-  The read protocol is [`reader-read-5.md`](reader-read-5.md), written before the read with its
-  §4 empty.
+  The read protocol is [`reader-read-5.md`](reader-read-5.md), written before the read.
+- **Tasks 4 and 5 are done.** The operator read the covers and the listing the same evening and
+  named four things; all four are quoted verbatim and routed in
+  [`reader-read-5.md`](reader-read-5.md) §4 — one direction gap with a market distribution behind
+  it, one instrument question on its second sighting, one direction gap whose cause is our own
+  dossier text, and one piece of product direction that is not a defect. Chapters remain the open
+  decision. **The brief is still not deletable**: task 6's chapter half is unspent.
 - **Pilot 10's sixteen listings are out of the package.** Asked, the operator said *"Let's
   generate everything from scratch"*; only `ferreira`'s fresh listing has been drawn, and the
   other three writers' are owed.
