@@ -84,6 +84,22 @@ def test_the_codex_command_is_ephemeral_sandboxed_and_accepts_references(tmp_pat
     )
 
 
+def test_the_scratch_workspace_tells_codex_its_absent_repository_is_deliberate(
+    tmp_path: Path,
+) -> None:
+    """`generate_art` runs Codex in a temporary directory to keep AGENTS.md out of the call.
+
+    A fresh temporary directory is never a trusted project and is never a git repository, so
+    without this flag Codex refuses every cover generation before drawing anything — which is
+    what it did from 2026-08-28 10:12 until the flag landed.
+    """
+    argv = covers.codex_argv(
+        workspace=tmp_path, target=tmp_path / "art.png", references=()
+    )
+    assert "--skip-git-repo-check" in argv
+    assert argv.index("--skip-git-repo-check") < argv.index("-C")
+
+
 def test_codex_generation_sends_the_prompt_on_stdin_and_requires_the_artifact(
     tmp_path: Path,
 ) -> None:
