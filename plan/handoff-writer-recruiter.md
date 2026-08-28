@@ -27,8 +27,11 @@ open on screens lighting at once — **nine of nine counting the two drafts that
 their own revisions, which is the stronger fact: the beat survives the revision step as well as
 the draw** (corrected in place 2026-08-28; the executing session's recount); halloran's says
 the first monster in an impossible place and all five open on the thing in the stairwell. The tonal skew rides the same text — eight of eight covers ever produced sit
-below mid-grey, and the cover pipeline reads the listing, so the darkness propagates downstream
-from prose whose upstream is the dossier and the prompts. Variety is a roster property before it
+below mid-grey, and the cover pipeline reads the listing, so ~~the darkness propagates
+downstream from prose whose upstream is the dossier and the prompts~~ **the path for the
+listing's tone to reach the cover exists by construction — but every input so far was a dark
+listing, so no dose-response is shown; a light listing through the same pipeline is the test**
+(softened in place 2026-08-28, matching the same correction at `ac0d529` on the read branch). Variety is a roster property before it
 is a prompt property, and roster growth is generative work — the kind the Architect pattern
 already contains.
 
