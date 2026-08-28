@@ -188,6 +188,12 @@ def codex_argv(
         "--ephemeral",
         "--sandbox",
         "workspace-write",
+        # The workspace is a scratch directory outside any checkout **on purpose** — that is
+        # what keeps repository session guidance out of the cover call. Codex refuses an
+        # untrusted non-repository directory unless it is told the absence is deliberate, so
+        # the flag that says so belongs beside the temporary workspace that needs it. Without
+        # it every generation died before drawing anything, from 2026-08-28 until this line.
+        "--skip-git-repo-check",
         "-C",
         str(resolved_workspace),
     ]
