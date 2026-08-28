@@ -186,6 +186,19 @@ SERIAL_POSITION_CAPACITY = 100_000
 #: flag still wins where it is given, so every existing invocation is unchanged.
 DATABASE_ENV = "LITHARNESS_DATABASE"
 
+#: Where the installation's roster lives, when it lives anywhere at all. **Without this, "a
+#: roster belongs to the installation" was a comment and not a behaviour**: `--writer` resolved
+#: through whatever `--database` was open, so an accepted writer could not reach a fresh book
+#: database — serial pilot 13 hit that as a free exit-2 and bridged it by cloning the entire
+#: store through `litharness backup`, which drags every unrelated table along. Set this (or
+#: `--roster-database`, which wins) to the roster store's path and the roster suite, the
+#: Recruiter, `revoice` and every `--writer` resolution use it; unset, everything falls back to
+#: the open database and nothing changes. It is one home rather than an export/import pair
+#: because a copy is where the rails die quietly: a second path that writes `accepted` rows,
+#: and a refusal (§149, terminal by design) that keeps drafting in every database that imported
+#: the writer before the operator said no. Stage-0 §151 records the choice.
+ROSTER_DATABASE_ENV = "LITHARNESS_ROSTER_DATABASE"
+
 #: **The shelf and the form reach the Recruiter's child process through the environment, never
 #: its command line**, which is `DATABASE_ENV`'s argument twice more. A flag between the binary
 #: and the subcommand widens the allowance to every command this CLI has; and a value the agent
@@ -199,8 +212,9 @@ RECRUIT_SHAPE_ENV = "LITHARNESS_RECRUIT_SHAPE"
 #: `--database` is parsed, so it can name the compiled cast and cannot enumerate a roster; four
 #: copies of that sentence would drift.
 _WRITER_OVERRIDE_HELP = (
-    f"the compiled cast ({', '.join(writers_domain.CAST)}), or any writer this database's "
-    "roster has accepted, which `litharness roster show` lists; overrides the global --writer"
+    f"the compiled cast ({', '.join(writers_domain.CAST)}), or any accepted writer on the "
+    "roster (--roster-database's when one is configured, else this database's), which "
+    "`litharness roster show` lists; overrides the global --writer"
 )
 
 #: **The listing loop's first refusing gate, and the only market-derived number under `src/`.**
@@ -264,6 +278,50 @@ def _env_flag(name: str) -> bool:
 
 def _store(args: argparse.Namespace) -> SqliteStore:
     return SqliteStore.open(args.database)
+
+
+def _roster_database(args: argparse.Namespace) -> Path:
+    """Where the roster lives: the installation's store when one is configured, else the open
+    database. The fallback is what every invocation before `--roster-database` existed got."""
+    configured: Path | None = getattr(args, "roster_database", None)
+    return configured if configured is not None else Path(args.database)
+
+
+def _roster_store(args: argparse.Namespace) -> SqliteStore:
+    """The store the roster suite, the Recruiter and `revoice` operate on.
+
+    These commands are roster-native: the rows they read, the proposals and decisions they
+    write, and the exemplars a voiced writer's `exemplar_digest` points at all belong beside
+    each other, so the whole command targets one store rather than splitting a writer from its
+    provenance across two files.
+    """
+    return SqliteStore.open(_roster_database(args))
+
+
+def _installed_writer(
+    args: argparse.Namespace, name: str, store: SqliteStore | None
+) -> tuple[writers_domain.Writer | None, str]:
+    """`_resolve_writer`, read against the installation's roster when one is configured.
+
+    **The configured roster replaces the open database's, it is not consulted beside it.** Two
+    sources of truth would mean a stale row in a book database could shadow the installation's
+    answer — including a refusal, which §149 makes terminal — and which of the two answered
+    would be invisible in the output. When nothing is configured, or the configured path is the
+    open database, this is exactly `_resolve_writer` and behaviour is unchanged.
+
+    The roster store is opened only for the lookup and closed before returning: a `Writer` is a
+    frozen value, so nothing downstream needs the connection that produced it. `SqliteStore.open`
+    creates the file the way `--database` does — a configured path is a deliberate location, and
+    a mistyped one cannot resolve silently: an empty roster refuses every stored name loudly and
+    resolves nothing but the compiled cast, which no roster could have changed.
+    """
+    wanted = getattr(args, "roster_database", None)
+    if wanted is None or Path(wanted).resolve() == Path(args.database).resolve():
+        return _resolve_writer(name, store)
+    if not name.strip():
+        return None, ""
+    with SqliteStore.open(wanted) as roster_store:
+        return _resolve_writer(name, roster_store)
 
 
 def _draft_policy(args: argparse.Namespace) -> DraftPolicy:
@@ -452,7 +510,7 @@ def _resolve_writer(
         return None, (
             f"litharness: no writer named {wanted!r}; the cast is "
             f"{', '.join(writers_domain.CAST)}, and `litharness roster show` lists every "
-            "writer this database holds"
+            "writer the roster holds"
         )
     return writer, ""
 
@@ -471,7 +529,7 @@ def _selected_writer(
     `argparse.SUPPRESS` is what lets an unset one fall through to the global rather than
     overwriting it with `None`.
     """
-    writer, reason = _resolve_writer(getattr(args, "writer", "") or "", store)
+    writer, reason = _installed_writer(args, getattr(args, "writer", "") or "", store)
     if reason:
         raise SystemExit(reason)
     return writer
@@ -2029,7 +2087,7 @@ def cmd_listing(args: argparse.Namespace) -> int:
         # **Resolved inside the store's lifetime, because a writer can now be a record.** The
         # refusal still lands before the first paid call, which is the property §19.1 asks for;
         # what moved is only that the roster is reachable when the name is looked up.
-        writer, reason = _resolve_writer(getattr(args, "writer", "") or "", store)
+        writer, reason = _installed_writer(args, getattr(args, "writer", "") or "", store)
         if reason:
             print(reason, file=sys.stderr)
             return EXIT_FAULT
@@ -2442,7 +2500,7 @@ def cmd_architect(args: argparse.Namespace) -> int:
     store = _store(args)
     stamp = _stamp(_now())
     try:
-        writer, reason = _resolve_writer(getattr(args, "writer", "") or "", store)
+        writer, reason = _installed_writer(args, getattr(args, "writer", "") or "", store)
         if reason:
             print(reason, file=sys.stderr)
             return EXIT_FAULT
@@ -2762,7 +2820,7 @@ def cmd_prompts(args: argparse.Namespace) -> int:
         else None
     )
     try:
-        writer, reason = _resolve_writer(wanted, store)
+        writer, reason = _installed_writer(args, wanted, store)
     finally:
         if store is not None:
             store.close()
@@ -3029,9 +3087,11 @@ def cmd_roster(args: argparse.Namespace) -> int:
 
     **`cmd_world`'s shape, and the divergences are deliberate.** Every read view prints JSON,
     because both an agent and an operator read these, and `application/roster.py` holds the
-    views and no logic. There is no `--book` and no `--branch`: a world belongs to a book and a
-    roster belongs to the installation, and the shorter command line is part of what keeps the
-    Recruiter's allowance narrow.
+    views and no logic. There is no `--book` and no `--branch`: a world belongs to a book where
+    a roster does not, and the shorter command line is part of what keeps the Recruiter's
+    allowance narrow. The whole suite operates on `_roster_store`, so a configured
+    `--roster-database` makes the roster the installation's rather than the open database's
+    (stage-0 §151).
 
     **`declare` refuses where `world declare` warns, and the two are not the same case.** A
     world is built one record at a time and is transiently incoherent by nature — a question
@@ -3073,7 +3133,7 @@ def cmd_roster(args: argparse.Namespace) -> int:
         _say(json.dumps(roster_mod.rehearse(text), ensure_ascii=False, indent=2))
         return EXIT_OK
 
-    store = _store(args)
+    store = _roster_store(args)
     try:
         if args.view == "show":
             status = (
@@ -3357,7 +3417,7 @@ def cmd_roster_refuse(args: argparse.Namespace) -> int:
     one path by which a refusal could quietly stop having happened.
     """
     stamp = _stamp(_now())
-    store = _store(args)
+    store = _roster_store(args)
     try:
         # The same in-flight guard `accept` carries. A refusal is an operator act by exactly
         # the same argument, and a recruit run holding the pen must not be able to type it.
@@ -3469,7 +3529,10 @@ def cmd_recruit(args: argparse.Namespace) -> int:
     # call and a form nobody typed is a form nobody can mistype. An explicit `--shape` still
     # wins and is recorded on the row and in the decision's profile.
     shape = args.shape or recruiter.shape_for(args.specialization)
-    database = str(Path(args.database).resolve())
+    # **The child is handed the roster's home, not whatever book database happened to be
+    # open.** The Recruiter's declares belong in the installation's roster when one is
+    # configured, and the child reads its database from the environment.
+    database = str(Path(_roster_database(args)).resolve())
     previous = {
         DATABASE_ENV: os.environ.get(DATABASE_ENV),
         RECRUIT_SHELF_ENV: os.environ.get(RECRUIT_SHELF_ENV),
@@ -3489,7 +3552,7 @@ def cmd_recruit(args: argparse.Namespace) -> int:
     # that calls `main` twice.
     store = None
     try:
-        store = _store(args)
+        store = _roster_store(args)
         before = {row["writer_id"] for row in store.roster_rows()}
         standing = [
             row["name"] for row in store.roster_rows(specialization=args.specialization)
@@ -3627,7 +3690,11 @@ def cmd_revoice(args: argparse.Namespace) -> int:
     """
     stamp = _stamp(_now())
     descriptor = _descriptor_from(args.descriptor)
-    store = _store(args)
+    # The roster store, and the parent resolves against it directly rather than through
+    # `_installed_writer`: this store *is* the installation's roster when one is configured,
+    # and the exemplar row the child's `exemplar_digest` points at must land beside the row
+    # that carries the digest.
+    store = _roster_store(args)
     try:
         parent, reason = _resolve_writer(args.writer, store)
         if parent is None:
@@ -5022,6 +5089,20 @@ def build_parser() -> argparse.ArgumentParser:
         help=(f"SQLite database path (default: ${DATABASE_ENV}, else {DEFAULT_DB})"),
     )
     parser.add_argument(
+        "--roster-database",
+        type=Path,
+        default=(
+            Path(os.environ[ROSTER_DATABASE_ENV])
+            if os.environ.get(ROSTER_DATABASE_ENV, "").strip()
+            else None
+        ),
+        help=(
+            "where the installation's writer roster lives; --writer resolution, the roster "
+            "suite, recruit and revoice all use it, so an accepted writer reaches a fresh "
+            f"book database (default: ${ROSTER_DATABASE_ENV}, else --database)"
+        ),
+    )
+    parser.add_argument(
         "--holder",
         default="session",
         help="identity recorded on tick ids and job leases (default: session)",
@@ -5512,15 +5593,18 @@ def build_parser() -> argparse.ArgumentParser:
     # The Recruiter's tool suite, and the world suite's ordering: the views first, then the
     # agent that holds them. One parser per view rather than a `--view` flag, for `world`'s
     # reason — an agent reads `--help` to find out what it can do. No `--book` and no
-    # `--branch` anywhere in it: a world belongs to a book and a roster belongs to the
-    # installation, and the shorter command line is part of what keeps the allowance narrow.
+    # `--branch` anywhere in it: a world belongs to a book where a roster does not, and the
+    # shorter command line is part of what keeps the allowance narrow. The roster belongs to
+    # the installation only where `--roster-database` or LITHARNESS_ROSTER_DATABASE says where
+    # that is; without one it belongs to the open database, which is what serial pilot 13 hit
+    # when an accepted writer could not reach a fresh book database (stage-0 §151).
     roster_cmd = sub.add_parser(
         "roster", help="the writers this installation holds, or offer it a new one"
     )
     roster_sub = roster_cmd.add_subparsers(dest="view", required=True)
 
     show_writers = roster_sub.add_parser(
-        "show", help="every writer this database holds, and which shelves have nobody"
+        "show", help="every writer the roster holds, and which shelves have nobody"
     )
     show_writers.add_argument("--name", help="one writer")
     show_writers.add_argument(
