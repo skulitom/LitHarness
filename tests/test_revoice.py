@@ -1,4 +1,4 @@
-"""The two revoicing calls, and the five gates on what the second one returns.
+"""The two revoicing calls, and the four gates on what the second one returns.
 
 `plan/dossier-voice-direction.md`. The properties here fail silently in the way this subsystem's
 always do — by rendering a prompt, by minting an id, or by writing a row — and four of them are
@@ -24,6 +24,7 @@ import pytest
 
 from litharness.application import revoice
 from litharness.domain import house, voice, writers
+from litharness.domain.directors import prose_axes_named
 from litharness.domain.writers import IllegalDossier
 
 DESCRIPTOR = voice.StyleDescriptor(
@@ -80,10 +81,26 @@ def test_the_descriptor_reaches_the_draw_and_only_the_draw() -> None:
     # The rendered pairs rather than the bare field names: `person` is also an ordinary English
     # word and the rewrite prompt says *"a paragraph by the same person"*, so a bare-name check
     # fails on prose that carries no descriptor at all.
-    assert revoice.render_descriptor(DESCRIPTOR) not in whole
-    for name, value in DESCRIPTOR.as_labels().items():
-        assert f"{name} {value}" not in whole, name
-    assert DESCRIPTOR.descriptor_id not in whole
+    #
+    # **Over several descriptors rather than one**, which is this test's own correction:
+    # excluding a single instance is satisfied by a prompt that happens not to carry *that* one,
+    # and the claim is that it carries none. The variants below differ in every numeric field.
+    for scale in (1.0, 1.37, 2.5):
+        candidate = voice.StyleDescriptor(
+            sentence_words_mean=11.5 * scale,
+            sentence_words_sd=6.0 * scale,
+            sentence_words_p10=3.0 * scale,
+            sentence_words_p50=10.0 * scale,
+            sentence_words_p90=21.0 * scale,
+            paragraph_sentences_mean=2.5 * scale,
+            connective_density=5.25 * scale,
+            person=voice.Person.THIRD,
+            tense=voice.Tense.PAST,
+        )
+        assert revoice.render_descriptor(candidate) not in whole
+        assert candidate.descriptor_id not in whole
+        for name, value in candidate.as_labels().items():
+            assert f"{name} {value}" not in whole, name
 
 
 def test_the_descriptor_arrives_in_the_prompt_half() -> None:
@@ -204,16 +221,28 @@ def test_the_census_refuses_a_rewrite_that_carries_a_mark() -> None:
     """**The gate the direction note asks for by name.**
 
     A dossier may no more demonstrate a measured axis than name one. An em-dash-laden exhibited
-    voice asserts by example the thing the em-dash loop exists to test, and `prose_axes_named`
-    was catching this case only because the character sits inside its naming pattern.
+    voice asserts by example the thing the em-dash loop exists to test.
+
+    **The match string is the carrying message specifically, and that is this test's own
+    correction.** It matched `"registered prose axis"` at first, which both the naming refusal
+    and the carrying refusal contain, so the assertion passed whichever gate fired — and for a
+    while what it claimed to exercise was an unreachable branch in `accept_rewrite`. Asserting
+    that the naming detector does *not* fire on this text is the other half.
     """
-    with pytest.raises(IllegalDossier, match="registered prose axis"):
-        _accept("You write about the sea — and what it keeps.")
+    carried = "You write about the sea — and what it keeps."
+    assert prose_axes_named(carried) == ()
+    with pytest.raises(IllegalDossier, match="carries the mark of the registered prose axis"):
+        _accept(carried)
 
 
 def test_the_borrowing_control_refuses_a_lifted_clause() -> None:
-    """§85's distinction, made a refusal: a model shown prose moves toward it by feature or by
-    phrase, and after the fact the two are not separable."""
+    """The exemplar-dose work's distinction (§89.5), made a refusal: a model shown prose moves
+    toward it by feature or by phrase, and after the fact the two are not separable.
+
+    Attributed to §85 in four places until an adversarial review checked. §85 measured the
+    channel open and its arms are centroid distances with no borrowing control in them; the
+    shown-pool against held-out-pool design is `voice_binding.py`'s, pre-registered at §89.5.
+    One of the four was the sentence an operator reads when a rewrite is refused."""
     lifted = (
         "You write the kind of thing where somebody two decks up was shouting a number over "
         "and over, and you love it."
@@ -256,3 +285,23 @@ def test_the_revoice_module_names_no_ranking_symbol() -> None:
             named.add(node.attr)
     for forbidden in ("rank", "ranked", "score", "scored", "prefer", "best", "retry", "redraw"):
         assert not any(forbidden in name.lower() for name in named), forbidden
+
+
+def test_the_borrowing_limit_bites_exactly_where_its_constant_says() -> None:
+    """The boundary, because `SHARED_RUN_LIMIT` is argued for as a number and was pinned as a mood.
+
+    Six was chosen with a reason — two texts about different things share a six-word run
+    essentially never — and until this test the suite only knew that 2 passes and 12 does not,
+    which is true of any threshold between them. A run of five passes and a run of six refuses,
+    or the constant is decoration.
+    """
+    passage = "one two three four five six seven eight"
+    five = "You write one two three four five and nothing else at all."
+    six = "You write one two three four five six and nothing else at all."
+
+    assert voice.longest_shared_run(passage, five) == voice.SHARED_RUN_LIMIT - 1
+    assert voice.longest_shared_run(passage, six) == voice.SHARED_RUN_LIMIT
+
+    assert revoice.accept_rewrite(original="You write tides.", exemplar=passage, returned=five)
+    with pytest.raises(IllegalDossier, match="borrowing rather than register"):
+        revoice.accept_rewrite(original="You write tides.", exemplar=passage, returned=six)

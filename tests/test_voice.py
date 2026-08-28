@@ -290,14 +290,30 @@ def test_the_same_statistic_has_one_implementation() -> None:
     Asserted as a repository property rather than argued in a docstring, because *a second home*
     is the defect shape this project keeps finding — `statistics.fmean` over sentence lengths
     written twice is two voices that disagree by a rounding rule.
+
+    **Both sides, and the marker is the computation rather than the constructor**, which is this
+    test's own correction twice over. It scanned the package alone, so it could never have seen
+    the measurement side it makes a claim about; and it matched `sentence_words_mean=` anywhere,
+    which is also how a caller writes a literal — `cli._SPECIMEN_DESCRIPTOR` tripped it while
+    computing nothing. What a second implementation looks like is a statistic derived from text
+    at the point of construction, so that is what is matched.
+
+    `voice_descriptors.serial_descriptors` builds a descriptor from `statistics.median` over
+    *descriptors already distilled by this module* and is an aggregation rather than a second
+    distillation, which is why the marker names the function this module uses and not every use
+    of `statistics`.
     """
     from pathlib import Path
 
-    package = Path(voice.__file__).resolve().parent.parent
+    repo = Path(voice.__file__).resolve().parents[3]
+    roots = (repo / "src" / "litharness", repo / "research" / "quality-measurement")
     offenders = [
-        path.relative_to(package).as_posix()
-        for path in package.rglob("*.py")
-        if path.name != "voice.py" and "sentence_words_mean=" in path.read_text(encoding="utf-8")
+        path.relative_to(repo).as_posix()
+        for root in roots
+        if root.exists()
+        for path in root.rglob("*.py")
+        if path.name != "voice.py"
+        and "sentence_words_mean=statistics." in path.read_text(encoding="utf-8")
     ]
     assert not offenders, f"a second distillation lives in {offenders}"
 
@@ -348,3 +364,81 @@ def test_no_shipped_writer_stopped_being_legal() -> None:
     for pool in (writers.CAST, writers.BUILTIN):
         for writer in pool.values():
             writers.legal_dossier(writer.dossier)
+
+
+# ------------------------------------------------ what an adversarial review found uncovered
+
+
+def test_the_median_does_not_move_with_the_parity_of_the_sentence_count() -> None:
+    """**The defect an adversarial review found, pinned so it cannot come back.**
+
+    `_quantile` used `round`, which is half-to-even *on the index*, and `share * (len - 1)` is an
+    exact `.5` for `share=0.50` at every even count. So `p50` alternated between the lower-middle
+    and the upper-middle rank with the count's parity: on a passage of alternating two-word and
+    ten-word sentences it returned 10.0 at four sentences and 2.0 at six, which is two aims and
+    two descriptor ids for one voice. The tie rule is now named and the estimator is stable.
+    """
+    short, long_ = "aa bb.", "cc cc cc cc cc cc cc cc cc cc."
+    seen = set()
+    for pairs in range(1, 8):
+        passage = " ".join([short] * pairs + [long_] * pairs)
+        seen.add(
+            voice.distill(
+                [passage], person=voice.Person.THIRD, tense=voice.Tense.PAST
+            ).sentence_words_p50
+        )
+    assert len(seen) == 1, f"p50 moved with the sentence count: {sorted(seen)}"
+
+
+def test_the_quantile_tie_goes_to_the_higher_rank() -> None:
+    """The convention the docstring now names, asserted so a second implementation has a target."""
+    assert voice._quantile([1.0, 2.0, 3.0, 4.0, 5.0, 6.0], 0.10) == 2.0
+    assert voice._quantile([1.0, 2.0, 3.0, 4.0, 5.0, 6.0], 0.50) == 4.0
+    assert voice._quantile([1.0, 2.0, 3.0, 4.0, 5.0, 6.0], 0.90) == 6.0
+
+
+def test_a_descriptor_addresses_what_a_model_was_shown() -> None:
+    """`as_labels` renders to two decimals and the address is taken over that, on purpose.
+
+    Two descriptors that render identically *are* the same descriptor for every purpose here —
+    they aim the same draw — and addressing the raw floats would mint a second id for a
+    difference in the seventh decimal that no prompt can express. Uncovered until an adversarial
+    review pointed out that addressing the raw floats passed every id test in this file.
+    """
+    coarse = _descriptor(connective_density=6.5)
+    finer = _descriptor(connective_density=6.5004)
+    assert coarse.as_labels() == finer.as_labels()
+    assert coarse.descriptor_id == finer.descriptor_id
+    assert _descriptor(connective_density=6.51).descriptor_id != coarse.descriptor_id
+
+
+def test_the_spread_and_the_paragraph_shape_are_read_from_the_text() -> None:
+    """Two fields nothing asserted from an actual distillation, so nothing would have caught a
+    constant returned in their place."""
+    flat = voice.distill(
+        ["aa bb cc. dd ee ff. gg hh ii."], person=voice.Person.THIRD, tense=voice.Tense.PAST
+    )
+    varied = voice.distill(
+        ["aa. bb cc dd ee ff gg hh ii jj kk. ll mm."],
+        person=voice.Person.THIRD,
+        tense=voice.Tense.PAST,
+    )
+    assert flat.sentence_words_sd == 0.0
+    assert varied.sentence_words_sd > 3.0
+
+    assert flat.paragraph_sentences_mean == 3.0
+    two_blocks = voice.distill(
+        ["aa bb. cc dd.\n\nee ff. gg hh. ii jj. kk ll."],
+        person=voice.Person.THIRD,
+        tense=voice.Tense.PAST,
+    )
+    assert two_blocks.paragraph_sentences_mean == 3.0
+
+
+def test_person_is_read_from_pronouns_rather_than_asserted() -> None:
+    first = "I went down. I counted them. My hands were shaking."
+    third = "He went down. He counted them. His hands shook."
+    assert voice.person_of(first) is voice.Person.FIRST
+    assert voice.person_of(third) is voice.Person.THIRD
+    assert voice.person_of("I went down and he counted them.") is voice.Person.MIXED
+    assert voice.person_of("The lift stopped between floors.") is voice.Person.MIXED

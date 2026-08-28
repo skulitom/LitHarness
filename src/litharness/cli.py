@@ -40,7 +40,7 @@ import litharness_contracts as lc
 from litharness.adapters import contracts_fixtures, evaluation_artifact
 from litharness.adapters.continuity_cli import ContinuityCliRunner
 from litharness.adapters.sqlite_store import MigrationsMissing, SqliteStore, StoredEvent
-from litharness.application import covers, recruiter, titles, world_agent
+from litharness.application import covers, recruiter, revoice, titles, world_agent
 from litharness.application import export as export_module
 from litharness.application import library as library_module
 from litharness.application import overview as overview_mod
@@ -108,6 +108,7 @@ from litharness.domain import extraction, house, integrity, propagation
 from litharness.domain import rivals as rivals_mod
 from litharness.domain import state as state_mod
 from litharness.domain import text as text_mod
+from litharness.domain import voice as voice_domain
 from litharness.domain import worlds as worlds_domain
 from litharness.domain import writers as writers_domain
 from litharness.domain.beats import Beat, BeatTemplate, TemplateMismatch, arc_template, beats_for
@@ -2547,6 +2548,23 @@ def cmd_architect(args: argparse.Namespace) -> int:
     return EXIT_OK
 
 
+#: A descriptor for `prompts` to render the draw with, and for nothing else. **Numbers with no
+#: provenance, deliberately**: a real one is distilled on the measurement side and reaches this
+#: process through `--descriptor`, so a specimen with a corpus behind it would put a value here
+#: that RS1 says may not be in the package at all.
+_SPECIMEN_DESCRIPTOR = voice_domain.StyleDescriptor(
+    sentence_words_mean=14.0,
+    sentence_words_sd=8.0,
+    sentence_words_p10=4.0,
+    sentence_words_p50=12.0,
+    sentence_words_p90=27.0,
+    paragraph_sentences_mean=3.0,
+    connective_density=7.0,
+    person=voice_domain.Person.THIRD,
+    tense=voice_domain.Tense.PAST,
+)
+
+
 def _prompt_pressure(
     request: CompletionRequest,
     *,
@@ -2910,6 +2928,22 @@ def cmd_prompts(args: argparse.Namespace) -> int:
         ),
         "recruit-several-no-beat": recruiter.render_recruit_request(
             "cozy-fantasy", shape="several-no-beat"
+        ),
+        # The two revoicing calls. Both floorless on purpose, which is why they read small
+        # beside the recruiter: `application/revoice.py` carries the argument.
+        #
+        # **The cast control is used where `--writer` is unset rather than the row being
+        # omitted, and that is not a convenience.** Every other role here has an anonymous arm
+        # because every other role can run without a writer; a draw cannot. A passage drawn by
+        # nobody is nobody's voice, and there is nothing to rewrite a dossier *into*. So
+        # `revoice` has no no-writer control by construction, and this row shows what an
+        # operator would actually send.
+        "revoice-draw": revoice.render_exemplar_request(
+            writer or writers_domain.CAST["ferreira"], descriptor=_SPECIMEN_DESCRIPTOR
+        ),
+        "revoice-rewrite": revoice.render_rewrite_request(
+            dossier=(writer or writers_domain.CAST["ferreira"]).dossier,
+            exemplar="A specimen passage, kept short.",
         ),
         "outline": render_outline_request(premise, (beat,), base=base, serial_arc_index=1),
         "narrative-planner": render_narrative_request(base, direction, ("scene-1",)),
@@ -3537,6 +3571,188 @@ def cmd_recruit(args: argparse.Namespace) -> int:
         # `cmd_architect` returns EXIT_OK for a zero-record run; this deliberately does not.
         print("litharness: the Recruiter declared nobody", file=sys.stderr)
         return EXIT_ATTENTION
+    return EXIT_OK
+
+
+def _descriptor_from(path: str) -> voice_domain.StyleDescriptor:
+    """A style descriptor read from a file, or a `SystemExit` naming what is wrong with it.
+
+    **The only door a descriptor comes through, and it is a file rather than flags.** Eight
+    numbers and two labels as ten command-line arguments is ten chances to transpose two of
+    them, and a descriptor is content-addressed — a transposition does not fail, it mints a
+    different aim under a different id and nothing says so.
+    `research/quality-measurement/voice_descriptors.py --emit` writes exactly this shape.
+    """
+    raw = json.loads(_read_text(path))
+    if not isinstance(raw, dict):
+        raise SystemExit(f"litharness: {path} is not a descriptor object")
+    try:
+        return voice_domain.StyleDescriptor(
+            person=voice_domain.Person(raw.pop("person", "")),
+            tense=voice_domain.Tense(raw.pop("tense", "")),
+            **{key: float(value) for key, value in raw.items()},
+        )
+    except (TypeError, ValueError, voice_domain.MalformedDescriptor) as error:
+        raise SystemExit(
+            f"litharness: {path} is not a usable descriptor: {error}. It needs exactly the "
+            "fields `voice.StyleDescriptor` declares, and `voice_descriptors.py --emit` "
+            "writes them"
+        ) from error
+
+
+def cmd_revoice(args: argparse.Namespace) -> int:
+    """Draw a passage as this writer, then re-mint the writer with its dossier written that way.
+
+    **Two paid calls and one proposal, and nothing in between is a choice.** The writer draws a
+    passage aimed by a descriptor; the passage is kept by its content address; an anonymous
+    rewriter returns the dossier saying the same things in that register; five gates read what
+    came back; and a **new** writer mints, carrying the exemplar digest as addressed material.
+    `application/revoice.py` holds both prompts and the gates, and the rail it holds is that a
+    refusal is a refusal: there is no redraw here, because drawing again and keeping the one
+    that passed is selection among candidates by preference (§61(5), §105.1), which §146.8
+    refused when a census hit could have been redrawn away.
+
+    **Nothing is edited.** `plan/dossier-voice-direction.md`'s anti-scope is explicit that
+    populating an exemplar mints a new writer rather than mutating one, and content addressing
+    makes that structural rather than polite: the parent's row is untouched and the child is a
+    different id.
+
+    **The name, and the one place this is awkward on purpose.** A child keeps its parent's name,
+    which is legal for a proposal and refused at acceptance while the parent is accepted — the
+    partial index holds one accepted writer per name. The way through is the operator's and it
+    is two recorded acts rather than a flag: `roster refuse` the parent, then `roster accept`
+    the child, which migration 036 exists to make possible. A compiled cast writer cannot be
+    re-minted under its own name at all, because `refuse_reserved_name` protects the controls
+    the roster is read against, so revoicing one needs `--name` and says so.
+    """
+    stamp = _stamp(_now())
+    descriptor = _descriptor_from(args.descriptor)
+    store = _store(args)
+    try:
+        parent, reason = _resolve_writer(args.writer, store)
+        if parent is None:
+            print(reason or f"litharness: no writer named {args.writer!r}", file=sys.stderr)
+            return EXIT_FAULT
+        name = (args.name or parent.name).strip()
+        if reserved := roster_mod.reserved_name(name):
+            print(reserved, file=sys.stderr)
+            print(
+                "  a re-minted writer needs a name of its own here: pass --name. The compiled "
+                "controls the roster is read against must not be shadowed by a stored row",
+                file=sys.stderr,
+            )
+            return EXIT_FAULT
+
+        rows = store.roster_rows(name=parent.name)
+        specialization = args.specialization or (rows[0]["specialization"] if rows else "")
+        shape = args.shape or (rows[0]["shape"] if rows else "")
+        if not specialization or not shape:
+            print(
+                "litharness: this writer has no stored shelf or form to inherit, so a re-mint "
+                "needs --specialization and --shape. A recruit carries both and a compiled cast "
+                "writer carries neither; an unlabelled row drops out of the registered arm "
+                "without saying so",
+                file=sys.stderr,
+            )
+            return EXIT_FAULT
+
+        registry = build_default_registry()
+        spend = _StageSpend()
+        calls = _ProviderCalls(
+            registry=registry, store=store, args=args, stamp=stamp, run=_StageSpend()
+        )
+
+        draw = revoice.render_exemplar_request(parent, descriptor=descriptor)
+        drawn, refusal = _completion_call(draw, calls=calls, spend=spend)
+        if drawn is None:
+            print(f"litharness: the draw returned nothing: {refusal}", file=sys.stderr)
+            return EXIT_FAULT
+        passage = drawn.text.strip()
+        digest = store.record_exemplar(
+            passage=passage,
+            drawn_by=parent.writer_id,
+            descriptor=descriptor,
+            profile=draw.profile,
+            drawn_at=stamp,
+        )
+
+        rewrite = revoice.render_rewrite_request(dossier=parent.dossier, exemplar=passage)
+        returned, refusal = _completion_call(rewrite, calls=calls, spend=spend)
+        if returned is None:
+            print(f"litharness: the rewrite returned nothing: {refusal}", file=sys.stderr)
+            print(f"  the passage is kept as {digest}", file=sys.stderr)
+            return EXIT_FAULT
+
+        try:
+            dossier = revoice.accept_rewrite(
+                original=parent.dossier, exemplar=passage, returned=returned.text
+            )
+            child = writers_domain.build(
+                name,
+                dossier,
+                interests=parent.interests,
+                exemplar_digest=digest,
+                note=(
+                    args.note
+                    or f"voiced from {parent.writer_id} against {descriptor.descriptor_id}"
+                ),
+            )
+            fresh = store.record_proposed_writer(
+                child, specialization=specialization, shape=shape, proposed_at=stamp
+            )
+        except writers_domain.IllegalDossier as error:
+            # **Nothing is written on this path except the passage**, which was already kept and
+            # is kept deliberately: it was paid for, it addresses itself, and a second run that
+            # drew it again would converge on the same row. What does not exist is a writer.
+            print(f"litharness: the rewrite was refused: {error}", file=sys.stderr)
+            print(f"  the passage is kept as {digest}; no writer was minted", file=sys.stderr)
+            return EXIT_FAULT
+
+        gate = GateOutcome(
+            gate=GateKind.SHAPE,
+            rule_or_critic_id=rewrite.profile,
+            passed=True,
+            blocking=False,
+            detail=(
+                f"{name} re-minted as {child.writer_id} from {parent.writer_id}, aimed by "
+                f"{descriptor.descriptor_id}, exemplar {digest}, "
+                f"{len(dossier.split())} words, proposed"
+                + ("" if fresh else "; already on record")
+            ),
+        )
+        store.record_decision(
+            PolicyDecision(
+                decision_id=decision_id_for(
+                    f"revoice:{parent.writer_id}:{digest}:{stamp}", 0, (gate,)
+                ),
+                outcome=Outcome.ACCEPT,
+                gates=(gate,),
+                profile=rewrite.profile,
+                provider=spend.provider,
+                model=spend.model,
+                invocations=spend.invocations,
+                total_tokens=spend.total_tokens,
+                cost_usd=spend.cost_usd,
+                reason=(
+                    "a writer drew one passage as itself and its dossier was rewritten to read "
+                    "like it; nothing ranked two candidates, nothing was redrawn, the parent is "
+                    "untouched, and the re-mint is a proposal until a person accepts it"
+                ),
+            ),
+            decided_at=stamp,
+        )
+    finally:
+        store.close()
+
+    print(f"{name}: re-minted as {child.writer_id} [proposed]")
+    print(f"  from {parent.writer_id}, aimed by {descriptor.descriptor_id}")
+    print(f"  passage {digest}, {len(passage.split())} words")
+    print(f"  dossier {len(dossier.split())} words; `roster show --dossier` reads it back")
+    if name == parent.name:
+        print(
+            f"  both writers answer to {name!r}. Only one may be accepted: `roster refuse "
+            f"{parent.writer_id}` first if the parent is on the roster"
+        )
     return EXIT_OK
 
 
@@ -5438,6 +5654,55 @@ def build_parser() -> argparse.ArgumentParser:
         "--note", help="operator annotation for the decision row. Never sent to the model"
     )
     recruit_cmd.set_defaults(func=cmd_recruit)
+
+    # **Its own verb rather than a flag on `recruit`, and the separation is containment.** A
+    # recruit run holds four `litharness roster ...` commands so an agent can write the record
+    # it cannot otherwise reach; these two calls return text this process writes down itself, so
+    # they hold no allowance at all. A flag would put a paid draw inside a run whose whole
+    # allowance argument is about what an agent may type.
+    revoice_cmd = sub.add_parser(
+        "revoice",
+        help="draw a passage as this writer, then re-mint it with its dossier written that way",
+    )
+    revoice_cmd.add_argument(
+        "--writer",
+        required=True,
+        help="the writer to draw as and re-mint from. Resolved the way `--writer` always is: "
+        "the accepted roster first, then the compiled cast. The parent is never edited",
+    )
+    revoice_cmd.add_argument(
+        "--descriptor",
+        required=True,
+        metavar="PATH",
+        help="the derived style descriptor that aims the draw, as a JSON object with the fields "
+        "`voice.StyleDescriptor` declares. Required and not defaulted: an unaimed draw is our "
+        "own register coming back in a costume, which is the circularity this path exists to "
+        "escape. The measurement side's distiller writes one file per serial; see the module "
+        "docstring of `application/revoice.py` for where a descriptor legally comes from",
+    )
+    revoice_cmd.add_argument(
+        "--name",
+        help="the name the re-minted writer takes. Defaults to the parent's, which is legal for "
+        "a proposal and refused at acceptance while the parent is accepted; a compiled cast "
+        "writer cannot be re-minted under its own name at all and needs this",
+    )
+    revoice_cmd.add_argument(
+        "--specialization",
+        choices=sorted(roster_mod.SPECIALIZATIONS),
+        help="inherited from the parent's stored row. Needed only where there is no row to "
+        "inherit from, which is every compiled cast writer",
+    )
+    revoice_cmd.add_argument(
+        "--shape",
+        choices=sorted(roster_mod.SHAPES),
+        help="inherited from the parent's stored row, for the same reason and in the same case. "
+        "The re-mint stays in the cell its parent was drafted into, because voice is a second "
+        "variable beside the form and not a replacement for it",
+    )
+    revoice_cmd.add_argument(
+        "--note", help="operator annotation. Never sent to a model and not addressed material"
+    )
+    revoice_cmd.set_defaults(func=cmd_revoice)
 
     listing = sub.add_parser(
         "listing",

@@ -305,6 +305,54 @@ def icc(groups: list[list[float]]) -> float | None:
     return (between - within) / denominator
 
 
+def serial_descriptors(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """One descriptor per serial: the field-wise median over that serial's chapters.
+
+    **A per-chapter descriptor is not the thing to aim a draw at, and the ICC is why.** The
+    reading below puts between-serial reliability in the high fives to low sevens, which is the
+    same sentence as: a quarter to two fifths of a single chapter's numbers are that chapter
+    rather than that serial. Aiming a writer at one chapter aims it partly at noise, and the
+    median over a serial's chapters is the cheapest estimator that is not a mean dragged by one
+    long chapter.
+
+    **Position 1 is excluded**, which is the registered `openings` reading applied rather than
+    only reported: an opening is a hook and a hook is its own register, and dropping it raised
+    ICC on five of seven fields. A serial with nothing but an opening contributes nothing rather
+    than contributing its hook under its own name.
+
+    Ordering survives the median: `p10 <= p50 <= p90` holds chapter by chapter and the median is
+    monotone across them, so `StyleDescriptor` cannot refuse what this builds.
+    """
+    grouped: dict[int, list[dict[str, Any]]] = defaultdict(list)
+    for row in rows:
+        if row["position"] != 1:
+            grouped[row["fiction_id"]].append(row)
+    out: list[dict[str, Any]] = []
+    for fiction, chapters in sorted(grouped.items()):
+        if not chapters:
+            continue
+        people = [chapter["person"] for chapter in chapters]
+        descriptor = voice_mod.StyleDescriptor(
+            **{
+                name: statistics.median(float(chapter[name]) for chapter in chapters)
+                for name in NUMERIC_FIELDS
+            },
+            person=voice_mod.Person(max(set(people), key=people.count)),
+            tense=ASSUMED_TENSE,
+        )
+        out.append(
+            {
+                "fiction_id": fiction,
+                "chapters": len(chapters),
+                "descriptor_id": descriptor.descriptor_id,
+                **{name: getattr(descriptor, name) for name in NUMERIC_FIELDS},
+                "person": str(descriptor.person),
+                "tense": str(descriptor.tense),
+            }
+        )
+    return out
+
+
 def analyse(rows: list[dict[str, Any]]) -> dict[str, Any]:
     """Between-serial against within-serial, per field, with and without the opening."""
     def _icc(subset: list[dict[str, Any]]) -> dict[str, float | None]:
@@ -328,6 +376,14 @@ def main(argv: list[str] | None = None) -> int:
         "--shards",
         default=",".join(str(shard) for shard in corpus_io.SHARDS),
         help="comma-separated shard numbers; the cached pair by default",
+    )
+    parser.add_argument(
+        "--emit",
+        default="",
+        help="directory to write one bare descriptor object per serial into, named by its "
+        "content address. This is what `litharness revoice --descriptor` reads; nothing here "
+        "decides which serial aims which writer, which is an assignment rule an arm registers "
+        "before a draw and not a choice this tool makes",
     )
     parser.add_argument(
         "--out",
@@ -376,6 +432,7 @@ def main(argv: list[str] | None = None) -> int:
         "descriptors": rows,
         "serials_contributing": len(contributing),
         "coverage_median": (statistics.median(coverage) if coverage else None),
+        "serial_descriptors": serial_descriptors(rows),
         "analysis": analyse(rows),
     }
     Path(args.out).parent.mkdir(parents=True, exist_ok=True)
@@ -400,6 +457,17 @@ def main(argv: list[str] | None = None) -> int:
         for field, value in table.items():
             print(f"    {field:28s} {'n/a' if value is None else f'{value:+.4f}'}")
     print(f"wrote {args.out}")
+    if args.emit:
+        emitted = Path(args.emit)
+        emitted.mkdir(parents=True, exist_ok=True)
+        fields = (*NUMERIC_FIELDS, "person", "tense")
+        for serial in payload["serial_descriptors"]:
+            (emitted / f"{serial['descriptor_id']}.json").write_text(
+                json.dumps({name: serial[name] for name in fields}, indent=2, sort_keys=True),
+                encoding="utf-8",
+                newline="\n",
+            )
+        print(f"emitted {len(payload['serial_descriptors'])} serial descriptor(s) to {emitted}")
     return 0
 
 

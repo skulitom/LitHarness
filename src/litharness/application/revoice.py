@@ -198,7 +198,7 @@ def render_rewrite_request(*, dossier: str, exemplar: str) -> CompletionRequest:
 
 
 def accept_rewrite(*, original: str, exemplar: str, returned: str) -> str:
-    """The rewritten dossier, or a refusal. **Five gates, and no redraw behind any of them.**
+    """The rewritten dossier, or a refusal. **Four gates, and no redraw behind any of them.**
 
     **The composition lives here rather than in the domain**, and the boundary is
     `application/roster.py`'s: the *rules* are domain — `writers.legal_dossier` and
@@ -213,16 +213,23 @@ def accept_rewrite(*, original: str, exemplar: str, returned: str) -> str:
        answered with a preamble, and it is honest about what it misses: a one-line preamble
        survives it. What backstops that is the same thing that backstops everything else here —
        the result lands `proposed` and a person reads it before `roster accept`.
-    2. **R1, unchanged and not weakened**, through `legal_dossier`. A rewrite that started
-       explaining its own register names an axis and never mints.
-    3. **The registered-axis census**, through `voice.axes_exhibited`. This is the gate the
-       direction note asks for by name: a rewritten dossier may not *carry* a registered mark any
-       more than it may name one, and an em-dash-laden exhibited voice asserts by example the
-       thing the em-dash loop exists to test.
-    4. **The borrowing control**, through `voice.longest_shared_run`. §85's design says a model
-       shown prose moves toward it by feature or by phrase and that a distance cannot tell those
-       apart; a lifted clause is a copy wearing a register.
-    5. **A rewrite that changed nothing is refused.** It would mint a new writer — the exemplar
+    2. **R1 and the registered-axis census, both through `legal_dossier`.** A rewrite that
+       started explaining its own register names an axis; one written with a mark demonstrates
+       it. Both never mint.
+
+       **This was two gates here and is one, and the collapse is worth recording rather than
+       tidying.** The census had its own branch calling `voice.axes_exhibited`, written before
+       the naming/carrying split moved the em dash out of `directors._CRAFT_INSTRUCTION` and put
+       the census inside `legal_dossier` itself. The moment that landed, this branch became
+       unreachable: every text it could catch had already raised one line earlier. An adversarial
+       review found it, and found that the test naming it passed through the *other* gate's
+       message, so "five gates" was four and one of them had a receipt for code that never ran.
+       Two commits in one session made each other redundant, which is the argument for the
+       review rather than an argument against either commit.
+    3. **The borrowing control**, through `voice.longest_shared_run`. `voice_binding.py`'s design
+       (§89.5) says a model shown prose moves toward it by feature or by phrase and that a
+       distance cannot tell those apart; a lifted clause is a copy wearing a register.
+    4. **A rewrite that changed nothing is refused.** It would mint a new writer — the exemplar
        digest is addressed material — whose dossier is byte-identical to its parent's, which is a
        second row that differs from the first in nothing that ever reaches a prompt.
 
@@ -241,21 +248,15 @@ def accept_rewrite(*, original: str, exemplar: str, returned: str) -> str:
             "arrives in one quoted argument; a line break here is usually a preamble the model "
             "added, and nothing is written"
         )
+    # R1 and the census in one call, and the docstring says why there is not a second one here.
     writers_domain.legal_dossier(text)
-    carried = voice_domain.axes_exhibited(text)
-    if carried:
-        raise IllegalDossier(
-            f"the rewrite carries the mark of the registered prose axis/axes "
-            f"{', '.join(carried)}. A dossier may no more demonstrate a measured axis than name "
-            "one: it rides in the system message of every scene call, so an exhibited mark "
-            "asserts by example what the loop exists to test"
-        )
     run = voice_domain.longest_shared_run(exemplar, text)
     if run >= voice_domain.SHARED_RUN_LIMIT:
         raise IllegalDossier(
             f"the rewrite shares a run of {run} words with the passage it was shown, against a "
             f"limit of {voice_domain.SHARED_RUN_LIMIT}. That is borrowing rather than register, "
-            "which is the distinction §85's exemplar work was built around, and the two are not "
+            "which is the distinction the exemplar-dose work (§89.5) was built around, and the "
+            "two are not "
             "separable after the fact"
         )
     if text == original.strip():

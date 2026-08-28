@@ -43,6 +43,7 @@ from litharness.adapters.sqlite_errors import (
 from litharness.adapters.sqlite_jobs import SqliteJobRepository
 from litharness.adapters.sqlite_plans import SqlitePlanRepository
 from litharness.adapters.sqlite_roster import SqliteRosterRepository
+from litharness.adapters.sqlite_voice import SqliteVoiceRepository
 from litharness.domain.budget import Spend
 from litharness.domain.directives import Directive, DirectiveKind, DirectiveStatus
 from litharness.domain.directors import DIRECTOR_AUTHOR_PREFIX
@@ -76,6 +77,7 @@ from litharness.domain.policy import (
 )
 from litharness.domain.promises import PROMISE_OPEN, PROMISE_PAID, Promise
 from litharness.domain.revision import Revision, node_version_id
+from litharness.domain.voice import StyleDescriptor
 from litharness.domain.writers import RosterStatus
 from litharness.domain.writers import Writer as DomainWriter
 
@@ -240,6 +242,7 @@ class SqliteStore:
             transaction,
             insert_decision=SqliteStore._insert_decision,
         )
+        self._voice = SqliteVoiceRepository(connection, transaction)
 
     # -- lifecycle ------------------------------------------------------------
 
@@ -1856,6 +1859,37 @@ class SqliteStore:
         return self._roster.refuse_writers(
             writer_ids, decision=decision, refused_at=refused_at
         )
+
+    # --- drawn exemplar passages -------------------------------------------------------
+    #
+    # Delegates only. `sqlite_voice.py` carries the content-address invariant, and these sit
+    # beside the roster because `roster_writers.exemplar_digest` is what points at them.
+
+    def record_exemplar(
+        self,
+        *,
+        passage: str,
+        drawn_by: str,
+        descriptor: StyleDescriptor,
+        profile: str,
+        drawn_at: str,
+    ) -> str:
+        """Keep one drawn passage and return its digest, which the caller mints a writer with."""
+        return self._voice.record_exemplar(
+            passage=passage,
+            drawn_by=drawn_by,
+            descriptor=descriptor,
+            profile=profile,
+            drawn_at=drawn_at,
+        )
+
+    def exemplar(self, exemplar_digest: str) -> dict[str, Any] | None:
+        """One stored passage, or `None`. Raises when a stored row stopped addressing itself."""
+        return self._voice.exemplar(exemplar_digest)
+
+    def exemplars_drawn_by(self, drawn_by: str) -> list[dict[str, Any]]:
+        """Every passage this writer drew, oldest first. A read, never a pick."""
+        return self._voice.exemplars_drawn_by(drawn_by)
 
     def machine_directives(
         self, book_id: str, branch_id: str, *, live_only: bool = False

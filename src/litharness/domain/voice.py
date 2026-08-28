@@ -31,6 +31,7 @@ import without a cycle, and `writers` composes both.
 from __future__ import annotations
 
 import enum
+import math
 import re
 import statistics
 from collections.abc import Mapping, Sequence
@@ -58,12 +59,14 @@ DESCRIPTOR_ID_PREFIX = "sty-"
 #: A registered prose axis whose *mark* is a thing a text can be seen to carry, and the mark.
 #:
 #: **One entry, and the entry was already being enforced somewhere else, which is the finding.**
-#: `directors._CRAFT_INSTRUCTION["em_dash"]` has the literal character as one of its
-#: alternatives, so a dossier that merely contains an em dash is refused today by a function
-#: whose name and docstring both say it catches text that *instructs about* an axis. The roster
-#: vocabulary already explains that refusal in exhibition's own terms — *"a dossier rides in the
-#: system message of every scene call, so a dossier written with the mark demonstrates the mark
-#: on every draft"* — so the rule was right and its home was wrong. This is the home.
+#: `directors._CRAFT_INSTRUCTION["em_dash"]` carried the literal character as one of its
+#: alternatives until 2026-08-28, so a dossier that merely contained an em dash was refused by a
+#: function whose name and docstring both say it catches text that *instructs about* an axis. The
+#: roster vocabulary already explained that refusal in exhibition's own terms — *"a dossier rides
+#: in the system message of every scene call, so a dossier written with the mark demonstrates the
+#: mark on every draft"* — so the rule was right and its home was wrong. This is the home, and
+#: `legal_brief` and `writers.legal_dossier` both run both detectors so nothing stopped being
+#: refused on the way.
 #:
 #: **What the table is for is the axis that has not been registered yet.** Today it holds one
 #: mark and the census it powers is nearly vacuous. `test_every_registered_axis_is_placed`
@@ -437,7 +440,9 @@ def distill(
 #: it, before the rewrite is a copy rather than a register.
 #:
 #: **The one control the prior art says this design cannot go without.**
-#: `research/quality-measurement/voice_binding.py` is the exemplar-dose experiment §85 ran, and
+#: `research/quality-measurement/voice_binding.py` is the exemplar-dose experiment registered at
+#: §89.5 — §85 is the entry that measured the channel open and carries no borrowing control at
+#: all, which is a distinction worth keeping straight here — and
 #: its whole design is a *borrowing* control: a model shown somebody's prose can move toward it
 #: by picking up the deep features the register is made of, or by lifting their phrases, and a
 #: distance measure cannot tell those apart. There the control is n-gram overlap against a shown
@@ -519,15 +524,29 @@ def person_of(text: str) -> Person:
 
 
 def _quantile(ordered: Sequence[float], share: float) -> float:
-    """Nearest-rank quantile over an already-sorted sequence.
+    """Nearest rank, **ties to the higher rank**, over an already-sorted sequence.
 
     Nearest-rank rather than interpolated because a descriptor is compared for equality by
     `descriptor_id_for`, and an interpolation scheme is a choice two implementations can make
-    differently while both being defensible. This one cannot.
+    differently while both being defensible.
+
+    **The tie rule is named because without it the scheme is exactly that choice, and the first
+    version of this function made it silently and wrongly.** It used `round`, which is
+    half-to-even *on the index*: `share * (len - 1)` is an exact `.5` for `share=0.50` at every
+    even count, so the tie went up at counts 4, 8, 12 and down at 2, 6, 10, and `p50` alternated
+    between the lower-middle and the upper-middle rank with the count's parity. On a passage of
+    alternating two-word and ten-word sentences it returned 10.0 at four sentences and 2.0 at
+    six — opposite ends of one distribution — which is two aims and two descriptor ids for one
+    voice. Found by an adversarial review; the docstring had claimed the scheme could not be
+    made differently by two implementations, at the very counts where it could.
+
+    `floor(x + 0.5)` is half-away-from-zero on a non-negative index, which is what every
+    implementation outside Python does by default, and the tie now has a name a second
+    implementation can be held to.
     """
     if not ordered:
         return 0.0
-    index = min(len(ordered) - 1, max(0, round(share * (len(ordered) - 1))))
+    index = min(len(ordered) - 1, max(0, math.floor(share * (len(ordered) - 1) + 0.5)))
     return float(ordered[index])
 
 

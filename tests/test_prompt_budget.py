@@ -29,14 +29,31 @@ import json
 
 import pytest
 
-from litharness.application import overview, readers, recruiter, titles, world_agent
+from litharness.application import overview, readers, recruiter, revoice, titles, world_agent
 from litharness.cli import EXIT_OK, _prompt_pressure, main
 from litharness.domain import house
+from litharness.domain import voice as voice_domain
 from litharness.domain import writers as writers_domain
 from litharness.domain.generation import CompletionRequest
 
 #: One writer, fixed, so a budget is about the rules rather than about whose dossier is longest.
 WRITER = writers_domain.CAST["ferreira"]
+
+#: A descriptor with the shape a real one has and none of its provenance. The numbers do not
+#: matter to a demand count and are never sent anywhere from this file; what matters is that
+#: `render_exemplar_request` cannot be called without one, which is the design rule this
+#: fixture inherits rather than works around.
+DESCRIPTOR = voice_domain.StyleDescriptor(
+    sentence_words_mean=11.5,
+    sentence_words_sd=6.0,
+    sentence_words_p10=3.0,
+    sentence_words_p50=10.0,
+    sentence_words_p90=21.0,
+    paragraph_sentences_mean=2.5,
+    connective_density=5.25,
+    person=voice_domain.Person.THIRD,
+    tense=voice_domain.Tense.PAST,
+)
 
 
 def _roles() -> dict[str, str]:
@@ -79,6 +96,20 @@ def _roles() -> dict[str, str]:
         ),
         "recruiter, several no beat": (
             recruiter.render_recruit_request("cozy-fantasy", shape="several-no-beat").system
+            or ""
+        ),
+        # **Two rows, and both are deliberately floorless**, which is why they are small. A
+        # passage nobody reads becomes the paragraph that rides the system message of every
+        # scene call its writer ever makes, so `revoice` inherits `recruiter`'s recorded
+        # reason for carrying no craft doctrine of its own rather than the scene writer's
+        # reason for carrying all of it.
+        "revoice draw": (
+            revoice.render_exemplar_request(WRITER, descriptor=DESCRIPTOR).system or ""
+        ),
+        "revoice rewrite": (
+            revoice.render_rewrite_request(
+                dossier=WRITER.dossier, exemplar="A passage."
+            ).system
             or ""
         ),
     }
@@ -168,6 +199,12 @@ BUDGET: dict[str, int] = {
     "scene writer, cast": 32,
     "measurement reader": 4,
     "steering reader": 4,
+    # Measured 2026-08-28 and set at what was there, the ratchet this file exists to be. Both
+    # sit far under the recruiter's 24 because neither carries the house floor and neither has
+    # a shape clause; the rewrite is larger than the draw because five gates on what comes back
+    # are five things the prompt says will refuse it.
+    "revoice draw": 9,
+    "revoice rewrite": 14,
 }
 
 #: The floor everything else inherits. Broken out because a clause added here is added to every

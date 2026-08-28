@@ -217,6 +217,14 @@ SHARD = "research/quality-measurement/corpora/royalroad-03.parquet"
 
 
 def test_the_package_checks_can_fail():
+    """**And it exercises the same two functions the live checks call, which it did not at first.**
+
+    The first version of this file left both live checks walking the tree inline and asserted
+    only on the helpers, so the receipt covered code nothing enforced with and the enforcement
+    had no receipt — a second home for one check, and a control that proved the wrong thing.
+    Found by an adversarial review that mutated both inline scans to `if False` and watched
+    three tests pass. The helpers are now the only implementation.
+    """
     tree = ast.parse(OFFENDING_MODULE)
     assert _research_imports(tree, frozenset({"corpus_io"})) == ["corpus_io"]
     assert [marker for _, marker in _corpus_strings(tree)] == [
@@ -250,20 +258,13 @@ def test_nothing_under_the_package_imports_a_research_module():
     package a place where somebody could reasonably reach for the corpus, and it is exactly the
     reach RS1 forbids — the numbers cross, the text does not.
     """
-    forbidden = {path.stem for path in RESEARCH.glob("*.py")}
+    forbidden = frozenset(path.stem for path in RESEARCH.glob("*.py"))
     assert forbidden, "no research modules found; this check would pass vacuously"
-    offenders: list[str] = []
-    for path, tree in _package_sources():
-        for node in ast.walk(tree):
-            if isinstance(node, ast.Import):
-                names = [alias.name for alias in node.names]
-            elif isinstance(node, ast.ImportFrom):
-                names = [node.module or ""]
-            else:
-                continue
-            for name in names:
-                if name.split(".")[0] in forbidden:
-                    offenders.append(f"{path.relative_to(REPO).as_posix()}: imports {name}")
+    offenders = [
+        f"{path.relative_to(REPO).as_posix()}: imports {name}"
+        for path, tree in _package_sources()
+        for name in _research_imports(tree, forbidden)
+    ]
     assert not offenders, "the package imports the measurement side:\n" + "\n".join(offenders)
 
 
@@ -278,20 +279,9 @@ def test_no_package_code_names_a_corpus_source():
     *reached*. A package module handed an open file object by a caller passes, and so it should
     — RS1 is a rule about what the package may know, and the composition root is `cli.py`.
     """
-    offenders: list[str] = []
-    for path, tree in _package_sources():
-        docstrings = _docstring_nodes(tree)
-        for node in ast.walk(tree):
-            if (
-                not isinstance(node, ast.Constant)
-                or not isinstance(node.value, str)
-                or id(node) in docstrings
-            ):
-                continue
-            lowered = node.value.casefold()
-            for marker in CORPUS_MARKERS:
-                if marker in lowered:
-                    offenders.append(
-                        f"{path.relative_to(REPO).as_posix()}:{node.lineno} names {marker!r}"
-                    )
+    offenders = [
+        f"{path.relative_to(REPO).as_posix()}:{line} names {marker!r}"
+        for path, tree in _package_sources()
+        for line, marker in _corpus_strings(tree)
+    ]
     assert not offenders, "package code names a corpus source:\n" + "\n".join(offenders)
