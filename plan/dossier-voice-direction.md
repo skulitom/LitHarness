@@ -50,9 +50,20 @@ A follow-on arm in §146's own framework, registered before any draw: same recru
 `house-voiced` vs `voice-exhibited` dossier cells, the exhibited voice drafted by the
 recruiter as a generative act; readings on the writers' *listings* (register counters against
 the market, premise lock beside them), prediction written first, §105's null prior inherited.
-Composes with the beat/no-beat variable rather than replacing it. Until that arm runs,
+Composes with the beat/no-beat variable rather than replacing it. ~~Until that arm runs,
 "exhibited voice changes output voice" is a well-supported conjecture with three mechanism
-receipts and zero direct measurements.
+receipts and zero direct measurements.~~ **Corrected in place, 2026-08-28, by the executing
+session: this understated the prior art. §85's `voice_binding` measured the
+demonstrated-voice channel OPEN — an exemplar-conditioned retell moves the register — and
+§89's Track V measured dose and persistence on top. Exhibition-moves-register is measured,
+not conjectured. What §85 does not cover is exactly this design's shape: it showed the model
+market passages (the crossing forbidden generation-side) and moved scene prose; the open
+question, and the only thing the arm needs to buy, is whether a MODEL-DRAFTED exemplar moves
+a DOSSIER. §85's design also supplies the borrowing control this note missed: register can
+move by feature uptake or by phrase lifting, no distance measure separates them after the
+fact, so the rewrite acceptance gate refuses a six-word run shared with the shown passage —
+the same fingerprint rule the editorial control plane uses against reader-vocabulary
+laundering.**
 
 ## The exemplar question, same day
 
