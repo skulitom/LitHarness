@@ -200,6 +200,35 @@ CLARITY = (
 #: than a truth test, and no clause anywhere now tells a writer to render a scene as a line.
 #: Read 7 §4.5's *"useless information again"* is the same axis from the other side and the
 #: movement criterion is the one that answers both. Shipped unmeasured.
+#:
+#: **The numbers clause was re-scoped 2026-08-29 as §161, and the licence it narrows is the one
+#: read 8 §4.2 measured being spent on a bureaucracy.** It read *"an exact number belongs to
+#: what this world counts and to nothing else"*, and the trouble is in the middle three words:
+#: a guild's glasses, a ledger's entries and a tax roll are all things a world counts, so the
+#: clause licensed exactness on exactly the surfaces the operator has now objected to four
+#: books running. §157's scheduled beats fired twice in pilot 14 and both landed as promotions
+#: inside a guild, which is what a licence this wide buys. The scope is now **what this world's
+#: own system counts** — the thing the sheet renders and the status line prints — which is a
+#: strictly smaller set than what the world counts, so this is a narrowing and not a new
+#: permission. §138's direction holds: nothing here was made affirmative.
+#:
+#: **The instance list was re-aimed at the classes that actually leaked, and it did not grow.**
+#: Its three instances were a prop's moves, a habit's repetitions and a wait's days, summarised
+#: as *"props and durations"*. Read 8's chapter leaked days (covered), an hour (covered), a jar
+#: count (**not** covered) and an age (not covered), so one instance moved from the habit —
+#: which no read has ever named — to a tally, and the summary widened to match. The instances
+#: are invented rather than lifted: §97.1 forbids an operator's read from becoming prompt text,
+#: and a number harvested from the book under read is that laundering with the numeral left in.
+#:
+#: **What this clause could not address before, and now can.** §154's second axis is that a
+#: demand naming something the writer cannot put on a page lands with its sign multiplied by
+#: zero. *"What this world counts"* named no artifact the drafting call had ever shown a
+#: writer — the referent was empty, so the exclusion had nothing to exclude *toward* and
+#: precision went where precision always goes. §158 made the status line reach the writer
+#: filled, and §161's furniture contract puts it on the page at the moment a number moves; the
+#: licence half of this clause now points at something the writer is holding. That is the whole
+#: of why a re-scope is worth more here than another prohibition would be. Shipped unmeasured,
+#: and its effect is Track 3's mundane-precision census to find, not this module's to claim.
 READER = (
     "Spend the words on what the reader opened this book for. Detail that only establishes "
     "who somebody is — the steps of a job, the order of a routine — is not why the reader "
@@ -214,11 +243,11 @@ READER = (
     "If the person this happens to came from somewhere like our own world, the life they came "
     "from is one a reader in their twenties has lived: a degree they are not using, a job "
     "that covers the rent, a thing they know far too much about for no professional reason.\n"
-    "An exact number belongs to what this world counts and to nothing else. A puzzle box "
-    "does not have thirty-one moves, a habit does "
-    "not have eleven repetitions, and a wait is not four days: exactness spent on props and "
-    "durations teaches a reader that the numbers here mean nothing, which costs the numbers "
-    "that do."
+    "An exact number belongs to what this world's own system counts and to nothing else. A "
+    "puzzle box does not have thirty-one moves, a crate does "
+    "not hold forty-two bottles, and a wait is not four days: exactness spent on props, "
+    "tallies and durations teaches a reader that the numbers here mean nothing, which costs "
+    "the numbers that do."
 )
 
 #: **What the reader is accumulating, and it is the genre's own economics.** The operator,

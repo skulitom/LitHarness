@@ -67,7 +67,7 @@ from litharness.domain.beats import Beat, TemplateMismatch, beats_for, template_
 from litharness.domain.budget import BudgetPolicy
 from litharness.domain.budget import check as budget_check
 from litharness.domain.events import Event, EventType, payload_digest
-from litharness.domain.extraction import MAX_SUFFIX, impossible_fields
+from litharness.domain.extraction import MAX_SUFFIX, impossible_fields, movable_names
 from litharness.domain.generation import CompletionRequest, CompletionResult, Resolution
 from litharness.domain.jobs import Job
 from litharness.domain.nodes import NodeKind
@@ -861,8 +861,16 @@ def outline_proposal(
     book_id: str,
     branch_id: str,
     result: CompletionResult,
+    counts: Sequence[str] = (),
 ) -> PlanProposal:
     """The model's outline as plan edits, one `SCENE_PLAN` item per beat.
+
+    **`counts` is what this book's system counts, in the order its sheet prints them** (§161),
+    and it is what lets the folded progression beat name the quantity that moves rather than
+    the category. It defaults to empty so a caller that does not supply it composes exactly
+    the sentence this fold composed before — the selector and this function are two call sites
+    for one schedule, and a default that changed behaviour would let them disagree about what
+    a scheduled scene says while both looked correct.
 
     `scope` names the scene the statement is about, which is what makes the item reachable by
     `scene_plan_for` and keeps it out of every *other* scene's packet. `constraints_of` selects
@@ -907,7 +915,7 @@ def outline_proposal(
                 # distinct functions never takes an outline at all, and the selector derives
                 # the bare beat at render time for its statement-less scenes (pilot 14 §3
                 # found the six-scene dead spot when this was the sole call site).
-                text=genre.with_beat(statement, beat.ordinal, len(beats)),
+                text=genre.with_beat(statement, beat.ordinal, len(beats), counts=counts),
                 authority=lc.PlanAuthority.INTENDED,
                 locked=False,
                 scope=lc.ResourceRef(
@@ -1121,6 +1129,9 @@ def make_outline_handler(
         # with no status sheet is asked for no milestones.
         planning_canon = planning_records(canon, entry_state)
         world = world_brief.brief_for(planning_canon)
+        # Read once and used twice — in the request below and by the folded beat's vocabulary
+        # in `outline_proposal`. A second lookup would be a second answer to whose book this is.
+        protagonist = worlds_mod.protagonist_brief(planning_canon)
         ladder = world.ladder if world is not None else None
         # **The world and its protagonist, off the `canon` already read two statements
         # above.** A second query would be a second answer to the same question, and the
@@ -1156,7 +1167,7 @@ def make_outline_handler(
             seed=seed or None,
             promises=open_promises,
             world=world,
-            protagonist=worlds_mod.protagonist_brief(planning_canon),
+            protagonist=protagonist,
             serial_arc_index=arc_index if isinstance(arc_index, int) else None,
             prior_summaries=prior_summaries,
             arc_entry_state=entry_state,
@@ -1218,6 +1229,19 @@ def make_outline_handler(
                 book_id=book_id,
                 branch_id=branch_id,
                 result=result,
+                # Read off the same `canon` and at the same entry position as `seed` above,
+                # so the beat folded into a scene plan names something the sheet this book
+                # actually starts with can move. `movable_names` is the one place that
+                # question is answered, shared with the drafting selector so the two call
+                # sites for one schedule cannot disagree. The protagonist comes from the
+                # brief already built for the request four lines down — a second lookup
+                # would be a second answer to whose book this is. `()` for a book that
+                # speaks no system voice.
+                counts=movable_names(
+                    canon,
+                    character=protagonist.subject if protagonist is not None else None,
+                    at=beats[0].story_order_key,
+                ),
             )
             # Validated with the outline, so a schedule that plans stasis refuses the whole
             # answer rather than landing beside a good outline. One call, one verdict.
