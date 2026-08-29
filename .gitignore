@@ -55,9 +55,11 @@ research/quality-measurement/results/latent-taste-activations*.jsonl
 # want it kept, `git add -f book-library/*/NOTES.md`.
 #
 # **The glob is `book-library*` and not `book-library`, and a near-miss is why.** `--library`
-# takes any root, and it has to be used whenever two runs share a title: `library.slugify` names
-# a shelf from the title alone, so a second book called *First In Time* overwrites the first
-# one's reading copy (Serial Pilot 2 §6.1). The obvious root for that second run is
+# takes any root, and for a long time it was forced whenever two runs shared a title:
+# `library.slugify` named a shelf from the title alone, so a second book called *First In Time*
+# overwrote the first one's reading copy (Serial Pilot 2 §6.1; since serial pilot 15b §7 a
+# colliding newcomer's shelf is id-suffixed instead, and `--library` is back to being a
+# choice). The obvious root for that second run is
 # `book-library-p4/`, which the bare rule did not cover — so the run that exists *because* of
 # the collision left a whole generated library sitting untracked, one `git add -A` away from
 # being committed.

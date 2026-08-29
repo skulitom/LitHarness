@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import json
 import re
+import shutil
 
 from litharness.adapters.sqlite_store import SqliteStore
 from litharness.application.export import collect
@@ -20,6 +21,7 @@ from litharness.application.library import (
     LIBRARY_DIRNAME,
     NOTES_FILENAME,
     NOTES_TEMPLATE,
+    SHELF_MARKER_FILENAME,
     STATE_FILENAME,
     chapters_for,
     index_markdown,
@@ -27,6 +29,7 @@ from litharness.application.library import (
     paste_plain,
     publish,
     root_for,
+    shelf_slug,
     slugify,
     volumes_for,
 )
@@ -369,6 +372,135 @@ def test_the_index_says_the_library_is_not_a_publication() -> None:
 def test_slugify_falls_back_rather_than_producing_an_empty_name() -> None:
     assert slugify("The Vane House", "book-id") == "the-vane-house"
     assert slugify("!!!", "abcdefghijklmno") == "abcdefghijkl"
+
+
+# -- two books, one title: the shelf collision (serial pilot 15b §7) -----------------------
+
+KETTLE = "What the Kettle Remembers"
+FIRST_BOOK = "44444444-4444-5444-8444-444444444444"
+FIRST_BRANCH = "55555555-5555-5555-8555-555555555555"
+SECOND_BOOK = "66666666-6666-5666-8666-666666666666"
+SECOND_BRANCH = "77777777-7777-5777-8777-777777777777"
+
+
+def a_kettle_book(book_id: str, branch_id: str, prose: str) -> object:
+    """One drafted scene under the shared title, for a book with its own identity."""
+    keys = initial_keys(1)
+    nodes = [
+        Node(logical_id="book", kind=NodeKind.BOOK, position_key="010", title=KETTLE),
+        Node.text_node(
+            "scene-1", NodeKind.SCENE, keys[0], prose, parent_logical_id="book", title="Scene 1"
+        ),
+    ]
+    return build_revision(book_id, branch_id, nodes)
+
+
+def test_shelf_slug_suffixes_only_a_colliding_newcomer(tmp_path) -> None:
+    """The first book to publish a name keeps it; a different book arriving at the same name
+    carries a short id suffix. A book with no id has nothing to disambiguate with."""
+    assert shelf_slug(tmp_path, "The Road", FIRST_BOOK) == "the-road"
+    shelf = tmp_path / "the-road"
+    shelf.mkdir()
+    (shelf / SHELF_MARKER_FILENAME).write_text(
+        json.dumps({"book_id": FIRST_BOOK}), encoding="utf-8"
+    )
+    assert shelf_slug(tmp_path, "The Road", FIRST_BOOK) == "the-road"
+    assert shelf_slug(tmp_path, "The Road", SECOND_BOOK) == "the-road--66666666"
+    assert shelf_slug(tmp_path, "The Road", "") == "the-road"
+
+
+def test_two_books_sharing_a_title_do_not_share_a_shelf(tmp_path) -> None:
+    """The defect as it happened: pilot 15 draw 1 and pilot 15b draw 2 carried one title from
+    two databases, both resolved `book-library/what-the-kettle-remembers/`, and the redraw
+    republished over draw 1's reading copy — which had to be archived by hand. The newcomer
+    now publishes beside, not over."""
+    root = tmp_path / LIBRARY_DIRNAME
+    first_store = SqliteStore.open(tmp_path / "serial15.db")
+    try:
+        first_store.commit_revision(
+            a_kettle_book(FIRST_BOOK, FIRST_BRANCH, "The kettle held its first hour."),
+            created_at=STAMP,
+        )
+        [first] = publish(first_store, root=root, generated_at=STAMP)
+    finally:
+        first_store.close()
+    second_store = SqliteStore.open(tmp_path / "serial15b.db")
+    try:
+        second_store.commit_revision(
+            a_kettle_book(SECOND_BOOK, SECOND_BRANCH, "The redraw held a different hour."),
+            created_at=STAMP,
+        )
+        [second] = publish(second_store, root=root, generated_at=STAMP)
+    finally:
+        second_store.close()
+
+    assert first.slug == "what-the-kettle-remembers"
+    assert second.slug == "what-the-kettle-remembers--66666666"
+    first_copy = (root / first.slug / f"{first.slug}.md").read_text(encoding="utf-8")
+    assert "its first hour" in first_copy, "the redraw must not republish over draw 1"
+    second_copy = (root / second.slug / f"{second.slug}.md").read_text(encoding="utf-8")
+    assert "a different hour" in second_copy
+    marker = json.loads(
+        (root / second.slug / SHELF_MARKER_FILENAME).read_text(encoding="utf-8")
+    )
+    assert marker["book_id"] == SECOND_BOOK
+
+
+def test_a_suffixed_shelf_keeps_its_name_after_the_bare_one_frees_up(tmp_path) -> None:
+    """Once suffixed, always suffixed: a shelf changing name because some other folder was
+    deleted would be a shelf moving behind the operator's back — the thing the whole rule
+    exists to prevent."""
+    root = tmp_path / LIBRARY_DIRNAME
+    first_store = SqliteStore.open(tmp_path / "one.db")
+    try:
+        first_store.commit_revision(
+            a_kettle_book(FIRST_BOOK, FIRST_BRANCH, "The kettle held its first hour."),
+            created_at=STAMP,
+        )
+        [first] = publish(first_store, root=root, generated_at=STAMP)
+    finally:
+        first_store.close()
+    second_store = SqliteStore.open(tmp_path / "two.db")
+    try:
+        second_store.commit_revision(
+            a_kettle_book(SECOND_BOOK, SECOND_BRANCH, "The redraw held a different hour."),
+            created_at=STAMP,
+        )
+        [second] = publish(second_store, root=root, generated_at=STAMP)
+        assert second.slug == "what-the-kettle-remembers--66666666"
+        shutil.rmtree(root / first.slug)
+        [again] = publish(second_store, root=root, generated_at=STAMP, force=True)
+    finally:
+        second_store.close()
+    assert again.slug == second.slug
+    assert not (root / first.slug).exists(), "the freed bare name is not re-claimed"
+
+
+def test_a_shelf_published_before_the_marker_existed_keeps_its_name(tmp_path) -> None:
+    """Legacy shelves carry no `.book.json`. The volume manifests already say whose the shelf
+    is, and a shelf that cannot say at all counts as the publisher's — either way an existing
+    shelf never moves and the book keeps its clean name."""
+    root = tmp_path / LIBRARY_DIRNAME
+    store = SqliteStore.open(tmp_path / "l.db")
+    try:
+        store.commit_revision(
+            a_kettle_book(FIRST_BOOK, FIRST_BRANCH, "The kettle held its first hour."),
+            created_at=STAMP,
+        )
+        [book] = publish(store, root=root, generated_at=STAMP)
+        shelf = root / book.slug
+
+        (shelf / SHELF_MARKER_FILENAME).unlink()
+        [from_manifests] = publish(store, root=root, generated_at=STAMP, force=True)
+        assert from_manifests.slug == book.slug
+        assert (shelf / SHELF_MARKER_FILENAME).is_file(), "the marker is restored on publish"
+
+        (shelf / SHELF_MARKER_FILENAME).unlink()
+        shutil.rmtree(shelf / "volumes")
+        [adopted] = publish(store, root=root, generated_at=STAMP, force=True)
+        assert adopted.slug == book.slug
+    finally:
+        store.close()
 
 
 def test_publishing_an_empty_store_says_so(tmp_path) -> None:

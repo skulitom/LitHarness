@@ -311,6 +311,14 @@ is a question this run poses; it did not arise in pilots 7 or 11–14 because no
 shared a title before, and it will arise every time an iterate-until-right loop redraws a book
 under a kept title.
 
+**Answered since this record: suffix, on the newcomer only** (stage-0 §172). The library now
+records shelf ownership (`.book.json`) and resolves the name through `library.shelf_slug`: the
+first book keeps the clean slug and a colliding newcomer publishes to
+`<slug>--<first 8 id chars>`, kept once assigned. This section's exact scenario — two stores, one
+title, one root — is `tests/test_library.py::test_two_books_sharing_a_title_do_not_share_a_shelf`,
+and under the fix the hand-archive above would not have been needed (the archive itself stays
+where it is).
+
 ## 8. The listing, the title, and what the gate did not do
 
 **Nothing.** The listing and title were reused verbatim, so no listing loop ran, no browsing pool

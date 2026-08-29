@@ -457,7 +457,11 @@ def main(argv: list[str] | None = None) -> int:
             book_id, branch_id = scope
             head = store.head(book_id, branch_id)
             if head is not None:
-                shelf = library_module.slugify(
+                # `shelf_slug`, not `slugify`: a redraw kept under the first draw's title
+                # publishes to a suffixed shelf (serial pilot 15b §7), and the one thing
+                # this line exists for is pointing the acceptance read at the right folder.
+                shelf = library_module.shelf_slug(
+                    library_module.root_for(args.database),
                     export_module.collect(
                         store,
                         book_id=book_id,
