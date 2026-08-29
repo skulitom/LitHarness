@@ -1209,6 +1209,73 @@ def _assemble(
     )
 
 
+def unfinished_systems(records: Sequence[lc.StateRecord]) -> tuple[str, ...]:
+    """Each system these records began and `systems_of` cannot read back, with what it lacks.
+
+    **Empty is a legal answer for `systems_of`, and it is two different answers** (Serial
+    Pilots 15 §2.1 and 15b §5): a world that declared nothing and a world one predicate short
+    both read back as no system, and a caller that cannot tell them apart tells the second the
+    first's sentence — three false clauses, §155.2's operator sent hunting the wrong absence,
+    while `world accept` names the true one on a channel nobody watches. This is the teller.
+
+    A candidate is a subject holding the system role, or one a governed criterion answers to;
+    what each lacks is measured against `systems_of`'s own requirements, in this module rather
+    than at the report's, for `_assemble`'s reason — a second reading of what a declared system
+    is would eventually disagree with the reader it describes. Complete systems contribute
+    nothing here, so on a finished world this is empty and the report side stays silent.
+    """
+    scales = {
+        record.subject: record.value
+        for record in records
+        if record.predicate == MAGNITUDE_SCALE and isinstance(record.value, Mapping)
+    }
+    governed: dict[str, str] = {}
+    for record in records:
+        if record.predicate == worlds_mod.GOVERNED_BY and record.object_ref:
+            governed[record.subject] = record.object_ref
+    criterion_nodes = worlds_mod.criteria(records)
+    holders = set(worlds_mod.entities_with_role(records, "system"))
+    owners = {owner for subject, owner in governed.items() if subject in criterion_nodes}
+
+    unfinished: list[str] = []
+    for system_id in sorted(holders | owners):
+        missing: list[str] = []
+        if system_id not in holders:
+            missing.append(
+                f"the system {worlds_mod.ENTITY_ROLE_PREDICATE} (a governed ladder answers "
+                "to it and nothing declares it a system)"
+            )
+        scale_value = scales.get(system_id)
+        maximum = scale_value.get("maximum") if isinstance(scale_value, Mapping) else None
+        if not isinstance(maximum, int) or isinstance(maximum, bool):
+            missing.append(
+                f"a {MAGNITUDE_SCALE} (minted at `world accept`, never declared by hand)"
+            )
+        owned = sorted(
+            subject
+            for subject, owner in governed.items()
+            if owner == system_id and subject in criterion_nodes
+        )
+        if not owned:
+            missing.append(
+                f"a governed ordinal ladder (no criterion is {worlds_mod.GOVERNED_BY} it)"
+            )
+        elif len(owned) > 1:
+            missing.append(
+                f"a single ladder ({len(owned)} criteria are {worlds_mod.GOVERNED_BY} it, "
+                "and a reader that chose between them would be inventing which one the "
+                "world meant)"
+            )
+        elif not worlds_mod.ladder_of(records, owned[0]):
+            missing.append(
+                f"a {worlds_mod.PRECEDES_PREDICATE} chain ({owned[0]}'s results do not "
+                "form one ladder)"
+            )
+        if missing:
+            unfinished.append(f"{system_id} lacks {' and '.join(missing)}")
+    return tuple(unfinished)
+
+
 def completion_records(
     records: Sequence[lc.StateRecord],
 ) -> tuple[tuple[lc.StateRecord, ...], tuple[str, ...]]:
@@ -1486,4 +1553,5 @@ __all__ = [
     "sheet_of",
     "starting_sheet",
     "systems_of",
+    "unfinished_systems",
 ]

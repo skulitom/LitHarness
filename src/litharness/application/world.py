@@ -520,8 +520,9 @@ def check(records: Sequence[lc.StateRecord]) -> dict[str, Any]:
 
     Both questions are asked through `domain/genre.py` rather than restated, so this view and
     the floor cannot come to disagree — the mistake §158 is the correction for. `system_gap` is
-    §160's and reports a world whose numbers have no system behind them, or one that declares
-    two sheets and would therefore silently render a line it never chose.
+    §160's and reports a world whose numbers have no system behind them, one that began a
+    system and left it one predicate short of readable (Serial Pilot 15b §5), or one that
+    declares two sheets and would therefore silently render a line it never chose.
     """
     coverage = worlds.manifestation_coverage(records)
     complaints = list(worlds.validate(records))

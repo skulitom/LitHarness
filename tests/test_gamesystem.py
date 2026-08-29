@@ -636,13 +636,102 @@ def test_a_system_a_seed_could_actually_draw_is_invisible_before_it_is_finished(
     """Serial Pilot 15's defect, at the point it bites: every clause true but the deciding one.
 
     The world holds the system role, one governed criterion, a ladder and the graph.
-    `systems_of` requires a magnitude scale, the Architect has no documented way to write one,
-    and so the book is told it declares no game system at all.
+    `systems_of` requires a magnitude scale and the Architect has no documented way to write
+    one — and until 15b §5 the gap answered with the sentence written for a world that
+    declared nothing, three false clauses. It now names the one predicate standing in the
+    way, which is the same absence `world accept` names when it declines to mint the scale.
     """
     world = _drawn_world(_system())
     assert gs.systems_of(world) == ()
     gap = genre.system_gap(world)
+    assert gap is not None and gs.MAGNITUDE_SCALE in gap
+    assert "declares no game system" not in gap
+    assert "seeded by hand" not in gap
+
+
+def test_a_finished_world_has_no_unfinished_systems_to_report() -> None:
+    """The quiet half of the teller: complete systems contribute nothing, so the report side
+    stays on the branch it was on and a finished book's `world check` does not change."""
+    assert gs.unfinished_systems(_canon(list(gs.records_for(_system())))) == ()
+
+
+def test_a_ladder_whose_issuer_is_never_declared_a_system_is_told_the_role_it_lacks() -> None:
+    """The other partial shape: everything present except the role. Naming the scale here
+    would be §155.2 again with a new word — the clause must be the piece actually missing."""
+    world = _canon(
+        [
+            record
+            for record in gs.records_for(_system())
+            if not (
+                record.predicate == worlds.ENTITY_ROLE_PREDICATE and record.value == "system"
+            )
+        ]
+    )
+    assert gs.systems_of(world) == ()
+    gap = genre.system_gap(world)
+    assert gap is not None and worlds.ENTITY_ROLE_PREDICATE in gap
+    assert gs.MAGNITUDE_SCALE not in gap
+
+
+def test_a_system_whose_ladder_is_ungoverned_is_told_the_ladder_and_not_the_scale() -> None:
+    world = _canon(
+        [
+            record
+            for record in gs.records_for(_system())
+            if not (
+                record.predicate == worlds.GOVERNED_BY
+                and record.subject == _system().criterion
+            )
+        ]
+    )
+    gap = genre.system_gap(world)
+    assert gap is not None and worlds.GOVERNED_BY in gap
+    assert gs.MAGNITUDE_SCALE not in gap
+
+
+def test_two_ladders_under_one_system_are_named_rather_than_read_as_no_system() -> None:
+    """`_assemble` abstains at two governed criteria rather than choose, which used to land
+    this world in the declared-nothing sentence by the other door."""
+    world = _canon(list(gs.records_for(_system())))
+    world.extend(
+        _canon(
+            [
+                worlds.world_record(
+                    "second_path", worlds.TYPE_PREDICATE, value=worlds.CRITERION
+                ),
+                worlds.world_record(
+                    "second_path", worlds.COMPARATOR_PREDICATE, value="ordinal"
+                ),
+                worlds.world_record(
+                    "second_path", worlds.GOVERNED_BY, object_ref="the_weave"
+                ),
+            ]
+        )
+    )
+    assert gs.systems_of(world) == ()
+    gap = genre.system_gap(world)
+    assert gap is not None and "2 criteria" in gap
+
+
+def test_a_proposed_partial_system_is_not_reported_as_unfinished() -> None:
+    """`_declared_systems`' reason, on the other half of the branch: a proposal is not yet
+    this book's system, and an Architect mid-build is the ordinary state and never a fault."""
+    proposed = [
+        record
+        for record in gs.records_for(_system())
+        if record.predicate not in gs.CONFIGURATION_PREDICATES
+    ]
+    gap = genre.system_gap(proposed)
     assert gap is not None and "declares no game system" in gap
+
+
+def test_a_world_that_declared_nothing_keeps_the_sentence_written_for_it() -> None:
+    """The split may not move the genuinely-empty audience: a hand-seeded book still reads
+    the declares-no-game-system report, not a claim that it began a system."""
+    legacy = _canon([worlds.world_record("sera", "status_snapshot", value={"level": 1})])
+    gap = genre.system_gap(legacy)
+    assert gap is not None and "declares no game system" in gap
+    assert "did not finish" not in gap
 
 
 def test_accepting_a_drawn_system_mints_the_scale_its_own_numbers_imply() -> None:

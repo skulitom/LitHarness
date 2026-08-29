@@ -203,6 +203,18 @@ absence that is not the one standing in the way. That is §155.2's shape, one do
 worlds that genuinely declared no system as well as by worlds like this one, so the text has two
 audiences and currently serves the first. Recorded with its mechanism and left for its own entry.
 
+**Fixed since, 2026-08-29.** The branch was split rather than reworded: `system_gap` now asks
+`gamesystem.unfinished_systems` first, which names each subject that holds the system role — or
+that a governed ladder answers to — with exactly the predicate(s) it lacks, measured against
+`systems_of`'s own requirements so the report and the reader cannot drift. This world would now
+be told *"the_keeping lacks a magnitude_scale (minted at `world accept`, never declared by
+hand)"*, which is the absence §165.2's acceptance call named, so the two channels agree; the
+declares-no-game-system sentence is kept for worlds that declared nothing, whom it was written
+for. Tests sit beside the drawn-system tests in `tests/test_gamesystem.py`
+(`test_a_system_a_seed_could_actually_draw_is_invisible_before_it_is_finished` and the five
+around it). A small diagnostic-text fix; no stage-0 number is claimed, and this note is the
+record.
+
 **The other gap closed.** The `status_snapshot` acceptance gate is gone after `world accept`, and
 the book drafted without being refused. **2 of 200 proposals were left proposed** — `q_sabb
 claim.content` and `mira_kell edge` — as slots a later declaration in the same draw had replaced.
@@ -359,6 +371,7 @@ have completed. The flag was passed anyway.
 ## 11. What is owed and was not done here
 
 - **`world check`'s system-gap text**, which is §5's finding and is unfixed by design here.
+  **Fixed since** — see §5's closing note.
 - **A live seed whose system completes.** §165.2's minting path has now run twice against a real
   world and declined both times — once on a guard, once on depth — so a `magnitude_scale` minted
   from a seed's own numbers is still **unobserved outside its tests**.
