@@ -20,6 +20,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import dataclasses
 import json
 import os
 import shutil
@@ -104,7 +105,7 @@ from litharness.application.summarize import (
 )
 from litharness.domain import characters as characters_mod
 from litharness.domain import directors as directors_domain
-from litharness.domain import extraction, genre, house, integrity, propagation
+from litharness.domain import extraction, gamesystem, genre, house, integrity, propagation
 from litharness.domain import rivals as rivals_mod
 from litharness.domain import state as state_mod
 from litharness.domain import text as text_mod
@@ -3859,6 +3860,77 @@ def cmd_revoice(args: argparse.Namespace) -> int:
     return EXIT_OK
 
 
+def _finish_drawn_systems(
+    store: SqliteStore, book_id: str, branch_id: str, stamp: str
+) -> tuple[int, tuple[str, ...]]:
+    """Mint the configuration a seed-drawn system cannot declare for itself (stage-0 §165).
+
+    **`world accept` is where this belongs, because here is where a person acted.**
+    `magnitude_scale` is mint-only by §163.2's decision — documenting it would invite a second
+    declaration beside the drawn one — and the Architect's `declare` path never constructs a
+    `SystemDef`. So a seed could draw an issuer, a ladder, governed capabilities and a
+    prerequisite graph and still be told *"this book declares no game system"*, with no
+    documented way to fill the one slot that decides it. That is Serial Pilot 15 §2.1.
+
+    Canon is re-read **after** promotion so a scale is never derived from a proposal this accept
+    declined to carry, and `gamesystem.completion_records` returns only the two predicates only
+    it can mint: nothing here declares a rung, a capability, an edge or a sheet.
+
+    **And it stops rather than finishing a system that would block the book, which is measured
+    rather than anticipated.** `genre.has_starting_sheet` is §160's ratchet: a book that declares
+    a game system must hold a sheet that is a real position in it, and until a system is declared
+    that half never runs. Serial Pilot 15 declared *both* a system whose columns are the rung and
+    six capability ids **and** a hand-written sheet of `rung`, `reach`, `carried` and `standing` —
+    two half-models that do not correspond. Finishing its system took that book from drafting to
+    `blocked` on a real run of this command, which is a fix breaking a book to report a gap. The
+    two shapes are told apart here rather than in `gamesystem`, because the question is the
+    floor's and `genre` is what owns it — `gamesystem` cannot import it without closing a cycle.
+    """
+    canon = [
+        record
+        for record in store.state_records(book_id, branch_id)
+        if state_mod.is_canon(record)
+    ]
+    completions, unfinished = gamesystem.completion_records(canon)
+    if not completions:
+        return 0, unfinished
+    finished = [
+        dataclasses.replace(record, authority=lc.StateAuthority.ACCEPTED_CANON)
+        for record in completions
+    ]
+    if genre.has_starting_sheet(canon) and not genre.has_starting_sheet([*canon, *finished]):
+        printed = ", ".join(field_.name for field_ in extraction.sheet_for(canon).fields)
+        columns = ", ".join(
+            key
+            for system in gamesystem.systems_of([*canon, *finished])
+            for key in system.value_keys
+        )
+        return 0, (
+            *unfinished,
+            "a system is drawn and was left unfinished on purpose: this book prints a sheet of "
+            f"({printed}) and the system's own columns are ({columns}), so declaring the system "
+            "would put the book under the rule that a sheet must be a position in its system and "
+            "stop it drafting. The sheet and the system are two descriptions of different books; "
+            "one of them has to give, and neither is this command's to choose",
+        )
+    written = store.record_state_records(book_id, branch_id, finished, created_at=stamp)
+    return written, unfinished
+
+
+def _report_completion(completed: int, unfinished: Sequence[str]) -> None:
+    """Say what was finished and, for anything that was not, why — never silently."""
+    if completed:
+        print(
+            f"  {completed} record(s) minted to finish a drawn system: the scale its own "
+            "numbers imply, and the digest that identifies it"
+        )
+    for reason in unfinished:
+        # A system the world drew and this could not finish leaves `system_gap` open, and an
+        # operator reading that gap is owed the reason it is still open rather than the gap's
+        # own default sentence about a world that declared nothing.
+        print(f"  not finished: {reason}")
+
+
 def cmd_world(args: argparse.Namespace) -> int:
     """The Architect's tools: ask this world a question, or declare something new in it.
 
@@ -3896,7 +3968,14 @@ def cmd_world(args: argparse.Namespace) -> int:
                 record for record in records if record.authority is lc.StateAuthority.PROPOSED
             ]
             if not proposals:
+                # **Completion still runs, and that is what makes an accepted book fixable.**
+                # Serial Pilot 15's world was already accepted when its system was found to be
+                # unfinishable, and there is no retraction to re-propose it with. Accept is the
+                # person-gate whether or not it has anything to promote, so running it again on
+                # a world with nothing outstanding finishes a drawn system and says so.
+                completed, unfinished = _finish_drawn_systems(store, book_id, branch_id, stamp)
                 print("nothing proposed; canon is unchanged")
+                _report_completion(completed, unfinished)
                 return EXIT_OK
             # **A declaration a later one replaced is not carried, and this is what makes the
             # Architect usable at all.** `world declare` appends and has no retraction, so an
@@ -3934,6 +4013,7 @@ def cmd_world(args: argparse.Namespace) -> int:
                 authority=lc.StateAuthority.ACCEPTED_CANON,
                 created_at=stamp,
             )
+            completed, unfinished = _finish_drawn_systems(store, book_id, branch_id, stamp)
             gate = GateOutcome(
                 gate=GateKind.SHAPE,
                 rule_or_critic_id="world.accept.v0",
@@ -3941,7 +4021,8 @@ def cmd_world(args: argparse.Namespace) -> int:
                 blocking=False,
                 detail=(
                     f"{moved} proposal(s) accepted; {len(replaced)} replaced by a later "
-                    f"declaration; {len(complaints)} complaint(s)"
+                    f"declaration; {len(complaints)} complaint(s); "
+                    f"{completed} system record(s) minted; {len(unfinished)} system(s) unfinished"
                     + (
                         "; replaced: "
                         + ", ".join(
@@ -3970,6 +4051,7 @@ def cmd_world(args: argparse.Namespace) -> int:
                 decided_at=stamp,
             )
             print(f"accepted {moved} of {len(proposals)} proposal(s) into canon")
+            _report_completion(completed, unfinished)
             if replaced:
                 # **Named, not just counted.** Without the fix a redeclaration was a loud
                 # blocking finding on every scene; with it, it is a record quietly not

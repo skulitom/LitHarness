@@ -1178,6 +1178,13 @@ def slot_warnings(record: lc.StateRecord) -> tuple[str, ...]:
       returns nothing for all of them, and every standing on those rungs stops counting —
       which is eleven `world check` complaints that name the standings and never the edges.
       Three sightings: Serial Pilot 7 §3.1.3, Serial Pilot 12 seed 1, Serial Pilot 13 seed 1.
+    - **An `--order-key` in neither order-key space** (§165). `state.key_space` knows two: the
+      scene keys the pipeline mints (`s1`, `s000001`) and the zero-padded digits a declaration
+      schedules a position in (`0350`). A key that is neither — `clearance`, `grade`, `cuff`,
+      `zz_c`, and 127 records across the pilot databases — is compared against scene positions
+      by spelling, so `clearance` is permanently past and `zz_c` permanently future in the same
+      book. Since §165 nothing folds it into a scene at all, which stops the silent half; this
+      warning is the other half, because the record still cannot be withdrawn.
 
     **Report-shaped, never a refusal, and that is not timidity.** An Architect building a world
     one record at a time is transiently incoherent almost continuously by design, and
@@ -1210,6 +1217,17 @@ def slot_warnings(record: lc.StateRecord) -> tuple[str, ...]:
                 "correction that drops the --order-key fills a different slot rather than "
                 "replacing this, so both edges survive `world accept`."
             )
+
+    key = state_mod.order_key_of(record)
+    if key is not None and state_mod.key_space(key) is None:
+        warnings.append(
+            f"--order-key carries {key!r}, which is neither a scene position (s1, s000001) nor "
+            f"a scheduled one (zero-padded digits like 0350). Nothing places it: a scene reads "
+            f"only its own space, so this record never stands anywhere, and against the scene "
+            f"keys it would sort by spelling alone. {record.subject} {record.predicate} is "
+            "therefore positioned nowhere, and a correction fills a different slot rather than "
+            "replacing it, so both survive `world accept`."
+        )
 
     return tuple(warnings)
 

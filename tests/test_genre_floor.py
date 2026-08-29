@@ -21,7 +21,7 @@ import pytest
 
 from litharness.adapters.sqlite_store import SqliteStore
 from litharness.application.planner import make_plan_selector, plan_progress
-from litharness.domain import genre
+from litharness.domain import genre, worlds
 from litharness.domain.draft import DraftPolicy
 from litharness.domain.extraction import STATUS_PREDICATE
 from litharness.domain.plans import import_plan
@@ -473,3 +473,156 @@ def test_a_seeded_book_is_not_reported_blocked(tmp_path, capsys) -> None:
     out = capsys.readouterr().out
     assert "blocked" not in out
     assert "needs attention 0" in out
+
+
+# ------------------------------------------- finishing a drawn system at accept (stage-0 §165)
+
+
+def _drawn(system) -> list[lc.StateRecord]:
+    """Everything an Architect can declare of a system: no scale, no digest."""
+    import dataclasses
+
+    from litharness.domain import gamesystem as gs
+
+    return [
+        dataclasses.replace(record, authority=lc.StateAuthority.ACCEPTED_CANON)
+        for record in gs.records_for(system)
+        if record.predicate not in gs.CONFIGURATION_PREDICATES
+    ]
+
+
+def _weave():
+    from litharness.domain import gamesystem as gs
+
+    return gs.SystemDef(
+        system_id="the_weave",
+        name="the Weave",
+        criterion="attunement",
+        rank_label="Seal",
+        ranks=(
+            gs.Rank("unsealed", "Unsealed"),
+            gs.Rank("first", "First"),
+            gs.Rank("second", "Second"),
+        ),
+        abilities=(
+            gs.Ability("seamsight", "Seamsight"),
+            gs.Ability("threadpull", "Threadpull"),
+            gs.Ability("stillwater", "Stillwater", needs=(gs.Need("seamsight", 2),)),
+            gs.Ability("lanterncall", "Lanterncall", needs=(gs.Need("threadpull"),)),
+            gs.Ability("deepweave", "Deepweave", needs=(gs.Need("stillwater"),)),
+        ),
+        scale=gs.Scale("Depth", 9),
+    )
+
+
+def _seed_world(db, records) -> tuple[str, str]:
+    """A book with no sheet of its own — the mystery fixture — plus the world under test."""
+    store = SqliteStore.open(db)
+    try:
+        book_id, branch_id = _fixture(store, "mystery")
+        store.record_state_records(
+            book_id, branch_id, records, created_at="2026-08-29T00:00:00Z"
+        )
+    finally:
+        store.close()
+    return book_id, branch_id
+
+
+def test_accept_finishes_a_drawn_system_whose_sheet_is_its_own(tmp_path, capsys) -> None:
+    """The forward case §160 built toward: the system settles the sheet and the gap closes.
+
+    The Architect can declare every part of this but the scale, so before §165 the book was told
+    it declared no game system at all. `world accept` mints the two predicates only
+    `gamesystem.records_for` can mint, and nothing else.
+    """
+    import dataclasses
+
+    from litharness.cli import EXIT_OK, main
+    from litharness.domain import gamesystem as gs
+
+    system = _weave()
+    records = _drawn(system)
+    sheet = gs.starting_sheet(system, "silas")
+    records.extend(
+        dataclasses.replace(record, authority=lc.StateAuthority.ACCEPTED_CANON)
+        for record in gs.records_for_sheet(sheet)
+    )
+    records.append(
+        dataclasses.replace(
+            worlds.world_record("silas", "can_do", object_ref="seamsight", value=3),
+            authority=lc.StateAuthority.ACCEPTED_CANON,
+        )
+    )
+    db = tmp_path / "drawn.db"
+    book_id, branch_id = _seed_world(db, records)
+    capsys.readouterr()
+
+    assert main(["--database", str(db), "world", "accept"]) == EXIT_OK
+    assert "minted to finish a drawn system" in capsys.readouterr().out
+
+    store = SqliteStore.open(db)
+    try:
+        canon = store.state_records(book_id, branch_id)
+        assert len(gs.systems_of(canon)) == 1
+        assert genre.system_gap(canon) is None
+        assert genre.genre_block(canon) is None
+    finally:
+        store.close()
+
+
+def test_a_system_is_left_unfinished_rather_than_blocking_a_book_that_drafts(
+    tmp_path, capsys
+) -> None:
+    """Serial Pilot 15's shape, and the regression this guard exists to prevent.
+
+    That seed declared a system whose columns are the rung and six capability ids **and** a
+    hand-written sheet of its own narrative quantities. Finishing the system puts the book under
+    §160's ratchet — a book that declares a system must hold a sheet that is a position in it —
+    and on a real run of `world accept` against `serial15.db` that took a book which was drafting
+    and reported it `blocked`. A fix that breaks a book to report a gap is not a fix, so the
+    system is left unfinished and the operator is told which two things disagree.
+    """
+    import dataclasses
+
+    from litharness.cli import EXIT_OK, main
+    from litharness.domain import gamesystem as gs
+
+    records = _drawn(_weave())
+    records.extend(
+        dataclasses.replace(record, authority=lc.StateAuthority.ACCEPTED_CANON)
+        for record in (
+            worlds.world_record("silas", "can_do", object_ref="seamsight", value=4),
+            worlds.world_record(
+                "silas",
+                "status_sheet",
+                value={"fields": [{"name": "rung", "label": "Standing"}]},
+            ),
+            worlds.world_record("silas", STATUS_PREDICATE, value={"rung": 2}),
+        )
+    )
+    db = tmp_path / "disagreeing.db"
+    book_id, branch_id = _seed_world(db, records)
+
+    store = SqliteStore.open(db)
+    try:
+        # It drafts before the accept, and that is the thing being protected.
+        assert genre.genre_block(store.state_records(book_id, branch_id)) is None
+    finally:
+        store.close()
+    capsys.readouterr()
+
+    assert main(["--database", str(db), "world", "accept"]) == EXIT_OK
+    out = capsys.readouterr().out
+    assert "left unfinished on purpose" in out
+    assert "minted to finish a drawn system" not in out
+
+    store = SqliteStore.open(db)
+    try:
+        canon = store.state_records(book_id, branch_id)
+        assert gs.systems_of(canon) == ()
+        assert genre.genre_block(canon) is None
+    finally:
+        store.close()
+
+    assert main(["--database", str(db), "status"]) == EXIT_OK
+    assert "blocked" not in capsys.readouterr().out
