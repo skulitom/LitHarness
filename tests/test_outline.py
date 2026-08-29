@@ -936,7 +936,9 @@ def test_the_schedule_is_reachable_at_every_length_the_pipeline_takes(
     a_book(store, scenes=scenes)
     functions = arc_template(scenes).functions
     if len(set(functions)) < len(functions):
-        make_outline_handler(StubPlanner(payload_for(scenes)), store, PROJECT_ID)(
+        # `with_schedule`, not `payload_for` (§158): a floor-clearing book's outline must
+        # answer the milestone ask, or the refusal re-enqueues the outline this asserts gone.
+        make_outline_handler(StubPlanner(with_schedule(scenes)), store, PROJECT_ID)(
             _job(store), START
         )
     else:
@@ -996,11 +998,18 @@ def seeded_book(store: SqliteStore, scenes: int = 12):  # type: ignore[no-untype
 
 
 def with_schedule(count: int, milestones: list[dict] | None = None) -> dict:
+    # The default schedule keeps only the ordinals the book has: a milestone naming a scene
+    # that does not exist is one of `_milestones`' refusals, and the length sweep runs this
+    # from seven scenes up.
     payload = payload_for(count)
     payload["milestones"] = milestones if milestones is not None else [
-        {"ordinal": 3, "state": {"gold": 4}},
-        {"ordinal": 7, "state": {"level": 2, "hp_max": 24, "gold": 9}},
-        {"ordinal": 11, "state": {"level": 3, "hp": 12, "gold": 2}},
+        entry
+        for entry in (
+            {"ordinal": 3, "state": {"gold": 4}},
+            {"ordinal": 7, "state": {"level": 2, "hp_max": 24, "gold": 9}},
+            {"ordinal": 11, "state": {"level": 3, "hp": 12, "gold": 2}},
+        )
+        if entry["ordinal"] <= count
     ]
     return payload
 

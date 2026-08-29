@@ -489,7 +489,9 @@ def test_a_tick_publishes_without_being_asked_and_writes_beside_the_database(
                             kind=lc.StateRecordKind.ASSERTION,
                             subject="rook",
                             predicate="status_snapshot",
-                            value="Level 1, debtor",
+                            # A mapping since §158: the floor asks for a sheet the
+                            # status-line machinery can render numbers from.
+                            value={"level": 1},
                             authority=lc.StateAuthority.ACCEPTED_CANON,
                         )
                     ],
