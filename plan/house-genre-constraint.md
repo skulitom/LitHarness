@@ -82,6 +82,29 @@ gained, numbers advanced per thousand words) can be counted over the chapter sha
 distribution instead of an adjective. That census is also the read-7 mechanics census's
 sibling and inherits the descriptor-half quarantine.
 
+**The prose-number licence, narrowed by the operator on pilot 15's chapter (2026-08-29):**
+
+> *"'Forty-two seams standing in Ashfen now' is wrong numbers should only come up when
+> talking about skills and ability level reached. outside of that numbers shouldn't come up
+> more than any other book"*
+
+So the licence splits by surface: the FURNITURE (the rendered status line) carries every
+system quantity exactly, including world aggregates the sheet tracks; the PROSE speaks a
+number only at the character's own skill/ability-level moments — a world-statistic in
+narration is out even when the sheet legitimately tracks it — and everywhere else the prose
+runs at ordinary-fiction number rates, for which §162's non-genre distributions are the
+measured reference (mundane-core ~1.1/1k, all mentions ~8.8/1k).
+
+Extended minutes later, verbatim: *"classes as well, litrpg elements"* — the prose licence
+covers the character's skills, ability levels, **classes, and LitRPG system elements
+generally**; the exclusion is world aggregates and mundane quantities, not the genre's own
+furniture. This also records a SCHEMA note for the system object: pilot 15's SystemDef
+models an ability graph, a ladder and a magnitude scale but no CLASS concept — while pilot
+12's own listing hook was a man reading class descriptions, and the operator's original awe
+direction ("i wonder what I would get and pick") is a choosing-among-options effect that
+classes carry natively. A class/build concept in SystemDef is a queued schema extension,
+not tonight's edit.
+
 **The hazard, named before anyone drafts a clause:** "show progress immediately" as prompt
 text is a §138 formula waiting to happen. The altitude that avoids it is **structural** —
 the planner's beat sheet, where scene 1's plan can carry a progression beat as a plan item

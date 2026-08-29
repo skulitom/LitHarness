@@ -755,7 +755,7 @@ def disclosures(records: Sequence[lc.StateRecord]) -> dict[str, tuple[str | None
 def _reached(key: str, at: str) -> bool:
     """Whether a record *stated at* `key` is one a book standing at `at` has reached.
 
-    The one predicate §166 replaced `key <= at` with, in the two places this module compares a
+    The one predicate §167 replaced `key <= at` with, in the two places this module compares a
     story position against where the book stands. It is `state.comparable` plus the ordinary
     comparison, in that order, and the order is the whole of it: a key in another space is not
     early, it is unplaceable, and asking `<=` first answers a question about spelling.
@@ -767,7 +767,7 @@ def _disclosed_by(key: str | None, at: str | None) -> bool:
     """Whether a reader-disclosure at `key` has landed by the time the book stands at `at`.
 
     **This is the disclosure question settled, and the settlement is that a position never
-    discloses on its own — a record does** (§166). A claim scheduled for `0380` is not told
+    discloses on its own — a record does** (§167). A claim scheduled for `0380` is not told
     because the book reached some scene; it is told because a `disclosed_to` record stands at a
     position the book has actually reached. The alternative — reading a schedule key as
     satisfied once the book passes the scene it *stands for* — needs a mapping from a schedule
@@ -849,7 +849,7 @@ def undisclosed_claims(
     honour something the world denies. See `CLAIM_FALSE`.
 
     **The `at is None` asymmetry above was right and the code only applied it to one of the two
-    ways a position can be unlocatable** (§166). `at` on the live path is a scene key and a
+    ways a position can be unlocatable** (§167). `at` on the live path is a scene key and a
     scheduled disclosure is written in digits, so `key > at` asked `'0380' > 's1'`, got `False`,
     and read the schedule as already told: on serial15.db **0 of that book's 8 claims were still
     hidden at scene one**, every one of its seven scheduled reveals handed to the writer of the
@@ -1486,7 +1486,7 @@ def standing_of(
     force is the last one the book has reached. `at=None` means "wherever the book is now", which
     reads every canon standing including the unplaced.
 
-    **§165's defect arrived here by a second door, and this one reproduced on two books** (§166).
+    **§165's defect arrived here by a second door, and this one reproduced on two books** (§167).
     `key > at` asked `'0350' > 's1'`, got `False`, and let every scheduled standing through the
     cutoff and into the latest-wins race — so on serial15.db scene one read mira at the wright
     rung, 5 of 6, the rung her whole arc is about reaching, instead of the seamer rung her

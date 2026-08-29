@@ -229,6 +229,45 @@ CLARITY = (
 #: licence half of this clause now points at something the writer is holding. That is the whole
 #: of why a re-scope is worth more here than another prohibition would be. Shipped unmeasured,
 #: and its effect is Track 3's mundane-precision census to find, not this module's to claim.
+#:
+#: **Narrowed once more the same day as §166, because §161's scope licensed the sentence the
+#: operator then called wrong.** On pilot 15's chapter: *"numbers should only come up when
+#: talking about skills and ability level reached. outside of that numbers shouldn't come up
+#: more than any other book"*, extended minutes later to *"classes as well, litrpg elements"*.
+#: The offending sentence spoke a town's count of its own repairs — and that quantity is a
+#: column of the book's own printed line, so the world's own system does count it and §161's
+#: scope permitted it. **The licence therefore splits by surface rather than by quantity**: the
+#: printed line carries every quantity the sheet holds, aggregates included, and prose speaks a
+#: number only where the system counts it in a person. One and the same figure is furniture and
+#: is not prose, which no wording of *what the system counts* could have separated.
+#:
+#: **Why the object is "in a person" rather than a list of what may be spoken.** The included
+#: side the operator named runs skills, levels, classes and the genre's own elements; writing
+#: those four down would be the instance-list shape this module has been corrected for twice,
+#: and an enumeration of what SUCCEEDS besides — the constraint adopted here on 2026-08-25,
+#: which §154 caught the awe clause breaking hours after it was written. What the four share is
+#: not their kind but their address: the system counts them **in a person**, where a world's
+#: tally of itself is counted in the world. The clause reaches numerals only, so a class *name*
+#: is not governed by it at all and nothing here stops one being spoken.
+#:
+#: **The furniture is named inline, which is §161.5's third surgery pattern at its second use.**
+#: A scope narrowed to the person alone would forbid the very line `application/planner.py`
+#: renders filled a few paragraphs later, and four books have failed for want of that line being
+#: distinguishable from narration. An exemption written as its own sentence would be a
+#: permission, and §138 measured a permission-only clause returning more than six times what a
+#: prohibition-only one did, worse than silence. Hung off a semicolon inside the sentence it
+#: delimits instead of permitting, and `house.demands` still reads one clause — so no ceiling
+#: moved. For the roles that never see a status line the referent is empty and by §154 it lands
+#: as a delimiter with nothing to delimit: inert, which is the right behaviour for a call that
+#: prints no line.
+#:
+#: **The instance list did not grow, for §161.8's reason unchanged.** A town's tally of its own
+#: repairs is a tally, which the summary already names, and the scope sentence is the half §138
+#: says gets obeyed; a fourth instance stays refused. The two classes §161.8 left uncovered — an
+#: age, an almanac ordinal — are uncovered still and still fall under the scope sentence. No
+#: numeral or phrase from the chapter under read is in the clause (§97.1); the chapter is a test
+#: fixture and nothing more. Shipped unmeasured: §162's non-genre distributions are what a later
+#: census would read this against, and no number of theirs is in any prompt.
 READER = (
     "Spend the words on what the reader opened this book for. Detail that only establishes "
     "who somebody is — the steps of a job, the order of a routine — is not why the reader "
@@ -243,7 +282,8 @@ READER = (
     "If the person this happens to came from somewhere like our own world, the life they came "
     "from is one a reader in their twenties has lived: a degree they are not using, a job "
     "that covers the rent, a thing they know far too much about for no professional reason.\n"
-    "An exact number belongs to what this world's own system counts and to nothing else. A "
+    "An exact number belongs to what this world's own system counts in a person and to "
+    "nothing else; the line the book itself prints is not prose. A "
     "puzzle box does not have thirty-one moves, a crate does "
     "not hold forty-two bottles, and a wait is not four days: exactness spent on props, "
     "tallies and durations teaches a reader that the numbers here mean nothing, which costs "

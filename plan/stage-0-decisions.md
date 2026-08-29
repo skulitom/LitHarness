@@ -16681,7 +16681,9 @@ entries and a tax roll are all things a world counts — so the clause **license
 exactly the surfaces the operator has now objected to across four books**, and read 8 §4.2 is
 the measurement of that licence being spent. The scope is now *what this world's own system
 counts*, which is a strictly smaller set: a narrowing, not a new permission, and §138's
-direction is preserved.
+direction is preserved. **Corrected in place by §166 the same day: this scope was still wide
+enough to license a world aggregate the sheet tracks, which the operator then named on pilot
+15's chapter, and the object narrowed again to what the system counts *in a person*.**
 
 **The two-axis check (§138 sign, §154 addressability), written per clause:**
 
@@ -17269,7 +17271,7 @@ the printed ones, so it and `system_gap` close together.
   arguably worse than the defect fixed here and it is a change to what every book's packet
   contains, with a SQL twin in `sqlite_store.state_records` that has to move with it. It is
   registered here with its numbers and left for its own entry rather than folded into this one.
-  **Fixed in §166**, which reproduced both numbers exactly, found the same defect a third time in
+  **Fixed in §167**, which reproduced both numbers exactly, found the same defect a third time in
   `worlds.standing_of` — leaking on two books, not one — and corrects the denominator in place:
   the attainable maximum is **7 of the 8**, the eighth being a `claim.false` that is correctly
   never hidden.
@@ -17289,7 +17291,139 @@ was read, so RS1 is untouched. No research claim is promoted and no axis is admi
 still exists and still means what it meant, and every world already forged reads as it did except
 where a scheduled snapshot used to be folded into a scene, which is the defect.
 
-## 166. The packet compared story positions across both order-key spaces, so a book handed the writer every answer it had scheduled, in the chapter that introduces the questions
+## 166. The licence narrowed at midnight still licensed the sentence the operator called wrong, because that quantity is a column of the book's own printed line
+
+§161 re-scoped the house numbers clause hours earlier — from *what this world counts* to *what
+this world's own system counts* — and pilot 15's chapter drew the narrowing again, on a sentence
+that clause had just been rewritten to permit:
+
+> *"'Forty-two seams standing in Ashfen now' is wrong numbers should only come up when talking
+> about skills and ability level reached. outside of that numbers shouldn't come up more than
+> any other book"*
+
+and minutes later, extending the included side rather than the excluded one:
+
+> *"classes as well, litrpg elements"*
+
+Both are recorded verbatim in `plan/house-genre-constraint.md`, which owns the quotes. This entry
+is the clause edit and its arithmetic.
+
+### 166.1 Measured first: the flagged quantity is furniture, so no scope over quantities could reach it
+
+The flagged sentence speaks a town's count of its own repairs, and **that count is a column of
+the status line the same chapter prints**: the book's sheet declares it, `render_status_line`
+renders it, `extract_state` reads it back into canon. §161's scope therefore licensed the
+sentence exactly — the world's own system does count it — and any further narrowing that stayed
+inside *which quantities the system counts* would either keep licensing it or start forbidding
+the book's own printed line, which extraction reads and `test_the_implied_sheet_only_ever_grows`
+protects.
+
+**So the licence splits by surface rather than by quantity.** The printed line carries every
+quantity the sheet holds, aggregates included; prose speaks a number only where the system counts
+it **in a person**. One and the same figure is furniture and is not prose. The distinction is an
+address, and an address is the only thing that separates the operator's two reactions to one
+chapter: the borderline he did not object to is a capacity counted in the character herself,
+which falls inside the licence for the same reason the aggregate falls outside it. Both lines are
+fixtures in `tests/test_page_contract.py` and neither is prompt text (§97.1).
+
+### 166.2 What shipped: one clause, one object, and the exemption inside the sentence
+
+`house.READER`'s numbers clause, before → after:
+
+> ~~An exact number belongs to what this world's own system counts and to nothing else.~~
+>
+> **An exact number belongs to what this world's own system counts in a person and to nothing
+> else; the line the book itself prints is not prose.**
+
+The clause's second sentence — the invented instances and their summary — is byte-identical.
+
+**Demand-counted before and after through `litharness prompts`, the whole table on both sides:
+every role's demand count is identical**, and the only movement anywhere is **+58 characters** in
+each role that stands on the floor. No ceiling in `tests/test_prompt_budget.py` was raised, and
+§164's conditional and maximal scene rows hold unchanged — which is what measuring them bought:
+this is the first clause edit since §164 that had a number to check itself against instead of an
+arithmetic performed by hand inside its own entry.
+
+**The pattern is §161.5's third — object-narrowing with inline naming — at its second use.** A
+scope narrowed to the person alone would forbid the very line `application/planner.py` renders
+filled a few paragraphs further down the same system message, so the exemption is load-bearing
+rather than tidy. Written as its own sentence it would be a permission, and §138 measured a
+permission-only clause returning more than six times what a prohibition-only one did and worse
+than silence; hung off a semicolon inside the sentence it delimits instead of permitting,
+`house.demands` reads one clause, and the exemption costs zero demands. It licenses no token the
+furniture ask has not already asked for by name.
+
+**The two-axis check (§138 sign, §154 addressability):**
+
+| clause | sign, before → after | addressability, before → after |
+|---|---|---|
+| numbers | prohibition → **prohibition**, object narrowed a second time; the added half delimits rather than permits | before, the licence half named a set of quantities the writer holds as a rendered line but could not tell which of them may be *spoken*; after, it names an address the writer can check against the page — the person a number is counted in — and the exemption points at the one artifact the drafting call renders filled (§158). For the roles that never see a status line the exemption's referent is empty and lands as a delimiter with nothing to delimit, which is inert and is the correct behaviour for a call that prints no line. |
+
+**The planner's furniture ask was read and deliberately not narrowed.** Its entire object is the
+printed line, which is the surface the operator's policy leaves whole, and narrowing it would
+delete aggregate columns from the artifact canon is read back from. It stays as §161 left it.
+
+Three tests in `tests/test_page_contract.py`:
+`test_the_licence_is_what_the_system_counts_in_a_person` holds the object and asserts the
+included side was *not* written down as an inventory;
+`test_the_furniture_rides_inside_the_sentence_and_buys_no_demand` holds the clause to one demand
+with the exemption inside it; and
+`test_no_word_of_the_chapter_under_read_became_prompt_text` is §97.1 made mechanical over the
+assembled scene system, the house floor and both beats.
+`test_exactness_is_licensed_to_the_systems_own_count_and_not_the_worlds` is corrected in place,
+its name kept, and now asserts both superseded forms absent.
+
+### 166.3 The included side is an address, never an inventory
+
+The operator's amendment names skills, ability levels, classes and the genre's elements
+generally, and the clause writes none of them down. Three reasons stack: an instance list is the
+shape this module has been corrected for twice (§155, §161.8); an enumeration of what *succeeds*
+is what `house.py` adopted a standing constraint against on 2026-08-25 and what §154 found the
+awe clause breaking hours after it was written; and a list is a floor's worst form, since every
+role that stands on the floor pays for it. What those four share is not their kind but their
+address — the system counts them in a person, where a world's tally of itself is counted in the
+world — so the address is what the clause says. The clause reaches numerals only, so a class
+*name* is governed by nothing in it, and a schema that gives a system a class concept can land
+without touching this text.
+
+### 166.4 What was refused
+
+- **No new clause, at any site.** §127 records a fourth rule against the same complaint failing;
+  §135 what a clause costs every role at once; §138 which half gets obeyed.
+- **No fourth instance**, on §161.8's reasoning unchanged: a town's tally of its own repairs is a
+  tally, which the clause's summary already names, and the scope sentence is the half that gets
+  obeyed. The two classes §161.8 left uncovered — an age, an almanac ordinal — are uncovered
+  still and still fall under the scope sentence.
+- **No numeral or phrase from the chapter under read entered any prompt.** The clause's own
+  *forty-two bottles* is invented, predates this read, and stays; the guard test names the phrase
+  and the proper noun rather than the bare numeral for exactly that reason.
+- **No bar, and nothing here is a threshold.** The demand counts and the +58 are sizes. §61's
+  four attainability checks have nothing to run on.
+- **No claim about any book.** Nothing was drafted, paid or free; no chapter was measured and
+  pilot 15 is not judged here. §162's non-genre distributions are what a later census would read
+  this against, and no number of theirs is in any prompt.
+- **No model called, and no model ranks or selects anything.**
+
+### 166.5 The residual: a scheduled beat can still name a quantity the prose may no longer speak
+
+`extraction.counted_names` returns every filled column of the book's sheet, filtered only for
+`MACHINERY_WORDS`, so §161.4's named beat can schedule a world aggregate as the quantity that
+moves. Under this licence that is routed rather than contradictory — the beat is satisfiable on
+the printed line, which is where such a quantity now belongs — but the writer is being pointed at
+a number it may not narrate, and the sheet carries no marker distinguishing a column counted in a
+person from one counted in the world. A selection fix needs that marker, which is a schema
+question and sits with the queued class/concept extension to `SystemDef` rather than with a
+clause. Named with its mechanism and left for its own entry.
+
+### 166.6 Anti-scope
+
+One clause in one module and three tests. Nothing here mints a system, declares a world, touches
+the Architect or the recruiter, edits `planner.py`, or reads a corpus — RS1 is untouched. No
+research claim is promoted and no axis admitted. The operator quotes this entry is written
+against live in `plan/` and in module commentary and are rendered into no call. `house.CLARITY`,
+`house.ACCUMULATION` and both beats are byte-identical.
+
+## 167. The packet compared story positions across both order-key spaces, so a book handed the writer every answer it had scheduled, in the chapter that introduces the questions
 
 **Measured first, on the store §165.3 named, and both of its numbers reproduced exactly.** On
 `serial15.db`, `state.records_before('s1')` admitted **18** records whose key is not comparable to
@@ -17319,7 +17453,7 @@ because 14 of the 23 reader-disclosure positions in the corpus are scene keys an
 correctly all along; 9 are schedule keys and 8 of those are serial15's. A fix to a comparison
 that changes one book is the shape this defect predicted.
 
-### 166.1 The disclosure semantics chosen, and why they are §110's rather than new
+### 167.1 The disclosure semantics chosen, and why they are §110's rather than new
 
 **A position never discloses on its own — a record does.** A claim scheduled for `0380` is not
 told because the book reached some scene; it is told because a `disclosed_to` record stands at a
@@ -17364,7 +17498,7 @@ hidden for the whole book. That is the cheap side of the asymmetry, which is whe
 belongs while it is unfixed, and closing it needs a disclosure channel somebody decides on rather
 than an inference this code makes on its own.
 
-### 166.2 The 18 incomparable records, handled deliberately
+### 167.2 The 18 incomparable records, handled deliberately
 
 **Excluded, *and* complained about — the third option, chosen over the other two.** Admitting them
 is the leak. Excluding them silently would report a permanent exclusion as a temporary one: a
@@ -17379,7 +17513,7 @@ deliberate half: serial15's `bez` holds one `stands_at` at `0300` and nothing el
 that rung would be answering "where does he stand when the book opens" with a position the world
 declared about somewhere else. An empty answer is the world declining to say, which it did.
 
-### 166.3 What shipped
+### 167.3 What shipped
 
 - **`worlds._reached`** — `state.comparable` then the comparison, in that order, which is the whole
   of it: a key in another space is not early, it is unplaceable, and asking `<=` first answers a
@@ -17417,7 +17551,7 @@ declared about somewhere else. An empty answer is the world declining to say, wh
   break, and a sweep over both spaces at every scene width in use, in both directions.
   `test_the_store_and_the_domain_slice_both_spaces_identically` pins the twin against the gate.
 
-### 166.4 What was refused
+### 167.4 What was refused
 
 - **The forward-looking selectors, and this is the one real judgement call.**
   `extraction.progression_target` and `standing_target` filter with `>= at`, so a schedule-keyed
@@ -17435,19 +17569,19 @@ declared about somewhere else. An empty answer is the world declining to say, wh
 - **`standing_of(at=None)`**, which still races the whole canon including the schedule. "Wherever
   the book is now" with no coordinate is a different question from a threshold, and answering it
   would change a report, a character sheet and the world brief on every book.
-- **Inventing a disclosure channel.** The gap in 166.1 is registered, not filled. Wiring
+- **Inventing a disclosure channel.** The gap in 167.1 is registered, not filled. Wiring
   `reveal_scene`'s ordinal into disclosure would be position-implies-settlement by another route,
   which is the thing §110.3 measured failing.
 - **Any normalisation of an order key**, unchanged from §165.3 and re-refused here.
 
-### 166.5 Correction to §165.3, in place
+### 167.5 Correction to §165.3, in place
 
 §165.3's "**0 of that book's 8 claims are still hidden at scene one**" is true and its denominator
 needs a ceiling: the attainable maximum is **7 of the 8**, because the eighth is marked
 `claim.false` and is correctly never hidden at any position. The defect is the same size; the
 number a fix can reach is seven.
 
-### 166.6 Anti-scope
+### 167.6 Anti-scope
 
 No bar is declared: the 18, the 0-of-7, the two-book leak and the one-book blast radius are
 descriptions of stores on disk, not thresholds anything is measured against, and §61's four checks

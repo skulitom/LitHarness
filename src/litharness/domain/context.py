@@ -509,7 +509,7 @@ def assemble(
         ):
             continue
         if not state_mod.reached_boundary(record, boundary):
-            # **Two reasons a record has not been reached, and the packet says which** (§166).
+            # **Two reasons a record has not been reached, and the packet says which** (§167).
             # A record dropped for standing later in the book is an ordinary slice; a record
             # dropped because its position is in the other order-key space is a world that
             # declared a coordinate this cutoff cannot place, and it will be dropped at *every*
@@ -561,7 +561,7 @@ def assemble(
     #
     # ~~against positions the Architect minted from the book's own beat sheet, so the two
     # vocabularies are commensurable by construction.~~ **False, and measured false** (§165.3,
-    # fixed in §166). `disclosure_at` is a scene key and an Architect's disclosure positions are
+    # fixed in §167). `disclosure_at` is a scene key and an Architect's disclosure positions are
     # schedule keys, so the two are the *least* commensurable pair in the codebase: on
     # serial15.db this comparison read all seven of the book's scheduled reveals as already
     # told, at scene one. `undisclosed_claims` now compares inside one space and an unlocatable

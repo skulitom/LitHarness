@@ -1,4 +1,4 @@
-"""Stage-0 §166: the packet's half of §165, and the book whose every secret was already told.
+"""Stage-0 §167: the packet's half of §165, and the book whose every secret was already told.
 
 §165 introduced the two order-key spaces and fixed the *fold* — what state stands at a scene.
 §165.3 measured, registered and deliberately did not fix the other half: the packet's cutoff and
@@ -103,7 +103,7 @@ def _hidden(records: list[lc.StateRecord], *, at: str | None) -> set[str]:
 
 
 def test_the_pilot_fifteen_claims_are_all_still_hidden_at_scene_one() -> None:
-    """The repro. Before §166 this set was empty, and that is the whole defect.
+    """The repro. Before §167 this set was empty, and that is the whole defect.
 
     Seven, not eight, and the eighth is the measurement's own correction: §165.3 counted the
     denominator as the book's 8 `claim.content` records, one of which is marked false and is
@@ -149,7 +149,7 @@ def test_a_disclosure_in_the_scenes_own_space_discloses_when_the_book_reaches_it
     """The working case, unchanged — this is what the fix must not break.
 
     Fourteen of the disclosure positions across the pilot stores are scene keys, and every one of
-    those books reads identically before and after §166. Only the schedule-keyed ones moved.
+    those books reads identically before and after §167. Only the schedule-keyed ones moved.
     """
     records = [*_claim("told_at_three"), _disclosure("told_at_three", "s3")]
     assert _hidden(records, at="s1") == {"told_at_three"}
@@ -213,7 +213,7 @@ def _positioned_seed() -> list[lc.StateRecord]:
 
 
 def test_a_scheduled_record_does_not_pass_a_scene_cutoff() -> None:
-    """The 18, as a rule rather than a count. Before §166 every one of them passed.
+    """The 18, as a rule rather than a count. Before §167 every one of them passed.
 
     The un-keyed record still passes, and the difference between it and a scheduled one is the
     whole design: un-keyed asserts no position and so belongs at every one, while a schedule key
@@ -269,7 +269,7 @@ def test_a_subject_whose_only_standing_is_scheduled_has_none_yet() -> None:
 
 
 def test_the_packet_says_which_records_it_could_not_place_and_why() -> None:
-    """Excluded *and* complained about, which is the third option §166 chose deliberately.
+    """Excluded *and* complained about, which is the third option §167 chose deliberately.
 
     A record dropped for standing later in the book will arrive; one dropped because its
     position is in another space will be dropped at every scene. Reporting both as "not yet

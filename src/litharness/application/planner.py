@@ -624,7 +624,7 @@ def packet_for(
         #
         # ~~against positions the Architect minted from this book's own beat sheet~~ … ~~and a
         # legacy world's schedule keeps working on an imported book~~. **Both false** (§165.3,
-        # fixed in §166): the beat's key is a scene key, an Architect's schedule is written in
+        # fixed in §167): the beat's key is a scene key, an Architect's schedule is written in
         # digits, and a schedule did not "keep working" — it read as wholly disclosed from scene
         # one, on every book that had one. The key passed here is unchanged; what changed is that
         # `undisclosed_claims` no longer compares it against a coordinate from another space.

@@ -1145,7 +1145,7 @@ def promotions(
         if not record.object_ref:
             continue
         earlier = state_mod.order_key_of(record)
-        # **A proposal is promoted only from a position this scene can place** (§166). The old
+        # **A proposal is promoted only from a position this scene can place** (§167). The old
         # test was `earlier >= order_key`, so a proposal keyed in the schedule space answered
         # `'0350' >= 's1'` with `False`, fell through the guard, and was minted as
         # `ACCEPTED_CANON` at scene one carrying the note `proposed at 0350` — a declaration

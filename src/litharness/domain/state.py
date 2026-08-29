@@ -226,7 +226,7 @@ def records_before(
     standing relationships from every packet.
 
     **A record that asserts a position in the other space does not survive, and that is a
-    different case from asserting none** (§166). `'0350' <= 's1'` is `True`, so before this
+    different case from asserting none** (§167). `'0350' <= 's1'` is `True`, so before this
     every scheduled declaration in the book passed every scene's cutoff: on serial15.db this
     admitted 18 records — three scheduled snapshots, four `stands_at`, three `can_do` and eight
     `disclosed_to` — into a packet built at `s1`. Un-keyed means *true of the book*, so it
@@ -282,7 +282,7 @@ def reached_boundary(record: lc.StateRecord, boundary: StoryBoundary) -> bool:
     """Whether ``record`` is established on the caller's side of ``boundary``.
 
     **This is the gate `eligible_records` runs, so it is the one the live packet passes
-    through, and it carried `records_before`'s defect with it** (§166). A key that states a
+    through, and it carried `records_before`'s defect with it** (§167). A key that states a
     position in the other space is not before this boundary and is not at it: it is
     unplaceable relative to it, and the honest answer to "has the book reached this yet" is
     *no*. The equality branches below are safe to leave keyed on the raw string because two

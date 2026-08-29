@@ -540,9 +540,16 @@ def test_exactness_is_licensed_to_the_systems_own_count_and_not_the_worlds() -> 
     which are all things a world counts and all things the operator has now objected to four
     books running. The scope is the world's own SYSTEM, which is a strictly smaller set — so
     this is a narrowing and not a new permission, and §138's direction is preserved.
+
+    **Corrected in place by §166, the same day.** That scope was still wide enough to license
+    a world aggregate the sheet legitimately tracks, which is the sentence the operator then
+    named on pilot 15; the object narrowed again, to what the system counts *in a person*.
+    Both superseded forms are asserted absent here and the surviving one is asserted by
+    `test_the_licence_is_what_the_system_counts_in_a_person`.
     """
-    assert "what this world's own system counts and to nothing else" in house.READER
+    assert "world's own system counts in a person and to nothing else" in house.READER
     assert "belongs to what this world counts" not in house.READER
+    assert "own system counts and to nothing else" not in house.READER
 
 
 def test_the_numbers_clause_names_the_classes_that_actually_leaked() -> None:
@@ -569,3 +576,73 @@ def test_no_edited_clause_speaks_this_systems_own_vocabulary(word: str) -> None:
     """The rail every reader-facing edit is held to, applied to §161's four clauses at once."""
     for text in (house.READER, genre.BEAT, genre.NAMED_BEAT):
         assert word not in text.lower()
+
+
+# --- the licence narrows to the person, §166 -------------------------------------------
+
+
+#: Pilot 15's two lines, held here as a fixture and nowhere as prompt text (§97.1). The first
+#: is the operator's named violation, the second the borderline the same licence has to keep.
+#: Both are quantities that book's sheet holds — the first is a column of the line it prints —
+#: which is exactly why §161's *what this world's own system counts* could not separate them,
+#: and why the object is now the person rather than the counting.
+_A_WORLDS_AGGREGATE_IN_PROSE = "Forty-two seams standing in Ashfen now"
+_A_PERSONS_OWN_CAPACITY_IN_PROSE = "Three minutes in her that weren't hers"
+
+
+def test_the_licence_is_what_the_system_counts_in_a_person() -> None:
+    """§166's narrowing, and the surface split is the whole of it.
+
+    The two fixture lines above are both licensed by §161's scope and the operator called one
+    of them wrong, so no wording of *what the system counts* could have told them apart: the
+    aggregate is a column of the book's own printed line. The licence therefore splits by
+    surface — the line carries every quantity the sheet holds, prose speaks a number only
+    where the system counts it in a person — and the object narrows to that address rather
+    than to a list of what may be spoken. A list of skills, levels and classes would be the
+    instance-list shape this module has twice been corrected for, and an enumeration of what
+    succeeds besides, which is `house`'s own standing constraint and §154's finding.
+    """
+    assert "counts in a person and to nothing else" in house.READER
+    # The included side is an address, never an inventory. The clause reaches numerals only, so
+    # a class NAME is governed by nothing in it — which is the point of not writing one down.
+    (scope,) = [item for item in house.demands(house.READER) if "exact number" in item]
+    for element in ("skill", "level", "class", "ability"):
+        assert element not in scope.lower()
+
+
+def test_the_furniture_rides_inside_the_sentence_and_buys_no_demand() -> None:
+    """§161.5's third surgery pattern at its second use, and the reason it is needed here.
+
+    A scope narrowed to the person alone would forbid the very line `planner.py` renders
+    filled into the same system message. Written as its own sentence the exemption would be a
+    permission, and §138 measured a permission-only clause returning more than six times what
+    a prohibition-only one did, worse than silence. On a semicolon inside the sentence it
+    delimits instead, `house.demands` reads one clause, and no ceiling moved.
+    """
+    clause = [item for item in house.demands(house.READER) if "exact number" in item]
+    assert len(clause) == 1
+    assert clause[0].endswith("the line the book itself prints is not prose.")
+
+
+@pytest.mark.parametrize("word", ("ashfen", "seams", "forty-two seams", "minutes in her"))
+def test_no_word_of_the_chapter_under_read_became_prompt_text(word: str) -> None:
+    """§97.1, mechanically. The read is a defect harvest and a numeral lifted out of it would
+    be that diagnostic laundered into a prompt with the evidence still inside.
+
+    The guard names the phrase and the proper noun rather than the bare numeral, because the
+    clause's own *forty-two bottles* is invented, predates this read, and stays.
+    """
+    assembled = " ".join(
+        (
+            house.HOUSE_RULES,
+            _scene_system(
+                status_example="[STATUS] sera — Attunement 1 | Threads 2/3",
+                criteria="assay_grade: ordinal — third_seal then first_seal",
+            ),
+            genre.BEAT,
+            genre.NAMED_BEAT,
+        )
+    ).lower()
+    assert word not in assembled
+    assert _A_WORLDS_AGGREGATE_IN_PROSE.lower() not in assembled
+    assert _A_PERSONS_OWN_CAPACITY_IN_PROSE.lower() not in assembled

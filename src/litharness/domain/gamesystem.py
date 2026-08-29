@@ -1391,7 +1391,7 @@ def sheet_of(
     def within(record: lc.StateRecord) -> bool:
         """Whether the book standing at `at` has reached the position this record states.
 
-        **`key <= at` again, and the sheet is the worst place for it** (§166). A scheduled
+        **`key <= at` again, and the sheet is the worst place for it** (§167). A scheduled
         `stands_at` or `can_do` answered `'0350' <= 's1'` with `True`, so the character sheet a
         writer is shown would print the rank and the ability magnitudes the arc ends on. It
         reproduces on no store yet only because no book on disk has a declared system —

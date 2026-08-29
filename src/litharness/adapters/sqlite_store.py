@@ -220,7 +220,7 @@ class SqliteStore:
     def __init__(self, connection: sqlite3.Connection) -> None:
         self._connection = connection
         # **`state_records`' story-time slice needs `key_space`, and it borrows the domain's
-        # rather than spelling it in SQL** (§166). The GLOB that means "digits, all the way
+        # rather than spelling it in SQL** (§167). The GLOB that means "digits, all the way
         # down" is writable, but a second implementation of which space a key is in is exactly
         # the drift `test_the_store_and_the_domain_slice_story_time_identically` exists to
         # catch — and it would be a copy of the one predicate §165 introduced to stop two
@@ -1093,7 +1093,7 @@ class SqliteStore:
         one query, two implementations is how a selector drifts from its gate.
 
         **And the slice is inside one order-key space, which is the half SQL got wrong for the
-        same reason Python did** (§166). `'0350' <= 's1'` is true in SQLite too, so a scheduled
+        same reason Python did** (§167). `'0350' <= 's1'` is true in SQLite too, so a scheduled
         declaration passed every scene's cutoff here as well. `litharness_key_space` is the
         domain's own `key_space` registered on the connection, so a key survives only when it
         states a position in the cutoff's space; a cutoff in neither space compares the column
