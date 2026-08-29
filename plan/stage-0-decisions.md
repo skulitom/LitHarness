@@ -16779,6 +16779,135 @@ is promoted and no axis admitted; the operator quotes this track is written agai
 `plan/` and in module commentary and are rendered into no call. `genre.py`'s sheet-recognition
 half and `domain/gamesystem.py` are §160's and were not edited.
 
+## 162. Our shelf writes twice the market's numbers and none of them are a quantity, and the excess is concentrated on the calendar the operator pointed at
+
+The operator's emphasised complaint — *"Unrelated numbers in prose (days events) is degrading our
+book quality by a significant margin"*, and read 8 §4.1's *"Useless numbers unrelated to anything
+keep coming up"* — had a hand count on one chapter and no instrument. It has one now. The counters
+are `research/quality-measurement/number_context.py`, the driver is `number_context_run.py`, the
+numbers live in `results/number-context.json` under registration digest `8e10ac598828d404`, and
+the reading is `number-context-results.md`. This entry does not restate what the artifacts own.
+
+**No model read anything on this path.** Regex and arithmetic over 67,436 market chapters and our
+own 20, both halves, so the whole census is free and rerunnable. `BRIEF.md` §2's lesson applied
+before the fact: a defect class that can be counted mechanically is counted mechanically.
+
+### 162.1 What was measured, and the validity arm that comes before any of it
+
+Each numeric mention — digits and spelled numbers alike, adjacent numerals merged into one — is
+assigned to the family of the thing it is attached to. The instrument's characteristic failure is
+locating *numerals* rather than *context*, so the arm that decides whether any of it may be read
+is the genre split inside the market half, computed in the same pass:
+
+| pooled per 1,000 words | LitRPG | not LitRPG | separation |
+|---|--:|--:|--:|
+| `system_magnitude` | **2.632** | **0.246** | **10.7x** |
+| share of chapters carrying one | 0.555 | 0.158 | 3.52x |
+| `mundane_core` | 1.236 | 1.121 | **1.10x** |
+
+**Both rows are the arm and the second matters as much as the first.** A counter that separated
+the genre on the mundane family too would be reading length or numeral density. 10.7x against
+1.10x is the discriminant shape. The era control `BRIEF.md` §2's `tricolon_rate` row exists to
+force was run beside it and the habit predates the LLMs: LitRPG `system_magnitude` is 2.877
+per 1,000 in the human pre-LLM cohort against 2.265 undeclared-2025 and 2.160 declared-AI-2025, so
+no version of *the market changed* explains our distance from it.
+
+### 162.2 The measurement
+
+**Our system column is empty, and it is below general fiction rather than merely below the
+genre.** One `system_magnitude` exists on the whole shelf across 8 books and 39,947 words, and the
+hand-check disqualifies it — *three levels of it below the lobby* is a parking structure, carried
+in `MEASURED_FALSE_POSITIVES` rather than quietly borne. Against that, 55.5% of market LitRPG
+chapters carry at least one, and so do 15.8% of the chapters the market did not tag LitRPG at all.
+On `magnitude_share_of_anchored`, which is bounded in [0, 1] and cannot be moved by how many
+numbers anyone writes, ours is **0.0029** against the genre's **0.2002** and the non-genre
+control's 0.0323.
+
+**The one column where we sit above the market is `system_ordinal`**, 0.225 per 1,000 against
+0.104 and 0.068. Every system-anchored number we write is an ordinal on a ladder word — *fourth
+grade*, *eighth-grade price*, `THIRD TIER`. This is read 8 §4.2 arriving as a count, and **the
+split between magnitude and ordinal exists because our own shelf forced it**: a single `system`
+column would have reported nine system numbers on the shelf and hidden that not one is a quantity.
+
+**The excess is on the calendar, and the baseline is what makes that legible.**
+
+| pooled per 1,000 words | ours | market LitRPG | ours ÷ genre |
+|---|--:|--:|--:|
+| all numeric mentions | 28.012 | 12.831 | 2.2x |
+| `object_count` | 9.187 | 4.113 | 2.2x |
+| `mundane_core` | 5.933 | 1.236 | 4.8x |
+| `calendar_duration` | 4.431 | 0.718 | **6.2x** |
+
+We write 2.2x the genre's numbers of every kind, and object counting tracks that baseline exactly.
+The calendar does not. Against the non-genre control the calendar figure is 6.1x, so this is not a
+genre convention over-applied — it is not a convention of published fiction at all. **Zero of our
+chapters carry no mundane number; a quarter of the genre's carry none.** At book grain (`BRIEF.md`
+§6(5)) the gap survives: our median book 4.78 per 1,000, the median LitRPG fiction 1.19, the median
+non-genre fiction 1.04. Our side is n=8 independent units and that is small.
+
+**The presentation layer, generalised off one book onto 13,364.** Read 4 counted 0 digits in
+*A Good Take*'s 7,865 words; this census reproduces both figures exactly and then finds that 75%
+of our chapters contain no numeral anywhere, against 32% of the genre's. The genre writes 3.7x the
+digits of non-genre fiction and **we write fewer digits than non-genre fiction does**.
+
+### 162.3 The registered direction, and both of its escape routes closed
+
+The direction was fixed and committed before a market row was read (`96b622f`, digest
+`134ae6f2a80bd274`): the market's LitRPG carries a higher system-to-mundane ratio than ours, and
+our shelf sits near the floor of the system distribution. Both held. The registration named two
+ways it could come out otherwise and **both are refuted rather than merely unobserved**: the
+market's LitRPG is not itself mundane-heavy (1.236 per 1,000, a quarter of chapters at zero), and
+our mundane density is not ordinary for published fiction (5.3x the non-genre control). So the
+finding is not only an absence of the system half. It is that absence *and* an excess of the
+mundane one, and only the second was in doubt.
+
+### 162.4 Three narrowings came from the market half, and the disclosure is the point
+
+A 2,000-row smoke aggregate had been seen before three precision fixes were written, so each is
+recorded with the direction it moves this census's own headline, and the pre-narrowing
+full-corpus numbers are kept at `results/number-context.pre-narrowing.json` so the drift is
+auditable rather than remembered. A determiner after a head now ends the noun phrase (*one more
+thing-your abilities* was a stat; **favours** the headline); `one` left the copula-age pattern
+(*he is one of the people in this town* was an age; lowers both halves); and structural headings
+in the shards' other languages are skipped with an `english_share` control beside them
+(*Capitulo 6* was an object count; **cuts against** the headline). `register_census`'s narrowings
+3 and 4 are the precedent and `BRIEF.md` §5 requires it — a detector exact on the half that
+motivated it and loose on the half it is compared against manufactures the comparison out of its
+own error rate.
+
+**The English control is the one that could have taken the headline away and did not.** A
+non-English chapter scores near zero on every English lexicon here, which would depress the
+market's mundane density and inflate our gap. Measured: 0.8% of the LitRPG half sits below the
+floor, and removing those rows moves ours-over-market from 4.800 to 4.756. About 1% of the effect
+was language.
+
+### 162.5 What was refused
+
+- **A bar, a floor or a target ratio, for any family, on either half.** None of §81/§85/§87/§89's
+  four attainability checks was run on any quantity here and none is proposed for a gate.
+- **Any claim that a mundane number harms a reader.** The operator said one did; that is a defect
+  harvest and not data (§95, §97.1). The instrument converts it into a count and stops.
+- **The operator's own *an hour of rain*.** `a` and `an` are not numerals and admitting them
+  would sweep in every indefinite noun phrase in the language. Declared rather than patched, with
+  the rejected attempts recorded — §150.4's deleted `fragment_rate` is the precedent for refusing
+  a counter that would not be what its name said.
+- **Separating an ordinal date from an ordinal enumeration.** *The fifteenth in the spring
+  almanac* and *the twenty-second jar* need a parser to tell apart. Both land in
+  `ordinal_enumeration`, which is therefore never pooled into `mundane_core`, and two fitted
+  rescues are recorded as rejected.
+- **Summing `object_count` into `mundane_core`.** Its head is found by a stopword rule rather
+  than a closed lexicon, so its precision is the lowest in the table. `register_census`'s tier A /
+  tier B rule.
+- **A model audit of located spans.** Precision is hand-checked on both halves and the hand-check
+  is exhaustive on exactly one chapter. Recall against an exhaustive market count is unmeasured.
+
+### 162.6 Anti-scope
+
+Measurement only. Nothing here mints a system, edits a prompt, touches `src/litharness/`, admits
+an axis, or promotes a research claim under `EPISTEMIC_GOVERNANCE.md`. Market text stays in the
+gitignored intermediate; the committed artifacts carry ids and numbers, and the hand-check spans
+live in a gitignored sidecar. The tests are `tests/test_number_context.py`.
+
 ## 163. The Architect's rule against power numbers was already gone, and what stood in its place was a default with the rejected sheet in it
 
 Read 4 (2026-08-22) named three standing instructions suppressing the genre's substance and put
