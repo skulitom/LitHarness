@@ -161,6 +161,35 @@ def test_the_recorded_false_positive_is_still_recorded() -> None:
         assert family in families(text)
 
 
+def test_a_structural_heading_is_skipped_in_any_of_the_shards_languages() -> None:
+    """`Capitulo 6` and `Cena 1` were object counts, and the shards are not all English.
+
+    A heading's number is navigation and not narration. The word bound keeps prose *about* a
+    chapter, which is a different sentence and does carry counts.
+    """
+    assert families("Capitulo 6: A Sombra Que Espreita") == []
+    assert families("Cena 1: A Segunda Conversa com o Velho") == []
+    prose = "Chapter 6 had taught him that eight days was a long time to wait for a letter."
+    assert "calendar_duration" in families(prose)
+
+
+def test_english_share_separates_english_prose_from_the_shards_other_languages() -> None:
+    """The control that keeps a non-English market row from reading as a numberless one.
+
+    Every English lexicon in this module scores a Portuguese chapter near zero, which depresses
+    the market's mundane density and INFLATES any ours-versus-market gap. The census reports the
+    market with and without those rows; this pins that the measure can tell them apart.
+    """
+    english = "The road came off the moor and down into the town by the time she reached it."
+    other = "A vila estava silenciosa, mas o velho seguiu as vozes baixas ate o fundo do poco."
+    assert number_context.english_share(english) > 0.30
+    assert number_context.english_share(other) < 0.10
+    assert number_context.english_share("") == 0.0
+    # `a` and `as` were in the set until this sample lifted a Portuguese line above the floor.
+    assert "a" not in number_context.ENGLISH_FUNCTION_WORDS
+    assert "as" not in number_context.ENGLISH_FUNCTION_WORDS
+
+
 def test_the_registration_declares_no_bar_and_names_its_direction() -> None:
     """`REGISTERED` under EPISTEMIC_GOVERNANCE means the direction was fixed before the run."""
     registration = number_context.PRE_REGISTRATION
@@ -168,6 +197,10 @@ def test_the_registration_declares_no_bar_and_names_its_direction() -> None:
     declaration = registration["declares_no_bar"]
     assert declaration.startswith("No target density, ratio or floor is declared")
     assert "four attainability checks" not in declaration or "range at the real n" in declaration
+    # The three precision fixes made after the market half opened are disclosed, with the
+    # direction each moves the census's own headline, and the pre-market commit is named.
+    assert "96b622f" in registration["narrowings_from_the_market_half"]
+    assert "CUTS AGAINST" in registration["narrowings_from_the_market_half"]
     assert registration["residuals"]
     assert number_context.registration_digest() == number_context.REGISTRATION_DIGEST
 

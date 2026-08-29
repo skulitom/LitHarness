@@ -190,6 +190,28 @@ PRE_REGISTRATION: dict[str, Any] = {
         "direction, independent unit, non-empty subgroup -- and this file runs none of them. It "
         "names distributions and stops."
     ),
+    "narrowings_from_the_market_half": (
+        "THREE PRECISION FIXES MADE AFTER THE MARKET HALF WAS OPENED, and the disclosure is "
+        "part of the record. The frozen pre-market registration is committed at 96b622f under "
+        "digest 134ae6f2a80bd274, so the drift is auditable rather than hidden, and the "
+        "pre-narrowing full-corpus numbers are kept at "
+        "`results/number-context.pre-narrowing.json`. **The aggregate of a 2,000-row smoke pass "
+        "had been seen before these were written**, so each is named with the direction it "
+        "moves this census's own headline. `register_census` is the precedent -- its narrowings "
+        "3 and 4 also came from the market half -- and BRIEF.md §5's rule requires it: a "
+        "detector exact on the half that motivated it and loose on the half it is compared "
+        "against manufactures the comparison out of its own error rate. (1) A determiner after "
+        "a head ends the noun phrase; `one more thing-your abilities` was a stat. Direction: "
+        "lowers the market's system and mundane columns slightly, which FAVOURS the headline. "
+        "(2) `one` leaves the copula-age pattern and a following `of` ends it; `he is one of "
+        "the people in this town` was an age. Direction: lowers the mundane column on both "
+        "halves. (3) Structural headings in any of the shards' languages are skipped, and an "
+        "`english_share` control is reported so non-English rows are visible; `Capitulo 6` and "
+        "`Cena 1` were object counts, and a non-English chapter scores near zero on every "
+        "English lexicon here. Direction: RAISES the market's mundane density and CUTS AGAINST "
+        "the headline, which is why it is the one of the three that had to be built rather "
+        "than noted."
+    ),
     "refused": {
         "indefinite_article_durations": (
             "`an hour of rain` -- the operator's own item -- is NOT counted. `a` and `an` are "
@@ -449,11 +471,70 @@ _AGE_UNIT = re.compile(
 _AGE_TRIGGER = re.compile(
     rf"\b(?:aged|turn(?:ed|s|ing)?)\s+(?:{_NUM_WORD_ALT}|\d{{1,3}})\b", re.IGNORECASE
 )
+#: **`one` is not an age and the market half proved it.** `he is one of the people in this town`
+#: was being reported as somebody's age. A bare `one` after a copula is a pronoun essentially
+#: always, so it is out of the copula alternation entirely, and a following partitive `of` ends
+#: the match whatever the numeral.
+_COPULA_NUM_ALT = "|".join(sorted(NUMERAL_WORDS - {"one"}, key=len, reverse=True))
 _AGE_COPULA = re.compile(
     r"\b(?:i|he|she|you|they|we)\s*(?:'m|'re|'s|\s+(?:am|is|are|was|were))\s+"
-    rf"(?:{_NUM_WORD_ALT}|\d{{1,3}})\b",
+    rf"(?:{_COPULA_NUM_ALT}|\d{{1,3}})\b(?!\s+of\b)",
     re.IGNORECASE,
 )
+
+#: A structural heading is not prose and its number counts nothing. `progression_cadence`'s
+#: furniture reject already carries `chapter \d`; this is the same exclusion widened to the
+#: languages actually present in the shards, which an English-only pattern was letting through
+#: as object counts -- `Capitulo 6`, `Cena 1`, `Cena 3` in one Portuguese chapter.
+_RE_HEADING = re.compile(
+    r"^\**\s*(?:chapter|chapitre|cap[ií]tulo|capitolo|kapitel|hoofdstuk|b[öo]l[üu]m|глава|"
+    r"scene|cena|escena|sc[eè]ne|szene|part|book|volume|arc|episode|interlude|prologue|"
+    r"epilogue|act)\b[\s:.\-#]*\d",
+    re.IGNORECASE,
+)
+#: A heading is short. Without the bound, prose ABOUT a chapter -- `Chapter 6 had taught him
+#: that eight days was a long time to wait for a letter` -- would be dropped along with the
+#: headings. **The bound admits a small false negative and it is measured, not assumed away**: a
+#: prose sentence that opens `Chapter N` and runs to twelve words or fewer is still swallowed.
+#: Prose almost never opens that way, and a heading can be long, so the cost is paid here rather
+#: than in the recall of the heading rule.
+_HEADING_MAX_WORDS = 12
+
+
+def is_heading_line(line: str) -> bool:
+    """True for a structural heading whose number is navigation rather than narration."""
+    return bool(_RE_HEADING.match(line)) and len(line.split()) <= _HEADING_MAX_WORDS
+
+
+#: Common English function words. Used for one thing only: saying how English a chapter is, so
+#: the market half's non-English rows are visible instead of silently scoring zero on every
+#: English lexicon.
+#:
+#: **`a` and `as` were in this set and were removed on a measured collision.** Both are also
+#: high-frequency function words in Portuguese, which is present in the shards, and on a short
+#: Portuguese sample they alone lifted the score to 0.14 -- above the floor the set exists to
+#: sit below. Every remaining word is one whose spelling does not carry that frequency in the
+#: other languages the shards hold.
+ENGLISH_FUNCTION_WORDS = lexicon(
+    "the of and to in that it is was he she for on with his her they be at by not this "
+    "but from or had have you all were are so if there what when which who been would could"
+)
+
+
+def english_share(text: str) -> float:
+    """Share of tokens among the commonest English function words.
+
+    **This is a control, not a filter, and it exists because the market half is not all in
+    English.** A Portuguese chapter scores near zero on every English lexicon in this module,
+    which drags the market's mundane density DOWN and therefore INFLATES any ours-versus-market
+    gap. That is a bias in favour of this census's own headline, so it is measured rather than
+    assumed away, and the census reports the market both with and without the rows below a
+    stated share. Real English prose runs about 0.35-0.45 here.
+    """
+    words = [token.lower for token in tokenise(text)]
+    if not words:
+        return 0.0
+    return sum(1 for word in words if word in ENGLISH_FUNCTION_WORDS) / len(words)
 
 
 @dataclass(frozen=True, slots=True)
@@ -516,6 +597,11 @@ def _head_window(tokens: Sequence[Token], after: int) -> list[Token]:
     for token in tokens[after : after + _HEAD_WALK]:
         low = token.lower
         if low in _SKIP or low.endswith("'s"):
+            # A determiner AFTER a head opens a new noun phrase, and the numeral does not
+            # govern it. Measured on the market half: `one more thing-your abilities` reached
+            # `abilities` and reported a stat where the numeral counts things.
+            if seen_content:
+                break
             continue
         if low in _PARTITIVE:
             if seen_content:
@@ -648,7 +734,7 @@ def locate(text: str) -> list[Mention]:
         running += len(line.split())
 
     for index, line in enumerate(lines):
-        if not line:
+        if not line or is_heading_line(line):
             continue
         tokens = tokenise(line)
         base = words_before[index]
@@ -716,6 +802,7 @@ class ChapterNumbers:
     digits: int
     by_family: dict[str, int]
     furniture_lines: int
+    english_share: float
 
     @property
     def mundane_core(self) -> int:
@@ -766,6 +853,7 @@ def measure(text: str) -> ChapterNumbers:
         digits=sum(1 for m in mentions if not m.spelled),
         by_family={f: sum(1 for m in mentions if m.family == f) for f in FAMILIES},
         furniture_lines=sum(1 for line in lines if is_furniture_line(line)),
+        english_share=english_share(text),
     )
 
 
@@ -804,6 +892,10 @@ FIXTURE_REFUSED: tuple[str, ...] = (
 FIXTURE_CLASSIFIED: tuple[tuple[str, str], ...] = (
     # The head window reached past `surprise` to `morning` and reported a duration.
     ("That was the first surprise of the morning.", "ordinal_enumeration"),
+    # From the MARKET half: a determiner after a head opens a new noun phrase.
+    ("Oh, and one more thing-your abilities do not stay with you.", "object_count"),
+    # From the MARKET half: a bare `one` after a copula is a pronoun, never an age.
+    ("That's Pete, he is one of the people in this town.", "object_count"),
     # Ordinality was read off the first token of the merged run, which is a cardinal.
     ("At the twenty-second jar she stopped.", "ordinal_enumeration"),
     # Adjectives and quantity modifiers must not hide a closed-lexicon head.
@@ -898,6 +990,7 @@ def selftest() -> list[str]:
 
 __all__ = [
     "CALENDAR_WORDS",
+    "ENGLISH_FUNCTION_WORDS",
     "FAMILIES",
     "FIXTURE_CLASSIFIED",
     "FIXTURE_MUNDANE",
@@ -911,8 +1004,10 @@ __all__ = [
     "SYSTEM_WORDS",
     "ChapterNumbers",
     "Mention",
+    "english_share",
     "family_of",
     "is_furniture_line",
+    "is_heading_line",
     "locate",
     "measure",
     "normalise",

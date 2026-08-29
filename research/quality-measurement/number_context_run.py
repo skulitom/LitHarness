@@ -47,6 +47,18 @@ OURS = "ours"
 MARKET_LITRPG = "market_litrpg"
 MARKET_OTHER = "market_not_litrpg"
 QUARANTINED = "quarantined_descriptor_half"
+#: The same two market halves restricted to rows that read as English prose. Reported beside
+#: the unrestricted ones and never instead of them.
+MARKET_LITRPG_EN = "market_litrpg_english"
+MARKET_OTHER_EN = "market_not_litrpg_english"
+
+#: **A reporting parameter, not a bar.** Real English prose runs about 0.35-0.45 on
+#: `number_context.english_share`; 0.10 is an order of magnitude below that, so it separates
+#: "not English" from "English" rather than dividing English chapters against each other. It
+#: was fixed at a linguistically obvious floor rather than chosen after looking at what the
+#: split did to any number, and the unrestricted populations are reported in full beside it so
+#: the choice can be refused.
+ENGLISH_FLOOR = 0.10
 
 #: Every per-chapter quantity the census distributes. Densities are per 1,000 words.
 REPORTED_DENSITIES = (
@@ -102,6 +114,7 @@ class Population:
         self.label = label
         self.series: dict[str, list[float]] = {name: [] for name in REPORTED_DENSITIES}
         self.words: list[float] = []
+        self.english: list[float] = []
         self.system_share: list[float] = []
         self.magnitude_share: list[float] = []
         self.totals: Counter[str] = Counter()
@@ -122,6 +135,7 @@ class Population:
         }
         self.chapters += 1
         self.words.append(float(row.words))
+        self.english.append(row.english_share)
         for name in REPORTED_DENSITIES:
             density = row.per_1k(counts[name])
             self.series[name].append(density)
@@ -160,6 +174,10 @@ class Population:
                 "total": pooled["words"],
                 "median": round(statistics.median(self.words), 1),
             },
+            "english_share": quantiles(self.english),
+            "share_below_english_floor": round(
+                sum(1 for value in self.english if value < ENGLISH_FLOOR) / self.chapters, 4
+            ),
             "density_per_1k": {
                 name: quantiles(self.series[name]) for name in REPORTED_DENSITIES
             },
@@ -186,6 +204,14 @@ def shelf_chapters(shelf: Path) -> list[tuple[str, str, str]]:
         (path.parent.parent.name, path.name, path.read_text(encoding="utf-8"))
         for path in sorted(shelf.glob("*/chapters/*.txt"))
     ]
+
+
+def _repo_relative(path: Path) -> str:
+    """The path as the repository sees it, or its bare name when it lives outside."""
+    try:
+        return str(path.relative_to(HERE.parents[1]))
+    except ValueError:
+        return path.name
 
 
 def _ratio(top: float | None, bottom: float | None) -> float | None:
@@ -245,6 +271,57 @@ def validity_arm(groups: dict[str, Population]) -> dict[str, Any]:
     }
 
 
+def _english_control(groups: dict[str, Population]) -> dict[str, Any]:
+    """How much of any ours-versus-market gap is the market not being in English.
+
+    A non-English chapter scores near zero on every English lexicon in this module, so it
+    depresses the market's mundane density and INFLATES the gap this census reports. The gap is
+    therefore printed twice -- over every market row, and over the rows that read as English --
+    and the second is the one to believe.
+    """
+    ours = groups[OURS]
+    if not ours.chapters:
+        return {"ran": False}
+
+    def mundane(name: str) -> float | None:
+        group = groups[name]
+        if not group.chapters:
+            return None
+        return round(group.totals["mundane_core"] * 1000 / (group.totals["words"] or 1), 4)
+
+    our_rate = mundane(OURS)
+    rows = {
+        name: {
+            "chapters": groups[name].chapters,
+            "pooled_mundane_core_per_1k": mundane(name),
+            "ours_over_market": _ratio(our_rate, mundane(name)),
+            "share_below_english_floor": (
+                round(
+                    sum(1 for v in groups[name].english if v < ENGLISH_FLOOR)
+                    / groups[name].chapters,
+                    4,
+                )
+                if groups[name].chapters
+                else None
+            ),
+        }
+        for name in (MARKET_LITRPG, MARKET_LITRPG_EN, MARKET_OTHER, MARKET_OTHER_EN)
+        if groups[name].chapters
+    }
+    return {
+        "english_floor": ENGLISH_FLOOR,
+        "reading": (
+            "`ours_over_market` is how many times our own pooled mundane-core density exceeds "
+            "that population's. Compare the `_english` row against the row above it: the "
+            "difference between them is the part of the gap that was the shards not being in "
+            "English, and only the `_english` row is a comparison between two bodies of "
+            "English prose."
+        ),
+        "our_pooled_mundane_core_per_1k": our_rate,
+        "populations": rows,
+    }
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
@@ -277,7 +354,14 @@ def main() -> int:
 
     groups: dict[str, Population] = {
         name: Population(name)
-        for name in (OURS, MARKET_LITRPG, MARKET_OTHER, QUARANTINED)
+        for name in (
+            OURS,
+            MARKET_LITRPG,
+            MARKET_OTHER,
+            MARKET_LITRPG_EN,
+            MARKET_OTHER_EN,
+            QUARANTINED,
+        )
     }
     cohorts: dict[str, Population] = {}
 
@@ -325,6 +409,10 @@ def main() -> int:
                 groups[MARKET_LITRPG if litrpg else MARKET_OTHER].add(
                     row, fiction_id=record["fiction_id"]
                 )
+                if row.english_share >= ENGLISH_FLOOR:
+                    groups[MARKET_LITRPG_EN if litrpg else MARKET_OTHER_EN].add(
+                        row, fiction_id=record["fiction_id"]
+                    )
                 if litrpg and record["cohort"]:
                     key = f"litrpg_{record['cohort']}"
                     cohorts.setdefault(key, Population(key)).add(
@@ -375,12 +463,14 @@ def main() -> int:
             for book, entry in sorted(our_books.items())
         },
         "validity_arm": validity_arm(groups),
+        "english_control": _english_control(groups),
         "declares_no_bar": nc.PRE_REGISTRATION["declares_no_bar"],
         "residuals": nc.PRE_REGISTRATION["residuals"],
         "hand_check_sidecar": {
-            "path": str(Path(args.sidecar).relative_to(HERE.parents[1]))
-            if not args.ours_only
-            else None,
+            # Repo-relative when it is inside the repo, and the bare name otherwise. A smoke
+            # run points `--sidecar` at a scratch directory and `relative_to` raised there,
+            # which failed the run after the whole scan had already been paid for.
+            "path": _repo_relative(Path(args.sidecar)) if hand_check else None,
             "spans": len(hand_check),
             "rule": (
                 "gitignored, never committed: it holds short spans of market prose so a "

@@ -1,0 +1,2933 @@
+{
+  "instrument": "number_context.v0",
+  "registration_digest": "8e10ac598828d404",
+  "pre_registration": {
+    "instrument": "number_context.v0",
+    "question": "when a chapter writes an exact quantity, what is the quantity attached to: a system the character interacts with, or a mundane surface (a calendar, an age, a price, a measure, a count of objects)?",
+    "predicted": "REGISTERED DIRECTION, fixed before the market half was opened. The first-principles diagnosis predicts that the market's LitRPG-tagged chapters carry a HIGHER system-to-mundane ratio than our own shelf does, and that our shelf sits near the floor of the system distribution. Two named ways this can come out the other way, both of which are results and not failures: (a) the market's LitRPG may itself be mundane-heavy in absolute terms, in which case the diagnosis's implicit picture of the genre is wrong and only the RATIO can carry it; (b) our own mundane density may be ORDINARY for published fiction, in which case what the operator noticed is the absence of the system half and not an excess of the mundane half. The census reports both halves separately so either reading is legible.",
+    "primary": "per-chapter density distributions (p50/p75/p90 and coverage) for system-anchored and for mundane-core-anchored numeric mentions, ours against market-LitRPG against market-not-LitRPG, plus the per-chapter system share of anchored mentions",
+    "unit": "one NUMERIC MENTION. Adjacent numerals are one mention -- `twenty-two`, `one hundred and fifty` and `two or three` each count once -- because a merged numeral is one act of precision by the writer. This is the unit rule `progression_cadence` states for furniture runs, applied to numerals.",
+    "families": {
+      "system_magnitude": "A CARDINAL quantity attached to a system anchor: `level 12`, `300 experience`, `Strength 14`, `+5`, `240 -> 300`. Also every cardinal inside a system furniture LINE, by location rather than by lexicon. This is the LitRPG sheet's own number.",
+      "system_ordinal": "An ORDINAL attached to the same anchors: `fourth grade`, `THIRD TIER`, `second rank`. **The split from `system_magnitude` was forced by our own shelf and is the sharpest thing this instrument does.** Every one of the eleven system-anchored numbers on our shelf is an ordinal on a ladder word and not one is a magnitude, which is read 8 §4.2's finding -- the progression beats fired into a guild bureaucracy's ordinal titles -- arriving as a count. A ladder position and a quantity on a sheet are different objects and a single `system` column would have hidden the difference.",
+      "calendar_duration": "The quantity is time: days, weeks, months, years, hours, minutes, nights, o'clock. The operator's own list is mostly this family.",
+      "age": "The quantity is somebody's age.",
+      "money": "The quantity is a price or a purse.",
+      "measure": "The quantity is a distance, a weight, a volume or a percentage -- a unit of measurement that is not time and not money.",
+      "object_count": "The quantity counts things: thirty jars, two women, four of the guild's jars. REPORTED SEPARATELY AND NEVER SUMMED INTO `mundane_core`, because its head noun is found by a stopword rule rather than a closed lexicon and its precision is therefore the lowest in the table.",
+      "ordinal_enumeration": "An ordinal that resolves to no closed-lexicon family: `the second jar`, `the twenty-second`, `first glass`. Reported separately and never pooled -- see `refused` for why an ordinal date cannot be separated from an ordinal enumeration here.",
+      "multiplicative": "`three times`, `four times over`. Counted, never pooled.",
+      "unanchored": "A numeral with no head at all: `the condemned one`, `Eight more`. Counted so the total is honest, and excluded from every headline."
+    },
+    "priority": [
+      "furniture_line_location",
+      "shape_system",
+      "age",
+      "system",
+      "calendar_duration",
+      "money",
+      "measure",
+      "multiplicative",
+      "object_count",
+      "ordinal_enumeration",
+      "unanchored"
+    ],
+    "never_summed": "`mundane_core` is calendar_duration + age + money + measure -- the four closed-lexicon families. `object_count`, `ordinal_enumeration`, `multiplicative` and `unanchored` are each reported on their own line and none is added into it. A count named for one defect that measures another is the lying column stage-0 §150.4 deleted a field for, and `register_census`'s tier A / tier B split is the same rule.",
+    "summed_and_why": "`system_any` IS the sum of `system_magnitude` and `system_ordinal`, and it is the one sum this instrument allows. The two are the same assertion -- a number attached to a system anchor -- differing only in the number's grammatical form, unlike the tier A / tier B split, which is two different assertions about the narrator. Both components are always printed beside the sum so a reader can refuse the pooling; the magnitude column alone is the one to read when the question is whether a sheet exists.",
+    "normalisation": "NFKC; curly quotes and dashes folded to ASCII; horizontal whitespace collapsed WITHIN a line; line structure preserved, because a system furniture line is recognised by being a whole line.",
+    "line_shapes_copied_deliberately": "The furniture line shapes are a COPY of `progression_cadence.v0`'s, not an import. A registration that is content-addressed must be self-contained: importing the neighbour's frozen block would let its digest change this instrument silently. The copy is stated here so the duplication is a decision on the record rather than drift, and `selftest` pins the shapes that matter.",
+    "control_same_pass": [
+      "LitRPG against not-LitRPG on the same counters, inside the market half. The system counter MUST separate them -- a genre whose defining artifact is a system carries more system numbers or this instrument is measuring something else. This is the validity arm, computed in the same pass (BRIEF.md §5).",
+      "chapter length is reported beside every density, because both are per-1,000-words and a length difference between halves would move them together.",
+      "spelled against digit mentions are reported separately for every population. Our own prose has been measured at ZERO digits in a whole book (read 4), so a counter that saw only digits would report our shelf's mundane precision as absent when it is 165 instances.",
+      "the per-fiction collapse is reported beside the per-chapter one, because fifty chapters of one serial share an author and a tic (BRIEF.md §6(5))."
+    ],
+    "quarantine": "the 26 descriptor-half fiction ids of stage-0 §150.1 are subtracted from the market half before any ours-versus-market number, and the pre-subtraction and post-subtraction row counts are both reported.",
+    "declares_no_bar": "No target density, ratio or floor is declared here, for any family, for either half. A bar needs §81/§85/§87/§89's four attainability checks -- range at the real n, direction, independent unit, non-empty subgroup -- and this file runs none of them. It names distributions and stops.",
+    "narrowings_from_the_market_half": "THREE PRECISION FIXES MADE AFTER THE MARKET HALF WAS OPENED, and the disclosure is part of the record. The frozen pre-market registration is committed at 96b622f under digest 134ae6f2a80bd274, so the drift is auditable rather than hidden, and the pre-narrowing full-corpus numbers are kept at `results/number-context.pre-narrowing.json`. **The aggregate of a 2,000-row smoke pass had been seen before these were written**, so each is named with the direction it moves this census's own headline. `register_census` is the precedent -- its narrowings 3 and 4 also came from the market half -- and BRIEF.md §5's rule requires it: a detector exact on the half that motivated it and loose on the half it is compared against manufactures the comparison out of its own error rate. (1) A determiner after a head ends the noun phrase; `one more thing-your abilities` was a stat. Direction: lowers the market's system and mundane columns slightly, which FAVOURS the headline. (2) `one` leaves the copula-age pattern and a following `of` ends it; `he is one of the people in this town` was an age. Direction: lowers the mundane column on both halves. (3) Structural headings in any of the shards' languages are skipped, and an `english_share` control is reported so non-English rows are visible; `Capitulo 6` and `Cena 1` were object counts, and a non-English chapter scores near zero on every English lexicon here. Direction: RAISES the market's mundane density and CUTS AGAINST the headline, which is why it is the one of the three that had to be built rather than noted.",
+    "refused": {
+      "indefinite_article_durations": "`an hour of rain` -- the operator's own item -- is NOT counted. `a` and `an` are not numerals, and admitting them would sweep in `a moment`, `a second`, `a while` and every indefinite noun phrase in the language, which is not precision. The operator's list therefore has one member this instrument cannot see, and that is stated rather than patched.",
+      "ordinal_dates": "`the fifteenth in the spring almanac` is a date and `the twenty-second jar` is an enumeration, and no closed rule here separates them: the distinguishing evidence is a governing noun phrase that needs a parser. Both land in `ordinal_enumeration`, which is why that family is never pooled into `mundane_core`. Attempted and rejected: treating a bare high ordinal as a date (fitted to one instance), and treating a season word within four tokens as a date context (drew `the spring almanac`, which is a book and not a date).",
+      "twice_thrice_dozen": "`twice`, `thrice`, `once` and `dozen` are not in the numeral lexicon. The first three are adverbs whose head is a verb rather than a quantity, and `dozen` collides with `dozens of`, which is vagueness rather than precision. A known recall hole, named.",
+      "spelled_out_ages_without_a_trigger": "`she was nine` is caught by the copula trigger; `nine, and never once expecting it` is not. The age family is the smallest in the table and is not load-bearing for any headline.",
+      "a_harm_claim": "Nothing here claims a mundane-anchored number harms a reader. The operator said one did; that is a defect harvest and not data (§95, §97.1), and this instrument converts it into a count and no further."
+    },
+    "residuals": [
+      "PRECISION IS HAND-MEASURED, NOT MODEL-MEASURED, and the hand-check is exhaustive on exactly one chapter -- read 8 §4.1's own list for Unlicensed Weather chapter 1. Every other precision statement rests on a sample.",
+      "RECALL IS UNMEASURED against any exhaustive market count. A chapter whose quantities are all written as indefinite articles or as `twice` scores zero.",
+      "`object_count` finds its head by a stopword rule, so a numeral followed by an adverb can take an adverb as its head. The family decision survives that (the mention is still a count) but the recorded head is then wrong, which is why heads are reported for hand-check and never aggregated.",
+      "A single large stat table contributes as many system mentions as it holds numbers. That is the honest reading of the question -- those numbers ARE on the page -- but it makes the system density heavy-tailed, so coverage is the statistic to believe, as `progression_cadence`'s validity arm already argues.",
+      "`gold`, `silver` and `copper` are money here and never system, although in this genre they are frequently both. Money is reported on its own line so the choice is visible.",
+      "Chapter text is whatever the shard holds, including front matter the reject list misses."
+    ]
+  },
+  "ran_at": "2026-08-29T13:38:32+00:00",
+  "source_intermediate": {
+    "snapshot_revision": "0e4df3f22999a7b7fa13b1e7564a09b5f3eb964e",
+    "rows_kept_by_scan": 67436,
+    "min_words": 300
+  },
+  "rows": {
+    "our_chapters": 20,
+    "our_books": 8,
+    "market_rows_before_quarantine": 67436,
+    "quarantined_subtracted": 2505,
+    "market_after_quarantine": 64931
+  },
+  "populations": {
+    "ours": {
+      "label": "ours",
+      "chapters": 20,
+      "distinct_fictions": 8,
+      "words": {
+        "total": 39947,
+        "median": 1970.5
+      },
+      "english_share": {
+        "n": 20,
+        "mean": 0.3996,
+        "p10": 0.3751,
+        "p25": 0.3872,
+        "p50": 0.3975,
+        "p75": 0.4133,
+        "p90": 0.4239,
+        "max": 0.4419,
+        "zero_share": 0.0
+      },
+      "share_below_english_floor": 0.0,
+      "density_per_1k": {
+        "system_magnitude": {
+          "n": 20,
+          "mean": 0.0259,
+          "p10": 0.0,
+          "p25": 0.0,
+          "p50": 0.0,
+          "p75": 0.0,
+          "p90": 0.0,
+          "max": 0.5187,
+          "zero_share": 0.95
+        },
+        "system_ordinal": {
+          "n": 20,
+          "mean": 0.3059,
+          "p10": 0.0,
+          "p25": 0.0,
+          "p50": 0.0,
+          "p75": 0.0,
+          "p90": 1.1237,
+          "max": 2.1142,
+          "zero_share": 0.8
+        },
+        "system_any": {
+          "n": 20,
+          "mean": 0.3319,
+          "p10": 0.0,
+          "p25": 0.0,
+          "p50": 0.0,
+          "p75": 0.1297,
+          "p90": 1.1237,
+          "max": 2.1142,
+          "zero_share": 0.75
+        },
+        "calendar_duration": {
+          "n": 20,
+          "mean": 4.7607,
+          "p10": 1.0348,
+          "p25": 2.0265,
+          "p50": 3.5179,
+          "p75": 7.3564,
+          "p90": 10.2354,
+          "max": 12.3203,
+          "zero_share": 0.0
+        },
+        "age": {
+          "n": 20,
+          "mean": 0.2738,
+          "p10": 0.0,
+          "p25": 0.0,
+          "p50": 0.0,
+          "p75": 0.482,
+          "p90": 0.9654,
+          "max": 1.0571,
+          "zero_share": 0.6
+        },
+        "money": {
+          "n": 20,
+          "mean": 0.2237,
+          "p10": 0.0,
+          "p25": 0.0,
+          "p50": 0.0,
+          "p75": 0.0,
+          "p90": 0.9687,
+          "max": 2.0161,
+          "zero_share": 0.8
+        },
+        "measure": {
+          "n": 20,
+          "mean": 0.9726,
+          "p10": 0.0,
+          "p25": 0.0,
+          "p50": 0.5108,
+          "p75": 1.6569,
+          "p90": 2.9041,
+          "max": 3.5053,
+          "zero_share": 0.4
+        },
+        "mundane_core": {
+          "n": 20,
+          "mean": 6.2308,
+          "p10": 2.462,
+          "p25": 3.5245,
+          "p50": 5.2107,
+          "p75": 8.852,
+          "p90": 12.1191,
+          "max": 12.685,
+          "zero_share": 0.0
+        },
+        "object_count": {
+          "n": 20,
+          "mean": 8.2186,
+          "p10": 4.0671,
+          "p25": 5.98,
+          "p50": 7.2168,
+          "p75": 10.135,
+          "p90": 14.3361,
+          "max": 16.5913,
+          "zero_share": 0.0
+        },
+        "ordinal_enumeration": {
+          "n": 20,
+          "mean": 4.9035,
+          "p10": 2.8516,
+          "p25": 3.0614,
+          "p50": 3.7702,
+          "p75": 5.3366,
+          "p90": 10.2819,
+          "max": 11.2474,
+          "zero_share": 0.0
+        },
+        "multiplicative": {
+          "n": 20,
+          "mean": 0.3917,
+          "p10": 0.0,
+          "p25": 0.0,
+          "p50": 0.2481,
+          "p75": 0.7787,
+          "p90": 1.0192,
+          "max": 1.0438,
+          "zero_share": 0.45
+        },
+        "unanchored": {
+          "n": 20,
+          "mean": 7.3214,
+          "p10": 3.9773,
+          "p25": 5.7693,
+          "p50": 7.4091,
+          "p75": 8.621,
+          "p90": 11.4261,
+          "max": 12.7291,
+          "zero_share": 0.0
+        },
+        "mentions": {
+          "n": 20,
+          "mean": 27.3979,
+          "p10": 22.0016,
+          "p25": 22.9596,
+          "p50": 23.9802,
+          "p75": 31.7643,
+          "p90": 35.7476,
+          "max": 38.5701,
+          "zero_share": 0.0
+        },
+        "spelled": {
+          "n": 20,
+          "mean": 26.7284,
+          "p10": 22.0016,
+          "p25": 22.9596,
+          "p50": 23.9802,
+          "p75": 29.3083,
+          "p90": 34.7125,
+          "max": 35.7479,
+          "zero_share": 0.0
+        },
+        "digits": {
+          "n": 20,
+          "mean": 0.6695,
+          "p10": 0.0,
+          "p25": 0.0,
+          "p50": 0.0,
+          "p75": 0.1297,
+          "p90": 2.0922,
+          "max": 6.11,
+          "zero_share": 0.75
+        }
+      },
+      "pooled_per_1k": {
+        "system_magnitude": 0.025,
+        "system_ordinal": 0.2253,
+        "system_any": 0.2503,
+        "calendar_duration": 4.4309,
+        "age": 0.3254,
+        "money": 0.1502,
+        "measure": 1.0264,
+        "mundane_core": 5.9329,
+        "object_count": 9.1872,
+        "ordinal_enumeration": 5.0317,
+        "multiplicative": 0.4005,
+        "unanchored": 7.2096,
+        "mentions": 28.0121,
+        "spelled": 27.0859,
+        "digits": 0.9262
+      },
+      "totals": {
+        "system_magnitude": 1,
+        "system_ordinal": 9,
+        "system_any": 10,
+        "calendar_duration": 177,
+        "age": 13,
+        "money": 6,
+        "measure": 41,
+        "mundane_core": 237,
+        "object_count": 367,
+        "ordinal_enumeration": 201,
+        "multiplicative": 16,
+        "unanchored": 288,
+        "mentions": 1119,
+        "spelled": 1082,
+        "digits": 37,
+        "furniture_lines": 0
+      },
+      "coverage": {
+        "share_with_any_system_number": 0.25,
+        "share_with_a_system_MAGNITUDE": 0.05,
+        "share_with_a_mundane_core_number": 1.0
+      },
+      "system_share_of_anchored": {
+        "n": 20,
+        "mean": 0.0187,
+        "p10": 0.0,
+        "p25": 0.0,
+        "p50": 0.0,
+        "p75": 0.012,
+        "p90": 0.07,
+        "max": 0.1,
+        "zero_share": 0.75
+      },
+      "magnitude_share_of_anchored": {
+        "n": 20,
+        "mean": 0.0029,
+        "p10": 0.0,
+        "p25": 0.0,
+        "p50": 0.0,
+        "p75": 0.0,
+        "p90": 0.0,
+        "max": 0.0588,
+        "zero_share": 0.95
+      },
+      "per_fiction_density_per_1k": {
+        "system_magnitude": {
+          "n": 8,
+          "mean": 0.0648,
+          "p10": 0.0,
+          "p25": 0.0,
+          "p50": 0.0,
+          "p75": 0.0,
+          "p90": 0.1556,
+          "max": 0.5187,
+          "zero_share": 0.875
+        },
+        "system_any": {
+          "n": 8,
+          "mean": 0.2056,
+          "p10": 0.0,
+          "p25": 0.0,
+          "p50": 0.0,
+          "p75": 0.491,
+          "p90": 0.5564,
+          "max": 0.6444,
+          "zero_share": 0.625
+        },
+        "mundane_core": {
+          "n": 8,
+          "mean": 5.1674,
+          "p10": 2.4385,
+          "p25": 3.7811,
+          "p50": 4.7824,
+          "p75": 6.6039,
+          "p90": 8.6536,
+          "max": 9.2723,
+          "zero_share": 0.0
+        },
+        "object_count": {
+          "n": 8,
+          "mean": 8.5049,
+          "p10": 5.5799,
+          "p25": 6.5031,
+          "p50": 6.9502,
+          "p75": 10.2741,
+          "p90": 13.6052,
+          "max": 15.4239,
+          "zero_share": 0.0
+        }
+      }
+    },
+    "market_litrpg": {
+      "label": "market_litrpg",
+      "chapters": 13364,
+      "distinct_fictions": 584,
+      "words": {
+        "total": 30133640,
+        "median": 2053.0
+      },
+      "english_share": {
+        "n": 13364,
+        "mean": 0.3163,
+        "p10": 0.2692,
+        "p25": 0.2946,
+        "p50": 0.3193,
+        "p75": 0.3439,
+        "p90": 0.3684,
+        "max": 0.4563,
+        "zero_share": 0.0005
+      },
+      "share_below_english_floor": 0.008,
+      "density_per_1k": {
+        "system_magnitude": {
+          "n": 13364,
+          "mean": 2.8669,
+          "p10": 0.0,
+          "p25": 0.0,
+          "p50": 0.4469,
+          "p75": 2.5707,
+          "p90": 8.6084,
+          "max": 134.0782,
+          "zero_share": 0.4449
+        },
+        "system_ordinal": {
+          "n": 13364,
+          "mean": 0.1104,
+          "p10": 0.0,
+          "p25": 0.0,
+          "p50": 0.0,
+          "p75": 0.0,
+          "p90": 0.3682,
+          "max": 13.8477,
+          "zero_share": 0.8693
+        },
+        "system_any": {
+          "n": 13364,
+          "mean": 2.9773,
+          "p10": 0.0,
+          "p25": 0.0,
+          "p50": 0.4973,
+          "p75": 2.7475,
+          "p90": 8.9128,
+          "max": 134.0782,
+          "zero_share": 0.4176
+        },
+        "calendar_duration": {
+          "n": 13364,
+          "mean": 0.7566,
+          "p10": 0.0,
+          "p25": 0.0,
+          "p50": 0.4379,
+          "p75": 1.0528,
+          "p90": 2.0252,
+          "max": 17.2712,
+          "zero_share": 0.4075
+        },
+        "age": {
+          "n": 13364,
+          "mean": 0.0729,
+          "p10": 0.0,
+          "p25": 0.0,
+          "p50": 0.0,
+          "p75": 0.0,
+          "p90": 0.2783,
+          "max": 4.9875,
+          "zero_share": 0.8862
+        },
+        "money": {
+          "n": 13364,
+          "mean": 0.1235,
+          "p10": 0.0,
+          "p25": 0.0,
+          "p50": 0.0,
+          "p75": 0.0,
+          "p90": 0.0,
+          "max": 19.7133,
+          "zero_share": 0.9057
+        },
+        "measure": {
+          "n": 13364,
+          "mean": 0.338,
+          "p10": 0.0,
+          "p25": 0.0,
+          "p50": 0.0,
+          "p75": 0.4785,
+          "p90": 1.004,
+          "max": 10.8696,
+          "zero_share": 0.6263
+        },
+        "mundane_core": {
+          "n": 13364,
+          "mean": 1.291,
+          "p10": 0.0,
+          "p25": 0.0,
+          "p50": 0.8667,
+          "p75": 1.7668,
+          "p90": 3.0754,
+          "max": 21.8424,
+          "zero_share": 0.2539
+        },
+        "object_count": {
+          "n": 13364,
+          "mean": 4.2011,
+          "p10": 1.268,
+          "p25": 2.2219,
+          "p50": 3.5157,
+          "p75": 5.3116,
+          "p90": 7.5543,
+          "max": 123.0159,
+          "zero_share": 0.0256
+        },
+        "ordinal_enumeration": {
+          "n": 13364,
+          "mean": 1.6039,
+          "p10": 0.0,
+          "p25": 0.6592,
+          "p50": 1.3441,
+          "p75": 2.1807,
+          "p90": 3.2436,
+          "max": 23.0263,
+          "zero_share": 0.1319
+        },
+        "multiplicative": {
+          "n": 13364,
+          "mean": 0.2545,
+          "p10": 0.0,
+          "p25": 0.0,
+          "p50": 0.0,
+          "p75": 0.4492,
+          "p90": 0.8072,
+          "max": 5.7971,
+          "zero_share": 0.6206
+        },
+        "unanchored": {
+          "n": 13364,
+          "mean": 2.9532,
+          "p10": 0.4128,
+          "p25": 1.0345,
+          "p50": 2.0233,
+          "p75": 3.4643,
+          "p90": 5.8968,
+          "max": 222.2222,
+          "zero_share": 0.0876
+        },
+        "mentions": {
+          "n": 13364,
+          "mean": 13.281,
+          "p10": 4.7655,
+          "p25": 7.0312,
+          "p50": 10.3826,
+          "p75": 15.8892,
+          "p90": 24.9434,
+          "max": 310.0559,
+          "zero_share": 0.0037
+        },
+        "spelled": {
+          "n": 13364,
+          "mean": 8.1738,
+          "p10": 3.6459,
+          "p25": 5.3172,
+          "p50": 7.5478,
+          "p75": 10.3028,
+          "p90": 13.5216,
+          "max": 44.0158,
+          "zero_share": 0.0107
+        },
+        "digits": {
+          "n": 13364,
+          "mean": 5.1072,
+          "p10": 0.0,
+          "p25": 0.0,
+          "p50": 1.3477,
+          "p75": 5.6609,
+          "p90": 14.85,
+          "max": 307.2626,
+          "zero_share": 0.3197
+        }
+      },
+      "pooled_per_1k": {
+        "system_magnitude": 2.6319,
+        "system_ordinal": 0.1041,
+        "system_any": 2.736,
+        "calendar_duration": 0.7177,
+        "age": 0.0692,
+        "money": 0.11,
+        "measure": 0.3393,
+        "mundane_core": 1.2361,
+        "object_count": 4.113,
+        "ordinal_enumeration": 1.5899,
+        "multiplicative": 0.2541,
+        "unanchored": 2.9016,
+        "mentions": 12.8307,
+        "spelled": 8.1583,
+        "digits": 4.6724
+      },
+      "totals": {
+        "system_magnitude": 79309,
+        "system_ordinal": 3136,
+        "system_any": 82445,
+        "calendar_duration": 21626,
+        "age": 2084,
+        "money": 3315,
+        "measure": 10224,
+        "mundane_core": 37249,
+        "object_count": 123941,
+        "ordinal_enumeration": 47909,
+        "multiplicative": 7656,
+        "unanchored": 87435,
+        "mentions": 386635,
+        "spelled": 245838,
+        "digits": 140797,
+        "furniture_lines": 39848
+      },
+      "coverage": {
+        "share_with_any_system_number": 0.5824,
+        "share_with_a_system_MAGNITUDE": 0.5551,
+        "share_with_a_mundane_core_number": 0.7461
+      },
+      "system_share_of_anchored": {
+        "n": 13223,
+        "mean": 0.2126,
+        "p10": 0.0,
+        "p25": 0.0,
+        "p50": 0.1,
+        "p75": 0.3684,
+        "p90": 0.64,
+        "max": 1.0,
+        "zero_share": 0.4114
+      },
+      "magnitude_share_of_anchored": {
+        "n": 13223,
+        "mean": 0.2002,
+        "p10": 0.0,
+        "p25": 0.0,
+        "p50": 0.0833,
+        "p75": 0.3333,
+        "p90": 0.619,
+        "max": 1.0,
+        "zero_share": 0.4389
+      },
+      "per_fiction_density_per_1k": {
+        "system_magnitude": {
+          "n": 584,
+          "mean": 2.8372,
+          "p10": 0.0,
+          "p25": 0.2281,
+          "p50": 1.2605,
+          "p75": 3.3207,
+          "p90": 6.9423,
+          "max": 39.8094,
+          "zero_share": 0.1764
+        },
+        "system_any": {
+          "n": 584,
+          "mean": 2.9511,
+          "p10": 0.0,
+          "p25": 0.2535,
+          "p50": 1.4073,
+          "p75": 3.5108,
+          "p90": 7.035,
+          "max": 39.8094,
+          "zero_share": 0.161
+        },
+        "mundane_core": {
+          "n": 584,
+          "mean": 1.5406,
+          "p10": 0.3239,
+          "p25": 0.6867,
+          "p50": 1.192,
+          "p75": 1.9926,
+          "p90": 3.0057,
+          "max": 12.1495,
+          "zero_share": 0.0651
+        },
+        "object_count": {
+          "n": 584,
+          "mean": 4.3455,
+          "p10": 2.1716,
+          "p25": 2.9086,
+          "p50": 3.8561,
+          "p75": 4.9264,
+          "p90": 6.6053,
+          "max": 112.2625,
+          "zero_share": 0.0154
+        }
+      }
+    },
+    "market_not_litrpg": {
+      "label": "market_not_litrpg",
+      "chapters": 51567,
+      "distinct_fictions": 3096,
+      "words": {
+        "total": 112339213,
+        "median": 1754.0
+      },
+      "english_share": {
+        "n": 51567,
+        "mean": 0.3191,
+        "p10": 0.2722,
+        "p25": 0.2973,
+        "p50": 0.3229,
+        "p75": 0.3471,
+        "p90": 0.3684,
+        "max": 0.5,
+        "zero_share": 0.0012
+      },
+      "share_below_english_floor": 0.0086,
+      "density_per_1k": {
+        "system_magnitude": {
+          "n": 51567,
+          "mean": 0.3072,
+          "p10": 0.0,
+          "p25": 0.0,
+          "p50": 0.0,
+          "p75": 0.0,
+          "p90": 0.5277,
+          "max": 177.0245,
+          "zero_share": 0.8421
+        },
+        "system_ordinal": {
+          "n": 51567,
+          "mean": 0.084,
+          "p10": 0.0,
+          "p25": 0.0,
+          "p50": 0.0,
+          "p75": 0.0,
+          "p90": 0.0,
+          "max": 43.956,
+          "zero_share": 0.9307
+        },
+        "system_any": {
+          "n": 51567,
+          "mean": 0.3912,
+          "p10": 0.0,
+          "p25": 0.0,
+          "p50": 0.0,
+          "p75": 0.0,
+          "p90": 0.7764,
+          "max": 177.0245,
+          "zero_share": 0.8014
+        },
+        "calendar_duration": {
+          "n": 51567,
+          "mean": 0.7527,
+          "p10": 0.0,
+          "p25": 0.0,
+          "p50": 0.3705,
+          "p75": 1.0508,
+          "p90": 2.0353,
+          "max": 44.5545,
+          "zero_share": 0.4469
+        },
+        "age": {
+          "n": 51567,
+          "mean": 0.0966,
+          "p10": 0.0,
+          "p25": 0.0,
+          "p50": 0.0,
+          "p75": 0.0,
+          "p90": 0.3319,
+          "max": 9.3168,
+          "zero_share": 0.8653
+        },
+        "money": {
+          "n": 51567,
+          "mean": 0.0565,
+          "p10": 0.0,
+          "p25": 0.0,
+          "p50": 0.0,
+          "p75": 0.0,
+          "p90": 0.0,
+          "max": 20.339,
+          "zero_share": 0.945
+        },
+        "measure": {
+          "n": 51567,
+          "mean": 0.2483,
+          "p10": 0.0,
+          "p25": 0.0,
+          "p50": 0.0,
+          "p75": 0.2856,
+          "p90": 0.8316,
+          "max": 23.8048,
+          "zero_share": 0.7151
+        },
+        "mundane_core": {
+          "n": 51567,
+          "mean": 1.1541,
+          "p10": 0.0,
+          "p25": 0.0,
+          "p50": 0.7386,
+          "p75": 1.6169,
+          "p90": 2.8629,
+          "max": 47.0297,
+          "zero_share": 0.3184
+        },
+        "object_count": {
+          "n": 51567,
+          "mean": 3.6514,
+          "p10": 0.9058,
+          "p25": 1.8536,
+          "p50": 3.0832,
+          "p75": 4.7414,
+          "p90": 6.8493,
+          "max": 69.7385,
+          "zero_share": 0.0539
+        },
+        "ordinal_enumeration": {
+          "n": 51567,
+          "mean": 1.5033,
+          "p10": 0.0,
+          "p25": 0.5157,
+          "p50": 1.1635,
+          "p75": 2.045,
+          "p90": 3.2017,
+          "max": 105.036,
+          "zero_share": 0.1917
+        },
+        "multiplicative": {
+          "n": 51567,
+          "mean": 0.271,
+          "p10": 0.0,
+          "p25": 0.0,
+          "p50": 0.0,
+          "p75": 0.4262,
+          "p90": 0.8787,
+          "max": 8.7977,
+          "zero_share": 0.636
+        },
+        "unanchored": {
+          "n": 51567,
+          "mean": 2.0564,
+          "p10": 0.0,
+          "p25": 0.761,
+          "p50": 1.5686,
+          "p75": 2.7027,
+          "p90": 4.2416,
+          "max": 98.0949,
+          "zero_share": 0.1449
+        },
+        "mentions": {
+          "n": 51567,
+          "mean": 9.0274,
+          "p10": 3.5016,
+          "p25": 5.3476,
+          "p50": 7.7913,
+          "p75": 11.0617,
+          "p90": 15.6006,
+          "max": 231.6384,
+          "zero_share": 0.0101
+        },
+        "spelled": {
+          "n": 51567,
+          "mean": 7.522,
+          "p10": 2.9922,
+          "p25": 4.7361,
+          "p50": 6.8762,
+          "p75": 9.544,
+          "p90": 12.7206,
+          "max": 71.4286,
+          "zero_share": 0.0168
+        },
+        "digits": {
+          "n": 51567,
+          "mean": 1.5054,
+          "p10": 0.0,
+          "p25": 0.0,
+          "p50": 0.0,
+          "p75": 1.2658,
+          "p90": 3.9922,
+          "max": 231.6384,
+          "zero_share": 0.5607
+        }
+      },
+      "pooled_per_1k": {
+        "system_magnitude": 0.246,
+        "system_ordinal": 0.0683,
+        "system_any": 0.3143,
+        "calendar_duration": 0.7237,
+        "age": 0.0901,
+        "money": 0.051,
+        "measure": 0.2558,
+        "mundane_core": 1.1205,
+        "object_count": 3.598,
+        "ordinal_enumeration": 1.4817,
+        "multiplicative": 0.2588,
+        "unanchored": 2.0184,
+        "mentions": 8.7918,
+        "spelled": 7.5224,
+        "digits": 1.2694
+      },
+      "totals": {
+        "system_magnitude": 27634,
+        "system_ordinal": 7674,
+        "system_any": 35308,
+        "calendar_duration": 81303,
+        "age": 10118,
+        "money": 5725,
+        "measure": 28733,
+        "mundane_core": 125879,
+        "object_count": 404200,
+        "ordinal_enumeration": 166452,
+        "multiplicative": 29077,
+        "unanchored": 226750,
+        "mentions": 987666,
+        "spelled": 845058,
+        "digits": 142608,
+        "furniture_lines": 16167
+      },
+      "coverage": {
+        "share_with_any_system_number": 0.1986,
+        "share_with_a_system_MAGNITUDE": 0.1579,
+        "share_with_a_mundane_core_number": 0.6816
+      },
+      "system_share_of_anchored": {
+        "n": 49978,
+        "mean": 0.0445,
+        "p10": 0.0,
+        "p25": 0.0,
+        "p50": 0.0,
+        "p75": 0.0,
+        "p90": 0.1429,
+        "max": 1.0,
+        "zero_share": 0.795
+      },
+      "magnitude_share_of_anchored": {
+        "n": 49978,
+        "mean": 0.0323,
+        "p10": 0.0,
+        "p25": 0.0,
+        "p50": 0.0,
+        "p75": 0.0,
+        "p90": 0.1,
+        "max": 1.0,
+        "zero_share": 0.837
+      },
+      "per_fiction_density_per_1k": {
+        "system_magnitude": {
+          "n": 3096,
+          "mean": 0.3152,
+          "p10": 0.0,
+          "p25": 0.0,
+          "p50": 0.0,
+          "p75": 0.0997,
+          "p90": 0.5392,
+          "max": 43.659,
+          "zero_share": 0.552
+        },
+        "system_any": {
+          "n": 3096,
+          "mean": 0.3629,
+          "p10": 0.0,
+          "p25": 0.0,
+          "p50": 0.0,
+          "p75": 0.1542,
+          "p90": 0.7536,
+          "max": 43.659,
+          "zero_share": 0.5055
+        },
+        "mundane_core": {
+          "n": 3096,
+          "mean": 1.3769,
+          "p10": 0.0,
+          "p25": 0.5257,
+          "p50": 1.0366,
+          "p75": 1.7633,
+          "p90": 2.8116,
+          "max": 20.1794,
+          "zero_share": 0.1085
+        },
+        "object_count": {
+          "n": 3096,
+          "mean": 3.604,
+          "p10": 1.3924,
+          "p25": 2.2727,
+          "p50": 3.2451,
+          "p75": 4.4308,
+          "p90": 6.01,
+          "max": 27.8552,
+          "zero_share": 0.0258
+        }
+      }
+    },
+    "market_litrpg_english": {
+      "label": "market_litrpg_english",
+      "chapters": 13257,
+      "distinct_fictions": 577,
+      "words": {
+        "total": 29833449,
+        "median": 2051.0
+      },
+      "english_share": {
+        "n": 13257,
+        "mean": 0.3188,
+        "p10": 0.2715,
+        "p25": 0.2953,
+        "p50": 0.3197,
+        "p75": 0.3441,
+        "p90": 0.3686,
+        "max": 0.4563,
+        "zero_share": 0.0
+      },
+      "share_below_english_floor": 0.0,
+      "density_per_1k": {
+        "system_magnitude": {
+          "n": 13257,
+          "mean": 2.8668,
+          "p10": 0.0,
+          "p25": 0.0,
+          "p50": 0.4513,
+          "p75": 2.5821,
+          "p90": 8.6256,
+          "max": 126.3617,
+          "zero_share": 0.4427
+        },
+        "system_ordinal": {
+          "n": 13257,
+          "mean": 0.1113,
+          "p10": 0.0,
+          "p25": 0.0,
+          "p50": 0.0,
+          "p75": 0.0,
+          "p90": 0.3712,
+          "max": 13.8477,
+          "zero_share": 0.8682
+        },
+        "system_any": {
+          "n": 13257,
+          "mean": 2.9781,
+          "p10": 0.0,
+          "p25": 0.0,
+          "p50": 0.5005,
+          "p75": 2.7605,
+          "p90": 8.927,
+          "max": 126.3617,
+          "zero_share": 0.4153
+        },
+        "calendar_duration": {
+          "n": 13257,
+          "mean": 0.7615,
+          "p10": 0.0,
+          "p25": 0.0,
+          "p50": 0.4433,
+          "p75": 1.0573,
+          "p90": 2.0333,
+          "max": 17.2712,
+          "zero_share": 0.4031
+        },
+        "age": {
+          "n": 13257,
+          "mean": 0.0734,
+          "p10": 0.0,
+          "p25": 0.0,
+          "p50": 0.0,
+          "p75": 0.0,
+          "p90": 0.2894,
+          "max": 4.9875,
+          "zero_share": 0.8853
+        },
+        "money": {
+          "n": 13257,
+          "mean": 0.1245,
+          "p10": 0.0,
+          "p25": 0.0,
+          "p50": 0.0,
+          "p75": 0.0,
+          "p90": 0.0,
+          "max": 19.7133,
+          "zero_share": 0.9051
+        },
+        "measure": {
+          "n": 13257,
+          "mean": 0.3401,
+          "p10": 0.0,
+          "p25": 0.0,
+          "p50": 0.0,
+          "p75": 0.4805,
+          "p90": 1.0077,
+          "max": 10.8696,
+          "zero_share": 0.624
+        },
+        "mundane_core": {
+          "n": 13257,
+          "mean": 1.2995,
+          "p10": 0.0,
+          "p25": 0.1628,
+          "p50": 0.8767,
+          "p75": 1.773,
+          "p90": 3.0819,
+          "max": 21.8424,
+          "zero_share": 0.249
+        },
+        "object_count": {
+          "n": 13257,
+          "mean": 4.2017,
+          "p10": 1.2877,
+          "p25": 2.2436,
+          "p50": 3.5286,
+          "p75": 5.3191,
+          "p90": 7.5556,
+          "max": 123.0159,
+          "zero_share": 0.0242
+        },
+        "ordinal_enumeration": {
+          "n": 13257,
+          "mean": 1.6149,
+          "p10": 0.0,
+          "p25": 0.6751,
+          "p50": 1.3541,
+          "p75": 2.1863,
+          "p90": 3.2519,
+          "max": 23.0263,
+          "zero_share": 0.1252
+        },
+        "multiplicative": {
+          "n": 13257,
+          "mean": 0.2566,
+          "p10": 0.0,
+          "p25": 0.0,
+          "p50": 0.0,
+          "p75": 0.4517,
+          "p90": 0.8098,
+          "max": 5.7971,
+          "zero_share": 0.6176
+        },
+        "unanchored": {
+          "n": 13257,
+          "mean": 2.9426,
+          "p10": 0.4261,
+          "p25": 1.0437,
+          "p50": 2.0284,
+          "p75": 3.4642,
+          "p90": 5.8498,
+          "max": 222.2222,
+          "zero_share": 0.0852
+        },
+        "mentions": {
+          "n": 13257,
+          "mean": 13.2934,
+          "p10": 4.8488,
+          "p25": 7.0838,
+          "p50": 10.4117,
+          "p75": 15.9046,
+          "p90": 24.9554,
+          "max": 234.5679,
+          "zero_share": 0.0026
+        },
+        "spelled": {
+          "n": 13257,
+          "mean": 8.2343,
+          "p10": 3.7463,
+          "p25": 5.3706,
+          "p50": 7.5836,
+          "p75": 10.3292,
+          "p90": 13.5472,
+          "max": 44.0158,
+          "zero_share": 0.0058
+        },
+        "digits": {
+          "n": 13257,
+          "mean": 5.0591,
+          "p10": 0.0,
+          "p25": 0.0,
+          "p50": 1.3405,
+          "p75": 5.6232,
+          "p90": 14.7674,
+          "max": 216.0494,
+          "zero_share": 0.3204
+        }
+      },
+      "pooled_per_1k": {
+        "system_magnitude": 2.6343,
+        "system_ordinal": 0.1051,
+        "system_any": 2.7394,
+        "calendar_duration": 0.7243,
+        "age": 0.0698,
+        "money": 0.111,
+        "measure": 0.3422,
+        "mundane_core": 1.2474,
+        "object_count": 4.1248,
+        "ordinal_enumeration": 1.605,
+        "multiplicative": 0.2566,
+        "unanchored": 2.8998,
+        "mentions": 12.873,
+        "spelled": 8.2368,
+        "digits": 4.6362
+      },
+      "totals": {
+        "system_magnitude": 78590,
+        "system_ordinal": 3136,
+        "system_any": 81726,
+        "calendar_duration": 21608,
+        "age": 2083,
+        "money": 3313,
+        "measure": 10209,
+        "mundane_core": 37213,
+        "object_count": 123057,
+        "ordinal_enumeration": 47884,
+        "multiplicative": 7656,
+        "unanchored": 86510,
+        "mentions": 384046,
+        "spelled": 245731,
+        "digits": 138315,
+        "furniture_lines": 39219
+      },
+      "coverage": {
+        "share_with_any_system_number": 0.5847,
+        "share_with_a_system_MAGNITUDE": 0.5573,
+        "share_with_a_mundane_core_number": 0.751
+      },
+      "system_share_of_anchored": {
+        "n": 13136,
+        "mean": 0.2128,
+        "p10": 0.0,
+        "p25": 0.0,
+        "p50": 0.1,
+        "p75": 0.3684,
+        "p90": 0.6393,
+        "max": 1.0,
+        "zero_share": 0.4099
+      },
+      "magnitude_share_of_anchored": {
+        "n": 13136,
+        "mean": 0.2003,
+        "p10": 0.0,
+        "p25": 0.0,
+        "p50": 0.0833,
+        "p75": 0.3333,
+        "p90": 0.619,
+        "max": 1.0,
+        "zero_share": 0.4376
+      },
+      "per_fiction_density_per_1k": {
+        "system_magnitude": {
+          "n": 577,
+          "mean": 2.8462,
+          "p10": 0.0,
+          "p25": 0.2389,
+          "p50": 1.2644,
+          "p75": 3.3917,
+          "p90": 6.9706,
+          "max": 39.8094,
+          "zero_share": 0.1698
+        },
+        "system_any": {
+          "n": 577,
+          "mean": 2.9616,
+          "p10": 0.0,
+          "p25": 0.2623,
+          "p50": 1.4088,
+          "p75": 3.5548,
+          "p90": 7.0477,
+          "max": 39.8094,
+          "zero_share": 0.1542
+        },
+        "mundane_core": {
+          "n": 577,
+          "mean": 1.5597,
+          "p10": 0.3323,
+          "p25": 0.6925,
+          "p50": 1.2046,
+          "p75": 1.9947,
+          "p90": 3.0097,
+          "max": 12.1495,
+          "zero_share": 0.0555
+        },
+        "object_count": {
+          "n": 577,
+          "mean": 4.3647,
+          "p10": 2.1846,
+          "p25": 2.9386,
+          "p50": 3.8718,
+          "p75": 4.9288,
+          "p90": 6.5892,
+          "max": 112.2625,
+          "zero_share": 0.0156
+        }
+      }
+    },
+    "market_not_litrpg_english": {
+      "label": "market_not_litrpg_english",
+      "chapters": 51125,
+      "distinct_fictions": 3046,
+      "words": {
+        "total": 111490952,
+        "median": 1757.0
+      },
+      "english_share": {
+        "n": 51125,
+        "mean": 0.3218,
+        "p10": 0.2741,
+        "p25": 0.298,
+        "p50": 0.3234,
+        "p75": 0.3473,
+        "p90": 0.3686,
+        "max": 0.5,
+        "zero_share": 0.0
+      },
+      "share_below_english_floor": 0.0,
+      "density_per_1k": {
+        "system_magnitude": {
+          "n": 51125,
+          "mean": 0.2976,
+          "p10": 0.0,
+          "p25": 0.0,
+          "p50": 0.0,
+          "p75": 0.0,
+          "p90": 0.5254,
+          "max": 80.5134,
+          "zero_share": 0.842
+        },
+        "system_ordinal": {
+          "n": 51125,
+          "mean": 0.0843,
+          "p10": 0.0,
+          "p25": 0.0,
+          "p50": 0.0,
+          "p75": 0.0,
+          "p90": 0.0,
+          "max": 43.956,
+          "zero_share": 0.9301
+        },
+        "system_any": {
+          "n": 51125,
+          "mean": 0.3818,
+          "p10": 0.0,
+          "p25": 0.0,
+          "p50": 0.0,
+          "p75": 0.0,
+          "p90": 0.7754,
+          "max": 81.6803,
+          "zero_share": 0.8009
+        },
+        "calendar_duration": {
+          "n": 51125,
+          "mean": 0.759,
+          "p10": 0.0,
+          "p25": 0.0,
+          "p50": 0.3812,
+          "p75": 1.0588,
+          "p90": 2.045,
+          "max": 44.5545,
+          "zero_share": 0.4423
+        },
+        "age": {
+          "n": 51125,
+          "mean": 0.0974,
+          "p10": 0.0,
+          "p25": 0.0,
+          "p50": 0.0,
+          "p75": 0.0,
+          "p90": 0.337,
+          "max": 9.3168,
+          "zero_share": 0.8641
+        },
+        "money": {
+          "n": 51125,
+          "mean": 0.057,
+          "p10": 0.0,
+          "p25": 0.0,
+          "p50": 0.0,
+          "p75": 0.0,
+          "p90": 0.0,
+          "max": 20.339,
+          "zero_share": 0.9445
+        },
+        "measure": {
+          "n": 51125,
+          "mean": 0.25,
+          "p10": 0.0,
+          "p25": 0.0,
+          "p50": 0.0,
+          "p75": 0.2927,
+          "p90": 0.8381,
+          "max": 23.2739,
+          "zero_share": 0.7127
+        },
+        "mundane_core": {
+          "n": 51125,
+          "mean": 1.1633,
+          "p10": 0.0,
+          "p25": 0.0,
+          "p50": 0.751,
+          "p75": 1.6304,
+          "p90": 2.8757,
+          "max": 47.0297,
+          "zero_share": 0.3127
+        },
+        "object_count": {
+          "n": 51125,
+          "mean": 3.6634,
+          "p10": 0.9355,
+          "p25": 1.8727,
+          "p50": 3.096,
+          "p75": 4.7544,
+          "p90": 6.8605,
+          "max": 69.7385,
+          "zero_share": 0.0509
+        },
+        "ordinal_enumeration": {
+          "n": 51125,
+          "mean": 1.5147,
+          "p10": 0.0,
+          "p25": 0.5345,
+          "p50": 1.1758,
+          "p75": 2.0555,
+          "p90": 3.211,
+          "max": 105.036,
+          "zero_share": 0.1849
+        },
+        "multiplicative": {
+          "n": 51125,
+          "mean": 0.2734,
+          "p10": 0.0,
+          "p25": 0.0,
+          "p50": 0.0,
+          "p75": 0.4316,
+          "p90": 0.8834,
+          "max": 8.7977,
+          "zero_share": 0.6328
+        },
+        "unanchored": {
+          "n": 51125,
+          "mean": 2.0608,
+          "p10": 0.0,
+          "p25": 0.7737,
+          "p50": 1.5762,
+          "p75": 2.7088,
+          "p90": 4.2457,
+          "max": 98.0949,
+          "zero_share": 0.1413
+        },
+        "mentions": {
+          "n": 51125,
+          "mean": 9.0573,
+          "p10": 3.5825,
+          "p25": 5.3974,
+          "p50": 7.8278,
+          "p75": 11.0847,
+          "p90": 15.625,
+          "max": 164.6635,
+          "zero_share": 0.0075
+        },
+        "spelled": {
+          "n": 51125,
+          "mean": 7.5818,
+          "p10": 3.1056,
+          "p25": 4.7909,
+          "p50": 6.9124,
+          "p75": 9.5694,
+          "p90": 12.7516,
+          "max": 71.4286,
+          "zero_share": 0.0113
+        },
+        "digits": {
+          "n": 51125,
+          "mean": 1.4756,
+          "p10": 0.0,
+          "p25": 0.0,
+          "p50": 0.0,
+          "p75": 1.2539,
+          "p90": 3.9539,
+          "max": 159.8558,
+          "zero_share": 0.5615
+        }
+      },
+      "pooled_per_1k": {
+        "system_magnitude": 0.2438,
+        "system_ordinal": 0.0681,
+        "system_any": 0.3119,
+        "calendar_duration": 0.7291,
+        "age": 0.0908,
+        "money": 0.0513,
+        "measure": 0.2566,
+        "mundane_core": 1.1278,
+        "object_count": 3.612,
+        "ordinal_enumeration": 1.4907,
+        "multiplicative": 0.2608,
+        "unanchored": 2.0253,
+        "mentions": 8.8285,
+        "spelled": 7.5754,
+        "digits": 1.2531
+      },
+      "totals": {
+        "system_magnitude": 27185,
+        "system_ordinal": 7590,
+        "system_any": 34775,
+        "calendar_duration": 81285,
+        "age": 10118,
+        "money": 5725,
+        "measure": 28612,
+        "mundane_core": 125740,
+        "object_count": 402705,
+        "ordinal_enumeration": 166197,
+        "multiplicative": 29077,
+        "unanchored": 225805,
+        "mentions": 984299,
+        "spelled": 844592,
+        "digits": 139707,
+        "furniture_lines": 15781
+      },
+      "coverage": {
+        "share_with_any_system_number": 0.1991,
+        "share_with_a_system_MAGNITUDE": 0.158,
+        "share_with_a_mundane_core_number": 0.6873
+      },
+      "system_share_of_anchored": {
+        "n": 49704,
+        "mean": 0.0441,
+        "p10": 0.0,
+        "p25": 0.0,
+        "p50": 0.0,
+        "p75": 0.0,
+        "p90": 0.1429,
+        "max": 1.0,
+        "zero_share": 0.7952
+      },
+      "magnitude_share_of_anchored": {
+        "n": 49704,
+        "mean": 0.0318,
+        "p10": 0.0,
+        "p25": 0.0,
+        "p50": 0.0,
+        "p75": 0.0,
+        "p90": 0.1,
+        "max": 1.0,
+        "zero_share": 0.8374
+      },
+      "per_fiction_density_per_1k": {
+        "system_magnitude": {
+          "n": 3046,
+          "mean": 0.3093,
+          "p10": 0.0,
+          "p25": 0.0,
+          "p50": 0.0,
+          "p75": 0.0999,
+          "p90": 0.537,
+          "max": 43.659,
+          "zero_share": 0.5486
+        },
+        "system_any": {
+          "n": 3046,
+          "mean": 0.3578,
+          "p10": 0.0,
+          "p25": 0.0,
+          "p50": 0.0,
+          "p75": 0.1563,
+          "p90": 0.7481,
+          "max": 43.659,
+          "zero_share": 0.5013
+        },
+        "mundane_core": {
+          "n": 3046,
+          "mean": 1.3994,
+          "p10": 0.1211,
+          "p25": 0.5543,
+          "p50": 1.0522,
+          "p75": 1.7881,
+          "p90": 2.8345,
+          "max": 20.1794,
+          "zero_share": 0.0949
+        },
+        "object_count": {
+          "n": 3046,
+          "mean": 3.635,
+          "p10": 1.4482,
+          "p25": 2.3102,
+          "p50": 3.2778,
+          "p75": 4.4497,
+          "p90": 6.0445,
+          "max": 27.8552,
+          "zero_share": 0.0236
+        }
+      }
+    },
+    "quarantined_descriptor_half": {
+      "label": "quarantined_descriptor_half",
+      "chapters": 2505,
+      "distinct_fictions": 26,
+      "words": {
+        "total": 6451246,
+        "median": 2455.0
+      },
+      "english_share": {
+        "n": 2505,
+        "mean": 0.3275,
+        "p10": 0.293,
+        "p25": 0.3074,
+        "p50": 0.326,
+        "p75": 0.3469,
+        "p90": 0.364,
+        "max": 0.4409,
+        "zero_share": 0.0
+      },
+      "share_below_english_floor": 0.0012,
+      "density_per_1k": {
+        "system_magnitude": {
+          "n": 2505,
+          "mean": 3.0874,
+          "p10": 0.0,
+          "p25": 0.0,
+          "p50": 0.9202,
+          "p75": 3.3463,
+          "p90": 8.7662,
+          "max": 52.8617,
+          "zero_share": 0.3134
+        },
+        "system_ordinal": {
+          "n": 2505,
+          "mean": 0.1377,
+          "p10": 0.0,
+          "p25": 0.0,
+          "p50": 0.0,
+          "p75": 0.0,
+          "p90": 0.4439,
+          "max": 16.5731,
+          "zero_share": 0.8212
+        },
+        "system_any": {
+          "n": 2505,
+          "mean": 3.2251,
+          "p10": 0.0,
+          "p25": 0.0,
+          "p50": 1.0116,
+          "p75": 3.6172,
+          "p90": 8.9878,
+          "max": 52.8617,
+          "zero_share": 0.2926
+        },
+        "calendar_duration": {
+          "n": 2505,
+          "mean": 0.9346,
+          "p10": 0.0,
+          "p25": 0.0,
+          "p50": 0.5721,
+          "p75": 1.3441,
+          "p90": 2.4862,
+          "max": 9.52,
+          "zero_share": 0.3126
+        },
+        "age": {
+          "n": 2505,
+          "mean": 0.0603,
+          "p10": 0.0,
+          "p25": 0.0,
+          "p50": 0.0,
+          "p75": 0.0,
+          "p90": 0.2885,
+          "max": 2.6385,
+          "zero_share": 0.8874
+        },
+        "money": {
+          "n": 2505,
+          "mean": 0.048,
+          "p10": 0.0,
+          "p25": 0.0,
+          "p50": 0.0,
+          "p75": 0.0,
+          "p90": 0.0,
+          "max": 3.6434,
+          "zero_share": 0.9325
+        },
+        "measure": {
+          "n": 2505,
+          "mean": 0.4126,
+          "p10": 0.0,
+          "p25": 0.0,
+          "p50": 0.0,
+          "p75": 0.5683,
+          "p90": 1.2134,
+          "max": 9.4386,
+          "zero_share": 0.5533
+        },
+        "mundane_core": {
+          "n": 2505,
+          "mean": 1.4556,
+          "p10": 0.0,
+          "p25": 0.4057,
+          "p50": 0.9724,
+          "p75": 1.9861,
+          "p90": 3.4389,
+          "max": 11.5256,
+          "zero_share": 0.1733
+        },
+        "object_count": {
+          "n": 2505,
+          "mean": 4.4973,
+          "p10": 1.8052,
+          "p25": 2.6344,
+          "p50": 3.9399,
+          "p75": 5.6338,
+          "p90": 7.5596,
+          "max": 97.0874,
+          "zero_share": 0.0032
+        },
+        "ordinal_enumeration": {
+          "n": 2505,
+          "mean": 1.8168,
+          "p10": 0.4383,
+          "p25": 0.878,
+          "p50": 1.5803,
+          "p75": 2.4351,
+          "p90": 3.484,
+          "max": 12.5945,
+          "zero_share": 0.0523
+        },
+        "multiplicative": {
+          "n": 2505,
+          "mean": 0.3166,
+          "p10": 0.0,
+          "p25": 0.0,
+          "p50": 0.0,
+          "p75": 0.5084,
+          "p90": 0.8553,
+          "max": 3.3741,
+          "zero_share": 0.5126
+        },
+        "unanchored": {
+          "n": 2505,
+          "mean": 2.9496,
+          "p10": 0.6839,
+          "p25": 1.2983,
+          "p50": 2.2202,
+          "p75": 3.658,
+          "p90": 5.6373,
+          "max": 38.2514,
+          "zero_share": 0.0319
+        },
+        "mentions": {
+          "n": 2505,
+          "mean": 14.261,
+          "p10": 6.1163,
+          "p25": 8.2028,
+          "p50": 11.5431,
+          "p75": 17.0819,
+          "p90": 24.8882,
+          "max": 172.1311,
+          "zero_share": 0.0
+        },
+        "spelled": {
+          "n": 2505,
+          "mean": 9.2086,
+          "p10": 4.9376,
+          "p25": 6.5295,
+          "p50": 8.5376,
+          "p75": 11.1784,
+          "p90": 14.212,
+          "max": 29.5723,
+          "zero_share": 0.0
+        },
+        "digits": {
+          "n": 2505,
+          "mean": 5.0523,
+          "p10": 0.0,
+          "p25": 0.3899,
+          "p50": 1.6882,
+          "p75": 5.8083,
+          "p90": 14.0323,
+          "max": 158.4699,
+          "zero_share": 0.2064
+        }
+      },
+      "pooled_per_1k": {
+        "system_magnitude": 3.1285,
+        "system_ordinal": 0.1452,
+        "system_any": 3.2738,
+        "calendar_duration": 0.9504,
+        "age": 0.0581,
+        "money": 0.0505,
+        "measure": 0.4213,
+        "mundane_core": 1.4803,
+        "object_count": 4.2852,
+        "ordinal_enumeration": 1.7961,
+        "multiplicative": 0.312,
+        "unanchored": 2.8461,
+        "mentions": 13.9936,
+        "spelled": 8.9474,
+        "digits": 5.0462
+      },
+      "totals": {
+        "system_magnitude": 20183,
+        "system_ordinal": 937,
+        "system_any": 21120,
+        "calendar_duration": 6131,
+        "age": 375,
+        "money": 326,
+        "measure": 2718,
+        "mundane_core": 9550,
+        "object_count": 27645,
+        "ordinal_enumeration": 11587,
+        "multiplicative": 2013,
+        "unanchored": 18361,
+        "mentions": 90276,
+        "spelled": 57722,
+        "digits": 32554,
+        "furniture_lines": 4876
+      },
+      "coverage": {
+        "share_with_any_system_number": 0.7074,
+        "share_with_a_system_MAGNITUDE": 0.6866,
+        "share_with_a_mundane_core_number": 0.8267
+      },
+      "system_share_of_anchored": {
+        "n": 2504,
+        "mean": 0.2395,
+        "p10": 0.0,
+        "p25": 0.0,
+        "p50": 0.1727,
+        "p75": 0.4,
+        "p90": 0.6111,
+        "max": 0.9474,
+        "zero_share": 0.2923
+      },
+      "magnitude_share_of_anchored": {
+        "n": 2504,
+        "mean": 0.2267,
+        "p10": 0.0,
+        "p25": 0.0,
+        "p50": 0.1544,
+        "p75": 0.3811,
+        "p90": 0.6,
+        "max": 0.9474,
+        "zero_share": 0.3131
+      },
+      "per_fiction_density_per_1k": {
+        "system_magnitude": {
+          "n": 26,
+          "mean": 2.4996,
+          "p10": 0.7991,
+          "p25": 0.9891,
+          "p50": 1.8732,
+          "p75": 3.1691,
+          "p90": 4.8869,
+          "max": 10.2233,
+          "zero_share": 0.0
+        },
+        "system_any": {
+          "n": 26,
+          "mean": 2.619,
+          "p10": 0.8994,
+          "p25": 1.0411,
+          "p50": 2.0181,
+          "p75": 3.2961,
+          "p90": 5.1879,
+          "max": 10.5305,
+          "zero_share": 0.0
+        },
+        "mundane_core": {
+          "n": 26,
+          "mean": 1.2999,
+          "p10": 0.7047,
+          "p25": 0.8726,
+          "p50": 1.0512,
+          "p75": 1.518,
+          "p90": 2.2009,
+          "max": 4.2919,
+          "zero_share": 0.0
+        },
+        "object_count": {
+          "n": 26,
+          "mean": 4.1686,
+          "p10": 2.9683,
+          "p25": 3.3408,
+          "p50": 4.2016,
+          "p75": 4.738,
+          "p90": 5.395,
+          "max": 6.9659,
+          "zero_share": 0.0
+        }
+      }
+    }
+  },
+  "litrpg_cohorts": {
+    "litrpg_declared_ai_2025": {
+      "label": "litrpg_declared_ai_2025",
+      "chapters": 941,
+      "distinct_fictions": 55,
+      "words": {
+        "total": 1965401,
+        "median": 1695.0
+      },
+      "english_share": {
+        "n": 941,
+        "mean": 0.2797,
+        "p10": 0.2417,
+        "p25": 0.2613,
+        "p50": 0.288,
+        "p75": 0.3092,
+        "p90": 0.3261,
+        "max": 0.4085,
+        "zero_share": 0.0
+      },
+      "share_below_english_floor": 0.0276,
+      "density_per_1k": {
+        "system_magnitude": {
+          "n": 941,
+          "mean": 2.4406,
+          "p10": 0.0,
+          "p25": 0.0,
+          "p50": 0.2914,
+          "p75": 2.2229,
+          "p90": 6.9444,
+          "max": 64.3137,
+          "zero_share": 0.4857
+        },
+        "system_ordinal": {
+          "n": 941,
+          "mean": 0.0638,
+          "p10": 0.0,
+          "p25": 0.0,
+          "p50": 0.0,
+          "p75": 0.0,
+          "p90": 0.1326,
+          "max": 3.3784,
+          "zero_share": 0.898
+        },
+        "system_any": {
+          "n": 941,
+          "mean": 2.5045,
+          "p10": 0.0,
+          "p25": 0.0,
+          "p50": 0.3827,
+          "p75": 2.3938,
+          "p90": 7.2072,
+          "max": 64.3137,
+          "zero_share": 0.4612
+        },
+        "calendar_duration": {
+          "n": 941,
+          "mean": 0.9369,
+          "p10": 0.0,
+          "p25": 0.0,
+          "p50": 0.5624,
+          "p75": 1.36,
+          "p90": 2.4435,
+          "max": 8.0071,
+          "zero_share": 0.4091
+        },
+        "age": {
+          "n": 941,
+          "mean": 0.053,
+          "p10": 0.0,
+          "p25": 0.0,
+          "p50": 0.0,
+          "p75": 0.0,
+          "p90": 0.0,
+          "max": 2.8962,
+          "zero_share": 0.916
+        },
+        "money": {
+          "n": 941,
+          "mean": 0.211,
+          "p10": 0.0,
+          "p25": 0.0,
+          "p50": 0.0,
+          "p75": 0.0,
+          "p90": 0.0,
+          "max": 19.7133,
+          "zero_share": 0.9012
+        },
+        "measure": {
+          "n": 941,
+          "mean": 0.2777,
+          "p10": 0.0,
+          "p25": 0.0,
+          "p50": 0.0,
+          "p75": 0.4114,
+          "p90": 0.9734,
+          "max": 4.1068,
+          "zero_share": 0.6621
+        },
+        "mundane_core": {
+          "n": 941,
+          "mean": 1.4786,
+          "p10": 0.0,
+          "p25": 0.0,
+          "p50": 1.004,
+          "p75": 2.1091,
+          "p90": 3.3149,
+          "max": 21.5054,
+          "zero_share": 0.2635
+        },
+        "object_count": {
+          "n": 941,
+          "mean": 3.872,
+          "p10": 0.9398,
+          "p25": 2.0,
+          "p50": 3.3615,
+          "p75": 5.2743,
+          "p90": 7.2442,
+          "max": 17.5781,
+          "zero_share": 0.0553
+        },
+        "ordinal_enumeration": {
+          "n": 941,
+          "mean": 1.7371,
+          "p10": 0.0,
+          "p25": 0.6481,
+          "p50": 1.3405,
+          "p75": 2.3895,
+          "p90": 3.6411,
+          "max": 23.0263,
+          "zero_share": 0.1573
+        },
+        "multiplicative": {
+          "n": 941,
+          "mean": 0.2663,
+          "p10": 0.0,
+          "p25": 0.0,
+          "p50": 0.0,
+          "p75": 0.4329,
+          "p90": 0.9074,
+          "max": 4.0733,
+          "zero_share": 0.6599
+        },
+        "unanchored": {
+          "n": 941,
+          "mean": 2.2643,
+          "p10": 0.0,
+          "p25": 0.6223,
+          "p50": 1.5113,
+          "p75": 3.003,
+          "p90": 4.6083,
+          "max": 74.4147,
+          "zero_share": 0.1753
+        },
+        "mentions": {
+          "n": 941,
+          "mean": 12.1227,
+          "p10": 4.1725,
+          "p25": 6.8182,
+          "p50": 10.1449,
+          "p75": 14.6603,
+          "p90": 21.978,
+          "max": 93.046,
+          "zero_share": 0.0096
+        },
+        "spelled": {
+          "n": 941,
+          "mean": 7.4442,
+          "p10": 2.9557,
+          "p25": 4.8876,
+          "p50": 7.0019,
+          "p75": 9.7826,
+          "p90": 12.6183,
+          "max": 32.8947,
+          "zero_share": 0.0319
+        },
+        "digits": {
+          "n": 941,
+          "mean": 4.6784,
+          "p10": 0.0,
+          "p25": 0.0,
+          "p50": 1.8762,
+          "p75": 5.441,
+          "p90": 12.2146,
+          "max": 87.1694,
+          "zero_share": 0.2774
+        }
+      },
+      "pooled_per_1k": {
+        "system_magnitude": 2.1599,
+        "system_ordinal": 0.0595,
+        "system_any": 2.2194,
+        "calendar_duration": 0.9657,
+        "age": 0.055,
+        "money": 0.1623,
+        "measure": 0.2671,
+        "mundane_core": 1.4501,
+        "object_count": 3.8852,
+        "ordinal_enumeration": 1.616,
+        "multiplicative": 0.2376,
+        "unanchored": 2.3629,
+        "mentions": 11.7711,
+        "spelled": 7.14,
+        "digits": 4.6311
+      },
+      "totals": {
+        "system_magnitude": 4245,
+        "system_ordinal": 117,
+        "system_any": 4362,
+        "calendar_duration": 1898,
+        "age": 108,
+        "money": 319,
+        "measure": 525,
+        "mundane_core": 2850,
+        "object_count": 7636,
+        "ordinal_enumeration": 3176,
+        "multiplicative": 467,
+        "unanchored": 4644,
+        "mentions": 23135,
+        "spelled": 14033,
+        "digits": 9102,
+        "furniture_lines": 2405
+      },
+      "coverage": {
+        "share_with_any_system_number": 0.5388,
+        "share_with_a_system_MAGNITUDE": 0.5143,
+        "share_with_a_mundane_core_number": 0.7365
+      },
+      "system_share_of_anchored": {
+        "n": 917,
+        "mean": 0.1986,
+        "p10": 0.0,
+        "p25": 0.0,
+        "p50": 0.0714,
+        "p75": 0.3333,
+        "p90": 0.6281,
+        "max": 1.0,
+        "zero_share": 0.4471
+      },
+      "magnitude_share_of_anchored": {
+        "n": 917,
+        "mean": 0.1886,
+        "p10": 0.0,
+        "p25": 0.0,
+        "p50": 0.0588,
+        "p75": 0.32,
+        "p90": 0.612,
+        "max": 1.0,
+        "zero_share": 0.4722
+      },
+      "per_fiction_density_per_1k": {
+        "system_magnitude": {
+          "n": 55,
+          "mean": 2.3262,
+          "p10": 0.0,
+          "p25": 0.1339,
+          "p50": 1.4898,
+          "p75": 3.8013,
+          "p90": 5.5727,
+          "max": 8.7094,
+          "zero_share": 0.2
+        },
+        "system_any": {
+          "n": 55,
+          "mean": 2.4163,
+          "p10": 0.0,
+          "p25": 0.2126,
+          "p50": 1.5972,
+          "p75": 3.8013,
+          "p90": 5.6311,
+          "max": 8.7094,
+          "zero_share": 0.1636
+        },
+        "mundane_core": {
+          "n": 55,
+          "mean": 1.1923,
+          "p10": 0.0,
+          "p25": 0.5535,
+          "p50": 1.0647,
+          "p75": 1.8484,
+          "p90": 2.3503,
+          "max": 3.9242,
+          "zero_share": 0.1455
+        },
+        "object_count": {
+          "n": 55,
+          "mean": 3.9969,
+          "p10": 1.8982,
+          "p25": 2.7836,
+          "p50": 3.6061,
+          "p75": 4.5399,
+          "p90": 6.1953,
+          "max": 16.4931,
+          "zero_share": 0.0182
+        }
+      }
+    },
+    "litrpg_human_pre_llm": {
+      "label": "litrpg_human_pre_llm",
+      "chapters": 5561,
+      "distinct_fictions": 281,
+      "words": {
+        "total": 12903897,
+        "median": 2099.0
+      },
+      "english_share": {
+        "n": 5561,
+        "mean": 0.3284,
+        "p10": 0.2861,
+        "p25": 0.3086,
+        "p50": 0.3308,
+        "p75": 0.3549,
+        "p90": 0.3776,
+        "max": 0.4563,
+        "zero_share": 0.0009
+      },
+      "share_below_english_floor": 0.011,
+      "density_per_1k": {
+        "system_magnitude": {
+          "n": 5561,
+          "mean": 3.1262,
+          "p10": 0.0,
+          "p25": 0.0,
+          "p50": 0.5079,
+          "p75": 3.0992,
+          "p90": 10.0865,
+          "max": 134.0782,
+          "zero_share": 0.4118
+        },
+        "system_ordinal": {
+          "n": 5561,
+          "mean": 0.1199,
+          "p10": 0.0,
+          "p25": 0.0,
+          "p50": 0.0,
+          "p75": 0.0,
+          "p90": 0.4211,
+          "max": 13.8477,
+          "zero_share": 0.8515
+        },
+        "system_any": {
+          "n": 5561,
+          "mean": 3.2461,
+          "p10": 0.0,
+          "p25": 0.0,
+          "p50": 0.6079,
+          "p75": 3.3085,
+          "p90": 10.1826,
+          "max": 134.0782,
+          "zero_share": 0.3832
+        },
+        "calendar_duration": {
+          "n": 5561,
+          "mean": 0.734,
+          "p10": 0.0,
+          "p25": 0.0,
+          "p50": 0.4335,
+          "p75": 1.0309,
+          "p90": 1.9506,
+          "max": 17.2712,
+          "zero_share": 0.405
+        },
+        "age": {
+          "n": 5561,
+          "mean": 0.0827,
+          "p10": 0.0,
+          "p25": 0.0,
+          "p50": 0.0,
+          "p75": 0.0,
+          "p90": 0.3369,
+          "max": 4.5802,
+          "zero_share": 0.8743
+        },
+        "money": {
+          "n": 5561,
+          "mean": 0.1104,
+          "p10": 0.0,
+          "p25": 0.0,
+          "p50": 0.0,
+          "p75": 0.0,
+          "p90": 0.109,
+          "max": 11.7801,
+          "zero_share": 0.8997
+        },
+        "measure": {
+          "n": 5561,
+          "mean": 0.3455,
+          "p10": 0.0,
+          "p25": 0.0,
+          "p50": 0.0,
+          "p75": 0.4824,
+          "p90": 1.0283,
+          "max": 10.4439,
+          "zero_share": 0.6217
+        },
+        "mundane_core": {
+          "n": 5561,
+          "mean": 1.2725,
+          "p10": 0.0,
+          "p25": 0.0,
+          "p50": 0.8805,
+          "p75": 1.7676,
+          "p90": 3.0682,
+          "max": 19.3437,
+          "zero_share": 0.2519
+        },
+        "object_count": {
+          "n": 5561,
+          "mean": 4.1893,
+          "p10": 1.396,
+          "p25": 2.2946,
+          "p50": 3.5587,
+          "p75": 5.316,
+          "p90": 7.4267,
+          "max": 112.2625,
+          "zero_share": 0.02
+        },
+        "ordinal_enumeration": {
+          "n": 5561,
+          "mean": 1.6047,
+          "p10": 0.0,
+          "p25": 0.6787,
+          "p50": 1.3736,
+          "p75": 2.1786,
+          "p90": 3.1822,
+          "max": 22.3285,
+          "zero_share": 0.1316
+        },
+        "multiplicative": {
+          "n": 5561,
+          "mean": 0.2459,
+          "p10": 0.0,
+          "p25": 0.0,
+          "p50": 0.0,
+          "p75": 0.439,
+          "p90": 0.7704,
+          "max": 5.7971,
+          "zero_share": 0.6215
+        },
+        "unanchored": {
+          "n": 5561,
+          "mean": 3.2447,
+          "p10": 0.5479,
+          "p25": 1.2521,
+          "p50": 2.2202,
+          "p75": 3.7488,
+          "p90": 6.4309,
+          "max": 127.3247,
+          "zero_share": 0.0568
+        },
+        "mentions": {
+          "n": 5561,
+          "mean": 13.8033,
+          "p10": 5.1948,
+          "p25": 7.4257,
+          "p50": 10.8696,
+          "p75": 16.684,
+          "p90": 26.0895,
+          "max": 310.0559,
+          "zero_share": 0.0023
+        },
+        "spelled": {
+          "n": 5561,
+          "mean": 8.2639,
+          "p10": 3.811,
+          "p25": 5.4325,
+          "p50": 7.6977,
+          "p75": 10.3872,
+          "p90": 13.5135,
+          "max": 44.0158,
+          "zero_share": 0.0104
+        },
+        "digits": {
+          "n": 5561,
+          "mean": 5.5394,
+          "p10": 0.0,
+          "p25": 0.0,
+          "p50": 1.7817,
+          "p75": 6.9162,
+          "p90": 15.7127,
+          "max": 307.2626,
+          "zero_share": 0.2785
+        }
+      },
+      "pooled_per_1k": {
+        "system_magnitude": 2.8767,
+        "system_ordinal": 0.12,
+        "system_any": 2.9967,
+        "calendar_duration": 0.6965,
+        "age": 0.0752,
+        "money": 0.1047,
+        "measure": 0.3636,
+        "mundane_core": 1.2401,
+        "object_count": 4.147,
+        "ordinal_enumeration": 1.6226,
+        "multiplicative": 0.2535,
+        "unanchored": 3.1215,
+        "mentions": 13.3815,
+        "spelled": 8.3189,
+        "digits": 5.0626
+      },
+      "totals": {
+        "system_magnitude": 37121,
+        "system_ordinal": 1548,
+        "system_any": 38669,
+        "calendar_duration": 8988,
+        "age": 971,
+        "money": 1351,
+        "measure": 4692,
+        "mundane_core": 16002,
+        "object_count": 53513,
+        "ordinal_enumeration": 20938,
+        "multiplicative": 3271,
+        "unanchored": 40280,
+        "mentions": 172673,
+        "spelled": 107346,
+        "digits": 65327,
+        "furniture_lines": 18130
+      },
+      "coverage": {
+        "share_with_any_system_number": 0.6168,
+        "share_with_a_system_MAGNITUDE": 0.5882,
+        "share_with_a_mundane_core_number": 0.7481
+      },
+      "system_share_of_anchored": {
+        "n": 5524,
+        "mean": 0.2313,
+        "p10": 0.0,
+        "p25": 0.0,
+        "p50": 0.125,
+        "p75": 0.4071,
+        "p90": 0.6667,
+        "max": 1.0,
+        "zero_share": 0.3791
+      },
+      "magnitude_share_of_anchored": {
+        "n": 5524,
+        "mean": 0.2179,
+        "p10": 0.0,
+        "p25": 0.0,
+        "p50": 0.1034,
+        "p75": 0.3846,
+        "p90": 0.6484,
+        "max": 1.0,
+        "zero_share": 0.4079
+      },
+      "per_fiction_density_per_1k": {
+        "system_magnitude": {
+          "n": 281,
+          "mean": 3.3188,
+          "p10": 0.0,
+          "p25": 0.3726,
+          "p50": 1.4745,
+          "p75": 4.1007,
+          "p90": 7.8511,
+          "max": 35.8127,
+          "zero_share": 0.1637
+        },
+        "system_any": {
+          "n": 281,
+          "mean": 3.4492,
+          "p10": 0.0,
+          "p25": 0.4552,
+          "p50": 1.6743,
+          "p75": 4.1183,
+          "p90": 7.9261,
+          "max": 35.8127,
+          "zero_share": 0.1566
+        },
+        "mundane_core": {
+          "n": 281,
+          "mean": 1.6745,
+          "p10": 0.3312,
+          "p25": 0.6848,
+          "p50": 1.2576,
+          "p75": 2.2498,
+          "p90": 3.2082,
+          "max": 12.1495,
+          "zero_share": 0.0676
+        },
+        "object_count": {
+          "n": 281,
+          "mean": 4.6935,
+          "p10": 2.3269,
+          "p25": 3.0561,
+          "p50": 3.9382,
+          "p75": 5.1558,
+          "p90": 6.9551,
+          "max": 112.2625,
+          "zero_share": 0.0107
+        }
+      }
+    },
+    "litrpg_undeclared_2025": {
+      "label": "litrpg_undeclared_2025",
+      "chapters": 5803,
+      "distinct_fictions": 253,
+      "words": {
+        "total": 12622387,
+        "median": 1964.0
+      },
+      "english_share": {
+        "n": 5803,
+        "mean": 0.3089,
+        "p10": 0.2622,
+        "p25": 0.2869,
+        "p50": 0.3104,
+        "p75": 0.3357,
+        "p90": 0.3594,
+        "max": 0.4392,
+        "zero_share": 0.0003
+      },
+      "share_below_english_floor": 0.0034,
+      "density_per_1k": {
+        "system_magnitude": {
+          "n": 5803,
+          "mean": 2.546,
+          "p10": 0.0,
+          "p25": 0.0,
+          "p50": 0.3404,
+          "p75": 2.2523,
+          "p90": 7.0312,
+          "max": 126.3617,
+          "zero_share": 0.4804
+        },
+        "system_ordinal": {
+          "n": 5803,
+          "mean": 0.1188,
+          "p10": 0.0,
+          "p25": 0.0,
+          "p50": 0.0,
+          "p75": 0.0,
+          "p90": 0.356,
+          "max": 9.2937,
+          "zero_share": 0.8764
+        },
+        "system_any": {
+          "n": 5803,
+          "mean": 2.6648,
+          "p10": 0.0,
+          "p25": 0.0,
+          "p50": 0.4316,
+          "p75": 2.4268,
+          "p90": 7.2202,
+          "max": 126.3617,
+          "zero_share": 0.4527
+        },
+        "calendar_duration": {
+          "n": 5803,
+          "mean": 0.7842,
+          "p10": 0.0,
+          "p25": 0.0,
+          "p50": 0.4527,
+          "p75": 1.0725,
+          "p90": 2.107,
+          "max": 14.0647,
+          "zero_share": 0.4046
+        },
+        "age": {
+          "n": 5803,
+          "mean": 0.0726,
+          "p10": 0.0,
+          "p25": 0.0,
+          "p50": 0.0,
+          "p75": 0.0,
+          "p90": 0.2921,
+          "max": 4.9875,
+          "zero_share": 0.8856
+        },
+        "money": {
+          "n": 5803,
+          "mean": 0.133,
+          "p10": 0.0,
+          "p25": 0.0,
+          "p50": 0.0,
+          "p75": 0.0,
+          "p90": 0.0,
+          "max": 19.697,
+          "zero_share": 0.9092
+        },
+        "measure": {
+          "n": 5803,
+          "mean": 0.3482,
+          "p10": 0.0,
+          "p25": 0.0,
+          "p50": 0.0,
+          "p75": 0.4902,
+          "p90": 1.0265,
+          "max": 10.8696,
+          "zero_share": 0.6311
+        },
+        "mundane_core": {
+          "n": 5803,
+          "mean": 1.338,
+          "p10": 0.0,
+          "p25": 0.0,
+          "p50": 0.8726,
+          "p75": 1.8011,
+          "p90": 3.2131,
+          "max": 21.8424,
+          "zero_share": 0.2562
+        },
+        "object_count": {
+          "n": 5803,
+          "mean": 4.3271,
+          "p10": 1.1834,
+          "p25": 2.2009,
+          "p50": 3.5411,
+          "p75": 5.4426,
+          "p90": 7.8791,
+          "max": 46.4853,
+          "zero_share": 0.0296
+        },
+        "ordinal_enumeration": {
+          "n": 5803,
+          "mean": 1.6063,
+          "p10": 0.0,
+          "p25": 0.6409,
+          "p50": 1.3298,
+          "p75": 2.1852,
+          "p90": 3.316,
+          "max": 14.7493,
+          "zero_share": 0.1392
+        },
+        "multiplicative": {
+          "n": 5803,
+          "mean": 0.2631,
+          "p10": 0.0,
+          "p25": 0.0,
+          "p50": 0.0,
+          "p75": 0.4626,
+          "p90": 0.8384,
+          "max": 4.1425,
+          "zero_share": 0.6205
+        },
+        "unanchored": {
+          "n": 5803,
+          "mean": 2.7344,
+          "p10": 0.0,
+          "p25": 0.9169,
+          "p50": 1.8755,
+          "p75": 3.2599,
+          "p90": 5.4705,
+          "max": 222.2222,
+          "zero_share": 0.113
+        },
+        "mentions": {
+          "n": 5803,
+          "mean": 12.9337,
+          "p10": 4.4107,
+          "p25": 6.7478,
+          "p50": 10.0532,
+          "p75": 15.3995,
+          "p90": 23.8587,
+          "max": 234.5679,
+          "zero_share": 0.0047
+        },
+        "spelled": {
+          "n": 5803,
+          "mean": 8.2939,
+          "p10": 3.5088,
+          "p25": 5.2055,
+          "p50": 7.5873,
+          "p75": 10.4943,
+          "p90": 13.9638,
+          "max": 38.0623,
+          "zero_share": 0.0093
+        },
+        "digits": {
+          "n": 5803,
+          "mean": 4.6398,
+          "p10": 0.0,
+          "p25": 0.0,
+          "p50": 1.0,
+          "p75": 4.5795,
+          "p90": 13.1156,
+          "max": 216.0494,
+          "zero_share": 0.3598
+        }
+      },
+      "pooled_per_1k": {
+        "system_magnitude": 2.2648,
+        "system_ordinal": 0.105,
+        "system_any": 2.3698,
+        "calendar_duration": 0.7344,
+        "age": 0.0717,
+        "money": 0.1179,
+        "measure": 0.3331,
+        "mundane_core": 1.2571,
+        "object_count": 4.183,
+        "ordinal_enumeration": 1.5855,
+        "multiplicative": 0.2618,
+        "unanchored": 2.7142,
+        "mentions": 12.3714,
+        "spelled": 8.2473,
+        "digits": 4.1241
+      },
+      "totals": {
+        "system_magnitude": 28587,
+        "system_ordinal": 1325,
+        "system_any": 29912,
+        "calendar_duration": 9270,
+        "age": 905,
+        "money": 1488,
+        "measure": 4205,
+        "mundane_core": 15868,
+        "object_count": 52799,
+        "ordinal_enumeration": 20013,
+        "multiplicative": 3304,
+        "unanchored": 34260,
+        "mentions": 156156,
+        "spelled": 104100,
+        "digits": 52056,
+        "furniture_lines": 12995
+      },
+      "coverage": {
+        "share_with_any_system_number": 0.5473,
+        "share_with_a_system_MAGNITUDE": 0.5196,
+        "share_with_a_mundane_core_number": 0.7438
+      },
+      "system_share_of_anchored": {
+        "n": 5725,
+        "mean": 0.1922,
+        "p10": 0.0,
+        "p25": 0.0,
+        "p50": 0.0769,
+        "p75": 0.3333,
+        "p90": 0.6,
+        "max": 1.0,
+        "zero_share": 0.4452
+      },
+      "magnitude_share_of_anchored": {
+        "n": 5725,
+        "mean": 0.1796,
+        "p10": 0.0,
+        "p25": 0.0,
+        "p50": 0.0588,
+        "p75": 0.3043,
+        "p90": 0.5714,
+        "max": 1.0,
+        "zero_share": 0.4734
+      },
+      "per_fiction_density_per_1k": {
+        "system_magnitude": {
+          "n": 253,
+          "mean": 2.3643,
+          "p10": 0.0,
+          "p25": 0.0962,
+          "p50": 1.0254,
+          "p75": 2.6703,
+          "p90": 6.0127,
+          "max": 39.8094,
+          "zero_share": 0.2016
+        },
+        "system_any": {
+          "n": 253,
+          "mean": 2.4626,
+          "p10": 0.0,
+          "p25": 0.152,
+          "p50": 1.1892,
+          "p75": 2.794,
+          "p90": 6.2998,
+          "max": 39.8094,
+          "zero_share": 0.1818
+        },
+        "mundane_core": {
+          "n": 253,
+          "mean": 1.4491,
+          "p10": 0.3287,
+          "p25": 0.6878,
+          "p50": 1.1312,
+          "p75": 1.7443,
+          "p90": 2.942,
+          "max": 8.835,
+          "zero_share": 0.0474
+        },
+        "object_count": {
+          "n": 253,
+          "mean": 4.0216,
+          "p10": 1.8843,
+          "p25": 2.7799,
+          "p50": 3.6736,
+          "p75": 4.7488,
+          "p90": 5.9874,
+          "max": 21.2243,
+          "zero_share": 0.0198
+        }
+      }
+    }
+  },
+  "our_books": {
+    "a-good-take": {
+      "chapters": 8,
+      "words": 7865,
+      "by_family": {
+        "system_magnitude": 0,
+        "system_ordinal": 5,
+        "calendar_duration": 57,
+        "age": 2,
+        "money": 4,
+        "measure": 3,
+        "object_count": 51,
+        "ordinal_enumeration": 39,
+        "multiplicative": 3,
+        "unanchored": 52
+      }
+    },
+    "copy-costs-a-hand": {
+      "chapters": 3,
+      "words": 6063,
+      "by_family": {
+        "system_magnitude": 0,
+        "system_ordinal": 0,
+        "calendar_duration": 7,
+        "age": 1,
+        "money": 0,
+        "measure": 17,
+        "object_count": 40,
+        "ordinal_enumeration": 23,
+        "multiplicative": 0,
+        "unanchored": 46
+      }
+    },
+    "patch-notes-for-earth": {
+      "chapters": 2,
+      "words": 3953,
+      "by_family": {
+        "system_magnitude": 0,
+        "system_ordinal": 0,
+        "calendar_duration": 9,
+        "age": 0,
+        "money": 0,
+        "measure": 3,
+        "object_count": 61,
+        "ordinal_enumeration": 18,
+        "multiplicative": 4,
+        "unanchored": 48
+      }
+    },
+    "patch-notes-for-the-apocalypse": {
+      "chapters": 1,
+      "words": 1928,
+      "by_family": {
+        "system_magnitude": 1,
+        "system_ordinal": 0,
+        "calendar_duration": 2,
+        "age": 0,
+        "money": 0,
+        "measure": 0,
+        "object_count": 14,
+        "ordinal_enumeration": 6,
+        "multiplicative": 1,
+        "unanchored": 22
+      }
+    },
+    "reappraisal": {
+      "chapters": 2,
+      "words": 8403,
+      "by_family": {
+        "system_magnitude": 0,
+        "system_ordinal": 4,
+        "calendar_duration": 65,
+        "age": 4,
+        "money": 2,
+        "measure": 7,
+        "object_count": 108,
+        "ordinal_enumeration": 47,
+        "multiplicative": 4,
+        "unanchored": 52
+      }
+    },
+    "the-rainwright-s-apprentice-has-no-licence": {
+      "chapters": 1,
+      "words": 1997,
+      "by_family": {
+        "system_magnitude": 0,
+        "system_ordinal": 0,
+        "calendar_duration": 5,
+        "age": 0,
+        "money": 0,
+        "measure": 7,
+        "object_count": 13,
+        "ordinal_enumeration": 4,
+        "multiplicative": 0,
+        "unanchored": 15
+      }
+    },
+    "unlicensed-weather": {
+      "chapters": 1,
+      "words": 2016,
+      "by_family": {
+        "system_magnitude": 0,
+        "system_ordinal": 0,
+        "calendar_duration": 8,
+        "age": 2,
+        "money": 0,
+        "measure": 1,
+        "object_count": 7,
+        "ordinal_enumeration": 21,
+        "multiplicative": 1,
+        "unanchored": 5
+      }
+    },
+    "what-takes": {
+      "chapters": 2,
+      "words": 7722,
+      "by_family": {
+        "system_magnitude": 0,
+        "system_ordinal": 0,
+        "calendar_duration": 24,
+        "age": 4,
+        "money": 0,
+        "measure": 3,
+        "object_count": 73,
+        "ordinal_enumeration": 43,
+        "multiplicative": 3,
+        "unanchored": 48
+      }
+    }
+  },
+  "validity_arm": {
+    "reading": "A genre whose defining artifact is a system the character reads must carry more system numbers than everything else on the platform, or this counter is locating something other than a system. **Coverage is the statistic to believe**: a single large stat table contributes as many mentions as it holds numbers, so the mean density is heavy-tailed while a share of chapters cannot be moved by one outlier. A separation near 1 would refute the instrument, not the genre.",
+    "litrpg_pooled_system_magnitude_per_1k": 2.6319,
+    "not_litrpg_pooled_system_magnitude_per_1k": 0.246,
+    "magnitude_pooled_separation": 10.699,
+    "litrpg_share_with_a_system_magnitude": 0.5551,
+    "not_litrpg_share_with_a_system_magnitude": 0.1579,
+    "magnitude_coverage_separation": 3.516,
+    "litrpg_pooled_mundane_core_per_1k": 1.2361,
+    "not_litrpg_pooled_mundane_core_per_1k": 1.1205,
+    "mundane_pooled_separation": 1.103,
+    "note_on_the_mundane_row": "The mundane row is NOT a validity check and no direction is registered for it. It is printed beside the system row because a counter that separated the genre on BOTH families equally would be reading chapter length or numeral density rather than context, and that reading has to be available."
+  },
+  "english_control": {
+    "english_floor": 0.1,
+    "reading": "`ours_over_market` is how many times our own pooled mundane-core density exceeds that population's. Compare the `_english` row against the row above it: the difference between them is the part of the gap that was the shards not being in English, and only the `_english` row is a comparison between two bodies of English prose.",
+    "our_pooled_mundane_core_per_1k": 5.9329,
+    "populations": {
+      "market_litrpg": {
+        "chapters": 13364,
+        "pooled_mundane_core_per_1k": 1.2361,
+        "ours_over_market": 4.8,
+        "share_below_english_floor": 0.008
+      },
+      "market_litrpg_english": {
+        "chapters": 13257,
+        "pooled_mundane_core_per_1k": 1.2474,
+        "ours_over_market": 4.756,
+        "share_below_english_floor": 0.0
+      },
+      "market_not_litrpg": {
+        "chapters": 51567,
+        "pooled_mundane_core_per_1k": 1.1205,
+        "ours_over_market": 5.295,
+        "share_below_english_floor": 0.0086
+      },
+      "market_not_litrpg_english": {
+        "chapters": 51125,
+        "pooled_mundane_core_per_1k": 1.1278,
+        "ours_over_market": 5.261,
+        "share_below_english_floor": 0.0
+      }
+    }
+  },
+  "declares_no_bar": "No target density, ratio or floor is declared here, for any family, for either half. A bar needs §81/§85/§87/§89's four attainability checks -- range at the real n, direction, independent unit, non-empty subgroup -- and this file runs none of them. It names distributions and stops.",
+  "residuals": [
+    "PRECISION IS HAND-MEASURED, NOT MODEL-MEASURED, and the hand-check is exhaustive on exactly one chapter -- read 8 §4.1's own list for Unlicensed Weather chapter 1. Every other precision statement rests on a sample.",
+    "RECALL IS UNMEASURED against any exhaustive market count. A chapter whose quantities are all written as indefinite articles or as `twice` scores zero.",
+    "`object_count` finds its head by a stopword rule, so a numeral followed by an adverb can take an adverb as its head. The family decision survives that (the mention is still a count) but the recorded head is then wrong, which is why heads are reported for hand-check and never aggregated.",
+    "A single large stat table contributes as many system mentions as it holds numbers. That is the honest reading of the question -- those numbers ARE on the page -- but it makes the system density heavy-tailed, so coverage is the statistic to believe, as `progression_cadence`'s validity arm already argues.",
+    "`gold`, `silver` and `copper` are money here and never system, although in this genre they are frequently both. Money is reported on its own line so the choice is visible.",
+    "Chapter text is whatever the shard holds, including front matter the reject list misses."
+  ],
+  "hand_check_sidecar": {
+    "path": "research\\quality-measurement\\derived\\number-context-handcheck.json",
+    "spans": 158,
+    "rule": "gitignored, never committed: it holds short spans of market prose so a precision claim about the market half can be re-checked rather than remembered"
+  }
+}
