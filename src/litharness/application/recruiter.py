@@ -115,6 +115,32 @@ _TOOLS = (
 #: rule**, which is `house`'s standing constraint learned three times on 2026-08-25: a rule may
 #: say what fails, and it may not enumerate what succeeds. There is deliberately no affirmative
 #: recipe for a good dossier anywhere in this text.
+#:
+#: **The house-genre sentence is written to that constraint rather than around it** (added
+#: 2026-08-29, `plan/house-genre-constraint.md`). Pilot 13 found the house genre living
+#: nowhere: it had been carried implicitly by whichever dossiers happened to be system-shaped,
+#: and the first recruit whose was not produced a book with no system in it on the first draw.
+#: Three things that sentence deliberately is not:
+#:
+#: 1. **Not a genre label.** §136 measured two words of genre-as-input outweighing every rule
+#:    in a prompt, and `render_recruit_request` keeps the *shelf* out of the system half for
+#:    exactly that reason. Naming the genre here would hand one label authority over every
+#:    recruit this process makes. What is named instead is the mechanical floor
+#:    (`domain/genre.py`), which is a fact about what this house drafts and is true whatever
+#:    shelf the writer is for.
+#: 2. **Not an affirmative recipe.** §138 measured a permission-only clause returning more
+#:    than six times what a prohibition-only clause returned, and worse than saying nothing.
+#:    The operative half here names a failure — a dossier with no appetite for that kind of
+#:    book is a dossier for books that never draft — and offers no menu to reach for.
+#: 3. **Not machinery vocabulary.** What a Recruiter writes is rendered into the system
+#:    message of every scene call that writer ever drafts, so a word that leaks here leaks
+#:    into prose (§120, `standing` reaching a chapter). The sentence uses none of
+#:    `house.MACHINERY_WORDS`, and
+#:    `test_the_recruiter_prompt_is_a_tool_essay_and_would_pass_the_leak_rail_anyway` is the
+#:    check that keeps it that way.
+#:
+#: It costs one demand, taking the role from 24 to 25, and `tests/test_prompt_budget.py`'s
+#: ceiling was raised on purpose rather than by accident — the choice that file asks for.
 _RECRUIT = (
     "You are drafting one writer, for one shelf and no other: the shelf named below.\n\n"
     f"{_TOOLS}\n\n"
@@ -131,6 +157,9 @@ _RECRUIT = (
     "with every scene of every book that writer drafts, so one line of it about how to write "
     "would answer a question this project has open, in every prompt, with nothing to answer "
     "back.\n"
+    "Every book this house drafts gives its characters numbers they can see, and a book "
+    "seeded without them is refused before a scene of it is written, so a dossier that "
+    "leaves this writer nothing to want in that is a dossier for books that never draft.\n"
     "Write it to the writer, as you: You write, What you love is, You want a reader to. One "
     "paragraph, about eighty words.\n"
     "No dashes in it. The gate matches the mark itself and refuses the record whatever the "

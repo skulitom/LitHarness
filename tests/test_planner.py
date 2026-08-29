@@ -143,7 +143,11 @@ def test_raw_reader_rows_do_not_enter_a_scene_prompt(store: SqliteStore) -> None
         dreading=["the planned resolution"],
     )
 
-    job = make_plan_selector(outline=False)(store, "worker-a", START, 300.0)
+    # The golden mystery is not a house book; this test is about reader-row leakage into the
+    # prompt, not the genre floor.
+    job = make_plan_selector(
+        outline=False, policy=DraftPolicy(require_starting_sheet=False)
+    )(store, "worker-a", START, 300.0)
 
     assert job is not None
     rendered = f"{job.payload.get('system', '')}\n{job.payload.get('prompt', '')}"
@@ -199,6 +203,25 @@ def test_the_production_selector_scopes_outline_work_to_one_serial_arc(
         ],
         created_at="2026-08-21T00:00:00Z",
     )
+    # The house genre floor (`domain/genre.py`) refuses to plan a book whose canon cannot
+    # speak system voice, so this synthetic book seeds a starting sheet — otherwise the
+    # selector's book-level filter would skip it before ever reaching the outline branch
+    # this test is about.
+    store.record_state_records(
+        BOOK_ID,
+        BRANCH_ID,
+        [
+            lc.StateRecord(
+                record_id="seed-status",
+                kind=lc.StateRecordKind.ASSERTION,
+                subject="rook",
+                predicate="status_snapshot",
+                value="Level 1, gatekeeper",
+                authority=lc.StateAuthority.ACCEPTED_CANON,
+            )
+        ],
+        created_at="2026-08-21T00:00:00Z",
+    )
 
     job = make_plan_selector(
         project_id=PROJECT_ID,
@@ -239,11 +262,15 @@ def test_a_fixture_book_reaches_six_accepted_scenes_with_no_human_in_the_loop(
 ) -> None:
     book_id, branch_id = _fixture(store, fixture)
 
-    outcomes = _run(store, 8)
+    # The golden mystery is not a house book — it carries no status snapshot by design — so
+    # this opts out of the genre floor; the golden litrpg fixture already carries a sheet and
+    # is unaffected by the opt-out.
+    policy = DraftPolicy(require_starting_sheet=False)
+    outcomes = _run(store, 8, policy=policy)
 
     assert outcomes.count(TickOutcome.RAN_JOB) == 6
     assert outcomes[-1] is TickOutcome.NO_WORK
-    progress = plan_progress(store, book_id, branch_id)
+    progress = plan_progress(store, book_id, branch_id, policy=policy)
     assert progress.drafted == 6 and progress.complete
 
 
@@ -258,7 +285,9 @@ def test_the_head_lineage_is_linear_and_carries_every_scene(
     holds one scene of prose. Only the lineage length distinguishes the two.
     """
     book_id, branch_id = _fixture(store, fixture)
-    _run(store, 8)
+    # The golden mystery is not a house book; this test is about lineage shape, not the
+    # genre floor. A no-op for litrpg, which already carries its own sheet.
+    _run(store, 8, policy=DraftPolicy(require_starting_sheet=False))
 
     head = store.head(book_id, branch_id)
     assert head is not None
@@ -271,18 +300,25 @@ def test_the_head_lineage_is_linear_and_carries_every_scene(
 def test_every_acceptance_carries_a_recorded_policy_decision(store: SqliteStore) -> None:
     """§19's integrity clause, over an autonomous run rather than a hand-driven one."""
     book_id, branch_id = _fixture(store, "mystery")
-    _run(store, 8)
+    # The golden mystery is not a house book; this test is about §19's integrity clause, not
+    # the genre floor. Without the opt-out the floor drafts nothing, the lineage is one
+    # revision long, and the loop below asserts nothing at all while still passing.
+    _run(store, 8, policy=DraftPolicy(require_starting_sheet=False))
 
     head = store.head(book_id, branch_id)
     assert head is not None
-    for revision_id in store.lineage(head.revision_id)[:-1]:  # the import has its own
+    lineage = store.lineage(head.revision_id)[:-1]  # the import has its own
+    assert lineage, "the run drafted nothing, so this test would assert nothing"
+    for revision_id in lineage:
         assert store.decision_for_revision(revision_id) is not None
 
 
 def test_an_autonomous_run_leaves_the_store_verifiable(store: SqliteStore) -> None:
     """Zero silent mutation: every revision rebuilds from canonical records."""
     _fixture(store, "mystery")
-    _run(store, 8)
+    # The golden mystery is not a house book; this test is about integrity verification,
+    # not the genre floor.
+    _run(store, 8, policy=DraftPolicy(require_starting_sheet=False))
     assert store.verify_integrity() == 7
 
 
@@ -291,10 +327,13 @@ def test_two_books_both_finish_and_neither_starves(store: SqliteStore) -> None:
     mystery = _fixture(store, "mystery")
     litrpg = _fixture(store, "litrpg")
 
-    _run(store, 14)
+    # The golden mystery is not a house book; this test is about fairness between two books,
+    # not the genre floor. A no-op for litrpg, which already carries its own sheet.
+    policy = DraftPolicy(require_starting_sheet=False)
+    _run(store, 14, policy=policy)
 
     for book_id, branch_id in (mystery, litrpg):
-        assert plan_progress(store, book_id, branch_id).complete
+        assert plan_progress(store, book_id, branch_id, policy=policy).complete
 
 
 def test_the_run_does_not_lower_the_shape_gate(store: SqliteStore) -> None:
@@ -311,11 +350,15 @@ def test_a_book_that_makes_no_progress_is_loud_not_quiet(store: SqliteStore) -> 
     """The green-board test. With the fake's answer below the length floor, every beat
     poisons — and the failure must be visible in all three places an operator looks."""
     book_id, branch_id = _fixture(store, "mystery")
-    loop = _conductor(store, pad=0)
+    # The golden mystery is not a house book; this test is about poison visibility, not the
+    # genre floor — without the opt-out the book is skipped before a single job is even
+    # enqueued, and nothing poisons.
+    policy = DraftPolicy(require_starting_sheet=False)
+    loop = _conductor(store, pad=0, policy=policy)
     for index in range(30):
         loop.tick(START + index * TICK)
 
-    assert plan_progress(store, book_id, branch_id).drafted == 0
+    assert plan_progress(store, book_id, branch_id, policy=policy).drafted == 0
     assert store.job_counts_by_status().get("poisoned", 0) == 6
     assert len(store.open_exceptions()) == 6, (
         "attempt exhaustion must file an exception; a poisoned queue and an empty "
@@ -350,8 +393,11 @@ def test_a_finished_book_and_a_blocked_book_are_distinguishable(store: SqliteSto
     """Both report NO_WORK. Telling them apart is the difference between a green board and
     a true one."""
     book_id, branch_id = _fixture(store, "mystery")
-    _run(store, 8)
-    finished = plan_progress(store, book_id, branch_id)
+    # The golden mystery is not a house book; this test is about a finished book reading as
+    # finished, not the genre floor.
+    policy = DraftPolicy(require_starting_sheet=False)
+    _run(store, 8, policy=policy)
+    finished = plan_progress(store, book_id, branch_id, policy=policy)
     assert finished.complete and finished.blocked_reason is None
 
 
@@ -399,7 +445,9 @@ def test_a_beat_already_planned_is_not_planned_again(store: SqliteStore) -> None
     """Derived job ids plus `has_job`. Two selections before the first completes must not
     produce two jobs for one beat — the fastest way to fork the branch."""
     _fixture(store, "mystery")
-    select = make_plan_selector()
+    # The golden mystery is not a house book; this test is about job de-duplication, not the
+    # genre floor.
+    select = make_plan_selector(policy=DraftPolicy(require_starting_sheet=False))
 
     first = select(store, "worker-a", START, 600.0)
     assert first is not None
@@ -412,9 +460,12 @@ def test_a_beat_already_planned_is_not_planned_again(store: SqliteStore) -> None
 
 def test_ticking_a_finished_book_enqueues_nothing(store: SqliteStore) -> None:
     _fixture(store, "mystery")
-    _run(store, 8)
+    # The golden mystery is not a house book; this test is about a finished queue staying
+    # empty, not the genre floor.
+    policy = DraftPolicy(require_starting_sheet=False)
+    _run(store, 8, policy=policy)
     before = sum(store.job_counts_by_status().values())
-    _run(store, 4)
+    _run(store, 4, policy=policy)
     assert sum(store.job_counts_by_status().values()) == before == 6
 
 
@@ -445,7 +496,9 @@ def test_a_poisoned_beat_does_not_stall_its_successors(store: SqliteStore) -> No
     )
     store.commit_revision(frozen, created_at="2026-08-13T00:01:00Z")
 
-    _run(store, 10)
+    # The golden mystery is not a house book; this test is about a locked beat not stalling
+    # the queue, not the genre floor.
+    _run(store, 10, policy=DraftPolicy(require_starting_sheet=False))
 
     final = store.head(book_id, branch_id)
     assert final is not None
@@ -471,7 +524,9 @@ def test_every_planned_payload_is_total(store: SqliteStore) -> None:
     """A missing key raises `HandlerInputError`, which is a job failure with no policy
     decision recorded — so payload construction must never depend on `.get`."""
     _fixture(store, "mystery")
-    _conductor(store).tick(START)
+    # The golden mystery is not a house book; this test is about payload completeness, not
+    # the genre floor.
+    _conductor(store, policy=DraftPolicy(require_starting_sheet=False)).tick(START)
     [job] = store.jobs_by_status(JobStatus.RUNNING) or store.jobs_by_status(JobStatus.SUCCEEDED)
     for key in ("revision_id", "logical_id", "prompt", "system", "book_id", "branch_id"):
         assert key in job.payload
@@ -953,7 +1008,13 @@ def test_the_planner_puts_the_chapter_position_on_the_queued_job(
     `test_the_target_length_reaches_the_prompt_at_all` records, arriving one layer up."""
     _fixture(store, "mystery")
 
-    make_plan_selector(project_id=PROJECT_ID, scenes_per_chapter=4)(store, "worker-a", START, 300.0)
+    # The golden mystery is not a house book; this test is about the chapter cue, not the
+    # genre floor.
+    make_plan_selector(
+        project_id=PROJECT_ID,
+        scenes_per_chapter=4,
+        policy=DraftPolicy(require_starting_sheet=False),
+    )(store, "worker-a", START, 300.0)
 
     [job] = [
         unit for unit in store.jobs_by_status(JobStatus.QUEUED) if unit.job_kind == SCENE_DRAFT
@@ -965,7 +1026,11 @@ def test_the_default_selector_queues_the_prompt_it_always_queued(store: SqliteSt
     """The other half of the control: the production path at its default renders no cue."""
     _fixture(store, "mystery")
 
-    make_plan_selector(project_id=PROJECT_ID)(store, "worker-a", START, 300.0)
+    # The golden mystery is not a house book; this test is about the default's no-cue
+    # control, not the genre floor.
+    make_plan_selector(
+        project_id=PROJECT_ID, policy=DraftPolicy(require_starting_sheet=False)
+    )(store, "worker-a", START, 300.0)
 
     [job] = [
         unit for unit in store.jobs_by_status(JobStatus.QUEUED) if unit.job_kind == SCENE_DRAFT
@@ -1331,7 +1396,9 @@ def test_bumping_the_epoch_reissues_a_burned_beat(store: SqliteStore) -> None:
     """A poisoned beat burns its derived id forever — `idempotency_key` is UNIQUE. Without
     a version in the derivation, "try scene 3 again" would be inexpressible."""
     book_id, branch_id = _fixture(store, "mystery")
-    loop = _conductor(store, pad=0)
+    # The golden mystery is not a house book; this test is about epoch bumping over a
+    # poisoned beat, not the genre floor.
+    loop = _conductor(store, pad=0, policy=DraftPolicy(require_starting_sheet=False))
     for index in range(6):
         loop.tick(START + index * TICK)
     assert store.job_counts_by_status().get("poisoned", 0) >= 1
@@ -1345,7 +1412,12 @@ def test_bumping_the_epoch_reissues_a_burned_beat(store: SqliteStore) -> None:
     assert head is not None
     new_id = beat_job_id(book_id, branch_id, "scene-1", SIX_BEAT.template_id, after)
     assert not store.has_job(new_id)
-    assert _conductor(store).tick(START + 100 * TICK).outcome is TickOutcome.RAN_JOB
+    assert (
+        _conductor(store, policy=DraftPolicy(require_starting_sheet=False))
+        .tick(START + 100 * TICK)
+        .outcome
+        is TickOutcome.RAN_JOB
+    )
 
 
 # --- §17 Stage 1 exit clause 4: planted-defect injection ------------------------------
@@ -1571,7 +1643,10 @@ def test_a_clean_book_is_not_refused_by_the_new_gate(store: SqliteStore) -> None
     reach six accepted scenes with the integrity gate live."""
     for fixture in ("mystery", "litrpg"):
         book_id, branch_id = _fixture(store, fixture)
-        _run(store, 20)
+        # The golden mystery is not a house book; this test is about the integrity gate
+        # (a different, pre-existing gate), not the genre floor. A no-op for litrpg, which
+        # already carries its own sheet.
+        _run(store, 20, policy=DraftPolicy(require_starting_sheet=False))
         head = store.head(book_id, branch_id)
         assert head is not None
         scenes = [node for node in head.in_reading_order() if node.kind is NodeKind.SCENE]

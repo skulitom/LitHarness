@@ -59,7 +59,7 @@ from litharness.application.model_context import StoryStateView, at_scene, plann
 from litharness.application.plan_refinement import accept_plan_proposal
 from litharness.application.policy_events import policy_decision_event
 from litharness.application.ports import OutlineStore, TextGenerator
-from litharness.domain import house, world_brief
+from litharness.domain import genre, house, world_brief
 from litharness.domain import serials as serials_mod
 from litharness.domain import state as state_mod
 from litharness.domain import worlds as worlds_mod
@@ -896,7 +896,13 @@ def outline_proposal(
             item=lc.PlanItem(
                 logical_id=scene_plan_id_for(beat.logical_id),
                 kind=lc.PlanKind.SCENE_PLAN,
-                text=statement,
+                # **The progression beat rides in the scene's own plan, not in a rule.** It is
+                # folded in here rather than asked for in the outline prompt so that it is a
+                # scheduled fact rather than a request a model may decline — §110's move one
+                # beat earlier: showing the call the material instead of instructing it. One
+                # `SCENE_PLAN` item per scene either way, because `scene_plan_for` returns the
+                # first scoped match and a second item would be a coin toss.
+                text=genre.with_beat(statement, beat.ordinal, len(beats)),
                 authority=lc.PlanAuthority.INTENDED,
                 locked=False,
                 scope=lc.ResourceRef(
