@@ -79,14 +79,18 @@ def test_a_book_that_declared_no_sheet_is_shown_the_columns_it_actually_counts()
     sheet, and the declaring vocabulary was undocumented — so this was every book. The line
     below is what the writer was handed: the book's own three quantities gone, four clichés
     in their place, and a question mark where each number should have been.
+
+    The subject reads `Sera` rather than `sera` in both lines because §169 moved the printed
+    name off the raw id; it is not part of what this test is about, and the four clichés and
+    four question marks are.
     """
     records = [_snapshot("sera", dict(_OWN_VOCABULARY))]
 
     was = render_status_line("sera", _OWN_VOCABULARY, sheet=DEFAULT_SHEET)
-    assert was == "[STATUS] sera — Level ? | HP ?/? | MP ?/? | Gold ?"
+    assert was == "[STATUS] Sera — Level ? | HP ?/? | MP ?/? | Gold ?"
 
     line = system_voice_example(records)
-    assert line == "[STATUS] sera — Attunement 1 | Threads 2/3"
+    assert line == "[STATUS] Sera — Attunement 1 | Threads 2/3"
     for cliche in ("Level", "HP", "MP", "Gold", "?"):
         assert cliche not in line
 
@@ -163,7 +167,7 @@ def test_an_advancement_that_restates_nothing_still_renders_a_whole_sheet() -> N
         _snapshot("sera", {"attunement": 2}, order_key="s2"),
     ]
     assert system_voice_example(records, at="s2") == (
-        "[STATUS] sera — Attunement 2 | Threads 2/3"
+        "[STATUS] Sera — Attunement 2 | Threads 2/3"
     )
     assert counted_names(records, at="s2") == ("Attunement", "Threads")
 

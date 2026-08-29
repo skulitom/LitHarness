@@ -124,12 +124,17 @@ def test_the_pilot_fifteen_key_set_folds_scene_one_to_the_opening_state() -> Non
 
     Before §165 this returned the `0350` snapshot — rung 5, reach 9 — because all three schedule
     keys sorted before `s1`, the ceiling was `0350`, and the fold returned the end of the book.
+
+    The subject stayed `mira` on the state side and reads `Mira` on the rendered side after
+    §169 moved the printed name off the raw id. Which snapshot the fold lands on is what this
+    test is about, and the pair below is the point: the record keeps the id, the line prints
+    the name.
     """
     records = _seed()
     standing = extraction.state_as_it_stands(records, at="s1")
     assert standing == ("mira", _OPENING)
     assert extraction.system_voice_example(records, at="s1") == (
-        "[STATUS] mira — Seamwork 2 | Reach 3 | Carried 4/5 | Seams standing in Ashfen 19"
+        "[STATUS] Mira — Seamwork 2 | Reach 3 | Carried 4/5 | Seams standing in Ashfen 19"
     )
 
 
