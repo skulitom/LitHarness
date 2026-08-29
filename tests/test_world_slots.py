@@ -297,19 +297,38 @@ def _status_sheet() -> lc.StateRecord:
 
 
 def _status_snapshot() -> lc.StateRecord:
-    """Keyless, which is the entry state: it sorts below every minted `s{n}` and is found at
-    every position. The rendered line is the one a scene is shown and asked to write."""
+    """Keyless is the entry state, and a zero-padded key is a schedule the scene does not read.
+
+    **Both halves of the documented line, handed to the reader that acts on them** (§165). The
+    line tells an Architect to leave the key off for the state the book opens in and to use
+    zero-padded digits to schedule a later position; it now also promises that a scheduled
+    snapshot is *not* folded into a scene. The second promise is the one Serial Pilot 15 needed
+    and did not have, so the probe asserts it rather than only the first: the schedule is canon,
+    `speaks_system_voice` sees it, and the line rendered at `s1` is still the opening state.
+
+    The earlier version of this docstring said a keyless record "sorts below every minted `s{n}`",
+    which was the exact belief that failed — a keyless record is not compared at all, it is
+    carried through every position, and the thing that does sort below every `s{n}` is any
+    numeric key an Architect writes.
+    """
     record = rec(
         "sera",
         extraction.STATUS_PREDICATE,
         value={"attunement": 1, "threads": 2, "threads_max": 3},
     )
     sheet = rec("sera", extraction.SHEET_PREDICATE, value=_SHEET_VALUE)
-    canon = [accepted(record), accepted(sheet)]
+    scheduled = rec(
+        "sera",
+        extraction.STATUS_PREDICATE,
+        value={"attunement": 9, "threads": 3, "threads_max": 3},
+        order_key="0350",
+    )
+    canon = [accepted(record), accepted(sheet), accepted(scheduled)]
     assert extraction.speaks_system_voice(canon)
     rendered = extraction.system_voice_example(canon, at="s1")
     assert rendered is not None
     assert "Attunement 1" in rendered and "Threads 2/3" in rendered
+    assert "Attunement 9" not in rendered
     return record
 
 

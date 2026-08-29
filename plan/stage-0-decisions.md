@@ -17152,3 +17152,135 @@ No bar is declared — these are ceilings on instruction text, not quality claim
 was called. §161.8's second residual is corrected in place with a pointer here; its first
 residual, the numbers clause's two uncovered classes, stands. RS1 is untouched and no research
 claim is promoted.
+
+## 165. Story positions were stated in two order-key spaces nobody had introduced, so a seed that scheduled an arc handed scene one the end of it
+
+**Measured first, on the store Serial Pilot 15 left behind.** That run's Architect declared its
+protagonist's whole arc in advance — `status_snapshot`s at `0110`, `0250` and `0350` — and left
+the opening state un-keyed, which is exactly what `world vocabulary` told it to do. Scene one was
+then shown the `0350` snapshot: rung 5 of 6 with reach 9, the reach the book's own canon says the
+mill wheel takes, in the chapter that introduces her. **The defect is nine characters wide:
+`'0350' <= 's1'` is `True`**, because digits sort below letters, and the magnitude of the number
+is irrelevant — *any* numeric key an Architect writes lands before *every* scene.
+
+**A census of the `order_key` column across all seventeen pilot databases, which is what made
+this a class rather than an instance:**
+
+| shape | records | who writes it |
+| --- | --: | --- |
+| un-keyed | 3,050 | every timeless declaration |
+| `s` + digits | 43 | `beats.beats_for` and `serials.beats_for_arc` |
+| all digits | 59 | a declaration scheduling a later position |
+| a word | 127 | §152's `--order-key`/`--value` trap, in eight databases |
+
+The fourth row is the case that does not even fail consistently. `clearance`, `notches`, `cuff`,
+`grade`, `rung-uncorded`, `charter-standing`, `reckoning`, `crit_licence`, `zz_c` — criterion
+names typed into the position slot — sort against scene keys by spelling, so `'clearance' < 's1'`
+is permanently past and `'zz_c' > 's1'` is permanently future, in the same book, for the same
+reason.
+
+**The scheduling was never the defect and the fix keeps it.** A seed committing in advance to
+where a character's numbers will stand is §110's promise-scheduling instinct applied to stats,
+and it is the behaviour to protect. What failed is that the two vocabularies for "where in the
+book" had never been introduced to each other.
+
+### 165.1 What shipped
+
+- **`state.key_space` and `state.comparable`.** Two named spaces: the **scene** keys the pipeline
+  mints, and the **schedule** keys a declaration states a position in. A key in neither compares
+  with nothing, **including another key in neither** — two words in the position slot are two
+  unplaceable records, not two records at a shared position.
+- **The fold reads one space plus the timeless.** `extraction.snapshot_at` and
+  `state_as_it_stands` ask "before this" within the ceiling's own space; the un-keyed snapshot
+  still folds at every position, and a scheduled snapshot is canon, readable, and never folded as
+  past. On the pilot-15 seed, scene one now folds to the opening state — `Seamwork 2 | Reach 3 |
+  Carried 4/5 | Seams standing in Ashfen 19` — against the `Seamwork 5 | Reach 9 | … 41` it was
+  shown.
+- **`worlds.slot_warnings` reports a key in neither space**, under `will_not_resolve` beside
+  §152's two, without moving `ok`. A scheduled key draws no warning, which is what keeps the good
+  behaviour good.
+- **Six vocabulary lines corrected.** `status_snapshot`, `stands_at` and `disclosed_to` each said
+  `--order-key` and never said what shape one takes; the shape is stated once in `how`, and the
+  scene keys are documented as **not for writing by hand** — `beats_for` derives its width from
+  the book's own length, so a hand-written `s1` sorts between `s09` and `s10` in any book that
+  grew past nine scenes. `_status_snapshot`'s probe now asserts the second half of its own line:
+  a scheduled snapshot beside the opening one does not reach `s1`.
+- **`tests/test_order_key_spaces.py`**, at serial15.db's exact key set and values. Ten of its
+  fourteen assertions fail against the pre-fix code.
+
+### 165.2 The permanently-open `system_gap`, and the guard that stopped the fix breaking a book
+
+Pilot 15 §2.1 recorded a second defect: its seed drew a system with an issuer, a six-rung ladder,
+six governed capabilities and a prerequisite graph, and `world check` answered *"this book
+declares no game system"*. Every clause of that sentence is false about that world except the one
+that decides it — `gamesystem.systems_of` requires `magnitude_scale`, §163.2 deliberately keeps
+that predicate out of `world vocabulary` so only `records_for` can mint it, and the Architect's
+`declare` path never constructs a `SystemDef`. **So a seed-drawn system could not close the gap
+by any documented route.**
+
+- **`gamesystem.completion_records`, run by `world accept`.** The acceptance act is the
+  person-gate, so minting there forges nothing. The scale is **read off the world's own declared
+  numbers** — the deepest magnitude any `can_do` holds or any `requires` asks for — and a world
+  that declared no depth gets a named reason instead of a default, because a scale of one is the
+  word §114.6 used for a decoration and inventing it would be authoring the single dimension the
+  world declined to have. Only the two configuration predicates are minted, filtered out of a
+  full `records_for` draw so `check_draw` runs and the digest is computed by the path that reads
+  it back. On serial15 that is `{"label": "Seamwork", "maximum": 9}` and one digest.
+- **It runs even when nothing is proposed**, because pilot 15's world was already accepted when
+  its system was found unfinishable and there is no retraction to re-propose it with.
+- **No second `status_sheet` is ever minted.** A book that declared its own would then have two,
+  `extraction.sheet_for` abstains to the generic line when there are two, and nothing can undo
+  it — that is `system_gap`'s own first branch, and completing a system into it would be the fix
+  causing the fault it exists to clear.
+
+**And then the fix was measured breaking the book it was written for, which is why the guard
+exists.** `genre.has_starting_sheet` is §160's ratchet: a book that declares a game system must
+hold a sheet that is a real position in it, and until a system is declared that half never runs.
+Pilot 15's seed declared *both* a system whose columns are the rung plus six capability ids
+**and** a hand-written sheet of `rung`, `reach`, `carried` and `standing` — two half-models that
+do not correspond. Finishing the system took that book from drafting to `blocked` on a real run
+of `world accept` against a copy of `serial15.db`. A fix that breaks a book in order to report a
+gap is not a fix, so completion now stops when it would move a book from clearing the floor to
+refused, and says which two things disagree and that neither is the command's to choose.
+
+**A second consequence was found the same way and guarded the same way.**
+`extraction.movable_names`' system arm had no requirement that the system's columns be the ones
+the book prints, because until a drawn system could exist beside a hand-declared sheet the two
+could not disagree. Completing pilot 15's system would have switched its scheduled beats to
+naming abilities its status line does not print — the defect `counted_names` already refuses for
+the legacy arm, arriving by the other door. The arm now runs only when the system's columns are
+the printed ones, so it and `system_gap` close together.
+
+### 165.3 What was refused
+
+- **Any normalisation of an order key.** Nothing converts a schedule key to a scene key or guesses
+  which scene an Architect meant. `record_id_for` is blind to position and the store is
+  `INSERT OR IGNORE`, so a corrected position does not even land; a projection would put this
+  repository in the business of authoring positions the world never declared.
+- **A refusal at `declare` or `accept` for a key in neither space.** §152 settled this: the
+  mechanism is the report, and `will_not_resolve` is where a mistake no later declaration undoes
+  already goes.
+- **Widening the same rule to the packet cutoff and the disclosure schedule, tonight.** Both carry
+  the identical defect and both were measured on serial15 rather than assumed:
+  `state.records_before('s1')` admits **18** records whose key is not comparable to `s1` — three
+  scheduled snapshots, four `stands_at`, three `can_do` and eight `disclosed_to` — and
+  `worlds.undisclosed_claims` compares `key > at`, so **0 of that book's 8 claims are still hidden
+  at scene one**: every scheduled reveal reads as already disclosed to the reader. That is
+  arguably worse than the defect fixed here and it is a change to what every book's packet
+  contains, with a SQL twin in `sqlite_store.state_records` that has to move with it. It is
+  registered here with its numbers and left for its own entry rather than folded into this one.
+- **Closing pilot 15's gap.** After completion its gap reads *"the sheet and the system are
+  describing different books"*, which is true, where it read *"this book declares no game
+  system"*, which was false. That is §155.2's fix — the reported absence is now the one actually
+  standing in the way — and closing it further would need a snapshot minted in the system's key
+  space beside the book's own, which is a second value in one slot and a contradiction on every
+  scene.
+
+### 165.4 Anti-scope
+
+No bar is declared: the census counts, the 18 records and the 0-of-8 are descriptions of stores on
+disk, not thresholds anything is measured against, and §61's four checks have nothing to run on.
+No model ranked, selected or judged anything; no model was called and no book was drawn. No corpus
+was read, so RS1 is untouched. No research claim is promoted and no axis is admitted. `--force`
+still exists and still means what it meant, and every world already forged reads as it did except
+where a scheduled snapshot used to be folded into a scene, which is the defect.

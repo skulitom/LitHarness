@@ -1147,49 +1147,182 @@ def systems_of(records: Sequence[lc.StateRecord]) -> tuple[SystemDef, ...]:
         maximum = scale_value.get("maximum")
         if not isinstance(maximum, int) or isinstance(maximum, bool):
             continue
-        criteria = sorted(
-            subject
-            for subject, owner in governed.items()
-            if owner == system_id and subject in worlds_mod.criteria(records)
+        system = _assemble(
+            records, system_id, Scale(label=label, maximum=maximum), names, governed
         )
-        if len(criteria) != 1:
-            # Abstains for `extraction.sheet_for`'s reason: two ladders under one system is a
-            # disagreement about which chain a sheet's rung column counts, and choosing would be
-            # this module inventing which one the world meant.
-            continue
-        criterion = criteria[0]
-        chain = worlds_mod.ladder_of(records, criterion)
-        if not chain:
-            continue
-        ability_ids = [
-            subject
-            for subject, owner in sorted(governed.items())
-            if owner == system_id and subject in set(worlds_mod.capabilities(records))
-        ]
-        abilities = tuple(
-            Ability(
-                ability_id=ability_id,
-                name=names.get(ability_id, ability_id),
-                needs=_needs_of(records, ability_id),
-                costs=_first_value(records, ability_id, worlds_mod.COSTS),
-                manifests_as=_first_value(
-                    records, ability_id, worlds_mod.MANIFESTS_PREDICATE
-                ),
-            )
-            for ability_id in ability_ids
-        )
-        by_id[system_id] = SystemDef(
-            system_id=system_id,
-            name=names.get(system_id, system_id),
-            criterion=criterion,
-            rank_label=names.get(criterion, "Rank"),
-            ranks=tuple(
-                Rank(rank_id=rank_id, name=names.get(rank_id, rank_id)) for rank_id in chain
-            ),
-            abilities=abilities,
-            scale=Scale(label=label, maximum=maximum),
-        )
+        if system is not None:
+            by_id[system_id] = system
     return tuple(by_id[key] for key in sorted(by_id))
+
+
+def _assemble(
+    records: Sequence[lc.StateRecord],
+    system_id: str,
+    scale: Scale,
+    names: Mapping[str, str],
+    governed: Mapping[str, str],
+) -> SystemDef | None:
+    """One system's ladder and graph, read off the world, given the scale it runs on.
+
+    Split out of `systems_of` so that the accept-time completion (`completion_records`) assembles
+    a drawn system through **exactly** the reader that will later read it back. Two assemblies
+    would be two answers to "what did this world declare", and the digest would eventually
+    disagree with the records it was minted from.
+    """
+    criteria = sorted(
+        subject
+        for subject, owner in governed.items()
+        if owner == system_id and subject in worlds_mod.criteria(records)
+    )
+    if len(criteria) != 1:
+        # Abstains for `extraction.sheet_for`'s reason: two ladders under one system is a
+        # disagreement about which chain a sheet's rung column counts, and choosing would be
+        # this module inventing which one the world meant.
+        return None
+    criterion = criteria[0]
+    chain = worlds_mod.ladder_of(records, criterion)
+    if not chain:
+        return None
+    ability_ids = [
+        subject
+        for subject, owner in sorted(governed.items())
+        if owner == system_id and subject in set(worlds_mod.capabilities(records))
+    ]
+    abilities = tuple(
+        Ability(
+            ability_id=ability_id,
+            name=names.get(ability_id, ability_id),
+            needs=_needs_of(records, ability_id),
+            costs=_first_value(records, ability_id, worlds_mod.COSTS),
+            manifests_as=_first_value(records, ability_id, worlds_mod.MANIFESTS_PREDICATE),
+        )
+        for ability_id in ability_ids
+    )
+    return SystemDef(
+        system_id=system_id,
+        name=names.get(system_id, system_id),
+        criterion=criterion,
+        rank_label=names.get(criterion, "Rank"),
+        ranks=tuple(Rank(rank_id=rank_id, name=names.get(rank_id, rank_id)) for rank_id in chain),
+        abilities=abilities,
+        scale=scale,
+    )
+
+
+def completion_records(
+    records: Sequence[lc.StateRecord],
+) -> tuple[tuple[lc.StateRecord, ...], tuple[str, ...]]:
+    """Finish every system this world drew but could not declare, and say why one is unfinished.
+
+    **The predicate a drawn system cannot reach, minted at the one act that is a person** (§165).
+    `magnitude_scale` and `system_digest` are kept out of `world vocabulary` on purpose (§163.2):
+    they are minted by `records_for` and never declared by hand, because a second declaration
+    beside the drawn one is the two-writers hazard. The consequence went unnoticed until Serial
+    Pilot 15 drew a system with an issuer, a six-rung ladder, six governed capabilities and a
+    prerequisite graph, and `system_gap` reported *"this book declares no game system"* — every
+    clause of it false about that world except the one that decided it. The Architect had no
+    documented way to fill the slot, and nothing else was going to.
+
+    `world accept` is where this runs, and that is what makes it minting rather than forging: a
+    person ran the command, the structure being completed is the world's own, and this function
+    invents no rung, no capability, no edge and no name.
+
+    **The scale is read off the declared numbers, and a world that declared none gets a reason
+    instead of a default.** `maximum` is the deepest magnitude the world has already put someone
+    at (`can_do`) or asked for (`requires`), because a scale must at least contain the depths its
+    own records assert. A world whose capabilities carry no number never expressed a depth at
+    all — it is a held-or-not inventory — and calling that a scale of `MIN_SCALE_MAXIMUM` would
+    invent the one dimension the world declined to have. The label is the system's own `is_a`
+    name; it is never printed on a status line (`columns` prints the rung label and the ability
+    names), so this reaches no page.
+
+    **Only the two configuration predicates are returned**, filtered out of a full `records_for`
+    draw rather than built separately, so `check_draw` runs and the digest is computed by the
+    same path that will read it back. Everything else `records_for` mints — the ladder, the
+    roles, the `governed_by` edges — the world already declared, and `status_sheet` is
+    deliberately among the things not returned: a book that declared its own sheet would get a
+    second one, `extraction.sheet_for` abstains to the generic line when there are two, and
+    there is no retraction to undo it. That is `system_gap`'s own first branch, and completing a
+    system into it would be this function causing the fault it exists to clear.
+    """
+    minted: list[lc.StateRecord] = []
+    reasons: list[str] = []
+    names = {
+        record.subject: str(record.value)
+        for record in records
+        if record.predicate == "is_a" and isinstance(record.value, str)
+    }
+    governed = {
+        record.subject: record.object_ref
+        for record in records
+        if record.predicate == worlds_mod.GOVERNED_BY and record.object_ref
+    }
+    declared = {
+        record.subject
+        for record in records
+        if record.predicate == MAGNITUDE_SCALE and isinstance(record.value, Mapping)
+    }
+    for system_id in worlds_mod.entities_with_role(records, "system"):
+        if system_id in declared:
+            continue
+        skeleton = _assemble(
+            records, system_id, Scale(label="", maximum=0), names, governed
+        )
+        if skeleton is None:
+            reasons.append(
+                f"{system_id} holds the system role, and its ladder could not be read: a system "
+                "needs exactly one criterion under `governed_by` and a `precedes` chain for it"
+            )
+            continue
+        maximum = _declared_depth(records, skeleton.ability_ids)
+        if maximum is None or maximum < MIN_SCALE_MAXIMUM:
+            reasons.append(
+                f"{system_id} declares no depth: nothing on its capabilities is held or required "
+                f"past {MIN_SCALE_MAXIMUM - 1}, so this world says who holds what and never how "
+                "far. A scale would be invented rather than read, so none is minted and the "
+                "system gap stays open"
+            )
+            continue
+        system = _assemble(
+            records,
+            system_id,
+            Scale(label=names.get(system_id, system_id), maximum=maximum),
+            names,
+            governed,
+        )
+        assert system is not None
+        try:
+            drawn = records_for(system)
+        except MalformedSystem as error:
+            reasons.append(f"{system_id} is drawn but incoherent, so nothing was minted: {error}")
+            continue
+        minted.extend(
+            record for record in drawn if record.predicate in CONFIGURATION_PREDICATES
+        )
+    return tuple(minted), tuple(reasons)
+
+
+def _declared_depth(
+    records: Sequence[lc.StateRecord], ability_ids: Sequence[str]
+) -> int | None:
+    """The deepest magnitude this world has declared on these capabilities, or `None` for none.
+
+    Both slots §160 reused are read: `can_do`'s value is how far a holder has taken a capability,
+    `requires`' is how far a prerequisite has to have been taken. A scale that did not contain
+    both would be one `check_draw` refuses on the world's own numbers.
+    """
+    wanted = set(ability_ids)
+    depths = [
+        record.value
+        for record in records
+        if isinstance(record.value, int)
+        and not isinstance(record.value, bool)
+        and (
+            (record.predicate == worlds_mod.CAN_DO and record.object_ref in wanted)
+            or (record.predicate == worlds_mod.REQUIRES and record.subject in wanted)
+        )
+    ]
+    return max(depths) if depths else None
 
 
 def _first_value(
@@ -1331,6 +1464,7 @@ __all__ = [
     "Scale",
     "SystemDef",
     "check_draw",
+    "completion_records",
     "deepen",
     "gain",
     "legal_moves",

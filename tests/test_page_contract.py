@@ -38,6 +38,7 @@ from litharness.application import planner
 from litharness.domain import genre, house, worlds
 from litharness.domain.extraction import (
     DEFAULT_SHEET,
+    SHEET_PREDICATE,
     STATUS_PREDICATE,
     counted_names,
     implied_sheet,
@@ -470,6 +471,37 @@ def test_the_system_arm_needs_a_character_and_a_single_system_or_it_abstains() -
     assert movable_names(records) == counted_names(records)
     # A character canon has never placed in the system.
     assert movable_names(records, character="nobody") == counted_names(records)
+
+
+def test_the_beat_stays_on_the_books_own_columns_when_the_system_prints_another_line() -> None:
+    """Stage-0 §165's guard: the system arm may only name what the writer can see.
+
+    Serial Pilot 15's seed declared a sheet of `rung`, `reach`, `carried` and `standing` **and**
+    a system whose columns are the rung plus six capability ids. Once `world accept` finishes
+    such a system (`gamesystem.completion_records`), the system arm would otherwise start naming
+    abilities that the book's status line does not print — which is the same defect
+    `counted_names` already refuses for the legacy arm, arriving by the other door. `system_gap`
+    reports exactly this disagreement, so the guard and the gap close together.
+    """
+    import dataclasses
+
+    from litharness.domain.extraction import counted_names, movable_names
+
+    records = [
+        *_weave_book(),
+        dataclasses.replace(
+            worlds.world_record(
+                "silas",
+                SHEET_PREDICATE,
+                value={"fields": [{"name": "rung", "label": "Standing"}]},
+            ),
+            authority=lc.StateAuthority.ACCEPTED_CANON,
+        ),
+    ]
+    # Two sheets, so `sheet_for` abstains to the default and the system's columns are not the
+    # ones printed. The beat falls to the book's own line rather than to the system's names.
+    assert "Seamsight" not in movable_names(records, character="silas")
+    assert movable_names(records, character="silas") == counted_names(records)
 
 
 def test_a_proposed_system_is_not_a_system_the_beat_may_schedule_against() -> None:

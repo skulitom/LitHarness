@@ -118,6 +118,23 @@ def vocabulary() -> dict[str, Any]:
     while the wrong position stands. The two shipped tests could not catch this one: they grade
     the predicate lines against their readers, and this was a sentence about identity.
 
+    **A sixth line was silent about the one thing that decided it** (§165). `status_snapshot`
+    said to put *"where in the book it becomes true"* in `--order-key` and to leave it off for
+    the opening state, *"which is then the one found at every position"* — and never said what
+    shape a key takes. Serial Pilot 15's Architect scheduled its protagonist's arc at `0110`,
+    `0250` and `0350`, which is the good behaviour, and scene one was handed the `0350` state
+    because `'0350' <= 's1'`. The promise about the un-keyed snapshot does not survive a single
+    keyed snapshot beside it, so the line now names the space to write in and says what a
+    scheduled one does *not* do. `stands_at` and `disclosed_to` carried the same silence and are
+    corrected with it; the shape itself is stated once, in `how`, because three copies of a
+    format is three places for it to drift.
+
+    **The scene keys are deliberately documented as not-for-writing.** `beats_for` derives its
+    width from the book's own length — `s1` at six scenes, `s01` at twenty-four — so a
+    hand-written `s1` is a guess at a coordinate whose width the writer does not control, and it
+    would sort between `s09` and `s10` in any book that grew. Telling an Architect to write scene
+    keys would have been a new trap in the sentence fixing the old one.
+
     **The line for `status_sheet` names no example fields, deliberately.** §138 measured that a
     permission overproduces what it names, so a line illustrating the shape with the default's
     own columns would teach the thing it exists to let a world escape. It names the *slots* and
@@ -177,7 +194,8 @@ def vocabulary() -> dict[str, Any]:
             ),
             "stands_at": (
                 "where somebody stands; --object the rung, --value the criterion whose ladder "
-                "it is, and --order-key when the book has already moved them"
+                "it is, and --order-key zero-padded digits to schedule a later standing. Leave "
+                "it off for where they stand when the book opens"
             ),
             "asks": "an open question; --value the question in plain words",
             "reveal_scene": "which scene answers it; --value the scene number",
@@ -186,7 +204,8 @@ def vocabulary() -> dict[str, Any]:
             "believes": "who holds a claim; the believer is the subject, --object the claim",
             "disclosed_to": (
                 "who has been told; --object the claim, --value reader when the one told is "
-                "the reader, and --order-key where in the book they are told"
+                "the reader, and --order-key zero-padded digits for where in the book they are "
+                "told. Leave it off only for something the reader knows from the first page"
             ),
             "edge": (
                 "what the one exceptional person can do that nobody else can; --value in "
@@ -208,10 +227,13 @@ def vocabulary() -> dict[str, Any]:
             ),
             "status_snapshot": (
                 "where those columns stand, as numbers; --value an object mapping each field "
-                "name to its number, and --order-key where in the book it becomes true — "
-                "leave the key off for the state the book opens in, which is then the one "
-                "found at every position. Until one of these is accepted the book is never "
-                "asked for a status line at all"
+                "name to its number, and --order-key zero-padded digits (0110, 0250) to "
+                "schedule a position the book reaches later. Leave the key off for the state "
+                "the book opens in, which `extraction.state_as_it_stands` then folds at every "
+                "scene. A scheduled snapshot is kept and is never folded into a scene, so "
+                "declaring an arc ahead of the writing does not become the state scene one is "
+                "shown. Until one of these is accepted the book is never asked for a status "
+                "line at all"
             ),
             "graph_line": (
                 "the line this book prints when somebody's standing changes; --value an "
@@ -240,6 +262,14 @@ def vocabulary() -> dict[str, Any]:
             "--order-key is where in the *story* a record becomes true, and nothing else. It "
             "is not how a record is scoped, filed or grouped; a ladder, a criterion and a "
             "capability are all outside story time and take none.",
+            "Write an --order-key as zero-padded digits — 0110, 0250, 0350 — leaving gaps so a "
+            "later declaration can land between two. That is the schedule space, and it is the "
+            "only one to write by hand. The scene keys the pipeline mints (s1, or s000001 in a "
+            "serial) are its own and their width depends on how long the book turns out to be, "
+            "so a hand-written s1 is a guess at a coordinate you do not own. A scene reads only "
+            "its own space, so a scheduled record is kept and is never read as already true; a "
+            "key that is neither — a word, a name, a criterion — is placed nowhere at all, and "
+            "`world check` lists it under will_not_resolve.",
             "This house publishes one genre, and a book that cannot state anybody's standing "
             "as numbers is not in it. The whole of that question is whether canon holds a "
             "status_snapshot whose value is an object; `world check` reports the gap while "

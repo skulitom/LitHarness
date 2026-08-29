@@ -85,6 +85,66 @@ RESOURCE_KIND: dict[lc.StateRecordKind, lc.ResourceKind] = {
 #: §9.1's foreshadow ledger both start here.
 THREAD_OPEN = "open"
 _SCENE_KEY = re.compile(r"s(?P<number>\d+)$")
+_SCHEDULE_KEY = re.compile(r"\d+$")
+
+#: Order keys the pipeline mints for a position the book **reaches**: `beats.beats_for` writes
+#: `s1`…`s6` at book width and `serials.beats_for_arc` writes `s000001` at serial width. Every
+#: cutoff on the live drafting path is one of these.
+SCENE_KEYS = "scene"
+
+#: Order keys a *declaration* states a position in: zero-padded digits, `domain/position.py`'s
+#: own gap-10 format, which is what an Architect reaches for when it schedules an arc ahead of
+#: the writing. A schedule is a position the book has **not** reached.
+SCHEDULE_KEYS = "schedule"
+
+
+def key_space(key: str | None) -> str | None:
+    """Which of the two order-key spaces `key` states a position in, or `None` for neither.
+
+    **The two spaces were never introduced to each other, and string comparison married them
+    silently** (§165). Scene keys begin with a letter and schedule keys are digits, so every
+    schedule key sorts *below* every scene key: `'0350' <= 's1'` is `True`. Serial Pilot 15's
+    Architect declared its protagonist's whole arc as three scheduled snapshots and left the
+    opening state un-keyed — exactly what the `status_snapshot` line asks for — and the fold
+    then handed scene one the last of the three. Nine characters wide, and the magnitude of the
+    number is irrelevant: *any* schedule key lands before *every* scene.
+
+    **A key in neither space is the case that does not even fail consistently.** Across the
+    pilot databases 127 records carry a word in this slot — `clearance`, `grade`, `cuff`,
+    `reckoning`, `zz_c` — §152's `--order-key`/`--value` trap, where a criterion name was typed
+    into the position slot. Those sort against scene keys by spelling: `'clearance' < 's1'` and
+    `'zz_c' > 's1'`, so one is permanently past and the other permanently future, on the same
+    book, for the same reason. `None` is returned for both, and nothing comparable to anything
+    is the only honest answer about a coordinate nobody can place. `world check` reports them.
+
+    An **absent** key is not in this vocabulary at all: it is the timeless declaration, and
+    every reader here already carries it through every cutoff.
+    """
+    if key is None:
+        return None
+    if _SCENE_KEY.fullmatch(key):
+        return SCENE_KEYS
+    if _SCHEDULE_KEY.fullmatch(key):
+        return SCHEDULE_KEYS
+    return None
+
+
+def comparable(key: str | None, cutoff: str | None) -> bool:
+    """Whether two order keys state positions in one space, and so may be compared at all.
+
+    **This is the whole of the fix, and it is deliberately not a normaliser.** Nothing here
+    converts a schedule key into a scene key or guesses which scene an Architect meant: a
+    record cannot be taken back (`record_id_for` is position-blind and the store is
+    `INSERT OR IGNORE`, so a corrected position does not even land), and a projection would put
+    this module in the business of authoring positions the world never declared. What it does
+    is refuse to compare two coordinates that do not measure the same thing.
+
+    A key in neither space compares with nothing, **including another key in neither space**.
+    Two words in the position slot are two unplaceable records, not two records at a shared
+    position, and treating them as ordered would re-enter the defect one address along.
+    """
+    space = key_space(key)
+    return space is not None and space == key_space(cutoff)
 
 
 @dataclass(frozen=True, slots=True)

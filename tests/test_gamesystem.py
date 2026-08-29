@@ -611,3 +611,120 @@ def test_a_written_down_system_is_a_coherent_world() -> None:
     """The records this module mints must satisfy the vocabulary they are written in; a system
     that made `worlds.validate` complain would be a system no world could hold."""
     assert worlds.validate(_seeded(_system())) == ()
+
+
+# ------------------------------------------------- finishing a drawn system (stage-0 §165)
+
+
+def _drawn_world(system: gs.SystemDef) -> list[lc.StateRecord]:
+    """The world an Architect can actually declare: everything but the two mint-only predicates.
+
+    §163.2 keeps `magnitude_scale` and `system_digest` out of `world vocabulary` on purpose, so
+    this is the most complete system a seed can reach through `world declare` — a ladder, an
+    issuer, governed capabilities and a prerequisite graph, and no scale.
+    """
+    return _canon(
+        [
+            record
+            for record in gs.records_for(system)
+            if record.predicate not in gs.CONFIGURATION_PREDICATES
+        ]
+    )
+
+
+def test_a_system_a_seed_could_actually_draw_is_invisible_before_it_is_finished() -> None:
+    """Serial Pilot 15's defect, at the point it bites: every clause true but the deciding one.
+
+    The world holds the system role, one governed criterion, a ladder and the graph.
+    `systems_of` requires a magnitude scale, the Architect has no documented way to write one,
+    and so the book is told it declares no game system at all.
+    """
+    world = _drawn_world(_system())
+    assert gs.systems_of(world) == ()
+    gap = genre.system_gap(world)
+    assert gap is not None and "declares no game system" in gap
+
+
+def test_accepting_a_drawn_system_mints_the_scale_its_own_numbers_imply() -> None:
+    """And exactly two records, both of them the ones only `records_for` can mint.
+
+    The structure is already in canon and is not re-declared; in particular no second
+    `status_sheet` is minted, because a book that declared its own would then have two and
+    `sheet_for` abstains to the generic line when it does.
+    """
+    world = _drawn_world(_system())
+    world.extend(
+        _canon([worlds.world_record("silas", worlds.CAN_DO, object_ref="seamsight", value=6)])
+    )
+    minted, reasons = gs.completion_records(world)
+    assert reasons == ()
+    assert {record.predicate for record in minted} == set(gs.CONFIGURATION_PREDICATES)
+    assert all(record.subject == "the_weave" for record in minted)
+    scale = next(record for record in minted if record.predicate == gs.MAGNITUDE_SCALE)
+    assert scale.value == {"label": "the Weave", "maximum": 6}
+    assert not any(record.predicate == "status_sheet" for record in minted)
+
+    finished = [*world, *_canon(list(minted))]
+    declared = gs.systems_of(finished)
+    assert len(declared) == 1
+    assert declared[0].scale.maximum == 6
+    assert gs.check_draw(declared[0]) == ()
+
+
+def test_the_depth_is_read_off_both_slots_and_never_invented() -> None:
+    """`can_do` says how far somebody has taken a capability and `requires` how far one must be
+    taken; a scale that did not contain both is one `check_draw` refuses on the world's own
+    numbers. The higher of the two wins because both are assertions this world already made."""
+    world = _drawn_world(_system())
+    world.extend(
+        _canon([worlds.world_record("silas", worlds.CAN_DO, object_ref="threadpull", value=4)])
+    )
+    minted, _ = gs.completion_records(world)
+    scale = next(record for record in minted if record.predicate == gs.MAGNITUDE_SCALE)
+    assert scale.value == {"label": "the Weave", "maximum": 4}
+
+
+def test_a_world_that_declared_no_depth_is_told_why_rather_than_given_a_default() -> None:
+    """The refusal that keeps this from authoring world facts.
+
+    A world whose capabilities are held-or-not never expressed a depth, and `MIN_SCALE_MAXIMUM`'s
+    own reason says a scale of one is a decoration. Minting one would invent the single dimension
+    the world declined to have, so the gap stays open and the reason is named.
+    """
+    world = _drawn_world(
+        _system(
+            abilities=(
+                gs.Ability("seamsight", "Seamsight"),
+                gs.Ability("threadpull", "Threadpull"),
+                gs.Ability("stillwater", "Stillwater", needs=(gs.Need("seamsight"),)),
+                gs.Ability("lanterncall", "Lanterncall", needs=(gs.Need("threadpull"),)),
+                gs.Ability("deepweave", "Deepweave", needs=(gs.Need("stillwater"),)),
+            )
+        )
+    )
+    minted, reasons = gs.completion_records(world)
+    assert minted == ()
+    assert len(reasons) == 1
+    assert "declares no depth" in reasons[0]
+    assert gs.systems_of(world) == ()
+
+
+def test_a_system_that_is_already_finished_is_left_alone() -> None:
+    """Idempotent, and the reason is the two-writers hazard: a second scale beside the drawn one
+    is exactly what §163.2 keeps the predicate undocumented to prevent."""
+    minted, reasons = gs.completion_records(_seeded(_system()))
+    assert minted == ()
+    assert reasons == ()
+
+
+def test_a_finished_system_whose_sheet_is_the_books_own_closes_the_gap() -> None:
+    """The whole point: a book that is a position in the system it declared has no gap left."""
+    world = _drawn_world(_system())
+    world.extend(_canon(list(gs.records_for_sheet(gs.starting_sheet(_system(), "silas")))))
+    world.extend(
+        _canon([worlds.world_record("silas", worlds.CAN_DO, object_ref="seamsight", value=3)])
+    )
+    minted, reasons = gs.completion_records(world)
+    assert reasons == ()
+    finished = [*world, *_canon(list(minted))]
+    assert genre.system_gap(finished) is None

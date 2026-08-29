@@ -1385,6 +1385,21 @@ def system_voice_example(
     return render_status_line(subject, values, sheet=sheet_for(records))
 
 
+def _folds_into(key: str | None, ceiling: str | None) -> bool:
+    """Whether a snapshot at `key` is part of the state standing at `ceiling`.
+
+    The un-keyed snapshot folds at every position — `status_snapshot`'s documented line calls it
+    *the state the book opens in* — and a positioned one folds only when its key is in the
+    ceiling's own space and at or before it. A ceiling that is itself un-keyed admits only the
+    un-keyed, which is what the old `or ""` arithmetic already did and the one case it got right.
+    """
+    if key is None:
+        return True
+    if ceiling is None:
+        return False
+    return state_mod.comparable(key, ceiling) and key <= ceiling
+
+
 def state_as_it_stands(
     records: Sequence[lc.StateRecord], *, at: str | None = None, include_at: bool = True
 ) -> tuple[str, dict[str, object]] | None:
@@ -1412,11 +1427,18 @@ def state_as_it_stands(
 
     A book whose snapshots each restate everything folds to exactly the latest one, which is
     every store written before this and both golden fixtures.
+
+    **The fold reads one order-key space, and reading two was Serial Pilot 15's finding**
+    (§165). `state_mod.comparable` is what says so: an un-keyed snapshot is the state the book
+    opens in and folds at every position, a snapshot in the ceiling's own space folds when it
+    is at or before it, and a snapshot in the *other* space is a declared schedule that this
+    book has not reached — canon, readable, and never folded as past. Before that rule the
+    ceiling itself could be a scheduled key, because `max` over mixed spaces picks by spelling.
     """
     latest = snapshot_at(records, at=at, include_at=include_at)
     if latest is None or not isinstance(latest.value, Mapping):
         return None
-    ceiling = state_mod.order_key_of(latest) or ""
+    ceiling = state_mod.order_key_of(latest)
     history = sorted(
         (
             record
@@ -1425,7 +1447,7 @@ def state_as_it_stands(
             and state_mod.is_canon(record)
             and record.subject == latest.subject
             and isinstance(record.value, Mapping)
-            and (state_mod.order_key_of(record) or "") <= ceiling
+            and _folds_into(state_mod.order_key_of(record), ceiling)
         ),
         key=lambda record: state_mod.order_key_of(record) or "",
     )
@@ -1454,6 +1476,11 @@ def snapshot_at(
     by the prose. Failing that, the latest one before it, which for a book still being written
     is the state the next scene continues from and for a book with nothing placed yet is the
     starting sheet.
+
+    **"Before it" is asked within one order-key space** (§165). A snapshot the Architect
+    scheduled at `0350` is not earlier than scene one because `'0350' < 's1'`; it is a position
+    in the other space, and the book has not reached it. `state_mod.comparable` decides, the
+    un-keyed snapshot stays eligible everywhere, and the schedule stays canon and unread here.
     """
     if not speaks_system_voice(records):
         return None
@@ -1475,13 +1502,26 @@ def snapshot_at(
         else []
     )
     earlier = [
-        record for record in snapshots if at is None or (state_mod.order_key_of(record) or "") < at
+        record
+        for record in snapshots
+        if at is None or _stands_before(state_mod.order_key_of(record), at)
     ]
     fallback = [record for record in snapshots if at is None] if not include_at else snapshots
     chosen = exact or earlier or fallback
     if not chosen:
         return None
     return max(chosen, key=lambda record: state_mod.order_key_of(record) or "")
+
+
+def _stands_before(key: str | None, at: str) -> bool:
+    """Whether a snapshot at `key` is one the book had already reached by `at`.
+
+    Un-keyed is the opening state and precedes every position. A positioned snapshot has to be
+    in `at`'s own space to be anywhere relative to it at all.
+    """
+    if key is None:
+        return True
+    return state_mod.comparable(key, at) and key < at
 
 
 def counted_names(
@@ -1563,11 +1603,32 @@ def movable_names(
     if character is not None:
         canon = [record for record in records if state_mod.is_canon(record)]
         systems = gamesystem_mod.systems_of(canon)
-        if len(systems) == 1:
+        if len(systems) == 1 and _system_prints_the_line(systems[0], records):
             sheet = gamesystem_mod.sheet_of(canon, character, system=systems[0], at=at)
             if sheet is not None:
                 return _named_moves(systems[0], gamesystem_mod.legal_moves(sheet))
     return counted_names(records, at=at)
+
+
+def _system_prints_the_line(
+    system: gamesystem_mod.SystemDef, records: Sequence[lc.StateRecord]
+) -> bool:
+    """Whether the declared system's columns are the columns this book actually prints.
+
+    **The system arm may only name what the writer can see** (§165). `counted_names` filters the
+    legacy arm to the fields the current snapshot fills, for the stated reason that a beat naming
+    a quantity absent from the line handed to the writer is a beat asking for a number out of
+    nowhere. The system arm had no matching guard because, until a drawn system could exist
+    beside a hand-declared sheet, the two could not disagree.
+
+    Serial Pilot 15 is the book where they do: its seed declared a sheet of `rung`, `reach`,
+    `carried` and `standing` **and** a system whose columns are the rung plus six capability ids,
+    and completing the system (`gamesystem.completion_records`) would otherwise have switched its
+    beats to naming abilities its status line does not print. `system_gap` reports exactly that
+    disagreement, so this guard and that gap close together: the beats come from the system
+    precisely when the book is a position in it.
+    """
+    return {field_.name for field_ in sheet_for(records).fields} == set(system.value_keys)
 
 
 def _named_moves(
