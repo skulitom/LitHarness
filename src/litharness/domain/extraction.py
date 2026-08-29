@@ -76,6 +76,7 @@ from hashlib import sha256
 
 import litharness_contracts as lc
 
+from litharness.domain import house as house_mod
 from litharness.domain import state as state_mod
 from litharness.domain import worlds as worlds_mod
 from litharness.domain.events import payload_digest
@@ -459,21 +460,107 @@ def parse_sheet(value: object) -> Sheet:
     return Sheet(tuple(fields))
 
 
+def label_for(key: str) -> str:
+    """A column label for a snapshot key the book never labelled.
+
+    Short keys uppercase and longer ones title-case, which is a rule rather than a lookup and
+    happens to be the genre's own convention: `hp` and `mp` are initialisms and so are `str`,
+    `dex` and `int`, while `attunement` and `soul_thread` are words. It reproduces
+    `DEFAULT_SHEET`'s four labels exactly from its four keys, which is what lets a derived
+    sheet be the same object for a book that used the default.
+    """
+    return key.upper() if len(key) <= 3 else key.replace("_", " ").title()
+
+
+def implied_sheet(records: Sequence[lc.StateRecord]) -> Sheet | None:
+    """The column form this book's own snapshots imply, or `None` where they imply none.
+
+    **This exists because the fallback was printing the operator's explicit not-this into
+    every book's drafting prompt** (§161). `DEFAULT_SHEET` is `Level | HP | MP | Gold`, and
+    the progression direction of 2026-08-21 is explicit that the model is abilities in a
+    graph and ranks with names and **not** HP/MP/Gold. A book that seeds
+    `{"attunement": 1, "threads": 2, "threads_max": 3}` and declares no sheet was shown
+    `[STATUS] sera — Level ? | HP ?/? | MP ?/? | Gold ?`: its own three quantities erased, four
+    clichés put in their place, and a question mark where every number should have been. Since
+    the declaring vocabulary was undocumented, that was every book.
+
+    So the columns are read off the book's own snapshots instead. Keys the parser cannot use
+    are dropped rather than guessed at — a key that is not an identifier cannot be a regex
+    group, and a value that is not a plain integer cannot be matched by `\\d+` — and `None` for
+    a book with nothing readable, which is the only case left where a caller falls back.
+
+    **The union across snapshots, in order of first appearance, and monotone on purpose.** A
+    system that grants a new quantity mid-book adds a column, and a sheet that could lose one
+    would stop parsing lines the book had already printed. Taking the union means the shape
+    only ever grows, which is the safe direction for a parser reading back prose that is
+    already on disk — and it is the genre's own direction, since what this reader collects is
+    what the person keeps.
+    """
+    snapshots = sorted(
+        (
+            record
+            for record in records
+            if record.predicate == STATUS_PREDICATE
+            and state_mod.is_canon(record)
+            and isinstance(record.value, Mapping)
+        ),
+        key=lambda record: state_mod.order_key_of(record) or "",
+    )
+    keys: list[str] = []
+    for record in snapshots:
+        assert isinstance(record.value, Mapping)
+        for key, value in record.value.items():
+            if not isinstance(key, str) or not key.isidentifier() or key in keys:
+                continue
+            if isinstance(value, bool) or not isinstance(value, int):
+                continue
+            keys.append(key)
+    known = set(keys)
+    fields = tuple(
+        SheetField(key, label_for(key), paired=f"{key}{MAX_SUFFIX}" in known)
+        for key in keys
+        if not (key.endswith(MAX_SUFFIX) and key[: -len(MAX_SUFFIX)] in known)
+    )
+    return Sheet(fields) if fields else None
+
+
 def sheet_for(records: Sequence[lc.StateRecord]) -> Sheet:
-    """The sheet this book declared, or the default.
+    """The sheet this book declared, the one its own snapshots imply, or the default.
 
     **Abstains when the book says more than one thing**, exactly as `attested_position` does:
     two declarations are a disagreement about the book's own vocabulary, and picking either
     would be this module choosing which of the author's answers is real.
+
+    **A book that declared nothing is now read rather than assumed** (§161, and
+    `implied_sheet` carries the measurement). The old fallback was `DEFAULT_SHEET`
+    unconditionally, which imposed `Level | HP | MP | Gold` on every book that had not
+    declared — and since the declaring vocabulary was undocumented, that was all of them. The
+    columns come off the book's own snapshots instead, so the line a writer is shown is the
+    line their book actually counts by.
+
+    **`DEFAULT_SHEET` survives as the answer for a book whose keys are its keys, and that is
+    what keeps every store on disk readable.** A snapshot holding exactly the default's six
+    value keys returns the default object itself rather than a derivation of it, so its
+    canonical column order is preserved rather than reconstructed from whatever order a
+    particular record's mapping happened to iterate in. Both golden fixtures are that book;
+    so is every store written before this function read anything. The default also remains
+    the answer for a book with no readable snapshot at all, which is a book
+    `speaks_system_voice` refuses and the genre floor blocks, so nothing is ever asked to
+    print it.
     """
     declared = [
         record
         for record in records
         if record.predicate == SHEET_PREDICATE and state_mod.is_canon(record)
     ]
-    if len(declared) != 1:
+    if len(declared) == 1:
+        return parse_sheet(declared[0].value)
+    if len(declared) > 1:
         return DEFAULT_SHEET
-    return parse_sheet(declared[0].value)
+    implied = implied_sheet(records)
+    if implied is None or set(implied.value_keys) == set(DEFAULT_SHEET.value_keys):
+        return DEFAULT_SHEET
+    return implied
 
 
 def impossible_fields(value: Mapping[str, object]) -> tuple[str, ...]:
@@ -1232,19 +1319,25 @@ __all__ = [
     "Sheet",
     "SheetField",
     "attested_position",
+    "counted_names",
     "extract_graph_facts",
     "extract_state",
     "graph_line_fault",
     "graph_line_for",
     "graph_record_id_for",
+    "implied_sheet",
+    "label_for",
+    "movable_names",
     "normalise_subject",
     "parse_graph_line",
     "parse_sheet",
     "promotions",
     "record_id_for",
     "sheet_for",
+    "snapshot_at",
     "standing_example",
     "standing_target",
+    "state_as_it_stands",
 ]
 
 
@@ -1274,6 +1367,83 @@ def system_voice_example(
     the state the next scene continues from, and for a book with nothing placed yet is the
     starting sheet.
     """
+    standing = state_as_it_stands(records, at=at, include_at=include_at)
+    if standing is None:
+        return None
+    subject, values = standing
+    return render_status_line(subject, values, sheet=sheet_for(records))
+
+
+def state_as_it_stands(
+    records: Sequence[lc.StateRecord], *, at: str | None = None, include_at: bool = True
+) -> tuple[str, dict[str, object]] | None:
+    """The subject and its whole state at `at`, folded forward across snapshots.
+
+    **A snapshot is not required to restate the sheet, and assuming it did was a live
+    exposure** (§161). `render_status_line` fills an absent key with `?`, so rendering one
+    partial snapshot puts a question mark on every column that scene did not touch — the same
+    defect `implied_sheet` was written against, arriving by a different door. The game system's
+    advancement records the edge that moved plus the snapshot it renders, and world-vocabulary
+    record ids are position-blind under an `INSERT OR IGNORE` store, so an unchanged holding
+    keeps the position where it was established rather than being rewritten at the new one.
+    Reading one record would therefore have shown the writer a sheet with holes in it wherever
+    the system worked correctly.
+
+    So the values are folded: every canon snapshot up to and including `at`, in order, later
+    values winning. That is not a new rule — it is the writer's own instruction (*"carry these
+    values forward unchanged unless this scene changes them"*) applied on this side, so the
+    line a writer is shown and the line a writer is asked to write are the same statement.
+
+    **Folded within one subject only.** The fold takes the subject of the snapshot that stands
+    at `at` and merges only that subject's snapshots; a book with two characters holding sheets
+    would otherwise have one of them shown the other's numbers. `snapshot_at` picks which
+    record stands, and its selection rule is unchanged.
+
+    A book whose snapshots each restate everything folds to exactly the latest one, which is
+    every store written before this and both golden fixtures.
+    """
+    latest = snapshot_at(records, at=at, include_at=include_at)
+    if latest is None or not isinstance(latest.value, Mapping):
+        return None
+    ceiling = state_mod.order_key_of(latest) or ""
+    history = sorted(
+        (
+            record
+            for record in records
+            if record.predicate == STATUS_PREDICATE
+            and state_mod.is_canon(record)
+            and record.subject == latest.subject
+            and isinstance(record.value, Mapping)
+            and (state_mod.order_key_of(record) or "") <= ceiling
+        ),
+        key=lambda record: state_mod.order_key_of(record) or "",
+    )
+    values: dict[str, object] = {}
+    for record in history:
+        assert isinstance(record.value, Mapping)
+        values.update(record.value)
+    return latest.subject, values
+
+
+def snapshot_at(
+    records: Sequence[lc.StateRecord], *, at: str | None = None, include_at: bool = True
+) -> lc.StateRecord | None:
+    """The canon status snapshot that stands at `at`, or `None`.
+
+    **Extracted from `system_voice_example` so a second reader of the same sheet cannot pick a
+    different one.** `counted_names` names the quantities the writer's scheduled beat may move,
+    and `system_voice_example` renders the line the writer is shown; a beat naming a quantity
+    that is not on the line the writer was handed would be this module answering one question
+    twice. The selection rule and its measured reason both live here now, once.
+
+    The rule is `system_voice_example`'s, unchanged: the snapshot *at* the position wins,
+    because a model shown a line will use its numbers and an imported book holds a snapshot for
+    every position at once — showing scene six's balance while asking for scene one invents a
+    state the integrity gate then refuses, and a refusal caused by the instruction rather than
+    by the prose. Failing that, the latest one before it, which for a book still being written
+    is the state the next scene continues from and for a book with nothing placed yet is the
+    starting sheet.
+    """
     if not speaks_system_voice(records):
         return None
     snapshots = [
@@ -1300,5 +1470,76 @@ def system_voice_example(
     chosen = exact or earlier or fallback
     if not chosen:
         return None
-    latest = max(chosen, key=lambda record: state_mod.order_key_of(record) or "")
-    return render_status_line(latest.subject, latest.value, sheet=sheet_for(records))
+    return max(chosen, key=lambda record: state_mod.order_key_of(record) or "")
+
+
+def counted_names(
+    records: Sequence[lc.StateRecord], *, at: str | None = None
+) -> tuple[str, ...]:
+    """The names this book's own system counts by, in the order its sheet prints them.
+
+    **This is the book's vocabulary, read off canon, and this module mints none of it.** The
+    labels come from the sheet the book declared (or, for a book that declared none, from the
+    default line this module shipped with), filtered to the fields the book's *current*
+    snapshot actually holds a value for. A book whose sheet declares a column it never fills
+    does not get that column named, because a beat naming a quantity the writer cannot see on
+    the line handed to it is a beat asking for a number out of nowhere.
+
+    **Empty is the control and it is the common case for everything written before a sheet
+    existed.** A book that speaks no system voice returns `()`, and every caller composes the
+    unnamed form it composed before this function existed.
+
+    **`MACHINERY_WORDS` are dropped, and the reason is `genre.BEAT`'s own** (§155.3): this
+    vocabulary is composed into a scene plan, the scene plan reaches the writer, and §120
+    measured `standing` reaching a chapter as prose when repo vocabulary got that far. A label
+    is book data rather than house text, so no ceiling test covers it; the filter is where the
+    guarantee has to live. A book whose every label collides falls back to the unnamed form,
+    which is the correct failure — the schedule still fires and names nothing.
+    """
+    standing = state_as_it_stands(records, at=at)
+    if standing is None:
+        return ()
+    held = set(standing[1])
+    return tuple(
+        field_.label
+        for field_ in sheet_for(records).fields
+        if field_.name in held and field_.label.casefold() not in house_mod.MACHINERY_WORDS
+    )
+
+
+def movable_names(
+    records: Sequence[lc.StateRecord], *, character: str | None = None, at: str | None = None
+) -> tuple[str, ...]:
+    """What the scheduled progression beat may name as moving here, in declaration order.
+
+    **The one source of beat vocabulary, and it has two arms with no mode flag** — the
+    recognition ratchet is the mode, which is the shape Track 1's game system and §158's
+    status-snapshot recognition already share. Every caller asks this one question; nothing
+    downstream branches on what kind of book it got.
+
+    *The legacy arm*, live and below: a book with no game system is named by the columns its
+    own status line prints (`counted_names`). It is a superset — a label is a quantity that
+    exists, which is not the same claim as a quantity that may move next — and a superset is
+    the right error for a book whose system was never modelled, because the alternative for
+    such a book is the categorical `genre.BEAT` and read 8 §4.2 measured what a category buys.
+
+    *The system arm*, on rebase over Track 1: where `gamesystem.systems_of(records)` returns
+    exactly one system, the answer is
+    `gamesystem.legal_moves(gamesystem.sheet_of(records, character, at=at))` rendered to
+    names, in the declaration order that accessor already returns them in. That arm is
+    strictly better and not merely different: it knows an ability whose prerequisite is unmet
+    is **not** offered, which a label cannot know, so it stops the schedule naming a move the
+    book cannot make. It ranks nothing and this function must not make it rank anything
+    (§61(5)) — declaration order is the book's own order, and `genre.beat_text` rotates
+    through it by schedule position for exactly that reason.
+
+    Two systems is an abstention rather than a choice, on `sheet_for`'s own precedent: two
+    declarations are a disagreement about the book's own vocabulary, and picking either would
+    be this module deciding which of the author's answers is real. Such a book falls to the
+    legacy arm, which is a description of what it prints rather than a claim about what it
+    can do.
+
+    `character` is the protagonist the sheet belongs to; the legacy arm has no use for it,
+    because a status line has one subject and `snapshot_at` already picked it.
+    """
+    return counted_names(records, at=at)

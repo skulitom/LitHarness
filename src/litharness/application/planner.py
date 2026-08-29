@@ -89,6 +89,7 @@ from litharness.domain.draft import DraftPolicy, is_draftable
 from litharness.domain.events import payload_digest
 from litharness.domain.extraction import (
     graph_line_for,
+    movable_names,
     progression_target,
     standing_example,
     standing_target,
@@ -367,12 +368,32 @@ def render_prompt(
         # Values as well as shape. A model asked for a status line with no numbers in view
         # invents them, and an invented balance is a contradiction the gate refuses and the
         # repair loop pays for.
+        #
+        # **The line moved off the scene's end and onto the change, and that is §161's
+        # furniture contract.** It used to read "End the scene with a status line in this
+        # form", which is a footer: a scene could advance the sheet in its prose and report
+        # the result after the reader had already left the moment. Read 8 §4.2 measured what
+        # a progression that happens off the furniture becomes — §157's beats fired twice on
+        # schedule in pilot 14 and both landed as guild promotions, narrated. A number that
+        # moves where the reader cannot see the system say so has not moved for the reader.
+        #
+        # **"Exactly once" is load-bearing and it is not tidiness.** `extract_state`
+        # runs `sheet.pattern.finditer` over the scene and mints one ACCEPTED_CANON record
+        # per match, all at the same `order_key` — so a scene printing the line before and
+        # after a change writes two canon snapshots that disagree at one position, which is
+        # precisely the shape `integrity.detect_contradictions` groups on. Asking for the
+        # line at the moment of change *and* at the scene's end would have manufactured the
+        # contradictions the gate then refuses and the repair loop pays for. One line per
+        # scene keeps the read-back single-valued, and the placement rule decides where the
+        # one goes: at the change if there is one, at the end if there is not, so the
+        # guaranteed emission the footer form bought is not given up to get the placement.
         system += (
-            " This book states its game state on the page. End the scene with a status line "
-            f"in this form, which is the state as it stands:\n{status_example}\n"
-            "Write the character's name as your prose spells it, carry these values forward "
-            "unchanged unless this scene changes them, and write the numbers the scene "
-            "leaves true."
+            " This book states its game state on the page, in this form, which is the state "
+            f"as it stands:\n{status_example}\n"
+            "Print that line exactly once: where one of its numbers changes, or at the "
+            "scene's end if none of them does. Write the character's name as your prose "
+            "spells it, carry these values forward unchanged unless this scene changes "
+            "them, and write the numbers the scene leaves true."
         )
         if progression:
             # **The instruction above defaults to stasis, and a model with no reason to
@@ -439,10 +460,42 @@ def render_prompt(
         # *judges*, which is closer to how to write the book than to what happened in it.
         # Putting it under "established and may be relied on" would invite the scene to
         # state the ladder rather than to show somebody moving up it.
+        #
+        # **Re-aimed 2026-08-29 as §161, and this is read 4's suppressor 2.** It read "a
+        # scene that changes where someone stands must show the change rather than announce
+        # it — a rank is something a reader sees, never something a narrator reports", and
+        # read 4's analysis of *A Good Take* named it one of three standing instructions
+        # actively suppressing the thing the operator keeps asking for: "a standing
+        # prohibition on printing the ladder". It was written against told-not-shown (§5 item
+        # 11) and it is defensible at that target; what it could not do is tell a narrator's
+        # summary apart from the book's own printed furniture, and both arrive in this same
+        # system message.
+        #
+        # **The repair narrows the prohibition's object rather than adding an exemption.** A
+        # carve-out written as its own demand would be a permission, and §138 measured a
+        # permission-only clause returning more than six times what a prohibition-only one
+        # did, worse than silence. So the object shrinks from "a narrator reports a rank" to
+        # "a narrator reports a rank whose change the reader was never shown" — which is the
+        # failure §5 item 11 actually named — and the printed line falls outside it.
+        #
+        # **The furniture is then named anyway, and the reason it is affordable is where it
+        # sits.** Four books running have failed the same way, so leaving the exemption
+        # implicit was worth less than saying it; `house.demands` splits on sentence
+        # terminators and a line break, so hanging it off a semicolon inside the same
+        # sentence names the exemption at a cost of zero demands. It is also delimiting
+        # rather than permitting — it says what the prohibition does not reach, and licenses
+        # no token the `status_example` block above has not already asked for by name.
+        #
+        # **What went with it was an affirmative half that is carried twice over already.**
+        # "Must show the change rather than announce it" is the `standing` block four lines
+        # up ("do not move it for no reason on the page") and `standing_line` right after it
+        # ("when the standing changes, print the line in this form"). §138's reading is that
+        # the prohibition half is the half that gets obeyed; the affirmative half here was
+        # redundant with two better-addressed demands.
         system += (
-            "\nThis world judges people by the following, and a scene that changes where "
-            "someone stands must show the change rather than announce it — a rank is "
-            "something a reader sees, never something a narrator reports:\n"
+            "\nThis world judges people by the following, and what fails is a narrator "
+            "reporting a rank whose change the reader was never shown; the line the book "
+            "itself prints is not that:\n"
             f"{criteria}"
         )
     # **Transport authority now agrees with author authority.** Constraints used to sit in
@@ -1038,11 +1091,26 @@ def make_plan_selector(
                     # reach (pilot 14 §3). `with_beat("")` is the bare beat on a scheduled
                     # ordinal and `""` (which renders nothing) everywhere else; gated on
                     # `outline` so the §54 control arm still reproduces the pre-plan prompt.
+                    # **`counts` is the book's own word for what moves in it** (§161), and
+                    # `movable_names` is the one place that question is answered — the
+                    # recognition ratchet is the mode, so nothing here branches on what kind
+                    # of book this is. Read at the position being drafted, so the quantity
+                    # the plan names is one the writer can see on the line it was handed.
+                    # `()` for every book that speaks no system voice, which composes the
+                    # unnamed `BEAT` and is byte-identical to what this call site rendered
+                    # before.
                     scene_plan=(
                         plan_item.text
                         if plan_item is not None
                         else (
-                            genre.with_beat("", beat.ordinal, beat.of_total)
+                            genre.with_beat(
+                                "",
+                                beat.ordinal,
+                                beat.of_total,
+                                counts=movable_names(
+                                    records, character=pov_id, at=beat.story_order_key
+                                ),
+                            )
                             if outline
                             else None
                         )

@@ -545,7 +545,10 @@ def test_the_outline_becomes_readable_plan_items_through_the_handler(
         # progression beat, folded in by `genre.with_beat` rather than asked of the model.
         assert item.text.startswith(DISTINCT[index - 1])
         scheduled = index in genre.beat_ordinals(len(beats))
-        assert (genre.BEAT in item.text) is scheduled, (
+        # `BEAT_TAIL`, not `BEAT`: §161 gave the beat a second form that names the quantity
+        # that moves, and this book's fixture sheet has one. The question here is whether
+        # the SCHEDULE fired, which is the tail either form ends with.
+        assert (genre.BEAT_TAIL in item.text) is scheduled, (
             f"scene {index} {'should' if scheduled else 'should not'} carry the beat"
         )
         if not scheduled:
@@ -902,12 +905,12 @@ def test_the_beat_fires_at_six_scenes_where_no_outline_ever_runs(
     assert job.payload["logical_id"] == f"scene-{ordinal}"
     prompt = str(job.payload["prompt"])
     if ordinal in genre.beat_ordinals(6):
-        assert genre.BEAT in prompt
-        assert prompt.rstrip().endswith(genre.BEAT), (
+        assert genre.BEAT_TAIL in prompt
+        assert prompt.rstrip().endswith(genre.BEAT_TAIL), (
             "the beat renders last, exactly where a stored scene plan renders"
         )
     else:
-        assert genre.BEAT not in prompt
+        assert genre.BEAT_TAIL not in prompt
         assert "This scene:" not in prompt, "an unscheduled scene keeps the bare prompt"
 
 
@@ -948,7 +951,7 @@ def test_the_schedule_is_reachable_at_every_length_the_pipeline_takes(
     assert job is not None
     assert job.job_kind != BOOK_OUTLINE
     assert job.payload["logical_id"] == "scene-1"
-    assert genre.BEAT in str(job.payload["prompt"])
+    assert genre.BEAT_TAIL in str(job.payload["prompt"])
 
 
 def test_the_control_arm_holds_back_the_scheduled_beat_too(store: SqliteStore) -> None:
@@ -968,7 +971,7 @@ def test_the_control_arm_holds_back_the_scheduled_beat_too(store: SqliteStore) -
     assert job is not None
     assert job.job_kind != BOOK_OUTLINE
     prompt = str(job.payload["prompt"])
-    assert genre.BEAT not in prompt
+    assert genre.BEAT_TAIL not in prompt
     assert "This scene:" not in prompt
 
 

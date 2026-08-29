@@ -300,10 +300,36 @@ EVERY = 2
 #: counting"*, which would have written a male protagonist into the plan of every scheduled
 #: scene of every book this house drafts, whoever the book is actually about. A scheduled item
 #: that reaches every book may not assume anything about who is in it.
-BEAT = (
-    "One of the numbers this book counts moves here, and the person it belongs to is there "
-    "when it does."
-)
+#: What both forms of the beat end with, and therefore the one string that answers "did the
+#: schedule fire here" without knowing which form fired. Broken out when §161 gave the beat a
+#: second form: a caller asking whether a scene carries a beat is asking about the schedule,
+#: not about whether this particular book had a vocabulary to name, and a test that matched on
+#: `BEAT` whole would have gone red on every book that did.
+BEAT_TAIL = "moves here, and the person it belongs to is there when it does."
+
+BEAT = f"One of the numbers this book counts {BEAT_TAIL}"
+
+#: The same beat with the book's own word for the thing that moves in it. **The one change
+#: §161 makes to this schedule, and it is addressability rather than emphasis** (§154): `BEAT`
+#: above names a *category* — "one of the numbers this book counts" — and read 8 §4.2 measured
+#: what a category buys. §157's beats fired on schedule twice in pilot 14 and the writer put
+#: the progression into guild paperwork ranks, because a scheduled item that does not name
+#: which quantity moves is satisfied by whichever ladder the world declared loudest, and the
+#: world's loudest ladder was a bureaucracy. The beat asked for progression and got a
+#: promotion. Naming the quantity is what closes that: `Windread moves here` can be satisfied
+#: by exactly one thing, and a guild glass is not it.
+#:
+#: **The name is book data and this module invents none of it.** `extraction.counted_names`
+#: reads the labels off the sheet the book declared, filtered to the fields its current
+#: snapshot actually holds — so the word in the plan is the same word on the status line the
+#: writer is handed, and a book that counts nothing gets `BEAT` unchanged, which is the
+#: control every book written before a sheet existed sits in.
+#:
+#: Held to `BEAT`'s two constraints, both of which were paid for: pronoun-free (§155.3's first
+#: draft would have written a male protagonist into every scheduled scene of every book), and
+#: no quality word anywhere — it says a named thing moves and the person it belongs to is
+#: present, which is a fact a scene either contains or does not.
+NAMED_BEAT = f"{{name}} {BEAT_TAIL}"
 
 
 def beat_ordinals(total: int, *, every: int = EVERY) -> frozenset[int]:
@@ -323,7 +349,41 @@ def beat_ordinals(total: int, *, every: int = EVERY) -> frozenset[int]:
     return frozenset({1, *range(1 + every, total + 1, every)})
 
 
-def with_beat(statement: str, ordinal: int, total: int, *, every: int = EVERY) -> str:
+def beat_text(
+    ordinal: int, total: int, *, counts: Sequence[str] = (), every: int = EVERY
+) -> str:
+    """The beat sentence a scheduled scene carries, in this book's own vocabulary.
+
+    `counts` is what this book's system counts, in the order its sheet prints them —
+    `extraction.counted_names` is the reader, and `()` is the control that yields `BEAT`
+    unchanged.
+
+    **Which name a given beat takes is a rotation through the schedule, and it is a schedule
+    rather than a choice.** The index is the beat's position in `beat_ordinals`, not its scene
+    ordinal: at `EVERY = 2` the scheduled ordinals are 1, 3, 5, 7, so indexing by ordinal on a
+    four-column sheet would reach columns 0 and 2 only and never name the other two. Position
+    cycles all of them. That this is arithmetic and not a preference matters under §61(5) — no
+    model ranks the book's quantities, and nothing here decides which of them is the important
+    one, because a schedule is the only mechanism this project has that makes a rhythm regular
+    (§155.1's third reading) and it is the mechanism the caller already trusts for *when*.
+
+    Callers pass a `counts` read at the position being drafted, so a book whose sheet grows a
+    column mid-manuscript starts naming it from the scene it appears in and not before.
+    """
+    if not counts:
+        return BEAT
+    position = sorted(beat_ordinals(total, every=every)).index(ordinal)
+    return NAMED_BEAT.format(name=counts[position % len(counts)])
+
+
+def with_beat(
+    statement: str,
+    ordinal: int,
+    total: int,
+    *,
+    counts: Sequence[str] = (),
+    every: int = EVERY,
+) -> str:
     """One scene's plan text, with the progression beat appended where it is scheduled.
 
     Appended rather than prepended: the outline's own statement is what this scene is *about*,
@@ -331,28 +391,37 @@ def with_beat(statement: str, ordinal: int, total: int, *, every: int = EVERY) -
     scheduled scene read as a progression scene first and its own story second.
 
     **An empty statement is a contract, not an edge case.** A scheduled scene with no
-    statement gets the bare `BEAT`; an unscheduled one stays empty, which renders nothing.
+    statement gets the bare beat; an unscheduled one stays empty, which renders nothing.
     That pair is what lets the drafting path pass `""` for a book that never takes an
     outline — a six-scene book has six distinct dramatic functions, so `needs_outline`
     never holds and the fold in `outline_proposal` is unreachable there (pilot 14 §3
     measured the schedule dead at exactly the standard pilot length). Both call sites
     compose the sentence through this one function, so the two paths cannot drift.
+
+    **`counts` defaults to empty so an unwired caller is byte-identical to what it was.** That
+    is not politeness: `outline_proposal` and the drafting selector are two call sites for one
+    schedule, and a default that changed behaviour would let them disagree about what a
+    scheduled scene says while both looking correct.
     """
     if ordinal not in beat_ordinals(total, every=every):
         return statement
+    beat = beat_text(ordinal, total, counts=counts, every=every)
     stripped = statement.strip()
     if not stripped:
-        return BEAT
+        return beat
     joiner = " " if stripped.endswith((".", "!", "?")) else ". "
-    return f"{stripped}{joiner}{BEAT}"
+    return f"{stripped}{joiner}{beat}"
 
 
 __all__ = [
     "BEAT",
+    "BEAT_TAIL",
     "EVERY",
     "HOUSE_GENRE",
+    "NAMED_BEAT",
     "NO_SHEET",
     "beat_ordinals",
+    "beat_text",
     "genre_block",
     "has_starting_sheet",
     "system_gap",
