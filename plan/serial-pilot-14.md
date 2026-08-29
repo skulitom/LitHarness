@@ -434,8 +434,9 @@ cost $3.61; the six-scene dead spot is what bought that, and §3 is what it boug
   an existing book cannot make a renderable snapshot.
 - **A `--state` passthrough on `listing --scenes`**, or any way for the loop that creates a book to
   seed one, so the floor's own named paths are reachable from the path pilots use.
-- **An operator surface for `blocked_reason`** (§7), so a floored book says why instead of
-  reporting `no_work`.
+- ~~**An operator surface for `blocked_reason`** (§7), so a floored book says why instead of
+  reporting `no_work`.~~ **Paid, same day: stage-0 §159 — `litharness status` renders each
+  blocked book's reason, computed with the drafting loop's own selector parameters.**
 - **`world retract`** (§5), still absent, and still the reason a mis-claimed id is permanent.
 - **The continuity evaluator** on a book that states game state (§7) — the advisory prints and
   nothing sets the command.
