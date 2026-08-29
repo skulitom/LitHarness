@@ -434,3 +434,46 @@ one point, not a trend. One observation worth a line: the set's *brightest* cove
 neither substitutes for the click question only the operator answers. Arithmetic on pixels,
 a description, never a threshold and never a quality claim (§61); no model ranked the four
 (§84 — all four ship, the choice is the reader's).
+
+## Read 9 arrives mid-read, and its first item is one the gate passed
+
+**Defect harvest, not data (§95); the read may still be streaming and later items fold in
+here.** The operator, 2026-08-29, verbatim:
+
+> *"I feel like the book is currently too superfocused on details, rather than story. there
+> is several paragraphs of multiple people talking about a dent on a kettle, which
+> apparently doesn't matter"*
+
+**Measured first.** Scene 1 runs 943 words. The arrival-and-dent business — Tace's entrance
+through *"It hasn't," Hanne agreed* — is 252 of them, 27% of the scene, spread across three
+speakers (the relayed message, the inspection paragraph, the confirmation), before the
+scene's first story move (the touch). The text itself rules the object trivial in four
+words: *"The dent was nothing."*
+
+**Routing: direction gap, with our own instruction text as the first suspect (§116's
+shape).** Nothing anywhere asks for narrative economy — no directive says what a scene may
+NOT dramatize, so nothing forbade this. But the sharper candidate is causal: the re-aimed
+seen-never-announced clause demands facts arrive dramatized rather than stated, and the dent
+conversation is exactly that machinery running — it exists to *show* "the patch held since
+spring" without announcing it. A discipline that turns every load-bearing fact into a
+staged delivery conversation will spend paragraphs on pretext objects at parity with the
+beat they serve. Whether that clause, the plan's silence on economy, or the entrance-default
+opening is the mechanism is the fix track's first question, answered from the packet and
+run records, not from this guess.
+
+**The class is house-level.** Read 5 (*"repetition of known info"*, ferreira), read 7
+(*"useless information"*, larkin), read 9 (this, penhale): three writers, three worlds, one
+shape — words spent on material whose story consequence is not legible on the page. The
+number-surface half of this was fixed by §160–§167; the attention-surface half was never
+addressed by anything.
+
+**And the gate missed it, which is recorded against the gate, not excused.** The
+coordinator's read passed this scene, reading the dent as covert setup doing trust-economy
+work. The operator's item corrects the gate's definition: function the reader cannot see
+working *is* trivia, whatever it smuggles. The cumulative gate checklist gains an attention
+item — no scene spends paragraphs on material whose story consequence isn't legible where
+it stands.
+
+**Instrument question, noted and not opened:** nothing counts story-consequence density,
+and a code-only key for it is not obvious; it goes to the battery families through
+`BRIEF.md` or it does not go at all. No fix is designed in this entry.
