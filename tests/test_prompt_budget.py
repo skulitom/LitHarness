@@ -26,11 +26,23 @@ were themselves reading for *"what the next rung costs"*, so they scored the jar
 from __future__ import annotations
 
 import json
+from typing import Any
 
 import pytest
 
-from litharness.application import overview, readers, recruiter, revoice, titles, world_agent
+from litharness.application import (
+    overview,
+    planner,
+    readers,
+    recruiter,
+    revoice,
+    titles,
+    world_agent,
+)
 from litharness.cli import EXIT_OK, _prompt_pressure, main
+from litharness.domain import beats as beats_domain
+from litharness.domain import context as context_domain
+from litharness.domain import extraction as extraction_domain
 from litharness.domain import house
 from litharness.domain import voice as voice_domain
 from litharness.domain import writers as writers_domain
@@ -256,6 +268,168 @@ def test_the_house_floor_is_the_thing_that_grows_everywhere_at_once() -> None:
     assert len(counted) <= HOUSE_BUDGET, (
         f"the house floor now makes {len(counted)} demands against {HOUSE_BUDGET}, and every "
         "role that stands on it just grew by the same amount"
+    )
+
+
+# ---------------------------------------------------------------------------
+# The conditional region of the scene prompt — §161.8's named gap.
+#
+# The two scene rows above are the floor and the floor plus a dossier, and everything
+# `planner.render_prompt` appends *per book state* — the status-line ask, the progression
+# milestone, the standing schedule, its printed-line form, the length ask, the criterion brief —
+# sat outside every row in `BUDGET`. Three tracks edited clauses in that region in one week and
+# each computed its before-and-after by hand, which is this file's founding failure one level
+# down: text that is sent and that no number describes.
+# ---------------------------------------------------------------------------
+
+#: The smallest inputs `render_prompt` accepts. The conditional region lives entirely in the
+#: system message and everything book-shaped lives in the prompt, so an empty packet loses
+#: nothing this file measures. It also renders **no locked block**, which is a decision rather
+#: than a convenience: `render_constraints` grows one line per locked item, so a ceiling over it
+#: would be a ceiling on how much a director may lock — book data, not rule text, and rule text
+#: is what this file ceilings.
+_BEAT = beats_domain.Beat(
+    logical_id="s1",
+    ordinal=1,
+    of_total=1,
+    title=None,
+    function="setup",
+    template_id=beats_domain.SIX_BEAT.template_id,
+)
+
+_PACKET = context_domain.ContextPacket(
+    query_id="prompt-budget",
+    target_logical_id="s1",
+    book_id="book",
+    branch_id="main",
+    base_revision_id="r0",
+)
+
+#: Payloads with the shape the real extractors produce and none of their provenance —
+#: `DESCRIPTOR`'s convention. The two status lines go through `render_status_line` itself, so
+#: the default sheet's shape cannot drift away from what this file measures; the other three
+#: are written to their renderers' documented one-line forms (`standing_target`'s sentence,
+#: `GraphLine.render`, `criterion_brief`'s `- criterion: comparator — ladder` line).
+#:
+#: **Every payload is held to one line, and that is the convention rather than an accident.**
+#: `house.demands` counts what the payload occupies, so a brief with three declared criteria
+#: costs two more than this fixture does. That spend is the book's — it scales with what a world
+#: declares, not with what anybody wrote in `planner.py` — and a ceiling that moved when a world
+#: declared a second criterion would be a ceiling on worlds. One line prices the instruction
+#: clauses plus the payload's floor, which is the half a track editing clauses can change.
+_STATUS_EXAMPLE = extraction_domain.render_status_line(
+    "Kestrel", {"level": 3, "hp": 18, "hp_max": 20, "mp": 6, "mp_max": 10, "gold": 12}
+)
+_PROGRESSION = extraction_domain.render_status_line(
+    "Kestrel", {"level": 4, "hp": 20, "hp_max": 20, "mp": 8, "mp_max": 10, "gold": 30}
+)
+_STANDING = "Kestrel stands at courier (1 of 3); the book's plan has them at gate-runner (2 of 3)"
+_STANDING_LINE = "[STANDING] Kestrel stands at courier"
+_CRITERIA = "- guild_rank: outranks — courier then gate-runner then warden"
+
+
+def _scene_system(**conditionals: Any) -> str:
+    """The system message the planner actually assembles, through the live path."""
+    system, _prompt = planner.render_prompt(
+        _BEAT, book_title=None, packet=_PACKET, **conditionals
+    )
+    return system
+
+
+#: Each block against the smallest prompt that can carry it, because two of the branches are
+#: nested: `progression` renders only inside `status_example`'s branch and `standing_line` only
+#: inside `standing`'s, so their cost is measured over a base that already pays for the parent.
+_CONDITIONAL_ARMS: dict[str, tuple[dict[str, Any], dict[str, Any]]] = {
+    "status_example": ({}, {"status_example": _STATUS_EXAMPLE}),
+    "progression": ({"status_example": _STATUS_EXAMPLE}, {"progression": _PROGRESSION}),
+    "standing": ({}, {"standing": _STANDING}),
+    "standing_line": ({"standing": _STANDING}, {"standing_line": _STANDING_LINE}),
+    "target_words": ({}, {"target_words": 900}),
+    "criteria": ({}, {"criteria": _CRITERIA}),
+}
+
+#: **Measured 2026-08-29 and set at what was there**, the ratchet this file exists to be: this
+#: change raises nothing, and a ceiling here moves only in a later, deliberate commit with the
+#: reason written down. The counts are marginal demands — what the branch adds to its base arm —
+#: because that is the number the three tracks were computing by hand, and each is the
+#: instruction's clauses plus one line of payload under the one-line convention above.
+SCENE_CONDITIONAL_BUDGET: dict[str, int] = {
+    "status_example": 4,
+    "progression": 3,
+    "standing": 3,
+    "standing_line": 2,
+    "target_words": 3,
+    "criteria": 2,
+}
+
+#: The whole assembled scene prompt — floor plus every conditional present — which until now had
+#: no number anywhere. **43 rather than the 44 the rows sum to, and the difference is real
+#: rather than rounding**: the length ask is appended with a leading space, so when the standing
+#: line's unterminated `[STANDING] …` tail is the text before it, `house.demands` reads the two
+#: as one clause. The assembly is what a model is sent, so the assembly is what is priced. The
+#: cast dossier is not in this row because its four demands are already the gap between the two
+#: scene rows in `BUDGET`; measured with it, the total is 47, exactly additive.
+SCENE_MAXIMAL_BUDGET = 43
+
+
+def test_the_scene_floor_row_is_what_the_planner_actually_assembles() -> None:
+    """The floor row above is a copy of `render_prompt`'s opening string, and copies drift.
+
+    Until now nothing tied the copy to the live path: a track rewording the floor inside
+    `planner.py` would leave `BUDGET`'s row measuring a prompt nobody sends, which is this
+    file's founding failure wearing the file's own clothes.
+    """
+    assert _scene_system() == _roles()["scene writer floor"]
+
+
+@pytest.mark.parametrize("block", sorted(SCENE_CONDITIONAL_BUDGET))
+def test_a_scene_conditional_block_stays_inside_its_declared_budget(block: str) -> None:
+    """No conditional branch grows without somebody choosing to let it.
+
+    §161.5 edited two clauses in this region and had to prove demand-neutrality by hand;
+    §161.8 named the absence of these rows as a live gap. The marginal count is computed over
+    the live assembly path, so a clause added to a branch in `planner.py` lands here the same
+    way a clause added to `house` lands in every role row.
+    """
+    base_kwargs, block_kwargs = _CONDITIONAL_ARMS[block]
+    base_text = _scene_system(**base_kwargs)
+    block_text = _scene_system(**base_kwargs, **block_kwargs)
+    # The branch appends, so the base survives verbatim and the subtraction below is the
+    # block's own cost rather than a difference between two unrelated prompts.
+    assert block_text.startswith(base_text)
+    added = len(house.demands(block_text)) - len(house.demands(base_text))
+    assert added >= 1, (
+        f"the {block} branch rendered nothing, so this row is measuring an absence — "
+        "if the branch moved or was renamed, move this arm with it"
+    )
+    assert added <= SCENE_CONDITIONAL_BUDGET[block], (
+        f"the scene prompt's {block} block now adds {added} demands against a budget of "
+        f"{SCENE_CONDITIONAL_BUDGET[block]}. Take one out, or raise the budget here and say "
+        "why. Every demand in this block rides every scene call of every book that declares "
+        "the state it describes."
+    )
+
+
+def test_the_maximal_assembled_scene_prompt_stays_inside_its_declared_budget() -> None:
+    """The largest prompt a scene drafter can be sent finally has a number.
+
+    Floor plus every conditional, through the live path. This is the total the per-block rows
+    cannot see: blocks join with spaces and newlines, and what a model reads is the join.
+    """
+    counted = house.demands(
+        _scene_system(
+            status_example=_STATUS_EXAMPLE,
+            progression=_PROGRESSION,
+            standing=_STANDING,
+            standing_line=_STANDING_LINE,
+            target_words=900,
+            criteria=_CRITERIA,
+        )
+    )
+    assert len(counted) <= SCENE_MAXIMAL_BUDGET, (
+        f"the maximal assembled scene prompt now makes {len(counted)} demands against a "
+        f"budget of {SCENE_MAXIMAL_BUDGET}. Take one out, or raise the budget here and say "
+        "why.\n" + "\n".join(f"  {index + 1:2d}. {item}" for index, item in enumerate(counted))
     )
 
 

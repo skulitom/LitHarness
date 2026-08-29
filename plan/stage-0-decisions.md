@@ -16769,7 +16769,8 @@ measures `house.with_house_rules(...)` — the floor and the cast writer — and
 every row in `BUDGET`. Both clauses edited here live in that unmeasured region, which is why
 their before-and-after was computed by hand above. Extending the ceiling table to the assembled
 conditional prompt is a real gap and was not taken here: it is a change to a file several tracks
-edited this week, and it wants its own decision rather than a rider on this one.
+edited this week, and it wants its own decision rather than a rider on this one. **Taken as §164
+on 2026-08-29: every branch now has a marginal ceiling and the maximal assembly has a number.**
 
 ### 161.9 Anti-scope
 
@@ -17086,3 +17087,68 @@ sentence, so the demand count is unchanged at 44 against the ceiling this entry 
 **Still not measured.** Everything above is a documentation and prompt change graded by tests. No
 world has been seeded under it, and no claim is made that an Architect holding these lines
 declares a system, or a better one.
+
+## 164. The conditional region of the scene prompt had six branches and no number, and the whole assembled prompt measures at 43 demands
+
+§161.8 named the gap and declined to close it as a rider. `tests/test_prompt_budget.py` measured
+`house.with_house_rules(...)` — the floor, and the floor plus a dossier — while every branch
+`application/planner.py` appends per book state (`status_example`, its nested `progression`,
+`standing`, its nested `standing_line`, `target_words`, `criteria`) sat outside every row in
+`BUDGET`. Three tracks edited clauses in that region in one week and each proved its
+demand-neutrality by hand — §161.5 did it in the entry's own prose — which is the suite's
+founding failure one level down: text that is sent, and no number anywhere describing it.
+
+### 164.1 Measured first, and every ceiling set at what was there
+
+Through the live path — `planner.render_prompt` with a minimal beat and an empty packet,
+one-line payloads in the real renderers' shapes — on 2026-08-29:
+
+- The floor assembles at 27 demands under its existing ceiling of 28, and is now pinned
+  byte-identical to the `BUDGET` row that until today was an unchecked copy of it.
+- The six branches add 4 (`status_example`), 3 (`progression`), 3 (`standing`), 2
+  (`standing_line`), 3 (`target_words`) and 2 (`criteria`) demands, each measured over the
+  smallest prompt that can carry it, because two of the branches render only inside a parent's.
+- The maximal assembled prompt — floor plus every conditional — makes **43** demands, not the 44
+  the rows sum to. The difference is real rather than rounding: the length ask is appended with
+  a leading space, so when the standing line's unterminated `[STANDING] …` tail is the text
+  before it, `house.demands` reads the two clauses as one. The assembly is what a model is
+  sent, so the assembly is what is priced. With the cast dossier the total is 47 — exactly the
+  four demands `BUDGET` already prices as the gap between its two scene rows, so that row is
+  not duplicated.
+
+This entry raises nothing and cuts nothing. Every ceiling is set at the measured value, and one
+moves only in a later, deliberate commit with the reason written down — the same boundary rule
+the listing loop works under.
+
+### 164.2 What shipped
+
+Three tests and two tables in `tests/test_prompt_budget.py`.
+`test_a_scene_conditional_block_stays_inside_its_declared_budget` holds each branch to
+`SCENE_CONDITIONAL_BUDGET`, with a floor assertion that the branch rendered at all so a renamed
+parameter cannot leave a row measuring an absence.
+`test_the_maximal_assembled_scene_prompt_stays_inside_its_declared_budget` holds the whole
+assembly to `SCENE_MAXIMAL_BUDGET`. And
+`test_the_scene_floor_row_is_what_the_planner_actually_assembles` ties `BUDGET`'s hand-copied
+floor string to the live path, so a rewording in `planner.py` fails a test instead of leaving
+the suite measuring a prompt nobody sends.
+
+### 164.3 What was refused
+
+- **No ceiling on the locked-constraints block.** `render_constraints` grows one line per locked
+  item, so a ceiling over it would cap how much a director may lock — book data rather than rule
+  text, and rule text is what the suite ceilings.
+- **Payloads held to one line, as a convention stated in the fixtures.** A brief with three
+  declared criteria costs two demands more than the fixture does; that spend scales with what a
+  world declares, not with what anybody wrote in `planner.py`, and a ceiling that moved when a
+  world declared a second criterion would be a ceiling on worlds.
+- **Marginal counts rather than absolute rows per combination.** The marginal number is the one
+  the three tracks were computing by hand, and absolute rows over branch combinations would be
+  sixteen numbers whose differences restate six.
+
+### 164.4 Anti-scope
+
+`planner.py` is untouched: no clause moved, no demand added or removed anywhere in any prompt.
+No bar is declared — these are ceilings on instruction text, not quality claims — and no model
+was called. §161.8's second residual is corrected in place with a pointer here; its first
+residual, the numbers clause's two uncovered classes, stands. RS1 is untouched and no research
+claim is promoted.
