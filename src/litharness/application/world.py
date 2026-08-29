@@ -28,8 +28,8 @@ from typing import Any
 
 import litharness_contracts as lc
 
+from litharness.domain import genre, worlds
 from litharness.domain import state as state_mod
-from litharness.domain import worlds
 
 #: Every view is addressable by name, so the CLI's subcommand table and this module cannot
 #: drift apart, and an agent can be told the list of views without a second source for it.
@@ -77,6 +77,54 @@ def vocabulary() -> dict[str, Any]:
     catch a line that names the right two slots and swaps which id goes where — the way
     `evaluates` was wrong — and saying so is the point: a check believed to cover more than it
     does is worse than one known to be narrow.
+
+    **Three predicates were reachable, load-bearing and absent from this mapping entirely, and
+    the genre floor's own repair path was one of them** (§163). `status_sheet`,
+    `status_snapshot` and `graph_line` are all declarable through `world declare` — measured on
+    the real CLI, on a listing-created book: two declarations and a `world accept` cleared
+    `genre.genre_block` and rendered `[STATUS] sera — Attunement 1 | Threads 2/3`, the book's
+    own columns, out of `extraction.system_voice_example`. Nothing refused them and nothing
+    was missing; they were simply not written down, in the command `world_agent`'s prompt calls
+    the list of *every* predicate the world's language admits. **`world vocabulary` is not a
+    reference an Architect consults beside another one — it is the whole of what a fresh draw
+    is told**, which is what makes an omission here indistinguishable from a prohibition.
+
+    **What the omission cost is a default rather than a silence, and that is the sharper
+    finding.** A book that declares no `status_sheet` does not go without one: it gets
+    `extraction.DEFAULT_SHEET`, whose labels reach the *writer* through
+    `system_voice_example` as the example line to imitate. So the operator's stated not-this
+    was arriving as what a book gets for declaring nothing, and the only escape was the
+    predicate nobody was told about. This is `worlds.py`'s "absence is free" — true of the
+    world model, and not true one layer down, where absence has a default with content in it.
+
+    **Four more lines landed with §160's vocabulary, and two of its predicates were
+    deliberately left out.** `governed_by` and `is_a` are documented because the Architect meets
+    them either way: `validate` complains about a system nobody declared, and `is_a` has carried
+    every name in this vocabulary since Serial Pilot 1's operator-typed seed while appearing in
+    no list. `can_do` and `requires` gained the value slots §160 put in them. But
+    `magnitude_scale` and `system_digest` are **not** documented, because they are minted by
+    `gamesystem.records_for` and never by hand — writing them down would invite a second
+    declaration beside the drawn one, which is the two-writers hazard the `status_sheet` line
+    already exists to warn about, manufactured on purpose. A predicate an agent cannot usefully
+    declare does not belong in the list of what it may declare.
+
+    **A fifth line was wrong, in the `how` list rather than among the predicates, and it was
+    wrong in the reassuring direction.** It said a corrected declaration that changes the
+    subject, the `--object` **or the `--order-key`** fills a different slot so both survive.
+    `record_id_for` carries no position, so the third is false: a redeclaration that moves only
+    the position is the same record, `record_state_records` is `INSERT OR IGNORE`, and the
+    store keeps the **first** position. `declare` does say `already on record`, so it is not
+    silent — but an Architect told it had just filled a second slot reads that as confirmation
+    while the wrong position stands. The two shipped tests could not catch this one: they grade
+    the predicate lines against their readers, and this was a sentence about identity.
+
+    **The line for `status_sheet` names no example fields, deliberately.** §138 measured that a
+    permission overproduces what it names, so a line illustrating the shape with the default's
+    own columns would teach the thing it exists to let a world escape. It names the *slots* and
+    says the fields are the book's own. For the same reason the hazard it does name is the one
+    that fails silently: `extraction.sheet_for` abstains to the default when a book declares
+    two sheets, so a second declaration is not an error, it is a quiet return to the line the
+    world was trying to replace.
     """
     return {
         "entity_roles": list(worlds.ENTITY_ROLES),
@@ -93,8 +141,26 @@ def vocabulary() -> dict[str, Any]:
                 "consequence_domains, --value the consequence in plain words"
             ),
             "manifests_as": "how it shows on the page; --value one line",
-            "can_do": "a person holds a capability; --object the capability's id",
-            "requires": "a prerequisite; --object what must come first",
+            "can_do": (
+                "a person holds a capability; --object the capability's id, and --value how "
+                "far they have taken it as a whole number. Leave the number off to say only "
+                "that they hold it"
+            ),
+            "requires": (
+                "a prerequisite; --object what must come first, and --value how far it has to "
+                "have been taken as a whole number. Leave it off, or 1, for held at all"
+            ),
+            "governed_by": (
+                "which system grants this; the criterion or the capability is the subject, "
+                "--object the system, which has to be a subject carrying the system role. A "
+                "ladder whose system nobody declared has no issuer, and that is the space "
+                "something else fills"
+            ),
+            "is_a": (
+                "what a thing is called, in this world's own words; --value the name. The "
+                "printed labels live here — the word a book counts rungs in, and an ability's "
+                "— so keep those short, letters only, and free of digits"
+            ),
             "costs": "what it takes; --value or --object",
             "taught_by": "who teaches it; --object the teacher",
             "comparator": (
@@ -128,6 +194,32 @@ def vocabulary() -> dict[str, Any]:
             ),
             "price": "what a thing charges; --value in plain words",
             "exception_to": "the rule that does not hold here; --object the rule",
+            # **The three that were reachable, load-bearing and undocumented** (§163). Every
+            # one is a JSON object in the value slot, which `cli._scalar` has kept whole since
+            # §158; none takes an edge. They are last in this mapping because a world declares
+            # at most one of each and the ones above are what it spends its declarations on.
+            "status_sheet": (
+                "the columns this book's own status line prints; --value an object "
+                '{"fields": [{"name": <the key a snapshot fills>, "label": <what the line '
+                'prints>, "paired": true|false}]}, and a paired field prints '
+                "current/maximum and adds a <name>_max key. Declare exactly one or none: a "
+                "book that declares none, and a book that declares two, both print a generic "
+                "line written in nobody's vocabulary"
+            ),
+            "status_snapshot": (
+                "where those columns stand, as numbers; --value an object mapping each field "
+                "name to its number, and --order-key where in the book it becomes true — "
+                "leave the key off for the state the book opens in, which is then the one "
+                "found at every position. Until one of these is accepted the book is never "
+                "asked for a status line at all"
+            ),
+            "graph_line": (
+                "the line this book prints when somebody's standing changes; --value an "
+                'object {"label": <a short bracket tag>, "edges": [{"predicate": '
+                '"stands_at", "phrase": <the words this book uses for it>}]}. Declare one '
+                "only if this world announces itself; a world whose systems are quiet "
+                "declares none and prints none"
+            ),
         },
         "how": [
             "Everything `declare` writes is PROPOSED. `world accept` is what makes it canon.",
@@ -148,10 +240,23 @@ def vocabulary() -> dict[str, Any]:
             "--order-key is where in the *story* a record becomes true, and nothing else. It "
             "is not how a record is scoped, filed or grouped; a ladder, a criterion and a "
             "capability are all outside story time and take none.",
+            "This house publishes one genre, and a book that cannot state anybody's standing "
+            "as numbers is not in it. The whole of that question is whether canon holds a "
+            "status_snapshot whose value is an object; `world check` reports the gap while "
+            "you are still building, and says nothing about whether the sheet is any good.",
+            "A drawn system brings its own status_sheet with it, so do not declare a second "
+            "one beside it. Two of them do not collide loudly: the book falls back to a "
+            "generic line written in nobody's vocabulary, which is the thing the declaration "
+            "existed to escape.",
             "A record in the wrong slot cannot be taken back — there is no retraction, and a "
-            "corrected declaration that changes the subject, the --object or the --order-key "
-            "fills a different slot, so both survive. `declare` reports these separately from "
-            "what is merely not coherent yet; read that list before writing the next record.",
+            "corrected declaration that changes the subject or the --object fills a different "
+            "slot, so both survive. `declare` reports these separately from what is merely not "
+            "coherent yet; read that list before writing the next record.",
+            "A record's identity is blind to --order-key, so a redeclaration that changes only "
+            "the position is the same record and does not land: `declare` answers `already on "
+            "record` and the first position stands. Nothing can move a record in story time, "
+            "and a fact that has not changed is not worth restating at a later position — the "
+            "restatement is dropped either way.",
         ],
     }
 
@@ -369,12 +474,47 @@ def check(records: Sequence[lc.StateRecord]) -> dict[str, Any]:
     because the edges themselves are legal. What is added is the naming and not a verdict:
     `worlds.slot_warnings` is about which slot a record went in, `ok` stays what
     `validate` says, and nothing here refuses anything.
+
+    **`gaps` is the third list and it is a different thing from either** (§163). A complaint is
+    a world contradicting itself and a warning is a record in a slot nothing reads; a gap is
+    something the house requires that this world has not declared *yet*, which on a half-built
+    world is the ordinary state and never a fault. It is reported for the reason `presence`
+    gives for reporting absence: an Architect that cannot see what is still missing has to
+    remember it instead, and the one gap here is the one the pipeline used to observe out loud
+    and proceed past anyway (`domain/genre.py`'s opening argument).
+
+    **It does not move `ok`, and that is the same rail `will_not_resolve` is on.** `ok` is what
+    `validate` says and `world accept` is the only gate; a world with no sheet yet is coherent,
+    and refusing it here would refuse every world in the middle of being built. The genre floor
+    already refuses at draft time, where the answer is final.
+
+    Both questions are asked through `domain/genre.py` rather than restated, so this view and
+    the floor cannot come to disagree — the mistake §158 is the correction for. `system_gap` is
+    §160's and reports a world whose numbers have no system behind them, or one that declares
+    two sheets and would therefore silently render a line it never chose.
     """
     coverage = worlds.manifestation_coverage(records)
     complaints = list(worlds.validate(records))
+    gaps: list[str] = []
+    if not genre.has_starting_sheet(records):
+        gaps.append(
+            "no accepted status_snapshot whose value is an object, so nothing in this book "
+            "can state where anybody stands as a number and no scene will be asked to. "
+            "`world vocabulary` has the shape; `world accept` is what makes it count"
+        )
+    # **Both, when both are true, because they are different facts.** The line above is the
+    # genre floor's question — can this book speak system voice at all — and `system_gap` is
+    # §160's: does the sheet it speaks with belong to a system the world declared. A book can
+    # fail the first and not the second (a hand-seeded sheet under a declared system) or the
+    # second and not the first (a sheet seeded by hand with no system behind it), and collapsing
+    # them would report whichever was checked first as though it were the whole answer.
+    from_system = genre.system_gap(records)
+    if from_system is not None:
+        gaps.append(from_system)
     return {
         "complaints": complaints,
         "ok": not complaints,
+        "gaps": gaps,
         "will_not_resolve": [
             warning for record in records for warning in worlds.slot_warnings(record)
         ],

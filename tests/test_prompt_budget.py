@@ -202,7 +202,18 @@ BUDGET: dict[str, int] = {
     "recruiter, several with beat": 25,
     "recruiter, several no beat": 25,
     "listing writer": 15,
-    "architect seed": 42,
+    # **Raised 42 -> 44 on 2026-08-29, for three sentences that replace an absence** (§163).
+    # The seed ask named a ladder and named nothing that hands out its rungs, so the model
+    # supplied the nearest issuer it knows and the book got an institution: pilot 14's
+    # scheduled progression beats fired on time and landed in guild paperwork ranks
+    # (`plan/first-principles-litrpg-core.md` §2). `_SYSTEM` is the occupant. It went in at six
+    # sentences and was cut to three against this ceiling, which is the trade this file asks
+    # for made in the order it asks for it — take something out first, then raise what is left
+    # on purpose. Nothing else came out: the seed's own ask was re-aimed rather than extended,
+    # so the capability half moved into `_SYSTEM` instead of being stated twice.
+    # `architect grow` is untouched at 41 and stays on 42; advancement is the beats' path and
+    # the grow ask already covers what a chapter made true.
+    "architect seed": 44,
     "architect grow": 42,
     "scene writer floor": 28,
     "scene writer, cast": 32,
