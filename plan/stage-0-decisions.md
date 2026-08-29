@@ -15709,3 +15709,218 @@ Architect's rule essay, or any research surface; nothing promotes a research cla
 axis, or converts a read into data; no model ranked, judged or read anything, and RS1 is
 untouched. The addressability axis is a reading of one clause against §138's four conditions and
 is offered as the reason a rule went inert, not as a law about models.
+
+## 156. Two of the operator's three register complaints belong to the genre and one is ours, and the institutional lean survived the deletion of the text accused of causing it
+
+Read 7 routed three register items off the story side: an institutional lean (§4.2), a
+narrating-the-inference tell named in two books by two writers (§4.3), and vocabulary friction at
+its third sighting (§4.4). All three are answered here, and they do not answer the same way. The
+counters are `research/quality-measurement/register_census.py`, the audit is
+`architect_register.py`, and the numbers live in `results/register-census.json`; this entry is
+their reading and does not restate what the artifacts own.
+
+**No model read anything in this entry.** Every counter is regex and arithmetic, both halves, so
+the whole round is free and rerunnable. That is `BRIEF.md` §2's lesson applied before the fact
+rather than after: a defect class that can be counted mechanically is counted mechanically or
+left alone.
+
+### 156.1 The institutional lean is not in our text, and the control is a natural experiment we already had
+
+§116 found thirty worlds reaching for debt and ledgers and the cause was four lines of `_RULES`.
+Read 7 §4.2 asks for the same audit at a new address, so it was run in the same order: measure
+first, then read the instruction text.
+
+**The measurement.** An institutional-permission family — charters, licences, guilds, tribunals,
+bailiffs and their kin — counted over the free-text values of the **nine** worlds on disk, per
+1,000 words. §116's exclusion rule carries across intact and matters more here than it did there:
+`world vocabulary` prints `institution` and `agency` among its entity roles and `law`, `economy`,
+`politics` and `crime` among its consequence domains, so those are counted **separately** as
+schema-supplied. Counting them would count our own menu.
+
+**The control is that the accused text no longer exists.** `_RULES` was de-biased by §116 on
+2026-08-23 and the entire Forge was retired on 2026-08-26 (`5483161`) in favour of a tool-holding
+Architect whose task text carries no institutional noun at all. Three regimes therefore sit on
+disk, and the rate does not move across them:
+
+| regime | worlds | median per 1,000 | range |
+|---|--:|--:|--|
+| Forge, before §116 | 2 | 6.19 | 5.00 – 7.37 |
+| Forge, after §116's de-bias | 3 | 5.47 | 2.49 – 6.23 |
+| Architect, after the Forge was retired | 4 | **4.37** | **0.00 – 11.58** |
+
+The Architect era holds both the corpus maximum and its minimum. **A lean that survives the
+deletion of the text accused of causing it is not caused by that text**, and this is the point at
+which §116's shape stops applying: there is no subtraction available in `world_agent.py` because
+there is nothing there to subtract.
+
+**The confound that decides the reading, closed before concluding.** The Architect's user prompt
+*is the listing*. Pilot 13's listing already contains `charter`, `licence`, `licensed` and
+`bailiff` — all four of the operator's words — before the Architect declares anything; pilot 12's
+contains none, and its two worlds are the two lowest in the table. The Architect is a **faithful
+amplifier of its listing**, not an independent source. `overview.py`'s task text is clean too, and
+so is `larkin`'s dossier, whose nearest thing to a prime is *"magic that behaves like weather …
+full of rules"*. The step that turns *rules* into *licensing* is the model's and is in none of our
+text.
+
+**Two simulated-reader pools said it first**, which is worth one line in any future validity
+argument: pilot 11's browsing pool flagged that *"the charter system could turn into paperwork
+rather than pressure"* on a different book, and pilot 13's own pool repeated the reservation on
+this one — the instrument side naming the operator's complaint before the operator did.
+
+**The surviving candidate explanation is named and not claimed.** The rate tracks **setting
+period** rather than prompt regime: on the five worlds a mechanical contemporary-versus-period
+marker classifies confidently, the ordering is perfect and non-overlapping — contemporary {0.00,
+1.58, 2.49} entirely below period {7.16, 11.58}. That is n=5, observational, with hand-made marker
+lists, and it is recorded as a description. No bar, no gate, and nothing acts on it.
+
+### 156.2 The narrating-the-inference tell is ours, at roughly five times the genre's rate
+
+Counted over 64,931 market chapters after the §150.1 quarantine subtraction (2,505 rows removed,
+and both counts are in the artifact) against the shelf's 19 chapters.
+
+| | ours | market LitRPG | market non-LitRPG |
+|---|--:|--:|--:|
+| tier A, per 1,000 words | **0.1623** | 0.0344 | 0.0203 |
+| tier B, per 1,000 words | 0.2669 | 0.0027 | 0.0026 |
+
+Tier A is the operator's exact class — a narratorial clause stating what was understood, meant, or
+did not need asking. **Ours is 4.7x the LitRPG rate and 8.0x the non-LitRPG rate.** Stated as
+counts rather than a rate, because §6(2) says store the integers: **7 hits in 37,868 words**,
+against 1.30 expected at the LitRPG rate, `P(X >= 7) = 0.0004` under a Poisson at that rate.
+
+**The locating control fires the right way**, which is what says the counter is reading register
+rather than prose in general: market LitRPG does this **more** than market non-LitRPG (0.0344 vs
+0.0203), so the genre itself leans toward the shape, and we sit above the genre.
+
+**Three things that keep this honest.** The hits span **4 of 8 books**, so it is not one book's
+tic — and the two instances the operator named are in two books by two writers, which is what
+promoted the class above a one-off before any of this was built. The n is nevertheless **7**, and
+a rate resting on seven events has a wide interval whatever the ratio says. And the fiction-level
+comparison — 50% of our books carry one against 33.4% of market LitRPG serials — is **not** the
+fair reading and is recorded here only so nobody quotes it: a market serial has far more chapters
+than one of ours and therefore more chances to score at least one, so the share-with-at-least-one
+is confounded by units per serial where the per-1,000-word rate is not.
+
+### 156.3 Vocabulary friction belongs to the genre, and the jargon half is a null
+
+| | ours | market LitRPG | market non-LitRPG |
+|---|--:|--:|--:|
+| rare unigrams per 1,000, names excluded (p50) | 13.33 | 9.65 | 10.01 |
+| the same, p10 – p90 | 6.68 – 25.97 | 3.26 – 20.81 | 3.52 – 23.70 |
+| rare **bigrams** per 1,000 (p50) | **153.07** | 175.43 | 183.93 |
+| proper nouns per 1,000 (p50) | 20.06 | 37.82 | 37.30 |
+
+**Ours is 1.4x the genre's median and sits inside the genre's own range** — our p50 falls between
+the market's p50 and its p90, at roughly its 62nd percentile. That is a different kind of answer
+from §156.2 and is the honest one: the class is real but it does not separate us, and **a
+vocabulary floor is therefore not supported by this measurement**. The operator's two rare words
+check out individually — `awnings` occurs 62 times in the 139.3M-token base and `trestle` 13, so
+both are genuinely rare in the genre — which says the instinct was right about those words and
+the rate is still not ours.
+
+**The jargon half is a null in the opposite direction.** *triage meetings* and *live build* are
+common words in an uncommon combination, invisible to any unigram floor, which is why a bigram
+counter exists beside it. On that counter **we are below the market**, 153 against 175 and 184.
+Our phrasing is more conventional than the genre's, not less.
+
+**The registered length control comes back clean**, computed in the same pass as `BRIEF.md` §5
+demands: our median chapter is 1,950 words against the market LitRPG median of 2,053, with
+comparable p10 and p90, so type variety rising with length does not explain the gap. And the
+proper-noun exclusion — the load-bearing choice in this counter — favours us **less** than the
+market, since we use roughly half as many names.
+
+### 156.4 What shipped
+
+**Two counters, a registration addressed by its bytes, and the artifact.**
+`register_census.py` holds both counters and `PRE_REGISTRATION`, frozen before the market half was
+opened; `register_census_run.py` is the driver and reads Track A's derived intermediate rather
+than the shards, so one expensive scan served two tracks. Tests: `tests/test_register_census.py`,
+every narrowing pinned by the false positive that caused it.
+
+**The Architect audit as a rerunnable module rather than a one-off**, `architect_register.py`,
+with `tests/test_architect_register.py` guarding the finding in both directions: no complaint the
+Architect reads may carry an administrative metaphor, and its task text may not acquire an
+institutional noun.
+
+**One subtraction, and it is small.** §116 changed the mystery rule's metaphor *"a secret with no
+recorded answer is a debt the book can never pay"*. Commit `d30b75a` had introduced that metaphor
+in **two** homes at once; §116's fix (`426974e`) changed the `_RULES` copy, `5483161` deleted
+`_RULES` with the Forge, and the second copy was never touched — leaving it the only survivor, in
+text the Architect reads back from `world check` and `world declare` on every run. Before and
+after:
+
+- ~~*"a mystery with no reveal is a promise the **ledger** can never pay"*~~
+- **now** *"a mystery with no reveal is a question the book never comes back to"*
+
+`registry` came out of the two comparator complaints in the same pass — *"the registry is …"* is
+now *"the admitted comparators are …"*. **The case for that one is weaker and is recorded as
+weaker**: it names the tool's own closed vocabulary rather than anything in a world, so it is
+ambient register rather than a metaphor about the story. What justifies it anyway is that
+`register` is in §116's named family, the replacement costs nothing, and there is no recall to
+lose — this is not `court`, whose removal §116.8 had to weigh against every courtyard in the
+language.
+
+**No movement claim attaches to either.** Nothing measured whether the metaphor moved a world and
+nothing could, retroactively; the justification is provenance, not effect.
+
+### 156.5 What was refused
+
+- **A bar, a floor or a threshold on any quantity here.** None of the four attainability checks
+  has been run on any of them, and the friction result is the case in point: 1.4x inside the
+  genre's own range is exactly the shape that would become a bar nobody could clear or everybody
+  could. Distributions only.
+- **A vocabulary floor**, refused by its own measurement rather than on principle. §156.3 is what
+  a null looks like when the class is real; the counter exists and says the rate is not ours.
+- **A gate on the Architect's premise, §116's own remedy.** §116 could gate because the Forge
+  produced a premise for a person to pick among. The Architect produces no such artifact, so
+  there is nothing for a membership test to refuse, and inventing one would be a gate built for a
+  finding that did not arrive.
+- **Any clause added to `world_agent.py`.** §156.1 is a finding that the fix is not available
+  there. §127, §135 and §138 are the three entries on what clause-adding costs, and adding one
+  against a lean the text demonstrably does not cause is the cheapest possible way to pay it.
+- **Summing tier A with tier B, or unigram friction with bigram friction.** Each pair measures a
+  different assertion. A number named for one defect that measures another is the lying column
+  §150.4 deleted `fragment_rate` for.
+- **A model judge for any of it**, at any point, on either half.
+
+### 156.6 Four narrowings, and the two that only the market half could have taught
+
+Each came from a hand-checked false positive and each is pinned by a test, which is the discipline
+§116.5 and §116.8 record three times over for word guards. A located quantifier is not generic
+(*"the way people **at the Stairhead** said the word fire"* names an in-world group); `they` is
+anaphoric in narrative prose; `like` is a general simile marker and drew three ordinary similes in
+ten sampled market hits; and `you` is countable for the manner tier and **not** for the inference
+tier, because generic `you` and second-person `you` are the same word and this corpus defeats
+every mechanical separation — sampled chapters carry unbalanced quotes (133 straight quotes in
+one, and 75 opening against 71 closing curly quotes in another), so positional pairing mispairs
+everything after the first stray, and at least one sampled story is written in second person
+throughout.
+
+**The last two could not have come from our own prose, and that is the transferable lesson.**
+Precision was hand-checked on the shelf, looked clean, and was not: our chapters simply carry less
+dialogue of the shape that breaks it. **A detector that is exact on the half that motivated it and
+loose on the half it is compared against manufactures the comparison out of its own error rate.**
+Both halves are now hand-checked and the run keeps a sample of market hits so the check is
+repeatable rather than remembered. Neither narrowing removed a single hit from our own shelf,
+which is what a precision fix rather than a shrink looks like.
+
+**And one artifact was caught before it became a finding.** A smoke run over 800 rows returned a
+bigram rate of **0.000 for every market chapter and 344.9 for every one of ours**. That is not
+friction; it is base membership, because market chapters were contributing their own words to the
+frequency table and ours were not. It is the coverage failure `BRIEF.md` §2 Pass 5 records for
+minimum cross-paragraph NCD, arriving live in a new instrument. The base now holds out every
+chapter it scores, symmetrically, and the registration says so. A second bug died beside it:
+proper-noun detection was colliding with homographs — one character called *Will* turned every
+modal in the chapter into a name — and reported 18-22% of all tokens as proper nouns until
+majority-capitalisation replaced first-sighting.
+
+### 156.7 Anti-scope
+
+No axis admitted, no research claim promoted, no mechanism qualified. Both censuses are `OBSERVED`
+and neither may steer a book. Nothing here changes the world schema, the record vocabulary, the
+Architect's tool allowance, any writer dossier, the listing task, or any prompt outside the three
+complaint strings named in §156.4 — and those are read by a model that is building a world, never
+by one writing prose. The operator's quotes are fixtures and none became prompt text (§97.1). No
+human judgment entered any measurement. RS1 holds: market text stayed in the gitignored `derived/`
+intermediate, the committed artifact carries ids and numbers, and nothing under `src/litharness/`
+gained a corpus reference.

@@ -693,8 +693,11 @@ def test_only_a_claim_that_asks_something_owes_a_reveal() -> None:
     The distinction was found by `test_a_clear_world_has_nothing_to_complain_about`: the first
     version of this vocabulary demanded a disclosure position for every claim, which turned a
     character's private secret into a reveal the book had to schedule. A secret stays hidden
-    until the story wants it; a mystery that asks a question and never answers it is the promise
-    the ledger can never pay.
+    until the story wants it; a mystery that asks a question and never answers it is the question
+    the book never comes back to.
+
+    The wording tracks the complaint text, which dropped `ledger` on 2026-08-29: the metaphor was
+    a §116-family word surviving in a second home after §116 corrected the first.
     """
     secret = [
         canon(worlds.world_record("never_told", worlds.CLAIM_CONTENT, value="nobody finds out"))

@@ -962,14 +962,21 @@ def validate(records: Sequence[lc.StateRecord]) -> tuple[str, ...]:
         if record.predicate == COMPARATOR_PREDICATE:
             comparator = str(record.value or "").strip()
             if comparator not in COMPARATORS:
+                # `registry` came out here and below on 2026-08-29. **The case is weaker than
+                # the `ledger` one above and is recorded as weaker**: this names the tool's own
+                # closed vocabulary rather than anything in a world, so it is ambient register
+                # rather than a metaphor about the story. What justifies the edit anyway is that
+                # `register` is in §116's named family, the replacement costs nothing and reads
+                # more exactly, and there is no recall to lose — this is not `court`, whose
+                # removal §116.8 had to weigh against every courtyard in the language.
                 complaints.append(
-                    f"{record.subject} declares the comparator {comparator!r}; the registry is "
-                    f"{', '.join(COMPARATORS)}"
+                    f"{record.subject} declares the comparator {comparator!r}; the admitted "
+                    f"comparators are {', '.join(COMPARATORS)}"
                 )
 
     for subject in nodes_of_type(records, CRITERION):
         if subject not in criteria(records):
-            complaints.append(f"criterion {subject} declares no comparator from the registry")
+            complaints.append(f"criterion {subject} declares no comparator from the admitted set")
 
     # **Three checks on a standing, all membership.** A rung this world never declared, a rung
     # that two chains both claim, and a standing on a criterion that is not ordinal. Nothing here
@@ -1039,9 +1046,20 @@ def validate(records: Sequence[lc.StateRecord]) -> tuple[str, ...]:
             # past the chapters being written, and those get no `disclosed_to` record at all —
             # the reader is not told in this book, so the claim stays hidden throughout, which
             # is exactly right. What every mystery owes is the ordinal.
+            # **`ledger` came out of this sentence on 2026-08-29, and the reason is §116.**
+            # It read *"a mystery with no reveal is a promise the ledger can never pay"*.
+            # Commit `d30b75a` introduced that metaphor in two homes at once — here and in the
+            # retired Forge's `_RULES`, as *"a secret with no recorded answer is a debt the book
+            # can never pay"*. §116 named `debt` and `ledger` in the administrative family it was
+            # removing and changed the `_RULES` copy; `5483161` then deleted `_RULES` with the
+            # Forge, and this copy was never touched, which left it the only survivor. It is
+            # Architect-visible on every run: `world check` and `world declare` print it.
+            # No claim is made that it moved any world — nothing measured that, and §116's own
+            # discipline is that a subtraction is justified by provenance, not by an effect
+            # nobody observed.
             complaints.append(
                 f"claim {claim_id} records an answer and no reveal scene; a mystery with no "
-                "reveal is a promise the ledger can never pay"
+                "reveal is a question the book never comes back to"
             )
 
     for record in records:

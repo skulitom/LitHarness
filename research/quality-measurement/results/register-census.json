@@ -1,0 +1,1015 @@
+{
+  "instrument": "register_census.v0",
+  "registration_digest": "2029fc350b1e6684",
+  "pre_registration": {
+    "question": "do our chapters narrate the reader's inference, and use rarer words, at a higher rate than the genre's own chapters do",
+    "predicted": "no direction is predicted for either counter. This is a census: the operator named both classes from two books, and whether either is OURS rather than the genre's is exactly what is unknown. A market rate at or above ours is a real result and the cheap one, because it dissolves the instrument question rather than funding it",
+    "primary": "per-chapter rate distributions, ours against market, reported as median and the p10-p90 range at the real n. Tier A and tier B of the gloss counter are never summed; unigram and bigram friction are never summed",
+    "unreadable": "fewer than 500 market chapters clear the pool after quarantine subtraction, or our own half holds fewer than 15 chapters. The first leaves a frequency table whose tail is noise, and the tail is where awnings and trestle live; the second leaves a distribution with no p10-p90 worth printing",
+    "control_same_pass": "chapter length is reported beside every rate, because type variety rises with length and both counters are per-token. Proper-noun rate is reported beside friction, because excluding names is the load-bearing choice and its size has to be visible. BRIEF.md section 5: the control is computed in the same pass or the headline means nothing",
+    "held_out_base": "the frequency base excludes every chapter it scores, on both sides. A market chapter left in the base supplies its own rare words a floor-clearing count from itself while our chapters get no such contribution, so the comparison would read out in-base versus out-of-base rather than common versus rare. This was not foreseen: a smoke run over 800 rows returned a bigram rate of 0.000 for every market chapter and 344.9 for every one of ours, which is that artifact at full strength, and it is the coverage failure BRIEF.md section 2 pass 5 records for minimum cross-paragraph NCD. Ours and the scored market sample are both wholly outside the base that scores them",
+    "quarantine": "the 26 descriptor-half fiction ids of stage-0 150.1 are subtracted from the market half before any comparison, and the pre-subtraction and post-subtraction row counts are both reported. They aimed something, so an ours-versus-market number including them is partly our own aim measured against itself",
+    "locating_control": "both counters are reported LitRPG against non-LitRPG inside the market half, which the intermediate's `litrpg` boolean supplies for free. This is a locating check rather than a hypothesis: if a counter scores the same on both, it is measuring something general about published prose rather than anything about this genre's register, and an ours-versus-market gap on it would be the harder to read for it. Added before the market half was opened and with our own half unmeasured against it",
+    "no_bar": "nothing here declares a bar, a floor or a threshold. No quantity in this module has had the four attainability checks run on it, and none is proposed for a gate",
+    "no_model": "no model call at any point, in either counter, for either half. Regex and arithmetic only, so the whole census is free and rerunnable"
+  },
+  "ran_at": "2026-08-29T00:50:21+00:00",
+  "source_intermediate": {
+    "snapshot_revision": "0e4df3f22999a7b7fa13b1e7564a09b5f3eb964e",
+    "rows_kept_by_scan": 67436
+  },
+  "rows": {
+    "seen": 67436,
+    "market_after_quarantine": 64931,
+    "quarantined_subtracted": 2505,
+    "friction_sample": 2474,
+    "base_rows_held_out_from_scoring": 62457,
+    "sample_mod": 27,
+    "our_chapters": 19
+  },
+  "frequency_base": {
+    "tokens": 139299876,
+    "types": 312632,
+    "bigram_tokens": 139237430,
+    "bigram_types_tracked": 1079197,
+    "note": "built from market chapters held out of scoring, so ours and the scored market sample sit equally outside it"
+  },
+  "gloss_per_1k": {
+    "market_litrpg|tier_a": {
+      "n": 13364,
+      "mean": 0.0344,
+      "p10": 0.0,
+      "p25": 0.0,
+      "p50": 0.0,
+      "p75": 0.0,
+      "p90": 0.0,
+      "max": 2.907,
+      "zero_share": 0.9329
+    },
+    "market_litrpg|tier_b": {
+      "n": 13364,
+      "mean": 0.0027,
+      "p10": 0.0,
+      "p25": 0.0,
+      "p50": 0.0,
+      "p75": 0.0,
+      "p90": 0.0,
+      "max": 1.8149,
+      "zero_share": 0.9942
+    },
+    "market_other|tier_a": {
+      "n": 51567,
+      "mean": 0.0203,
+      "p10": 0.0,
+      "p25": 0.0,
+      "p50": 0.0,
+      "p75": 0.0,
+      "p90": 0.0,
+      "max": 4.1451,
+      "zero_share": 0.9603
+    },
+    "market_other|tier_b": {
+      "n": 51567,
+      "mean": 0.0026,
+      "p10": 0.0,
+      "p25": 0.0,
+      "p50": 0.0,
+      "p75": 0.0,
+      "p90": 0.0,
+      "max": 2.4331,
+      "zero_share": 0.9943
+    },
+    "ours|tier_a": {
+      "n": 19,
+      "mean": 0.1623,
+      "p10": 0.0,
+      "p25": 0.0,
+      "p50": 0.0,
+      "p75": 0.0,
+      "p90": 0.3108,
+      "max": 2.0844,
+      "zero_share": 0.7895
+    },
+    "ours|tier_b": {
+      "n": 19,
+      "mean": 0.2669,
+      "p10": 0.0,
+      "p25": 0.0,
+      "p50": 0.0,
+      "p75": 0.4942,
+      "p90": 1.0035,
+      "max": 1.5385,
+      "zero_share": 0.6842
+    }
+  },
+  "gloss_per_1k_by_fiction": {
+    "market_litrpg|tier_a": {
+      "n": 584,
+      "mean": 0.0258,
+      "p10": 0.0,
+      "p25": 0.0,
+      "p50": 0.0,
+      "p75": 0.021,
+      "p90": 0.0689,
+      "max": 1.1404,
+      "zero_share": 0.6661
+    },
+    "market_litrpg|tier_b": {
+      "n": 584,
+      "mean": 0.0031,
+      "p10": 0.0,
+      "p25": 0.0,
+      "p50": 0.0,
+      "p75": 0.0,
+      "p90": 0.0008,
+      "max": 0.605,
+      "zero_share": 0.899
+    },
+    "market_other|tier_a": {
+      "n": 3096,
+      "mean": 0.0163,
+      "p10": 0.0,
+      "p25": 0.0,
+      "p50": 0.0,
+      "p75": 0.0,
+      "p90": 0.0394,
+      "max": 1.182,
+      "zero_share": 0.7862
+    },
+    "market_other|tier_b": {
+      "n": 3096,
+      "mean": 0.0025,
+      "p10": 0.0,
+      "p25": 0.0,
+      "p50": 0.0,
+      "p75": 0.0,
+      "p90": 0.0,
+      "max": 0.4669,
+      "zero_share": 0.9344
+    }
+  },
+  "friction_rare_per_1k": {
+    "market_litrpg": {
+      "n": 496,
+      "mean": 14.179,
+      "p10": 3.2606,
+      "p25": 5.3561,
+      "p50": 9.6536,
+      "p75": 14.3785,
+      "p90": 20.8059,
+      "max": 396.2264,
+      "zero_share": 0.002
+    },
+    "market_other": {
+      "n": 1978,
+      "mean": 14.3768,
+      "p10": 3.5196,
+      "p25": 6.2352,
+      "p50": 10.0053,
+      "p75": 15.7101,
+      "p90": 23.7008,
+      "max": 389.0137,
+      "zero_share": 0.0111
+    },
+    "ours": {
+      "n": 19,
+      "mean": 15.7939,
+      "p10": 6.678,
+      "p25": 10.6597,
+      "p50": 13.3333,
+      "p75": 21.3283,
+      "p90": 25.9671,
+      "max": 34.7648,
+      "zero_share": 0.0
+    }
+  },
+  "proper_noun_per_1k": {
+    "market_litrpg": {
+      "n": 496,
+      "mean": 43.1052,
+      "p10": 11.6815,
+      "p25": 21.9818,
+      "p50": 37.8184,
+      "p75": 53.6631,
+      "p90": 79.8627,
+      "max": 222.6057,
+      "zero_share": 0.004
+    },
+    "market_other": {
+      "n": 1978,
+      "mean": 42.5148,
+      "p10": 11.9571,
+      "p25": 22.9908,
+      "p50": 37.3016,
+      "p75": 55.5876,
+      "p90": 77.2685,
+      "max": 330.3965,
+      "zero_share": 0.0061
+    },
+    "ours": {
+      "n": 19,
+      "mean": 20.2051,
+      "p10": 13.102,
+      "p25": 16.1591,
+      "p50": 20.0634,
+      "p75": 24.4702,
+      "p90": 30.1113,
+      "max": 33.3681,
+      "zero_share": 0.0
+    }
+  },
+  "bigram_friction_per_1k": {
+    "market_litrpg": {
+      "n": 496,
+      "mean": 189.2248,
+      "p10": 128.0687,
+      "p25": 147.5677,
+      "p50": 175.4275,
+      "p75": 210.1184,
+      "p90": 249.2337,
+      "max": 848.0486,
+      "zero_share": 0.0
+    },
+    "market_other": {
+      "n": 1978,
+      "mean": 194.0003,
+      "p10": 129.8035,
+      "p25": 154.3397,
+      "p50": 183.9257,
+      "p75": 217.9093,
+      "p90": 258.3589,
+      "max": 827.0762,
+      "zero_share": 0.0
+    },
+    "ours": {
+      "n": 19,
+      "mean": 162.8798,
+      "p10": 129.2653,
+      "p25": 141.7679,
+      "p50": 153.0715,
+      "p75": 187.0729,
+      "p90": 204.8399,
+      "max": 216.592,
+      "zero_share": 0.0
+    }
+  },
+  "market_tier_a_hits_for_hand_check": [
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "Which meant men like me could very easily shatter their soul into a thousand pieces and sell core shards on the black market or attempt to enslave a core for our own nefarious needs."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "Which meant that there was one of the most valuable people in the kingdom walking in step with her merry band about two feet behind him."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "And his sea of consciousness was a small pond with stagnant water, which meant weakness and powerlessness."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "The government had been threatening to slash their project's budget for a while now, which meant their precious power allocation was on the chopping block."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "Sure, they would have a save-state of him, which meant they could recreate him if the experiment had gone wrong, but that\u2019s only assuming they ever got the machine working and had their lab power supply reinstated."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "The world's a cube, which means he lives in one side of this cube."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "Which meant that she didn't just automatically 'know' whatever was sent her way, though she could go through it at speeds no human could ever compete with."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "Which meant organization, beyond what she had been expecting."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "Which meant extensive expertise in mass production, logistics and automation."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "Which meant the regular processing."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "Which meant it was especially important to safeguard it."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "Which meant that either the defenses were active in some way and she had shattered them, or the armor itself had been a composite plating, similar to what her ships had used, with an energy dispersion matrix underneath the primary armor materials, meant to distribute the power of attacks, which wouldn't work if one hit it from the back."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "Which meant it shattered into splinters when she'd closed her hand around it with her armor's full might."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "Which meant advanced ore processing, element separation and centrifuges."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "Though the rovers would only be good for short engagements, with the same energy limitations as fixed emplacements, they could retreat to her crash site for a recharge, which meant they had the luxury to be able to run away from a fight they wouldn't have the juice to win."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "Now, she's planning to return, which means we need to be ready to receive her when she does."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "Which meant she could afford to go full length on the tests and ferret out problems and mistakes before they bit her in the ass and caused a squishie to get killed."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "\" Even if they were laser focused on the mines, anyone with some amount of intelligence on the other side would realize the eventual target would be the pass, which meant screening its approaches."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "Which meant that the Hand might have been expecting the reinforcements."
+    },
+    {
+      "group": "market_litrpg",
+      "tier": "a2",
+      "sentence": "The Domain of this one was reportedly nature, which meant it had the potential to become a goldmine."
+    },
+    {
+      "group": "market_litrpg",
+      "tier": "a2",
+      "sentence": "A nature dungeon would presumably contain creatures native to its Domain which meant beasts, nature elementals, fey and other creatures closely tied to nature."
+    },
+    {
+      "group": "market_litrpg",
+      "tier": "a2",
+      "sentence": "Having set up camp a number of times before in various training exercises, the recruits fell naturally into their required roles and even Themis contributed, which meant they finished within the hour."
+    },
+    {
+      "group": "market_litrpg",
+      "tier": "a2",
+      "sentence": "Overall, her battles with the two had always been hard won \u2013 even if she was undefeated \u2013 which meant that the two were probably in the top five fighters of the recruits."
+    },
+    {
+      "group": "market_litrpg",
+      "tier": "a2",
+      "sentence": "Which meant that they were all here for the same reason; to get however close to his power as they could."
+    },
+    {
+      "group": "market_litrpg",
+      "tier": "a2",
+      "sentence": "She was faster and lither than the hulking frontliner which meant she easily kept pace."
+    },
+    {
+      "group": "market_litrpg",
+      "tier": "a2",
+      "sentence": "Thankfully, it looked like Alistair had taken the bait in the end and entered behind their party, which meant the plan should still work."
+    },
+    {
+      "group": "market_litrpg",
+      "tier": "a2",
+      "sentence": "The plan would still succeed, which meant the Demon would get his due, and Themis would get his deserved power and recognition."
+    },
+    {
+      "group": "market_litrpg",
+      "tier": "a2",
+      "sentence": "Neither was she delirious anymore, which meant that she could feel everything her body wanted to tell her."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "Don't force it, which means that you have compressed to the limit of your current level."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "Although this sentence seems to be not heavy, in other words, it is equivalent to saying that Ye Huo remembers his feelings, which means that Ye Huo owes him a part of love."
+    },
+    {
+      "group": "market_litrpg",
+      "tier": "a2",
+      "sentence": "He was ten years old now! He was basically a teenager, which meant he was basically an adult! His tastes had drastically changed by hanging around other boys his age, not to mention that his little sister loving flowers and frills made them automatically uncool."
+    },
+    {
+      "group": "market_litrpg",
+      "tier": "a2",
+      "sentence": "his stick connected and broke the joint which meant he had now disabled two crickets that while they could still chase him, but they were much slower and less dangerous so long as he stayed away from their mouths\n\nDespite crippling two of the crickets the battle was far from won."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "Which means that if there is an empty place, someone isn't here."
+    },
+    {
+      "group": "market_litrpg",
+      "tier": "a2",
+      "sentence": "Yet, I need to survive, which means I need resources."
+    },
+    {
+      "group": "market_litrpg",
+      "tier": "a2",
+      "sentence": "Which means the answer is there, and it has to be something I can do."
+    },
+    {
+      "group": "market_litrpg",
+      "tier": "a2",
+      "sentence": "That makes my mind attribute 16, which means it's only two levels behind my will attribute."
+    },
+    {
+      "group": "market_litrpg",
+      "tier": "a2",
+      "sentence": "Too young and unbonded too, which meant he could have flown away, or hurt himself in the fight with the Shrike."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "The nest was in the mountain range that separated the \u2018Dark forest\u2019 from the sea, which meant a long and hard trek through the forest and the mountains for us."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "His sword would be of limited use against something that size, which meant getting creative."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "Raised voices, the clatter of equipment being moved hastily, the distinctive sound of armor on stone, fresh wounded were arriving, which meant the battle had begun again."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "What was even more concerning, was the fact that this type of spell could be used only by two types of magic: Air and Void, which meant that there was either a fully capable sorcerer for the first time in thousands of years, or an apostate wielding forbidden magic."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "Then, in the morning, Kyra gave her the wonderful news that the Bastard Commander would be away for some important business, which meant that for the first time in weeks, she had the whole day for herself."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "It was almost sunset, which meant that it was about time to head back to the Palace."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "The sun had almost set, which meant that she didn\u2019t have much time left to get any dirt on Valeria."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "She didn\u2019t believe it was possible that the King was hiding it from her or directed it to someone else, which meant that Flavius himself was being kept in the dark too."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "This year\u2019s Dawning was special since the Princess was turning twenty, which meant she was of marriageable age."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "Which means I need you to stay alive."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "Kurogane? That name doesn't ring any bells\u2026 Which means he's either an unknown talent or\u2026 something else."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "Which meant one thing\u2014he didn't survive long enough to make an impact."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "There was still some time before lunch, which meant he could finally put his newly acquired technique to the test."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "They never cared what they did, which meant they were often left with the worst tasks\u2014hauling trash, cleaning filth."
+    },
+    {
+      "group": "market_litrpg",
+      "tier": "a2",
+      "sentence": "Chaos beasts were attracted to clusters of human civilization, which meant that the sharecropping families who lived on the outskirts of these towns bore the brunt of the attacks."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "\u2014\u2014\u2014\u2014\u2014\n\n\u201cAkemund are you there?\u201d Tristran was in the bath house, the rooms were private which means\n\nhis conversation would be."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "Dorian, being an experienced mercenary, had access to a higher rank, which meant better pay and access to more high-profile contracts."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "That, and the rumor Django heard that there was another noble ball coming up, which meant more exquisite food would be inevitably thrown away."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "wasn't this good news? Outstanding, even? No matter which way he looked at it, him being an advent seemed certain, which meant one thing -\n\nHe wasn't cursed! Well, not affected by a curse, anyway."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "Which meant he couldn't muscle his way to bigger reserves, not physically."
+    },
+    {
+      "group": "market_litrpg",
+      "tier": "a2",
+      "sentence": "Which meant it was time to delve into upgrades to better improve both his life and potential as a Mercenary."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "He had just seen that happen, which meant prices on the ground floor would be at a low right now."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "It was a Friday which meant her first class for the day was fashion marketing and branding."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "A station this large probably had an advanced AI, which meant Briggon had to be extra cautious not to be recognised."
+    },
+    {
+      "group": "market_litrpg",
+      "tier": "a2",
+      "sentence": "Which meant that despite the beast\u2019s toughness, it wasn\u2019t an actual [Raid Boss]."
+    },
+    {
+      "group": "market_litrpg",
+      "tier": "a2",
+      "sentence": "Missiles also fell into the same category as railgun rounds, easy to dodge or otherwise preventing from impacting, but when they did hit, the damage was harder to mitigate, which meant that they were primarily used to crack open an enemy\u2019s anti-energy weapon defenses, rather than to deliver a killing blow directly."
+    },
+    {
+      "group": "market_litrpg",
+      "tier": "a2",
+      "sentence": "Which meant reducing the volume of enemy missiles, which, in turn, required them to knock out the small enemy crafts, aided by their railguns."
+    },
+    {
+      "group": "market_other",
+      "tier": "a1",
+      "sentence": "The jeans from last night now had a rip in them, something I might have to sew just so no one notices."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "Which means that I have to give something up."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "Which meant that\u2015\n\n'It is time to take risks, huh? Even though I hate risks."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "Which meant that I had to learn a lot more skills than I first thought."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "Which meant that I was going to be severly weaker than other people."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "decrease?\n\n'Which means that making it small enough to fit inbetween atoms isn't impossible."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "'It is curved for pancakes' sake!'\n\nWhich meant that this was a huge circle."
+    },
+    {
+      "group": "market_other",
+      "tier": "a1",
+      "sentence": "Who'd have thought that safety procedures could suffer from race conditions?\"\n\n\"So, this happens often enough that no-one feels the need to take it seriously?\" asked Dave, unsure whether to be reassured or terrified by his co-workers unconcernedly bantering in the corridor."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "He was glad that Xiun took the lead, which meant Ehrban did not have to do anything other than keep Uliorn after Xiun\u2019s stallion and his own gaze firmly on his friend\u2019s back."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "Which meant, she supposed in fairness, that so had she."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "Which meant fewer fishermen."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "'The Unchained will still remain for some time which means they\u2019ll end up honoring the deal."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "\"I can feel remnants of his mana which means they were definitely his."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "Even someone of Magnus\u2019s caliber hadn't detected him using the skill, which meant this old Yxlier was truly on another level."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "Which meant\u2026 no sex\u2014or at least not until I caught up with her expectations."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "But she didn\u2019t\u2014which meant she was serious."
+    },
+    {
+      "group": "market_litrpg",
+      "tier": "a2",
+      "sentence": "The through line likely led to the next rank, which meant the offshoots were skills."
+    },
+    {
+      "group": "market_litrpg",
+      "tier": "a2",
+      "sentence": "Which meant she wouldn\u2019t be able to do much of anything at her current stage."
+    },
+    {
+      "group": "market_litrpg",
+      "tier": "a2",
+      "sentence": "There were no nearby roads or woodland paths from what she could tell, which meant she\u2019d have to pick her way through the forest on her own."
+    },
+    {
+      "group": "market_litrpg",
+      "tier": "a2",
+      "sentence": "There was next to nothing she could do on her own at present, which meant following Kaedric\u2019s lead was her only real option."
+    },
+    {
+      "group": "market_litrpg",
+      "tier": "a2",
+      "sentence": "Which meant learning what she could about the flora at her disposal would be invaluable."
+    },
+    {
+      "group": "market_litrpg",
+      "tier": "a2",
+      "sentence": "Which meant he had to think."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "All the weapons were good steel, not bronze, which meant that these men had a good commander who took care to arm his men well."
+    },
+    {
+      "group": "market_other",
+      "tier": "a1",
+      "sentence": "Now, his fortress lay in the wilds of Alftane, in the foothills of the Icespire mountains, far away from cities or towns, so no one took notice of what he was doing until it was too late."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "Which means I need a scanner."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "Which meant there was something they knew that I didn't."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "Which meant I needed to pick a destination for my next jump."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "Which meant we were never meant to come back or if we did we would know too much."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "Which meant it looked perfect."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "Which meant, it was highly likely that something had happened to his Master!\n\nSure enough."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "Which meant everyone misunderstood; the tens of thousands of sword shadows in the sky weren't her doing at all."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "14 G\u2014\n\nwhich meant the ship could descend smoothly, without needing a complex deceleration sequence."
+    },
+    {
+      "group": "market_litrpg",
+      "tier": "a2",
+      "sentence": "Even though it was painful, her shoulders were able to complete full rotations which meant nothing was dislocated, her basic training in first aid coming in handy."
+    },
+    {
+      "group": "market_litrpg",
+      "tier": "a2",
+      "sentence": "I gotta ask though, what's up with this chat? Seems to me that if you were suspicious of me it'd be easier just to surveil my team, which means it's not that right? Are you just screwing with me?\u201d \u201cI do notice you have never claimed ignorance of the questions you've been asked."
+    },
+    {
+      "group": "market_litrpg",
+      "tier": "a2",
+      "sentence": "It somehow used the ambient mana around them to accomplish this, which meant there was a limit to the boost."
+    },
+    {
+      "group": "market_litrpg",
+      "tier": "a2",
+      "sentence": "That meant he had to find it to complete the quest, which meant he would follow the blood."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "Which meant I needed to rethink our approach."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "Which meant this was going to end in blood."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "Which meant someone would come looking."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "Which meant we were on borrowed time."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "Which meant the moment we woke up, we were in danger."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "Which meant I had to move."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "Which meant my instincts would have to do the work."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "Which meant--wait, \"The King of Elysium?\" Melchior echoed."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "Which meant killing him wouldn't stop the flow of his power, it wouldn't fix the hole."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "Which meant they\u2019d be open for any sort of attack, this time without the protection and bulk of the Beinhoff."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "Which means we will most likely have to approach and convince them that you are a friend."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "Ye Chen couldn't even assess her cultivation, which meant it was definitely higher than his."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "Now that his breakthrough had been achieved, how could Ye Chen not be overjoyed?\n\nMoreover, the system's cooldown period for rewards had ended, which meant it was the perfect time to hand over the storage bag."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "And the higher one's cultivation, the more they could absorb, which meant more advantages to be had."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "Without it, Den cannot be channeled, which means no class, no skills, and no way to get stronger."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "The injection took effect immediately which meant the offensive capabilities were as promising as him enhancing himself."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "The work was awkward and fiddly, because the space was small out of necessity - it wouldn\u2019t do to weaken the structure of the wall - and it was low to the ground which meant kneeling on the cold ground."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "He\u2019d have to find it first, which meant scouting reports."
+    },
+    {
+      "group": "market_litrpg",
+      "tier": "a2",
+      "sentence": "Which meant that the bulk of Shadow Demons he\u2014and any other unfortunate Encoded who traveled here\u2014would face were of the Cerberus rank."
+    },
+    {
+      "group": "market_litrpg",
+      "tier": "a2",
+      "sentence": "Which meant if he absorbed just twenty Shadow Demons, he would already have advanced in strength by leaps and bounds."
+    },
+    {
+      "group": "market_litrpg",
+      "tier": "a2",
+      "sentence": "Which meant that if rank gave Saturis anything to go on, then it would mean that the Shadow Fragments which he collected \u2014 if the system was working within well established rules \u2014 would be very small if he were to adjust the size to fit that of a normal Encoded."
+    },
+    {
+      "group": "market_litrpg",
+      "tier": "a2",
+      "sentence": "Which meant there was something just beyond the periphery of his mind's eye to fully grasp how his Halo worked."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "I can\u2019t remember last night, which means I lost my temper again."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "I shiver; my sensitivity must be going haywire, which means this is gonna hurt."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "\u201d\n\n\u201cWhich means we need to find it before the rains start,\u201d Rogar added."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "Which means it was here."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "She knew she was the closest to where the Lake-Wolf had carried Reylo, which meant she had the best chance of seeing it."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "Which meant it was getting ready to strike again."
+    },
+    {
+      "group": "market_other",
+      "tier": "a1",
+      "sentence": "Do you think she was biding her time?\u201d\n\n\u201cNo,\u201d Dad said, \u201cShe didn\u2019t know about us, and we hadn\u2019t planned to snatch her so no one would have known beforehand."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "Which means getting Dumbledore's trust without becoming his pawn."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "The island was small\u2014nowhere to run except back into the water, which meant death by cold or radiation."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "Which means that we\u2019ll be making frequent trips to the forests."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "Some of the people escaped on foot, which meant that the carriages couldn't go any faster."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "\u2019\u2019 Sophia sighed, \u2019\u2019Which means I can\u2019t send a letter either."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "Which meant lying low wasn\u2019t an option."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "Since he\u2019s been busy, he hasn\u2019t been home much, which means I\u2019ve spent my allotted two observation hours each day just trying to locate him."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "The Dutch believed that some ancient magic are being involved, which means involvement in two realms."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "They begin the ritual through blood, which means by blood it shall be ended."
+    },
+    {
+      "group": "market_litrpg",
+      "tier": "a2",
+      "sentence": "Jessie always wore a revealing robe and a hat, which meant the girl owned the pants, shirt, and jacket strewn about."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "Ry\u016bji quickly grounded himself, taking a deep breath and reminding himself that he was far from Silverwind\u2014which meant he was far away from that bizarre college fair, and from her."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "This phenomenon only occurred every three hours, which meant I had to be ready by nine o'clock."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "The latest issue with Synthetic Dawn had landed on his desk, which meant that somewhere, some poor soul had wasted days or possibly weeks trying to solve the issue, only to miserably fail."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "\"\n\nShe didn\u2019t deny it, which meant we had already won."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "He noticed no trails in the dirt to show where the ball had rolled, which meant it must have gone airborne."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "\u201cAdam and Eve lived in a paradise, which means the weather was perfect and everything was provided for them."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "It was indeed steps, which meant the room was still there and intact."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "According to the internal calendar of the computers in the command center, today was January 14, 2102, which meant in four months, he and Marty would have been here seventeen years."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "This potion has no direct purchasing channel other than buying it through the auction house, which means even if you have a lot of money, you will have to compete against others to win it."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "He could tell the old man was terrified of Liam, which meant he could press further without issue."
+    },
+    {
+      "group": "market_other",
+      "tier": "a2",
+      "sentence": "Which meant."
+    }
+  ],
+  "fixture_check": {
+    "unigram_fixture_ranks": {
+      "awnings": 62,
+      "trestle": 13
+    },
+    "note": "counts of the operator's two rare words in the market's own text. A word the market uses freely is not friction, whatever it did to one reader"
+  }
+}
