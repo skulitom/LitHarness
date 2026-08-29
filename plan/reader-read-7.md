@@ -150,7 +150,93 @@ else.
 
 ## 4. The read
 
-*Empty until the operator has read the book.*
+Arrived 2026-08-29, shortly after delivery. **The operator stopped mid-chapter — the first
+time §2's third prompt has ever returned its answer** — and the verdict is quoted before the
+items because it is the read's headline:
+
+> *"Ok i can't continue reading, it's not gripping im not seeing much improvement from
+> previous title"*
+
+The genre verdict (*"It's not litrpg"*) had already arrived on first sight and is recorded as
+the standing constraint in [`house-genre-constraint.md`](house-genre-constraint.md); this
+read is what the operator found *inside* the register the book does have.
+
+### 4.1 The opening line, and the operator's own counter-shape
+
+> *"'The rain over Ambry Market has been sold to someone else, and Corin is carrying a jar
+> of it in his bag.' - who is someone else why are we saying this? why would the reader
+> care? It should have been something more like 'Corin has an unusual job of selling weather
+> in jars at the market' Same thing, said in fewer words keeping the reader interested."*
+
+The operator's counter-shape leads with the protagonist's exceptional position; the listing
+led with a world mystery. That is the second read in a row to make this exact move — read
+6's biggest finding was the class menu (the offer) skimped while the world got the opening —
+and it matches the standing hook direction (a hook is an exception belonging to one person).
+**Route: direction gap, second sighting** — nothing anywhere says where the hook sits in an
+opening. The operator's rewrite is a harvest quote and may not become prompt text (§97.1);
+what may move is the *placement* question, through the designed channels.
+
+### 4.2 Licences read as minutiae, and two simulated readers said so first
+
+> *"'nobody can explain how a boy with no licence got a storm into glass' - again for some
+> reason bringing up licences , legal licences etc falls under boring mundane minutia, not
+> interesting systems"*
+
+This is §116's shape at a new address: there, debt-and-ledger worlds read as depressing and
+the bias sat in our own rule text; here, charter-and-licence institutional framing reads as
+mundane. **Two instrument premonitions are on record**: pilot 11's browsing pool flagged
+*"the charter system could turn into paperwork rather than pressure"* on a different book,
+and pilot 13's own pool repeated the reservation on this one — a rare case of the simulated
+readership naming the operator's complaint before the operator did, worth one line in any
+future validity argument. **Route: direction gap with the §116-shape audit named first** —
+before any clause, check the Architect's prompt surfaces for an institutional lean (charters,
+licences, tribunals are exactly the register its worlds keep reaching for).
+
+### 4.3 The spoonfed inference — the same tell, second book, second writer
+
+> *"'so nobody had to ask.' - ai tell basically the exact same one as ''What,' in the way
+> people say it when they mean nothing' from the previous book. It's like talking about
+> details all readers already understand, we are spoonfeeding them information they should
+> have infered themselves, it adds nothing (probably harms) the story"*
+
+The operator has now named the same tell class across two books by two different writers,
+which makes it writer-independent — house-level, not dossier-level. The class is precise
+enough to name: **narrating the inference** — a gloss that performs the reader's deduction
+for them. **Route: instrument question, second sighting**, to the tells battery (the
+defect-tell family), with the cross-writer fact recorded as what promotes it above a one-off.
+
+### 4.4 Vocabulary friction, third sighting of the class
+
+> *"'pitch at the end of the awnings,' - what are awnings?? / 'e trestle in its nest of
+> straw' - odd vocab again"*
+
+Read 6 had *triage meetings* and *live build*; this book has period-craft words. Different
+writers, different registers, same class: words that stop the popcorn reader. The standing
+register direction (plain words, no dense prose) has never had a vocabulary floor in any
+rule. **Route: direction gap, third sighting of the class.**
+
+### 4.5 Two precision items
+
+> *"'glass fogged on the west side and clear on the east.' - east and west is used on much
+> larger spacial scales"*
+
+A spatial idiom misapplied at jar scale — a detail that misparses. **Route: direction gap**
+(CLARITY's two-ways clause governs ambiguity, not idiom scale).
+
+> *"'Three people walked past it and did not look. ' - useless information again"*
+
+Economy at the beat level: `house.READER`'s compression clause governs job-detail scenes,
+not atmospheric beats. **Route: direction gap**, and it clusters with read 6's
+narrated-not-present finding — words spent that move nothing.
+
+### 4.6 What the stop itself says
+
+The stop landed inside scene 1, before any ladder, sky-count, or the jar's hum paid off.
+Combined with the verdict ("not seeing much improvement from previous title"), the honest
+reading: the defect families above are not polish items — they are why the operator left,
+and three of them (hook placement, institutional register, spoonfeeding) are now
+multi-sighting patterns across books and writers. No number is attached to any of this and
+none may be; it is the largest single harvest since read 4 and it is still not data.
 
 ## 5. Anti-scope
 
