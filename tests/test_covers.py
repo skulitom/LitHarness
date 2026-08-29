@@ -389,6 +389,48 @@ def test_an_existing_book_defaults_to_its_library_shelf(
     )
 
 
+def test_a_book_colliding_on_title_gets_covers_in_its_own_shelf(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    """Serial pilot 15b §7: two books shared one title. The cover command must resolve the
+    same suffixed shelf the library publisher does, or a redraw's covers would land inside
+    the first book's shelf."""
+    for name in ("one.db", "two.db"):
+        database = tmp_path / name
+        assert main(["--database", str(database), "init"]) == EXIT_OK
+        assert (
+            main(
+                [
+                    "--database",
+                    str(database),
+                    "new",
+                    "Memory Toll",
+                    "--premise",
+                    "A road takes one memory at every gate.",
+                    "--scenes",
+                    "6",
+                ]
+            )
+            == EXIT_OK
+        )
+        assert main(["--database", str(database), "library"]) == EXIT_OK
+    capsys.readouterr()
+
+    [suffixed] = [
+        path
+        for path in (tmp_path / "book-library").iterdir()
+        if path.is_dir() and path.name.startswith("memory-toll--")
+    ]
+    source = art(tmp_path / "art.png")
+    assert (
+        main(["--database", str(tmp_path / "two.db"), "cover", "--art", str(source)]) == EXIT_OK
+    )
+    assert (suffixed / "covers" / "cover-01.png").is_file()
+    assert not (tmp_path / "book-library" / "memory-toll" / "covers").exists(), (
+        "the first book's shelf is not where the second book's covers belong"
+    )
+
+
 def test_the_cli_reports_a_non_object_bundle_as_an_operational_fault(
     tmp_path: Path, capsys: pytest.CaptureFixture[str]
 ) -> None:

@@ -18096,3 +18096,49 @@ floor. RS1 is untouched: no corpus was read and nothing under `src/litharness/` 
 reference. No human judgment entered anything — the operator's reads are a defect harvest (§95,
 §97.1), the chapter under read is a test fixture, and no word of it or of any read is in the
 clause.
+
+## 172. Two books sharing a title shared one shelf, and now only the colliding newcomer's name changes
+
+**Found twice before it was fixed, and the second time it cost a hand-archive.** `library.slugify`
+names a shelf from the title alone. Serial Pilot 2 §6.1 met the collision first and dodged it with
+`--library book-library-p4` — the reason the gitignore glob is `book-library*`. Serial pilot 15b §7
+met it head-on: pilot 15 draw 1 and pilot 15b draw 2 both carried *What the Kettle Remembers* from
+different databases beside one root, both resolved `book-library/what-the-kettle-remembers/`, and
+the redraw would have republished over draw 1's reading copy on its first drafting tick — caught
+only because that record's author checked before ticking, and answered by copying draw 1's shelf to
+`runs/pilots/pilot15/shelf-draw-1/` by hand. That record posed refuse-suffix-or-overwrite and
+proposed nothing, and it named the reason the case is recurrent rather than freak: every
+iterate-until-reads-right redraw under a kept title is this collision.
+
+**What shipped: suffix, on the newcomer only, and sticky.** `application/library.py` gains
+`shelf_slug(root, title, book_id)` and a per-shelf ownership record — `.book.json`, written before
+anything else in the shelf, so a publish interrupted mid-shelf still leaves the one fact a later
+collision is resolved by. The rule: the first book to publish a name keeps it; a different book
+arriving at the same name carries `--<first 8 id characters>`; once suffixed, a shelf keeps its
+suffixed name even after the bare one frees up, so no shelf ever changes name behind the operator's
+back. Shelves published before the marker existed resolve through their volume manifests, which
+already carry the book id, and a shelf that cannot say whose it is counts as the publisher's own —
+which is what keeps every existing shelf exactly where it is; nothing on any disk was moved or
+renamed by this change. The resolvers agree because there is one: `publish_book`, `publish`'s
+skipped-current-book path, `cover`'s default shelf (when a store supplied an identity; a
+bundle-only cover run has none to resolve with and keeps the bare title), and
+`tools/serial_pilot_check.py`'s read-this-folder line all call `shelf_slug`. Tests, beside the
+existing slugify one: `test_shelf_slug_suffixes_only_a_colliding_newcomer`,
+`test_two_books_sharing_a_title_do_not_share_a_shelf` (the pilot's own scenario, two stores into
+one root), `test_a_suffixed_shelf_keeps_its_name_after_the_bare_one_frees_up`,
+`test_a_shelf_published_before_the_marker_existed_keeps_its_name`, and
+`test_a_book_colliding_on_title_gets_covers_in_its_own_shelf`. The gitignore's
+"`--library` has to be used whenever two runs share a title" was corrected in place, and the
+library `README.md` preamble now tells an operator what a suffixed folder is.
+
+**Refused: the other two arms of the record's question, each for its own reason.** Overwriting is
+the defect. Refusing the publish would make the on-every-tick default unsafe in exactly the loop
+that produces the case — the first drafting tick of every kept-title redraw would abort or demand a
+flag somebody must remember, and the gitignore's near-miss is the record of what remembering by
+hand looks like. Also refused: suffixing every shelf uniformly (moves every shelf an operator has
+bookmarked, for zero standing collisions), and deduplicating or gating titles themselves — two
+books may share one, and the library's only job is to keep both readable.
+
+**Anti-scope.** The root-level index `README.md` and `.state.json` remain last-store-wins when two
+databases publish into one root — visible, pre-existing, and not this entry's defect. No bar is
+declared; nothing here measures anything; the only numbers above are name lengths.

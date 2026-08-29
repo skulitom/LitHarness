@@ -2390,7 +2390,16 @@ def cmd_cover(args: argparse.Namespace) -> int:
         if supplied
         else (args.variants if args.variants is not None else covers.DEFAULT_VARIANTS)
     )
-    shelf = _library_root(args) / library_module.slugify(spec.title, spec.book_id or "cover")
+    library_root = _library_root(args)
+    # The same shelf the library publisher resolves, suffix and all, so a colliding book's
+    # covers land beside its own reading copy rather than inside the first book's shelf. A
+    # bundle-only run consulted no store, so it has no identity to resolve a collision with
+    # and the bare title names the shelf as it always has.
+    shelf = library_root / (
+        library_module.shelf_slug(library_root, spec.title, spec.book_id)
+        if spec.book_id
+        else library_module.slugify(spec.title, "cover")
+    )
     default_output = (
         shelf / "volumes" / f"Volume{spec.volume}" / "covers"
         if spec.volume is not None

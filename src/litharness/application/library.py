@@ -83,6 +83,14 @@ DEFAULT_ROOT = Path(LIBRARY_DIRNAME)
 #: republish over an unchanged book is a no-op. Dotted so it sorts out of the way of the books.
 STATE_FILENAME = ".state.json"
 
+#: Written into every shelf so the folder can say which book it belongs to. It exists for one
+#: case: two books sharing one title. `slugify` names a shelf from the title alone, so without
+#: an ownership record the second *What the Kettle Remembers* republished over the first one's
+#: reading copy (serial pilot 15b §7; Serial Pilot 2 §6.1 was the same collision a `--library`
+#: root dodged by hand). Dotted like `.state.json` and for the same reason: derived
+#: bookkeeping, sorted out of the way of the books.
+SHELF_MARKER_FILENAME = ".book.json"
+
 
 def root_for(database: Path | str) -> Path:
     """The library folder for this database: beside it, named `book-library`.
@@ -156,9 +164,64 @@ it is good for is *locating* a defect a counter can be built for.
 
 
 def slugify(title: str, fallback: str) -> str:
-    """A filename-safe name for a book. Falls back to the id when a title is unusable."""
+    """A filename-safe name for a book. Falls back to the id when a title is unusable.
+
+    Derived from the title and nothing else, so two books sharing a title share this name —
+    `shelf_slug` is what turns it into a shelf that is one book's alone.
+    """
     slug = _SLUG_STRIP.sub("-", title.strip().lower()).strip("-")
     return slug or fallback[:12]
+
+
+def _shelf_owner(shelf: Path) -> str | None:
+    """Which book this shelf belongs to, or `None` when the folder cannot say.
+
+    The marker is the record. The volume manifests are the fallback for shelves published
+    before the marker existed — every one already carries the canonical book identity, so an
+    old shelf is not orphaned by the marker being newer than it. Unreadable means unknown,
+    for the same reason `_read_state` swallows corruption: the books are the truth, and the
+    worst a wrong `None` costs is a shelf adopted by the book publishing into it.
+    """
+    candidates = [shelf / SHELF_MARKER_FILENAME]
+    volumes = shelf / "volumes"
+    if volumes.is_dir():
+        candidates.extend(sorted(volumes.glob("Volume*/manifest.json")))
+    for path in candidates:
+        if not path.is_file():
+            continue
+        try:
+            loaded = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            continue
+        book_id = loaded.get("book_id") if isinstance(loaded, dict) else None
+        if isinstance(book_id, str) and book_id:
+            return book_id
+    return None
+
+
+def shelf_slug(root: Path, title: str, book_id: str) -> str:
+    """The shelf name for this book under this root: `slugify`'s name, unless it is taken.
+
+    Two books shared one title in serial pilot 15b and the redraw republished over the first
+    draw's reading copy, because the name was derived from the title alone. The rule that
+    fixes it without moving anything: the first book to publish a name keeps it, and only a
+    colliding newcomer carries a short id suffix — which it then keeps even after the bare
+    name frees up, so a shelf never changes name behind the operator's back. A shelf that
+    cannot say whose it is counts as this book's, which is what lets shelves published
+    before the ownership marker existed keep their names.
+    """
+    bare = slugify(title, book_id)
+    tag = _SLUG_STRIP.sub("-", book_id.lower()).strip("-")[:8]
+    if not tag:
+        # No identity to disambiguate with; the bare name is all there is.
+        return bare
+    suffixed = f"{bare}--{tag}"
+    if (root / suffixed).is_dir():
+        return suffixed
+    owner = _shelf_owner(root / bare)
+    if owner is None or owner == book_id:
+        return bare
+    return suffixed
 
 
 @dataclass(frozen=True, slots=True)
@@ -496,8 +559,17 @@ def publish_book(
     chapters_per_volume: int = DEFAULT_CHAPTERS_PER_VOLUME,
 ) -> PublishedBook:
     """Write one book's shelf: the reading copies, the pastable chapters, and the notes file."""
-    slug = slugify(document.title, document.book_id)
+    slug = shelf_slug(root, document.title, document.book_id)
     shelf = root / slug
+    # The ownership record goes down first, so a publish interrupted mid-shelf still left
+    # behind the one fact a later collision is resolved by.
+    _write(
+        shelf / SHELF_MARKER_FILENAME,
+        json.dumps(
+            {"book_id": document.book_id, "title": document.title}, indent=2, sort_keys=True
+        )
+        + "\n",
+    )
     _write(shelf / f"{slug}.md", document.as_markdown(scenes_per_chapter))
     _write(shelf / f"{slug}.html", document.as_html(scenes_per_chapter))
 
@@ -582,6 +654,11 @@ Each book has a shelf:
 - `NOTES.md` — what you noticed. Worth writing: a named defect from a human read is one of
   only two ways a new axis enters the registry, and all three the system measures today came
   from one read of one book.
+
+**Two books that share a title do not share a shelf.** The first book keeps the clean name,
+and a later book's folder carries a short id suffix (`<book>--1a2b3c4d`) — which it keeps,
+so no shelf changes name behind your back. The dotted `.book.json` in each shelf is how the
+library remembers whose a name is.
 
 **A chapter holding an undrafted scene is withheld, not emitted with a hole in it.** The count
 is in the table below.
@@ -692,7 +769,7 @@ def publish(
                 PublishedBook(
                     book_id=book_id,
                     branch_id=branch_id,
-                    slug=slugify(document.title, book_id),
+                    slug=shelf_slug(root, document.title, book_id),
                     title=document.title,
                     summary=document.summary,
                     drafted=document.drafted,
@@ -754,6 +831,7 @@ __all__ = [
     "NOTES_FILENAME",
     "NOTES_TEMPLATE",
     "NOT_DRAFTED",
+    "SHELF_MARKER_FILENAME",
     "STATE_FILENAME",
     "Chapter",
     "PublishedBook",
@@ -765,6 +843,7 @@ __all__ = [
     "publish",
     "publish_book",
     "root_for",
+    "shelf_slug",
     "slugify",
     "volumes_for",
 ]
