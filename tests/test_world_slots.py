@@ -625,8 +625,21 @@ def test_a_world_with_no_sheet_is_told_so_and_is_still_a_coherent_world() -> Non
     payload = world_view.check([_RULE])
     assert payload["ok"] is True
     assert payload["complaints"] == []
-    assert len(payload["gaps"]) == 1
-    assert "status_snapshot" in payload["gaps"][0]
+    assert any("status_snapshot" in gap for gap in payload["gaps"])
+
+
+def test_the_missing_system_is_a_separate_gap_from_the_missing_sheet() -> None:
+    """Two questions, both reported, because a world can fail either without the other.
+
+    The floor asks whether this book can speak system voice at all; §160's `system_gap` asks
+    whether the sheet it speaks with belongs to a system the world declared. A hand-seeded
+    sheet answers the first and not the second, which is every book on disk today.
+    """
+    hand_seeded = [accepted(_status_snapshot()), accepted(_status_sheet())]
+    payload = world_view.check(hand_seeded)
+    assert payload["ok"] is True
+    assert not any("status_snapshot" in gap for gap in payload["gaps"]), "the floor is clear"
+    assert any("no game system" in gap for gap in payload["gaps"]), payload["gaps"]
 
 
 def test_the_gap_closes_on_exactly_what_the_genre_floor_reads() -> None:
@@ -637,8 +650,14 @@ def test_the_gap_closes_on_exactly_what_the_genre_floor_reads() -> None:
     that answered yes to prose would let a book pass and never be asked for a line.
     """
     prose = accepted(rec("sera", extraction.STATUS_PREDICATE, value="attuned, two threads"))
-    assert world_view.check([prose])["gaps"], "a prose sheet is not a sheet the line renders"
-    assert world_view.check([prose, accepted(_status_snapshot())])["gaps"] == []
+
+    def floor_gaps(records: list[lc.StateRecord]) -> list[str]:
+        """Only the floor's own gap. The system gap is a separate question and stays open on
+        a hand-seeded book, which is every book on disk today."""
+        return [gap for gap in world_view.check(records)["gaps"] if "status_snapshot" in gap]
+
+    assert floor_gaps([prose]), "a prose sheet is not a sheet the line renders"
+    assert floor_gaps([prose, accepted(_status_snapshot())]) == []
 
 
 def test_a_proposed_sheet_leaves_the_gap_open_because_accept_is_the_gate() -> None:
@@ -671,14 +690,15 @@ def test_the_predicates_the_vocabulary_names_are_the_ones_that_clear_the_floor(
         ],
     ):
         assert main(["--database", db, *argv]) == EXIT_OK
-    capsys.readouterr()
-    assert main(["--database", db, "world", "check", "--json"]) == EXIT_OK
-    assert json.loads(capsys.readouterr().out)["gaps"], "not canon until accept"
+    def floor_gap_open() -> bool:
+        capsys.readouterr()
+        assert main(["--database", db, "world", "check", "--json"]) == EXIT_OK
+        gaps = json.loads(capsys.readouterr().out)["gaps"]
+        return any("status_snapshot" in gap for gap in gaps)
 
+    assert floor_gap_open(), "not canon until accept"
     assert main(["--database", db, "world", "accept"]) == EXIT_OK
-    capsys.readouterr()
-    assert main(["--database", db, "world", "check", "--json"]) == EXIT_OK
-    assert json.loads(capsys.readouterr().out)["gaps"] == []
+    assert not floor_gap_open(), "the documented predicates did not clear the floor"
 
 
 def test_the_vocabulary_an_architect_reads_names_the_domain_and_the_criterion(
