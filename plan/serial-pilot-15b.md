@@ -534,3 +534,45 @@ world aggregates, cozy reads cozy and not grey, character-first opening line.
 **Verdict: the loop spins again.** Three tracks, independent by file surface, §169–§171
 pre-allocated in launch order and re-scanned at commit per the house rule. The gate read
 stays a diagnostic (§95); read 9's remaining items fold in whenever they arrive.
+
+## Iteration 4 — draw 4 under §168–§171 together, and the gate passes
+
+**The run.** The same recipe on `serial15d.db`, draw 3 archived to
+`runs/pilots/pilot15/shelf-draw-3/` first. Seed clean on `check` (one advisory: an
+incomplete cardinality shape that checks nothing, recorded by the tool itself), `accept`
+took 234 of 239 with the same deliberate system-unfinished shape. Chapter 1 in four ticks,
+1,903 words, two scenes, zero rows in `exceptions`, **$4.80 across 5 paid decisions**. The
+seed's own progression stakes are the sharpest of the four draws: the ladder is *tacked,
+held, seated, trued, whole*, the Millwrights' Table passes load-bearing work at *trued* and
+not below, and Mira opens short of it where the reader can see the distance.
+
+**All three of iteration 3's defects verified fixed on the page.** Both status lines read
+`[STATUS] Mira Kell — …` (§169's name, §170's protagonist), and both print at her own
+number-moves: scene 1's rung-up to *seated* — dramatized as a kettle boiling under three
+people watching, socially confirmed in dialogue (*"That's seated, that is"*) before the
+sheet prints Hold 3 — and scene 2's Carried filling 2/3 → 3/3, spoken in prose as *"You're
+full." / "I'm full."*, which is §166's counted-in-a-person licence used exactly. The strong
+narratorial-gloss shape is absent; what remains is two mild located instances and one
+simile, at or under genre-typical texture.
+
+**What the chapter does that no earlier draw did.** The rung gate is a spoken stake
+(*"The Millwrights Table won't pass a hand below trued… You're held"* — stale by one
+evening, since the reader watched her reach *seated* the night before, which is dramatic
+irony the book earns), the deadline is set (the sitting's quarter-day), a rival mender is
+asking questions one town over, and the central mystery advances on a physical clue —
+Hesper's wet boots and the weed in her lacing against *"I look at it from the bridge"*,
+then the rule's own read: dark, water close, a fist closing on boxwood until the joint
+gave. The chapter ends with Mira capped, coated, and walking to the mill. Momentum, cost,
+potential (a Hearing 0 column is a promise), and zero dent-class passages — every scene
+business settles something where it stands.
+
+**Residuals below the line, recorded so read 10 knows they were seen:** *"pour half a
+poured cup"* wobbles where scene 1's version of the same image is clean; the Millwrights'
+Table loses its apostrophe once; the rung-word-to-number mapping (*seated* = Hold 3) is
+taught only by adjacency of dialogue and sheet, never stated. None rises to any operator
+item.
+
+**Verdict: the gate passes on the cumulative reads-4-through-9 checklist, every item.**
+$14.10 across the loop's three fix iterations (draws 2–4). The covers and listing are
+unchanged from the gate-passed package (same title, same listing, covers drawn against
+it); the shelf's reading copies now carry draw 4. Read 10 is the operator's.
