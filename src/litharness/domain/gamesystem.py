@@ -1389,8 +1389,20 @@ def sheet_of(
         system = found[0]
 
     def within(record: lc.StateRecord) -> bool:
+        """Whether the book standing at `at` has reached the position this record states.
+
+        **`key <= at` again, and the sheet is the worst place for it** (§167). A scheduled
+        `stands_at` or `can_do` answered `'0350' <= 's1'` with `True`, so the character sheet a
+        writer is shown would print the rank and the ability magnitudes the arc ends on. It
+        reproduces on no store yet only because no book on disk has a declared system —
+        §165.2's `completion_records` mints one at `world accept`, which is what makes this
+        live rather than hypothetical. The un-keyed record is the opening state and reaches
+        every position; a key in another space reaches none of them.
+        """
         key = state_mod.order_key_of(record)
-        return at is None or key is None or key <= at
+        if at is None or key is None:
+            return True
+        return state_mod.comparable(key, at) and key <= at
 
     standings = [
         record

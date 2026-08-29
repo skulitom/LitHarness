@@ -1145,7 +1145,17 @@ def promotions(
         if not record.object_ref:
             continue
         earlier = state_mod.order_key_of(record)
-        if earlier is None or earlier >= order_key:
+        # **A proposal is promoted only from a position this scene can place** (§167). The old
+        # test was `earlier >= order_key`, so a proposal keyed in the schedule space answered
+        # `'0350' >= 's1'` with `False`, fell through the guard, and was minted as
+        # `ACCEPTED_CANON` at scene one carrying the note `proposed at 0350` — a declaration
+        # about the end of the book promoted into canon at the start of it. No store on disk
+        # holds such a record today, so this reproduces nowhere and is fixed anyway: the guard
+        # can only ever promote *fewer* edges than before, so it cannot invent a fact, and a
+        # canon-minting path is the wrong place to leave a comparison that is wrong by spelling.
+        if earlier is None or not state_mod.comparable(earlier, order_key):
+            continue
+        if earlier >= order_key:
             continue
         key = _edge_key(record)
         if key in already:

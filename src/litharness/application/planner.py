@@ -619,9 +619,15 @@ def packet_for(
         # **Where the book stands, and it is a different question from the cutoff above.**
         # The cutoff decides which records *exist yet* and is gated by `stated_position`, so it
         # is `None` for any book whose story positions somebody else chose. This asks whether
-        # the reader has been *told* a thing, against positions the Architect minted from this
-        # book's own beat sheet — so it is entitled to the beat's key unconditionally, and a
-        # legacy world's schedule keeps working on an imported book where the cutoff abstains.
+        # the reader has been *told* a thing, so it is entitled to the beat's key
+        # unconditionally where the cutoff abstains.
+        #
+        # ~~against positions the Architect minted from this book's own beat sheet~~ … ~~and a
+        # legacy world's schedule keeps working on an imported book~~. **Both false** (§165.3,
+        # fixed in §167): the beat's key is a scene key, an Architect's schedule is written in
+        # digits, and a schedule did not "keep working" — it read as wholly disclosed from scene
+        # one, on every book that had one. The key passed here is unchanged; what changed is that
+        # `undisclosed_claims` no longer compares it against a coordinate from another space.
         #
         # The two lines were written by different sessions within a day of each other and the
         # merge is where they met. They agree: a non-chronological template mints no key, both

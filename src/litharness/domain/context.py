@@ -509,13 +509,24 @@ def assemble(
         ):
             continue
         if not state_mod.reached_boundary(record, boundary):
-            omitted.append(
-                Omission(
-                    record.record_id,
-                    record.record_id,
-                    f"not yet established at {state_moment.value} boundary",
-                )
+            # **Two reasons a record has not been reached, and the packet says which** (§167).
+            # A record dropped for standing later in the book is an ordinary slice; a record
+            # dropped because its position is in the other order-key space is a world that
+            # declared a coordinate this cutoff cannot place, and it will be dropped at *every*
+            # scene, not just this one. Reporting both as "not yet established" would make a
+            # permanent exclusion look like a temporary one — the failure §152 named when it
+            # made `will_not_resolve` a separate line from a warning, and the reason an
+            # omission carries a reason at all.
+            key = state_mod.order_key_of(record)
+            reason = (
+                f"position {key!r} is not in the {state_mod.key_space(boundary.cutoff)} "
+                f"key space this cutoff reads, so it is unplaceable here"
+                if key is not None
+                and boundary.cutoff is not None
+                and not state_mod.comparable(key, boundary.cutoff)
+                else f"not yet established at {state_moment.value} boundary"
             )
+            omitted.append(Omission(record.record_id, record.record_id, reason))
         elif not state_mod.visible_to(record, pov_character_id):
             omitted.append(
                 Omission(
@@ -545,9 +556,17 @@ def assemble(
     # cutoff decides which *records exist yet* and `domain/state.py` refuses to invent one,
     # because nothing defines a mapping from a manuscript scene to an author's order key. The
     # disclosure coordinate answers a different question — *has the reader been told this yet* —
-    # against positions the Architect minted from the book's own beat sheet, so the two
-    # vocabularies are commensurable by construction. Passing the cutoff for both would tie the
-    # reveal schedule to a slicing decision the live path deliberately declines to make.
+    # so passing the cutoff for both would tie the reveal schedule to a slicing decision the
+    # live path deliberately declines to make.
+    #
+    # ~~against positions the Architect minted from the book's own beat sheet, so the two
+    # vocabularies are commensurable by construction.~~ **False, and measured false** (§165.3,
+    # fixed in §167). `disclosure_at` is a scene key and an Architect's disclosure positions are
+    # schedule keys, so the two are the *least* commensurable pair in the codebase: on
+    # serial15.db this comparison read all seven of the book's scheduled reveals as already
+    # told, at scene one. `undisclosed_claims` now compares inside one space and an unlocatable
+    # disclosure reads as *not yet*, so this line is safe for the reason opposite to the one
+    # written here — not because the coordinates agree, but because they are no longer assumed to.
     hidden_ids = worlds_mod.hidden_record_ids(visible, at=disclosure_at)
 
     threads: list[PackedItem] = []

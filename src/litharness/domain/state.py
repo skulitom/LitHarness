@@ -224,11 +224,22 @@ def records_before(
     survives a cutoff rather than being dropped: it asserts no narrative position, and
     treating "unplaced" as "later than everything" would silently discard world rules and
     standing relationships from every packet.
+
+    **A record that asserts a position in the other space does not survive, and that is a
+    different case from asserting none** (§167). `'0350' <= 's1'` is `True`, so before this
+    every scheduled declaration in the book passed every scene's cutoff: on serial15.db this
+    admitted 18 records — three scheduled snapshots, four `stands_at`, three `can_do` and eight
+    `disclosed_to` — into a packet built at `s1`. Un-keyed means *true of the book*, so it
+    belongs at every position; a schedule key means *true at a position this book has not
+    reached*, so it belongs at none of them yet. The two must not collapse into each other, and
+    string comparison collapsed them silently in the leaking direction.
     """
     if cutoff is None:
         return tuple(records)
     return tuple(
-        record for record in records if (key := order_key_of(record)) is None or key <= cutoff
+        record
+        for record in records
+        if (key := order_key_of(record)) is None or (comparable(key, cutoff) and key <= cutoff)
     )
 
 
@@ -268,10 +279,21 @@ class StoryBoundary:
 
 
 def reached_boundary(record: lc.StateRecord, boundary: StoryBoundary) -> bool:
-    """Whether ``record`` is established on the caller's side of ``boundary``."""
+    """Whether ``record`` is established on the caller's side of ``boundary``.
+
+    **This is the gate `eligible_records` runs, so it is the one the live packet passes
+    through, and it carried `records_before`'s defect with it** (§167). A key that states a
+    position in the other space is not before this boundary and is not at it: it is
+    unplaceable relative to it, and the honest answer to "has the book reached this yet" is
+    *no*. The equality branches below are safe to leave keyed on the raw string because two
+    keys that are equal are in the same space by construction — `key_space` partitions on
+    shape, and one string has one shape.
+    """
     key = order_key_of(record)
     if boundary.cutoff is None or key is None:
         return True
+    if not comparable(key, boundary.cutoff):
+        return False
     if key < boundary.cutoff:
         return True
     if key > boundary.cutoff:
