@@ -1571,6 +1571,38 @@ def snapshot_at(
     scheduled at `0350` is not earlier than scene one because `'0350' < 's1'`; it is a position
     in the other space, and the book has not reached it. `state_mod.comparable` decides, the
     un-keyed snapshot stays eligible everywhere, and the schedule stays canon and unread here.
+
+    **Whose sheet is asked before which of theirs stands** (§170). Every rule above answers
+    *when*; none of them answered *whose*, and until a second member of the cast held a sheet
+    the two questions could not come apart. Serial Pilot 15's third draw is where they did:
+    the Architect gave the protagonist and a thirteen-year-old apprentice an opening snapshot
+    each, both un-keyed, and the tie fell out of `max` over two empty strings — which is store
+    row order, and it went to the apprentice. The chapter then printed the apprentice's line
+    twice and the protagonist's declared opening position (*mender, keeping three, nineteen
+    marks*) never reached the page at all. Nothing was blocked and nothing was wrong with her
+    records; the selection simply had no opinion.
+
+    So the protagonist's own snapshots are taken first where she holds any, and the position
+    rules below run inside them. `worlds.protagonist_brief` is the source and it is the same
+    one `application/planner.py` already reads for point of view a line above this call, so
+    the line the writer is shown and the person the packet is built for cannot disagree. It is
+    a derivation and never a choice (§61(5)): the role is declared in the book's own canon, and
+    two declared protagonists resolve first-by-subject-id there rather than here.
+
+    **A book whose protagonist holds no sheet falls through unchanged**, which is every book
+    written before a protagonist role existed, both golden fixtures, and every store holding
+    exactly one sheet-holder — including Serial Pilot 15's second draw, where this filter is a
+    no-op because the mender was the only subject with a snapshot at all. The fall-through
+    matters beyond compatibility: `genre.has_starting_sheet` reads this chain, so a filter that
+    could empty it would newly refuse to draft books that draft today.
+
+    **The filter also closes a ratchet.** Extraction writes a snapshot at the scene's own key
+    for whoever the prose printed, and a keyed snapshot outranks an un-keyed opening — so one
+    arbitrary tie at scene 1 aimed every later scene at the same subject for the rest of the
+    book. Taking the protagonist first is asked before the ordering, so a side character's
+    extracted line can no longer capture the furniture. A side character *progressing* is
+    untouched: their snapshots stay canon, stay extracted and stay in the packet. What they no
+    longer own is the one line the reader reads as the interface.
     """
     if not speaks_system_voice(records):
         return None
@@ -1586,6 +1618,7 @@ def snapshot_at(
         # mapping, so the guard above and this filter agree by construction. Kept so a future
         # loosening of the predicate fails toward abstaining rather than toward `str.get`.
         return None
+    snapshots = _the_protagonists(snapshots, records)
     exact = (
         [record for record in snapshots if state_mod.order_key_of(record) == at]
         if include_at
@@ -1601,6 +1634,27 @@ def snapshot_at(
     if not chosen:
         return None
     return max(chosen, key=lambda record: state_mod.order_key_of(record) or "")
+
+
+def _the_protagonists(
+    snapshots: Sequence[lc.StateRecord], records: Sequence[lc.StateRecord]
+) -> list[lc.StateRecord]:
+    """The protagonist's snapshots, or all of them where she holds none.
+
+    Narrowing rather than selecting: this returns a subset of what it was given and decides
+    nothing about which member of that subset stands. `snapshot_at` owns that, unchanged.
+
+    The empty case is the whole reason this is a function and not two lines inline. A book with
+    no declared protagonist and a book whose declared protagonist has no sheet are different
+    facts with the same right answer — leave the set alone — and both are ordinary rather than
+    exceptional: the first is every book written before 2026-08-22, and the second is any book
+    whose sheet-holder is somebody the world did not name as its own.
+    """
+    brief = worlds_mod.protagonist_brief(records)
+    if brief is None:
+        return list(snapshots)
+    owned = [record for record in snapshots if record.subject == brief.subject]
+    return owned or list(snapshots)
 
 
 def _stands_before(key: str | None, at: str) -> bool:
