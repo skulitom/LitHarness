@@ -95,6 +95,16 @@ narration is out even when the sheet legitimately tracks it — and everywhere e
 runs at ordinary-fiction number rates, for which §162's non-genre distributions are the
 measured reference (mundane-core ~1.1/1k, all mentions ~8.8/1k).
 
+Extended minutes later, verbatim: *"classes as well, litrpg elements"* — the prose licence
+covers the character's skills, ability levels, **classes, and LitRPG system elements
+generally**; the exclusion is world aggregates and mundane quantities, not the genre's own
+furniture. This also records a SCHEMA note for the system object: pilot 15's SystemDef
+models an ability graph, a ladder and a magnitude scale but no CLASS concept — while pilot
+12's own listing hook was a man reading class descriptions, and the operator's original awe
+direction ("i wonder what I would get and pick") is a choosing-among-options effect that
+classes carry natively. A class/build concept in SystemDef is a queued schema extension,
+not tonight's edit.
+
 **The hazard, named before anyone drafts a clause:** "show progress immediately" as prompt
 text is a §138 formula waiting to happen. The altitude that avoids it is **structural** —
 the planner's beat sheet, where scene 1's plan can carry a progression beat as a plan item
