@@ -597,3 +597,89 @@ item.
 $14.10 across the loop's three fix iterations (draws 2–4). The covers and listing are
 unchanged from the gate-passed package (same title, same listing, covers drawn against
 it); the shelf's reading copies now carry draw 4. Read 10 is the operator's.
+
+## Read 10 fails the book, and most of it lands below prose
+
+**Defect harvest, not data (§95). Arrived 2026-08-30, on draw 4 — the draw the coordinator's
+gate passed, so every item here is also a gate-calibration lesson.** The items, verbatim, then
+the routing.
+
+> *"Impossible to understand what is happening in the chapter if you haven't read the
+> overview."*
+
+> *"'Evening,' he said. 'It's the kettle.' / 'What do you use it for?' Mira asked." — yes
+> kettles are used to boil water...*
+
+The chapter leans on the listing for its premise, and its one signature device (a mend wants
+to know its use) is never given its in-world reason on the page, so it reads as a stupid
+question. Standalone comprehension is a direction gap: the awe clause asks the opening to
+*show the offer*; nothing asks the chapter to *teach its own mechanic*.
+
+> *"the story still feels stagnant and not progressing."*
+
+Two shop-visits in a row read as episodic to the person the book is for, whatever stakes the
+coordinator's read traced under them. The felt experience outranks the trace.
+
+> *"We should make character relatble and later aspirational, i don't think we really
+> accomplish either ones currently."*
+
+Premise/protagonist altitude — the class read 3 put above direction entirely. Converges with
+the standing readership direction (a prior life the target reader has lived). A village
+mender in a cozy valley is neither, and no fix inside this book's draws reaches it.
+
+> *"Status came up randomly, in a proper Litrpg inner dialogue of future class/abilities
+> progression is a large part of the story. As a reader i want to deliberate class options
+> and what i would have chosen, or what abilities i would pick. Randomly inserting status
+> doesn't make it a litrpg it just seems like noise. If we have a status it has to be part of
+> the world characters are interacting with."*
+
+**The central item, and it names a gap in §160's own contract.** The furniture renders at
+number-moves — a narrator overlay, correct by the page contract and experienced as noise. The
+operator's direction: the system is DIEGETIC — a thing the character opens, reads, and
+deliberates over, with future-pick deliberation as a large part of the story. This activates
+the queued class/build concept (choosing-among-options, the operator's original awe
+direction) and re-aims the furniture contract from renderer-driven to character-driven. The
+operator supplied an example sentence; per §97.1 it informs the design through the designed
+channel and no word of it becomes prompt text.
+
+> *"There are too many people, too many conversation about mundane things which don't
+> progress the story."*
+
+Draw 4's chapter 1 stages five named present characters plus four named offstage in 1,903
+words. Nothing anywhere bounds early-chapter cast. Direction gap, countable.
+
+> *"The sentences are often not what any human says either like 'She let go of the seam and
+> it stayed with her' - seams non't stay with anyone, that is not a thing seams do /
+> 'solidly as her own morning' - mornings are not solid / 'You keep it behind something you
+> reach past hot. Put it in front' - what does this even mean"*
+
+Figure-level clarity: metaphors that fail a literal read, an antecedent that points at the
+wrong noun, dialogue whose referent cannot be reconstructed at reading speed. This is
+`house.CLARITY`'s own object one level down — the sentence parses; the figure doesn't. Third
+writer to produce the family (reads 5, 7, 9, 10).
+
+> *"Anyways looks like the majority of the issues are still present. I think we might need a
+> new writer, doesn't look like we made meaningful progress"*
+
+**Casting decision, taken here rather than asked back:** the next draw is `ferreira` — the
+operator-named default, the one dossier that is system-native — on a fresh premise built for
+the readership direction, since the relatable/aspirational item cannot be reached inside the
+kettle premise. The kettle draws stay on the shelf as the loop's record. penhale is not
+judged by one book; the figure-clarity family is house-level (three writers) and gets a
+house fix, not a scapegoat.
+
+> *"(also small thing, the status window should be rendered in a table, the width of text on
+> the website is too short as well)"*
+
+Two mechanical rendering items on the reading copy: the status line renders as a table; the
+text column widens.
+
+**Gate calibration, recorded against the gate.** The coordinator's pass traced stakes and
+momentum that the operator did not feel, taught the rung-mapping by adjacency that the
+operator experienced as noise, and read five named characters as texture where the operator
+counted them as crowd. The checklist gains: standalone comprehension (no listing assumed),
+felt progression over traceable progression, diegetic system interaction, early-cast size,
+and figures that survive a literal read.
+
+**Anti-scope.** No bar, no axis, no research claim; one person's read of one chapter. The
+fix tracks are named in the next entry when they land, not promised here.
