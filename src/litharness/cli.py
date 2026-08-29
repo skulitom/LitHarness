@@ -86,7 +86,7 @@ from litharness.application.outline import (
     render_outline_request,
 )
 from litharness.application.plan_refinement import accept_plan_proposal
-from litharness.application.planner import make_plan_selector
+from litharness.application.planner import make_plan_selector, plan_progress
 from litharness.application.planner import render_prompt as render_scene_prompt
 from litharness.application.repair import (
     EVALUATE_REVISION,
@@ -686,6 +686,24 @@ def cmd_tick(args: argparse.Namespace) -> int:
 def cmd_status(args: argparse.Namespace) -> int:
     store = _store(args)
     try:
+        # **The blocked books, asked of the same function the tick's selector consults.**
+        # `plan_progress` has carried the refusal since §155.2 and the selector has honoured
+        # it, but no command printed it — pilot 14 §7 watched a floored book return `no_work`
+        # under a report reading `jobs {}` / `needs attention 0`, so a stopped board and a
+        # board at rest were the same screen. Computed under the policy and serial shape
+        # `cmd_tick` hands its selector, because the answer depends on both: the sentence
+        # printed here is the sentence the next tick refuses with, not a second opinion.
+        policy = _draft_policy(args)
+        shape = SerialShape(args.chapter_scenes, args.arc_chapters)
+        blocked = []
+        for book_id, branch_id, _ in store.branches():
+            progress = plan_progress(
+                store, book_id, branch_id, policy=policy, serial_shape=shape
+            )
+            if progress.blocked_reason is not None:
+                blocked.append(
+                    status_module.BlockedBook(book_id, branch_id, progress.blocked_reason)
+                )
         report = status_module.collect(
             store,
             _now(),
@@ -693,6 +711,7 @@ def cmd_status(args: argparse.Namespace) -> int:
             # The CLI is the only caller that knows whether the sibling evaluator is wired,
             # so it is the only one that can report the pack being off.
             continuity_evaluator=args.continuity_evaluator_command is not None,
+            blocked=blocked,
         )
     finally:
         store.close()
