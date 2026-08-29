@@ -68,6 +68,20 @@ opening *shows the offer*; the operator is saying the offer must already be *mov
 converges with read 7 §4.1's hook-placement gap: the opening's job is the protagonist's
 exception + the system + the first felt progress, together, early.
 
+And extended minutes later from placement to **cadence**:
+
+> *"not just progress inside the opening, readers expect constant and regular progress. Well
+> whatever activates dopamine receptors"*
+
+So the timing half is a rhythm, not a first beat: progression events arrive early AND keep
+arriving at a regular cadence for the whole book. The measurable version exists before any
+design argument: the market's own progression-event cadence (rungs moved, capabilities
+gained, numbers advanced per thousand words) can be counted over the chapter shards on disk
+— the same move the comic-beat census made for levity (genre at 5.50 beats/1k, ours at its
+61st percentile), which is the precedent for turning "constant and regular" into a
+distribution instead of an adjective. That census is also the read-7 mechanics census's
+sibling and inherits the descriptor-half quarantine.
+
 **The hazard, named before anyone drafts a clause:** "show progress immediately" as prompt
 text is a §138 formula waiting to happen. The altitude that avoids it is **structural** —
 the planner's beat sheet, where scene 1's plan can carry a progression beat as a plan item
