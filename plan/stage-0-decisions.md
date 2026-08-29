@@ -15793,6 +15793,10 @@ and is never rendered into a call) and one predicate, `has_starting_sheet`, whic
 `extraction.speaks_system_voice` rather than restating it**. A second definition of what a
 starting sheet is would be a second answer to the question the *writer's* prompt already asks;
 if they disagreed, a book could pass the floor and still never be asked for a status line.
+**Correction (§158): the delegation was necessary and not sufficient.** The delegate carried
+only half the ask's condition — any canon snapshot counted, while the ask renders out of a
+mapping — and pilot 14 measured a prose-valued sheet passing the floor on a book that was never
+asked. `speaks_system_voice` now requires the mapping the ask renders from.
 
 **The surface is the planner, and three candidate surfaces were rejected with reasons:**
 
@@ -16181,6 +16185,80 @@ and position, and the change spends zero additional calls on any path. No resear
 promoted; pilot 14 §3's finding table stays where it is and this entry only points at it. The
 seeding-path and diagnostics defects pilot 14 filed beside this one (§2.2, §7) are not addressed
 here and belong to their own entries.
+
+## 158. Clearing the floor did not mean being asked, and the one seeding path that can reach a pilot's book could not carry the sheet
+
+**Measured first, all of it in pilot 14 before anything here was built**
+(`plan/serial-pilot-14.md` §2.2 and §7). The floor's refusal named `new --state` and
+`import --state`, and on the path pilots actually use both are unreachable: `listing --scenes`
+creates the book itself and hard-nulls `state` when it does, and `import` has no `--book` or
+`--branch` — it is the command that *creates* a book, not one that adds state to an existing
+one. The reachable path is the in-world one, `world declare <subject> status_snapshot` promoted
+by `world accept` — and `cli._scalar` kept a parsed `--value` only when it was
+`int | float | bool`, so a mapping round-tripped back to its raw string. The ask renders out of
+a `Mapping` (`extraction.system_voice_example`), and the status-line instruction lives inside
+`if status_example:` (`application/planner.py`). Net effect on the shipped book: canon held a
+`status_snapshot`, the floor passed, the sheet reached the writer's packet as fact — **and the
+book was never asked to end a scene with a status line.** `progression_target` was dark for the
+same root cause: it needs a `PROPOSED` mapping-valued snapshot, and the outline mints those from
+a mapping seed the book could never hold. One defect, two symptoms.
+
+**What shipped.**
+
+- **`cli._scalar` keeps a JSON object.** Its scalar-only rule was earned — a 317-record world
+  stored every reveal scene as the string `"34"` — and the widening addresses that history
+  rather than overruling it: an object is as plainly typed as 34, `json.loads` on prose raises
+  and the text is kept, and no sentence parses as `{...}` by accident. Arrays still round-trip
+  as prose, because nothing reads a list-valued record.
+- **`extraction.speaks_system_voice` requires a `Mapping` value.** §155.2's argument for
+  delegating the floor's predicate was that the floor and the writer's prompt must consult one
+  question, or a book could pass the floor and still never be asked — and pilot 14 measured
+  exactly that split, because the delegate carried only half the ask's condition. The predicate
+  now carries all of it, so the floor, the rules-pack advisory (§159's surface) and the
+  outline's seed read agree by construction.
+- **The refusal diagnoses the pilot's actual state and names the reachable path.** A floored
+  book whose canon holds only prose-valued snapshots is told that its sheets cannot be rendered
+  from, instead of the now-false "none of them a canon status_snapshot"; and both the refusal
+  and `cmd_new`'s advisory name `world declare <subject> status_snapshot --value '{...}'
+  --order-key <key>` then `world accept` beside the two creation-time paths, which stay valid.
+- **The chain is pinned end to end on the CLI's own commands**
+  (`test_a_book_seeded_by_world_declare_is_actually_asked_for_a_status_line`): a
+  listing-created book is floored; declared-but-not-accepted stays floored, because accept is
+  the gate; after `world accept` the floor clears and the selector's draft job carries the
+  status-line instruction, with the seeded numbers rendered, in its system prompt.
+
+**What was refused, each with its reason.**
+
+- **A `--state` passthrough on `listing --scenes`.** A starting sheet restates world facts, and
+  at listing time there is no world to restate — the Architect has not run. A sheet authored
+  there is authored blind, which is the licence pilot 12 §3 refused. The hard-null stays, with
+  its reason now written at the null.
+- **A write-capable `state` command, or an `import` that targets an existing book.**
+  `world declare` promoted by `world accept` already adds state to a live book under a recorded
+  decision; a second door would go around the one gate (§139.3's argument for where the gate
+  is).
+- **Widening `_scalar` to arrays.** No consumer reads a list-valued record; widen when one
+  does.
+
+**What this does not repair.** `serial14.db`'s shipped book still holds its prose sheet, and
+with no `world retract` (still owed, pilot 14 §10) a corrected declare in the same slot would
+put a second canon value beside the first once accepted. Fix-forward on that book is the
+operator's call, not this entry's.
+
+**Corrections in place.** §155.2 now carries a pointer here: its delegation was necessary and
+not sufficient. Three suite fixtures (`tests/test_outline.py`, `tests/test_planner.py`,
+`tests/test_library.py`) had seeded prose-valued snapshots to satisfy the floor — the loophole
+shape, encoded as a convenience, in the third case through `new --state` itself — and now seed
+mappings, which also means a floor-clearing fixture's outline is asked for a milestone schedule
+and its stub replies carry one: the semantics the fixtures were skirting.
+
+### 158.1 Anti-scope
+
+No bar is declared, no count is restated and no quality claim is made: the floor still answers
+one yes/no question about canon, and what a good sheet contains is not said anywhere. No model
+ranked, judged or read anything — every change is a pure-function widening or tightening plus
+refusal text, and zero additional calls are spent on any path. The operator surface for the
+refusal is §159's; the six-scene beat fold is §157's; nothing here restates their content.
 
 ## 159. The refusal the selector honoured was printed nowhere, and `status` now says it in the planner's own words
 

@@ -216,7 +216,9 @@ def test_the_production_selector_scopes_outline_work_to_one_serial_arc(
                 kind=lc.StateRecordKind.ASSERTION,
                 subject="rook",
                 predicate="status_snapshot",
-                value="Level 1, gatekeeper",
+                # A mapping since §158: the floor asks for a sheet the status-line machinery
+                # can render numbers from, and a prose value no longer counts as one.
+                value={"level": 1},
                 authority=lc.StateAuthority.ACCEPTED_CANON,
             )
         ],

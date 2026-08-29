@@ -44,6 +44,7 @@ from collections.abc import Sequence
 
 import litharness_contracts as lc
 
+from litharness.domain import state as state_mod
 from litharness.domain.extraction import STATUS_PREDICATE, speaks_system_voice
 
 #: The genre every book this house publishes is in. A constant rather than a per-book setting,
@@ -68,6 +69,15 @@ def has_starting_sheet(records: Sequence[lc.StateRecord]) -> bool:
     a book could pass this floor and still never be asked for a status line, which is exactly
     the silent condition the floor exists to end.
 
+    **That disagreement happened anyway, and the delegation alone did not prevent it**
+    (Serial Pilot 14 §2.2 and §7, corrected into §155.2 as §158). The writer's prompt asks
+    through `system_voice_example`, which renders numbers out of a mapping, while
+    `speaks_system_voice` counted any canon snapshot — so a prose-valued sheet, the only
+    shape `world declare --value` could then carry, cleared the floor and the writer was
+    never asked. The repair is in the delegate, where this docstring's own argument says it
+    belongs: `speaks_system_voice` now requires the mapping the ask renders from, and the
+    floor inherits the promise instead of restating it.
+
     A `PROPOSED` snapshot does not count, and that is `speaks_system_voice`'s rule rather than
     one added here: the outline's milestone schedule mints `PROPOSED` status records, so
     counting them would let a book satisfy the floor with its own plan for later instead of
@@ -85,15 +95,31 @@ def genre_block(records: Sequence[lc.StateRecord]) -> str | None:
     """
     if has_starting_sheet(records):
         return None
-    held = len(records)
-    seeded = (
-        f"{held} state record(s) on this branch, none of them a canon {STATUS_PREDICATE}"
-        if held
-        else "no state records on this branch at all"
+    # Every canon snapshot counted here is unrenderable — a renderable one would have cleared
+    # the floor above — and telling a book that holds one "none of them a canon status_snapshot"
+    # sends the operator hunting the wrong absence. Serial Pilot 14 §2.2's book is what this
+    # sentence is for: canon held the sheet, as prose, and nothing could render numbers from it.
+    prose_sheets = sum(
+        1
+        for record in records
+        if record.predicate == STATUS_PREDICATE and state_mod.is_canon(record)
     )
+    held = len(records)
+    if prose_sheets:
+        seeded = (
+            f"{prose_sheets} canon {STATUS_PREDICATE} record(s) whose value is prose rather "
+            "than a mapping, which the status-line machinery cannot render numbers from"
+        )
+    elif held:
+        seeded = f"{held} state record(s) on this branch, none of them a canon {STATUS_PREDICATE}"
+    else:
+        seeded = "no state records on this branch at all"
     return (
         f"{NO_SHEET}; {seeded}. Seed one with `new --state` or `import --state` before "
-        "drafting, or this book writes no system voice and never reads any back."
+        f"drafting — or, on a book that already exists, `world declare <subject> "
+        f"{STATUS_PREDICATE} --value '{{...}}' --order-key <key>` with the value a JSON "
+        "object, then `world accept` — or this book writes no system voice and never reads "
+        "any back."
     )
 
 

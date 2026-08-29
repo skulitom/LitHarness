@@ -93,16 +93,49 @@ def _fixture(store: SqliteStore, name: str) -> tuple[str, str]:
 
 
 def test_a_canon_status_snapshot_is_what_the_floor_asks_for() -> None:
+    """A canon, mapping-valued snapshot — the shape extraction mints — clears the floor.
+
+    The value here was the string `"Level 1"` until §158, and Serial Pilot 14 §2.2 cited
+    this very test as the licence for seeding a prose sheet: the floor passed and the book
+    was never asked for a status line, because `system_voice_example` renders numbers out of
+    a mapping and had nothing to render from. The floor's question is not "does a snapshot
+    exist" but "can this book speak system voice at all", and a sheet nothing can read
+    numbers from cannot.
+    """
     sheet = lc.StateRecord(
         record_id="seed",
         kind=lc.StateRecordKind.ASSERTION,
         subject="rook",
         predicate=STATUS_PREDICATE,
-        value="Level 1",
+        value={"level": 1, "gold": 11},
         authority=lc.StateAuthority.ACCEPTED_CANON,
     )
     assert genre.has_starting_sheet([sheet])
     assert genre.genre_block([sheet]) is None
+
+
+def test_a_prose_valued_snapshot_does_not_clear_the_floor() -> None:
+    """The pilot 14 sheet: canon holds the snapshot, and nothing can render numbers from it.
+
+    Passing the floor on this record is the measured silent condition — the sheet reached
+    the writer's packet as fact and the book was never asked to end a scene with a status
+    line (`plan/serial-pilot-14.md` §7). The refusal must also say what is actually wrong:
+    "none of them a canon status_snapshot" over a book that holds one sends the operator
+    hunting the wrong absence.
+    """
+    sheet = lc.StateRecord(
+        record_id="seed",
+        kind=lc.StateRecordKind.ASSERTION,
+        subject="ilse",
+        predicate=STATUS_PREDICATE,
+        value="guild grade no glass (1 of 7); eleven coppers",
+        authority=lc.StateAuthority.ACCEPTED_CANON,
+    )
+    assert not genre.has_starting_sheet([sheet])
+    reason = genre.genre_block([sheet]) or ""
+    assert genre.NO_SHEET in reason
+    assert "prose" in reason and "mapping" in reason
+    assert "none of them" not in reason
 
 
 def test_a_proposed_status_snapshot_does_not_satisfy_the_floor() -> None:
@@ -112,12 +145,13 @@ def test_a_proposed_status_snapshot_does_not_satisfy_the_floor() -> None:
     a sheet that is true now — and the plan is written by the same run that would then be
     allowed to proceed on the strength of it.
     """
+    # A mapping on purpose, so the only thing refusing it is its authority.
     planned = lc.StateRecord(
         record_id="standing-s3",
         kind=lc.StateRecordKind.ASSERTION,
         subject="rook",
         predicate=STATUS_PREDICATE,
-        value="Level 4",
+        value={"level": 4},
         authority=lc.StateAuthority.PROPOSED,
     )
     assert not genre.has_starting_sheet([planned])
@@ -187,6 +221,106 @@ def test_a_seeded_book_still_reaches_the_selector(store: SqliteStore) -> None:
     """The floor must refuse the unseeded book without refusing every book."""
     _fixture(store, "litrpg")
     assert make_plan_selector(outline=False)(store, "worker-a", START, 300.0) is not None
+
+
+# --- the chain the floor exists to start ------------------------------------------------
+
+
+def test_a_value_that_is_plainly_a_mapping_is_stored_as_one() -> None:
+    """`_scalar` keeps a JSON object for the number's own reason (§158).
+
+    It lives in this file because the parse is link one of the chain the floor guards:
+    Serial Pilot 14 §2.2 established that `world declare` + `world accept` is the only
+    seeding path that can reach a listing-created book, and this function round-tripping
+    objects to their raw string is what made that path unable to produce a sheet the
+    status-line machinery renders from. The prose and quoted-string cases pin the original
+    reveal-scene hazard the docstring records; the array case pins the deliberate refusal.
+    """
+    from litharness.cli import _scalar
+
+    assert _scalar('{"level": 1, "gold": 11}') == {"level": 1, "gold": 11}
+    assert _scalar("34") == 34
+    assert _scalar("true") is True
+    assert _scalar("a reveal scheduled at scene 34") == "a reveal scheduled at scene 34"
+    # A parsed string is not coerced: the quoted form stays text (quotes and all), which is
+    # what keeps it out of `worlds.reveal_scenes`' genuine-int reading.
+    assert _scalar('"34"') == '"34"'
+    # Nothing reads a list-valued record; an array stays prose until something does.
+    assert _scalar("[1, 2]") == "[1, 2]"
+
+
+def test_a_book_seeded_by_world_declare_is_actually_asked_for_a_status_line(
+    tmp_path, monkeypatch, capsys
+) -> None:  # type: ignore[no-untyped-def]
+    """Clearing the floor means the writer is asked — walked on the one reachable path.
+
+    `domain/genre.py` says the floor exists to start the chain *seed → ask → print → read*,
+    and §155.2's stated promise is that a book cannot pass the floor and still never be
+    asked. Serial Pilot 14 measured exactly that split on the shipped book: a listing-created
+    book (whose `new` call hard-nulls `--state`), seeded through `world declare` with the
+    only value shape `--value` could then carry, cleared the floor while the drafting prompt
+    never carried the status-line instruction (§2.2, §7). This test is that pilot's route,
+    end to end: the same commands, a mapping value, and the assertion the pilot's book
+    fails — the enqueued draft job's system prompt asks for the status line and shows the
+    seeded numbers.
+    """
+    from litharness.cli import EXIT_OK, main
+
+    monkeypatch.setenv("LITHARNESS_FAKE_PAD_CHARS", "400")
+    db = tmp_path / "seeded.db"
+    assert main(["--database", str(db), "init"]) == EXIT_OK
+    assert (
+        main(["--database", str(db), "listing", "--writer", "vance", "--scenes", "6"]) == EXIT_OK
+    )
+    capsys.readouterr()
+
+    select = make_plan_selector(outline=False)
+
+    store = SqliteStore.open(db)
+    try:
+        [(book_id, branch_id, _)] = store.branches()
+        # The pilot-14 starting condition: created by the listing loop, no sheet, refused.
+        assert genre.genre_block(store.state_records(book_id, branch_id)) is not None
+        assert select(store, "worker-a", START, 300.0) is None
+    finally:
+        store.close()
+
+    sheet = json.dumps({"level": 1, "hp": 10, "hp_max": 10, "mp": 4, "mp_max": 4, "gold": 11})
+    assert (
+        main(
+            [
+                "--database", str(db),
+                "world", "declare", "ilse", STATUS_PREDICATE,
+                "--value", sheet,
+                "--order-key", "s1",
+            ]
+        )
+        == EXIT_OK
+    )
+
+    store = SqliteStore.open(db)
+    try:
+        # Declared is only PROPOSED; the floor still refuses, because accept is the gate.
+        assert genre.genre_block(store.state_records(book_id, branch_id)) is not None
+    finally:
+        store.close()
+
+    assert main(["--database", str(db), "world", "accept"]) == EXIT_OK
+    capsys.readouterr()
+
+    store = SqliteStore.open(db)
+    try:
+        records = store.state_records(book_id, branch_id)
+        assert genre.genre_block(records) is None
+        job = select(store, "worker-a", START, 300.0)
+        assert job is not None
+        system = str(job.payload["system"])
+        assert "End the scene with a status line" in system
+        # The seeded numbers, rendered — not a template with braces in it.
+        assert "Level 1" in system and "Gold 11" in system
+        assert "{subject}" not in system
+    finally:
+        store.close()
 
 
 # --- the opt-out -----------------------------------------------------------------------

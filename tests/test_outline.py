@@ -54,7 +54,14 @@ def store(tmp_path) -> SqliteStore:
     return SqliteStore.open(tmp_path / "outline.db")
 
 
-def a_book(store: SqliteStore, scenes: int = 12):  # type: ignore[no-untyped-def]
+#: The starting sheet `a_book` seeds and the schedule tests write milestones against. One
+#: dict, both places: a second sheet with different keys would let `at_scene` hand the
+#: handler whichever record it read last, and a milestone keyed to the other one would be
+#: refused for inventing statistics.
+SEED = {"level": 1, "hp": 18, "hp_max": 18, "mp": 4, "mp_max": 4, "gold": 12}
+
+
+def a_book(store: SqliteStore, scenes: int = 12, *, sheet: bool = True):  # type: ignore[no-untyped-def]
     revision = new_book(BOOK_ID, BRANCH_ID, title="Book", scenes=scenes)
     store.commit_revision(revision, created_at="2026-08-16T00:00:00Z")
     store.record_plan_items(
@@ -72,25 +79,28 @@ def a_book(store: SqliteStore, scenes: int = 12):  # type: ignore[no-untyped-def
         created_at="2026-08-16T00:00:00Z",
     )
     # The house genre floor (`domain/genre.py`) refuses to draft a book whose canon cannot
-    # speak system voice, so the fixture seeds the starting sheet its own premise implies —
-    # this book charges Kestrel for a skill she used and compounds past her level cap. Without
-    # it the selector correctly declines every scene and these tests measure the floor instead
-    # of the outline.
-    store.record_state_records(
-        BOOK_ID,
-        BRANCH_ID,
-        [
-            lc.StateRecord(
-                record_id="seed-status",
-                kind=lc.StateRecordKind.ASSERTION,
-                subject="kestrel",
-                predicate="status_snapshot",
-                value="Level 3, Courier, debt 41 marks",
-                authority=lc.StateAuthority.ACCEPTED_CANON,
-            )
-        ],
-        created_at="2026-08-16T00:00:00Z",
-    )
+    # speak system voice, so the fixture seeds a starting sheet. A mapping since §158: the
+    # floor asks for a sheet the status-line machinery can render numbers from, and the
+    # prose value this fixture carried before — the pilot 14 loophole — no longer counts.
+    # That also means a seeded book's outline is *asked* for a milestone schedule and its
+    # stub reply must carry one; `sheet=False` is the book that genuinely does not speak,
+    # which the selector floors and only a directly-handed job can reach.
+    if sheet:
+        store.record_state_records(
+            BOOK_ID,
+            BRANCH_ID,
+            [
+                lc.StateRecord(
+                    record_id="seed-status",
+                    kind=lc.StateRecordKind.ASSERTION,
+                    subject="kestrel",
+                    predicate="status_snapshot",
+                    value=dict(SEED),
+                    authority=lc.StateAuthority.ACCEPTED_CANON,
+                )
+            ],
+            created_at="2026-08-16T00:00:00Z",
+        )
     return revision
 
 
@@ -522,7 +532,7 @@ def test_the_outline_becomes_readable_plan_items_through_the_handler(
     store: SqliteStore,
 ) -> None:
     revision = a_book(store, scenes=12)
-    planner = StubPlanner(payload_for(12))
+    planner = StubPlanner(with_schedule(12))
     handle = make_outline_handler(planner, store, PROJECT_ID)
     handle(_job(store), START)
 
@@ -546,7 +556,7 @@ def test_running_the_outline_twice_is_a_no_op(store: SqliteStore) -> None:
     """An outline is a whole-book model call; a replayed job must converge rather than pay
     for it again."""
     a_book(store, scenes=12)
-    planner = StubPlanner(payload_for(12))
+    planner = StubPlanner(with_schedule(12))
     handle = make_outline_handler(planner, store, PROJECT_ID)
     handle(_job(store), START)
     handle(_job(store), START + 1)
@@ -631,7 +641,7 @@ def test_a_partially_outlined_book_is_completed_rather_than_refused(
     Now the twelve are updated and the thirteenth created, in one proposal.
     """
     a_book(store, scenes=12)
-    handle = make_outline_handler(StubPlanner(payload_for(12)), store, PROJECT_ID)
+    handle = make_outline_handler(StubPlanner(with_schedule(12)), store, PROJECT_ID)
     handle(_job(store), START)
     assert scene_plan_for(store.plan_items(BOOK_ID, BRANCH_ID), "scene-12") is not None
 
@@ -639,7 +649,7 @@ def test_a_partially_outlined_book_is_completed_rather_than_refused(
     grown = new_book(BOOK_ID, BRANCH_ID, title="Book", scenes=13)
     store.commit_revision(grown, created_at="2026-08-16T01:00:00Z")
 
-    planner = StubPlanner(payload_for(13))
+    planner = StubPlanner(with_schedule(13))
     make_outline_handler(planner, store, PROJECT_ID)(_job(store, "outline-2"), START + 1)
 
     items = store.plan_items(BOOK_ID, BRANCH_ID)
@@ -773,7 +783,7 @@ def test_an_outlined_book_stops_enqueueing_outlines(store: SqliteStore) -> None:
     from litharness.application.planner import make_plan_selector
 
     a_book(store, scenes=12)
-    handle = make_outline_handler(StubPlanner(payload_for(12)), store, PROJECT_ID)
+    handle = make_outline_handler(StubPlanner(with_schedule(12)), store, PROJECT_ID)
     handle(_job(store), START)
 
     selected = make_plan_selector(project_id=PROJECT_ID)(store, "worker-a", START + 1, 60.0)
@@ -822,7 +832,7 @@ def test_the_drafting_lane_reads_the_statement_the_outline_wrote(store: SqliteSt
     from litharness.application.planner import make_plan_selector
 
     a_book(store, scenes=12)
-    make_outline_handler(StubPlanner(payload_for(12)), store, PROJECT_ID)(_job(store), START)
+    make_outline_handler(StubPlanner(with_schedule(12)), store, PROJECT_ID)(_job(store), START)
 
     draft_job = make_plan_selector(project_id=PROJECT_ID)(store, "worker-a", START + 1, 60.0)
     assert draft_job is not None
@@ -926,7 +936,9 @@ def test_the_schedule_is_reachable_at_every_length_the_pipeline_takes(
     a_book(store, scenes=scenes)
     functions = arc_template(scenes).functions
     if len(set(functions)) < len(functions):
-        make_outline_handler(StubPlanner(payload_for(scenes)), store, PROJECT_ID)(
+        # `with_schedule`, not `payload_for` (§158): a floor-clearing book's outline must
+        # answer the milestone ask, or the refusal re-enqueues the outline this asserts gone.
+        make_outline_handler(StubPlanner(with_schedule(scenes)), store, PROJECT_ID)(
             _job(store), START
         )
     else:
@@ -961,8 +973,8 @@ def test_the_control_arm_holds_back_the_scheduled_beat_too(store: SqliteStore) -
 
 
 # -- the progression schedule (§52's third taxonomy entry) ---------------------------------
-
-SEED = {"level": 1, "hp": 18, "hp_max": 18, "mp": 4, "mp_max": 4, "gold": 12}
+# `SEED` lives beside `a_book` now (§158): the fixture's own sheet and the schedule tests
+# must agree on one set of keys.
 
 
 def seeded_book(store: SqliteStore, scenes: int = 12):  # type: ignore[no-untyped-def]
@@ -986,11 +998,18 @@ def seeded_book(store: SqliteStore, scenes: int = 12):  # type: ignore[no-untype
 
 
 def with_schedule(count: int, milestones: list[dict] | None = None) -> dict:
+    # The default schedule keeps only the ordinals the book has: a milestone naming a scene
+    # that does not exist is one of `_milestones`' refusals, and the length sweep runs this
+    # from seven scenes up.
     payload = payload_for(count)
     payload["milestones"] = milestones if milestones is not None else [
-        {"ordinal": 3, "state": {"gold": 4}},
-        {"ordinal": 7, "state": {"level": 2, "hp_max": 24, "gold": 9}},
-        {"ordinal": 11, "state": {"level": 3, "hp": 12, "gold": 2}},
+        entry
+        for entry in (
+            {"ordinal": 3, "state": {"gold": 4}},
+            {"ordinal": 7, "state": {"level": 2, "hp_max": 24, "gold": 9}},
+            {"ordinal": 11, "state": {"level": 3, "hp": 12, "gold": 2}},
+        )
+        if entry["ordinal"] <= count
     ]
     return payload
 
@@ -1168,7 +1187,11 @@ def test_a_book_that_does_not_speak_system_voice_gets_no_schedule(
     """A stat block in a locked-room mystery is not a smaller error than a missing one, so
     the schedule is asked for only where the book already states its state on the page — the
     same question `render_prompt` asks before requesting a status line."""
-    a_book(store, scenes=12)  # no canon status snapshot
+    # `sheet=False` since §158: a prose-valued snapshot used to stand in for "does not
+    # speak" here, and a prose sheet now floors the book instead of half-counting. A job can
+    # still reach the handler for such a book — enqueued before the sheet existed, or under
+    # `DraftPolicy(require_starting_sheet=False)` — and the handler must still not schedule.
+    a_book(store, scenes=12, sheet=False)
     planner = StubPlanner(payload_for(12))  # and no milestones in the answer
     make_outline_handler(planner, store, PROJECT_ID)(_job(store), START)
 
@@ -1219,7 +1242,7 @@ def test_volunteered_payoff_windows_are_ignored_when_the_book_owes_nothing(
     from litharness.domain.policy import Outcome
 
     a_book(store, scenes=12)
-    payload = payload_for(12)
+    payload = with_schedule(12)
     payload["payoff_windows"] = [
         {"subject": "a debt this book never opened", "first_scene": 3, "last_scene": 9}
     ]
@@ -1246,7 +1269,10 @@ LADDER = world_brief.Ladder(
 
 
 def _rising(*pairs: tuple[int, str]) -> dict:
-    payload = payload_for(12)
+    # On `with_schedule` rather than `payload_for` since §158: `a_book` now seeds a real
+    # sheet, so a handler run on it is asked for a progression schedule too, and a stub
+    # reply without one refuses the whole outline before the rung schedule is reached.
+    payload = with_schedule(12)
     payload["standing_milestones"] = [
         {"ordinal": ordinal, "rung": rung} for ordinal, rung in pairs
     ]

@@ -429,11 +429,17 @@ cost $3.61; the six-scene dead spot is what bought that, and §3 is what it boug
 
 - **Where `with_beat` is applied** (§3), so a six-scene book is not the one length the schedule
   cannot reach. Filed as a follow-up; deliberately not fixed mid-run.
-- **A seeding path that can carry a mapping** (§2.2, §7), so a book can clear the floor *and* be
+- ~~**A seeding path that can carry a mapping** (§2.2, §7), so a book can clear the floor *and* be
   asked for a status line. Today the two reachable facts are in tension: the path that can reach
-  an existing book cannot make a renderable snapshot.
-- **A `--state` passthrough on `listing --scenes`**, or any way for the loop that creates a book to
-  seed one, so the floor's own named paths are reachable from the path pilots use.
+  an existing book cannot make a renderable snapshot.~~ **Paid, same day: stage-0 §158 —
+  `world declare --value` carries a JSON object, `speaks_system_voice` requires the mapping the
+  ask renders from, and the chain is pinned end to end on the CLI's own commands.**
+- ~~**A `--state` passthrough on `listing --scenes`**, or any way for the loop that creates a book to
+  seed one, so the floor's own named paths are reachable from the path pilots use.~~ **Settled,
+  same day: the flag itself is refused in stage-0 §158 — a sheet restates world facts and no
+  world exists at listing time — and the "any way" half is paid by the same entry: the
+  declare→accept path now produces a renderable sheet, and the refusal and `cmd_new` advisory
+  name it.**
 - ~~**An operator surface for `blocked_reason`** (§7), so a floored book says why instead of
   reporting `no_work`.~~ **Paid, same day: stage-0 §159 — `litharness status` renders each
   blocked book's reason, computed with the drafting loop's own selector parameters.**
