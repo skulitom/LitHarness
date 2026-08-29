@@ -385,3 +385,28 @@ is not evidence. **No stage-0 number is claimed**: what shipped here is a book a
 findings. No model ranked, selected or judged anything, and no corpus was read — RS1 is untouched.
 Nothing the operator or the coordinator says about this book becomes a prompt, directive, finding
 or plan item (§97.1).
+
+## The coordinator's read — the iteration gate, and it passes
+
+Read 2026-08-29 by the coordinating session under the operator's standing loop directive
+("give it a read yourself... Don't stop until you think it reads right"). Diagnostic, never
+measurement; the operator's read 9 is the judgment that counts.
+
+**Verdict: the loop closes.** Item by item against the operator's cumulative list: every
+prose number is the character's own quantity under §166's licence — her Carrying spoken as
+*"Three, now. Room for one more"* with its cost dramatized, her rung as Hanne's *"Then
+that's two"*, her failure count as the two returned repairs — and the world-aggregate class
+is absent entirely. The rung-up is scene 1's centrepiece, felt before it is named, socially
+confirmed before the sheet prints. The furniture prints at the number-moves and nowhere
+else. No licences, ledgers or guilds; the antagonists are a buyer, a secret, and a social
+economy of suppers. The endgame leak is dead — Holds 2 of 5, the goal locked behind a
+rule the reader can verify (*"a repair answers the hand that made it and no other"*). No
+spoonfed inference in the operator's named shape; craft vocabulary grounded in context;
+exception-first opening.
+
+Residuals below the defect line, recorded so the next read knows they were seen: the
+opening paragraph runs writerly for two sentences before the trade's cost lands; *"the way
+you look at a grown-up you have decided to let handle something"* sits at the gloss
+boundary but is specific and earned. Neither rises to any item on the operator's list.
+
+Covers and the operator package follow; read 9 is the operator's.
