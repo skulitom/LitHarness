@@ -477,3 +477,60 @@ it stands.
 **Instrument question, noted and not opened:** nothing counts story-consequence density,
 and a code-only key for it is not obvious; it goes to the battery families through
 `BRIEF.md` or it does not go at all. No fix is designed in this entry.
+
+## Iteration 3 — draw 3 under §168, and the gate fails it on three named defects
+
+**The run.** Iteration 2's recipe byte-for-byte on a fresh store (`serial15c.db`), same title
+and listing off `runs/pilots/pilot15/`, writer `penhale`, §168's passage-unit clause riding
+every scene call for the first time. One seed draw, `check` clean, `accept` took 227 of 234
+and deliberately declined to complete the system — the Architect's sheet `(keeping, reach,
+marks, work)` and the system's own columns describe different books, the same
+sheet-as-furniture shape draw 2 drafted under. Chapter 1 in four ticks (two beat jobs, one
+evaluation, one summary), 1,981 words, two scenes; zero rows in `exceptions`; **$5.14 across
+5 paid decisions**. Draw 2's shelf copy archived at `runs/pilots/pilot15/shelf-draw-2/`
+before the first tick (the §-recorded slug collision, dodged by hand a second time).
+
+**What the read says §168 bought, stated carefully as one draw's description.** The dent
+class is absent. Scene 1's opening reaches its first story move in under 300 words, every
+establishing beat is cashed inside the chapter (the boy's patient hands at the file become
+the first grant; the pot on the bench becomes the borrowed-hands cost landing), and the
+chapter's story moves twice — the apprentice's first grant, and the dead mender's guessing
+seam, which advances the book's central mystery on-page. Story-motion is the strongest of
+the three draws. One draw under one changed clause is a description, not a treatment effect.
+
+**The three defects the gate names, all from the page:**
+
+1. **The status line prints a raw machine id.** Both furniture lines read `[STATUS]
+   tam_cawl — …` where draw 2 printed `[STATUS] Mira Kell — …`. A snake_case subject id on
+   the reader's page is a rendering defect; the column labels arrive display-formed
+   (`Marks holding`, `Work in hand`), so the subject name is the one surface that fell
+   back raw. Mechanical; the fix track post-mortems why draw 2's path had a name and this
+   one did not.
+
+2. **The protagonist's sheet never renders, and no protagonist number moves.** Both
+   scheduled number-moves belong to the apprentice; Mira's own opening position (the seed's
+   *mender, keeping three, nineteen marks*) never reaches the page as furniture, and her
+   accepting the wheel job — ten days, her bench — moves nothing she owns. A mentor
+   watching a first grant is a fine cozy beat, but a chapter whose only rendered sheets
+   belong to a side character inverts the exception-first hook (the MC progresses faster —
+   recorded direction) and the genre floor's spirit: the interface the *character* reads.
+   Why both beats aimed at the same non-protagonist subject is the post-mortem question,
+   answered from the packet, not guessed here.
+
+3. **The narrating-the-inference tell is back, in the operator's previously-named shape.**
+   *"…said no hurry at all, twice, which is what people say when they mean the opposite and
+   are ashamed of it"*; *"the way a man looks in when he has decided beforehand to look
+   in"*; two milder instances. §156 measured this family at 4.7x the genre in our text and
+   its intervention has sat queued since; the operator named the identical construction in
+   read 5 and its sibling in read 7. Third confirmed sighting; the queued intervention's
+   scheduled moment.
+
+**Residuals below the line:** one mixed-tense sentence (*"He carts… and he set it down"*)
+inside an otherwise consistent gnomic-present device the voice uses three times; trade
+vocabulary all grounded by use. **What passes unchanged from draw 2's checklist:** prose
+numbers all counted-in-a-person or ordinary-fiction rates, no institutional register, no
+world aggregates, cozy reads cozy and not grey, character-first opening line.
+
+**Verdict: the loop spins again.** Three tracks, independent by file surface, §169–§171
+pre-allocated in launch order and re-scanned at commit per the house rule. The gate read
+stays a diagnostic (§95); read 9's remaining items fold in whenever they arrive.
