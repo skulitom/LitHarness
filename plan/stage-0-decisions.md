@@ -17590,3 +17590,159 @@ was drawn and no paid call was made. No corpus was read, so RS1 is untouched. No
 promoted and no axis is admitted. Every book already forged reads as it did except serial15, whose
 scheduled answers stop reaching the writer, and serial14b, whose protagonist stops reading one
 grade above where her world put her.
+
+## 168. Nothing in the assembled scene prompt had a unit smaller than a scene, so a quarter of an opening could go on material the text itself rules inconsequential without breaking a rule
+
+Read 9, 2026-08-29, on pilot 15b's *What the Kettle Remembers*: the book is *"too superfocused on
+details, rather than story"*, with several paragraphs of people talking about an object *"which
+apparently doesn't matter"*. This is a defect harvest and never data (§95); nothing the operator
+said is in any prompt, and the class is house-level rather than one book's — read 5 (*"repetition
+of known info"*, ferreira), read 7 (*"useless information"*, larkin) and read 9 (penhale) are three
+writers, three worlds and one axis. The number-surface half of it was closed by §160–§167; the
+attention-surface half had never been addressed by anything.
+
+### 168.1 Measured first, from the packet and not from the prose
+
+Scene 1 runs 943 words. Its opening business is **252 of them — 27%** — across three speakers,
+before the scene's first story move, and the text rules the object inconsequential in four words.
+
+**What the writer was actually given, read off the stored dossier:**
+
+| what the prompt held | scene 1 |
+| --- | --: |
+| system message | 4,561 chars, 42 demands |
+| packet | 21,749 chars, 143 fact lines |
+| fact lines rendered as a page-image (`shows on the page as:`) | 33 |
+| cast sheets rendered as a page-image (`on the page:`) | 7 |
+| packet budget consumed | 4,307 of 200,000 tokens |
+| statements scoped to *this* scene | 1 (the trailing beat sentence) |
+| plan item | ABSENT |
+
+**Nothing was filtered.** The packet spends 2% of its budget, so every fact the world holds reaches
+every scene; `context.assemble` selects on budget alone, and the world is smaller than the budget.
+
+**And the opening discharges the packet.** Five of the first 252 words' beats are near-verbatim
+renderings of five of those 40 page-images — the shop's, three cast sheets', and the object's,
+whose declared page-image contains the hook the scene then stages and does not cash. The prose is
+the packet's own material being worked through.
+
+### 168.2 The finding: no rule was broken, and that is the defect
+
+Three mechanisms were on the table and the packet convicts one of them.
+
+**Acquitted — "no directive addresses narrative economy".** One does. The house floor's economy
+block is three demands, and it was live on this scene. What it could not do is reach this: its
+compression demand's object is *detail that only establishes who somebody is — the steps of a job,
+the order of a routine*, and a staged handover of a fact is not that; its movement demand's unit is
+**the whole scene**, and this scene moved. So the block was satisfied, in full, by a scene that
+spent a quarter of itself on material with no consequence anybody can see.
+
+**Acquitted — the re-aimed seen-never-announced clause.** §161 narrowed its object to *a narrator
+reporting a rank whose change the reader was never shown*. The material read 9 named is not a rank,
+and this scene's rank change is shown twice over. The clause cannot reach it, so it cannot have
+produced it. **The suspicion was reasonable and it is wrong**, and it is recorded because the
+opposite conclusion would have re-opened a clause that four books were spent narrowing.
+
+**Acquitted — "openings default to entrance logistics".** The whole of what the prompt says about
+this scene's kind is one word, `setup`. No text anywhere asks for an arrival.
+
+**Convicted — the gap between an object and a unit.** A demand that names the wrong object and a
+demand that names the wrong unit leave a shape that satisfies both. That is not an enforcement
+failure and no gate could have caught it, because there was no rule to enforce.
+
+### 168.3 What shipped
+
+**One prohibition in `house.READER`, whose unit is a passage**, and it is the whole change:
+
+> What fails is a passage that settles nothing in the scene it sits in, however much it establishes.
+
+**It reaches what a passage settles, never whether it was staged**, and that boundary is
+load-bearing rather than decorative. `planner`'s criterion block forbids a narrator reporting a
+change the reader was never shown, and the length ask two branches later says the scene has room to
+play out in real time; a clause against staging established material would contradict both at once,
+which is exactly how the half §163 removed failed. The concession — *however much it establishes* —
+carries the boundary by naming establishing insufficient rather than forbidden.
+
+**Its test is consequence and not truth**, which is §163's correction held. The removed half read
+*"if the events would be equally true with those specifics removed, remove them"*, and it deletes
+presence by construction, because dramatisation is by definition the specifics that leave the
+events equally true. *What the scene settles* is the movement criterion of the demand below it,
+evaluated one unit down.
+
+**It is addressable** (§154): a passage is a thing a writer emits and can emit fewer of. The
+demand it replaces was not.
+
+**Paid for by subtraction, not by a raised ceiling.** *"Spend the words on what the reader opened
+this book for"* is gone. It was affirmative, and its object was what a reader wants — a reader
+state, which is the shape §154 measured landing with its sign multiplied by zero when the awe
+clause did the same thing hours after this module adopted the rule against it. Its content survives
+in the two demands that followed it, both correctly signed and both addressable, so what went was a
+topic sentence for rules that no longer needed one.
+
+**The measured price, before and after, through `litharness prompts`:**
+
+| role | demands before | demands after | chars before | chars after |
+| --- | --: | --: | --: | --: |
+| house-floor | 24 | 24 | 2,903 | 2,945 |
+| scene | 37 | 37 | 4,920 | 4,962 |
+| architect-seed | 44 | 44 | 5,599 | 5,641 |
+| architect-grow | 41 | 41 | 5,251 | 5,293 |
+| outline | 27 | 27 | 5,817 | 5,859 |
+
+**Zero demands, +42 characters**, on every role that stands on the floor and on no other. §135's
+accounting is what makes that a fact rather than a claim, and `tests/test_prompt_budget.py` is the
+ratchet that keeps it one.
+
+`tests/test_scene_economy.py` holds the shape: that a demand with a sub-scene unit exists, that the
+movement criterion survives beside it, that the truth-keyed removal test did not come back through
+the door this entry opened, that the clause names no reader state and no staging, that the price
+was paid rather than added, and that the demand reaches the live assembled prompt rather than a
+constant.
+
+### 168.4 What was refused
+
+- **A scene plan that separates a scene's turn from its runway.** It is the right idea at the right
+  altitude and it is not small: this book's plan holds one item of kind `premise` and no scene
+  statement at all, so the fix is a new generation path with a paid call per scene, not an edit.
+  Recorded as the shape a later entry should take, with §110/§157 as its precedent.
+- **Any surgery on the seen-never-announced clause**, because 168.2 acquits it. Re-aiming a clause
+  that did not cause the defect would have spent four books' worth of narrowing on a guess.
+- **A countable word-shape discipline.** Every form of it prices a passage by its length, and
+  length is not what failed — a 252-word passage that settled something would be a good opening.
+- **An instance list on the new clause.** Three clauses in this module were cut for being recited
+  and each was an instance list; the failure named here is a configuration rather than a
+  vocabulary, and an invented instance is the shape that came back as a formula in five listings of
+  eight.
+- **A metric, an axis or a census for story-consequence density.** Read 9's instrument question is
+  real and it is not this track's: it goes to the battery families through `BRIEF.md` or it does
+  not go at all (`EPISTEMIC_GOVERNANCE.md`).
+- **Touching the packet.** 168.1 shows the discharged material coming from two packet sections, and
+  a register clause on one of them is available. It was not taken: the packet's section
+  instructions are rule text that rides every scene call and **no ceiling anywhere describes
+  them** — `tests/test_prompt_budget.py`'s own fixture uses an empty packet and says so — so
+  adding rule text there would be this file's founding failure at a third address. Named as a
+  residual below rather than fixed here.
+
+### 168.5 Two residuals, named because they are real
+
+- **The packet's rule text is unpriced.** Four of its sections carry instructions to the writer and
+  no budget row measures any of them. That is a gap whether or not anybody adds to it.
+- **`manifests_as` is declared to be a fact and rendered as an instruction.** `worlds.py` states
+  the field is *"a fact about the world, exactly as a rule is — never an instruction about how to
+  write them"*, and the packet renders every one of them as `shows on the page as:`, 33 times per
+  scene. Whether the render frame contributes anything is unmeasured and unmeasurable without a
+  draw, so nothing here changes it; it is recorded so the next track does not have to find it
+  again.
+
+### 168.6 Anti-scope
+
+No bar is declared. The 252 of 943, the 27%, the 143 fact lines, the 40 page-images, the 4,307 of
+200,000 and the five discharges are descriptions of one stored prompt and one stored chapter, never
+thresholds, and §61's four attainability checks have nothing to run on. **The clause ships
+unmeasured**: one prohibition against one book's defect, with no draw behind it and no claim that a
+later draw will differ — §138's direction is the only evidence that a correctly-signed prohibition
+is the form worth shipping. No model ranked, selected or judged anything; no model was called, no
+book was drawn, no paid call was made, and no `runs/` database was written to. No corpus was read,
+so RS1 is untouched. No research claim is promoted and no axis is admitted. Nothing the operator
+said became prompt text, and no noun of the chapter under read is in the clause (§97.1) —
+`test_no_word_of_the_read_9_chapter_became_prompt_text` is that, mechanically.

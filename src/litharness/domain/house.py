@@ -268,10 +268,52 @@ CLARITY = (
 #: numeral or phrase from the chapter under read is in the clause (§97.1); the chapter is a test
 #: fixture and nothing more. Shipped unmeasured: §162's non-genre distributions are what a later
 #: census would read this against, and no number of theirs is in any prompt.
+#:
+#: **The economy block had no unit smaller than a scene, which is §168 and is the third read to
+#: name the same axis.** Read 5 (*"repetition of known info"*), read 7 (*"useless information"*)
+#: and read 9 all name words spent on material whose consequence is not legible where it stands;
+#: read 9's instance is 252 of one scene's 943 words, three speakers, before that scene's first
+#: story move. **Nothing in the assembled prompt was violated by it**, and that is the finding:
+#: the compression clause's object is detail that establishes *who somebody is*, and a staged
+#: handover of a fact is not that; the movement demand's unit is the whole scene, and that scene
+#: moved. So a scene could satisfy every demand it was given and still spend a quarter of itself
+#: on material it then rules inconsequential. The gap is between an object and a unit, and it is
+#: closed at the same altitude by one prohibition whose unit is a passage.
+#:
+#: **Its object is a passage and its test is what the scene settles, which is §154's axis and
+#: §163's correction held together.** A passage is a thing a writer can emit fewer of, so the
+#: demand has an addressee — unlike the sentence it replaces. And the test is deliberately *not*
+#: whether the book would be equally true without it: §163 removed a truth-keyed removal test
+#: from this very clause because dramatisation is by definition the specifics that leave the
+#: events equally true, so such a filter deletes presence by construction. What the scene settles
+#: is the movement criterion of the demand below it, evaluated one unit down.
+#:
+#: **It does not forbid dramatising anything, and that boundary is load-bearing.** `planner`'s
+#: criterion block forbids a narrator reporting a change the reader was never shown, and the
+#: length ask two branches later says the scene has room to play out in real time. A clause
+#: against *staging* would contradict both, which is exactly how §163's removed half failed. The
+#: concession — *however much it establishes* — is what carries that: establishing is named as
+#: insufficient rather than as forbidden, so the clause reaches the settling and not the staging.
+#:
+#: **Paid for by subtracting the sentence above it rather than by raising a ceiling.** *"Spend
+#: the words on what the reader opened this book for"* was affirmative, and its object was what a
+#: reader wants — a reader state, which §154 measured landing with its sign multiplied by zero
+#: when the awe clause did the same thing. Its content survives in the two demands after it, both
+#: correctly signed and both addressable, so it was a topic sentence for rules that no longer
+#: needed one. The house floor's demand count is unchanged; `tests/test_prompt_budget.py` is what
+#: says so, and `tests/test_scene_economy.py` holds the shape.
+#:
+#: **No instance list, and the refusal is this module's own history.** Three clauses here were
+#: cut for being recited, and an invented failure instance is the shape that got recited. Nothing
+#: from the chapter under read is in the clause (§97.1): no object of its, no count of its, and
+#: none of the operator's words. Shipped unmeasured — one clause against one book's defect, with
+#: no draw behind it, and read 9's own instrument question routed elsewhere (`BRIEF.md`).
 READER = (
-    "Spend the words on what the reader opened this book for. Detail that only establishes "
+    "Detail that only establishes "
     "who somebody is — the steps of a job, the order of a routine — is not why the reader "
-    "came. Every scene moves the thing the book is about closer or further away.\n"
+    "came. What fails is a passage that settles nothing in the scene it sits in, however "
+    "much it establishes. Every scene moves the thing the book is about closer or further "
+    "away.\n"
     "The opening shows what this book is offering: something a person could come to be able to "
     "do, and somewhere the reader has not been. A reader who reaches the end of the opening "
     "scene without seeing either has been given no reason to start another.\n"
