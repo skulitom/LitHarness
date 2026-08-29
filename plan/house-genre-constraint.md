@@ -82,6 +82,19 @@ gained, numbers advanced per thousand words) can be counted over the chapter sha
 distribution instead of an adjective. That census is also the read-7 mechanics census's
 sibling and inherits the descriptor-half quarantine.
 
+**The prose-number licence, narrowed by the operator on pilot 15's chapter (2026-08-29):**
+
+> *"'Forty-two seams standing in Ashfen now' is wrong numbers should only come up when
+> talking about skills and ability level reached. outside of that numbers shouldn't come up
+> more than any other book"*
+
+So the licence splits by surface: the FURNITURE (the rendered status line) carries every
+system quantity exactly, including world aggregates the sheet tracks; the PROSE speaks a
+number only at the character's own skill/ability-level moments — a world-statistic in
+narration is out even when the sheet legitimately tracks it — and everywhere else the prose
+runs at ordinary-fiction number rates, for which §162's non-genre distributions are the
+measured reference (mundane-core ~1.1/1k, all mentions ~8.8/1k).
+
 **The hazard, named before anyone drafts a clause:** "show progress immediately" as prompt
 text is a §138 formula waiting to happen. The altitude that avoids it is **structural** —
 the planner's beat sheet, where scene 1's plan can carry a progression beat as a plan item
