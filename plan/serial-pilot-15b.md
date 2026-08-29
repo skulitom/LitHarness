@@ -410,3 +410,27 @@ you look at a grown-up you have decided to let handle something"* sits at the gl
 boundary but is specific and earned. Neither rises to any item on the operator's list.
 
 Covers and the operator package follow; read 9 is the operator's.
+
+## The cover set — four variants, measured against the prior twenty
+
+Drawn after the gate passed, from `runs/pilots/pilot15/listing.json`, pilot 14's exact
+invocation shape: no art direction (the standing control), both ceilings as top-level flags,
+default publication name. The image provider again reported no cost. Output:
+`book-library/what-the-kettle-remembers/covers/`, manifest beside the images.
+
+| cover | mean luminance | what it is |
+| --- | --: | --- |
+| `cover-01.png` | 48.4 | Mira working the wheel, memory-panels glowing in the paddles |
+| `cover-02.png` | **59.4** | the wheel over the town, overcast, fire accents |
+| `cover-03.png` | 50.6 | the kettle itself, patched seams glowing, steam curling into a shape |
+| `cover-04.png` | 39.5 | Mira's hand on the wheel, faces in the mist inside it |
+
+**The set's mean is 49.5 against the prior twenty covers' 50.8** (that pool folds pilot 14's
+four into read 8's sixteen-cover baseline: mean 50.8, max 77.6, min 26.5). The standing
+description — this project makes dark covers — holds unchanged; pilot 14's brighter set was
+one point, not a trend. One observation worth a line: the set's *brightest* cover by pixels
+(`cover-02`, grey sky) is the one that reads gloomiest to a person, which is pilot 14 §8's
+"brighter is not light" met from the other side — luminance and mood are different axes, and
+neither substitutes for the click question only the operator answers. Arithmetic on pixels,
+a description, never a threshold and never a quality claim (§61); no model ranked the four
+(§84 — all four ship, the choice is the reader's).
