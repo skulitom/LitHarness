@@ -17746,3 +17746,117 @@ book was drawn, no paid call was made, and no `runs/` database was written to. N
 so RS1 is untouched. No research claim is promoted and no axis is admitted. Nothing the operator
 said became prompt text, and no noun of the chapter under read is in the clause (§97.1) —
 `test_no_word_of_the_read_9_chapter_became_prompt_text` is that, mechanically.
+
+## 170. The status line had a rule for when a sheet stands and none for whose, so a chapter's whole interface belonged to a thirteen-year-old apprentice
+
+Serial Pilot 15's third draw (`plan/serial-pilot-15b.md`, iteration 3, defect 2) printed
+`[STATUS] tam_cawl — …` twice in chapter 1. The protagonist's declared opening position — the
+seed's *mender, keeping three, nineteen marks* — never reached the page as furniture, and the one
+scheduled progression beat landed on the apprentice. This is the post-mortem and the fix.
+
+### 170.1 Measured first, from the stored packets
+
+- **The writer was pointed at the apprentice and aimed where it was pointed.** Scene 1's stored
+  system message carries `[STATUS] tam_cawl — Keeping 0 | Reach 0 | Marks holding 0 | Work in hand
+  0/1`, and its prompt ends `This scene: Keeping moves here, and the person it belongs to is there
+  when it does.` `genre.NAMED_BEAT` is subject-free on purpose (§155.3 made it pronoun-free so a
+  scheduled item reaching every book assumes nothing about who is in it), so the status line is the
+  only place the machinery names a person. The beat did not choose a subject; it inherited one.
+- **The protagonist was known, one line above the call that ignored her.**
+  `application/planner.py` reads `pov = worlds.protagonist_brief(book_records)` and passes `pov_id`
+  to `packet_for` and to `movable_names`. The next argument in the same `render_prompt` call,
+  `status_example=system_voice_example(records, at=...)`, takes no subject at all.
+- **The selection had no opinion, and the tie fell to store row order.** `extraction.snapshot_at`
+  collected every canon `status_snapshot` and ended in
+  `max(chosen, key=lambda record: order_key_of(record) or "")`. The mender and the apprentice each
+  held an un-keyed opening snapshot, so both keys were `""`; `max` returns the first element
+  holding the maximum, which is whichever row the store happened to hold first.
+- **The ratchet is what made it the whole chapter.** Extraction minted `tam_cawl status_snapshot`
+  at key `s1` from scene 1's own prose, and a keyed snapshot outranks an un-keyed opening at `s2`.
+  One arbitrary tie at scene 1 aimed every scene after it.
+
+Three candidate causes were named before the packets were read, and two are killed by them:
+
+- **Contradiction-poisoned proposals: killed.** `mira_kell status_snapshot keeping=3, marks=19,
+  reach=1, work=3, work_max=4` is canon in that store and renderable. The seven proposals declined
+  at `world accept` were a competing `keeping=2` variant and duplicate `manifests_as`; nothing about
+  her position was blocked, missing or unreadable.
+- **The book not knowing its protagonist: killed.** `mira_kell entity_role protagonist` is canon in
+  both the second and third draws, and `worlds.protagonist_brief` already reads it.
+- **The scheduler having no protagonist concept: confirmed**, and located precisely — not in the
+  beat schedule, which never names a subject, but in the snapshot selection the beat and the
+  furniture line both read.
+
+**Draw 2 was luck, not machinery.** `serial15b.db` holds exactly one subject with a
+`status_snapshot`, so there was no tie to lose. The same records replayed through the fixed selector
+are byte-identical, which is what makes it a control rather than a second data point.
+
+**Correction to the defect as filed, in place.** The iteration-3 section says *"both scheduled
+number-moves belong to the apprentice"*. `genre.beat_ordinals(6, every=2)` is `{1, 3, 5}`, so
+chapter 1 carried **one** scheduled beat, in scene 1. Scene 2's second `tam_cawl` line is the
+standing furniture instruction (*print that line where one of its numbers changes*) discharged
+against the same wrong subject, which is the ratchet above rather than a second schedule firing.
+
+### 170.2 What shipped
+
+One narrowing, in the one function whose stated purpose is that two readers of the same sheet
+cannot pick different ones. `extraction.snapshot_at` now takes the protagonist's snapshots first
+where she holds any, and every position rule below runs unchanged inside them. The subject comes
+from `worlds.protagonist_brief` — the book's own declared `entity_role`, the same source
+`application/planner.py` already reads for point of view — so the line the writer is shown and the
+person the packet is built for cannot disagree.
+
+Both surfaces close together because both read this one function: `system_voice_example` renders
+the furniture line, and `counted_names` names the quantity the beat may move. No call site changed,
+no parameter was added, and no prompt text was written.
+
+Replayed against `serial15c.db`'s own records, the line the writer would have been handed is
+`[STATUS] mira_kell — Keeping 3 | Reach 1 | Marks holding 19 | Work in hand 3/4`, which is the
+seed's opening position exactly. The raw id in that line is a separate rendering defect with its own
+track; nothing here touches how a subject is spelled.
+
+**Prompt budget: unchanged, and that is the point.** `litharness prompts` reports the `scene` role
+at the same characters and the same demand count before and after. The fix changes which subject
+fills a slot that already existed, which is §138's distinction between structure and prose — a
+clause saying *show the protagonist progressing* would have been a formula, and this is the
+§110/§157 shape instead: aim the machinery and add no adjective.
+
+Three tests, in `tests/test_page_contract.py` beside the furniture contract they extend:
+`test_the_reader_facing_line_belongs_to_the_books_protagonist` (the defect, with the same rows minus
+the declaration as the demonstration that the tie is real),
+`test_a_side_characters_extracted_line_cannot_capture_the_rest_of_the_book` (the ratchet, plus the
+assertion that the fold and the position rules still run inside her own snapshots), and
+`test_a_declared_protagonist_who_holds_no_sheet_leaves_the_line_where_it_was`.
+
+### 170.3 What was refused
+
+- **A side character progressing is not forbidden, and nothing here forbids it.** Their snapshots
+  stay canon, stay extracted, and stay in the packet. What they no longer own is the one line the
+  reader reads as the interface. The defect was the protagonist never moving, never the apprentice
+  moving.
+- **No blocking floor for a protagonist without a sheet.** Narrowing to an empty set would have been
+  the stronger statement, and `genre.has_starting_sheet` reads this same chain — so a filter that
+  could empty it would newly refuse to draft books that draft today. The fall-through is deliberate
+  and its cost is named: a book whose sheet-holder is somebody the world did not name as its own
+  still prints that person's line.
+- **No per-scene POV parameter.** The right subject for a multi-POV book is the scene's POV rather
+  than the book's protagonist, and threading one would let `outline_proposal` and the drafting
+  selector disagree about a question they currently answer once. No book in this repository has more
+  than one POV; deriving from canon keeps them equal until one does.
+- **No model chooses anything.** The role is declared in the book's own canon and two declared
+  protagonists resolve first-by-subject-id in `worlds.protagonist_brief`, which is where that rule
+  already lived. §61(5) is untouched: this is a derivation, and there is no candidate set.
+- **Nothing the read said became prompt text.** The diagnosis came from stored packets and stored
+  records; no sentence of the gate's or the operator's reading reached a prompt, a directive or a
+  plan item (§97.1, the `debug-book` rule).
+
+### 170.4 Anti-scope
+
+No bar is declared. The two draws, the one scheduled beat, the seven declined proposals and the
+unchanged prompt-budget row are descriptions of stored rows and arithmetic over them, never
+thresholds, and §61's four attainability checks have nothing to run on. **The fix ships unmeasured
+on the page**: it is verified against the records of a draw that already happened and against the
+tests above, with no claim that a later draw reads better. No model ranked, selected or judged
+anything; no model was called, no book was drawn and no paid call was made. The pilot databases were
+opened read-only and copied to a scratchpad before any replay, so no `runs/` store was written to.
+No corpus was read, so RS1 is untouched, and no research claim is promoted and no axis admitted.

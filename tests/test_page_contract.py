@@ -1,7 +1,7 @@
 """Stage-0 §161: everything between the sheet and the page.
 
-Three things are asserted here and they fail for three different reasons, which is why they
-are one file rather than three additions to three others.
+Four things are asserted here and they fail for four different reasons, which is why they
+are one file rather than four additions to four others.
 
 **The furniture contract.** A book that clears the genre floor is asked to print its status
 line at the moment one of its numbers moves, exactly once. The cardinality is not tidiness:
@@ -25,6 +25,16 @@ landing as promotions inside a guild, because a category is satisfied by whichev
 world declared loudest. The beat now names the quantity.
 `test_the_beat_rotates_by_schedule_position_and_not_by_scene_ordinal` is the one to read: the
 obvious implementation is one line and it can never reach half the sheet.
+
+**The line belongs to somebody, and until §170 nothing said who.** Every rule in `snapshot_at`
+answers *when* a snapshot stands; none answered *whose*, and the question could not come apart
+from the other one until a second member of the cast held a sheet. Serial Pilot 15's third draw
+is where it did, and the tie between two un-keyed openings fell out of `max` over two empty
+strings — store row order — to a thirteen-year-old apprentice.
+`test_the_reader_facing_line_belongs_to_the_books_protagonist` is that defect;
+`test_a_side_characters_extracted_line_cannot_capture_the_rest_of_the_book` is the ratchet
+behind it, because a keyed snapshot outranks an opening and scene 1's pick therefore aimed
+every scene after it.
 
 No model reads, ranks or judges anything in this file, and no bar is declared anywhere in it.
 """
@@ -50,7 +60,9 @@ from litharness.domain.extraction import (
 )
 
 
-def _snapshot(subject: str, value: dict[str, object], *, order_key: str = "s1") -> lc.StateRecord:
+def _snapshot(
+    subject: str, value: dict[str, object], *, order_key: str | None = "s1"
+) -> lc.StateRecord:
     return worlds.world_record(
         subject,
         STATUS_PREDICATE,
@@ -58,6 +70,22 @@ def _snapshot(subject: str, value: dict[str, object], *, order_key: str = "s1") 
         order_key=order_key,
         authority=lc.StateAuthority.ACCEPTED_CANON,
     )
+
+
+def _role(subject: str, role: str = "protagonist") -> lc.StateRecord:
+    """The one record that says whose book this is. Canon, because a proposal is not a book yet."""
+    return worlds.world_record(
+        subject,
+        worlds.ENTITY_ROLE_PREDICATE,
+        value=role,
+        authority=lc.StateAuthority.ACCEPTED_CANON,
+    )
+
+
+#: Two openings and no keys, which is the shape that made the tie: a mender keeping three with
+#: nineteen marks holding, and the apprentice who turns up at her counter with nothing yet.
+_MENDER = {"keeping": 3, "marks": 19}
+_APPRENTICE = {"keeping": 0, "marks": 0}
 
 
 #: The shape Track 4's manual probe drew when the render path was fed a world's own words:
@@ -190,6 +218,71 @@ def test_a_book_that_restates_everything_folds_to_exactly_its_latest_snapshot() 
     ]
     subject, values = state_as_it_stands(records, at="s2")  # type: ignore[misc]
     assert (subject, values) == ("rook", {**_DEFAULT_SHAPED, "level": 2})
+
+
+def test_the_reader_facing_line_belongs_to_the_books_protagonist() -> None:
+    """Stage-0 §170's defect, in the shape it reached the page.
+
+    Serial Pilot 15's third draw gave the protagonist and a thirteen-year-old apprentice an
+    opening snapshot each, both un-keyed. `snapshot_at` ended in `max` over two empty strings,
+    which is store row order, and the apprentice won it — so the chapter printed his line
+    twice and the mender's declared opening never reached the page as furniture at all.
+
+    The second assertion is the same two rows with the declaration taken away, and it is what
+    makes the first one mean something: the tie is real, it resolves to whichever row the store
+    happened to hold first, and the declared role is the whole of what decides it.
+    """
+    cast = [
+        _snapshot("tam", dict(_APPRENTICE), order_key=None),
+        _snapshot("mira", dict(_MENDER), order_key=None),
+    ]
+    assert state_as_it_stands([*cast, _role("mira")]) == ("mira", _MENDER)
+    assert counted_names([*cast, _role("mira")]) == ("Keeping", "Marks")
+
+    assert state_as_it_stands(cast) == ("tam", _APPRENTICE)
+
+
+def test_a_side_characters_extracted_line_cannot_capture_the_rest_of_the_book() -> None:
+    """The ratchet behind §170's defect, and why the filter is asked before the ordering.
+
+    Extraction mints a snapshot at the scene's own key for whoever the prose printed, and a
+    keyed snapshot outranks an un-keyed opening — so one arbitrary tie at scene 1 aimed every
+    scene after it at the same subject for the rest of the book. Narrowing to the protagonist
+    first is what stops a side character's extracted line capturing the furniture.
+
+    Nothing here forbids the apprentice a number: his snapshots are still canon and still
+    extracted. What he no longer owns is the one line the reader reads as the interface.
+    """
+    opening = [
+        _role("mira"),
+        _snapshot("mira", dict(_MENDER), order_key=None),
+        _snapshot("tam", dict(_APPRENTICE), order_key=None),
+        # Scene 1 printed the apprentice, so extraction minted him a snapshot at `s1`.
+        _snapshot("tam", {"keeping": 1, "marks": 1}, order_key="s1"),
+    ]
+    assert state_as_it_stands(opening, at="s2") == ("mira", _MENDER)
+    # Without the declaration, that keyed row outranks every opening in the book.
+    unowned = [record for record in opening if record.predicate != worlds.ENTITY_ROLE_PREDICATE]
+    assert state_as_it_stands(unowned, at="s2") == ("tam", {"keeping": 1, "marks": 1})
+
+    # And the position rules still run inside her own snapshots, folding as they did before.
+    moved = [*opening, _snapshot("mira", {"keeping": 4}, order_key="s2")]
+    assert state_as_it_stands(moved, at="s2") == ("mira", {"keeping": 4, "marks": 19})
+
+
+def test_a_declared_protagonist_who_holds_no_sheet_leaves_the_line_where_it_was() -> None:
+    """The fall-through, and it is load-bearing rather than politeness.
+
+    `genre.has_starting_sheet` reads this chain, so a filter that could empty it would newly
+    refuse to draft books that draft today. A book with no declared protagonist and a book
+    whose protagonist holds no sheet are different facts with the same right answer.
+    """
+    holder = [_snapshot("sera", dict(_OWN_VOCABULARY))]
+    was = system_voice_example(holder)
+
+    for records in ([_role("gerrit"), *holder], holder):
+        assert system_voice_example(records) == was
+        assert genre.has_starting_sheet(records)
 
 
 def test_a_label_is_derived_by_a_rule_and_the_rule_is_the_genres_own() -> None:
