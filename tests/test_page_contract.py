@@ -394,6 +394,103 @@ def test_the_beat_never_carries_this_systems_own_vocabulary() -> None:
     assert genre.beat_text(1, 8, counts=counted_names(all_machinery)) == genre.BEAT
 
 
+# --- the system arm of the beat's vocabulary (§160's ratchet, from this side) -----------
+
+
+def _weave_book(character: str = "silas") -> list[lc.StateRecord]:
+    """A book running one declared system, seeded at its starting sheet.
+
+    Written out here rather than imported from `tests/test_gamesystem.py`: this file's subject
+    is what the render side does with a system, and reaching into the system's own test module
+    for the fixture would let that subject move without these tests noticing.
+    """
+    import dataclasses
+
+    from litharness.domain import gamesystem as gs
+
+    system = gs.SystemDef(
+        system_id="the_weave",
+        name="the Weave",
+        criterion="attunement",
+        rank_label="Seal",
+        ranks=(
+            gs.Rank("unsealed", "Unsealed"),
+            gs.Rank("first_seal", "First Seal"),
+            gs.Rank("second_seal", "Second Seal"),
+        ),
+        abilities=(
+            gs.Ability("seamsight", "Seamsight"),
+            gs.Ability("threadpull", "Threadpull"),
+            # Reachable only once Seamsight is two deep, which is the thing a column label
+            # cannot know and the whole reason the system arm is better than a superset.
+            gs.Ability("stillwater", "Stillwater", needs=(gs.Need("seamsight", 2),)),
+            gs.Ability("lanterncall", "Lanterncall", needs=(gs.Need("threadpull"),)),
+            gs.Ability(
+                "deepweave",
+                "Deepweave",
+                needs=(gs.Need("first_seal"), gs.Need("stillwater")),
+            ),
+        ),
+        scale=gs.Scale("Depth", 9),
+    )
+    sheet = gs.starting_sheet(system, character)
+    return [
+        dataclasses.replace(record, authority=lc.StateAuthority.ACCEPTED_CANON)
+        for record in (*gs.records_for(system), *gs.records_for_sheet(sheet))
+    ]
+
+
+def test_a_system_book_names_only_moves_the_character_can_actually_make() -> None:
+    """The system arm, and the claim a label could never make.
+
+    `Stillwater` needs `Seamsight` two deep, and the starting sheet holds nothing — so it is
+    not a legal move and the beat must not name it. A superset read off the status line's
+    columns would name it, which is the error the legacy arm accepts for a book whose system
+    was never modelled and this book does not have to.
+    """
+    from litharness.domain.extraction import movable_names
+
+    records = _weave_book()
+    names = movable_names(records, character="silas")
+    assert "Stillwater" not in names
+    assert {"Seamsight", "Threadpull"} <= set(names)
+
+
+def test_the_system_arm_needs_a_character_and_a_single_system_or_it_abstains() -> None:
+    """Three ways the system arm cannot answer, each falling to the legacy arm.
+
+    Two declared systems is an abstention rather than a choice, on `sheet_for`'s precedent: a
+    disagreement about the book's own vocabulary is not this module's to settle.
+    """
+    from litharness.domain.extraction import counted_names, movable_names
+
+    records = _weave_book()
+    # No character named: the drafting path passes `None` for a book with no declared
+    # protagonist, and the answer falls back rather than guessing whose sheet is meant.
+    assert movable_names(records) == counted_names(records)
+    # A character canon has never placed in the system.
+    assert movable_names(records, character="nobody") == counted_names(records)
+
+
+def test_a_proposed_system_is_not_a_system_the_beat_may_schedule_against() -> None:
+    """Canon only, which is `genre._declared_systems`' rule for its reason.
+
+    `systems_of` reads proposals deliberately, so the Architect's world is visible mid-build.
+    A beat is not that reader: scheduling a scene around an unaccepted draw would put it on
+    the page before anybody accepted it.
+    """
+    import dataclasses
+
+    from litharness.domain.extraction import counted_names, movable_names
+
+    proposed = [
+        dataclasses.replace(record, authority=lc.StateAuthority.PROPOSED)
+        for record in _weave_book()
+    ]
+    # Nothing canon at all, so both arms have nothing to say and agree on silence.
+    assert movable_names(proposed, character="silas") == counted_names(proposed) == ()
+
+
 def test_an_unscheduled_scene_is_left_byte_identical() -> None:
     """The control §155.3 is read against, and naming the quantity did not disturb it."""
     counts = ("Attunement", "Threads")

@@ -1129,6 +1129,9 @@ def make_outline_handler(
         # with no status sheet is asked for no milestones.
         planning_canon = planning_records(canon, entry_state)
         world = world_brief.brief_for(planning_canon)
+        # Read once and used twice — in the request below and by the folded beat's vocabulary
+        # in `outline_proposal`. A second lookup would be a second answer to whose book this is.
+        protagonist = worlds_mod.protagonist_brief(planning_canon)
         ladder = world.ladder if world is not None else None
         # **The world and its protagonist, off the `canon` already read two statements
         # above.** A second query would be a second answer to the same question, and the
@@ -1164,7 +1167,7 @@ def make_outline_handler(
             seed=seed or None,
             promises=open_promises,
             world=world,
-            protagonist=worlds_mod.protagonist_brief(planning_canon),
+            protagonist=protagonist,
             serial_arc_index=arc_index if isinstance(arc_index, int) else None,
             prior_summaries=prior_summaries,
             arc_entry_state=entry_state,
@@ -1230,9 +1233,15 @@ def make_outline_handler(
                 # so the beat folded into a scene plan names something the sheet this book
                 # actually starts with can move. `movable_names` is the one place that
                 # question is answered, shared with the drafting selector so the two call
-                # sites for one schedule cannot disagree. `()` for a book that speaks no
-                # system voice.
-                counts=movable_names(canon, at=beats[0].story_order_key),
+                # sites for one schedule cannot disagree. The protagonist comes from the
+                # brief already built for the request four lines down — a second lookup
+                # would be a second answer to whose book this is. `()` for a book that
+                # speaks no system voice.
+                counts=movable_names(
+                    canon,
+                    character=protagonist.subject if protagonist is not None else None,
+                    at=beats[0].story_order_key,
+                ),
             )
             # Validated with the outline, so a schedule that plans stasis refuses the whole
             # answer rather than landing beside a good outline. One call, one verdict.

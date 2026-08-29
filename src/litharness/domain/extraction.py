@@ -76,6 +76,7 @@ from hashlib import sha256
 
 import litharness_contracts as lc
 
+from litharness.domain import gamesystem as gamesystem_mod
 from litharness.domain import house as house_mod
 from litharness.domain import state as state_mod
 from litharness.domain import worlds as worlds_mod
@@ -105,7 +106,17 @@ SHEET_PREDICATE = "status_sheet"
 #: small instance of the general defect `plan/state-model-abilities.md` §2 names — a record
 #: shaped for a machine, rendered into a prompt — and the general fix is a projection layer.
 #: This is the narrow one: what configures the telling is not part of the told.
-CONFIGURATION_PREDICATES = frozenset({SHEET_PREDICATE, worlds_mod.GRAPH_LINE_PREDICATE})
+#: **§160's configuration predicates union in here rather than beside** (§161, and the ownership
+#: was settled between the two tracks rather than assumed). Three consumers read this set —
+#: `domain/context.py`, `application/model_context.py`, `domain/world_brief.py` — and all three
+#: read it from this module, so a second set would be a second answer to "may this reach a
+#: packet" and the two would eventually disagree about a record. A game system's magnitude scale
+#: and its digest configure how a book is written down exactly as a sheet declaration does, so
+#: they belong to the same one answer.
+CONFIGURATION_PREDICATES = (
+    frozenset({SHEET_PREDICATE, worlds_mod.GRAPH_LINE_PREDICATE})
+    | gamesystem_mod.CONFIGURATION_PREDICATES
+)
 
 #: Named so a later change to the graph line's grammar is a visible version bump. Deliberately
 #: neither `REGISTRY_VERSION` nor `worlds.REGISTRY_VERSION`: three producers now write records —
@@ -1523,15 +1534,19 @@ def movable_names(
     the right error for a book whose system was never modelled, because the alternative for
     such a book is the categorical `genre.BEAT` and read 8 §4.2 measured what a category buys.
 
-    *The system arm*, on rebase over Track 1: where `gamesystem.systems_of(records)` returns
-    exactly one system, the answer is
-    `gamesystem.legal_moves(gamesystem.sheet_of(records, character, at=at))` rendered to
-    names, in the declaration order that accessor already returns them in. That arm is
-    strictly better and not merely different: it knows an ability whose prerequisite is unmet
-    is **not** offered, which a label cannot know, so it stops the schedule naming a move the
-    book cannot make. It ranks nothing and this function must not make it rank anything
-    (§61(5)) — declaration order is the book's own order, and `genre.beat_text` rotates
-    through it by schedule position for exactly that reason.
+    *The system arm*, where this book declares exactly one system and the character stands
+    somewhere in it: `gamesystem.legal_moves` over that sheet, named in the declaration order
+    that accessor already returns them in. It is strictly better and not merely different —
+    it knows an ability whose prerequisite is unmet is **not** offered, which a label cannot
+    know, so it stops the schedule naming a move the book cannot make. It ranks nothing and
+    this function must not make it rank anything (§61(5)): declaration order is the book's own
+    order, and `genre.beat_text` rotates through it by schedule position for that reason.
+
+    **An empty answer from the system arm is an answer**, not a reason to fall through. A sheet
+    with no legal move left is a character who cannot advance, and naming a column they hold
+    would tell the scene something moves when the system says nothing can. The fall-through is
+    for the cases where the system arm *cannot answer at all* — no system declared, more than
+    one, or no canon position for this character.
 
     Two systems is an abstention rather than a choice, on `sheet_for`'s own precedent: two
     declarations are a disagreement about the book's own vocabulary, and picking either would
@@ -1539,7 +1554,41 @@ def movable_names(
     legacy arm, which is a description of what it prints rather than a claim about what it
     can do.
 
-    `character` is the protagonist the sheet belongs to; the legacy arm has no use for it,
-    because a status line has one subject and `snapshot_at` already picked it.
+    **Canon only**, which is `genre._declared_systems`' rule for `genre`'s reason: `systems_of`
+    deliberately reads proposals too, because the Architect builds a system before `world
+    accept` and a reader that saw nothing until acceptance would report an empty world
+    mid-build. A beat is not that reader — a proposed system is a plan for later, and
+    scheduling a scene around one would put an unaccepted draw on the page.
     """
+    if character is not None:
+        canon = [record for record in records if state_mod.is_canon(record)]
+        systems = gamesystem_mod.systems_of(canon)
+        if len(systems) == 1:
+            sheet = gamesystem_mod.sheet_of(canon, character, system=systems[0], at=at)
+            if sheet is not None:
+                return _named_moves(systems[0], gamesystem_mod.legal_moves(sheet))
     return counted_names(records, at=at)
+
+
+def _named_moves(
+    system: gamesystem_mod.SystemDef, moves: Sequence[gamesystem_mod.Move]
+) -> tuple[str, ...]:
+    """One name per available move, in the order they were offered.
+
+    A `RISE` is named by the rung it reaches and everything else by the ability that moves,
+    which is the name the system itself declared — nothing here mints a word. `MACHINERY_WORDS`
+    are dropped for `counted_names`' reason: this vocabulary reaches the writer inside a scene
+    plan and therefore shapes prose a reader reads, and a declared name is book data that no
+    ceiling test can cover.
+    """
+    abilities = {ability.ability_id: ability.name for ability in system.abilities}
+    ranks = {rank.rank_id: rank.name for rank in system.ranks}
+    named: list[str] = []
+    for move in moves:
+        if move.kind is gamesystem_mod.AdvanceKind.RISE:
+            name = ranks.get(move.rank_id or "")
+        else:
+            name = abilities.get(move.ability_id or "")
+        if name and name.casefold() not in house_mod.MACHINERY_WORDS:
+            named.append(name)
+    return tuple(named)

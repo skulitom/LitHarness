@@ -16511,6 +16511,274 @@ is re-minted and no book on disk is re-seeded; the ratchet exists so that none h
 research claim is touched, no axis is registered, and no book is judged. The Architect's seed and
 the `world vocabulary` documentation belong to §163, and the render path to its own track.
 
+## 161. The page had no home for a number, so the writer was shown four clichés and four question marks, and the beat that fired named a category a bureaucracy could satisfy
+
+Read 8's verdict commissioned [`first-principles-litrpg-core.md`](first-principles-litrpg-core.md),
+and this is the track between the sheet and the page: the render path, the beats' vocabulary,
+and the numbers policy. §160 mints the system; this entry mints nothing and reads what canon
+already holds. Code: `domain/extraction.py`, `domain/genre.py`'s beat half, `domain/house.py`,
+`application/planner.py`, and three lines of `application/outline.py` carrying one argument to
+the fold. Tests: `tests/test_page_contract.py`.
+
+**No model read, ranked or judged anything here, and nothing was measured on a draft.** Every
+number below is a property of instruction text or of a rendered line — a demand count, a
+character count, a string. Whether any of it changes a chapter is the next pilot's to find, and
+the numbers-policy half is Track 3's census to measure, not this entry's to claim.
+
+### 161.1 The defect nobody had looked at: the only system-voice example the pipeline ever rendered was the operator's explicit not-this
+
+`extraction.DEFAULT_SHEET` is `Level | HP | MP | Gold`. The operator's progression direction of
+2026-08-21 is explicit that the model is abilities in a graph and ranks with names and **not**
+HP/MP/Gold, and §155.2 built a floor requiring a sheet without anyone reading what the fallback
+sheet said. `sheet_for` returned that default for any book that declared none, and since the
+declaring vocabulary was undocumented (§163's finding), that was every book.
+
+**The worse half is what `render_status_line` does with a key it does not hold**:
+`value.get(field, "?")`. So a book seeding three quantities of its own was handed this, as the
+state it should carry forward:
+
+| | |
+|---|---|
+| what the book's canon held | `{"attunement": 1, "threads": 2, "threads_max": 3}` |
+| what the writer was shown | `[STATUS] sera — Level ? \| HP ?/? \| MP ?/? \| Gold ?` |
+| what it is shown now | `[STATUS] sera — Attunement 1 \| Threads 2/3` |
+
+Its own three quantities erased, four clichés in their place, and a question mark where every
+number should have been. `test_a_book_that_declared_no_sheet_is_shown_the_columns_it_actually_counts`
+pins both lines, the old one included, because the old one is the finding.
+
+**What shipped is a derivation, not a deletion.** `implied_sheet` reads the columns off the
+book's own canon snapshots — union across snapshots in order of first appearance, so the shape
+only ever grows and a granted quantity can never un-parse a line already on disk. Keys the
+parser cannot use are dropped rather than guessed at: a regex group needs an identifier and
+`\d+` needs a plain integer, and `bool` is excluded explicitly because `isinstance(True, int)`
+is True in Python. Labels derive by a rule and not a lookup — three characters or fewer
+uppercase, longer title-case — which reproduces the default's four labels exactly from its four
+keys and happens to be the genre's own convention (`HP`, `MP`, `STR`, `DEX` against
+`Attunement`, `Soul Thread`).
+
+**`DEFAULT_SHEET` survives in exactly two places, and "the default dies" is corrected here
+rather than repeated.** What died is the *imposition*. The object remains the answer for (i) a
+book whose snapshot holds precisely the default's six value keys, returned as the object itself
+so its canonical column order is preserved rather than reconstructed from whatever order one
+record's mapping happened to iterate in — that is what keeps both golden fixtures and every
+store written before today parsing unchanged, and
+`test_a_book_whose_keys_are_the_defaults_keys_still_gets_the_default_object` asserts identity
+rather than equality to say so; and (ii) a book with no readable snapshot at all, which
+`speaks_system_voice` refuses and the genre floor blocks, so nothing is ever asked to print it.
+No migration was required and none was written.
+
+### 161.2 A second exposure, closed before it fired, and it was the same defect by another door
+
+§160 carries a store caution: world-vocabulary record ids are position-blind —
+`(subject, predicate, object_ref, value)` with no order key — under an `INSERT OR IGNORE` store,
+so an unchanged fact rewritten at a later position is silently dropped. Its advancement
+therefore records the edge that moved plus the snapshot it renders, and **nothing guarantees a
+snapshot restates the whole sheet.**
+
+`system_voice_example` read one record's value. Under a partial advancement snapshot it would
+have put a question mark on every column the scene did not touch — 161.1's defect exactly,
+arriving through correct behaviour rather than through a bad default. `state_as_it_stands` folds
+every canon snapshot up to the position, later values winning, within one subject only, so a
+book with two characters holding sheets cannot be shown the other's numbers. **The fold is not a
+new rule**: it is the writer's own instruction — *"carry these values forward unchanged unless
+this scene changes them"* — applied on this side, so the line a writer is shown and the line a
+writer is asked to write are the same statement. A book whose snapshots each restate everything
+folds to exactly the latest one, which is every store on disk.
+`test_an_advancement_that_restates_nothing_still_renders_a_whole_sheet` is the exposure and
+`test_the_fold_never_crosses_from_one_character_to_another` is its boundary.
+
+### 161.3 The furniture contract: the line moved off the scene's footer and onto the change
+
+The ask read *"End the scene with a status line in this form"*, which is a footer — a scene
+could advance the sheet in its prose and report the result after the reader had already left the
+moment. It now reads *"Print that line exactly once: where one of its numbers changes, or at the
+scene's end if none of them does."*
+
+**"Exactly once" is load-bearing and it is not tidiness.** `extract_state` runs
+`sheet.pattern.finditer` and mints one `ACCEPTED_CANON` record per match, all at one
+`order_key` — so a scene printing the line before and after a change writes two canon snapshots
+that disagree at one position, which is precisely the shape `integrity.detect_contradictions`
+groups on. Asking for the line at the moment of change *and* at the scene's end would have
+manufactured the contradictions the gate then refuses and the repair loop pays for. One line per
+scene keeps the read-back single-valued, and the placement rule decides where the one goes, so
+the guaranteed emission the footer bought is not given up to get the placement. **This was found
+by reading the extractor, not by a failing test**;
+`test_the_status_line_is_asked_for_exactly_once` is the test written afterwards.
+
+**The ratchet is the mode, so the clause carries no mode flag.** Both arms clear
+`speaks_system_voice`; only the rendered line differs, and
+`test_the_ask_is_the_same_sentence_for_a_system_book_and_a_default_shaped_one` pins that the two
+cost the same demands.
+
+### 161.4 The beats now name which quantity moves, and the rotation is a schedule rather than a choice
+
+§157's beat named a category — *"one of the numbers this book counts"* — and read 8 §4.2
+measured what a category buys: both of pilot 14's scheduled beats fired, on schedule, and both
+landed as promotions inside a guild, because a category is satisfied by whichever ladder the
+world declared loudest and the world's loudest ladder was a bureaucracy. `NAMED_BEAT` names the
+quantity, from `extraction.movable_names`, which is **the one place that question is answered**
+and has two arms with no mode flag:
+
+- *the legacy arm* — the columns the book's own status line prints. A superset: a label is a
+  quantity that exists, which is not the claim that it may move next. That error is the right
+  one for a book whose system was never modelled, because the alternative there is the
+  categorical `BEAT`.
+- *the system arm* — `gamesystem.legal_moves` over the character's sheet, in declaration order.
+  Strictly better and not merely different: **it knows an ability whose prerequisite is unmet is
+  not offered**, which a label cannot know, so it stops the schedule naming a move the book
+  cannot make. `test_a_system_book_names_only_moves_the_character_can_actually_make` is that
+  claim, on a system where one ability needs another two deep.
+
+An empty answer from the system arm is an answer, not a reason to fall through: a sheet with no
+legal move is a character who cannot advance, and naming a column they hold would tell the scene
+something moves when the system says nothing can. The fall-through is for the cases where the
+system arm *cannot answer at all* — no system, more than one (an abstention on `sheet_for`'s
+precedent, not a choice), or no canon position for this character. Canon only, which is
+`genre._declared_systems`' rule for its reason: `systems_of` reads proposals deliberately so the
+Architect's world is visible mid-build, and a beat is not that reader.
+`test_the_system_arm_needs_a_character_and_a_single_system_or_it_abstains` and
+`test_a_proposed_system_is_not_a_system_the_beat_may_schedule_against` hold both boundaries.
+
+**The rotation index is the beat's position in the schedule and not its scene ordinal, and the
+obvious implementation is one line that can never reach half the sheet.** At `EVERY = 2` the
+scheduled ordinals are 1, 3, 5, 7, so indexing a four-column sheet by ordinal reaches columns 0
+and 2 and never names the other two.
+`test_the_beat_rotates_by_schedule_position_and_not_by_scene_ordinal` is the one to read.
+Nothing here ranks the book's quantities (§61(5)): declaration order is the book's own order and
+a rotation through it decides nothing, which is the argument §155.3 made for *when* a beat fires.
+
+**Two constraints were inherited rather than restated.** The named form is pronoun-free —
+§155.3's first draft would have written a male protagonist into every scheduled scene of every
+book — and it carries no `MACHINERY_WORDS`. The second is where this could have broken and did
+not: `BEAT` is house text and a ceiling test covers it, but **a name that comes off a book's own
+declaration is book data, and no ceiling test can reach it**, so both arms drop the collisions
+and a book whose every name collides falls back to the unnamed form — the correct failure, since
+the schedule still fires and names nothing.
+`test_the_beat_never_carries_this_systems_own_vocabulary` pins it. `genre.BEAT_TAIL` was broken
+out so "did the schedule fire" is one string either form ends with; six §157 assertions were
+re-anchored onto it rather than weakened.
+
+### 161.5 The numbers policy inverted by re-scoping one licence, and every edited clause is demand-neutral
+
+Three clauses were edited and **not one demand was added anywhere**. Measured with
+`house.demands` over the assembled text, before and after:
+
+| clause | demands | characters |
+|---|---|---|
+| `house.READER`, the numbers clause | 2 → **2** | +21, in every role that stands on the floor |
+| `planner`, the furniture ask | 4 → **4** | 334 → 409 |
+| `planner`, the criteria clause | 2 → **2** | 257 → **225** |
+
+`litharness prompts` before and after: every role's demand count identical — listing 15,
+architect 41, outline 27, scene 37, house floor 24 — and the only character movement is the +21
+the house re-scope costs. **No ceiling in `tests/test_prompt_budget.py` was raised**, and none
+had to be argued for.
+
+**The licence, and it is the three middle words that mattered.** The clause read *"an exact
+number belongs to what this world counts and to nothing else"*. A guild's glasses, a ledger's
+entries and a tax roll are all things a world counts — so the clause **licensed exactness on
+exactly the surfaces the operator has now objected to across four books**, and read 8 §4.2 is
+the measurement of that licence being spent. The scope is now *what this world's own system
+counts*, which is a strictly smaller set: a narrowing, not a new permission, and §138's
+direction is preserved.
+
+**The two-axis check (§138 sign, §154 addressability), written per clause:**
+
+| clause | sign, before → after | addressability, before → after |
+|---|---|---|
+| numbers | prohibition → **prohibition**, scope narrowed | *"what this world counts"* named no artifact the drafting call had ever shown a writer — the referent was **empty**, so the exclusion had nothing to exclude *toward*. §158 made the line reach the writer filled and 161.3 puts it on the page at the moment a number moves; the licence half now points at something the writer is holding. |
+| furniture ask | placement direction → **placement direction plus a cardinality prohibition** | addressable throughout: the token is the rendered line, and the change adds a position on the page, which is also addressable |
+| criteria | prohibition + redundant affirmative → **prohibition alone**, object narrowed | addressable throughout; the narrowing removes an object — the printed line — that the addressee could not distinguish from narration |
+
+**Read 4's suppressor 2, and the route is a third pattern worth naming.** The clause read *"a
+rank is something a reader sees, never something a narrator reports"* — read 4 called it a
+standing prohibition on printing the ladder and named narrowing it as the lever. Two routes were
+available. An exemption written as its own demand is a **permission**, and §138 measured a
+permission-only clause returning more than six times what a prohibition-only one did and worse
+than silence. So the object was narrowed instead — to *"a narrator reporting a rank whose change
+the reader was never shown"*, which is the failure §5 item 11 actually named — and the furniture
+falls outside it by construction. The furniture is then **named anyway, hung off a semicolon
+inside the same sentence**: `house.demands` splits on sentence terminators and line breaks, so
+an explicit exemption costs **zero demands**, and inside the sentence it delimits rather than
+permits.
+
+This is the third distinct clause-surgery pattern the log now carries, and the three are
+recorded together so a later editor has all of them: **subtraction** (§154 — take the clause
+out), **re-signing** (§138 — say the same thing as a prohibition), and **object-narrowing with
+inline naming** (here — shrink what the prohibition reaches, then name the exclusion inside the
+sentence so it costs nothing). The third is available only where the sentence can carry a
+semicolon, which is a real limit rather than a general licence.
+
+**What went with it was an affirmative half carried twice over already**: *"must show the change
+rather than announce it"* is the `standing` block four lines above (*"do not move it for no
+reason on the page"*) and `standing_line` immediately after it (*"when the standing changes,
+print the line in this form"*). Subtracting a redundant affirmative is safe precisely because
+two better-addressed demands already carry it.
+
+**Suppressor 3 — free absence — is closed, and was closed before this track opened.** §155 made
+a starting sheet a floor a book is refused for lacking, and §158 made the floor's predicate
+require the mapping the ask renders from. No code here; recorded so read 4's three are all
+accounted for — 1 is §163's, 2 is above, 3 was already dead.
+
+### 161.6 One ownership decision, settled between tracks rather than assumed
+
+`gamesystem.CONFIGURATION_PREDICATES` unions into `extraction.CONFIGURATION_PREDICATES` **on
+this side**, and the choice was made jointly rather than by whoever edited second. Three
+consumers read that set — `domain/context.py`, `application/model_context.py`,
+`domain/world_brief.py` — and all three read it from `extraction`, so a second set would be a
+second answer to "may this record reach a packet" and the two would eventually disagree. A
+system's magnitude scale and its digest configure how a book is written down exactly as a sheet
+declaration does, so they belong to the same one answer. The import direction is the one §160
+fixed and this entry did not test: `extraction` may import `gamesystem`, never the reverse.
+
+### 161.7 What was refused
+
+- **No new clause anywhere**, at any of the three sites. §127 records a fourth rule against the
+  same complaint failing, §135 what a clause costs every role at once, §138 which half gets
+  obeyed.
+- **No bar declared, and nothing here is a threshold.** The demand and character counts are
+  sizes. The four attainability checks (§81, §85, §87, §89) were not run because nothing here is
+  a bar.
+- **No claim about any book.** Nothing was drafted, paid or free, and no chapter was measured.
+  The numbers policy's effect is Track 3's mundane-precision census to measure; this entry
+  claims *shipped, unmeasured* and nothing further.
+- **No operator quote became prompt text** (§97.1). The numbers clause's instances are invented
+  — a puzzle box, a crate, a wait — and the one that changed swapped a habit for a tally because
+  a jar count is what read 8 measured and a habit is not. **A numeral harvested from the book
+  under read would be laundering a diagnostic into a prompt with the evidence still in it**, so
+  the leaked ages and almanac ordinals are named here and not in the clause.
+- **`DEFAULT_SHEET` was not deleted** — 161.1 gives the two places it survives and why deleting
+  it would rewrite the reading of every store on disk.
+- **The `?` placeholder was not removed from `render_status_line`.** It is the honest output for
+  a genuinely absent key; what was wrong was handing it a sheet the book never chose.
+- **No model ranks the book's quantities.** The rotation is arithmetic over declaration order,
+  and `legal_moves` is explicit that it orders nothing.
+
+### 161.8 Two residuals, named because they are real
+
+**The numbers clause still under-covers two classes read 8 measured.** Its instances now reach
+props, tallies and durations; the leaked *nineteen years old* (an age) and *the fifteenth in the
+almanac* (an ordinal) fall under the scope sentence and under no instance. A fourth instance was
+refused: instance lists are the shape §155 and this module's own standing constraint have both
+been corrected for, and the scope sentence is the half §138 says gets obeyed.
+
+**The conditional blocks of the scene prompt have no ceiling.** `tests/test_prompt_budget.py`
+measures `house.with_house_rules(...)` — the floor and the cast writer — and the
+`status_example`, `progression`, `standing`, `criteria` and `target_words` branches are outside
+every row in `BUDGET`. Both clauses edited here live in that unmeasured region, which is why
+their before-and-after was computed by hand above. Extending the ceiling table to the assembled
+conditional prompt is a real gap and was not taken here: it is a change to a file several tracks
+edited this week, and it wants its own decision rather than a rider on this one.
+
+### 161.9 Anti-scope
+
+The render path, the beat's vocabulary and three clause edits. Nothing here mints a system,
+declares a world, touches the Architect, or reads a corpus — RS1 is untouched. No research claim
+is promoted and no axis admitted; the operator quotes this track is written against live in
+`plan/` and in module commentary and are rendered into no call. `genre.py`'s sheet-recognition
+half and `domain/gamesystem.py` are §160's and were not edited.
+
 ## 163. The Architect's rule against power numbers was already gone, and what stood in its place was a default with the rejected sheet in it
 
 Read 4 (2026-08-22) named three standing instructions suppressing the genre's substance and put
