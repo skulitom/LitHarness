@@ -455,11 +455,49 @@ def test_a_tick_publishes_without_being_asked_and_writes_beside_the_database(
 ) -> None:
     """On by default is the point: a reading copy you have to remember to ask for is one
     nobody has. `--no-library` is the opt-out, and neither writes into the working directory."""
+    import litharness_contracts as lc
+
     from litharness.cli import EXIT_OK, main
 
     monkeypatch.setenv("LITHARNESS_FAKE_PAD_CHARS", "400")
     db = tmp_path / "cli.db"
     assert main(["--database", str(db), "init"]) == EXIT_OK
+
+    # The house genre floor (`domain/genre.py`) refuses to draft a book whose canon holds no
+    # starting sheet, so this synthetic book is seeded one at creation — `new --state`, the
+    # same door the module docstring names — rather than left to drift and never tick at all.
+    state_path = tmp_path / "seed-state.json"
+    state_path.write_text(
+        json.dumps(
+            lc.to_jsonable(
+                lc.StateSnapshot(
+                    meta=lc.ArtifactMeta(
+                        schema_version="1.0.0",
+                        artifact_id="state-seed-toll-road",
+                        artifact_kind="state_snapshot",
+                        created_at=STAMP,
+                        actor="test",
+                        tool=lc.ToolIdentity(name="test", version="0.1.0"),
+                        source_revisions=[],
+                    ),
+                    book_id=BOOK_ID,
+                    branch_id=BRANCH_ID,
+                    revision_id="state-seed-toll-road",
+                    records=[
+                        lc.StateRecord(
+                            record_id="seed-status",
+                            kind=lc.StateRecordKind.ASSERTION,
+                            subject="rook",
+                            predicate="status_snapshot",
+                            value="Level 1, debtor",
+                            authority=lc.StateAuthority.ACCEPTED_CANON,
+                        )
+                    ],
+                )
+            )
+        ),
+        encoding="utf-8",
+    )
     assert (
         main(
             [
@@ -471,6 +509,8 @@ def test_a_tick_publishes_without_being_asked_and_writes_beside_the_database(
                 "A debtor works off an impossible debt.",
                 "--scenes",
                 "6",
+                "--state",
+                str(state_path),
             ]
         )
         == EXIT_OK

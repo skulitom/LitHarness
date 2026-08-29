@@ -189,9 +189,18 @@ def _roles() -> dict[str, str]:
 BUDGET: dict[str, int] = {
     "title writer": 10,
     "title lookup": 6,
-    "recruiter, single image": 24,
-    "recruiter, several with beat": 24,
-    "recruiter, several no beat": 24,
+    # **Raised 24 -> 25 on 2026-08-29, deliberately and for one named sentence.** The house
+    # genre had been living nowhere (`plan/house-genre-constraint.md`; pilot 13 §8.2), carried
+    # by whichever dossiers happened to be system-shaped, and the first recruit whose was not
+    # drew a book with no system in it. The sentence added to `_RECRUIT` names the mechanical
+    # floor that now refuses such a book rather than naming the genre — §136's reason — and it
+    # is prohibition-shaped rather than a recipe, which is §138's. This is the choice this file
+    # asks for: take something out, or raise the number on purpose and say why. Nothing was
+    # taken out, because the twenty-four that were here are the tool essay and the refusals,
+    # and the recruiter still carries no house floor.
+    "recruiter, single image": 25,
+    "recruiter, several with beat": 25,
+    "recruiter, several no beat": 25,
     "listing writer": 15,
     "architect seed": 42,
     "architect grow": 42,

@@ -34,8 +34,8 @@ from litharness.application.outline import (
     render_outline_request,
     standing_milestone_records,
 )
+from litharness.domain import genre, world_brief, worlds
 from litharness.domain import state as state_mod
-from litharness.domain import world_brief, worlds
 from litharness.domain.beats import arc_template, beats_for
 from litharness.domain.extraction import standing_target
 from litharness.domain.generation import CompletionResult, Resolution, Usage
@@ -67,6 +67,26 @@ def a_book(store: SqliteStore, scenes: int = 12):  # type: ignore[no-untyped-def
                 text=PREMISE,
                 authority=lc.PlanAuthority.CANONICAL_IN_PROSE,
                 locked=True,
+            )
+        ],
+        created_at="2026-08-16T00:00:00Z",
+    )
+    # The house genre floor (`domain/genre.py`) refuses to draft a book whose canon cannot
+    # speak system voice, so the fixture seeds the starting sheet its own premise implies —
+    # this book charges Kestrel for a skill she used and compounds past her level cap. Without
+    # it the selector correctly declines every scene and these tests measure the floor instead
+    # of the outline.
+    store.record_state_records(
+        BOOK_ID,
+        BRANCH_ID,
+        [
+            lc.StateRecord(
+                record_id="seed-status",
+                kind=lc.StateRecordKind.ASSERTION,
+                subject="kestrel",
+                predicate="status_snapshot",
+                value="Level 3, Courier, debt 41 marks",
+                authority=lc.StateAuthority.ACCEPTED_CANON,
             )
         ],
         created_at="2026-08-16T00:00:00Z",
@@ -501,7 +521,15 @@ def test_the_outline_becomes_readable_plan_items_through_the_handler(
     for index, beat in enumerate(beats, start=1):
         item = scene_plan_for(items, beat.logical_id)
         assert item is not None, f"{beat.logical_id} has no statement"
-        assert item.text == DISTINCT[index - 1]
+        # The outline's own statement always leads; a scheduled scene then carries the house
+        # progression beat, folded in by `genre.with_beat` rather than asked of the model.
+        assert item.text.startswith(DISTINCT[index - 1])
+        scheduled = index in genre.beat_ordinals(len(beats))
+        assert (genre.BEAT in item.text) is scheduled, (
+            f"scene {index} {'should' if scheduled else 'should not'} carry the beat"
+        )
+        if not scheduled:
+            assert item.text == DISTINCT[index - 1]
 
 
 def test_running_the_outline_twice_is_a_no_op(store: SqliteStore) -> None:
@@ -792,7 +820,12 @@ def test_the_drafting_lane_reads_the_statement_the_outline_wrote(store: SqliteSt
     prompt = str(draft_job.payload["prompt"])
     ordinal = int((draft_job.payload.get("selected_by") or {}).get("ordinal") or 1)
     assert DISTINCT[ordinal - 1] in prompt, "the scene was drafted knowing what it is for"
-    assert prompt.rstrip().endswith(DISTINCT[ordinal - 1])
+    # Still rendered LAST, which is the property this line has always been about. What ends
+    # the prompt is the scene's stored plan — its own statement, plus the house progression
+    # beat where the cadence schedules one.
+    stored = scene_plan_for(store.plan_items(BOOK_ID, BRANCH_ID), f"scene-{ordinal}")
+    assert stored is not None
+    assert prompt.rstrip().endswith(stored.text.strip())
 
 
 def test_the_control_arm_is_reachable_through_the_operator_surface(

@@ -34,6 +34,7 @@ from litharness.application.conductor import Conductor
 from litharness.application.handlers import SCENE_DRAFT, make_scene_draft_handler
 from litharness.application.planner import make_plan_selector
 from litharness.cli import EXIT_ATTENTION, EXIT_OK, main
+from litharness.domain.draft import DraftPolicy
 from litharness.domain.generation import CompletionRequest, CompletionResult, Usage
 from litharness.domain.nodes import Node, NodeKind
 from litharness.domain.plans import import_plan, scene_plan_id_for
@@ -51,6 +52,12 @@ STAMP = "2026-08-21T00:00:00Z"
 #: Enough padding to clear the draft policy's floor without touching the gate — the same
 #: number `tests/test_planner.py` runs its autonomous book at.
 PAD = 400
+
+#: The golden mystery fixture — this file's default and its only fixture, below — is not a
+#: house book: a locked-room mystery carries no status snapshot by design. This whole file is
+#: about provenance and forensic verbs, never about the genre floor, so every drafting helper
+#: below opts out of it rather than seeding a sheet that would defeat the fixture's point.
+NOT_A_HOUSE_BOOK = DraftPolicy(require_starting_sheet=False)
 
 
 @pytest.fixture
@@ -83,7 +90,7 @@ def drafted(db, capsys, fixture: str = "mystery") -> tuple[str, str]:
             holder="worker-a",
             project_id=PROJECT_ID,
             registry=registry,
-            select=make_plan_selector(),
+            select=make_plan_selector(policy=NOT_A_HOUSE_BOOK),
             handlers={SCENE_DRAFT: make_scene_draft_handler(registry, store, PROJECT_ID)},
         )
         for index in range(8):
@@ -162,7 +169,7 @@ def outlined(db, capsys, fixture: str = "mystery") -> tuple[str, str]:
             holder="worker-a",
             project_id=PROJECT_ID,
             registry=registry,
-            select=make_plan_selector(),
+            select=make_plan_selector(policy=NOT_A_HOUSE_BOOK),
             handlers={SCENE_DRAFT: make_scene_draft_handler(registry, store, PROJECT_ID)},
         )
         for index in range(8):
@@ -204,7 +211,7 @@ def stubbed(db, capsys, stub: str, fixture: str = "mystery") -> tuple[str, str]:
             holder="worker-a",
             project_id=PROJECT_ID,
             registry=registry,
-            select=make_plan_selector(),
+            select=make_plan_selector(policy=NOT_A_HOUSE_BOOK),
             handlers={SCENE_DRAFT: make_scene_draft_handler(registry, store, PROJECT_ID)},
         )
         for index in range(4):

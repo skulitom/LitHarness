@@ -15710,6 +15710,197 @@ axis, or converts a read into data; no model ranked, judged or read anything, an
 untouched. The addressability axis is a reading of one clause against §138's four conditions and
 is offered as the reason a rule went inert, not as a law about models.
 
+## 155. The house genre had been living in nobody's file, the pipeline said so out loud twice, and the market turns out to be neither constant nor regular
+
+**Built 2026-08-29 from [`plan/house-genre-constraint.md`](house-genre-constraint.md), which
+recorded the operator's constraint verbatim and deliberately left its home open for a fresh
+session.** This entry picks the home. Code: `domain/genre.py` (new), `domain/draft.py`
+(`DraftPolicy.require_starting_sheet`), `application/planner.py` (a blocked reason and a refusal
+in front of the spend), `application/outline.py` (the beat folded into the scene plan),
+`application/recruiter.py` (one sentence in the system half), `cli.py` (`cmd_new`'s advisory
+becomes the report half). Measurement:
+`research/quality-measurement/progression_cadence.py` with
+[`progression-cadence-results.md`](../research/quality-measurement/progression-cadence-results.md)
+and a committed results JSON. Tests: `tests/test_genre_floor.py`.
+
+**The floor's two halves are the constraint's two halves**: the system furniture exists in every
+book, and progress on it is felt early. They ship together because they fail together — a book
+with no starting sheet has nothing for a cadence to schedule.
+
+### 155.1 The census: the market is late, bursty, and half of it is empty
+
+Registration digest `5d42f2065efb7e09`. 67,436 chapters materialised in one pass over both
+cached shards, **no genre filter and no per-story sampling**; the 26 descriptor-half fiction ids
+are carried as a `quarantined` column and subtracted from every population (2,505 rows).
+Code-only counters — **no model call, no cost, no sampling variance**.
+
+**The validity arm is reported before any distribution, and it exists only because the scan was
+widened for a sibling track.** Chapters the market did not tag `LitRPG` are the control these
+counters must score below: mean 1.224 against 0.188 events per 1,000 words (**6.50x**), and
+49.0% of LitRPG chapters carrying at least one located event against 12.8% (**3.84x**). Coverage
+is the number to believe, being a share. **The median ratio is deliberately not the statistic**:
+the control's median is 0.0, so a ratio over it is undefined and would read as a triumph.
+
+The distribution, on 13,364 LitRPG chapters over 584 fictions, median 2,053 words:
+
+| | |
+|---|--:|
+| events / 1k, median | **0.00** |
+| events / 1k, p75 / p90 / mean | 1.26 / 3.60 / 1.224 |
+| chapters carrying no located event | **51.0%** |
+| an event inside the first 500 words | **22.5%** |
+| median word offset of the first event | 585 |
+| median gap between consecutive events (n=4,496) | 89 words |
+| coefficient of variation of those gaps | **0.96** |
+
+**Three readings, and the first refutes the obvious one.** The operator asked for *"constant and
+regular"* progress; a gap CV of 0.96 is essentially Poisson and half the genre's chapters are dry
+end to end, so the market is neither. Nothing downstream of this census is justified as
+imitating it, and 155.3 says so at the point of the placement. Second, **the market earns the
+operator's opening complaint three times out of four** — only 22.5% of chapters put an event in
+their first 500 words — which is the strongest evidence any part of this effort has and it
+supports the scene-1 half specifically. Third, a Poisson market is itself the argument for
+scheduling: if regularity were something prompt text produced, some corner of a 584-fiction
+market would show it, and none does.
+
+**A correction to the instrument, made after seeing a number and recorded rather than quietly
+fixed.** The first run put `system_block` at 83% of the *control's* events, which is not credible
+for a population with mostly no system; the frame pattern was matching scene dividers written as
+three or more rule characters. A run of rule characters with no furniture line in it is now a
+divider and no event. This is not a rubric fitted to its answers and the argument does not depend
+on the number: a scene divider is not a progression event whatever any count says, the rule was
+stated before the re-run, and its declared direction was to *lower* both populations. Measured
+after, both fell and the separation rose from roughly 3.8x to 6.50x. Digest rotated `b2901ac0` to
+`5d42f206` with nothing published under the first.
+
+**No bar is declared** — the four attainability checks (81, 85, 87, 89) were not run, because
+nothing here is a bar. **The top residual is that precision and recall are both unmeasured**, and
+reliability being 1.0 by construction is not a virtue but a different failure mode: a
+deterministic instrument repeats its own mistakes perfectly, where the comic locator's noise at
+least made its unreliability visible. The 51%-zero figure is a **joint claim about the market and
+about this instrument's recall**, and that caveat travels with it wherever it is quoted.
+
+### 155.2 The floor: a message that had been observed twice became a thing to fail against
+
+**What licensed it is on disk rather than argued.** Both `listing --scenes` and `new` printed
+*"no state seeded — a LitRPG book needs a starting sheet to speak system voice"* on two separate
+databases and the run proceeded, because there was nothing for it to fail against
+(`plan/serial-pilot-13.md` 8.2). The condition was `not records` — **any** record silenced it —
+so a book with a full canon and no status snapshot printed nothing at all.
+
+`domain/genre.py` holds the operator's constraint quoted at the definition (97.1: it lives there
+and is never rendered into a call) and one predicate, `has_starting_sheet`, which **delegates to
+`extraction.speaks_system_voice` rather than restating it**. A second definition of what a
+starting sheet is would be a second answer to the question the *writer's* prompt already asks;
+if they disagreed, a book could pass the floor and still never be asked for a status line.
+
+**The surface is the planner, and three candidate surfaces were rejected with reasons:**
+
+- **Not `gate_draft`.** It runs after `registry.complete` — behind the spend. A floor there
+  records a book that should not have been drafted; it does not prevent one.
+- **Not `draft_block`**, despite its docstring making the strongest case for it (one function,
+  two callers, no drift). Three of `is_draftable`'s four callers use it to *count* drafted
+  scenes — `drafted = sum(1 for beat in beats if not is_draftable(...))` — so a genre veto there
+  would make a blocked book report **every scene as already written**. This was found by
+  reading the callers, not by a failing test.
+- **Not `cmd_new` alone.** Book creation funnels through it, but a book reaching the store by
+  `import` skips it entirely, and a floor a path can skip is the flag-mismatch defect in new
+  clothes.
+
+So `plan_progress` reports the refusal as a blocked reason — one door along from the no-premise
+block and under the same argument, *a blocked book reports its reason rather than looking
+finished* — and the selector refuses the book before a packet is built, a job enqueued or a call
+made. `cmd_new` keeps the advisory, now on the floor's own predicate and printing the floor's own
+sentence from one shared constant, so report and gate cannot drift. **That is the report-then-gate
+shape: the report where seeding is cheap, the gate where the spend is.**
+
+`DraftPolicy.require_starting_sheet` **defaults True so a path that forgets it fails closed**;
+the dangerous direction for a floor is a surface that silently skips it. It lives in the policy
+for `target_words`' recorded reason — an input that decides whether a book produces prose at all
+and appears in no policy record is what `policy_config_digest` exists to catch. Turning it off is
+how the suite drafts the golden **mystery** fixture, which is a complete, well-formed book this
+house would not publish and exactly what the floor is for;
+`test_the_litrpg_fixture_clears_the_floor` against
+`test_the_mystery_fixture_is_refused_by_the_floor` is the pair carrying the argument, since the
+only difference between the two golden books is whether canon holds a status snapshot.
+
+**A `PROPOSED` status snapshot does not satisfy the floor**, and that is `speaks_system_voice`'s
+rule rather than one added here: the outline mints `PROPOSED` status records, so counting them
+would let a book clear the floor with its own plan for later — written by the same run the floor
+would then let proceed.
+
+### 155.3 The cadence beats: a schedule, at the plan altitude, with no adjective in it
+
+`plan/house-genre-constraint.md` named the hazard before anyone drafted a clause — *"show
+progress immediately" as prompt text is a formula waiting to happen* — and named the altitude
+that avoids it: the planner's beat sheet, where a scene's plan can carry a progression beat as a
+plan item rather than as prose instruction. That is the 110 move one beat earlier: 110 repaired a
+call by **showing it the durable material** it had never been shown rather than by instructing it
+harder, and this shows the writer a scheduled item instead of asking for a quality.
+
+`genre.beat_ordinals` schedules **scene 1 always**, whatever the cadence and however short the
+book, then every `EVERY`-th scene. `genre.with_beat` folds one code-composed sentence into the
+scene's own `SCENE_PLAN` text, appended so the outline's statement still leads — one plan item
+per scene, because `scene_plan_for` returns the first scoped match and a second item would be a
+coin toss. An unscheduled scene is left byte-identical, which is the control this change is read
+against.
+
+**`EVERY = 2` is a placement in a measured distribution and not a bar.** At roughly 950 words a
+scene it puts a book near the market's 65th percentile by density — above the median the market
+sits at and well below its p90. **It is deliberately not the market's own cadence**, and 155.1 is
+the reason that is honest rather than sloppy: the market is Poisson and half-empty, the
+operator's stated reader-effect is the target, and the measured market is the departure point
+printed beside it.
+
+**Two defects found in this work's own output before it shipped.** The beat's first draft read
+*"something he has been counting"*, which would have written a male protagonist into the plan of
+every scheduled scene of every book this house drafts; it is now pronoun-free and
+`test_the_beat_assumes_nothing_about_who_the_book_is_about` pins it. And the sentence is checked
+against `house.MACHINERY_WORDS`, because it reaches the writer inside the scene plan and
+therefore shapes prose a reader reads — 120 measured `standing` reaching a chapter when repo
+vocabulary got that far.
+
+### 155.4 The recruiter, and the one demand it cost
+
+The recruit prompt's system half gains one sentence, so every **future** dossier composes with
+the house genre. The nine accepted genre-free recruits are not touched here; a successor mint
+rides the voice re-mint separately.
+
+It is written to `house`'s standing constraint rather than around it. **Not a genre label** — 136
+measured two words of genre-as-input outweighing every rule, and `render_recruit_request` keeps
+the *shelf* out of the system half for that reason, so what is named is the mechanical floor
+rather than the genre. **Not an affirmative recipe** — 138 measured a permission-only clause
+returning more than six times what a prohibition-only clause returned and worse than silence, so
+the operative half names a failure and offers no menu. **Not machinery vocabulary** — what a
+Recruiter writes rides in the system message of every scene call that writer ever drafts.
+
+**It cost one demand, taking the role from 24 to 25, and `tests/test_prompt_budget.py`'s ceiling
+was raised on purpose with the reason written beside it** — the choice that file asks for, rather
+than the accident it exists to prevent. Nothing was removed to pay for it, because the
+twenty-four already there are the tool essay and the refusals, and the recruiter still carries no
+house floor.
+
+### 155.5 What was refused
+
+- **No target cadence declared, and no bar anywhere.** 155.1 names a distribution and stops.
+- **No ours-vs-market placement.** The instrument's precision is unmeasured, and placing our own
+  prose in a distribution whose units are unvalidated would give a percentile the weight of a
+  finding.
+- **No model ranked, judged or read anything.** The census is deterministic counting over text;
+  the beat is composed in code; the floor is a predicate over canon.
+- **No operator quote became prompt text.** Both quotes live in `domain/genre.py`'s commentary
+  and neither is rendered into any call (97.1).
+- **The nine accepted recruits were not re-minted**, and `larkin`'s book is not retro-judged.
+  Pilot 13 remains the draw that located the gap, which is what a pilot is for.
+
+### 155.6 Anti-scope
+
+One census, one floor, one schedule, one sentence in one prompt. Nothing here claims the floor
+makes a book good, counts system lines, thresholds how much furniture is enough, or has any
+opinion about any book's prose. Nothing promotes a research claim: the census is OBSERVED and
+admits nothing. RS1 is untouched — market text lives only in a gitignored `derived/` intermediate
+and the committed artifacts carry ids and numbers.
+
 ## 156. Two of the operator's three register complaints belong to the genre and one is ours, and the institutional lean survived the deletion of the text accused of causing it
 
 Read 7 routed three register items off the story side: an institutional lean (§4.2), a

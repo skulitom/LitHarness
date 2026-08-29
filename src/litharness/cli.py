@@ -104,7 +104,7 @@ from litharness.application.summarize import (
 )
 from litharness.domain import characters as characters_mod
 from litharness.domain import directors as directors_domain
-from litharness.domain import extraction, house, integrity, propagation
+from litharness.domain import extraction, genre, house, integrity, propagation
 from litharness.domain import rivals as rivals_mod
 from litharness.domain import state as state_mod
 from litharness.domain import text as text_mod
@@ -4365,8 +4365,15 @@ def cmd_new(args: argparse.Namespace) -> int:
         print(f"  {len(promise_rows)} seeded promise(s), each with an answer already in canon")
     if graph_fault:
         print(f"  graph line declared and UNUSABLE, so this book has none: {graph_fault}")
-    if not records:
-        print("  no state seeded — a LitRPG book needs a starting sheet to speak system voice")
+    # **The report half of the house genre floor**, and the condition is the floor's own
+    # predicate rather than a count. `not records` let any record at all silence this, which is
+    # how pilot 13's book — canon full, no status snapshot anywhere in it — was created,
+    # outlined and drafted without the advisory ever printing. The sentence comes from
+    # `domain/genre.NO_SHEET`, so what is said here and what the floor refuses with cannot
+    # drift apart.
+    if not genre.has_starting_sheet(records):
+        print(f"  {genre.NO_SHEET}")
+        print("  this book will not draft until one is seeded: `new --state` or `import --state`")
     return EXIT_OK
 
 

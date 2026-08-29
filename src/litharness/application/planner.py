@@ -95,6 +95,7 @@ from litharness.domain.extraction import (
     stated_position,
     system_voice_example,
 )
+from litharness.domain.genre import genre_block
 from litharness.domain.jobs import Job, input_digest_for
 from litharness.domain.plans import premise_of, scene_plan_for, scene_plan_line
 from litharness.domain.revision import Revision
@@ -664,13 +665,24 @@ def plan_progress(
             serial_mode,
         )
     drafted = sum(1 for beat in beats if not is_draftable(head, beat.logical_id, policy=policy))
+    # **The house genre floor, reported as a reason and not as a finished book.** One door
+    # along from the premise block and written under the same argument: a book with no
+    # starting sheet is not idle, it is stopped, and `complete` must not read True over it.
+    # It is checked *after* `drafted` is counted so the report still says how far the book
+    # actually got — a blocked book that also claims zero drafted scenes hides its own state.
+    genre_reason = (
+        genre_block(store.state_records(book_id, branch_id))
+        if (policy or DraftPolicy()).require_starting_sheet
+        else None
+    )
     return BookProgress(
         book_id,
         branch_id,
         drafted,
         len(beats),
-        continuation_reason=continuation,
-        open_ended=serial_mode,
+        genre_reason,
+        continuation,
+        serial_mode,
     )
 
 
@@ -913,9 +925,26 @@ def make_plan_selector(
             # load-bearing because that digest is also the sampler seed.
             # Read here rather than beside `positions`, which is pure: this is a query, and
             # a book whose work is already in flight has just `continue`d above without one.
-            pov = worlds.protagonist_brief(
-                store.state_records(progress.book_id, progress.branch_id)
-            )
+            book_records = store.state_records(progress.book_id, progress.branch_id)
+
+            # **The house genre floor, in front of the spend rather than behind it.** The
+            # budget gate's argument, applied to a condition that is knowable even earlier: a
+            # check that runs after the provider call records a book that should not have been
+            # drafted, it does not prevent one. Refusing here means no packet is built, no job
+            # is enqueued and no call is made for a book that cannot speak system voice.
+            #
+            # `continue` to the next book rather than `break` out of the loop, and never a
+            # raise: one book missing its starting sheet is not a reason for the other books
+            # on this tick to stop. `plan_progress` reports the same refusal with the same
+            # reason, so `status` says why the board is not moving instead of showing a book
+            # that looks finished.
+            if (
+                (policy or DraftPolicy()).require_starting_sheet
+                and genre_block(book_records) is not None
+            ):
+                continue
+
+            pov = worlds.protagonist_brief(book_records)
             pov_id = pov.subject if pov is not None else None
 
             for beat in beats:
@@ -970,7 +999,10 @@ def make_plan_selector(
                 # once per question — the habit `application/outline.py` names in its own canon
                 # read as "the pattern this deliberately does not copy". Adding the standing and
                 # its printed form would have made it six.
-                records = store.state_records(progress.book_id, progress.branch_id)
+                # The floor above already read this book's records, and nothing on this path
+                # writes state, so the per-beat re-read this replaces was the same rows
+                # fetched again once per scene.
+                records = book_records
                 position = positions.get(beat.logical_id)
                 system, prompt = render_prompt(
                     beat,

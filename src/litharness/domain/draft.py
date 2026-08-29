@@ -45,6 +45,22 @@ class DraftPolicy:
     max_chars: int = 8000
     #: See the module docstring. Do not flip this to make a caller's life easier.
     allow_overwrite: bool = False
+    #: The house genre floor (`domain/genre.py`): a book whose canon cannot speak system voice
+    #: is not drafted at all. Enforced by the planner — `plan_progress` reports it and the
+    #: selector refuses in front of the spend — rather than by `gate_draft`, because it is a
+    #: fact about the book and not about a candidate string, and because a veto here would be
+    #: read by `is_draftable`'s three counting callers as "this scene is already written".
+    #:
+    #: **Default True so a path that forgets it fails closed.** The dangerous direction for a
+    #: floor is a surface that silently skips it; a caller that never mentions this gets the
+    #: floor, and one that wants a book without a sheet has to say so where a reader can see
+    #: it. It lives in the policy for `target_words`' reason — an input that decides whether a
+    #: book produces prose at all and appears in no policy record is the invisible input
+    #: `policy_config_digest` exists to catch.
+    #:
+    #: Turning it off is how the suite drafts the golden mystery fixture, which is a book this
+    #: house would not publish and exactly what the floor is for.
+    require_starting_sheet: bool = True
     #: How long a scene the generator is **asked** for. A target, never a limit: nothing here
     #: checks it, and `gate_draft` keeps refusing only stubs and runaways.
     #:

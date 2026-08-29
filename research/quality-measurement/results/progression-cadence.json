@@ -1,0 +1,770 @@
+{
+  "instrument": "progression_cadence.v0",
+  "registration_digest": "5d42f2065efb7e09",
+  "computed_at": "2026-08-29T00:40:13+00:00",
+  "manifest": {
+    "instrument": "progression_cadence.v0",
+    "registration_digest": "b2901ac0ea90ff56",
+    "scanned_at": "2026-08-29T00:25:13+00:00",
+    "snapshot_revision": "0e4df3f22999a7b7fa13b1e7564a09b5f3eb964e",
+    "shards": [
+      3,
+      30
+    ],
+    "shard_cohorts": {
+      "3": "recent",
+      "30": "older"
+    },
+    "filter": {
+      "genre_tag": null,
+      "min_words": 300,
+      "note": "No genre filter and no per-story sampling. `litrpg` and `quarantined` are columns, not filters, so every downstream half subtracts explicitly."
+    },
+    "rows_seen": 68676,
+    "rows_kept": 67436,
+    "rows_per_shard": {
+      "3": 33591,
+      "30": 33845
+    },
+    "quarantined_fiction_ids": [
+      47017,
+      47021,
+      47118,
+      47127,
+      47199,
+      47434,
+      47621,
+      47923,
+      47982,
+      47986,
+      48117,
+      48157,
+      48176,
+      48402,
+      48951,
+      49031,
+      49032,
+      107121,
+      107125,
+      107252,
+      107692,
+      108451,
+      108458,
+      109037,
+      109390,
+      109427
+    ],
+    "columns": [
+      "fiction_id",
+      "chapter_id",
+      "words",
+      "release_datetime",
+      "followers",
+      "tags",
+      "litrpg",
+      "quarantined",
+      "cohort",
+      "text"
+    ],
+    "parquet": "chapters.parquet",
+    "corpus_rule": "Gitignored. Market text never leaves derived/; committed artifacts carry ids and numbers only."
+  },
+  "chapters_measured": 67436,
+  "quarantine_subtracted": 2505,
+  "populations": {
+    "litrpg_market": {
+      "label": "LitRPG-tagged, quarantine subtracted",
+      "n": 13364,
+      "distinct_fictions": 584,
+      "words": {
+        "median": 2053.0
+      },
+      "density_per_1k": {
+        "n": 13364,
+        "mean": 1.2241,
+        "sd": 2.8144,
+        "p5": 0.0,
+        "p10": 0.0,
+        "p25": 0.0,
+        "p50": 0.0,
+        "p75": 1.2626,
+        "p90": 3.5981,
+        "p95": 5.5327,
+        "max": 67.9348
+      },
+      "absolute_events": {
+        "n": 13364,
+        "mean": 2.37,
+        "sd": 4.6882,
+        "p5": 0.0,
+        "p10": 0.0,
+        "p25": 0.0,
+        "p50": 0.0,
+        "p75": 3.0,
+        "p90": 7.0,
+        "p95": 11.0,
+        "max": 62.0
+      },
+      "coverage": {
+        "with_at_least_one": 6552,
+        "share_with_at_least_one": 0.4903,
+        "zero_event_chapters": 6812,
+        "share_zero": 0.5097
+      },
+      "earliness": {
+        "share_event_in_first_500_words": 0.2245,
+        "share_event_in_first_1000_words": 0.3316,
+        "first_event_words": {
+          "n": 6552,
+          "mean": 837.3718,
+          "sd": 895.8699,
+          "p5": 6.0,
+          "p10": 39.0,
+          "p25": 188.0,
+          "p50": 585.0,
+          "p75": 1237.0,
+          "p90": 1883.9,
+          "p95": 2395.9,
+          "max": 16905.0
+        },
+        "first_event_fraction_of_chapter": {
+          "n": 6552,
+          "mean": 0.3656,
+          "sd": 0.3,
+          "p5": 0.0026,
+          "p10": 0.0211,
+          "p25": 0.0952,
+          "p50": 0.2993,
+          "p75": 0.6006,
+          "p90": 0.84,
+          "p95": 0.922,
+          "max": 0.9996
+        }
+      },
+      "regularity": {
+        "median_gap_words": {
+          "n": 4496,
+          "mean": 262.0496,
+          "sd": 469.4974,
+          "p5": 5.0,
+          "p10": 11.0,
+          "p25": 31.0,
+          "p50": 89.0,
+          "p75": 275.625,
+          "p90": 727.25,
+          "p95": 1103.5,
+          "max": 7210
+        },
+        "gap_cv": {
+          "n": 3395,
+          "mean": 1.0575,
+          "sd": 0.6119,
+          "p5": 0.2261,
+          "p10": 0.3658,
+          "p25": 0.6585,
+          "p50": 0.9567,
+          "p75": 1.3494,
+          "p90": 1.8257,
+          "p95": 2.2344,
+          "max": 4.8943
+        },
+        "chapters_with_two_or_more": 4496
+      },
+      "family_share": {
+        "system_block": 0.5857,
+        "level_up": 0.141,
+        "capability_gain": 0.1048,
+        "stat_delta": 0.1686
+      },
+      "family_totals": {
+        "system_block": 18550,
+        "level_up": 4466,
+        "capability_gain": 3318,
+        "stat_delta": 5339
+      },
+      "length_residual_spearman_density_words": -0.0042
+    },
+    "not_litrpg_control": {
+      "label": "not LitRPG-tagged, quarantine subtracted",
+      "n": 51567,
+      "distinct_fictions": 3096,
+      "words": {
+        "median": 1754.0
+      },
+      "density_per_1k": {
+        "n": 51567,
+        "mean": 0.1882,
+        "sd": 0.9302,
+        "p5": 0.0,
+        "p10": 0.0,
+        "p25": 0.0,
+        "p50": 0.0,
+        "p75": 0.0,
+        "p90": 0.3991,
+        "p95": 0.9545,
+        "max": 26.93
+      },
+      "absolute_events": {
+        "n": 51567,
+        "mean": 0.3197,
+        "sd": 1.4881,
+        "p5": 0.0,
+        "p10": 0.0,
+        "p25": 0.0,
+        "p50": 0.0,
+        "p75": 0.0,
+        "p90": 1.0,
+        "p95": 2.0,
+        "max": 55.0
+      },
+      "coverage": {
+        "with_at_least_one": 6587,
+        "share_with_at_least_one": 0.1277,
+        "zero_event_chapters": 44980,
+        "share_zero": 0.8723
+      },
+      "earliness": {
+        "share_event_in_first_500_words": 0.0551,
+        "share_event_in_first_1000_words": 0.0828,
+        "first_event_words": {
+          "n": 6587,
+          "mean": 983.0182,
+          "sd": 1194.7588,
+          "p5": 0.0,
+          "p10": 13.0,
+          "p25": 186.0,
+          "p50": 641.0,
+          "p75": 1343.5,
+          "p90": 2278.4,
+          "p95": 3165.4,
+          "max": 15833.0
+        },
+        "first_event_fraction_of_chapter": {
+          "n": 6587,
+          "mean": 0.3996,
+          "sd": 0.3142,
+          "p5": 0.0,
+          "p10": 0.0085,
+          "p25": 0.1111,
+          "p50": 0.3479,
+          "p75": 0.6588,
+          "p90": 0.8816,
+          "p95": 0.9477,
+          "max": 0.9996
+        }
+      },
+      "regularity": {
+        "median_gap_words": {
+          "n": 2672,
+          "mean": 401.884,
+          "sd": 660.2355,
+          "p5": 15.0,
+          "p10": 28.0,
+          "p25": 59.875,
+          "p50": 151.5,
+          "p75": 474.0,
+          "p90": 1075.9,
+          "p95": 1578.6,
+          "max": 8403
+        },
+        "gap_cv": {
+          "n": 1608,
+          "mean": 0.7989,
+          "sd": 0.4338,
+          "p5": 0.1451,
+          "p10": 0.2571,
+          "p25": 0.5007,
+          "p50": 0.7838,
+          "p75": 1.0163,
+          "p90": 1.3338,
+          "p95": 1.5504,
+          "max": 3.5066
+        },
+        "chapters_with_two_or_more": 2672
+      },
+      "family_share": {
+        "system_block": 0.6473,
+        "level_up": 0.1251,
+        "capability_gain": 0.1698,
+        "stat_delta": 0.0578
+      },
+      "family_totals": {
+        "system_block": 10671,
+        "level_up": 2063,
+        "capability_gain": 2799,
+        "stat_delta": 953
+      },
+      "length_residual_spearman_density_words": 0.053
+    },
+    "quarantined_descriptor_half": {
+      "label": "LitRPG, descriptor half — reported, never pooled",
+      "n": 2505,
+      "distinct_fictions": 26,
+      "words": {
+        "median": 2455.0
+      },
+      "density_per_1k": {
+        "n": 2505,
+        "mean": 0.8337,
+        "sd": 1.5053,
+        "p5": 0.0,
+        "p10": 0.0,
+        "p25": 0.0,
+        "p50": 0.2758,
+        "p75": 0.999,
+        "p90": 2.4866,
+        "p95": 3.6274,
+        "max": 17.4881
+      },
+      "absolute_events": {
+        "n": 2505,
+        "mean": 2.1968,
+        "sd": 4.4151,
+        "p5": 0.0,
+        "p10": 0.0,
+        "p25": 0.0,
+        "p50": 1.0,
+        "p75": 3.0,
+        "p90": 6.0,
+        "p95": 10.0,
+        "max": 88.0
+      },
+      "coverage": {
+        "with_at_least_one": 1299,
+        "share_with_at_least_one": 0.5186,
+        "zero_event_chapters": 1206,
+        "share_zero": 0.4814
+      },
+      "earliness": {
+        "share_event_in_first_500_words": 0.2148,
+        "share_event_in_first_1000_words": 0.3178,
+        "first_event_words": {
+          "n": 1299,
+          "mean": 966.6913,
+          "sd": 988.6791,
+          "p5": 0.0,
+          "p10": 13.4,
+          "p25": 196.5,
+          "p50": 694.0,
+          "p75": 1474.5,
+          "p90": 2277.0,
+          "p95": 2795.3,
+          "max": 9795.0
+        },
+        "first_event_fraction_of_chapter": {
+          "n": 1299,
+          "mean": 0.3527,
+          "sd": 0.305,
+          "p5": 0.0,
+          "p10": 0.0067,
+          "p25": 0.077,
+          "p50": 0.2783,
+          "p75": 0.5881,
+          "p90": 0.8367,
+          "p95": 0.9375,
+          "max": 0.9993
+        }
+      },
+      "regularity": {
+        "median_gap_words": {
+          "n": 839,
+          "mean": 346.8057,
+          "sd": 525.2927,
+          "p5": 7.95,
+          "p10": 11.0,
+          "p25": 37.0,
+          "p50": 155.0,
+          "p75": 440.75,
+          "p90": 957.7,
+          "p95": 1347.3,
+          "max": 5027
+        },
+        "gap_cv": {
+          "n": 634,
+          "mean": 1.0021,
+          "sd": 0.581,
+          "p5": 0.152,
+          "p10": 0.4065,
+          "p25": 0.6631,
+          "p50": 0.9008,
+          "p75": 1.2975,
+          "p90": 1.696,
+          "p95": 2.0671,
+          "max": 3.8999
+        },
+        "chapters_with_two_or_more": 839
+      },
+      "family_share": {
+        "system_block": 0.4338,
+        "level_up": 0.2986,
+        "capability_gain": 0.1321,
+        "stat_delta": 0.1356
+      },
+      "family_totals": {
+        "system_block": 2387,
+        "level_up": 1643,
+        "capability_gain": 727,
+        "stat_delta": 746
+      },
+      "length_residual_spearman_density_words": 0.1082
+    },
+    "litrpg_human_pre_llm": {
+      "label": "LitRPG, human_pre_llm",
+      "n": 5561,
+      "distinct_fictions": 281,
+      "words": {
+        "median": 2099.0
+      },
+      "density_per_1k": {
+        "n": 5561,
+        "mean": 1.3984,
+        "sd": 3.4604,
+        "p5": 0.0,
+        "p10": 0.0,
+        "p25": 0.0,
+        "p50": 0.3219,
+        "p75": 1.4293,
+        "p90": 3.7411,
+        "p95": 5.7726,
+        "max": 67.9348
+      },
+      "absolute_events": {
+        "n": 5561,
+        "mean": 2.6727,
+        "sd": 5.0168,
+        "p5": 0.0,
+        "p10": 0.0,
+        "p25": 0.0,
+        "p50": 1.0,
+        "p75": 3.0,
+        "p90": 8.0,
+        "p95": 13.0,
+        "max": 50.0
+      },
+      "coverage": {
+        "with_at_least_one": 2919,
+        "share_with_at_least_one": 0.5249,
+        "zero_event_chapters": 2642,
+        "share_zero": 0.4751
+      },
+      "earliness": {
+        "share_event_in_first_500_words": 0.2357,
+        "share_event_in_first_1000_words": 0.3456,
+        "first_event_words": {
+          "n": 2919,
+          "mean": 859.9298,
+          "sd": 904.321,
+          "p5": 18.0,
+          "p10": 48.8,
+          "p25": 208.0,
+          "p50": 602.0,
+          "p75": 1270.0,
+          "p90": 1922.4,
+          "p95": 2431.0,
+          "max": 16905.0
+        },
+        "first_event_fraction_of_chapter": {
+          "n": 2919,
+          "mean": 0.3673,
+          "sd": 0.2978,
+          "p5": 0.0082,
+          "p10": 0.0261,
+          "p25": 0.0975,
+          "p50": 0.3002,
+          "p75": 0.6011,
+          "p90": 0.8384,
+          "p95": 0.9198,
+          "max": 0.9996
+        }
+      },
+      "regularity": {
+        "median_gap_words": {
+          "n": 2027,
+          "mean": 250.9095,
+          "sd": 451.9776,
+          "p5": 3.15,
+          "p10": 10.0,
+          "p25": 31.0,
+          "p50": 86.5,
+          "p75": 261.75,
+          "p90": 689.2,
+          "p95": 1074.8,
+          "max": 6241
+        },
+        "gap_cv": {
+          "n": 1534,
+          "mean": 1.1026,
+          "sd": 0.6718,
+          "p5": 0.2101,
+          "p10": 0.3393,
+          "p25": 0.6737,
+          "p50": 0.9683,
+          "p75": 1.3985,
+          "p90": 1.9994,
+          "p95": 2.4907,
+          "max": 4.1185
+        },
+        "chapters_with_two_or_more": 2027
+      },
+      "family_share": {
+        "system_block": 0.5975,
+        "level_up": 0.1245,
+        "capability_gain": 0.1183,
+        "stat_delta": 0.1597
+      },
+      "family_totals": {
+        "system_block": 8881,
+        "level_up": 1850,
+        "capability_gain": 1759,
+        "stat_delta": 2373
+      },
+      "length_residual_spearman_density_words": -0.0022
+    },
+    "litrpg_undeclared_2025": {
+      "label": "LitRPG, undeclared_2025",
+      "n": 5803,
+      "distinct_fictions": 253,
+      "words": {
+        "median": 1964.0
+      },
+      "density_per_1k": {
+        "n": 5803,
+        "mean": 1.0843,
+        "sd": 2.2185,
+        "p5": 0.0,
+        "p10": 0.0,
+        "p25": 0.0,
+        "p50": 0.0,
+        "p75": 1.091,
+        "p90": 3.3587,
+        "p95": 5.4973,
+        "max": 24.9415
+      },
+      "absolute_events": {
+        "n": 5803,
+        "mean": 2.0731,
+        "sd": 4.2971,
+        "p5": 0.0,
+        "p10": 0.0,
+        "p25": 0.0,
+        "p50": 0.0,
+        "p75": 2.0,
+        "p90": 6.0,
+        "p95": 10.0,
+        "max": 62.0
+      },
+      "coverage": {
+        "with_at_least_one": 2672,
+        "share_with_at_least_one": 0.4605,
+        "zero_event_chapters": 3131,
+        "share_zero": 0.5395
+      },
+      "earliness": {
+        "share_event_in_first_500_words": 0.2168,
+        "share_event_in_first_1000_words": 0.3252,
+        "first_event_words": {
+          "n": 2672,
+          "mean": 790.457,
+          "sd": 863.3676,
+          "p5": 1.0,
+          "p10": 35.0,
+          "p25": 173.0,
+          "p50": 560.0,
+          "p75": 1143.0,
+          "p90": 1760.9,
+          "p95": 2191.6,
+          "max": 13196.0
+        },
+        "first_event_fraction_of_chapter": {
+          "n": 2672,
+          "mean": 0.3593,
+          "sd": 0.2974,
+          "p5": 0.0009,
+          "p10": 0.0163,
+          "p25": 0.0953,
+          "p50": 0.2946,
+          "p75": 0.5837,
+          "p90": 0.8282,
+          "p95": 0.9221,
+          "max": 0.9986
+        }
+      },
+      "regularity": {
+        "median_gap_words": {
+          "n": 1806,
+          "mean": 269.0354,
+          "sd": 451.6181,
+          "p5": 6.0,
+          "p10": 11.0,
+          "p25": 33.0,
+          "p50": 96.0,
+          "p75": 296.25,
+          "p90": 752.0,
+          "p95": 1091.875,
+          "max": 5214
+        },
+        "gap_cv": {
+          "n": 1338,
+          "mean": 0.9942,
+          "sd": 0.508,
+          "p5": 0.2181,
+          "p10": 0.3748,
+          "p25": 0.648,
+          "p50": 0.9457,
+          "p75": 1.2945,
+          "p90": 1.6393,
+          "p95": 1.9091,
+          "max": 3.386
+        },
+        "chapters_with_two_or_more": 1806
+      },
+      "family_share": {
+        "system_block": 0.5515,
+        "level_up": 0.1786,
+        "capability_gain": 0.0953,
+        "stat_delta": 0.1746
+      },
+      "family_totals": {
+        "system_block": 6634,
+        "level_up": 2149,
+        "capability_gain": 1146,
+        "stat_delta": 2101
+      },
+      "length_residual_spearman_density_words": -0.0119
+    },
+    "litrpg_declared_ai_2025": {
+      "label": "LitRPG, declared_ai_2025",
+      "n": 941,
+      "distinct_fictions": 55,
+      "words": {
+        "median": 1695.0
+      },
+      "density_per_1k": {
+        "n": 941,
+        "mean": 1.2094,
+        "sd": 2.3649,
+        "p5": 0.0,
+        "p10": 0.0,
+        "p25": 0.0,
+        "p50": 0.0,
+        "p75": 1.3175,
+        "p90": 3.7296,
+        "p95": 5.9682,
+        "max": 19.0275
+      },
+      "absolute_events": {
+        "n": 941,
+        "mean": 2.2317,
+        "sd": 4.7249,
+        "p5": 0.0,
+        "p10": 0.0,
+        "p25": 0.0,
+        "p50": 0.0,
+        "p75": 2.0,
+        "p90": 7.0,
+        "p95": 10.0,
+        "max": 50.0
+      },
+      "coverage": {
+        "with_at_least_one": 432,
+        "share_with_at_least_one": 0.4591,
+        "zero_event_chapters": 509,
+        "share_zero": 0.5409
+      },
+      "earliness": {
+        "share_event_in_first_500_words": 0.2487,
+        "share_event_in_first_1000_words": 0.3443,
+        "first_event_words": {
+          "n": 432,
+          "mean": 706.4236,
+          "sd": 789.4641,
+          "p5": 21.0,
+          "p10": 60.2,
+          "p25": 162.0,
+          "p50": 451.5,
+          "p75": 986.0,
+          "p90": 1664.3,
+          "p95": 2255.0,
+          "max": 5654.0
+        },
+        "first_event_fraction_of_chapter": {
+          "n": 432,
+          "mean": 0.3446,
+          "sd": 0.2896,
+          "p5": 0.0078,
+          "p10": 0.0257,
+          "p25": 0.0905,
+          "p50": 0.2634,
+          "p75": 0.5393,
+          "p90": 0.7987,
+          "p95": 0.9248,
+          "max": 0.9993
+        }
+      },
+      "regularity": {
+        "median_gap_words": {
+          "n": 302,
+          "mean": 305.4272,
+          "sd": 646.173,
+          "p5": 7.0,
+          "p10": 10.0,
+          "p25": 27.0,
+          "p50": 83.5,
+          "p75": 307.375,
+          "p90": 736.5,
+          "p95": 1362.2,
+          "max": 7210
+        },
+        "gap_cv": {
+          "n": 235,
+          "mean": 1.0265,
+          "sd": 0.6094,
+          "p5": 0.2784,
+          "p10": 0.3995,
+          "p25": 0.6361,
+          "p50": 0.9118,
+          "p75": 1.3143,
+          "p90": 1.6506,
+          "p95": 1.984,
+          "max": 4.1815
+        },
+        "chapters_with_two_or_more": 302
+      },
+      "family_share": {
+        "system_block": 0.6476,
+        "level_up": 0.1176,
+        "capability_gain": 0.0876,
+        "stat_delta": 0.1471
+      },
+      "family_totals": {
+        "system_block": 1360,
+        "level_up": 247,
+        "capability_gain": 184,
+        "stat_delta": 309
+      },
+      "length_residual_spearman_density_words": -0.0047
+    }
+  },
+  "validity_arm": {
+    "reading": "These counters must separate the genre from everything else. A separation near 1 would say they locate ordinary narration rather than progression. **The median ratio is not the statistic**: the control's median density is 0.0, so a ratio over it is undefined and would read as a triumph. Mean density and coverage are reported instead, and coverage is the one to believe — it is a share, so no outlier chapter can move it.",
+    "litrpg_mean_per_1k": 1.2241,
+    "not_litrpg_mean_per_1k": 0.1882,
+    "mean_separation": 6.504,
+    "litrpg_share_with_an_event": 0.4903,
+    "not_litrpg_share_with_an_event": 0.1277,
+    "coverage_separation": 3.839,
+    "control_family_share": {
+      "system_block": 0.6473,
+      "level_up": 0.1251,
+      "capability_gain": 0.1698,
+      "stat_delta": 0.0578
+    }
+  },
+  "declares_no_bar": "No target cadence is declared here. A bar needs §81/§85/§87/§89's four attainability checks — range at the real n, direction, independent unit, non-empty subgroup — and this file runs none of them. It names a distribution and stops.",
+  "residuals": [
+    "PRECISION IS UNMEASURED. Reliability is 1.0 by construction because the counters are deterministic; nothing here checks that a located span is a progression event. The cheapest fix is a model-audited subsample of located spans, and it is not run here.",
+    "RECALL IS UNMEASURED, and is the direction a prose-mode chapter loses on: progression carried entirely by implication and no phrase from the lexicons scores zero.",
+    "The counters were written by reading this genre's conventions, not fitted to any sample; but they were also never held out from one, so they are a prior and not a trained classifier.",
+    "Chapter text is whatever the shard holds, including any front matter the exclusion list misses."
+  ]
+}
