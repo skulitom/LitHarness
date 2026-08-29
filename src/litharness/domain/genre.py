@@ -40,12 +40,17 @@ answers one yes/no question about canon: can this book speak system voice at all
 
 from __future__ import annotations
 
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 
 import litharness_contracts as lc
 
+from litharness.domain import gamesystem as gamesystem_mod
 from litharness.domain import state as state_mod
-from litharness.domain.extraction import STATUS_PREDICATE, speaks_system_voice
+from litharness.domain.extraction import (
+    SHEET_PREDICATE,
+    STATUS_PREDICATE,
+    speaks_system_voice,
+)
 
 #: The genre every book this house publishes is in. A constant rather than a per-book setting,
 #: because the operator's constraint is about the house and not about a shelf: a book's shelf
@@ -82,8 +87,117 @@ def has_starting_sheet(records: Sequence[lc.StateRecord]) -> bool:
     one added here: the outline's milestone schedule mints `PROPOSED` status records, so
     counting them would let a book satisfy the floor with its own plan for later instead of
     with a sheet that is true now.
+
+    **§160 makes this a ratchet rather than a second tightening.** A book that declares no game
+    system is answered exactly as before — the delegate's question and nothing else — so no book
+    or fixture already on disk moves. A book that *does* declare one must hold a sheet that is a
+    real position in it. The two halves are one rule stated once: the floor asks whether this
+    book's sheet is the sheet its own canon implies, and for a book with no system the implied
+    sheet is any renderable mapping.
+
+    A flag would have been the obvious alternative and is the thing §155.2 argues against one
+    door along: a switch somebody has to flip is a switch somebody forgets, and the moment seeds
+    mint systems every new book is under the strict half automatically, with nothing to remember.
     """
-    return speaks_system_voice(records)
+    if not speaks_system_voice(records):
+        return False
+    declared = _declared_systems(records)
+    if not declared:
+        return True
+    return any(_is_position_in(records, system) for system in declared)
+
+
+def _declared_systems(
+    records: Sequence[lc.StateRecord],
+) -> tuple[gamesystem_mod.SystemDef, ...]:
+    """The systems this book's **canon** declares.
+
+    Canon-filtered, unlike `gamesystem.systems_of` itself, and the difference is the whole reason
+    the ratchet is safe. That function deliberately reads proposals too, because the Architect
+    builds a system before `world accept` and a reader that saw nothing until acceptance would
+    report an empty world mid-build. The floor is the opposite case: a proposal is not yet this
+    book's system, and tightening against one would refuse a book for a draw nobody accepted.
+    """
+    return gamesystem_mod.systems_of(
+        [record for record in records if state_mod.is_canon(record)]
+    )
+
+
+def _canon_snapshots(records: Sequence[lc.StateRecord]) -> tuple[Mapping[str, object], ...]:
+    return tuple(
+        record.value
+        for record in records
+        if record.predicate == STATUS_PREDICATE
+        and state_mod.is_canon(record)
+        and isinstance(record.value, Mapping)
+    )
+
+
+def _is_position_in(
+    records: Sequence[lc.StateRecord], system: gamesystem_mod.SystemDef
+) -> bool:
+    """Whether some canon snapshot is a position in this system.
+
+    **Compared by value keys and not by numbers.** Which rung somebody stands on and how far
+    they have taken a capacity are facts about the book that this module has no business
+    checking; what it checks is that the sheet and the system are speaking about the same
+    columns. A snapshot whose keys are the system's is renderable through the system's own line;
+    one whose keys are not will render the wrong labels, or `?` where a value is missing, which
+    is the defect Track 2 measured on the default sheet and the one this floor exists to catch a
+    generation earlier.
+    """
+    wanted = set(system.value_keys)
+    return any(set(snapshot) == wanted for snapshot in _canon_snapshots(records))
+
+
+def system_gap(records: Sequence[lc.StateRecord]) -> str | None:
+    """What stands between this book and a sheet its own system implies, or `None`.
+
+    **A report and not a gate**, which is the shape `genre_block`'s docstring already argues for:
+    the report belongs where seeding is cheap and the refusal belongs in front of the spend. A
+    book can be perfectly draftable and still be reported on here — a book with no system clears
+    the floor and is told what it is missing, because saying nothing is how §155.2's condition
+    went unnamed on two databases while the pipeline drafted anyway.
+
+    The first branch is the one that cost the most to find. `extraction.sheet_for` abstains to
+    the default when a book declares more than one sheet, so a second declaration does not
+    error — it silently restores a column set the book never chose, and a book that had seeded
+    its own keys is then shown a line with placeholders where its numbers were.
+    """
+    sheets = sum(
+        1
+        for record in records
+        if record.predicate == SHEET_PREDICATE and state_mod.is_canon(record)
+    )
+    if sheets > 1:
+        return (
+            f"this book declares {sheets} canon {SHEET_PREDICATE} records; the status line "
+            "abstains to the default when there is more than one, so the book renders a line "
+            "it never chose and its own values are lost. Retract all but one."
+        )
+    declared = _declared_systems(records)
+    if not declared:
+        return (
+            "this book declares no game system: no subject holds the system role with a "
+            "magnitude scale and a governed ordinal ladder. Its sheet is whatever was seeded "
+            "by hand, its numbers have no home, and a progression beat has no vocabulary to "
+            "land in."
+        )
+    for system in declared:
+        if _is_position_in(records, system):
+            return None
+    system = declared[0]
+    held = _canon_snapshots(records)
+    if not held:
+        return (
+            f"this book declares the system {system.system_id} and holds no canon "
+            f"{STATUS_PREDICATE}; nobody is anywhere in it yet."
+        )
+    return (
+        f"this book declares the system {system.system_id}, whose columns are "
+        f"{', '.join(system.value_keys)}, and no canon {STATUS_PREDICATE} carries those keys; "
+        "the sheet and the system are describing different books."
+    )
 
 
 def genre_block(records: Sequence[lc.StateRecord]) -> str | None:
@@ -95,6 +209,13 @@ def genre_block(records: Sequence[lc.StateRecord]) -> str | None:
     """
     if has_starting_sheet(records):
         return None
+    # **The system half fails with its own sentence**, because the sentences below diagnose the
+    # absence of a renderable snapshot and this book may hold one. §155.2's whole complaint is a
+    # book being told the wrong absence and its operator hunting it; a book whose sheet does not
+    # match its declared system would be told it had seeded nothing, which is false and sends
+    # somebody to reseed a sheet that is already there.
+    if speaks_system_voice(records):
+        return system_gap(records)
     # Every canon snapshot counted here is unrenderable — a renderable one would have cleared
     # the floor above — and telling a book that holds one "none of them a canon status_snapshot"
     # sends the operator hunting the wrong absence. Serial Pilot 14 §2.2's book is what this
@@ -234,5 +355,6 @@ __all__ = [
     "beat_ordinals",
     "genre_block",
     "has_starting_sheet",
+    "system_gap",
     "with_beat",
 ]
