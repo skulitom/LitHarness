@@ -488,8 +488,10 @@ def check(records: Sequence[lc.StateRecord]) -> dict[str, Any]:
     and refusing it here would refuse every world in the middle of being built. The genre floor
     already refuses at draft time, where the answer is final.
 
-    The question is asked through `genre.has_starting_sheet` rather than restated, so this view
-    and the floor cannot come to disagree — the mistake §158 is the correction for.
+    Both questions are asked through `domain/genre.py` rather than restated, so this view and
+    the floor cannot come to disagree — the mistake §158 is the correction for. `system_gap` is
+    §160's and reports a world whose numbers have no system behind them, or one that declares
+    two sheets and would therefore silently render a line it never chose.
     """
     coverage = worlds.manifestation_coverage(records)
     complaints = list(worlds.validate(records))
@@ -500,6 +502,15 @@ def check(records: Sequence[lc.StateRecord]) -> dict[str, Any]:
             "can state where anybody stands as a number and no scene will be asked to. "
             "`world vocabulary` has the shape; `world accept` is what makes it count"
         )
+    # **Both, when both are true, because they are different facts.** The line above is the
+    # genre floor's question — can this book speak system voice at all — and `system_gap` is
+    # §160's: does the sheet it speaks with belong to a system the world declared. A book can
+    # fail the first and not the second (a hand-seeded sheet under a declared system) or the
+    # second and not the first (a sheet seeded by hand with no system behind it), and collapsing
+    # them would report whichever was checked first as though it were the whole answer.
+    from_system = genre.system_gap(records)
+    if from_system is not None:
+        gaps.append(from_system)
     return {
         "complaints": complaints,
         "ok": not complaints,

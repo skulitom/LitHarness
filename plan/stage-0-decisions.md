@@ -16674,6 +16674,14 @@ to a reader.
   `status_sheet`, so a second must not be declared beside it. That is the documentation half of
   the silent abstention; §160's `system_gap` is the recognition half, and neither restates the
   other.
+- **`gaps` carries §160's `system_gap` beside the floor's, and both when both are true.** They
+  are different questions: the floor asks whether this book can speak system voice at all,
+  `system_gap` whether the sheet it speaks with belongs to a system the world declared. A
+  hand-seeded sheet answers the first and not the second — which is every book on disk today —
+  so collapsing them would report whichever was checked first as though it were the whole
+  answer. Wiring it also corrected two of this entry's own tests, which had asserted the gap
+  list was *empty* after a hand seeding; what they meant, and now say, is that the floor's own
+  gap closed. Neither moves `ok`, and `system_gap` is a report by its own design.
 
 The seed ask absorbed §160's label constraint into a clause it already had rather than growing a
 sentence, so the demand count is unchanged at 44 against the ceiling this entry raised.
