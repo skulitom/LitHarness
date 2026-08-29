@@ -77,6 +77,7 @@ from litharness.domain.policy import (
 )
 from litharness.domain.promises import PROMISE_OPEN, PROMISE_PAID, Promise
 from litharness.domain.revision import Revision, node_version_id
+from litharness.domain.state import key_space as _order_key_space
 from litharness.domain.voice import StyleDescriptor
 from litharness.domain.writers import RosterStatus
 from litharness.domain.writers import Writer as DomainWriter
@@ -218,6 +219,14 @@ class StoredEvent:
 class SqliteStore:
     def __init__(self, connection: sqlite3.Connection) -> None:
         self._connection = connection
+        # **`state_records`' story-time slice needs `key_space`, and it borrows the domain's
+        # rather than spelling it in SQL** (§166). The GLOB that means "digits, all the way
+        # down" is writable, but a second implementation of which space a key is in is exactly
+        # the drift `test_the_store_and_the_domain_slice_story_time_identically` exists to
+        # catch — and it would be a copy of the one predicate §165 introduced to stop two
+        # vocabularies disagreeing. Deterministic and pure, so it is safe to register once per
+        # connection and cannot vary between the query and the gate.
+        connection.create_function("litharness_key_space", 1, _order_key_space, deterministic=True)
         # The finalizer owns the native handle without retaining this store. Explicit
         # context management calls it early; legacy short-lived call sites still close as
         # soon as the wrapper becomes unreachable, including through reference cycles.
@@ -1082,6 +1091,15 @@ class SqliteStore:
         drop every standing world rule from every packet. `domain/state.py::records_before`
         applies the identical rule in memory, and the two are tested against each other —
         one query, two implementations is how a selector drifts from its gate.
+
+        **And the slice is inside one order-key space, which is the half SQL got wrong for the
+        same reason Python did** (§166). `'0350' <= 's1'` is true in SQLite too, so a scheduled
+        declaration passed every scene's cutoff here as well. `litharness_key_space` is the
+        domain's own `key_space` registered on the connection, so a key survives only when it
+        states a position in the cutoff's space; a cutoff in neither space compares the column
+        against `NULL`, which is never true, and only the unplaced records come back — which is
+        `comparable`'s rule exactly, arrived at by SQL's own three-valued logic rather than by a
+        second copy of it.
         """
         # Retracted records are excluded everywhere by default, so a caller cannot forget:
         # a record read out of prose a `revert` removed from the book is not canon any more,
@@ -1097,8 +1115,11 @@ class SqliteStore:
             sql += " AND subject = ?"
             params.append(subject)
         if before is not None:
-            sql += " AND (order_key IS NULL OR order_key <= ?)"
-            params.append(before)
+            sql += (
+                " AND (order_key IS NULL OR (litharness_key_space(order_key) = ? "
+                "AND order_key <= ?))"
+            )
+            params.extend([_order_key_space(before), before])
         # NULLs last, matching `in_story_order`. SQLite sorts NULL first by default, which
         # would put unplaced records ahead of scene one.
         sql += " ORDER BY order_key IS NULL, order_key, record_id"

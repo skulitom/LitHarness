@@ -752,6 +752,72 @@ def disclosures(records: Sequence[lc.StateRecord]) -> dict[str, tuple[str | None
     }
 
 
+def _reached(key: str, at: str) -> bool:
+    """Whether a record *stated at* `key` is one a book standing at `at` has reached.
+
+    The one predicate §166 replaced `key <= at` with, in the two places this module compares a
+    story position against where the book stands. It is `state.comparable` plus the ordinary
+    comparison, in that order, and the order is the whole of it: a key in another space is not
+    early, it is unplaceable, and asking `<=` first answers a question about spelling.
+    """
+    return state_mod.comparable(key, at) and key <= at
+
+
+def _disclosed_by(key: str | None, at: str | None) -> bool:
+    """Whether a reader-disclosure at `key` has landed by the time the book stands at `at`.
+
+    **This is the disclosure question settled, and the settlement is that a position never
+    discloses on its own — a record does** (§166). A claim scheduled for `0380` is not told
+    because the book reached some scene; it is told because a `disclosed_to` record stands at a
+    position the book has actually reached. The alternative — reading a schedule key as
+    satisfied once the book passes the scene it *stands for* — needs a mapping from a schedule
+    key to a scene key, and §165.3 refused exactly that by name: nothing normalises an order key
+    or guesses which scene an Architect meant, because a projection would put this repository in
+    the business of authoring positions the world never declared.
+
+    **The choice is §110's, not a new one, and §110 is the entry that measured the alternative
+    failing.** That ledger has one open→paid transition and it is a write-once record write;
+    paying a subject nothing opened is a no-op, because "a payoff with no recorded promise is not
+    a debt this ledger can attest was owed". Reaching a due position does not settle a promise
+    and does not even make it late — `promises.overdue` compares strictly, so the scene *at* the
+    due position is still the scene entitled to pay, and passing it raises an advisory MINOR
+    finding that blocks nothing. And §110.3 measured position-implies-settlement wrong in both
+    directions inside one run: the two seeded debts the book actually answered at their scheduled
+    scenes stayed **open**, while the one debt marked **paid** was scheduled for scene 63 and
+    never disclosed at all. A schedule is a statement of intent, and intent is not an event.
+
+    **The existing machinery already meant this in two more places, so nothing here is a third
+    mechanism.** `REVEAL_SCENE` stores the reveal as an *ordinal* rather than a position for this
+    precise reason — "a *position* is minted only for a scene the book actually has" — so the
+    schedule and the realisation were separate vocabularies before this function was touched. And
+    `undisclosed_claims`' own asymmetry decides the residue: an unlocatable position reads as
+    *not yet*, because handing a writer a secret the reader already has costs one scene some
+    material, while handing it nothing so it states a secret the book has not revealed destroys
+    the spine the reveal was built on.
+
+    **What this leaves open is named rather than closed here.** Nothing in the pipeline writes a
+    `disclosed_to` record — every one is authored by a seed or an Architect — and §165's
+    vocabulary line asks for zero-padded digits while documenting scene keys as not-for-writing.
+    So a world following that line has no shape it may write that discloses at a scene, and its
+    reveals stay hidden for the whole book. That is the cheap side of the asymmetry and it is
+    where a defect belongs while it is unfixed; closing it needs a disclosure channel somebody
+    decides on, not an inference this function makes on its own.
+
+    So three cases, and the middle one is the whole of the change:
+
+    - **no position** — a claim open from the first page, the only case where the world has
+      actually said *already told*, and it still says it;
+    - **a position in another space than `at`**, or any position when the book states no
+      position at all — unlocatable, so *not yet*;
+    - **a position in `at`'s own space** — compared, at or before is told, after is not yet.
+    """
+    if key is None:
+        return True
+    if at is None:
+        return False
+    return _reached(key, at)
+
+
 def undisclosed_claims(
     records: Sequence[lc.StateRecord], *, at: str | None = None
 ) -> tuple[lc.StateRecord, ...]:
@@ -781,6 +847,15 @@ def undisclosed_claims(
     **A false claim is never hidden, because it is not true.** The heading this feeds says *true,
     and the reader has not been told*; a character's error under it would instruct the writer to
     honour something the world denies. See `CLAIM_FALSE`.
+
+    **The `at is None` asymmetry above was right and the code only applied it to one of the two
+    ways a position can be unlocatable** (§166). `at` on the live path is a scene key and a
+    scheduled disclosure is written in digits, so `key > at` asked `'0380' > 's1'`, got `False`,
+    and read the schedule as already told: on serial15.db **0 of that book's 8 claims were still
+    hidden at scene one**, every one of its seven scheduled reveals handed to the writer of the
+    chapter that introduces them. An unlocatable position now reads as *not yet* whether the
+    position is missing or merely in the other space, which is the sentence above applied where
+    it always meant to apply. See `_disclosed_by` for what does count as a disclosure.
     """
     schedule = disclosures(records)
     wrong = false_claims(records)
@@ -794,9 +869,7 @@ def undisclosed_claims(
         if keys is None:
             hidden.append(record)
             continue
-        if any(key is None for key in keys):
-            continue
-        if at is None or all(key is not None and key > at for key in keys):
+        if not any(_disclosed_by(key, at) for key in keys):
             hidden.append(record)
     return state_mod.in_story_order(hidden)
 
@@ -1413,6 +1486,17 @@ def standing_of(
     force is the last one the book has reached. `at=None` means "wherever the book is now", which
     reads every canon standing including the unplaced.
 
+    **§165's defect arrived here by a second door, and this one reproduced on two books** (§166).
+    `key > at` asked `'0350' > 's1'`, got `False`, and let every scheduled standing through the
+    cutoff and into the latest-wins race — so on serial15.db scene one read mira at the wright
+    rung, 5 of 6, the rung her whole arc is about reaching, instead of the seamer rung her
+    un-keyed opening standing declares; and on serial14b.db ilse read one grade above her
+    opening, off a standing keyed 22. Same nine characters as the `status_snapshot`
+    leak, same book, different predicate. A standing scheduled in the other space is a standing
+    the book has not reached, so it is now filtered out rather than raced — which also means a
+    subject whose *only* standing is a scheduled one has none yet, and that is the world
+    declining to say where they stand when the book opens rather than this function guessing.
+
     **A dict per criterion rather than one rung, because a subject may be on two ladders.**
     Magic and body cultivation side by side is the world `PRECEDES_PREDICATE` puts the criterion
     on the edge for, and collapsing the two here would splice an order nobody declared. The
@@ -1426,9 +1510,14 @@ def standing_of(
             continue
         if record.subject != subject:
             continue
-        key = state_mod.order_key_of(record) or ""
-        if at is not None and key > at:
+        stated = state_mod.order_key_of(record)
+        if at is not None and stated is not None and not _reached(stated, at):
             continue
+        # Once the filter above has run, every survivor is either un-keyed — `""`, the opening
+        # standing, which correctly loses the race to any position the book has reached — or in
+        # `at`'s own space. So the `>=` below is a comparison inside one space by construction,
+        # and stays a plain string compare.
+        key = stated or ""
         criterion = str(record.value or "").strip() or criterion_of_rung(
             records, record.object_ref
         )

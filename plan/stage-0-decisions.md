@@ -17269,6 +17269,10 @@ the printed ones, so it and `system_gap` close together.
   arguably worse than the defect fixed here and it is a change to what every book's packet
   contains, with a SQL twin in `sqlite_store.state_records` that has to move with it. It is
   registered here with its numbers and left for its own entry rather than folded into this one.
+  **Fixed in §166**, which reproduced both numbers exactly, found the same defect a third time in
+  `worlds.standing_of` — leaking on two books, not one — and corrects the denominator in place:
+  the attainable maximum is **7 of the 8**, the eighth being a `claim.false` that is correctly
+  never hidden.
 - **Closing pilot 15's gap.** After completion its gap reads *"the sheet and the system are
   describing different books"*, which is true, where it read *"this book declares no game
   system"*, which was false. That is §155.2's fix — the reported absence is now the one actually
@@ -17284,3 +17288,171 @@ No model ranked, selected or judged anything; no model was called and no book wa
 was read, so RS1 is untouched. No research claim is promoted and no axis is admitted. `--force`
 still exists and still means what it meant, and every world already forged reads as it did except
 where a scheduled snapshot used to be folded into a scene, which is the defect.
+
+## 166. The packet compared story positions across both order-key spaces, so a book handed the writer every answer it had scheduled, in the chapter that introduces the questions
+
+**Measured first, on the store §165.3 named, and both of its numbers reproduced exactly.** On
+`serial15.db`, `state.records_before('s1')` admitted **18** records whose key is not comparable to
+`s1` — three `status_snapshot`, four `stands_at`, three `can_do` and eight `disclosed_to`, every
+one of them in the schedule space — and `worlds.undisclosed_claims(at='s1')` returned **0** hidden
+claims. Seven scheduled reveals, each written at ten times the `reveal_scene` ordinal the same
+world declares, all read as *already told to the reader* in the book's first chapter. This is the
+mystery-answer leak `plan/world-architect.md` recorded once before, arriving through the cutoff
+instead of through the reveal position.
+
+**The eighth claim is a correction to the denominator rather than a missing hit.**
+`claim_past_saving` carries `claim.false`, so it is correctly never hidden — the packet's hidden
+heading says *true*. The attainable maximum at any position is therefore **7 of the 8**, which is
+exactly what the un-positioned call had always returned, and that is what makes `at='s1'`
+returning zero a defect in the comparison rather than a disagreement about the count.
+
+**A second door, found by reading the callers rather than by looking for it, and this one leaked
+on two books.** `worlds.standing_of` carried the same `key > at`. On serial15 scene one read mira
+at the wright rung — 5 of 6, the rung her whole arc is about reaching — instead of the seamer rung
+her un-keyed opening standing declares; on `serial14b.db` ilse read one grade above her opening,
+off a standing keyed `22`. That is §165's own defect, on §165's own book, in a different
+predicate, and §165 did not catch it because it fixed the fold and this is the cutoff.
+
+**The blast radius was measured before the fix was believed, across every pilot store on disk.**
+Exactly **one** book changes: serial15, from 0 hidden to 7. Every other store reads identically,
+because 14 of the 23 reader-disclosure positions in the corpus are scene keys and compared
+correctly all along; 9 are schedule keys and 8 of those are serial15's. A fix to a comparison
+that changes one book is the shape this defect predicted.
+
+### 166.1 The disclosure semantics chosen, and why they are §110's rather than new
+
+**A position never discloses on its own — a record does.** A claim scheduled for `0380` is not
+told because the book reached some scene; it is told because a `disclosed_to` record stands at a
+position the book has actually reached. Three cases, and the middle one is the whole change:
+
+- **no position** — open from the first page, the only case where a world has actually said
+  *already told*, and it still says it;
+- **a position in another space than where the book stands**, or any position when the book states
+  none — unlocatable, so *not yet*;
+- **a position in the book's own space** — compared, at or before is told, after is not yet.
+
+**The alternative was refused by the entry this one builds on.** Reading a schedule key as
+satisfied once the book passes the scene it stands for needs a schedule→scene projection, and
+§165.3 refused exactly that: nothing normalises an order key or guesses which scene an Architect
+meant, because a projection puts this repository in the business of authoring positions the world
+never declared.
+
+**And §110 is the entry that measured the alternative failing.** That ledger has one open→paid
+transition and it is a write-once record write; paying a subject nothing opened is a no-op,
+because a payoff with no recorded promise is not a debt the ledger can attest was owed. Reaching a
+due position does not settle a promise and does not even make it late — `promises.overdue`
+compares strictly, so the scene *at* the due position is still the one entitled to pay, and
+passing it raises an advisory MINOR finding that blocks nothing. §110.3 then measured
+position-implies-settlement wrong in **both directions inside one run**: the two seeded debts the
+book actually answered at their scheduled scenes stayed *open*, while the one debt marked *paid*
+was scheduled for scene 63 and never disclosed at all. A schedule is a statement of intent, and
+intent is not an event.
+
+**Two more places in the existing machinery already meant this, which is why it is not a third
+mechanism.** `REVEAL_SCENE` stores a reveal as an *ordinal* rather than a position for this exact
+reason — "a *position* is minted only for a scene the book actually has" — so the schedule and the
+realisation were separate vocabularies before this function was touched. And `undisclosed_claims`'
+own asymmetry already decided the residue: an unlocatable position reads as *not yet*, because
+handing a writer a secret the reader already has costs one scene some material, while handing it
+nothing so it states a secret the book has not revealed destroys the spine the reveal was built on.
+
+**What this leaves open is named, not closed.** Nothing in the pipeline writes a `disclosed_to`
+record — every one is authored by a seed or an Architect — and §165's own vocabulary correction
+asks for zero-padded digits while documenting scene keys as not-for-writing-by-hand. So a world
+following that line has no shape it may write that discloses at a scene, and its reveals stay
+hidden for the whole book. That is the cheap side of the asymmetry, which is where a defect
+belongs while it is unfixed, and closing it needs a disclosure channel somebody decides on rather
+than an inference this code makes on its own.
+
+### 166.2 The 18 incomparable records, handled deliberately
+
+**Excluded, *and* complained about — the third option, chosen over the other two.** Admitting them
+is the leak. Excluding them silently would report a permanent exclusion as a temporary one: a
+record dropped for standing later in the book will arrive at some scene, while a record dropped
+for stating a position in the other space will be dropped at *every* scene. So `context.assemble`'s
+omission now names the space it could not place the key in, beside the ordinary "not yet
+established" reason. `world check`'s `will_not_resolve` already reports the keys in *neither*
+space (§152, §165.1), so the operator channel for the unplaceable was not invented here either.
+
+A subject whose only standing is a scheduled one now has **no** standing at a scene, which is the
+deliberate half: serial15's `bez` holds one `stands_at` at `0300` and nothing else, and returning
+that rung would be answering "where does he stand when the book opens" with a position the world
+declared about somewhere else. An empty answer is the world declining to say, which it did.
+
+### 166.3 What shipped
+
+- **`worlds._reached`** — `state.comparable` then the comparison, in that order, which is the whole
+  of it: a key in another space is not early, it is unplaceable, and asking `<=` first answers a
+  question about spelling. Used by `standing_of` and by **`worlds._disclosed_by`**, which states
+  the three cases above.
+- **Five packet-side thresholds moved to it**: `state.records_before`, `state.reached_boundary`
+  (the gate `eligible_records` runs, so the one the live packet passes through),
+  `worlds.undisclosed_claims`, `worlds.standing_of`, and `gamesystem.sheet_of`'s `within` — the
+  last reproducing on no store only because no book on disk has a declared system yet, which
+  §165.2's `completion_records` changes at the next `world accept`.
+- **`extraction.promotions`**, which is not packet-side and was fixed anyway. Its
+  `earlier >= order_key` let a schedule-keyed `PROPOSED` edge fall through and be minted as
+  `ACCEPTED_CANON` at scene one carrying the note `proposed at 0350`. No store holds such a record,
+  so it reproduces nowhere; the guard can only ever promote *fewer* edges than before, so it cannot
+  invent a fact, and a canon-minting path is the wrong place to leave a comparison that is wrong by
+  spelling.
+- **The SQL twin §165.3 named the existence of.** `SqliteStore.state_records`' `before` clause
+  compared `order_key <= ?` — `'0350' <= 's1'` is true in SQLite for the same reason. It now calls
+  `litharness_key_space`, the domain's own `key_space` registered on the connection, rather than
+  spelling the two spaces in GLOB a second time. A cutoff in neither space compares the column
+  against `NULL`, which is never true, so only the unplaced records return — `comparable`'s rule
+  reached through SQL's own three-valued logic instead of a second copy of it.
+- **Two false premises corrected in place.** `domain/context.py` claimed the disclosure coordinate
+  and the Architect's positions were "commensurable by construction"; `application/planner.py`
+  claimed "a legacy world's schedule keeps working on an imported book". Both are struck through
+  where they stand, with the measurement. The schedule did not keep working — it read as wholly
+  disclosed from scene one, on every book that had one.
+- **`tests/test_packet_order_key_spaces.py`**, at serial15's exact key set, claim ids and values.
+  **35 of its 44 assertions fail against the pre-fix code.** It carries the repro
+  (`test_the_pilot_fifteen_claims_are_all_still_hidden_at_scene_one`), the settled semantics
+  (`test_a_position_alone_never_discloses_a_scheduled_claim`), the second door
+  (`test_scene_one_reads_the_opening_standing_not_the_end_of_the_arc`), the deliberate refusal
+  (`test_a_subject_whose_only_standing_is_scheduled_has_none_yet`), the packet's complaint
+  (`test_the_packet_says_which_records_it_could_not_place_and_why`), the working case it must not
+  break, and a sweep over both spaces at every scene width in use, in both directions.
+  `test_the_store_and_the_domain_slice_both_spaces_identically` pins the twin against the gate.
+
+### 166.4 What was refused
+
+- **The forward-looking selectors, and this is the one real judgement call.**
+  `extraction.progression_target` and `standing_target` filter with `>= at`, so a schedule-keyed
+  milestone against a scene cutoff is silently dropped as already-passed — the same defect
+  inverted. They are **not** fixed here, because the fix needs an answer to "which of two
+  candidates in two different spaces is *nearest*", and `comparable` deliberately supplies no
+  cross-space ordering to answer it with. Measured before deciding: no store on disk holds a
+  single `PROPOSED` `status_snapshot`, and the one book with proposed standings resolves its
+  target correctly, so the defect is real in the code and unreachable in the corpus. Registered
+  with that measurement rather than guessed at.
+- **Every ordering that is not a threshold.** `state.in_story_order` and the store's matching
+  `ORDER BY` interleave the two spaces — every schedule key sorts before every scene key. That is
+  a sort, not a gate; nothing passes or fails on it, and changing it would reorder the packet for
+  every book on disk to fix nothing measured.
+- **`standing_of(at=None)`**, which still races the whole canon including the schedule. "Wherever
+  the book is now" with no coordinate is a different question from a threshold, and answering it
+  would change a report, a character sheet and the world brief on every book.
+- **Inventing a disclosure channel.** The gap in 166.1 is registered, not filled. Wiring
+  `reveal_scene`'s ordinal into disclosure would be position-implies-settlement by another route,
+  which is the thing §110.3 measured failing.
+- **Any normalisation of an order key**, unchanged from §165.3 and re-refused here.
+
+### 166.5 Correction to §165.3, in place
+
+§165.3's "**0 of that book's 8 claims are still hidden at scene one**" is true and its denominator
+needs a ceiling: the attainable maximum is **7 of the 8**, because the eighth is marked
+`claim.false` and is correctly never hidden at any position. The defect is the same size; the
+number a fix can reach is seven.
+
+### 166.6 Anti-scope
+
+No bar is declared: the 18, the 0-of-7, the two-book leak and the one-book blast radius are
+descriptions of stores on disk, not thresholds anything is measured against, and §61's four checks
+have nothing to run on. No model ranked, selected or judged anything; no model was called, no book
+was drawn and no paid call was made. No corpus was read, so RS1 is untouched. No research claim is
+promoted and no axis is admitted. Every book already forged reads as it did except serial15, whose
+scheduled answers stop reaching the writer, and serial14b, whose protagonist stops reading one
+grade above where her world put her.
