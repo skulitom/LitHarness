@@ -211,12 +211,46 @@ def chains_too_hard(listing: str, *, ceiling: float) -> bool:
 #: writers to 0, 0, 0, 0, which is the defect the clause was added for in the first place. The
 #: clause was **measured on the wrong sample, not wrong**: ten hand-supplied listings said 3.8,
 #: forty-two say 2, and it is judged against the second from now on.
+#:
+#: **The opening clause forbade both available openings, corrected 2026-08-29 on read 7 §4.1.**
+#: It read *"Open where the trouble already is: not on an account of the world, and not on an
+#: introduction to whoever it happens to"*, and the two prohibitions between them ruled out the
+#: world and the person, leaving an **unowned situation** — which is an account of the world by
+#: another route, so the ban that was supposed to stop world-first openings was the one the
+#: model could satisfy while writing one. Its affirmative half named *the trouble*, owned by
+#: nobody, and the permission is what got obeyed (§138). The result is pilot 13's first line,
+#: *"The rain over Ambry Market has been sold to someone else, and Corin is carrying a jar of
+#: it in his bag"* — the trouble leading, the person arriving in the subordinate clause. The
+#: operator: *"who is someone else why are we saying this? why would the reader care?"*
+#:
+#: **The ban on the person was an over-correction of a defect that was never the person.** It
+#: replaced *"open on the person it happens to"* after five of eight listings began on a mundane
+#: job — but what the operator objected to was the biography, not the protagonist: *"isekai is
+#: good, we just don't have to mention their job every time"*. So the prohibition is narrowed to
+#: what was actually measured, the prior life, and the permission is deleted rather than
+#: rewritten: §138 puts silence (29.4) above a permission (47.2) and a prohibition (7.0) above
+#: both. Nothing now says where to open. By elimination what is left is the person as they are
+#: now, and the demand five clauses down already requires what they are after.
+#:
+#: **This is placement only, and the operator's own rewrite did not become prompt text (§97.1).**
+#: Demand count unchanged at 15, which is this role's ceiling and left no other move.
+#:
+#: **Two levers named and not pulled.** The material label is still *"What this book is to be
+#: about"*, and §136 measured that heading turning two genre words into the book's subject
+#: matter — a subject-matter frame over the only material in the call is a structural push
+#: toward a topic rather than a person, and changing it would break the empty-brief control
+#: §136 deliberately refused to touch. And **nothing in this task names the protagonist's
+#: exception at all** — the hook direction is that a hook is an exception belonging to one
+#: person, and read 3 already recorded that no step decides or records what is singular about
+#: whoever the book is about. That gap is structural (a protagonist object, a brief), not a
+#: clause: this role is at its ceiling and a clause is what §127 measured failing four times.
+#: Shipped unmeasured; pilot 14 is what reads it.
 _TASK = (
     "You are writing the listing for a new serial: the few lines a reader meets on the front "
     "page of a serial-fiction site, and the only thing that decides whether they open chapter "
     "one.\n"
-    "A reader meeting this has not started the book. Open where the trouble already is: not on "
-    "an account of the world, and not on an introduction to whoever it happens to.\n"
+    "A reader meeting this has not started the book. Not an account of the world, and not the "
+    "life whoever this happens to had before it began.\n"
     "Exactness spent on floors, ranks, counts and lengths of time is space the hook needed.\n"
     "A sentence a reader can take two ways has failed, and so has one that asserts what nobody "
     "in the story could know yet.\n"
