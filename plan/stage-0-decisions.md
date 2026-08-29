@@ -17746,3 +17746,138 @@ book was drawn, no paid call was made, and no `runs/` database was written to. N
 so RS1 is untouched. No research claim is promoted and no axis is admitted. Nothing the operator
 said became prompt text, and no noun of the chapter under read is in the clause (§97.1) —
 `test_no_word_of_the_read_9_chapter_became_prompt_text` is that, mechanically.
+
+## 171. The narrating-the-inference tell had been measured, named in three books by three writers, and reached by nothing in any prompt
+
+**Measured first, and the measurement is §156.2's rather than this entry's.** The construction — a
+narrator explaining one person's gesture or phrase by asserting what people in general do or mean
+— was counted there against the market's own chapters, ours beside the genre's, and that entry and
+`results/register-census.json` own the rates, the counts and the multiple. **No quantity of that
+census is restated here and none of it is anywhere near a prompt**: a rule quoting one of its
+numbers would be the instrument writing its own instruction. §156.5's refusals stand unchanged,
+including the refusal of a bar over anything it counts. Nothing is declared a bar here either, and
+none of the four attainability checks has been run on any quantity in this entry.
+
+**What is new is not a number, it is the third sighting and the empty slot.** §156 queued an
+intervention and did not write it. The class then arrived again: the shape was named in one book,
+its sibling in a second by a different writer, and the identical construction in draw 3 of pilot
+15b by a third — three writers sharing no dossier and one construction. Run over that draw, the
+census's own counter fires on both of the assertions it keeps separate, which locates the
+recurrence inside the class the module was built for rather than inside a paraphrase of it.
+
+**A fourth reading was taken before anything was designed, and it is what decided where a fix
+could live: nothing in the assembled prompt reached the construction.** `house.CLARITY`'s object
+is a sentence a reader cannot follow, and a gloss of this kind makes its moment *more* followable
+while it does the damage — which is why four reads standing on a clarity floor never caught it.
+`planner`'s criterion block is the only other clause in the system whose subject is a narrator,
+and it is conditional on a declared criterion and scoped to a rank. So this is §156.1's shape
+inverted: there the fix was unavailable because the accused text did not exist, and here the
+mechanism is a model prior plus silence, with the silence being the part this project owns.
+
+### 171.1 What shipped
+
+One clause, appended to `house.READER`, prohibition-signed with its boundary carried inside the
+sentence:
+
+> What fails is a narrator explaining what one person did or said with a rule about what people in
+> general do or mean, however true the rule is; what somebody in the scene makes of it is not
+> that.
+
+**It went into the house floor rather than into the drafting call**, and the reason is
+`domain/house.py`'s own founding one: five rule changes once edited a single role and the writer
+never saw any of them. A third narration clause in a role file would be that failure rebuilt, and
+the siblings this follows — §154's re-signing and §161's re-scope — are both in this constant.
+
+**Its object is a construction and its addressee is a writer** (§154). A narrator's sentence is a
+thing a writer emits and can emit fewer of; nobody can emit less of a register. The clause names
+no state of anybody's mind, which is the axis the awe clause failed on.
+
+**The boundary is the whole difficulty and it is not an exemption sentence.** A character's read
+of one specific moment is this genre's ordinary free indirect style — seeing somebody decide a
+thing dramatises, where a rule about people legislates — and §156's counter already draws that
+line, excluding an inference attributed to a character as interiority. Two halves hold it: the
+prohibition is armed only by the general rule, and the delimiter says whose reading falls outside.
+The delimiter hangs off a semicolon inside the sentence it bounds rather than standing alone,
+which is §161.5's pattern at its third use, and the concession names accuracy as the excuse this
+construction always has rather than as a defence — §168's concession doing the same job one clause
+above it.
+
+**Tests beside the code**, in a new file so no parallel session's file was restructured:
+`tests/test_narratorial_gloss.py`.
+`test_the_clause_reaches_the_general_rule_and_not_a_character_s_own_read` is the one to read;
+`test_the_clause_does_not_reach_the_subjectless_import_gloss` pins the narrowing below;
+`test_the_clause_does_not_collide_with_the_floor_above_it` is §129's tier check made mechanical;
+and `test_no_word_of_the_chapter_under_read_became_prompt_text` is §97.1.
+
+### 171.2 The arm that was deliberately not reached, stated before the fact
+
+§156's first tier has two arms, and **this clause answers the smaller one on our own shelf**. The
+other is a subjectless import gloss that asserts no rule about anybody, and on the shelf it does
+most of the work that tier counts. It was left alone on purpose: reaching it would reach ordinary
+free indirect inference and delete presence by construction, which is exactly how §163's
+truth-keyed removal test failed in this same constant, and the read-confirmed class in all three
+books is the generic-rule shape rather than that one.
+
+**So a later census should expect a small movement on that tier or none**, and predicting it now
+is cheaper than explaining it afterwards. A prohibition counts nothing, so naming one construction
+here does not merge two assertions §156 keeps apart.
+
+**One instrument observation, offered to the census and not acted on**: an indefinite singular
+standing for people in general is not in the counter's generic list, so one of the two strong
+instances in draw 3 is invisible to it. That is a recall hole in a frozen, pre-registered counter,
+and widening it is the census owner's decision under its own registration, never a fix-track's.
+
+### 171.3 What was refused
+
+- **Editing the counter, or testing this clause against it.** A test asserting a house clause
+  satisfies `register_census.py` would couple the instruction to the instrument that reads it, and
+  the census's value is that it is an independent reader of our prose.
+- **Folding the prohibition onto an existing sentence with a semicolon**, which would have cost
+  zero demands. A delimiter may share a sentence with the rule it bounds; a second unrelated rule
+  wearing one terminator is `house.demands` evaded rather than paid, and that counter exists so no
+  ceiling moves by accident.
+- **Paying by deleting `READER`'s reader-measuring sentence**, which is affirmative, names a reader
+  state, and is arguably §154's own axis left unapplied. It is the operator's product direction and
+  §154 re-signed that block days ago; unwinding a clause another entry deliberately kept, from a
+  track about a different defect, is a claim this track has not earned.
+- **An instance list**, for §168's reason unchanged: three clauses here were cut for being recited
+  and each was an instance list.
+- **A gate, a counter or a repair rule on drafted prose.** The class is answered at the altitude it
+  was measured at, and an enforcement built for an unmeasured intervention is a gate looking for a
+  finding that has not arrived.
+- **Any model reading, ranking or judging anything.** None was called; no book was drawn, no paid
+  call made, no `runs/` database written.
+
+### 171.4 The price, paid in the open, and the residual it exposes
+
+Two ceilings moved in `tests/test_prompt_budget.py`, deliberately and in writing: `architect seed`
+44 → 45 and the maximal assembled scene prompt 43 → 44. Nothing came out to pay for it, and the
+cheaper alternatives were both worse — one evaded the counter, the other put craft doctrine back
+in a role file.
+
+**At the Architect the demand lands inert**, because that role declares a world through tools and
+narrates nothing, so by §154 the referent is empty. That is the honest cost: a demand the seed
+cannot use, against a rule that the roles which do write prose need in the one place it will not
+drift.
+
+**The residual is a ceiling inconsistency this made visible.** The house floor had one demand of
+headroom against `HOUSE_BUDGET` while `architect seed` had none; after this clause the floor and
+three of the rows standing on it sit exactly at their ceilings. **The next clause added to `house`
+raises four numbers, not one**, and whoever adds it should know that before they write it rather
+than when the suite tells them.
+
+### 171.5 Anti-scope
+
+**Shipped unmeasured, and that is the whole claim.** One clause against one construction, with no
+draw behind it: no chapter was written under it, no before-and-after exists, and nothing here says
+the tell will fall. The census re-run that would read it is a separate registered act under its own
+registration and is not this track's to perform or to promise. No axis is admitted, no research
+claim promoted, no mechanism qualified, and §156's censuses remain `OBSERVED` and may not steer a
+book.
+
+Nothing here changes the world schema, the record vocabulary, the Architect's tool allowance, any
+writer dossier, the listing task, the editorial control plane, or any prompt other than the house
+floor. RS1 is untouched: no corpus was read and nothing under `src/litharness/` gained a corpus
+reference. No human judgment entered anything — the operator's reads are a defect harvest (§95,
+§97.1), the chapter under read is a test fixture, and no word of it or of any read is in the
+clause.

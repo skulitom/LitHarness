@@ -111,11 +111,17 @@ def test_the_new_demand_was_paid_for_and_not_added() -> None:
     correctly signed and both addressable, so what went was a topic sentence for rules that
     no longer needed one. `tests/test_prompt_budget.py` owns the ceiling; this owns the shape
     the ceiling is measuring.
+
+    **The two counts moved 11 -> 12 and 24 -> 25 on 2026-08-29 for §171**, which added the
+    narrating-the-inference prohibition and paid for it at the budget file by raising one
+    ceiling on purpose. What this test asserts is unchanged and is about §168: its own demand
+    arrived free, and the sentence it removed has not come back. The counts are updated rather
+    than loosened, because a `<=` here would stop the file noticing the next silent growth.
     """
     assert _THE_SUBTRACTED_AFFIRMATIVE not in house.READER
     assert "Spend the words on" not in house.READER
-    assert len(house.demands(house.READER)) == 11
-    assert len(house.demands(house.HOUSE_RULES)) == 24
+    assert len(house.demands(house.READER)) == 12
+    assert len(house.demands(house.HOUSE_RULES)) == 25
 
 
 def test_the_new_demand_carries_no_instance_list() -> None:
