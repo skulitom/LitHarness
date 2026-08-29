@@ -5,6 +5,11 @@ iteration 1 of the operator's iterate-until-right loop, and its gate is the coor
 rather than the operator's — so this document carries **no reader-read skeleton**, by that
 directive.
 
+**Iteration 2 is [`serial-pilot-15b.md`](serial-pilot-15b.md)**, drawn on the same title and
+listing after §§165–167 landed against §7 of this document. This record is not superseded: its
+prose stays in `serial15.db`, and its shelf is archived at `runs/pilots/pilot15/shelf-draw-1/`
+because the two draws share a slug.
+
 This is the first book produced under the complete first-principles redesign (stage-0 §§160–163,
 merged at `1931dfe`). Five things had never run live before; §§2–6 are what each of them did, and
 §7 is the one that misbehaved. The writer is **penhale**, cast by the recorded slate-order
