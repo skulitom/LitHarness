@@ -97,6 +97,17 @@ def vocabulary() -> dict[str, Any]:
     predicate nobody was told about. This is `worlds.py`'s "absence is free" — true of the
     world model, and not true one layer down, where absence has a default with content in it.
 
+    **Four more lines landed with §160's vocabulary, and two of its predicates were
+    deliberately left out.** `governed_by` and `is_a` are documented because the Architect meets
+    them either way: `validate` complains about a system nobody declared, and `is_a` has carried
+    every name in this vocabulary since Serial Pilot 1's operator-typed seed while appearing in
+    no list. `can_do` and `requires` gained the value slots §160 put in them. But
+    `magnitude_scale` and `system_digest` are **not** documented, because they are minted by
+    `gamesystem.records_for` and never by hand — writing them down would invite a second
+    declaration beside the drawn one, which is the two-writers hazard the `status_sheet` line
+    already exists to warn about, manufactured on purpose. A predicate an agent cannot usefully
+    declare does not belong in the list of what it may declare.
+
     **A fifth line was wrong, in the `how` list rather than among the predicates, and it was
     wrong in the reassuring direction.** It said a corrected declaration that changes the
     subject, the `--object` **or the `--order-key`** fills a different slot so both survive.
@@ -130,8 +141,26 @@ def vocabulary() -> dict[str, Any]:
                 "consequence_domains, --value the consequence in plain words"
             ),
             "manifests_as": "how it shows on the page; --value one line",
-            "can_do": "a person holds a capability; --object the capability's id",
-            "requires": "a prerequisite; --object what must come first",
+            "can_do": (
+                "a person holds a capability; --object the capability's id, and --value how "
+                "far they have taken it as a whole number. Leave the number off to say only "
+                "that they hold it"
+            ),
+            "requires": (
+                "a prerequisite; --object what must come first, and --value how far it has to "
+                "have been taken as a whole number. Leave it off, or 1, for held at all"
+            ),
+            "governed_by": (
+                "which system grants this; the criterion or the capability is the subject, "
+                "--object the system, which has to be a subject carrying the system role. A "
+                "ladder whose system nobody declared has no issuer, and that is the space "
+                "something else fills"
+            ),
+            "is_a": (
+                "what a thing is called, in this world's own words; --value the name. The "
+                "printed labels live here — the word a book counts rungs in, and an ability's "
+                "— so keep those short, letters only, and free of digits"
+            ),
             "costs": "what it takes; --value or --object",
             "taught_by": "who teaches it; --object the teacher",
             "comparator": (
@@ -215,6 +244,10 @@ def vocabulary() -> dict[str, Any]:
             "as numbers is not in it. The whole of that question is whether canon holds a "
             "status_snapshot whose value is an object; `world check` reports the gap while "
             "you are still building, and says nothing about whether the sheet is any good.",
+            "A drawn system brings its own status_sheet with it, so do not declare a second "
+            "one beside it. Two of them do not collide loudly: the book falls back to a "
+            "generic line written in nobody's vocabulary, which is the thing the declaration "
+            "existed to escape.",
             "A record in the wrong slot cannot be taken back — there is no retraction, and a "
             "corrected declaration that changes the subject or the --object fills a different "
             "slot, so both survive. `declare` reports these separately from what is merely not "

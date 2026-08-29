@@ -139,8 +139,8 @@ _SYSTEM = (
     "withhold it, and the book is better when something does — but it reads the ladder rather "
     "than owning it, and the one this book is about climbs the system's.\n"
     "Declare what the system grants, in what order and at what cost, each grant countable and "
-    "named in short plain words; at least one of them needs another one first, or what you "
-    "have declared is a list rather than a graph."
+    "named in short plain words with no digits in them; at least one of them needs another one "
+    "first, or what you have declared is a list rather than a graph."
 )
 
 _SEED = (

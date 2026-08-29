@@ -120,14 +120,39 @@ def _manifests_as() -> lc.StateRecord:
 
 
 def _can_do() -> lc.StateRecord:
-    record = rec("kell", worlds.CAN_DO, object_ref="cap_read_grain")
+    """§160 put the holder's depth in the value slot, which was free; the edge still says who
+    holds what, and a record written without a number reads exactly as it always did."""
+    record = rec("kell", worlds.CAN_DO, object_ref="cap_read_grain", value=2)
     assert worlds.capabilities_of([record], "kell") == ("cap_read_grain",)
+    assert "kell can do cap_read_grain at 2" in sentences([record])
+    assert "kell can do cap_read_grain" in sentences(
+        [rec("kell", worlds.CAN_DO, object_ref="cap_read_grain")]
+    )
     return record
 
 
 def _requires() -> lc.StateRecord:
-    record = rec("cap_read_grain", worlds.REQUIRES, object_ref="cap_hold_a_glass")
+    record = rec("cap_read_grain", worlds.REQUIRES, object_ref="cap_hold_a_glass", value=2)
     assert worlds.requirement_depth([record]) == 1
+    assert "needs cap_hold_a_glass at 2 first" in sentences([record])
+    return record
+
+
+def _governed_by() -> lc.StateRecord:
+    """The governed thing is the subject and the system is the edge — `RECOGNIZED_BY`'s
+    direction, so an institution recognising a standing and a system granting one cannot
+    invert against each other."""
+    record = rec("crit_seal", worlds.GOVERNED_BY, object_ref="sys_the_weave")
+    assert worlds.governed_by([record]) == {"crit_seal": "sys_the_weave"}
+    assert worlds.governed([record], "sys_the_weave") == ("crit_seal",)
+    return record
+
+
+def _is_a() -> lc.StateRecord:
+    """The name-bearing predicate, undocumented since Serial Pilot 1's operator-typed seed and
+    now carrying the rung column's printed label."""
+    record = rec("crit_seal", "is_a", value="the Third Seal")
+    assert "seal" in worlds.key_nouns([record])
     return record
 
 
@@ -303,6 +328,8 @@ def _graph_line() -> lc.StateRecord:
 
 _PROBES: dict[str, Callable[[], lc.StateRecord]] = {
     "entity_role": _entity_role,
+    "governed_by": _governed_by,
+    "is_a": _is_a,
     "status_sheet": _status_sheet,
     "status_snapshot": _status_snapshot,
     "graph_line": _graph_line,

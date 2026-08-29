@@ -16646,3 +16646,38 @@ axis admitted. `domain/worlds.py` is unmodified — its constants and readers ar
 and read 4's still-live second suppressor (`planner.py`'s *"a rank is something a reader sees,
 never something a narrator reports"*, which stops a declared ladder ever printing) are routed to
 Track 2 and are named here only so the finding is not lost.
+
+### 163.2 What the rebase over §160 added, and the two predicates left out of it
+
+§160 landed the vocabulary this entry documents against, so the lines were written from its code
+rather than from its description — which is the §152 discipline applied to a contract as well as
+to a reader.
+
+- **`governed_by` and `is_a` are documented.** The first is the issuer edge, and the Architect
+  meets it whether or not it declares one by hand: `validate` now complains that *"a ladder whose
+  system nobody declared has no issuer"*, and a complaint naming a predicate absent from the
+  vocabulary is this entry's own defect committed again. The second has carried every name in
+  this vocabulary since Serial Pilot 1's operator-typed seed and appeared in no list; it now also
+  carries the printed rung label, so the line says to keep those short, letters only and free of
+  digits — `check_draw` refuses a draw whose label holds a digit.
+- **`can_do` and `requires` document the value slots §160 put in them**, and both probes assert
+  the projection *without* a number still reads as it always did, which is the byte-identity rail
+  §160 kept.
+- **`magnitude_scale` and `system_digest` are deliberately not documented.** They are minted by
+  `gamesystem.records_for` and never declared by hand, so writing them down would invite a second
+  declaration beside the drawn one — the two-writers hazard the `status_sheet` line exists to warn
+  about, manufactured on purpose. A predicate an agent cannot usefully declare does not belong in
+  the list of what it may declare. This is the one place where an omission from this surface is
+  correct, and it is recorded here so that it reads as a decision rather than as the same
+  oversight the entry is about.
+- **One `how` line was added rather than a predicate**: a drawn system brings its own
+  `status_sheet`, so a second must not be declared beside it. That is the documentation half of
+  the silent abstention; §160's `system_gap` is the recognition half, and neither restates the
+  other.
+
+The seed ask absorbed §160's label constraint into a clause it already had rather than growing a
+sentence, so the demand count is unchanged at 44 against the ceiling this entry raised.
+
+**Still not measured.** Everything above is a documentation and prompt change graded by tests. No
+world has been seeded under it, and no claim is made that an Architect holding these lines
+declares a system, or a better one.
