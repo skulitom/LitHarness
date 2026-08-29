@@ -308,6 +308,53 @@ CLARITY = (
 #: from the chapter under read is in the clause (§97.1): no object of its, no count of its, and
 #: none of the operator's words. Shipped unmeasured — one clause against one book's defect, with
 #: no draw behind it, and read 9's own instrument question routed elsewhere (`BRIEF.md`).
+#:
+#: **The narrating-the-inference tell got a clause on 2026-08-29, at its third read-confirmed
+#: sighting and its first clause of any kind.** §156 measured the construction against the
+#: market's own chapters and reported ours at a multiple of the genre's rate; that entry and its
+#: artifact own every number, none is restated here, and none goes anywhere near a prompt. What
+#: is new is not the measurement but the addressee: the shape was named in one book, then in a
+#: second by a different writer, then in a third — three writers who share no dossier and one
+#: construction — while the intervention §156 queued stayed unwritten. **Nothing in the assembled
+#: prompt reached it**, and the reason is worth recording rather than assuming: `CLARITY`'s object
+#: is a sentence a reader cannot follow, and a gloss of this kind makes its moment *more*
+#: followable while it does the damage, so a clarity floor is the one rule that cannot catch it.
+#: The tiers stay where §156 put them — that entry counts two assertions separately and never sums
+#: them, and a prohibition counts nothing, so naming one construction here does not merge them.
+#:
+#: **Its object is a construction and not a subject matter, which is what §154 asks of it.** A
+#: writer can emit fewer sentences of a named shape; nobody can emit less of a register. What
+#: fails is a narrator generalising, and the generalisation is the thing sitting on the page.
+#:
+#: **The boundary is the whole difficulty, and it is carried inside the sentence.** A character's
+#: read of one specific moment is this genre's ordinary free indirect style and is not the defect:
+#: seeing somebody decide a thing dramatises, where a rule about people legislates. §156's counter
+#: draws that line in the same place — it excludes an inference attributed to a character as
+#: interiority — so the clause is bounded where the instrument is. The delimiter hangs off a
+#: semicolon inside the sentence it bounds instead of standing as its own permission (§161.5's
+#: pattern, third use), and the concession names accuracy as the excuse this construction always
+#: has rather than as a defence, which is §168's concession doing the same job one clause up.
+#:
+#: **What it deliberately does not reach, stated before the fact.** §156's first tier has two
+#: arms, and the larger one on our own shelf is the subjectless import gloss that asserts no rule
+#: about anybody. Reaching that would reach ordinary free indirect inference and delete presence
+#: by construction — §163's lesson about a filter keyed too wide, which cost this module a clause
+#: already. So this is aimed at the shape three reads confirmed and **not** at the arm carrying
+#: most of the count, and a later census should expect a small movement or none. Predicting that
+#: now is cheaper than explaining it afterwards.
+#:
+#: **Paid by raising one ceiling on purpose rather than by hiding a demand.** The floor had one
+#: demand of headroom and the Architect's seed had none, so a house edit surfaces there;
+#: `tests/test_prompt_budget.py` carries the raise with its reason. Folding this onto an existing
+#: sentence with a semicolon would have cost zero demands and was refused — a delimiter may share
+#: a sentence with the rule it bounds, but a second unrelated rule wearing one terminator is that
+#: counter evaded rather than paid, and the counter exists so no ceiling moves by accident. At a
+#: role that narrates nothing the referent is empty and by §154 it lands inert, which is the right
+#: behaviour for a call that writes no prose. No instance list, for §168's reason unchanged: an
+#: invented instance is the shape this module has been recited back three times. Nothing from the
+#: chapter under read is in it and none of the operator's words are (§97.1) — naming the class
+#: needs the words the counter itself is built from, and those are the instrument's, not a read's.
+#: Shipped unmeasured, and the census that would read it is a separate registered act.
 READER = (
     "Detail that only establishes "
     "who somebody is — the steps of a job, the order of a routine — is not why the reader "
@@ -329,7 +376,10 @@ READER = (
     "puzzle box does not have thirty-one moves, a crate does "
     "not hold forty-two bottles, and a wait is not four days: exactness spent on props, "
     "tallies and durations teaches a reader that the numbers here mean nothing, which costs "
-    "the numbers that do."
+    "the numbers that do.\n"
+    "What fails is a narrator explaining what one person did or said with a rule about what "
+    "people in general do or mean, however true the rule is; what somebody in the scene makes "
+    "of it is not that."
 )
 
 #: **What the reader is accumulating, and it is the genre's own economics.** The operator,

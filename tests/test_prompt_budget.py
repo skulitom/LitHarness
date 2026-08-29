@@ -225,7 +225,21 @@ BUDGET: dict[str, int] = {
     # so the capability half moved into `_SYSTEM` instead of being stated twice.
     # `architect grow` is untouched at 41 and stays on 42; advancement is the beats' path and
     # the grow ask already covers what a chapter made true.
-    "architect seed": 44,
+    #
+    # **Raised 44 -> 45 on 2026-08-29 for one house clause, and the raise is where a house edit
+    # surfaces** (§171). The floor carried one demand of headroom against `HOUSE_BUDGET` and this
+    # row carried none, so the floor's slack was unusable without moving this number — which is
+    # the inconsistency this table exists to make visible rather than a cost of the clause. The
+    # occupant is `house.READER`'s narrating-the-inference prohibition, at the third
+    # read-confirmed sighting of a construction §156 measured above the genre's own rate. Nothing
+    # came out to pay for it and the alternatives were both worse: hanging it off an existing
+    # sentence would have cost zero demands by evading this counter, and putting it in the
+    # drafting call's own prompt would have put craft doctrine back in a role file, which is the
+    # failure `domain/house.py` exists to end. **At this role it lands inert** — the Architect
+    # declares a world through tools and narrates nothing, so by §154 the referent is empty — and
+    # that is the honest price: a demand the seed cannot use, against a rule the roles that write
+    # prose need in the one place that does not drift.
+    "architect seed": 45,
     "architect grow": 42,
     "scene writer floor": 28,
     "scene writer, cast": 32,
@@ -369,7 +383,13 @@ SCENE_CONDITIONAL_BUDGET: dict[str, int] = {
 #: as one clause. The assembly is what a model is sent, so the assembly is what is priced. The
 #: cast dossier is not in this row because its four demands are already the gap between the two
 #: scene rows in `BUDGET`; measured with it, the total is 47, exactly additive.
-SCENE_MAXIMAL_BUDGET = 43
+#:
+#: **43 -> 44 on 2026-08-29, the same house clause and the same raise as `architect seed`**
+#: (§171). One demand added to the floor lands once in this total, which is what this row was
+#: built to show: the drafting call is the role the narrating-the-inference prohibition is
+#: actually for, and it is the one row here where the demand is not inert. The off-by-one against
+#: the summed rows above is unchanged and still the length ask's leading space.
+SCENE_MAXIMAL_BUDGET = 44
 
 
 def test_the_scene_floor_row_is_what_the_planner_actually_assembles() -> None:
