@@ -39,6 +39,20 @@ has not met is welcome, and is how a world gets big" produced inserted undefined
 `ACCUMULATION`'s "a price is paid in a body, in time, in risk" produced "pays in blood, in
 sleep, in years" in five listings of eight. The prohibition half of all three did its work
 and none of it was ever recited.
+
+**A fourth instance, found 2026-08-29, and it was inside this module the whole time.** The awe
+clause added to `READER` later on 2026-08-25 — hours after the constraint above was written —
+was itself two enumerations of what succeeds, and nobody checked the new clause against the
+rule the same file had just adopted. Read 6 §4.6 is what it cost. A constraint that governs
+edits is worth nothing if the next edit is not read against it, so: **before a clause ships
+from here, split it with `demands` and name the sign of each half.**
+
+**And signedness is not the whole test — a demand also has to be addressable.** The awe clause
+failed in a way §138 could not predict: its permissions named a *reader state* rather than
+anything on a page, so instead of overproducing they did nothing at all, and an earlier
+correctly-signed prohibition took the slot. A rule here addresses a writer, and the only thing
+a writer can do is put words on a page. A clause whose object is what the reader feels has no
+addressee.
 """
 
 from __future__ import annotations
@@ -131,30 +145,72 @@ CLARITY = (
 #:
 #: **It also carries the answer to a defect four listings kept**: every one of them named
 #: where the top was, which the operator's first complaint was that *"part of the appeal of
-#: progression fantasy is you don't know where the top is"*. That is written here as a
+#: progression fantasy is you don't know where the top is"*. ~~That is written here as a
 #: reader effect rather than as a ban on ceilings, because a ban is the shape this project
-#: keeps measuring as a pink elephant.
+#: keeps measuring as a pink elephant.~~ **The pink-elephant reasoning was refuted by §138
+#: three days later** — the prohibition-only form of the clause it tested came back at 7.0
+#: number tokens per thousand against the market's 7.2 and **0 of 8** listings naming a floor,
+#: while the permission form ran to 47.2. A ban is the form that works; the ceiling is now
+#: written as one below.
+#:
+#: **Corrected 2026-08-29 after read 6 §4.6, and the clause was this module's own standing
+#: constraint left unapplied.** Pilot 12's chapter skimped the class menu — *"i didn't get a
+#: vivid enough image of what i'm interested in, what the class options were"* — with the awe
+#: clause live, the first ENFORCEMENT defect since read 4. It did not fail to be enforced; it
+#: was never addressable. Of its four demands, three were permissions and two of those named
+#: a **reader state** — *"they should finish wanting to try it: wondering what they would be
+#: given, what they would pick, and what they would build out of it"* and *"a thing that
+#: combines with other things ... whose ceiling nobody has seen"*. A reader state is not a
+#: token a writer can emit, so the permission had no page surface to overproduce onto and
+#: went inert instead. **That is the second axis §138 did not have**: signedness says which
+#: direction a clause pushes, addressability says whether it pushes on anything at all. Both
+#: of those sentences were also the enumerate-what-succeeds shape the paragraph above this
+#: constant forbids, written the same day the constraint was, and never checked against it.
+#:
+#: **What actually occupied the slot was the compression clause, four demands earlier.** Its
+#: examples named *"the numbers on a card, the order of a routine"*, which is the surface form
+#: of a class menu, and it is a prohibition — correctly signed and page-addressable, against an
+#: unaddressable permission. §138 predicts that outcome exactly. The instance list is gone from
+#: it for the same reason (and was redundant with the numbers clause below); the offer's page
+#: presence is now carried by the prohibition here, which is what a writer can act on.
+#:
+#: Shipped unmeasured: the effect on a drafted chapter is pilot 14's to find.
 #:
 #: **What the reader came for.** The measured failure this answers is one scene of eight spent
 #: rendering a support call step by step — technically an opening in which somebody wants
 #: something, and 1,067 words that bought the reader nothing. The simulated reader panel passed
 #: that chapter with zero comprehension faults, which is why this is a second rule and not a
 #: clause of the first.
+#:
+#: **The compression clause was teaching the defect it was blamed for, audited 2026-08-29 on
+#: read 6 §4.2's named check, and the check was right.** The operator: *"I feel like i am being
+#: narrated events instead of feeling present in the events."* The clause read *"is worth a line
+#: rather than a scene, and if the events would be equally true with those specifics removed,
+#: remove them"*, and both halves teach summary. **"A line rather than a scene" was the only
+#: place in the whole assembled scene prompt that named a scene-to-summary conversion as a
+#: target** — and it contradicted the drafting call's own length note two paragraphs later,
+#: *"room to play out in real time ... instead of being told in summary"*, with the house floor
+#: carrying the authority framing. **And the removal test was keyed to truth**: dramatisation is
+#: by definition the specifics that leave the events equally true — what is said, what is
+#: noticed — so a filter that deletes whatever does not change what is true deletes presence by
+#: construction. This is §116's shape at a third address: the bias was in our own rule text.
+#:
+#: The remedy is gone and the target is kept. What sorts detail now is the movement criterion
+#: the next demand already owned — *"every scene moves the thing the book is about"* — rather
+#: than a truth test, and no clause anywhere now tells a writer to render a scene as a line.
+#: Read 7 §4.5's *"useless information again"* is the same axis from the other side and the
+#: movement criterion is the one that answers both. Shipped unmeasured.
 READER = (
     "Spend the words on what the reader opened this book for. Detail that only establishes "
-    "who somebody is — the steps of a job, the numbers on a card, the order of a routine — is "
-    "worth a line rather than a scene, and if the events would be equally true with those "
-    "specifics removed, remove them. Every scene moves the thing the book is about closer or "
-    "further away.\n"
+    "who somebody is — the steps of a job, the order of a routine — is not why the reader "
+    "came. Every scene moves the thing the book is about closer or further away.\n"
     "The opening shows what this book is offering: something a person could come to be able to "
     "do, and somewhere the reader has not been. A reader who reaches the end of the opening "
     "scene without seeing either has been given no reason to start another.\n"
     "The reader is measuring themselves against the offer, and that is the whole of why they "
-    "are here. They should finish wanting to try it: wondering what they would be given, "
-    "what they would pick, and what they would build out of it. A power with one use invites "
-    "nobody in. What a reader plays with is a thing that combines with other things, that "
-    "could be pushed further than anyone in the story has pushed it, and whose ceiling nobody "
-    "in the world has seen.\n"
+    "are here. A power with one use invites nobody in, and neither does one the reader meets "
+    "as a summary of what it could be rather than on the page. A story that names its own "
+    "ceiling has told the reader where to stop.\n"
     "If the person this happens to came from somewhere like our own world, the life they came "
     "from is one a reader in their twenties has lived: a degree they are not using, a job "
     "that covers the rent, a thing they know far too much about for no professional reason.\n"

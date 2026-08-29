@@ -15547,3 +15547,165 @@ deterministic change, not a threshold anything is measured against.
 canon record's authority changed. `disagreement_key` is unchanged, so the detector and
 supersession still share one idea of a slot — the property `tests/test_world_supersession.py`
 was written to hold. No model was called, nothing ranks or judges, and RS1 is untouched.
+
+## 154. A rule whose object is a reader state has no addressee, and two clauses written against the opening's defects were teaching them
+
+The operator has asked twice, across two reads, for the protagonist's exception to arrive first
+(read 6 §4.6, the class menu skimped; read 7 §4.1, a world mystery where the person should be),
+and read 6 routed the first of those as an **enforcement defect** — the first since read 4 —
+because a rule asking for exactly that reader effect by name was live when the chapter was
+drafted. This entry is the post-mortem read 6 §4.6 asked for, and the answer is that all three
+clauses governing an opening were asking for something other than what they were written for.
+Nothing was drawn from a model: the instrument is §135's `house.demands` over the assembled
+prompt, and the behavioural evidence is prior — §138's four measured conditions, and two
+operator reads that are harvests rather than data.
+
+**Measured: the awe clause, split and signed.** `litharness prompts --role scene` assembles 38
+demands; `house.READER` supplies twelve of them, and the awe clause is four.
+
+| # | the demand | sign | what it addresses |
+| --- | --- | --- | --- |
+| 6 | *"the reader is measuring themselves against the offer"* | unsigned | rationale |
+| 7 | *"they should finish wanting to try it: wondering what they would be given, what they would pick, and what they would build out of it"* | permission | **a reader state** |
+| 8 | *"a power with one use invites nobody in"* | prohibition | the power's design, fixed upstream |
+| 9 | *"what a reader plays with is a thing that combines ... whose ceiling nobody has seen"* | permission | **a reader state** |
+
+**Three of four are permissions and not one addresses the page.** §138 measured that a permission
+overproduces what it names (47.2 number tokens per thousand against a market's 7.2, worse than
+the 29.4 of saying nothing). These permissions name what the reader *feels*, and a reader state
+is not a token a writer can emit — so there was no surface to overproduce onto and the clause
+went inert instead of loud. The single prohibition is correctly signed and lands upstream of the
+writer, on a power's design, which the world already fixed before the scene call.
+
+**The general axis, stated for the next clause review rather than for this one.** §138 established
+that a rule is **signed**: what it permits comes back, what it forbids stops. That predicts
+direction and it cannot predict silence — a permission that produces *nothing* is outside its
+table. The missing property is **addressability**:
+
+> A rule in a prompt addresses a writer, and the only thing a writer can do is put words on a
+> page. A demand whose object is a reader's state, an author's intention, or an artifact fixed
+> upstream of this call names nothing the addressee can emit, and lands with whatever force its
+> sign would give it multiplied by zero.
+
+So every clause takes **two questions, not one**: *what is its sign* (§138), and *what can the
+role receiving it actually put on the page in response*. The two are independent, and the failure
+modes differ — a mis-signed addressable clause is loud in the wrong direction, an unaddressable
+clause is silent in any direction and its slot is taken by whatever nearby demand is both signed
+and addressable. The awe clause is this entry's instance: unaddressable permissions naming a
+reader state, beaten by an addressable prohibition four demands earlier. **The claim is a reading
+of one clause against §138's four measured conditions, offered as the reason a rule went inert —
+it is not itself measured, and the check it licenses is a review step, never a bar.**
+
+**What occupied the slot instead was `READER`'s compression clause, four demands earlier**, whose
+examples read *"the numbers on a card, the order of a routine"* — the surface form of a class
+menu — and which is a prohibition, correctly signed and page-addressable. A page-addressable
+prohibition against an unaddressable permission is not a contest, and §138 predicts the winner.
+The rule existed, the book did not do it, and no second clause was needed to explain why.
+
+**Demands 7 and 9 were also this module's own constraint, unapplied.** `house.py` had adopted
+*a rule here may say what fails, it may not enumerate what succeeds* earlier on 2026-08-25 after
+three instances; the awe clause was added hours later as two enumerations of what succeeds and
+was never read against it. Read 6 §4.6 is what that cost.
+
+**The compression clause was teaching the defect it is blamed for, and read 6 §4.2 named the
+check before anyone drafted anything.** The operator: *"I feel like i am being narrated events
+instead of feeling present in the events."* The clause read *"worth a line rather than a scene,
+and if the events would be equally true with those specifics removed, remove them"*, and both
+halves teach summary:
+
+1. **"A line rather than a scene" was the only text in the entire assembled scene prompt naming
+   a scene-to-summary conversion as a target**, and it contradicts the same prompt's own length
+   note — *"room to play out in real time ... instead of being told in summary"* — with the house
+   floor carrying the authority framing and arriving first.
+2. **The removal test was keyed to truth.** Dramatisation *is* the specifics that leave the events
+   equally true — what is said, what is noticed, what is done. A filter deleting whatever does not
+   change what is true deletes presence by construction.
+
+This is §116's shape at a third address: the bias was in our own rule text. Read 7 §4.5's
+*"useless information again"* is the same axis from the other side, and the criterion that
+answers both was already the next demand — *"every scene moves the thing the book is about"* —
+which sorts on movement rather than on truth.
+
+**And the listing's opening clause forbade both openings available to it.** It read *"Open where
+the trouble already is: not on an account of the world, and not on an introduction to whoever it
+happens to."* The two prohibitions rule out the world and the person, and what is left is an
+**unowned situation** — an account of the world by another route, so the ban meant to stop
+world-first openings is the one a model can satisfy while writing one. Its affirmative half names
+*the trouble*, owned by nobody. Pilot 13's first line is what the prompt asked for: *"The rain
+over Ambry Market has been sold to someone else, and Corin is carrying a jar of it in his bag"*,
+the trouble leading and the person in the subordinate clause.
+
+The ban on the person was an over-correction of a defect that was never the person: it replaced
+*"open on the person it happens to"* after five of eight listings began on a mundane job, but
+what the operator objected to was the biography — *"isekai is good, we just don't have to mention
+their job every time"*.
+
+**So this is §116's shape too, and that makes three instances in this entry.** §116 recorded a
+bias sitting in our own rule text rather than in a model: the compression clause taught the
+narration the operator complained of, the opening clause wrote the world-first line the operator
+complained of, and the awe clause enumerated what succeeds in the one file that forbids it. In
+all three the prompt asked for the defect. **The lesson that generalises past these three is the
+audit order**: when a read names a defect a standing rule already covers, read the rule's own
+wording before drafting anything, because a rule that covers a defect by topic can be causing it
+by form. Read 6 §4.2 named that check and it had never been run; running it cost nothing and
+found two of the three.
+
+**What shipped**, all of it subtraction or re-signing, no clause added anywhere:
+
+| | before | after |
+| --- | --- | --- |
+| `house.HOUSE_RULES` | 25 demands, 3,092 chars | **24**, 2,824 |
+| scene writer, assembled | 38 | **37** |
+| architect seed / grow | 42 | **41** |
+| outline | 28 | **27** |
+| listing writer | 15 demands, 1,874 chars | **15**, 1,845 |
+
+- `READER`'s compression clause loses the scene-to-line remedy and the truth test, and keeps its
+  target; the movement criterion in the next demand does the sorting. Its *"numbers on a card"*
+  instance goes with them — redundant with the numbers clause below it, and the thing that
+  shape-matched a class menu.
+- `READER`'s awe clause loses both reader-state permissions and gains nothing: the offer's page
+  presence and the unnamed ceiling are carried as prohibitions, which is what a writer can act on.
+- `overview._TASK`'s opening clause loses its permission entirely — §138 puts silence above a
+  permission and a prohibition above both — and narrows the person-ban to the prior life, which is
+  what was actually measured. Nothing now says where to open; by elimination what is left is the
+  person as they are now, and a demand five clauses down already requires what they are after.
+
+Every ceiling in `tests/test_prompt_budget.py` is a maximum and every number above moves down or
+holds, so no ceiling was raised and none had to be argued for.
+
+**Shipped unmeasured and mutually confounded, and this is the honest half.** No draft was drawn,
+paid or free. What is demonstrated here is a property of instruction text — its demand count and
+the sign and addressee of each demand — and *not* any effect on a chapter or a listing. Whether
+openings change is pilot 14's to find, and **the three edits land together on that read, so it
+cannot attribute a change to any one of them.** Separating them would cost three arms on an
+instrument that has repeatedly saturated (§135), and no such arm is registered or scheduled here.
+
+**What was refused.** No new affirmative clause, at any of the three sites: §127 records a fourth
+rule against the same complaint failing, §135 records what a clause costs every role at once, and
+§138 records which half of a rule gets obeyed. No bar declared over anything — the demand counts
+are sizes, not thresholds, and §138's 7.0-against-7.2 is explicitly not one either. The operator's
+own rewrite of the opening line (*"Corin has an unusual job of selling weather in jars"*) did not
+become prompt text and is quoted here only as the harvest it is (§97.1). And the pink-elephant
+argument recorded in `house` against banning a named ceiling was overturned rather than ignored:
+§138's prohibition-only row is the later and controlled evidence, and the correction is in place
+beside the original.
+
+**Two levers named and not pulled**, both structural and both outside this entry's reach. The
+listing's material label is still *"What this book is to be about"*, and §136 measured that
+heading turning two genre words into the book's subject matter — a subject-matter frame over the
+only material in the call, which §136 deliberately refused to change because the empty-brief
+control hangs on it. And **nothing in any prompt names the protagonist's exception**: the hook
+direction is that a hook is an exception belonging to one person, and read 3 already recorded that
+no step decides or records what is singular about whoever a book is about. That gap wants a
+protagonist object or a brief, not a clause — the listing role is at its ceiling, and a clause is
+the move §127 measured failing. **It is the named survivor of this round**: these three edits
+remove what was pushing openings toward the world, and none of them supplies an exception for an
+opening to lead with. If pilot 14's openings still arrive without one, the object is what gets
+built, and the edits here will have narrowed what that build has to explain.
+
+**Anti-scope.** Three clauses in two modules. Nothing here touches the planner, the recruiter, the
+Architect's rule essay, or any research surface; nothing promotes a research claim, admits an
+axis, or converts a read into data; no model ranked, judged or read anything, and RS1 is
+untouched. The addressability axis is a reading of one clause against §138's four conditions and
+is offered as the reason a rule went inert, not as a law about models.
