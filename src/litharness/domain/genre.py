@@ -182,6 +182,14 @@ def with_beat(statement: str, ordinal: int, total: int, *, every: int = EVERY) -
     Appended rather than prepended: the outline's own statement is what this scene is *about*,
     and the beat is one more thing that happens in it. Leading with the beat would make every
     scheduled scene read as a progression scene first and its own story second.
+
+    **An empty statement is a contract, not an edge case.** A scheduled scene with no
+    statement gets the bare `BEAT`; an unscheduled one stays empty, which renders nothing.
+    That pair is what lets the drafting path pass `""` for a book that never takes an
+    outline — a six-scene book has six distinct dramatic functions, so `needs_outline`
+    never holds and the fold in `outline_proposal` is unreachable there (pilot 14 §3
+    measured the schedule dead at exactly the standard pilot length). Both call sites
+    compose the sentence through this one function, so the two paths cannot drift.
     """
     if ordinal not in beat_ordinals(total, every=every):
         return statement

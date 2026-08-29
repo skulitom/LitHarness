@@ -902,6 +902,11 @@ def outline_proposal(
                 # beat earlier: showing the call the material instead of instructing it. One
                 # `SCENE_PLAN` item per scene either way, because `scene_plan_for` returns the
                 # first scoped match and a second item would be a coin toss.
+                #
+                # This fold is NOT the schedule's only reach: a book whose sheet has all-
+                # distinct functions never takes an outline at all, and the selector derives
+                # the bare beat at render time for its statement-less scenes (pilot 14 §3
+                # found the six-scene dead spot when this was the sole call site).
                 text=genre.with_beat(statement, beat.ordinal, len(beats)),
                 authority=lc.PlanAuthority.INTENDED,
                 locked=False,
