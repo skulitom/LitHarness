@@ -163,6 +163,14 @@ def system_gap(records: Sequence[lc.StateRecord]) -> str | None:
     the default when a book declares more than one sheet, so a second declaration does not
     error — it silently restores a column set the book never chose, and a book that had seeded
     its own keys is then shown a line with placeholders where its numbers were.
+
+    **The empty answer is two answers, and the split is the fix for Serial Pilots 15 §2.1 and
+    15b §5.** `_declared_systems` is empty for a world that declared nothing and for a world
+    one predicate short, and the second used to be told the first's sentence — three false
+    clauses about a world holding the system role, a governed ladder and the Architect's own
+    sheet, which is §155.2's operator hunting the wrong absence while `world accept` named the
+    true one on a channel nobody watches. `gamesystem.unfinished_systems` tells the two apart
+    in the reader's own terms, so `check` and `accept` now name the same missing piece.
     """
     sheets = sum(
         1
@@ -177,6 +185,20 @@ def system_gap(records: Sequence[lc.StateRecord]) -> str | None:
         )
     declared = _declared_systems(records)
     if not declared:
+        # Canon-filtered for `_declared_systems`' reason: a proposal is not yet this book's
+        # system, and telling a world mid-build it began one and stopped would report the
+        # ordinary state of every seed as a fault.
+        unfinished = gamesystem_mod.unfinished_systems(
+            [record for record in records if state_mod.is_canon(record)]
+        )
+        if unfinished:
+            return (
+                "this book began a game system and did not finish it: "
+                + "; ".join(unfinished)
+                + ". An unfinished system reads back as no system at all, so the sheet is "
+                "never checked as a position in it and no beat speaks its ranks or "
+                "abilities."
+            )
         return (
             "this book declares no game system: no subject holds the system role with a "
             "magnitude scale and a governed ordinal ladder. Its sheet is whatever was seeded "
