@@ -284,3 +284,51 @@ def test_the_report_and_the_gate_say_the_same_words() -> None:
     assert genre.NO_SHEET not in source, (
         "the sentence is hard-coded in cli.py again; it belongs to domain/genre.py alone"
     )
+
+
+# --- the operator surface --------------------------------------------------------------
+
+
+def test_a_floored_book_says_why_on_the_operator_surface(tmp_path, capsys) -> None:
+    """The refusal must reach a command an operator actually runs, not just the domain object.
+
+    Pilot 14 §7 watched the gap live: `plan_progress` computed the reason and the selector
+    honoured it, but no command printed it, so a floored book returned `no_work` under a
+    `status` reading `jobs {}` / `needs attention 0` — a stopped board and a board at rest
+    were the same screen. This pins `litharness status` to the planner's own sentence, so
+    the surface cannot silently regress to that state (§159).
+    """
+    from litharness.cli import EXIT_OK, main
+
+    db = tmp_path / "surface.db"
+    seeding = SqliteStore.open(db)
+    try:
+        _fixture(seeding, "mystery")
+    finally:
+        seeding.close()
+
+    assert main(["--database", str(db), "status"]) == EXIT_OK
+    out = capsys.readouterr().out
+    assert genre.NO_SHEET in out, "the floor's own sentence must reach the status report"
+    assert "blocked" in out
+    assert "needs attention 1" in out, (
+        "a blocked book must count in the number the operator watches; it appears in no "
+        "other count"
+    )
+
+
+def test_a_seeded_book_is_not_reported_blocked(tmp_path, capsys) -> None:
+    """The negative control: a book past the floor puts no blocked line on the report."""
+    from litharness.cli import EXIT_OK, main
+
+    db = tmp_path / "surface.db"
+    seeding = SqliteStore.open(db)
+    try:
+        _fixture(seeding, "litrpg")
+    finally:
+        seeding.close()
+
+    assert main(["--database", str(db), "status"]) == EXIT_OK
+    out = capsys.readouterr().out
+    assert "blocked" not in out
+    assert "needs attention 0" in out

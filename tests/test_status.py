@@ -127,3 +127,40 @@ def test_the_warning_defaults_off_so_an_embedding_is_not_accused(store: SqliteSt
     _book(store, "litrpg")
 
     assert status_module.collect(store, NOW).unchecked_system_voice_books == 0
+
+
+def test_a_blocked_book_is_a_line_of_the_report_and_counts_as_attention() -> None:
+    """Pilot 14 §7's gap, closed at the report: a blocked book enqueues no job, opens no
+    exception and raises no finding, so before this line it was invisible on every other
+    line — `jobs {}` / `needs attention 0` over a board the selector had stopped (§159).
+    """
+    refusal = "no state seeded — this is the planner's own sentence, carried verbatim"
+    report = status_module.Status(
+        now=NOW, blocked=(status_module.BlockedBook("book-1", "main", refusal),)
+    )
+
+    assert report.needs_attention == 1
+    rendered = report.render()
+    assert "blocked" in rendered and "book-1/main" in rendered and refusal in rendered
+    assert report.as_dict()["blocked"] == [
+        {"book_id": "book-1", "branch_id": "main", "reason": refusal}
+    ]
+
+
+def test_an_unblocked_board_carries_no_blocked_line() -> None:
+    """The rules-pack line's argument: a line that is always there is a line nobody reads."""
+    report = status_module.Status(now=NOW)
+    assert "blocked" not in report.render()
+    assert report.needs_attention == 0
+
+
+def test_collect_reports_no_blocked_books_it_was_not_handed(store: SqliteStore) -> None:
+    """The refusal is `plan_progress`'s, and its answer depends on the draft policy and
+    serial shape the tick actually runs under — flags only the CLI holds. So `collect`
+    defaults to none rather than re-deriving a reason that could disagree with the
+    selector's; the mystery book below is floored, and this report may not say so on its
+    own authority.
+    """
+    _book(store, "mystery")
+
+    assert status_module.collect(store, NOW).blocked == ()

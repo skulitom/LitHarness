@@ -12,6 +12,7 @@ from a heartbeat or a cadence.
 
 from __future__ import annotations
 
+from collections.abc import Sequence
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from typing import Any
@@ -21,6 +22,20 @@ from litharness.domain.budget import BudgetPolicy, Spend
 from litharness.domain.directives import DirectiveStatus
 from litharness.domain.extraction import speaks_system_voice
 from litharness.domain.jobs import JobStatus
+
+
+@dataclass(frozen=True, slots=True)
+class BlockedBook:
+    """One book the planner refuses to advance, and the sentence it refuses with.
+
+    The reason is `plan_progress`'s own `blocked_reason`, carried verbatim rather than
+    recomputed: §155.2's report-then-gate shape holds only if the report and the gate say
+    the same words, and a second computation here is a second answer that can drift.
+    """
+
+    book_id: str
+    branch_id: str
+    reason: str
 
 
 @dataclass(frozen=True, slots=True)
@@ -52,6 +67,15 @@ class Status:
     #: accepted canon across twelve ACCEPT decisions and zero findings. A run missing the
     #: genre's best deterministic quality claim now says so on the line an operator reads.
     unchecked_system_voice_books: int = 0
+    #: Books the planner refuses to advance — no head revision, no premise, a template
+    #: mismatch, or the genre floor — each with `plan_progress`'s own reason. Listed rather
+    #: than counted, unlike `blocking_findings`: no other command reads a blocked reason
+    #: (`litharness findings` is where findings are read), so a count with no sentence
+    #: behind it would leave the operator exactly where pilot 14 §7 found them — a floored
+    #: book returning `no_work` under a report reading `jobs {}` / `needs attention 0`,
+    #: indistinguishable from a board at rest. A blocked book enqueues no job, opens no
+    #: exception and raises no finding, so it is invisible to every other line here (§159).
+    blocked: tuple[BlockedBook, ...] = ()
 
     @property
     def needs_attention(self) -> int:
@@ -64,6 +88,11 @@ class Status:
             # a repair clears it, so it belongs in the number an operator watches — not in a
             # separate one they have to remember to look at.
             + self.blocking_findings
+            # The same argument one door along: a blocked book is refused by the selector
+            # every tick until somebody seeds or imports what it is missing, and it appears
+            # in no other count — which is how pilot 14 §7 read `needs attention 0` off a
+            # board that had stopped.
+            + len(self.blocked)
         )
 
     def as_dict(self) -> dict[str, Any]:
@@ -73,6 +102,10 @@ class Status:
             "unread_directives": self.unread_directives,
             "open_exceptions": self.open_exceptions,
             "blocking_findings": self.blocking_findings,
+            "blocked": [
+                {"book_id": item.book_id, "branch_id": item.branch_id, "reason": item.reason}
+                for item in self.blocked
+            ],
             "unchecked_system_voice_books": self.unchecked_system_voice_books,
             "digest": self.digest,
             "spend": {
@@ -100,6 +133,12 @@ class Status:
             f"unread          {self.unread_directives} directive(s)",
             f"exceptions      {self.open_exceptions} open",
             f"findings        {self.blocking_findings} blocking",
+            # One line per blocked book and none when nothing is blocked, the rules-pack
+            # line's argument: a line that is always there is a line nobody reads.
+            *(
+                f"blocked         {item.book_id}/{item.branch_id}: {item.reason}"
+                for item in self.blocked
+            ),
             f"digest today    {self.digest or '{}'}",
             *(
                 [
@@ -124,10 +163,19 @@ def collect(
     *,
     budget: BudgetPolicy | None = None,
     continuity_evaluator: bool = True,
+    blocked: Sequence[BlockedBook] = (),
 ) -> Status:
     """`continuity_evaluator` defaults to True so this reports nothing unless a caller
     states otherwise — an operator surface that accused every embedding of a missing
-    evaluator would be noise, and the CLI is the only caller that knows."""
+    evaluator would be noise, and the CLI is the only caller that knows.
+
+    `blocked` is handed in rather than computed here, under the same rule: the refusal is
+    `plan_progress`'s, and its answer depends on the draft policy and serial shape the tick
+    actually runs under — flags only the CLI holds. A `StatusStore` cannot ask the planner's
+    question (no manuscript or plan access, on purpose), and widening it so this module
+    could re-derive the reason would buy a second computation that can disagree with the
+    selector's. Defaulting empty means an embedding that does not pass it reports no blocked
+    books rather than wrong ones."""
     day = datetime.fromtimestamp(now, tz=UTC).date().isoformat()
     return Status(
         now=now,
@@ -143,6 +191,7 @@ def collect(
         digest=store.digest(day),
         spend=store.spend_on(day),
         budget=budget or BudgetPolicy(),
+        blocked=tuple(blocked),
         # Read off canon rather than declared by a genre flag, for the reason
         # `speaks_system_voice` reads it that way: a flag is a second source of truth for
         # something the records already answer, and the two eventually disagree. A mystery
@@ -159,4 +208,4 @@ def collect(
     )
 
 
-__all__ = ["Status", "collect"]
+__all__ = ["BlockedBook", "Status", "collect"]

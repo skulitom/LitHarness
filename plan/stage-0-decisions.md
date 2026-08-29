@@ -16115,3 +16115,74 @@ by one writing prose. The operator's quotes are fixtures and none became prompt 
 human judgment entered any measurement. RS1 holds: market text stayed in the gitignored `derived/`
 intermediate, the committed artifact carries ids and numbers, and nothing under `src/litharness/`
 gained a corpus reference.
+
+## 159. The refusal the selector honoured was printed nowhere, and `status` now says it in the planner's own words
+
+*(Numbered by allocation: three floor follow-ups landed in parallel worktrees and the
+coordinating session assigned 157 and 158 to the other two before any had committed. If either
+lapses, the gap stands rather than this entry moving.)*
+
+**Measured first.** Pilot 14 §7 (`plan/serial-pilot-14.md`) grepped `blocked_reason` across
+`src/litharness/` and found it in exactly one module: `application/planner.py` declares it on
+`BookProgress`, populates it from the premise check and the genre floor, and the selector honours
+it — no other module reads it and no command printed it. Then the gap arrived live: a book with
+no starting sheet made `tick` return `no_work` with spend unchanged — the floor refusing in
+front of the spend, §155.2 doing its job — while `status` read `jobs {}` / `needs attention 0`
+and a library line of `0 of 6 scene(s) drafted`. A floored book and a board at rest were the
+same screen, and the reason the board was not moving was invisible from every surface an
+operator runs.
+
+**Where the overclaim lived, precisely.** §155.2's own text claims only what was true —
+`plan_progress` reports the refusal and the selector refuses — so no in-place correction is
+needed there. The sentence that promised more sat in the comment beside the selector's floor
+check: *"`plan_progress` reports the same refusal with the same reason, so `status` says why the
+board is not moving instead of showing a book that looks finished."* `status` read no such
+thing; the comment described the design's intent as the shipped state. This entry makes the
+sentence true rather than striking it.
+
+**What shipped.** `application/status.py` gains `BlockedBook` — book, branch, and
+`plan_progress`'s reason **verbatim**, never recomputed — and `Status.blocked`, rendered one
+line per blocked book and no line when nothing is blocked (the rules-pack line's argument: a
+line that is always there is a line nobody reads). The JSON output carries the same rows.
+Blocked books count into `needs_attention` under `blocking_findings`' argument one door along:
+the selector refuses them every tick until somebody seeds or imports what is missing, and a
+blocked book enqueues no job, opens no exception and raises no finding, so before this it was
+invisible to every other line of the report — which is exactly how a stopped board read
+`needs attention 0`.
+
+`collect` is **handed** the rows rather than computing them, `continuity_evaluator`'s
+precedent: the refusal depends on the draft policy and serial shape the tick actually runs
+under, which are flags only the CLI holds, and a `StatusStore` cannot ask the planner's
+question (no manuscript or plan access, on purpose). `cmd_status` computes the rows with
+`plan_progress` under the same `_draft_policy(args)` and `SerialShape(args.chapter_scenes,
+args.arc_chapters)` that `cmd_tick` hands its selector — so the sentence `status` prints is the
+sentence the next tick refuses with, not a second opinion that can drift.
+
+**Pinned so it cannot silently regress**: `test_a_floored_book_says_why_on_the_operator_surface`
+and `test_a_seeded_book_is_not_reported_blocked` run `main([... "status"])` end to end and
+assert the floor's own sentence (`genre.NO_SHEET`) reaches stdout and that a seeded book puts no
+blocked line there; `test_a_blocked_book_is_a_line_of_the_report_and_counts_as_attention`,
+`test_an_unblocked_board_carries_no_blocked_line` and
+`test_collect_reports_no_blocked_books_it_was_not_handed` pin the report's shape, the quiet
+default, and that `collect` asserts nothing on its own authority. This pays pilot 14 §10's
+"operator surface for `blocked_reason`" item.
+
+**What was refused, and why:**
+
+- **A count instead of the sentences.** `blocking_findings` counts because `litharness
+  findings` is where findings are read; no command reads a blocked reason, so a count would
+  leave the operator at the same screen with a bigger number on it.
+- **Computing the reason in `status.py`, or widening `StatusStore` so it could.** A second
+  derivation of the refusal is a second answer to the planner's question, and the two would
+  eventually disagree — §155.2's one-string argument, applied to a predicate instead of a
+  sentence.
+- **A reason line on `tick`'s output.** `no_work` stays as it is: the loop reads tick output on
+  every tick, and a reason printed on every quiet tick is the always-there line nobody reads.
+  `status` is the between-ticks operator surface §19 names, so the reason lives there.
+- **Any change to which books are blocked.** No new refusal condition; the floor, premise and
+  template logic are untouched, and this surface prints whatever `plan_progress` already says.
+
+**Anti-scope.** Reporting only: no model call anywhere on this path, nothing judges prose, and
+no research claim is touched. The JSON key is additive. The reason sentence's seeding advice
+belongs to `domain/genre.py` and travels with it — if the seeding paths it names change, the
+sentence changes at its one home and this surface carries the new words unedited.
