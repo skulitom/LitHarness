@@ -155,6 +155,75 @@ else.
 
 ## 4. The read
 
+Arrived 2026-08-29. Six items and then a verdict that reframes them all — the verdict first,
+because everything routes through it:
+
+> *"ok I think we need to think of our system from first principles. We keep running into
+> the same issues. Something is rotten at the core and we need to fix it. The abilities
+> progression and stat sheets are missing, i'm not feeling like i'm reading litrpg at all.
+> The numbers that do come up, come up in cotext they shouldn't come up and the numbers are
+> completely unrelated to what they would be in a real litrpg books, describing days events
+> etc instead of abilities. This was a problem before as i mentioned in every other book we
+> generated, this really has to stop i can't be saying the same thing over and over"*
+
+**The operator is right that it is a repeat, and the record says how exact.** Read 4
+(2026-08-22): *"missing stats it doesn't feel crunchy (no lists of abilities
+progression...)"* — and read 4's own analysis found the cause then: three standing
+instructions actively suppressing the substance. That finding was recorded and never
+scheduled as a fix; every round since has been register-side. The whole arc routes to
+[`first-principles-litrpg-core.md`](first-principles-litrpg-core.md), which this read
+commissions.
+
+### 4.1 The items
+
+> *"Is the writer unable to come up with more creative ideas? this sounds exactly the same
+> as the previous book..."*
+
+larkin's premise lock at book level, third sighting of the class. Dossier-level; the §146
+arm's standing question.
+
+> *"'Unlicensed Weather' - again with the licenses i thought we discussed this... /
+> 'stamped, taxed and logged in a ledger' - same problem with bringing up taxes and
+> ledgers..."*
+
+The institutional register in the TITLE and in §116's own page vocabulary. §156 measured
+the lean arriving in the listing draw from the model's prior — subtraction cannot reach it;
+only a positive occupant of that space can. Routes to the core doc.
+
+> *"Notice how we were supposed to have light fantasy, instead we got gloomy weather and
+> grey tones on the cover..."*
+
+The capability question's second half: the palette moved (brightest cover set on the
+shelf) and it still reads grey. Brighter is not light. Routes to the core doc.
+
+> *"'He had a neat thumb' - oddly specific, never heard anyone describe thumbs as neat"*
+
+Odd-descriptor instance; recorded (the census puts our friction RATE at the genre's;
+individual oddities still land).
+
+> *"'Eight days at that flaw and there'll be an hour of rain on your table' - this doesn't
+> make sense... Useless numbers unrelated to anything keep coming up..."*
+
+**The core item.** Chapter 1's numbers, exhaustively: eight days, ten days, nine days,
+twelve days, an hour of rain, thirty jars, the fifteenth in the almanac, nineteen years
+old, eleven years. Every number is calendar, inventory or age; zero are system quantities.
+Read 4 counted the identical shape (165 spelled numbers, zero system numbers). Precision
+leaks to mundane surfaces because the genre's legitimate home for numbers does not exist on
+the drafting path.
+
+### 4.2 What the coordinator's own read of chapter 1 adds (solicited by the operator; not evidence)
+
+The operator asked the coordinating session to read the chapter directly. One observation
+from that read sharpens the diagnosis beyond the harvest items: **§157's progression beats
+fired, on schedule, twice — and were absorbed by the wrong system.** Ilse advances at both
+scheduled beat positions (the countersign making her *first glass*; the slate making her
+*second glass*). The machinery worked; what it produced is promotion inside a guild
+bureaucracy, because the world's only ladders are institutional titles and the pipeline has
+no game system — no named abilities, no quantified growth, no sheet the character sees —
+for a progression beat to land in. The beat asked for progression and the writer reached
+for the only progression vocabulary the world declared. This is the mechanism of the
+operator's "numbers in the wrong context": not a prose defect but a missing object.
+
 ## 5. Anti-scope
 
 No bar is declared here and nothing in this file admits an axis or promotes a research claim
