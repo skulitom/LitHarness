@@ -15478,3 +15478,72 @@ nothing to run on.
 world already forged reads exactly as it did — the projection, the packet and the byte-identity
 rail are untouched. Nothing here ranks, selects or judges; no model was called; RS1 is
 untouched. `--force` still exists and still means what it meant.
+
+## 153. Supersession settled acceptance and nothing else, so the blocker reopened on the second accept and the operator's view of a sound world was empty
+
+**Found by another session reporting a symptom, and the symptom's stated cause was wrong.**
+The report was that `world ladders` prints `[]` on `serial13b.db` — Serial Pilot 13's accepted
+world, 234 of 258 records canon, three chains that provably resolve — with the proposed fix
+being that the read views should resolve records "the way `world accept` does: canon plus live
+proposals with superseded strays excluded". Run on the database, that recipe reproduces the
+bug: `integrity.superseded` over the surviving proposals returns **zero** strays, because each
+one's supersessor is now canon and therefore not in the group being examined. The report named
+the right defect and the wrong mechanism, and taking it on report would have shipped a fix that
+changes nothing.
+
+**What the same omission does on the write side is worse, and it was not in the report.**
+`cmd_world`'s accept branch passed `superseded` the proposals alone. On a first accept that is
+complete — canon holds none of those slots yet. On the **second**, the records the first round
+declined to carry are still proposals sitting in slots canon now holds, nothing supersedes them
+among the proposals, and they promote. Measured on a copy of `serial13b.db`: a second
+`world accept --force` promoted 24 of 24, and `detect_contradictions` over the resulting canon
+returned **24 MAJOR blocking findings** where it had returned none. That is §139's blocker —
+the one that let Serial Pilot 7 draft not one word — reopening one round later, on a world that
+had accepted cleanly.
+
+**And the two defects hold each other up, which is why they are one entry and one change.** The
+22 spurious `world check` complaints on that world are all standings on rungs no chain declared,
+and they are spurious for the read-side reason: the strays splice every ladder, so no rung is
+declared, so every standing complains. Those complaints are also the only thing stopping a
+second accept without `--force`. Fixing the reporting half alone would have removed the
+complaints, cleared the path, and let the poisoning happen quietly.
+
+**What shipped.** One rule, in `integrity.superseded`, and one positive form of it.
+
+- **Canon holds its slot against every proposal in it, whatever the clock says.** The previous
+  ordering was declaration time alone, which is correct among proposals and has nothing to say
+  about a proposal whose slot is already answered.
+- **Canon is never itself reported replaced, not even by later canon.** Two accepted records in
+  one slot is a real contradiction and `detect_contradictions` exists to say so; dropping the
+  older here would hide a canon defect from every caller that filters on this.
+- `integrity.in_force` is the complement — canon plus the proposals nothing has answered — and
+  every `world` view now reads it. `world show` deliberately does not: it is the provenance
+  view, and an Architect that cannot see what it proposed proposes it again. `world summary`
+  counts both sets and reports `replaced` rather than netting it away.
+
+**Measured after, on a copy of the same database.** `world ladders` returns all three chains
+with their rungs and standings; `world check` goes from 23 complaints to **1**, which is the
+one real defect in that world and is §152's — a rule id sitting in a consequence's domain slot,
+now named by `will_not_resolve`; `world check` and `world accept` agree; and a second
+`world accept --force` promotes 0 of 24 and leaves canon at 234 records with zero
+contradictions.
+
+**What was refused.**
+
+- **Filtering the read views to canon.** `worlds.capabilities` documents why not, and it is the
+  Architect's working state: filtering would report zero capabilities while it is building
+  them. What is dropped is only the answered, never the merely unaccepted.
+- **Letting a newer proposal displace canon in a view.** Canon is what the drafting packet is
+  built from — `protagonist_brief` and `standing_of` filter to it — so a view that showed a
+  proposal over an accepted fact would disagree with the book.
+- **Repairing `serial13b.db`.** The 24 strays are inert under the fix and the one real complaint
+  is a world fact this session has no licence to author.
+- A retraction path, again (§152).
+
+**No bar is declared.** The counts above are of one database's records before and after a
+deterministic change, not a threshold anything is measured against.
+
+**Anti-scope.** `promote_state_records` is still only ever upward, nothing was demoted, and no
+canon record's authority changed. `disagreement_key` is unchanged, so the detector and
+supersession still share one idea of a slot — the property `tests/test_world_supersession.py`
+was written to hold. No model was called, nothing ranks or judges, and RS1 is untouched.

@@ -384,19 +384,36 @@ def check(records: Sequence[lc.StateRecord]) -> dict[str, Any]:
     }
 
 
-def summary(records: Sequence[lc.StateRecord]) -> dict[str, Any]:
-    """One call an agent can open with: how big this world is and where the holes are."""
+def summary(
+    records: Sequence[lc.StateRecord],
+    in_force: Sequence[lc.StateRecord] | None = None,
+) -> dict[str, Any]:
+    """One call an agent can open with: how big this world is and where the holes are.
+
+    **Two sets, counted separately, because the difference is a thing to know.** `records`,
+    `canon` and `proposed` describe the store — everything ever declared on this branch. The
+    contents below them describe `in_force`: what the world actually says, which is canon plus
+    the proposals nothing has replaced (`integrity.in_force`). `replaced` is the gap, and it is
+    reported rather than netted away — a world carrying two dozen dead declarations is
+    something the Architect should be able to see, and it was invisible while the two sets were
+    the same list.
+
+    `in_force` defaults to `records`, so a caller with no store behind it — every test that
+    builds records by hand — gets exactly what it got before.
+    """
+    speaking = tuple(in_force) if in_force is not None else tuple(records)
     canon = _canon_only(records)
     return {
         "records": len(records),
         "canon": len(canon),
         "proposed": len(records) - len(canon),
-        "rules": len(worlds.rules(records)),
-        "criteria": len(worlds.criteria(records)),
-        "capabilities": len(worlds.capabilities(records)),
-        "cast": len(worlds.entities_with_role(records, "cast")),
-        "open_questions": len(worlds.questions(records)),
-        "check": check(records),
+        "replaced": len(records) - len(speaking),
+        "rules": len(worlds.rules(speaking)),
+        "criteria": len(worlds.criteria(speaking)),
+        "capabilities": len(worlds.capabilities(speaking)),
+        "cast": len(worlds.entities_with_role(speaking, "cast")),
+        "open_questions": len(worlds.questions(speaking)),
+        "check": check(speaking),
     }
 
 

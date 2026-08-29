@@ -277,6 +277,25 @@ def superseded(
     **Multi-valued predicates are skipped**, on `MULTI_VALUED`'s licence and for its reason: a
     subject carrying both `cast` and `protagonist` is two facts, and treating the second as
     replacing the first would silently delete the protagonist a world just declared.
+
+    **Canon holds its slot against every proposal in it, and is never itself reported
+    replaced.** Two rules, and each closes a hole the other cannot.
+
+    - *A proposal loses to canon whatever the clock says.* Until 2026-08-29 this ordered a
+      group by declaration time alone, and every caller passed only the proposals, so the
+      question never arose. It arises on the **second** `world accept`: the proposals a first
+      round left behind sit in slots canon now holds, nothing supersedes them among the
+      proposals, they promote, and canon ends with two values in one slot — MAJOR, blocking,
+      every scene of the book refused. That is §139's blocker reopening one round later, and
+      it reproduces on Serial Pilot 13's accepted world, where a second accept turns 24
+      leftovers into 24 blocking findings.
+    - *Canon is never replaced, not even by later canon.* Two accepted records in one slot is
+      a real contradiction and `detect_contradictions` exists to say so. Letting the older one
+      drop out here would hide a canon defect from every caller that filters on this — which is
+      the failure of a tidy-up wearing a repair's clothes.
+
+    So the rail above holds in both directions: nothing is demoted, and nothing accepted is
+    quietly dropped from what anybody reads.
     """
     groups: dict[tuple[str, str, str, str], list[lc.StateRecord]] = {}
     for record in records:
@@ -288,12 +307,43 @@ def superseded(
     for members in groups.values():
         if len({_value_key(record.value) for record in members}) < 2:
             continue
+        canon = [record for record in members if state_mod.is_canon(record)]
+        proposals = [record for record in members if not state_mod.is_canon(record)]
+        if canon:
+            replaced.extend(record.record_id for record in proposals)
+            continue
         ordered = sorted(
-            members,
+            proposals,
             key=lambda record: (declared_at.get(record.record_id, ""), record.record_id),
         )
         replaced.extend(record.record_id for record in ordered[:-1])
     return tuple(sorted(replaced))
+
+
+def in_force(
+    records: Sequence[lc.StateRecord], *, declared_at: Mapping[str, str]
+) -> tuple[lc.StateRecord, ...]:
+    """The records that speak for this world: everything `superseded` did not replace.
+
+    **The positive form of the same rule, because the read views needed one.** `world accept`
+    asks which records to leave behind; every view that reports what a world *contains* is
+    asking the complementary question and, until 2026-08-29, none of them asked it at all —
+    they read the raw record list, strays included.
+
+    What that cost is `world ladders` printing `[]` for a world whose three chains resolve.
+    Serial Pilot 13's accepted world holds, for each rung edge, the criterion-less proposal the
+    Architect wrote first and the corrected canon edge that replaced it. `worlds.rank_order`
+    reads an edge with no criterion as belonging to **every** ladder, so the strays spliced all
+    three chains, `ladder_of` returned empty for each, and the operator's view of a sound world
+    was empty. `world check` disagreed with `world accept` about the same world for the same
+    reason — one saying it contradicts itself, the other having accepted it without `--force`,
+    which is two answers to one question.
+
+    Order is preserved, so a caller that hands this to `state.in_story_order` gets what it got
+    before. A world with nothing replaced comes back as the sequence it was given.
+    """
+    replaced = set(superseded(records, declared_at=declared_at))
+    return tuple(record for record in records if record.record_id not in replaced)
 
 
 def detect_contradictions(subject: DetectorInput) -> list[Finding]:
@@ -756,6 +806,7 @@ __all__ = [
     "disagreement_key",
     "gate_integrity",
     "gate_standing",
+    "in_force",
     "run_detectors",
     "summarise",
     "superseded",
