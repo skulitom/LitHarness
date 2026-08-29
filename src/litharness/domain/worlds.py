@@ -199,6 +199,9 @@ COMPARATORS: tuple[str, ...] = (
 #: `(third_seal, precedes, → second_seal)` with the criterion in the value slot. The criterion
 #: is on the edge because a world may run several ladders at once — magic and body cultivation
 #: side by side — and an unscoped chain would splice them into one order nobody declared.
+#:
+#: **An edge scoped by story position instead is the splice, and it has happened three times**;
+#: `slot_warnings` is where a declaration is told so.
 PRECEDES_PREDICATE = "precedes"
 
 #: Which criterion judges which kind of subject.
@@ -1062,6 +1065,68 @@ def validate(records: Sequence[lc.StateRecord]) -> tuple[str, ...]:
     return tuple(complaints)
 
 
+def slot_warnings(record: lc.StateRecord) -> tuple[str, ...]:
+    """One declaration's slots read back at it, for the mistakes no later declaration undoes.
+
+    **Separate from `validate` because these do not resolve, and `not_yet_coherent` promises
+    they will.** Every complaint `validate` makes about a half-built world is true only until
+    the rest of the world lands — a question with no answer yet, a rung with no chain yet — and
+    `world declare` reports them under a heading that says so. A record in the wrong slot reads
+    exactly the same in that list and is the opposite thing: `integrity.disagreement_key` makes
+    a slot `(subject, predicate, object, order key)`, so a correction that changes any of those
+    three fills a *different* slot, `world accept` carries both, and the mistake is in canon
+    for good. There is no `world retract`.
+
+    Two warnings, both earned:
+
+    - **A `consequence` whose `--object` is not a domain.** `world vocabulary` documented that
+      slot as carrying the rule until 2026-08-29 while `consequence_domains` has always read it
+      as the domain of life the consequence lands in. An Architect that believed the
+      documentation put the rule id in the edge; `consequence_domains` skipped every one of
+      them, `world rules` reported the rules with no domains, and the records could not be
+      withdrawn. Six of them, permanently, in Serial Pilot 13's first seed.
+    - **A `precedes` edge scoped by `--order-key` and carrying no `--value`.** `rank_order`
+      reads a chain's criterion out of the value slot and ignores story position entirely, so
+      such an edge joins *every* ladder at once. Three chains become one splice, `ladder_of`
+      returns nothing for all of them, and every standing on those rungs stops counting —
+      which is eleven `world check` complaints that name the standings and never the edges.
+      Three sightings: Serial Pilot 7 §3.1.3, Serial Pilot 12 seed 1, Serial Pilot 13 seed 1.
+
+    **Report-shaped, never a refusal, and that is not timidity.** An Architect building a world
+    one record at a time is transiently incoherent almost continuously by design, and
+    `world accept` is the gate that exists to hold that (§139.3). A `precedes` with no criterion
+    is also perfectly legal in the common world with one ladder — `rank_order` says so — so a
+    validator clause here would refuse worlds that are right. What was missing was never
+    permission to refuse; it was that the tool said nothing about which slot it had just read.
+    """
+    warnings: list[str] = []
+
+    if record.predicate == CONSEQUENCE_PREDICATE:
+        domain = (record.object_ref or "").strip()
+        if domain not in CONSEQUENCE_DOMAINS:
+            warnings.append(
+                f"consequence: --object carries {domain or 'nothing'}, and that slot is the "
+                f"domain of life this lands in. The rule is the subject ({record.subject}), "
+                "and the consequence itself goes in --value. Nothing reads this record as "
+                "written, and a corrected one fills a different slot rather than replacing "
+                "it, so both survive `world accept`."
+            )
+
+    if record.predicate == PRECEDES_PREDICATE:
+        scoped = str(record.value or "").strip()
+        if not scoped and state_mod.order_key_of(record) is not None:
+            warnings.append(
+                f"precedes: --order-key is story time and a ladder is not in story time, so "
+                f"this edge is on no particular ladder — the criterion goes in --value. "
+                f"{record.subject} below {record.object_ref} therefore joins every chain this "
+                "world declares, and a world with more than one gets no chain at all. A "
+                "correction that drops the --order-key fills a different slot rather than "
+                "replacing this, so both edges survive `world accept`."
+            )
+
+    return tuple(warnings)
+
+
 def _cardinality_parts(records: Sequence[lc.StateRecord]) -> dict[str, set[str]]:
     declared = {
         record.subject
@@ -1630,6 +1695,7 @@ __all__ = [
     "reveal_scenes",
     "rules",
     "rung_index",
+    "slot_warnings",
     "standing_of",
     "undisclosed_claims",
     "validate",

@@ -56,7 +56,27 @@ def vocabulary() -> dict[str, Any]:
     shell in front of it.
 
     Values come from `domain/worlds.py`'s own constants, so this cannot drift from what
-    `validate` will accept.
+    `validate` will accept. **The prose beside them can and did**, which is the defect below.
+
+    **Four of these lines named the wrong slot, and one of them cost a pilot six dead
+    records.** Checked line by line against the function that reads each predicate on
+    2026-08-29, after `consequence` was found documenting `--object` as the rule while
+    `worlds.consequence_domains` has always read it as the domain. The other three were the
+    same error unreported: `evaluates` and `edge` were written backwards, and `precedes`,
+    `stands_at`, `disclosed_to` and `claim.false` each named the slot they take an edge in and
+    stayed silent about the value slot their reader actually keys on — while `comparator`, the
+    predicate without which `criteria` finds no criterion at all, was not listed. The shapes
+    here are now each one a statement about a named reader in `domain/worlds.py`.
+
+    **What stops it drifting again is a pair of tests and neither alone would do.**
+    `test_every_documented_slot_is_the_slot_its_reader_reads` builds a record to each shape and
+    hands it to the function that reads that predicate, which pins the shape but is still the
+    author's reading of the prose written down twice;
+    `test_the_documented_line_names_the_slots_its_own_record_fills` compares the line to that
+    verified record, so a line naming a slot its record does not fill fails. The pair does not
+    catch a line that names the right two slots and swaps which id goes where — the way
+    `evaluates` was wrong — and saying so is the point: a check believed to cover more than it
+    does is worse than one known to be narrow.
     """
     return {
         "entity_roles": list(worlds.ENTITY_ROLES),
@@ -68,22 +88,44 @@ def vocabulary() -> dict[str, Any]:
             "entity_role": "what kind of thing this is; --value one of entity_roles",
             "type": "reifies a node; --value one of node_types, and only those",
             "world_rule": "a rule this world runs on; --value the rule in plain words",
-            "consequence": "a second-order effect of a rule; --object the rule",
+            "consequence": (
+                "a second-order effect of a rule; the rule is the subject, --object one of "
+                "consequence_domains, --value the consequence in plain words"
+            ),
             "manifests_as": "how it shows on the page; --value one line",
             "can_do": "a person holds a capability; --object the capability's id",
             "requires": "a prerequisite; --object what must come first",
             "costs": "what it takes; --value or --object",
             "taught_by": "who teaches it; --object the teacher",
-            "stands_at": "where somebody stands; --object the rung",
-            "precedes": "rung ordering, lowest first; --object the rung above",
-            "evaluates": "a criterion measures a subject; --object the criterion",
+            "comparator": (
+                "how a criterion judges; the criterion is the subject, --value one of "
+                "comparators, and a criterion without one is not a criterion"
+            ),
+            "evaluates": (
+                "what a criterion judges; the criterion is the subject, --object the kind of "
+                "thing it judges"
+            ),
+            "precedes": (
+                "rung ordering, lowest first; --object the rung above, --value the criterion "
+                "whose ladder this is. Never --order-key: a ladder is not in story time"
+            ),
+            "stands_at": (
+                "where somebody stands; --object the rung, --value the criterion whose ladder "
+                "it is, and --order-key when the book has already moved them"
+            ),
             "asks": "an open question; --value the question in plain words",
             "reveal_scene": "which scene answers it; --value the scene number",
             "claim.content": "something believed; --value the claim",
-            "claim.false": "marks a claim untrue",
-            "believes": "who holds a claim; --object the claim",
-            "disclosed_to": "who has been told; --object the claim",
-            "edge": "an ordinary relationship; --object the other subject",
+            "claim.false": "marks a claim untrue; --value true, and only a literal true",
+            "believes": "who holds a claim; the believer is the subject, --object the claim",
+            "disclosed_to": (
+                "who has been told; --object the claim, --value reader when the one told is "
+                "the reader, and --order-key where in the book they are told"
+            ),
+            "edge": (
+                "what the one exceptional person can do that nobody else can; --value in "
+                "plain words"
+            ),
             "price": "what a thing charges; --value in plain words",
             "exception_to": "the rule that does not hold here; --object the rule",
         },
@@ -99,8 +141,17 @@ def vocabulary() -> dict[str, Any]:
             "reader learns it. Declaring `asks` alone is reported until its answer lands.",
             "A capability is `entity_role capability`, then `manifests_as`, then somebody "
             "`can_do` it by --object.",
-            "A ladder is a criterion, its rungs joined lowest-first by `precedes`, and "
-            "somebody at `stands_at` one of them.",
+            "A ladder is `type criterion` and a `comparator ordinal`, its rungs joined "
+            "lowest-first by `precedes` with the criterion in --value, and somebody at "
+            "`stands_at` one of them. Every `precedes` on one ladder must carry the same "
+            "--value, or the rungs belong to no ladder and the standings count nothing.",
+            "--order-key is where in the *story* a record becomes true, and nothing else. It "
+            "is not how a record is scoped, filed or grouped; a ladder, a criterion and a "
+            "capability are all outside story time and take none.",
+            "A record in the wrong slot cannot be taken back — there is no retraction, and a "
+            "corrected declaration that changes the subject, the --object or the --order-key "
+            "fills a different slot, so both survive. `declare` reports these separately from "
+            "what is merely not coherent yet; read that list before writing the next record.",
         ],
     }
 
@@ -309,31 +360,60 @@ def check(records: Sequence[lc.StateRecord]) -> dict[str, Any]:
     `worlds.validate` is the whole of it, plus the manifestation count, and its own docstring
     states the boundary this inherits: every check is arithmetic or membership over the records
     and none is a judgment about whether the world is any good.
+
+    **`will_not_resolve` is carried here as well as at `declare`, and it does not move `ok`.**
+    Serial Pilot 12's first seed read fifteen complaints out of this view, every one of them a
+    standing on a rung no chain declared, and wrote a diagnosis saying the records were stored
+    correctly and the CLI was at fault — an argument for `--force`. The cause was nine
+    `precedes` edges it had scoped by `--order-key`, which this view had no way to mention
+    because the edges themselves are legal. What is added is the naming and not a verdict:
+    `worlds.slot_warnings` is about which slot a record went in, `ok` stays what
+    `validate` says, and nothing here refuses anything.
     """
     coverage = worlds.manifestation_coverage(records)
     complaints = list(worlds.validate(records))
     return {
         "complaints": complaints,
         "ok": not complaints,
+        "will_not_resolve": [
+            warning for record in records for warning in worlds.slot_warnings(record)
+        ],
         "manifested": len(coverage.covered),
         "needing_manifestation": len(coverage.features),
         "unmanifested": list(coverage.missing),
     }
 
 
-def summary(records: Sequence[lc.StateRecord]) -> dict[str, Any]:
-    """One call an agent can open with: how big this world is and where the holes are."""
+def summary(
+    records: Sequence[lc.StateRecord],
+    in_force: Sequence[lc.StateRecord] | None = None,
+) -> dict[str, Any]:
+    """One call an agent can open with: how big this world is and where the holes are.
+
+    **Two sets, counted separately, because the difference is a thing to know.** `records`,
+    `canon` and `proposed` describe the store — everything ever declared on this branch. The
+    contents below them describe `in_force`: what the world actually says, which is canon plus
+    the proposals nothing has replaced (`integrity.in_force`). `replaced` is the gap, and it is
+    reported rather than netted away — a world carrying two dozen dead declarations is
+    something the Architect should be able to see, and it was invisible while the two sets were
+    the same list.
+
+    `in_force` defaults to `records`, so a caller with no store behind it — every test that
+    builds records by hand — gets exactly what it got before.
+    """
+    speaking = tuple(in_force) if in_force is not None else tuple(records)
     canon = _canon_only(records)
     return {
         "records": len(records),
         "canon": len(canon),
         "proposed": len(records) - len(canon),
-        "rules": len(worlds.rules(records)),
-        "criteria": len(worlds.criteria(records)),
-        "capabilities": len(worlds.capabilities(records)),
-        "cast": len(worlds.entities_with_role(records, "cast")),
-        "open_questions": len(worlds.questions(records)),
-        "check": check(records),
+        "replaced": len(records) - len(speaking),
+        "rules": len(worlds.rules(speaking)),
+        "criteria": len(worlds.criteria(speaking)),
+        "capabilities": len(worlds.capabilities(speaking)),
+        "cast": len(worlds.entities_with_role(speaking, "cast")),
+        "open_questions": len(worlds.questions(speaking)),
+        "check": check(speaking),
     }
 
 

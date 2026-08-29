@@ -24,6 +24,7 @@ _SOURCE_TESTS: Final = {
         "tests/test_cli.py",
         "tests/test_import.py",
         "tests/test_listing_loop.py",
+        "tests/test_world_slots.py",
     ),
     "src/litharness/adapters/contracts_fixtures.py": (
         "tests/test_import.py",
@@ -43,6 +44,10 @@ _SOURCE_TESTS: Final = {
     ),
     "src/litharness/adapters/sqlite_store.py": ("tests/test_store.py",),
     "src/litharness/application/ports.py": ("tests/test_architecture.py",),
+    # `_matching_test` would look for `tests/test_world.py`, which does not exist, and send
+    # every touch of the Architect's view layer to a full run. The slot suite is the one that
+    # grades it: it reads `vocabulary` line by line against the readers in `domain/worlds.py`.
+    "src/litharness/application/world.py": ("tests/test_world_slots.py",),
     "tools/check.py": ("tests/test_check_tool.py",),
 }
 

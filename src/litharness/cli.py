@@ -3846,6 +3846,14 @@ def cmd_world(args: argparse.Namespace) -> int:
     try:
         book_id, branch_id = export_module.resolve_branch(store, args.book, args.branch)
         records = store.state_records(book_id, branch_id)
+        # **What this world says, as against what has ever been written into it.** Every view
+        # below except `show` reads the resolved set: a proposal a later declaration or an
+        # accepted record already replaced is not part of the world and reporting it is how
+        # `world ladders` came to print `[]` for a world whose three chains resolve. `show` is
+        # the exception on purpose — it is the provenance view, and an Architect that cannot
+        # see what it proposed last chapter proposes it again.
+        declared_at = store.state_record_times(book_id, branch_id)
+        in_force = integrity.in_force(records, declared_at=declared_at)
 
         if args.view == "accept":
             proposals = [
@@ -3863,13 +3871,16 @@ def cmd_world(args: argparse.Namespace) -> int:
             # demoted — `promote_state_records` is only ever upward — the replaced records
             # simply stay the proposals they already were, and `world summary` still counts
             # them. See `integrity.superseded`.
-            replaced = integrity.superseded(
-                proposals, declared_at=store.state_record_times(book_id, branch_id)
-            )
+            #
+            # **Every record, not just the proposals, and that is the second round's fix.** A
+            # proposal left behind by a first accept sits in a slot canon now holds; among the
+            # proposals alone nothing supersedes it, so it used to promote and put two values
+            # in one canon slot — MAJOR, blocking, every scene refused. Passing canon in is
+            # what lets it be recognised as already answered. Canon is never replaced by this,
+            # so `carried` is still only ever a subset of the proposals.
+            replaced = integrity.superseded(records, declared_at=declared_at)
             carried = [record for record in proposals if record.record_id not in set(replaced)]
-            complaints = worlds_domain.validate(
-                [record for record in records if record.record_id not in set(replaced)]
-            )
+            complaints = worlds_domain.validate(in_force)
             if complaints and not args.force:
                 for complaint in complaints:
                     print(f"litharness: {complaint}", file=sys.stderr)
@@ -3933,7 +3944,7 @@ def cmd_world(args: argparse.Namespace) -> int:
                     f"  {len(replaced)} left proposed: a later declaration filled the same "
                     "slot, and accepting both is a blocking contradiction on every scene"
                 )
-                by_id = {record.record_id: record for record in proposals}
+                by_id = {record.record_id: record for record in records}
                 for record_id in replaced:
                     record = by_id[record_id]
                     print(f"    {record.subject} {record.predicate}")
@@ -3950,7 +3961,7 @@ def cmd_world(args: argparse.Namespace) -> int:
                 if head is not None
                 else {}
             )
-            print(json.dumps(world_mod.presence(records, scenes), ensure_ascii=False, indent=2))
+            print(json.dumps(world_mod.presence(in_force, scenes), ensure_ascii=False, indent=2))
             return EXIT_OK
         if args.view == "declare":
             record = worlds_domain.world_record(
@@ -3972,6 +3983,18 @@ def cmd_world(args: argparse.Namespace) -> int:
             complaints = worlds_domain.validate([*records, record])
             fresh = worlds_domain.validate(records)
             new_complaints = [c for c in complaints if c not in fresh]
+            # **The second list is the one that matters, and it is second because the first
+            # one lies about it.** `not_yet_coherent` is a promise that the rest of the world
+            # will settle this, and for a question awaiting its answer or a rung awaiting its
+            # chain that promise is kept. A record written into the wrong slot reads
+            # identically in that list and nothing will ever settle it: there is no
+            # retraction, and `integrity.disagreement_key` makes a correction that changes the
+            # subject, the edge or the story position a *different* slot, so `world accept`
+            # carries both. Serial Pilot 13's first seed read a membership complaint about six
+            # `consequence` edges, took it for transient, and left six dead records in canon;
+            # Serial Pilot 12's read eleven complaints naming standings and diagnosed the CLI.
+            # Both were told something true under a heading that made it sound temporary.
+            warnings = worlds_domain.slot_warnings(record)
             written = store.record_state_records(book_id, branch_id, [record], created_at=stamp)
             payload: Any = {
                 "record_id": record.record_id,
@@ -3979,6 +4002,7 @@ def cmd_world(args: argparse.Namespace) -> int:
                 "new": bool(written),
                 "says": state_mod.describe(record),
                 "not_yet_coherent": new_complaints,
+                "will_not_resolve": list(warnings),
             }
             if args.json:
                 print(json.dumps(payload, ensure_ascii=False, indent=2))
@@ -3987,6 +4011,8 @@ def cmd_world(args: argparse.Namespace) -> int:
                 print(f"{verb}: {payload['says']}  [{record.authority.value}]")
                 for complaint in new_complaints:
                     print(f"  ! not yet coherent: {complaint}", file=sys.stderr)
+                for warning in warnings:
+                    print(f"  !! will not resolve: {warning}", file=sys.stderr)
             return EXIT_OK
     finally:
         store.close()
@@ -3994,21 +4020,21 @@ def cmd_world(args: argparse.Namespace) -> int:
     if args.view == "show":
         payload = world_mod.declarations(records, subject=args.subject)
     elif args.view == "rules":
-        payload = world_mod.rules(records)
+        payload = world_mod.rules(in_force)
     elif args.view == "ladders":
-        payload = world_mod.ladders(records)
+        payload = world_mod.ladders(in_force)
     elif args.view == "abilities":
-        payload = world_mod.abilities(records, holder=args.holder)
+        payload = world_mod.abilities(in_force, holder=args.holder)
     elif args.view == "cast":
-        payload = world_mod.cast(records)
+        payload = world_mod.cast(in_force)
     elif args.view == "threads":
-        payload = world_mod.threads(records, at=args.at)
+        payload = world_mod.threads(in_force, at=args.at)
     elif args.view == "vocabulary":
         payload = world_mod.vocabulary()
     elif args.view == "check":
-        payload = world_mod.check(records)
+        payload = world_mod.check(in_force)
     else:
-        payload = world_mod.summary(records)
+        payload = world_mod.summary(records, in_force)
 
     print(json.dumps(payload, ensure_ascii=False, indent=2))
     if args.view == "check" and not payload["ok"]:
