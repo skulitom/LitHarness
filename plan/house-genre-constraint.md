@@ -54,6 +54,27 @@ compiled cast (ferreira, halloran, vance, okonjo) all carry it; of the nine acce
 recruits, none provably does — so **production casting is cast-only until the floor
 exists**, and pilot 13 stands as the recorded reason.
 
+## The timing half, same night
+
+The operator, minutes after the seventh read:
+
+> *"When i read litrpg, i want to feel progress and potential and i want to see it as soon
+> as possible. I don't want to read to the end of chapter 1 to see interesting progress"*
+
+So the floor has two halves: the system furniture EXISTS in every book, and progress on it
+is FELT early — on-page progression inside the opening, not an offer described and paid off
+later. This sharpens two standing pieces at once: `house.READER`'s awe clause says the
+opening *shows the offer*; the operator is saying the offer must already be *moving*. And it
+converges with read 7 §4.1's hook-placement gap: the opening's job is the protagonist's
+exception + the system + the first felt progress, together, early.
+
+**The hazard, named before anyone drafts a clause:** "show progress immediately" as prompt
+text is a §138 formula waiting to happen. The altitude that avoids it is **structural** —
+the planner's beat sheet, where scene 1's plan can carry a progression beat as a plan item
+rather than as prose instruction. A plan that schedules the first rung-move into the opening
+scene needs no adjective; §110 already proved the promise ledger moves payoffs by showing
+the settling call, and this is the same move one beat earlier.
+
 ## Anti-scope
 
 Pilot 13 finishes and ships to the shelf as evidence — it answered the capability question
