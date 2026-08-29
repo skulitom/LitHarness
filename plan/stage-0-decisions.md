@@ -16116,6 +16116,72 @@ human judgment entered any measurement. RS1 holds: market text stayed in the git
 intermediate, the committed artifact carries ids and numbers, and nothing under `src/litharness/`
 gained a corpus reference.
 
+## 157. The cadence schedule was keyed to the outline's own condition, so the standard pilot length was the one length it could not reach
+
+**Measured first, by pilot 14 live and then by the sweep this shipped.** §155.3 registered the
+progression-beat schedule as *"scene 1 always, whatever the cadence and however short the book"*
+— and its only fold into anything a writer reads lived in `outline_proposal`, inside `SCENE_PLAN`
+items only the outline handler writes. The outline is enqueued only when `needs_outline` holds,
+which requires duplicate dramatic functions; a six-scene book's six functions are all distinct,
+so at `--scenes 6` no outline is ever enqueued, no `SCENE_PLAN` is ever written, and no beat ever
+fires — while 7, 8, 12 and 24 all work, because only `rising` repeats and six is the one length
+with exactly one of it. Six is what every serial pilot recipe passes, so the fix round's beats
+shipped structurally dead on the default path. `plan/serial-pilot-14.md` §3 found it live, on the
+operator's instruction left it unfixed mid-run, redrew the book at eight scenes ($3.61 for the
+second seed), and filed the decision this entry records: fix by reading intent, not by patching
+the recipe.
+
+**The intent was read on both sides before either fix was picked.** The outline gate's own
+comment says the six-scene condition *"is the defect, not the book"* — an outline exists to
+disambiguate scenes an all-`rising` sheet cannot tell apart, six distinct functions leave nothing
+to disambiguate, and `test_a_six_scene_book_is_never_outlined` pins that no model call is spent
+there. So giving six-scene books outlines was refused: it would spend a whole-book generation to
+work around a scheduling accident, and it would overturn a correct design to compensate for an
+incidental call site. What was wrong was only that §155.3's schedule — a pure function of scene
+position, costing nothing — had been hung off a gate that answers a different question.
+
+**What shipped.** The selector's drafting lane now derives the bare beat at render time for a
+scene that has no stored statement: `genre.with_beat("", ordinal, of_total)` is the beat sentence
+on a scheduled ordinal and the empty string — which renders nothing — everywhere else, composed
+through the same function the outline path folds with, so the two paths cannot drift. A stored
+statement is still passed verbatim, because `outline_proposal` already folded its beat in. The
+derived-not-stored shape is `beats.py`'s own idiom — a schedule that is a pure function of the
+count needs no storage, and storing it was always incidental to the outline needing storage for
+the model's statements. Regression: the whole six-scene schedule is walked at the selector
+(`test_the_beat_fires_at_six_scenes_where_no_outline_ever_runs` — beats exactly on
+`beat_ordinals(6)`, rendered last, unscheduled scenes byte-bare), and
+`test_the_schedule_is_reachable_at_every_length_the_pipeline_takes` sweeps 4..24 so no *other*
+length can become a dead spot — below six `arc_template` refuses and that refusal is the pinned
+behaviour; from six up, scene 1's prompt carries the beat whatever path the book takes. The sweep
+is the point: pilot 14 classes this with pilot 12 §5's flag-mismatch shape — a feature keyed to a
+condition the standard recipe never meets — and a point fix at six would only pin the length that
+has already bitten.
+
+**The fold is gated on the same `outline` flag as the statements, and that is a decision, not an
+accident.** The flag's docstring read *"this changes nothing except whether the statements are
+asked for"*, and the beat costs no model call, so an argument existed for letting it fire under
+`outline=False` too. Refused: §54's control arm exists so the bare pre-plan prompt stays
+reproducible through a flag rather than by editing code, and a beat that no flag can hold back
+would be exactly the code-edit-only control that arm was built to prevent needing. §155.3's own
+control — an unscheduled scene left byte-identical — needs no flag and is unchanged.
+
+**What was refused, and what this does not touch.** No outline for six-scene books (above). No
+idempotent re-fold of stored statements — the stored text is used verbatim, and a `with_beat`
+that skipped statements already carrying the beat would mask any real double-fold elsewhere. No
+change to `EVERY`, to the beat sentence, to `beat_ordinals`, or to `needs_outline` itself — the
+gate keeps answering "can the sheet tell its scenes apart" and the schedule stops depending on
+the answer. Nothing here revisits pilot 14's abandoned six-scene book: `serial14.db` stays the
+record of the finding, and no book was redrawn under the fix.
+
+### 157.1 Anti-scope
+
+No bar is declared and no quantity is introduced — the schedule's placement argument is §155.3's,
+untouched. No model ranked, judged or read anything: the fold is a pure function of scene count
+and position, and the change spends zero additional calls on any path. No research claim is
+promoted; pilot 14 §3's finding table stays where it is and this entry only points at it. The
+seeding-path and diagnostics defects pilot 14 filed beside this one (§2.2, §7) are not addressed
+here and belong to their own entries.
+
 ## 159. The refusal the selector honoured was printed nowhere, and `status` now says it in the planner's own words
 
 *(Numbered by allocation: three floor follow-ups landed in parallel worktrees and the

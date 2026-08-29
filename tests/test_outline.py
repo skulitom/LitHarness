@@ -36,7 +36,7 @@ from litharness.application.outline import (
 )
 from litharness.domain import genre, world_brief, worlds
 from litharness.domain import state as state_mod
-from litharness.domain.beats import arc_template, beats_for
+from litharness.domain.beats import TemplateMismatch, arc_template, beats_for
 from litharness.domain.extraction import standing_target
 from litharness.domain.generation import CompletionResult, Resolution, Usage
 from litharness.domain.jobs import Job, input_digest_for
@@ -117,6 +117,16 @@ DISTINCT = [
     "The Guild offers to clear the debt if she carries one sealed packet.",
     "She opens the packet and finds a writ against her own mentor.",
     "She refuses the run and the interest compounds past her level cap.",
+    "Her mentor closes the courier office and burns the route ledgers in the yard.",
+    "Kestrel maps the untaxed rooftop routes by night to run mail the Guild cannot price.",
+    "The collector who broke her lantern defects and hands her his collection book.",
+    "The Guild posts her name on the defaulters' board at every gate in the city.",
+    "She undercuts the Guild's couriers openly and the queue at her door says it worked.",
+    "The holder calls the whole debt due at once before the magistrate.",
+    "The magistrate rules the altered ledger page inadmissible and voids the compounding.",
+    "The Guild's charter is read aloud and the clause about sold pages ruins them.",
+    "Kestrel pays the original principal in coin earned off the books.",
+    "She posts her own ledger page on the counting-house door, cleared in her own hand.",
 ]
 
 
@@ -845,6 +855,109 @@ def test_the_control_arm_is_reachable_through_the_operator_surface(
     assert selected.job_kind != BOOK_OUTLINE, "no statement is planned"
     # And the book still drafts: the control arm is a degraded book, never a stalled one.
     assert "This scene:" not in str(selected.payload["prompt"])
+
+
+# -- the cadence schedule reaching books the outline never touches (pilot 14 §3) -----------
+
+
+@pytest.mark.parametrize("drafted", range(6))
+def test_the_beat_fires_at_six_scenes_where_no_outline_ever_runs(
+    store: SqliteStore, drafted: int
+) -> None:
+    """Pilot 14 §3's dead spot, closed: the whole six-scene schedule, at the selector.
+
+    §155.3 schedules scene 1 always, "however short the book" — but the beat's only fold
+    lived in `outline_proposal`, and a six-scene book has six distinct dramatic functions,
+    so `needs_outline` never holds, no `SCENE_PLAN` is ever written, and the fold was
+    unreachable at exactly the standard pilot length. Pilot 14 measured it live and redrew
+    at eight scenes; this walks all six selections on a fresh store each and pins that the
+    prompt carries the beat exactly on `beat_ordinals(6)` — scheduled scenes gain it,
+    rendered last where a stored plan renders, and unscheduled scenes keep the bare prompt,
+    which is the byte-identical control §155.3 says the schedule is read against.
+    """
+    from litharness.application.planner import make_plan_selector
+
+    revision = a_book(store, scenes=6)
+    if drafted:
+        filled = revision.replacing(
+            revision.node(f"scene-{index}").with_content("Drafted scene. " * 40)
+            for index in range(1, drafted + 1)
+        )
+        store.commit_revision(filled, created_at="2026-08-16T01:00:00Z")
+
+    job = make_plan_selector(project_id=PROJECT_ID)(store, "worker-a", START, 60.0)
+    assert job is not None
+    assert job.job_kind != BOOK_OUTLINE, "six distinct functions leave nothing to outline"
+    ordinal = drafted + 1
+    assert job.payload["logical_id"] == f"scene-{ordinal}"
+    prompt = str(job.payload["prompt"])
+    if ordinal in genre.beat_ordinals(6):
+        assert genre.BEAT in prompt
+        assert prompt.rstrip().endswith(genre.BEAT), (
+            "the beat renders last, exactly where a stored scene plan renders"
+        )
+    else:
+        assert genre.BEAT not in prompt
+        assert "This scene:" not in prompt, "an unscheduled scene keeps the bare prompt"
+
+
+@pytest.mark.parametrize("scenes", range(4, 25))
+def test_the_schedule_is_reachable_at_every_length_the_pipeline_takes(
+    store: SqliteStore, scenes: int
+) -> None:
+    """No length may be a dead spot again — the flag-mismatch shape, swept rather than spotted.
+
+    Pilot 14 §3 classes the six-scene gap with pilot 12 §5's silent failures: a feature keyed
+    to a condition the standard recipe never meets. A point regression at six would only pin
+    the length that has already bitten, so this sweeps every count from below the template
+    floor to the serial-arc default. Below six, `arc_template` refuses — a book that cannot
+    carry the named beats has no schedule to miss, and the refusal is the documented behaviour.
+    From six up, whatever path the book takes to a draftable scene — no outline at exactly
+    six, an outline everywhere `rising` repeats — scene 1's prompt carries the beat, because
+    `beat_ordinals` schedules scene 1 always.
+    """
+    from litharness.application.planner import make_plan_selector
+
+    if scenes < 6:
+        with pytest.raises(TemplateMismatch):
+            arc_template(scenes)
+        return
+
+    a_book(store, scenes=scenes)
+    functions = arc_template(scenes).functions
+    if len(set(functions)) < len(functions):
+        make_outline_handler(StubPlanner(payload_for(scenes)), store, PROJECT_ID)(
+            _job(store), START
+        )
+    else:
+        assert scenes == 6, "six is the one all-distinct length — the dead spot was here"
+
+    job = make_plan_selector(project_id=PROJECT_ID)(store, "worker-a", START + 1, 60.0)
+    assert job is not None
+    assert job.job_kind != BOOK_OUTLINE
+    assert job.payload["logical_id"] == "scene-1"
+    assert genre.BEAT in str(job.payload["prompt"])
+
+
+def test_the_control_arm_holds_back_the_scheduled_beat_too(store: SqliteStore) -> None:
+    """`outline=False` keeps the bare pre-plan prompt reproducible — beat included.
+
+    The beat costs no model call, but it rides the plan line, and a no-plan-side-text arm
+    that could only be produced by editing code is exactly the control the flag exists to
+    prevent needing. Asserted at six scenes, where the beat arrives with no outline at all,
+    so the flag is shown to gate the derived fold and not just the statements.
+    """
+    from litharness.application.planner import make_plan_selector
+
+    a_book(store, scenes=6)
+    job = make_plan_selector(project_id=PROJECT_ID, outline=False)(
+        store, "worker-a", START, 60.0
+    )
+    assert job is not None
+    assert job.job_kind != BOOK_OUTLINE
+    prompt = str(job.payload["prompt"])
+    assert genre.BEAT not in prompt
+    assert "This scene:" not in prompt
 
 
 # -- the progression schedule (§52's third taxonomy entry) ---------------------------------

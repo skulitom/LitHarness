@@ -67,7 +67,7 @@ from litharness.application.outline import (
     outline_job_id,
 )
 from litharness.application.ports import ApplicationStore, PlanningStore
-from litharness.domain import house, worlds
+from litharness.domain import genre, house, worlds
 from litharness.domain import state as state_mod
 from litharness.domain.beats import (
     SIX_BEAT,
@@ -712,8 +712,12 @@ def make_plan_selector(
     no outline against 0/30 with one — is a comparison of two books, and a control arm that
     could only be produced by editing the code would be a control nobody could reproduce. It
     is also the honest flag for a book somebody plans by hand: the drafting path already
-    treats a scene without a statement as ordinary, so this changes nothing except whether
-    the statements are asked for.
+    treats a scene without a statement as ordinary, so this changes nothing except what
+    plan-side text reaches the prompt — the statements, and §155.3's scheduled beat with
+    them. The beat costs no model call, but it rides the same plan line, and holding it
+    back here is what keeps the bare pre-plan prompt reproducible through a flag rather
+    than by editing code — the property this arm exists for. (§155.3's own control,
+    an unscheduled scene left byte-identical, needs no flag at all.)
 
     `token_budget` bounds the *context* a beat is drafted against, and is separate from
     `BudgetPolicy`'s ceilings, which bound the spend. They fail differently and on purpose: a
@@ -850,8 +854,17 @@ def make_plan_selector(
             #
             # **Enqueued, never waited on.** It outranks scene work (300 against 0) so it is
             # claimed first when both are queued, and a scene drafted without a statement
-            # simply omits the line — which is exactly the behaviour that shipped before this
-            # existed. An outline that fails must leave a degraded book, not a stalled one.
+            # simply omits the statement — the scheduled house beat still rides where the
+            # cadence schedules one (the `scene_plan` fold below), so an outline that fails
+            # leaves a degraded book, not a stalled one and not an off-schedule one.
+            #
+            # **§155.3's beat schedule is deliberately not keyed to this gate.** It was, by
+            # accident of call site: the beat's only fold lived in `outline_proposal`, so a
+            # book this gate correctly declined to outline — every six-scene book — was also
+            # a book the cadence could never reach, and six is the standard pilot length
+            # (pilot 14 §3 measured the dead spot live). The gate answers "can the sheet
+            # tell its scenes apart"; the schedule answers "which scenes carry a beat"; the
+            # fold below is what keeps the second question answered when this one says no.
             functions = [beat.function for beat in beats]
             plan_items = store.plan_items(progress.book_id, progress.branch_id)
             needs_outline = (
@@ -1014,7 +1027,26 @@ def make_plan_selector(
                     # ordinary character/world records still use StateMoment.ENTERING.
                     status_example=system_voice_example(records, at=beat.story_order_key),
                     target_words=(policy or DraftPolicy()).target_words,
-                    scene_plan=(plan_item.text if plan_item is not None else None),
+                    # A stored statement already carries the beat where the cadence schedules
+                    # one — `outline_proposal` folded it in — so it is passed verbatim. A
+                    # scene with **no** statement still gets the scheduled beat, derived here
+                    # the way `beats_for` derives the sheet: a pure function of the position,
+                    # stored nowhere. §155.3 schedules scene 1 always, "however short the
+                    # book", but the fold in `outline_proposal` is reachable only through
+                    # `needs_outline` — and at six scenes every dramatic function is distinct,
+                    # so the standard pilot length was the one length the schedule could not
+                    # reach (pilot 14 §3). `with_beat("")` is the bare beat on a scheduled
+                    # ordinal and `""` (which renders nothing) everywhere else; gated on
+                    # `outline` so the §54 control arm still reproduces the pre-plan prompt.
+                    scene_plan=(
+                        plan_item.text
+                        if plan_item is not None
+                        else (
+                            genre.with_beat("", beat.ordinal, beat.of_total)
+                            if outline
+                            else None
+                        )
+                    ),
                     progression=progression_target(records, at=beat.story_order_key),
                     criteria=worlds.criterion_brief(records),
                     # The ladder's two, and both are `None` for every book whose canon declares
