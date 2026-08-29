@@ -723,8 +723,10 @@ def test_the_prompt_asks_for_system_voice_only_where_the_book_speaks_it(
             ),
         )[0]
 
-    assert "[STATUS] rook — Level 3 | HP 24/30 | MP 8/10 | Gold 45" in prompts["litrpg"]
+    assert "[STATUS] Rook — Level 3 | HP 24/30 | MP 8/10 | Gold 45" in prompts["litrpg"]
     assert "{subject}" not in prompts["litrpg"], "a placeholder is a thing a model copies"
+    # And so is a machine id — §169, `tests/test_display_names.py`.
+    assert "[STATUS] rook" not in prompts["litrpg"]
     assert "[STATUS]" not in prompts["mystery"]
     assert not speaks_system_voice(store.state_records(*mystery_ids))
 
@@ -741,7 +743,7 @@ def test_the_planner_puts_the_system_voice_instruction_on_the_queued_job(
     [job] = [
         unit for unit in store.jobs_by_status(JobStatus.QUEUED) if unit.job_kind == SCENE_DRAFT
     ]
-    assert "[STATUS] rook — Level 3" in str(job.payload["system"])
+    assert "[STATUS] Rook — Level 3" in str(job.payload["system"])
 
 
 # --- where the scene sits in its chapter -----------------------------------------------
@@ -1282,7 +1284,7 @@ def test_the_seeded_book_asks_for_the_line_it_will_later_read(store: SqliteStore
     [job] = [
         unit for unit in store.jobs_by_status(JobStatus.QUEUED) if unit.job_kind == SCENE_DRAFT
     ]
-    assert "[STATUS] rook — Level 3 | HP 24/30 | MP 8/10 | Gold 45" in str(job.payload["system"])
+    assert "[STATUS] Rook — Level 3 | HP 24/30 | MP 8/10 | Gold 45" in str(job.payload["system"])
     assert job.payload["selected_by"]["story_order_key"] == "s1"
 
 
@@ -1859,7 +1861,7 @@ def test_a_schedule_is_a_record_that_is_not_canon(store: SqliteStore) -> None:
     records = store.state_records(book_id, branch_id)
 
     assert progression_target(records, at="s1") == (
-        "[STATUS] rook — Level 5 | HP 44/44 | MP 12/12 | Gold 5"
+        "[STATUS] Rook — Level 5 | HP 44/44 | MP 12/12 | Gold 5"
     )
     # The seed sheet is canon and is what the scene is shown as *current*; the milestone is
     # not, and is what it is shown as *coming*. Neither is the other.

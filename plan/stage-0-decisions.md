@@ -17746,3 +17746,104 @@ book was drawn, no paid call was made, and no `runs/` database was written to. N
 so RS1 is untouched. No research claim is promoted and no axis is admitted. Nothing the operator
 said became prompt text, and no noun of the chapter under read is in the clause (§97.1) —
 `test_no_word_of_the_read_9_chapter_became_prompt_text` is that, mechanically.
+
+## 169 A status line printed a machine id because nothing ever looked up the name the book had already written down
+
+Pilot 15 draw 3's chapter 1 prints `[STATUS] tam_cawl — Keeping 1 | Reach 0 | Marks holding 1 |
+Work in hand 0/1` at both of its number-moves. Every column label beside it is display-formed,
+because labels come off a declared `Sheet`; the subject was the one surface written out as the
+records hold it. Draw 2 of the same book, from the same code, printed `[STATUS] Mira Kell — …`.
+
+### 169.1 Measured first: the code was defective in both draws and one writer covered for it
+
+Read out of the two stores with the `debug-book` verbs, never by opening a database.
+
+- **The raw id was in both prompts.** `why --scene 1` on `serial15b.db` shows the stored system
+  message carrying `[STATUS] mira_kell — Holds 1 | …`; the same verb on `serial15c.db` shows
+  `[STATUS] tam_cawl — Keeping 0 | …`. `system_voice_example` renders the subject verbatim and
+  always did. What differed between the draws was only whether the model took up the instruction
+  beside it — *"write the character's name as your prose spells it"*. Draw 2's writer paraphrased
+  and draw 3's copied.
+- **This is `system_voice_example`'s own recorded failure, with an id in the slot instead of a
+  brace.** That function exists because a model shown `{subject}` wrote the placeholder out
+  verbatim: a line that looks right, parses right, and establishes nothing. The same slot was
+  still being filled with something no reader should see, and the same model behaviour — copy
+  the example — is what put it on the page.
+- **The name was on record in both books, and nothing asked for it.** `state --subject` shows
+  `tam_cawl is_a Tam Cawl` in draw 3 and `mira_kell is_a Mira Kell` in draw 2, both
+  `ACCEPTED_CANON`. `is_a` is where this vocabulary keeps names: `application/world.py`
+  documents it to the Architect as *what a thing is called, in this world's own words*, and
+  `gamesystem.py` already reads system, rung and ability names out of it in two places. The
+  status line was the one printed surface that never asked.
+
+**Three candidates were named before the read and all three are dead.** *A name record draw 2
+had and draw 3 lacked*: both books hold one, for both subjects. *A renderer that humanises only
+certain subjects*: it humanised none, in either draw, and `render_status_line`'s docstring said
+so on purpose. *Draw 3's seven unaccepted proposals starving a lookup*: there was no lookup to
+starve, and `tam_cawl`'s `is_a` is accepted canon regardless.
+
+### 169.2 What shipped: a name resolution with a guard, in the renderer
+
+`extraction.display_name(records, subject)` and `extraction.humanise_subject(subject)`, and
+`render_status_line` now takes `records` and prints what they answer. `system_voice_example` and
+`progression_target` pass their own.
+
+- **Canon first**: the subject's `ACCEPTED_CANON` `is_a`.
+- **Used only when it normalises back to the subject**, and that guard is what makes the lookup
+  safe rather than clever. `extract_state` reads the printed line back through
+  `normalise_subject` and skips any subject canon has not already used, so a printed name that
+  landed elsewhere would not mis-file the book's state — it would stop reading it, scene after
+  scene, with every line still looking right. The guard also tells a name from a kind for free:
+  a book filing `mira_kell is_a mender` has stated a kind, `mender` does not normalise to
+  `mira_kell`, and the humanised id is printed instead.
+- **Otherwise humanised** — underscores to spaces, words capitalised, `normalise_subject`'s two
+  moves undone. A subject that is not already its own normalised form was never an id and is
+  printed untouched, so a `McKay` a caller passed is not damaged on the way through.
+
+`test_the_status_line_never_prints_a_raw_subject_id` is draw 3's line rendered by the fixed path;
+`test_the_example_the_writer_is_shown_carries_the_name_and_not_the_id` is the surface the defect
+travelled on; `test_the_printed_name_reads_back_as_the_subject_it_stands_for` is the loop closed
+through `extract_state` and is the one to read;
+`test_a_name_that_does_not_normalise_back_to_the_subject_is_refused` and
+`test_a_proposed_name_is_not_a_name_yet` are the two the guard buys.
+
+**A correction in place**: `render_status_line`'s docstring read *"the subject is written as the
+book's records hold it"*, on the argument that title-casing an id would mint a fact no canon
+record states. The first half of that argument is true and is why canon is asked first; the
+second was wrong twice — the fact was usually on record, and the alternative to minting it was
+not neutrality but a machine id in front of a reader. The docstring now says so.
+
+**Six assertions across four test files were pinning the raw id** (`[STATUS] sera`, `rook`,
+`mira`) and now pin the name. Each is annotated where the change is not what its test is about.
+
+### 169.3 What was refused
+
+- **Any prompt or clause text.** This is a renderer defect. The instruction beside the example
+  already asks for the character's name; the fix is to stop handing the writer something else to
+  copy, not to ask louder. No clause was added, edited or re-aimed, and no ceiling moved.
+- **The standing line, `[STANDING] <subject> <phrase> <rung>`.** It is the same defect on the
+  sibling furniture form and it did not fire in this book — `graph_line_for` returned nothing, so
+  no such line was in either prompt. It is also not the same size: its *object* is a raw rung id
+  (`rung_mender`) as well, and naming rungs is `gamesystem`'s territory rather than this
+  function's. Recorded as owed, not done here.
+- **The context packet's subject rendering.** The packet prints `mira_kell stands at rung_mender
+  (3 of 5)` and 30-odd lines like it. That is machine-facing context which already carries
+  `is: Mira Kell` beside it, not a line the book prints, and rewriting it would be a change to
+  what every scene is shown rather than to what a reader sees.
+- **`progression_target`'s sheet.** It renders with `DEFAULT_SHEET` while its sibling
+  `system_voice_example` passes `sheet_for(records)`, so a book with its own vocabulary would be
+  shown its milestone in `Level | HP | MP | Gold`. It is a real defect of the §161 class and it
+  is a different one; it did not fire in this book (no progression schedule was declared) and
+  widening this diff to it would have mixed two findings under one commit.
+
+### 169.4 Anti-scope
+
+No bar is declared, and there is no quantity here that could carry one. Two chapters, two stored
+prompts and two `state` listings are the whole of the evidence; §61's four attainability checks
+have nothing to run on. **No claim is made that draw 3's writer would now paraphrase correctly**
+— the point is that it no longer has to, and one draw would not have shown that either way. No
+model was called, no book was drawn, no paid call was made, and neither run database was written
+to (`serial15b.db` and `serial15c.db` were read through `debug-book` verbs only). No corpus was
+read, so RS1 is untouched. No research claim is promoted and no axis is admitted. Nothing either
+dossier said became prompt text, a directive or a plan item (§97.1); what it located was a
+missing lookup, and the fix is engineering.
