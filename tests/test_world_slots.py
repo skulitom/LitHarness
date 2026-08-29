@@ -36,7 +36,7 @@ import pytest
 
 from litharness.application import world as world_view
 from litharness.cli import EXIT_OK, main
-from litharness.domain import worlds
+from litharness.domain import extraction, worlds
 
 
 def rec(subject: str, predicate: str, **kwargs: object) -> lc.StateRecord:
@@ -120,14 +120,39 @@ def _manifests_as() -> lc.StateRecord:
 
 
 def _can_do() -> lc.StateRecord:
-    record = rec("kell", worlds.CAN_DO, object_ref="cap_read_grain")
+    """§160 put the holder's depth in the value slot, which was free; the edge still says who
+    holds what, and a record written without a number reads exactly as it always did."""
+    record = rec("kell", worlds.CAN_DO, object_ref="cap_read_grain", value=2)
     assert worlds.capabilities_of([record], "kell") == ("cap_read_grain",)
+    assert "kell can do cap_read_grain at 2" in sentences([record])
+    assert "kell can do cap_read_grain" in sentences(
+        [rec("kell", worlds.CAN_DO, object_ref="cap_read_grain")]
+    )
     return record
 
 
 def _requires() -> lc.StateRecord:
-    record = rec("cap_read_grain", worlds.REQUIRES, object_ref="cap_hold_a_glass")
+    record = rec("cap_read_grain", worlds.REQUIRES, object_ref="cap_hold_a_glass", value=2)
     assert worlds.requirement_depth([record]) == 1
+    assert "needs cap_hold_a_glass at 2 first" in sentences([record])
+    return record
+
+
+def _governed_by() -> lc.StateRecord:
+    """The governed thing is the subject and the system is the edge — `RECOGNIZED_BY`'s
+    direction, so an institution recognising a standing and a system granting one cannot
+    invert against each other."""
+    record = rec("crit_seal", worlds.GOVERNED_BY, object_ref="sys_the_weave")
+    assert worlds.governed_by([record]) == {"crit_seal": "sys_the_weave"}
+    assert worlds.governed([record], "sys_the_weave") == ("crit_seal",)
+    return record
+
+
+def _is_a() -> lc.StateRecord:
+    """The name-bearing predicate, undocumented since Serial Pilot 1's operator-typed seed and
+    now carrying the rung column's printed label."""
+    record = rec("crit_seal", "is_a", value="the Third Seal")
+    assert "seal" in worlds.key_nouns([record])
     return record
 
 
@@ -247,8 +272,67 @@ def _exception_to() -> lc.StateRecord:
     return _EXCEPTION
 
 
+# --- the three that were reachable and undocumented (§163) ---------------------------------
+#
+# All three are configuration in the value slot, so their readers live in `domain/extraction.py`
+# rather than in `worlds.py`. That is why they were missed: every other line in this vocabulary
+# documents a predicate `worlds.py` reads, and these are the ones a *different* module reads
+# through the same `world declare`.
+
+_SHEET_VALUE = {
+    "fields": [
+        {"name": "attunement", "label": "Attunement"},
+        {"name": "threads", "label": "Threads", "paired": True},
+    ]
+}
+
+
+def _status_sheet() -> lc.StateRecord:
+    """The columns are the book's own, and `paired` is what mints the `_max` key."""
+    record = rec("sera", extraction.SHEET_PREDICATE, value=_SHEET_VALUE)
+    sheet = extraction.sheet_for([accepted(record)])
+    assert sheet.value_keys == ("attunement", "threads", "threads_max")
+    assert sheet != extraction.DEFAULT_SHEET
+    return record
+
+
+def _status_snapshot() -> lc.StateRecord:
+    """Keyless, which is the entry state: it sorts below every minted `s{n}` and is found at
+    every position. The rendered line is the one a scene is shown and asked to write."""
+    record = rec(
+        "sera",
+        extraction.STATUS_PREDICATE,
+        value={"attunement": 1, "threads": 2, "threads_max": 3},
+    )
+    sheet = rec("sera", extraction.SHEET_PREDICATE, value=_SHEET_VALUE)
+    canon = [accepted(record), accepted(sheet)]
+    assert extraction.speaks_system_voice(canon)
+    rendered = extraction.system_voice_example(canon, at="s1")
+    assert rendered is not None
+    assert "Attunement 1" in rendered and "Threads 2/3" in rendered
+    return record
+
+
+def _graph_line() -> lc.StateRecord:
+    record = rec(
+        "sera",
+        worlds.GRAPH_LINE_PREDICATE,
+        value={"label": "ASSIZE", "edges": [{"predicate": "stands_at", "phrase": "now stands at"}]},
+    )
+    assert extraction.graph_line_fault([accepted(record)]) is None
+    line = extraction.parse_graph_line(record.value)
+    assert line.label == "ASSIZE"
+    assert line.edges[0].predicate == "stands_at"
+    return record
+
+
 _PROBES: dict[str, Callable[[], lc.StateRecord]] = {
     "entity_role": _entity_role,
+    "governed_by": _governed_by,
+    "is_a": _is_a,
+    "status_sheet": _status_sheet,
+    "status_snapshot": _status_snapshot,
+    "graph_line": _graph_line,
     "type": _type,
     "world_rule": _world_rule,
     "consequence": _consequence,
@@ -483,6 +567,118 @@ def test_a_ladder_edge_in_story_time_is_reported_and_still_accepted(fake, tmp_pa
     assert "--value" in printed.err
     assert main(["--database", db, "world", "accept"]) == EXIT_OK
     assert "accepted 1" in capsys.readouterr().out
+
+
+def test_a_records_identity_is_blind_to_its_order_key() -> None:
+    """The fifth wrong line in this vocabulary, and it was wrong in the reassuring direction.
+
+    `how` told the Architect that a corrected declaration changing the subject, the `--object`
+    **or the `--order-key`** fills a different slot so both survive. The first two are true.
+    The third is not: `record_id_for` keys on `(subject, predicate, object_ref, value)` and
+    carries no position, so a redeclaration that moves only the position is the same record.
+    """
+    at_one = rec("kell", worlds.STANDS_AT_PREDICATE, object_ref="a", value="c", order_key="s1")
+    at_seven = rec("kell", worlds.STANDS_AT_PREDICATE, object_ref="a", value="c", order_key="s7")
+    assert at_one.record_id == at_seven.record_id, "position is not part of identity"
+    moved = rec("kell", worlds.STANDS_AT_PREDICATE, object_ref="b", value="c", order_key="s1")
+    assert at_one.record_id != moved.record_id, "the edge is part of identity"
+
+
+def test_repositioning_a_declared_fact_does_not_land_and_says_so(fake, tmp_path, capsys) -> None:  # type: ignore[no-untyped-def]
+    """And the store keeps the FIRST position, which is why the old line was dangerous.
+
+    `record_state_records` is INSERT OR IGNORE on that id, so the second declaration is
+    dropped. It is not silent — `declare` answers `already on record` — but an Architect told
+    it had just filled a second slot would read that as confirmation while the wrong position
+    stood.
+    """
+    db = seeded(tmp_path)
+    capsys.readouterr()
+    for key in ("s1", "s7"):
+        assert (
+            main(
+                [
+                    "--database", db, "world", "declare", "kell", "stands_at",
+                    "--object", "second_seal", "--value", "crit_seal", "--order-key", key,
+                ]
+            )
+            == EXIT_OK
+        )
+    printed = capsys.readouterr().out
+    assert "already on record" in printed
+
+    capsys.readouterr()
+    assert main(["--database", db, "world", "show", "--subject", "kell", "--json"]) == EXIT_OK
+    rows = json.loads(capsys.readouterr().out)
+    standings = [row for row in rows if row["predicate"] == "stands_at"]
+    assert len(standings) == 1, "the reposition became a second record after all"
+    assert standings[0]["order_key"] == "s1", "the second declaration moved the first"
+
+
+def test_a_world_with_no_sheet_is_told_so_and_is_still_a_coherent_world() -> None:
+    """The gap is the third list and it moves no verdict (§163).
+
+    A half-built world has no sheet yet and that is the ordinary state, so this reports and
+    `ok` stays what `validate` says. The floor refuses at draft time, where the answer is
+    final; refusing here would refuse every world in the middle of being built.
+    """
+    payload = world_view.check([_RULE])
+    assert payload["ok"] is True
+    assert payload["complaints"] == []
+    assert len(payload["gaps"]) == 1
+    assert "status_snapshot" in payload["gaps"][0]
+
+
+def test_the_gap_closes_on_exactly_what_the_genre_floor_reads() -> None:
+    """One question, asked through `genre.has_starting_sheet` rather than restated.
+
+    A canon snapshot with a prose value does **not** close it, which is §158's whole
+    correction: the sheet the writer is shown is rendered out of a mapping, so a predicate
+    that answered yes to prose would let a book pass and never be asked for a line.
+    """
+    prose = accepted(rec("sera", extraction.STATUS_PREDICATE, value="attuned, two threads"))
+    assert world_view.check([prose])["gaps"], "a prose sheet is not a sheet the line renders"
+    assert world_view.check([prose, accepted(_status_snapshot())])["gaps"] == []
+
+
+def test_a_proposed_sheet_leaves_the_gap_open_because_accept_is_the_gate() -> None:
+    """The Architect declaring one is not the book having one; `world accept` is the act."""
+    assert world_view.check([_status_snapshot()])["gaps"], "a proposal is not canon"
+
+
+def test_the_predicates_the_vocabulary_names_are_the_ones_that_clear_the_floor(
+    fake, tmp_path, capsys
+) -> None:  # type: ignore[no-untyped-def]
+    """The handshake, end to end on the commands an Architect actually holds (§163).
+
+    Both predicates were reachable and neither was written down, in the command
+    `world_agent`'s prompt calls the list of every predicate the world's language admits. This
+    drives the documented shapes through the real CLI and asserts the book ends up rendering
+    **its own** columns — the counterfactual that makes the omission a finding rather than a
+    theory, since a book that declares no sheet is not sheetless but on `DEFAULT_SHEET`.
+    """
+    db = seeded(tmp_path)
+    capsys.readouterr()
+    for argv in (
+        ["world", "declare", "sera", "status_sheet", "--value", json.dumps(_SHEET_VALUE)],
+        [
+            "world",
+            "declare",
+            "sera",
+            "status_snapshot",
+            "--value",
+            json.dumps({"attunement": 1, "threads": 2, "threads_max": 3}),
+        ],
+    ):
+        assert main(["--database", db, *argv]) == EXIT_OK
+    capsys.readouterr()
+    assert main(["--database", db, "world", "check", "--json"]) == EXIT_OK
+    assert json.loads(capsys.readouterr().out)["gaps"], "not canon until accept"
+
+    assert main(["--database", db, "world", "accept"]) == EXIT_OK
+    capsys.readouterr()
+    assert main(["--database", db, "world", "check", "--json"]) == EXIT_OK
+    assert json.loads(capsys.readouterr().out)["gaps"] == []
 
 
 def test_the_vocabulary_an_architect_reads_names_the_domain_and_the_criterion(

@@ -32,6 +32,20 @@ upgrade, §109's rule.
 arithmetic over records, and it never sees a reader's verdict because there is no verdict to
 see: the readership speaks in behaviour and in what it hopes for, and it speaks to the writer
 through the overview loop, not to this.
+
+**The seed ask names an issuer, and until §163 it did not.** `plan/reader-read-4.md` recorded
+three standing instructions suppressing the genre's substance, the first of them the
+Architect's rule against power numbers — and that rule is **gone**, swept for and not found:
+no file under `src/` carries it or a paraphrase, it was cut in `530f40e` rather than with the
+Forge two days later, and its affirmative tail (*"the ladder's rungs are the numbers this
+world counts"*) survives re-signed in `house.py` as a clause about where an exact number
+belongs. So there was nothing here to re-aim. What was here was an **absence**: the ask named
+a ladder and named nothing that hands out its rungs, which is the condition
+`plan/first-principles-litrpg-core.md` §2 measured — *"a world asked for ladders with no game
+system builds institutions"*, and pilot 14's scheduled progression beats duly landed in guild
+paperwork ranks. `_SYSTEM` is the occupant, and the reason this is an addition rather than a
+subtraction is §156.1: the institutional lean is not in our text, so there is nothing to take
+out.
 """
 
 from __future__ import annotations
@@ -80,14 +94,64 @@ _TOOLS = (
     "declare what the book needs and keep it coherent."
 )
 
+#: **The occupant of the issuer position, and the whole of §163's addition to this prompt.**
+#: A ladder needs something to hand its rungs out, and until this paragraph existed the ask
+#: named a ladder and named no issuer — so the model supplied the nearest one it knows, which
+#: is an office. `plan/first-principles-litrpg-core.md` §2 is the measurement: guild paperwork
+#: ranks absorbed pilot 14's scheduled progression beats, and licences, wards and excise keep
+#: returning, *"partly because a world asked for ladders with no game system builds
+#: institutions"*. Subtraction was tried on the register side and did not move it; this is the
+#: occupant instead.
+#:
+#: **Institutions are kept and given their job rather than forbidden**, and the paragraph
+#: reaches that by naming none of them. They are the operator's own "agencies above the
+#: protagonist", so a clause banning them would subtract from the wrong place — §156.1 measured
+#: that the institutional lean is not in our text. What moves is *which* of the two owns the
+#: ladder, and that is sayable without an institutional noun.
+#:
+#: **The first draft of this paragraph said it the other way and
+#: `test_the_architect_task_text_names_no_institution` refused it**, correctly. It read
+#: *"Guilds, wards, houses and licences may recognise where somebody stands … the book is
+#: better with them in it"* — an explicit permission, written to keep institutions available.
+#: §138's measurement is that a permission overproduces what it names, so that sentence would
+#: have taught the Architect the exact vocabulary pilot 14's guild paperwork ranks came out of,
+#: while believing it was protecting the story. The guard is §156.1's finding turned into a
+#: rail: the lean is not in our text, *and that only stays true if nobody adds one*. The
+#: institution here is therefore an unnamed whatever-else, which permits every institution and
+#: primes none.
+#:
+#: **Every sentence names something declarable.** §154's second axis: a demand whose object is
+#: a reader's state or an author's intention names nothing the addressee can emit. This
+#: addressee's only act is a `world declare`, so each sentence here names a record — an entity
+#: role, a chain, a capability, a prerequisite — and none of them asks for an effect. The
+#: shapes are deliberately absent: `world vocabulary` is where a slot is written down, and a
+#: copy here would be a second one to disagree with it (§152's defect, pre-made).
+#: **Three sentences, and the compression is the budget's doing rather than taste.** The first
+#: draft was six and put the role five over its ceiling; `test_prompt_budget` is explicit that
+#: the choice is to take something out or to raise the number on purpose, so both were done —
+#: this is as small as the ask gets while still carrying an issuer, a ladder that belongs to
+#: it, an inventory that is countable, and the one edge that makes it a graph.
+_SYSTEM = (
+    "Something in this world grants what people can do, and a ladder belongs to whatever hands "
+    "out its rungs: name that thing, declare it as this world's system, and give it the "
+    "ladder.\n"
+    "Whatever else is in the world may recognise where somebody has got to, price it or "
+    "withhold it, and the book is better when something does — but it reads the ladder rather "
+    "than owning it, and the one this book is about climbs the system's.\n"
+    "Declare what the system grants, in what order and at what cost, each grant countable and "
+    "named in short plain words with no digits in them; at least one of them needs another one "
+    "first, or what you have declared is a list rather than a graph."
+)
+
 _SEED = (
     "You are building the world of the book you are about to write. The listing below is what a "
     "reader has already been promised, so the world has to be able to keep it.\n\n"
     f"{_TOOLS}\n\n"
-    "Build enough world for the first chapters to stand on: who is in it, what they can do, what "
-    "getting better means here and what it costs, and what is true that nobody has been told "
-    "yet. Stop when the book could be written from what you have declared. Then say, in two or "
-    "three sentences, what you built and what you deliberately left open."
+    f"{_SYSTEM}\n\n"
+    "Build enough world for the first chapters to stand on besides that: who is in it, how it "
+    "works, and what is true that nobody has been told yet. Stop when the book could be "
+    "written from what you have declared. Then say, in two or three sentences, what you built "
+    "and what you deliberately left open."
 )
 
 _GROW = (
