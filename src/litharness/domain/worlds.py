@@ -148,6 +148,22 @@ TAUGHT_BY = "taught_by"
 #: change its packet.
 COSTS = "costs"
 
+#: A capability or a criterion belongs to a named system. An edge: the **governed thing is the
+#: subject and the system is the object**, the same direction as `RECOGNIZED_BY`, so the two can
+#: never invert against each other.
+#:
+#: **This is the predicate that was missing, and its absence is why guilds kept arriving.**
+#: §113 built the ladder and §114 built the inventory, and `system` has been a member of
+#: `ENTITY_ROLES` the whole time — so two thirds of a game system were already declarable and
+#: nothing owned them. `plan/first-principles-litrpg-core.md` §2 names the consequence: ranks
+#: need an issuer, and with no system able to *be* one the Architect mints institutions, which
+#: is why licences and wardens keep returning. Subtraction cannot fix that; only an occupant
+#: can, and this edge is how a system occupies the space.
+#:
+#: It does not displace `RECOGNIZED_BY` and no rule forbids institutions. A world may now say
+#: that a guild recognises where you stand while the system grants what you can do — different
+#: facts about different objects, which stopped having to share one ladder.
+GOVERNED_BY = "governed_by"
 
 
 # --- rules and their consequences ----------------------------------------------------------
@@ -477,6 +493,34 @@ def capabilities_of(records: Sequence[lc.StateRecord], subject: str) -> tuple[st
                 if record.predicate == CAN_DO and record.object_ref
                 and record.subject == subject
             }
+        )
+    )
+
+
+def governed_by(records: Sequence[lc.StateRecord]) -> dict[str, str]:
+    """Every subject that names a system, and the system it names. Subject → system.
+
+    Singular rather than plural, unlike `entity_roles`: a capability governed by two systems
+    would make "which ladder counts this" unanswerable, and the last edge silently winning is
+    worse than the first one doing so. `validate` complains about the pair; this reports one.
+
+    Canon is not filtered, for `capabilities`' reason — the Architect works on proposals before
+    `world accept`, and filtering here would report no system while one is being built.
+    """
+    found: dict[str, str] = {}
+    for record in records:
+        if record.predicate == GOVERNED_BY and record.object_ref:
+            found.setdefault(record.subject, record.object_ref)
+    return found
+
+
+def governed(records: Sequence[lc.StateRecord], system: str) -> tuple[str, ...]:
+    """What this system governs — its criteria and its capabilities together, sorted."""
+    return tuple(
+        sorted(
+            subject
+            for subject, owner in governed_by(records).items()
+            if owner == system
         )
     )
 
@@ -1016,6 +1060,31 @@ def validate(records: Sequence[lc.StateRecord]) -> tuple[str, ...]:
                 f"{record.subject} stands on {criterion}, whose comparator is "
                 f"{declared_comparators.get(criterion)!r} rather than 'ordinal'; a standing is a "
                 "position in an order and a comparator that declares no order has no positions"
+            )
+
+    # **Two checks on `governed_by`, both membership.** A subject governed twice, and a system
+    # nobody declared. `governed_by` reports the first edge and `validate` is where the second
+    # is complained about, which is `criterion_of_rung`'s split between abstaining and objecting.
+    # Nothing here asks whether a system is a good one to be governed by; there is no ordering
+    # over systems and this function mints none.
+    systems = set(entities_with_role(records, "system"))
+    seen_owners: dict[str, set[str]] = {}
+    for record in records:
+        if record.predicate != GOVERNED_BY or not record.object_ref:
+            continue
+        seen_owners.setdefault(record.subject, set()).add(record.object_ref)
+        if record.object_ref not in systems:
+            complaints.append(
+                f"{record.subject} is governed by {record.object_ref}, which is not declared "
+                "with the system role; a ladder whose system nobody declared has no issuer, "
+                "which is the space an institution then fills"
+            )
+    for subject, owners_of in sorted(seen_owners.items()):
+        if len(owners_of) > 1:
+            complaints.append(
+                f"{subject} is governed by {len(owners_of)} systems "
+                f"({', '.join(sorted(owners_of))}); which system counts a subject has to be "
+                "one answer, and `governed_by` reports the first rather than choosing"
             )
 
     known = (
@@ -1569,10 +1638,27 @@ def _record_sentence(
     # and break the byte-identity rail. They keep `state.describe`'s flat form until somebody
     # pays for that change deliberately; `costs` reads acceptably flat, which is why a
     # capability's price reuses it rather than inventing a legible twin.
+    # **The magnitude joins the sentence only when there is one, and that is what keeps the
+    # byte-identity rail intact.** §160 put a holder's depth in this edge's value slot, which
+    # was free; a record written before it — or by any world that states only that somebody can
+    # do a thing — has no integer there and reads exactly as it always did. No adjective and no
+    # verb about growth: how far somebody has taken a capacity is the same class of fact as
+    # where they stand.
     if record.predicate == CAN_DO and record.object_ref:
+        depth = record.value if isinstance(record.value, int) else None
+        if depth is not None and not isinstance(record.value, bool):
+            return f"{record.subject} can do {record.object_ref} at {depth}"
         return f"{record.subject} can do {record.object_ref}"
     if record.predicate == REQUIRES and record.object_ref:
+        # A threshold of 1 is "held at all", which is what every `requires` record written
+        # before §160 means, so it is not printed — printing it would change the packet of
+        # every world already forged in order to say nothing new.
+        threshold = record.value if isinstance(record.value, int) else None
+        if threshold is not None and not isinstance(record.value, bool) and threshold > 1:
+            return f"{record.subject} needs {record.object_ref} at {threshold} first"
         return f"{record.subject} needs {record.object_ref} first"
+    if record.predicate == GOVERNED_BY and record.object_ref:
+        return f"{record.subject} is governed by {record.object_ref}"
     if record.predicate == TAUGHT_BY and record.object_ref:
         return f"{record.subject} is taught by {record.object_ref}"
     if record.predicate == PRICE_PREDICATE and value:
@@ -1653,6 +1739,7 @@ __all__ = [
     "EVALUATION_SUBJECT",
     "EXCEPTION_PREDICATE",
     "EXCEPTS_PREDICATE",
+    "GOVERNED_BY",
     "GRAPH_LINE_PREDICATE",
     "GROUP_KEYS",
     "GROUP_KEY_PREDICATE",
@@ -1696,6 +1783,8 @@ __all__ = [
     "entity_roles",
     "false_claims",
     "features",
+    "governed",
+    "governed_by",
     "group_of",
     "hidden_record_ids",
     "in_scope",
