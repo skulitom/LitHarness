@@ -2319,6 +2319,12 @@ def cmd_listing(args: argparse.Namespace) -> int:
         created = argparse.Namespace(**vars(args))
         created.title = title or "Untitled"
         created.premise = listing
+        # No seed state, deliberately — not an omission (§158). A starting sheet restates
+        # world facts, and at listing time there is no world to restate: the Architect has
+        # not run. A `--state` here would be a sheet authored blind, which is the licence
+        # pilot 12 §3 refused. The sanctioned path for a listing-created book is `world
+        # declare <subject> status_snapshot --value '{...}'` then `world accept`, once the
+        # facts it restates are canon; `cmd_new` prints the floor's advisory pointing there.
         created.state = None
         created.promises = None
         return cmd_new(created)
@@ -2464,7 +2470,8 @@ def cmd_characters(args: argparse.Namespace) -> int:
 
 
 def _scalar(text: str | None) -> object:
-    """A `--value` as the type it plainly is: 34 is a number, everything else is prose.
+    """A `--value` as the type it plainly is: 34 is a number, `{"level": 1}` is a sheet,
+    everything else is prose.
 
     **Written because a 317-record world had every one of its reveal scenes stored as
     `"34"`.** argparse hands over text, the store JSON-encodes what it is given, and
@@ -2472,9 +2479,19 @@ def _scalar(text: str | None) -> object:
     invisible and nothing complained, because a reveal that does not parse looks exactly
     like a reveal nobody scheduled.
 
-    Only scalars are coerced, so no sentence is at risk: `json.loads` on prose raises and
-    the text is kept. A value that really is meant to be the string `34` is written
-    `--value '\"34\"'`, which is the only case this changes and the rarer one by far.
+    **A JSON object is kept for the number's own reason** (§158). Everything that reads a
+    `status_snapshot` reads fields out of a mapping, and while this function round-tripped
+    objects back to their raw string, the one seeding path that can reach a listing-created
+    book — `world declare` then `world accept` — could not produce a sheet the status-line
+    machinery renders from: Serial Pilot 14's book cleared the genre floor and was never
+    asked for a status line (§2.2, §7). An object is as plainly typed as 34 and the original
+    hazard does not extend to it: `json.loads` on prose raises and the text is kept, and no
+    sentence parses as `{...}` by accident. Arrays still round-trip as prose because nothing
+    reads a list-valued record; widen again when something does.
+
+    A value that really is meant to be the string `34` — or the string `{"a": 1}` — is
+    written `--value '\"34\"'`, which is the only case coercion changes and the rarer one
+    by far.
     """
     if text is None:
         return None
@@ -2482,7 +2499,7 @@ def _scalar(text: str | None) -> object:
         parsed = json.loads(text)
     except ValueError:
         return text
-    return parsed if isinstance(parsed, int | float | bool) else text
+    return parsed if isinstance(parsed, int | float | bool | dict) else text
 
 
 def _read_text(source: str) -> str:
@@ -4392,7 +4409,11 @@ def cmd_new(args: argparse.Namespace) -> int:
     # drift apart.
     if not genre.has_starting_sheet(records):
         print(f"  {genre.NO_SHEET}")
-        print("  this book will not draft until one is seeded: `new --state` or `import --state`")
+        print(
+            "  this book will not draft until one is seeded: `new --state`, `import "
+            "--state`, or — once its world is accepted — `world declare <subject> "
+            "status_snapshot --value '{...}' --order-key <key>` then `world accept`"
+        )
     return EXIT_OK
 
 

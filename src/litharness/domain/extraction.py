@@ -685,9 +685,24 @@ def speaks_system_voice(records: Sequence[lc.StateRecord]) -> bool:
     disagree. A book whose canon holds a status snapshot has spoken system voice at least
     once; one whose canon holds none has not, and asking its generator for a status line
     would put a LitRPG stat block in a locked-room mystery.
+
+    **The value must be a mapping, because "speaks" is a promise about the chain and not
+    about one record's existence** (§158). Everything that answers True here reads fields
+    out of the snapshot: `render_status_line` formats them, `system_voice_example` fills the
+    line the writer is shown, the outline reads the seed it schedules milestones from — and
+    extraction itself only ever mints mappings. Serial Pilot 14 seeded a prose-valued
+    snapshot, the only shape `world declare --value` could then carry, and measured the
+    split this clause closes: the floor built on this predicate passed, the sheet reached
+    the packet as fact, and the book was never asked to end a scene with a status line,
+    because `system_voice_example` had nothing to render numbers from. A predicate that
+    answers True while the ask stays silent is the exact disagreement
+    `genre.has_starting_sheet` delegates here to rule out.
     """
     return any(
-        record.predicate == STATUS_PREDICATE and state_mod.is_canon(record) for record in records
+        record.predicate == STATUS_PREDICATE
+        and state_mod.is_canon(record)
+        and isinstance(record.value, Mapping)
+        for record in records
     )
 
 
@@ -1269,9 +1284,9 @@ def system_voice_example(
         and isinstance(record.value, Mapping)
     ]
     if not snapshots:
-        # It speaks, but no snapshot carries a value this can render from. Abstaining is the
-        # same answer as not speaking: an example is what makes the instruction unambiguous,
-        # and there is nothing to build one out of.
+        # Unreachable since §158: `speaks_system_voice` itself now requires a renderable
+        # mapping, so the guard above and this filter agree by construction. Kept so a future
+        # loosening of the predicate fails toward abstaining rather than toward `str.get`.
         return None
     exact = (
         [record for record in snapshots if state_mod.order_key_of(record) == at]
