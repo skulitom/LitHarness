@@ -126,11 +126,15 @@ def test_the_new_demand_was_paid_for_and_not_added() -> None:
     the one role that does not stand on the floor. So READER reads 11 and the floor reads 25:
     §176's clause lands on the clarity side, §174's departure on the reader side, and what this
     test asserts is still §168's and is still unchanged.
+
+    **26 again on 2026-08-30 for §181**, a diction prohibition on the clarity side taking the
+    demand of headroom §174's departure had left. READER still reads 11, which is this test's
+    half, and the floor's total is updated rather than loosened for the reason above.
     """
     assert _THE_SUBTRACTED_AFFIRMATIVE not in house.READER
     assert "Spend the words on" not in house.READER
     assert len(house.demands(house.READER)) == 11
-    assert len(house.demands(house.HOUSE_RULES)) == 25
+    assert len(house.demands(house.HOUSE_RULES)) == 26
 
 
 def test_the_new_demand_carries_no_instance_list() -> None:

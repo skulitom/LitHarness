@@ -320,6 +320,14 @@ BUDGET: dict[str, int] = {
 #: one *person* to one person or object is a scope word on a rule whose object, remedy and
 #: concession are untouched, so `house.demands` reads the same count — §161.5's in-place pattern,
 #: widened rather than narrowed. Only the figure half needed a sentence.
+#:
+#: **No number moved for §181, and that is worth a line so the next track is not misled.** §176
+#: raised this ceiling to 26 and predicted the floor would sit *at* it; §174 landed the same day
+#: and took the readership clause out of `house.READER`, so the floor has been at 25 with one
+#: demand of headroom ever since — an artifact of two tracks crossing rather than an allowance
+#: anybody granted. §181's diction clause occupies it. **The floor and all five rows standing on
+#: it are now at their ceilings again**, so the next clause added to `house` raises six numbers,
+#: which is §176.4's prediction arriving one entry later than it said.
 HOUSE_BUDGET = 26
 
 
