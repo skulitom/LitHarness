@@ -135,11 +135,23 @@ def test_the_new_demand_was_paid_for_and_not_added() -> None:
     demands. **And 26 -> 27 the same day for §181** on the clarity side, the raise that moved
     six ceilings (`tests/test_prompt_budget.py` owns them). What this test asserts is still
     §168's and is still unchanged.
+
+**12 -> 10 and 27 -> 22 on 2026-08-30 for §187**, and this is the first time either number
+    here has fallen. Five register clauses left `house` for `application/reviser.py` — §171's
+    and §179's off `READER`, §176's, §180's and §181's off `CLARITY` — on the audit at
+    `plan/agent-impact/` plus the operator's word, which is what §127's brake asks for.
+    **§168's own clause is not among them and the reason is in the audit's matrix**: the family
+    it was written against is one the reads stopped naming, so it sits in the column of things
+    that worked rather than the column of clause-addressed families still alive. Its nearest
+    neighbour §179 did leave, which makes the boundary between them moot rather than settled;
+    if a later track brings that clause back to this constant, the separation this file's
+    sibling asserts is what it has to re-establish. What this test asserts is still §168's and
+    is still unchanged.
     """
     assert _THE_SUBTRACTED_AFFIRMATIVE not in house.READER
     assert "Spend the words on" not in house.READER
-    assert len(house.demands(house.READER)) == 12
-    assert len(house.demands(house.HOUSE_RULES)) == 27
+    assert len(house.demands(house.READER)) == 10
+    assert len(house.demands(house.HOUSE_RULES)) == 22
 
 
 def test_the_new_demand_carries_no_instance_list() -> None:

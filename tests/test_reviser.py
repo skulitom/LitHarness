@@ -503,6 +503,13 @@ def test_every_craft_clause_the_reviser_carries_says_what_fails() -> None:
     observation — enters as a prohibition on the shape standing in its way. A clause naming an
     adjective for good prose would be the permission form §138 measured at more than six times
     the prohibition form and worse than silence.
+
+    **Six became eleven on 2026-08-30** (§187): four register prohibitions moved here from
+    `house` and one is new. Asserted exactly rather than with `>=`, which is the change that
+    matters as much as the number — this role now owns sentence register, so it is the row where
+    a clause added by habit would land, and a bound would let that happen quietly. Every one of
+    the five arrivals is prohibition-signed, which is the property this test was written for and
+    the property that decided they could move here at all.
     """
     from litharness.application import reviser as module
 
@@ -511,9 +518,74 @@ def test_every_craft_clause_the_reviser_carries_says_what_fails() -> None:
         for demand in house.demands(module._TASK)
         if demand.startswith("What fails")
     ]
-    assert len(craft) >= 6, "the register spec is prohibition-signed or it is not a spec"
+    assert len(craft) == 11, (
+        "the register spec is prohibition-signed or it is not a spec, and it is counted exactly "
+        "because this is now the role sentence register is added to"
+    )
     for adjective in ("beautiful", "elegant", "vivid", "good prose", "better"):
         assert adjective not in module._TASK.lower()
+
+
+#: The four clauses §187 moved here from `house`, byte-identical to the text that left. Held by
+#: operative words rather than whole, the convention each clause's own test file keeps.
+PORTED = (
+    ("§171 gloss", "a rule about what people in general do or mean"),
+    ("§179 implication", "naming an absence or a permission"),
+    ("§176 comparison", "a comparison to a thing that does not have the quality"),
+    ("§181 diction", "a specialist's word where ordinary speech has one"),
+)
+
+
+@pytest.mark.parametrize(("entry", "operative"), PORTED, ids=[name for name, _ in PORTED])
+def test_a_register_clause_moved_here_stands_here_and_nowhere_else(
+    entry: str, operative: str
+) -> None:
+    """§187's move, asserted as a move rather than as an addition.
+
+    A rule in two places is §152's defect and it is the thing this track was most able to cause:
+    four clauses left `house` and arrived here, and a copy left behind in either constant would
+    have made one prohibition two texts that can disagree. Each clause's own test file asserts
+    what it means; this asserts that it has exactly one home.
+    """
+    from litharness.application import reviser as module
+
+    assert operative in module._TASK, f"{entry} did not arrive"
+    assert operative not in house.HOUSE_RULES, f"{entry} was left behind on the floor"
+
+
+def test_the_pair_clause_closes_the_unit_the_chain_clause_leaves_open() -> None:
+    """§187's one new clause, and the measurement that asked for it.
+
+    `plan/agent-impact/` measured the subordinate-connective density flat across this stage's
+    only draw while the chain share fell by two thirds — the stage answered a chained sentence by
+    cutting it in two. That obeys a prohibition whose object is **one sentence** and leaves the
+    relation unsaid across the two sentences that result, so the gap is a unit rather than a
+    subject. The new clause takes the pair as its object and names the same three relations the
+    chain clause already names, which is what makes it one relation set at two units rather than
+    a second rule against one complaint (§127).
+
+    It carries no concession because it excludes by construction (§181's form): where neither
+    sentence is the reason, the moment or the condition of the other there is nothing to fail, so
+    ordinary consecutive sentences are never reached and §163's failure mode has no door.
+    """
+    from litharness.application import reviser as module
+
+    demands = house.demands(module._TASK)
+    (chain,) = [item for item in demands if "hanging one happening on the next" in item]
+    (pair,) = [item for item in demands if "a pair of sentences" in item]
+
+    assert pair.startswith("What fails is")
+    assert pair != chain, "two demands, two units"
+    for relation in ("the reason", "the moment", "the condition"):
+        assert relation in pair and relation in chain
+    # The object is a thing a writer emits and can emit fewer of (§154). No reader state: what
+    # the reader would have to work out is not a token anybody can put on a page.
+    assert "reader" not in pair.lower()
+    for state in ("guess", "work out", "wonder", "confus"):
+        assert state not in pair.lower()
+    # Excludes by construction, so no concession and no permission (§138).
+    assert ";" not in pair
+    assert "—" not in pair and ":" not in pair
 
 
 def test_no_word_of_the_reads_that_commissioned_this_is_in_the_prompt() -> None:
