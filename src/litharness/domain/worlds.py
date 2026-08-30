@@ -1795,8 +1795,17 @@ def _record_sentence(
     if record.predicate == CONSEQUENCE_PREDICATE and value:
         domain = (record.object_ref or "").replace("_", " ")
         return f"Because of {record.subject}, in {domain}: {value}"
+    # **The one predicate this module declares a fact and rendered as an instruction** (§168.5,
+    # fixed here as §182). Three sites state the contract — `MANIFESTS_PREDICATE`'s docstring,
+    # `EDGE_PREDICATE`'s (*"a fact about the world, exactly as a rule is — never an instruction
+    # about how to write them"*), and `gamesystem.Ability`'s — and the render said
+    # `shows on the page as:`, which names the writer's output and reads as a shot to take. On
+    # pilot 16 scene 1 that frame rode 37 of the packet's 145 fact lines. **The frame names the
+    # world instead**, because that is what the field holds: a form the thing has where people
+    # live with it, on the same footing as the rule above it. No fact is dropped and no line is
+    # added — this is the imperative surface going, not the world going.
     if record.predicate == MANIFESTS_PREDICATE and value:
-        return f"{record.subject} shows on the page as: {value}"
+        return f"The form {record.subject} takes in the world: {value}"
     # **The exception, its edge and its price, as three facts and no instruction.** The register
     # is the one the rules and manifestations already use: what is so, never what to do about it.
     # A sentence here that said "open on them" or "make the reader like them" would be this

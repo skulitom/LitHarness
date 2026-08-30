@@ -5,7 +5,7 @@ Dungeon crawler carl author says he keeps 200page excel sheet for some individua
 in his world … we can't expect our writers to write in the dark."*
 
 The facts were already there. World records carry a character's role, what they are, what
-they want, how they sound, how they show on the page, what they can do, where they stand, what
+they want, how they sound, what they look like, what they can do, where they stand, what
 they are the exception to, what they owe and who owes them — as `(subject, predicate, value)`
 rows. Nothing gathered them. `worlds.protagonist_brief` does it for exactly one person and
 stops.
@@ -126,7 +126,11 @@ class Character:
             ("is", self.is_a),
             ("wants", self.wants),
             ("sounds", self.voice),
-            ("on the page", self.manifests_as),
+            # **The same field and the same correction as `worlds._record_sentence`** (§182).
+            # Every other label here names something the person *is* — is, wants, sounds, can
+            # do, costs — and this one named the writer's output. `looks like` puts it back in
+            # the series it belongs to; the value is unchanged and no line is added or dropped.
+            ("looks like", self.manifests_as),
             ("can do what nobody else can", self.edge),
             ("and it costs", self.price),
         ):
