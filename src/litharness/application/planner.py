@@ -67,7 +67,7 @@ from litharness.application.outline import (
     outline_job_id,
 )
 from litharness.application.ports import ApplicationStore, PlanningStore
-from litharness.domain import genre, house, worlds
+from litharness.domain import genre, house, staging, worlds
 from litharness.domain import state as state_mod
 from litharness.domain.beats import (
     SIX_BEAT,
@@ -1105,17 +1105,31 @@ def make_plan_selector(
                     # `()` for every book that speaks no system voice, which composes the
                     # unnamed `BEAT` and is byte-identical to what this call site rendered
                     # before.
+                    # **The opening's cast bound rides the same fold, and for the same
+                    # reason.** §175: the packet's cast section is the one part with no scene
+                    # scoping, so at a budget that does not bind every declared person reaches
+                    # every scene — nine sheets in the chapter read 10 called crowded, and the
+                    # writer used all nine. `staging` bounds how many of them reach one page
+                    # without cutting the packet, because no honest order to cut it by exists.
+                    # Folded around the beat rather than beside it: the statement and the beat
+                    # say what the scene contains, the bound says what it may not also contain.
+                    # A stored statement already carries both — `outline_proposal` folds them
+                    # in the same order — so only the statement-less branch composes here.
                     scene_plan=(
                         plan_item.text
                         if plan_item is not None
                         else (
-                            genre.with_beat(
-                                "",
-                                beat.ordinal,
-                                beat.of_total,
-                                counts=movable_names(
-                                    records, character=pov_id, at=beat.story_order_key
+                            staging.with_bound(
+                                genre.with_beat(
+                                    "",
+                                    beat.ordinal,
+                                    beat.of_total,
+                                    counts=movable_names(
+                                        records, character=pov_id, at=beat.story_order_key
+                                    ),
                                 ),
+                                beat.ordinal,
+                                arc_index=arc_index or None,
                             )
                             if outline
                             else None
