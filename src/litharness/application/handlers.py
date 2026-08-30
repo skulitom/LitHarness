@@ -28,7 +28,7 @@ from __future__ import annotations
 
 from collections.abc import Sequence
 from contextlib import suppress
-from dataclasses import replace
+from dataclasses import dataclass, replace
 from datetime import UTC, datetime
 from hashlib import sha256
 
@@ -46,7 +46,7 @@ from litharness.application.reviser import (
 )
 from litharness.domain.budget import BudgetPolicy, BudgetVerdict
 from litharness.domain.budget import check as budget_check
-from litharness.domain.draft import DraftPolicy, gate_draft, strip_em_dash
+from litharness.domain.draft import DraftOutcome, DraftPolicy, gate_draft, strip_em_dash
 from litharness.domain.editorial import (
     InterventionRealization,
     ReaderMechanism,
@@ -79,7 +79,13 @@ from litharness.domain.policy import (
     policy_digest,
 )
 from litharness.domain.progression import gate_progression
-from litharness.domain.reviser import Breach, ReviserPolicy, contain
+from litharness.domain.reviser import (
+    Breach,
+    PreRevisionDraft,
+    ReviserPolicy,
+    contain,
+    pre_revision_draft_id,
+)
 from litharness.domain.revision import Revision, node_version_id
 from litharness.domain.serials import SerialShape
 from litharness.domain.text import content_hash
@@ -217,6 +223,34 @@ def draft_sampler(job: Job, profile: str) -> Sampler:
 REVISION_GATE = "revision.containment.v0"
 
 
+@dataclass(frozen=True, slots=True)
+class _Ladder:
+    """What one run of the deterministic ladder found, over one text (§187).
+
+    **A value rather than a mutation, because the ladder now runs more than once.** §185 put
+    the reviser in front of the gates so the revision would be judged by them; §187 puts the
+    *draft* through them first so a doomed draft is never rewritten. That means two runs per
+    revised scene, and a sequence of rebindings in one scope could not express which run the
+    decision cites. Everything here is derived from the text in the `text` field and from
+    store reads; nothing in it is persisted by the run that produced it.
+
+    **There is nowhere in this to put a preference between two texts.** It carries a verdict
+    about *one* candidate, exactly as `DraftOutcome` does, and the caller keeps the second run
+    because it is the one over the adopted text — not because it scored better. §61(5) and
+    §105.1 at a third address.
+    """
+
+    #: The candidate after §180's strip, which is the string `result.text` is rebound to.
+    text: str
+    #: How many em dashes the strip took out of *this* text.
+    marks_removed: int
+    outcome: DraftOutcome
+    gates: tuple[GateOutcome, ...]
+    extracted: tuple[lc.StateRecord, ...]
+    findings: list[DomainFinding]
+    accepted: bool
+
+
 def _revision_gate(passed: bool, detail: str | None) -> GateOutcome:
     """The reviser call's own recorded verdict. **Deliberately non-blocking, and it is not a
     craft gate.**
@@ -268,10 +302,13 @@ def revise_draft(
     comparison.
 
     **Where this sits is the whole design and it was read off the code rather than chosen.**
-    It runs on the provider's string, before `strip_em_dash` and before `gate_draft`, so the
-    revision goes down the identical ladder the draft would have — shape, integrity and §184's
-    beat comparison all read the revised prose. The three alternatives were each refused by
-    something already written down:
+    It runs on an unaccepted string and in front of the ladder that judges what it returns, so
+    the revision goes down the identical ladder the draft would have — shape, integrity and
+    §184's beat comparison all read the revised prose. **§187 moved one thing and left that
+    invariant standing**: the ladder now runs on the draft first and this call is made only if
+    the draft cleared it, so `drafted` is the gated text (canonicalized, after `strip_em_dash`)
+    rather than the provider's raw string, and the strip runs again on whatever comes back.
+    The three alternatives were each refused by something already written down:
 
     * **A follow-on job rewriting accepted prose through `apply_patch`.** §184's gate could not
       re-run there. §184.4 abstains on *a position the book already wrote down*, and a scene
@@ -285,10 +322,12 @@ def revise_draft(
       `MANUSCRIPT_REVISION_ACCEPTED` events would name one scene, and a re-printed status line
       at an already-written position is the second canon snapshot at one key that
       `integrity.detect_contradictions` groups on and refuses.
-    * **After the em-dash strip instead of before it.** The strip would then be the last thing
-      that touched the *draft* and nothing would touch the revision, so the mark read 1 and
-      read 11 both named would come back through a door §180 had closed. The strip stays the
-      last rewrite before the gate, which is §180.4's third load-bearing detail unchanged.
+    * **Leaving the revision unstripped.** The strip has to be the last rewrite before the gate
+      on whichever text is adopted, or the mark read 1 and read 11 both named comes back
+      through a door §180 had closed. It runs once per ladder pass rather than once per call,
+      which keeps §180.4's third load-bearing detail — one text, one hash, one offset space —
+      true of both passes, and makes the count on each pass a fact about that pass's author:
+      the draft's marks are the writer's and the revision's are the reviser's.
 
     None of this makes `draft.py`'s rule false. *A draft may only fill emptiness; rewriting
     existing prose must route through `apply_patch`* is about prose the store holds, and
@@ -599,21 +638,205 @@ def make_scene_draft_handler(
 
         result, resolution = registry.complete(request)
 
-        # **The reviser, and it runs on the provider's string rather than on an accepted
-        # scene** (§185; the operator's read-12 directive). One draft in, one revision out: no
-        # second candidate, no scoring, nothing choosing between two texts. `revise_draft`
-        # returns the draft untouched on every refusal path, so a failed containment check, an
-        # exhausted ceiling and a dead transport all leave the scene exactly where it was — and
-        # what comes back goes down the identical ladder below, which is the whole reason the
-        # call sits here and not after acceptance.
+        # Captured before anything rebinds `result`: the ladder below runs twice and both runs
+        # judge the same provider answer's schema conformance, which is a property of the call
+        # rather than of either text.
+        conforms = result.conforms
+
+        def run_ladder(candidate: str) -> _Ladder:
+            """§180's strip, then shape, then integrity, then §184's beat, over one text.
+
+            **Minting nothing.** Everything here is a pure function or a store *read*:
+            `gate_draft` returns a revision without persisting it, `extract_state` returns
+            records, `gate_integrity` returns findings. Which is what makes it safe to run
+            twice — the caller decides which run is the verdict of record and only that run's
+            findings are written.
+            """
+            # **The one punctuation rewrite this system performs, and it happens here rather
+            # than anywhere later for a reason that is about hashes and not about prose**
+            # (§180). Three sites below still read `result.text` — the duplicate-scene
+            # detector's `candidate`, and two `content_hash` calls — so a rewrite applied
+            # inside `gate_draft` would leave them describing a string that was never stored.
+            # Stripping before the gate keeps one text, one hash and one offset space, which is
+            # also why it cannot be done as a migration over prose already in the store: every
+            # open finding's span is measured against the text as committed. **It therefore
+            # runs once per ladder run rather than once per handler call** (§187): each run
+            # judges its own text, and the strip is still the last rewrite before the gate on
+            # whichever text is adopted, which is all §185.2's argument ever required.
+            stripped, marks = strip_em_dash(candidate)
+            outcome = gate_draft(
+                revision,
+                logical_id,
+                stripped,
+                conforms=conforms,
+                policy=policy,
+            )
+
+            # §4.2's ladder produces a *decision*, not a boolean. Slice 4 approximated this
+            # with a payload dict; contracts 1.1.0 made it an artifact, so the gate results,
+            # the outcome, the provenance and the frozen policy digest now travel together and
+            # can be queried later by job or by resulting revision.
+            gates = gates_for_draft(outcome)
+
+            # §4.2 ladder step 3, and the first gate in the wired path that is about the *book*
+            # rather than about the string. It runs only on a candidate that cleared shape:
+            # integrity over text the shape gate refused would be a second opinion on a draft
+            # that is already going back, and it would cost a store read per refusal.
+            findings: list[DomainFinding] = []
+            # §12 step 5's output. Empty when the job carries no book scope — a hand `enqueue`
+            # against a bare revision. Bound here rather than inside the branch because the
+            # acceptance path below reads it unconditionally, and an unbound name there would
+            # turn a scene with no system voice into a failed job.
+            extracted: tuple[lc.StateRecord, ...] = ()
+            if outcome.accepted and book_id and branch_id:
+                stored_records = tuple(store.state_records(str(book_id), str(branch_id)))
+                # **Before the gate, not after acceptance**, which is the whole point. Extracting
+                # afterwards would make the detector a report on canon already written; extracting
+                # here means the facts this scene asserts are judged against established canon
+                # while refusing is still free — the node stays empty, nothing commits, and the
+                # finding drives the ladder. `node_after.content` rather than `result.text`
+                # because `gate_draft` canonicalizes, and a span measured against the raw provider
+                # string points at the wrong characters once NFC and line endings are applied.
+                if outcome.node_after is not None:
+                    extracted = extract_state(
+                        outcome.node_after.content or "",
+                        known=stored_records,
+                        project_id=project_id,
+                        book_id=str(book_id),
+                        branch_id=str(branch_id),
+                        logical_id=logical_id,
+                        version_id=node_version_id(outcome.node_after),
+                        # A book with no imported snapshot has no story-time vocabulary, so every
+                        # scene it writes is unplaceable and §12 step 5 extracts nothing from it
+                        # forever — which is Book Zero. A chronological template is entitled to
+                        # say where its beats sit; `stated_position` accepts that answer only
+                        # when the book itself is silent.
+                        stated_order_key=(
+                            str(selected["story_order_key"])
+                            if selected.get("story_order_key")
+                            else None
+                        ),
+                    )
+                subject = DetectorInput(
+                    book_id=str(book_id),
+                    branch_id=str(branch_id),
+                    logical_id=logical_id,
+                    candidate=stripped,
+                    records=stored_records + extracted,
+                    plan_items=tuple(store.plan_items(str(book_id), str(branch_id))),
+                    # **The rest of the book, so a scene can be compared against it.** Read off
+                    # the base revision rather than the candidate's, because the candidate's does
+                    # not exist yet — and taken in reading order and excluding this node, so a
+                    # scene is never compared against itself. Without this
+                    # `detect_duplicate_scene` runs on every draft and finds nothing, which is a
+                    # detector that is present and inert: the shape §19.1 spends a paragraph on.
+                    prior_prose=tuple(
+                        (node.logical_id, node.content)
+                        for node in revision.in_reading_order()
+                        if node.kind is NodeKind.SCENE
+                        and node.content
+                        and node.logical_id != logical_id
+                    ),
+                    ordinal=int(selected.get("ordinal", 0) or 0),
+                    of_total=int(selected.get("of_total", 0) or 0),
+                    # The promise ledger's open rows, for `promise.overdue.v0` — supplied the
+                    # way `prior_prose` is, so the detector stays a pure function of its input.
+                    # Model-sourced rows; the detector can only annotate (MINOR, heuristic).
+                    open_promises=tuple(
+                        store.promises(str(book_id), str(branch_id), open_only=True)
+                    ),
+                    # The template's coordinate for this beat, same payload slot extraction
+                    # reads as `stated_order_key`. None when the sheet is not chronological,
+                    # and None makes the overdue check abstain exactly as milestones do.
+                    story_order_key=(
+                        str(selected["story_order_key"])
+                        if selected.get("story_order_key")
+                        else None
+                    ),
+                )
+                # `standing` was read and cleared before the generation, so this pass judges
+                # only what the in-process detectors say about *this* candidate — which is why
+                # its refusal costs an attempt where the pre-flight one does not.
+                integrity, findings = gate_integrity(subject)
+                gates = (*gates, standing_gate, integrity)
+
+                # **§4.2's ladder, one rung further: did the scheduled beat land?** (§184) The
+                # plan told this scene which of the book's quantities moves in it, and until now
+                # nothing compared that ask against the state the scene wrote down — so the beat
+                # rode the prompt, extraction read a snapshot off the prose, and the two never
+                # met. Both halves of the ask were recorded on the payload when the work was
+                # selected, so nothing is re-derived here: the gate reads two frozen strings and
+                # compares two integers out of `stored_records` and `extracted`, which are the
+                # same two values the integrity gate was handed above. `None` on every scene whose
+                # plan named no quantity, and the ladder is then byte-identical to what it was.
+                beat_gate = gate_progression(
+                    _text(selected.get("progression_beat")),
+                    _text(selected.get("progression_column")),
+                    before=stored_records,
+                    extracted=extracted,
+                    at=(
+                        str(selected["story_order_key"])
+                        if selected.get("story_order_key")
+                        else None
+                    ),
+                )
+                if beat_gate is not None:
+                    gates = (*gates, beat_gate)
+
+            # **`accepted` is the whole ladder's verdict, not the shape gate's.** Kept as its
+            # own name rather than by rewriting `outcome`, because `outcome.vetoes` is what
+            # the refusal event reports and a rewritten outcome would report a candidate
+            # refused with no reason attached — the shape gate passed, so it has none to give.
+            # The integrity gate's veto lives on its own `GateOutcome`, which `decide` and the
+            # decision record already read.
+            return _Ladder(
+                text=stripped,
+                marks_removed=marks,
+                outcome=outcome,
+                gates=gates,
+                extracted=extracted,
+                findings=findings,
+                accepted=outcome.accepted
+                and all(gate.passed for gate in gates if gate.blocking),
+            )
+
+        # **The deterministic ladder runs on the draft, and the reviser is only paid for a
+        # draft that cleared it** (§187; recommendation 1b of `plan/agent-impact/REPORT.md`).
+        # §185 put the second call in front of the ladder so the revision would be judged by
+        # it, and that half is unchanged — what moved is that the *draft* is judged first.
+        # `plan/agent-impact/reviser-impact.md` §2 measured why: three of five reviser calls on
+        # the audited chapter bought text `integrity.progression.v0` then refused, and §185.3's
+        # own containment argument is that the machine lines are byte-identical **so that
+        # gate's verdict cannot change** — so those rewrites were incapable of altering the
+        # outcome they were paid for, by the design's own reasoning. A refused draft now costs
+        # the writer's call and nothing else.
+        ladder = run_ladder(result.text)
+
+        # **One draft in, one revision out: no second candidate, no scoring, nothing choosing
+        # between two texts** (§185; the operator's read-12 directive). `revise_draft` returns
+        # the draft untouched on every refusal path, so a failed containment check, an
+        # exhausted ceiling and a dead transport all leave the scene exactly where it was.
         revised_by: str | None = None
         revision_events: Sequence[Event] = ()
-        if revise:
+        #: The prose this attempt would have committed under `--no-revise`, kept only when a
+        #: revision was adopted over it (§187). Canonicalized and stripped, so a later diff
+        #: against the accepted node compares prose against prose.
+        superseded: tuple[str, int] | None = None
+        if revise and ladder.accepted:
+            assert ladder.outcome.node_after is not None  # accepted implies a filled node
+            gated_draft = ladder.outcome.node_after.content or ""
             revised, revised_by, revision_events = revise_draft(
                 registry,
                 store,
                 job,
-                drafted=result.text,
+                # **The text the reviser rewrites is the text the ladder passed**, which is
+                # the gated draft rather than the provider's raw string. Handing it the raw
+                # one would mean the ladder approved a text and a different text was rewritten
+                # — and a diff of the kept draft against the accepted prose would then
+                # attribute NFC normalisation, line-ending unification and every §180 em-dash
+                # rewrite to the reviser. One text, one offset space (§180.4), now on both
+                # sides of the call.
+                drafted=gated_draft,
                 already_spent=result,
                 material=_text(payload.get("packet")),
                 project_id=project_id,
@@ -626,141 +849,24 @@ def make_scene_draft_handler(
                 model=reviser_model,
                 now=now,
             )
-            result = replace(result, text=revised)
+            if revised_by is not None:
+                # **The ladder re-runs, on the adopted text, and this run is the verdict of
+                # record.** §185's invariant is that the accepted text passed the gates, and
+                # it survives the reorder intact: the shape gate is the one that can change
+                # its verdict here (§185.3), and it does so on the revision.
+                superseded = (gated_draft, ladder.marks_removed)
+                ladder = run_ladder(revised)
+            # Nothing is re-run when containment refused: `revise_draft` returned the draft
+            # unchanged, so a second pass over the identical string would spend two store
+            # reads to reproduce a verdict already in hand.
 
-        # **The one punctuation rewrite this system performs, and it happens here rather than
-        # anywhere later for a reason that is about hashes and not about prose** (§180). Three
-        # sites below still read `result.text` — the duplicate-scene detector's `candidate`, and
-        # two `content_hash` calls — so a rewrite applied inside `gate_draft` would leave them
-        # describing a string that was never stored. Rebinding the result before the gate keeps
-        # one text, one hash and one offset space, which is also why it cannot be done as a
-        # migration over prose already in the store: every open finding's span is measured
-        # against the text as committed.
-        drafted, marks_removed = strip_em_dash(result.text)
-        result = replace(result, text=drafted)
-
-        outcome = gate_draft(
-            revision,
-            logical_id,
-            result.text,
-            conforms=result.conforms,
-            policy=policy,
-        )
-
-        # §4.2's ladder produces a *decision*, not a boolean. Slice 4 approximated this
-        # with a payload dict; contracts 1.1.0 made it an artifact, so the gate results,
-        # the outcome, the provenance and the frozen policy digest now travel together and
-        # can be queried later by job or by resulting revision.
-        gates = gates_for_draft(outcome)
-
-        # §4.2 ladder step 3, and the first gate in the wired path that is about the *book*
-        # rather than about the string. It runs only on a candidate that cleared shape:
-        # integrity over text the shape gate refused would be a second opinion on a draft
-        # that is already going back, and it would cost a store read per refusal.
-        findings: list[DomainFinding] = []
-        # §12 step 5's output. Empty when the job carries no book scope — a hand `enqueue`
-        # against a bare revision. Bound here rather than inside the branch because the
-        # acceptance path below reads it unconditionally, and an unbound name there would
-        # turn a scene with no system voice into a failed job.
-        extracted: tuple[lc.StateRecord, ...] = ()
-        if outcome.accepted and book_id and branch_id:
-            stored_records = tuple(store.state_records(str(book_id), str(branch_id)))
-            # **Before the gate, not after acceptance**, which is the whole point. Extracting
-            # afterwards would make the detector a report on canon already written; extracting
-            # here means the facts this scene asserts are judged against established canon
-            # while refusing is still free — the node stays empty, nothing commits, and the
-            # finding drives the ladder. `node_after.content` rather than `result.text`
-            # because `gate_draft` canonicalizes, and a span measured against the raw provider
-            # string points at the wrong characters once NFC and line endings are applied.
-            if outcome.node_after is not None:
-                extracted = extract_state(
-                    outcome.node_after.content or "",
-                    known=stored_records,
-                    project_id=project_id,
-                    book_id=str(book_id),
-                    branch_id=str(branch_id),
-                    logical_id=logical_id,
-                    version_id=node_version_id(outcome.node_after),
-                    # A book with no imported snapshot has no story-time vocabulary, so every
-                    # scene it writes is unplaceable and §12 step 5 extracts nothing from it
-                    # forever — which is Book Zero. A chronological template is entitled to
-                    # say where its beats sit; `stated_position` accepts that answer only
-                    # when the book itself is silent.
-                    stated_order_key=(
-                        str(selected["story_order_key"])
-                        if selected.get("story_order_key")
-                        else None
-                    ),
-                )
-            subject = DetectorInput(
-                book_id=str(book_id),
-                branch_id=str(branch_id),
-                logical_id=logical_id,
-                candidate=result.text,
-                records=stored_records + extracted,
-                plan_items=tuple(store.plan_items(str(book_id), str(branch_id))),
-                # **The rest of the book, so a scene can be compared against it.** Read off
-                # the base revision rather than the candidate's, because the candidate's does
-                # not exist yet — and taken in reading order and excluding this node, so a
-                # scene is never compared against itself. Without this
-                # `detect_duplicate_scene` runs on every draft and finds nothing, which is a
-                # detector that is present and inert: the shape §19.1 spends a paragraph on.
-                prior_prose=tuple(
-                    (node.logical_id, node.content)
-                    for node in revision.in_reading_order()
-                    if node.kind is NodeKind.SCENE
-                    and node.content
-                    and node.logical_id != logical_id
-                ),
-                ordinal=int(selected.get("ordinal", 0) or 0),
-                of_total=int(selected.get("of_total", 0) or 0),
-                # The promise ledger's open rows, for `promise.overdue.v0` — supplied the
-                # way `prior_prose` is, so the detector stays a pure function of its input.
-                # Model-sourced rows; the detector can only annotate (MINOR, heuristic).
-                open_promises=tuple(store.promises(str(book_id), str(branch_id), open_only=True)),
-                # The template's coordinate for this beat, same payload slot extraction
-                # reads as `stated_order_key`. None when the sheet is not chronological,
-                # and None makes the overdue check abstain exactly as milestones do.
-                story_order_key=(
-                    str(selected["story_order_key"]) if selected.get("story_order_key") else None
-                ),
-            )
-            # `standing` was read and cleared before the generation, so this pass judges
-            # only what the in-process detectors say about *this* candidate — which is why
-            # its refusal costs an attempt where the pre-flight one does not.
-            integrity, findings = gate_integrity(subject)
-            gates = (*gates, standing_gate, integrity)
-
-            # **§4.2's ladder, one rung further: did the scheduled beat land?** (§184) The
-            # plan told this scene which of the book's quantities moves in it, and until now
-            # nothing compared that ask against the state the scene wrote down — so the beat
-            # rode the prompt, extraction read a snapshot off the prose, and the two never
-            # met. Both halves of the ask were recorded on the payload when the work was
-            # selected, so nothing is re-derived here: the gate reads two frozen strings and
-            # compares two integers out of `stored_records` and `extracted`, which are the
-            # same two values the integrity gate was handed above. `None` on every scene whose
-            # plan named no quantity, and the ladder is then byte-identical to what it was.
-            beat_gate = gate_progression(
-                _text(selected.get("progression_beat")),
-                _text(selected.get("progression_column")),
-                before=stored_records,
-                extracted=extracted,
-                at=(
-                    str(selected["story_order_key"])
-                    if selected.get("story_order_key")
-                    else None
-                ),
-            )
-            if beat_gate is not None:
-                gates = (*gates, beat_gate)
-
-        # **`accepted` is the whole ladder's verdict, not the shape gate's.** Kept as its own
-        # name rather than by rewriting `outcome`, because `outcome.vetoes` is what the
-        # refusal event reports and a rewritten outcome would report a candidate refused with
-        # no reason attached — the shape gate passed, so it has none to give. The integrity
-        # gate's veto lives on its own `GateOutcome`, which `decide` and the decision record
-        # already read.
-        accepted = outcome.accepted and all(gate.passed for gate in gates if gate.blocking)
+        outcome = ladder.outcome
+        gates = ladder.gates
+        extracted = ladder.extracted
+        findings = ladder.findings
+        accepted = ladder.accepted
+        marks_removed = ladder.marks_removed
+        result = replace(result, text=ladder.text)
 
         if findings:
             # Recorded whether or not they block. A minor finding dropped because it was not
@@ -830,8 +936,10 @@ def make_scene_draft_handler(
             store.record_decision(decision, decided_at=_timestamp(now))
             failed = [gate for gate in gates if gate.blocking and not gate.passed]
             return [
-                # The reviser's own decision event first, because its call happened first and
-                # because a refused candidate is still a candidate somebody paid twice for.
+                # The reviser's own decision event first, because its call happened first.
+                # **Empty whenever the draft is what was refused** (§187): the second call is
+                # not made at all on that path, so a candidate refused here was paid for twice
+                # only when the revision is the text that failed.
                 *revision_events,
                 Event(
                     event_type=EventType.MANUSCRIPT_CANDIDATE_CREATED,
@@ -1002,6 +1110,43 @@ def make_scene_draft_handler(
                     )
                 )
             realizations = tuple(realized)
+        # **The one text nothing kept** (§187; recommendation 2 of the attribution report).
+        # `plan/agent-impact/reviser-impact.md` §1 established by three reads of the code that
+        # no draft/revision pair exists anywhere and none can be built later — the reviser's
+        # decision row carries cost and a containment verdict and no text, the acceptance event
+        # carries `chars` and `revised_by` and no text, and `--no-session-persistence` leaves
+        # no transcript. So the stage that now writes every sentence the book ships was the one
+        # stage whose input was not recorded. It is recorded here, in the transaction that
+        # keeps the prose that replaced it, and only when a revision was actually adopted: when
+        # containment refused, the draft *is* the accepted prose and a second copy of it would
+        # be a row saying nothing.
+        #
+        # **Nothing about this row compares the two texts.** It says what the stage was handed.
+        # The comparison is a reader's, later, outside the loop — `litharness why --json` is
+        # where it surfaces, on the operator's side of §97.1.
+        kept: tuple[PreRevisionDraft, ...] = ()
+        if superseded is not None and revised_by is not None:
+            content, draft_marks = superseded
+            kept = (
+                PreRevisionDraft(
+                    draft_id=pre_revision_draft_id(
+                        outcome.revision.revision_id, logical_id, content
+                    ),
+                    book_id=revision.book_id,
+                    branch_id=revision.branch_id,
+                    logical_id=logical_id,
+                    revision_id=outcome.revision.revision_id,
+                    job_id=job.job_id,
+                    attempt=job.attempts,
+                    # The writer's model, not the reviser's: `result` was rebound on `text`
+                    # alone, so its provenance is still the drafting call's.
+                    drafted_by=result.model or "(unnamed)",
+                    revised_by=revised_by,
+                    content=content,
+                    em_dashes_removed=draft_marks,
+                    recorded_at=_timestamp(now),
+                ),
+            )
         store.commit_revision(
             outcome.revision,
             created_at=_timestamp(now),
@@ -1009,6 +1154,7 @@ def make_scene_draft_handler(
             state_records=extracted,
             jobs=follow_up_jobs,
             intervention_realizations=realizations,
+            pre_revision_drafts=kept,
             decision=decision,
         )
 

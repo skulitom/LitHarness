@@ -76,6 +76,7 @@ from litharness.domain.policy import (
     VerdictSource,
 )
 from litharness.domain.promises import PROMISE_OPEN, PROMISE_PAID, Promise
+from litharness.domain.reviser import PreRevisionDraft
 from litharness.domain.revision import Revision, node_version_id
 from litharness.domain.state import key_space as _order_key_space
 from litharness.domain.voice import StyleDescriptor
@@ -391,6 +392,7 @@ class SqliteStore:
         retract_state_for_nodes: Collection[str] = (),
         jobs: Sequence[Job] = (),
         intervention_realizations: Sequence[InterventionRealization] = (),
+        pre_revision_drafts: Sequence[PreRevisionDraft] = (),
         decision: PolicyDecision | None = None,
     ) -> None:
         """Persist a revision, its events and the state read out of it, atomically.
@@ -426,6 +428,7 @@ class SqliteStore:
                 retract_state_for_nodes=retract_state_for_nodes,
                 jobs=jobs,
                 intervention_realizations=intervention_realizations,
+                pre_revision_drafts=pre_revision_drafts,
                 decision=decision,
             )
 
@@ -441,6 +444,7 @@ class SqliteStore:
         retract_state_for_nodes: Collection[str] = (),
         jobs: Sequence[Job] = (),
         intervention_realizations: Sequence[InterventionRealization] = (),
+        pre_revision_drafts: Sequence[PreRevisionDraft] = (),
         decision: PolicyDecision | None = None,
     ) -> None:
         """Everything `commit_revision` writes, on a transaction the caller already owns."""
@@ -536,6 +540,35 @@ class SqliteStore:
             self._jobs.insert_job(connection, job)
         for realization in intervention_realizations:
             self._audience.insert_intervention_realization(connection, realization)
+        # **The draft the reviser was handed, in the transaction that keeps the prose that
+        # replaced it** (§187). It inherits the revision's crash semantics for the reason
+        # `state_records` does one paragraph up: a kept draft for a revision that does not
+        # exist would be a text nothing can be diffed against, and writing it after the commit
+        # is unreachable on replay because the handler returns early once a prior ACCEPT
+        # decision is on record.
+        for draft in pre_revision_drafts:
+            connection.execute(
+                "INSERT OR IGNORE INTO pre_revision_drafts (draft_id, book_id, branch_id, "
+                "logical_id, revision_id, job_id, attempt, drafted_by, revised_by, content, "
+                "content_sha256, chars, em_dashes_removed, created_at) "
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                (
+                    draft.draft_id,
+                    draft.book_id,
+                    draft.branch_id,
+                    draft.logical_id,
+                    draft.revision_id,
+                    draft.job_id,
+                    draft.attempt,
+                    draft.drafted_by,
+                    draft.revised_by,
+                    draft.content,
+                    draft.content_sha256,
+                    len(draft.content),
+                    draft.em_dashes_removed,
+                    draft.recorded_at,
+                ),
+            )
         # The head moves in the same transaction as the revision it points at, so a
         # crash cannot leave a revision that exists but is not the head, or a head
         # pointing at nothing. `revert` relies on this: it commits a revision whose
@@ -547,6 +580,44 @@ class SqliteStore:
             "revision_id = excluded.revision_id, updated_at = excluded.updated_at",
             (revision.book_id, revision.branch_id, revision.revision_id, created_at),
         )
+
+    def pre_revision_drafts(
+        self, book_id: str, branch_id: str, *, logical_id: str | None = None
+    ) -> list[PreRevisionDraft]:
+        """Every kept pre-revision draft for a branch, oldest first (§187).
+
+        **Deliberately not on `DraftStore` or on any protocol in `application/ports.py`.** The
+        write reaches the store through `commit_revision`'s keyword; there is no read anywhere
+        the application layer can name, so no workflow that coordinates through those protocols
+        can put this text into a packet, a summary, a detector input or a prompt. That is the
+        `debug-book` rule (§97.1) enforced by where the method is rather than promised in a
+        docstring — `cli.py`'s dossier is the one caller, on the operator's side of the loop.
+        """
+        clause = "" if logical_id is None else " AND logical_id = ?"
+        parameters: tuple[str, ...] = (book_id, branch_id)
+        if logical_id is not None:
+            parameters = (*parameters, logical_id)
+        return [
+            PreRevisionDraft(
+                draft_id=row["draft_id"],
+                book_id=row["book_id"],
+                branch_id=row["branch_id"],
+                logical_id=row["logical_id"],
+                revision_id=row["revision_id"],
+                job_id=row["job_id"],
+                attempt=row["attempt"],
+                drafted_by=row["drafted_by"],
+                revised_by=row["revised_by"],
+                content=row["content"],
+                em_dashes_removed=row["em_dashes_removed"],
+                recorded_at=row["created_at"],
+            )
+            for row in self._connection.execute(
+                "SELECT * FROM pre_revision_drafts WHERE book_id = ? AND branch_id = ?"
+                f"{clause} ORDER BY created_at, draft_id",
+                parameters,
+            )
+        ]
 
     def load_revision(self, revision_id: str) -> Revision:
         row = self._connection.execute(

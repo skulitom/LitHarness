@@ -34,6 +34,7 @@ than another, and no code path in the module under test can express one.
 
 from __future__ import annotations
 
+import dataclasses
 from datetime import UTC, datetime
 
 import pytest
@@ -54,22 +55,30 @@ from litharness.domain import house
 from litharness.domain.budget import BudgetPolicy
 from litharness.domain.draft import DraftPolicy
 from litharness.domain.events import EventType
+from litharness.domain.extraction import render_status_line, sheet_for
 from litharness.domain.generation import CompletionRequest
 from litharness.domain.jobs import Job, JobStatus, input_digest_for
 from litharness.domain.patch import Veto
 from litharness.domain.policy import Outcome, policy_digest
+from litharness.domain.progression import PROGRESSION_GATE
 from litharness.domain.reviser import (
     Breach,
     ReviserPolicy,
     contain,
     introduced,
     machine_lines,
+    pre_revision_draft_id,
 )
 from litharness.providers.base import ProviderError, ProviderFailureKind
 from litharness.providers.fake import FakeProvider
 from litharness.providers.registry import ProviderRegistry
 from tests.conftest import PROJECT_ID
 from tests.test_draft import START, blank_revision
+
+# The located case, borrowed from the file that owns it rather than rebuilt here: serial pilot
+# 18b's declared system, its protagonist's sheet, and the opening line the packet showed her.
+from tests.test_progression_gate import _canon as progression_canon
+from tests.test_progression_gate import _standing as progression_standing
 
 #: One machine line, and it is the default sheet's own shape. The separator is the bare em dash
 #: `extraction`'s parser keys on with no alternation, which is exactly why `strip_em_dash` skips
@@ -267,6 +276,12 @@ def test_the_containment_module_offers_nothing_that_could_order_two_texts() -> N
     `Containment` carries a verdict, a named breach and a sentence, and no number. A quality
     field would be a number about prose that something downstream could sort on, which is how
     the rail gets crossed by accident rather than by decision.
+
+    **`PreRevisionDraft` joined this module under the same rule and is pinned the same way**
+    (§187). It is the record of what the stage was *handed*, so it has to live beside the
+    predicates that read that text — and a kept draft with a verdict on it would be the
+    ordering arriving as a column instead of as a call. Its field set is asserted whole here
+    for exactly the reason `Containment`'s is: adding a score has to change this line.
     """
     from dataclasses import fields
 
@@ -275,15 +290,31 @@ def test_the_containment_module_offers_nothing_that_could_order_two_texts() -> N
     assert set(module.__all__) == {
         "Breach",
         "Containment",
+        "PreRevisionDraft",
         "ReviserPolicy",
         "contain",
         "introduced",
         "machine_lines",
+        "pre_revision_draft_id",
     }
     assert {field.name for field in fields(module.Containment)} == {
         "held",
         "breach",
         "detail",
+    }
+    assert {field.name for field in fields(module.PreRevisionDraft)} == {
+        "draft_id",
+        "book_id",
+        "branch_id",
+        "logical_id",
+        "revision_id",
+        "job_id",
+        "attempt",
+        "drafted_by",
+        "revised_by",
+        "content",
+        "em_dashes_removed",
+        "recorded_at",
     }
 
 
@@ -449,6 +480,309 @@ def test_the_job_settles_against_the_writers_decision_and_never_the_revisers(
     assert settling is not None
     assert settling.profile != REVISION_PROFILE
     assert settling.outcome is Outcome.ACCEPT
+
+
+# ------------------------------------------- §187: the ladder runs first, and the draft is kept
+
+
+def _seeded_with_a_beat(store: SqliteStore) -> str:
+    """The same seeding, plus canon and a scheduled progression beat on the payload.
+
+    Serial pilot 18b's own shape, borrowed from the file that owns it: a protagonist standing
+    on the first rung of a declared system holding `cold seal` at 2, and a plan that named
+    that quantity as moving in scene 1. Both halves of the ask ride `selected_by` because
+    §184 records them where the work was selected, and the gate reads them there.
+    """
+    revision = blank_revision()
+    store.commit_revision(revision, created_at="2026-08-12T00:00:00Z")
+    store.record_state_records(
+        revision.book_id,
+        revision.branch_id,
+        progression_canon(),
+        created_at="2026-08-12T00:00:00Z",
+        source_revision_id=revision.revision_id,
+    )
+    payload: dict[str, object] = {
+        "revision_id": revision.revision_id,
+        "logical_id": "scene-1",
+        "prompt": "Draft the opening scene.",
+        "packet": "Ines owes the yard a ticket.",
+        "book_id": revision.book_id,
+        "branch_id": revision.branch_id,
+        "selected_by": {
+            "ordinal": 1,
+            "of_total": 6,
+            "story_order_key": "s1",
+            "progression_beat": "cold seal",
+            "progression_column": "cold_seal",
+        },
+    }
+    store.enqueue(
+        Job(
+            job_id="draft-1",
+            job_kind=SCENE_DRAFT,
+            payload=payload,
+            input_digest=input_digest_for(payload),
+        )
+    )
+    return revision.revision_id
+
+
+#: A scene that stages the ability and prints no panel, so `extract_state` reads nothing off
+#: it and §184's comparison has no *after* to compare. Serial pilot 18b's located failure in
+#: its cheapest form. No word of any read and no sentence of any book is in it (§97.1).
+UNMOVED = (
+    "Ines set her palm to the plate and felt the grain go quiet under it, the way it had "
+    "gone quiet in the yard the week before, and she held it there until the cold came up "
+    "through her wrist and the seam stopped arguing with her. Nothing on the wall printed "
+    "anything back. She counted to herself and let go and the plate stayed as it was."
+)
+
+#: The same scene with the panel printed and `cold seal` one higher — the beat's own ask, met.
+#: Rendered through the inverse of the parser rather than typed, so the line the test writes and
+#: the line `extract_state` reads cannot come apart.
+MOVED_STATUS = render_status_line(
+    "ines_barrow",
+    {**progression_standing(), "cold_seal": 3},
+    sheet=sheet_for(progression_canon()),
+    records=progression_canon(),
+)
+
+#: A revision of it. Never sent, in the test below, and that is the assertion.
+UNMOVED_REVISION = (
+    "Because the seam had stopped arguing, Ines set her palm to the plate and held it "
+    "there. The grain went quiet under her hand, the way it had in the yard the week "
+    "before. Nothing on the wall printed anything back. She counted to herself, let go, "
+    "and the plate stayed as it was."
+)
+
+
+def test_a_draft_the_beat_gate_refuses_is_never_sent_to_the_reviser(
+    store: SqliteStore,
+) -> None:
+    """**Recommendation 1b, and the case the audit measured** (§187).
+
+    `plan/agent-impact/reviser-impact.md` §2 and §3 own the numbers: three of the audited
+    chapter's five reviser calls were spent on drafts `integrity.progression.v0` then refused,
+    and §185.3's containment argument is that the machine lines are byte-identical **so that
+    gate's verdict cannot change** — so those rewrites could not have altered the outcome they
+    were paid for. Here the second answer is scripted and never asked for.
+    """
+    _seeded_with_a_beat(store)
+    _, provider = _run(store, [UNMOVED, UNMOVED_REVISION])
+
+    assert provider.responses == [UNMOVED_REVISION], "the reviser was never called"
+    assert store.spend_on(_day(START)).invocations == 1
+    assert store.load_job("draft-1").status is not JobStatus.SUCCEEDED
+
+    refusals = [
+        entry.event
+        for entry in store.read_log()
+        if entry.event.event_type is EventType.MANUSCRIPT_CANDIDATE_CREATED
+    ]
+    assert refusals and Veto.PROGRESSION_UNMOVED.value in refusals[0].payload["vetoes"]
+    # And no reviser decision row exists to explain a call that did not happen.
+    assert [
+        row for row in store.decisions_for_job("draft-1") if row.profile == REVISION_PROFILE
+    ] == []
+
+
+def test_a_draft_the_shape_gate_refuses_is_never_sent_to_the_reviser(
+    store: SqliteStore,
+) -> None:
+    """The same ordering through a different gate, on the lever §185's own mirror test uses.
+
+    `test_the_gate_ladder_refuses_the_revision_and_not_the_draft` sets the floor so the draft
+    clears it and the revision does not; this sets it so the draft does not. One lever, two
+    directions, and the pair is the whole of what §187 moved.
+    """
+    short_draft = "Ines set her palm to the plate."
+    policy = DraftPolicy(min_chars=len(short_draft) + 1)
+
+    _seeded(store)
+    _, provider = _run(store, [short_draft, REVISION], policy=policy)
+
+    assert provider.responses == [REVISION], "the reviser was never called"
+    assert store.spend_on(_day(START)).invocations == 1
+
+
+def test_a_draft_that_clears_the_ladder_is_revised_and_the_ladder_runs_again(
+    store: SqliteStore,
+) -> None:
+    """**The §185 invariant survives the reorder: the accepted text passed the gates.**
+
+    Draft, ladder, revise, containment, strip, ladder again — the second run is the verdict of
+    record and it is the one whose gates the decision cites. The draft's own run minted
+    nothing: it wrote no finding, no state record and no decision row of its own, so the only
+    trace it leaves is that the money was spent twice rather than three times.
+    """
+    _seeded_with_a_beat(store)
+    moved = f"{UNMOVED}\n{MOVED_STATUS}"
+    moved_revision = f"{UNMOVED_REVISION}\n{MOVED_STATUS}"
+    _, provider = _run(store, [moved, moved_revision])
+
+    assert provider.responses == [], "both calls were made"
+    assert store.load_job("draft-1").status is JobStatus.SUCCEEDED
+    assert _accepted_prose(store) == moved_revision
+    assert _acceptance(store)["revised_by"] == "fake-deterministic-v1"
+
+    settling = store.latest_decision_for("draft-1")
+    assert settling is not None
+    beat = [gate for gate in settling.gates if gate.rule_or_critic_id == PROGRESSION_GATE]
+    assert beat and beat[0].passed, "the beat gate ran on the adopted text and passed"
+    assert store.decisions_for_job("draft-1") and all(
+        row.attempt == 1 for row in store.decisions_for_job("draft-1")
+    ), "one attempt, two decision rows, one of them the reviser's"
+
+
+def test_a_revision_the_ladder_refuses_costs_the_unit_its_attempt_and_the_draft_does_not_stand(
+    store: SqliteStore,
+) -> None:
+    """**Which of the two semantics §187 kept, stated as an assertion rather than in prose.**
+
+    `revise_draft` returns the draft on every *containment* refusal, so the book is never
+    hostage to the stage (§185.3). A revision that containment admitted and the **ladder** then
+    refused is a different case, and §185.3's own
+    `test_the_gate_ladder_refuses_the_revision_and_not_the_draft` settled it: the candidate is
+    refused and the unit retries on its veto class. §187 did not reopen that. Adopting the
+    draft instead would be a rule choosing between two texts on a gate outcome — code, not a
+    model, but still a selection §185.9 never licensed — and it would be shipped with no
+    measurement behind it. Recorded as a refusal in the ledger and named as a residual: a
+    draft that cleared the ladder is discarded when the revision it paid for does not.
+    """
+    short_draft = ("Ines counted the coins on the ledger stone, one at a time. " * 4).strip()
+    short_revision = ("Ines counted the coins on the stone, one at a time now. " * 4).strip()
+    policy = DraftPolicy(min_chars=len(short_revision) + 1)
+    assert len(short_draft) >= policy.min_chars > len(short_revision)
+    assert contain(short_draft, short_revision).held
+
+    _seeded(store)
+    _run(store, [short_draft, short_revision], policy=policy)
+
+    settling = store.latest_decision_for("draft-1")
+    assert settling is not None and settling.outcome is Outcome.RETRY
+    head = store.head(*_book_branch(store))
+    assert head is not None and head.node("scene-1").content is None
+    # The draft was gated and passed, and it is gone: nothing keeps a text no revision
+    # superseded, because nothing was accepted for it to sit beside.
+    assert store.pre_revision_drafts(*_book_branch(store)) == []
+
+
+def test_the_draft_the_reviser_replaced_is_kept_beside_the_prose_that_replaced_it(
+    store: SqliteStore,
+) -> None:
+    """**Recommendation 2** (§187). The attribution hole `reviser-impact.md` §1 established by
+    three reads of the code: `revise_draft` returns one string, `commit_revision` stores that
+    one, and the writer's draft was a local variable that was rebound and never persisted.
+
+    What is kept is the **gated** draft — canonicalized, after §180's strip — which is exactly
+    the prose `--no-revise` would have committed for this attempt. Kept raw instead, a diff
+    against the accepted node would attribute NFC normalisation and every stripped mark to the
+    reviser.
+    """
+    _seeded(store)
+    _run(store, [DRAFT, REVISION])
+
+    kept = store.pre_revision_drafts(*_book_branch(store))
+    assert len(kept) == 1
+    row = kept[0]
+    assert row.content == DRAFT, "the text the ladder passed, not the text the store kept"
+    assert row.logical_id == "scene-1"
+    assert row.revision_id == store.head(*_book_branch(store)).revision_id  # type: ignore[union-attr]
+    assert row.drafted_by == "fake-deterministic-v1"
+    assert row.revised_by == "fake-deterministic-v1"
+    assert row.attempt == 1
+    assert row.em_dashes_removed == 0, "the writer reached for no mark outside the panel"
+
+    # The pair, which is the thing that did not exist: one join, two texts, no inference.
+    assert _accepted_prose(store) == REVISION
+    assert row.content != _accepted_prose(store)
+
+
+def test_the_kept_draft_counts_the_writers_own_marks_and_the_acceptance_counts_the_revisers(
+    store: SqliteStore,
+) -> None:
+    """§185.8 item 2 recorded that `em_dashes_removed` stops being a fact about the writer once
+    the stage is on. It is one again, per scene, on the row beside the text it was counted in —
+    because the strip now runs once per ladder pass, so each pass's count belongs to that
+    pass's author."""
+    marked_draft = DRAFT.replace("the tally did not move.", "the tally — did not move.")
+    marked_revision = REVISION.replace("the tally had not moved,", "the tally — not moved —")
+
+    _seeded(store)
+    _run(store, [marked_draft, marked_revision])
+
+    kept = store.pre_revision_drafts(*_book_branch(store))
+    assert len(kept) == 1 and kept[0].em_dashes_removed == 1
+    assert _acceptance(store)["em_dashes_removed"] == 2
+    assert "—" not in kept[0].content.split("\n")[0], "the kept draft is the stripped one"
+    assert STATUS in kept[0].content, "the machine line kept its own separator"
+
+
+@pytest.mark.parametrize(
+    ("answers", "revise"),
+    [
+        ([DRAFT, DRAFT], True),
+        ([DRAFT, REVISION], False),
+    ],
+    ids=["containment refused the revision", "the control arm"],
+)
+def test_no_draft_is_kept_when_the_accepted_prose_is_the_writers_own(
+    store: SqliteStore, answers: list[object], revise: bool
+) -> None:
+    """A second copy of the accepted prose would be a row saying nothing.
+
+    The record exists to name a text the book did **not** keep. Where containment refused, or
+    where §54's control held the stage back, the draft *is* what was accepted and the node
+    already holds it.
+    """
+    _seeded(store)
+    _run(store, answers, revise=revise)
+
+    assert _accepted_prose(store) == DRAFT
+    assert store.pre_revision_drafts(*_book_branch(store)) == []
+
+
+def test_the_kept_draft_is_addressed_by_its_own_text_so_a_replay_converges(
+    store: SqliteStore,
+) -> None:
+    """`CONTRIBUTING.md`'s replay rule at this address: identities are content-derived and a
+    re-run converges rather than duplicating work. Written twice, on purpose."""
+    _seeded(store)
+    _run(store, [DRAFT, REVISION])
+
+    kept = store.pre_revision_drafts(*_book_branch(store))
+    assert len(kept) == 1
+    assert kept[0].draft_id == pre_revision_draft_id(
+        kept[0].revision_id, "scene-1", kept[0].content
+    )
+
+    head = store.head(*_book_branch(store))
+    assert head is not None
+    store.commit_revision(head, created_at="2026-08-13T00:00:00Z", pre_revision_drafts=kept)
+    assert store.pre_revision_drafts(*_book_branch(store)) == kept
+
+    with pytest.raises(ValueError, match="does not address its own text"):
+        dataclasses.replace(kept[0], content=f"{kept[0].content} and one word more")
+
+
+def test_the_kept_draft_is_write_only_at_the_application_boundary() -> None:
+    """**§97.1 enforced by where the method is rather than promised in a docstring.**
+
+    The write reaches the store through `commit_revision`'s keyword; there is no reader on
+    `DraftStore` or on any protocol in `application/ports.py`, so no workflow that coordinates
+    through them can name this text — it cannot reach a packet, a summary, a detector input or
+    a prompt. The reader is on the concrete store, where the operator's dossier is its one
+    caller. This is `test_the_containment_module_offers_nothing_that_could_order_two_texts`'s
+    move at a second address: cheaper to forbid the call than to review every future edit.
+    """
+    from litharness.application import ports
+
+    assert "pre_revision_drafts" in ports.ManuscriptWriter.commit_revision.__annotations__
+    for protocol in (ports.DraftStore, ports.ManuscriptReader, ports.ManuscriptWriter):
+        readers = [name for name in dir(protocol) if "pre_revision_draft" in name]
+        assert readers == [], f"{protocol.__name__} offers a way to read a kept draft back"
+    assert hasattr(SqliteStore, "pre_revision_drafts")
 
 
 # ------------------------------------------------------------------------- the control arm

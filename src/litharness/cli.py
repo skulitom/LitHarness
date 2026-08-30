@@ -1246,6 +1246,22 @@ def _scene_dossier(
     if plan_item is None:
         absent.append("plan_item")
 
+    # **The text the reviser replaced, when there is one** (§187). Scoped to the revision that
+    # introduced this scene's prose, so what comes back is the *pair*: this row's text against
+    # the node content beside it. Absence is not a gap and is deliberately not on `absent` —
+    # a scene drafted with the stage held back, or drafted before §187, has no such text
+    # because the accepted prose is the writer's own. Nothing is computed from either string
+    # here; §97.1 keeps this verb on the operator's side and a diff is a reader's act.
+    kept = (
+        [
+            item
+            for item in store.pre_revision_drafts(book_id, branch_id, logical_id=logical_id)
+            if item.revision_id == introduced
+        ]
+        if introduced is not None
+        else []
+    )
+
     return {
         "book_id": book_id,
         "branch_id": branch_id,
@@ -1290,6 +1306,22 @@ def _scene_dossier(
             _finding_row(item)
             for item in store.findings(book_id, branch_id, logical_id=logical_id, open_only=False)
         ],
+        "draft_before_revision": None
+        if not kept
+        else {
+            "draft_id": kept[0].draft_id,
+            "attempt": kept[0].attempt,
+            "drafted_by": kept[0].drafted_by,
+            "revised_by": kept[0].revised_by,
+            "chars": len(kept[0].content),
+            "content_sha256": kept[0].content_sha256,
+            "em_dashes_removed": kept[0].em_dashes_removed,
+            "recorded_at": kept[0].recorded_at,
+            # **The text itself, so the diff needs no second tool.** The report that
+            # commissioned this had to open a copy of the store to reach what no verb could
+            # answer; `why --json` beside `export` is now the whole pair.
+            "content": kept[0].content,
+        },
         "absent": absent,
     }
 
@@ -1433,6 +1465,26 @@ def _render_dossier(dossier: dict[str, Any]) -> str:
             f"{item['rule_or_critic_id'] or item['category']}",
         )
         field("", f"    {item['message']}")
+
+    # **Named and not printed, which is the rule this renderer already keeps for prose.**
+    # `scene` above prints a length and a hash and sends the reader to `export` for the text;
+    # the draft is prose too and gets the same treatment. `--json` carries both strings, so the
+    # diff the attribution report could not compute is two verbs away and neither of them
+    # opens the database. The prompt at the bottom is printed whole because a prompt is not
+    # prose. Silence here means the accepted prose is the writer's own.
+    kept: dict[str, Any] | None = dossier["draft_before_revision"]
+    if kept is not None:
+        field(
+            "draft",
+            f"{kept['chars']} char(s), sha256 {kept['content_sha256']} "
+            f"({kept['em_dashes_removed']} em dash(es) removed)",
+        )
+        field(
+            "",
+            f"written by {kept['drafted_by']}, replaced by {kept['revised_by']} "
+            f"on attempt {kept['attempt']}",
+        )
+        field("", "the text is in `--json`; the prose that replaced it is in `export`")
 
     if dossier["absent"]:
         field("absent", ", ".join(dossier["absent"]))
