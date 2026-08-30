@@ -35,6 +35,14 @@ Two quantities have no instrument in the repo and are computed here under a flag
   proper-noun counter reused here is a strict superset of named characters -- it also catches
   places, institutions and system names -- so it is reported as proper nouns and never as cast.
 
+**Two instruments are read at TWO VERSIONS each, and both versions are reported.** The first
+battery found `progression_cadence` and `number_context`'s system half blind to this project's
+own `[STATUS]` page contract, so their v0 rows are zeros that mean *unmeasured*. The answer
+shipped as a second registered version rather than an edit: `cadence_v2` and `numbers_v2` below
+carry their own registration digests, the v0 keys beside them are unchanged and still the only
+ones any market number may be read against, and nothing pools the two. A v2 count is not a
+better book; it is the same page seen by a detector that can read one of its lines.
+
     uv run python plan/agent-impact/scripts/draw_battery.py --artifact-root C:/DEV/LitHarness
 
 Re-runnable: it reads text files and writes JSON to stdout. It writes nothing else and needs no
@@ -248,7 +256,17 @@ def battery(text: str) -> dict[str, Any]:
         quarantined=False,
         cohort=None,
     )
+    cadence_v2 = progression_cadence.measure(
+        text,
+        fiction_id=0,
+        chapter_id=0,
+        litrpg=True,
+        quarantined=False,
+        cohort=None,
+        version="v2",
+    )
     numbers = number_context.measure(prose)
+    numbers_v2 = number_context.measure(text, version="v2")
     em_file = voice.exhibition_census(text)["em_dash"]
     em = voice.exhibition_census(prose)["em_dash"]
     nouns = register_census.proper_nouns(prose)
@@ -320,13 +338,67 @@ def battery(text: str) -> dict[str, Any]:
         # closes after STATUS and the columns carry no colon. So `is_furniture_line` is False
         # on every line of every draw, and the sheet's own values fall through to the ordinary
         # prose families -- which is why the numbers above are measured on `prose` instead.
+        #
+        # **`v2` is the answer to that row and it is a SECOND instrument, not a repair of the
+        # first.** Both v0 blocks are byte-identical and every number published under their
+        # digests still validates; v2 adds one line shape and a published mask. The v2 numbers
+        # live in their own keys below and are never pooled with v0's.
         "furniture_detected_by_market_instruments": {
             "number_context": numbers.furniture_lines,
             "progression_cadence": sum(
                 1 for line in text.splitlines() if progression_cadence._is_furniture(line)
             ),
+            "number_context_v2": numbers_v2.furniture_lines,
+            "progression_cadence_v2": sum(
+                1
+                for line in text.splitlines()
+                if progression_cadence._is_furniture(line, version="v2")
+            ),
             "actually_present": len(status_profile(text)["lines"]),
         },
+        # progression_cadence.v2 -- the same counters over the same chapter, by a detector that
+        # can see our page contract. A count moving from 0 to 2 here is the DETECTOR changing
+        # and not the book: nothing about these chapters is different from the v0 rows above.
+        "cadence_v2": {
+            "registration_digest": progression_cadence.REGISTRATION_DIGEST_V2,
+            "events": cadence_v2.events,
+            "per_1k": round(cadence_v2.per_1k, 3),
+            "first_event_words": cadence_v2.first_event_words,
+            "first_event_fraction": round(cadence_v2.first_event_fraction, 4)
+            if cadence_v2.first_event_fraction is not None
+            else None,
+            "median_gap": cadence_v2.median_gap,
+            "gap_cv": round(cadence_v2.gap_cv, 3) if cadence_v2.gap_cv is not None else None,
+            "by_family": cadence_v2.by_family,
+        },
+        # number_context.v2 -- run over the WHOLE file rather than over `prose`, which is the
+        # point: under v2 a sheet's cells are system numbers by location, so they no longer
+        # have to be deleted to stop them contaminating the mundane half.
+        "numbers_v2": {
+            "registration_digest": number_context.REGISTRATION_DIGEST_V2,
+            "mentions": numbers_v2.mentions,
+            "system_any": numbers_v2.system_any,
+            "system_magnitude": numbers_v2.by_family["system_magnitude"],
+            "system_ordinal": numbers_v2.by_family["system_ordinal"],
+            "mundane_core": numbers_v2.mundane_core,
+            "mundane_per_1k": per_1k(numbers_v2.mundane_core),
+            "object_count": numbers_v2.by_family["object_count"],
+            "furniture_lines": numbers_v2.furniture_lines,
+            "system_share_of_anchored": round(numbers_v2.system_share_of_anchored, 4)
+            if numbers_v2.system_share_of_anchored is not None
+            else None,
+            "by_family": numbers_v2.by_family,
+            # The v0-on-prose reading of the same page, for the one comparison that IS legible:
+            # both are our own chapters, and the mundane half should barely move because v2
+            # takes cells OUT of the prose families rather than adding to them.
+            "mundane_core_v0_on_prose": numbers.mundane_core,
+        },
+        # Does the research-side mask agree with the pipeline's own definition of a system
+        # line? `draft._SYSTEM_LINE` cannot be imported by a research module -- those run under
+        # an interpreter where the package is absent -- so v2 transcribes the shape instead,
+        # and this row is the check that the transcription did not drift.
+        "v2_mask_matches_pipeline": progression_cadence.prose_only(text, version="v2")
+        == prose_only(text),
     }
 
 

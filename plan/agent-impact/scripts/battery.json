@@ -105,8 +105,51 @@
     "furniture_detected_by_market_instruments": {
       "number_context": 0,
       "progression_cadence": 0,
+      "number_context_v2": 0,
+      "progression_cadence_v2": 0,
       "actually_present": 0
-    }
+    },
+    "cadence_v2": {
+      "registration_digest": "f1a205af2cd3d718",
+      "events": 0,
+      "per_1k": 0.0,
+      "first_event_words": null,
+      "first_event_fraction": null,
+      "median_gap": null,
+      "gap_cv": null,
+      "by_family": {
+        "system_block": 0,
+        "level_up": 0,
+        "capability_gain": 0,
+        "stat_delta": 0
+      }
+    },
+    "numbers_v2": {
+      "registration_digest": "6c007094f6159474",
+      "mentions": 45,
+      "system_any": 0,
+      "system_magnitude": 0,
+      "system_ordinal": 0,
+      "mundane_core": 11,
+      "mundane_per_1k": 5.464,
+      "object_count": 7,
+      "furniture_lines": 0,
+      "system_share_of_anchored": 0.0,
+      "by_family": {
+        "system_magnitude": 0,
+        "system_ordinal": 0,
+        "calendar_duration": 8,
+        "age": 2,
+        "money": 0,
+        "measure": 1,
+        "object_count": 7,
+        "ordinal_enumeration": 21,
+        "multiplicative": 1,
+        "unanchored": 5
+      },
+      "mundane_core_v0_on_prose": 11
+    },
+    "v2_mask_matches_pipeline": true
   },
   "p15-d1": {
     "path": "runs/pilots/pilot15/shelf-draw-1/chapters/Chapter1.txt",
@@ -225,8 +268,51 @@
     "furniture_detected_by_market_instruments": {
       "number_context": 0,
       "progression_cadence": 0,
+      "number_context_v2": 2,
+      "progression_cadence_v2": 2,
       "actually_present": 2
-    }
+    },
+    "cadence_v2": {
+      "registration_digest": "f1a205af2cd3d718",
+      "events": 2,
+      "per_1k": 0.986,
+      "first_event_words": 841,
+      "first_event_fraction": 0.4145,
+      "median_gap": 1171,
+      "gap_cv": null,
+      "by_family": {
+        "system_block": 2,
+        "level_up": 0,
+        "capability_gain": 0,
+        "stat_delta": 0
+      }
+    },
+    "numbers_v2": {
+      "registration_digest": "6c007094f6159474",
+      "mentions": 35,
+      "system_any": 10,
+      "system_magnitude": 10,
+      "system_ordinal": 0,
+      "mundane_core": 7,
+      "mundane_per_1k": 3.514,
+      "object_count": 9,
+      "furniture_lines": 2,
+      "system_share_of_anchored": 0.3846,
+      "by_family": {
+        "system_magnitude": 10,
+        "system_ordinal": 0,
+        "calendar_duration": 6,
+        "age": 1,
+        "money": 0,
+        "measure": 0,
+        "object_count": 9,
+        "ordinal_enumeration": 1,
+        "multiplicative": 3,
+        "unanchored": 5
+      },
+      "mundane_core_v0_on_prose": 7
+    },
+    "v2_mask_matches_pipeline": true
   },
   "p15-d2": {
     "path": "runs/pilots/pilot15/shelf-draw-2/chapters/Chapter1.txt",
@@ -345,8 +431,51 @@
     "furniture_detected_by_market_instruments": {
       "number_context": 0,
       "progression_cadence": 0,
+      "number_context_v2": 2,
+      "progression_cadence_v2": 2,
       "actually_present": 2
-    }
+    },
+    "cadence_v2": {
+      "registration_digest": "f1a205af2cd3d718",
+      "events": 2,
+      "per_1k": 1.016,
+      "first_event_words": 631,
+      "first_event_fraction": 0.3205,
+      "median_gap": 569,
+      "gap_cv": null,
+      "by_family": {
+        "system_block": 2,
+        "level_up": 0,
+        "capability_gain": 0,
+        "stat_delta": 0
+      }
+    },
+    "numbers_v2": {
+      "registration_digest": "6c007094f6159474",
+      "mentions": 31,
+      "system_any": 12,
+      "system_magnitude": 12,
+      "system_ordinal": 0,
+      "mundane_core": 3,
+      "mundane_per_1k": 1.553,
+      "object_count": 9,
+      "furniture_lines": 2,
+      "system_share_of_anchored": 0.5,
+      "by_family": {
+        "system_magnitude": 12,
+        "system_ordinal": 0,
+        "calendar_duration": 2,
+        "age": 1,
+        "money": 0,
+        "measure": 0,
+        "object_count": 9,
+        "ordinal_enumeration": 1,
+        "multiplicative": 0,
+        "unanchored": 6
+      },
+      "mundane_core_v0_on_prose": 3
+    },
+    "v2_mask_matches_pipeline": true
   },
   "p15-d3": {
     "path": "runs/pilots/pilot15/shelf-draw-3/chapters/Chapter1.txt",
@@ -466,8 +595,51 @@
     "furniture_detected_by_market_instruments": {
       "number_context": 0,
       "progression_cadence": 0,
+      "number_context_v2": 2,
+      "progression_cadence_v2": 2,
       "actually_present": 2
-    }
+    },
+    "cadence_v2": {
+      "registration_digest": "f1a205af2cd3d718",
+      "events": 2,
+      "per_1k": 1.008,
+      "first_event_words": 966,
+      "first_event_fraction": 0.4869,
+      "median_gap": 1001,
+      "gap_cv": null,
+      "by_family": {
+        "system_block": 2,
+        "level_up": 0,
+        "capability_gain": 0,
+        "stat_delta": 0
+      }
+    },
+    "numbers_v2": {
+      "registration_digest": "6c007094f6159474",
+      "mentions": 38,
+      "system_any": 10,
+      "system_magnitude": 10,
+      "system_ordinal": 0,
+      "mundane_core": 8,
+      "mundane_per_1k": 4.109,
+      "object_count": 5,
+      "furniture_lines": 2,
+      "system_share_of_anchored": 0.4348,
+      "by_family": {
+        "system_magnitude": 10,
+        "system_ordinal": 0,
+        "calendar_duration": 7,
+        "age": 1,
+        "money": 0,
+        "measure": 0,
+        "object_count": 5,
+        "ordinal_enumeration": 3,
+        "multiplicative": 2,
+        "unanchored": 10
+      },
+      "mundane_core_v0_on_prose": 8
+    },
+    "v2_mask_matches_pipeline": true
   },
   "p15-d4": {
     "path": "book-library/what-the-kettle-remembers/chapters/Chapter1.txt",
@@ -594,8 +766,51 @@
     "furniture_detected_by_market_instruments": {
       "number_context": 0,
       "progression_cadence": 0,
+      "number_context_v2": 2,
+      "progression_cadence_v2": 2,
       "actually_present": 2
-    }
+    },
+    "cadence_v2": {
+      "registration_digest": "f1a205af2cd3d718",
+      "events": 2,
+      "per_1k": 1.049,
+      "first_event_words": 920,
+      "first_event_fraction": 0.4827,
+      "median_gap": 897,
+      "gap_cv": null,
+      "by_family": {
+        "system_block": 2,
+        "level_up": 0,
+        "capability_gain": 0,
+        "stat_delta": 0
+      }
+    },
+    "numbers_v2": {
+      "registration_digest": "6c007094f6159474",
+      "mentions": 31,
+      "system_any": 14,
+      "system_magnitude": 14,
+      "system_ordinal": 0,
+      "mundane_core": 0,
+      "mundane_per_1k": 0.0,
+      "object_count": 7,
+      "furniture_lines": 2,
+      "system_share_of_anchored": 0.6667,
+      "by_family": {
+        "system_magnitude": 14,
+        "system_ordinal": 0,
+        "calendar_duration": 0,
+        "age": 0,
+        "money": 0,
+        "measure": 0,
+        "object_count": 7,
+        "ordinal_enumeration": 4,
+        "multiplicative": 3,
+        "unanchored": 3
+      },
+      "mundane_core_v0_on_prose": 0
+    },
+    "v2_mask_matches_pipeline": true
   },
   "p16": {
     "path": "book-library/reading-the-ladder-wrong/chapters/Chapter1.txt",
@@ -715,8 +930,51 @@
     "furniture_detected_by_market_instruments": {
       "number_context": 0,
       "progression_cadence": 0,
+      "number_context_v2": 2,
+      "progression_cadence_v2": 2,
       "actually_present": 2
-    }
+    },
+    "cadence_v2": {
+      "registration_digest": "f1a205af2cd3d718",
+      "events": 2,
+      "per_1k": 0.99,
+      "first_event_words": 340,
+      "first_event_fraction": 0.1683,
+      "median_gap": 1131,
+      "gap_cv": null,
+      "by_family": {
+        "system_block": 2,
+        "level_up": 0,
+        "capability_gain": 0,
+        "stat_delta": 0
+      }
+    },
+    "numbers_v2": {
+      "registration_digest": "6c007094f6159474",
+      "mentions": 49,
+      "system_any": 18,
+      "system_magnitude": 18,
+      "system_ordinal": 0,
+      "mundane_core": 5,
+      "mundane_per_1k": 2.545,
+      "object_count": 11,
+      "furniture_lines": 2,
+      "system_share_of_anchored": 0.5294,
+      "by_family": {
+        "system_magnitude": 18,
+        "system_ordinal": 0,
+        "calendar_duration": 5,
+        "age": 0,
+        "money": 0,
+        "measure": 0,
+        "object_count": 11,
+        "ordinal_enumeration": 6,
+        "multiplicative": 0,
+        "unanchored": 9
+      },
+      "mundane_core_v0_on_prose": 5
+    },
+    "v2_mask_matches_pipeline": true
   },
   "p18-d2": {
     "path": "runs/pilots/pilot18/shelf-draw-2/chapters/Chapter1.txt",
@@ -823,8 +1081,51 @@
     "furniture_detected_by_market_instruments": {
       "number_context": 0,
       "progression_cadence": 0,
+      "number_context_v2": 2,
+      "progression_cadence_v2": 2,
       "actually_present": 2
-    }
+    },
+    "cadence_v2": {
+      "registration_digest": "f1a205af2cd3d718",
+      "events": 2,
+      "per_1k": 1.015,
+      "first_event_words": 404,
+      "first_event_fraction": 0.205,
+      "median_gap": 871,
+      "gap_cv": null,
+      "by_family": {
+        "system_block": 2,
+        "level_up": 0,
+        "capability_gain": 0,
+        "stat_delta": 0
+      }
+    },
+    "numbers_v2": {
+      "registration_digest": "6c007094f6159474",
+      "mentions": 51,
+      "system_any": 18,
+      "system_magnitude": 18,
+      "system_ordinal": 0,
+      "mundane_core": 2,
+      "mundane_per_1k": 1.065,
+      "object_count": 12,
+      "furniture_lines": 2,
+      "system_share_of_anchored": 0.5625,
+      "by_family": {
+        "system_magnitude": 18,
+        "system_ordinal": 0,
+        "calendar_duration": 0,
+        "age": 0,
+        "money": 0,
+        "measure": 2,
+        "object_count": 12,
+        "ordinal_enumeration": 4,
+        "multiplicative": 1,
+        "unanchored": 14
+      },
+      "mundane_core_v0_on_prose": 2
+    },
+    "v2_mask_matches_pipeline": true
   },
   "p18-d3": {
     "path": "book-library/the-station-keeps-score--435c41f9/chapters/Chapter1.txt",
@@ -935,8 +1236,51 @@
     "furniture_detected_by_market_instruments": {
       "number_context": 0,
       "progression_cadence": 0,
+      "number_context_v2": 2,
+      "progression_cadence_v2": 2,
       "actually_present": 2
-    }
+    },
+    "cadence_v2": {
+      "registration_digest": "f1a205af2cd3d718",
+      "events": 2,
+      "per_1k": 1.015,
+      "first_event_words": 936,
+      "first_event_fraction": 0.4751,
+      "median_gap": 811,
+      "gap_cv": null,
+      "by_family": {
+        "system_block": 2,
+        "level_up": 0,
+        "capability_gain": 0,
+        "stat_delta": 0
+      }
+    },
+    "numbers_v2": {
+      "registration_digest": "6c007094f6159474",
+      "mentions": 34,
+      "system_any": 12,
+      "system_magnitude": 12,
+      "system_ordinal": 0,
+      "mundane_core": 1,
+      "mundane_per_1k": 0.516,
+      "object_count": 11,
+      "furniture_lines": 2,
+      "system_share_of_anchored": 0.5,
+      "by_family": {
+        "system_magnitude": 12,
+        "system_ordinal": 0,
+        "calendar_duration": 0,
+        "age": 0,
+        "money": 0,
+        "measure": 1,
+        "object_count": 11,
+        "ordinal_enumeration": 2,
+        "multiplicative": 0,
+        "unanchored": 8
+      },
+      "mundane_core_v0_on_prose": 1
+    },
+    "v2_mask_matches_pipeline": true
   },
   "p12": {
     "path": "book-library/patch-notes-for-the-apocalypse/chapters/Chapter1.txt",
@@ -1041,8 +1385,51 @@
     "furniture_detected_by_market_instruments": {
       "number_context": 0,
       "progression_cadence": 0,
+      "number_context_v2": 0,
+      "progression_cadence_v2": 0,
       "actually_present": 0
-    }
+    },
+    "cadence_v2": {
+      "registration_digest": "f1a205af2cd3d718",
+      "events": 0,
+      "per_1k": 0.0,
+      "first_event_words": null,
+      "first_event_fraction": null,
+      "median_gap": null,
+      "gap_cv": null,
+      "by_family": {
+        "system_block": 0,
+        "level_up": 0,
+        "capability_gain": 0,
+        "stat_delta": 0
+      }
+    },
+    "numbers_v2": {
+      "registration_digest": "6c007094f6159474",
+      "mentions": 46,
+      "system_any": 1,
+      "system_magnitude": 1,
+      "system_ordinal": 0,
+      "mundane_core": 2,
+      "mundane_per_1k": 1.039,
+      "object_count": 14,
+      "furniture_lines": 0,
+      "system_share_of_anchored": 0.0588,
+      "by_family": {
+        "system_magnitude": 1,
+        "system_ordinal": 0,
+        "calendar_duration": 2,
+        "age": 0,
+        "money": 0,
+        "measure": 0,
+        "object_count": 14,
+        "ordinal_enumeration": 6,
+        "multiplicative": 1,
+        "unanchored": 22
+      },
+      "mundane_core_v0_on_prose": 2
+    },
+    "v2_mask_matches_pipeline": true
   },
   "p13": {
     "path": "book-library/the-rainwright-s-apprentice-has-no-licence/chapters/Chapter1.txt",
@@ -1152,7 +1539,50 @@
     "furniture_detected_by_market_instruments": {
       "number_context": 0,
       "progression_cadence": 0,
+      "number_context_v2": 0,
+      "progression_cadence_v2": 0,
       "actually_present": 0
-    }
+    },
+    "cadence_v2": {
+      "registration_digest": "f1a205af2cd3d718",
+      "events": 0,
+      "per_1k": 0.0,
+      "first_event_words": null,
+      "first_event_fraction": null,
+      "median_gap": null,
+      "gap_cv": null,
+      "by_family": {
+        "system_block": 0,
+        "level_up": 0,
+        "capability_gain": 0,
+        "stat_delta": 0
+      }
+    },
+    "numbers_v2": {
+      "registration_digest": "6c007094f6159474",
+      "mentions": 44,
+      "system_any": 0,
+      "system_magnitude": 0,
+      "system_ordinal": 0,
+      "mundane_core": 12,
+      "mundane_per_1k": 6.018,
+      "object_count": 13,
+      "furniture_lines": 0,
+      "system_share_of_anchored": 0.0,
+      "by_family": {
+        "system_magnitude": 0,
+        "system_ordinal": 0,
+        "calendar_duration": 5,
+        "age": 0,
+        "money": 0,
+        "measure": 7,
+        "object_count": 13,
+        "ordinal_enumeration": 4,
+        "multiplicative": 0,
+        "unanchored": 15
+      },
+      "mundane_core_v0_on_prose": 12
+    },
+    "v2_mask_matches_pipeline": true
   }
 }

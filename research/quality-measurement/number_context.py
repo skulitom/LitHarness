@@ -268,13 +268,116 @@ PRE_REGISTRATION: dict[str, Any] = {
 }
 
 
-def registration_digest() -> str:
-    """Address the registration by its bytes, so a later edit cannot pass as the original."""
-    material = json.dumps(PRE_REGISTRATION, sort_keys=True, ensure_ascii=False)
+def _digest(block: dict[str, Any]) -> str:
+    """Address a registration by its bytes, so a later edit cannot pass as the original."""
+    material = json.dumps(block, sort_keys=True, ensure_ascii=False)
     return sha256(material.encode("utf-8")).hexdigest()[:16]
 
 
+def registration_digest() -> str:
+    return _digest(PRE_REGISTRATION)
+
+
 REGISTRATION_DIGEST = registration_digest()
+
+
+# ----------------------------------------------------------------------- the frozen block, v2
+
+#: **A SECOND INSTRUMENT, NOT AN EDIT OF THE FIRST**, on the same terms as
+#: `progression_cadence.v2` and for the same reason: this module copied v0's furniture line
+#: shapes deliberately, so it inherited v0's blindness deliberately too. Everything stage-0
+#: §162 published — the 10.7x validity arm, the 2.2x mundane excess, `magnitude_share_of_
+#: anchored` at 0.0029 against the genre's 0.2002 — was computed by v0 over 67,436 market
+#: chapters and our own 20, and every one of those numbers still validates against the bytes
+#: that produced it. v0 stays the default and stays callable.
+PRE_REGISTRATION_V2: dict[str, Any] = {
+    "instrument": "number_context.v2",
+    "supersedes": "number_context.v0",
+    #: Literal on purpose, like `progression_cadence.v2`'s: if v0's block moves, this stops
+    #: naming its parent and `selftest` says so.
+    "inherits_registration_digest": "8e10ac598828d404",
+    "question": PRE_REGISTRATION["question"],
+    "why_a_new_version_exists": (
+        "**MEASURED BLINDNESS.** `plan/agent-impact/draw-battery.md` ran v0 over ten of this "
+        "project's own accepted chapter 1s: `furniture_lines` was 0 on all ten and `system_any` "
+        "was 0 on nine, with the tenth a single hit on a pre-redesign book. The cause is the "
+        "copy this module made on purpose — v0's three accepted line shapes are "
+        "`progression_cadence.v0`'s, and none of them is `[STATUS] Subject — Label N | Label N "
+        "| …`. Worse than a zero: run over a raw chapter file, the sheet's own values fall "
+        "THROUGH the furniture rule into the ordinary prose families, and the battery measured "
+        "a nine-column sheet printed twice inflating `object_count` from 12 to 28. So on our "
+        "own shelf v0 does not merely under-count the system half, it CONTAMINATES the mundane "
+        "one, which is the half every §162 headline is about."
+    ),
+    "the_one_addition": (
+        "The same single shape `progression_cadence.v2` adds, `furniture_tagged_columns`, and "
+        "nothing else: the numeral class, every lexicon, the head walk, the priority order, "
+        "the merge rule and all three market-half narrowings are v0's, byte for byte. **Copied "
+        "rather than imported, again and for the recorded reason**: a registration that is "
+        "content-addressed must be self-contained, and importing the neighbour's frozen block "
+        "would let its digest change this instrument silently. `tests/test_number_context.py` "
+        "pins that the two copies agree, so a divergence is a failing test."
+    ),
+    "what_changes_in_the_counts": (
+        "One consequence, stated before the numbers were read: a `[STATUS]` line's cells are "
+        "assigned by LOCATION under v2, so they land in `system_magnitude` / `system_ordinal` "
+        "and leave `object_count` and `unanchored`. The system half therefore rises and the "
+        "mundane-adjacent families fall on any text carrying a sheet. **Neither movement is a "
+        "book getting better or worse.** It is the same page, counted by a detector that can "
+        "see one of its lines."
+    ),
+    "not_comparable_with_the_market_census": (
+        "**STATED AS A LIMIT OF THIS VERSION, not as a to-do.** Every market number in stage-0 "
+        "§162 is v0's, computed under digest `8e10ac598828d404`. v2 has NOT been run over the "
+        "market half and this version does not propose running it. A v2 count on a house "
+        "chapter may not be placed beside a v0 market density, ratio or share, and no such "
+        "placement is made anywhere v2 is reported. The direction is the one that flatters us "
+        "— v2 can only move numbers from the mundane side toward the system side, and §162's "
+        "finding is that our system side is empty — so an ours-v2-against-market-v0 comparison "
+        "would report progress that is entirely the detector's. Restoring comparability means "
+        "a full market pass under v2, which is not run here."
+    ),
+    "families": PRE_REGISTRATION["families"],
+    "priority": PRE_REGISTRATION["priority"],
+    "never_summed": PRE_REGISTRATION["never_summed"],
+    "summed_and_why": PRE_REGISTRATION["summed_and_why"],
+    "normalisation": PRE_REGISTRATION["normalisation"],
+    "patterns_added": {
+        "furniture_tagged_columns": (
+            r"^\**(?:\[[^\[\]|\n]{1,24}\]|<[^<>|\n]{1,24}>)\**[^\S\n]*"
+            r"[^\n|]{1,80}?[^\S\n]*[–—-][^\S\n]*"  # noqa: RUF001
+            r"(?=[^\n]*\d)"
+            r"[^\n|]{1,80}(?:\|[^\n|]{1,80})+$"
+        ),
+    },
+    "refused": PRE_REGISTRATION["refused"],
+    "declares_no_bar": (
+        "No target density, ratio or floor is declared here either, for any family, for either "
+        "half. §81/§85/§87/§89's four attainability checks are not run by this version any more "
+        "than by v0. Recognising our own furniture buys a count and nothing else."
+    ),
+    "residuals": [
+        *PRE_REGISTRATION["residuals"],
+        "PRECISION ON THE NEW SHAPE IS HAND-CHECKED ON TEN OF OUR OWN CHAPTERS AND NOWHERE "
+        "ELSE — exact on the half that motivated it and untested on the other, which is "
+        "`BRIEF.md` §5's named failure mode. It is survivable only because no cross-half "
+        "comparison is made under v2.",
+        "THE SHAPE IS KEYED ON THE CURRENT RENDERER'S LINE. A future page contract that drops "
+        "the tag, the dash or the pipes returns this instrument to v0's zero, silently and in "
+        "the same direction as the defect it was built to fix.",
+    ],
+}
+
+
+def registration_digest_v2() -> str:
+    return _digest(PRE_REGISTRATION_V2)
+
+
+REGISTRATION_DIGEST_V2 = registration_digest_v2()
+
+#: Every version this module can be asked for, and the one it answers as when nobody asks.
+VERSIONS = ("v0", "v2")
+DEFAULT_VERSION = "v0"
 
 
 # --------------------------------------------------------------------------- normalisation
@@ -318,23 +421,40 @@ _RE_REJECT = re.compile(
     re.IGNORECASE,
 )
 _EDGE = "|*=-_~+ ─-╿│┃"
+#: v2's one addition, compiled beside v0's so the whole accepted set reads in one place. It is
+#: reachable only through `version="v2"`.
+_RE_TAGGED_COLUMNS = re.compile(
+    PRE_REGISTRATION_V2["patterns_added"]["furniture_tagged_columns"], re.IGNORECASE
+)
 
 
-def is_furniture_line(line: str) -> bool:
+def _check_version(version: str) -> str:
+    """A typo must be a refusal, never a silent fall back to v0's answers."""
+    if version not in VERSIONS:
+        raise ValueError(f"unknown instrument version {version!r}; expected one of {VERSIONS}")
+    return version
+
+
+def is_furniture_line(line: str, *, version: str = DEFAULT_VERSION) -> bool:
     """True for an interface line the character reads rather than the narrator speaks.
 
     A bare rule of frame characters is a scene divider and is NOT furniture -- the correction
     `progression_cadence` records having made before it published a reading, kept here because
     the same `***` would otherwise put every fiction on the platform inside a status block.
+
+    `version="v2"` adds the house page contract's own line and changes nothing else, including
+    the order: the reject list still fires first, so an author's note wearing columns is still
+    an author's note.
     """
+    _check_version(version)
     if not line or _RE_REJECT.match(line) or _RE_FRAME.match(line):
         return False
     inner = line.strip(_EDGE).strip()
     if not inner or _RE_REJECT.match(inner):
         return False
-    return bool(
-        _RE_BRACKETED.match(inner) or _RE_ANGLED.match(inner) or _RE_STATLINE.match(inner)
-    )
+    if _RE_BRACKETED.match(inner) or _RE_ANGLED.match(inner) or _RE_STATLINE.match(inner):
+        return True
+    return version == "v2" and bool(_RE_TAGGED_COLUMNS.match(inner))
 
 
 # --------------------------------------------------------------------------- the numeral class
@@ -722,8 +842,13 @@ def _pronoun_one(tokens: Sequence[Token], start: int, end: int) -> bool:
     return previous in {"no", "any", "every", "some"} or following == "another"
 
 
-def locate(text: str) -> list[Mention]:
-    """Every numeric mention in one chapter, classified, in text order."""
+def locate(text: str, *, version: str = DEFAULT_VERSION) -> list[Mention]:
+    """Every numeric mention in one chapter, classified, in text order.
+
+    `version` selects the frozen block and defaults to `v0`, so nothing written before v2
+    existed changes its answer. Only the furniture-line test differs between the two.
+    """
+    _check_version(version)
     mentions: list[Mention] = []
     lines = normalise(text).split("\n")
 
@@ -738,7 +863,7 @@ def locate(text: str) -> list[Mention]:
             continue
         tokens = tokenise(line)
         base = words_before[index]
-        furniture = is_furniture_line(line)
+        furniture = is_furniture_line(line, version=version)
 
         # Shape-system and age spans are resolved on the raw line, then matched to mentions by
         # character offset, because both are multi-token patterns a per-token rule cannot see.
@@ -803,6 +928,10 @@ class ChapterNumbers:
     by_family: dict[str, int]
     furniture_lines: int
     english_share: float
+    #: Which frozen block produced this row. Defaulted so no existing construction changes, and
+    #: carried on the row rather than only in the driver's manifest so a v0 count and a v2
+    #: count can never be pooled by accident once they are in the same list.
+    version: str = DEFAULT_VERSION
 
     @property
     def mundane_core(self) -> int:
@@ -843,8 +972,8 @@ class ChapterNumbers:
         )
 
 
-def measure(text: str) -> ChapterNumbers:
-    mentions = locate(text)
+def measure(text: str, *, version: str = DEFAULT_VERSION) -> ChapterNumbers:
+    mentions = locate(text, version=version)
     lines = normalise(text).split("\n")
     return ChapterNumbers(
         words=len(text.split()),
@@ -852,14 +981,15 @@ def measure(text: str) -> ChapterNumbers:
         spelled=sum(1 for m in mentions if m.spelled),
         digits=sum(1 for m in mentions if not m.spelled),
         by_family={f: sum(1 for m in mentions if m.family == f) for f in FAMILIES},
-        furniture_lines=sum(1 for line in lines if is_furniture_line(line)),
+        furniture_lines=sum(1 for line in lines if is_furniture_line(line, version=version)),
         english_share=english_share(text),
+        version=version,
     )
 
 
-def family_of(text: str) -> list[tuple[str, str]]:
+def family_of(text: str, *, version: str = DEFAULT_VERSION) -> list[tuple[str, str]]:
     """`(surface, family)` for every mention -- the shape a hand-check reads."""
-    return [(m.surface, m.family) for m in locate(text)]
+    return [(m.surface, m.family) for m in locate(text, version=version)]
 
 
 # --------------------------------------------------------------------------- selftest
@@ -923,6 +1053,18 @@ _SELFTEST_FURNITURE = """He opened the door.
 The room was cold.
 """
 
+#: The house page contract, transcribed from an accepted chapter on the shelf. Detector
+#: material and nothing else: no line here reaches a prompt (§97.1). Four cells, all digits,
+#: two of which a v0 run misfiles as `object_count` and `unanchored` on the raw file -- which
+#: is the contamination v2 exists to stop, not merely a zero.
+_SELFTEST_HOUSE = (
+    "She read the slate.\n"
+    "\n"
+    "[STATUS] Ines — Rating 3 | Graded 9 | Written 1/12 | Warmth 6/6\n"
+    "\n"
+    "Outside, the rain had stopped.\n"
+)
+
 
 def selftest() -> list[str]:
     """Every failure this instrument can find in itself, as a list of messages."""
@@ -985,6 +1127,84 @@ def selftest() -> list[str]:
     if family_of("Nothing happens here at all."):
         failures.append("inert prose located a mention")
 
+    failures += _selftest_v2()
+
+    return failures
+
+
+def _selftest_v2() -> list[str]:
+    """v2's own pins, including the one that keeps v0 blind on purpose.
+
+    A superseded instrument whose answers quietly changed would invalidate every number
+    published under its digest, so "v0 still misfiles the house sheet" is a property this file
+    defends rather than a defect it has yet to fix.
+    """
+    failures: list[str] = []
+
+    if registration_digest_v2() != REGISTRATION_DIGEST_V2:
+        failures.append("v2's frozen block moved; this is a third instrument")
+    if PRE_REGISTRATION_V2["inherits_registration_digest"] != REGISTRATION_DIGEST:
+        failures.append(
+            "v2 names a parent digest that v0 no longer has -- either v0's block moved or v2 "
+            "was written against a different ancestor, and both make the pair unauditable"
+        )
+
+    house_v2 = measure(_SELFTEST_HOUSE, version="v2")
+    if house_v2.furniture_lines != 1:
+        failures.append(
+            f"the house page contract gave {house_v2.furniture_lines} furniture lines under "
+            "v2, not 1 -- the tagged-column shape is the whole reason this version exists"
+        )
+    if house_v2.system_any != 6:
+        failures.append(
+            f"the house sheet's cells located {house_v2.system_any} system numbers under v2, "
+            "expected 6 (`3`, `9`, `1`, `12`, `6`, `6`)"
+        )
+    if house_v2.mundane_core or house_v2.by_family["object_count"]:
+        failures.append(f"a v2 house sheet leaked into the mundane half: {house_v2.by_family}")
+
+    house_v0 = measure(_SELFTEST_HOUSE)
+    if house_v0.furniture_lines != 0:
+        failures.append(
+            "v0 saw the house sheet -- v0's published numbers were computed by a detector "
+            "that could not, and it must keep not seeing it"
+        )
+    if house_v0.system_any:
+        failures.append("v0 located a system number on the house sheet")
+    if not house_v0.by_family["object_count"]:
+        failures.append(
+            "the recorded CONTAMINATION stopped reproducing: under v0 the sheet's own values "
+            "fall through into the prose families, which is the defect v2 fixes and the "
+            "battery measured. If this ever stops firing, v0 changed."
+        )
+
+    # Every v0 case answers identically under v2: the addition is one shape, not a rewrite.
+    for name, sample in (
+        ("furniture", _SELFTEST_FURNITURE),
+        ("divider", "He stopped.\n\n***\n\nShe did not."),
+        ("aside", "[A/N: sorry for the late chapter, exams!]\n\nHe walked on."),
+        *((text, text) for text, _f in FIXTURE_CLASSIFIED),
+    ):
+        if family_of(sample) != family_of(sample, version="v2"):
+            failures.append(f"v2 changed a v0 answer on the {name!r} case; it must add only")
+
+    if is_furniture_line("[A/N] late again — sorry 1 | exams 2 | soon 3", version="v2"):
+        failures.append("v2 counted an author's note as a status panel")
+    for shape in (
+        "[STATUS] Ines — Rating 3",
+        "[STATUS] Ines — Rating | Graded | Written",
+        "The plan — hers, not his — needed three more days.",
+    ):
+        if is_furniture_line(shape, version="v2"):
+            failures.append(f"v2 accepted a shape its narrowings refuse: {shape!r}")
+
+    try:
+        locate("x", version="v1")
+    except ValueError:
+        pass
+    else:
+        failures.append("an unknown version fell back to v0 instead of refusing")
+
     return failures
 
 
@@ -1000,8 +1220,11 @@ __all__ = [
     "MONEY_WORDS",
     "MUNDANE_CORE",
     "PRE_REGISTRATION",
+    "PRE_REGISTRATION_V2",
     "REGISTRATION_DIGEST",
+    "REGISTRATION_DIGEST_V2",
     "SYSTEM_WORDS",
+    "VERSIONS",
     "ChapterNumbers",
     "Mention",
     "english_share",
@@ -1012,6 +1235,7 @@ __all__ = [
     "measure",
     "normalise",
     "registration_digest",
+    "registration_digest_v2",
     "selftest",
     "tokenise",
 ]
@@ -1029,7 +1253,10 @@ def _main(argv: Sequence[str] | None = None) -> int:
         print(f"FAIL: {failure}", file=sys.stderr)
     if failures:
         return 1
-    print(f"selftest OK - registration_digest {REGISTRATION_DIGEST}")
+    print(
+        f"selftest OK - v0 {REGISTRATION_DIGEST}, v2 {REGISTRATION_DIGEST_V2} "
+        f"(default {DEFAULT_VERSION})"
+    )
     return 0
 
 

@@ -20990,3 +20990,149 @@ arm. No corpus was read, so RS1 is untouched. No research claim is promoted, no 
 qualified, no axis admitted, and the kept draft is operator diagnostics under §95 — a record on the
 operator's side of the loop, with no path back into generation and no protocol through which one
 could be added by accident.
+
+## 189. Two census instruments have been scoring our own page contract at zero, and the zero was the detector's
+
+**Built 2026-08-30 from [`plan/agent-impact/REPORT.md`](agent-impact/REPORT.md)'s third
+recommendation** — *"teach the census instruments the house `[STATUS]` format through the
+registered instrument channel, so cadence and system-number rows stop reading as zero"* — which
+was itself routed from [`draw-battery.md`](agent-impact/draw-battery.md) §3.1 and §3.2. Code:
+`research/quality-measurement/progression_cadence.py` and `number_context.py` (a second frozen
+block each; every v0 byte untouched), `plan/agent-impact/scripts/draw_battery.py` (v2 columns
+beside the v0 ones). Reading: `draw-battery.md` §6, which owns the ten-chapter table. Tests:
+`tests/test_progression_cadence.py` (new) and `tests/test_number_context.py`.
+
+**No model was called, no corpus was opened, no paid call was made, and no market pass was
+run.** Regex and arithmetic over ten of our own chapter files, end to end.
+
+### 189.1 Measured first: the instruments were blind, and one of them was worse than blind
+
+The battery ran both instruments over every accepted chapter 1 on the shelf and got
+`events = 0` and `system_any = 0` on all ten. **The cause is in the detectors, not the books.**
+`progression_cadence.v0` accepts three furniture shapes — a whole-line bracketed span, a
+whole-line angled span, or a colon-separated stat line — and this project's own furniture is
+`[STATUS] Subject — Label N | Label N | …`, which is none of the three: the bracket closes after
+the tag and text follows, and the columns carry no colon. `number_context.v0` copied those
+shapes on purpose (`line_shapes_copied_deliberately`) and so inherited the blindness on purpose.
+
+**The number-context half was not merely reporting a zero, it was contaminating the other
+column.** A line that is not furniture is prose, so the sheet's own cells fell through into the
+ordinary families: `draw-battery.md` §3.2 measured a nine-column sheet printed twice inflating
+`object_count` from 12 to 28. The battery worked around that by deleting the furniture before
+counting; the workaround is what this entry replaces.
+
+**Re-run under v2, the true count is 2 and three quarters of the zero was real.** Each of the
+seven post-redesign draws carries exactly two located events, both `system_block`, and the
+other three families — `level_up`, `capability_gain`, `stat_delta` — are **0 across all ten
+chapters under both versions**. So the recognition bought back the two `[STATUS]` prints and
+nothing else: no chapter on this shelf writes advancement, a named capability or a moving number
+in prose the market's own inline lexicons can see. The three pre-redesign columns stay at 0 and
+that zero is now load-bearing — they carry no status line at all, so both versions agree by
+construction for the first time. `number_context.v2` puts `system_any` at 10 to 18 on the seven,
+every one a magnitude and not one an ordinal. The table is `draw-battery.md` §6.1 and this entry
+does not restate it.
+
+### 189.2 What shipped: a second version of each instrument, and v0 left exactly where it was
+
+**A pre-registered counter is not silently improved.** Every published market number for these
+two instruments — §155.1's cadence census over 13,364 LitRPG chapters, §162's number census over
+67,436 — was computed under `5d42f2065efb7e09` and `8e10ac598828d404`, and both digests are
+unchanged. `locate`, `measure` and `is_furniture_line` still answer as v0 unless a caller asks
+otherwise; `DEFAULT_VERSION` is `"v0"` and a test pins it. What shipped beside them:
+
+- **`progression_cadence.v2`, digest `f1a205af2cd3d718`**, and **`number_context.v2`, digest
+  `6c007094f6159474`** — each a second `PRE_REGISTRATION_V2` block in its own module, addressed
+  by its own bytes, naming its parent's digest as a **literal** so that a later edit to v0 stops
+  the pair validating instead of quietly re-parenting it.
+- **One added line shape, `furniture_tagged_columns`**, and nothing else: a short bracketed or
+  angled tag, a subject, an em/en/ASCII dash, then **two or more** pipe-delimited columns of
+  which at least one carries a digit. Family list, priority order, both unit rules, the reject
+  list and every inline pattern are v0's byte for byte, and each selftest re-runs its own v0
+  cases through v2 and fails if any answer moves.
+- **A published mask.** `furniture_mask` and `prose_only` — because a detector that recognises
+  furniture and gives a caller no way to subtract it has moved the error rather than fixed it.
+  The mask is computed on normalised lines and applied to **raw** ones, because `normalise`
+  folds U+2014 to a hyphen and a mask returning normalised text would delete the em-dash signal
+  it was invoked to protect.
+- **A `--version` on `census` that refuses to overwrite v0's results file**, and was not run.
+
+**Two measured checks, and they are the reason to believe the shape rather than the digests.**
+First, v2 over a whole chapter file reproduces v0-over-prose **exactly** for `mundane_core`,
+`object_count` and `unanchored`, on all ten chapters: v2 is v0-on-prose plus the sheet's cells
+filed as system, which is what the added shape claims and is now demonstrated. Second,
+`prose_only(..., version="v2")` is byte-equal to the pipeline's own `draft._SYSTEM_LINE`-and-
+`* * *` subtraction on all ten. That second one is a **check and not a guarantee**: research
+modules run under an interpreter where the package is absent, so the shape is transcribed rather
+than imported, and `statusline`'s own docstring argues a renderer's choice and a counter's
+definition should be free to stop agreeing. A divergence is now a failing test instead of a
+discovery three months later.
+
+### 189.3 The comparability is broken and is stated rather than repaired
+
+**No v2 number may be placed beside any market number, and none is.** Every market figure for
+either instrument is v0's. Neither market half has been re-run under v2, this entry does not
+propose re-running it, and the two sentences a later session will want to write are named here
+so they are refused in advance: *our first event lands at 0.17–0.49 of the chapter against the
+market's 22.5% inside 500 words*, and *our system share of anchored is 0.38–0.67 against the
+genre's 0.2002*. **Both are invalid.** The sides were counted by different instruments.
+
+**The direction of the invalidity is the one that flatters us, which is why it is refused
+outright rather than carried with a caveat.** v2 adds an accepted shape and removes none, so it
+can only ever locate *more* furniture than v0 — on either half. A v2 house count read against a
+v0 market distribution therefore overstates our position by an amount nobody has measured, and
+§162's finding is precisely that our system column is empty, so the flattering direction is also
+the direction of the standing claim. Restoring comparability costs a full re-materialise-and-
+census pass under v2 on both instruments. The code path exists and was deliberately left unrun:
+it is a market act, it is not what this fix was for, and one sustained job at a time on this box.
+
+### 189.4 What was refused
+
+- **Editing v0.** The cheapest fix on the table and the one that would have cost the most:
+  67,436 chapters' worth of published numbers would have stopped validating against the bytes
+  that produced them, silently, and stage-0 §155 and §162 would have become entries whose
+  measurements no longer exist. `EPISTEMIC_GOVERNANCE.md`'s content-addressing rule is exactly
+  this case.
+- **Re-running the market.** Named as the repair for §189.3 and not performed here.
+- **Reading a v2 count as an improvement.** Both `declares_no_bar` blocks say it in their own
+  bytes, and v2's adds a sentence v0's did not need: a chapter's event count moving from 0 to 2
+  is a detector change and not a book getting better.
+- **A bar, a floor or a target cadence.** §81/§85/§87/§89's four attainability checks — range at
+  the real n, direction, independent unit, non-empty subgroup — were not run on any quantity
+  here, because nothing here is a bar. Recognising our own furniture buys a count and stops.
+- **Promoting §180's chain counter into the research instrument family.** It was considered on
+  this pass and left in `plan/agent-impact/scripts/`. Moving it would mint a craft counter, and
+  `CONTRIBUTING.md`'s metric rule with `BRIEF.md` §5 wants a registration, a named confound and
+  a control in the same pass — none of which a transcription of a lost script can supply
+  (§180.1's own census ran on *"a crude script that is not kept"*). The two instruments this
+  entry does touch are a different case: they already carry frozen registrations, and v2
+  corrects a **measured blindness** in one of them rather than proposing a new quantity. The
+  chain rows keep both flags they were published with.
+- **Generalising the new shape past what was measured.** It is exact on the half that motivated
+  it and untested on every other, which is `BRIEF.md` §5's named failure mode. That is
+  survivable only because no cross-half comparison is made under v2, and it is recorded as the
+  top residual in both v2 blocks rather than argued away. A second residual is recorded beside
+  it: the shape is keyed on the current renderer's line, so a future page contract that drops
+  the tag, the dash or the pipes returns both instruments to zero — silently, and in the same
+  direction as the defect v2 was built to fix.
+
+### 189.5 Corrections in place
+
+- **`draw-battery.md` §3.1 and §3.2** keep their numbers and each gains a pointer to §6. Their
+  zeros are still what v0 returns and are still correct.
+- **`draw-battery.md` §7's anti-scope said "no stage-0 number is claimed — nothing shipped
+  because of this document".** Struck through in place: §6 shipped as this entry.
+- The re-run of `plan/agent-impact/scripts/battery.json` reproduced **every v0 field byte for
+  byte**; the only new keys are `cadence_v2`, `numbers_v2` and `v2_mask_matches_pipeline`.
+
+### 189.6 Anti-scope
+
+Measurement only. Nothing here mints a system, edits a prompt, touches `src/litharness/`, gates,
+ranks or selects anything, admits an axis, or promotes a research claim under
+`EPISTEMIC_GOVERNANCE.md` — the v2 blocks are `REGISTERED` shapes with `OBSERVED` counts on ten
+of our own chapters and nothing above that. No model read or judged anything. **No corpus was
+read by any version**: the re-run touched ten house chapter files and nothing else, so RS1 is
+untouched, and nothing under `src/litharness/` imports either research module or the runner. No
+count here reaches the writer, the reviser, the editorial control plane, the reader loop, the
+roster or any dossier, and nothing the operator said about any of these books became prompt
+text, a directive or a plan item (§97.1). The defect was in a detector and the fix is a second
+detector.
